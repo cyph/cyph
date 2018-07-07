@@ -17,7 +17,9 @@ simple=''
 simpleProdBuild=''
 simpleWebSignBuild=''
 pack=''
+fast=''
 environment=''
+firebaseAll=''
 firebaseBackup=''
 customBuild=''
 saveBuildArtifacts=''
@@ -25,6 +27,11 @@ debug=''
 debugProdBuild=''
 test=true
 websign=true
+
+if [ "${1}" == '--firebase-all' ] ; then
+	firebaseAll=true
+	shift
+fi
 
 if [ "${1}" == '--firebase-backup' ] ; then
 	firebaseBackup=true
@@ -77,6 +84,11 @@ if [ "${1}" == '--pack' ] ; then
 	shift
 fi
 
+if [ "${1}" == '--fast' ] ; then
+	fast=true
+	shift
+fi
+
 if [ "${1}" == '--site' ] ; then
 	shift
 	site="${1}"
@@ -120,7 +132,11 @@ if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
 fi
 
 if [ "${compiledProjects}" ] && [ ! "${test}" ] && [ ! "${debug}" ] ; then
-	./commands/lint.sh || fail
+	if [ "${fast}" ] ; then
+		log "WARNING: Skipping lint. Make sure you know what you're doing."
+	else
+		./commands/lint.sh || fail
+	fi
 fi
 
 log 'Initial setup'
@@ -194,8 +210,12 @@ if [ "${customBuild}" ] ; then
 fi
 
 
-if [ ! "${simple}" ] ; then
-	rm shared/assets/frozen 2> /dev/null
+if [ ! "${simple}" ] && [ -f shared/assets/frozen ] ; then
+	if [ "${fast}" ] ; then
+		log "WARNING: Assets frozen. Make sure you know what you're doing."
+	else
+		rm shared/assets/frozen
+	fi
 fi
 
 ./commands/copyworkspace.sh ~/.build
@@ -692,7 +712,10 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 		firebaseProjects='cyphme'
 	else
 		firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
-		if [ "${environment}" != 'dev' ] ; then
+
+		if [ "${firebaseAll}" ] ; then
+			firebaseProjects="${firebaseProjects} cyph-test-staging cyph-test-beta cyph-test-master"
+		elif [ "${environment}" != 'dev' ] ; then
 			firebaseProjects="${firebaseProjects} cyph-test-${branch}"
 		fi
 
