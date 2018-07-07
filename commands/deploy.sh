@@ -17,6 +17,7 @@ simple=''
 simpleProdBuild=''
 simpleWebSignBuild=''
 pack=''
+fast=''
 environment=''
 firebaseBackup=''
 customBuild=''
@@ -77,6 +78,11 @@ if [ "${1}" == '--pack' ] ; then
 	shift
 fi
 
+if [ "${1}" == '--fast' ] ; then
+	fast=true
+	shift
+fi
+
 if [ "${1}" == '--site' ] ; then
 	shift
 	site="${1}"
@@ -120,7 +126,11 @@ if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
 fi
 
 if [ "${compiledProjects}" ] && [ ! "${test}" ] && [ ! "${debug}" ] ; then
-	./commands/lint.sh || fail
+	if [ "${fast}" ] ; then
+		log "WARNING: Skipping lint. Make sure you know what you're doing."
+	else
+		./commands/lint.sh || fail
+	fi
 fi
 
 log 'Initial setup'
@@ -194,8 +204,12 @@ if [ "${customBuild}" ] ; then
 fi
 
 
-if [ ! "${simple}" ] ; then
-	rm shared/assets/frozen 2> /dev/null
+if [ ! "${simple}" ] && [ -f shared/assets/frozen ] ; then
+	if [ "${fast}" ] ; then
+		log "WARNING: Assets frozen. Make sure you know what you're doing."
+	else
+		rm shared/assets/frozen
+	fi
 fi
 
 ./commands/copyworkspace.sh ~/.build
