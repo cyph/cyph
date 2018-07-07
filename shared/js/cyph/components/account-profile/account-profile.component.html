@@ -192,12 +192,11 @@
 </ng-template>
 
 <ng-template #standardProfile>
-	<div fxFlexFill fxLayout='row'>
+	<div fxLayout='row'>
 		<div
 			fxFlex
-			fxFlexFill
 			fxLayout='column'
-			fxLayoutAlign='center stretch'
+			fxLayoutAlign='center'
 			fxLayoutGap='32px'
 			class='profile standard'
 			[class.mobile]='envService.isMobile'
@@ -265,6 +264,7 @@
 
 			<ng-container *ngTemplateOutlet='buttons'></ng-container>
 			<ng-container *ngTemplateOutlet='fileUpload'></ng-container>
+			<div></div>
 		</div>
 	</div>
 </ng-template>
@@ -281,7 +281,6 @@
 <!-- Standard view -->
 
 <div
-	fxFlexFill
 	[class.editing]='isEditorFocused'
 	*ngIf='!envService.isTelehealth'
 >
@@ -293,15 +292,13 @@
 <!-- Telehealth view -->
 
 <div
-	fxFlexFill
 	class='telehealth'
 	[class.editing]='isEditorFocused'
 	*ngIf='envService.isTelehealth'
 >
-	<div fxFlexFill fxLayout='row'>
+	<div fxLayout='row'>
 		<div
 			fxFlex
-			fxFlexFill
 			fxLayout='column'
 			class='profile telehealth'
 			[class.mobile]='envService.isMobile'

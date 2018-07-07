@@ -2,6 +2,10 @@
 
 $header-size: 135px;
 
+:host > div {
+	position: relative;
+}
+
 .profile {
 	position: relative;
 	text-align: center;
@@ -12,12 +16,19 @@ $header-size: 135px;
 		.avatar {
 			width: 10em;
 			height: 10em;
+			margin-top: 0;
+			margin-bottom: 1em;
+		}
+
+		.cover-image {
+			height: calc(10em + 84px);
 		}
 	}
 
 	.avatar {
 		width: 18em;
 		height: 18em;
+		margin-top: 1em;
 		box-shadow: 0 20px 42px 0 rgba(0, 0, 0, 0.3);
 		border-width: 10px !important;
 
@@ -32,7 +43,7 @@ $header-size: 135px;
 		top: 0;
 		left: 0;
 		width: calc(100% + 1px);
-		height: 20em;
+		height: calc(20em + 20px);
 		overflow: hidden;
 		opacity: 0.95;
 		box-shadow: 0 14px 0px 0px rgba(69, 39, 160, 0.42);
@@ -102,7 +113,7 @@ mat-card {
 .edit-buttons {
 	position: absolute;
 	bottom: 25px;
-	right: 25px;
+	right: 27px;
 }
 
 .edit-hide {

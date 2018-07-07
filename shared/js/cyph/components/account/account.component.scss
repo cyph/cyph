@@ -34,27 +34,45 @@
 		&.padding.large {
 			padding: 0 $accountPaddingLarge;
 
-			cyph-account-profile .cover-image {
-				left: -$accountPaddingLarge;
-				width: calc(100% + 1px + #{$accountPaddingLarge * 2});
+			cyph-account-profile {
+				.cover-image {
+					left: -$accountPaddingLarge;
+					width: calc(100% + 1px + #{$accountPaddingLarge * 2});
+				}
+
+				.edit-buttons {
+					right: calc(27px - #{$accountPaddingLarge});
+				}
 			}
 		}
 
 		&.padding.medium {
 			padding: 0 $accountPaddingMedium;
 
-			cyph-account-profile .cover-image {
-				left: -$accountPaddingMedium;
-				width: calc(100% + 1px + #{$accountPaddingMedium * 2});
+			cyph-account-profile {
+				.cover-image {
+					left: -$accountPaddingMedium;
+					width: calc(100% + 1px + #{$accountPaddingMedium * 2});
+				}
+
+				.edit-buttons {
+					right: calc(27px - #{$accountPaddingMedium});
+				}
 			}
 		}
 
 		&.padding.small {
 			padding: 0 $accountPaddingSmall;
 
-			cyph-account-profile .cover-image {
-				left: -$accountPaddingSmall;
-				width: calc(100% + 1px + #{$accountPaddingSmall * 2});
+			cyph-account-profile {
+				.cover-image {
+					left: -$accountPaddingSmall;
+					width: calc(100% + 1px + #{$accountPaddingSmall * 2});
+				}
+
+				.edit-buttons {
+					right: calc(27px - #{$accountPaddingSmall});
+				}
 			}
 		}
 	}

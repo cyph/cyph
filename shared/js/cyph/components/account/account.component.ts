@@ -48,7 +48,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	/** Indicates whether section should take up 100% height. */
 	public get fullHeight () : boolean {
 		return [
-			'',
 			'contacts',
 			'logout',
 			'messages',
