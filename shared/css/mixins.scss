@@ -150,6 +150,10 @@ $accountPaddingSmall: 2.5vw;
 				map-get($cyph-accent, darker),
 				$cyph-background
 			);
+
+			@if $partialInversion {
+				color: $cyph-inverted;
+			}
 		}
 	}
 
