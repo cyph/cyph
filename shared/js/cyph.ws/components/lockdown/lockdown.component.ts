@@ -48,17 +48,22 @@ export class LockdownComponent implements OnInit {
 			}
 		}
 		else if (password) {
-			const {name}	= await this.databaseService.callFunction('environmentUnlock', {
-				id: this.potassiumService.toHex(
-					(await this.potassiumService.passwordHash.hash(
-						password,
-						this.databaseService.salt
-					)).hash
-				),
-				namespace: this.databaseService.namespace
-			}).catch(
-				() => undefined
-			);
+			let name: string|undefined;
+
+			try {
+				name	=
+					(await this.databaseService.callFunction('environmentUnlock', {
+						id: this.potassiumService.toHex(
+							(await this.potassiumService.passwordHash.hash(
+								password,
+								this.databaseService.salt
+							)).hash
+						),
+						namespace: this.databaseService.namespace
+					})).name
+				;
+			}
+			catch {}
 
 			if (typeof name === 'string' && name) {
 				success	= true;
