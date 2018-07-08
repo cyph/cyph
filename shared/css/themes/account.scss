@@ -18,18 +18,19 @@ $cyph-message-colors: map-merge($cyph-message-colors, (
 	app: (
 		desktop: transparent,
 		mobile: transparent,
+		mobileText: $cyph-foreground,
 		text: $cyph-foreground
 	),
-	me: map-merge(map-get($cyph-message-colors, me), (
+	me: (
 		desktop: transparent,
 		mobile: rgba(map-get(map-get($cyph-message-colors, me), mobile), 0.9),
 		text: $cyph-foreground
-	)),
-	other: map-merge(map-get($cyph-message-colors, other), (
+	),
+	other: (
 		desktop: transparent,
 		mobile: rgba(map-get(map-get($cyph-message-colors, other), mobile), 0.7),
 		text: $cyph-foreground
-	))
+	)
 ));
 
 body.primary-account-theme {
