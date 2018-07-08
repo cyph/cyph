@@ -68,16 +68,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'profile',
 				'staff',
 				'video'
-			].find(
-				path => this.route === path
-			) !== undefined
+			].indexOf(this.route) > -1
 		) || (
 			this.activatedRouteURL.length > 1 &&
 			[
 				'appointments'
-			].find(
-				path => this.route === path
-			) !== undefined
+			].indexOf(this.route) > -1
 		);
 	}
 
@@ -90,16 +86,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'profile',
 				'video',
 				'wallets'
-			].find(
-				path => this.route === path
-			) !== undefined
+			].indexOf(this.route) > -1
 		) || (
 			this.activatedRouteURL.length > 1 &&
 			[
 				'appointments'
-			].find(
-				path => this.route === path
-			) !== undefined
+			].indexOf(this.route) > -1
 		);
 	}
 
@@ -141,9 +133,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'staff',
 			'video',
 			'wallets'
-		].find(
-			path => this.route === path
-		) !== undefined;
+		].indexOf(this.route) > -1;
 	}
 
 	/** @inheritDoc */
@@ -195,9 +185,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'chat-transition',
 				'messages',
 				'notifications'
-			].find(
-				path => this.route === path
-			) !== undefined
+			].indexOf(this.route) > -1
 		;
 	}
 
