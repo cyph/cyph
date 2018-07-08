@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# CDN node setup script for Ubuntu 16.04
+# CDN node setup script for Ubuntu 18.04
 
 
 cert='ASK RYAN FOR THIS'

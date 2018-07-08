@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# WebSign reverse proxy server setup script for Ubuntu 16.04
+# WebSign reverse proxy server setup script for Ubuntu 18.04
 
 
 rekeyscript='base64 hpkpsuicide.sh'
