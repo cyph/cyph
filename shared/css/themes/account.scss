@@ -36,14 +36,6 @@ $cyph-message-colors: map-merge($cyph-message-colors, (
 body.primary-account-theme {
 	@include cyph-apply-theme(false, true);
 
-	cyph-account-menu, mat-card, mat-dialog-container {
-		@include cyph-inverted-theme;
-	}
-
-	cyph-account-menu .menu {
-		background-color: map-get($cyph-accent, darker);
-	}
-
 	cyph-chat-message-list .background-image {
 		@include filter(brightness(0.75));
 	}
