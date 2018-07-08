@@ -38,16 +38,21 @@ export class AppService implements CanActivate {
 	public chatRootState: ChatRootStates	= ChatRootStates.blank;
 
 	/** If true, app is locked down. */
-	public isLockedDown: boolean			=
-		!!this.envService.environment.customBuild &&
-		(
-			!!this.envService.environment.customBuild.config.lockedDown ||
-			!!this.envService.environment.customBuild.config.password
-		) &&
-		!locationData.hash.match(
+	public isLockedDown: boolean			= !(
+		!(
+			this.envService.environment.customBuild &&
+			(
+				this.envService.environment.customBuild.config.lockedDown ||
+				this.envService.environment.customBuild.config.password
+			)
+		) ||
+		[
+			'trial-signup'
+		].indexOf(locationData.hash.slice(1)) > -1 ||
+		locationData.hash.match(
 			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
 		)
-	;
+	);
 
 	/** @inheritDoc */
 	public canActivate (_: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {
