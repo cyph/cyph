@@ -365,6 +365,15 @@ $accountPaddingSmall: 2.5vw;
 	@include mat-sidenav-theme($theme);
 	@include mat-tabs-theme($theme);
 
+	mat-card, mat-dialog-container {
+		@include mat-checkbox-theme($theme);
+		@include mat-chips-theme($theme);
+		@include mat-expansion-panel-theme($theme);
+		@include mat-form-field-theme($theme);
+		@include mat-input-theme($theme);
+		@include mat-select-theme($theme);
+	}
+
 	$theme-accent: map-get(map-get($theme, accent), default);
 
 	.mat-tab-label-content {
