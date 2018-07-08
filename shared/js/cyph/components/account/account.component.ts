@@ -59,11 +59,13 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public get fullHeight () : boolean {
 		return (
 			[
+				'',
 				'audio',
 				'contacts',
 				'logout',
 				'messages',
 				'patients',
+				'profile',
 				'staff',
 				'video'
 			].find(
