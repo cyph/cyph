@@ -365,6 +365,10 @@ $accountPaddingSmall: 2.5vw;
 	@include mat-sidenav-theme($theme);
 	@include mat-tabs-theme($theme);
 
+	.mat-select-content, .mat-select-panel-done-animating {
+		background-color: mat-color(map-get($theme, background), card);
+	}
+
 	mat-card, mat-dialog-container {
 		@include mat-checkbox-theme($theme);
 		@include mat-chips-theme($theme);
