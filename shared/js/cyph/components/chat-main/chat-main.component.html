@@ -322,7 +322,9 @@
 			(
 				chatService.chatSelfDestructed === undefined ||
 				(chatService.chatSelfDestructed | async) === false
-			)
+			) &&
+			(chatService.chatSelfDestructTimer?.isStarted | async) === true &&
+			(chatService.chatSelfDestructTimer?.isComplete | async) === false
 		'
 	>
 		<div cyphTranslate>Message will self-destruct in</div>

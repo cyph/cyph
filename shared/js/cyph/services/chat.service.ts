@@ -261,9 +261,12 @@ export class ChatService {
 				})()
 			);
 
-			if (selfDestructChat) {
-				this.chatSelfDestruct	= true;
-				await this.chat.messages.clear();
+			if (selfDestructChat && o.text.selfDestructTimeout) {
+				this.chatSelfDestruct		= true;
+				this.chatSelfDestructed		= this.chat.messageList.watchFlat().pipe(
+					map(messageIDs => messageIDs.length === 0)
+				);
+				this.chatSelfDestructTimer	= new Timer(o.text.selfDestructTimeout);
 			}
 
 			return {
@@ -300,20 +303,20 @@ export class ChatService {
 				});
 			}
 
-			if (o.selfDestructChat) {
-				this.chatSelfDestructed		= this.chat.messageList.watchFlat().pipe(
-					map(messageIDs => messageIDs.length === 0)
-				);
-				this.chatSelfDestructTimer	= new Timer(this.chatSelfDestructTimeout * 1000);
+			if (o.selfDestructChat && this.chatSelfDestructTimer) {
 				await this.chatSelfDestructTimer.start();
 				this.chatSelfDestructEffect	= true;
 				await sleep(500);
-				await this.chat.messages.clear();
-				await sleep(1000);
+
+				await Promise.all([
+					this.chat.messages.clear(),
+					this.chat.messageList.clear(),
+					sleep(1000)
+				]);
+
 				this.chatSelfDestructEffect	= false;
 
 				if (o.author !== this.sessionService.localUsername) {
-					await sleep(10000);
 					await this.close();
 				}
 			}
@@ -1033,7 +1036,7 @@ export class ChatService {
 			authorType: ChatMessage.AuthorTypes.Local,
 			dimensions,
 			id,
-			selfDestructTimeout,
+			selfDestructTimeout: selfDestructChat ? undefined : selfDestructTimeout,
 			sessionSubID: this.sessionService.sessionSubID,
 			timestamp
 		}));

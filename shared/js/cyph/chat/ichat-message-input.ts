@@ -24,6 +24,9 @@ export interface IChatMessageInput {
 	/** @see IChatMessage.predecessors */
 	predecessors?: IChatMessagePredecessor[];
 
+	/** @see ISessionText.selfDestructChat */
+	selfDestructChat?: boolean;
+
 	/** @see IChatMessage.selfDestructTimeout */
 	selfDestructTimeout?: number;
 

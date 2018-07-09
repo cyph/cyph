@@ -1,6 +1,6 @@
 import {BehaviorSubject, Subject} from 'rxjs';
-import {staticNgZone} from './util/static-services';
-import {getTimestamp} from './util/time';
+import {map, takeWhile} from 'rxjs/operators';
+import {getTimestamp, watchTimestamp} from './util/time';
 import {sleep} from './util/wait';
 
 
@@ -20,8 +20,14 @@ export class Timer {
 	/** @ignore */
 	private isStopped: boolean		= false;
 
+	/** @ignore */
+	private startPromise?: Promise<void>;
+
 	/** Indicates whether timer's countdown has completed. */
 	public isComplete: Subject<boolean>	= new BehaviorSubject(false);
+
+	/** Indicates whether timer's countdown has started. */
+	public isStarted: Subject<boolean>	= new BehaviorSubject(false);
 
 	/** Human-readable string indicating remaining time. */
 	public timestamp: Subject<string>	= new BehaviorSubject(
@@ -62,38 +68,48 @@ export class Timer {
 		if (this.isStopped) {
 			return;
 		}
+		else if (this.startPromise) {
+			return this.startPromise;
+		}
 
-		await (await staticNgZone).runOutsideAngular(async () => {
+		this.isStarted.next(true);
+
+		this.startPromise	= new Promise(async (resolve, reject) => {
 			await sleep(1000);
 
 			this.endTime	= (await getTimestamp()) + this.countdown;
 
-			for (
-				let timeRemaining = this.countdown;
-				timeRemaining > 0;
-				timeRemaining = this.endTime - (await getTimestamp())
-			) {
-				if (this.isStopped) {
-					return;
-				}
+			watchTimestamp(250).pipe(
+				map(timestamp => ({
+					continue:
+						!this.isStopped &&
+						this.endTime !== undefined &&
+						this.endTime > timestamp
+					,
+					next: this.getTimestamp((this.endTime || 0) - timestamp)
+				})),
+				takeWhile(o => o.continue),
+				map(o => o.next)
+			).subscribe(
+				s => this.timestamp.next(s),
+				reject,
+				async () => {
+					this.timestamp.next(
+						this.includeHours ?
+							'0:00:00' :
+							this.includeMinutes ?
+								'0:00' :
+								'0'
+					);
 
-				this.timestamp.next(this.getTimestamp(timeRemaining));
-				await sleep();
-
-				if (timeRemaining < 1) {
+					resolve();
 					await sleep(1000);
+					this.isComplete.next(true);
 				}
-			}
-
-			this.isComplete.next(true);
-			this.timestamp.next(
-				this.includeHours ?
-					'0:00:00' :
-					this.includeMinutes ?
-						'0:00' :
-						'0'
 			);
 		});
+
+		return this.startPromise;
 	}
 
 	/** Stops countdown. */
