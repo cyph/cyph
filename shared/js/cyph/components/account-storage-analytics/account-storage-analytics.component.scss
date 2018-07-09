@@ -1,1 +1,5 @@
 @import '../../../../css/mixins';
+
+:host > div {
+	text-align: center;
+}
