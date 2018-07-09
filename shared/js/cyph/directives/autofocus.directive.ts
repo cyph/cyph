@@ -12,9 +12,14 @@ import {sleep, waitForIterable} from '../util/wait';
 })
 export class AutofocusDirective implements OnInit {
 	/** @ignore */
-	private static readonly loading: Promise<void>	=
-		waitForIterable(() => $('body.load-complete')).then(async () => sleep(1500))
-	;
+	private static readonly loading: Promise<void>	= Promise.all([
+		waitForIterable(() => $('body.load-complete')).then(async () => sleep(750)),
+		new Promise<void>(resolve => {
+			$(document.body).one('mousedown', () => { resolve(); });
+		})
+	]).then(async () =>
+		sleep(750)
+	);
 
 	/** Indicates whether directive should be active. */
 	@Input() public cyphAutofocus?: boolean;
@@ -25,15 +30,14 @@ export class AutofocusDirective implements OnInit {
 			return;
 		}
 
-		this.renderer.setAttribute(this.elementRef.nativeElement, 'autofocus', '');
-
-		const $elem	= $(<HTMLElement> this.elementRef.nativeElement);
-		await waitForIterable(() => $elem.filter(':visible'));
-
 		if (this.envService.isMobile) {
 			await AutofocusDirective.loading;
 		}
 
+		this.renderer.setAttribute(this.elementRef.nativeElement, 'autofocus', '');
+
+		const $elem	= $(<HTMLElement> this.elementRef.nativeElement);
+		await waitForIterable(() => $elem.filter(':visible'));
 		$elem.trigger('focus');
 	}
 
