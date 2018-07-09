@@ -1,6 +1,7 @@
 import {Directive, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
 import * as $ from 'jquery';
-import {waitForIterable} from '../util/wait';
+import {EnvService} from '../services/env.service';
+import {sleep, waitForIterable} from '../util/wait';
 
 
 /**
@@ -10,6 +11,11 @@ import {waitForIterable} from '../util/wait';
 	selector: '[cyphAutofocus]'
 })
 export class AutofocusDirective implements OnInit {
+	/** @ignore */
+	private static readonly loading: Promise<void>	=
+		waitForIterable(() => $('body.load-complete')).then(async () => sleep(1500))
+	;
+
 	/** Indicates whether directive should be active. */
 	@Input() public cyphAutofocus?: boolean;
 
@@ -23,6 +29,11 @@ export class AutofocusDirective implements OnInit {
 
 		const $elem	= $(<HTMLElement> this.elementRef.nativeElement);
 		await waitForIterable(() => $elem.filter(':visible'));
+
+		if (this.envService.isMobile) {
+			await AutofocusDirective.loading;
+		}
+
 		$elem.trigger('focus');
 	}
 
@@ -31,6 +42,9 @@ export class AutofocusDirective implements OnInit {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly renderer: Renderer2
+		private readonly renderer: Renderer2,
+
+		/** @ignore */
+		private readonly envService: EnvService
 	) {}
 }
