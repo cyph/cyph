@@ -221,6 +221,8 @@ fi
 ./commands/copyworkspace.sh ~/.build
 cd ~/.build
 
+cp -a backend/shared/* firebase/functions/
+
 mkdir geoisp.tmp
 cd geoisp.tmp
 wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-ISP&suffix=tar.gz&license_key=$(

@@ -16,11 +16,14 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/hoisie/mustache"
 	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/log"
+	"google.golang.org/appengine/mail"
 	"google.golang.org/appengine/urlfetch"
 )
 
@@ -64,6 +67,8 @@ var router = mux.NewRouter()
 var isRouterActive = false
 
 var sanitizer = bluemonday.StrictPolicy()
+
+var emailTemplate, _ = mustache.ParseString(getFileText("shared/email.html"))
 
 var countrydb, _ = geoip2.Open("GeoIP2-Country.mmdb")
 var orgdb, _ = geoip2.Open("GeoIP2-ISP.mmdb")
@@ -354,4 +359,25 @@ func sanitize(s string, params ...int) string {
 	}
 
 	return sanitized
+}
+
+func getFileText(path string) string {
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
+}
+
+func sendMail(h HandlerArgs, to string, subject string, text string) {
+	err := mail.Send(h.Context, &mail.Message{
+		Sender:   "Cyph <noreply@cyph.com>",
+		Subject:  subject,
+		To:       []string{to},
+		HTMLBody: emailTemplate.Render(map[string]interface{}{"lines": strings.Split(text, "\n")}),
+	})
+
+	if err != nil {
+		log.Errorf(h.Context, "Failed to send email: %v", err)
+	}
 }
