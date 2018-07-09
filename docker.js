@@ -440,7 +440,7 @@ switch (args.command) {
 		break;
 
 	case 'editimage':
-		editImage(baseShellCommandArgs[0]);
+		editImage(`source ~/.bashrc ; ${baseShellCommandArgs[0]}`);
 		break;
 
 	case 'kill':
