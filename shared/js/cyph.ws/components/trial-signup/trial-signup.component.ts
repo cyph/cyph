@@ -17,6 +17,9 @@ import {AppService} from '../../app.service';
 	templateUrl: './trial-signup.component.html'
 })
 export class TrialSignupComponent implements OnInit {
+	/** Generated API key. */
+	public apiKey?: string;
+
 	/** Indicates whether signup attempt is in progress. */
 	public checking: boolean	= false;
 
@@ -32,9 +35,6 @@ export class TrialSignupComponent implements OnInit {
 	/** Name. */
 	public name: string			= '';
 
-	/** Generated password. */
-	public password?: string;
-
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.appService.loadComplete();
@@ -46,11 +46,11 @@ export class TrialSignupComponent implements OnInit {
 
 		try {
 			while (true) {
-				const password	= await xkcdPassphrase.generateWithWordCount(4);
+				const apiKey	= await xkcdPassphrase.generateWithWordCount(4);
 
-				const o	= await requestJSON({
+				const o			= await requestJSON({
 					data: {
-						apiKey: password,
+						apiKey,
 						email: this.email,
 						name: this.name,
 						namespace: this.databaseService.namespace
@@ -60,7 +60,7 @@ export class TrialSignupComponent implements OnInit {
 				});
 
 				if (o.tryAgain !== true) {
-					this.password	= password;
+					this.apiKey	= apiKey;
 					return;
 				}
 			}

@@ -20,7 +20,7 @@
 				</span>
 			</mat-card-subtitle>
 			<mat-card-content>
-				<form ngNativeValidate (submit)='submit()' *ngIf='!password'>
+				<form ngNativeValidate (submit)='submit()' *ngIf='!apiKey'>
 					<div fxLayout='row' fxLayoutAlign='center center'>
 						<h3
 							class='cyph-banner warn'
@@ -73,14 +73,14 @@
 					</div>
 				</form>
 			</mat-card-content>
-			<div *ngIf='password'>
+			<div *ngIf='apiKey'>
 				<br />
 				<h3 class='cyph-banner success'>
 					<div cyphTranslate>
 						Your trial account is now active. You can log in to this environment
 						using the following code:
 					</div>
-					<div class='xkcd-passphrase'>{{password}}</div>
+					<div class='xkcd-passphrase'>{{apiKey}}</div>
 					<div>
 						<span cyphTranslate>
 							Don't lose it! If you need help during your trial,
