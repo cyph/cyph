@@ -46,10 +46,14 @@ func main() {
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
 	company := sanitize(h.Request.PostFormValue("company"))
-	email := sanitize(h.Request.PostFormValue("email"))
 	name := sanitize(h.Request.PostFormValue("name"))
 	namespace := sanitize(h.Request.PostFormValue("namespace"))
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
+
+	email, err := getEmail(h.Request.PostFormValue("email"))
+	if err != nil {
+		return err.Error(), http.StatusForbidden
+	}
 
 	names := strings.SplitN(name, " ", 2)
 	firstName := names[0]
@@ -470,18 +474,16 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 func proTrialSignup(h HandlerArgs) (interface{}, int) {
 	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
 	company := sanitize(h.Request.PostFormValue("company"))
-	email := sanitize(h.Request.PostFormValue("email"))
 	name := sanitize(h.Request.PostFormValue("name"))
 	namespace := sanitize(h.Request.PostFormValue("namespace"))
 
-	if !emailRegex.MatchString(email) {
-		return "invalid email address", http.StatusForbidden
+	email, err := getEmail(h.Request.PostFormValue("email"))
+	if err != nil {
+		return err.Error(), http.StatusForbidden
 	}
 
 	customerEmail := &CustomerEmail{}
 	customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
-
-	var err error
 
 	if err = datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
 		return "trial code already exists for this user", http.StatusForbidden
@@ -849,10 +851,10 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 func signup(h HandlerArgs) (interface{}, int) {
 	signup := getSignupFromRequest(h)
-	email := signup["email"].(string)
 
-	if !strings.Contains(email, "@") {
-		return "", http.StatusTeapot
+	email, err := getEmail(signup["email"].(string))
+	if err != nil {
+		return err.Error(), http.StatusForbidden
 	}
 
 	jsonSignup, _ := json.Marshal(signup)

@@ -48,7 +48,7 @@ const baseRequest	= <R, T> (
 				if (url.slice(-5) === '.json') {
 					contentType	= 'application/json';
 				}
-				else if (responseType === 'text') {
+				else if (responseType === 'json' || responseType === 'text') {
 					contentType	= 'application/x-www-form-urlencoded';
 				}
 			}
@@ -212,7 +212,7 @@ export const requestJSON	= async (o: {
 	timeout?: number;
 	url: string;
 }) : Promise<any> => {
-	return (await baseRequest<any, any>({contentType: 'application/json', ...o}, 'json', res =>
+	return (await baseRequest<any, any>(o, 'json', res =>
 		res.body
 	)).result;
 };

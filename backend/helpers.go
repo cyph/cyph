@@ -382,6 +382,13 @@ func sanitize(s string, params ...int) string {
 	return sanitized
 }
 
+func getEmail(email string) (string, error) {
+	if !emailRegex.MatchString(email) {
+		return "", errors.New("invalid email address: " + email)
+	}
+	return email, nil
+}
+
 func getTimestamp() int64 {
 	return time.Now().UnixNano() / 1e6
 }
