@@ -1,6 +1,7 @@
 /* tslint:disable:object-literal-sort-keys */
 
 import {Routes} from '@angular/router';
+import {env} from '../cyph/env';
 import {account, accountRedirect, login, retry} from '../cyph/routes';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './components/ephemeral-chat-root';
@@ -16,7 +17,9 @@ export const appRoutes: Routes	= [
 	login,
 	account,
 	...accountRedirect,
-	{path: 'trial-signup', component: TrialSignupComponent},
-	{path: 'unlock/:password', component: LockdownComponent},
+	...(!(env.environment.customBuild && env.environment.customBuild.config.lockedDown) ? [] : [
+		{path: 'trial-signup', component: TrialSignupComponent},
+		{path: 'unlock/:password', component: LockdownComponent}
+	]),
 	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
 ];
