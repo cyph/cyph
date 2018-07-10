@@ -19,6 +19,8 @@ export class AutofocusDirective implements OnInit {
 		})
 	]).then(async () =>
 		sleep(750)
+	).catch(
+		() => {}
 	);
 
 	/** Indicates whether directive should be active. */
