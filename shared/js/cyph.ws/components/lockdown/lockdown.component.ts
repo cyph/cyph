@@ -142,6 +142,7 @@ export class LockdownComponent implements OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');
 		}

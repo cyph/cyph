@@ -91,7 +91,7 @@ export class Timer {
 				takeWhile(o => o.continue),
 				map(o => o.next)
 			).subscribe(
-				s => this.timestamp.next(s),
+				s => { this.timestamp.next(s); },
 				reject,
 				async () => {
 					this.timestamp.next(
