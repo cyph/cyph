@@ -1,10 +1,13 @@
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {LockFunction} from '../../../cyph/lock-function-type';
 import {StringProto} from '../../../cyph/proto';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {DialogService} from '../../../cyph/services/dialog.service';
 import {EnvService} from '../../../cyph/services/env.service';
 import {LocalStorageService} from '../../../cyph/services/local-storage.service';
 import {StringsService} from '../../../cyph/services/strings.service';
+import {lockFunction} from '../../../cyph/util/lock';
 import {random} from '../../../cyph/util/random';
 import {requestJSON} from '../../../cyph/util/request';
 import {sleep} from '../../../cyph/util/wait';
@@ -29,6 +32,9 @@ export class LockdownComponent implements OnInit {
 	/** Indicates whether the last unlock attempt has failed. */
 	public error: boolean		= false;
 
+	/** Unlock attempt lock. */
+	public lock: LockFunction	= lockFunction();
+
 	/** Password to be used for unlock attempt. */
 	public password: string		= '';
 
@@ -37,60 +43,66 @@ export class LockdownComponent implements OnInit {
 
 	/** @ignore */
 	private async tryUnlock (password: string, passive: boolean = false) : Promise<boolean> {
-		let success	= false;
-
-		if (this.correctPassword) {
-			/* tslint:disable-next-line:possible-timing-attack */
-			success	= this.password === this.correctPassword;
-
-			if (!passive) {
-				await sleep(random(1000, 250));
+		return this.lock(async () => {
+			if (!this.appService.isLockedDown) {
+				return true;
 			}
-		}
-		else if (password) {
-			let name: string|undefined;
 
-			try {
-				const o	= await requestJSON({
-					headers: {Authorization: password},
-					method: 'POST',
-					url: this.envService.baseUrl + 'pro/unlock'
-				});
+			let success	= false;
 
-				if (o.namespace === this.databaseService.namespace) {
-					name	=
-						typeof o.company === 'string' && o.company.length > 0 ?
-							o.company :
-						typeof o.name === 'string' && o.name.length > 0 ?
-							o.name :
-							undefined
-					;
-				}
-			}
-			catch {}
-
-			if (name) {
-				success	= true;
+			if (this.correctPassword) {
+				/* tslint:disable-next-line:possible-timing-attack */
+				success	= this.password === this.correctPassword;
 
 				if (!passive) {
-					await this.dialogService.alert({
-						content: `${this.stringsService.welcomeComma} ${name}.`,
-						title: this.stringsService.unlockedTitle
-					});
+					await sleep(random(1000, 250));
 				}
 			}
-		}
+			else if (password) {
+				let name: string|undefined;
 
-		if (success) {
-			await Promise.all([
-				this.appService.unlock(),
-				passive ?
-					Promise.resolve(undefined) :
-					this.localStorageService.setItem('password', StringProto, this.password)
-			]);
-		}
+				try {
+					const o	= await requestJSON({
+						headers: {Authorization: password},
+						method: 'POST',
+						url: this.envService.baseUrl + 'pro/unlock'
+					});
 
-		return success;
+					if (o.namespace === this.databaseService.namespace) {
+						name	=
+							typeof o.company === 'string' && o.company.length > 0 ?
+								o.company :
+							typeof o.name === 'string' && o.name.length > 0 ?
+								o.name :
+								undefined
+						;
+					}
+				}
+				catch {}
+
+				if (name) {
+					success	= true;
+
+					if (!passive) {
+						await this.dialogService.alert({
+							content: `${this.stringsService.welcomeComma} ${name}.`,
+							title: this.stringsService.unlockedTitle
+						});
+					}
+				}
+			}
+
+			if (success) {
+				await Promise.all([
+					this.appService.unlock(),
+					passive ?
+						Promise.resolve(undefined) :
+						this.localStorageService.setItem('password', StringProto, this.password)
+				]);
+			}
+
+			return success;
+		});
 	}
 
 	/** @inheritDoc */
@@ -106,6 +118,12 @@ export class LockdownComponent implements OnInit {
 		}
 
 		this.correctPassword	= this.envService.environment.customBuild.config.password;
+
+		this.activatedRoute.data.subscribe(async o => {
+			if (typeof o.password === 'string') {
+				await this.tryUnlock(o.password);
+			}
+		});
 
 		await this.tryUnlock(
 			await this.localStorageService.getItem('password', StringProto).catch(() => ''),
@@ -124,6 +142,9 @@ export class LockdownComponent implements OnInit {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly activatedRoute: ActivatedRoute,
+
 		/** @ignore */
 		private readonly appService: AppService,
 
