@@ -75,7 +75,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusTeapot
 	}
 	if amount < 1 {
-		return "Invalid amount.", http.StatusTeapot
+		return "invalid amount", http.StatusTeapot
 	}
 
 	subscriptionString := sanitize(h.Request.PostFormValue("subscription"))
@@ -252,7 +252,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	id := sanitize(h.Vars["id"])
 
 	if !isValidCyphID(id) {
-		return "Invalid ID.", http.StatusForbidden
+		return "invalid ID", http.StatusForbidden
 	}
 
 	proFeatures := getProFeaturesFromRequest(h)
@@ -265,7 +265,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	/* Discard pre-authorization after two days */
 	if err == nil && now-preAuthorizedCyph.Timestamp > 172800000 {
 		datastore.Delete(h.Context, preAuthorizedCyphKey)
-		return "Pre-authorization expired.", http.StatusForbidden
+		return "pre-authorization expired", http.StatusForbidden
 	}
 
 	var preAuthorizedProFeatures map[string]bool
@@ -276,7 +276,7 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	if proFeatures["api"] && !proFeatures["modestBranding"] {
 		for feature, isRequired := range proFeatures {
 			if isRequired && !preAuthorizedProFeatures[feature] {
-				return "Pro feature " + feature + " not available.", http.StatusForbidden
+				return "pro feature " + feature + " not available", http.StatusForbidden
 			}
 		}
 	}
@@ -351,7 +351,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	id := sanitize(h.Vars["id"])
 
 	if !isValidCyphID(id) {
-		return "Invalid ID.", http.StatusForbidden
+		return "invalid ID", http.StatusForbidden
 	}
 
 	customer, customerKey, err := getCustomer(h)
@@ -431,7 +431,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	}
 
 	if customer.SessionCount >= sessionCountLimit && sessionCountLimit != -1 {
-		return "Session limit exceeded.", http.StatusForbidden
+		return "session limit exceeded", http.StatusForbidden
 	}
 
 	customer.LastSession = now.UnixNano() / 1e6
@@ -598,10 +598,10 @@ func redoxDeleteAPIKey(h HandlerArgs) (interface{}, int) {
 	redoxCredentialsKey := datastore.NewKey(h.Context, "RedoxCredentials", apiKey, 0, nil)
 
 	if err := datastore.Get(h.Context, redoxCredentialsKey, redoxCredentials); err != nil {
-		return "Invalid API key.", http.StatusNotFound
+		return "invalid API key", http.StatusNotFound
 	}
 	if redoxCredentials.MasterAPIKey != masterAPIKey {
-		return "Invalid master API key.", http.StatusForbidden
+		return "invalid master API key", http.StatusForbidden
 	}
 
 	if err := datastore.Delete(h.Context, redoxCredentialsKey); err != nil {
@@ -685,14 +685,14 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 	)
 
 	if err != nil {
-		return "Invalid API key.", http.StatusNotFound
+		return "invalid API key", http.StatusNotFound
 	}
 
 	username := redoxCredentials.Username
 
 	if redoxCredentials.RedoxAPIKey == "" || redoxCredentials.RedoxSecret == "" {
 		if redoxCredentials.MasterAPIKey == "" {
-			return "Retired API key.", http.StatusNotFound
+			return "retired API key", http.StatusNotFound
 		}
 
 		err := datastore.Get(
@@ -712,7 +712,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 		}
 
 		if redoxCredentials.RedoxAPIKey == "" || redoxCredentials.RedoxSecret == "" {
-			return "Redox credentials not found.", http.StatusInternalServerError
+			return "redox credentials not found", http.StatusInternalServerError
 		}
 	}
 
@@ -780,7 +780,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 		case string:
 			redoxAuth.AccessToken = accessToken
 		default:
-			return "Invalid Redox auth data.", http.StatusInternalServerError
+			return "invalid Redox auth data", http.StatusInternalServerError
 		}
 
 		expiresDynamic, _ := body["expires"]
@@ -789,7 +789,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 			expiryTimestamp, _ := time.Parse(time.RFC3339, expires)
 			redoxAuth.Expires = expiryTimestamp.UnixNano() / 1e6
 		default:
-			return "Invalid Redox auth data.", http.StatusInternalServerError
+			return "invalid Redox auth data", http.StatusInternalServerError
 		}
 
 		refreshTokenDynamic, _ := body["refreshToken"]
@@ -797,7 +797,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 		case string:
 			redoxAuth.RefreshToken = refreshToken
 		default:
-			return "Invalid Redox auth data.", http.StatusInternalServerError
+			return "invalid Redox auth data", http.StatusInternalServerError
 		}
 
 		redoxAuth.RedoxAPIKey = redoxCredentials.RedoxAPIKey
@@ -913,5 +913,5 @@ func signup(h HandlerArgs) (interface{}, int) {
 		return "set", http.StatusOK
 	}
 
-	return "Signup failed.", http.StatusInternalServerError
+	return "signup failed", http.StatusInternalServerError
 }
