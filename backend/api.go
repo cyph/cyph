@@ -44,7 +44,7 @@ func main() {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
-	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
+	trialAPIKey := sanitize(h.Request.PostFormValue("apiKey"))
 	company := sanitize(h.Request.PostFormValue("company"))
 	name := sanitize(h.Request.PostFormValue("name"))
 	namespace := sanitize(h.Request.PostFormValue("namespace"))
@@ -94,14 +94,25 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	success := false
 
 	if subscription {
-		if apiKey == "" {
-			apiKey, err = generateAPIKey()
+		var apiKey string
+		var customerKey *datastore.Key
+
+		if trialAPIKey == "" {
+			apiKey = trialAPIKey
+			customerKey = datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
+			customer := &Customer{}
+
+			if err = datastore.Get(h.Context, customerKey, customer); err != nil || !customer.Trial {
+				return "invalid trial API key", http.StatusForbidden
+			}
+		} else {
+			apiKey, customerKey, err = generateAPIKey(h, "Customer")
 			if err != nil {
 				return err.Error(), http.StatusInternalServerError
 			}
 		}
 
-		customer, err := bt.Customer().Create(h.Context, &braintree.CustomerRequest{
+		braintreeCustomer, err := bt.Customer().Create(h.Context, &braintree.CustomerRequest{
 			Company:   company,
 			Email:     email,
 			FirstName: firstName,
@@ -113,7 +124,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		paymentMethod, err := bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
-			CustomerId:         customer.Id,
+			CustomerId:         braintreeCustomer.Id,
 			PaymentMethodNonce: nonce,
 		})
 
@@ -162,14 +173,14 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		txLog = "Subscription " + string(tx.Status)
 
 		if success {
-			txLog = txLog + "\nAPI key: " + apiKey + "\nCustomer ID: " + customer.Id
+			txLog = txLog + "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
 
 			_, err := datastore.Put(
 				h.Context,
-				datastore.NewKey(h.Context, "Customer", apiKey, 0, nil),
+				customerKey,
 				&Customer{
 					APIKey:      apiKey,
-					BraintreeID: customer.Id,
+					BraintreeID: braintreeCustomer.Id,
 					Company:     company,
 					Email:       email,
 					Name:        name,
@@ -472,7 +483,6 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 }
 
 func proTrialSignup(h HandlerArgs) (interface{}, int) {
-	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
 	company := sanitize(h.Request.PostFormValue("company"))
 	name := sanitize(h.Request.PostFormValue("name"))
 	namespace := sanitize(h.Request.PostFormValue("namespace"))
@@ -489,18 +499,9 @@ func proTrialSignup(h HandlerArgs) (interface{}, int) {
 		return "trial code already exists for this user", http.StatusForbidden
 	}
 
-	if apiKey == "" {
-		apiKey, err = generateAPIKey()
-		if err != nil {
-			return err.Error(), http.StatusInternalServerError
-		}
-	}
-
-	customer := &Customer{}
-	customerKey := datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
-
-	if err = datastore.Get(h.Context, customerKey, customer); err == nil {
-		return `{"tryAgain": true}`, http.StatusOK
+	apiKey, customerKey, err := generateAPIKey(h, "Customer")
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
 	}
 
 	_, err = datastore.Put(
@@ -534,7 +535,7 @@ func proTrialSignup(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	return `{}`, http.StatusOK
+	return apiKey, http.StatusOK
 }
 
 func proUnlock(h HandlerArgs) (interface{}, int) {
@@ -569,14 +570,14 @@ func redoxAddCredentials(h HandlerArgs) (interface{}, int) {
 	redoxSecret := sanitize(h.Request.PostFormValue("redoxSecret"))
 	username := sanitize(h.Request.PostFormValue("username"))
 
-	masterAPIKey, err := generateAPIKey()
+	masterAPIKey, redoxCredentialsKey, err := generateAPIKey(h, "RedoxCredentials")
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
 
 	_, err = datastore.Put(
 		h.Context,
-		datastore.NewKey(h.Context, "RedoxCredentials", masterAPIKey, 0, nil),
+		redoxCredentialsKey,
 		&RedoxCredentials{
 			APIKey:      masterAPIKey,
 			RedoxAPIKey: redoxAPIKey,
@@ -617,14 +618,14 @@ func redoxGenerateAPIKey(h HandlerArgs) (interface{}, int) {
 	masterAPIKey := sanitize(h.Request.PostFormValue("masterAPIKey"))
 	username := sanitize(h.Request.PostFormValue("username"))
 
-	apiKey, err := generateAPIKey()
+	apiKey, redoxCredentialsKey, err := generateAPIKey(h, "RedoxCredentials")
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
 
 	_, err = datastore.Put(
 		h.Context,
-		datastore.NewKey(h.Context, "RedoxCredentials", apiKey, 0, nil),
+		redoxCredentialsKey,
 		&RedoxCredentials{
 			APIKey:       apiKey,
 			MasterAPIKey: masterAPIKey,

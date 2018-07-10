@@ -93,12 +93,21 @@ func isValidCyphID(id string) bool {
 	return len(id) == config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
 
-func generateAPIKey() (string, error) {
+func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) {
 	bytes := make([]byte, config.APIKeyByteLength)
 	if _, err := rand.Read(bytes); err != nil {
-		return "", err
+		return "", nil, err
 	}
-	return hex.EncodeToString(bytes), nil
+
+	apiKey := hex.EncodeToString(bytes)
+	datastoreKey := datastore.NewKey(h.Context, kind, apiKey, 0, nil)
+
+	iterator := datastore.NewQuery(kind).Filter("__key__ =", datastoreKey).Run(h.Context)
+	if _, err := iterator.Next(nil); err == nil {
+		return generateAPIKey(h, kind)
+	}
+
+	return apiKey, datastoreKey, nil
 }
 
 func geolocate(h HandlerArgs) (string, string, string, string) {

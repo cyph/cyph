@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {xkcdPassphrase} from 'xkcd-passphrase';
 import {emailPattern} from '../../../cyph/email-pattern';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {EnvService} from '../../../cyph/services/env.service';
 import {StringsService} from '../../../cyph/services/strings.service';
-import {requestJSON} from '../../../cyph/util/request';
+import {request} from '../../../cyph/util/request';
 import {AppService} from '../../app.service';
 
 
@@ -45,24 +44,18 @@ export class TrialSignupComponent implements OnInit {
 		this.checking	= true;
 
 		try {
-			while (true) {
-				const apiKey	= await xkcdPassphrase.generateWithWordCount(4);
+			this.apiKey	= await request({
+				data: {
+					email: this.email,
+					name: this.name,
+					namespace: this.databaseService.namespace
+				},
+				method: 'POST',
+				url: this.envService.baseUrl + 'pro/trialsignup'
+			});
 
-				const o			= await requestJSON({
-					data: {
-						apiKey,
-						email: this.email,
-						name: this.name,
-						namespace: this.databaseService.namespace
-					},
-					method: 'POST',
-					url: this.envService.baseUrl + 'pro/trialsignup'
-				});
-
-				if (o.tryAgain !== true) {
-					this.apiKey	= apiKey;
-					return;
-				}
+			if (!this.apiKey) {
+				throw new Error('Empty API key.');
 			}
 		}
 		catch {
