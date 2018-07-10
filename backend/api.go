@@ -47,12 +47,16 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	trialAPIKey := sanitize(h.Request.PostFormValue("apiKey"))
 	company := sanitize(h.Request.PostFormValue("company"))
 	name := sanitize(h.Request.PostFormValue("name"))
-	namespace := sanitize(h.Request.PostFormValue("namespace"))
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
 	email, err := getEmail(h.Request.PostFormValue("email"))
 	if err != nil {
-		return err.Error(), http.StatusForbidden
+		return err.Error(), http.StatusBadRequest
+	}
+
+	namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
 	}
 
 	names := strings.SplitN(name, " ", 2)
@@ -60,10 +64,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	lastName := ""
 	if len(names) > 1 {
 		lastName = names[1]
-	}
-
-	if namespace == "" {
-		namespace = "cyph.ws"
 	}
 
 	planID := ""
@@ -485,11 +485,15 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 func proTrialSignup(h HandlerArgs) (interface{}, int) {
 	company := sanitize(h.Request.PostFormValue("company"))
 	name := sanitize(h.Request.PostFormValue("name"))
-	namespace := sanitize(h.Request.PostFormValue("namespace"))
 
 	email, err := getEmail(h.Request.PostFormValue("email"))
 	if err != nil {
-		return err.Error(), http.StatusForbidden
+		return err.Error(), http.StatusBadRequest
+	}
+
+	namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
 	}
 
 	customerEmail := &CustomerEmail{}
@@ -855,7 +859,7 @@ func signup(h HandlerArgs) (interface{}, int) {
 
 	email, err := getEmail(signup["email"].(string))
 	if err != nil {
-		return err.Error(), http.StatusForbidden
+		return err.Error(), http.StatusBadRequest
 	}
 
 	jsonSignup, _ := json.Marshal(signup)

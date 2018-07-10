@@ -398,6 +398,20 @@ func getEmail(email string) (string, error) {
 	return email, nil
 }
 
+func getNamespace(namespace string) (string, error) {
+	if namespace == "" {
+		return "cyph.ws", nil
+	}
+
+	namespace = sanitize(namespace)
+
+	if _, err := net.LookupHost(namespace); err != nil {
+		return "", errors.New("invalid namespace: " + namespace)
+	}
+
+	return namespace, nil
+}
+
 func getTimestamp() int64 {
 	return time.Now().UnixNano() / 1e6
 }
