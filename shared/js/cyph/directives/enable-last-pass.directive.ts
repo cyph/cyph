@@ -23,7 +23,10 @@ export class EnableLastPassDirective implements OnInit {
 		this.renderer.setAttribute(this.elementRef.nativeElement, 'data-lpignore', 'true');
 		this.renderer.setAttribute(this.elementRef.nativeElement, 'role', 'note');
 
-		if (!this.elementRef.nativeElement.id) {
+		if (
+			!this.elementRef.nativeElement.id ||
+			this.elementRef.nativeElement.id.startsWith('mat-input-')
+		) {
 			this.renderer.setAttribute(this.elementRef.nativeElement, 'id', getID());
 		}
 
