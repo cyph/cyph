@@ -165,6 +165,15 @@ a {
 	white-space: pre;
 }
 
+.password-title {
+	position: relative;
+
+	button.back {
+		position: absolute;
+		right: 0;
+	}
+}
+
 .xkcd-passphrase {
 	font-family: 'Ubuntu Mono';
 	font-size: 2em;
