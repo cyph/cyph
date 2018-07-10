@@ -136,7 +136,7 @@ var config = struct {
 
 	"UA-56220601-1",
 
-	24,
+	16,
 
 	"no-cache",
 
