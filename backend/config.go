@@ -162,7 +162,7 @@ var config = struct {
 
 	(48 * time.Hour),
 
-	600,
+	600000,
 
 	map[string]Plan{
 		"0-0": Plan{

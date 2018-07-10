@@ -30,7 +30,7 @@ func init() {
 	handleFuncs("/redox/credentials", Handlers{methods.PUT: redoxAddCredentials})
 	handleFuncs("/redox/execute", Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
-	handleFuncs("/timestamp", Handlers{methods.GET: getTimestamp})
+	handleFuncs("/timestamp", Handlers{methods.GET: getTimestampHandler})
 
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
@@ -229,14 +229,14 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	}
 
 	proFeatures := getProFeaturesFromRequest(h)
-	now := time.Now().Unix()
+	now := getTimestamp()
 	preAuthorizedCyph := &PreAuthorizedCyph{}
 	preAuthorizedCyphKey := datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil)
 
 	err := datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
 
 	/* Discard pre-authorization after two days */
-	if err == nil && now-preAuthorizedCyph.Timestamp > 172800 {
+	if err == nil && now-preAuthorizedCyph.Timestamp > 172800000 {
 		datastore.Delete(h.Context, preAuthorizedCyphKey)
 		return "Pre-authorization expired.", http.StatusForbidden
 	}
@@ -316,8 +316,8 @@ func getIceServers(h HandlerArgs) (interface{}, int) {
 	return getTwilioToken(h)["ice_servers"], http.StatusOK
 }
 
-func getTimestamp(h HandlerArgs) (interface{}, int) {
-	return strconv.FormatInt(time.Now().UnixNano()/1000000, 10), http.StatusOK
+func getTimestampHandler(h HandlerArgs) (interface{}, int) {
+	return strconv.FormatInt(getTimestamp(), 10), http.StatusOK
 }
 
 func preAuth(h HandlerArgs) (interface{}, int) {
@@ -394,7 +394,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	}
 
 	now := time.Now()
-	lastSession := time.Unix(customer.LastSession, 0)
+	lastSession := time.Unix(customer.LastSession/1e6, 0)
 
 	if now.Year() > lastSession.Year() || now.Month() > lastSession.Month() {
 		customer.SessionCount = 0
@@ -404,7 +404,7 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return "Session limit exceeded.", http.StatusForbidden
 	}
 
-	customer.LastSession = now.Unix()
+	customer.LastSession = now.UnixNano() / 1e6
 	customer.SessionCount++
 
 	proFeaturesJSON, err := json.Marshal(proFeatures)
@@ -547,7 +547,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 	apiKeyOrMasterAPIKey := sanitize(h.Request.PostFormValue("apiKeyOrMasterAPIKey"))
 	redoxCommand := h.Request.PostFormValue("redoxCommand")
-	timestamp := time.Now().Unix()
+	timestamp := getTimestamp()
 
 	redoxCredentials := &RedoxCredentials{}
 
@@ -602,7 +602,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 	err = datastore.Get(h.Context, redoxAuthKey, redoxAuth)
 
-	if err != nil || redoxAuth.AccessToken == "" || redoxAuth.Expires < (timestamp+3600) {
+	if err != nil || redoxAuth.AccessToken == "" || redoxAuth.Expires < (timestamp+3600000) {
 		var req *http.Request
 
 		if redoxAuth.RefreshToken == "" {
@@ -666,7 +666,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 		switch expires := expiresDynamic.(type) {
 		case string:
 			expiryTimestamp, _ := time.Parse(time.RFC3339, expires)
-			redoxAuth.Expires = expiryTimestamp.Unix()
+			redoxAuth.Expires = expiryTimestamp.UnixNano() / 1e6
 		default:
 			return "Invalid Redox auth data.", http.StatusInternalServerError
 		}

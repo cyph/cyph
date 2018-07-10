@@ -14,6 +14,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/hoisie/mustache"
@@ -359,6 +360,10 @@ func sanitize(s string, params ...int) string {
 	}
 
 	return sanitized
+}
+
+func getTimestamp() int64 {
+	return time.Now().UnixNano() / 1e6
 }
 
 func getFileText(path string) string {
