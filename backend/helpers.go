@@ -17,8 +17,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cbroglie/mustache"
 	"github.com/gorilla/mux"
-	"github.com/hoisie/mustache"
 	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
@@ -402,11 +402,17 @@ func getFileText(path string) string {
 }
 
 func sendMail(h HandlerArgs, to string, subject string, text string) {
-	err := mail.Send(h.Context, &mail.Message{
+	body, err := emailTemplate.Render(map[string]interface{}{"lines": strings.Split(text, "\n")})
+
+	if err != nil {
+		log.Errorf(h.Context, "Failed to render email body: %v", err)
+	}
+
+	err = mail.Send(h.Context, &mail.Message{
 		Sender:   "Cyph <noreply@cyph.com>",
 		Subject:  subject,
 		To:       []string{to},
-		HTMLBody: emailTemplate.Render(map[string]interface{}{"lines": strings.Split(text, "\n")}),
+		HTMLBody: body,
 	})
 
 	if err != nil {

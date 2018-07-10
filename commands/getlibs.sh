@@ -24,9 +24,9 @@ installPackages () {
 
 
 go get -u \
+	github.com/cbroglie/mustache \
 	github.com/gorilla/context \
 	github.com/gorilla/mux \
-	github.com/hoisie/mustache \
 	github.com/lionelbarrow/braintree-go \
 	github.com/microcosm-cc/bluemonday \
 	github.com/oschwald/geoip2-golang \
