@@ -29,11 +29,6 @@ export class AppService implements CanActivate {
 	/** @ignore */
 	private readonly lockedDownRoute: Promise<string>	= this._LOCKED_DOWN_ROUTE.promise;
 
-	/** @ignore */
-	private readonly resolveLockedDownRoute: (lockedDownRoute: string) => void	=
-		this._LOCKED_DOWN_ROUTE.resolve
-	;
-
 	/** @see ChatRootStates */
 	public chatRootState: ChatRootStates	= ChatRootStates.blank;
 
@@ -49,10 +44,15 @@ export class AppService implements CanActivate {
 		[
 			'trial-signup'
 		].indexOf(locationData.hash.slice(1)) > -1 ||
-		locationData.hash.match(
+		locationData.hash.split('/')[0].match(
 			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
 		)
 	);
+
+	/** Resolves route to redirect to after unlock. */
+	public readonly resolveLockedDownRoute: (lockedDownRoute: string) => void	=
+		this._LOCKED_DOWN_ROUTE.resolve
+	;
 
 	/** @inheritDoc */
 	public canActivate (_: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {

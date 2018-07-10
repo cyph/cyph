@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {LockFunction} from '../../../cyph/lock-function-type';
 import {StringProto} from '../../../cyph/proto';
 import {DatabaseService} from '../../../cyph/services/database.service';
@@ -97,7 +96,7 @@ export class LockdownComponent implements OnInit {
 					this.appService.unlock(),
 					passive ?
 						Promise.resolve(undefined) :
-						this.localStorageService.setItem('password', StringProto, this.password)
+						this.localStorageService.setItem('password', StringProto, password)
 				]);
 			}
 
@@ -107,23 +106,23 @@ export class LockdownComponent implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		if (!(
-			this.envService.environment.customBuild && (
-				this.envService.environment.customBuild.config.lockedDown ||
-				this.envService.environment.customBuild.config.password
-			)
-		)) {
-			this.appService.isLockedDown	= false;
-			return;
-		}
+		this.correctPassword	=
+			this.envService.environment.customBuild ?
+				this.envService.environment.customBuild.config.password :
+				undefined
+		;
 
-		this.correctPassword	= this.envService.environment.customBuild.config.password;
+		const urlPassword		= (locationData.hash.match(/#unlock\/([^\/]+)$/) || [])[1];
 
-		this.activatedRoute.data.subscribe(async o => {
-			if (typeof o.password === 'string') {
-				await this.tryUnlock(o.password);
+		if (urlPassword) {
+			this.appService.resolveLockedDownRoute('');
+
+			if (await this.tryUnlock(urlPassword)) {
+				return;
 			}
-		});
+
+			this.error	= true;
+		}
 
 		await this.tryUnlock(
 			await this.localStorageService.getItem('password', StringProto).catch(() => ''),
@@ -131,6 +130,7 @@ export class LockdownComponent implements OnInit {
 		);
 
 		this.ready	= true;
+		this.appService.loadComplete();
 	}
 
 	/** Initiates unlock attempt. */
@@ -142,9 +142,6 @@ export class LockdownComponent implements OnInit {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly activatedRoute: ActivatedRoute,
-
 		/** @ignore */
 		private readonly appService: AppService,
 
