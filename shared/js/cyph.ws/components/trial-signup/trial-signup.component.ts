@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {emailPattern} from '../../../cyph/email-pattern';
-import {PotassiumService} from '../../../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {EnvService} from '../../../cyph/services/env.service';
 import {StringsService} from '../../../cyph/services/strings.service';
+import {requestJSON} from '../../../cyph/util/request';
 import {AppService} from '../../app.service';
 
 
@@ -46,21 +46,20 @@ export class TrialSignupComponent implements OnInit {
 
 		try {
 			while (true) {
-				const password		= await xkcdPassphrase.generateWithWordCount(4);
+				const password	= await xkcdPassphrase.generateWithWordCount(4);
 
-				const {tryAgain}	= await this.databaseService.callFunction('proTrialSignup', {
-					email: this.email,
-					id: this.potassiumService.toHex(
-						(await this.potassiumService.passwordHash.hash(
-							password,
-							this.databaseService.salt
-						)).hash
-					),
-					name: this.name,
-					namespace: this.databaseService.namespace
+				const o	= await requestJSON({
+					data: {
+						apiKey: password,
+						email: this.email,
+						name: this.name,
+						namespace: this.databaseService.namespace
+					},
+					method: 'POST',
+					url: this.envService.baseUrl + 'pro/trialsignup'
 				});
 
-				if (!tryAgain) {
+				if (o.tryAgain !== true) {
 					this.password	= password;
 					return;
 				}
@@ -80,9 +79,6 @@ export class TrialSignupComponent implements OnInit {
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
-
-		/** @ignore */
-		private readonly potassiumService: PotassiumService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

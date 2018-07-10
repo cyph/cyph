@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {StringProto} from '../../../cyph/proto';
-import {PotassiumService} from '../../../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {DialogService} from '../../../cyph/services/dialog.service';
 import {EnvService} from '../../../cyph/services/env.service';
 import {LocalStorageService} from '../../../cyph/services/local-storage.service';
 import {StringsService} from '../../../cyph/services/strings.service';
 import {random} from '../../../cyph/util/random';
+import {requestJSON} from '../../../cyph/util/request';
 import {sleep} from '../../../cyph/util/wait';
 import {AppService} from '../../app.service';
 
@@ -51,21 +51,25 @@ export class LockdownComponent implements OnInit {
 			let name: string|undefined;
 
 			try {
-				name	=
-					(await this.databaseService.callFunction('environmentUnlock', {
-						id: this.potassiumService.toHex(
-							(await this.potassiumService.passwordHash.hash(
-								password,
-								this.databaseService.salt
-							)).hash
-						),
-						namespace: this.databaseService.namespace
-					})).name
-				;
+				const o	= await requestJSON({
+					headers: {Authorization: password},
+					method: 'POST',
+					url: this.envService.baseUrl + 'pro/unlock'
+				});
+
+				if (o.namespace === this.databaseService.namespace) {
+					name	=
+						typeof o.company === 'string' && o.company.length > 0 ?
+							o.company :
+						typeof o.name === 'string' && o.name.length > 0 ?
+							o.name :
+							undefined
+					;
+				}
 			}
 			catch {}
 
-			if (typeof name === 'string' && name) {
+			if (name) {
 				success	= true;
 
 				if (!passive) {
@@ -134,9 +138,6 @@ export class LockdownComponent implements OnInit {
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
-
-		/** @ignore */
-		private readonly potassiumService: PotassiumService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

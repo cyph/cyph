@@ -168,31 +168,6 @@
 				}
 			},
 
-			"lockdownIDs": {
-				"$lockdownID": {
-					"email": {
-						".validate": "newData.isString()"
-					},
-					"name": {
-						".validate": "newData.isString()"
-					},
-					"timestamp": {
-						".validate": "newData.val() === now"
-					},
-					"trial": {
-						".validate": "newData.isBoolean()"
-					}
-				}
-			},
-
-			"lockdownIdTrials": {
-				"$emailHash": {
-					"lockdownID": {
-						".validate": "newData.isString()"
-					}
-				}
-			},
-
 			"locks": {
 				".read": true,
 				".write": true,

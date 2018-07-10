@@ -30,7 +30,6 @@ const {notify}	= require('./notify')(database, messaging);
 
 
 const channelDisconnectTimeout	= 5000;
-const cyphProTrialDuration		= 1209600000;
 
 const getRealUsername	= async (namespace, username) => {
 	try {
@@ -120,53 +119,6 @@ exports.channelDisconnect	= functions.database.ref(
 	}
 
 	return removeItem(params.namespace, `channels/${doomedRef.key}`);
-});
-
-
-exports.environmentUnlock	= onRequest(async (req, res, namespace) => {
-	const id	= validateInput(req.body.id);
-
-	const {email, name, timestamp, trial}	=
-		(await database.ref(`${namespace}/lockdownIDs/${id}`).once('value')).val()
-	;
-
-	if (isNaN(timestamp)) {
-		throw new Error('Invalid lockdown ID.');
-	}
-
-	if (trial && (Date.now() - timestamp) > cyphProTrialDuration) {
-		throw new Error('Expired trial code.');
-	}
-
-	res.send({name});
-});
-
-
-exports.proTrialSignup	= onRequest(async (req, res, namespace) => {
-	const email	= validateInput(req.body.email, emailRegex);
-	const id	= validateInput(req.body.id);
-	const name	= validateInput(req.body.name);
-
-	const emailHash	= getHash(email);
-
-	const lockdownRef	= database.ref(`${namespace}/lockdownIDs/${id}`);
-	const trialRef		= database.ref(`${namespace}/lockdownIdTrials/${emailHash}`);
-
-	if ((await trialRef.once('value')).exists()) {
-		throw new Error('Trial code already exists for this user.');
-	}
-	else if ((await lockdownRef.once('value')).exists()) {
-		return res.send({tryAgain: true});
-	}
-
-	await lockdownRef.set({
-		email,
-		name,
-		timestamp: admin.database.ServerValue.TIMESTAMP,
-		trial: true
-	});
-
-	res.send({});
 });
 
 

@@ -17,6 +17,7 @@ const baseRequest	= <R, T> (
 		contentType?: string;
 		data?: any;
 		discardErrors?: boolean;
+		headers?: Record<string, string|string[]>;
 		method?: string;
 		retries?: number;
 		timeout?: number;
@@ -36,6 +37,7 @@ const baseRequest	= <R, T> (
 		result: (async () => {
 			const httpClient	= await staticHttpClient;
 
+			const headers			= o.headers || {};
 			const method: string	= o.method || 'GET';
 			const retries: number	= o.retries === undefined ? 0 : o.retries;
 			let contentType: string	= o.contentType || '';
@@ -77,7 +79,8 @@ const baseRequest	= <R, T> (
 
 					const req	= httpClient.request<T>(new HttpRequest(method, url, data, {
 						headers: new HttpHeaders({
-							...(contentType ? {'Content-Type': contentType} : {})
+							...(contentType ? {'Content-Type': contentType} : {}),
+							...headers
 						}),
 						responseType
 					}));
@@ -137,6 +140,7 @@ const baseRequest	= <R, T> (
 export const request	= async (o: {
 	contentType?: string;
 	data?: any;
+	headers?: Record<string, string|string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
@@ -151,6 +155,7 @@ export const request	= async (o: {
 export const requestByteStream	= (o: {
 	contentType?: string;
 	data?: any;
+	headers?: Record<string, string|string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
@@ -168,6 +173,7 @@ export const requestByteStream	= (o: {
 export const requestBytes	= async (o: {
 	contentType?: string;
 	data?: any;
+	headers?: Record<string, string|string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
@@ -180,6 +186,7 @@ export const requestBytes	= async (o: {
 export const requestMaybeJSON	= async (o: {
 	contentType?: string;
 	data?: any;
+	headers?: Record<string, string|string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
@@ -199,6 +206,7 @@ export const requestMaybeJSON	= async (o: {
 export const requestJSON	= async (o: {
 	contentType?: string;
 	data?: any;
+	headers?: Record<string, string|string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;

@@ -7,12 +7,24 @@ import (
 
 type none struct{}
 
-// Customer : Braintree customer
+// Customer : Customer with API key
 type Customer struct {
 	APIKey       string
 	BraintreeID  string
+	Company      string
+	Email        string
 	LastSession  int64
+	Name         string
+	Namespace    string
 	SessionCount int64
+	Timestamp    int64
+	Trial        bool
+}
+
+// CustomerEmail : Mapping of email address to API key
+type CustomerEmail struct {
+	APIKey string
+	Email  string
 }
 
 // Plan : Braintree plan
@@ -80,6 +92,8 @@ var config = struct {
 	NewCyphTimeout             int64
 	Plans                      map[string]Plan
 	RootURL                    string
+	TrialDuration              int64
+	TrialPlan                  Plan
 }{
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
 
@@ -228,4 +242,19 @@ var config = struct {
 	},
 
 	"http://localhost:42000",
+
+	1209600000,
+
+	Plan{
+		ProFeatures: map[string]bool{
+			"api":            true,
+			"disableP2P":     false,
+			"modestBranding": false,
+			"nativeCrypto":   false,
+			"telehealth":     true,
+			"video":          true,
+			"voice":          true,
+		},
+		SessionCountLimit: -1,
+	},
 }

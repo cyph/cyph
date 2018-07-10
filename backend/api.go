@@ -24,6 +24,8 @@ func init() {
 	handleFuncs("/geolocation/{language}", Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
+	handleFuncs("/pro/trialsignup", Handlers{methods.POST: proTrialSignup})
+	handleFuncs("/pro/unlock", Handlers{methods.POST: proUnlock})
 	handleFuncs("/redox/apikey/delete", Handlers{methods.POST: redoxDeleteAPIKey})
 	handleFuncs("/redox/apikey/generate", Handlers{methods.POST: redoxGenerateAPIKey})
 	handleFuncs("/redox/apikey/verify", Handlers{methods.POST: redoxVerifyAPIKey})
@@ -42,9 +44,11 @@ func main() {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
+	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
 	company := sanitize(h.Request.PostFormValue("company"))
 	email := sanitize(h.Request.PostFormValue("email"))
 	name := sanitize(h.Request.PostFormValue("name"))
+	namespace := sanitize(h.Request.PostFormValue("namespace"))
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
 	names := strings.SplitN(name, " ", 2)
@@ -52,6 +56,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	lastName := ""
 	if len(names) > 1 {
 		lastName = names[1]
+	}
+
+	if namespace == "" {
+		namespace = "cyph.ws"
 	}
 
 	planID := ""
@@ -82,10 +90,11 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	success := false
 
 	if subscription {
-		apiKey, err := generateAPIKey()
-
-		if err != nil {
-			return err.Error(), http.StatusTeapot
+		if apiKey == "" {
+			apiKey, err = generateAPIKey()
+			if err != nil {
+				return err.Error(), http.StatusInternalServerError
+			}
 		}
 
 		customer, err := bt.Customer().Create(h.Context, &braintree.CustomerRequest{
@@ -157,6 +166,24 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				&Customer{
 					APIKey:      apiKey,
 					BraintreeID: customer.Id,
+					Company:     company,
+					Email:       email,
+					Name:        name,
+					Namespace:   namespace,
+					Trial:       false,
+				},
+			)
+
+			if err != nil {
+				txLog = "\n\nERROR: " + err.Error()
+			}
+
+			_, err = datastore.Put(
+				h.Context,
+				datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil),
+				&CustomerEmail{
+					APIKey: apiKey,
+					Email:  email,
 				},
 			)
 
@@ -327,60 +354,63 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return "Invalid ID.", http.StatusForbidden
 	}
 
-	var apiKey string
-	if authHeader, ok := h.Request.Header["Authorization"]; ok && len(authHeader) > 0 {
-		apiKey = sanitize(authHeader[0])
-	} else {
-		return "Must include an API key.", http.StatusForbidden
-	}
-
-	customer := &Customer{}
-	customerKey := datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
-
-	if err := datastore.Get(h.Context, customerKey, customer); err != nil {
-		return "Invalid API key.", http.StatusNotFound
-	}
-
-	bt := braintreeInit(h)
-	braintreeCustomer, err := bt.Customer().Find(h.Context, customer.BraintreeID)
-
+	customer, customerKey, err := getCustomer(h)
 	if err != nil {
-		return err.Error(), http.StatusTeapot
+		return err.Error(), http.StatusNotFound
+	}
+
+	plans := []Plan{}
+
+	if customer.Trial && config.TrialDuration >= (getTimestamp()-customer.Timestamp) {
+		plans = append(plans, config.TrialPlan)
+	} else if customer.BraintreeID != "" {
+		bt := braintreeInit(h)
+		braintreeCustomer, err := bt.Customer().Find(h.Context, customer.BraintreeID)
+
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+		subscriptions := []*braintree.Subscription{}
+
+		if braintreeCustomer.CreditCards != nil {
+			for i := range braintreeCustomer.CreditCards.CreditCard {
+				creditCard := braintreeCustomer.CreditCards.CreditCard[i]
+				for j := range creditCard.Subscriptions.Subscription {
+					subscriptions = append(subscriptions, creditCard.Subscriptions.Subscription[j])
+				}
+			}
+		}
+
+		if braintreeCustomer.PayPalAccounts != nil {
+			for i := range braintreeCustomer.PayPalAccounts.PayPalAccount {
+				payPalAccount := braintreeCustomer.PayPalAccounts.PayPalAccount[i]
+				for j := range payPalAccount.Subscriptions.Subscription {
+					subscriptions = append(subscriptions, payPalAccount.Subscriptions.Subscription[j])
+				}
+			}
+		}
+
+		for i := range subscriptions {
+			subscription := subscriptions[i]
+
+			if subscription.Status != braintree.SubscriptionStatusActive {
+				continue
+			}
+
+			plan, ok := config.Plans[subscription.PlanId]
+			if !ok {
+				continue
+			}
+
+			plans = append(plans, plan)
+		}
 	}
 
 	proFeatures := map[string]bool{}
 	sessionCountLimit := int64(0)
-	subscriptions := []*braintree.Subscription{}
 
-	if braintreeCustomer.CreditCards != nil {
-		for i := range braintreeCustomer.CreditCards.CreditCard {
-			creditCard := braintreeCustomer.CreditCards.CreditCard[i]
-			for j := range creditCard.Subscriptions.Subscription {
-				subscriptions = append(subscriptions, creditCard.Subscriptions.Subscription[j])
-			}
-		}
-	}
-
-	if braintreeCustomer.PayPalAccounts != nil {
-		for i := range braintreeCustomer.PayPalAccounts.PayPalAccount {
-			payPalAccount := braintreeCustomer.PayPalAccounts.PayPalAccount[i]
-			for j := range payPalAccount.Subscriptions.Subscription {
-				subscriptions = append(subscriptions, payPalAccount.Subscriptions.Subscription[j])
-			}
-		}
-	}
-
-	for i := range subscriptions {
-		subscription := subscriptions[i]
-
-		if subscription.Status != braintree.SubscriptionStatusActive {
-			continue
-		}
-
-		plan, ok := config.Plans[subscription.PlanId]
-		if !ok {
-			continue
-		}
+	for i := range plans {
+		plan := plans[i]
 
 		for feature, isAvailable := range plan.ProFeatures {
 			if isAvailable {
@@ -432,9 +462,100 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	trackEvent(h, "session", "preauth", apiKey, 1)
+	trackEvent(h, "session", "preauth", customer.APIKey, 1)
 
 	return "", http.StatusOK
+}
+
+func proTrialSignup(h HandlerArgs) (interface{}, int) {
+	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
+	company := sanitize(h.Request.PostFormValue("company"))
+	email := sanitize(h.Request.PostFormValue("email"))
+	name := sanitize(h.Request.PostFormValue("name"))
+	namespace := sanitize(h.Request.PostFormValue("namespace"))
+
+	if !emailRegex.MatchString(email) {
+		return "invalid email address", http.StatusForbidden
+	}
+
+	customerEmail := &CustomerEmail{}
+	customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
+
+	var err error
+
+	if err = datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
+		return "trial code already exists for this user", http.StatusForbidden
+	}
+
+	if apiKey == "" {
+		apiKey, err = generateAPIKey()
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+	}
+
+	customer := &Customer{}
+	customerKey := datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
+
+	if err = datastore.Get(h.Context, customerKey, customer); err == nil {
+		return `{"tryAgain": true}`, http.StatusOK
+	}
+
+	_, err = datastore.Put(
+		h.Context,
+		customerKey,
+		&Customer{
+			APIKey:    apiKey,
+			Company:   company,
+			Email:     email,
+			Name:      name,
+			Namespace: namespace,
+			Timestamp: getTimestamp(),
+			Trial:     true,
+		},
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	_, err = datastore.Put(
+		h.Context,
+		customerEmailKey,
+		&CustomerEmail{
+			APIKey: apiKey,
+			Email:  email,
+		},
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return `{}`, http.StatusOK
+}
+
+func proUnlock(h HandlerArgs) (interface{}, int) {
+	customer, _, err := getCustomer(h)
+	if err != nil {
+		return err.Error(), http.StatusNotFound
+	}
+
+	if customer.Trial && (getTimestamp()-customer.Timestamp) > config.TrialDuration {
+		return "expired trial code", http.StatusForbidden
+	}
+
+	json, err := json.Marshal(map[string]string{
+		"company":   customer.Company,
+		"name":      customer.Name,
+		"namespace": customer.Namespace,
+	})
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return string(json), http.StatusOK
 }
 
 func redoxAddCredentials(h HandlerArgs) (interface{}, int) {

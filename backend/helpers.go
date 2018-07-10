@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -23,6 +24,7 @@ import (
 	"github.com/oschwald/geoip2-golang"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine"
+	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/mail"
 	"google.golang.org/appengine/urlfetch"
@@ -212,6 +214,24 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	bt.HttpClient = urlfetch.Client(h.Context)
 
 	return bt
+}
+
+func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
+	var apiKey string
+	if authHeader, ok := h.Request.Header["Authorization"]; ok && len(authHeader) > 0 {
+		apiKey = sanitize(authHeader[0])
+	} else {
+		return nil, nil, errors.New("must include an API key")
+	}
+
+	customer := &Customer{}
+	customerKey := datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
+
+	if err := datastore.Get(h.Context, customerKey, customer); err != nil {
+		return nil, nil, errors.New("invalid API key")
+	}
+
+	return customer, customerKey, nil
 }
 
 func getTwilioToken(h HandlerArgs) map[string]interface{} {
