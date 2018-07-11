@@ -412,6 +412,16 @@ func getNamespace(namespace string) (string, error) {
 	return namespace, nil
 }
 
+func getURL(maybeURL string) (string, error) {
+	o, err := url.ParseRequestURI(maybeURL)
+
+	if err != nil {
+		return "", err
+	}
+
+	return o.Scheme + "://" + o.Host, nil
+}
+
 func getTimestamp() int64 {
 	return time.Now().UnixNano() / 1e6
 }
@@ -424,8 +434,18 @@ func getFileText(path string) string {
 	return string(b)
 }
 
-func sendMail(h HandlerArgs, to string, subject string, text string) {
-	body, err := emailTemplate.Render(map[string]interface{}{"lines": strings.Split(text, "\n")})
+func sendMail(h HandlerArgs, to string, subject string, text string, html string) {
+	lines := []string{}
+	htmlLines := []string{}
+
+	if text != "" {
+		lines = strings.Split(text, "\n")
+	}
+	if html != "" {
+		htmlLines = strings.Split(html, "\n")
+	}
+
+	body, err := emailTemplate.Render(map[string]interface{}{"htmlLines": htmlLines, "lines": lines})
 
 	if err != nil {
 		log.Errorf(h.Context, "Failed to render email body: %v", err)

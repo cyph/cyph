@@ -496,6 +496,11 @@ func proTrialSignup(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusBadRequest
 	}
 
+	url, err := getURL(h.Request.PostFormValue("url"))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
+
 	customerEmail := &CustomerEmail{}
 	customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
 
@@ -538,6 +543,18 @@ func proTrialSignup(h HandlerArgs) (interface{}, int) {
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
+
+	sendMail(h, email, "Cyph Trial", "", ""+
+		"Welcome to Cyph "+name+", and thanks for signing up!\n"+
+		"<div style='text-align: left'>"+
+		"Your trial access code is:&nbsp;&nbsp;"+
+		"<a style='font-family: monospace; font-size: 16px' href='"+
+		url+"/unlock/"+apiKey+
+		"'>"+
+		apiKey+
+		"</a>"+
+		"</div>"+
+		"")
 
 	return apiKey, http.StatusOK
 }

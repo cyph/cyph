@@ -48,7 +48,8 @@ export class TrialSignupComponent implements OnInit {
 				data: {
 					email: this.email,
 					name: this.name,
-					namespace: this.databaseService.namespace
+					namespace: this.databaseService.namespace,
+					url: locationData.href
 				},
 				method: 'POST',
 				url: this.envService.baseUrl + 'pro/trialsignup'
