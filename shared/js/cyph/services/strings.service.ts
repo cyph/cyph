@@ -196,7 +196,7 @@ export class StringsService {
 	public readonly email: string						= `Email`;
 
 	/** @see StringsService */
-	public readonly emailOptional: string				= `Email (Optional)`;
+	public readonly emailOptional: string				= `Email (optional)`;
 
 	/** @see StringsService */
 	public readonly emptyContactList: string			= `You have no friends.`;
