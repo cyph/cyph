@@ -57,6 +57,18 @@
 							<input
 								matInput
 								cyphTranslate
+								[(ngModel)]='company'
+								name='company'
+								type='text'
+								placeholder='Company Name (optional)'
+							/>
+						</mat-form-field>
+					</div>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+							<input
+								matInput
+								cyphTranslate
 								[(ngModel)]='email'
 								[pattern]='emailPattern'
 								name='email'

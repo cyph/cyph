@@ -22,6 +22,9 @@ export class TrialSignupComponent implements OnInit {
 	/** Indicates whether signup attempt is in progress. */
 	public checking: boolean	= false;
 
+	/** Company. */
+	public company: string		= '';
+
 	/** Email address. */
 	public email: string		= '';
 
@@ -46,6 +49,7 @@ export class TrialSignupComponent implements OnInit {
 		try {
 			this.apiKey	= await request({
 				data: {
+					company: this.company,
 					email: this.email,
 					name: this.name,
 					namespace: this.databaseService.namespace,
