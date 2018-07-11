@@ -405,7 +405,7 @@ func getNamespace(namespace string) (string, error) {
 
 	namespace = sanitize(namespace)
 
-	if _, err := net.LookupHost(namespace); err != nil {
+	if !hostnameRegex.MatchString(namespace) {
 		return "", errors.New("invalid namespace: " + namespace)
 	}
 
