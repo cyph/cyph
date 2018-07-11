@@ -59,6 +59,7 @@ typescriptAssets="$(
 	{
 		echo cyph/crypto/native-web-crypto-polyfill;
 		echo cyph/crypto/potassium/index;
+		echo cyph/forms/index;
 		echo cyph/proto/index;
 		echo cyph/util/index;
 		echo standalone/analytics;
