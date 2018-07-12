@@ -48,14 +48,18 @@ export const infiniteSleep	= async () : Promise<void> => {
 
 /** Runs f until it returns with no errors. */
 export const retryUntilSuccessful	= async <T> (
-	f: () => (MaybePromise<T>),
+	f: (lastErr?: any) => (MaybePromise<T>),
 	maxAttempts: number = 10
 ) : Promise<T> => {
+	let lastErr: any|undefined;
+
 	for (let i = 0 ; true ; ++i) {
 		try {
-			return await f();
+			return await f(lastErr);
 		}
 		catch (err) {
+			lastErr	= err;
+
 			if (i > maxAttempts) {
 				throw err;
 			}

@@ -15,6 +15,7 @@ const {
 	deserialize,
 	retryUntilSuccessful,
 	serialize,
+	sleep,
 	uuid
 }	= require('./util');
 
@@ -55,6 +56,17 @@ const processURL	= (namespace, url) => {
 
 const getHash		= bytes => crypto.createHash('sha512').update(bytes).digest('hex');
 
+const retry			= async f => retryUntilSuccessful(async (lastErr) => {
+	if (lastErr) {
+		console.error(lastErr);
+
+		return Promise.race([
+			f(),
+			sleep(600000).then(() => Promise.reject('Database method timeout.'))
+		]);
+	}
+});
+
 const databaseService	= {
 	app,
 	auth,
@@ -66,11 +78,11 @@ const databaseService	= {
 	async getItem (namespace, url, proto, skipSignature, decompress) {
 		url	= processURL(namespace, url);
 
-		const {hash}	= await retryUntilSuccessful(async () =>
+		const {hash}	= await retry(async () =>
 			(await database.ref(url).once('value')).val()
 		);
 
-		let bytes		= await retryUntilSuccessful(async () =>
+		let bytes		= await retry(async () =>
 			(await storage.file(`${url}/${hash}`).download())[0]
 		);
 
@@ -95,10 +107,10 @@ const databaseService	= {
 	async removeItem (namespace, url) {
 		url	= processURL(namespace, url);
 
-		await retryUntilSuccessful(async () => database.ref(url).remove());
+		await retry(async () => database.ref(url).remove());
 
 		if (isCloudFunction) {
-			await retryUntilSuccessful(async () =>
+			await retry(async () =>
 				storage.deleteFiles({force: true, prefix: `${url}/`})
 			);
 		}
@@ -109,8 +121,8 @@ const databaseService	= {
 		const bytes	= await serialize(proto, value);
 		const hash	= getHash(bytes);
 
-		await retryUntilSuccessful(async () => storage.file(`${url}/${hash}`).save(bytes));
-		await retryUntilSuccessful(async () => database.ref(url).set({
+		await retry(async () => storage.file(`${url}/${hash}`).save(bytes));
+		await retry(async () => database.ref(url).set({
 			hash,
 			timestamp: admin.database.ServerValue.TIMESTAMP
 		}));
