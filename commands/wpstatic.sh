@@ -282,8 +282,8 @@ if [ -f wp-content/plugins/pricing-table-by-supsystic/js/table.min.js ] ; then
 fi
 
 # Workaround for silly hack in Zephyr that violates CSP
-if [ -f wp-content/themes/Zephyr2/framework/js/us.core.min.js ] ; then
-	sed -i "s|this\.options=this\.\\\$nav\.find('\.w-nav-options:first')\[0\]\.onclick()\|\|{};|try{this.options=JSON.parse(this.\$nav.find('.w-nav-options:first')[0].getAttribute('onclick').split('return')[1].trim());}catch(_){this.options={};}|g" wp-content/themes/Zephyr2/framework/js/us.core.min.js
+if [ -f wp-content/themes/Zephyr/framework/js/us.core.min.js ] ; then
+	sed -i "s|this\.options=this\.\\\$nav\.find('\.w-nav-options:first')\[0\]\.onclick()\|\|{};|try{this.options=JSON.parse(this.\$nav.find('.w-nav-options:first')[0].getAttribute('onclick').split('return')[1].trim());}catch(_){this.options={};}|g" wp-content/themes/Zephyr/framework/js/us.core.min.js
 fi
 
 grep -rl "'//' + disqus_shortname" |
@@ -317,7 +317,7 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 done
 
 for f in $(find . -type f -name '*.css') ; do
-	sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/Zephyr2/framework/fonts|g" "${f}"
+	sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/Zephyr/framework/fonts|g" "${f}"
 
 	for type in eot svg ttf woff2 woff ; do
 		grep "\.${type}" "${f}" |
