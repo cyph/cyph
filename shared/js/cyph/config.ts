@@ -30,11 +30,6 @@ export class Config {
 		}
 	];
 
-	/** Braintree-related config. */
-	public readonly braintreeConfig	= {
-		endpoint: 'braintree'
-	};
-
 	/** User-facing email addresses to include in places like contact forms. */
 	public readonly contactEmailAddresses: string[]	= [
 		'hello',

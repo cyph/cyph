@@ -2,7 +2,11 @@
 <form ngNativeValidate (submit)='submit()'>
 	<div fxLayout='column' fxLayoutGap='16px' *ngIf='!complete'>
 		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
-			<h2 *ngIf='itemName'>{{itemName}} SUBSCRIPTION</h2>
+			<h2 *ngIf='itemName'>
+				<span>{{itemName}}</span>
+				&ngsp;
+				<span cyphTranslate>SUBSCRIPTION</span>
+			</h2>
 			<div>
 				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
 					<mat-form-field fxFlex>

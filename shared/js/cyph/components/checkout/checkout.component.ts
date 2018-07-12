@@ -5,7 +5,6 @@ import * as braintreeDropIn from 'braintree-web-drop-in';
 import {AppService} from '../../../cyph.com/app.service';
 import {SubscriptionTypes} from '../../checkout';
 import {emailPattern} from '../../email-pattern';
-import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {request} from '../../util/request';
@@ -26,13 +25,13 @@ export class CheckoutComponent implements AfterViewInit {
 	private braintreeInstance: any;
 
 	/** Amount in dollars. */
-	@Input() public amount: number	= 0;
+	@Input() public amount: number		= 0;
 
 	/** Item category ID number. */
 	@Input() public category?: number;
 
 	/** Company. */
-	@Input() public company?: string;
+	@Input() public company: string		= '';
 
 	/** Indicates whether checkout is complete. */
 	public complete: boolean			= false;
@@ -56,8 +55,10 @@ export class CheckoutComponent implements AfterViewInit {
 	public pending: boolean				= false;
 
 	public itemName: string | undefined	=
-		this.appService.cart ? this.appService.cart.itemName.replace(/([A-Z])/g, ' $1')
-		.toUpperCase() : undefined;
+		this.appService.cart ?
+			this.appService.cart.itemName.replace(/([A-Z])/g, ' $1').toUpperCase() :
+			undefined
+	;
 
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
@@ -81,7 +82,7 @@ export class CheckoutComponent implements AfterViewInit {
 
 		const authorization: string	= await request({
 			retries: 5,
-			url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
+			url: this.envService.baseUrl + 'braintree'
 		});
 
 		braintreeDropIn.create(
@@ -138,7 +139,7 @@ export class CheckoutComponent implements AfterViewInit {
 					data: {
 						amount: Math.floor(this.amount * 100),
 						category: this.category,
-						company: this.company || '',
+						company: this.company,
 						email: this.email,
 						item: this.item,
 						name: this.name,
@@ -146,7 +147,7 @@ export class CheckoutComponent implements AfterViewInit {
 						subscription: this.subscriptionType !== undefined
 					},
 					method: 'POST',
-					url: this.envService.baseUrl + this.configService.braintreeConfig.endpoint
+					url: this.envService.baseUrl + 'braintree'
 				}).catch(
 					() => ''
 				) === 'true'
@@ -165,9 +166,6 @@ export class CheckoutComponent implements AfterViewInit {
 
 		/** @ignore */
 		private readonly elementRef: ElementRef,
-
-		/** @ignore */
-		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly envService: EnvService,
