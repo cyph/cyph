@@ -19,7 +19,7 @@ EOM
 
 source ~/.bashrc
 
-gcloud components update --quiet --version 207.0.0
+gcloud components update --quiet
 
 tns error-reporting disable
 tns usage-reporting disable
