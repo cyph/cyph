@@ -10,7 +10,6 @@
 
 	<content src="index.html" />
 
-	<preference name="android-minSdkVersion" value="14" />
 	<plugin name="cordova-plugin-battery-status" spec="*" />
 	<plugin name="cordova-plugin-camera" spec="*" />
 	<plugin name="cordova-plugin-media-capture" spec="*" />
@@ -52,4 +51,7 @@
 		<allow-intent href="itms:*" />
 		<allow-intent href="itms-apps:*" />
 	</platform>
+
+	<engine name="android" spec="^5.0.0" />
+	<engine name="ios" spec="^11.0.0" />
 </widget>
