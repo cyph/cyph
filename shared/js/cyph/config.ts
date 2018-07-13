@@ -84,28 +84,10 @@ export class Config {
 		};
 	}	= {
 		categories: {
-			accounting: {
-				id: 5,
-				items: {
-					generic: {id: 0}
-				}
-			},
 			donation: {
 				id: 0,
 				items: {
 					generic: {id: 0}
-				}
-			},
-			enterprise: {
-				id: 2,
-				items: {
-					basics: {
-						amount: 99,
-						id: 1,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					beta: {id: 0},
-					works: {id: 2}
 				}
 			},
 			ephemeral: {
@@ -133,23 +115,26 @@ export class Config {
 					}
 				}
 			},
-			individual: {
-				id: 1,
+			hint: {
+				id: 5,
 				items: {
-					pro: {id: 0}
-				}
-			},
-			legal: {
-				id: 4,
-				items: {
-					generic: {id: 0}
+					annual: {
+						amount: 168,
+						id: 2,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					monthly: {
+						amount: 29,
+						id: 1,
+						subscriptionType: SubscriptionTypes.monthly
+					}
 				}
 			},
 			subscription: {
-				id: 6,
+				id: 1,
 				items: {
 					annual: {
-						id: 0,
+						id: 2,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					monthly: {
@@ -163,12 +148,12 @@ export class Config {
 				items: {
 					singlePractitioner: {
 						amount: 250,
-						id: 0,
+						id: 1,
 						subscriptionType: SubscriptionTypes.monthly
 					},
 					smallPractice: {
 						amount: 1000,
-						id: 1,
+						id: 2,
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				}
