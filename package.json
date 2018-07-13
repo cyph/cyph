@@ -1,0 +1,12 @@
+{
+	"name": "com.cyph.app",
+	"displayName": "Cyph",
+	"version": "1.0.0",
+	"description": "Completely private voice and video chat.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Cyph, Inc.",
+	"license": "Ms-RSL"
+}
