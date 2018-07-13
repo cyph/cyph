@@ -84,7 +84,9 @@ export class LockdownComponent implements OnInit {
 
 					if (!passive) {
 						await this.dialogService.alert({
-							content: `${this.stringsService.welcomeComma} ${name}.`,
+							content: `${this.stringsService.welcomeComma} ${name}${
+								name.endsWith('.') ? '' : '.'
+							}`,
 							title: this.stringsService.unlockedTitle
 						});
 					}
