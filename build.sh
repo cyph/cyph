@@ -6,10 +6,8 @@ cd $(cd "$(dirname "$0")" ; pwd)
 rm -rf build 2> /dev/null
 mkdir build
 
-for f in * ; do
-	if [ "${f}" != 'build' ] ; then
-		cp -a "${f}" build/
-	fi
+for f in $(ls -a | grep -vP '^(\.|\.\.|build)$') ; do
+	cp -a "${f}" build/
 done
 
 cd build
