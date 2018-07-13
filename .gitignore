@@ -1,6 +1,5 @@
 # OS X
 .DS_Store
-/build
 /node_modules
 /package-lock.json
 /platforms

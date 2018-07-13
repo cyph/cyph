@@ -3,14 +3,14 @@
 
 cd $(cd "$(dirname "$0")" ; pwd)
 
-rm -rf build 2> /dev/null
-mkdir build
+rm -rf ../cyph-phonegap-build 2> /dev/null
+mkdir ../cyph-phonegap-build
 
-for f in $(ls -a | grep -vP '^(\.|\.\.|build)$') ; do
-	cp -a "${f}" build/
+for f in $(ls -a | grep -vP '^(\.|\.\.)$') ; do
+	cp -a "${f}" ../cyph-phonegap-build/
 done
 
-cd build
+cd ../cyph-phonegap-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
 
