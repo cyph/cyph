@@ -5,7 +5,7 @@
 	[class.menu]='!sidenav'
 	[class.menu-root]='!sidenav'
 	[class.sidenav]='sidenav'
-	*ngIf='accountDatabaseService.currentUser.value'
+	*ngIf='!!accountDatabaseService.currentUser.value'
 >
 	<div
 		[fxFlex]='(menuExpanded | async) ? "25px" : "10px"'
