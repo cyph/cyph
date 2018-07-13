@@ -7,7 +7,7 @@
 				&ngsp;
 				<span cyphTranslate>SUBSCRIPTION</span>
 			</h2>
-			<div>
+			<div *ngIf='!apiKey'>
 				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
 					<mat-form-field fxFlex>
 						<input
@@ -33,7 +33,7 @@
 					</mat-form-field>
 				</div>
 			</div>
-			<div>
+			<div *ngIf='!apiKey'>
 				<mat-form-field fxFlex>
 					<input
 						matInput

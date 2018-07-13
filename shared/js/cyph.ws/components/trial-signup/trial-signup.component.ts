@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Observable} from 'rxjs';
+import {filter, map, take} from 'rxjs/operators';
 import {emailPattern} from '../../../cyph/email-pattern';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {EnvService} from '../../../cyph/services/env.service';
@@ -17,7 +20,9 @@ import {AppService} from '../../app.service';
 })
 export class TrialSignupComponent implements OnInit {
 	/** Generated API key. */
-	public apiKey?: string;
+	public readonly apiKey: Observable<string|undefined>	=
+		this.activatedRoute.params.pipe(map(o => o.apiKey))
+	;
 
 	/** Indicates whether signup attempt is in progress. */
 	public checking: boolean	= false;
@@ -47,31 +52,44 @@ export class TrialSignupComponent implements OnInit {
 		this.checking	= true;
 
 		try {
-			this.apiKey	= await request({
-				data: {
-					company: this.company,
-					email: this.email,
-					name: this.name,
-					namespace: this.databaseService.namespace,
-					url: locationData.href
-				},
-				method: 'POST',
-				url: this.envService.baseUrl + 'pro/trialsignup'
-			});
+			const url		= location.href.split('/').slice(0, 3).join('/');
 
-			if (!this.apiKey) {
+			const [apiKey, {category, item}]	= await Promise.all([
+				request({
+					data: {
+						company: this.company,
+						email: this.email,
+						name: this.name,
+						namespace: this.databaseService.namespace,
+						url
+					},
+					method: 'POST',
+					url: this.envService.baseUrl + 'pro/trialsignup'
+				}),
+				this.activatedRoute.params.pipe<{category: string; item: string}>(
+					filter(o => o.category && o.item),
+					take(1)
+				).toPromise()
+			]);
+
+			if (!apiKey) {
 				throw new Error('Empty API key.');
 			}
+
+			location.href	=
+				`${this.envService.homeUrl}checkout/${category}/${item}/${apiKey}?ref=${url}`
+			;
 		}
 		catch {
 			this.error		= true;
-		}
-		finally {
 			this.checking	= false;
 		}
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly activatedRoute: ActivatedRoute,
+
 		/** @ignore */
 		private readonly appService: AppService,
 

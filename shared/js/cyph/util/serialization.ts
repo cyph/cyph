@@ -53,12 +53,20 @@ export const stringify	= <T> (value: T) : string =>
 	stringifyInternal(value)
 ;
 
+/** Parses query string (no nested URI component decoding for now). */
+export const fromQueryString	= (search: string = locationData.search.slice(1)) : any =>
+	!search ? {} : search.split('&').map(p => p.split('=')).reduce(
+		(o, [key, value]) => ({...o, [decodeURIComponent(key)]: decodeURIComponent(value)}),
+		{}
+	)
+;
+
 /**
  * Serializes o to a query string (cf. jQuery.param).
  * @param parent Ignore this (internal use).
  */
-export const toQueryString	= (o: any, parent?: string) : string => {
-	return Object.keys(o).
+export const toQueryString	= (o: any, parent?: string) : string =>
+	Object.keys(o).
 		map((k: string) => {
 			const key: string	= parent ? `${parent}[${k}]` : k;
 
@@ -69,5 +77,4 @@ export const toQueryString	= (o: any, parent?: string) : string => {
 		}).
 		join('&').
 		replace(/%20/g, '+')
-	;
-};
+;

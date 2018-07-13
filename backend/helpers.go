@@ -462,3 +462,68 @@ func sendMail(h HandlerArgs, to string, subject string, text string, html string
 		log.Errorf(h.Context, "Failed to send email: %v", err)
 	}
 }
+
+func getPlanData(h HandlerArgs, customer *Customer) (map[string]bool, int64, error) {
+	proFeatures := map[string]bool{}
+	sessionCountLimit := int64(0)
+	plans := []Plan{}
+
+	if customer.BraintreeID != "" {
+		bt := braintreeInit(h)
+		braintreeCustomer, err := bt.Customer().Find(h.Context, customer.BraintreeID)
+
+		if err != nil {
+			return proFeatures, sessionCountLimit, err
+		}
+		subscriptions := []*braintree.Subscription{}
+
+		if braintreeCustomer.CreditCards != nil {
+			for i := range braintreeCustomer.CreditCards.CreditCard {
+				creditCard := braintreeCustomer.CreditCards.CreditCard[i]
+				for j := range creditCard.Subscriptions.Subscription {
+					subscriptions = append(subscriptions, creditCard.Subscriptions.Subscription[j])
+				}
+			}
+		}
+
+		if braintreeCustomer.PayPalAccounts != nil {
+			for i := range braintreeCustomer.PayPalAccounts.PayPalAccount {
+				payPalAccount := braintreeCustomer.PayPalAccounts.PayPalAccount[i]
+				for j := range payPalAccount.Subscriptions.Subscription {
+					subscriptions = append(subscriptions, payPalAccount.Subscriptions.Subscription[j])
+				}
+			}
+		}
+
+		for i := range subscriptions {
+			subscription := subscriptions[i]
+
+			if subscription.Status != braintree.SubscriptionStatusActive {
+				continue
+			}
+
+			plan, ok := config.Plans[subscription.PlanId]
+			if !ok {
+				continue
+			}
+
+			plans = append(plans, plan)
+		}
+	}
+
+	for i := range plans {
+		plan := plans[i]
+
+		for feature, isAvailable := range plan.ProFeatures {
+			if isAvailable {
+				proFeatures[feature] = true
+			}
+		}
+
+		if plan.SessionCountLimit > sessionCountLimit || plan.SessionCountLimit == -1 {
+			sessionCountLimit = plan.SessionCountLimit
+		}
+	}
+
+	return proFeatures, sessionCountLimit, nil
+}

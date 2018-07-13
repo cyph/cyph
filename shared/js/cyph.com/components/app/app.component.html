@@ -1184,9 +1184,12 @@
 						</div>
 						<cyph-checkout
 							[amount]='appService.cart?.amount'
+							[apiKey]='appService.cart?.apiKey'
 							[category]='appService.cart?.categoryID'
 							[item]='appService.cart?.itemID'
+							[noSpinnerEnd]='!!appService.cart?.apiKey'
 							[subscriptionType]='appService.cart?.subscriptionType'
+							(confirmed)='appService.checkoutConfirmed()'
 							*ngIf='appService.cart'
 						>
 							<div

@@ -42,8 +42,9 @@ export class AppService implements CanActivate {
 			)
 		) ||
 		[
-			'trial-signup'
-		].indexOf(locationData.hash.slice(1)) > -1 ||
+			'confirm',
+			'signup'
+		].indexOf(locationData.hash.slice(1).split('/')[0]) > -1 ||
 		locationData.hash.split('/')[0].match(
 			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
 		)

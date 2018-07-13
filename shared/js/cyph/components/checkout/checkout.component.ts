@@ -1,6 +1,6 @@
 /* tslint:disable:no-import-side-effect */
 
-import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import {AppService} from '../../../cyph.com/app.service';
 import {SubscriptionTypes} from '../../checkout';
@@ -27,6 +27,9 @@ export class CheckoutComponent implements AfterViewInit {
 	/** Amount in dollars. */
 	@Input() public amount: number		= 0;
 
+	/** Trial API key to upgrade. */
+	@Input() public apiKey: string		= '';
+
 	/** Item category ID number. */
 	@Input() public category?: number;
 
@@ -35,6 +38,9 @@ export class CheckoutComponent implements AfterViewInit {
 
 	/** Indicates whether checkout is complete. */
 	public complete: boolean			= false;
+
+	/** Checkout confirmation event. */
+	@Output() public readonly confirmed: EventEmitter<void>	= new EventEmitter<void>();
 
 	/** ID of Braintree container element. */
 	public readonly containerID: string	= `id-${uuid()}`;
@@ -59,6 +65,9 @@ export class CheckoutComponent implements AfterViewInit {
 			this.appService.cart.itemName.replace(/([A-Z])/g, ' $1').toUpperCase() :
 			undefined
 	;
+
+	/** If true, will never stop spinning. */
+	@Input() public noSpinnerEnd: boolean	= false;
 
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
@@ -134,10 +143,11 @@ export class CheckoutComponent implements AfterViewInit {
 				throw paymentMethod.err;
 			}
 
-			this.success	=
+			const success	=
 				await request({
 					data: {
 						amount: Math.floor(this.amount * 100),
+						apiKey: this.apiKey,
 						category: this.category,
 						company: this.company,
 						email: this.email,
@@ -153,10 +163,17 @@ export class CheckoutComponent implements AfterViewInit {
 				) === 'true'
 			;
 
-			this.complete	= true;
+			if (success) {
+				this.confirmed.emit();
+			}
+
+			if (!this.noSpinnerEnd) {
+				this.complete	= true;
+				this.success	= success;
+			}
 		}
 		finally {
-			this.pending	= false;
+			this.pending	= this.noSpinnerEnd;
 		}
 	}
 

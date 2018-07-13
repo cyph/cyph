@@ -769,7 +769,7 @@ export class StringsService {
 	public readonly transactionHistory: string			= `Transaction History`;
 
 	/** @see StringsService */
-	public readonly trialTitle: string					= `${this.internalProduct} Trial`;
+	public readonly trialTitle: string					= `${this.internalProduct} Signup`;
 
 	/** @see StringsService */
 	public readonly unknown: string						= `Unknown`;

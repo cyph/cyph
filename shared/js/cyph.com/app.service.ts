@@ -10,6 +10,7 @@ import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {SignupService} from '../cyph/services/signup.service';
 import {request} from '../cyph/util/request';
+import {fromQueryString} from '../cyph/util/serialization';
 import {sleep, waitForIterable} from '../cyph/util/wait';
 import {Carousel} from './carousel';
 import {elements} from './elements';
@@ -24,9 +25,13 @@ export class AppService {
 	/** @ignore */
 	private disableNextScroll: boolean	= false;
 
+	/** @ignore */
+	private readonly queryParams: any	= fromQueryString();
+
 	/** Amount, category, and item in cart. */
 	public cart?: {
 		amount: number;
+		apiKey?: string;
 		categoryID: number;
 		categoryName: string;
 		itemID: number;
@@ -88,13 +93,11 @@ export class AppService {
 		this.router.navigated	= false;
 
 		/* Workaround for Prefinery bug */
-		/* tslint:disable-next-line:tab-equals */
-		if (location.search && location.search.match(/^\?r=/)) {
-			this.router.navigate(['invite', location.search.split('r=')[1] || '']);
+		if (typeof this.queryParams.r === 'string') {
+			this.router.navigate(['invite', this.queryParams.r]);
 			return;
 		}
-		/* tslint:disable-next-line:tab-equals */
-		else if (location.search && location.search.match(/^\?ref-check=/)) {
+		else if (this.queryParams['ref-check'] !== undefined) {
 			this.router.navigate(['waitlisttrack']);
 			return;
 		}
@@ -172,13 +175,19 @@ export class AppService {
 
 		if (state === States.checkout) {
 			try {
+				const apiKey	= urlSegmentPaths[3] && urlSegmentPaths[3].length === 32 ?
+					urlSegmentPaths[3] :
+					undefined
+				;
+
 				this.updateCart(
 					urlSegmentPaths[1],
 					urlSegmentPaths[2].replace(
 						/-(.)/g,
 						(_, s) => s.toUpperCase()
 					),
-					parseFloat(urlSegmentPaths[3])
+					!apiKey ? parseFloat(urlSegmentPaths[3]) : undefined,
+					apiKey
 				);
 			}
 			catch {
@@ -238,11 +247,19 @@ export class AppService {
 		}
 	}
 
+	/** Checkout completion event handler. */
+	public checkoutConfirmed () : void {
+		if (this.cart && this.cart.apiKey && typeof this.queryParams.ref === 'string') {
+			location.href	= `${this.queryParams.ref}/confirm/${this.cart.apiKey}`;
+		}
+	}
+
 	/** Update cart and open checkout screen. */
 	public updateCart (
 		categoryName: string,
 		itemName: string,
-		customAmount?: number
+		customAmount?: number,
+		apiKey?: string
 	) : void {
 		const category	= this.configService.pricingConfig.categories[categoryName];
 		const item		= category && category.items ? category.items[itemName] : undefined;
@@ -258,6 +275,7 @@ export class AppService {
 
 		this.cart	= {
 			amount,
+			apiKey,
 			categoryID: category.id,
 			categoryName,
 			itemID: item.id,
@@ -311,7 +329,7 @@ export class AppService {
 
 		this.router.events.subscribe(e => {
 			if (e instanceof NavigationEnd) {
-				this.onUrlChange(e.url);
+				this.onUrlChange(e.url.split('?')[0]);
 			}
 		});
 

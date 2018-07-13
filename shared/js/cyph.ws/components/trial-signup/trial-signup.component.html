@@ -16,20 +16,25 @@
 				<span>{{stringsService.product}}!</span>
 				&ngsp;
 				<span cyphTranslate>
-					You can sign up here for 14-day trial access.
+					You can sign up here for access.
 				</span>
 			</mat-card-subtitle>
 			<mat-card-content>
-				<form ngNativeValidate (submit)='submit()' *ngIf='!apiKey'>
+				<form
+					ngNativeValidate
+					fxLayout='column'
+					fxLayoutGap='16px'
+					(submit)='submit()'
+					*ngIf='(apiKey | async) === undefined'
+				>
 					<div fxLayout='row' fxLayoutAlign='center center'>
 						<h3
 							class='cyph-banner warn'
 							[style.visibility]='error ? "visible" : "hidden"'
 						>
 							<span cyphTranslate>
-								It looks like you've already signed up for a trial.
-								If you believe this message to be in error, please
-								refresh and try again or
+								It looks like you've already signed up. If you believe this
+								message to be in error, please refresh and try again or
 							</span>
 							&ngsp;
 							<a
@@ -78,49 +83,50 @@
 							/>
 						</mat-form-field>
 					</div>
+					<div></div>
 					<div fxLayout='row' fxLayoutAlign='center center'>
 						<button mat-button type='submit' cyphTranslate>
 							Sign Up
 						</button>
 					</div>
 				</form>
-			</mat-card-content>
-			<div *ngIf='apiKey'>
-				<br />
-				<h3 class='cyph-banner success'>
-					<div cyphTranslate>
-						Your trial account is now active. You can log in to this environment
-						using the following code:
-					</div>
-					<div class='xkcd-passphrase'>{{apiKey}}</div>
-					<div>
-						<span cyphTranslate>
-							If you need help during your trial, or you're just bored and need
-							a friend, feel free to
-						</span>
-						&ngsp;
-						<a
-							[href]='envService.homeUrl + "contact"'
+				<div *ngIf='(apiKey | async) !== undefined'>
+					<br />
+					<h3 class='cyph-banner success'>
+						<div cyphTranslate>
+							Your account is now active. You can log in to this environment
+							using the following code:
+						</div>
+						<div class='xkcd-passphrase'>{{apiKey | async}}</div>
+						<div>
+							<span cyphTranslate>
+								If you ever need any help, or you're just bored and need
+								a friend, feel free to
+							</span>
+							&ngsp;
+							<a
+								[href]='envService.homeUrl + "contact"'
+								cyphTranslate
+							>reach out to us</a>
+							&ngsp;
+							<span cyphTranslate>
+								any time.
+							</span>
+						</div>
+					</h3>
+					<br />
+					<div fxLayoutAlign='center'>
+						<button
+							mat-button
 							cyphTranslate
-						>reach out to us</a>
-						&ngsp;
-						<span cyphTranslate>
-							any time.
-						</span>
+							routerLink='/'
+						>
+							Enter Cyph
+						</button>
 					</div>
-				</h3>
-				<br />
-				<div fxLayoutAlign='center'>
-					<button
-						mat-button
-						cyphTranslate
-						routerLink='/'
-					>
-						Enter Cyph
-					</button>
+					<br />
 				</div>
-				<br />
-			</div>
+			</mat-card-content>
 			<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 		</mat-card>
 	</div>

@@ -17,8 +17,8 @@ type Customer struct {
 	Name         string
 	Namespace    string
 	SessionCount int64
+	SignupURL    string
 	Timestamp    int64
-	Trial        bool
 }
 
 // CustomerEmail : Mapping of email address to API key
@@ -92,8 +92,6 @@ var config = struct {
 	NewCyphTimeout             int64
 	Plans                      map[string]Plan
 	RootURL                    string
-	TrialDuration              int64
-	TrialPlan                  Plan
 }{
 	regexp.MustCompile("[A-Za-z0-9]{7}"),
 
@@ -242,19 +240,4 @@ var config = struct {
 	},
 
 	"http://localhost:42000",
-
-	1209600000,
-
-	Plan{
-		ProFeatures: map[string]bool{
-			"api":            true,
-			"disableP2P":     false,
-			"modestBranding": false,
-			"nativeCrypto":   false,
-			"telehealth":     true,
-			"video":          true,
-			"voice":          true,
-		},
-		SessionCountLimit: -1,
-	},
 }

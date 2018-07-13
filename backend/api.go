@@ -44,27 +44,35 @@ func main() {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
-	trialAPIKey := sanitize(h.Request.PostFormValue("apiKey"))
-	company := sanitize(h.Request.PostFormValue("company"))
-	name := sanitize(h.Request.PostFormValue("name"))
+	var err error
+
+	company := ""
+	email := ""
+	name := ""
+	namespace := ""
+	signupURL := "https://cyph.ws"
+	timestamp := int64(0)
+
+	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
+
+	if apiKey == "" {
+		company = sanitize(h.Request.PostFormValue("company"))
+		name = sanitize(h.Request.PostFormValue("name"))
+
+		email, err = getEmail(h.Request.PostFormValue("email"))
+		if err != nil {
+			return err.Error(), http.StatusBadRequest
+		}
+
+		namespace, err = getNamespace(h.Request.PostFormValue("namespace"))
+		if err != nil {
+			return err.Error(), http.StatusBadRequest
+		}
+
+		timestamp = getTimestamp()
+	}
+
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
-
-	email, err := getEmail(h.Request.PostFormValue("email"))
-	if err != nil {
-		return err.Error(), http.StatusBadRequest
-	}
-
-	namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
-	if err != nil {
-		return err.Error(), http.StatusBadRequest
-	}
-
-	names := strings.SplitN(name, " ", 2)
-	firstName := names[0]
-	lastName := ""
-	if len(names) > 1 {
-		lastName = names[1]
-	}
 
 	planID := ""
 	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("category")), 10, 64); err == nil {
@@ -94,22 +102,34 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	success := false
 
 	if subscription {
-		var apiKey string
 		var customerKey *datastore.Key
 
-		if trialAPIKey == "" {
-			apiKey = trialAPIKey
+		if apiKey != "" {
 			customerKey = datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
 			customer := &Customer{}
 
-			if err = datastore.Get(h.Context, customerKey, customer); err != nil || !customer.Trial {
+			if err = datastore.Get(h.Context, customerKey, customer); err != nil {
 				return "invalid trial API key", http.StatusForbidden
 			}
+
+			company = customer.Company
+			email = customer.Email
+			name = customer.Name
+			namespace = customer.Namespace
+			signupURL = customer.SignupURL
+			timestamp = customer.Timestamp
 		} else {
 			apiKey, customerKey, err = generateAPIKey(h, "Customer")
 			if err != nil {
 				return err.Error(), http.StatusInternalServerError
 			}
+		}
+
+		names := strings.SplitN(name, " ", 2)
+		firstName := names[0]
+		lastName := ""
+		if len(names) > 1 {
+			lastName = names[1]
 		}
 
 		braintreeCustomer, err := bt.Customer().Create(h.Context, &braintree.CustomerRequest{
@@ -185,7 +205,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 					Email:       email,
 					Name:        name,
 					Namespace:   namespace,
-					Trial:       false,
+					SignupURL:   signupURL,
+					Timestamp:   timestamp,
 				},
 			)
 
@@ -243,6 +264,18 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			"\n\n" + txLog +
 			""),
 	})
+
+	sendMail(h, email, "Cyph Purchase Confirmation", "", ""+
+		"Welcome to Cyph "+name+", and thanks for signing up!\n"+
+		"<div style='text-align: left'>"+
+		"Your access code is:&nbsp;&nbsp;"+
+		"<a style='font-family: monospace; font-size: 16px' href='"+
+		signupURL+"/unlock/"+apiKey+
+		"'>"+
+		apiKey+
+		"</a>"+
+		"</div>"+
+		"")
 
 	return success, http.StatusOK
 }
@@ -374,68 +407,9 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusNotFound
 	}
 
-	plans := []Plan{}
-
-	if customer.Trial && config.TrialDuration >= (getTimestamp()-customer.Timestamp) {
-		plans = append(plans, config.TrialPlan)
-	} else if customer.BraintreeID != "" {
-		bt := braintreeInit(h)
-		braintreeCustomer, err := bt.Customer().Find(h.Context, customer.BraintreeID)
-
-		if err != nil {
-			return err.Error(), http.StatusTeapot
-		}
-		subscriptions := []*braintree.Subscription{}
-
-		if braintreeCustomer.CreditCards != nil {
-			for i := range braintreeCustomer.CreditCards.CreditCard {
-				creditCard := braintreeCustomer.CreditCards.CreditCard[i]
-				for j := range creditCard.Subscriptions.Subscription {
-					subscriptions = append(subscriptions, creditCard.Subscriptions.Subscription[j])
-				}
-			}
-		}
-
-		if braintreeCustomer.PayPalAccounts != nil {
-			for i := range braintreeCustomer.PayPalAccounts.PayPalAccount {
-				payPalAccount := braintreeCustomer.PayPalAccounts.PayPalAccount[i]
-				for j := range payPalAccount.Subscriptions.Subscription {
-					subscriptions = append(subscriptions, payPalAccount.Subscriptions.Subscription[j])
-				}
-			}
-		}
-
-		for i := range subscriptions {
-			subscription := subscriptions[i]
-
-			if subscription.Status != braintree.SubscriptionStatusActive {
-				continue
-			}
-
-			plan, ok := config.Plans[subscription.PlanId]
-			if !ok {
-				continue
-			}
-
-			plans = append(plans, plan)
-		}
-	}
-
-	proFeatures := map[string]bool{}
-	sessionCountLimit := int64(0)
-
-	for i := range plans {
-		plan := plans[i]
-
-		for feature, isAvailable := range plan.ProFeatures {
-			if isAvailable {
-				proFeatures[feature] = true
-			}
-		}
-
-		if plan.SessionCountLimit > sessionCountLimit || plan.SessionCountLimit == -1 {
-			sessionCountLimit = plan.SessionCountLimit
-		}
+	proFeatures, sessionCountLimit, err := getPlanData(h, customer)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
 	}
 
 	now := time.Now()
@@ -522,8 +496,8 @@ func proTrialSignup(h HandlerArgs) (interface{}, int) {
 			Email:     email,
 			Name:      name,
 			Namespace: namespace,
+			SignupURL: url,
 			Timestamp: getTimestamp(),
-			Trial:     true,
 		},
 	)
 
@@ -544,18 +518,6 @@ func proTrialSignup(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	sendMail(h, email, "Cyph Trial", "", ""+
-		"Welcome to Cyph "+name+", and thanks for signing up!\n"+
-		"<div style='text-align: left'>"+
-		"Your trial access code is:&nbsp;&nbsp;"+
-		"<a style='font-family: monospace; font-size: 16px' href='"+
-		url+"/unlock/"+apiKey+
-		"'>"+
-		apiKey+
-		"</a>"+
-		"</div>"+
-		"")
-
 	return apiKey, http.StatusOK
 }
 
@@ -565,8 +527,13 @@ func proUnlock(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusNotFound
 	}
 
-	if customer.Trial && (getTimestamp()-customer.Timestamp) > config.TrialDuration {
-		return "expired trial code", http.StatusForbidden
+	proFeatures, _, err := getPlanData(h, customer)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	if !proFeatures["api"] {
+		return "invalid or expired API key", http.StatusForbidden
 	}
 
 	json, err := json.Marshal(map[string]string{
