@@ -21,10 +21,8 @@ if (customBuildBase64) {
 	}
 }
 
-accountPrimaryTheme	= false;
+accountPrimaryTheme	= true;
 accountRoot			= 'account';
-
-let altTheme		= false;
 
 /* tslint:disable-next-line:strict-type-predicates */
 if (typeof $ === 'function' && typeof window === 'object') {
@@ -41,6 +39,8 @@ if (typeof $ === 'function' && typeof window === 'object') {
 		}
 
 		if (environment.customBuild.config.backgroundColor) {
+			accountPrimaryTheme	= false;
+
 			$('head').find(
 				'meta[name="theme-color"],' +
 				'meta[name="msapplication-TileColor"]'
@@ -55,7 +55,7 @@ if (typeof $ === 'function' && typeof window === 'object') {
 		}
 
 		if (environment.customBuild.config.telehealth) {
-			altTheme	= true;
+			accountPrimaryTheme	= false;
 			$(document.body).addClass('telehealth');
 		}
 
@@ -64,7 +64,7 @@ if (typeof $ === 'function' && typeof window === 'object') {
 		}
 
 		if (environment.customBuild.css) {
-			altTheme			= true;
+			accountPrimaryTheme	= false;
 			const style			= document.createElement('style');
 			style.textContent	= environment.customBuild.css;
 			document.head.appendChild(style);
@@ -87,10 +87,6 @@ if (typeof $ === 'function' && typeof window === 'object') {
 				}
 			});
 		}
-	}
-
-	if (!altTheme) {
-		accountPrimaryTheme	= true;
 	}
 }
 
