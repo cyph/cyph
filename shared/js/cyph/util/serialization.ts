@@ -55,7 +55,7 @@ export const stringify	= <T> (value: T) : string =>
 
 /** Parses query string (no nested URI component decoding for now). */
 export const fromQueryString	= (search: string = locationData.search.slice(1)) : any =>
-	!search ? {} : search.split('&').map(p => p.split('=')).reduce(
+	!search ? {} : search.split('&').map(p => p.split('=')).reduce<any>(
 		(o, [key, value]) => ({...o, [decodeURIComponent(key)]: decodeURIComponent(value)}),
 		{}
 	)
