@@ -46,7 +46,7 @@ export class NotificationService implements INotificationService {
 
 			try {
 				if (this.audio) {
-					this.audio.play();
+					this.audio.play().catch(() => {});
 				}
 			}
 			catch {}
