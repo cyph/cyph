@@ -4,7 +4,7 @@
 cd $(cd "$(dirname "$0")" ; pwd)
 
 echo -n 'Password: '
-read password
+read -s password
 echo
 
 rm -rf ../cyph-phonegap-build 2> /dev/null
