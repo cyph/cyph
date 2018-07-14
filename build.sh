@@ -3,6 +3,10 @@
 
 cd $(cd "$(dirname "$0")" ; pwd)
 
+echo -n 'Password: '
+read password
+echo
+
 rm -rf ../cyph-phonegap-build 2> /dev/null
 mkdir ../cyph-phonegap-build
 
@@ -19,4 +23,14 @@ cordova platform add android
 
 echo -e '\n\nBUILD\n\n'
 
-cordova build --release --device
+if [ "${password}" != "" ] ; then
+	cordova build android --release --device -- \
+		--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
+		--alias=cyph \
+		--storePassword="${password}" \
+		--password="${password}"
+
+	# cordova build ios --release --device
+else
+	cordova build --debug --device
+fi
