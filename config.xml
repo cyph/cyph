@@ -31,7 +31,7 @@
 	<allow-intent href="mailto:*" />
 	<allow-intent href="geo:*" />
 
-	<preference name="android-minSdkVersion" value="23" />
+	<preference name="android-minSdkVersion" value="26" />
 
 	<platform name="android">
 		<preference name="OverrideUserAgent" value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36" />
