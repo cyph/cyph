@@ -19,7 +19,7 @@ cd ../cyph-phonegap-build
 echo -e '\n\nADD PLATFORMS\n\n'
 
 cordova platform add android
-# cordova platform add ios
+cordova platform add ios
 
 echo -e '\n\nBUILD\n\n'
 
@@ -28,9 +28,15 @@ if [ "${password}" != "" ] ; then
 		--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
 		--alias=cyph \
 		--storePassword="${password}" \
-		--password="${password}"
+		--password="${password}" \
+	|| \
+		exit 1
 
-	# cordova build ios --release --device
+	cordova build ios --release --device \
+		--codeSignIdentity='iPhone Distribution' \
+		--developmentTeam='SXZZ8WLPV2' \
+		--packageType='app-store' \
+		--provisioningProfile='5ed3df4c-a57b-4108-9abf-a8930e12a4f9'
 else
 	cordova build --debug --device
 fi
