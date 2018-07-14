@@ -3,7 +3,7 @@
 
 cd $(cd "$(dirname "$0")" ; pwd)
 
-echo -n 'Password: '
+echo -n 'Password (leave blank for debug mode): '
 read -s password
 echo
 
