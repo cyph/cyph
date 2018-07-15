@@ -1,6 +1,3 @@
-import {potassiumUtil} from '../crypto/potassium/potassium-util';
-
-
 /**
  * Compares two or more arrays.
  * @returns True if equal, false otherwise.
@@ -42,18 +39,21 @@ export const compareValues	= <T> (a: T, b: T, ...values: T[]) : boolean => {
 
 /** Constant time string comparison. */
 export const safeStringCompare	= (a: string, b: string) : boolean => {
-	if (a.length !== b.length) {
-		return false;
+	let mismatch: number;
+
+	const length	= a.length;
+
+	if (b.length === length) {
+		mismatch	= 0;
+	}
+	else {
+		mismatch	= 1;
+		b			= a;
 	}
 
-	const aBytes	= potassiumUtil.fromString(a);
-	const bBytes	= potassiumUtil.fromString(b);
+	for (let i = 0 ; i < length ; ++i) {
+		mismatch	|= (a.charCodeAt(i) ^ b.charCodeAt(i));
+	}
 
-	try {
-		return potassiumUtil.compareMemory(aBytes, bBytes);
-	}
-	finally {
-		potassiumUtil.clearMemory(aBytes);
-		potassiumUtil.clearMemory(bBytes);
-	}
+	return mismatch === 0;
 };
