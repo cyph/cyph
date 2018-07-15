@@ -182,7 +182,7 @@
 		</button>
 		<button
 			mat-fab
-			*ngIf='!envService.isTelehealth && (editMode | async) === false'
+			*ngIf='!envService.isTelehealth || (editMode | async) === false'
 			[matTooltip]='(editMode | async) ? "Save" : "Edit"'
 			matTooltipPosition='above'
 			(click)='editMode.value ? saveProfile() : setEditMode(true)'
