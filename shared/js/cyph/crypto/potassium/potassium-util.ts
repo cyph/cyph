@@ -35,10 +35,12 @@ export class PotassiumUtil {
 
 	/** Indicates whether two blocks of memory contain the same data. */
 	public compareMemory (a: ArrayBufferView, b: ArrayBufferView) : boolean {
-		return a.byteLength === b.byteLength && sodiumUtil.memcmp(
+		const lengthMismatch	= a.byteLength !== b.byteLength;
+
+		return sodiumUtil.memcmp(
 			this.toBytes(a),
-			this.toBytes(b)
-		);
+			this.toBytes(lengthMismatch ? a : b)
+		) && !lengthMismatch;
 	}
 
 	/** Concatenates multiple blocks of memory into one. */
