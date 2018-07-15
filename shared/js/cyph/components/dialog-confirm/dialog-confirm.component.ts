@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {StringsService} from '../../services/strings.service';
 
@@ -7,6 +7,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for confirm dialog.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-dialog-confirm',
 	styleUrls: ['./dialog-confirm.component.scss'],
 	templateUrl: './dialog-confirm.component.html'

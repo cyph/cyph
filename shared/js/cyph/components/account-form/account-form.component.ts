@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {AccountFileRecord, IAccountFileRecord, IForm} from '../../proto';
@@ -12,6 +12,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for an individual form.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-form',
 	styleUrls: ['./account-form.component.scss'],
 	templateUrl: './account-form.component.html'

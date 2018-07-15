@@ -222,18 +222,18 @@
 	<smd-fab-speed-dial
 		class='fixed-fab'
 		animationMode='scale'
-		[open]='isSpeedDialOpen'
-		(mouseleave)='isSpeedDialOpen = false'
+		[open]='isSpeedDialOpen | async'
+		(mouseleave)='isSpeedDialOpen.next(false)'
 	>
-		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
+		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen.next(true)'>
 			<button
 				mat-fab
 				[matTooltip]='stringsService.newWalletGenerate'
 				matTooltipPosition='left'
 				(click)='generate(newWalletOptions.generate)'
 			>
-				<mat-icon *ngIf='!isSpeedDialOpen'>add</mat-icon>
-				<mat-icon svgIcon='key-add-light' *ngIf='isSpeedDialOpen'></mat-icon>
+				<mat-icon *ngIf='(isSpeedDialOpen | async) === false'>add</mat-icon>
+				<mat-icon svgIcon='key-add-light' *ngIf='isSpeedDialOpen | async'></mat-icon>
 			</button>
 		</smd-fab-trigger>
 		<smd-fab-actions>

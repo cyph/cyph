@@ -1,4 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {emailPattern} from '../../email-pattern';
 import {ConfigService} from '../../services/config.service';
 import {StringsService} from '../../services/strings.service';
@@ -10,16 +11,17 @@ import {email} from '../../util/email';
  * Angular component for contact form UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-contact',
 	styleUrls: ['./contact.component.scss'],
 	templateUrl: './contact.component.html'
 })
 export class ContactComponent implements OnInit {
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern	= emailPattern;
+	public readonly emailPattern			= emailPattern;
 
 	/** Indicates whether the feedback form UI should be displayed. */
-	public feedbackForm: boolean			= false;
+	public readonly feedbackForm			= new BehaviorSubject<boolean>(false);
 
 	/** Sender email address. */
 	@Input() public fromEmail: string		= '';
@@ -28,33 +30,29 @@ export class ContactComponent implements OnInit {
 	@Input() public fromName: string		= '';
 
 	/** Indicates whether data collection is consented to under the GDPR. */
-	public gdprConsent: boolean				= false;
+	public readonly gdprConsent				= new BehaviorSubject<boolean>(false);
 
 	/** Email body. */
 	@Input() public message: string			= '';
 
 	/** Indicates whether response is requested. */
-	public responseRequested: boolean		= false;
+	public readonly responseRequested		= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether email has been sent. */
-	public sent: boolean					= false;
+	public readonly sent					= new BehaviorSubject<boolean>(false);
 
 	/** Email subject. */
 	@Input() public subject: string			= '';
 
 	/** Recipient @cyph.com email address ("@cyph.com" may be omitted). */
-	@Input() public to: string				= '';
+	@Input() public to: string				= 'hello';
 
 	/** @see trackBySelf */
-	public trackBySelf: typeof trackBySelf	= trackBySelf;
+	public readonly trackBySelf				= trackBySelf;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.feedbackForm	= this.to === 'feedback';
-
-		if (!this.to) {
-			this.to	= 'hello';
-		}
+		this.feedbackForm.next(this.to === 'feedback');
 	}
 
 	/** Sends email. */
@@ -67,7 +65,7 @@ export class ContactComponent implements OnInit {
 			this.fromName
 		);
 
-		this.sent	= true;
+		this.sent.next(true);
 	}
 
 	constructor (

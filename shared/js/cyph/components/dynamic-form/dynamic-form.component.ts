@@ -1,4 +1,13 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Optional, Output} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	EventEmitter,
+	Inject,
+	Input,
+	OnInit,
+	Optional,
+	Output
+} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as mexp from 'math-expression-evaluator';
 import * as msgpack from 'msgpack-lite';
@@ -22,6 +31,7 @@ import {uuid} from '../../util/uuid';
  * Angular component for dynamic form.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-dynamic-form',
 	styleUrls: ['./dynamic-form.component.scss'],
 	templateUrl: './dynamic-form.component.html'

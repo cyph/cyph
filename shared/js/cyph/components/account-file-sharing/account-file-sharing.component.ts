@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import once from 'lodash-es/once';
 import {AccountFileShare} from '../../account';
@@ -16,6 +16,7 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
  * Angular component for account file sharing UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-file-sharing',
 	styleUrls: ['./account-file-sharing.component.scss'],
 	templateUrl: './account-file-sharing.component.html'
@@ -64,6 +65,19 @@ export class AccountFileSharingComponent {
 	/** @see readableByteLength */
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
+	/** Usernames to share with. */
+	private get usernames () : string[] {
+		return Array.from(
+			(
+				this.accountContactsSearch &&
+				this.accountContactsSearch.searchBar &&
+				this.accountContactsSearch.searchBar.filter.value
+			) || []
+		).map(o =>
+			o.username
+		);
+	}
+
 	/** Shares file. */
 	public readonly share	= once(async () =>
 		Promise.all(this.usernames.map(async username => {
@@ -89,19 +103,6 @@ export class AccountFileSharingComponent {
 			}
 		}))
 	);
-
-	/** Usernames to share with. */
-	public get usernames () : string[] {
-		return Array.from(
-			(
-				this.accountContactsSearch &&
-				this.accountContactsSearch.searchBar &&
-				this.accountContactsSearch.searchBar.filter.value
-			) || []
-		).map(o =>
-			o.username
-		);
-	}
 
 	constructor (
 		/** @see AccountService */

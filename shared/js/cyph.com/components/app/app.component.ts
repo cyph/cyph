@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {emailPattern} from '../../../cyph/email-pattern';
 import {ConfigService} from '../../../cyph/services/config.service';
 import {EnvService} from '../../../cyph/services/env.service';
@@ -13,6 +13,7 @@ import {Promos, States} from '../../enums';
  * Angular component for Cyph home page.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-app',
 	templateUrl: './app.component.html'
 })

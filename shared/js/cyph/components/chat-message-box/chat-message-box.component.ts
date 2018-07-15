@@ -1,10 +1,12 @@
 import {
 	AfterViewInit,
+	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
 	Input
 } from '@angular/core';
 import * as $ from 'jquery';
+import {BehaviorSubject} from 'rxjs';
 import * as tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../../animations';
 import {States} from '../../chat/enums';
@@ -27,6 +29,7 @@ import {sleep, waitForIterable} from '../../util/wait';
  */
 @Component({
 	animations: [slideInOutBottom],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-message-box',
 	styleUrls: ['./chat-message-box.component.scss'],
 	templateUrl: './chat-message-box.component.html'
@@ -73,7 +76,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	public readonly inheritsNgForm: boolean	= false;
 
 	/** Indicates whether speed dial is open. */
-	public isSpeedDialOpen: boolean			= false;
+	public readonly isSpeedDialOpen			= new BehaviorSubject<boolean>(false);
 
 	/** Indicates which version of the UI should be displayed. */
 	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;

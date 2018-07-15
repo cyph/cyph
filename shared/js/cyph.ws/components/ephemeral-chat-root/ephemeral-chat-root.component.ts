@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnDestroy} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
@@ -39,6 +39,7 @@ import {ChatRootStates} from '../../enums';
  */
 @Component({
 	animations: [fadeIn],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		AffiliateService,
 		ChannelService,

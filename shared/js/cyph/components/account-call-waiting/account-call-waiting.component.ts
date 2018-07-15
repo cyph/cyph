@@ -1,4 +1,12 @@
-import {AfterViewInit, Component, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	Input,
+	OnChanges,
+	SimpleChanges,
+	ViewChild
+} from '@angular/core';
 import {BehaviorSubject, combineLatest, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
@@ -19,6 +27,7 @@ import {AccountComposeNoProvidersComponent} from '../account-compose-no-provider
  * Angular component for account call waiting UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-call-waiting',
 	styleUrls: ['./account-call-waiting.component.scss'],
 	templateUrl: './account-call-waiting.component.html'

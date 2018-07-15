@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -11,6 +11,7 @@ import {readableByteLength} from '../../util/formatting';
  * Angular component for account settings UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-storage-analytics',
 	styleUrls: ['./account-storage-analytics.component.scss'],
 	templateUrl: './account-storage-analytics.component.html'

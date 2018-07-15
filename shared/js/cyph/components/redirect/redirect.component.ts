@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
@@ -8,6 +8,7 @@ import {sleep} from '../../util/wait';
  * Angular component for redirecting.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-redirect',
 	template: ''
 })

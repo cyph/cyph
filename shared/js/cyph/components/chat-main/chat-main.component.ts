@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import {fadeIn} from '../../animations';
 import {States, UiStyles} from '../../chat/enums';
@@ -21,6 +21,7 @@ import {readableByteLength} from '../../util/formatting';
  */
 @Component({
 	animations: [fadeIn],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-main',
 	styleUrls: ['./chat-main.component.scss'],
 	templateUrl: './chat-main.component.html'

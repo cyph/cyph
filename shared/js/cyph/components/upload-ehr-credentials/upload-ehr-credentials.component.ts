@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {take} from 'rxjs/operators';
@@ -13,6 +13,7 @@ import {StringsService} from '../../services/strings.service';
  * Used by addredoxcredentials script; not intended for user interaction.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-upload-ehr-credentials',
 	styleUrls: ['./upload-ehr-credentials.component.scss'],
 	templateUrl: './upload-ehr-credentials.component.html'

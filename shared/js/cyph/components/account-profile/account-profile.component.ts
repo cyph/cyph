@@ -1,8 +1,8 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {combineLatest, Observable, of} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {AccountUserTypes, BlobProto, DataURIProto, IForm} from '../../proto';
@@ -20,7 +20,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
-import {cacheObservable} from '../../util/flatten-observable';
+import {cacheObservable, toBehaviorSubject} from '../../util/flatten-observable';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {deserialize, serialize} from '../../util/serialization';
 
@@ -29,146 +29,104 @@ import {deserialize, serialize} from '../../util/serialization';
  * Angular component for account profile UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-profile',
 	styleUrls: ['./account-profile.component.scss'],
 	templateUrl: './account-profile.component.html'
 })
 export class AccountProfileComponent implements OnDestroy, OnInit {
 	/** @ignore */
-	private destroyed: boolean		= false;
+	private destroyed: boolean	= false;
 
 	/** @ignore */
-	private editorFocus: boolean	= false;
+	private readonly userInternal: Observable<{
+		isCurrentUser: boolean;
+		user?: User;
+		username?: string;
+	}>;
+
+	/** @ignore */
+	private readonly username: Observable<string|undefined>;
 
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+	public readonly accountUserTypes					= AccountUserTypes;
 
 	/** Current draft of user profile. */
-	public draft: {
+	public readonly draft								= new BehaviorSubject<{
 		avatar?: Blob;
 		coverImage?: Blob;
 		description?: string;
 		forms?: IForm[];
 		name?: string;
-	}	= {};
+	}>(
+		{}
+	);
 
 	/** @see AccountProfileComponent.doctorListOnly */
-	public readonly doctorListOnly: Observable<boolean>			= cacheObservable(
+	public readonly doctorListOnly: Observable<boolean>	= cacheObservable(
 		this.activatedRoute.data.pipe(map(o => o.doctorListOnly === true))
 	);
 
 	/** Profile edit mode. */
-	public editMode: boolean		= false;
+	public readonly editMode							= new BehaviorSubject<boolean>(false);
 
 	/** Gets data URI of file. */
-	public readonly getDataURI		= memoize(async (file?: Blob) =>
+	public readonly getDataURI							= memoize(async (file?: Blob) =>
 		!file ? undefined : deserialize(DataURIProto, await serialize(BlobProto, file))
 	);
 
 	/** Indicates whether this is home component. */
-	@Input() public home: boolean	= false;
+	@Input() public home: boolean						= false;
 
 	/** @see AccountContactsService.watchIfContact */
-	public isContact?: Observable<boolean>;
-
-	/** @see UserPresence */
-	public readonly statuses: typeof userPresenceSelectOptions	= userPresenceSelectOptions;
-
-	/** @see trackBySelf */
-	public readonly trackBySelf: typeof trackBySelf				= trackBySelf;
-
-	/** @see trackByValue */
-	public readonly trackByValue: typeof trackByValue			= trackByValue;
-
-	/** @see urlToSafeStyle */
-	public readonly urlToSafeStyle: typeof urlToSafeStyle		= urlToSafeStyle;
-
-	/** User profile. */
-	public user?: User;
-
-	/** List of members, if user is an organization. */
-	public userMembers?: Observable<User[]>;
-
-	/** User parent organization profile. */
-	public userOrganiztion?: User;
-
-	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence	= UserPresence;
-
-	/** @ignore */
-	private async setUser (username?: string) : Promise<void> {
-		try {
-			if (username) {
-				this.isContact	= this.accountContactsService.watchIfContact(username);
-				this.user		= await this.accountUserLookupService.getUser(username, false);
-			}
-			else if (this.accountDatabaseService.currentUser.value) {
-				if (this.envService.isTelehealth) {
-					const userType	=
-						await this.accountDatabaseService.currentUser.value.user.userType.pipe(
-							take(1)
-						).toPromise()
-					;
-
-					if (
-						this.envService.environment.customBuild &&
-						this.envService.environment.customBuild.config.organization &&
-						this.home &&
-						userType === AccountUserTypes.Standard
-					) {
-						this.router.navigate([
-							accountRoot,
-							'doctors'
-						]);
-						return;
-					}
-				}
-
-				this.isContact	= of(false);
-				this.user		= this.accountDatabaseService.currentUser.value.user;
-			}
-		}
-		catch {}
-
-		if (this.user) {
-			this.userMembers		= this.accountOrganizationsService.getMembers(this.user);
-
-			this.userOrganiztion	=
-				await this.accountOrganizationsService.getOrganization(this.user)
-			;
-
-			await this.user.fetch();
-
-			if (!this.destroyed) {
-				await this.accountService.setHeader(this.user);
-			}
-
-			this.accountService.resolveUiReady();
-		}
-		else {
-			this.userMembers		= undefined;
-			this.userOrganiztion	= undefined;
-
-			this.router.navigate([accountRoot, username ? '404' : 'login']);
-		}
-	}
+	public readonly isContact: Observable<boolean>;
 
 	/** Indicates whether this is the profile of the currently signed in user. */
-	public get isCurrentUser () : boolean {
-		return (
-			this.accountDatabaseService.currentUser.value !== undefined &&
-			this.user === this.accountDatabaseService.currentUser.value.user
-		);
-	}
+	public readonly isCurrentUser: Observable<boolean>;
 
 	/** Indicates whether the profile editor is in focus. */
-	public get isEditorFocused () : boolean {
-		return this.editorFocus && this.editMode;
-	}
+	public readonly isEditorFocused						= new BehaviorSubject<boolean>(false);
 
-	public set isEditorFocused (value: boolean) {
-		this.editorFocus	= value;
-	}
+	/** Indicates whether profile is ready to save. */
+	public readonly readyToSave: Observable<boolean>	= this.draft.pipe(map(draft =>
+		(
+			draft.avatar !== undefined ||
+			draft.coverImage !== undefined ||
+			draft.description !== undefined ||
+			draft.forms !== undefined ||
+			draft.name !== undefined
+		) && (
+			draft.description === undefined ||
+			draft.description.length <= this.accountService.maxDescriptionLength
+		) && (
+			draft.name === undefined ||
+			draft.name.length <= this.accountService.maxNameLength
+		)
+	));
+
+	/** @see UserPresence */
+	public readonly statuses							= userPresenceSelectOptions;
+
+	/** @see trackBySelf */
+	public readonly trackBySelf							= trackBySelf;
+
+	/** @see trackByValue */
+	public readonly trackByValue						= trackByValue;
+
+	/** @see urlToSafeStyle */
+	public readonly urlToSafeStyle						= urlToSafeStyle;
+
+	/** List of members, if user is an organization. */
+	public readonly userMembers: Observable<User[]|undefined>;
+
+	/** User parent organization profile. */
+	public readonly userOrganiztion: Observable<User|undefined>;
+
+	/** @see UserPresence */
+	public readonly userPresence						= UserPresence;
+
+	/** User profile. */
+	public readonly userProfile: BehaviorSubject<User|undefined>;
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
@@ -179,39 +137,36 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
 
-		combineLatest(
-			this.activatedRoute.params,
-			this.doctorListOnly
-		).subscribe(async ([params, doctorListOnly]: [{username?: string}, boolean]) => {
-			/* Temporary workaround for listing doctors */
+		this.userInternal.subscribe(async ({user, username}) => {
 			if (
-				doctorListOnly &&
+				!username &&
+				this.envService.isTelehealth &&
 				this.envService.environment.customBuild &&
-				this.envService.environment.customBuild.config.organization
+				this.envService.environment.customBuild.config.organization &&
+				this.home &&
+				this.accountDatabaseService.currentUser.value &&
+				(
+					await this.accountDatabaseService.currentUser.value.user.userType.pipe(
+						take(1)
+					).toPromise()
+				) === AccountUserTypes.Standard
 			) {
-				await this.setUser(this.envService.environment.customBuild.config.organization);
+				/* Redirect telehealth patient home page to /doctors */
+				this.router.navigate([accountRoot, 'doctors']);
+			}
+			else if (user) {
+				await user.fetch();
+
+				if (!this.destroyed) {
+					await this.accountService.setHeader(user);
+				}
+
+				this.accountService.resolveUiReady();
 			}
 			else {
-				await this.setUser(params.username);
+				this.router.navigate([accountRoot, username ? '404' : 'login']);
 			}
 		});
-	}
-
-	/** Indicates whether profile is ready to save. */
-	public get readyToSave () : boolean {
-		return (
-			this.draft.avatar !== undefined ||
-			this.draft.coverImage !== undefined ||
-			this.draft.description !== undefined ||
-			this.draft.forms !== undefined ||
-			this.draft.name !== undefined
-		) && (
-			this.draft.description === undefined ||
-			this.draft.description.length <= this.accountService.maxDescriptionLength
-		) && (
-			this.draft.name === undefined ||
-			this.draft.name.length <= this.accountService.maxNameLength
-		);
 	}
 
 	/** Publishes new user description. */
@@ -221,7 +176,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		description?: string;
 		forms?: IForm[];
 	}) : Promise<void> {
-		const user	= this.user;
+		const user	= this.userProfile.value;
 
 		if (!user || !this.isCurrentUser) {
 			throw new Error("Cannot modify another user's description.");
@@ -236,8 +191,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 			forms,
 			name
 		}	= !draft ?
-			this.draft :
-			{...this.draft, ...draft}
+			this.draft.value :
+			{...this.draft.value, ...draft}
 		;
 
 		await Promise.all([
@@ -293,41 +248,41 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Crops and sets avatar. */
 	public async setAvatar (avatar?: File) : Promise<void> {
-		if (!avatar || !this.editMode) {
+		if (!avatar || !this.editMode.value) {
 			return;
 		}
 
 		const title	= avatar.name;
 		const src	= await this.getDataURI(avatar);
 
-		if (!src || !this.editMode) {
+		if (!src || !this.editMode.value) {
 			return;
 		}
 
 		const dataURI	= await this.dialogService.cropImage({aspectRatio: 1, src, title});
 
-		if (!dataURI || !this.editMode) {
+		if (!dataURI || !this.editMode.value) {
 			return;
 		}
 
 		const cropped	= await deserialize(BlobProto, await serialize(DataURIProto, dataURI));
 
-		if (!this.editMode) {
+		if (!this.editMode.value) {
 			return;
 		}
 
-		this.draft.avatar	= cropped;
+		this.updateDraft({avatar: cropped});
 	}
 
 	/** Sets edit mode. */
 	public setEditMode (editMode: boolean) : void {
-		this.draft		= {};
-		this.editMode	= editMode;
+		this.draft.next({});
+		this.editMode.next(editMode);
 	}
 
 	/** Shares medical data from EHR system with the patient. */
 	public async shareEhrData () : Promise<void> {
-		const user	= this.user;
+		const user	= this.userProfile.value;
 
 		if (!user || !(await this.dialogService.confirm({
 			content: this.stringsService.shareEhrData,
@@ -389,6 +344,17 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		}
 	}
 
+	/** Updates draft. */
+	public updateDraft (draft: {
+		avatar?: Blob;
+		coverImage?: Blob;
+		description?: string;
+		forms?: IForm[];
+		name?: string;
+	}) : void {
+		this.draft.next({...this.draft.value, ...draft});
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
@@ -431,5 +397,60 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		this.username			= combineLatest(
+			this.activatedRoute.params,
+			this.doctorListOnly
+		).pipe(map(([params, doctorListOnly]: [{username?: string}, boolean]) =>
+			/* Temporary workaround for listing doctors */
+			(
+				doctorListOnly &&
+				this.envService.environment.customBuild &&
+				this.envService.environment.customBuild.config.organization
+			) ?
+				this.envService.environment.customBuild.config.organization :
+				params.username
+		));
+
+		this.userInternal		= combineLatest(
+			this.username,
+			this.accountDatabaseService.currentUser
+		).pipe(mergeMap(async ([username, currentUser]) =>
+			username ?
+				{
+					isCurrentUser: false,
+					user: await this.accountUserLookupService.getUser(username, false),
+					username
+				} :
+			currentUser ?
+				{
+					isCurrentUser: true,
+					user: currentUser.user,
+					username
+				} :
+				{
+					isCurrentUser: false,
+					username
+				}
+		));
+
+		this.userProfile				= toBehaviorSubject(
+			this.userInternal.pipe(map(o => o.user)),
+			undefined
+		);
+
+		this.userMembers		= this.userProfile.pipe(mergeMap(user =>
+			user ? this.accountOrganizationsService.getMembers(user) : of(undefined)
+		));
+
+		this.userOrganiztion	= this.userProfile.pipe(mergeMap(async user =>
+			user ? this.accountOrganizationsService.getOrganization(user) : undefined
+		));
+
+		this.isContact			= this.username.pipe(mergeMap(username =>
+			username ? this.accountContactsService.watchIfContact(username) : of(false)
+		));
+
+		this.isCurrentUser		= this.userInternal.pipe(map(o => o.isCurrentUser));
+	}
 }

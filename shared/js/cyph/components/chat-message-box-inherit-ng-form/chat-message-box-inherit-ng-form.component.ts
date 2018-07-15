@@ -1,4 +1,4 @@
-import {Component, ElementRef} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef} from '@angular/core';
 import {ControlContainer, NgForm} from '@angular/forms';
 import {slideInOutBottom} from '../../animations';
 import {ChatService} from '../../services/chat.service';
@@ -18,6 +18,7 @@ import {ChatMessageBoxComponent} from '../chat-message-box';
  */
 @Component({
 	animations: [slideInOutBottom],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-message-box-inherit-ng-form',
 	styleUrls: ['../chat-message-box/chat-message-box.component.scss'],
 	templateUrl: '../chat-message-box/chat-message-box.component.html',

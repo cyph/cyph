@@ -1,6 +1,6 @@
 import {SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
@@ -112,7 +112,7 @@ export class User {
 	));
 
 	/** Indicates whether user data is ready to be consumed. */
-	public ready: boolean	= false;
+	public readonly ready	= new BehaviorSubject<boolean>(false);
 
 	/** @see IAccountUserProfile.realUsername */
 	public readonly realUsername: Observable<string>	= toBehaviorSubject(
@@ -142,13 +142,13 @@ export class User {
 
 	/** Fetches user data and sets ready to true when complete. */
 	public async fetch () : Promise<void> {
-		if (this.ready) {
+		if (this.ready.value) {
 			return;
 		}
 
 		await lockTryOnce(this.fetchLock, async () => {
 			await User.fetchLock(async () => this.accountUserProfile.getValue());
-			this.ready	= true;
+			this.ready.next(true);
 		});
 	}
 

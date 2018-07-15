@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {
 	AccountFileRecord,
@@ -22,6 +22,7 @@ import {getDateTimeString} from '../../util/time';
  * Angular component for EHR access UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-ehr-access',
 	styleUrls: ['./account-ehr-access.component.scss'],
 	templateUrl: './account-ehr-access.component.html'

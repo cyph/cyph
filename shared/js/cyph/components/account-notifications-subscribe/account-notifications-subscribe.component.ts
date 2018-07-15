@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {combineLatest, Observable} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
@@ -13,6 +13,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for account notifications subscribe UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-notifications-subscribe',
 	styleUrls: ['./account-notifications-subscribe.component.scss'],
 	templateUrl: './account-notifications-subscribe.component.html'

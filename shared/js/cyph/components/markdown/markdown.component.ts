@@ -1,10 +1,11 @@
-import {Component, ElementRef, Input, OnChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges} from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import * as $ from 'jquery';
 import * as MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
 import * as markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';
+import {BehaviorSubject} from 'rxjs';
 import {EnvService} from '../../services/env.service';
 import {HtmlSanitizerService} from '../../services/html-sanitizer.service';
 import {StringsService} from '../../services/strings.service';
@@ -15,6 +16,7 @@ import {sleep} from '../../util/wait';
  * Angular component for rendering Markdown.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-markdown',
 	styleUrls: ['./markdown.component.scss'],
 	templateUrl: './markdown.component.html'
@@ -27,7 +29,7 @@ export class MarkdownComponent implements OnChanges {
 	private readonly markdownIt: MarkdownIt.MarkdownIt;
 
 	/** Rendered HTML. */
-	public html?: SafeHtml;
+	public readonly html	= new BehaviorSubject<SafeHtml|undefined>(undefined);
 
 	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown?: string;
@@ -80,7 +82,7 @@ export class MarkdownComponent implements OnChanges {
 			html	= html.replace(/\<a href="#/g, '<a target="_self" href="#');
 		}
 
-		this.html	= this.domSanitizer.bypassSecurityTrustHtml(html);
+		this.html.next(this.domSanitizer.bypassSecurityTrustHtml(html));
 	}
 
 	constructor (

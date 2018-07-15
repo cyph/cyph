@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
 import {emailPattern} from '../../email-pattern';
@@ -13,19 +13,21 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {toBehaviorSubject} from '../../util/flatten-observable';
 
 
 /**
  * Angular component for account settings UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-settings',
 	styleUrls: ['./account-settings.component.scss'],
 	templateUrl: './account-settings.component.html'
 })
 export class AccountSettingsComponent implements OnInit {
 	/** Data. */
-	public readonly data	= {
+	public readonly data	= new BehaviorSubject({
 		current: {
 			email: '',
 			name: '',
@@ -37,7 +39,7 @@ export class AccountSettingsComponent implements OnInit {
 			realUsername: ''
 		},
 		usernamePattern: ''
-	};
+	});
 
 	/** Email address. */
 	public readonly email: IAsyncValue<string>	= this.accountDatabaseService.getAsyncValue(
@@ -47,28 +49,31 @@ export class AccountSettingsComponent implements OnInit {
 	);
 
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern	= emailPattern;
+	public readonly emailPattern	= emailPattern;
 
 	/** Indicates whether page is loading. */
-	public readonly loading: BehaviorSubject<boolean>	= new BehaviorSubject(true);
+	public readonly loading			= new BehaviorSubject(true);
+
+	/** Indicates whether data is ready to save. */
+	public readonly ready: BehaviorSubject<boolean>;
 
 	/** UI state. */
-	public state: Observable<number>	= this.activatedRoute.data.pipe(map(o =>
+	public readonly state: Observable<number>			= this.activatedRoute.data.pipe(map(o =>
 		typeof o.state === 'number' ? o.state : this.states.default
 	));
 
 	/** UI states. */
-	public readonly states	= {
+	public readonly states			= {
 		default: 1,
 		masterKey: 2,
 		pin: 3
 	};
 
 	/** User. */
-	public user?: User;
+	public readonly user			= new BehaviorSubject<User|undefined>(undefined);
 
 	/** @see usernameMask */
-	public readonly usernameMask: typeof usernameMask	= usernameMask;
+	public readonly usernameMask	= usernameMask;
 
 	/** @ignore */
 	private async changePasswordInternal <T> (
@@ -77,7 +82,7 @@ export class AccountSettingsComponent implements OnInit {
 		dialogConfig: {content: string; failureContent: string; title: string},
 		changePassword: (password: T) => Promise<void>
 	) : Promise<void> {
-		const user	= this.user;
+		const user	= this.user.value;
 		if (
 			!user ||
 			(await this.state.pipe(take(1)).toPromise()) !== requiredState
@@ -142,70 +147,86 @@ export class AccountSettingsComponent implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
 
-		this.user	= (await this.accountDatabaseService.getCurrentUser()).user;
+		const {user}	= await this.accountDatabaseService.getCurrentUser();
+
+		this.user.next(user);
 
 		const [email, {name, realUsername}]	= await Promise.all([
 			this.email.getValue(),
-			this.user.accountUserProfile.getValue()
+			user.accountUserProfile.getValue()
 		]);
 
-		this.data.current			= {
+		const current	= {
 			email,
 			name,
-			realUsername: realUsername.toLowerCase() === this.user.username ?
+			realUsername: realUsername.toLowerCase() === user.username ?
 				realUsername :
-				this.user.username
+				user.username
 		};
 
-		this.data.modified			= {...this.data.current};
-
-		this.data.usernamePattern	=
-			this.user.username.split('').map(c => `[${c.toUpperCase()}${c}]`).join('')
-		;
+		this.updateData({
+			current,
+			modified: current,
+			usernamePattern: user.username.split('').map(c => `[${c.toUpperCase()}${c}]`).join('')
+		});
 
 		this.loading.next(false);
 	}
 
-	/** Indicates whether data is ready to save. */
-	public get ready () : boolean {
-		return (
-			!!this.user &&
-			(
-				this.data.current.email !== this.data.modified.email ||
-				this.data.current.name !== this.data.modified.name ||
-				this.data.current.realUsername !== this.data.modified.realUsername
-			) &&
-			!!this.data.modified.name &&
-			this.data.modified.realUsername.toLowerCase() === this.user.username
-		);
-	}
-
 	/** Saves data updates. */
 	public async save () : Promise<void> {
-		const user	= this.user;
-		if (!user || !this.ready) {
+		const user	= this.user.value;
+		if (!user || !this.ready.value) {
 			return;
 		}
 
 		this.loading.next(true);
 
-		const email			= this.data.modified.email.trim();
-		const name			= this.data.modified.name.trim();
-		const realUsername	= this.data.modified.realUsername.trim();
+		const data			= this.data.value;
+		const email			= data.modified.email.trim();
+		const name			= data.modified.name.trim();
+		const realUsername	= data.modified.realUsername.trim();
 
 		await Promise.all([
-			this.data.current.email === email ?
+			data.current.email === email ?
 				undefined :
 				this.email.setValue(email)
 			,
-			this.data.current.name === name && this.data.current.realUsername === realUsername ?
+			data.current.name === name && data.current.realUsername === realUsername ?
 				undefined :
 				user.accountUserProfile.updateValue(async o => ({...o, name, realUsername}))
 		]);
 
-		this.data.current	= {email, name, realUsername};
+		this.updateData({current: {email, name, realUsername}});
 
 		this.loading.next(false);
+	}
+
+	/** Updates draft. */
+	public updateData (data: {
+		current?: {
+			email?: string;
+			name?: string;
+			realUsername?: string;
+		};
+		modified?: {
+			email?: string;
+			name?: string;
+			realUsername?: string;
+		};
+		usernamePattern?: string;
+	}) : void {
+		this.data.next({
+			current: {
+				...this.data.value.current,
+				...data.current
+			},
+			modified: {
+				...this.data.value.modified,
+				...data.modified
+			},
+			usernamePattern: data.usernamePattern || this.data.value.usernamePattern
+		});
 	}
 
 	constructor (
@@ -235,5 +256,19 @@ export class AccountSettingsComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		this.ready	= toBehaviorSubject(
+			combineLatest(this.data, this.user).pipe(map(([data, user]) =>
+				!!user &&
+				(
+					data.current.email !== data.modified.email ||
+					data.current.name !== data.modified.name ||
+					data.current.realUsername !== data.modified.realUsername
+				) &&
+				!!data.modified.name &&
+				data.modified.realUsername.toLowerCase() === user.username
+			)),
+			false
+		);
+	}
 }

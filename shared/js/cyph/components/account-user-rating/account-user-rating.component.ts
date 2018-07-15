@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {reviewMax, User} from '../../account';
 import {AccountService} from '../../services/account.service';
@@ -11,6 +11,7 @@ import {numberToString} from '../../util/formatting';
  * Angular component for account user rating UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-user-rating',
 	styleUrls: ['./account-user-rating.component.scss'],
 	templateUrl: './account-user-rating.component.html'

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import * as $ from 'jquery';
 import {EnvService} from '../../../cyph/services/env.service';
 import {sleep, waitForIterable} from '../../../cyph/util/wait';
@@ -10,6 +10,7 @@ import {elements} from '../../elements';
  * Angular component for the Cyph chat demo.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-demo',
 	styleUrls: ['./demo.component.scss'],
 	templateUrl: './demo.component.html'

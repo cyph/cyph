@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
 import {filter, map, mergeMap} from 'rxjs/operators';
@@ -24,6 +24,7 @@ import {uuid} from '../../util/uuid';
  * Angular component for account compose UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: accountChatProviders,
 	selector: 'cyph-account-compose',
 	styleUrls: ['./account-compose.component.scss'],
@@ -199,12 +200,12 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	};
 
 	/** Indicates whether message has been sent, or undefined for in-progress. */
-	public sent: BehaviorSubject<boolean|undefined>						=
+	public readonly sent: BehaviorSubject<boolean|undefined>		=
 		new BehaviorSubject<boolean|undefined>(false)
 	;
 
 	/** ID of a file that has been sent, if applicable. */
-	public sentFileID: BehaviorSubject<string|undefined>				=
+	public readonly sentFileID: BehaviorSubject<string|undefined>	=
 		new BehaviorSubject<string|undefined>(undefined)
 	;
 

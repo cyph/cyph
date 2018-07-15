@@ -8,7 +8,7 @@
 				[ngModel]='value | async'
 				(ngModelChange)='value.next(processValue($event))'
 				[ngClass]='"length-" + ((value | async)?.length || 0).toString()'
-				[disabled]='isDisabled'
+				[disabled]='isDisabled | async'
 				(blur)='onTouched && onTouched()'
 				[name]='name'
 				type='tel'

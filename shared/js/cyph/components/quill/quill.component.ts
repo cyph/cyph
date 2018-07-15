@@ -1,5 +1,6 @@
 import {
 	AfterViewInit,
+	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
 	EventEmitter,
@@ -13,7 +14,7 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import * as $ from 'jquery';
 import * as Quill from 'quill';
 import * as Delta from 'quill-delta';
-import {Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {IQuillDelta} from '../../iquill-delta';
 import {IQuillRange} from '../../iquill-range';
 import {LockFunction} from '../../lock-function-type';
@@ -28,6 +29,7 @@ import {resolvable, sleep, waitForIterable, waitForValue} from '../../util/wait'
  * Angular component for Quill editor.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
 			multi: true,
@@ -94,6 +96,9 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 	/** Indicates whether editor should be read-only. */
 	@Input() public isDisabled: boolean	= false;
+
+	/** isDisabled wrapper for ControlValueAccessor. */
+	public readonly isDisabledWrapper	= new BehaviorSubject(false);
 
 	/** Emits on ready. */
 	@Output() public readonly ready: EventEmitter<void>	= new EventEmitter<void>();
@@ -253,6 +258,10 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 			return;
 		}
 
+		if (this.isDisabledWrapper.value !== this.isDisabled) {
+			this.isDisabledWrapper.next(this.isDisabled);
+		}
+
 		await waitForValue(() => this.quill);
 
 		if (!this.quill) {
@@ -350,8 +359,8 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 	/** @inheritDoc */
 	public setDisabledState (b: boolean) : void {
-		if (this.isDisabled !== b) {
-			this.isDisabled	= b;
+		if (this.isDisabledWrapper.value !== b) {
+			this.isDisabledWrapper.next(b);
 		}
 	}
 

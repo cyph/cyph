@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -11,6 +11,7 @@ import {sleep} from '../../util/wait';
  * Angular component for account logout UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-logout',
 	styleUrls: ['./account-logout.component.scss'],
 	templateUrl: './account-logout.component.html'

@@ -1,4 +1,10 @@
-import {AfterViewInit, Component, OnDestroy, ViewChild} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	OnDestroy,
+	ViewChild
+} from '@angular/core';
 import {Options} from 'fullcalendar';
 import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
@@ -23,6 +29,7 @@ import {getDateTimeString, watchTimestamp} from '../../util/time';
  * Angular component for account appointments UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-appointments',
 	styleUrls: ['./account-appointments.component.scss'],
 	templateUrl: './account-appointments.component.html'

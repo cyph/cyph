@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
 import {User} from '../../account/user';
 import {ChatMessageValue} from '../../proto';
@@ -13,6 +13,7 @@ import {ChatMessageBoxInheritNgFormComponent} from '../chat-message-box-inherit-
  * Angular component for account chat message box UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-chat-message-box',
 	styleUrls: ['./account-chat-message-box.component.scss'],
 	templateUrl: './account-chat-message-box.component.html'

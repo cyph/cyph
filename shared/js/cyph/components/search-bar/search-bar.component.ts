@@ -1,4 +1,5 @@
 import {
+	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
 	EventEmitter,
@@ -24,6 +25,7 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
  * Angular component for search bar UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-search-bar',
 	styleUrls: ['./search-bar.component.scss'],
 	templateUrl: './search-bar.component.html'

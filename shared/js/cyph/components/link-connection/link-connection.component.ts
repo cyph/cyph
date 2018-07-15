@@ -1,7 +1,8 @@
-import {AfterViewInit, Component, ElementRef} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import clipboard from 'clipboard-polyfill';
 import * as $ from 'jquery';
+import {BehaviorSubject} from 'rxjs';
 import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
 import {DialogService} from '../../services/dialog.service';
@@ -18,6 +19,7 @@ import {sleep, waitForIterable, waitForValue} from '../../util/wait';
  * (e.g. for starting a new cyph).
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-link-connection',
 	styleUrls: ['./link-connection.component.scss'],
 	templateUrl: './link-connection.component.html'
@@ -27,37 +29,38 @@ export class LinkConnectionComponent implements AfterViewInit {
 	private readonly addTimeLock: {}	= {};
 
 	/** @ignore */
+	private connectLinkInput?: HTMLInputElement;
+
+	/** @ignore */
 	private readonly copyLock: {}		= {};
 
 	/** @ignore */
-	private linkConstant: string			= '';
+	private linkConstant: string		= '';
 
 	/** Indicates whether the advanced features menu is open. */
-	public advancedFeatures: boolean		= false;
+	public readonly advancedFeatures	= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
-	public isPassive: boolean				= false;
+	public readonly isPassive			= new BehaviorSubject<boolean>(false);
 
 	/** The link to join this connection. */
-	public link?: string;
+	public readonly link				= new BehaviorSubject<string>('');
 
 	/** Mailto version of this link. */
-	public linkMailto?: SafeUrl;
+	public readonly linkMailto			= new BehaviorSubject<SafeUrl|undefined>(undefined);
 
 	/** SMS version of this link. */
-	public linkSMS?: SafeUrl;
+	public readonly linkSMS				= new BehaviorSubject<SafeUrl|undefined>(undefined);
 
 	/** Draft of queued message. */
-	public queuedMessageDraft: string		= '';
+	public readonly queuedMessageDraft	= new BehaviorSubject<string>('');
 
 	/** Counts down until link expires. */
-	public timer?: Timer;
+	public readonly timer				= new Timer(this.configService.cyphCountdown, false);
 
 	/** Extends the countdown duration. */
 	public async addTime (milliseconds: number) : Promise<void> {
-		if (this.timer) {
-			this.timer.addTime(milliseconds);
-		}
+		this.timer.addTime(milliseconds);
 
 		await lockTryOnce(
 			this.addTimeLock,
@@ -88,9 +91,9 @@ export class LinkConnectionComponent implements AfterViewInit {
 
 		await waitForValue(() => this.sessionService.state.sharedSecret || undefined);
 
-		this.isPassive		= this.sessionService.state.wasInitiatedByAPI;
+		this.isPassive.next(this.sessionService.state.wasInitiatedByAPI);
 
-		if (this.isPassive || !this.sessionService.state.startingNewCyph) {
+		if (this.isPassive.value || !this.sessionService.state.startingNewCyph) {
 			return;
 		}
 
@@ -102,16 +105,15 @@ export class LinkConnectionComponent implements AfterViewInit {
 
 		const linkEncoded	= encodeURIComponent(this.linkConstant);
 
-		this.linkMailto		= this.domSanitizer.bypassSecurityTrustUrl(
+		this.linkMailto.next(this.domSanitizer.bypassSecurityTrustUrl(
 			`mailto:?subject=Cyph&body=${linkEncoded}`
-		);
+		));
 
-		this.linkSMS		= this.domSanitizer.bypassSecurityTrustUrl(
+		this.linkSMS.next(this.domSanitizer.bypassSecurityTrustUrl(
 			this.envService.smsUriBase + linkEncoded
-		);
+		));
 
-		this.link			= this.linkConstant;
-		this.timer			= new Timer(this.configService.cyphCountdown, false);
+		this.link.next(this.linkConstant);
 
 		if (this.elementRef.nativeElement && this.envService.isWeb) {
 			const $element		= $(this.elementRef.nativeElement);
@@ -125,28 +127,11 @@ export class LinkConnectionComponent implements AfterViewInit {
 				$connectLinkLink.on('click', e => { e.preventDefault(); });
 			}
 			else {
-				const $connectLinkInput	= await waitForIterable(
-					() => $element.find('.connect-link-input')
-				);
+				this.connectLinkInput	= <HTMLInputElement> (await waitForIterable(
+					() => document.querySelectorAll('.connect-link-input')
+				))[0];
 
-				const connectLinkInput	= <HTMLInputElement> $connectLinkInput[0];
-
-				(async () => {
-					while (isWaiting) {
-						await sleep(1000);
-
-						if (this.advancedFeatures) {
-							continue;
-						}
-
-						if (this.link !== this.linkConstant) {
-							this.link	= this.linkConstant;
-						}
-
-						$connectLinkInput.trigger('focus');
-						connectLinkInput.setSelectionRange(0, this.linkConstant.length);
-					}
-				})();
+				this.onBlur();
 			}
 
 			await waitForIterable(() => $element.filter(':visible'));
@@ -157,14 +142,13 @@ export class LinkConnectionComponent implements AfterViewInit {
 
 		this.sessionService.connected.then(() => {
 			isWaiting			= false;
-			this.link			= '';
 			this.linkConstant	= '';
-			this.linkMailto		= undefined;
-			this.linkSMS		= undefined;
 
-			if (this.timer) {
-				this.timer.stop();
-			}
+			this.link.next('');
+			this.linkMailto.next(undefined);
+			this.linkSMS.next(undefined);
+
+			this.timer.stop();
 		});
 
 		await sleep(1000);
@@ -174,6 +158,28 @@ export class LinkConnectionComponent implements AfterViewInit {
 			isWaiting	= false;
 			this.chatService.abortSetup();
 		}
+	}
+
+	/** Blur event handler. */
+	public async onBlur () : Promise<void> {
+		await sleep(0);
+
+		if (!this.connectLinkInput || this.advancedFeatures.value) {
+			return;
+		}
+
+		this.connectLinkInput.focus();
+		this.connectLinkInput.setSelectionRange(0, this.linkConstant.length);
+	}
+
+	/** Resets link value. */
+	public async resetLinkValue (value: string) : Promise<void> {
+		this.link.next(value);
+		await sleep(0);
+		this.link.next(this.linkConstant);
+		await sleep(0);
+
+		this.onBlur();
 	}
 
 	constructor (

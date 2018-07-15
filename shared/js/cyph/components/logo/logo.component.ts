@@ -1,4 +1,4 @@
-import {Component, HostBinding, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostBinding, Input} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -9,6 +9,7 @@ import {urlToSafeStyle} from '../../util/safe-values';
  * Angular component to display logo.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-logo',
 	styleUrls: ['./logo.component.scss'],
 	templateUrl: './logo.component.html'

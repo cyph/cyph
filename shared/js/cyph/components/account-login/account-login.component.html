@@ -2,7 +2,7 @@
 	fxFlexFill
 	fxLayoutAlign='center center'
 	class='login-form animated fadeIn'
-	[class.checking]='checking'
+	[class.checking]='checking | async'
 	[class.mobile]='envService.isMobile'
 >
 	<mat-card
@@ -10,27 +10,27 @@
 		fxFlex.sm='95'
 		fxFlex.md='75'
 		fxFlex.gt-md='50'
-		*ngIf='pinUnlock !== undefined'
+		*ngIf='(pinUnlock | async) !== undefined'
 	>
 		<cyph-logo cardHeader homeLink></cyph-logo>
 		<mat-card-title cyphTranslate>
-			<span *ngIf='!pinUnlock'>{{stringsService.logInTitle}}</span>
-			<span *ngIf='pinUnlock'>{{stringsService.unlockTitle}}</span>
+			<span *ngIf='(pinUnlock | async) === false'>{{stringsService.logInTitle}}</span>
+			<span *ngIf='pinUnlock | async'>{{stringsService.unlockTitle}}</span>
 		</mat-card-title>
-		<mat-card-subtitle *ngIf='pinUnlock'>
+		<mat-card-subtitle *ngIf='pinUnlock | async'>
 			<p>
 				<span cyphTranslate>Welcome back</span>
 				&ngsp;
-				<span>{{savedUsername}}!</span>
+				<span>{{savedUsername | async}}!</span>
 				&ngsp;
 				<span cyphTranslate>Enter your PIN below.</span>
 			</p>
 			<p>
 				<span cyphTranslate>Not</span>
 				&ngsp;
-				<span>{{savedUsername}}?</span>
+				<span>{{savedUsername | async}}?</span>
 				&ngsp;
-				<a cyphTranslate (click)='pinUnlock = false'>Sign in as a different user</a>
+				<a cyphTranslate (click)='pinUnlock.next(false)'>Sign in as a different user</a>
 				&ngsp;
 				<span cyphTranslate>or</span>
 				&ngsp;
@@ -40,20 +40,28 @@
 		<mat-card-content>
 			<form ngNativeValidate (submit)='submit()'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h3 class='cyph-banner warn' [style.visibility]='error ? "visible" : "hidden"'>
+					<h3
+						class='cyph-banner warn'
+						[style.visibility]='(error | async) ? "visible" : "hidden"'
+					>
 						{{
-							pinUnlock ?
+							(pinUnlock | async) ?
 								stringsService.invalidPIN :
 								stringsService.invalidCredentials
 						}}
 					</h3>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!pinUnlock'>
+				<div
+					fxLayout='row'
+					fxLayoutAlign='center center'
+					*ngIf='(pinUnlock | async) === false'
+				>
 					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='username'
+							[ngModel]='username | async'
+							(ngModelChange)='username.next($event)'
 							[textMask]='usernameMask'
 							name='cyphUsername'
 							placeholder='Username'
@@ -62,13 +70,23 @@
 						/>
 					</mat-form-field>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!pinUnlock || pinIsCustom'>
-					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60' *ngIf='pinUnlock'>
+				<div
+					fxLayout='row'
+					fxLayoutAlign='center center'
+					*ngIf='(pinUnlock | async) === false || (pinIsCustom | async)'
+				>
+					<mat-form-field
+						fxFlex
+						fxFlex.sm='80'
+						fxFlex.gt-sm='60'
+						*ngIf='pinUnlock | async'
+					>
 						<input
 							matInput
-							[(ngModel)]='pin'
+							[ngModel]='pin | async'
+							(ngModelChange)='pin.next($event)'
 							name='lockScreenPIN'
-							[type]='hidePassword ? "password" : "text"'
+							[type]='(hidePassword | async) ? "password" : "text"'
 							[placeholder]='stringsService.pin'
 							cyphAutofocus
 							required
@@ -76,47 +94,56 @@
 						<mat-icon
 							matSuffix
 							class='suffix-button'
-							(click)='hidePassword = !hidePassword'
+							(click)='hidePassword.next(!hidePassword.value)'
 						>
-							{{hidePassword ? 'visibility' : 'visibility_off'}}
+							{{(hidePassword | async) ? 'visibility' : 'visibility_off'}}
 						</mat-icon>
 					</mat-form-field>
-					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60' *ngIf='!pinUnlock'>
+					<mat-form-field
+						fxFlex
+						fxFlex.sm='80'
+						fxFlex.gt-sm='60'
+						*ngIf='(pinUnlock | async) === false'
+					>
 						<input
 							matInput
-							[(ngModel)]='masterKey'
+							[ngModel]='masterKey | async'
+							(ngModelChange)='masterKey.next($event)'
 							name='masterKey'
-							[type]='hidePassword ? "password" : "text"'
+							[type]='(hidePassword | async) ? "password" : "text"'
 							[placeholder]='stringsService.masterKey'
 							required
 						/>
 						<mat-icon
 							matSuffix
 							class='suffix-button'
-							(click)='hidePassword = !hidePassword'
+							(click)='hidePassword.next(!hidePassword.value)'
 						>
-							{{hidePassword ? 'visibility' : 'visibility_off'}}
+							{{(hidePassword | async) ? 'visibility' : 'visibility_off'}}
 						</mat-icon>
 					</mat-form-field>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='pinUnlock && !pinIsCustom'>
+				<div
+					fxLayout='row'
+					fxLayoutAlign='center center'
+					*ngIf='(pinUnlock | async) && (pinIsCustom | async) === false'
+				>
 					<cyph-pin-input
 						fxFlex
 						fxFlex.sm='80'
 						fxFlex.gt-sm='60'
-						[(ngModel)]='pin'
+						[ngModel]='pin | async'
+						(ngModelChange)='pin.next($event)'
 						name='pin'
 						[autofocus]='true'
 						[required]='true'
 					></cyph-pin-input>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<button
-						mat-button
-						type='submit'
-						[matTooltip]='pinUnlock ? stringsService.unlock : stringsService.logIn'
-					>
-						{{pinUnlock ? stringsService.unlock : stringsService.logIn}}
+					<button mat-button type='submit' [matTooltip]='
+						(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
+					'>
+						{{(pinUnlock | async) ? stringsService.unlock : stringsService.logIn}}
 					</button>
 				</div>
 			</form>

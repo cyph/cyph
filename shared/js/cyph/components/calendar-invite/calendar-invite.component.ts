@@ -1,4 +1,11 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	Input,
+	OnChanges,
+	OnInit
+} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
@@ -26,6 +33,7 @@ import {translate} from '../../util/translate';
  * Angular component for calendar invite UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
 			multi: true,
@@ -38,6 +46,11 @@ import {translate} from '../../util/translate';
 	templateUrl: './calendar-invite.component.html'
 })
 export class CalendarInviteComponent implements ControlValueAccessor, OnChanges, OnInit {
+	/** Value. */
+	public readonly calendarInvite									=
+		new BehaviorSubject<ICalendarInvite|undefined>(undefined)
+	;
+
 	/** @see CallTypes */
 	public readonly callTypes: typeof CallTypes						= CallTypes;
 
@@ -107,6 +120,9 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	/** Indicates whether input is disabled. */
 	@Input() public isDisabled: boolean								= false;
 
+	/** isDisabled wrapper for ControlValueAccessor. */
+	public readonly isDisabledWrapper								= new BehaviorSubject(false);
+
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean									= this.envService.isMobile;
 
@@ -161,10 +177,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	;
 
 	/** @see trackBySelf */
-	public trackBySelf: typeof trackBySelf							= trackBySelf;
-
-	/** Value. */
-	public value?: ICalendarInvite;
+	public readonly trackBySelf: typeof trackBySelf					= trackBySelf;
 
 	/** Default appointment reason dropdown selection. */
 	public get defaultReasonForAppointment () : string {
@@ -173,8 +186,15 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {
-		if (this.value && !this.value.title) {
-			this.value.title	= this.defaultReasonForAppointment;
+		if (this.isDisabledWrapper.value !== this.isDisabled) {
+			this.isDisabledWrapper.next(this.isDisabled);
+		}
+
+		if (this.calendarInvite.value && !this.calendarInvite.value.title) {
+			this.calendarInvite.next({
+				...this.calendarInvite.value,
+				title: this.defaultReasonForAppointment
+			});
 		}
 
 		if (!this.followUp) {
@@ -198,8 +218,8 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 		/* Two weeks from this Monday. */
 		const timestamp	= now.getTime() + (1 - now.getDay()) * 86400000 + 1209600000;
 
-		if (this.value === undefined) {
-			this.value	= {
+		if (this.calendarInvite.value === undefined) {
+			this.calendarInvite.next({
 				alternateDays: {},
 				alternateTimeFrames: {},
 				callType: CallTypes.None,
@@ -207,7 +227,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 				endTime: timestamp + this.duration,
 				startTime: timestamp,
 				title: this.defaultReasonForAppointment
-			};
+			});
 		}
 	}
 
@@ -222,15 +242,15 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 	}
 
 	/** @inheritDoc */
-	public setDisabledState (isDisabled: boolean) : void {
-		if (this.isDisabled !== isDisabled) {
-			this.isDisabled	= isDisabled;
+	public setDisabledState (b: boolean) : void {
+		if (this.isDisabledWrapper.value !== b) {
+			this.isDisabledWrapper.next(b);
 		}
 	}
 
 	/** Disable all validation and set appointment to now. Local environments only. */
 	public async setNow () : Promise<void> {
-		if (!this.envService.debug || !this.value) {
+		if (!this.envService.debug || !this.calendarInvite.value) {
 			return;
 		}
 
@@ -249,21 +269,34 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 			this.durations.push(duration);
 		}
 
-		this.duration			= duration;
-		this.value.startTime	= timestamp - (duration / 2);
-		this.value.endTime		= timestamp + (duration / 2);
+		this.duration	= duration;
 
-		this.onChange(this.value);
+		this.valueChange({
+			...this.calendarInvite.value,
+			endTime: timestamp + (duration / 2),
+			startTime: timestamp - (duration / 2)
+		});
+
+		this.changeDetectorRef.markForCheck();
+	}
+
+	/** Handle value change. */
+	public valueChange (value: ICalendarInvite) : void {
+		this.calendarInvite.next(value);
+		this.onChange(value);
 	}
 
 	/** @inheritDoc */
 	public writeValue (value?: ICalendarInvite) : void {
-		if (value && this.value !== value) {
-			this.value	= value;
+		if (value && this.calendarInvite.value !== value) {
+			this.calendarInvite.next(value);
 		}
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly changeDetectorRef: ChangeDetectorRef,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
 

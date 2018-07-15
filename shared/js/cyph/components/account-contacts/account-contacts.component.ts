@@ -1,4 +1,12 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	Input,
+	OnChanges,
+	OnInit,
+	SimpleChanges,
+	ViewChild
+} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 /* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
 import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
@@ -19,6 +27,7 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
  * Angular component for account contacts UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-contacts',
 	styleUrls: ['./account-contacts.component.scss'],
 	templateUrl: './account-contacts.component.html'

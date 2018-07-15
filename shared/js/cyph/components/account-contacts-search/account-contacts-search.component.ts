@@ -1,4 +1,5 @@
 import {
+	ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
 	Input,
@@ -25,6 +26,7 @@ import {SearchBarComponent} from '../search-bar';
  * Angular component for account contacts search UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-contacts-search',
 	styleUrls: ['./account-contacts-search.component.scss'],
 	templateUrl: './account-contacts-search.component.html'

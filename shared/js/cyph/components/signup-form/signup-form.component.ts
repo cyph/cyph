@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import {emailPattern} from '../../email-pattern';
 import {EnvService} from '../../services/env.service';
@@ -11,6 +11,7 @@ import {sleep} from '../../util/wait';
  * Angular component for signup form.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-signup-form',
 	styleUrls: ['./signup-form.component.scss'],
 	templateUrl: './signup-form.component.html'

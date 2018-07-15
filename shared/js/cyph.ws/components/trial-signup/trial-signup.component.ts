@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {emailPattern} from '../../../cyph/email-pattern';
 import {DatabaseService} from '../../../cyph/services/database.service';
@@ -14,6 +14,7 @@ import {AppService} from '../../app.service';
  * Angular component for the Cyph trial signup screen.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-trial-signup',
 	styleUrls: ['./trial-signup.component.scss'],
 	templateUrl: './trial-signup.component.html'
@@ -25,22 +26,22 @@ export class TrialSignupComponent implements OnInit {
 	;
 
 	/** Indicates whether signup attempt is in progress. */
-	public checking: boolean	= false;
+	public readonly checking		= new BehaviorSubject<boolean>(false);
 
 	/** Company. */
-	public company: string		= '';
+	public readonly company			= new BehaviorSubject<string>('');
 
 	/** Email address. */
-	public email: string		= '';
+	public readonly email			= new BehaviorSubject<string>('');
 
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern	= emailPattern;
+	public readonly emailPattern	= emailPattern;
 
 	/** Indicates whether the last signup attempt has failed. */
-	public error: boolean		= false;
+	public readonly error			= new BehaviorSubject<boolean>(false);
 
 	/** Name. */
-	public name: string			= '';
+	public readonly name			= new BehaviorSubject<string>('');
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
@@ -49,7 +50,7 @@ export class TrialSignupComponent implements OnInit {
 
 	/** Initiates signup attempt. */
 	public async submit () : Promise<void> {
-		this.checking	= true;
+		this.checking.next(true);
 
 		try {
 			const url		= location.href.split('/').slice(0, 3).join('/');
@@ -57,9 +58,9 @@ export class TrialSignupComponent implements OnInit {
 			const [apiKey, {category, item}]	= await Promise.all([
 				request({
 					data: {
-						company: this.company,
-						email: this.email,
-						name: this.name,
+						company: this.company.value,
+						email: this.email.value,
+						name: this.name.value,
 						namespace: this.databaseService.namespace,
 						url
 					},
@@ -81,8 +82,8 @@ export class TrialSignupComponent implements OnInit {
 			;
 		}
 		catch {
-			this.error		= true;
-			this.checking	= false;
+			this.error.next(true);
+			this.checking.next(false);
 		}
 	}
 

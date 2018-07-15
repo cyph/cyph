@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -6,6 +6,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for alert dialog.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-dialog-alert',
 	styleUrls: ['./dialog-alert.component.scss'],
 	templateUrl: './dialog-alert.component.html'

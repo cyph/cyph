@@ -1,22 +1,25 @@
 <div
 	fxFlexFill
 	fxLayoutAlign='center start'
-	[class.initiating]='showSpinner'
-	*ngIf='!realTime || accountService.enableDocs'
+	[class.initiating]='showSpinner | async'
+	*ngIf='(realTime | async) === false || accountService.enableDocs'
 >
 	<mat-card fxFlex class='note'>
 		<div fxLayout='column'>
 			<div fxLayoutAlign='center center' fxLayout='row'>
 				<mat-card-title fxFlex>
-					<div *ngIf='!editable'>
-						{{(note?.metadata | async)?.name || stringsService.untitled}}
+					<div *ngIf='(noteEditable | async) === false'>
+						{{((note | async)?.metadata | async)?.name || stringsService.untitled}}
 					</div>
-					<mat-form-field fxFlex *ngIf='editable'>
+					<mat-form-field fxFlex *ngIf='noteEditable | async'>
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]='(note?.metadata | async)?.name || stringsService.untitled'
-							(ngModelChange)='noteData.nameChange = $event'
+							[ngModel]='
+								((note | async)?.metadata | async)?.name ||
+								stringsService.untitled
+							'
+							(ngModelChange)='updateNoteData({nameChange: $event})'
 							(blur)='realTimeTitleUpdate()'
 							[maxlength]='accountFilesService.maxNameLength'
 							required
@@ -28,8 +31,8 @@
 						mat-icon-button
 						cyphTranslate
 						matTooltip='Close Editor'
-						[routerLink]='newNote ? ".." : "."'
-						*ngIf='editable'
+						[routerLink]='(newNote | async) ? ".." : "."'
+						*ngIf='noteEditable | async'
 					>
 						<mat-icon>close</mat-icon>
 					</button>
@@ -38,7 +41,7 @@
 						cyphTranslate
 						matTooltip='Back'
 						routerLink='..'
-						*ngIf='!editable'
+						*ngIf='(noteEditable | async) === false'
 					>
 						<mat-icon>arrow_back</mat-icon>
 					</button>
@@ -48,9 +51,9 @@
 						matTooltip='Edit'
 						routerLink='edit'
 						*ngIf='
-							!editable &&
+							(noteEditable | async) === false &&
 							accountDatabaseService.currentUser.value?.user.username ===
-								noteData.owner
+								(noteData | async)?.owner
 						'
 					>
 						<mat-icon>edit</mat-icon>
@@ -63,7 +66,7 @@
 							accountFilesService.shareFilePrompt(metadata);
 							$event.stopPropagation();
 						'
-						*ngIf='note?.metadata | async as metadata'
+						*ngIf='(note | async)?.metadata | async as metadata'
 					>
 						<mat-icon>share</mat-icon>
 					</button>
@@ -73,10 +76,10 @@
 						matTooltip='Save'
 						(click)='saveNote()'
 						*ngIf='
-							editable &&
-							!realTime &&
+							(noteEditable | async) &&
+							(realTime | async) === false &&
 							accountDatabaseService.currentUser.value?.user.username ===
-								noteData.owner
+								(noteData | async)?.owner
 						'
 					>
 						<mat-icon>save</mat-icon>
@@ -85,25 +88,25 @@
 						mat-icon-button
 						cyphTranslate
 						matTooltip='Delete'
-						*ngIf='!newNote'
-						(click)='accountFilesService.remove(note?.metadata)'
+						*ngIf='(newNote | async) === false'
+						(click)='accountFilesService.remove(note.value?.metadata)'
 					>
 						<mat-icon>delete</mat-icon>
 					</button>
 				</mat-card-header>
 			</div>
 			<mat-card-content fxFlex fxLayout='column'>
-				<div [class.cyph-light-theme]='editable'>
-					<mat-card [class.editable]='editable'>
+				<div [class.cyph-light-theme]='noteEditable | async'>
+					<mat-card [class.editable]='noteEditable | async'>
 						<mat-card-content>
 							<cyph-quill
-								[content]='note?.content | async'
-								[deltas]='note?.doc?.deltas'
-								[isDisabled]='!editable'
+								[content]='(note | async)?.content | async'
+								[deltas]='(note | async)?.doc?.deltas'
+								[isDisabled]='(noteEditable | async) === false'
 								(contentChange)='onChange($event)'
 							></cyph-quill>
 							<!--
-								[selections]='note?.doc?.selections'
+								[selections]='(note | async)?.doc?.selections'
 								(selectionChange)='onSelectionChange($event)'
 							-->
 						</mat-card-content>
@@ -115,6 +118,6 @@
 
 	<mat-progress-spinner
 		mode='indeterminate'
-		*ngIf='showSpinner'
+		*ngIf='showSpinner | async'
 	></mat-progress-spinner>
 </div>

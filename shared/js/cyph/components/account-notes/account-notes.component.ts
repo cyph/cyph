@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {IAccountFileRecord, IAccountFileReference} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -16,40 +17,39 @@ import {trackByID} from '../../track-by/track-by-id';
  * Angular component for notes UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-notes',
 	styleUrls: ['./account-notes.component.scss'],
 	templateUrl: './account-notes.component.html'
 })
 export class AccountNotesComponent implements OnInit {
-	/** Indicates whether or not the real-time doc UI is enabled. */
-	public realTime: boolean	= false;
-
-	/** @see trackByID */
-	public readonly trackByID: typeof trackByID	= trackByID;
-
 	/** List of incoming notes to display. */
-	public get incomingNotes () : Observable<(IAccountFileRecord&IAccountFileReference)[]> {
-		return this.realTime ?
+	public readonly incomingNotes: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
+		this.activatedRoute.data.pipe(mergeMap(o => o.realTime ?
 			this.accountFilesService.incomingFilesFiltered.docs :
 			this.accountFilesService.incomingFilesFiltered.notes
-		;
-	}
+		))
+	;
+
+	/** List of notes to display. */
+	public readonly notes: Observable<(IAccountFileRecord&{owner: string})[]>	=
+		this.activatedRoute.data.pipe(mergeMap(o => o.realTime ?
+			this.accountFilesService.filesListFiltered.docs :
+			this.accountFilesService.filesListFiltered.notes
+		))
+	;
+
+	/** Indicates whether or not the real-time doc UI is enabled. */
+	public readonly realTime: Observable<boolean>	=
+		this.activatedRoute.data.pipe(map(o => o.realTime))
+	;
+
+	/** @see trackByID */
+	public readonly trackByID: typeof trackByID		= trackByID;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
-
-		this.activatedRoute.data.subscribe(o => {
-			this.realTime	= o.realTime;
-		});
-	}
-
-	/** List of notes to display. */
-	public get notes () : Observable<(IAccountFileRecord&{owner: string})[]> {
-		return this.realTime ?
-			this.accountFilesService.filesListFiltered.docs :
-			this.accountFilesService.filesListFiltered.notes
-		;
 	}
 
 	constructor (

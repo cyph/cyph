@@ -1,9 +1,9 @@
-<section fxFlexFill fxLayout='column' id='main' *ngIf='ready'>
+<section fxFlexFill fxLayout='column' id='main' *ngIf='ready | async'>
 	<div
 		fxFlexFill
 		fxLayoutAlign='center center'
 		class='login-form'
-		[class.checking]='checking'
+		[class.checking]='checking | async'
 	>
 		<mat-card fxFlex fxFlex.sm='95' fxFlex.md='75' fxFlex.gt-md='50'>
 			<cyph-logo cardHeader homeLink></cyph-logo>
@@ -24,7 +24,7 @@
 					<div fxLayout='row' fxLayoutAlign='center center'>
 						<h3
 							class='cyph-banner warn'
-							[style.visibility]='error ? "visible" : "hidden"'
+							[style.visibility]='(error | async) ? "visible" : "hidden"'
 						>
 							{{stringsService.invalidPassword}}
 						</h3>
@@ -33,12 +33,13 @@
 						<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
 							<input
 								matInput
+								cyphAutofocus
 								cyphTranslate
-								[(ngModel)]='password'
+								[ngModel]='password | async'
+								(ngModelChange)='password.next($event)'
 								name='password'
 								type='password'
 								placeholder='Password'
-								cyphAutofocus
 								required
 							/>
 						</mat-form-field>

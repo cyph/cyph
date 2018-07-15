@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -15,6 +15,7 @@ import {readableByteLength} from '../../util/formatting';
  * Angular component for files UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-files',
 	styleUrls: ['./account-files.component.scss'],
 	templateUrl: './account-files.component.html'

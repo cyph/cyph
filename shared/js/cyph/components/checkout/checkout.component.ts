@@ -1,7 +1,16 @@
 /* tslint:disable:no-import-side-effect */
 
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	Output
+} from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
+import {BehaviorSubject} from 'rxjs';
 import {AppService} from '../../../cyph.com/app.service';
 import {SubscriptionTypes} from '../../checkout';
 import {emailPattern} from '../../email-pattern';
@@ -16,6 +25,7 @@ import {sleep} from '../../util/wait';
  * Angular component for Braintree payment checkout UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-checkout',
 	styleUrls: ['./checkout.component.scss'],
 	templateUrl: './checkout.component.html'
@@ -25,31 +35,31 @@ export class CheckoutComponent implements AfterViewInit {
 	private braintreeInstance: any;
 
 	/** Amount in dollars. */
-	@Input() public amount: number		= 0;
+	@Input() public amount: number			= 0;
 
 	/** Trial API key to upgrade. */
-	@Input() public apiKey: string		= '';
+	@Input() public apiKey: string			= '';
 
 	/** Item category ID number. */
 	@Input() public category?: number;
 
 	/** Company. */
-	@Input() public company: string		= '';
+	@Input() public company: string			= '';
 
 	/** Indicates whether checkout is complete. */
-	public complete: boolean			= false;
+	public readonly complete				= new BehaviorSubject<boolean>(false);
 
 	/** Checkout confirmation event. */
-	@Output() public readonly confirmed: EventEmitter<void>	= new EventEmitter<void>();
+	@Output() public readonly confirmed		= new EventEmitter<void>();
 
 	/** ID of Braintree container element. */
-	public readonly containerID: string	= `id-${uuid()}`;
+	public readonly containerID: string		= `id-${uuid()}`;
 
 	/** Email address. */
 	@Input() public email?: string;
 
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern	= emailPattern;
+	public readonly emailPattern			= emailPattern;
 
 	/** Item ID number. */
 	@Input() public item?: number;
@@ -58,9 +68,9 @@ export class CheckoutComponent implements AfterViewInit {
 	@Input() public name?: string;
 
 	/** Indicates whether payment is pending. */
-	public pending: boolean				= false;
+	public readonly pending					= new BehaviorSubject<boolean>(false);
 
-	public itemName: string | undefined	=
+	public itemName: string | undefined		=
 		this.appService.cart ?
 			this.appService.cart.itemName.replace(/([A-Z])/g, ' $1').toUpperCase() :
 			undefined
@@ -73,10 +83,10 @@ export class CheckoutComponent implements AfterViewInit {
 	@Input() public subscriptionType?: SubscriptionTypes;
 
 	/** @see SubscriptionTypes */
-	@Input() public subscriptionTypes: typeof SubscriptionTypes	= SubscriptionTypes;
+	public readonly subscriptionTypes		= SubscriptionTypes;
 
 	/** Indicates whether checkout is complete. */
-	public success: boolean				= false;
+	public readonly success					= new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -87,7 +97,7 @@ export class CheckoutComponent implements AfterViewInit {
 
 		await sleep(0);
 
-		this.complete	= false;
+		this.complete.next(false);
 
 		const authorization: string	= await request({
 			retries: 5,
@@ -120,15 +130,15 @@ export class CheckoutComponent implements AfterViewInit {
 	/** Submits payment. */
 	public async submit () : Promise<void> {
 		if (!this.braintreeInstance) {
-			this.complete	= true;
-			this.pending	= false;
-			this.success	= false;
+			this.complete.next(true);
+			this.pending.next(false);
+			this.success.next(false);
 
 			throw new Error('Cannot process payment because Braintree failed to initialize.');
 		}
 
 		try {
-			this.pending		= true;
+			this.pending.next(true);
 
 			const paymentMethod	= await new Promise<{
 				data: any;
@@ -168,12 +178,12 @@ export class CheckoutComponent implements AfterViewInit {
 			}
 
 			if (!this.noSpinnerEnd) {
-				this.complete	= true;
-				this.success	= success;
+				this.complete.next(true);
+				this.success.next(success);
 			}
 		}
 		finally {
-			this.pending	= this.noSpinnerEnd;
+			this.pending.next(this.noSpinnerEnd);
 		}
 	}
 

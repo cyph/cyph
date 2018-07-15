@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
@@ -11,6 +11,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for image dialog.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-dialog-image',
 	styleUrls: ['./dialog-image.component.scss'],
 	templateUrl: './dialog-image.component.html'

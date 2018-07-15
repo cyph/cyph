@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject} from 'rxjs';
 import {usernameMask} from '../../account';
 import {BinaryProto, BooleanProto, StringProto} from '../../proto';
 import {AccountService} from '../../services/account.service';
@@ -15,56 +16,57 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for account login UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-login',
 	styleUrls: ['./account-login.component.scss'],
 	templateUrl: './account-login.component.html'
 })
 export class AccountLoginComponent implements OnInit {
 	/** @ignore */
-	private savedMasterKey?: Uint8Array;
+	private readonly savedMasterKey		= new BehaviorSubject<Uint8Array|undefined>(undefined);
 
 	/** Indicates whether login attempt is in progress. */
-	public checking: boolean			= true;
+	public readonly checking			= new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether the last login attempt has failed. */
-	public error: boolean				= false;
+	public readonly error				= new BehaviorSubject<boolean>(false);
 
 	/** Password visibility setting. */
-	public hidePassword: boolean		= true;
+	public readonly hidePassword		= new BehaviorSubject<boolean>(true);
 
 	/** Master key to be used for login attempt. */
-	public masterKey: string			= '';
+	public readonly masterKey			= new BehaviorSubject<string>('');
 
 	/** PIN to be used for login attempt. */
-	public pin: string					= '';
+	public readonly pin					= new BehaviorSubject<string>('');
 
 	/** Indicates whether PIN is custom. */
-	public pinIsCustom: boolean			= true;
+	public readonly pinIsCustom			= new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether a PIN unlock using saved credentials will be performed. */
-	public pinUnlock: boolean			= false;
+	public readonly pinUnlock			= new BehaviorSubject<boolean>(false);
 
 	/** Username saved in local storage from previous login. */
-	public savedUsername?: string;
+	public readonly savedUsername		= new BehaviorSubject<string|undefined>(undefined);
 
 	/** Username to be used for login attempt. */
-	public username: string				= '';
+	public readonly username			= new BehaviorSubject<string>('');
 
 	/** @see usernameMask */
 	public readonly usernameMask: any	= usernameMask;
 
 	/** @ignore */
 	private async postLogin () : Promise<void> {
-		if (this.savedMasterKey) {
-			this.potassiumService.clearMemory(this.savedMasterKey);
+		if (this.savedMasterKey.value) {
+			this.potassiumService.clearMemory(this.savedMasterKey.value);
 		}
 
-		this.masterKey		= '';
-		this.pin			= '';
-		this.pinIsCustom	= true;
-		this.savedMasterKey	= undefined;
-		this.savedMasterKey	= undefined;
-		this.username		= '';
+		this.masterKey.next('');
+		this.pin.next('');
+		this.pinIsCustom.next(true);
+		this.savedMasterKey.next(undefined);
+		this.savedUsername.next(undefined);
+		this.username.next('');
 
 		await this.router.navigate(
 			this.activatedRoute.snapshot.url.length > 0 ?
@@ -83,80 +85,73 @@ export class AccountLoginComponent implements OnInit {
 		}
 
 		try {
-			this.pinIsCustom	= await this.localStorageService.getItem(
-				'pinIsCustom',
-				BooleanProto
-			).catch(
-				() => true
-			);
+			const [pinIsCustom, savedMasterKey, savedUsername]	= await Promise.all([
+				this.localStorageService.getItem('pinIsCustom', BooleanProto).catch(() => true),
+				this.localStorageService.getItem('masterKey', BinaryProto).catch(() => undefined),
+				this.localStorageService.getItem('username', StringProto).catch(() => undefined)
+			]);
 
-			this.savedMasterKey	= await this.localStorageService.getItem(
-				'masterKey',
-				BinaryProto
-			).catch(
-				() => undefined
-			);
+			this.pinIsCustom.next(pinIsCustom);
+			this.savedMasterKey.next(savedMasterKey);
+			this.savedUsername.next(savedUsername);
 
-			this.savedUsername	= await this.localStorageService.getItem(
-				'username',
-				StringProto
-			).catch(
-				() => undefined
-			);
-
-			if (!(this.savedMasterKey && this.savedUsername)) {
+			if (!(savedMasterKey && savedUsername)) {
 				return;
 			}
 
-			this.pinUnlock	= true;
+			this.pinUnlock.next(true);
 
 			const savedPIN	= await this.accountAuthService.getSavedPIN();
 
 			if (
 				savedPIN &&
-				await this.accountAuthService.login(
-					this.savedUsername,
-					this.savedMasterKey,
-					savedPIN
-				)
+				(await this.accountAuthService.login(savedUsername, savedMasterKey, savedPIN))
 			) {
 				this.potassiumService.clearMemory(savedPIN);
 				await this.postLogin();
 			}
 		}
 		finally {
-			this.checking	= false;
+			this.checking.next(false);
 			this.accountService.resolveUiReady();
 		}
 	}
 
 	/** Removes locally saved login credentials. */
 	public async removeSavedCredentials () : Promise<void> {
-		if (this.savedMasterKey) {
-			this.potassiumService.clearMemory(this.savedMasterKey);
+		if (this.savedMasterKey.value) {
+			this.potassiumService.clearMemory(this.savedMasterKey.value);
 		}
 
 		await this.accountAuthService.removeSavedCredentials();
 
-		this.pinIsCustom	= true;
-		this.pinUnlock		= false;
-		this.savedMasterKey	= undefined;
-		this.savedMasterKey	= undefined;
+		this.pinIsCustom.next(true);
+		this.pinUnlock.next(false);
+		this.savedMasterKey.next(undefined);
+		this.savedUsername.next(undefined);
 	}
 
 	/** Initiates login attempt. */
 	public async submit () : Promise<void> {
-		this.checking	= true;
-		this.error		= false;
+		this.checking.next(true);
+		this.error.next(false);
 
-		this.error		= !(await (this.pinUnlock && this.savedMasterKey && this.savedUsername ?
-			this.accountAuthService.login(this.savedUsername, this.savedMasterKey, this.pin) :
-			this.accountAuthService.login(this.username, this.masterKey)
-		));
+		this.error.next(!(await (
+			this.pinUnlock.value && this.savedMasterKey.value && this.savedUsername.value ?
+				this.accountAuthService.login(
+					this.savedUsername.value,
+					this.savedMasterKey.value,
+					this.pin.value
+				) :
+				this.accountAuthService.login(
+					this.username.value,
+					this.masterKey.value
+				)
+		)));
 
-		this.checking	= false;
+		this.checking.next(false);
 
-		if (this.error) {
+		if (this.error.value) {
 			return;
 		}
 

@@ -13,14 +13,14 @@
 		<div></div>
 	</div>
 	<div>
-		<span *ngIf='isPassive && !envService.isTelehealth' cyphTranslate>
+		<span *ngIf='(isPassive | async) && !envService.isTelehealth' cyphTranslate>
 			Waiting for user to join...
 		</span>
-		<span *ngIf='isPassive && envService.isTelehealth' cyphTranslate>
+		<span *ngIf='(isPassive | async) && envService.isTelehealth' cyphTranslate>
 			You have successfully checked in. Your telehealth session
 			will begin when the other party connects.
 		</span>
-		<div *ngIf='!isPassive'>
+		<div *ngIf='(isPassive | async) === false'>
 			<span *ngIf='envService.isTelehealth' cyphTranslate>
 				Send the link below to the patient. When they open it,
 				your telehealth session will begin.
@@ -42,7 +42,11 @@
 					<input
 						matInput
 						class='connect-link-input'
-						[(ngModel)]='link'
+						[ngModel]='link | async'
+						(ngModelChange)='resetLinkValue($event)'
+						(blur)='onBlur()'
+						(click)='onBlur()'
+						(keydown)='onBlur()'
 						[matTooltip]='stringsService.linkTooltip'
 					/>
 				</mat-form-field>
@@ -66,7 +70,7 @@
 				<br />
 				<br />
 
-				<a mat-mini-fab matTooltip='SMS' [href]='linkSMS' cyphTranslate>
+				<a mat-mini-fab matTooltip='SMS' [href]='linkSMS | async' cyphTranslate>
 					<mat-icon>textsms</mat-icon>
 				</a>
 
@@ -74,7 +78,13 @@
 					&nbsp;
 				</span>
 
-				<a mat-mini-fab matTooltip='Email' target='_self' [href]='linkMailto' cyphTranslate>
+				<a
+					mat-mini-fab
+					matTooltip='Email'
+					target='_self'
+					[href]='linkMailto | async'
+					cyphTranslate
+				>
 					<mat-icon>email</mat-icon>
 				</a>
 
@@ -94,13 +104,13 @@
 		</div>
 
 		<br />
-		<div class='timer' *ngIf='timer'>
+		<div class='timer'>
 			<span cyphTranslate>
 				Link expires in
 			</span>
 			&ngsp;
 			<span class='countdown'>
-				{{timer?.timestamp | async}}
+				{{timer.timestamp | async}}
 			</span>
 			&ngsp;
 			<button
@@ -131,17 +141,22 @@
 				*ngIf='envService.environment.customBuild?.config.pro'
 			>
 				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-slide-toggle [(ngModel)]='advancedFeatures' cyphTranslate>
+					<mat-slide-toggle
+						[ngModel]='advancedFeatures | async'
+						(ngModelChange)='advancedFeatures.next($event)'
+						cyphTranslate
+					>
 						Advanced Features
 					</mat-slide-toggle>
 				</div>
 
-				<div fxLayout='row' fxLayoutGap='16px' *ngIf='advancedFeatures'>
+				<div fxLayout='row' fxLayoutGap='16px' *ngIf='advancedFeatures | async'>
 					<mat-form-field fxFlex fxLayout='column'>
 						<textarea
 							matInput
 							cyphTranslate
-							[(ngModel)]='queuedMessageDraft'
+							[ngModel]='queuedMessageDraft | async'
+							(ngModelChange)='queuedMessageDraft.next($event)'
 							placeholder='Queue up first message'
 							rows='3'
 						></textarea>
@@ -152,7 +167,7 @@
 								mat-icon-button
 								matTooltip='Save'
 								cyphTranslate
-								(click)='chatService.setQueuedMessage(queuedMessageDraft)'
+								(click)='chatService.setQueuedMessage(queuedMessageDraft.value)'
 							>
 								<mat-icon>save</mat-icon>
 							</button>

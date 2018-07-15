@@ -5,12 +5,12 @@
 		fxLayoutGap='32px'
 		ngNativeValidate
 		(submit)='
-			getMasterKeyOnly && masterKeyReady ?
-				submitMasterKey.emit(useXkcdPassphrase ? xkcd : masterKey) :
-			getPinOnly && lockScreenPasswordReady ?
+			getMasterKeyOnly && masterKeyReady.value ?
+				submitMasterKey.emit(useXkcdPassphrase.value ? xkcd : masterKey.value) :
+			getPinOnly && lockScreenPasswordReady.value ?
 				submitPIN.emit({
-					isCustom: !useLockScreenPIN,
-					value: useLockScreenPIN ? lockScreenPIN : lockScreenPassword
+					isCustom: !useLockScreenPIN.value,
+					value: useLockScreenPIN.value ? lockScreenPIN.value : lockScreenPassword.value
 				}) :
 				undefined
 		'
@@ -23,9 +23,9 @@
 		</div>
 
 		<div fxLayoutAlign='center center'>
-			<button mat-raised-button type='submit' [disabled]='!(
-				getMasterKeyOnly ? masterKeyReady : lockScreenPasswordReady
-			)'>
+			<button mat-raised-button type='submit' [disabled]='
+				((getMasterKeyOnly ? masterKeyReady : lockScreenPasswordReady) | async) === false
+			'>
 				{{stringsService.submit}}
 			</button>
 		</div>
@@ -34,7 +34,7 @@
 
 <div
 	class='login-form'
-	[class.checking]='checking'
+	[class.checking]='checking | async'
 	*ngIf='!getMasterKeyOnly && !getPinOnly'
 >
 	<mat-card fxFlex class='fullscreen'>
@@ -53,8 +53,8 @@
 						(submit)='submit()'
 					>
 						<mat-tab-group
-							[(selectedIndex)]='tabIndex'
-							(selectedIndexChange)='updateRoute(0, $event)'
+							[selectedIndex]='tabIndex | async'
+							(selectedIndexChange)='tabIndex.next($event); updateRoute(0, $event)'
 						>
 							<mat-tab>
 								<ng-template mat-tab-label>
@@ -123,10 +123,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='tabIndex > 0'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 0'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='tabIndex <= 0'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 0'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -157,6 +157,9 @@
 													fxFlex
 													fxFlex.sm='80'
 													fxFlex.gt-sm='60'
+													*ngIf='
+														usernameWatcher | async as currentUsername
+													'
 												>
 													<input
 														matInput
@@ -186,9 +189,9 @@
 														cyphTranslate
 														matTooltip='Username unavailable'
 														*ngIf='
-															!username.pending &&
-															!!username.value &&
-															!!username.errors
+															!currentUsername.pending &&
+															!!currentUsername.value &&
+															!!currentUsername.errors
 														'
 													>
 														error_outline
@@ -198,16 +201,18 @@
 														cyphTranslate
 														matTooltip='Username available!'
 														*ngIf='
-															!username.pending &&
-															!!username.value &&
-															!username.errors
+															!currentUsername.pending &&
+															!!currentUsername.value &&
+															!currentUsername.errors
 														'
 													>
 														check
 													</mat-icon>
 													<mat-error
 														cyphTranslate
-														*ngIf='username.hasError("usernameTaken")'
+														*ngIf='currentUsername.hasError(
+															"usernameTaken"
+														)'
 													>
 														Username unavailable
 													</mat-error>
@@ -223,7 +228,8 @@
 														matInput
 														cyphTranslate
 														[maxlength]='accountService.maxNameLength'
-														[(ngModel)]='name'
+														[ngModel]='name | async'
+														(ngModelChange)='name.next($event)'
 														name='name'
 														[placeholder]='envService.isTelehealth ?
 															stringsService.name :
@@ -242,7 +248,8 @@
 													<input
 														matInput
 														cyphTranslate
-														[(ngModel)]='email'
+														[ngModel]='email | async'
+														(ngModelChange)='email.next($event)'
 														name='email'
 														type='email'
 														[pattern]='emailPattern'
@@ -266,7 +273,8 @@
 													<input
 														matInput
 														cyphTranslate
-														[(ngModel)]='inviteCode'
+														[ngModel]='inviteCode | async'
+														(ngModelChange)='inviteCode.next($event)'
 														name='inviteCode'
 														type='inviteCode'
 														placeholder='Invite Code'
@@ -280,10 +288,10 @@
 							</mat-tab>
 							<mat-tab *ngIf='false'>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='tabIndex > 1'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 1'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='tabIndex <= 1'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 1'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -300,10 +308,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='tabIndex > 1'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 1'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='tabIndex <= 1'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 1'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -314,10 +322,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='tabIndex > 2'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 2'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='tabIndex <= 2'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 2'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -328,10 +336,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='tabIndex > 3'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 3'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='tabIndex <= 3'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 3'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -351,7 +359,7 @@
 									<div fxLayout='row' fxLayoutAlign='center center'>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3 class='cyph-banner warn' *ngIf='error'>
+												<h3 class='cyph-banner warn' *ngIf='error | async'>
 													{{
 														accountAuthService.errorMessage ||
 														stringsService.signupFailed
@@ -362,19 +370,21 @@
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<strong cyphTranslate>Username:</strong>
 												&nbsp;
-												<span>{{username.value}}</span>
+												<span>{{(usernameWatcher | async)?.value}}</span>
 											</div>
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<strong cyphTranslate>Name:</strong>
 												&nbsp;
-												<span>{{name}}</span>
+												<span>{{name | async}}</span>
 											</div>
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<strong cyphTranslate>Email:</strong>
 												&nbsp;
-												<span>{{email || stringsService.omitted}}</span>
+												<span>
+													{{(email | async) || stringsService.omitted}}
+												</span>
 											</div>
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
@@ -382,10 +392,10 @@
 													Lock Screen PIN/Password:
 												</strong>
 												&nbsp;
-												<span *ngIf='useLockScreenPIN'>
-													{{lockScreenPIN}}
+												<span *ngIf='useLockScreenPIN | async'>
+													{{lockScreenPIN | async}}
 												</span>
-												<span *ngIf='!useLockScreenPIN'>
+												<span *ngIf='(useLockScreenPIN | async) === false'>
 													&#xfe61;&#xfe61;&#xfe61;&#xfe61;
 												</span>
 											</div>
@@ -398,15 +408,23 @@
 						<div
 							fxLayout='row'
 							fxLayoutAlign='center center'
-							*ngIf='tabIndex === totalSteps'
+							*ngIf='((tabIndex | async) || 0) === totalSteps'
 						>
-							<button mat-button type='submit' [disabled]='!readyToSubmit'>
+							<button
+								mat-button
+								type='submit'
+								[disabled]='(readyToSubmit | async) === false'
+							>
 								<span cyphTranslate>Register</span>
 							</button>
 						</div>
 					</form>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='tabIndex !== totalSteps'>
+				<div
+					fxLayout='row'
+					fxLayoutAlign='center center'
+					*ngIf='((tabIndex | async) || 0) !== totalSteps'
+				>
 					<button mat-button (click)='updateRoute(1)'>
 						<span cyphTranslate>Next</span>
 					</button>
@@ -495,9 +513,9 @@
 
 		<div
 			fxLayout='row'
-			(click)='useXkcdPassphrase = true'
+			(click)='useXkcdPassphrase.next(true)'
 			class='password-option'
-			[class.deselected]='!useXkcdPassphrase'
+			[class.deselected]='(useXkcdPassphrase | async) === false'
 		>
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -511,21 +529,21 @@
 						fxFlex.sm='80'
 						fxFlex.gt-sm='60'
 						class='spoiler'
-						[class.revealed]='!spoiler'
+						[class.revealed]='(spoiler | async) === false'
 						(click)='
-							spoiler = !spoiler;
-							xkcdPassphraseHasBeenViewed = true;
+							spoiler.next(!spoiler.value);
+							xkcdPassphraseHasBeenViewed.next(true);
 						'
 					>
 						<div class='xkcd-passphrase animated fadeIn'>
 							<span
-								*ngIf='spoiler'
+								*ngIf='spoiler | async'
 								class='animated fadeIn'
 							>
 								Click to Reveal
 							</span>
 							<span
-								*ngIf='!spoiler'
+								*ngIf='(spoiler | async) === false'
 								class='animated fadeIn'
 							>
 								{{xkcdPassphrase | async}}
@@ -539,9 +557,9 @@
 		<div
 			fxLayout='row'
 			cyphTranslate
-			(click)='useXkcdPassphrase = false'
+			(click)='useXkcdPassphrase.next(false)'
 			class='password-option'
-			[class.deselected]='useXkcdPassphrase'
+			[class.deselected]='useXkcdPassphrase | async'
 		>
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -554,26 +572,26 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='masterKey'
+							[ngModel]='masterKey | async'
+							(ngModelChange)='masterKey.next($event)'
 							name='masterKey'
-							[type]='hidePassword.masterKey ?
+							[type]='(hidePassword.masterKey | async) ?
 								"password" :
 								"text"
 							'
 							placeholder='Master Key'
-							[required]='!useXkcdPassphrase'
+							[required]='(useXkcdPassphrase | async) === false'
 							[pattern]='".{" + masterKeyLength + ",}"'
 						/>
 						<mat-icon
 							matSuffix
 							class='suffix-button'
-							(click)='
-								hidePassword.masterKey =
-									!hidePassword.masterKey
-							'
+							(click)='hidePassword.masterKey.next(
+								!hidePassword.masterKey.value
+							)'
 						>
 							{{
-								hidePassword.masterKey ?
+								(hidePassword.masterKey | async) ?
 									'visibility' :
 									'visibility_off'
 							}}
@@ -585,26 +603,26 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='masterKeyConfirm'
+							[ngModel]='masterKeyConfirm | async'
+							(ngModelChange)='masterKeyConfirm.next($event)'
 							name='masterKeyConfirm'
-							[type]='hidePassword.masterKeyConfirm ?
+							[type]='(hidePassword.masterKeyConfirm | async) ?
 								"password" :
 								"text"
 							'
 							placeholder='Confirm Master Key'
-							[required]='!useXkcdPassphrase'
-							[pattern]='masterKey'
+							[required]='(useXkcdPassphrase | async) === false'
+							[pattern]='masterKey | async'
 						/>
 						<mat-icon
 							matSuffix
 							class='suffix-button'
-							(click)='
-								hidePassword.masterKeyConfirm =
-									!hidePassword.masterKeyConfirm
-							'
+							(click)='hidePassword.masterKeyConfirm.next(
+								!hidePassword.masterKeyConfirm.value
+							)'
 						>
 							{{
-								hidePassword.masterKeyConfirm ?
+								(hidePassword.masterKeyConfirm | async) ?
 									'visibility' :
 									'visibility_off'
 							}}
@@ -643,9 +661,9 @@
 
 		<div
 			fxLayout='row'
-			(click)='useLockScreenPIN = true'
+			(click)='useLockScreenPIN.next(true)'
 			class='password-option'
-			[class.deselected]='!useLockScreenPIN'
+			[class.deselected]='(useLockScreenPIN | async) === false'
 		>
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -658,11 +676,12 @@
 						fxFlex
 						fxFlex.sm='80'
 						fxFlex.gt-sm='60'
-						[(ngModel)]='lockScreenPIN'
+						[ngModel]='lockScreenPIN | async'
+						(ngModelChange)='lockScreenPIN.next($event)'
 						name='lockScreenPIN'
 						[autofocus]='true'
 						[hide]='false'
-						[required]='useLockScreenPIN'
+						[required]='useLockScreenPIN | async'
 					></cyph-pin-input>
 				</div>
 			</div>
@@ -671,9 +690,9 @@
 		<div
 			fxLayout='row'
 			cyphTranslate
-			(click)='useLockScreenPIN = false'
+			(click)='useLockScreenPIN.next(false)'
 			class='password-option'
-			[class.deselected]='useLockScreenPIN'
+			[class.deselected]='useLockScreenPIN | async'
 		>
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -686,26 +705,26 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='lockScreenPassword'
+							[ngModel]='lockScreenPassword | async'
+							(ngModelChange)='lockScreenPassword.next($event)'
 							name='lockScreenPassword'
-							[type]='hidePassword.lockScreen ?
+							[type]='(hidePassword.lockScreen | async) ?
 								"password" :
 								"text"
 							'
 							placeholder='Lock Screen Password'
-							[required]='!useLockScreenPIN'
+							[required]='(useLockScreenPIN | async) === false'
 							[pattern]='".{" + lockScreenPasswordLength + ",}"'
 						/>
 						<mat-icon
 							matSuffix
 							class='suffix-button'
-							(click)='
-								hidePassword.lockScreen =
-									!hidePassword.lockScreen
-							'
+							(click)='hidePassword.lockScreen.next(
+								!hidePassword.lockScreen.value
+							)'
 						>
 							{{
-								hidePassword.lockScreen ?
+								(hidePassword.lockScreen | async) ?
 									'visibility' :
 									'visibility_off'
 							}}
@@ -717,26 +736,26 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='lockScreenPasswordConfirm'
+							[ngModel]='lockScreenPasswordConfirm | async'
+							(ngModelChange)='lockScreenPasswordConfirm.next($event)'
 							name='lockScreenPasswordConfirm'
-							[type]='hidePassword.lockScreenConfirm ?
+							[type]='(hidePassword.lockScreenConfirm | async) ?
 								"password" :
 								"text"
 							'
 							placeholder='Confirm Lock Screen Password'
-							[required]='!useLockScreenPIN'
-							[pattern]='lockScreenPassword'
+							[required]='(useLockScreenPIN | async) === false'
+							[pattern]='lockScreenPassword | async'
 						/>
 						<mat-icon
 							matSuffix
 							class='suffix-button'
-							(click)='
-								hidePassword.lockScreenConfirm =
-									!hidePassword.lockScreenConfirm
-							'
+							(click)='hidePassword.lockScreenConfirm.next(
+								!hidePassword.lockScreenConfirm.value
+							)'
 						>
 							{{
-								hidePassword.lockScreenConfirm ?
+								(hidePassword.lockScreenConfirm | async) ?
 									'visibility' :
 									'visibility_off'
 							}}

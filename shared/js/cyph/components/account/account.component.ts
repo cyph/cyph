@@ -1,5 +1,7 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
+import {combineLatest, Observable, of} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {initGranim} from '../../granim';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
@@ -14,6 +16,7 @@ import {resolvable} from '../../util/wait';
  * Angular component for the Cyph account screen.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
 			provide: EnvService,
@@ -26,7 +29,30 @@ import {resolvable} from '../../util/wait';
 })
 export class AccountComponent implements AfterViewInit, OnInit {
 	/** @ignore */
-	private readonly _VIEW_INITIATED					= resolvable();
+	private readonly _VIEW_INITIATED									= resolvable();
+
+	/** @ignore */
+	private readonly activatedRouteChildURL: Observable<UrlSegment[]>	=
+		this.activatedRoute.firstChild && this.activatedRoute.firstChild.firstChild ?
+			this.activatedRoute.firstChild.firstChild.url :
+			of([])
+	;
+
+	/** @ignore */
+	private readonly activatedRouteURL: Observable<UrlSegment[]>		=
+		this.activatedRoute.firstChild ?
+			this.activatedRoute.firstChild.url :
+			of([])
+	;
+
+	/** @ignore */
+	private readonly route: Observable<string>							=
+		this.activatedRouteURL.pipe(map(activatedRouteURL =>
+			activatedRouteURL.length > 0 ?
+				activatedRouteURL[0].path :
+				''
+		))
+	;
 
 	/** @ignore */
 	private readonly resolveViewInitiated: () => void	= this._VIEW_INITIATED.resolve;
@@ -34,30 +60,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	/** Resolves after view init. */
 	public readonly viewInitiated: Promise<void>		= this._VIEW_INITIATED.promise;
 
-	/** @ignore */
-	private get activatedRouteURL () : UrlSegment[] {
-		return (
-			this.activatedRoute.snapshot.firstChild &&
-			this.activatedRoute.snapshot.firstChild.url.length > 0
-		) ?
-			this.activatedRoute.snapshot.firstChild.url :
-			[]
-		;
-	}
-
-	/** @ignore */
-	private get route () : string {
-		const activatedRouteURL	= this.activatedRouteURL;
-
-		return activatedRouteURL.length > 0 ?
-			activatedRouteURL[0].path :
-			''
-		;
-	}
-
 	/** Indicates whether section should take up 100% height. */
-	public get fullHeight () : boolean {
-		return (
+	public readonly fullHeight: Observable<boolean>		= combineLatest(
+		this.activatedRouteURL,
+		this.route
+	).pipe(map(([activatedRouteURL, route]) =>
+		(
 			[
 				'',
 				'audio',
@@ -68,46 +76,52 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				'profile',
 				'staff',
 				'video'
-			].indexOf(this.route) > -1
+			].indexOf(route) > -1
 		) || (
-			this.activatedRouteURL.length > 1 &&
+			activatedRouteURL.length > 1 &&
 			[
 				'appointments'
-			].indexOf(this.route) > -1
-		);
-	}
+			].indexOf(route) > -1
+		)
+	));
 
 	/** Indicates whether section should take up 100% width. */
-	public get fullWidth () : boolean {
-		return this.envService.isMobile || (
+	public readonly fullWidth: Observable<boolean>		= combineLatest(
+		this.activatedRouteURL,
+		this.route
+	).pipe(map(([activatedRouteURL, route]) =>
+		this.envService.isMobile || (
 			[
 				'audio',
 				'messages',
 				'profile',
 				'video',
 				'wallets'
-			].indexOf(this.route) > -1
+			].indexOf(route) > -1
 		) || (
-			this.activatedRouteURL.length > 1 &&
+			activatedRouteURL.length > 1 &&
 			[
 				'appointments'
-			].indexOf(this.route) > -1
-		);
-	}
+			].indexOf(route) > -1
+		)
+	));
 
 	/** Indicates whether menu should be displayed. */
-	public get menuVisible () : boolean {
+	public readonly menuVisible: Observable<boolean>		= combineLatest(
+		this.accountDatabaseService.currentUser,
+		this.activatedRouteChildURL,
+		this.route
+
+	).pipe(map(([currentUser, activatedRouteChildURL, route]) => {
 		if (
-			this.route === 'appointments' &&
-			this.activatedRoute.snapshot.firstChild &&
-			this.activatedRoute.snapshot.firstChild.firstChild &&
-			this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0 &&
-			this.activatedRoute.snapshot.firstChild.firstChild.url[0].path !== 'end'
+			route === 'appointments' &&
+			activatedRouteChildURL.length > 0 &&
+			activatedRouteChildURL[0].path !== 'end'
 		) {
 			return false;
 		}
 
-		return this.accountDatabaseService.currentUser.value !== undefined && [
+		return currentUser !== undefined && [
 			'',
 			'404',
 			'audio',
@@ -133,8 +147,25 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			'staff',
 			'video',
 			'wallets'
-		].indexOf(this.route) > -1;
-	}
+		].indexOf(route) > -1;
+	}));
+
+	/** Indicates whether sidebar should be displayed. */
+	public readonly sidebarVisible: Observable<boolean>		= combineLatest(
+		this.accountDatabaseService.currentUser,
+		this.route
+
+	).pipe(map(([currentUser, route]) =>
+		!this.envService.isMobile &&
+		!this.envService.isTelehealth &&
+		currentUser !== undefined &&
+		[
+			'',
+			'chat-transition',
+			'messages',
+			'notifications'
+		].indexOf(route) > -1
+	));
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -173,20 +204,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 				}
 			});
 		}
-	}
-
-	/** Indicates whether sidebar should be displayed. */
-	public get sidebarVisible () : boolean {
-		return this.accountDatabaseService.currentUser.value !== undefined &&
-			!this.envService.isMobile &&
-			!this.envService.isTelehealth &&
-			[
-				'',
-				'chat-transition',
-				'messages',
-				'notifications'
-			].indexOf(this.route) > -1
-		;
 	}
 
 	constructor (

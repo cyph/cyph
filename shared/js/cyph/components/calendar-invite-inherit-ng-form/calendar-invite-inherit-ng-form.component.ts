@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
 import {ControlContainer, NG_VALUE_ACCESSOR, NgForm} from '@angular/forms';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -10,6 +10,7 @@ import {CalendarInviteComponent} from '../calendar-invite';
  * @see CalendarInviteComponent
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
 			multi: true,
@@ -24,10 +25,12 @@ import {CalendarInviteComponent} from '../calendar-invite';
 })
 export class CalendarInviteInheritNgFormComponent extends CalendarInviteComponent {
 	constructor (
+		changeDetectorRef: ChangeDetectorRef,
 		envService: EnvService,
 		stringsService: StringsService
 	) {
 		super(
+			changeDetectorRef,
 			envService,
 			stringsService
 		);

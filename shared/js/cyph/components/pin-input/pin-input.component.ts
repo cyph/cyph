@@ -1,4 +1,11 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input,
+	OnInit,
+	ViewChild
+} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
@@ -9,6 +16,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for PIN input UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
 			multi: true,
@@ -31,7 +39,7 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	@Input() public hide: boolean					= true;
 
 	/** Indicates whether input is disabled. */
-	public isDisabled: boolean						= false;
+	public readonly isDisabled						= new BehaviorSubject<boolean>(false);
 
 	/** Input. */
 	@ViewChild('pinInput') public pinInput?: ElementRef;
@@ -82,9 +90,7 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 
 	/** @inheritDoc */
 	public setDisabledState (b: boolean) : void {
-		if (this.isDisabled !== b) {
-			this.isDisabled	= b;
-		}
+		this.isDisabled.next(b);
 	}
 
 	/** @inheritDoc */

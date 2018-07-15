@@ -24,7 +24,7 @@
 		fxHide.lt-md
 		fxLayout='column'
 		class='sidebar animated slideInLeft _0'
-		*ngIf='menuVisible'
+		*ngIf='menuVisible | async'
 	></cyph-account-menu>
 
 	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
@@ -82,8 +82,8 @@
 				fxFlex
 				class='content-wrapper animated'
 				[class.fadeOutUp]='accountService.transition | async'
-				[class.full-height]='fullHeight'
-				[class.padding]='!fullWidth'
+				[class.full-height]='fullHeight | async'
+				[class.padding]='(fullWidth | async) === false'
 				ngClass.lt-md='small'
 				ngClass.md='medium'
 				ngClass.gt-md='large'
@@ -98,7 +98,7 @@
 		fxHide.lt-md
 		fxLayout='column'
 		class='sidebar contacts'
-		*ngIf='sidebarVisible'
+		*ngIf='sidebarVisible | async'
 	>
 		<div fxFlexFill fxLayout='row'>
 			<cyph-account-contacts fxFlex></cyph-account-contacts>

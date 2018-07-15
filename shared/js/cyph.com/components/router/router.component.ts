@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 
 
 /**
@@ -6,6 +6,7 @@ import {Component} from '@angular/core';
  * for server-side rendering before we fully migrate to Angular Router.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-router',
 	template: '<router-outlet></router-outlet>'
 })

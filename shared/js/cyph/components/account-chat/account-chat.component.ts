@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
 import {filter, mergeMap, take} from 'rxjs/operators';
@@ -27,6 +27,7 @@ import {sleep} from '../../util/wait';
  * Angular component for account chat UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: accountChatProviders,
 	selector: 'cyph-account-chat',
 	styleUrls: ['./account-chat.component.scss'],
@@ -43,33 +44,33 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 	private initiatedContactID?: string;
 
 	/** Appointment data, when applicable. */
-	public readonly appointment: BehaviorSubject<(IAppointment&{id: string})|undefined>	=
+	public readonly appointment				=
 		new BehaviorSubject<(IAppointment&{id: string})|undefined>(undefined)
 	;
 
 	/** @see ChatMessageValue.Types */
-	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
+	public readonly chatMessageValueTypes	=
 		ChatMessageValue.Types
 	;
 
 	/** @see ChatMessageValue.Types */
-	public messageType: BehaviorSubject<ChatMessageValue.Types>			= new BehaviorSubject(
+	public readonly messageType				= new BehaviorSubject<ChatMessageValue.Types>(
 		ChatMessageValue.Types.Text
 	);
 
 	/** @see ChatMessageList.promptFollowup */
-	public readonly promptFollowup: BehaviorSubject<string|undefined>	=
+	public readonly promptFollowup			=
 		new BehaviorSubject<string|undefined>(undefined)
 	;
 
 	/** @see States */
-	public readonly states: typeof States								= States;
+	public readonly states					= States;
 
 	/** @see UiStyles */
-	public readonly uiStyles: typeof UiStyles							= UiStyles;
+	public readonly uiStyles				= UiStyles;
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence					= UserPresence;
+	public readonly userPresence			= UserPresence;
 
 	/** @ignore */
 	private async navigate (...url: string[]) : Promise<void> {

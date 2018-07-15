@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {IContactListItem, User, UserPresence} from '../../account';
@@ -13,6 +13,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for account contact UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-contact',
 	styleUrls: ['./account-contact.component.scss'],
 	templateUrl: './account-contact.component.html'

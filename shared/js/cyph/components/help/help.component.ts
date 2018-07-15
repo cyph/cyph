@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -7,6 +7,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for help UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-help',
 	styleUrls: ['./help.component.scss'],
 	templateUrl: './help.component.html'

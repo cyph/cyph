@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {LockFunction} from '../../../cyph/lock-function-type';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {StringProto} from '../../../cyph/proto';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {DialogService} from '../../../cyph/services/dialog.service';
@@ -17,6 +17,7 @@ import {AppService} from '../../app.service';
  * Angular component for the Cyph lockdown screen.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-lockdown',
 	styleUrls: ['./lockdown.component.scss'],
 	templateUrl: './lockdown.component.html'
@@ -26,19 +27,19 @@ export class LockdownComponent implements OnInit {
 	private correctPassword?: string;
 
 	/** Indicates whether unlock attempt is in progress. */
-	public checking: boolean	= false;
+	public readonly checking	= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the last unlock attempt has failed. */
-	public error: boolean		= false;
+	public readonly error		= new BehaviorSubject<boolean>(false);
 
 	/** Unlock attempt lock. */
-	public lock: LockFunction	= lockFunction();
+	public readonly lock		= lockFunction();
 
 	/** Password to be used for unlock attempt. */
-	public password: string		= '';
+	public readonly password	= new BehaviorSubject<string>('');
 
 	/** Indicates whether component has been initiated. */
-	public ready: boolean		= false;
+	public readonly ready		= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	private async tryUnlock (password: string, passive: boolean = false) : Promise<boolean> {
@@ -51,7 +52,7 @@ export class LockdownComponent implements OnInit {
 
 			if (this.correctPassword) {
 				/* tslint:disable-next-line:possible-timing-attack */
-				success	= this.password === this.correctPassword;
+				success	= this.password.value === this.correctPassword;
 
 				if (!passive) {
 					await sleep(random(1000, 250));
@@ -123,7 +124,7 @@ export class LockdownComponent implements OnInit {
 				return;
 			}
 
-			this.error	= true;
+			this.error.next(true);
 		}
 
 		await this.tryUnlock(
@@ -131,16 +132,16 @@ export class LockdownComponent implements OnInit {
 			true
 		);
 
-		this.ready	= true;
+		this.ready.next(true);
 		this.appService.loadComplete();
 	}
 
 	/** Initiates unlock attempt. */
 	public async submit () : Promise<void> {
-		this.checking	= true;
-		this.error		= false;
-		this.error		= !(await this.tryUnlock(this.password));
-		this.checking	= false;
+		this.checking.next(true);
+		this.error.next(false);
+		this.error.next(!(await this.tryUnlock(this.password.value)));
+		this.checking.next(false);
 	}
 
 	constructor (

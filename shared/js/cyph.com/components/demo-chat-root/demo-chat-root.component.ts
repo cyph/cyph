@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import * as Konami from 'konami-code.js';
 import {env} from '../../../cyph/env';
@@ -25,6 +25,7 @@ import {LocalSessionService} from '../../local-session.service';
  * Angular component for chat UI root to share services.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		ChatMessageGeometryService,
 		ChatService,

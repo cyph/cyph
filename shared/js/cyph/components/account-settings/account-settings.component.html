@@ -19,7 +19,8 @@
 					matInput
 					cyphTranslate
 					[maxlength]='accountService.maxNameLength'
-					[(ngModel)]='data.modified.name'
+					[ngModel]='(data | async)?.modified.name'
+					(ngModelChange)='updateData({modified: {name: $event}})'
 					name='name'
 					placeholder='Name'
 					required
@@ -29,7 +30,8 @@
 				<input
 					matInput
 					cyphTranslate
-					[(ngModel)]='data.modified.email'
+					[ngModel]='(data | async)?.modified.email'
+					(ngModelChange)='updateData({modified: {email: $event}})'
 					name='email'
 					type='email'
 					[pattern]='emailPattern'
@@ -62,9 +64,7 @@
 				<strong cyphTranslate>Premium Status:</strong>
 				&ngsp;
 				&nbsp;
-				<span *ngIf='
-					accountDatabaseService.currentUser.value?.user.hasPremium | async; else getPremium
-				'>
+				<span *ngIf='(user | async)?.hasPremium | async; else getPremium'>
 					{{stringsService.enabled}}
 				</span>
 				<ng-template #getPremium>
@@ -96,8 +96,9 @@
 							<input
 								matInput
 								cyphTranslate
-								[(ngModel)]='data.modified.realUsername'
-								[pattern]='data.usernamePattern'
+								[ngModel]='(data | async)?.modified.realUsername'
+								(ngModelChange)='updateData({modified: {realUsername: $event}})'
+								[pattern]='(data | async)?.usernamePattern'
 								[textMask]='usernameMask'
 								name='realUsername'
 								placeholder='Username Capitalization'
@@ -120,7 +121,12 @@
 			<div></div>
 
 			<div fxLayout='row' fxLayoutAlign='center'>
-				<button mat-raised-button cyphTranslate type='submit' [disabled]='!ready'>
+				<button
+					mat-raised-button
+					cyphTranslate
+					type='submit'
+					[disabled]='(ready | async) === false'
+				>
 					Save
 				</button>
 			</div>

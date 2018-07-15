@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ModalDialogParams} from 'nativescript-angular/modal-dialog';
 
 
@@ -6,6 +6,7 @@ import {ModalDialogParams} from 'nativescript-angular/modal-dialog';
  * Native Angular component for image dialog.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-dialog-image',
 	styleUrls: ['../../js/cyph/components/dialog-image/dialog-image.component.scss'],
 	templateUrl: '../../js/cyph/components/dialog-image/dialog-image.component.html'

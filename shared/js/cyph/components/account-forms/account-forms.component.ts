@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -13,6 +13,7 @@ import {trackByID} from '../../track-by/track-by-id';
  * Angular component for forms UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-forms',
 	styleUrls: ['./account-forms.component.scss'],
 	templateUrl: './account-forms.component.html'

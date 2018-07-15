@@ -1,4 +1,5 @@
 import {
+	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
 	EventEmitter,
@@ -31,6 +32,7 @@ import {sleep, waitForIterable} from '../../util/wait';
  * Angular component for chat message.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-message',
 	styleUrls: ['./chat-message.component.scss'],
 	templateUrl: './chat-message.component.html'

@@ -1,4 +1,5 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {usernameMask} from '../../account';
 import {emailPattern} from '../../email-pattern';
 import {StringsService} from '../../services/strings.service';
@@ -10,28 +11,29 @@ import {stringify} from '../../util/serialization';
  * Angular component for claim username UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-claim-username',
 	styleUrls: ['./claim-username.component.scss'],
 	templateUrl: './claim-username.component.html'
 })
 export class ClaimUsernameComponent {
 	/** User's email address. */
-	@Input() public email: string						= '';
+	@Input() public email: string				= '';
 
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern	= emailPattern;
+	public readonly emailPattern				= emailPattern;
 
 	/** Indicates whether form has been submitted. */
-	public submitted: boolean							= false;
+	public readonly submitted					= new BehaviorSubject<boolean>(false);
 
 	/** Requested username. */
-	@Input() public username: string					= '';
+	@Input() public username: string			= '';
 
 	/** Requested username alternate/backup. */
-	@Input() public usernameAlternate: string			= '';
+	@Input() public usernameAlternate: string	= '';
 
 	/** @see usernameMask */
-	public readonly usernameMask: any					= usernameMask;
+	public readonly usernameMask: any			= usernameMask;
 
 	/** Submits form. */
 	public submit () : void {
@@ -46,7 +48,7 @@ export class ClaimUsernameComponent {
 			this.email
 		);
 
-		this.submitted	= true;
+		this.submitted.next(true);
 	}
 
 	constructor (

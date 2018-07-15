@@ -4,7 +4,7 @@
 	fxLayoutAlign='center start'
 	class='card-list'
 	[class.initiating]='accountFilesService.showSpinner'
-	*ngIf='!realTime || accountService.enableDocs'
+	*ngIf='(realTime | async) === false || accountService.enableDocs'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card
@@ -76,8 +76,8 @@
 		</mat-card>
 
 		<h2 *ngIf='(incomingNotes | async)?.length > 0'>
-			<span cyphTranslate *ngIf='realTime'>Incoming Docs</span>
-			<span cyphTranslate *ngIf='!realTime'>Incoming Notes</span>
+			<span cyphTranslate *ngIf='(realTime | async)'>Incoming Docs</span>
+			<span cyphTranslate *ngIf='(realTime | async) === false'>Incoming Notes</span>
 		</h2>
 
 		<mat-card
@@ -132,7 +132,7 @@
 
 	<button
 		mat-fab
-		[matTooltip]='realTime ? stringsService.newDoc : stringsService.newNote'
+		[matTooltip]='(realTime | async) ? stringsService.newDoc : stringsService.newNote'
 		matTooltipPosition='above'
 		routerLink='new'
 		class='fixed-fab'

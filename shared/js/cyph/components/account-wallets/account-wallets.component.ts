@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {NewWalletOptions} from '../../cryptocurrency';
 import {Cryptocurrencies, Currencies} from '../../proto';
@@ -21,34 +22,35 @@ import {getDateTimeString} from '../../util/time';
  * Angular component for wallets UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-wallets',
 	styleUrls: ['./account-wallets.component.scss'],
 	templateUrl: './account-wallets.component.html'
 })
 export class AccountWalletsComponent implements OnInit {
 	/** @see Cryptocurrencies */
-	public readonly cryptocurrencies: typeof Cryptocurrencies	= Cryptocurrencies;
+	public readonly cryptocurrencies					= Cryptocurrencies;
 
 	/** @see Currencies */
-	public readonly currencies: typeof Currencies				= Currencies;
+	public readonly currencies							= Currencies;
 
 	/** @see getDateTimeString */
-	public readonly getDateTimeString: typeof getDateTimeString	= getDateTimeString;
+	public readonly getDateTimeString					= getDateTimeString;
 
 	/** Indicates whether speed dial is open. */
-	public isSpeedDialOpen: boolean								= false;
+	public readonly isSpeedDialOpen						= new BehaviorSubject<boolean>(false);
 
 	/** @see NewWalletOptions */
-	public readonly newWalletOptions: typeof NewWalletOptions	= NewWalletOptions;
+	public readonly newWalletOptions					= NewWalletOptions;
 
 	/** @see numberToString */
-	public readonly numberToString: typeof numberToString		= numberToString;
+	public readonly numberToString						= numberToString;
 
 	/** @see trackByID */
-	public readonly trackByID: typeof trackByID					= trackByID;
+	public readonly trackByID							= trackByID;
 
 	/** Transaction list columns. */
-	public readonly transactionListColumns: string[]			= [
+	public readonly transactionListColumns: string[]	= [
 		'amount',
 		'senders',
 		'wasSentByMe',

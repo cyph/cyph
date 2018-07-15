@@ -162,11 +162,11 @@
 
 		<smd-fab-speed-dial
 			animationMode='scale'
-			[open]='isSpeedDialOpen'
-			(mouseleave)='isSpeedDialOpen = false'
+			[open]='isSpeedDialOpen | async'
+			(mouseleave)='isSpeedDialOpen.next(false)'
 			*ngIf='!envService.isMobile'
 		>
-			<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen = true'>
+			<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen.next(true)'>
 				<button mat-fab>
 					<mat-icon>add</mat-icon>
 				</button>

@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
@@ -14,6 +14,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for account home UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-menu',
 	styleUrls: ['./account-menu.component.scss'],
 	templateUrl: './account-menu.component.html'

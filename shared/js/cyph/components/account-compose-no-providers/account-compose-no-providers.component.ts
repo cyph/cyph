@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -17,6 +17,7 @@ import {AccountComposeComponent} from '../account-compose';
  * Angular component for account compose UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-compose-no-providers',
 	styleUrls: ['../account-compose/account-compose.component.scss'],
 	templateUrl: '../account-compose/account-compose.component.html'

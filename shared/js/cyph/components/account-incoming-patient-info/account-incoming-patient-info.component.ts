@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {
 	AccountFileRecord,
@@ -24,6 +24,7 @@ import {prettyPrint} from '../../util/serialization';
  * Angular component for account incoming patient info UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-incoming-patient-info',
 	styleUrls: ['./account-incoming-patient-info.component.scss'],
 	templateUrl: './account-incoming-patient-info.component.html'
