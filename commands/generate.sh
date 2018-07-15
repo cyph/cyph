@@ -46,7 +46,7 @@ echo "@import '../../../../css/mixins';" > ${dir}/${selector}.component.native.s
 echo "export * from './${selector}.component';" > ${dir}/index.ts
 
 if [ "${ngModel}" ] ; then cat > ${dir}/${selector}.component.ts << EOM
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {StringsService} from '../../services/strings.service';
 
@@ -55,6 +55,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for ${genericDescription} UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
 		{
 			multi: true,
