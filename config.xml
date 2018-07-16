@@ -40,11 +40,18 @@
 	<preference name="android-minSdkVersion" value="19" />
 
 	<platform name="android">
-		<preference name="OverrideUserAgent" value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36" />
+		<preference
+			name="OverrideUserAgent"
+			value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36"
+		/>
 
 		<allow-intent href="market:*" />
 
-		<config-file target="AndroidManifest.xml" parent="/*">
+		<edit-config
+			file="app/src/main/AndroidManifest.xml"
+			target="/manifest/application"
+			mode="merge"
+		>
 			<uses-permission android:name="android.permission.CAMERA" />
 			<uses-permission android:name="android.permission.INTERNET" />
 			<uses-permission android:name="android.permission.NFC" />
@@ -56,7 +63,7 @@
 			<uses-permission android:name="android.permission.VIBRATE" />
 			<uses-permission android:name="android.permission.WRITE_CALENDAR" />
 			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-		</config-file>
+		</edit-config>
 
 		<icon density="ldpi" src="res/icon/android/drawable-ldpi-icon.png" />
 		<icon density="mdpi" src="res/icon/android/drawable-mdpi-icon.png" />
