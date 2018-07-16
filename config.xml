@@ -20,7 +20,6 @@
 	<plugin name="cordova-plugin-inappbrowser" spec="*" />
 	<plugin name="cordova-plugin-media-capture" spec="*" />
 	<plugin name="cordova-plugin-network-information" spec="*" />
-	<plugin name="cordova-plugin-permission" spec="*" />
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 
