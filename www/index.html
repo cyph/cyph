@@ -557,8 +557,43 @@ function webSignSRI_Process (baseUrl) {
 		
 <script>document.addEventListener('deviceready', function () {
 
-if (device.platform === 'iOS') {
-	cordova.plugins.iosrtc.registerGlobals();
+switch (device.platform) {
+	case 'Android':
+		function androidPermissionErrorHandler (err) {
+			if (typeof err === 'string') {
+				alert(err);
+			}
+		}
+
+		var androidPermississions	= [
+			'READ_EXTERNAL_STORAGE',
+			'WRITE_EXTERNAL_STORAGE'
+		].map(function (s) {
+			return 'android.permission.' + s;
+		});
+
+		window.plugins.Permission.has(
+			androidPermississions,
+			function(results) {
+				var permissionsToRequest	= androidPermississions.filter(function (permission) {
+					return !results[permission];
+				});
+
+				if (permissionsToRequest.length > 0) {
+					window.plugins.Permission.request(
+						permission,
+						resolve,
+						androidPermissionErrorHandler
+					);
+				}
+			},
+			androidPermissionErrorHandler
+		);
+		break;
+
+	case 'iOS':
+		cordova.plugins.iosrtc.registerGlobals();
+		break;
 }
 
 var isHiddenService	= false;
