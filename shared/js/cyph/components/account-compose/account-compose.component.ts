@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
-import {filter, map, mergeMap} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
+import {BehaviorSubject, combineLatest} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account';
 import {States} from '../../chat/enums';
 import {AccountFileRecord, AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
@@ -54,10 +54,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= toBehaviorSubject(
-		concat(
-			of(undefined),
-			this.router.events.pipe(filter(event => event instanceof NavigationEnd))
-		).pipe(mergeMap(() => combineLatest(
+		this.accountService.routeChanges.pipe(mergeMap(() => combineLatest(
 			this.activatedRoute.firstChild ?
 				this.activatedRoute.firstChild.data :
 				this.activatedRoute.data
@@ -248,9 +245,6 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
-
-		/** @ignore */
-		private readonly router: Router,
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,

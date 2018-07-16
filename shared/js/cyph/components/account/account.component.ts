@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {combineLatest, Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import {initGranim} from '../../granim';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
@@ -33,16 +33,20 @@ export class AccountComponent implements AfterViewInit, OnInit {
 
 	/** @ignore */
 	private readonly activatedRouteChildURL: Observable<UrlSegment[]>	=
-		this.activatedRoute.firstChild && this.activatedRoute.firstChild.firstChild ?
-			this.activatedRoute.firstChild.firstChild.url :
-			of([])
+		this.accountService.routeChanges.pipe(mergeMap(() =>
+			this.activatedRoute.firstChild && this.activatedRoute.firstChild.firstChild ?
+				this.activatedRoute.firstChild.firstChild.url :
+				of([])
+		))
 	;
 
 	/** @ignore */
 	private readonly activatedRouteURL: Observable<UrlSegment[]>		=
-		this.activatedRoute.firstChild ?
-			this.activatedRoute.firstChild.url :
-			of([])
+		this.accountService.routeChanges.pipe(mergeMap(() =>
+			this.activatedRoute.firstChild ?
+				this.activatedRoute.firstChild.url :
+				of([])
+		))
 	;
 
 	/** @ignore */
@@ -111,7 +115,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		this.accountDatabaseService.currentUser,
 		this.activatedRouteChildURL,
 		this.route
-
 	).pipe(map(([currentUser, activatedRouteChildURL, route]) => {
 		if (
 			route === 'appointments' &&
@@ -154,7 +157,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	public readonly sidebarVisible: Observable<boolean>		= combineLatest(
 		this.accountDatabaseService.currentUser,
 		this.route
-
 	).pipe(map(([currentUser, route]) =>
 		!this.envService.isMobile &&
 		!this.envService.isTelehealth &&

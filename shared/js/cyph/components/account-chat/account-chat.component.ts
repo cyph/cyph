@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router, UrlSegment} from '@angular/router';
-import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
-import {filter, map, mergeMap, take} from 'rxjs/operators';
+import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
+import {BehaviorSubject, combineLatest} from 'rxjs';
+import {map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {States, UiStyles} from '../../chat/enums';
 import {AccountFileRecord, CallTypes, ChatMessageValue, IAppointment} from '../../proto';
@@ -109,10 +109,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		const lock	= lockFunction();
 
-		concat(
-			of(undefined),
-			this.router.events.pipe(filter(event => event instanceof NavigationEnd))
-		).pipe(mergeMap(() => combineLatest(
+		this.accountService.routeChanges.pipe(mergeMap(() => combineLatest(
 			this.activatedRoute.firstChild ?
 				this.activatedRoute.firstChild.data :
 				this.activatedRoute.data

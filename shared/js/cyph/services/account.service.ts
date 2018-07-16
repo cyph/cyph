@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {User} from '../account';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
 import {ConfigService} from './config.service';
@@ -108,6 +109,15 @@ export class AccountService {
 
 	/** Resolves ready promise. */
 	public readonly resolveUiReady: () => void			= this._UI_READY.resolve;
+
+	/** Route change listener. */
+	public readonly routeChanges: Observable<void>		= toBehaviorSubject(
+		this.router.events.pipe(
+			filter(event => event instanceof NavigationEnd),
+			map(() => {})
+		),
+		undefined
+	);
 
 	/** Root for account routes. */
 	public readonly routeRoot: string					=
