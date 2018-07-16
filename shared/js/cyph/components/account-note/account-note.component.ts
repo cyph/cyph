@@ -170,12 +170,6 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 			}
 		});
 
-		this.showSpinner.subscribe(showSpinner => {
-			if (showSpinner) {
-				this.initDoc();
-			}
-		});
-
 		combineLatest(
 			this.activatedRoute.params,
 			this.realTime

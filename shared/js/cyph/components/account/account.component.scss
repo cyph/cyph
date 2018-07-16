@@ -18,6 +18,7 @@
 
 	cyph-account-contacts .card-list {
 		margin-top: 0 !important;
+		min-height: 100% !important;
 	}
 
 	.content {
@@ -183,6 +184,12 @@
 }
 
 :host > :not(.mobile) {
+	::ng-deep {
+		.card-list {
+			min-height: calc(100vh - 102px - 2em) !important;
+		}
+	}
+
 	.header {
 		bottom: 10px;
 		height: 100px;
@@ -209,6 +216,10 @@
 		cyph-account-settings > div:first-child,
 		.card-list {
 			padding: 32px 8px;
+		}
+
+		.card-list {
+			min-height: calc(100vh - 50px - 2em - 32px) !important;
 		}
 	}
 

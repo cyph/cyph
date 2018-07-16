@@ -23,7 +23,9 @@
 					{{note.name || stringsService.untitled}}
 				</mat-card-title>
 				<mat-card-subtitle>
-					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
+					<div *ngIf='(realTime | async) === false'>
+						{{accountFilesService.noteSnippet(note.id) | async}}
+					</div>
 					<div *ngIf='
 						!note.wasAnonymousShare &&
 						currentUser.user.username !== note.owner

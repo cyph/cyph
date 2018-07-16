@@ -43,7 +43,7 @@ import {
 	Wallet
 } from '../proto';
 import {filterUndefined} from '../util/filter';
-import {flattenObservable} from '../util/flatten-observable';
+import {flattenObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {convertStorageUnitsToBytes} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {saveFile} from '../util/save-file';
@@ -95,9 +95,6 @@ export class AccountFilesService {
 		timestamp: 0,
 		wasAnonymousShare: false
 	};
-
-	/** @ignore */
-	private readonly noteSnippets: Map<string, string>	= new Map<string, string>();
 
 	/** @ignore */
 	private readonly watchFile	= memoize(
@@ -463,13 +460,38 @@ export class AccountFilesService {
 	public readonly initiated				= new BehaviorSubject<boolean>(false);
 
 	/** Determines whether file should be treated as an image. */
-	public readonly isImage	= memoize(async (id: string) => {
+	public readonly isImage					= memoize(async (id: string) => {
 		const file	= await this.getFile(id);
 		return file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg');
 	});
 
 	/** Maximum number of characters in a file name. */
 	public readonly maxNameLength: number	= 80;
+
+	/** Returns a snippet of a note to use as a preview. */
+	public readonly noteSnippet				= memoize((id: string) => toBehaviorSubject(
+		(async () => {
+			const limit		= 75;
+			const file		= await this.getFile(id);
+			const content	= this.deltaToString(
+				msgpack.decode(
+					await this.accountDatabaseService.getItem(
+						`users/${file.owner}/files/${id}`,
+						BinaryProto,
+						undefined,
+						file.key
+					)
+				)
+			);
+
+			return of(
+				content.length > limit ?
+					`${content.substr(0, limit)}...` :
+					content
+			);
+		}),
+		'...'
+	));
 
 	/** Indicates whether spinner should be displayed. */
 	public readonly showSpinner				= new BehaviorSubject<boolean>(true);
@@ -936,37 +958,6 @@ export class AccountFilesService {
 	/** Indicates whether this user has a file with the specified id. */
 	public async hasFile (id: string) : Promise<boolean> {
 		return this.accountDatabaseService.hasItem(`fileReferences/${id}`);
-	}
-
-	/** Returns a snippet of a note to use as a preview. */
-	public noteSnippet (id: string) : string {
-		if (!this.noteSnippets.has(id)) {
-			this.noteSnippets.set(id, '...');
-
-			(async () => {
-				const limit		= 75;
-				const file		= await this.getFile(id);
-				const content	= this.deltaToString(
-					msgpack.decode(
-						await this.accountDatabaseService.getItem(
-							`users/${file.owner}/files/${id}`,
-							BinaryProto,
-							undefined,
-							file.key
-						)
-					)
-				);
-
-				this.noteSnippets.set(
-					id,
-					content.length > limit ?
-						`${content.substr(0, limit)}...` :
-						content
-				);
-			})();
-		}
-
-		return this.noteSnippets.get(id) || '';
 	}
 
 	/** Opens a file. */
