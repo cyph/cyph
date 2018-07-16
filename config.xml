@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.cyph.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget
+	id="com.cyph.app"
+	version="1.0.0"
+	xmlns="http://www.w3.org/ns/widgets"
+	xmlns:cdv="http://cordova.apache.org/ns/1.0"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+>
 	<name>Cyph</name>
 	<description>
 		Completely private voice and video chat.
@@ -31,11 +37,26 @@
 	<allow-intent href="mailto:*" />
 	<allow-intent href="geo:*" />
 
-	<preference name="android-minSdkVersion" value="23" />
+	<preference name="android-minSdkVersion" value="22" />
 
 	<platform name="android">
 		<preference name="OverrideUserAgent" value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36" />
+
 		<allow-intent href="market:*" />
+
+		<config-file target="AndroidManifest.xml" parent="/*">
+			<uses-permission android:name="android.permission.CAMERA" />
+			<uses-permission android:name="android.permission.INTERNET" />
+			<uses-permission android:name="android.permission.NFC" />
+			<uses-permission android:name="android.permission.READ_CALENDAR" />
+			<uses-permission android:name="android.permission.READ_CONTACTS" />
+			<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+			<uses-permission android:name="android.permission.RECORD_AUDIO" />
+			<uses-permission android:name="android.permission.USE_FINGERPRINT" />
+			<uses-permission android:name="android.permission.VIBRATE" />
+			<uses-permission android:name="android.permission.WRITE_CALENDAR" />
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+		</config-file>
 
 		<icon density="ldpi" src="res/icon/android/drawable-ldpi-icon.png" />
 		<icon density="mdpi" src="res/icon/android/drawable-mdpi-icon.png" />
