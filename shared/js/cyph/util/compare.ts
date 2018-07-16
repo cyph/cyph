@@ -52,6 +52,7 @@ export const safeStringCompare	= (a: string, b: string) : boolean => {
 	}
 
 	for (let i = 0 ; i < length ; ++i) {
+		/* tslint:disable-next-line:no-bitwise */
 		mismatch	|= (a.charCodeAt(i) ^ b.charCodeAt(i));
 	}
 
