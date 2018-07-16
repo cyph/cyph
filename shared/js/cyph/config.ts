@@ -87,7 +87,7 @@ export class Config {
 			donation: {
 				id: 0,
 				items: {
-					generic: {id: 0}
+					donation: {id: 0}
 				}
 			},
 			ephemeral: {
