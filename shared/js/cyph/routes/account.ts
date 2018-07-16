@@ -47,7 +47,7 @@ export const account: Route	= {
 			children: [
 				{
 					path: 'call',
-					component: AccountChatComponent,
+					component: BlankComponent,
 					data: {
 						ephemeralSubSession: true,
 						messageType: ChatMessageValue.Types.Form,
@@ -56,7 +56,7 @@ export const account: Route	= {
 				},
 				{
 					path: 'end',
-					component: AccountChatComponent,
+					component: BlankComponent,
 					data: {
 						ephemeralSubSession: true,
 						promptFollowup: true
@@ -92,7 +92,7 @@ export const account: Route	= {
 			component: AccountNoteComponent,
 			data: {realTime: true},
 			children: [
-				{path: 'edit', component: AccountNoteComponent}
+				{path: 'edit', component: BlankComponent}
 			]
 		},
 		{path: 'doctors', component: AccountProfileComponent, data: {doctorListOnly: true}},
@@ -121,7 +121,7 @@ export const account: Route	= {
 			component: AccountNoteComponent,
 			data: {realTime: false},
 			children: [
-				{path: 'edit', component: AccountNoteComponent}
+				{path: 'edit', component: BlankComponent}
 			]
 		},
 		{
