@@ -47,10 +47,13 @@ export class LinkConnectionComponent implements AfterViewInit {
 	/** The link to join this connection. */
 	public readonly link				= new BehaviorSubject<string>('');
 
-	/** Mailto version of this link. */
+	/** Safe version of this link. */
+	public readonly linkHref			= new BehaviorSubject<SafeUrl|undefined>(undefined);
+
+	/** Safe mailto version of this link. */
 	public readonly linkMailto			= new BehaviorSubject<SafeUrl|undefined>(undefined);
 
-	/** SMS version of this link. */
+	/** Safe SMS version of this link. */
 	public readonly linkSMS				= new BehaviorSubject<SafeUrl|undefined>(undefined);
 
 	/** Draft of queued message. */
@@ -111,6 +114,10 @@ export class LinkConnectionComponent implements AfterViewInit {
 
 		const linkEncoded	= encodeURIComponent(this.linkConstant);
 
+		this.link.next(this.linkConstant);
+
+		this.linkHref.next(this.linkConstant);
+
 		this.linkMailto.next(this.domSanitizer.bypassSecurityTrustUrl(
 			`mailto:?subject=Cyph&body=${linkEncoded}`
 		));
@@ -118,8 +125,6 @@ export class LinkConnectionComponent implements AfterViewInit {
 		this.linkSMS.next(this.domSanitizer.bypassSecurityTrustUrl(
 			this.envService.smsUriBase + linkEncoded
 		));
-
-		this.link.next(this.linkConstant);
 
 		if (this.elementRef.nativeElement && this.envService.isWeb) {
 			const $element		= $(this.elementRef.nativeElement);
@@ -151,6 +156,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 			this.linkConstant	= '';
 
 			this.link.next('');
+			this.linkHref.next(undefined);
 			this.linkMailto.next(undefined);
 			this.linkSMS.next(undefined);
 

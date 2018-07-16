@@ -63,9 +63,9 @@
 			<div class='connect-link-mobile' *ngIf='envService.isMobile'>
 				<a
 					class='connect-link-link'
-					[href]='link'
+					[href]='linkHref | async'
 					[matTooltip]='stringsService.linkTooltip'
-				>{{link}}</a>
+				>{{link | async}}</a>
 
 				<br />
 				<br />
