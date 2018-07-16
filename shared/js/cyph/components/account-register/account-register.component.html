@@ -361,7 +361,7 @@
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<h3 class='cyph-banner warn' *ngIf='error | async'>
 													{{
-														accountAuthService.errorMessage ||
+														(accountAuthService.errorMessage | async) ||
 														stringsService.signupFailed
 													}}
 												</h3>

@@ -27,7 +27,7 @@ export class DemoComponent implements AfterViewInit {
 				(!elements.heroText().is(':appeared') && elements.demoRoot().is(':appeared'))
 		;
 
-		if (this.demoService.isActive === isActive) {
+		if (this.demoService.isActive.value === isActive) {
 			return;
 		}
 
@@ -79,7 +79,7 @@ export class DemoComponent implements AfterViewInit {
 			await sleep();
 		}
 
-		this.demoService.isActive	= isActive;
+		this.demoService.isActive.next(isActive);
 	}
 
 	/** @ignore */

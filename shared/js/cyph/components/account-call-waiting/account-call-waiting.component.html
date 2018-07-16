@@ -1,240 +1,250 @@
 <ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
-	<div
-		fxFlexFill
-		class='content'
-		[fxShow]='sessionService.freezePong | async'
-	>
-		<cyph-account-compose-no-providers #formCompose></cyph-account-compose-no-providers>
-	</div>
+<ng-container *ngIf='chatService.chatSubject | async as chat'>
 
-	<mat-card
-		fxFlexFill
-		fxLayout='column'
-		fxLayoutAlign='start center'
-		class='white-card animated fadeIn'
-		ngClass.lt-md='compact'
-		[fxHide]='sessionService.freezePong | async'
-	>
-		<div fxFlexFill fxLayout='column' fxLayoutAlign='stretch' class='content'>
-			<cyph-logo fxFlex='5em'></cyph-logo>
 
-			<ng-container *ngIf='participantsByType | async as participants'>
-				<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
+<div
+	fxFlexFill
+	class='content'
+	[fxShow]='sessionService.freezePong | async'
+>
+	<cyph-account-compose-no-providers #formCompose></cyph-account-compose-no-providers>
+</div>
 
-				<div fxFlex [style.width]='"100%"' *ngIf='
-					envService.isTelehealth &&
-					appointment?.calendarInvite.title &&
-					appointment?.calendarInvite.callType
+<mat-card
+	fxFlexFill
+	fxLayout='column'
+	fxLayoutAlign='start center'
+	class='white-card animated fadeIn'
+	ngClass.lt-md='compact'
+	[fxHide]='sessionService.freezePong | async'
+>
+	<div fxFlexFill fxLayout='column' fxLayoutAlign='stretch' class='content'>
+		<cyph-logo fxFlex='5em'></cyph-logo>
+
+		<ng-container *ngIf='participantsByType | async as participants'>
+			<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
+
+			<div fxFlex [style.width]='"100%"' *ngIf='
+				envService.isTelehealth &&
+				appointment?.calendarInvite.title &&
+				appointment?.calendarInvite.callType
+			'>
+				<ng-container *ngIf='
+					(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor;
+					else standardView
 				'>
-					<ng-container *ngIf='
-						(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor;
-						else standardView
-					'>
+					<div
+						*ngIf='
+							(participants.get(accountUserTypes.Standard) || [])[0] as patient
+						'
+						fxFlex
+						fxLayout='column'
+						fxLayoutAlign='stretch'
+						fxLayoutGap='10px'
+					>
+						<h1>
+							{{stringsService.your}}
+							{{appointment?.calendarInvite.title}}
+							{{
+								(appointment?.calendarInvite.callType === callTypes.Video) ?
+									stringsService.video :
+									''
+							}}
+							{{
+								(appointment?.calendarInvite.callType === callTypes.Audio) ?
+									stringsService.voice :
+									''
+							}}
+							{{stringsService.telehealthSessionWith}}
+							{{(patient?.name | async)}}
+						</h1>
+						<br />
+						<br />
+						<div fxLayout='row' fxLayoutAlign='center'>
+							<cyph-account-contact
+								[clickable]='false'
+								[contact]='patient'
+								class='cyph-inverted-theme animated fadeIn'
+								[class.fadeOut]='
+									((chat.initProgress | async) || 0) > 0
+								'
+								fxFlex
+								fxFlex.gt-sm='40'
+								*ngIf='((chat.initProgress | async) || 0) === 0'
+							></cyph-account-contact>
+						</div>
+						<br />
 						<div
-							*ngIf='
-								(participants.get(accountUserTypes.Standard) || [])[0] as patient
-							'
+							class='loading'
 							fxFlex
 							fxLayout='column'
-							fxLayoutAlign='stretch'
-							fxLayoutGap='10px'
+							fxLayoutAlign='center stretch'
 						>
-							<h1>
-								{{stringsService.your}}
-								{{appointment?.calendarInvite.title}}
-								{{
-									(appointment?.calendarInvite.callType === callTypes.Video) ?
-										stringsService.video :
-										''
-								}}
-								{{
-									(appointment?.calendarInvite.callType === callTypes.Audio) ?
-										stringsService.voice :
-										''
-								}}
-								{{stringsService.telehealthSessionWith}}
-								{{(patient?.name | async)}}
-							</h1>
-							<br />
-							<br />
-							<div fxLayout='row' fxLayoutAlign='center'>
-								<cyph-account-contact
-									[clickable]='false'
-									[contact]='patient'
-									class='cyph-inverted-theme animated fadeIn'
-									[class.fadeOut]='
-										((chatService.chat.initProgress | async) || 0) > 0
-									'
-									fxFlex
-									fxFlex.gt-sm='40'
-									*ngIf='((chatService.chat.initProgress | async) || 0) === 0'
-								></cyph-account-contact>
-							</div>
-							<br />
 							<div
-								class='loading'
-								fxFlex
-								fxLayout='column'
-								fxLayoutAlign='center stretch'
+								class='logo-animation'
+								*ngIf='((chat.initProgress | async) || 0) > 0'
 							>
-								<div
-									class='logo-animation'
-									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
-								>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-								</div>
-								<ng-container *ngTemplateOutlet='loadingMessage'></ng-container>
-								<div fxLayoutAlign='center'>
-									<mat-progress-bar
-										fxFlex='50'
-										[mode]='(
-											((chatService.chat.initProgress | async) || 0) <= 110 &&
-											!p2pWebRTCService.localMediaError
-										) ?
-											"determinate" :
-											"indeterminate"
-										'
-										[color]='
-											p2pWebRTCService.localMediaError ? "warn" : "primary"
-										'
-										*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
-										[value]='(chatService.chat.initProgress | async) || 0'
-									></mat-progress-bar>
-								</div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
 							</div>
-							<br />
-							<br />
-							<br />
-							<br />
+							<ng-container *ngTemplateOutlet='loadingMessage'></ng-container>
+							<div fxLayoutAlign='center'>
+								<mat-progress-bar
+									fxFlex='50'
+									[mode]='(
+										((chat.initProgress | async) || 0) <= 110 &&
+										(p2pWebRTCService.localMediaError | async) === false
+									) ?
+										"determinate" :
+										"indeterminate"
+									'
+									[color]='
+										(p2pWebRTCService.localMediaError | async) ?
+											"warn" :
+											"primary"
+									'
+									*ngIf='((chat.initProgress | async) || 0) > 0'
+									[value]='(chat.initProgress | async) || 0'
+								></mat-progress-bar>
+							</div>
 						</div>
-					</ng-container>
-					<ng-template #standardView>
+						<br />
+						<br />
+						<br />
+						<br />
+					</div>
+				</ng-container>
+				<ng-template #standardView>
+					<div
+						*ngIf='
+							(participants.get(accountUserTypes.TelehealthDoctor) || [])[0] as
+							doctor
+						'
+						fxFlex
+						fxLayout='column'
+						fxLayoutAlign='stretch'
+						fxLayoutGap='10px'
+					>
+						<h1>
+							{{stringsService.your}}
+							{{appointment?.calendarInvite.title}}
+							{{
+								(appointment?.calendarInvite.callType === callTypes.Video) ?
+									stringsService.video :
+									''
+							}}
+							{{
+								(appointment?.calendarInvite.callType === callTypes.Audio) ?
+									stringsService.voice :
+									''
+							}}
+							{{stringsService.telehealthSessionWith}}
+							{{stringsService.dr}}
+							{{(doctor?.name | async)}}
+						</h1>
+						<br />
+						<br />
+						<div fxLayout='row' fxLayoutAlign='center'>
+							<cyph-account-contact
+								[clickable]='false'
+								[contact]='doctor'
+								class='cyph-inverted-theme animated fadeIn'
+								[class.fadeOut]='
+									((chat.initProgress | async) || 0) > 0
+								'
+								fxFlex
+								fxFlex.gt-sm='40'
+								*ngIf='((chat.initProgress | async) || 0) === 0'
+							></cyph-account-contact>
+						</div>
+						<br />
 						<div
-							*ngIf='
-								(participants.get(accountUserTypes.TelehealthDoctor) || [])[0] as
-								doctor
-							'
+							class='loading'
 							fxFlex
 							fxLayout='column'
-							fxLayoutAlign='stretch'
-							fxLayoutGap='10px'
+							fxLayoutAlign='center stretch'
 						>
-							<h1>
-								{{stringsService.your}}
-								{{appointment?.calendarInvite.title}}
-								{{
-									(appointment?.calendarInvite.callType === callTypes.Video) ?
-										stringsService.video :
-										''
-								}}
-								{{
-									(appointment?.calendarInvite.callType === callTypes.Audio) ?
-										stringsService.voice :
-										''
-								}}
-								{{stringsService.telehealthSessionWith}}
-								{{stringsService.dr}}
-								{{(doctor?.name | async)}}
-							</h1>
-							<br />
-							<br />
-							<div fxLayout='row' fxLayoutAlign='center'>
-								<cyph-account-contact
-									[clickable]='false'
-									[contact]='doctor'
-									class='cyph-inverted-theme animated fadeIn'
-									[class.fadeOut]='
-										((chatService.chat.initProgress | async) || 0) > 0
-									'
-									fxFlex
-									fxFlex.gt-sm='40'
-									*ngIf='((chatService.chat.initProgress | async) || 0) === 0'
-								></cyph-account-contact>
-							</div>
-							<br />
 							<div
-								class='loading'
-								fxFlex
-								fxLayout='column'
-								fxLayoutAlign='center stretch'
+								class='logo-animation'
+								*ngIf='((chat.initProgress | async) || 0) > 0'
 							>
-								<div
-									class='logo-animation'
-									*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
-								>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-								</div>
-								<ng-container *ngTemplateOutlet='loadingMessage'></ng-container>
-								<div fxLayoutAlign='center'>
-									<mat-progress-bar
-										fxFlex='50'
-										[mode]='(
-											((chatService.chat.initProgress | async) || 0) <= 110 &&
-											!p2pWebRTCService.localMediaError
-										) ?
-											"determinate" :
-											"indeterminate"
-										'
-										[color]='
-											p2pWebRTCService.localMediaError ? "warn" : "primary"
-										'
-										*ngIf='((chatService.chat.initProgress | async) || 0) > 0'
-										[value]='(chatService.chat.initProgress | async) || 0'
-									></mat-progress-bar>
-								</div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
 							</div>
-							<br />
-							<br />
-							<br />
-							<br />
+							<ng-container *ngTemplateOutlet='loadingMessage'></ng-container>
+							<div fxLayoutAlign='center'>
+								<mat-progress-bar
+									fxFlex='50'
+									[mode]='(
+										((chat.initProgress | async) || 0) <= 110 &&
+										(p2pWebRTCService.localMediaError | async) === false
+									) ?
+										"determinate" :
+										"indeterminate"
+									'
+									[color]='
+										(p2pWebRTCService.localMediaError | async) ?
+											"warn" :
+											"primary"
+									'
+									*ngIf='((chat.initProgress | async) || 0) > 0'
+									[value]='(chat.initProgress | async) || 0'
+								></mat-progress-bar>
+							</div>
 						</div>
-					</ng-template>
-				</div>
-				<ng-template #loadingMessage>
-					<ng-container *ngIf='
-						(chatService.chat.initProgress | async) === 0; else loading
+						<br />
+						<br />
+						<br />
+						<br />
+					</div>
+				</ng-template>
+			</div>
+			<ng-template #loadingMessage>
+				<ng-container *ngIf='
+					(chat.initProgress | async) === 0; else loading
+				'>
+					<h2 *ngIf='
+						envService.isTelehealth && (
+							(currentUser?.user.userType | async) === accountUserTypes.Standard
+						);
+						else doctorMessage
 					'>
+						{{stringsService.waitingRoomCheckedInPatient}}
+					</h2>
+					<ng-template #doctorMessage>
 						<h2 *ngIf='
 							envService.isTelehealth && (
-								(currentUser?.user.userType | async) === accountUserTypes.Standard
+								(currentUser?.user.userType | async) ===
+								accountUserTypes.TelehealthDoctor
 							);
-							else doctorMessage
+							else genericMessage
 						'>
-							{{stringsService.waitingRoomCheckedInPatient}}
-						</h2>
-						<ng-template #doctorMessage>
-							<h2 *ngIf='
-								envService.isTelehealth && (
-									(currentUser?.user.userType | async) ===
-									accountUserTypes.TelehealthDoctor
-								);
-								else genericMessage
-							'>
-								{{stringsService.waitingRoomCheckedInDoctor}}
-							</h2>
-						</ng-template>
-						<ng-template #genericMessage>
-							<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
-						</ng-template>
-					</ng-container>
-					<ng-template #loading>
-						<h2 *ngIf='!p2pWebRTCService.localMediaError'>
-							{{stringsService.connecting}}
-						</h2>
-						<h2 *ngIf='p2pWebRTCService.localMediaError'>
-							{{stringsService.localMediaError}}
+							{{stringsService.waitingRoomCheckedInDoctor}}
 						</h2>
 					</ng-template>
+					<ng-template #genericMessage>
+						<h2>{{stringsService.waitingRoomCheckedInGeneric}}</h2>
+					</ng-template>
+				</ng-container>
+				<ng-template #loading>
+					<h2 *ngIf='(p2pWebRTCService.localMediaError | async) === false'>
+						{{stringsService.connecting}}
+					</h2>
+					<h2 *ngIf='p2pWebRTCService.localMediaError | async'>
+						{{stringsService.localMediaError}}
+					</h2>
 				</ng-template>
-			</ng-container>
-		</div>
-	</mat-card>
+			</ng-template>
+		</ng-container>
+	</div>
+</mat-card>
+
+
+</ng-container>
 </ng-container>

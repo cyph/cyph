@@ -3,7 +3,7 @@
 	<div fxLayout='column' fxLayoutGap='16px' *ngIf='(complete | async) === false'>
 		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
 			<h2 *ngIf='itemName'>
-				<span>{{itemName}}</span>
+				<span>{{formatItemName(itemName)}}</span>
 				&ngsp;
 				<span cyphTranslate>SUBSCRIPTION</span>
 			</h2>
@@ -40,11 +40,11 @@
 						cyphTranslate
 						[(ngModel)]='company'
 						name='company'
-						[placeholder]='itemName?.includes("BUSINESS") ?
+						[placeholder]='formatItemName(itemName)?.includes("BUSINESS") ?
 							"Company" :
 							"Company (optional)"
 						'
-						[required]='itemName?.includes("BUSINESS")'
+						[required]='formatItemName(itemName)?.includes("BUSINESS")'
 					/>
 				</mat-form-field>
 			</div>

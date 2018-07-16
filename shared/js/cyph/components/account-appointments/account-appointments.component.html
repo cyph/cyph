@@ -3,7 +3,7 @@
 	fxLayout='row'
 	fxLayoutAlign='center start'
 	class='card-list'
-	[class.initiating]='accountFilesService.showSpinner'
+	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
@@ -68,7 +68,7 @@
 
 	<mat-progress-spinner
 		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner'
+		*ngIf='accountFilesService.showSpinner | async'
 	></mat-progress-spinner>
 
 	<button
@@ -99,7 +99,7 @@
 		<div class='cyph-inverted-theme' *ngIf='timestampWatcher | async as now'>
 			<mat-accordion
 				class='appointment animated fadeInDown'
-				[class.bounceInRight]='!accountFilesService.initiated'
+				[class.bounceInRight]='(accountFilesService.initiated | async) === false'
 			>
 				<mat-expansion-panel *ngFor='
 					let o of list | async; trackBy: trackByID; let i = index

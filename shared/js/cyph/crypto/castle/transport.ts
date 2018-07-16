@@ -30,7 +30,7 @@ export class Transport {
 
 	/** Indicates whether or not this transport is still usable. */
 	public get isAlive () : boolean {
-		return this.sessionService.state.isAlive;
+		return this.sessionService.state.isAlive.value;
 	}
 
 	/** Trigger event for logging cyphertext. */

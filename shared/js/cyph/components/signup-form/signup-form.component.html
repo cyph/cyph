@@ -5,7 +5,7 @@
 	fxLayoutGap='16px'
 	(submit)='submit()'
 >
-	<div fxFlexFill *ngIf='signupService.state === 0'>
+	<div fxFlexFill *ngIf='(signupService.state | async) === 0'>
 		<div fxLayout='row'>
 			<ng-content></ng-content>
 		</div>
@@ -21,7 +21,8 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='signupService.data.email'
+							[ngModel]='signupService.data.email | async'
+							(ngModelChange)='signupService.data.email.next($event)'
 							name='email'
 							type='email'
 							[pattern]='emailPattern'
@@ -58,7 +59,8 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='signupService.data.inviteCode'
+							[ngModel]='signupService.data.inviteCode | async'
+							(ngModelChange)='signupService.data.inviteCode.next($event)'
 							name='inviteCode'
 							type='text'
 							placeholder='Invite Code'
@@ -104,7 +106,7 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf='signupService.state === 1'>
+	<div fxFlexFill *ngIf='(signupService.state | async) === 1'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -112,7 +114,8 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='signupService.data.email'
+							[ngModel]='signupService.data.email | async'
+							(ngModelChange)='signupService.data.email.next($event)'
 							name='email'
 							type='email'
 							[pattern]='emailPattern'
@@ -126,7 +129,8 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='signupService.data.inviteCode'
+							[ngModel]='signupService.data.inviteCode | async'
+							(ngModelChange)='signupService.data.inviteCode.next($event)'
 							name='inviteCode'
 							type='text'
 							placeholder='Invite Code'
@@ -151,7 +155,7 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf='signupService.state === 2'>
+	<div fxFlexFill *ngIf='(signupService.state | async) === 2'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -159,7 +163,8 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='signupService.data.name'
+							[ngModel]='signupService.data.name | async'
+							(ngModelChange)='signupService.data.name.next($event)'
 							name='name'
 							placeholder='Name (optional)'
 						/>
@@ -174,14 +179,14 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf='signupService.state === 3'>
+	<div fxFlexFill *ngIf='(signupService.state | async) === 3'>
 		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 			<div fxFlex='50' fxLayout='column'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<p fxFlex='80'>
 						<span cyphTranslate>Thanks for subscribing,</span>
 						&ngsp;
-						<span>{{signupService.data.name}}!</span>
+						<span>{{signupService.data.name | async}}!</span>
 						&ngsp;
 						<span cyphTranslate>We'll email you when your invite is ready.</span>
 					</p>

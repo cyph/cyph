@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
@@ -42,7 +44,7 @@ export class P2PService {
 				title: this.stringsService.p2pTitle
 			});
 		},
-		audioDefaultEnabled: () => !this.chatService.walkieTalkieMode,
+		audioDefaultEnabled: () => !this.chatService.walkieTalkieMode.value,
 		canceled: () => {
 			this.dialogService.alert({
 				content: this.stringsService.p2pCanceled,
@@ -115,11 +117,19 @@ export class P2PService {
 		}
 	};
 
+	/** @see P2PWebRTCService.isActive */
+	public readonly isActive				= this.p2pWebRTCService.isActive;
+
+	/** Is active or has initial call type. */
+	public readonly isActiveOrInitialCall	= this.isActive.pipe(map(isActive =>
+		isActive || this.sessionInitService.callType !== undefined
+	));
+
 	/** Indicates whether P2P is possible (i.e. both clients support WebRTC). */
-	public isEnabled: boolean		= false;
+	public readonly isEnabled				= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether sidebar is open. */
-	public isSidebarOpen: boolean	= false;
+	public readonly isSidebarOpen			= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	private get p2pWarning () : string {
@@ -146,7 +156,7 @@ export class P2PService {
 
 	/** If chat authentication is complete, alert that P2P is disabled. */
 	public disabledAlert () : void {
-		if (this.chatService.chat.isConnected && !this.isEnabled) {
+		if (this.chatService.chat.isConnected && !this.isEnabled.value) {
 			this.dialogService.alert({
 				content: this.stringsService.p2pDisabled,
 				ok: this.stringsService.ok,
@@ -162,22 +172,12 @@ export class P2PService {
 	) : Promise<void> {
 		this.p2pWebRTCService.init(this.chatService, this.handlers, localVideo, remoteVideo);
 
-		this.isEnabled	= await this.sessionCapabilitiesService.capabilities.p2p;
-	}
-
-	/** @see P2PWebRTCService.isActive */
-	public get isActive () : boolean {
-		return this.p2pWebRTCService.isActive;
-	}
-
-	/** Is active or has initial call type. */
-	public get isActiveOrInitialCall () : boolean {
-		return this.isActive || this.sessionInitService.callType !== undefined;
+		this.isEnabled.next(await this.sessionCapabilitiesService.capabilities.p2p);
 	}
 
 	/** Toggle window of sidebar containing chat UI. */
 	public toggleSidebar () : void {
-		this.isSidebarOpen	= !this.isSidebarOpen;
+		this.isSidebarOpen.next(!this.isSidebarOpen.value);
 	}
 
 	/**
@@ -185,14 +185,14 @@ export class P2PService {
 	 * requesting new P2P session if necessary.
 	 */
 	public videoCallButton () : void {
-		if (!this.isEnabled) {
+		if (!this.isEnabled.value) {
 			return;
 		}
 
-		if (!this.p2pWebRTCService.isActive) {
+		if (!this.p2pWebRTCService.isActive.value) {
 			this.request('video');
 		}
-		else if (this.p2pWebRTCService.videoEnabled) {
+		else if (this.p2pWebRTCService.videoEnabled.value) {
 			this.p2pWebRTCService.toggle('video');
 		}
 	}
@@ -202,11 +202,11 @@ export class P2PService {
 	 * requesting new P2P session if necessary.
 	 */
 	public voiceCallButton () : void {
-		if (!this.isEnabled) {
+		if (!this.isEnabled.value) {
 			return;
 		}
 
-		if (!this.p2pWebRTCService.isActive) {
+		if (!this.p2pWebRTCService.isActive.value) {
 			this.request('audio');
 		}
 		else {

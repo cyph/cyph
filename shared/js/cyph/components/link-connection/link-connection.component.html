@@ -174,22 +174,25 @@
 							<mat-button-toggle
 								matTooltip='Self-Destruct'
 								cyphTranslate
-								[checked]='chatService.chatSelfDestruct'
-								(change)='
-									chatService.chatSelfDestruct = !chatService.chatSelfDestruct
-								'
+								[checked]='chatService.chatSelfDestruct | async'
+								(change)='chatService.chatSelfDestruct.next(
+									!chatService.chatSelfDestruct.value
+								)'
 							>
 								<mat-icon>timer</mat-icon>
 							</mat-button-toggle>
 						</div>
 						<div
-							*ngIf='chatService.chatSelfDestruct'
+							*ngIf='chatService.chatSelfDestruct | async'
 							class='self-destruct-timer'
 						>
 							<mat-form-field>
 								<input
 									matInput
-									[(ngModel)]='chatService.chatSelfDestructTimeout'
+									[ngModel]='chatService.chatSelfDestructTimeout | async'
+									(ngModelChange)='
+										chatService.chatSelfDestructTimeout.next($event)
+									'
 									name='timer'
 									max='9999'
 									type='number'
@@ -203,8 +206,10 @@
 						<mat-button-toggle
 							matTooltip='Walkie Talkie Mode'
 							cyphTranslate
-							[checked]='chatService.walkieTalkieMode'
-							(change)='chatService.walkieTalkieMode = !chatService.walkieTalkieMode'
+							[checked]='chatService.walkieTalkieMode | async'
+							(change)='chatService.walkieTalkieMode.next(
+								!chatService.walkieTalkieMode.value
+							)'
 						>
 							<mat-icon svgIcon='walkie-talkie'></mat-icon>
 						</mat-button-toggle>

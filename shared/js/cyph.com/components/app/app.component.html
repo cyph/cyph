@@ -2,7 +2,7 @@
 	fxFlexFill
 	fxLayout='column'
 	id='main'
-	[class.unisection-mode]='appService.state !== states.home'
+	[class.unisection-mode]='(appService.state | async) !== states.home'
 >
 	<mat-sidenav-container (backdropClick)='sidenav.close()'>
 		<mat-sidenav #sidenav ngClass.gt-md='disabled' mode='push' position='end'>
@@ -271,15 +271,15 @@
 
 		<section
 			id='hero-section'
-			[class.promo]='appService.promo !== undefined'
-			[class.disrupt]='appService.promo === promos.disrupt'
+			[class.promo]='(appService.promo | async) !== undefined'
+			[class.disrupt]='(appService.promo | async) === promos.disrupt'
 		>
 			<div class='hero-foreground'>
 				<div
 					fxLayout='row'
 					fxLayoutAlign='center center'
 					id='promo-section'
-					*ngIf='appService.promo !== undefined'
+					*ngIf='(appService.promo | async) !== undefined'
 				>
 					<mat-card
 						fxFlex='33'
@@ -287,53 +287,53 @@
 						fxFlex.xs='100'
 						class='animated wow'
 						data-wow-delay='3000ms'
-						[class.bounceInLeft]='appService.promo === promos.jjgo'
-						[class.bounceInDown]='appService.promo !== promos.jjgo'
+						[class.bounceInLeft]='(appService.promo | async) === promos.jjgo'
+						[class.bounceInDown]='(appService.promo | async) !== promos.jjgo'
 					>
 						<mat-card-title>
 							<img
 								alt='Promo image'
 								[src]='
 									"/assets/img/thirdparty/" +
-									promos[appService.promo] +
+									promos[(appService.promo | async)] +
 									".png"
 								'
 							/>
 						</mat-card-title>
 						<mat-card-content>
-							<p *ngIf='appService.promo !== promos.disrupt'>
+							<p *ngIf='(appService.promo | async) !== promos.disrupt'>
 								<span cyphTranslate>Welcome</span>
 								&ngsp;
-								<span *ngIf='appService.promo === promos.betalist'>
+								<span *ngIf='(appService.promo | async) === promos.betalist'>
 									Betalisters!
 								</span>
-								<span *ngIf='appService.promo !== promos.betalist'>
-									<i *ngIf='appService.promo === promos.penn'>
+								<span *ngIf='(appService.promo | async) !== promos.betalist'>
+									<i *ngIf='(appService.promo | async) === promos.penn'>
 										Penn's Sunday School
 									</i>
-									<i *ngIf='appService.promo === promos.jjgo'>
+									<i *ngIf='(appService.promo | async) === promos.jjgo'>
 										Jordan, Jesse, Go!
 									</i>
-									<i *ngIf='appService.promo === promos.ventura'>
+									<i *ngIf='(appService.promo | async) === promos.ventura'>
 										We The People
 									</i>
-									<i *ngIf='appService.promo === promos.sawbones'>
+									<i *ngIf='(appService.promo | async) === promos.sawbones'>
 										Sawbones
 									</i>
-									<i *ngIf='appService.promo === promos.judgejohn'>
+									<i *ngIf='(appService.promo | async) === promos.judgejohn'>
 										Judge John Hodgman
 									</i>
-									<i *ngIf='appService.promo === promos.mybrother'>
+									<i *ngIf='(appService.promo | async) === promos.mybrother'>
 										My Brother, My Brother and Me
 									</i>
-									<i *ngIf='appService.promo === promos.security'>
+									<i *ngIf='(appService.promo | async) === promos.security'>
 										The Security Brief
 									</i>
 									&ngsp;
 									<span cyphTranslate>listeners!</span>
 								</span>
 							</p>
-							<p *ngIf='appService.promo !== promos.disrupt'>
+							<p *ngIf='(appService.promo | async) !== promos.disrupt'>
 								<a routerLink='/register' cyphTranslate>Sign up now</a>,
 								&ngsp;
 								<span cyphTranslate>
@@ -341,7 +341,7 @@
 									for a Cyph beta account.
 								</span>
 							</p>
-							<span *ngIf='appService.promo === promos.disrupt'>
+							<span *ngIf='(appService.promo | async) === promos.disrupt'>
 								<p>
 									<span cyphTranslate>
 										The big new Cyph v2 beta release is right around the corner!
@@ -365,7 +365,8 @@
 										<input
 											matInput
 											cyphTranslate
-											[(ngModel)]='signupService.data.email'
+											[ngModel]='signupService.data.email | async'
+											(ngModelChange)='signupService.data.email.next($event)'
 											name='email'
 											type='email'
 											[pattern]='emailPattern'
@@ -379,7 +380,8 @@
 										<input
 											matInput
 											cyphTranslate
-											[(ngModel)]='signupService.data.name'
+											[ngModel]='signupService.data.name | async'
+											(ngModelChange)='signupService.data.name.next($event)'
 											name='name'
 											placeholder='Name (optional)'
 										/>
@@ -400,7 +402,7 @@
 						<span cyphTranslate>Secure your</span>
 						&ngsp;
 						<span class='feature-cycle'>
-							{{appService.features[appService.featureIndex]}}
+							{{appService.features[appService.featureIndex | async]}}
 						</span>
 						&ngsp;
 						<span cyphTranslate>in one click.</span>
@@ -416,7 +418,7 @@
 										class='laptop screenshot'
 										src='/assets/img/laptop-screenshot.png'
 										alt='Laptop displaying secure Cyph video call'
-										[class.demo]='demoService.isActive'
+										[class.demo]='demoService.isActive | async'
 									/>
 								</a>
 								&nbsp;
@@ -428,7 +430,7 @@
 										class='phone screenshot'
 										src='/assets/img/phone-screenshot.png'
 										alt='Phone displaying secure Cyph video call'
-										[class.demo]='demoService.isActive'
+										[class.demo]='demoService.isActive | async'
 									/>
 								</a>
 								&nbsp;
@@ -459,7 +461,7 @@
 				fxLayout='row'
 				class='carousel wow animated fadeIn'
 				data-wow-delay='2750ms'
-				*ngIf='appService.testimonialCarousel'
+				*ngIf='appService.testimonialCarousel | async as testimonialCarousel'
 			>
 				<div fxLayout='column' fxLayoutGap='64px' class='logo-container'>
 					<div fxLayout='row'>
@@ -467,7 +469,7 @@
 							fxFlex
 							fxLayout='column'
 							class='logo'
-							(click)='appService.testimonialCarousel?.setItem(0)'
+							(click)='testimonialCarousel.setItem(0)'
 						>
 							<img
 								cyphTranslate
@@ -480,7 +482,7 @@
 							fxFlex
 							fxLayout='column'
 							class='logo'
-							(click)='appService.testimonialCarousel?.setItem(1)'
+							(click)='testimonialCarousel.setItem(1)'
 						>
 							<img
 								cyphTranslate
@@ -590,11 +592,14 @@
 		</section>
 
 		<section id='features-section'>
-			<div class='carousel grid-container' *ngIf='appService.featureCarousel !== undefined'>
+			<div
+				class='carousel grid-container'
+				*ngIf='appService.featureCarousel | async as featureCarousel'
+			>
 				<div class='grid-parent grid-33 tablet-grid-33'>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel?.setItem(0)'
+						(click)='featureCarousel.setItem(0)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -610,7 +615,7 @@
 					</div>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel?.setItem(1)'
+						(click)='featureCarousel.setItem(1)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -629,7 +634,7 @@
 				<div class='grid-parent grid-33 tablet-grid-33'>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel?.setItem(2)'
+						(click)='featureCarousel.setItem(2)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -645,7 +650,7 @@
 					</div>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel?.setItem(3)'
+						(click)='featureCarousel.setItem(3)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -664,7 +669,7 @@
 				<div class='grid-parent grid-33 tablet-grid-33'>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel?.setItem(4)'
+						(click)='featureCarousel.setItem(4)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -680,7 +685,7 @@
 					</div>
 					<div
 						class='grid-100 tablet-grid-100 logo logo-text'
-						(click)='appService.featureCarousel?.setItem(5)'
+						(click)='featureCarousel.setItem(5)'
 					>
 						<img
 							class='grid-25 tablet-grid-25'
@@ -976,7 +981,7 @@
 
 		<section
 			id='error'
-			*ngIf='appService.state === states.error'
+			*ngIf='(appService.state | async) === states.error'
 			class='unisection'
 		>
 			<div>
@@ -1001,7 +1006,7 @@
 
 		<section
 			id='claimusername'
-			*ngIf='appService.state === states.claimusername'
+			*ngIf='(appService.state | async) === states.claimusername'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1010,7 +1015,7 @@
 			<div class='section-content-container' fxLayout='column' fxLayoutGap='32px'>
 				<div>
 					<cyph-claim-username
-						[email]='appService.claimUsernameEmail'
+						[email]='appService.claimUsernameEmail | async'
 					></cyph-claim-username>
 				</div>
 			</div>
@@ -1018,7 +1023,7 @@
 
 		<section
 			id='contact'
-			*ngIf='appService.state === states.contact'
+			*ngIf='(appService.state | async) === states.contact'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1026,7 +1031,7 @@
 			</h1>
 			<div class='section-content-container' fxLayout='column' fxLayoutGap='32px'>
 				<div>
-					<cyph-contact [to]='appService.contactTo'></cyph-contact>
+					<cyph-contact [to]='appService.contactTo | async'></cyph-contact>
 				</div>
 				<div>
 					<p>
@@ -1050,7 +1055,7 @@
 
 		<section
 			id='donate'
-			*ngIf='appService.state === states.donate'
+			*ngIf='(appService.state | async) === states.donate'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1099,14 +1104,15 @@
 						fxFlex
 						fxLayout='column'
 						thumbLabel
-						[(ngModel)]='appService.donationAmount'
+						[ngModel]='appService.donationAmount | async'
+						(ngModelChange)='appService.donationAmount.next($event)'
 						step='1'
 						min='1'
 						max='1337'
 						matTooltip='Donation Amount'
 					></mat-slider>
 					<div fxLayout='column' class='donation-amount'>
-						${{appService.donationAmount}}
+						${{appService.donationAmount | async}}
 					</div>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
@@ -1117,7 +1123,7 @@
 						(click)='appService.updateCart(
 							"donation",
 							"generic",
-							appService.donationAmount
+							appService.donationAmount.value
 						)'
 					>
 						Confirm Donation Amount
@@ -1158,7 +1164,7 @@
 
 		<section
 			id='checkout'
-			*ngIf='appService.state === states.checkout'
+			*ngIf='(appService.state | async) === states.checkout'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1167,7 +1173,7 @@
 			<div fxLayout='row' fxLayoutAlign='center center'>
 				<mat-card fxFlex='33' fxFlex.sm='80' fxFlex.xs='95'>
 					<mat-card-content>
-						<div class='cart empty' *ngIf='!appService.cart'>
+						<div class='cart empty' *ngIf='(appService.cart | async) === undefined'>
 							<h3 cyphTranslate>
 								There's nothing in your cart. What are you even doing here?
 							</h3>
@@ -1183,19 +1189,20 @@
 							<a routerLink='/donate' cyphTranslate>make a donation</a>.
 						</div>
 						<cyph-checkout
-							[amount]='appService.cart?.amount'
-							[apiKey]='appService.cart?.apiKey'
-							[category]='appService.cart?.categoryID'
-							[item]='appService.cart?.itemID'
-							[noSpinnerEnd]='!!appService.cart?.apiKey'
-							[subscriptionType]='appService.cart?.subscriptionType'
+							[amount]='cart.amount'
+							[apiKey]='cart.apiKey'
+							[category]='cart.categoryID'
+							[item]='cart.itemID'
+							[itemName]='cart.itemName'
+							[noSpinnerEnd]='!!cart.apiKey'
+							[subscriptionType]='cart.subscriptionType'
 							(confirmed)='appService.checkoutConfirmed()'
-							*ngIf='appService.cart'
+							*ngIf='appService.cart | async as cart'
 						>
 							<div
 								cyphTranslate
 								*ngIf='
-									appService.cart?.categoryID ===
+									cart.categoryID ===
 									configService.pricingConfig.categories.donation.id
 								'
 							>
@@ -1204,7 +1211,7 @@
 							<div
 								cyphTranslate
 								*ngIf='
-									appService.cart?.categoryID !==
+									cart.categoryID !==
 									configService.pricingConfig.categories.donation.id
 								'
 							>
@@ -1218,7 +1225,7 @@
 
 		<section
 			id='termsofservice'
-			*ngIf='appService.state === states.termsofservice'
+			*ngIf='(appService.state | async) === states.termsofservice'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1360,7 +1367,7 @@
 
 		<section
 			id='privacypolicy'
-			*ngIf='appService.state === states.privacypolicy'
+			*ngIf='(appService.state | async) === states.privacypolicy'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>
@@ -1427,7 +1434,7 @@
 
 		<section
 			id='waitlisttrack'
-			*ngIf='appService.state === states.waitlisttrack'
+			*ngIf='(appService.state | async) === states.waitlisttrack'
 			class='unisection'
 		>
 			<h1 class='hero-text wow animated fadeInDownBig' data-wow-delay='420ms' cyphTranslate>

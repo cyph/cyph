@@ -141,7 +141,7 @@ export class AccountChatService extends ChatService {
 
 		this.accountSessionInitService.callType	= callType || this.envService.callType;
 
-		this.chat	= ephemeralSubSession ?
+		this.chatSubject.next(ephemeralSubSession ?
 			{
 				...this.getDefaultChatData(),
 				isConnected: true,
@@ -202,7 +202,7 @@ export class AccountChatService extends ChatService {
 						)
 				})
 			)
-		;
+		);
 
 		await this.accountSessionService.setUser(username, sessionSubID, ephemeralSubSession);
 		this.resolvers.chatConnected.resolve();

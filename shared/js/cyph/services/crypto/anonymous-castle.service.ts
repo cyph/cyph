@@ -27,13 +27,13 @@ export class AnonymousCastleService extends CastleService {
 		const localUser			= new AnonymousLocalUser(
 			potassiumService,
 			handshakeState,
-			sessionService.state.sharedSecret
+			sessionService.state.sharedSecret.value
 		);
 
 		const remoteUser		= new AnonymousRemoteUser(
 			potassiumService,
 			handshakeState,
-			sessionService.state.sharedSecret,
+			sessionService.state.sharedSecret.value,
 			sessionService.remoteUsername
 		);
 

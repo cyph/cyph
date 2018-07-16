@@ -54,8 +54,8 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 				await ChatMessageComponent.services.windowWatcherService.waitUntilVisible();
 
 				if (
-					ChatMessageComponent.services.p2pService.isActive &&
-					!ChatMessageComponent.services.p2pService.isSidebarOpen
+					ChatMessageComponent.services.p2pService.isActive.value &&
+					!ChatMessageComponent.services.p2pService.isSidebarOpen.value
 				) {
 					continue;
 				}
@@ -101,7 +101,10 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** Temporary workaround pending ACCOUNTS-36. */
 	private static services?: {
-		p2pService: {isActive: boolean; isSidebarOpen: boolean};
+		p2pService: {
+			isActive: BehaviorSubject<boolean>;
+			isSidebarOpen: BehaviorSubject<boolean>;
+		};
 		windowWatcherService: {waitUntilVisible: () => Promise<void>};
 	};
 

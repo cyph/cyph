@@ -315,7 +315,7 @@ export class AccountSessionService extends SessionService {
 
 			await this.stateResolver.promise;
 
-			if (this.state.isAlice) {
+			if (this.state.isAlice.value) {
 				this.on(rpcEvents.requestSymmetricKey, async () => {
 					this.send([rpcEvents.symmetricKey, {bytes: await symmetricKeyPromise}]);
 				});
@@ -325,7 +325,7 @@ export class AccountSessionService extends SessionService {
 				return;
 			}
 
-			if (this.state.isAlice) {
+			if (this.state.isAlice.value) {
 				const symmetricKey	= this.potassiumService.randomBytes(
 					await this.potassiumService.secretBox.keyBytes
 				);

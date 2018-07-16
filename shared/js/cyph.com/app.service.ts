@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {NavigationEnd, Router} from '@angular/router';
 import * as $ from 'jquery';
+import {BehaviorSubject} from 'rxjs';
 import * as WOW from 'wowjs';
 import {SubscriptionTypes} from '../cyph/checkout';
 import {BetaRegisterComponent} from '../cyph/components/beta-register';
@@ -29,7 +30,7 @@ export class AppService {
 	private readonly queryParams: any	= fromQueryString();
 
 	/** Amount, category, and item in cart. */
-	public cart?: {
+	public readonly cart				= new BehaviorSubject<undefined|{
 		amount: number;
 		apiKey?: string;
 		categoryID: number;
@@ -37,22 +38,24 @@ export class AppService {
 		itemID: number;
 		itemName: string;
 		subscriptionType?: SubscriptionTypes;
-	};
+	}>(
+		undefined
+	);
 
-	/** @see ClaimUsernameComponent.email. */
-	public claimUsernameEmail?: string;
+	/** @see ClaimUsernameComponent.email */
+	public readonly claimUsernameEmail	= new BehaviorSubject<string|undefined>(undefined);
 
-	/** @see ContactComponent.to. */
-	public contactTo?: string;
+	/** @see ContactComponent.to */
+	public readonly contactTo			= new BehaviorSubject<string|undefined>(undefined);
 
 	/** Donation amount in dollars. */
-	public donationAmount: number	= 10;
+	public readonly donationAmount		= new BehaviorSubject<number>(10);
 
 	/** Carousel of features. */
-	public featureCarousel?: Carousel;
+	public readonly featureCarousel		= new BehaviorSubject<Carousel|undefined>(undefined);
 
 	/** Current feature displayed in hero section. */
-	public featureIndex: number			= 0;
+	public readonly featureIndex		= new BehaviorSubject<number>(0);
 
 	/** List of features to cycle through in hero section. */
 	public readonly features: string[]	= [
@@ -64,24 +67,24 @@ export class AppService {
 	];
 
 	/** @see HomeSections */
-	public homeSection?: HomeSections;
+	public readonly homeSection			= new BehaviorSubject<HomeSections|undefined>(undefined);
 
 	/** @see Promos */
-	public promo?: Promos;
+	public readonly promo				= new BehaviorSubject<Promos|undefined>(undefined);
 
 	/** @see States */
-	public state: States	= States.home;
+	public readonly state				= new BehaviorSubject<States>(States.home);
 
 	/** Carousel of testimonials. */
-	public testimonialCarousel?: Carousel;
+	public readonly testimonialCarousel	= new BehaviorSubject<Carousel|undefined>(undefined);
 
 	/** @ignore */
 	private cycleFeatures () : void {
-		if (this.featureIndex < this.features.length - 1) {
-			this.featureIndex++;
+		if (this.featureIndex.value < this.features.length - 1) {
+			this.featureIndex.next(this.featureIndex.value + 1);
 		}
 		else {
-			this.featureIndex	= 0;
+			this.featureIndex.next(0);
 		}
 	}
 
@@ -108,26 +111,26 @@ export class AppService {
 		const state: States|undefined	= (<any> States)[urlBasePath];
 		const promo: Promos|undefined	= (<any> Promos)[urlBasePath];
 
-		this.homeSection	= promo === undefined ?
+		this.homeSection.next(promo === undefined ?
 			(<any> HomeSections)[urlBasePath] :
 			HomeSections.promo
-		;
+		);
 
 		this.titleService.setTitle(
 			(<any> pageTitles)[urlBasePath] || pageTitles.defaultTitle
 		);
 
-		if (this.homeSection !== undefined) {
-			this.state	= States.home;
+		if (this.homeSection.value !== undefined) {
+			this.state.next(States.home);
 
 			if (promo !== undefined) {
-				this.promo					= promo;
-				this.signupService.promo	= Promos[promo];
+				this.promo.next(promo);
+				this.signupService.promo.next(Promos[promo]);
 			}
 
 			await sleep();
 
-			switch (this.homeSection) {
+			switch (this.homeSection.value) {
 				case HomeSections.register:
 					await this.dialogService.baseDialog(BetaRegisterComponent);
 					this.disableNextScroll	= true;
@@ -135,11 +138,11 @@ export class AppService {
 					break;
 
 				case HomeSections.invite:
-					this.signupService.data.inviteCode	=
+					this.signupService.data.inviteCode.next(
 						urlSegmentPaths.join('/').split(
 							`${HomeSections[HomeSections.invite]}/`
 						)[1] || ''
-					;
+					);
 
 					await this.dialogService.baseDialog(BetaRegisterComponent, o => {
 						o.invite	= true;
@@ -159,11 +162,11 @@ export class AppService {
 
 					this.scroll(
 						(
-							$(`#${HomeSections[this.homeSection]}-section`).offset() ||
+							$(`#${HomeSections[this.homeSection.value]}-section`).offset() ||
 							{left: 0, top: 0}
 						).top -
 						(
-							this.homeSection === HomeSections.gettingstarted ?
+							this.homeSection.value === HomeSections.gettingstarted ?
 								-1 :
 								(elements.mainToolbar().height() || 0)
 						)
@@ -195,25 +198,25 @@ export class AppService {
 			}
 		}
 		else if (state === States.claimusername) {
-			this.claimUsernameEmail	= urlSegmentPaths[1];
-			this.state				= state;
+			this.claimUsernameEmail.next(urlSegmentPaths[1]);
+			this.state.next(state);
 		}
 		else if (state === States.contact) {
 			const to: string	= urlSegmentPaths[1];
 			if (this.configService.contactEmailAddresses.indexOf(to) > -1) {
-				this.contactTo	= to;
+				this.contactTo.next(to);
 			}
 
-			this.state	= state;
+			this.state.next(state);
 		}
 		else if (state !== undefined) {
-			this.state	= state;
+			this.state.next(state);
 		}
 		else if (urlBasePath === '') {
-			this.state	= States.home;
+			this.state.next(States.home);
 		}
 		else if (urlBasePath === '404') {
-			this.state	= States.error;
+			this.state.next(States.error);
 		}
 		else {
 			this.router.navigate(['404']);
@@ -249,8 +252,8 @@ export class AppService {
 
 	/** Checkout completion event handler. */
 	public checkoutConfirmed () : void {
-		if (this.cart && this.cart.apiKey && typeof this.queryParams.ref === 'string') {
-			location.href	= `${this.queryParams.ref}/confirm/${this.cart.apiKey}`;
+		if (this.cart.value && this.cart.value.apiKey && typeof this.queryParams.ref === 'string') {
+			location.href	= `${this.queryParams.ref}/confirm/${this.cart.value.apiKey}`;
 		}
 	}
 
@@ -273,7 +276,7 @@ export class AppService {
 			throw new Error('Invalid updateCart arguments.');
 		}
 
-		this.cart	= {
+		this.cart.next({
 			amount,
 			apiKey,
 			categoryID: category.id,
@@ -281,9 +284,9 @@ export class AppService {
 			itemID: item.id,
 			itemName,
 			subscriptionType: item.subscriptionType
-		};
+		});
 
-		this.state	= States.checkout;
+		this.state.next(States.checkout);
 	}
 
 	constructor (
@@ -372,11 +375,11 @@ export class AppService {
 			await waitForIterable(elements.featuresSection);
 			await waitForIterable(elements.testimonialsSection);
 
-			this.featureCarousel		= new Carousel(elements.featuresSection(), true);
-			this.testimonialCarousel	= new Carousel(
+			this.featureCarousel.next(new Carousel(elements.featuresSection(), true));
+			this.testimonialCarousel.next(new Carousel(
 				elements.testimonialsSection(),
 				this.envService.isMobile
-			);
+			));
 
 			/* Header / new cyph button animation */
 
@@ -391,9 +394,9 @@ export class AppService {
 				while (true) {
 					await sleep(500);
 
-					const shouldExpand	= this.state === States.home && (
+					const shouldExpand	= this.state.value === States.home && (
 						(
-							this.promo === undefined &&
+							this.promo.value === undefined &&
 							elements.heroText().is(':appeared')
 						) ||
 						elements.footer().is(':appeared')

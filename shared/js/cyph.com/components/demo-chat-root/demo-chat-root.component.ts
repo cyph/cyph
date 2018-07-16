@@ -66,10 +66,12 @@ export class DemoChatRootComponent implements OnInit {
 		this.data.message.subscribe(s => {
 			if (this.chatService.chat.currentMessage.text === undefined) {
 				this.chatService.chat.currentMessage.text	= '';
+				this.chatService.updateChat();
 			}
 
 			if (s.length === 1) {
 				this.chatService.chat.currentMessage.text += s;
+				this.chatService.updateChat();
 			}
 			else if (s.length > 1) {
 				this.chatService.send(undefined, {text: s}, undefined, undefined, false);
@@ -93,7 +95,7 @@ export class DemoChatRootComponent implements OnInit {
 			new Konami(async () => {
 				this.router.navigate([HomeSections[HomeSections.intro]]);
 
-				while (!this.demoService.isActive) {
+				while (!this.demoService.isActive.value) {
 					await sleep();
 				}
 

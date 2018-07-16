@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
-import {filter, mergeMap, take} from 'rxjs/operators';
+import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {States, UiStyles} from '../../chat/enums';
 import {AccountFileRecord, CallTypes, ChatMessageValue, IAppointment} from '../../proto';
@@ -53,6 +53,14 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		ChatMessageValue.Types
 	;
 
+	/** Indicates whether call is pending or not yet loaded. */
+	public readonly initialCallPending		= combineLatest(
+		this.p2pWebRTCService.initialCallPending,
+		this.p2pWebRTCService.loading
+	).pipe(map(([initialCallPending, loading]) =>
+		initialCallPending || loading
+	));
+
 	/** @see ChatMessageValue.Types */
 	public readonly messageType				= new BehaviorSubject<ChatMessageValue.Types>(
 		ChatMessageValue.Types.Text
@@ -78,11 +86,6 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 		this.router.navigate([accountRoot, 'chat-transition'], {skipLocationChange: true});
 		await sleep(0);
 		this.router.navigate([accountRoot, ...url]);
-	}
-
-	/** Indicates whether call is pending or not yet loaded. */
-	public get initialCallPending () : boolean {
-		return this.p2pWebRTCService.initialCallPending || this.p2pWebRTCService.loading;
 	}
 
 	/** @inheritDoc */

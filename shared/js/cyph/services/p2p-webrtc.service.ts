@@ -87,18 +87,16 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		kill: async () : Promise<void> => {
 			const wasAccepted			= this.isAccepted;
-			const wasInitialCallPending	= this.initialCallPending;
+			const wasInitialCallPending	= this.initialCallPending.value;
 			this.isAccepted				= false;
-			this.isActive				= false;
-			this.initialCallPending		= false;
+			this.isActive.next(false);
+			this.initialCallPending.next(false);
 			this.p2pSessionData			= undefined;
 
 			await sleep(500);
 
-			this.incomingStream.audio	= false;
-			this.incomingStream.video	= false;
-			this.outgoingStream.audio	= false;
-			this.outgoingStream.video	= false;
+			this.incomingStream.next({audio: false, video: false});
+			this.outgoingStream.next({audio: false, video: false});
 
 			if (this.webRTC.value) {
 				this.webRTC.value.mute();
@@ -219,22 +217,26 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	public readonly disconnect: Observable<void>	= this.disconnectInternal;
 
 	/** @inheritDoc */
-	public readonly incomingStream					= {audio: false, video: false};
+	public readonly incomingStream					= new BehaviorSubject(
+		{audio: false, video: false}
+	);
 
 	/** @inheritDoc */
-	public initialCallPending: boolean				= false;
+	public readonly initialCallPending				= new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
-	public isActive: boolean						= false;
+	public readonly isActive						= new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
-	public loading: boolean							= false;
+	public readonly loading							= new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
-	public localMediaError: boolean					= false;
+	public readonly localMediaError					= new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
-	public readonly outgoingStream					= {audio: false, video: false};
+	public readonly outgoingStream					= new BehaviorSubject(
+		{audio: false, video: false}
+	);
 
 	/** @inheritDoc */
 	public readonly ready: Promise<boolean>			= this._READY.promise;
@@ -243,7 +245,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	public readonly resolveReady: () => void		= this._READY.resolve;
 
 	/** @inheritDoc */
-	public videoEnabled								= false;
+	public readonly videoEnabled					= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	private async getWebRTC () : Promise<any> {
@@ -328,7 +330,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 			if (
 				p2pSessionData &&
-				(!this.p2pSessionData || !this.sessionService.state.isAlice)
+				(!this.p2pSessionData || !this.sessionService.state.isAlice.value)
 			) {
 				this.p2pSessionData	= p2pSessionData;
 			}
@@ -355,19 +357,18 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 	/** @inheritDoc */
 	public accept (callType?: 'audio'|'video', isPassive: boolean = false) : void {
-		this.isAccepted				= true;
-		this.loading				= true;
-		this.outgoingStream.video	= callType === 'video';
-		this.outgoingStream.audio	= true;
+		this.isAccepted	= true;
+		this.loading.next(true);
+		this.outgoingStream.next({audio: true, video: callType === 'video'});
 
 		if (isPassive) {
-			this.isActive	= true;
+			this.isActive.next(true);
 		}
 	}
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {
-		this.initialCallPending	= false;
+		this.initialCallPending.next(false);
 
 		await Promise.all([
 			this.sessionService.send([rpcEvents.p2p, {command: {
@@ -400,11 +401,10 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 			this.webRTC.next(undefined);
 
-			this.loading				= true;
-			this.incomingStream.audio	= this.outgoingStream.audio;
-			this.incomingStream.video	= this.outgoingStream.video;
-			this.videoEnabled			= this.outgoingStream.video;
-			this.isActive				= true;
+			this.loading.next(true);
+			this.incomingStream.next({...this.outgoingStream.value});
+			this.videoEnabled.next(this.outgoingStream.value.video);
+			this.isActive.next(true);
 
 			const p2pSessionData			= this.p2pSessionData;
 			const webRTCEvents: string[]	= [];
@@ -500,7 +500,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				},
 				debug: env.debug,
 				localVideoEl: $localVideo[0],
-				media: this.outgoingStream,
+				media: this.outgoingStream.value,
 				peerConnectionConfig:
 					!this.sessionService.apiFlags.disableP2P ?
 						{iceServers} :
@@ -512,13 +512,15 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			webRTC.connection.on(
 				'streamUpdate',
 				(incomingStream: {audio: boolean; video: boolean}) => {
-					this.incomingStream.audio	= !!incomingStream.audio;
-					this.incomingStream.video	= !!incomingStream.video;
+					this.incomingStream.next({
+						audio: !!incomingStream.audio,
+						video: !!incomingStream.video
+					});
 				}
 			);
 
 			webRTC.on('localMediaError', () => {
-				this.localMediaError	= true;
+				this.localMediaError.next(true);
 			});
 
 			this.handleLoadingEvent(webRTC, this.loadingEvents.readyToCall, () => {
@@ -533,7 +535,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 			this.handleLoadingEvent(webRTC, this.loadingEvents.finished, async () => {
 				await (await this.handlers).loaded();
-				this.loading	= false;
+				this.loading.next(false);
 				await this.progressUpdate(this.loadingEvents.finished, 100);
 				this.toggle('audio', !(await this.handlers).audioDefaultEnabled());
 			});
@@ -547,7 +549,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			(await this.handlers).connected(true);
 			this.webRTC.next(webRTC);
 
-			this.initialCallPending	= false;
+			this.initialCallPending.next(false);
 		});
 	}
 
@@ -567,7 +569,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 
 		this.accept(callType);
 
-		this.p2pSessionData	= isPassive && !this.sessionService.state.isAlice ?
+		this.p2pSessionData	= isPassive && !this.sessionService.state.isAlice.value ?
 			undefined :
 			{
 				iceServers: await request({retries: 5, url: env.baseUrl + 'iceservers'}).catch(
@@ -592,7 +594,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		/* Time out if request hasn't been accepted within 10 minutes */
 
 		for (let seconds = 0 ; seconds < 600 ; ++seconds) {
-			if (this.isActive) {
+			if (this.isActive.value) {
 				return;
 			}
 
@@ -608,15 +610,15 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			const webRTC	= await this.getWebRTC();
 
 			if (medium === 'audio' || medium === undefined) {
-				const oldAudio	= this.outgoingStream.audio;
-
-				this.outgoingStream.audio	=
+				const audio	=
 					shouldPause === false ||
-					(shouldPause === undefined && !this.outgoingStream.audio)
+					(shouldPause === undefined && !this.outgoingStream.value.audio)
 				;
 
-				if (oldAudio !== this.outgoingStream.audio) {
-					if (this.outgoingStream.audio) {
+				if (this.outgoingStream.value.audio !== audio) {
+					this.outgoingStream.next({...this.outgoingStream.value, audio});
+
+					if (audio) {
 						webRTC.unmute();
 					}
 					else {
@@ -626,15 +628,15 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 			}
 
 			if (medium === 'video' || medium === undefined) {
-				const oldVideo	= this.outgoingStream.video;
-
-				this.outgoingStream.video	=
+				const video	=
 					shouldPause === false ||
-					(shouldPause === undefined && !this.outgoingStream.video)
+					(shouldPause === undefined && !this.outgoingStream.value.video)
 				;
 
-				if (oldVideo !== this.outgoingStream.video) {
-					if (this.outgoingStream.video) {
+				if (this.outgoingStream.value.video !== video) {
+					this.outgoingStream.next({...this.outgoingStream.value, video});
+
+					if (video) {
 						webRTC.resumeVideo();
 					}
 					else {
@@ -643,7 +645,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				}
 			}
 
-			webRTC.connection.emit('streamUpdate', this.outgoingStream);
+			webRTC.connection.emit('streamUpdate', this.outgoingStream.value);
 		});
 	}
 

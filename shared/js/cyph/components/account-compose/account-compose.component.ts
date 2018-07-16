@@ -102,6 +102,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 					default:
 						throw new Error('Invalid chat message type.');
 				}
+
+				this.accountChatService.updateChat();
 			}
 
 			return messageType;
@@ -195,6 +197,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		this.accountChatService.chat.currentMessage.quill			= undefined;
 		this.accountChatService.chat.currentMessage.text			= '';
 
+		this.accountChatService.updateChat();
+
 		this.sent.next(true);
 	/* tslint:disable-next-line:semicolon */
 	};
@@ -219,7 +223,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountChatService.chat.state	= States.chat;
-		this.sessionService.state.isAlive	= true;
+		this.accountChatService.updateChat();
+		this.sessionService.state.isAlive.next(true);
 
 		this.activatedRoute.params.subscribe(async o => {
 			const username: string|undefined	=

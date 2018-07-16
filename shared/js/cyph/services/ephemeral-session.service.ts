@@ -36,7 +36,7 @@ export class EphemeralSessionService extends SessionService {
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
 	 */
 	private async pingPong () : Promise<void> {
-		while (this.state.isAlive) {
+		while (this.state.isAlive.value) {
 			await sleep(random(90000, 30000));
 
 			if (
@@ -73,8 +73,8 @@ export class EphemeralSessionService extends SessionService {
 			id	= readableID(this.configService.secretLength);
 		}
 
-		this.state.cyphID		= id.substring(0, this.configService.cyphIDLength);
-		this.state.sharedSecret	= this.state.sharedSecret || id;
+		this.state.cyphID.next(id.substring(0, this.configService.cyphIDLength));
+		this.state.sharedSecret.next(this.state.sharedSecret.value || id);
 	}
 
 	/** @inheritDoc */
@@ -84,7 +84,7 @@ export class EphemeralSessionService extends SessionService {
 		/* If aborting before the cyph begins, block friend from trying to join */
 		request({
 			method: 'POST',
-			url: `${env.baseUrl}channels/${this.state.cyphID}`
+			url: `${env.baseUrl}channels/${this.state.cyphID.value}`
 		}).catch(
 			() => {}
 		);
@@ -94,7 +94,7 @@ export class EphemeralSessionService extends SessionService {
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		super.channelOnOpen(isAlice);
 
-		if (this.state.isAlice) {
+		if (this.state.isAlice.value) {
 			this.trigger(events.beginWaiting);
 		}
 		else {
@@ -107,7 +107,7 @@ export class EphemeralSessionService extends SessionService {
 				hitType: 'event'
 			});
 
-			if (this.state.wasInitiatedByAPI) {
+			if (this.state.wasInitiatedByAPI.value) {
 				this.analyticsService.sendEvent({
 					eventAction: 'started',
 					eventCategory: 'api-initiated-cyph',
@@ -121,7 +121,7 @@ export class EphemeralSessionService extends SessionService {
 	/** @inheritDoc */
 	public get proFeatures () : ProFeatures {
 		return new ProFeatures(
-			this.state.wasInitiatedByAPI,
+			this.state.wasInitiatedByAPI.value,
 			this.apiFlags.disableP2P,
 			this.apiFlags.modestBranding,
 			this.sessionInitService.callType === 'video',
@@ -171,7 +171,7 @@ export class EphemeralSessionService extends SessionService {
 		let id	= this.sessionInitService.id;
 
 		if (id === '404') {
-			this.state.startingNewCyph	= true;
+			this.state.startingNewCyph.next(true);
 			this.trigger(events.cyphNotFound);
 			return;
 		}
@@ -194,27 +194,27 @@ export class EphemeralSessionService extends SessionService {
 		}
 
 		if (this.envService.isTelehealth) {
-			this.remoteUsername.next(this.state.isAlice ?
+			this.remoteUsername.next(this.state.isAlice.value ?
 				this.stringsService.patient :
 				this.stringsService.doctor
 			);
 		}
 
-		this.state.wasInitiatedByAPI	= id.length > this.configService.secretLength;
+		this.state.wasInitiatedByAPI.next(id.length > this.configService.secretLength);
 
 		/* true = yes; false = no; undefined = maybe */
-		this.state.startingNewCyph		=
-			this.state.wasInitiatedByAPI ?
+		this.state.startingNewCyph.next(
+			this.state.wasInitiatedByAPI.value ?
 				undefined :
 				id.length < 1 ?
 					true :
 					false
-		;
+		);
 
 		this.setID(id);
 
 		const channelID: string	=
-			this.state.startingNewCyph === false ?
+			this.state.startingNewCyph.value === false ?
 				'' :
 				uuid(true)
 		;
@@ -226,7 +226,7 @@ export class EphemeralSessionService extends SessionService {
 						data: {channelID, proFeatures: this.proFeatures},
 						method: 'POST',
 						retries: 5,
-						url: `${env.baseUrl}channels/${this.state.cyphID}`
+						url: `${env.baseUrl}channels/${this.state.cyphID.value}`
 					})
 				);
 			}

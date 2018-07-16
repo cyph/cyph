@@ -50,12 +50,12 @@ export interface ISessionService {
 
 	/** State of the cyph (referenced by UI). */
 	readonly state: {
-		cyphID: string;
-		isAlice: boolean;
-		isAlive: boolean;
-		sharedSecret: string;
-		startingNewCyph?: boolean;
-		wasInitiatedByAPI: boolean;
+		cyphID: BehaviorSubject<string>;
+		isAlice: BehaviorSubject<boolean>;
+		isAlive: BehaviorSubject<boolean>;
+		sharedSecret: BehaviorSubject<string>;
+		startingNewCyph: BehaviorSubject<boolean|undefined>;
+		wasInitiatedByAPI: BehaviorSubject<boolean>;
 	};
 
 	/** Castle event handler called by Castle.Transport. */

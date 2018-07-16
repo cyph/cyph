@@ -67,7 +67,7 @@ export class AccountFilesService {
 	 * Resolves circular dependency needed for shareFilePrompt to work.
 	 * @see AccountFileSharingComponent
 	 */
-	public static accountFileSharingComponent	=
+	public static readonly accountFileSharingComponent	=
 		resolvable<ComponentType<{
 			closeFunction?: IResolvable<() => void>;
 			file?: AccountFileShare;
@@ -460,7 +460,7 @@ export class AccountFilesService {
 	};
 
 	/** Indicates whether the first load has completed. */
-	public initiated: boolean				= false;
+	public readonly initiated				= new BehaviorSubject<boolean>(false);
 
 	/** Determines whether file should be treated as an image. */
 	public readonly isImage	= memoize(async (id: string) => {
@@ -472,7 +472,7 @@ export class AccountFilesService {
 	public readonly maxNameLength: number	= 80;
 
 	/** Indicates whether spinner should be displayed. */
-	public showSpinner: boolean				= true;
+	public readonly showSpinner				= new BehaviorSubject<boolean>(true);
 
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
@@ -1440,16 +1440,16 @@ export class AccountFilesService {
 	) {
 		(async () => {
 			if ((await this.accountDatabaseService.getListKeys('fileReferences')).length === 0) {
-				this.initiated		= true;
-				this.showSpinner	= false;
+				this.initiated.next(true);
+				this.showSpinner.next(false);
 			}
 			else {
 				this.filesList.pipe(
 					filter(arr => arr.length > 0),
 					take(1)
 				).toPromise().then(() => {
-					this.initiated		= true;
-					this.showSpinner	= false;
+					this.initiated.next(true);
+					this.showSpinner.next(false);
 				});
 			}
 		})();

@@ -86,7 +86,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 	public async ngAfterViewInit () : Promise<void> {
 		await sleep(0);
 
-		this.appService.chatRootState	= ChatRootStates.blank;
+		this.appService.chatRootState.next(ChatRootStates.blank);
 
 		const granimStates	= {
 			'default-state': !this.envService.isTelehealth ?
@@ -153,8 +153,8 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 			}
 		}
 
-		if (this.sessionService.state.startingNewCyph !== true) {
-			this.appService.isLockedDown	= false;
+		if (this.sessionService.state.startingNewCyph.value !== true) {
+			this.appService.isLockedDown.next(false);
 
 			this.router.navigate(
 				(
@@ -192,7 +192,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 			}
 
 			beforeUnloadMessage				= undefined;
-			this.appService.chatRootState	= ChatRootStates.chat;
+			this.appService.chatRootState.next(ChatRootStates.chat);
 		});
 
 		this.sessionService.one(events.beginChatComplete).then(() => {
@@ -208,7 +208,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 				return;
 			}
 
-			this.appService.chatRootState	= ChatRootStates.waitingForFriend;
+			this.appService.chatRootState.next(ChatRootStates.waitingForFriend);
 		});
 
 		this.sessionService.connected.then(() => {
@@ -216,7 +216,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 				return;
 			}
 
-			this.appService.chatRootState	= ChatRootStates.chat;
+			this.appService.chatRootState.next(ChatRootStates.chat);
 		});
 
 		this.sessionService.cyphNotFound.then(() => {
@@ -224,7 +224,7 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 				return;
 			}
 
-			this.appService.chatRootState	= ChatRootStates.error;
+			this.appService.chatRootState.next(ChatRootStates.error);
 			this.router.navigate(['404']);
 		});
 

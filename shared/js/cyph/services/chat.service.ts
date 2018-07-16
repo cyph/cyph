@@ -144,33 +144,33 @@ export class ChatService {
 	}[]	= [];
 
 	/** @see IChatData */
-	public chat: IChatData;
+	public readonly chatSubject: BehaviorSubject<IChatData>;
 
 	/** Indicates whether the chat is self-destructing. */
-	public chatSelfDestruct: boolean		= false;
+	public readonly chatSelfDestruct		= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the chat is self-destructed. */
-	public chatSelfDestructed?: Observable<boolean>;
+	public readonly chatSelfDestructed		= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the chat self-destruction effect should be running. */
-	public chatSelfDestructEffect: boolean	= false;
+	public readonly chatSelfDestructEffect	= new BehaviorSubject<boolean>(false);
 
 	/** Time in seconds until chat self-destructs. */
-	public chatSelfDestructTimeout: number	= 5;
+	public readonly chatSelfDestructTimeout	= new BehaviorSubject<number>(5);
 
 	/** Timer for chat self-destruction. */
-	public chatSelfDestructTimer?: Timer;
+	public readonly chatSelfDestructTimer	= new BehaviorSubject<Timer|undefined>(undefined);
 
 	/** Indicates whether the chat is ready to be displayed. */
-	public initiated: boolean				= false;
+	public readonly initiated				= new BehaviorSubject<boolean>(false);
 
 	/** Interval for debouncing send buttons. */
 	public readonly messageDebounce: number	= 250;
 
 	/** @see P2PService */
 	public readonly p2pService				= resolvable<{
-		isActive: boolean;
-		isSidebarOpen: boolean;
+		isActive: BehaviorSubject<boolean>;
+		isSidebarOpen: BehaviorSubject<boolean>;
 	}>();
 
 	/** Sub-resolvables of uiReady. */
@@ -192,7 +192,7 @@ export class ChatService {
 	;
 
 	/** Indicates whether "walkie talkie" mode is enabled for calls. */
-	public walkieTalkieMode: boolean		= false;
+	public readonly walkieTalkieMode		= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	private async addTextMessage (...textMessageInputs: ISessionMessageData[]) : Promise<void> {
@@ -262,11 +262,15 @@ export class ChatService {
 			);
 
 			if (selfDestructChat && o.text.selfDestructTimeout) {
-				this.chatSelfDestruct		= true;
-				this.chatSelfDestructed		= this.chat.messageList.watchFlat().pipe(
+				this.chatSelfDestruct.next(true);
+
+				this.chat.messageList.watchFlat().pipe(
 					map(messageIDs => messageIDs.length === 0)
+				).subscribe(
+					this.chatSelfDestructed
 				);
-				this.chatSelfDestructTimer	= new Timer(o.text.selfDestructTimeout);
+
+				this.chatSelfDestructTimer.next(new Timer(o.text.selfDestructTimeout));
 			}
 
 			return {
@@ -303,9 +307,9 @@ export class ChatService {
 				});
 			}
 
-			if (o.selfDestructChat && this.chatSelfDestructTimer) {
-				await this.chatSelfDestructTimer.start();
-				this.chatSelfDestructEffect	= true;
+			if (o.selfDestructChat && this.chatSelfDestructTimer.value) {
+				await this.chatSelfDestructTimer.value.start();
+				this.chatSelfDestructEffect.next(true);
 				await sleep(500);
 
 				await Promise.all([
@@ -314,7 +318,7 @@ export class ChatService {
 					sleep(1000)
 				]);
 
-				this.chatSelfDestructEffect	= false;
+				this.chatSelfDestructEffect.next(false);
 
 				if (o.author !== this.sessionService.localUsername) {
 					await this.close();
@@ -347,9 +351,12 @@ export class ChatService {
 		}
 		else if (!this.chat.isDisconnected) {
 			this.chat.isDisconnected	= true;
-			if (!this.chatSelfDestruct) {
+			this.updateChat();
+
+			if (!this.chatSelfDestruct.value) {
 				this.addMessage({value: this.stringsService.disconnectNotification});
 			}
+
 			this.sessionService.close();
 		}
 	}
@@ -502,6 +509,7 @@ export class ChatService {
 	/** Aborts the process of chat initialisation and authentication. */
 	public async abortSetup () : Promise<void> {
 		this.chat.state	= States.aborted;
+		this.updateChat();
 		this.sessionService.trigger(events.abort);
 		this.sessionService.close();
 		await this.dialogService.dismissToast();
@@ -617,7 +625,7 @@ export class ChatService {
 
 				await this.scrollService.trackItem(
 					id,
-					p2pService.isActive && !p2pService.isSidebarOpen
+					p2pService.isActive.value && !p2pService.isSidebarOpen.value
 				);
 			}
 
@@ -675,11 +683,11 @@ export class ChatService {
 			this.send(
 				undefined,
 				{text: this.chat.queuedMessage},
-				this.chatSelfDestruct ?
-					this.chatSelfDestructTimeout * 1000 :
+				this.chatSelfDestruct.value ?
+					this.chatSelfDestructTimeout.value * 1000 :
 					undefined
 				,
-				this.chatSelfDestruct
+				this.chatSelfDestruct.value
 			);
 		}
 
@@ -688,6 +696,7 @@ export class ChatService {
 
 			this.initProgressFinish();
 			this.chat.state	= States.chatBeginMessage;
+			this.updateChat();
 
 			await sleep(3000);
 
@@ -698,15 +707,16 @@ export class ChatService {
 			this.sessionService.trigger(events.beginChatComplete);
 
 			this.chat.state	= States.chat;
+			this.updateChat();
 
 			for (let i = 0 ; i < 15 ; ++i) {
-				if (this.chatSelfDestruct) {
+				if (this.chatSelfDestruct.value) {
 					break;
 				}
 				await sleep(100);
 			}
 
-			if (!this.chatSelfDestruct) {
+			if (!this.chatSelfDestruct.value) {
 				this.addMessage({
 					shouldNotify: false,
 					timestamp: (await getTimestamp()) - 30000,
@@ -714,11 +724,17 @@ export class ChatService {
 				});
 			}
 
-			this.initiated	= true;
+			this.initiated.next(true);
 			this.resolvers.chatConnected.resolve();
 		}
 
 		this.chat.isConnected	= true;
+		this.updateChat();
+	}
+
+	/** @see ChatService.chatSubject */
+	public get chat () : IChatData {
+		return this.chatSubject.value;
 	}
 
 	/** After confirmation dialog, this kills the chat. */
@@ -824,6 +840,8 @@ export class ChatService {
 	 * sends appropriate typing indicator signals through session.
 	 */
 	public async messageChange (isText: boolean = false) : Promise<void> {
+		this.updateChat();
+
 		return this.messageChangeLock(async () => {
 			if (this.chat.pendingMessageRoot) {
 				await this.localStorageService.setItem<IChatMessageLiveValueSerialized>(
@@ -843,6 +861,7 @@ export class ChatService {
 			}
 
 			this.chat.previousMessage	= this.chat.currentMessage.text;
+			this.updateChat();
 
 			await sleep(this.outgoingMessageBatchDelay);
 
@@ -853,6 +872,7 @@ export class ChatService {
 
 			if (this.chat.isMessageChanged !== isMessageChanged) {
 				this.chat.isMessageChanged	= isMessageChanged;
+				this.updateChat();
 				this.sessionService.send([
 					rpcEvents.typing,
 					{chatState: {isTyping: this.chat.isMessageChanged}}
@@ -1076,7 +1096,13 @@ export class ChatService {
 	/** Sets queued message to be sent after handshake. */
 	public setQueuedMessage (messageText: string) : void {
 		this.chat.queuedMessage	= messageText;
+		this.updateChat();
 		this.dialogService.toast(this.stringsService.queuedMessageSaved, 2500);
+	}
+
+	/** Pushes update to chat subject. */
+	public updateChat () : void {
+		this.chatSubject.next({...this.chat});
 	}
 
 	constructor (
@@ -1116,14 +1142,14 @@ export class ChatService {
 		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
-		this.chat	= this.getDefaultChatData();
+		this.chatSubject	= new BehaviorSubject(this.getDefaultChatData());
 
 		this.sessionService.ready.then(() => {
 			const beginChat				= this.sessionService.one(events.beginChat);
 			const callType				= this.sessionInitService.callType;
 			const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
-			this.p2pWebRTCService.initialCallPending	= callType !== undefined;
+			this.p2pWebRTCService.initialCallPending.next(callType !== undefined);
 
 			this.scrollService.resolveUnreadItems(this.getScrollServiceUnreadMessages());
 
@@ -1183,6 +1209,8 @@ export class ChatService {
 						this.chat.currentMessage.text ||
 						messageLiveValue.text
 					;
+
+					this.updateChat();
 				}).catch(
 					() => {}
 				).then(() => {
@@ -1227,7 +1255,7 @@ export class ChatService {
 			);
 
 			this.sessionService.connected.then(async () => {
-				this.sessionCapabilitiesService.resolveWalkieTalkieMode(this.walkieTalkieMode);
+				this.sessionCapabilitiesService.resolveWalkieTalkieMode(this.walkieTalkieMode.value);
 
 				if (callType !== undefined) {
 					this.sessionService.yt().then(async () => {
@@ -1280,6 +1308,7 @@ export class ChatService {
 				}
 
 				this.chat.state	= States.keyExchange;
+				this.updateChat();
 				this.initProgressStart();
 			});
 
@@ -1342,7 +1371,7 @@ export class ChatService {
 		});
 
 		this.sessionCapabilitiesService.capabilities.walkieTalkieMode.then(walkieTalkieMode => {
-			this.walkieTalkieMode	= walkieTalkieMode;
+			this.walkieTalkieMode.next(walkieTalkieMode);
 		});
 	}
 }

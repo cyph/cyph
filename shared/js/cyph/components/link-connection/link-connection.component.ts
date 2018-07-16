@@ -3,6 +3,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import clipboard from 'clipboard-polyfill';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
 import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
 import {DialogService} from '../../services/dialog.service';
@@ -11,7 +12,7 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {Timer} from '../../timer';
 import {lockTryOnce} from '../../util/lock';
-import {sleep, waitForIterable, waitForValue} from '../../util/wait';
+import {sleep, waitForIterable} from '../../util/wait';
 
 
 /**
@@ -89,18 +90,23 @@ export class LinkConnectionComponent implements AfterViewInit {
 	public async ngAfterViewInit () : Promise<void> {
 		let isWaiting		= true;
 
-		await waitForValue(() => this.sessionService.state.sharedSecret || undefined);
+		const sharedSecret	=
+			await this.sessionService.state.sharedSecret.pipe(
+				filter(s => s.length > 0),
+				take(1)
+			).toPromise()
+		;
 
-		this.isPassive.next(this.sessionService.state.wasInitiatedByAPI);
+		this.isPassive.next(this.sessionService.state.wasInitiatedByAPI.value);
 
-		if (this.isPassive.value || !this.sessionService.state.startingNewCyph) {
+		if (this.isPassive.value || !this.sessionService.state.startingNewCyph.value) {
 			return;
 		}
 
 		this.linkConstant	=
 			this.envService.newCyphUrl +
 			(this.envService.newCyphUrl.indexOf('#') > -1 ? '' : '#') +
-			this.sessionService.state.sharedSecret
+			sharedSecret
 		;
 
 		const linkEncoded	= encodeURIComponent(this.linkConstant);

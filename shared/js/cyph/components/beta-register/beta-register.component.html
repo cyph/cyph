@@ -9,7 +9,7 @@
 			</span>
 		</mat-card-title>
 		<mat-card-subtitle>
-			<div *ngIf='signupService.state === 1'>
+			<div *ngIf='(signupService.state | async) === 1'>
 				<span *ngIf='!invite' cyphTranslate>
 					Enter your email address.
 				</span>
@@ -18,7 +18,7 @@
 					on our waitlist.
 				</span>
 			</div>
-			<div *ngIf='signupService.state === 2' cyphTranslate>
+			<div *ngIf='(signupService.state | async) === 2' cyphTranslate>
 				Thanks for signing up. Feel free to give us your name too.
 				Privacy is at the core of our ideology, so we'll never give
 				away your email address or personal details.

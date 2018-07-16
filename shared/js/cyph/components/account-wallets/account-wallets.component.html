@@ -1,6 +1,6 @@
 <div
 	fxFlexFill
-	[class.initiating]='accountFilesService.showSpinner'
+	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='accountService.enableWallets'
 >
 	<div
@@ -56,7 +56,7 @@
 					let i = index;
 				'
 				[attr.data-index]='i'
-				[class.bounceInRight]='!accountFilesService.initiated'
+				[class.bounceInRight]='(accountFilesService.initiated | async) === false'
 				[label]='wallet.record.name'
 				[ngClass]='"_" + i'
 			>
@@ -216,7 +216,7 @@
 
 	<mat-progress-spinner
 		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner'
+		*ngIf='accountFilesService.showSpinner | async'
 	></mat-progress-spinner>
 
 	<smd-fab-speed-dial

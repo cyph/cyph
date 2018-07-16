@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ChatMessage} from '../chat';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {LocalAsyncList} from '../local-async-list';
@@ -24,7 +24,7 @@ export class CyphertextService {
 	;
 
 	/** Indicates whether cyphertext should be displayed. */
-	public isVisible: boolean	= false;
+	public readonly isVisible	= new BehaviorSubject<boolean>(false);
 
 	/** Cyphertext message list. */
 	public readonly messages: LocalAsyncList<ChatMessage>	= new LocalAsyncList<ChatMessage>();
@@ -59,11 +59,11 @@ export class CyphertextService {
 
 	/** Hides cyphertext UI. */
 	public hide () : void {
-		if (!this.isVisible) {
+		if (!this.isVisible.value) {
 			return;
 		}
 
-		this.isVisible	= false;
+		this.isVisible.next(false);
 
 		this.dialogService.toast(this.stringsService.cypherToast3, 1000);
 	}
@@ -73,7 +73,7 @@ export class CyphertextService {
 		await this.dialogService.toast(this.stringsService.cypherToast1, 2000);
 		await this.dialogService.toast(this.stringsService.cypherToast2, 3000);
 
-		this.isVisible	= true;
+		this.isVisible.next(true);
 
 		this.analyticsService.sendEvent({
 			eventAction: 'show',

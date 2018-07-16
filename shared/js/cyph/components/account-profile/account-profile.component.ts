@@ -182,7 +182,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 			throw new Error("Cannot modify another user's description.");
 		}
 
-		this.accountService.interstitial	= true;
+		this.accountService.interstitial.next(true);
 
 		const {
 			avatar,
@@ -242,7 +242,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 				user.accountUserProfileExtra.updateValue(async o => ({...o, forms}))
 		]);
 
-		this.accountService.interstitial	= false;
+		this.accountService.interstitial.next(false);
 		this.setEditMode(false);
 	}
 
@@ -291,7 +291,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 			return;
 		}
 
-		this.accountService.interstitial	= true;
+		this.accountService.interstitial.next(true);
 
 		let alertPromise	= Promise.resolve();
 
@@ -339,7 +339,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 			});
 		}
 		finally {
-			this.accountService.interstitial	= false;
+			this.accountService.interstitial.next(false);
 			await alertPromise;
 		}
 	}

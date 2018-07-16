@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {EnvService} from '../cyph/services/env.service';
 import {random} from '../cyph/util/random';
 import {request} from '../cyph/util/request';
@@ -48,7 +49,7 @@ export class DemoService {
 	`;
 
 	/** Indicates whether demo is in active state. */
-	public isActive: boolean	= false;
+	public readonly isActive	= new BehaviorSubject<boolean>(false);
 
 	/** Messages to send during demo. */
 	public readonly messages: Promise<{

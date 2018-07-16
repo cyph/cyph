@@ -44,7 +44,7 @@ export class LockdownComponent implements OnInit {
 	/** @ignore */
 	private async tryUnlock (password: string, passive: boolean = false) : Promise<boolean> {
 		return this.lock(async () => {
-			if (!this.appService.isLockedDown) {
+			if (!this.appService.isLockedDown.value) {
 				return true;
 			}
 

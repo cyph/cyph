@@ -3,7 +3,7 @@
 	fxLayout='row'
 	fxLayoutAlign='center start'
 	class='card-list'
-	[class.initiating]='accountFilesService.showSpinner'
+	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='(realTime | async) === false || accountService.enableDocs'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
@@ -11,7 +11,7 @@
 			class='note animated slideInDown'
 			*ngFor='let note of notes | async; trackBy: trackByID; let i = index'
 			[attr.data-index]='i'
-			[class.bounceInRight]='!accountFilesService.initiated'
+			[class.bounceInRight]='(accountFilesService.initiated | async) === false'
 			[ngClass]='"_" + i'
 			[routerLink]='note.id'
 		>
@@ -84,7 +84,7 @@
 			class='note animated'
 			*ngFor='let note of incomingNotes | async; trackBy: trackByID; let i = index'
 			[attr.data-index]='i'
-			[class.bounceInRight]='!accountFilesService.initiated'
+			[class.bounceInRight]='(accountFilesService.initiated | async) === false'
 			[ngClass]='"_" + i'
 		>
 			<mat-card-header fxLayout='row'>
@@ -127,7 +127,7 @@
 
 	<mat-progress-spinner
 		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner'
+		*ngIf='accountFilesService.showSpinner | async'
 	></mat-progress-spinner>
 
 	<button

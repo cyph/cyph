@@ -58,10 +58,10 @@ export class AccountService {
 	;
 
 	/** Indicates the status of the interstitial. */
-	public interstitial: boolean						= false;
+	public readonly interstitial						= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the UI is ready. */
-	public isUiReady: boolean							= false;
+	public readonly isUiReady							= new BehaviorSubject<boolean>(false);
 
 	/** Maximum length of profile description. */
 	public readonly maxDescriptionLength: number		= 1000;
@@ -287,7 +287,7 @@ export class AccountService {
 		});
 
 		this.uiReady.then(() => {
-			this.isUiReady	= true;
+			this.isUiReady.next(true);
 		});
 	}
 }

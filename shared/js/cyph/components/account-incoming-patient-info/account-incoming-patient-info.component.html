@@ -3,7 +3,7 @@
 	fxLayout='row'
 	fxLayoutAlign='center start'
 	class='card-list'
-	[class.initiating]='accountFilesService.showSpinner'
+	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='envService.isTelehealth'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
@@ -16,7 +16,7 @@
 				class='redox-patient animated'
 				*ngIf='getRedoxPatient(redoxPatient) | async as redoxPatientData'
 				[attr.data-index]='i'
-				[class.bounceInRight]='!accountFilesService.initiated'
+				[class.bounceInRight]='(accountFilesService.initiated | async) === false'
 				[ngClass]='"_" + i'
 			>
 				<mat-card-header fxLayout='row'>
@@ -64,6 +64,6 @@
 
 	<mat-progress-spinner
 		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner'
+		*ngIf='accountFilesService.showSpinner | async'
 	></mat-progress-spinner>
 </div>

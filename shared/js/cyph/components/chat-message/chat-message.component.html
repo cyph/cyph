@@ -8,7 +8,7 @@
 	[class.author-remote]='message?.authorType === authorTypes.Remote'
 	[class.file-transfer]='message?.value?.fileTransfer !== undefined'
 	[class.get-value-failure]='message?.value?.failure'
-	[class.self-destruct]='chatService.chatSelfDestruct'
+	[class.self-destruct]='chatService.chatSelfDestruct | async'
 	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
 	[class.visibility-hidden]='(viewReady | async) === false'
 	[id]='message ? "message-id-" + message?.id : undefined'

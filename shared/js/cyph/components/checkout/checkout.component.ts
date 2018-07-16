@@ -10,8 +10,8 @@ import {
 	Output
 } from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
-import {AppService} from '../../../cyph.com/app.service';
 import {SubscriptionTypes} from '../../checkout';
 import {emailPattern} from '../../email-pattern';
 import {EnvService} from '../../services/env.service';
@@ -61,23 +61,27 @@ export class CheckoutComponent implements AfterViewInit {
 	/** @see emailPattern */
 	public readonly emailPattern			= emailPattern;
 
+	/** Formats item name. */
+	public readonly formatItemName			= memoize((itemName?: string) =>
+		typeof itemName === 'string' ?
+			itemName.replace(/([A-Z])/g, ' $1').toUpperCase() :
+			undefined
+	);
+
 	/** Item ID number. */
 	@Input() public item?: number;
+
+	/** Item name. */
+	@Input() public itemName?: string;
 
 	/** Name. */
 	@Input() public name?: string;
 
-	/** Indicates whether payment is pending. */
-	public readonly pending					= new BehaviorSubject<boolean>(false);
-
-	public itemName: string | undefined		=
-		this.appService.cart ?
-			this.appService.cart.itemName.replace(/([A-Z])/g, ' $1').toUpperCase() :
-			undefined
-	;
-
 	/** If true, will never stop spinning. */
 	@Input() public noSpinnerEnd: boolean	= false;
+
+	/** Indicates whether payment is pending. */
+	public readonly pending					= new BehaviorSubject<boolean>(false);
 
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
@@ -188,9 +192,6 @@ export class CheckoutComponent implements AfterViewInit {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly appService: AppService,
-
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 

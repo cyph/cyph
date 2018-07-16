@@ -1,7 +1,7 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
-import {Subscription} from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 import {skip} from 'rxjs/operators';
 import {RegistrationErrorCodes} from '../../account';
 import {IProto} from '../../iproto';
@@ -44,7 +44,7 @@ export class AccountAuthService {
 	private statusSaveSubscription?: Subscription;
 
 	/** Error message. */
-	public errorMessage?: string;
+	public readonly errorMessage	= new BehaviorSubject<string|undefined>(undefined);
 
 	/** @ignore */
 	private async getItem <T> (
@@ -619,11 +619,11 @@ export class AccountAuthService {
 		catch (errorCode) {
 			switch (errorCode) {
 				case RegistrationErrorCodes.InvalidInviteCode:
-					this.errorMessage	= this.stringsService.invalidInviteCode;
+					this.errorMessage.next(this.stringsService.invalidInviteCode);
 					break;
 
 				default:
-					this.errorMessage	= undefined;
+					this.errorMessage.next(undefined);
 			}
 
 			await this.databaseService.unregister(username, loginData.secondaryPassword).catch(

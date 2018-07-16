@@ -7,7 +7,8 @@ import {
 	RouterStateSnapshot
 } from '@angular/router';
 import * as $ from 'jquery';
-import {first} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
+import {filter, first, take} from 'rxjs/operators';
 import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
@@ -30,10 +31,10 @@ export class AppService implements CanActivate {
 	private readonly lockedDownRoute: Promise<string>	= this._LOCKED_DOWN_ROUTE.promise;
 
 	/** @see ChatRootStates */
-	public chatRootState: ChatRootStates	= ChatRootStates.blank;
+	public readonly chatRootState	= new BehaviorSubject<ChatRootStates>(ChatRootStates.blank);
 
 	/** If true, app is locked down. */
-	public isLockedDown: boolean			= !(
+	public readonly isLockedDown	= new BehaviorSubject<boolean>(!(
 		!(
 			this.envService.environment.customBuild &&
 			(
@@ -48,7 +49,7 @@ export class AppService implements CanActivate {
 		locationData.hash.split('/')[0].match(
 			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
 		)
-	);
+	));
 
 	/** Resolves route to redirect to after unlock. */
 	public readonly resolveLockedDownRoute: (lockedDownRoute: string) => void	=
@@ -57,7 +58,7 @@ export class AppService implements CanActivate {
 
 	/** @inheritDoc */
 	public canActivate (_: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {
-		if (this.isLockedDown) {
+		if (this.isLockedDown.value) {
 			this.resolveLockedDownRoute(state.url);
 			return false;
 		}
@@ -75,11 +76,11 @@ export class AppService implements CanActivate {
 
 	/** Disables lockdown. */
 	public async unlock () : Promise<void> {
-		if (!this.isLockedDown) {
+		if (!this.isLockedDown.value) {
 			return;
 		}
 
-		this.isLockedDown	= false;
+		this.isLockedDown.next(false);
 		this.router.navigateByUrl(await this.lockedDownRoute);
 	}
 
@@ -130,7 +131,7 @@ export class AppService implements CanActivate {
 				return;
 			}
 
-			if (this.isLockedDown) {
+			if (this.isLockedDown.value) {
 				this.loadComplete();
 			}
 
@@ -150,9 +151,10 @@ export class AppService implements CanActivate {
 				await this.accountService.uiReady;
 			}
 			else {
-				while (this.chatRootState === ChatRootStates.blank) {
-					await sleep();
-				}
+				await this.chatRootState.pipe(
+					filter(state => state !== ChatRootStates.blank),
+					take(1)
+				).toPromise();
 
 				await sleep();
 			}

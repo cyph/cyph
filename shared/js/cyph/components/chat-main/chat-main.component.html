@@ -3,9 +3,10 @@
 	fxFlexFill
 	fxLayout='column'
 	class='chat-main'
-	[class.video]='p2pService.isActive'
+	[class.video]='p2pService.isActive | async'
 	[class.mobile]='envService.isMobile'
-	[class.self-destruct]='chatService.chatSelfDestruct'
+	[class.self-destruct]='chatService.chatSelfDestruct | async'
+	*ngIf='chatService.chatSubject | async as chat'
 >
 	<div
 		fxFlex
@@ -13,17 +14,17 @@
 		fxLayoutAlign='center stretch'
 		class='loading'
 		*ngIf='
-			chatService.chat.state === states.keyExchange ||
-			chatService.chat.state === states.chatBeginMessage
+			chat.state === states.keyExchange ||
+			chat.state === states.chatBeginMessage
 		'
 		[@fadeIn]='"in"'
 	>
 		<div
 			class='logo-animation'
-			[class.connected]='chatService.chat.state === states.chatBeginMessage'
+			[class.connected]='chat.state === states.chatBeginMessage'
 			*ngIf='
-				chatService.chat.state === states.keyExchange ||
-				chatService.chat.state === states.chatBeginMessage
+				chat.state === states.keyExchange ||
+				chat.state === states.chatBeginMessage
 			'
 		>
 			<div></div>
@@ -35,20 +36,20 @@
 
 		<div
 			cyphTranslate
-			*ngIf='chatService.chat.state === states.keyExchange'
+			*ngIf='chat.state === states.keyExchange'
 		>
 			Initiating Key Exchange...
 		</div>
 		<div
 			cyphTranslate
-			*ngIf='chatService.chat.state === states.chatBeginMessage'
+			*ngIf='chat.state === states.chatBeginMessage'
 		>
 			Securely Connected!
 		</div>
 
 		<mat-progress-bar
 			class='key-exchange-progress'
-			[value]='(chatService.chat.initProgress | async) || 0'
+			[value]='(chat.initProgress | async) || 0'
 		></mat-progress-bar>
 	</div>
 
@@ -57,7 +58,7 @@
 		fxLayout='column'
 		fxLayoutAlign='center stretch'
 		class='abort-screen loading'
-		*ngIf='chatService.chat.state === states.aborted'
+		*ngIf='chat.state === states.aborted'
 		[@fadeIn]='"in"'
 	>
 		<div class='image'>
@@ -96,7 +97,7 @@
 			<ng-container *ngIf='!accounts'>
 				<br />
 				<br />
-				<ng-container *ngIf='sessionService.state.isAlice'>
+				<ng-container *ngIf='sessionService.state.isAlice | async'>
 					<span cyphTranslate>
 						If this was a mistake or error,
 						you may generate a new link and
@@ -104,7 +105,7 @@
 					&ngsp;
 					<a cyphTranslate [routerLink]='envService.newCyphUrlRetry'>try again</a>.
 				</ng-container>
-				<ng-container *ngIf='!sessionService.state.isAlice'>
+				<ng-container *ngIf='(sessionService.state.isAlice | async) === false'>
 					<span cyphTranslate>
 						If this was a mistake or error,
 						your practitoner will send you a new link.
@@ -116,22 +117,28 @@
 
 	<div
 		fxFlex
-		[fxShow]='p2pService.isActive'
+		[fxShow]='p2pService.isActive | async'
 		class='video-call'
-		[class.sidebar-open]='p2pService.isSidebarOpen'
-		*ngIf='p2pWebRTCService && chatService.chat.state === states.chat'
+		[class.sidebar-open]='p2pService.isSidebarOpen | async'
+		*ngIf='chat.state === states.chat'
 	>
 		<a class='logo' [href]='envService.homeUrl'>
 			<cyph-logo alignment='left' video></cyph-logo>
 		</a>
 		<div
 			class='friend stream'
-			[fxHide]='!p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
+			[fxHide]='
+				!(p2pWebRTCService.incomingStream | async)?.video ||
+				(p2pWebRTCService.loading | async)
+			'
 		></div>
 		<img
 			*ngIf='!envService.customBuildImages.audioImage'
 			class='friend'
-			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
+			[fxHide]='
+				(p2pWebRTCService.incomingStream | async)?.video ||
+				(p2pWebRTCService.loading | async)
+			'
 			src='/assets/img/voicecall.jpg'
 			alt='Voice call'
 			cyphTranslate
@@ -139,21 +146,24 @@
 		<img
 			*ngIf='!!envService.customBuildImages.audioImage'
 			class='friend'
-			[fxHide]='p2pWebRTCService.incomingStream.video || p2pWebRTCService.loading'
+			[fxHide]='
+				(p2pWebRTCService.incomingStream | async)?.video ||
+				(p2pWebRTCService.loading | async)
+			'
 			[src]='envService.customBuildImages.audioImage | async'
 			alt='Voice call'
 			cyphTranslate
 		/>
 		<video
 			class='me'
-			[fxHide]='!p2pWebRTCService.outgoingStream.video'
+			[fxHide]='!(p2pWebRTCService.outgoingStream | async)?.video'
 			autoplay
 			muted
 		></video>
 
 		<mat-progress-spinner
 			mode='indeterminate'
-			*ngIf='p2pWebRTCService.loading'
+			*ngIf='p2pWebRTCService.loading | async'
 		></mat-progress-spinner>
 
 		<button
@@ -180,7 +190,8 @@
 			class='buttons'
 		>
 			<mat-slide-toggle
-				[(ngModel)]='chatService.walkieTalkieMode'
+				[ngModel]='chatService.walkieTalkieMode | async'
+				(ngModelChange)='chatService.walkieTalkieMode.next($event)'
 				*ngIf='envService.environment.customBuild?.config.pro'
 			>
 				<mat-icon svgIcon='walkie-talkie'></mat-icon>
@@ -190,15 +201,18 @@
 				class='video-call-button'
 				(click)='p2pService.videoCallButton()'
 				[matTooltip]='
-					!p2pWebRTCService.outgoingStream.video ?
+					!(p2pWebRTCService.outgoingStream | async)?.video ?
 						stringsService.cameraEnable :
 						stringsService.cameraDisable
 				'
 				matTooltipPosition='above'
-				*ngIf='p2pWebRTCService.videoEnabled'
+				*ngIf='p2pWebRTCService.videoEnabled | async'
 			>
 				<mat-icon>
-					<ng-container *ngIf='!p2pWebRTCService.outgoingStream.video; else videocamOff'>
+					<ng-container *ngIf='
+						!(p2pWebRTCService.outgoingStream | async)?.video;
+						else videocamOff
+					'>
 						videocam
 					</ng-container>
 					<ng-template #videocamOff>
@@ -210,29 +224,32 @@
 				mat-icon-button
 				class='voice-call-button'
 				(click)='
-					!chatService.walkieTalkieMode ?
+					!chatService.walkieTalkieMode.value ?
 						p2pService.voiceCallButton() :
 						undefined
 				'
 				(pointerenter)='
-					chatService.walkieTalkieMode ?
+					chatService.walkieTalkieMode.value ?
 						p2pWebRTCService.toggle("audio", false) :
 						undefined
 				'
 				(pointerleave)='
-					chatService.walkieTalkieMode ?
+					chatService.walkieTalkieMode.value ?
 						p2pWebRTCService.toggle("audio", true) :
 						undefined
 				'
 				[matTooltip]='
-					!p2pWebRTCService.outgoingStream.audio ?
+					!(p2pWebRTCService.outgoingStream | async)?.audio ?
 						stringsService.micEnable :
 						stringsService.micDisable
 				'
 				matTooltipPosition='above'
 			>
 				<mat-icon>
-					<ng-container *ngIf='!p2pWebRTCService.outgoingStream.audio; else micOff'>
+					<ng-container *ngIf='
+						!(p2pWebRTCService.outgoingStream | async)?.audio;
+						else micOff
+					'>
 						mic
 					</ng-container>
 					<ng-template #micOff>
@@ -258,12 +275,12 @@
 		class='video-call-message-box'
 		[accounts]='accounts'
 		[messageType]='messageType'
-		*ngIf='p2pService.isActive'
+		*ngIf='p2pService.isActive | async'
 	></cyph-chat-message-box>
 
 	<div
 		class='transfer-list'
-		*ngIf='chatService.chat.state === states.chat && !p2pService.isActive'
+		*ngIf='chat.state === states.chat && (p2pService.isActive | async) === false'
 		[@fadeIn]='"in"'
 	>
 		<div fxFlex fxLayout='column'>
@@ -305,7 +322,7 @@
 	<div
 		fxFlex
 		fxFlexFill
-		*ngIf='chatService.initiated && chatService.chatSelfDestructEffect'
+		*ngIf='(chatService.initiated | async) && (chatService.chatSelfDestructEffect | async)'
 		class='poof'
 	>
 		<video autoplay src='/assets/video/poof.webm'></video>
@@ -316,33 +333,31 @@
 		fxLayoutAlign='center center'
 		fxLayoutGap='10px'
 		class='self-destruct-timer'
-		[style.visibility]='!chatService.initiated ? "hidden" : undefined'
+		[style.visibility]='(chatService.initiated | async) ? undefined : "hidden"'
 		*ngIf='
-			chatService.chatSelfDestructTimer &&
-			(
-				chatService.chatSelfDestructed === undefined ||
-				(chatService.chatSelfDestructed | async) === false
-			) &&
-			(chatService.chatSelfDestructTimer?.isStarted | async) === true &&
-			(chatService.chatSelfDestructTimer?.isComplete | async) === false
+			(chatService.chatSelfDestructed | async) === false &&
+			((chatService.chatSelfDestructTimer | async)?.isStarted | async) === true &&
+			((chatService.chatSelfDestructTimer | async)?.isComplete | async) === false
 		'
 	>
 		<div cyphTranslate>Message will self-destruct in</div>
-		<div class='countdown'>{{chatService.chatSelfDestructTimer?.timestamp | async}}</div>
+		<div class='countdown'>
+			{{(chatService.chatSelfDestructTimer | async)?.timestamp | async}}
+		</div>
 	</div>
 
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
 		[accounts]='accounts'
-		[chat]='chatService.chat'
+		[chat]='chat'
 		[messageCountInTitle]='messageCountInTitle'
-		[mobile]='envService.isMobile || p2pService.isActive'
+		[mobile]='envService.isMobile || (p2pService.isActive | async)'
 		[persistentEndMessage]='persistentEndMessage'
 		[promptFollowup]='promptFollowup'
-		[showDisconnectMessage]='chatService.chat.isDisconnected && !hideDisconnectMessage'
+		[showDisconnectMessage]='chat.isDisconnected && !hideDisconnectMessage'
 		[uiStyle]='uiStyle'
-		*ngIf='chatService.chat.state === states.chat'
+		*ngIf='chat.state === states.chat'
 		[@fadeIn]='"in"'
 	>
 		<ng-content></ng-content>

@@ -144,12 +144,12 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public readonly state									= {
-		cyphID: '',
-		isAlice: false,
-		isAlive: true,
-		sharedSecret: '',
-		startingNewCyph: <boolean|undefined> false,
-		wasInitiatedByAPI: false
+		cyphID: new BehaviorSubject(''),
+		isAlice: new BehaviorSubject(false),
+		isAlive: new BehaviorSubject(true),
+		sharedSecret: new BehaviorSubject(''),
+		startingNewCyph: new BehaviorSubject<boolean|undefined>(false),
+		wasInitiatedByAPI: new BehaviorSubject(false)
 	};
 
 	/** Sends messages through Castle. */
@@ -169,14 +169,14 @@ export abstract class SessionService implements ISessionService {
 
 	/** @see IChannelHandlers.onMessage */
 	protected async channelOnMessage (message: Uint8Array) : Promise<void> {
-		if (this.state.isAlive) {
+		if (this.state.isAlive.value) {
 			await this.castleService.receive(message);
 		}
 	}
 
 	/** @see IChannelHandlers.onOpen */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
-		this.state.isAlice	= isAlice;
+		this.state.isAlice.next(isAlice);
 		this.resolveOpened();
 	}
 
@@ -284,20 +284,20 @@ export abstract class SessionService implements ISessionService {
 	) : Promise<void> {
 		switch (event) {
 			case CastleEvents.abort:
-				this.state.sharedSecret	= '';
+				this.state.sharedSecret.next('');
 				this.errorService.log('CYPH AUTHENTICATION FAILURE');
 				this.trigger(events.connectFailure);
 				break;
 
 			case CastleEvents.connect:
-				this.state.sharedSecret	= '';
+				this.state.sharedSecret.next('');
 				this.trigger(events.beginChat);
 
 				if (!this.resolveSymmetricKey) {
 					return;
 				}
 
-				if (this.state.isAlice) {
+				if (this.state.isAlice.value) {
 					const potassiumService	= this.potassiumService;
 					const symmetricKey		= potassiumService.randomBytes(
 						await potassiumService.secretBox.keyBytes
@@ -379,11 +379,11 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async destroy () : Promise<void> {
-		if (!this.state.isAlive) {
+		if (!this.state.isAlive.value) {
 			return;
 		}
 
-		this.state.isAlive	= false;
+		this.state.isAlive.next(false);
 		this.trigger(events.closeChat);
 
 		for (const event of Array.from(this.openEvents)) {
@@ -406,8 +406,8 @@ export abstract class SessionService implements ISessionService {
 		/* First person to join ephemeral session is "Bob" as optimization for Castle handshake */
 		const isAlice	=
 			this.sessionInitService.ephemeral ?
-				!this.state.isAlice :
-				this.state.isAlice
+				!this.state.isAlice.value :
+				this.state.isAlice.value
 		;
 
 		return {

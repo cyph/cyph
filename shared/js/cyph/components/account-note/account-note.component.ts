@@ -267,7 +267,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 				;
 			}
 
-			this.accountService.interstitial	= true;
+			this.accountService.interstitial.next(true);
 
 			if (this.newNote.value) {
 				noteData.id	=
@@ -295,7 +295,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 			if (noteData.id) {
 				this.router.navigate([accountRoot, 'notes', noteData.id]);
 				await sleep();
-				this.accountService.interstitial	= false;
+				this.accountService.interstitial.next(false);
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);
 			}
 		});

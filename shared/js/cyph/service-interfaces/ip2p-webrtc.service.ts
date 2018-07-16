@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {ChatService} from '../services/chat.service';
 
@@ -11,28 +11,28 @@ export interface IP2PWebRTCService {
 	readonly disconnect: Observable<void>;
 
 	/** Description of incoming data. */
-	readonly incomingStream: {audio: boolean; video: boolean};
+	readonly incomingStream: BehaviorSubject<{audio: boolean; video: boolean}>;
 
 	/** Indicates whether an initial call is pending. */
-	readonly initialCallPending: boolean;
+	readonly initialCallPending: BehaviorSubject<boolean>;
 
 	/** Indicates whether a P2P session currently exists. */
-	readonly isActive: boolean;
+	readonly isActive: BehaviorSubject<boolean>;
 
 	/** Indicates whether session is currently loading. */
-	readonly loading: boolean;
+	readonly loading: BehaviorSubject<boolean>;
 
 	/** Indicates whether starting local camera/microphone has failed. */
-	readonly localMediaError: boolean;
+	readonly localMediaError: BehaviorSubject<boolean>;
 
 	/** Description of outgoing data (passed directly into navigator.getUserMedia). */
-	readonly outgoingStream: {audio: boolean; video: boolean};
+	readonly outgoingStream: BehaviorSubject<{audio: boolean; video: boolean}>;
 
 	/** Resolves when service is ready. */
 	readonly ready: Promise<boolean>;
 
 	/** If true, toggling video is allowed during the current call. */
-	readonly videoEnabled: boolean;
+	readonly videoEnabled: BehaviorSubject<boolean>;
 
 	/**
 	 * Accepts current call request (or preemptively accepts future call requests,

@@ -38,11 +38,11 @@ export class LocalSessionService extends SessionService {
 			await sleep();
 		}
 
-		if (!this.state.isAlive) {
+		if (!this.state.isAlive.value) {
 			return;
 		}
 
-		this.state.isAlive	= false;
+		this.state.isAlive.next(false);
 
 		this.chatData.channelIncoming.complete();
 		this.chatData.channelOutgoing.complete();
@@ -51,9 +51,10 @@ export class LocalSessionService extends SessionService {
 
 	/** Initializes chat data. */
 	public async initChatData (chatData: ChatData) : Promise<void> {
-		this.chatData		= chatData;
-		this.state.isAlice	= this.envService.isMobile;
-		this.state.isAlive	= true;
+		this.chatData	= chatData;
+
+		this.state.isAlice.next(this.envService.isMobile);
+		this.state.isAlive.next(true);
 
 		this.chatData.channelIncoming.subscribe(
 			message => {

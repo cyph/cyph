@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {request} from '../util/request';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
@@ -11,32 +12,36 @@ import {EnvService} from './env.service';
 export class SignupService {
 	/** Signup data entered by user. */
 	public readonly data	= {
-		email: '',
-		inviteCode: '',
-		language: this.envService.fullLanguage,
-		name: ''
+		email: new BehaviorSubject<string>(''),
+		inviteCode: new BehaviorSubject<string>(''),
+		name: new BehaviorSubject<string>('')
 	};
 
 	/** Used to track which users signed up through a promo page. */
-	public promo: string	= '';
+	public readonly promo	= new BehaviorSubject<string>('');
 
 	/** Ordinal number indicating which screen of this form is active. */
-	public state: number	= 0;
+	public readonly state	= new BehaviorSubject<number>(0);
 
 	/** Submits signup data to server. */
 	public async submit () : Promise<void> {
-		++this.state;
+		this.state.next(this.state.value + 1);
 
-		if (!this.data.email) {
+		if (!this.data.email.value) {
 			return;
 		}
 
-		if (this.state === 1) {
-			++this.state;
+		if (this.state.value === 1) {
+			this.state.next(this.state.value + 1);
 		}
 
 		const signupResult: string	= await request({
-			data: this.data,
+			data: {
+				email: this.data.email.value,
+				inviteCode: this.data.inviteCode.value,
+				language: this.envService.fullLanguage,
+				name: this.data.name.value
+			},
 			method: 'PUT',
 			retries: 5,
 			url: this.envService.baseUrl + 'signups'
@@ -53,12 +58,12 @@ export class SignupService {
 			hitType: 'event'
 		});
 
-		if (this.promo) {
+		if (this.promo.value) {
 			this.analyticsService.sendEvent({
 				hitType: 'social',
 				socialAction: 'signup',
-				socialNetwork: 'promo-' + this.promo,
-				socialTarget: this.data.email
+				socialNetwork: 'promo-' + this.promo.value,
+				socialTarget: this.data.email.value
 			});
 		}
 	}

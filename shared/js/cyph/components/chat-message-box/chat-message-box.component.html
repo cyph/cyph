@@ -1,4 +1,7 @@
-<div fxFlexFill *ngIf='chatService.chat.state === states.chat && sessionService.state.isAlive'>
+<ng-container *ngIf='chatService.chatSubject | async as chat'>
+
+
+<div fxFlexFill *ngIf='chat.state === states.chat && (sessionService.state.isAlive | async)'>
 	<div
 		class='calendar-invite-message-box'
 		[class.mobile]='envService.isMobile'
@@ -17,7 +20,7 @@
 		<cyph-calendar-invite
 			fxFlexFill
 			name='calendar-invite-message'
-			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
+			[(ngModel)]='chat.currentMessage.calendarInvite'
 			(ngModelChange)='chatService.messageChange()'
 			[followUp]='calendarInviteFollowUp'
 			[reasons]='calendarInviteReasons'
@@ -26,7 +29,7 @@
 		<cyph-calendar-invite-inherit-ng-form
 			fxFlexFill
 			name='calendar-invite-message'
-			[(ngModel)]='chatService.chat.currentMessage.calendarInvite'
+			[(ngModel)]='chat.currentMessage.calendarInvite'
 			(ngModelChange)='chatService.messageChange()'
 			[followUp]='calendarInviteFollowUp'
 			[reasons]='calendarInviteReasons'
@@ -41,8 +44,8 @@
 		*ngIf='messageType === chatMessageValueTypes.Form'
 	>
 		<cyph-dynamic-form
-			[form]='chatService.chat.currentMessage.form'
-			(submitForm)='chatService.chat.currentMessage.form = $event; send()'
+			[form]='chat.currentMessage.form'
+			(submitForm)='chat.currentMessage.form = $event; chatService.updateChat(); send()'
 		></cyph-dynamic-form>
 	</div>
 
@@ -64,7 +67,7 @@
 		<cyph-quill
 			fxFlexFill
 			name='quill-message'
-			[(ngModel)]='chatService.chat.currentMessage.quill'
+			[(ngModel)]='chat.currentMessage.quill'
 			(ngModelChange)='chatService.messageChange()'
 		></cyph-quill>
 	</div>
@@ -80,7 +83,7 @@
 				fxFlex
 				class='message-box tabIndent'
 				name='text-message'
-				[(ngModel)]='chatService.chat.currentMessage.text'
+				[(ngModel)]='chat.currentMessage.text'
 				(ngModelChange)='chatService.messageChange(true)'
 				placeholder='Send a secure message...'
 				cyphTranslate
@@ -90,7 +93,7 @@
 		<div *ngIf='envService.isMobile'>
 			<div
 				class='message-box-button-group'
-				*ngIf='showSendButton && !!chatService.chat.currentMessage.text'
+				*ngIf='showSendButton && !!chat.currentMessage.text'
 				[@slideInOutBottom]='"in"'
 			>
 				<button
@@ -104,15 +107,15 @@
 			</div>
 			<div
 				class='message-box-button-group'
-				*ngIf='!chatService.chat.currentMessage.text'
+				*ngIf='!chat.currentMessage.text'
 				[@slideInOutBottom]='"in"'
 			>
 				<button
 					mat-icon-button
 					matTooltip='Video Call'
 					(click)='mobileButtonHandlers.videoCall()'
-					[disabled]='!p2pService.isEnabled'
-					*ngIf='!p2pService.isActive'
+					[disabled]='(p2pService.isEnabled | async) === false'
+					*ngIf='(p2pService.isActive | async) === false'
 					cyphTranslate
 				>
 					<mat-icon>video_call</mat-icon>
@@ -121,8 +124,8 @@
 					mat-icon-button
 					matTooltip='Voice Call'
 					(click)='mobileButtonHandlers.voiceCall()'
-					[disabled]='!p2pService.isEnabled'
-					*ngIf='!p2pService.isActive'
+					[disabled]='(p2pService.isEnabled | async) === false'
+					*ngIf='(p2pService.isActive | async) === false'
 					cyphTranslate
 				>
 					<mat-icon>call</mat-icon>
@@ -189,8 +192,8 @@
 					cyphTranslate
 					matTooltip='Voice Call'
 					matTooltipPosition='left'
-					[disabled]='!p2pService.isEnabled'
-					*ngIf='!p2pService.isActive'
+					[disabled]='(p2pService.isEnabled | async) === false'
+					*ngIf='(p2pService.isActive | async) === false'
 					(click)='p2pService.voiceCallButton()'
 				>
 					<mat-icon>call</mat-icon>
@@ -200,8 +203,8 @@
 					cyphTranslate
 					matTooltip='Video Call'
 					matTooltipPosition='left'
-					[disabled]='!p2pService.isEnabled'
-					*ngIf='!p2pService.isActive'
+					[disabled]='(p2pService.isEnabled | async) === false'
+					*ngIf='(p2pService.isActive | async) === false'
 					(click)='p2pService.videoCallButton()'
 				>
 					<mat-icon>video_call</mat-icon>
@@ -251,3 +254,6 @@
 		</ng-container>
 	</div>
 </div>
+
+
+</ng-container>
