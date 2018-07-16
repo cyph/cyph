@@ -21,6 +21,11 @@
 		min-height: 100% !important;
 	}
 
+	cyph-not-found {
+		display: block;
+		height: 100vh;
+	}
+
 	.content {
 		scroll-behavior: smooth;
 		overflow-y: auto;
