@@ -2,7 +2,7 @@
 	class='global'
 	mode='indeterminate'
 	*ngIf='
-		(userProfile | async)?.ready !== true ||
+		((userProfile | async)?.ready | async) !== true ||
 		((userProfile | async)?.userType | async) === undefined;
 		else profile
 	'

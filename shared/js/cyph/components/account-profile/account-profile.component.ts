@@ -434,7 +434,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 				}
 		));
 
-		this.userProfile				= toBehaviorSubject(
+		this.userProfile		= toBehaviorSubject(
 			this.userInternal.pipe(map(o => o.user)),
 			undefined
 		);

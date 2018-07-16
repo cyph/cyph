@@ -27,7 +27,7 @@
 			(((user | async)?.unreadMessageCount | async) || 0) > 0
 		)'
 		matBadgePosition='above before'
-		*ngIf='(user | async)?.ready; else loading'
+		*ngIf='(user | async)?.ready | async; else loading'
 	>
 		<img
 			mat-card-avatar
