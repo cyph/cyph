@@ -1,3 +1,6 @@
+<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
+
+
 <div
 	fxFlexFill
 	fxLayout='row'
@@ -23,8 +26,7 @@
 					<div>{{accountFilesService.noteSnippet(note.id)}}</div>
 					<div *ngIf='
 						!note.wasAnonymousShare &&
-						accountDatabaseService.currentUser.value &&
-						accountDatabaseService.currentUser.value?.user.username !== note.owner
+						currentUser.user.username !== note.owner
 					'>
 						<br />
 						<span cyphTranslate>Owner:</span>
@@ -43,9 +45,7 @@
 						cyphTranslate
 						matTooltip='Edit'
 						[routerLink]='note.id + "/edit"'
-						*ngIf='
-							accountDatabaseService.currentUser.value?.user.username === note.owner
-						'
+						*ngIf='currentUser.user.username === note.owner'
 					>
 						<mat-icon>edit</mat-icon>
 					</button>
@@ -140,3 +140,6 @@
 		<mat-icon>add</mat-icon>
 	</button>
 </div>
+
+
+</ng-container>

@@ -71,7 +71,7 @@
 					fxLayoutAlign='center center'
 					(click)='accountService.toggleMobileMenu()'
 					fxHide.gt-sm
-					*ngIf='!!accountDatabaseService.currentUser.value'
+					*ngIf='(accountDatabaseService.currentUser | async) !== undefined'
 				>
 					<mat-icon>menu</mat-icon>
 				</button>

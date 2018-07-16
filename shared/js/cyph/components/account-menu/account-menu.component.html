@@ -1,3 +1,6 @@
+<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
+
+
 <div
 	fxFlexFill
 	fxLayout='row'
@@ -5,7 +8,6 @@
 	[class.menu]='!sidenav'
 	[class.menu-root]='!sidenav'
 	[class.sidenav]='sidenav'
-	*ngIf='!!accountDatabaseService.currentUser.value'
 >
 	<div
 		[fxFlex]='(menuExpanded | async) ? "25px" : "10px"'
@@ -67,12 +69,9 @@
 							matTooltip='Profile'
 							matTooltipPosition='right'
 							class='avatar animated fadeIn _1'
-							[ngClass]='userPresence[
-								(accountDatabaseService.currentUser.value?.user.status | async) ||
-								0
-							]'
+							[ngClass]='userPresence[(currentUser.user.status | async) || 0]'
 							alt='Profile Picture'
-							[src]='accountDatabaseService.currentUser.value?.user.avatar | async'
+							[src]='currentUser.user.avatar | async'
 							[routerLink]='accountService.routeRoot + "profile"'
 							(click)='click()'
 						/>
@@ -114,9 +113,7 @@
 <ng-template #buttons>
 	<ng-container *ngIf='
 		envService.isTelehealth &&
-		(
-			accountDatabaseService.currentUser.value?.user.userType | async
-		) === accountUserTypes.Standard &&
+		(currentUser.user.userType | async) === accountUserTypes.Standard &&
 		(accountFilesService.incomingFilesFiltered.redoxPatients | async)?.length > 0
 	'>
 		<button
@@ -178,9 +175,7 @@
 
 	<ng-container *ngIf='
 		envService.isTelehealth &&
-		(
-			accountDatabaseService.currentUser.value?.user.userType | async
-		) !== accountUserTypes.TelehealthDoctor
+		(currentUser.user.userType | async) !== accountUserTypes.TelehealthDoctor
 	'>
 		<button
 			mat-button
@@ -212,9 +207,7 @@
 
 	<ng-container *ngIf='
 		envService.isTelehealth &&
-		(
-			accountDatabaseService.currentUser.value?.user.userType | async
-		) !== accountUserTypes.Standard
+		(currentUser.user.userType | async) !== accountUserTypes.Standard
 	'>
 		<button
 			mat-button
@@ -329,9 +322,7 @@
 
 	<ng-container *ngIf='!envService.isTelehealth || (
 		envService.isTelehealth &&
-		(
-			accountDatabaseService.currentUser.value?.user.userType | async
-		) !== accountUserTypes.Standard
+		(currentUser.user.userType | async) !== accountUserTypes.Standard
 	)'>
 		<button
 			mat-button
@@ -549,3 +540,6 @@
 		<mat-icon>exit_to_app</mat-icon>
 	</button>
 </ng-template>
+
+
+</ng-container>

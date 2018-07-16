@@ -4,6 +4,7 @@
 	fxLayoutAlign='center start'
 	class='card-list'
 	[class.initiating]='accountFilesService.showSpinner | async'
+	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
 		<mat-card
@@ -25,8 +26,7 @@
 				<mat-card-subtitle>
 					<div *ngIf='
 						!form.wasAnonymousShare &&
-						accountDatabaseService.currentUser.value &&
-						accountDatabaseService.currentUser.value?.user.username !== form.owner
+						currentUser.user.username !== form.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						&ngsp;

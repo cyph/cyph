@@ -1,3 +1,6 @@
+<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
+
+
 <div
 	fxFlexFill
 	fxLayoutAlign='center start'
@@ -52,8 +55,7 @@
 						routerLink='edit'
 						*ngIf='
 							(noteEditable | async) === false &&
-							accountDatabaseService.currentUser.value?.user.username ===
-								(noteData | async)?.owner
+							currentUser.user.username === (noteData | async)?.owner
 						'
 					>
 						<mat-icon>edit</mat-icon>
@@ -78,8 +80,7 @@
 						*ngIf='
 							(noteEditable | async) &&
 							(realTime | async) === false &&
-							accountDatabaseService.currentUser.value?.user.username ===
-								(noteData | async)?.owner
+							currentUser.user.username === (noteData | async)?.owner
 						'
 					>
 						<mat-icon>save</mat-icon>
@@ -121,3 +122,6 @@
 		*ngIf='showSpinner | async'
 	></mat-progress-spinner>
 </div>
+
+
+</ng-container>

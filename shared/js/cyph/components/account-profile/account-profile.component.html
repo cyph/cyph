@@ -19,7 +19,10 @@
 		fxLayout='row'
 		fxLayoutAlign='center center'
 		fxLayoutGap='16px'
-		*ngIf='(isCurrentUser | async) === false && !!accountDatabaseService.currentUser.value'
+		*ngIf='
+			(isCurrentUser | async) === false &&
+			(accountDatabaseService.currentUser | async) !== undefined
+		'
 	>
 		<button
 			mat-mini-fab
@@ -123,7 +126,9 @@
 </ng-template>
 
 <ng-template #emailLikeButtons let-patientData='patientData'>
-	<div fxLayout='row' fxLayoutGap='16px' *ngIf='!!accountDatabaseService.currentUser.value'>
+	<div fxLayout='row' fxLayoutGap='16px' *ngIf='
+		(accountDatabaseService.currentUser | async) !== undefined
+	'>
 		<button
 			mat-mini-fab
 			cyphTranslate
@@ -153,7 +158,7 @@
 			*ngIf='
 				patientData &&
 				(
-					accountDatabaseService.currentUser.value?.user.userType | async
+					(accountDatabaseService.currentUser | async)?.user.userType | async
 				) === accountUserTypes.TelehealthDoctor
 			'
 		>
