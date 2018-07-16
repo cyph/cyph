@@ -11,7 +11,8 @@ const {customBuild}	= require('./custombuild');
 const args			= {
 	id: process.argv[2],
 	baseEnvironment: process.argv[3],
-	version: process.argv[4]
+	version: process.argv[4],
+	noLockDown: process.argv[5] === '--no-lock-down'
 };
 
 
@@ -20,6 +21,10 @@ const o	= customBuild(args.id, args.version);
 const baseEnvironment	=
 	(args.baseEnvironment || 'local').replace(/[A-Z]/, s => `-${s.toLowerCase()}`)
 ;
+
+if (args.noLockDown && o.config) {
+	o.config.lockedDown	= false;
+}
 
 fs.writeFileSync(
 	`${__dirname}/../shared/js/environments/.environment.tmp.ts`,

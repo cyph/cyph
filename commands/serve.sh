@@ -7,6 +7,7 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 customBuild=''
 firebaseBackup=''
+noLockDown=''
 e2e=''
 localSeleniumServer=''
 site=''
@@ -24,6 +25,10 @@ if [ "${1}" == '--e2e' ] ; then
 fi
 if [ "${1}" == '--firebase-backup' ] ; then
 	firebaseBackup=true
+	shift
+fi
+if [ "${1}" == '--no-lock-down' ] ; then
+	noLockDown='--no-lock-down'
 	shift
 fi
 if [ "${1}" == '--prod' ] ; then
@@ -66,7 +71,7 @@ if [ "${localSeleniumServer}" ] ; then
 fi
 
 if [ "${customBuild}" ] ; then
-	./commands/custombuildtoenvironment.js "${customBuild}" "${environment}"
+	./commands/custombuildtoenvironment.js "${customBuild}" "${environment}" '' "${noLockDown}"
 	checkfail
 	environment='tmp'
 fi
