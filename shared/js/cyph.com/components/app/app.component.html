@@ -279,7 +279,7 @@
 					fxLayout='row'
 					fxLayoutAlign='center center'
 					id='promo-section'
-					*ngIf='(appService.promo | async) !== undefined'
+					*ngIf='appService.promo | async as promo'
 				>
 					<mat-card
 						fxFlex='33'
@@ -287,53 +287,54 @@
 						fxFlex.xs='100'
 						class='animated wow'
 						data-wow-delay='3000ms'
-						[class.bounceInLeft]='(appService.promo | async) === promos.jjgo'
-						[class.bounceInDown]='(appService.promo | async) !== promos.jjgo'
+						[class.bounceInLeft]='promo === promos.jjgo'
+						[class.bounceInDown]='promo !== promos.jjgo'
 					>
 						<mat-card-title>
 							<img
 								alt='Promo image'
 								[src]='
 									"/assets/img/thirdparty/" +
-									promos[(appService.promo | async)] +
+									promos[promo] +
 									".png"
 								'
+								
 							/>
 						</mat-card-title>
 						<mat-card-content>
-							<p *ngIf='(appService.promo | async) !== promos.disrupt'>
+							<p *ngIf='promo !== promos.disrupt'>
 								<span cyphTranslate>Welcome</span>
 								&ngsp;
-								<span *ngIf='(appService.promo | async) === promos.betalist'>
+								<span *ngIf='promo === promos.betalist'>
 									Betalisters!
 								</span>
-								<span *ngIf='(appService.promo | async) !== promos.betalist'>
-									<i *ngIf='(appService.promo | async) === promos.penn'>
+								<span *ngIf='promo !== promos.betalist'>
+									<i *ngIf='promo === promos.penn'>
 										Penn's Sunday School
 									</i>
-									<i *ngIf='(appService.promo | async) === promos.jjgo'>
+									<i *ngIf='promo === promos.jjgo'>
 										Jordan, Jesse, Go!
 									</i>
-									<i *ngIf='(appService.promo | async) === promos.ventura'>
+									<i *ngIf='promo === promos.ventura'>
 										We The People
 									</i>
-									<i *ngIf='(appService.promo | async) === promos.sawbones'>
+									<i *ngIf='promo === promos.sawbones'>
 										Sawbones
 									</i>
-									<i *ngIf='(appService.promo | async) === promos.judgejohn'>
+									<i *ngIf='promo === promos.judgejohn'>
 										Judge John Hodgman
 									</i>
-									<i *ngIf='(appService.promo | async) === promos.mybrother'>
+									<i *ngIf='promo === promos.mybrother'>
 										My Brother, My Brother and Me
 									</i>
-									<i *ngIf='(appService.promo | async) === promos.security'>
+									<i *ngIf='promo === promos.security'>
 										The Security Brief
 									</i>
 									&ngsp;
 									<span cyphTranslate>listeners!</span>
 								</span>
 							</p>
-							<p *ngIf='(appService.promo | async) !== promos.disrupt'>
+							<p *ngIf='promo !== promos.disrupt'>
 								<a routerLink='/register' cyphTranslate>Sign up now</a>,
 								&ngsp;
 								<span cyphTranslate>
@@ -341,7 +342,7 @@
 									for a Cyph beta account.
 								</span>
 							</p>
-							<span *ngIf='(appService.promo | async) === promos.disrupt'>
+							<span *ngIf='promo === promos.disrupt'>
 								<p>
 									<span cyphTranslate>
 										The big new Cyph v2 beta release is right around the corner!
@@ -402,7 +403,7 @@
 						<span cyphTranslate>Secure your</span>
 						&ngsp;
 						<span class='feature-cycle'>
-							{{appService.features[appService.featureIndex | async]}}
+							{{appService.features[(appService.featureIndex | async) || 0]}}
 						</span>
 						&ngsp;
 						<span cyphTranslate>in one click.</span>
