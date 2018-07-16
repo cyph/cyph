@@ -18,25 +18,36 @@ cd ../cyph-phonegap-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
 
-cordova platform add android
-cordova platform add ios
+if [ "${1}" != 'ios' ] ; then
+	cordova platform add android
+fi
+
+if [ "${1}" != 'android' ] ; then
+	cordova platform add ios
+fi
 
 echo -e '\n\nBUILD\n\n'
 
 if [ "${password}" != "" ] ; then
-	cordova build android --release --device -- \
-		--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
-		--alias=cyph \
-		--storePassword="${password}" \
-		--password="${password}" \
-	|| \
-		exit 1
+	if [ "${1}" != 'ios' ] ; then
+		cordova build android --release --device -- \
+			--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
+			--alias=cyph \
+			--storePassword="${password}" \
+			--password="${password}" \
+		|| \
+			exit 1
+	fi
 
-	cordova build ios --release --device \
-		--codeSignIdentity='iPhone Distribution' \
-		--developmentTeam='SXZZ8WLPV2' \
-		--packageType='app-store' \
-		--provisioningProfile='5ed3df4c-a57b-4108-9abf-a8930e12a4f9'
+	if [ "${1}" != 'android' ] ; then
+		cordova build ios --release --device \
+			--codeSignIdentity='iPhone Distribution' \
+			--developmentTeam='SXZZ8WLPV2' \
+			--packageType='app-store' \
+			--provisioningProfile='5ed3df4c-a57b-4108-9abf-a8930e12a4f9' \
+		|| \
+			exit 1
+	fi
 else
-	cordova build --debug --device
+	cordova build --debug --device || exit 1
 fi
