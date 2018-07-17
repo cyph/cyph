@@ -26,7 +26,7 @@ const copyByteArrays	= (x: any) : any => {
 	return x;
 };
 
-const logInternal	= (error: boolean, ...args: any[]) : void => {
+const debugLogInternal	= (error: boolean, ...args: any[]) : void => {
 	if (!env.debug) {
 		return;
 	}
@@ -48,11 +48,11 @@ const logInternal	= (error: boolean, ...args: any[]) : void => {
 
 
 /** Logs to console in local env. */
-export const log	= (...args: any[]) : void => {
-	logInternal(false, args);
+export const debugLog	= (...args: any[]) : void => {
+	debugLogInternal(false, args);
 };
 
 /** Logs error to console in local env. */
-export const logError	= (...args: any[]) : void => {
-	logInternal(true, args);
+export const debugLogError	= (...args: any[]) : void => {
+	debugLogInternal(true, args);
 };

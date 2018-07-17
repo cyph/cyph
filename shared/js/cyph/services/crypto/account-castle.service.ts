@@ -15,7 +15,7 @@ import {
 } from '../../proto';
 import {filterUndefinedOperator} from '../../util/filter';
 import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
-import {log} from '../../util/log';
+import {debugLog} from '../../util/log';
 import {AccountContactsService} from '../account-contacts.service';
 import {AccountSessionService} from '../account-session.service';
 import {AccountDatabaseService} from './account-database.service';
@@ -58,7 +58,7 @@ export class AccountCastleService extends CastleService {
 					this.pairwiseSessions,
 					accountSessionService.ephemeralSubSession ? undefined : user.username,
 					async () => {
-						log({startingAccountCastleSession: {user}});
+						debugLog({startingAccountCastleSession: {user}});
 
 						const sessionURL		= `castleSessions/${castleSessionID}/session`;
 

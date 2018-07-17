@@ -29,6 +29,7 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByVsItem} from '../../track-by/track-by-vs-item';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
+import {debugLog} from '../../util/log';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {compareDates, relativeDateString, watchDateChange} from '../../util/time';
 
@@ -163,7 +164,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
 		this.initialScrollDown.pipe(filter(b => !b), take(1)).toPromise().then(() => {
-			log({chatMessageList: 'initial load complete'});
+			debugLog({chatMessageList: 'initial load complete'});
 			this.chatService.resolvers.messageListLoaded.resolve();
 		});
 
@@ -207,7 +208,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 				chat.pendingMessages.watch(),
 				watchDateChange(true)
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
-				log({chatMessageList: {onlineMessages, pendingMessages}});
+				debugLog({chatMessageList: {onlineMessages, pendingMessages}});
 
 				if (
 					this.initialScrollDown.value &&
