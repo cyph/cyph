@@ -2,6 +2,7 @@ import {ErrorHandler, Injectable} from '@angular/core';
 import {fromError} from 'stacktrace-js';
 import {email} from '../util/email';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {logError} from '../util/log';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 
@@ -50,8 +51,13 @@ export class ErrorService implements ErrorHandler {
 		;
 
 		if (err) {
-			/* tslint:disable-next-line:no-console */
-			console.error(err);
+			if (this.envService.debug) {
+				logError(err);
+			}
+			else {
+				/* tslint:disable-next-line:no-console */
+				console.error(err);
+			}
 		}
 
 		const numEmails	= getOrSetDefault(this.numEmails, subject, () => 0) + 1;
