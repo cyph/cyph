@@ -14,7 +14,7 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {filterUndefinedOperator} from '../util/filter';
 import {lockFunction} from '../util/lock';
-import {log} from '../util/log';
+import {debugLog} from '../util/log';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
@@ -443,7 +443,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				slice(0, 4)
 			;
 
-			log({p2pWebRTCJoin: {iceServers, p2pSessionData}});
+			debugLog({p2pWebRTCJoin: {iceServers, p2pSessionData}});
 
 			const webRTC	= new SimpleWebRTC({
 				adjustPeerVolume: false,
