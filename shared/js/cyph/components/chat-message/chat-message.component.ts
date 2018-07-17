@@ -109,9 +109,6 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 	};
 
 
-	/** Indicates whether this is the accounts UI. */
-	@Input() public accounts: boolean	= false;
-
 	/** @see ChatMessage.AuthorTypes */
 	public readonly authorTypes: typeof ChatMessage.AuthorTypes	= ChatMessage.AuthorTypes;
 

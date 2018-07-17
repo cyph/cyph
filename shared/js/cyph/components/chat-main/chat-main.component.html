@@ -84,7 +84,7 @@
 			<span>{{stringsService.session}}</span>
 			&ngsp;
 			<span cyphTranslate>has been aborted.</span>
-			<ng-container *ngIf='!accounts'>
+			<ng-container *ngIf='!envService.isAccounts'>
 				<br />
 				<br />
 				<span cyphTranslate>Please</span>
@@ -94,7 +94,7 @@
 		</div>
 		<div *ngIf='envService.isTelehealth'>
 			<span cyphTranslate>This telehealth session has been aborted.</span>
-			<ng-container *ngIf='!accounts'>
+			<ng-container *ngIf='!envService.isAccounts'>
 				<br />
 				<br />
 				<ng-container *ngIf='sessionService.state.isAlice | async'>
@@ -273,7 +273,6 @@
 
 	<cyph-chat-message-box
 		class='video-call-message-box'
-		[accounts]='accounts'
 		[messageType]='messageType'
 		*ngIf='p2pService.isActive | async'
 	></cyph-chat-message-box>
@@ -349,7 +348,6 @@
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
-		[accounts]='accounts'
 		[chat]='chat'
 		[messageCountInTitle]='messageCountInTitle'
 		[mobile]='envService.isMobile || (p2pService.isActive | async)'

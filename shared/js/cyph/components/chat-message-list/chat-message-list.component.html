@@ -48,7 +48,6 @@
 
 			<cyph-chat-message
 				fxLayout='row'
-				[accounts]='item.accounts'
 				[message]='item.message'
 				[mobile]='item.mobile'
 				[pending]='item.pending'
@@ -81,7 +80,7 @@
 
 					<div
 						fxLayoutAlign='center center'
-						*ngIf='!!promptFollowup && !!accountService; else chatEndMessage'
+						*ngIf='!!promptFollowup; else chatEndMessage'
 					>
 						<button
 							fxLayout

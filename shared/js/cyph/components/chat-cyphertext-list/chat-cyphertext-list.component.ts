@@ -14,9 +14,6 @@ import {trackByID} from '../../track-by/track-by-id';
 	templateUrl: './chat-cyphertext-list.component.html'
 })
 export class ChatCyphertextListComponent {
-	/** Indicates whether this is the accounts UI. */
-	@Input() public accounts: boolean	= false;
-
 	/** @see CyphertextService.messages */
 	@Input() public messages?: ChatMessage[];
 

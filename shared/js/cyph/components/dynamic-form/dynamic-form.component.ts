@@ -2,10 +2,8 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
-	Inject,
 	Input,
 	OnInit,
-	Optional,
 	Output
 } from '@angular/core';
 import memoize from 'lodash-es/memoize';
@@ -79,7 +77,7 @@ export class DynamicFormComponent implements OnInit {
 
 	/** Data source to pull data from on init and save data to on submit. */
 	@Input() public dataSource?: MaybePromise<IAsyncValue<any>|undefined>	=
-		(this.accountDatabaseService && this.envService.isTelehealth) ?
+		this.envService.isAccounts && this.envService.isTelehealth ?
 			this.accountDatabaseService.getCurrentUser().then(() =>
 				this.accountDatabaseService ?
 					this.accountDatabaseService.getAsyncValue('patientInfo', PatientInfo) :
@@ -427,8 +425,7 @@ export class DynamicFormComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		@Inject(AccountDatabaseService) @Optional()
-		private readonly accountDatabaseService: AccountDatabaseService|undefined,
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

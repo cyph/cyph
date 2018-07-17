@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {usernameMask} from '../../account';
 import {BinaryProto, BooleanProto, StringProto} from '../../proto';
+import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -17,6 +18,12 @@ import {StringsService} from '../../services/strings.service';
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	providers: [
+		{
+			provide: EnvService,
+			useClass: AccountEnvService
+		}
+	],
 	selector: 'cyph-account-login',
 	styleUrls: ['./account-login.component.scss'],
 	templateUrl: './account-login.component.html'

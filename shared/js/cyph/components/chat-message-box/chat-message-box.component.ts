@@ -52,9 +52,6 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 	/* tslint:disable-next-line:semicolon */
 	};
 
-	/** Indicates whether this is the accounts UI. */
-	@Input() public accounts: boolean	= false;
-
 	/** @see CalendarInviteComponent.followUp */
 	@Input() public calendarInviteFollowUp?: boolean;
 

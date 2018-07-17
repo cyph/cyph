@@ -147,7 +147,7 @@
 				mat-icon-button
 				[matMenuTriggerFor]='menu'
 				class='menu-button'
-				*ngIf='!accounts'
+				*ngIf='!envService.isAccounts'
 			>
 				<mat-icon>more_horiz</mat-icon>
 			</button>
@@ -156,7 +156,11 @@
 					<mat-icon>help_outline</mat-icon>
 					<span>{{stringsService.help}}</span>
 				</button>
-				<button mat-menu-item (click)='chatService.disconnectButton()' *ngIf='!accounts'>
+				<button
+					mat-menu-item
+					(click)='chatService.disconnectButton()'
+					*ngIf='!envService.isAccounts'
+				>
 					<mat-icon>close</mat-icon>
 					<span>{{stringsService.disconnect}}</span>
 				</button>
@@ -226,7 +230,7 @@
 					[matTooltip]='stringsService.disconnect'
 					matTooltipPosition='left'
 					(click)='chatService.disconnectButton()'
-					*ngIf='!accounts'
+					*ngIf='!envService.isAccounts'
 				>
 					<mat-icon>close</mat-icon>
 				</button>

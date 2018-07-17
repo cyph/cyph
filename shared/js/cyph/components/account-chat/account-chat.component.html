@@ -31,7 +31,6 @@
 		>
 			<cyph-chat-main
 				fxFlex
-				[accounts]='true'
 				[messageType]='messageType | async'
 				[class.visibility-hidden]='initialCallPending | async'
 			></cyph-chat-main>
@@ -47,7 +46,6 @@
 			<cyph-chat-main
 				fxFlex
 				class='chat-end-margin'
-				[accounts]='true'
 				[messageType]='messageType | async'
 				[persistentEndMessage]='true'
 				[promptFollowup]='promptFollowup | async'

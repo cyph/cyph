@@ -69,6 +69,9 @@ export class EnvService extends Env {
 		org: (async () => (await this.geolocationPromise).org)()
 	};
 
+	/** Indicates whether this is the accounts UI. */
+	public readonly isAccounts: boolean				= false;
+
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
 		try {

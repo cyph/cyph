@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Inject, OnInit, Optional} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -14,14 +14,9 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './not-found.component.html'
 })
 export class NotFoundComponent implements OnInit {
-	/** Indicates whether this is an accounts 404. */
-	public get accounts () : boolean {
-		return this.accountService !== undefined;
-	}
-
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		if (this.accountService) {
+		if (this.envService.isAccounts) {
 			this.accountService.transitionEnd();
 			this.accountService.resolveUiReady();
 		}
@@ -29,8 +24,7 @@ export class NotFoundComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		@Inject(AccountService) @Optional()
-		private readonly accountService: AccountService|undefined,
+		private readonly accountService: AccountService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
