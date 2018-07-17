@@ -44,6 +44,8 @@ export class AccountCastleService extends CastleService {
 			filterUndefinedOperator(),
 			take(1)
 		).subscribe(user => {
+			debugLog({startingAccountCastleSession: {user}});
+
 			this.pairwiseSessionLock(async () => {
 				const castleSessionID	= await this.accountContactsService.
 					getCastleSessionID(user.username).
@@ -51,6 +53,7 @@ export class AccountCastleService extends CastleService {
 				;
 
 				if (!castleSessionID) {
+					debugLog({startingAccountCastleSessionFailed: {user}});
 					return;
 				}
 
@@ -58,7 +61,7 @@ export class AccountCastleService extends CastleService {
 					this.pairwiseSessions,
 					accountSessionService.ephemeralSubSession ? undefined : user.username,
 					async () => {
-						debugLog({startingAccountCastleSession: {user}});
+						debugLog({startingAccountCastleSessionNow: {castleSessionID, user}});
 
 						const sessionURL		= `castleSessions/${castleSessionID}/session`;
 

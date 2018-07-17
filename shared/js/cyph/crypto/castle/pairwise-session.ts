@@ -328,6 +328,8 @@ export class PairwiseSession {
 			}
 		}
 	) {
+		debugLog({castlePairwiseSession: 'start'});
+
 		retryUntilSuccessful(async () => {
 			while (true) {
 				const currentStep	= await this.handshakeState.currentStep.getValue();

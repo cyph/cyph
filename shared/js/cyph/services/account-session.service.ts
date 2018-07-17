@@ -7,6 +7,7 @@ import {events, ISessionMessageData, rpcEvents} from '../session';
 import {filterUndefined} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {debugLog} from '../util/log';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
@@ -158,6 +159,8 @@ export class AccountSessionService extends SessionService {
 		if (this.initiated) {
 			throw new Error('User already set.');
 		}
+
+		debugLog({accountSessionInit: {ephemeralSubSession, username, sessionSubID, setHeader}});
 
 		username			= this.normalizeUsername(username);
 		this.initiated		= true;
@@ -364,6 +367,8 @@ export class AccountSessionService extends SessionService {
 				await this.accountService.setHeader(user);
 			}
 		}
+
+		debugLog({accountSessionInitComplete: {user}});
 
 		this.remoteUser.next(user);
 		this.resolveReady();
