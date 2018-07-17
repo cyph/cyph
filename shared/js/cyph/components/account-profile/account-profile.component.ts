@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@ang
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, mergeMap, skip, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {AccountUserTypes, BlobProto, DataURIProto, IForm} from '../../proto';
@@ -137,7 +137,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
 
-		this.userInternal.subscribe(async ({user, username}) => {
+		this.userInternal.pipe(skip(1)).subscribe(async ({user, username}) => {
 			if (
 				!username &&
 				this.envService.isTelehealth &&
@@ -412,45 +412,60 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 				params.username
 		));
 
-		this.userInternal		= combineLatest(
-			this.username,
-			this.accountDatabaseService.currentUser
-		).pipe(mergeMap(async ([username, currentUser]) =>
-			username ?
-				{
-					isCurrentUser: false,
-					user: await this.accountUserLookupService.getUser(username, false),
-					username
-				} :
-			currentUser ?
-				{
-					isCurrentUser: true,
-					user: currentUser.user,
-					username
-				} :
-				{
-					isCurrentUser: false,
-					username
-				}
-		));
+		this.userInternal		= toBehaviorSubject(
+			combineLatest(
+				this.username,
+				this.accountDatabaseService.currentUser
+			).pipe(mergeMap(async ([username, currentUser]) =>
+				username ?
+					{
+						isCurrentUser: false,
+						user: await this.accountUserLookupService.getUser(username, false),
+						username
+					} :
+				currentUser ?
+					{
+						isCurrentUser: true,
+						user: currentUser.user,
+						username
+					} :
+					{
+						isCurrentUser: false,
+						username
+					}
+			)),
+			{isCurrentUser: false}
+		);
 
 		this.userProfile		= toBehaviorSubject(
 			this.userInternal.pipe(map(o => o.user)),
 			undefined
 		);
 
-		this.userMembers		= this.userProfile.pipe(mergeMap(user =>
-			user ? this.accountOrganizationsService.getMembers(user) : of(undefined)
-		));
+		this.userMembers		= toBehaviorSubject(
+			this.userProfile.pipe(mergeMap(user =>
+				user ? this.accountOrganizationsService.getMembers(user) : of(undefined)
+			)),
+			undefined
+		);
 
-		this.userOrganiztion	= this.userProfile.pipe(mergeMap(async user =>
-			user ? this.accountOrganizationsService.getOrganization(user) : undefined
-		));
+		this.userOrganiztion	= toBehaviorSubject(
+			this.userProfile.pipe(mergeMap(async user =>
+				user ? this.accountOrganizationsService.getOrganization(user) : undefined
+			)),
+			undefined
+		);
 
-		this.isContact			= this.username.pipe(mergeMap(username =>
-			username ? this.accountContactsService.watchIfContact(username) : of(false)
-		));
+		this.isContact			= toBehaviorSubject(
+			this.username.pipe(mergeMap(username =>
+				username ? this.accountContactsService.watchIfContact(username) : of(false)
+			)),
+			false
+		);
 
-		this.isCurrentUser		= this.userInternal.pipe(map(o => o.isCurrentUser));
+		this.isCurrentUser		= toBehaviorSubject(
+			this.userInternal.pipe(map(o => o.isCurrentUser)),
+			false
+		);
 	}
 }
