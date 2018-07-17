@@ -41,23 +41,25 @@
 				</p>
 				<p cyphTranslate>Reasons why you may have landed here:</p>
 				<ul>
-					<li>
-						<span cyphTranslate>The</span>
-						&ngsp;
-						<span>{{stringsService.session}}</span>
-						&ngsp;
-						<span cyphTranslate>you're looking for has expired</span>
-					</li>
-					<li cyphTranslate>
-						<span cyphTranslate>The</span>
-						&ngsp;
-						<span>{{stringsService.session}}</span>
-						&ngsp;
-						<span cyphTranslate>
-							you're looking for has already been connected to
-							(someone else got there first, or you clicked twice)
-						</span>
-					</li>
+					<ng-container *ngIf='!envService.isAccounts'>
+						<li>
+							<span cyphTranslate>The</span>
+							&ngsp;
+							<span>{{stringsService.session}}</span>
+							&ngsp;
+							<span cyphTranslate>you're looking for has expired</span>
+						</li>
+						<li cyphTranslate>
+							<span cyphTranslate>The</span>
+							&ngsp;
+							<span>{{stringsService.session}}</span>
+							&ngsp;
+							<span cyphTranslate>
+								you're looking for has already been connected to
+								(someone else got there first, or you clicked twice)
+							</span>
+						</li>
+					</ng-container>
 					<li cyphTranslate>
 						A glitch in the matrix
 					</li>
