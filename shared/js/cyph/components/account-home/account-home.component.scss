@@ -3,10 +3,10 @@
 ::ng-deep {
 	.sidebar.contacts cyph-account-contact:not(.active) {
 		padding-left: 10px;
+		transition: 420ms;
 
 		&:hover {
 			padding-left: 0;
-			transition: 420ms;
 		}
 	}
 }
