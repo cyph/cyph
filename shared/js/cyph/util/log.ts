@@ -1,8 +1,10 @@
+import * as msgpack from 'msgpack-lite';
 import {env} from '../env';
 
 
 const logs: {
 	args: any[];
+	argsCopy: string;
 	error?: true;
 	timestamp: number;
 }[]	= [];
@@ -12,29 +14,25 @@ if (env.debug) {
 }
 
 
-const copyByteArrays	= (x: any) : any => {
-	if (x instanceof Uint8Array) {
-		return {copy: new Uint8Array(x), original: x};
-	}
-
-	if (typeof x === 'object') {
-		for (const k of Object.keys(x)) {
-			x[k]	= copyByteArrays(x[k]);
-		}
-	}
-
-	return x;
-};
-
 const debugLogInternal	= (error: boolean, ...args: any[]) : void => {
 	if (!env.debug) {
 		return;
 	}
 
-	args	= copyByteArrays(args);
+	let argsCopy: any|undefined;
 
-	/* tslint:disable-next-line:ban */
-	logs.push({args, timestamp: Date.now(), ...(error ? {error} : {})});
+	try {
+		argsCopy	= msgpack.decode(msgpack.encode(args));
+	}
+	catch {}
+
+	logs.push({
+		args,
+		argsCopy,
+		/* tslint:disable-next-line:ban */
+		timestamp: Date.now(),
+		...(error ? {error} : {})
+	});
 
 	if (error) {
 		/* tslint:disable-next-line:no-console */
