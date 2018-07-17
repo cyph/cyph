@@ -43,4 +43,9 @@ body.primary-account-theme {
 	cyph-chat-message-list .background-image {
 		@include filter(brightness(0.75));
 	}
+
+	.cyph-banner {
+		color: $cyph-background-main;
+		background-color: $cyph-background;
+	}
 }
