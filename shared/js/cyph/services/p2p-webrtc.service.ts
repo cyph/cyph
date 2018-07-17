@@ -443,7 +443,7 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 				slice(0, 4)
 			;
 
-			log({iceServers, p2pSessionData});
+			log({p2pWebRTCJoin: {iceServers, p2pSessionData}});
 
 			const webRTC	= new SimpleWebRTC({
 				adjustPeerVolume: false,
