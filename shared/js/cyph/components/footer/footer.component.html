@@ -5,12 +5,14 @@
 		<div fxFlex='nogrow' fxLayoutAlign='center center'>
 			<a [href]='envService.homeUrl'>
 				<span>&copy; {{stringsService.company}} 2018</span>
-					&nbsp;&nbsp;&nbsp;
-				<span class='pre-spaced'>{{stringsService.patents}}</span>
+
+				<span *ngIf='!envService.isAccounts' class='pre-spaced'>
+					&nbsp;&nbsp;&nbsp;{{stringsService.patents}}
+				</span>
 			</a>
 		</div>
 
-		<div>&nbsp;&nbsp;</div>
+		<div *ngIf='!envService.isAccounts'>&nbsp;&nbsp;</div>
 
 		<div fxFlex='nogrow' fxLayoutAlign='center center'>
 			<a [href]='envService.homeUrl + "contact"' cyphTranslate>
@@ -18,7 +20,11 @@
 			</a>
 		</div>
 
-		<div fxFlex='nogrow' fxLayoutAlign='center center' *ngIf='!limited'>
+		<div
+			fxFlex='nogrow'
+			fxLayoutAlign='center center'
+			*ngIf='!limited && !envService.isAccounts'
+		>
 			<strong>-</strong>
 			&nbsp;
 			<div>
