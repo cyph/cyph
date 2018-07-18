@@ -101,6 +101,14 @@ export class PairwiseSession {
 		const incomingMessages	= await promises.incomingMessages;
 		let incomingMessagesMax	= await promises.incomingMessagesMax;
 
+		debugLog({pairwiseSessionIncomingMessage: {
+			cyphertext,
+			incomingMessageID,
+			incomingMessages,
+			incomingMessagesMax,
+			newMessageID
+		}});
+
 		if (newMessageID >= incomingMessageID) {
 			if (newMessageID > incomingMessagesMax) {
 				incomingMessagesMax	= newMessageID;
@@ -162,6 +170,8 @@ export class PairwiseSession {
 		this.incomingMessageID.setValue(incomingMessageID);
 		this.incomingMessages.setValue(incomingMessages);
 		this.incomingMessagesMax.setValue(incomingMessagesMax);
+
+		debugLog({pairwiseSessionIncomingMessageProcessed: {decryptedMessages}});
 
 		return decryptedMessages;
 	}
@@ -457,6 +467,13 @@ export class PairwiseSession {
 									message,
 									messageID
 								);
+
+								debugLog({pairwiseSessionOutgoingMessage: {
+									cyphertext,
+									message,
+									messageID: this.potassium.toDataView(messageID).
+										getUint32(0, true)
+								}});
 
 								await this.transport.send(this.potassium.concatMemory(
 									true,
