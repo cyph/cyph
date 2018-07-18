@@ -105,7 +105,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		) || (
 			activatedRouteURL.length > 1 &&
 			[
-				'appointments'
+				'appointments',
+				'notes'
 			].indexOf(route) > -1
 		)
 	));

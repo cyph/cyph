@@ -20,6 +20,10 @@ mat-card-title {
 		font-size: 28px;
 		width: 100%;
 	}
+
+	&:not(.editable) {
+		padding-bottom: 1.5em;
+	}
 }
 
 mat-card-header {

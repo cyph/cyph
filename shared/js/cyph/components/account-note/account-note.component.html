@@ -10,7 +10,7 @@
 	<mat-card fxFlex class='note'>
 		<div fxLayout='column'>
 			<div fxLayoutAlign='center center' fxLayout='row'>
-				<mat-card-title fxFlex>
+				<mat-card-title [class.editable]='noteEditable | async' fxFlex>
 					<div *ngIf='(noteEditable | async) === false'>
 						{{((note | async)?.metadata | async)?.name || stringsService.untitled}}
 					</div>
@@ -97,7 +97,7 @@
 				</mat-card-header>
 			</div>
 			<mat-card-content fxFlex fxLayout='column'>
-				<div [class.cyph-light-theme]='noteEditable | async'>
+				<div class='cyph-light-theme'>
 					<mat-card [class.editable]='noteEditable | async'>
 						<mat-card-content>
 							<cyph-quill
