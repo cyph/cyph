@@ -15,7 +15,7 @@
 				placeholder='PIN'
 				[cyphAutofocus]='autofocus'
 				[required]='required'
-				[class.text-security]='hide'
+				[class.text-security]='hide | async'
 				pattern='\d\d\d\d'
 			/>
 		</div>
@@ -23,8 +23,8 @@
 	<mat-icon
 		matSuffix
 		class='suffix-button'
-		(click)='hide = !hide'
+		(click)='hide.next(!hide.value)'
 	>
-		{{hide ? 'visibility' : 'visibility_off'}}
+		{{(hide | async) ? 'visibility' : 'visibility_off'}}
 	</mat-icon>
 </mat-form-field>

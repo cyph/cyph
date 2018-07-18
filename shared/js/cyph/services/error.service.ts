@@ -2,7 +2,7 @@ import {ErrorHandler, Injectable} from '@angular/core';
 import {fromError} from 'stacktrace-js';
 import {email} from '../util/email';
 import {getOrSetDefault} from '../util/get-or-set-default';
-import {logError} from '../util/log';
+import {debugLogError} from '../util/log';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 
@@ -52,7 +52,7 @@ export class ErrorService implements ErrorHandler {
 
 		if (err) {
 			if (this.envService.debug) {
-				logError(err);
+				debugLogError(err);
 			}
 			else {
 				/* tslint:disable-next-line:no-console */

@@ -8,7 +8,7 @@ import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {lockFunction} from '../../util/lock';
-import {log} from '../../util/log';
+import {debugLog} from '../../util/log';
 import {getTimestamp} from '../../util/time';
 import {resolvable, retryUntilSuccessful, sleep} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
@@ -54,14 +54,14 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private async abort () : Promise<void> {
-		log({handshake: 'abort'});
+		debugLog({handshake: 'abort'});
 		await this.handshakeState.currentStep.setValue(HandshakeSteps.Aborted);
 		this.transport.abort();
 	}
 
 	/** @ignore */
 	private async connect () : Promise<void> {
-		log({handshake: 'connect'});
+		debugLog({handshake: 'connect'});
 
 		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Complete) {
 			return;
@@ -328,6 +328,8 @@ export class PairwiseSession {
 			}
 		}
 	) {
+		debugLog({castlePairwiseSession: 'start'});
+
 		retryUntilSuccessful(async () => {
 			while (true) {
 				const currentStep	= await this.handshakeState.currentStep.getValue();
@@ -339,7 +341,7 @@ export class PairwiseSession {
 
 				/* Bootstrap asymmetric ratchet */
 				else if (currentStep === HandshakeSteps.Start) {
-					log({handshake: 'start'});
+					debugLog({handshake: 'start'});
 
 					if (this.handshakeState.isAlice) {
 						await this.ratchetBootstrapOutgoing();
@@ -354,7 +356,7 @@ export class PairwiseSession {
 					currentStep === HandshakeSteps.PostBootstrap &&
 					(await symmetricRatchetState.current.incoming.getValue()) === undefined
 				) {
-					log({handshake: 'post-bootstrap'});
+					debugLog({handshake: 'post-bootstrap'});
 
 					const initialSecret	= await this.handshakeState.initialSecret.getValue();
 
@@ -382,7 +384,7 @@ export class PairwiseSession {
 
 				/* Ready to activate Core */
 				else {
-					log({handshake: 'final step'});
+					debugLog({handshake: 'final step'});
 
 					const [
 						currentIncoming,

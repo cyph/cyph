@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
 import {IResolvable} from '../iresolvable';
@@ -35,8 +35,8 @@ export class AccountContactsService {
 				const user	= accountUserLookupService.getUser(username);
 
 				return {
-					unreadMessageCount: toBehaviorSubject(
-						async () => user.then(async o => o ? o.unreadMessageCount : of(0)),
+					unreadMessageCount: toBehaviorSubject<number>(
+						user.then(async o => o ? o.unreadMessageCount : 0),
 						0
 					),
 					user,

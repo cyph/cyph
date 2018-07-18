@@ -57,7 +57,7 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	/** First filter item. */
 	public readonly filterSingle: BehaviorSubject<T|undefined>						=
 		toBehaviorSubject(
-			() => this.filter.pipe(map(items => items.values().next().value)),
+			this.filter.pipe(map(items => items.values().next().value)),
 			undefined
 		)
 	;

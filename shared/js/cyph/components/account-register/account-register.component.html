@@ -157,9 +157,6 @@
 													fxFlex
 													fxFlex.sm='80'
 													fxFlex.gt-sm='60'
-													*ngIf='
-														usernameWatcher | async as currentUsername
-													'
 												>
 													<input
 														matInput
@@ -171,46 +168,47 @@
 														cyphAutofocus
 														required
 													/>
-													<div
-														matSuffix
-														cyphTranslate
-														class='username-pending'
-														matTooltip='Checking availability...'
-														*ngIf='username.pending'
-													>
-														<mat-progress-spinner
-															diameter='24'
-															strokeWidth='2'
-															mode='indeterminate'
-														></mat-progress-spinner>
+													<div matSuffix *ngIf='
+														usernameWatcher | async as currentUsername
+													'>
+														<span
+															cyphTranslate
+															class='username-pending'
+															matTooltip='Checking availability...'
+															*ngIf='currentUsername.pending'
+														>
+															<mat-progress-spinner
+																diameter='24'
+																strokeWidth='2'
+																mode='indeterminate'
+															></mat-progress-spinner>
+														</span>
+														<mat-icon
+															cyphTranslate
+															matTooltip='Username unavailable'
+															*ngIf='
+																!currentUsername.pending &&
+																!!currentUsername.value &&
+																!!currentUsername.errors
+															'
+														>
+															error_outline
+														</mat-icon>
+														<mat-icon
+															cyphTranslate
+															matTooltip='Username available!'
+															*ngIf='
+																!currentUsername.pending &&
+																!!currentUsername.value &&
+																!currentUsername.errors
+															'
+														>
+															check
+														</mat-icon>
 													</div>
-													<mat-icon
-														matSuffix
-														cyphTranslate
-														matTooltip='Username unavailable'
-														*ngIf='
-															!currentUsername.pending &&
-															!!currentUsername.value &&
-															!!currentUsername.errors
-														'
-													>
-														error_outline
-													</mat-icon>
-													<mat-icon
-														matSuffix
-														cyphTranslate
-														matTooltip='Username available!'
-														*ngIf='
-															!currentUsername.pending &&
-															!!currentUsername.value &&
-															!currentUsername.errors
-														'
-													>
-														check
-													</mat-icon>
 													<mat-error
 														cyphTranslate
-														*ngIf='currentUsername.hasError(
+														*ngIf='(usernameWatcher | async)?.hasError(
 															"usernameTaken"
 														)'
 													>
@@ -392,12 +390,18 @@
 													Lock Screen PIN/Password:
 												</strong>
 												&nbsp;
-												<span *ngIf='useLockScreenPIN | async'>
+												<span *ngIf='
+													(useLockScreenPIN | async) &&
+													(hidePassword.lockScreenPIN | async) === false;
+													else hiddenLockScreenPassword
+												'>
 													{{lockScreenPIN | async}}
 												</span>
-												<span *ngIf='(useLockScreenPIN | async) === false'>
-													&#xfe61;&#xfe61;&#xfe61;&#xfe61;
-												</span>
+												<ng-template #hiddenLockScreenPassword>
+													<span>
+														&#xfe61;&#xfe61;&#xfe61;&#xfe61;
+													</span>
+												</ng-template>
 											</div>
 										</div>
 									</div>
@@ -680,7 +684,7 @@
 						(ngModelChange)='lockScreenPIN.next($event)'
 						name='lockScreenPIN'
 						[autofocus]='true'
-						[hide]='false'
+						[hide]='hidePassword.lockScreenPIN'
 						[required]='useLockScreenPIN | async'
 					></cyph-pin-input>
 				</div>
@@ -708,7 +712,7 @@
 							[ngModel]='lockScreenPassword | async'
 							(ngModelChange)='lockScreenPassword.next($event)'
 							name='lockScreenPassword'
-							[type]='(hidePassword.lockScreen | async) ?
+							[type]='(hidePassword.lockScreenPassword | async) ?
 								"password" :
 								"text"
 							'
@@ -719,12 +723,12 @@
 						<mat-icon
 							matSuffix
 							class='suffix-button'
-							(click)='hidePassword.lockScreen.next(
-								!hidePassword.lockScreen.value
+							(click)='hidePassword.lockScreenPassword.next(
+								!hidePassword.lockScreenPassword.value
 							)'
 						>
 							{{
-								(hidePassword.lockScreen | async) ?
+								(hidePassword.lockScreenPassword | async) ?
 									'visibility' :
 									'visibility_off'
 							}}
@@ -739,7 +743,7 @@
 							[ngModel]='lockScreenPasswordConfirm | async'
 							(ngModelChange)='lockScreenPasswordConfirm.next($event)'
 							name='lockScreenPasswordConfirm'
-							[type]='(hidePassword.lockScreenConfirm | async) ?
+							[type]='(hidePassword.lockScreenPasswordConfirm | async) ?
 								"password" :
 								"text"
 							'
@@ -750,12 +754,12 @@
 						<mat-icon
 							matSuffix
 							class='suffix-button'
-							(click)='hidePassword.lockScreenConfirm.next(
-								!hidePassword.lockScreenConfirm.value
+							(click)='hidePassword.lockScreenPasswordConfirm.next(
+								!hidePassword.lockScreenPasswordConfirm.value
 							)'
 						>
 							{{
-								(hidePassword.lockScreenConfirm | async) ?
+								(hidePassword.lockScreenPasswordConfirm | async) ?
 									'visibility' :
 									'visibility_off'
 							}}

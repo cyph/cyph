@@ -182,6 +182,14 @@
 			display: none;
 		}
 
+		cyph-account-contact {
+			@include transition(padding-left 150ms);
+
+			&:not(.active):not(:hover) {
+				padding-left: 10px;
+			}
+		}
+
 		cyph-search-bar .search-bar .mat-form-field-flex {
 			padding: 0 5px;
 		}

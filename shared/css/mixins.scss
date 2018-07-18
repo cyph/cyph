@@ -56,6 +56,7 @@ $accountPaddingSmall: 2.5vw;
 
 	$cyph-theme: cyph-theme-default();
 	$cyph-theme-inverted: cyph-theme-inverted();
+	$cyph-theme-partial-inverted: cyph-theme-partial-inverted();
 
 	$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 50, 100);
 
@@ -73,10 +74,10 @@ $accountPaddingSmall: 2.5vw;
 	@include cyph-main-theme;
 
 	@if $partialInversion {
-		@include theme-alt($cyph-theme-inverted);
+		@include theme-alt($cyph-theme-inverted, $cyph-theme-partial-inverted);
 
 		.cyph-#{if($cyph-is-dark, 'dark', 'light')}-theme {
-			@include theme-alt($cyph-theme);
+			@include theme-alt($cyph-theme, $cyph-theme-partial-inverted);
 		}
 	}
 
@@ -333,14 +334,18 @@ $accountPaddingSmall: 2.5vw;
 @mixin cyph-main-theme {
 	$cyph-theme: cyph-theme-default();
 
-	$cyph-progress-theme: map-merge($cyph-theme, (
-		primary: map-merge($cyph-primary, (
+	@include angular-material-theme($cyph-theme);
+	@include cyph-progress-theme($cyph-theme, $cyph-progress-foreground);
+}
+
+@mixin cyph-progress-theme($theme, $color: map-get(map-get($theme, foreground), base)) {
+	$cyph-progress-theme: map-merge($theme, (
+		primary: map-merge(map-get($theme, primary), (
 			lighter: rgba(0, 0, 0, 0.15),
-			default: $cyph-progress-foreground
+			default: $color
 		))
 	));
 
-	@include angular-material-theme($cyph-theme);
 	@include mat-progress-bar-theme($cyph-progress-theme);
 	@include mat-progress-spinner-theme($cyph-progress-theme);
 }
@@ -357,7 +362,7 @@ $accountPaddingSmall: 2.5vw;
 	}
 }
 
-@mixin theme-alt($theme) {
+@mixin theme-alt($theme, $theme-partial-inverted) {
 	@include mat-autocomplete-theme($theme);
 	@include mat-card-theme($theme);
 	@include mat-dialog-theme($theme);
@@ -375,7 +380,19 @@ $accountPaddingSmall: 2.5vw;
 		@include mat-expansion-panel-theme($theme);
 		@include mat-form-field-theme($theme);
 		@include mat-input-theme($theme);
+		@include cyph-progress-theme($theme-partial-inverted);
 		@include mat-select-theme($theme);
+		@include mat-tabs-theme($theme-partial-inverted);
+
+		$theme-foreground: map-get(map-get($theme-partial-inverted, foreground), base);
+
+		.mat-tab-label-content {
+			color: $theme-foreground;
+		}
+
+		.mat-tab-label-active {
+			background-color: rgba($theme-foreground, 0.1);
+		}
 	}
 
 	$theme-accent: map-get(map-get($theme, accent), default);
@@ -443,6 +460,17 @@ $accountPaddingSmall: 2.5vw;
 		$cyph-foreground,
 		$cyph-inverted,
 		not $cyph-is-dark
+	);
+}
+
+@function cyph-theme-partial-inverted() {
+	@return cyph-theme(
+		$cyph-primary,
+		$cyph-accent,
+		$cyph-warn,
+		$cyph-foreground,
+		$cyph-background,
+		$cyph-is-dark
 	);
 }
 

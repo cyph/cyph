@@ -109,6 +109,6 @@ export const getOrSetDefaultObservable	= <K, V> (
 	map: MaybePromise<Map<K, Observable<V>>>,
 	key: MaybePromise<K>,
 	defaultValue: () => MaybePromise<Observable<V>>
-) : Observable<V> => cacheObservable(
+) : Observable<V> => cacheObservable<V>(
 	getOrSetDefaultAsync(map, key, defaultValue)
 );

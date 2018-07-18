@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, skip, take} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
@@ -57,8 +57,9 @@ export class AccountRegisterComponent implements OnInit {
 
 	/** Password visibility settings. */
 	public readonly hidePassword						= {
-		lockScreen: new BehaviorSubject<boolean>(true),
-		lockScreenConfirm: new BehaviorSubject<boolean>(true),
+		lockScreenPassword: new BehaviorSubject<boolean>(true),
+		lockScreenPasswordConfirm: new BehaviorSubject<boolean>(true),
+		lockScreenPIN: new BehaviorSubject<boolean>(false),
 		masterKey: new BehaviorSubject<boolean>(true),
 		masterKeyConfirm: new BehaviorSubject<boolean>(true)
 	};
@@ -161,8 +162,8 @@ export class AccountRegisterComponent implements OnInit {
 	);
 
 	/** Auto-generated password option. */
-	public readonly xkcdPassphrase						= toBehaviorSubject(
-		async () => of(await xkcdPassphrase.generate()),
+	public readonly xkcdPassphrase						= toBehaviorSubject<string>(
+		xkcdPassphrase.generate(),
 		''
 	);
 
