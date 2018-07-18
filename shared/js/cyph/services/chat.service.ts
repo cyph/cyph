@@ -34,6 +34,7 @@ import {events, ISessionMessageAdditionalData, ISessionMessageData, rpcEvents} f
 import {Timer} from '../timer';
 import {filterUndefined} from '../util/filter';
 import {lockFunction} from '../util/lock';
+import {debugLog} from '../util/log';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
@@ -1256,6 +1257,15 @@ export class ChatService {
 
 			this.sessionService.connected.then(async () => {
 				this.sessionCapabilitiesService.resolveWalkieTalkieMode(this.walkieTalkieMode.value);
+
+				debugLog(async () => ({chat: {
+					futureMessages: await this.chat.futureMessages.getValue(),
+					lastConfirmedMessage: await this.chat.lastConfirmedMessage.getValue(),
+					lastUnreadMessage: await this.chat.lastUnreadMessage,
+					messageList: await this.chat.messageList.getValue(),
+					messages: await this.chat.messages.getValue(),
+					unconfirmedMessages: this.chat.unconfirmedMessages.value
+				}}));
 
 				if (callType !== undefined) {
 					this.sessionService.yt().then(async () => {
