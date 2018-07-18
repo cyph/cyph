@@ -36,7 +36,7 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	@Input() public autofocus: boolean				= false;
 
 	/** Hide PIN. */
-	@Input() public hide: boolean					= true;
+	@Input() public hide							= new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether input is disabled. */
 	public readonly isDisabled						= new BehaviorSubject<boolean>(false);
