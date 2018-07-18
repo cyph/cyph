@@ -52,7 +52,7 @@ export class ErrorService implements ErrorHandler {
 
 		if (err) {
 			if (this.envService.debug) {
-				debugLogError(err);
+				debugLogError(() => err);
 			}
 			else {
 				/* tslint:disable-next-line:no-console */

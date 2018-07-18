@@ -160,7 +160,12 @@ export class AccountSessionService extends SessionService {
 			throw new Error('User already set.');
 		}
 
-		debugLog({accountSessionInit: {ephemeralSubSession, username, sessionSubID, setHeader}});
+		debugLog(() => ({accountSessionInit: {
+			ephemeralSubSession,
+			username,
+			sessionSubID,
+			setHeader
+		}}));
 
 		username			= this.normalizeUsername(username);
 		this.initiated		= true;
@@ -368,7 +373,7 @@ export class AccountSessionService extends SessionService {
 			}
 		}
 
-		debugLog({accountSessionInitComplete: {user}});
+		debugLog(() => ({accountSessionInitComplete: {user}}));
 
 		this.remoteUser.next(user);
 		this.resolveReady();

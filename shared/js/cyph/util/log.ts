@@ -14,10 +14,12 @@ if (env.debug) {
 }
 
 
-const debugLogInternal	= (error: boolean, ...args: any[]) : void => {
+const debugLogInternal	= (error: boolean, argFunctions: (() => any)[]) : void => {
 	if (!env.debug) {
 		return;
 	}
+
+	const args	= argFunctions.map(f => f());
 
 	let argsCopy: any|undefined;
 
@@ -46,11 +48,11 @@ const debugLogInternal	= (error: boolean, ...args: any[]) : void => {
 
 
 /** Logs to console in local env. */
-export const debugLog	= (...args: any[]) : void => {
+export const debugLog	= (...args: (() => any)[]) : void => {
 	debugLogInternal(false, args);
 };
 
 /** Logs error to console in local env. */
-export const debugLogError	= (...args: any[]) : void => {
+export const debugLogError	= (...args: (() => any)[]) : void => {
 	debugLogInternal(true, args);
 };

@@ -164,7 +164,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
 		this.initialScrollDown.pipe(filter(b => !b), take(1)).toPromise().then(() => {
-			debugLog({chatMessageList: 'initial load complete'});
+			debugLog(() => ({chatMessageList: 'initial load complete'}));
 			this.chatService.resolvers.messageListLoaded.resolve();
 		});
 
@@ -208,7 +208,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 				chat.pendingMessages.watch(),
 				watchDateChange(true)
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
-				debugLog({chatMessageList: {onlineMessages, pendingMessages}});
+				debugLog(() => ({chatMessageList: {onlineMessages, pendingMessages}}));
 
 				if (
 					this.initialScrollDown.value &&

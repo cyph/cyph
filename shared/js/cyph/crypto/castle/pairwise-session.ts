@@ -54,14 +54,14 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private async abort () : Promise<void> {
-		debugLog({handshake: 'abort'});
+		debugLog(() => ({handshake: 'abort'}));
 		await this.handshakeState.currentStep.setValue(HandshakeSteps.Aborted);
 		this.transport.abort();
 	}
 
 	/** @ignore */
 	private async connect () : Promise<void> {
-		debugLog({handshake: 'connect'});
+		debugLog(() => ({handshake: 'connect'}));
 
 		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Complete) {
 			return;
@@ -101,13 +101,13 @@ export class PairwiseSession {
 		const incomingMessages	= await promises.incomingMessages;
 		let incomingMessagesMax	= await promises.incomingMessagesMax;
 
-		debugLog({pairwiseSessionIncomingMessage: {
+		debugLog(() => ({pairwiseSessionIncomingMessage: {
 			cyphertext,
 			incomingMessageID,
 			incomingMessages,
 			incomingMessagesMax,
 			newMessageID
-		}});
+		}}));
 
 		if (newMessageID >= incomingMessageID) {
 			if (newMessageID > incomingMessagesMax) {
@@ -171,7 +171,7 @@ export class PairwiseSession {
 		this.incomingMessages.setValue(incomingMessages);
 		this.incomingMessagesMax.setValue(incomingMessagesMax);
 
-		debugLog({pairwiseSessionIncomingMessageProcessed: {decryptedMessages}});
+		debugLog(() => ({pairwiseSessionIncomingMessageProcessed: {decryptedMessages}}));
 
 		return decryptedMessages;
 	}
@@ -338,7 +338,7 @@ export class PairwiseSession {
 			}
 		}
 	) {
-		debugLog({castlePairwiseSession: 'start'});
+		debugLog(() => ({castlePairwiseSession: 'start'}));
 
 		retryUntilSuccessful(async () => {
 			while (true) {
@@ -351,7 +351,7 @@ export class PairwiseSession {
 
 				/* Bootstrap asymmetric ratchet */
 				else if (currentStep === HandshakeSteps.Start) {
-					debugLog({handshake: 'start'});
+					debugLog(() => ({handshake: 'start'}));
 
 					if (this.handshakeState.isAlice) {
 						await this.ratchetBootstrapOutgoing();
@@ -366,7 +366,7 @@ export class PairwiseSession {
 					currentStep === HandshakeSteps.PostBootstrap &&
 					(await symmetricRatchetState.current.incoming.getValue()) === undefined
 				) {
-					debugLog({handshake: 'post-bootstrap'});
+					debugLog(() => ({handshake: 'post-bootstrap'}));
 
 					const initialSecret	= await this.handshakeState.initialSecret.getValue();
 
@@ -394,7 +394,7 @@ export class PairwiseSession {
 
 				/* Ready to activate Core */
 				else {
-					debugLog({handshake: 'final step'});
+					debugLog(() => ({handshake: 'final step'}));
 
 					const [
 						currentIncoming,
@@ -468,12 +468,12 @@ export class PairwiseSession {
 									messageID
 								);
 
-								debugLog({pairwiseSessionOutgoingMessage: {
+								debugLog(() => ({pairwiseSessionOutgoingMessage: {
 									cyphertext,
 									message,
 									messageID: this.potassium.toDataView(messageID).
 										getUint32(0, true)
-								}});
+								}}));
 
 								await this.transport.send(this.potassium.concatMemory(
 									true,
