@@ -1,5 +1,6 @@
 import * as msgpack from 'msgpack-lite';
 import {env} from '../env';
+import {MaybePromise} from '../maybe-promise-type';
 
 
 const logs: {
@@ -14,12 +15,15 @@ if (env.debug) {
 }
 
 
-const debugLogInternal	= (error: boolean, argFunctions: (() => any)[]) : void => {
+const debugLogInternal	= async (
+	error: boolean,
+	argFunctions: (() => MaybePromise<any>)[]
+) : Promise<void> => {
 	if (!env.debug) {
 		return;
 	}
 
-	const args	= argFunctions.map(f => f());
+	const args	= await Promise.all(argFunctions.map(async f => f()));
 
 	let argsCopy: any|undefined;
 
@@ -48,11 +52,11 @@ const debugLogInternal	= (error: boolean, argFunctions: (() => any)[]) : void =>
 
 
 /** Logs to console in local env. */
-export const debugLog	= (...args: (() => any)[]) : void => {
-	debugLogInternal(false, args);
-};
+export const debugLog	= async (...args: (() => MaybePromise<any>)[]) : Promise<void> =>
+	debugLogInternal(false, args)
+;
 
 /** Logs error to console in local env. */
-export const debugLogError	= (...args: (() => any)[]) : void => {
-	debugLogInternal(true, args);
-};
+export const debugLogError	= async (...args: (() => MaybePromise<any>)[]) : Promise<void> =>
+	debugLogInternal(true, args)
+;
