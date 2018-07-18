@@ -54,14 +54,14 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private async abort () : Promise<void> {
-		debugLog(() => ({handshake: 'abort'}));
+		debugLog(() => ({castleHandshake: 'abort'}));
 		await this.handshakeState.currentStep.setValue(HandshakeSteps.Aborted);
 		this.transport.abort();
 	}
 
 	/** @ignore */
 	private async connect () : Promise<void> {
-		debugLog(() => ({handshake: 'connect'}));
+		debugLog(() => ({castleHandshake: 'connect'}));
 
 		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Complete) {
 			return;
@@ -338,7 +338,7 @@ export class PairwiseSession {
 			}
 		}
 	) {
-		debugLog(() => ({castlePairwiseSession: 'start'}));
+		debugLog(() => ({pairwiseSessionStart: true}));
 
 		retryUntilSuccessful(async () => {
 			while (true) {
@@ -351,7 +351,7 @@ export class PairwiseSession {
 
 				/* Bootstrap asymmetric ratchet */
 				else if (currentStep === HandshakeSteps.Start) {
-					debugLog(() => ({handshake: 'start'}));
+					debugLog(() => ({castleHandshake: 'start'}));
 
 					if (this.handshakeState.isAlice) {
 						await this.ratchetBootstrapOutgoing();
@@ -366,7 +366,7 @@ export class PairwiseSession {
 					currentStep === HandshakeSteps.PostBootstrap &&
 					(await symmetricRatchetState.current.incoming.getValue()) === undefined
 				) {
-					debugLog(() => ({handshake: 'post-bootstrap'}));
+					debugLog(() => ({castleHandshake: 'post-bootstrap'}));
 
 					const initialSecret	= await this.handshakeState.initialSecret.getValue();
 
@@ -394,7 +394,7 @@ export class PairwiseSession {
 
 				/* Ready to activate Core */
 				else {
-					debugLog(() => ({handshake: 'final step'}));
+					debugLog(() => ({castleHandshake: 'final step'}));
 
 					const [
 						currentIncoming,
