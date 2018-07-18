@@ -50,7 +50,7 @@ export class ScrollService {
 	public readonly unreadItems: Promise<IAsyncSet<string>>	= this._UNREAD_ITEMS.promise;
 
 	/** Watches unread item count. */
-	public readonly watchUnreadCount	= memoize(() => toBehaviorSubject(
+	public readonly watchUnreadCount	= memoize(() => toBehaviorSubject<number>(
 		async () => {
 			const unreadItems	= await this.unreadItems;
 

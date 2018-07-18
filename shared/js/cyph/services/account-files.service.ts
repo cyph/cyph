@@ -469,7 +469,7 @@ export class AccountFilesService {
 	public readonly maxNameLength: number	= 80;
 
 	/** Returns a snippet of a note to use as a preview. */
-	public readonly noteSnippet				= memoize((id: string) => toBehaviorSubject(
+	public readonly noteSnippet				= memoize((id: string) => toBehaviorSubject<string>(
 		(async () => {
 			const limit		= 75;
 			const file		= await this.getFile(id);
@@ -484,11 +484,10 @@ export class AccountFilesService {
 				)
 			);
 
-			return of(
-				content.length > limit ?
-					`${content.substr(0, limit)}...` :
-					content
-			);
+			return content.length > limit ?
+				`${content.substr(0, limit)}...` :
+				content
+			;
 		}),
 		'...'
 	));
@@ -842,8 +841,8 @@ export class AccountFilesService {
 
 		return {
 			asyncList: docAsyncList,
-			deltas: flattenObservable(watchers.then(o => o.deltas)),
-			selections: flattenObservable(watchers.then(o => o.selections))
+			deltas: flattenObservable<IQuillDelta>(watchers.then(o => o.deltas)),
+			selections: flattenObservable<IQuillRange>(watchers.then(o => o.selections))
 		};
 	}
 

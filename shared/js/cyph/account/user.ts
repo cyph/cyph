@@ -129,7 +129,7 @@ export class User {
 	);
 
 	/** Unread incoming message count from this user. */
-	public readonly unreadMessageCount: Observable<number>	= toBehaviorSubject(
+	public readonly unreadMessageCount: Observable<number>	= toBehaviorSubject<number>(
 		async () => (await this.unreadMessages).watchSize(),
 		0
 	);

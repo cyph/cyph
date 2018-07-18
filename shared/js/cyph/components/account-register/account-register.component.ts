@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, skip, take} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
@@ -161,8 +161,8 @@ export class AccountRegisterComponent implements OnInit {
 	);
 
 	/** Auto-generated password option. */
-	public readonly xkcdPassphrase						= toBehaviorSubject(
-		async () => of(await xkcdPassphrase.generate()),
+	public readonly xkcdPassphrase						= toBehaviorSubject<string>(
+		xkcdPassphrase.generate(),
 		''
 	);
 

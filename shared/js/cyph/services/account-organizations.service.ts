@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {User} from '../account';
 import {AccountUserTypes} from '../proto';
@@ -23,12 +23,12 @@ export class AccountOrganizationsService {
 		return getOrSetDefault(
 			this.membersCache,
 			typeof org === 'string' ? normalize(org) : org.username,
-			() => toBehaviorSubject(
+			() => toBehaviorSubject<User[]>(
 				async () => {
 					if (typeof org === 'string') {
 						const maybeOrg	= await this.accountUserLookupService.getUser(org);
 						if (!maybeOrg) {
-							return of([]);
+							return [];
 						}
 						org	= maybeOrg;
 					}
@@ -37,7 +37,7 @@ export class AccountOrganizationsService {
 						(await org.accountUserProfile.getValue()).userType !==
 						AccountUserTypes.Org
 					) {
-						return of([]);
+						return [];
 					}
 
 					return org.organizationMembers.watch().pipe(mergeMap(async o =>
