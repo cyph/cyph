@@ -117,57 +117,62 @@ export class Core {
 		}
 	}
 
+	/** @ignore */
+	private cloneRatchetState () : ICastleRatchetState {
+		return {
+			asymmetric: {...this.ratchetState.asymmetric},
+			symmetric: {
+				current: {...this.ratchetState.symmetric.current},
+				next: {...this.ratchetState.symmetric.next}
+			}
+		};
+	}
+
 	/** Pushes local ratchet state to ratchetStateAsync. */
-	private async updateRatchetState () : Promise<void> {
+	private async updateRatchetState (ratchetState: ICastleRatchetState) : Promise<void> {
 		await this.updateRatchetLock(async () => {
 			if (this.oldRatchetState) {
 				if (
 					this.oldRatchetState.asymmetric.privateKey !==
-					this.ratchetState.asymmetric.privateKey
+					ratchetState.asymmetric.privateKey
 				) {
 					this.potassium.clearMemory(this.oldRatchetState.asymmetric.privateKey);
 				}
 				if (
 					this.oldRatchetState.asymmetric.publicKey !==
-					this.ratchetState.asymmetric.publicKey
+					ratchetState.asymmetric.publicKey
 				) {
 					this.potassium.clearMemory(this.oldRatchetState.asymmetric.publicKey);
 				}
 				if (
 					this.oldRatchetState.symmetric.current.incoming !==
-					this.ratchetState.symmetric.current.incoming
+					ratchetState.symmetric.current.incoming
 				) {
 					this.potassium.clearMemory(this.oldRatchetState.symmetric.current.incoming);
 				}
 				if (
 					this.oldRatchetState.symmetric.current.outgoing !==
-					this.ratchetState.symmetric.current.outgoing
+					ratchetState.symmetric.current.outgoing
 				) {
 					this.potassium.clearMemory(this.oldRatchetState.symmetric.current.outgoing);
 				}
 				if (
 					this.oldRatchetState.symmetric.next.incoming !==
-					this.ratchetState.symmetric.next.incoming
+					ratchetState.symmetric.next.incoming
 				) {
 					this.potassium.clearMemory(this.oldRatchetState.symmetric.next.incoming);
 				}
 				if (
 					this.oldRatchetState.symmetric.next.outgoing !==
-					this.ratchetState.symmetric.next.outgoing
+					ratchetState.symmetric.next.outgoing
 				) {
 					this.potassium.clearMemory(this.oldRatchetState.symmetric.next.outgoing);
 				}
 			}
 
-			this.oldRatchetState	= {
-				asymmetric: {...this.ratchetState.asymmetric},
-				symmetric: {
-					current: {...this.ratchetState.symmetric.current},
-					next: {...this.ratchetState.symmetric.next}
-				}
-			};
+			this.oldRatchetState	= ratchetState;
 
-			await this.ratchetStateAsync.setValue(this.ratchetState);
+			await this.ratchetStateAsync.setValue(ratchetState);
 		});
 	}
 
@@ -224,7 +229,9 @@ export class Core {
 						this.ratchetState.symmetric.current	= this.ratchetState.symmetric.next;
 					}
 
-					handled.then(async () => this.updateRatchetState());
+					const ratchetState	= this.cloneRatchetState();
+
+					handled.then(async () => this.updateRatchetState(ratchetState));
 
 					return;
 				}
@@ -239,36 +246,35 @@ export class Core {
 	 * Encrypt outgoing plaintext.
 	 * @param plaintext Data to be encrypted.
 	 * @param messageID Used to enforce message ordering.
-	 * @returns Cyphertext.
+	 * @param cyphertextHandler Handles cyphertext and blocks uppdating of ratchet state.
 	 */
-	public async encrypt (plaintext: Uint8Array, messageID: Uint8Array) : Promise<Uint8Array> {
-		const o	= await this.lock(async () => {
+	public async encrypt (
+		plaintext: Uint8Array,
+		messageID: Uint8Array,
+		cyphertextHandler: (cyphertext: Uint8Array) => Promise<void>
+	) : Promise<void> {
+		await this.lock(async () => {
 			const ratchetData	= await this.asymmetricRatchet();
 			const fullPlaintext	= this.potassium.concatMemory(false, ratchetData, plaintext);
 
 			this.potassium.clearMemory(ratchetData);
 
-			const key	= await this.potassium.hash.deriveKey(
+			this.ratchetState.symmetric.current.outgoing	= await this.potassium.hash.deriveKey(
 				this.ratchetState.symmetric.current.outgoing
 			);
 
-			this.ratchetState.symmetric.current.outgoing	= new Uint8Array(key);
+			const ratchetState	= this.cloneRatchetState();
 
-			this.updateRatchetState();
-
-			return {fullPlaintext, key};
+			this.potassium.secretBox.seal(
+				fullPlaintext,
+				ratchetState.symmetric.current.outgoing,
+				messageID
+			).then(
+				cyphertextHandler
+			).then(async () =>
+				this.updateRatchetState(ratchetState)
+			);
 		});
-
-		const cyphertext	= await this.potassium.secretBox.seal(
-			o.fullPlaintext,
-			o.key,
-			messageID
-		);
-
-		this.potassium.clearMemory(o.key);
-		this.potassium.clearMemory(o.fullPlaintext);
-
-		return cyphertext;
 	}
 
 	constructor (

@@ -424,25 +424,26 @@ export class PairwiseSession {
 
 						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message =>
 							lock(async () => {
-								const messageID		= await this.newOutgoingMessageID();
+								const messageID	= await this.newOutgoingMessageID();
 
-								const cyphertext	= await (await this.core).encrypt(
+								await (await this.core).encrypt(
 									message,
-									messageID
-								);
-
-								debugLog(() => ({pairwiseSessionOutgoingMessage: {
-									cyphertext,
-									message,
-									messageID: this.potassium.toDataView(messageID).
-										getUint32(0, true)
-								}}));
-
-								await this.transport.send(this.potassium.concatMemory(
-									true,
 									messageID,
-									cyphertext
-								));
+									async cyphertext => {
+										debugLog(() => ({pairwiseSessionOutgoingMessage: {
+											cyphertext,
+											message,
+											messageID: this.potassium.toDataView(messageID).
+												getUint32(0, true)
+										}}));
+
+										await this.transport.send(this.potassium.concatMemory(
+											true,
+											messageID,
+											cyphertext
+										));
+									}
+								);
 							})
 						);
 
