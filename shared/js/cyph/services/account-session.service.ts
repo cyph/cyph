@@ -162,9 +162,9 @@ export class AccountSessionService extends SessionService {
 
 		debugLog(() => ({accountSessionInit: {
 			ephemeralSubSession,
-			username,
 			sessionSubID,
-			setHeader
+			setHeader,
+			username
 		}}));
 
 		username			= this.normalizeUsername(username);
