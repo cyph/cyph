@@ -1,3 +1,4 @@
+/.bootstrap.original
 /.build
 .build.yaml
 *.mmdb

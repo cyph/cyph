@@ -8,21 +8,26 @@ const mkdirp		= require('mkdirp');
 const superSphincs	= require('supersphincs');
 
 
-(async () => {
+const pack	= async (dir, inputPath, enableMinify, enableSRI, outputPath) => {
 
 
-const args			= {
-	enableSRI: process.argv.indexOf('--sri') > -1,
-	enableMinify: process.argv.indexOf('--minify') > -1,
-	inputPath: `${process.env.PWD}/${process.argv.slice(-2)[0]}`,
-	outputPath: `${process.env.PWD}/${process.argv.slice(-1)[0]}`
-};
+if (enableSRI && !outputPath) {
+	throw new Error('Cannot enable SRI without an output path specified.');
+}
+
+const subresourcePath	= enableSRI ? `${outputPath}-subresources` : undefined;
+
+if (subresourcePath) {
+	await new Promise(resolve => mkdirp(subresourcePath, resolve));
+}
 
 
-const subresourcePath	= `${args.outputPath}-subresources`;
-await new Promise(resolve => mkdirp(subresourcePath, resolve));
+if (!dir) {
+	dir	= '.';
+}
 
-const html	= fs.readFileSync(args.inputPath).toString();
+
+const html	= fs.readFileSync(`${dir}/${inputPath}`).toString();
 const $		= cheerio.load(html);
 
 const subresources	= await Promise.all(Array.from(
@@ -30,8 +35,8 @@ const subresources	= await Promise.all(Array.from(
 		const $elem		= $(elem);
 		const tagName	= $elem.prop('tagName').toLowerCase();
 
-		const enableSRI	=
-			args.enableSRI &&
+		const sri		=
+			enableSRI &&
 			$elem.attr('websign-sri-disable') === undefined
 		;
 
@@ -39,7 +44,7 @@ const subresources	= await Promise.all(Array.from(
 			tagName === 'script' ? 'src' : 'href'
 		).split('?')[0].replace(/^\//, '');
 
-		const content	= fs.readFileSync(path).toString().
+		const content	= fs.readFileSync(`${dir}/${path}`).toString().
 			replace(/\n\/\/# sourceMappingURL=.*?\.map/g, '').
 			replace(/\n\/*# sourceMappingURL=.*?\.map *\//g, '').
 			trim()
@@ -47,28 +52,28 @@ const subresources	= await Promise.all(Array.from(
 
 		return {
 			$elem,
-			tagName,
-			enableSRI,
-			path,
 			content,
-			hash: (await superSphincs.hash(content)).hex
+			sri,
+			hash: (await superSphincs.hash(content)).hex,
+			path,
+			tagName
 		};
 	})
 ));
 
 for (let subresource of subresources) {
-	if (subresource.enableSRI) {
+	if (subresource.sri) {
 		const path			= `${subresourcePath}/${subresource.path}`;
 		const pathParent	= path.split('/').slice(0, -1).join('/');
 
 		await new Promise(resolve => mkdirp(pathParent, resolve));
-		fs.writeFileSync(path, subresource.content);
-		fs.writeFileSync(path + '.srihash', subresource.hash);
+		fs.writeFileSync(`${dir}/${path}`, subresource.content);
+		fs.writeFileSync(`${dir}/${path}.srihash`, subresource.hash);
 	}
 
 	subresource.$elem.replaceWith(
 		subresource.tagName === 'script' ?
-			(subresource.enableSRI ?
+			(subresource.sri ?
 				`
 					<script
 						websign-sri-path='${subresource.path}'
@@ -81,7 +86,7 @@ for (let subresource of subresources) {
 					}</script>
 				`
 			) :
-			(subresource.enableSRI ?
+			(subresource.sri ?
 				`
 					<link
 						rel='stylesheet'
@@ -97,22 +102,50 @@ for (let subresource of subresources) {
 }
 
 
-const output	= $.html().trim();
-
-fs.writeFileSync(
-	args.outputPath,
-	args.enableMinify ?
-		htmlMinifier.minify(output, {
+const output	= (html =>
+	enableMinify ?
+		htmlMinifier.minify(html, {
 			collapseWhitespace: true,
 			minifyCSS: false,
 			minifyJS: false,
 			removeComments: true
 		}) :
-		output
+		html
+)(
+	$.html().trim()
 );
 
+if (outputPath) {
+	fs.writeFileSync(`${dir}/${outputPath}`, output);
+}
 
-})().catch(err => {
-	console.error(err);
-	process.exit(1);
-});
+return output;
+
+
+};
+
+
+if (require.main === module) {
+	const args	= {
+		enableMinify: process.argv.indexOf('--minify') > -1,
+		enableSRI: process.argv.indexOf('--sri') > -1,
+		inputPath: process.argv.slice(-2)[0],
+		outputPath: process.argv.slice(-1)[0]
+	};
+
+	pack(
+		process.env.PWD,
+		args.inputPath,
+		args.enableMinify,
+		args.enableSRI,
+		args.outputPath
+	).then(() => {
+		process.exit(0);
+	}).catch(err => {
+		console.error(err);
+		process.exit(1);
+	});
+}
+else {
+	module.exports	= {pack};
+}
