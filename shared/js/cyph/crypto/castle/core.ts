@@ -32,7 +32,13 @@ export class Core {
 
 
 	/** @ignore */
-	private readonly lock: LockFunction	= lockFunction();
+	private readonly lock: LockFunction					= lockFunction();
+
+	/** @ignore */
+	private oldRatchetState?: ICastleRatchetState;
+
+	/** @ignore */
+	private readonly updateRatchetLock: LockFunction	= lockFunction();
 
 	/** @ignore */
 	private async asymmetricRatchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
@@ -88,7 +94,6 @@ export class Core {
 				this.ratchetState.asymmetric.privateKey
 			);
 
-			this.potassium.clearMemory(this.ratchetState.asymmetric.privateKey);
 			this.ratchetState.asymmetric.privateKey	= new Uint8Array(0);
 		}
 
@@ -110,6 +115,60 @@ export class Core {
 		else {
 			return new Uint8Array([0]);
 		}
+	}
+
+	/** Pushes local ratchet state to ratchetStateAsync. */
+	private async updateRatchetState () : Promise<void> {
+		await this.updateRatchetLock(async () => {
+			if (this.oldRatchetState) {
+				if (
+					this.oldRatchetState.asymmetric.privateKey !==
+					this.ratchetState.asymmetric.privateKey
+				) {
+					this.potassium.clearMemory(this.oldRatchetState.asymmetric.privateKey);
+				}
+				if (
+					this.oldRatchetState.asymmetric.publicKey !==
+					this.ratchetState.asymmetric.publicKey
+				) {
+					this.potassium.clearMemory(this.oldRatchetState.asymmetric.publicKey);
+				}
+				if (
+					this.oldRatchetState.symmetric.current.incoming !==
+					this.ratchetState.symmetric.current.incoming
+				) {
+					this.potassium.clearMemory(this.oldRatchetState.symmetric.current.incoming);
+				}
+				if (
+					this.oldRatchetState.symmetric.current.outgoing !==
+					this.ratchetState.symmetric.current.outgoing
+				) {
+					this.potassium.clearMemory(this.oldRatchetState.symmetric.current.outgoing);
+				}
+				if (
+					this.oldRatchetState.symmetric.next.incoming !==
+					this.ratchetState.symmetric.next.incoming
+				) {
+					this.potassium.clearMemory(this.oldRatchetState.symmetric.next.incoming);
+				}
+				if (
+					this.oldRatchetState.symmetric.next.outgoing !==
+					this.ratchetState.symmetric.next.outgoing
+				) {
+					this.potassium.clearMemory(this.oldRatchetState.symmetric.next.outgoing);
+				}
+			}
+
+			this.oldRatchetState	= {
+				asymmetric: {...this.ratchetState.asymmetric},
+				symmetric: {
+					current: {...this.ratchetState.symmetric.current},
+					next: {...this.ratchetState.symmetric.next}
+				}
+			};
+
+			await this.ratchetStateAsync.setValue(this.ratchetState);
+		});
 	}
 
 	/**
@@ -151,8 +210,7 @@ export class Core {
 						this.potassium.toBytes(decrypted, startIndex)
 					);
 
-					this.potassium.clearMemory(keys.incoming);
-					keys.incoming	= incomingKey;
+					keys.incoming		= incomingKey;
 
 					if (startIndex !== 1) {
 						await this.asymmetricRatchet(this.potassium.toBytes(
@@ -163,12 +221,10 @@ export class Core {
 					}
 
 					if (keys === this.ratchetState.symmetric.next) {
-						this.potassium.clearMemory(this.ratchetState.symmetric.current.incoming);
-						this.potassium.clearMemory(this.ratchetState.symmetric.current.outgoing);
 						this.ratchetState.symmetric.current	= this.ratchetState.symmetric.next;
 					}
 
-					handled.then(async () => this.ratchetStateAsync.setValue(this.ratchetState));
+					handled.then(async () => this.updateRatchetState());
 
 					return;
 				}
@@ -196,10 +252,9 @@ export class Core {
 				this.ratchetState.symmetric.current.outgoing
 			);
 
-			this.potassium.clearMemory(this.ratchetState.symmetric.current.outgoing);
 			this.ratchetState.symmetric.current.outgoing	= new Uint8Array(key);
 
-			this.ratchetStateAsync.setValue(this.ratchetState);
+			this.updateRatchetState();
 
 			return {fullPlaintext, key};
 		});
