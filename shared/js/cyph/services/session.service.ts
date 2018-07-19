@@ -189,7 +189,7 @@ export abstract class SessionService implements ISessionService {
 		;
 
 		if (otherSubSessionMessages.length > 0) {
-			this.incomingMessageQueue.pushItem({messages: otherSubSessionMessages});
+			await this.incomingMessageQueue.pushItem({messages: otherSubSessionMessages});
 		}
 
 		await Promise.all(messages.filter(this.correctSubSession).map(async message => {
