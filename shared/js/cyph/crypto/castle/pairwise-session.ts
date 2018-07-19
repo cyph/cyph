@@ -86,7 +86,7 @@ export class PairwiseSession {
 	private async processIncomingMessages (
 		newMessageID: number,
 		cyphertext: Uint8Array
-	) : Promise<Uint8Array[]> {
+	) : Promise<void> {
 		const promises	= {
 			incomingMessageID: this.incomingMessageID.getValue(),
 			incomingMessages: this.incomingMessages.getValue(),
@@ -116,8 +116,6 @@ export class PairwiseSession {
 			message.push(cyphertext);
 		}
 
-		const decryptedMessages: Uint8Array[]	= [];
-
 		while (incomingMessageID <= incomingMessagesMax) {
 			const id		= incomingMessageID;
 			const message	= incomingMessages[id];
@@ -128,9 +126,10 @@ export class PairwiseSession {
 
 			for (const cyphertextBytes of message) {
 				try {
-					const plaintext	= await (await this.core).decrypt(cyphertextBytes);
-
-					decryptedMessages.push(plaintext);
+					await (await this.core).decrypt(
+						cyphertextBytes,
+						async plaintext => this.decryptedMessageQueue.pushItem(plaintext)
+					);
 
 					++incomingMessageID;
 					break;
@@ -156,10 +155,6 @@ export class PairwiseSession {
 		this.incomingMessageID.setValue(incomingMessageID);
 		this.incomingMessages.setValue(incomingMessages);
 		this.incomingMessagesMax.setValue(incomingMessagesMax);
-
-		debugLog(() => ({pairwiseSessionIncomingMessageProcessed: {decryptedMessages}}));
-
-		return decryptedMessages;
 	}
 
 	/** @ignore */
@@ -286,6 +281,9 @@ export class PairwiseSession {
 		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
+		private readonly decryptedMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
+
+		/** @ignore */
 		private readonly incomingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
 
 		/** @ignore */
@@ -407,36 +405,29 @@ export class PairwiseSession {
 					await this.connect();
 
 					this.receiveLock(async o => {
-						const lock					= lockFunction();
-						const sessionReceiveLock	= lockFunction();
+						const lock			= lockFunction();
 
-						const sub	= this.incomingMessageQueue.subscribe(
+						const cyphertextSub	= this.incomingMessageQueue.subscribe(
 							async ({cyphertext, newMessageID, resolve}) => lock(async () => {
 								this.transport.logCyphertext(this.remoteUser.username, cyphertext);
-
-								const decryptedMessages	= await this.processIncomingMessages(
-									newMessageID,
-									cyphertext
-								);
-
-								sessionReceiveLock(async () => {
-									for (const plaintext of decryptedMessages) {
-										await this.transport.receive(
-											plaintext,
-											this.remoteUser.username
-										);
-									}
-
-									resolve();
-								});
+								await this.processIncomingMessages(newMessageID, cyphertext);
+								resolve();
 							})
+						);
+
+						const plaintextSub	= this.decryptedMessageQueue.subscribeAndPop(
+							async plaintext => {
+								debugLog(() => ({pairwiseSessionDecrypted: {plaintext}}));
+								await this.transport.receive(plaintext, this.remoteUser.username);
+							}
 						);
 
 						this.isReceiving.next(true);
 						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
 						this.isReceiving.next(false);
 						await sleep();
-						sub.unsubscribe();
+						cyphertextSub.unsubscribe();
+						plaintextSub.unsubscribe();
 					});
 
 					this.sendLock(async o => {

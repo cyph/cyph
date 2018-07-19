@@ -114,6 +114,15 @@ export class AccountCastleService extends CastleService {
 							localUser,
 							remoteUser,
 							handshakeState,
+							this.accountDatabaseService.getAsyncList(
+								`${sessionURL}/decryptedMessageQueue`,
+								BinaryProto,
+								undefined,
+								undefined,
+								undefined,
+								false,
+								true
+							),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/incomingMessageID`,
 								Uint32Proto,

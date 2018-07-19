@@ -353,6 +353,19 @@
 										".validate": "newData.val() === now"
 									}
 								},
+								"decryptedMessageQueue": {
+									"$decryptedMessage": {
+										"data": {
+											".validate": "newData.isString()"
+										},
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									}
+								},
 								"handshake": {
 									"currentStep": {
 										"data": {

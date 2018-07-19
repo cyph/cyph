@@ -94,6 +94,7 @@ service firebase.storage {
 				// 			/publicKey/{hash} {}
 				// 		}
 				// 		/channelUserID/{hash} {}
+				// 		/decryptedMessageQueue/{hash} {}
 				// 		/handshake {
 				// 			/currentStep/{hash} {}
 				// 			/initialSecret/{hash} {}

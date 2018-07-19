@@ -109,9 +109,12 @@ export class Core {
 	/**
 	 * Decrypt incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
-	 * @returns Plaintext.
+	 * @param plaintextHandler Handles plaintext and blocks uppdating of session state.
 	 */
-	public async decrypt (cyphertext: Uint8Array) : Promise<Uint8Array> {
+	public async decrypt (
+		cyphertext: Uint8Array,
+		plaintextHandler: (plaintext: Uint8Array) => Promise<void>
+	) : Promise<void> {
 		const ephemeralKeyExchangePublicKeyBytes	=
 			await this.potassium.ephemeralKeyExchange.publicKeyBytes
 		;
@@ -135,17 +138,21 @@ export class Core {
 						messageID
 					);
 
+					const startIndex	= decrypted[0] === 1 ?
+						ephemeralKeyExchangePublicKeyBytes + 1 :
+						1
+					;
+
+					await plaintextHandler(this.potassium.toBytes(decrypted, startIndex));
+
 					keys.incoming.setValue(incomingKey);
 
-					let startIndex	= 1;
-					if (decrypted[0] === 1) {
+					if (startIndex !== 1) {
 						await this.asymmetricRatchet(this.potassium.toBytes(
 							decrypted,
-							startIndex,
+							1,
 							ephemeralKeyExchangePublicKeyBytes
 						));
-
-						startIndex += ephemeralKeyExchangePublicKeyBytes;
 					}
 
 					if (keys === this.symmetricRatchetState.next) {
@@ -162,7 +169,7 @@ export class Core {
 						);
 					}
 
-					return this.potassium.toBytes(decrypted, startIndex);
+					return;
 				}
 				catch {}
 			}
