@@ -518,7 +518,11 @@ export class AccountFilesService {
 			filePromise.then(file => file.key)
 		);
 
-		return {progress, result: result.then(o => o.value)};
+		return {progress, result: result.then(async o =>
+			o.value instanceof Blob ?
+				<any> new Blob([o.value], {type: (await filePromise).mediaType}) :
+				o.value
+		)};
 	}
 
 	/** @ignore */
