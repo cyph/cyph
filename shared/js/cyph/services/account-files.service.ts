@@ -161,7 +161,7 @@ export class AccountFilesService {
 			description: 'File',
 			isOfType: (file: any) => file instanceof Blob,
 			mediaType: undefined,
-			proto: BinaryProto,
+			proto: BlobProto,
 			recordType: AccountFileRecord.RecordTypes.File,
 			route: 'files',
 			securityModel: undefined
