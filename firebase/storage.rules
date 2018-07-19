@@ -89,10 +89,6 @@ service firebase.storage {
 				// 	match /messageList-head/{hash} {}
 				// 	match /messages/{message}/{hash} {}
 				// 	match /session {
-				// 		/asymmetricRatchetState {
-				// 			/privateKey/{hash} {}
-				// 			/publicKey/{hash} {}
-				// 		}
 				// 		/channelUserID/{hash} {}
 				// 		/decryptedMessageQueue/{hash} {}
 				// 		/handshake {
@@ -105,17 +101,8 @@ service firebase.storage {
 				// 		/incomingMessagesMax/{hash} {}
 				// 		/outgoingMessageID/{hash} {}
 				// 		/outgoingMessageQueue/{hash} {}
+				// 		/ratchetState {}
 				// 		/symmetricKey/{hash} {}
-				// 		/symmetricRatchetState {
-				// 			/current {
-				// 				/incoming/{hash} {}
-				// 				/outgoing/{hash} {}
-				// 			}
-				// 			/next {
-				// 				/incoming/{hash} {}
-				// 				/outgoing/{hash} {}
-				// 			}
-				// 		}
 				// 	}
 				// }
 

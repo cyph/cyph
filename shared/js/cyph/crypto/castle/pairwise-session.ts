@@ -1,12 +1,12 @@
 import {BehaviorSubject, Subject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {config} from '../../config';
-import {denullifyAsyncValue} from '../../denullify-async-value';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
+import {ICastleRatchetState} from '../../proto';
 import {lockFunction} from '../../util/lock';
 import {debugLog} from '../../util/log';
 import {getTimestamp} from '../../util/time';
@@ -14,11 +14,9 @@ import {resolvable, retryUntilSuccessful, sleep} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';
-import {IAsymmetricRatchetState} from './iasymmetric-ratchet-state';
 import {IHandshakeState} from './ihandshake-state';
 import {ILocalUser} from './ilocal-user';
 import {IRemoteUser} from './iremote-user';
-import {ISymmetricRatchetStateMaybe} from './isymmetric-ratchet-state-maybe';
 import {Transport} from './transport';
 
 
@@ -306,21 +304,22 @@ export class PairwiseSession {
 		/** @ignore */
 		private readonly sendLock: LockFunction = lockFunction(),
 
-		asymmetricRatchetState: IAsymmetricRatchetState = {
-			privateKey: new LocalAsyncValue(undefined),
-			publicKey: new LocalAsyncValue(undefined)
-		},
-
-		symmetricRatchetState: ISymmetricRatchetStateMaybe = {
-			current: {
-				incoming: new LocalAsyncValue(undefined),
-				outgoing: new LocalAsyncValue(undefined)
+		ratchetState: IAsyncValue<ICastleRatchetState> = new LocalAsyncValue<ICastleRatchetState>({
+			asymmetric: {
+				privateKey: new Uint8Array(0),
+				publicKey: new Uint8Array(0)
 			},
-			next: {
-				incoming: new LocalAsyncValue(undefined),
-				outgoing: new LocalAsyncValue(undefined)
+			symmetric: {
+				current: {
+					incoming: new Uint8Array(0),
+					outgoing: new Uint8Array(0)
+				},
+				next: {
+					incoming: new Uint8Array(0),
+					outgoing: new Uint8Array(0)
+				}
 			}
-		}
+		})
 	) {
 		debugLog(() => ({pairwiseSessionStart: true}));
 
@@ -348,7 +347,9 @@ export class PairwiseSession {
 				/* Initialize symmetric ratchet */
 				else if (
 					currentStep === HandshakeSteps.PostBootstrap &&
-					(await symmetricRatchetState.current.incoming.getValue()) === undefined
+					this.potassium.isEmpty(
+						(await ratchetState.getValue()).symmetric.current.incoming
+					)
 				) {
 					debugLog(() => ({castleHandshake: 'post-bootstrap'}));
 
@@ -364,42 +365,30 @@ export class PairwiseSession {
 						initialSecret
 					);
 
-					await Promise.all([
-						symmetricRatchetState.current.incoming.setValue(symmetricKeys.incoming),
-						symmetricRatchetState.current.outgoing.setValue(symmetricKeys.outgoing),
-						symmetricRatchetState.next.incoming.setValue(
-							new Uint8Array(symmetricKeys.incoming)
-						),
-						symmetricRatchetState.next.outgoing.setValue(
-							new Uint8Array(symmetricKeys.outgoing)
-						)
-					]);
+					await ratchetState.setValue({
+						asymmetric: {
+							privateKey: new Uint8Array(0),
+							publicKey: new Uint8Array(0)
+						},
+						symmetric: {
+							current: symmetricKeys,
+							next: {
+								incoming: new Uint8Array(symmetricKeys.incoming),
+								outgoing: new Uint8Array(symmetricKeys.outgoing)
+							}
+						}
+					});
 				}
 
 				/* Ready to activate Core */
 				else {
 					debugLog(() => ({castleHandshake: 'final step'}));
 
-					const [
-						currentIncoming,
-						currentOutgoing,
-						nextIncoming,
-						nextOutgoing
-					]	= await Promise.all([
-						denullifyAsyncValue(symmetricRatchetState.current.incoming),
-						denullifyAsyncValue(symmetricRatchetState.current.outgoing),
-						denullifyAsyncValue(symmetricRatchetState.next.incoming),
-						denullifyAsyncValue(symmetricRatchetState.next.outgoing)
-					]);
-
 					this.resolveCore(new Core(
 						this.potassium,
 						this.handshakeState.isAlice,
-						{
-							current: {incoming: currentIncoming, outgoing: currentOutgoing},
-							next: {incoming: nextIncoming, outgoing: nextOutgoing}
-						},
-						asymmetricRatchetState
+						await ratchetState.getValue(),
+						ratchetState
 					));
 
 					await this.connect();

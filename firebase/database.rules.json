@@ -318,30 +318,6 @@
 								}
 							},
 							"session": {
-								"asymmetricRatchetState": {
-									"privateKey": {
-										"data": {
-											".validate": "newData.isString()"
-										},
-										"hash": {
-											".validate": "newData.isString()"
-										},
-										"timestamp": {
-											".validate": "newData.val() === now"
-										}
-									},
-									"publicKey": {
-										"data": {
-											".validate": "newData.isString()"
-										},
-										"hash": {
-											".validate": "newData.isString()"
-										},
-										"timestamp": {
-											".validate": "newData.val() === now"
-										}
-									}
-								},
 								"channelUserID": {
 									"data": {
 										".validate": "newData.isString()"
@@ -458,7 +434,7 @@
 										}
 									}
 								},
-								"symmetricKey": {
+								"ratchetState": {
 									"data": {
 										".validate": "newData.isString()"
 									},
@@ -469,54 +445,15 @@
 										".validate": "newData.val() === now"
 									}
 								},
-								"symmetricRatchetState": {
-									"current": {
-										"incoming": {
-											"data": {
-												".validate": "newData.isString()"
-											},
-											"hash": {
-												".validate": "newData.isString()"
-											},
-											"timestamp": {
-												".validate": "newData.val() === now"
-											}
-										},
-										"outgoing": {
-											"data": {
-												".validate": "newData.isString()"
-											},
-											"hash": {
-												".validate": "newData.isString()"
-											},
-											"timestamp": {
-												".validate": "newData.val() === now"
-											}
-										}
+								"symmetricKey": {
+									"data": {
+										".validate": "newData.isString()"
 									},
-									"next": {
-										"incoming": {
-											"data": {
-												".validate": "newData.isString()"
-											},
-											"hash": {
-												".validate": "newData.isString()"
-											},
-											"timestamp": {
-												".validate": "newData.val() === now"
-											}
-										},
-										"outgoing": {
-											"data": {
-												".validate": "newData.isString()"
-											},
-											"hash": {
-												".validate": "newData.isString()"
-											},
-											"timestamp": {
-												".validate": "newData.val() === now"
-											}
-										}
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
 									}
 								}
 							}

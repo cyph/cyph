@@ -29,8 +29,10 @@ export class PotassiumUtil {
 	}
 
 	/** Zeroes out memory. */
-	public clearMemory (a: ArrayBufferView) : void {
-		sodiumUtil.memzero(this.toBytes(a));
+	public clearMemory (a?: ArrayBufferView) : void {
+		if (a) {
+			sodiumUtil.memzero(this.toBytes(a));
+		}
 	}
 
 	/** Indicates whether two blocks of memory contain the same data. */
@@ -94,6 +96,11 @@ export class PotassiumUtil {
 			sodiumUtil.from_string(s) :
 			this.toBytes(s)
 		;
+	}
+
+	/** Indicates whether maybe-byte-array is empty. */
+	public isEmpty (a?: ArrayBufferView) : boolean {
+		return !a || a.byteLength < 1;
 	}
 
 	/** Joins byte arrays for later separation with splitBytes. */

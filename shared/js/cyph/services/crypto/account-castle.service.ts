@@ -10,6 +10,7 @@ import {
 import {
 	BinaryProto,
 	CastleIncomingMessagesProto,
+	CastleRatchetState,
 	MaybeBinaryProto,
 	Uint32Proto
 } from '../../proto';
@@ -170,68 +171,15 @@ export class AccountCastleService extends CastleService {
 							),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
 							this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),
-							{
-								privateKey: this.accountDatabaseService.getAsyncValue(
-									`${sessionURL}/asymmetricRatchetState/privateKey`,
-									MaybeBinaryProto,
-									undefined,
-									undefined,
-									undefined,
-									undefined,
-									true
-								),
-								publicKey: this.accountDatabaseService.getAsyncValue(
-									`${sessionURL}/asymmetricRatchetState/publicKey`,
-									MaybeBinaryProto,
-									undefined,
-									undefined,
-									undefined,
-									undefined,
-									true
-								)
-							},
-							{
-								current: {
-									incoming: this.accountDatabaseService.getAsyncValue(
-										`${sessionURL}/symmetricRatchetState/current/incoming`,
-										MaybeBinaryProto,
-										undefined,
-										undefined,
-										undefined,
-										undefined,
-										true
-									),
-									outgoing: this.accountDatabaseService.getAsyncValue(
-										`${sessionURL}/symmetricRatchetState/current/outgoing`,
-										MaybeBinaryProto,
-										undefined,
-										undefined,
-										undefined,
-										undefined,
-										true
-									)
-								},
-								next: {
-									incoming: this.accountDatabaseService.getAsyncValue(
-										`${sessionURL}/symmetricRatchetState/next/incoming`,
-										MaybeBinaryProto,
-										undefined,
-										undefined,
-										undefined,
-										undefined,
-										true
-									),
-									outgoing: this.accountDatabaseService.getAsyncValue(
-										`${sessionURL}/symmetricRatchetState/next/outgoing`,
-										MaybeBinaryProto,
-										undefined,
-										undefined,
-										undefined,
-										undefined,
-										true
-									)
-								}
-							}
+							this.accountDatabaseService.getAsyncValue(
+								`${sessionURL}/ratchetState`,
+								CastleRatchetState,
+								undefined,
+								undefined,
+								undefined,
+								undefined,
+								true
+							)
 						);
 					}
 				));
