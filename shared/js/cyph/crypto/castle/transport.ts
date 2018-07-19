@@ -44,12 +44,9 @@ export class Transport {
 
 	/** Handle decrypted incoming message. */
 	public async receive (
-		cyphertext: Uint8Array,
 		plaintext: Uint8Array,
 		author: Observable<string>
 	) : Promise<void> {
-		this.logCyphertext(author, cyphertext);
-
 		const timestamp		= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
 		const instanceID	= potassiumUtil.toBytes(plaintext, 8, 16);
 		const data			= potassiumUtil.toBytes(plaintext, 24);

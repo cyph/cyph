@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {config} from '../../config';
 import {denullifyAsyncValue} from '../../denullify-async-value';
@@ -86,11 +86,7 @@ export class PairwiseSession {
 	private async processIncomingMessages (
 		newMessageID: number,
 		cyphertext: Uint8Array
-	) : Promise<{
-		cyphertextBytes: Uint8Array;
-		plaintext: Uint8Array;
-		username: Observable<string>;
-	}[]> {
+	) : Promise<Uint8Array[]> {
 		const promises	= {
 			incomingMessageID: this.incomingMessageID.getValue(),
 			incomingMessages: this.incomingMessages.getValue(),
@@ -120,13 +116,7 @@ export class PairwiseSession {
 			message.push(cyphertext);
 		}
 
-		const decryptedMessages: {
-			cyphertextBytes: Uint8Array;
-			plaintext: Uint8Array;
-			username: Observable<string>;
-		}[]	=
-			[]
-		;
+		const decryptedMessages: Uint8Array[]	= [];
 
 		while (incomingMessageID <= incomingMessagesMax) {
 			const id		= incomingMessageID;
@@ -140,11 +130,7 @@ export class PairwiseSession {
 				try {
 					const plaintext	= await (await this.core).decrypt(cyphertextBytes);
 
-					decryptedMessages.push({
-						cyphertextBytes,
-						plaintext,
-						username: this.remoteUser.username
-					});
+					decryptedMessages.push(plaintext);
 
 					++incomingMessageID;
 					break;
@@ -426,21 +412,18 @@ export class PairwiseSession {
 
 						const sub	= this.incomingMessageQueue.subscribe(
 							async ({cyphertext, newMessageID, resolve}) => lock(async () => {
+								this.transport.logCyphertext(this.remoteUser.username, cyphertext);
+
 								const decryptedMessages	= await this.processIncomingMessages(
 									newMessageID,
 									cyphertext
 								);
 
 								sessionReceiveLock(async () => {
-									for (const {
-										cyphertextBytes,
-										plaintext,
-										username
-									} of decryptedMessages) {
+									for (const plaintext of decryptedMessages) {
 										await this.transport.receive(
-											cyphertextBytes,
 											plaintext,
-											username
+											this.remoteUser.username
 										);
 									}
 
