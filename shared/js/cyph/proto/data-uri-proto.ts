@@ -7,7 +7,7 @@ import {staticDomSanitizer} from '../util/static-services';
 /** Base64 data URI encoder/decoder. (Doesn't actually use Protocol Buffers.) */
 export class DataURIProto {
 	/** @ignore */
-	private static readonly prefix: string	= 'data:application/octet-stream;base64,';
+	private static readonly prefix: string	= 'data:image/png;base64,';
 
 	/** @ignore */
 	private static readonly prefixBytes: Uint8Array	= potassiumUtil.fromString(
