@@ -91,6 +91,7 @@ service firebase.storage {
 				// 	match /session {
 				// 		/channelUserID/{hash} {}
 				// 		/decryptedMessageQueue/{hash} {}
+				// 		/encryptedMessageQueue/{hash} {}
 				// 		/handshake {
 				// 			/currentStep/{hash} {}
 				// 			/initialSecret/{hash} {}

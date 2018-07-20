@@ -48,6 +48,9 @@ export class PairwiseSession {
 	private readonly isReceiving: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @ignore */
+	private lastOutgoingMessageID?: number;
+
+	/** @ignore */
 	private nextOutgoingMessageID?: number;
 
 	/** @ignore */
@@ -73,10 +76,14 @@ export class PairwiseSession {
 	}
 
 	/** @ignore */
+	private incrementMessageID (messageID: number) : number {
+		return messageID === config.maxUint32 ? 0 : messageID + 1;
+	}
+
+	/** @ignore */
 	private async newOutgoingMessageID () : Promise<{
 		messageID: number;
 		messageIDBytes: Uint8Array;
-		nextMessageID: number;
 	}> {
 		if (this.nextOutgoingMessageID === undefined) {
 			this.nextOutgoingMessageID	= await this.outgoingMessageID.getValue();
@@ -84,16 +91,11 @@ export class PairwiseSession {
 
 		const messageID	= this.nextOutgoingMessageID;
 
-		this.nextOutgoingMessageID	=
-			messageID === config.maxUint32 ?
-				0 :
-				messageID + 1
-		;
+		this.nextOutgoingMessageID	= this.incrementMessageID(messageID);
 
 		return {
 			messageID,
-			messageIDBytes: new Uint8Array(new Uint32Array([messageID]).buffer),
-			nextMessageID: this.nextOutgoingMessageID
+			messageIDBytes: new Uint8Array(new Uint32Array([messageID]).buffer)
 		};
 	}
 
@@ -176,6 +178,37 @@ export class PairwiseSession {
 		this.incomingMessageID.setValue(incomingMessageID);
 		this.incomingMessages.setValue(incomingMessages);
 		this.incomingMessagesMax.setValue(incomingMessagesMax);
+	}
+
+	/** @ignore */
+	private async processOutgoingMessages (...cyphertexts: Uint8Array[]) : Promise<void> {
+		let anyMessagesSent	= false;
+
+		for (const cyphertext of cyphertexts) {
+			const messageID	= this.potassium.toDataView(cyphertext).getUint32(0, true);
+
+			if (
+				this.lastOutgoingMessageID === undefined ||
+				messageID > this.lastOutgoingMessageID
+			) {
+				debugLog(() => ({pairwiseSessionOutgoingMessageSend: {cyphertext, messageID}}));
+
+				await this.transport.send(cyphertext);
+
+				anyMessagesSent				= true;
+				this.lastOutgoingMessageID	= messageID;
+			}
+		}
+
+		if (!anyMessagesSent || this.lastOutgoingMessageID === undefined) {
+			return;
+		}
+
+		await this.outgoingMessageID.setValue(
+			this.incrementMessageID(
+				this.lastOutgoingMessageID
+			)
+		);
 	}
 
 	/** @ignore */
@@ -303,6 +336,9 @@ export class PairwiseSession {
 
 		/** @ignore */
 		private readonly decryptedMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
+
+		/** @ignore */
+		private readonly encryptedMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
 
 		/** @ignore */
 		private readonly incomingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
@@ -443,11 +479,19 @@ export class PairwiseSession {
 					});
 
 					this.sendLock(async o => {
-						const lock	= lockFunction();
+						await this.processOutgoingMessages(...(
+							await this.encryptedMessageQueue.getValue()
+						));
 
-						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message =>
-							lock(async () => {
-								const {messageID, messageIDBytes, nextMessageID}	=
+						const lock			= lockFunction();
+
+						const cyphertextSub	= this.encryptedMessageQueue.subscribeAndPop(
+							async cyphertext => this.processOutgoingMessages(cyphertext)
+						);
+
+						const plaintextSub	= this.outgoingMessageQueue.subscribeAndPop(
+							async message => lock(async () => {
+								const {messageID, messageIDBytes}	=
 									await this.newOutgoingMessageID()
 								;
 
@@ -455,26 +499,27 @@ export class PairwiseSession {
 									message,
 									messageIDBytes,
 									async cyphertext => {
-										debugLog(() => ({pairwiseSessionOutgoingMessage: {
+										debugLog(() => ({pairwiseSessionOutgoingMessageQueue: {
 											cyphertext,
 											message,
 											messageID
 										}}));
 
-										await this.transport.send(this.potassium.concatMemory(
-											true,
-											messageIDBytes,
-											cyphertext
-										));
-
-										await this.outgoingMessageID.setValue(nextMessageID);
+										return this.encryptedMessageQueue.pushItem(
+											this.potassium.concatMemory(
+												true,
+												messageIDBytes,
+												cyphertext
+											)
+										);
 									}
 								);
 							})
 						);
 
 						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
-						sub.unsubscribe();
+						cyphertextSub.unsubscribe();
+						plaintextSub.unsubscribe();
 					});
 
 					return;

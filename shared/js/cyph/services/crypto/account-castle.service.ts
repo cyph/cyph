@@ -124,6 +124,15 @@ export class AccountCastleService extends CastleService {
 								false,
 								true
 							),
+							this.accountDatabaseService.getAsyncList(
+								`${sessionURL}/encryptedMessageQueue`,
+								BinaryProto,
+								undefined,
+								undefined,
+								undefined,
+								false,
+								true
+							),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/incomingMessageID`,
 								Uint32Proto,

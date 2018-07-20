@@ -342,6 +342,19 @@
 										}
 									}
 								},
+								"encryptedMessageQueue": {
+									"$decryptedMessage": {
+										"data": {
+											".validate": "newData.isString()"
+										},
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
+									}
+								},
 								"handshake": {
 									"currentStep": {
 										"data": {
