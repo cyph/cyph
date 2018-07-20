@@ -72,6 +72,7 @@ while true ; do
 			f !== '.git' &&
 			f !== 'websign' &&
 			f !== 'cyph' &&
+			!f.startsWith('simple-') &&
 			!fs.lstatSync(f).isSymbolicLink()
 		)
 	).
