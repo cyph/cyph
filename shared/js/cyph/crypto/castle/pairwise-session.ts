@@ -48,6 +48,9 @@ export class PairwiseSession {
 	private readonly isReceiving: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @ignore */
+	private nextOutgoingMessageID?: number;
+
+	/** @ignore */
 	private readonly resolveCore: (core: Core) => void		= this._CORE.resolve;
 
 	/** @ignore */
@@ -70,14 +73,28 @@ export class PairwiseSession {
 	}
 
 	/** @ignore */
-	private async newOutgoingMessageID () : Promise<Uint8Array> {
-		const outgoingMessageID	= await this.outgoingMessageID.getValue();
-		this.outgoingMessageID.setValue(
-			outgoingMessageID === config.maxUint32 ?
+	private async newOutgoingMessageID () : Promise<{
+		messageID: number;
+		messageIDBytes: Uint8Array;
+		nextMessageID: number;
+	}> {
+		if (this.nextOutgoingMessageID === undefined) {
+			this.nextOutgoingMessageID	= await this.outgoingMessageID.getValue();
+		}
+
+		const messageID	= this.nextOutgoingMessageID;
+
+		this.nextOutgoingMessageID	=
+			messageID === config.maxUint32 ?
 				0 :
-				outgoingMessageID + 1
-		);
-		return new Uint8Array(new Uint32Array([outgoingMessageID]).buffer);
+				messageID + 1
+		;
+
+		return {
+			messageID,
+			messageIDBytes: new Uint8Array(new Uint32Array([messageID]).buffer),
+			nextMessageID: this.nextOutgoingMessageID
+		};
 	}
 
 	/** @ignore */
@@ -94,6 +111,8 @@ export class PairwiseSession {
 		let incomingMessageID	= await promises.incomingMessageID;
 		const incomingMessages	= await promises.incomingMessages;
 		let incomingMessagesMax	= await promises.incomingMessagesMax;
+
+		const ratchetUpdatePromises: Promise<void>[]	= [];
 
 		debugLog(() => ({pairwiseSessionIncomingMessage: {
 			cyphertext,
@@ -124,10 +143,12 @@ export class PairwiseSession {
 
 			for (const cyphertextBytes of message) {
 				try {
-					await (await this.core).decrypt(
+					const {ratchetUpdateComplete}	= await (await this.core).decrypt(
 						cyphertextBytes,
 						async plaintext => this.decryptedMessageQueue.pushItem(plaintext)
 					);
+
+					ratchetUpdatePromises.push(ratchetUpdateComplete);
 
 					++incomingMessageID;
 					break;
@@ -149,6 +170,8 @@ export class PairwiseSession {
 
 			delete incomingMessages[id];
 		}
+
+		await Promise.all(ratchetUpdatePromises);
 
 		this.incomingMessageID.setValue(incomingMessageID);
 		this.incomingMessages.setValue(incomingMessages);
@@ -424,24 +447,27 @@ export class PairwiseSession {
 
 						const sub	= this.outgoingMessageQueue.subscribeAndPop(async message =>
 							lock(async () => {
-								const messageID	= await this.newOutgoingMessageID();
+								const {messageID, messageIDBytes, nextMessageID}	=
+									await this.newOutgoingMessageID()
+								;
 
 								await (await this.core).encrypt(
 									message,
-									messageID,
+									messageIDBytes,
 									async cyphertext => {
 										debugLog(() => ({pairwiseSessionOutgoingMessage: {
 											cyphertext,
 											message,
-											messageID: this.potassium.toDataView(messageID).
-												getUint32(0, true)
+											messageID
 										}}));
 
 										await this.transport.send(this.potassium.concatMemory(
 											true,
-											messageID,
+											messageIDBytes,
 											cyphertext
 										));
+
+										await this.outgoingMessageID.setValue(nextMessageID);
 									}
 								);
 							})

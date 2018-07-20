@@ -186,7 +186,7 @@ export class Core {
 	public async decrypt (
 		cyphertext: Uint8Array,
 		plaintextHandler: (plaintext: Uint8Array) => Promise<void>
-	) : Promise<void> {
+	) : Promise<{ratchetUpdateComplete: Promise<void>}> {
 		const ephemeralKeyExchangePublicKeyBytes	=
 			await this.potassium.ephemeralKeyExchange.publicKeyBytes
 		;
@@ -231,9 +231,7 @@ export class Core {
 						this.ratchetState.symmetric.current	= this.ratchetState.symmetric.next;
 					}
 
-					this.updateRatchetState(handled);
-
-					return;
+					return {ratchetUpdateComplete: this.updateRatchetState(handled)};
 				}
 				catch {}
 			}
@@ -252,8 +250,8 @@ export class Core {
 		plaintext: Uint8Array,
 		messageID: Uint8Array,
 		cyphertextHandler: (cyphertext: Uint8Array) => Promise<void>
-	) : Promise<void> {
-		await this.lock(async () => {
+	) : Promise<{ratchetUpdateComplete: Promise<void>}> {
+		return this.lock(async () => {
 			const ratchetData	= await this.asymmetricRatchet();
 			const fullPlaintext	= this.potassium.concatMemory(false, ratchetData, plaintext);
 
@@ -263,13 +261,13 @@ export class Core {
 				this.ratchetState.symmetric.current.outgoing
 			);
 
-			this.updateRatchetState(this.potassium.secretBox.seal(
-				fullPlaintext,
-				this.ratchetState.symmetric.current.outgoing,
-				messageID
-			).then(
-				cyphertextHandler
-			));
+			return {ratchetUpdateComplete: this.updateRatchetState(
+				this.potassium.secretBox.seal(
+					fullPlaintext,
+					this.ratchetState.symmetric.current.outgoing,
+					messageID
+				).then(cyphertextHandler)
+			)};
 		});
 	}
 
