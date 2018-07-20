@@ -117,20 +117,22 @@ export class Core {
 		}
 	}
 
-	/** @ignore */
-	private cloneRatchetState () : ICastleRatchetState {
-		return {
+	/**
+	 * Pushes local ratchet state to ratchetStateAsync.
+	 * @param blocker Block updating ratchet state on resolution of this.
+	 */
+	private async updateRatchetState (blocker: Promise<void>) : Promise<void> {
+		const ratchetState	= {
 			asymmetric: {...this.ratchetState.asymmetric},
 			symmetric: {
 				current: {...this.ratchetState.symmetric.current},
 				next: {...this.ratchetState.symmetric.next}
 			}
 		};
-	}
 
-	/** Pushes local ratchet state to ratchetStateAsync. */
-	private async updateRatchetState (ratchetState: ICastleRatchetState) : Promise<void> {
 		await this.updateRatchetLock(async () => {
+			await blocker;
+
 			if (this.oldRatchetState) {
 				if (
 					this.oldRatchetState.asymmetric.privateKey !==
@@ -229,9 +231,7 @@ export class Core {
 						this.ratchetState.symmetric.current	= this.ratchetState.symmetric.next;
 					}
 
-					const ratchetState	= this.cloneRatchetState();
-
-					handled.then(async () => this.updateRatchetState(ratchetState));
+					this.updateRatchetState(handled);
 
 					return;
 				}
@@ -263,17 +263,13 @@ export class Core {
 				this.ratchetState.symmetric.current.outgoing
 			);
 
-			const ratchetState	= this.cloneRatchetState();
-
-			this.potassium.secretBox.seal(
+			this.updateRatchetState(this.potassium.secretBox.seal(
 				fullPlaintext,
-				ratchetState.symmetric.current.outgoing,
+				this.ratchetState.symmetric.current.outgoing,
 				messageID
 			).then(
 				cyphertextHandler
-			).then(async () =>
-				this.updateRatchetState(ratchetState)
-			);
+			));
 		});
 	}
 
