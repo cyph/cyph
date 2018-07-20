@@ -5,7 +5,7 @@ import {firebase} from '@firebase/app';
 import {FirebaseApp} from '@firebase/app-types';
 import '@firebase/auth';
 import {FirebaseAuth} from '@firebase/auth-types';
-import {ServerValue} from '@firebase/database';
+import {ServerValue} from '@firebase/database/dist/packages/database';
 import {
 	DataSnapshot,
 	FirebaseDatabase,
