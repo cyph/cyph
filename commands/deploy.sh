@@ -18,8 +18,8 @@ simpleProdBuild=''
 simpleWebSignBuild=''
 pack=''
 fast=''
-environment=''
-firebaseAll=''
+mainEnvironment=''
+allBranches=''
 firebaseBackup=''
 customBuild=''
 saveBuildArtifacts=''
@@ -28,8 +28,13 @@ debugProdBuild=''
 test=true
 websign=true
 
-if [ "${1}" == '--firebase-all' ] ; then
-	firebaseAll=true
+if [ "${1}" == '--simple' ] ; then
+	simple=true
+	shift
+fi
+
+if [ "${1}" == '--all-branches' ] ; then
+	allBranches=true
 	shift
 fi
 
@@ -49,9 +54,6 @@ elif [ "${1}" == '--debug-prod-prod-build' ] ; then
 	test=''
 	debug=true
 	debugProdBuild=true
-	shift
-elif [ "${1}" == '--simple' ] ; then
-	simple=true
 	shift
 elif [ "${1}" == '--simple-custom-build' ] ; then
 	shift
@@ -153,22 +155,32 @@ if [ "${branch}" == 'prod' ] ; then
 	fi
 elif [ ! "${test}" ] ; then
 	fail 'Cannot do prod deploy from test branch'
+elif [ ! "${allBranches}" ] ; then
+	fail 'Cannot do allBranches deploy from test branch'
 fi
-version="${branch}"
+if [ "${allBranches}" ] ; then
+	if [ ! "${test}" ] ; then
+		fail 'Cannot do non-test allBranches deploy'
+	fi
+	if [ "${customBuild}" ] ; then
+		fail 'Cannot do customBuild allBranches deploy'
+	fi
+fi
+mainVersion="${branch}"
 if [ "${test}" ] && [ "${username}" != cyph ] ; then
-	version="${username}-${version}"
+	mainVersion="${username}-${mainVersion}"
 fi
 if [ "${simple}" ] ; then
-	version="simple-${version}"
+	mainVersion="simple-${mainVersion}"
 fi
 if [ ! "${test}" ] ; then
-	version=prod
+	mainVersion=prod
 fi
 if [ "${debug}" ] ; then
 	if [ "${test}" ] ; then
-		version="debug-${version}"
+		mainVersion="debug-${mainVersion}"
 	else
-		version=debug
+		mainVersion=debug
 	fi
 fi
 
@@ -185,28 +197,28 @@ if [ "${firebaseBackup}" ] ; then
 		fail 'Cannot use backup Firebase environment in prod'
 	fi
 
-	environment="$(processEnvironmentName backup)"
+	mainEnvironment="$(processEnvironmentName backup)"
 elif [ ! "${test}" ] ; then
 	if [ "${debug}" ] ; then
-		environment="$(processEnvironmentName debugProd)"
+		mainEnvironment="$(processEnvironmentName debugProd)"
 	else
-		environment="$(processEnvironmentName prod)"
+		mainEnvironment="$(processEnvironmentName prod)"
 	fi
 elif \
 	[ "${branch}" == 'staging' ] || \
 	[ "${branch}" == 'beta' ] || \
 	[ "${branch}" == 'master' ] \
 ; then
-	environment="$(processEnvironmentName "${branch}")"
+	mainEnvironment="$(processEnvironmentName "${branch}")"
 else
-	environment="$(processEnvironmentName dev)"
+	mainEnvironment="$(processEnvironmentName dev)"
 fi
 
 if [ "${customBuild}" ] ; then
-	./commands/custombuildtoenvironment.js "${customBuild}" "${environment}" "${version}"
+	./commands/custombuildtoenvironment.js "${customBuild}" "${mainEnvironment}" "${mainVersion}"
 	checkfail
-	environment='tmp'
-	version="$(echo "${version}" | sed 's|^simple-||')-$(echo "${customBuild}" | tr '.' '-')"
+	mainEnvironment='tmp'
+	mainVersion="$(echo "${mainVersion}" | sed 's|^simple-||')-$(echo "${customBuild}" | tr '.' '-')"
 fi
 
 
@@ -241,6 +253,28 @@ rm -rf geoisp.tmp
 cat ~/.cyph/backend.vars >> backend/app.yaml
 cat ~/.cyph/test.vars >> test/test.yaml
 cp ~/.cyph/GeoIP2-Country.mmdb backend/
+
+branchDirs=''
+if [ "${allBranches}" ] ; then
+	./commands/updaterepos.js
+	mkdir ~/.build/branches
+	cd ~/.cyph/repos/internal
+
+	for gitBranch in $(git branch | sed 's/^\*//' | grep -vP '^\s*prod$') ; do
+		branchDir="${HOME}/.build/branches/${gitBranch}"
+		branchDirs="${branchDir} ${branchDirs}"
+
+		git checkout ${gitBranch}
+		./commands/copyworkspace.sh ${branchDir}
+		git clean -dfx
+		rm -rf ${branchDir}/backend ${branchDir}/firebase
+		cp -a ~/.build/backend ${branchDir}/
+		cat ~/.cyph/backend.vars.sandbox >> ${branchDir}/backend/app.yaml
+	done
+
+	cd ~/.build
+fi
+
 if [ "${branch}" == 'staging' ] ; then
 	echo '  PROD: true' >> backend/app.yaml
 	cat ~/.cyph/backend.vars.prod >> backend/app.yaml
@@ -248,7 +282,34 @@ else
 	cat ~/.cyph/backend.vars.sandbox >> backend/app.yaml
 fi
 
+
+getEnvironment () {
+	version="$(getVersion ${1})"
+
+	if [ "${version}" == "${mainVersion}" ] ; then
+		echo "${mainEnvironment}"
+	elif \
+		[ "${version}" == 'staging' ] || \
+		[ "${version}" == 'beta' ] || \
+		[ "${version}" == 'master' ] \
+	; then
+		processEnvironmentName "${version}"
+	else
+		processEnvironmentName dev
+	fi
+}
+
+getVersion () {
+	if [ ! "${1}" ] || [ "${1}" == '~/.build' ] ; then
+		echo "${mainVersion}"
+	else
+		echo ${1} | perl -pe 's/.*\///'
+	fi
+}
+
 projectname () {
+	version="$(getVersion ${2})"
+
 	if [ "${simple}" ] || [ "${1}" == 'cyph.com' ] ; then
 		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
 	elif [ "${test}" ] || [ "${debug}" ] ; then
@@ -258,7 +319,12 @@ projectname () {
 	fi
 }
 
-package="$(projectname cyph.ws)"
+
+
+for branchDir in ${branchDirs} ~/.build ; do
+version="$(getVersion ${branchDir})"
+environment="$(getEnvironment ${branchDir})"
+cd ${branchDir}
 
 
 if [ -d test ] ; then
@@ -414,9 +480,7 @@ fi
 
 
 # wpstatic + cache busting
-waitingForWpstatic=''
 if [ "${cacheBustedProjects}" ] ; then
-	waitingForWpstatic=true
 	bash -c "
 		touch .wpstatic.output
 
@@ -505,11 +569,11 @@ if [ "${compiledProjects}" ] ; then
 fi
 for d in $compiledProjects ; do
 	if [ ! -d "${d}" ] ; then
-		log "Skip $(projectname "${d}")"
+		log "Skip $(projectname "${d}" ${branchDir})"
 		continue
 	fi
 
-	log "Build $(projectname "${d}")"
+	log "Build $(projectname "${d}" ${branchDir})"
 
 	cd "${d}"
 
@@ -573,7 +637,7 @@ touch .build.done
 
 # WebSign packaging
 if [ "${pack}" ] ; then
-	log "Pack ${package}"
+	log "Pack $(projectname cyph.ws ${branchDir})"
 
 	cd "${webSignedProject}"
 
@@ -584,7 +648,15 @@ if [ "${pack}" ] ; then
 
 	cd ..
 fi
+
+
+done
+
+
+
 if [ "${websign}" ] ; then
+	package="$(projectname cyph.ws)"
+
 	log "WebSign ${package}"
 
 	./commands/updaterepos.js
@@ -593,7 +665,7 @@ if [ "${websign}" ] ; then
 	customBuilds=''
 
 	if [ "${username}" == 'cyph' ] && [ "${branch}" == 'staging' ] && [ ! "${debug}" ] ; then
-		./commands/websign/custombuilds.js pkg/cyph.ws pkg "${version}"
+		./commands/websign/custombuilds.js pkg/cyph.ws pkg "${mainVersion}"
 		checkfail
 		customBuilds="$(cat pkg/custombuilds.list)"
 		rm pkg/custombuilds.list
@@ -603,6 +675,13 @@ if [ "${websign}" ] ; then
 
 	if [ "${test}" ] || [ "${debug}" ] ; then
 		mv pkg/cyph.ws "pkg/${package}"
+
+		for branchDir in ${branchDirs} ; do
+			branchPackage=$(projectname cyph.ws ${branchDir})
+			packages="${branchPackage} ${packages}"
+
+			mv ${branchDir}/pkg/cyph.ws pkg/${branchPackage}
+		done
 	fi
 
 	for p in ${packages} ; do
@@ -628,9 +707,7 @@ if [ "${websign}" ] ; then
 			zopfli -i1000 %; \
 			brotli -Zk %; \
 		'
-	fi
 
-	if [ -d pkg/cyph.ws-subresources ] ; then
 		cp -a pkg/cyph.ws-subresources/* cdn/${package}/
 
 		for customBuild in ${customBuilds} ; do
@@ -644,6 +721,15 @@ if [ "${websign}" ] ; then
 			cd ../..
 		done
 	fi
+
+	for branchDir in ${branchDirs} ; do
+		branchPackage=$(projectname cyph.ws ${branchDir})
+		branchSubresources=${branchDir}/pkg/cyph.ws-subresources
+
+		if [ -d ${branchSubresources} ] ; then
+			mv ${branchSubresources}/* cdn/${branchPackage}/
+		fi
+	done
 
 	cd cdn
 
@@ -692,6 +778,14 @@ if [ "${websign}" ] ; then
 	fi
 fi
 
+
+
+for branchDir in ${branchDirs} ~/.build ; do
+version="$(getVersion ${branchDir})"
+environment="$(getEnvironment ${branchDir})"
+cd ${branchDir}
+
+
 # WebSign redirects
 if [ ! "${simple}" ] ; then
 	for suffix in ${shortlinkProjects} ; do
@@ -708,6 +802,10 @@ if [ ! "${simple}" ] ; then
 fi
 
 
+done
+
+
+
 # Firebase deployment
 if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ ! "${debug}" ] ; then
 	if [ ! "${test}" ] ; then
@@ -715,9 +813,9 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 	else
 		firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
 
-		if [ "${firebaseAll}" ] ; then
+		if [ "${allBranches}" ] ; then
 			firebaseProjects="${firebaseProjects} cyph-test-staging cyph-test-beta cyph-test-master"
-		elif [ "${environment}" != 'dev' ] ; then
+		elif [ "${mainEnvironment}" != 'dev' ] ; then
 			firebaseProjects="${firebaseProjects} cyph-test-${branch}"
 		fi
 
@@ -793,13 +891,21 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 	cd ..
 fi
 
+
+
+for branchDir in ${branchDirs} ~/.build ; do
+version="$(getVersion ${branchDir})"
+environment="$(getEnvironment ${branchDir})"
+cd ${branchDir}
+
+
 if [ "${debug}" ] ; then
 	rm -rf ${prodOnlyProjects} backend
 elif [ "${test}" ] ; then
 	rm -rf ${prodOnlyProjects}
 fi
 
-if [ "${waitingForWpstatic}" ] ; then
+if [ "${cacheBustedProjects}" ] ; then
 	while true ; do
 		cat .wpstatic.output
 		echo -n > .wpstatic.output
@@ -843,6 +949,11 @@ if [ "${site}" != 'firebase' ] ; then
 	# 	gcloudDeploy test/*.yaml
 	# fi
 fi
+
+
+done
+
+
 
 cd "${dir}"
 
