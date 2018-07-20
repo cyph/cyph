@@ -973,6 +973,10 @@ export class ChatService {
 				throw new Error('Invalid ChatMessageValue.Types value.');
 		}
 
+		if (!keepCurrentMessage) {
+			this.updateChat();
+		}
+
 		const removeOldStorageItem	= () => oldLocalStorageKey ?
 			this.localStorageService.removeItem(oldLocalStorageKey) :
 			undefined
