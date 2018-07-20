@@ -300,7 +300,7 @@ getEnvironment () {
 }
 
 getVersion () {
-	if [ ! "${1}" ] || [ "${1}" == '~/.build' ] ; then
+	if [ ! "${1}" ] || [ "${1}" == '~/.build' ] || [ "${1}" == "${HOME}/.build" ] ; then
 		echo "${mainVersion}"
 	else
 		echo ${1} | perl -pe 's/.*\///'
