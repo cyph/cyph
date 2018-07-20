@@ -109,6 +109,8 @@ export class MarkdownComponent implements OnChanges {
 			),
 			html: false,
 			linkify: true,
+			typographer: false
+			/*
 			quotes:
 				(
 					envService.language === 'ru' ?
@@ -120,6 +122,7 @@ export class MarkdownComponent implements OnChanges {
 				'‘’'
 			,
 			typographer: true
+			*/
 		}).
 			disable('image').
 			use(markdownItEmoji).
