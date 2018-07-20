@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {BehaviorSubject, Subject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {config} from '../../config';
