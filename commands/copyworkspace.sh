@@ -7,13 +7,14 @@ ${source}/commands/protobuf.sh
 
 find "${1}" -type d -name node_modules -not -path '*/node_modules/*' -exec unbindmount "{}" \; 2> /dev/null
 rm -rf "${1}" 2> /dev/null
-mkdir -p "${1}/shared"
+mkdir -p "${1}/shared/lib"
 dir="$(realpath "${1}")"
 
 cd "${source}"
 cp -a $(ls | grep -vP '^shared$') "${dir}/"
 cd shared
 cp -a $(ls | grep -vP '^(lib|node_modules)$') "${dir}/shared/"
+cp -a lib/js "${dir}/shared/lib/"
 
 for d in cyph.com cyph.ws ; do
 	cd "${dir}/${d}"
