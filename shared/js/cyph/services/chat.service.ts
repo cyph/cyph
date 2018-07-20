@@ -165,8 +165,8 @@ export class ChatService {
 	/** Indicates whether the chat is ready to be displayed. */
 	public readonly initiated				= new BehaviorSubject<boolean>(false);
 
-	/** Interval for debouncing send buttons. */
-	public readonly messageDebounce: number	= 250;
+	/** Interval for throttling send buttons. */
+	public readonly messageThrottle: number	= 250;
 
 	/** @see P2PService */
 	public readonly p2pService				= resolvable<{
