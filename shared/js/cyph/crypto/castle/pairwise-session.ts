@@ -406,9 +406,11 @@ export class PairwiseSession {
 				/* Initialize symmetric ratchet */
 				else if (
 					currentStep === HandshakeSteps.PostBootstrap &&
-					this.potassium.isEmpty(
-						(await ratchetState.getValue()).symmetric.current.incoming
-					)
+					this.potassium.isEmpty(await ratchetState.getValue().then(o =>
+						o.symmetric &&
+						o.symmetric.current &&
+						o.symmetric.current.incoming
+					))
 				) {
 					debugLog(() => ({castleHandshake: 'post-bootstrap'}));
 
