@@ -1181,72 +1181,73 @@ export class ChatService {
 			);
 
 			if (pendingMessageRoot) {
-				this.localStorageService.getItem(
-					`${this.chat.pendingMessageRoot}-live`,
-					ChatMessageLiveValueSerialized
-				).then(messageLiveValue => {
-					this.chat.currentMessage.calendarInvite	=
-						this.chat.currentMessage.calendarInvite ||
-						messageLiveValue.calendarInvite
-					;
+				Promise.all([
+					this.localStorageService.getItem(
+						`${this.chat.pendingMessageRoot}-live`,
+						ChatMessageLiveValueSerialized
+					).then(messageLiveValue => {
+						this.chat.currentMessage.calendarInvite	=
+							this.chat.currentMessage.calendarInvite ||
+							messageLiveValue.calendarInvite
+						;
 
-					this.chat.currentMessage.fileTransfer	=
-						this.chat.currentMessage.fileTransfer ||
-						messageLiveValue.fileTransfer
-					;
+						this.chat.currentMessage.fileTransfer	=
+							this.chat.currentMessage.fileTransfer ||
+							messageLiveValue.fileTransfer
+						;
 
-					this.chat.currentMessage.form			=
-						this.chat.currentMessage.form ||
-						messageLiveValue.form
-					;
+						this.chat.currentMessage.form			=
+							this.chat.currentMessage.form ||
+							messageLiveValue.form
+						;
 
-					this.chat.currentMessage.quill			=
-						this.chat.currentMessage.quill ||
-						(
-							messageLiveValue.quill &&
-							messageLiveValue.quill.length > 0
-						) ?
-							{ops: msgpack.decode(messageLiveValue.quill)} :
-							undefined
-					;
+						this.chat.currentMessage.quill			=
+							this.chat.currentMessage.quill ||
+							(
+								messageLiveValue.quill &&
+								messageLiveValue.quill.length > 0
+							) ?
+								{ops: msgpack.decode(messageLiveValue.quill)} :
+								undefined
+						;
 
-					this.chat.currentMessage.text			=
-						this.chat.currentMessage.text ||
-						messageLiveValue.text
-					;
+						this.chat.currentMessage.text			=
+							this.chat.currentMessage.text ||
+							messageLiveValue.text
+						;
 
-					this.updateChat();
-				}).catch(
+						this.updateChat();
+					}),
+					this.localStorageService.lock(pendingMessageRoot, async () => {
+						const pendingMessages	= await this.localStorageService.getValues(
+							pendingMessageRoot,
+							ChatPendingMessage,
+							true
+						);
+
+						await Promise.all(pendingMessages.map(async ([key, pendingMessage]) =>
+							this.send(
+								pendingMessage.messageType,
+								{
+									...pendingMessage.message,
+									quill: (
+										pendingMessage.message.quill &&
+										pendingMessage.message.quill.length > 0
+									) ?
+										{ops: msgpack.decode(pendingMessage.message.quill)} :
+										undefined
+								},
+								pendingMessage.selfDestructTimeout,
+								pendingMessage.selfDestructChat,
+								true,
+								key
+							)
+						));
+					})
+				]).catch(
 					() => {}
 				).then(() => {
 					this.resolvers.currentMessageSynced.resolve();
-				});
-
-				this.localStorageService.lock(pendingMessageRoot, async () => {
-					const pendingMessages	= await this.localStorageService.getValues(
-						pendingMessageRoot,
-						ChatPendingMessage,
-						true
-					);
-
-					await Promise.all(pendingMessages.map(async ([key, pendingMessage]) =>
-						this.send(
-							pendingMessage.messageType,
-							{
-								...pendingMessage.message,
-								quill: (
-									pendingMessage.message.quill &&
-									pendingMessage.message.quill.length > 0
-								) ?
-									{ops: msgpack.decode(pendingMessage.message.quill)} :
-									undefined
-							},
-							pendingMessage.selfDestructTimeout,
-							pendingMessage.selfDestructChat,
-							true,
-							key
-						)
-					));
 				});
 			}
 			else {
