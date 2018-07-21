@@ -320,23 +320,6 @@ projectname () {
 }
 
 
-if [ "${compiledProjects}" ] ; then
-	./commands/buildunbundledassets.sh $(
-		if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
-			if [ "${simpleProdBuild}" ] ; then
-				echo '--prod-test --service-worker'
-			else
-				echo '--test'
-			fi
-		fi
-	) || fail
-
-	rm -rf "${dir}/shared/assets"
-	cp -a shared/assets "${dir}/shared/"
-	touch shared/assets/frozen
-fi
-
-
 
 for branchDir in ${branchDirs} ~/.build ; do
 version="$(getVersion ${branchDir})"
@@ -567,11 +550,23 @@ if [ "${customBuild}" ] ; then
 fi
 
 # Compile + translate + minify
-if [ "${version}" != "${mainVersion}" ] ; then
-	rm -rf shared/assets/*
-	cp -a ~/.build/shared/assets/* shared/assets/
+if [ "${compiledProjects}" ] ; then
+	./commands/buildunbundledassets.sh $(
+		if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
+			if [ "${simpleProdBuild}" ] ; then
+				echo '--prod-test --service-worker'
+			else
+				echo '--test'
+			fi
+		fi
+	) || fail
+
+	./commands/ngassets.sh
+
+	rm -rf "${dir}/shared/assets"
+	cp -a shared/assets "${dir}/shared/"
+	touch shared/assets/frozen
 fi
-./commands/ngassets.sh
 for d in $compiledProjects ; do
 	if [ ! -d "${d}" ] ; then
 		log "Skip $(projectname "${d}" ${branchDir})"
