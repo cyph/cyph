@@ -3,13 +3,13 @@
  */
 
 
-const gcloudStorage					= require('@google-cloud/storage');
-const crypto						= require('crypto');
-const admin							= require('firebase-admin');
-const functions						= require('firebase-functions');
-const lz4							= require('lz4');
-const os							= require('os');
-const {BinaryProto, StringProto}	= require('./proto');
+const gcloudStorage	= require('@google-cloud/storage');
+const crypto		= require('crypto');
+const admin			= require('firebase-admin');
+const functions		= require('firebase-functions');
+const lz4			= require('lz4');
+const os			= require('os');
+const {BinaryProto}	= require('./proto');
 
 const {
 	deserialize,

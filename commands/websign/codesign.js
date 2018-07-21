@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 
-const fs			= require('fs');
-const mkdirp		= require('mkdirp');
-const {sign}		= require('../sign');
+const fs		= require('fs');
+const mkdirp	= require('mkdirp');
+const {sign}	= require('../sign');
 
 
 (async () => {

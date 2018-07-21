@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 
-const firebase						= require('firebase-admin');
-const fs							= require('fs');
-const os							= require('os');
-const xkcdPassphrase				= require('xkcd-passphrase');
-const databaseService				= require('../modules/database-service');
-const potassium						= require('../modules/potassium');
+const firebase			= require('firebase-admin');
+const fs				= require('fs');
+const os				= require('os');
+const xkcdPassphrase	= require('xkcd-passphrase');
+const databaseService	= require('../modules/database-service');
+const potassium			= require('../modules/potassium');
 
 
 const addProCode	= async (projectId, name, password, namespace, email) => {
