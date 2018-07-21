@@ -3,16 +3,17 @@
 	fxLayoutAlign='center center'
 	class='cyph-foreground'
 	[class.initiating]='
-		accountChatService.chat.state === states.chat &&
+		chat.state === states.chat &&
 		(accountChatService.uiReady | async) !== true
 	'
 	[class.mobile]='envService.isMobile'
 	[cyphDropZone]='false && (
-		accountChatService.chat.state === states.chat &&
+		chat.state === states.chat &&
 		(accountChatService.uiReady | async) === true
 	)'
 	[cyphDropZoneClass]='false'
 	(fileDrop)='fileTransferService.send($event)'
+	*ngIf='accountChatService.chatSubject | async as chat'
 >
 	<div
 		fxFlex
@@ -65,7 +66,7 @@
 	<mat-progress-spinner
 		mode='indeterminate'
 		*ngIf='
-			accountChatService.chat.state === states.chat &&
+			chat.state === states.chat &&
 			(accountChatService.uiReady | async) !== true
 		'
 	></mat-progress-spinner>

@@ -28,7 +28,7 @@
 			<strong>-</strong>
 			&nbsp;
 			<div>
-				<strong *ngIf='sessionService?.state.wasInitiatedByAPI; else proMessage'>
+				<strong *ngIf='sessionService?.state.wasInitiatedByAPI | async; else proMessage'>
 					{{stringsService.footerMessageAPI}}
 				</strong>
 				<ng-template #proMessage>
