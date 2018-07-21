@@ -3,8 +3,10 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
+	Inject,
 	Input,
-	OnChanges
+	OnChanges,
+	Optional
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
 import * as $ from 'jquery';
@@ -263,7 +265,7 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 								author	= this.sessionService.localUsername;
 
 								const currentUser	=
-									this.envService.isAccounts ?
+									this.envService.isAccounts && this.accountDatabaseService ?
 										this.accountDatabaseService.currentUser.value :
 										undefined
 								;
@@ -275,7 +277,9 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 							}
 							else {
 								try {
-									authorUser	= this.envService.isAccounts ?
+									authorUser	= (
+										this.envService.isAccounts && this.accountUserLookupService
+									) ?
 										await this.accountUserLookupService.getUser(
 											message.authorID,
 											false
@@ -372,10 +376,12 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService,
+		@Inject(AccountDatabaseService) @Optional()
+		private readonly accountDatabaseService: AccountDatabaseService|undefined,
 
 		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService,
+		@Inject(AccountUserLookupService) @Optional()
+		private readonly accountUserLookupService: AccountUserLookupService|undefined,
 
 		/* @ignore
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
@@ -394,7 +400,8 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 		private readonly sessionService: SessionService,
 
 		/** @see AccountService */
-		public readonly accountService: AccountService,
+		@Inject(AccountService) @Optional()
+		public readonly accountService: AccountService|undefined,
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,

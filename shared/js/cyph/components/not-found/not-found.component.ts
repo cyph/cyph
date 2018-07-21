@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, OnInit, Optional} from '@angular/core';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -16,7 +16,7 @@ import {StringsService} from '../../services/strings.service';
 export class NotFoundComponent implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		if (this.envService.isAccounts) {
+		if (this.envService.isAccounts && this.accountService) {
 			this.accountService.transitionEnd();
 			this.accountService.resolveUiReady();
 		}
@@ -24,7 +24,8 @@ export class NotFoundComponent implements OnInit {
 
 	constructor (
 		/** @ignore */
-		private readonly accountService: AccountService,
+		@Inject(AccountService) @Optional()
+		private readonly accountService: AccountService|undefined,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
