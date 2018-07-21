@@ -59,12 +59,12 @@ const getHash		= bytes => crypto.createHash('sha512').update(bytes).digest('hex'
 const retry			= async f => retryUntilSuccessful(async (lastErr) => {
 	if (lastErr) {
 		console.error(lastErr);
-
-		return Promise.race([
-			f(),
-			sleep(600000).then(() => Promise.reject('Database method timeout.'))
-		]);
 	}
+
+	return Promise.race([
+		f(),
+		sleep(600000).then(() => Promise.reject('Database method timeout.'))
+	]);
 });
 
 const databaseService	= {
