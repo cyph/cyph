@@ -454,9 +454,15 @@ export class PairwiseSession {
 					await this.connect();
 
 					this.lock(async o => {
-						await this.processOutgoingMessages(...(
+						const initialOutgoingMessages	=
 							await this.encryptedMessageQueue.getValue()
-						));
+						;
+
+						if (!o.stillOwner.value) {
+							return;
+						}
+
+						await this.processOutgoingMessages(...initialOutgoingMessages);
 
 						if (!o.stillOwner.value) {
 							return;
