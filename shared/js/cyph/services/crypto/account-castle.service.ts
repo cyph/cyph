@@ -178,8 +178,7 @@ export class AccountCastleService extends CastleService {
 								false,
 								true
 							),
-							this.accountDatabaseService.lockFunction(`${sessionURL}/receiveLock`),
-							this.accountDatabaseService.lockFunction(`${sessionURL}/sendLock`),
+							this.accountDatabaseService.lockFunction(`${sessionURL}/lock`),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/ratchetState`,
 								CastleRatchetState,

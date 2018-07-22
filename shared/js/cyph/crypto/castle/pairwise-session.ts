@@ -360,10 +360,7 @@ export class PairwiseSession {
 		private readonly outgoingMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
 
 		/** @ignore */
-		private readonly receiveLock: LockFunction = lockFunction(),
-
-		/** @ignore */
-		private readonly sendLock: LockFunction = lockFunction(),
+		private readonly lock: LockFunction = lockFunction(),
 
 		ratchetState: IAsyncValue<ICastleRatchetState> = new LocalAsyncValue<ICastleRatchetState>({
 			asymmetric: {
@@ -456,45 +453,39 @@ export class PairwiseSession {
 
 					await this.connect();
 
-					this.receiveLock(async o => {
-						const lock			= lockFunction();
+					this.lock(async o => {
+						await this.processOutgoingMessages(...(
+							await this.encryptedMessageQueue.getValue()
+						));
 
-						const cyphertextSub	= this.incomingMessageQueue.subscribe(
-							async ({cyphertext, newMessageID, resolve}) => lock(async () => {
+						if (!o.stillOwner.value) {
+							return;
+						}
+
+						const receiveLock	= lockFunction();
+						const sendLock		= lockFunction();
+
+						const receiveCyphertextSub	= this.incomingMessageQueue.subscribe(
+							async ({cyphertext, newMessageID, resolve}) => receiveLock(async () => {
 								this.transport.logCyphertext(this.remoteUser.username, cyphertext);
 								await this.processIncomingMessages(newMessageID, cyphertext);
 								resolve();
 							})
 						);
 
-						const plaintextSub	= this.decryptedMessageQueue.subscribeAndPop(
+						const receivePlaintextSub	= this.decryptedMessageQueue.subscribeAndPop(
 							async plaintext => {
 								debugLog(() => ({pairwiseSessionDecrypted: {plaintext}}));
 								await this.transport.receive(plaintext, this.remoteUser.username);
 							}
 						);
 
-						this.isReceiving.next(true);
-						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
-						this.isReceiving.next(false);
-						await sleep();
-						cyphertextSub.unsubscribe();
-						plaintextSub.unsubscribe();
-					});
-
-					this.sendLock(async o => {
-						await this.processOutgoingMessages(...(
-							await this.encryptedMessageQueue.getValue()
-						));
-
-						const lock			= lockFunction();
-
-						const cyphertextSub	= this.encryptedMessageQueue.subscribeAndPop(
+						const sendCyphertextSub		= this.encryptedMessageQueue.subscribeAndPop(
 							async cyphertext => this.processOutgoingMessages(cyphertext)
 						);
 
-						const plaintextSub	= this.outgoingMessageQueue.subscribeAndPop(
-							async message => lock(async () => {
+						const sendPlaintextSub		= this.outgoingMessageQueue.subscribeAndPop(
+							async message => sendLock(async () => {
 								const {messageID, messageIDBytes}	=
 									await this.newOutgoingMessageID()
 								;
@@ -521,9 +512,14 @@ export class PairwiseSession {
 							})
 						);
 
+						this.isReceiving.next(true);
 						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
-						cyphertextSub.unsubscribe();
-						plaintextSub.unsubscribe();
+						this.isReceiving.next(false);
+						await sleep();
+						receiveCyphertextSub.unsubscribe();
+						receivePlaintextSub.unsubscribe();
+						sendCyphertextSub.unsubscribe();
+						sendPlaintextSub.unsubscribe();
 					});
 
 					return;
