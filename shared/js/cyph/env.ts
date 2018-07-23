@@ -60,6 +60,9 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is Chrome. */
 	public readonly isChrome: boolean			= /chrome/.test(Env.UA) && !/edge/.test(Env.UA);
 
+	/** Indicates whether this is Cordova. */
+	public readonly isCordova: boolean			= (<any> self).cordova !== undefined;
+
 	/** Indicates whether this is Edge. */
 	public readonly isEdge: boolean				= /edge\/\d+/.test(Env.UA);
 

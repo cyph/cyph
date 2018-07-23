@@ -32,7 +32,7 @@ export class AutofocusDirective implements OnInit {
 			return;
 		}
 
-		if (this.envService.isMobile) {
+		if (this.envService.isMobile && !this.envService.isCordova) {
 			await AutofocusDirective.loading;
 		}
 
