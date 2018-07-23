@@ -51,7 +51,7 @@ if [ "${password}" != "" ] ; then
 			--packageType='development' \
 			--provisioningProfile='5d62676b-6683-44f6-be18-5ee7f1b02fff'
 
-		if [ ! -d platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
+		if [ ! -f platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
 
 		mv platforms/ios/build/device ios-debug
 
@@ -61,7 +61,7 @@ if [ "${password}" != "" ] ; then
 			--packageType='app-store' \
 			--provisioningProfile='5ed3df4c-a57b-4108-9abf-a8930e12a4f9'
 
-		if [ ! -d platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
+		if [ ! -f platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
 
 		mv platforms/ios/build/device ios-release
 
