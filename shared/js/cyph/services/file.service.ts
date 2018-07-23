@@ -63,6 +63,15 @@ export class FileService {
 		}
 	}
 
+	/** Converts data URI to blob. */
+	public fromDataURI (dataURI: string) : Blob {
+		const arr		= dataURI.split(';base64,');
+		const mediaType	= arr[0].slice(5);
+		const bytes		= potassiumUtil.fromBase64(arr[1]);
+
+		return new Blob([bytes], {type: mediaType});
+	}
+
 	/**
 	 * Converts File/Blob to byte array.
 	 * @param image If true, file is processed as an image (compressed).

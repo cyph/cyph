@@ -55,7 +55,10 @@ export class Env extends EnvDeploy {
 	public readonly host: string				= locationData.host.replace('www.', '');
 
 	/** Indicates whether this is Android. */
-	public readonly isAndroid: boolean			= /android/.test(Env.UA);
+	public readonly isAndroid: boolean			= /android/.test(Env.UA) || (
+		(<any> self).device &&
+		(<any> self).device.platform === 'Android'
+	);
 
 	/** Indicates whether this is Chrome. */
 	public readonly isChrome: boolean			= /chrome/.test(Env.UA) && !/edge/.test(Env.UA);
@@ -94,7 +97,10 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether this is iOS. */
-	public readonly isIOS: boolean				= /ipad|iphone|ipod/.test(Env.UA);
+	public readonly isIOS: boolean				= /ipad|iphone|ipod/.test(Env.UA) || (
+		(<any> self).device &&
+		(<any> self).device.platform === 'iOS'
+	);
 
 	/** Indicates whether this is macOS / OS X. */
 	public readonly isMacOS: boolean			= /mac os x/.test(Env.UA);
