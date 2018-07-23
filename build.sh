@@ -34,21 +34,19 @@ if [ "${password}" != "" ] ; then
 			--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
 			--alias=cyph \
 			--storePassword="${password}" \
-			--password="${password}" \
-		|| \
-			exit 1
+			--password="${password}"
 
-		cp platforms/android/app/build/outputs/apk/release/app-release.apk build/cyph.apk
+		cp platforms/android/app/build/outputs/apk/release/app-release.apk build/cyph.apk || exit 1
 	fi
 
 	if [ "${1}" != 'android' ] ; then
 		cordova build ios --debug --device \
 			--codeSignIdentity='iPhone Developer' \
 			--developmentTeam='SXZZ8WLPV2' \
-			--packageType='app-store' \
-			--provisioningProfile='5d62676b-6683-44f6-be18-5ee7f1b02fff' \
-		|| \
-			exit 1
+			--packageType='development' \
+			--provisioningProfile='5d62676b-6683-44f6-be18-5ee7f1b02fff'
+
+		if [ ! -d platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
 
 		mv platforms/ios/build/device ios-debug
 
@@ -56,9 +54,9 @@ if [ "${password}" != "" ] ; then
 			--codeSignIdentity='iPhone Distribution' \
 			--developmentTeam='SXZZ8WLPV2' \
 			--packageType='app-store' \
-			--provisioningProfile='5ed3df4c-a57b-4108-9abf-a8930e12a4f9' \
-		|| \
-			exit 1
+			--provisioningProfile='5ed3df4c-a57b-4108-9abf-a8930e12a4f9'
+
+		if [ ! -d platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
 
 		mv platforms/ios/build/device ios-release
 
