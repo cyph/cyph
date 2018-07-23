@@ -68,21 +68,18 @@ export class FileService {
 	 * @param image If true, file is processed as an image (compressed).
 	 */
 	public async getBytes (file: Blob, image: boolean = this.isImage(file)) : Promise<Uint8Array> {
+		const bytes	= await potassiumUtil.fromBlob(file);
+
 		if (!image || file.type === 'image/gif' || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
-			return potassiumUtil.fromBlob(file);
+			return bytes;
 		}
 
-		return new Promise<Uint8Array>(resolve => {
-			const reader	= new FileReader();
-
-			reader.onload	= () => {
-				const img	= document.createElement('img');
-				img.onload	= () => { resolve(this.compressImage(img, file)); };
-				img.src		= reader.result;
-			};
-
-			reader.readAsDataURL(file);
+		return new Promise<Uint8Array>((resolve, reject) => {
+			const img	= document.createElement('img');
+			img.onerror	= reject;
+			img.onload	= () => { resolve(this.compressImage(img, file)); };
+			img.src		= this.toDataURI(bytes, file.type);
 		});
 	}
 
