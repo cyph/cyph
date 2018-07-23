@@ -3,6 +3,7 @@ import {NgZone} from '@angular/core';
 import {DomSanitizer, SafeValue} from '@angular/platform-browser';
 import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
+import {FileService} from '../services/file.service';
 import {resolvable} from './wait';
 
 
@@ -36,6 +37,16 @@ if (!(env.isMainThread && env.isWeb)) {
 export const staticDomSanitizer: Promise<DomSanitizer>	= resolvableDomSanitizer.promise;
 
 
+/** Resolvable fileService. */
+const resolvableFileService	= !env.isMainThread ? undefined : resolvable<FileService>();
+
+/** @ignore */
+export const staticFileService: Promise<FileService>	= resolvableFileService ?
+	resolvableFileService.promise :
+	Promise.reject('File service not found.')
+;
+
+
 /** Resolvable httpClient. */
 const resolvableHttpClient	= !env.isMainThread ? undefined : resolvable<HttpClient>();
 
@@ -53,9 +64,16 @@ const resolvableNgZone	= resolvable<NgZone>();
 export const staticNgZone: Promise<NgZone>	= resolvableNgZone.promise;
 
 
-export const resolveStaticServices	= ({dialogService, domSanitizer, httpClient, ngZone}: {
+export const resolveStaticServices	= ({
+	dialogService,
+	domSanitizer,
+	fileService,
+	httpClient,
+	ngZone
+}: {
 	dialogService?: DialogService;
 	domSanitizer?: DomSanitizer;
+	fileService?: FileService;
 	httpClient?: HttpClient;
 	ngZone: NgZone;
 }) => {
@@ -65,6 +83,10 @@ export const resolveStaticServices	= ({dialogService, domSanitizer, httpClient, 
 
 	if (resolvableDomSanitizer && domSanitizer) {
 		resolvableDomSanitizer.resolve(domSanitizer);
+	}
+
+	if (fileService && resolvableFileService) {
+		resolvableFileService.resolve(fileService);
 	}
 
 	if (resolvableHttpClient && httpClient) {

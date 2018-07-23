@@ -1,6 +1,6 @@
 import {saveAs} from 'file-saver';
 import {env} from '../env';
-import {staticDialogService} from './static-services';
+import {staticDialogService, staticFileService} from './static-services';
 import {translate} from './translate';
 import {sleep} from './wait';
 
@@ -11,27 +11,40 @@ export const saveFile	= async (
 	fileName: string,
 	mediaType?: string
 ) : Promise<void> => {
-	const dialogService	= await staticDialogService;
+	const [dialogService, fileService]	= await Promise.all([
+		staticDialogService,
+		staticFileService
+	]);
 
 	const oldBeforeUnloadMessage	= beforeUnloadMessage;
 	beforeUnloadMessage				= undefined;
 
+	const fileMediaType	= mediaType && mediaType.indexOf('/') > 0 ?
+		mediaType :
+		'application/octet-stream'
+	;
+
 	const save	= () => {
 		saveAs(
-			new Blob(
-				[content],
-				{
-					type: mediaType && mediaType.indexOf('/') > 0 ?
-						mediaType :
-						'application/octet-stream'
-				}
-			),
+			new Blob([content], {type: fileMediaType}),
 			fileName,
 			false
 		);
 	};
 
-	if (!env.isSafari) {
+	if (env.isCordova) {
+		await new Promise<void>((resolve, reject) => {
+			(<any> self).plugins.socialsharing.shareWithOptions(
+				{
+					files: [fileService.toDataURI(content, fileMediaType)],
+					subject: fileName
+				},
+				resolve,
+				reject
+			);
+		});
+	}
+	else if (!env.isSafari) {
 		save();
 	}
 	else {

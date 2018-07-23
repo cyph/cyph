@@ -25,6 +25,7 @@ import {CyphWebModule} from '../cyph/modules/cyph-web.module';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
+import {FileService} from '../cyph/services/file.service';
 import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {NotificationService} from '../cyph/services/notification.service';
@@ -92,8 +93,9 @@ export class AppModule {
 		domSanitizer: DomSanitizer,
 		httpClient: HttpClient,
 		ngZone: NgZone,
-		dialogService: DialogService
+		dialogService: DialogService,
+		fileService: FileService
 	) {
-		resolveStaticServices({dialogService, domSanitizer, httpClient, ngZone});
+		resolveStaticServices({dialogService, domSanitizer, fileService, httpClient, ngZone});
 	}
 }
