@@ -3,9 +3,12 @@
 
 cd $(cd "$(dirname "$0")" ; pwd)
 
-echo -n 'Password (leave blank for Android-only debug mode): '
-read -s password
-echo
+password='balls'
+if [ "${1}" != 'ios' ] ; then
+	echo -n 'Password (leave blank for Android-only debug mode): '
+	read -s password
+	echo
+fi
 
 rm -rf ../cyph-phonegap-build 2> /dev/null
 mkdir -p ../cyph-phonegap-build/build
