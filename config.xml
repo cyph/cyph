@@ -28,6 +28,7 @@
 	<plugin name="cordova-plugin-iosrtc" spec="*" />
 	<plugin name="cordova-plugin-media-capture" spec="*" />
 	<plugin name="cordova-plugin-network-information" spec="*" />
+	<plugin name="cordova-plugin-splashscreen" spec="*" />
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 
@@ -41,6 +42,8 @@
 
 	<preference name="android-minSdkVersion" value="22" />
 	<preference name="android-targetSdkVersion" value="22" />
+
+	<preference name="SplashShowOnlyFirstTime" value="false" />
 
 	<platform name="android">
 		<preference
