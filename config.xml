@@ -31,6 +31,7 @@
 	<plugin name="cordova-plugin-splashscreen" spec="*" />
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
+	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
 
 	<access origin="*" />
 	<allow-intent href="http://*/*" />
