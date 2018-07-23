@@ -1,5 +1,4 @@
 import {sodiumUtil} from 'sodiumutil';
-import {env} from '../../env';
 
 
 /**
@@ -76,23 +75,11 @@ export class PotassiumUtil {
 
 	/** Converts Blob into binary byte array. */
 	public async fromBlob (b: Blob) : Promise<Uint8Array> {
-		const getBytes	= async () => new Promise<Uint8Array>((resolve, reject) => {
+		return new Promise<Uint8Array>(resolve => {
 			const reader	= new FileReader();
-			reader.onerror	= reject;
 			reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
 			reader.readAsArrayBuffer(b);
 		});
-
-		if (env.isCordova && b instanceof File) {
-			return new Promise<Uint8Array>(resolve => {
-				(<any> self).requestFileSystem((<any> self).PERSISTENT, 0, () => {
-					resolve(getBytes());
-				});
-			});
-		}
-		else {
-			return getBytes();
-		}
 	}
 
 	/** Converts hex string into binary byte array. */
