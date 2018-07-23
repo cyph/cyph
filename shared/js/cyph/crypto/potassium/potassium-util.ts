@@ -1,5 +1,4 @@
 import {sodiumUtil} from 'sodiumutil';
-import {env} from '../../env';
 
 
 /**
@@ -83,7 +82,7 @@ export class PotassiumUtil {
 			reader.readAsArrayBuffer(b);
 		});
 
-		if (env.isCordova && b instanceof File) {
+		if ((<any> self).cordova !== undefined && b instanceof File) {
 			return new Promise<Uint8Array>(resolve => {
 				(<any> self).requestFileSystem((<any> self).PERSISTENT, 0, () => {
 					resolve(getBytes());
