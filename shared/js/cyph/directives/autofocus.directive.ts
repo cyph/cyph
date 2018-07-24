@@ -12,8 +12,13 @@ import {sleep, waitForIterable} from '../util/wait';
 })
 export class AutofocusDirective implements OnInit {
 	/** @ignore */
+	private static readonly loadComplete: Promise<void>	=
+		waitForIterable(() => $('body.load-complete')).catch(() => {}).then(async () => sleep(750))
+	;
+
+	/** @ignore */
 	private static readonly loading: Promise<void>	= Promise.all([
-		waitForIterable(() => $('body.load-complete')).then(async () => sleep(750)),
+		AutofocusDirective.loadComplete,
 		new Promise<void>(resolve => {
 			$(document.body).one('mousedown', () => { resolve(); });
 		})
@@ -32,7 +37,10 @@ export class AutofocusDirective implements OnInit {
 			return;
 		}
 
-		if (this.envService.isMobile) {
+		if (this.envService.isCordova) {
+			await AutofocusDirective.loadComplete;
+		}
+		else if (this.envService.isMobile) {
 			await AutofocusDirective.loading;
 		}
 
