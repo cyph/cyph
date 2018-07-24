@@ -3,6 +3,7 @@ import {env} from './env';
 import {eventManager} from './event-manager';
 import {IThread} from './ithread';
 import {stringify} from './util/serialization';
+import {uuid} from './util/uuid';
 
 
 /** @inheritDoc */
@@ -149,7 +150,7 @@ export class Thread implements IThread {
 		f: Function,
 		locals: any = {},
 		onmessage: (e: MessageEvent) => any = () => {}
-	) {
+	) { (async () => {
 		const seedBytes	= potassiumUtil.randomBytes(32);
 
 		const threadSetupVars	= {
@@ -202,18 +203,52 @@ export class Thread implements IThread {
 			threadSetupVars.seed[i]	= 0;
 		}
 
-		const blobUrl	= URL.createObjectURL(
-			new Blob([threadBody], {type: 'application/javascript'})
-		);
+		const blob		= new Blob([threadBody], {type: 'application/javascript'});
+		const blobURL	= URL.createObjectURL(blob);
+
+		let workerFileEntry: any|undefined;
 
 		try {
-			this.worker	= new Worker(blobUrl);
+			this.worker	= new Worker(blobURL);
 		}
 		catch (err) {
-			if (this.worker) {
-				this.worker.terminate();
+			if (!env.isCordova) {
+				throw err;
 			}
-			throw err;
+
+			this.worker	= new Worker(await new Promise<string>((resolve, reject) => {
+				(<any> self).requestFileSystem(
+					(<any> self).TEMPORARY,
+					threadBody.length,
+					(fs: any) => {
+						fs.root.getFile(
+							`${uuid()}.js`,
+							{create: true, exclusive: false},
+							(fileEntry: any) => {
+								fileEntry.createWriter((fileWriter: any) => {
+									fileWriter.onerror		= reject;
+
+									fileWriter.onwriteend	= () => {
+										workerFileEntry	= fileEntry;
+
+										try {
+											resolve(fileEntry.toInternalURL());
+										}
+										catch (fileEntryErr) {
+											reject(fileEntryErr);
+											fileEntry.remove();
+										}
+									};
+
+									fileWriter.write(blob);
+								});
+							},
+							reject
+						);
+					},
+					reject
+				);
+			}));
 		}
 
 
@@ -222,9 +257,16 @@ export class Thread implements IThread {
 		worker.onmessage	= (e: MessageEvent) => {
 			if (e.data === 'ready') {
 				try {
-					URL.revokeObjectURL(blobUrl);
+					URL.revokeObjectURL(blobURL);
 				}
 				catch {}
+
+				if (workerFileEntry) {
+					try {
+						workerFileEntry.remove();
+					}
+					catch {}
+				}
 
 				/* tslint:disable-next-line:deprecation */
 				worker.postMessage(locals);
@@ -241,5 +283,5 @@ export class Thread implements IThread {
 		};
 
 		eventManager.threads.add(this);
-	}
+	})(); }
 }
