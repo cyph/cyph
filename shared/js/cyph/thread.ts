@@ -208,15 +208,14 @@ export class Thread implements IThread {
 			}
 
 			this.worker	= new Worker(await new Promise<string>((resolve, reject) => {
-				(<any> self).requestFileSystem(
-					(<any> self).PERSISTENT,
-					threadBody.length * 4,
-					(fs: any) => {
-						fs.root.getFile(
-							`${
-								(<any> self).cordova.file.tempDirectory ||
-								(<any> self).cordova.file.cacheDirectory
-							}/${uuid()}.js`,
+				(<any> self).resolveLocalFileSystemURL(
+					(
+						(<any> self).cordova.file.tempDirectory ||
+						(<any> self).cordova.file.cacheDirectory
+					),
+					(dirEntry: any) => {
+						dirEntry.getFile(
+							`${uuid()}.js`,
 							{create: true, exclusive: false},
 							(fileEntry: any) => {
 								fileEntry.createWriter((fileWriter: any) => {
