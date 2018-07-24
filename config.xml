@@ -55,13 +55,17 @@
 	<preference name="SplashScreenBackgroundColor" value="#8b62d9" />
 	<preference name="SplashScreenDelay" value="4000" />
 	<preference name="SplashShowOnlyFirstTime" value="false" />
+	<preference name="StatusBarBackgroundColor" value="#8b62d9" />
 	<preference name="StatusBarOverlaysWebView" value="false" />
+	<preference name="StatusBarStyle" value="lightcontent" />
 
 	<platform name="android">
 		<preference
 			name="OverrideUserAgent"
 			value="Mozilla/5.0 (Linux; Android 7.1; Pixel XL Build/NDE63H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.91 Mobile Safari/537.36"
 		/>
+
+		<preference name="StatusBarBackgroundColor" value="#673ab7" />
 
 		<allow-intent href="market:*" />
 
