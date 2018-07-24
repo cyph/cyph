@@ -12,56 +12,63 @@ import {EnvService} from './env.service';
 export class FileService {
 	/** @ignore */
 	private async compressImage (image: HTMLImageElement, file: Blob|IFile) : Promise<Uint8Array> {
-		const canvas: HTMLCanvasElement			= document.createElement('canvas');
-		const context: CanvasRenderingContext2D	=
-			<CanvasRenderingContext2D> canvas.getContext('2d')
-		;
+		try {
+			const canvas	= document.createElement('canvas');
+			const context	= canvas.getContext('2d');
 
-		let widthFactor: number		= this.configService.filesConfig.maxImageWidth / image.width;
-		let heightFactor: number	= this.configService.filesConfig.maxImageWidth / image.height;
+			if (!context) {
+				throw new Error('No canvas context.');
+			}
 
-		if (widthFactor > 1) {
-			widthFactor		= 1;
-		}
-		if (heightFactor > 1) {
-			heightFactor	= 1;
-		}
+			let widthFactor		= this.configService.filesConfig.maxImageWidth / image.width;
+			let heightFactor	= this.configService.filesConfig.maxImageWidth / image.height;
 
-		const factor: number	= Math.min(widthFactor, heightFactor);
+			if (widthFactor > 1) {
+				widthFactor		= 1;
+			}
+			if (heightFactor > 1) {
+				heightFactor	= 1;
+			}
 
-		canvas.width	= image.width * factor;
-		canvas.height	= image.height * factor;
+			const factor	= Math.min(widthFactor, heightFactor);
 
-		context.drawImage(image, 0, 0, canvas.width, canvas.height);
+			canvas.width	= image.width * factor;
+			canvas.height	= image.height * factor;
 
-		const hasTransparency: boolean	=
-			(file instanceof Blob ? file.type : file.mediaType) !== 'image/jpeg' &&
-			context.getImageData(0, 0, image.width, image.height).data[3] !== 255
-		;
+			context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-		const outputType: string|undefined		= !hasTransparency ? 'image/jpeg' : undefined;
-		const outputQuality: number|undefined	= !hasTransparency ?
-			Math.min(960 / Math.max(canvas.width, canvas.height), 1) :
-			undefined
-		;
+			const hasTransparency	=
+				(file instanceof Blob ? file.type : file.mediaType) !== 'image/jpeg' &&
+				context.getImageData(0, 0, image.width, image.height).data[3] !== 255
+			;
 
-		/* tslint:disable-next-line:no-unbound-method */
-		if (canvas.toBlob && !(this.envService.isCordova && this.envService.isAndroid)) {
-			return new Promise<Uint8Array>(resolve => {
-				canvas.toBlob(
-					async blob => {
-						resolve(!blob ? new Uint8Array(0) : await potassiumUtil.fromBlob(blob));
-					},
-					outputType,
-					outputQuality
+			const outputType	= !hasTransparency ? 'image/jpeg' : undefined;
+			const outputQuality	= !hasTransparency ?
+				Math.min(960 / Math.max(canvas.width, canvas.height), 1) :
+				undefined
+			;
+
+			/* tslint:disable-next-line:no-unbound-method */
+			if (canvas.toBlob && !(this.envService.isCordova && this.envService.isAndroid)) {
+				return await new Promise<Uint8Array>(resolve => {
+					canvas.toBlob(
+						async blob => {
+							resolve(!blob ? new Uint8Array(0) : potassiumUtil.fromBlob(blob));
+						},
+						outputType,
+						outputQuality
+					);
+				});
+			}
+			else {
+				return potassiumUtil.fromBase64(
+					canvas.toDataURL(outputType, outputQuality).split(',')[1]
 				);
-			});
+			}
 		}
-		else {
-			return potassiumUtil.fromBase64(
-				canvas.toDataURL(outputType, outputQuality).split(',')[1]
-			);
-		}
+		catch {}
+
+		return file instanceof Blob ? potassiumUtil.fromBlob(file) : file.data;
 	}
 
 	/** Converts data URI to blob. */
