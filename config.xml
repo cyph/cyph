@@ -69,6 +69,8 @@
 
 		<allow-intent href="market:*" />
 
+		<resource-file src="google-services.json" target="app/google-services.json" />
+
 		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.CAMERA" />
 		</config-file>
@@ -128,6 +130,8 @@
 		<allow-intent href="itms-apps:*" />
 
 		<preference name="UseSwiftLanguageVersion" value="3.3" />
+
+		<resource-file src="GoogleService-Info.plist" />
 
 		<hook
 			type="after_platform_add"
