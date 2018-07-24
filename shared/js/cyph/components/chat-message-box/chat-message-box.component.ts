@@ -10,6 +10,7 @@ import {BehaviorSubject} from 'rxjs';
 import * as tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../../animations';
 import {States} from '../../chat/enums';
+import {IFile} from '../../ifile';
 import {ChatMessageValue} from '../../proto';
 import {ChatService} from '../../services/chat.service';
 import {EnvService} from '../../services/env.service';
@@ -80,7 +81,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 	/** Wrappers for mobile button handlers. */
 	public readonly mobileButtonHandlers	= {
-		fileTransfer: (file: File) => {
+		fileTransfer: (file: IFile) => {
 			this.mobileButtonWrapper(false, () => {
 				this.fileTransferService.send(file);
 			});

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {IFile} from '../ifile';
 import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 
@@ -10,7 +11,7 @@ import {EnvService} from './env.service';
 @Injectable()
 export class FileService {
 	/** @ignore */
-	private async compressImage (image: HTMLImageElement, file: Blob) : Promise<Uint8Array> {
+	private async compressImage (image: HTMLImageElement, file: Blob|IFile) : Promise<Uint8Array> {
 		const canvas: HTMLCanvasElement			= document.createElement('canvas');
 		const context: CanvasRenderingContext2D	=
 			<CanvasRenderingContext2D> canvas.getContext('2d')
@@ -34,7 +35,7 @@ export class FileService {
 		context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
 		const hasTransparency: boolean	=
-			file.type !== 'image/jpeg' &&
+			(file instanceof Blob ? file.type : file.mediaType) !== 'image/jpeg' &&
 			context.getImageData(0, 0, image.width, image.height).data[3] !== 255
 		;
 
@@ -45,7 +46,7 @@ export class FileService {
 		;
 
 		/* tslint:disable-next-line:no-unbound-method */
-		if (canvas.toBlob) {
+		if (canvas.toBlob && !(this.envService.isCordova && this.envService.isAndroid)) {
 			return new Promise<Uint8Array>(resolve => {
 				canvas.toBlob(
 					async blob => {
@@ -76,20 +77,33 @@ export class FileService {
 	 * Converts File/Blob to byte array.
 	 * @param image If true, file is processed as an image (compressed).
 	 */
-	public async getBytes (file: Blob, image: boolean = this.isImage(file)) : Promise<Uint8Array> {
-		if (!image || file.type === 'image/gif' || !this.envService.isWeb) {
+	public async getBytes (
+		file: Blob|IFile,
+		image: boolean = this.isImage(file)
+	) : Promise<Uint8Array> {
+		if (
+			!image ||
+			(file instanceof Blob ? file.type : file.mediaType) === 'image/gif' ||
+			!this.envService.isWeb
+		) {
 			/* TODO: HANDLE NATIVE */
-			return potassiumUtil.fromBlob(file);
+			return file instanceof Blob ? potassiumUtil.fromBlob(file) : file.data;
 		}
 
-		return new Promise<Uint8Array>(resolve => {
-			const reader	= new FileReader();
+		const compressImage	= async (dataURI: string) => new Promise<Uint8Array>(resolve => {
+			const img	= document.createElement('img');
+			img.onload	= () => { resolve(this.compressImage(img, file)); };
+			img.src		= dataURI;
+		});
 
-			reader.onload	= () => {
-				const img	= document.createElement('img');
-				img.onload	= () => { resolve(this.compressImage(img, file)); };
-				img.src		= reader.result;
-			};
+		if (!(file instanceof Blob)) {
+			return compressImage(this.toDataURI(file.data, file.mediaType));
+		}
+
+		return new Promise<Uint8Array>((resolve, reject) => {
+			const reader	= new FileReader();
+			reader.onerror	= reject;
+			reader.onload	= () => { resolve(compressImage(reader.result)); };
 
 			reader.readAsDataURL(file);
 		});
@@ -103,9 +117,20 @@ export class FileService {
 		return this.toDataURI(await this.getBytes(file, image), file.type);
 	}
 
+	/**
+	 * Converts File/Blob to IFile.
+	 */
+	public async getIFile (file: Blob) : Promise<IFile> {
+		return {
+			data: await this.getBytes(file, false),
+			mediaType: file.type,
+			name: file instanceof File ? file.name : 'File'
+		};
+	}
+
 	/** Indicates whether a File/Blob is an image. */
-	public isImage (file: Blob) : boolean {
-		return file.type.indexOf('image/') === 0;
+	public isImage (file: Blob|IFile) : boolean {
+		return (file instanceof Blob ? file.type : file.mediaType).indexOf('image/') === 0;
 	}
 
 	/** Converts binary data to base64 data URI. */

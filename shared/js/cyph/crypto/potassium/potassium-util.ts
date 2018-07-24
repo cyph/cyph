@@ -74,10 +74,16 @@ export class PotassiumUtil {
 	}
 
 	/** Converts Blob into binary byte array. */
-	public async fromBlob (b: Blob) : Promise<Uint8Array> {
-		return new Promise<Uint8Array>(resolve => {
+	public async fromBlob (b: Blob|ArrayBufferView) : Promise<Uint8Array> {
+		if (ArrayBuffer.isView(b)) {
+			return this.toBytes(b);
+		}
+
+		return new Promise<Uint8Array>((resolve, reject) => {
 			const reader	= new FileReader();
+			reader.onerror	= reject;
 			reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
+
 			reader.readAsArrayBuffer(b);
 		});
 	}

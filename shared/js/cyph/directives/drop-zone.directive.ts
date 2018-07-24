@@ -8,6 +8,7 @@ import {
 	Renderer2
 } from '@angular/core';
 import * as Dropzone from 'dropzone';
+import {IFile} from '../ifile';
 import {EnvService} from '../services/env.service';
 import {FileService} from '../services/file.service';
 import {uuid} from '../util/uuid';
@@ -38,7 +39,7 @@ export class DropZoneDirective implements OnChanges {
 	@Input() public cyphDropZoneClass: boolean	= true;
 
 	/** File drop event emitter. */
-	@Output() public readonly fileDrop: EventEmitter<Blob>	= new EventEmitter<Blob>();
+	@Output() public readonly fileDrop: EventEmitter<IFile>	= new EventEmitter<IFile>();
 
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
@@ -65,10 +66,10 @@ export class DropZoneDirective implements OnChanges {
 				!(this.envService.isCordova && this.envService.isAndroid) ?
 					(() => {
 						const dz	= new Dropzone(`.${this.id}`, {
-							accept: (file, done) => {
+							accept: async (file, done) => {
 								done('ignore');
 								dz.removeAllFiles();
-								this.fileDrop.emit(file);
+								this.fileDrop.emit(await this.fileService.getIFile(file));
 							},
 							acceptedFiles: this.accept,
 							url: 'data:text/plain;ascii,'
@@ -80,8 +81,15 @@ export class DropZoneDirective implements OnChanges {
 						const elem: HTMLElement	= this.elementRef.nativeElement;
 
 						const handler			= () => {
-							(<any> self).fileChooser.open((dataURI: string) => {
-								this.fileDrop.emit(this.fileService.fromDataURI(dataURI));
+							(<any> self).fileChooser.open((o: any) => {
+								if (
+									typeof o === 'object' &&
+									o.data instanceof Uint8Array &&
+									typeof o.mediaType === 'string' &&
+									typeof o.name === 'string'
+								) {
+									this.fileDrop.emit(o);
+								}
 							});
 						};
 

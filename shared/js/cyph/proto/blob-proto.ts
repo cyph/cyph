@@ -14,7 +14,7 @@ export class BlobProto {
 	}
 
 	/** @see IProto.encode */
-	public static async encode (data: Blob) : Promise<Uint8Array> {
+	public static async encode (data: Blob|ArrayBufferView) : Promise<Uint8Array> {
 		return potassiumUtil.fromBlob(data);
 	}
 
