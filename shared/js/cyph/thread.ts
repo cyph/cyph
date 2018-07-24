@@ -130,27 +130,17 @@ export class Thread implements IThread {
 		}
 	}
 
-	/** @inheritDoc */
-	public stop () : void {
-		if (this.worker) {
-			this.worker.terminate();
-		}
-
-		this.worker	= undefined;
-
-		eventManager.threads.delete(this);
-	}
-
 	/**
+	 * Starts worker.
 	 * @param f Function to run in the new thread.
 	 * @param locals Local data to pass in to the new thread.
 	 * @param onmessage Handler for messages from the thread.
 	 */
-	constructor (
+	public async start (
 		f: Function,
 		locals: any = {},
 		onmessage: (e: MessageEvent) => any = () => {}
-	) { (async () => {
+	) {
 		const seedBytes	= potassiumUtil.randomBytes(32);
 
 		const threadSetupVars	= {
@@ -283,5 +273,18 @@ export class Thread implements IThread {
 		};
 
 		eventManager.threads.add(this);
-	})(); }
+	}
+
+	/** @inheritDoc */
+	public stop () : void {
+		if (this.worker) {
+			this.worker.terminate();
+		}
+
+		this.worker	= undefined;
+
+		eventManager.threads.delete(this);
+	}
+
+	constructor () {}
 }

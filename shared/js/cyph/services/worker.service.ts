@@ -40,7 +40,9 @@ export class WorkerService {
 			locals	= await locals;
 		}
 
-		this.threads.push(new Thread(f, locals, onmessage));
+		const thread	= new Thread();
+		await thread.start(f, locals, onmessage);
+		this.threads.push(thread);
 	}
 
 	/** Runs a function in the context of the ServiceWorker. */
