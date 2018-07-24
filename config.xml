@@ -25,6 +25,7 @@
 	<plugin name="cordova-plugin-firebase-messaging" spec="*" />
 	<plugin name="cordova-plugin-geolocation" spec="*" />
 	<plugin name="cordova-plugin-globalization" spec="*" />
+	<plugin name="cordova-plugin-headercolor" spec="*" />
 	<plugin name="cordova-plugin-inappbrowser" spec="*" />
 	<plugin name="cordova-plugin-ionic-webview" spec="*" />
 	<plugin name="cordova-plugin-iosrtc" spec="*" />
@@ -48,6 +49,7 @@
 	<preference name="android-targetSdkVersion" value="22" />
 	<preference name="BackgroundColor" value="#8b62d9" />
 	<preference name="deployment-target" value="10.0" />
+	<preference name="HeaderColor" value="#8b62d9" />
 	<preference name="KeyboardDisplayRequiresUserAction" value="false" />
 	<preference name="ShowSplashScreenSpinner" value="false" />
 	<preference name="SplashScreenBackgroundColor" value="#8b62d9" />
