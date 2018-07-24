@@ -33,6 +33,10 @@
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
+	<plugin
+		name="cordova-labs-wkwebview-engine-localhost"
+		spec="https://github.com/apache/cordova-plugins.git#wkwebview-engine-localhost"
+	/>
 
 	<access origin="*" />
 	<allow-intent href="http://*/*" />
@@ -117,6 +121,13 @@
 		<allow-intent href="itms:*" />
 		<allow-intent href="itms-apps:*" />
 
+		<content src="http://localhost:45014" />
+
+		<feature name="CDVWKWebViewEngine">
+			<param name="ios-package" value="CDVWKWebViewEngine" />
+		</feature>
+
+		<preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
 		<preference name="UseSwiftLanguageVersion" value="3.3" />
 
 		<hook
