@@ -29,6 +29,7 @@
 	<plugin name="cordova-plugin-media-capture" spec="*" />
 	<plugin name="cordova-plugin-network-information" spec="*" />
 	<plugin name="cordova-plugin-splashscreen" spec="*" />
+	<plugin name="cordova-plugin-statusbar" spec="*" />
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
@@ -50,6 +51,7 @@
 	<preference name="SplashScreenBackgroundColor" value="#8b62d9" />
 	<preference name="SplashScreenDelay" value="4000" />
 	<preference name="SplashShowOnlyFirstTime" value="false" />
+	<preference name="StatusBarOverlaysWebView" value="false" />
 
 	<platform name="android">
 		<preference
