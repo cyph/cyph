@@ -4,7 +4,7 @@
 cd $(cd "$(dirname "$0")" ; pwd)
 
 password='balls'
-if [ "${1}" != 'ios' ] ; then
+if [ "${1}" != 'ios' ] && [ "${1}" != 'emulator' ] ; then
 	echo -n 'Password (leave blank for Android-only debug mode): '
 	read -s password
 	echo
@@ -33,7 +33,9 @@ fi
 
 echo -e '\n\nBUILD\n\n'
 
-if [ "${password}" != "" ] ; then
+if [ "${1}" == 'emulator' ] ; then
+	cordova build --debug --emulator || exit 1
+elif [ "${password}" != "" ] ; then
 	if [ "${1}" != 'ios' ] ; then
 		cordova build android --release --device -- \
 			--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
