@@ -20,17 +20,11 @@ export class FileService {
 				throw new Error('No canvas context.');
 			}
 
-			let widthFactor		= this.configService.filesConfig.maxImageWidth / image.width;
-			let heightFactor	= this.configService.filesConfig.maxImageWidth / image.height;
-
-			if (widthFactor > 1) {
-				widthFactor		= 1;
-			}
-			if (heightFactor > 1) {
-				heightFactor	= 1;
-			}
-
-			const factor	= Math.min(widthFactor, heightFactor);
+			const factor	= Math.min(
+				this.configService.filesConfig.maxImageWidth / image.width,
+				this.configService.filesConfig.maxImageWidth / image.height,
+				1
+			);
 
 			canvas.width	= image.width * factor;
 			canvas.height	= image.height * factor;
