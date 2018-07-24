@@ -58,39 +58,39 @@
 
 		<allow-intent href="market:*" />
 
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.CAMERA" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.INTERNET" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.NFC" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.READ_CALENDAR" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.READ_CONTACTS" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.RECORD_AUDIO" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.USE_FINGERPRINT" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.VIBRATE" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.WRITE_CALENDAR" />
-		</edit-config>
-		<edit-config file="app/src/main/AndroidManifest.xml" target="/manifest/application">
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
 			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-		</edit-config>
+		</config-file>
 
 		<icon density="ldpi" src="res/icon/android/drawable-ldpi-icon.png" />
 		<icon density="mdpi" src="res/icon/android/drawable-mdpi-icon.png" />
