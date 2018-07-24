@@ -22,6 +22,7 @@
 	<plugin name="cordova-plugin-device" spec="*" />
 	<plugin name="cordova-plugin-dialogs" spec="*" />
 	<plugin name="cordova-plugin-file" spec="*" />
+	<plugin name="cordova-plugin-filechooser-data" spec="*" />
 	<plugin name="cordova-plugin-geolocation" spec="*" />
 	<plugin name="cordova-plugin-globalization" spec="*" />
 	<plugin name="cordova-plugin-inappbrowser" spec="*" />
