@@ -130,6 +130,7 @@ var config = struct {
 		"staging-dot-cyph-video-dot-cyphme.appspot.com": empty,
 		"staging-dot-cyph-audio-dot-cyphme.appspot.com": empty,
 		"staging-dot-cyphme.appspot.com":                empty,
+		"localhost:45014":                               empty,
 	},
 
 	"UA-56220601-1",
