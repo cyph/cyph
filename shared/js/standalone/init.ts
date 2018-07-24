@@ -49,11 +49,7 @@ $(async () => {
 			/* In WebSigned environments, perform CSP Meta-Hardening */
 			await sleep(10000);
 			$(document.head).append(
-				`<meta http-equiv="Content-Security-Policy" content="${
-					env.isCordova && env.isIOS ?
-						`${env.CSP.replace(/;/g, ' gap:;')} gap:` :
-						env.CSP
-				}" />`
+				`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
 			);
 		}
 		else if (location.pathname !== '/') {
