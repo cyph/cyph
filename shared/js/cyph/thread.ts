@@ -193,8 +193,9 @@ export class Thread implements IThread {
 			threadSetupVars.seed[i]	= 0;
 		}
 
-		const blob		= new Blob([threadBody], {type: 'application/javascript'});
-		const blobURL	= URL.createObjectURL(blob);
+		const blobURL	= URL.createObjectURL(
+			new Blob([threadBody], {type: 'application/javascript'})
+		);
 
 		let workerFileEntry: any|undefined;
 
@@ -208,11 +209,14 @@ export class Thread implements IThread {
 
 			this.worker	= new Worker(await new Promise<string>((resolve, reject) => {
 				(<any> self).requestFileSystem(
-					(<any> self).TEMPORARY,
-					threadBody.length,
+					(<any> self).PERSISTENT,
+					threadBody.length * 4,
 					(fs: any) => {
 						fs.root.getFile(
-							`${uuid()}.js`,
+							`${
+								(<any> self).cordova.file.tempDirectory ||
+								(<any> self).cordova.file.cacheDirectory
+							}/${uuid()}.js`,
 							{create: true, exclusive: false},
 							(fileEntry: any) => {
 								fileEntry.createWriter((fileWriter: any) => {
@@ -230,7 +234,7 @@ export class Thread implements IThread {
 										}
 									};
 
-									fileWriter.write(blob);
+									fileWriter.write(new Blob([threadBody], {type: 'text/plain'}));
 								});
 							},
 							reject
