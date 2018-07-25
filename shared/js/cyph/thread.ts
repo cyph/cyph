@@ -209,10 +209,7 @@ export class Thread implements IThread {
 
 			this.worker	= new Worker(await new Promise<string>((resolve, reject) => {
 				(<any> self).resolveLocalFileSystemURL(
-					(
-						(<any> self).cordova.file.tempDirectory ||
-						(<any> self).cordova.file.cacheDirectory
-					),
+					(<any> self).cordova.file.dataDirectory,
 					(dirEntry: any) => {
 						dirEntry.getFile(
 							`${uuid()}.js`,
@@ -225,7 +222,7 @@ export class Thread implements IThread {
 										workerFileEntry	= fileEntry;
 
 										try {
-											resolve(fileEntry.toInternalURL());
+											resolve(fileEntry.toURL());
 										}
 										catch (fileEntryErr) {
 											reject(fileEntryErr);
