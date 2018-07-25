@@ -3,7 +3,6 @@ import {env} from './env';
 import {eventManager} from './event-manager';
 import {IThread} from './ithread';
 import {stringify} from './util/serialization';
-import {uuid} from './util/uuid';
 
 
 /** @inheritDoc */
@@ -130,13 +129,23 @@ export class Thread implements IThread {
 		}
 	}
 
+	/** @inheritDoc */
+	public stop () : void {
+		if (this.worker) {
+			this.worker.terminate();
+		}
+
+		this.worker	= undefined;
+
+		eventManager.threads.delete(this);
+	}
+
 	/**
-	 * Starts worker.
 	 * @param f Function to run in the new thread.
 	 * @param locals Local data to pass in to the new thread.
 	 * @param onmessage Handler for messages from the thread.
 	 */
-	public async start (
+	constructor (
 		f: Function,
 		locals: any = {},
 		onmessage: (e: MessageEvent) => any = () => {}
@@ -197,8 +206,6 @@ export class Thread implements IThread {
 			new Blob([threadBody], {type: 'application/javascript'})
 		);
 
-		let workerFileEntry: any|undefined;
-
 		try {
 			this.worker	= new Worker(blobURL);
 		}
@@ -207,38 +214,10 @@ export class Thread implements IThread {
 				throw err;
 			}
 
-			this.worker	= new Worker(await new Promise<string>((resolve, reject) => {
-				(<any> self).resolveLocalFileSystemURL(
-					(<any> self).cordova.file.dataDirectory,
-					(dirEntry: any) => {
-						dirEntry.getFile(
-							`${uuid()}.js`,
-							{create: true, exclusive: false},
-							(fileEntry: any) => {
-								fileEntry.createWriter((fileWriter: any) => {
-									fileWriter.onerror		= reject;
+			this.worker	= new Worker('/worker.js');
 
-									fileWriter.onwriteend	= () => {
-										workerFileEntry	= fileEntry;
-
-										try {
-											resolve(fileEntry.toURL());
-										}
-										catch (fileEntryErr) {
-											reject(fileEntryErr);
-											fileEntry.remove();
-										}
-									};
-
-									fileWriter.write(new Blob([threadBody], {type: 'text/plain'}));
-								});
-							},
-							reject
-						);
-					},
-					reject
-				);
-			}));
+			/* tslint:disable-next-line:deprecation */
+			this.worker.postMessage(threadBody);
 		}
 
 
@@ -250,13 +229,6 @@ export class Thread implements IThread {
 					URL.revokeObjectURL(blobURL);
 				}
 				catch {}
-
-				if (workerFileEntry) {
-					try {
-						workerFileEntry.remove();
-					}
-					catch {}
-				}
 
 				/* tslint:disable-next-line:deprecation */
 				worker.postMessage(locals);
@@ -274,17 +246,4 @@ export class Thread implements IThread {
 
 		eventManager.threads.add(this);
 	}
-
-	/** @inheritDoc */
-	public stop () : void {
-		if (this.worker) {
-			this.worker.terminate();
-		}
-
-		this.worker	= undefined;
-
-		eventManager.threads.delete(this);
-	}
-
-	constructor () {}
 }
