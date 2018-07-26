@@ -154,7 +154,6 @@ read -r -d '' modules <<- EOM
 	htmlencode
 	htmllint
 	image-type
-	immutable@rc
 	interact.js
 	jasmine-core@2
 	jasmine-spec-reporter
