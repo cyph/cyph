@@ -102,7 +102,8 @@ export class Thread implements IThread {
 		}
 		importScripts('/assets/node_modules/libsodium/dist/browsers-sumo/sodium.js');
 
-		threadSetupVars	= undefined;
+		threadSetupVars					= undefined;
+		(<any> self).threadSetupVars	= undefined;
 	}
 
 	/** @ignore */
@@ -175,7 +176,7 @@ export class Thread implements IThread {
 
 		const threadBody	= `
 			try {
-				var threadSetupVars = ${stringify(threadSetupVars)};
+				self.threadSetupVars = ${stringify(threadSetupVars)};
 				${
 					/* tslint:disable-next-line:no-unbound-method */
 					Thread.stringifyFunction(Thread.threadEnvSetup)
