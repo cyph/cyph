@@ -63,7 +63,7 @@ export class DropZoneDirective implements OnChanges {
 			document.body.contains(this.elementRef.nativeElement)
 		).then(() => {
 			const dropZone	=
-				!(this.envService.isCordova && this.envService.isAndroid) ?
+				!this.envService.isCordova ?
 					(() => {
 						const dz	= new Dropzone(`.${this.id}`, {
 							accept: async (file, done) => {
@@ -80,8 +80,10 @@ export class DropZoneDirective implements OnChanges {
 					(() => {
 						const elem: HTMLElement	= this.elementRef.nativeElement;
 
-						const handler			= () => {
-							(<any> self).fileChooser.open((o: any) => {
+						const handler			= async () => {
+							try {
+								const o: any	= await (<any> self).chooser.getFile(this.accept);
+
 								if (
 									typeof o === 'object' &&
 									o.data instanceof Uint8Array &&
@@ -90,7 +92,8 @@ export class DropZoneDirective implements OnChanges {
 								) {
 									this.fileDrop.emit(o);
 								}
-							});
+							}
+							catch {}
 						};
 
 						elem.addEventListener('click', handler);
