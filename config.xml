@@ -17,10 +17,10 @@
 	<plugin name="cordova-plugin-add-swift-support" spec="*" />
 	<plugin name="cordova-plugin-battery-status" spec="*" />
 	<plugin name="cordova-plugin-camera" spec="*" />
+	<plugin name="cordova-plugin-chooser" spec="*" />
 	<plugin name="cordova-plugin-device" spec="*" />
 	<plugin name="cordova-plugin-dialogs" spec="*" />
 	<plugin name="cordova-plugin-file" spec="*" />
-	<plugin name="cordova-plugin-filechooser-data" spec="*" />
 	<plugin name="cordova-plugin-firebase-messaging" spec="*" />
 	<plugin name="cordova-plugin-geolocation" spec="*" />
 	<plugin name="cordova-plugin-globalization" spec="*" />
