@@ -5,7 +5,8 @@ import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
-import {AccountUserTypes, BlobProto, DataURIProto, IForm} from '../../proto';
+import {IFile} from '../../ifile';
+import {AccountUserTypes, DataURIProto, IForm} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
@@ -53,8 +54,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Current draft of user profile. */
 	public readonly draft								= new BehaviorSubject<{
-		avatar?: Blob;
-		coverImage?: Blob;
+		avatar?: IFile;
+		coverImage?: IFile;
 		description?: string;
 		forms?: IForm[];
 		name?: string;
@@ -71,8 +72,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	public readonly editMode							= new BehaviorSubject<boolean>(false);
 
 	/** Gets data URI of file. */
-	public readonly getDataURI							= memoize(async (file?: Blob) =>
-		!file ? undefined : deserialize(DataURIProto, await serialize(BlobProto, file))
+	public readonly getDataURI							= memoize(async (file?: IFile) =>
+		!file ? undefined : deserialize(DataURIProto, file.data)
 	);
 
 	/** Indicates whether this is home component. */
@@ -171,8 +172,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Publishes new user description. */
 	public async saveProfile (draft?: {
-		avatar?: Blob;
-		coverImage?: Blob;
+		avatar?: IFile;
+		coverImage?: IFile;
 		description?: string;
 		forms?: IForm[];
 	}) : Promise<void> {
@@ -247,7 +248,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	}
 
 	/** Crops and sets avatar. */
-	public async setAvatar (avatar?: File) : Promise<void> {
+	public async setAvatar (avatar?: IFile) : Promise<void> {
 		if (!avatar || !this.editMode.value) {
 			return;
 		}
@@ -265,13 +266,13 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 			return;
 		}
 
-		const cropped	= await deserialize(BlobProto, await serialize(DataURIProto, dataURI));
+		const cropped	= await serialize(DataURIProto, dataURI);
 
 		if (!this.editMode.value) {
 			return;
 		}
 
-		this.updateDraft({avatar: cropped});
+		this.updateDraft({avatar: {...avatar, data: cropped}});
 	}
 
 	/** Sets edit mode. */
@@ -346,8 +347,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Updates draft. */
 	public updateDraft (draft: {
-		avatar?: Blob;
-		coverImage?: Blob;
+		avatar?: IFile;
+		coverImage?: IFile;
 		description?: string;
 		forms?: IForm[];
 		name?: string;

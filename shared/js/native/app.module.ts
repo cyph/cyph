@@ -26,6 +26,7 @@ import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
 import {MainThreadPotassiumService} from './js/cyph/services/crypto/main-thread-potassium.service';
 import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
 import {DialogService} from './js/cyph/services/dialog.service';
+import {FileService} from './js/cyph/services/file.service';
 import {LocalStorageService} from './js/cyph/services/local-storage.service';
 import {resolveStaticServices} from './js/cyph/util/static-services';
 import {NativeDialogService} from './native-dialog.service';
@@ -85,11 +86,12 @@ import {NativeTitleService} from './native-title.service';
 export class AppModule {
 	constructor (
 		httpClient: HttpClient,
-		dialogService: DialogService,
 		ngZone: NgZone,
-		router: Router
+		router: Router,
+		dialogService: DialogService,
+		fileService: FileService
 	) {
 		router.resetConfig(appRoutes);
-		resolveStaticServices({dialogService, httpClient, ngZone});
+		resolveStaticServices({dialogService, fileService, httpClient, ngZone});
 	}
 }

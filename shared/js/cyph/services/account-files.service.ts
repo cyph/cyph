@@ -159,7 +159,10 @@ export class AccountFilesService {
 		[AccountFileRecord.RecordTypes.File]: {
 			blockAnonymous: false,
 			description: 'File',
-			isOfType: (file: any) => file instanceof Blob,
+			isOfType: (file: any) =>
+				file instanceof Blob ||
+				(file.data instanceof Uint8Array && typeof file.mediaType === 'string')
+			,
 			mediaType: undefined,
 			proto: BlobProto,
 			recordType: AccountFileRecord.RecordTypes.File,
@@ -918,7 +921,7 @@ export class AccountFilesService {
 						0
 				) :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
-				(file instanceof Blob ? file.size : NaN) :
+				(file instanceof Blob ? file.size : 'mediaType' in file ? file.data.length : NaN) :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
 				msgpack.encode(<IQuillDelta> file).length :
 			fileConfig.proto ?
@@ -1294,12 +1297,22 @@ export class AccountFilesService {
 					})()};
 				})() :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
-				this.accountDatabaseService.uploadItem(
-					url,
-					BlobProto,
-					file instanceof Blob ? file : new Blob(),
-					undefined,
-					key
+				(
+					file instanceof Blob ?
+						this.accountDatabaseService.uploadItem(
+							url,
+							BlobProto,
+							file,
+							undefined,
+							key
+						) :
+						this.accountDatabaseService.uploadItem(
+							url,
+							BinaryProto,
+							'mediaType' in file ? file.data : new Uint8Array(0),
+							undefined,
+							key
+						)
 				) :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
 				this.accountDatabaseService.uploadItem(
@@ -1326,6 +1339,7 @@ export class AccountFilesService {
 					mediaType:
 						fileConfig.mediaType ||
 						(file instanceof Blob ? file.type : undefined) ||
+						('mediaType' in file ? file.mediaType : undefined) ||
 						'application/octet-stream'
 					,
 					name,

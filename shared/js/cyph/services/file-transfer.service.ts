@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import {Observable, of} from 'rxjs';
+import {IFile} from '../ifile';
 import {LocalAsyncSet} from '../local-async-set';
 import {BinaryProto, ChatMessageValue, DataURIProto, IFileTransfer} from '../proto';
 import {readableByteLength} from '../util/formatting';
@@ -149,11 +150,11 @@ export class FileTransferService {
 	 * (compressed and automatically downloaded).
 	 */
 	public async send (
-		file: File,
+		file: IFile,
 		image: boolean = this.fileService.isImage(file),
 		imageSelfDestructTimeout?: number
 	) : Promise<void> {
-		if (file.size > this.configService.filesConfig.maxSize) {
+		if (file.data.length > this.configService.filesConfig.maxSize) {
 			this.analyticsService.sendEvent({
 				eventAction: 'toolarge',
 				eventCategory: 'file',
@@ -172,9 +173,9 @@ export class FileTransferService {
 			id: uuid(true),
 			image,
 			isOutgoing: true,
-			mediaType: file.type,
+			mediaType: file.mediaType,
 			name: file.name,
-			size: file.size
+			size: file.data.length
 		};
 
 		const transferPlaceholder	= {metadata: fileTransfer, progress: of(0)};

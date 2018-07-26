@@ -22,6 +22,7 @@ import {ThreadedPotassiumService} from '../cyph/services/crypto/threaded-potassi
 import {DatabaseService} from '../cyph/services/database.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {FaviconService} from '../cyph/services/favicon.service';
+import {FileService} from '../cyph/services/file.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
 import {appRoutes} from './app-routes';
@@ -77,6 +78,7 @@ export class AppModule {
 		router: Router,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
+		fileService: FileService,
 		localStorageService: LocalStorageService
 	) {
 		router.resetConfig(appRoutes);
@@ -85,6 +87,6 @@ export class AppModule {
 			testEnvironmentSetup(databaseService, localStorageService);
 		}
 
-		resolveStaticServices({dialogService, domSanitizer, httpClient, ngZone});
+		resolveStaticServices({dialogService, domSanitizer, fileService, httpClient, ngZone});
 	}
 }

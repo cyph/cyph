@@ -1,4 +1,4 @@
-
+import {IFile} from '../ifile';
 import {IQuillDelta} from '../iquill-delta';
 import {IAppointment, IEhrApiKey, IForm, IRedoxPatient, IWallet} from '../proto';
 
@@ -7,6 +7,7 @@ import {IAppointment, IEhrApiKey, IForm, IRedoxPatient, IWallet} from '../proto'
 export type AccountFile	=
 	IAppointment|
 	IEhrApiKey|
+	IFile|
 	IForm|
 	IQuillDelta|
 	IQuillDelta[]|

@@ -5,8 +5,8 @@ $cyph-background: #f5f5f6;
 $cyph-foreground: #424242;
 $cyph-inverted: #eeecf1;
 $cyph-progress-foreground: #e7c447;
-$cyph-speed-dial-action-alt-background: $cyph-background;
-$cyph-speed-dial-action-alt-foreground: $cyph-foreground;
+$cyph-speed-dial-action-alt-background: $cyph-foreground;
+$cyph-speed-dial-action-alt-foreground: $cyph-inverted;
 
 $cyph-message-box-colors: map-merge($cyph-message-box-colors, (
 	desktopBackground: white,

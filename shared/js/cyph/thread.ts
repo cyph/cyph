@@ -102,7 +102,8 @@ export class Thread implements IThread {
 		}
 		importScripts('/assets/node_modules/libsodium/dist/browsers-sumo/sodium.js');
 
-		threadSetupVars	= undefined;
+		threadSetupVars					= undefined;
+		(<any> self).threadSetupVars	= undefined;
 	}
 
 	/** @ignore */
@@ -174,27 +175,34 @@ export class Thread implements IThread {
 		};
 
 		const threadBody	= `
-			var threadSetupVars = ${stringify(threadSetupVars)};
-			${
-				/* tslint:disable-next-line:no-unbound-method */
-				Thread.stringifyFunction(Thread.threadEnvSetup)
-			}
-
-			self.onmessage	= function (e) {
-				self.locals		= e.data;
-				self.onmessage	= undefined;
-				e				= undefined;
-
-				${Thread.stringifyFunction(f)}
+			try {
+				self.threadSetupVars = ${stringify(threadSetupVars)};
 				${
 					/* tslint:disable-next-line:no-unbound-method */
-					Thread.stringifyFunction(Thread.threadPostSetup)
+					Thread.stringifyFunction(Thread.threadEnvSetup)
 				}
-			};
 
-			self.sodium.ready.then(function () {
-				self.postMessage('ready');
-			});
+				self.onmessage	= function (e) {
+					self.locals		= e.data;
+					self.onmessage	= undefined;
+					e				= undefined;
+
+					${Thread.stringifyFunction(f)}
+					${
+						/* tslint:disable-next-line:no-unbound-method */
+						Thread.stringifyFunction(Thread.threadPostSetup)
+					}
+				};
+
+				self.sodium.ready.then(function () {
+					self.postMessage('ready');
+				}).catch(function (err) {
+					self.postMessage({error: err && err.message});
+				});
+			}
+			catch (err) {
+				self.postMessage({error: err && err.message});
+			}
 		`;
 
 		for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {
@@ -202,18 +210,22 @@ export class Thread implements IThread {
 			threadSetupVars.seed[i]	= 0;
 		}
 
-		const blobUrl	= URL.createObjectURL(
+		const blobURL	= URL.createObjectURL(
 			new Blob([threadBody], {type: 'application/javascript'})
 		);
 
 		try {
-			this.worker	= new Worker(blobUrl);
+			this.worker	= new Worker(blobURL);
 		}
 		catch (err) {
-			if (this.worker) {
-				this.worker.terminate();
+			if (!env.isCordova) {
+				throw err;
 			}
-			throw err;
+
+			this.worker	= new Worker('/worker.js');
+
+			/* tslint:disable-next-line:deprecation */
+			this.worker.postMessage(threadBody);
 		}
 
 
@@ -222,7 +234,7 @@ export class Thread implements IThread {
 		worker.onmessage	= (e: MessageEvent) => {
 			if (e.data === 'ready') {
 				try {
-					URL.revokeObjectURL(blobUrl);
+					URL.revokeObjectURL(blobURL);
 				}
 				catch {}
 
@@ -232,8 +244,11 @@ export class Thread implements IThread {
 			else if (e.data === 'close') {
 				this.stop();
 			}
-			else if (e.data && e.data.isThreadEvent) {
+			else if (typeof e.data === 'object' && e.data.isThreadEvent) {
 				eventManager.trigger(e.data.event, e.data.data);
+			}
+			else if (typeof e.data === 'object' && 'error' in e.data) {
+				throw new Error(`Thread error: ${(e.data.error || '').toString()}`);
 			}
 			else {
 				onmessage(e);
