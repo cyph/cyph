@@ -4,7 +4,9 @@
 	class='login-form animated fadeIn'
 	[class.checking]='checking | async'
 	[class.mobile]='envService.isMobile'
+	ngClass.gt-xs='gt-xs'
 >
+<ng-container *ngIf='!envService.isMobile; else mobileView'>
 	<mat-card
 		fxFlex
 		fxFlex.sm='95'
@@ -37,8 +39,8 @@
 				<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
 			</p>
 		</mat-card-subtitle>
-		<mat-card-content>
-			<form ngNativeValidate (submit)='submit()'>
+		<mat-card-content fxLyout='column'>
+			<form ngNativeValidate (submit)='submit()' fxLayout='column' fxLayoutAlign='center'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<h3
 						class='cyph-banner warn'
@@ -51,94 +53,10 @@
 						}}
 					</h3>
 				</div>
-				<div
-					fxLayout='row'
-					fxLayoutAlign='center center'
-					*ngIf='(pinUnlock | async) === false'
-				>
-					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
-						<input
-							matInput
-							cyphTranslate
-							[ngModel]='username | async'
-							(ngModelChange)='username.next($event)'
-							[textMask]='usernameMask'
-							name='cyphUsername'
-							placeholder='Username'
-							cyphAutofocus
-							required
-						/>
-					</mat-form-field>
-				</div>
-				<div
-					fxLayout='row'
-					fxLayoutAlign='center center'
-					*ngIf='(pinUnlock | async) === false || (pinIsCustom | async)'
-				>
-					<mat-form-field
-						fxFlex
-						fxFlex.sm='80'
-						fxFlex.gt-sm='60'
-						*ngIf='pinUnlock | async'
-					>
-						<input
-							matInput
-							[ngModel]='pin | async'
-							(ngModelChange)='pin.next($event)'
-							name='lockScreenPIN'
-							[type]='(hidePassword | async) ? "password" : "text"'
-							[placeholder]='stringsService.pin'
-							cyphAutofocus
-							required
-						/>
-						<mat-icon
-							matSuffix
-							class='suffix-button'
-							(click)='hidePassword.next(!hidePassword.value)'
-						>
-							{{(hidePassword | async) ? 'visibility' : 'visibility_off'}}
-						</mat-icon>
-					</mat-form-field>
-					<mat-form-field
-						fxFlex
-						fxFlex.sm='80'
-						fxFlex.gt-sm='60'
-						*ngIf='(pinUnlock | async) === false'
-					>
-						<input
-							matInput
-							[ngModel]='masterKey | async'
-							(ngModelChange)='masterKey.next($event)'
-							name='masterKey'
-							[type]='(hidePassword | async) ? "password" : "text"'
-							[placeholder]='stringsService.masterKey'
-							required
-						/>
-						<mat-icon
-							matSuffix
-							class='suffix-button'
-							(click)='hidePassword.next(!hidePassword.value)'
-						>
-							{{(hidePassword | async) ? 'visibility' : 'visibility_off'}}
-						</mat-icon>
-					</mat-form-field>
-				</div>
-				<div
-					fxLayout='row'
-					fxLayoutAlign='center center'
-					*ngIf='(pinUnlock | async) && (pinIsCustom | async) === false'
-				>
-					<cyph-pin-input
-						fxFlex
-						fxFlex.sm='80'
-						fxFlex.gt-sm='60'
-						[ngModel]='pin | async'
-						(ngModelChange)='pin.next($event)'
-						name='pin'
-						[autofocus]='true'
-						[required]='true'
-					></cyph-pin-input>
-				</div>
+				<ng-container *ngTemplateOutlet='usernameField'></ng-container>
+				<ng-container *ngIf='(pinUnlock | async) === true; else login'>
+					<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
+				</ng-container>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<button mat-button type='submit' [matTooltip]='
 						(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
@@ -147,7 +65,161 @@
 					</button>
 				</div>
 			</form>
+			
 		</mat-card-content>
 		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</mat-card>
+</ng-container>
+<ng-template #mobileView>
+	<div fxFlexFill fxLayout='column' *ngIf='(pinUnlock | async) !== undefined'>
+		<cyph-logo homeLink></cyph-logo>
+		<div class='unlockString' fxLayoutAlign='center' fxLayoutAlign.xs='center end'>
+			<span fxFlex cyphTranslate>
+				<ng-container *ngIf='(pinUnlock | async); else loginText'>
+					Enter your 
+					{{(pinIsCustom | async) ? stringsService.unlockPassword : stringsService.pin}}
+					below.
+				</ng-container>
+				<ng-template #loginText>Login to Cyph</ng-template>
+			</span>
+		</div>
+		<div fxFlex fxLayoutAlign='center center'>
+			<form fxFlex ngNativeValidate (submit)='submit()' fxLayout='column' fxLayoutAlign='center'>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<h3
+							class='cyph-banner warn'
+							[style.display]='(error | async) ? "block" : "none"'
+						>
+							{{
+								(pinUnlock | async) ?
+									stringsService.invalidPIN :
+									stringsService.invalidCredentials
+							}}
+						</h3>
+					</div>
+					<ng-container *ngTemplateOutlet='usernameField'></ng-container>
+					<ng-container *ngIf='(pinUnlock | async) === true; else login'>
+						<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
+					</ng-container>
+				<div
+					fxLayout='row'
+					fxFlex
+					fxLayoutAlign='center center'
+				>
+					<button fxFlex mat-raised-button type='submit' [matTooltip]='
+						(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
+					'>
+						{{(pinUnlock | async) ? stringsService.unlock : stringsService.logIn}}
+					</button>
+				</div>
+			</form>
+		</div>
+		<i class='logout' fxFlex='5' fxFlexAlign='center center'>
+			<ng-container *ngIf='(pinUnlock | async); else signup'>
+				<span cyphTranslate>Not</span>
+				&ngsp;
+				<span>{{savedUsername | async}}?</span>
+				&ngsp;
+				<a cyphTranslate (click)='pinUnlock.next(false)'>Sign in as a different user</a>
+				&ngsp;
+				<span cyphTranslate>or</span>
+				&ngsp;
+				<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
+			</ng-container>
+			<ng-template #signup>
+				<a cyphTranslate href='#'>
+					Sign up for Cyph
+				</a>
+			</ng-template>
+		</i>
+		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+	</div>
+</ng-template>
 </div>
+
+<ng-template #usernameField>
+	<div fxLayout='row' fxLayoutAlign='center' fxFlex='80'>
+		<mat-form-field [fxFlex]='((pinUnlock | async) && (pinIsCustom | async) === false) ? "40" : "80"'>
+				<input
+					matInput
+					cyphTranslate
+					[ngModel]='(savedUsername | async)'
+					(ngModelChange)='username.next($event)'
+					[textMask]='usernameMask'
+					name='cyphUsername'
+					placeholder='Username'
+					cyphAutofocus
+					[disabled]='(pinUnlock | async)'
+					[required]='(pinUnlock | async) === false'
+				/>
+		</mat-form-field>
+	</div>
+</ng-template>
+
+<ng-template #login>
+	<div fxLayout='row' fxLayoutAlign='center'>
+		<mat-form-field
+			fxFlex='80'
+		>
+			<input
+				matInput
+				[ngModel]='masterKey | async'
+				(ngModelChange)='masterKey.next($event)'
+				name='masterKey'
+				[type]='(hidePassword | async) ? "password" : "text"'
+				[placeholder]='stringsService.masterKey'
+				required
+			/>
+			<mat-icon
+				matSuffix
+				class='suffix-button'
+				(click)='hidePassword.next(!hidePassword.value)'
+			>
+				{{(hidePassword | async) ? 'visibility' : 'visibility_off'}}
+			</mat-icon>
+		</mat-form-field>
+	</div>
+</ng-template>
+
+<ng-template #pinUnlockFields>
+	<ng-container *ngIf='(pinIsCustom | async) === false; else pwUnlockFields'>
+		<div fxLayout='row' fxLayoutAlign='center'>
+			<cyph-pin-input
+				fxFlex='40'
+				fxFlex.lt-sm='80'
+				[ngModel]='pin | async'
+				(ngModelChange)='pin.next($event)'
+				name='pin'
+				[autofocus]='true'
+				[required]='true'
+			></cyph-pin-input>
+		</div>
+	</ng-container>
+</ng-template>
+
+<ng-template #pwUnlockFields>
+<div fxLayout='row' fxLayoutAlign='center'>
+	<mat-form-field fxFlex='80'>
+		<input
+			matInput
+			[ngModel]='pin | async'
+			(ngModelChange)='pin.next($event)'
+			name='lockScreenPassword'
+			[type]='(hidePassword | async) ? "password" : "text"'
+			[placeholder]='stringsService.unlockPassword | titlecase'
+			cyphAutofocus
+			required
+		/>
+		<mat-icon
+			matSuffix
+			class='suffix-button'
+			(click)='hidePassword.next(!hidePassword.value)'
+		>
+			{{(hidePassword | async) ? 'visibility' : 'visibility_off'}}
+		</mat-icon>
+	</mat-form-field>
+	</div>
+	<br />
+</ng-template>
+
+

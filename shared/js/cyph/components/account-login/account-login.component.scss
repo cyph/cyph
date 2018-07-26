@@ -1,4 +1,5 @@
 @import '../../../../css/mixins';
+@import '../../../../css/theme';
 
 form > div:last-child {
 	padding-top: 64px;
@@ -8,13 +9,58 @@ cyph-pin-input {
 	padding-bottom: 32px;
 }
 
+.logout {
+	text-align: center;
+}
+
 .mobile {
-	.mat-card {
-		height: 100% !important;
+	padding: 2em;
+	text-align: center;
+
+	::ng-deep cyph-logo {
+		height: 7%;
+		margin-bottom: 20px;
+	}
+
+	form > div:last-child {
+		padding-top: 0px;
+		top: -10px;
+		position: relative;
+	}
+
+	h1 {
+		font-size: 2.5em;
+	}
+
+	.unlockString {
+		//margin-bottom: 24px;
+		span {
+			font-size: 1.35em;
+		}
+	}
+
+
+
+	.mat-card, .mat-card-content {
+		//height: 100% !important;
 		width: 100%;
 	}
+	
 
 	.mat-card-title {
 		text-align: center;
+	}
+	&.gt-xs {
+		::ng-deep cyph-logo {
+			height: 12%;
+		}
+		i {
+			position: relative;
+			top: 5px;
+		}
+	}
+	button {
+		margin-top: 45px;
+		width: 100%;
 	}
 }
