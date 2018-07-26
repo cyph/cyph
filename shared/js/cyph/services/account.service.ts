@@ -280,13 +280,17 @@ export class AccountService {
 
 
 		let lastSection	= '';
+		let lastURL		= '';
 
 		this.router.events.subscribe(e => {
 			if (!(e instanceof NavigationStart)) {
 				return;
 			}
 
-			this.headerInternal.next(undefined);
+			if (e.url !== lastURL) {
+				lastURL	= e.url;
+				this.headerInternal.next(undefined);
+			}
 
 			const section	= (e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
 
