@@ -81,19 +81,19 @@ export class DropZoneDirective implements OnChanges {
 						const elem: HTMLElement	= this.elementRef.nativeElement;
 
 						const handler			= async () => {
-							try {
-								const o: any	= await (<any> self).chooser.getFile(this.accept);
+							const o: any	= await (<any> self).chooser.getFile(this.accept);
 
-								if (
-									typeof o === 'object' &&
-									o.data instanceof Uint8Array &&
-									typeof o.mediaType === 'string' &&
-									typeof o.name === 'string'
-								) {
-									this.fileDrop.emit(o);
-								}
+							if (
+								typeof o === 'object' &&
+								o.data instanceof Uint8Array &&
+								typeof o.mediaType === 'string' &&
+								typeof o.name === 'string'
+							) {
+								this.fileDrop.emit(o);
 							}
-							catch {}
+							else {
+								throw new Error('Invalid chooser result.');
+							}
 						};
 
 						elem.addEventListener('click', handler);
