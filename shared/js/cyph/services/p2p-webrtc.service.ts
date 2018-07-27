@@ -56,8 +56,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 	public static readonly isSupported: boolean	=
 		/* Temporarily blocking Edge until issue resolved in simplewebrtc/webrtc-adapter */
 		!(env.environment.production && env.isEdge) &&
-		/* Temporarily blocking Safari until it works */
-		!(env.environment.production && env.isSafari) &&
+		/* Temporarily blocking non-Cordova Safari until it works */
+		!(env.environment.production && env.isSafari && !env.isCordova) &&
 		(() => {
 			try {
 				return new SimpleWebRTC({connection: {on: () => {}}}).capabilities.support;
