@@ -91,9 +91,6 @@ export class DropZoneDirective implements OnChanges {
 							) {
 								this.fileDrop.emit(o);
 							}
-							else {
-								throw new Error('Invalid chooser result.');
-							}
 						};
 
 						elem.addEventListener('click', handler);
