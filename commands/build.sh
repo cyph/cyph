@@ -40,7 +40,7 @@ done
 ./commands/ngassets.sh
 for d in ${projects} ; do
 	cd "${d}"
-	ng build --prod
+	ng build --aot true
 	checkfail
 	cd ..
 done
