@@ -104,6 +104,7 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageListComponent,
 		CommonModule,
 		ContactComponent,
+		CyphWebModule,
 		DynamicFormComponent,
 		EnableLastPassDirective,
 		HelpComponent,
