@@ -112,7 +112,13 @@
 </div>
 
 <ng-template #buttons>
-	<div fxFlex class='buttons' fxLayout='column' fxLayoutGap='24px' [fxLayoutAlign]='envService.isMobile ? "space-evenly" : ""'>
+	<div
+		fxFlex
+		class='buttons'
+		fxLayout='column'
+		fxLayoutGap='24px'
+		[fxLayoutAlign]='envService.isMobile ? "space-evenly" : ""'
+	>
 		<ng-container *ngIf='
 			envService.isTelehealth &&
 			(currentUser.user.userType | async) === accountUserTypes.Standard &&

@@ -42,6 +42,7 @@ import {ImageCropperModule} from 'ngx-image-cropper';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogImageComponent} from '../components/dialog-image';
+import {DialogVideoComponent} from '../components/dialog-video';
 import {MarkdownComponent} from '../components/markdown';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {EnterPressDirective} from '../directives/enter-press.directive';
@@ -62,6 +63,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogImageComponent,
+		DialogVideoComponent,
 		DropZoneDirective,
 		EnterPressDirective,
 		MarkdownComponent,
@@ -71,6 +73,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogImageComponent,
+		DialogVideoComponent,
 		MarkdownComponent
 	],
 	exports: [
@@ -79,6 +82,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogImageComponent,
+		DialogVideoComponent,
 		DropZoneDirective,
 		EnterPressDirective,
 		FlexLayoutModule,

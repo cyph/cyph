@@ -86,5 +86,13 @@ export class DialogService {
 		throw new Error('Must provide an implementation of DialogService.toast.');
 	}
 
+		/** Displays video. */
+		public async video (
+			_O: {src: SafeUrl|string; title?: string},
+			_CLOSE_FUNCTION?: IResolvable<() => void>
+		) : Promise<void> {
+			throw new Error('Must provide an implementation of DialogService.video.');
+		}
+
 	constructor () {}
 }

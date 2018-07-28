@@ -468,6 +468,12 @@ export class AccountFilesService {
 		return file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg');
 	});
 
+	/** Determines whether file should be treated as an image. */
+	public readonly isVideo					= memoize(async (id: string) => {
+		const file	= await this.getFile(id);
+		return file.mediaType.startsWith('video/');
+	});
+
 	/** Maximum number of characters in a file name. */
 	public readonly maxNameLength: number	= 80;
 
@@ -969,7 +975,9 @@ export class AccountFilesService {
 	/** Opens a file. */
 	public async openFile (id: string) : Promise<void> {
 		if (!(await this.openImage(id))) {
+			if (!(await this.openVideo(id))) {
 			await this.downloadAndSave(id).result;
+			}
 		}
 	}
 
@@ -988,6 +996,23 @@ export class AccountFilesService {
 		}
 
 		return isImage;
+	}
+
+	/**
+	 * Opens an video file.
+	 * @returns Whether or not file is an video.
+	 */
+	public async openVideo (id: string) : Promise<boolean> {
+		const isVideo	= await this.isVideo(id);
+
+		if (isVideo) {
+			this.dialogService.video({
+				src: await this.downloadURI(id).result,
+				title: (await this.getFile(id)).name
+			});
+		}
+
+		return isVideo;
 	}
 
 	/** Removes a file. */

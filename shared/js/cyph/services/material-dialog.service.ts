@@ -7,6 +7,7 @@ import {map} from 'rxjs/operators';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogImageComponent} from '../components/dialog-image';
+import {DialogVideoComponent} from '../components/dialog-video';
 import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {lockFunction} from '../util/lock';
@@ -243,6 +244,25 @@ export class MaterialDialogService implements DialogService {
 			await sleep(500);
 			return false;
 		}
+	}
+
+	/** @inheritDoc */
+	public async video (
+		o: {src: SafeUrl|string; title?: string},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<void> {
+		return this.lock(async () => {
+			const matDialogRef	= this.matDialog.open(DialogVideoComponent);
+
+			matDialogRef.componentInstance.src		= o.src;
+			matDialogRef.componentInstance.title	= o.title;
+
+			if (closeFunction) {
+				closeFunction.resolve(() => { matDialogRef.close(); });
+			}
+
+			await matDialogRef.afterClosed().toPromise();
+		});
 	}
 
 	constructor (
