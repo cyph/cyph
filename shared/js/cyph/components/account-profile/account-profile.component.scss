@@ -151,10 +151,11 @@ smd-fab-speed-dial ::ng-deep smd-fab-actions button.open {
 	position: fixed;
 }
 
-.edit-buttons {
-	position: absolute;
+.speed-dial {
+	position: fixed;
 	bottom: 25px;
 	right: 27px;
+	z-index: 1;
 }
 
 .edit-hide {
