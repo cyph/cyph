@@ -13,6 +13,7 @@
 		<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px'>
 			<button
 				mat-raised-button
+				color='primary'
 				[matTooltip]='stringsService.newWalletGenerate'
 				matTooltipPosition='above'
 				(click)='generate(newWalletOptions.generate)'
@@ -23,6 +24,7 @@
 			</button>
 			<button
 				mat-raised-button
+				color='primary'
 				cyphTranslate
 				[matTooltip]='stringsService.newWalletImportKey'
 				matTooltipPosition='above'
@@ -34,6 +36,7 @@
 			</button>
 			<button
 				mat-raised-button
+				color='primary'
 				cyphTranslate
 				[matTooltip]='stringsService.newWalletImportAddress'
 				matTooltipPosition='above'
