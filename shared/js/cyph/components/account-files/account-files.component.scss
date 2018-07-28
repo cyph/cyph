@@ -3,3 +3,15 @@
 .file-upload {
 	height: 10em;
 }
+
+.mobile{
+	mat-card {
+		width: 80vw;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	::ng-deep .mat-card-header-text {
+		word-break: break-word;
+	}
+}
