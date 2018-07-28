@@ -8,7 +8,9 @@ img {
 }
 
 [mat-dialog-actions] {
-	margin-bottom: -64px;
+	margin-bottom: 0px;
+	top: -15px;
+	position: relative;
 }
 
 .crop-container {
