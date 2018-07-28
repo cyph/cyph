@@ -435,7 +435,7 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public async init (channelID?: string, userID?: string) : Promise<void> {
 		this.incomingMessageQueueLock(async o => {
-			this.incomingMessageQueue.subscribeAndPop(async ({messages}) => {
+			const sub	= this.incomingMessageQueue.subscribeAndPop(async ({messages}) => {
 				if (!messages || messages.length < 1) {
 					return;
 				}
@@ -448,6 +448,7 @@ export abstract class SessionService implements ISessionService {
 			});
 
 			await Promise.race([this.closed, o.stillOwner.toPromise()]);
+			sub.unsubscribe();
 		});
 
 		await Promise.all([
