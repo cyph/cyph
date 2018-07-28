@@ -199,6 +199,77 @@
 	</div>
 </ng-template>
 
+<ng-template #speedDial>
+	<div
+		class='overlay fullscreen'
+		*ngIf='envService.isMobile && (isSpeedDialOpen | async)'
+		(click)='isSpeedDialOpen.next(false)'
+	></div>
+	<smd-fab-speed-dial
+		animationMode='scale'
+		[open]='isSpeedDialOpen | async'
+		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
+		class='edit-buttons edit-hide'
+	>
+		<smd-fab-trigger
+			[spin]='true'
+			(mouseenter)='!envService.isMobile ? isSpeedDialOpen.next(true) : undefined'
+		>
+			<button
+				mat-fab
+				cyphTranslate
+				matTooltip='Compose Message'
+				matTooltipPosition='left'
+				[routerLink]='
+					(isSpeedDialOpen | async) ?
+						accountService.routeRoot + "compose/" :
+						undefined
+				'
+				(click)='
+					envService.isMobile ?
+						isSpeedDialOpen.next(!isSpeedDialOpen.value) :
+						undefined
+				'
+			>
+				<mat-icon>{{(isSpeedDialOpen | async) ? 'message' : 'add'}}</mat-icon>
+			</button>
+		</smd-fab-trigger>
+		<smd-fab-actions>
+			<button
+				mat-mini-fab
+				[class.open]='isSpeedDialOpen | async'
+				cyphTranslate
+				matTooltip='New Note'
+				matTooltipPosition='left'
+				[routerLink]='accountService.routeRoot + "notes/new"'
+			>
+				<mat-icon>note_add</mat-icon>
+			</button>
+			<button
+				mat-mini-fab
+				[class.open]='isSpeedDialOpen | async'
+				cyphTranslate
+				matTooltip='Upload File'
+				matTooltipPosition='left'
+				cyphDropZone
+				(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+			>
+				<mat-icon>cloud_upload</mat-icon>
+			</button>
+			<button
+				mat-mini-fab
+				[class.open]='isSpeedDialOpen | async'
+				cyphTranslate
+				class='alt'
+				matTooltip='New Cyph link'
+				matTooltipPosition='left'
+			>
+				<mat-icon>link</mat-icon>
+			</button>
+		</smd-fab-actions>
+	</smd-fab-speed-dial>
+	</ng-template>
+
 <ng-template #fileUpload>
 	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='(isCurrentUser | async) === false'>
 		<div
@@ -237,6 +308,34 @@
 				[cyphDropZone]='editMode | async'
 				(fileDrop)='updateDraft({coverImage: $event})'
 			></div>
+
+			<div class='edit-button' fxLayout='row' fxLayoutGap='8px'>
+			<button
+				mat-raised-button
+				cyphTranslate
+				(click)='setEditMode(false)'
+				[matTooltip]='cancel'
+				*ngIf='(isCurrentUser | async) && (editMode | async)'
+			>
+				<ng-container *ngIf='editMode | async'>
+					<mat-icon>cancel</mat-icon> Cancel Changes
+				</ng-container>
+			</button>
+			<button
+				mat-raised-button
+				cyphTranslate
+				(click)='editMode.value ? saveProfile() : setEditMode(true)'
+				[matTooltip]='(editMode | async) ? "Edit Profile" : "Save Profile"'
+				*ngIf='isCurrentUser | async'
+			>
+				<ng-container *ngIf='editMode | async'>
+					<mat-icon>save</mat-icon> Save Profile
+				</ng-container>
+				<ng-container *ngIf='(editMode | async) === false'>
+					<mat-icon>edit</mat-icon> Edit Profile
+				</ng-container>
+			</button>
+			</div>
 
 			<div fxLayoutAlign='center center'>
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='16px'>
@@ -308,7 +407,7 @@
 	*ngIf='!envService.isTelehealth'
 >
 	<ng-container *ngTemplateOutlet='standardProfile'></ng-container>
-	<ng-container *ngTemplateOutlet='editButton'></ng-container>
+	<ng-container *ngTemplateOutlet='speedDial'></ng-container>
 </div>
 
 

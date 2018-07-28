@@ -111,6 +111,42 @@ mat-card {
 	min-width: 200px;
 }
 
+.edit-button {
+	right: -210px;
+	top: 0;
+	position: absolute;
+	transition: 500ms;
+
+
+	button {
+		width: 175px;
+		opacity: 0.75;
+
+		&:hover {
+			opacity: 1;
+		}
+
+		mat-icon {
+			font-size: 22px;
+			height: 22px;
+			width: 22px;
+			position: relative;
+			right: 5px;
+		}
+	}
+}
+
+
+.overlay {
+	background-color: #333;
+	opacity: 0.5;
+	z-index: 1;
+	height: 100vh;
+	width: 100vw;
+	top: 0;
+	position: fixed;
+}
+
 .edit-buttons {
 	position: absolute;
 	bottom: 25px;

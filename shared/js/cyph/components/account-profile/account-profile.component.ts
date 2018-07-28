@@ -39,6 +39,9 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	/** @ignore */
 	private destroyed: boolean	= false;
 
+	/** Indicates whether speed dial is open. */
+	public readonly isSpeedDialOpen						= new BehaviorSubject<boolean>(false);
+
 	/** @ignore */
 	private readonly userInternal: Observable<{
 		isCurrentUser: boolean;
