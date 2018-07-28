@@ -360,7 +360,7 @@
 						readViewClasses: "animated flipInX _2"
 					}'></ng-container>
 					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
-					<div></div>
+					<div *ngIf='(editMode | async)'></div>
 					<ng-container *ngTemplateOutlet='description; context: {
 						divider: true,
 						readViewClasses: "animated flipInX _3"
@@ -371,7 +371,7 @@
 			<div
 				fxLayoutAlign='center center'
 				class='edit-hide status'
-				*ngIf='isCurrentUser | async'
+				*ngIf='(isCurrentUser | async) && (editMode | async) === false'
 			>
 				<mat-form-field fxFlex='50'>
 					<mat-select
