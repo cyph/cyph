@@ -8,9 +8,23 @@
 	font-size: 18px;
 }
 
+.mobile {
+	.buttons button, button.logout {
+		font-size: 30px;
+		min-height: 40px;
+
+		mat-icon {
+			font-size: 30px;
+			height: 30px;
+			width: 30px;
+		}
+	}
+}
+
 button {
 	font-family: Ubuntu;
-	font-size: 22px;
+	font-weight: 300;
+	font-size: 26px;
 
 	&[mat-icon-button] {
 		height: 1.75em;
