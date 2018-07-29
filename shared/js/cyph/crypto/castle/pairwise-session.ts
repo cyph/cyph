@@ -276,8 +276,7 @@ export class PairwiseSession {
 	/** Receive/decrypt incoming message. */
 	public async receive (cyphertext: Uint8Array) : Promise<void> {
 		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
-			await this.abort();
-			return;
+			return this.abort();
 		}
 
 		await this.isReceiving.pipe(filter(b => b), take(1)).toPromise();
@@ -296,8 +295,7 @@ export class PairwiseSession {
 	/** Send/encrypt outgoing message. */
 	public async send (plaintext: string|ArrayBufferView, timestamp?: number) : Promise<void> {
 		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
-			await this.abort();
-			return;
+			return this.abort();
 		}
 
 		if (timestamp === undefined) {
