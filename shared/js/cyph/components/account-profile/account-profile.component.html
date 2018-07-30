@@ -314,12 +314,10 @@
 				mat-raised-button
 				cyphTranslate
 				(click)='setEditMode(false)'
-				[matTooltip]='cancel'
+				matTooltip='Cancel Changes'
 				*ngIf='(isCurrentUser | async) && (editMode | async)'
 			>
-				<ng-container *ngIf='editMode | async'>
-					<mat-icon>cancel</mat-icon> Cancel Changes
-				</ng-container>
+				<mat-icon>cancel</mat-icon> Cancel Changes
 			</button>
 			<button
 				mat-raised-button
