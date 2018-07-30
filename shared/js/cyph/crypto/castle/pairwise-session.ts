@@ -1,21 +1,18 @@
-/* tslint:disable:max-file-line-count */
-
-import {BehaviorSubject, Subject} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
-import {config} from '../../config';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import {ICastleRatchetState} from '../../proto';
+import {ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
+import {filterUndefined} from '../../util/filter';
 import {lockFunction} from '../../util/lock';
 import {debugLog} from '../../util/log';
 import {getTimestamp} from '../../util/time';
-import {resolvable, retryUntilSuccessful, sleep} from '../../util/wait';
+import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';
+import {ICastleIncomingMessages} from './icastle-incoming-messages';
 import {IHandshakeState} from './ihandshake-state';
 import {ILocalUser} from './ilocal-user';
 import {IRemoteUser} from './iremote-user';
@@ -27,36 +24,17 @@ import {Transport} from './transport';
  */
 export class PairwiseSession {
 	/** @ignore */
-	private readonly _CORE					= resolvable<Core>();
-
-	/** @ignore */
-	private readonly core: Promise<Core>	= this._CORE.promise;
-
-	/** @ignore */
-	private readonly incomingMessageQueue: Subject<{
+	private readonly incomingMessageQueue	= new LocalAsyncList<{
 		cyphertext: Uint8Array;
 		newMessageID: number;
 		resolve: () => void;
-	}>	= new Subject<{
-		cyphertext: Uint8Array;
-		newMessageID: number;
-		resolve: () => void;
-	}>();
+	}>([]);
 
 	/** @ignore */
-	private readonly instanceID: Uint8Array					= this.potassium.randomBytes(16);
-
-	/** @ignore */
-	private readonly isReceiving: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	private readonly instanceID: Uint8Array	= this.potassium.randomBytes(16);
 
 	/** @ignore */
 	private lastOutgoingMessageID?: number;
-
-	/** @ignore */
-	private nextOutgoingMessageID?: number;
-
-	/** @ignore */
-	private readonly resolveCore: (core: Core) => void		= this._CORE.resolve;
 
 	/** @ignore */
 	private async abort () : Promise<void> {
@@ -78,68 +56,38 @@ export class PairwiseSession {
 	}
 
 	/** @ignore */
-	private incrementMessageID (messageID: number) : number {
-		return messageID === config.maxUint32 ? 0 : messageID + 1;
-	}
-
-	/** @ignore */
-	private async newOutgoingMessageID () : Promise<{
-		messageID: number;
-		messageIDBytes: Uint8Array;
-	}> {
-		if (this.nextOutgoingMessageID === undefined) {
-			this.nextOutgoingMessageID	= await this.outgoingMessageID.getValue();
-		}
-
-		const messageID	= this.nextOutgoingMessageID;
-
-		this.nextOutgoingMessageID	= this.incrementMessageID(messageID);
-
-		return {
-			messageID,
-			messageIDBytes: new Uint8Array(new Uint32Array([messageID]).buffer)
-		};
-	}
-
-	/** @ignore */
 	private async processIncomingMessages (
+		core: Core,
 		newMessageID: number,
 		cyphertext: Uint8Array
 	) : Promise<void> {
 		const promises	= {
-			incomingMessageID: this.incomingMessageID.getValue(),
-			incomingMessages: this.incomingMessages.getValue(),
-			incomingMessagesMax: this.incomingMessagesMax.getValue()
+			incomingMessageID: this.ratchetState.getValue().then(o => o.incomingMessageID + 1),
+			incomingMessages: this.incomingMessages.getValue()
 		};
 
 		let incomingMessageID	= await promises.incomingMessageID;
 		const incomingMessages	= await promises.incomingMessages;
-		let incomingMessagesMax	= await promises.incomingMessagesMax;
-
-		const ratchetUpdatePromises: Promise<void>[]	= [];
 
 		debugLog(() => ({pairwiseSessionIncomingMessage: {
 			cyphertext,
 			incomingMessageID,
 			incomingMessages,
-			incomingMessagesMax,
 			newMessageID
 		}}));
 
+		incomingMessages.max	= Math.max(incomingMessageID, incomingMessages.max, newMessageID);
+
 		if (newMessageID >= incomingMessageID) {
-			if (newMessageID > incomingMessagesMax) {
-				incomingMessagesMax	= newMessageID;
-			}
-
-			const message	= incomingMessages[newMessageID] || [];
-
-			incomingMessages[newMessageID]	= message;
-			message.push(cyphertext);
+			incomingMessages.queue[newMessageID]	= [
+				...(incomingMessages.queue[newMessageID] || []),
+				cyphertext
+			];
 		}
 
-		while (incomingMessageID <= incomingMessagesMax) {
+		while (incomingMessageID <= incomingMessages.max) {
 			const id		= incomingMessageID;
-			const message	= incomingMessages[id];
+			const message	= incomingMessages.queue[id];
 
 			if (message === undefined) {
 				break;
@@ -147,13 +95,7 @@ export class PairwiseSession {
 
 			for (const cyphertextBytes of message) {
 				try {
-					const {ratchetUpdateComplete}	= await (await this.core).decrypt(
-						cyphertextBytes,
-						async plaintext => this.decryptedMessageQueue.pushItem(plaintext)
-					);
-
-					ratchetUpdatePromises.push(ratchetUpdateComplete);
-
+					await core.decrypt(cyphertextBytes);
 					++incomingMessageID;
 					break;
 				}
@@ -167,25 +109,16 @@ export class PairwiseSession {
 						throw err;
 					}
 				}
-				finally {
-					this.potassium.clearMemory(cyphertextBytes);
-				}
 			}
 
-			delete incomingMessages[id];
+			delete incomingMessages.queue[id];
 		}
 
-		await Promise.all(ratchetUpdatePromises);
-
-		this.incomingMessageID.setValue(incomingMessageID);
-		this.incomingMessages.setValue(incomingMessages);
-		this.incomingMessagesMax.setValue(incomingMessagesMax);
+		await this.incomingMessages.setValue(incomingMessages);
 	}
 
 	/** @ignore */
 	private async processOutgoingMessages (...cyphertexts: Uint8Array[]) : Promise<void> {
-		let anyMessagesSent	= false;
-
 		for (const cyphertext of cyphertexts) {
 			const messageID	= this.potassium.toDataView(cyphertext).getUint32(0, true);
 
@@ -197,20 +130,9 @@ export class PairwiseSession {
 
 				await this.transport.send(cyphertext);
 
-				anyMessagesSent				= true;
 				this.lastOutgoingMessageID	= messageID;
 			}
 		}
-
-		if (!anyMessagesSent || this.lastOutgoingMessageID === undefined) {
-			return;
-		}
-
-		await this.outgoingMessageID.setValue(
-			this.incrementMessageID(
-				this.lastOutgoingMessageID
-			)
-		);
 	}
 
 	/** @ignore */
@@ -279,11 +201,9 @@ export class PairwiseSession {
 			return this.abort();
 		}
 
-		await this.isReceiving.pipe(filter(b => b), take(1)).toPromise();
-
 		const {promise, resolve}	= resolvable();
 
-		this.incomingMessageQueue.next({
+		await this.incomingMessageQueue.pushItem({
 			cyphertext,
 			newMessageID: this.potassium.toDataView(cyphertext).getUint32(0, true),
 			resolve
@@ -335,24 +255,9 @@ export class PairwiseSession {
 		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
-		private readonly decryptedMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
-
-		/** @ignore */
-		private readonly encryptedMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
-
-		/** @ignore */
-		private readonly incomingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
-
-		/** @ignore */
-		private readonly incomingMessages: IAsyncValue<{[id: number]: Uint8Array[]|undefined}> =
-			new LocalAsyncValue<{[id: number]: Uint8Array[]|undefined}>({})
+		private readonly incomingMessages: IAsyncValue<ICastleIncomingMessages> =
+			new LocalAsyncValue<ICastleIncomingMessages>({max: 0, queue: {}})
 		,
-
-		/** @ignore */
-		private readonly incomingMessagesMax: IAsyncValue<number> = new LocalAsyncValue(0),
-
-		/** @ignore */
-		private readonly outgoingMessageID: IAsyncValue<number> = new LocalAsyncValue(0),
 
 		/** @ignore */
 		private readonly outgoingMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
@@ -360,22 +265,31 @@ export class PairwiseSession {
 		/** @ignore */
 		private readonly lock: LockFunction = lockFunction(),
 
-		ratchetState: IAsyncValue<ICastleRatchetState> = new LocalAsyncValue<ICastleRatchetState>({
-			asymmetric: {
-				privateKey: new Uint8Array(0),
-				publicKey: new Uint8Array(0)
-			},
-			symmetric: {
-				current: {
-					incoming: new Uint8Array(0),
-					outgoing: new Uint8Array(0)
+		/** @ignore */
+		private readonly ratchetState: IAsyncValue<ICastleRatchetState> =
+			new LocalAsyncValue<ICastleRatchetState>({
+				asymmetric: {
+					privateKey: new Uint8Array(0),
+					publicKey: new Uint8Array(0)
 				},
-				next: {
-					incoming: new Uint8Array(0),
-					outgoing: new Uint8Array(0)
+				incomingMessageID: 0,
+				outgoingMessageID: 1,
+				symmetric: {
+					current: {
+						incoming: new Uint8Array(0),
+						outgoing: new Uint8Array(0)
+					},
+					next: {
+						incoming: new Uint8Array(0),
+						outgoing: new Uint8Array(0)
+					}
 				}
-			}
-		})
+			})
+		,
+
+		/** @ignore */
+		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate> =
+			new LocalAsyncList([])
 	) {
 		debugLog(() => ({pairwiseSessionStart: true}));
 
@@ -403,7 +317,7 @@ export class PairwiseSession {
 				/* Initialize symmetric ratchet */
 				else if (
 					currentStep === HandshakeSteps.PostBootstrap &&
-					this.potassium.isEmpty(await ratchetState.getValue().then(o =>
+					this.potassium.isEmpty(await this.ratchetState.getValue().then(o =>
 						o.symmetric &&
 						o.symmetric.current &&
 						o.symmetric.current.incoming
@@ -423,11 +337,13 @@ export class PairwiseSession {
 						initialSecret
 					);
 
-					await ratchetState.setValue({
+					await this.ratchetState.setValue({
 						asymmetric: {
 							privateKey: new Uint8Array(0),
 							publicKey: new Uint8Array(0)
 						},
+						incomingMessageID: 0,
+						outgoingMessageID: 1,
 						symmetric: {
 							current: symmetricKeys,
 							next: {
@@ -442,25 +358,55 @@ export class PairwiseSession {
 				else {
 					debugLog(() => ({castleHandshake: 'final step'}));
 
-					this.resolveCore(new Core(
-						this.potassium,
-						this.handshakeState.isAlice,
-						await ratchetState.getValue(),
-						ratchetState
-					));
-
 					await this.connect();
 
 					this.lock(async o => {
-						const initialOutgoingMessages	=
-							await this.encryptedMessageQueue.getValue()
-						;
+						const initialRatchetUpdates	= await this.ratchetUpdateQueue.getValue();
 
 						if (!o.stillOwner.value) {
 							return;
 						}
 
-						await this.processOutgoingMessages(...initialOutgoingMessages);
+						await Promise.all([
+							this.processOutgoingMessages(...filterUndefined(
+								initialRatchetUpdates.map(o =>
+									o.cyphertext && !this.potassium.isEmpty(o.cyphertext) ?
+										o.cyphertext :
+										undefined
+								)
+							)),
+							this.transport.receive(this.remoteUser.username, ...filterUndefined(
+								initialRatchetUpdates.map(o =>
+									o.plaintext && !this.potassium.isEmpty(o.plaintext) ?
+										o.plaintext :
+										undefined
+								)
+							))
+						]);
+
+						if (!o.stillOwner.value) {
+							return;
+						}
+
+						const lastRatchetUpdate	= initialRatchetUpdates.slice(-1)[0];
+
+						if (lastRatchetUpdate) {
+							await this.ratchetState.setValue(lastRatchetUpdate.ratchetState);
+						}
+
+						if (!o.stillOwner.value) {
+							return;
+						}
+
+						const core	= new Core(
+							this.potassium,
+							this.handshakeState.isAlice,
+							lastRatchetUpdate ?
+								lastRatchetUpdate.ratchetState :
+								await this.ratchetState.getValue()
+							,
+							this.ratchetUpdateQueue
+						);
 
 						if (!o.stillOwner.value) {
 							return;
@@ -469,61 +415,38 @@ export class PairwiseSession {
 						const receiveLock	= lockFunction();
 						const sendLock		= lockFunction();
 
-						const receiveCyphertextSub	= this.incomingMessageQueue.subscribe(
+						const decryptSub		= this.incomingMessageQueue.subscribeAndPop(
 							async ({cyphertext, newMessageID, resolve}) => receiveLock(async () => {
 								this.transport.logCyphertext(this.remoteUser.username, cyphertext);
-								await this.processIncomingMessages(newMessageID, cyphertext);
+								await this.processIncomingMessages(core, newMessageID, cyphertext);
 								resolve();
 							})
 						);
 
-						const receivePlaintextSub	= this.decryptedMessageQueue.subscribeAndPop(
-							async plaintext => {
-								debugLog(() => ({pairwiseSessionDecrypted: {plaintext}}));
-								await this.transport.receive(plaintext, this.remoteUser.username);
+						const encryptSub		= this.outgoingMessageQueue.subscribeAndPop(
+							async message => sendLock(async () => core.encrypt(message))
+						);
+
+						const ratchetUpdateSub	= this.ratchetUpdateQueue.subscribeAndPop(async ({
+							cyphertext,
+							plaintext,
+							ratchetState
+						}) => {
+							if (cyphertext && !this.potassium.isEmpty(cyphertext)) {
+								await this.processOutgoingMessages(cyphertext);
 							}
-						);
 
-						const sendCyphertextSub		= this.encryptedMessageQueue.subscribeAndPop(
-							async cyphertext => this.processOutgoingMessages(cyphertext)
-						);
+							if (plaintext && !this.potassium.isEmpty(plaintext)) {
+								await this.transport.receive(this.remoteUser.username, plaintext);
+							}
 
-						const sendPlaintextSub		= this.outgoingMessageQueue.subscribeAndPop(
-							async message => sendLock(async () => {
-								const {messageID, messageIDBytes}	=
-									await this.newOutgoingMessageID()
-								;
+							await this.ratchetState.setValue(ratchetState);
+						});
 
-								await (await this.core).encrypt(
-									message,
-									messageIDBytes,
-									async cyphertext => {
-										debugLog(() => ({pairwiseSessionOutgoingMessageQueue: {
-											cyphertext,
-											message,
-											messageID
-										}}));
-
-										return this.encryptedMessageQueue.pushItem(
-											this.potassium.concatMemory(
-												true,
-												messageIDBytes,
-												cyphertext
-											)
-										);
-									}
-								);
-							})
-						);
-
-						this.isReceiving.next(true);
 						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
-						this.isReceiving.next(false);
-						await sleep();
-						receiveCyphertextSub.unsubscribe();
-						receivePlaintextSub.unsubscribe();
-						sendCyphertextSub.unsubscribe();
-						sendPlaintextSub.unsubscribe();
+						decryptSub.unsubscribe();
+						encryptSub.unsubscribe();
+						ratchetUpdateSub.unsubscribe();
 					});
 
 					return;

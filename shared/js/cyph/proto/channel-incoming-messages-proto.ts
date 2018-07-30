@@ -1,46 +1,49 @@
 import {CastleIncomingMessages} from '../../proto';
+import {ICastleIncomingMessages} from '../crypto/castle/icastle-incoming-messages';
 import {deserialize, serialize} from '../util/serialization';
 
 
 /** @see CastleIncomingMessages */
 export class CastleIncomingMessagesProto {
 	/** @see IProto.create */
-	public static create () : {[id: number]: Uint8Array[]|undefined} {
-		return {};
+	public static create () : ICastleIncomingMessages {
+		return {max: 0, queue: {}};
 	}
 
 	/** @see IProto.decode */
-	public static async decode (bytes: Uint8Array) : Promise<{
-		[id: number]: Uint8Array[]|undefined;
-	}> {
-		const {incomingMessages}	= await deserialize(CastleIncomingMessages, bytes);
+	public static async decode (bytes: Uint8Array) : Promise<ICastleIncomingMessages> {
+		const incomingMessages	= await deserialize(CastleIncomingMessages, bytes);
 
 		if (!incomingMessages) {
-			return {};
+			return this.create();
 		}
 
-		return Object.keys(incomingMessages).reduce<{[id: number]: Uint8Array[]|undefined}>(
-			(o, id: any) => {
-				const {cyphertexts}	= incomingMessages[id];
-				o[id]	= cyphertexts && cyphertexts.length > 0 ? cyphertexts : undefined;
-				return o;
-			},
-			{}
-		);
+		return {
+			max: incomingMessages.max,
+			queue: Object.keys(incomingMessages.queue).reduce<{
+				[id: number]: Uint8Array[]|undefined;
+			}>(
+				(o, id: any) => {
+					const {cyphertexts}	= incomingMessages.queue[id];
+					o[id]	= cyphertexts && cyphertexts.length > 0 ? cyphertexts : undefined;
+					return o;
+				},
+				{}
+			)
+		};
 	}
 
 	/** @see IProto.encode */
-	public static async encode (
-		data: {[id: number]: Uint8Array[]|undefined}
-	) : Promise<Uint8Array> {
+	public static async encode (incomingMessages: ICastleIncomingMessages) : Promise<Uint8Array> {
 		return serialize(
 			CastleIncomingMessages,
 			{
-				incomingMessages: Object.keys(data).reduce<{
+				max: incomingMessages.max,
+				queue: Object.keys(incomingMessages.queue).reduce<{
 					[id: string]: CastleIncomingMessages.ICastleIncomingMessageItem;
 				}>(
 					(o, id: any) => {
-						o[id]	= {cyphertexts: data[id]};
+						o[id]	= {cyphertexts: incomingMessages.queue[id]};
 						return o;
 					},
 					{}

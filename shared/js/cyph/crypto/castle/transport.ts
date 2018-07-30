@@ -1,6 +1,7 @@
 import {Observable} from 'rxjs';
 import {ISessionService} from '../../service-interfaces/isession.service';
 import {CastleEvents, events} from '../../session/enums';
+import {debugLog} from '../../util/log';
 import {potassiumUtil} from '../potassium/potassium-util';
 
 
@@ -44,20 +45,24 @@ export class Transport {
 
 	/** Handle decrypted incoming message. */
 	public async receive (
-		plaintext: Uint8Array,
-		author: Observable<string>
+		author: Observable<string>,
+		...plaintexts: Uint8Array[]
 	) : Promise<void> {
-		const timestamp		= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
-		const instanceID	= potassiumUtil.toBytes(plaintext, 8, 16);
-		const data			= potassiumUtil.toBytes(plaintext, 24);
+		for (const plaintext of plaintexts) {
+			debugLog(() => ({pairwiseSessionDecrypted: {plaintext}}));
 
-		if (data.length > 0) {
-			await this.sessionService.castleHandler(CastleEvents.receive, {
-				author,
-				instanceID: potassiumUtil.toHex(instanceID),
-				plaintext: data,
-				timestamp
-			});
+			const timestamp		= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
+			const instanceID	= potassiumUtil.toBytes(plaintext, 8, 16);
+			const data			= potassiumUtil.toBytes(plaintext, 24);
+
+			if (data.length > 0) {
+				await this.sessionService.castleHandler(CastleEvents.receive, {
+					author,
+					instanceID: potassiumUtil.toHex(instanceID),
+					plaintext: data,
+					timestamp
+				});
+			}
 		}
 	}
 
