@@ -345,7 +345,11 @@ export class PairwiseSession {
 							return;
 						}
 
-						const lastRatchetUpdate	= initialRatchetUpdates.slice(-1)[0];
+						const lastRatchetUpdate	=
+							(
+								<(ICastleRatchetUpdate|undefined)[]> initialRatchetUpdates
+							).slice(-1)[0]
+						;
 
 						if (lastRatchetUpdate) {
 							await this.ratchetState.setValue(lastRatchetUpdate.ratchetState);
@@ -385,6 +389,17 @@ export class PairwiseSession {
 
 						const ratchetUpdateSub	= this.ratchetUpdateQueue.subscribeAndPop(
 							async update => {
+								if (
+									lastRatchetUpdate &&
+									lastRatchetUpdate.ratchetState.incomingMessageID >=
+										update.ratchetState.incomingMessageID
+									&&
+									lastRatchetUpdate.ratchetState.outgoingMessageID >=
+										update.ratchetState.outgoingMessageID
+								) {
+									return;
+								}
+
 								await this.transport.process(this.remoteUser.username, update);
 								await this.ratchetState.setValue(update.ratchetState);
 							}
