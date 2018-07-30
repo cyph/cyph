@@ -378,7 +378,7 @@ enum CallTypes {
 	Video = 2;
 }
 
-/** Castle incoming messages. */
+/** Represents queued up incoming Castle cyphertext messages. */
 message CastleIncomingMessages {
 	/** List of received cyphertexts with a particular message ID. */
 	message CastleIncomingMessageItem {
@@ -386,8 +386,11 @@ message CastleIncomingMessages {
 		repeated bytes cyphertexts = 1;
 	}
 
+	/** Max observed incoming message ID. */
+	required uint32 max = 1;
+
 	/** Mapping of message IDs to CastleIncomingMessageItems. */
-	map<uint32, CastleIncomingMessageItem> incomingMessages = 1;
+	map<uint32, CastleIncomingMessageItem> queue = 2;
 }
 
 /** State of a Castle Core ratchet. */
@@ -422,8 +425,26 @@ message CastleRatchetState {
 	/** @see AsymmetricRatchetState */
 	required AsymmetricRatchetState asymmetric = 1;
 
+	/** Last incoming message ID. */
+	required uint32 incomingMessageID = 2;
+
+	/** Next outgoing message ID. */
+	required uint32 outgoingMessageID = 3;
+
 	/** @see SymmetricRatchetState */
-	required SymmetricRatchetState symmetric = 2;
+	required SymmetricRatchetState symmetric = 4;
+}
+
+/** CastleRatchetState update with assocated output. */
+message CastleRatchetUpdate {
+	/** Encrypted outgoing cyphertext. */
+	bytes cyphertext = 1;
+
+	/** Decrypted incoming plaintext. */
+	bytes plaintext = 2;
+
+	/** @see CastleRatchetState */
+	required CastleRatchetState ratchetState = 3;
 }
 
 /** ChannelService message. */

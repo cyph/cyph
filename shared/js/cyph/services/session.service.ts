@@ -31,6 +31,7 @@ import {filterUndefined} from '../util/filter';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {debugLog} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -182,6 +183,8 @@ export abstract class SessionService implements ISessionService {
 
 	/** @ignore */
 	protected async cyphertextReceiveHandler (messages: ISessionMessage[]) : Promise<void> {
+		debugLog(() => ({cyphertextReceiveHandler: {messages}}));
+
 		const messageGroups				= new Map<string, ISessionMessageDataInternal[]>();
 
 		const otherSubSessionMessages	=
@@ -435,7 +438,7 @@ export abstract class SessionService implements ISessionService {
 	/** @inheritDoc */
 	public async init (channelID?: string, userID?: string) : Promise<void> {
 		this.incomingMessageQueueLock(async o => {
-			this.incomingMessageQueue.subscribeAndPop(async ({messages}) => {
+			const sub	= this.incomingMessageQueue.subscribeAndPop(async ({messages}) => {
 				if (!messages || messages.length < 1) {
 					return;
 				}
@@ -448,6 +451,7 @@ export abstract class SessionService implements ISessionService {
 			});
 
 			await Promise.race([this.closed, o.stillOwner.toPromise()]);
+			sub.unsubscribe();
 		});
 
 		await Promise.all([

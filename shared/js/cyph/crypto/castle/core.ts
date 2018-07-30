@@ -1,6 +1,6 @@
-import {IAsyncValue} from '../../iasync-value';
+import {IAsyncList} from '../../iasync-list';
 import {LockFunction} from '../../lock-function-type';
-import {CastleRatchetState, ICastleRatchetState} from '../../proto';
+import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
 import {lockFunction} from '../../util/lock';
 import {IPotassium} from '../potassium/ipotassium';
 
@@ -118,12 +118,16 @@ export class Core {
 	}
 
 	/**
-	 * Pushes local ratchet state to ratchetStateAsync.
-	 * @param blocker Block updating ratchet state on resolution of this.
+	 * Pushes ratchet state update to queue.
 	 */
-	private async updateRatchetState (blocker: Promise<void>) : Promise<void> {
+	private async updateRatchetState (o: {
+		cyphertext?: Uint8Array;
+		plaintext?: Uint8Array;
+	}) : Promise<void> {
 		const ratchetState	= {
 			asymmetric: {...this.ratchetState.asymmetric},
+			incomingMessageID: this.ratchetState.incomingMessageID,
+			outgoingMessageID: this.ratchetState.outgoingMessageID,
 			symmetric: {
 				current: {...this.ratchetState.symmetric.current},
 				next: {...this.ratchetState.symmetric.next}
@@ -131,8 +135,6 @@ export class Core {
 		};
 
 		await this.updateRatchetLock(async () => {
-			await blocker;
-
 			if (this.oldRatchetState) {
 				if (
 					this.oldRatchetState.asymmetric.privateKey !==
@@ -174,26 +176,40 @@ export class Core {
 
 			this.oldRatchetState	= ratchetState;
 
-			await this.ratchetStateAsync.setValue(ratchetState);
+			await this.ratchetUpdateQueue.pushItem({...o, ratchetState});
 		});
 	}
 
 	/**
 	 * Decrypt incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
-	 * @param plaintextHandler Handles plaintext and blocks uppdating of ratchet state.
 	 */
-	public async decrypt (
-		cyphertext: Uint8Array,
-		plaintextHandler: (plaintext: Uint8Array) => Promise<void>
-	) : Promise<{ratchetUpdateComplete: Promise<void>}> {
-		const ephemeralKeyExchangePublicKeyBytes	=
-			await this.potassium.ephemeralKeyExchange.publicKeyBytes
-		;
+	public async decrypt (cyphertext: Uint8Array) : Promise<void> {
+		const messageID	= this.potassium.toDataView(cyphertext).getUint32(0, true);
+
+		if (this.ratchetState.incomingMessageID >= messageID) {
+			return;
+		}
 
 		return this.lock(async () => {
-			const messageID	= this.potassium.toBytes(cyphertext, 0, 4);
-			const encrypted	= this.potassium.toBytes(cyphertext, 4);
+			const ephemeralKeyExchangePublicKeyBytes	=
+				await this.potassium.ephemeralKeyExchange.publicKeyBytes
+			;
+
+			if (this.ratchetState.incomingMessageID >= messageID) {
+				return;
+			}
+			else if (messageID - this.ratchetState.incomingMessageID === 1) {
+				++this.ratchetState.incomingMessageID;
+			}
+			else {
+				throw new Error('Out of order incoming message.');
+			}
+
+			const messageIDBytes	= this.potassium.toBytes(cyphertext, 0, 4);
+			const encrypted			= this.potassium.toBytes(cyphertext, 4);
+
+			let lastErrorMessage	= '';
 
 			for (const keys of [
 				this.ratchetState.symmetric.current,
@@ -205,7 +221,7 @@ export class Core {
 					const decrypted		= await this.potassium.secretBox.open(
 						encrypted,
 						incomingKey,
-						messageID
+						messageIDBytes
 					);
 
 					const startIndex	= decrypted[0] === 1 ?
@@ -213,9 +229,7 @@ export class Core {
 						1
 					;
 
-					const handled		= plaintextHandler(
-						this.potassium.toBytes(decrypted, startIndex)
-					);
+					const plaintext		= this.potassium.toBytes(decrypted, startIndex);
 
 					keys.incoming		= incomingKey;
 
@@ -231,27 +245,30 @@ export class Core {
 						this.ratchetState.symmetric.current	= this.ratchetState.symmetric.next;
 					}
 
-					return {ratchetUpdateComplete: this.updateRatchetState(handled)};
+					this.updateRatchetState({plaintext});
+					return;
 				}
-				catch {}
+				catch (err) {
+					if (err) {
+						lastErrorMessage	= err.message ? err.message : err.toString();
+					}
+				}
 			}
 
-			throw new Error('Invalid cyphertext.');
+			throw new Error(`Invalid cyphertext: ${lastErrorMessage}.`);
 		});
 	}
 
 	/**
 	 * Encrypt outgoing plaintext.
 	 * @param plaintext Data to be encrypted.
-	 * @param messageID Used to enforce message ordering.
-	 * @param cyphertextHandler Handles cyphertext and blocks uppdating of ratchet state.
 	 */
-	public async encrypt (
-		plaintext: Uint8Array,
-		messageID: Uint8Array,
-		cyphertextHandler: (cyphertext: Uint8Array) => Promise<void>
-	) : Promise<{ratchetUpdateComplete: Promise<void>}> {
+	public async encrypt (plaintext: Uint8Array) : Promise<void> {
 		return this.lock(async () => {
+			const messageIDBytes	=
+				new Uint8Array(new Uint32Array([this.ratchetState.outgoingMessageID++]).buffer)
+			;
+
 			const ratchetData	= await this.asymmetricRatchet();
 			const fullPlaintext	= this.potassium.concatMemory(false, ratchetData, plaintext);
 
@@ -261,13 +278,15 @@ export class Core {
 				this.ratchetState.symmetric.current.outgoing
 			);
 
-			return {ratchetUpdateComplete: this.updateRatchetState(
-				this.potassium.secretBox.seal(
+			this.updateRatchetState({cyphertext: this.potassium.concatMemory(
+				true,
+				messageIDBytes,
+				await this.potassium.secretBox.seal(
 					fullPlaintext,
 					this.ratchetState.symmetric.current.outgoing,
-					messageID
-				).then(cyphertextHandler)
-			)};
+					messageIDBytes
+				)
+			)});
 		});
 	}
 
@@ -279,9 +298,9 @@ export class Core {
 		private readonly isAlice: boolean,
 
 		/** @ignore */
-		private readonly ratchetState: ICastleRatchetState,
+		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate>,
 
-		/** @ignore */
-		private readonly ratchetStateAsync: IAsyncValue<ICastleRatchetState>
+		/** @see ICastleRatchetState */
+		public readonly ratchetState: ICastleRatchetState
 	) {}
 }

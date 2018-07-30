@@ -11,6 +11,7 @@ import {
 	BinaryProto,
 	CastleIncomingMessagesProto,
 	CastleRatchetState,
+	CastleRatchetUpdate,
 	MaybeBinaryProto,
 	Uint32Proto
 } from '../../proto';
@@ -115,54 +116,9 @@ export class AccountCastleService extends CastleService {
 							localUser,
 							remoteUser,
 							handshakeState,
-							this.accountDatabaseService.getAsyncList(
-								`${sessionURL}/decryptedMessageQueue`,
-								BinaryProto,
-								undefined,
-								undefined,
-								undefined,
-								false,
-								true
-							),
-							this.accountDatabaseService.getAsyncList(
-								`${sessionURL}/encryptedMessageQueue`,
-								BinaryProto,
-								undefined,
-								undefined,
-								undefined,
-								false,
-								true
-							),
-							this.accountDatabaseService.getAsyncValue(
-								`${sessionURL}/incomingMessageID`,
-								Uint32Proto,
-								undefined,
-								undefined,
-								undefined,
-								undefined,
-								true
-							),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/incomingMessages`,
 								CastleIncomingMessagesProto,
-								undefined,
-								undefined,
-								undefined,
-								undefined,
-								true
-							),
-							this.accountDatabaseService.getAsyncValue(
-								`${sessionURL}/incomingMessagesMax`,
-								Uint32Proto,
-								undefined,
-								undefined,
-								undefined,
-								undefined,
-								true
-							),
-							this.accountDatabaseService.getAsyncValue(
-								`${sessionURL}/outgoingMessageID`,
-								Uint32Proto,
 								undefined,
 								undefined,
 								undefined,
@@ -186,6 +142,15 @@ export class AccountCastleService extends CastleService {
 								undefined,
 								undefined,
 								undefined,
+								true
+							),
+							this.accountDatabaseService.getAsyncList(
+								`${sessionURL}/ratchetUpdateQueue`,
+								CastleRatchetUpdate,
+								undefined,
+								undefined,
+								undefined,
+								false,
 								true
 							)
 						);
