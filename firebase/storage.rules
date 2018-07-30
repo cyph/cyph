@@ -90,19 +90,15 @@ service firebase.storage {
 				// 	match /messages/{message}/{hash} {}
 				// 	match /session {
 				// 		/channelUserID/{hash} {}
-				// 		/decryptedMessageQueue/{hash} {}
-				// 		/encryptedMessageQueue/{hash} {}
 				// 		/handshake {
 				// 			/currentStep/{hash} {}
 				// 			/initialSecret/{hash} {}
 				// 		}
-				// 		/incomingMessageID/{hash} {}
 				// 		/incomingMessageQueue/{hash} {}
 				// 		/incomingMessages/{hash} {}
-				// 		/incomingMessagesMax/{hash} {}
-				// 		/outgoingMessageID/{hash} {}
 				// 		/outgoingMessageQueue/{hash} {}
-				// 		/ratchetState {}
+				// 		/ratchetState/{hash} {}
+				// 		/ratchetUpdateQueue/{hash} {}
 				// 		/symmetricKey/{hash} {}
 				// 	}
 				// }

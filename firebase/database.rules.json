@@ -329,32 +329,6 @@
 										".validate": "newData.val() === now"
 									}
 								},
-								"decryptedMessageQueue": {
-									"$decryptedMessage": {
-										"data": {
-											".validate": "newData.isString()"
-										},
-										"hash": {
-											".validate": "newData.isString()"
-										},
-										"timestamp": {
-											".validate": "newData.val() === now"
-										}
-									}
-								},
-								"encryptedMessageQueue": {
-									"$decryptedMessage": {
-										"data": {
-											".validate": "newData.isString()"
-										},
-										"hash": {
-											".validate": "newData.isString()"
-										},
-										"timestamp": {
-											".validate": "newData.val() === now"
-										}
-									}
-								},
 								"handshake": {
 									"currentStep": {
 										"data": {
@@ -379,17 +353,6 @@
 										}
 									}
 								},
-								"incomingMessageID": {
-									"data": {
-										".validate": "newData.isString()"
-									},
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								},
 								"incomingMessageQueue": {
 									"data": {
 										".validate": "newData.isString()"
@@ -402,28 +365,6 @@
 									}
 								},
 								"incomingMessages": {
-									"data": {
-										".validate": "newData.isString()"
-									},
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								},
-								"incomingMessagesMax": {
-									"data": {
-										".validate": "newData.isString()"
-									},
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								},
-								"outgoingMessageID": {
 									"data": {
 										".validate": "newData.isString()"
 									},
@@ -456,6 +397,19 @@
 									},
 									"timestamp": {
 										".validate": "newData.val() === now"
+									}
+								},
+								"ratchetUpdateQueue": {
+									"$outgoingMessage": {
+										"data": {
+											".validate": "newData.isString()"
+										},
+										"hash": {
+											".validate": "newData.isString()"
+										},
+										"timestamp": {
+											".validate": "newData.val() === now"
+										}
 									}
 								},
 								"symmetricKey": {
