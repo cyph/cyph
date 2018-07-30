@@ -209,6 +209,8 @@ export class Core {
 			const messageIDBytes	= this.potassium.toBytes(cyphertext, 0, 4);
 			const encrypted			= this.potassium.toBytes(cyphertext, 4);
 
+			let lastErrorMessage	= '';
+
 			for (const keys of [
 				this.ratchetState.symmetric.current,
 				this.ratchetState.symmetric.next
@@ -243,12 +245,17 @@ export class Core {
 						this.ratchetState.symmetric.current	= this.ratchetState.symmetric.next;
 					}
 
-					await this.updateRatchetState({plaintext});
+					this.updateRatchetState({plaintext});
+					return;
 				}
-				catch {}
+				catch (err) {
+					if (err) {
+						lastErrorMessage	= err.message ? err.message : err.toString();
+					}
+				}
 			}
 
-			throw new Error('Invalid cyphertext.');
+			throw new Error(`Invalid cyphertext: ${lastErrorMessage}.`);
 		});
 	}
 
@@ -271,7 +278,7 @@ export class Core {
 				this.ratchetState.symmetric.current.outgoing
 			);
 
-			await this.updateRatchetState({cyphertext: this.potassium.concatMemory(
+			this.updateRatchetState({cyphertext: this.potassium.concatMemory(
 				true,
 				messageIDBytes,
 				await this.potassium.secretBox.seal(
@@ -291,9 +298,9 @@ export class Core {
 		private readonly isAlice: boolean,
 
 		/** @ignore */
-		private readonly ratchetState: ICastleRatchetState,
+		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate>,
 
-		/** @ignore */
-		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate>
+		/** @see ICastleRatchetState */
+		public readonly ratchetState: ICastleRatchetState
 	) {}
 }

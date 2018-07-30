@@ -57,57 +57,48 @@ export class PairwiseSession {
 		newMessageID: number,
 		cyphertext: Uint8Array
 	) : Promise<void> {
-		const promises	= {
-			incomingMessageID: this.ratchetState.getValue().then(o => o.incomingMessageID + 1),
-			incomingMessages: this.incomingMessages.getValue()
-		};
-
-		let incomingMessageID	= await promises.incomingMessageID;
-		const incomingMessages	= await promises.incomingMessages;
+		const incomingMessages		= await this.incomingMessages.getValue();
+		const nextIncomingMessageID	= core.ratchetState.incomingMessageID + 1;
 
 		debugLog(() => ({pairwiseSessionIncomingMessage: {
 			cyphertext,
-			incomingMessageID,
 			incomingMessages,
-			newMessageID
+			newMessageID,
+			nextIncomingMessageID
 		}}));
 
-		incomingMessages.max	= Math.max(incomingMessageID, incomingMessages.max, newMessageID);
+		incomingMessages.max	= Math.max(
+			incomingMessages.max,
+			newMessageID,
+			nextIncomingMessageID
+		);
 
-		if (newMessageID >= incomingMessageID) {
+		if (newMessageID >= nextIncomingMessageID) {
 			incomingMessages.queue[newMessageID]	= [
 				...(incomingMessages.queue[newMessageID] || []),
 				cyphertext
 			];
 		}
 
-		while (incomingMessageID <= incomingMessages.max) {
-			const id		= incomingMessageID;
+		for (let id = nextIncomingMessageID ; id <= incomingMessages.max ; ++id) {
 			const message	= incomingMessages.queue[id];
 
 			if (message === undefined) {
-				break;
+				continue;
 			}
 
 			for (const cyphertextBytes of message) {
 				try {
+					debugLog(() => ({castleDecryptAttempt: {cyphertextBytes, message, id}}));
 					await core.decrypt(cyphertextBytes);
-					++incomingMessageID;
+					debugLog(() => ({castleDecryptSuccess: {id}}));
+					delete incomingMessages.queue[id];
 					break;
 				}
 				catch (err) {
-					if (
-						(
-							await this.handshakeState.currentStep.getValue()
-						) !== HandshakeSteps.Complete
-					) {
-						this.abort();
-						throw err;
-					}
+					debugLog(() => ({castleDecryptError: {err, id}}));
 				}
 			}
-
-			delete incomingMessages.queue[id];
 		}
 
 		await this.incomingMessages.setValue(incomingMessages);
@@ -367,11 +358,10 @@ export class PairwiseSession {
 						const core	= new Core(
 							this.potassium,
 							this.handshakeState.isAlice,
+							this.ratchetUpdateQueue,
 							lastRatchetUpdate ?
 								lastRatchetUpdate.ratchetState :
 								await this.ratchetState.getValue()
-							,
-							this.ratchetUpdateQueue
 						);
 
 						if (!o.stillOwner.value) {
