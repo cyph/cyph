@@ -34,9 +34,6 @@ export class PairwiseSession {
 	private readonly instanceID: Uint8Array	= this.potassium.randomBytes(16);
 
 	/** @ignore */
-	private lastOutgoingMessageID?: number;
-
-	/** @ignore */
 	private async abort () : Promise<void> {
 		debugLog(() => ({castleHandshake: 'abort'}));
 		await this.handshakeState.currentStep.setValue(HandshakeSteps.Aborted);
@@ -115,24 +112,6 @@ export class PairwiseSession {
 		}
 
 		await this.incomingMessages.setValue(incomingMessages);
-	}
-
-	/** @ignore */
-	private async processOutgoingMessages (...cyphertexts: Uint8Array[]) : Promise<void> {
-		for (const cyphertext of cyphertexts) {
-			const messageID	= this.potassium.toDataView(cyphertext).getUint32(0, true);
-
-			if (
-				this.lastOutgoingMessageID === undefined ||
-				messageID > this.lastOutgoingMessageID
-			) {
-				debugLog(() => ({pairwiseSessionOutgoingMessageSend: {cyphertext, messageID}}));
-
-				await this.transport.send(cyphertext);
-
-				this.lastOutgoingMessageID	= messageID;
-			}
-		}
 	}
 
 	/** @ignore */
@@ -368,7 +347,7 @@ export class PairwiseSession {
 						}
 
 						await Promise.all([
-							this.processOutgoingMessages(...filterUndefined(
+							this.transport.send(...filterUndefined(
 								initialRatchetUpdates.map(o =>
 									o.cyphertext && !this.potassium.isEmpty(o.cyphertext) ?
 										o.cyphertext :
@@ -433,7 +412,7 @@ export class PairwiseSession {
 							ratchetState
 						}) => {
 							if (cyphertext && !this.potassium.isEmpty(cyphertext)) {
-								await this.processOutgoingMessages(cyphertext);
+								await this.transport.send(cyphertext);
 							}
 
 							if (plaintext && !this.potassium.isEmpty(plaintext)) {
