@@ -4,7 +4,6 @@ import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
-import {filterUndefined} from '../../util/filter';
 import {lockFunction} from '../../util/lock';
 import {debugLog} from '../../util/log';
 import {getTimestamp} from '../../util/time';
@@ -346,22 +345,10 @@ export class PairwiseSession {
 							return;
 						}
 
-						await Promise.all([
-							this.transport.send(...filterUndefined(
-								initialRatchetUpdates.map(o =>
-									o.cyphertext && !this.potassium.isEmpty(o.cyphertext) ?
-										o.cyphertext :
-										undefined
-								)
-							)),
-							this.transport.receive(this.remoteUser.username, ...filterUndefined(
-								initialRatchetUpdates.map(o =>
-									o.plaintext && !this.potassium.isEmpty(o.plaintext) ?
-										o.plaintext :
-										undefined
-								)
-							))
-						]);
+						await this.transport.process(
+							this.remoteUser.username,
+							...initialRatchetUpdates
+						);
 
 						if (!o.stillOwner.value) {
 							return;
@@ -406,21 +393,12 @@ export class PairwiseSession {
 							async message => sendLock(async () => core.encrypt(message))
 						);
 
-						const ratchetUpdateSub	= this.ratchetUpdateQueue.subscribeAndPop(async ({
-							cyphertext,
-							plaintext,
-							ratchetState
-						}) => {
-							if (cyphertext && !this.potassium.isEmpty(cyphertext)) {
-								await this.transport.send(cyphertext);
+						const ratchetUpdateSub	= this.ratchetUpdateQueue.subscribeAndPop(
+							async update => {
+								await this.transport.process(this.remoteUser.username, update);
+								await this.ratchetState.setValue(update.ratchetState);
 							}
-
-							if (plaintext && !this.potassium.isEmpty(plaintext)) {
-								await this.transport.receive(this.remoteUser.username, plaintext);
-							}
-
-							await this.ratchetState.setValue(ratchetState);
-						});
+						);
 
 						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
 						decryptSub.unsubscribe();

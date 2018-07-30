@@ -1,6 +1,7 @@
 import {Observable} from 'rxjs';
 import {ISessionService} from '../../service-interfaces/isession.service';
 import {CastleEvents, events} from '../../session/enums';
+import {filterUndefined} from '../../util/filter';
 import {debugLog} from '../../util/log';
 import {potassiumUtil} from '../potassium/potassium-util';
 
@@ -44,6 +45,29 @@ export class Transport {
 		}
 
 		this.sessionService.trigger(events.cyphertext, {author, cyphertext});
+	}
+
+	/** Send and/or receive incoming and outgoing messages. */
+	public async process (author: Observable<string>, ...messages: {
+		cyphertext?: Uint8Array;
+		plaintext?: Uint8Array;
+	}[]) : Promise<void> {
+		await Promise.all([
+			this.receive(author, ...filterUndefined(
+				messages.map(o =>
+					o.plaintext && !potassiumUtil.isEmpty(o.plaintext) ?
+						o.plaintext :
+						undefined
+				)
+			)),
+			this.send(...filterUndefined(
+				messages.map(o =>
+					o.cyphertext && !potassiumUtil.isEmpty(o.cyphertext) ?
+						o.cyphertext :
+						undefined
+				)
+			))
+		]);
 	}
 
 	/** Handle decrypted incoming message. */
