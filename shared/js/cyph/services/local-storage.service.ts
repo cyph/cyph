@@ -4,6 +4,7 @@ import {IProto} from '../iproto';
 import {BinaryProto, LocalStorageLockMetadata, LocalStorageValue} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {filterUndefined} from '../util/filter';
+import {debugLog} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -156,6 +157,8 @@ export class LocalStorageService extends DataManagerService {
 		const metadata		= {id, reason};
 		const stillOwner	= new BehaviorSubject(true);
 
+		debugLog(() => ({localStorageLockWaiting: {id, lockURL, stillOwner}}));
+
 		const getLockValue	= async () =>
 			this.getValue(lockURL, LocalStorageLockMetadata).catch(() => undefined)
 		;
@@ -182,6 +185,8 @@ export class LocalStorageService extends DataManagerService {
 				await sleep(this.lockConfig.interval);
 			}
 		}
+
+		debugLog(() => ({localStorageLockClaimed: {id, lockURL, stillOwner}}));
 
 		const promise	= f({reason: lastReason, stillOwner});
 
@@ -211,6 +216,8 @@ export class LocalStorageService extends DataManagerService {
 			else {
 				await this.removeItem(lockURL);
 			}
+
+			debugLog(() => ({localStorageLockReleased: {id, lockURL, stillOwner}}));
 		}
 	}
 
