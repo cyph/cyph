@@ -65,7 +65,7 @@
 					</button>
 				</div>
 			</form>
-			
+
 		</mat-card-content>
 		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</mat-card>
@@ -76,7 +76,7 @@
 		<div class='unlockString' fxLayoutAlign='center' fxLayoutAlign.xs='center end'>
 			<span fxFlex cyphTranslate>
 				<ng-container *ngIf='(pinUnlock | async); else loginText'>
-					Enter your 
+					Enter your
 					{{(pinIsCustom | async) ? stringsService.unlockPassword : stringsService.pin}}
 					below.
 				</ng-container>

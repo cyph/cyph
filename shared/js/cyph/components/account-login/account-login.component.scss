@@ -23,7 +23,7 @@ cyph-pin-input {
 	}
 
 	form > div:last-child {
-		padding-top: 0px;
+		padding-top: 0;
 		top: -10px;
 		position: relative;
 	}
@@ -39,26 +39,26 @@ cyph-pin-input {
 		}
 	}
 
-
-
 	.mat-card, .mat-card-content {
 		//height: 100% !important;
 		width: 100%;
 	}
-	
 
 	.mat-card-title {
 		text-align: center;
 	}
+
 	&.gt-xs {
 		::ng-deep cyph-logo {
 			height: 12%;
 		}
+
 		i {
 			position: relative;
 			top: 5px;
 		}
 	}
+
 	button {
 		margin-top: 45px;
 		width: 100%;
