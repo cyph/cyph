@@ -39,9 +39,6 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	/** @ignore */
 	private destroyed: boolean	= false;
 
-	/** Indicates whether speed dial is open. */
-	public readonly isSpeedDialOpen						= new BehaviorSubject<boolean>(false);
-
 	/** @ignore */
 	private readonly userInternal: Observable<{
 		isCurrentUser: boolean;
@@ -90,6 +87,9 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Indicates whether the profile editor is in focus. */
 	public readonly isEditorFocused						= new BehaviorSubject<boolean>(false);
+
+	/** Indicates whether speed dial is open. */
+	public readonly isSpeedDialOpen						= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether profile is ready to save. */
 	public readonly readyToSave: Observable<boolean>	= this.draft.pipe(map(draft =>

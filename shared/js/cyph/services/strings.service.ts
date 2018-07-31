@@ -627,6 +627,12 @@ export class StringsService {
 	public readonly profile: string						= `profile`;
 
 	/** @see StringsService */
+	public readonly profileEdit: string					= `Edit Profile`;
+
+	/** @see StringsService */
+	public readonly profileSave: string					= `Save Profile`;
+
+	/** @see StringsService */
 	public readonly queuedMessageSaved: string			= `Queued message saved.`;
 
 	/** @see StringsService */

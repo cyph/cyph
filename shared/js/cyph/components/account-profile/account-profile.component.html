@@ -167,6 +167,44 @@
 	</div>
 </ng-template>
 
+<ng-template #coverEditButton>
+	<div class='cover-edit-buttons' fxLayout='row' fxLayoutGap='8px'>
+		<button
+			mat-raised-button
+			cyphTranslate
+			(click)='setEditMode(false)'
+			matTooltip='Cancel Changes'
+			*ngIf='(isCurrentUser | async) && (editMode | async)'
+		>
+			<mat-icon>cancel</mat-icon>
+			&ngsp;
+			<span cyphTranslate>Cancel Changes</span>
+		</button>
+		<button
+			mat-raised-button
+			cyphTranslate
+			(click)='editMode.value ? saveProfile() : setEditMode(true)'
+			[matTooltip]='
+				(editMode | async) ?
+					stringsService.profileEdit :
+					stringsService.profileSave
+			'
+			*ngIf='isCurrentUser | async'
+		>
+			<ng-container *ngIf='editMode | async; else coverEditButtonEditText'>
+				<mat-icon>save</mat-icon>
+				&ngsp;
+				<span>{{stringsService.profileSave}}</span>
+			</ng-container>
+			<ng-template #coverEditButtonEditText>
+				<mat-icon>edit</mat-icon>
+				&ngsp;
+				<span>{{stringsService.profileEdit}}</span>
+			</ng-template>
+		</button>
+	</div>
+</ng-template>
+
 <ng-template #editButton>
 	<div
 		fxLayout='row'
@@ -252,6 +290,7 @@
 				matTooltip='Upload File'
 				matTooltipPosition='left'
 				cyphDropZone
+				[cyphDropZoneClass]='false'
 				(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
 			>
 				<mat-icon>cloud_upload</mat-icon>
@@ -261,14 +300,14 @@
 				[class.open]='isSpeedDialOpen | async'
 				cyphTranslate
 				class='alt'
-				matTooltip='New Cyph link'
+				matTooltip='New Cyph Link'
 				matTooltipPosition='left'
 			>
 				<mat-icon>link</mat-icon>
 			</button>
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
-	</ng-template>
+</ng-template>
 
 <ng-template #fileUpload>
 	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='(isCurrentUser | async) === false'>
@@ -309,31 +348,7 @@
 				(fileDrop)='updateDraft({coverImage: $event})'
 			></div>
 
-			<div class='cover-edit-buttons' fxLayout='row' fxLayoutGap='8px'>
-			<button
-				mat-raised-button
-				cyphTranslate
-				(click)='setEditMode(false)'
-				matTooltip='Cancel Changes'
-				*ngIf='(isCurrentUser | async) && (editMode | async)'
-			>
-				<mat-icon>cancel</mat-icon> Cancel Changes
-			</button>
-			<button
-				mat-raised-button
-				cyphTranslate
-				(click)='editMode.value ? saveProfile() : setEditMode(true)'
-				[matTooltip]='(editMode | async) ? "Edit Profile" : "Save Profile"'
-				*ngIf='isCurrentUser | async'
-			>
-				<ng-container *ngIf='editMode | async'>
-					<mat-icon>save</mat-icon> Save Profile
-				</ng-container>
-				<ng-container *ngIf='(editMode | async) === false'>
-					<mat-icon>edit</mat-icon> Edit Profile
-				</ng-container>
-			</button>
-			</div>
+			<ng-container *ngTemplateOutlet='coverEditButton'></ng-container>
 
 			<div fxLayoutAlign='center center'>
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='16px'>
