@@ -1,5 +1,6 @@
 import {IAsyncList} from '../../iasync-list';
 import {LockFunction} from '../../lock-function-type';
+import {MaybePromise} from '../../maybe-promise-type';
 import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
 import {lockFunction} from '../../util/lock';
 import {IPotassium} from '../potassium/ipotassium';
@@ -262,12 +263,21 @@ export class Core {
 	/**
 	 * Encrypt outgoing plaintext.
 	 * @param plaintext Data to be encrypted.
+	 * @param getMessageID Callback that gets message ID.
 	 */
-	public async encrypt (plaintext: Uint8Array) : Promise<void> {
-		return this.lock(async () => {
-			const messageIDBytes	=
-				new Uint8Array(new Uint32Array([this.ratchetState.outgoingMessageID++]).buffer)
-			;
+	public async encrypt (
+		plaintext: Uint8Array,
+		getMessageID?: (messageID: number) => MaybePromise<void>
+	) : Promise<void> {
+		await this.lock(async () => {
+			const messageID			= this.ratchetState.outgoingMessageID;
+			const messageIDBytes	= new Uint8Array(new Uint32Array([messageID]).buffer);
+
+			++this.ratchetState.outgoingMessageID;
+
+			if (getMessageID) {
+				await getMessageID(messageID);
+			}
 
 			const ratchetData	= await this.asymmetricRatchet();
 			const fullPlaintext	= this.potassium.concatMemory(false, ratchetData, plaintext);

@@ -1,5 +1,6 @@
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
+import {IResolvable} from '../../iresolvable';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
@@ -31,6 +32,12 @@ export class PairwiseSession {
 
 	/** @ignore */
 	private readonly instanceID: Uint8Array	= this.potassium.randomBytes(16);
+
+	/** @ignore */
+	private pendingMessageResolvers?: {
+		resolvers: Map<number, IResolvable<void>>;
+		timestamps: Map<number, number>;
+	};
 
 	/** @ignore */
 	private async abort () : Promise<void> {
@@ -204,7 +211,18 @@ export class PairwiseSession {
 		this.potassium.clearMemory(plaintextBytes);
 		this.potassium.clearMemory(timestampBytes);
 
+		let resolver: IResolvable<void>|undefined;
+
+		if (this.pendingMessageResolvers) {
+			resolver	= resolvable();
+			this.pendingMessageResolvers.resolvers.set(timestamp, resolver);
+		}
+
 		await this.outgoingMessageQueue.pushItem(outgoingMessage);
+
+		if (resolver) {
+			await resolver.promise;
+		}
 	}
 
 	constructor (
@@ -329,7 +347,14 @@ export class PairwiseSession {
 
 					await this.connect();
 
+					const pendingMessageResolvers	= {
+						resolvers: new Map<number, IResolvable<void>>(),
+						timestamps: new Map<number, number>()
+					};
+
 					this.lock(async o => {
+						this.pendingMessageResolvers	= pendingMessageResolvers;
+
 						const initialRatchetUpdates	= await this.ratchetUpdateQueue.getValue();
 
 						if (!o.stillOwner.value) {
@@ -384,7 +409,16 @@ export class PairwiseSession {
 						);
 
 						const encryptSub		= this.outgoingMessageQueue.subscribeAndPop(
-							async message => sendLock(async () => core.encrypt(message))
+							async message => sendLock(async () => core.encrypt(
+								message,
+								messageID => {
+									const timestamp	=
+										this.potassium.toDataView(message).getFloat64(0, true)
+									;
+
+									pendingMessageResolvers.timestamps.set(messageID, timestamp);
+								}
+							))
 						);
 
 						const ratchetUpdateSub	= this.ratchetUpdateQueue.subscribeAndPop(
@@ -402,6 +436,28 @@ export class PairwiseSession {
 
 								await this.transport.process(this.remoteUser.username, update);
 								await this.ratchetState.setValue(update.ratchetState);
+
+								if (!update.cyphertext) {
+									return;
+								}
+
+								const messageID	=
+									this.potassium.toDataView(update.cyphertext).getUint32(0, true)
+								;
+
+								const timestamp	=
+									pendingMessageResolvers.timestamps.get(messageID)
+								;
+
+								const resolver	=
+									timestamp !== undefined ?
+										pendingMessageResolvers.resolvers.get(timestamp) :
+										undefined
+								;
+
+								if (resolver) {
+									resolver.resolve();
+								}
 							}
 						);
 
@@ -409,6 +465,14 @@ export class PairwiseSession {
 						decryptSub.unsubscribe();
 						encryptSub.unsubscribe();
 						ratchetUpdateSub.unsubscribe();
+					}).then(() => {
+						this.pendingMessageResolvers	= undefined;
+
+						for (const resolver of Array.from(
+							pendingMessageResolvers.resolvers.values()
+						)) {
+							resolver.resolve();
+						}
 					});
 
 					return;
