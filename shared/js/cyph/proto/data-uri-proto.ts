@@ -23,7 +23,10 @@ export class DataURIProto {
 	}
 
 	/** Converts possible-SafeUrl to string. */
-	public static async safeUrlToString (data: SafeUrl|string) : Promise<string> {
+	public static async safeUrlToString (
+		data: SafeUrl|string,
+		mediaType?: string
+	) : Promise<string> {
 		if (typeof data === 'string') {
 			return data;
 		}
@@ -41,7 +44,10 @@ export class DataURIProto {
 			throw new Error('Input failed DomSanitizer validation.');
 		}
 
-		return sanitized;
+		return mediaType ?
+			`data:${mediaType};base64,${sanitized.split(';base64,')[1]}` :
+			sanitized
+		;
 	}
 
 	/** @see IProto.create */

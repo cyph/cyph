@@ -1,13 +1,17 @@
 @import '../../../../css/mixins';
 
-img {
+img, video {
 	display: block;
 	max-height: 100%;
 	max-width: 100%;
 	margin: auto;
 }
 
-[mat-dialog-actions] {
+video {
+	width: 100%;
+}
+
+[mat-dialog-actions]:not(.crop-actions) {
 	margin-bottom: 0;
 	top: -15px;
 	position: relative;

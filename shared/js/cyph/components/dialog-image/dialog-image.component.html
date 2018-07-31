@@ -11,18 +11,19 @@
 			<mat-icon>close</mat-icon>
 		</button>
 	</div>
-
 </div>
+
 <div mat-dialog-content>
 	<div fxFlex [class.crop-container]='!!cropResult'>
-		<img
-			cyphTranslate
-			alt='Full size image'
-			[src]='src'
-			*ngIf='!cropResult'
-		/>
+		<ng-container *ngIf='!cropResult; else imageCropUI'>
+			<img cyphTranslate alt='Full size image' [src]='src' *ngIf='!video' />
 
-		<ng-container *ngIf='!!cropResult'>
+			<video cyphTranslate autoplay controls alt='Video' *ngIf='video'>
+				<source [type]='mediaType' [src]='src' />
+			</video>
+		</ng-container>
+
+		<ng-template #imageCropUI>
 			<image-cropper
 				format='png'
 				[aspectRatio]='cropAspectRatio'
@@ -30,12 +31,13 @@
 				[maintainAspectRatio]='!!cropAspectRatio'
 				(imageCropped)='cropped = $event'
 				(loadImageFailed)='crop(false)'
-				*ngIf='safeUrlToString(src) | async as imageBase64'
+				*ngIf='safeUrlToString(src, mediaType) | async as imageBase64'
 			></image-cropper>
-		</ng-container>
+		</ng-template>
 	</div>
 </div>
-<div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!!cropResult'>
+
+<div mat-dialog-actions class='crop-actions' fxLayoutAlign='end center' *ngIf='!!cropResult'>
 	<button mat-button class='cancel' (click)='crop(false)'>{{stringsService.cancel}}</button>
 	<button mat-button class='ok' (click)='crop(true)'>{{stringsService.ok}}</button>
 </div>

@@ -26,9 +26,12 @@ export class DialogImageComponent {
 	/** In-progress cropped image. */
 	public cropped?: string;
 
+	/** MIME type. */
+	public mediaType: string	= 'image/png';
+
 	/** @see DataURIProto.safeUrlToString */
-	public readonly safeUrlToString	= memoize(async (data?: SafeUrl|string) =>
-		!data ? undefined : DataURIProto.safeUrlToString(data).catch(() => undefined)
+	public readonly safeUrlToString	= memoize(async (data?: SafeUrl|string, mediaType?: string) =>
+		!data ? undefined : DataURIProto.safeUrlToString(data, mediaType).catch(() => undefined)
 	);
 
 	/** Image src. */
@@ -56,6 +59,11 @@ export class DialogImageComponent {
 		);
 
 		this.matDialogRef.close();
+	}
+
+	/** Indicates whether this is a video. */
+	public get video () : boolean {
+		return this.mediaType.startsWith('video/');
 	}
 
 	constructor (

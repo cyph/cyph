@@ -55,9 +55,9 @@ export class DialogService {
 		throw new Error('Must provide an implementation of DialogService.dismissToast.');
 	}
 
-	/** Displays image. */
+	/** Displays image or video. Default mediaType is image/png. */
 	public async image (
-		_O: {src: SafeUrl|string; title?: string},
+		_O: {mediaType?: string; src: SafeUrl|string; title?: string},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.image.');
@@ -85,14 +85,6 @@ export class DialogService {
 	public async toast (_CONTENT: string, _DURATION: number, _ACTION?: string) : Promise<boolean> {
 		throw new Error('Must provide an implementation of DialogService.toast.');
 	}
-
-		/** Displays video. */
-		public async video (
-			_O: {src: SafeUrl|string; title?: string},
-			_CLOSE_FUNCTION?: IResolvable<() => void>
-		) : Promise<void> {
-			throw new Error('Must provide an implementation of DialogService.video.');
-		}
 
 	constructor () {}
 }

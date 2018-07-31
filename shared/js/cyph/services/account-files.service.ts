@@ -463,15 +463,15 @@ export class AccountFilesService {
 	public readonly initiated				= new BehaviorSubject<boolean>(false);
 
 	/** Determines whether file should be treated as an image. */
-	public readonly isImage					= memoize(async (id: string) => {
+	public readonly isImage					= memoize(async (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference
+	)) => {
 		const file	= await this.getFile(id);
-		return file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg');
-	});
 
-	/** Determines whether file should be treated as an image. */
-	public readonly isVideo					= memoize(async (id: string) => {
-		const file	= await this.getFile(id);
-		return file.mediaType.startsWith('video/');
+		return (
+			file.mediaType.startsWith('video/') ||
+			(file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg'))
+		);
 	});
 
 	/** Maximum number of characters in a file name. */
@@ -975,9 +975,7 @@ export class AccountFilesService {
 	/** Opens a file. */
 	public async openFile (id: string) : Promise<void> {
 		if (!(await this.openImage(id))) {
-			if (!(await this.openVideo(id))) {
 			await this.downloadAndSave(id).result;
-			}
 		}
 	}
 
@@ -986,33 +984,18 @@ export class AccountFilesService {
 	 * @returns Whether or not file is an image.
 	 */
 	public async openImage (id: string) : Promise<boolean> {
-		const isImage	= await this.isImage(id);
+		const file		= await this.getFile(id);
+		const isImage	= await this.isImage(file);
 
 		if (isImage) {
 			this.dialogService.image({
+				mediaType: file.mediaType,
 				src: await this.downloadURI(id).result,
-				title: (await this.getFile(id)).name
+				title: file.name
 			});
 		}
 
 		return isImage;
-	}
-
-	/**
-	 * Opens an video file.
-	 * @returns Whether or not file is an video.
-	 */
-	public async openVideo (id: string) : Promise<boolean> {
-		const isVideo	= await this.isVideo(id);
-
-		if (isVideo) {
-			this.dialogService.video({
-				src: await this.downloadURI(id).result,
-				title: (await this.getFile(id)).name
-			});
-		}
-
-		return isVideo;
 	}
 
 	/** Removes a file. */
