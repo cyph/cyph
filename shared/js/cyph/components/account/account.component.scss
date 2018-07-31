@@ -41,6 +41,10 @@
 			padding: 0 $accountPaddingLarge;
 
 			cyph-account-profile {
+				.cover-edit-buttons {
+					right: -$accountPaddingLarge;
+				}
+
 				.cover-image {
 					left: -$accountPaddingLarge;
 					width: calc(100% + 1px + #{$accountPaddingLarge * 2});
@@ -56,6 +60,10 @@
 			padding: 0 $accountPaddingMedium;
 
 			cyph-account-profile {
+				.cover-edit-buttons {
+					right: -$accountPaddingMedium;
+				}
+
 				.cover-image {
 					left: -$accountPaddingMedium;
 					width: calc(100% + 1px + #{$accountPaddingMedium * 2});
@@ -71,6 +79,10 @@
 			padding: 0 $accountPaddingSmall;
 
 			cyph-account-profile {
+				.cover-edit-buttons {
+					right: -$accountPaddingSmall;
+				}
+
 				.cover-image {
 					left: -$accountPaddingSmall;
 					width: calc(100% + 1px + #{$accountPaddingSmall * 2});
