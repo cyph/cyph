@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {emailPattern} from '../../email-pattern';
 import {ConfigService} from '../../services/config.service';
+import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {email} from '../../util/email';
@@ -71,6 +72,9 @@ export class ContactComponent implements OnInit {
 	constructor (
 		/** @see ConfigService */
 		public readonly configService: ConfigService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

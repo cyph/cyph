@@ -114,9 +114,19 @@
 			</div>
 			<div></div>
 			<div fxLayout='row' fxLayoutAlign='center'>
-				<button mat-button cyphTranslate type='submit'>
+				<button
+					mat-button
+					cyphTranslate
+					type='submit'
+					*ngIf='!envService.isMobile; else mobileButton'
+				>
 					Send
 				</button>
+				<ng-template #mobileButton>
+					<button mat-raised-button cyphTranslate fxFlex type='submit'>
+						Send
+					</button>
+				</ng-template>
 			</div>
 		</form>
 		<div *ngIf='sent | async' cyphTranslate>
