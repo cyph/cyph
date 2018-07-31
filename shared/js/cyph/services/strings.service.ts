@@ -778,10 +778,10 @@ export class StringsService {
 	public readonly unlock: string						= `Unlock`;
 
 	/** @see StringsService */
-	public readonly unlockPassword: string				= `unlock password`;
+	public readonly unlockedTitle: string				= `${this.internalProduct} Unlocked`;
 
 	/** @see StringsService */
-	public readonly unlockedTitle: string				= `${this.internalProduct} Unlocked`;
+	public readonly unlockPassword: string				= `unlock password`;
 
 	/** @see StringsService */
 	public readonly unlockTitle: string					= `Unlock ${this.internalProduct}`;
