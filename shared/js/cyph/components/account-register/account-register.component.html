@@ -73,11 +73,13 @@
 											envService.coBranded && !envService.whiteLabel;
 											else telehealthWelcomeMessage
 										'>
-											<span cyphTranslate>Welcome to</span>
-											&nbsp;
-											<span>{{stringsService.product}}</span>
-											&nbsp;
-											<span cyphTranslate>powered by Cyph!</span>
+											<span>
+												<span cyphTranslate>Welcome to</span>
+												&ngsp;
+												<span>{{stringsService.product}}</span>
+												&ngsp;
+												<span cyphTranslate>powered by Cyph!</span>
+											</span>
 										</ng-container>
 										<ng-template #telehealthWelcomeMessage>
 											<ng-container *ngIf='
@@ -90,13 +92,15 @@
 											</ng-container>
 										</ng-template>
 										<ng-template #mainBasicWelcomeMessage>
-											<span cyphTranslate>
-												Congratulations on securing your
+											<span>
+												<span cyphTranslate>
+													Congratulations on securing your
+												</span>
+												&ngsp;
+												<span>{{stringsService.product}}</span>
+												&ngsp;
+												<span cyphTranslate>account invite!</span>
 											</span>
-											&nbsp;
-											<span>{{stringsService.product}}</span>
-											&nbsp;
-											<span cyphTranslate>account invite!</span>
 										</ng-template>
 									</div>
 									<div
@@ -139,15 +143,17 @@
 										fxLayoutAlign='center center'
 										class='description'
 									>
-										<span cyphTranslate>Who are you? Associate your</span>
-										&nbsp;
-										<span>{{stringsService.product}}</span>
-										&nbsp;
-										<span cyphTranslate *ngIf='!envService.isTelehealth'>
-											account with your identity or an alias.
-										</span>
-										<span cyphTranslate *ngIf='envService.isTelehealth'>
-											account with your identity.
+										<span>
+											<span cyphTranslate>Who are you? Associate your</span>
+											&ngsp;
+											<span>{{stringsService.product}}</span>
+											&ngsp;
+											<span cyphTranslate *ngIf='!envService.isTelehealth'>
+												account with your identity or an alias.
+											</span>
+											<span cyphTranslate *ngIf='envService.isTelehealth'>
+												account with your identity.
+											</span>
 										</span>
 									</div>
 									<div fxLayout='row' fxLayoutAlign='center center'>
