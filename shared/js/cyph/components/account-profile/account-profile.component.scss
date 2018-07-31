@@ -196,11 +196,10 @@ smd-fab-speed-dial ::ng-deep smd-fab-actions button.open {
 	position: fixed;
 }
 
-.speed-dial {
-	position: fixed;
+.profile-fab {
+	position: absolute;
 	bottom: 25px;
 	right: 27px;
-	z-index: 1;
 }
 
 .edit-hide {

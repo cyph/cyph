@@ -171,7 +171,7 @@
 	<div
 		fxLayout='row'
 		fxLayoutGap='16px'
-		class='edit-buttons edit-hide'
+		class='edit-buttons edit-hide profile-fab'
 		*ngIf='isCurrentUser | async'
 	>
 		<button
@@ -209,7 +209,7 @@
 		animationMode='scale'
 		[open]='isSpeedDialOpen | async'
 		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
-		class='speed-dial edit-hide'
+		class='speed-dial edit-hide profile-fab'
 	>
 		<smd-fab-trigger
 			[spin]='true'
