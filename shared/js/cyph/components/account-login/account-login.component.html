@@ -47,8 +47,8 @@
 			</p>
 		</mat-card-subtitle>
 
-		<mat-card-content fxLyout='column'>
-			<form ngNativeValidate (submit)='submit()' fxLayout='column' fxLayoutAlign='center'>
+		<mat-card-content fxLayout='row' fxLayoutAlign='center'>
+			<form ngNativeValidate fxFlex='80' fxLayout='column' (submit)='submit()'>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<h3
 						class='cyph-banner warn'
@@ -177,10 +177,8 @@
 
 
 <ng-template #usernameField>
-	<div fxLayout='row' fxLayoutAlign='center' fxFlex='80'>
-		<mat-form-field [fxFlex]='
-			((pinUnlock | async) && (pinIsCustom | async) === false) ? "40" : "80"
-		'>
+	<div fxLayout='row' fxLayoutAlign='center'>
+		<mat-form-field fxFlex>
 			<input
 				matInput
 				cyphTranslate
@@ -199,7 +197,7 @@
 
 <ng-template #login>
 	<div fxLayout='row' fxLayoutAlign='center'>
-		<mat-form-field fxFlex='80'>
+		<mat-form-field fxFlex>
 			<input
 				matInput
 				[ngModel]='masterKey | async'
@@ -218,14 +216,14 @@
 			</mat-icon>
 		</mat-form-field>
 	</div>
+	<br />
 </ng-template>
 
 <ng-template #pinUnlockFields>
 	<ng-container *ngIf='(pinIsCustom | async) === false; else pwUnlockFields'>
 		<div fxLayout='row' fxLayoutAlign='center'>
 			<cyph-pin-input
-				fxFlex='40'
-				fxFlex.lt-sm='80'
+				fxFlex
 				[ngModel]='pin | async'
 				(ngModelChange)='pin.next($event)'
 				name='pin'
@@ -238,7 +236,7 @@
 
 <ng-template #pwUnlockFields>
 	<div fxLayout='row' fxLayoutAlign='center'>
-		<mat-form-field fxFlex='80'>
+		<mat-form-field fxFlex>
 			<input
 				matInput
 				[ngModel]='pin | async'
