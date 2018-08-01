@@ -199,14 +199,14 @@
 				mat-list-item
 				cyphTranslate
 				class='contacts'
-				matTooltip='Contacts'
+				matTooltip='Messages'
 				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "contacts"'
+				[routerLink]='accountService.routeRoot'
 				(click)='click()'
 			>
-				<mat-icon mat-list-icon>people</mat-icon>
+				<mat-icon mat-list-icon>message</mat-icon>
 				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Contacts
+					Messages
 				</h3>
 			</a>
 		</ng-container>

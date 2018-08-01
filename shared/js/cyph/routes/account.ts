@@ -103,6 +103,7 @@ export const account: Route	= {
 		{path: 'home', redirectTo: ''},
 		{path: 'incoming-patient-info', component: AccountIncomingPatientInfoComponent},
 		{path: 'logout', component: AccountLogoutComponent},
+		{path: 'messages', component: AccountContactsComponent},
 		{path: 'messages/:contactID', component: AccountChatComponent},
 		{path: 'messages/:contactID/:sessionSubID', component: AccountChatComponent},
 		{
