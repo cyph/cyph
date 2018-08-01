@@ -101,22 +101,12 @@ $header-size: 135px;
 		}
 	}
 
-	mat-form-field.mobile {
-			width: 90% !important;
-	}
-
-	mat-form-field.description ::ng-deep {
-		textarea {
-			text-align: center;
-			font-family: Ubuntu;
-			font-weight: 300;
-			font-size: 20px;
-			min-height: 3em;
-		}
-
-		.mat-form-field-infix {
-			padding: 0;
-		}
+	mat-form-field.description textarea {
+		text-align: center;
+		font-family: Ubuntu;
+		font-weight: 300;
+		font-size: 20px;
+		min-height: 4em;
 	}
 
 	.username {

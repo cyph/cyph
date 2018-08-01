@@ -80,27 +80,35 @@
 		</div>
 	</div>
 	<div *ngIf='divider'></div>
-	<mat-form-field class='description' [class.mobile]='envService.isMobile' *ngIf='editMode | async'>
-		<textarea
-			matInput
-			#descriptionEditor
-			(blur)='isEditorFocused.next(false)'
-			(focus)='isEditorFocused.next(true)'
-			[ngModel]='user.description | async'
-			(ngModelChange)='updateDraft({description: $event})'
-		></textarea>
-		<mat-hint align='end' *ngIf='
-			descriptionEditor.value.length <= accountService.maxDescriptionLength;
-			else descriptionEditError
-		'>
-			{{accountService.maxDescriptionLength - descriptionEditor.value.length}}
-		</mat-hint>
-		<ng-template #descriptionEditError>
-			<mat-error align='end'>
+	<div fxLayoutAlign='center' *ngIf='editMode | async'>
+		<mat-form-field
+			class='description'
+			fxFlex='95'
+			fxFlex.md='87.5'
+			fxFlex.lg='80'
+			fxFlex.gt-lg='50'
+		>
+			<textarea
+				matInput
+				#descriptionEditor
+				(blur)='isEditorFocused.next(false)'
+				(focus)='isEditorFocused.next(true)'
+				[ngModel]='user.description | async'
+				(ngModelChange)='updateDraft({description: $event})'
+			></textarea>
+			<mat-hint align='end' *ngIf='
+				descriptionEditor.value.length <= accountService.maxDescriptionLength;
+				else descriptionEditError
+			'>
 				{{accountService.maxDescriptionLength - descriptionEditor.value.length}}
-			</mat-error>
-		</ng-template>
-	</mat-form-field>
+			</mat-hint>
+			<ng-template #descriptionEditError>
+				<mat-error align='end'>
+					{{accountService.maxDescriptionLength - descriptionEditor.value.length}}
+				</mat-error>
+			</ng-template>
+		</mat-form-field>
+	</div>
 </ng-template>
 
 <ng-template #name let-prefix='prefix' let-readViewClasses='readViewClasses'>
@@ -112,17 +120,26 @@
 		{{prefix || ''}}
 		{{user.name | async | slice:0:accountService.maxNameLength}}
 	</div>
-	<mat-form-field class='name' [class.mobile]='envService.isMobile' *ngIf='editMode | async'>
-		<input
-			matInput
-			#descriptionEditor
-			(blur)='isEditorFocused.next(false)'
-			(focus)='isEditorFocused.next(true)'
-			[maxlength]='accountService.maxNameLength'
-			[ngModel]='user.name | async'
-			(ngModelChange)='updateDraft({name: $event})'
-		/>
-	</mat-form-field>
+	<div fxLayoutAlign='center' *ngIf='editMode | async'>
+		<mat-form-field
+			class='name'
+			fxFlex='95'
+			fxFlex.sm='75'
+			fxFlex.md='66'
+			fxFlex.lg='50'
+			fxFlex.gt-lg='40'
+		>
+			<input
+				matInput
+				#descriptionEditor
+				(blur)='isEditorFocused.next(false)'
+				(focus)='isEditorFocused.next(true)'
+				[maxlength]='accountService.maxNameLength'
+				[ngModel]='user.name | async'
+				(ngModelChange)='updateDraft({name: $event})'
+			/>
+		</mat-form-field>
+	</div>
 </ng-template>
 
 <ng-template #emailLikeButtons let-patientData='patientData'>
