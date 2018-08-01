@@ -1,8 +1,8 @@
 import * as $ from 'jquery';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
-import {Env} from './env';
-import {stringify} from './util/serialization';
-import {sleep} from './util/wait';
+import {EnvDeploy, envDeploy} from './env-deploy';
+import {stringify} from './util/serialization/json';
+import {sleep} from './util/wait/sleep';
 
 
 /**
@@ -47,14 +47,14 @@ export class Analytics {
 
 	constructor (
 		/** @ignore */
-		private readonly env: Env
+		private readonly env: EnvDeploy = envDeploy
 	) {
 		this.enabled	= Promise.resolve().then(async () => {
 			const appName: string		= this.env.host;
 			const appVersion: string	= this.env.isWeb ? 'Web' : 'Native';
 
 			/* TODO: HANDLE NATIVE */
-			if (this.env.isOnion || this.env.environment.local || !this.env.isWeb) {
+			if (this.env.isOnion || this.env.isLocalEnv || !this.env.isWeb) {
 				throw new Error('Analytics disabled.');
 			}
 

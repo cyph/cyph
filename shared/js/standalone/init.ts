@@ -45,7 +45,7 @@ if (!HTMLElement.prototype.click) {
 
 $(async () => {
 	if (!env.isHomeSite) {
-		if (!env.environment.local) {
+		if (!env.isLocalEnv) {
 			/* In WebSigned environments, perform CSP Meta-Hardening */
 			await sleep(10000);
 			$(document.head).append(

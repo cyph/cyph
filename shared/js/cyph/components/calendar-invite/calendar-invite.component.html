@@ -198,7 +198,7 @@
 		</mat-form-field>
 
 		<ng-container *ngIf='
-			envService.environment.local &&
+			envService.isLocalEnv &&
 			(isDisabledWrapper | async) === false
 		'>
 			&nbsp;&nbsp;&nbsp;

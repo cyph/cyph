@@ -1,9 +1,12 @@
 import {Observable} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {Async} from '../async-type';
-import {config} from '../config';
-import {IResolvable} from '../iresolvable';
-import {MaybePromise} from '../maybe-promise-type';
+import {Async} from '../../async-type';
+import {config} from '../../config';
+import {IResolvable} from '../../iresolvable';
+import {MaybePromise} from '../../maybe-promise-type';
+import {sleep} from './sleep';
+
+export * from './sleep';
 
 
 /** Converts Async to awaitable Promise. */
@@ -31,12 +34,6 @@ export const resolvable	= <T = void> (value?: T) : IResolvable<T> => {
 	}
 
 	return {promise, reject, resolve};
-};
-
-/** Sleep for the specifed amount of time. */
-export const sleep	= async (ms: number = 250) : Promise<void> => {
-	/* tslint:disable-next-line:ban */
-	return new Promise<void>(resolve => { setTimeout(() => { resolve(); }, ms); });
 };
 
 /** Sleeps forever. */
