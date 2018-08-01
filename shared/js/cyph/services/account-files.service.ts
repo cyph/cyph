@@ -518,6 +518,8 @@ export class AccountFilesService {
 		progress: Observable<number>;
 		result: Promise<T>;
 	} {
+		this.showSpinner.next(true);
+
 		const filePromise	= this.getFile(id);
 
 		const {progress, result}	= this.accountDatabaseService.downloadItem(
@@ -527,11 +529,14 @@ export class AccountFilesService {
 			filePromise.then(file => file.key)
 		);
 
-		return {progress, result: result.then(async o =>
-			o.value instanceof Blob ?
+		return {progress, result: result.then(async o => {
+			this.showSpinner.next(false);
+
+			return o.value instanceof Blob ?
 				<any> new Blob([o.value], {type: (await filePromise).mediaType}) :
 				o.value
-		)};
+			;
+		})};
 	}
 
 	/** @ignore */
@@ -974,6 +979,8 @@ export class AccountFilesService {
 
 	/** Opens a file. */
 	public async openFile (id: string) : Promise<void> {
+		this.showSpinner.next(true);
+
 		if (!(await this.openImage(id))) {
 			await this.downloadAndSave(id).result;
 		}
@@ -984,6 +991,8 @@ export class AccountFilesService {
 	 * @returns Whether or not file is an image.
 	 */
 	public async openImage (id: string) : Promise<boolean> {
+		this.showSpinner.next(true);
+
 		const file		= await this.getFile(id);
 		const isImage	= await this.isImage(file);
 
