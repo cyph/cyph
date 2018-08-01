@@ -114,11 +114,11 @@ export class AppService implements CanActivate {
 		}
 
 		if (accountRoot !== '') {
-			self.onhashchange	= () => {
+			self.addEventListener('hashchange', () => {
 				if (!locationData.hash.match(new RegExp(`^#?/?${accountRoot}(/|$)`))) {
 					location.reload();
 				}
-			};
+			});
 		}
 
 		ngZone.runOutsideAngular(async () => {

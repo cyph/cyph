@@ -43,6 +43,10 @@ if (!HTMLElement.prototype.click) {
 	};
 }
 
+if (location.hash && location.hash.endsWith('/')) {
+	location.hash	= location.hash.slice(0, -1);
+}
+
 $(async () => {
 	if (!env.isHomeSite) {
 		if (!env.isLocalEnv) {

@@ -164,10 +164,24 @@ export class AccountService {
 
 	/** Toggles mobile account menu. */
 	public toggleMobileMenu (menuOpen?: boolean) : void {
-		this.mobileMenuOpenInternal.next(typeof menuOpen === 'boolean' ?
-			menuOpen :
-			!this.mobileMenuOpenInternal.value
-		);
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof location === 'object') {
+			location.hash	= location.hash.replace(/\/$/, '') + (
+				(
+					typeof menuOpen === 'boolean' ?
+						menuOpen :
+						!location.hash.endsWith('/')
+				) ?
+					'/' :
+					''
+			);
+		}
+		else {
+			this.mobileMenuOpenInternal.next(typeof menuOpen === 'boolean' ?
+				menuOpen :
+				!this.mobileMenuOpenInternal.value
+			);
+		}
 	}
 
 	/** Triggers event to ends transition between components. */
@@ -192,6 +206,16 @@ export class AccountService {
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof location === 'object') {
+			const mobileMenuHashChangeHandler	= () => {
+				this.mobileMenuOpenInternal.next(location.hash.endsWith('/'));
+			};
+
+			self.addEventListener('hashchange', mobileMenuHashChangeHandler);
+			this.routeChanges.subscribe(mobileMenuHashChangeHandler);
+		}
+
 		this.header	= combineLatest(
 			this.headerInternal,
 			this.windowWatcherService.width,
