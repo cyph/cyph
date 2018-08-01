@@ -175,7 +175,7 @@ mat-card {
 	}
 }
 
-smd-fab-speed-dial ::ng-deep smd-fab-actions button.open {
+smd-fab-speed-dial ::ng-deep smd-fab-actions > .open {
 	opacity: 1 !important;
 	transform: scale(1) !important;
 }

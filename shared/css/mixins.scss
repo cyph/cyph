@@ -305,7 +305,7 @@ $accountPaddingSmall: 2.5vw;
 		@include mat-button-theme($cyph-speed-dial-action-theme);
 	}
 
-	button.alt {
+	.alt {
 		&.mat-fab, &.mat-mini-fab {
 			background-color: $cyph-speed-dial-action-alt-background !important;
 			color: $cyph-speed-dial-action-alt-foreground !important;

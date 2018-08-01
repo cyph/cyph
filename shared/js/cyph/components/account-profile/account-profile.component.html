@@ -298,16 +298,17 @@
 			>
 				<mat-icon>cloud_upload</mat-icon>
 			</button>
-			<button
+			<a
 				mat-mini-fab
 				[class.open]='isSpeedDialOpen | async'
 				cyphTranslate
 				class='alt'
 				matTooltip='New Cyph Link'
 				matTooltipPosition='left'
+				[href]='envService.newCyphUrl'
 			>
 				<mat-icon>link</mat-icon>
-			</button>
+			</a>
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
 </ng-template>
