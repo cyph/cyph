@@ -210,6 +210,8 @@
 		[open]='isSpeedDialOpen | async'
 		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
 		class='speed-dial edit-hide'
+		[class.home]='home'
+		[class.mobile]='envService.isMobile'
 	>
 		<smd-fab-trigger
 			[spin]='true'
