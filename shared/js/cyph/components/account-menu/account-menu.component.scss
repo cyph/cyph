@@ -4,52 +4,28 @@
 	@include transition(all 0.25s ease-out);
 }
 
-.sidenav button {
-	font-size: 18px;
-}
-
-.mobile {
-	.buttons button, button.logout {
-		font-size: 30px;
-		min-height: 40px;
-
-		mat-icon {
-			font-size: 30px;
-			height: 30px;
-			width: 30px;
-		}
+:host > div:not(.collapsed) {
+	.home-list {
+		margin-top: 12px;
+		margin-bottom: -6px;
 	}
 }
 
-button {
-	font-family: Ubuntu;
-	font-weight: 300;
-	font-size: 26px;
-
-	&[mat-icon-button] {
-		height: 1.75em;
-		width: 1.75em;
-
-		&.home {
-			height: 2em;
-			width: 2em;
-		}
+:host > div.collapsed {
+	img.avatar {
+		margin-left: -9px;
 	}
 
-	&.emphasis {
-		font-weight: bold;
-
-		@include filter(contrast(2));
-
-		mat-icon {
-			@include icon-size(42px);
-		}
+	cyph-logo {
+		height: 28px;
+		width: 28px;
+		margin-left: -2px;
 	}
+}
 
-	mat-icon {
-		margin-right: 5px;
-
-		@include icon-size(32px);
+a.emphasis {
+	h3, mat-icon {
+		font-weight: bold !important;
 	}
 }
 
@@ -57,22 +33,20 @@ cyph-logo {
 	height: 2.5em;
 }
 
-[mat-icon-button] cyph-logo {
-	height: 40px;
-	margin-top: 6px;
-}
-
-img, cyph-logo {
-	max-width: 100%;
-}
-
 img.avatar {
-	width: calc(100% - 10px);
+	cursor: default;
 }
 
-.avatar-container {
+.avatar-list p {
+	opacity: 0.6;
+}
+
+.cover-image {
+	position: absolute;
+	top: 0;
+	left: 0;
 	width: 100%;
-	max-width: 150px;
+	height: 150px;
 }
 
 .menu {
@@ -83,6 +57,18 @@ img.avatar {
 	}
 }
 
-.menu-toggle mat-icon {
-	margin-left: -4px;
+.menu-toggle {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	z-index: 1;
+
+	mat-icon {
+		margin-left: -4px;
+	}
+}
+
+mat-divider {
+	height: 2px;
 }

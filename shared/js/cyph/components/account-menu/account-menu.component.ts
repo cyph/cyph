@@ -8,6 +8,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {urlToSafeStyle} from '../../util/safe-values';
 
 
 /**
@@ -30,6 +31,9 @@ export class AccountMenuComponent {
 
 	/** If true, is inside a sidenav. */
 	@Input() public sidenav: boolean							= false;
+
+	/** @see urlToSafeStyle */
+	public readonly urlToSafeStyle								= urlToSafeStyle;
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence			= UserPresence;

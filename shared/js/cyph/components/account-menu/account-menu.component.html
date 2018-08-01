@@ -11,81 +11,11 @@
 	[class.sidenav]='sidenav'
 >
 	<div
-		[fxFlex]='(menuExpanded | async) ? "25px" : "10px"'
-		*ngIf='!sidenav && (accountService.menuReduced | async) === false'
-	></div>
-
-	<div
 		fxFlex
 		fxLayout='column'
-		[fxLayoutAlign]='
-			(menuExpanded | async) ? "center stretch" : "center center"
-		'
-		[fxLayoutGap]='!sidenav && (accountService.menuReduced | async) ? "2px" : "16px"'
+		fxLayoutAlign='center stretch'
 	>
-		<ng-container *ngIf='!sidenav'>
-			<div></div>
-			<div *ngIf='menuExpanded | async'></div>
-		</ng-container>
-
-		<button
-			mat-button
-			fxFlex='3.5em'
-			cyphTranslate
-			class='home'
-			matTooltip='Home'
-			matTooltipPosition='right'
-			[routerLink]='accountService.routeRoot'
-			(click)='click()'
-			*ngIf='menuExpanded | async'
-		>
-			<cyph-logo></cyph-logo>
-		</button>
-		<button
-			mat-icon-button
-			cyphTranslate
-			class='home'
-			matTooltip='Home'
-			matTooltipPosition='right'
-			[routerLink]='accountService.routeRoot'
-			(click)='click()'
-			*ngIf='(menuExpanded | async) === false'
-		>
-			<cyph-logo icon></cyph-logo>
-		</button>
-
-
-
-		<ng-container *ngIf='(accountService.menuReduced | async) === false'>
-			<div></div>
-			<div fxLayoutAlign='center center'>
-				<div
-					[fxFlex]='(menuExpanded | async) ? "60" : "6em"'
-					fxHide.lt-md
-					fxLayoutAlign='center center'
-				>
-					<div class='avatar-container'>
-						<img
-							cyphTranslate
-							matTooltip='Profile'
-							matTooltipPosition='right'
-							class='avatar animated fadeIn _1'
-							[ngClass]='userPresence[(currentUser.user.status | async) || 0]'
-							alt='Profile Picture'
-							[src]='currentUser.user.avatar | async'
-							[routerLink]='accountService.routeRoot + "profile"'
-							(click)='click()'
-						/>
-					</div>
-				</div>
-			</div>
-			<div></div>
-		</ng-container>
-
 		<ng-container *ngTemplateOutlet='buttons'></ng-container>
-
-		<div></div>
-		<div *ngIf='menuExpanded | async'></div>
 	</div>
 
 	<button
@@ -112,443 +42,304 @@
 </div>
 
 <ng-template #buttons>
+	<div fxFlex><div cyphNanoScroller><div fxFlex fxFlexFill>
+
+
 	<div
-		fxFlex
-		class='buttons'
-		fxLayout='column'
-		fxLayoutGap='24px'
-		[fxLayoutAlign]='envService.isMobile ? "space-evenly" : ""'
-	>
+		class='cover-image'
+		[style.background-image]='urlToSafeStyle(currentUser.user.coverImage | async) | async'
+		*ngIf='menuExpanded | async'
+	></div>
+
+	<mat-nav-list class='home-list'>
+		<a
+			mat-list-item
+			cyphTranslate
+			class='home'
+			matTooltip='Home'
+			matTooltipPosition='right'
+			[routerLink]='accountService.routeRoot'
+			(click)='click()'
+		>
+			<cyph-logo mat-list-icon icon *ngIf='(menuExpanded | async) === false'></cyph-logo>
+			<cyph-logo matLine *ngIf='menuExpanded | async'></cyph-logo>
+		</a>
+	</mat-nav-list>
+
+	<mat-list class='avatar-list'>
+		<mat-list-item>
+			<img
+				cyphTranslate
+				matListAvatar
+				class='avatar'
+				[ngClass]='userPresence[(currentUser.user.status | async) || 0]'
+				alt='Profile Picture'
+				[src]='currentUser.user.avatar | async'
+			/>
+			<h3 matLine [fxShow]='menuExpanded | async'>
+				{{currentUser.user.name | async}}
+			</h3>
+			<p matLine [fxShow]='menuExpanded | async'>
+				@{{currentUser.user.realUsername | async}}
+			</p>
+		</mat-list-item>
+	</mat-list>
+
+	<mat-nav-list>
 		<ng-container *ngIf='
 			envService.isTelehealth &&
 			(currentUser.user.userType | async) === accountUserTypes.Standard &&
 			(accountFilesService.incomingFilesFiltered.redoxPatients | async)?.length > 0
 		'>
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='incoming-patient-info emphasis'
 				matTooltip='Incoming Patient Info'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "incoming-patient-info"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon>local_hospital</mat-icon>
-				&ngsp;
-				<span>Incoming</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='incoming-patient-info emphasis'
-				matTooltip='Incoming Patient Info'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "incoming-patient-info"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon>local_hospital</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>local_hospital</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Incoming
+				</h3>
+			</a>
 		</ng-container>
 
 		<ng-container *ngIf='envService.isTelehealth'>
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='appointments'
 				matTooltip='Appointments'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "appointments"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon>date_range</mat-icon>
-				&ngsp;
-				<span>Appointments</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='appointments'
-				matTooltip='Appointments'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "appointments"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon>date_range</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>date_range</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Appointments
+				</h3>
+			</a>
 		</ng-container>
 
 		<ng-container *ngIf='
 			envService.isTelehealth &&
 			(currentUser.user.userType | async) !== accountUserTypes.TelehealthDoctor
 		'>
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='doctors'
 				matTooltip='Doctors'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "doctors"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon svgIcon='doctor'></mat-icon>
-				&ngsp;
-				<span>Doctors</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='doctors'
-				matTooltip='Doctors'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "doctors"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon svgIcon='doctor'></mat-icon>
-			</button>
+				<mat-icon mat-list-icon svgIcon='doctor'></mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Doctors
+				</h3>
+			</a>
 		</ng-container>
 
 		<ng-container *ngIf='
 			envService.isTelehealth &&
 			(currentUser.user.userType | async) !== accountUserTypes.Standard
 		'>
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='patients'
 				matTooltip='Patients'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "patients"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon>local_hospital</mat-icon>
-				&ngsp;
-				<span>Patients</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='patients'
-				matTooltip='Patients'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "patients"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon>local_hospital</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>local_hospital</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Patients
+				</h3>
+			</a>
 
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='staff'
 				matTooltip='Staff'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "staff"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon>people</mat-icon>
-				&ngsp;
-				<span>Staff</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='staff'
-				matTooltip='Staff'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "staff"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon>people</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>people</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Staff
+				</h3>
+			</a>
 
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='ehr-access'
 				matTooltip='EHR Access'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "ehr-access"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon>vpn_key</mat-icon>
-				&ngsp;
-				<span>EHR Access</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='ehr-access'
-				matTooltip='EHR Access'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "ehr-access"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon>vpn_key</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>vpn_key</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					EHR Access
+				</h3>
+			</a>
 		</ng-container>
 
 		<ng-container *ngIf='!envService.isTelehealth'>
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='contacts'
 				matTooltip='Contacts'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "contacts"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon>people</mat-icon>
-				&ngsp;
-				<span>Contacts</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='contacts'
-				matTooltip='Contacts'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "contacts"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon>people</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>people</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Contacts
+				</h3>
+			</a>
 		</ng-container>
 
 		<ng-container *ngIf='!envService.isTelehealth || (
 			envService.isTelehealth &&
 			(currentUser.user.userType | async) !== accountUserTypes.Standard
 		)'>
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='files'
 				matTooltip='Files'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "files"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon>folder</mat-icon>
-				&ngsp;
-				<span>Files</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='files'
-				matTooltip='Files'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "files"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon>folder</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>folder</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Files
+				</h3>
+			</a>
 
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='notes'
 				matTooltip='Notes'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "notes"'
 				(click)='click()'
-				*ngIf='menuExpanded | async'
 			>
-				<mat-icon>create</mat-icon>
-				&ngsp;
-				<span>Notes</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='notes'
-				matTooltip='Notes'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "notes"'
-				(click)='click()'
-				*ngIf='(menuExpanded | async) === false'
-			>
-				<mat-icon>create</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>create</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Notes
+				</h3>
+			</a>
 
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='docs'
 				matTooltip='Docs'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "docs"'
 				(click)='click()'
-				*ngIf='
-					accountService.enableDocs &&
-					(menuExpanded | async)
-				'
+				*ngIf='accountService.enableDocs'
 			>
-				<mat-icon>library_books</mat-icon>
-				&ngsp;
-				<span>Docs</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='docs'
-				matTooltip='Docs'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "docs"'
-				(click)='click()'
-				*ngIf='
-					accountService.enableDocs &&
-					(menuExpanded | async) === false
-				'
-			>
-				<mat-icon>library_books</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>library_books</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Docs
+				</h3>
+			</a>
 
 			<ng-template #medicalFormsIcon>
 				<mat-icon svgIcon='medical-forms'></mat-icon>
 			</ng-template>
 
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='forms'
 				matTooltip='Forms'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "forms"'
 				(click)='click()'
-				*ngIf='
-					(!envService.environment.production || envService.isTelehealth) &&
-					(menuExpanded | async)
-				'
+				*ngIf='!envService.environment.production || envService.isTelehealth'
 			>
-				<ng-container *ngIf='!envService.isTelehealth; else medicalFormsIcon'>
-					<mat-icon>content_paste</mat-icon>
-				</ng-container>
-				&ngsp;
-				<span>Forms</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='forms'
-				matTooltip='Forms'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "forms"'
-				(click)='click()'
-				*ngIf='
-					(!envService.environment.production || envService.isTelehealth) &&
-					(menuExpanded | async) === false
-				'
-			>
-				<mat-icon>content_paste</mat-icon>
-			</button>
+				<mat-icon mat-list-icon *ngIf='!envService.isTelehealth; else medicalFormsIcon'>
+					content_paste
+				</mat-icon>
+				<ng-template #medicalFormsIcon>
+					<mat-icon mat-list-icon svgIcon='medical-forms'></mat-icon>
+				</ng-template>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Forms
+				</h3>
+			</a>
 
-			<button
-				mat-button
+			<a
+				mat-list-item
 				cyphTranslate
 				class='wallets'
 				matTooltip='Wallets'
 				matTooltipPosition='right'
 				[routerLink]='accountService.routeRoot + "wallets"'
 				(click)='click()'
-				*ngIf='
-					accountService.enableWallets &&
-					(menuExpanded | async)
-				'
+				*ngIf='accountService.enableWallets'
 			>
-				<mat-icon>account_balance_wallet</mat-icon>
-				&ngsp;
-				<span>Wallets</span>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				class='wallets'
-				matTooltip='Wallets'
-				matTooltipPosition='right'
-				[routerLink]='accountService.routeRoot + "wallets"'
-				(click)='click()'
-				*ngIf='
-					accountService.enableWallets &&
-					(menuExpanded | async) === false
-				'
-			>
-				<mat-icon>account_balance_wallet</mat-icon>
-			</button>
+				<mat-icon mat-list-icon>account_balance_wallet</mat-icon>
+				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+					Wallets
+				</h3>
+			</a>
 		</ng-container>
+	</mat-nav-list>
 
-		<button
-			mat-button
+
+	</div></div></div>
+
+	<mat-nav-list>
+		<mat-divider></mat-divider>
+
+		<a
+			mat-list-item
 			cyphTranslate
 			class='settings'
 			matTooltip='Settings'
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "settings"'
 			(click)='click()'
-			*ngIf='menuExpanded | async'
 		>
-			<mat-icon>settings</mat-icon>
-			&ngsp;
-			<span>Settings</span>
-		</button>
-		<button
-			mat-icon-button
+			<mat-icon mat-list-icon>settings</mat-icon>
+			<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+				Settings
+			</h3>
+		</a>
+
+		<a
+			mat-list-item
 			cyphTranslate
-			class='settings'
-			matTooltip='Settings'
+			class='logout'
+			matTooltip='Logout'
 			matTooltipPosition='right'
-			[routerLink]='accountService.routeRoot + "settings"'
+			[routerLink]='accountService.routeRoot + "logout"'
 			(click)='click()'
-			*ngIf='(menuExpanded | async) === false'
 		>
-			<mat-icon>settings</mat-icon>
-		</button>
-	</div>
-
-	<div fxFlex='3.5'></div>
-
-	<button
-		mat-button
-		cyphTranslate
-		class='logout'
-		matTooltip='Logout'
-		matTooltipPosition='right'
-		[routerLink]='accountService.routeRoot + "logout"'
-		(click)='click()'
-		*ngIf='menuExpanded | async'
-	>
-		<mat-icon>exit_to_app</mat-icon>
-		&ngsp;
-		<span>Logout</span>
-	</button>
-	<button
-		mat-icon-button
-		cyphTranslate
-		class='logout'
-		matTooltip='Logout'
-		matTooltipPosition='right'
-		[routerLink]='accountService.routeRoot + "logout"'
-		(click)='click()'
-		*ngIf='(menuExpanded | async) === false'
-	>
-		<mat-icon>exit_to_app</mat-icon>
-	</button>
-
+			<mat-icon mat-list-icon>exit_to_app</mat-icon>
+			<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+				Logout
+			</h3>
+		</a>
+	</mat-nav-list>
 </ng-template>
 
 

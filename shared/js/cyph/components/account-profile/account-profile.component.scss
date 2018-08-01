@@ -48,13 +48,9 @@ $header-size: 135px;
 		overflow: hidden;
 		opacity: 0.95;
 		box-shadow: 0 14px 0 0 rgba(69, 39, 160, 0.42);
-		background-size: cover;
-		background-position: center;
 
-		@include filter(brightness(0.5));
-
-		&.cyph-drop-zone:hover {
-			@include filter(none);
+		&.cyph-drop-zone:hover:after {
+			display: none;
 		}
 
 		&:not(.cyph-drop-zone) {
@@ -62,10 +58,8 @@ $header-size: 135px;
 		}
 	}
 
-	img, .cover-image {
-		&.cyph-drop-zone:not(:hover) {
-			opacity: 0.75;
-		}
+	img.cyph-drop-zone:not(:hover) {
+		opacity: 0.75;
 	}
 
 	/* .member-list:not(.doctor-list-only) { */

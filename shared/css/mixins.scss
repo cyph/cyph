@@ -366,6 +366,7 @@ $accountPaddingSmall: 2.5vw;
 	@include mat-autocomplete-theme($theme);
 	@include mat-card-theme($theme);
 	@include mat-dialog-theme($theme);
+	@include mat-list-theme($theme);
 	@include mat-option-theme($theme);
 	@include mat-sidenav-theme($theme);
 	@include mat-tabs-theme($theme);

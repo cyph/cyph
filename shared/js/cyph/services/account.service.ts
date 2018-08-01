@@ -91,12 +91,11 @@ export class AccountService {
 	public readonly menuMinWidth: number				= this.menuExpandedMinWidth * 2.5;
 
 	/** Indicates whether simplified menu should be displayed. */
-	public readonly menuReduced: Observable<boolean>	= combineLatest(
-		this.windowWatcherService.height,
-		this.windowWatcherService.width
-	).pipe(map(([height, width]) =>
-		Math.min(height, width) <= this.configService.responsiveMaxWidths.xs
-	));
+	public readonly menuReduced: Observable<boolean>	=
+		this.windowWatcherService.width.pipe(map(width =>
+			width <= this.configService.responsiveMaxWidths.xs
+		))
+	;
 
 	/** Indicates whether mobile menu is open. */
 	public readonly mobileMenuOpen: Observable<boolean>	= combineLatest(
