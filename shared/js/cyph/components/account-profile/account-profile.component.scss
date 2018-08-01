@@ -102,17 +102,12 @@ $header-size: 135px;
 	}
 
 	mat-form-field.description ::ng-deep {
-		top: -50px;
-		width: 50% !important;
-		margin-left: auto;
-		margin-right: auto;
-
 		textarea {
 			text-align: center;
 			font-family: Ubuntu;
 			font-weight: 300;
 			font-size: 20px;
-			height: 1.5em;
+			min-height: 3em;
 		}
 
 		.mat-form-field-infix {

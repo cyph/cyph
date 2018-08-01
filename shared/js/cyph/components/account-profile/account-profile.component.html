@@ -379,7 +379,7 @@
 					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
 					<div *ngIf='(editMode | async)'></div>
 					<ng-container *ngTemplateOutlet='description; context: {
-						divider: true,
+						divider: (editMode | async) === false,
 						readViewClasses: "animated flipInX _3"
 					}'></ng-container>
 				</div>
