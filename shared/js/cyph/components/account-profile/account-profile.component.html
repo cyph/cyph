@@ -80,7 +80,7 @@
 		</div>
 	</div>
 	<div *ngIf='divider'></div>
-	<mat-form-field class='description' *ngIf='editMode | async'>
+	<mat-form-field class='description' [class.mobile]='envService.isMobile' *ngIf='editMode | async'>
 		<textarea
 			matInput
 			#descriptionEditor
@@ -112,7 +112,7 @@
 		{{prefix || ''}}
 		{{user.name | async | slice:0:accountService.maxNameLength}}
 	</div>
-	<mat-form-field class='name' *ngIf='editMode | async'>
+	<mat-form-field class='name' [class.mobile]='envService.isMobile' *ngIf='editMode | async'>
 		<input
 			matInput
 			#descriptionEditor
@@ -240,7 +240,7 @@
 <ng-template #speedDial>
 	<div
 		class='overlay fullscreen'
-		*ngIf='envService.isMobile && (isSpeedDialOpen | async)'
+		*ngIf='envService.isMobile && (isSpeedDialOpen | async) && (editMode | async) === false'
 		(click)='isSpeedDialOpen.next(false)'
 	></div>
 	<smd-fab-speed-dial
@@ -248,6 +248,7 @@
 		[open]='isSpeedDialOpen | async'
 		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
 		class='speed-dial edit-hide profile-fab'
+		[fxHide]='editMode | async'
 	>
 		<smd-fab-trigger
 			[spin]='true'
@@ -309,6 +310,19 @@
 			>
 				<mat-icon>link</mat-icon>
 			</a>
+			<button
+				mat-mini-fab
+				color='primary'
+				[class.open]='isSpeedDialOpen | async'
+				cyphTranslate
+				class='alt'
+				matTooltip='Edit Profile'
+				matTooltipPosition='left'
+				(click)='setEditMode(true)'
+				*ngIf='envService.isMobile'
+			>
+				<mat-icon>edit</mat-icon>
+			</button>
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
 </ng-template>
@@ -407,6 +421,16 @@
 						</mat-option>
 					</mat-select>
 				</mat-form-field>
+			</div>
+
+			<div class='mobile-edit' fxLayout='row' fxFlex *ngIf='envService.isMobile && (editMode | async)'>
+				<button fxFlex='50' mat-button (click)='setEditMode(false)'>
+					<mat-icon>cancel</mat-icon>
+				</button>
+				<button fxFlex='50' mat-button (click)='saveProfile()'>
+					<mat-icon>save</mat-icon>
+				</button>
+
 			</div>
 
 			<ng-container *ngTemplateOutlet='buttons'></ng-container>

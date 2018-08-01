@@ -75,7 +75,7 @@ $header-size: 135px;
 	}
 
 	mat-form-field.name ::ng-deep {
-		width: 50% !important;
+		width: 50%;
 		margin-left: auto;
 		margin-right: auto;
 
@@ -99,6 +99,10 @@ $header-size: 135px;
 		.mat-form-field-wrapper {
 			padding-bottom: 0;
 		}
+	}
+
+	mat-form-field.mobile {
+			width: 90% !important;
 	}
 
 	mat-form-field.description ::ng-deep {
@@ -173,6 +177,17 @@ mat-card {
 smd-fab-speed-dial ::ng-deep smd-fab-actions > .open {
 	opacity: 1 !important;
 	transform: scale(1) !important;
+}
+
+.mobile-edit {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100vw;
+
+	button {
+		height: 10vh;
+	}
 }
 
 .overlay {
