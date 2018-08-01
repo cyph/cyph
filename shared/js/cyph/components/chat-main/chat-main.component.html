@@ -120,7 +120,7 @@
 		[fxShow]='p2pService.isActive | async'
 		class='video-call'
 		[class.sidebar-open]='p2pService.isSidebarOpen | async'
-		*ngIf='chat.state === states.chat'
+		*ngIf='chat.state === states.chat && (p2pService.isActive | async)'
 	>
 		<a class='logo' [href]='envService.homeUrl'>
 			<cyph-logo alignment='left' video></cyph-logo>
