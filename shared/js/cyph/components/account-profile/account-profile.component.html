@@ -383,7 +383,9 @@
 				(fileDrop)='updateDraft({coverImage: $event})'
 			></div>
 
-			<ng-container *ngTemplateOutlet='coverEditButton'></ng-container>
+			<ng-container *ngIf='!envService.isMobile'>
+				<ng-container *ngTemplateOutlet='coverEditButton'></ng-container>
+			</ng-container>
 
 			<div fxLayoutAlign='center center'>
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='16px'>
