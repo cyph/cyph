@@ -273,10 +273,15 @@
 		>
 			<button
 				mat-fab
+				[attr.aria-label]='
+					envService.isMobile && (isSpeedDialOpen | async) === false ?
+						stringsService.openMenu :
+						undefined
+				'
 				[matTooltip]='
 					!envService.isMobile || (isSpeedDialOpen | async) ?
 						stringsService.composeMessage :
-						stringsService.openMenu
+						undefined
 				'
 				matTooltipPosition='left'
 				[routerLink]='

@@ -56,8 +56,7 @@
 					mat-icon-button
 					cyphTranslate
 					class='home'
-					matTooltip='Home'
-					matTooltipPosition='right'
+					aria-label='Home'
 					[routerLink]='accountService.routeRoot'
 					fxHide.gt-sm
 				>
@@ -66,8 +65,7 @@
 				<h1 fxFlex>{{(accountService.header | async) || ''}}</h1>
 				<button
 					mat-icon-button
-					matTooltip='Menu'
-					matTooltipPosition='left'
+					aria-label='Menu'
 					fxLayoutAlign='center center'
 					(click)='accountService.toggleMobileMenu()'
 					fxHide.gt-sm
