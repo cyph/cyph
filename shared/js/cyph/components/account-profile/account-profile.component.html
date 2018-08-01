@@ -481,7 +481,10 @@
 	*ngIf='!envService.isTelehealth'
 >
 	<ng-container *ngTemplateOutlet='standardProfile'></ng-container>
-	<ng-container *ngTemplateOutlet='speedDial'></ng-container>
+
+	<ng-container *ngIf='isCurrentUser | async'>
+		<ng-container *ngTemplateOutlet='speedDial'></ng-container>
+	</ng-container>
 
 	<mat-progress-spinner
 		mode='indeterminate'
