@@ -440,14 +440,18 @@
 				</mat-form-field>
 			</div>
 
-			<div class='mobile-edit' fxLayout='row' fxFlex *ngIf='envService.isMobile && (editMode | async)'>
+			<div
+				class='mobile-edit'
+				fxFlex
+				fxLayout='row'
+				*ngIf='envService.isMobile && (editMode | async)'
+			>
 				<button fxFlex='50' mat-button (click)='setEditMode(false)'>
 					<mat-icon>cancel</mat-icon>
 				</button>
 				<button fxFlex='50' mat-button (click)='saveProfile()'>
 					<mat-icon>save</mat-icon>
 				</button>
-
 			</div>
 
 			<ng-container *ngTemplateOutlet='buttons'></ng-container>
@@ -573,7 +577,10 @@
 				</div>
 			</div>
 
-			<div fxLayout='column' [fxLayoutAlign]='envService.isMobile ? "center" : "center center"'>
+			<div
+				fxLayout='column'
+				[fxLayoutAlign]='envService.isMobile ? "center" : "center center"'
+			>
 				<mat-card
 					class='animated slideInDown'
 					[class.doctor-list-only]='doctorListOnly | async'
