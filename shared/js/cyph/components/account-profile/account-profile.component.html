@@ -255,8 +255,11 @@
 		>
 			<button
 				mat-fab
-				cyphTranslate
-				matTooltip='Compose Message'
+				[matTooltip]='
+					!envService.isMobile || (isSpeedDialOpen | async) ?
+						stringsService.composeMessage :
+						stringsService.openMenu
+				'
 				matTooltipPosition='left'
 				[routerLink]='
 					(isSpeedDialOpen | async) ?

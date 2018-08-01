@@ -117,6 +117,9 @@ export class StringsService {
 	public readonly company: string						= `${this.internalCompany}`;
 
 	/** @see StringsService */
+	public readonly composeMessage: string				= `Compose Message`;
+
+	/** @see StringsService */
 	public readonly connectedNotification: string		= `Connected!`;
 
 	/** @see StringsService */
@@ -502,6 +505,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly open: string						= `Open`;
+
+	/** @see StringsService */
+	public readonly openMenu: string					= `Open Menu`;
 
 	/** @see StringsService */
 	public readonly openProfile: string					= `Open Profile`;
