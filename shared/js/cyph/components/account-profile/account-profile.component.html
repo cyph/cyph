@@ -262,6 +262,7 @@
 	></div>
 	<smd-fab-speed-dial
 		animationMode='scale'
+		[fixed]='true'
 		[open]='isSpeedDialOpen | async'
 		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
 		class='speed-dial edit-hide profile-fab'
@@ -306,6 +307,7 @@
 				matTooltip='New Note'
 				matTooltipPosition='left'
 				[routerLink]='accountService.routeRoot + "notes/new"'
+				(click)='isSpeedDialOpen.next(false)'
 			>
 				<mat-icon>note_add</mat-icon>
 			</button>
@@ -318,6 +320,7 @@
 				cyphDropZone
 				[cyphDropZoneClass]='false'
 				(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+				(click)='isSpeedDialOpen.next(false)'
 			>
 				<mat-icon>cloud_upload</mat-icon>
 			</button>
@@ -329,6 +332,7 @@
 				matTooltip='New Cyph Link'
 				matTooltipPosition='left'
 				[href]='envService.newCyphUrl'
+				(click)='isSpeedDialOpen.next(false)'
 			>
 				<mat-icon>link</mat-icon>
 			</a>
@@ -340,7 +344,7 @@
 				class='alt'
 				matTooltip='Edit Profile'
 				matTooltipPosition='left'
-				(click)='setEditMode(true)'
+				(click)='isSpeedDialOpen.next(false); setEditMode(true)'
 				*ngIf='envService.isMobile'
 			>
 				<mat-icon>edit</mat-icon>
