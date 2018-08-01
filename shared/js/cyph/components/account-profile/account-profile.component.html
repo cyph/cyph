@@ -311,30 +311,36 @@
 				(fileDrop)='updateDraft({coverImage: $event})'
 			></div>
 
-			<div class='edit-button' fxLayout='row' fxLayoutGap='8px'>
-			<button
-				mat-raised-button
-				cyphTranslate
-				(click)='setEditMode(false)'
-				matTooltip='Cancel Changes'
-				*ngIf='(isCurrentUser | async) && (editMode | async)'
+			<div
+				class='edit-button'
+				[class.home]='home'
+				*ngIf='!envService.isMobile'
+				fxLayout='row'
+				fxLayoutGap='8px'
 			>
-				<mat-icon>cancel</mat-icon> Cancel Changes
-			</button>
-			<button
-				mat-raised-button
-				cyphTranslate
-				(click)='editMode.value ? saveProfile() : setEditMode(true)'
-				[matTooltip]='(editMode | async) ? "Edit Profile" : "Save Profile"'
-				*ngIf='isCurrentUser | async'
-			>
-				<ng-container *ngIf='editMode | async'>
-					<mat-icon>save</mat-icon> Save Profile
-				</ng-container>
-				<ng-container *ngIf='(editMode | async) === false'>
-					<mat-icon>edit</mat-icon> Edit Profile
-				</ng-container>
-			</button>
+				<button
+					mat-raised-button
+					cyphTranslate
+					(click)='setEditMode(false)'
+					matTooltip='Cancel Changes'
+					*ngIf='(isCurrentUser | async) && (editMode | async)'
+				>
+					<mat-icon>cancel</mat-icon> Cancel Changes
+				</button>
+				<button
+					mat-raised-button
+					cyphTranslate
+					(click)='editMode.value ? saveProfile() : setEditMode(true)'
+					[matTooltip]='(editMode | async) ? "Edit Profile" : "Save Profile"'
+					*ngIf='isCurrentUser | async'
+				>
+					<ng-container *ngIf='editMode | async'>
+						<mat-icon>save</mat-icon> Save Profile
+					</ng-container>
+					<ng-container *ngIf='(editMode | async) === false'>
+						<mat-icon>edit</mat-icon> Edit Profile
+					</ng-container>
+				</button>
 			</div>
 
 			<div fxLayoutAlign='center center'>

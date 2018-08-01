@@ -158,10 +158,14 @@ mat-card {
 }
 
 .edit-button {
-	right: -7.5vw;
+	right: 0;
 	top: 0;
 	position: absolute;
 	transition: 500ms;
+
+	&.home {
+		right: -7.5vw;
+	}
 
 	button {
 		width: 175px;
