@@ -80,7 +80,7 @@
 		</div>
 	</div>
 	<div *ngIf='divider'></div>
-	<mat-form-field class='description' *ngIf='editMode | async'>
+	<mat-form-field class='description' [class.mobile]='envService.isMobile' *ngIf='editMode | async'>
 		<textarea
 			matInput
 			#descriptionEditor
@@ -112,7 +112,7 @@
 		{{prefix || ''}}
 		{{user.name | async | slice:0:accountService.maxNameLength}}
 	</div>
-	<mat-form-field class='name' *ngIf='editMode | async'>
+	<mat-form-field class='name' [class.mobile]='envService.isMobile' *ngIf='editMode | async'>
 		<input
 			matInput
 			#descriptionEditor

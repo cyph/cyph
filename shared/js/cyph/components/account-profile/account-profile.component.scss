@@ -81,7 +81,7 @@ $header-size: 135px;
 	}
 
 	mat-form-field.name ::ng-deep {
-		width: 50% !important;
+		width: 50%;
 		margin-left: auto;
 		margin-right: auto;
 
@@ -107,9 +107,13 @@ $header-size: 135px;
 		}
 	}
 
+	mat-form-field.mobile {
+			width: 90% !important;
+	}
+
 	mat-form-field.description ::ng-deep {
 		top: -50px;
-		width: 50% !important;
+		width: 50%;
 		margin-left: auto;
 		margin-right: auto;
 
