@@ -46,6 +46,10 @@ button {
 		}
 	}
 
+	::ng-deep .mat-button-focus-overlay {
+		min-height: 42px;
+	}
+
 	mat-icon {
 		margin-right: 5px;
 
