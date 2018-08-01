@@ -262,7 +262,7 @@
 	></div>
 	<smd-fab-speed-dial
 		animationMode='scale'
-		[fixed]='true'
+		[forceTooltips]='envService.isMobile'
 		[open]='isSpeedDialOpen | async'
 		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
 		class='speed-dial edit-hide profile-fab'
