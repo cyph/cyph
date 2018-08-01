@@ -164,23 +164,14 @@ export class AccountService {
 
 	/** Toggles mobile account menu. */
 	public toggleMobileMenu (menuOpen?: boolean) : void {
-		/* tslint:disable-next-line:strict-type-predicates */
-		if (typeof location === 'object') {
-			location.hash	= location.hash.replace(/\/$/, '') + (
-				(
-					typeof menuOpen === 'boolean' ?
-						menuOpen :
-						!location.hash.endsWith('/')
-				) ?
-					'/' :
-					''
-			);
+		if (typeof menuOpen !== 'boolean') {
+			menuOpen	= !this.mobileMenuOpenInternal.value;
 		}
-		else {
-			this.mobileMenuOpenInternal.next(typeof menuOpen === 'boolean' ?
-				menuOpen :
-				!this.mobileMenuOpenInternal.value
-			);
+
+		this.mobileMenuOpenInternal.next(menuOpen);
+
+		if (menuOpen && this.envService.isWeb) {
+			history.pushState(undefined, undefined);
 		}
 	}
 
@@ -206,14 +197,10 @@ export class AccountService {
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
-		/* tslint:disable-next-line:strict-type-predicates */
-		if (typeof location === 'object') {
-			const mobileMenuHashChangeHandler	= () => {
-				this.mobileMenuOpenInternal.next(location.hash.endsWith('/'));
-			};
-
-			self.addEventListener('hashchange', mobileMenuHashChangeHandler);
-			this.routeChanges.subscribe(mobileMenuHashChangeHandler);
+		if (this.envService.isWeb) {
+			self.addEventListener('popstate', () => {
+				this.mobileMenuOpenInternal.next(false);
+			});
 		}
 
 		this.header	= combineLatest(

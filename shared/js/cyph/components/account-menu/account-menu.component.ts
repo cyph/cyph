@@ -46,10 +46,7 @@ export class AccountMenuComponent {
 		}
 		*/
 
-		/* tslint:disable-next-line:strict-type-predicates */
-		if (typeof location !== 'object') {
-			this.accountService.toggleMobileMenu(false);
-		}
+		this.accountService.toggleMobileMenu(false);
 	}
 
 	constructor (
