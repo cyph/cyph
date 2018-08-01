@@ -1273,6 +1273,8 @@ export class AccountFilesService {
 			throw new Error('Invalid AccountFilesService.upload input.');
 		}
 
+		this.showSpinner.next(true);
+
 		const id			= uuid();
 		const key			= (async () => this.potassiumService.randomBytes(
 			await this.potassiumService.secretBox.keyBytes
@@ -1383,6 +1385,8 @@ export class AccountFilesService {
 						await this.shareFile(id, shareWithUser);
 					}
 				}
+
+				this.showSpinner.next(false);
 
 				return id;
 			})
