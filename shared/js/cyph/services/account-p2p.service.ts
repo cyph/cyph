@@ -3,7 +3,6 @@ import {Router} from '@angular/router';
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
-import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
@@ -35,9 +34,7 @@ export class AccountP2PService extends P2PService {
 		await sleep(0);
 
 		const id		= uuid();
-		const contactID	= await this.accountContactsService.getContactID(
-			this.accountSessionService.remoteUser.value.username
-		);
+		const contactID	= await this.accountSessionService.remoteUser.value.contactID;
 
 		await (await this.accountSessionService.send([
 			rpcEvents.accountP2P,
@@ -62,6 +59,23 @@ export class AccountP2PService extends P2PService {
 		await this.router.navigate([accountRoot, callType, contactID, id]);
 	}
 
+	/** @inheritDoc */
+	public async closeButton () : Promise<void> {
+		const [contactID]	= await Promise.all([
+			this.accountSessionService.remoteUser.value ?
+				this.accountSessionService.remoteUser.value.contactID :
+				Promise.resolve(undefined)
+			,
+			super.closeButton()
+		]);
+
+		if (!contactID) {
+			return;
+		}
+
+		await this.router.navigate([accountRoot, 'messages', contactID]);
+	}
+
 	constructor (
 		chatService: ChatService,
 		dialogService: DialogService,
@@ -73,9 +87,6 @@ export class AccountP2PService extends P2PService {
 
 		/** @ignore */
 		private readonly router: Router,
-
-		/** @ignore */
-		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService
@@ -103,15 +114,13 @@ export class AccountP2PService extends P2PService {
 						continue;
 					}
 
-					const id				= o.command.additionalData;
-					const callType			= o.command.method;
-					const contactID			= await this.accountContactsService.getContactID(
-						this.accountSessionService.remoteUser.value.username
-					);
-					const {realUsername}	= await this.accountSessionService.remoteUser.value.
-						accountUserProfile.
-						getValue()
-					;
+					const id		= o.command.additionalData;
+					const callType	= o.command.method;
+
+					const [contactID, {realUsername}]	= await Promise.all([
+						this.accountSessionService.remoteUser.value.contactID,
+						this.accountSessionService.remoteUser.value.accountUserProfile.getValue()
+					]);
 
 					this.chatService.addMessage({
 						value: `${realUsername} ${this.stringsService.hasInvitedYouToA} ${
