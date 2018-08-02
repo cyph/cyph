@@ -125,18 +125,22 @@
 
 		&.Online {
 			border-color: map-get($mat-green, 700) !important;
+			background-color: map-get($mat-green, 700) !important;
 		}
 
 		&.Away {
 			border-color: map-get($mat-amber, 500) !important;
+			background-color: map-get($mat-amber, 500) !important;
 		}
 
 		&.Busy {
 			border-color: map-get($mat-red, 700) !important;
+			background-color: map-get($mat-red, 700) !important;
 		}
 
 		&.Offline {
 			border-color: map-get($mat-grey, 900) !important;
+			background-color: map-get($mat-grey, 900) !important;
 		}
 	}
 
