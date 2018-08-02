@@ -300,7 +300,7 @@ const editImage			= (command, condition, useOriginal) => Promise.resolve().then(
 			true
 		) !== 'dothemove'
 	) {
-		return false;
+		return Promise.resolve(false);
 	}
 
 	const tmpContainer	= containerName('tmp');
@@ -426,11 +426,11 @@ const updateCircleCI	= () => {
 	).then(() => {
 		fs.unlinkSync('Dockerfile.tmp');
 	}).then(() => Promise.all(
-		spawn('docker', ['images', '-a']).
+		[] /* spawn('docker', ['images', '-a']).
 			split('\n').
 			slice(1).
 			filter(s => s.indexOf('cyph/circleci') > -1).
-			map(s => spawnAsync('docker', ['rmi', s.split(/\s+/)[0]]))
+			map(s => spawnAsync('docker', ['rmi', s.split(/\s+/)[0]])) */
 	)).then(() =>
 		spawnAsync('docker', ['system', 'prune', '-f'])
 	);
