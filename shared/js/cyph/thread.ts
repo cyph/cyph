@@ -155,7 +155,7 @@ export class Thread implements IThread {
 
 		const threadSetupVars	= {
 			accountRoot,
-			isLocalEnv: env.environment.local,
+			isLocalEnv: env.isLocalEnv,
 			locationData: {
 				hash: locationData.hash,
 				host: locationData.host,

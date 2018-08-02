@@ -29,7 +29,7 @@
 				[aspectRatio]='cropAspectRatio'
 				[imageBase64]='imageBase64'
 				[maintainAspectRatio]='!!cropAspectRatio'
-				(imageCropped)='cropped = $event'
+				(imageCroppedBase64)='cropped = $event'
 				(loadImageFailed)='crop(false)'
 				*ngIf='safeUrlToString(src, mediaType) | async as imageBase64'
 			></image-cropper>

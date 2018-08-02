@@ -43,9 +43,13 @@ if (!HTMLElement.prototype.click) {
 	};
 }
 
+if (location.hash && location.hash.endsWith('/')) {
+	location.hash	= location.hash.slice(0, -1);
+}
+
 $(async () => {
 	if (!env.isHomeSite) {
-		if (!env.environment.local) {
+		if (!env.isLocalEnv) {
 			/* In WebSigned environments, perform CSP Meta-Hardening */
 			await sleep(10000);
 			$(document.head).append(

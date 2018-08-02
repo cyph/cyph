@@ -181,10 +181,15 @@ export class AccountService {
 
 	/** Toggles mobile account menu. */
 	public toggleMobileMenu (menuOpen?: boolean) : void {
-		this.mobileMenuOpenInternal.next(typeof menuOpen === 'boolean' ?
-			menuOpen :
-			!this.mobileMenuOpenInternal.value
-		);
+		if (typeof menuOpen !== 'boolean') {
+			menuOpen	= !this.mobileMenuOpenInternal.value;
+		}
+
+		if (menuOpen && this.envService.isWeb) {
+			history.pushState(undefined, undefined);
+		}
+
+		this.mobileMenuOpenInternal.next(menuOpen);
 	}
 
 	/** Triggers event to ends transition between components. */
@@ -209,6 +214,12 @@ export class AccountService {
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
+		if (this.envService.isWeb) {
+			self.addEventListener('popstate', () => {
+				this.mobileMenuOpenInternal.next(false);
+			});
+		}
+
 		this.header	= combineLatest(
 			this.headerInternal,
 			this.windowWatcherService.width,

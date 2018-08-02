@@ -45,31 +45,32 @@ export class P2PService {
 			});
 		},
 		audioDefaultEnabled: () => !this.chatService.walkieTalkieMode.value,
-		canceled: () => {
-			this.dialogService.alert({
+		canceled: async () => {
+			await this.dialogService.alert({
 				content: this.stringsService.p2pCanceled,
 				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
 			});
 		},
-		connected: (isConnected: boolean) => {
+		connected: async (isConnected: boolean) => {
 			if (isConnected) {
-				this.chatService.addMessage({
+				await this.chatService.addMessage({
 					shouldNotify: false,
 					value: this.stringsService.p2pConnect
 				});
 			}
 			else {
-				this.dialogService.alert({
-					content: this.stringsService.p2pDisconnect,
-					ok: this.stringsService.ok,
-					title: this.stringsService.p2pTitle
-				});
-
-				this.chatService.addMessage({
-					shouldNotify: false,
-					value: this.stringsService.p2pDisconnect
-				});
+				await Promise.all([
+					this.dialogService.alert({
+						content: this.stringsService.p2pDisconnect,
+						ok: this.stringsService.ok,
+						title: this.stringsService.p2pTitle
+					}),
+					this.chatService.addMessage({
+						shouldNotify: false,
+						value: this.stringsService.p2pDisconnect
+					})
+				]);
 			}
 		},
 		loaded: async () => {
@@ -102,14 +103,14 @@ export class P2PService {
 				title: this.stringsService.p2pTitle
 			});
 		},
-		requestConfirmation: () => {
-			this.chatService.addMessage({
+		requestConfirmation: async () => {
+			await this.chatService.addMessage({
 				shouldNotify: false,
 				value: this.stringsService.p2pRequestConfirmation
 			});
 		},
-		requestRejection: () => {
-			this.dialogService.alert({
+		requestRejection: async () => {
+			await this.dialogService.alert({
 				content: this.stringsService.p2pDeny,
 				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
@@ -145,19 +146,19 @@ export class P2PService {
 	}
 
 	/** Close active P2P session. */
-	public closeButton () : void {
+	public async closeButton () : Promise<void> {
 		if (!this.sessionInitService.ephemeral || this.sessionInitService.callType === undefined) {
-			this.p2pWebRTCService.close();
+			await this.p2pWebRTCService.close();
 		}
 		else {
-			this.chatService.disconnectButton();
+			await this.chatService.disconnectButton();
 		}
 	}
 
 	/** If chat authentication is complete, alert that P2P is disabled. */
-	public disabledAlert () : void {
+	public async disabledAlert () : Promise<void> {
 		if (this.chatService.chat.isConnected && !this.isEnabled.value) {
-			this.dialogService.alert({
+			await this.dialogService.alert({
 				content: this.stringsService.p2pDisabled,
 				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
@@ -184,16 +185,16 @@ export class P2PService {
 	 * Attempt to toggle outgoing video stream,
 	 * requesting new P2P session if necessary.
 	 */
-	public videoCallButton () : void {
+	public async videoCallButton () : Promise<void> {
 		if (!this.isEnabled.value) {
 			return;
 		}
 
 		if (!this.p2pWebRTCService.isActive.value) {
-			this.request('video');
+			await this.request('video');
 		}
 		else if (this.p2pWebRTCService.videoEnabled.value) {
-			this.p2pWebRTCService.toggle('video');
+			await this.p2pWebRTCService.toggle('video');
 		}
 	}
 
@@ -201,16 +202,16 @@ export class P2PService {
 	 * Attempt to toggle outgoing audio stream,
 	 * requesting new P2P session if necessary.
 	 */
-	public voiceCallButton () : void {
+	public async voiceCallButton () : Promise<void> {
 		if (!this.isEnabled.value) {
 			return;
 		}
 
 		if (!this.p2pWebRTCService.isActive.value) {
-			this.request('audio');
+			await this.request('audio');
 		}
 		else {
-			this.p2pWebRTCService.toggle('audio');
+			await this.p2pWebRTCService.toggle('audio');
 		}
 	}
 

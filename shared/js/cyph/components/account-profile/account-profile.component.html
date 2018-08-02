@@ -262,6 +262,7 @@
 	></div>
 	<smd-fab-speed-dial
 		animationMode='scale'
+		[forceTooltips]='envService.isMobile'
 		[open]='isSpeedDialOpen | async'
 		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
 		class='speed-dial edit-hide profile-fab'
@@ -273,10 +274,15 @@
 		>
 			<button
 				mat-fab
+				[attr.aria-label]='
+					envService.isMobile && (isSpeedDialOpen | async) === false ?
+						stringsService.openMenu :
+						undefined
+				'
 				[matTooltip]='
 					!envService.isMobile || (isSpeedDialOpen | async) ?
 						stringsService.composeMessage :
-						stringsService.openMenu
+						undefined
 				'
 				matTooltipPosition='left'
 				[routerLink]='
@@ -301,6 +307,7 @@
 				matTooltip='New Note'
 				matTooltipPosition='left'
 				[routerLink]='accountService.routeRoot + "notes/new"'
+				(click)='isSpeedDialOpen.next(false)'
 			>
 				<mat-icon>note_add</mat-icon>
 			</button>
@@ -313,6 +320,7 @@
 				cyphDropZone
 				[cyphDropZoneClass]='false'
 				(fileDrop)='accountFilesService.upload($event.name, $event, user.username)'
+				(click)='isSpeedDialOpen.next(false)'
 			>
 				<mat-icon>cloud_upload</mat-icon>
 			</button>
@@ -324,6 +332,7 @@
 				matTooltip='New Cyph Link'
 				matTooltipPosition='left'
 				[href]='envService.newCyphUrl'
+				(click)='isSpeedDialOpen.next(false)'
 			>
 				<mat-icon>link</mat-icon>
 			</a>
@@ -335,7 +344,7 @@
 				class='alt'
 				matTooltip='Edit Profile'
 				matTooltipPosition='left'
-				(click)='setEditMode(true)'
+				(click)='isSpeedDialOpen.next(false); setEditMode(true)'
 				*ngIf='envService.isMobile'
 			>
 				<mat-icon>edit</mat-icon>
@@ -383,7 +392,9 @@
 				(fileDrop)='updateDraft({coverImage: $event})'
 			></div>
 
-			<ng-container *ngTemplateOutlet='coverEditButton'></ng-container>
+			<ng-container *ngIf='!envService.isMobile'>
+				<ng-container *ngTemplateOutlet='coverEditButton'></ng-container>
+			</ng-container>
 
 			<div fxLayoutAlign='center center'>
 				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='16px'>
@@ -440,14 +451,18 @@
 				</mat-form-field>
 			</div>
 
-			<div class='mobile-edit' fxLayout='row' fxFlex *ngIf='envService.isMobile && (editMode | async)'>
+			<div
+				class='mobile-edit'
+				fxFlex
+				fxLayout='row'
+				*ngIf='envService.isMobile && (editMode | async)'
+			>
 				<button fxFlex='50' mat-button (click)='setEditMode(false)'>
 					<mat-icon>cancel</mat-icon>
 				</button>
 				<button fxFlex='50' mat-button (click)='saveProfile()'>
 					<mat-icon>save</mat-icon>
 				</button>
-
 			</div>
 
 			<ng-container *ngTemplateOutlet='buttons'></ng-container>
@@ -462,10 +477,19 @@
 
 <div
 	[class.editing]='(isEditorFocused | async) && (editMode | async)'
+	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='!envService.isTelehealth'
 >
 	<ng-container *ngTemplateOutlet='standardProfile'></ng-container>
-	<ng-container *ngTemplateOutlet='speedDial'></ng-container>
+
+	<ng-container *ngIf='isCurrentUser | async'>
+		<ng-container *ngTemplateOutlet='speedDial'></ng-container>
+	</ng-container>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner | async'
+	></mat-progress-spinner>
 </div>
 
 
@@ -474,6 +498,7 @@
 <div
 	class='telehealth'
 	[class.editing]='(isEditorFocused | async) && (editMode | async)'
+	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='envService.isTelehealth'
 >
 	<div fxLayout='row'>
@@ -573,7 +598,10 @@
 				</div>
 			</div>
 
-			<div fxLayout='column' [fxLayoutAlign]='envService.isMobile ? "center" : "center center"'>
+			<div
+				fxLayout='column'
+				[fxLayoutAlign]='envService.isMobile ? "center" : "center center"'
+			>
 				<mat-card
 					class='animated slideInDown'
 					[class.doctor-list-only]='doctorListOnly | async'
@@ -775,6 +803,11 @@
 	</div>
 
 	<ng-container *ngTemplateOutlet='editButton'></ng-container>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner | async'
+	></mat-progress-spinner>
 </div>
 
 
