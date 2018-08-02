@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
+import {SafeUrl} from '@angular/platform-browser';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import {User} from '../account';
+import {AccountUserPresence} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
@@ -41,6 +43,16 @@ export class AccountService {
 
 	/** Header title for current section. */
 	public readonly header: Observable<string|undefined>;
+
+	public headerAvatar: Observable<SafeUrl|string|undefined>	=
+		new Observable<SafeUrl|string|undefined>(undefined);
+
+	public headerStatus: Observable<AccountUserPresence.Statuses|undefined> =
+		new Observable<AccountUserPresence.Statuses|undefined>(undefined);
+
+	public headerUsername: Observable<string|undefined> =
+	new Observable<string|undefined>(undefined);
+
 
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: boolean					=
@@ -151,6 +163,11 @@ export class AccountService {
 		else {
 			const {name, realUsername}	= await header.accountUserProfile.getValue();
 			this.headerInternal.next(name || `@${realUsername}`);
+			this.headerAvatar		= await header.avatar;
+			this.headerStatus		= await header.status;
+			this.headerUsername		= await header.realUsername;
+
+
 		}
 	}
 
@@ -211,7 +228,6 @@ export class AccountService {
 			) {
 				return undefined;
 			}
-
 			if (
 				[
 					'appointments',
@@ -221,6 +237,7 @@ export class AccountService {
 					'files',
 					'forms',
 					'incoming-patient-info',
+					'messages',
 					'notes',
 					'patients',
 					'settings',
@@ -228,7 +245,7 @@ export class AccountService {
 					'wallets'
 				].indexOf(route) < 0 ||
 				(
-					routePath.length > 1
+					routePath.length > 2
 				)
 			) {
 				return width <= this.configService.responsiveMaxWidths.sm ?
@@ -289,6 +306,8 @@ export class AccountService {
 			if (e.url !== lastURL) {
 				lastURL	= e.url;
 				this.headerInternal.next(undefined);
+				this.headerAvatar = new Observable<undefined>(undefined);
+				this.headerStatus = new Observable<undefined>(undefined);
 			}
 
 			const section	= (e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';

@@ -49,7 +49,7 @@
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='center center'
 				fxLayoutGap='24px'
-				*ngIf='(accountService.header | async) !== undefined'
+				*ngIf='accountService.header | async'
 			>
 				<span></span>
 				<button
@@ -63,7 +63,21 @@
 				>
 					<cyph-logo icon></cyph-logo>
 				</button>
-				<h1 fxFlex>{{(accountService.header | async) || ''}}</h1>
+				<div fxFlex fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='8px'>
+					<ng-container *ngIf='(accountService.headerAvatar | async)'>
+						<img
+							cyphTranslate
+							matListAvatar
+							class='avatar'
+							[class.mobile]='envService.isMobile'
+							[ngClass]='userPresence[(accountService.headerStatus | async) || 0]'
+							alt='Profile Picture'
+							[src]='(accountService.headerAvatar | async)'
+							[routerLink]='accountService.routeRoot + "profile/" + ((accountService.headerUsername | async) || "")'
+						/>
+					</ng-container>
+					<h1> {{(accountService.header | async) || ''}} </h1>
+				</div>
 				<button
 					mat-icon-button
 					matTooltip='Menu'

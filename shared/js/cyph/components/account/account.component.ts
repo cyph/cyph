@@ -2,6 +2,7 @@ import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit} from '@angula
 import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
+import {UserPresence} from '../../account'
 import {initGranim} from '../../granim';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
@@ -207,6 +208,9 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			});
 		}
 	}
+
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence		= UserPresence;
 
 	constructor (
 		/** @ignore */
