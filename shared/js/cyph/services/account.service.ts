@@ -168,11 +168,11 @@ export class AccountService {
 			menuOpen	= !this.mobileMenuOpenInternal.value;
 		}
 
-		this.mobileMenuOpenInternal.next(menuOpen);
-
 		if (menuOpen && this.envService.isWeb) {
 			history.pushState(undefined, undefined);
 		}
+
+		this.mobileMenuOpenInternal.next(menuOpen);
 	}
 
 	/** Triggers event to ends transition between components. */
