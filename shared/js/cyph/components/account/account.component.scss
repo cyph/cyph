@@ -308,6 +308,13 @@
 			border-width: 3.5px;
 		}
 	}
+
+	h1.logo-text {
+		font-family: Ubuntu;
+		font-size: 2.5em;
+
+		@include transform(translateY(-3px));
+	}
 }
 
 .interstitial {

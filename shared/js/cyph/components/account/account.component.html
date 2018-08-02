@@ -64,7 +64,10 @@
 				</button>
 
 				<div fxFlex fxLayout='row'>
-					<ng-container *ngIf='accountService.header | async as header'>
+					<ng-container *ngIf='
+						accountService.header | async as header;
+						else logoTextHeader
+					'>
 						<a
 							fxFlex
 							class='profile-link'
@@ -104,6 +107,9 @@
 							<h1 fxFlex>{{header}}</h1>
 						</ng-template>
 					</ng-container>
+					<ng-template #logoTextHeader>
+						<h1 fxFlex class='logo-text'>{{stringsService.logoText}}</h1>
+					</ng-template>
 				</div>
 
 				<button

@@ -34,6 +34,13 @@ export class StringsService {
 	;
 
 	/** @ignore */
+	private readonly internalLogoText: string					=
+		this.customBuildStrings.internalLogoText ||
+		this.customBuildStrings.internalProduct ||
+		`cyph`
+	;
+
+	/** @ignore */
 	private readonly internalProduct: string					=
 		this.customBuildStrings.internalProduct ||
 		`Cyph`
@@ -389,6 +396,9 @@ export class StringsService {
 
 	/** @see StringsService */
 	public readonly logo: string						= `Logo`;
+
+	/** @see StringsService */
+	public readonly logoText: string					= this.internalLogoText;
 
 	/** @see StringsService */
 	public readonly masterKey: string					= `Master Key`;
