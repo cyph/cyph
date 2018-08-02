@@ -56,8 +56,7 @@
 			mat-list-item
 			cyphTranslate
 			class='home'
-			matTooltip='Home'
-			matTooltipPosition='right'
+			aria-label='Home'
 			[routerLink]='accountService.routeRoot'
 			(click)='click()'
 		>
@@ -96,8 +95,7 @@
 				mat-list-item
 				cyphTranslate
 				class='incoming-patient-info emphasis'
-				matTooltip='Incoming Patient Info'
-				matTooltipPosition='right'
+				aria-label='Incoming Patient Info'
 				[routerLink]='accountService.routeRoot + "incoming-patient-info"'
 				(click)='click()'
 			>
@@ -113,8 +111,7 @@
 				mat-list-item
 				cyphTranslate
 				class='appointments'
-				matTooltip='Appointments'
-				matTooltipPosition='right'
+				aria-label='Appointments'
 				[routerLink]='accountService.routeRoot + "appointments"'
 				(click)='click()'
 			>
@@ -133,8 +130,7 @@
 				mat-list-item
 				cyphTranslate
 				class='doctors'
-				matTooltip='Doctors'
-				matTooltipPosition='right'
+				aria-label='Doctors'
 				[routerLink]='accountService.routeRoot + "doctors"'
 				(click)='click()'
 			>
@@ -153,8 +149,7 @@
 				mat-list-item
 				cyphTranslate
 				class='patients'
-				matTooltip='Patients'
-				matTooltipPosition='right'
+				aria-label='Patients'
 				[routerLink]='accountService.routeRoot + "patients"'
 				(click)='click()'
 			>
@@ -168,8 +163,7 @@
 				mat-list-item
 				cyphTranslate
 				class='staff'
-				matTooltip='Staff'
-				matTooltipPosition='right'
+				aria-label='Staff'
 				[routerLink]='accountService.routeRoot + "staff"'
 				(click)='click()'
 			>
@@ -183,8 +177,7 @@
 				mat-list-item
 				cyphTranslate
 				class='ehr-access'
-				matTooltip='EHR Access'
-				matTooltipPosition='right'
+				aria-label='EHR Access'
 				[routerLink]='accountService.routeRoot + "ehr-access"'
 				(click)='click()'
 			>
@@ -200,8 +193,7 @@
 				mat-list-item
 				cyphTranslate
 				class='contacts'
-				matTooltip='Messages'
-				matTooltipPosition='right'
+				aria-label='Messages'
 				[routerLink]='accountService.routeRoot'
 				(click)='click()'
 			>
@@ -220,8 +212,7 @@
 				mat-list-item
 				cyphTranslate
 				class='files'
-				matTooltip='Files'
-				matTooltipPosition='right'
+				aria-label='Files'
 				[routerLink]='accountService.routeRoot + "files"'
 				(click)='click()'
 			>
@@ -235,8 +226,7 @@
 				mat-list-item
 				cyphTranslate
 				class='notes'
-				matTooltip='Notes'
-				matTooltipPosition='right'
+				aria-label='Notes'
 				[routerLink]='accountService.routeRoot + "notes"'
 				(click)='click()'
 			>
@@ -250,8 +240,7 @@
 				mat-list-item
 				cyphTranslate
 				class='docs'
-				matTooltip='Docs'
-				matTooltipPosition='right'
+				aria-label='Docs'
 				[routerLink]='accountService.routeRoot + "docs"'
 				(click)='click()'
 				*ngIf='accountService.enableDocs'
@@ -270,8 +259,7 @@
 				mat-list-item
 				cyphTranslate
 				class='forms'
-				matTooltip='Forms'
-				matTooltipPosition='right'
+				aria-label='Forms'
 				[routerLink]='accountService.routeRoot + "forms"'
 				(click)='click()'
 				*ngIf='!envService.environment.production || envService.isTelehealth'
@@ -291,8 +279,7 @@
 				mat-list-item
 				cyphTranslate
 				class='wallets'
-				matTooltip='Wallets'
-				matTooltipPosition='right'
+				aria-label='Wallets'
 				[routerLink]='accountService.routeRoot + "wallets"'
 				(click)='click()'
 				*ngIf='accountService.enableWallets'
@@ -315,8 +302,7 @@
 			mat-list-item
 			cyphTranslate
 			class='settings'
-			matTooltip='Settings'
-			matTooltipPosition='right'
+			aria-label='Settings'
 			[routerLink]='accountService.routeRoot + "settings"'
 			(click)='click()'
 		>
@@ -330,8 +316,7 @@
 			mat-list-item
 			cyphTranslate
 			class='logout'
-			matTooltip='Log Out'
-			matTooltipPosition='right'
+			aria-label='Log Out'
 			[routerLink]='accountService.routeRoot + "logout"'
 			(click)='click()'
 		>

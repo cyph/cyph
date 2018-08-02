@@ -190,7 +190,7 @@
 			mat-raised-button
 			cyphTranslate
 			(click)='setEditMode(false)'
-			matTooltip='Cancel Changes'
+			aria-label='Cancel Changes'
 			*ngIf='(isCurrentUser | async) && (editMode | async)'
 		>
 			<mat-icon>cancel</mat-icon>
@@ -201,7 +201,7 @@
 			mat-raised-button
 			cyphTranslate
 			(click)='editMode.value ? saveProfile() : setEditMode(true)'
-			[matTooltip]='
+			[attr.aria-label]='
 				(editMode | async) ?
 					stringsService.profileSave :
 					stringsService.profileEdit
@@ -579,7 +579,6 @@
 									"request-appointment/" +
 									(user.contactID | async)
 								'
-								matTooltip='Request Appointment'
 							>
 								Request Appointment
 							</button>
