@@ -80,7 +80,10 @@
 						*ngIf='
 							(noteEditable | async) &&
 							(realTime | async) === false &&
-							currentUser.user.username === (noteData | async)?.owner
+							(
+								(newNote | async) ||
+								currentUser.user.username === (noteData | async)?.owner
+							)
 						'
 					>
 						<mat-icon>save</mat-icon>
