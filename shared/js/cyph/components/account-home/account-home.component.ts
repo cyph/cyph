@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -15,7 +15,12 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-home.component.scss'],
 	templateUrl: './account-home.component.html'
 })
-export class AccountHomeComponent {
+export class AccountHomeComponent implements AfterViewInit {
+	/** @inheritDoc */
+	public ngAfterViewInit () : void {
+		this.accountService.transitionEnd();
+	}
+
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,

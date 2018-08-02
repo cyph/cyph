@@ -36,7 +36,7 @@ $cyph-message-colors: map-merge($cyph-message-colors, (
 body.primary-account-theme {
 	@include cyph-apply-theme(false, true);
 
-	cyph-account cyph-not-found img {
+	cyph-account cyph-not-found img, cyph-account-home > div > cyph-logo {
 		@include filter(brightness(0.25));
 	}
 

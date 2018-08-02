@@ -161,6 +161,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		!this.envService.isTelehealth &&
 		currentUser !== undefined &&
 		[
+			'',
 			'chat-transition',
 			'messages',
 			'notifications',
