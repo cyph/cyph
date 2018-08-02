@@ -1,5 +1,5 @@
 <cyph-account-profile [home]='true' *ngIf='
-	this.envService.isTelehealth;
+	envService.isTelehealth;
 	else contactsHome
 '></cyph-account-profile>
 
@@ -15,3 +15,103 @@
 		<cyph-logo icon></cyph-logo>
 	</div>
 </ng-template>
+
+<div *ngIf='!envService.isTelehealth'>
+	<div
+		class='overlay fullscreen'
+		(click)='isSpeedDialOpen.next(false)'
+		*ngIf='envService.isMobile && (isSpeedDialOpen | async)'
+	></div>
+	<smd-fab-speed-dial
+		animationMode='scale'
+		[forceTooltips]='envService.isMobile'
+		[open]='isSpeedDialOpen | async'
+		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
+		[class.absolute-fab]='!(envService.isMobile || envService.isTelehealth)'
+		[class.fixed-fab]='envService.isMobile || envService.isTelehealth'
+	>
+		<smd-fab-trigger
+			[spin]='true'
+			(mouseenter)='!envService.isMobile ? isSpeedDialOpen.next(true) : undefined'
+		>
+			<button
+				mat-fab
+				[attr.aria-label]='
+					envService.isMobile && (isSpeedDialOpen | async) === false ?
+						stringsService.openMenu :
+						undefined
+				'
+				[matTooltip]='
+					!envService.isMobile || (isSpeedDialOpen | async) ?
+						stringsService.composeMessage :
+						undefined
+				'
+				matTooltipPosition='left'
+				[routerLink]='
+					(isSpeedDialOpen | async) ?
+						accountService.routeRoot + "compose/" :
+						undefined
+				'
+				(click)='
+					envService.isMobile ?
+						isSpeedDialOpen.next(!isSpeedDialOpen.value) :
+						undefined
+				'
+			>
+				<mat-icon>{{(isSpeedDialOpen | async) ? 'message' : 'add'}}</mat-icon>
+			</button>
+		</smd-fab-trigger>
+		<smd-fab-actions>
+			<button
+				mat-mini-fab
+				[class.open]='isSpeedDialOpen | async'
+				cyphTranslate
+				matTooltip='New Note'
+				matTooltipPosition='left'
+				[routerLink]='accountService.routeRoot + "notes/new"'
+				(click)='isSpeedDialOpen.next(false)'
+			>
+				<mat-icon>note_add</mat-icon>
+			</button>
+			<button
+				mat-mini-fab
+				[class.open]='isSpeedDialOpen | async'
+				cyphTranslate
+				matTooltip='Upload File'
+				matTooltipPosition='left'
+				cyphDropZone
+				[cyphDropZoneClass]='false'
+				(fileDrop)='accountFilesService.upload($event.name, $event)'
+				(click)='isSpeedDialOpen.next(false)'
+			>
+				<mat-icon>cloud_upload</mat-icon>
+			</button>
+			<a
+				mat-mini-fab
+				[class.open]='isSpeedDialOpen | async'
+				cyphTranslate
+				class='alt'
+				matTooltip='New Cyph Link'
+				matTooltipPosition='left'
+				[href]='envService.newCyphUrl'
+				(click)='isSpeedDialOpen.next(false)'
+			>
+				<mat-icon>link</mat-icon>
+			</a>
+			<button
+				mat-mini-fab
+				color='primary'
+				[class.open]='isSpeedDialOpen | async'
+				cyphTranslate
+				class='alt'
+				matTooltip='Edit Profile'
+				matTooltipPosition='left'
+				[routerLink]='accountService.routeRoot + "profile/edit"'
+				(click)='isSpeedDialOpen.next(false)'
+				*ngIf='envService.isMobile'
+			>
+				<mat-icon>edit</mat-icon>
+			</button>
+		</smd-fab-actions>
+	</smd-fab-speed-dial>
+</div>

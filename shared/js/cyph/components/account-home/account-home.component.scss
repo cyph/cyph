@@ -3,3 +3,19 @@
 cyph-logo {
 	height: 15em;
 }
+
+smd-fab-speed-dial ::ng-deep smd-fab-actions > .open {
+	opacity: 1 !important;
+	
+	@include transform(scale(1) !important);
+}
+
+.overlay {
+	background-color: #333;
+	opacity: 0.5;
+	z-index: 1;
+	height: 100vh;
+	width: 100vw;
+	top: 0;
+	position: fixed;
+}

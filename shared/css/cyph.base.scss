@@ -205,6 +205,12 @@ a {
 }
 
 [mat-fab], smd-fab-speed-dial {
+	&.absolute-fab {
+		position: absolute;
+		right: 27px;
+		bottom: 25px;
+	}
+
 	&.fixed-fab {
 		position: fixed;
 		right: 42px;
