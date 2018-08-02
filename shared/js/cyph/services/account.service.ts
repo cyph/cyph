@@ -162,7 +162,7 @@ export class AccountService {
 			menuOpen	= !this.mobileMenuOpenInternal.value;
 		}
 
-		if (menuOpen && this.envService.isWeb) {
+		if (menuOpen && this.envService.isWeb && !this.envService.isCordova) {
 			history.pushState(undefined, undefined);
 		}
 
@@ -191,7 +191,17 @@ export class AccountService {
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
-		if (this.envService.isWeb) {
+		if (this.envService.isCordova) {
+			self.addEventListener('backbutton', () => {
+				if (this.mobileMenuOpenInternal.value) {
+					this.mobileMenuOpenInternal.next(false);
+				}
+				else {
+					history.back();
+				}
+			});
+		}
+		else if (this.envService.isWeb) {
 			self.addEventListener('popstate', () => {
 				this.mobileMenuOpenInternal.next(false);
 			});
