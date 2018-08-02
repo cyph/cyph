@@ -192,7 +192,7 @@ export class AccountService {
 		private readonly windowWatcherService: WindowWatcherService
 	) {
 		if (this.envService.isCordova) {
-			self.addEventListener('backbutton', () => {
+			document.addEventListener('backbutton', () => {
 				if (this.mobileMenuOpenInternal.value) {
 					this.mobileMenuOpenInternal.next(false);
 				}
