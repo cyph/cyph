@@ -107,25 +107,25 @@ RUN wget \
 RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
 RUN rm ~/*.tar.gz
 
-RUN mkdir ~/androidsdk
-RUN wget https://dl.google.com/android/repository/tools_r25.2.5-linux.zip -O ~/androidsdk.zip
-RUN unzip ~/androidsdk.zip -d ~/androidsdk
-RUN rm ~/androidsdk.zip
-RUN bash -c ' \
-	source ~/.bashrc; \
-	mv $ANDROID_HOME/tools $ANDROID_HOME/balls; \
-	ln -s $ANDROID_HOME/balls $ANDROID_HOME/tools; \
-	yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses; \
-	$ANDROID_HOME/tools/bin/sdkmanager \
-		"tools" \
-		"platform-tools" \
-		"platforms;android-25" \
-		"build-tools;25.0.2" \
-		"extras;android;m2repository" \
-		"extras;google;m2repository" \
-	; \
-	rm -rf $ANDROID_HOME/balls; \
-'
+#RUN mkdir ~/androidsdk
+#RUN wget https://dl.google.com/android/repository/tools_r25.2.5-linux.zip -O ~/androidsdk.zip
+#RUN unzip ~/androidsdk.zip -d ~/androidsdk
+#RUN rm ~/androidsdk.zip
+#RUN bash -c ' \
+#	source ~/.bashrc; \
+#	mv $ANDROID_HOME/tools $ANDROID_HOME/balls; \
+#	ln -s $ANDROID_HOME/balls $ANDROID_HOME/tools; \
+#	yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses; \
+#	$ANDROID_HOME/tools/bin/sdkmanager \
+#		"tools" \
+#		"platform-tools" \
+#		"platforms;android-25" \
+#		"build-tools;25.0.2" \
+#		"extras;android;m2repository" \
+#		"extras;google;m2repository" \
+#	; \
+#	rm -rf $ANDROID_HOME/balls; \
+#'
 
 RUN mkdir ~/haxelib
 RUN haxelib setup ~/haxelib
