@@ -468,7 +468,9 @@ switch (args.command) {
 
 	case 'make':
 		killEverything();
-		initPromise	= spawnAsync('docker', ['build', '-t', `${image}_original`, '.']).then(() =>
+		initPromise	= spawnAsync('docker', ['build', '-t', image, '.']).then(() =>
+			spawnAsync('docker', ['tag', `${image}:latest`, `${image}_original:latest`])
+		).then(() =>
 			pullUpdates()
 		).then(() =>
 			editImage(shellScripts.setup)
