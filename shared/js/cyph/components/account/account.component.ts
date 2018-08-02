@@ -62,11 +62,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	/** @ignore */
 	private readonly resolveViewInitiated: () => void	= this._VIEW_INITIATED.resolve;
 
-	/** Resolves after view init. */
-	public readonly viewInitiated: Promise<void>		= this._VIEW_INITIATED.promise;
-
 	/** Indicates whether section should take up 100% height. */
-	public readonly fullHeight: Observable<boolean>		= combineLatest(
+	public readonly fullHeight: Observable<boolean>			= combineLatest(
 		this.activatedRouteURL,
 		this.route
 	).pipe(map(([activatedRouteURL, route]) =>
@@ -91,7 +88,7 @@ export class AccountComponent implements AfterViewInit, OnInit {
 	));
 
 	/** Indicates whether section should take up 100% width. */
-	public readonly fullWidth: Observable<boolean>		= combineLatest(
+	public readonly fullWidth: Observable<boolean>			= combineLatest(
 		this.activatedRouteURL,
 		this.route
 	).pipe(map(([activatedRouteURL, route]) =>
@@ -170,6 +167,12 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		].indexOf(route) > -1
 	));
 
+	/** @see UserPresence */
+	public readonly userPresence: typeof UserPresence		= UserPresence;
+
+	/** Resolves after view init. */
+	public readonly viewInitiated: Promise<void>			= this._VIEW_INITIATED.promise;
+
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		this.resolveViewInitiated();
@@ -208,9 +211,6 @@ export class AccountComponent implements AfterViewInit, OnInit {
 			});
 		}
 	}
-
-	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence		= UserPresence;
 
 	constructor (
 		/** @ignore */

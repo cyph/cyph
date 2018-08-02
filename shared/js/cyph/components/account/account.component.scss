@@ -294,13 +294,17 @@ button.home {
 		}
 	}
 
+	a.profile-link {
+		text-decoration: none;
+	}
+
 	.avatar {
-		width: 5%;
-		height: 5%;
+		width: 3.5em;
+		height: 3.5em;
 
 		&.mobile {
-			width: 15%;
-			height: 15%;
+			width: 2.5em;
+			height: 2.5em;
 			border-width: 3.5px;
 		}
 	}

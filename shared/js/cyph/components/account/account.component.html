@@ -49,7 +49,7 @@
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='center center'
 				fxLayoutGap='24px'
-				*ngIf='accountService.header | async'
+				*ngIf='(accountService.header | async) !== undefined'
 			>
 				<span></span>
 				<button
@@ -62,21 +62,50 @@
 				>
 					<cyph-logo icon></cyph-logo>
 				</button>
-				<div fxFlex fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='8px'>
-					<ng-container *ngIf='(accountService.headerAvatar | async)'>
-						<img
-							cyphTranslate
-							matListAvatar
-							class='avatar'
-							[class.mobile]='envService.isMobile'
-							[ngClass]='userPresence[(accountService.headerStatus | async) || 0]'
-							alt='Profile Picture'
-							[src]='(accountService.headerAvatar | async)'
-							[routerLink]='accountService.routeRoot + "profile/" + ((accountService.headerUsername | async) || "")'
-						/>
+
+				<div fxFlex fxLayout='row'>
+					<ng-container *ngIf='accountService.header | async as header'>
+						<a
+							fxFlex
+							class='profile-link'
+							[routerLink]='
+								accountService.routeRoot +
+								"profile/" +
+								header.username
+							'
+							*ngIf='!!header.avatar; else stringHeader'
+						>
+							<div
+								fxFlex
+								fxLayout='row'
+								fxLayoutAlign='center center'
+								fxLayoutGap='8px'
+							>
+								<img
+									cyphTranslate
+									class='avatar'
+									[class.mobile]='envService.isMobile'
+									[ngClass]='userPresence[(header.status | async) || 0]'
+									alt='Profile Picture'
+									[src]='header.avatar | async'
+								/>
+
+								<h1 *ngIf='header.name | async as name; else usernameHeader'>
+									{{name}}
+								</h1>
+
+								<ng-template #usernameHeader>
+									<h1>@{{header.realUsername | async}}</h1>
+								</ng-template>
+							</div>
+						</a>
+
+						<ng-template #stringHeader>
+							<h1 fxFlex>{{header}}</h1>
+						</ng-template>
 					</ng-container>
-					<h1> {{(accountService.header | async) || ''}} </h1>
 				</div>
+
 				<button
 					mat-icon-button
 					aria-label='Menu'

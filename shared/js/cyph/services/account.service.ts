@@ -1,10 +1,8 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
-import {SafeUrl} from '@angular/platform-browser';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import {User} from '../account';
-import {AccountUserPresence} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
@@ -22,8 +20,8 @@ export class AccountService {
 	private readonly _UI_READY	= resolvable();
 
 	/** @ignore */
-	private readonly headerInternal: BehaviorSubject<string|undefined>	=
-		new BehaviorSubject<string|undefined>(undefined)
+	private readonly headerInternal: BehaviorSubject<string|User|undefined>	=
+		new BehaviorSubject<string|User|undefined>(undefined)
 	;
 
 	/** @ignore */
@@ -42,17 +40,7 @@ export class AccountService {
 	;
 
 	/** Header title for current section. */
-	public readonly header: Observable<string|undefined>;
-
-	public headerAvatar: Observable<SafeUrl|string|undefined>	=
-		new Observable<SafeUrl|string|undefined>(undefined);
-
-	public headerStatus: Observable<AccountUserPresence.Statuses|undefined> =
-		new Observable<AccountUserPresence.Statuses|undefined>(undefined);
-
-	public headerUsername: Observable<string|undefined> =
-	new Observable<string|undefined>(undefined);
-
+	public readonly header: Observable<string|User|undefined>;
 
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: boolean					=
@@ -157,18 +145,7 @@ export class AccountService {
 
 	/** Sets custom header text. */
 	public async setHeader (header: string|User) : Promise<void> {
-		if (typeof header === 'string') {
-			this.headerInternal.next(header);
-		}
-		else {
-			const {name, realUsername}	= await header.accountUserProfile.getValue();
-			this.headerInternal.next(name || `@${realUsername}`);
-			this.headerAvatar		= await header.avatar;
-			this.headerStatus		= await header.status;
-			this.headerUsername		= await header.realUsername;
-
-
-		}
+		this.headerInternal.next(header);
 	}
 
 	/** Toggles account menu. */
@@ -232,6 +209,7 @@ export class AccountService {
 				ehr: 'EHR'
 			};
 
+			/* No header */
 			if (
 				[
 					'register'
@@ -239,6 +217,21 @@ export class AccountService {
 			) {
 				return undefined;
 			}
+
+			/* No header until explicitly set via accountService.setHeader */
+			if (
+				[
+					'messages',
+					'profile'
+				].indexOf(route) > -1 &&
+				(
+					routePath.length > 1
+				)
+			) {
+				return header;
+			}
+
+			/* No header by default for non-whitelisted sections or deep routes */
 			if (
 				[
 					'appointments',
@@ -248,7 +241,6 @@ export class AccountService {
 					'files',
 					'forms',
 					'incoming-patient-info',
-					'messages',
 					'notes',
 					'patients',
 					'settings',
@@ -256,9 +248,10 @@ export class AccountService {
 					'wallets'
 				].indexOf(route) < 0 ||
 				(
-					routePath.length > 2
+					routePath.length > 1
 				)
 			) {
+				/* Always make at least an empty string on mobile to ensure menu bar displays */
 				return width <= this.configService.responsiveMaxWidths.sm ?
 					(header || '') :
 					undefined
@@ -317,8 +310,6 @@ export class AccountService {
 			if (e.url !== lastURL) {
 				lastURL	= e.url;
 				this.headerInternal.next(undefined);
-				this.headerAvatar = new Observable<undefined>(undefined);
-				this.headerStatus = new Observable<undefined>(undefined);
 			}
 
 			const section	= (e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
