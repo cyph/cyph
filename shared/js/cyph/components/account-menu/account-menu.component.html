@@ -330,14 +330,14 @@
 			mat-list-item
 			cyphTranslate
 			class='logout'
-			matTooltip='Logout'
+			matTooltip='Log Out'
 			matTooltipPosition='right'
 			[routerLink]='accountService.routeRoot + "logout"'
 			(click)='click()'
 		>
 			<mat-icon mat-list-icon>exit_to_app</mat-icon>
 			<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-				Logout
+				Log Out
 			</h3>
 		</a>
 	</mat-nav-list>
