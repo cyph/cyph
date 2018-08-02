@@ -384,14 +384,14 @@
 
 <div
 	[class.editing]='(isEditorFocused | async) && (editMode | async)'
-	[class.initiating]='accountFilesService.showSpinner | async'
+	[class.initiating]='accountFilesService.uploadSpinner | async'
 	*ngIf='!envService.isTelehealth'
 >
 	<ng-container *ngTemplateOutlet='standardProfile'></ng-container>
 
 	<mat-progress-spinner
 		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner | async'
+		*ngIf='accountFilesService.uploadSpinner | async'
 	></mat-progress-spinner>
 </div>
 
@@ -401,7 +401,7 @@
 <div
 	class='telehealth'
 	[class.editing]='(isEditorFocused | async) && (editMode | async)'
-	[class.initiating]='accountFilesService.showSpinner | async'
+	[class.initiating]='accountFilesService.uploadSpinner | async'
 	*ngIf='envService.isTelehealth'
 >
 	<div fxLayout='row'>
@@ -709,7 +709,7 @@
 
 	<mat-progress-spinner
 		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner | async'
+		*ngIf='accountFilesService.uploadSpinner | async'
 	></mat-progress-spinner>
 </div>
 

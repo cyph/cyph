@@ -504,6 +504,9 @@ export class AccountFilesService {
 	/** Indicates whether spinner should be displayed. */
 	public readonly showSpinner				= new BehaviorSubject<boolean>(true);
 
+	/** Indicates whether spinner for uploads should be displayed. */
+	public readonly uploadSpinner			= this.showSpinner.pipe(skip(1));
+
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
 		return htmlToText.fromString(new QuillDeltaToHtml(delta.ops || []).convert());

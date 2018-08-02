@@ -14,6 +14,7 @@ import {map, mergeMap} from 'rxjs/operators';
 import {IContactListItem, User, UserPresence} from '../../account';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
+import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
@@ -122,6 +123,9 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 		this.routeReactiveContactList.pipe(map(o => o.filteredContactList))
 	;
 
+	/** Indicates whether this is home component. */
+	@Input() public home: boolean												= false;
+
 	/** Indicates whether to use inverted theme. */
 	@Input() public invertedTheme: boolean										= false;
 
@@ -187,6 +191,9 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
+
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

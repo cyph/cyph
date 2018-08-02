@@ -4,15 +4,25 @@
 '></cyph-account-profile>
 
 <ng-template #contactsHome>
-	<cyph-account-contacts *ngIf='
+	<cyph-account-contacts [home]='true' *ngIf='
 		envService.isMobile;
 		else sidebarHome
 	'></cyph-account-contacts>
 </ng-template>
 
 <ng-template #sidebarHome>
-	<div fxFlex fxFlexFill fxLayoutAlign='center center'>
+	<div
+		fxFlex
+		fxFlexFill
+		fxLayoutAlign='center center'
+		[class.initiating]='accountFilesService.uploadSpinner | async'
+	>
 		<cyph-logo icon></cyph-logo>
+
+		<mat-progress-spinner
+			mode='indeterminate'
+			*ngIf='accountFilesService.uploadSpinner | async'
+		></mat-progress-spinner>
 	</div>
 </ng-template>
 
