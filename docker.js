@@ -206,6 +206,7 @@ const shellScripts			= {
 		command: `
 			source ~/.bashrc
 			${windowsWorkaround}
+			/cyph/commands/updatedockerimage.sh
 			/cyph/commands/getlibs.sh
 		`,
 		condition: `
@@ -287,7 +288,7 @@ const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOu
 	}
 };
 
-const editImage			= (command, condition) => Promise.resolve().then(() => {
+const editImage			= (command, condition, useOriginal) => Promise.resolve().then(() => {
 	if (
 		condition &&
 		dockerRun(
@@ -299,17 +300,27 @@ const editImage			= (command, condition) => Promise.resolve().then(() => {
 			true
 		) !== 'dothemove'
 	) {
-		return;
+		return false;
 	}
 
 	const tmpContainer	= containerName('tmp');
 
 	spawn('docker', ['rm', '-f', tmpContainer]);
 
-	return dockerRun(command, tmpContainer, undefined, true, ['-p', '9005:9005']).then(() =>
+	return Promise.resolve(
+		useOriginal ?
+			spawnAsync('docker', ['tag', `${image}_original:latest`, `${image}:latest`]) :
+			undefined
+	).then(() =>
+		dockerRun(command, tmpContainer, undefined, true, ['-p', '9005:9005'])
+	).then(() =>
 		spawnAsync('docker', ['commit', tmpContainer, image])
 	).then(() =>
 		spawnAsync('docker', ['rm', '-f', tmpContainer])
+	).then(() =>
+		spawnAsync('docker', ['system', 'prune', '-f'])
+	).then(() =>
+		true
 	);
 });
 
@@ -333,8 +344,14 @@ const pullUpdates		= () => {
 		return Promise.resolve();
 	}
 
-	return editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition).then(() =>
-		editImage(shellScripts.libUpdate.command, shellScripts.libUpdate.condition)
+	return editImage(
+		shellScripts.libUpdate.command,
+		shellScripts.libUpdate.condition,
+		true
+	).then(didUpdate =>
+		didUpdate ?
+			undefined :
+			editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition, true)
 	).then(() => {
 		const libNative	= path.join('shared', 'lib', 'native');
 		const ready		= path.join(__dirname, libNative, '.ready');
@@ -414,7 +431,9 @@ const updateCircleCI	= () => {
 			slice(1).
 			filter(s => s.indexOf('cyph/circleci') > -1).
 			map(s => spawnAsync('docker', ['rmi', s.split(/\s+/)[0]]))
-	));
+	)).then(() =>
+		spawnAsync('docker', ['system', 'prune', '-f'])
+	);
 };
 
 
@@ -449,10 +468,12 @@ switch (args.command) {
 
 	case 'make':
 		killEverything();
-		initPromise	= spawnAsync('docker', ['build', '-t', image, '.']).then(() =>
+		initPromise	= spawnAsync('docker', ['build', '-t', `${image}_original`, '.']).then(() =>
 			pullUpdates()
 		).then(() =>
 			editImage(shellScripts.setup)
+		).then(() =>
+			spawnAsync('docker', ['tag', `${image}:latest`, `${image}_original:latest`])
 		);
 		break;
 
