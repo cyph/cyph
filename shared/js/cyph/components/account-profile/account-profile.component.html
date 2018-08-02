@@ -243,11 +243,15 @@
 		</button>
 		<button
 			mat-fab
-			*ngIf='!envService.isTelehealth || (editMode | async) === false'
-			[matTooltip]='(editMode | async) ? "Save" : "Edit"'
+			[matTooltip]='
+				(editMode | async) ?
+					stringsService.profileSave :
+					stringsService.profileEdit
+			'
 			matTooltipPosition='above'
 			(click)='editMode.value ? saveProfile() : setEditMode(true)'
 			[disabled]='(editMode | async) && (readyToSave | async) === false'
+			*ngIf='!envService.isTelehealth || (editMode | async) === false'
 		>
 			<mat-icon *ngIf='editMode | async'>save</mat-icon>
 			<mat-icon *ngIf='(editMode | async) === false'>edit</mat-icon>
