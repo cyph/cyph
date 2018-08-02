@@ -154,6 +154,10 @@ mat-card {
 			opacity: 1;
 		}
 
+		&[disabled] {
+			background-color: white;
+		}
+
 		mat-icon {
 			font-size: 22px;
 			height: 22px;

@@ -206,6 +206,7 @@
 					stringsService.profileSave :
 					stringsService.profileEdit
 			'
+			[disabled]='(editMode | async) && (readyToSave | async) === false'
 			*ngIf='isCurrentUser | async'
 		>
 			<ng-container *ngIf='editMode | async; else coverEditButtonEditText'>
@@ -361,7 +362,12 @@
 				<button fxFlex='50' mat-button (click)='setEditMode(false)'>
 					<mat-icon>cancel</mat-icon>
 				</button>
-				<button fxFlex='50' mat-button (click)='saveProfile()'>
+				<button
+					fxFlex='50'
+					mat-button
+					(click)='saveProfile()'
+					[disabled]='(readyToSave | async) === false'
+				>
 					<mat-icon>save</mat-icon>
 				</button>
 			</div>
