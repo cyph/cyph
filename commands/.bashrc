@@ -79,7 +79,7 @@ export -f unbindmount
 
 export FIREBASE_CONFIG='{}'
 
-if [ -f ~/.cyph/notify.key ] ; then
+if [ -f ~/.cyph/notify.key ] && [ -f /node_modules/.bin/notify ] ; then
 	rm ~/.notifyreg 2> /dev/null
 	/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)" > /dev/null
 fi
