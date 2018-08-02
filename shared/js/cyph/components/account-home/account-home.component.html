@@ -1,8 +1,14 @@
-<cyph-account-contacts *ngIf='
-	envService.isMobile ||
+<cyph-account-profile [home]='true' *ngIf='
 	this.envService.isTelehealth;
-	else sidebarHome
-'></cyph-account-contacts>
+	else contactsHome
+'></cyph-account-profile>
+
+<ng-template #contactsHome>
+	<cyph-account-contacts *ngIf='
+		envService.isMobile;
+		else sidebarHome
+	'></cyph-account-contacts>
+</ng-template>
 
 <ng-template #sidebarHome>
 	<div fxFlex fxFlexFill fxLayoutAlign='center center'>
