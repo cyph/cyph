@@ -192,15 +192,13 @@ export class AccountService {
 		private readonly windowWatcherService: WindowWatcherService
 	) {
 		if (this.envService.isCordova) {
-			self.addEventListener('deviceready', () => {
-				self.addEventListener('backbutton', () => {
-					if (this.mobileMenuOpenInternal.value) {
-						this.mobileMenuOpenInternal.next(false);
-					}
-					else {
-						history.back();
-					}
-				});
+			self.addEventListener('backbutton', () => {
+				if (this.mobileMenuOpenInternal.value) {
+					this.mobileMenuOpenInternal.next(false);
+				}
+				else {
+					history.back();
+				}
 			});
 		}
 		else if (this.envService.isWeb) {
