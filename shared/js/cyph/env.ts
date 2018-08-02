@@ -87,7 +87,7 @@ export class Env extends EnvDeploy {
 		databaseURL: `wss://${this.environment.firebase.project}.firebaseio.com`,
 		messagingSenderId: this.environment.firebase.messagingSenderId,
 		projectId: this.environment.firebase.project,
-		storageBucket: `${this.environment.firebase.project}.appspot.com`,
+		storageBucket: `${this.environment.firebase.project}.appspot.com`
 	};
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
