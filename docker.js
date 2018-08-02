@@ -351,7 +351,7 @@ const pullUpdates		= () => {
 	).then(didUpdate =>
 		didUpdate ?
 			undefined :
-			editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition, true)
+			editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition)
 	).then(() => {
 		const libNative	= path.join('shared', 'lib', 'native');
 		const ready		= path.join(__dirname, libNative, '.ready');
