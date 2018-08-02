@@ -75,6 +75,7 @@
 				[ngClass]='userPresence[(currentUser.user.status | async) || 0]'
 				alt='Profile Picture'
 				[src]='currentUser.user.avatar | async'
+				[routerLink]='accountService.routeRoot + "profile"'
 			/>
 			<h3 matLine [fxShow]='menuExpanded | async'>
 				{{currentUser.user.name | async}}

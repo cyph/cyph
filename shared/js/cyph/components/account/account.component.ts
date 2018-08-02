@@ -163,7 +163,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		[
 			'chat-transition',
 			'messages',
-			'notifications'
+			'notifications',
+			'profile'
 		].indexOf(route) > -1
 	));
 
