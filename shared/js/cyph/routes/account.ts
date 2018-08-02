@@ -143,7 +143,13 @@ export const account: Route	= {
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.Standard}
 		},
-		{path: 'profile', component: AccountProfileComponent},
+		{
+			path: 'profile',
+			component: AccountProfileComponent,
+			children: [
+				{path: 'edit', component: BlankComponent}
+			]
+		},
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', redirectTo: 'register/1'},
 		{path: 'register/:step', component: AccountRegisterComponent},

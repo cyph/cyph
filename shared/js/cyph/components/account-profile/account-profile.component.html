@@ -203,8 +203,8 @@
 			(click)='editMode.value ? saveProfile() : setEditMode(true)'
 			[matTooltip]='
 				(editMode | async) ?
-					stringsService.profileEdit :
-					stringsService.profileSave
+					stringsService.profileSave :
+					stringsService.profileEdit
 			'
 			*ngIf='isCurrentUser | async'
 		>
