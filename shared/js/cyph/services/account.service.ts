@@ -213,7 +213,7 @@ export class AccountService {
 					history.back();
 				}
 				else {
-					(<any> navigator).app.exitApp()
+					(<any> navigator).app.exitApp();
 				}
 			});
 
