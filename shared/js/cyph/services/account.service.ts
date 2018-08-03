@@ -212,8 +212,8 @@ export class AccountService {
 					navigationDepth -= 2;
 					history.back();
 				}
-				else {
-					(<any> navigator).app.exitApp();
+				else if (this.envService.isAndroid) {
+					(<any> self).plugins.appMinimize.minimize();
 				}
 			});
 
