@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, take} from 'rxjs/operators';
 import {User} from '../account';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {lockTryOnce} from '../util/lock';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
 import {ConfigService} from './config.service';
@@ -192,13 +193,19 @@ export class AccountService {
 		private readonly windowWatcherService: WindowWatcherService
 	) {
 		if (this.envService.isCordova) {
+			const backbuttonLock	= {};
+
 			document.addEventListener('backbutton', () => {
-				if (this.mobileMenuOpenInternal.value) {
-					this.mobileMenuOpenInternal.next(false);
-				}
-				else {
-					history.back();
-				}
+				lockTryOnce(backbuttonLock, async () => {
+					await sleep();
+
+					if (await this.mobileMenuOpen.pipe(take(1)).toPromise()) {
+						this.mobileMenuOpenInternal.next(false);
+					}
+					else {
+						history.back();
+					}
+				});
 			});
 		}
 		else if (this.envService.isWeb) {
