@@ -15,6 +15,7 @@
 	</author>
 
 	<plugin name="cordova-plugin-add-swift-support" spec="*" />
+	<plugin name="cordova-plugin-appminimize" spec="*" />
 	<plugin name="cordova-plugin-battery-status" spec="*" />
 	<plugin name="cordova-plugin-camera" spec="*" />
 	<plugin name="cordova-plugin-chooser" spec="*" />
