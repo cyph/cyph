@@ -16,6 +16,7 @@ import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {P2PService} from '../../services/p2p.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
@@ -138,6 +139,9 @@ export class AccountCallWaitingComponent implements AfterViewInit, OnChanges {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see P2PService */
+		public readonly p2pService: P2PService,
 
 		/** @see P2PWebRTCService */
 		public readonly p2pWebRTCService: P2PWebRTCService,

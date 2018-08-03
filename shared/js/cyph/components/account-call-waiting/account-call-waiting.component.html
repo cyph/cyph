@@ -24,6 +24,15 @@
 		<ng-container *ngIf='participantsByType | async as participants'>
 			<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
 
+			<div fxLayout='row'>
+				<button
+					mat-raised-button
+					color='primary'
+					(click)='p2pService.closeButton()'
+					fxFlex='33'
+				>Cancel</button>
+			</div>
+
 			<div fxFlex [style.width]='"100%"' *ngIf='
 				envService.isTelehealth &&
 				appointment?.calendarInvite.title &&

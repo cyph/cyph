@@ -8,6 +8,19 @@
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+		<div
+			class='file-upload mobile'
+			fxLayoutAlign='center'
+			fxLayout='row'
+			matTooltip='Upload'
+			matTooltipPosition='above'
+			cyphDropZone
+			cyphTranslate
+			(fileDrop)='accountFilesService.upload($event.name, $event)'
+			*ngIf='envService.isMobile'
+		>
+			<mat-icon>file_upload</mat-icon>
+		</div>
 		<mat-card
 			class='file animated slideInDown'
 			*ngFor='
@@ -111,6 +124,7 @@
 			cyphDropZone
 			cyphTranslate
 			(fileDrop)='accountFilesService.upload($event.name, $event)'
+			*ngIf='!envService.isMobile'
 		>
 			<mat-icon>file_upload</mat-icon>
 		</div>
