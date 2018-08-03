@@ -131,6 +131,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 			},
 			{appointmentID?: string; contactID?: string; sessionSubID?: string},
 			UrlSegment[]
+		/* tslint:disable-next-line:cyclomatic-complexity */
 		]) => lock(async () => {
 			if (this.destroyed) {
 				return;
