@@ -52,7 +52,7 @@ cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 			display: block;
 		}
 
-		mat-card > :not(mat-progress-spinner):not(.global) {
+		> * > :not(mat-progress-spinner):not(.global) {
 			opacity: 0.15;
 		}
 	}
