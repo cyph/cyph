@@ -41,6 +41,7 @@
 				undefined :
 				accountService.routeRoot + "profile/" + (username || "")
 			'
+			(click)='$event.stopPropagation()'
 		/>
 		<div fxLayout='column' fxLayoutAlign='center start'>
 			<mat-card-title>
