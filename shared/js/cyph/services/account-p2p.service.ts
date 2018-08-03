@@ -36,6 +36,32 @@ export class AccountP2PService extends P2PService {
 		const id		= uuid();
 		const contactID	= await this.accountSessionService.remoteUser.value.contactID;
 
+		await this.router.navigate([accountRoot, callType, contactID, id]);
+	}
+
+	/** @inheritDoc */
+	public async closeButton () : Promise<void> {
+		const [contactID]	= await Promise.all([
+			this.accountSessionService.remoteUser.value ?
+				this.accountSessionService.remoteUser.value.contactID :
+				Promise.resolve(undefined)
+			,
+			super.closeButton()
+		]);
+
+		if (!contactID) {
+			return;
+		}
+
+		await this.router.navigate([accountRoot, 'messages', contactID]);
+	}
+
+	/** Initiates call. */
+	public async initCall (callType: 'audio'|'video', id: string) : Promise<void> {
+		if (!this.accountSessionService.remoteUser.value) {
+			return;
+		}
+
 		await (await this.accountSessionService.send([
 			rpcEvents.accountP2P,
 			{command: {
@@ -55,25 +81,6 @@ export class AccountP2PService extends P2PService {
 				}.`
 			})
 		);
-
-		await this.router.navigate([accountRoot, callType, contactID, id]);
-	}
-
-	/** @inheritDoc */
-	public async closeButton () : Promise<void> {
-		const [contactID]	= await Promise.all([
-			this.accountSessionService.remoteUser.value ?
-				this.accountSessionService.remoteUser.value.contactID :
-				Promise.resolve(undefined)
-			,
-			super.closeButton()
-		]);
-
-		if (!contactID) {
-			return;
-		}
-
-		await this.router.navigate([accountRoot, 'messages', contactID]);
 	}
 
 	constructor (
