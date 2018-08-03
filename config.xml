@@ -22,7 +22,6 @@
 	<plugin name="cordova-plugin-device" spec="*" />
 	<plugin name="cordova-plugin-dialogs" spec="*" />
 	<plugin name="cordova-plugin-file" spec="*" />
-	<!-- <plugin name="cordova-plugin-firebase-messaging" spec="*" /> -->
 	<plugin name="cordova-plugin-geolocation" spec="*" />
 	<plugin name="cordova-plugin-globalization" spec="*" />
 	<plugin name="cordova-plugin-headercolor" spec="*" />
@@ -38,6 +37,7 @@
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
+	<plugin name="phonegap-plugin-push" spec="*" />
 
 	<access origin="*" />
 	<allow-intent href="http://*/*" />
