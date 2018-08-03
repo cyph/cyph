@@ -73,6 +73,15 @@ export const account: Route	= {
 				ephemeralSubSession: true
 			}
 		},
+		{
+			path: 'audio/:contactID/:sessionSubID/init',
+			component: AccountChatComponent,
+			data: {
+				callType: 'audio',
+				ephemeralSubSession: true,
+				init: true
+			}
+		},
 		{path: 'chat-transition', component: BlankComponent},
 		{
 			path: 'compose',
@@ -191,6 +200,15 @@ export const account: Route	= {
 			data: {
 				callType: 'video',
 				ephemeralSubSession: true
+			}
+		},
+		{
+			path: 'video/:contactID/:sessionSubID/init',
+			component: AccountChatComponent,
+			data: {
+				callType: 'video',
+				ephemeralSubSession: true,
+				init: true
 			}
 		},
 		{path: 'wallets', component: AccountWalletsComponent},

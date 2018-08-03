@@ -238,7 +238,8 @@ export abstract class SessionService implements ISessionService {
 			ISessionMessageAdditionalData|(
 				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
 			)
-		][]
+		][],
+		sessionSubID: string|undefined
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
 		const newMessages: (ISessionMessage&{data: ISessionMessageData})[]	= [];
 
@@ -258,7 +259,7 @@ export abstract class SessionService implements ISessionService {
 				chatState: additionalData.chatState,
 				command: additionalData.command,
 				id: additionalData.id || uuid(),
-				sessionSubID: this.sessionSubID,
+				sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
 				timestamp
@@ -527,6 +528,12 @@ export abstract class SessionService implements ISessionService {
 
 	/** @inheritDoc */
 	public async send (
+		sessionSubID?: string|[
+			string,
+			ISessionMessageAdditionalData|(
+				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
+			)
+		],
 		...messages: [
 			string,
 			ISessionMessageAdditionalData|(
@@ -538,7 +545,12 @@ export abstract class SessionService implements ISessionService {
 		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
 	}> {
 		return this.sendLock(async () => {
-			const newMessages	= await this.newMessages(messages);
+			if (sessionSubID instanceof Array) {
+				messages.unshift(sessionSubID);
+				sessionSubID	= this.sessionSubID;
+			}
+
+			const newMessages	= await this.newMessages(messages, sessionSubID);
 
 			return {
 				confirmPromise: this.plaintextSendHandler(newMessages),

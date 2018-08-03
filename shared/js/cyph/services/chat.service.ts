@@ -526,6 +526,7 @@ export class ChatService {
 			id,
 			key,
 			predecessors,
+			rootSession,
 			selfDestructTimeout,
 			shouldNotify,
 			timestamp,
@@ -600,7 +601,7 @@ export class ChatService {
 				id,
 				predecessors,
 				selfDestructTimeout,
-				sessionSubID: this.sessionService.sessionSubID,
+				sessionSubID: rootSession ? undefined : this.sessionService.sessionSubID,
 				timestamp
 			};
 
