@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as Delta from 'quill-delta';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {IAsyncList} from '../../iasync-list';
 import {IQuillDelta} from '../../iquill-delta';
@@ -33,6 +33,9 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 
 	/** @ignore */
 	private readonly saveLock	= lockFunction();
+
+	/** @ignore */
+	private urlSubscription?: Subscription;
 
 	/** Indicates whether or not this is a new note. */
 	public readonly newNote	= new BehaviorSubject<boolean>(false);
@@ -157,6 +160,10 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 	public ngOnDestroy () : void {
 		this.note.next(undefined);
 		this.updateNoteData({id: undefined});
+
+		if (this.urlSubscription) {
+			this.urlSubscription.unsubscribe();
+		}
 	}
 
 	/** @inheritDoc */
@@ -164,10 +171,9 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 		this.accountService.transitionEnd();
 
 		this.setURL(this.router.url);
-		this.router.events.subscribe(({url}: any) => {
-			if (typeof url === 'string') {
-				this.setURL(url);
-			}
+
+		this.urlSubscription	= this.accountService.routeChanges.subscribe(url => {
+			this.setURL(url);
 		});
 
 		combineLatest(

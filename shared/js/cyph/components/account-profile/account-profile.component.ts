@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@ang
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {filter, map, mergeMap, take} from 'rxjs/operators';
+import {map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {IFile} from '../../ifile';
@@ -70,10 +70,9 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** Profile edit mode. */
 	public readonly editMode: BehaviorSubject<boolean>	= toBehaviorSubject(
-		this.router.events.pipe(
-			filter(({url}: any) => typeof url === 'string'),
-			map(({url}: {url: string}) => url.split('/').slice(-1)[0] === 'edit')
-		),
+		this.accountService.routeChanges.pipe(map(url =>
+			url.split('/').slice(-1)[0] === 'edit'
+		)),
 		false
 	);
 
