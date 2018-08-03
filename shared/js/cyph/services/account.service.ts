@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {User} from '../account';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {lockTryOnce} from '../util/lock';
@@ -194,18 +194,24 @@ export class AccountService {
 	) {
 		if (this.envService.isCordova) {
 			const backbuttonLock	= {};
+			let navigationDepth		= 0;
 
 			document.addEventListener('backbutton', () => {
 				lockTryOnce(backbuttonLock, async () => {
-					await sleep();
-
-					if (await this.mobileMenuOpen.pipe(take(1)).toPromise()) {
+					if (this.mobileMenuOpenInternal.value || navigationDepth < 1) {
 						this.mobileMenuOpenInternal.next(false);
 					}
 					else {
+						navigationDepth -= 2;
 						history.back();
 					}
+
+					await sleep();
 				});
+			});
+
+			this.routeChanges.subscribe(() => {
+				++navigationDepth;
 			});
 		}
 		else if (this.envService.isWeb) {
