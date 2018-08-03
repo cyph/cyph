@@ -213,7 +213,7 @@ export class AccountService {
 					history.back();
 				}
 				else {
-					(<any> self).cordova.plugins.exit();
+					(<any> navigator).app.exitApp()
 				}
 			});
 
