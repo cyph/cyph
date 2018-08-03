@@ -80,8 +80,7 @@
 			<button
 				mat-card-avatar
 				mat-icon-button
-				cyphTranslate
-				matTooltip='Open Profile'
+				[matTooltip]='stringsService.openProfile'
 				[routerLink]='!clickable ?
 					undefined :
 					accountService.routeRoot + "profile/" + (username || "")
