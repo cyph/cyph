@@ -27,10 +27,13 @@
 			<div fxLayout='row'>
 				<button
 					mat-raised-button
+					cyphTranslate
 					color='primary'
 					(click)='p2pService.closeButton()'
 					fxFlex='33'
-				>Cancel</button>
+				>
+					Cancel
+				</button>
 			</div>
 
 			<div fxFlex [style.width]='"100%"' *ngIf='

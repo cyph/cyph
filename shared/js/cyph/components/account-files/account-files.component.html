@@ -8,19 +8,10 @@
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
-		<div
-			class='file-upload mobile'
-			fxLayoutAlign='center'
-			fxLayout='row'
-			matTooltip='Upload'
-			matTooltipPosition='above'
-			cyphDropZone
-			cyphTranslate
-			(fileDrop)='accountFilesService.upload($event.name, $event)'
-			*ngIf='envService.isMobile'
-		>
-			<mat-icon>file_upload</mat-icon>
-		</div>
+		<ng-container *ngIf='envService.isMobile'>
+			<ng-container *ngTemplateOutlet='fileUploadDropZone'></ng-container>
+		</ng-container>
+
 		<mat-card
 			class='file animated slideInDown'
 			*ngFor='
@@ -115,19 +106,9 @@
 			</mat-card-header>
 		</mat-card>
 
-		<div
-			class='file-upload'
-			fxLayoutAlign='center'
-			fxLayout='row'
-			matTooltip='Upload'
-			matTooltipPosition='above'
-			cyphDropZone
-			cyphTranslate
-			(fileDrop)='accountFilesService.upload($event.name, $event)'
-			*ngIf='!envService.isMobile'
-		>
-			<mat-icon>file_upload</mat-icon>
-		</div>
+		<ng-container *ngIf='!envService.isMobile'>
+			<ng-container *ngTemplateOutlet='fileUploadDropZone'></ng-container>
+		</ng-container>
 
 		<h2
 			cyphTranslate
@@ -214,3 +195,18 @@
 		*ngIf='accountFilesService.showSpinner | async'
 	></mat-progress-spinner>
 </div>
+
+<ng-template #fileUploadDropZone>
+	<div
+		class='file-upload'
+		fxLayoutAlign='center'
+		fxLayout='row'
+		matTooltip='Upload'
+		matTooltipPosition='above'
+		cyphDropZone
+		cyphTranslate
+		(fileDrop)='accountFilesService.upload($event.name, $event)'
+	>
+		<mat-icon>file_upload</mat-icon>
+	</div>
+</ng-template>

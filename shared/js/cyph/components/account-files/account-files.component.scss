@@ -18,8 +18,8 @@
 
 .card-list.mobile {
 	padding-top: 0 !important;
-}
 
-.file-upload.mobile {
-	height: 5em !important;
+	.file-upload {
+		height: 5em;
+	}
 }

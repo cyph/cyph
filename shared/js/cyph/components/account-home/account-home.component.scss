@@ -1,7 +1,8 @@
 @import '../../../../css/mixins';
 
-cyph-logo {
+.logo {
 	height: 15em;
+	opacity: 0.85;
 	pointer-events: none;
 }
 
@@ -19,9 +20,4 @@ smd-fab-speed-dial ::ng-deep smd-fab-actions > .open {
 	width: 100vw;
 	top: 0;
 	position: fixed;
-}
-
-.logo {
-	opacity: 0.85;
-	width: 50%;
 }

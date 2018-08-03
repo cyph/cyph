@@ -17,7 +17,15 @@
 		fxLayoutAlign='center center'
 		[class.initiating]='accountFilesService.uploadSpinner | async'
 	>
-		<img class='logo' src='/assets/img/logo.purple.alt.icon.png' />
+		<cyph-logo class='logo' icon *ngIf='envService.coBranded; else cyphAltLogo'></cyph-logo>
+		<ng-template #cyphAltLogo>
+			<img
+				class='logo'
+				cyphTranslate
+				alt='Logo'
+				src='/assets/img/logo.purple.alt.icon.png'
+			/>
+		</ng-template>
 
 		<mat-progress-spinner
 			mode='indeterminate'
