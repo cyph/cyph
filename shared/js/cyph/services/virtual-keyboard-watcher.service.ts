@@ -56,6 +56,12 @@ export class VirtualKeyboardWatcherService {
 			return;
 		}
 
+		if (this.envService.isCordova) {
+			self.addEventListener('keyboardDidHide', () => { this.trigger(false); });
+			self.addEventListener('keyboardDidShow', () => { this.trigger(true); });
+			return;
+		}
+
 		/* http://stackoverflow.com/a/11650231/459881 */
 
 		const $window	= $(window);
