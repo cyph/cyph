@@ -144,7 +144,7 @@ export class AccountService {
 	}
 
 	/** Sets custom header text. */
-	public async setHeader (header: string|User) : Promise<void> {
+	public setHeader (header: string|User) : void {
 		this.headerInternal.next(header);
 	}
 

@@ -165,7 +165,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 				await user.fetch();
 
 				if (!this.destroyed && this.envService.isMobile) {
-					await this.accountService.setHeader(user);
+					this.accountService.setHeader(user);
 				}
 
 				this.accountService.resolveUiReady();

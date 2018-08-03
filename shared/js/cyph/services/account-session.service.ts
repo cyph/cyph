@@ -369,7 +369,7 @@ export class AccountSessionService extends SessionService {
 			user.realUsername.subscribe(this.remoteUsername);
 
 			if (setHeader) {
-				await this.accountService.setHeader(user);
+				this.accountService.setHeader(user);
 			}
 		}
 
