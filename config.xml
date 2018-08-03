@@ -26,6 +26,7 @@
 	<plugin name="cordova-plugin-globalization" spec="*" />
 	<plugin name="cordova-plugin-headercolor" spec="*" />
 	<plugin name="cordova-plugin-inappbrowser" spec="*" />
+	<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
 	<plugin name="cordova-plugin-ionic-webview" spec="*" />
 	<plugin name="cordova-plugin-iosrtc" spec="*" />
 	<plugin name="cordova-plugin-media-capture" spec="*" />
