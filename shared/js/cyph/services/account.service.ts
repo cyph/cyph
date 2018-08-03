@@ -4,7 +4,6 @@ import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import {User} from '../account';
 import {toBehaviorSubject} from '../util/flatten-observable';
-import {lockTryOnce} from '../util/lock';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
 import {ConfigService} from './config.service';
@@ -111,12 +110,12 @@ export class AccountService {
 	public readonly resolveUiReady: () => void			= this._UI_READY.resolve;
 
 	/** Route change listener. */
-	public readonly routeChanges: Observable<void>		= toBehaviorSubject(
+	public readonly routeChanges						= toBehaviorSubject<string>(
 		this.router.events.pipe(
-			filter(event => event instanceof NavigationEnd),
-			map(() => {})
+			filter(event => event instanceof NavigationEnd && event.url !== this.currentRoute),
+			map(({url}: NavigationEnd) => url)
 		),
-		undefined
+		this.router.url
 	);
 
 	/** Root for account routes. */
@@ -129,6 +128,11 @@ export class AccountService {
 
 	/** Resolves after UI is ready. */
 	public readonly uiReady: Promise<void>				= this._UI_READY.promise;
+
+	/** @ignore */
+	private get currentRoute () : string {
+		return this.routeChanges.value;
+	}
 
 	/** @ignore */
 	private get routePath () : string[] {
@@ -193,21 +197,24 @@ export class AccountService {
 		private readonly windowWatcherService: WindowWatcherService
 	) {
 		if (this.envService.isCordova) {
-			const backbuttonLock	= {};
-			let navigationDepth		= 0;
+			let navigationDepth	= -3;
 
 			document.addEventListener('backbutton', () => {
-				lockTryOnce(backbuttonLock, async () => {
-					if (this.mobileMenuOpenInternal.value || navigationDepth < 1) {
-						this.mobileMenuOpenInternal.next(false);
-					}
-					else {
-						navigationDepth -= 2;
-						history.back();
-					}
+				const menuOpen	= this.mobileMenuOpenInternal.value;
 
-					await sleep();
-				});
+				this.mobileMenuOpenInternal.next(false);
+
+				if (menuOpen) {
+					return;
+				}
+
+				if (navigationDepth >= 1) {
+					navigationDepth -= 2;
+					history.back();
+				}
+				else {
+					(<any> self).cordova.plugins.exit();
+				}
 			});
 
 			this.routeChanges.subscribe(() => {
