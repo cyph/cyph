@@ -1,6 +1,9 @@
 version: 2
 jobs:
   build:
+  branches:
+    only:
+      - prod
     docker:
       - image: cyph/circleci:latest
     working_directory: /cyph

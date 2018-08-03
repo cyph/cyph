@@ -5,15 +5,6 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$DIR"
 
 
-if [ "${CIRCLECI}" ] && [ "${CIRCLE_PROJECT_USERNAME}" != cyph ] && ( \
-	[ "${CIRCLE_BRANCH}" == master ] || \
-	[ "${CIRCLE_BRANCH}" == beta ] || \
-	[ "${CIRCLE_BRANCH}" == prod ]
-) ; then
-	pass 'Skipping build'
-fi
-
-
 if [ "${1}" != '--angular-only' ] ; then
 	cd backend
 	go build
