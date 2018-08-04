@@ -3,9 +3,9 @@
 # CDN node setup script for Ubuntu 18.04
 
 
-cert='ASK RYAN FOR THIS'
-key='ASK RYAN FOR THIS'
-githubToken='ASK RYAN FOR THIS'
+PROMPT cert
+PROMPT key
+PROMPT githubToken
 
 
 adduser --gecos '' --disabled-password --home /home/cyph cyph || exit 1

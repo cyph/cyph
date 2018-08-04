@@ -3,16 +3,16 @@
 # Tor server setup script for Ubuntu 18.04
 
 
-rekeyscript='base64 hpkpsuicide.sh'
+rekeyscript='BASE64 hpkpsuicide.sh'
 
-apikey='ASK RYAN FOR THIS'
-orderid='ASK RYAN FOR THIS'
+PROMPT apikey
+PROMPT orderid
 csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyphdbyhiddenbhs.onion'
 
 onionaddress='cyphdbyhiddenbhs.onion'
-onionkey='ASK RYAN FOR THIS'
-cert='ASK RYAN FOR THIS'
-key='ASK RYAN FOR THIS'
+PROMPT onionkey
+PROMPT cert
+PROMPT key
 
 
 cd $(cd "$(dirname "$0")"; pwd)

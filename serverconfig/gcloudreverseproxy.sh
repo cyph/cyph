@@ -2,9 +2,9 @@
 
 # Google Cloud reverse proxy setup script for Ubuntu 18.04
 
-cert='ASK RYAN FOR THIS'
-key='ASK RYAN FOR THIS'
-backupHash='ASK RYAN FOR THIS'
+PROMPT cert
+PROMPT key
+PROMPT backupHash
 
 
 cd $(cd "$(dirname "$0")"; pwd)

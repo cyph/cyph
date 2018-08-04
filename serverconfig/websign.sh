@@ -3,11 +3,11 @@
 # WebSign reverse proxy server setup script for Ubuntu 18.04
 
 
-rekeyscript='base64 hpkpsuicide.sh'
+rekeyscript='BASE64 hpkpsuicide.sh'
 
-apikey='ASK RYAN FOR THIS'
-orderid='ASK RYAN FOR THIS'
-githubToken='ASK RYAN FOR THIS'
+PROMPT apikey
+PROMPT orderid
+PROMPT githubToken
 csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyph.ws'
 
 
