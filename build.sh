@@ -14,7 +14,7 @@ fi
 rm -rf ../cyph-phonegap-build 2> /dev/null || true
 mkdir -p ../cyph-phonegap-build/build
 
-for f in $(ls -a | grep -vP '^(\.|\.\.)$') ; do
+for f in $(ls -a | grep -v '^\.$' | grep -v '^\.\.$') ; do
 	cp -a "${f}" ../cyph-phonegap-build/
 done
 
