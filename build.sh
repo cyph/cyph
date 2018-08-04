@@ -1,6 +1,7 @@
 #!/bin/bash
 
 
+set -e
 cd $(cd "$(dirname "$0")" ; pwd)
 
 password='balls'
@@ -10,7 +11,7 @@ if [ "${1}" != 'ios' ] && [ "${1}" != 'emulator' ] ; then
 	echo
 fi
 
-rm -rf ../cyph-phonegap-build 2> /dev/null
+rm -rf ../cyph-phonegap-build 2> /dev/null || true
 mkdir -p ../cyph-phonegap-build/build
 
 for f in $(ls -a | grep -vP '^(\.|\.\.)$') ; do
@@ -21,11 +22,21 @@ cd ../cyph-phonegap-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
 
+npm install -g cordova
+
 if [ "${1}" != 'ios' ] ; then
 	cordova platform add android
 fi
 
 if [ "${1}" != 'android' ] ; then
+	if ! which gem > /dev/null ; then
+		brew install ruby
+	fi
+
+	if ! which pod > /dev/null ; then
+		gem install cocoapods
+	fi
+
 	npm -g install xcode
 	cordova platform add ios
 	chmod +x plugins/cordova-plugin-iosrtc/extra/hooks/iosrtc-swift-support.js
