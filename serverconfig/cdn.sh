@@ -41,16 +41,17 @@ openssl dhparam -out dhparams.pem 2048
 keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 backupHash='V3Khw3OOrzNle8puKasf47gcsFk9QqKP5wy0WWodtgA='
 
-npm install express spdy
+npm install koa koa-router
 
 
 cat > server.js <<- EOM
 	#!/usr/bin/env node
 
-	const app				= require('express')();
+	const app				= new require('koa')();
 	const child_process		= require('child_process');
 	const fs				= require('fs');
-	const spdy				= require('spdy');
+	const http2				= require('http2');
+	const router			= require('koa-router')();
 
 	const cache				= {
 		br: {
@@ -70,15 +71,13 @@ cat > server.js <<- EOM
 	const keyPath			= 'key.pem';
 	const dhparamPath		= 'dhparams.pem';
 
-	const returnError		= res => res.status(418).end();
-
-	const getFileName		= (req, ext) => () => new Promise((resolve, reject) => {
-		if (req.path.indexOf('..') > -1) {
+	const getFileName		= async (ctx, ext) => () => new Promise((resolve, reject) => {
+		if (ctx.request.path.indexOf('..') > -1) {
 			reject('Invalid path.');
 			return;
 		}
 
-		fs.realpath(cdnPath + req.path.slice(1) + ext, (err, path) => {
+		fs.realpath(cdnPath + ctx.request.path.slice(1) + ext, (err, path) => {
 			if (err || !path) {
 				reject(err);
 				return;
@@ -112,64 +111,75 @@ cat > server.js <<- EOM
 		});
 	});
 
-	app.use((req, res, next) => {
-		res.set('Access-Control-Allow-Methods', 'GET');
-		res.set('Access-Control-Allow-Origin', '*');
-		res.set('Cache-Control', 'public, max-age=31536000');
-		res.set('Content-Type', 'application/octet-stream');
-		res.set('Public-Key-Pins', 'max-age=5184000; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"');
-		res.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
+	app.use(async ctx => {
+		ctx.cyph	= {};
 
-		if ((req.get('Accept-Encoding') || '').replace(/\s+/g, '').split(',').indexOf('br') > -1) {
-			req.cache		= cache.br;
-			req.getFileName	= getFileName(req, '.br');
+		ctx.set('Access-Control-Allow-Methods', 'GET');
+		ctx.set('Access-Control-Allow-Origin', '*');
+		ctx.set('Cache-Control', 'public, max-age=31536000');
+		ctx.set('Content-Type', 'application/octet-stream');
+		ctx.set(
+			'Public-Key-Pins',
+			'max-age=5184000; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"'
+		);
+		ctx.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
 
-			res.set('Content-Encoding', 'br');
+		if (
+			(ctx.request.get('Accept-Encoding') || '').
+				replace(/\s+/g, '').
+				split(',').
+				indexOf('br') > -1
+		) {
+			ctx.cyph.cache			= cache.br;
+			ctx.cyph.getFileName	= getFileName(ctx, '.br');
+
+			ctx.set('Content-Encoding', 'br');
 		}
 		else {
-			req.cache		= cache.gzip;
-			req.getFileName	= getFileName(req, '.gz');
+			ctx.cyph.cache			= cache.gzip;
+			ctx.cyph.getFileName	= getFileName(ctx, '.gz');
 
-			res.set('Content-Encoding', 'gzip');
+			ctx.set('Content-Encoding', 'gzip');
 		}
-
-		next();
 	});
 
-	app.get(/.*\/current/, (req, res) => req.getFileName().then(fileName =>
-		new Promise((resolve, reject) =>
+	app.on('error', async (_, ctx) => {
+		ctx.body	= '';
+		ctx.status	= 418;
+	});
+
+	router.get(/.*\/current/, async ctx => {
+		const fileName	= ctx.cyph.getFileName();
+
+		const ctx.body	= await new Promise((resolve, reject) =>
 			fs.readFile(cdnPath + fileName, (err, data) => {
 				if (!err && data) {
-					req.cache.current[fileName]	= data;
+					ctx.cyph.cache.current[fileName]	= data;
 				}
 
-				if (req.cache.current[fileName]) {
-					resolve(req.cache.current[fileName]);
+				if (ctx.cyph.cache.current[fileName]) {
+					resolve(ctx.cyph.cache.current[fileName]);
 				}
 				else {
 					reject(err);
 				}
 			})
-		)
-	).then(data =>
-		res.send(data)
-	).catch(() =>
-		returnError(res)
-	));
+		);
+	});
 
-	app.get(/\/.*/, (req, res) => (async () => {
-		if (req.cache.urls[req.originalUrl]) {
+	router.get(/\/.*/, async ctx => {
+		if (ctx.cyph.cache.urls[ctx.request.originalUrl]) {
 			return;
 		}
 
-		const hash		= req.originalUrl.split('?')[1];
-		const fileName	= await req.getFileName();
+		const hash		= ctx.request.originalUrl.split('?')[1];
+		const fileName	= await ctx.cyph.getFileName();
 
-		if (!req.cache.files[fileName]) {
-			req.cache.files[fileName]	= {};
+		if (!ctx.cyph.cache.files[fileName]) {
+			ctx.cyph.cache.files[fileName]	= {};
 		}
 
-		if (!req.cache.files[fileName][hash]) {
+		if (!ctx.cyph.cache.files[fileName][hash]) {
 			await new Promise((resolve, reject) =>
 				fs.stat(cdnPath + fileName, err => {
 					if (err) {
@@ -188,25 +198,30 @@ cat > server.js <<- EOM
 					concat([['HEAD']])
 			)[0][0];
 
-			req.cache.files[fileName][hash]	= await git('show', revision + ':' + fileName);
+			ctx.cyph.cache.files[fileName][hash]	= await git('show', revision + ':' + fileName);
 		}
 
-		req.cache.urls[req.originalUrl]	= req.cache.files[fileName][hash];
-	})().then(() =>
-		res.send(
-			req.hostname === 'localhost' ?
-				'' :
-				req.cache.urls[req.originalUrl]
-		)
-	).catch(() =>
-		returnError(res)
-	));
+		ctx.cyph.cache.urls[ctx.request.originalUrl]	= ctx.cyph.cache.files[fileName][hash];
 
-	spdy.createServer({
-		cert: fs.readFileSync(certPath),
-		key: fs.readFileSync(keyPath),
-		dhparam: fs.readFileSync(dhparamPath)
-	}, app).listen(31337);
+		ctx.body	=
+			ctx.request.hostname === 'localhost' ?
+				'' :
+				ctx.cyph.cache.urls[ctx.request.originalUrl]
+		;
+	});
+
+	app.use(router.routes());
+
+	http2.createSecureServer(
+		{
+			cert: fs.readFileSync(certPath),
+			key: fs.readFileSync(keyPath),
+			dhparam: fs.readFileSync(dhparamPath)
+		},
+		app.callback()
+	).listen(
+		31337
+	);
 EOM
 chmod +x server.js
 
