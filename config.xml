@@ -140,6 +140,10 @@
 			src="plugins/cordova-plugin-iosrtc/extra/hooks/iosrtc-swift-support.js"
 		/>
 
+		<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
+			<string>For end-to-end encrypted video calling between users</string>
+		</edit-config
+
 		<icon height="57" platform="ios" src="res/icon/ios/icon.png" width="57" />
 		<icon height="114" platform="ios" src="res/icon/ios/icon@2x.png" width="114" />
 		<icon height="40" platform="ios" src="res/icon/ios/icon-40.png" width="40" />
@@ -156,6 +160,7 @@
 		<icon height="29" platform="ios" src="res/icon/ios/icon-small.png" width="29" />
 		<icon height="58" platform="ios" src="res/icon/ios/icon-small@2x.png" width="58" />
 		<icon height="87" platform="ios" src="res/icon/ios/icon-small@3x.png" width="87" />
+		<icon height="1024" platform="ios" src="res/icon/ios/icon-1024.png" width="1024" />
 		<splash height="1136" platform="ios" src="res/screen/ios/Default-568h@2x~iphone.png" width="640" />
 		<splash height="1334" platform="ios" src="res/screen/ios/Default-667h.png" width="750" />
 		<splash height="2208" platform="ios" src="res/screen/ios/Default-736h.png" width="1242" />
