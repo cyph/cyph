@@ -134,12 +134,13 @@
 
 	<button
 		mat-fab
+		color='primary'
 		[matTooltip]='(realTime | async) ? stringsService.newDoc : stringsService.newNote'
 		matTooltipPosition='above'
 		routerLink='new'
 		class='fixed-fab'
 	>
-		<mat-icon>add</mat-icon>
+		<mat-icon>note_add</mat-icon>
 	</button>
 </div>
 
