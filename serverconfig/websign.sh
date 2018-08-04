@@ -132,7 +132,7 @@ EOM
 
 
 rekeyscriptDecoded="$(
-	echo "${rekeyscript}" | base64 --decode |
+	echo "${rekeyscript}" |
 	sed "s|API_KEY|${apikey}|g" |
 	sed "s|ORDER_ID|${orderid}|g" |
 	sed "s|CSR_SUBJECT|${csrSubject}|g"

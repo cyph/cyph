@@ -22,8 +22,8 @@ do-release-upgrade -f DistUpgradeViewNonInteractive
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl
 
-echo "${cert}" | base64 --decode > /etc/nginx/ssl/cert.pem
-echo "${key}" | base64 --decode > /etc/nginx/ssl/key.pem
+echo "${cert}" > /etc/nginx/ssl/cert.pem
+echo "${key}" > /etc/nginx/ssl/key.pem
 openssl dhparam -out /etc/nginx/ssl/dhparams.pem 2048
 
 keyHash="$(openssl rsa -in /etc/nginx/ssl/key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"

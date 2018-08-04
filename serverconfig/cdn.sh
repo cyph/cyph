@@ -34,8 +34,8 @@ cat > /tmp/setup.sh << EndOfMessage
 
 cd /home/cyph
 
-echo '${cert}' | base64 --decode > cert.pem
-echo '${key}' | base64 --decode > key.pem
+echo '${cert}' > cert.pem
+echo '${key}' > key.pem
 openssl dhparam -out dhparams.pem 2048
 
 keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"

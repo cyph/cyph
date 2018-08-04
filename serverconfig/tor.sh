@@ -39,8 +39,8 @@ do-release-upgrade -f DistUpgradeViewNonInteractive
 
 mkdir -p /etc/nginx/ssl/websign
 chmod 600 -R /etc/nginx/ssl
-echo "${cert}" | base64 --decode > /etc/nginx/ssl/cert.pem
-echo "${key}" | base64 --decode > /etc/nginx/ssl/key.pem
+echo "${cert}" > /etc/nginx/ssl/cert.pem
+echo "${key}" > /etc/nginx/ssl/key.pem
 openssl dhparam -out /etc/nginx/ssl/dhparams.pem 2048
 echo 'tmpfs /etc/nginx/ssl/websign tmpfs rw,size=50M 0 0' >> /etc/fstab
 mount --all
@@ -55,7 +55,7 @@ echo '
 
 mkdir /var/lib/tor/hidden_service/
 echo "${onionaddress}" > /var/lib/tor/hidden_service/hostname
-echo "${onionkey}" | base64 --decode > /var/lib/tor/hidden_service/private_key
+echo "${onionkey}" > /var/lib/tor/hidden_service/private_key
 chown -R debian-tor:debian-tor /var/lib/tor/hidden_service/
 chmod -R 0700 /var/lib/tor/hidden_service/
 
@@ -162,7 +162,7 @@ EOM
 
 
 rekeyscriptDecoded="$(
-	echo "${rekeyscript}" | base64 --decode |
+	echo "${rekeyscript}" |
 	sed "s|API_KEY|${apikey}|g" |
 	sed "s|ORDER_ID|${orderid}|g" |
 	sed "s|CSR_SUBJECT|${csrSubject}|g" |
