@@ -49,6 +49,7 @@ cat > server.js <<- EOM
 
 	const app				= new require('koa')();
 	const child_process		= require('child_process');
+	const crypto			= require('crypto');
 	const fs				= require('fs');
 	const http2				= require('http2');
 	const router			= require('koa-router')();
@@ -216,7 +217,8 @@ cat > server.js <<- EOM
 		{
 			cert: fs.readFileSync(certPath),
 			key: fs.readFileSync(keyPath),
-			dhparam: fs.readFileSync(dhparamPath)
+			dhparam: fs.readFileSync(dhparamPath),
+			secureOptions: crypto.constants.SSL_OP_NO_TLSv1
 		},
 		app.callback()
 	).listen(
