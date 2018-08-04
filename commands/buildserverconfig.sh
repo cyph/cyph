@@ -34,5 +34,5 @@ cat > Dockerfile <<- EOM
 		base64 |
 		perl -pe 's/\s//g'
 	)' | base64 --decode > script.sh
-	RUN sudo bash script.sh
+	RUN bash script.sh
 EOM
