@@ -22,7 +22,7 @@ cd ../cyph-phonegap-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
 
-npm install -g cordova
+npm -g install cordova
 
 if [ "${1}" != 'ios' ] ; then
 	cordova platform add android
