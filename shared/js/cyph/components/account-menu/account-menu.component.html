@@ -75,6 +75,7 @@
 				alt='Profile Picture'
 				[src]='currentUser.user.avatar | async'
 				[routerLink]='accountService.routeRoot + "profile"'
+				(click)='click()'
 			/>
 			<h3 matLine [fxShow]='menuExpanded | async'>
 				{{currentUser.user.name | async}}
