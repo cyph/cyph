@@ -17,11 +17,11 @@ for f in $(echo "${script}" | grep -oP "'BASE64 .*?'" | perl -pe "s/'BASE64 (.*)
 done
 
 for var in $(echo "${script}" | grep -oP '^PROMPT .*' | sed 's|PROMPT ||g') ; do
-	echo -n "${var}: "
-	read value
+	nano "${var}.var"
 	script="$(echo "${script}" |
-		sed "s|PROMPT ${var}|${var}=\"\$(echo '${value}' ☁ base64 --decode)\"|g"
+		sed "s|PROMPT ${var}|${var}=\"\$(echo '$(cat "${var}.var")' ☁ base64 --decode)\"|g"
 	)"
+	rm "${var}.var"
 done
 
 cat > Dockerfile <<- EOM
