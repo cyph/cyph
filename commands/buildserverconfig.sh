@@ -10,6 +10,8 @@ fi
 
 
 read -r -d '' script <<- EOM
+#!/bin/bash
+
 sed -i 's/# deb /deb /g' /etc/apt/sources.list
 sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
 
@@ -60,7 +62,7 @@ EndOfMessage
 chmod 700 /init.sh /systemupdate.sh
 umask 022
 
-$(cat "${1}.sh")
+$(tail -n+2 "${1}.sh")
 EOM
 
 
