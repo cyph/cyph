@@ -166,7 +166,7 @@ export class ChatService {
 	public readonly initiated				= new BehaviorSubject<boolean>(false);
 
 	/** Interval for throttling send buttons. */
-	public readonly messageThrottle: number	= 100;
+	public readonly messageThrottle: number	= 250;
 
 	/** @see P2PService */
 	public readonly p2pService				= resolvable<{
