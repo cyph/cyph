@@ -93,3 +93,9 @@ cat > Dockerfile <<- EOM
 
 	CMD bash -c '/init.sh ; sleep Infinity'
 EOM
+
+echo -n 'Submit Google Cloud Build? [y/N] '
+read submit
+if [ "${submit}" == 'y' ] ; then
+	gcloud builds submit --tag "gcr.io/cyphme/cyph-serverconfig-${1}" .
+fi
