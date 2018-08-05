@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Tor server setup script for Ubuntu 18.04
+# Tor server setup script
 
 
 rekeyscript='BASE64 hpkpsuicide.sh'
@@ -17,25 +17,14 @@ PROMPT key
 
 cd $(cd "$(dirname "$0")"; pwd)
 
-sed -i 's/# deb /deb /g' /etc/apt/sources.list
-sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
-
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades install curl lsb-release apt-transport-https
-apt-get -y --allow-downgrades purge apache* mysql*
 distro="$(lsb_release -c | awk '{print $2}')"
-echo "
-	deb http://deb.torproject.org/torproject.org ${distro} main
-	deb https://deb.nodesource.com/node_10.x ${distro} main
-" >> /etc/apt/sources.list
+echo "deb http://deb.torproject.org/torproject.org ${distro} main" >> /etc/apt/sources.list
 gpg --keyserver keys.gnupg.net --recv 886DDD89
 gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
-curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+
 apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades upgrade
-apt-get -y --allow-downgrades install apt cron dpkg nginx openssl nodejs deb.torproject.org-keyring tor
-do-release-upgrade -f DistUpgradeViewNonInteractive
+
+apt-get -y --allow-downgrades install deb.torproject.org-keyring tor
 
 mkdir -p /etc/nginx/ssl/websign
 chmod 600 -R /etc/nginx/ssl
@@ -60,18 +49,6 @@ chown -R debian-tor:debian-tor /var/lib/tor/hidden_service/
 chmod -R 0700 /var/lib/tor/hidden_service/
 
 umask 077
-
-
-cat > /systemupdate.sh << EndOfMessage
-#!/bin/bash
-
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades -o Dpkg::Options::=--force-confdef upgrade
-do-release-upgrade -f DistUpgradeViewNonInteractive
-
-reboot
-EndOfMessage
 
 
 staticSSL='$(
@@ -171,19 +148,7 @@ rekeyscriptDecoded="$(
 echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" | sed 's|443|8081|g' > /hpkpsuicide.sh
 
 
-chmod 700 /systemupdate.sh /hpkpsuicide.sh
+chmod 700 /hpkpsuicide.sh
 umask 022
 
-updatehour=$RANDOM
-let 'updatehour %= 24'
-updateday=$RANDOM
-let 'updateday %= 7'
-
-crontab -l > /tmp/cyph.cron
-echo '@reboot /hpkpsuicide.sh' >> /tmp/cyph.cron
-echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cyph.cron
-crontab /tmp/cyph.cron
-rm /tmp/cyph.cron
-
-rm tor.sh
-reboot
+echo '/hpkpsuicide.sh &' >> /init.sh

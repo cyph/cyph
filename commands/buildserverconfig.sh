@@ -8,7 +8,61 @@ if [ ! -f "${1}.sh" ] ; then
 	fail 'fak u gooby'
 fi
 
-script="$(cat "${1}.sh")"
+
+read -r -d '' script <<- EOM
+sed -i 's/# deb /deb /g' /etc/apt/sources.list
+sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
+
+export DEBIAN_FRONTEND=noninteractive
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades upgrade
+
+apt-get -y --allow-downgrades install apt-utils
+apt-get -y --allow-downgrades install \
+	apt \
+	apt-transport-https \
+	build-essential \
+	curl \
+	dpkg \
+	git \
+	gnupg2 \
+	lsb-release \
+	nginx \
+	openssl \
+	psmisc \
+	software-properties-common
+
+apt-get -y --allow-downgrades purge apache* mysql*
+
+distro="\$(lsb_release -c | awk '{print \$2}')"
+echo "deb https://deb.nodesource.com/node_10.x \${distro} main" >> /etc/apt/sources.list
+curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades upgrade
+apt-get -y --allow-downgrades install nodejs
+
+umask 077
+
+cat > /init.sh << EndOfMessage
+#!/bin/bash
+/systemupdate.sh
+bash -c 'while true ; do /systemupdate.sh ; sleep 24h ; done' &
+EndOfMessage
+
+cat > /systemupdate.sh << EndOfMessage
+#!/bin/bash
+export DEBIAN_FRONTEND=noninteractive
+apt-get -y --allow-downgrades update
+apt-get -y --allow-downgrades -o Dpkg::Options::=--force-confdef upgrade
+EndOfMessage
+
+chmod 700 /init.sh /systemupdate.sh
+umask 022
+
+$(cat "${1}.sh")
+EOM
+
 
 for f in $(echo "${script}" | grep -oP "'BASE64 .*?'" | perl -pe "s/'BASE64 (.*)'/\1/g") ; do
 	script="$(echo "${script}" |
@@ -35,4 +89,7 @@ cat > Dockerfile <<- EOM
 		perl -pe 's/\s//g'
 	)' | base64 --decode > script.sh
 	RUN bash script.sh
+	RUN rm script.sh
+
+	CMD bash -c '/init.sh ; sleep Infinity'
 EOM

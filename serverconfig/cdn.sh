@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# CDN node setup script for Ubuntu 18.04
+# CDN node setup script
 
 
 PROMPT cert
@@ -12,21 +12,6 @@ adduser --gecos '' --disabled-password --home /home/cyph cyph || exit 1
 
 
 cd $(cd "$(dirname "$0")"; pwd)
-
-sed -i 's/# deb /deb /g' /etc/apt/sources.list
-sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
-
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades install curl lsb-release apt-transport-https
-apt-get -y --allow-downgrades purge apache* mysql*
-distro="$(lsb_release -c | awk '{print $2}')"
-echo "deb https://deb.nodesource.com/node_10.x ${distro} main" >> /etc/apt/sources.list
-curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades upgrade
-apt-get -y --allow-downgrades install apt cron dpkg nodejs openssl build-essential git
-do-release-upgrade -f DistUpgradeViewNonInteractive
 
 
 cat > /tmp/setup.sh << EndOfMessage
@@ -41,20 +26,19 @@ openssl dhparam -out dhparams.pem 2048
 keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 backupHash='V3Khw3OOrzNle8puKasf47gcsFk9QqKP5wy0WWodtgA='
 
-npm install koa koa-router
+npm install koa
 
 
 cat > server.js <<- EOM
 	#!/usr/bin/env node
 
-	const app				= new require('koa')();
-	const child_process		= require('child_process');
-	const crypto			= require('crypto');
-	const fs				= require('fs');
-	const http2				= require('http2');
-	const router			= require('koa-router')();
+	const app			= new (require('koa'))();
+	const childProcess	= require('child_process');
+	const crypto		= require('crypto');
+	const fs			= require('fs');
+	const http2			= require('http2');
 
-	const cache				= {
+	const cache			= {
 		br: {
 			current: {},
 			files: {},
@@ -67,12 +51,12 @@ cat > server.js <<- EOM
 		}
 	};
 
-	const cdnPath			= './cdn/';
-	const certPath			= 'cert.pem';
-	const keyPath			= 'key.pem';
-	const dhparamPath		= 'dhparams.pem';
+	const cdnPath		= './cdn/';
+	const certPath		= 'cert.pem';
+	const keyPath		= 'key.pem';
+	const dhparamPath	= 'dhparams.pem';
 
-	const getFileName		= async (ctx, ext) => () => new Promise((resolve, reject) => {
+	const getFileName	= (ctx, ext) => async () => new Promise((resolve, reject) => {
 		if (ctx.request.path.indexOf('..') > -1) {
 			reject('Invalid path.');
 			return;
@@ -95,9 +79,9 @@ cat > server.js <<- EOM
 		});
 	});
 
-	const git				= (...args) => new Promise((resolve, reject) => {
+	const git			= (...args) => new Promise((resolve, reject) => {
 		let data		= Buffer.from([]);
-		const stdout	= child_process.spawn('git', args, {cwd: cdnPath}).stdout;
+		const stdout	= childProcess.spawn('git', args, {cwd: cdnPath}).stdout;
 
 		stdout.on('data', buf => data = Buffer.concat([data, buf]));
 
@@ -113,112 +97,131 @@ cat > server.js <<- EOM
 	});
 
 	app.use(async ctx => {
-		ctx.cyph	= {};
+		try {
+			const cyphCtx	= {};
 
-		ctx.set('Access-Control-Allow-Methods', 'GET');
-		ctx.set('Access-Control-Allow-Origin', '*');
-		ctx.set('Cache-Control', 'public, max-age=31536000');
-		ctx.set('Content-Type', 'application/octet-stream');
-		ctx.set(
-			'Public-Key-Pins',
-			'max-age=5184000; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"'
-		);
-		ctx.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
-
-		if (
-			(ctx.request.get('Accept-Encoding') || '').
-				replace(/\s+/g, '').
-				split(',').
-				indexOf('br') > -1
-		) {
-			ctx.cyph.cache			= cache.br;
-			ctx.cyph.getFileName	= getFileName(ctx, '.br');
-
-			ctx.set('Content-Encoding', 'br');
-		}
-		else {
-			ctx.cyph.cache			= cache.gzip;
-			ctx.cyph.getFileName	= getFileName(ctx, '.gz');
-
-			ctx.set('Content-Encoding', 'gzip');
-		}
-	});
-
-	app.on('error', async (_, ctx) => {
-		ctx.body	= '';
-		ctx.status	= 418;
-	});
-
-	router.get(/.*\/current/, async ctx => {
-		const fileName	= ctx.cyph.getFileName();
-
-		const ctx.body	= await new Promise((resolve, reject) =>
-			fs.readFile(cdnPath + fileName, (err, data) => {
-				if (!err && data) {
-					ctx.cyph.cache.current[fileName]	= data;
-				}
-
-				if (ctx.cyph.cache.current[fileName]) {
-					resolve(ctx.cyph.cache.current[fileName]);
-				}
-				else {
-					reject(err);
-				}
-			})
-		);
-	});
-
-	router.get(/\/.*/, async ctx => {
-		if (ctx.cyph.cache.urls[ctx.request.originalUrl]) {
-			return;
-		}
-
-		const hash		= ctx.request.originalUrl.split('?')[1];
-		const fileName	= await ctx.cyph.getFileName();
-
-		if (!ctx.cyph.cache.files[fileName]) {
-			ctx.cyph.cache.files[fileName]	= {};
-		}
-
-		if (!ctx.cyph.cache.files[fileName][hash]) {
-			await new Promise((resolve, reject) =>
-				fs.stat(cdnPath + fileName, err => {
-					if (err) {
-						reject(err);
-						return;
-					}
-					resolve();
-				})
+			ctx.set('Access-Control-Allow-Methods', 'GET');
+			ctx.set('Access-Control-Allow-Origin', '*');
+			ctx.set('Cache-Control', 'public, max-age=31536000');
+			ctx.set('Content-Type', 'application/octet-stream');
+			ctx.set(
+				'Public-Key-Pins',
+				'max-age=5184000; pin-sha256="\${keyHash}"; pin-sha256="\${backupHash}"'
 			);
+			ctx.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
 
-			const revision	= !hash ? '' : (
-				(await git('log', '--pretty=format:%H %s', fileName)).toString().
-					split('\n').
-					map(s => s.split(' ')).
-					filter(arr => arr[1] === hash).
-					concat([['HEAD']])
-			)[0][0];
+			if (!ctx.path || ctx.path === '/') {
+				ctx.body	= 'Welcome to Cyph, lad';
+				ctx.status	= 200;
+				return;
+			}
 
-			ctx.cyph.cache.files[fileName][hash]	= await git('show', revision + ':' + fileName);
+			if (
+				(ctx.request.get('Accept-Encoding') || '').
+					replace(/\s+/g, '').
+					split(',').
+					indexOf('br') > -1
+			) {
+				cyphCtx.cache		= cache.br;
+				cyphCtx.getFileName	= getFileName(ctx, '.br');
+
+				ctx.set('Content-Encoding', 'br');
+			}
+			else {
+				cyphCtx.cache		= cache.gzip;
+				cyphCtx.getFileName	= getFileName(ctx, '.gz');
+
+				ctx.set('Content-Encoding', 'gzip');
+			}
+
+
+			// /.*\/current/ route
+
+			if (ctx.path.endsWith('current')) {
+				const fileName	= await cyphCtx.getFileName();
+
+				ctx.body	= await new Promise((resolve, reject) =>
+					fs.readFile(cdnPath + fileName, (err, data) => {
+						if (!err && data) {
+							cyphCtx.cache.current[fileName]	= data;
+						}
+
+						if (cyphCtx.cache.current[fileName]) {
+							resolve(cyphCtx.cache.current[fileName]);
+						}
+						else {
+							reject(err);
+						}
+					})
+				);
+
+				ctx.status	= 200;
+
+				return;
+			}
+
+
+			// /\/.*/ route
+
+			if (!cyphCtx.cache.urls[ctx.originalUrl]) {
+				const hash		= ctx.originalUrl.split('?')[1];
+				const fileName	= await cyphCtx.getFileName();
+
+				if (!cyphCtx.cache.files[fileName]) {
+					cyphCtx.cache.files[fileName]	= {};
+				}
+
+				if (!cyphCtx.cache.files[fileName][hash]) {
+					await new Promise((resolve, reject) =>
+						fs.stat(cdnPath + fileName, err => {
+							if (err) {
+								reject(err);
+							}
+							else {
+								resolve();
+							}
+						})
+					);
+
+					const revision	= !hash ? '' : (
+						(await git('log', '--pretty=format:%H %s', fileName)).toString().
+							split('\n').
+							map(s => s.split(' ')).
+							filter(arr => arr[1] === hash).
+							concat([['HEAD']])
+					)[0][0];
+
+					cyphCtx.cache.files[fileName][hash]	=
+						await git('show', revision + ':' + fileName)
+					;
+				}
+
+				cyphCtx.cache.urls[ctx.originalUrl]	=
+					cyphCtx.cache.files[fileName][hash]
+				;
+			}
+
+			ctx.body	=
+				ctx.request.hostname === 'localhost' ?
+					'' :
+					cyphCtx.cache.urls[ctx.originalUrl]
+			;
+
+			ctx.status	= 200;
 		}
-
-		ctx.cyph.cache.urls[ctx.request.originalUrl]	= ctx.cyph.cache.files[fileName][hash];
-
-		ctx.body	=
-			ctx.request.hostname === 'localhost' ?
-				'' :
-				ctx.cyph.cache.urls[ctx.request.originalUrl]
-		;
+		catch {
+			ctx.body	= '';
+			ctx.status	= 418;
+		}
 	});
-
-	app.use(router.routes());
 
 	http2.createSecureServer(
 		{
+			allowHTTP1: true,
 			cert: fs.readFileSync(certPath),
 			key: fs.readFileSync(keyPath),
 			dhparam: fs.readFileSync(dhparamPath),
-			secureOptions: crypto.constants.SSL_OP_NO_TLSv1
+			secureOptions: crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_TLSv1
 		},
 		app.callback()
 	).listen(
@@ -230,6 +233,8 @@ chmod +x server.js
 
 cat > cdnupdate.sh <<- EOM
 	#!/bin/bash
+
+	cd
 
 	cachePath=" \
 		url=\"https://localhost:31337/\\\\\\\$( \
@@ -259,7 +264,15 @@ cat > cdnupdate.sh <<- EOM
 		git clone https://${githubToken}:x-oauth-basic@github.com/cyph/cdn.git || sleep 5
 	done
 
+	if [ "\\\${1}" == 'init' ] ; then
+		exit
+	fi
+
 	cd cdn
+
+	git pull
+
+	bash -c 'cd ; npm update ; ./server.js' &
 
 	head="\\\$(getHead)"
 
@@ -282,21 +295,17 @@ cat > cdnupdate.sh <<- EOM
 	done
 
 	# Start from scratch when pull fails
-	cd ..
+	cd
 	rm -rf cdn
-	/home/cyph/cdnupdate.sh &
+	./cdnupdate.sh &
 	while [ ! -d cdn ] ; do sleep 5 ; done
 	killall node
-	/home/cyph/server.js &
+	./server.js &
 EOM
 chmod +x cdnupdate.sh
 
 
-crontab -l > cdn.cron
-echo '@reboot /home/cyph/cdnupdate.sh' >> cdn.cron
-echo '@reboot /home/cyph/server.js' >> cdn.cron
-crontab cdn.cron
-rm cdn.cron
+./cdnupdate.sh init
 EndOfMessage
 
 
@@ -305,40 +314,4 @@ su cyph -c /tmp/setup.sh
 rm /tmp/setup.sh
 
 
-cat > /portredirect.sh << EndOfMessage
-#!/bin/bash
-
-sleep 60
-/sbin/iptables -A PREROUTING -t nat -p tcp --dport 443 -j REDIRECT --to-port 31337
-EndOfMessage
-chmod +x /portredirect.sh
-
-
-cat > /systemupdate.sh << EndOfMessage
-#!/bin/bash
-
-su cyph -c 'cd ; npm update'
-
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades -o Dpkg::Options::=--force-confdef upgrade
-do-release-upgrade -f DistUpgradeViewNonInteractive
-
-reboot
-EndOfMessage
-chmod +x /systemupdate.sh
-
-
-updatehour=$RANDOM
-let 'updatehour %= 24'
-updateday=$RANDOM
-let 'updateday %= 7'
-
-crontab -l > /tmp/cdn.cron
-echo "@reboot /portredirect.sh" >> /tmp/cdn.cron
-echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cdn.cron
-crontab /tmp/cdn.cron
-rm /tmp/cdn.cron
-
-rm cdn.sh
-reboot
+echo 'su cyph -c /home/cyph/cdnupdate.sh &' >> /init.sh

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# WebSign reverse proxy server setup script for Ubuntu 18.04
+# WebSign reverse proxy server setup script
 
 
 rekeyscript='BASE64 hpkpsuicide.sh'
@@ -11,39 +11,12 @@ PROMPT githubToken
 csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyph.ws'
 
 
-sed -i 's/# deb /deb /g' /etc/apt/sources.list
-sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
-
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades install curl lsb-release apt-transport-https
-apt-get -y --allow-downgrades purge apache* mysql*
-distro="$(lsb_release -c | awk '{print $2}')"
-echo "deb https://deb.nodesource.com/node_10.x ${distro} main" >> /etc/apt/sources.list
-curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
-apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades upgrade
-apt-get -y --allow-downgrades install apt dpkg nginx openssl nodejs git
-do-release-upgrade -f DistUpgradeViewNonInteractive
-
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl
 echo 'tmpfs /etc/nginx/ssl tmpfs rw,size=50M 0 0' >> /etc/fstab
 mount --all
 
 umask 077
-
-
-cat > /systemupdate.sh << EndOfMessage
-#!/bin/bash
-
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y --allow-downgrades update
-apt-get -y --allow-downgrades -o Dpkg::Options::=--force-confdef upgrade
-do-release-upgrade -f DistUpgradeViewNonInteractive
-
-reboot
-EndOfMessage
 
 
 cat > /certupdate.sh << EndOfMessage
@@ -140,22 +113,10 @@ rekeyscriptDecoded="$(
 echo "${rekeyscriptDecoded/NGINX_CONF/$nginxconf}" > /hpkpsuicide.sh
 
 
-chmod 700 /systemupdate.sh /certupdate.sh /hpkpsuicide.sh
+chmod 700 /certupdate.sh /hpkpsuicide.sh
 umask 022
 
-updatehour=$RANDOM
-let 'updatehour %= 24'
-updateday=$RANDOM
-let 'updateday %= 7'
-
-crontab -l > /tmp/cyph.cron
-echo '@reboot /hpkpsuicide.sh' >> /tmp/cyph.cron
-echo '@reboot /certupdate.sh' >> /tmp/cyph.cron
-echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cyph.cron
-crontab /tmp/cyph.cron
-rm /tmp/cyph.cron
+echo '/certupdate.sh &' >> /init.sh
+echo '/hpkpsuicide.sh &' >> /init.sh
 
 /certupdate.sh init
-
-rm websign.sh
-reboot

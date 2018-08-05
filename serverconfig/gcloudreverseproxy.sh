@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Google Cloud reverse proxy setup script for Ubuntu 18.04
+# Google Cloud reverse proxy setup script
 
 PROMPT cert
 PROMPT key
@@ -8,16 +8,6 @@ PROMPT backupHash
 
 
 cd $(cd "$(dirname "$0")"; pwd)
-
-sed -i 's/# deb /deb /g' /etc/apt/sources.list
-sed -i 's/\/\/.*archive.ubuntu.com/\/\/archive.ubuntu.com/g' /etc/apt/sources.list
-
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes update
-apt-get -y --force-yes upgrade
-apt-get -y --force-yes purge apache* mysql*
-apt-get -y --force-yes install apt dpkg nginx openssl
-do-release-upgrade -f DistUpgradeViewNonInteractive
 
 mkdir /etc/nginx/ssl
 chmod 600 /etc/nginx/ssl
@@ -111,32 +101,3 @@ http {
 	}
 }
 EndOfMessage
-
-
-cat > /systemupdate.sh << EndOfMessage
-#!/bin/bash
-
-export DEBIAN_FRONTEND=noninteractive
-apt-get -y --force-yes update
-apt-get -y --force-yes -o Dpkg::Options::=--force-confdef upgrade
-do-release-upgrade -f DistUpgradeViewNonInteractive
-
-reboot
-EndOfMessage
-chmod +x /systemupdate.sh
-
-
-updatehour=$RANDOM
-let 'updatehour %= 24'
-updateday=$RANDOM
-let 'updateday %= 7'
-
-crontab -l > /tmp/cyph.cron
-echo "45 ${updatehour} * * ${updateday} /systemupdate.sh" >> /tmp/cyph.cron
-crontab /tmp/cyph.cron
-rm /tmp/cyph.cron
-
-
-cd "${dir}"
-rm gcloudreverseproxy.sh
-reboot
