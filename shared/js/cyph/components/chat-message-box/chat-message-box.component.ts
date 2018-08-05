@@ -183,7 +183,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 		try {
 			if (
 				this.lastSendTimestamp !== undefined &&
-				(timestamp - this.lastSendTimestamp) < this.chatService.messageThrottle
+				(timestamp - this.lastSendTimestamp) < this.chatService.messageDebounce
 			) {
 				return false;
 			}
