@@ -42,6 +42,7 @@ import {AnalyticsService} from './analytics.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
+import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
@@ -708,11 +709,17 @@ export class ChatService {
 			this.chat.state	= States.chat;
 			this.updateChat();
 
-			for (let i = 0 ; i < 15 ; ++i) {
-				if (this.chatSelfDestruct.value) {
-					break;
+			if (
+				this.envService.environment.customBuild &&
+				this.envService.environment.customBuild.config.pro
+			) {
+				for (let i = 0 ; i < 15 ; ++i) {
+					if (this.chatSelfDestruct.value) {
+						break;
+					}
+
+					await sleep(100);
 				}
-				await sleep(100);
 			}
 
 			if (!this.chatSelfDestruct.value) {
@@ -1117,6 +1124,9 @@ export class ChatService {
 
 		/** @ignore */
 		protected readonly dialogService: DialogService,
+
+		/** @ignore */
+		protected readonly envService: EnvService,
 
 		/** @ignore */
 		protected readonly localStorageService: LocalStorageService,

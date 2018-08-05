@@ -212,6 +212,7 @@ export class AccountChatService extends ChatService {
 		analyticsService: AnalyticsService,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
+		envService: EnvService,
 		localStorageService: LocalStorageService,
 		notificationService: NotificationService,
 		p2pWebRTCService: P2PWebRTCService,
@@ -232,15 +233,13 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionService: AccountSessionService,
 
 		/** @ignore */
-		private readonly accountSessionInitService: AccountSessionInitService,
-
-		/** @ignore */
-		private readonly envService: EnvService
+		private readonly accountSessionInitService: AccountSessionInitService
 	) {
 		super(
 			analyticsService,
 			databaseService,
 			dialogService,
+			envService,
 			localStorageService,
 			notificationService,
 			p2pWebRTCService,
