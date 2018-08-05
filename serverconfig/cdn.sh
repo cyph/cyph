@@ -26,7 +26,7 @@ openssl dhparam -out dhparams.pem 2048
 keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 backupHash='V3Khw3OOrzNle8puKasf47gcsFk9QqKP5wy0WWodtgA='
 
-npm install koa
+npm install koa spdy
 
 
 cat > server.js <<- EOM
@@ -36,7 +36,8 @@ cat > server.js <<- EOM
 	const childProcess	= require('child_process');
 	const crypto		= require('crypto');
 	const fs			= require('fs');
-	const http2			= require('http2');
+	// const http2		= require('http2');
+	const spdy			= require('spdy');
 
 	const cache			= {
 		br: {
@@ -209,15 +210,16 @@ cat > server.js <<- EOM
 
 			ctx.status	= 200;
 		}
-		catch {
-			ctx.body	= '';
+		catch (err) {
+			ctx.body	= err.toString();
 			ctx.status	= 418;
 		}
 	});
 
-	http2.createSecureServer(
+	// http2.createSecureServer(
+	spdy.createServer(
 		{
-			allowHTTP1: true,
+			// allowHTTP1: true,
 			cert: fs.readFileSync(certPath),
 			key: fs.readFileSync(keyPath),
 			dhparam: fs.readFileSync(dhparamPath),
