@@ -49,7 +49,7 @@ umask 077
 cat > /init.sh << EndOfMessage
 #!/bin/bash
 /systemupdate.sh
-bash -c 'while true ; do /systemupdate.sh ; sleep 24h ; done' &
+# bash -c 'while true ; do /systemupdate.sh ; sleep 24h ; done' &
 EndOfMessage
 
 cat > /systemupdate.sh << EndOfMessage
