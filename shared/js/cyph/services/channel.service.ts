@@ -9,7 +9,7 @@ import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
 import {lockFunction} from '../util/lock';
 import {uuid} from '../util/uuid';
-import {resolvable, waitForValue} from '../util/wait';
+import {resolvable} from '../util/wait';
 import {DatabaseService} from './database.service';
 
 
@@ -40,7 +40,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	private readonly state: Promise<{lock: LockFunction; url: string}>	= this._STATE.promise;
 
 	/** @ignore */
-	private userID?: string;
+	private readonly userID	= resolvable<string>();
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {
@@ -91,14 +91,13 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 		this.resolveState({lock: this.databaseService.lockFunction(`${url}/lock`), url});
 
-		if (userID) {
-			this.userID	= userID;
-		}
-		else {
+		if (!userID) {
+			userID			= uuid();
 			this.ephemeral	= true;
-			this.userID		= uuid();
-			this.databaseService.setDisconnectTracker(`${url}/disconnects/${this.userID}`);
+			this.databaseService.setDisconnectTracker(`${url}/disconnects/${userID}`);
 		}
+
+		this.userID.resolve(userID);
 
 		this.subscriptions.push(this.databaseService.watchListPushes(
 			`${url}/messages`,
@@ -107,7 +106,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			true,
 			this.subscriptions
 		).subscribe(async message => {
-			if (message.value.author === this.userID) {
+			if (message.value.author === userID) {
 				return;
 			}
 
@@ -128,9 +127,9 @@ export class ChannelService extends BaseProvider implements IChannelService {
 				await this.databaseService.getList(`${url}/users`, StringProto).catch(
 					() => <string[]> []
 				)
-			).indexOf(this.userID) < 0
+			).indexOf(userID) < 0
 		) {
-			await this.databaseService.pushItem(`${url}/users`, StringProto, this.userID, true);
+			await this.databaseService.pushItem(`${url}/users`, StringProto, userID, true);
 		}
 
 		let isOpen	= false;
@@ -146,7 +145,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 				}
 				if (!isOpen) {
 					isOpen	= true;
-					handlers.onOpen(users[0].value === this.userID);
+					handlers.onOpen(users[0].value === userID);
 				}
 				if (users.length < 2) {
 					return;
@@ -187,7 +186,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		await this.localLock(async () => this.databaseService.pushItem<IChannelMessage>(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
-			{author: await waitForValue(() => this.userID), cyphertext},
+			{author: await this.userID.promise, cyphertext},
 			true
 		));
 	}
