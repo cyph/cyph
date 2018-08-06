@@ -316,6 +316,19 @@
 		<a
 			mat-list-item
 			cyphTranslate
+			class='lock'
+			aria-label='Lock'
+			(click)='accountAuthService.lock()'
+		>
+			<mat-icon mat-list-icon>lock</mat-icon>
+			<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
+				Lock
+			</h3>
+		</a>
+
+		<a
+			mat-list-item
+			cyphTranslate
 			class='logout'
 			aria-label='Log Out'
 			[routerLink]='accountService.routeRoot + "logout"'
