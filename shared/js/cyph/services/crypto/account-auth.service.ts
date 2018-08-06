@@ -26,6 +26,7 @@ import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {DatabaseService} from '../database.service';
+import {EnvService} from '../env.service';
 import {ErrorService} from '../error.service';
 import {LocalStorageService} from '../local-storage.service';
 import {StringsService} from '../strings.service';
@@ -234,6 +235,12 @@ export class AccountAuthService extends BaseProvider {
 	/** Removes PIN from local storage. */
 	public async lock () : Promise<void> {
 		await this.localStorageService.removeItem('pinHash');
+		if (this.envService.isWeb) {
+			location.reload();
+		}
+		else {
+			/* TODO: HANDLE NATIVE */
+		}
 	}
 
 	/**
@@ -699,6 +706,9 @@ export class AccountAuthService extends BaseProvider {
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly errorService: ErrorService,
