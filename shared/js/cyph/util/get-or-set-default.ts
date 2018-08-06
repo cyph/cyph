@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
@@ -108,7 +108,9 @@ export const getOrSetDefaultAsync	= async <K, V> (
 export const getOrSetDefaultObservable	= <K, V> (
 	map: MaybePromise<Map<K, Observable<V>>>,
 	key: MaybePromise<K>,
-	defaultValue: () => MaybePromise<Observable<V>>
+	defaultValue: () => MaybePromise<Observable<V>>,
+	subscriptions?: Subscription[]
 ) : Observable<V> => cacheObservable<V>(
-	getOrSetDefaultAsync(map, key, defaultValue)
+	getOrSetDefaultAsync(map, key, defaultValue),
+	subscriptions
 );

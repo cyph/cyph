@@ -5,6 +5,7 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncMap} from '../../iasync-map';
 import {IAsyncValue} from '../../iasync-value';
@@ -39,7 +40,7 @@ import {PotassiumService} from './potassium.service';
  * Setting private data encrypts it and getting private data decrypts it.
  */
 @Injectable()
-export class AccountDatabaseService {
+export class AccountDatabaseService extends BaseProvider {
 	/** @ignore */
 	private async getUsernameFromURL (
 		url: MaybePromise<string>,
@@ -423,7 +424,8 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
 		immutable: boolean = true,
-		noBlobStorage: boolean = false
+		noBlobStorage: boolean = false,
+		subscriptions?: Subscription[]
 	) : IAsyncList<T> {
 		const localLock	= lockFunction();
 
@@ -463,7 +465,8 @@ export class AccountDatabaseService {
 					f,
 					securityModel,
 					customKey,
-					anonymous
+					anonymous,
+					subscriptions
 				);
 			},
 			updateValue: async f => asyncList.lock(async () =>
@@ -475,7 +478,8 @@ export class AccountDatabaseService {
 				securityModel,
 				customKey,
 				anonymous,
-				immutable
+				immutable,
+				subscriptions
 			).pipe(map<ITimedValue<T>[], T[]>(
 				arr => arr.map(o => o.value)
 			))),
@@ -488,7 +492,8 @@ export class AccountDatabaseService {
 				securityModel,
 				customKey,
 				anonymous,
-				immutable
+				immutable,
+				subscriptions
 			).pipe(map<ITimedValue<T>, T>(
 				o => o.value
 			)))
@@ -505,7 +510,8 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
 		noBlobStorage: boolean = false,
-		staticValues: boolean = false
+		staticValues: boolean = false,
+		subscriptions?: Subscription[]
 	) : IAsyncMap<string, T> {
 		const localLock	= lockFunction();
 		const itemLocks	= new Map<string, LockFunction>();
@@ -526,7 +532,8 @@ export class AccountDatabaseService {
 				BinaryProto,
 				k => this.lockFunction(k),
 				noBlobStorage,
-				staticValues
+				staticValues,
+				subscriptions
 			);
 		})();
 
@@ -641,7 +648,9 @@ export class AccountDatabaseService {
 			updateValue: async f => asyncMap.lock(async () =>
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
-			watch: memoize(() => this.watchListKeys(url).pipe(mergeMap(getValueHelper))),
+			watch: memoize(() => this.watchListKeys(url, subscriptions).pipe(
+				mergeMap(getValueHelper)
+			)),
 			watchKeys: () => flattenObservable<string[]>(async () =>
 				(await baseAsyncMap).watchKeys()
 			),
@@ -661,7 +670,8 @@ export class AccountDatabaseService {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
 		blockGetValue: boolean = false,
-		noBlobStorage: boolean = false
+		noBlobStorage: boolean = false,
+		subscriptions?: Subscription[]
 	) : IAsyncValue<T> {
 		const localLock		= lockFunction();
 
@@ -673,7 +683,8 @@ export class AccountDatabaseService {
 				BinaryProto,
 				k => this.lockFunction(k),
 				blockGetValue,
-				noBlobStorage
+				noBlobStorage,
+				subscriptions
 			);
 		})();
 
@@ -683,7 +694,8 @@ export class AccountDatabaseService {
 				proto,
 				securityModel,
 				customKey,
-				anonymous
+				anonymous,
+				subscriptions
 			).pipe(map<ITimedValue<T>, T>(o => o.value))
 		);
 
@@ -1103,9 +1115,10 @@ export class AccountDatabaseService {
 		f: (value: T) => MaybePromise<void>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		subscriptions?: Subscription[]
 	) : Subscription {
-		return this.watchListKeyPushes(url).subscribe(async ({key}) => {
+		return this.watchListKeyPushes(url, subscriptions).subscribe(async ({key}) => {
 			try {
 				const fullURL	= `${url}/${key}`;
 				await f(await this.getItem(fullURL, proto, securityModel, customKey, anonymous));
@@ -1183,7 +1196,8 @@ export class AccountDatabaseService {
 		proto: IProto<T>,
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false
+		anonymous: boolean = false,
+		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
@@ -1192,7 +1206,8 @@ export class AccountDatabaseService {
 
 					return this.databaseService.watch(
 						processedURL,
-						BinaryProto
+						BinaryProto,
+						subscriptions
 					).pipe(mergeMap(async data => ({
 						timestamp: data.timestamp,
 						value: await this.open(
@@ -1210,7 +1225,8 @@ export class AccountDatabaseService {
 				mergeMap(
 					o => o
 				)
-			)
+			),
+			subscriptions
 		);
 	}
 
@@ -1220,8 +1236,11 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.watchExists */
-	public watchExists (url: MaybePromise<string>) : Observable<boolean> {
-		return this.databaseService.watchExists(this.normalizeURL(url));
+	public watchExists (
+		url: MaybePromise<string>,
+		subscriptions?: Subscription[]
+	) : Observable<boolean> {
+		return this.databaseService.watchExists(this.normalizeURL(url), subscriptions);
 	}
 
 	/** @see DatabaseService.watchList */
@@ -1231,17 +1250,19 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
-		immutable: boolean = true
+		immutable: boolean = true,
+		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>[]> {
 		const cache: {head?: string; keys: number; value: ITimedValue<T>[]}	= {keys: 0, value: []};
 
-		const keysWatcher	= () => this.watchListKeys(url);
+		const keysWatcher	= () => this.watchListKeys(url, subscriptions);
 		const headWatcher	= () => this.watch(
 			`${url}-head`,
 			StringProto,
 			securityModel,
 			customKey,
-			anonymous
+			anonymous,
+			subscriptions
 		);
 
 		const watcher	= immutable ?
@@ -1284,18 +1305,25 @@ export class AccountDatabaseService {
 
 					return cache.value;
 				})
-			)
+			),
+			subscriptions
 		);
 	}
 
 	/** @see DatabaseService.watchListKeyPushes */
-	public watchListKeyPushes (url: MaybePromise<string>) : Observable<{
+	public watchListKeyPushes (
+		url: MaybePromise<string>,
+		subscriptions?: Subscription[]
+	) : Observable<{
 		key: string;
 		previousKey?: string;
 	}> {
 		return this.currentUser.pipe(
 			mergeMap(async () =>
-				this.databaseService.watchListKeyPushes(await this.normalizeURL(url))
+				this.databaseService.watchListKeyPushes(
+					await this.normalizeURL(url),
+					subscriptions
+				)
 			),
 			mergeMap(
 				o => o
@@ -1304,16 +1332,23 @@ export class AccountDatabaseService {
 	}
 
 	/** @see DatabaseService.watchListKeys */
-	public watchListKeys (url: MaybePromise<string>) : Observable<string[]> {
+	public watchListKeys (
+		url: MaybePromise<string>,
+		subscriptions?: Subscription[]
+	) : Observable<string[]> {
 		return cacheObservable(
 			this.currentUser.pipe(
 				mergeMap(async () =>
-					this.databaseService.watchListKeys(await this.normalizeURL(url))
+					this.databaseService.watchListKeys(
+						await this.normalizeURL(url),
+						subscriptions
+					)
 				),
 				mergeMap(
 					o => o
 				)
-			)
+			),
+			subscriptions
 		);
 	}
 
@@ -1324,7 +1359,8 @@ export class AccountDatabaseService {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false,
-		immutable: boolean = true
+		immutable: boolean = true,
+		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
@@ -1333,7 +1369,10 @@ export class AccountDatabaseService {
 
 					return this.databaseService.watchListPushes(
 						processedURL,
-						BinaryProto
+						BinaryProto,
+						undefined,
+						undefined,
+						subscriptions
 					).pipe(mergeMap(async data => ({
 						timestamp: data.timestamp,
 						value: await this.open(
@@ -1350,7 +1389,8 @@ export class AccountDatabaseService {
 				mergeMap(
 					o => o
 				)
-			)
+			),
+			subscriptions
 		);
 	}
 
@@ -1366,5 +1406,7 @@ export class AccountDatabaseService {
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
-	) {}
+	) {
+		super();
+	}
 }

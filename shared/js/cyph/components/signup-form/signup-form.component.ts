@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
+import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {EnvService} from '../../services/env.service';
 import {SignupService} from '../../services/signup.service';
@@ -16,7 +17,7 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./signup-form.component.scss'],
 	templateUrl: './signup-form.component.html'
 })
-export class SignupFormComponent {
+export class SignupFormComponent extends BaseProvider {
 	/** @see emailPattern */
 	public readonly emailPattern: typeof emailPattern	= emailPattern;
 
@@ -55,5 +56,7 @@ export class SignupFormComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -18,7 +19,7 @@ import {trackByID} from '../../track-by/track-by-id';
 	styleUrls: ['./account-forms.component.scss'],
 	templateUrl: './account-forms.component.html'
 })
-export class AccountFormsComponent implements OnInit {
+export class AccountFormsComponent extends BaseProvider implements OnInit {
 	/** @see trackByID */
 	public readonly trackByID: typeof trackByID	= trackByID;
 
@@ -48,5 +49,7 @@ export class AccountFormsComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

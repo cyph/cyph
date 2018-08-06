@@ -1,4 +1,5 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 
 
 /**
@@ -8,7 +9,7 @@ import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 	/* tslint:disable-next-line:directive-selector */
 	selector: '[routerLink]'
 })
-export class RouterLinkDirective implements OnInit {
+export class RouterLinkDirective extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (this.elementRef.nativeElement) {
@@ -22,5 +23,7 @@ export class RouterLinkDirective implements OnInit {
 
 		/** @ignore */
 		private readonly renderer: Renderer2
-	) {}
+	) {
+		super();
+	}
 }

@@ -6,6 +6,7 @@ import * as markdownItEmoji from 'markdown-it-emoji';
 import * as markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';
 import {BehaviorSubject} from 'rxjs';
+import {BaseProvider} from '../../base-provider';
 import {EnvService} from '../../services/env.service';
 import {HtmlSanitizerService} from '../../services/html-sanitizer.service';
 import {StringsService} from '../../services/strings.service';
@@ -21,7 +22,7 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./markdown.component.scss'],
 	templateUrl: './markdown.component.html'
 })
-export class MarkdownComponent implements OnChanges {
+export class MarkdownComponent extends BaseProvider implements OnChanges {
 	/** @ignore */
 	private initiated: boolean	= false;
 
@@ -101,6 +102,8 @@ export class MarkdownComponent implements OnChanges {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		this.markdownIt	= new MarkdownIt({
 			breaks: true,
 			highlight: (s: string) => microlight.process(

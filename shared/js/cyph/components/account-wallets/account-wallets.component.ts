@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {xkcdPassphrase} from 'xkcd-passphrase';
+import {BaseProvider} from '../../base-provider';
 import {NewWalletOptions} from '../../cryptocurrency';
 import {Cryptocurrencies, Currencies} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -27,7 +28,7 @@ import {getDateTimeString} from '../../util/time';
 	styleUrls: ['./account-wallets.component.scss'],
 	templateUrl: './account-wallets.component.html'
 })
-export class AccountWalletsComponent implements OnInit {
+export class AccountWalletsComponent extends BaseProvider implements OnInit {
 	/** @see Cryptocurrencies */
 	public readonly cryptocurrencies					= Cryptocurrencies;
 
@@ -149,5 +150,7 @@ export class AccountWalletsComponent implements OnInit {
 
 		/** @see QRService */
 		public readonly qrService: QRService
-	) {}
+	) {
+		super();
+	}
 }

@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import {BaseProvider} from '../../base-provider';
 import {
 	AccountFileRecord,
 	IAccountFileRecord,
@@ -27,7 +28,7 @@ import {getDateTimeString} from '../../util/time';
 	styleUrls: ['./account-ehr-access.component.scss'],
 	templateUrl: './account-ehr-access.component.html'
 })
-export class AccountEhrAccessComponent implements OnInit {
+export class AccountEhrAccessComponent extends BaseProvider implements OnInit {
 	/** @see getDateTimeString */
 	public readonly getDateTimeString: typeof getDateTimeString	= getDateTimeString;
 
@@ -108,5 +109,7 @@ export class AccountEhrAccessComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

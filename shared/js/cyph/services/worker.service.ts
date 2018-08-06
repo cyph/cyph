@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {MaybePromise} from '../maybe-promise-type';
 import {Thread} from '../thread';
 import {uuid} from '../util/uuid';
@@ -10,7 +11,7 @@ import {ConfigService} from './config.service';
  * Angular service for managing Workers.
  */
 @Injectable()
-export class WorkerService {
+export class WorkerService extends BaseProvider {
 	/** @ignore */
 	private readonly serviceWorkerResolvers: Map<string, {
 		reject: (err: any) => void;
@@ -69,6 +70,8 @@ export class WorkerService {
 		/** @ignore */
 		private readonly configService: ConfigService
 	) {
+		super();
+
 		this.serviceWorker	= this.serviceWorkerRegistration.then(async () => {
 			navigator.serviceWorker.addEventListener('message', (e: any) => {
 				if (!e.data || typeof e.data.id !== 'string') {

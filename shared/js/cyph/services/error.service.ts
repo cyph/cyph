@@ -1,5 +1,6 @@
 import {ErrorHandler, Injectable} from '@angular/core';
 import {fromError} from 'stacktrace-js';
+import {BaseProvider} from '../base-provider';
 import {email} from '../util/email';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {debugLogError} from '../util/log';
@@ -11,7 +12,7 @@ import {EnvService} from './env.service';
  * Handles error logging.
  */
 @Injectable()
-export class ErrorService implements ErrorHandler {
+export class ErrorService extends BaseProvider implements ErrorHandler {
 	/** @ignore */
 	private readonly numEmails: Map<string, number>	= new Map<string, number>();
 
@@ -82,5 +83,7 @@ export class ErrorService implements ErrorHandler {
 
 		/** @ignore */
 		private readonly envService: EnvService
-	) {}
+	) {
+		super();
+	}
 }

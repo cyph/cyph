@@ -1,5 +1,6 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 import {memoize} from 'lodash-es';
+import {BaseProvider} from '../base-provider';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
 
@@ -11,7 +12,7 @@ import {sleep} from '../util/wait';
 	/* tslint:disable-next-line:directive-selector */
 	selector: 'form:not([cyphEnableLastPass]), input:not([cyphEnableLastPass])'
 })
-export class EnableLastPassDirective implements OnInit {
+export class EnableLastPassDirective extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		if (!this.elementRef.nativeElement) {
@@ -43,5 +44,7 @@ export class EnableLastPassDirective implements OnInit {
 
 		/** @ignore */
 		private readonly renderer: Renderer2
-	) {}
+	) {
+		super();
+	}
 }

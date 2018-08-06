@@ -106,7 +106,8 @@ export class DatabaseService extends DataManagerService {
 		url: string,
 		proto: IProto<T>,
 		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
-		noBlobStorage: boolean = false
+		noBlobStorage: boolean = false,
+		subscriptions?: Subscription[]
 	) : IAsyncList<T> {
 		const lock		= lockFactory(url);
 		const localLock	= lockFunction();
@@ -130,14 +131,16 @@ export class DatabaseService extends DataManagerService {
 			updateValue: async f => asyncList.lock(async () =>
 				asyncList.setValue(await f(await asyncList.getValue()))
 			),
-			watch: memoize(() => this.watchList(url, proto).pipe(
+			watch: memoize(() => this.watchList(url, proto, undefined, subscriptions).pipe(
 				map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
 			)),
 			watchFlat: memoize(() => asyncList.watch().pipe(map(arr =>
 				arr.reduce<any>((a, b) => a.concat(b), [])
 			))),
 			watchPushes: memoize(() =>
-				this.watchListPushes(url, proto).pipe(map<ITimedValue<T>, T>(o => o.value))
+				this.watchListPushes(url, proto, undefined, undefined, subscriptions).pipe(
+					map<ITimedValue<T>, T>(o => o.value)
+				)
 			)
 		};
 
@@ -153,7 +156,8 @@ export class DatabaseService extends DataManagerService {
 		proto: IProto<T>,
 		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
 		noBlobStorage: boolean = false,
-		staticValues: boolean = false
+		staticValues: boolean = false,
+		subscriptions?: Subscription[]
 	) : IAsyncMap<string, T> {
 		const lock		= lockFactory(url);
 		const localLock	= lockFunction();
@@ -248,9 +252,11 @@ export class DatabaseService extends DataManagerService {
 			updateValue: async f => asyncMap.lock(async () =>
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
-			watch: memoize(() => this.watchListKeys(url).pipe(mergeMap(getValueHelper))),
-			watchKeys: memoize(() => this.watchListKeys(url)),
-			watchSize: memoize(() => this.watchListKeys(url).pipe(
+			watch: memoize(() => this.watchListKeys(url, subscriptions).pipe(
+				mergeMap(getValueHelper)
+			)),
+			watchKeys: memoize(() => this.watchListKeys(url, subscriptions)),
+			watchSize: memoize(() => this.watchListKeys(url, subscriptions).pipe(
 				mergeMap(async keys => keys.length)
 			))
 		};
@@ -268,7 +274,8 @@ export class DatabaseService extends DataManagerService {
 		proto: IProto<T>,
 		lockFactory: (k: string) => LockFunction = k => this.lockFunction(k),
 		blockGetValue: boolean = false,
-		noBlobStorage: boolean = false
+		noBlobStorage: boolean = false,
+		subscriptions?: Subscription[]
 	) : IAsyncValue<T> {
 		const lock			= lockFactory(url);
 		const localLock		= lockFunction();
@@ -328,7 +335,7 @@ export class DatabaseService extends DataManagerService {
 				await asyncValue.setValue(newValue);
 			}),
 			watch: memoize(() =>
-				this.watch(url, proto).pipe(map<ITimedValue<T>, T>(o => o.value))
+				this.watch(url, proto, subscriptions).pipe(map<ITimedValue<T>, T>(o => o.value))
 			)
 		};
 
@@ -496,9 +503,10 @@ export class DatabaseService extends DataManagerService {
 	public subscribeAndPop<T> (
 		url: string,
 		proto: IProto<T>,
-		f: (value: T) => MaybePromise<void>
+		f: (value: T) => MaybePromise<void>,
+		subscriptions?: Subscription[]
 	) : Subscription {
-		return this.watchListKeyPushes(url).subscribe(async ({key}) => {
+		return this.watchListKeyPushes(url, subscriptions).subscribe(async ({key}) => {
 			try {
 				const fullURL	= `${url}/${key}`;
 				await f(await this.getItem(fullURL, proto));
@@ -545,13 +553,17 @@ export class DatabaseService extends DataManagerService {
 	/** Subscribes to a value. */
 	public watch<T> (
 		_URL: MaybePromise<string>,
-		_PROTO: IProto<T>
+		_PROTO: IProto<T>,
+		_SUBSCRIPTIONS?: Subscription[]
 	) : Observable<ITimedValue<T>> {
 		throw new Error('Must provide an implementation of DatabaseService.watch.');
 	}
 
 	/** Subscribes to whether or not a value exists. */
-	public watchExists (_URL: MaybePromise<string>) : Observable<boolean> {
+	public watchExists (
+		_URL: MaybePromise<string>,
+		_SUBSCRIPTIONS?: Subscription[]
+	) : Observable<boolean> {
 		throw new Error('Must provide an implementation of DatabaseService.watchExists.');
 	}
 
@@ -559,13 +571,17 @@ export class DatabaseService extends DataManagerService {
 	public watchList<T> (
 		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
-		_COMPLETE_ON_EMPTY: boolean = false
+		_COMPLETE_ON_EMPTY: boolean = false,
+		_SUBSCRIPTIONS?: Subscription[]
 	) : Observable<ITimedValue<T>[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchList.');
 	}
 
 	/** Subscribes to new keys of a list. */
-	public watchListKeyPushes (_URL: MaybePromise<string>) : Observable<{
+	public watchListKeyPushes (
+		_URL: MaybePromise<string>,
+		_SUBSCRIPTIONS?: Subscription[]
+	) : Observable<{
 		key: string;
 		previousKey?: string;
 	}> {
@@ -573,7 +589,10 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Subscribes to the keys of a list. */
-	public watchListKeys (_URL: MaybePromise<string>) : Observable<string[]> {
+	public watchListKeys (
+		_URL: MaybePromise<string>,
+		_SUBSCRIPTIONS?: Subscription[]
+	) : Observable<string[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListKeys.');
 	}
 
@@ -582,7 +601,8 @@ export class DatabaseService extends DataManagerService {
 		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
 		_COMPLETE_ON_EMPTY: boolean = false,
-		_NO_CACHE: boolean = false
+		_NO_CACHE: boolean = false,
+		_SUBSCRIPTIONS?: Subscription[]
 	) : Observable<ITimedValue<T>&{key: string; previousKey?: string; url: string}> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListPushes.');
 	}

@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {IRedoxAppointment, IRedoxPatient, RedoxPatient} from '../proto';
 import {deserialize, serialize} from '../util/serialization';
 import {EHRIntegrationService} from './ehr-integration.service';
@@ -7,7 +8,7 @@ import {EHRIntegrationService} from './ehr-integration.service';
  * Angular service for EHR/EMR system usage.
  */
 @Injectable()
-export class EHRService {
+export class EHRService extends BaseProvider {
 	/** @ignore */
 	private throwErrors (response: any) : void {
 		if (
@@ -100,5 +101,7 @@ export class EHRService {
 	constructor (
 		/** @ignore */
 		private readonly ehrIntegrationService: EHRIntegrationService
-	) {}
+	) {
+		super();
+	}
 }

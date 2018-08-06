@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {reviewMax, User} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByIndex} from '../../track-by/track-by-index';
@@ -16,7 +17,7 @@ import {numberToString} from '../../util/formatting';
 	styleUrls: ['./account-user-rating.component.scss'],
 	templateUrl: './account-user-rating.component.html'
 })
-export class AccountUserRatingComponent {
+export class AccountUserRatingComponent extends BaseProvider {
 	/** @ignore */
 	private readonly uiMaxRating: number	= 5;
 
@@ -57,5 +58,7 @@ export class AccountUserRatingComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

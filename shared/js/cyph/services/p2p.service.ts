@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
@@ -16,7 +17,7 @@ import {StringsService} from './strings.service';
  * Manages P2P sessions.
  */
 @Injectable()
-export class P2PService {
+export class P2PService extends BaseProvider {
 	/** @ignore */
 	private readonly handlers: IP2PHandlers	= {
 		acceptConfirm: async (callType: string, timeout: number, isAccepted: boolean) => {
@@ -237,6 +238,8 @@ export class P2PService {
 		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
+		super();
+
 		this.chatService.p2pService.resolve(this);
 	}
 }

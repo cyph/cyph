@@ -1,11 +1,14 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
 import {resolvable} from '../util/wait';
 
 
 /** Accounts implementation of ISessionCapabilitiesService. */
 @Injectable()
-export class AccountSessionCapabilitiesService implements ISessionCapabilitiesService {
+export class AccountSessionCapabilitiesService
+extends BaseProvider
+implements ISessionCapabilitiesService {
 	/** @ignore */
 	private readonly _P2P_SUPPORT	= resolvable<boolean>();
 
@@ -28,5 +31,7 @@ export class AccountSessionCapabilitiesService implements ISessionCapabilitiesSe
 		this._WALKIE_TALKIE.resolve
 	;
 
-	constructor () {}
+	constructor () {
+		super();
+	}
 }

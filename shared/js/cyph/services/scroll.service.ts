@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import {map} from 'rxjs/operators';
+import {BaseProvider} from '../base-provider';
 import {IAsyncSet} from '../iasync-set';
 import {MaybePromise} from '../maybe-promise-type';
 import {toBehaviorSubject} from '../util/flatten-observable';
@@ -14,7 +15,7 @@ import {WindowWatcherService} from './window-watcher.service';
  * Manages scrolling and scroll-detection.
  */
 @Injectable()
-export class ScrollService {
+export class ScrollService extends BaseProvider {
 	/** @ignore */
 	private readonly _ROOT_ELEMENT			= resolvable<JQuery|undefined>();
 
@@ -65,7 +66,8 @@ export class ScrollService {
 				}).length
 			));
 		},
-		0
+		0,
+		this.subscriptions
 	));
 
 	/** @ignore */
@@ -169,5 +171,7 @@ export class ScrollService {
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
-	) {}
+	) {
+		super();
+	}
 }

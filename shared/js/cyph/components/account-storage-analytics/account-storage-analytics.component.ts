@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -16,7 +17,7 @@ import {readableByteLength} from '../../util/formatting';
 	styleUrls: ['./account-storage-analytics.component.scss'],
 	templateUrl: './account-storage-analytics.component.html'
 })
-export class AccountStorageAnalyticsComponent {
+export class AccountStorageAnalyticsComponent extends BaseProvider {
 	/** @see readableByteLength */
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
@@ -35,5 +36,7 @@ export class AccountStorageAnalyticsComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

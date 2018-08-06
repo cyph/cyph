@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
+import {BaseProvider} from '../../../cyph/base-provider';
 import {emailPattern} from '../../../cyph/email-pattern';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {EnvService} from '../../../cyph/services/env.service';
@@ -19,7 +20,7 @@ import {AppService} from '../../app.service';
 	styleUrls: ['./trial-signup.component.scss'],
 	templateUrl: './trial-signup.component.html'
 })
-export class TrialSignupComponent implements OnInit {
+export class TrialSignupComponent extends BaseProvider implements OnInit {
 	/** Generated API key. */
 	public readonly apiKey: Observable<string|undefined>	=
 		this.activatedRoute.params.pipe(map(o => o.apiKey))
@@ -103,6 +104,8 @@ export class TrialSignupComponent implements OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');

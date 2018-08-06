@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
+import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {BinaryProto, StringProto} from '../proto';
 import {filterUndefined} from '../util/filter';
@@ -20,7 +21,7 @@ import {DatabaseService} from './database.service';
  * Account contacts service.
  */
 @Injectable()
-export class AccountContactsService {
+export class AccountContactsService extends BaseProvider {
 	/** @ignore */
 	private readonly accountUserLookupService: IResolvable<AccountUserLookupService>	=
 		resolvable()
@@ -28,7 +29,10 @@ export class AccountContactsService {
 
 	/** List of contacts for current user, sorted alphabetically by username. */
 	public readonly contactList: Observable<(IContactListItem|User)[]>	= toBehaviorSubject(
-		this.accountDatabaseService.watchListKeys('contacts').pipe(mergeMap(async usernames => {
+		this.accountDatabaseService.watchListKeys(
+			'contacts',
+			this.subscriptions
+		).pipe(mergeMap(async usernames => {
 			const accountUserLookupService	= await this.accountUserLookupService.promise;
 
 			return normalizeArray(usernames).map(username => {
@@ -37,14 +41,16 @@ export class AccountContactsService {
 				return {
 					unreadMessageCount: toBehaviorSubject<number>(
 						user.then(async o => o ? o.unreadMessageCount : 0),
-						0
+						0,
+						this.subscriptions
 					),
 					user,
 					username
 				};
 			});
 		})),
-		[]
+		[],
+		this.subscriptions
 	);
 
 	/** Fully loads contact list. */
@@ -58,7 +64,8 @@ export class AccountContactsService {
 						)
 					))
 				)),
-				[]
+				[],
+				this.subscriptions
 			)
 	);
 
@@ -170,8 +177,14 @@ export class AccountContactsService {
 	}
 
 	/** Watches whether the user is a contact. */
-	public watchIfContact (username: string) : Observable<boolean> {
-		return this.accountDatabaseService.watchExists(this.contactURL(username));
+	public watchIfContact (
+		username: string,
+		subscriptions?: Subscription[]
+	) : Observable<boolean> {
+		return this.accountDatabaseService.watchExists(
+			this.contactURL(username),
+			subscriptions
+		);
 	}
 
 	constructor (
@@ -184,6 +197,8 @@ export class AccountContactsService {
 		/** @ignore */
 		private readonly databaseService: DatabaseService
 	) {
+		super();
+
 		this.accountDatabaseService.getListKeys('contacts').then(usernames => {
 			if (usernames.length < 1) {
 				this.showSpinner.next(false);

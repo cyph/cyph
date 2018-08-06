@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -20,7 +21,7 @@ import {readableByteLength} from '../../util/formatting';
 	styleUrls: ['./account-files.component.scss'],
 	templateUrl: './account-files.component.html'
 })
-export class AccountFilesComponent implements OnInit {
+export class AccountFilesComponent extends BaseProvider implements OnInit {
 	/** @see readableByteLength */
 	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
 
@@ -56,5 +57,7 @@ export class AccountFilesComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
+import {BaseProvider} from '../../base-provider';
 import {IResolvable} from '../../iresolvable';
 import {DataURIProto} from '../../proto';
 import {StringsService} from '../../services/strings.service';
@@ -16,7 +17,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./dialog-image.component.scss'],
 	templateUrl: './dialog-image.component.html'
 })
-export class DialogImageComponent {
+export class DialogImageComponent extends BaseProvider {
 	/** Aspect ratio for cropping. */
 	public cropAspectRatio?: number;
 
@@ -75,5 +76,7 @@ export class DialogImageComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

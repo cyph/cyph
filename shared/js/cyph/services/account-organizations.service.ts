@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {User} from '../account';
+import {BaseProvider} from '../base-provider';
 import {AccountUserTypes} from '../proto';
 import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
@@ -14,7 +15,7 @@ import {AccountUserLookupService} from './account-user-lookup.service';
  * Angular service for account organizations.
  */
 @Injectable()
-export class AccountOrganizationsService {
+export class AccountOrganizationsService extends BaseProvider {
 	/** @ignore */
 	private readonly membersCache: Map<string, Observable<User[]>>	= new Map();
 
@@ -46,7 +47,8 @@ export class AccountOrganizationsService {
 						)))
 					));
 				},
-				[]
+				[],
+				this.subscriptions
 			)
 		);
 	}
@@ -82,5 +84,7 @@ export class AccountOrganizationsService {
 	constructor (
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService
-	) {}
+	) {
+		super();
+	}
 }

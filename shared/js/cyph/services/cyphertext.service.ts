@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
+import {BaseProvider} from '../base-provider';
 import {ChatMessage} from '../chat';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {LocalAsyncList} from '../local-async-list';
@@ -16,7 +17,7 @@ import {StringsService} from './strings.service';
  * Manages cyphertext chat UI.
  */
 @Injectable()
-export class CyphertextService {
+export class CyphertextService extends BaseProvider {
 	/** Indicates whether cyphertext UI should be enabled. */
 	public readonly isEnabled: boolean	=
 		!this.envService.isTelehealth &&
@@ -99,6 +100,8 @@ export class CyphertextService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
+		super();
+
 		if (this.isEnabled) {
 			this.sessionService.on(
 				events.cyphertext,

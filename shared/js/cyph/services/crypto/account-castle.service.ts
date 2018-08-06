@@ -42,7 +42,7 @@ export class AccountCastleService extends CastleService {
 	) : Promise<void> {
 		const transport	= new Transport(accountSessionService);
 
-		accountSessionService.remoteUser.pipe(
+		this.subscriptions.push(accountSessionService.remoteUser.pipe(
 			filterUndefinedOperator(),
 			take(1)
 		).subscribe(user => {
@@ -157,7 +157,7 @@ export class AccountCastleService extends CastleService {
 					}
 				));
 			});
-		});
+		}));
 	}
 
 	/** @inheritDoc */

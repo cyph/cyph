@@ -14,6 +14,7 @@ import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
 import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {AccountFile, AccountFileShare, SecurityModels} from '../account';
 import {Async} from '../async-type';
+import {BaseProvider} from '../base-provider';
 import {StorageUnits} from '../enums/storage-units';
 import {IAsyncList} from '../iasync-list';
 import {IProto} from '../iproto';
@@ -62,7 +63,7 @@ import {StringsService} from './strings.service';
  * Account file service.
  */
 @Injectable()
-export class AccountFilesService {
+export class AccountFilesService extends BaseProvider {
 	/**
 	 * Resolves circular dependency needed for shareFilePrompt to work.
 	 * @see AccountFileSharingComponent
@@ -97,13 +98,20 @@ export class AccountFilesService {
 	};
 
 	/** @ignore */
+	private readonly watchAppointmentCache	=
+		new Map<string|IAccountFileRecord, Observable<IAppointment>>()
+	;
+
+	/** @ignore */
 	private readonly watchFile	= memoize(
 		(value: IAccountFileReference) =>
 			!value.owner ? undefined : this.accountDatabaseService.watch(
 				`users/${value.owner}/fileRecords/${value.id}`,
 				AccountFileRecord,
 				undefined,
-				value.key
+				value.key,
+				undefined,
+				this.subscriptions
 			).pipe(map(o => ({
 				timestamp: o.timestamp,
 				value: {
@@ -117,9 +125,15 @@ export class AccountFilesService {
 	);
 
 	/** @ignore */
-	private readonly watchFileDataCache: Map<string|IAccountFileRecord, Observable<any>>	=
-		new Map<string|IAccountFileRecord, Observable<any>>()
+	private readonly watchFileDataCache	= new Map<string, Observable<any>>();
+
+	/** @ignore */
+	private readonly watchMetadataCache	=
+		new Map<string|IAccountFileRecord, Observable<IAccountFileRecord&IAccountFileReference>>()
 	;
+
+	/** @ignore */
+	private readonly watchNoteCache		= new Map<string, Observable<IQuillDelta>>();
 
 	/** File type configurations. */
 	public readonly config	= {
@@ -219,7 +233,8 @@ export class AccountFilesService {
 			undefined,
 			undefined,
 			undefined,
-			false
+			false,
+			this.subscriptions
 		).pipe(
 			mergeMap(references => combineLatest(filterUndefined(references.map(({value}) =>
 				this.watchFile(value)
@@ -316,7 +331,9 @@ export class AccountFilesService {
 		this.accountDatabaseService.currentUser.pipe(mergeMap(o =>
 			!o ? [] : this.databaseService.watchList(
 				`users/${o.user.username}/incomingFiles`,
-				BinaryProto
+				BinaryProto,
+				undefined,
+				this.subscriptions
 			).pipe(mergeMap(async arr =>
 				(await Promise.all(arr.map(async ({value}) => getOrSetDefaultAsync(
 					this.incomingFileCache,
@@ -498,7 +515,8 @@ export class AccountFilesService {
 				content
 			;
 		}),
-		'...'
+		'...',
+		this.subscriptions
 	));
 
 	/** Indicates whether spinner should be displayed. */
@@ -593,7 +611,9 @@ export class AccountFilesService {
 					filePromise.then(file => `users/${file.owner}/files/${file.id}`),
 					<any> proto,
 					securityModel,
-					filePromise.then(file => file.key)
+					filePromise.then(file => file.key),
+					undefined,
+					this.subscriptions
 				).pipe(map(o =>
 					isNaN(o.timestamp) ? undefined : o.value
 				));
@@ -862,8 +882,14 @@ export class AccountFilesService {
 
 		return {
 			asyncList: docAsyncList,
-			deltas: flattenObservable<IQuillDelta>(watchers.then(o => o.deltas)),
-			selections: flattenObservable<IQuillRange>(watchers.then(o => o.selections))
+			deltas: flattenObservable<IQuillDelta>(
+				watchers.then(o => o.deltas),
+				this.subscriptions
+			),
+			selections: flattenObservable<IQuillRange>(
+				watchers.then(o => o.selections),
+				this.subscriptions
+			)
 		};
 	}
 
@@ -1407,48 +1433,72 @@ export class AccountFilesService {
 
 	/** Watches appointment. */
 	public watchAppointment (id: string|IAccountFileRecord) : Observable<IAppointment> {
-		const filePromise	= this.getFile(id);
+		return getOrSetDefault(
+			this.watchAppointmentCache,
+			typeof id === 'string' ? id : id.id,
+			() => {
+				const filePromise	= this.getFile(id);
 
-		return this.accountDatabaseService.watch(
-			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-			Appointment,
-			undefined,
-			filePromise.then(file => file.key)
-		).pipe(map(o =>
-			o.value
-		));
+				return this.accountDatabaseService.watch(
+					filePromise.then(file => `users/${file.owner}/files/${file.id}`),
+					Appointment,
+					undefined,
+					filePromise.then(file => file.key),
+					undefined,
+					this.subscriptions
+				).pipe(map(o =>
+					o.value
+				));
+			}
+		);
 	}
 
 	/** Watches file record. */
 	public watchMetadata (id: string|IAccountFileRecord) : Observable<
 		IAccountFileRecord&IAccountFileReference
 	> {
-		const filePromise	= this.getFile(id);
+		return getOrSetDefault(
+			this.watchMetadataCache,
+			typeof id === 'string' ? id : id.id,
+			() => {
+				const filePromise	= this.getFile(id);
 
-		return this.accountDatabaseService.watch(
-			filePromise.then(file => `users/${file.owner}/fileRecords/${file.id}`),
-			AccountFileRecord,
-			undefined,
-			filePromise.then(file => file.key)
-		).pipe(mergeMap(async o => ({
-			...o.value,
-			...(await filePromise),
-			name: o.value.name.slice(0, this.maxNameLength)
-		})));
+				return this.accountDatabaseService.watch(
+					filePromise.then(file => `users/${file.owner}/fileRecords/${file.id}`),
+					AccountFileRecord,
+					undefined,
+					filePromise.then(file => file.key),
+					undefined,
+					this.subscriptions
+				).pipe(mergeMap(async o => ({
+					...o.value,
+					...(await filePromise),
+					name: o.value.name.slice(0, this.maxNameLength)
+				})));
+			}
+		);
 	}
 
 	/** Watches note. */
 	public watchNote (id: string|IAccountFileRecord) : Observable<IQuillDelta> {
-		const filePromise	= this.getFile(id);
+		return getOrSetDefault(
+			this.watchNoteCache,
+			typeof id === 'string' ? id : id.id,
+			() => {
+				const filePromise	= this.getFile(id);
 
-		return this.accountDatabaseService.watch(
-			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-			BinaryProto,
-			undefined,
-			filePromise.then(file => file.key)
-		).pipe(map(o =>
-			o.value.length > 0 ? msgpack.decode(o.value) : {ops: []}
-		));
+				return this.accountDatabaseService.watch(
+					filePromise.then(file => `users/${file.owner}/files/${file.id}`),
+					BinaryProto,
+					undefined,
+					filePromise.then(file => file.key),
+					undefined,
+					this.subscriptions
+				).pipe(map(o =>
+					o.value.length > 0 ? msgpack.decode(o.value) : {ops: []}
+				));
+			}
+		);
 	}
 
 	constructor (
@@ -1470,6 +1520,8 @@ export class AccountFilesService {
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
+		super();
+
 		(async () => {
 			if ((await this.accountDatabaseService.getListKeys('fileReferences')).length === 0) {
 				this.initiated.next(true);

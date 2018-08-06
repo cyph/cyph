@@ -1,8 +1,9 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as Delta from 'quill-delta';
-import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
+import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
 import {IQuillDelta} from '../../iquill-delta';
 import {IQuillRange} from '../../iquill-range';
@@ -27,15 +28,12 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-note.component.scss'],
 	templateUrl: './account-note.component.html'
 })
-export class AccountNoteComponent implements OnDestroy, OnInit {
+export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnInit {
 	/** @ignore */
 	private readonly editView	= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	private readonly saveLock	= lockFunction();
-
-	/** @ignore */
-	private urlSubscription?: Subscription;
 
 	/** Indicates whether or not this is a new note. */
 	public readonly newNote	= new BehaviorSubject<boolean>(false);
@@ -75,7 +73,8 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 	/** Indicates whether or not the real-time doc UI is enabled. */
 	public readonly realTime: BehaviorSubject<boolean>	= toBehaviorSubject(
 		this.activatedRoute.data.pipe(map(o => o.realTime)),
-		false
+		false,
+		this.subscriptions
 	);
 
 	/** Indicates whether spinner should be displayed. */
@@ -158,12 +157,10 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+
 		this.note.next(undefined);
 		this.updateNoteData({id: undefined});
-
-		if (this.urlSubscription) {
-			this.urlSubscription.unsubscribe();
-		}
 	}
 
 	/** @inheritDoc */
@@ -172,11 +169,11 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 
 		this.setURL(this.router.url);
 
-		this.urlSubscription	= this.accountService.routeChanges.subscribe(url => {
+		this.subscriptions.push(this.accountService.routeChanges.subscribe(url => {
 			this.setURL(url);
-		});
+		}));
 
-		combineLatest(
+		this.subscriptions.push(combineLatest(
 			this.activatedRoute.params,
 			this.realTime
 		).subscribe(async ([o, realTime]) => {
@@ -204,7 +201,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 			catch {
 				this.router.navigate([accountRoot, '404']);
 			}
-		});
+		}));
 	}
 
 	/** Note change handler. */
@@ -335,5 +332,7 @@ export class AccountNoteComponent implements OnDestroy, OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

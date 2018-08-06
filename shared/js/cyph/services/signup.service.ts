@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+import {BaseProvider} from '../base-provider';
 import {request} from '../util/request';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
@@ -9,7 +10,7 @@ import {EnvService} from './env.service';
  * Angular service that handles waitlist signups.
  */
 @Injectable()
-export class SignupService {
+export class SignupService extends BaseProvider {
 	/** Signup data entered by user. */
 	public readonly data	= {
 		email: new BehaviorSubject<string>(''),
@@ -74,5 +75,7 @@ export class SignupService {
 
 		/** @ignore */
 		private readonly envService: EnvService
-	) {}
+	) {
+		super();
+	}
 }

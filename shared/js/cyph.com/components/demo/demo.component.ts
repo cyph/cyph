@@ -1,5 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import * as $ from 'jquery';
+import {BaseProvider} from '../../../cyph/base-provider';
 import {EnvService} from '../../../cyph/services/env.service';
 import {sleep, waitForIterable} from '../../../cyph/util/wait';
 import {DemoService} from '../../demo.service';
@@ -15,7 +16,7 @@ import {elements} from '../../elements';
 	styleUrls: ['./demo.component.scss'],
 	templateUrl: './demo.component.html'
 })
-export class DemoComponent implements AfterViewInit {
+export class DemoComponent extends BaseProvider implements AfterViewInit {
 	/** @ignore */
 	private readonly mobileUIScale: number	= 0.625;
 
@@ -221,5 +222,7 @@ export class DemoComponent implements AfterViewInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService
-	) {}
+	) {
+		super();
+	}
 }

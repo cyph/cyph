@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -11,7 +12,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./dialog-alert.component.scss'],
 	templateUrl: './dialog-alert.component.html'
 })
-export class DialogAlertComponent {
+export class DialogAlertComponent extends BaseProvider {
 	/** Content. */
 	public content?: string;
 
@@ -27,5 +28,7 @@ export class DialogAlertComponent {
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

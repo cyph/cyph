@@ -9,6 +9,7 @@ import {
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
+import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -28,7 +29,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./pin-input.component.scss'],
 	templateUrl: './pin-input.component.html'
 })
-export class PinInputComponent implements ControlValueAccessor, OnInit {
+export class PinInputComponent extends BaseProvider implements ControlValueAccessor, OnInit {
 	/** Change event callback. */
 	private onChange?: (s: string) => void;
 
@@ -63,7 +64,7 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.value.subscribe(s => {
+		this.subscriptions.push(this.value.subscribe(s => {
 			s	= (s || '').trim();
 
 			if (this.onChange) {
@@ -75,7 +76,7 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 				input.value	= '';
 				input.value	= s;
 			}
-		});
+		}));
 	}
 
 	/** @inheritDoc */
@@ -103,5 +104,7 @@ export class PinInputComponent implements ControlValueAccessor, OnInit {
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {map} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
+import {BaseProvider} from '../base-provider';
 import {LockFunction} from '../lock-function-type';
 import {
 	AccountUserPresence,
@@ -25,7 +26,7 @@ import {EnvService} from './env.service';
  * Account user lookup service.
  */
 @Injectable()
-export class AccountUserLookupService {
+export class AccountUserLookupService extends BaseProvider {
 	/** @ignore */
 	private readonly downloadLock: LockFunction			= lockFunction();
 
@@ -250,6 +251,8 @@ export class AccountUserLookupService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		super();
+
 		this.accountContactsService.init(this);
 	}
 }

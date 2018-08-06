@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {AppService} from '../../app.service';
+import {BaseProvider} from '../../js/cyph/base-provider';
 import {EnvService} from '../../js/cyph/services/env.service';
 import {StringsService} from '../../js/cyph/services/strings.service';
 
@@ -12,7 +13,7 @@ import {StringsService} from '../../js/cyph/services/strings.service';
 	selector: 'cyph-app',
 	templateUrl: './app.component.html'
 })
-export class AppComponent {
+export class AppComponent extends BaseProvider {
 	constructor (
 		/** @see AppService */
 		public readonly appService: AppService,
@@ -22,5 +23,7 @@ export class AppComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

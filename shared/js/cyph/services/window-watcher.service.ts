@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
+import {BaseProvider} from '../base-provider';
 import {EnvService} from './env.service';
 
 
@@ -9,7 +10,7 @@ import {EnvService} from './env.service';
  * Keeps track of this window.
  */
 @Injectable()
-export class WindowWatcherService {
+export class WindowWatcherService extends BaseProvider {
 	/** @ignore */
 	private get windowHeight () : number {
 		return window.innerHeight;
@@ -56,6 +57,8 @@ export class WindowWatcherService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		super();
+
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

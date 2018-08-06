@@ -9,6 +9,7 @@ import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import * as tabIndent from 'tab-indent';
 import {slideInOutBottom} from '../../animations';
+import {BaseProvider} from '../../base-provider';
 import {States} from '../../chat/enums';
 import {IFile} from '../../ifile';
 import {ChatMessageValue} from '../../proto';
@@ -34,7 +35,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 	styleUrls: ['./chat-message-box.component.scss'],
 	templateUrl: './chat-message-box.component.html'
 })
-export class ChatMessageBoxComponent implements AfterViewInit {
+export class ChatMessageBoxComponent extends BaseProvider implements AfterViewInit {
 	/** @ignore */
 	private readonly $textarea: Promise<JQuery>	= waitForIterable(
 		() => $(this.elementRef.nativeElement).find('.text-message-box textarea')
@@ -199,5 +200,7 @@ export class ChatMessageBoxComponent implements AfterViewInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

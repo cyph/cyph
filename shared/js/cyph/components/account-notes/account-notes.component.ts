@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
+import {BaseProvider} from '../../base-provider';
 import {IAccountFileRecord, IAccountFileReference} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -22,7 +23,7 @@ import {trackByID} from '../../track-by/track-by-id';
 	styleUrls: ['./account-notes.component.scss'],
 	templateUrl: './account-notes.component.html'
 })
-export class AccountNotesComponent implements OnInit {
+export class AccountNotesComponent extends BaseProvider implements OnInit {
 	/** List of incoming notes to display. */
 	public readonly incomingNotes: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
 		this.activatedRoute.data.pipe(mergeMap(o => o.realTime ?
@@ -76,5 +77,7 @@ export class AccountNotesComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

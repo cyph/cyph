@@ -12,6 +12,7 @@ import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, skip, take} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -33,7 +34,7 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-register.component.scss'],
 	templateUrl: './account-register.component.html'
 })
-export class AccountRegisterComponent implements OnInit {
+export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** @ignore */
 	private usernameDebounceLast?: string;
 
@@ -179,7 +180,7 @@ export class AccountRegisterComponent implements OnInit {
 			return;
 		}
 
-		this.activatedRoute.params.subscribe(async o => {
+		this.subscriptions.push(this.activatedRoute.params.subscribe(async o => {
 			if (typeof o.step === 'string') {
 				const step	= Number.parseInt(o.step, 10);
 
@@ -194,7 +195,7 @@ export class AccountRegisterComponent implements OnInit {
 			}
 
 			this.router.navigate([accountRoot, 'register', '1']);
-		});
+		}));
 	}
 
 	/** Initiates registration attempt. */
@@ -277,6 +278,8 @@ export class AccountRegisterComponent implements OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		this.lockScreenPasswordReady	= toBehaviorSubject(
 			combineLatest(
 				this.lockScreenPassword,
@@ -296,7 +299,8 @@ export class AccountRegisterComponent implements OnInit {
 						safeStringCompare(lockScreenPassword, lockScreenPasswordConfirm)
 					)
 			)),
-			false
+			false,
+			this.subscriptions
 		);
 
 		this.masterKeyReady				= toBehaviorSubject(
@@ -318,7 +322,8 @@ export class AccountRegisterComponent implements OnInit {
 						safeStringCompare(masterKey, masterKeyConfirm)
 					)
 			)),
-			false
+			false,
+			this.subscriptions
 		);
 
 		this.readyToSubmit				= toBehaviorSubject(
@@ -342,7 +347,8 @@ export class AccountRegisterComponent implements OnInit {
 				!lockScreenPasswordReady ||
 				!masterKeyReady
 			))),
-			false
+			false,
+			this.subscriptions
 		);
 	}
 }

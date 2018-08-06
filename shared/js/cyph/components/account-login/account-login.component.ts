@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {usernameMask} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {BinaryProto, BooleanProto, StringProto} from '../../proto';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
@@ -28,7 +29,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-login.component.scss'],
 	templateUrl: './account-login.component.html'
 })
-export class AccountLoginComponent implements OnInit {
+export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** @ignore */
 	private readonly savedMasterKey		= new BehaviorSubject<Uint8Array|undefined>(undefined);
 
@@ -193,6 +194,8 @@ export class AccountLoginComponent implements OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');

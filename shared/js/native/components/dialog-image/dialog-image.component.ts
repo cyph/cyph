@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ModalDialogParams} from 'nativescript-angular/modal-dialog';
+import {BaseProvider} from '../../js/cyph/base-provider';
 
 
 /**
@@ -11,7 +12,7 @@ import {ModalDialogParams} from 'nativescript-angular/modal-dialog';
 	styleUrls: ['../../js/cyph/components/dialog-image/dialog-image.component.scss'],
 	templateUrl: '../../js/cyph/components/dialog-image/dialog-image.component.html'
 })
-export class DialogImageComponent {
+export class DialogImageComponent extends BaseProvider {
 	/** Image src. */
 	public src: string;
 
@@ -19,6 +20,8 @@ export class DialogImageComponent {
 	public title?: string;
 
 	constructor (params: ModalDialogParams) {
+		super();
+
 		this.src	= params.context;
 	}
 }

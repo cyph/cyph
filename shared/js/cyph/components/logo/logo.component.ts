@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, HostBinding, Input} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import {BaseProvider} from '../../base-provider';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {urlToSafeStyle} from '../../util/safe-values';
@@ -14,7 +15,7 @@ import {urlToSafeStyle} from '../../util/safe-values';
 	styleUrls: ['./logo.component.scss'],
 	templateUrl: './logo.component.html'
 })
-export class LogoComponent {
+export class LogoComponent extends BaseProvider {
 	/** @ignore */
 	private cardHeaderInternal: boolean	= false;
 
@@ -163,5 +164,7 @@ export class LogoComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

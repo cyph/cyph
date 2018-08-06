@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject, combineLatest} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {States} from '../../chat/enums';
 import {AccountFileRecord, AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
 import {accountChatProviders} from '../../providers';
@@ -30,7 +31,7 @@ import {uuid} from '../../util/uuid';
 	styleUrls: ['./account-compose.component.scss'],
 	templateUrl: './account-compose.component.html'
 })
-export class AccountComposeComponent implements OnDestroy, OnInit {
+export class AccountComposeComponent extends BaseProvider implements OnDestroy, OnInit {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
@@ -117,7 +118,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 	public readonly recipientSingle: BehaviorSubject<User|undefined>	=
 		toBehaviorSubject(
 			() => this.recipient.pipe(map(o => o.values().next().value)),
-			undefined
+			undefined,
+			this.subscriptions
 		)
 	;
 
@@ -212,6 +214,8 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
+		super.ngOnDestroy();
+
 		if (this.hasOwnProviders) {
 			await this.sessionService.destroy();
 		}
@@ -223,7 +227,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 		this.accountChatService.updateChat();
 		this.sessionService.state.isAlive.next(true);
 
-		this.activatedRoute.params.subscribe(async o => {
+		this.subscriptions.push(this.activatedRoute.params.subscribe(async o => {
 			const username: string|undefined	=
 				await this.accountContactsService.getContactUsername(o.contactID).catch(() =>
 					undefined
@@ -235,7 +239,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 			}
 
 			this.searchUsername.next(username);
-		});
+		}));
 
 		this.accountChatService.init(this.chatMessageGeometryService);
 		this.scrollService.init();
@@ -275,5 +279,7 @@ export class AccountComposeComponent implements OnDestroy, OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BaseProvider} from '../../base-provider';
 import {AccountFileRecord, IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -17,7 +18,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-form.component.scss'],
 	templateUrl: './account-form.component.html'
 })
-export class AccountFormComponent implements OnInit {
+export class AccountFormComponent extends BaseProvider implements OnInit {
 	/** Current form. */
 	public readonly form	= new BehaviorSubject<{
 		data: Promise<IForm>;
@@ -31,7 +32,7 @@ export class AccountFormComponent implements OnInit {
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
-		combineLatest(
+		this.subscriptions.push(combineLatest(
 			this.activatedRoute.data,
 			this.activatedRoute.params
 		).subscribe(async ([data, params]) => {
@@ -83,7 +84,7 @@ export class AccountFormComponent implements OnInit {
 			catch {
 				this.router.navigate([accountRoot, '404']);
 			}
-		});
+		}));
 	}
 
 	constructor (
@@ -104,5 +105,7 @@ export class AccountFormComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

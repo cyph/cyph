@@ -1,5 +1,6 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 import * as $ from 'jquery';
+import {BaseProvider} from '../base-provider';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
 import {translate} from '../util/translate';
@@ -11,7 +12,7 @@ import {translate} from '../util/translate';
 @Directive({
 	selector: '[cyphTranslate]'
 })
-export class TranslateDirective implements OnInit {
+export class TranslateDirective extends BaseProvider implements OnInit {
 	/** @ignore */
 	private handleElement (nativeElement: HTMLElement) : void {
 		const $element	= $(nativeElement);
@@ -82,5 +83,7 @@ export class TranslateDirective implements OnInit {
 
 		/** @ignore */
 		private readonly envService: EnvService
-	) {}
+	) {
+		super();
+	}
 }

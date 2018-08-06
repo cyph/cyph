@@ -5,6 +5,7 @@ import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import * as SimpleWebRTC from 'simplewebrtc';
+import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {eventManager} from '../event-manager';
 import {LockFunction} from '../lock-function-type';
@@ -27,7 +28,7 @@ import {SessionService} from './session.service';
 
 /** @inheritDoc */
 @Injectable()
-export class P2PWebRTCService implements IP2PWebRTCService {
+export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService {
 	/** @ignore */
 	private readonly _CHAT_SERVICE	= resolvable<ChatService>();
 
@@ -658,6 +659,8 @@ export class P2PWebRTCService implements IP2PWebRTCService {
 		/** @ignore */
 		private readonly sessionService: SessionService
 	) {
+		super();
+
 		this.sessionService.on(events.closeChat, () => { this.close(); });
 
 		this.sessionService.on(rpcEvents.p2p, (newEvents: ISessionMessageData[]) => {

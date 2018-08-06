@@ -11,6 +11,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {IContactListItem, User} from '../../account';
 import {Async} from '../../async-type';
+import {BaseProvider} from '../../base-provider';
 import {ISearchOptions} from '../../isearch-options';
 import {AccountUserProfileExtra} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -31,7 +32,7 @@ import {SearchBarComponent} from '../search-bar';
 	styleUrls: ['./account-contacts-search.component.scss'],
 	templateUrl: './account-contacts-search.component.html'
 })
-export class AccountContactsSearchComponent {
+export class AccountContactsSearchComponent extends BaseProvider {
 	/** @see SearchBarComponent.chipInput */
 	@Input() public chipInput: boolean		= false;
 
@@ -212,5 +213,7 @@ export class AccountContactsSearchComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

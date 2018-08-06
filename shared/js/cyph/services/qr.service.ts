@@ -3,6 +3,7 @@ import {SafeUrl} from '@angular/platform-browser';
 import {DopeQrOptions, generateQRCode} from 'dope-qr';
 import memoize from 'lodash-es/memoize';
 import {encode} from 'msgpack-lite';
+import {BaseProvider} from '../base-provider';
 import {BinaryProto, DataURIProto} from '../proto';
 import {deserialize} from '../util/serialization';
 import {PotassiumService} from './crypto/potassium.service';
@@ -13,7 +14,7 @@ import {LocalStorageService} from './local-storage.service';
  * Angular service for QR codes.
  */
 @Injectable()
-export class QRService {
+export class QRService extends BaseProvider {
 	/** Generates a QR code and caches to local storage. */
 	public readonly getQRCode	= memoize(async (options: DopeQrOptions) : Promise<SafeUrl> =>
 		deserialize(
@@ -34,5 +35,7 @@ export class QRService {
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
-	) {}
+	) {
+		super();
+	}
 }

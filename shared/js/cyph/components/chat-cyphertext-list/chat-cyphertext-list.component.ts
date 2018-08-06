@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {ChatMessage} from '../../chat';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
@@ -13,7 +14,7 @@ import {trackByID} from '../../track-by/track-by-id';
 	styleUrls: ['./chat-cyphertext-list.component.scss'],
 	templateUrl: './chat-cyphertext-list.component.html'
 })
-export class ChatCyphertextListComponent {
+export class ChatCyphertextListComponent extends BaseProvider {
 	/** @see CyphertextService.messages */
 	@Input() public messages?: ChatMessage[];
 
@@ -23,5 +24,7 @@ export class ChatCyphertextListComponent {
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

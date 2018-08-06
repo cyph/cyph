@@ -4,6 +4,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
 import {map} from 'rxjs/operators';
+import {BaseProvider} from '../base-provider';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogImageComponent} from '../components/dialog-image';
@@ -19,7 +20,7 @@ import {StringsService} from './strings.service';
  * DialogService implementation built on Angular Material.
  */
 @Injectable()
-export class MaterialDialogService implements DialogService {
+export class MaterialDialogService extends BaseProvider implements DialogService {
 	/** @ignore */
 	private readonly lock: LockFunction	= lockFunction();
 
@@ -258,5 +259,7 @@ export class MaterialDialogService implements DialogService {
 
 		/** @ignore */
 		private readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

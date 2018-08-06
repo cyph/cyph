@@ -3,6 +3,7 @@ import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/r
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import {User} from '../account';
+import {BaseProvider} from '../base-provider';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
@@ -15,7 +16,7 @@ import {WindowWatcherService} from './window-watcher.service';
  * Account service.
  */
 @Injectable()
-export class AccountService {
+export class AccountService extends BaseProvider {
 	/** @ignore */
 	private readonly _UI_READY	= resolvable();
 
@@ -115,7 +116,8 @@ export class AccountService {
 			filter(event => event instanceof NavigationEnd && event.url !== this.currentRoute),
 			map(({url}: NavigationEnd) => url)
 		),
-		this.router.url
+		this.router.url,
+		this.subscriptions
 	);
 
 	/** Root for account routes. */
@@ -196,6 +198,8 @@ export class AccountService {
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
+		super();
+
 		if (this.envService.isCordova) {
 			let navigationDepth	= -3;
 
@@ -217,9 +221,9 @@ export class AccountService {
 				}
 			});
 
-			this.routeChanges.subscribe(() => {
+			this.subscriptions.push(this.routeChanges.subscribe(() => {
 				++navigationDepth;
-			});
+			}));
 		}
 		else if (this.envService.isWeb) {
 			self.addEventListener('popstate', () => {
@@ -332,7 +336,7 @@ export class AccountService {
 		let lastSection	= '';
 		let lastURL		= '';
 
-		this.router.events.subscribe(e => {
+		this.subscriptions.push(this.router.events.subscribe(e => {
 			if (!(e instanceof NavigationStart)) {
 				return;
 			}
@@ -348,7 +352,7 @@ export class AccountService {
 				lastSection	= section;
 				this.transitionInternal.next(true);
 			}
-		});
+		}));
 
 		this.uiReady.then(() => {
 			this.isUiReady.next(true);

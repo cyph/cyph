@@ -2,8 +2,9 @@
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, combineLatest, interval, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, Observable} from 'rxjs';
 import {filter, map, take, takeWhile} from 'rxjs/operators';
+import {BaseProvider} from '../base-provider';
 import {ChatMessage, IChatData, IChatMessageInput, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
 import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
@@ -57,7 +58,7 @@ import {StringsService} from './strings.service';
  * Manages a chat.
  */
 @Injectable()
-export class ChatService {
+export class ChatService extends BaseProvider {
 	/** @ignore */
 	private static readonly approximateKeyExchangeTime: number	= 9000;
 
@@ -98,9 +99,6 @@ export class ChatService {
 		this._CHAT_GEOMETRY_SERVICE.resolve
 	;
 
-	/** @ignore */
-	private unconfirmedMessagesSubscription?: Subscription;
-
 	/** @see ChatMessageGeometryService */
 	protected readonly chatMessageGeometryService: Promise<{
 		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
@@ -114,7 +112,14 @@ export class ChatService {
 			this.potassiumService,
 			this.messageValuesURL,
 			ChatMessageValue,
-			this.databaseService.getAsyncMap(this.messageValuesURL, BinaryProto)
+			this.databaseService.getAsyncMap(
+				this.messageValuesURL,
+				BinaryProto,
+				undefined,
+				undefined,
+				undefined,
+				this.subscriptions
+			)
 		)
 	;
 
@@ -328,10 +333,8 @@ export class ChatService {
 
 	/** This kills the chat. */
 	private async close () : Promise<void> {
-		if (this.unconfirmedMessagesSubscription) {
-			this.unconfirmedMessagesSubscription.unsubscribe();
-			this.unconfirmedMessagesSubscription	= undefined;
-		}
+		/* tslint:disable-next-line:no-life-cycle-call */
+		this.ngOnDestroy();
 
 		if (!this.sessionInitService.ephemeral) {
 			this.sessionService.close();
@@ -829,12 +832,12 @@ export class ChatService {
 	) : void {
 		const increment	= timeInterval / totalTime;
 
-		interval(timeInterval).pipe(
+		this.subscriptions.push(interval(timeInterval).pipe(
 			takeWhile(() => this.chat.initProgress.value < 125),
 			map(() => this.chat.initProgress.value + (increment * 100))
 		).subscribe(
 			this.chat.initProgress
-		);
+		));
 	}
 
 	/**
@@ -1155,6 +1158,8 @@ export class ChatService {
 		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
+		super();
+
 		this.chatSubject	= new BehaviorSubject(this.getDefaultChatData());
 
 		this.sessionService.ready.then(() => {
@@ -1166,7 +1171,7 @@ export class ChatService {
 
 			this.scrollService.resolveUnreadItems(this.getScrollServiceUnreadMessages());
 
-			this.unconfirmedMessagesSubscription		= combineLatest(
+			this.subscriptions.push(combineLatest(
 				this.chat.lastConfirmedMessage.watch(),
 				this.chat.messageList.watchFlat()
 			).pipe(map(([lastConfirmedMessage, messageIDs]) => {
@@ -1186,7 +1191,7 @@ export class ChatService {
 				return unconfirmedMessages;
 			})).subscribe(
 				this.chat.unconfirmedMessages
-			);
+			));
 
 			if (pendingMessageRoot) {
 				Promise.all([

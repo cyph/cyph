@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
 import {User} from '../../account/user';
+import {BaseProvider} from '../../base-provider';
 import {ChatMessageValue} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
@@ -18,7 +19,7 @@ import {ChatMessageBoxInheritNgFormComponent} from '../chat-message-box-inherit-
 	styleUrls: ['./account-chat-message-box.component.scss'],
 	templateUrl: './account-chat-message-box.component.html'
 })
-export class AccountChatMessageBoxComponent {
+export class AccountChatMessageBoxComponent extends BaseProvider {
 	/** @see ChatMessageBoxComponent.calendarInviteFollowUp */
 	@Input() public calendarInviteFollowUp?: boolean;
 
@@ -72,5 +73,7 @@ export class AccountChatMessageBoxComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

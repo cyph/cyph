@@ -12,6 +12,7 @@ import {
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
+import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {emailPattern} from '../../email-pattern';
 import {EnvService} from '../../services/env.service';
@@ -30,7 +31,7 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./checkout.component.scss'],
 	templateUrl: './checkout.component.html'
 })
-export class CheckoutComponent implements AfterViewInit {
+export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 	/* Braintree instance. */
 	private braintreeInstance: any;
 
@@ -200,5 +201,7 @@ export class CheckoutComponent implements AfterViewInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

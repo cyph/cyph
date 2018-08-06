@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import * as $ from 'jquery';
+import {BaseProvider} from '../../base-provider';
 import {CyphertextService} from '../../services/cyphertext.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -14,7 +15,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./chat-cyphertext.component.scss'],
 	templateUrl: './chat-cyphertext.component.html'
 })
-export class ChatCyphertextComponent implements OnInit {
+export class ChatCyphertextComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (!this.envService.isWeb) {
@@ -39,5 +40,7 @@ export class ChatCyphertextComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

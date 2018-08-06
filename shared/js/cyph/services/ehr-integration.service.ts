@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {request, requestJSON, requestMaybeJSON} from '../util/request';
 import {stringify} from '../util/serialization';
 import {EnvService} from './env.service';
@@ -8,7 +9,7 @@ import {EnvService} from './env.service';
  * Angular service for EHR/EMR system integration.
  */
 @Injectable()
-export class EHRIntegrationService {
+export class EHRIntegrationService extends BaseProvider {
 	/** Uploads EHR credentials and returns master API key. */
 	public async addCredentials (
 		cyphAdminKey: string,
@@ -83,5 +84,7 @@ export class EHRIntegrationService {
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService
-	) {}
+	) {
+		super();
+	}
 }

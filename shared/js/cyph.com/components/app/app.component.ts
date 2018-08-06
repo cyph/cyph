@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {BaseProvider} from '../../../cyph/base-provider';
 import {emailPattern} from '../../../cyph/email-pattern';
 import {ConfigService} from '../../../cyph/services/config.service';
 import {EnvService} from '../../../cyph/services/env.service';
@@ -17,7 +18,7 @@ import {Promos, States} from '../../enums';
 	selector: 'cyph-app',
 	templateUrl: './app.component.html'
 })
-export class AppComponent {
+export class AppComponent extends BaseProvider {
 	/** @see emailPattern */
 	public readonly emailPattern: typeof emailPattern	= emailPattern;
 
@@ -45,5 +46,7 @@ export class AppComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

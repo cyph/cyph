@@ -1,3 +1,4 @@
+import {BaseProvider} from '../base-provider';
 import {IProto} from '../iproto';
 import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto} from '../proto';
@@ -6,7 +7,7 @@ import {BinaryProto} from '../proto';
 /**
  * Base class for any service that manages data.
  */
-export class DataManagerService {
+export class DataManagerService extends BaseProvider {
 	/** Gets an item's value. */
 	public async getItem<T> (_URL: string, _PROTO: IProto<T>) : Promise<T> {
 		throw new Error('Must provide an implementation of getItem.');
@@ -52,5 +53,7 @@ export class DataManagerService {
 		throw new Error('Must provide an implementation of setItem.');
 	}
 
-	constructor () {}
+	constructor () {
+		super();
+	}
 }

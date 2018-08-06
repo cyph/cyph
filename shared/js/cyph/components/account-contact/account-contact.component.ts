@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnChanges} from '@angular/cor
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {IContactListItem, User, UserPresence} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
 import {AccountService} from '../../services/account.service';
@@ -18,7 +19,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-contact.component.scss'],
 	templateUrl: './account-contact.component.html'
 })
-export class AccountContactComponent implements OnChanges {
+export class AccountContactComponent extends BaseProvider implements OnChanges {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
@@ -77,5 +78,7 @@ export class AccountContactComponent implements OnChanges {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

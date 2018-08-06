@@ -4,6 +4,7 @@ import {NavigationEnd, Router} from '@angular/router';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import * as WOW from 'wowjs';
+import {BaseProvider} from '../cyph/base-provider';
 import {SubscriptionTypes} from '../cyph/checkout';
 import {BetaRegisterComponent} from '../cyph/components/beta-register';
 import {ConfigService} from '../cyph/services/config.service';
@@ -22,7 +23,7 @@ import {HomeSections, pageTitles, Promos, States} from './enums';
  * Angular service for Cyph home page.
  */
 @Injectable()
-export class AppService {
+export class AppService extends BaseProvider {
 	/** @ignore */
 	private disableNextScroll: boolean	= false;
 
@@ -308,6 +309,8 @@ export class AppService {
 		/** @ignore */
 		private readonly titleService: Title
 	) {
+		super();
+
 		/* Redirect to Onion site when on Tor */
 		if (!this.envService.isOnion) {
 			(async () => {
@@ -330,11 +333,11 @@ export class AppService {
 			new WOW({live: true}).init();
 		}
 
-		this.router.events.subscribe(e => {
+		this.subscriptions.push(this.router.events.subscribe(e => {
 			if (e instanceof NavigationEnd) {
 				this.onUrlChange(e.url.split('?')[0]);
 			}
-		});
+		}));
 
 		(async () => {
 			/* Disable background video on mobile */

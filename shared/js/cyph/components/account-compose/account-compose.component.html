@@ -37,7 +37,7 @@
 						)'
 						[placeholder]='stringsService.to'
 						[searchUsername]='searchUsername'
-						(userFilterChange)='$event.subscribe(recipient)'
+						(userFilterChange)='subscriptions.push($event.subscribe(recipient))'
 						*ngIf='(appointmentFormData | async) === undefined'
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box

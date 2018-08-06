@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
+import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {IResolvable} from '../iresolvable';
 import {ISessionService} from '../service-interfaces/isession.service';
@@ -11,7 +12,7 @@ import {SessionInitService} from './session-init.service';
  * SessionInitService implementation that gets ID from URL.
  */
 @Injectable()
-export class UrlSessionInitService implements SessionInitService {
+export class UrlSessionInitService extends BaseProvider implements SessionInitService {
 	/** @inheritDoc */
 	public readonly callType?: 'audio'|'video';
 
@@ -33,6 +34,8 @@ export class UrlSessionInitService implements SessionInitService {
 		/** @ignore */
 		private readonly router: Router
 	) {
+		super();
+
 		const urlSegmentPaths	=
 			this.router.routerState.snapshot.root.firstChild ?
 				this.router.routerState.snapshot.root.firstChild.url.map(o => o.path) :

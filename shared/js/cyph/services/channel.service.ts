@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Subject, Subscription} from 'rxjs';
+import {BaseProvider} from '../base-provider';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {LockFunction} from '../lock-function-type';
@@ -14,7 +15,7 @@ import {DatabaseService} from './database.service';
 
 /** @inheritDoc */
 @Injectable()
-export class ChannelService implements IChannelService {
+export class ChannelService extends BaseProvider implements IChannelService {
 	/** @ignore */
 	private readonly _STATE		= resolvable<{lock: LockFunction; url: string}>();
 
@@ -39,9 +40,6 @@ export class ChannelService implements IChannelService {
 	private readonly state: Promise<{lock: LockFunction; url: string}>	= this._STATE.promise;
 
 	/** @ignore */
-	private readonly subscriptions: Subscription[]	= [];
-
-	/** @ignore */
 	private userID?: string;
 
 	/** @inheritDoc */
@@ -58,23 +56,24 @@ export class ChannelService implements IChannelService {
 	/** @inheritDoc */
 	public destroy () : void {
 		this.pauseOnMessage(true);
-
-		for (const subscription of this.subscriptions) {
-			subscription.unsubscribe();
-		}
+		/* tslint:disable-next-line:no-life-cycle-call */
+		this.ngOnDestroy();
 	}
 
 	/** @inheritDoc */
 	public async getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
-		blockGetValue?: boolean
+		blockGetValue?: boolean,
+		subscriptions?: Subscription[]
 	) : Promise<IAsyncValue<T>> {
 		return this.databaseService.getAsyncValue(
 			`${(await this.state).url}/${url}`,
 			proto,
 			undefined,
-			blockGetValue
+			blockGetValue,
+			undefined,
+			subscriptions
 		);
 	}
 
@@ -105,7 +104,8 @@ export class ChannelService implements IChannelService {
 			`${url}/messages`,
 			ChannelMessage,
 			undefined,
-			true
+			true,
+			this.subscriptions
 		).subscribe(async message => {
 			if (message.value.author === this.userID) {
 				return;
@@ -137,7 +137,8 @@ export class ChannelService implements IChannelService {
 		this.subscriptions.push(this.databaseService.watchList(
 			`${url}/users`,
 			StringProto,
-			true
+			true,
+			this.subscriptions
 		).subscribe(
 			users => {
 				if (users.length < 1) {
@@ -199,5 +200,7 @@ export class ChannelService implements IChannelService {
 	constructor (
 		/** @ignore */
 		private readonly databaseService: DatabaseService
-	) {}
+	) {
+		super();
+	}
 }

@@ -15,6 +15,7 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Async} from '../../async-type';
+import {BaseProvider} from '../../base-provider';
 import {ISearchOptions} from '../../isearch-options';
 import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';
@@ -30,7 +31,7 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 	styleUrls: ['./search-bar.component.scss'],
 	templateUrl: './search-bar.component.html'
 })
-export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
+export class SearchBarComponent<T extends any> extends BaseProvider implements OnChanges, OnInit {
 	/** @ignore */
 	private querySubscription?: Subscription;
 
@@ -58,7 +59,8 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	public readonly filterSingle: BehaviorSubject<T|undefined>						=
 		toBehaviorSubject(
 			this.filter.pipe(map(items => items.values().next().value)),
-			undefined
+			undefined,
+			this.subscriptions
 		)
 	;
 
@@ -168,5 +170,7 @@ export class SearchBarComponent<T extends any> implements OnChanges, OnInit {
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

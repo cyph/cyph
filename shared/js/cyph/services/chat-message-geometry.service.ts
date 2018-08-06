@@ -6,6 +6,7 @@ import {
 	Injector
 } from '@angular/core';
 import {ViewBase} from 'tns-core-modules/ui/core/view-base/view-base';
+import {BaseProvider} from '../base-provider';
 import {ChatMessage} from '../chat';
 import {ChatMessageComponent} from '../components/chat-message';
 import {uuid} from '../util/uuid';
@@ -17,7 +18,7 @@ import {EnvService} from './env.service';
  * Angular service for chat message geometry.
  */
 @Injectable()
-export class ChatMessageGeometryService {
+export class ChatMessageGeometryService extends BaseProvider {
 	/** Calculates the dimensions of a chat message at its maximum potential width. */
 	public async getDimensions (message: ChatMessage) : Promise<ChatMessage> {
 		if (!this.envService.isWeb) {
@@ -203,6 +204,8 @@ export class ChatMessageGeometryService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		super();
+
 		this.chatService.init(this);
 	}
 }

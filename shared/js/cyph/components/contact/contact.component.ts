@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
@@ -17,7 +18,7 @@ import {email} from '../../util/email';
 	styleUrls: ['./contact.component.scss'],
 	templateUrl: './contact.component.html'
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent extends BaseProvider implements OnInit {
 	/** @see emailPattern */
 	public readonly emailPattern			= emailPattern;
 
@@ -78,5 +79,7 @@ export class ContactComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

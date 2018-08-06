@@ -2,15 +2,15 @@ import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
-	OnDestroy,
 	ViewChild
 } from '@angular/core';
 import {Options} from 'fullcalendar';
 import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
-import {combineLatest, Observable, of, Subscription} from 'rxjs';
+import {combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {User} from '../../account/user';
+import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes, CallTypes, IAccountFileRecord, IAppointment} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -34,15 +34,12 @@ import {getDateTimeString, watchTimestamp} from '../../util/time';
 	styleUrls: ['./account-appointments.component.scss'],
 	templateUrl: './account-appointments.component.html'
 })
-export class AccountAppointmentsComponent implements AfterViewInit, OnDestroy {
+export class AccountAppointmentsComponent extends BaseProvider implements AfterViewInit {
 	/** Time in ms when user can check in - also used as cuttoff point for end time. */
 	private readonly appointmentGracePeriod: number	= 600000;
 
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
-
-	/** @ignore */
-	private calendarEventsSubscription?: Subscription;
 
 	/** Gets appointment. */
 	private readonly getAppointment:
@@ -188,7 +185,7 @@ export class AccountAppointmentsComponent implements AfterViewInit, OnDestroy {
 			await this.calendar.initialized.pipe(take(1)).toPromise();
 		}
 
-		this.calendarEventsSubscription	= this.unfilteredAppointments.subscribe(appointments => {
+		this.subscriptions.push(this.unfilteredAppointments.subscribe(appointments => {
 			this.calendarEvents	= appointments.map(({appointment}) => ({
 				end: appointment.calendarInvite.endTime,
 				start: appointment.calendarInvite.startTime,
@@ -198,14 +195,7 @@ export class AccountAppointmentsComponent implements AfterViewInit, OnDestroy {
 			if (this.calendar) {
 				this.calendar.fullCalendar('refetchEvents');
 			}
-		});
-	}
-
-	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		if (this.calendarEventsSubscription) {
-			this.calendarEventsSubscription.unsubscribe();
-		}
+		}));
 	}
 
 	constructor (
@@ -232,5 +222,7 @@ export class AccountAppointmentsComponent implements AfterViewInit, OnDestroy {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/cor
 import memoize from 'lodash-es/memoize';
 import once from 'lodash-es/once';
 import {AccountFileShare} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {IResolvable} from '../../iresolvable';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -21,7 +22,7 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 	styleUrls: ['./account-file-sharing.component.scss'],
 	templateUrl: './account-file-sharing.component.html'
 })
-export class AccountFileSharingComponent {
+export class AccountFileSharingComponent extends BaseProvider {
 	/** @see AccountContactsSearchComponent */
 	@ViewChild(AccountContactsSearchComponent)
 	public accountContactsSearch?: AccountContactsSearchComponent;
@@ -127,7 +128,9 @@ export class AccountFileSharingComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }
 
 

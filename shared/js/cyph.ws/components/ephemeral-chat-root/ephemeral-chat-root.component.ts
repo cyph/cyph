@@ -1,8 +1,9 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import {Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as Konami from 'konami-code.js';
 import {fadeIn} from '../../../cyph/animations';
+import {BaseProvider} from '../../../cyph/base-provider';
 import {States as ChatStates} from '../../../cyph/chat/enums';
 import {initGranim} from '../../../cyph/granim';
 import {AffiliateService} from '../../../cyph/services/affiliate.service';
@@ -72,10 +73,7 @@ import {ChatRootStates} from '../../enums';
 	styleUrls: ['./ephemeral-chat-root.component.scss'],
 	templateUrl: './ephemeral-chat-root.component.html'
 })
-export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
-	/** @ignore */
-	private destroyed: boolean	= false;
-
+export class EphemeralChatRootComponent extends BaseProvider implements AfterViewInit {
 	/** @see ChatRootStates */
 	public readonly chatRootStates: typeof ChatRootStates	= ChatRootStates;
 
@@ -254,11 +252,6 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		}
 	}
 
-	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		this.destroyed	= true;
-	}
-
 	constructor (
 		/** @ignore */
 		private readonly dialogService: DialogService,
@@ -302,6 +295,8 @@ export class EphemeralChatRootComponent implements AfterViewInit, OnDestroy {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');

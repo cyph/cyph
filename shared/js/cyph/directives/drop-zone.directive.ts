@@ -8,6 +8,7 @@ import {
 	Renderer2
 } from '@angular/core';
 import * as Dropzone from 'dropzone';
+import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
 import {EnvService} from '../services/env.service';
 import {FileService} from '../services/file.service';
@@ -19,7 +20,7 @@ import {waitUntilTrue} from '../util/wait';
 @Directive({
 	selector: '[cyphDropZone]'
 })
-export class DropZoneDirective implements OnChanges {
+export class DropZoneDirective extends BaseProvider implements OnChanges {
 	/** @ignore */
 	private readonly className: string	= 'cyph-drop-zone';
 
@@ -121,5 +122,7 @@ export class DropZoneDirective implements OnChanges {
 
 		/** @ignore */
 		private readonly fileService: FileService
-	) {}
+	) {
+		super();
+	}
 }

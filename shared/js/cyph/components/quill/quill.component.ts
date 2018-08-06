@@ -6,7 +6,6 @@ import {
 	EventEmitter,
 	Input,
 	OnChanges,
-	OnDestroy,
 	Output,
 	SimpleChanges
 } from '@angular/core';
@@ -15,6 +14,7 @@ import * as $ from 'jquery';
 import * as Quill from 'quill';
 import * as Delta from 'quill-delta';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BaseProvider} from '../../base-provider';
 import {IQuillDelta} from '../../iquill-delta';
 import {IQuillRange} from '../../iquill-range';
 import {LockFunction} from '../../lock-function-type';
@@ -41,15 +41,14 @@ import {resolvable, sleep, waitForIterable, waitForValue} from '../../util/wait'
 	styleUrls: ['./quill.component.scss'],
 	templateUrl: './quill.component.html'
 })
-export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnChanges, OnDestroy {
+export class QuillComponent
+extends BaseProvider
+implements AfterViewInit, ControlValueAccessor, OnChanges {
 	/** @ignore */
 	private readonly clientID: string	= uuid();
 
 	/** @ignore */
 	private deltasSubscription?: Subscription;
-
-	/** @ignore */
-	private destroyed: boolean	= false;
 
 	/** @ignore */
 	private editablePromise?: Promise<void>;
@@ -343,11 +342,6 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 	}
 
 	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		this.destroyed	= true;
-	}
-
-	/** @inheritDoc */
 	public registerOnChange (f: (content: IQuillDelta) => void) : void {
 		this.onChange	= f;
 	}
@@ -382,5 +376,7 @@ export class QuillComponent implements AfterViewInit, ControlValueAccessor, OnCh
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

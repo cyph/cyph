@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {first, take} from 'rxjs/operators';
+import {BaseProvider} from '../../base-provider';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {ICastle} from '../../crypto/icastle';
 import {LockFunction} from '../../lock-function-type';
@@ -15,7 +16,7 @@ import {PotassiumService} from './potassium.service';
  * @see ICastle
  */
 @Injectable()
-export class CastleService implements ICastle {
+export class CastleService extends BaseProvider implements ICastle {
 	/** @ignore */
 	protected readonly pairwiseSession: BehaviorSubject<PairwiseSession|undefined>	=
 		new BehaviorSubject<PairwiseSession|undefined>(undefined)
@@ -64,5 +65,7 @@ export class CastleService implements ICastle {
 		return new CastleService();
 	}
 
-	constructor () {}
+	constructor () {
+		super();
+	}
 }

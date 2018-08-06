@@ -18,7 +18,7 @@ import {
 	FirebaseStorage,
 	Reference as StorageReference
 } from '@firebase/storage-types';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {skip} from 'rxjs/operators';
 import {env} from '../env';
 import {IProto} from '../iproto';
@@ -106,9 +106,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @ignore */
 	private readonly observableCaches	= {
+		watch: new Map<string, Observable<ITimedValue<any>>>(),
 		watchExists: new Map<string, Observable<boolean>>(),
+		watchList: new Map<string, Observable<ITimedValue<any>[]>>(),
 		watchListKeyPushes: new Map<string, Observable<{key: string; previousKey?: string}>>(),
-		watchListKeys: new Map<string, Observable<string[]>>()
+		watchListKeys: new Map<string, Observable<string[]>>(),
+		watchListPushes: new Map<string, Observable<ITimedValue<any>&{
+			key: string;
+			previousKey?: string;
+			url: string;
+		}>>()
 	};
 
 	/** @ignore */
@@ -834,7 +841,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			await onDisconnect.remove().then();
 
-			this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
+			const sub	= this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 				if (!isConnected) {
 					return;
 				}
@@ -847,6 +854,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			await ref.set(ServerValue.TIMESTAMP).then();
 
 			return async () => {
+				sub.unsubscribe();
 				await ref.remove().then();
 				await onDisconnect.cancel().then();
 			};
@@ -866,7 +874,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			await onDisconnect.set(ServerValue.TIMESTAMP).then();
 
-			this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
+			const sub	= this.connectionStatus().pipe(skip(1)).subscribe(isConnected => {
 				if (!isConnected) {
 					return;
 				}
@@ -879,6 +887,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			await ref.remove().then();
 
 			return async () => {
+				sub.unsubscribe();
 				await ref.set(ServerValue.TIMESTAMP).then();
 				await onDisconnect.cancel().then();
 			};
@@ -1086,59 +1095,68 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public watch<T> (
 		urlPromise: MaybePromise<string>,
-		proto: IProto<T>
+		proto: IProto<T>,
+		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>> {
-		return this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>>(observer => {
-			let cleanup: Function;
-			let lastValue: T|undefined;
+		return getOrSetDefaultObservable(
+			this.observableCaches.watch,
+			urlPromise,
+			() => this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>>(observer => {
+				let cleanup: Function;
+				let lastValue: T|undefined;
 
-			/* tslint:disable-next-line:no-null-keyword */
-			const onValue	= async (snapshot: DataSnapshot|null) => {
-				const url	= await urlPromise;
+				/* tslint:disable-next-line:no-null-keyword */
+				const onValue	= async (snapshot: DataSnapshot|null) => {
+					const url	= await urlPromise;
 
-				if (!snapshot || !snapshot.exists()) {
-					const timestamp	= await getTimestamp();
-					this.ngZone.run(() => {
-						observer.next({timestamp, value: proto.create()});
-					});
-				}
-				else {
-					const result	= await (await this.downloadItem(url, proto)).result;
-
-					if (
-						result.value !== lastValue &&
-						!(
-							ArrayBuffer.isView(result.value) &&
-							ArrayBuffer.isView(lastValue) &&
-							this.potassiumService.compareMemory(
-								result.value,
-								lastValue
-							)
-						)
-					) {
-						this.ngZone.run(() => { observer.next(result); });
+					if (!snapshot || !snapshot.exists()) {
+						const timestamp	= await getTimestamp();
+						this.ngZone.run(() => {
+							observer.next({timestamp, value: proto.create()});
+						});
 					}
+					else {
+						const result	= await (await this.downloadItem(url, proto)).result;
 
-					lastValue		= result.value;
-				}
-			};
+						if (
+							result.value !== lastValue &&
+							!(
+								ArrayBuffer.isView(result.value) &&
+								ArrayBuffer.isView(lastValue) &&
+								this.potassiumService.compareMemory(
+									result.value,
+									lastValue
+								)
+							)
+						) {
+							this.ngZone.run(() => { observer.next(result); });
+						}
 
-			(async () => {
-				const url	= await urlPromise;
+						lastValue		= result.value;
+					}
+				};
 
-				const ref	= await this.getDatabaseRef(url);
-				ref.on('value', onValue);
-				cleanup	= () => { ref.off('value', onValue); };
-			})();
+				(async () => {
+					const url	= await urlPromise;
 
-			return async () => {
-				(await waitForValue(() => cleanup))();
-			};
-		}));
+					const ref	= await this.getDatabaseRef(url);
+					ref.on('value', onValue);
+					cleanup	= () => { ref.off('value', onValue); };
+				})();
+
+				return async () => {
+					(await waitForValue(() => cleanup))();
+				};
+			})),
+			subscriptions
+		);
 	}
 
 	/** @inheritDoc */
-	public watchExists (urlPromise: MaybePromise<string>) : Observable<boolean> {
+	public watchExists (
+		urlPromise: MaybePromise<string>,
+		subscriptions?: Subscription[]
+	) : Observable<boolean> {
 		return getOrSetDefaultObservable(
 			this.observableCaches.watchExists,
 			urlPromise,
@@ -1163,7 +1181,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			}))
+			})),
+			subscriptions
 		);
 	}
 
@@ -1171,137 +1190,151 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public watchList<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		completeOnEmpty: boolean = false
+		completeOnEmpty: boolean = false,
+		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>[]> {
-		return this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>[]>(observer => {
-			let cleanup: Function;
+		return getOrSetDefaultObservable(
+			this.observableCaches.watchList,
+			urlPromise,
+			() => this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>[]>(observer => {
+				let cleanup: Function;
 
-			(async () => {
-				const url	= await urlPromise;
+				(async () => {
+					const url	= await urlPromise;
 
-				const data		= new Map<string, {hash: string; timestamp: number; value: T}>();
-				const listRef	= await this.getDatabaseRef(url);
-				let initiated	= false;
-
-				const initialValues	= (await listRef.once('value')).val() || {};
-
-				/* tslint:disable-next-line:no-null-keyword */
-				const getValue		= async (snapshot: {key?: string|null; val: () => any}) => {
-					if (!snapshot.key) {
-						return false;
-					}
-					const {hash, timestamp}	=
-						snapshot.val() || {hash: undefined, timestamp: undefined}
+					const data		=
+						new Map<string, {hash: string; timestamp: number; value: T}>()
 					;
-					if (typeof hash !== 'string' || typeof timestamp !== 'number') {
-						return false;
-					}
-					data.set(snapshot.key, {
-						hash,
-						timestamp,
-						value: await this.getItem(`${url}/${snapshot.key}`, proto)
-					});
-					return true;
-				};
 
-				const publishList	= () => {
-					this.ngZone.run(() => {
-						observer.next(
-							this.getListKeysInternal(data).map(k => {
-								const o	= data.get(k);
-								if (!o) {
-									throw new Error('Corrupt Map.');
-								}
-								return {timestamp: o.timestamp, value: o.value};
-							})
-						);
-					});
-				};
+					const listRef	= await this.getDatabaseRef(url);
+					let initiated	= false;
 
-				/* tslint:disable-next-line:no-null-keyword */
-				const onChildAdded		= async (snapshot: DataSnapshot|null) : Promise<void> => {
-					if (
-						snapshot &&
-						snapshot.key &&
-						typeof (snapshot.val() || {}).hash !== 'string'
-					) {
-						return onChildAdded(await this.waitForValue(`${url}/${snapshot.key}`));
-					}
-					else if (
-						!snapshot ||
-						!snapshot.key ||
-						data.has(snapshot.key) ||
-						!(await getValue(snapshot))
-					) {
-						return;
+					const initialValues	= (await listRef.once('value')).val() || {};
+
+					/* tslint:disable-next-line:no-null-keyword */
+					const getValue		= async (snapshot: {key?: string|null; val: () => any}) => {
+						if (!snapshot.key) {
+							return false;
+						}
+						const {hash, timestamp}	=
+							snapshot.val() || {hash: undefined, timestamp: undefined}
+						;
+						if (typeof hash !== 'string' || typeof timestamp !== 'number') {
+							return false;
+						}
+						data.set(snapshot.key, {
+							hash,
+							timestamp,
+							value: await this.getItem(`${url}/${snapshot.key}`, proto)
+						});
+						return true;
+					};
+
+					const publishList	= () => {
+						this.ngZone.run(() => {
+							observer.next(
+								this.getListKeysInternal(data).map(k => {
+									const o	= data.get(k);
+									if (!o) {
+										throw new Error('Corrupt Map.');
+									}
+									return {timestamp: o.timestamp, value: o.value};
+								})
+							);
+						});
+					};
+
+					const onChildAdded		= async (
+						/* tslint:disable-next-line:no-null-keyword */
+						snapshot: DataSnapshot|null
+					) : Promise<void> => {
+						if (
+							snapshot &&
+							snapshot.key &&
+							typeof (snapshot.val() || {}).hash !== 'string'
+						) {
+							return onChildAdded(await this.waitForValue(`${url}/${snapshot.key}`));
+						}
+						else if (
+							!snapshot ||
+							!snapshot.key ||
+							data.has(snapshot.key) ||
+							!(await getValue(snapshot))
+						) {
+							return;
+						}
+						publishList();
+					};
+
+					/* tslint:disable-next-line:no-null-keyword */
+					const onChildChanged	= async (snapshot: DataSnapshot|null) => {
+						if (
+							!snapshot ||
+							!snapshot.key ||
+							!(await getValue(snapshot))
+						) {
+							return;
+						}
+						publishList();
+					};
+
+					/* tslint:disable-next-line:no-null-keyword */
+					const onChildRemoved	= async (snapshot: DataSnapshot|null) => {
+						if (!snapshot || !snapshot.key) {
+							return;
+						}
+						data.delete(snapshot.key);
+						publishList();
+					};
+
+					/* tslint:disable-next-line:no-null-keyword */
+					const onValue			= async (snapshot: DataSnapshot|null) => {
+						if (!initiated) {
+							initiated	= true;
+							return;
+						}
+						if (snapshot && !snapshot.exists()) {
+							this.ngZone.run(() => { observer.complete(); });
+						}
+					};
+
+					for (const key of Object.keys(initialValues)) {
+						await getValue({key, val: () => initialValues[key]});
 					}
 					publishList();
-				};
 
-				/* tslint:disable-next-line:no-null-keyword */
-				const onChildChanged	= async (snapshot: DataSnapshot|null) => {
-					if (
-						!snapshot ||
-						!snapshot.key ||
-						!(await getValue(snapshot))
-					) {
-						return;
+					listRef.on('child_added', onChildAdded);
+					listRef.on('child_changed', onChildChanged);
+					listRef.on('child_removed', onChildRemoved);
+
+					if (completeOnEmpty) {
+						listRef.on('value', onValue);
 					}
-					publishList();
+
+					cleanup	= () => {
+						listRef.off('child_added', onChildAdded);
+						listRef.off('child_changed', onChildChanged);
+						listRef.off('child_removed', onChildRemoved);
+						listRef.off('value', onValue);
+					};
+				})().catch(() => {
+					this.ngZone.run(() => { observer.next([]); });
+					cleanup	= () => {};
+				});
+
+				return async () => {
+					(await waitForValue(() => cleanup))();
 				};
-
-				/* tslint:disable-next-line:no-null-keyword */
-				const onChildRemoved	= async (snapshot: DataSnapshot|null) => {
-					if (!snapshot || !snapshot.key) {
-						return;
-					}
-					data.delete(snapshot.key);
-					publishList();
-				};
-
-				/* tslint:disable-next-line:no-null-keyword */
-				const onValue			= async (snapshot: DataSnapshot|null) => {
-					if (!initiated) {
-						initiated	= true;
-						return;
-					}
-					if (snapshot && !snapshot.exists()) {
-						this.ngZone.run(() => { observer.complete(); });
-					}
-				};
-
-				for (const key of Object.keys(initialValues)) {
-					await getValue({key, val: () => initialValues[key]});
-				}
-				publishList();
-
-				listRef.on('child_added', onChildAdded);
-				listRef.on('child_changed', onChildChanged);
-				listRef.on('child_removed', onChildRemoved);
-
-				if (completeOnEmpty) {
-					listRef.on('value', onValue);
-				}
-
-				cleanup	= () => {
-					listRef.off('child_added', onChildAdded);
-					listRef.off('child_changed', onChildChanged);
-					listRef.off('child_removed', onChildRemoved);
-					listRef.off('value', onValue);
-				};
-			})().catch(() => {
-				this.ngZone.run(() => { observer.next([]); });
-				cleanup	= () => {};
-			});
-
-			return async () => {
-				(await waitForValue(() => cleanup))();
-			};
-		}));
+			})),
+			subscriptions
+		);
 	}
 
 	/** @inheritDoc */
-	public watchListKeyPushes (urlPromise: MaybePromise<string>) : Observable<{
+	public watchListKeyPushes (
+		urlPromise: MaybePromise<string>,
+		subscriptions?: Subscription[]
+	) : Observable<{
 		key: string;
 		previousKey?: string;
 	}> {
@@ -1353,12 +1386,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			}))
+			})),
+			subscriptions
 		);
 	}
 
 	/** @inheritDoc */
-	public watchListKeys (urlPromise: MaybePromise<string>) : Observable<string[]> {
+	public watchListKeys (
+		urlPromise: MaybePromise<string>,
+		subscriptions?: Subscription[]
+	) : Observable<string[]> {
 		return getOrSetDefaultObservable(
 			this.observableCaches.watchListKeys,
 			urlPromise,
@@ -1408,7 +1445,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			}))
+			})),
+			subscriptions
 		);
 	}
 
@@ -1417,10 +1455,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
 		completeOnEmpty: boolean = false,
-		noCache: boolean = false
+		noCache: boolean = false,
+		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>&{key: string; previousKey?: string; url: string}> {
-		return this.ngZone.runOutsideAngular(() =>
-			new Observable<ITimedValue<T>&{
+		return getOrSetDefaultObservable(
+			this.observableCaches.watchListPushes,
+			urlPromise,
+			() => this.ngZone.runOutsideAngular(() => new Observable<ITimedValue<T>&{
 				key: string;
 				previousKey?: string;
 				url: string;
@@ -1501,7 +1542,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 				return async () => {
 					(await waitForValue(() => cleanup))();
 				};
-			})
+			})),
+			subscriptions
 		);
 	}
 

@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 
 
 /**
@@ -9,6 +10,8 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 	selector: 'cyph-blank',
 	template: ''
 })
-export class BlankComponent {
-	constructor () {}
+export class BlankComponent extends BaseProvider {
+	constructor () {
+		super();
+	}
 }

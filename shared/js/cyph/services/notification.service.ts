@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {INotificationService} from '../service-interfaces/inotification.service';
 import {EnvService} from './env.service';
 import {FaviconService} from './favicon.service';
@@ -11,7 +12,7 @@ import {WorkerService} from './worker.service';
  * @inheritDoc
  */
 @Injectable()
-export class NotificationService implements INotificationService {
+export class NotificationService extends BaseProvider implements INotificationService {
 	/** @ignore */
 	private readonly audio?: HTMLAudioElement;
 
@@ -105,6 +106,8 @@ export class NotificationService implements INotificationService {
 		/** @ignore */
 		private readonly workerService: WorkerService
 	) {
+		super();
+
 		if (this.envService.isMobile) {
 			this.config.audio	= undefined;
 		}
@@ -112,7 +115,7 @@ export class NotificationService implements INotificationService {
 			this.audio	= new Audio(this.config.audio);
 		}
 
-		this.windowWatcherService.visibility.subscribe(isVisible => {
+		this.subscriptions.push(this.windowWatcherService.visibility.subscribe(isVisible => {
 			if (isVisible) {
 				for (const notification of this.openNotifications) {
 					try {
@@ -126,7 +129,7 @@ export class NotificationService implements INotificationService {
 			else {
 				this.disableNotify	= false;
 			}
-		});
+		}));
 
 		try {
 			(<any> self).Notification.requestPermission();

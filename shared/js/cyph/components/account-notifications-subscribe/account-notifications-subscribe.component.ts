@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {combineLatest, Observable} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {SecurityModels} from '../../account/enums';
+import {BaseProvider} from '../../base-provider';
 import {IAsyncValue} from '../../iasync-value';
 import {StringProto} from '../../proto';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -18,7 +19,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-notifications-subscribe.component.scss'],
 	templateUrl: './account-notifications-subscribe.component.html'
 })
-export class AccountNotificationsSubscribeComponent {
+export class AccountNotificationsSubscribeComponent extends BaseProvider {
 	/** @ignore */
 	private readonly email: IAsyncValue<string>	= this.accountDatabaseService.getAsyncValue(
 		'email',
@@ -61,5 +62,7 @@ export class AccountNotificationsSubscribeComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

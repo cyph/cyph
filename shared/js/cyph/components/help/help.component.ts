@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -12,12 +13,14 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./help.component.scss'],
 	templateUrl: './help.component.html'
 })
-export class HelpComponent {
+export class HelpComponent extends BaseProvider {
 	constructor (
 		/** @see EnvService */
 		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

@@ -1,6 +1,7 @@
 import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
+import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 
 
@@ -8,7 +9,7 @@ import {IResolvable} from '../iresolvable';
  * Provides modal/dialog functionality.
  */
 @Injectable()
-export class DialogService {
+export class DialogService extends BaseProvider {
 	/** Displays alert. */
 	public async alert (
 		_O: {content: string; markdown?: boolean; ok?: string; title?: string},
@@ -86,5 +87,7 @@ export class DialogService {
 		throw new Error('Must provide an implementation of DialogService.toast.');
 	}
 
-	constructor () {}
+	constructor () {
+		super();
+	}
 }

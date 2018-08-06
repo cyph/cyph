@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, Inject, Input, Optional} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {EnvService} from '../../services/env.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
@@ -13,7 +14,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./footer.component.scss'],
 	templateUrl: './footer.component.html'
 })
-export class FooterComponent {
+export class FooterComponent extends BaseProvider {
 	/** If true, will display a more limited version of the footer. */
 	@Input() public limited: boolean	= false;
 
@@ -27,5 +28,7 @@ export class FooterComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

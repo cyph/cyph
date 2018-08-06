@@ -48,6 +48,7 @@ echo "export * from './${selector}.component';" > ${dir}/index.ts
 if [ "${ngModel}" ] ; then cat > ${dir}/${selector}.component.ts << EOM
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -67,7 +68,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./${selector}.component.scss'],
 	templateUrl: './${selector}.component.html'
 })
-export class ${class} implements ControlValueAccessor {
+export class ${class} extends BaseProvider implements ControlValueAccessor {
 	/** Change event callback. */
 	private onChange: (value: string) => void	= () => {};
 
@@ -107,11 +108,14 @@ export class ${class} implements ControlValueAccessor {
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }
 EOM
 else cat > ${dir}/${selector}.component.ts << EOM
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -119,15 +123,18 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for ${genericDescription} UI.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-${selector}',
 	styleUrls: ['./${selector}.component.scss'],
 	templateUrl: './${selector}.component.html'
 })
-export class ${class} {
+export class ${class} extends BaseProvider {
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }
 EOM
 fi
@@ -143,6 +150,7 @@ file="shared/js/cyph/directives/${selector}.directive.ts"
 
 cat > ${file} << EOM
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 
 
 /**
@@ -151,7 +159,7 @@ import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 @Directive({
 	selector: '[cyph${name}]'
 })
-export class ${class} implements OnInit {
+export class ${class} extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {}
 
@@ -208,13 +216,14 @@ file="shared/js/cyph/services/${selector}.service.ts"
 
 cat > ${file} << EOM
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 
 
 /**
  * Angular service for ${genericDescription}.
  */
 @Injectable()
-export class ${class} {
+export class ${class} extends BaseProvider {
 	constructor () {}
 }
 EOM

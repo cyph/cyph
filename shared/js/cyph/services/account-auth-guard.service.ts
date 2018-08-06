@@ -1,12 +1,15 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router} from '@angular/router';
+import {BaseProvider} from '../base-provider';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 
 
 /** Auth guard for accounts routing. */
 @Injectable()
-export class AccountAuthGuardService implements CanActivate, CanActivateChild {
+export class AccountAuthGuardService
+extends BaseProvider
+implements CanActivate, CanActivateChild {
 	/** @ignore */
 	private readonly anonymouslyAccessibleRoutes: string[]	= [
 		'404',
@@ -62,5 +65,7 @@ export class AccountAuthGuardService implements CanActivate, CanActivateChild {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService
-	) {}
+	) {
+		super();
+	}
 }

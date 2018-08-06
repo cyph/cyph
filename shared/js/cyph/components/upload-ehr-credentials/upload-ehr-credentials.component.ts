@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {take} from 'rxjs/operators';
+import {BaseProvider} from '../../base-provider';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {EHRIntegrationService} from '../../services/ehr-integration.service';
@@ -18,7 +19,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./upload-ehr-credentials.component.scss'],
 	templateUrl: './upload-ehr-credentials.component.html'
 })
-export class UploadEhrCredentialsComponent implements OnInit {
+export class UploadEhrCredentialsComponent extends BaseProvider implements OnInit {
 	/** Generated API key. */
 	public readonly apiKey: BehaviorSubject<string>	= new BehaviorSubject('');
 
@@ -76,5 +77,7 @@ export class UploadEhrCredentialsComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

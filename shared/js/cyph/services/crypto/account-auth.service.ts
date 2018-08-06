@@ -1,9 +1,10 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Subscription} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {skip} from 'rxjs/operators';
 import {RegistrationErrorCodes} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {IProto} from '../../iproto';
 import {
 	AccountLoginData,
@@ -36,12 +37,9 @@ import {PotassiumService} from './potassium.service';
  * Account authentication service.
  */
 @Injectable()
-export class AccountAuthService {
+export class AccountAuthService extends BaseProvider {
 	/** @ignore */
 	private connectTrackerCleanup?: () => void;
-
-	/** @ignore */
-	private statusSaveSubscription?: Subscription;
 
 	/** Error message. */
 	public readonly errorMessage	= new BehaviorSubject<string|undefined>(undefined);
@@ -369,9 +367,10 @@ export class AccountAuthService {
 			}
 			catch {}
 
-			this.statusSaveSubscription	= this.databaseService.watch(
+			this.subscriptions.push(this.databaseService.watch(
 				`users/${username}/presence`,
-				AccountUserPresence
+				AccountUserPresence,
+				this.subscriptions
 			).pipe(skip(1)).subscribe(({timestamp, value}) => {
 				if (isNaN(timestamp)) {
 					return;
@@ -382,7 +381,7 @@ export class AccountAuthService {
 					AccountUserPresence,
 					value
 				);
-			});
+			}));
 
 			this.databaseService.registerPushNotifications(`users/${username}/messagingTokens`).
 				catch(() => {})
@@ -433,9 +432,9 @@ export class AccountAuthService {
 			return false;
 		}
 
-		if (this.statusSaveSubscription) {
-			this.statusSaveSubscription.unsubscribe();
-		}
+		/* tslint:disable-next-line:no-life-cycle-call */
+		this.ngOnDestroy();
+
 		if (this.connectTrackerCleanup) {
 			this.connectTrackerCleanup();
 			this.connectTrackerCleanup	= undefined;
@@ -707,5 +706,7 @@ export class AccountAuthService {
 
 		/** @ignore */
 		private readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

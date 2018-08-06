@@ -4,6 +4,7 @@ import clipboard from 'clipboard-polyfill';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
+import {BaseProvider} from '../../base-provider';
 import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
 import {DialogService} from '../../services/dialog.service';
@@ -25,7 +26,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 	styleUrls: ['./link-connection.component.scss'],
 	templateUrl: './link-connection.component.html'
 })
-export class LinkConnectionComponent implements AfterViewInit {
+export class LinkConnectionComponent extends BaseProvider implements AfterViewInit {
 	/** @ignore */
 	private readonly addTimeLock: {}	= {};
 
@@ -218,5 +219,7 @@ export class LinkConnectionComponent implements AfterViewInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

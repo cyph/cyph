@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+import {BaseProvider} from '../cyph/base-provider';
 import {EnvService} from '../cyph/services/env.service';
 import {random} from '../cyph/util/random';
 import {request} from '../cyph/util/request';
@@ -13,7 +14,7 @@ import {ChatData} from './chat-data';
  * Angular service for Cyph chat demo.
  */
 @Injectable()
-export class DemoService {
+export class DemoService extends BaseProvider {
 	/** Desktop chat UI data. */
 	public readonly desktop: ChatData;
 
@@ -158,6 +159,8 @@ export class DemoService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		super();
+
 		this.desktop	= new ChatData(false);
 		this.mobile		= new ChatData(
 			true,

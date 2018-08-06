@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, Inject, OnInit, Optional} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -13,7 +14,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./not-found.component.scss'],
 	templateUrl: './not-found.component.html'
 })
-export class NotFoundComponent implements OnInit {
+export class NotFoundComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (this.envService.isAccounts && this.accountService) {
@@ -32,5 +33,7 @@ export class NotFoundComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

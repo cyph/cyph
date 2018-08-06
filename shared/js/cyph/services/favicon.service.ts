@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
+import {BaseProvider} from '../base-provider';
 import {IFaviconSet} from '../favicon/ifavicon-set';
 import {EnvService} from './env.service';
 
@@ -8,7 +9,7 @@ import {EnvService} from './env.service';
  * Manages favicon.
  */
 @Injectable()
-export class FaviconService {
+export class FaviconService extends BaseProvider {
 	/** @ignore */
 	private readonly elements	= {
 		apple: (size: string) => $(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`),
@@ -109,6 +110,8 @@ export class FaviconService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		super();
+
 		if (!this.envService.isWeb || this.faviconSets.default.apple114) {
 			return;
 		}

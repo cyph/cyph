@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {ISessionCapabilities} from '../proto';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
@@ -8,7 +9,9 @@ import {SessionService} from './session.service';
 
 /** @inheritDoc */
 @Injectable()
-export class SessionCapabilitiesService implements ISessionCapabilitiesService {
+export class SessionCapabilitiesService
+extends BaseProvider
+implements ISessionCapabilitiesService {
 	/** @ignore */
 	private readonly _CAPABILITIES	= resolvable<ISessionCapabilities>();
 
@@ -59,6 +62,8 @@ export class SessionCapabilitiesService implements ISessionCapabilitiesService {
 		/** @ignore */
 		private readonly sessionService: SessionService
 	) {
+		super();
+
 		this.sessionService.one(events.beginChat).then(async () => {
 			const localCapabilities		= await this.localCapabilities;
 

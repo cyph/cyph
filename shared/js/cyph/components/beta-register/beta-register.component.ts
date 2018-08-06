@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {BaseProvider} from '../../base-provider';
 import {EnvService} from '../../services/env.service';
 import {SignupService} from '../../services/signup.service';
 import {StringsService} from '../../services/strings.service';
@@ -13,7 +14,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./beta-register.component.scss'],
 	templateUrl: './beta-register.component.html'
 })
-export class BetaRegisterComponent {
+export class BetaRegisterComponent extends BaseProvider {
 	/** @see SignupFormComponent.invite */
 	@Input() public invite: boolean	= false;
 
@@ -26,5 +27,7 @@ export class BetaRegisterComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

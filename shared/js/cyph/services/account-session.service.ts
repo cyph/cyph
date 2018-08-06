@@ -366,7 +366,7 @@ export class AccountSessionService extends SessionService {
 		const user	= await this.accountUserLookupService.getUser(username, false);
 
 		if (user) {
-			user.realUsername.subscribe(this.remoteUsername);
+			this.subscriptions.push(user.realUsername.subscribe(this.remoteUsername));
 
 			if (setHeader) {
 				this.accountService.setHeader(user);

@@ -11,6 +11,7 @@ import {
 import memoize from 'lodash-es/memoize';
 import * as mexp from 'math-expression-evaluator';
 import * as msgpack from 'msgpack-lite';
+import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {IAsyncValue} from '../../iasync-value';
 import {MaybePromise} from '../../maybe-promise-type';
@@ -36,7 +37,7 @@ import {uuid} from '../../util/uuid';
 	styleUrls: ['./dynamic-form.component.scss'],
 	templateUrl: './dynamic-form.component.html'
 })
-export class DynamicFormComponent implements OnInit {
+export class DynamicFormComponent extends BaseProvider implements OnInit {
 	/** @ignore */
 	private readonly maskDefaultKey: Uint8Array				= new Uint8Array(0);
 
@@ -435,5 +436,7 @@ export class DynamicFormComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

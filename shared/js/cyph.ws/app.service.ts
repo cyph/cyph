@@ -9,6 +9,7 @@ import {
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, first, take} from 'rxjs/operators';
+import {BaseProvider} from '../cyph/base-provider';
 import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
@@ -23,7 +24,7 @@ import {ChatRootStates} from './enums';
  * Angular service for Cyph web UI.
  */
 @Injectable()
-export class AppService implements CanActivate {
+export class AppService extends BaseProvider implements CanActivate {
 	/** @ignore */
 	private readonly _LOCKED_DOWN_ROUTE					= resolvable<string>();
 
@@ -102,6 +103,8 @@ export class AppService implements CanActivate {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		super();
+
 		try {
 			(<any> navigator).storage.persist();
 		}

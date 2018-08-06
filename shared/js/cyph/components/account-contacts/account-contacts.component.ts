@@ -9,9 +9,10 @@ import {
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 /* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {IContactListItem, User, UserPresence} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -33,11 +34,14 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 	styleUrls: ['./account-contacts.component.scss'],
 	templateUrl: './account-contacts.component.html'
 })
-export class AccountContactsComponent implements OnChanges, OnInit {
+export class AccountContactsComponent extends BaseProvider implements OnChanges, OnInit {
 	/** @ignore */
 	private readonly contactListInternal: BehaviorSubject<(IContactListItem|User)[]>	=
 		new BehaviorSubject<(IContactListItem|User)[]>([])
 	;
+
+	/** @ignore */
+	private contactListSubscription?: Subscription;
 
 	/** @ignore */
 	private readonly routeReactiveContactList: Observable<{
@@ -163,14 +167,20 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 
 	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {
-		if ('contactList' in changes) {
-			this.contactList.subscribe(this.contactListInternal);
+		if (!('contactList' in changes)) {
+			return;
 		}
+
+		if (this.contactListSubscription) {
+			this.contactListSubscription.unsubscribe();
+		}
+
+		this.contactListSubscription	= this.contactList.subscribe(this.contactListInternal);
 	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.contactList.subscribe(this.contactListInternal);
+		this.contactListSubscription	= this.contactList.subscribe(this.contactListInternal);
 		this.accountService.transitionEnd();
 	}
 
@@ -200,5 +210,7 @@ export class AccountContactsComponent implements OnChanges, OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

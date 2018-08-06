@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import {BaseProvider} from '../base-provider';
 import {random} from '../util/random';
 import {AnalyticsService} from './analytics.service';
 
 
 /** Used for very basic A/B testing. */
 @Injectable()
-export class SplitTestingService {
+export class SplitTestingService extends BaseProvider {
 	/** @ignore */
 	private readonly getValueInternal	= memoize((analEvent: string, values: any) => {
 		if (values === undefined) {
@@ -68,5 +69,7 @@ export class SplitTestingService {
 	constructor (
 		/** @ignore */
 		private readonly analyticsService: AnalyticsService
-	) {}
+	) {
+		super();
+	}
 }

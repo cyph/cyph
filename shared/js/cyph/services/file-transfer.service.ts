@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import {Observable, of} from 'rxjs';
+import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
 import {LocalAsyncSet} from '../local-async-set';
 import {BinaryProto, ChatMessageValue, DataURIProto, IFileTransfer} from '../proto';
@@ -24,7 +25,7 @@ import {StringsService} from './strings.service';
  * Manages file transfers within a chat.
  */
 @Injectable()
-export class FileTransferService {
+export class FileTransferService extends BaseProvider {
 	/** In-progress file transfers. */
 	public readonly transfers: LocalAsyncSet<{
 		metadata: IFileTransfer;
@@ -250,5 +251,7 @@ export class FileTransferService {
 
 		/** @ignore */
 		private readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

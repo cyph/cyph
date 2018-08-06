@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import * as Konami from 'konami-code.js';
+import {BaseProvider} from '../../../cyph/base-provider';
 import {env} from '../../../cyph/env';
 import {ChatMessageGeometryService} from '../../../cyph/services/chat-message-geometry.service';
 import {ChatService} from '../../../cyph/services/chat.service';
@@ -50,7 +51,7 @@ import {LocalSessionService} from '../../local-session.service';
 	selector: 'cyph-demo-chat-root',
 	templateUrl: './demo-chat-root.component.html'
 })
-export class DemoChatRootComponent implements OnInit {
+export class DemoChatRootComponent extends BaseProvider implements OnInit {
 	/** @see ChatData */
 	@Input() public data?: ChatData;
 
@@ -132,5 +133,7 @@ export class DemoChatRootComponent implements OnInit {
 
 		/** @see CyphertextService */
 		public readonly cyphertextService: CyphertextService
-	) {}
+	) {
+		super();
+	}
 }

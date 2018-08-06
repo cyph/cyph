@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {SecurityModels} from '../account';
+import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
 import {BinaryProto} from '../proto';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -10,7 +11,7 @@ import {FileService} from './file.service';
  * Account settings service.
  */
 @Injectable()
-export class AccountSettingsService {
+export class AccountSettingsService extends BaseProvider {
 	/** @ignore */
 	private async setImage (file: IFile, prop: 'avatar'|'coverImage') : Promise<void> {
 		await this.accountDatabaseService.setItem(
@@ -37,5 +38,7 @@ export class AccountSettingsService {
 
 		/** @ignore */
 		private readonly fileService: FileService
-	) {}
+	) {
+		super();
+	}
 }

@@ -15,6 +15,7 @@ import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
+import {BaseProvider} from '../../base-provider';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
 import {MaybePromise} from '../../maybe-promise-type';
 import {IChatMessage} from '../../proto';
@@ -45,7 +46,7 @@ import {compareDates, relativeDateString, watchDateChange} from '../../util/time
 	styleUrls: ['./chat-message-list.component.scss'],
 	templateUrl: './chat-message-list.component.html'
 })
-export class ChatMessageListComponent implements AfterViewInit {
+export class ChatMessageListComponent extends BaseProvider implements AfterViewInit {
 	/* @ignore
 	private currentMaxWidth: number			= 0;
 	*/
@@ -335,7 +336,7 @@ export class ChatMessageListComponent implements AfterViewInit {
 			this.maxWidthWatcher
 		)
 		*/
-		observables.messages.pipe(map(messages => (
+		this.subscriptions.push(observables.messages.pipe(map(messages => (
 			<({dateChange?: string; message?: ChatMessage; pending: boolean})[]>
 			(messages.length < 1 ? [{pending: false}] : messages)
 		).map(({dateChange, message, pending}, i, arr) => {
@@ -362,7 +363,7 @@ export class ChatMessageListComponent implements AfterViewInit {
 			};
 		}))).subscribe(
 			this.vsData
-		);
+		));
 	}
 
 	constructor (
@@ -402,5 +403,7 @@ export class ChatMessageListComponent implements AfterViewInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

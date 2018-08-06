@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
@@ -16,7 +17,7 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-logout.component.scss'],
 	templateUrl: './account-logout.component.html'
 })
-export class AccountLogoutComponent implements OnInit {
+export class AccountLogoutComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
@@ -53,5 +54,7 @@ export class AccountLogoutComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

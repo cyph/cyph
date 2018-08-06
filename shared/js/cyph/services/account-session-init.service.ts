@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {resolvable} from '../util/wait';
@@ -9,7 +10,7 @@ import {SessionInitService} from './session-init.service';
  * SessionInitService implementation for accounts.
  */
 @Injectable()
-export class AccountSessionInitService implements SessionInitService {
+export class AccountSessionInitService extends BaseProvider implements SessionInitService {
 	/** @inheritDoc */
 	public callType?: 'audio'|'video';
 
@@ -27,5 +28,7 @@ export class AccountSessionInitService implements SessionInitService {
 		return new AccountSessionInitService();
 	}
 
-	constructor () {}
+	constructor () {
+		super();
+	}
 }

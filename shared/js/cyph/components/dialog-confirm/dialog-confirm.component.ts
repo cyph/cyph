@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
+import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -12,7 +13,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./dialog-confirm.component.scss'],
 	templateUrl: './dialog-confirm.component.html'
 })
-export class DialogConfirmComponent {
+export class DialogConfirmComponent extends BaseProvider {
 	/** Cancel button text. */
 	public cancel?: string;
 
@@ -40,5 +41,7 @@ export class DialogConfirmComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

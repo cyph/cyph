@@ -1,6 +1,7 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {translate} from '../util/translate';
 import {EnvService} from './env.service';
 
@@ -10,7 +11,7 @@ import {EnvService} from './env.service';
  * (translated to user's language where possible).
  */
 @Injectable()
-export class StringsService {
+export class StringsService extends BaseProvider {
 	/** @ignore */
 	private readonly customBuildStrings: {[k: string]: string}	=
 		(
@@ -879,6 +880,8 @@ export class StringsService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		super();
+
 		/* tslint:disable-next-line:no-this-assignment */
 		const strings: {[k: string]: any}	= this;
 

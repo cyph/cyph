@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+import {BaseProvider} from '../../../cyph/base-provider';
 import {StringProto} from '../../../cyph/proto';
 import {DatabaseService} from '../../../cyph/services/database.service';
 import {DialogService} from '../../../cyph/services/dialog.service';
@@ -22,7 +23,7 @@ import {AppService} from '../../app.service';
 	styleUrls: ['./lockdown.component.scss'],
 	templateUrl: './lockdown.component.html'
 })
-export class LockdownComponent implements OnInit {
+export class LockdownComponent extends BaseProvider implements OnInit {
 	/** @ignore */
 	private correctPassword?: string;
 
@@ -163,6 +164,8 @@ export class LockdownComponent implements OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');

@@ -3,6 +3,7 @@ import memoize from 'lodash-es/memoize';
 import {Observable, timer} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {getExchangeRates, Transaction, Wallet as SimpleBTCWallet} from 'simplebtc';
+import {BaseProvider} from '../base-provider';
 import {GenericCurrency} from '../generic-currency-type';
 import {Cryptocurrencies, Currencies, IWallet} from '../proto';
 
@@ -12,7 +13,7 @@ import {Cryptocurrencies, Currencies, IWallet} from '../proto';
  * Supported cryptocurrencies: BTC.
  */
 @Injectable()
-export class CryptocurrencyService {
+export class CryptocurrencyService extends BaseProvider {
 	/** @ignore */
 	private readonly watchBalanceInternal	=
 		memoize((wallet: IWallet) =>
@@ -204,5 +205,7 @@ export class CryptocurrencyService {
 		return this.watchBalanceInternal(wallet)(convert)(publicBalanceOnly);
 	}
 
-	constructor () {}
+	constructor () {
+		super();
+	}
 }

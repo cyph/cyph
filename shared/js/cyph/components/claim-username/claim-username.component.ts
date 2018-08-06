@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {usernameMask} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {StringsService} from '../../services/strings.service';
 import {email} from '../../util/email';
@@ -16,7 +17,7 @@ import {stringify} from '../../util/serialization';
 	styleUrls: ['./claim-username.component.scss'],
 	templateUrl: './claim-username.component.html'
 })
-export class ClaimUsernameComponent {
+export class ClaimUsernameComponent extends BaseProvider {
 	/** User's email address. */
 	@Input() public email: string				= '';
 
@@ -54,5 +55,7 @@ export class ClaimUsernameComponent {
 	constructor (
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

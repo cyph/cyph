@@ -1,6 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
 import * as $ from 'jquery';
 import {fadeIn} from '../../animations';
+import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';
 import {ChatMessageValue} from '../../proto';
 import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
@@ -26,7 +27,7 @@ import {readableByteLength} from '../../util/formatting';
 	styleUrls: ['./chat-main.component.scss'],
 	templateUrl: './chat-main.component.html'
 })
-export class ChatMainComponent implements AfterViewInit {
+export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean					= false;
 
@@ -102,5 +103,7 @@ export class ChatMainComponent implements AfterViewInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

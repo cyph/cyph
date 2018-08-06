@@ -3,6 +3,7 @@ import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject, combineLatest} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
+import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';
 import {AccountFileRecord, CallTypes, ChatMessageValue, IAppointment} from '../../proto';
 import {accountChatProviders} from '../../providers';
@@ -33,10 +34,7 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-chat.component.scss'],
 	templateUrl: './account-chat.component.html'
 })
-export class AccountChatComponent implements OnDestroy, OnInit {
-	/** @ignore */
-	private destroyed: boolean	= false;
-
+export class AccountChatComponent extends BaseProvider implements OnDestroy, OnInit {
 	/** @ignore */
 	private initiatedAppointmentID?: string;
 
@@ -90,7 +88,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
-		this.destroyed	= true;
+		super.ngOnDestroy();
 
 		if (this.p2pWebRTCService.isActive) {
 			await this.p2pWebRTCService.close();
@@ -109,7 +107,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		const lock	= lockFunction();
 
-		this.accountService.routeChanges.pipe(mergeMap(() => combineLatest(
+		this.subscriptions.push(this.accountService.routeChanges.pipe(mergeMap(() => combineLatest(
 			this.activatedRoute.firstChild ?
 				this.activatedRoute.firstChild.data :
 				this.activatedRoute.data
@@ -252,7 +250,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 					this.promptFollowup.next(undefined);
 				}
 			}
-		}));
+		})));
 	}
 
 	constructor (
@@ -297,5 +295,7 @@ export class AccountChatComponent implements OnDestroy, OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

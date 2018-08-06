@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IFile} from '../ifile';
 import {ConfigService} from './config.service';
@@ -9,7 +10,7 @@ import {EnvService} from './env.service';
  * Manages files.
  */
 @Injectable()
-export class FileService {
+export class FileService extends BaseProvider {
 	/** @ignore */
 	private async compressImage (image: HTMLImageElement, file: Blob|IFile) : Promise<Uint8Array> {
 		try {
@@ -145,5 +146,7 @@ export class FileService {
 
 		/** @ignore */
 		private readonly envService: EnvService
-	) {}
+	) {
+		super();
+	}
 }

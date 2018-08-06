@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
 
@@ -12,7 +13,7 @@ import {sleep} from '../../util/wait';
 	selector: 'cyph-redirect',
 	template: ''
 })
-export class RedirectComponent implements OnInit {
+export class RedirectComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		await sleep(0);
@@ -36,5 +37,7 @@ export class RedirectComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

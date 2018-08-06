@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {resolvable} from '../util/wait';
@@ -8,7 +9,7 @@ import {resolvable} from '../util/wait';
  * Provides ID for initiating new Session.
  */
 @Injectable()
-export class SessionInitService {
+export class SessionInitService extends BaseProvider {
 	/** If set, indicates an initial call type for the session. */
 	public readonly callType?: 'audio'|'video';
 
@@ -26,5 +27,7 @@ export class SessionInitService {
 		return new SessionInitService();
 	}
 
-	constructor () {}
+	constructor () {
+		super();
+	}
 }

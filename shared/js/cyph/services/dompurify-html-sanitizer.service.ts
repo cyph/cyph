@@ -2,6 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import * as DOMPurify from 'dompurify';
+import {BaseProvider} from '../base-provider';
 import {HtmlSanitizerService} from './html-sanitizer.service';
 
 
@@ -11,13 +12,15 @@ import {HtmlSanitizerService} from './html-sanitizer.service';
  * https://github.com/cure53/DOMPurify/blob/master/demos/hooks-scheme-whitelist.html.
  */
 @Injectable()
-export class DOMPurifyHtmlSanitizerService implements HtmlSanitizerService {
+export class DOMPurifyHtmlSanitizerService extends BaseProvider implements HtmlSanitizerService {
 	/** @inheritDoc */
 	public sanitize (html: string) : string {
 		return DOMPurify.sanitize(html, {FORBID_TAGS: ['style']});
 	}
 
 	constructor () {
+		super();
+
 		/* Allowed URI schemes */
 		const whitelist	= ['http', 'https', 'ftp'];
 

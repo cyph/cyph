@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {IAsyncValue} from '../../iasync-value';
 import {StringProto} from '../../proto';
@@ -25,7 +26,7 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 	styleUrls: ['./account-settings.component.scss'],
 	templateUrl: './account-settings.component.html'
 })
-export class AccountSettingsComponent implements OnInit {
+export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	/** Data. */
 	public readonly data	= new BehaviorSubject({
 		current: {
@@ -257,6 +258,8 @@ export class AccountSettingsComponent implements OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		this.ready	= toBehaviorSubject(
 			combineLatest(this.data, this.user).pipe(map(([data, user]) =>
 				!!user &&
@@ -268,7 +271,8 @@ export class AccountSettingsComponent implements OnInit {
 				!!data.modified.name &&
 				data.modified.realUsername.toLowerCase() === user.username
 			)),
-			false
+			false,
+			this.subscriptions
 		);
 	}
 }

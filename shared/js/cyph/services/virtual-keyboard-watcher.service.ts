@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
+import {BaseProvider} from '../base-provider';
 import {eventManager} from '../event-manager';
 import {EnvService} from './env.service';
 
@@ -8,7 +9,7 @@ import {EnvService} from './env.service';
  * Keeps track of whether an on-screen virtual keyboard is open.
  */
 @Injectable()
-export class VirtualKeyboardWatcherService {
+export class VirtualKeyboardWatcherService extends BaseProvider {
 	/** @ignore */
 	private readonly initialScreenSize: number		= self.innerHeight;
 
@@ -47,6 +48,8 @@ export class VirtualKeyboardWatcherService {
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
+		super();
+
 		if (!this.envService.isMobile) {
 			return;
 		}

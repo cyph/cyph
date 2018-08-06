@@ -3,6 +3,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {take} from 'rxjs/operators';
+import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
 import {eventManager} from '../event-manager';
 import {IAsyncList} from '../iasync-list';
@@ -50,7 +51,7 @@ import {StringsService} from './strings.service';
  * Manages a session.
  */
 @Injectable()
-export abstract class SessionService implements ISessionService {
+export abstract class SessionService extends BaseProvider implements ISessionService {
 	/** @ignore */
 	private readonly _OPENED					= resolvable(true);
 
@@ -420,18 +421,21 @@ export abstract class SessionService implements ISessionService {
 			initialSecretCyphertext: await this.channelService.getAsyncValue(
 				'handshake/initialSecretCyphertext',
 				BinaryProto,
-				true
+				true,
+				this.subscriptions
 			),
 			isAlice,
 			localPublicKey: await this.channelService.getAsyncValue(
 				`handshake/${isAlice ? 'alice' : 'bob'}PublicKey`,
 				BinaryProto,
-				true
+				true,
+				this.subscriptions
 			),
 			remotePublicKey: await this.channelService.getAsyncValue(
 				`handshake/${isAlice ? 'bob' : 'alice'}PublicKey`,
 				BinaryProto,
-				true
+				true,
+				this.subscriptions
 			)
 		};
 	}
@@ -597,6 +601,8 @@ export abstract class SessionService implements ISessionService {
 		/** @ignore */
 		protected readonly stringsService: StringsService
 	) {
+		super();
+
 		this.sessionInitService.sessionService.resolve(this);
 	}
 }

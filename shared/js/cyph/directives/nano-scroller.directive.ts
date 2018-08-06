@@ -1,4 +1,5 @@
 import {Directive, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {EnvService} from '../services/env.service';
 
 
@@ -9,7 +10,7 @@ import {EnvService} from '../services/env.service';
 @Directive({
 	selector: '[cyphNanoScroller]'
 })
-export class NanoScrollerDirective implements OnInit {
+export class NanoScrollerDirective extends BaseProvider implements OnInit {
 	/** If true, sets nano class on this element. */
 	@Input() public cyphNanoScrollerNoParent: boolean	= false;
 
@@ -39,5 +40,7 @@ export class NanoScrollerDirective implements OnInit {
 
 		/** @ignore */
 		private readonly envService: EnvService
-	) {}
+	) {
+		super();
+	}
 }

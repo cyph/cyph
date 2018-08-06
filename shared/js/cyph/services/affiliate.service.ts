@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
+import {BaseProvider} from '../base-provider';
 import {translate} from '../util/translate';
 import {SplitTestingService} from './split-testing.service';
 
 
 /** URLs and copy for affiliate programs. */
 @Injectable()
-export class AffiliateService {
+export class AffiliateService extends BaseProvider {
 	/** @ignore */
 	private readonly amazon		= {
 		copy: {
@@ -47,5 +48,7 @@ export class AffiliateService {
 	constructor (
 		/** @ignore */
 		private readonly splitTestingService: SplitTestingService
-	) {}
+	) {
+		super();
+	}
 }

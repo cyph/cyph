@@ -5,6 +5,7 @@ import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
 import {alert, confirm, prompt} from 'tns-core-modules/ui/dialogs/dialogs';
 import {DialogImageComponent} from './components/dialog-image';
+import {BaseProvider} from './js/cyph/base-provider';
 import {IResolvable} from './js/cyph/iresolvable';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {DialogService} from './js/cyph/services/dialog.service';
@@ -17,7 +18,7 @@ import {sleep} from './js/cyph/util/wait';
  * DialogService implementation for NativeScript.
  */
 @Injectable()
-export class NativeDialogService implements DialogService {
+export class NativeDialogService extends BaseProvider implements DialogService {
 	/** @ignore */
 	private readonly lock: LockFunction	= lockFunction();
 
@@ -205,5 +206,7 @@ export class NativeDialogService implements DialogService {
 
 		/** @ignore */
 		private readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

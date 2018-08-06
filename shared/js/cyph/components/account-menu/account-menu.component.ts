@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
+import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -20,7 +21,7 @@ import {urlToSafeStyle} from '../../util/safe-values';
 	styleUrls: ['./account-menu.component.scss'],
 	templateUrl: './account-menu.component.html'
 })
-export class AccountMenuComponent {
+export class AccountMenuComponent extends BaseProvider {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
@@ -64,5 +65,7 @@ export class AccountMenuComponent {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

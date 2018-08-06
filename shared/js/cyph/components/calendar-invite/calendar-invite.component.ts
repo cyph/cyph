@@ -9,6 +9,7 @@ import {
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
+import {BaseProvider} from '../../base-provider';
 import {ITimeRange} from '../../itime-range';
 import {CalendarInvite, CallTypes, ICalendarInvite} from '../../proto';
 import {EnvService} from '../../services/env.service';
@@ -45,7 +46,9 @@ import {translate} from '../../util/translate';
 	styleUrls: ['./calendar-invite.component.scss'],
 	templateUrl: './calendar-invite.component.html'
 })
-export class CalendarInviteComponent implements ControlValueAccessor, OnChanges, OnInit {
+export class CalendarInviteComponent
+extends BaseProvider
+implements ControlValueAccessor, OnChanges, OnInit {
 	/** Value. */
 	public readonly calendarInvite									=
 		new BehaviorSubject<ICalendarInvite|undefined>(undefined)
@@ -302,5 +305,7 @@ export class CalendarInviteComponent implements ControlValueAccessor, OnChanges,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

@@ -1,10 +1,11 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
+import {BaseProvider} from '../../base-provider';
 import {IFile} from '../../ifile';
 import {AccountUserTypes, DataURIProto, IForm} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -35,10 +36,7 @@ import {deserialize, serialize} from '../../util/serialization';
 	styleUrls: ['./account-profile.component.scss'],
 	templateUrl: './account-profile.component.html'
 })
-export class AccountProfileComponent implements OnDestroy, OnInit {
-	/** @ignore */
-	private destroyed: boolean	= false;
-
+export class AccountProfileComponent extends BaseProvider implements OnInit {
 	/** @ignore */
 	private readonly userInternal: Observable<{
 		isCurrentUser: boolean;
@@ -65,7 +63,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 
 	/** @see AccountProfileComponent.doctorListOnly */
 	public readonly doctorListOnly: Observable<boolean>	= cacheObservable(
-		this.activatedRoute.data.pipe(map(o => o.doctorListOnly === true))
+		this.activatedRoute.data.pipe(map(o => o.doctorListOnly === true)),
+		this.subscriptions
 	);
 
 	/** Profile edit mode. */
@@ -73,7 +72,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		this.accountService.routeChanges.pipe(map(url =>
 			url.split('/').slice(-1)[0] === 'edit'
 		)),
-		false
+		false,
+		this.subscriptions
 	);
 
 	/** Gets data URI of file. */
@@ -135,15 +135,10 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 	public readonly userProfile: BehaviorSubject<User|undefined>;
 
 	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		this.destroyed	= true;
-	}
-
-	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
 
-		this.userInternal.subscribe(async ({user, username}) => {
+		this.subscriptions.push(this.userInternal.subscribe(async ({user, username}) => {
 			if (
 				!username &&
 				this.envService.isTelehealth &&
@@ -172,7 +167,7 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 			else {
 				this.router.navigate([accountRoot, username ? '404' : 'login']);
 			}
-		});
+		}));
 	}
 
 	/** Publishes new user description. */
@@ -408,6 +403,8 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		this.username			= combineLatest(
 			this.activatedRoute.params,
 			this.doctorListOnly
@@ -422,57 +419,67 @@ export class AccountProfileComponent implements OnDestroy, OnInit {
 				params.username
 		));
 
-		this.userInternal		= cacheObservable(combineLatest(
-			this.username,
-			this.accountDatabaseService.currentUser
-		).pipe(mergeMap(async ([username, currentUser]) =>
-			username ?
-				{
-					isCurrentUser: false,
-					user: await this.accountUserLookupService.getUser(username, false),
-					username
-				} :
-			currentUser ?
-				{
-					isCurrentUser: true,
-					user: currentUser.user,
-					username
-				} :
-				{
-					isCurrentUser: false,
-					username
-				}
-		)));
+		this.userInternal		= cacheObservable(
+			combineLatest(
+				this.username,
+				this.accountDatabaseService.currentUser
+			).pipe(mergeMap(async ([username, currentUser]) =>
+				username ?
+					{
+						isCurrentUser: false,
+						user: await this.accountUserLookupService.getUser(username, false),
+						username
+					} :
+				currentUser ?
+					{
+						isCurrentUser: true,
+						user: currentUser.user,
+						username
+					} :
+					{
+						isCurrentUser: false,
+						username
+					}
+			)),
+			this.subscriptions
+		);
 
 		this.userProfile		= toBehaviorSubject(
 			this.userInternal.pipe(map(o => o.user)),
-			undefined
+			undefined,
+			this.subscriptions
 		);
 
 		this.userMembers		= toBehaviorSubject(
 			this.userProfile.pipe(mergeMap(user =>
 				user ? this.accountOrganizationsService.getMembers(user) : of(undefined)
 			)),
-			undefined
+			undefined,
+			this.subscriptions
 		);
 
 		this.userOrganiztion	= toBehaviorSubject(
 			this.userProfile.pipe(mergeMap(async user =>
 				user ? this.accountOrganizationsService.getOrganization(user) : undefined
 			)),
-			undefined
+			undefined,
+			this.subscriptions
 		);
 
 		this.isContact			= toBehaviorSubject(
 			this.username.pipe(mergeMap(username =>
-				username ? this.accountContactsService.watchIfContact(username) : of(false)
+				username ?
+					this.accountContactsService.watchIfContact(username, this.subscriptions) :
+					of(false)
 			)),
-			false
+			false,
+			this.subscriptions
 		);
 
 		this.isCurrentUser		= toBehaviorSubject(
 			this.userInternal.pipe(map(o => o.isCurrentUser)),
-			false
+			false,
+			this.subscriptions
 		);
 	}
 }

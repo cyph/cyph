@@ -14,6 +14,7 @@ import * as $ from 'jquery';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
+import {BaseProvider} from '../../base-provider';
 import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
 import {ChatService} from '../../services/chat.service';
@@ -37,7 +38,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 	styleUrls: ['./chat-message.component.scss'],
 	templateUrl: './chat-message.component.html'
 })
-export class ChatMessageComponent implements OnChanges, OnDestroy {
+export class ChatMessageComponent extends BaseProvider implements OnChanges, OnDestroy {
 	/** Temporary workaround pending ACCOUNTS-36. */
 	private static readonly appeared: BehaviorSubject<Set<string>>	= (() => {
 		const ids		= new Set<string>();
@@ -226,6 +227,8 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+
 		this.viewReady.next(false);
 	}
 
@@ -279,5 +282,7 @@ export class ChatMessageComponent implements OnChanges, OnDestroy {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

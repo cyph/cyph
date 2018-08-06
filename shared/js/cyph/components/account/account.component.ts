@@ -3,6 +3,7 @@ import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {UserPresence} from '../../account';
+import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountService} from '../../services/account.service';
@@ -28,7 +29,7 @@ import {resolvable} from '../../util/wait';
 	styleUrls: ['./account.component.scss'],
 	templateUrl: './account.component.html'
 })
-export class AccountComponent implements AfterViewInit, OnInit {
+export class AccountComponent extends BaseProvider implements AfterViewInit, OnInit {
 	/** @ignore */
 	private readonly _VIEW_INITIATED									= resolvable();
 
@@ -233,6 +234,8 @@ export class AccountComponent implements AfterViewInit, OnInit {
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
+		super();
+
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.toggle('primary-account-theme', accountPrimaryTheme);

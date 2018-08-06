@@ -1,12 +1,13 @@
 import {Directive, ElementRef, EventEmitter, OnInit, Output} from '@angular/core';
 import * as $ from 'jquery';
+import {BaseProvider} from '../base-provider';
 
 
 /** Fires event on enter press. */
 @Directive({
 	selector: '[cyphEnterPress]'
 })
-export class EnterPressDirective implements OnInit {
+export class EnterPressDirective extends BaseProvider implements OnInit {
 	/** Enter press event emitter. */
 	@Output() public readonly cyphEnterPress: EventEmitter<void>	= new EventEmitter<void>();
 
@@ -25,5 +26,7 @@ export class EnterPressDirective implements OnInit {
 	constructor (
 		/** @ignore */
 		private readonly elementRef: ElementRef
-	) {}
+	) {
+		super();
+	}
 }

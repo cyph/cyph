@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import {BaseProvider} from '../../base-provider';
 import {
 	AccountFileRecord,
 	IAccountFileRecord,
@@ -29,7 +30,7 @@ import {prettyPrint} from '../../util/serialization';
 	styleUrls: ['./account-incoming-patient-info.component.scss'],
 	templateUrl: './account-incoming-patient-info.component.html'
 })
-export class AccountIncomingPatientInfoComponent implements OnInit {
+export class AccountIncomingPatientInfoComponent extends BaseProvider implements OnInit {
 	/** Downloads RedoxPatient object. */
 	public readonly getRedoxPatient					= memoize(async redoxPatient =>
 		this.accountFilesService.downloadFile(
@@ -99,5 +100,7 @@ export class AccountIncomingPatientInfoComponent implements OnInit {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }

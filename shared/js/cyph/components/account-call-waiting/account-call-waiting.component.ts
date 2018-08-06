@@ -10,6 +10,7 @@ import {
 import {BehaviorSubject, combineLatest, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
+import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -33,7 +34,9 @@ import {AccountComposeNoProvidersComponent} from '../account-compose-no-provider
 	styleUrls: ['./account-call-waiting.component.scss'],
 	templateUrl: './account-call-waiting.component.html'
 })
-export class AccountCallWaitingComponent implements AfterViewInit, OnChanges {
+export class AccountCallWaitingComponent
+extends BaseProvider
+implements AfterViewInit, OnChanges {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
@@ -108,7 +111,11 @@ export class AccountCallWaitingComponent implements AfterViewInit, OnChanges {
 
 			await sleep(0);
 
-			combineLatest(
+			if (this.destroyed) {
+				return;
+			}
+
+			this.subscriptions.push(combineLatest(
 				this.accountDatabaseService.currentUser.pipe(mergeMap(o =>
 					o ? o.user.userType : of(undefined)
 				)),
@@ -117,7 +124,7 @@ export class AccountCallWaitingComponent implements AfterViewInit, OnChanges {
 				sent !== true && userType === AccountUserTypes.Standard
 			)).subscribe(
 				this.sessionService.freezePong
-			);
+			));
 		}
 		finally {
 			this.accountService.transitionEnd();
@@ -151,5 +158,7 @@ export class AccountCallWaitingComponent implements AfterViewInit, OnChanges {
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
-	) {}
+	) {
+		super();
+	}
 }
