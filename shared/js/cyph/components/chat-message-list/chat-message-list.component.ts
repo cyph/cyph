@@ -5,7 +5,6 @@ import {
 	ElementRef,
 	Inject,
 	Input,
-	OnChanges,
 	Optional
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
@@ -46,7 +45,7 @@ import {compareDates, relativeDateString, watchDateChange} from '../../util/time
 	styleUrls: ['./chat-message-list.component.scss'],
 	templateUrl: './chat-message-list.component.html'
 })
-export class ChatMessageListComponent implements AfterViewInit, OnChanges {
+export class ChatMessageListComponent implements AfterViewInit {
 	/* @ignore
 	private currentMaxWidth: number			= 0;
 	*/
@@ -164,28 +163,23 @@ export class ChatMessageListComponent implements AfterViewInit, OnChanges {
 	*/
 
 	/** @inheritDoc */
-	public ngAfterViewInit () : void {
+	public async ngAfterViewInit () : Promise<void> {
 		this.initialScrollDown.pipe(filter(b => !b), take(1)).toPromise().then(() => {
 			debugLog(() => ({chatMessageList: 'initial load complete'}));
 			this.chatService.resolvers.messageListLoaded.resolve();
 		});
 
-		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
-			/* TODO: HANDLE NATIVE */
-			return;
+		/* TODO: HANDLE NATIVE */
+		if (this.envService.isWeb) {
+			this.scrollService.init(
+				/* Pending virtual scrolling:
+				$(this.elementRef.nativeElement).children().children().first(),
+				*/
+				$(this.elementRef.nativeElement).children().first(),
+				this.messageCountInTitle
+			);
 		}
 
-		this.scrollService.init(
-			/* Pending virtual scrolling:
-			$(this.elementRef.nativeElement).children().children().first(),
-			*/
-			$(this.elementRef.nativeElement).children().first(),
-			this.messageCountInTitle
-		);
-	}
-
-	/** @inheritDoc */
-	public async ngOnChanges () : Promise<void> {
 		if (!this.chat) {
 			return;
 		}
