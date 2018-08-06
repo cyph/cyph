@@ -77,9 +77,12 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		this.username.next('');
 
 		await this.router.navigate(
-			this.activatedRoute.snapshot.url.length > 0 ?
-				this.activatedRoute.snapshot.url.map(o => o.path) :
-				[accountRoot]
+			this.accountDatabaseService.currentUser.value ?
+				this.activatedRoute.snapshot.url.length > 0 ?
+					this.activatedRoute.snapshot.url.map(o => o.path) :
+					[accountRoot]
+				:
+				[accountRoot, 'welcome']
 		);
 	}
 

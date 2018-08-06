@@ -265,6 +265,14 @@ export class AccountAuthService extends BaseProvider {
 				);
 			}
 
+			errorLogMessage	= 'getting loginData';
+
+			const loginData	= await this.getItem(
+				`users/${username}/loginData`,
+				AccountLoginData,
+				masterKey
+			);
+
 			errorLogMessage	= 'getting user';
 
 			const user		= await this.accountUserLookupService.getUser(
@@ -273,16 +281,8 @@ export class AccountAuthService extends BaseProvider {
 			);
 
 			if (!user) {
-				throw new Error('Nonexistent user.');
+				return true;
 			}
-
-			errorLogMessage	= 'getting loginData';
-
-			const loginData	= await this.getItem(
-				`users/${username}/loginData`,
-				AccountLoginData,
-				masterKey
-			);
 
 			try {
 				/* Test to see if we can fetch user data before initiating fresh log-in */
