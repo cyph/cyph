@@ -13,7 +13,7 @@
 		<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px'>
 			<button
 				mat-raised-button
-				color='primary'
+				color='accent'
 				[attr.aria-label]='stringsService.newWalletGenerate'
 				(click)='generate(newWalletOptions.generate)'
 			>
@@ -23,7 +23,7 @@
 			</button>
 			<button
 				mat-raised-button
-				color='primary'
+				color='accent'
 				cyphTranslate
 				[attr.aria-label]='stringsService.newWalletImportKey'
 				(click)='generate(newWalletOptions.importKey)'
@@ -34,7 +34,7 @@
 			</button>
 			<button
 				mat-raised-button
-				color='primary'
+				color='accent'
 				cyphTranslate
 				[attr.aria-label]='stringsService.newWalletImportAddress'
 				(click)='generate(newWalletOptions.importAddress)'
