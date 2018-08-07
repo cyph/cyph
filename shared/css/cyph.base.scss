@@ -80,6 +80,10 @@ html, body {
 	font-weight: 300;
 }
 
+img:not([src]) {
+	visibility: hidden !important;
+}
+
 section {
 	display: block;
 }

@@ -43,9 +43,6 @@ import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogImageComponent} from '../components/dialog-image';
 import {MarkdownComponent} from '../components/markdown';
-import {DropZoneDirective} from '../directives/drop-zone.directive';
-import {EnterPressDirective} from '../directives/enter-press.directive';
-import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {LocalStorageService} from '../services/local-storage.service';
@@ -62,10 +59,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogImageComponent,
-		DropZoneDirective,
-		EnterPressDirective,
-		MarkdownComponent,
-		NanoScrollerDirective
+		MarkdownComponent
 	],
 	entryComponents: [
 		DialogAlertComponent,
@@ -79,8 +73,6 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogImageComponent,
-		DropZoneDirective,
-		EnterPressDirective,
 		FlexLayoutModule,
 		FormsModule,
 		FullCalendarModule,
@@ -115,7 +107,6 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
-		NanoScrollerDirective,
 		ReactiveFormsModule,
 		RouterModule,
 		SmdFabSpeedDialModule,

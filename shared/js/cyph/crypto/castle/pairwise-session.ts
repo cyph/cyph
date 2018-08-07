@@ -1,12 +1,15 @@
+/* tslint:disable:max-file-line-count */
+
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
 import {IResolvable} from '../../iresolvable';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import {ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
+import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
 import {lockFunction} from '../../util/lock';
 import {debugLog} from '../../util/log';
+import {deserialize, serialize} from '../../util/serialization';
 import {getTimestamp} from '../../util/time';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
@@ -376,6 +379,11 @@ export class PairwiseSession {
 							).slice(-1)[0]
 						;
 
+						debugLog(() => ({castleLockClaimed: {
+							initialRatchetUpdates,
+							lastRatchetUpdate
+						}}));
+
 						if (lastRatchetUpdate) {
 							await this.ratchetState.setValue(lastRatchetUpdate.ratchetState);
 						}
@@ -389,7 +397,13 @@ export class PairwiseSession {
 							this.handshakeState.isAlice,
 							this.ratchetUpdateQueue,
 							lastRatchetUpdate ?
-								lastRatchetUpdate.ratchetState :
+								await deserialize(
+									CastleRatchetState,
+									await serialize(
+										CastleRatchetState,
+										lastRatchetUpdate.ratchetState
+									)
+								) :
 								await this.ratchetState.getValue()
 						);
 
@@ -431,8 +445,11 @@ export class PairwiseSession {
 									lastRatchetUpdate.ratchetState.outgoingMessageID >=
 										update.ratchetState.outgoingMessageID
 								) {
+									debugLog(() => ({ratchetUpdate: {update, dropped: true}}));
 									return;
 								}
+
+								debugLog(() => ({ratchetUpdate: {update, dropped: false}}));
 
 								await this.transport.process(this.remoteUser.username, update);
 								await this.ratchetState.setValue(update.ratchetState);
@@ -454,6 +471,13 @@ export class PairwiseSession {
 										pendingMessageResolvers.resolvers.get(timestamp) :
 										undefined
 								;
+
+								debugLog(() => ({ratchetUpdateSend: {
+									messageID,
+									resolver: resolver !== undefined,
+									timestamp,
+									update
+								}}));
 
 								if (resolver) {
 									resolver.resolve();

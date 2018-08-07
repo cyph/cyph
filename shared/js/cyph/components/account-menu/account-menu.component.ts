@@ -52,11 +52,11 @@ export class AccountMenuComponent extends BaseProvider {
 	}
 
 	constructor (
-		/** @see AccountAuthService */
-		public readonly accountAuthService: AccountAuthService,
-
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountAuthService */
+		public readonly accountAuthService: AccountAuthService,
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
