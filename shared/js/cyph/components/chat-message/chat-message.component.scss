@@ -93,12 +93,22 @@
 			position: relative;
 		}
 
-		h4.image-title {
-			text-align: center;
-			width: 100%;
+		.video-message {
+			max-width: 90%;
+			max-height: 75%;
+			margin: 10px auto;
+			display: block;
+			position: relative;
 		}
 
-		h4.image-title, .mat-button-wrapper {
+		h4.image-title, h4.video-title {
+			text-align: center;
+			width: 100%;
+			margin-bottom: 0.5em;
+			margin-top: 1em;
+		}
+
+		h4.image-title, h4.video-title, .mat-button-wrapper {
 			text-overflow: ellipsis;
 			overflow-x: hidden;
 			display: block;
@@ -112,8 +122,15 @@
 			max-width: 50%;
 			max-height: 75%;
 
-			&.image-container {
+			&.image-container, &.video-container {
 				height: 100%;
+			}
+
+			&.video-container {
+				height: auto;
+				width: auto;
+				padding: 5px;
+				min-height: 250px;
 			}
 		}
 
@@ -125,7 +142,7 @@
 			span.mat-button-wrapper {
 				line-height: 3.5em;
 			}
-			
+
 			mat-icon.mat-icon {
 				padding-right: 0.5em;
 			}
@@ -198,6 +215,10 @@
 
 			.image-message {
 				max-width: 90vw;
+				max-height: 50vh;
+			}
+			.video-message {
+				max-width: 80vw;
 				max-height: 50vh;
 			}
 			.centered, .centered-fake {

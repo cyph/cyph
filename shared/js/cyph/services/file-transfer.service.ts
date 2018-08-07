@@ -55,6 +55,26 @@ export class FileTransferService extends BaseProvider {
 		}
 	});
 
+	/** Downloads video. */
+	public readonly getVideo	= memoize(async (fileTransfer: IFileTransfer) : Promise<{
+		success: boolean;
+		uri?: SafeUrl;
+	}> => {
+		try {
+			if (!fileTransfer.video) {
+				throw new Error('Not a video.');
+			}
+
+			return {
+				success: true,
+				uri: await deserialize(DataURIProto, await this.receiveInternal(fileTransfer))
+			};
+		}
+		catch {
+			return {success: false};
+		}
+	});
+
 	/** TODO: Get rid of this and add upload and download methods to EncryptedAsyncMap. */
 	private async encryptFile (plaintext: Uint8Array, url: string) : Promise<{
 		cyphertext: Uint8Array;
@@ -148,12 +168,14 @@ export class FileTransferService extends BaseProvider {
 	/**
 	 * Sends file.
 	 * @param image If true, file is processed as an image
+	 * @param video If true, file is processed as a video
 	 * (compressed and automatically downloaded).
 	 */
 	public async send (
 		file: IFile,
 		image: boolean = this.fileService.isImage(file),
-		imageSelfDestructTimeout?: number
+		imageSelfDestructTimeout?: number,
+		video: boolean = this.fileService.isVideo(file)
 	) : Promise<void> {
 		if (file.data.length > this.configService.filesConfig.maxSize) {
 			this.analyticsService.sendEvent({
@@ -176,7 +198,8 @@ export class FileTransferService extends BaseProvider {
 			isOutgoing: true,
 			mediaType: file.mediaType,
 			name: file.name,
-			size: file.data.length
+			size: file.data.length,
+			video
 		};
 
 		const transferPlaceholder	= {metadata: fileTransfer, progress: of(0)};

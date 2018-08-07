@@ -19,6 +19,7 @@ import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
 import {ChatService} from '../../services/chat.service';
 import {DialogService} from '../../services/dialog.service';
+import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
 import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
@@ -276,6 +277,9 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		/** @see DialogService */
 		public readonly dialogService: DialogService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see FileTransferService */
 		public readonly fileTransferService: FileTransferService,

@@ -135,6 +135,11 @@ export class FileService extends BaseProvider {
 		return (file instanceof Blob ? file.type : file.mediaType).indexOf('image/') === 0;
 	}
 
+	/** Indicates whether a File/Blob is a video. */
+	public isVideo (file: Blob|IFile) : boolean {
+		return (file instanceof Blob ? file.type : file.mediaType).indexOf('video/') === 0;
+	}
+
 	/** Converts binary data to base64 data URI. */
 	public toDataURI (data: Uint8Array, mediaType: string) : string {
 		return `data:${mediaType};base64,${potassiumUtil.toBase64(data)}`;
