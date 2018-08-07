@@ -30,7 +30,13 @@ emsdk install latest
 emsdk uninstall $(emsdk list | grep INSTALLED | perl -pe 's/\(?\*\)?//g' | grep node | awk '{print $1}')
 emsdk activate latest
 
-if [ "$(command -v gcloud)" ] ; then gcloud components update --quiet ; fi
+~/google-cloud-sdk/install.sh \
+	--additional-components app-engine-go cloud-datastore-emulator \
+	--command-completion false \
+	--path-update false \
+	--usage-reporting false
+
+gcloud components update --quiet
 
 echo | haxelib update > /dev/null
 
