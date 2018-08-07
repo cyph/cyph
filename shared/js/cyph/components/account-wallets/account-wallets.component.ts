@@ -59,6 +59,10 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		'timestamp'
 	];
 
+	public editMode: boolean							= false;
+
+	public newWalletName								= new BehaviorSubject<string>('');
+
 	/** Generates and uploads a new wallet. */
 	public async generate (
 		newWalletOptions: NewWalletOptions = NewWalletOptions.generate,
@@ -70,7 +74,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 
 		switch (newWalletOptions) {
 			case NewWalletOptions.generate:
-				name = await this.dialogService.prompt({
+				name	= await this.dialogService.prompt({
 					content: this.stringsService.newWalletGenerateText,
 					placeholder: 'Wallet Name',
 					title: this.stringsService.newWalletGenerate

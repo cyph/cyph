@@ -81,3 +81,16 @@ mat-tab-group {
 .outgoing {
 	color: map-get($mat-red, 700);
 }
+
+.title {
+	&:not(.edit) {
+		 ::ng-deep .mat-form-field-underline {
+			display: none !important;
+		}
+	}
+	input {
+		font-size: 24px;
+		text-align: center;
+		color: #fff !important;
+	}
+}

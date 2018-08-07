@@ -70,13 +70,39 @@
 							&ngsp;
 							<span cyphTranslate>Bitcoin</span>
 						</mat-chip>
-						<button mat-icon-button cyphTranslate matTooltip='Settings'>
-							<mat-icon>settings</mat-icon>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Edit'
+							(click)='editMode = true'
+							*ngIf='!editMode'
+						>
+							<mat-icon>edit</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Edit'
+							(click)='newWalletName ?
+								accountFilesService.updateMetadata(wallet.record.id, {name: newWalletName.value})
+								&& editMode = false
+								: editMode = false
+							'
+							*ngIf='editMode'
+						>
+							<mat-icon>save</mat-icon>
 						</button>
 					</mat-chip-list>
 
 					<div fxLayout='row' fxLayoutAlign='center center'>
-						<h2>{{wallet.record.name}}</h2>
+						<mat-form-field fxFlex='66' class='title' [class.edit]='editMode'>
+							<input
+								matInput
+								[ngModel]='wallet.record.name'
+								(ngModelChange)='newWalletName.next($event)'
+								[disabled]='!editMode'
+							/>
+						</mat-form-field>
 					</div>
 
 					<div
