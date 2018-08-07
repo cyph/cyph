@@ -72,3 +72,15 @@ cyph-logo {
 mat-divider {
 	height: 2px;
 }
+
+.nano.other:not(:hover):not(mat-tab-group) > :first-child {
+	width: 100% !important;
+}
+
+::-webkit-scrollbar {
+	width: 0px;
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: #f4f4f4;
+}
