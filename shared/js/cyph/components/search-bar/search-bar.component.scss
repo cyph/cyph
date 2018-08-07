@@ -1,5 +1,5 @@
 @import '../../../../css/mixins';
 
-.search-bar {
+.search-bar:not(.mobile) {
 	padding-top: 1em;
 }

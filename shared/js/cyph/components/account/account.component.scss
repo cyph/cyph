@@ -97,6 +97,10 @@
 				}
 			}
 		}
+
+		&.mobile {
+			margin-top: 75px;
+		}
 	}
 
 	.cyph-gradient {
@@ -318,6 +322,11 @@ button.home {
 		font-size: 2.5em;
 
 		@include transform(translateY(-3px));
+	}
+
+	&.mobile {
+		position: fixed;
+		width: 100%;
 	}
 }
 

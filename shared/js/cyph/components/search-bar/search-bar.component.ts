@@ -17,6 +17,7 @@ import {map} from 'rxjs/operators';
 import {Async} from '../../async-type';
 import {BaseProvider} from '../../base-provider';
 import {ISearchOptions} from '../../isearch-options';
+import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';
 import {toBehaviorSubject} from '../../util/flatten-observable';
@@ -168,6 +169,9 @@ export class SearchBarComponent<T extends any> extends BaseProvider implements O
 	}
 
 	constructor (
+		/** @see EnvService */
+		public readonly envService: EnvService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
