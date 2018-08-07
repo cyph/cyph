@@ -54,7 +54,7 @@
 		>
 			<button
 				mat-fab
-				color='primary'
+				[color]='envService.isMobile ? "primary" : "accent"'
 				[attr.aria-label]='
 					envService.isMobile && (isSpeedDialOpen | async) === false ?
 						stringsService.openMenu :
