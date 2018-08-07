@@ -376,6 +376,11 @@ export class PairwiseSession {
 							).slice(-1)[0]
 						;
 
+						debugLog(() => ({castleLockClaimed: {
+							initialRatchetUpdates,
+							lastRatchetUpdate
+						}}));
+
 						if (lastRatchetUpdate) {
 							await this.ratchetState.setValue(lastRatchetUpdate.ratchetState);
 						}
@@ -431,8 +436,11 @@ export class PairwiseSession {
 									lastRatchetUpdate.ratchetState.outgoingMessageID >=
 										update.ratchetState.outgoingMessageID
 								) {
+									debugLog(() => ({ratchetUpdate: {update, dropped: true}}));
 									return;
 								}
+
+								debugLog(() => ({ratchetUpdate: {update, dropped: false}}));
 
 								await this.transport.process(this.remoteUser.username, update);
 								await this.ratchetState.setValue(update.ratchetState);
@@ -454,6 +462,13 @@ export class PairwiseSession {
 										pendingMessageResolvers.resolvers.get(timestamp) :
 										undefined
 								;
+
+								debugLog(() => ({ratchetUpdateSend: {
+									messageID,
+									resolver: resolver !== undefined,
+									timestamp,
+									update
+								}}));
 
 								if (resolver) {
 									resolver.resolve();
