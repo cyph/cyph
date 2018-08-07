@@ -4,9 +4,10 @@ import {IResolvable} from '../../iresolvable';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import {ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
+import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
 import {lockFunction} from '../../util/lock';
 import {debugLog} from '../../util/log';
+import {deserialize, serialize} from '../../util/serialization';
 import {getTimestamp} from '../../util/time';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
@@ -394,7 +395,13 @@ export class PairwiseSession {
 							this.handshakeState.isAlice,
 							this.ratchetUpdateQueue,
 							lastRatchetUpdate ?
-								lastRatchetUpdate.ratchetState :
+								await deserialize(
+									CastleRatchetState,
+									await serialize(
+										CastleRatchetState,
+										lastRatchetUpdate.ratchetState
+									)
+								) :
 								await this.ratchetState.getValue()
 						);
 
