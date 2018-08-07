@@ -84,3 +84,8 @@ mat-divider {
 ::-webkit-scrollbar-thumb {
 	background: #f4f4f4;
 }
+
+.collapsed ::ng-deep .mat-list-item .mat-list-item-content {
+	position: relative;
+	left: 12px;
+}
