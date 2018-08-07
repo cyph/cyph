@@ -80,9 +80,25 @@
 			<h3 matLine [fxShow]='menuExpanded | async'>
 				{{currentUser.user.name | async}}
 			</h3>
-			<p matLine [fxShow]='menuExpanded | async'>
-				@{{currentUser.user.realUsername | async}}
-			</p>
+			<div matLine [fxShow]='menuExpanded | async' fxLayoutAlign='row'>
+				<div>@{{currentUser.user.realUsername | async}} </div>
+				<mat-select
+					cyphTranslate
+					color='alt'
+					[ngModel]='currentUser.user.status | async'
+					(ngModelChange)='currentUser.user.accountUserPresence.setValue({status: $event})'
+					name='status'
+					class='status'
+					placeholder='Status'
+				>
+					<mat-option
+						*ngFor='let status of statuses; trackBy: trackByValue'
+						[value]='status.value'
+					>
+						{{status.text}}
+					</mat-option>
+				</mat-select>
+		</div>
 		</mat-list-item>
 	</mat-list>
 

@@ -334,30 +334,6 @@
 			</div>
 
 			<div
-				fxLayoutAlign='center center'
-				class='edit-hide status'
-				*ngIf='(isCurrentUser | async) && (editMode | async) === false'
-			>
-				<mat-form-field fxFlex='50'>
-					<mat-select
-						fxFlex
-						cyphTranslate
-						[ngModel]='user.status | async'
-						(ngModelChange)='user.accountUserPresence.setValue({status: $event})'
-						name='status'
-						placeholder='Status'
-					>
-						<mat-option
-							*ngFor='let status of statuses; trackBy: trackByValue'
-							[value]='status.value'
-						>
-							{{status.text}}
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
-			</div>
-
-			<div
 				class='mobile-edit'
 				fxFlex
 				fxLayout='row'

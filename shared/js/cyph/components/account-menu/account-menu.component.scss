@@ -89,3 +89,21 @@ mat-divider {
 	position: relative;
 	left: 12px;
 }
+
+.status {
+	right: 25px;
+	position: absolute;
+	width: 80px;
+	text-align: right;
+	
+	::ng-deep {
+		.mat-select-value-text span {
+			color: #f4f4f480;
+			font-style: italic;
+			padding-right: 3.5px;
+		}
+		.mat-select-arrow {
+			color: rgba(255, 255, 255, 0.54) !important;
+		}
+	}
+}
