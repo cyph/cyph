@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';
 import {IResolvable} from '../../iresolvable';
