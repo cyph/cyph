@@ -85,8 +85,8 @@
 			cursor: pointer;
 			width: auto;
 			height: auto;
-			max-width: 200px;
-			max-height: 200px;
+			max-width: 90%;
+			max-height: 75%;
 			margin: 10px auto;
 			display: block;
 			box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.4);
@@ -119,6 +119,16 @@
 
 		&.get-value-failure {
 			opacity: 0.5;
+		}
+
+		.save-file {
+			span.mat-button-wrapper {
+				line-height: 3.5em;
+			}
+			
+			mat-icon.mat-icon {
+				padding-right: 0.5em;
+			}
 		}
 
 		.self-destruct-timer {
@@ -185,14 +195,18 @@
 				font-size: 1.43rem;
 				padding: 5px;
 			}
+
+			.image-message {
+				max-width: 90vw;
+				max-height: 50vh;
+			}
+			.centered, .centered-fake {
+				max-width: 100%;
+			}
 		}
 
 		&:not(.mobile) {
 			border-radius: 1px;
-		}
-
-		&.mobile.file-transfer {
-			width: 100%;
 		}
 
 		/* Temporary workaround for matTooltip issue */
@@ -200,5 +214,8 @@
 		touch-action: inherit !important;
 
 		@include user-select(inherit !important);
+	}
+	.file-transfer .message {
+		min-width: 275px;
 	}
 }
