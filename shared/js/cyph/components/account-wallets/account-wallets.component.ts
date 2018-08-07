@@ -63,17 +63,20 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 	public async generate (
 		newWalletOptions: NewWalletOptions = NewWalletOptions.generate,
 		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC,
-		name: string|Promise<string> = xkcdPassphrase.generateWithWordCount(4)
+		name: string|undefined|Promise<string> = xkcdPassphrase.generate(4);
 	) : Promise<void> {
 		let address: string|undefined;
 		let key: string|undefined;
 
 		switch (newWalletOptions) {
 			case NewWalletOptions.generate:
-				if (!(await this.dialogService.confirm({
+				name = await this.dialogService.prompt({
 					content: this.stringsService.newWalletGenerateText,
+					placeholder: 'Wallet Name',
 					title: this.stringsService.newWalletGenerate
-				}))) {
+				});
+
+				if (!name) {
 					return;
 				}
 
