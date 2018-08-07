@@ -99,5 +99,8 @@ EOM
 echo -n 'Submit Google Cloud Build? [y/N] '
 read submit
 if [ "${submit}" == 'y' ] ; then
+	mkdir -p ~/cloudbuild-staging
+	cp Dockerfile ~/cloudbuild-staging/
+	cd ~/cloudbuild-staging
 	gcloud builds submit --tag "gcr.io/cyphme/cyph-serverconfig-${1}" .
 fi
