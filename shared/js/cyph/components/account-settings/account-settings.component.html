@@ -5,6 +5,7 @@
 		*ngIf='state | async as stateValue'
 	>
 		<form
+			[class.mobile]='envService.isMobile'
 			ngNativeValidate
 			fxFlex
 			fxFlex.gt-md='75'
