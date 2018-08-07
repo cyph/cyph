@@ -26,7 +26,7 @@ import {urlToSafeStyle} from '../../util/safe-values';
 export class AccountMenuComponent extends BaseProvider {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
-	
+
 	/** @see AccountService.menuExpanded */
 	public readonly menuExpanded: Observable<boolean>			=
 		this.accountService.menuExpanded.pipe(map(menuExpanded => this.sidenav || menuExpanded))
