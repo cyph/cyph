@@ -24,6 +24,7 @@ apt-get -y --allow-downgrades install \
 	apt \
 	apt-transport-https \
 	build-essential \
+	cron \
 	curl \
 	dpkg \
 	git \
@@ -95,6 +96,24 @@ cat > Dockerfile <<- EOM
 
 	CMD bash -c '/init.sh ; sleep Infinity'
 EOM
+
+echo " \
+	HISTFILE= \
+	$(cat Dockerfile | grep -P '^RUN ' | sed 's/^RUN / ; sudo /g' | tr '\n' ' ') ; \
+	sudo bash -c ' \
+		crontab -l > /tmp/cyph.cron ; \
+		echo \"@reboot /init.sh\" >> /tmp/cyph.cron ; \
+		crontab /tmp/cyph.cron ; \
+		rm /tmp/cyph.cron ; \
+		reboot \
+	'
+" |
+	perl -pe 's/\s+/ /g' |
+	perl -pe 's/\s*$//g' |
+	perl -pe "s/-c ' /-c '/g" |
+	perl -pe "s/ '$/'/g" |
+	perl -pe 's/sudo echo/echo/g' \
+> setup.txt
 
 echo -n 'Submit Google Cloud Build? [y/N] '
 read submit
