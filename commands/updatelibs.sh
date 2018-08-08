@@ -98,16 +98,11 @@ read -r -d '' modules <<- EOM
 	@types/quill
 	@types/stacktrace-js
 	@yaga/leaflet-ng2
-	angular-infinite-list
 	angular-fittext
 	angular-material-clock-time-picker
 	angular-speed-dial
-	angular-ssr
-	angular2-cool-infinite-grid
 	angular2-draggable
-	angular2-template-loader
 	angular2-text-mask
-	angular2-virtual-scroll
 	animate.css@https://github.com/daneden/animate.css
 	animated-scroll-to
 	awesome-typescript-loader
@@ -132,7 +127,6 @@ read -r -d '' modules <<- EOM
 	datauri
 	dompurify
 	dope-qr
-	dragula
 	dropzone
 	extract-text-webpack-plugin
 	fast-crc32c
@@ -159,7 +153,6 @@ read -r -d '' modules <<- EOM
 	htmlencode
 	htmllint
 	image-type
-	interact.js
 	jasmine-core@2
 	jasmine-spec-reporter
 	jquery
@@ -209,19 +202,15 @@ read -r -d '' modules <<- EOM
 	ng2-truncate
 	ngx-contextmenu
 	ngx-image-cropper
-	ngx-infinite-scroll
 	node-fetch
 	node-sass
 	notify-cli
 	ntru
-	od-virtualscroll
 	opentok
 	opus-recorder
 	parchment
 	pdfjs-dist
 	pdfkit
-	prepack
-	prepack-webpack-plugin
 	primeng
 	protobufjs
 	protractor
@@ -295,7 +284,6 @@ read -r -d '' modules <<- EOM
 	whatwg-fetch
 	wowjs
 	xkcd-passphrase
-	zombie
 	zone.js
 	$(cat ${dir}/native/plugins.list)
 EOM
