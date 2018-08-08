@@ -179,7 +179,7 @@
 								(click)='
 									!clickable ?
 										undefined :
-									 envService.isMobile ?
+									envService.isMobile ?
 										fileTransferService.saveFile(value.fileTransfer) :
 										dialogService.image({
 											mediaType: value.fileTransfer.mediaType,
