@@ -438,6 +438,7 @@ $nanoScrollbarWidth: 17px;
 		#{nanoDefault()} {
 			overflow: auto;
 			position: relative;
+			overflow-x: hidden;
 
 			&.edge {
 				overflow: hidden;
@@ -451,6 +452,9 @@ $nanoScrollbarWidth: 17px;
 			top: 0;
 			left: 0;
 			overflow: scroll;
+		}
+
+		&, #{nanoDefaultTarget()} {
 			overflow-x: hidden;
 		}
 
@@ -466,41 +470,22 @@ $nanoScrollbarWidth: 17px;
 			}
 		}
 
+		&.webkit {
+			::-webkit-scrollbar {
+				width: 0;
+				background: transparent;
+			}
+
+			::-webkit-scrollbar-thumb {
+				background: #f4f4f4;
+			}
+		}
+
 		&.other {
-			&.webkit {
-				::-webkit-scrollbar {
-					width: 0;
-					background: transparent;
-				}
-
-				::-webkit-scrollbar-thumb {
-					background: #f4f4f4;
-				}
-			}
-
-			&:not(.webkit):not(:hover) {
-				@at-root {
-					#{nanoDefaultTarget()} {
-						width: calc(100% - #{$nanoScrollbarWidth});
-					}
-
-					#{nanoTabGroupTarget()} {
-						padding-right: $nanoScrollbarWidth;
-					}
-				}
-			}
-
-			&:hover {
+			@at-root {
 				@at-root #{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+					width: calc(100% + #{$nanoScrollbarWidth});
 					overflow-y: scroll;
-				}
-			}
-
-			&:not(:hover) {
-				@at-root {
-					#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
-						overflow: hidden;
-					}
 				}
 			}
 		}
