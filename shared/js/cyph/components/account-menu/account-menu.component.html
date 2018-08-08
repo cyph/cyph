@@ -81,7 +81,7 @@
 				{{currentUser.user.name | async}}
 			</h3>
 			<div matLine [fxShow]='menuExpanded | async' fxLayoutAlign='row'>
-				<div>@{{currentUser.user.realUsername | async}} </div>
+				<div class='username'>@{{currentUser.user.realUsername | async}}</div>
 				<mat-select
 					cyphTranslate
 					[ngModel]='currentUser.user.status | async'
