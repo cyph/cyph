@@ -168,12 +168,14 @@ read -r -d '' modules <<- EOM
 	karma-jasmine
 	karma-jasmine-html-reporter@0
 	konami-code.js
+	lamejs
 	lazy
 	leaflet
 	libsodium@https://github.com/jedisct1/libsodium.js
 	libsodium-sumo@https://github.com/jedisct1/libsodium.js
 	libsodium-wrappers@https://github.com/jedisct1/libsodium.js
 	libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js
+	libvorbis.js
 	localforage
 	lodash-es
 	long
@@ -208,6 +210,7 @@ read -r -d '' modules <<- EOM
 	ntru
 	od-virtualscroll
 	opentok
+	opus-recorder
 	parchment
 	pdfjs-dist
 	pdfkit
@@ -223,6 +226,8 @@ read -r -d '' modules <<- EOM
 	raw-loader
 	read
 	readable-stream
+	recorder.js
+	recordrtc
 	reflect-metadata
 	request
 	resize-observer-polyfill
@@ -269,6 +274,10 @@ read -r -d '' modules <<- EOM
 	uglifyjs-webpack-plugin
 	unsemantic
 	url-loader
+	video.js
+	videojs-record
+	videojs-wavesurfer
+	wavesurfer.js
 	web-animations-js
 	webpack
 	webpack-cli
