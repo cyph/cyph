@@ -452,9 +452,6 @@ $nanoScrollbarWidth: 17px;
 			top: 0;
 			left: 0;
 			overflow: scroll;
-		}
-
-		&, #{nanoDefaultTarget()} {
 			overflow-x: hidden;
 		}
 
