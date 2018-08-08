@@ -84,10 +84,11 @@ mat-tab-group {
 
 .title {
 	&:not(.edit) {
-		 ::ng-deep .mat-form-field-underline {
+		::ng-deep .mat-form-field-underline {
 			display: none !important;
 		}
 	}
+
 	input {
 		font-size: 24px;
 		text-align: center;

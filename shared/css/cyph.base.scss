@@ -468,7 +468,7 @@ $nanoScrollbarWidth: 17px;
 
 		&.other {
 			::-webkit-scrollbar {
-				width: 0px;
+				width: 0;
 				background: transparent;
 			}
 
