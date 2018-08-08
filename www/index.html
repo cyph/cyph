@@ -557,6 +557,12 @@ function webSignSRI_Process (baseUrl) {
 		
 <script>document.addEventListener('deviceready', function () {
 
+document.addEventListener('backbutton', function (e) {
+	if (typeof self.onbackbutton === 'function') {
+		self.onbackbutton(e);
+	}
+});
+
 if (device.platform === 'iOS') {
 	cordova.plugins.iosrtc.registerGlobals();
 }
