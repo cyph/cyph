@@ -35,6 +35,7 @@ import {BrowserModule, DomSanitizer} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RouterModule} from '@angular/router';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
+import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
 import {FullCalendarModule} from 'ng-fullcalendar';
 import {ImageCropperModule} from 'ngx-image-cropper';
@@ -68,6 +69,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MarkdownComponent
 	],
 	exports: [
+		AngularDraggableModule,
 		BrowserAnimationsModule,
 		BrowserModule,
 		DialogAlertComponent,
@@ -113,6 +115,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		TextMaskModule
 	],
 	imports: [
+		AngularDraggableModule,
 		BrowserAnimationsModule,
 		BrowserModule,
 		FlexLayoutModule,

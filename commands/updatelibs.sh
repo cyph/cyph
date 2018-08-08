@@ -100,6 +100,7 @@ read -r -d '' modules <<- EOM
 	angular-speed-dial
 	angular-ssr
 	angular2-cool-infinite-grid
+	angular2-draggable
 	angular2-template-loader
 	angular2-text-mask
 	angular2-virtual-scroll
