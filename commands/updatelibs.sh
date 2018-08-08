@@ -44,12 +44,14 @@ read -r -d '' modules <<- EOM
 	@angular-devkit/schematics
 	@angular-devkit/schematics-cli
 	@asymmetrik/ngx-leaflet
+	@beezleeart/ngx-filemanager
 	@compodoc/compodoc
 	@covalent/core
 	@covalent/dynamic-forms
 	@covalent/highlight
 	@covalent/http
 	@covalent/markdown
+	@ctrl/ngx-rightclick
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth
@@ -76,6 +78,7 @@ read -r -d '' modules <<- EOM
 	@ngxs/storage-plugin
 	@ngxs/store
 	@opentok/client
+	@rign/angular2-filemanager
 	@types/braintree-web
 	@types/dompurify
 	@types/dropzone
@@ -96,6 +99,7 @@ read -r -d '' modules <<- EOM
 	@types/stacktrace-js
 	@yaga/leaflet-ng2
 	angular-infinite-list
+	angular-fittext
 	angular-material-clock-time-picker
 	angular-speed-dial
 	angular-ssr
@@ -184,6 +188,7 @@ read -r -d '' modules <<- EOM
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
+	mat-video
 	math-expression-evaluator
 	mceliece
 	microlight-string
@@ -202,6 +207,7 @@ read -r -d '' modules <<- EOM
 	ng2-fittext
 	ng2-pdf-viewer
 	ng2-truncate
+	ngx-contextmenu
 	ngx-image-cropper
 	ngx-infinite-scroll
 	node-fetch
