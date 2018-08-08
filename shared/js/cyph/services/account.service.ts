@@ -203,7 +203,7 @@ export class AccountService extends BaseProvider {
 		if (this.envService.isCordova) {
 			let navigationDepth	= -3;
 
-			document.addEventListener('backbutton', () => {
+			(<any> self).onbackbutton	= () => {
 				const menuOpen	= this.mobileMenuOpenInternal.value;
 
 				this.mobileMenuOpenInternal.next(false);
@@ -219,7 +219,7 @@ export class AccountService extends BaseProvider {
 				else if (this.envService.isAndroid) {
 					(<any> self).plugins.appMinimize.minimize();
 				}
-			});
+			};
 
 			this.subscriptions.push(this.routeChanges.subscribe(() => {
 				++navigationDepth;
