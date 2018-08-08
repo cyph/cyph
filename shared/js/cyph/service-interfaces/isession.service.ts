@@ -103,12 +103,6 @@ export interface ISessionService {
 
 	/** Send at least one message through the session. */
 	send (
-		sessionSubID?: string|[
-			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
-		],
 		...messages: [
 			string,
 			ISessionMessageAdditionalData|(

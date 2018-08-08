@@ -1,13 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {NotificationTypes} from '../proto';
 import {ISessionMessageData, rpcEvents} from '../session';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
-import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
 import {ChatService} from './chat.service';
-import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
@@ -39,7 +36,7 @@ export class AccountP2PService extends P2PService {
 		const id		= uuid();
 		const contactID	= await this.accountSessionService.remoteUser.value.contactID;
 
-		await this.router.navigate([accountRoot, callType, contactID, id, 'init']);
+		await this.router.navigate([accountRoot, callType, contactID, id]);
 	}
 
 	/** @inheritDoc */
@@ -65,39 +62,25 @@ export class AccountP2PService extends P2PService {
 			return;
 		}
 
-		const user	= this.accountSessionService.remoteUser.value;
+		await (await this.accountSessionService.send([
+			rpcEvents.accountP2P,
+			{command: {
+				additionalData: id,
+				method: callType
+			}}
+		])).confirmPromise;
 
-		await Promise.all([
-			Promise.all([
-				this.accountSessionService.send(undefined, [
-					rpcEvents.accountP2P,
-					{command: {
-						additionalData: id,
-						method: callType
-					}}
-				]),
-				this.accountContactsService.getCastleSessionID(user.username)
-			]).then(async ([o, castleSessionID]) => Promise.all([
-				o.confirmPromise,
-				this.accountDatabaseService.notify(
-					user.username,
-					NotificationTypes.Message,
-					{castleSessionID, id: o.newMessages[0].data.id}
-				)
-			])),
-			user.accountUserProfile.getValue().then(async ({realUsername}) =>
-				this.chatService.addMessage({
-					rootSession: true,
-					value: `${this.stringsService.youInvited} ${realUsername} ${
-						this.stringsService.toA
-					} ${
-						callType === 'video' ?
-							this.stringsService.videoCall :
-							this.stringsService.audioCall
-					}.`
-				})
-			)
-		]);
+		await this.accountSessionService.remoteUser.value.accountUserProfile.getValue().then(
+			async ({realUsername}) => this.chatService.addMessage({
+				value: `${this.stringsService.youInvited} ${realUsername} ${
+					this.stringsService.toA
+				} ${
+					callType === 'video' ?
+						this.stringsService.videoCall :
+						this.stringsService.audioCall
+				}.`
+			})
+		);
 	}
 
 	constructor (
@@ -111,12 +94,6 @@ export class AccountP2PService extends P2PService {
 
 		/** @ignore */
 		private readonly router: Router,
-
-		/** @ignore */
-		private readonly accountContactsService: AccountContactsService,
-
-		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService

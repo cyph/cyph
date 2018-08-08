@@ -117,16 +117,11 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				this.activatedRoute.firstChild.url :
 				this.activatedRoute.url
 		))).subscribe(async ([
-			{callType, ephemeralSubSession, init, promptFollowup},
+			{callType, ephemeralSubSession, promptFollowup},
 			{appointmentID, contactID, sessionSubID},
 			[{path}]
 		]: [
-			{
-				callType?: 'audio'|'video';
-				ephemeralSubSession?: boolean;
-				init?: boolean;
-				promptFollowup?: boolean;
-			},
+			{callType?: 'audio'|'video'; ephemeralSubSession?: boolean; promptFollowup?: boolean},
 			{appointmentID?: string; contactID?: string; sessionSubID?: string},
 			UrlSegment[]
 		/* tslint:disable-next-line:cyclomatic-complexity */
@@ -217,7 +212,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
-				if (init && sessionSubID) {
+				if (sessionSubID) {
 					await this.accountP2PService.initCall(callType, sessionSubID);
 				}
 

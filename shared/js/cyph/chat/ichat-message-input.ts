@@ -24,9 +24,6 @@ export interface IChatMessageInput {
 	/** @see IChatMessage.predecessors */
 	predecessors?: IChatMessagePredecessor[];
 
-	/** If true, ignores the current sub-session and sends to the root session. */
-	rootSession?: boolean;
-
 	/** @see ISessionText.selfDestructChat */
 	selfDestructChat?: boolean;
 

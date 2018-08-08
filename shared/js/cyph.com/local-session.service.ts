@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {LockFunction} from '../cyph/lock-function-type';
-import {MaybePromise} from '../cyph/maybe-promise-type';
 import {ISessionMessage} from '../cyph/proto';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {EnvService} from '../cyph/services/env.service';
@@ -92,18 +91,7 @@ export class LocalSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public async send (
-		sessionSubID?: string|[
-			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
-		],
-		...messages: [
-			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
-		][]
+		...messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<{
 		confirmPromise: Promise<void>;
 		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
@@ -112,12 +100,7 @@ export class LocalSessionService extends SessionService {
 			await sleep();
 		}
 
-		if (sessionSubID instanceof Array) {
-			messages.unshift(sessionSubID);
-			sessionSubID	= this.sessionSubID;
-		}
-
-		const newMessages	= await this.newMessages(messages, sessionSubID);
+		const newMessages	= await this.newMessages(messages);
 
 		for (const message of newMessages) {
 			const cyphertext	= potassiumUtil.randomBytes(random(1024, 100));
@@ -128,10 +111,7 @@ export class LocalSessionService extends SessionService {
 			});
 
 			this.chatData.channelOutgoing.next(
-				(await this.newMessages(
-					[[events.cyphertext, {bytes: cyphertext}]],
-					sessionSubID
-				))[0]
+				(await this.newMessages([[events.cyphertext, {bytes: cyphertext}]]))[0]
 			);
 			this.chatData.channelOutgoing.next(message);
 		}

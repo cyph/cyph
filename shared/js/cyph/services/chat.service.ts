@@ -527,7 +527,6 @@ export class ChatService extends BaseProvider {
 			id,
 			key,
 			predecessors,
-			rootSession,
 			selfDestructTimeout,
 			shouldNotify,
 			timestamp,
@@ -602,7 +601,7 @@ export class ChatService extends BaseProvider {
 				id,
 				predecessors,
 				selfDestructTimeout,
-				sessionSubID: rootSession ? undefined : this.sessionService.sessionSubID,
+				sessionSubID: this.sessionService.sessionSubID,
 				timestamp
 			};
 

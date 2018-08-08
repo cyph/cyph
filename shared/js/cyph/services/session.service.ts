@@ -239,8 +239,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 			ISessionMessageAdditionalData|(
 				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
 			)
-		][],
-		sessionSubID: string|undefined
+		][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
 		const newMessages: (ISessionMessage&{data: ISessionMessageData})[]	= [];
 
@@ -260,7 +259,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 				chatState: additionalData.chatState,
 				command: additionalData.command,
 				id: additionalData.id || uuid(),
-				sessionSubID,
+				sessionSubID: this.sessionSubID,
 				text: additionalData.text,
 				textConfirmation: additionalData.textConfirmation,
 				timestamp
@@ -532,12 +531,6 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public async send (
-		sessionSubID?: string|[
-			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
-		],
 		...messages: [
 			string,
 			ISessionMessageAdditionalData|(
@@ -549,12 +542,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
 	}> {
 		return this.sendLock(async () => {
-			if (sessionSubID instanceof Array) {
-				messages.unshift(sessionSubID);
-				sessionSubID	= this.sessionSubID;
-			}
-
-			const newMessages	= await this.newMessages(messages, sessionSubID);
+			const newMessages	= await this.newMessages(messages);
 
 			return {
 				confirmPromise: this.plaintextSendHandler(newMessages),
