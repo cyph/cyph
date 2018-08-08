@@ -7,12 +7,12 @@ rekeyscript='BASE64 hpkpsuicide.sh'
 
 PROMPT apikey
 PROMPT orderid
-csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyphdbyhiddenbhs.onion'
-
-onionaddress='cyphdbyhiddenbhs.onion'
 PROMPT onionkey
 PROMPT cert
 PROMPT key
+
+onionaddress='cyphdbyhiddenbhs.onion'
+csrSubject="/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=${onionaddress}"
 
 
 cd $(cd "$(dirname "$0")"; pwd)
@@ -34,7 +34,7 @@ openssl dhparam -out /etc/nginx/ssl/dhparams.pem 2048
 echo 'tmpfs /etc/nginx/ssl/websign tmpfs rw,size=50M 0 0' >> /etc/fstab
 mount --all
 
-echo '*.cyphdbyhiddenbhs.onion' > /etc/nginx/sans.json
+echo "*.${onionaddress}" > /etc/nginx/sans.json
 
 echo '
 	HiddenServiceDir /var/lib/tor/hidden_service/
@@ -63,24 +63,24 @@ read -r -d '' nginxconf <<- EOM
 
 	server {
 		${staticSSL}
-		server_name cyphdbyhiddenbhs.onion;
-		return 301 https://www.cyphdbyhiddenbhs.onion\\\$request_uri;
+		server_name ${onionaddress};
+		return 301 https://www.${onionaddress}\\\$request_uri;
 	}
 
 	server {
 		${staticSSL}
-		server_name www.cyphdbyhiddenbhs.onion;
+		server_name www.${onionaddress};
 		\$(proxysite https://prod-dot-cyph-com-dot-cyphme.appspot.com)
 	}
 	server {
 		${staticSSL}
-		server_name api.cyphdbyhiddenbhs.onion;
+		server_name api.${onionaddress};
 		\$(proxysite https://prod-dot-default-dot-cyphme.appspot.com)
 	}
 
 	server {
 		${staticSSL}
-		server_name cdn.cyphdbyhiddenbhs.onion;
+		server_name cdn.${onionaddress};
 
 		location / {
 			rewrite /(.*) /\\\$1 break;
@@ -93,7 +93,7 @@ read -r -d '' nginxconf <<- EOM
 
 	server {
 		${staticSSL}
-		server_name ping.cyphdbyhiddenbhs.onion;
+		server_name ping.${onionaddress};
 
 		location = / {
 			add_header Content-Type 'text/plain';
@@ -105,22 +105,22 @@ read -r -d '' nginxconf <<- EOM
 
 	server {
 		\${sslconf}
-		server_name im.cyphdbyhiddenbhs.onion;
+		server_name im.${onionaddress};
 		\$(proxysite https://prod-dot-cyph-im-dot-cyphme.appspot.com)
 	}
 	server {
 		\${sslconf}
-		server_name io.cyphdbyhiddenbhs.onion;
+		server_name io.${onionaddress};
 		\$(proxysite https://prod-dot-cyph-io-dot-cyphme.appspot.com)
 	}
 	server {
 		\${sslconf}
-		server_name video.cyphdbyhiddenbhs.onion;
+		server_name video.${onionaddress};
 		\$(proxysite https://prod-dot-cyph-video-dot-cyphme.appspot.com)
 	}
 	server {
 		\${sslconf}
-		server_name audio.cyphdbyhiddenbhs.onion;
+		server_name audio.${onionaddress};
 		\$(proxysite https://prod-dot-cyph-audio-dot-cyphme.appspot.com)
 	}
 
