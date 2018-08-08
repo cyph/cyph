@@ -159,7 +159,7 @@
 			[fxHide]='!(p2pWebRTCService.outgoingStream | async)?.video'
 			autoplay
 			muted
-			ngDraggable
+			[ngDraggable]='envService.environment.customBuild?.config.pro'
 		></video>
 
 		<mat-progress-spinner
