@@ -10,7 +10,6 @@ import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
-import {AccountP2PService} from '../../services/account-p2p.service';
 import {AccountSessionService} from '../../services/account-session.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -18,6 +17,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
+import {P2PService} from '../../services/p2p.service';
 import {StringsService} from '../../services/strings.service';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
@@ -212,10 +212,6 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
-				if (sessionSubID) {
-					await this.accountP2PService.initCall(callType, sessionSubID);
-				}
-
 				this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
 					if (!this.destroyed) {
 						this.router.navigate(
@@ -273,9 +269,6 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
-		/** @see AccountP2PService */
-		public readonly accountP2PService: AccountP2PService,
-
 		/** @see AccountSessionService */
 		public readonly accountSessionService: AccountSessionService,
 
@@ -284,6 +277,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 		/** @see FileTransferService */
 		public readonly fileTransferService: FileTransferService,
+
+		/** @see P2PService */
+		public readonly p2pService: P2PService,
 
 		/** @see P2PWebRTCService */
 		public readonly p2pWebRTCService: P2PWebRTCService,

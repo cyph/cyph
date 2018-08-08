@@ -20,7 +20,6 @@ import {SessionService} from '../services/session.service';
 
 export const accountChatProviders	= [
 	AccountChatService,
-	AccountP2PService,
 	AccountSessionService,
 	AccountSessionCapabilitiesService,
 	AccountSessionInitService,
@@ -40,7 +39,7 @@ export const accountChatProviders	= [
 	},
 	{
 		provide: P2PService,
-		useExisting: AccountP2PService
+		useClass: AccountP2PService
 	},
 	{
 		provide: SessionService,
