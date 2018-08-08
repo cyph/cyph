@@ -2,6 +2,11 @@
 	[fxFlex]='mobile && uiStyle === uiStyles.default ? "nogrow" : ""'
 	class='message-item'
 	[ngClass]='"ui-style-" + uiStyles[uiStyle]'
+	[class.full-width]='
+		uiStyle === uiStyles.default &&
+		value.fileTransfer &&
+		!value.fileTransfer.image
+	'
 	[class.mobile]='mobile'
 	[class.author-app]='message?.authorType === authorTypes.App'
 	[class.author-local]='message?.authorType === authorTypes.Local'
@@ -12,7 +17,7 @@
 	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
 	[class.visibility-hidden]='(viewReady | async) === false'
 	[id]='message ? "message-id-" + message?.id : undefined'
-	*ngIf='message?.valueWatcher | async; let value'
+	*ngIf='message?.valueWatcher | async as value'
 >
 	<div>
 		<div fxLayout='row' *ngIf='uiStyle === uiStyles.default; else emailUI'>
@@ -149,113 +154,94 @@
 		></cyph-calendar-invite>
 		<ng-template #fileTransferValue>
 			<div *ngIf='value.fileTransfer; else formValue'>
-				<ng-container
-					*ngIf='(value.fileTransfer.image || value.fileTransfer.video); else saveFile'
-				>
-					<ng-container *ngIf='value.fileTransfer.image'>
-						<ng-container *ngIf='
-							fileTransferService.getImage(value.fileTransfer) | async as image;
-							else imageLoading
-						'>
-							<ng-container *ngIf='image.success; else imageFailure'>
-								<div class='centered image-container'>
-									<img
-										class='image-message'
-										[src]='image.uri'
-										[alt]='value.fileTransfer.name'
-										(click)='dialogService.image({
+				<ng-container *ngIf='value.fileTransfer.image; else saveFile'>
+					<ng-container *ngIf='
+						fileTransferService.getImage(value.fileTransfer) | async as image;
+						else imageLoading
+					'>
+						<ng-container *ngIf='image.success; else imageFailure'>
+							<div class='centered image-container'>
+								<ng-container
+									*ngTemplateOutlet='imageDisplay; context: {clickable: true}'
+								></ng-container>
+							</div>
+							<div class='centered-fake image-container visibility-hidden'>
+								<ng-container *ngTemplateOutlet='imageDisplay'></ng-container>
+							</div>
+							<br />
+							<br />
+						</ng-container>
+						<ng-template #imageDisplay let-clickable='clickable'>
+							<img
+								class='image-message'
+								[src]='image.uri'
+								[alt]='value.fileTransfer.name'
+								(click)='
+									!clickable ?
+										undefined :
+									 envService.isMobile ?
+										fileTransferService.saveFile(value.fileTransfer) :
+										dialogService.image({
+											mediaType: value.fileTransfer.mediaType,
 											src: image.uri,
 											title: value.fileTransfer.name
-										})'
-									/>
-									<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
-								</div>
-								<div class='centered-fake image-container visibility-hidden'>
-									<img
+										})
+								'
+								*ngIf='
+									!value.fileTransfer.mediaType.startsWith("video/");
+									else imageDisplayVideo
+								'
+							/>
+							<ng-template #imageDisplayVideo>
+								<span
+									class='video-message-wrapper'
+									(click)='!clickable || envService.isMobile ?
+										undefined :
+										dialogService.image({
+											mediaType: value.fileTransfer.mediaType,
+											src: image.uri,
+											title: value.fileTransfer.name
+										})
+									'
+								>
+									<video
 										class='image-message'
-										[src]='image.uri'
-										[alt]='value.fileTransfer.name'
-									/>
-									<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
-								</div>
-								<br />
-								<br />
-							</ng-container>
-							<ng-template #imageFailure>
-								<div class='centered'>
-									<span>{{stringsService.incomingFileSaveImageError}}</span>
-									<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
-								</div>
-								<br />
-								<br />
-							</ng-template>
-						</ng-container>
-						<ng-template #imageLoading>
-							<div
-								[class.centered]='active'
-								[class.visibility-hidden]='!active'
-								*ngFor='let active of [true, false]; trackBy: trackBySelf'
-							>
-								<mat-progress-spinner
-									mode='indeterminate'
-									diameter='50'
-									strokeWidth='5'
-								></mat-progress-spinner>
-							</div>
-							<br />
-							<br />
-						</ng-template>
-					</ng-container>
-					<ng-container *ngIf='value.fileTransfer.video'>
-						<ng-container *ngIf='
-							fileTransferService.getVideo(value.fileTransfer) | async as video;
-							else videoLoading
-						'>
-							<ng-container *ngIf='video.success; else videoFailure'>
-								<div class='video-container' [class.centered]='!envService.isMobile'>
-									<video class='video-message' controls>
+										controls
+										[attr.aria-label]='value.fileTransfer.name'
+									>
 										<source
 											[type]='value.fileTransfer.mediaType'
-											[src]='video.uri'
+											[src]='image.uri'
 										/>
 									</video>
-									<h4 class='video-title'>{{value.fileTransfer.name}}</h4>
-								</div>
-								<div
-									class='centered-fake video-container visibility-hidden'
-									*ngIf='!envService.isMobile'
-								>
-									<video class='video-message' controls>
-										<source [type]='value.fileTransfer.mediaType' [src]='video.uri' />
-									</video>
-									<h4 class='video-title'>{{value.fileTransfer.name}}</h4>
-									</div>
-							</ng-container>
-							<ng-template #videoFailure>
-								<div class='centered'>
-									<span>Error</span>
-									<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
-								</div>
-								<br />
-								<br />
+								</span>
 							</ng-template>
-						</ng-container>
-						<ng-template #videoLoading>
-							<div
-								[class.centered]='active'
-								[class.visibility-hidden]='!active'
-								*ngFor='let active of [true, false]; trackBy: trackBySelf'
-							>
-								<mat-progress-spinner
-									mode='indeterminate'
-									diameter='50'
-									strokeWidth='5'
-								></mat-progress-spinner>
+							<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
+						</ng-template>
+						<ng-template #imageFailure>
+							<div class='centered'>
+								<span>{{stringsService.incomingFileSaveImageError}}</span>
+								<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
 							</div>
 							<br />
 							<br />
 						</ng-template>
 					</ng-container>
+					<ng-template #imageLoading>
+						<div
+							[class.centered]='active'
+							[class.visibility-hidden]='!active'
+							*ngFor='let active of [true, false]; trackBy: trackBySelf'
+						>
+							<mat-progress-spinner
+								mode='indeterminate'
+								diameter='50'
+								strokeWidth='5'
+							></mat-progress-spinner>
+						</div>
+						<br />
+						<br />
+					</ng-template>
 				</ng-container>
 				<ng-template #saveFile>
 					<button
@@ -265,8 +251,12 @@
 						[matTooltip]='stringsService.incomingFile'
 					>
 						<mat-icon>get_app</mat-icon>
-						{{value.fileTransfer.name}}
-						({{readableByteLength(value.fileTransfer.size)}})
+						&ngsp;
+						<span>
+							{{value.fileTransfer.name}}
+							&ngsp;
+							({{readableByteLength(value.fileTransfer.size)}})
+						</span>
 					</button>
 					<br />
 					<br />

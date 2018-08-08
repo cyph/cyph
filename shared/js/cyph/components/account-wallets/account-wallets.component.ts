@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {xkcdPassphrase} from 'xkcd-passphrase';
 import {BaseProvider} from '../../base-provider';
 import {NewWalletOptions} from '../../cryptocurrency';
-import {Cryptocurrencies, Currencies} from '../../proto';
+import {MaybePromise} from '../../maybe-promise-type';
+import {Cryptocurrencies, Currencies, IAccountFileRecord} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -35,6 +35,17 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 	/** @see Currencies */
 	public readonly currencies							= Currencies;
 
+	/** Current draft of edited wallet. */
+	public readonly draft								= new BehaviorSubject<{
+		id?: string;
+		name?: string;
+	}>(
+		{}
+	);
+
+	/** Edit mode. */
+	public editMode										= new BehaviorSubject<boolean>(false);
+
 	/** @see getDateTimeString */
 	public readonly getDateTimeString					= getDateTimeString;
 
@@ -59,24 +70,23 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		'timestamp'
 	];
 
-	public editMode: boolean							= false;
-
 	public newWalletName								= new BehaviorSubject<string>('');
 
 	/** Generates and uploads a new wallet. */
 	public async generate (
 		newWalletOptions: NewWalletOptions = NewWalletOptions.generate,
 		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC,
-		name: string|undefined|Promise<string> = xkcdPassphrase.generate(4);
+		customName?: MaybePromise<string|undefined>
 	) : Promise<void> {
 		let address: string|undefined;
 		let key: string|undefined;
+		let name: string|undefined;
 
 		switch (newWalletOptions) {
 			case NewWalletOptions.generate:
-				name	= await this.dialogService.prompt({
+				name	= (await customName) || await this.dialogService.prompt({
 					content: this.stringsService.newWalletGenerateText,
-					placeholder: 'Wallet Name',
+					placeholder: this.stringsService.newWalletNameInput,
 					title: this.stringsService.newWalletGenerate
 				});
 
@@ -116,8 +126,20 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 				return;
 		}
 
+		if (!name) {
+			name	= (await customName) || await this.dialogService.prompt({
+				content: this.stringsService.newWalletNameText,
+				placeholder: this.stringsService.newWalletNameInput,
+				title: this.stringsService.newWalletName
+			});
+
+			if (!name) {
+				return;
+			}
+		}
+
 		await this.accountFilesService.upload(
-			await name,
+			name,
 			await this.cryptocurrencyService.generateWallet({address, cryptocurrency, key})
 		);
 	}
@@ -125,6 +147,40 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
+	}
+
+	/** Saves draft edits. */
+	public async saveEdits () : Promise<void> {
+		if (
+			this.editMode.value &&
+			this.draft.value &&
+			this.draft.value.id &&
+			this.draft.value.name
+		) {
+			await this.accountFilesService.updateMetadata(
+				this.draft.value.id,
+				{name: this.draft.value.name}
+			);
+		}
+
+		this.setEditMode(false);
+	}
+
+	/** Sets edit mode. */
+	public setEditMode (editMode: boolean|IAccountFileRecord) : void {
+		if (typeof editMode === 'object') {
+			this.draft.next({id: editMode.id, name: editMode.name});
+			this.editMode.next(true);
+		}
+		else {
+			this.draft.next({});
+			this.editMode.next(editMode);
+		}
+	}
+
+	/** Updates draft. */
+	public updateDraft (draft: {id?: string; name?: string}) : void {
+		this.draft.next({...this.draft.value, ...draft});
 	}
 
 	constructor (

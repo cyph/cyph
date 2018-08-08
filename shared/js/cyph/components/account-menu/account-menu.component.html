@@ -84,9 +84,10 @@
 				<div>@{{currentUser.user.realUsername | async}} </div>
 				<mat-select
 					cyphTranslate
-					color='alt'
 					[ngModel]='currentUser.user.status | async'
-					(ngModelChange)='currentUser.user.accountUserPresence.setValue({status: $event})'
+					(ngModelChange)='
+						currentUser.user.accountUserPresence.setValue({status: $event})
+					'
 					name='status'
 					class='status'
 					placeholder='Status'

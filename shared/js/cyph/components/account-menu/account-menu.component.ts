@@ -32,14 +32,14 @@ export class AccountMenuComponent extends BaseProvider {
 		this.accountService.menuExpanded.pipe(map(menuExpanded => this.sidenav || menuExpanded))
 	;
 
-	/** @see UserPresence */
-	public readonly statuses							= userPresenceSelectOptions;
-
-	/** @see trackByValue */
-	public readonly trackByValue						= trackByValue;
-
 	/** If true, is inside a sidenav. */
 	@Input() public sidenav: boolean							= false;
+
+	/** @see UserPresence */
+	public readonly statuses									= userPresenceSelectOptions;
+
+	/** @see trackByValue */
+	public readonly trackByValue								= trackByValue;
 
 	/** @see urlToSafeStyle */
 	public readonly urlToSafeStyle								= urlToSafeStyle;

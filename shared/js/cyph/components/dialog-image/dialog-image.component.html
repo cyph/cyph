@@ -18,7 +18,7 @@
 		<ng-container *ngIf='!cropResult; else imageCropUI'>
 			<img cyphTranslate alt='Full size image' [src]='src' *ngIf='!video' />
 
-			<video cyphTranslate autoplay controls alt='Video' *ngIf='video'>
+			<video cyphTranslate autoplay controls aria-label='Video' *ngIf='video'>
 				<source [type]='mediaType' [src]='src' />
 			</video>
 		</ng-container>

@@ -18,7 +18,15 @@ export class TranslateDirective extends BaseProvider implements OnInit {
 		const $element	= $(nativeElement);
 		const $children	= $element.children();
 
-		for (const attr of ['alt', 'aria-label', 'content', 'label', 'matTooltip', 'placeholder']) {
+		for (const attr of [
+			'alt',
+			'aria-label',
+			'content',
+			'label',
+			'matTooltip',
+			'placeholder',
+			'title'
+		]) {
 			this.translate(
 				$element.attr(attr) || '',
 				translation => {

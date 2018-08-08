@@ -467,6 +467,15 @@ $nanoScrollbarWidth: 17px;
 		}
 
 		&.other {
+			::-webkit-scrollbar {
+				width: 0px;
+				background: transparent;
+			}
+
+			::-webkit-scrollbar-thumb {
+				background: #f4f4f4;
+			}
+
 			&:hover {
 				@at-root #{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
 					overflow-y: scroll;
@@ -475,6 +484,10 @@ $nanoScrollbarWidth: 17px;
 
 			&:not(:hover) {
 				@at-root {
+					> :first-child {
+						width: 100% !important;
+					}
+
 					#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
 						overflow: hidden;
 					}

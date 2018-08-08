@@ -60,7 +60,7 @@ cyph-logo {
 .menu-toggle {
 	position: absolute;
 	top: 0;
-	right: 0;
+	right: -2px;
 	height: 100%;
 	z-index: 1;
 
@@ -71,18 +71,6 @@ cyph-logo {
 
 mat-divider {
 	height: 2px;
-}
-
-.nano.other:not(:hover):not(mat-tab-group) > :first-child {
-	width: 100% !important;
-}
-
-::-webkit-scrollbar {
-	width: 0px;
-	background: transparent;
-}
-::-webkit-scrollbar-thumb {
-	background: #f4f4f4;
 }
 
 .collapsed ::ng-deep .mat-list-item .mat-list-item-content {
@@ -98,10 +86,11 @@ mat-divider {
 	
 	::ng-deep {
 		.mat-select-value-text span {
-			color: #f4f4f480;
+			color: rgba(244, 244, 244, 0.5);
 			font-style: italic;
 			padding-right: 3.5px;
 		}
+
 		.mat-select-arrow {
 			color: rgba(255, 255, 255, 0.54) !important;
 		}

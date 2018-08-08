@@ -85,6 +85,7 @@ export class FileService extends BaseProvider {
 	) : Promise<Uint8Array> {
 		if (
 			!image ||
+			(file instanceof Blob ? file.type : file.mediaType).startsWith('video/') ||
 			(file instanceof Blob ? file.type : file.mediaType) === 'image/gif' ||
 			!this.envService.isWeb
 		) {
@@ -130,9 +131,12 @@ export class FileService extends BaseProvider {
 		};
 	}
 
-	/** Indicates whether a File/Blob is an image. */
+	/** Indicates whether a File/Blob is an image (or video). */
 	public isImage (file: Blob|IFile) : boolean {
-		return (file instanceof Blob ? file.type : file.mediaType).indexOf('image/') === 0;
+		return (
+			(file instanceof Blob ? file.type : file.mediaType).indexOf('image/') === 0 ||
+			this.isVideo(file)
+		);
 	}
 
 	/** Indicates whether a File/Blob is a video. */

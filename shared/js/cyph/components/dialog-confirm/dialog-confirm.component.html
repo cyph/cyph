@@ -8,7 +8,7 @@
 	<ng-template #text>
 		<div>{{content}}</div>
 	</ng-template>
-	<ng-container *ngIf='prompt !== undefined'>
+	<form ngNativeValidate *ngIf='prompt !== undefined' (submit)='matDialogRef.close(true)'>
 		<br />
 		<mat-form-field>
 			<input
@@ -16,11 +16,12 @@
 				cyphTranslate
 				[(ngModel)]='prompt'
 				[placeholder]='promptPlaceholder || stringsService.response'
-				(keyup.enter)='matDialogRef.close(true)'
+				name='prompt'
+				required
 				type='text'
 			/>
 		</mat-form-field>
-	</ng-container>
+	</form>
 </div>
 <div mat-dialog-actions fxLayoutAlign='end center'>
 	<button mat-button class='cancel' (click)='matDialogRef.close(false)'>{{cancel}}</button>

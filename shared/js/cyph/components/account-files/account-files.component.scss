@@ -25,7 +25,8 @@
 }
 
 mat-card.incoming {
-	transition: 500ms;
+	@include transition(500ms);
+
 	&:not(:hover) {
 		opacity: 0.75 !important;
 	}

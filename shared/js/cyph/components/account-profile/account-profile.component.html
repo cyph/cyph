@@ -491,7 +491,7 @@
 					ngClass.lt-md='lt-md'
 					ngClass.md='md'
 					fxLayout='column'
-					*ngIf='user.extra() | async; let extra'
+					*ngIf='user.extra() | async as extra'
 					[class.fadeOutUp]='(accountService.transition | async) === true'
 				>
 					<mat-card-content

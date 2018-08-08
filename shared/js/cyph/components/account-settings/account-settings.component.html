@@ -5,13 +5,13 @@
 		*ngIf='state | async as stateValue'
 	>
 		<form
-			[class.mobile]='envService.isMobile'
 			ngNativeValidate
 			fxFlex
 			fxFlex.gt-md='75'
 			fxFlex.gt-lg='50'
 			fxLayout='column'
 			fxLayoutGap='16px'
+			[class.mobile]='envService.isMobile'
 			(submit)='save()'
 			*ngIf='stateValue === states.default; else changePassword'
 		>

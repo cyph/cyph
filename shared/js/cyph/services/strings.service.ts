@@ -324,7 +324,7 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly incomingFileSaveImageError: string	=
-		`Failed to download this image.`
+		`Failed to download.`
 	;
 
 	/** @see StringsService */
@@ -475,6 +475,17 @@ export class StringsService extends BaseProvider {
 	/** @see StringsService */
 	public readonly newWalletImportKeyText: string		=
 		`Import existing wallet private key in WIF format:`
+	;
+
+	/** @see StringsService */
+	public readonly newWalletName: string				= `Wallet Name`;
+
+	/** @see StringsService */
+	public readonly newWalletNameInput: string			= `Wallet Name`;
+
+	/** @see StringsService */
+	public readonly newWalletNameText: string			=
+		`Name of this wallet:`
 	;
 
 	/** @see StringsService */

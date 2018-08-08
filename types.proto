@@ -799,9 +799,6 @@ message FileTransfer {
 
 	/** File size in bytes. */
 	required uint32 size = 8;
-
-	/** Indicates whether file should be handled as a video. */
-	bool video = 9;
 }
 
 /** Represents a form that a user can submit responses to. */

@@ -74,33 +74,29 @@
 							mat-icon-button
 							cyphTranslate
 							matTooltip='Edit'
-							(click)='editMode = true'
-							*ngIf='!editMode'
+							(click)='setEditMode(wallet.record)'
+							*ngIf='(editMode | async) === false'
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
 						<button
 							mat-icon-button
 							cyphTranslate
-							matTooltip='Edit'
-							(click)='newWalletName ?
-								accountFilesService.updateMetadata(wallet.record.id, {name: newWalletName.value})
-								&& editMode = false
-								: editMode = false
-							'
-							*ngIf='editMode'
+							matTooltip='Save'
+							(click)='saveEdits()'
+							*ngIf='editMode | async'
 						>
 							<mat-icon>save</mat-icon>
 						</button>
 					</mat-chip-list>
 
 					<div fxLayout='row' fxLayoutAlign='center center'>
-						<mat-form-field fxFlex='66' class='title' [class.edit]='editMode'>
+						<mat-form-field fxFlex='66' class='title' [class.edit]='editMode | async'>
 							<input
 								matInput
-								[ngModel]='wallet.record.name'
-								(ngModelChange)='newWalletName.next($event)'
-								[disabled]='!editMode'
+								[ngModel]='(draft | async)?.name || wallet.record.name'
+								(ngModelChange)='updateDraft({name: $event})'
+								[disabled]='(editMode | async) === false'
 							/>
 						</mat-form-field>
 					</div>
