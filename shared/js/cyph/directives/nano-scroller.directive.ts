@@ -23,15 +23,18 @@ export class NanoScrollerDirective extends BaseProvider implements OnInit {
 
 		this.renderer.addClass(element, 'nano');
 
+		if (this.envService.isMobile || this.envService.isMacOS) {
+			return;
+		}
+
 		if (this.envService.isEdge) {
 			this.renderer.addClass(element, 'edge');
 		}
-		else if (!this.envService.isMobile && !this.envService.isMacOS) {
+		else if (this.envService.isWebKit) {
+			this.renderer.addClass(element, 'webkit');
+		}
+		else {
 			this.renderer.addClass(element, 'other');
-
-			if (this.envService.isWebKit) {
-				this.renderer.addClass(element, 'webkit');
-			}
 		}
 	}
 
