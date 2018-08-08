@@ -467,13 +467,27 @@ $nanoScrollbarWidth: 17px;
 		}
 
 		&.other {
-			::-webkit-scrollbar {
-				width: 0;
-				background: transparent;
+			&.webkit {
+				::-webkit-scrollbar {
+					width: 0;
+					background: transparent;
+				}
+
+				::-webkit-scrollbar-thumb {
+					background: #f4f4f4;
+				}
 			}
 
-			::-webkit-scrollbar-thumb {
-				background: #f4f4f4;
+			&:not(.webkit):not(:hover) {
+				@at-root {
+					#{nanoDefaultTarget()} {
+						width: calc(100% - #{$nanoScrollbarWidth});
+					}
+
+					#{nanoTabGroupTarget()} {
+						padding-right: $nanoScrollbarWidth;
+					}
+				}
 			}
 
 			&:hover {
@@ -484,20 +498,8 @@ $nanoScrollbarWidth: 17px;
 
 			&:not(:hover) {
 				@at-root {
-					> :first-child {
-						width: 100% !important;
-					}
-
 					#{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
 						overflow: hidden;
-					}
-
-					#{nanoDefaultTarget()} {
-						width: calc(100% - #{$nanoScrollbarWidth});
-					}
-
-					#{nanoTabGroupTarget()} {
-						padding-right: $nanoScrollbarWidth;
 					}
 				}
 			}

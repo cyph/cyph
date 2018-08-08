@@ -193,6 +193,13 @@ export class Env extends EnvDeploy {
 		}
 	})();
 
+	/** Indicates whether this is a WebKit/Blink browser. */
+	public readonly isWebKit: boolean			=
+		this.isChrome ||
+		this.isSafari ||
+		(this.isWeb && 'WebkitAppearance' in document.documentElement.style)
+	;
+
 	/** Normalized language code, used for translations. */
 	public readonly language: string			= (() => {
 		const language: string	= this.fullLanguage.split('-')[0];
