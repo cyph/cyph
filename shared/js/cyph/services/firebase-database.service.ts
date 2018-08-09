@@ -1073,15 +1073,37 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			(await (await this.getDatabaseRef(url))).on('value', async snapshot => {
 				const value: {
-					[key: string]: {id?: string; reason?: string; timestamp?: number};
+					[key: string]: {
+						claimTimestamp?: number;
+						id?: string;
+						reason?: string;
+						timestamp?: number;
+					};
 				}	=
 					(snapshot && snapshot.val()) || {}
 				;
 
-				const keys	= Object.keys(value).sort();
+				const timestamp		= await getTimestamp();
 
-				if (keys.length > 0) {
-					reason		= value[keys[0]].reason;
+				const contenders	= Object.keys(value).
+					map(k => value[k]).
+					filter(contender =>
+						typeof contender.claimTimestamp === 'number' &&
+						!isNaN(contender.claimTimestamp) &&
+						typeof contender.id === 'string' &&
+						typeof contender.timestamp === 'number' &&
+						!isNaN(contender.timestamp) &&
+						(
+							timestamp - contender.timestamp
+						) < this.lockLeaseConfig.expirationLimit
+					).
+					sort((a, b) =>
+						(<number> a.claimTimestamp) - (<number> b.claimTimestamp)
+					)
+				;
+
+				if (contenders.length > 0) {
+					reason		= contenders[0].reason;
 					reason		= typeof reason === 'string' ? reason : undefined;
 					wasLocked	= true;
 					return;
