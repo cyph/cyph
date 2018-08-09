@@ -433,12 +433,10 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				currentUser ?
 					{
 						isCurrentUser: true,
-						user: currentUser.user,
-						username
+						user: currentUser.user
 					} :
 					{
-						isCurrentUser: false,
-						username
+						isCurrentUser: false
 					}
 			)),
 			this.subscriptions
