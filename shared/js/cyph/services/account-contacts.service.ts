@@ -87,6 +87,10 @@ export class AccountContactsService extends BaseProvider {
 
 			const [userA, userB]		= normalizeArray([currentUserUsername, username]);
 
+			if (!(userA && userB)) {
+				return '';
+			}
+
 			return this.databaseService.getOrSetDefault(
 				`castleSessionIDs/${userA}/${userB}`,
 				StringProto,
