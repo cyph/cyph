@@ -155,7 +155,7 @@ if [ "${branch}" == 'prod' ] ; then
 	fi
 elif [ ! "${test}" ] ; then
 	fail 'Cannot do prod deploy from test branch'
-elif [ ! "${allBranches}" ] ; then
+elif [ "${allBranches}" ] ; then
 	fail 'Cannot do allBranches deploy from test branch'
 fi
 if [ "${allBranches}" ] ; then
