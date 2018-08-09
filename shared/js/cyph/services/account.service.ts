@@ -136,8 +136,8 @@ export class AccountService extends BaseProvider {
 		return this.routeChanges.value;
 	}
 
-	/** @ignore */
-	private get routePath () : string[] {
+	/** Current route path. */
+	public get routePath () : string[] {
 		const route	= (
 			this.activatedRoute.snapshot.firstChild &&
 			this.activatedRoute.snapshot.firstChild.firstChild &&

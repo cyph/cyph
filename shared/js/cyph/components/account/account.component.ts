@@ -34,15 +34,6 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	private readonly _VIEW_INITIATED									= resolvable();
 
 	/** @ignore */
-	private readonly activatedRouteChildURL: Observable<UrlSegment[]>	=
-		this.accountService.routeChanges.pipe(mergeMap(() =>
-			this.activatedRoute.firstChild && this.activatedRoute.firstChild.firstChild ?
-				this.activatedRoute.firstChild.firstChild.url :
-				of([])
-		))
-	;
-
-	/** @ignore */
 	private readonly activatedRouteURL: Observable<UrlSegment[]>		=
 		this.accountService.routeChanges.pipe(mergeMap(() =>
 			this.activatedRoute.firstChild ?
@@ -57,6 +48,13 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			activatedRouteURL.length > 0 ?
 				activatedRouteURL[0].path :
 				''
+		))
+	;
+
+	/** @ignore */
+	private readonly routePath: Observable<string[]>					=
+		this.accountService.routeChanges.pipe(map(() =>
+			this.accountService.routePath
 		))
 	;
 
@@ -113,13 +111,17 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	/** Indicates whether menu should be displayed. */
 	public readonly menuVisible: Observable<boolean>		= combineLatest(
 		this.accountDatabaseService.currentUser,
-		this.activatedRouteChildURL,
-		this.route
-	).pipe(map(([currentUser, activatedRouteChildURL, route]) => {
+		this.route,
+		this.routePath
+	).pipe(map(([currentUser, route, routePath]) => {
 		if (
-			route === 'appointments' &&
-			activatedRouteChildURL.length > 0 &&
-			activatedRouteChildURL[0].path !== 'end'
+			[
+				'appointments',
+				'audio',
+				'video'
+			].indexOf(route) > -1 &&
+			routePath.length > 1 &&
+			routePath[1] !== 'end'
 		) {
 			return false;
 		}
@@ -127,8 +129,8 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		return currentUser !== undefined && [
 			'',
 			'404',
-			'audio',
 			'appointments',
+			'audio',
 			'chat-transition',
 			'compose',
 			'contacts',
