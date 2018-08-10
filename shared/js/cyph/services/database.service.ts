@@ -16,6 +16,7 @@ import {NotificationTypes} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {debugLog} from '../util/log';
 import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -506,13 +507,20 @@ export class DatabaseService extends DataManagerService {
 		f: (value: T) => MaybePromise<void>,
 		subscriptions?: Subscription[]
 	) : Subscription {
+		const lock	= lockFunction();
+
 		return this.watchListKeyPushes(url, subscriptions).subscribe(async ({key}) => {
-			try {
-				const fullURL	= `${url}/${key}`;
-				await f(await this.getItem(fullURL, proto));
-				await this.removeItem(fullURL);
-			}
-			catch {}
+			const fullURL	= `${await url}/${key}`;
+
+			await lock(async () => {
+				try {
+					await f(await this.getItem(fullURL, proto));
+					await this.removeItem(fullURL);
+				}
+				catch (err) {
+					debugLog(() => ({databaseSubscribeAndPopError: err}));
+				}
+			});
 		});
 	}
 

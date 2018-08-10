@@ -26,6 +26,7 @@ import {cacheObservable, flattenObservable} from '../../util/flatten-observable'
 import {normalize} from '../../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {lockFunction} from '../../util/lock';
+import {debugLog} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {DatabaseService} from '../database.service';
@@ -1118,13 +1119,23 @@ export class AccountDatabaseService extends BaseProvider {
 		anonymous: boolean = false,
 		subscriptions?: Subscription[]
 	) : Subscription {
+		const lock	= lockFunction();
+
 		return this.watchListKeyPushes(url, subscriptions).subscribe(async ({key}) => {
-			try {
-				const fullURL	= `${await url}/${key}`;
-				await f(await this.getItem(fullURL, proto, securityModel, customKey, anonymous));
-				await this.removeItem(fullURL);
-			}
-			catch {}
+			const fullURL	= `${await url}/${key}`;
+
+			await lock(async () => {
+				try {
+					await f(
+						await this.getItem(fullURL, proto, securityModel, customKey, anonymous)
+					);
+
+					await this.removeItem(fullURL);
+				}
+				catch (err) {
+					debugLog(() => ({accountDatabaseSubscribeAndPopError: err}));
+				}
+			});
 		});
 	}
 
