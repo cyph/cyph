@@ -1229,7 +1229,9 @@ export class ChatService extends BaseProvider {
 						;
 
 						this.updateChat();
-					}),
+					}).catch(
+						() => {}
+					),
 					this.localStorageService.lock(pendingMessageRoot, async () => {
 						const pendingMessages	= await this.localStorageService.getValues(
 							pendingMessageRoot,
@@ -1255,10 +1257,10 @@ export class ChatService extends BaseProvider {
 								key
 							)
 						));
-					})
-				]).catch(
-					() => {}
-				).then(() => {
+					}).catch(
+						() => {}
+					)
+				]).then(() => {
 					this.resolvers.currentMessageSynced.resolve();
 				});
 			}
