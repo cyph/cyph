@@ -1,4 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
+import {Router} from '@angular/router';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
@@ -36,6 +37,9 @@ export class AccountHomeComponent extends BaseProvider implements AfterViewInit 
 	}
 
 	constructor (
+		/** @see Router */
+		public readonly router: Router,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

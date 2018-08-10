@@ -79,6 +79,9 @@ export class SearchBarComponent<T extends any> extends BaseProvider implements O
 	/** Transforms string value to filter value. */
 	@Input() public filterTransform: (value?: string) => T	= value => <any> value;
 
+	/** Emits on search bar input blur. */
+	@Output() public readonly inputBlur						= new EventEmitter<void>();
+
 	/** Search bar autocomplete options list length. */
 	@Input() public listLength: number						= 10;
 

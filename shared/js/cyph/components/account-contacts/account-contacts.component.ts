@@ -1,9 +1,11 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
+	EventEmitter,
 	Input,
 	OnChanges,
 	OnInit,
+	Output,
 	SimpleChanges,
 	ViewChild
 } from '@angular/core';
@@ -132,6 +134,11 @@ export class AccountContactsComponent extends BaseProvider implements OnChanges,
 
 	/** Indicates whether to use inverted theme. */
 	@Input() public invertedTheme: boolean										= false;
+
+	/** @see AccountContactsSearchComponent.searchBarBlur */
+	@Output() public readonly searchBarBlur										=
+		new EventEmitter<void>()
+	;
 
 	/** Search mode. */
 	@Input() public searchMode: boolean											= false;

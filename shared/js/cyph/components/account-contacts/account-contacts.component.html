@@ -17,6 +17,7 @@
 			[contactList]='contactList'
 			[externalUsers]='true'
 			[searchProfileExtra]='searchProfileExtra'
+			(searchBarBlur)='searchBarBlur.emit()'
 		></cyph-account-contacts-search>
 
 		<div fxFlex fxLayoutAlign='center center' *ngIf='

@@ -11,4 +11,5 @@
 	[query]='searchUsername'
 	[spinner]='searchSpinner'
 	(filterChange)='userFilterChange.emit($event)'
+	(inputBlur)='searchBarBlur.emit()'
 ></cyph-search-bar>
