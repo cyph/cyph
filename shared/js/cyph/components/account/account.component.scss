@@ -289,7 +289,7 @@ $mobileAppBarHeight: 56px;
 		}
 
 		cyph-logo, mat-icon {
-			@include icon-size(24px);
+			@include icon-size(28px);
 		}
 	}
 }
@@ -321,6 +321,7 @@ $mobileAppBarHeight: 56px;
 
 	h1 {
 		font-size: 24px;
+		text-align: center;
 	}
 
 	h1.logo-text {
