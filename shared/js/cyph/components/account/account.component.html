@@ -44,7 +44,8 @@
 
 			<div
 				fxLayout='row'
-				class='header animated slideInDown'
+				class='header slideInDown'
+				[class.animated]='!envService.isMobile'
 				[class.fadeOutUp]='accountService.transition | async'
 				[class.mobile]='envService.isMobile'
 				fxLayoutAlign='center center'
