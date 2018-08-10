@@ -1,10 +1,14 @@
 @import '../../../../css/mixins';
 
 .logout {
-	font-size: 60px;
 	font-family: Ubuntu;
+	font-size: 4.5em;
 	font-weight: 500;
 	position: relative;
+
+	&.small {
+		font-size: 2.5em;
+	}
 
 	> .ellipsis {
 		overflow: hidden;
