@@ -59,25 +59,30 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 			;
 		}
 
-		let html	= this.htmlSanitizerService.sanitize(
-			this.markdownIt.render(this.markdown || '').
+		let html	= this.markdownIt.render(this.markdown || '').
+			/* Merge blockquotes like reddit */
+			replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
 
-				/* Merge blockquotes like reddit */
-				replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
+			/* Images */
+			replace(
+				/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
+				(_: string, value: string) => {
+					const img: HTMLImageElement	= document.createElement('img');
+					img.src	= value;
+					return img.outerHTML;
+				}
+			)
+		;
 
-				/* Images */
-				replace(
-					/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-					(_: string, value: string) => {
-						const img: HTMLImageElement	= document.createElement('img');
-						img.src	= value;
-						return img.outerHTML;
-					}
-				).
+		/* Gracefully handle protocol-less links */
+		if (!this.targetSelf) {
+			html	= html.replace(
+				/(href=")(((?!:\/\/).)*?")/g,
+				(_, a, b) => `${a}http://${b}`
+			);
+		}
 
-				/* Gracefully handle protocol-less links */
-				replace(/(href=")(((?!:\/\/).)*?")/g, (_, a, b) => `${a}http://${b}`)
-		);
+		html	= this.htmlSanitizerService.sanitize(html);
 
 		if (this.targetSelf) {
 			html	= html.replace(/\<a href="#/g, '<a target="_self" href="#');
