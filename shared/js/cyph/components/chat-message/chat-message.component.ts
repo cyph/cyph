@@ -112,16 +112,16 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 
 	/** @see ChatMessage.AuthorTypes */
-	public readonly authorTypes: typeof ChatMessage.AuthorTypes	= ChatMessage.AuthorTypes;
+	public readonly authorTypes: typeof ChatMessage.AuthorTypes		= ChatMessage.AuthorTypes;
 
 	/** @see ChatMessage */
 	@Input() public message?: ChatMessage;
 
 	/** Indicates whether mobile version should be displayed. */
-	@Input() public mobile: boolean		= false;
+	@Input() public mobile: boolean									= false;
 
 	/** Indicates whether message is pending locally. */
-	@Input() public pending: boolean	= false;
+	@Input() public pending: boolean								= false;
 
 	/** @see ChatMessageValue.quill */
 	public readonly quill: BehaviorSubject<IQuillDelta|undefined>	=
@@ -141,16 +141,16 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 	public readonly trackBySelf: typeof trackBySelf					= trackBySelf;
 
 	/** @see ChatMainComponent.uiStyle */
-	@Input() public uiStyle: UiStyles			= UiStyles.default;
+	@Input() public uiStyle: UiStyles								= UiStyles.default;
 
 	/** @see UiStyles */
-	public readonly uiStyles: typeof UiStyles	= UiStyles;
+	public readonly uiStyles: typeof UiStyles						= UiStyles;
 
 	/** @see IChatData.unconfirmedMessages */
 	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};
 
 	/** Indicates whether view is ready. */
-	public readonly viewReady: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	public readonly viewReady: BehaviorSubject<boolean>				= new BehaviorSubject(false);
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
