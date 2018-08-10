@@ -35,6 +35,9 @@ if (env.isCordova) {
 		if (clickableOverlay instanceof HTMLElement) {
 			clickableOverlay.click();
 		}
+		else if (env.isAndroid && !(<any> self).androidBackbuttonReady) {
+			(<any> self).plugins.appMinimize.minimize();
+		}
 		else {
 			history.back();
 		}
