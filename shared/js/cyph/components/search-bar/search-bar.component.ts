@@ -36,6 +36,9 @@ export class SearchBarComponent<T extends any> extends BaseProvider implements O
 	/** @ignore */
 	private querySubscription?: Subscription;
 
+	/** @see AutofocusDirective */
+	@Input() public autofocus: boolean						= false;
+
 	/** If true, will use a chip input and return multiple items in filter. */
 	@Input() public chipInput: boolean						= false;
 

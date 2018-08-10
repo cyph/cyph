@@ -4,7 +4,7 @@
 '></cyph-account-profile>
 
 <ng-template #contactsHome>
-	<cyph-account-contacts [home]='true' *ngIf='
+	<cyph-account-contacts [home]='true' [searchMode]='searchMode | async' *ngIf='
 		envService.isMobile;
 		else sidebarHome
 	'></cyph-account-contacts>

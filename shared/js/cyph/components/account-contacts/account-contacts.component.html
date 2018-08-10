@@ -10,6 +10,8 @@
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
 		<cyph-account-contacts-search
 			#accountContactsSearch
+			[class.searchMode]='searchMode'
+			[autofocus]='searchMode'
 			[contactList]='contactList'
 			[externalUsers]='true'
 			[searchProfileExtra]='searchProfileExtra'

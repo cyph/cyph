@@ -1,5 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -21,6 +22,13 @@ import {StringsService} from '../../services/strings.service';
 export class AccountHomeComponent extends BaseProvider implements AfterViewInit {
 	/** Indicates whether speed dial is open. */
 	public readonly isSpeedDialOpen	= new BehaviorSubject<boolean>(false);
+
+	/** @see AccountContactsComponent.searchMode */
+	public readonly searchMode: Observable<boolean>	=
+		this.accountService.routeChanges.pipe(map(url =>
+			url.split('/').slice(-1)[0] === 'search'
+		))
+	;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {

@@ -33,6 +33,9 @@ import {SearchBarComponent} from '../search-bar';
 	templateUrl: './account-contacts-search.component.html'
 })
 export class AccountContactsSearchComponent extends BaseProvider {
+	/** @see SearchBarComponent.autofocus */
+	@Input() public autofocus: boolean		= false;
+
 	/** @see SearchBarComponent.chipInput */
 	@Input() public chipInput: boolean		= false;
 

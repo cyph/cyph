@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
+import {Directive, ElementRef, Input, OnChanges, Renderer2} from '@angular/core';
 import * as $ from 'jquery';
 import {BaseProvider} from '../base-provider';
 import {EnvService} from '../services/env.service';
@@ -11,7 +11,7 @@ import {sleep, waitForIterable} from '../util/wait';
 @Directive({
 	selector: '[cyphAutofocus]'
 })
-export class AutofocusDirective extends BaseProvider implements OnInit {
+export class AutofocusDirective extends BaseProvider implements OnChanges {
 	/** @ignore */
 	private static readonly loadComplete: Promise<void>	=
 		waitForIterable(() => $('body.load-complete')).catch(() => {}).then(async () => sleep(750))
@@ -33,7 +33,7 @@ export class AutofocusDirective extends BaseProvider implements OnInit {
 	@Input() public cyphAutofocus?: boolean;
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngOnChanges () : Promise<void> {
 		if (!this.elementRef.nativeElement || this.cyphAutofocus === false) {
 			return;
 		}

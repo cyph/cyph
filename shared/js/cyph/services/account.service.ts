@@ -346,7 +346,11 @@ export class AccountService extends BaseProvider {
 				this.headerInternal.next(undefined);
 			}
 
-			const section	= (e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
+			let section	= (e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
+
+			if (section === 'search') {
+				section	= '';
+			}
 
 			if (section !== lastSection) {
 				lastSection	= section;

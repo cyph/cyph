@@ -37,7 +37,7 @@
 				#sidenav
 				ngClass.gt-sm='disabled'
 				mode='push'
-				position='end'
+				position='start'
 				[opened]='accountService.mobileMenuOpen | async'
 			>
 				<cyph-account-menu [sidenav]='true'></cyph-account-menu>
@@ -56,10 +56,11 @@
 				<button
 					mat-icon-button
 					cyphTranslate
-					class='home'
-					aria-label='Home'
-					[routerLink]='accountService.routeRoot'
+					class='logo-icon'
+					aria-label='Menu'
+					(click)='accountService.toggleMobileMenu()'
 					fxHide.gt-sm
+					*ngIf='(accountDatabaseService.currentUser | async) !== undefined'
 				>
 					<cyph-logo icon></cyph-logo>
 				</button>
@@ -115,13 +116,13 @@
 
 				<button
 					mat-icon-button
-					aria-label='Menu'
-					fxLayoutAlign='center center'
-					(click)='accountService.toggleMobileMenu()'
+					cyphTranslate
+					aria-label='Search'
+					[routerLink]='accountService.routeRoot + "search"'
 					fxHide.gt-sm
-					*ngIf='(accountDatabaseService.currentUser | async) !== undefined'
+					*ngIf='!envService.isTelehealth'
 				>
-					<mat-icon>menu</mat-icon>
+					<mat-icon>search</mat-icon>
 				</button>
 				<span></span>
 			</div>

@@ -38,7 +38,13 @@ export const account: Route	= {
 	canActivate: [AccountAuthGuardService],
 	canActivateChild: [AccountAuthGuardService],
 	children: [
-		{path: '', component: AccountHomeComponent},
+		{
+			path: '',
+			component: AccountHomeComponent,
+			children: [
+				{path: 'search', component: BlankComponent}
+			]
+		},
 		{path: '404', component: NotFoundComponent},
 		{path: 'appointments', component: AccountAppointmentsComponent},
 		{

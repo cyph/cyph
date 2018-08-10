@@ -133,6 +133,9 @@ export class AccountContactsComponent extends BaseProvider implements OnChanges,
 	/** Indicates whether to use inverted theme. */
 	@Input() public invertedTheme: boolean										= false;
 
+	/** Search mode. */
+	@Input() public searchMode: boolean											= false;
+
 	/** @see AccountContactsSearchComponent.searchProfileExtra */
 	@Input() public searchProfileExtra: boolean									= false;
 
