@@ -288,7 +288,16 @@ $mobileAppBarHeight: 56px;
 			height: calc(100% - #{$mobileAppBarHeight});
 		}
 
-		cyph-logo, mat-icon {
+		button.logo-icon {
+			@include transform(translateX(1px));
+		}
+
+		cyph-logo {
+			height: 26px;
+			width: 26px;
+		}
+
+		mat-icon {
 			@include icon-size(24px);
 		}
 	}
