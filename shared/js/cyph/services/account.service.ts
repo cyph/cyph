@@ -262,7 +262,11 @@ export class AccountService extends BaseProvider {
 					routePath.length > 1
 				)
 			) {
-				return header;
+				/* Always make at least an empty string on mobile to ensure menu bar displays */
+				return width <= this.configService.responsiveMaxWidths.sm ?
+					(header || '') :
+					header
+				;
 			}
 
 			/* No header by default for non-whitelisted sections or deep routes */
