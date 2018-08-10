@@ -80,6 +80,10 @@ html, body {
 	font-weight: 300;
 }
 
+body.cordova * {
+	-webkit-tap-highlight-color: transparent !important;
+}
+
 img:not([src]) {
 	visibility: hidden !important;
 }

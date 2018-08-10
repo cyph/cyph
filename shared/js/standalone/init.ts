@@ -18,6 +18,10 @@ if (env.isMobile) {
 	$(document.body).addClass('mobile');
 }
 
+if (env.isCordova) {
+	$(document.body).addClass('cordova');
+}
+
 /* Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=821876 */
 
 if (!(env.isMacOS && env.isChrome && env.chromeVersion >= 65)) {
