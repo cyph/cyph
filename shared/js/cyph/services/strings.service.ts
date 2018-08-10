@@ -137,6 +137,9 @@ export class StringsService extends BaseProvider {
 	public readonly contactCyph: string					= `Contact ${this.internalCompany}`;
 
 	/** @see StringsService */
+	public readonly contactSupport: string				= `Contact Support`;
+
+	/** @see StringsService */
 	public readonly continueDialogAction: string		= `continue`;
 
 	/** @see StringsService */
@@ -220,6 +223,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly endTime: string						= `End Time`;
+
+	/** @see StringsService */
+	public readonly feedback: string					= `Leave Feedback`;
 
 	/** @see StringsService */
 	public readonly fileCall: string					= `file transfer`;

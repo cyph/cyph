@@ -51,6 +51,10 @@
 		*ngIf='menuExpanded | async'
 	></div>
 
+	<div class='context-menu' *ngIf='menuExpanded | async'>
+		<ng-content></ng-content>
+	</div>
+
 	<mat-nav-list class='home-list'>
 		<a
 			mat-list-item

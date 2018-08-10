@@ -4,11 +4,13 @@ import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {User} from '../account';
 import {BaseProvider} from '../base-provider';
+import {ContactComponent} from '../components/contact';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {ConfigService} from './config.service';
+import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
 
@@ -147,6 +149,16 @@ export class AccountService extends BaseProvider {
 		return this.routeChanges.value;
 	}
 
+	/** Contact form dialog. */
+	public async contactFormDialog (to?: string) : Promise<void> {
+		await this.dialogService.baseDialog(ContactComponent, o => {
+			if (to) {
+				o.hideToDropdown	= true;
+				o.to				= to;
+			}
+		});
+	}
+
 	/** Current route path. */
 	public get routePath () : string[] {
 		const route	= (
@@ -205,6 +217,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

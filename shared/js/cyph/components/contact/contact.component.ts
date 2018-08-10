@@ -34,8 +34,14 @@ export class ContactComponent extends BaseProvider implements OnInit {
 	/** Indicates whether data collection is consented to under the GDPR. */
 	public readonly gdprConsent				= new BehaviorSubject<boolean>(false);
 
+	/** Hide to dropdown. */
+	@Input() public hideToDropdown: boolean	= false;
+
 	/** Email body. */
 	@Input() public message: string			= '';
+
+	/** Indicates whether response request is required. */
+	public readonly responseRequired		= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether response is requested. */
 	public readonly responseRequested		= new BehaviorSubject<boolean>(false);
@@ -55,6 +61,7 @@ export class ContactComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.feedbackForm.next(this.to === 'feedback');
+		this.responseRequired.next(this.to === 'help');
 	}
 
 	/** Sends email. */

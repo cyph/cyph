@@ -48,6 +48,13 @@ cyph-logo {
 	height: 150px;
 }
 
+.context-menu {
+	position: absolute;
+	top: 8px;
+	right: 4px;
+	z-index: 10;
+}
+
 .menu {
 	width: calc(100% + 4px) !important;
 	max-width: calc(100% + 4px) !important;
