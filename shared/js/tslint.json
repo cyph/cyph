@@ -281,6 +281,7 @@
 		"no-unused-css": false,
 		"pipe-impure": true,
 		"pipe-naming": false,
+		"pipe-prefix": true,
 		"prefer-inline-decorator": false,
 		"prefer-output-readonly": true,
 		"template-conditional-complexity": false,
