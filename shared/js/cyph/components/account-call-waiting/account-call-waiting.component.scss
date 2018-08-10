@@ -1,15 +1,11 @@
 @import '../../../../css/mixins';
 
 cyph-logo {
-	margin-left: auto;
-	margin-right: auto;
-	height: 80%;
+	height: 5em;
 	opacity: 0.75;
 }
 
 .content {
-	height: 100%;
-
 	> :last-child {
 		margin-bottom: auto;
 	}

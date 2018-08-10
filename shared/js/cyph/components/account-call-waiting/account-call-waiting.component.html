@@ -13,16 +13,20 @@
 <mat-card
 	fxFlexFill
 	fxLayout='column'
-	fxLayoutAlign='start center'
-	class='white-card animated fadeIn'
+	[fxLayoutAlign]='telehealthAppointment ? "stretch" : "center center"'
+	class='animated fadeIn'
 	ngClass.lt-md='compact'
 	[fxHide]='sessionService.freezePong | async'
 >
-	<div fxFlexFill fxLayout='column' fxLayoutAlign='stretch' class='content'>
-		<cyph-logo fxFlex='5em'></cyph-logo>
+	<mat-card-content fxLayout='column' class='content'>
+		<cyph-logo></cyph-logo>
 
 		<ng-container *ngIf='participantsByType | async as participants'>
-			<h2 cyphTranslate *ngIf='!envService.isTelehealth'>Waiting to Start Call</h2>
+			<h2 cyphTranslate fxLayout='row' *ngIf='!telehealthAppointment'>
+				Waiting to Start Call
+			</h2>
+
+			<br />
 
 			<div fxLayout='row'>
 				<button
@@ -30,17 +34,15 @@
 					cyphTranslate
 					color='primary'
 					(click)='p2pService.closeButton()'
-					fxFlex='33'
+					fxFlex='3em'
 				>
 					Cancel
 				</button>
 			</div>
 
-			<div fxFlex [style.width]='"100%"' *ngIf='
-				envService.isTelehealth &&
-				appointment?.calendarInvite.title &&
-				appointment?.calendarInvite.callType
-			'>
+			<div fxFlex [style.width]='"100%"' *ngIf='telehealthAppointment'>
+				<br />
+
 				<ng-container *ngIf='
 					(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor;
 					else standardView
@@ -222,16 +224,14 @@
 					(chat.initProgress | async) === 0; else loading
 				'>
 					<h2 *ngIf='
-						envService.isTelehealth && (
-							(currentUser?.user.userType | async) === accountUserTypes.Standard
-						);
+						(currentUser?.user.userType | async) === accountUserTypes.Standard;
 						else doctorMessage
 					'>
 						{{stringsService.waitingRoomCheckedInPatient}}
 					</h2>
 					<ng-template #doctorMessage>
 						<h2 *ngIf='
-							envService.isTelehealth && (
+							(
 								(currentUser?.user.userType | async) ===
 								accountUserTypes.TelehealthDoctor
 							);
@@ -254,7 +254,7 @@
 				</ng-template>
 			</ng-template>
 		</ng-container>
-	</div>
+	</mat-card-content>
 </mat-card>
 
 

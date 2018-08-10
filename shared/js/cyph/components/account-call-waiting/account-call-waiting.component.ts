@@ -131,6 +131,16 @@ implements AfterViewInit, OnChanges {
 		}
 	}
 
+	/** Telehealth appointment UI. */
+	public get telehealthAppointment () : boolean {
+		return !!(
+			this.envService.isTelehealth &&
+			this.appointment &&
+			this.appointment.calendarInvite.callType &&
+			this.appointment.calendarInvite.title
+		);
+	}
+
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
