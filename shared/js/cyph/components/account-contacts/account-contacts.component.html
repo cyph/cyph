@@ -8,6 +8,8 @@
 	'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
+		<br *ngIf='envService.isMobile' />
+
 		<cyph-account-contacts-search
 			#accountContactsSearch
 			[class.searchMode]='searchMode'

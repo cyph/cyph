@@ -8,15 +8,19 @@
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
-		<div fxLayoutAlign='center' *ngIf='envService.isMobile'>
-			<cyph-account-storage-analytics
-				fxFlex
-				fxFlex.lt-md='75'
-				fxFlex.md='50'
-				fxFlex.gt-md='33'
-				class='mobile'
-			></cyph-account-storage-analytics>
-		</div>
+		<ng-container *ngIf='envService.isMobile'>
+			<div></div>
+
+			<div fxLayoutAlign='center'>
+				<cyph-account-storage-analytics
+					fxFlex
+					fxFlex.lt-md='75'
+					fxFlex.md='50'
+					fxFlex.gt-md='33'
+					class='mobile'
+				></cyph-account-storage-analytics>
+			</div>
+		</ng-container>
 
 		<mat-card
 			class='file animated incoming'
