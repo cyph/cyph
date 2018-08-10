@@ -47,7 +47,6 @@
 				class='header slideInDown'
 				[class.animated]='!envService.isMobile'
 				[class.fadeOutUp]='accountService.transition | async'
-				[class.mobile]='envService.isMobile'
 				fxLayoutAlign='center center'
 				fxLayoutGap='8px'
 				*ngIf='(accountService.header | async) !== undefined'
@@ -94,7 +93,6 @@
 								<img
 									cyphTranslate
 									class='avatar'
-									[class.mobile]='envService.isMobile'
 									[ngClass]='userPresence[(header.status | async) || 0]'
 									alt='Profile Picture'
 									[src]='header.avatar | async'
@@ -143,7 +141,6 @@
 				[class.fadeOutUp]='accountService.transition | async'
 				[class.full-height]='fullHeight | async'
 				[class.padding]='(fullWidth | async) === false'
-				[class.mobile]='envService.isMobile'
 				ngClass.lt-md='small'
 				ngClass.md='medium'
 				ngClass.gt-md='large'

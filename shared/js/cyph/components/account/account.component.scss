@@ -99,10 +99,6 @@ $mobileAppBarHeight: 56px;
 				}
 			}
 		}
-
-		&.mobile {
-			margin-top: $mobileAppBarHeight;
-		}
 	}
 
 	.cyph-gradient {
@@ -279,13 +275,19 @@ $mobileAppBarHeight: 56px;
 	}
 
 	.header {
+		position: fixed;
+		width: 100%;
 		height: $mobileAppBarHeight;
 		min-height: $mobileAppBarHeight;
 		font-size: 12px;
 		box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
 
-		+ .content-wrapper.full-height {
-			height: calc(100% - #{$mobileAppBarHeight});
+		+ .content-wrapper {
+			margin-top: $mobileAppBarHeight;
+
+			&.full-height {
+				height: calc(100% - #{$mobileAppBarHeight});
+			}
 		}
 
 		h1 {
@@ -308,6 +310,12 @@ $mobileAppBarHeight: 56px;
 		mat-icon {
 			@include icon-size(24px);
 		}
+
+		.avatar {
+			width: 28px;
+			height: 28px;
+			border-width: 3px;
+		}
 	}
 }
 
@@ -328,12 +336,6 @@ $mobileAppBarHeight: 56px;
 	.avatar {
 		width: 3.5em;
 		height: 3.5em;
-
-		&.mobile {
-			width: 28px;
-			height: 28px;
-			border-width: 3px;
-		}
 	}
 
 	h1 {
@@ -345,11 +347,6 @@ $mobileAppBarHeight: 56px;
 		font-size: 28px;
 
 		@include transform(translateY(-2px));
-	}
-
-	&.mobile {
-		position: fixed;
-		width: 100%;
 	}
 }
 
