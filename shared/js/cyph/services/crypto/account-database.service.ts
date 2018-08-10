@@ -521,7 +521,7 @@ export class AccountDatabaseService extends BaseProvider {
 		const lockItem			= (key: string) => getOrSetDefault(
 			itemLocks,
 			key,
-			() => this.lockFunction(`${url}/${key}`)
+			() => this.lockFunction((async () => `${await url}/${key}`)())
 		);
 
 		const baseAsyncMap		= (async () => {
@@ -541,12 +541,12 @@ export class AccountDatabaseService extends BaseProvider {
 			itemCache,
 			key,
 			async () => this.localStorageService.getOrSetDefault(
-				`${method}/${url}/${key}`,
+				`${method}/${await url}/${key}`,
 				proto,
 				async () => (
 					await (
 						await this.getItemInternal(
-							`${url}/${key}`,
+							`${await url}/${key}`,
 							proto,
 							securityModel,
 							customKey,
@@ -577,8 +577,8 @@ export class AccountDatabaseService extends BaseProvider {
 			}
 
 			await Promise.all([
-				this.removeItem(`${url}/${key}`),
-				this.localStorageService.removeItem(`${method}/${url}/${key}`)
+				this.removeItem(`${await url}/${key}`),
+				this.localStorageService.removeItem(`${method}/${await url}/${key}`)
 			]);
 		};
 
@@ -589,14 +589,14 @@ export class AccountDatabaseService extends BaseProvider {
 
 			await Promise.all([
 				this.setItemInternal(
-					`${url}/${key}`,
+					`${await url}/${key}`,
 					proto,
 					value,
 					securityModel,
 					customKey,
 					noBlobStorage
 				),
-				this.localStorageService.setItem(`${method}/${url}/${key}`, proto, value)
+				this.localStorageService.setItem(`${method}/${await url}/${key}`, proto, value)
 			]);
 		};
 
@@ -785,7 +785,7 @@ export class AccountDatabaseService extends BaseProvider {
 		const [keys, head]	= await Promise.all([
 			this.getListKeys(url),
 			!immutable ? Promise.resolve(undefined) : this.getItemInternal(
-				`${url}-head`,
+				`${await url}-head`,
 				StringProto,
 				securityModel,
 				customKey,
@@ -1027,7 +1027,7 @@ export class AccountDatabaseService extends BaseProvider {
 			async (key, previousKey, o) => {
 				if (immutable) {
 					o.callback	= async () => this.setItem(
-						`${url}-head`,
+						`${await url}-head`,
 						StringProto,
 						key,
 						securityModel,
@@ -1039,7 +1039,7 @@ export class AccountDatabaseService extends BaseProvider {
 				}
 
 				return this.seal(
-					`${url}/${key}`,
+					`${await url}/${key}`,
 					proto,
 					value,
 					securityModel,
@@ -1120,7 +1120,7 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Subscription {
 		return this.watchListKeyPushes(url, subscriptions).subscribe(async ({key}) => {
 			try {
-				const fullURL	= `${url}/${key}`;
+				const fullURL	= `${await url}/${key}`;
 				await f(await this.getItem(fullURL, proto, securityModel, customKey, anonymous));
 				await this.removeItem(fullURL);
 			}
@@ -1257,7 +1257,7 @@ export class AccountDatabaseService extends BaseProvider {
 
 		const keysWatcher	= () => this.watchListKeys(url, subscriptions);
 		const headWatcher	= () => this.watch(
-			`${url}-head`,
+			(async () => `${await url}-head`)(),
 			StringProto,
 			securityModel,
 			customKey,
