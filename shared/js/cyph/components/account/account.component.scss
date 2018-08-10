@@ -292,6 +292,10 @@ $mobileAppBarHeight: 56px;
 
 		h1 {
 			pointer-events: none;
+			white-space: nowrap;
+			max-width: calc(100vw - 160px);
+			overflow: hidden;
+			text-overflow: ellipsis;
 
 			&:not(.logo-text) {
 				font-weight: normal;
@@ -315,6 +319,10 @@ $mobileAppBarHeight: 56px;
 			width: 28px;
 			height: 28px;
 			border-width: 3px;
+
+			+ h1 {
+				max-width: calc(100vw - 210px);
+			}
 		}
 	}
 }
