@@ -38,7 +38,7 @@
 
 <div *ngIf='!envService.isTelehealth'>
 	<div
-		class='overlay fullscreen'
+		class='overlay clickable'
 		(click)='isSpeedDialOpen.next(false)'
 		*ngIf='envService.isMobile && (isSpeedDialOpen | async)'
 	></div>

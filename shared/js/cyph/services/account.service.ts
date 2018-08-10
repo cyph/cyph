@@ -233,11 +233,12 @@ export class AccountService extends BaseProvider {
 			let navigationDepth	= -3;
 
 			(<any> self).onbackbutton	= () => {
-				const menuOpen	= this.mobileMenuOpenInternal.value;
+				const clickableOverlay	= document.querySelector(
+					'.overlay.clickable, .mat-drawer-backdrop.mat-drawer-shown'
+				);
 
-				this.mobileMenuOpenInternal.next(false);
-
-				if (menuOpen) {
+				if (clickableOverlay instanceof HTMLElement) {
+					clickableOverlay.click();
 					return;
 				}
 
