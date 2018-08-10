@@ -454,7 +454,10 @@ export class PairwiseSession {
 								await this.transport.process(this.remoteUser.username, update);
 								await this.ratchetState.setValue(update.ratchetState);
 
-								if (!update.cyphertext) {
+								if (
+									!update.cyphertext ||
+									this.potassium.isEmpty(update.cyphertext)
+								) {
 									return;
 								}
 
