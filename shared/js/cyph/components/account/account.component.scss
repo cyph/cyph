@@ -288,6 +288,14 @@ $mobileAppBarHeight: 56px;
 			height: calc(100% - #{$mobileAppBarHeight});
 		}
 
+		h1 {
+			pointer-events: none;
+
+			&:not(.logo-text) {
+				font-weight: normal;
+			}
+		}
+
 		button.logo-icon {
 			@include transform(translateX(1px));
 		}
