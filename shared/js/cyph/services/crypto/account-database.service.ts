@@ -813,8 +813,11 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** @see DatabaseService.getListKeys */
-	public async getListKeys (url: MaybePromise<string>) : Promise<string[]> {
-		return this.databaseService.getListKeys(await this.normalizeURL(url));
+	public async getListKeys (
+		url: MaybePromise<string>,
+		noFilter: boolean = false
+	) : Promise<string[]> {
+		return this.databaseService.getListKeys(await this.normalizeURL(url), noFilter);
 	}
 
 	/** Gets a value and sets a default value if none had previously been set. */
@@ -1345,14 +1348,16 @@ export class AccountDatabaseService extends BaseProvider {
 	/** @see DatabaseService.watchListKeys */
 	public watchListKeys (
 		url: MaybePromise<string>,
-		subscriptions?: Subscription[]
+		subscriptions?: Subscription[],
+		noFilter: boolean = false
 	) : Observable<string[]> {
 		return cacheObservable(
 			this.currentUser.pipe(
 				mergeMap(async () =>
 					this.databaseService.watchListKeys(
 						await this.normalizeURL(url),
-						subscriptions
+						subscriptions,
+						noFilter
 					)
 				),
 				mergeMap(

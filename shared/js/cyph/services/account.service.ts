@@ -1,13 +1,15 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, mergeMap} from 'rxjs/operators';
 import {User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
 import {ConfigService} from './config.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
 
@@ -39,6 +41,11 @@ export class AccountService extends BaseProvider {
 	private readonly transitionInternal: BehaviorSubject<boolean>		=
 		new BehaviorSubject(false)
 	;
+
+	/** @ignore */
+	private readonly watchNestedMessageCountKeys						= memoize((key: string) =>
+		this.accountDatabaseService.watchListKeys(`unreadMessages/${key}`, this.subscriptions)
+	);
 
 	/** Header title for current section. */
 	public readonly header: Observable<string|User|undefined>;
@@ -131,6 +138,16 @@ export class AccountService extends BaseProvider {
 	/** Resolves after UI is ready. */
 	public readonly uiReady: Promise<void>				= this._UI_READY.promise;
 
+	/** Total count of unread messages. */
+	public readonly unreadMessages: Observable<number>	= toBehaviorSubject(
+		this.accountDatabaseService.watchListKeys('unreadMessages', this.subscriptions, true).pipe(
+			mergeMap(keys => combineLatest(keys.map(this.watchNestedMessageCountKeys))),
+			map(nestedKeys => nestedKeys.reduce((n, arr) => n + arr.length, 0))
+		),
+		0,
+		this.subscriptions
+	);
+
 	/** @ignore */
 	private get currentRoute () : string {
 		return this.routeChanges.value;
@@ -188,6 +205,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,

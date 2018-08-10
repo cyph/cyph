@@ -234,7 +234,14 @@
 				[routerLink]='accountService.routeRoot'
 				(click)='click()'
 			>
-				<mat-icon mat-list-icon>message</mat-icon>
+				<mat-icon
+					mat-list-icon
+					[matBadge]='((accountService.unreadMessages | async) || 0).toString()'
+					[matBadgeHidden]='!(((accountService.unreadMessages | async) || 0) > 0)'
+					matBadgePosition='above after'
+				>
+					message
+				</mat-icon>
 				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
 					Messages
 				</h3>

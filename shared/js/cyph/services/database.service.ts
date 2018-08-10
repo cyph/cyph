@@ -359,7 +359,10 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Gets the keys of a list. */
-	public async getListKeys (_URL: MaybePromise<string>) : Promise<string[]> {
+	public async getListKeys (
+		_URL: MaybePromise<string>,
+		_NO_FILTER?: boolean
+	) : Promise<string[]> {
 		throw new Error('Must provide an implementation of DatabaseService.getListKeys.');
 	}
 
@@ -599,7 +602,8 @@ export class DatabaseService extends DataManagerService {
 	/** Subscribes to the keys of a list. */
 	public watchListKeys (
 		_URL: MaybePromise<string>,
-		_SUBSCRIPTIONS?: Subscription[]
+		_SUBSCRIPTIONS?: Subscription[],
+		_NO_FILTER?: boolean
 	) : Observable<string[]> {
 		throw new Error('Must provide an implementation of DatabaseService.watchListKeys.');
 	}

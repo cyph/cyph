@@ -160,7 +160,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
-	private getListKeysInternal (value: Map<string, any>|{[k: string]: any}) : string[] {
+	private getListKeysInternal (
+		value: Map<string, any>|{[k: string]: any},
+		noFilter: boolean = false
+	) : string[] {
 		if (!value) {
 			return [];
 		}
@@ -171,7 +174,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			).sort()
 		;
 
-		const endIndex	= keys.findIndex(
+		const endIndex	= noFilter ? -1 : keys.findIndex(
 			value instanceof Map ?
 				k => typeof value.get(k).hash !== 'string' :
 				k => typeof value[k].hash !== 'string'
@@ -387,13 +390,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async getListKeys (urlPromise: MaybePromise<string>) : Promise<string[]> {
+	public async getListKeys (
+		urlPromise: MaybePromise<string>,
+		noFilter: boolean = false
+	) : Promise<string[]> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url	= await urlPromise;
 
 			try {
 				return this.getListKeysInternal(
-					(await (await this.getDatabaseRef(url)).once('value')).val()
+					(await (await this.getDatabaseRef(url)).once('value')).val(),
+					noFilter
 				);
 			}
 			catch {
@@ -1416,7 +1423,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public watchListKeys (
 		urlPromise: MaybePromise<string>,
-		subscriptions?: Subscription[]
+		subscriptions?: Subscription[],
+		noFilter: boolean = false
 	) : Observable<string[]> {
 		return getOrSetDefaultObservable(
 			this.observableCaches.watchListKeys,
@@ -1440,12 +1448,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 						}
 
 						const val: any	= snapshot.val() || {};
-						const newKeys	= this.getListKeysInternal(val);
+						const newKeys	= this.getListKeysInternal(val, noFilter);
 
-						for (let i = newKeys.length - 1 ; i >= 0 ; --i) {
-							const o	= val[newKeys[i]];
-							if (!o || typeof o.hash !== 'string') {
-								return;
+						if (!noFilter) {
+							for (let i = newKeys.length - 1 ; i >= 0 ; --i) {
+								const o	= val[newKeys[i]];
+								if (!o || typeof o.hash !== 'string') {
+									return;
+								}
 							}
 						}
 
