@@ -377,6 +377,7 @@ $accountPaddingSmall: 2.5vw;
 	}
 
 	mat-card, mat-dialog-container {
+		@include mat-button-theme($theme);
 		@include mat-checkbox-theme($theme);
 		@include mat-chips-theme($theme);
 		@include mat-expansion-panel-theme($theme);
