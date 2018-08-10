@@ -21,19 +21,25 @@
 >
 	<div>
 		<div fxLayout='row' *ngIf='uiStyle === uiStyles.default; else emailUI'>
-			<div class='message'>
-				<strong
-					class='message-author'
-					*ngIf='!mobile && message?.authorType !== authorTypes.App'
-				>
-					{{message?.author | async}}:
-				</strong>
-				&ngsp;
-				<ng-container *ngTemplateOutlet='messageContent; context: {
-					value: value
-				}'></ng-container>
+			<div class='message' fxFlex>
+				<div fxLayout='row'>
+					<strong
+						class='message-author'
+						*ngIf='!mobile && message?.authorType !== authorTypes.App'
+					>
+						{{message?.author | async}}:
+					</strong>
+					&nbsp;
+					<ng-container *ngTemplateOutlet='messageContent; context: {
+						value: value
+					}'></ng-container>
+				</div>
 			</div>
-			<div fxFlex fxLayoutAlign='end center' class='message-timestamp'>
+			<div
+				[fxFlex]='!envService.isMobile ? "6em" : undefined'
+				fxLayoutAlign='end center'
+				class='message-timestamp'
+			>
 				<div fxLayout='row'>
 					<div *ngIf='mobile && message?.authorType === authorTypes.Local'>
 						{{message?.author | async}} &nbsp;&mdash;&nbsp;
@@ -145,7 +151,7 @@
 </ng-template>
 
 <ng-template #messageContent let-value='value'>
-	<span>
+	<span fxFlex>
 		<cyph-calendar-invite
 			[isDisabled]='true'
 			[mobile]='mobile'

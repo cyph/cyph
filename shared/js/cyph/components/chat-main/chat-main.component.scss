@@ -32,14 +32,12 @@
 		}
 	}
 
-	.chat-main .message-item.ui-style-default .message {
-		max-width: 85%;
-	}
-
 	.chat-main:not(.mobile):not(.video) .message-item.ui-style-default.author-app .message {
-		width: 85%;
+		@include transform(translateX(3em));
 
-		@include transform(translateX(9.25%));
+		p {
+			vertical-align: middle;
+		}
 	}
 
 	.chat-main:not(.mobile):not(.video) .message-item.ui-style-default,
