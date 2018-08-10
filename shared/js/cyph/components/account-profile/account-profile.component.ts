@@ -277,12 +277,13 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 	/** Sets edit mode. */
 	public setEditMode (editMode: boolean) : void {
-		if (!this.isCurrentUser.value) {
+		if (!this.isCurrentUser.value || !this.accountDatabaseService.currentUser.value) {
 			throw new Error("Cannot edit another user's profile.");
 		}
 
 		this.draft.next({});
 		this.router.navigate([accountRoot, 'profile', ...(editMode ? ['edit'] : [])]);
+		this.accountService.setHeader(this.accountDatabaseService.currentUser.value.user);
 	}
 
 	/** Shares medical data from EHR system with the patient. */
