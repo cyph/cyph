@@ -263,7 +263,11 @@
 	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='(isCurrentUser | async) === false'>
 		<div
 			class='file-upload'
-			fxFlex='25'
+			fxFlex='95'
+			fxFlex.sm='75'
+			fxFlex.md='66'
+			fxFlex.lg='50'
+			fxFlex.gt-lg='40'
 			fxLayoutAlign='center'
 			matTooltip='Share File'
 			matTooltipPosition='above'
