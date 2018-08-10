@@ -230,8 +230,6 @@ export class AccountService extends BaseProvider {
 		super();
 
 		if (this.envService.isCordova) {
-			let navigationDepth	= -3;
-
 			(<any> self).onbackbutton	= () => {
 				const clickableOverlay	= document.querySelector(
 					'.overlay.clickable, .mat-drawer-backdrop.mat-drawer-shown'
@@ -239,21 +237,11 @@ export class AccountService extends BaseProvider {
 
 				if (clickableOverlay instanceof HTMLElement) {
 					clickableOverlay.click();
-					return;
 				}
-
-				if (navigationDepth >= 1) {
-					navigationDepth -= 2;
+				else {
 					history.back();
 				}
-				else if (this.envService.isAndroid) {
-					(<any> self).plugins.appMinimize.minimize();
-				}
 			};
-
-			this.subscriptions.push(this.routeChanges.subscribe(() => {
-				++navigationDepth;
-			}));
 		}
 		else if (this.envService.isWeb) {
 			self.addEventListener('popstate', () => {

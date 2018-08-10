@@ -92,6 +92,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			this.accountDatabaseService.currentUser.value &&
 			this.accountDatabaseService.currentUser.value.user
 		) {
+			if (this.envService.isCordova && this.envService.isAndroid) {
+				(<any> self).plugins.appMinimize.minimize();
+			}
+
 			return this.postLogin();
 		}
 
