@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
-import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {User} from '../account';
@@ -8,8 +7,8 @@ import {BaseProvider} from '../base-provider';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
+import {AccountContactsService} from './account-contacts.service';
 import {ConfigService} from './config.service';
-import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
 import {WindowWatcherService} from './window-watcher.service';
 
@@ -41,11 +40,6 @@ export class AccountService extends BaseProvider {
 	private readonly transitionInternal: BehaviorSubject<boolean>		=
 		new BehaviorSubject(false)
 	;
-
-	/** @ignore */
-	private readonly watchNestedMessageCountKeys						= memoize((key: string) =>
-		this.accountDatabaseService.watchListKeys(`unreadMessages/${key}`, this.subscriptions)
-	);
 
 	/** Header title for current section. */
 	public readonly header: Observable<string|User|undefined>;
@@ -140,9 +134,9 @@ export class AccountService extends BaseProvider {
 
 	/** Total count of unread messages. */
 	public readonly unreadMessages: Observable<number>	= toBehaviorSubject(
-		this.accountDatabaseService.watchListKeys('unreadMessages', this.subscriptions, true).pipe(
-			mergeMap(keys => combineLatest(keys.map(this.watchNestedMessageCountKeys))),
-			map(nestedKeys => nestedKeys.reduce((n, arr) => n + arr.length, 0))
+		this.accountContactsService.contactList.pipe(
+			mergeMap(users => combineLatest(users.map(user => user.unreadMessageCount))),
+			map(unreadCounts => unreadCounts.reduce((a, b) => a + b, 0))
 		),
 		0,
 		this.subscriptions
@@ -207,7 +201,7 @@ export class AccountService extends BaseProvider {
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService,
+		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,
