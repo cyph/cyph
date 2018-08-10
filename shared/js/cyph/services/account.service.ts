@@ -229,21 +229,7 @@ export class AccountService extends BaseProvider {
 	) {
 		super();
 
-		if (this.envService.isCordova) {
-			(<any> self).onbackbutton	= () => {
-				const clickableOverlay	= document.querySelector(
-					'.overlay.clickable, .mat-drawer-backdrop.mat-drawer-shown'
-				);
-
-				if (clickableOverlay instanceof HTMLElement) {
-					clickableOverlay.click();
-				}
-				else {
-					history.back();
-				}
-			};
-		}
-		else if (this.envService.isWeb) {
+		if (this.envService.isWeb && !this.envService.isCordova) {
 			self.addEventListener('popstate', () => {
 				this.mobileMenuOpenInternal.next(false);
 			});

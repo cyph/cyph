@@ -24,6 +24,23 @@ if (!(env.isMacOS && env.isChrome && env.chromeVersion >= 65)) {
 	$(document.body).addClass('enable-drop-shadow');
 }
 
+/* Cordova back button support */
+
+if (env.isCordova) {
+	(<any> self).onbackbutton	= () => {
+		const clickableOverlay	= document.querySelector(
+			'.overlay.clickable, .mat-drawer-backdrop.mat-drawer-shown'
+		);
+
+		if (clickableOverlay instanceof HTMLElement) {
+			clickableOverlay.click();
+		}
+		else {
+			history.back();
+		}
+	};
+}
+
 /* Handle beforeunload */
 
 window.addEventListener('beforeunload', e => {
