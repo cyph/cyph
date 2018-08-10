@@ -30,6 +30,7 @@ $accountPaddingSmall: 2.5vw;
 	min-height: $size;
 	width: $size;
 	min-width: $size;
+	line-height: $size;
 }
 
 @mixin shadow {

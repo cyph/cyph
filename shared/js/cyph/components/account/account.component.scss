@@ -1,5 +1,7 @@
 @import '../../../../css/theme';
 
+$mobileAppBarHeight: 56px;
+
 :host ::ng-deep {
 	/* Staggered animation support. Usage: add any class from ._1 -> ._10 */
 
@@ -99,7 +101,7 @@
 		}
 
 		&.mobile {
-			margin-top: 50px;
+			margin-top: $mobileAppBarHeight;
 		}
 	}
 
@@ -198,7 +200,6 @@
 
 	.header {
 		position: relative;
-		text-align: center;
 	}
 
 	.header, .sidebar {
@@ -244,6 +245,7 @@
 		height: 100px;
 		min-height: 100px;
 		margin-bottom: 2px;
+		text-align: center;
 
 		&:after {
 			height: 20px;
@@ -268,7 +270,7 @@
 		}
 
 		.card-list {
-			min-height: calc(100vh - 50px - 2em - 32px) !important;
+			min-height: calc(100vh - #{$mobileAppBarHeight} - 2em - 32px) !important;
 		}
 	}
 
@@ -277,19 +279,19 @@
 	}
 
 	.header {
-		height: 50px;
-		min-height: 50px;
+		height: $mobileAppBarHeight;
+		min-height: $mobileAppBarHeight;
 		font-size: 12px;
 		box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
 
 		+ .content-wrapper.full-height {
-			height: calc(100% - 50px);
+			height: calc(100% - #{$mobileAppBarHeight});
+		}
+
+		cyph-logo, mat-icon {
+			@include icon-size(24px);
 		}
 	}
-}
-
-button.logo-icon {
-	border-radius: unset !important;
 }
 
 .header {
@@ -311,17 +313,21 @@ button.logo-icon {
 		height: 3.5em;
 
 		&.mobile {
-			width: 2.5em;
-			height: 2.5em;
-			border-width: 3.5px;
+			width: 28px;
+			height: 28px;
+			border-width: 3px;
 		}
+	}
+
+	h1 {
+		font-size: 24px;
 	}
 
 	h1.logo-text {
 		font-family: Ubuntu;
-		font-size: 2.5em;
+		font-size: 28px;
 
-		@include transform(translateY(-3px));
+		@include transform(translateY(-2px));
 	}
 
 	&.mobile {

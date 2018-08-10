@@ -49,10 +49,11 @@
 				[class.fadeOutUp]='accountService.transition | async'
 				[class.mobile]='envService.isMobile'
 				fxLayoutAlign='center center'
-				fxLayoutGap='24px'
+				fxLayoutGap='8px'
 				*ngIf='(accountService.header | async) !== undefined'
 			>
-				<span></span>
+				<div></div>
+
 				<button
 					mat-icon-button
 					cyphTranslate
@@ -64,6 +65,10 @@
 				>
 					<cyph-logo icon></cyph-logo>
 				</button>
+
+				<div></div>
+				<div></div>
+				<div></div>
 
 				<div fxFlex fxLayout='row'>
 					<ng-container *ngIf='
@@ -83,8 +88,8 @@
 							<div
 								fxFlex
 								fxLayout='row'
-								fxLayoutAlign='center center'
-								fxLayoutGap='8px'
+								fxLayoutAlign='start center'
+								fxLayoutGap='16px'
 							>
 								<img
 									cyphTranslate
@@ -114,6 +119,10 @@
 					</ng-template>
 				</div>
 
+				<div></div>
+				<div></div>
+				<div></div>
+
 				<button
 					mat-icon-button
 					cyphTranslate
@@ -124,7 +133,8 @@
 				>
 					<mat-icon>search</mat-icon>
 				</button>
-				<span></span>
+
+				<div></div>
 			</div>
 
 			<div
