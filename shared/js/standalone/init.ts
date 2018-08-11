@@ -6,8 +6,10 @@
  */
 
 
+import {NavigationEnd, Router} from '@angular/router';
 import * as $ from 'jquery';
 import {env} from '../cyph/env';
+import {staticRouter} from '../cyph/util/static-services';
 import {triggerClick} from '../cyph/util/trigger-click';
 import {sleep} from '../cyph/util/wait';
 
@@ -31,7 +33,20 @@ if (!(env.isMacOS && env.isChrome && env.chromeVersion >= 65)) {
 /* Cordova back button support */
 
 if (env.isCordova) {
-	(<any> self).onbackbutton	= () => {
+	let router: Router|undefined;
+	const routingHistory: string[]	= [];
+
+	staticRouter.then(staticRouterValue => {
+		router	= staticRouterValue;
+
+		router.events.subscribe(e => {
+			if (e instanceof NavigationEnd) {
+				routingHistory.push(e.url);
+			}
+		});
+	});
+
+	(<any> self).onbackbutton	= async () => {
 		for (const selector of [
 			'.overlay.clickable',
 			'.cdk-overlay-connected-position-bounding-box',
@@ -49,8 +64,13 @@ if (env.isCordova) {
 		if (env.isAndroid && !(<any> self).androidBackbuttonReady) {
 			(<any> self).plugins.appMinimize.minimize();
 		}
-		else {
-			history.back();
+		else if (router) {
+			const lastRoute	= routingHistory[routingHistory.length - 2];
+
+			if (lastRoute) {
+				router.navigateByUrl(lastRoute);
+				routingHistory.pop();
+			}
 		}
 	};
 }

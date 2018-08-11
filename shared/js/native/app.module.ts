@@ -92,6 +92,13 @@ export class AppModule {
 		fileService: FileService
 	) {
 		router.resetConfig(appRoutes);
-		resolveStaticServices({dialogService, fileService, httpClient, ngZone});
+
+		resolveStaticServices({
+			dialogService,
+			fileService,
+			httpClient,
+			ngZone,
+			router
+		});
 	}
 }

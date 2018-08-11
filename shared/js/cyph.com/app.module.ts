@@ -16,7 +16,7 @@ import {HttpClient} from '@angular/common/http';
 import {NgModule, NgZone} from '@angular/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {DomSanitizer} from '@angular/platform-browser';
-import {RouterModule} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register';
 import {CheckoutComponent} from '../cyph/components/checkout';
 import {ClaimUsernameComponent} from '../cyph/components/claim-username';
@@ -93,9 +93,17 @@ export class AppModule {
 		domSanitizer: DomSanitizer,
 		httpClient: HttpClient,
 		ngZone: NgZone,
+		router: Router,
 		dialogService: DialogService,
 		fileService: FileService
 	) {
-		resolveStaticServices({dialogService, domSanitizer, fileService, httpClient, ngZone});
+		resolveStaticServices({
+			dialogService,
+			domSanitizer,
+			fileService,
+			httpClient,
+			ngZone,
+			router
+		});
 	}
 }

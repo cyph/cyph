@@ -87,6 +87,13 @@ export class AppModule {
 			testEnvironmentSetup(databaseService, localStorageService);
 		}
 
-		resolveStaticServices({dialogService, domSanitizer, fileService, httpClient, ngZone});
+		resolveStaticServices({
+			dialogService,
+			domSanitizer,
+			fileService,
+			httpClient,
+			ngZone,
+			router
+		});
 	}
 }
