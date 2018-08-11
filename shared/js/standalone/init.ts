@@ -33,7 +33,10 @@ if (!(env.isMacOS && env.isChrome && env.chromeVersion >= 65)) {
 if (env.isCordova) {
 	(<any> self).onbackbutton	= () => {
 		const clickableOverlay	= document.querySelector(
-			'.overlay.clickable, .mat-drawer-backdrop.mat-drawer-shown'
+			'.overlay.clickable,' +
+			'.mat-drawer-backdrop.mat-drawer-shown,' +
+			'.cdk-overlay-backdrop.cdk-overlay-backdrop-showing,' +
+			'.cdk-overlay-connected-position-bounding-box'
 		);
 
 		if (clickableOverlay instanceof HTMLElement) {
