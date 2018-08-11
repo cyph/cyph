@@ -162,9 +162,11 @@
 			</ng-container>
 
 			<ng-template #signup>
-				<a [routerLink]='accountService.routeRoot + "register"'>
-					{{stringsService.registerTitle}}.
-				</a>
+				<span cyphTranslate>Don't have your account yet?</span>
+				&ngsp;
+				<a
+					[routerLink]='accountService.routeRoot + "register"'
+				>{{stringsService.registerTitle}}</a>.
 			</ng-template>
 		</i>
 
