@@ -239,7 +239,12 @@ export class AccountAuthService extends BaseProvider {
 		if (!reload) {
 			return;
 		}
-		else if (this.envService.isWeb) {
+
+		if ((<any> self).androidBackbuttonReady) {
+			(<any> self).plugins.appMinimize.minimize();
+		}
+
+		if (this.envService.isWeb) {
 			location.reload();
 		}
 		else {
