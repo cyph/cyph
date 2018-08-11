@@ -60,6 +60,12 @@ body.cordova {
 			display: none !important;
 		}
 	}
+
+	#pre-load {
+		.double-bounce1, .double-bounce2 {
+			display: none !important;
+		}
+	}
 }
 
 body:not(.cordova) {
