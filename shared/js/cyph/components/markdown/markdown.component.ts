@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges} from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
+import {Router} from '@angular/router';
 import * as $ from 'jquery';
 import * as MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
@@ -37,6 +38,19 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 
 	/** If true, <a> tags with # links will be rendered with the attribute target='_self'. */
 	@Input() public targetSelf?: boolean;
+
+	/** Handle router link clicks. */
+	public click (event: MouseEvent) : void {
+		if (!(event.srcElement instanceof HTMLAnchorElement)) {
+			return;
+		}
+
+		const routerLink	= event.srcElement.getAttribute('router-link');
+
+		if (routerLink) {
+			this.router.navigate(routerLink.split('/'));
+		}
+	}
 
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
@@ -85,7 +99,7 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 		html	= this.htmlSanitizerService.sanitize(html);
 
 		if (this.targetSelf) {
-			html	= html.replace(/\<a href="#/g, '<a target="_self" href="#');
+			html	= html.replace(/\<a href="#/g, '<a router-link="');
 		}
 
 		this.html.next(this.domSanitizer.bypassSecurityTrustHtml(html));
@@ -97,6 +111,9 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 
 		/** @ignore */
 		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly htmlSanitizerService: HtmlSanitizerService,

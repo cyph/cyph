@@ -102,7 +102,7 @@ $accountPaddingSmall: 2.5vw;
 		border-color: $cyph-foreground;
 	}
 
-	cyph-chat-message a[href], cyph-quill > .disabled .ql-snow a {
+	cyph-chat-message a[href], cyph-chat-message a[router-link], cyph-quill > .disabled .ql-snow a {
 		color: $cyph-hyperlinks;
 	}
 
