@@ -251,7 +251,16 @@ export class AccountService extends BaseProvider {
 			if (
 				[
 					'register'
-				].indexOf(route) > -1
+				].indexOf(route) > -1 ||
+				(
+					[
+						'appointments',
+						'audio',
+						'video'
+					].indexOf(route) > -1 &&
+					routePath.length > 1 &&
+					routePath[1] !== 'end'
+				)
 			) {
 				return undefined;
 			}
