@@ -27,7 +27,8 @@ mat-card-title {
 }
 
 mat-card-header {
-	top: 14px;
 	position: absolute;
+	top: 14px;
 	right: 25px;
+	width: calc(100% - 34px);
 }
