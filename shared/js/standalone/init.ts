@@ -32,17 +32,21 @@ if (!(env.isMacOS && env.isChrome && env.chromeVersion >= 65)) {
 
 if (env.isCordova) {
 	(<any> self).onbackbutton	= () => {
-		const clickableOverlay	= document.querySelector(
-			'.overlay.clickable,' +
-			'.mat-drawer-backdrop.mat-drawer-shown,' +
-			'.cdk-overlay-backdrop.cdk-overlay-backdrop-showing,' +
-			'.cdk-overlay-connected-position-bounding-box'
-		);
+		for (const selector of [
+			'.overlay.clickable',
+			'.cdk-overlay-connected-position-bounding-box',
+			'.mat-drawer-backdrop.mat-drawer-shown',
+			'.cdk-overlay-backdrop.cdk-overlay-backdrop-showing'
+		]) {
+			const clickableOverlay	= document.querySelector(selector);
 
-		if (clickableOverlay instanceof HTMLElement) {
-			clickableOverlay.click();
+			if (clickableOverlay instanceof HTMLElement) {
+				clickableOverlay.click();
+				return;
+			}
 		}
-		else if (env.isAndroid && !(<any> self).androidBackbuttonReady) {
+
+		if (env.isAndroid && !(<any> self).androidBackbuttonReady) {
 			(<any> self).plugins.appMinimize.minimize();
 		}
 		else {
