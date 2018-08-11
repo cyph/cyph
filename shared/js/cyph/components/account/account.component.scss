@@ -347,12 +347,12 @@ $mobileAppBarHeight: 56px;
 	}
 
 	h1 {
-		font-size: 24px;
+		font-size: 20px;
 	}
 
 	h1.logo-text {
 		font-family: Ubuntu;
-		font-size: 28px;
+		font-size: 24px;
 
 		@include transform(translateY(-2px));
 	}
