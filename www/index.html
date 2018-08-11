@@ -17,19 +17,16 @@
 	height: calc(100% + 2px);
 	z-index: 999;
 }
-#websign-load > div.animation {
-	height: 100%;
-	width: 100%;
-	position: absolute;
-	top: 0px;
-	left: 0px;
-}
-#websign-load > div.animation > * {
-	height: 60px;
-	width: 60px;
-	position: absolute;
-	top: calc(50% - 30px);
-	left: calc(50% - 30px);
+#websign-load > div.logo-animation {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWoAAAFqBAMAAADB9g3QAAAAJ1BMVEUAAAD///////////////////////////////////////////////+uPUo5AAAADXRSTlMAAkAwIP+/gM/v32CftT5rzwAAAf1JREFUeAHs3bVZREEAgMHFXRs4LwBtgRg5y3EiPEY7oF9C7N23j3OZv4IJ1zc0SpIkSZIkSdJ6PkWrIbHNfLxCSGwyn6JcaFSpnKJsSOykHK8SEpspp+iAmpqampqampqampqampp61NXU1NTU76eJfZTj1U8Tu2xd3a9Rx6Ompqampqampqampqampqampqampqampqampqampqampqampqampqampt577N/ugiRJkiRJaevm1Dd8a/wx2k2I1J1lhn9ejK5SU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU7cQNTU1NTU1NTU1NfXuadsL31o4jXYVJEmSJElqb+v5aKvhW5v5dlfszMpCNv65cStVB1tNTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1N3W/nr0vJzuf4+ete9tnufBQ5EARBFM11MreGMmRkq8g0hiHSEAqarnI3mdWPyIfg/d1N75suMNZdwPW+EdddwPW+EdddwPW+EdddwPW+EdddwPW2Edcl4DpFXBdxnSKui7hOEddFXKeI6yKuU8R1Edcp4rqI6xRxPYjrEHE9iOsQcT2I6xBxPYjrEHE9iOsQcT2I6xBxPYjrEHB9mIjrWcD1YSKuZwGtJwH9yszMzMzMzMzMzJ7mBCP+pIiKfB6TAAAAAElFTkSuQmCC);
+	background-size: cover;
+	height: 33vh;
+	width: 33vh;
+	min-height: 33vh;
+	min-width: 33vh;
+	margin-top: 33vh;
+	margin-left: auto;
+	margin-right: auto;
 }
 #websign-load > div.message {
 	position: absolute;
@@ -96,44 +93,6 @@
 }
 
 
-.double-bounce1, .double-bounce2 {
-	border-radius: 50%;
-	background-color: #fff;
-	opacity: 0.6;
-	-webkit-animation: preloadbounce 2s infinite ease-in-out;
-	-moz-animation: preloadbounce 2s infinite ease-in-out;
-	animation: preloadbounce 2s infinite ease-in-out;
-}
-.double-bounce2 {
-	-webkit-animation-delay: -1s;
-	-moz-animation-delay: -1s;
-	animation-delay: -1s;
-}
-@-webkit-keyframes preloadbounce {
-	0%, 100% {
-		-webkit-transform: scale(0);
-	}
-	50% {
-		-webkit-transform: scale(1);
-	}
-}
-@keyframes preloadbounce {
-	0%, 100% {
-		-webkit-transform: scale(0);
-		-moz-transform: scale(0);
-		-ms-transform: scale(0);
-		-o-transform: scale(0);
-		transform: scale(0);
-	}
-	50% {
-		-webkit-transform: scale(1);
-		-moz-transform: scale(1);
-		-ms-transform: scale(1);
-		-o-transform: scale(1);
-		transform: scale(1);
-	}
-}
-
 @-webkit-keyframes breathe {
 	0%, 100% {
 		-webkit-filter: brightness(.9);
@@ -154,12 +113,9 @@
 }</style>
 				
 	</head>
-	<body>
+	<body class="cordova">
 		<div id="websign-load">
-			<div class="animation">
-				<div class="double-bounce1"></div>
-				<div class="double-bounce2"></div>
-			</div>
+			<div class="logo-animation"></div>
 
 			<div id="websign-load-message" class="message"></div>
 

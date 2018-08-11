@@ -56,7 +56,7 @@
 	<preference name="KeyboardDisplayRequiresUserAction" value="false" />
 	<preference name="ShowSplashScreenSpinner" value="false" />
 	<preference name="SplashScreenBackgroundColor" value="#8b62d9" />
-	<preference name="SplashScreenDelay" value="4000" />
+	<preference name="SplashScreenDelay" value="1000" />
 	<preference name="SplashShowOnlyFirstTime" value="false" />
 	<preference name="StatusBarBackgroundColor" value="#673ab7" />
 	<preference name="StatusBarOverlaysWebView" value="false" />
