@@ -49,7 +49,7 @@ if (env.isCordova) {
 	(<any> self).onbackbutton	= async () => {
 		for (const selector of [
 			'.overlay.clickable',
-			'.cdk-overlay-connected-position-bounding-box',
+			'.cdk-overlay-pane.mat-tooltip-panel',
 			'.mat-drawer-backdrop.mat-drawer-shown',
 			'.cdk-overlay-backdrop.cdk-overlay-backdrop-showing'
 		]) {
