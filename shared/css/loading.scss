@@ -52,6 +52,22 @@ body {
 	}
 }
 
+body.cordova {
+	.loading > .logo-animation {
+		background-size: cover;
+
+		> * {
+			display: none !important;
+		}
+	}
+}
+
+body:not(.cordova) {
+	.loading > .logo-animation {
+		background-image: none !important;
+	}
+}
+
 .loading {
 	font-size: 1.43rem;
 
@@ -81,11 +97,14 @@ body {
 	> .logo-animation {
 		@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
 
+		&, > * {
+			background-image: url(/assets/img/logo.white.icon.png);
+		}
+
 		> * {
 			background-color: transparent;
 			background-repeat: no-repeat;
 			background-size: 33vh 33vh;
-			background-image: url(/assets/img/logo.white.icon.png);
 			opacity: 0;
 		}
 
