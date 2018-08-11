@@ -181,6 +181,7 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 			}
 			else {
 				await this.accountChatService.setUser(recipient.username, true);
+				await this.accountChatService.resolvers.currentMessageSynced.promise;
 				await this.accountChatService.send(
 					this.messageType.value,
 					undefined,
