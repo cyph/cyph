@@ -225,7 +225,7 @@ export class StringsService extends BaseProvider {
 	public readonly endTime: string						= `End Time`;
 
 	/** @see StringsService */
-	public readonly feedback: string					= `Leave Feedback`;
+	public readonly feedback: string					= `Send Feedback`;
 
 	/** @see StringsService */
 	public readonly fileCall: string					= `file transfer`;
