@@ -13,7 +13,8 @@
 				[name]='name'
 				type='tel'
 				placeholder='PIN'
-				[cyphAutofocus]='autofocus'
+				cyphAutofocus
+				[cyphAutofocusEnabled]='autofocus'
 				[required]='required'
 				[class.text-security]='hide | async'
 				pattern='\d\d\d\d'
