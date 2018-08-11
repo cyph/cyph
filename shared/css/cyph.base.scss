@@ -13,6 +13,11 @@ mat-dialog-container {
 	}
 }
 
+.mat-tooltip {
+	font-size: 12px;
+	font-weight: normal;
+}
+
 /* Workaround for mobile Chrome vh bug */
 .cdk-global-overlay-wrapper, .cdk-overlay-container {
 	height: 100%;
