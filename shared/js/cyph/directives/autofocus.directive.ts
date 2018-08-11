@@ -30,11 +30,11 @@ export class AutofocusDirective extends BaseProvider implements OnChanges {
 	);
 
 	/** Indicates whether directive should be active. */
-	@Input() public cyphAutofocus?: boolean;
+	@Input() public cyphAutofocus: boolean	= true;
 
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
-		if (!this.elementRef.nativeElement || this.cyphAutofocus === false) {
+		if (!this.elementRef.nativeElement || this.cyphAutofocus !== true) {
 			return;
 		}
 
