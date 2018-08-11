@@ -65,8 +65,8 @@ if (env.isCordova) {
 			(<any> self).plugins.appMinimize.minimize();
 		}
 		else if (router && routingHistory.length >= 2) {
-			router.navigateByUrl(routingHistory[routingHistory.length - 2]);
 			routingHistory.pop();
+			router.navigateByUrl(routingHistory.pop() || '');
 		}
 	};
 }
