@@ -64,13 +64,9 @@ if (env.isCordova) {
 		if (env.isAndroid && !(<any> self).androidBackbuttonReady) {
 			(<any> self).plugins.appMinimize.minimize();
 		}
-		else if (router) {
-			const lastRoute	= routingHistory[routingHistory.length - 2];
-
-			if (lastRoute) {
-				router.navigateByUrl(lastRoute);
-				routingHistory.pop();
-			}
+		else if (router && routingHistory.length >= 2) {
+			router.navigateByUrl(routingHistory[routingHistory.length - 2]);
+			routingHistory.pop();
 		}
 	};
 }
