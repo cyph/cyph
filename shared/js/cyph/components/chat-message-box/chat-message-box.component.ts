@@ -166,6 +166,9 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 			tabIndent.render($textarea[0]);
 		}
+
+		await this.chatService.resolvers.currentMessageSynced.promise;
+		$textarea.trigger('focus');
 	}
 
 	/** Sends current message. */
