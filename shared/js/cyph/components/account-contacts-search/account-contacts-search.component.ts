@@ -153,7 +153,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 							})),
 							topOption: externalUser === undefined ? undefined : {
 								routerLink:
-									`${accountRoot}${accountRoot === '' ? '' : '/'}profile/${
+									`/${accountRoot}${accountRoot === '' ? '' : '/'}profile/${
 										externalUser
 									}`
 								,
