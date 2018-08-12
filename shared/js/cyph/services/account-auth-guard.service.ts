@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router} from '@angular/router';
 import {BaseProvider} from '../base-provider';
-import {AccountAuthService} from '../services/crypto/account-auth.service';
-import {AccountDatabaseService} from '../services/crypto/account-database.service';
+import {AccountAuthService} from './crypto/account-auth.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 
 
 /** Auth guard for accounts routing. */

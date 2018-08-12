@@ -23,7 +23,7 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByUser} from '../../track-by/track-by-user';
-import {filterUndefined} from '../../util/index';
+import {filterUndefined} from '../../util';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
 
