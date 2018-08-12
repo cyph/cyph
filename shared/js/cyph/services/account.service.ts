@@ -282,7 +282,10 @@ export class AccountService extends BaseProvider {
 				;
 			}
 
-			/* No header by default for non-whitelisted sections or deep routes */
+			/*
+				No header by default for non-whitelisted sections,
+				or deep routes of non-whitelisted sections
+			*/
 			if (
 				[
 					'appointments',
@@ -297,8 +300,17 @@ export class AccountService extends BaseProvider {
 					'settings',
 					'staff',
 					'wallets'
-				].indexOf(route) < 0 ||
-				(
+				].indexOf(route) < 0 || (
+					[
+						'docs',
+						'ehr-access',
+						'files',
+						'forms',
+						'incoming-patient-info',
+						'notes',
+						'settings',
+						'wallets'
+					].indexOf(route) < 0 &&
 					routePath.length > 1
 				)
 			) {
