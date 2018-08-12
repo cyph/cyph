@@ -40,7 +40,7 @@ if (env.isCordova) {
 		router	= staticRouterValue;
 
 		router.events.subscribe(e => {
-			if (e instanceof NavigationEnd) {
+			if (e instanceof NavigationEnd && e.url !== routingHistory.slice(-1)[0]) {
 				routingHistory.push(e.url);
 			}
 		});
