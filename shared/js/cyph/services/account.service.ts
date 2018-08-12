@@ -174,7 +174,7 @@ export class AccountService extends BaseProvider {
 	}
 
 	/** Sets custom header text. */
-	public setHeader (header?: string|User) : void {
+	public setHeader (header: string|User) : void {
 		this.headerInternal.next(header);
 	}
 
