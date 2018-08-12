@@ -72,6 +72,7 @@ for (const id of customBuildIds) {
 	}
 
 	if (o.preLoadCSS) {
+		const $style	= $('style').eq(0);
 		$style.html(o.preLoadCSS($style.html()));
 		delete o.preLoadCSS;
 	}
