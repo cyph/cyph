@@ -486,6 +486,7 @@ export class AccountFilesService extends BaseProvider {
 		const file	= await this.getFile(id);
 
 		return (
+			file.mediaType.startsWith('audio/') ||
 			file.mediaType.startsWith('video/') ||
 			(file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg'))
 		);
@@ -986,10 +987,13 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
-	public getThumbnail (mediaType: string) : 'insert_drive_file'|'movie'|'photo' {
+	public getThumbnail (mediaType: string) : 'audiotrack'|'insert_drive_file'|'movie'|'photo' {
 		const typeCategory	= mediaType.split('/')[0];
 
 		switch (typeCategory) {
+			case 'audio':
+				return 'audiotrack';
+
 			case 'image':
 				return 'photo';
 

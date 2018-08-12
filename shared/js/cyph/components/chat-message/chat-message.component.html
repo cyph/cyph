@@ -178,6 +178,17 @@
 							<br />
 						</ng-container>
 						<ng-template #imageDisplay let-clickable='clickable'>
+							<audio
+								controls
+								[attr.aria-label]='value.fileTransfer.name'
+								*ngIf='value.fileTransfer.mediaType.startsWith("audio/")'
+							>
+								<source
+									[type]='value.fileTransfer.mediaType'
+									[src]='image.uri'
+								/>
+							</audio>
+
 							<img
 								class='image-message'
 								[src]='image.uri'
@@ -193,35 +204,33 @@
 											title: value.fileTransfer.name
 										})
 								'
-								*ngIf='
-									!value.fileTransfer.mediaType.startsWith("video/");
-									else imageDisplayVideo
-								'
+								*ngIf='value.fileTransfer.mediaType.startsWith("image/")'
 							/>
-							<ng-template #imageDisplayVideo>
-								<span
-									class='video-message-wrapper'
-									(click)='!clickable || envService.isMobile ?
-										undefined :
-										dialogService.image({
-											mediaType: value.fileTransfer.mediaType,
-											src: image.uri,
-											title: value.fileTransfer.name
-										})
-									'
+
+							<span
+								class='video-message-wrapper'
+								(click)='!clickable || envService.isMobile ?
+									undefined :
+									dialogService.image({
+										mediaType: value.fileTransfer.mediaType,
+										src: image.uri,
+										title: value.fileTransfer.name
+									})
+								'
+								*ngIf='value.fileTransfer.mediaType.startsWith("video/")'
+							>
+								<video
+									class='image-message'
+									controls
+									[attr.aria-label]='value.fileTransfer.name'
 								>
-									<video
-										class='image-message'
-										controls
-										[attr.aria-label]='value.fileTransfer.name'
-									>
-										<source
-											[type]='value.fileTransfer.mediaType'
-											[src]='image.uri'
-										/>
-									</video>
-								</span>
-							</ng-template>
+									<source
+										[type]='value.fileTransfer.mediaType'
+										[src]='image.uri'
+									/>
+								</video>
+							</span>
+
 							<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
 						</ng-template>
 						<ng-template #imageFailure>

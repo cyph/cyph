@@ -62,11 +62,6 @@ export class DialogImageComponent extends BaseProvider {
 		this.matDialogRef.close();
 	}
 
-	/** Indicates whether this is a video. */
-	public get video () : boolean {
-		return this.mediaType.startsWith('video/');
-	}
-
 	constructor (
 		/** @ignore */
 		private readonly domSanitizer: DomSanitizer,

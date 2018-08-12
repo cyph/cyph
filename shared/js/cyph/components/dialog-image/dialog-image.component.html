@@ -16,9 +16,30 @@
 <div mat-dialog-content>
 	<div fxFlex [class.crop-container]='!!cropResult'>
 		<ng-container *ngIf='!cropResult; else imageCropUI'>
-			<img cyphTranslate alt='Full size image' [src]='src' *ngIf='!video' />
+			<audio
+				cyphTranslate
+				autoplay
+				controls
+				aria-label='Audio'
+				*ngIf='mediaType.startsWith("audio/")'
+			>
+				<source [type]='mediaType' [src]='src' />
+			</audio>
 
-			<video cyphTranslate autoplay controls aria-label='Video' *ngIf='video'>
+			<img
+				cyphTranslate
+				alt='Full size image'
+				[src]='src'
+				*ngIf='mediaType.startsWith("image/")'
+			/>
+
+			<video
+				cyphTranslate
+				autoplay
+				controls
+				aria-label='Video'
+				*ngIf='mediaType.startsWith("video/")'
+			>
 				<source [type]='mediaType' [src]='src' />
 			</video>
 		</ng-container>

@@ -85,7 +85,7 @@ export class FileService extends BaseProvider {
 	) : Promise<Uint8Array> {
 		if (
 			!image ||
-			(file instanceof Blob ? file.type : file.mediaType).startsWith('video/') ||
+			this.isVideo(file) ||
 			(file instanceof Blob ? file.type : file.mediaType) === 'image/gif' ||
 			!this.envService.isWeb
 		) {
@@ -134,14 +134,15 @@ export class FileService extends BaseProvider {
 	/** Indicates whether a File/Blob is an image (or video). */
 	public isImage (file: Blob|IFile) : boolean {
 		return (
-			(file instanceof Blob ? file.type : file.mediaType).indexOf('image/') === 0 ||
+			(file instanceof Blob ? file.type : file.mediaType).startsWith('image/') ||
 			this.isVideo(file)
 		);
 	}
 
 	/** Indicates whether a File/Blob is a video. */
 	public isVideo (file: Blob|IFile) : boolean {
-		return (file instanceof Blob ? file.type : file.mediaType).indexOf('video/') === 0;
+		const mediaType	= file instanceof Blob ? file.type : file.mediaType;
+		return mediaType.startsWith('audio/') || mediaType.startsWith('video/');
 	}
 
 	/** Converts binary data to base64 data URI. */
