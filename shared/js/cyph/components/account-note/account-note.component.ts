@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as Delta from 'quill-delta';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
 import {IQuillDelta} from '../../iquill-delta';
@@ -201,6 +201,12 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 			catch {
 				this.router.navigate([accountRoot, '404']);
 			}
+		}));
+
+		this.subscriptions.push(this.note.pipe(
+			mergeMap(o => o ? o.metadata : of(undefined))
+		).subscribe(noteMetadata => {
+			this.accountService.setHeader(noteMetadata ? noteMetadata.name : undefined);
 		}));
 	}
 
