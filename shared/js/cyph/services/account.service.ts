@@ -12,6 +12,7 @@ import {AccountContactsService} from './account-contacts.service';
 import {ConfigService} from './config.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
+import {StringsService} from './strings.service';
 import {WindowWatcherService} from './window-watcher.service';
 
 
@@ -225,6 +226,9 @@ export class AccountService extends BaseProvider {
 		private readonly envService: EnvService,
 
 		/** @ignore */
+		private readonly stringsService: StringsService,
+
+		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
 		super();
@@ -246,6 +250,11 @@ export class AccountService extends BaseProvider {
 			const specialCases: {[k: string]: string}	= {
 				ehr: 'EHR'
 			};
+
+			/* Special case: set root header on mobile to "Messages" */
+			if (route === '' && width <= this.configService.responsiveMaxWidths.sm) {
+				return this.stringsService.messagesHeader;
+			}
 
 			/* No header */
 			if (
