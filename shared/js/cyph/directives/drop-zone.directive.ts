@@ -72,8 +72,8 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 								dz.removeAllFiles();
 								this.fileDrop.emit(await this.fileService.getIFile(file));
 							},
-							acceptedFiles: this.accept,
-							url: 'data:text/plain;ascii,'
+							url: 'data:text/plain;ascii,',
+							...(this.accept ? {acceptedFiles: this.accept} : {})
 						});
 
 						return dz;
