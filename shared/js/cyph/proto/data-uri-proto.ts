@@ -43,7 +43,7 @@ export class DataURIProto {
 	/** @see IProto.decode */
 	public static async decode (
 		bytes: Uint8Array,
-		mediaType: string = 'application/octet-stream'
+		mediaType: string = 'image/png'
 	) : Promise<SafeUrl> {
 		if (bytes.length < 1) {
 			return {};
