@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 
-const cheerio		= require('cheerio');
 const childProcess	= require('child_process');
+const datauri		= require('datauri');
 const fs			= require('fs');
 const htmlencode	= require('htmlencode');
 const os			= require('os');
@@ -90,16 +90,44 @@ const customBuild	= (id, version) => {
 		o.config.title	= htmlencode.htmlEncode(o.config.title);
 	}
 
+	const preLoadSCSS	= `
+		${!o.config.backgroundColor ? '' : `
+			html > body {
+				background-color: ${o.config.backgroundColor} !important;
+			}
+		`}
+
+		${!o.logoVertical ? '' : `
+			.loading > .logo-animation {
+				&, > * {
+					background-image: url(${datauri.sync(paths.logoVertical)});
+				}
+			}
+		`}
+	`.trim();
+
+	if (preLoadSCSS) {
+		const preLoadCSS	= compileSCSS(preLoadSCSS);
+
+		o.preLoadCSS		= originalCSS => {
+			if (o.logoVertical) {
+				originalCSS	= originalCSS.
+					replace(/body\.cordova/g, 'body').
+					replace(/body:not(\.cordova)/g, 'body.custom-build-ignore').
+					replace(/background-image:url\([^\)]+\);/g, '')
+				;
+			}
+
+			return preLoadCSS + originalCSS;
+		};
+	}
+
 	const scss	= `
 		${!o.config.backgroundColor ? '' : `
 			$cyph-background: ${o.config.backgroundColor};
 
 			#main-chat-gradient {
 				display: none !important;
-			}
-
-			#pre-load {
-				background-color: ${o.config.backgroundColor} !important;
 			}
 		`}
 

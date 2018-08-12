@@ -71,9 +71,14 @@ for (const id of customBuildIds) {
 		;
 	}
 
+	if (o.preLoadCSS) {
+		$style.html(o.preLoadCSS($style.html()));
+		delete o.preLoadCSS;
+	}
+
 	if (o.css) {
 		await addSubresource($, `${o.id}.css`, o.css);
-		o.css	= undefined;
+		delete o.css;
 	}
 
 	await addSubresource($, `${o.id}.js`, `
