@@ -132,13 +132,14 @@ if [ ! "${CIRCLECI}" ] ; then
 	fi
 fi
 
-mkdir /tmp/cyph0
+mkdir -p /tmp/cyph0/search_indexes
 dev_appserver.py \
 	--skip_sdk_update_check \
 	--port 42000 \
 	--admin_port 6000 \
 	--host 0.0.0.0 \
 	--storage_path /tmp/cyph0 \
+	--support_datastore_emulator=True \
 	backend/.build.yaml \
 &
 
