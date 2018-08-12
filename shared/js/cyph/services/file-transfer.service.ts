@@ -8,7 +8,6 @@ import {LocalAsyncSet} from '../local-async-set';
 import {BinaryProto, ChatMessageValue, DataURIProto, IFileTransfer} from '../proto';
 import {readableByteLength} from '../util/formatting';
 import {saveFile} from '../util/save-file';
-import {deserialize} from '../util/serialization';
 import {uuid} from '../util/uuid';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
@@ -47,7 +46,10 @@ export class FileTransferService extends BaseProvider {
 
 			return {
 				success: true,
-				uri: await deserialize(DataURIProto, await this.receiveInternal(fileTransfer))
+				uri: await DataURIProto.decode(
+					await this.receiveInternal(fileTransfer),
+					fileTransfer.mediaType
+				)
 			};
 		}
 		catch {
@@ -186,10 +188,7 @@ export class FileTransferService extends BaseProvider {
 			await this.transfers.addItem(transfer);
 
 			const url						= `${this.path}/${fileTransfer.id}`;
-			const plaintext					= await this.fileService.getBytes(
-				file,
-				media && this.fileService.isImage(file)
-			);
+			const plaintext					= await this.fileService.getBytes(file, media);
 			const {cyphertext, hash, key}	= await this.encryptFile(plaintext, url);
 
 			const uploadTask	= this.databaseService.uploadItem(url, BinaryProto, cyphertext);

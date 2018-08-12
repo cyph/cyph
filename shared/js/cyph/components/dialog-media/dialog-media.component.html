@@ -21,16 +21,16 @@
 				autoplay
 				controls
 				aria-label='Audio'
-				*ngIf='mediaType.startsWith("audio/")'
+				*ngIf='fileService.isAudio(mediaType)'
 			>
-				<source [type]='mediaType' [src]='src' />
+				<source [type]='mediaType' [src]='stringToSafeUrl(src)' />
 			</audio>
 
 			<img
 				cyphTranslate
 				alt='Full size image'
-				[src]='src'
-				*ngIf='mediaType.startsWith("image/")'
+				[src]='stringToSafeUrl(src)'
+				*ngIf='fileService.isImage(mediaType)'
 			/>
 
 			<video
@@ -38,9 +38,9 @@
 				autoplay
 				controls
 				aria-label='Video'
-				*ngIf='mediaType.startsWith("video/")'
+				*ngIf='fileService.isVideo(mediaType)'
 			>
-				<source [type]='mediaType' [src]='src' />
+				<source [type]='mediaType' [src]='stringToSafeUrl(src)' />
 			</video>
 		</ng-container>
 

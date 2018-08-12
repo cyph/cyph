@@ -5,6 +5,7 @@ import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
 import {IResolvable} from '../../iresolvable';
 import {DataURIProto} from '../../proto';
+import {FileService} from '../../services/file.service';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -35,6 +36,11 @@ export class DialogMediaComponent extends BaseProvider {
 		!data ? undefined : DataURIProto.safeUrlToString(data, mediaType).catch(() => undefined)
 	);
 
+	/** String to safeUrl. */
+	public readonly stringToSafeUrl	= memoize(async (data?: SafeUrl|string) =>
+		typeof data !== 'string' ? data : this.domSanitizer.bypassSecurityTrustUrl(data)
+	);
+
 	/** Image src. */
 	public src?: SafeUrl|string;
 
@@ -51,9 +57,7 @@ export class DialogMediaComponent extends BaseProvider {
 			!accept ?
 				undefined :
 			this.cropped ?
-				this.domSanitizer.bypassSecurityTrustUrl(
-					await DataURIProto.normalize(this.cropped)
-				) :
+				this.domSanitizer.bypassSecurityTrustUrl(this.cropped) :
 			typeof this.src === 'string' ?
 				this.domSanitizer.bypassSecurityTrustUrl(this.src) :
 				this.src
@@ -68,6 +72,9 @@ export class DialogMediaComponent extends BaseProvider {
 
 		/** @ignore */
 		private readonly matDialogRef: MatDialogRef<DialogMediaComponent>,
+
+		/** @see FileService */
+		public readonly fileService: FileService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

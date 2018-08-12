@@ -21,6 +21,7 @@ import {ChatService} from '../../services/chat.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
+import {FileService} from '../../services/file.service';
 import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
@@ -280,6 +281,9 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see FileService */
+		public readonly fileService: FileService,
 
 		/** @see FileTransferService */
 		public readonly fileTransferService: FileTransferService,

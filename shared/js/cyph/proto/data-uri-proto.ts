@@ -1,26 +1,16 @@
 import {SecurityContext} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {MaybePromise} from '../maybe-promise-type';
 import {staticDomSanitizer} from '../util/static-services';
 
 
 /** Base64 data URI encoder/decoder. (Doesn't actually use Protocol Buffers.) */
 export class DataURIProto {
 	/** @ignore */
-	private static readonly prefix: string	= 'data:image/png;base64,';
-
-	/** @ignore */
-	private static readonly prefixBytes: Uint8Array	= potassiumUtil.fromString(
-		DataURIProto.prefix
+	private static readonly defaultPrefix: Uint8Array	= potassiumUtil.fromString(
+		'data:application/octet-stream;base64,'
 	);
-
-	/** Replaces prefix with DataURIProto.prefix. */
-	public static async normalize (data: SafeUrl|string) : Promise<string> {
-		return (
-			DataURIProto.prefix +
-			(await DataURIProto.safeUrlToString(data)).split(';base64,')[1]
-		);
-	}
 
 	/** Converts possible-SafeUrl to string. */
 	public static async safeUrlToString (
@@ -56,13 +46,20 @@ export class DataURIProto {
 	}
 
 	/** @see IProto.decode */
-	public static async decode (bytes: Uint8Array) : Promise<SafeUrl> {
+	public static async decode (bytes: Uint8Array, mediaType?: string) : Promise<SafeUrl> {
 		if (bytes.length < 1) {
 			return {};
 		}
 
 		return (await staticDomSanitizer).bypassSecurityTrustUrl(
-			DataURIProto.prefix + potassiumUtil.toBase64(bytes)
+			potassiumUtil.toBase64(potassiumUtil.concatMemory(
+				false,
+				mediaType ?
+					potassiumUtil.fromString(`data:${mediaType};base64,`) :
+					DataURIProto.defaultPrefix
+				,
+				bytes
+			))
 		);
 	}
 
@@ -77,7 +74,7 @@ export class DataURIProto {
 			return new Uint8Array(0);
 		}
 
-		return potassiumUtil.fromBase64(data.slice(DataURIProto.prefix.length));
+		return potassiumUtil.fromBase64(data.slice(data.indexOf(',')));
 	}
 
 	/** @see IProto.verify */
@@ -89,15 +86,37 @@ export class DataURIProto {
 
 		if (
 			typeof data === 'string' &&
-			data.length >= DataURIProto.prefix.length &&
-			potassiumUtil.compareMemory(
-				potassiumUtil.fromString(data.slice(0, DataURIProto.prefix.length)),
-				DataURIProto.prefixBytes
-			)
+			/^data:[^\/]+\/[^\/]+;base64,$/.test(data.slice(0, data.indexOf(',') + 1))
 		) {
 			return;
 		}
 
 		return 'Not a data URI.';
 	}
+
+
+	/** @see DataURIProto.create */
+	public create () : SafeUrl {
+		return DataURIProto.create();
+	}
+
+	/** @see DataURIProto.decode */
+	public async decode (bytes: Uint8Array) : Promise<SafeUrl> {
+		return DataURIProto.decode(bytes, await this.mediaType);
+	}
+
+	/** @see DataURIProto.encode */
+	public async encode (data: SafeUrl|string) : Promise<Uint8Array> {
+		return DataURIProto.encode(data);
+	}
+
+	/** @see DataURIProto.verify */
+	public async verify (data: SafeUrl|string) : Promise<string|undefined> {
+		return DataURIProto.verify(data);
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly mediaType: MaybePromise<string>
+	) {}
 }

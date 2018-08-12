@@ -24,7 +24,7 @@ import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
 import {cacheObservable, toBehaviorSubject} from '../../util/flatten-observable';
 import {urlToSafeStyle} from '../../util/safe-values';
-import {deserialize, serialize} from '../../util/serialization';
+import {serialize} from '../../util/serialization';
 
 
 /**
@@ -78,7 +78,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 	/** Gets data URI of file. */
 	public readonly getDataURI							= memoize(async (file?: IFile) =>
-		!file ? undefined : deserialize(DataURIProto, file.data)
+		!file ? undefined : DataURIProto.decode(file.data, file.mediaType)
 	);
 
 	/** Indicates whether this is home component. */

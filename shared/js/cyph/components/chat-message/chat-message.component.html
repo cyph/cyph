@@ -181,7 +181,7 @@
 							<audio
 								controls
 								[attr.aria-label]='value.fileTransfer.name'
-								*ngIf='value.fileTransfer.mediaType.startsWith("audio/")'
+								*ngIf='fileService.isAudio(value.fileTransfer)'
 							>
 								<source
 									[type]='value.fileTransfer.mediaType'
@@ -204,7 +204,7 @@
 											title: value.fileTransfer.name
 										})
 								'
-								*ngIf='value.fileTransfer.mediaType.startsWith("image/")'
+								*ngIf='fileService.isImage(value.fileTransfer)'
 							/>
 
 							<span
@@ -217,7 +217,7 @@
 										title: value.fileTransfer.name
 									})
 								'
-								*ngIf='value.fileTransfer.mediaType.startsWith("video/")'
+								*ngIf='fileService.isVideo(value.fileTransfer)'
 							>
 								<video
 									class='media-message'

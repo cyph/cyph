@@ -56,6 +56,7 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
+import {FileService} from './file.service';
 import {StringsService} from './strings.service';
 
 
@@ -482,15 +483,9 @@ export class AccountFilesService extends BaseProvider {
 	/** Determines whether file should be treated as multimedia. */
 	public readonly isMedia					= memoize(async (
 		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference
-	)) => {
-		const file	= await this.getFile(id);
-
-		return (
-			file.mediaType.startsWith('audio/') ||
-			file.mediaType.startsWith('video/') ||
-			(file.mediaType.startsWith('image/') && !file.mediaType.startsWith('image/svg'))
-		);
-	});
+	)) =>
+		this.fileService.isMedia(await this.getFile(id))
+	);
 
 	/** Maximum number of characters in a file name. */
 	public readonly maxNameLength: number	= 80;
@@ -546,7 +541,10 @@ export class AccountFilesService extends BaseProvider {
 
 		const {progress, result}	= this.accountDatabaseService.downloadItem(
 			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-			proto,
+			(<any> proto) === DataURIProto ?
+				<any> new DataURIProto(filePromise.then(file => file.mediaType)) :
+				proto
+			,
 			securityModel,
 			filePromise.then(file => file.key)
 		);
@@ -1517,6 +1515,9 @@ export class AccountFilesService extends BaseProvider {
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly fileService: FileService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService,

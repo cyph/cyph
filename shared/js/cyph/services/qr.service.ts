@@ -5,7 +5,6 @@ import memoize from 'lodash-es/memoize';
 import {encode} from 'msgpack-lite';
 import {BaseProvider} from '../base-provider';
 import {BinaryProto, DataURIProto} from '../proto';
-import {deserialize} from '../util/serialization';
 import {PotassiumService} from './crypto/potassium.service';
 import {LocalStorageService} from './local-storage.service';
 
@@ -17,15 +16,15 @@ import {LocalStorageService} from './local-storage.service';
 export class QRService extends BaseProvider {
 	/** Generates a QR code and caches to local storage. */
 	public readonly getQRCode	= memoize(async (options: DopeQrOptions) : Promise<SafeUrl> =>
-		deserialize(
-			DataURIProto,
+		DataURIProto.decode(
 			await this.localStorageService.getOrSetDefault(
 				`QRService/${this.potassiumService.toHex(
 					await this.potassiumService.hash.hash(encode(options))
 				)}`,
 				BinaryProto,
 				async () => generateQRCode(options)
-			)
+			),
+			'image/png'
 		)
 	);
 

@@ -33,7 +33,7 @@ export class FileService extends BaseProvider {
 			context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
 			const hasTransparency	=
-				(file instanceof Blob ? file.type : file.mediaType) !== 'image/jpeg' &&
+				this.getMediaType(file) !== 'image/jpeg' &&
 				context.getImageData(0, 0, image.width, image.height).data[3] !== 255
 			;
 
@@ -66,6 +66,11 @@ export class FileService extends BaseProvider {
 		return file instanceof Blob ? potassiumUtil.fromBlob(file) : file.data;
 	}
 
+	/** @ignore */
+	private getMediaType (file: Blob|string|{mediaType: string}) : string {
+		return typeof file === 'string' ? file : file instanceof Blob ? file.type : file.mediaType;
+	}
+
 	/** Converts data URI to blob. */
 	public fromDataURI (dataURI: string) : Blob {
 		const arr		= dataURI.split(';base64,');
@@ -77,15 +82,17 @@ export class FileService extends BaseProvider {
 
 	/**
 	 * Converts File/Blob to byte array.
-	 * @param image If true, file is processed as an image (compressed).
+	 * @param image If true, file is processed as an image when possible (compressed).
 	 */
 	public async getBytes (
 		file: Blob|IFile,
-		image: boolean = this.isImage(file)
+		image: boolean = true
 	) : Promise<Uint8Array> {
+		image	= image && this.isImage(file, true);
+
 		if (
 			!image ||
-			(file instanceof Blob ? file.type : file.mediaType) === 'image/gif' ||
+			this.getMediaType(file) === 'image/gif' ||
 			!this.envService.isWeb
 		) {
 			/* TODO: HANDLE NATIVE */
@@ -131,27 +138,32 @@ export class FileService extends BaseProvider {
 	}
 
 	/** Indicates whether a File/Blob is audio. */
-	public isAudio (file: Blob|IFile) : boolean {
-		return (file instanceof Blob ? file.type : file.mediaType).startsWith('audio/');
+	public isAudio (file: Blob|string|{mediaType: string}) : boolean {
+		return this.getMediaType(file).startsWith('audio/');
 	}
 
 	/** Indicates whether a File/Blob is an image. */
-	public isImage (file: Blob|IFile) : boolean {
-		return (file instanceof Blob ? file.type : file.mediaType).startsWith('image/');
+	public isImage (file: Blob|string|{mediaType: string}, includeSVG: boolean = false) : boolean {
+		const mediaType	= this.getMediaType(file);
+
+		return (
+			mediaType.startsWith('image/') &&
+			(includeSVG || !mediaType.startsWith('image/svg'))
+		);
 	}
 
 	/** Indicates whether a File/Blob is multimedia. */
-	public isMedia (file: Blob|IFile) : boolean {
+	public isMedia (file: Blob|string|{mediaType: string}, includeSVG: boolean = false) : boolean {
 		return (
 			this.isAudio(file) ||
-			this.isImage(file) ||
+			this.isImage(file, includeSVG) ||
 			this.isVideo(file)
 		);
 	}
 
 	/** Indicates whether a File/Blob is a video. */
-	public isVideo (file: Blob|IFile) : boolean {
-		return (file instanceof Blob ? file.type : file.mediaType).startsWith('video/');
+	public isVideo (file: Blob|string|{mediaType: string}) : boolean {
+		return this.getMediaType(file).startsWith('video/');
 	}
 
 	/** Converts binary data to base64 data URI. */
