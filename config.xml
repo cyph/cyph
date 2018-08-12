@@ -107,12 +107,90 @@
 			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 		</config-file>
 
-		<icon density="ldpi" src="res/icon/android/drawable-ldpi-icon.png" />
-		<icon density="mdpi" src="res/icon/android/drawable-mdpi-icon.png" />
-		<icon density="hdpi" src="res/icon/android/drawable-hdpi-icon.png" />
-		<icon density="xhdpi" src="res/icon/android/drawable-xhdpi-icon.png" />
-		<icon density="xxhdpi" src="res/icon/android/drawable-xxhdpi-icon.png" />
-		<icon density="xxxhdpi" src="res/icon/android/drawable-xxxhdpi-icon.png" />
+		<edit-config
+			file="app/src/main/AndroidManifest.xml"
+			mode="merge"
+			target="/manifest/application"
+		>
+			<application
+				android:icon="@mipmap/ic_launcher"
+				android:roundIcon="@mipmap/ic_launcher_round"
+			/>
+		</edit-config>
+
+		<resource-file
+			src="res/icon/android/mipmap-anydpi-v26/ic_launcher.xml"
+			target="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-anydpi-v26/ic_launcher_round.xml"
+			target="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-hdpi/ic_launcher.png"
+			target="app/src/main/res/mipmap-hdpi/ic_launcher.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-hdpi/ic_launcher_foreground.png"
+			target="app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-hdpi/ic_launcher_round.png"
+			target="app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-mdpi/ic_launcher.png"
+			target="app/src/main/res/mipmap-mdpi/ic_launcher.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-mdpi/ic_launcher_foreground.png"
+			target="app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-mdpi/ic_launcher_round.png"
+			target="app/src/main/res/mipmap-mdpi/ic_launcher_round.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xhdpi/ic_launcher.png"
+			target="app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xhdpi/ic_launcher_foreground.png"
+			target="app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xhdpi/ic_launcher_round.png"
+			target="app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xxhdpi/ic_launcher.png"
+			target="app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xxhdpi/ic_launcher_foreground.png"
+			target="app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xxhdpi/ic_launcher_round.png"
+			target="app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xxxhdpi/ic_launcher.png"
+			target="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xxxhdpi/ic_launcher_foreground.png"
+			target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png"
+		/>
+		<resource-file
+			src="res/icon/android/mipmap-xxxhdpi/ic_launcher_round.png"
+			target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"
+		/>
+		<resource-file
+			src="res/icon/android/values/ic_launcher_background.xml"
+			target="app/src/main/res/values/ic_launcher_background.xml"
+		/>
+
 		<splash density="land-ldpi" src="res/screen/android/drawable-land-ldpi-screen.png" />
 		<splash density="land-mdpi" src="res/screen/android/drawable-land-mdpi-screen.png" />
 		<splash density="land-hdpi" src="res/screen/android/drawable-land-hdpi-screen.png" />
@@ -161,6 +239,7 @@
 		<icon height="58" platform="ios" src="res/icon/ios/icon-small@2x.png" width="58" />
 		<icon height="87" platform="ios" src="res/icon/ios/icon-small@3x.png" width="87" />
 		<icon height="1024" platform="ios" src="res/icon/ios/icon-1024.png" width="1024" />
+
 		<splash height="1136" platform="ios" src="res/screen/ios/Default-568h@2x~iphone.png" width="640" />
 		<splash height="1334" platform="ios" src="res/screen/ios/Default-667h.png" width="750" />
 		<splash height="2208" platform="ios" src="res/screen/ios/Default-736h.png" width="1242" />
