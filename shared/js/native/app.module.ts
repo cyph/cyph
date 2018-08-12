@@ -20,7 +20,7 @@ import {NativeScriptRouterModule, NSModuleFactoryLoader} from 'nativescript-angu
 import {appRoutes} from './app-routes';
 import {AppService} from './app.service';
 import {AppComponent} from './components/app';
-import {DialogImageComponent} from './components/dialog-image';
+import {DialogMediaComponent} from './components/dialog-media';
 import {CyphAppModule} from './js/cyph/modules/cyph-app.module';
 import {CyphCommonModule} from './js/cyph/modules/cyph-common.module';
 import {MainThreadPotassiumService} from './js/cyph/services/crypto/main-thread-potassium.service';
@@ -41,11 +41,11 @@ import {NativeTitleService} from './native-title.service';
 	bootstrap: [AppComponent],
 	declarations: [
 		AppComponent,
-		DialogImageComponent
+		DialogMediaComponent
 	],
 	entryComponents: [
 		AppComponent,
-		DialogImageComponent
+		DialogMediaComponent
 	],
 	imports: [
 		NativeScriptRouterModule.forRoot([]),

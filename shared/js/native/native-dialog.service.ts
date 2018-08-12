@@ -4,7 +4,7 @@ import {SafeUrl} from '@angular/platform-browser';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
 import {alert, confirm, prompt} from 'tns-core-modules/ui/dialogs/dialogs';
-import {DialogImageComponent} from './components/dialog-image';
+import {DialogMediaComponent} from './components/dialog-media';
 import {BaseProvider} from './js/cyph/base-provider';
 import {IResolvable} from './js/cyph/iresolvable';
 import {LockFunction} from './js/cyph/lock-function-type';
@@ -121,12 +121,12 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @inheritDoc
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
-	public async image (
+	public async media (
 		o: {src: SafeUrl|string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
-			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
+			throw new Error('NativeDialogService.media closeFunction is unsupported.');
 		}
 
 		if (typeof o.src !== 'string') {
@@ -134,7 +134,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		}
 
 		return this.lock(async () => {
-			await this.modalDialogService.showModal(DialogImageComponent, {context: o});
+			await this.modalDialogService.showModal(DialogMediaComponent, {context: o});
 		});
 	}
 

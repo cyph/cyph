@@ -7,7 +7,7 @@ import {map} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
-import {DialogImageComponent} from '../components/dialog-image';
+import {DialogMediaComponent} from '../components/dialog-media';
 import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {lockFunction} from '../util/lock';
@@ -169,7 +169,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		title?: string;
 	}) : Promise<SafeUrl|undefined> {
 		return this.lock(async () => {
-			const matDialogRef	= this.matDialog.open(DialogImageComponent);
+			const matDialogRef	= this.matDialog.open(DialogMediaComponent);
 			const cropResult	= resolvable<SafeUrl|undefined>();
 
 			matDialogRef.componentInstance.cropAspectRatio	= o.aspectRatio;
@@ -190,12 +190,12 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	}
 
 	/** @inheritDoc */
-	public async image (
+	public async media (
 		o: {mediaType?: string; src: SafeUrl|string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
-			const matDialogRef	= this.matDialog.open(DialogImageComponent);
+			const matDialogRef	= this.matDialog.open(DialogMediaComponent);
 
 			matDialogRef.componentInstance.src		= o.src;
 			matDialogRef.componentInstance.title	= o.title;

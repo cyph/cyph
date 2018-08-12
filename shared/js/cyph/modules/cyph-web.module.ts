@@ -42,7 +42,7 @@ import {ImageCropperModule} from 'ngx-image-cropper';
 /* import {VirtualScrollModule} from 'od-virtualscroll'; */
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
-import {DialogImageComponent} from '../components/dialog-image';
+import {DialogMediaComponent} from '../components/dialog-media';
 import {MarkdownComponent} from '../components/markdown';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
@@ -59,13 +59,13 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 	declarations: [
 		DialogAlertComponent,
 		DialogConfirmComponent,
-		DialogImageComponent,
+		DialogMediaComponent,
 		MarkdownComponent
 	],
 	entryComponents: [
 		DialogAlertComponent,
 		DialogConfirmComponent,
-		DialogImageComponent,
+		DialogMediaComponent,
 		MarkdownComponent
 	],
 	exports: [
@@ -74,7 +74,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		BrowserModule,
 		DialogAlertComponent,
 		DialogConfirmComponent,
-		DialogImageComponent,
+		DialogMediaComponent,
 		FlexLayoutModule,
 		FormsModule,
 		FullCalendarModule,

@@ -56,12 +56,12 @@ export class DialogService extends BaseProvider {
 		throw new Error('Must provide an implementation of DialogService.dismissToast.');
 	}
 
-	/** Displays image or video. Default mediaType is image/png. */
-	public async image (
+	/** Displays multimedia. Default mediaType is image/png. */
+	public async media (
 		_O: {mediaType?: string; src: SafeUrl|string; title?: string},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<void> {
-		throw new Error('Must provide an implementation of DialogService.image.');
+		throw new Error('Must provide an implementation of DialogService.media.');
 	}
 
 	/** Prompts for input. */

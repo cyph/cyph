@@ -329,7 +329,7 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
-	public readonly incomingFileSaveImageError: string	=
+	public readonly incomingFileSaveMediaError: string	=
 		`Failed to download.`
 	;
 

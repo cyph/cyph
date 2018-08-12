@@ -5,7 +5,7 @@
 	[class.full-width]='
 		uiStyle === uiStyles.default &&
 		value.fileTransfer &&
-		!value.fileTransfer.image
+		!value.fileTransfer.media
 	'
 	[class.mobile]='mobile'
 	[class.author-app]='message?.authorType === authorTypes.App'
@@ -160,24 +160,24 @@
 		></cyph-calendar-invite>
 		<ng-template #fileTransferValue>
 			<div *ngIf='value.fileTransfer; else formValue'>
-				<ng-container *ngIf='value.fileTransfer.image; else saveFile'>
+				<ng-container *ngIf='value.fileTransfer.media; else saveFile'>
 					<ng-container *ngIf='
-						fileTransferService.getImage(value.fileTransfer) | async as image;
-						else imageLoading
+						fileTransferService.getMedia(value.fileTransfer) | async as media;
+						else mediaLoading
 					'>
-						<ng-container *ngIf='image.success; else imageFailure'>
-							<div class='centered image-container'>
+						<ng-container *ngIf='media.success; else mediaFailure'>
+							<div class='centered media-container'>
 								<ng-container
-									*ngTemplateOutlet='imageDisplay; context: {clickable: true}'
+									*ngTemplateOutlet='mediaDisplay; context: {clickable: true}'
 								></ng-container>
 							</div>
-							<div class='centered-fake image-container visibility-hidden'>
-								<ng-container *ngTemplateOutlet='imageDisplay'></ng-container>
+							<div class='centered-fake media-container visibility-hidden'>
+								<ng-container *ngTemplateOutlet='mediaDisplay'></ng-container>
 							</div>
 							<br />
 							<br />
 						</ng-container>
-						<ng-template #imageDisplay let-clickable='clickable'>
+						<ng-template #mediaDisplay let-clickable='clickable'>
 							<audio
 								controls
 								[attr.aria-label]='value.fileTransfer.name'
@@ -185,22 +185,22 @@
 							>
 								<source
 									[type]='value.fileTransfer.mediaType'
-									[src]='image.uri'
+									[src]='media.uri'
 								/>
 							</audio>
 
 							<img
-								class='image-message'
-								[src]='image.uri'
+								class='media-message'
+								[src]='media.uri'
 								[alt]='value.fileTransfer.name'
 								(click)='
 									!clickable ?
 										undefined :
 									envService.isMobile ?
 										fileTransferService.saveFile(value.fileTransfer) :
-										dialogService.image({
+										dialogService.media({
 											mediaType: value.fileTransfer.mediaType,
-											src: image.uri,
+											src: media.uri,
 											title: value.fileTransfer.name
 										})
 								'
@@ -211,38 +211,38 @@
 								class='video-message-wrapper'
 								(click)='!clickable || envService.isMobile ?
 									undefined :
-									dialogService.image({
+									dialogService.media({
 										mediaType: value.fileTransfer.mediaType,
-										src: image.uri,
+										src: media.uri,
 										title: value.fileTransfer.name
 									})
 								'
 								*ngIf='value.fileTransfer.mediaType.startsWith("video/")'
 							>
 								<video
-									class='image-message'
+									class='media-message'
 									controls
 									[attr.aria-label]='value.fileTransfer.name'
 								>
 									<source
 										[type]='value.fileTransfer.mediaType'
-										[src]='image.uri'
+										[src]='media.uri'
 									/>
 								</video>
 							</span>
 
-							<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
+							<h4 class='media-title'>{{value.fileTransfer.name}}</h4>
 						</ng-template>
-						<ng-template #imageFailure>
+						<ng-template #mediaFailure>
 							<div class='centered'>
-								<span>{{stringsService.incomingFileSaveImageError}}</span>
-								<h4 class='image-title'>{{value.fileTransfer.name}}</h4>
+								<span>{{stringsService.incomingFileSaveMediaError}}</span>
+								<h4 class='media-title'>{{value.fileTransfer.name}}</h4>
 							</div>
 							<br />
 							<br />
 						</ng-template>
 					</ng-container>
-					<ng-template #imageLoading>
+					<ng-template #mediaLoading>
 						<div
 							[class.centered]='active'
 							[class.visibility-hidden]='!active'

@@ -85,7 +85,6 @@ export class FileService extends BaseProvider {
 	) : Promise<Uint8Array> {
 		if (
 			!image ||
-			this.isVideo(file) ||
 			(file instanceof Blob ? file.type : file.mediaType) === 'image/gif' ||
 			!this.envService.isWeb
 		) {
@@ -116,7 +115,7 @@ export class FileService extends BaseProvider {
 	 * Converts File/Blob to base64 data URI.
 	 * @param image If true, file is processed as an image (compressed).
 	 */
-	public async getDataURI (file: Blob, image: boolean = this.isImage(file)) : Promise<string> {
+	public async getDataURI (file: Blob, image?: boolean) : Promise<string> {
 		return this.toDataURI(await this.getBytes(file, image), file.type);
 	}
 
@@ -131,18 +130,28 @@ export class FileService extends BaseProvider {
 		};
 	}
 
-	/** Indicates whether a File/Blob is an image (or video). */
+	/** Indicates whether a File/Blob is audio. */
+	public isAudio (file: Blob|IFile) : boolean {
+		return (file instanceof Blob ? file.type : file.mediaType).startsWith('audio/');
+	}
+
+	/** Indicates whether a File/Blob is an image. */
 	public isImage (file: Blob|IFile) : boolean {
+		return (file instanceof Blob ? file.type : file.mediaType).startsWith('image/');
+	}
+
+	/** Indicates whether a File/Blob is multimedia. */
+	public isMedia (file: Blob|IFile) : boolean {
 		return (
-			(file instanceof Blob ? file.type : file.mediaType).startsWith('image/') ||
+			this.isAudio(file) ||
+			this.isImage(file) ||
 			this.isVideo(file)
 		);
 	}
 
 	/** Indicates whether a File/Blob is a video. */
 	public isVideo (file: Blob|IFile) : boolean {
-		const mediaType	= file instanceof Blob ? file.type : file.mediaType;
-		return mediaType.startsWith('audio/') || mediaType.startsWith('video/');
+		return (file instanceof Blob ? file.type : file.mediaType).startsWith('video/');
 	}
 
 	/** Converts binary data to base64 data URI. */

@@ -79,7 +79,7 @@
 			text-decoration: none;
 		}
 
-		.image-message {
+		.media-message {
 			cursor: pointer;
 			width: auto;
 			height: auto;
@@ -96,14 +96,14 @@
 			}
 		}
 
-		h4.image-title {
+		h4.media-title {
 			text-align: center;
 			width: 100%;
 			margin-bottom: 0.5em;
 			margin-top: 1em;
 		}
 
-		h4.image-title, .mat-button-wrapper {
+		h4.media-title, .mat-button-wrapper {
 			text-overflow: ellipsis;
 			overflow-x: hidden;
 			display: block;
@@ -117,7 +117,7 @@
 			max-width: 50%;
 			max-height: 75%;
 
-			&.image-container {
+			&.media-container {
 				height: 100%;
 			}
 		}
@@ -207,7 +207,7 @@
 				padding: 5px;
 			}
 
-			.image-message {
+			.media-message {
 				max-width: 90vw;
 				max-height: 50vh;
 			}

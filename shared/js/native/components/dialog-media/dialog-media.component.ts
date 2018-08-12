@@ -8,11 +8,11 @@ import {BaseProvider} from '../../js/cyph/base-provider';
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	selector: 'cyph-dialog-image',
-	styleUrls: ['../../js/cyph/components/dialog-image/dialog-image.component.scss'],
-	templateUrl: '../../js/cyph/components/dialog-image/dialog-image.component.html'
+	selector: 'cyph-dialog-media',
+	styleUrls: ['../../js/cyph/components/dialog-media/dialog-media.component.scss'],
+	templateUrl: '../../js/cyph/components/dialog-media/dialog-media.component.html'
 })
-export class DialogImageComponent extends BaseProvider {
+export class DialogMediaComponent extends BaseProvider {
 	/** Image src. */
 	public src: string;
 

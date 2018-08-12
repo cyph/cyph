@@ -150,7 +150,7 @@
 							accountFilesService.downloadAndSave(file.id);
 							$event.stopPropagation();
 						'
-						*ngIf='accountFilesService.isImage(file.id) | async'
+						*ngIf='accountFilesService.isMedia(file.id) | async'
 					>
 						<mat-icon>cloud_download</mat-icon>
 					</button>

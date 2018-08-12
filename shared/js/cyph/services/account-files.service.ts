@@ -479,8 +479,8 @@ export class AccountFilesService extends BaseProvider {
 	/** Indicates whether the first load has completed. */
 	public readonly initiated				= new BehaviorSubject<boolean>(false);
 
-	/** Determines whether file should be treated as an image. */
-	public readonly isImage					= memoize(async (
+	/** Determines whether file should be treated as multimedia. */
+	public readonly isMedia					= memoize(async (
 		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference
 	)) => {
 		const file	= await this.getFile(id);
@@ -1014,30 +1014,30 @@ export class AccountFilesService extends BaseProvider {
 	public async openFile (id: string) : Promise<void> {
 		this.showSpinner.next(true);
 
-		if (!(await this.openImage(id))) {
+		if (!(await this.openMedia(id))) {
 			await this.downloadAndSave(id).result;
 		}
 	}
 
 	/**
-	 * Opens an image file.
-	 * @returns Whether or not file is an image.
+	 * Opens a multimedia file.
+	 * @returns Whether or not file is multimedia.
 	 */
-	public async openImage (id: string) : Promise<boolean> {
+	public async openMedia (id: string) : Promise<boolean> {
 		this.showSpinner.next(true);
 
 		const file		= await this.getFile(id);
-		const isImage	= await this.isImage(file);
+		const isMedia	= await this.isMedia(file);
 
-		if (isImage) {
-			this.dialogService.image({
+		if (isMedia) {
+			this.dialogService.media({
 				mediaType: file.mediaType,
 				src: await this.downloadURI(id).result,
 				title: file.name
 			});
 		}
 
-		return isImage;
+		return isMedia;
 	}
 
 	/** Removes a file. */

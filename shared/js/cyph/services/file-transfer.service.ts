@@ -35,14 +35,14 @@ export class FileTransferService extends BaseProvider {
 		progress: Observable<number>;
 	}>();
 
-	/** Downloads image. */
-	public readonly getImage	= memoize(async (fileTransfer: IFileTransfer) : Promise<{
+	/** Downloads multimedia. */
+	public readonly getMedia	= memoize(async (fileTransfer: IFileTransfer) : Promise<{
 		success: boolean;
 		uri?: SafeUrl;
 	}> => {
 		try {
-			if (!fileTransfer.image) {
-				throw new Error('Not an image.');
+			if (!fileTransfer.media) {
+				throw new Error('Not multimedia.');
 			}
 
 			return {
@@ -147,13 +147,13 @@ export class FileTransferService extends BaseProvider {
 
 	/**
 	 * Sends file.
-	 * @param image If true, file is processed as an image
+	 * @param media If true, file is processed as multimedia
 	 * (compressed when possible, automatically downloaded, and displayed inline).
 	 */
 	public async send (
 		file: IFile,
-		image: boolean = this.fileService.isImage(file),
-		imageSelfDestructTimeout?: number
+		media: boolean = this.fileService.isMedia(file),
+		mediaSelfDestructTimeout?: number
 	) : Promise<void> {
 		if (file.data.length > this.configService.filesConfig.maxSize) {
 			this.analyticsService.sendEvent({
@@ -172,8 +172,8 @@ export class FileTransferService extends BaseProvider {
 
 		const fileTransfer: IFileTransfer	= {
 			id: uuid(true),
-			image,
 			isOutgoing: true,
+			media,
 			mediaType: file.mediaType,
 			name: file.name,
 			size: file.data.length
@@ -186,7 +186,10 @@ export class FileTransferService extends BaseProvider {
 			await this.transfers.addItem(transfer);
 
 			const url						= `${this.path}/${fileTransfer.id}`;
-			const plaintext					= await this.fileService.getBytes(file, image);
+			const plaintext					= await this.fileService.getBytes(
+				file,
+				media && this.fileService.isImage(file)
+			);
 			const {cyphertext, hash, key}	= await this.encryptFile(plaintext, url);
 
 			const uploadTask	= this.databaseService.uploadItem(url, BinaryProto, cyphertext);
@@ -210,7 +213,7 @@ export class FileTransferService extends BaseProvider {
 			await this.chatService.send(
 				ChatMessageValue.Types.FileTransfer,
 				{fileTransfer: {...fileTransfer, isOutgoing: false}},
-				imageSelfDestructTimeout
+				mediaSelfDestructTimeout
 			);
 		}
 		catch {

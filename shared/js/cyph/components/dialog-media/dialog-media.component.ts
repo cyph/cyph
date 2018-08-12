@@ -13,11 +13,11 @@ import {StringsService} from '../../services/strings.service';
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	selector: 'cyph-dialog-image',
-	styleUrls: ['./dialog-image.component.scss'],
-	templateUrl: './dialog-image.component.html'
+	selector: 'cyph-dialog-media',
+	styleUrls: ['./dialog-media.component.scss'],
+	templateUrl: './dialog-media.component.html'
 })
-export class DialogImageComponent extends BaseProvider {
+export class DialogMediaComponent extends BaseProvider {
 	/** Aspect ratio for cropping. */
 	public cropAspectRatio?: number;
 
@@ -67,7 +67,7 @@ export class DialogImageComponent extends BaseProvider {
 		private readonly domSanitizer: DomSanitizer,
 
 		/** @ignore */
-		private readonly matDialogRef: MatDialogRef<DialogImageComponent>,
+		private readonly matDialogRef: MatDialogRef<DialogMediaComponent>,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
