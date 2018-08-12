@@ -36,8 +36,8 @@ export class DialogMediaComponent extends BaseProvider {
 		!data ? undefined : DataURIProto.safeUrlToString(data, mediaType).catch(() => undefined)
 	);
 
-	/** String to safeUrl. */
-	public readonly stringToSafeUrl	= memoize(async (data?: SafeUrl|string) =>
+	/** String to SafeUrl. */
+	public readonly stringToSafeUrl	= memoize((data?: SafeUrl|string) =>
 		typeof data !== 'string' ? data : this.domSanitizer.bypassSecurityTrustUrl(data)
 	);
 
