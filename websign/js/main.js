@@ -32,6 +32,15 @@ else if (!isHiddenService && !localStorage.webSignWWWPinned) {
 	location.host					= 'www.' + location.host;
 }
 
+if (
+	config.cyphBrandedPackages[packageName] ||
+	config.cyphBranches.filter(function (branch) {
+		return config.cyphBrandedPackages[packageName.replace(branch, '')];
+	}).length > 0
+) {
+	document.getElementById('websign-load').className	= 'cyph-branded';
+}
+
 /* Get user's current location to choose optimal CDN node */
 Promise.resolve().then(function () {
 	if (isHiddenService) {
