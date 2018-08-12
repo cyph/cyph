@@ -7,11 +7,6 @@ import {staticDomSanitizer} from '../util/static-services';
 
 /** Base64 data URI encoder/decoder. (Doesn't actually use Protocol Buffers.) */
 export class DataURIProto {
-	/** @ignore */
-	private static readonly defaultPrefix: Uint8Array	= potassiumUtil.fromString(
-		'data:application/octet-stream;base64,'
-	);
-
 	/** Converts possible-SafeUrl to string. */
 	public static async safeUrlToString (
 		data: SafeUrl|string,
@@ -46,20 +41,16 @@ export class DataURIProto {
 	}
 
 	/** @see IProto.decode */
-	public static async decode (bytes: Uint8Array, mediaType?: string) : Promise<SafeUrl> {
+	public static async decode (
+		bytes: Uint8Array,
+		mediaType: string = 'application/octet-stream'
+	) : Promise<SafeUrl> {
 		if (bytes.length < 1) {
 			return {};
 		}
 
 		return (await staticDomSanitizer).bypassSecurityTrustUrl(
-			potassiumUtil.toBase64(potassiumUtil.concatMemory(
-				false,
-				mediaType ?
-					potassiumUtil.fromString(`data:${mediaType};base64,`) :
-					DataURIProto.defaultPrefix
-				,
-				bytes
-			))
+			`data:${mediaType};base64,` + potassiumUtil.toBase64(bytes)
 		);
 	}
 
