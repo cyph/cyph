@@ -96,14 +96,6 @@ const customBuild	= (id, version) => {
 				background-color: ${o.config.backgroundColor} !important;
 			}
 		`}
-
-		${!o.logoVertical ? '' : `
-			.loading > .logo-animation {
-				&, > * {
-					background-image: url(${datauri.sync(paths.logoVertical)});
-				}
-			}
-		`}
 	`.trim();
 
 	if (preLoadSCSS) {
@@ -113,8 +105,11 @@ const customBuild	= (id, version) => {
 			if (o.logoVertical) {
 				originalCSS	= originalCSS.
 					replace(/body\.cordova/g, 'body').
-					replace(/body:not(\.cordova)/g, 'body.custom-build-ignore').
-					replace(/background-image:url\([^\)]+\);/g, '')
+					replace(/body:not\(\.cordova\)/g, 'body.custom-build-ignore').
+					replace(
+						/background-image:url\([^\)]+\)/g,
+						`background-image:url(${datauri.sync(paths.logoVertical)})`
+					)
 				;
 			}
 
