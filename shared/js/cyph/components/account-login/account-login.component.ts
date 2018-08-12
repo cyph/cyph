@@ -96,10 +96,6 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			this.accountDatabaseService.currentUser.value &&
 			this.accountDatabaseService.currentUser.value.user
 		) {
-			if ((<any> self).androidBackbuttonReady) {
-				(<any> self).plugins.appMinimize.minimize();
-			}
-
 			return this.postLogin();
 		}
 
@@ -206,6 +202,14 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		public readonly stringsService: StringsService
 	) {
 		super();
+
+		if (
+			(<any> self).androidBackbuttonReady &&
+			this.accountDatabaseService.currentUser.value &&
+			this.accountDatabaseService.currentUser.value.user
+		) {
+			(<any> self).plugins.appMinimize.minimize();
+		}
 
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
