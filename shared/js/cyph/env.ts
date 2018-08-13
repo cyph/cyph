@@ -217,7 +217,11 @@ export class Env extends EnvDeploy {
 
 	/** @inheritDoc */
 	public readonly newCyphBaseUrl: string		=
-		this.environment.customBuild && !this.environment.local && this.coBranded ?
+		(
+			this.environment.customBuild &&
+			!this.environment.local &&
+			!this.environment.customBuild.config.accountsOnly
+		) ?
 			`https://${this.environment.customBuild.id}/` :
 			envDeploy.newCyphBaseUrl
 	;
