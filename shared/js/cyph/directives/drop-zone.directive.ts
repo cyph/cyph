@@ -11,7 +11,9 @@ import * as Dropzone from 'dropzone';
 import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
 import {EnvService} from '../services/env.service';
+import {DialogService} from '../services/dialog.service';
 import {FileService} from '../services/file.service';
+import {StringsService} from '../services/strings.service';
 import {uuid} from '../util/uuid';
 import {waitUntilTrue} from '../util/wait';
 
@@ -42,6 +44,15 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 	/** File drop event emitter. */
 	@Output() public readonly fileDrop: EventEmitter<IFile>	= new EventEmitter<IFile>();
 
+	/** @ignore */
+	private async confirm (file: {name: string}) : Promise<boolean> {
+		return this.dialogService.confirm({
+			content: `${this.stringsService.upload} \`${file.name.replace(/\`/g, "'")}\`?`,
+			markdown: true,
+			title: this.stringsService.uploadFile
+		});
+	}
+
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
 		this.renderer.addClass(this.elementRef.nativeElement, this.id);
@@ -70,7 +81,10 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 							accept: async (file, done) => {
 								done('ignore');
 								dz.removeAllFiles();
-								this.fileDrop.emit(await this.fileService.getIFile(file));
+
+								if (await this.confirm(file)) {
+									this.fileDrop.emit(await this.fileService.getIFile(file));
+								}
 							},
 							url: 'data:text/plain;ascii,',
 							...(this.accept ? {acceptedFiles: this.accept} : {})
@@ -88,7 +102,8 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 								typeof o === 'object' &&
 								o.data instanceof Uint8Array &&
 								typeof o.mediaType === 'string' &&
-								typeof o.name === 'string'
+								typeof o.name === 'string' &&
+								(await this.confirm(o))
 							) {
 								this.fileDrop.emit(o);
 							}
@@ -118,10 +133,16 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 		private readonly renderer: Renderer2,
 
 		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
 		private readonly envService: EnvService,
 
 		/** @ignore */
-		private readonly fileService: FileService
+		private readonly fileService: FileService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		super();
 	}

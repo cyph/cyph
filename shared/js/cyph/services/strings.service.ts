@@ -833,6 +833,12 @@ export class StringsService extends BaseProvider {
 	public readonly untitled: string					= `Untitled`;
 
 	/** @see StringsService */
+	public readonly upload: string						= `Upload`;
+
+	/** @see StringsService */
+	public readonly uploadFile: string					= `Upload File`;
+
+	/** @see StringsService */
 	public readonly userAvatar: string					= `User Avatar`;
 
 	/** @see StringsService */
