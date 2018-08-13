@@ -81,7 +81,7 @@
 				<div class='header-content' fxFlex fxLayout='row'>
 					<ng-container *ngIf='
 						accountService.header | async as header;
-						else logoTextHeader
+						else emptyHeader
 					'>
 						<a
 							fxFlex
@@ -121,8 +121,8 @@
 							<h1 fxFlex>{{header}}</h1>
 						</ng-template>
 					</ng-container>
-					<ng-template #logoTextHeader>
-						<h1 fxFlex class='logo-text'>{{stringsService.logoText}}</h1>
+					<ng-template #emptyHeader>
+						<h1 fxFlex></h1>
 					</ng-template>
 				</div>
 
