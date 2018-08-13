@@ -63,7 +63,13 @@ export class StringsService extends BaseProvider {
 	public readonly accept: string						= `accept`;
 
 	/** @see StringsService */
+	public readonly access: string						= `Access`;
+
+	/** @see StringsService */
 	public readonly affTooltip: string					= `Opens in new tab`;
+
+	/** @see StringsService */
+	public readonly allow: string						= `Allow`;
 
 	/** @see StringsService */
 	public readonly appointmentCalendar: string			= `Appointment Calendar`;
@@ -76,6 +82,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly callType: string					= `Call Type`;
+
+	/** @see StringsService */
+	public readonly camera: string						= `camera`;
 
 	/** @see StringsService */
 	public readonly cameraDisable: string				= `Disable Camera`;
@@ -431,6 +440,9 @@ export class StringsService extends BaseProvider {
 	public readonly messageUnconfirmed: string			=
 		`Message delivery unconfirmed`
 	;
+
+	/** @see StringsService */
+	public readonly mic: string							= `microphone`;
 
 	/** @see StringsService */
 	public readonly micDisable: string					= `Disable Mic`;

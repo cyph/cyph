@@ -20,7 +20,7 @@ import {StringsService} from './strings.service';
 export class P2PService extends BaseProvider {
 	/** @ignore */
 	private readonly handlers: IP2PHandlers	= {
-		acceptConfirm: async (callType: string, timeout: number, isAccepted: boolean) => {
+		acceptConfirm: async (callType, timeout, isAccepted) => {
 			if (isAccepted) {
 				return true;
 			}
@@ -49,11 +49,10 @@ export class P2PService extends BaseProvider {
 		canceled: async () => {
 			await this.dialogService.alert({
 				content: this.stringsService.p2pCanceled,
-				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
 			});
 		},
-		connected: async (isConnected: boolean) => {
+		connected: async isConnected => {
 			if (isConnected) {
 				await this.chatService.addMessage({
 					shouldNotify: false,
@@ -64,7 +63,6 @@ export class P2PService extends BaseProvider {
 				await Promise.all([
 					this.dialogService.alert({
 						content: this.stringsService.p2pDisconnect,
-						ok: this.stringsService.ok,
 						title: this.stringsService.p2pTitle
 					}),
 					this.chatService.addMessage({
@@ -80,13 +78,24 @@ export class P2PService extends BaseProvider {
 				await sleep(1000);
 			}
 		},
-		requestConfirm: async (callType: string, isAccepted: boolean) => {
+		localVideoConfirm: async video => {
+			return this.dialogService.confirm({
+				content: `${
+					this.stringsService.allow
+				} ${
+					video ? this.stringsService.camera : this.stringsService.mic
+				} ${
+					this.stringsService.allow
+				}?`,
+				title: this.stringsService.p2pTitle
+			});
+		},
+		requestConfirm: async (callType, isAccepted) => {
 			if (isAccepted) {
 				return true;
 			}
 
 			return this.dialogService.confirm({
-				cancel: this.stringsService.cancel,
 				content: `${
 					this.stringsService.p2pInit
 				} ${
@@ -113,7 +122,6 @@ export class P2PService extends BaseProvider {
 		requestRejection: async () => {
 			await this.dialogService.alert({
 				content: this.stringsService.p2pDeny,
-				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
 			});
 		}
@@ -161,7 +169,6 @@ export class P2PService extends BaseProvider {
 		if (this.chatService.chat.isConnected && !this.isEnabled.value) {
 			await this.dialogService.alert({
 				content: this.stringsService.p2pDisabled,
-				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
 			});
 		}

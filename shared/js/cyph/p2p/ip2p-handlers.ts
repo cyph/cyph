@@ -24,6 +24,9 @@ export interface IP2PHandlers {
 	/** Loaded handler. */
 	loaded: () => MaybePromise<void>;
 
+	/** Local video start confirm handler. */
+	localVideoConfirm: (video: boolean) => Promise<boolean>;
+
 	/** Request confirm handler. */
 	requestConfirm: (callType: 'audio'|'video', isAccepted: boolean) => Promise<boolean>;
 

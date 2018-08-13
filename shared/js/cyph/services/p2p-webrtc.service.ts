@@ -132,7 +132,10 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 		}
 	};
 
-	/** @inheritDoc */
+	/** @ignore */
+	private readonly confirmLocalVideoAccess			= false;
+
+	/** @ignore */
 	private readonly disconnectInternal: Subject<void>	= new Subject();
 
 	/** @ignore */
@@ -446,6 +449,16 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 
 			debugLog(() => ({p2pWebRTCJoin: {iceServers, p2pSessionData}}));
 
+			const handlers	= await this.handlers;
+
+			if (
+				!this.confirmLocalVideoAccess ||
+				!(await handlers.localVideoConfirm(this.outgoingStream.value.video))
+			) {
+				debugLog(() => 'p2pWebRTCJoinCancel');
+				return this.close();
+			}
+
 			const webRTC	= new SimpleWebRTC({
 				adjustPeerVolume: false,
 				autoRemoveVideos: true,
@@ -535,10 +548,10 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 			this.handleLoadingEvent(webRTC, this.loadingEvents.joinedRoom, 75);
 
 			this.handleLoadingEvent(webRTC, this.loadingEvents.finished, async () => {
-				await (await this.handlers).loaded();
+				await handlers.loaded();
 				this.loading.next(false);
 				await this.progressUpdate(this.loadingEvents.finished, 100);
-				this.toggle('audio', !(await this.handlers).audioDefaultEnabled());
+				this.toggle('audio', !handlers.audioDefaultEnabled());
 			});
 
 			webRTC.startLocalVideo();
@@ -547,7 +560,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 				await this.commands.webRTC({args: [p2pSessionData.id], event: 'connect'}, false);
 			}
 
-			(await this.handlers).connected(true);
+			handlers.connected(true);
 			this.webRTC.next(webRTC);
 
 			this.initialCallPending.next(false);
