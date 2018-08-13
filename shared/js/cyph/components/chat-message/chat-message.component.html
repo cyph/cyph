@@ -22,7 +22,7 @@
 	<div>
 		<div fxLayout='row' *ngIf='uiStyle === uiStyles.default; else emailUI'>
 			<div class='message' fxFlex>
-				<div fxLayout='row'>
+				<div fxLayout='row' fxLayoutAlign='start center'>
 					<strong
 						class='message-author'
 						*ngIf='!mobile && message?.authorType !== authorTypes.App'
