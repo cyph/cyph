@@ -252,7 +252,7 @@ export class AccountService extends BaseProvider {
 			};
 
 			/* Special case: set root header on mobile to "Messages" */
-			if (route === '' && width <= this.configService.responsiveMaxWidths.sm) {
+			if (!route && width <= this.configService.responsiveMaxWidths.sm) {
 				return this.stringsService.messagesHeader;
 			}
 

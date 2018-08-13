@@ -197,11 +197,13 @@
 
 	<button
 		mat-fab
+		class='fixed-fab'
 		color='primary'
 		matTooltip='Upload File'
 		matTooltipPosition='left'
 		cyphDropZone
-		class='fixed-fab'
+		cyphTranslate
+		(fileDrop)='accountFilesService.upload($event.name, $event)'
 	>
 		<mat-icon>file_upload</mat-icon>
 	</button>

@@ -134,9 +134,9 @@ body:not(.cordova) {
 
 		> :nth-child(1) {
 			height: 40%;
-			width: 60%;
+			width: 65%;
 			top: 60%;
-			left: 40%;
+			left: 35%;
 			background-position: 100% 100%;
 
 			@include animation(logo0 1890ms step-end);
@@ -144,7 +144,7 @@ body:not(.cordova) {
 
 		> :nth-child(2) {
 			height: 40%;
-			width: 40%;
+			width: 35%;
 			top: 60%;
 			left: 0;
 			background-position: 0 100%;
