@@ -26,6 +26,17 @@
 		display: none;
 	}
 
+	.logo-animation {
+		height: 150px !important;
+		width: 150px !important;
+		min-height: 150px !important;
+		min-width: 150px !important;
+
+		> * {
+			background-size: 150px 150px !important;
+		}
+	}
+
 	> .desktop {
 		height: calc((100vw - 60px) * 0.47 * 0.565);
 		width: calc(47% + 1px);
@@ -127,6 +138,13 @@
 				max-width: 100%;
 				text-align: center;
 				font-size: 135%;
+			}
+		}
+
+		cyph-chat-message {
+			.media-message {
+				max-width: 100%;
+				max-height: 75%;
 			}
 		}
 
