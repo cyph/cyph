@@ -26,7 +26,7 @@ if (env.isCordova) {
 
 /* Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=821876 */
 
-if (env.isMacOS && env.isChrome && env.chromeVersion >= 65) {
+if (env.isMacOS && env.isChrome && env.chromeVersion >= 65 && env.chromeVersion < 68) {
 	$(document.body).addClass('disable-drop-shadow');
 }
 
