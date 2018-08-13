@@ -276,6 +276,7 @@ $mobileAppBarHeight: 56px;
 
 	.header {
 		position: fixed;
+		z-index: 15;
 		width: 100%;
 		height: $mobileAppBarHeight;
 		min-height: $mobileAppBarHeight;

@@ -245,6 +245,9 @@ mat-progress-spinner.global {
 [matDialogTitle] {
 	font-family: Ubuntu;
 	font-weight: initial !important;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	max-height: 32px;
 }
 
 .router-link {
