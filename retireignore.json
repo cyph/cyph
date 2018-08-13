@@ -12,6 +12,10 @@
 		"justification": "Dev dependency"
 	},
 	{
+		"path": "bootstrap",
+		"justification": "Dev dependency"
+	},
+	{
 		"path": "cli",
 		"justification": "Dev dependency"
 	},
