@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, combineLatest, interval, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, Observable, of} from 'rxjs';
 import {filter, map, take, takeWhile} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {User} from '../account/user';
@@ -177,6 +177,9 @@ export class ChatService extends BaseProvider {
 		isActive: BehaviorSubject<boolean>;
 		isSidebarOpen: BehaviorSubject<boolean>;
 	}>();
+
+	/** Remote User object where applicable. */
+	public readonly remoteUser: Observable<User|undefined>	= of(undefined);
 
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers				= {
@@ -799,11 +802,6 @@ export class ChatService extends BaseProvider {
 		}
 
 		return message;
-	}
-
-	/** Gets remote user if applicable. */
-	public async getRemoteUser () : Promise<User|undefined> {
-		return undefined;
 	}
 
 	/** Displays help information. */

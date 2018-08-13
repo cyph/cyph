@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {map, mergeMap, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
@@ -55,6 +55,13 @@ export class AccountChatService extends ChatService {
 	}>();
 
 	/** @inheritDoc */
+	public readonly remoteUser: Observable<User|undefined>	=
+		this.sessionService.remoteUsername.pipe(mergeMap(async username =>
+			username ? this.accountUserLookupService.getUser(username, false) : undefined
+		))
+	;
+
+	/** @inheritDoc */
 	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
 		return (
 			author === this.sessionService.appUsername ?
@@ -63,12 +70,6 @@ export class AccountChatService extends ChatService {
 				(await this.accountDatabaseService.getCurrentUser()).user.username :
 				author.pipe(take(1)).toPromise().then(normalize).catch(() => undefined)
 		);
-	}
-
-	/** @inheritDoc */
-	public async getRemoteUser () : Promise<User|undefined> {
-		const username	= await this.getAuthorID(this.sessionService.remoteUsername);
-		return username ? this.accountUserLookupService.getUser(username, false) : undefined;
 	}
 
 	/** Gets async set for scrollService.unreadMessages. */
