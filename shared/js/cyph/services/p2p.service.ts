@@ -19,7 +19,7 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class P2PService extends BaseProvider {
 	/** @ignore */
-	private readonly handlers: IP2PHandlers	= {
+	protected readonly handlers: IP2PHandlers	= {
 		acceptConfirm: async (callType, timeout, isAccepted) => {
 			if (isAccepted) {
 				return true;

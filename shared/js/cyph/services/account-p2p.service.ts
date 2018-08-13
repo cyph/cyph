@@ -26,7 +26,10 @@ export class AccountP2PService extends P2PService {
 
 	/** @ignore */
 	protected async request (callType: 'audio'|'video') : Promise<void> {
-		if (!this.accountSessionService.remoteUser.value) {
+		if (
+			!this.accountSessionService.remoteUser.value ||
+			!(await this.handlers.requestConfirm(callType, false))
+		) {
 			return;
 		}
 
