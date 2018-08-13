@@ -24,7 +24,7 @@ mat-dialog-container {
 }
 
 /* Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=821876 */
-body:not(.enable-drop-shadow) {
+body.disable-drop-shadow {
 	.loading > .logo-animation, cyph-chat-message-list .message-list-background {
 		@include filter(none !important);
 	}

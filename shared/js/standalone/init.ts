@@ -26,8 +26,8 @@ if (env.isCordova) {
 
 /* Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=821876 */
 
-if (!(env.isMacOS && env.isChrome && env.chromeVersion >= 65)) {
-	$(document.body).addClass('enable-drop-shadow');
+if (env.isMacOS && env.isChrome && env.chromeVersion >= 65) {
+	$(document.body).addClass('disable-drop-shadow');
 }
 
 /* Cordova back button support */
