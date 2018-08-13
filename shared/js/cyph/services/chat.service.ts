@@ -5,6 +5,7 @@ import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, combineLatest, interval, Observable} from 'rxjs';
 import {filter, map, take, takeWhile} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
+import {User} from '../account/user';
 import {ChatMessage, IChatData, IChatMessageInput, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
 import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
@@ -798,6 +799,11 @@ export class ChatService extends BaseProvider {
 		}
 
 		return message;
+	}
+
+	/** Gets remote user if applicable. */
+	public async getRemoteUser () : Promise<User|undefined> {
+		return undefined;
 	}
 
 	/** Displays help information. */

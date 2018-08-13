@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map, take} from 'rxjs/operators';
-import {SecurityModels} from '../account';
+import {SecurityModels, User} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
 import {LocalAsyncList} from '../local-async-list';
@@ -22,6 +22,7 @@ import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
+import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -62,6 +63,12 @@ export class AccountChatService extends ChatService {
 				(await this.accountDatabaseService.getCurrentUser()).user.username :
 				author.pipe(take(1)).toPromise().then(normalize).catch(() => undefined)
 		);
+	}
+
+	/** @inheritDoc */
+	public async getRemoteUser () : Promise<User|undefined> {
+		const username	= await this.getAuthorID(this.sessionService.remoteUsername);
+		return username ? this.accountUserLookupService.getUser(username, false) : undefined;
 	}
 
 	/** Gets async set for scrollService.unreadMessages. */
@@ -233,7 +240,10 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionService: AccountSessionService,
 
 		/** @ignore */
-		private readonly accountSessionInitService: AccountSessionInitService
+		private readonly accountSessionInitService: AccountSessionInitService,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService
 	) {
 		super(
 			analyticsService,
