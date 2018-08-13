@@ -452,7 +452,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 			const handlers	= await this.handlers;
 
 			if (
-				!this.confirmLocalVideoAccess ||
+				this.confirmLocalVideoAccess &&
 				!(await handlers.localVideoConfirm(this.outgoingStream.value.video))
 			) {
 				debugLog(() => 'p2pWebRTCJoinCancel');
