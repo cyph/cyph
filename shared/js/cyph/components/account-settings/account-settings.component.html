@@ -125,7 +125,8 @@
 				<button
 					mat-raised-button
 					cyphTranslate
-					[fxFlex]='envService.isMobile'
+					fxFlex
+					fxFlex.gt-sm='initial'
 					type='submit'
 					[disabled]='(ready | async) === false'
 				>

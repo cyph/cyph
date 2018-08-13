@@ -23,9 +23,17 @@
 		</div>
 
 		<div fxLayoutAlign='center center'>
-			<button mat-raised-button type='submit' [disabled]='
-				((getMasterKeyOnly ? masterKeyReady : lockScreenPasswordReady) | async) === false
-			'>
+			<button
+				mat-raised-button
+				fxFlex
+				fxFlex.gt-sm='initial'
+				type='submit'
+				[disabled]='
+					(
+						(getMasterKeyOnly ? masterKeyReady : lockScreenPasswordReady) | async
+					) === false
+				'
+			>
 				{{stringsService.submit}}
 			</button>
 		</div>
