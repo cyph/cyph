@@ -14,7 +14,6 @@ var config	= {
 	cyphBrandedPackages: {
 		'cyph.audio': true,
 		'cyph.chat': true,
-		'cyph.healthcare': true,
 		'cyph.im': true,
 		'cyph.io': true,
 		'cyph.me': true,

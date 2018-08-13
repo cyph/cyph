@@ -18,7 +18,7 @@ const customBuildIds	= fs.readdirSync(repoPath).filter(s =>
 	fs.lstatSync(`${repoPath}/${s}`).isDirectory()
 );
 
-const cssRoot			= `${__dirname}/../shared/css`
+const cssRoot			= `${__dirname}/../shared/css`;
 
 const compileSCSS	= scss =>
 	childProcess.spawnSync('cleancss', [], {input:
@@ -90,25 +90,38 @@ const customBuild	= (id, version) => {
 		o.config.title	= htmlencode.htmlEncode(o.config.title);
 	}
 
+	/* Telehealth background color is copied from shared/css/themes/telehealth.scss */
+	const preLoadBackgroundColor	=
+		o.config.backgroundColor || (o.config.telehealth ? '#eeecf1' : undefined)
+	;
+
+	const preLoadLogoPath			=
+		o.logoVertical ?
+			paths.logoVertical :
+		o.config.telehealth ?
+			`${__dirname}/../shared/assets/img/logo.telehealth.icon.png` :
+			undefined
+	;
+
 	const preLoadSCSS	= `
-		${!o.config.backgroundColor ? '' : `
+		${!preLoadBackgroundColor ? '' : `
 			html > body {
-				background-color: ${o.config.backgroundColor} !important;
+				background-color: ${preLoadBackgroundColor} !important;
 			}
 		`}
 	`.trim();
 
-	if (preLoadSCSS) {
+	if (preLoadSCSS || preLoadLogoPath) {
 		const preLoadCSS	= compileSCSS(preLoadSCSS);
 
 		o.preLoadCSS		= originalCSS => {
-			if (o.logoVertical) {
+			if (preLoadLogoPath) {
 				originalCSS	= originalCSS.
 					replace(/body\.cordova/g, 'body').
 					replace(/body:not\(\.cordova\)/g, 'body.custom-build-ignore').
 					replace(
 						/background-image:url\([^\)]+\)/g,
-						`background-image:url(${datauri.sync(paths.logoVertical)})`
+						`background-image:url(${datauri.sync(preLoadLogoPath)})`
 					)
 				;
 			}
