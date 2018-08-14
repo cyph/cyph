@@ -184,7 +184,11 @@ exports.itemRemoved	= functions.database.ref(
 
 exports.userConsumeInvite	= functions.database.ref(
 	'{namespace}/users/{user}/inviteCode'
-).onCreate(async (data, {params}) => {
+).onWrite(async (data, {params}) => {
+	if (!data.after.val()) {
+		return;
+	}
+
 	const username		= params.user;
 	const inviteCode	= await getItem(
 		params.namespace,
