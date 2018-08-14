@@ -551,11 +551,13 @@ export class AccountAuthService extends BaseProvider {
 			]);
 
 			await Promise.all([
-				this.setItem(
-					`users/${username}/loginData`,
-					AccountLoginData,
-					loginData,
-					await this.passwordHash(username, masterKey)
+				this.passwordHash(username, masterKey).then(async masterKeyHash =>
+					this.setItem(
+						`users/${username}/loginData`,
+						AccountLoginData,
+						loginData,
+						masterKeyHash
+					)
 				),
 				this.setItem(
 					`users/${username}/publicProfile`,
@@ -614,11 +616,13 @@ export class AccountAuthService extends BaseProvider {
 					signingKeyPair.privateKey,
 					true
 				),
-				this.setItem(
-					`users/${username}/pin/hash`,
-					BinaryProto,
-					await this.passwordHash(username, pin.value),
-					loginData.symmetricKey
+				this.passwordHash(username, pin.value).then(async pinHash =>
+					this.setItem(
+						`users/${username}/pin/hash`,
+						BinaryProto,
+						pinHash,
+						loginData.symmetricKey
+					)
 				),
 				this.setItem(
 					`users/${username}/pin/isCustom`,
