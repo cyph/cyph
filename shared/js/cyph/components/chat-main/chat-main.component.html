@@ -3,6 +3,7 @@
 	fxFlexFill
 	fxLayout='column'
 	class='chat-main'
+	[class.accounts]='envService.isAccounts'
 	[class.video]='p2pService.isActive | async'
 	[class.mobile]='envService.isMobile'
 	[class.self-destruct]='chatService.chatSelfDestruct | async'
@@ -166,10 +167,13 @@
 							<h2 class='name'>{{((chatService.remoteUser | async)?.name | async) || ""}}</h2>
 							<img
 								cyphTranslate
-								class='avatar call Online'
+								class='avatar call'
 								[src]='((chatService.remoteUser | async)?.avatar | async) || ""'
 								alt='User Avatar'
 							/>
+							<h3 class='timer'>
+								{{((p2pService.timer | async)?.timestamp | async) || '00:00'}}
+							</h3>
 				</div>
 		</ng-container>
 		<video
@@ -205,7 +209,7 @@
 			fxFlex
 			fxLayout='row'
 			fxLayoutAlign='center center'
-			fxLayoutGap='32px'
+			[fxLayoutGap]='(envService.isAccounts && !envService.isMobile) ? "128px" : "32px"'
 			class='buttons'
 		>
 			<mat-slide-toggle

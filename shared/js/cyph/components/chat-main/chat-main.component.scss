@@ -496,23 +496,58 @@
 	text-align: center;
 }
 
-.cover-image.call {
-	position: absolute;
-}
+.accounts {
+	.cover-image.call {
+		position: absolute;
+		z-index: 0 !important;
 
-.avatar.call{
-	position: relative;
-	width: auto;
-	height: 33vh;
-}
+		&::after {
+			background-image: url(/assets/img/cyph.brick.pattern.png);
+		}
+	}
 
-h2.name {
-	color: #f4f4f4e6;
-	margin-bottom: 0.5em;
-	font-size: 2em;
-}
+	.avatar.call{
+		position: relative;
+		width: auto;
+		height: 33vh;
+		border-width: 0.5em;
+	}
 
-div.contact {
-	position: relative;
-	top: -2.5em;
+	h2.name {
+		color: #f4f4f4e6;
+		margin-bottom: 0.5em;
+		font-size: 2em;
+	}
+
+	h3.timer {
+		color: #f4f4f480;
+		font-size: 2em;
+		margin-top: 0.5em;
+		font-family: roboto;
+		font-weight: 500;
+	}
+
+	&:not(.mobile) {
+		.buttons {
+			bottom: 15vh;
+			
+			button {
+				@include transform(scale(1.75));
+			}
+		}
+	}
+
+	&.mobile {
+		.buttons button {
+			@include transform(scale(2));
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 12vh;
+		}
+	}
+
+	div.contact {
+		position: relative;
+		top: -2.5em;
+	}
 }

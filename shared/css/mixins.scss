@@ -166,6 +166,9 @@ $accountPaddingSmall: 2.5vw;
 	}
 
 	cyph-chat-main {
+		.avatar.call {
+			border-color: map-get($cyph-primary, default);
+		}
 		.chat-main.video .friend-is-typing .ellipsis-spinner > div {
 			background-color: $cyph-inverted;
 		}
