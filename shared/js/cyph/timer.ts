@@ -12,12 +12,6 @@ export class Timer {
 	private endTime?: number;
 
 	/** @ignore */
-	private includeHours: boolean	= false;
-
-	/** @ignore */
-	private includeMinutes: boolean	= false;
-
-	/** @ignore */
 	private isStopped: boolean		= false;
 
 	/** @ignore */
@@ -142,7 +136,13 @@ export class Timer {
 		autostart?: boolean,
 
 		/** Number of ms before countup stops. */
-		private readonly countupDuration?: number
+		private readonly countupDuration?: number,
+
+		/** Include minutes in timestamp string. */
+		private includeMinutes: boolean	= false,
+
+		/** Include hours in timestamp string. */
+		private includeHours: boolean	= false
 	) {
 		if (countdown === undefined) {
 			this.countUp	= true;

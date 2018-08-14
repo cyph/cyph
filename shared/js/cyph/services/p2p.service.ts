@@ -80,7 +80,7 @@ export class P2PService extends BaseProvider {
 			}
 		},
 		loaded: async () => {
-			this.timer.next(new Timer(undefined, true));
+			this.timer.next(new Timer(undefined, true, undefined, true));
 
 			if (!this.sessionInitService.ephemeral) {
 				this.chatService.initProgressFinish();
