@@ -16,6 +16,7 @@ import {events, ISessionMessageData, rpcEvents} from '../session';
 import {filterUndefinedOperator} from '../util/filter';
 import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
+import {requestPermissions} from '../util/permissions';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
@@ -452,8 +453,14 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 			const handlers	= await this.handlers;
 
 			if (
-				this.confirmLocalVideoAccess &&
-				!(await handlers.localVideoConfirm(this.outgoingStream.value.video))
+				(
+					this.confirmLocalVideoAccess &&
+					!(await handlers.localVideoConfirm(this.outgoingStream.value.video))
+				) ||
+				!(await requestPermissions(...[
+					'RECORD_AUDIO',
+					...(this.outgoingStream.value.video ? ['CAMERA'] : [])
+				]))
 			) {
 				debugLog(() => 'p2pWebRTCJoinCancel');
 				return this.close();

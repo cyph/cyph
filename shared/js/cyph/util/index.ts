@@ -7,6 +7,7 @@ export * from './get-or-set-default';
 export * from './lock';
 export * from './log';
 export * from './objects';
+export * from './permissions';
 export * from './random';
 export * from './request';
 export * from './safe-values';

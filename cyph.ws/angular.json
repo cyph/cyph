@@ -116,6 +116,15 @@
 								}
 							]
 						},
+						"localProd": {
+							"outputHashing": "all",
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.local-prod.ts"
+								}
+							]
+						},
 						"localStaging": {
 							"outputHashing": "all",
 							"fileReplacements": [
@@ -227,6 +236,9 @@
 						},
 						"localMaster": {
 							"browserTarget": "cyph.ws:build:localMaster"
+						},
+						"localProd": {
+							"browserTarget": "cyph.ws:build:localProd"
 						},
 						"localStaging": {
 							"browserTarget": "cyph.ws:build:localStaging"
