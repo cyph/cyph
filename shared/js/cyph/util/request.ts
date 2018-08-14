@@ -54,7 +54,7 @@ const baseRequest	= <R, T> (
 			}
 
 			if (data && method === 'GET') {
-				url		+= '?' + (
+				url += '?' + (
 					typeof data === 'object' ?
 						toQueryString(data) :
 						(<string> data.toString())

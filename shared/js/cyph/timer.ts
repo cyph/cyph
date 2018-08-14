@@ -85,17 +85,23 @@ export class Timer {
 			}
 
 			watchTimestamp(250).pipe(
-				map(timestamp => ({
-					continue:
-						!this.isStopped &&
-						(this.endTime === undefined || this.endTime > timestamp)
-					,
-					next: this.getTimestamp(
-						this.countUp ?
-							timestamp - startTime :
-							(this.endTime || 0) - timestamp
-					)
-				})),
+				map(timestamp => {
+					if (this.countUp) {
+						timestamp += this.time;
+					}
+
+					return {
+						continue:
+							!this.isStopped &&
+							(this.endTime === undefined || this.endTime > timestamp)
+						,
+						next: this.getTimestamp(
+							this.countUp ?
+								timestamp - startTime :
+								(this.endTime || 0) - timestamp
+						)
+					};
+				}),
 				takeWhile(o => o.continue),
 				map(o => o.next)
 			).subscribe(

@@ -62,7 +62,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 			);
 
 			if (typeof calcEnd === 'number') {
-				calcEnd	+= 5;
+				calcEnd += 5;
 			}
 			else {
 				calcEnd	= s.length;
