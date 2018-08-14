@@ -507,7 +507,7 @@
 		}
 	}
 
-	.avatar.call{
+	.avatar.call {
 		position: relative;
 		width: 33vh;
 		height: 33vh;
@@ -537,7 +537,7 @@
 		&:not(.mobile) {
 			.buttons {
 				bottom: 15vh;
-				
+
 				button {
 					@include transform(scale(1.75));
 				}
