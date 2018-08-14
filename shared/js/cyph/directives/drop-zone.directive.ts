@@ -10,8 +10,8 @@ import {
 import * as Dropzone from 'dropzone';
 import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
-import {EnvService} from '../services/env.service';
 import {DialogService} from '../services/dialog.service';
+import {EnvService} from '../services/env.service';
 import {FileService} from '../services/file.service';
 import {StringsService} from '../services/strings.service';
 import {uuid} from '../util/uuid';

@@ -161,7 +161,8 @@
 				<div
 					fxFlexFill
 					class='cover-image call'
-					[style.background-image]='urlToSafeStyle((chatService.remoteUser | async)?.coverImage | async) | async'
+					[style.background-image]='urlToSafeStyle(
+						(chatService.remoteUser | async)?.coverImage | async) | async'
 				></div>
 				<div class='contact' fxFlex fxLayout='column' fxLayoutAlign='center center'>
 							<h2 class='name'>{{((chatService.remoteUser | async)?.name | async) || ""}}</h2>
