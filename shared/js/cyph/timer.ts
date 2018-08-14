@@ -23,15 +23,21 @@ export class Timer {
 	/** @ignore */
 	private startPromise?: Promise<void>;
 
-	/** Indicates whether timer's countdown has completed. */
+	/** Indicates whether timer is counting up (as opposed to down). */
+	public readonly countUp: boolean;
+
+	/** Indicates whether timer's count has completed. */
 	public isComplete: Subject<boolean>	= new BehaviorSubject(false);
 
-	/** Indicates whether timer's countdown has started. */
+	/** Indicates whether timer's count has started. */
 	public isStarted: Subject<boolean>	= new BehaviorSubject(false);
+
+	/** Duration in milliseconds. */
+	public time: number;
 
 	/** Human-readable string indicating remaining time. */
 	public timestamp: Subject<string>	= new BehaviorSubject(
-		this.getTimestamp(this.countdown)
+		this.getTimestamp(this.time)
 	);
 
 	/** @ignore */
@@ -40,8 +46,8 @@ export class Timer {
 		const minutes	= Math.floor((timeRemaining % 3600000) / 60000);
 		const seconds	= Math.floor(((timeRemaining % 3600000) % 60000) / 1000);
 
-		this.includeHours	= this.includeHours || this.countdown >= 3600000;
-		this.includeMinutes	= this.includeMinutes || this.countdown >= 60000;
+		this.includeHours	= this.includeHours || this.time >= 3600000;
+		this.includeMinutes	= this.includeMinutes || this.time >= 60000;
 
 		return this.includeHours ?
 			`${hours}:${`0${minutes}`.slice(-2)}:${`0${seconds}`.slice(-2)}` :
@@ -51,9 +57,9 @@ export class Timer {
 		;
 	}
 
-	/** Extends the countdown duration. */
+	/** Extends the countdown duration or increases recorded countup duration. */
 	public addTime (milliseconds: number) : void {
-		this.countdown += milliseconds;
+		this.time += milliseconds;
 
 		if (this.endTime) {
 			this.endTime += milliseconds;
@@ -61,8 +67,8 @@ export class Timer {
 	}
 
 	/**
-	 * Initiates countdown.
-	 * @returns Promise that resolves when countdown finishes or is stopped.
+	 * Initiates count.
+	 * @returns Promise that resolves when count finishes or is stopped.
 	 */
 	public async start () : Promise<void> {
 		if (this.isStopped) {
@@ -77,16 +83,26 @@ export class Timer {
 		this.startPromise	= new Promise(async (resolve, reject) => {
 			await sleep(1000);
 
-			this.endTime	= (await getTimestamp()) + this.countdown;
+			const startTime	= await getTimestamp();
+
+			if (!this.countUp) {
+				this.endTime	= startTime + this.time;
+			}
+			else if (this.countupDuration) {
+				this.endTime	= startTime + this.countupDuration;
+			}
 
 			watchTimestamp(250).pipe(
 				map(timestamp => ({
 					continue:
 						!this.isStopped &&
-						this.endTime !== undefined &&
-						this.endTime > timestamp
+						(this.endTime === undefined || this.endTime > timestamp)
 					,
-					next: this.getTimestamp((this.endTime || 0) - timestamp)
+					next: this.getTimestamp(
+						this.countUp ?
+							timestamp - startTime :
+							(this.endTime || 0) - timestamp
+					)
 				})),
 				takeWhile(o => o.continue),
 				map(o => o.next)
@@ -94,13 +110,15 @@ export class Timer {
 				s => { this.timestamp.next(s); },
 				reject,
 				async () => {
-					this.timestamp.next(
-						this.includeHours ?
-							'0:00:00' :
-							this.includeMinutes ?
-								'0:00' :
-								'0'
-					);
+					if (!this.countUp) {
+						this.timestamp.next(
+							this.includeHours ?
+								'0:00:00' :
+								this.includeMinutes ?
+									'0:00' :
+									'0'
+						);
+					}
 
 					resolve();
 					await sleep(1000);
@@ -112,18 +130,29 @@ export class Timer {
 		return this.startPromise;
 	}
 
-	/** Stops countdown. */
+	/** Stops count. */
 	public stop () : void {
 		this.isStopped	= true;
 		this.isComplete.next(true);
 	}
 
 	constructor (
-		/** Countdown duration in milliseconds. */
-		public countdown: number,
+		countdown?: number,
 
-		autostart?: boolean
+		autostart?: boolean,
+
+		/** Number of ms before countup stops. */
+		private readonly countupDuration?: number
 	) {
+		if (countdown === undefined) {
+			this.countUp	= true;
+			this.time		= 0;
+		}
+		else {
+			this.countUp	= false;
+			this.time		= countdown;
+		}
+
 		if (autostart) {
 			this.start();
 		}
