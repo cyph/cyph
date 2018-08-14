@@ -3,6 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
+import {Timer} from '../timer';
 import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
@@ -60,6 +61,12 @@ export class P2PService extends BaseProvider {
 				});
 			}
 			else {
+				if (this.timer.value) {
+					this.timer.value.stop();
+				}
+
+				this.timer.next(undefined);
+
 				await Promise.all([
 					this.dialogService.alert({
 						content: this.stringsService.p2pDisconnect,
@@ -73,6 +80,8 @@ export class P2PService extends BaseProvider {
 			}
 		},
 		loaded: async () => {
+			this.timer.next(new Timer(undefined, true));
+
 			if (!this.sessionInitService.ephemeral) {
 				this.chatService.initProgressFinish();
 				await sleep(1000);
@@ -140,6 +149,9 @@ export class P2PService extends BaseProvider {
 
 	/** Indicates whether sidebar is open. */
 	public readonly isSidebarOpen			= new BehaviorSubject<boolean>(false);
+
+	/** Countup timer for call duration. */
+	public readonly timer					= new BehaviorSubject<Timer|undefined>(undefined);
 
 	/** @ignore */
 	private get p2pWarning () : string {
