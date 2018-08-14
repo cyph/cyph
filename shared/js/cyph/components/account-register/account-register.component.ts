@@ -9,7 +9,7 @@ import {
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, skip, take} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -212,7 +212,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.error.next(!(await this.accountAuthService.register(
 			this.username.value,
 			this.useXkcdPassphrase.value ?
-				(await this.xkcdPassphrase.pipe(skip(1), take(1)).toPromise()) :
+				this.xkcdPassphrase.value :
 				this.masterKey.value
 			,
 			{
@@ -332,20 +332,23 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				this.lockScreenPasswordReady,
 				this.masterKeyReady,
 				this.name,
-				this.usernameWatcher
+				this.usernameWatcher,
+				this.xkcdPassphrase
 			).pipe(map(([
 				inviteCode,
 				lockScreenPasswordReady,
 				masterKeyReady,
 				name,
-				username
+				username,
+				xkcd
 			]) => !(
 				!username.value ||
 				username.errors ||
 				!name ||
 				!inviteCode ||
 				!lockScreenPasswordReady ||
-				!masterKeyReady
+				!masterKeyReady ||
+				xkcd.length < 1
 			))),
 			false,
 			this.subscriptions
