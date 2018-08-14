@@ -14,7 +14,7 @@ export const random	= (max?: number, min: number = 0) : number => {
 
 	let randomUint	= 0;
 	for (let i = 0 ; i < randomData.length ; ++i) {
-		randomUint		+= randomData[i] * Math.pow(2, i * 16);
+		randomUint += randomData[i] * Math.pow(2, i * 16);
 		randomData[i]	= 0;
 	}
 
