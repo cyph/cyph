@@ -32,6 +32,7 @@
 	<plugin name="cordova-plugin-iosrtc" spec="*" />
 	<plugin name="cordova-plugin-media-capture" spec="*" />
 	<plugin name="cordova-plugin-network-information" spec="*" />
+	<plugin name="cordova-plugin-permission" spec="*" />
 	<plugin name="cordova-plugin-privacyscreen" spec="*" />
 	<plugin name="cordova-plugin-splashscreen" spec="*" />
 	<plugin name="cordova-plugin-statusbar" spec="*" />
