@@ -132,28 +132,46 @@
 				(p2pWebRTCService.loading | async)
 			'
 		></div>
-		<img
-			*ngIf='!envService.customBuildImages.audioImage'
-			class='friend'
-			[fxHide]='
-				(p2pWebRTCService.incomingStream | async)?.video ||
-				(p2pWebRTCService.loading | async)
-			'
-			src='/assets/img/voicecall.jpg'
-			alt='Voice call'
-			cyphTranslate
-		/>
-		<img
-			*ngIf='!!envService.customBuildImages.audioImage'
-			class='friend'
-			[fxHide]='
-				(p2pWebRTCService.incomingStream | async)?.video ||
-				(p2pWebRTCService.loading | async)
-			'
-			[src]='envService.customBuildImages.audioImage | async'
-			alt='Voice call'
-			cyphTranslate
-		/>
+		<ng-container *ngIf='!envService.isAccounts'>
+			<img
+				*ngIf='!envService.customBuildImages.audioImage'
+				class='friend'
+				[fxHide]='
+					(p2pWebRTCService.incomingStream | async)?.video ||
+					(p2pWebRTCService.loading | async)
+				'
+				src='/assets/img/voicecall.jpg'
+				alt='Voice call'
+				cyphTranslate
+			/>
+			<img
+				*ngIf='!!envService.customBuildImages.audioImage'
+				class='friend'
+				[fxHide]='
+					(p2pWebRTCService.incomingStream | async)?.video ||
+					(p2pWebRTCService.loading | async)
+				'
+				[src]='envService.customBuildImages.audioImage | async'
+				alt='Voice call'
+				cyphTranslate
+			/>
+		</ng-container>
+		<ng-container *ngIf='envService.isAccounts'>
+				<div
+					fxFlexFill
+					class='cover-image call'
+					[style.background-image]='urlToSafeStyle((chatService.remoteUser | async)?.coverImage | async) | async'
+				></div>
+				<div class='contact' fxFlex fxLayout='column' fxLayoutAlign='center center'>
+							<h2 class='name'>{{((chatService.remoteUser | async)?.name | async) || ""}}</h2>
+							<img
+								cyphTranslate
+								class='avatar call Online'
+								[src]='((chatService.remoteUser | async)?.avatar | async) || ""'
+								alt='User Avatar'
+							/>
+				</div>
+		</ng-container>
 		<video
 			class='me'
 			[fxHide]='!(p2pWebRTCService.outgoingStream | async)?.video'

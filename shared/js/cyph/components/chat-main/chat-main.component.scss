@@ -495,3 +495,24 @@
 	font-weight: 500;
 	text-align: center;
 }
+
+.cover-image.call {
+	position: absolute;
+}
+
+.avatar.call{
+	position: relative;
+	width: auto;
+	height: 33vh;
+}
+
+h2.name {
+	color: #f4f4f4e6;
+	margin-bottom: 0.5em;
+	font-size: 2em;
+}
+
+div.contact {
+	position: relative;
+	top: -2.5em;
+}

@@ -15,6 +15,7 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByTransfer} from '../../track-by/track-by-transfer';
 import {readableByteLength} from '../../util/formatting';
+import {urlToSafeStyle} from '../../util/safe-values';
 
 
 /**
@@ -57,6 +58,9 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles						= UiStyles;
+
+	/** @see urlToSafeStyle */
+	public readonly urlToSafeStyle								= urlToSafeStyle;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
