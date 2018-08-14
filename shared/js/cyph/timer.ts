@@ -30,18 +30,16 @@ export class Timer {
 	public time: number;
 
 	/** Human-readable string indicating remaining time. */
-	public timestamp: Subject<string>	= new BehaviorSubject(
-		this.getTimestamp(this.time)
-	);
+	public timestamp: Subject<string>;
 
 	/** @ignore */
-	private getTimestamp (timeRemaining: number) : string {
-		const hours		= Math.floor(timeRemaining / 3600000);
-		const minutes	= Math.floor((timeRemaining % 3600000) / 60000);
-		const seconds	= Math.floor(((timeRemaining % 3600000) % 60000) / 1000);
+	private getTimestamp (time: number) : string {
+		const hours		= Math.floor(time / 3600000);
+		const minutes	= Math.floor((time % 3600000) / 60000);
+		const seconds	= Math.floor(((time % 3600000) % 60000) / 1000);
 
-		this.includeHours	= this.includeHours || this.time >= 3600000;
-		this.includeMinutes	= this.includeMinutes || this.time >= 60000;
+		this.includeHours	= this.includeHours || time >= 3600000 || this.time >= 3600000;
+		this.includeMinutes	= this.includeMinutes || time >= 60000 || this.time >= 60000;
 
 		return this.includeHours ?
 			`${hours}:${`0${minutes}`.slice(-2)}:${`0${seconds}`.slice(-2)}` :
@@ -152,6 +150,8 @@ export class Timer {
 			this.countUp	= false;
 			this.time		= countdown;
 		}
+
+		this.timestamp	= new BehaviorSubject(this.getTimestamp(this.time));
 
 		if (autostart) {
 			this.start();
