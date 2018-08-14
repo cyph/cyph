@@ -511,7 +511,10 @@ function webSignSRI_Process (baseUrl) {
 };</script>
 				
 		
-<script>document.addEventListener('deviceready', function () {
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('deviceready', function () {
+
 
 document.addEventListener('backbutton', function (e) {
 	if (typeof self.onbackbutton === 'function') {
@@ -706,7 +709,9 @@ catch(function (err) {
 });
 
 
-})();</script>
+});
+});
+</script>
 				
 	
 
