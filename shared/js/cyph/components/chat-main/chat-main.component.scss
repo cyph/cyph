@@ -209,6 +209,7 @@
 
 		.video-call .friend {
 			height: calc(85% - 110px) !important;
+			width: auto !important;
 		}
 
 		cyph-chat-message-list {
@@ -508,46 +509,49 @@
 
 	.avatar.call{
 		position: relative;
-		width: auto;
+		width: 33vh;
 		height: 33vh;
 		border-width: 0.5em;
+		pointer-events: none;
 	}
 
 	h2.name {
-		color: #f4f4f4e6;
+		color: rgba(244, 244, 244, 0.9);
 		margin-bottom: 0.5em;
 		font-size: 2em;
 	}
 
 	h3.timer {
-		color: #f4f4f480;
+		color: rgba(244, 244, 244, 0.5);
 		font-size: 2em;
 		margin-top: 0.5em;
-		font-family: roboto;
 		font-weight: 500;
-	}
-
-	&:not(.mobile) {
-		.buttons {
-			bottom: 15vh;
-			
-			button {
-				@include transform(scale(1.75));
-			}
-		}
-	}
-
-	&.mobile {
-		.buttons button {
-			@include transform(scale(2));
-			margin-left: auto;
-			margin-right: auto;
-			margin-bottom: 12vh;
-		}
 	}
 
 	div.contact {
 		position: relative;
 		top: -2.5em;
+	}
+
+	&.audio-only {
+		&:not(.mobile) {
+			.buttons {
+				bottom: 15vh;
+				
+				button {
+					@include transform(scale(1.75));
+				}
+			}
+		}
+
+		&.mobile {
+			.buttons button {
+				margin-left: auto;
+				margin-right: auto;
+				margin-bottom: 12vh;
+
+				@include transform(scale(2));
+			}
+		}
 	}
 }

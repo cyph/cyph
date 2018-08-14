@@ -4,6 +4,7 @@
 	fxLayout='column'
 	class='chat-main'
 	[class.accounts]='envService.isAccounts'
+	[class.audio-only]='(p2pWebRTCService.videoEnabled | async) !== true'
 	[class.video]='p2pService.isActive | async'
 	[class.mobile]='envService.isMobile'
 	[class.self-destruct]='chatService.chatSelfDestruct | async'
@@ -133,7 +134,7 @@
 				(p2pWebRTCService.loading | async)
 			'
 		></div>
-		<ng-container *ngIf='!envService.isAccounts'>
+		<ng-container *ngIf='!envService.isAccounts; else accountsAudioCall'>
 			<img
 				*ngIf='!envService.customBuildImages.audioImage'
 				class='friend'
@@ -157,26 +158,32 @@
 				cyphTranslate
 			/>
 		</ng-container>
-		<ng-container *ngIf='envService.isAccounts'>
+		<ng-template #accountsAudioCall>
+			<ng-container *ngIf='(p2pWebRTCService.incomingStream | async)?.video !== true'>
 				<div
 					fxFlexFill
 					class='cover-image call'
 					[style.background-image]='urlToSafeStyle(
-						(chatService.remoteUser | async)?.coverImage | async) | async'
+						(chatService.remoteUser | async)?.coverImage | async
+					) | async'
 				></div>
 				<div class='contact' fxFlex fxLayout='column' fxLayoutAlign='center center'>
-							<h2 class='name'>{{((chatService.remoteUser | async)?.name | async) || ""}}</h2>
-							<img
-								cyphTranslate
-								class='avatar call'
-								[src]='((chatService.remoteUser | async)?.avatar | async) || ""'
-								alt='User Avatar'
-							/>
-							<h3 class='timer'>
-								{{((p2pService.timer | async)?.timestamp | async) || '00:00'}}
-							</h3>
+					<h2 class='name'>
+						{{((chatService.remoteUser | async)?.name | async) || ""}}
+					</h2>
+					<img
+						cyphTranslate
+						class='avatar call'
+						[src]='avatar'
+						alt='User Avatar'
+						*ngIf='(chatService.remoteUser | async)?.avatar | async as avatar'
+					/>
+					<h3 class='timer'>
+						{{((p2pService.timer | async)?.timestamp | async) || '00:00'}}
+					</h3>
 				</div>
-		</ng-container>
+			</ng-container>
+		</ng-template>
 		<video
 			class='me'
 			[fxHide]='!(p2pWebRTCService.outgoingStream | async)?.video'
@@ -210,7 +217,15 @@
 			fxFlex
 			fxLayout='row'
 			fxLayoutAlign='center center'
-			[fxLayoutGap]='(envService.isAccounts && !envService.isMobile) ? "128px" : "32px"'
+			[fxLayoutGap]='
+				(
+					envService.isAccounts &&
+					!envService.isMobile &&
+					(p2pWebRTCService.videoEnabled | async) !== true
+				) ?
+					"128px" :
+					"32px"
+			'
 			class='buttons'
 		>
 			<mat-slide-toggle

@@ -30,37 +30,37 @@ import {urlToSafeStyle} from '../../util/safe-values';
 })
 export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 	/** Indicates whether projected disconnection message should be hidden. */
-	@Input() public hideDisconnectMessage: boolean					= false;
+	@Input() public hideDisconnectMessage: boolean		= false;
 
 	/** @see ChatMessageListComponent.messageCountInTitle */
-	@Input() public messageCountInTitle: boolean					= false;
+	@Input() public messageCountInTitle: boolean		= false;
 
 	/** @see ChatMessageBoxComponent.messageType */
-	@Input() public messageType: ChatMessageValue.Types				= ChatMessageValue.Types.Text;
+	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
 
 	/** @see ChatMessageListComponent.persistentEndMessage */
-	@Input() public persistentEndMessage: boolean					= false;
+	@Input() public persistentEndMessage: boolean		= false;
 
 	/** @see ChatMessageListComponent.promptFollowup */
 	@Input() public promptFollowup?: string;
 
 	/** @see readableByteLength */
-	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
+	public readonly readableByteLength					= readableByteLength;
 
 	/** @see States */
-	public readonly states: typeof States							= States;
+	public readonly states								= States;
 
 	/** @see trackByTransfer */
-	public readonly trackByTransfer: typeof trackByTransfer			= trackByTransfer;
+	public readonly trackByTransfer						= trackByTransfer;
 
 	/** Indicates which version of the UI should be displayed. */
-	@Input() public uiStyle: UiStyles								= UiStyles.default;
+	@Input() public uiStyle: UiStyles					= UiStyles.default;
 
 	/** @see UiStyles */
-	public readonly uiStyles: typeof UiStyles						= UiStyles;
+	public readonly uiStyles							= UiStyles;
 
 	/** @see urlToSafeStyle */
-	public readonly urlToSafeStyle								= urlToSafeStyle;
+	public readonly urlToSafeStyle						= urlToSafeStyle;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
