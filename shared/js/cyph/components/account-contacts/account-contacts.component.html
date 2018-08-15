@@ -2,6 +2,7 @@
 	fxFlexFill
 	fxLayout='row'
 	class='card-list animated slideInDown'
+	ngClass.lt-md='mobile'
 	[class.initiating]='
 		(accountContactsService.showSpinner | async) ||
 		(home && (accountFilesService.uploadSpinner | async))

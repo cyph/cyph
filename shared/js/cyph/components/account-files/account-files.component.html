@@ -7,7 +7,13 @@
 	[class.mobile]='envService.isMobile'
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
-	<div fxFlex='95' fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='12px'>
+	<div
+		fxFlex='95'
+		fxLayout='column'
+		fxLayoutAlign='center stretch'
+		fxLayoutGap='16px'
+		fxLayoutGap.lt-md='8px'
+	>
 		<ng-container *ngIf='envService.isMobile'>
 			<div></div>
 
