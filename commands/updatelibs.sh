@@ -97,6 +97,7 @@ read -r -d '' modules <<- EOM
 	@types/pdfkit
 	@types/quill
 	@types/stacktrace-js
+	@types/video.js
 	@yaga/leaflet-ng2
 	angular-fittext
 	angular-material-clock-time-picker

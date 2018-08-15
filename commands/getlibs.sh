@@ -225,13 +225,21 @@ for anyType in \
 	braintree-web-drop-in \
 	granim \
 	konami-code.js \
+	lamejs \
+	libvorbis.js \
 	markdown-it-emoji \
 	markdown-it-sup \
 	math-expression-evaluator \
+	opus-recorder \
 	quill-delta \
+	recorder.js \
+	recordrtc \
 	simplewebrtc \
 	tab-indent \
 	u2f-api-polyfill \
+	videojs-record \
+	videojs-wavesurfer \
+	wavesurfer.js \
 	wowjs
 do
 	mkdir -p "@types/${anyType}"
