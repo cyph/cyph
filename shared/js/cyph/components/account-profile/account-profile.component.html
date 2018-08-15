@@ -355,6 +355,23 @@
 					<mat-icon>save</mat-icon>
 				</button>
 			</div>
+			
+			<ng-container *ngIf='envService.isMobile'>
+				<button
+					mat-fab
+					[matTooltip]='
+						(editMode | async) ?
+							stringsService.profileSave :
+							stringsService.profileEdit
+					'
+					matTooltipPosition='above'
+					class='fixed-fab'
+					(click)='setEditMode(true)'
+					*ngIf='!envService.isTelehealth && (editMode | async) === false'
+				>
+					<mat-icon>edit</mat-icon>
+				</button>
+			</ng-container>
 
 			<ng-container *ngTemplateOutlet='buttons'></ng-container>
 			<ng-container *ngTemplateOutlet='fileUpload'></ng-container>
