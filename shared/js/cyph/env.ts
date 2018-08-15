@@ -172,26 +172,11 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is Safari. */
 	public readonly isSafari: boolean			= navigatorData.vendor === 'Apple Computer, Inc.';
 
-	/** Indicates whether this should be considered a tablet. */
-	public readonly isTablet: boolean			= this.isMobile && self.outerWidth > 767;
-
 	/** @see CustomBuildConfig.telehealth */
 	public readonly isTelehealth: boolean		=
 		this.environment.customBuild !== undefined &&
 		this.environment.customBuild.config.telehealth === true
 	;
-
-	/** Indicates whether this is a touchscreen environment. */
-	public readonly isTouch: boolean			= (() => {
-		/* TODO: HANDLE NATIVE */
-		try {
-			document.createEvent('TouchEvent');
-			return true;
-		}
-		catch {
-			return false;
-		}
-	})();
 
 	/** Indicates whether this is a WebKit/Blink browser. */
 	public readonly isWebKit: boolean			=
