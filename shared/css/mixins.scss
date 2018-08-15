@@ -142,6 +142,13 @@ $accountPaddingSmall: 2.5vw;
 		}
 	}
 
+	cyph-account-call-waiting {
+		.avatar.call {
+			border-color: map-get($cyph-primary, default);
+			background-color: map-get($cyph-primary, default);
+		}
+	}
+
 	cyph-account-menu {
 		.menu {
 			background-color: if(

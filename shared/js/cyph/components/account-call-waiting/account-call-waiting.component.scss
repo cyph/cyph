@@ -5,7 +5,7 @@ cyph-logo {
 	opacity: 0.75;
 }
 
-.content {
+.content, mat-card-content {
 	> :last-child {
 		margin-bottom: auto;
 	}
@@ -13,6 +13,28 @@ cyph-logo {
 	h1, h2, h5 {
 		text-align: center;
 	}
+}
+
+.contact.call {
+	min-width: 66vw;
+	
+	.avatar {
+		height: 25vh;
+		width: auto;
+	}
+}
+
+cyph-logo {
+	margin-bottom: 1em;
+}
+
+button.cancel {
+	color: #f4f4f4;
+	background-color: #d32f2f !important;
+}
+
+.compact button.cancel {
+	@include transform(scale(2));
 }
 
 .avatar {
