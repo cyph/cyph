@@ -215,7 +215,7 @@ read -r -d '' modules <<- EOM
 	protobufjs
 	protractor
 	puppeteer
-	quill
+	quill@https://github.com/buu700/quill-tmp
 	quill-delta
 	quill-delta-to-html
 	raw-loader
