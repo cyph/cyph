@@ -288,6 +288,7 @@
 			fxLayoutAlign='center'
 			fxLayoutGap='32px'
 			class='profile standard'
+			[class.edit-mode]='editMode | async'
 			[class.mobile]='envService.isMobile'
 		>
 			<div
@@ -307,7 +308,12 @@
 			</ng-container>
 
 			<div fxLayoutAlign='center center'>
-				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' fxLayoutGap='16px'>
+				<div
+					fxFlex
+					fxLayout='column'
+					fxLayoutAlign='center stretch'
+					[fxLayoutGap]='(editMode | async) ? "0px" : "16px"'
+				>
 					<div fxLayoutAlign='center center'>
 						<img
 							cyphTranslate
@@ -329,7 +335,6 @@
 						readViewClasses: "animated flipInX _2"
 					}'></ng-container>
 					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
-					<div *ngIf='(editMode | async)'></div>
 					<ng-container *ngTemplateOutlet='description; context: {
 						divider: (editMode | async) === false,
 						readViewClasses: "animated flipInX _3"
@@ -372,10 +377,8 @@
 					<mat-icon>edit</mat-icon>
 				</button>
 			</ng-container>
-
 			<ng-container *ngTemplateOutlet='buttons'></ng-container>
 			<ng-container *ngTemplateOutlet='fileUpload'></ng-container>
-			<div></div>
 		</div>
 	</div>
 </ng-template>

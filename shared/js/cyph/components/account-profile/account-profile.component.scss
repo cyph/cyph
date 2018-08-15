@@ -84,6 +84,7 @@ $header-size: 135px;
 			font-weight: 500;
 			border-bottom: 1px solid #777;
 			font-size: 42px;
+			margin-top: 15px;
 			padding-bottom: 10px;
 		}
 
@@ -108,6 +109,19 @@ $header-size: 135px;
 		font-size: 20px;
 		min-height: 4em;
 	}
+
+	&.edit-mode {
+		mat-form-field.description {
+			textarea {
+				min-height: 0 !important;
+				margin: -20px 0px;
+			}
+			.mat-form-field-infix {
+				border-top: 0;
+			}
+		}
+	}
+
 
 	.username {
 		font-size: 24px;
