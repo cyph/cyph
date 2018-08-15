@@ -11,6 +11,11 @@ cyph-account-contact.active ::ng-deep .contact {
 	}
 
 	cyph-account-contact {
-		margin: 12px 0;
+		margin: 0;
+		margin-bottom: 12px;
+
+		&.active {
+			margin-bottom: 24px;
+		}
 	}
 }
