@@ -119,20 +119,6 @@
 			>
 				<mat-icon>link</mat-icon>
 			</a>
-			<button
-				mat-mini-fab
-				color='primary'
-				[class.open]='isSpeedDialOpen | async'
-				cyphTranslate
-				class='alt'
-				matTooltip='Edit Profile'
-				matTooltipPosition='left'
-				[routerLink]='accountService.routeRoot + "profile/edit"'
-				(click)='isSpeedDialOpen.next(false)'
-				*ngIf='envService.isMobile'
-			>
-				<mat-icon>edit</mat-icon>
-			</button>
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
 </div>
