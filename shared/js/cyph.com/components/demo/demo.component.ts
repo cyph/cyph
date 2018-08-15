@@ -146,7 +146,7 @@ export class DemoComponent extends BaseProvider implements AfterViewInit {
 		await waitForIterable(elements.demoRoot);
 		await waitForIterable(elements.heroText);
 
-		if (!this.envService.isMobile) {
+		if (!this.envService.isMobileOS) {
 			await waitForIterable(() =>
 				elements.screenshotLaptop().filter((_, elem) =>
 					($(elem).offset() || {left: 0, top: 0}).left > 0
@@ -176,13 +176,13 @@ export class DemoComponent extends BaseProvider implements AfterViewInit {
 
 		await sleep(750);
 
-		if (!this.envService.isMobile) {
+		if (!this.envService.isMobileOS) {
 			await this.activeTransition(true);
 		}
 
 		elements.demoRoot().css('opacity', 1);
 
-		if (!this.envService.isMobile) {
+		if (!this.envService.isMobileOS) {
 			elements.heroText().on('appear', () => { this.activeTransition(); });
 			elements.heroText().on('disappear', () => { this.activeTransition(); });
 			elements.demoRoot().on('appear', () => { this.activeTransition(); });
@@ -208,7 +208,7 @@ export class DemoComponent extends BaseProvider implements AfterViewInit {
 			this.facebookJoke($desktopFacebookPic, $mobileFacebookPic)
 		);
 
-		if (!this.envService.isMobile) {
+		if (!this.envService.isMobileOS) {
 			await waitForIterable(elements.demoListDesktop);
 			await waitForIterable(elements.demoListMobile);
 			elements.demoListDesktop().append($desktopFacebookPic);

@@ -127,7 +127,7 @@ implements ControlValueAccessor, OnChanges, OnInit {
 	public readonly isDisabledWrapper								= new BehaviorSubject(false);
 
 	/** Indicates whether mobile version should be displayed. */
-	@Input() public mobile: boolean									= this.envService.isMobile;
+	@Input() public mobile: boolean									= this.envService.isMobile.value;
 
 	/** Change event callback. */
 	public onChange: (value: ICalendarInvite) => void				= () => {};

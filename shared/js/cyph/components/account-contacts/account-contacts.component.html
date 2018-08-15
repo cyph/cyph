@@ -2,14 +2,14 @@
 	fxFlexFill
 	fxLayout='row'
 	class='card-list animated slideInDown'
-	ngClass.lt-md='mobile'
+	[class.mobile]='envService.isMobile | async'
 	[class.initiating]='
 		(accountContactsService.showSpinner | async) ||
 		(home && (accountFilesService.uploadSpinner | async))
 	'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
-		<br *ngIf='envService.isMobile' />
+		<br *ngIf='envService.isMobile | async' />
 
 		<cyph-account-contacts-search
 			#accountContactsSearch

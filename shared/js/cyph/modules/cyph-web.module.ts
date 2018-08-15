@@ -160,6 +160,10 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		EnvService,
 		StringsService,
 		{
+			provide: 'EnvService',
+			useExisting: EnvService
+		},
+		{
 			provide: DialogService,
 			useClass: MaterialDialogService
 		},

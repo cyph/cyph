@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {env} from '../cyph/env';
 import {EnvService} from '../cyph/services/env.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
@@ -10,21 +11,13 @@ import {ChatData} from './chat-data';
  */
 @Injectable()
 export class DemoEnvService extends EnvService {
-	/** @ignore */
-	private chatData?: ChatData;
+	/** @inheritDoc */
+	public readonly isMobile: BehaviorSubject<boolean>	= new BehaviorSubject(env.isMobile.value);
 
 	/** Initializes service. */
 	public init (chatData: ChatData) : void {
-		this.chatData	= chatData;
+		this.isMobile.next(chatData.isMobile);
 	}
-
-	/** @inheritDoc */
-	public get isMobile () : boolean {
-		return this.chatData ? this.chatData.isMobile : env.isMobile;
-	}
-
-	/** @ignore */
-	public set isMobile (_: boolean) {}
 
 	constructor (localStorageService: LocalStorageService) {
 		super(localStorageService);

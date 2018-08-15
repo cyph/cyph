@@ -53,7 +53,7 @@ export class LocalSessionService extends SessionService {
 	public async initChatData (chatData: ChatData) : Promise<void> {
 		this.chatData	= chatData;
 
-		this.state.isAlice.next(this.envService.isMobile);
+		this.state.isAlice.next(this.envService.isMobile.value);
 		this.state.isAlive.next(true);
 
 		this.chatData.channelIncoming.subscribe(

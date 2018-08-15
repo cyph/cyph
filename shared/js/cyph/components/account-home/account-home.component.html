@@ -8,7 +8,7 @@
 		[home]='true'
 		[searchMode]='searchMode | async'
 		(searchBarBlur)='router.navigate([accountService.routeRoot])'
-		*ngIf='envService.isMobile; else sidebarHome'
+		*ngIf='envService.isMobile | async; else sidebarHome'
 	></cyph-account-contacts>
 </ng-template>
 
@@ -40,30 +40,30 @@
 	<div
 		class='overlay clickable'
 		(click)='isSpeedDialOpen.next(false)'
-		*ngIf='envService.isMobile && (isSpeedDialOpen | async)'
+		*ngIf='(envService.isMobile | async) && (isSpeedDialOpen | async)'
 	></div>
 	<smd-fab-speed-dial
 		animationMode='scale'
-		[forceTooltips]='envService.isMobile'
+		[forceTooltips]='envService.isMobile | async'
 		[open]='isSpeedDialOpen | async'
-		(mouseleave)='!envService.isMobile ? isSpeedDialOpen.next(false) : undefined'
-		[class.absolute-fab]='!(envService.isMobile || envService.isTelehealth)'
-		[class.fixed-fab]='envService.isMobile || envService.isTelehealth'
+		(mouseleave)='!envService.isMobile.value ? isSpeedDialOpen.next(false) : undefined'
+		[class.absolute-fab]='!((envService.isMobile | async) || envService.isTelehealth)'
+		[class.fixed-fab]='(envService.isMobile | async) || envService.isTelehealth'
 	>
 		<smd-fab-trigger
 			[spin]='true'
-			(mouseenter)='!envService.isMobile ? isSpeedDialOpen.next(true) : undefined'
+			(mouseenter)='!envService.isMobile.value ? isSpeedDialOpen.next(true) : undefined'
 		>
 			<button
 				mat-fab
-				[color]='envService.isMobile ? "primary" : "accent"'
+				[color]='(envService.isMobile | async) ? "primary" : "accent"'
 				[attr.aria-label]='
-					envService.isMobile && (isSpeedDialOpen | async) === false ?
+					(envService.isMobile | async) && (isSpeedDialOpen | async) === false ?
 						stringsService.openMenu :
 						undefined
 				'
 				[matTooltip]='
-					!envService.isMobile || (isSpeedDialOpen | async) ?
+					(envService.isMobile | async) === false || (isSpeedDialOpen | async) ?
 						stringsService.composeMessage :
 						undefined
 				'
@@ -74,7 +74,7 @@
 						undefined
 				'
 				(click)='
-					envService.isMobile ?
+					envService.isMobile.value ?
 						isSpeedDialOpen.next(!isSpeedDialOpen.value) :
 						undefined
 				'

@@ -289,7 +289,7 @@
 			fxLayoutGap='32px'
 			class='profile standard'
 			[class.edit-mode]='editMode | async'
-			[class.mobile]='envService.isMobile'
+			[class.mobile]='envService.isMobile | async'
 		>
 			<div
 				class='cover-image'
@@ -303,7 +303,7 @@
 				(fileDrop)='updateDraft({coverImage: $event})'
 			></div>
 
-			<ng-container *ngIf='!envService.isMobile'>
+			<ng-container *ngIf='(envService.isMobile | async) === false'>
 				<ng-container *ngTemplateOutlet='coverEditButton'></ng-container>
 			</ng-container>
 
@@ -346,7 +346,7 @@
 				class='mobile-edit'
 				fxFlex
 				fxLayout='row'
-				*ngIf='envService.isMobile && (editMode | async)'
+				*ngIf='(envService.isMobile | async) && (editMode | async)'
 			>
 				<button fxFlex='50' mat-button (click)='setEditMode(false)'>
 					<mat-icon>cancel</mat-icon>
@@ -361,7 +361,7 @@
 				</button>
 			</div>
 
-			<ng-container *ngIf='envService.isMobile'>
+			<ng-container *ngIf='envService.isMobile | async'>
 				<button
 					mat-fab
 					[matTooltip]='
@@ -413,7 +413,7 @@
 			fxFlex
 			fxLayout='column'
 			class='profile telehealth'
-			[class.mobile]='envService.isMobile'
+			[class.mobile]='envService.isMobile | async'
 		>
 			<div
 				fxLayout='column'
@@ -497,8 +497,7 @@
 								*ngIf='
 									(user.userType | async) === accountUserTypes.TelehealthDoctor
 								'
-								fxHide.xs
-								[fxHide]='envService.isMobile'
+								fxHide.lt-md
 							></cyph-account-user-rating>
 						</div>
 					</div>
@@ -507,7 +506,8 @@
 
 			<div
 				fxLayout='column'
-				[fxLayoutAlign]='envService.isMobile ? "center" : "center center"'
+				fxLayoutAlign='center center'
+				fxLayoutAlign.lt-md='center'
 			>
 				<mat-card
 					class='animated slideInDown'

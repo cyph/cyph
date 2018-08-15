@@ -1,9 +1,13 @@
 /* tslint:disable:cyclomatic-complexity */
 
+import {BehaviorSubject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {environment} from '../environments';
 import {config} from './config';
 import {EnvDeploy, envDeploy} from './env-deploy';
 import {IEnvironment} from './proto';
+import {WindowWatcherService} from './services/window-watcher.service';
+import {toBehaviorSubject} from './util/flatten-observable';
 
 
 /**
@@ -150,8 +154,11 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is the main thread. */
 	public readonly isMainThread: boolean		= typeof (<any> self).importScripts !== 'function';
 
-	/** Indicates whether this is mobile. */
-	public readonly isMobile: boolean			=
+	/** Indicates whether this is a mobile screen size (equivalent to Flex Layout lt-md). */
+	public readonly isMobile: BehaviorSubject<boolean>;
+
+	/** Indicates whether this is a mobile operating system. */
+	public readonly isMobileOS: boolean			=
 		this.isAndroid ||
 		this.isIOS ||
 		this.isFFMobile
@@ -253,6 +260,19 @@ export class Env extends EnvDeploy {
 		this.cyphIoUrl		= this.useBaseUrl ? this.cyphIoBaseUrl : envDeploy.cyphIoUrl;
 		this.cyphMeUrl		= this.useBaseUrl ? this.cyphMeBaseUrl : envDeploy.cyphMeUrl;
 		this.cyphVideoUrl	= this.useBaseUrl ? this.cyphVideoBaseUrl : envDeploy.cyphVideoUrl;
+
+		if (this.isExtension || !this.isWeb) {
+			this.isMobile	= new BehaviorSubject(true);
+			return;
+		}
+
+		const detectIfMobile		= (width: number) => width <= config.responsiveMaxWidths.sm;
+		const windowWatcherService	= new WindowWatcherService(this);
+
+		this.isMobile	= toBehaviorSubject(
+			windowWatcherService.width.pipe(map(detectIfMobile)),
+			detectIfMobile(windowWatcherService.width.value)
+		);
 	}
 }
 

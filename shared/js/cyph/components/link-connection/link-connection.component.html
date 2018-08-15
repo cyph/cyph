@@ -27,7 +27,7 @@
 			</span>
 			<span
 				class='description'
-				[class.mobile]='envService.isMobile'
+				[class.mobile]='envService.isMobileOS'
 				*ngIf='!envService.isTelehealth'
 				cyphTranslate
 			>
@@ -37,7 +37,7 @@
 			<br />
 			<br />
 
-			<div fxLayoutAlign='center center' *ngIf='!envService.isMobile'>
+			<div fxLayoutAlign='center center' *ngIf='!envService.isMobileOS'>
 				<mat-form-field fxFlex='50'>
 					<input
 						matInput
@@ -60,7 +60,7 @@
 				</button>
 			</div>
 
-			<div class='connect-link-mobile' *ngIf='envService.isMobile'>
+			<div class='connect-link-mobile' *ngIf='envService.isMobileOS'>
 				<a
 					class='connect-link-link'
 					[href]='linkHref | async'
@@ -124,7 +124,7 @@
 		</div>
 	</div>
 
-	<ng-container *ngIf='!envService.isMobile'>
+	<ng-container *ngIf='!envService.isMobileOS'>
 		<br />
 		<br />
 	</ng-container>

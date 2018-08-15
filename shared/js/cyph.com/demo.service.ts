@@ -20,7 +20,7 @@ export class DemoService extends BaseProvider {
 
 	/** Data URI to use for placeholder for Facebook joke. */
 	public readonly facebookPicDataUri: Promise<string>		= (
-		!this.envService.isMobile ?
+		!this.envService.isMobileOS ?
 			Promise.reject('') :
 			request({retries: 5, url: '/assets/img/fbimagealt.txt'})
 	).catch(
@@ -28,7 +28,7 @@ export class DemoService extends BaseProvider {
 	);
 
 	/** Frame containing Facebook profile picture. */
-	public readonly facebookPicFrame: string			= this.envService.isMobile ? '' : `
+	public readonly facebookPicFrame: string			= this.envService.isMobileOS ? '' : `
 		<div class='facebook-pic image-frame real'>
 			<iframe
 				src='https://www.facebook.com/plugins/comments.php?href=https://www.${
@@ -136,7 +136,7 @@ export class DemoService extends BaseProvider {
 				chatData.message.next(text);
 				other.scrollDown.next();
 
-				if (!this.envService.isMobile) {
+				if (!this.envService.isMobileOS) {
 					await facebookJoke();
 					await sleep();
 				}

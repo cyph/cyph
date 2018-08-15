@@ -2,7 +2,7 @@
 	fxFlexFill
 	fxLayout='row'
 	fxLayout.xs='column'
-	[class.mobile]='envService.isMobile'
+	[class.mobile]='envService.isMobile | async'
 	[class.transition]='accountService.transition | async'
 >
 	<div *ngIf='accountService.interstitial | async' class='interstitial animated fadeIn'>
@@ -54,7 +54,7 @@
 			<div
 				fxLayout='row'
 				class='header slideInDown'
-				[class.animated]='!envService.isMobile'
+				[class.animated]='(envService.isMobile | async) === false'
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='stretch center'
 				fxLayoutGap='8px'

@@ -6,7 +6,7 @@
 	[class.accounts]='envService.isAccounts'
 	[class.audio-only]='(p2pWebRTCService.videoEnabled | async) !== true'
 	[class.video]='p2pService.isActive | async'
-	[class.mobile]='envService.isMobile'
+	[class.mobile]='envService.isMobile | async'
 	[class.self-destruct]='chatService.chatSelfDestruct | async'
 	*ngIf='chatService.chatSubject | async as chat'
 >
@@ -220,7 +220,7 @@
 			[fxLayoutGap]='
 				(
 					envService.isAccounts &&
-					!envService.isMobile &&
+					(envService.isMobile | async) === false &&
 					(p2pWebRTCService.videoEnabled | async) !== true
 				) ?
 					"128px" :
@@ -389,7 +389,7 @@
 		fxFlexFill
 		[chat]='chat'
 		[messageCountInTitle]='messageCountInTitle'
-		[mobile]='envService.isMobile || (p2pService.isActive | async)'
+		[mobile]='(envService.isMobile | async) || (p2pService.isActive | async)'
 		[persistentEndMessage]='persistentEndMessage'
 		[promptFollowup]='promptFollowup'
 		[showDisconnectMessage]='chat.isDisconnected && !hideDisconnectMessage'

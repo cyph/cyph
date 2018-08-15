@@ -4,7 +4,7 @@
 	fxLayoutAlign='center start'
 	class='card-list'
 	[class.initiating]='accountFilesService.showSpinner | async'
-	[class.mobile]='envService.isMobile'
+	[class.mobile]='envService.isMobile | async'
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
 	<div
@@ -14,7 +14,7 @@
 		fxLayoutGap='16px'
 		fxLayoutGap.lt-md='8px'
 	>
-		<ng-container *ngIf='envService.isMobile'>
+		<ng-container *ngIf='envService.isMobile | async'>
 			<div></div>
 
 			<div fxLayoutAlign='center'>
@@ -186,7 +186,7 @@
 			</mat-card-header>
 		</mat-card>
 
-		<ng-container *ngIf='!envService.isMobile'>
+		<ng-container *ngIf='(envService.isMobile | async) === false'>
 			<ng-container *ngTemplateOutlet='fileUploadDropZone'></ng-container>
 
 			<div fxLayoutAlign='center'>

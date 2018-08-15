@@ -11,7 +11,7 @@
 			fxFlex.gt-lg='50'
 			fxLayout='column'
 			fxLayoutGap='16px'
-			[class.mobile]='envService.isMobile'
+			[class.mobile]='envService.isMobile | async'
 			(submit)='save()'
 			*ngIf='stateValue === states.default; else changePassword'
 		>

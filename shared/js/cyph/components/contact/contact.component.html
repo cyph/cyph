@@ -124,7 +124,7 @@
 					mat-button
 					cyphTranslate
 					type='submit'
-					*ngIf='!envService.isMobile; else mobileButton'
+					*ngIf='(envService.isMobile | async) === false; else mobileButton'
 				>
 					Send
 				</button>

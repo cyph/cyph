@@ -130,7 +130,7 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 		if (this.elementRef.nativeElement && this.envService.isWeb) {
 			const $element		= $(this.elementRef.nativeElement);
 
-			if (this.envService.isMobile) {
+			if (this.envService.isMobileOS) {
 				const $connectLinkLink	= await waitForIterable(
 					() => $element.find('.connect-link-link')
 				);

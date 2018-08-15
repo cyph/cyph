@@ -14,7 +14,7 @@
 				fxFlex='50'
 				fxLayout='column'
 				fxLayoutAlign='center stretch'
-				*ngIf='!envService.isMobile'
+				*ngIf='(envService.isMobile | async) === false'
 			>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<mat-form-field fxFlex='80'>

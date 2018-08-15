@@ -102,7 +102,7 @@
 					'
 				></cyph-chat-message-box>
 
-				<cyph-footer *ngIf='!envService.isMobile'></cyph-footer>
+				<cyph-footer *ngIf='(envService.isMobile | async) === false'></cyph-footer>
 			</div>
 		</footer>
 	</section>

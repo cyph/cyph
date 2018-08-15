@@ -16,19 +16,18 @@ import {sleep} from '../cyph/util/wait';
 
 /* Mobile CSS class */
 
-if (env.isMobile) {
-	$(document.body).addClass('mobile');
-}
+env.isMobile.subscribe(isMobile => {
+	document.body.classList.toggle('mobile', isMobile);
+});
 
-if (env.isCordova) {
-	$(document.body).addClass('cordova');
-}
+document.body.classList.toggle('cordova', env.isCordova);
 
 /* Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=821876 */
 
-if (env.isMacOS && env.isChrome && env.chromeVersion >= 65 && env.chromeVersion < 68) {
-	$(document.body).addClass('disable-drop-shadow');
-}
+document.body.classList.toggle(
+	'disable-drop-shadow',
+	env.isMacOS && env.isChrome && env.chromeVersion >= 65 && env.chromeVersion < 68
+);
 
 /* Cordova back button support */
 
@@ -110,7 +109,7 @@ $(async () => {
 
 	/* Try again if page takes too long to initialize */
 	await sleep(120000);
-	if (!$(document.body).hasClass('load-complete')) {
+	if (!document.body.classList.contains('load-complete')) {
 		location.reload();
 	}
 });

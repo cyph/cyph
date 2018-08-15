@@ -31,7 +31,7 @@ export class AccountService extends BaseProvider {
 
 	/** @ignore */
 	private readonly menuExpandedInternal: BehaviorSubject<boolean>		=
-		new BehaviorSubject(!this.envService.isMobile)
+		new BehaviorSubject(!this.envService.isMobile.value)
 	;
 
 	/** @ignore */
@@ -104,11 +104,10 @@ export class AccountService extends BaseProvider {
 
 	/** Indicates whether mobile menu is open. */
 	public readonly mobileMenuOpen: Observable<boolean>	= combineLatest(
-		this.mobileMenuOpenInternal,
-		this.windowWatcherService.width
-	).pipe(map(([mobileMenuOpen, width]) =>
-		mobileMenuOpen &&
-		width <= this.configService.responsiveMaxWidths.sm
+		this.envService.isMobile,
+		this.mobileMenuOpenInternal
+	).pipe(map(([isMobile, mobileMenuOpen]) =>
+		isMobile && mobileMenuOpen
 	));
 
 	/** Resolves ready promise. */
@@ -241,9 +240,9 @@ export class AccountService extends BaseProvider {
 
 		this.header	= combineLatest(
 			this.headerInternal,
-			this.windowWatcherService.width,
+			this.envService.isMobile,
 			this.transitionInternal
-		).pipe(map(([header, width]) => {
+		).pipe(map(([header, isMobile]) => {
 			const routePath	= this.routePath;
 			const route		= routePath[0];
 
@@ -252,7 +251,7 @@ export class AccountService extends BaseProvider {
 			};
 
 			/* Special case: set root header on mobile to "Messages" */
-			if (!route && width <= this.configService.responsiveMaxWidths.sm) {
+			if (!route && isMobile) {
 				return this.stringsService.messagesHeader;
 			}
 
@@ -286,10 +285,7 @@ export class AccountService extends BaseProvider {
 				)
 			) {
 				/* Always make at least an empty string on mobile to ensure menu bar displays */
-				return width <= this.configService.responsiveMaxWidths.sm ?
-					(header || '') :
-					header
-				;
+				return isMobile ? (header || '') : header;
 			}
 
 			/*
@@ -325,10 +321,7 @@ export class AccountService extends BaseProvider {
 				)
 			) {
 				/* Always make at least an empty string on mobile to ensure menu bar displays */
-				return width <= this.configService.responsiveMaxWidths.sm ?
-					(header || '') :
-					undefined
-				;
+				return isMobile ? (header || '') : undefined;
 			}
 
 			return header || translate(route.

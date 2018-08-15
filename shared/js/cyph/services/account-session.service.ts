@@ -154,7 +154,7 @@ export class AccountSessionService extends SessionService {
 		username: string|string[],
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false,
-		setHeader: boolean = this.envService.isMobile
+		setHeader: boolean = this.envService.isMobile.value
 	) : Promise<void> {
 		if (this.initiated) {
 			throw new Error('User already set.');

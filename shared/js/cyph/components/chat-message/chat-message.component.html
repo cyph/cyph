@@ -36,7 +36,7 @@
 				</div>
 			</div>
 			<div
-				[fxFlex]='!envService.isMobile ? "6em" : undefined'
+				[fxFlex]='(envService.isMobile | async) ? undefined : "6em"'
 				fxLayoutAlign='end center'
 				class='message-timestamp'
 			>
@@ -196,7 +196,7 @@
 								(click)='
 									!clickable ?
 										undefined :
-									envService.isMobile ?
+									envService.isMobile.value ?
 										fileTransferService.saveFile(value.fileTransfer) :
 										dialogService.media({
 											mediaType: value.fileTransfer.mediaType,
@@ -209,7 +209,7 @@
 
 							<span
 								class='video-message-wrapper'
-								(click)='!clickable || envService.isMobile ?
+								(click)='!clickable || envService.isMobile.value ?
 									undefined :
 									dialogService.media({
 										mediaType: value.fileTransfer.mediaType,

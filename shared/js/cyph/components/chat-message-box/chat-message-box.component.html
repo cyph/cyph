@@ -4,7 +4,7 @@
 <div fxFlexFill *ngIf='chat.state === states.chat && (sessionService.state.isAlive | async)'>
 	<div
 		class='calendar-invite-message-box'
-		[class.mobile]='envService.isMobile'
+		[class.mobile]='envService.isMobile | async'
 		fxFlexFill
 		*ngIf='messageType === chatMessageValueTypes.CalendarInvite'
 	>
@@ -39,7 +39,7 @@
 
 	<div
 		class='form-message-box'
-		[class.mobile]='envService.isMobile'
+		[class.mobile]='envService.isMobile | async'
 		fxFlexFill
 		*ngIf='messageType === chatMessageValueTypes.Form'
 	>
@@ -51,7 +51,7 @@
 
 	<div
 		class='quill-message-box'
-		[class.mobile]='envService.isMobile'
+		[class.mobile]='envService.isMobile | async'
 		fxFlexFill
 		*ngIf='messageType === chatMessageValueTypes.Quill'
 	>
@@ -74,7 +74,7 @@
 
 	<div
 		class='text-message-box'
-		[class.mobile]='envService.isMobile'
+		[class.mobile]='envService.isMobile | async'
 		fxFlexFill
 		*ngIf='messageType === chatMessageValueTypes.Text'
 	>
@@ -90,7 +90,7 @@
 			></textarea>
 		</div>
 
-		<div *ngIf='envService.isMobile'>
+		<div *ngIf='envService.isMobile | async'>
 			<div
 				class='message-box-button-group'
 				*ngIf='showSendButton && !!chat.currentMessage.text'
@@ -171,7 +171,7 @@
 			animationMode='scale'
 			[open]='isSpeedDialOpen | async'
 			(mouseleave)='isSpeedDialOpen.next(false)'
-			*ngIf='!envService.isMobile'
+			*ngIf='(envService.isMobile | async) === false'
 		>
 			<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen.next(true)'>
 				<button mat-fab>

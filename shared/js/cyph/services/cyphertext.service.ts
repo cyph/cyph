@@ -41,7 +41,7 @@ export class CyphertextService extends BaseProvider {
 		await this.messages.updateValue(async messages => [
 			...(
 				/* Mobile performance optimisation */
-				messages.length > (this.envService.isMobile ? 5 : 50) ?
+				messages.length > (this.envService.isMobileOS ? 5 : 50) ?
 					messages.slice(1) :
 					messages
 			),

@@ -100,7 +100,7 @@ export class DemoChatRootComponent extends BaseProvider implements OnInit {
 					await sleep();
 				}
 
-				if (env.isMobile) {
+				if (env.isMobileOS) {
 					this.demoService.mobile.showCyphertext.next();
 				}
 				else {

@@ -108,7 +108,7 @@ export class NotificationService extends BaseProvider implements INotificationSe
 	) {
 		super();
 
-		if (this.envService.isMobile) {
+		if (this.envService.isMobileOS) {
 			this.config.audio	= undefined;
 		}
 		else if (Audio) {

@@ -90,9 +90,10 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	/** Indicates whether section should take up 100% width. */
 	public readonly fullWidth: Observable<boolean>			= combineLatest(
 		this.activatedRouteURL,
+		this.envService.isMobile,
 		this.route
-	).pipe(map(([activatedRouteURL, route]) =>
-		this.envService.isMobile || (
+	).pipe(map(([activatedRouteURL, isMobile, route]) =>
+		isMobile || (
 			[
 				'audio',
 				'call',
@@ -162,9 +163,10 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	/** Indicates whether sidebar should be displayed. */
 	public readonly sidebarVisible: Observable<boolean>		= combineLatest(
 		this.accountDatabaseService.currentUser,
+		this.envService.isMobile,
 		this.route
-	).pipe(map(([currentUser, route]) =>
-		!this.envService.isMobile &&
+	).pipe(map(([currentUser, isMobile, route]) =>
+		!isMobile &&
 		!this.envService.isTelehealth &&
 		currentUser !== undefined &&
 		[

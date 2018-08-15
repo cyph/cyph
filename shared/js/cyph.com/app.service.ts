@@ -329,7 +329,7 @@ export class AppService extends BaseProvider {
 			})();
 		}
 
-		if (!this.envService.isMobile) {
+		if (!this.envService.isMobileOS) {
 			new WOW({live: true}).init();
 		}
 
@@ -344,7 +344,7 @@ export class AppService extends BaseProvider {
 
 			await waitForIterable(elements.backgroundVideo);
 
-			if (this.envService.isMobile) {
+			if (this.envService.isMobileOS) {
 				const $mobilePoster: JQuery	= $(document.createElement('img'));
 				$mobilePoster.attr('src', elements.backgroundVideo().attr('mobile-poster') || '');
 
@@ -381,7 +381,7 @@ export class AppService extends BaseProvider {
 			this.featureCarousel.next(new Carousel(elements.featuresSection(), true));
 			this.testimonialCarousel.next(new Carousel(
 				elements.testimonialsSection(),
-				this.envService.isMobile
+				this.envService.isMobileOS
 			));
 
 			/* Header / new cyph button animation */

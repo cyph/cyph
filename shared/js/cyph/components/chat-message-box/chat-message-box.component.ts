@@ -133,7 +133,7 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 		$textarea.on('keypress', e => {
 			if (
-				(this.envService.isMobile && this.virtualKeyboardWatcherService.isOpen) ||
+				(this.envService.isMobileOS && this.virtualKeyboardWatcherService.isOpen) ||
 				e.keyCode !== 13 ||
 				e.shiftKey
 			) {
@@ -145,7 +145,7 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 			$textarea.val('');
 		});
 
-		if (this.envService.isMobile) {
+		if (this.envService.isMobileOS) {
 			$textarea.on('focus', async () => {
 				await sleep(750);
 				await this.scrollService.scrollDown();

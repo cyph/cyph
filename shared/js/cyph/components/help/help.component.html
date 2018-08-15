@@ -1,4 +1,4 @@
-<div [class.mobile]='envService.isMobile'>
+<div [class.mobile]='envService.isMobile | async'>
 	<mat-tab-group cyphNanoScroller [cyphNanoScrollerNoParent]='true'>
 		<mat-tab [label]='stringsService.formattingHelp'>
 			<p>

@@ -1,9 +1,8 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
-import {EnvService} from './env.service';
 
 
 /**
@@ -55,7 +54,7 @@ export class WindowWatcherService extends BaseProvider {
 
 	constructor (
 		/** @ignore */
-		private readonly envService: EnvService
+		@Inject('EnvService') private readonly envService: {isMobileOS: boolean; isWeb: boolean}
 	) {
 		super();
 
@@ -66,7 +65,7 @@ export class WindowWatcherService extends BaseProvider {
 
 		const $window	= $(window);
 
-		if (this.envService.isMobile) {
+		if (this.envService.isMobileOS) {
 			document.addEventListener('visibilitychange', () => {
 				this.visibility.next(!document.hidden);
 			});

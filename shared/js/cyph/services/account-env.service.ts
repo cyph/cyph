@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {env} from '../env';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 
@@ -11,14 +10,6 @@ import {LocalStorageService} from './local-storage.service';
 export class AccountEnvService extends EnvService {
 	/** @inheritDoc */
 	public readonly isAccounts: boolean	= true;
-
-	/** @inheritDoc */
-	public get isMobile () : boolean {
-		return this.isExtension || env.isMobile;
-	}
-
-	/** @ignore */
-	public set isMobile (_: boolean) {}
 
 	constructor (
 		localStorageService: LocalStorageService

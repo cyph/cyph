@@ -107,7 +107,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	@Input() public isDisabled: boolean							= false;
 
 	/** Indicates whether mobile version should be displayed. */
-	@Input() public mobile: boolean								= this.envService.isMobile;
+	@Input() public mobile: boolean								= this.envService.isMobile.value;
 
 	/** @see Form */
 	@Output() public readonly submitForm: EventEmitter<IForm>	= new EventEmitter<IForm>();

@@ -13,7 +13,7 @@
 		chat.state === states.chat &&
 		(accountChatService.uiReady | async) !== true
 	'
-	[class.mobile]='envService.isMobile'
+	[class.mobile]='envService.isMobile | async'
 	[cyphDropZone]='false && (
 		chat.state === states.chat &&
 		(accountChatService.uiReady | async) === true

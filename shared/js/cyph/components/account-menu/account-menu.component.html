@@ -7,7 +7,7 @@
 	[class.collapsed]='(menuExpanded | async) === false'
 	[class.menu]='!sidenav'
 	[class.menu-root]='!sidenav'
-	[class.mobile]='envService.isMobile'
+	[class.mobile]='envService.isMobile | async'
 	[class.sidenav]='sidenav'
 >
 	<div

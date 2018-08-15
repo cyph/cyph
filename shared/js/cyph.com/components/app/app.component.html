@@ -409,7 +409,7 @@
 					</h1>
 
 					<div class='hero-container grid-container'>
-						<div fxLayout='row' *ngIf='!envService.isMobile'>
+						<div fxLayout='row' *ngIf='(envService.isMobile | async) === false'>
 							<div fxFlex='25'></div>
 							<div class='wow bounceInLeft' data-wow-delay='2250ms'>
 								<a routerLink='/intro'>
@@ -496,7 +496,7 @@
 				<div fxLayout='column' fxFlex class='quote-container'>
 					<div fxLayout='row' class='quote-row'>
 						<div
-							[fxFlex]='envService.isMobile ? "100" : "50"'
+							[fxFlex]='(envService.isMobile | async) ? "100" : "50"'
 							fxLayout='column'
 							class='quote'
 						>
@@ -538,7 +538,7 @@
 							</div>
 						</div>
 						<div
-							[fxFlex]='envService.isMobile ? "100" : "50"'
+							[fxFlex]='(envService.isMobile | async) ? "100" : "50"'
 							fxLayout='column'
 							class='quote'
 						>
@@ -571,7 +571,7 @@
 				class='nav-arrow'
 				routerLink='/intro'
 				matTooltip='Scroll Down'
-				*ngIf='!envService.isMobile'
+				*ngIf='(envService.isMobile | async) === false'
 			>
 				<mat-icon>keyboard_arrow_down</mat-icon>
 			</a>
@@ -583,7 +583,7 @@
 				class='nav-arrow'
 				routerLink='/'
 				matTooltip='Scroll Up'
-				*ngIf='!envService.isMobile'
+				*ngIf='(envService.isMobile | async) === false'
 			>
 				<mat-icon>keyboard_arrow_up</mat-icon>
 			</a>
@@ -967,7 +967,7 @@
 				Press The Button
 			</h1>
 			<div class='section-content-container'>
-				<div [fxFlex]='envService.isMobile'>
+				<div [fxFlex]='envService.isMobile | async'>
 					<p cyphTranslate>
 						The button will take you into the Cyph application, where you'll be given
 						a custom shortlink to share with one friend.

@@ -1,7 +1,7 @@
 <mat-form-field
 	fxFlex
 	class='search-bar'
-	[class.mobile]='envService.isMobile'
+	[class.mobile]='envService.isMobile | async'
 	*ngIf='filter | async as values'
 >
 	<mat-chip-list #chipList *ngIf='chipInput'>

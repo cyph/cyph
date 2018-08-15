@@ -50,7 +50,7 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 	) {
 		super();
 
-		if (!this.envService.isMobile) {
+		if (!this.envService.isMobileOS) {
 			return;
 		}
 

@@ -3,13 +3,13 @@
 	fxLayoutAlign='center center'
 	class='login-form animated fadeIn'
 	[class.checking]='checking | async'
-	[class.mobile]='envService.isMobile'
+	[class.mobile]='envService.isMobile | async'
 	ngClass.gt-xs='gt-xs'
 	*ngIf='(pinUnlock | async) !== undefined'
 >
 
 
-<ng-container *ngIf='!envService.isMobile; else mobileView'>
+<ng-container *ngIf='(envService.isMobile | async) === false; else mobileView'>
 	<mat-card
 		fxFlex
 		fxFlex.sm='95'

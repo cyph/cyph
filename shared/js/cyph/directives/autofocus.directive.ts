@@ -41,7 +41,7 @@ export class AutofocusDirective extends BaseProvider implements OnChanges, OnIni
 		if (this.envService.isCordova) {
 			await AutofocusDirective.loadComplete;
 		}
-		else if (this.envService.isMobile) {
+		else if (this.envService.isMobileOS) {
 			await AutofocusDirective.loading;
 		}
 
