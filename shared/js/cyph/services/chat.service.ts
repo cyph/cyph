@@ -1165,6 +1165,21 @@ export class ChatService extends BaseProvider {
 
 		this.chatSubject	= new BehaviorSubject(this.getDefaultChatData());
 
+		if (this.envService.debug) {
+			this.resolvers.chatConnected.promise.then(() => {
+				debugLog(() => 'ChatService.resolvers.chatConnected resolved');
+			});
+			this.resolvers.currentMessageSynced.promise.then(() => {
+				debugLog(() => 'ChatService.resolvers.currentMessageSynced resolved');
+			});
+			this.resolvers.messageListLoaded.promise.then(() => {
+				debugLog(() => 'ChatService.resolvers.messageListLoaded resolved');
+			});
+			this.uiReady.then(() => {
+				debugLog(() => 'ChatService.uiReady resolved');
+			});
+		}
+
 		this.sessionService.ready.then(() => {
 			const beginChat				= this.sessionService.one(events.beginChat);
 			const callType				= this.sessionInitService.callType;
