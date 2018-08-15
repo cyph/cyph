@@ -28,11 +28,6 @@ cyph-logo {
 	margin-bottom: 1em;
 }
 
-button.cancel {
-	color: #f4f4f4;
-	background-color: #d32f2f !important;
-}
-
 .compact button.cancel {
 	@include transform(scale(2));
 }

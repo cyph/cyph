@@ -23,11 +23,10 @@
 		<div fxFlex fxLayout='column' fxLayoutAlign='center center'>
 			<ng-container *ngIf='participantsByType | async as participants'>
 				<div fxLayoutAlign='center center'>
-					<h1
-						cyphTranslate
-						*ngIf='!telehealthAppointment && (chatService.remoteUser | async)'
-					>
-							Calling {{((chatService.remoteUser | async)?.name | async) || ""}}...
+					<h1 *ngIf='!telehealthAppointment && (chatService.remoteUser | async)'>
+						<span cyphTranslate>Calling</span>
+						&ngsp;
+						<span>{{((chatService.remoteUser | async)?.name | async) || ""}}...</span>
 					</h1>
 				</div>
 
@@ -38,20 +37,20 @@
 					fxLayoutAlign='center center'
 					*ngIf='!telehealthAppointment'
 				>
-					
-						<img
-							cyphTranslate
-							class='avatar call'
-							[src]='avatar'
-							alt='User Avatar'
-							*ngIf='(chatService.remoteUser | async)?.avatar | async as avatar'
-						/>
-					</div>
+					<img
+						cyphTranslate
+						class='avatar call'
+						[src]='avatar'
+						alt='User Avatar'
+						*ngIf='(chatService.remoteUser | async)?.avatar | async as avatar'
+					/>
+				</div>
 
 				<div fxFlex='25' fxLayout='column' fxLayoutAlign='center center'>
 					<button
-						mat-icon-button
-						class='cancel'
+						mat-mini-fab
+						color='warn'
+						aria-label='Cancel'
 						cyphTranslate
 						(click)='p2pService.closeButton()'
 					>
