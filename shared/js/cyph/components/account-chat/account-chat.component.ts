@@ -10,6 +10,7 @@ import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountP2PService} from '../../services/account-p2p.service';
 import {AccountSessionService} from '../../services/account-session.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -17,7 +18,6 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
-import {P2PService} from '../../services/p2p.service';
 import {StringsService} from '../../services/strings.service';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
@@ -46,6 +46,13 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		new BehaviorSubject<(IAppointment&{id: string})|undefined>(undefined)
 	;
 
+	/** @see AccountCallWaiting.cancelRedirectsHome */
+	public readonly cancelRedirectsHome		=
+		this.activatedRoute.data.pipe(map(({cancelRedirectsHome}) =>
+			cancelRedirectsHome === true
+		))
+	;
+
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes	=
 		ChatMessageValue.Types
@@ -58,6 +65,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	).pipe(map(([initialCallPending, loading]) =>
 		initialCallPending || loading
 	));
+
+	/** Initial load screen before a user is set. */
+	public readonly initiating				= new BehaviorSubject(true);
 
 	/** @see ChatMessageValue.Types */
 	public readonly messageType				= new BehaviorSubject<ChatMessageValue.Types>(
@@ -192,16 +202,26 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				}
 
 				try {
-					await this.accountChatService.setUser(
-						contactID.indexOf(',') > -1 ?
-							contactID.split(',') :
-							await this.accountContactsService.getContactUsername(contactID)
-						,
-						undefined,
-						callType,
-						sessionSubID,
-						ephemeralSubSession
-					);
+					const username	= contactID.indexOf(',') > -1 ?
+						contactID.split(',') :
+						await this.accountContactsService.getContactUsername(contactID)
+					;
+
+					if (callType !== undefined && !sessionSubID) {
+						await this.accountChatService.setUser(username);
+						return this.accountP2PService.beginCall(callType, path);
+					}
+					else {
+						this.initiating.next(false);
+
+						await this.accountChatService.setUser(
+							username,
+							undefined,
+							callType,
+							sessionSubID,
+							ephemeralSubSession
+						);
+					}
 				}
 				catch {
 					this.router.navigate([accountRoot, '404']);
@@ -269,6 +289,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
+		/** @see AccountP2PService */
+		public readonly accountP2PService: AccountP2PService,
+
 		/** @see AccountSessionService */
 		public readonly accountSessionService: AccountSessionService,
 
@@ -277,9 +300,6 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 		/** @see FileTransferService */
 		public readonly fileTransferService: FileTransferService,
-
-		/** @see P2PService */
-		public readonly p2pService: P2PService,
 
 		/** @see P2PWebRTCService */
 		public readonly p2pWebRTCService: P2PWebRTCService,

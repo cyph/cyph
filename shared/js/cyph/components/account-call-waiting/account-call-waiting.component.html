@@ -22,11 +22,11 @@
 		<cyph-logo></cyph-logo>
 		<div fxFlex fxLayout='column' fxLayoutAlign='center center'>
 			<ng-container *ngIf='participantsByType | async as participants'>
-				<div fxLayoutAlign='center center'>
-					<h1 *ngIf='!telehealthAppointment && (chatService.remoteUser | async)'>
+				<div fxLayoutAlign='center center' *ngIf='!telehealthAppointment'>
+					<h1 *ngIf='(chatService.remoteUser | async)?.name | async as name'>
 						<span cyphTranslate>Calling</span>
 						&ngsp;
-						<span>{{((chatService.remoteUser | async)?.name | async) || ""}}...</span>
+						<span>{{name}}...</span>
 					</h1>
 				</div>
 
@@ -52,7 +52,7 @@
 						color='warn'
 						aria-label='Cancel'
 						cyphTranslate
-						(click)='p2pService.closeButton()'
+						(click)='accountP2PService.closeButton(cancelRedirectsHome)'
 					>
 						<mat-icon>call_end</mat-icon>
 					</button>

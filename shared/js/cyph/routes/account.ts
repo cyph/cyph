@@ -72,10 +72,29 @@ export const account: Route	= {
 		},
 		{path: 'appointments/:appointmentID/forms/:id', component: AccountFormComponent},
 		{
+			path: 'audio/:contactID',
+			component: AccountChatComponent,
+			data: {callType: 'audio'}
+		},
+		{
 			path: 'audio/:contactID/:sessionSubID',
 			component: AccountChatComponent,
 			data: {
 				callType: 'audio',
+				ephemeralSubSession: true
+			}
+		},
+		{
+			path: 'call/:contactID',
+			component: AccountChatComponent,
+			data: {callType: 'audio'}
+		},
+		{
+			path: 'call/:contactID/:sessionSubID',
+			component: AccountChatComponent,
+			data: {
+				callType: 'audio',
+				cancelRedirectsHome: true,
 				ephemeralSubSession: true
 			}
 		},
@@ -190,6 +209,11 @@ export const account: Route	= {
 		{
 			path: 'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',
 			component: UploadEhrCredentialsComponent
+		},
+		{
+			path: 'video/:contactID',
+			component: AccountChatComponent,
+			data: {callType: 'video'}
 		},
 		{
 			path: 'video/:contactID/:sessionSubID',

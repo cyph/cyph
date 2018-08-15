@@ -265,6 +265,7 @@ export class AccountService extends BaseProvider {
 					[
 						'appointments',
 						'audio',
+						'call',
 						'video'
 					].indexOf(route) > -1 &&
 					routePath.length > 1 &&

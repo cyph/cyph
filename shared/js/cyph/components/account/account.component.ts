@@ -70,6 +70,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			[
 				'',
 				'audio',
+				'call',
 				'contacts',
 				'logout',
 				'messages',
@@ -94,6 +95,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		this.envService.isMobile || (
 			[
 				'audio',
+				'call',
 				'messages',
 				'profile',
 				'video',
@@ -118,6 +120,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			[
 				'appointments',
 				'audio',
+				'call',
 				'video'
 			].indexOf(route) > -1 &&
 			routePath.length > 1 &&
@@ -131,6 +134,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			'404',
 			'appointments',
 			'audio',
+			'call',
 			'chat-transition',
 			'compose',
 			'contacts',

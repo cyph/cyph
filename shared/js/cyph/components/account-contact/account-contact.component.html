@@ -36,7 +36,7 @@
 			[ngClass]='userPresence[((user | async)?.status | async) || 0]'
 			[src]='(user | async)?.avatar | async'
 			alt='User Avatar'
-			[matTooltip]='clickable ? stringsService.openProfile : ""'
+			aria-label='clickable ? stringsService.openProfile : ""'
 			[routerLink]='!clickable ?
 				undefined :
 				accountService.routeRoot + "profile/" + (username || "")
@@ -74,6 +74,24 @@
 			*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
 			fxHide.lt-md
 		></cyph-account-user-rating>
+		<div fxFlex fxLayoutAlign='end center' *ngIf='clickable'>
+			<button
+				mat-icon-button
+				cyphTranslate
+				aria-label='Call'
+				[routerLink]='
+					((user | async)?.contactID | async) ?
+						(
+							accountService.routeRoot +
+							"call/" +
+							(((user | async)?.contactID | async) || "")
+						) :
+						undefined
+				'
+			>
+				<mat-icon>call</mat-icon>
+			</button>
+		</div>
 	</mat-card-header>
 
 	<ng-template #loading>

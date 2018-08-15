@@ -39,6 +39,19 @@ export class AccountP2PService extends P2PService {
 		/* Workaround for "Form submission canceled because the form is not connected" warning */
 		await sleep(0);
 
+		await this.router.navigate([
+			accountRoot,
+			callType,
+			await this.accountSessionService.remoteUser.value.contactID
+		]);
+	}
+
+	/** Initiates call. */
+	public async beginCall (callType: 'audio'|'video', route: string = callType) : Promise<void> {
+		if (!this.accountSessionService.remoteUser.value) {
+			return;
+		}
+
 		const id		= uuid();
 		const username	= this.accountSessionService.remoteUser.value.username;
 		const contactID	= await this.accountSessionService.remoteUser.value.contactID;
@@ -73,11 +86,11 @@ export class AccountP2PService extends P2PService {
 			)
 		]);
 
-		await this.router.navigate([accountRoot, callType, contactID, id]);
+		await this.router.navigate([accountRoot, route, contactID, id]);
 	}
 
 	/** @inheritDoc */
-	public async closeButton () : Promise<void> {
+	public async closeButton (cancelRedirectsHome: boolean = false) : Promise<void> {
 		const [contactID]	= await Promise.all([
 			this.accountSessionService.remoteUser.value ?
 				this.accountSessionService.remoteUser.value.contactID :
@@ -90,7 +103,12 @@ export class AccountP2PService extends P2PService {
 			return;
 		}
 
-		await this.router.navigate([accountRoot, 'messages', contactID]);
+		if (cancelRedirectsHome) {
+			await this.router.navigate([accountRoot]);
+		}
+		else {
+			await this.router.navigate([accountRoot, 'messages', contactID]);
+		}
 	}
 
 	constructor (

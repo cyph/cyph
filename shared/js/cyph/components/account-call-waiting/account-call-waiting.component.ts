@@ -12,13 +12,13 @@ import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
+import {AccountP2PService} from '../../services/account-p2p.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
-import {P2PService} from '../../services/p2p.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
@@ -40,11 +40,14 @@ implements AfterViewInit, OnChanges {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
 
+	/** @see AccountChatComponent */
+	@Input() public appointment?: IAppointment&{id: string};
+
 	/** @see AccountUserTypes */
 	public readonly callTypes: typeof CallTypes	= CallTypes;
 
-	/** @see AccountChatComponent */
-	@Input() public appointment?: IAppointment&{id: string};
+	/** If true, canceling the call will redirect home instead of to /messages. */
+	@Input() public cancelRedirectsHome: boolean	= false;
 
 	/** Component for composing forms. */
 	@ViewChild(AccountComposeNoProvidersComponent)
@@ -148,6 +151,9 @@ implements AfterViewInit, OnChanges {
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
+		/** @see AccountP2PService */
+		public readonly accountP2PService: AccountP2PService,
+
 		/** @see AccountUserLookupService */
 		public readonly accountUserLookupService: AccountUserLookupService,
 
@@ -156,9 +162,6 @@ implements AfterViewInit, OnChanges {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
-
-		/** @see P2PService */
-		public readonly p2pService: P2PService,
 
 		/** @see P2PWebRTCService */
 		public readonly p2pWebRTCService: P2PWebRTCService,

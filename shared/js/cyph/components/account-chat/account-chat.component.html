@@ -1,3 +1,10 @@
+<div class='initiating' *ngIf='initiating | async; else mainUI'>
+	<mat-progress-spinner mode='indeterminate'></mat-progress-spinner>
+</div>
+
+<ng-template #mainUI>
+
+
 <div
 	fxFlexFill
 	fxLayoutAlign='center center'
@@ -24,6 +31,7 @@
 		<cyph-account-call-waiting
 			fxFlexFill
 			[appointment]='appointment | async'
+			[cancelRedirectsHome]='cancelRedirectsHome | async'
 			*ngIf='initialCallPending | async'
 		></cyph-account-call-waiting>
 
@@ -38,7 +46,7 @@
 
 			<cyph-account-chat-message-box
 				[messageType]='chatMessageValueTypes.Text'
-				*ngIf='(p2pService.isActiveOrInitialCall | async) === false'
+				*ngIf='(accountP2PService.isActiveOrInitialCall | async) === false'
 				[class.visibility-hidden]='initialCallPending | async'
 			></cyph-account-chat-message-box>
 		</ng-container>
@@ -57,7 +65,7 @@
 					[messageType]='messageType | async'
 					[recipient]='accountSessionService.remoteUser'
 					[showHeader]='true'
-					*ngIf='(p2pService.isActiveOrInitialCall | async) === false'
+					*ngIf='(accountP2PService.isActiveOrInitialCall | async) === false'
 				></cyph-account-chat-message-box>
 			</cyph-chat-main>
 		</ng-template>
@@ -72,5 +80,7 @@
 	></mat-progress-spinner>
 </div>
 
+
+</ng-template>
 
 <router-outlet></router-outlet>
