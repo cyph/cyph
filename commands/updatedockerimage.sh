@@ -36,6 +36,8 @@ emsdk activate latest
 	--path-update false \
 	--usage-reporting false
 
+source ~/.bashrc
+
 gcloud components update --quiet
 
 echo | haxelib update > /dev/null
