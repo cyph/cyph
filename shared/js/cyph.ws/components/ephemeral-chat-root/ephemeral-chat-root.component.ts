@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import {Router} from '@angular/router';
 import * as $ from 'jquery';
-import * as Konami from 'konami-code.js';
+import * as Konami from 'konami';
 import {fadeIn} from '../../../cyph/animations';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {States as ChatStates} from '../../../cyph/chat/enums';

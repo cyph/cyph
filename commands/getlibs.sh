@@ -224,7 +224,7 @@ EOM
 for anyType in \
 	braintree-web-drop-in \
 	granim \
-	konami-code.js \
+	konami \
 	lamejs \
 	libvorbis.js \
 	markdown-it-emoji \
@@ -273,7 +273,7 @@ echo "
 " > @types/fg-loadcss/index.d.ts
 
 for arr in \
-	'konami-code.js/konami.js Konami' \
+	'konami/konami.js Konami' \
 	'tab-indent/js/tabIndent.js tabIndent' \
 	'wowjs/dist/wow.js this.WOW'
 do

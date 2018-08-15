@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import * as Konami from 'konami-code.js';
+import * as Konami from 'konami';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {env} from '../../../cyph/env';
 import {ChatMessageGeometryService} from '../../../cyph/services/chat-message-geometry.service';

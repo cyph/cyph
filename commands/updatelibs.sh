@@ -165,7 +165,7 @@ read -r -d '' modules <<- EOM
 	karma-coverage-istanbul-reporter
 	karma-jasmine
 	karma-jasmine-html-reporter@0
-	konami-code.js
+	konami
 	lamejs
 	lazy
 	leaflet
