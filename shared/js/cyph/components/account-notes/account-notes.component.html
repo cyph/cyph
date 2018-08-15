@@ -9,7 +9,7 @@
 	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='(realTime | async) === false || accountService.enableDocs'
 >
-	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='12px'>
 		<mat-card
 			class='note animated slideInDown'
 			*ngFor='let note of notes | async; trackBy: trackByID; let i = index'

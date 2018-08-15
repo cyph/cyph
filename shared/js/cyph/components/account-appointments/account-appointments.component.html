@@ -6,7 +6,7 @@
 	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='accountDatabaseService.currentUser | async as currentUser'
 >
-	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='12px'>
 		<ng-container *ngIf='calendarOptions'>
 			<div class='cyph-inverted-theme'>
 				<mat-accordion class='calendar'>

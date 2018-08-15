@@ -132,6 +132,21 @@ input.text-security {
 	}
 }
 
+body.mobile .card-list {
+	mat-card {
+		padding: 20px;
+		padding-bottom: 12px;
+
+		mat-card-header > div:last-child {
+			margin-top: -12px;
+		}
+
+		.mat-card-avatar {
+			@include transform(translateY(-4px));
+		}
+	}
+}
+
 .initiating {
 	overflow-y: hidden !important;
 

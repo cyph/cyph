@@ -6,7 +6,7 @@
 	[class.initiating]='accountFilesService.showSpinner | async'
 	*ngIf='envService.isTelehealth'
 >
-	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='16px'>
+	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch' fxLayoutGap='12px'>
 		<ng-container *ngFor='
 			let redoxPatient of accountFilesService.incomingFilesFiltered.redoxPatients | async;
 			trackBy: trackByID;
