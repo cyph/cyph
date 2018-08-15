@@ -540,12 +540,19 @@ export class AccountAuthService extends BaseProvider {
 							throw RegistrationErrorCodes.InvalidInviteCode;
 						}
 
-						await this.setItem(
-							`users/${username}/inviterUsername`,
-							StringProto,
-							inviterUsername,
-							loginData.symmetricKey
-						);
+						await Promise.all([
+							this.setItem(
+								`users/${username}/inviterUsername`,
+								StringProto,
+								inviterUsername,
+								loginData.symmetricKey
+							),
+							this.databaseService.setItem(
+								`users/${username}/contacts/${inviterUsername}`,
+								BinaryProto,
+								new Uint8Array(0)
+							)
+						]);
 					}
 				})()
 			]);
