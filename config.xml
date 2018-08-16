@@ -14,6 +14,7 @@
 		Cyph, Inc.
 	</author>
 
+	<plugin name="cordova-call" spec="*" />
 	<plugin name="cordova-plugin-add-swift-support" spec="*" />
 	<plugin name="cordova-plugin-appminimize" spec="*" />
 	<plugin name="cordova-plugin-battery-status" spec="*" />
