@@ -5,6 +5,8 @@ import {
 	ElementRef,
 	Inject,
 	Input,
+	OnChanges,
+	OnDestroy,
 	Optional
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
@@ -46,7 +48,9 @@ import {compareDates, relativeDateString, watchDateChange} from '../../util/time
 	styleUrls: ['./chat-message-list.component.scss'],
 	templateUrl: './chat-message-list.component.html'
 })
-export class ChatMessageListComponent extends BaseProvider implements AfterViewInit {
+export class ChatMessageListComponent
+extends BaseProvider
+implements AfterViewInit, OnChanges, OnDestroy {
 	/* @ignore
 	private currentMaxWidth: number			= 0;
 	*/
@@ -80,13 +84,14 @@ export class ChatMessageListComponent extends BaseProvider implements AfterViewI
 	*/
 
 	/** @ignore */
-	private readonly messageCache: Map<string, {
+	private readonly changes			= new BehaviorSubject<void>(undefined);
+
+	/** @ignore */
+	private readonly messageCache		= new Map<string, {
 		dateChange?: string;
 		message: ChatMessage;
 		pending: boolean;
-	}>	=
-		new Map()
-	;
+	}>();
 
 	/** @ignore */
 	private readonly observableCache	= new Map<IChatData, {
@@ -105,7 +110,7 @@ export class ChatMessageListComponent extends BaseProvider implements AfterViewI
 	;
 
 	/** Used for initial scroll down on load. */
-	public readonly initialScrollDown: BehaviorSubject<boolean>	= new BehaviorSubject(true);
+	public readonly initialScrollDown					= new BehaviorSubject(true);
 
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean		= false;
@@ -336,7 +341,10 @@ export class ChatMessageListComponent extends BaseProvider implements AfterViewI
 			this.maxWidthWatcher
 		)
 		*/
-		this.subscriptions.push(observables.messages.pipe(map(messages => (
+		this.subscriptions.push(combineLatest(
+			observables.messages,
+			this.changes
+		).pipe(map(([messages]) => (
 			<({dateChange?: string; message?: ChatMessage; pending: boolean})[]>
 			(messages.length < 1 ? [{pending: false}] : messages)
 		).map(({dateChange, message, pending}, i, arr) => {
@@ -364,6 +372,16 @@ export class ChatMessageListComponent extends BaseProvider implements AfterViewI
 		}))).subscribe(
 			this.vsData
 		));
+	}
+
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		this.changes.next(undefined);
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.changes.complete();
 	}
 
 	constructor (
