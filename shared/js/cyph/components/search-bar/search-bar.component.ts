@@ -5,6 +5,7 @@ import {
 	EventEmitter,
 	Input,
 	OnChanges,
+	OnDestroy,
 	OnInit,
 	Output,
 	SimpleChanges,
@@ -32,7 +33,9 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 	styleUrls: ['./search-bar.component.scss'],
 	templateUrl: './search-bar.component.html'
 })
-export class SearchBarComponent<T extends any> extends BaseProvider implements OnChanges, OnInit {
+export class SearchBarComponent<T extends any>
+extends BaseProvider
+implements OnChanges, OnDestroy, OnInit {
 	/** @ignore */
 	private querySubscription?: Subscription;
 
@@ -134,6 +137,13 @@ export class SearchBarComponent<T extends any> extends BaseProvider implements O
 				this.pushToFilter(value);
 			});
 		}
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.clearFilter();
+		/* tslint:disable-next-line:no-life-cycle-call */
+		super.ngOnDestroy();
 	}
 
 	/** @inheritDoc */

@@ -44,6 +44,11 @@ export class AccountService extends BaseProvider {
 		new BehaviorSubject(false)
 	;
 
+	/** Active sidebar contact username. */
+	public readonly activeSidebarContact				=
+		new BehaviorSubject<string|undefined>(undefined)
+	;
+
 	/** Header title for current section. */
 	public readonly header: Observable<string|User|undefined>;
 
@@ -239,16 +244,22 @@ export class AccountService extends BaseProvider {
 		}
 
 		this.header	= combineLatest(
+			this.activeSidebarContact,
 			this.headerInternal,
 			this.envService.isMobile,
 			this.transitionInternal
-		).pipe(map(([header, isMobile]) => {
+		).pipe(map(([activeSidebarContact, header, isMobile]) => {
 			const routePath	= this.routePath;
 			const route		= routePath[0];
 
 			const specialCases: {[k: string]: string}	= {
 				ehr: 'EHR'
 			};
+
+			/* Avoid redundancy between header and sidebar */
+			if (header instanceof User && header.username === activeSidebarContact) {
+				header	= undefined;
+			}
 
 			/* Special case: set root header on mobile to "Messages" */
 			if (!route && isMobile) {

@@ -158,7 +158,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 			else if (user) {
 				await user.fetch();
 
-				if (!this.destroyed && this.envService.isMobile.value) {
+				if (!this.destroyed) {
 					this.accountService.setHeader(user);
 				}
 

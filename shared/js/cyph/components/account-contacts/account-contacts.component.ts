@@ -1,9 +1,11 @@
 import {
+	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
 	Input,
 	OnChanges,
+	OnDestroy,
 	OnInit,
 	Output,
 	SimpleChanges,
@@ -23,7 +25,8 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByUser} from '../../track-by/track-by-user';
-import {filterUndefined} from '../../util';
+import {filterUndefined} from '../../util/filter';
+import {toBehaviorSubject} from '../../util/flatten-observable';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
 
@@ -36,7 +39,8 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 	styleUrls: ['./account-contacts.component.scss'],
 	templateUrl: './account-contacts.component.html'
 })
-export class AccountContactsComponent extends BaseProvider implements OnChanges, OnInit {
+export class AccountContactsComponent extends BaseProvider
+implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	/** @ignore */
 	private readonly contactListInternal: BehaviorSubject<(IContactListItem|User)[]>	=
 		new BehaviorSubject<(IContactListItem|User)[]>([])
@@ -115,8 +119,12 @@ export class AccountContactsComponent extends BaseProvider implements OnChanges,
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Full contact list with active contact filtered out. */
-	public readonly activeUser: Observable<IContactListItem|User|undefined>		=
-		this.routeReactiveContactList.pipe(map(o => o.activeUser))
+	public readonly activeUser													=
+		toBehaviorSubject(
+			this.routeReactiveContactList.pipe(map(o => o.activeUser)),
+			undefined,
+			this.subscriptions
+		)
 	;
 
 	/** List of users to search. */
@@ -145,6 +153,9 @@ export class AccountContactsComponent extends BaseProvider implements OnChanges,
 
 	/** @see AccountContactsSearchComponent.searchProfileExtra */
 	@Input() public searchProfileExtra: boolean									= false;
+
+	/** Indicates whether being used in the sidebar. */
+	@Input() public sidebar: boolean											= false;
 
 	/** @see trackByUser */
 	public readonly trackByUser: typeof trackByUser								= trackByUser;
@@ -176,6 +187,28 @@ export class AccountContactsComponent extends BaseProvider implements OnChanges,
 	*/
 
 	/** @inheritDoc */
+	public ngAfterViewInit () : void {
+		if (
+			!this.sidebar ||
+			!this.accountContactsSearch ||
+			!this.accountContactsSearch.searchBar
+		) {
+			return;
+		}
+
+		this.subscriptions.push(
+			combineLatest(
+				this.activeUser,
+				this.accountContactsSearch.searchBar.filterSingle
+			).subscribe(([a, b]) => {
+				this.accountService.activeSidebarContact.next(
+					a ? a.username : b ? b.username : undefined
+				);
+			})
+		);
+	}
+
+	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {
 		if (!('contactList' in changes)) {
 			return;
@@ -186,6 +219,13 @@ export class AccountContactsComponent extends BaseProvider implements OnChanges,
 		}
 
 		this.contactListSubscription	= this.contactList.subscribe(this.contactListInternal);
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		this.activeUser.next(undefined);
+		/* tslint:disable-next-line:no-life-cycle-call */
+		super.ngOnDestroy();
 	}
 
 	/** @inheritDoc */
