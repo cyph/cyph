@@ -50,6 +50,9 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 	/* tslint:disable-next-line:semicolon */
 	};
 
+	/** If true, autofocuses. */
+	@Input() public autofocus: boolean	= true;
+
 	/** @see CalendarInviteComponent.followUp */
 	@Input() public calendarInviteFollowUp?: boolean;
 
@@ -168,7 +171,10 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 		}
 
 		await this.chatService.resolvers.currentMessageSynced.promise;
-		$textarea.trigger('focus');
+
+		if (this.autofocus) {
+			$textarea.trigger('focus');
+		}
 	}
 
 	/** Sends current message. */
