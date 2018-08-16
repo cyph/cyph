@@ -53,13 +53,14 @@ export class AccountP2PService extends P2PService {
 		}
 
 		const id		= uuid();
+		const messageID	= uuid();
 		const username	= this.accountSessionService.remoteUser.value.username;
 		const contactID	= await this.accountSessionService.remoteUser.value.contactID;
 
 		await (await this.accountSessionService.send([
 			rpcEvents.accountP2P,
 			{command: {
-				additionalData: id,
+				additionalData: `${id}\n${messageID}`,
 				method: callType
 			}}
 		])).confirmPromise;
@@ -67,7 +68,6 @@ export class AccountP2PService extends P2PService {
 		await Promise.all([
 			this.accountSessionService.remoteUser.value.accountUserProfile.getValue().then(
 				async ({realUsername}) => this.chatService.addMessage({
-					id,
 					value: `${this.stringsService.youInvited} ${realUsername} ${
 						this.stringsService.toA
 					} ${
@@ -81,7 +81,7 @@ export class AccountP2PService extends P2PService {
 				this.accountDatabaseService.notify(
 					username,
 					NotificationTypes.Message,
-					{castleSessionID, id}
+					{castleSessionID, id: messageID}
 				)
 			)
 		]);
@@ -155,8 +155,8 @@ export class AccountP2PService extends P2PService {
 						continue;
 					}
 
-					const id		= o.command.additionalData;
-					const callType	= o.command.method;
+					const [id, messageID]	= (o.command.additionalData || '').split('\n');
+					const callType			= o.command.method;
 
 					const [contactID, {realUsername}]	= await Promise.all([
 						this.accountSessionService.remoteUser.value.contactID,
@@ -164,7 +164,7 @@ export class AccountP2PService extends P2PService {
 					]);
 
 					this.chatService.addMessage({
-						id,
+						id: messageID,
 						value: `${realUsername} ${this.stringsService.hasInvitedYouToA} ${
 							callType === 'video' ?
 								this.stringsService.videoCall :
