@@ -119,6 +119,7 @@
 			target="/manifest/application"
 		>
 			<application
+				android:largeHeap="true"
 				android:icon="@mipmap/ic_launcher"
 				android:roundIcon="@mipmap/ic_launcher_round"
 			/>
