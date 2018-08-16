@@ -119,12 +119,12 @@ export class Config {
 				id: 5,
 				items: {
 					annual: {
-						amount: 588,
+						amount: 168,
 						id: 2,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					monthly: {
-						amount: 99,
+						amount: 29,
 						id: 1,
 						subscriptionType: SubscriptionTypes.monthly
 					}
@@ -143,8 +143,23 @@ export class Config {
 					}
 				}
 			},
-			telehealth: {
+			telehealthBasic: {
 				id: 3,
+				items: {
+					annual: {
+						amount: 228,
+						id: 2,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					monthly: {
+						amount: 29,
+						id: 1,
+						subscriptionType: SubscriptionTypes.monthly
+					}
+				}
+			},
+			telehealthPro: {
+				id: 6,
 				items: {
 					singlePractitioner: {
 						amount: 250,
