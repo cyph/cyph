@@ -185,7 +185,10 @@ export class AppService extends BaseProvider {
 				;
 
 				this.updateCart(
-					urlSegmentPaths[1],
+					urlSegmentPaths[1].replace(
+						/-(.)/g,
+						(_, s) => s.toUpperCase()
+					),
 					urlSegmentPaths[2].replace(
 						/-(.)/g,
 						(_, s) => s.toUpperCase()
