@@ -40,6 +40,7 @@
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
+	<plugin name="phonegap-plugin-local-notification" spec="*" />
 	<plugin name="phonegap-plugin-push" spec="*" />
 
 	<access origin="*" />
