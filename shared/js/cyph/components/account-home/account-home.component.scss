@@ -6,6 +6,13 @@
 	pointer-events: none;
 }
 
+/* Offset height of speed dial + 16px above and below */
+cyph-account-contacts ::ng-deep {
+	.card-list.mobile .contact-list {
+		padding-bottom: 88px;
+	}
+}
+
 smd-fab-speed-dial ::ng-deep smd-fab-actions > .open {
 	opacity: 1 !important;
 
