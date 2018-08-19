@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {IAsyncSet} from '../iasync-set';
@@ -46,6 +47,35 @@ export class ScrollService extends BaseProvider {
 	public readonly resolveUnreadItems: (rootElement: MaybePromise<IAsyncSet<string>>) => void	=
 		this._UNREAD_ITEMS.resolve
 	;
+
+	/** Current scroll positon. */
+	public readonly scrollPosition: BehaviorSubject<number>	= toBehaviorSubject<number>(
+		this.rootElement.then(rootElement => rootElement ?
+			new Observable<number>(observer => {
+				const handler	= () => {
+					observer.next(
+						rootElement[0].scrollHeight -
+						(
+							rootElement[0].scrollTop +
+							rootElement[0].clientHeight
+						)
+					);
+				};
+
+				rootElement.on('scroll', handler);
+
+				return () => {
+					rootElement.off('scroll', handler);
+				};
+			}) :
+			0
+		),
+		0,
+		this.subscriptions
+	);
+
+	/** Scroll position deemed high enough that it makes sense to display unread indicator. */
+	public readonly transitionaryScrollPosition: number		= 256;
 
 	/** Unread item IDs. */
 	public readonly unreadItems: Promise<IAsyncSet<string>>	= this._UNREAD_ITEMS.promise;
@@ -109,7 +139,15 @@ export class ScrollService extends BaseProvider {
 	}
 
 	/** Scrolls to bottom. */
-	public async scrollDown () : Promise<void> {
+	public async scrollDown (force: boolean = true, delay: number = 0) : Promise<void> {
+		if (!(force || (this.scrollPosition.value < this.transitionaryScrollPosition))) {
+			return;
+		}
+
+		if (delay > 0) {
+			await sleep(delay);
+		}
+
 		const rootElement	= await this.rootElement;
 		if (!rootElement) {
 			return;
@@ -136,26 +174,13 @@ export class ScrollService extends BaseProvider {
 
 	/** Process new item. */
 	public async trackItem (id: string, noScrollDown: boolean = false) : Promise<void> {
-		const rootElement	= await this.rootElement;
-		if (!rootElement) {
-			return;
-		}
-
-		const unreadItems		= await this.unreadItems;
-
-		const scrollPosition	=
-			rootElement[0].scrollHeight -
-			(
-				rootElement[0].scrollTop +
-				rootElement[0].clientHeight
-			)
-		;
+		const unreadItems	= await this.unreadItems;
 
 		if (
 			!noScrollDown &&
 			this.windowWatcherService.visibility.value &&
 			(await unreadItems.size()) < 1 &&
-			scrollPosition < 150
+			this.scrollPosition.value < this.transitionaryScrollPosition
 		) {
 			this.scrollDown();
 			return;

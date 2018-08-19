@@ -1084,7 +1084,7 @@ export class ChatService extends BaseProvider {
 				value
 			});
 
-			await this.scrollService.scrollDown();
+			await this.scrollService.scrollDown(false);
 		});
 
 		const resolver	= resolvable();

@@ -159,10 +159,9 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 		});
 
 		if (this.envService.isMobileOS) {
-			$textarea.on('focus', async () => {
-				await sleep(750);
-				await this.scrollService.scrollDown();
-			});
+			$textarea.on('focus', async () =>
+				this.scrollService.scrollDown(false, 750)
+			);
 		}
 		else {
 			/* Allow tabbing for code indentation */
@@ -175,6 +174,17 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 		if (this.autofocus) {
 			$textarea.trigger('focus');
+		}
+	}
+
+	/** Scrolls down and focuses message box. */
+	public async scrollDown () : Promise<void> {
+		const focus	= !this.envService.isMobileOS || this.virtualKeyboardWatcherService.isOpen;
+
+		await this.scrollService.scrollDown();
+
+		if (focus) {
+			(await this.$textarea).trigger('focus');
 		}
 	}
 

@@ -247,8 +247,12 @@
 				<h3
 					fxFlex
 					class='new-messages cyph-banner emphasis'
-					(click)='scrollService.scrollDown()'
-					*ngIf='unreadItemCount > 0'
+					(click)='scrollDown()'
+					*ngIf='
+						unreadItemCount > 0 &&
+						((scrollService.scrollPosition | async) || 0) >
+							scrollService.transitionaryScrollPosition
+					'
 				>
 					↓&nbsp;
 					{{unreadItemCount}}
