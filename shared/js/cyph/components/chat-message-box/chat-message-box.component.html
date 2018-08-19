@@ -88,6 +88,11 @@
 				placeholder='Send a secure message...'
 				cyphTranslate
 			></textarea>
+			<textarea
+				fxFlex
+				class='message-box tabIndent fake'
+				name='text-message-fake'
+			></textarea>
 		</div>
 
 		<div *ngIf='envService.isMobile | async'>

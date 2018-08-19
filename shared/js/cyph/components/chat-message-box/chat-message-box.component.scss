@@ -11,6 +11,14 @@
 
 	.message-box {
 		resize: none;
+
+		&.fake {
+			visibility: hidden !important;
+			pointer-events: none !important;
+			position: absolute !important;
+
+			@include transition(none !important);
+		}
 	}
 
 	.message-box-button-group {
@@ -55,6 +63,8 @@
 	&.mobile {
 		.message-box {
 			height: 2.96em;
+			min-height: 2.96em;
+			max-height: 50vh;
 			font-size: 1.12em;
 			line-height: 1.5em;
 			padding: 10px 60px 10px 15px;

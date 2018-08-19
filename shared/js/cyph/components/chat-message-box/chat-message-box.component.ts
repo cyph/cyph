@@ -38,7 +38,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 export class ChatMessageBoxComponent extends BaseProvider implements AfterViewInit {
 	/** @ignore */
 	private readonly $textarea: Promise<JQuery>	= waitForIterable(
-		() => $(this.elementRef.nativeElement).find('.text-message-box textarea')
+		() => $(this.elementRef.nativeElement).find('.text-message-box textarea:not(.fake)')
 	);
 
 	/** @ignore */
@@ -132,7 +132,15 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 		/* Allow enter press to submit, except on mobile without external keyboard */
 
-		const $textarea	= await this.$textarea;
+		const $textarea		= await this.$textarea;
+		const $textareaFake	= $textarea.siblings('.fake').eq(0);
+
+		const resizeTextArea	= () => {
+			$textareaFake.val($textarea.val() || '');
+			$textareaFake.width($textarea.width() || 0);
+			$textarea.css('height', `${$textareaFake[0].scrollHeight.toString()}px`);
+			$textareaFake.val('');
+		};
 
 		$textarea.on('keypress', e => {
 			if (
@@ -140,12 +148,14 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 				e.keyCode !== 13 ||
 				e.shiftKey
 			) {
+				resizeTextArea();
 				return;
 			}
 
 			e.preventDefault();
 			this.send();
 			$textarea.val('');
+			$textarea.height(0);
 		});
 
 		if (this.envService.isMobileOS) {
@@ -155,22 +165,13 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 			});
 		}
 		else {
-			/* Adapt message box to content size on desktop */
-
-			const messageBoxLineHeight	= Number.parseInt($textarea.css('line-height'), 10);
-
-			$textarea.on('keyup', () => {
-				const val		= $textarea.val();
-				const valString	= ((val instanceof Array ? val[0] : val) || '').toString();
-				return $textarea.height(messageBoxLineHeight * valString.split('\n').length);
-			});
-
 			/* Allow tabbing for code indentation */
-
 			tabIndent.render($textarea[0]);
 		}
 
 		await this.chatService.resolvers.currentMessageSynced.promise;
+
+		resizeTextArea();
 
 		if (this.autofocus) {
 			$textarea.trigger('focus');
