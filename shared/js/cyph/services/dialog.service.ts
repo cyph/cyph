@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
+import {MaybePromise} from '../maybe-promise-type';
 
 
 /**
@@ -21,7 +22,7 @@ export class DialogService extends BaseProvider {
 	/** Generic modal implementation that takes a template / content. */
 	public async baseDialog<T> (
 		_COMPONENT_TYPE: ComponentType<T>,
-		_SET_INPUTS?: (componentInstance: T) => void,
+		_SET_INPUTS?: (componentInstance: T) => MaybePromise<void>,
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.baseDialog.');

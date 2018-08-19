@@ -8,6 +8,7 @@ import {DialogMediaComponent} from './components/dialog-media';
 import {BaseProvider} from './js/cyph/base-provider';
 import {IResolvable} from './js/cyph/iresolvable';
 import {LockFunction} from './js/cyph/lock-function-type';
+import {MaybePromise} from './js/cyph/maybe-promise-type';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {StringsService} from './js/cyph/services/strings.service';
 import {lockFunction} from './js/cyph/util/lock';
@@ -54,7 +55,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 */
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
-		setInputs?: (componentInstance: T) => void,
+		setInputs?: (componentInstance: T) => MaybePromise<void>,
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (setInputs) {

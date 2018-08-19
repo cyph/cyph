@@ -2,14 +2,16 @@ import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap} from 'rxjs/operators';
-import {User} from '../account';
+import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
+import {StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {translate} from '../util/translate';
 import {resolvable, sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {ConfigService} from './config.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {StringsService} from './strings.service';
@@ -156,11 +158,29 @@ export class AccountService extends BaseProvider {
 
 	/** Contact form dialog. */
 	public async contactFormDialog (to?: string) : Promise<void> {
-		await this.dialogService.baseDialog(ContactComponent, o => {
+		await this.dialogService.baseDialog(ContactComponent, async o => {
 			if (to) {
 				o.hideToDropdown	= true;
 				o.to				= to;
 			}
+
+			if (!this.accountDatabaseService.currentUser.value) {
+				return;
+			}
+
+			const [email, {name, realUsername}]	= await Promise.all([
+				this.accountDatabaseService.getItem(
+					'email',
+					StringProto,
+					SecurityModels.unprotected
+				).catch(
+					() => ''
+				),
+				this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue()
+			]);
+
+			o.fromEmail	= email;
+			o.fromName	= name ? `${name} (@${realUsername})` : realUsername;
 		});
 	}
 
@@ -219,6 +239,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,
+
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,

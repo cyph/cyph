@@ -10,6 +10,7 @@ import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
 import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {lockFunction} from '../util/lock';
 import {resolvable, sleep} from '../util/wait';
 import {DialogService} from './dialog.service';
@@ -129,7 +130,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	/** @inheritDoc */
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
-		setInputs?: (componentInstance: T) => void,
+		setInputs?: (componentInstance: T) => MaybePromise<void>,
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
@@ -140,7 +141,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			}
 
 			if (setInputs) {
-				setInputs(matDialogRef.componentInstance);
+				await setInputs(matDialogRef.componentInstance);
 			}
 
 			await matDialogRef.afterClosed().toPromise();
