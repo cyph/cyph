@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
@@ -82,14 +82,21 @@ export class AccountChatService extends ChatService {
 			SecurityModels.unprotected
 		);
 
+		const watch	= memoize(() => combineLatest(
+			asyncMap.watchKeys(),
+			this.fetchedMessageIDs.watch()
+		).pipe(map(([keys, fetchedMessageIDs]) => new Set(
+			keys.filter(k => fetchedMessageIDs.has(k))
+		))));
+
 		return {
 			addItem: async (_VALUE: string) => {},
 			clear: async () => asyncMap.clear(),
 			deleteItem: async (value: string) => asyncMap.removeItem(value),
 			hasItem: async (value: string) => asyncMap.hasItem(value),
 			size: async () => asyncMap.size(),
-			watch: memoize(() => asyncMap.watchKeys().pipe(map(keys => new Set(keys)))),
-			watchSize: memoize(() => asyncMap.watchSize())
+			watch,
+			watchSize: memoize(() => watch().pipe(map(keys => keys.size)))
 		};
 	}
 

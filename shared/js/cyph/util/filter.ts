@@ -1,7 +1,16 @@
 import {Observable} from 'rxjs';
 import {filter} from 'rxjs/operators';
+import {MaybePromise} from '../maybe-promise-type';
 import {compareValues} from './compare';
 
+
+/** Filters asynchronously. */
+export const filterAsync				=
+	async <T> (arr: T[], f: (value: T) => MaybePromise<boolean>) : Promise<T[]> =>
+		(await Promise.all(arr.map(async value => ({filter: await f(value), value})))).
+			filter(o => o.filter).
+			map(o => o.value)
+;
 
 /** rxjs operator that filters out consecutive duplicate values. */
 export const filterDuplicatesOperator	= <T> () : (source: Observable<T>) => Observable<T> => {

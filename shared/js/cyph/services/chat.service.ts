@@ -107,6 +107,11 @@ export class ChatService extends BaseProvider {
 		this._CHAT_GEOMETRY_SERVICE.promise
 	;
 
+	/** IDs of fetched messages. */
+	protected readonly fetchedMessageIDs										=
+		new LocalAsyncSet<string>()
+	;
+
 	/** Global map of message IDs to values. */
 	protected readonly messageValues: EncryptedAsyncMap<IChatMessageValue>		=
 		new EncryptedAsyncMap<IChatMessageValue>(
@@ -787,6 +792,10 @@ export class ChatService extends BaseProvider {
 				).catch(
 					() => undefined
 				);
+
+				if (message.value !== undefined) {
+					await this.fetchedMessageIDs.addItem(message.id);
+				}
 			}
 		}
 

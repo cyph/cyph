@@ -216,6 +216,8 @@ export class DatabaseService extends DataManagerService {
 			]);
 		};
 
+		const watchKeys	= memoize(() => this.watchListKeys(url, subscriptions));
+
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncMap: IAsyncMap<string, T>	= {
@@ -253,13 +255,9 @@ export class DatabaseService extends DataManagerService {
 			updateValue: async f => asyncMap.lock(async () =>
 				asyncMap.setValue(await f(await asyncMap.getValue()))
 			),
-			watch: memoize(() => this.watchListKeys(url, subscriptions).pipe(
-				mergeMap(getValueHelper)
-			)),
-			watchKeys: memoize(() => this.watchListKeys(url, subscriptions)),
-			watchSize: memoize(() => this.watchListKeys(url, subscriptions).pipe(
-				mergeMap(async keys => keys.length)
-			))
+			watch: memoize(() => watchKeys().pipe(mergeMap(getValueHelper))),
+			watchKeys,
+			watchSize: memoize(() => watchKeys().pipe(map(keys => keys.length)))
 		};
 
 		return asyncMap;
