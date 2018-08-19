@@ -250,8 +250,7 @@
 					(click)='scrollDown()'
 					*ngIf='
 						unreadItemCount > 0 &&
-						((scrollService.scrollPosition | async) || 0) >
-							scrollService.transitionaryScrollPosition
+						((scrollService.scrollPosition | async) || 0) > scrollService.minScroll
 					'
 				>
 					↓&nbsp;

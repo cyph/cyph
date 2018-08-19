@@ -43,6 +43,9 @@ export class ScrollService extends BaseProvider {
 	/** @ignore */
 	private readonly scrollDownLock: {}	= {};
 
+	/** Scroll position deemed high enough that it makes sense to display unread indicator. */
+	public readonly minScroll: number						= 256;
+
 	/** Resolves unreadItems. */
 	public readonly resolveUnreadItems: (rootElement: MaybePromise<IAsyncSet<string>>) => void	=
 		this._UNREAD_ITEMS.resolve
@@ -53,13 +56,14 @@ export class ScrollService extends BaseProvider {
 		this.rootElement.then(rootElement => rootElement ?
 			new Observable<number>(observer => {
 				const handler	= () => {
-					observer.next(
+					observer.next(Math.max(
 						rootElement[0].scrollHeight -
 						(
 							rootElement[0].scrollTop +
 							rootElement[0].clientHeight
-						)
-					);
+						),
+						0
+					));
 				};
 
 				rootElement.on('scroll', handler);
@@ -70,12 +74,9 @@ export class ScrollService extends BaseProvider {
 			}) :
 			0
 		),
-		0,
+		this.minScroll,
 		this.subscriptions
 	);
-
-	/** Scroll position deemed high enough that it makes sense to display unread indicator. */
-	public readonly transitionaryScrollPosition: number		= 256;
 
 	/** Unread item IDs. */
 	public readonly unreadItems: Promise<IAsyncSet<string>>	= this._UNREAD_ITEMS.promise;
@@ -140,7 +141,7 @@ export class ScrollService extends BaseProvider {
 
 	/** Scrolls to bottom. */
 	public async scrollDown (force: boolean = true, delay: number = 0) : Promise<void> {
-		if (!(force || (this.scrollPosition.value < this.transitionaryScrollPosition))) {
+		if (!(force || (this.scrollPosition.value < this.minScroll))) {
 			return;
 		}
 
@@ -180,7 +181,7 @@ export class ScrollService extends BaseProvider {
 			!noScrollDown &&
 			this.windowWatcherService.visibility.value &&
 			(await unreadItems.size()) < 1 &&
-			this.scrollPosition.value < this.transitionaryScrollPosition
+			this.scrollPosition.value < this.minScroll
 		) {
 			this.scrollDown();
 			return;
@@ -198,5 +199,12 @@ export class ScrollService extends BaseProvider {
 		private readonly windowWatcherService: WindowWatcherService
 	) {
 		super();
+
+		this.subscriptions.push(this.scrollPosition.subscribe(async scrollPosition => {
+			if (scrollPosition === 0) {
+				await (await this.unreadItems).clear();
+				await this.updateTitle();
+			}
+		}));
 	}
 }
