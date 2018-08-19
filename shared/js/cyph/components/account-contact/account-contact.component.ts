@@ -7,6 +7,7 @@ import {AccountUserTypes} from '../../proto';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
+import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -35,6 +36,9 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 			this.accountOrganizationsService.getOrganization(username)
 		)
 	;
+
+	/** @see P2PWebRTCService.isSupported */
+	public readonly p2pSupported							= P2PWebRTCService.isSupported;
 
 	/** Indicates whether unread message count should be displayed. */
 	@Input() public showUnreadMessageCount: boolean			= false;

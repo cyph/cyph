@@ -74,7 +74,11 @@
 			*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
 			fxHide.lt-md
 		></cyph-account-user-rating>
-		<div fxFlex fxLayoutAlign='end center' *ngIf='clickable && !envService.isTelehealth'>
+		<div fxFlex fxLayoutAlign='end center' *ngIf='
+			p2pSupported &&
+			clickable &&
+			!envService.isTelehealth
+		'>
 			<button
 				mat-icon-button
 				cyphTranslate
