@@ -644,6 +644,9 @@
 						"email": {
 							".validate": "newData.isString()"
 						},
+						"lastPushEmail": {
+							".validate": "newData.val() === now"
+						},
 						"name": {
 							".validate": "newData.isString()"
 						},

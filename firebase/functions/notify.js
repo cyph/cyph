@@ -1,7 +1,11 @@
+const admin			= require('firebase-admin');
 const sanitize		= require('sanitize-html');
 const {sendMail}	= require('./email');
 const {sendMessage}	= require('./messaging');
 const {normalize}	= require('./util');
+
+
+const emailNotificationRateLimit	= 3600000;
 
 
 module.exports	= (database, messaging) => ({
@@ -22,8 +26,26 @@ module.exports	= (database, messaging) => ({
 			return;
 		}
 
-		if (!(await notifyMessage())) {
-			await notifyMail();
+		if (await notifyMessage()) {
+			return;
 		}
+
+		const lastPushEmail			=
+			database.ref(`${namespace}/users/${normalize(username)}/internal/lastPushEmail`)
+		;
+
+		const lastPushEmailValue	= (await lastPushEmail.once('value')).val();
+
+		if (
+			!isNaN(lastPushEmailValue) &&
+			(Date.now() - lastPushEmailValue) < emailNotificationRateLimit
+		) {
+			return;
+		}
+
+		await Promise.all([
+			notifyMail(),
+			lastPushEmail.set(admin.database.ServerValue.TIMESTAMP)
+		]);
 	}
 });
