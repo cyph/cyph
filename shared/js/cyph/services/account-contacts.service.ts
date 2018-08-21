@@ -143,14 +143,14 @@ export class AccountContactsService extends BaseProvider {
 
 	/** Adds contact. */
 	public async addContact (username: string) : Promise<void> {
-		const url	= this.contactURL(username);
-
-		if (!(await this.accountDatabaseService.hasItem(url))) {
+		if (!(await this.isContact(username))) {
 			await this.accountDatabaseService.setItem(
-				url,
+				this.contactURL(username),
 				BinaryProto,
 				new Uint8Array(0),
-				SecurityModels.unprotected
+				SecurityModels.unprotected,
+				undefined,
+				true
 			);
 		}
 	}
