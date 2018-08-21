@@ -78,13 +78,16 @@ const databaseService	= {
 	async getItem (namespace, url, proto, skipSignature, decompress) {
 		url	= processURL(namespace, url);
 
-		const {hash}	= await retry(async () =>
+		const {data, hash}	= await retry(async () =>
 			(await database.ref(url).once('value')).val()
 		);
 
-		let bytes		= await retry(async () =>
-			(await storage.file(`${url}/${hash}`).download())[0]
-		);
+		let bytes			= data ?
+			Buffer.from(data, 'base64') :
+			await retry(async () =>
+				(await storage.file(`${url}/${hash}`).download())[0]
+			)
+		;
 
 		if (skipSignature) {
 			bytes	= bytes.slice(41256);
@@ -107,24 +110,32 @@ const databaseService	= {
 	async removeItem (namespace, url) {
 		url	= processURL(namespace, url);
 
-		await retry(async () => database.ref(url).remove());
-
 		if (isCloudFunction) {
-			await retry(async () =>
-				storage.deleteFiles({force: true, prefix: `${url}/`})
-			);
+			await Promise.all([
+				database.ref(url).remove(),
+				storage.deleteFiles({force: true, prefix: `${url}/`}).catch(() => {})
+			]);
+		}
+		else {
+			await retry(async () => database.ref(url).remove());
 		}
 	},
-	async setItem (namespace, url, proto, value) {
+	async setItem (namespace, url, proto, value, noBlobStorage) {
 		url	= processURL(namespace, url);
 
 		const bytes	= await serialize(proto, value);
 		const hash	= getHash(bytes);
 
-		await retry(async () => storage.file(`${url}/${hash}`).save(bytes));
+		if (!noBlobStorage) {
+			await retry(async () => storage.file(`${url}/${hash}`).save(bytes));
+		}
+
 		await retry(async () => database.ref(url).set({
 			hash,
-			timestamp: admin.database.ServerValue.TIMESTAMP
+			timestamp: admin.database.ServerValue.TIMESTAMP,
+			...(!noBlobStorage ? {} : {
+				data: bytes.toString('base64')
+			})
 		}));
 	},
 	storage

@@ -43,6 +43,7 @@
 			'
 			(click)='$event.stopPropagation()'
 		/>
+
 		<div fxLayout='column' fxLayoutAlign='center start'>
 			<mat-card-title>
 				{{
@@ -69,32 +70,67 @@
 				</ng-template>
 			</mat-card-subtitle>
 		</div>
+
 		<cyph-account-user-rating
 			[user]='user | async'
 			*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
 			fxHide.lt-md
 		></cyph-account-user-rating>
-		<div fxFlex fxLayoutAlign='end center' *ngIf='
-			p2pSupported &&
-			clickable &&
-			!envService.isTelehealth
-		'>
-			<button
-				mat-icon-button
-				cyphTranslate
-				aria-label='Call'
-				[routerLink]='
-					((user | async)?.contactID | async) ?
-						(
-							accountService.routeRoot +
-							"call/" +
-							(((user | async)?.contactID | async) || "")
-						) :
-						undefined
-				'
-			>
-				<mat-icon>call</mat-icon>
-			</button>
+
+		<div fxFlex fxLayoutAlign='end center' *ngIf='clickable'>
+			<ng-container *ngIf='(user | async)?.contactState | async as contactState'>
+				<ng-container *ngIf='contactState === accountContactStates.Confirmed'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						aria-label='Call'
+						[routerLink]='
+							((user | async)?.contactID | async) ?
+								(
+									accountService.routeRoot +
+									"call/" +
+									(((user | async)?.contactID | async) || "")
+								) :
+								undefined
+						'
+						*ngIf='p2pSupported && !envService.isTelehealth'
+					>
+						<mat-icon>call</mat-icon>
+					</button>
+				</ng-container>
+				<ng-container *ngIf='contactState === accountContactStates.IncomingRequest'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Accept Contact Request'
+						(click)='
+							accountContactsService.acceptContactRequest(username);
+							$event.stopPropagation();
+						'
+					>
+						<mat-icon>check</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Decline Contact Request'
+						(click)='
+							accountContactsService.removeContact(username);
+							$event.stopPropagation();
+						'
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</ng-container>
+				<ng-container *ngIf='contactState === accountContactStates.OutgoingRequest'>
+					<mat-icon
+						cyphTranslate
+						matTooltip='Contact Request Pending'
+					>
+						people_outline
+					</mat-icon>
+				</ng-container>
+			</ng-container>
 		</div>
 	</mat-card-header>
 

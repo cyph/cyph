@@ -3,7 +3,8 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {IContactListItem, User, UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
-import {AccountUserTypes} from '../../proto';
+import {AccountContactState, AccountUserTypes} from '../../proto';
+import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
@@ -21,11 +22,14 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-contact.component.html'
 })
 export class AccountContactComponent extends BaseProvider implements OnChanges {
+	/** @see AccountContactState.States */
+	public readonly accountContactStates					= AccountContactState.States;
+
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+	public readonly accountUserTypes						= AccountUserTypes;
 
 	/** Indicates whether links should be enabled. */
-	@Input() public clickable: boolean	= true;
+	@Input() public clickable: boolean						= true;
 
 	/** Contact. */
 	@Input() public contact?: IContactListItem|User;
@@ -73,6 +77,9 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountContactsService */
+		public readonly accountContactsService: AccountContactsService,
 
 		/** @see AccountOrganizationsService */
 		public readonly accountOrganizationsService: AccountOrganizationsService,

@@ -5,7 +5,7 @@ import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
-import {BinaryProto, StringProto} from '../proto';
+import {AccountContactState, StringProto} from '../proto';
 import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
@@ -136,23 +136,33 @@ export class AccountContactsService extends BaseProvider {
 	/** Indicates whether spinner should be displayed. */
 	public readonly showSpinner: BehaviorSubject<boolean>	= new BehaviorSubject(true);
 
-	/** @ignore */
-	private contactURL (username: string) : string {
-		return `contacts/${normalize(username)}`;
+	/** Accepts incoming contact request. */
+	public async acceptContactRequest (username: string) : Promise<void> {
+		await this.accountDatabaseService.setItem(
+			this.contactURL(username),
+			AccountContactState,
+			{state: AccountContactState.States.Confirmed},
+			SecurityModels.unprotected,
+			undefined,
+			true
+		);
 	}
 
 	/** Adds contact. */
 	public async addContact (username: string) : Promise<void> {
-		if (!(await this.isContact(username))) {
-			await this.accountDatabaseService.setItem(
-				this.contactURL(username),
-				BinaryProto,
-				new Uint8Array(0),
-				SecurityModels.unprotected,
-				undefined,
-				true
-			);
-		}
+		await this.accountDatabaseService.setItem(
+			this.contactURL(username),
+			AccountContactState,
+			{state: AccountContactState.States.OutgoingRequest},
+			SecurityModels.unprotected,
+			undefined,
+			true
+		);
+	}
+
+	/** Contact URL. */
+	public contactURL (username: string) : string {
+		return `contacts/${normalize(username)}`;
 	}
 
 	/** Initializes service. */

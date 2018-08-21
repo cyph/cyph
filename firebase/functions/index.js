@@ -7,6 +7,7 @@ const namespaces								= require('./namespaces');
 const {normalize, retryUntilSuccessful, sleep}	= require('./util');
 
 const {
+	AccountContactState,
 	AccountFileRecord,
 	AccountUserProfile,
 	NotificationTypes,
@@ -217,6 +218,145 @@ exports.userConsumeInvite	= functions.database.ref(
 				params.namespace,
 				`users/${inviterUsername}/inviteCodes/${inviteCode}`
 			)
+	]);
+});
+
+
+exports.userContactSet	= functions.database.ref(
+	'{namespace}/users/{user}/contacts/{contact}'
+).onWrite(async ({after: data}, {params}) => {
+	const contact			= params.contact;
+	const username			= params.user;
+	const contactURL		= `users/${username}/contacts/${contact}`;
+	const otherContactURL	= `users/${contact}/contacts/${username}`;
+
+	const contactState		= (await getItem(
+		params.namespace,
+		contactURL,
+		AccountContactState
+	).catch(
+		() => ({state: undefined})
+	)).state;
+
+	/* If removing contact, delete on other end */
+	if (contactState === undefined) {
+		return removeItem(params.namespace, otherContactURL);
+	}
+
+	const otherContactState		= (await getItem(
+		params.namespace,
+		otherContactURL,
+		AccountContactState
+	).catch(
+		() => ({state: undefined})
+	)).state;
+
+	/* Handle all possible valid contact state pairings */
+	switch (contactState) {
+		case AccountContactState.States.Confirmed:
+			switch (otherContactState) {
+				case AccountContactState.States.Confirmed:
+					return;
+
+				case AccountContactState.States.IncomingRequest:
+					return setItem(
+						params.namespace,
+						contactURL,
+						AccountContactState,
+						{state: AccountContactState.States.OutgoingRequest},
+						true
+					);
+
+				case AccountContactState.States.OutgoingRequest:
+					return setItem(
+						params.namespace,
+						otherContactURL,
+						AccountContactState,
+						{state: AccountContactState.States.Confirmed},
+						true
+					);
+
+				default:
+					Promise.all([
+						setItem(
+							params.namespace,
+							contactURL,
+							AccountContactState,
+							{state: AccountContactState.States.OutgoingRequest},
+							true
+						),
+						setItem(
+							params.namespace,
+							otherContactURL,
+							AccountContactState,
+							{state: AccountContactState.States.IncomingRequest},
+							true
+						)
+					]);
+			}
+
+		case AccountContactState.States.IncomingRequest:
+			switch (otherContactState) {
+				case AccountContactState.States.Confirmed:
+					return setItem(
+						params.namespace,
+						otherContactURL,
+						AccountContactState,
+						{state: AccountContactState.States.OutgoingRequest},
+						true
+					);
+
+				case AccountContactState.States.OutgoingRequest:
+					return;
+			}
+
+		case AccountContactState.States.OutgoingRequest:
+			switch (otherContactState) {
+				case AccountContactState.States.Confirmed:
+					return setItem(
+						params.namespace,
+						contactURL,
+						AccountContactState,
+						{state: AccountContactState.States.Confirmed},
+						true
+					);
+
+				case AccountContactState.States.IncomingRequest:
+					return;
+
+				case AccountContactState.States.OutgoingRequest:
+					return Promise.all([
+						setItem(
+							params.namespace,
+							contactURL,
+							AccountContactState,
+							{state: AccountContactState.States.Confirmed},
+							true
+						),
+						setItem(
+							params.namespace,
+							otherContactURL,
+							AccountContactState,
+							{state: AccountContactState.States.Confirmed},
+							true
+						)
+					]);
+
+				default:
+					return setItem(
+						params.namespace,
+						otherContactURL,
+						AccountContactState,
+						{state: AccountContactState.States.IncomingRequest},
+						true
+					);
+			}
+	}
+
+	/* Clear out invalid states */
+	return Promise.all([
+		removeItem(params.namespace, contactURL),
+		removeItem(params.namespace, otherContactURL)
 	]);
 });
 

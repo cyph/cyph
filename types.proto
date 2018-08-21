@@ -1,6 +1,20 @@
 syntax = "proto3";
 
 
+/** Account contact relationship metadata. */
+message AccountContactState {
+	/** Possible states. */
+	enum States {
+		None = 0;
+		Confirmed = 1;
+		IncomingRequest = 2;
+		OutgoingRequest = 3;
+	}
+
+	/** @see States */
+	required States state = 1;
+}
+
 /** Metadata of one file stored in an account. */
 message AccountFileRecord {
 	/** Possible file record types. */

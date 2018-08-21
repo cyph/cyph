@@ -107,6 +107,7 @@
 			[showUnreadMessageCount]='true'
 			class='animated slideInDown'
 			[class.cyph-inverted-theme]='invertedTheme'
+			*ngIf='(item.user | async)?.contactState | async'
 		></cyph-account-contact>
 	</ng-container>
 </ng-template>

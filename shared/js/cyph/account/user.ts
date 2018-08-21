@@ -7,6 +7,7 @@ import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {
+	AccountContactState,
 	AccountUserTypes,
 	IAccountUserPresence,
 	IAccountUserProfile,
@@ -51,6 +52,12 @@ export class User {
 		User.defaultAvatar
 	).pipe(
 		mergeMap(async avatar => avatar || User.defaultAvatar)
+	);
+
+	/** @see IAccountContactState.state */
+	public readonly contactState: Observable<AccountContactState.States>	= toBehaviorSubject(
+		this.accountContactState.watch().pipe(map(({state}) => state)),
+		AccountContactState.States.None
 	);
 
 	/** Image URI for cover image. */
@@ -164,6 +171,9 @@ export class User {
 
 		/** @ignore */
 		private readonly coverImageInternal: Observable<SafeUrl|string|undefined>,
+
+		/** @see IAccountContactState */
+		public readonly accountContactState: IAsyncValue<AccountContactState>,
 
 		/** @see IAccountUserPresence */
 		public readonly accountUserPresence: IAsyncValue<IAccountUserPresence>,
