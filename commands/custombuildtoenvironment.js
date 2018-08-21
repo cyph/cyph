@@ -18,6 +18,9 @@ const args			= {
 
 const o	= customBuild(args.id, args.version);
 
+o.css	= `${o.preLoadCSS || ''}\n${o.css || ''}`.trim();
+delete o.preLoadCSS;
+
 const baseEnvironment	=
 	(args.baseEnvironment || 'local').replace(/[A-Z]/, s => `-${s.toLowerCase()}`)
 ;
