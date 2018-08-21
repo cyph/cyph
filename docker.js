@@ -58,7 +58,11 @@ const args	= {
 		process.argv.indexOf('--simple-websign-build') > -1 ||
 		process.argv.indexOf('--simple-websign-prod-build') > -1
 	,
-	site: process.argv[(process.argv.indexOf('--site') + 1) || undefined]
+	site: process.argv[(process.argv.indexOf('--site') + 1) || undefined] || (
+		process.argv.indexOf('--firebase-local') > -1 ?
+			'firebase' :
+			undefined
+	)
 };
 
 const baseShellCommandArgs	= process.argv.

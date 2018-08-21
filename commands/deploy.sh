@@ -43,6 +43,13 @@ if [ "${1}" == '--firebase-backup' ] ; then
 	shift
 fi
 
+if [ "${1}" == '--firebase-local' ] ; then
+	firebaseLocal=true
+	site='firebase'
+	fast=true
+	shift
+fi
+
 if [ "${1}" == '--prod' ] ; then
 	test=''
 	shift
@@ -811,12 +818,16 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 	if [ ! "${test}" ] ; then
 		firebaseProjects='cyphme'
 	else
-		firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
+		if [ "${firebaseLocal}" ] ; then
+			firebaseProjects='cyph-test-local'
+		else
+			firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
 
-		if [ "${allBranches}" ] ; then
-			firebaseProjects="${firebaseProjects} cyph-test-staging cyph-test-beta cyph-test-master"
-		elif [ "${mainEnvironment}" != 'dev' ] ; then
-			firebaseProjects="${firebaseProjects} cyph-test-${branch}"
+			if [ "${allBranches}" ] ; then
+				firebaseProjects="${firebaseProjects} cyph-test-staging cyph-test-beta cyph-test-master"
+			elif [ "${mainEnvironment}" != 'dev' ] ; then
+				firebaseProjects="${firebaseProjects} cyph-test-${branch}"
+			fi
 		fi
 
 		# Workaround for https://stackoverflow.com/q/50513374/459881
