@@ -20,6 +20,7 @@ import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {EnvService} from '../../services/env.service';
@@ -105,7 +106,10 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 		const index	= contactList.findIndex(contact => contact.username === username);
 
 		if (index < 0) {
-			return {filteredContactList: contactList};
+			return {
+				activeUser: await this.accountUserLookupService.getUser(username, false),
+				filteredContactList: contactList
+			};
 		}
 
 		return {
@@ -242,6 +246,9 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
