@@ -7,6 +7,7 @@ import {RegistrationErrorCodes} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {IProto} from '../../iproto';
 import {
+	AccountContactState,
 	AccountLoginData,
 	AccountUserPresence,
 	AccountUserProfile,
@@ -549,8 +550,8 @@ export class AccountAuthService extends BaseProvider {
 							),
 							this.databaseService.setItem(
 								`users/${username}/contacts/${inviterUsername}`,
-								BinaryProto,
-								new Uint8Array(0)
+								AccountContactState,
+								{state: AccountContactState.States.OutgoingRequest}
 							)
 						]);
 					}
