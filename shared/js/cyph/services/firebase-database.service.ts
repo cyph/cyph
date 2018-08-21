@@ -77,8 +77,35 @@ export class FirebaseDatabaseService extends DatabaseService {
 	private readonly localLocks: Map<string, {}>	= new Map<string, {}>();
 
 	/** Firebase Cloud Messaging token. */
-	private readonly messagingToken: Promise<string|undefined>	=
+	private readonly messaging: Promise<{
+		cordova?: any;
+		token?: string;
+	}>	=
 		this.ngZone.runOutsideAngular(async () => {
+			if (this.envService.isCordova) {
+				const cordova	= (<any> self).PushNotification.init({
+					android: {},
+					browser: {
+						pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+					},
+					ios: {
+						alert: 'true',
+						badge: 'true',
+						sound: 'true'
+					},
+					windows: {}
+				});
+
+				return {
+					cordova,
+					token: await new Promise<string>(resolve => {
+						cordova.on('registration', (o: any) => {
+							resolve(o.registrationId);
+						});
+					})
+				};
+			}
+
 			const app						= await this.app;
 			const messaging					= app.messaging();
 			const serviceWorkerRegistration	= await this.workerService.serviceWorkerRegistration;
@@ -98,9 +125,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			messaging.useServiceWorker(serviceWorkerRegistration);
 			await messaging.requestPermission();
-			return (await messaging.getToken()) || undefined;
-		}).catch(() =>
-			undefined
+			return {token: (await messaging.getToken()) || undefined};
+		}).catch(
+			() => ({})
 		)
 	;
 
@@ -790,7 +817,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public async registerPushNotifications (urlPromise: MaybePromise<string>) : Promise<void> {
 		const url			= await urlPromise;
-		let messagingToken	= await this.messagingToken;
+		const messaging		= await this.messaging;
 
 		await this.ngZone.runOutsideAngular(async () => {
 			let oldMessagingToken	= await this.localStorageService.getItem(
@@ -800,26 +827,26 @@ export class FirebaseDatabaseService extends DatabaseService {
 				undefined
 			);
 
-			if (messagingToken) {
+			if (messaging.token) {
 				await this.localStorageService.setItem(
 					'FirebaseDatabaseService.messagingToken',
 					StringProto,
-					messagingToken
+					messaging.token
 				);
 			}
 			else if (oldMessagingToken) {
-				messagingToken		= oldMessagingToken;
+				messaging.token		= oldMessagingToken;
 				oldMessagingToken	= undefined;
 			}
 
-			if (!messagingToken) {
+			if (!messaging.token) {
 				return;
 			}
 
 			const ref	= await this.getDatabaseRef(url);
 
 			await Promise.all([
-				ref.child(messagingToken).set(true).then(),
+				ref.child(messaging.token).set(true).then(),
 				oldMessagingToken ? ref.child(oldMessagingToken).remove().then() : undefined
 			]);
 		});
@@ -957,9 +984,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async unregisterPushNotifications (urlPromise: MaybePromise<string>) : Promise<void> {
-		const url	= await urlPromise;
+		const url		= await urlPromise;
+		const messaging	= await this.messaging;
 
 		await this.ngZone.runOutsideAngular(async () => {
+			if (messaging.cordova) {
+				messaging.cordova.unregister();
+			}
+
 			const messagingToken	= await this.localStorageService.getItem(
 				'FirebaseDatabaseService.messagingToken',
 				StringProto
