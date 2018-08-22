@@ -848,7 +848,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const ref	= await this.getDatabaseRef(url);
 
 			await Promise.all([
-				ref.child(messaging.token).set(true).then(),
+				ref.child(messaging.token).set(this.envService.platform).then(),
 				oldMessagingToken && oldMessagingToken !== messaging.token ?
 					ref.child(oldMessagingToken).remove().then() :
 					undefined

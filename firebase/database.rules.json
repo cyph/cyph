@@ -759,7 +759,7 @@
 
 					"messagingTokens": {
 						"$messagingToken": {
-							".validate": "newData.exists()"
+							".validate": "newData.isString()"
 						}
 					},
 

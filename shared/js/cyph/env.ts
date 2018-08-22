@@ -224,6 +224,17 @@ export class Env extends EnvDeploy {
 		envDeploy.newCyphUrl
 	;
 
+	/** Platform name ("android", "ios", "unknown", "web"). */
+	public readonly platform: string			=
+		!this.isCordova && this.isWeb ?
+			'web' :
+		this.isAndroid ?
+			'android' :
+		this.isIOS ?
+			'ios' :
+			'unknown'
+	;
+
 	/** Complete (original case) language code, e.g. "en-US". */
 	public readonly realLanguage: string		= Env.language;
 
