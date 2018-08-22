@@ -173,7 +173,7 @@
 
 	<div
 		[fxFlex]='accountService.menuExpandedMinWidthPX'
-		fxHide.lt-md
+		[fxShow]='(accountDatabaseService.currentUser | async) !== undefined'
 		fxLayout='column'
 		class='sidebar contacts'
 		*ngIf='sidebarVisible | async'

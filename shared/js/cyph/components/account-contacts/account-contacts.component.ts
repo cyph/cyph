@@ -106,6 +106,8 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 		const index	= contactList.findIndex(contact => contact.username === username);
 
 		if (index < 0) {
+			this.accountService.activeSidebarContact.next(username);
+
 			return {
 				activeUser: await this.accountUserLookupService.getUser(username, false),
 				filteredContactList: contactList

@@ -162,13 +162,11 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 
 	/** Indicates whether sidebar should be displayed. */
 	public readonly sidebarVisible: Observable<boolean>		= combineLatest(
-		this.accountDatabaseService.currentUser,
 		this.envService.isMobile,
 		this.route
-	).pipe(map(([currentUser, isMobile, route]) =>
+	).pipe(map(([isMobile, route]) =>
 		!isMobile &&
 		!this.envService.isTelehealth &&
-		currentUser !== undefined &&
 		[
 			'',
 			'chat-transition',
