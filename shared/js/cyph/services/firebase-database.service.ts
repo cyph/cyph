@@ -84,14 +84,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		this.ngZone.runOutsideAngular(async () => {
 			if (this.envService.isCordova) {
 				const cordova	= (<any> self).PushNotification.init({
-					android: {
-						icon: 'notification_icon',
-						iconColor: (
-							this.envService.environment.customBuild &&
-							this.envService.environment.customBuild.config.backgroundColor
-						) ||
-							'#8b62d9'
-					},
+					android: {},
 					ios: {
 						alert: true,
 						badge: true,
