@@ -2,6 +2,7 @@ const cors										= require('cors')({origin: true});
 const firebase									= require('firebase');
 const admin										= require('firebase-admin');
 const functions									= require('firebase-functions');
+const {sendMailInternal}						= require('./email');
 const {emailRegex}								= require('./email-regex');
 const namespaces								= require('./namespaces');
 const {normalize, retryUntilSuccessful, sleep}	= require('./util');
@@ -582,10 +583,16 @@ exports.userRegister	= functionsUser.onCreate(async (userRecord, {params}) => {
 	const username	= emailSplit[0];
 	const namespace	= emailSplit[1].replace(/\./g, '_');
 
-	return database.ref(`${namespace}/pendingSignups/${username}`).set({
-		timestamp: admin.database.ServerValue.TIMESTAMP,
-		uid: userRecord.uid
-	});
+	return Promise.all([
+		database.ref(`${namespace}/pendingSignups/${username}`).set({
+			timestamp: admin.database.ServerValue.TIMESTAMP,
+			uid: userRecord.uid
+		}),
+		sendMailInternal(
+			'user-registrations@cyph.com',
+			`Cyph User Registration: ${username}@${namespace}`
+		)
+	]);
 });
 
 
