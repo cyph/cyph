@@ -453,6 +453,19 @@ exports.userNotification	= functions.database.ref(
 						subject: `Calendar Invite from ${senderUsername}`,
 						text: `${targetName}, ${senderName} has sent an appointment request.`
 					} :
+				notification.type === NotificationTypes.ContactAccept ?
+					{
+						subject: `Contact Confirmation from ${senderUsername}`,
+						text:
+							`${targetName}, ${senderName} has accepted your contact request.`
+					} :
+				notification.type === NotificationTypes.ContactRequest ?
+					{
+						subject: `Contact Request from ${senderUsername}`,
+						text:
+							`${targetName}, ${senderName} wants to be your contact. ` +
+							`Log in to accept or decline.`
+					} :
 				notification.type === NotificationTypes.File ?
 					{
 						subject: `Incoming Data from ${senderUsername}`,

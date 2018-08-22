@@ -5,7 +5,7 @@ import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
-import {AccountContactState, StringProto} from '../proto';
+import {AccountContactState, NotificationTypes, StringProto} from '../proto';
 import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
@@ -146,6 +146,11 @@ export class AccountContactsService extends BaseProvider {
 			undefined,
 			true
 		);
+
+		await this.accountDatabaseService.notify(
+			username,
+			NotificationTypes.ContactAccept
+		);
 	}
 
 	/** Adds contact. */
@@ -157,6 +162,11 @@ export class AccountContactsService extends BaseProvider {
 			SecurityModels.unprotected,
 			undefined,
 			true
+		);
+
+		await this.accountDatabaseService.notify(
+			username,
+			NotificationTypes.ContactRequest
 		);
 	}
 
