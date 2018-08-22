@@ -6,13 +6,12 @@ const sendMessage	= async (database, messaging, namespace, username, body) => {
 		return false;
 	}
 
-	const notification	= {
-		body,
-		icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png',
-		title: 'Cyph'
-	};
+	const data		= {body, title: 'Cyph'};
 
-	const response		= await messaging.sendToDevice(tokens, {data: notification, notification});
+	const response	= await messaging.sendToDevice(tokens, {data, notification: {
+		...data,
+		icon: 'https://www.cyph.com/assets/img/favicon/favicon-256x256.png'
+	}});
 
 	await Promise.all(
 		response.results.
