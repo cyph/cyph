@@ -849,7 +849,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			await Promise.all([
 				ref.child(messaging.token).set(true).then(),
-				oldMessagingToken ? ref.child(oldMessagingToken).remove().then() : undefined
+				oldMessagingToken && oldMessagingToken !== messaging.token ?
+					ref.child(oldMessagingToken).remove().then() :
+					undefined
 			]);
 		});
 	}
