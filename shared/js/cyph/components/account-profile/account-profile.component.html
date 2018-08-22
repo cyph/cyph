@@ -361,7 +361,12 @@
 				</button>
 			</div>
 
-			<ng-container *ngIf='envService.isMobile | async'>
+			<ng-container *ngIf='
+				(isCurrentUser | async) === true &&
+				(envService.isMobile | async) === true &&
+				(editMode | async) === false &&
+				!envService.isTelehealth
+			'>
 				<button
 					mat-fab
 					[matTooltip]='
@@ -372,7 +377,6 @@
 					matTooltipPosition='above'
 					class='fixed-fab'
 					(click)='setEditMode(true)'
-					*ngIf='!envService.isTelehealth && (editMode | async) === false'
 				>
 					<mat-icon>edit</mat-icon>
 				</button>
