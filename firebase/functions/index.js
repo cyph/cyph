@@ -426,7 +426,7 @@ exports.userNotification	= functions.database.ref(
 	const metadata		= typeof notification.metadata === 'object' ? notification.metadata : {};
 	const now			= Date.now();
 
-	if (!notification || !notification.target || isNaN(notification.type) || !metadata.id) {
+	if (!notification || !notification.target || isNaN(notification.type)) {
 		return;
 	}
 
@@ -493,6 +493,10 @@ exports.userNotification	= functions.database.ref(
 			);
 		})(),
 		(async () => {
+			if (!metadata.id) {
+				return;
+			}
+
 			const userPath	= `${params.namespace}/users/${notification.target}`;
 
 			const hasFile	= async () =>
