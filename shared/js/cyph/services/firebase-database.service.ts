@@ -86,9 +86,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const cordova	= (<any> self).PushNotification.init({
 					android: {},
 					ios: {
-						alert: 'true',
-						badge: 'true',
-						sound: 'true'
+						alert: true,
+						badge: true,
+						sound: true
 					}
 				});
 
