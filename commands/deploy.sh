@@ -25,6 +25,7 @@ customBuild=''
 saveBuildArtifacts=''
 debug=''
 debugProdBuild=''
+skipWebsite=''
 test=true
 websign=true
 
@@ -104,6 +105,12 @@ if [ "${1}" == '--site' ] ; then
 	shift
 fi
 
+if [ "${1}" == '--skip-website' ] ; then
+	skipWebsite=true
+	site="${webSignedProject}"
+	shift
+fi
+
 if [ "${site}" ] ; then
 	for var in cacheBustedProjects compiledProjects ; do
 		for d in $(eval "echo \$$var") ; do
@@ -116,6 +123,10 @@ if [ "${site}" ] ; then
 	if [ "${site}" != "${webSignedProject}" ] ; then
 		websign=''
 	fi
+fi
+
+if [ "${skipWebsite}" ] ; then
+	site=''
 fi
 
 if [ "${simple}" ] ; then
@@ -495,7 +506,11 @@ if [ "${cacheBustedProjects}" ] ; then
 			while [ ! -f .build.done ] ; do sleep 1 ; done
 		fi
 
-		if [ ! '${simple}' ] && ( [ ! '${site}' ] || [ '${site}' == cyph.com ] ) ; then
+		if \
+			[ ! '${skipWebsite}' ] && \
+			[ ! '${simple}' ] && \
+			( [ ! '${site}' ] || [ '${site}' == cyph.com ] )
+		then
 			rm -rf wpstatic 2> /dev/null
 			mkdir -p wpstatic/blog
 			cp cyph.com/cyph-com.yaml wpstatic/
@@ -552,7 +567,7 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 fi
 
 
-if [ "${customBuild}" ] ; then
+if [ "${skipWebsite}" ] || [ "${customBuild}" ] ; then
 	mv cyph.com cyph.com.src
 fi
 
