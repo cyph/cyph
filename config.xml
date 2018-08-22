@@ -115,6 +115,19 @@
 			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 		</config-file>
 
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<meta-data
+				android:name="com.google.firebase.messaging.default_notification_icon"
+				android:resource="@drawable/notification_icon"
+			/>
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest">
+			<meta-data
+				android:name="com.google.firebase.messaging.default_notification_color"
+				android:resource="@color/ic_launcher_background"
+			/>
+		</config-file>
+
 		<edit-config
 			file="app/src/main/AndroidManifest.xml"
 			mode="merge"
@@ -198,6 +211,22 @@
 		<resource-file
 			src="res/icon/android/values/ic_launcher_background.xml"
 			target="app/src/main/res/values/ic_launcher_background.xml"
+		/>
+		<resource-file
+			src="res/icon/android/drawable-mdpi/notification_icon.png"
+			target="app/src/main/res/drawable-mdpi/notification_icon.png"
+		/>
+		<resource-file
+			src="res/icon/android/drawable-hdpi/notification_icon.png"
+			target="app/src/main/res/drawable-hdpi/notification_icon.png"
+		/>
+		<resource-file
+			src="res/icon/android/drawable-xhdpi/notification_icon.png"
+			target="app/src/main/res/drawable-xhdpi/notification_icon.png"
+		/>
+		<resource-file
+			src="res/icon/android/drawable-xxhdpi/notification_icon.png"
+			target="app/src/main/res/drawable-xxhdpi/notification_icon.png"
 		/>
 
 		<splash density="land-ldpi" src="res/screen/android/drawable-land-ldpi-screen.png" />
