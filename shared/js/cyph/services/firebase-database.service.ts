@@ -85,15 +85,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 			if (this.envService.isCordova) {
 				const cordova	= (<any> self).PushNotification.init({
 					android: {},
-					browser: {
-						pushServiceURL: 'http://push.api.phonegap.com/v1/push'
-					},
 					ios: {
 						alert: 'true',
 						badge: 'true',
 						sound: 'true'
-					},
-					windows: {}
+					}
 				});
 
 				return {
