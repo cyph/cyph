@@ -94,6 +94,12 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		this.route
 	).pipe(map(([activatedRouteURL, isMobile, route]) =>
 		isMobile || (
+			this.envService.isTelehealth &&
+			[
+				'doctors',
+				'profile'
+			].indexOf(route) > -1
+		) || (
 			[
 				'audio',
 				'call',

@@ -227,13 +227,13 @@
 	<div
 		fxLayout='row'
 		fxLayoutGap='16px'
-		class='edit-buttons edit-hide absolute-fab'
+		class='edit-buttons edit-hide'
 		*ngIf='isCurrentUser | async'
 	>
 		<button
 			mat-fab
 			cyphTranslate
-			class='alt'
+			class='alt absolute-fab'
 			matTooltip='Close'
 			matTooltipPosition='above'
 			(click)='setEditMode(false)'
@@ -243,6 +243,7 @@
 		</button>
 		<button
 			mat-fab
+			class='absolute-fab'
 			[matTooltip]='
 				(editMode | async) ?
 					stringsService.profileSave :

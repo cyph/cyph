@@ -370,6 +370,10 @@ mat-card {
 			margin-bottom: 0;
 		}
 
+		mat-form-field.name {
+			min-width: 300px;
+		}
+
 		.description {
 			margin: 20px auto auto auto;
 			position: relative;

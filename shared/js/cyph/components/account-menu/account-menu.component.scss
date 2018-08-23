@@ -55,6 +55,16 @@ cyph-logo {
 	z-index: 10;
 }
 
+.context-menu, .avatar-list {
+	&, * {
+		color: #eeecf1;
+	}
+}
+
+.home-list cyph-logo {
+	@include filter(brightness(1.5));
+}
+
 .menu {
 	width: calc(100% + 4px) !important;
 	max-width: calc(100% + 4px) !important;
