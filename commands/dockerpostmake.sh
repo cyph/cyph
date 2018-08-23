@@ -11,5 +11,6 @@ cat >> ~/.bashrc <<- EOM
 	fi
 EOM
 
+source ~/.bashrc
 tns error-reporting disable
 tns usage-reporting disable
