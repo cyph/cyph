@@ -44,7 +44,7 @@ const sendMailInternal	= async (
 	accountsURL
 ) => transporter.sendMail({
 	from: `Cyph <${auth.user}>`,
-	html: mustache.render(await template, {accountsURL, lines: text.split('\n')}),
+	html: !text ? '' : mustache.render(await template, {accountsURL, lines: text.split('\n')}),
 	icalEvent: !eventDetails ? undefined : {
 		content: ical({
 			domain: 'cyph.com',
@@ -63,7 +63,7 @@ const sendMailInternal	= async (
 		method: 'request'
 	},
 	subject,
-	text,
+	text: text || '',
 	to: !eventinviter || !eventinviter.formatted ?
 		to.formatted :
 		[to.formatted, eventinviter.formatted]
