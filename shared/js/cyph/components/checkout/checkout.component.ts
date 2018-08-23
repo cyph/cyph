@@ -17,6 +17,7 @@ import {SubscriptionTypes} from '../../checkout';
 import {emailPattern} from '../../email-pattern';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {request} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
@@ -95,6 +96,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 
 	/** Indicates whether checkout is complete. */
 	public readonly success					= new BehaviorSubject<boolean>(false);
+
+	/** @see trackBySelf */
+	public readonly trackBySelf				= trackBySelf;
 
 	/** User count options. */
 	public readonly userOptions: number[]	= new Array(99).fill(0).map((_, i) => i + 2);

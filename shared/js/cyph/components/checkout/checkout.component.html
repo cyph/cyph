@@ -61,7 +61,7 @@
 					required
 				>
 					<mat-option [value]='1'>1 {{stringsService.user}}</mat-option>
-					<mat-option *ngFor='let n of userOptions' [value]='n'>
+					<mat-option *ngFor='let n of userOptions; trackBy: trackBySelf' [value]='n'>
 						{{n.toString()}} {{stringsService.users}}
 					</mat-option>
 				</mat-select>
