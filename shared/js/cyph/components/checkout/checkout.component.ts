@@ -39,13 +39,13 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 	@Input() public amount: number			= 0;
 
 	/** Trial API key to upgrade. */
-	@Input() public apiKey: string			= '';
+	@Input() public apiKey?: string;
 
 	/** Item category ID number. */
 	@Input() public category?: number;
 
 	/** Company. */
-	@Input() public company: string			= '';
+	@Input() public company?: string;
 
 	/** Indicates whether checkout is complete. */
 	public readonly complete				= new BehaviorSubject<boolean>(false);
@@ -173,16 +173,16 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 						amount: Math.floor(
 							this.amount *
 							100 *
-							(this.perUser ? 1 : this.users.value)
+							(this.perUser ? this.users.value : 1)
 						),
-						apiKey: this.apiKey,
-						category: this.category,
-						company: this.company,
-						email: this.email,
-						item: this.item,
-						name: this.name,
 						nonce: paymentMethod.data.nonce,
-						subscription: this.subscriptionType !== undefined
+						subscription: this.subscriptionType !== undefined,
+						...(this.apiKey !== undefined ? {apiKey: this.apiKey} : {}),
+						...(this.category !== undefined ? {category: this.category} : {}),
+						...(this.company !== undefined ? {company: this.company} : {}),
+						...(this.email !== undefined ? {email: this.email} : {}),
+						...(this.item !== undefined ? {item: this.item} : {}),
+						...(this.name !== undefined ? {name: this.name} : {})
 					},
 					method: 'POST',
 					url: this.envService.baseUrl + 'braintree'

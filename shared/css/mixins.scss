@@ -59,6 +59,15 @@ $accountPaddingSmall: 2.5vw;
 	$cyph-theme-inverted: cyph-theme-inverted();
 	$cyph-theme-partial-inverted: cyph-theme-partial-inverted();
 
+	$cyph-theme-white: cyph-theme(
+		$cyph-white,
+		$cyph-white,
+		$cyph-warn,
+		$cyph-foreground,
+		$cyph-background,
+		$cyph-is-dark
+	);
+
 	$cyph-speed-dial-action-palette: mat-palette($mat-grey, 50, 50, 100);
 
 	$cyph-speed-dial-action-theme: cyph-theme(
@@ -95,14 +104,8 @@ $accountPaddingSmall: 2.5vw;
 
 	@if $cyph-is-dark {
 		mat-card, mat-dialog-container {
-			@include mat-form-field-theme(cyph-theme(
-				$cyph-white,
-				$cyph-white,
-				$cyph-warn,
-				$cyph-foreground,
-				$cyph-background,
-				$cyph-is-dark
-			));
+			@include mat-form-field-theme($cyph-theme-white);
+			@include mat-input-theme($cyph-theme-white);
 		}
 	}
 
