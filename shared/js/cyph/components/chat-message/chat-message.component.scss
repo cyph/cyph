@@ -101,6 +101,10 @@
 			width: 100%;
 			margin-bottom: 0.5em;
 			margin-top: 1em;
+
+			&.download-link {
+				text-decoration: underline;
+			}
 		}
 
 		h4.media-title, .mat-button-wrapper {

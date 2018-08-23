@@ -231,7 +231,13 @@
 								</video>
 							</span>
 
-							<h4 class='media-title'>{{value.fileTransfer.name}}</h4>
+							<h4
+								class='media-title download-link'
+								(click)='fileTransferService.saveFile(value.fileTransfer)'
+								[matTooltip]='stringsService.incomingFile'
+							>
+								{{value.fileTransfer.name}}
+							</h4>
 						</ng-template>
 						<ng-template #mediaFailure>
 							<div class='centered'>
