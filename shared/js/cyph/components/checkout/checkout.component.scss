@@ -28,13 +28,21 @@
 			display: none;
 		}
 
-		.mat-form-field:not(.mat-form-field-invalid), .mat-form-field.mat-focused {
+		.mat-form-field {
 			.mat-form-field-label, input {
 				color: rgba(255, 255, 255, 0.54) !important;
 			}
 
-			.mat-form-field-underline, .mat-form-field-ripple {
-				background-color: rgba(255, 255, 255, 0.54) !important;
+			&.mat-form-field-invalid {
+				.mat-form-field-label, input {
+					color: #d32f2f !important;
+				}
+			}
+
+			&:not(.mat-form-field-invalid) {
+				.mat-form-field-underline, .mat-form-field-ripple {
+					background-color: rgba(255, 255, 255, 0.54) !important;
+				}
 			}
 		}
 
@@ -59,7 +67,7 @@
 			background-color: #663ab7;
 
 			.braintree-option {
-				background-color: #EDE7F6;
+				background-color: #ede7f6;
 				margin-top: 0.66em;
 				border-radius: 5px;
 				box-shadow: 0 2px rgba(0, 0, 0, 0.25);
