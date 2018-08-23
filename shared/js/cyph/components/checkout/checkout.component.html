@@ -51,19 +51,20 @@
 				</mat-form-field>
 			</div>
 			<div *ngIf='perUser'>
-				<mat-form-field fxFlex>
-					<input
-						matInput
-						cyphTranslate
-						[ngModel]='users | async'
-						(ngModelChange)='users.next(parseInt($event))'
-						name='users'
-						placeholder='Number of Users'
-						min='1'
-						type='number'
-						required
-					/>
-				</mat-form-field>
+				<mat-select
+					cyphTranslate
+					fxFlex
+					[ngModel]='users | async'
+					(ngModelChange)='users.next($event)'
+					name='users'
+					placeholder='Number of Users'
+					required
+				>
+					<mat-option [value]='1'>1 {{stringsService.user}}</mat-option>
+					<mat-option *ngFor='let n of userOptions' [value]='n'>
+						{{n.toString()}} {{stringsService.users}}
+					</mat-option>
+				</mat-select>
 			</div>
 			<div [id]='containerID' class='braintree'></div>
 		</div>

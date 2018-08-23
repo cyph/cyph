@@ -96,6 +96,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 	/** Indicates whether checkout is complete. */
 	public readonly success					= new BehaviorSubject<boolean>(false);
 
+	/** User count options. */
+	public readonly userOptions: number[]	= new Array(99).fill(0).map((_, i) => i + 2);
+
 	/** Number of users for per-user pricing. */
 	public readonly users					= new BehaviorSubject<number>(1);
 
@@ -136,12 +139,6 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 				this.braintreeInstance	= instance;
 			}
 		);
-	}
-
-	/** @see Number.parseInt */
-	public parseInt (s: string) : number {
-		const n	= s ? Number.parseInt(s, 10) : 1;
-		return !isNaN(n) ? n : 1;
 	}
 
 	/** Submits payment. */

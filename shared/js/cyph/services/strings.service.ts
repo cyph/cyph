@@ -851,6 +851,9 @@ export class StringsService extends BaseProvider {
 	public readonly uploadFile: string					= `Upload File`;
 
 	/** @see StringsService */
+	public readonly user: string						= `User`;
+
+	/** @see StringsService */
 	public readonly userAvatar: string					= `User Avatar`;
 
 	/** @see StringsService */
@@ -858,6 +861,9 @@ export class StringsService extends BaseProvider {
 		`You may change the casing of your username. For example, ` +
 		`@johntitor could become @JohnTitor or @JOHNTITOR.`
 	;
+
+	/** @see StringsService */
+	public readonly users: string						= `Users`;
 
 	/** @see StringsService */
 	public readonly video: string						= `Video`;
