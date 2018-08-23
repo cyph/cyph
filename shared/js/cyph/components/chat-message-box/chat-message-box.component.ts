@@ -87,8 +87,9 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 			});
 		},
 		send: () => {
-			this.mobileButtonWrapper(true, () => {
+			this.mobileButtonWrapper(true, async () => {
 				this.send();
+				(await this.$textarea).css('height', '0');
 			});
 		},
 		videoCall: () => {
@@ -142,6 +143,10 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 			$textareaFake.val('');
 		};
 
+		$textarea.on('keyup', () => {
+			resizeTextArea();
+		});
+
 		$textarea.on('keypress', e => {
 			if (
 				(this.envService.isMobileOS && this.virtualKeyboardWatcherService.isOpen) ||
@@ -155,7 +160,7 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 			e.preventDefault();
 			this.send();
 			$textarea.val('');
-			$textarea.height(0);
+			$textarea.css('height', '0');
 		});
 
 		if (this.envService.isMobileOS) {
