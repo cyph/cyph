@@ -93,6 +93,19 @@ $accountPaddingSmall: 2.5vw;
 		color: $cyph-foreground;
 	}
 
+	@if $cyph-is-dark {
+		mat-card, mat-dialog-container {
+			@include mat-form-field-theme(cyph-theme(
+				$cyph-white,
+				$cyph-white,
+				$cyph-warn,
+				$cyph-foreground,
+				$cyph-background,
+				$cyph-is-dark
+			));
+		}
+	}
+
 	#{$root}, #main, .cyph-foreground {
 		background-color: $cyph-background;
 		color: $cyph-foreground;
