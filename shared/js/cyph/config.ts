@@ -77,6 +77,7 @@ export class Config {
 					[item: string]: {
 						amount?: number;
 						id: number;
+						perUser?: boolean;
 						subscriptionType?: SubscriptionTypes;
 					};
 				};
@@ -121,11 +122,13 @@ export class Config {
 					annual: {
 						amount: 168,
 						id: 2,
+						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					monthly: {
 						amount: 29,
 						id: 1,
+						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				}
@@ -149,11 +152,13 @@ export class Config {
 					annual: {
 						amount: 228,
 						id: 2,
+						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					monthly: {
 						amount: 29,
 						id: 1,
+						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				}
@@ -164,11 +169,13 @@ export class Config {
 					singlePractitioner: {
 						amount: 250,
 						id: 1,
+						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					},
 					smallPractice: {
 						amount: 1000,
 						id: 2,
+						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				}

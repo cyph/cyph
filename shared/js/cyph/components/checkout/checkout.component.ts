@@ -84,6 +84,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 	/** Indicates whether payment is pending. */
 	public readonly pending					= new BehaviorSubject<boolean>(false);
 
+	/** Indicates whether pricing is per-user. */
+	@Input() public perUser: boolean		= false;
+
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
 
@@ -92,6 +95,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 
 	/** Indicates whether checkout is complete. */
 	public readonly success					= new BehaviorSubject<boolean>(false);
+
+	/** Number of users for per-user pricing. */
+	public readonly users					= new BehaviorSubject<number>(1);
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -132,6 +138,12 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 		);
 	}
 
+	/** @see Number.parseInt */
+	public parseInt (s: string) : number {
+		const n	= s ? Number.parseInt(s, 10) : 1;
+		return !isNaN(n) ? n : 1;
+	}
+
 	/** Submits payment. */
 	public async submit () : Promise<void> {
 		if (!this.braintreeInstance) {
@@ -161,7 +173,11 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 			const success	=
 				await request({
 					data: {
-						amount: Math.floor(this.amount * 100),
+						amount: Math.floor(
+							this.amount *
+							100 *
+							(this.perUser ? 1 : this.users.value)
+						),
 						apiKey: this.apiKey,
 						category: this.category,
 						company: this.company,

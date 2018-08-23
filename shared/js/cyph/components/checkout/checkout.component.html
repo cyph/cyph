@@ -50,13 +50,28 @@
 					/>
 				</mat-form-field>
 			</div>
+			<div *ngIf='perUser'>
+				<mat-form-field fxFlex>
+					<input
+						matInput
+						cyphTranslate
+						[ngModel]='users | async'
+						(ngModelChange)='users.next(parseInt($event))'
+						name='users'
+						placeholder='Number of Users'
+						min='1'
+						type='number'
+						required
+					/>
+				</mat-form-field>
+			</div>
 			<div [id]='containerID' class='braintree'></div>
 		</div>
 		<div fxLayoutAlign='center center'>
 			<button mat-raised-button type='submit'>
 				<span cyphTranslate>Confirm</span>
 				&ngsp;
-				<span>${{amount}}</span>
+				<span>${{amount * (perUser ? ((users | async) || 1) : 1)}}</span>
 				&ngsp;
 				<span>
 					<span *ngIf='subscriptionType === undefined' cyphTranslate>payment</span>

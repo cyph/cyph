@@ -1195,6 +1195,7 @@
 							[item]='cart.itemID'
 							[itemName]='cart.itemName'
 							[noSpinnerEnd]='!!cart.apiKey'
+							[perUser]='cart.perUser'
 							[subscriptionType]='cart.subscriptionType'
 							(confirmed)='appService.checkoutConfirmed()'
 							*ngIf='appService.cart | async as cart'

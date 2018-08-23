@@ -38,6 +38,7 @@ export class AppService extends BaseProvider {
 		categoryName: string;
 		itemID: number;
 		itemName: string;
+		perUser: boolean;
 		subscriptionType?: SubscriptionTypes;
 	}>(
 		undefined
@@ -287,6 +288,7 @@ export class AppService extends BaseProvider {
 			categoryName,
 			itemID: item.id,
 			itemName,
+			perUser: item.perUser === true,
 			subscriptionType: item.subscriptionType
 		});
 
