@@ -42,7 +42,7 @@ body.telehealth {
 		width: 42vh;
 	}
 
-	.loading {
+	&:not(.cobranded) .loading {
 		font-size: 1.43rem;
 
 		> .image, > .logo-animation {

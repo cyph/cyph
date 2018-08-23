@@ -54,11 +54,6 @@ if (typeof $ === 'function' && typeof window === 'object') {
 			);
 		}
 
-		if (environment.customBuild.config.telehealth) {
-			accountPrimaryTheme	= false;
-			$(document.body).addClass('telehealth');
-		}
-
 		if (environment.customBuild.config.title) {
 			$('title').text(environment.customBuild.config.title);
 		}
@@ -71,6 +66,8 @@ if (typeof $ === 'function' && typeof window === 'object') {
 		}
 
 		if (environment.customBuild.favicon) {
+			$(document.body).addClass('cobranded');
+
 			const faviconURI	=
 				`data:image/png;base64,${potassiumUtil.toBase64(environment.customBuild.favicon)}`
 			;
@@ -86,6 +83,11 @@ if (typeof $ === 'function' && typeof window === 'object') {
 					elem.content	= faviconURI;
 				}
 			});
+		}
+
+		if (environment.customBuild.config.telehealth) {
+			accountPrimaryTheme	= false;
+			$(document.body).addClass('telehealth');
 		}
 	}
 }

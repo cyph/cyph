@@ -96,6 +96,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		isMobile || (
 			this.envService.isTelehealth &&
 			[
+				'',
 				'doctors',
 				'profile'
 			].indexOf(route) > -1
@@ -172,7 +173,6 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		this.route
 	).pipe(map(([isMobile, route]) =>
 		!isMobile &&
-		!this.envService.isTelehealth &&
 		[
 			'',
 			'chat-transition',

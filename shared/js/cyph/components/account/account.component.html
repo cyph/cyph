@@ -173,7 +173,10 @@
 
 	<div
 		[fxFlex]='accountService.menuExpandedMinWidthPX'
-		[fxShow]='(accountDatabaseService.currentUser | async) !== undefined'
+		[fxShow]='
+			!envService.isTelehealth &&
+			(accountDatabaseService.currentUser | async) !== undefined
+		'
 		fxLayout='column'
 		class='sidebar contacts'
 		*ngIf='sidebarVisible | async'

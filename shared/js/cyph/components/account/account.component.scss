@@ -312,6 +312,10 @@ $mobileAppBarHeight: 56px;
 			@include icon-size(24px);
 		}
 
+		cyph-logo {
+			@include filter(grayscale(1) brightness(0) invert(1) brightness(0.95));
+		}
+
 		.avatar {
 			width: 28px;
 			height: 28px;

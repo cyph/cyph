@@ -679,6 +679,9 @@ export class StringsService extends BaseProvider {
 	public readonly profileEdit: string					= `Edit Profile`;
 
 	/** @see StringsService */
+	public readonly profileHeader: string				= `Profile`;
+
+	/** @see StringsService */
 	public readonly profileSave: string					= `Save Profile`;
 
 	/** @see StringsService */

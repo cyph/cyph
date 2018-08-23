@@ -8,6 +8,10 @@
 	.home-list {
 		margin-top: 12px;
 		margin-bottom: -6px;
+
+		cyph-logo {
+			@include filter(brightness(1.5));
+		}
 	}
 }
 
@@ -59,10 +63,6 @@ cyph-logo {
 	&, * {
 		color: #eeecf1;
 	}
-}
-
-.home-list cyph-logo {
-	@include filter(brightness(1.5));
 }
 
 .menu {

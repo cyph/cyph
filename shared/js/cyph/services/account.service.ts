@@ -284,9 +284,12 @@ export class AccountService extends BaseProvider {
 				header	= undefined;
 			}
 
-			/* Special case: set root header on mobile to "Messages" */
+			/* Special case: set root header on mobile */
 			if (!route && isMobile) {
-				return this.stringsService.messagesHeader;
+				return this.envService.isTelehealth ?
+					this.stringsService.profileHeader :
+					this.stringsService.messagesHeader
+				;
 			}
 
 			/* No header */

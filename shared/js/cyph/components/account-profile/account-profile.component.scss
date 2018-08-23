@@ -63,8 +63,10 @@ $header-size: 135px;
 	}
 
 	/* .member-list:not(.doctor-list-only) { */
-	.member-list {
-		height: 340px;
+	.member-list ::ng-deep > .card-list {
+		height: 50vh !important;
+		max-height: 50vh !important;
+		min-height: 50vh !important;
 	}
 
 	.name {

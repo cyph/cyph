@@ -233,7 +233,7 @@
 		<button
 			mat-fab
 			cyphTranslate
-			class='alt absolute-fab'
+			class='alt fixed-fab'
 			matTooltip='Close'
 			matTooltipPosition='above'
 			(click)='setEditMode(false)'
@@ -243,7 +243,7 @@
 		</button>
 		<button
 			mat-fab
-			class='absolute-fab'
+			class='fixed-fab'
 			[matTooltip]='
 				(editMode | async) ?
 					stringsService.profileSave :
