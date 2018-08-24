@@ -102,4 +102,4 @@ const sendMail			= async (database, namespace, username, subject, text, eventDet
 };
 
 
-module.exports	= {sendMail};
+module.exports	= {sendMail, sendMailInternal};
