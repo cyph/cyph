@@ -76,9 +76,14 @@ export class Env extends EnvDeploy {
 
 	/** Debug mode (true by default in local env). */
 	public readonly debug: boolean				=
-		typeof environment.debug === 'boolean' ?
-			environment.debug :
-			environment.local
+		(
+			environment.customBuild &&
+			environment.customBuild.config.accountsOnly
+		) || (
+			typeof environment.debug === 'boolean' ?
+				environment.debug :
+				environment.local
+		)
 	;
 
 	/** @see IEnvironment */
