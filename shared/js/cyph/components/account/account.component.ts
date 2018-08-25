@@ -200,7 +200,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			return;
 		}
 
-		if (!this.envService.coBranded && !this.envService.isExtension) {
+		if (this.envService.showGranim) {
 			await initGranim({
 				direction: 'radial',
 				element: '.cyph-gradient',

@@ -243,8 +243,13 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether Granim gradient canvases should be displayed. */
 	public readonly showGranim: boolean			=
+		!this.isExtension &&
 		!this.isOldFirefox &&
-		!this.isMobile
+		!this.isMobile &&
+		!(
+			this.environment.customBuild &&
+			this.environment.customBuild.config.backgroundColor
+		)
 	;
 
 	/** Base URI for sending an SMS. */

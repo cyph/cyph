@@ -91,6 +91,9 @@ export class LogoComponent extends BaseProvider {
 	/** @ignore */
 	private videoInternal: boolean		= false;
 
+	/** @ignore */
+	private whiteInternal: boolean		= false;
+
 	/** Alignment of logo position. */
 	@Input() public alignment: 'bottom'|'center'|'left'|'right'|'top'	= 'center';
 
@@ -153,6 +156,15 @@ export class LogoComponent extends BaseProvider {
 	}
 	public set video (value: boolean) {
 		this.videoInternal	= (<any> value) === '' ? true : value;
+	}
+
+	/** Indicates whether to apply filter to make image white. */
+	@Input()
+	public get white () : boolean {
+		return this.whiteInternal;
+	}
+	public set white (value: boolean) {
+		this.whiteInternal	= (<any> value) === '' ? true : value;
 	}
 
 	constructor (

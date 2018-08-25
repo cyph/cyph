@@ -711,44 +711,47 @@ message Environment {
 		/** If true, performs video call by default (takes priority over callTypeAudio). */
 		bool callTypeVideo = 5;
 
+		/** If true, is dark theme. */
+		bool dark = 6;
+
 		/** If true, forces the use of Twilio TURN infrastructure for lower-latency calls. */
-		bool disableP2P = 6;
+		bool disableP2P = 7;
 
 		/** Indicates whether docs will be enabled. */
-		bool enableDocs = 7;
+		bool enableDocs = 8;
 
 		/** Indicates whether wallets will be enabled. */
-		bool enableWallets = 8;
+		bool enableWallets = 9;
 
 		/** Optional custom foreground color. */
-		string foregroundColor = 9;
+		string foregroundColor = 10;
 
 		/** If true, locked down with server-stored password. */
-		bool lockedDown = 10;
+		bool lockedDown = 11;
 
 		/** Indicates whether native crypto will be used. */
-		bool nativeCrypto = 11;
+		bool nativeCrypto = 12;
 
 		/** Organization username to associate with this custom build. */
-		string organization = 12;
+		string organization = 13;
 
 		/** Optional password to lock down environment (not a security feature). */
-		string password = 13;
+		string password = 14;
 
 		/** Indicates whether this is a Cyph Pro environment. */
-		bool pro = 14;
+		bool pro = 15;
 
 		/** Indicates whether this is the telehealth version. */
-		bool telehealth = 15;
+		bool telehealth = 16;
 
 		/** Page title of this Cyph instance. */
-		string title = 16;
+		string title = 17;
 
 		/** Indicates whether this environment should share the main Cyph database namespace. */
-		bool usePrimaryNamespace = 17;
+		bool usePrimaryNamespace = 18;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 18;
+		bool whiteLabel = 19;
 	}
 
 	/** Firebase configuration. */

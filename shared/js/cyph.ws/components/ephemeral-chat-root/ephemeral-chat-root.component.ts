@@ -118,7 +118,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 				undefined
 		};
 
-		const granim	= await initGranim({
+		const granim	= !this.envService.showGranim ? undefined : await initGranim({
 			direction: 'radial',
 			element: '#main-chat-gradient',
 			isPausedWhenNotInView: true,

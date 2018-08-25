@@ -13,20 +13,24 @@
 	display: block;
 	height: 100%;
 	width: 100%;
+}
 
-	&.alignment-bottom {
-		background-position-y: 100%;
-	}
+.alignment-bottom {
+	background-position-y: 100%;
+}
 
-	&.alignment-left {
-		background-position-x: 0;
-	}
+.alignment-left {
+	background-position-x: 0;
+}
 
-	&.alignment-right {
-		background-position-x: 100%;
-	}
+.alignment-right {
+	background-position-x: 100%;
+}
 
-	&.alignment-top {
-		background-position-y: 0;
-	}
+.alignment-top {
+	background-position-y: 0;
+}
+
+.white {
+	@include filter(grayscale(1) brightness(0) invert(1) brightness(0.95));
 }

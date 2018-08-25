@@ -1,6 +1,7 @@
 <a
 	[href]='envService.homeUrl'
 	[ngClass]='"alignment-" + alignment'
+	[class.white]='white'
 	[style.background-image]='logo | async'
 	[title]='stringsService.logo'
 	*ngIf='homeLink && !envService.coBranded; else noLink'
@@ -9,6 +10,7 @@
 <ng-template #noLink>
 	<div
 		[ngClass]='"alignment-" + alignment'
+		[class.white]='white'
 		[style.background-image]='logo | async'
 		[title]='stringsService.logo'
 	></div>

@@ -133,10 +133,10 @@ const customBuild	= (id, version) => {
 	const scss	= `
 		${!o.config.backgroundColor ? '' : `
 			$cyph-background: ${o.config.backgroundColor};
+		`}
 
-			#main-chat-gradient {
-				display: none !important;
-			}
+		${o.config.dark === undefined ? '' : `
+			$cyph-is-dark: ${o.config.dark.toString()};
 		`}
 
 		${!o.config.foregroundColor ? '' : `
