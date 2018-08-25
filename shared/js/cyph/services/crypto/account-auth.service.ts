@@ -541,18 +541,20 @@ export class AccountAuthService extends BaseProvider {
 							throw RegistrationErrorCodes.InvalidInviteCode;
 						}
 
-						await Promise.all([
+						await Promise.all<{}|void>([
 							this.setItem(
 								`users/${username}/inviterUsername`,
 								StringProto,
 								inviterUsername,
 								loginData.symmetricKey
 							),
-							this.databaseService.setItem(
-								`users/${username}/contacts/${inviterUsername}`,
-								AccountContactState,
-								{state: AccountContactState.States.OutgoingRequest}
-							)
+							username !== inviterUsername ?
+								this.databaseService.setItem(
+									`users/${username}/contacts/${inviterUsername}`,
+									AccountContactState,
+									{state: AccountContactState.States.OutgoingRequest}
+								) :
+								undefined
 						]);
 					}
 				})()
