@@ -30,16 +30,13 @@ export class Env extends EnvDeploy {
 	/** @ignore */
 	private readonly useBaseUrl: boolean		= !!environment.customBuild || environment.local;
 
-	/** @see IEnvironment */
-	public readonly environment: IEnvironment	= environment;
-
 	/** If applicable, default call type. */
 	public readonly callType?: 'audio'|'video'	= (
-		this.environment.customBuild && this.environment.customBuild.config.callTypeVideo ?
+		environment.customBuild && environment.customBuild.config.callTypeVideo ?
 			'video' :
-			this.environment.customBuild && this.environment.customBuild.config.callTypeAudio ?
-				'audio' :
-				undefined
+		environment.customBuild && environment.customBuild.config.callTypeAudio ?
+			'audio' :
+			undefined
 	);
 
 	/** Google Chrome version, if applicable. */
@@ -49,8 +46,8 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this is a co-branded (or white label) instance of Cyph. */
 	public readonly coBranded: boolean			=
-		this.environment.customBuild !== undefined &&
-		this.environment.customBuild.favicon !== undefined
+		environment.customBuild !== undefined &&
+		environment.customBuild.favicon !== undefined
 	;
 
 	/** Base URL for a new audio cyph link ("https://cyph.ws/#audio/" or equivalent). */
@@ -79,19 +76,22 @@ export class Env extends EnvDeploy {
 
 	/** Debug mode (true by default in local env). */
 	public readonly debug: boolean				=
-		typeof this.environment.debug === 'boolean' ?
-			this.environment.debug :
-			this.environment.local
+		typeof environment.debug === 'boolean' ?
+			environment.debug :
+			environment.local
 	;
+
+	/** @see IEnvironment */
+	public readonly environment: IEnvironment	= environment;
 
 	/** Firebase-related config. */
 	public readonly firebaseConfig				= {
-		apiKey: this.environment.firebase.apiKey,
-		authDomain: `${this.environment.firebase.project}.firebaseapp.com`,
-		databaseURL: `wss://${this.environment.firebase.project}.firebaseio.com`,
-		messagingSenderId: this.environment.firebase.messagingSenderId,
-		projectId: this.environment.firebase.project,
-		storageBucket: `${this.environment.firebase.project}.appspot.com`
+		apiKey: environment.firebase.apiKey,
+		authDomain: `${environment.firebase.project}.firebaseapp.com`,
+		databaseURL: `wss://${environment.firebase.project}.firebaseio.com`,
+		messagingSenderId: environment.firebase.messagingSenderId,
+		projectId: environment.firebase.project,
+		storageBucket: `${environment.firebase.project}.appspot.com`
 	};
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
@@ -114,8 +114,8 @@ export class Env extends EnvDeploy {
 
 	/** @see CustomBuildConfig.browserExtension */
 	public readonly isExtension: boolean		=
-		this.environment.customBuild !== undefined &&
-		this.environment.customBuild.config.browserExtension === true
+		environment.customBuild !== undefined &&
+		environment.customBuild.config.browserExtension === true
 	;
 
 	/** Indicates whether this is mobile Firefox. */
@@ -146,7 +146,7 @@ export class Env extends EnvDeploy {
 	);
 
 	/** @see IEnvironment.local */
-	public readonly isLocalEnv: boolean			= this.environment.local;
+	public readonly isLocalEnv: boolean			= environment.local;
 
 	/** Indicates whether this is macOS / OS X. */
 	public readonly isMacOS: boolean			= /mac os x/.test(Env.UA);
@@ -181,8 +181,8 @@ export class Env extends EnvDeploy {
 
 	/** @see CustomBuildConfig.telehealth */
 	public readonly isTelehealth: boolean		=
-		this.environment.customBuild !== undefined &&
-		this.environment.customBuild.config.telehealth === true
+		environment.customBuild !== undefined &&
+		environment.customBuild.config.telehealth === true
 	;
 
 	/** Indicates whether this is a WebKit/Blink browser. */
@@ -210,11 +210,11 @@ export class Env extends EnvDeploy {
 	/** @inheritDoc */
 	public readonly newCyphBaseUrl: string		=
 		(
-			this.environment.customBuild &&
-			!this.environment.local &&
-			!this.environment.customBuild.config.accountsOnly
+			environment.customBuild &&
+			!environment.local &&
+			!environment.customBuild.config.accountsOnly
 		) ?
-			`https://${this.environment.customBuild.id}/` :
+			`https://${environment.customBuild.id}/` :
 			envDeploy.newCyphBaseUrl
 	;
 
@@ -239,7 +239,7 @@ export class Env extends EnvDeploy {
 	public readonly realLanguage: string		= Env.language;
 
 	/** Indicates whether minimal affiliate advertising should be displayed. */
-	public readonly showAds: boolean			= !this.environment.customBuild;
+	public readonly showAds: boolean			= !environment.customBuild;
 
 	/** Indicates whether Granim gradient canvases should be displayed. */
 	public readonly showGranim: boolean			=
@@ -247,8 +247,8 @@ export class Env extends EnvDeploy {
 		!this.isOldFirefox &&
 		!this.isMobile &&
 		!(
-			this.environment.customBuild &&
-			this.environment.customBuild.config.backgroundColor
+			environment.customBuild &&
+			environment.customBuild.config.backgroundColor
 		)
 	;
 
@@ -260,8 +260,8 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this is a full white label instance of Cyph. */
 	public readonly whiteLabel: boolean			=
-		this.environment.customBuild !== undefined &&
-		this.environment.customBuild.config.whiteLabel === true
+		environment.customBuild !== undefined &&
+		environment.customBuild.config.whiteLabel === true
 	;
 
 	constructor () {
