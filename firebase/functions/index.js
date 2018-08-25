@@ -594,7 +594,7 @@ exports.userRegister	= functionsUser.onCreate(async (userRecord, {params}) => {
 		}),
 		sendMailInternal(
 			'user-registrations@cyph.com',
-			`Cyph User Registration: ${username}@${namespace}`
+			`Cyph User Registration: ${userRecord.email}`
 		)
 	]);
 });
