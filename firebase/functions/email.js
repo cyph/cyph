@@ -64,9 +64,12 @@ const sendMailInternal	= async (
 	},
 	subject,
 	text: text || '',
-	to: !eventinviter || !eventinviter.formatted ?
-		to.formatted :
-		[to.formatted, eventinviter.formatted]
+	to:
+		typeof to === 'string' ?
+			to :
+		!eventinviter || !eventinviter.formatted ?
+			to.formatted :
+			[to.formatted, eventinviter.formatted]
 });
 
 /**
