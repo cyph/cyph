@@ -40,12 +40,12 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 	@Input() public targetSelf?: boolean;
 
 	/** Handle router link clicks. */
-	public click (event: MouseEvent) : void {
-		if (!(event.srcElement instanceof HTMLAnchorElement)) {
+	public click (e: MouseEvent) : void {
+		if (!(e.target instanceof HTMLAnchorElement)) {
 			return;
 		}
 
-		const routerLink	= event.srcElement.getAttribute('router-link');
+		const routerLink	= e.target.getAttribute('router-link');
 
 		if (routerLink) {
 			this.router.navigate(routerLink.split('/'));
