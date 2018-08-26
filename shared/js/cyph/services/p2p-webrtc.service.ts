@@ -519,7 +519,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 						);
 					}
 				},
-				debug: env.debug,
+				debug: env.debugLog,
 				localVideoEl: $localVideo[0],
 				media: this.outgoingStream.value,
 				peerConnectionConfig:

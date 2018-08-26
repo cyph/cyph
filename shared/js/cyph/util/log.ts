@@ -10,7 +10,7 @@ const logs: {
 	timestamp: number;
 }[]	= [];
 
-if (env.debug) {
+if (env.debugLog) {
 	(<any> self).logs	= logs;
 }
 
@@ -19,7 +19,7 @@ const debugLogInternal	= async (
 	error: boolean,
 	argFunctions: (() => MaybePromise<any>)[]
 ) : Promise<void> => {
-	if (!env.debug) {
+	if (!env.debugLog) {
 		return;
 	}
 

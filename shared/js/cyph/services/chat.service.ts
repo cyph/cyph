@@ -1174,7 +1174,7 @@ export class ChatService extends BaseProvider {
 
 		this.chatSubject	= new BehaviorSubject(this.getDefaultChatData());
 
-		if (this.envService.debug) {
+		if (this.envService.debugLog) {
 			this.resolvers.chatConnected.promise.then(() => {
 				debugLog(() => 'ChatService.resolvers.chatConnected resolved');
 			});
