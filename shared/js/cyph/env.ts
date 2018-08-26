@@ -82,7 +82,10 @@ export class Env extends EnvDeploy {
 	;
 
 	/** Indicates whether debug logging is enabled (true by default when debug is true). */
-	public readonly debugLog: boolean			= this.debug;
+	public readonly debugLog: boolean			=
+		(environment.customBuild && environment.customBuild.config.accountsOnly) ||
+		this.debug
+	;
 
 	/** @see IEnvironment */
 	public readonly environment: IEnvironment	= environment;
