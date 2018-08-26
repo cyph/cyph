@@ -331,6 +331,7 @@ export class AccountService extends BaseProvider {
 			*/
 			if (
 				[
+					'404',
 					'appointments',
 					'contacts',
 					'docs',
