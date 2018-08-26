@@ -66,9 +66,8 @@ then(function (continent) {
 			'/'
 		;
 
-		return new Promise(function (resolve, reject) {
-			setTimeout(reject, 30000);
-
+		return Promise.race([
+			new Promise(function (_, reject) { setTimeout(reject, 30000); }),
 			fetch(
 				cdnUrl + 'current?' + Date.now()
 			).then(function (response) {
@@ -78,16 +77,15 @@ then(function (continent) {
 				var oldTimestamp	= parseInt(localStorage.webSignPackageTimestamp, 10);
 
 				if (oldTimestamp > newTimestamp) {
-					reject();
-					return;
+					throw new Error('Outdated package.');
 				}
 
-				resolve({
+				return {
 					cdnUrl: cdnUrl,
 					packageTimestamp: newTimestamp
-				});
-			});
-		});
+				};
+			})
+		]);
 	}
 
 	if (continent) {
