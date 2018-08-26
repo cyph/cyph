@@ -28,7 +28,7 @@
 					fxFlexFill
 					fxLayout='column'
 					fxLayoutGap='8px'
-					*ngIf='(sent | async) === false'
+					[fxShow]='(sent | async) === false'
 				>
 					<cyph-account-contacts-search
 						[class.visibility-hidden]='!!searchUsername.value && (
