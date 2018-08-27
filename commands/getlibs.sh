@@ -303,6 +303,11 @@ done
 # Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
 rm -rf ng-fullcalendar/node_modules &> /dev/null
 
+# Temporary workaround for https://github.com/pierrec/node-lz4/pull/64#issuecomment-416119077
+sed -i \
+	's|"browser": "./build/lz4.js",|"browser": {"./lib/utils.js": "./lib/utils-js.js"},|g' \
+	lz4/package.json
+
 # Temporary workaround for https://github.com/dcodeIO/protobuf.js/issues/863
 while true ; do
 	for host in raw.githubusercontent.com cdn.rawgit.com rawgit.com ; do
