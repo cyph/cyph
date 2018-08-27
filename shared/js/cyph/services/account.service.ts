@@ -271,7 +271,10 @@ export class AccountService extends BaseProvider {
 			new Hammer(document.body).on('panleft', () => {
 				if (this.mobileMenuOpenInternal.value) {
 					this.mobileMenuOpenInternal.next(false);
-					history.back();
+
+					if (!this.envService.isCordova) {
+						history.back();
+					}
 				}
 			});
 
