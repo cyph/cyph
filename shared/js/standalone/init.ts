@@ -35,8 +35,8 @@ if (env.isCordova) {
 		for (const selector of [
 			'.overlay.clickable',
 			'.cdk-overlay-pane.mat-tooltip-panel',
-			'.mat-drawer-backdrop.mat-drawer-shown',
-			'.cdk-overlay-backdrop.cdk-overlay-backdrop-showing'
+			'.cdk-overlay-backdrop.cdk-overlay-backdrop-showing',
+			'.mat-drawer-backdrop.mat-drawer-shown'
 		]) {
 			const clickableOverlay	= document.querySelector(selector);
 
