@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
+import * as Hammer from 'hammerjs';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
@@ -263,6 +264,26 @@ export class AccountService extends BaseProvider {
 		if (this.envService.isWeb && !this.envService.isCordova) {
 			self.addEventListener('popstate', () => {
 				this.mobileMenuOpenInternal.next(false);
+			});
+		}
+
+		if (this.envService.isWeb && this.envService.isMobileOS) {
+			new Hammer(document.body).on('panleft', () => {
+				if (this.mobileMenuOpenInternal.value) {
+					this.mobileMenuOpenInternal.next(false);
+					history.back();
+				}
+			});
+
+			new Hammer(document.body, {recognizers: [
+				[
+					Hammer.Pan,
+					{direction: Hammer.DIRECTION_RIGHT, threshold: 0}
+				]
+			]}).on('pan', e => {
+				if (e.center.x < 40 && e.deltaX > 0) {
+					this.toggleMobileMenu(true);
+				}
 			});
 		}
 

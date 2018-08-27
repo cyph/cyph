@@ -84,6 +84,7 @@ read -r -d '' modules <<- EOM
 	@types/dropzone
 	@types/file-saver
 	@types/fullcalendar@3.5.2
+	@types/hammerjs
 	@types/html-to-text
 	@types/jasmine
 	@types/jquery
