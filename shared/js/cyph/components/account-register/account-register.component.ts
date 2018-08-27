@@ -21,6 +21,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
+import {toInt} from '../../util/formatting';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 
@@ -182,7 +183,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		this.subscriptions.push(this.activatedRoute.params.subscribe(async o => {
 			if (typeof o.step === 'string') {
-				const step	= Number.parseInt(o.step, 10);
+				const step	= toInt(o.step);
 
 				/* Allow "step" parameter to double up as invite code */
 				if (isNaN(step) && !this.inviteCode.value) {

@@ -8,6 +8,7 @@ import {EnvDeploy, envDeploy} from './env-deploy';
 import {IEnvironment} from './proto';
 import {WindowWatcherService} from './services/window-watcher.service';
 import {toBehaviorSubject} from './util/flatten-observable';
+import {toInt} from './util/formatting';
 
 
 /**
@@ -41,7 +42,7 @@ export class Env extends EnvDeploy {
 
 	/** Google Chrome version, if applicable. */
 	public readonly chromeVersion: number		=
-		Number.parseInt((Env.UA.match(/chrome\/(\d+)/) || [])[1], 10)
+		toInt((Env.UA.match(/chrome\/(\d+)/) || [])[1])
 	;
 
 	/** Indicates whether this is a co-branded (or white label) instance of Cyph. */
@@ -179,7 +180,7 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is a version of Firefox before 57 ("Quantum"). */
 	public readonly isOldFirefox: boolean		=
 		this.isFirefox &&
-		!(Number.parseInt((Env.UA.match(/firefox\/(\d+)/) || [])[1], 10) >= 57)
+		!(toInt((Env.UA.match(/firefox\/(\d+)/) || [])[1]) >= 57)
 	;
 
 	/** Indicates whether this is Safari. */

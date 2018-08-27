@@ -7,6 +7,7 @@ import {env} from '../env';
 import {ITimeRange} from '../itime-range';
 import {Time} from '../time-type';
 import {flattenObservable} from './flatten-observable';
+import {toInt} from './formatting';
 import {random} from './random';
 import {request} from './request';
 import {translate} from './translate';
@@ -67,7 +68,7 @@ const getOrdinal	= memoize((n: number) : string => {
 /** Gets hour and minute of a Time or string of the form "hh:mm". */
 export const getHourAndMinuteOfTime	= (time: Time|string) : {hour: number; minute: number} => {
 	if (typeof time === 'string') {
-		const [hour, minute]	= time.split(':').map(s => Number.parseInt(s, 10));
+		const [hour, minute]	= time.split(':').map(s => toInt(s));
 		return {hour, minute};
 	}
 	else {

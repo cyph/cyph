@@ -7,6 +7,7 @@ import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {toInt} from '../../util/formatting';
 
 
 /**
@@ -42,7 +43,7 @@ export class AccountFormComponent extends BaseProvider implements OnInit {
 				const editable							= data.editable === true;
 
 				if (appointmentID && id) {
-					const i				= Number.parseInt(id, 10);
+					const i				= toInt(id);
 					const downloadTask	= this.accountFilesService.downloadFile(
 						appointmentID,
 						AccountFileRecord.RecordTypes.Appointment

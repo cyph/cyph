@@ -80,3 +80,9 @@ const readableByteLengthInternal	= memoize((n: number) =>
 export const readableByteLength	= (n: number, storageUnit?: StorageUnits) : string =>
 	readableByteLengthInternal(n)(storageUnit)
 ;
+
+/** Stricter parseInt. */
+export const toInt	= (s: string) : number =>
+	/* tslint:disable-next-line:ban */
+	/^\d+$/.test(s) ? parseInt(s, 10) : NaN
+;

@@ -6,7 +6,7 @@ const fs							= require('fs');
 const os							= require('os');
 const databaseService				= require('../modules/database-service');
 const {BooleanProto, StringProto}	= require('../modules/proto');
-const {readableID}					= require('../modules/util');
+const {readableID, toInt}			= require('../modules/util');
 
 
 const addInviteCode	= async (projectId, countByUser, namespace) => {
@@ -71,7 +71,7 @@ if (require.main === module) {
 	(async () => {
 		const projectId			= process.argv[2];
 		const username			= process.argv[3];
-		const count				= parseInt(process.argv[4]);
+		const count				= toInt(process.argv[4]);
 		const namespace			= process.argv[5];
 		const countByUser		= {};
 		countByUser[username]	= isNaN(count) ? 1 : count;

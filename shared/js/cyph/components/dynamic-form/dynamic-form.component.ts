@@ -22,6 +22,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackByIndex} from '../../track-by/track-by-index';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {filterUndefined} from '../../util/filter';
+import {toInt} from '../../util/formatting';
 import {getOrSetDefault} from '../../util/get-or-set-default';
 import {parse} from '../../util/serialization';
 import {timestampToDate} from '../../util/time';
@@ -273,7 +274,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 							const arrayIndex	= (s.match(/\[\d+\]$/) || [])[0];
 							return !arrayIndex ? s : [
 								s.slice(0, 0 - arrayIndex.length),
-								Number.parseInt(arrayIndex.slice(1, -1), 10)
+								toInt(arrayIndex.slice(1, -1))
 							];
 						}).reduce(
 							(arr: (number|string)[], s) => arr.concat(s),
@@ -421,9 +422,9 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 		this.submitForm.emit(this.form);
 	}
 
-	/** @see Number.parseInt */
-	public parseInt (s: string) : number|undefined {
-		return s ? Number.parseInt(s, 10) : undefined;
+	/** @see toInt */
+	public toInt (s: string) : number|undefined {
+		return s ? toInt(s) : undefined;
 	}
 
 	constructor (

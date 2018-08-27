@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Env} from '../env';
 import {DataURIProto, StringProto} from '../proto';
+import {toInt} from '../util/formatting';
 import {request} from '../util/request';
 import {deserialize, parse} from '../util/serialization';
 import {LocalStorageService} from './local-storage.service';
@@ -75,9 +76,8 @@ export class EnvService extends Env {
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
 		try {
-			const timestamp	= Number.parseInt(
-				await this.localStorageService.getItem('webSignPackageTimestamp', StringProto),
-				10
+			const timestamp	= toInt(
+				await this.localStorageService.getItem('webSignPackageTimestamp', StringProto)
 			);
 
 			if (!isNaN(timestamp)) {

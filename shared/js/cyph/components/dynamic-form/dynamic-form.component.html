@@ -125,7 +125,7 @@
 				matInput
 				[textMask]='getMask(o)'
 				[ngModel]='o.valueNumber'
-				(ngModelChange)='o.valueNumber = parseInt($event)'
+				(ngModelChange)='o.valueNumber = toInt($event)'
 				[max]='o.max'
 				[min]='o.min'
 				[name]='getName(o)'
