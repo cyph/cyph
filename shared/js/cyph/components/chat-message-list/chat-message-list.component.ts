@@ -10,6 +10,7 @@ import {
 	Optional
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
+import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 /* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
 /* import ResizeObserver from 'resize-observer-polyfill'; */
@@ -33,6 +34,7 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByVsItem} from '../../track-by/track-by-vs-item';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
+import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {compareDates, relativeDateString, watchDateChange} from '../../util/time';
@@ -184,6 +186,16 @@ implements AfterViewInit, OnChanges, OnDestroy {
 				$(this.elementRef.nativeElement).children().first(),
 				this.messageCountInTitle
 			);
+
+			/* Dismiss keyboard when scrolling down on mobile */
+			if (this.envService.isMobileOS) {
+				new Hammer(this.elementRef.nativeElement, {recognizers: [
+					[
+						Hammer.Pan,
+						{direction: Hammer.DIRECTION_DOWN, threshold: 0}
+					]
+				]}).on('pan', dismissKeyboard);
+			}
 		}
 
 		if (!this.chat) {
