@@ -7,7 +7,7 @@ import * as $ from 'jquery';
 export class Elements {
 	/** jQuery wrapper that memoizes DOM elements for performance. */
 	public static getElement (
-		selector: string|JQuery.PlainObject|(() => JQuery)
+		selector: string|(() => JQuery)
 	) : () => JQuery {
 		let cache: JQuery;
 
