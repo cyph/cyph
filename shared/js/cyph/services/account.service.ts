@@ -281,10 +281,10 @@ export class AccountService extends BaseProvider {
 			new Hammer(document.body, {recognizers: [
 				[
 					Hammer.Pan,
-					{direction: Hammer.DIRECTION_RIGHT, threshold: 0}
+					{direction: Hammer.DIRECTION_RIGHT, threshold: 4}
 				]
 			]}).on('pan', e => {
-				if (e.center.x < 40 && e.deltaX > 0) {
+				if (e.center.x < 72 && e.deltaX > 8 && e.deltaY < 4) {
 					this.toggleMobileMenu(true);
 				}
 			});
