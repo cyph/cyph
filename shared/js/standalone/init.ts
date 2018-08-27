@@ -6,10 +6,8 @@
  */
 
 
-import {NavigationEnd, Router} from '@angular/router';
 import * as $ from 'jquery';
 import {env} from '../cyph/env';
-import {staticRouter} from '../cyph/util/static-services';
 import {triggerClick} from '../cyph/util/trigger-click';
 import {sleep} from '../cyph/util/wait';
 
@@ -32,19 +30,6 @@ document.body.classList.toggle(
 /* Cordova back button support */
 
 if (env.isCordova) {
-	let router: Router|undefined;
-	const routingHistory: string[]	= [];
-
-	staticRouter.then(staticRouterValue => {
-		router	= staticRouterValue;
-
-		router.events.subscribe(e => {
-			if (e instanceof NavigationEnd && e.url !== routingHistory.slice(-1)[0]) {
-				routingHistory.push(e.url);
-			}
-		});
-	});
-
 	(<any> self).onbackbutton	= async () => {
 		for (const selector of [
 			'.overlay.clickable',
@@ -63,9 +48,8 @@ if (env.isCordova) {
 		if (env.isAndroid && !(<any> self).androidBackbuttonReady) {
 			(<any> self).plugins.appMinimize.minimize();
 		}
-		else if (router && routingHistory.length >= 2) {
-			routingHistory.pop();
-			router.navigateByUrl(routingHistory.pop() || '');
+		else {
+			history.back();
 		}
 	};
 }
