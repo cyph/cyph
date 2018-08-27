@@ -89,3 +89,9 @@ fi
 if [ "${CIRCLECI}" ] ; then
 	sed -i 's|localhost|0.0.0.0|g' /cyph/commands/serve.sh /cyph/*/protractor.conf.js
 fi
+
+
+# Temporary workaround for https://github.com/pierrec/node-lz4/pull/64#issuecomment-416119077
+sed -i \
+	's|"browser": "./build/lz4.js",|"browser": {"./lib/utils.js": "./lib/utils-js.js"},|g' \
+	/node_modules/lz4/package.json
