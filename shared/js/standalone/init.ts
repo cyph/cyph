@@ -6,9 +6,10 @@
  */
 
 
+import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import {env} from '../cyph/env';
-import {triggerClick} from '../cyph/util/trigger-click';
+import {dismissKeyboard, triggerClick} from '../cyph/util/input';
 import {sleep} from '../cyph/util/wait';
 
 
@@ -52,6 +53,17 @@ if (env.isCordova) {
 			history.back();
 		}
 	};
+}
+
+/* Dismiss keyboard when scrolling down on mobile */
+
+if (env.isWeb && env.isMobileOS) {
+	new Hammer(document.body, {recognizers: [
+		[
+			Hammer.Pan,
+			{direction: Hammer.DIRECTION_DOWN, threshold: 0}
+		]
+	]}).on('pan', dismissKeyboard);
 }
 
 /* Handle beforeunload */
