@@ -30,6 +30,8 @@
 		<button
 			mat-raised-button
 			color='accent'
+			fxFlex
+			fxFlex.gt-sm='initial'
 			[disabled]='
 				messageForm.invalid ||
 				(recipient !== undefined && (recipient | async) === undefined)

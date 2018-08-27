@@ -32,9 +32,11 @@
 
 	<div fxLayoutAlign='center'>
 		<button
-			(click)='share()'
 			mat-raised-button
+			fxFlex
+			fxFlex.gt-sm='initial'
 			[disabled]='(accountContactsSearch.searchBar?.filter | async)?.size < 1'
+			(click)='share()'
 		>
 			{{stringsService.share}} {{o.fileConfig?.description}}
 		</button>
