@@ -112,7 +112,7 @@ declare module 'libsodium' {
 		crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES: number;
 		crypto_onetimeauth_BYTES: number;
 		crypto_onetimeauth_KEYBYTES: number;
-		crypto_pwhash_ALG_DEFAULT: number;
+		crypto_pwhash_ALG_ARGON2ID13: number;
 		crypto_pwhash_BYTES_MAX: number;
 		crypto_pwhash_BYTES_MIN: number;
 		crypto_pwhash_MEMLIMIT_INTERACTIVE: number;

@@ -39,7 +39,7 @@ export class PasswordHash implements IPasswordHash {
 					salt,
 					opsLimit,
 					memLimit,
-					sodium.crypto_pwhash_ALG_DEFAULT
+					sodium.crypto_pwhash_ALG_ARGON2ID13
 				))
 	};
 
