@@ -617,7 +617,15 @@ exports.userRegisterConfirmed	= functions.database.ref(
 			username,
 			`Welcome to Cyph, ${realUsername}`,
 			`Congratulations ${name}, your account is now activated!\n` +
-				`Sign in at ${namespaces[params.namespace].accountsURL}login.`
+				`Sign in at ${namespaces[params.namespace].accountsURL}login.` +
+				/* Temporary, pending app's public release */
+				(
+					params.namespace !== 'cyph_ws' ? '' : (
+						`\nYou'll receive an invite to access the iOS app shortly, ` +
+						`and the Android app is available here: ` +
+						`https://play.google.com/apps/testing/com.cyph.app`
+					)
+				)
 		),
 		registrationEmailSentRef.set(true)
 	]);
