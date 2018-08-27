@@ -68,7 +68,7 @@ const getOrdinal	= memoize((n: number) : string => {
 /** Gets hour and minute of a Time or string of the form "hh:mm". */
 export const getHourAndMinuteOfTime	= (time: Time|string) : {hour: number; minute: number} => {
 	if (typeof time === 'string') {
-		const [hour, minute]	= time.split(':').map(s => toInt(s));
+		const [hour, minute]	= time.split(':').map(toInt);
 		return {hour, minute};
 	}
 	else {
