@@ -65,7 +65,7 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 			return;
 		}
 
-		/* http://stackoverflow.com/a/11650231/459881 */
+		/* https://stackoverflow.com/a/11650231/459881 */
 
 		const $window	= $(window);
 
