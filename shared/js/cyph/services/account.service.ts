@@ -2,17 +2,21 @@ import {Injectable} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
 import * as Hammer from 'hammerjs';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map, mergeMap} from 'rxjs/operators';
+import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
 import {StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {prettyPrint, stringify} from '../util/serialization';
 import {translate} from '../util/translate';
+import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
+import {AccountFilesService} from './account-files.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {PotassiumService} from './crypto/potassium.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {StringsService} from './strings.service';
@@ -245,6 +249,9 @@ export class AccountService extends BaseProvider {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
+		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
 		private readonly configService: ConfigService,
 
 		/** @ignore */
@@ -254,12 +261,46 @@ export class AccountService extends BaseProvider {
 		private readonly envService: EnvService,
 
 		/** @ignore */
+		private readonly potassiumService: PotassiumService,
+
+		/** @ignore */
 		private readonly stringsService: StringsService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService
 	) {
 		super();
+
+		if (this.envService.debugLog) {
+			(<any> self).shareLogsWithCyph	= async () => {
+				await this.interstitial.pipe(filter(b => !b), take(1)).toPromise();
+				this.interstitial.next(true);
+
+				await Promise.all([
+					this.accountFilesService.upload(
+						`${uuid()}.log`,
+						{
+							data: this.potassiumService.fromString(
+								(<Record<string, any>[]> (<any> self).logs).map(o =>
+									`${o.timestamp}${o.error ? ' (error)' : ''}: ${
+										o.argsCopy !== undefined ?
+											prettyPrint(o.argsCopy) :
+											stringify({keys: Object.keys(o.args)})
+									}`
+								).join('\n\n\n\n') +
+								'\n'
+							),
+							mediaType: 'text/plain',
+							name: ''
+						},
+						'cyph'
+					),
+					sleep(1000)
+				]);
+
+				this.interstitial.next(false);
+			};
+		}
 
 		if (this.envService.isWeb && !this.envService.isCordova) {
 			self.addEventListener('popstate', () => {
