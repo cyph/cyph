@@ -1,6 +1,7 @@
 import * as msgpack from 'msgpack-lite';
 import {env} from '../env';
 import {MaybePromise} from '../maybe-promise-type';
+import {prettyPrint} from './serialization/json';
 
 
 const logs: {
@@ -26,9 +27,17 @@ const debugLogInternal	= async (
 	const args	= await Promise.all(argFunctions.map(async f => f()));
 
 	let argsCopy: any|undefined;
+	let argsString: string|undefined;
 
 	try {
 		argsCopy	= msgpack.decode(msgpack.encode(args));
+		argsString	=
+			argsCopy.length > 1 ?
+				prettyPrint(argsCopy) :
+			typeof argsCopy[0] === 'string' ?
+				argsCopy[0] :
+				prettyPrint(argsCopy[0])
+		;
 	}
 	catch {}
 
@@ -42,11 +51,11 @@ const debugLogInternal	= async (
 
 	if (error) {
 		/* tslint:disable-next-line:no-console */
-		console.error(...args);
+		console.error(...(argsString ? [argsString] : args));
 	}
 	else {
 		/* tslint:disable-next-line:no-console */
-		console.log(...args);
+		console.log(...(argsString ? [argsString] : args));
 	}
 };
 
