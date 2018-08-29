@@ -287,8 +287,7 @@ export class AccountService extends BaseProvider {
 											prettyPrint(o.argsCopy) :
 											stringify({keys: Object.keys(o.args)})
 									}`
-								).join('\n\n\n\n') +
-								'\n'
+								).join('\n\n\n\n') + '\n'
 							),
 							mediaType: 'text/plain',
 							name: ''
