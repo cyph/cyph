@@ -26,7 +26,7 @@ export const parse	= <T> (text: string) : T => {
 		v && v.isUint8Array === true && typeof v.data === 'string' ?
 			potassiumUtil.fromBase64(v.data) :
 		v && v.isMap === true && typeof v.data === 'object' ?
-			new Map(<any> Object.keys(v.data).map(k => [k, v.data[k]])) :
+			new Map<any, any>(<any> Object.keys(v.data).map(k => [k, v.data[k]])) :
 			v
 	);
 };
