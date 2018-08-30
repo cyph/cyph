@@ -31,6 +31,13 @@
 			matTooltip='${LINK} will be replaced with the actual link.'
 		></textarea>
 	</mat-form-field>
+	<mat-checkbox
+		cyphTranslate
+		[(ngModel)]='saveToLocalStorage'
+		matTooltip='Saves message to local browser storage and reuses next time'
+	>
+		Save for Next Time
+	</mat-checkbox>
 </div>
 <div mat-dialog-actions fxLayoutAlign='end center'>
 	<button mat-button class='cancel' (click)='matDialogRef.close(false)'>

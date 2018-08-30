@@ -4,7 +4,9 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
+import {LinkConnectionEmail} from '../../proto';
 import {EnvService} from '../../services/env.service';
+import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -30,6 +32,9 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 	/** Mailto link. */
 	public readonly linkTarget: string	= this.envService.isMobileOS ? '_self' : '_blank';
 
+	/** Indicates whether subject and text should be saved to local storage. */
+	public saveToLocalStorage: boolean	= true;
+
 	/** Email subject. */
 	public subject: string				= this.stringsService.linkConnectionEmailSubject;
 
@@ -40,7 +45,14 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 	public to: string					= '';
 
 	/** @inheritDoc */
-	public ngOnDestroy () : void {
+	public async ngOnDestroy () : Promise<void> {
+		if (this.saveToLocalStorage) {
+			await this.localStorageService.setItem('linkConnectionEmail', LinkConnectionEmail, {
+				subject: this.subject,
+				text: this.text
+			});
+		}
+
 		this.linkMailto.next(undefined);
 
 		this.subject	= '';
@@ -49,8 +61,26 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 	}
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
+	public async ngOnInit () : Promise<void> {
 		this.update();
+
+		try {
+			const o	= await this.localStorageService.getItem(
+				'linkConnectionEmail',
+				LinkConnectionEmail
+			);
+
+			if (o.subject) {
+				this.subject	= o.subject;
+			}
+
+			if (o.text) {
+				this.text		= o.text;
+			}
+
+			this.update();
+		}
+		catch {}
 	}
 
 	/** Updates mailto link. */
@@ -73,6 +103,9 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see LocalStorageService */
+		public readonly localStorageService: LocalStorageService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

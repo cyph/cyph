@@ -941,6 +941,15 @@ message KeyPair {
 	required bytes publicKey = 2;
 }
 
+/** Link connection email value. */
+message LinkConnectionEmail {
+	/** Email subject. */
+	string subject = 1;
+
+	/** Email text. */
+	string text = 2;
+}
+
 /** Local storage lock claim value. */
 message LocalStorageLockMetadata {
 	/** ID. */
