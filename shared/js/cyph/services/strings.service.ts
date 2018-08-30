@@ -384,6 +384,17 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
+	public readonly linkConnectionEmailSubject: string	=
+		`${this.internalProductShort} Invite`
+	;
+
+	/** @see StringsService */
+	public readonly linkConnectionEmailText: string		=
+		`I'm inviting you to chat with me securely via ${this.internalProductShort}!\n\n` +
+		`I'll be waiting here: \${LINK}`
+	;
+
+	/** @see StringsService */
 	public readonly linkCopied: string					=
 		`${this.capitalize(this.internalSession)} link copied.`
 	;

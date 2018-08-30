@@ -33,6 +33,7 @@ import {AccountUserRatingComponent} from '../components/account-user-rating';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {FooterComponent} from '../components/footer';
 import {LinkConnectionComponent} from '../components/link-connection';
+import {LinkConnectionEmailComponent} from '../components/link-connection-email';
 import {NotFoundComponent} from '../components/not-found';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
@@ -94,6 +95,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountWalletsComponent,
 		FooterComponent,
 		LinkConnectionComponent,
+		LinkConnectionEmailComponent,
 		NotFoundComponent,
 		UploadEhrCredentialsComponent
 	],
@@ -130,6 +132,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountWalletsComponent,
 		FooterComponent,
 		LinkConnectionComponent,
+		LinkConnectionEmailComponent,
 		NotFoundComponent,
 		UploadEhrCredentialsComponent
 	],
@@ -166,6 +169,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountWalletsComponent,
 		FooterComponent,
 		LinkConnectionComponent,
+		LinkConnectionEmailComponent,
 		NotFoundComponent,
 		UploadEhrCredentialsComponent
 	],

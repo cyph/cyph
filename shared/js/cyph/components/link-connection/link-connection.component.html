@@ -52,6 +52,14 @@
 				</mat-form-field>
 				<button
 					mat-icon-button
+					matTooltip='Email'
+					(click)='email()'
+					cyphTranslate
+				>
+					<mat-icon>email</mat-icon>
+				</button>
+				<button
+					mat-icon-button
 					matTooltip='Copy to Clipboard'
 					(click)='copyToClipboard()'
 					cyphTranslate
@@ -78,15 +86,14 @@
 					&nbsp;
 				</span>
 
-				<a
+				<button
 					mat-mini-fab
 					matTooltip='Email'
-					target='_self'
-					[href]='linkMailto | async'
+					(click)='email()'
 					cyphTranslate
 				>
 					<mat-icon>email</mat-icon>
-				</a>
+				</button>
 
 				<span class='divider'>
 					&nbsp;

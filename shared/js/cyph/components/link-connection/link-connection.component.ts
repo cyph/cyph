@@ -14,6 +14,7 @@ import {StringsService} from '../../services/strings.service';
 import {Timer} from '../../timer';
 import {lockTryOnce} from '../../util/lock';
 import {sleep, waitForIterable} from '../../util/wait';
+import {LinkConnectionEmailComponent} from '../link-connection-email';
 
 
 /**
@@ -42,6 +43,9 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 	/** Indicates whether the advanced features menu is open. */
 	public readonly advancedFeatures	= new BehaviorSubject<boolean>(false);
 
+	/** Forces focus on input. */
+	public forceFocus: boolean			= true;
+
 	/** Indicates whether this link connection was initiated passively via API integration. */
 	public readonly isPassive			= new BehaviorSubject<boolean>(false);
 
@@ -50,9 +54,6 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 
 	/** Safe version of this link. */
 	public readonly linkHref			= new BehaviorSubject<SafeUrl|undefined>(undefined);
-
-	/** Safe mailto version of this link. */
-	public readonly linkMailto			= new BehaviorSubject<SafeUrl|undefined>(undefined);
 
 	/** Safe SMS version of this link. */
 	public readonly linkSMS				= new BehaviorSubject<SafeUrl|undefined>(undefined);
@@ -90,6 +91,17 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 		);
 	}
 
+	/** Emails link. */
+	public async email () : Promise<void> {
+		this.forceFocus	= false;
+
+		await this.dialogService.baseDialog(LinkConnectionEmailComponent, o => {
+			o.link	= this.linkConstant;
+		});
+
+		this.forceFocus	= true;
+	}
+
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		let isWaiting		= true;
@@ -118,10 +130,6 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 		this.link.next(this.linkConstant);
 
 		this.linkHref.next(this.linkConstant);
-
-		this.linkMailto.next(this.domSanitizer.bypassSecurityTrustUrl(
-			`mailto:?subject=Cyph&body=${linkEncoded}`
-		));
 
 		this.linkSMS.next(this.domSanitizer.bypassSecurityTrustUrl(
 			this.envService.smsUriBase + linkEncoded
@@ -158,7 +166,6 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 
 			this.link.next('');
 			this.linkHref.next(undefined);
-			this.linkMailto.next(undefined);
 			this.linkSMS.next(undefined);
 
 			this.timer.stop();
@@ -177,7 +184,7 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 	public async onBlur () : Promise<void> {
 		await sleep(0);
 
-		if (!this.connectLinkInput || this.advancedFeatures.value) {
+		if (!this.forceFocus || !this.connectLinkInput || this.advancedFeatures.value) {
 			return;
 		}
 
