@@ -86,6 +86,7 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 	/** Updates mailto link. */
 	public update () : void {
 		this.linkMailto.next(this.domSanitizer.bypassSecurityTrustUrl(
+			/* tslint:disable-next-line:tab-equals */
 			`mailto:${this.to}?subject=${
 				encodeURIComponent(this.subject)
 			}&body=${
