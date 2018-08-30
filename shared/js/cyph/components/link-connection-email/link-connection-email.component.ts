@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {MatDialogRef} from '@angular/material/dialog';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
