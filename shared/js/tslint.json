@@ -331,7 +331,7 @@
 		"no-unnecessary-semicolons": false /* Pending fix: true */,
 		"no-with-statement": false /* Pending fix: true */,
 		"possible-timing-attack": true,
-		"prefer-type-cast": true,
+		"prefer-type-cast": false /* Pending fix: true */,
 		"promise-must-complete": true,
 		"use-named-parameter": true,
 
