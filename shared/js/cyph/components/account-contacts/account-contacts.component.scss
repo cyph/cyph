@@ -17,6 +17,14 @@ cyph-account-contact.active ::ng-deep .contact {
 		&.active {
 			margin-bottom: 32px;
 		}
+
+		::ng-deep mat-card-title {
+			max-width: calc(100vw - 180px);
+
+			&.incoming {
+				max-width: calc(100vw - 220px);
+			}
+		}
 	}
 
 	&.mobile cyph-account-contact {

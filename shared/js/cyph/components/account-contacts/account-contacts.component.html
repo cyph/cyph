@@ -50,6 +50,7 @@
 				></cyph-account-contact>
 			</div>
 
+			<!--
 			<div fxFlex>
 				<div cyphNanoScroller>
 					<div class='contact-list'>
@@ -57,37 +58,31 @@
 							let item of filteredContactList | async; trackBy: trackByUser
 						'>
 							<ng-container *ngTemplateOutlet='listItem; context: {
-								item: item,
-								unreadMessages: true
-							}'></ng-container>
-						</ng-container>
-						<ng-container *ngFor='
-							let item of filteredContactList | async; trackBy: trackByUser
-						'>
-							<ng-container *ngTemplateOutlet='listItem; context: {
-								item: item,
-								unreadMessages: false
+								item: item
 							}'></ng-container>
 						</ng-container>
 					</div>
 				</div>
 			</div>
-
-			<!--
-			<od-virtualscroll
-				class='contact-list'
-				[vsData]='filteredContactList'
-				[vsEqualsFunc]='vsEqualsFunc'
-				[vsOptions]='vsOptions'
-				*ngIf='(accountContactsSearch?.searchBar?.filterSingle | async) === undefined'
-			>
-				<ng-template let-item>
-					<ng-container *ngTemplateOutlet='listItem; context: {
-						item: item
-					}'></ng-container>
-				</ng-template>
-			</od-virtualscroll>
 			-->
+
+			<div fxFlex>
+				<div cyphNanoScroller>
+					<cdk-virtual-scroll-viewport
+						fxFlexFill
+						[itemSize]='86 + ((envService.isMobile | async) ? 8 : 16)'
+						class='contact-list'
+					>
+						<ng-container *cdkVirtualFor='
+							let item of filteredContactList; trackBy: trackByUser
+						'>
+							<ng-container *ngTemplateOutlet='listItem; context: {
+								item: item
+							}'></ng-container>
+						</ng-container>
+					</cdk-virtual-scroll-viewport>
+				</div>
+			</div>
 		</ng-template>
 	</div>
 
@@ -100,17 +95,10 @@
 	></mat-progress-spinner>
 </div>
 
-<ng-template #listItem let-item='item' let-unreadMessages='unreadMessages'>
-	<ng-container *ngIf='unreadMessages === (((item.unreadMessageCount | async) || 0) > 0)'>
-		<cyph-account-contact
-			[contact]='item'
-			[showUnreadMessageCount]='true'
-			class='animated slideInDown'
-			[class.cyph-inverted-theme]='invertedTheme'
-			*ngIf='
-				contactList !== accountContactsService.contactList ||
-				((item.user ? (item.user | async)?.contactState : item.contactState) | async)
-			'
-		></cyph-account-contact>
-	</ng-container>
+<ng-template #listItem let-item='item'>
+	<cyph-account-contact
+		[contact]='item'
+		[showUnreadMessageCount]='true'
+		[class.cyph-inverted-theme]='invertedTheme'
+	></cyph-account-contact>
 </ng-template>

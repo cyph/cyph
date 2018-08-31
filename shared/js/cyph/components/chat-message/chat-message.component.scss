@@ -110,6 +110,7 @@
 
 		h4.media-title, .mat-button-wrapper {
 			text-overflow: ellipsis;
+			white-space: nowrap;
 			overflow-x: hidden;
 			display: block;
 		}

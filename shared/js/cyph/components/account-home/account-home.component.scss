@@ -8,7 +8,7 @@
 
 /* Offset height of speed dial + 16px above and below */
 cyph-account-contacts ::ng-deep {
-	.card-list.mobile .contact-list {
+	.card-list.mobile .contact-list:not(cdk-virtual-scroll-viewport) {
 		padding-bottom: 88px;
 	}
 }

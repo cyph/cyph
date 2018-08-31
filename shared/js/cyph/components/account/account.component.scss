@@ -206,13 +206,17 @@ $mobileAppBarHeight: 56px;
 		mat-card {
 			padding: 18px 24px;
 
+			mat-card-title {
+				max-width: 120px !important;
+
+				&.incoming {
+					max-width: 80px !important;
+				}
+			}
+
 			mat-card-subtitle {
 				margin-bottom: 0;
 			}
-		}
-
-		.contact-list > br:last-child {
-			display: none;
 		}
 
 		cyph-account-contact {

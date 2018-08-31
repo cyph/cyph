@@ -138,9 +138,18 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 		this.accountContactsService.contactList
 	;
 
-	/** Full contact list with active contact filtered out. */
+	/** Full contact list with active contact removed and users with unread messages on top. */
 	public readonly filteredContactList: Observable<(IContactListItem|User)[]>	=
-		this.routeReactiveContactList.pipe(map(o => o.filteredContactList))
+		this.routeReactiveContactList.pipe(mergeMap(o =>
+			combineLatest(
+				o.filteredContactList.map(o => o.unreadMessageCount)
+			).pipe(map(counts =>
+				this.contactList !== this.accountContactsService.contactList ? [] : [
+					...(o.filteredContactList.filter((_: any, i: number) => counts[i] > 0)),
+					...(o.filteredContactList.filter((_: any, i: number) => counts[i] < 1))
+				]
+			))
+		))
 	;
 
 	/** Indicates whether this is home component. */

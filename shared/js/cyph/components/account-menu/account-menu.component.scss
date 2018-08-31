@@ -42,6 +42,7 @@ cyph-logo {
 	max-width: calc(100% - 85px);
 	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .cover-image {

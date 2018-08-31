@@ -1,3 +1,4 @@
+import {ScrollingModule} from '@angular/cdk/scrolling';
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -111,6 +112,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatTooltipModule,
 		ReactiveFormsModule,
 		RouterModule,
+		ScrollingModule,
 		SmdFabSpeedDialModule,
 		TextMaskModule
 	],
@@ -153,6 +155,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MatTooltipModule,
 		ReactiveFormsModule,
 		RouterModule,
+		ScrollingModule,
 		SmdFabSpeedDialModule,
 		TextMaskModule
 	],

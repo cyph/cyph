@@ -18,67 +18,69 @@
 	fxFlex
 	*ngIf='!!username'
 >
-	<mat-card-header
-		fxLayout='row'
-		fxLayoutAlign='stretch center'
-		[matBadge]='(((user | async)?.unreadMessageCount | async) || 0).toString()'
-		[matBadgeHidden]='!(
-			showUnreadMessageCount &&
-			(((user | async)?.unreadMessageCount | async) || 0) > 0
-		)'
-		matBadgePosition='above before'
-		*ngIf='(user | async)?.ready | async; else loading'
-	>
-		<img
-			mat-card-avatar
-			cyphTranslate
-			class='avatar'
-			[ngClass]='userPresence[((user | async)?.status | async) || 0]'
-			[src]='(user | async)?.avatar | async'
-			alt='User Avatar'
-			aria-label='clickable ? stringsService.openProfile : ""'
-			[routerLink]='!clickable ?
-				undefined :
-				accountService.routeRoot + "profile/" + (username || "")
-			'
-			(click)='$event.stopPropagation()'
-		/>
+	<ng-container *ngIf='(user | async)?.ready | async; else loading'>
+		<mat-card-header
+			fxLayout='row'
+			fxLayoutAlign='stretch center'
+			[matBadge]='(((user | async)?.unreadMessageCount | async) || 0).toString()'
+			[matBadgeHidden]='!(
+				showUnreadMessageCount &&
+				(((user | async)?.unreadMessageCount | async) || 0) > 0
+			)'
+			matBadgePosition='above before'
+			*ngIf='(user | async)?.contactState | async as contactState'
+		>
+			<img
+				mat-card-avatar
+				cyphTranslate
+				class='avatar'
+				[ngClass]='userPresence[((user | async)?.status | async) || 0]'
+				[src]='(user | async)?.avatar | async'
+				alt='User Avatar'
+				aria-label='clickable ? stringsService.openProfile : ""'
+				[routerLink]='!clickable ?
+					undefined :
+					accountService.routeRoot + "profile/" + (username || "")
+				'
+				(click)='$event.stopPropagation()'
+			/>
 
-		<div fxLayout='column' fxLayoutAlign='center start'>
-			<mat-card-title>
-				{{
-					((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor ?
-						stringsService.dr :
-						''
-				}}
-				{{(user | async)?.name | async}}
-			</mat-card-title>
-			<mat-card-subtitle fxHide.lt-md>
-				<ng-container *ngIf='
-					((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
-					else standardView
-				'>
-					<ng-container *ngIf='getUserOrg(username) | async as org'>
-						<mat-icon>business</mat-icon>
-						&ngsp;
-						<span>{{(org?.name | async)}}</span>
+			<div fxLayout='column' fxLayoutAlign='center start'>
+				<mat-card-title
+					[class.incoming]='contactState === accountContactStates.IncomingRequest'
+				>
+					{{
+						((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor ?
+							stringsService.dr :
+							''
+					}}
+					{{(user | async)?.name | async}}
+				</mat-card-title>
+				<mat-card-subtitle fxHide.lt-md>
+					<ng-container *ngIf='
+						((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
+						else standardView
+					'>
+						<ng-container *ngIf='getUserOrg(username) | async as org'>
+							<mat-icon>business</mat-icon>
+							&ngsp;
+							<span>{{(org?.name | async)}}</span>
+						</ng-container>
 					</ng-container>
-				</ng-container>
 
-				<ng-template #standardView>
-					@{{((user | async)?.realUsername | async)}}
-				</ng-template>
-			</mat-card-subtitle>
-		</div>
+					<ng-template #standardView>
+						@{{((user | async)?.realUsername | async)}}
+					</ng-template>
+				</mat-card-subtitle>
+			</div>
 
-		<cyph-account-user-rating
-			[user]='user | async'
-			*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
-			fxHide.lt-md
-		></cyph-account-user-rating>
+			<cyph-account-user-rating
+				[user]='user | async'
+				*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
+				fxHide.lt-md
+			></cyph-account-user-rating>
 
-		<div fxFlex fxLayoutAlign='end center' *ngIf='clickable'>
-			<ng-container *ngIf='(user | async)?.contactState | async as contactState'>
+			<div fxFlex fxLayoutAlign='end center' *ngIf='clickable'>
 				<ng-container *ngIf='contactState === accountContactStates.Confirmed'>
 					<button
 						mat-icon-button
@@ -130,9 +132,9 @@
 						person_add
 					</mat-icon>
 				</ng-container>
-			</ng-container>
-		</div>
-	</mat-card-header>
+			</div>
+		</mat-card-header>
+	</ng-container>
 
 	<ng-template #loading>
 		<mat-card-header class='pending' fxLayout='row'>
