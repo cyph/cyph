@@ -71,7 +71,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 
 			const ok				= matDialogRef.afterClosed().toPromise<boolean>();
 
-			const promptResponse	= matDialogRef.beforeClose().toPromise().then(() =>
+			const promptResponse	= matDialogRef.beforeClosed().toPromise().then(() =>
 				matDialogRef.componentInstance.prompt
 			);
 
