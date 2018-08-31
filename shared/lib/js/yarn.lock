@@ -9269,7 +9269,7 @@ levn@~0.3.0:
 
 "libsodium-sumo@https://github.com/jedisct1/libsodium.js", "libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js", "libsodium-wrappers@https://github.com/jedisct1/libsodium.js", libsodium@0.7.3, "libsodium@https://github.com/jedisct1/libsodium.js":
   version "0.7.3"
-  resolved "https://github.com/jedisct1/libsodium.js#5cf2b1c93cd3de803156c66305a482e20bcc5a7b"
+  resolved "https://github.com/jedisct1/libsodium.js#96c1c974b13fe9641a91d1ff4832ec838eb84c2a"
   dependencies:
     libsodium "0.7.3"
 
