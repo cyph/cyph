@@ -429,7 +429,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 							o.urls :
 							o.urls instanceof Array ?
 								o.urls.filter((url: string) => url.indexOf('stun:') !== 0) :
-								undefined
+								[]
 						;
 					}
 

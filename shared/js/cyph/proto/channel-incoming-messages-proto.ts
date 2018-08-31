@@ -14,17 +14,19 @@ export class CastleIncomingMessagesProto {
 	public static async decode (bytes: Uint8Array) : Promise<ICastleIncomingMessages> {
 		const incomingMessages	= await deserialize(CastleIncomingMessages, bytes);
 
-		if (!incomingMessages) {
+		if (!incomingMessages || !incomingMessages.queue) {
 			return this.create();
 		}
 
+		const {queue}	= incomingMessages;
+
 		return {
 			max: incomingMessages.max,
-			queue: Object.keys(incomingMessages.queue).reduce<{
+			queue: Object.keys(queue).reduce<{
 				[id: number]: Uint8Array[]|undefined;
 			}>(
 				(o, id: any) => {
-					const {cyphertexts}	= incomingMessages.queue[id];
+					const {cyphertexts}	= queue[id];
 					o[id]	= cyphertexts && cyphertexts.length > 0 ? cyphertexts : undefined;
 					return o;
 				},
