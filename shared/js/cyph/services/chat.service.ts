@@ -1247,7 +1247,11 @@ export class ChatService extends BaseProvider {
 								messageLiveValue.quill &&
 								messageLiveValue.quill.length > 0
 							) ?
-								{ops: msgpack.decode(messageLiveValue.quill)} :
+								{ops:
+									messageLiveValue.quill instanceof Uint8Array ?
+										msgpack.decode(messageLiveValue.quill) :
+										[]
+								} :
 								undefined
 						;
 

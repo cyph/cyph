@@ -112,7 +112,13 @@ export class FileService extends BaseProvider {
 		return new Promise<Uint8Array>((resolve, reject) => {
 			const reader	= new FileReader();
 			reader.onerror	= reject;
-			reader.onload	= () => { resolve(compressImage(reader.result)); };
+			reader.onload	= () => {
+				resolve(
+					typeof reader.result === 'string' ?
+						compressImage(reader.result) :
+						new Uint8Array(0)
+				);
+			};
 
 			reader.readAsDataURL(file);
 		});

@@ -21,7 +21,7 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 
 	crypto	= {
 		/* tslint:disable-next-line:no-null-keyword */
-		getRandomValues: <T extends ArrayBufferView> (array?: T|null) : T => {
+		getRandomValues: <T extends ArrayBufferView|null> (array?: T|null) : T => {
 			if (!array) {
 				throw new TypeError(
 					`Failed to execute 'getRandomValues' on 'Crypto': ${

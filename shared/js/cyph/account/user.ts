@@ -9,6 +9,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {
 	AccountContactState,
 	AccountUserTypes,
+	IAccountContactState,
 	IAccountUserPresence,
 	IAccountUserProfile,
 	IAccountUserProfileExtra,
@@ -173,7 +174,7 @@ export class User {
 		private readonly coverImageInternal: Observable<SafeUrl|string|undefined>,
 
 		/** @see IAccountContactState */
-		public readonly accountContactState: IAsyncValue<AccountContactState>,
+		public readonly accountContactState: IAsyncValue<IAccountContactState>,
 
 		/** @see IAccountUserPresence */
 		public readonly accountUserPresence: IAsyncValue<IAccountUserPresence>,

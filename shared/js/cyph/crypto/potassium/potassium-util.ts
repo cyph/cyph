@@ -82,7 +82,13 @@ export class PotassiumUtil {
 		return new Promise<Uint8Array>((resolve, reject) => {
 			const reader	= new FileReader();
 			reader.onerror	= reject;
-			reader.onload	= () => { resolve(new Uint8Array(reader.result)); };
+			reader.onload	= () => {
+				resolve(
+					reader.result instanceof ArrayBuffer ?
+						new Uint8Array(reader.result) :
+						new Uint8Array(0)
+				);
+			};
 
 			reader.readAsArrayBuffer(b);
 		});
