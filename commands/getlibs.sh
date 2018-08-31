@@ -300,6 +300,9 @@ for f in $(grep -rl lodash html-to-text) ; do
 	mv ${f}.new ${f}
 done
 
+# Temporary workaround for simple btc rxjs version difference
+rm -rf simplebtc/node_modules
+
 # Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
 rm -rf ng-fullcalendar/node_modules &> /dev/null
 
