@@ -199,8 +199,8 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 			if (
 				this.elementRef.nativeElement &&
 				typeof this.elementRef.nativeElement.scrollIntoView === 'function' &&
-				/* Leave email-style UI at the top for now */
-				this.uiStyle !== UiStyles.email
+				/* Leave mail UI at the top for now */
+				this.uiStyle !== UiStyles.mail
 			) {
 				await this.waitUntilInitiated();
 				this.elementRef.nativeElement.scrollIntoView(undefined, {behavior: 'instant'});

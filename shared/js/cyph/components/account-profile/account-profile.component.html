@@ -142,7 +142,7 @@
 	</div>
 </ng-template>
 
-<ng-template #emailLikeButtons let-patientData='patientData'>
+<ng-template #mailButtons let-patientData='patientData'>
 	<div fxLayout='row' fxLayoutGap='16px' *ngIf='
 		(accountDatabaseService.currentUser | async) !== undefined
 	'>
@@ -528,7 +528,7 @@
 					>
 					<div fxLayout='column' fxLayoutGap='16px'>
 						<div fxLayout='row' fxLayoutAlign='center center'>
-							<ng-container *ngTemplateOutlet='emailLikeButtons; context: {
+							<ng-container *ngTemplateOutlet='mailButtons; context: {
 								patientData: true
 							}'></ng-container>
 						</div>
@@ -594,7 +594,7 @@
 
 							<div></div>
 
-							<ng-container *ngTemplateOutlet='emailLikeButtons'></ng-container>
+							<ng-container *ngTemplateOutlet='mailButtons'></ng-container>
 						</div>
 						<ng-container *ngTemplateOutlet='description'></ng-container>
 						<br />
@@ -697,7 +697,7 @@
 								{{user.description | async}}
 							</div>
 
-							<ng-container *ngTemplateOutlet='emailLikeButtons'></ng-container>
+							<ng-container *ngTemplateOutlet='mailButtons'></ng-container>
 						</div>
 					</mat-card-content>
 				</mat-card>

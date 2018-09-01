@@ -202,7 +202,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 			return;
 		}
 
-		if (this.uiStyle === UiStyles.email) {
+		if (this.uiStyle === UiStyles.mail) {
 			this.initialScrollDown.next(false);
 		}
 

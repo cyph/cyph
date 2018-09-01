@@ -1,7 +1,7 @@
 @import '../../../../css/mixins';
 
-.email-ui {
-	.email-divider {
+.mail-ui {
+	.mail-divider {
 		border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 	}
 
@@ -16,7 +16,7 @@
 	}
 }
 
-.message-item:not(.mobile) .email-ui {
+.message-item:not(.mobile) .mail-ui {
 	.avatar-image {
 		margin-top: -13px;
 		margin-left: -13px;
