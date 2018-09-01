@@ -73,7 +73,9 @@
 						class='contact-list'
 					>
 						<ng-container *cdkVirtualFor='
-							let item of filteredContactList; trackBy: trackByUser
+							let item of filteredContactList;
+							templateCacheSize: 0;
+							trackBy: trackByUser;
 						'>
 							<ng-container *ngTemplateOutlet='listItem; context: {
 								item: item
