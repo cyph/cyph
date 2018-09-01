@@ -289,7 +289,7 @@ export class AccountFilesService extends BaseProvider {
 			this.config[AccountFileRecord.RecordTypes.Form]
 		),
 		redoxPatients: this.getFiles(
-			this.filesListFiltered.ehrApiKeys,
+			this.filesListFiltered.redoxPatients,
 			AccountFileRecord.RecordTypes.RedoxPatient,
 			this.config[AccountFileRecord.RecordTypes.RedoxPatient]
 		),
