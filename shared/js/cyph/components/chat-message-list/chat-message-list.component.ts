@@ -15,7 +15,7 @@ import * as $ from 'jquery';
 /* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
 /* import ResizeObserver from 'resize-observer-polyfill'; */
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map, mergeMap, take} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
@@ -25,7 +25,6 @@ import {IChatMessage} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 /* import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service'; */
-import {ChatService} from '../../services/chat.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PService} from '../../services/p2p.service';
@@ -111,9 +110,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 			urlToSafeStyle(this.envService.customBuildImages.logoVertical).catch(() => undefined)
 	;
 
-	/** Used for initial scroll down on load. */
-	public readonly initialScrollDown					= new BehaviorSubject(true);
-
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean		= false;
 
@@ -172,11 +168,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
-		this.initialScrollDown.pipe(filter(b => !b), take(1)).toPromise().then(() => {
-			debugLog(() => ({chatMessageList: 'initial load complete'}));
-			this.chatService.resolvers.messageListLoaded.resolve();
-		});
-
 		/* TODO: HANDLE NATIVE */
 		if (this.envService.isWeb) {
 			this.scrollService.init(
@@ -202,13 +193,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 			return;
 		}
 
-		if (this.uiStyle === UiStyles.email) {
-			this.initialScrollDown.next(false);
-		}
-
 		const chat				= this.chat;
-
-		const lastUnreadMessage	= await chat.lastUnreadMessage;
 
 		const observables		= getOrSetDefault(this.observableCache, chat, () => ({
 			messages: combineLatest(
@@ -223,14 +208,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 				watchDateChange(true)
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
 				debugLog(() => ({chatMessageList: {onlineMessages, pendingMessages}}));
-
-				if (
-					this.initialScrollDown.value &&
-					onlineMessages.length < 1 &&
-					!lastUnreadMessage
-				) {
-					this.initialScrollDown.next(false);
-				}
 
 				for (let i = pendingMessages.length - 1 ; i >= 0 ; --i) {
 					const pendingMessage	= pendingMessages[i];
@@ -359,29 +336,20 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		).pipe(map(([messages]) => (
 			<({dateChange?: string; message?: ChatMessage; pending: boolean})[]>
 			(messages.length < 1 ? [{pending: false}] : messages)
-		).map(({dateChange, message, pending}, i, arr) => {
-			const isEnd	= (i + 1) === arr.length;
-
-			return {
-				accounts: this.envService.isAccounts,
-				dateChange,
-				isEnd,
-				isFriendTyping: chat.isFriendTyping,
-				isStart: i === 0,
-				message,
-				mobile: this.mobile,
-				pending,
-				persistentEndMessage: this.persistentEndMessage,
-				scrollIntoView: this.initialScrollDown.value && (
-					lastUnreadMessage ?
-						((message && message.id) === lastUnreadMessage) :
-						isEnd
-				),
-				showDisconnectMessage: this.showDisconnectMessage,
-				uiStyle: this.uiStyle,
-				unconfirmedMessages: observables.unconfirmedMessages
-			};
-		}))).subscribe(
+		).map(({dateChange, message, pending}, i, arr) => ({
+			accounts: this.envService.isAccounts,
+			dateChange,
+			isEnd: (i + 1) === arr.length,
+			isFriendTyping: chat.isFriendTyping,
+			isStart: i === 0,
+			message,
+			mobile: this.mobile,
+			pending,
+			persistentEndMessage: this.persistentEndMessage,
+			showDisconnectMessage: this.showDisconnectMessage,
+			uiStyle: this.uiStyle,
+			unconfirmedMessages: observables.unconfirmedMessages
+		})))).subscribe(
 			this.vsData
 		));
 	}
@@ -411,9 +379,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		/* @ignore
 		private readonly chatMessageGeometryService: ChatMessageGeometryService,
 		*/
-
-		/** @ignore */
-		private readonly chatService: ChatService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

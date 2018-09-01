@@ -1,4 +1,5 @@
 import {ScrollingModule} from '@angular/cdk/scrolling';
+import {ScrollingModule as ExperimentalScrollingModule} from '@angular/cdk-experimental/scrolling';
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -76,6 +77,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
+		ExperimentalScrollingModule,
 		FlexLayoutModule,
 		FormsModule,
 		FullCalendarModule,
@@ -120,6 +122,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		AngularDraggableModule,
 		BrowserAnimationsModule,
 		BrowserModule,
+		ExperimentalScrollingModule,
 		FlexLayoutModule,
 		FormsModule,
 		FullCalendarModule,
