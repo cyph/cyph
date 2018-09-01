@@ -41,7 +41,6 @@ import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
 import {FullCalendarModule} from 'ng-fullcalendar';
 import {ImageCropperModule} from 'ngx-image-cropper';
-/* import {VirtualScrollModule} from 'od-virtualscroll'; */
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';

@@ -12,7 +12,6 @@ import {
 	ViewChild
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-/* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {IContactListItem, User, UserPresence} from '../../account';
@@ -177,29 +176,6 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence							= UserPresence;
-
-	/* Equality function for virtual scrolling.
-	public readonly vsEqualsFunc: (a: number, b: number) => boolean				= (() => {
-		/*
-		const contactList	= this.contactList;
-
-		return (a: number, b: number) =>
-			contactList.value.length > a &&
-			contactList.value.length > b &&
-			contactList.value[a].username === contactList.value[b].username
-		;
-		*
-
-		return () => false;
-	})();
-	*/
-
-	/* Options for virtual scrolling.
-	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
-		itemHeight: 123,
-		numLimitColumns: 1
-	});
-	*/
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {

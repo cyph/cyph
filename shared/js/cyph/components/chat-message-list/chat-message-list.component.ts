@@ -12,8 +12,6 @@ import {
 import {SafeStyle} from '@angular/platform-browser';
 import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
-/* import {IVirtualScrollOptions} from 'od-virtualscroll'; */
-/* import ResizeObserver from 'resize-observer-polyfill'; */
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
@@ -24,7 +22,6 @@ import {MaybePromise} from '../../maybe-promise-type';
 import {IChatMessage} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
-/* import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service'; */
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PService} from '../../services/p2p.service';
@@ -52,38 +49,6 @@ import {compareDates, relativeDateString, watchDateChange} from '../../util/time
 export class ChatMessageListComponent
 extends BaseProvider
 implements AfterViewInit, OnChanges, OnDestroy {
-	/* @ignore
-	private currentMaxWidth: number			= 0;
-	*/
-
-	/* @ignore
-	private currentViewportWidth: number	= 0;
-	*/
-
-	/* @ignore
-	private readonly maxWidthWatcher: Observable<void>	= new Observable(observer => {
-		if (!this.envService.isWeb) {
-			/* TODO: HANDLE NATIVE
-			observer.next();
-			return;
-		}
-
-		const resizeObserver	= new ResizeObserver(async () => {
-			this.currentMaxWidth		=
-				await this.chatMessageGeometryService.getMaxWidth(this.elementRef.nativeElement)
-			;
-
-			this.currentViewportWidth	= document.body.clientWidth;
-
-			observer.next();
-		});
-
-		resizeObserver.observe(this.elementRef.nativeElement);
-
-		return () => { resizeObserver.disconnect(); };
-	});
-	*/
-
 	/** @ignore */
 	private readonly changes			= new BehaviorSubject<void>(undefined);
 
@@ -137,43 +102,11 @@ implements AfterViewInit, OnChanges, OnDestroy {
 	/** Data formatted for virtual scrolling. */
 	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject<IVsItem[]>([]);
 
-	/* Equality function for virtual scrolling.
-	public readonly vsEqualsFunc: (a: number, b: number) => boolean	= (() => {
-		/*
-		const vsData	= this.vsData;
-
-		return (a: number, b: number) =>
-			vsData.value.length > a &&
-			vsData.value.length > b &&
-			vsData.value[a].message.id === vsData.value[b].message.id
-		;
-		*
-
-		return () => false;
-	})();
-	*/
-
-	/* Options for virtual scrolling.
-	public readonly vsOptions: Observable<IVirtualScrollOptions>	= of({
-		itemHeight: async ({message}: IVsItem) =>
-			message === undefined ? 0 : this.chatMessageGeometryService.getHeight(
-				message,
-				this.currentMaxWidth,
-				this.currentViewportWidth
-			)
-		,
-		numLimitColumns: 1
-	});
-	*/
-
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		/* TODO: HANDLE NATIVE */
 		if (this.envService.isWeb) {
 			this.scrollService.init(
-				/* Pending virtual scrolling:
-				$(this.elementRef.nativeElement).children().children().first(),
-				*/
 				$(this.elementRef.nativeElement).children().first(),
 				this.messageCountInTitle
 			);
@@ -324,12 +257,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 			unconfirmedMessages: chat.unconfirmedMessages
 		}));
 
-		/*
-		combineLatest(
-			observables.messages,
-			this.maxWidthWatcher
-		)
-		*/
 		this.subscriptions.push(combineLatest(
 			observables.messages,
 			this.changes
@@ -375,10 +302,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		/** @ignore */
 		@Inject(AccountUserLookupService) @Optional()
 		private readonly accountUserLookupService: AccountUserLookupService|undefined,
-
-		/* @ignore
-		private readonly chatMessageGeometryService: ChatMessageGeometryService,
-		*/
 
 		/** @ignore */
 		private readonly envService: EnvService,

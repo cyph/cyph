@@ -3,7 +3,6 @@ import {Router} from '@angular/router';
 import * as Konami from 'konami';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {env} from '../../../cyph/env';
-import {ChatMessageGeometryService} from '../../../cyph/services/chat-message-geometry.service';
 import {ChatService} from '../../../cyph/services/chat.service';
 import {CyphertextService} from '../../../cyph/services/cyphertext.service';
 import {EnvService} from '../../../cyph/services/env.service';
@@ -28,7 +27,6 @@ import {LocalSessionService} from '../../local-session.service';
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
-		ChatMessageGeometryService,
 		ChatService,
 		CyphertextService,
 		DemoEnvService,

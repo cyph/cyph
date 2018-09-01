@@ -1,19 +1,15 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
-	ElementRef,
 	EventEmitter,
 	Input,
 	OnChanges,
 	OnDestroy,
 	Output,
-	Renderer2,
 	SimpleChanges
 } from '@angular/core';
-import * as $ from 'jquery';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
@@ -27,7 +23,6 @@ import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {readableByteLength} from '../../util/formatting';
-import {sleep, waitForIterable} from '../../util/wait';
 
 
 /**
@@ -138,31 +133,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 		this.viewReady.next(true);
 	}
 
-	/** Resolves after view init. */
-	public async waitUntilInitiated () : Promise<void> {
-		await this.viewReady.pipe(filter(b => b), take(1)).toPromise();
-
-		const $elem		= $(this.elementRef.nativeElement);
-		const $message	= await waitForIterable(() => $elem.find('.message'));
-
-		await Promise.all($message.children().toArray().map(async element => {
-			const promise	= new Promise<void>(async resolve => {
-				$(element).one('transitionend', () => { resolve(); });
-			});
-
-			this.renderer.addClass(element, 'transitionend');
-			await Promise.race([promise, sleep(3000)]);
-			this.renderer.removeClass(element, 'transitionend');
-		}));
-	}
-
 	constructor (
-		/** @ignore */
-		private readonly elementRef: ElementRef,
-
-		/** @ignore */
-		private readonly renderer: Renderer2,
-
 		/** @ignore */
 		private readonly scrollService: ScrollService,
 

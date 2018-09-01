@@ -9,7 +9,6 @@ import {initGranim} from '../../../cyph/granim';
 import {AffiliateService} from '../../../cyph/services/affiliate.service';
 import {ChannelService} from '../../../cyph/services/channel.service';
 import {ChatEnvService} from '../../../cyph/services/chat-env.service';
-import {ChatMessageGeometryService} from '../../../cyph/services/chat-message-geometry.service';
 import {ChatService} from '../../../cyph/services/chat.service';
 import {AnonymousCastleService} from '../../../cyph/services/crypto/anonymous-castle.service';
 import {CastleService} from '../../../cyph/services/crypto/castle.service';
@@ -44,7 +43,6 @@ import {ChatRootStates} from '../../enums';
 	providers: [
 		AffiliateService,
 		ChannelService,
-		ChatMessageGeometryService,
 		ChatService,
 		CyphertextService,
 		FileTransferService,

@@ -4,7 +4,6 @@ import {AccountSessionCapabilitiesService} from '../services/account-session-cap
 import {AccountSessionInitService} from '../services/account-session-init.service';
 import {AccountSessionService} from '../services/account-session.service';
 import {ChannelService} from '../services/channel.service';
-import {ChatMessageGeometryService} from '../services/chat-message-geometry.service';
 import {ChatService} from '../services/chat.service';
 import {AccountCastleService} from '../services/crypto/account-castle.service';
 import {CastleService} from '../services/crypto/castle.service';
@@ -25,7 +24,6 @@ export const accountChatProviders	= [
 	AccountSessionCapabilitiesService,
 	AccountSessionInitService,
 	ChannelService,
-	ChatMessageGeometryService,
 	CyphertextService,
 	FileTransferService,
 	P2PWebRTCService,

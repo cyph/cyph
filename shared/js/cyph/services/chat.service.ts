@@ -68,11 +68,6 @@ export class ChatService extends BaseProvider {
 
 
 	/** @ignore */
-	private readonly _CHAT_GEOMETRY_SERVICE				= resolvable<{
-		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
-	}>();
-
-	/** @ignore */
 	private lastConfirmedMessageID?: string;
 
 	/** @ignore */
@@ -91,21 +86,6 @@ export class ChatService extends BaseProvider {
 	private readonly messageValuesURL: string			= 'messageValues' + (
 		this.sessionInitService.ephemeral ? 'Ephemeral' : ''
 	);
-
-	/** @ignore */
-	private readonly resolveChatMessageGeometryService: (chatMessageGeometryService: {
-		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
-	/* tslint:disable-next-line:semicolon */
-	}) => void	=
-		this._CHAT_GEOMETRY_SERVICE.resolve
-	;
-
-	/** @see ChatMessageGeometryService */
-	protected readonly chatMessageGeometryService: Promise<{
-		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
-	}>	=
-		this._CHAT_GEOMETRY_SERVICE.promise
-	;
 
 	/** IDs of fetched messages. */
 	protected readonly fetchedMessageIDs										=
@@ -823,13 +803,6 @@ export class ChatService extends BaseProvider {
 		});
 	}
 
-	/** Initializes service. */
-	public init (chatMessageGeometryService: {
-		getDimensions: (message: ChatMessage) => Promise<ChatMessage>;
-	}) : void {
-		this.resolveChatMessageGeometryService(chatMessageGeometryService);
-	}
-
 	/** Sets incrementing chat.initProgress to 100. */
 	public initProgressFinish () : void {
 		this.chat.initProgress.next(100);
@@ -1020,20 +993,7 @@ export class ChatService extends BaseProvider {
 			)
 		;
 
-		const dimensionsPromise	= (async () =>
-			(
-				await (await this.chatMessageGeometryService).getDimensions(new ChatMessage(
-					{
-						authorID: '',
-						authorType: ChatMessage.AuthorTypes.Local,
-						id: '',
-						timestamp: 0,
-						value
-					},
-					this.sessionService.localUsername
-				))
-			).dimensions || []
-		)();
+		const dimensionsPromise	= Promise.resolve([]);
 
 		const predecessorsPromise	= (async () : Promise<IChatMessagePredecessor[]|undefined> => {
 			let lastLocal: IChatMessagePredecessor|undefined;

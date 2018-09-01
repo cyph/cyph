@@ -11,7 +11,6 @@ import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
-import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
@@ -242,7 +241,6 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 			this.searchUsername.next(username);
 		}));
 
-		this.accountChatService.init(this.chatMessageGeometryService);
 		this.scrollService.init();
 		this.accountService.transitionEnd();
 	}
@@ -259,9 +257,6 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
-
-		/** @ignore */
-		private readonly chatMessageGeometryService: ChatMessageGeometryService,
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,

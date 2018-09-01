@@ -4,7 +4,6 @@ import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
-import {ChatMessageGeometryService} from '../../services/chat-message-geometry.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
@@ -31,7 +30,6 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		accountChatService: AccountChatService,
 		accountContactsService: AccountContactsService,
 		accountFilesService: AccountFilesService,
-		chatMessageGeometryService: ChatMessageGeometryService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
 		accountService: AccountService,
@@ -44,7 +42,6 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			accountChatService,
 			accountContactsService,
 			accountFilesService,
-			chatMessageGeometryService,
 			scrollService,
 			sessionService,
 			accountService,
