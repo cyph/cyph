@@ -9,6 +9,7 @@ message AccountContactState {
 		Confirmed = 1;
 		IncomingRequest = 2;
 		OutgoingRequest = 3;
+		Stranger = 4;
 	}
 
 	/** @see States */

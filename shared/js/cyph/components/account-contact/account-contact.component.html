@@ -28,7 +28,12 @@
 				(((user | async)?.unreadMessageCount | async) || 0) > 0
 			)'
 			matBadgePosition='above before'
-			*ngIf='(user | async)?.contactState | async as contactState'
+			*ngIf='
+				(
+					((user | async)?.contactState | async) ||
+					accountContactStates.Stranger
+				) as contactState
+			'
 		>
 			<img
 				mat-card-avatar
