@@ -31,20 +31,21 @@
 					[fxShow]='(sent | async) === false'
 				>
 					<cyph-account-contacts-search
+						#accountContactsSearch
 						[class.visibility-hidden]='!!searchUsername.value && (
 							(messageType | async) === chatMessageValueTypes.CalendarInvite ||
 							(messageType | async) === chatMessageValueTypes.Form
 						)'
+						[chipInput]='true'
 						[placeholder]='stringsService.to'
 						[searchUsername]='searchUsername'
-						(userFilterChange)='subscriptions.push($event.subscribe(recipient))'
+						(userFilterChange)='subscriptions.push($event.subscribe(recipients))'
 						*ngIf='(appointmentFormData | async) === undefined'
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
 						[customSendFunction]='send'
 						[calendarInviteFollowUp]='appointmentFollowUp | async'
 						[messageType]='messageType | async'
-						[recipient]='recipientSingle'
 						[showHeader]='true'
 						[showUnreadCount]='false'
 					></cyph-account-chat-message-box>
@@ -61,16 +62,22 @@
 							(messageType | async) !== chatMessageValueTypes.CalendarInvite;
 							else appointmentRequested
 						'>
-							<span cyphTranslate>Message sent to</span>
-							&ngsp;
-							<a [routerLink]='
-								accountService.routeRoot +
-								"messages/" +
-								((recipientSingle | async)?.contactID | async)
-							'>
-								{{(recipientSingle | async)?.name | async}}
-								(@{{(recipientSingle | async)?.realUsername | async}})
-							</a>
+							<ng-container *ngIf='sentMessage | async as sentMessageData'>
+								<span cyphTranslate>Message sent to</span>
+								&ngsp;
+								<a [routerLink]='
+									accountService.routeRoot +
+									"messages/" +
+									sentMessageData.id
+								'>
+									<span *ngIf='sentMessageData.name'>
+										{{sentMessageData.name}}
+									</span>
+									<span cyphTranslate *ngIf='!sentMessageData.name'>
+										group conversation
+									</span>
+								</a>
+							</ng-container>
 						</div>
 					</ng-template>
 					<ng-template #appointmentRequested>

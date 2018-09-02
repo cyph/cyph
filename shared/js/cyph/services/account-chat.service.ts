@@ -10,6 +10,7 @@ import {
 	ChatLastConfirmedMessage,
 	ChatMessage,
 	ChatMessageValue,
+	IAccountMessagingGroup,
 	IChatMessage,
 	NeverProto,
 	NotificationTypes,
@@ -137,18 +138,30 @@ export class AccountChatService extends ChatService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		username: string|string[],
+		chat: {group: IAccountMessagingGroup}|{username: string},
 		keepCurrentMessage: boolean = false,
 		callType?: 'audio'|'video',
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
-		username				= this.accountSessionService.normalizeUsername(username);
+		if ('username' in chat) {
+			chat.username	= this.accountSessionService.normalizeUsername(chat.username);
+		}
 
-		const notificationData	= {
-			castleSessionID: await this.accountContactsService.getCastleSessionID(username),
-			usernames: username instanceof Array ? username : [username]
-		};
+		const notificationData	= 'username' in chat ?
+			{
+				castleSessionID: await this.accountContactsService.getCastleSessionID(
+					chat.username
+				),
+				usernames: [chat.username]
+			} :
+			{
+				castleSessionID: chat.group.castleSessionID,
+				usernames: chat.group.usernames ?
+					this.accountSessionService.normalizeUsername(chat.group.usernames) :
+					[]
+			}
+		;
 
 		this.notificationData.resolve(notificationData);
 
@@ -164,7 +177,7 @@ export class AccountChatService extends ChatService {
 			} :
 			getOrSetDefault(
 				this.chats,
-				username instanceof Array ? username.join(' ') : username,
+				'username' in chat ? chat.username : `group: ${chat.group.castleSessionID}`,
 				() => ({
 					currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
 					futureMessages: this.accountDatabaseService.getAsyncMap(
@@ -219,7 +232,7 @@ export class AccountChatService extends ChatService {
 			)
 		);
 
-		await this.accountSessionService.setUser(username, sessionSubID, ephemeralSubSession);
+		await this.accountSessionService.setUser(chat, sessionSubID, ephemeralSubSession);
 		this.resolvers.chatConnected.resolve();
 	}
 

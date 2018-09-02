@@ -25,6 +25,7 @@ import {
 	AccountFileRecord,
 	AccountFileReference,
 	AccountFileReferenceContainer,
+	AccountMessagingGroup,
 	Appointment,
 	BinaryProto,
 	BlobProto,
@@ -34,6 +35,7 @@ import {
 	IAccountFileRecord,
 	IAccountFileReference,
 	IAccountFileReferenceContainer,
+	IAccountMessagingGroup,
 	IAppointment,
 	IEhrApiKey,
 	IForm,
@@ -194,6 +196,16 @@ export class AccountFilesService extends BaseProvider {
 			route: 'forms',
 			securityModel: SecurityModels.privateSigned
 		},
+		[AccountFileRecord.RecordTypes.MessagingGroup]: {
+			blockAnonymous: true,
+			description: 'Messaging Group',
+			isOfType: (file: any) => typeof file.castleSessionID === 'string',
+			mediaType: 'cyph/messaging-group',
+			proto: AccountMessagingGroup,
+			recordType: AccountFileRecord.RecordTypes.MessagingGroup,
+			route: '',
+			securityModel: undefined
+		},
 		[AccountFileRecord.RecordTypes.Note]: {
 			blockAnonymous: false,
 			description: 'Note',
@@ -258,6 +270,10 @@ export class AccountFilesService extends BaseProvider {
 		ehrApiKeys: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.EhrApiKey),
 		files: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Form),
+		messagingGroups: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.MessagingGroup
+		),
 		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note),
 		redoxPatients: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.RedoxPatient),
 		wallets: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Wallet)
@@ -287,6 +303,11 @@ export class AccountFilesService extends BaseProvider {
 			this.filesListFiltered.forms,
 			AccountFileRecord.RecordTypes.Form,
 			this.config[AccountFileRecord.RecordTypes.Form]
+		),
+		messagingGroups: this.getFiles(
+			this.filesListFiltered.messagingGroups,
+			AccountFileRecord.RecordTypes.MessagingGroup,
+			this.config[AccountFileRecord.RecordTypes.MessagingGroup]
 		),
 		redoxPatients: this.getFiles(
 			this.filesListFiltered.redoxPatients,
@@ -322,6 +343,7 @@ export class AccountFilesService extends BaseProvider {
 		AccountFileRecord.RecordTypes.EhrApiKey,
 		AccountFileRecord.RecordTypes.File,
 		AccountFileRecord.RecordTypes.Form,
+		AccountFileRecord.RecordTypes.MessagingGroup,
 		AccountFileRecord.RecordTypes.Note,
 		AccountFileRecord.RecordTypes.RedoxPatient,
 		AccountFileRecord.RecordTypes.Wallet
@@ -432,6 +454,10 @@ export class AccountFilesService extends BaseProvider {
 		ehrApiKeys: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.EhrApiKey),
 		files: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.File),
 		forms: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Form),
+		messagingGroups: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.MessagingGroup
+		),
 		notes: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Note),
 		redoxPatients: this.filterFiles(
 			this.incomingFiles,
@@ -464,6 +490,11 @@ export class AccountFilesService extends BaseProvider {
 			this.incomingFilesFiltered.forms,
 			AccountFileRecord.RecordTypes.Form,
 			this.config[AccountFileRecord.RecordTypes.Form]
+		),
+		messagingGroups: this.getFiles(
+			this.incomingFilesFiltered.messagingGroups,
+			AccountFileRecord.RecordTypes.MessagingGroup,
+			this.config[AccountFileRecord.RecordTypes.MessagingGroup]
 		),
 		redoxPatients: this.getFiles(
 			this.incomingFilesFiltered.redoxPatients,
@@ -769,6 +800,13 @@ export class AccountFilesService extends BaseProvider {
 	};
 	public downloadFile (
 		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		recordType: AccountFileRecord.RecordTypes.MessagingGroup
+	) : {
+		progress: Observable<number>;
+		result: Promise<IAccountMessagingGroup>;
+	};
+	public downloadFile (
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.RedoxPatient
 	) : {
 		progress: Observable<number>;
@@ -1006,6 +1044,27 @@ export class AccountFilesService extends BaseProvider {
 	/** Indicates whether this user has a file with the specified id. */
 	public async hasFile (id: string) : Promise<boolean> {
 		return this.accountDatabaseService.hasItem(`fileReferences/${id}`);
+	}
+
+	/** Initiates group messaging session. */
+	public async initMessagingGroup (
+		usernames: string[],
+		mailUIDefault?: boolean,
+		title?: string,
+		description?: string
+	) : Promise<{
+		group: IAccountMessagingGroup;
+		id: string;
+	}> {
+		const group	= {
+			castleSessionID: uuid(true),
+			description,
+			mailUIDefault,
+			title,
+			usernames
+		};
+
+		return {group, id: await this.upload('', group, usernames).result};
 	}
 
 	/** Opens a file. */
@@ -1293,9 +1352,14 @@ export class AccountFilesService extends BaseProvider {
 
 	/**
 	 * Uploads new file.
-	 * @param shareWithUser Username of another user to optionally share this file with.
+	 * @param shareWithUser Username(s) of another user or users to share this file with.
 	 */
-	public upload (name: string, file: AccountFile, shareWithUser?: string, metadata?: string) : {
+	public upload (
+		name: string,
+		file: AccountFile,
+		shareWithUser?: string|string[],
+		metadata?: string
+	) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
@@ -1305,7 +1369,7 @@ export class AccountFilesService extends BaseProvider {
 		if (this.accountDatabaseService.currentUser.value) {
 			username	= this.accountDatabaseService.currentUser.value.user.username;
 		}
-		else if (shareWithUser) {
+		else if (typeof shareWithUser === 'string') {
 			anonymous	= true;
 			username	= shareWithUser;
 		}
@@ -1421,8 +1485,11 @@ export class AccountFilesService extends BaseProvider {
 						}
 					);
 
-					if (shareWithUser) {
+					if (typeof shareWithUser === 'string') {
 						await this.shareFile(id, shareWithUser);
+					}
+					else if (shareWithUser instanceof Array) {
+						await Promise.all(shareWithUser.map(async u => this.shareFile(id, u)));
 					}
 				}
 
