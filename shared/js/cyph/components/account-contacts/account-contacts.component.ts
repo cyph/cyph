@@ -153,7 +153,7 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	public readonly filteredContactList: Observable<(IContactListItem|User)[]>	=
 		this.routeReactiveContactList.pipe(mergeMap(o =>
 			combineLatest(
-				o.filteredContactList.map(o => o.unreadMessageCount)
+				o.filteredContactList.map(({unreadMessageCount}) => unreadMessageCount)
 			).pipe(map(counts =>
 				this.contactList !== this.accountContactsService.contactList ? [] : [
 					...(o.filteredContactList.filter((_: any, i: number) => counts[i] > 0)),
