@@ -42,6 +42,9 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 	/** @see ChatMessageBoxComponent.customSendFunction */
 	@Input() public customSendFunction?: () => Promise<void>;
 
+	/** If true, will disable send button. */
+	@Input() public disableSend: boolean		= false;
+
 	/** @see ChatMessageBoxComponent.fileAccept */
 	@Input() public fileAccept?: string;
 

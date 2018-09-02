@@ -1,15 +1,14 @@
 <form #messageForm='ngForm' fxFlexFill fxLayout='column' fxLayoutGap='8px' (submit)='submit()'>
 	<ng-container *ngIf='showHeader'>
-		<cyph-account-contact
-			[clickable]='false'
-			[contact]='recipient === undefined ? undefined : recipient | async'
-			class='cyph-inverted-theme'
-			[class.visibility-hidden]='
-				(recipient === undefined ? undefined : recipient | async) === undefined
-			'
-		></cyph-account-contact>
+		<ng-container *ngIf='(recipient === undefined ? undefined : recipient | async) as contact'>
+			<cyph-account-contact
+				[clickable]='false'
+				[contact]='contact'
+				class='cyph-inverted-theme'
+			></cyph-account-contact>
 
-		<hr />
+			<hr />
+		</ng-container>
 	</ng-container>
 
 	<cyph-chat-message-box-inherit-ng-form
@@ -33,6 +32,7 @@
 			fxFlex
 			fxFlex.gt-sm='initial'
 			[disabled]='
+				disableSend ||
 				messageForm.invalid ||
 				(recipient !== undefined && (recipient | async) === undefined)
 			'

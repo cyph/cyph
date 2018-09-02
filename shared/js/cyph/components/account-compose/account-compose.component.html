@@ -45,6 +45,7 @@
 					<cyph-account-chat-message-box
 						[customSendFunction]='send'
 						[calendarInviteFollowUp]='appointmentFollowUp | async'
+						[disableSend]='((recipients | async)?.size || 0) < 1'
 						[messageType]='messageType | async'
 						[showHeader]='true'
 						[showUnreadCount]='false'
