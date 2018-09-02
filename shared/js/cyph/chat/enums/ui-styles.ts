@@ -3,5 +3,5 @@
  */
 export enum UiStyles {
 	default,
-	email
+	mail
 }

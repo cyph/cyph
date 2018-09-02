@@ -5,15 +5,21 @@ import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
-import {AccountContactState, NotificationTypes, StringProto} from '../proto';
+import {
+	AccountContactState,
+	AccountFileRecord,
+	IAccountMessagingGroup,
+	NotificationTypes,
+	StringProto
+} from '../proto';
 import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
+import {AccountFilesService} from './account-files.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
-import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 
 
@@ -69,35 +75,45 @@ export class AccountContactsService extends BaseProvider {
 			)
 	);
 
-	/**
-	 * Gets Castle session ID based on username.
-	 * Note: string array parameter is temporary/deprecated.
-	 */
-	public readonly getCastleSessionID	= memoize(
-		async (username: string|string[]) : Promise<string> => {
-			const currentUserUsername	=
-				(await this.accountDatabaseService.getCurrentUser()).user.username
-			;
+	/** Gets Castle session ID based on username. */
+	public readonly getCastleSessionID	= memoize(async (username: string) : Promise<string> => {
+		const currentUserUsername	=
+			(await this.accountDatabaseService.getCurrentUser()).user.username
+		;
 
-			if (username instanceof Array) {
-				return this.potassiumService.toHex(await this.potassiumService.hash.hash(
-					normalizeArray([currentUserUsername, ...username]).join(' ')
-				));
-			}
+		const [userA, userB]		= normalizeArray([currentUserUsername, username]);
 
-			const [userA, userB]		= normalizeArray([currentUserUsername, username]);
-
-			if (!(userA && userB)) {
-				return '';
-			}
-
-			return this.databaseService.getOrSetDefault(
-				`castleSessionIDs/${userA}/${userB}`,
-				StringProto,
-				() => uuid(true)
-			);
+		if (!(userA && userB)) {
+			return '';
 		}
-	);
+
+		return this.databaseService.getOrSetDefault(
+			`castleSessionIDs/${userA}/${userB}`,
+			StringProto,
+			() => uuid(true)
+		);
+	});
+
+	/** Gets contact username or group metadata based on ID. */
+	public readonly getChatData			= memoize(async (id?: string) : Promise<
+		{group: IAccountMessagingGroup}|{username: string}
+	> => {
+		if (!id) {
+			throw new Error('Invalid contact ID.');
+		}
+
+		try {
+			return {username: await this.getContactUsername(id)};
+		}
+		catch {
+			return {
+				group: await this.accountFilesService.downloadFile(
+					id,
+					AccountFileRecord.RecordTypes.MessagingGroup
+				).result
+			};
+		}
+	});
 
 	/** Gets contact ID based on username. */
 	public readonly getContactID		= memoize(async (username?: string) : Promise<string> =>
@@ -216,7 +232,7 @@ export class AccountContactsService extends BaseProvider {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService,
+		private readonly accountFilesService: AccountFilesService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService

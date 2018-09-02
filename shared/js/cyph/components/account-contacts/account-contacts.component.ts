@@ -63,13 +63,15 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 			this.activatedRoute.snapshot
 		;
 
-		const username: string	= snapshot.params.username || (
-			await this.accountContactsService.getContactUsername(
-				snapshot.params.contactID
-			).catch(() =>
-				undefined
-			)
-		);
+		const username			=
+			typeof snapshot.params.username === 'string' ?
+				snapshot.params.username :
+				(await this.accountContactsService.getContactUsername(
+					snapshot.params.contactID
+				).catch(() =>
+					undefined
+				))
+		;
 
 		let userTypeFilter: AccountUserTypes|undefined	= data.userTypeFilter;
 		let userTypeFilterOut: boolean					= data.userTypeFilterOut === true;

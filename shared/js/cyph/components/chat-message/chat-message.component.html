@@ -20,7 +20,7 @@
 	*ngIf='message?.valueWatcher | async as value'
 >
 	<div>
-		<div fxLayout='row' *ngIf='uiStyle === uiStyles.default; else emailUI'>
+		<div fxLayout='row' *ngIf='uiStyle === uiStyles.default; else mailUI'>
 			<div class='message' fxFlex>
 				<div fxLayout='row' fxLayoutAlign='start center'>
 					<strong
@@ -60,11 +60,11 @@
 			</div>
 		</div>
 
-		<ng-template #emailUI>
+		<ng-template #mailUI>
 			<div
 				fxLayout='row'
-				class='cyph-theme-light email-ui'
-				[class.email-local]='message?.authorType === authorTypes.Local'
+				class='cyph-theme-light mail-ui'
+				[class.mail-local]='message?.authorType === authorTypes.Local'
 			>
 				<mat-card fxFlex>
 					<mat-card-header>
@@ -97,7 +97,7 @@
 							</div>
 						</mat-card-title>
 					</mat-card-header>
-					<div class='email-divider' mat-card-image></div>
+					<div class='mail-divider' mat-card-image></div>
 					<mat-card-content>
 						<ng-container *ngTemplateOutlet='messageContent; context: {
 							value: value

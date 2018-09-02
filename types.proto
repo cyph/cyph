@@ -25,6 +25,7 @@ message AccountFileRecord {
 		EhrApiKey = 5;
 		File = 1;
 		Form = 3;
+		MessagingGroup = 8;
 		Note = 4;
 		RedoxPatient = 6;
 		Wallet = 7;
@@ -104,6 +105,24 @@ message AccountLoginData {
 
 	/** Symmetric key for encrypting user data. */
 	required bytes symmetricKey = 2;
+}
+
+/** Group chat metadata. */
+message AccountMessagingGroup {
+	/** Castle session ID. */
+	required string castleSessionID = 1;
+
+	/** Description. */
+	string description = 2;
+
+	/** Indicates whether the mail UI should be used by default. */
+	bool mailUIDefault = 3;
+
+	/** Title. */
+	string title = 4;
+
+	/** Participants. */
+	repeated string usernames = 5;
 }
 
 /** User presence. */

@@ -2,7 +2,13 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {User} from '../account/user';
-import {BinaryProto, ISessionMessage, SessionMessageList, StringProto} from '../proto';
+import {
+	BinaryProto,
+	IAccountMessagingGroup,
+	ISessionMessage,
+	SessionMessageList,
+	StringProto
+} from '../proto';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {filterUndefined} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
@@ -132,6 +138,9 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** Normalizes username or username list. */
+	public normalizeUsername (username: string) : string;
+	public normalizeUsername (username: string[]) : string[];
+	public normalizeUsername (username: string|string[]) : string|string[];
 	public normalizeUsername (username: string|string[]) : string|string[] {
 		if (username instanceof Array) {
 			username	= normalizeArray(username);
@@ -151,7 +160,7 @@ export class AccountSessionService extends SessionService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		username: string|string[],
+		chat: {group: IAccountMessagingGroup}|{username: string},
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false,
 		setHeader: boolean = true
@@ -161,34 +170,36 @@ export class AccountSessionService extends SessionService {
 		}
 
 		debugLog(() => ({accountSessionInit: {
+			chat,
 			ephemeralSubSession,
 			sessionSubID,
-			setHeader,
-			username
+			setHeader
 		}}));
 
-		username			= this.normalizeUsername(username);
+		if ('username' in chat) {
+			chat.username	= this.normalizeUsername(chat.username);
+		}
+
 		this.initiated		= true;
 		this.sessionSubID	= sessionSubID;
 
 
 		/* Group session init */
 
-		if (username instanceof Array) {
+		if ('group' in chat) {
 			/* Create N pairwise sessions, one for each other group member */
 
 			this.sessionSubID	=
 				`group-${
-					/* TODO: Kill username-based group chat route and share a file with a UUID */
-					await this.accountContactsService.getCastleSessionID(username)
+					chat.group.castleSessionID
 				}${
 					this.sessionSubID ? `-${this.sessionSubID}` : ''
 				}`
 			;
 
-			const group	= await Promise.all(username.map(async groupMember => {
+			const group	= await Promise.all((chat.group.usernames || []).map(async username => {
 				const session	= this.spawn();
-				await session.setUser(groupMember, this.sessionSubID, ephemeralSubSession, false);
+				await session.setUser({username}, this.sessionSubID, ephemeralSubSession, false);
 				return session;
 			}));
 
@@ -261,7 +272,7 @@ export class AccountSessionService extends SessionService {
 
 		(async () => {
 			const castleSessionID	=
-				await this.accountContactsService.getCastleSessionID(username)
+				await this.accountContactsService.getCastleSessionID(chat.username)
 			;
 
 			if (ephemeralSubSession) {
@@ -363,7 +374,7 @@ export class AccountSessionService extends SessionService {
 			}
 		})();
 
-		const user	= await this.accountUserLookupService.getUser(username, false);
+		const user	= await this.accountUserLookupService.getUser(chat.username, false);
 
 		if (user) {
 			this.subscriptions.push(user.realUsername.subscribe(this.remoteUsername));

@@ -109,17 +109,8 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 	);
 
 	/** @see SearchBarComponent.filter */
-	public readonly recipient: BehaviorSubject<Set<User>>				=
+	public readonly recipients: BehaviorSubject<Set<User>>				=
 		new BehaviorSubject<Set<User>>(new Set())
-	;
-
-	/** @see SearchBarComponent.filterSingle */
-	public readonly recipientSingle: BehaviorSubject<User|undefined>	=
-		toBehaviorSubject(
-			() => this.recipient.pipe(map(o => o.values().next().value)),
-			undefined,
-			this.subscriptions
-		)
 	;
 
 	/** @see AccountContactsSearchComponent.searchUsername */
@@ -147,9 +138,10 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 			await this.accountFilesService.updateAppointment(id, appointment);
 		}
 		else {
-			const recipient	= this.recipientSingle.value;
+			const recipientUsers	= Array.from(this.recipients.value);
+			const recipients		= recipientUsers.map(o => o.username);
 
-			if (!recipient || !this.accountDatabaseService.currentUser.value) {
+			if (recipients.length < 1 || !this.accountDatabaseService.currentUser.value) {
 				this.sent.next(false);
 				return;
 			}
@@ -170,16 +162,34 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 					{
 						calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,
 						participants: [
-							recipient.username,
+							...recipients,
 							this.accountDatabaseService.currentUser.value.user.username
 						],
 						rsvpSessionSubID: uuid()
 					},
-					recipient.username
+					recipients
 				).result);
 			}
 			else {
-				await this.accountChatService.setUser(recipient.username, true);
+				const chat	=
+					recipients.length === 1 ?
+						{username: recipients[0]} :
+						(await this.accountFilesService.initMessagingGroup(recipients))
+				;
+
+				if ('username' in chat) {
+					const [id, {name, realUsername}]	= await Promise.all([
+						recipientUsers[0].contactID,
+						recipientUsers[0].accountUserProfile.getValue()
+					]);
+
+					this.sentMessage.next({id, name: `${name} (@${realUsername})`});
+				}
+				else {
+					this.sentMessage.next({id: chat.id});
+				}
+
+				await this.accountChatService.setUser(chat, true);
 				await this.accountChatService.resolvers.currentMessageSynced.promise;
 				await this.accountChatService.send(
 					this.messageType.value,
@@ -210,6 +220,11 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 	/** ID of a file that has been sent, if applicable. */
 	public readonly sentFileID: BehaviorSubject<string|undefined>	=
 		new BehaviorSubject<string|undefined>(undefined)
+	;
+
+	/** Metadata of a message that has been sent, if applicable. */
+	public readonly sentMessage										=
+		new BehaviorSubject<{id: string; name?: string}|undefined>(undefined)
 	;
 
 	/** @inheritDoc */
