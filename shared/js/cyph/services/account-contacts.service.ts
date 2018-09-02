@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -9,6 +9,7 @@ import {
 	AccountContactState,
 	AccountFileRecord,
 	IAccountMessagingGroup,
+	NeverProto,
 	NotificationTypes,
 	StringProto
 } from '../proto';
@@ -35,25 +36,44 @@ export class AccountContactsService extends BaseProvider {
 
 	/** List of contacts for current user, sorted alphabetically by username. */
 	public readonly contactList: Observable<(IContactListItem|User)[]>	= toBehaviorSubject(
-		this.accountDatabaseService.watchListKeys(
-			'contacts',
-			this.subscriptions
-		).pipe(mergeMap(async usernames => {
+		combineLatest(
+			this.accountFilesService.filesListFilteredWithData.messagingGroups(),
+			this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
+			this.accountDatabaseService.watchListKeys('contacts', this.subscriptions)
+		).pipe(mergeMap(async ([groups, incomingGroups, usernames]) => {
 			const accountUserLookupService	= await this.accountUserLookupService.promise;
 
-			return normalizeArray(usernames).map(username => {
-				const user	= accountUserLookupService.getUser(username);
-
-				return {
+			return [
+				...[
+					...incomingGroups.map(o => ({group: o.data, id: o.record.id, incoming: true})),
+					...groups.map(o => ({group: o.data, id: o.record.id, incoming: false}))
+				].map(groupData => ({
+					groupData,
 					unreadMessageCount: toBehaviorSubject<number>(
-						user.then(async o => o ? o.unreadMessageCount : 0),
-						0,
-						this.subscriptions
+						this.accountDatabaseService.getAsyncMap(
+							`unreadMessages/${groupData.group.castleSessionID}`,
+							NeverProto,
+							SecurityModels.unprotected
+						).watchSize(),
+						0
 					),
-					user,
-					username
-				};
-			});
+					user: Promise.resolve(undefined),
+					username: `group: ${groupData.group.castleSessionID}`
+				})),
+				...normalizeArray(usernames).map(username => {
+					const user	= accountUserLookupService.getUser(username);
+
+					return {
+						unreadMessageCount: toBehaviorSubject<number>(
+							user.then(async o => o ? o.unreadMessageCount : 0),
+							0,
+							this.subscriptions
+						),
+						user,
+						username
+					};
+				})
+			];
 		})),
 		[],
 		this.subscriptions

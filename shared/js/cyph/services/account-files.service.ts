@@ -350,12 +350,15 @@ export class AccountFilesService extends BaseProvider {
 	];
 
 	/** Incoming files. */
-	public readonly incomingFiles: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
-		this.accountDatabaseService.currentUser.pipe(mergeMap(o =>
-			!o ? [] : this.databaseService.watchList(
-				`users/${o.user.username}/incomingFiles`,
+	public readonly incomingFiles	=
+		toBehaviorSubject<(IAccountFileRecord&IAccountFileReference)[]>(
+			this.accountDatabaseService.watchList(
+				'incomingFiles',
 				BinaryProto,
+				SecurityModels.unprotected,
 				undefined,
+				undefined,
+				false,
 				this.subscriptions
 			).pipe(mergeMap(async arr =>
 				(await Promise.all(arr.map(async ({value}) => getOrSetDefaultAsync(
@@ -373,7 +376,7 @@ export class AccountFilesService extends BaseProvider {
 								AccountFileReferenceContainer,
 								await this.potassiumService.box.open(
 									value,
-									o.keys.encryptionKeyPair
+									currentUser.keys.encryptionKeyPair
 								)
 							);
 
@@ -437,8 +440,9 @@ export class AccountFilesService extends BaseProvider {
 					}
 				)))).
 					filter(file => file !== this.nonexistentFile)
-			))
-		))
+			)),
+			[]
+		)
 	;
 
 	/**
@@ -611,16 +615,19 @@ export class AccountFilesService extends BaseProvider {
 		data: T;
 		record: IAccountFileRecord;
 	}[]> {
-		return memoize(() => filesList.pipe(
-			mergeMap(records => combineLatest(records.map(record =>
-				this.watchFileData(record, recordType).pipe(map(data => ({
-					data,
-					record
-				})))
-			))),
-			map(files =>
-				<any> files.filter(o => o.data !== undefined)
-			)
+		return memoize(() => toBehaviorSubject<{data: T; record: IAccountFileRecord}[]>(
+			filesList.pipe(
+				mergeMap(records => combineLatest(records.map(record =>
+					this.watchFileData(record, recordType).pipe(map(data => ({
+						data,
+						record
+					})))
+				))),
+				map(files =>
+					<any> files.filter(o => o.data !== undefined)
+				)
+			),
+			[]
 		));
 	}
 
@@ -653,12 +660,24 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Accepts or rejects incoming file. */
 	public async acceptIncomingFile (
-		incomingFile: IAccountFileRecord&IAccountFileReference,
+		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true,
 		metadata?: string
 	) : Promise<void> {
 		if (typeof options === 'boolean') {
 			options	= {reject: !options};
+		}
+
+		const incomingFile				=
+			typeof id === 'object' && 'key' in id ?
+				id :
+			typeof id === 'object' ?
+				this.incomingFiles.value.find(o => o.id === id.id) :
+				this.incomingFiles.value.find(o => o.id === id)
+		;
+
+		if (incomingFile === undefined) {
+			throw new Error('Incoming file not found.');
 		}
 
 		const fileConfig				= this.config[incomingFile.recordType];
@@ -1061,7 +1080,14 @@ export class AccountFilesService extends BaseProvider {
 			description,
 			mailUIDefault,
 			title,
-			usernames
+			usernames: [
+				...usernames,
+				...(
+					this.accountDatabaseService.currentUser.value ?
+						[this.accountDatabaseService.currentUser.value.user.username] :
+						[]
+				)
+			]
 		};
 
 		return {group, id: await this.upload('', group, usernames).result};

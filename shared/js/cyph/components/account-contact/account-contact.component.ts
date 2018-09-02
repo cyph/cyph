@@ -3,10 +3,12 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {IContactListItem, User, UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
-import {AccountContactState, AccountUserTypes} from '../../proto';
+import {AccountContactState, AccountUserTypes, IAccountMessagingGroup} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
+import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
 import {AccountService} from '../../services/account.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
@@ -55,6 +57,31 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	/** @see UserPresence */
 	public readonly userPresence: typeof UserPresence		= UserPresence;
 
+	/** @see IContactListItem.groupData */
+	public get groupData () : {
+		group: IAccountMessagingGroup;
+		id: string;
+		incoming: boolean;
+	}|undefined {
+		return this.contact && 'groupData' in this.contact ? this.contact.groupData : undefined;
+	}
+
+	/** Group username list. */
+	public get groupUsernames () : string|undefined {
+		const groupData	= this.groupData;
+
+		return groupData && groupData.group.usernames ?
+			'@' + groupData.group.usernames.
+				filter(username =>
+					!this.accountDatabaseService.currentUser.value ||
+					this.accountDatabaseService.currentUser.value.user.username !== username
+				).
+				join(', @')
+			:
+			undefined
+		;
+	}
+
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
 		const user	= !this.contact || this.contact instanceof User ?
@@ -75,11 +102,17 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
+
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService,
 
 		/** @see AccountOrganizationsService */
 		public readonly accountOrganizationsService: AccountOrganizationsService,

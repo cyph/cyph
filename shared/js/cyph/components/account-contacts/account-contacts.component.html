@@ -109,6 +109,7 @@
 			[class.cyph-inverted-theme]='invertedTheme'
 			*ngIf='
 				contactList !== accountContactsService.contactList ||
+				item.groupData !== undefined ||
 				((item.user ? (item.user | async)?.contactState : item.contactState) | async)
 			'
 		></cyph-account-contact>
