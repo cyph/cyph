@@ -16,7 +16,7 @@
 			undefined
 	'
 	fxFlex
-	*ngIf='!!username'
+	*ngIf='groupData === undefined && !!username; else groupContact'
 >
 	<ng-container *ngIf='(user | async)?.ready | async; else loading'>
 		<mat-card-header
@@ -158,3 +158,53 @@
 		</mat-card-header>
 	</ng-template>
 </mat-card>
+
+
+<ng-template #groupContact>
+	<mat-card
+		class='contact animated'
+		[class.non-clickable]='!clickable || groupData?.incoming'
+		[class.telehealth]='envService.isTelehealth'
+		[routerLink]='
+			!clickable || groupData?.incoming ?
+				undefined :
+				(accountService.routeRoot + "messages/" + groupData?.id)
+		'
+		fxFlex
+		*ngIf='groupData !== undefined'
+	>
+		<mat-card-header
+			fxLayout='row'
+			fxLayoutAlign='stretch center'
+			[matBadge]='((contact?.unreadMessageCount | async) || 0).toString()'
+			[matBadgeHidden]='!(
+				showUnreadMessageCount &&
+				((contact?.unreadMessageCount | async) || 0) > 0
+			)'
+			matBadgePosition='above before'
+		>
+			<mat-icon mat-card-avatar>group</mat-icon>
+			<mat-card-title><span cyphTranslate>Group</span></mat-card-title>
+			<mat-card-subtitle>{{groupUsernames}}</mat-card-subtitle>
+
+			<div fxFlex fxLayoutAlign='end center' *ngIf='clickable && groupData?.incoming'>
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip='Accept Contact Request'
+					(click)='accountFilesService.acceptIncomingFile(groupData?.id)'
+				>
+					<mat-icon>check</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip='Decline Contact Request'
+					(click)='accountFilesService.acceptIncomingFile(groupData?.id, false)'
+				>
+					<mat-icon>close</mat-icon>
+				</button>
+			</div>
+		</mat-card-header>
+	</mat-card>
+</ng-template>

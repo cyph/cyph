@@ -100,13 +100,23 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 			);
 		}
 
-		if (!username) {
-			return {filteredContactList: contactList};
-		}
-
-		const index	= contactList.findIndex(contact => contact.username === username);
+		const index	=
+			username ?
+				contactList.findIndex(contact => contact.username === username) :
+			snapshot.params.contactID ?
+				contactList.findIndex(contact =>
+					'groupData' in contact &&
+					contact.groupData !== undefined &&
+					contact.groupData.id === snapshot.params.contactID
+				) :
+				-1
+		;
 
 		if (index < 0) {
+			if (!username) {
+				return {filteredContactList: contactList};
+			}
+
 			this.accountService.activeSidebarContact.next(username);
 
 			return {
