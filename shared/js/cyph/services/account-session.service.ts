@@ -197,7 +197,9 @@ export class AccountSessionService extends SessionService {
 				}`
 			;
 
-			const group	= await Promise.all((chat.group.usernames || []).map(async username => {
+			const group	= await Promise.all(this.normalizeUsername(
+				chat.group.usernames || []
+			).map(async username => {
 				const session	= this.spawn();
 				await session.setUser({username}, this.sessionSubID, ephemeralSubSession, false);
 				return session;
