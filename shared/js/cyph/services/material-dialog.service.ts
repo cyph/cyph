@@ -11,6 +11,7 @@ import {DialogMediaComponent} from '../components/dialog-media';
 import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
+import {IForm} from '../proto';
 import {lockFunction} from '../util/lock';
 import {resolvable, sleep} from '../util/wait';
 import {DialogService} from './dialog.service';
@@ -30,6 +31,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		o: {
 			cancel?: string;
 			content: string;
+			form?: IForm;
 			ok?: string;
 			markdown?: boolean;
 			placeholder?: string;
@@ -38,7 +40,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		},
 		closeFunction?: IResolvable<() => void>,
 		prompt: boolean = false
-	) : Promise<{ok: boolean; promptResponse: string|undefined}> {
+	) : Promise<{ok: boolean; promptResponse: string|IForm|undefined}> {
 		return this.lock(async () => {
 			const matDialogRef	= this.matDialog.open(DialogConfirmComponent);
 
@@ -48,6 +50,8 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 				o.cancel :
 				this.stringsService.cancel
 			;
+
+			matDialogRef.componentInstance.form					= o.form;
 
 			matDialogRef.componentInstance.markdown				= !!o.markdown;
 
@@ -72,7 +76,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			const ok				= matDialogRef.afterClosed().toPromise<boolean>();
 
 			const promptResponse	= matDialogRef.beforeClosed().toPromise().then(() =>
-				matDialogRef.componentInstance.prompt
+				matDialogRef.componentInstance.form || matDialogRef.componentInstance.prompt
 			);
 
 			let hasReturned	= false;
@@ -218,14 +222,37 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		o: {
 			cancel?: string;
 			content: string;
-			markdown?: boolean;
+			form: IForm;
 			ok?: string;
 			placeholder?: string;
 			timeout?: number;
-			title?: string;
+			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<string|undefined> {
+	) : Promise<IForm|undefined>;
+	public async prompt (
+		o: {
+			cancel?: string;
+			content: string;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<string|undefined>;
+	public async prompt (
+		o: {
+			cancel?: string;
+			content: string;
+			form?: IForm;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<string|IForm|undefined> {
 		const {ok, promptResponse}	= await this.confirmHelper(o, closeFunction, true);
 		return ok ? promptResponse : undefined;
 	}

@@ -104,11 +104,14 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	/** Hides all elements with empty values when isDisabled is true. */
 	@Input() public hideEmptyElements: boolean					= false;
 
+	/** Hides submit button. */
+	@Input() public hideSubmitButton: boolean					= false;
+
 	/** Indicates whether input is disabled/read-only. */
 	@Input() public isDisabled: boolean							= false;
 
 	/** Indicates whether mobile version should be displayed. */
-	@Input() public mobile: boolean								= this.envService.isMobile.value;
+	@Input() public mobile?: boolean;
 
 	/** @see Form */
 	@Output() public readonly submitForm: EventEmitter<IForm>	= new EventEmitter<IForm>();
@@ -432,8 +435,8 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 		@Inject(AccountDatabaseService) @Optional()
 		private readonly accountDatabaseService: AccountDatabaseService|undefined,
 
-		/** @ignore */
-		private readonly envService: EnvService,
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

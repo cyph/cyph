@@ -4,6 +4,7 @@ import {SafeUrl} from '@angular/platform-browser';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
+import {IForm} from '../proto';
 
 
 /**
@@ -70,13 +71,37 @@ export class DialogService extends BaseProvider {
 		_O: {
 			cancel?: string;
 			content: string;
+			form: IForm;
 			ok?: string;
 			placeholder?: string;
 			timeout?: number;
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
-	) : Promise<string|undefined> {
+	) : Promise<IForm|undefined>;
+	public async prompt (
+		_O: {
+			cancel?: string;
+			content: string;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title: string;
+		},
+		_CLOSE_FUNCTION?: IResolvable<() => void>
+	) : Promise<string|undefined>;
+	public async prompt (
+		_O: {
+			cancel?: string;
+			content: string;
+			form?: IForm;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title: string;
+		},
+		_CLOSE_FUNCTION?: IResolvable<() => void>
+	) : Promise<string|IForm|undefined> {
 		throw new Error('Must provide an implementation of DialogService.prompt.');
 	}
 

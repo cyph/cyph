@@ -8,22 +8,37 @@
 	<ng-template #text>
 		<div>{{content}}</div>
 	</ng-template>
-	<form ngNativeValidate *ngIf='prompt !== undefined' (submit)='matDialogRef.close(true)'>
-		<br />
-		<mat-form-field>
-			<input
-				matInput
-				cyphTranslate
-				[(ngModel)]='prompt'
-				[placeholder]='promptPlaceholder || stringsService.response'
-				name='prompt'
-				required
-				type='text'
-			/>
-		</mat-form-field>
-	</form>
+	<cyph-dynamic-form
+		#dynamicForm
+		[form]='form'
+		[hideSubmitButton]='true'
+		(submitForm)='matDialogRef.close(true)'
+		*ngIf='form !== undefined; else stringPrompt'
+	></cyph-dynamic-form>
+	<ng-template #stringPrompt>
+		<form ngNativeValidate *ngIf='prompt !== undefined' (submit)='matDialogRef.close(true)'>
+			<br />
+			<mat-form-field>
+				<input
+					matInput
+					cyphTranslate
+					[(ngModel)]='prompt'
+					[placeholder]='promptPlaceholder || stringsService.response'
+					name='prompt'
+					required
+					type='text'
+				/>
+			</mat-form-field>
+		</form>
+	</ng-template>
 </div>
 <div mat-dialog-actions fxLayoutAlign='end center'>
 	<button mat-button class='cancel' (click)='matDialogRef.close(false)'>{{cancel}}</button>
-	<button mat-button class='ok' (click)='matDialogRef.close(true)'>{{ok}}</button>
+	<button
+		mat-button
+		class='ok'
+		(click)='dynamicForm ? dynamicForm.onSubmit() : matDialogRef.close(true)'
+	>
+		{{ok}}
+	</button>
 </div>

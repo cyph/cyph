@@ -9,6 +9,7 @@ import {BaseProvider} from './js/cyph/base-provider';
 import {IResolvable} from './js/cyph/iresolvable';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {MaybePromise} from './js/cyph/maybe-promise-type';
+import {IForm} from './js/cyph/proto';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {StringsService} from './js/cyph/services/strings.service';
 import {lockFunction} from './js/cyph/util/lock';
@@ -141,6 +142,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.form Currently unsupported (ignored).
 	 * @param o.markdown Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
@@ -149,14 +151,37 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		o: {
 			cancel?: string;
 			content: string;
-			markdown?: boolean;
+			form: IForm;
 			ok?: string;
 			placeholder?: string;
 			timeout?: number;
-			title?: string;
+			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<string|undefined> {
+	) : Promise<IForm|undefined>;
+	public async prompt (
+		o: {
+			cancel?: string;
+			content: string;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<string|undefined>;
+	public async prompt (
+		o: {
+			cancel?: string;
+			content: string;
+			form?: IForm;
+			ok?: string;
+			placeholder?: string;
+			timeout?: number;
+			title: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<string|IForm|undefined> {
 		if (closeFunction) {
 			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
 		}

@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {BaseProvider} from '../../base-provider';
+import {IForm} from '../../proto';
 import {StringsService} from '../../services/strings.service';
 
 
@@ -19,6 +20,9 @@ export class DialogConfirmComponent extends BaseProvider {
 
 	/** Content. */
 	public content?: string;
+
+	/** Form for prompt. If defined, will render and return response. */
+	public form?: IForm;
 
 	/** Indicates whether content is Markdown. */
 	public markdown: boolean	= false;
