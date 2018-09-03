@@ -44,6 +44,7 @@ import {ImageCropperModule} from 'ngx-image-cropper';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
+import {DynamicFormComponent} from '../components/dynamic-form';
 import {MarkdownComponent} from '../components/markdown';
 import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
@@ -61,12 +62,14 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
+		DynamicFormComponent,
 		MarkdownComponent
 	],
 	entryComponents: [
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
+		DynamicFormComponent,
 		MarkdownComponent
 	],
 	exports: [
@@ -76,6 +79,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
+		DynamicFormComponent,
 		ExperimentalScrollingModule,
 		FlexLayoutModule,
 		FormsModule,

@@ -31,7 +31,7 @@
 		</div>
 	</div>
 	<br />
-	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!isDisabled'>
+	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!hideSubmitButton && !isDisabled'>
 		<button mat-raised-button color='accent' type='submit'>
 			{{submitText}}
 		</button>
@@ -90,7 +90,10 @@
 					[for]='datepicker'
 				></mat-datepicker-toggle>
 			</mat-form-field>
-			<mat-datepicker [touchUi]='mobile' #datepicker></mat-datepicker>
+			<mat-datepicker
+				#datepicker
+				[touchUi]='mobile !== undefined ? mobile : ((envService.isMobile | async) || false)'
+			></mat-datepicker>
 		</ng-container>
 
 		<mat-form-field *ngIf='o.type === types.Email'>
