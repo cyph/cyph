@@ -14,10 +14,10 @@
 		(accountChatService.uiReady | async) !== true
 	'
 	[class.mobile]='envService.isMobile | async'
-	[cyphDropZone]='false && (
+	[cyphDropZone]='
 		chat.state === states.chat &&
 		(accountChatService.uiReady | async) === true
-	)'
+	'
 	[cyphDropZoneClass]='false'
 	(fileDrop)='fileTransferService.send($event)'
 	*ngIf='accountChatService.chatSubject | async as chat'
