@@ -11,12 +11,12 @@
 	class='cyph-foreground'
 	[class.initiating]='
 		chat.state === states.chat &&
-		(accountChatService.uiReady | async) !== true
+		(accountChatService.uiPartiallyReady | async) !== true
 	'
 	[class.mobile]='envService.isMobile | async'
 	[cyphDropZone]='
 		chat.state === states.chat &&
-		(accountChatService.uiReady | async) === true
+		(accountChatService.uiPartiallyReady | async) === true
 	'
 	[cyphDropZoneClass]='false'
 	(fileDrop)='fileTransferService.send($event)'
@@ -28,6 +28,22 @@
 		fxLayout='column'
 		*ngIf='accountSessionService.opened | async'
 	>
+		<div
+			fxLayout='row'
+			fxLayoutAlign='center center'
+			class='loading-indicator cyph-banner dark'
+			*ngIf='chat.state === states.chat && (accountChatService.uiReady | async) !== true'
+		>
+			<mat-progress-spinner
+				diameter='16'
+				strokeWidth='2'
+				mode='indeterminate'
+			></mat-progress-spinner>
+			&nbsp;
+			&nbsp;
+			<span cyphTranslate>Loading...</span>
+		</div>
+
 		<cyph-account-call-waiting
 			fxFlexFill
 			[appointment]='appointment | async'
@@ -75,7 +91,7 @@
 		mode='indeterminate'
 		*ngIf='
 			chat.state === states.chat &&
-			(accountChatService.uiReady | async) !== true
+			(accountChatService.uiPartiallyReady | async) !== true
 		'
 	></mat-progress-spinner>
 </div>

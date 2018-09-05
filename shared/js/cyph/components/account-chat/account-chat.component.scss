@@ -12,6 +12,21 @@
 	}
 }
 
+.loading-indicator {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+	position: absolute;
+	top: 0;
+	left: 2px;
+	height: 24px;
+	width: calc(100% - 3px);
+	z-index: 10;
+	padding: 0;
+}
+
+.cyph-foreground.initiating > div:first-child {
+	display: none !important;
+}
+
 .chat-end-margin ::ng-deep .chat-end-message mat-card {
 	margin-bottom: 1em;
 }

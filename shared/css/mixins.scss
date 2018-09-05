@@ -130,6 +130,21 @@ $accountPaddingSmall: 2.5vw;
 		color: $cyph-background;
 		background-color: $cyph-foreground;
 
+		&.dark {
+			$dark-foreground: if($cyph-is-dark, $cyph-foreground, $cyph-inverted);
+			$dark-background: if($cyph-is-dark, $cyph-inverted, $cyph-foreground);
+
+			color: $dark-foreground;
+			background-color: $dark-background;
+
+			@include mat-progress-spinner-theme(map-merge($cyph-theme, (
+				primary: map-merge(map-get($cyph-theme, primary), (
+					lighter: rgba(0, 0, 0, 0.15),
+					default: $dark-foreground
+				))
+			)));
+		}
+
 		&.warn {
 			color: map-get($cyph-warn, default);
 		}

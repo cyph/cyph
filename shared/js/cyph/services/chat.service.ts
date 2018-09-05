@@ -173,6 +173,13 @@ export class ChatService extends BaseProvider {
 		messageListLoaded: resolvable()
 	};
 
+	/** Resolves when UI is partially ready to be displayed. */
+	public readonly uiPartiallyReady: Promise<true>	=
+		this.resolvers.messageListLoaded.promise.then<true>(() =>
+			true
+		)
+	;
+
 	/** Resolves when UI is ready to be displayed. */
 	public readonly uiReady: Promise<true>	=
 		Promise.all([
@@ -994,6 +1001,10 @@ export class ChatService extends BaseProvider {
 				removeOldStorageItem
 			)
 		;
+
+		if (!oldLocalStorageKey) {
+			await this.resolvers.currentMessageSynced;
+		}
 
 		const dimensionsPromise	= Promise.resolve([]);
 
