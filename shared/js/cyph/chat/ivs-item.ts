@@ -32,6 +32,9 @@ export interface IVsItem {
 	/** @see ChatMessageListComponent.persistentEndMessage */
 	persistentEndMessage: boolean;
 
+	/** Indicates whether message should be scrolled into view and used to end spinner. */
+	scrollIntoView: boolean;
+
 	/** @see ChatMessageListComponent.showDisconnectMessage */
 	showDisconnectMessage: boolean;
 
