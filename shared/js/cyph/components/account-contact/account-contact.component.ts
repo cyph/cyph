@@ -12,6 +12,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
+import {normalizeArray} from '../../util/formatting';
 
 
 /**
@@ -71,10 +72,11 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 		const groupData	= this.groupData;
 
 		return groupData && groupData.group.usernames ?
-			'@' + groupData.group.usernames.
-				filter(username =>
-					!this.accountDatabaseService.currentUser.value ||
-					this.accountDatabaseService.currentUser.value.user.username !== username
+			'@' + normalizeArray(
+					groupData.group.usernames.filter(username =>
+						!this.accountDatabaseService.currentUser.value ||
+						this.accountDatabaseService.currentUser.value.user.username !== username
+					)
 				).
 				join(', @')
 			:
