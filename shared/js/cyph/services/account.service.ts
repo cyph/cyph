@@ -30,32 +30,24 @@ import {WindowWatcherService} from './window-watcher.service';
 @Injectable()
 export class AccountService extends BaseProvider {
 	/** @ignore */
-	private readonly _UI_READY	= resolvable();
+	private readonly _UI_READY				= resolvable();
 
 	/** @ignore */
-	private readonly headerInternal: BehaviorSubject<string|User|undefined>	=
-		new BehaviorSubject<string|User|undefined>(undefined)
+	private readonly headerInternal			= new BehaviorSubject<string|User|undefined>(undefined);
+
+	/** @ignore */
+	private readonly menuExpandedInternal	=
+		new BehaviorSubject<boolean>(!this.envService.isMobile.value)
 	;
 
 	/** @ignore */
-	private readonly menuExpandedInternal: BehaviorSubject<boolean>		=
-		new BehaviorSubject(!this.envService.isMobile.value)
-	;
+	private readonly mobileMenuOpenInternal	= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
-	private readonly mobileMenuOpenInternal: BehaviorSubject<boolean>	=
-		new BehaviorSubject(false)
-	;
-
-	/** @ignore */
-	private readonly transitionInternal: BehaviorSubject<boolean>		=
-		new BehaviorSubject(false)
-	;
+	private readonly transitionInternal		= new BehaviorSubject<boolean>(false);
 
 	/** Active sidebar contact username. */
-	public readonly activeSidebarContact				=
-		new BehaviorSubject<string|undefined>(undefined)
-	;
+	public readonly activeSidebarContact	= new BehaviorSubject<string|undefined>(undefined);
 
 	/** Header title for current section. */
 	public readonly header: Observable<string|User|undefined>;
