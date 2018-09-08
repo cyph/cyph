@@ -111,6 +111,15 @@ export class AccountP2PService extends P2PService {
 		}
 	}
 
+	/** @inheritDoc */
+	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
+		await super.init(localVideo, remoteVideo);
+
+		if (this.accountSessionService.group) {
+			this.isEnabled.next(false);
+		}
+	}
+
 	constructor (
 		chatService: ChatService,
 		dialogService: DialogService,

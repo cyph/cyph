@@ -43,9 +43,6 @@ export class AccountSessionService extends SessionService {
 	private readonly _READY						= resolvable();
 
 	/** @ignore */
-	private group?: AccountSessionService[];
-
-	/** @ignore */
 	private initiated: boolean					= false;
 
 	/** @ignore */
@@ -66,6 +63,9 @@ export class AccountSessionService extends SessionService {
 
 	/** If true, this is an ephemeral sub-session. */
 	public ephemeralSubSession: boolean							= false;
+
+	/** Messaging group, if applicable. */
+	public group?: AccountSessionService[];
 
 	/** @inheritDoc */
 	public readonly ready: Promise<void>						= this._READY.promise;
