@@ -169,23 +169,14 @@ export class ChatService extends BaseProvider {
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers				= {
 		chatConnected: resolvable(),
-		currentMessageSynced: resolvable(),
-		messageListLoaded: resolvable()
+		currentMessageSynced: resolvable()
 	};
-
-	/** Resolves when UI is partially ready to be displayed. */
-	public readonly uiPartiallyReady: Promise<true>	=
-		this.resolvers.messageListLoaded.promise.then<true>(() =>
-			true
-		)
-	;
 
 	/** Resolves when UI is ready to be displayed. */
 	public readonly uiReady: Promise<true>	=
 		Promise.all([
 			this.resolvers.chatConnected.promise,
-			this.resolvers.currentMessageSynced.promise,
-			this.resolvers.messageListLoaded.promise
+			this.resolvers.currentMessageSynced.promise
 		]).then<true>(() =>
 			true
 		)
@@ -1151,9 +1142,6 @@ export class ChatService extends BaseProvider {
 			});
 			this.resolvers.currentMessageSynced.promise.then(() => {
 				debugLog(() => 'ChatService.resolvers.currentMessageSynced resolved');
-			});
-			this.resolvers.messageListLoaded.promise.then(() => {
-				debugLog(() => 'ChatService.resolvers.messageListLoaded resolved');
 			});
 			this.uiReady.then(() => {
 				debugLog(() => 'ChatService.uiReady resolved');

@@ -13,7 +13,7 @@ import {SafeStyle} from '@angular/platform-browser';
 import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map, mergeMap, take} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
@@ -22,7 +22,6 @@ import {MaybePromise} from '../../maybe-promise-type';
 import {IChatMessage} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
-import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
@@ -109,16 +108,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
-		if (this.configService.chatVirtualScrolling) {
-			this.chatService.resolvers.messageListLoaded.resolve();
-		}
-		else {
-			this.initialScrollDown.pipe(filter(b => !b), take(1)).toPromise().then(() => {
-				debugLog(() => ({chatMessageList: 'initial load complete'}));
-				this.chatService.resolvers.messageListLoaded.resolve();
-			});
-		}
-
 		/* TODO: HANDLE NATIVE */
 		if (this.envService.isWeb) {
 			this.scrollService.init(
@@ -340,9 +329,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		/** @ignore */
 		@Inject(AccountUserLookupService) @Optional()
 		private readonly accountUserLookupService: AccountUserLookupService|undefined,
-
-		/** @ignore */
-		private readonly chatService: ChatService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

@@ -1,33 +1,14 @@
-<div class='initiating' *ngIf='initiating | async; else mainUI'>
-	<mat-progress-spinner mode='indeterminate'></mat-progress-spinner>
-</div>
-
-<ng-template #mainUI>
-
-
 <div
 	fxFlexFill
 	fxLayoutAlign='center center'
 	class='cyph-foreground'
-	[class.initiating]='
-		chat.state === states.chat &&
-		(accountChatService.uiPartiallyReady | async) !== true
-	'
 	[class.mobile]='envService.isMobile | async'
-	[cyphDropZone]='
-		chat.state === states.chat &&
-		(accountChatService.uiPartiallyReady | async) === true
-	'
+	[cyphDropZone]='chat.state === states.chat'
 	[cyphDropZoneClass]='false'
 	(fileDrop)='fileTransferService.send($event)'
 	*ngIf='accountChatService.chatSubject | async as chat'
 >
-	<div
-		fxFlex
-		fxFlexFill
-		fxLayout='column'
-		*ngIf='accountSessionService.opened | async'
-	>
+	<div fxFlex fxFlexFill fxLayout='column'>
 		<div
 			fxLayout='row'
 			fxLayoutAlign='center center'
@@ -86,17 +67,7 @@
 			</cyph-chat-main>
 		</ng-template>
 	</div>
-
-	<mat-progress-spinner
-		mode='indeterminate'
-		*ngIf='
-			chat.state === states.chat &&
-			(accountChatService.uiPartiallyReady | async) !== true
-		'
-	></mat-progress-spinner>
 </div>
 
-
-</ng-template>
 
 <router-outlet></router-outlet>
