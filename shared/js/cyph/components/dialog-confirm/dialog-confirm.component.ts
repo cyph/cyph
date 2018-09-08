@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ViewChild} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {BaseProvider} from '../../base-provider';
 import {IForm} from '../../proto';
 import {StringsService} from '../../services/strings.service';
+import {DynamicFormComponent} from '../dynamic-form';
 
 
 /**
@@ -20,6 +21,9 @@ export class DialogConfirmComponent extends BaseProvider {
 
 	/** Content. */
 	public content?: string;
+
+	/** @see DynamicFormComponent */
+	@ViewChild(DynamicFormComponent) public dynamicForm?: DynamicFormComponent;
 
 	/** Form for prompt. If defined, will render and return response. */
 	public form?: IForm;
