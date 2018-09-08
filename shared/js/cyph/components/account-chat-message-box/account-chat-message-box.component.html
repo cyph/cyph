@@ -1,16 +1,4 @@
 <form #messageForm='ngForm' fxFlexFill fxLayout='column' fxLayoutGap='8px' (submit)='submit()'>
-	<ng-container *ngIf='showHeader'>
-		<ng-container *ngIf='(recipient === undefined ? undefined : recipient | async) as contact'>
-			<cyph-account-contact
-				[clickable]='false'
-				[contact]='contact'
-				class='cyph-inverted-theme'
-			></cyph-account-contact>
-
-			<hr />
-		</ng-container>
-	</ng-container>
-
 	<cyph-chat-message-box-inherit-ng-form
 		#chatMessageBox
 		[calendarInviteFollowUp]='calendarInviteFollowUp'
@@ -31,11 +19,7 @@
 			color='accent'
 			fxFlex
 			fxFlex.gt-sm='initial'
-			[disabled]='
-				disableSend ||
-				messageForm.invalid ||
-				(recipient !== undefined && (recipient | async) === undefined)
-			'
+			[disabled]='disableSend || messageForm.invalid'
 			type='submit'
 			cyphTranslate
 		>

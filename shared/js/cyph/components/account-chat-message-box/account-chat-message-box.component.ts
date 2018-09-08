@@ -1,6 +1,4 @@
 import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
-import {Observable} from 'rxjs';
-import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessageValue} from '../../proto';
 import {AccountService} from '../../services/account.service';
@@ -50,9 +48,6 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 
 	/** @see ChatMessageBoxComponent.messageType */
 	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
-
-	/** Message recipient to display in header. */
-	@Input() public recipient?: Observable<User|undefined>;
 
 	/** Shows header. */
 	@Input() public showHeader: boolean			= false;

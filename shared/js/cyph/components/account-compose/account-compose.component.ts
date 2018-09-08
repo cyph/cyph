@@ -174,7 +174,10 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 				const chat	=
 					recipients.length === 1 ?
 						{username: recipients[0]} :
-						(await this.accountFilesService.initMessagingGroup(recipients))
+						(await this.accountFilesService.initMessagingGroup(
+							recipients,
+							this.messageType.value === ChatMessageValue.Types.Quill
+						))
 				;
 
 				if ('username' in chat) {
@@ -189,8 +192,15 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 					this.sentMessage.next({id: chat.id});
 				}
 
-				await this.accountChatService.setUser(chat, true);
+				await this.accountChatService.setUser(
+					chat,
+					true,
+					undefined,
+					this.messageType.value === ChatMessageValue.Types.Quill ? 'mail' : undefined
+				);
+
 				await this.accountChatService.resolvers.currentMessageSynced.promise;
+
 				await this.accountChatService.send(
 					this.messageType.value,
 					undefined,

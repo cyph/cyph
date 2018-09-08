@@ -371,6 +371,7 @@ export class AccountService extends BaseProvider {
 			/* No header until explicitly set via accountService.setHeader */
 			if (
 				[
+					'mail',
 					'messages',
 					'profile'
 				].indexOf(route) > -1 &&

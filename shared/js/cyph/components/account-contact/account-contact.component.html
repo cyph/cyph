@@ -168,7 +168,11 @@
 		[routerLink]='
 			!clickable || groupData?.incoming ?
 				undefined :
-				(accountService.routeRoot + "messages/" + groupData?.id)
+				(
+					accountService.routeRoot +
+					(groupData?.group.mailUIDefault ? "mail/" : "messages/") +
+					groupData?.id
+				)
 		'
 		fxFlex
 		*ngIf='groupData !== undefined'

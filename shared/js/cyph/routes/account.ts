@@ -128,6 +128,11 @@ export const account: Route	= {
 		{path: 'home', redirectTo: ''},
 		{path: 'incoming-patient-info', component: AccountIncomingPatientInfoComponent},
 		{path: 'logout', component: AccountLogoutComponent},
+		{
+			path: 'mail/:contactID',
+			component: AccountChatComponent,
+			data: {defaultSessionSubID: 'mail'}
+		},
 		{path: 'messages', component: AccountContactsComponent},
 		{path: 'messages/:contactID', component: AccountChatComponent},
 		{path: 'messages/:contactID/:sessionSubID', component: AccountChatComponent},

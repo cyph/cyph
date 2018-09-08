@@ -71,7 +71,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** @see ChatMessageValue.Types */
 	public readonly messageType				= new BehaviorSubject<ChatMessageValue.Types>(
-		ChatMessageValue.Types.Text
+		this.envService.isTelehealth ?
+			ChatMessageValue.Types.Quill :
+			ChatMessageValue.Types.Text
 	);
 
 	/** @see ChatMessageList.promptFollowup */
@@ -111,10 +113,6 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
-		if (this.envService.isTelehealth) {
-			this.messageType.next(ChatMessageValue.Types.Quill);
-		}
-
 		const lock	= lockFunction();
 
 		this.subscriptions.push(this.accountService.routeChanges.pipe(mergeMap(() => combineLatest(
@@ -127,11 +125,16 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				this.activatedRoute.firstChild.url :
 				this.activatedRoute.url
 		))).subscribe(async ([
-			{callType, ephemeralSubSession, promptFollowup},
+			{callType, defaultSessionSubID, ephemeralSubSession, promptFollowup},
 			{appointmentID, contactID, sessionSubID},
 			[{path}]
 		]: [
-			{callType?: 'audio'|'video'; ephemeralSubSession?: boolean; promptFollowup?: boolean},
+			{
+				callType?: 'audio'|'video';
+				defaultSessionSubID?: string;
+				ephemeralSubSession?: boolean;
+				promptFollowup?: boolean;
+			},
 			{appointmentID?: string; contactID?: string; sessionSubID?: string},
 			UrlSegment[]
 		/* tslint:disable-next-line:cyclomatic-complexity */
@@ -200,6 +203,16 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				if (!contactID) {
 					return;
 				}
+
+				if (defaultSessionSubID && !sessionSubID) {
+					sessionSubID	= defaultSessionSubID;
+				}
+
+				this.messageType.next(
+					sessionSubID === 'mail' || this.envService.isTelehealth ?
+						ChatMessageValue.Types.Quill :
+						ChatMessageValue.Types.Text
+				);
 
 				try {
 					const chat	= await this.accountContactsService.getChatData(contactID);

@@ -73,6 +73,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 				'call',
 				'contacts',
 				'logout',
+				'mail',
 				'messages',
 				'patients',
 				'profile',
@@ -104,6 +105,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			[
 				'audio',
 				'call',
+				'mail',
 				'messages',
 				'profile',
 				'video',
@@ -152,6 +154,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			'files',
 			'forms',
 			'incoming-patient-info',
+			'mail',
 			'messages',
 			'new-patient',
 			'notes',
@@ -176,6 +179,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		[
 			'',
 			'chat-transition',
+			'mail',
 			'messages',
 			'notifications',
 			'profile'
