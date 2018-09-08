@@ -34,47 +34,54 @@ export class AccountContactsService extends BaseProvider {
 		resolvable()
 	;
 
+	private readonly contactListHelpers	= {
+		groupData: memoize(
+			(groupData: {group: IAccountMessagingGroup; id: string; incoming: boolean}) => ({
+				groupData,
+				unreadMessageCount: toBehaviorSubject<number>(
+					this.accountDatabaseService.getAsyncMap(
+						`unreadMessages/${groupData.group.castleSessionID}`,
+						NeverProto,
+						SecurityModels.unprotected
+					).watchSize(),
+					0
+				),
+				user: Promise.resolve(undefined),
+				username: `group: ${groupData.group.castleSessionID}`
+			}),
+			(groupData: {id: string; incoming: boolean}) =>
+				`${groupData.id} ${groupData.incoming.toString()}`
+		),
+		user: memoize(async (username: string) => {
+			const user	= (await this.accountUserLookupService.promise).getUser(username);
+
+			return {
+				unreadMessageCount: toBehaviorSubject<number>(
+					user.then(async o => o ? o.unreadMessageCount : 0),
+					0,
+					this.subscriptions
+				),
+				user,
+				username
+			};
+		})
+	};
+
 	/** List of contacts for current user, sorted alphabetically by username. */
 	public readonly contactList: Observable<(IContactListItem|User)[]>	= toBehaviorSubject(
 		combineLatest(
 			this.accountFilesService.filesListFilteredWithData.messagingGroups(),
 			this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
 			this.accountDatabaseService.watchListKeys('contacts', this.subscriptions)
-		).pipe(mergeMap(async ([groups, incomingGroups, usernames]) => {
-			const accountUserLookupService	= await this.accountUserLookupService.promise;
-
-			return [
-				...[
-					...incomingGroups.map(o => ({group: o.data, id: o.record.id, incoming: true})),
-					...groups.map(o => ({group: o.data, id: o.record.id, incoming: false}))
-				].map(groupData => ({
-					groupData,
-					unreadMessageCount: toBehaviorSubject<number>(
-						this.accountDatabaseService.getAsyncMap(
-							`unreadMessages/${groupData.group.castleSessionID}`,
-							NeverProto,
-							SecurityModels.unprotected
-						).watchSize(),
-						0
-					),
-					user: Promise.resolve(undefined),
-					username: `group: ${groupData.group.castleSessionID}`
-				})),
-				...normalizeArray(usernames).map(username => {
-					const user	= accountUserLookupService.getUser(username);
-
-					return {
-						unreadMessageCount: toBehaviorSubject<number>(
-							user.then(async o => o ? o.unreadMessageCount : 0),
-							0,
-							this.subscriptions
-						),
-						user,
-						username
-					};
-				})
-			];
-		})),
+		).pipe(mergeMap(async ([groups, incomingGroups, usernames]) => [
+			...[
+				...incomingGroups.map(o => ({group: o.data, id: o.record.id, incoming: true})),
+				...groups.map(o => ({group: o.data, id: o.record.id, incoming: false}))
+			].map(
+				this.contactListHelpers.groupData
+			),
+			...(await Promise.all(normalizeArray(usernames).map(this.contactListHelpers.user)))
+		])),
 		[],
 		this.subscriptions
 	);
