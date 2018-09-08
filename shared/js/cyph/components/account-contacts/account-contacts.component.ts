@@ -27,6 +27,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackByUser} from '../../track-by/track-by-user';
 import {filterUndefined} from '../../util/filter';
 import {toBehaviorSubject} from '../../util/flatten-observable';
+import {observableAll} from '../../util/observable-all';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
 
@@ -152,7 +153,7 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	/** Full contact list with active contact removed and users with unread messages on top. */
 	public readonly filteredContactList: Observable<(IContactListItem|User)[]>	=
 		this.routeReactiveContactList.pipe(mergeMap(o =>
-			combineLatest(
+			observableAll(
 				o.filteredContactList.map(({unreadMessageCount}) => unreadMessageCount)
 			).pipe(map(counts =>
 				this.contactList !== this.accountContactsService.contactList ? [] : [

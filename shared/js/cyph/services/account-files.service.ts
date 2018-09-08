@@ -49,6 +49,7 @@ import {filterUndefined} from '../util/filter';
 import {flattenObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {convertStorageUnitsToBytes} from '../util/formatting';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {observableAll} from '../util/observable-all';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -249,7 +250,7 @@ export class AccountFilesService extends BaseProvider {
 			false,
 			this.subscriptions
 		).pipe(
-			mergeMap(references => combineLatest(filterUndefined(references.map(({value}) =>
+			mergeMap(references => observableAll(filterUndefined(references.map(({value}) =>
 				this.watchFile(value)
 			)))),
 			map(records => records.
@@ -617,7 +618,7 @@ export class AccountFilesService extends BaseProvider {
 	}[]> {
 		return memoize(() => toBehaviorSubject<{data: T; record: IAccountFileRecord}[]>(
 			filesList.pipe(
-				mergeMap(records => combineLatest(records.map(record =>
+				mergeMap(records => observableAll(records.map(record =>
 					this.watchFileData(record, recordType).pipe(map(data => ({
 						data,
 						record

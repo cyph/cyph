@@ -8,6 +8,7 @@ import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
 import {StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {observableAll} from '../util/observable-all';
 import {prettyPrint, stringify} from '../util/serialization';
 import {translate} from '../util/translate';
 import {uuid} from '../util/uuid';
@@ -149,7 +150,7 @@ export class AccountService extends BaseProvider {
 	/** Total count of unread messages. */
 	public readonly unreadMessages: Observable<number>	= toBehaviorSubject(
 		this.accountContactsService.contactList.pipe(
-			mergeMap(users => combineLatest(users.map(user => user.unreadMessageCount))),
+			mergeMap(users => observableAll(users.map(user => user.unreadMessageCount))),
 			map(unreadCounts => unreadCounts.reduce((a, b) => a + b, 0))
 		),
 		0,

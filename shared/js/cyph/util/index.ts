@@ -8,6 +8,7 @@ export * from './input';
 export * from './lock';
 export * from './log';
 export * from './objects';
+export * from './observable-all';
 export * from './permissions';
 export * from './random';
 export * from './request';

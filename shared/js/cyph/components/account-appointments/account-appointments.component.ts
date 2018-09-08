@@ -22,6 +22,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {filterUndefined} from '../../util/filter';
+import {observableAll} from '../../util/observable-all';
 import {getDateTimeString, watchTimestamp} from '../../util/time';
 
 
@@ -163,7 +164,7 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 		record: IAccountFileRecord;
 	}[]> {
 		return recordsList.pipe(
-			mergeMap(records => combineLatest(
+			mergeMap(records => observableAll(
 				records.map(record =>
 					this.getAppointment(record).pipe(map(appointment =>
 						appointment ? {id: record.id, record, ...appointment} : undefined
