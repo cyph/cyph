@@ -206,7 +206,7 @@ $mobileAppBarHeight: 56px;
 		mat-card {
 			padding: 18px 24px;
 
-			mat-card-title {
+			mat-card-subtitle, mat-card-title {
 				max-width: 120px !important;
 
 				&.incoming {

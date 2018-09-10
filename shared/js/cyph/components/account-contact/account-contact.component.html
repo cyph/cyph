@@ -52,6 +52,7 @@
 
 			<div fxLayout='column' fxLayoutAlign='center start'>
 				<mat-card-title
+					class='truncate'
 					[class.incoming]='contactState === accountContactStates.IncomingRequest'
 				>
 					{{
@@ -61,7 +62,10 @@
 					}}
 					{{(user | async)?.name | async}}
 				</mat-card-title>
-				<mat-card-subtitle fxHide.lt-md>
+				<mat-card-subtitle
+					class='truncate'
+					[class.incoming]='contactState === accountContactStates.IncomingRequest'
+				>
 					<ng-container *ngIf='
 						((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
 						else standardView
@@ -154,7 +158,7 @@
 			>
 				<mat-icon>person</mat-icon>
 			</button>
-			<mat-card-title>@{{username}}</mat-card-title>
+			<mat-card-title class='truncate'>@{{username}}</mat-card-title>
 		</mat-card-header>
 	</ng-template>
 </mat-card>
@@ -188,8 +192,12 @@
 			matBadgePosition='above before'
 		>
 			<mat-icon mat-card-avatar>group</mat-icon>
-			<mat-card-title><span cyphTranslate>Group</span></mat-card-title>
-			<mat-card-subtitle>{{groupUsernames}}</mat-card-subtitle>
+			<mat-card-title class='truncate'>
+				<span cyphTranslate>Group</span>
+			</mat-card-title>
+			<mat-card-subtitle class='truncate'>
+				{{groupUsernames}}
+			</mat-card-subtitle>
 
 			<div fxFlex fxLayoutAlign='end center' *ngIf='clickable && groupData?.incoming'>
 				<button
