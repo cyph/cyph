@@ -51,7 +51,7 @@
 			cyphTranslate
 			class='animated flipInX _4'
 			matTooltip='New Message'
-			[routerLink]='accountService.routeRoot + "compose/" + (user.contactID | async)'
+			[routerLink]='accountService.routeRoot + "mail/" + (user.contactID | async)'
 		>
 			<mat-icon>email</mat-icon>
 		</button>
@@ -151,7 +151,7 @@
 			cyphTranslate
 			matTooltip='New Message'
 			[routerLink]='
-				accountService.routeRoot + "compose/" + (user.contactID | async)
+				accountService.routeRoot + "mail/" + (user.contactID | async)
 			'
 		>
 			<mat-icon>email</mat-icon>
