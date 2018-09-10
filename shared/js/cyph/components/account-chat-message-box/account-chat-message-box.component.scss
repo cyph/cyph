@@ -1,7 +1,14 @@
 @import '../../../../css/mixins';
 
-:host ::ng-deep cyph-account-contact .avatar {
-	pointer-events: none;
+:host ::ng-deep {
+	cyph-account-contact .avatar {
+		pointer-events: none;
+	}
+
+	cyph-quill {
+		display: block;
+		min-height: 240px !important;
+	}
 }
 
 hr {
