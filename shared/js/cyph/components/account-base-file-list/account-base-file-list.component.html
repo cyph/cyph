@@ -54,9 +54,9 @@
 							<a [routerLink]='
 								accountService.routeRoot +
 								"profile/" +
-								o.record.owner
+								o.owner
 							'>
-								@{{o.record.owner}}
+								@{{o.owner}}
 							</a>
 						</div>
 						<div *ngIf='o.record.wasAnonymousShare'>
@@ -85,8 +85,8 @@
 					<div *ngIf='!o.record.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
 						&ngsp;
-						<a [routerLink]='accountService.routeRoot + "profile/" + o.record.owner'>
-							{{o.record.owner}}
+						<a [routerLink]='accountService.routeRoot + "profile/" + o.owner'>
+							{{o.owner}}
 						</a>
 					</div>
 					<div cyphTranslate *ngIf='o.record.wasAnonymousShare'>
@@ -168,12 +168,12 @@
 
 					<div *ngIf='
 						!o.record.wasAnonymousShare &&
-						currentUser.user.username !== o.record.owner
+						currentUser.user.username !== o.owner
 					'>
 						<span cyphTranslate>Owner:</span>
 						&ngsp;
-						<a [routerLink]='accountService.routeRoot + "profile/" + o.record.owner'>
-							{{o.record.owner}}
+						<a [routerLink]='accountService.routeRoot + "profile/" + o.owner'>
+							{{o.owner}}
 						</a>
 					</div>
 					<div cyphTranslate *ngIf='o.record.wasAnonymousShare'>
@@ -229,7 +229,7 @@
 								accountFilesService.config[recordType].route +
 								"/" + o.record.id + "/edit"
 							'
-							*ngIf='currentUser.user.username === o.record.owner'
+							*ngIf='currentUser.user.username === o.owner'
 						>
 							<mat-icon>edit</mat-icon>
 						</button>

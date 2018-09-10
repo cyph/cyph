@@ -61,7 +61,6 @@ import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {FileService} from './file.service';
 import {StringsService} from './strings.service';
-import { trackByValue } from '../../native/js/cyph/track-by';
 
 
 /**
@@ -141,7 +140,19 @@ export class AccountFilesService extends BaseProvider {
 	private readonly watchNoteCache		= new Map<string, Observable<IQuillDelta>>();
 
 	/** File type configurations. */
-	public readonly config	= {
+	public readonly config: Record<AccountFileRecord.RecordTypes, {
+		blockAnonymous: boolean;
+		description: string;
+		incoming: () => Observable<{data: any; owner: string; record: IAccountFileRecord}[]>;
+		isOfType: (file: any) => boolean;
+		list: () => Observable<{data: any; owner: string; record: IAccountFileRecord}[]>;
+		mediaType?: string;
+		proto?: IProto<any>;
+		recordType: AccountFileRecord.RecordTypes;
+		route: string;
+		securityModel?: SecurityModels;
+		subroutable: boolean;
+	}>	= {
 		[AccountFileRecord.RecordTypes.Appointment]: {
 			blockAnonymous: true,
 			description: 'Appointment',
@@ -211,7 +222,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.Form,
 			route: 'forms',
 			securityModel: SecurityModels.privateSigned,
-			subroutable: trackByValue
+			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.MessagingGroup]: {
 			blockAnonymous: true,
@@ -628,7 +639,11 @@ export class AccountFilesService extends BaseProvider {
 		filesList: Observable<(IAccountFileRecord&{owner: string})[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<
-		(IAccountFileRecord&{owner: string; record: IAccountFileRecord&{owner: string}})[]
+		(IAccountFileRecord&{
+			data: undefined;
+			owner: string;
+			record: IAccountFileRecord;
+		})[]
 	> {
 		return filesList.pipe(map(files => files.filter(({owner, recordType, wasAnonymousShare}) =>
 			!!owner &&
@@ -636,6 +651,7 @@ export class AccountFilesService extends BaseProvider {
 			!(this.config[recordType].blockAnonymous && wasAnonymousShare)
 		).map(record => ({
 			...record,
+			data: undefined,
 			record
 		}))));
 	}
@@ -644,16 +660,22 @@ export class AccountFilesService extends BaseProvider {
 	private getFiles<T, TRecord extends {owner: string}> (
 		filesList: Observable<(IAccountFileRecord&TRecord)[]>,
 		recordType: AccountFileRecord.RecordTypes,
-		_CONFIG: {proto: IProto<T>}
+		_CONFIG: {proto?: IProto<T>}
 	) : () => Observable<{
 		data: T;
+		owner: string;
 		record: IAccountFileRecord;
 	}[]> {
-		return memoize(() => toBehaviorSubject<{data: T; record: IAccountFileRecord}[]>(
+		return memoize(() => toBehaviorSubject<{
+			data: T;
+			owner: string;
+			record: IAccountFileRecord;
+		}[]>(
 			filesList.pipe(
 				mergeMap(records => observableAll(records.map(record =>
 					this.watchFileData(record, recordType).pipe(map(data => ({
 						data,
+						owner: record.owner,
 						record
 					})))
 				))),
