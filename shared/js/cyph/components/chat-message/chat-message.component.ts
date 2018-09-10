@@ -3,9 +3,11 @@ import {
 	Component,
 	ElementRef,
 	EventEmitter,
+	Inject,
 	Input,
 	OnChanges,
 	OnDestroy,
+	Optional,
 	Output,
 	Renderer2,
 	SimpleChanges
@@ -17,6 +19,7 @@ import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
+import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
 import {DialogService} from '../../services/dialog.service';
@@ -291,6 +294,10 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService,
+
+		/** @see AccountService */
+		@Optional() @Inject(AccountService)
+		public readonly accountService: AccountService|undefined,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,

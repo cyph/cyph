@@ -73,8 +73,13 @@
 							cyphTranslate
 							class='avatar-image'
 							[src]='message?.authorUser?.avatar | async'
+							[routerLink]='
+								accountService?.routeRoot +
+								"profile/" +
+								message?.authorUser?.username
+							'
 							alt='User Avatar'
-							*ngIf='!!message?.authorUser'
+							*ngIf='accountService && !!message?.authorUser'
 						/>
 						<mat-card-title fxFlex>
 							<div fxFlex [fxLayout]='mobile ? "column" : "row"'>

@@ -140,6 +140,12 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 		this.subscriptions.push(this.userInternal.subscribe(async ({user, username}) => {
 			if (
+				this.accountDatabaseService.currentUser.value &&
+				this.accountDatabaseService.currentUser.value.user.username === username
+			) {
+				this.router.navigate([accountRoot, 'profile'], {replaceUrl: true});
+			}
+			else if (
 				!username &&
 				this.envService.isTelehealth &&
 				this.envService.environment.customBuild &&
