@@ -187,6 +187,10 @@ export class AccountSessionService extends SessionService {
 		/* Group session init */
 
 		if ('group' in chat) {
+			if (setHeader) {
+				this.accountService.setHeader(this.stringsService.group);
+			}
+
 			/* Create N pairwise sessions, one for each other group member */
 
 			this.sessionSubID	=

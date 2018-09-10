@@ -292,6 +292,9 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
+	public readonly group: string						= `Group`;
+
+	/** @see StringsService */
 	public readonly hasInvitedYouToA: string			= `has invited you to a`;
 
 	/** @see StringsService */
