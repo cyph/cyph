@@ -1,5 +1,6 @@
 /.bootstrap.original
 /.build
+/threadpack.log
 .build.yaml
 *.mmdb
 .sass-cache

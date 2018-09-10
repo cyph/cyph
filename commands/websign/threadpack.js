@@ -26,6 +26,7 @@ const code		= fs.readFileSync(args.path).toString().replace(
 const {error}	= uglify.minify(code);
 
 if (error) {
+	fs.appendFileSync('/cyph/threadpack.log', `${args.path}:\n\n${code}\n\n\n\n\n\n\n\n`);
 	throw error;
 }
 
