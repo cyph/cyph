@@ -225,7 +225,7 @@ implements ControlValueAccessor, OnChanges, OnInit {
 			this.calendarInvite.next({
 				alternateDays: {},
 				alternateTimeFrames: {},
-				callType: CallTypes.None,
+				callType: this.envService.isTelehealth ? CallTypes.Video : CallTypes.None,
 				description: '',
 				endTime: timestamp + this.duration,
 				startTime: timestamp,
