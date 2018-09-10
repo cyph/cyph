@@ -61,6 +61,7 @@ import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {FileService} from './file.service';
 import {StringsService} from './strings.service';
+import { trackByValue } from '../../native/js/cyph/track-by';
 
 
 /**
@@ -144,98 +145,125 @@ export class AccountFilesService extends BaseProvider {
 		[AccountFileRecord.RecordTypes.Appointment]: {
 			blockAnonymous: true,
 			description: 'Appointment',
+			incoming: () => this.incomingFilesFiltered.appointments,
 			isOfType: (file: any) => typeof file.calendarInvite === 'object',
+			list: () => this.filesListFiltered.appointments,
 			mediaType: 'cyph/appointment',
 			proto: Appointment,
 			recordType: AccountFileRecord.RecordTypes.Appointment,
 			route: 'appointments',
-			securityModel: undefined
+			securityModel: undefined,
+			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.Doc]: {
 			blockAnonymous: false,
 			description: 'Doc',
+			incoming: () => this.incomingFilesFiltered.docs,
 			isOfType: (file: any) => file instanceof Array,
+			list: () => this.filesListFiltered.docs,
 			mediaType: 'cyph/doc',
 			proto: undefined,
 			recordType: AccountFileRecord.RecordTypes.Doc,
 			route: 'docs',
-			securityModel: undefined
+			securityModel: undefined,
+			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.EhrApiKey]: {
 			blockAnonymous: false,
 			description: 'EHR Access',
+			incoming: () => this.incomingFilesFilteredWithData.ehrApiKeys(),
 			isOfType: (file: any) =>
 				typeof file.apiKey === 'string' &&
 				typeof file.isMaster === 'boolean'
 			,
+			list: () => this.filesListFilteredWithData.ehrApiKeys(),
 			mediaType: 'cyph/ehr-api-key',
 			proto: EhrApiKey,
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
 			route: 'ehr-access',
-			securityModel: undefined
+			securityModel: undefined,
+			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.File]: {
 			blockAnonymous: false,
 			description: 'File',
+			incoming: () => this.incomingFilesFiltered.files,
 			isOfType: (file: any) =>
 				file instanceof Blob ||
 				(file.data instanceof Uint8Array && typeof file.mediaType === 'string')
 			,
+			list: () => this.filesListFiltered.files,
 			mediaType: undefined,
 			proto: BlobProto,
 			recordType: AccountFileRecord.RecordTypes.File,
 			route: 'files',
-			securityModel: undefined
+			securityModel: undefined,
+			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.Form]: {
 			blockAnonymous: false,
 			description: 'Form',
+			incoming: () => this.incomingFilesFiltered.forms,
 			isOfType: (file: any) => file.components instanceof Array,
+			list: () => this.filesListFiltered.forms,
 			mediaType: 'cyph/form',
 			proto: Form,
 			recordType: AccountFileRecord.RecordTypes.Form,
 			route: 'forms',
-			securityModel: SecurityModels.privateSigned
+			securityModel: SecurityModels.privateSigned,
+			subroutable: trackByValue
 		},
 		[AccountFileRecord.RecordTypes.MessagingGroup]: {
 			blockAnonymous: true,
 			description: 'Messaging Group',
+			incoming: () => this.incomingFilesFiltered.messagingGroups,
 			isOfType: (file: any) => typeof file.castleSessionID === 'string',
+			list: () => this.filesListFiltered.messagingGroups,
 			mediaType: 'cyph/messaging-group',
 			proto: AccountMessagingGroup,
 			recordType: AccountFileRecord.RecordTypes.MessagingGroup,
 			route: '',
-			securityModel: undefined
+			securityModel: undefined,
+			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.Note]: {
 			blockAnonymous: false,
 			description: 'Note',
+			incoming: () => this.incomingFilesFiltered.notes,
 			isOfType: (file: any) => typeof file.chop === 'function' || file.ops instanceof Array,
+			list: () => this.filesListFiltered.notes,
 			mediaType: 'cyph/note',
 			proto: BinaryProto,
 			recordType: AccountFileRecord.RecordTypes.Note,
 			route: 'notes',
-			securityModel: undefined
+			securityModel: undefined,
+			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.RedoxPatient]: {
 			blockAnonymous: true,
 			description: 'Patient Info',
+			incoming: () => this.incomingFilesFiltered.redoxPatients,
 			isOfType: (file: any) => typeof file.Demographics === 'object',
+			list: () => this.filesListFiltered.redoxPatients,
 			mediaType: 'cyph/redox-patient',
 			proto: RedoxPatient,
 			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
 			route: 'incoming-patient-info',
-			securityModel: undefined
+			securityModel: undefined,
+			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.Wallet]: {
 			blockAnonymous: false,
 			description: 'Wallet',
+			incoming: () => this.incomingFilesFiltered.wallets,
 			isOfType: (file: any) => typeof file.cryptocurrency === 'number',
+			list: () => this.filesListFiltered.wallets,
 			mediaType: 'cyph/wallet',
 			proto: Wallet,
 			recordType: AccountFileRecord.RecordTypes.Wallet,
 			route: 'wallets',
-			securityModel: undefined
+			securityModel: undefined,
+			subroutable: true
 		}
 	};
 
@@ -596,15 +624,20 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** @ignore */
-	private filterFiles<T extends {owner: string}> (
-		filesList: Observable<(IAccountFileRecord&T)[]>,
+	private filterFiles (
+		filesList: Observable<(IAccountFileRecord&{owner: string})[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
-	) : Observable<(IAccountFileRecord&T)[]> {
+	) : Observable<
+		(IAccountFileRecord&{owner: string; record: IAccountFileRecord&{owner: string}})[]
+	> {
 		return filesList.pipe(map(files => files.filter(({owner, recordType, wasAnonymousShare}) =>
 			!!owner &&
 			recordType === filterRecordTypes &&
 			!(this.config[recordType].blockAnonymous && wasAnonymousShare)
-		)));
+		).map(record => ({
+			...record,
+			record
+		}))));
 	}
 
 	/** @ignore */
@@ -1043,7 +1076,33 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
-	public getThumbnail (mediaType: string) : 'audiotrack'|'insert_drive_file'|'movie'|'photo' {
+	public getThumbnail (mediaType: string) : string {
+		switch (mediaType) {
+			case 'cyph/appointment':
+				return 'event';
+
+			case 'cyph/doc':
+				return 'subject';
+
+			case 'cyph/ehr-api-key':
+				return 'vpn_key';
+
+			case 'cyph/form':
+				return 'web';
+
+			case 'cyph/messaging-group':
+				return 'group';
+
+			case 'cyph/note':
+				return 'short_text';
+
+			case 'cyph/redox-patient':
+				return 'person';
+
+			case 'cyph/wallet':
+				return 'account_balance_wallet';
+		}
+
 		const typeCategory	= mediaType.split('/')[0];
 
 		switch (typeCategory) {

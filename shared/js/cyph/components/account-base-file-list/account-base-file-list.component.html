@@ -1,0 +1,309 @@
+<div
+	fxFlexFill
+	fxLayout='row'
+	fxLayoutAlign='center start'
+	class='card-list'
+	[class.initiating]='accountFilesService.showSpinner | async'
+	[class.mobile]='envService.isMobile | async'
+	*ngIf='accountDatabaseService.currentUser | async as currentUser'
+>
+	<div
+		fxFlex='95'
+		fxLayout='column'
+		fxLayoutAlign='center stretch'
+		fxLayoutGap='16px'
+		fxLayoutGap.lt-md='8px'
+	>
+		<ng-container *ngIf='
+			recordType === recordTypes.File &&
+			(envService.isMobile | async)
+		'>
+			<div></div>
+
+			<div fxLayoutAlign='center'>
+				<cyph-account-storage-analytics
+					fxFlex='90'
+					fxFlex.md='66'
+					fxFlex.gt-md='40'
+					class='mobile'
+				></cyph-account-storage-analytics>
+			</div>
+		</ng-container>
+
+		<mat-card
+			class='animated incoming'
+			*ngFor='
+				let o of accountFilesService.config[recordType].incoming() | async;
+				trackBy: trackByID;
+				let i = index;
+			'
+			[attr.data-index]='i'
+			[class.bounceInRight]='(accountFilesService.initiated | async) === false'
+			[ngClass]='"_" + i'
+		>
+			<mat-card-header fxLayout='row'>
+				<mat-icon mat-card-avatar>
+					{{accountFilesService.getThumbnail(o.record.mediaType)}}
+				</mat-icon>
+				<mat-card-title>
+					<ng-container *ngIf='
+						recordType === recordTypes.EhrApiKey;
+						else incomingTitleDefault
+					'>
+						<div *ngIf='!o.record.wasAnonymousShare'>
+							<a [routerLink]='
+								accountService.routeRoot +
+								"profile/" +
+								o.record.owner
+							'>
+								@{{o.record.owner}}
+							</a>
+						</div>
+						<div *ngIf='o.record.wasAnonymousShare'>
+							{{getDateTimeString(o.record.timestamp)}}
+						</div>
+					</ng-container>
+
+					<ng-template #incomingTitleDefault>
+						{{o.record.name || stringsService.untitled}}
+					</ng-template>
+				</mat-card-title>
+
+				<mat-card-subtitle>
+					<ng-container *ngIf='recordType === recordTypes.File'>
+						<div>
+							<span cyphTranslate>Type:</span>
+							&ngsp;
+							<span>{{o.record.mediaType}}</span>
+						</div>
+						<div>
+							<span cyphTranslate>Size:</span>
+							&ngsp;
+							<span>{{readableByteLength(o.record.size)}}</span>
+						</div>
+					</ng-container>
+					<div *ngIf='!o.record.wasAnonymousShare'>
+						<span cyphTranslate>Shared by</span>
+						&ngsp;
+						<a [routerLink]='accountService.routeRoot + "profile/" + o.record.owner'>
+							{{o.record.owner}}
+						</a>
+					</div>
+					<div cyphTranslate *ngIf='o.record.wasAnonymousShare'>
+						Shared anonymously
+					</div>
+				</mat-card-subtitle>
+				<div fxFlex fxLayoutAlign='end center'>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Accept'
+						(click)='
+							recordType === recordTypes.EhrApiKey ?
+								acceptEhrApiKey(o.record) :
+								accountFilesService.acceptIncomingFile(o.record)
+						'
+					>
+						<mat-icon>check</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Reject'
+						(click)='accountFilesService.acceptIncomingFile(o.record, false)'
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</div>
+			</mat-card-header>
+		</mat-card>
+
+		<br />
+
+		<mat-card
+			class='animated slideInDown'
+			*ngFor='
+				let o of accountFilesService.config[recordType].list() | async;
+				trackBy: trackByID;
+				let i = index;
+			'
+			[attr.data-index]='i'
+			[class.bounceInRight]='(accountFilesService.initiated | async) === false'
+			[ngClass]='"_" + i'
+			[routerLink]='
+				accountService.routeRoot +
+				accountFilesService.config[recordType].route +
+				(accountFilesService.config[recordType].subroutable ? ("/" + o.record.id) : "")
+			'
+			(click)='
+				recordType === recordTypes.File ?
+					accountFilesService.openFile(o.record.id) :
+					undefined
+			'
+		>
+			<mat-card-header fxLayout='row'>
+				<mat-icon mat-card-avatar>
+					{{accountFilesService.getThumbnail(o.record.mediaType)}}
+				</mat-icon>
+				<mat-card-title>
+					{{o.record.name || stringsService.untitled}}
+				</mat-card-title>
+				<mat-card-subtitle>
+					<ng-container *ngIf='recordType === recordTypes.File'>
+						<div>
+							<span cyphTranslate>Type:</span>
+							&ngsp;
+							<span>{{o.record.mediaType}}</span>
+						</div>
+						<div>
+							<span cyphTranslate>Size:</span>
+							&ngsp;
+							<span>{{readableByteLength(o.record.size)}}</span>
+						</div>
+					</ng-container>
+
+					<div *ngIf='recordType === recordTypes.Note'>
+						{{accountFilesService.noteSnippet(o.record.id) | async}}
+					</div>
+
+					<div *ngIf='
+						!o.record.wasAnonymousShare &&
+						currentUser.user.username !== o.record.owner
+					'>
+						<span cyphTranslate>Owner:</span>
+						&ngsp;
+						<a [routerLink]='accountService.routeRoot + "profile/" + o.record.owner'>
+							{{o.record.owner}}
+						</a>
+					</div>
+					<div cyphTranslate *ngIf='o.record.wasAnonymousShare'>
+						Received from anonymous
+					</div>
+				</mat-card-subtitle>
+
+				<div fxFlex fxLayoutAlign='end center'>
+					<ng-container *ngIf='recordType === recordTypes.File'>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Settings'
+							*ngIf='false'
+						>
+							<mat-icon>settings</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Download'
+							(click)='
+								accountFilesService.downloadAndSave(o.record.id);
+								$event.stopPropagation();
+							'
+							*ngIf='accountFilesService.isMedia(o.record.id) | async'
+						>
+							<mat-icon>cloud_download</mat-icon>
+						</button>
+					</ng-container>
+
+					<ng-container *ngIf='recordType === recordTypes.Form'>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Edit'
+							*ngIf='false'
+						>
+							<mat-icon>edit</mat-icon>
+						</button>
+					</ng-container>
+
+					<ng-container *ngIf='
+						recordType === recordTypes.Doc ||
+						recordType === recordTypes.Note
+					'>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip='Edit'
+							[routerLink]='
+								accountService.routeRoot +
+								accountFilesService.config[recordType].route +
+								"/" + o.record.id + "/edit"
+							'
+							*ngIf='currentUser.user.username === o.record.owner'
+						>
+							<mat-icon>edit</mat-icon>
+						</button>
+					</ng-container>
+
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Share'
+						(click)='
+							recordType === recordTypes.EhrApiKey ?
+								shareEhrApiKey(o) :
+								accountFilesService.shareFilePrompt(o.record)
+							;
+							$event.stopPropagation();
+						'
+						*ngIf='recordType !== recordTypes.EhrApiKey || o.data?.isMaster'
+					>
+						<mat-icon>share</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip='Delete'
+						(click)='
+							recordType === recordTypes.EhrApiKey ?
+								removeEhrApiKey(o) :
+								accountFilesService.remove(o.record)
+							;
+							$event.stopPropagation();
+						'
+						*ngIf='recordType !== recordTypes.EhrApiKey || !o.data?.isMaster'
+					>
+						<mat-icon>delete</mat-icon>
+					</button>
+				</div>
+			</mat-card-header>
+		</mat-card>
+
+		<ng-container *ngIf='
+			recordType === recordTypes.File &&
+			(envService.isMobile | async) === false
+		'>
+			<ng-container *ngTemplateOutlet='fileUploadDropZone'></ng-container>
+
+			<div fxLayoutAlign='center'>
+				<cyph-account-storage-analytics
+					fxFlex='90'
+					fxFlex.md='66'
+					fxFlex.gt-md='40'
+				></cyph-account-storage-analytics>
+			</div>
+		</ng-container>
+	</div>
+
+	<ng-content></ng-content>
+
+	<mat-progress-spinner
+		mode='indeterminate'
+		*ngIf='accountFilesService.showSpinner | async'
+	></mat-progress-spinner>
+</div>
+
+<ng-template #fileUploadDropZone>
+	<div
+		class='file-upload'
+		fxLayoutAlign='center'
+		fxLayout='row'
+		matTooltip='Upload File'
+		matTooltipPosition='above'
+		cyphDropZone
+		cyphTranslate
+		(fileDrop)='accountFilesService.upload($event.name, $event)'
+	>
+		<mat-icon>file_upload</mat-icon>
+	</div>
+</ng-template>

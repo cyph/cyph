@@ -1,0 +1,38 @@
+@import '../../../../css/mixins';
+
+.file-upload {
+	height: 10em;
+}
+
+.mobile {
+	::ng-deep .mat-card-header-text {
+		word-break: break-word;
+	}
+}
+
+.card-list.mobile {
+	padding-top: 0 !important;
+
+	.file-upload {
+		height: 5em;
+	}
+}
+
+mat-card.incoming {
+	@include transition(500ms);
+
+	&:not(:hover) {
+		opacity: 0.75 !important;
+	}
+}
+
+cyph-account-storage-analytics.mobile {
+	position: relative;
+	top: -15px;
+}
+
+mat-card-subtitle, mat-card-title {
+	@include word-wrap;
+
+	white-space: normal;
+}

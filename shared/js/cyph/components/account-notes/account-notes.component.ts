@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
-import {IAccountFileRecord, IAccountFileReference} from '../../proto';
+import {AccountFileRecord} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -11,7 +11,6 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {trackByID} from '../../track-by/track-by-id';
 
 
 /**
@@ -24,29 +23,15 @@ import {trackByID} from '../../track-by/track-by-id';
 	templateUrl: './account-notes.component.html'
 })
 export class AccountNotesComponent extends BaseProvider implements OnInit {
-	/** List of incoming notes to display. */
-	public readonly incomingNotes: Observable<(IAccountFileRecord&IAccountFileReference)[]>	=
-		this.activatedRoute.data.pipe(mergeMap(o => o.realTime ?
-			this.accountFilesService.incomingFilesFiltered.docs :
-			this.accountFilesService.incomingFilesFiltered.notes
-		))
-	;
-
-	/** List of notes to display. */
-	public readonly notes: Observable<(IAccountFileRecord&{owner: string})[]>	=
-		this.activatedRoute.data.pipe(mergeMap(o => o.realTime ?
-			this.accountFilesService.filesListFiltered.docs :
-			this.accountFilesService.filesListFiltered.notes
-		))
-	;
-
 	/** Indicates whether or not the real-time doc UI is enabled. */
 	public readonly realTime: Observable<boolean>	=
 		this.activatedRoute.data.pipe(map(o => o.realTime))
 	;
-
-	/** @see trackByID */
-	public readonly trackByID: typeof trackByID		= trackByID;
+	/** @see AccountFileRecord.RecordTypes */
+	public readonly recordType	= this.realTime.pipe(map(realTime => realTime ?
+		AccountFileRecord.RecordTypes.Doc :
+		AccountFileRecord.RecordTypes.Note
+	));
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
