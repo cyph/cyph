@@ -23,8 +23,6 @@ cp /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js /node_modules/ugl
 
 commandsDir="$(cd "$(dirname "$0")" ; pwd)"
 
-sed -i "s|^\s*compress:.*,|compress: compress === true ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
-
 sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
 
 sed -i "s/safari10 = .*;/safari10 = true;/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
