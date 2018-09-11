@@ -5,6 +5,7 @@ import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IAppointment} from '../proto';
 import {Timer} from '../timer';
+import {prettyPrint} from '../util/serialization';
 import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
@@ -197,7 +198,14 @@ export class P2PService extends BaseProvider {
 	public async openNotes (appointment: IAppointment) : Promise<void> {
 		const newNotes	= await this.dialogService.prompt({
 			bottomSheet: true,
-			content: this.stringsService.appointmentNotes,
+			content:
+				(
+					appointment.forms && appointment.forms.length > 0 ?
+						`${prettyPrint(appointment.forms)}\n\n\n` :
+						''
+				) +
+				this.stringsService.appointmentNotes
+			,
 			preFill: appointment.notes,
 			title: this.stringsService.notes
 		});
