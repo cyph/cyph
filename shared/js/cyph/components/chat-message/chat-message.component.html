@@ -17,7 +17,7 @@
 	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
 	[class.visibility-hidden]='(viewReady | async) === false'
 	[id]='message ? "message-id-" + message?.id : undefined'
-	*ngIf='message?.valueWatcher | async as value'
+	*ngIf='message?.valueWatcher | async as value; else messageLoading'
 >
 	<div>
 		<div fxLayout='row' *ngIf='uiStyle === uiStyles.default; else mailUI'>
@@ -314,4 +314,20 @@
 			></cyph-markdown>
 		</ng-template>
 	</span>
+</ng-template>
+
+<ng-template #messageLoading>
+	<div class='message-loading'>
+		<div *ngIf='
+			((message?.authorUser?.name | async) || (message?.author | async)) as author;
+			else messageLoadingNoAuthor
+		'>
+			<span cyphTranslate>Loading message from</span>
+			&ngsp;
+			<span>{{author}}...</span>
+		</div>
+		<ng-template #messageLoadingNoAuthor>
+			<div cyphTranslate>Loading message...</div>
+		</ng-template>
+	</div>
 </ng-template>

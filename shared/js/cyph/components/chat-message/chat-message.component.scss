@@ -35,6 +35,18 @@
 	}
 }
 
+.message-loading {
+	width: 100%;
+	text-align: center;
+	vertical-align: middle;
+	border-style: dashed;
+	border-width: 1.5px;
+
+	> div {
+		margin: 25px 0;
+	}
+}
+
 .message-item.mobile .confirmation-checks mat-icon {
 	@include icon-size(12px);
 
