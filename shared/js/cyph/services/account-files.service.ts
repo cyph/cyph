@@ -9,7 +9,7 @@ import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {DeltaOperation, DeltaStatic} from 'quill';
 import * as Delta from 'quill-delta';
-import QuillDeltaToHtml from 'quill-delta-to-html';
+import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
 import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
 import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {AccountFile, AccountFileShare, SecurityModels} from '../account';
@@ -598,7 +598,7 @@ export class AccountFilesService extends BaseProvider {
 
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
-		return htmlToText.fromString(new QuillDeltaToHtml(delta.ops || []).convert());
+		return htmlToText.fromString(new QuillDeltaToHtmlConverter(delta.ops || []).convert());
 	}
 
 	/** @ignore */
