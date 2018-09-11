@@ -444,42 +444,30 @@ export const patientProfile		= () : IForm[] => [
 	newForm(
 		[
 			contact('redoxPatient.Demographics'),
-			newFormComponent(
-				[
-					newFormContainer(
-						[
-							datepicker({
-								id: 'DOB',
-								label: 'Date of Birth',
-								required: true,
-								width: 20
-							}),
-							select({
-								id: 'Sex',
-								label: 'Sex',
-								options: ['Male', 'Female'],
-								width: 15
-							}),
-							select({
-								id: 'MaritalStatus',
-								label: 'Marital Status',
-								options: ['Single', 'Married']
-							}),
-							numberInput({
-								label: 'Weight (lbs)',
-								max: 1500,
-								required: false,
-								width: 10
-							}),
-							height()
-						],
-						undefined,
-						false
-					)
-				],
-				undefined,
-				true
-			)
+			newFormComponent([newFormContainer([datepicker({
+				id: 'DOB',
+				label: 'Date of Birth',
+				required: true,
+				width: 20
+			})])]),
+			newFormComponent([newFormContainer([select({
+				id: 'Sex',
+				label: 'Sex',
+				options: ['Male', 'Female'],
+				width: 15
+			})])]),
+			newFormComponent([newFormContainer([select({
+				id: 'MaritalStatus',
+				label: 'Marital Status',
+				options: ['Single', 'Married']
+			})])]),
+			newFormComponent([newFormContainer([numberInput({
+				label: 'Weight (lbs)',
+				max: 1500,
+				required: false,
+				width: 10
+			})])]),
+			newFormComponent([newFormContainer([height()])])
 		],
 		undefined,
 		true
