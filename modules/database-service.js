@@ -3,7 +3,7 @@
  */
 
 
-const gcloudStorage	= require('@google-cloud/storage');
+const {Storage}		= require('@google-cloud/storage');
 const crypto		= require('crypto');
 const admin			= require('firebase-admin');
 const functions		= require('firebase-functions');
@@ -44,7 +44,7 @@ const auth			= app.auth();
 const database		= app.database();
 const functionsUser	= functions.auth.user();
 const messaging		= app.messaging();
-const storage		= gcloudStorage(config.storage).bucket(`${config.project.id}.appspot.com`);
+const storage		= new Storage(config.storage).bucket(`${config.project.id}.appspot.com`);
 
 const processURL	= (namespace, url) => {
 	if (!namespace || !url) {
