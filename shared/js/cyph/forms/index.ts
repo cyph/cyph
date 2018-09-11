@@ -4,10 +4,12 @@ import {Form, IForm} from '../proto';
 
 const newForm			= (
 	components: Form.IComponent[],
-	id?: string
+	id?: string,
+	isExpansionPanel?: boolean
 ) : IForm => ({
 	components,
-	id
+	id,
+	isExpansionPanel
 });
 
 const newFormComponent	= (
@@ -438,60 +440,92 @@ export const newPatient			= () : IForm => newForm(
 );
 
 /** Patient profile form. */
-export const patientProfile		= () : IForm => newForm(
-	[
-		contact('redoxPatient.Demographics'),
-		newFormComponent(
-			[
-				newFormContainer(
-					[
-						datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
-						select({
-							id: 'Sex',
-							label: 'Sex',
-							options: ['Male', 'Female'],
-							width: 15
-						}),
-						select({
-							id: 'MaritalStatus',
-							label: 'Marital Status',
-							options: ['Single', 'Married']
-						}),
-						numberInput(
-							{label: 'Weight (lbs)', max: 1500, width: 10, required: false}
-						),
-						height()
-					],
-					undefined,
-					false
-				)
-			],
-			undefined,
-			true
-		)
-	]
-);
+export const patientProfile		= () : IForm[] => [
+	newForm(
+		[
+			contact('redoxPatient.Demographics'),
+			newFormComponent(
+				[
+					newFormContainer(
+						[
+							datepicker({
+								id: 'DOB',
+								label: 'Date of Birth',
+								required: true,
+								width: 20
+							}),
+							select({
+								id: 'Sex',
+								label: 'Sex',
+								options: ['Male', 'Female'],
+								width: 15
+							}),
+							select({
+								id: 'MaritalStatus',
+								label: 'Marital Status',
+								options: ['Single', 'Married']
+							}),
+							numberInput({
+								label: 'Weight (lbs)',
+								max: 1500,
+								required: false,
+								width: 10
+							}),
+							height()
+						],
+						undefined,
+						false
+					)
+				],
+				undefined,
+				true
+			)
+		],
+		undefined,
+		true
+	)
+];
 
 /** Doctor profile form. */
-export const doctorProfile				= () : IForm => newForm(
-	[
-		newFormComponent([title('Doctor Profile')])
-	],
-	'doctor-profile'
-);
+export const doctorProfile				= () : IForm[] => [
+	newForm(
+		[
+			newFormComponent([title('Education & Training')]),
+			newFormComponent([newFormContainer([input({label: "Bachelor's"})])]),
+			newFormComponent([newFormContainer([input({label: 'Medical School'})])]),
+			newFormComponent([newFormContainer([input({label: 'Residency'})])])
+		],
+		undefined,
+		true
+	),
+	newForm(
+		[
+			newFormComponent([title('Misc')]),
+			newFormComponent([newFormContainer([input({label: 'NPI'})])])
+		],
+		undefined,
+		true
+	)
+];
 
 /** Telehealth organization profile form. */
-export const telehealthOrgProfile		= () : IForm => newForm(
-	[
-		newFormComponent([title('Org Profile')])
-	],
-	'org-profile'
-);
+export const telehealthOrgProfile		= () : IForm[] => [
+	newForm(
+		[
+			newFormComponent([title('Org Profile')])
+		],
+		undefined,
+		true
+	)
+];
 
 /** Telehealth staff profile form. */
-export const telehealthStaffProfile		= () : IForm => newForm(
-	[
-		newFormComponent([title('Staff Profile')])
-	],
-	'staff-profile'
-);
+export const telehealthStaffProfile		= () : IForm[] => [
+	newForm(
+		[
+			newFormComponent([title('Staff Profile')])
+		],
+		undefined,
+		true
+	)
+];

@@ -111,6 +111,35 @@
 	</div>
 </ng-template>
 
+<ng-template #forms let-extra='extra'>
+	<div class='cyph-inverted-theme' *ngIf='extra.forms.length > 0'>
+		<!-- TODO: factor this out to a "dynamic form accordion" component -->
+		<mat-accordion>
+			<mat-expansion-panel
+				[expanded]='i === 0'
+				*ngFor='let form of extra.forms; let i = index; trackBy: trackBySelf'
+			>
+				<mat-expansion-panel-header>
+					<mat-panel-title>
+						<h2>{{
+							(
+								((form?.components || [])[0]?.containers || [])[0]?.elements || []
+							)[0]?.
+								element.
+								label
+						}}</h2>
+					</mat-panel-title>
+				</mat-expansion-panel-header>
+				<cyph-dynamic-form
+					[form]='form'
+					[hideSubmitButton]='true'
+					[isDisabled]='(editMode | async) === false'
+				></cyph-dynamic-form>
+			</mat-expansion-panel>
+		</mat-accordion>
+	</div>
+</ng-template>
+
 <ng-template #name let-prefix='prefix' let-readViewClasses='readViewClasses'>
 	<div
 		class='name'
@@ -533,25 +562,19 @@
 								}'></ng-container>
 							</div>
 						</div>
-						<ng-container *ngFor='let form of extra.forms; trackBy: trackBySelf'>
-							<cyph-dynamic-form
-								[form]='form'
-								[isDisabled]='(editMode | async) === false'
-								[submitText]='stringsService.saveUpperCase'
-								(submitForm)='saveProfile({forms: extra.forms})'
-							></cyph-dynamic-form>
-						</ng-container>
+						<ng-container
+							*ngTemplateOutlet='forms; context: {extra: extra}'
+						></ng-container>
 					</mat-card-content>
 					<mat-card-content *ngIf='(user.userType | async) === accountUserTypes.Org'>
 						<div fxLayout='column'>
 							<div fxLayout='column' *ngIf='(doctorListOnly | async) !== true'>
 								<ng-container *ngTemplateOutlet='description'></ng-container>
-								<h2 cyphTranslate>Address</h2>
-								<mat-list>
-									<mat-list-item>
-										<span>{{extra.address || ''}}</span>
-									</mat-list-item>
-								</mat-list>
+								<br />
+								<br />
+								<ng-container
+									*ngTemplateOutlet='forms; context: {extra: extra}'
+								></ng-container>
 								<br />
 								<br />
 							</div>
@@ -599,93 +622,9 @@
 						<ng-container *ngTemplateOutlet='description'></ng-container>
 						<br />
 						<br />
-						<div class='cyph-inverted-theme'>
-							<mat-accordion>
-								<mat-expansion-panel expanded>
-									<mat-expansion-panel-header>
-										<mat-panel-title>
-											<h2 cyphTranslate>Education & Training</h2>
-										</mat-panel-title>
-									</mat-expansion-panel-header>
-									<div fxLayout='column'>
-										<div fxLayout='row'>
-											<span cyphTranslate>Bachelors</span>
-											<span>&nbsp;&mdash;&nbsp;</span>
-											<span>
-												{{(extra.education || [])[0]?.locationName || ''}}
-											</span>
-										</div>
-										<div fxLayout='row'>
-											<span cyphTranslate>Medical School</span>
-											<span>&nbsp;&mdash;&nbsp;</span>
-											<span>
-												{{(extra.education || [])[1]?.locationName || ''}}
-											</span>
-										</div>
-										<div fxLayout='row'>
-											<span cyphTranslate>Residency</span>
-											<span>&nbsp;&mdash;&nbsp;</span>
-											<span>
-												{{(extra.education || [])[2]?.locationName || ''}}
-											</span>
-										</div>
-									</div>
-								</mat-expansion-panel>
-								<mat-expansion-panel>
-									<mat-expansion-panel-header>
-										<mat-panel-title>
-											<h2 cyphTranslate>Insurance</h2>
-										</mat-panel-title>
-									</mat-expansion-panel-header>
-									<div fxLayout='column'>
-										<div *ngFor='
-											let insurance of (extra.insurance || []);
-											trackBy: trackBySelf
-										'>
-											{{insurance}}
-										</div>
-									</div>
-								</mat-expansion-panel>
-								<mat-expansion-panel>
-									<mat-expansion-panel-header>
-										<mat-panel-title>
-											<h2 cyphTranslate>Specialties</h2>
-										</mat-panel-title>
-									</mat-expansion-panel-header>
-									<div fxLayout='column'>
-										<span>{{(extra.specialties || [])[0] || ''}}</span>
-										<span>{{(extra.specialties || [])[1] || ''}}</span>
-									</div>
-								</mat-expansion-panel>
-								<mat-expansion-panel>
-									<mat-expansion-panel-header>
-										<mat-panel-title>
-											<h2 cyphTranslate>Languages</h2>
-										</mat-panel-title>
-									</mat-expansion-panel-header>
-									<div fxLayout='column'>
-										<span>{{(extra.languages || [])[0]?.language || ''}}</span>
-										<span>{{(extra.languages || [])[3]?.language || ''}}</span>
-									</div>
-								</mat-expansion-panel>
-								<mat-expansion-panel>
-									<mat-expansion-panel-header>
-										<mat-panel-title>
-											<h2 cyphTranslate>Misc</h2>
-										</mat-panel-title>
-									</mat-expansion-panel-header>
-									<div fxLayout='column'>
-										<div fxLayout='row'>
-											<span cyphTranslate>NPI</span>
-											<span>&nbsp;&mdash;&nbsp;</span>
-											<span>
-												{{(extra.npis || [])[0] || ''}}
-											</span>
-										</div>
-									</div>
-								</mat-expansion-panel>
-							</mat-accordion>
-						</div>
+						<ng-container
+							*ngTemplateOutlet='forms; context: {extra: extra}'
+						></ng-container>
 					</mat-card-content>
 
 					<mat-card-content
@@ -693,11 +632,16 @@
 					>
 						<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='16px'>
 							<h2 cyphTranslate>Telehealth Administrator</h2>
+							<ng-container *ngTemplateOutlet='mailButtons'></ng-container>
+							<br />
 							<div class='description' *ngIf='user.description'>
 								{{user.description | async}}
 							</div>
-
-							<ng-container *ngTemplateOutlet='mailButtons'></ng-container>
+							<br />
+							<br />
+							<ng-container
+								*ngTemplateOutlet='forms; context: {extra: extra}'
+							></ng-container>
 						</div>
 					</mat-card-content>
 				</mat-card>

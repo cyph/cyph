@@ -5,11 +5,35 @@
 	(submit)='onSubmit()'
 	*ngIf='form'
 >
+	<ng-container *ngIf='!form?.isExpansionPanel; else expansionPanelForm'>
+		<ng-container *ngTemplateOutlet='mainView; context: {
+			components: form?.components || []
+		}'></ng-container>
+	</ng-container>
+
+	<ng-template #expansionPanelForm>
+		<ng-container *ngTemplateOutlet='mainView; context: {
+			components: (form?.components || []).slice(1)
+		}'></ng-container>
+	</ng-template>
+
+	<ng-container *ngIf='!hideSubmitButton && !isDisabled'>
+		<br />
+		<div fxLayout='row' fxLayoutAlign='center center'>
+			<button mat-raised-button color='accent' type='submit'>
+				{{submitText}}
+			</button>
+		</div>
+	</ng-container>
+</form>
+
+
+<ng-template #mainView let-components='components'>
 	<div
 		fxLayout='column'
 		fxLayoutAlign='center'
 		class='component'
-		*ngFor='let component of form?.components; trackBy: trackByIndex'
+		*ngFor='let component of components; trackBy: trackByIndex'
 	>
 		<div
 			[fxLayout]='component.isColumn ? "column" : "row"'
@@ -30,14 +54,7 @@
 			</div>
 		</div>
 	</div>
-	<br />
-	<div fxLayout='row' fxLayoutAlign='center center' *ngIf='!hideSubmitButton && !isDisabled'>
-		<button mat-raised-button color='accent' type='submit'>
-			{{submitText}}
-		</button>
-	</div>
-</form>
-
+</ng-template>
 
 <ng-template #elementContainerView let-container='container'>
 	<ng-container *ngFor='let element of container.elements; trackBy: trackByIndex'>
@@ -110,18 +127,24 @@
 			/>
 		</mat-form-field>
 
-		<mat-form-field *ngIf='o.type === types.Input'>
-			<input
-				matInput
-				[textMask]='getMask(o)'
-				[(ngModel)]='o.valueString'
-				[name]='getName(o)'
-				type='text'
-				[disabled]='isDisabled'
-				[placeholder]='o.label'
-				[required]='o.required'
-			/>
-		</mat-form-field>
+		<ng-container  *ngIf='o.type === types.Input'>
+			<mat-form-field *ngIf='!isDisabled'>
+				<input
+					matInput
+					[textMask]='getMask(o)'
+					[(ngModel)]='o.valueString'
+					[name]='getName(o)'
+					type='text'
+					[placeholder]='o.label'
+					[required]='o.required'
+				/>
+			</mat-form-field>
+			<div *ngIf='isDisabled'>
+				<strong>{{o.label}}:</strong>
+				&ngsp;
+				<span>{{o.valueString}}</span>
+			</div>
+		</ng-container>
 
 		<mat-form-field *ngIf='o.type === types.Number'>
 			<input

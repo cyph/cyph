@@ -950,6 +950,9 @@ message Form {
 
 	/** Optional ID. Can be used for associating with fields in other systems. */
 	string id = 2;
+
+	/** If true, this form will be displayed in an accordion expansion panel. */
+	bool isExpansionPanel = 3;
 }
 
 /** An asymmetric key pair. */

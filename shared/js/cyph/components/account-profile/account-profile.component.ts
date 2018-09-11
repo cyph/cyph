@@ -6,6 +6,12 @@ import {map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
+import {
+	doctorProfile,
+	patientProfile,
+	telehealthOrgProfile,
+	telehealthStaffProfile
+} from '../../forms';
 import {IFile} from '../../ifile';
 import {AccountUserTypes, DataURIProto, IForm} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -282,7 +288,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	}
 
 	/** Sets edit mode. */
-	public setEditMode (editMode: boolean) : void {
+	public async setEditMode (editMode: boolean) : Promise<void> {
 		if (!this.isCurrentUser.value || !this.accountDatabaseService.currentUser.value) {
 			throw new Error("Cannot edit another user's profile.");
 		}
@@ -290,6 +296,40 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 		this.draft.next({});
 		this.router.navigate([accountRoot, 'profile', ...(editMode ? ['edit'] : [])]);
 		this.accountService.setHeader(this.accountDatabaseService.currentUser.value.user);
+
+		const user	= this.userProfile.value;
+
+		if (!(editMode && this.envService.isTelehealth && user)) {
+			return;
+		}
+
+		const profilePromise	= user.accountUserProfile.getValue();
+
+		await user.accountUserProfileExtra.updateValue(async extra => {
+			if (extra.forms && extra.forms.length > 0) {
+				throw new Error();
+			}
+
+			const {userType}	= await profilePromise;
+
+			const forms			=
+				userType === AccountUserTypes.Org ?
+					telehealthOrgProfile() :
+				userType === AccountUserTypes.Standard ?
+					patientProfile() :
+				userType === AccountUserTypes.TelehealthAdmin ?
+					telehealthStaffProfile() :
+				userType === AccountUserTypes.TelehealthDoctor ?
+					doctorProfile() :
+					undefined
+			;
+
+			if (forms === undefined) {
+				throw new Error();
+			}
+
+			return {...extra, forms};
+		});
 	}
 
 	/** Shares medical data from EHR system with the patient. */
