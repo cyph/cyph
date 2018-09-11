@@ -3,6 +3,7 @@
 cyph-logo {
 	height: 5em;
 	opacity: 0.75;
+	margin-bottom: 1em;
 }
 
 .content, mat-card-content {
@@ -24,10 +25,6 @@ cyph-logo {
 	}
 }
 
-cyph-logo {
-	margin-bottom: 1em;
-}
-
 .compact button.cancel {
 	@include transform(scale(2));
 }
@@ -39,19 +36,6 @@ cyph-logo {
 	box-shadow: 0 20px 42px 0 rgba(0, 0, 0, 0.3);
 	border-width: 10px !important;
 	margin: 5px auto 5px auto;
-}
-
-.loading {
-	.logo-animation {
-		@include transform(translate(0, 15%) scale(0.9));
-
-		opacity: 0.25;
-		position: absolute;
-		left: 0;
-		right: 0;
-		margin: auto;
-		z-index: -42;
-	}
 }
 
 mat-card.compact {

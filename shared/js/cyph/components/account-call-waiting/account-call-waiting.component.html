@@ -112,16 +112,6 @@
 								fxLayout='column'
 								fxLayoutAlign='center stretch'
 							>
-								<div
-									class='logo-animation'
-									*ngIf='((chat.initProgress | async) || 0) > 0'
-								>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-								</div>
 								<ng-container *ngTemplateOutlet='loadingMessage'></ng-container>
 								<div fxLayoutAlign='center'>
 									<mat-progress-bar
@@ -199,16 +189,6 @@
 								fxLayout='column'
 								fxLayoutAlign='center stretch'
 							>
-								<div
-									class='logo-animation'
-									*ngIf='((chat.initProgress | async) || 0) > 0'
-								>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-								</div>
 								<ng-container *ngTemplateOutlet='loadingMessage'></ng-container>
 								<div fxLayoutAlign='center'>
 									<mat-progress-bar
