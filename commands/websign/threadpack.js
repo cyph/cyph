@@ -15,15 +15,12 @@ const args	= {
 
 const code		= fs.readFileSync(args.path).toString().replace(
 	/importScripts\(["'](.*?)["']\)/g,
-	(_, value) => {
-		const script	=
-			fs.readFileSync(
-				value.slice(value[0] === '/' ? 1 : 0).split('?')[0]
-			).toString().trim()
-		;
-
-		return `\n\n${script.endsWith(';') ? script.slice(0, -1) : script}\n\n`;
-	}
+	(_, value) =>
+		'\n\n' +
+		fs.readFileSync(
+			value.slice(value[0] === '/' ? 1 : 0).split('?')[0]
+		).toString() +
+		'\n\n'
 );
 
 const {error}	= uglify.minify(code);
