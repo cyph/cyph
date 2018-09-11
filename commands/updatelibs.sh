@@ -16,7 +16,7 @@ read -r -d '' modules <<- EOM
 	@angular/animations@next
 	@angular/cdk@next
 	@angular/cdk-experimental@next
-	@angular/cli@next
+	@angular/cli
 	@angular/common@next
 	@angular/compiler@next
 	@angular/compiler-cli@next
@@ -34,15 +34,15 @@ read -r -d '' modules <<- EOM
 	@angular/router@next
 	@angular/service-worker@next
 	@angular/tsc-wrapped@next
-	@angular-devkit/architect@next
-	@angular-devkit/architect-cli@next
-	@angular-devkit/build-ng-packagr@next
-	@angular-devkit/core@next
-	@angular-devkit/build-angular@next
-	@angular-devkit/build-optimizer@next
-	@angular-devkit/build-webpack@next
-	@angular-devkit/schematics@next
-	@angular-devkit/schematics-cli@next
+	@angular-devkit/architect
+	@angular-devkit/architect-cli
+	@angular-devkit/build-ng-packagr
+	@angular-devkit/core
+	@angular-devkit/build-angular
+	@angular-devkit/build-optimizer
+	@angular-devkit/build-webpack
+	@angular-devkit/schematics
+	@angular-devkit/schematics-cli
 	@asymmetrik/ngx-leaflet
 	@beezleeart/ngx-filemanager
 	@compodoc/compodoc
@@ -72,7 +72,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack@next
+	@ngtools/webpack
 	@ngxs/devtools-plugin
 	@ngxs/logger-plugin
 	@ngxs/storage-plugin
