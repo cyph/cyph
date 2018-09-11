@@ -156,10 +156,12 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 			observableAll(
 				o.filteredContactList.map(({unreadMessageCount}) => unreadMessageCount)
 			).pipe(map(counts =>
-				this.contactList !== this.accountContactsService.contactList ? [] : [
-					...(o.filteredContactList.filter((_: any, i: number) => counts[i] > 0)),
-					...(o.filteredContactList.filter((_: any, i: number) => counts[i] < 1))
-				]
+				this.contactList !== this.accountContactsService.contactList ?
+					o.filteredContactList :
+					[
+						...(o.filteredContactList.filter((_: any, i: number) => counts[i] > 0)),
+						...(o.filteredContactList.filter((_: any, i: number) => counts[i] < 1))
+					]
 			))
 		))
 	;
