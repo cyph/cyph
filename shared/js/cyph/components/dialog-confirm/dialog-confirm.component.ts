@@ -1,8 +1,18 @@
-import {ChangeDetectionStrategy, Component, ViewChild} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	Inject,
+	Optional,
+	ViewChild
+} from '@angular/core';
+import {MatBottomSheetRef} from '@angular/material/bottom-sheet';
 import {MatDialogRef} from '@angular/material/dialog';
 import {BaseProvider} from '../../base-provider';
 import {IForm} from '../../proto';
 import {StringsService} from '../../services/strings.service';
+import {sleep} from '../../util/wait';
 import {DynamicFormComponent} from '../dynamic-form';
 
 
@@ -15,7 +25,7 @@ import {DynamicFormComponent} from '../dynamic-form';
 	styleUrls: ['./dialog-confirm.component.scss'],
 	templateUrl: './dialog-confirm.component.html'
 })
-export class DialogConfirmComponent extends BaseProvider {
+export class DialogConfirmComponent extends BaseProvider implements AfterViewInit {
 	/** Cancel button text. */
 	public cancel?: string;
 
@@ -43,9 +53,38 @@ export class DialogConfirmComponent extends BaseProvider {
 	/** Title. */
 	public title?: string;
 
+	/** Indicates whether this is a bottom sheet. */
+	public get bottomSheet () : boolean {
+		return this.matBottomSheetRef !== undefined;
+	}
+
+	/** Closes dialog. */
+	public close (ok?: boolean) {
+		if (this.matDialogRef) {
+			this.matDialogRef.close(ok);
+		}
+		else if (this.matBottomSheetRef) {
+			this.matBottomSheetRef.dismiss(ok);
+		}
+	}
+
+	/** @inheritDoc */
+	public async ngAfterViewInit () : Promise<void> {
+		await sleep(0);
+		this.changeDetectorRef.markForCheck();
+	}
+
 	constructor (
-		/** Dialog instance. */
-		public readonly matDialogRef: MatDialogRef<DialogConfirmComponent>,
+		/** @ignore */
+		private readonly changeDetectorRef: ChangeDetectorRef,
+
+		/** @ignore */
+		@Optional() @Inject(MatBottomSheetRef)
+		private readonly matBottomSheetRef: MatBottomSheetRef<DialogConfirmComponent>|undefined,
+
+		/** @ignore */
+		@Optional() @Inject(MatDialogRef)
+		private readonly matDialogRef: MatDialogRef<DialogConfirmComponent>|undefined,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

@@ -3,7 +3,7 @@ import * as $ from 'jquery';
 import {fadeIn} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';
-import {ChatMessageValue} from '../../proto';
+import {IAppointment, ChatMessageValue} from '../../proto';
 import {ChatService} from '../../services/chat.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
@@ -28,6 +28,9 @@ import {urlToSafeStyle} from '../../util/safe-values';
 	templateUrl: './chat-main.component.html'
 })
 export class ChatMainComponent extends BaseProvider implements AfterViewInit {
+	/** Appointment associated with this call. */
+	@Input() public appointment?: IAppointment;
+
 	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean		= false;
 

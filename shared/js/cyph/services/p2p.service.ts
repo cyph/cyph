@@ -3,6 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
+import {IAppointment} from '../proto';
 import {Timer} from '../timer';
 import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
@@ -190,6 +191,20 @@ export class P2PService extends BaseProvider {
 	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
 		this.p2pWebRTCService.init(this.chatService, this.handlers, localVideo, remoteVideo);
 		this.isEnabled.next(await this.sessionCapabilitiesService.capabilities.p2p);
+	}
+
+	/** Opens notes. */
+	public async openNotes (appointment: IAppointment) : Promise<void> {
+		const newNotes	= await this.dialogService.prompt({
+			bottomSheet: true,
+			content: this.stringsService.appointmentNotes,
+			preFill: appointment.notes,
+			title: this.stringsService.notes
+		});
+
+		if (newNotes !== undefined) {
+			appointment.notes	= newNotes;
+		}
 	}
 
 	/** Toggle window of sidebar containing chat UI. */

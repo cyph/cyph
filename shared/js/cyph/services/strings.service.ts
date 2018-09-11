@@ -78,6 +78,9 @@ export class StringsService extends BaseProvider {
 	public readonly appointmentDuration: string			= `Appointment Duration`;
 
 	/** @see StringsService */
+	public readonly appointmentNotes: string			= `Notes about this appointment:`;
+
+	/** @see StringsService */
 	public readonly audioCall: string					= `call`;
 
 	/** @see StringsService */

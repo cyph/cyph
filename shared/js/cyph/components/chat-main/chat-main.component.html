@@ -299,6 +299,16 @@
 			<button
 				mat-icon-button
 				cyphTranslate
+				matTooltip='Notes'
+				matTooltipPosition='above'
+				(click)='p2pService.openNotes(appointment)'
+				*ngIf='appointment'
+			>
+				<mat-icon>notes</mat-icon>
+			</button>
+			<button
+				mat-icon-button
+				cyphTranslate
 				matTooltip='End Call'
 				matTooltipPosition='above'
 				color='warn'

@@ -6,6 +6,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
+import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
@@ -88,6 +89,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		MarkdownComponent,
 		MatAutocompleteModule,
 		MatBadgeModule,
+		MatBottomSheetModule,
 		MatButtonModule,
 		MatButtonToggleModule,
 		MatCardModule,
@@ -133,6 +135,7 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		ImageCropperModule,
 		MatAutocompleteModule,
 		MatBadgeModule,
+		MatBottomSheetModule,
 		MatButtonModule,
 		MatCardModule,
 		MatCheckboxModule,

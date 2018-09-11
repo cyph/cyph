@@ -1,3 +1,6 @@
+<ng-container *ngIf='accountDatabaseService.currentUser | async as user'>
+
+
 <div
 	fxFlexFill
 	fxLayoutAlign='center center'
@@ -37,6 +40,11 @@
 		>
 			<cyph-chat-main
 				fxFlex
+				[appointment]='
+					(user.user.userType | async) === accountUserTypes.TelehealthDoctor ?
+						(appointment | async) :
+						undefined
+				'
 				[messageType]='messageType | async'
 				[class.visibility-hidden]='initialCallPending | async'
 			></cyph-chat-main>
@@ -52,6 +60,11 @@
 			<cyph-chat-main
 				fxFlex
 				class='chat-end-margin'
+				[appointment]='
+					(user.user.userType | async) === accountUserTypes.TelehealthDoctor ?
+						(appointment | async) :
+						undefined
+				'
 				[messageType]='messageType | async'
 				[persistentEndMessage]='true'
 				[promptFollowup]='promptFollowup | async'
@@ -67,6 +80,9 @@
 		</ng-template>
 	</div>
 </div>
+
+
+</ng-container>
 
 
 <router-outlet></router-outlet>

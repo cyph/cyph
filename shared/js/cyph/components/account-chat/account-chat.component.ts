@@ -5,7 +5,13 @@ import {map, mergeMap, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';
-import {AccountFileRecord, CallTypes, ChatMessageValue, IAppointment} from '../../proto';
+import {
+	AccountFileRecord,
+	AccountUserTypes,
+	CallTypes,
+	ChatMessageValue,
+	IAppointment
+} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -21,6 +27,7 @@ import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
+import {getDateTimeString} from '../../util/time';
 import {sleep} from '../../util/wait';
 
 
@@ -40,6 +47,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** @ignore */
 	private initiatedContactID?: string;
+
+	/** @see AccountUserTypes */
+	public readonly accountUserTypes		= AccountUserTypes;
 
 	/** Appointment data, when applicable. */
 	public readonly appointment				=
@@ -161,9 +171,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				}
 
 				let appointment: IAppointment&{id: string};
+				let appointmentOther: string|undefined;
 
 				if (appointmentID) {
-					appointment	= {
+					appointment			= {
 						id: appointmentID,
 						...(await this.accountFilesService.downloadFile(
 							appointmentID,
@@ -171,7 +182,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 						).result)
 					};
 
-					callType		=
+					callType			=
 						promptFollowup ?
 							undefined :
 						appointment.calendarInvite.callType === CallTypes.Video ?
@@ -181,9 +192,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 							undefined
 					;
 
-					sessionSubID	= appointmentID;
+					sessionSubID		= appointmentID;
 
-					contactID		= await this.accountContactsService.getContactID(
+					appointmentOther	=
 						appointment.participants === undefined ?
 							undefined :
 							appointment.participants.find(participant =>
@@ -192,6 +203,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 									this.accountDatabaseService.currentUser.value.user.username
 								) !== normalize(participant)
 							)
+					;
+
+					contactID		= await this.accountContactsService.getContactID(
+						appointmentOther
 					);
 
 					this.appointment.next(appointment);
@@ -259,6 +274,17 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 								undefined,
 								true
 							);
+
+							if (appointment.notes && appointmentOther) {
+								await this.accountFilesService.upload(
+									`Notes about ${appointmentOther} (${
+										appointment.calendarInvite.title
+									}, ${
+										getDateTimeString(appointment.calendarInvite.startTime)
+									})`,
+									appointment.notes
+								)
+							}
 						}
 					}
 				});

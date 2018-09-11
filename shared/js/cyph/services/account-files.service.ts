@@ -1460,11 +1460,12 @@ export class AccountFilesService extends BaseProvider {
 
 	/**
 	 * Uploads new file.
+	 * @param data If string, will convert into a note.
 	 * @param shareWithUser Username(s) of another user or users to share this file with.
 	 */
 	public upload (
 		name: string,
-		file: AccountFile,
+		data: AccountFile|string,
 		shareWithUser?: string|string[],
 		metadata?: string
 	) : {
@@ -1492,6 +1493,12 @@ export class AccountFilesService extends BaseProvider {
 			await this.potassiumService.secretBox.keyBytes
 		))();
 		const url			= `users/${username}/files/${id}`;
+
+		const file			=
+			typeof data === 'string' ?
+				<IQuillDelta> new Delta().insert(data) :
+				data
+		;
 
 		const fileConfig	= this.config[this.getFileType(file)];
 

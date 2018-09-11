@@ -142,18 +142,22 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.bottomSheet Currently unsupported (ignored).
 	 * @param o.form Currently unsupported (ignored).
 	 * @param o.markdown Currently unsupported (ignored).
+	 * @param o.preFill Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async prompt (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			form: IForm;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},
@@ -161,10 +165,12 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	) : Promise<IForm|undefined>;
 	public async prompt (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},
@@ -172,11 +178,13 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	) : Promise<string|undefined>;
 	public async prompt (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			form?: IForm;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},

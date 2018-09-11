@@ -69,11 +69,13 @@ export class DialogService extends BaseProvider {
 	/** Prompts for input. */
 	public async prompt (
 		_O: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			form: IForm;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},
@@ -81,10 +83,12 @@ export class DialogService extends BaseProvider {
 	) : Promise<IForm|undefined>;
 	public async prompt (
 		_O: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},
@@ -92,11 +96,13 @@ export class DialogService extends BaseProvider {
 	) : Promise<string|undefined>;
 	public async prompt (
 		_O: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			form?: IForm;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},

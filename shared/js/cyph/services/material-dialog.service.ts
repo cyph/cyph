@@ -1,5 +1,6 @@
 import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
+import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
@@ -29,12 +30,14 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	/** @ignore */
 	private async confirmHelper (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			form?: IForm;
 			ok?: string;
 			markdown?: boolean;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title?: string;
 		},
@@ -42,41 +45,64 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		prompt: boolean = false
 	) : Promise<{ok: boolean; promptResponse: string|IForm|undefined}> {
 		return this.lock(async () => {
-			const matDialogRef	= this.matDialog.open(DialogConfirmComponent);
+			const matDialogRef	= o.bottomSheet ?
+				this.matBottomSheet.open(DialogConfirmComponent) :
+				this.matDialog.open(DialogConfirmComponent)
+			;
 
-			matDialogRef.componentInstance.content				= o.content;
+			const afterClosed	= 'close' in matDialogRef ?
+				() => matDialogRef.afterClosed() :
+				() => matDialogRef.afterDismissed()
+			;
 
-			matDialogRef.componentInstance.cancel				= o.cancel !== undefined ?
+			const beforeClosed	= 'close' in matDialogRef ?
+				() => matDialogRef.beforeClosed() :
+				() => matDialogRef.backdropClick()
+			;
+
+			const close			= 'close' in matDialogRef ?
+				(ok?: boolean) => { matDialogRef.close(ok); } :
+				(ok?: boolean) => { matDialogRef.dismiss(ok); }
+			;
+
+			const instance		= 'componentInstance' in matDialogRef ?
+				matDialogRef.componentInstance :
+				matDialogRef.instance
+			;
+
+			instance.content			= o.content;
+
+			instance.cancel				= o.cancel !== undefined ?
 				o.cancel :
 				this.stringsService.cancel
 			;
 
-			matDialogRef.componentInstance.form					= o.form;
+			instance.form				= o.form;
 
-			matDialogRef.componentInstance.markdown				= !!o.markdown;
+			instance.markdown			= !!o.markdown;
 
-			matDialogRef.componentInstance.ok					= o.ok !== undefined ?
+			instance.ok					= o.ok !== undefined ?
 				o.ok :
 				this.stringsService.ok
 			;
 
-			matDialogRef.componentInstance.prompt				= prompt ? '' : undefined;
+			instance.prompt				= prompt ? (o.preFill || '') : undefined;
 
-			matDialogRef.componentInstance.promptPlaceholder	= o.placeholder;
+			instance.promptPlaceholder	= o.placeholder;
 
-			matDialogRef.componentInstance.title				= o.title !== undefined ?
+			instance.title				= o.title !== undefined ?
 				o.title :
 				''
 			;
 
 			if (closeFunction) {
-				closeFunction.resolve(() => { matDialogRef.close(); });
+				closeFunction.resolve(close);
 			}
 
-			const ok				= matDialogRef.afterClosed().toPromise<boolean>();
+			const ok				= afterClosed().toPromise<boolean|undefined>();
 
-			const promptResponse	= matDialogRef.beforeClosed().toPromise().then(() =>
-				matDialogRef.componentInstance.form || matDialogRef.componentInstance.prompt
+			const promptResponse	= beforeClosed().toPromise().then(() =>
+				instance.form || instance.prompt
 			);
 
 			let hasReturned	= false;
@@ -84,14 +110,14 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 				(async () => {
 					await sleep(o.timeout);
 					if (!hasReturned) {
-						matDialogRef.close(false);
+						close(false);
 					}
 				})();
 			}
 
 			try {
 				return {
-					ok: await ok,
+					ok: !!(await ok),
 					promptResponse: await promptResponse
 				};
 			}
@@ -220,11 +246,13 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	/** @inheritDoc */
 	public async prompt (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			form: IForm;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},
@@ -232,10 +260,12 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	) : Promise<IForm|undefined>;
 	public async prompt (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},
@@ -243,11 +273,13 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	) : Promise<string|undefined>;
 	public async prompt (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			form?: IForm;
 			ok?: string;
 			placeholder?: string;
+			preFill?: string;
 			timeout?: number;
 			title: string;
 		},
@@ -279,6 +311,9 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly matBottomSheet: MatBottomSheet,
+
 		/** @ignore */
 		private readonly matDialog: MatDialog,
 
