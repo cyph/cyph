@@ -443,6 +443,7 @@ export const newPatient			= () : IForm => newForm(
 export const patientProfile		= () : IForm[] => [
 	newForm(
 		[
+			newFormComponent([title('Medical Data')]),
 			contact('redoxPatient.Demographics'),
 			newFormComponent([newFormContainer([datepicker({
 				id: 'DOB',
