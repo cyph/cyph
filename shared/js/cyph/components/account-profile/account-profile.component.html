@@ -526,21 +526,21 @@
 					<mat-card-content
 						*ngIf='(user.userType | async) === accountUserTypes.Standard'
 					>
-					<div fxLayout='column' fxLayoutGap='16px'>
-						<div fxLayout='row' fxLayoutAlign='center center'>
-							<ng-container *ngTemplateOutlet='mailButtons; context: {
-								patientData: true
-							}'></ng-container>
+						<div fxLayout='column' fxLayoutGap='16px'>
+							<div fxLayout='row' fxLayoutAlign='center center'>
+								<ng-container *ngTemplateOutlet='mailButtons; context: {
+									patientData: true
+								}'></ng-container>
+							</div>
 						</div>
-					</div>
-					<ng-container *ngFor='let form of extra.forms; trackBy: trackBySelf'>
-						<cyph-dynamic-form
-							[form]='form'
-							[isDisabled]='(editMode | async) === false'
-							[submitText]='stringsService.saveUpperCase'
-							(submitForm)='saveProfile({forms: extra.forms})'
-						></cyph-dynamic-form>
-					</ng-container>
+						<ng-container *ngFor='let form of extra.forms; trackBy: trackBySelf'>
+							<cyph-dynamic-form
+								[form]='form'
+								[isDisabled]='(editMode | async) === false'
+								[submitText]='stringsService.saveUpperCase'
+								(submitForm)='saveProfile({forms: extra.forms})'
+							></cyph-dynamic-form>
+						</ng-container>
 					</mat-card-content>
 					<mat-card-content *ngIf='(user.userType | async) === accountUserTypes.Org'>
 						<div fxLayout='column'>
