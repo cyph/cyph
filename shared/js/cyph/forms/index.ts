@@ -479,8 +479,8 @@ export const newPatient			= () : IForm => newForm(
 	'patient'
 );
 
-/** Patient profile form. */
-export const patientProfile		= () : IForm[] => [
+/** Private patient profile form. */
+export const patientProfilePrivate		= () : IForm[] => [
 	newForm(
 		[
 			newFormComponent([title('Basic Info')]),
@@ -508,6 +508,17 @@ export const patientProfile		= () : IForm[] => [
 				}),
 				height()
 			])])
+		],
+		undefined,
+		true
+	)
+];
+
+/** Patient profile form. */
+export const patientProfile		= () : IForm[] => [
+	newForm(
+		[
+			newFormComponent([title('Patient Profile')])
 		],
 		undefined,
 		true
