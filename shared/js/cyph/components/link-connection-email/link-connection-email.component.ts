@@ -36,10 +36,18 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 	public saveToLocalStorage: boolean	= true;
 
 	/** Email subject. */
-	public subject: string				= this.stringsService.linkConnectionEmailSubject;
+	public subject: string				=
+		this.envService.isTelehealth ?
+			this.stringsService.linkEmailSubjectTelehealth :
+			this.stringsService.linkEmailSubject
+	;
 
 	/** Email text. */
-	public text: string					= this.stringsService.linkConnectionEmailText;
+	public text: string					=
+		this.envService.isTelehealth ?
+			this.stringsService.linkEmailTextTelehealth :
+			this.stringsService.linkEmailText
+	;
 
 	/** Email recipient. */
 	public to: string					= '';
@@ -47,7 +55,7 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
 		if (this.saveToLocalStorage) {
-			await this.localStorageService.setItem('linkConnectionEmail', LinkConnectionEmail, {
+			await this.localStorageService.setItem('linkEmail', LinkConnectionEmail, {
 				subject: this.subject,
 				text: this.text
 			});
@@ -66,7 +74,7 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 
 		try {
 			const o	= await this.localStorageService.getItem(
-				'linkConnectionEmail',
+				'linkEmail',
 				LinkConnectionEmail
 			);
 

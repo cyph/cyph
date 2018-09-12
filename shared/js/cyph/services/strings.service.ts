@@ -390,17 +390,6 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
-	public readonly linkConnectionEmailSubject: string	=
-		`${this.internalProductShort} Invite`
-	;
-
-	/** @see StringsService */
-	public readonly linkConnectionEmailText: string		=
-		`I'm inviting you to chat with me securely via ${this.internalProductShort}!\n\n` +
-		`I'll be waiting here: \${LINK}`
-	;
-
-	/** @see StringsService */
 	public readonly linkCopied: string					=
 		`${this.capitalize(this.internalSession)} link copied.`
 	;
@@ -408,6 +397,28 @@ export class StringsService extends BaseProvider {
 	/** @see StringsService */
 	public readonly linkCopyFail: string				=
 		`Automated clipboard copy unsupported in this browser.`
+	;
+
+	/** @see StringsService */
+	public readonly linkEmailSubject: string			=
+		`${this.internalProductShort} Chat Invite`
+	;
+
+	/** @see StringsService */
+	public readonly linkEmailSubjectTelehealth: string	=
+		`Your Telehealth Appointment`
+	;
+
+	/** @see StringsService */
+	public readonly linkEmailText: string				=
+		`I'm inviting you to chat with me securely via ${this.internalProductShort}!\n\n` +
+		`I'll be waiting here: \${LINK}`
+	;
+
+	/** @see StringsService */
+	public readonly linkEmailTextTelehealth: string		=
+		`Your telehealth appointment is starting now.\n\n` +
+		`Your doctor is waiting here: \${LINK} (click to join)`
 	;
 
 	/** @see StringsService */
