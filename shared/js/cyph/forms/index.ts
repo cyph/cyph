@@ -346,6 +346,44 @@ export const contact			= (id?: string) : Form.IComponent => {
 	);
 };
 
+/** Contact information components. */
+export const contactSplit		= (id?: string) : Form.IComponent[] => {
+	return [
+		newFormComponent(
+			[name()],
+			id
+		),
+		newFormComponent(
+			[newFormContainer([
+				email(),
+				phone(),
+				ssn()
+			])],
+			id
+		),
+		newFormComponent(
+			[newFormContainer(
+				[
+					input({id: 'StreetAddress', label: 'Address'})
+				],
+				'Address'
+			)],
+			id
+		),
+		newFormComponent(
+			[newFormContainer(
+				[
+					input({id: 'City', label: 'City'}),
+					input({id: 'State', label: 'State', width: 10}),
+					input({id: 'ZIP', label: 'Zip', width: 25})
+				],
+				'Address'
+			)],
+			id
+		)
+	];
+};
+
 /** Height. */
 export const height		= (id: string = 'height') : Form.IElementContainer => newFormContainer(
 	[
@@ -443,32 +481,31 @@ export const newPatient			= () : IForm => newForm(
 export const patientProfile		= () : IForm[] => [
 	newForm(
 		[
-			newFormComponent([title('Medical Data')]),
-			contact('redoxPatient.Demographics'),
-			newFormComponent([newFormContainer([datepicker({
-				id: 'DOB',
-				label: 'Date of Birth',
-				required: true,
-				width: 20
-			})])]),
-			newFormComponent([newFormContainer([select({
-				id: 'Sex',
-				label: 'Sex',
-				options: ['Male', 'Female'],
-				width: 15
-			})])]),
-			newFormComponent([newFormContainer([select({
-				id: 'MaritalStatus',
-				label: 'Marital Status',
-				options: ['Single', 'Married']
-			})])]),
-			newFormComponent([newFormContainer([numberInput({
-				label: 'Weight (lbs)',
-				max: 1500,
-				required: false,
-				width: 10
-			})])]),
-			newFormComponent([newFormContainer([height()])])
+			newFormComponent([title('Basic Info')]),
+			...contactSplit('redoxPatient.Demographics'),
+			newFormComponent([newFormContainer([
+				datepicker({
+					id: 'DOB',
+					label: 'Date of Birth'
+				}),
+				select({
+					id: 'Sex',
+					label: 'Sex',
+					options: ['Male', 'Female']
+				}),
+				select({
+					id: 'MaritalStatus',
+					label: 'Marital Status',
+					options: ['Single', 'Married']
+				})
+			])]),
+			newFormComponent([newFormContainer([
+				numberInput({
+					label: 'Weight (lbs)',
+					max: 1500
+				}),
+				height()
+			])])
 		],
 		undefined,
 		true
