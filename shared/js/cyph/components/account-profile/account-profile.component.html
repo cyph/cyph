@@ -550,11 +550,10 @@
 					[class.doctor-list-only]='doctorListOnly | async'
 					ngClass.lt-md='lt-md'
 					ngClass.md='md'
-					fxLayout='column'
 					*ngIf='user.extra() | async as extra'
 					[class.fadeOutUp]='(accountService.transition | async) === true'
 				>
-					<mat-card-content>
+					<mat-card-content fxLayout='column'>
 						<br />
 						<h2 cyphTranslate class='subheader' *ngIf='
 							(user.userType | async) === accountUserTypes.TelehealthAdmin
