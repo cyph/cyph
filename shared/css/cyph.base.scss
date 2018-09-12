@@ -237,6 +237,10 @@ a {
 	&.absolute-fab, &.fixed-fab {
 		right: 16px;
 		bottom: 16px;
+
+		&.left-shift {
+			right: 72px;
+		}
 	}
 
 	&.absolute-fab {

@@ -82,6 +82,7 @@
 
 		<mat-checkbox
 			[(ngModel)]='o.valueBoolean'
+			(ngModelChange)='changeForm.emit()'
 			[disabled]='isDisabled'
 			[name]='getName(o)'
 			[required]='o.required'
@@ -96,7 +97,10 @@
 					matInput
 					[matDatepicker]='datepicker'
 					[ngModel]='timestampToDate(o.valueNumber, true)'
-					(ngModelChange)='o.valueNumber = $event ? $event.getTime() : 0'
+					(ngModelChange)='
+						o.valueNumber = $event ? $event.getTime() : 0;
+						changeForm.emit();
+					'
 					[disabled]='isDisabled'
 					[name]='getName(o)'
 					[placeholder]='o.label'
@@ -118,6 +122,7 @@
 				matInput
 				[textMask]='getMask(o)'
 				[(ngModel)]='o.valueString'
+				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				type='email'
 				[pattern]='emailPattern'
@@ -133,6 +138,7 @@
 					matInput
 					[textMask]='getMask(o)'
 					[(ngModel)]='o.valueString'
+					(ngModelChange)='changeForm.emit()'
 					[name]='getName(o)'
 					type='text'
 					[placeholder]='o.label'
@@ -151,7 +157,10 @@
 				matInput
 				[textMask]='getMask(o)'
 				[ngModel]='o.valueNumber'
-				(ngModelChange)='o.valueNumber = toInt($event)'
+				(ngModelChange)='
+					o.valueNumber = toInt($event);
+					changeForm.emit();
+				'
 				[max]='o.max'
 				[min]='o.min'
 				[name]='getName(o)'
@@ -167,6 +176,7 @@
 				matInput
 				[textMask]='getMask(o)'
 				[(ngModel)]='o.valueString'
+				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				[type]='isDisabled ? "text" : "password"'
 				[disabled]='isDisabled'
@@ -179,6 +189,7 @@
 		<mat-radio-group
 			fxFlex
 			[(ngModel)]='o.valueString'
+			(ngModelChange)='changeForm.emit()'
 			[name]='getName(o)'
 			[disabled]='isDisabled'
 			[required]='o.required'
@@ -196,6 +207,7 @@
 			<mat-select
 				fxFlex
 				[(ngModel)]='o.valueString'
+				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				[disabled]='isDisabled'
 				[placeholder]='o.label'
@@ -213,6 +225,7 @@
 		<h3 *ngIf='o.type === types.Slider'>{{o.label}}</h3>
 		<mat-slider
 			[(ngModel)]='o.valueNumber'
+			(ngModelChange)='changeForm.emit()'
 			[max]='o.max'
 			[min]='o.min'
 			[name]='getName(o)'
@@ -236,6 +249,7 @@
 				matAutosizeMinRows='4'
 				[textMask]='getMask(o)'
 				[(ngModel)]='o.valueString'
+				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				[disabled]='isDisabled'
 				[placeholder]='o.label'
@@ -248,6 +262,7 @@
 				matInput
 				[textMask]='getMask(o)'
 				[(ngModel)]='o.valueString'
+				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				type='time'
 				[disabled]='isDisabled'
@@ -261,6 +276,7 @@
 				matInput
 				[textMask]='getMask(o)'
 				[(ngModel)]='o.valueString'
+				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				type='url'
 				[disabled]='isDisabled'

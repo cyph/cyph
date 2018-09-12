@@ -79,6 +79,9 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 		});
 	});
 
+	/** Emits when form changes. */
+	@Output() public readonly changeForm						= new EventEmitter<void>();
+
 	/** Data source to pull data from on init and save data to on submit. */
 	@Input() public dataSource?: MaybePromise<IAsyncValue<any>|undefined>	=
 		this.envService.isAccounts && this.accountDatabaseService && this.envService.isTelehealth ?
@@ -114,7 +117,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	@Input() public mobile?: boolean;
 
 	/** @see Form */
-	@Output() public readonly submitForm: EventEmitter<IForm>	= new EventEmitter<IForm>();
+	@Output() public readonly submitForm						= new EventEmitter<IForm>();
 
 	/** Submit button text. */
 	@Input() public submitText: string							= this.stringsService.submit;

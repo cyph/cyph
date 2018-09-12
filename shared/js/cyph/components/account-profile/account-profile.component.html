@@ -134,6 +134,7 @@
 					[form]='form'
 					[hideSubmitButton]='true'
 					[isDisabled]='(editMode | async) === false'
+					(changeForm)='updateDraft({forms: extra.forms})'
 				></cyph-dynamic-form>
 			</mat-expansion-panel>
 		</mat-accordion>
@@ -263,6 +264,7 @@
 			mat-fab
 			cyphTranslate
 			class='alt fixed-fab'
+			[class.left-shift]='envService.isTelehealth'
 			matTooltip='Close'
 			matTooltipPosition='above'
 			(click)='setEditMode(false)'
@@ -281,7 +283,7 @@
 			matTooltipPosition='above'
 			(click)='editMode.value ? saveProfile() : setEditMode(true)'
 			[disabled]='(editMode | async) && (readyToSave | async) === false'
-			*ngIf='!envService.isTelehealth || (editMode | async) === false'
+			*ngIf='envService.isTelehealth || (editMode | async) === false'
 		>
 			<mat-icon *ngIf='editMode | async'>save</mat-icon>
 			<mat-icon *ngIf='(editMode | async) === false'>edit</mat-icon>
