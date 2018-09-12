@@ -300,6 +300,10 @@ mat-card {
 			background-position-x: calc(100% - 24px);
 		}
 	}
+
+	.ql-container {
+		font-size: inherit;
+	}
 }
 
 @media (max-width: 799px) {
