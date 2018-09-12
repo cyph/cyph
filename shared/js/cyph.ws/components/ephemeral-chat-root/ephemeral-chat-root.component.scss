@@ -9,3 +9,9 @@ a.affiliate {
 :host > span.initiating > cyph-chat-cyphertext {
 	display: none;
 }
+
+:host ::ng-deep {
+	.message-loading {
+		display: none;
+	}
+}
