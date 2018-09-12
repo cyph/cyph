@@ -47,6 +47,7 @@
 
 	<div
 		class='cover-image'
+		[class.hidden]='envService.isTelehealth'
 		[style.background-image]='urlToSafeStyle(currentUser.user.coverImage | async) | async'
 		*ngIf='menuExpanded | async'
 	></div>
