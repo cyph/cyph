@@ -3,7 +3,7 @@ import * as $ from 'jquery';
 import {fadeIn} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';
-import {IAppointment, ChatMessageValue} from '../../proto';
+import {ChatMessageValue, IAppointment} from '../../proto';
 import {ChatService} from '../../services/chat.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';

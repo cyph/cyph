@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';

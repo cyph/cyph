@@ -61,8 +61,8 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			;
 
 			const close			= 'close' in matDialogRef ?
-				(ok?: boolean) => { matDialogRef.close(ok); } :
-				(ok?: boolean) => { matDialogRef.dismiss(ok); }
+				(closeOK?: boolean) => { matDialogRef.close(closeOK); } :
+				(closeOK?: boolean) => { matDialogRef.dismiss(closeOK); }
 			;
 
 			const instance		= 'componentInstance' in matDialogRef ?

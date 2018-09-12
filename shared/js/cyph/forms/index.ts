@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
 

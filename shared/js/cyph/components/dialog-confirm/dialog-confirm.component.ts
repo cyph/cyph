@@ -59,7 +59,7 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 	}
 
 	/** Closes dialog. */
-	public close (ok?: boolean) {
+	public close (ok?: boolean) : void {
 		if (this.matDialogRef) {
 			this.matDialogRef.close(ok);
 		}

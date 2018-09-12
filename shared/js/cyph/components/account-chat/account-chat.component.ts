@@ -283,7 +283,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 										getDateTimeString(appointment.calendarInvite.startTime)
 									})`,
 									appointment.notes
-								)
+								);
 							}
 						}
 					}
