@@ -26,6 +26,7 @@ import {AccountWalletsComponent} from '../components/account-wallets';
 import {BlankComponent} from '../components/blank';
 import {NotFoundComponent} from '../components/not-found';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
+import {env} from '../env';
 import {newPatient} from '../forms';
 import {AccountUserTypes, ChatMessageValue} from '../proto';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
@@ -120,7 +121,19 @@ export const account: Route	= {
 				{path: 'edit', component: BlankComponent}
 			]
 		},
-		{path: 'doctors', component: AccountProfileComponent, data: {doctorListOnly: true}},
+		{
+			path: 'doctors',
+			component:
+				(
+					env.isTelehealth &&
+					env.environment.customBuild &&
+					env.environment.customBuild.config.organization
+				) ?
+					AccountProfileComponent :
+					AccountContactsComponent
+			,
+			data: {doctorListOnly: true}
+		},
 		{path: 'ehr-access', component: AccountEhrAccessComponent},
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'forms', component: AccountFormsComponent},

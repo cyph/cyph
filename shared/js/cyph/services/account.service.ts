@@ -393,6 +393,7 @@ export class AccountService extends BaseProvider {
 					'appointments',
 					'contacts',
 					'docs',
+					'doctors',
 					'ehr-access',
 					'files',
 					'forms',

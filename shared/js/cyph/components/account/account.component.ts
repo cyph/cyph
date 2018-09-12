@@ -72,6 +72,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 				'audio',
 				'call',
 				'contacts',
+				'doctors',
 				'logout',
 				'mail',
 				'messages',
@@ -98,8 +99,16 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			this.envService.isTelehealth &&
 			[
 				'',
-				'doctors',
-				'profile'
+				'profile',
+				...(
+					(
+						this.envService.isTelehealth &&
+						this.envService.environment.customBuild &&
+						this.envService.environment.customBuild.config.organization
+					) ?
+						['doctors'] :
+						[]
+				)
 			].indexOf(route) > -1
 		) || (
 			[
