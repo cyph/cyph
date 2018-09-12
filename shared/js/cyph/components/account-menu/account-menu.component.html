@@ -65,8 +65,17 @@
 			[routerLink]='accountService.routeRoot'
 			(click)='click()'
 		>
-			<cyph-logo mat-list-icon icon *ngIf='(menuExpanded | async) === false'></cyph-logo>
-			<cyph-logo matLine *ngIf='menuExpanded | async'></cyph-logo>
+			<cyph-logo
+				mat-list-icon
+				icon
+				white
+				*ngIf='(menuExpanded | async) === false'
+			></cyph-logo>
+			<cyph-logo
+				matLine
+				white
+				*ngIf='menuExpanded | async'
+			></cyph-logo>
 		</a>
 	</mat-nav-list>
 

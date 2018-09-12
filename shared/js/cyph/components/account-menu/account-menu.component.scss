@@ -14,8 +14,6 @@
 			position: relative;
 			left: 50%;
 
-			@include filter(brightness(1.5));
-
 			@include transform(translateX(-50%));
 		}
 	}
