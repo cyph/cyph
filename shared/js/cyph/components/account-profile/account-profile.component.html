@@ -552,97 +552,81 @@
 					*ngIf='user.extra() | async as extra'
 					[class.fadeOutUp]='(accountService.transition | async) === true'
 				>
-					<mat-card-content
-						*ngIf='(user.userType | async) === accountUserTypes.Standard'
-					>
-						<div fxLayout='column' fxLayoutGap='16px'>
-							<div fxLayout='row' fxLayoutAlign='center center'>
-								<ng-container *ngTemplateOutlet='mailButtons; context: {
-									patientData: true
-								}'></ng-container>
-							</div>
-						</div>
-						<ng-container
-							*ngTemplateOutlet='forms; context: {extra: extra}'
-						></ng-container>
-					</mat-card-content>
-					<mat-card-content *ngIf='(user.userType | async) === accountUserTypes.Org'>
-						<div fxLayout='column'>
-							<div fxLayout='column' *ngIf='(doctorListOnly | async) !== true'>
-								<ng-container *ngTemplateOutlet='description'></ng-container>
-								<br />
-								<br />
-								<ng-container
-									*ngTemplateOutlet='forms; context: {extra: extra}'
-								></ng-container>
-								<br />
-								<br />
-							</div>
-							<ng-container *ngIf='(userMembers | async)?.length > 0'>
-								<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
-								<cyph-account-contacts
-									fxFlex
-									class='member-list'
-									[class.doctor-list-only]='doctorListOnly | async'
-									[contactList]='userMembers'
-									[invertedTheme]='true'
-									[searchProfileExtra]='true'
-								></cyph-account-contacts>
-							</ng-container>
-						</div>
-					</mat-card-content>
-					<mat-card-content *ngIf='
-						(user.userType | async) === accountUserTypes.TelehealthDoctor
-					'>
-						<div
-							fxLayout='row'
-							fxLayout.lt-md='column'
-							fxLayoutAlign='center center'
-							fxLayoutGap='5px'
-							[style.margin]='"20px"'
-							*ngIf='(isCurrentUser | async) === false'
-						>
-							<button
-								mat-raised-button
-								cyphTranslate
-								color='primary'
-								[routerLink]='
-									accountService.routeRoot +
-									"request-appointment/" +
-									(user.contactID | async)
-								'
+					<mat-card-content>
+						<br />
+						<h2 cyphTranslate class='subheader' *ngIf='
+							(user.userType | async) === accountUserTypes.TelehealthAdmin
+						'>
+							Telehealth Administrator
+						</h2>
+						<h2 cyphTranslate class='subheader' *ngIf='
+							(user.userType | async) === accountUserTypes.Org
+						'>
+							Telehealth Organization
+						</h2>
+						<h2 cyphTranslate class='subheader' *ngIf='
+							(user.userType | async) === accountUserTypes.Standard
+						'>
+							Patient
+						</h2>
+
+						<ng-container *ngIf='(user.userType | async) !== accountUserTypes.Org'>
+							<div
+								fxLayout='row'
+								fxLayout.lt-md='column'
+								fxLayoutAlign='center center'
+								fxLayoutGap='12px'
+								[style.margin]='"20px"'
+								*ngIf='(isCurrentUser | async) === false'
 							>
-								Request Appointment
-							</button>
+								<ng-container  *ngIf='
+									(user.userType | async) === accountUserTypes.TelehealthDoctor
+								'>
+									<button
+										mat-raised-button
+										cyphTranslate
+										color='primary'
+										[routerLink]='
+											accountService.routeRoot +
+											"request-appointment/" +
+											(user.contactID | async)
+										'
+									>
+										Request Appointment
+									</button>
+									<div></div>
+								</ng-container>
 
-							<div></div>
-
-							<ng-container *ngTemplateOutlet='mailButtons'></ng-container>
-						</div>
-						<ng-container *ngTemplateOutlet='description'></ng-container>
-						<br />
-						<br />
-						<ng-container
-							*ngTemplateOutlet='forms; context: {extra: extra}'
-						></ng-container>
-					</mat-card-content>
-
-					<mat-card-content
-						*ngIf='(user.userType | async) === accountUserTypes.TelehealthAdmin'
-					>
-						<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='16px'>
-							<h2 cyphTranslate>Telehealth Administrator</h2>
-							<ng-container *ngTemplateOutlet='mailButtons'></ng-container>
-							<br />
-							<div class='description' *ngIf='user.description'>
-								{{user.description | async}}
+								<ng-container *ngTemplateOutlet='mailButtons'></ng-container>
 							</div>
+						</ng-container>
+
+						<ng-container *ngIf='
+							(user.userType | async) !== accountUserTypes.Org ||
+							(doctorListOnly | async) !== true
+						'>
+							<ng-container *ngTemplateOutlet='description'></ng-container>
 							<br />
 							<br />
 							<ng-container
 								*ngTemplateOutlet='forms; context: {extra: extra}'
 							></ng-container>
-						</div>
+						</ng-container>
+
+						<ng-container *ngIf='
+							(user.userType | async) === accountUserTypes.Org &&
+							(userMembers | async)?.length > 0
+						'>
+							<h2 cyphTranslate class='user-list-header'>Available Doctors</h2>
+							<cyph-account-contacts
+								fxFlex
+								class='member-list'
+								[class.doctor-list-only]='doctorListOnly | async'
+								[contactList]='userMembers'
+								[invertedTheme]='true'
+								[searchProfileExtra]='true'
+							></cyph-account-contacts>
+						</ng-container>
 					</mat-card-content>
 				</mat-card>
 
