@@ -6,7 +6,7 @@
 	fxLayoutAlign='center center'
 	class='cyph-foreground'
 	[class.mobile]='envService.isMobile | async'
-	[cyphDropZone]='chat.state === states.chat'
+	[cyphDropZone]='false && chat.state === states.chat'
 	[cyphDropZoneClass]='false'
 	(fileDrop)='fileTransferService.send($event)'
 	*ngIf='accountChatService.chatSubject | async as chat'
