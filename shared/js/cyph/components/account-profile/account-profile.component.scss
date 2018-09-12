@@ -234,17 +234,22 @@ mat-card {
 				}
 
 				&.xs {
-					height: 60px !important;
-					min-height: 60px !important;
-					max-height: 60px !important;
-
 					.name {
 						margin-top: 7px;
 					}
 
-					&.avatar {
-						width: 3.5em;
-						height: 3.5em;
+					.practice mat-icon {
+						margin-top: -1px;
+						margin-right: -4px;
+					}
+
+					.username {
+						font-size: 16px;
+						margin-bottom: -8px;
+					}
+
+					&:after {
+						background-color: inherit;
 					}
 				}
 
