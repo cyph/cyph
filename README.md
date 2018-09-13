@@ -8,7 +8,7 @@ The major advantage of Cyph over alternatives is that it can run right in your
 browser. Having solved this problem (see #1 below) gives Cyph a uniquely smooth
 user onboarding experience — just open the website, no app install required —
 and also enables simple API integrations such as
-[Hint's telehealth implementation](http://support.hint.com/knowledgebase/articles/863355)
+[Hint's telehealth implementation](https://support.hint.com/integrations/cyph-integration)
 through our cross-language SDK.
 
 As to the level of security provided:
