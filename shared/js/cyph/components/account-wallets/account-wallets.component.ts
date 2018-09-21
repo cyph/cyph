@@ -176,7 +176,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 
 	/** Sends money. */
 	public async send (wallet: IWallet, recipient?: string, amount?: number) : Promise<void> {
-		if (recipient === undefined || amount === undefined) {
+		if (recipient === undefined || amount === undefined || isNaN(amount)) {
 			const sendForm	= await this.dialogService.prompt({
 				content: '',
 				form: newForm([
@@ -203,7 +203,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			amount		= getFormValue(sendForm, 'number', 1, 0, 0);
 		}
 
-		if (recipient === undefined || amount === undefined) {
+		if (recipient === undefined || amount === undefined || isNaN(amount)) {
 			return;
 		}
 
