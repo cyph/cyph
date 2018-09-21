@@ -5,28 +5,28 @@ import {Form, IForm} from '../proto';
 
 
 export const {getFormValue}		= class {
-	static getFormValue (
+	public static getFormValue (
 		form: IForm|undefined,
 		value: 'boolean',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
 	) : boolean|undefined;
-	static getFormValue (
+	public static getFormValue (
 		form: IForm|undefined,
 		value: 'number',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
 	) : number|undefined;
-	static getFormValue (
+	public static getFormValue (
 		form: IForm|undefined,
 		value: 'string',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
 	) : string|undefined;
-	static getFormValue (
+	public static getFormValue (
 		form: IForm|undefined,
 		value: 'boolean'|'number'|'string',
 		componentIndex: number,
