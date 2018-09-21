@@ -92,6 +92,7 @@
 							mat-icon-button
 							[matTooltip]='stringsService.bitcoinSendTitle'
 							(click)='send(wallet.data)'
+							*ngIf='!wallet.data.address'
 						>
 							<mat-icon>send</mat-icon>
 						</button>
