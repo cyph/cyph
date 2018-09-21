@@ -157,13 +157,15 @@
 				matInput
 				[textMask]='getMask(o)'
 				[ngModel]='o.valueNumber'
-				(ngModelChange)='
-					o.valueNumber = toInt($event);
+				(keyup)='
+					o.valueNumber = parseNumber($event.target.value, o.max, o.min);
+					$event.target.value = o.valueNumber.toString();
 					changeForm.emit();
 				'
 				[max]='o.max'
 				[min]='o.min'
 				[name]='getName(o)'
+				[step]='o.step'
 				type='number'
 				[disabled]='isDisabled'
 				[placeholder]='o.label'
@@ -229,6 +231,7 @@
 			[max]='o.max'
 			[min]='o.min'
 			[name]='getName(o)'
+			[step]='o.step'
 			*ngIf='o.type === types.Slider'
 		></mat-slider>
 

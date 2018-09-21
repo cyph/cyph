@@ -896,6 +896,9 @@ message Form {
 		/** Indicates whether required. */
 		bool required = 8;
 
+		/** Numerical value minimum increment. */
+		double step = 14;
+
 		/** @see Type */
 		required Types type = 9;
 

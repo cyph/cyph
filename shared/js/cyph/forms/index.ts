@@ -112,6 +112,7 @@ export const newFormElement	= <T extends {
 	noGrow?: boolean;
 	options?: string[];
 	required?: boolean;
+	step?: number;
 	value?: boolean|number|string;
 	width?: number;
 }> (elementType: Form.Element.Types) => (o?: T) => {
@@ -124,6 +125,7 @@ export const newFormElement	= <T extends {
 		noGrow: o && o.noGrow === true,
 		options: o && o.options,
 		required: o && o.required,
+		step: o && o.step,
 		type: elementType,
 		width: o && o.width
 	};
@@ -192,6 +194,7 @@ export const numberInput	= newFormElement<{
 	min?: number;
 	noGrow?: boolean;
 	required?: boolean;
+	step?: number;
 	value?: number;
 	width?: number;
 }>(Form.Element.Types.Number);
@@ -236,6 +239,7 @@ export const slider			= newFormElement<{
 	max?: number;
 	min?: number;
 	noGrow?: boolean;
+	step?: number;
 	value?: number;
 	width?: number;
 }>(Form.Element.Types.Slider);
@@ -279,6 +283,7 @@ export const timeInput		= newFormElement<{
 	min?: number;
 	noGrow?: boolean;
 	required?: boolean;
+	step?: number;
 	value?: string;
 	width?: number;
 }>(Form.Element.Types.Time);

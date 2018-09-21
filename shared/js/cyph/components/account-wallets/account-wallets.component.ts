@@ -189,6 +189,9 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 					newFormComponent([newFormContainer([
 						numberInput({
 							label: this.stringsService.bitcoinAmountLabel,
+							max: 20999999.9769,
+							min: 0.00000547,
+							step: 0.00000001,
 							value: amount
 						})
 					])])

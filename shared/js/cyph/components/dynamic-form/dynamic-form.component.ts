@@ -428,9 +428,16 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 		this.submitForm.emit(this.form);
 	}
 
-	/** @see toInt */
-	public toInt (s: string) : number|undefined {
-		return s ? toInt(s) : undefined;
+	/** Parses number. */
+	public parseNumber (s: string, max?: number, min: number = 0) : number {
+		const n	= s ? parseFloat(s) : NaN;
+
+		return isNaN(n) || n <= min ?
+			min :
+		max !== undefined && n >= max ?
+			max :
+			n
+		;
 	}
 
 	constructor (
