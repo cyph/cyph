@@ -88,6 +88,13 @@
 						>
 							<mat-icon>save</mat-icon>
 						</button>
+						<button
+							mat-icon-button
+							[matTooltip]='stringsService.bitcoinSendTitle'
+							(click)='send(wallet.data)'
+						>
+							<mat-icon>send</mat-icon>
+						</button>
 					</mat-chip-list>
 
 					<div fxLayout='row' fxLayoutAlign='center center'>

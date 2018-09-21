@@ -84,6 +84,30 @@ export class StringsService extends BaseProvider {
 	public readonly audioCall: string					= `call`;
 
 	/** @see StringsService */
+	public readonly bitcoinAmountLabel: string			= `Amount (BTC)`;
+
+	/** @see StringsService */
+	public readonly bitcoinErrorText: string			= `Failed to send`;
+
+	/** @see StringsService */
+	public readonly bitcoinErrorTitle: string			= `Send Error`;
+
+	/** @see StringsService */
+	public readonly bitcoinRecipientLabel: string		= `Recipient Address`;
+
+	/** @see StringsService */
+	public readonly bitcoinSendTitle: string			= `Send Bitcoin`;
+
+	/** @see StringsService */
+	public readonly bitcoinShort: string				= `BTC`;
+
+	/** @see StringsService */
+	public readonly bitcoinSuccessText: string			= `Sent`;
+
+	/** @see StringsService */
+	public readonly bitcoinSuccessTitle: string			= `Send Success`;
+
+	/** @see StringsService */
 	public readonly callType: string					= `Call Type`;
 
 	/** @see StringsService */

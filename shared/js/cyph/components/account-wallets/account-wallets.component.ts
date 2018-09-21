@@ -2,8 +2,16 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {NewWalletOptions} from '../../cryptocurrency';
+import {
+	getFormValue,
+	input,
+	newForm,
+	newFormComponent,
+	newFormContainer,
+	numberInput
+} from '../../forms';
 import {MaybePromise} from '../../maybe-promise-type';
-import {Cryptocurrencies, Currencies, IAccountFileRecord} from '../../proto';
+import {Cryptocurrencies, Currencies, IAccountFileRecord, IWallet} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
@@ -164,6 +172,63 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		}
 
 		this.setEditMode(false);
+	}
+
+	/** Sends money. */
+	public async send (wallet: IWallet, recipient?: string, amount?: number) : Promise<void> {
+		if (recipient === undefined || amount === undefined) {
+			const sendForm	= await this.dialogService.prompt({
+				content: '',
+				form: newForm([
+					newFormComponent([newFormContainer([
+						input({
+							label: this.stringsService.bitcoinRecipientLabel,
+							value: recipient
+						})
+					])]),
+					newFormComponent([newFormContainer([
+						numberInput({
+							label: this.stringsService.bitcoinAmountLabel,
+							value: amount
+						})
+					])])
+				]),
+				title: this.stringsService.bitcoinSendTitle
+			});
+
+			recipient	= getFormValue(sendForm, 'string', 0, 0, 0);
+			amount		= getFormValue(sendForm, 'number', 1, 0, 0);
+		}
+
+		if (recipient === undefined || amount === undefined) {
+			return;
+		}
+
+		this.accountFilesService.showSpinner.next(true);
+
+		try {
+			await this.cryptocurrencyService.send(wallet, recipient, amount);
+
+			return this.dialogService.alert({
+				content: `${this.stringsService.bitcoinSuccessText} ${amount.toString()} ${
+					this.stringsService.bitcoinShort
+				}.`,
+				title: this.stringsService.bitcoinSuccessTitle
+			});
+		}
+		catch (err) {
+			return this.dialogService.alert({
+				content: `${this.stringsService.bitcoinErrorText} ${amount.toString()} ${
+					this.stringsService.bitcoinShort
+				}${
+					err instanceof Error ? `: ${err.message}` : '.'
+				}`,
+				title: this.stringsService.bitcoinErrorTitle
+			});
+		}
+		finally {
+			this.accountFilesService.showSpinner.next(false);
+		}
 	}
 
 	/** Sets edit mode. */

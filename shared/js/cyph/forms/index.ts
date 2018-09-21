@@ -4,7 +4,65 @@ import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
 
 
-const newForm			= (
+export const {getFormValue}		= class {
+	static getFormValue (
+		form: IForm|undefined,
+		value: 'boolean',
+		componentIndex: number,
+		containerIndex: number,
+		elementIndex: number
+	) : boolean|undefined;
+	static getFormValue (
+		form: IForm|undefined,
+		value: 'number',
+		componentIndex: number,
+		containerIndex: number,
+		elementIndex: number
+	) : number|undefined;
+	static getFormValue (
+		form: IForm|undefined,
+		value: 'string',
+		componentIndex: number,
+		containerIndex: number,
+		elementIndex: number
+	) : string|undefined;
+	static getFormValue (
+		form: IForm|undefined,
+		value: 'boolean'|'number'|'string',
+		componentIndex: number,
+		containerIndex: number,
+		elementIndex: number
+	) : boolean|number|string|undefined {
+		const component	= form && form.components ? form.components[componentIndex] : undefined;
+
+		if (!component) {
+			return;
+		}
+
+		const container	= component.containers ? component.containers[containerIndex] : undefined;
+
+		if (!container) {
+			return;
+		}
+
+		const element	= container.elements ? container.elements[elementIndex] : undefined;
+
+		if (!element || !element.element) {
+			return;
+		}
+
+		return value === 'boolean' ?
+			element.element.valueBoolean :
+		value === 'number' ?
+			element.element.valueNumber :
+		value === 'string' ?
+			element.element.valueString :
+			undefined
+		;
+	}
+};
+
+export const newForm			= (
 	components: Form.IComponent[],
 	id?: string,
 	isExpansionPanel?: boolean
@@ -14,7 +72,7 @@ const newForm			= (
 	isExpansionPanel
 });
 
-const newFormComponent	= (
+export const newFormComponent	= (
 	containers: (Form.IElementContainer|Form.IElementContainer[])[],
 	id?: string,
 	isColumn?: boolean
@@ -24,7 +82,7 @@ const newFormComponent	= (
 	isColumn
 });
 
-const newFormContainer		= (
+export const newFormContainer	= (
 	elements: (Form.IElement|Form.IElement[]|Form.IElementContainer)[],
 	id?: string,
 	isColumn?: boolean,
@@ -45,7 +103,7 @@ const newFormContainer		= (
 });
 
 
-const newFormElement	= <T extends {
+export const newFormElement	= <T extends {
 	id?: string;
 	label?: string;
 	mask?: any;
