@@ -33,6 +33,7 @@
 					matInput
 					matTextareaAutosize
 					[(ngModel)]='prompt'
+					[placeholder]='promptPlaceholder || stringsService.response'
 					name='prompt'
 					required
 					*ngIf='bottomSheet'

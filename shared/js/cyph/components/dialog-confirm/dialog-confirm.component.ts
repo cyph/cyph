@@ -26,6 +26,9 @@ import {DynamicFormComponent} from '../dynamic-form';
 	templateUrl: './dialog-confirm.component.html'
 })
 export class DialogConfirmComponent extends BaseProvider implements AfterViewInit {
+	/** Indicates whether this is a bottom sheet. */
+	public bottomSheet: boolean	= false;
+
 	/** Cancel button text. */
 	public cancel?: string;
 
@@ -52,11 +55,6 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 
 	/** Title. */
 	public title?: string;
-
-	/** Indicates whether this is a bottom sheet. */
-	public get bottomSheet () : boolean {
-		return this.matBottomSheetRef !== undefined;
-	}
 
 	/** Closes dialog. */
 	public close (ok?: boolean) : void {

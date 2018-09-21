@@ -70,6 +70,8 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 				matDialogRef.instance
 			;
 
+			instance.bottomSheet		= o.bottomSheet || false;
+
 			instance.content			= o.content;
 
 			instance.cancel				= o.cancel !== undefined ?
