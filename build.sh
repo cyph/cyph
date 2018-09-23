@@ -25,6 +25,9 @@ echo -e '\n\nADD PLATFORMS\n\n'
 npm -g install cordova
 
 if [ "${1}" != 'ios' ] ; then
+	sed -i 's|<plugin name="cordova-plugin-ionic-keyboard" spec="\*" />|<plugin name="cordova-plugin-ionic-keyboard" spec="^1" />|' config.xml
+	sed -i 's|<plugin name="cordova-plugin-ionic-webview" spec="\*" />|<plugin name="cordova-plugin-ionic-webview" spec="^1" />|' config.xml
+
 	cordova platform add android
 fi
 
