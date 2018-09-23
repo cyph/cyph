@@ -331,9 +331,6 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		private readonly accountUserLookupService: AccountUserLookupService|undefined,
 
 		/** @ignore */
-		private readonly envService: EnvService,
-
-		/** @ignore */
 		private readonly scrollService: ScrollService,
 
 		/** @ignore */
@@ -345,6 +342,9 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 		/** @see ConfigService */
 		public readonly configService: ConfigService,
+
+		/** @ignore */
+		public readonly envService: EnvService,
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,

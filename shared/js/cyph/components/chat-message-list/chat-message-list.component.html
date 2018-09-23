@@ -99,12 +99,29 @@
 					</div>
 					<ng-template #chatEndMessage>
 						<div
-							fxLayout='row'
+							fxLayout='column'
 							class='chat-end-message'
 							[class.chat-disconnect-message]='!item.persistentEndMessage'
 							[class.cyph-light-theme]='item.persistentEndMessage'
 							*ngIf='item.persistentEndMessage || item.showDisconnectMessage'
 						>
+							<div
+								fxLayout='row'
+								fxLayoutAlign='center center'
+								fxLayoutGap='16px'
+								[fxHide]='envService.environment.customBuild?.config.pro'
+							>
+								<h2>{{stringsService.bannerText}}</h2>
+								<a
+									mat-raised-button
+									cyphTranslate
+									class='donate'
+									class='breathe'
+									[href]='envService.homeUrl + "donate"'
+								>
+									Donate
+								</a>
+							</div>
 							<div fxFlexFill fxLayoutAlign='center center'>
 								<mat-card
 									[fxFlex]='item.persistentEndMessage ? 95 : 90'
