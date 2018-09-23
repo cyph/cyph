@@ -4,6 +4,7 @@
 	id='main'
 	[class.unisection-mode]='(appService.state | async) !== states.home'
 >
+
 	<mat-sidenav-container (backdropClick)='sidenav.close()'>
 		<mat-sidenav #sidenav ngClass.gt-md='disabled' position='end'>
 			<div fxLayout='column' fxLayoutGap='8px'>
@@ -148,125 +149,134 @@
 				</div>
 			</div>
 		</mat-sidenav>
+		<mat-toolbar
+			id='main-toolbar'
+			class='wow animated fadeInDownBig'
+			[class.banner-open]='(appService.state | async) != states.donate && (appService.state | async) != states.checkout && (appService.bannerOpen | async)'>
+			<mat-toolbar-row
+				fxLayoutAlign='center center'
+				*ngIf='(appService.state | async) != states.donate && (appService.state | async) != states.checkout && (appService.bannerOpen | async)'>
+			<cyph-banner></cyph-banner>
+				</mat-toolbar-row>
+			<mat-toolbar-row>
+				<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
+					<div fxFlex fxLayout='column'>
+						<div fxLayout='row'>
+							<div fxLayout='column' fxLayoutAlign='center center'>
+								<a cyphTranslate id='logo' routerLink='/'>
+									<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
+								</a>
+							</div>
 
-		<mat-toolbar id='main-toolbar' class='wow animated fadeInDownBig'>
-			<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-				<div fxFlex fxLayout='column'>
-					<div fxLayout='row'>
-						<div fxLayout='column' fxLayoutAlign='center center'>
-							<a cyphTranslate id='logo' routerLink='/'>
-								<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
-							</a>
+							<div fxFlex fxLayout='column'></div>
+
+							<div
+								fxLayout='column'
+								fxLayoutAlign='center center'
+								fxHide.lt-lg class='link-wrapper-outer right'
+							>
+								<div class='link-wrapper-inner' cyphTranslate>
+									<a mat-button routerLink='/intro'>
+										Intro
+									</a>
+									<a mat-button routerLink='/features'>
+										Features
+									</a>
+									<a mat-button routerLink='/about'>
+										About
+									</a>
+									<a mat-button routerLink='/gettingstarted'>
+										Getting Started
+									</a>
+								</div>
+							</div>
 						</div>
+					</div>
 
-						<div fxFlex fxLayout='column'></div>
-
-						<div
-							fxLayout='column'
-							fxLayoutAlign='center center'
-							fxHide.lt-lg class='link-wrapper-outer right'
+					<div fxFlexAlign='center' fxLayout='column' fxLayoutAlign='center center'>
+						<a
+							mat-raised-button
+							cyphTranslate
+							id='new-cyph'
+							class='breathe'
+							[href]='envService.newCyphUrl'
 						>
-							<div class='link-wrapper-inner' cyphTranslate>
-								<a mat-button routerLink='/intro'>
-									Intro
-								</a>
-								<a mat-button routerLink='/features'>
-									Features
-								</a>
-								<a mat-button routerLink='/about'>
-									About
-								</a>
-								<a mat-button routerLink='/gettingstarted'>
-									Getting Started
-								</a>
+							Start New Cyph
+						</a>
+					</div>
+
+					<div fxFlex fxLayout='column'>
+						<div fxLayout='row'>
+							<div
+								fxLayout='column'
+								fxLayoutAlign='center center'
+								fxHide.lt-lg
+								class='link-wrapper-outer left'
+							>
+								<div class='link-wrapper-inner' cyphTranslate>
+									<a mat-button [href]='envService.homeWordPressUrl + "blog"'>
+										Blog
+									</a>
+									<a mat-button [href]='envService.homeWordPressUrl + "faq"'>
+										FAQ
+									</a>
+									<a mat-button [href]='envService.homeWordPressUrl + "pricing"'>
+										Pricing
+									</a>
+									<a mat-button routerLink='/register'>
+										Register
+									</a>
+								</div>
+							</div>
+
+							<div fxFlex fxLayout='column'></div>
+
+							<div fxLayout='column' fxLayoutAlign='center center'>
+								<div fxHide.lt-lg class='social-media'>
+									<a
+										mat-icon-button
+										cyphTranslate
+										matTooltip='Facebook'
+										href='https://www.facebook.com/cyph'
+										target='_blank'
+									>
+										<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
+									</a>
+									<a
+										mat-icon-button
+										cyphTranslate
+										matTooltip='Twitter'
+										href='https://twitter.com/cyph'
+										target='_blank'
+									>
+										<img src='/assets/img/iconfinder/twitter.png' alt='Twitter icon' />
+									</a>
+									<a
+										mat-icon-button
+										cyphTranslate
+										matTooltip='GitHub'
+										href='https://github.com/cyph/cyph'
+										target='_blank'
+									>
+										<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
+									</a>
+								</div>
+
+								<div fxHide.gt-md>
+									<button
+										mat-icon-button
+										cyphTranslate
+										aria-label='Menu'
+										(click)='sidenav.toggle()'
+									>
+										<mat-icon>menu</mat-icon>
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-
-				<div fxFlexAlign='center' fxLayout='column' fxLayoutAlign='center center'>
-					<a
-						mat-raised-button
-						cyphTranslate
-						id='new-cyph'
-						class='breathe'
-						[href]='envService.newCyphUrl'
-					>
-						Start New Cyph
-					</a>
-				</div>
-
-				<div fxFlex fxLayout='column'>
-					<div fxLayout='row'>
-						<div
-							fxLayout='column'
-							fxLayoutAlign='center center'
-							fxHide.lt-lg
-							class='link-wrapper-outer left'
-						>
-							<div class='link-wrapper-inner' cyphTranslate>
-								<a mat-button [href]='envService.homeWordPressUrl + "blog"'>
-									Blog
-								</a>
-								<a mat-button [href]='envService.homeWordPressUrl + "faq"'>
-									FAQ
-								</a>
-								<a mat-button [href]='envService.homeWordPressUrl + "pricing"'>
-									Pricing
-								</a>
-								<a mat-button routerLink='/register'>
-									Register
-								</a>
-							</div>
-						</div>
-
-						<div fxFlex fxLayout='column'></div>
-
-						<div fxLayout='column' fxLayoutAlign='center center'>
-							<div fxHide.lt-lg class='social-media'>
-								<a
-									mat-icon-button
-									cyphTranslate
-									matTooltip='Facebook'
-									href='https://www.facebook.com/cyph'
-									target='_blank'
-								>
-									<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
-								</a>
-								<a
-									mat-icon-button
-									cyphTranslate
-									matTooltip='Twitter'
-									href='https://twitter.com/cyph'
-									target='_blank'
-								>
-									<img src='/assets/img/iconfinder/twitter.png' alt='Twitter icon' />
-								</a>
-								<a
-									mat-icon-button
-									cyphTranslate
-									matTooltip='GitHub'
-									href='https://github.com/cyph/cyph'
-									target='_blank'
-								>
-									<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
-								</a>
-							</div>
-
-							<div fxHide.gt-md>
-								<button
-									mat-icon-button
-									cyphTranslate
-									aria-label='Menu'
-									(click)='sidenav.toggle()'
-								>
-									<mat-icon>menu</mat-icon>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			</mat-toolbar-row>
 		</mat-toolbar>
 
 		<section
@@ -1057,6 +1067,32 @@
 				Donate
 			</h1>
 			<div fxLayout='column' fxLayoutGap='16px' class='section-content-container'>
+				<div fxLayout='column' fxLayoutAlign='center center'>
+						<mat-form-field fxLayout='row' class='donation-amount'
+						>
+							<span>$</span>
+							<input
+								matInput
+								type='number'
+								fxFlex='95'
+								[ngModel]='appService.donationAmount | async'
+								(ngModelChange)='appService.donationAmount.next($event)'
+								matTooltip='Donation Amount'
+							/>
+						</mat-form-field>
+						<button
+							mat-raised-button
+							cyphTranslate
+							class='donate-button'
+							(click)='appService.updateCart(
+								"donation",
+								"donation",
+								appService.donationAmount.value
+							)'
+						>
+							Confirm Donation Amount
+						</button>
+					</div>
 				<div fxLayout='row'>
 					<div fxLayout='column'>
 						<p>
@@ -1093,36 +1129,6 @@
 							native mobile apps and Cyph accounts.
 						</p>
 					</div>
-				</div>
-				<div fxLayout='row'>
-					<mat-slider
-						fxFlex
-						fxLayout='column'
-						thumbLabel
-						[ngModel]='appService.donationAmount | async'
-						(ngModelChange)='appService.donationAmount.next($event)'
-						step='1'
-						min='1'
-						max='1337'
-						matTooltip='Donation Amount'
-					></mat-slider>
-					<div fxLayout='column' class='donation-amount'>
-						${{appService.donationAmount | async}}
-					</div>
-				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<button
-						mat-button
-						cyphTranslate
-						class='donate-button'
-						(click)='appService.updateCart(
-							"donation",
-							"donation",
-							appService.donationAmount.value
-						)'
-					>
-						Confirm Donation Amount
-					</button>
 				</div>
 			</div>
 			<div fxLayout='column' fxLayoutGap='16px' class='section-content-container'>

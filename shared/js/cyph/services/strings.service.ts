@@ -84,6 +84,9 @@ export class StringsService extends BaseProvider {
 	public readonly audioCall: string					= `call`;
 
 	/** @see StringsService */
+	public readonly bannerText: string					= `Help Defend Internet Privacy: `;
+
+	/** @see StringsService */
 	public readonly bitcoinAmountLabel: string			= `Amount (BTC)`;
 
 	/** @see StringsService */

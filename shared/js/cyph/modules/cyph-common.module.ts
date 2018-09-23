@@ -1,6 +1,7 @@
 import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
 import {Title} from '@angular/platform-browser';
+import {BannerComponent} from '../components/banner';
 import {BlankComponent} from '../components/blank';
 import {CalendarInviteComponent} from '../components/calendar-invite';
 import {CalendarInviteInheritNgFormComponent} from '../components/calendar-invite-inherit-ng-form';
@@ -46,6 +47,7 @@ import {CyphWebModule} from './cyph-web.module';
 	declarations: [
 		AnchorDirective,
 		AutofocusDirective,
+		BannerComponent,
 		BlankComponent,
 		CalendarInviteComponent,
 		CalendarInviteInheritNgFormComponent,
@@ -71,6 +73,7 @@ import {CyphWebModule} from './cyph-web.module';
 		TranslateDirective
 	],
 	entryComponents: [
+		BannerComponent,
 		BlankComponent,
 		CalendarInviteComponent,
 		CalendarInviteInheritNgFormComponent,
@@ -93,6 +96,7 @@ import {CyphWebModule} from './cyph-web.module';
 	exports: [
 		AnchorDirective,
 		AutofocusDirective,
+		BannerComponent,
 		BlankComponent,
 		CalendarInviteComponent,
 		CalendarInviteInheritNgFormComponent,

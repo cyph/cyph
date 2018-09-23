@@ -1,0 +1,26 @@
+@import '../../../../css/mixins';
+
+::host {
+	height: 50px;
+	text-align: center;
+	z-index: 9;
+
+	a:hover {
+		cursor: pointer;
+	}
+
+	.banner {
+		background-color: #424242;
+	}
+
+	#close-banner {
+		margin-right: 16px;
+		position: absolute;
+	}
+
+	#donate {
+		margin-bottom: 3.5px;
+	}
+
+
+}

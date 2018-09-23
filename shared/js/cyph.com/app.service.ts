@@ -30,6 +30,9 @@ export class AppService extends BaseProvider {
 	/** @ignore */
 	private readonly queryParams: any	= fromQueryString();
 
+	/** Is the Cyph banner component displayed? */
+	public bannerOpen					= new BehaviorSubject<boolean | undefined>(true);
+
 	/** Amount, category, and item in cart. */
 	public readonly cart				= new BehaviorSubject<undefined|{
 		amount: number;
