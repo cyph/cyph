@@ -154,12 +154,14 @@
 			[class.banner-open]='
 				(appService.state | async) !== states.donate &&
 				(appService.state | async) !== states.checkout &&
+				(envService.isMobile | async) !== true &&
 				(appService.bannerOpen | async)
 			'
 		>
 			<mat-toolbar-row fxLayoutAlign='center center' *ngIf='
 				(appService.state | async) !== states.donate &&
 				(appService.state | async) !== states.checkout &&
+				(envService.isMobile | async) !== true &&
 				(appService.bannerOpen | async)
 			'>
 				<cyph-banner (close)='appService.bannerOpen.next(false)'></cyph-banner>
