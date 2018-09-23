@@ -39,7 +39,6 @@ if [ "${1}" != 'android' ] ; then
 
 	npm -g install xcode
 	cordova platform add ios
-	chmod +x plugins/cordova-plugin-iosrtc/extra/hooks/iosrtc-swift-support.js
 	pod install --project-directory=platforms/ios
 fi
 
