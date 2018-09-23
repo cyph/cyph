@@ -4,18 +4,18 @@
 		<a
 			mat-raised-button
 			cyphTranslate
-			id='donate'
+			class='donate'
 			class='breathe'
 			[href]='envService.homeUrl + "donate"'
 		>
 			Donate
 		</a>
 	</div>
-	<div id='close-banner'>
+	<div class='close-banner'>
 		<a
 			mat-icon-button
 			cyphTranslate
-			(click)='appService.bannerOpen.next(false)'
+			(click)='close.emit()'
 		>
 			<mat-icon>close</mat-icon>
 		</a>

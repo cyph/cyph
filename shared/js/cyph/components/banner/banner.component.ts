@@ -1,10 +1,9 @@
-import {Component} from '@angular/core';
-import {AppService} from '../../../cyph.com/app.service';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
 /**
- * Angular component for Cyph banner
+ * Angular component for Cyph banner.
  */
 @Component({
 	selector: 'cyph-banner',
@@ -12,10 +11,10 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './banner.component.html'
 })
 export class BannerComponent {
-	constructor (
-		/** @see AppService */
-		public readonly appService: AppService,
+	/** Close event. */
+	@Output() public readonly close	= new EventEmitter<void>();
 
+	constructor (
 		/** @see EnvService */
 		public readonly envService: EnvService,
 

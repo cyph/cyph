@@ -4,7 +4,6 @@
 	id='main'
 	[class.unisection-mode]='(appService.state | async) !== states.home'
 >
-
 	<mat-sidenav-container (backdropClick)='sidenav.close()'>
 		<mat-sidenav #sidenav ngClass.gt-md='disabled' position='end'>
 			<div fxLayout='column' fxLayoutGap='8px'>
@@ -152,19 +151,29 @@
 		<mat-toolbar
 			id='main-toolbar'
 			class='wow animated fadeInDownBig'
-			[class.banner-open]='(appService.state | async) != states.donate && (appService.state | async) != states.checkout && (appService.bannerOpen | async)'>
-			<mat-toolbar-row
-				fxLayoutAlign='center center'
-				*ngIf='(appService.state | async) != states.donate && (appService.state | async) != states.checkout && (appService.bannerOpen | async)'>
-			<cyph-banner></cyph-banner>
-				</mat-toolbar-row>
+			[class.banner-open]='
+				(appService.state | async) !== states.donate &&
+				(appService.state | async) !== states.checkout &&
+				(appService.bannerOpen | async)
+			'
+		>
+			<mat-toolbar-row fxLayoutAlign='center center' *ngIf='
+				(appService.state | async) !== states.donate &&
+				(appService.state | async) !== states.checkout &&
+				(appService.bannerOpen | async)
+			'>
+				<cyph-banner (close)='appService.bannerOpen.next(false)'></cyph-banner>
+			</mat-toolbar-row>
 			<mat-toolbar-row>
 				<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
 					<div fxFlex fxLayout='column'>
 						<div fxLayout='row'>
 							<div fxLayout='column' fxLayoutAlign='center center'>
 								<a cyphTranslate id='logo' routerLink='/'>
-									<img src='/assets/img/logo.white.horizontal.header.png' alt='Cyph logo' />
+									<img
+										src='/assets/img/logo.white.horizontal.header.png'
+										alt='Cyph logo'
+									/>
 								</a>
 							</div>
 
@@ -240,7 +249,10 @@
 										href='https://www.facebook.com/cyph'
 										target='_blank'
 									>
-										<img src='/assets/img/iconfinder/facebook.png' alt='Facebook icon' />
+										<img
+											src='/assets/img/iconfinder/facebook.png'
+											alt='Facebook icon'
+										/>
 									</a>
 									<a
 										mat-icon-button
@@ -249,7 +261,10 @@
 										href='https://twitter.com/cyph'
 										target='_blank'
 									>
-										<img src='/assets/img/iconfinder/twitter.png' alt='Twitter icon' />
+										<img
+											src='/assets/img/iconfinder/twitter.png'
+											alt='Twitter icon'
+										/>
 									</a>
 									<a
 										mat-icon-button
@@ -258,7 +273,10 @@
 										href='https://github.com/cyph/cyph'
 										target='_blank'
 									>
-										<img src='/assets/img/iconfinder/github.png' alt='GitHub icon' />
+										<img
+											src='/assets/img/iconfinder/github.png'
+											alt='GitHub icon'
+										/>
 									</a>
 								</div>
 
@@ -1068,8 +1086,7 @@
 			</h1>
 			<div fxLayout='column' fxLayoutGap='16px' class='section-content-container'>
 				<div fxLayout='column' fxLayoutAlign='center center'>
-						<mat-form-field fxLayout='row' class='donation-amount'
-						>
+						<mat-form-field fxLayout='row' class='donation-amount'>
 							<span>$</span>
 							<input
 								matInput
