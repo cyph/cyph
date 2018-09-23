@@ -99,6 +99,10 @@
 		"justification": "Dev dependency"
 	},
 	{
+		"path": "react",
+		"justification": "Dev dependency"
+	},
+	{
 		"path": "scandirectory",
 		"justification": "Dev dependency"
 	},
