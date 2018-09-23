@@ -322,11 +322,13 @@ export class AppService extends BaseProvider {
 
 		/* Banner state local storage persistence */
 		try {
+			/* tslint:disable-next-line:ban */
 			if (localStorage.getItem('bannerClosed')) {
 				this.bannerOpen.next(false);
 			}
 			else {
 				this.bannerOpen.pipe(filter(open => !open), take(1)).toPromise().then(() => {
+					/* tslint:disable-next-line:ban */
 					localStorage.setItem('bannerClosed', 'true');
 				});
 			}
