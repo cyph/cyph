@@ -3,6 +3,7 @@ import {Title} from '@angular/platform-browser';
 import {NavigationEnd, Router} from '@angular/router';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
 import * as WOW from 'wowjs';
 import {BaseProvider} from '../cyph/base-provider';
 import {SubscriptionTypes} from '../cyph/checkout';
@@ -318,6 +319,19 @@ export class AppService extends BaseProvider {
 		private readonly titleService: Title
 	) {
 		super();
+
+		/* Banner state local storage persistence */
+		try {
+			if (localStorage.getItem('bannerClosed')) {
+				this.bannerOpen.next(false);
+			}
+			else {
+				this.bannerOpen.pipe(filter(open => !open), take(1)).toPromise().then(() => {
+					localStorage.setItem('bannerClosed', 'true');
+				});
+			}
+		}
+		catch {}
 
 		/* Redirect to Onion site when on Tor */
 		if (!this.envService.isOnion) {
