@@ -302,6 +302,14 @@ export class AccountService extends BaseProvider {
 
 		if (this.envService.isWeb && this.envService.isMobileOS) {
 			new Hammer(document.body).on('panleft', () => {
+				if (
+					this.accountDatabaseService.currentUser.value === undefined ||
+					this.windowWatcherService.width.value <=
+						this.configService.responsiveMaxWidths.sm
+				) {
+					return;
+				}
+
 				if (this.mobileMenuOpenInternal.value) {
 					this.mobileMenuOpenInternal.next(false);
 
@@ -317,6 +325,14 @@ export class AccountService extends BaseProvider {
 					{direction: Hammer.DIRECTION_RIGHT, threshold: 4}
 				]
 			]}).on('pan', e => {
+				if (
+					this.accountDatabaseService.currentUser.value === undefined ||
+					this.windowWatcherService.width.value <=
+						this.configService.responsiveMaxWidths.sm
+				) {
+					return;
+				}
+
 				if (e.center.x < 72 && e.deltaX > 8 && e.deltaY < 4) {
 					this.toggleMobileMenu(true);
 				}
