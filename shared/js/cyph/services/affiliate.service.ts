@@ -56,7 +56,7 @@ export class AffiliateService extends BaseProvider {
 		private readonly splitTestingService: SplitTestingService,
 
 		/** @ignore */
-		private readonly stringsService: StringsService,
+		private readonly stringsService: StringsService
 	) {
 		super();
 	}

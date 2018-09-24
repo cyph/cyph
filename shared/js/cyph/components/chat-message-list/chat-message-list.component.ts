@@ -343,7 +343,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		/** @see ConfigService */
 		public readonly configService: ConfigService,
 
-		/** @ignore */
+		/** @see EnvService */
 		public readonly envService: EnvService,
 
 		/** @see P2PService */
