@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {translate} from '../util/translate';
+import {EnvService} from './env.service';
 import {SplitTestingService} from './split-testing.service';
+import {StringsService} from './strings.service'
 
 
 /** URLs and copy for affiliate programs. */
@@ -42,12 +44,19 @@ export class AffiliateService extends BaseProvider {
 		{href: this.nordVPN.links.default, text: this.nordVPN.copy.protect},
 		{href: this.amazon.links.webcam4k, text: this.amazon.copy.webcam4k},
 		{href: this.amazon.links.webcam1080p, text: this.amazon.copy.webcam1080p},
-		{href: this.amazon.links.snowden, text: this.amazon.copy.snowden}
+		{href: this.amazon.links.snowden, text: this.amazon.copy.snowden},
+		{href: this.envService.homeUrl + 'donate', text: this.stringsService.bannerTextAlt}
 	]);
 
 	constructor (
 		/** @ignore */
-		private readonly splitTestingService: SplitTestingService
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly splitTestingService: SplitTestingService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService,
 	) {
 		super();
 	}
