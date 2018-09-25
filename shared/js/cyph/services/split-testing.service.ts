@@ -35,7 +35,7 @@ export class SplitTestingService extends BaseProvider {
 				)
 			;
 
-			index	= Math.floor(((<any[]> values).length + 1) * random());
+			index	= Math.floor(values.length * random());
 		}
 
 		this.analyticsService.sendEvent({
