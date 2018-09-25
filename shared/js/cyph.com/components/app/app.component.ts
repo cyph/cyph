@@ -1,10 +1,12 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {BaseProvider} from '../../../cyph/base-provider';
+import {currencyMask} from '../../../cyph/currency-mask';
 import {emailPattern} from '../../../cyph/email-pattern';
 import {ConfigService} from '../../../cyph/services/config.service';
 import {EnvService} from '../../../cyph/services/env.service';
 import {SignupService} from '../../../cyph/services/signup.service';
 import {StringsService} from '../../../cyph/services/strings.service';
+import {toFloat} from '../../../cyph/util/formatting';
 import {AppService} from '../../app.service';
 import {DemoService} from '../../demo.service';
 import {Promos, States} from '../../enums';
@@ -19,14 +21,20 @@ import {Promos, States} from '../../enums';
 	templateUrl: './app.component.html'
 })
 export class AppComponent extends BaseProvider {
+	/** @see currencyMask */
+	public readonly currencyMask	= currencyMask;
+
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern	= emailPattern;
+	public readonly emailPattern	= emailPattern;
 
 	/** @see Promos */
-	public readonly promos: typeof Promos				= Promos;
+	public readonly promos			= Promos;
 
 	/** @see States */
-	public readonly states: typeof States				= States;
+	public readonly states			= States;
+
+	/** @see toFloat */
+	public readonly toFloat			= toFloat;
 
 	constructor (
 		/** @see AppService */

@@ -81,6 +81,24 @@ export const readableByteLength	= (n: number, storageUnit?: StorageUnits) : stri
 	readableByteLengthInternal(n)(storageUnit)
 ;
 
+/** Parses number. */
+export const toFloat	=
+	(s: string, max?: number, min: number = 0, force: boolean = false) : number => {
+		if (force) {
+			s	= (s.match(/(\d+|\.)/g) || []).join('');
+		}
+
+		const n	= s ? parseFloat(s) : NaN;
+
+		return isNaN(n) || n <= min ?
+			min :
+		max !== undefined && n >= max ?
+			max :
+			n
+		;
+	}
+;
+
 /** Stricter parseInt. */
 export const toInt	= (s: string) : number =>
 	/* tslint:disable-next-line:ban */

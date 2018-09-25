@@ -1089,14 +1089,14 @@
 			<div fxLayout='column' fxLayoutGap='16px' class='section-content-container'>
 				<div fxLayout='column' fxLayoutAlign='center center'>
 						<mat-form-field fxLayout='row' class='donation-amount'>
-							<span>$</span>
 							<input
 								matInput
-								type='number'
-								fxFlex='95'
-								[ngModel]='appService.donationAmount | async'
-								(ngModelChange)='appService.donationAmount.next($event)'
-								matTooltip='Donation Amount'
+								[ngModel]='((appService.donationAmount | async) || 0).toString()'
+								(ngModelChange)='appService.donationAmount.next(
+									toFloat($event, undefined, undefined, true)
+								)'
+								[textMask]='currencyMask'
+								placeholder='Donation Amount'
 							/>
 						</mat-form-field>
 						<button

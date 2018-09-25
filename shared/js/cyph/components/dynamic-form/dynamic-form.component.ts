@@ -22,7 +22,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackByIndex} from '../../track-by/track-by-index';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {filterUndefined} from '../../util/filter';
-import {toInt} from '../../util/formatting';
+import {toFloat, toInt} from '../../util/formatting';
 import {getOrSetDefault} from '../../util/get-or-set-default';
 import {parse} from '../../util/serialization';
 import {timestampToDate} from '../../util/time';
@@ -94,7 +94,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	;
 
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern	= emailPattern;
+	public readonly emailPattern								= emailPattern;
 
 	/** @see Form */
 	@Input() public form?: IForm;
@@ -123,16 +123,19 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	@Input() public submitText: string							= this.stringsService.submit;
 
 	/** @see timestampToDate */
-	public readonly timestampToDate: typeof timestampToDate		= timestampToDate;
+	public readonly timestampToDate								= timestampToDate;
+
+	/** @see toFloat */
+	public readonly toFloat										= toFloat;
 
 	/** @see trackByIndex */
-	public readonly trackByIndex: typeof trackByIndex			= trackByIndex;
+	public readonly trackByIndex								= trackByIndex;
 
 	/** @see trackBySelf */
-	public readonly trackBySelf: typeof trackBySelf				= trackBySelf;
+	public readonly trackBySelf									= trackBySelf;
 
 	/** @see Form.FormElement.Types */
-	public readonly types: typeof Form.Element.Types			= Form.Element.Types;
+	public readonly types										= Form.Element.Types;
 
 	/** @ignore */
 	private async getDataSource () : Promise<IAsyncValue<any>|undefined> {
@@ -426,18 +429,6 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 		}
 
 		this.submitForm.emit(this.form);
-	}
-
-	/** Parses number. */
-	public parseNumber (s: string, max?: number, min: number = 0) : number {
-		const n	= s ? parseFloat(s) : NaN;
-
-		return isNaN(n) || n <= min ?
-			min :
-		max !== undefined && n >= max ?
-			max :
-			n
-		;
 	}
 
 	constructor (

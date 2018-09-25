@@ -158,7 +158,7 @@
 				[textMask]='getMask(o)'
 				[ngModel]='o.valueNumber'
 				(keyup)='
-					o.valueNumber = parseNumber($event.target.value, o.max, o.min);
+					o.valueNumber = toFloat($event.target.value, o.max, o.min);
 					$event.target.value = o.valueNumber.toString();
 					changeForm.emit();
 				'
