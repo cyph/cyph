@@ -27,6 +27,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {EnvService} from '../../services/env.service';
 import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
+import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByVsItem} from '../../track-by/track-by-vs-item';
@@ -348,6 +349,9 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
+
+		/** @see SessionInitService */
+		public readonly sessionInitService: SessionInitService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

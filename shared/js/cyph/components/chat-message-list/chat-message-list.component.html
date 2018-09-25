@@ -109,13 +109,15 @@
 								fxLayout='row'
 								fxLayoutAlign='center center'
 								fxLayoutGap='16px'
-								[fxHide]='envService.environment.customBuild?.config.pro'
+								[fxHide]='
+									!sessionInitService.ephemeral ||
+									envService.environment.customBuild?.config.pro
+								'
 							>
 								<h2>{{stringsService.bannerText}}</h2>
 								<a
 									mat-raised-button
 									cyphTranslate
-									class='donate'
 									class='breathe'
 									[href]='envService.homeUrl + "donate"'
 								>
