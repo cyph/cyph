@@ -86,10 +86,20 @@
 								<span *ngIf='!!message?.authorUser'>
 									<strong>{{message?.authorUser?.name | async}}&nbsp;</strong>
 									&ngsp;
-									<small>{{message?.author | async}}</small>
+									<small>
+										{{
+											message?.authorType === authorTypes.Remote ?
+												'@' :
+												''
+										}}{{message?.author | async}}
+									</small>
 								</span>
 								<strong *ngIf='!message?.authorUser'>
-									{{message?.author | async}}
+									{{
+										message?.authorType === authorTypes.Remote ?
+											'@' :
+											''
+									}}{{message?.author | async}}
 								</strong>
 								<div fxFlex *ngIf='!mobile'></div>
 								<div>
