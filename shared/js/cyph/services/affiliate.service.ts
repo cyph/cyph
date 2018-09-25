@@ -3,7 +3,7 @@ import {BaseProvider} from '../base-provider';
 import {translate} from '../util/translate';
 import {EnvService} from './env.service';
 import {SplitTestingService} from './split-testing.service';
-import {StringsService} from './strings.service'
+import {StringsService} from './strings.service';
 
 
 /** URLs and copy for affiliate programs. */
