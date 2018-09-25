@@ -188,7 +188,7 @@ export class AccountSessionService extends SessionService {
 
 		if ('group' in chat) {
 			if (setHeader) {
-				this.accountService.setHeader(this.stringsService.group);
+				this.accountService.setHeader({mobile: this.stringsService.group});
 			}
 
 			/* Create N pairwise sessions, one for each other group member */

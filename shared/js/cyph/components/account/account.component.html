@@ -58,7 +58,19 @@
 				[class.fadeOutUp]='accountService.transition | async'
 				fxLayoutAlign='stretch center'
 				fxLayoutGap='8px'
-				*ngIf='(accountService.header | async) !== undefined'
+				*ngIf='
+					(accountService.header | async) !== undefined &&
+					!(
+						(envService.isMobile | async) &&
+						(accountService.header | async)?.desktop !== undefined &&
+						(accountService.header | async)?.mobile === undefined
+					) &&
+					!(
+						(envService.isMobile | async) === false &&
+						(accountService.header | async)?.desktop === undefined &&
+						(accountService.header | async)?.mobile !== undefined
+					)
+				'
 			>
 				<div></div>
 
@@ -118,7 +130,13 @@
 						</a>
 
 						<ng-template #stringHeader>
-							<h1 fxFlex>{{header}}</h1>
+							<h1 fxFlex>{{
+								(
+									(envService.isMobile | async) ?
+										header.mobile :
+										header.desktop
+								) || ''
+							}}</h1>
 						</ng-template>
 					</ng-container>
 					<ng-template #emptyHeader>

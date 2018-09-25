@@ -33,7 +33,9 @@ export class AccountService extends BaseProvider {
 	private readonly _UI_READY				= resolvable();
 
 	/** @ignore */
-	private readonly headerInternal			= new BehaviorSubject<string|User|undefined>(undefined);
+	private readonly headerInternal			=
+		new BehaviorSubject<string|{desktop?: string; mobile?: string}|User|undefined>(undefined)
+	;
 
 	/** @ignore */
 	private readonly menuExpandedInternal	=
@@ -50,7 +52,7 @@ export class AccountService extends BaseProvider {
 	public readonly activeSidebarContact	= new BehaviorSubject<string|undefined>(undefined);
 
 	/** Header title for current section. */
-	public readonly header: Observable<string|User|undefined>;
+	public readonly header: Observable<{desktop?: string; mobile?: string}|User|undefined>;
 
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: boolean					=
@@ -197,7 +199,7 @@ export class AccountService extends BaseProvider {
 	}
 
 	/** Sets custom header text. */
-	public setHeader (header: string|User) : void {
+	public setHeader (header: string|{desktop?: string; mobile?: string}|User) : void {
 		this.headerInternal.next(header);
 	}
 
@@ -344,105 +346,110 @@ export class AccountService extends BaseProvider {
 			this.headerInternal,
 			this.envService.isMobile,
 			this.transitionInternal
-		).pipe(map(([activeSidebarContact, header, isMobile]) => {
-			const routePath	= this.routePath;
-			const route		= routePath[0];
+		).pipe(
+			map(([activeSidebarContact, header, isMobile, _]) => {
+				const routePath	= this.routePath;
+				const route		= routePath[0];
 
-			const specialCases: {[k: string]: string}	= {
-				ehr: 'EHR'
-			};
+				const specialCases: {[k: string]: string}	= {
+					ehr: 'EHR'
+				};
 
-			/* Avoid redundancy between header and sidebar */
-			if (header instanceof User && header.username === activeSidebarContact) {
-				header	= undefined;
-			}
+				/* Avoid redundancy between header and sidebar */
+				if (header instanceof User && header.username === activeSidebarContact) {
+					header	= undefined;
+				}
 
-			/* Special case: set root header on mobile */
-			if (!route && isMobile) {
-				return this.envService.isTelehealth ?
-					this.stringsService.profileHeader :
-					this.stringsService.messagesHeader
-				;
-			}
+				/* Special case: set root header on mobile */
+				if (!route && isMobile) {
+					return this.envService.isTelehealth ?
+						this.stringsService.profileHeader :
+						this.stringsService.messagesHeader
+					;
+				}
 
-			/* No header */
-			if (
-				[
-					'register'
-				].indexOf(route) > -1 ||
-				(
+				/* No header */
+				if (
 					[
-						'appointments',
-						'audio',
-						'call',
-						'video'
+						'register'
+					].indexOf(route) > -1 ||
+					(
+						[
+							'appointments',
+							'audio',
+							'call',
+							'video'
+						].indexOf(route) > -1 &&
+						routePath.length > 1 &&
+						routePath[1] !== 'end'
+					)
+				) {
+					return undefined;
+				}
+
+				/* No header until explicitly set via accountService.setHeader */
+				if (
+					[
+						'mail',
+						'messages',
+						'profile'
 					].indexOf(route) > -1 &&
-					routePath.length > 1 &&
-					routePath[1] !== 'end'
-				)
-			) {
-				return undefined;
-			}
+					(
+						routePath.length > 1
+					)
+				) {
+					/* Always make at least an empty string on mobile to ensure menu bar displays */
+					return isMobile ? (header || '') : header;
+				}
 
-			/* No header until explicitly set via accountService.setHeader */
-			if (
-				[
-					'mail',
-					'messages',
-					'profile'
-				].indexOf(route) > -1 &&
-				(
-					routePath.length > 1
-				)
-			) {
-				/* Always make at least an empty string on mobile to ensure menu bar displays */
-				return isMobile ? (header || '') : header;
-			}
-
-			/*
-				No header by default for non-whitelisted sections,
-				or deep routes of non-whitelisted sections
-			*/
-			if (
-				[
-					'404',
-					'appointments',
-					'contacts',
-					'docs',
-					'doctors',
-					'ehr-access',
-					'files',
-					'forms',
-					'incoming-patient-info',
-					'notes',
-					'patients',
-					'settings',
-					'staff',
-					'wallets'
-				].indexOf(route) < 0 || (
+				/*
+					No header by default for non-whitelisted sections,
+					or deep routes of non-whitelisted sections
+				*/
+				if (
 					[
+						'404',
+						'appointments',
+						'contacts',
 						'docs',
+						'doctors',
 						'ehr-access',
 						'files',
 						'forms',
 						'incoming-patient-info',
 						'notes',
+						'patients',
 						'settings',
+						'staff',
 						'wallets'
-					].indexOf(route) < 0 &&
-					routePath.length > 1
-				)
-			) {
-				/* Always make at least an empty string on mobile to ensure menu bar displays */
-				return isMobile ? (header || '') : undefined;
-			}
+					].indexOf(route) < 0 || (
+						[
+							'docs',
+							'ehr-access',
+							'files',
+							'forms',
+							'incoming-patient-info',
+							'notes',
+							'settings',
+							'wallets'
+						].indexOf(route) < 0 &&
+						routePath.length > 1
+					)
+				) {
+					/* Always make at least an empty string on mobile to ensure menu bar displays */
+					return isMobile ? (header || '') : undefined;
+				}
 
-			return header || translate(route.
-				split('-').
-				map(s => specialCases[s] || (s[0].toUpperCase() + s.slice(1))).
-				join(' ')
-			);
-		}));
+				return header || translate(route.
+					split('-').
+					map(s => specialCases[s] || (s[0].toUpperCase() + s.slice(1))).
+					join(' ')
+				);
+			}),
+			map(header =>
+				typeof header === 'string' ? {desktop: header, mobile: header} : header
+			)
+		);
 
 		this.menuExpandable	= combineLatest(
 			this.menuReduced,
