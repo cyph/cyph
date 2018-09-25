@@ -136,6 +136,10 @@ body:not(.load-complete) {
 	}
 }
 
+.banner-wrapper {
+	background-color: #424242;
+}
+
 @media all and (orientation: portrait) {
 	body.mobile #main-toolbar.new-cyph-expanded #new-cyph {
 		@include transform(translateY(30em) scale(2));

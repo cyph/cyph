@@ -1,10 +1,9 @@
-<div class='banner' fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='16px'>
+<div class='banner' fxFlex fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='16px'>
 	<div fxFlex fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='16px'>
 		<h2>{{stringsService.bannerText}}</h2>
 		<a
 			mat-raised-button
 			cyphTranslate
-			class='donate'
 			class='breathe'
 			[href]='envService.homeUrl + "donate"'
 		>
