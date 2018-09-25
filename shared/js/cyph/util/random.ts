@@ -10,11 +10,11 @@ import {potassiumUtil} from '../crypto/potassium/potassium-util';
  * otherwise, returns float in range [0, 1) (like Math.random).
  */
 export const random	= (max?: number, min: number = 0) : number => {
-	const randomData	= new Uint16Array(potassiumUtil.randomBytes(6).buffer);
+	const randomData	= potassiumUtil.randomBytes(6);
 
 	let randomUint	= 0;
 	for (let i = 0 ; i < randomData.length ; ++i) {
-		randomUint += randomData[i] * Math.pow(2, i * 16);
+		randomUint += randomData[i] * Math.pow(2, i * 8);
 		randomData[i]	= 0;
 	}
 
@@ -22,7 +22,7 @@ export const random	= (max?: number, min: number = 0) : number => {
 		return randomUint;
 	}
 
-	const randomFloat: number	= randomUint / config.maxSafeUint;
+	const randomFloat	= randomUint / config.maxSafeUint;
 
 	if (max === undefined) {
 		return randomFloat;
