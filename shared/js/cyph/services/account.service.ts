@@ -308,7 +308,7 @@ export class AccountService extends BaseProvider {
 			new Hammer(document.body).on('panleft', () => {
 				if (
 					this.accountDatabaseService.currentUser.value === undefined ||
-					this.windowWatcherService.width.value <=
+					this.windowWatcherService.width.value >
 						this.configService.responsiveMaxWidths.sm
 				) {
 					return;
@@ -331,7 +331,7 @@ export class AccountService extends BaseProvider {
 			]}).on('pan', e => {
 				if (
 					this.accountDatabaseService.currentUser.value === undefined ||
-					this.windowWatcherService.width.value <=
+					this.windowWatcherService.width.value >
 						this.configService.responsiveMaxWidths.sm
 				) {
 					return;
