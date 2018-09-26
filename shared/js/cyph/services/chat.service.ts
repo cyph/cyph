@@ -1393,5 +1393,12 @@ export class ChatService extends BaseProvider {
 		this.sessionCapabilitiesService.capabilities.walkieTalkieMode.then(walkieTalkieMode => {
 			this.walkieTalkieMode.next(walkieTalkieMode);
 		});
+
+		/* For automated tests */
+		if (this.envService.isWeb) {
+			(<any> self).sendMessage	= async (message?: string, selfDestructTimeout?: number) =>
+				this.send(undefined, {text: message}, selfDestructTimeout)
+			;
+		}
 	}
 }

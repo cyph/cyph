@@ -239,15 +239,6 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 				this.cyphertextService.show();
 			});
 		}
-
-		/* For automated tests */
-		if (this.envService.isWeb) {
-			(<any> self).sendMessage	=
-				(message?: string, selfDestructTimeout?: number) => {
-					this.chatService.send(undefined, {text: message}, selfDestructTimeout);
-				}
-			;
-		}
 	}
 
 	constructor (
