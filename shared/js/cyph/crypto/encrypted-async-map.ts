@@ -3,6 +3,7 @@ import {IAsyncMap} from '../iasync-map';
 import {IProto} from '../iproto';
 import {LocalAsyncMap} from '../local-async-map';
 import {MaybePromise} from '../maybe-promise-type';
+import {debugLogError} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {IPotassium} from './potassium/ipotassium';
 
@@ -102,6 +103,11 @@ export class EncryptedAsyncMap<T> {
 		const plaintext	= await this.getItemBytesUnsafe(key, encryptionKey);
 
 		if (!this.potassium.compareMemory(hash, await this.hash(undefined, plaintext, hasher))) {
+			debugLogError(async () => ({encryptedAsyncMapInvalidHash: {
+				plaintext,
+				plaintextObject: await deserialize(this.proto, plaintext).catch(err => ({err}))
+			}}));
+
 			throw new Error('Invalid hash in EncryptedAsyncMap.getItemBytes.');
 		}
 
