@@ -1,4 +1,4 @@
-import {saveAs} from 'file-saver';
+import fileSaver from 'file-saver';
 import {env} from '../env';
 import {staticDialogService, staticFileService} from './static-services';
 import {translate} from './translate';
@@ -25,7 +25,7 @@ export const saveFile	= async (
 	;
 
 	const save	= () => {
-		saveAs(
+		fileSaver.saveAs(
 			new Blob([content], {type: fileMediaType}),
 			fileName,
 			false
