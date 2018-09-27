@@ -328,7 +328,11 @@
 
 	<div
 		class='transfer-list'
-		*ngIf='chat.state === states.chat && (p2pService.isActive | async) === false'
+		*ngIf='
+			chat.state === states.chat &&
+			sessionInitService.ephemeral &&
+			(p2pService.isActive | async) === false
+		'
 		[@fadeIn]='"in"'
 	>
 		<div fxFlex fxLayout='column'>

@@ -10,6 +10,7 @@ import {FileTransferService} from '../../services/file-transfer.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
+import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByTransfer} from '../../track-by/track-by-transfer';
@@ -103,6 +104,9 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 
 		/** @see SessionService */
 		public readonly sessionService: SessionService,
+
+		/** @see SessionInitService */
+		public readonly sessionInitService: SessionInitService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
