@@ -12,7 +12,7 @@ import {
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import * as $ from 'jquery';
 import * as Quill from 'quill';
-import * as Delta from 'quill-delta';
+import Delta from 'quill-delta';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {IQuillDelta} from '../../iquill-delta';
@@ -146,11 +146,11 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 			return;
 		}
 
-		this.quill.setContents(
+		this.quill.setContents(<any> (
 			this.content ?
 				new Delta(this.stripExternalSubresources(this.content).ops) :
 				new Delta()
-		);
+		));
 	}
 
 	/** @ignore */
@@ -291,7 +291,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 						}
 						else if (delta.clientID !== this.clientID) {
 							this.quill.updateContents(
-								new Delta(this.stripExternalSubresources(delta).ops)
+								<any> new Delta(this.stripExternalSubresources(delta).ops)
 							);
 						}
 					});

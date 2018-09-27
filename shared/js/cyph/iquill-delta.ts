@@ -6,6 +6,6 @@ export interface IQuillDelta {
 	/** The originating client's unique ID. */
 	clientID?: string;
 
-	/** @see DeltaStatic.ops */
+	/** @see Delta.ops */
 	ops?: DeltaOperation[];
 }

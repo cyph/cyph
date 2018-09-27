@@ -7,8 +7,8 @@ import {Router} from '@angular/router';
 import * as htmlToText from 'html-to-text';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
-import {DeltaOperation, DeltaStatic} from 'quill';
-import * as Delta from 'quill-delta';
+import {DeltaOperation} from 'quill';
+import Delta from 'quill-delta';
 import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
 import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
 import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
@@ -975,7 +975,7 @@ export class AccountFilesService extends BaseProvider {
 						ops: deltas.length < 1 ? [] : deltas.
 							filter(o => o && typeof (<any> o).index !== 'number').
 							map<DeltaOperation[]|undefined>(o => (<any> o).ops).
-							reduce<DeltaStatic>(
+							reduce<Delta>(
 								(delta, ops) => ops ? delta.compose(new Delta(ops)) : delta,
 								new Delta()
 							).ops || []

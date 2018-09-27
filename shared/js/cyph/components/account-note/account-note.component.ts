@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import * as Delta from 'quill-delta';
+import Delta from 'quill-delta';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';

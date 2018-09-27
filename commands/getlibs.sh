@@ -231,7 +231,6 @@ for anyType in \
 	markdown-it-sup \
 	math-expression-evaluator \
 	opus-recorder \
-	quill-delta \
 	recorder.js \
 	recordrtc \
 	simplewebrtc \
