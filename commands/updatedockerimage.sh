@@ -36,7 +36,7 @@ emsdk activate latest
 	--path-update false \
 	--usage-reporting false
 
-source ~/.bashrc
+source ~/google-cloud-sdk/path.bash.inc
 
 gcloud components update --quiet
 
