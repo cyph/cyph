@@ -44,7 +44,7 @@ export const saveFile	= async (
 			);
 		});
 	}
-	else if (!env.isSafari) {
+	else if (env.safariVersion === undefined || env.safariVersion >= 10.1) {
 		save();
 	}
 	else {

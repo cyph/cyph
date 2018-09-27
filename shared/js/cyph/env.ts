@@ -245,6 +245,13 @@ export class Env extends EnvDeploy {
 	/** Complete (original case) language code, e.g. "en-US". */
 	public readonly realLanguage: string		= Env.language;
 
+	/** Indicates whether this is Safari 10.0 or older. */
+	public readonly safariVersion?: number		=
+		this.isSafari ?
+			parseFloat((Env.UA.match(/version\/(\d+\.\d+)/) || [])[1] || '0') :
+			undefined
+	;
+
 	/** Indicates whether minimal affiliate advertising should be displayed. */
 	public readonly showAds: boolean			= !environment.customBuild;
 
