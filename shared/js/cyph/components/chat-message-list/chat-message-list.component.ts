@@ -1,3 +1,4 @@
+import {CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
@@ -7,7 +8,8 @@ import {
 	Input,
 	OnChanges,
 	OnDestroy,
-	Optional
+	Optional,
+	ViewChild
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
 import * as Hammer from 'hammerjs';
@@ -36,6 +38,7 @@ import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {compareDates, relativeDateString, watchDateChange} from '../../util/time';
+import {sleep, waitForIterable} from '../../util/wait';
 
 
 /**
@@ -103,6 +106,9 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles			= UiStyles;
+
+	/** @see */
+	@ViewChild(CdkVirtualScrollViewport) virtualScrollViewport?: CdkVirtualScrollViewport;
 
 	/** Data formatted for virtual scrolling. */
 	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject<IVsItem[]>([]);
@@ -307,6 +313,32 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		}))).subscribe(
 			this.vsData
 		));
+
+		if (!this.envService.isWeb) {
+			return;
+		}
+
+		const virtualScrollViewport		= this.virtualScrollViewport;
+
+		if (!virtualScrollViewport) {
+			return;
+		}
+
+		const $virtualScrollViewport	= $(virtualScrollViewport.elementRef.nativeElement);
+
+		await waitForIterable(() => $virtualScrollViewport.find('cyph-chat-message'));
+
+		virtualScrollViewport.checkViewportSize();
+		await sleep();
+		virtualScrollViewport.scrollTo({bottom: 0});
+		await sleep();
+		virtualScrollViewport.checkViewportSize();
+		this.initialScrollDown.next(false);
+
+		this.subscriptions.push(this.vsData.subscribe(async () => {
+			await sleep();
+			virtualScrollViewport.checkViewportSize();
+		}))
 	}
 
 	/** @inheritDoc */

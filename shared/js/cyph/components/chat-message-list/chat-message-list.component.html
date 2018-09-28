@@ -10,8 +10,17 @@
 	</div>
 </div>
 
-<div cyphNanoScroller *ngIf='chatService.virtualScroll | async'>
-	<cdk-virtual-scroll-viewport fxFlexFill autosize class='message-list-background'>
+<div
+	cyphNanoScroller
+	[class.visibility-hidden]='initialScrollDown | async'
+	*ngIf='chatService.virtualScroll | async'
+>
+	<cdk-virtual-scroll-viewport
+		#virtualScrollViewport
+		fxFlexFill
+		autosize
+		class='message-list-background'
+	>
 		<ng-container *cdkVirtualFor='
 			let item of vsData;
 			trackBy: trackByVsItem;
