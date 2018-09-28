@@ -30,9 +30,6 @@ export class Config {
 		}
 	];
 
-	/** Indicates whether chat virtual scrolling should be enabled. */
-	public readonly chatVirtualScrolling: boolean	= false;
-
 	/** User-facing email addresses to include in places like contact forms. */
 	public readonly contactEmailAddresses: string[]	= [
 		'hello',

@@ -1,7 +1,7 @@
 <div
 	cyphNanoScroller
 	[class.visibility-hidden]='initialScrollDown | async'
-	*ngIf='!configService.chatVirtualScrolling'
+	*ngIf='!envService.chatVirtualScroll'
 >
 	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
 		<ng-container *ngFor='let item of vsData | async; trackBy: trackByVsItem'>
@@ -10,7 +10,7 @@
 	</div>
 </div>
 
-<div cyphNanoScroller *ngIf='configService.chatVirtualScrolling'>
+<div cyphNanoScroller *ngIf='envService.chatVirtualScroll'>
 	<cdk-virtual-scroll-viewport fxFlexFill autosize class='message-list-background'>
 		<ng-container *cdkVirtualFor='
 			let item of vsData;

@@ -21,7 +21,6 @@ import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
 import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';
-import {ConfigService} from '../../services/config.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
@@ -58,7 +57,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 					continue;
 				}
 
-				if (ChatMessageComponent.services.configService.chatVirtualScrolling) {
+				if (ChatMessageComponent.services.envService.chatVirtualScroll) {
 					return;
 				}
 
@@ -112,8 +111,8 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 	/** Temporary workaround pending ACCOUNTS-36. */
 	private static services?: {
-		configService: {
-			chatVirtualScrolling: boolean;
+		envService: {
+			chatVirtualScroll: boolean;
 		};
 		p2pService: {
 			isActive: BehaviorSubject<boolean>;
@@ -180,7 +179,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
 		if (!ChatMessageComponent.services) {
 			ChatMessageComponent.services	= {
-				configService: this.configService,
+				envService: this.envService,
 				p2pService: this.p2pService,
 				windowWatcherService: this.windowWatcherService
 			};
@@ -214,7 +213,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 				/* Leave email-style UI at the top for now */
 				this.uiStyle !== UiStyles.mail &&
 				/* Leave virtual scrolling UI at the top for now */
-				!this.configService.chatVirtualScrolling
+				!this.envService.chatVirtualScroll
 			) {
 				await this.waitUntilInitiated();
 				this.elementRef.nativeElement.scrollIntoView(undefined, {behavior: 'instant'});
@@ -233,7 +232,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		await this.windowWatcherService.waitUntilVisible();
 
-		if (!this.configService.chatVirtualScrolling) {
+		if (!this.envService.chatVirtualScroll) {
 			/* Temporary workaround pending ACCOUNTS-36 */
 			await ChatMessageComponent.appeared.
 				pipe(filter(arr => arr.has(id)), take(1)).
@@ -282,9 +281,6 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		/** @ignore */
 		private readonly renderer: Renderer2,
-
-		/** @ignore */
-		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,
