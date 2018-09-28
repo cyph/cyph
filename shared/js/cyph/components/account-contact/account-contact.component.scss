@@ -25,7 +25,7 @@
 		}
 
 		mat-card-title {
-			font-size: 20px;
+			font-size: 20px !important;
 			margin: 0 0 7px 0;
 		}
 
@@ -76,7 +76,7 @@
 	}
 
 	mat-card-title {
-		font-size: 1.2em;
-		margin-top: 20px;
+		font-size: 1.2em !important;
+		margin-top: calc(1em - 2px);
 	}
 }

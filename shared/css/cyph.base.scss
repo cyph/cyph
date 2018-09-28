@@ -123,6 +123,10 @@ input.text-security {
 		}
 	}
 
+	mat-card-title {
+		font-size: 1em !important;
+	}
+
 	mat-card-title.truncate, mat-card-subtitle.truncate {
 		overflow-x: hidden;
 		text-overflow: ellipsis;
