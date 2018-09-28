@@ -3,14 +3,24 @@
 .mail-ui {
 	.mail-divider {
 		border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+		margin: 8px -24px 24px -24px;
+		width: calc(100% + 48px);
 	}
 
 	::ng-deep {
-		mat-card-header {
-			margin-right: -17px;
+		mat-card {
+			padding: 24px;
 
-			.mat-card-header-text {
-				width: 100%;
+			mat-card-header {
+				margin-right: -17px;
+
+				.mat-card-header-text {
+					width: 100%;
+				}
+			}
+
+			mat-card-title {
+				font-size: 14px !important;
 			}
 		}
 	}
