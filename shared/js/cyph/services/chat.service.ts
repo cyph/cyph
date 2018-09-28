@@ -182,6 +182,9 @@ export class ChatService extends BaseProvider {
 		)
 	;
 
+	/** Indicates whether chat virtual scrolling should be enabled. */
+	public readonly virtualScroll			= new BehaviorSubject<boolean>(false);
+
 	/** Indicates whether "walkie talkie" mode is enabled for calls. */
 	public readonly walkieTalkieMode		= new BehaviorSubject<boolean>(false);
 

@@ -22,6 +22,7 @@ import {MaybePromise} from '../../maybe-promise-type';
 import {IChatMessage} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
+import {ChatService} from '../../services/chat.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PService} from '../../services/p2p.service';
@@ -339,6 +340,9 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		/** @see AccountService */
 		@Inject(AccountService) @Optional()
 		public readonly accountService: AccountService|undefined,
+
+		/** @see ChatService */
+		public readonly chatService: ChatService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

@@ -40,9 +40,6 @@ export class Env extends EnvDeploy {
 			undefined
 	);
 
-	/** Indicates whether chat virtual scrolling should be enabled. */
-	public readonly chatVirtualScroll: boolean	= false;
-
 	/** Google Chrome version, if applicable. */
 	public readonly chromeVersion: number		=
 		toInt((Env.UA.match(/chrome\/(\d+)/) || [])[1])

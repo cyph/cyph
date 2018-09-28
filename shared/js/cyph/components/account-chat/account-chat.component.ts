@@ -229,6 +229,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 						ChatMessageValue.Types.Text
 				);
 
+				this.accountChatService.virtualScroll.next(
+					this.messageType.value === ChatMessageValue.Types.Text
+				);
+
 				try {
 					const chat	= await this.accountContactsService.getChatData(contactID);
 

@@ -57,10 +57,6 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 					continue;
 				}
 
-				if (ChatMessageComponent.services.envService.chatVirtualScroll) {
-					return;
-				}
-
 				await ChatMessageComponent.services.windowWatcherService.waitUntilVisible();
 
 				if (
@@ -111,9 +107,6 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 	/** Temporary workaround pending ACCOUNTS-36. */
 	private static services?: {
-		envService: {
-			chatVirtualScroll: boolean;
-		};
 		p2pService: {
 			isActive: BehaviorSubject<boolean>;
 			isSidebarOpen: BehaviorSubject<boolean>;
@@ -179,7 +172,6 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
 		if (!ChatMessageComponent.services) {
 			ChatMessageComponent.services	= {
-				envService: this.envService,
 				p2pService: this.p2pService,
 				windowWatcherService: this.windowWatcherService
 			};
@@ -213,7 +205,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 				/* Leave email-style UI at the top for now */
 				this.uiStyle !== UiStyles.mail &&
 				/* Leave virtual scrolling UI at the top for now */
-				!this.envService.chatVirtualScroll
+				!this.chatService.virtualScroll.value
 			) {
 				await this.waitUntilInitiated();
 				this.elementRef.nativeElement.scrollIntoView(undefined, {behavior: 'instant'});
@@ -232,7 +224,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		await this.windowWatcherService.waitUntilVisible();
 
-		if (!this.envService.chatVirtualScroll) {
+		if (!this.chatService.virtualScroll.value) {
 			/* Temporary workaround pending ACCOUNTS-36 */
 			await ChatMessageComponent.appeared.
 				pipe(filter(arr => arr.has(id)), take(1)).
