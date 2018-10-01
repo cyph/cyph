@@ -125,6 +125,9 @@ read -r -d '' modules <<- EOM
 	core-js
 	crypto-browserify
 	css-loader
+	csv
+	csv-parse
+	csv-stringify
 	d3
 	datauri
 	dompurify
@@ -176,6 +179,7 @@ read -r -d '' modules <<- EOM
 	libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js#96c1c974b13fe9641a91d1ff4832ec838eb84c2a
 	libvorbis.js
 	localforage
+	lodash
 	lodash-es
 	long
 	lunr
@@ -202,6 +206,7 @@ read -r -d '' modules <<- EOM
 	ng2-fittext
 	ng2-pdf-viewer
 	ng2-truncate
+	ngx-build-plus
 	ngx-contextmenu
 	ngx-image-cropper
 	node-fetch
@@ -214,6 +219,7 @@ read -r -d '' modules <<- EOM
 	pdfjs-dist
 	pdfkit
 	primeng
+	promise-semaphore
 	protobufjs
 	protractor
 	puppeteer
