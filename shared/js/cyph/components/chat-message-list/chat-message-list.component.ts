@@ -108,7 +108,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 	public readonly uiStyles: typeof UiStyles			= UiStyles;
 
 	/** @see */
-	@ViewChild(CdkVirtualScrollViewport) virtualScrollViewport?: CdkVirtualScrollViewport;
+	@ViewChild(CdkVirtualScrollViewport) public virtualScrollViewport?: CdkVirtualScrollViewport;
 
 	/** Data formatted for virtual scrolling. */
 	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject<IVsItem[]>([]);
@@ -338,7 +338,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		this.subscriptions.push(this.vsData.subscribe(async () => {
 			await sleep();
 			virtualScrollViewport.checkViewportSize();
-		}))
+		}));
 	}
 
 	/** @inheritDoc */
