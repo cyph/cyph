@@ -294,7 +294,26 @@ sendData(0);
 
 
 if (require.main === module) {
-	sign(JSON.parse(process.argv[2]), process.argv[3] === '--test');
+	(async () => {
+		const args		= process.argv.slice(2);
+		const inputs	= args[0];
+		const testSign	= args[1] === '--test';
+
+		if (typeof inputs !== 'string' || !inputs) {
+			throw './sign.js \'{"message": "data to sign"}\'';
+		}
+
+		const signed	= await sign(JSON.parse(inputs), testSign);
+
+		console.log({
+			...signed,
+			signedInputs: signed.signedInputs.map(o => o.toString('base64'))
+		});
+		process.exit(0);
+	})().catch(err => {
+		console.error(err);
+		process.exit(1);
+	});
 }
 else {
 	module.exports	= {agsePublicSigningKeys: publicKeys, sign};
