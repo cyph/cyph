@@ -92,10 +92,6 @@ for (const k of [
 		}
 ;
 
-if (!IS_WEB) {
-	(<any> self).saveAs	= 'FileSaver is only supported in main thread of web environment.';
-}
-
 
 /* Make sure compiler adds necessary helpers to global scope in threads */
 

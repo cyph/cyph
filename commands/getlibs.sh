@@ -282,8 +282,6 @@ done
 
 for m in libsodium* ; do cd ${m} ; mv package-${m}.json package.json ; cd .. ; done
 
-sed -i 's/saveAs\s*||/self.saveAs||/g' file-saver/*.js
-
 cp -f simplewebrtc/out/simplewebrtc-with-adapter.bundle.js simplewebrtc/src/simplewebrtc.js
 # sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.js
 

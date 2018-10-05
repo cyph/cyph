@@ -11,6 +11,11 @@ export const saveFile	= async (
 	fileName: string,
 	mediaType?: string
 ) : Promise<void> => {
+	/* TODO: HANDLE NATIVE */
+	if (!env.isWeb) {
+		return;
+	}
+
 	const [dialogService, fileService]	= await Promise.all([
 		staticDialogService,
 		staticFileService
