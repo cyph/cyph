@@ -58,7 +58,7 @@ if (typeof $ === 'function' && typeof window === 'object') {
 			$('title').text(environment.customBuild.config.title);
 		}
 
-		if (environment.customBuild.css) {
+		if (environment.customBuild.css && document.head) {
 			accountPrimaryTheme	= false;
 			const style			= document.createElement('style');
 			style.textContent	= environment.customBuild.css;

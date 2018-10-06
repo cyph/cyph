@@ -196,7 +196,11 @@ export class Env extends EnvDeploy {
 	public readonly isWebKit: boolean			=
 		this.isChrome ||
 		this.isSafari ||
-		(this.isWeb && 'WebkitAppearance' in document.documentElement.style)
+		!!(
+			this.isWeb &&
+			document.documentElement &&
+			'WebkitAppearance' in document.documentElement.style
+		)
 	;
 
 	/** Normalized language code, used for translations. */

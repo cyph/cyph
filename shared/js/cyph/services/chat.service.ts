@@ -1291,14 +1291,14 @@ export class ChatService extends BaseProvider {
 							this.initProgressStart(42000);
 						}
 
-						await this.dialogService.toast(
+						return !(await this.dialogService.toast(
 							callType === 'video' ?
 								this.stringsService.p2pWarningVideoPassive :
 								this.stringsService.p2pWarningAudioPassive
 							,
 							ChatService.p2pPassiveConnectTime,
 							this.stringsService.cancel
-						);
+						));
 					}).then(async canceled => {
 						if (!canceled) {
 							this.p2pWebRTCService.accept(callType, true);

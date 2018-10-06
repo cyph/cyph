@@ -790,7 +790,19 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const o: {callback?: () => Promise<void>}	= {};
 
 			if (typeof value === 'function') {
-				value	= await value(key, previousKey, o);
+				value	=
+					await (
+						<(
+							key: string,
+							previousKey: () => Promise<string|undefined>,
+							o: {callback?: () => MaybePromise<void>}
+						) => MaybePromise<T>> value
+					)(
+						key,
+						previousKey,
+						o
+					)
+				;
 			}
 
 			const result	= await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);

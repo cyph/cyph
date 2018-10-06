@@ -79,7 +79,7 @@ if (location.hash && location.hash.endsWith('/')) {
 
 $(async () => {
 	if (!env.isHomeSite) {
-		if (!env.isLocalEnv) {
+		if (!env.isLocalEnv && document.head) {
 			/* In WebSigned environments, perform CSP Meta-Hardening */
 			await sleep(10000);
 			$(document.head).append(

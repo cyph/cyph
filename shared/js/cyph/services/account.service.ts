@@ -220,7 +220,7 @@ export class AccountService extends BaseProvider {
 		}
 
 		if (menuOpen && this.envService.isWeb && !this.envService.isCordova) {
-			history.pushState(undefined, undefined);
+			history.pushState(undefined, '');
 		}
 
 		this.mobileMenuOpenInternal.next(menuOpen);

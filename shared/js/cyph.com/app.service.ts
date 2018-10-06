@@ -251,7 +251,9 @@ export class AppService extends BaseProvider {
 			Math.abs(($(document).scrollTop() || 0) - position)
 		;
 
-		$(document.documentElement).animate({scrollTop: position}, delay);
+		if (document.documentElement) {
+			$(document.documentElement).animate({scrollTop: position}, delay);
+		}
 
 		if (onComplete) {
 			await sleep(delay + 50);
