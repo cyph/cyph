@@ -9,25 +9,25 @@ fi
 
 
 onexit () {
-	mv /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js.bak /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js 2> /dev/null
+	mv /node_modules/terser-webpack-plugin/dist/minify.js.bak /node_modules/terser-webpack-plugin/dist/minify.js 2> /dev/null
 }
 
 if [ ! "${noBuild}" ] ; then
 	trap onexit EXIT
 fi
 
-cp /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js.bak
+cp /node_modules/terser-webpack-plugin/dist/minify.js /node_modules/terser-webpack-plugin/dist/minify.js.bak
 
 
 # Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
 
 commandsDir="$(cd "$(dirname "$0")" ; pwd)"
 
-sed -i "s|^\s*compress:.*,|compress: compress === true ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+sed -i "s|^\s*compress:.*,|compress: compress === true ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" /node_modules/terser-webpack-plugin/dist/minify.js
 
-sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/terser-webpack-plugin/dist/minify.js
 
-sed -i "s/safari10 = .*;/safari10 = true;/g" /node_modules/uglifyjs-webpack-plugin/dist/uglify/minify.js
+sed -i "s/safari10 = .*;/safari10 = true;/g" /node_modules/terser-webpack-plugin/dist/minify.js
 
 
 # Workaround for https://github.com/angular/angular-cli/issues/10612
@@ -69,7 +69,7 @@ ng eject --prod --output-hashing none "${@}"
 cat > webpack.js <<- EOM
 	const HtmlWebpackPlugin		= require('html-webpack-plugin');
 	const path					= require('path');
-	const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
+	const TerserPlugin			= require('terser-webpack-plugin');
 	const {CommonsChunkPlugin}	= require('webpack').optimize;
 	const {mangleExceptions}	= require('../commands/mangleexceptions');
 	const config				= require('./webpack.config.js');
@@ -154,17 +154,17 @@ cat > webpack.js <<- EOM
 		);
 	}
 
-	const uglifyJsIndex	= config.plugins.indexOf(
-		config.plugins.find(o => o instanceof UglifyJsPlugin)
+	const terserIndex	= config.plugins.indexOf(
+		config.plugins.find(o => o instanceof TerserPlugin)
 	);
 
-	if (uglifyJsIndex > -1) {
-		const {options}	= config.plugins[uglifyJsIndex];
+	if (terserIndex > -1) {
+		const {options}	= config.plugins[terserIndex];
 
-		options.uglifyOptions.compress.sequences	= false;
-		options.uglifyOptions.mangle				= {reserved: mangleExceptions};
+		options.terserOptions.compress.sequences	= false;
+		options.terserOptions.mangle				= {reserved: mangleExceptions};
 
-		config.plugins.splice(uglifyJsIndex, 1, new UglifyJsPlugin(options));
+		config.plugins.splice(terserIndex, 1, new TerserPlugin(options));
 	}
 
 	config.output.filename		= '[name].js';

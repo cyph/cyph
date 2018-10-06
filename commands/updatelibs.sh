@@ -255,6 +255,8 @@ read -r -d '' modules <<- EOM
 	stylelint-scss
 	supersphincs
 	tab-indent
+	terser
+	terser-webpack-plugin
 	text-mask-addons
 	textillate
 	tns-android

@@ -29,12 +29,12 @@ uglify () {
 			shift
 		fi
 
-		uglifyjs "${@}" -b
+		terser "${@}" -b
 	elif [ "${1}" == '-cm' ] ; then
 		shift
-		uglifyjs "${@}" -cm
+		terser "${@}" -cm
 	else
-		uglifyjs "${@}"
+		terser "${@}"
 	fi
 }
 
@@ -183,7 +183,7 @@ for f in ${typescriptAssets} ; do
 	cat > webpack.js <<- EOM
 		const {TsConfigPathsPlugin}	= require('awesome-typescript-loader');
 		const path					= require('path');
-		const UglifyJsPlugin		= require('uglifyjs-webpack-plugin');
+		const TerserPlugin		= require('terser-webpack-plugin');
 		const {mangleExceptions}	= require('../../../commands/mangleexceptions');
 
 		module.exports	= {
@@ -206,12 +206,12 @@ for f in ${typescriptAssets} ; do
 				path: '${PWD}'
 			},
 			plugins: [
-				new UglifyJsPlugin({
+				new TerserPlugin({
 					cache: true,
 					extractComments: false,
 					parallel: true,
 					sourceMap: false,
-					uglifyOptions: {
+					terserOptions: {
 						ecma: 5,
 						ie8: false,
 						output: {
@@ -304,5 +304,5 @@ done
 
 cd ..
 find . -type f -name '*.js' -exec sed -i 's|use strict||g' {} \;
-if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec uglifyjs {} -bo {} \; ; fi
+if [ "${prodTest}" ] ; then find . -type f -name '*.js' -exec terser {} -bo {} \; ; fi
 echo "${hash}" > unbundled.hash

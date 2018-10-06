@@ -2,7 +2,7 @@
 
 
 const fs		= require('fs');
-const uglify	= require('uglify-es');
+const terser	= require('terser');
 
 
 (async () => {
@@ -23,7 +23,7 @@ const code		= fs.readFileSync(args.path).toString().replace(
 		'\n\n'
 );
 
-const {error}	= uglify.minify(code);
+const {error}	= terser.minify(code);
 
 if (error) {
 	fs.appendFileSync('/cyph/threadpack.log', `${args.path}:\n\n${code}\n\n\n\n\n\n\n\n`);
