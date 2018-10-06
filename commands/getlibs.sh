@@ -355,7 +355,13 @@ cd ..
 # 	cd ..
 # done
 
-find . -type d -path '*/node_modules/@angular' -exec rm -rf {} \; 2> /dev/null
+find . -type d \( \
+	-path '*/node_modules/@angular' -o \
+	-path '*/node_modules/@angular-devkit' -o \
+	-path '*/node_modules/@ngtools' \
+\) \
+	-exec rm -rf {} \; \
+2> /dev/null
 
 cd ../..
 
