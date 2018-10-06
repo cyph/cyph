@@ -360,6 +360,7 @@
 		"rxjs-no-ignored-error": false,
 		"rxjs-no-ignored-subscribe": true,
 		"rxjs-no-internal": true,
+		"rxjs-no-nested-subscribe": true,
 		"rxjs-no-operator": false,
 		"rxjs-no-patched": false,
 		"rxjs-no-subject-unsubscribe": true,
@@ -375,6 +376,7 @@
 		"rxjs-no-unused-add": false,
 		"rxjs-no-wholesale": false,
 		"rxjs-prefer-add": false,
+		"rxjs-prefer-async-pipe": false,
 		"rxjs-prefer-observer": false,
 		"rxjs-throw-error": false
 	},
