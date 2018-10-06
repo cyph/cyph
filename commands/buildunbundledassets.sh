@@ -230,11 +230,9 @@ for f in ${typescriptAssets} ; do
 						else
 							echo "
 								compress: false /* {
-									inline: 3,
 									passes: 3,
 									pure_getters: true,
-									sequences: false,
-									typeofs: false
+									sequences: false
 								} */,
 								mangle: {
 									reserved: mangleExceptions
