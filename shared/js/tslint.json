@@ -375,6 +375,7 @@
 		"rxjs-no-unused-add": false,
 		"rxjs-no-wholesale": false,
 		"rxjs-prefer-add": false,
+		"rxjs-prefer-observer": false,
 		"rxjs-throw-error": false
 	},
 	"rulesDirectory": [
