@@ -140,7 +140,7 @@ dev_appserver.py \
 	--host 0.0.0.0 \
 	--storage_path /tmp/cyph0 \
 	--support_datastore_emulator=True \
-	backend/.build.yaml \
+	${PWD}/backend/.build.yaml \
 &
 
 ./commands/buildunbundledassets.sh \
