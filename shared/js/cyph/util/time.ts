@@ -8,6 +8,7 @@ import {ITimeRange} from '../itime-range';
 import {Time} from '../time-type';
 import {flattenObservable} from './flatten-observable';
 import {toInt} from './formatting';
+import {lockFunction} from './lock';
 import {random} from './random';
 import {request} from './request';
 import {translate} from './translate';
@@ -300,11 +301,13 @@ export const getTimes	= (
 	)
 ;
 
+const getTimestampLock		= lockFunction();
+
 /**
  * Returns current timestamp, with logic to correct for incorrect
  * local clocks and ensure each output is unique.
  */
-export const getTimestamp	= async () : Promise<number> => {
+export const getTimestamp	= async () => getTimestampLock(async () => {
 	/* tslint:disable-next-line:ban */
 	let unixMilliseconds: number	= Date.now() + (await timestampData.offset);
 
@@ -318,7 +321,7 @@ export const getTimestamp	= async () : Promise<number> => {
 	}
 
 	return unixMilliseconds;
-};
+});
 
 /** Returns a human-readable representation of the time (e.g. "3:37pm"). */
 export const getTimeString	= memoize((timestamp?: number) : string =>

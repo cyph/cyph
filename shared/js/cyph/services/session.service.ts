@@ -90,9 +90,6 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		this._SYMMETRIC_KEY.resolve
 	;
 
-	/** @ignore */
-	protected sendLock: LockFunction									= lockFunction();
-
 	/**
 	 * Session key for misc stuff like locking.
 	 * TODO: Either change how AccountSessionService.setUser works or make this an observable.
@@ -241,9 +238,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 			)
 		][]
 	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
-		const newMessages: (ISessionMessage&{data: ISessionMessageData})[]	= [];
-
-		for (const message of messages) {
+		return Promise.all(messages.map(async message => {
 			const timestamp		= await getTimestamp();
 			const event			= message[0];
 			let additionalData	= message[1];
@@ -252,23 +247,22 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 				additionalData	= await additionalData(timestamp);
 			}
 
-			const data: ISessionMessageData	= {
-				author: this.localUsername,
-				bytes: additionalData.bytes,
-				capabilities: additionalData.capabilities,
-				chatState: additionalData.chatState,
-				command: additionalData.command,
-				id: additionalData.id || uuid(),
-				sessionSubID: this.sessionSubID,
-				text: additionalData.text,
-				textConfirmation: additionalData.textConfirmation,
-				timestamp
+			return {
+				data: {
+					author: this.localUsername,
+					bytes: additionalData.bytes,
+					capabilities: additionalData.capabilities,
+					chatState: additionalData.chatState,
+					command: additionalData.command,
+					id: additionalData.id || uuid(),
+					sessionSubID: this.sessionSubID,
+					text: additionalData.text,
+					textConfirmation: additionalData.textConfirmation,
+					timestamp
+				},
+				event
 			};
-
-			newMessages.push({event, data});
-		}
-
-		return newMessages;
+		}));
 	}
 
 	/** @ignore */
@@ -541,14 +535,12 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		confirmPromise: Promise<void>;
 		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
 	}> {
-		return this.sendLock(async () => {
-			const newMessages	= await this.newMessages(messages);
+		const newMessages	= await this.newMessages(messages);
 
-			return {
-				confirmPromise: this.plaintextSendHandler(newMessages),
-				newMessages
-			};
-		});
+		return {
+			confirmPromise: this.plaintextSendHandler(newMessages),
+			newMessages
+		};
 	}
 
 	/** @inheritDoc */
