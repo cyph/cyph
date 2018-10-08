@@ -224,13 +224,11 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		await this.windowWatcherService.waitUntilVisible();
 
-		if (!this.chatService.virtualScroll.value) {
-			/* Temporary workaround pending ACCOUNTS-36 */
-			await ChatMessageComponent.appeared.
-				pipe(filter(arr => arr.has(id)), take(1)).
-				toPromise()
-			;
-		}
+		/* Temporary workaround pending ACCOUNTS-36 */
+		await ChatMessageComponent.appeared.
+			pipe(filter(arr => arr.has(id)), take(1)).
+			toPromise()
+		;
 
 		if (this.message === changes.message.currentValue) {
 			await this.scrollService.setRead(this.message.id);

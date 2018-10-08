@@ -155,6 +155,9 @@ export class ChatService extends BaseProvider {
 	/** Timer for chat self-destruction. */
 	public readonly chatSelfDestructTimer	= new BehaviorSubject<Timer|undefined>(undefined);
 
+	/** Indicates whether chat virtual scrolling should be enabled if possible. */
+	public readonly enableVirtualScroll		= new BehaviorSubject<boolean>(false);
+
 	/** Indicates whether the chat is ready to be displayed. */
 	public readonly initiated				= new BehaviorSubject<boolean>(false);
 
@@ -198,8 +201,14 @@ export class ChatService extends BaseProvider {
 		)
 	;
 
-	/** Indicates whether chat virtual scrolling should be enabled. */
-	public readonly virtualScroll			= new BehaviorSubject<boolean>(false);
+	/** Indicates whether chat virtual scrolling is enabled. */
+	public readonly virtualScroll			= toBehaviorSubject(
+		combineLatest(this.enableVirtualScroll, this.messages).pipe(map(([enable, messages]) =>
+			enable && messages !== undefined && messages.length > 50
+		)),
+		false,
+		this.subscriptions
+	);
 
 	/** Indicates whether "walkie talkie" mode is enabled for calls. */
 	public readonly walkieTalkieMode		= new BehaviorSubject<boolean>(false);
