@@ -39,7 +39,6 @@ for (const k of [
 	'history',
 	'location',
 	'navigator',
-	'onthreadmessage',
 	'testEnvironmentSetup',
 	'translations'
 ]) {

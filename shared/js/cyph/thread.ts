@@ -110,13 +110,6 @@ export class Thread<T> implements IThread<T> {
 		(<any> self).threadSetupVars	= undefined;
 	}
 
-	/** @ignore */
-	private static threadPostSetup () : void {
-		if (!self.onmessage && onthreadmessage) {
-			self.onmessage	= onthreadmessage;
-		}
-	}
-
 
 	/** @ignore */
 	private alive: boolean			= true;
@@ -194,10 +187,6 @@ export class Thread<T> implements IThread<T> {
 					e					= undefined;
 
 					${Thread.stringifyFunction(f)}
-					${
-						/* tslint:disable-next-line:no-unbound-method */
-						Thread.stringifyFunction(Thread.threadPostSetup)
-					}
 
 					self.postMessage('cyphThreadRunning');
 				};

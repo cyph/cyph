@@ -49,12 +49,6 @@ declare let navigatorData: Navigator;
 
 /**
  * @global
- * Event handler for messages to the current thread.
- */
-declare let onthreadmessage: ((e: MessageEvent) => any)|undefined;
-
-/**
- * @global
  * Used in test environments for some setup.
  */
 declare let testEnvironmentSetup: undefined|(
