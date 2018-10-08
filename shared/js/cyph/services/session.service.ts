@@ -347,7 +347,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 					/* Discard messages without valid timestamps */
 					if (
 						isNaN(message.data.timestamp) ||
-						message.data.timestamp > castleTimestamp ||
+						message.data.timestamp < castleTimestamp ||
 						message.data.timestamp < (
 							this.lastIncomingMessageTimestamps.get(castleInstanceID) || 0
 						)
