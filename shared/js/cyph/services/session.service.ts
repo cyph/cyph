@@ -352,6 +352,11 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 							this.lastIncomingMessageTimestamps.get(castleInstanceID) || 0
 						)
 					) {
+						debugLog(() => ({cyphertextReceiveDiscardInvalidTimestamp: {
+							lastTimestamp: this.lastIncomingMessageTimestamps.get(castleInstanceID),
+							message
+						}}));
+
 						return;
 					}
 
