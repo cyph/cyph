@@ -5,7 +5,7 @@ import {BehaviorSubject, Observable, of} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
-import {eventManager} from '../event-manager';
+import {EventManager} from '../event-manager';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
@@ -53,22 +53,22 @@ import {StringsService} from './strings.service';
 @Injectable()
 export abstract class SessionService extends BaseProvider implements ISessionService {
 	/** @ignore */
-	private readonly _OPENED					= resolvable(true);
+	private readonly _OPENED			= resolvable(true);
 
 	/** @ignore */
-	private readonly _SYMMETRIC_KEY				= resolvable<Uint8Array>();
+	private readonly _SYMMETRIC_KEY		= resolvable<Uint8Array>();
 
 	/** @ignore */
-	private readonly correctSubSession			= (message: ISessionMessage) : boolean =>
+	private readonly correctSubSession	= (message: ISessionMessage) : boolean =>
 		(message.data.sessionSubID || undefined) === this.sessionSubID
 	/* tslint:disable-next-line:semicolon */
 	;
 
 	/** @ignore */
-	private readonly openEvents: Set<string>	= new Set();
+	private readonly eventManager		= new EventManager();
 
 	/** @ignore */
-	protected readonly eventID: string									= uuid();
+	private readonly openEvents			= new Set<string>();
 
 	/** @ignore */
 	protected incomingMessageQueue: IAsyncList<ISessionMessageList>		= new LocalAsyncList();
@@ -504,19 +504,19 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public off<T> (event: string, handler?: (data: T) => void) : void {
-		eventManager.off<T>(event + this.eventID, handler);
+		this.eventManager.off<T>(event, handler);
 	}
 
 	/** @inheritDoc */
 	public on<T> (event: string, handler: (data: T) => void) : void {
 		this.openEvents.add(event);
-		eventManager.on<T>(event + this.eventID, handler);
+		this.eventManager.on<T>(event, handler);
 	}
 
 	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
 		this.openEvents.add(event);
-		return eventManager.one<T>(event + this.eventID);
+		return this.eventManager.one<T>(event);
 	}
 
 	/** @inheritDoc */
@@ -562,7 +562,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public async trigger (event: string, data?: any) : Promise<void> {
-		await eventManager.trigger(event + this.eventID, data);
+		await this.eventManager.trigger(event, data);
 	}
 
 	/** @inheritDoc */

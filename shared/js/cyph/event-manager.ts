@@ -5,7 +5,7 @@ import {getOrSetDefault} from './util/get-or-set-default';
 
 
 /**
- * Global event manager.
+ * Event manager.
  */
 export class EventManager {
 	/** @ignore */
@@ -82,6 +82,3 @@ export class EventManager {
 
 	constructor () {}
 }
-
-/** @see EventManager */
-export const eventManager	= new EventManager();
