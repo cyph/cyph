@@ -1,11 +1,10 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of, ReplaySubject, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
-import {eventManager} from '../event-manager';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
@@ -65,10 +64,10 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	;
 
 	/** @ignore */
-	private readonly openEvents: Set<string>	= new Set();
-
-	/** @ignore */
-	protected readonly eventID: string									= uuid();
+	private readonly events						= new Map<string, {
+		subject: ReplaySubject<any>;
+		subscriptions: Map<Function, Subscription>;
+	}>();
 
 	/** @ignore */
 	protected incomingMessageQueue: IAsyncList<ISessionMessageList>		= new LocalAsyncList();
@@ -150,6 +149,17 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		startingNewCyph: new BehaviorSubject<boolean|undefined>(false),
 		wasInitiatedByAPI: new BehaviorSubject(false)
 	};
+
+	/** @ignore */
+	private getEventData (event: string) : {
+		subject: ReplaySubject<any>;
+		subscriptions: Map<Function, Subscription>;
+	} {
+		return getOrSetDefault(this.events, event, () => ({
+			subscriptions: new Map<Function, Subscription>(),
+			subject: new ReplaySubject<any>()
+		}));
+	}
 
 	/** Sends messages through Castle. */
 	protected async castleSendMessages (messages: ISessionMessage[]) : Promise<void> {
@@ -396,9 +406,10 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		this.state.isAlive.next(false);
 		this.trigger(events.closeChat);
 
-		for (const event of Array.from(this.openEvents)) {
+		for (const event of Array.from(this.events.keys())) {
 			this.off(event);
 		}
+		this.events.clear();
 
 		this.channelService.destroy();
 	}
@@ -504,19 +515,29 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public off<T> (event: string, handler?: (data: T) => void) : void {
-		eventManager.off<T>(event + this.eventID, handler);
+		const eventData	= this.getEventData(event);
+		const handlers	= handler ? [handler] : Array.from(eventData.subscriptions.keys());
+
+		for (const k of handlers) {
+			const sub	= eventData.subscriptions.get(k);
+
+			if (sub) {
+				sub.unsubscribe();
+				eventData.subscriptions.delete(k);
+			}
+		}
 	}
 
 	/** @inheritDoc */
 	public on<T> (event: string, handler: (data: T) => void) : void {
-		this.openEvents.add(event);
-		eventManager.on<T>(event + this.eventID, handler);
+		const eventData	= this.getEventData(event);
+		eventData.subscriptions.set(handler, eventData.subject.subscribe(handler));
 	}
 
 	/** @inheritDoc */
 	public async one<T> (event: string) : Promise<T> {
-		this.openEvents.add(event);
-		return eventManager.one<T>(event + this.eventID);
+		const eventData	= this.getEventData(event);
+		return eventData.subject.pipe(take(1)).toPromise();
 	}
 
 	/** @inheritDoc */
@@ -562,7 +583,8 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public async trigger (event: string, data?: any) : Promise<void> {
-		await eventManager.trigger(event + this.eventID, data);
+		const eventData	= this.getEventData(event);
+		eventData.subject.next(data);
 	}
 
 	/** @inheritDoc */
