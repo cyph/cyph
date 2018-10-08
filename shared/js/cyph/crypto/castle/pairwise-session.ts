@@ -362,12 +362,12 @@ export class PairwiseSession {
 						/*** "Lite" Castle ***/
 
 						if (this.lite) {
-							const core	= new CoreLite(
+							const coreLite			= new CoreLite(
 								this.potassium,
 								await this.ratchetState.getValue()
 							);
 
-							const decryptSub	= this.incomingMessageQueue.subscribeAndPop(
+							const liteDecryptSub	= this.incomingMessageQueue.subscribeAndPop(
 								async ({cyphertext, resolve}) => {
 									this.transport.logCyphertext(
 										this.remoteUser.username,
@@ -375,7 +375,7 @@ export class PairwiseSession {
 									);
 
 									try {
-										const plaintext	= await core.decrypt(cyphertext);
+										const plaintext	= await coreLite.decrypt(cyphertext);
 
 										resolve();
 
@@ -391,10 +391,10 @@ export class PairwiseSession {
 								}
 							);
 
-							const encryptSub	= this.outgoingMessageQueue.subscribeAndPop(
+							const liteEncryptSub	= this.outgoingMessageQueue.subscribeAndPop(
 								async message => {
 									try {
-										const cyphertext	= await core.encrypt(message);
+										const cyphertext	= await coreLite.encrypt(message);
 
 										const timestamp		=
 											this.potassium.toDataView(message).getFloat64(0, true)
@@ -421,8 +421,8 @@ export class PairwiseSession {
 							);
 
 							await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
-							decryptSub.unsubscribe();
-							encryptSub.unsubscribe();
+							liteDecryptSub.unsubscribe();
+							liteEncryptSub.unsubscribe();
 
 							return;
 						}
