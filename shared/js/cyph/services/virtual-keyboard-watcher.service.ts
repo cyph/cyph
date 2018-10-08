@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
+import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
-import {eventManager} from '../event-manager';
 import {EnvService} from './env.service';
 
 
@@ -11,38 +11,10 @@ import {EnvService} from './env.service';
 @Injectable()
 export class VirtualKeyboardWatcherService extends BaseProvider {
 	/** @ignore */
-	private readonly initialScreenSize: number		= self.innerHeight;
-
-	/** @ignore */
-	private readonly keyboardChangeEvent: string	= 'keyboardChangeEvent';
+	private readonly initialScreenSize: number	= self.innerHeight;
 
 	/** Indicates whether the virtual keyboard is currently open. */
-	public isOpen: boolean	= false;
-
-	/** @ignore */
-	private trigger (isOpen: boolean) : void {
-		if (this.isOpen === isOpen) {
-			return;
-		}
-
-		this.isOpen	= isOpen;
-		eventManager.trigger(
-			this.keyboardChangeEvent,
-			this.isOpen
-		);
-	}
-
-	/** Sets handler to run when keyboard status changes. */
-	public onChange (handler: (isOpen: boolean) => void) : void {
-		eventManager.on(this.keyboardChangeEvent, handler);
-	}
-
-	/**
-	 * Waits for the keyboard status to change once.
-	 */
-	public async waitForChange () : Promise<boolean> {
-		return eventManager.one<boolean>(this.keyboardChangeEvent);
-	}
+	public readonly isOpen	= new BehaviorSubject<boolean>(false);
 
 	constructor (
 		/** @ignore */
@@ -60,8 +32,8 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 		}
 
 		if (this.envService.isCordova) {
-			self.addEventListener('keyboardDidHide', () => { this.trigger(false); });
-			self.addEventListener('keyboardDidShow', () => { this.trigger(true); });
+			self.addEventListener('keyboardDidHide', () => { this.isOpen.next(false); });
+			self.addEventListener('keyboardDidShow', () => { this.isOpen.next(true); });
 			return;
 		}
 
@@ -72,15 +44,15 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 		/* Android */
 		if (this.envService.isAndroid) {
 			$window.on('resize', () => {
-				this.trigger(window.innerHeight < this.initialScreenSize);
+				this.isOpen.next(window.innerHeight < this.initialScreenSize);
 			});
 		}
 		/* iOS/misc. */
 		else {
 			const inputSelector		= 'input, textarea';
 			const focusBlurListen	= ($elem: JQuery<HTMLElement|Node[]>) => {
-				$elem.on('blur', () => { this.trigger(false); });
-				$elem.on('focus', () => { this.trigger(true); });
+				$elem.on('blur', () => { this.isOpen.next(false); });
+				$elem.on('focus', () => { this.isOpen.next(true); });
 			};
 
 			focusBlurListen($(inputSelector));

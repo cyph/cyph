@@ -2,13 +2,11 @@
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {take} from 'rxjs/operators';
+import {BehaviorSubject, Observable, ReplaySubject, Subject, Subscription} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
 import * as SimpleWebRTC from 'simplewebrtc';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
-import {eventManager} from '../event-manager';
-import {LockFunction} from '../lock-function-type';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {ISessionCommand} from '../proto';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
@@ -129,7 +127,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 				await this.getWebRTC();
 			}
 
-			await eventManager.trigger(P2PWebRTCService.constants.webRTC + data.event, data.args);
+			this.webRTCEvents.next(data);
 		}
 	};
 
@@ -146,7 +144,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 	private isAccepted: boolean							= false;
 
 	/** @ignore */
-	private readonly joinLock: LockFunction				= lockFunction();
+	private readonly joinLock							= lockFunction();
 
 	/** @ignore */
 	private readonly loadingEvents						= {
@@ -187,7 +185,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 	private p2pSessionData?: {iceServers: string; id: string; isAlice: boolean};
 
 	/** @ignore */
-	private readonly progressUpdateLock: LockFunction							= lockFunction();
+	private readonly progressUpdateLock											= lockFunction();
 
 	/** @ignore */
 	private readonly remoteVideo: Promise<() => JQuery>	= this._REMOTE_VIDEO.promise;
@@ -213,10 +211,15 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 	;
 
 	/** @ignore */
-	private readonly toggleLock: LockFunction		= lockFunction();
+	private readonly toggleLock						= lockFunction();
 
 	/** @ignore */
-	private readonly webRTC: BehaviorSubject<any>	= new BehaviorSubject(undefined);
+	private readonly webRTC							= new BehaviorSubject<any>(undefined);
+
+	/** @ignore */
+	private readonly webRTCEvents					=
+		new ReplaySubject<{args: any[]; event: string}>()
+	;
 
 	/** @inheritDoc */
 	public readonly disconnect: Observable<void>	= this.disconnectInternal;
@@ -411,8 +414,8 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 			this.videoEnabled.next(this.outgoingStream.value.video);
 			this.isActive.next(true);
 
-			const p2pSessionData			= this.p2pSessionData;
-			const webRTCEvents: string[]	= [];
+			const p2pSessionData						= this.p2pSessionData;
+			const webRTCSubscriptions: Subscription[]	= [];
 
 			const $localVideo	= await waitForIterable<JQuery>(await this.localVideo);
 			const $remoteVideo	= await waitForIterable<JQuery>(await this.remoteVideo);
@@ -472,8 +475,8 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 				autoRequestMedia: false,
 				connection: {
 					disconnect: () => {
-						for (const event of webRTCEvents) {
-							eventManager.off(event);
+						for (const subscription of webRTCSubscriptions) {
+							subscription.unsubscribe();
 						}
 					},
 					emit: (event: string, ...args: any[]) => {
@@ -499,12 +502,9 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 					},
 					getSessionid: () => p2pSessionData.id,
 					on: (event: string, callback: Function) => {
-						const fullEvent: string	= P2PWebRTCService.constants.webRTC + event;
-						webRTCEvents.push(fullEvent);
-
-						eventManager.on(
-							fullEvent,
-							(args: any) => {
+						webRTCSubscriptions.push(this.webRTCEvents.
+							pipe(filter(e => e.event === event)).
+							subscribe(({args}) => {
 								/* http://www.kapejod.org/en/2014/05/28/ */
 								if (event === 'message' && args[0].type === 'offer') {
 									args[0].payload.sdp	= (<string> args[0].payload.sdp).
@@ -515,7 +515,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 								}
 
 								callback.apply(webRTC, args);
-							}
+							})
 						);
 					}
 				},

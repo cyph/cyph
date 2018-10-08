@@ -117,7 +117,7 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 	private mobileButtonWrapper (leaveFocused: boolean, f: () => void) : void {
 		lockTryOnce(this.mobileButtonLock, async () => {
 			f();
-			if (leaveFocused && this.virtualKeyboardWatcherService.isOpen) {
+			if (leaveFocused && this.virtualKeyboardWatcherService.isOpen.value) {
 				(await this.$textarea).trigger('focus');
 			}
 			await sleep(500);
@@ -149,7 +149,7 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 		$textarea.on('keypress', e => {
 			if (
-				(this.envService.isMobileOS && this.virtualKeyboardWatcherService.isOpen) ||
+				(this.envService.isMobileOS && this.virtualKeyboardWatcherService.isOpen.value) ||
 				e.keyCode !== 13 ||
 				e.shiftKey
 			) {
@@ -182,7 +182,7 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 	/** Scrolls down and focuses message box. */
 	public async scrollDown () : Promise<void> {
-		const focus	= !this.envService.isMobileOS || this.virtualKeyboardWatcherService.isOpen;
+		const focus	= !this.envService.isMobileOS || this.virtualKeyboardWatcherService.isOpen.value;
 
 		await this.scrollService.scrollDown();
 
