@@ -1,6 +1,7 @@
 export * from './anonymous-local-user';
 export * from './anonymous-remote-user';
 export * from './core';
+export * from './core-lite';
 export * from './enums';
 export * from './icastle-incoming-messages';
 export * from './ihandshake-state';

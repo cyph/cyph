@@ -8,10 +8,7 @@ import {
 	Transport
 } from '../../crypto/castle';
 import {
-	BinaryProto,
-	CastleIncomingMessagesProto,
 	CastleRatchetState,
-	CastleRatchetUpdate,
 	MaybeBinaryProto,
 	Uint32Proto
 } from '../../proto';
@@ -116,6 +113,9 @@ export class AccountCastleService extends CastleService {
 							localUser,
 							remoteUser,
 							handshakeState,
+							undefined,
+							undefined,
+							/*
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/incomingMessages`,
 								CastleIncomingMessagesProto,
@@ -134,6 +134,7 @@ export class AccountCastleService extends CastleService {
 								false,
 								true
 							),
+							*/
 							this.accountDatabaseService.lockFunction(`${sessionURL}/lock`),
 							this.accountDatabaseService.getAsyncValue(
 								`${sessionURL}/ratchetState`,
@@ -144,6 +145,8 @@ export class AccountCastleService extends CastleService {
 								undefined,
 								true
 							),
+							undefined,
+							/*
 							this.accountDatabaseService.getAsyncList(
 								`${sessionURL}/ratchetUpdateQueue`,
 								CastleRatchetUpdate,
@@ -152,7 +155,9 @@ export class AccountCastleService extends CastleService {
 								undefined,
 								false,
 								true
-							)
+							),
+							*/
+							true
 						);
 					}
 				));

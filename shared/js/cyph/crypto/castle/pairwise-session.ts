@@ -13,6 +13,7 @@ import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
+import {CoreLite} from './core-lite';
 import {HandshakeSteps} from './enums';
 import {ICastleIncomingMessages} from './icastle-incoming-messages';
 import {IHandshakeState} from './ihandshake-state';
@@ -183,7 +184,7 @@ export class PairwiseSession {
 
 		await this.incomingMessageQueue.pushItem({
 			cyphertext,
-			newMessageID: this.potassium.toDataView(cyphertext).getUint32(0, true),
+			newMessageID: this.lite ? 0 : this.potassium.toDataView(cyphertext).getUint32(0, true),
 			resolve
 		});
 
@@ -275,6 +276,10 @@ export class PairwiseSession {
 		/** @ignore */
 		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate> =
 			new LocalAsyncList([])
+		,
+
+		/** @ignore */
+		private readonly lite: boolean = false
 	) {
 		debugLog(() => ({pairwiseSessionStart: true}));
 
@@ -353,6 +358,78 @@ export class PairwiseSession {
 					this.lock(async o => {
 						this.pendingMessageResolvers	= pendingMessageResolvers;
 
+
+						/*** "Lite" Castle ***/
+
+						if (this.lite) {
+							const core	= new CoreLite(
+								this.potassium,
+								await this.ratchetState.getValue()
+							);
+
+							const decryptSub	= this.incomingMessageQueue.subscribeAndPop(
+								async ({cyphertext, resolve}) => {
+									this.transport.logCyphertext(
+										this.remoteUser.username,
+										cyphertext
+									);
+
+									try {
+										const plaintext	= await core.decrypt(cyphertext);
+
+										resolve();
+
+										return this.transport.process(
+											this.remoteUser.username,
+											true,
+											{plaintext}
+										);
+									}
+									catch (err) {
+										debugLog(() => ({castleLiteDecryptError: {err}}));
+									}
+								}
+							);
+
+							const encryptSub	= this.outgoingMessageQueue.subscribeAndPop(
+								async message => {
+									try {
+										const cyphertext	= await core.encrypt(message);
+
+										const timestamp		=
+											this.potassium.toDataView(message).getFloat64(0, true)
+										;
+
+										const resolver		=
+											pendingMessageResolvers.resolvers.get(timestamp)
+										;
+
+										if (resolver) {
+											resolver.resolve();
+										}
+
+										return this.transport.process(
+											this.remoteUser.username,
+											true,
+											{cyphertext}
+										);
+									}
+									catch (err) {
+										debugLog(() => ({castleLiteEncryptError: {err}}));
+									}
+								}
+							);
+
+							await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
+							decryptSub.unsubscribe();
+							encryptSub.unsubscribe();
+
+							return;
+						}
+
+
+						/*** Full Castle ***/
+
 						const initialRatchetUpdates	= await this.ratchetUpdateQueue.getValue();
 
 						if (!o.stillOwner.value) {
@@ -361,6 +438,7 @@ export class PairwiseSession {
 
 						await this.transport.process(
 							this.remoteUser.username,
+							false,
 							...initialRatchetUpdates
 						);
 
@@ -446,7 +524,11 @@ export class PairwiseSession {
 
 								debugLog(() => ({ratchetUpdate: {update, dropped: false}}));
 
-								await this.transport.process(this.remoteUser.username, update);
+								await this.transport.process(
+									this.remoteUser.username,
+									false,
+									update
+								);
 								await this.ratchetState.setValue(update.ratchetState);
 
 								if (
