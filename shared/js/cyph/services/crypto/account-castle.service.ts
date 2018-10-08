@@ -42,126 +42,124 @@ export class AccountCastleService extends CastleService {
 		this.subscriptions.push(accountSessionService.remoteUser.pipe(
 			filterUndefinedOperator(),
 			take(1)
-		).subscribe(user => {
+		).subscribe(async user => {
 			debugLog(() => ({startingAccountCastleSession: {user}}));
 
-			this.pairwiseSessionLock(async () => {
-				const castleSessionID	= await this.accountContactsService.
-					getCastleSessionID(user.username).
-					catch(() => undefined)
-				;
+			const castleSessionID	= await this.accountContactsService.
+				getCastleSessionID(user.username).
+				catch(() => undefined)
+			;
 
-				if (!castleSessionID) {
-					debugLog(() => ({startingAccountCastleSessionFailed: {user}}));
-					return;
-				}
+			if (!castleSessionID) {
+				debugLog(() => ({startingAccountCastleSessionFailed: {user}}));
+				return;
+			}
 
-				this.pairwiseSession.next(await getOrSetDefaultAsync(
-					this.pairwiseSessions,
-					accountSessionService.ephemeralSubSession ? undefined : user.username,
-					async () => {
-						debugLog(() => ({startingAccountCastleSessionNow: {
-							castleSessionID,
-							user
-						}}));
+			this.pairwiseSession.next(await getOrSetDefaultAsync(
+				this.pairwiseSessions,
+				accountSessionService.ephemeralSubSession ? undefined : user.username,
+				async () => {
+					debugLog(() => ({startingAccountCastleSessionNow: {
+						castleSessionID,
+						user
+					}}));
 
-						const sessionURL		= `castleSessions/${castleSessionID}/session`;
+					const sessionURL		= `castleSessions/${castleSessionID}/session`;
 
-						const localUser			= new RegisteredLocalUser(
-							this.accountDatabaseService
-						);
+					const localUser			= new RegisteredLocalUser(
+						this.accountDatabaseService
+					);
 
-						const remoteUser		= new RegisteredRemoteUser(
-							this.accountDatabaseService,
-							user.realUsername
-						);
+					const remoteUser		= new RegisteredRemoteUser(
+						this.accountDatabaseService,
+						user.realUsername
+					);
 
-						if (accountSessionService.ephemeralSubSession) {
-							return new PairwiseSession(
-								potassiumService,
-								transport,
-								localUser,
-								remoteUser,
-								await accountSessionService.handshakeState()
-							);
-						}
-
-						const handshakeState	= await accountSessionService.handshakeState(
-							this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
-								`${sessionURL}/handshake/currentStep`,
-								Uint32Proto,
-								undefined,
-								undefined,
-								undefined,
-								undefined,
-								true
-							),
-							this.accountDatabaseService.getAsyncValue(
-								`${sessionURL}/handshake/initialSecret`,
-								MaybeBinaryProto,
-								undefined,
-								undefined,
-								undefined,
-								undefined,
-								true
-							)
-						);
-
+					if (accountSessionService.ephemeralSubSession) {
 						return new PairwiseSession(
 							potassiumService,
 							transport,
 							localUser,
 							remoteUser,
-							handshakeState,
-							undefined,
-							undefined,
-							/*
-							this.accountDatabaseService.getAsyncValue(
-								`${sessionURL}/incomingMessages`,
-								CastleIncomingMessagesProto,
-								undefined,
-								undefined,
-								undefined,
-								undefined,
-								true
-							),
-							this.accountDatabaseService.getAsyncList(
-								`${sessionURL}/outgoingMessageQueue`,
-								BinaryProto,
-								undefined,
-								undefined,
-								undefined,
-								false,
-								true
-							),
-							*/
-							this.accountDatabaseService.lockFunction(`${sessionURL}/lock`),
-							this.accountDatabaseService.getAsyncValue(
-								`${sessionURL}/ratchetState`,
-								CastleRatchetState,
-								undefined,
-								undefined,
-								undefined,
-								undefined,
-								true
-							),
-							undefined,
-							/*
-							this.accountDatabaseService.getAsyncList(
-								`${sessionURL}/ratchetUpdateQueue`,
-								CastleRatchetUpdate,
-								undefined,
-								undefined,
-								undefined,
-								false,
-								true
-							),
-							*/
-							true
+							await accountSessionService.handshakeState()
 						);
 					}
-				));
-			});
+
+					const handshakeState	= await accountSessionService.handshakeState(
+						this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
+							`${sessionURL}/handshake/currentStep`,
+							Uint32Proto,
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							true
+						),
+						this.accountDatabaseService.getAsyncValue(
+							`${sessionURL}/handshake/initialSecret`,
+							MaybeBinaryProto,
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							true
+						)
+					);
+
+					return new PairwiseSession(
+						potassiumService,
+						transport,
+						localUser,
+						remoteUser,
+						handshakeState,
+						undefined,
+						undefined,
+						/*
+						this.accountDatabaseService.getAsyncValue(
+							`${sessionURL}/incomingMessages`,
+							CastleIncomingMessagesProto,
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							true
+						),
+						this.accountDatabaseService.getAsyncList(
+							`${sessionURL}/outgoingMessageQueue`,
+							BinaryProto,
+							undefined,
+							undefined,
+							undefined,
+							false,
+							true
+						),
+						*/
+						this.accountDatabaseService.lockFunction(`${sessionURL}/lock`),
+						this.accountDatabaseService.getAsyncValue(
+							`${sessionURL}/ratchetState`,
+							CastleRatchetState,
+							undefined,
+							undefined,
+							undefined,
+							undefined,
+							true
+						),
+						undefined,
+						/*
+						this.accountDatabaseService.getAsyncList(
+							`${sessionURL}/ratchetUpdateQueue`,
+							CastleRatchetUpdate,
+							undefined,
+							undefined,
+							undefined,
+							false,
+							true
+						),
+						*/
+						true
+					);
+				}
+			));
 		}));
 	}
 
