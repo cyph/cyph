@@ -95,4 +95,4 @@ for (const k of [
 
 /* Make sure compiler adds necessary helpers to global scope in threads */
 
-(async (..._) => {})(...Array.from([]));
+(async (_O: any, ..._) => {})({...{a: true}, ...{b: false}}, ...Array.from([]));

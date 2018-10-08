@@ -1,7 +1,10 @@
 /**
  * Creates and controls a thread.
  */
-export interface IThread {
+export interface IThread<T> {
+	/** API to interact with thread. */
+	readonly api: Promise<T>;
+
 	/**
 	 * Indicates whether this thread is active.
 	 */

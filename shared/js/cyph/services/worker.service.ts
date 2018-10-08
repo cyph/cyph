@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
+import {IThread} from '../ithread';
 import {MaybePromise} from '../maybe-promise-type';
 import {Thread} from '../thread';
 import {uuid} from '../util/uuid';
@@ -28,20 +29,16 @@ export class WorkerService extends BaseProvider {
 		navigator.serviceWorker.register(this.configService.webSignConfig.serviceWorker)
 	)();
 
-	/** List of spawned Threads. */
-	public readonly threads: Thread[]	= [];
-
 	/** @see Thread */
-	public async createThread (
+	public async createThread<T> (
 		f: Function,
-		locals: MaybePromise<any> = {},
-		onmessage: (e: MessageEvent) => any = () => {}
-	) : Promise<void> {
+		locals: MaybePromise<any> = {}
+	) : Promise<IThread<T>> {
 		if (locals instanceof Promise) {
 			locals	= await locals;
 		}
 
-		this.threads.push(new Thread(f, locals, onmessage));
+		return new Thread<T>(f, locals);
 	}
 
 	/** Runs a function in the context of the ServiceWorker. */

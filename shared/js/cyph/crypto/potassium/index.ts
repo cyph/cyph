@@ -1,4 +1,3 @@
-export * from '../../event-manager';
 export * from './box';
 export * from './ephemeral-key-exchange';
 export * from './hash';
@@ -16,4 +15,3 @@ export * from './potassium';
 export * from './potassium-util';
 export * from './secret-box';
 export * from './sign';
-export * from './thread-events';

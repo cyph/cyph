@@ -13,7 +13,7 @@ export class EventManager {
 	private readonly eventMappings: Map<string, Set<Function>>	= new Map<string, Set<Function>>();
 
 	/** List of all active threads. */
-	public readonly threads: Set<IThread>	= new Set<IThread>();
+	public readonly threads: Set<IThread<any>>	= new Set<IThread<any>>();
 
 	/** Removes handler from event. */
 	public off<T> (event: string, handler?: (data: T) => void) : void {

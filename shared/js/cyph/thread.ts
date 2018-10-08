@@ -1,12 +1,13 @@
+import * as Comlink from 'comlinkjs';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
-import {eventManager} from './event-manager';
 import {IThread} from './ithread';
 import {stringify} from './util/serialization';
+import {resolvable} from './util/wait';
 
 
 /** @inheritDoc */
-export class Thread implements IThread {
+export class Thread<T> implements IThread<T> {
 	/** @ignore */
 	private static stringifyFunction (f: Function) : string {
 		const s: string	= f.toString();
@@ -56,12 +57,15 @@ export class Thread implements IThread {
 		importScripts('/assets/js/standalone/global.js');
 		/* Import when needed: /assets/js/standalone/node-polyfills.js */
 
+		/* RPC */
+
+		importScripts('/assets/node_modules/comlinkjs/umd/comlink.js');
 
 		/* Allow destroying the Thread object from within the thread */
 
 		/* This is DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
 		/* tslint:disable-next-line:no-unbound-method */
-		self.close	= () => (<any> self).postMessage('close');
+		self.close	= () => (<any> self).postMessage('cyphThreadClose');
 
 
 		/* Polyfills */
@@ -115,16 +119,25 @@ export class Thread implements IThread {
 
 
 	/** @ignore */
-	private worker?: Worker;
+	private alive: boolean			= true;
+
+	/** @ignore */
+	private readonly apiResolver	= resolvable<T>();
+
+	/** @ignore */
+	private readonly worker: Worker;
+
+	/** @inheritDoc */
+	public readonly api	= this.apiResolver.promise;
 
 	/** @inheritDoc */
 	public isAlive () : boolean {
-		return this.worker !== undefined;
+		return this.alive;
 	}
 
 	/** @inheritDoc */
 	public postMessage (o: any) : void {
-		if (this.worker) {
+		if (this.alive) {
 			/* tslint:disable-next-line:deprecation */
 			this.worker.postMessage(o);
 		}
@@ -132,25 +145,18 @@ export class Thread implements IThread {
 
 	/** @inheritDoc */
 	public stop () : void {
-		if (this.worker) {
+		if (this.alive) {
 			this.worker.terminate();
 		}
 
-		this.worker	= undefined;
-
-		eventManager.threads.delete(this);
+		this.alive	= false;
 	}
 
 	/**
 	 * @param f Function to run in the new thread.
 	 * @param locals Local data to pass in to the new thread.
-	 * @param onmessage Handler for messages from the thread.
 	 */
-	constructor (
-		f: Function,
-		locals: any = {},
-		onmessage: (e: MessageEvent) => any = () => {}
-	) {
+	constructor (f: Function, locals: any = {}) {
 		const seedBytes	= potassiumUtil.randomBytes(32);
 
 		const threadSetupVars	= {
@@ -183,25 +189,27 @@ export class Thread implements IThread {
 				}
 
 				self.onmessage	= function (e) {
-					self.locals		= e.data;
-					self.onmessage	= undefined;
-					e				= undefined;
+					self.threadLocals	= e.data;
+					self.onmessage		= undefined;
+					e					= undefined;
 
 					${Thread.stringifyFunction(f)}
 					${
 						/* tslint:disable-next-line:no-unbound-method */
 						Thread.stringifyFunction(Thread.threadPostSetup)
 					}
+
+					self.postMessage('cyphThreadRunning');
 				};
 
 				self.sodium.ready.then(function () {
-					self.postMessage('ready');
+					self.postMessage('cyphThreadReady');
 				}).catch(function (err) {
-					self.postMessage({error: err && err.message});
+					self.postMessage({cyphThreadError: err && err.message});
 				});
 			}
 			catch (err) {
-				self.postMessage({error: err && err.message});
+				self.postMessage({cyphThreadError: err && err.message});
 			}
 		`;
 
@@ -229,32 +237,25 @@ export class Thread implements IThread {
 		}
 
 
-		const worker	= this.worker;
-
-		worker.onmessage	= (e: MessageEvent) => {
-			if (e.data === 'ready') {
+		this.worker.onmessage	= (e: MessageEvent) => {
+			if (e.data === 'cyphThreadReady') {
 				try {
 					URL.revokeObjectURL(blobURL);
 				}
 				catch {}
 
 				/* tslint:disable-next-line:deprecation */
-				worker.postMessage(locals);
+				this.worker.postMessage(locals);
 			}
-			else if (e.data === 'close') {
+			else if (e.data === 'cyphThreadRunning') {
+				this.apiResolver.resolve(<any> Comlink.proxy(this.worker));
+			}
+			else if (e.data === 'cyphThreadClose') {
 				this.stop();
 			}
-			else if (typeof e.data === 'object' && e.data.isThreadEvent) {
-				eventManager.trigger(e.data.event, e.data.data);
-			}
-			else if (typeof e.data === 'object' && 'error' in e.data) {
-				throw new Error(`Thread error: ${(e.data.error || '').toString()}`);
-			}
-			else {
-				onmessage(e);
+			else if (typeof e.data === 'object' && 'cyphThreadError' in e.data) {
+				throw new Error(`Thread error: ${(e.data.cyphThreadError || '').toString()}`);
 			}
 		};
-
-		eventManager.threads.add(this);
 	}
 }
