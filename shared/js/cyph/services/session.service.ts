@@ -153,7 +153,14 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** Sends messages through Castle. */
 	protected async castleSendMessages (messages: ISessionMessage[]) : Promise<void> {
-		await this.castleService.send(await serialize(SessionMessageList, {messages}));
+		if (messages.length < 1) {
+			return;
+		}
+
+		await this.castleService.send(
+			await serialize(SessionMessageList, {messages}),
+			messages[0].data.timestamp
+		);
 	}
 
 	/** @see IChannelHandlers.onClose */

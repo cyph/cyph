@@ -10,7 +10,6 @@ import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../
 import {lockFunction} from '../../util/lock';
 import {debugLog} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
-import {getTimestamp} from '../../util/time';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
@@ -192,13 +191,9 @@ export class PairwiseSession {
 	}
 
 	/** Send/encrypt outgoing message. */
-	public async send (plaintext: string|ArrayBufferView, timestamp?: number) : Promise<void> {
+	public async send (plaintext: string|ArrayBufferView, timestamp: number) : Promise<void> {
 		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
 			return this.abort();
-		}
-
-		if (timestamp === undefined) {
-			timestamp	= await getTimestamp();
 		}
 
 		const plaintextBytes	= this.potassium.fromString(plaintext);

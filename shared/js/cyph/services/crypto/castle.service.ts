@@ -1,13 +1,11 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {first, take} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
+import {take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {PairwiseSession} from '../../crypto/castle/pairwise-session';
 import {ICastle} from '../../crypto/icastle';
-import {LockFunction} from '../../lock-function-type';
 import {filterUndefinedOperator} from '../../util/filter';
 import {lockFunction} from '../../util/lock';
-import {getTimestamp} from '../../util/time';
 import {SessionService} from '../session.service';
 import {PotassiumService} from './potassium.service';
 
@@ -18,23 +16,21 @@ import {PotassiumService} from './potassium.service';
 @Injectable()
 export class CastleService extends BaseProvider implements ICastle {
 	/** @ignore */
-	protected readonly pairwiseSession: BehaviorSubject<PairwiseSession|undefined>	=
+	protected readonly pairwiseSession		=
 		new BehaviorSubject<PairwiseSession|undefined>(undefined)
 	;
 
 	/** @ignore */
-	protected readonly pairwiseSessionFiltered: Observable<PairwiseSession>			=
-		this.pairwiseSession.pipe(filterUndefinedOperator())
-	;
-
-	/** @ignore */
-	protected readonly pairwiseSessionLock: LockFunction	= lockFunction();
+	protected readonly pairwiseSessionLock	= lockFunction();
 
 	/** @ignore */
 	protected async getPairwiseSession () : Promise<PairwiseSession> {
-		await this.pairwiseSessionFiltered.pipe(first()).toPromise();
+		if (this.pairwiseSession.value) {
+			return this.pairwiseSession.value;
+		}
+
 		return this.pairwiseSessionLock(async () =>
-			this.pairwiseSessionFiltered.pipe(take(1)).toPromise()
+			this.pairwiseSession.pipe(filterUndefinedOperator(), take(1)).toPromise()
 		);
 	}
 
@@ -52,11 +48,7 @@ export class CastleService extends BaseProvider implements ICastle {
 	}
 
 	/** @inheritDoc */
-	public async send (plaintext: string|ArrayBufferView, timestamp?: number) : Promise<void> {
-		if (timestamp === undefined) {
-			timestamp	= await getTimestamp();
-		}
-
+	public async send (plaintext: string|ArrayBufferView, timestamp: number) : Promise<void> {
 		return (await this.getPairwiseSession()).send(plaintext, timestamp);
 	}
 
