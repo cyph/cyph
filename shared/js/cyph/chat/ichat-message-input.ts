@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {IChatMessageLine, IChatMessagePredecessor, IChatMessageValue} from '../proto';
+import {IChatMessagePredecessor, IChatMessageValue} from '../proto';
 
 
 /**
@@ -8,9 +8,6 @@ import {IChatMessageLine, IChatMessagePredecessor, IChatMessageValue} from '../p
 export interface IChatMessageInput {
 	/** Message author. */
 	author?: Observable<string>;
-
-	/** @see IChatMessage.dimensions */
-	dimensions?: IChatMessageLine[];
 
 	/** @see IChatMessage.hash */
 	hash?: Uint8Array;

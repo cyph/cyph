@@ -4,7 +4,6 @@ import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {
 	ChatMessage as ChatMessageInternal,
 	IChatMessage,
-	IChatMessageLine,
 	IChatMessagePredecessor,
 	IChatMessageValue
 } from '../proto';
@@ -32,9 +31,6 @@ export class ChatMessage implements IChatMessage {
 	public dateTimeString: string						= getDateTimeString(
 		this.message.timestamp
 	);
-
-	/** @inheritDoc */
-	public dimensions?: IChatMessageLine[]				= this.message.dimensions;
 
 	/** @inheritDoc */
 	public hash?: Uint8Array							= this.message.hash;

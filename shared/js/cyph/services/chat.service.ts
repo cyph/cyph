@@ -25,7 +25,6 @@ import {
 	ChatPendingMessage,
 	IChatLastConfirmedMessage,
 	IChatMessage,
-	IChatMessageLine,
 	IChatMessageLiveValueSerialized,
 	IChatMessagePredecessor,
 	IChatMessageValue,
@@ -126,7 +125,6 @@ export class ChatService extends BaseProvider {
 	protected readonly outgoingMessageQueue: {
 		messageData: [
 			Promise<IChatMessage>,
-			Promise<IChatMessageLine[]>,
 			string,
 			Promise<IChatMessagePredecessor[]|undefined>,
 			Promise<Uint8Array>,
@@ -294,7 +292,6 @@ export class ChatService extends BaseProvider {
 
 			return {
 				author: o.author,
-				dimensions: o.text.dimensions,
 				hash: o.text.hash,
 				id: o.id,
 				key: o.text.key,
@@ -440,7 +437,6 @@ export class ChatService extends BaseProvider {
 					async timestamp => {
 						const [
 							chatMessage,
-							dimensions,
 							id,
 							predecessors,
 							key,
@@ -466,7 +462,6 @@ export class ChatService extends BaseProvider {
 						return {
 							id,
 							text: {
-								dimensions,
 								hash,
 								key,
 								predecessors,
@@ -537,7 +532,6 @@ export class ChatService extends BaseProvider {
 		/* tslint:disable-next-line:cyclomatic-complexity */
 		const newMessages	= filterUndefined(await Promise.all(messageInputs.map(async ({
 			author,
-			dimensions,
 			hash,
 			id,
 			key,
@@ -612,7 +606,6 @@ export class ChatService extends BaseProvider {
 						ChatMessage.AuthorTypes.Local :
 						ChatMessage.AuthorTypes.Remote
 				,
-				dimensions,
 				id,
 				predecessors,
 				selfDestructTimeout,
@@ -1025,8 +1018,6 @@ export class ChatService extends BaseProvider {
 			await this.resolvers.currentMessageSynced;
 		}
 
-		const dimensionsPromise	= Promise.resolve([]);
-
 		const predecessorsPromise	= (async () : Promise<IChatMessagePredecessor[]|undefined> => {
 			let lastLocal: IChatMessagePredecessor|undefined;
 			let lastRemote: IChatMessagePredecessor|undefined;
@@ -1066,13 +1057,11 @@ export class ChatService extends BaseProvider {
 
 		const chatMessagePromise	= Promise.all([
 			this.getAuthorID(this.sessionService.localUsername),
-			dimensionsPromise,
 			getTimestamp(),
 			localStoragePromise
-		]).then(async ([authorID, dimensions, timestamp]) : Promise<IChatMessage> => ({
+		]).then(async ([authorID, timestamp]) : Promise<IChatMessage> => ({
 			authorID,
 			authorType: ChatMessage.AuthorTypes.Local,
-			dimensions,
 			id,
 			selfDestructTimeout: selfDestructChat ? undefined : selfDestructTimeout,
 			sessionSubID: this.sessionService.sessionSubID,
@@ -1094,7 +1083,6 @@ export class ChatService extends BaseProvider {
 		this.outgoingMessageQueue.push({
 			messageData: [
 				chatMessagePromise,
-				dimensionsPromise,
 				id,
 				predecessorsPromise,
 				uploadPromise,

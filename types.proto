@@ -514,9 +514,6 @@ message ChatMessage {
 	/** @see AuthorTypes */
 	required AuthorTypes authorType = 2;
 
-	/** Metadata used to estimate message's size for virtual scrolling. */
-	repeated ChatMessageLine dimensions = 3;
-
 	/**
 	 * Hash of this entire object.
 	 * Includes value. Excludes authorType, hash, and key.
@@ -543,21 +540,6 @@ message ChatMessage {
 
 	/** @see ChatMessageValue */
 	ChatMessageValue value = 8;
-}
-
-/** Dimensions for one message line. */
-message ChatMessageLine {
-	/** Line height on a big screen. */
-	required uint32 bigScreenHeight = 1;
-
-	/** Line width on a big screen. */
-	required uint32 bigScreenWidth = 2;
-
-	/** Line height on a small screen. */
-	required uint32 smallScreenHeight = 3;
-
-	/** Line width on a small screen. */
-	required uint32 smallScreenWidth = 4;
 }
 
 /** @see IChatMessageLiveValue */
@@ -1859,9 +1841,6 @@ message SessionMessageDataList {
 
 /** Contains an actual chat text message. */
 message SessionText {
-	/** @see ChatMessage.dimensions */
-	repeated ChatMessageLine dimensions = 1;
-
 	/** @see ChatMessage.hash */
 	required bytes hash = 5;
 
