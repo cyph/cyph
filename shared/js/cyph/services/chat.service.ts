@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, combineLatest, interval, Observable, of} from 'rxjs';
-import {filter, map, take, takeWhile} from 'rxjs/operators';
+import {filter, map, mergeMap, take, takeWhile} from 'rxjs/operators';
 import {User} from '../account/user';
 import {BaseProvider} from '../base-provider';
 import {ChatMessage, IChatData, IChatMessageInput, IChatMessageLiveValue, States} from '../chat';
@@ -34,7 +34,8 @@ import {
 } from '../proto';
 import {events, ISessionMessageAdditionalData, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
-import {filterUndefined} from '../util/filter';
+import {filterUndefined, filterUndefinedOperator} from '../util/filter';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
 import {getTimestamp} from '../util/time';
@@ -137,7 +138,7 @@ export class ChatService extends BaseProvider {
 	}[]	= [];
 
 	/** @see IChatData */
-	public readonly chatSubject: BehaviorSubject<IChatData>;
+	public readonly chatSubject				= new BehaviorSubject(this.getDefaultChatData());
 
 	/** Indicates whether the chat is self-destructing. */
 	public readonly chatSelfDestruct		= new BehaviorSubject<boolean>(false);
@@ -156,6 +157,21 @@ export class ChatService extends BaseProvider {
 
 	/** Indicates whether the chat is ready to be displayed. */
 	public readonly initiated				= new BehaviorSubject<boolean>(false);
+
+	/** List of messages. */
+	public readonly messages				= toBehaviorSubject(
+		this.chatSubject.pipe(mergeMap(chat =>
+			chat.messageList.watchFlat().pipe(mergeMap(async messageIDs =>
+				Promise.all(messageIDs.map(async id =>
+					chat.messages.getItem(id)
+				)).catch(() : IChatMessage[] =>
+					[]
+				)
+			))
+		)),
+		undefined,
+		this.subscriptions
+	);
 
 	/** @see P2PService */
 	public readonly p2pService				= resolvable<{
@@ -602,7 +618,7 @@ export class ChatService extends BaseProvider {
 					this.messageValueHasher(chatMessage)
 				);
 
-				hash	= o.hash;
+				hash	= await o.getHash();
 				key		= o.encryptionKey;
 			}
 
@@ -1006,10 +1022,13 @@ export class ChatService extends BaseProvider {
 			let lastLocal: IChatMessagePredecessor|undefined;
 			let lastRemote: IChatMessagePredecessor|undefined;
 
-			const messageIDs	= await this.chat.messageList.getFlatValue();
+			const messages	=
+				this.messages.value ||
+				(await this.messages.pipe(filterUndefinedOperator(), take(1)).toPromise())
+			;
 
-			for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
-				const o	= await this.chat.messages.getItem(messageIDs[i]);
+			for (let i = messages.length - 1 ; i >= 0 ; --i) {
+				const o	= messages[i];
 
 				const isLocal	= !lastLocal && o.authorType === ChatMessage.AuthorTypes.Local;
 				const isRemote	= !lastRemote && o.authorType === ChatMessage.AuthorTypes.Remote;
@@ -1136,8 +1155,6 @@ export class ChatService extends BaseProvider {
 		protected readonly stringsService: StringsService
 	) {
 		super();
-
-		this.chatSubject	= new BehaviorSubject(this.getDefaultChatData());
 
 		if (this.envService.debugLog) {
 			this.resolvers.chatConnected.promise.then(() => {

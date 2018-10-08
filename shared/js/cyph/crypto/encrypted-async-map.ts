@@ -164,18 +164,18 @@ export class EncryptedAsyncMap<T> {
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<{
 		encryptionKey: Uint8Array;
-		hash: Uint8Array;
+		getHash: () => Promise<Uint8Array>;
 	}> {
 		const encryptionKey	= this.potassium.randomBytes(await this.potassium.secretBox.keyBytes);
 
 		const {cyphertext, plaintext}	= await this.seal(key, value, encryptionKey);
 
-		const [hash]	= await Promise.all([
-			this.hash(value, plaintext, hasher, true),
-			this.map.setItem(key, cyphertext)
-		]);
+		this.map.setItem(key, cyphertext);
 
-		return {encryptionKey, hash};
+		return {
+			encryptionKey,
+			getHash: async () => this.hash(value, plaintext, hasher, true)
+		};
 	}
 
 	/** Sets an item with a custom encryption key. */

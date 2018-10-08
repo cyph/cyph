@@ -33,6 +33,7 @@ import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByVsItem} from '../../track-by/track-by-vs-item';
+import {filterUndefinedOperator} from '../../util/filter';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
@@ -147,13 +148,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 		const observables		= getOrSetDefault(this.observableCache, chat, () => ({
 			messages: combineLatest(
-				chat.messageList.watchFlat().pipe(mergeMap(async messageIDs =>
-					Promise.all(messageIDs.map(async id =>
-						chat.messages.getItem(id)
-					)).catch(() : IChatMessage[] =>
-						[]
-					)
-				)),
+				this.chatService.messages.pipe(filterUndefinedOperator<IChatMessage[]>()),
 				chat.pendingMessages.watch(),
 				watchDateChange(true)
 			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
