@@ -39,7 +39,16 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 								() => potassium[k][k2]
 					}))).
 					reduce((a, b) => [...a, ...b]).
-					reduce((a, b) => ({...a, ...b}), {})
+					reduce(
+						(a, b) => {
+							for (const k3 of Object.keys(b)) {
+								a[k3]	= b[k3];
+							}
+
+							return a;
+						},
+						{}
+					)
 				,
 				self
 			);
