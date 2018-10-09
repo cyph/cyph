@@ -8,26 +8,34 @@ if [ "${1}" == '--no-build' ] ; then
 fi
 
 
+# Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
+
+minifyScripts='
+	/node_modules/terser-webpack-plugin/dist/minify.js
+	/node_modules/uglifyjs-webpack-plugin/dist/minify.js
+'
+
 onexit () {
-	mv /node_modules/terser-webpack-plugin/dist/minify.js.bak /node_modules/terser-webpack-plugin/dist/minify.js 2> /dev/null
+	for minifyScript in ${minifyScripts} ; do
+		mv ${minifyScript}.bak ${minifyScript} 2> /dev/null
+	done
 }
 
 if [ ! "${noBuild}" ] ; then
 	trap onexit EXIT
 fi
 
-cp /node_modules/terser-webpack-plugin/dist/minify.js /node_modules/terser-webpack-plugin/dist/minify.js.bak
+for minifyScript in ${minifyScripts} ; do
+	cp ${minifyScript} ${minifyScript}.bak
 
+	commandsDir="$(cd "$(dirname "$0")" ; pwd)"
 
-# Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
+	sed -i "s|^\s*compress:.*,|compress: typeof compress === 'undefined' \|\| (typeof compress === 'boolean' \&\& compress === true) ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" ${minifyScript}
 
-commandsDir="$(cd "$(dirname "$0")" ; pwd)"
+	sed -i "s/mangle:.*,/mangle: typeof mangle === 'boolean' \&\& mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" ${minifyScript}
 
-sed -i "s|^\s*compress:.*,|compress: compress === true ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" /node_modules/terser-webpack-plugin/dist/minify.js
-
-sed -i "s/mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" /node_modules/terser-webpack-plugin/dist/minify.js
-
-sed -i "s/safari10 = .*;/safari10 = true;/g" /node_modules/terser-webpack-plugin/dist/minify.js
+	sed -i "s/safari10 = .*;/safari10 = true;/g" ${minifyScript}
+done
 
 
 # Workaround for https://github.com/angular/angular-cli/issues/10612

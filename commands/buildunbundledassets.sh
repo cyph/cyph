@@ -183,7 +183,7 @@ for f in ${typescriptAssets} ; do
 	cat > webpack.js <<- EOM
 		const {TsConfigPathsPlugin}	= require('awesome-typescript-loader');
 		const path					= require('path');
-		const TerserPlugin		= require('terser-webpack-plugin');
+		const TerserPlugin			= require('terser-webpack-plugin');
 		const {mangleExceptions}	= require('../../../commands/mangleexceptions');
 
 		module.exports	= {
@@ -199,49 +199,51 @@ for f in ${typescriptAssets} ; do
 					}
 				]
 			},
+			optimization: {
+				minimizer: [
+					new TerserPlugin({
+						cache: true,
+						extractComments: false,
+						parallel: true,
+						sourceMap: false,
+						terserOptions: {
+							ecma: 5,
+							ie8: false,
+							output: {
+								ascii_only: true,
+								webkit: true,
+								$(if [ "${test}" ] ; then
+									echo "beautify: true, comments: true"
+								else
+									echo "comments: false"
+								fi)
+							},
+							safari10: true,
+							warnings: false,
+							$(if [ "${test}" ] ; then
+								echo "compress: false, mangle: false"
+							else
+								echo "
+									compress: false /* {
+										passes: 3,
+										pure_getters: true,
+										sequences: false
+									} */,
+									mangle: {
+										reserved: mangleExceptions
+									}
+								"
+							fi)
+						}
+					})
+				]
+			},
 			output: {
 				filename: '${f}.js',
 				library: '${m}',
 				libraryTarget: 'var',
 				path: '${PWD}'
 			},
-			plugins: [
-				new TerserPlugin({
-					cache: true,
-					extractComments: false,
-					parallel: true,
-					sourceMap: false,
-					terserOptions: {
-						ecma: 5,
-						ie8: false,
-						output: {
-							ascii_only: true,
-							webkit: true,
-							$(if [ "${test}" ] ; then
-								echo "beautify: true, comments: true"
-							else
-								echo "comments: false"
-							fi)
-						},
-						safari10: true,
-						warnings: false,
-						$(if [ "${test}" ] ; then
-							echo "compress: false, mangle: false"
-						else
-							echo "
-								compress: false /* {
-									passes: 3,
-									pure_getters: true,
-									sequences: false
-								} */,
-								mangle: {
-									reserved: mangleExceptions
-								}
-							"
-						fi)
-					}
-				})
-			],
 			resolve: {
 				alias: {
 					jquery: path.resolve(__dirname, '../../js/externals/jquery.ts')
