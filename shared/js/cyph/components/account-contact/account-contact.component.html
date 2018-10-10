@@ -13,7 +13,11 @@
 				"messages/" +
 				(((user | async)?.contactID | async) || "")
 			) :
-			undefined
+			(
+				accountService.routeRoot +
+				"messages/user/" +
+				(username || "")
+			)
 	'
 	fxFlex
 	*ngIf='groupData === undefined && !!username; else groupContact'

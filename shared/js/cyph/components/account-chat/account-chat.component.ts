@@ -18,6 +18,7 @@ import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountP2PService} from '../../services/account-p2p.service';
 import {AccountSessionService} from '../../services/account-session.service';
+import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -134,7 +135,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 			this.activatedRoute
 		).subscribe(async ([
 			{callType, defaultSessionSubID, ephemeralSubSession, promptFollowup},
-			{appointmentID, contactID, sessionSubID},
+			{appointmentID, contactID, sessionSubID, username},
 			[{path}]
 		]: [
 			{
@@ -143,7 +144,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				ephemeralSubSession?: boolean;
 				promptFollowup?: boolean;
 			},
-			{appointmentID?: string; contactID?: string; sessionSubID?: string},
+			{appointmentID?: string; contactID?: string; sessionSubID?: string; username?: string},
 			UrlSegment[]
 		/* tslint:disable-next-line:cyclomatic-complexity */
 		]) => lock(async () => {
@@ -152,6 +153,14 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 			}
 
 			try {
+				if (username) {
+					const user	= await this.AccountUserLookupService.getUser(username, false);
+					if (user) {
+						await this.navigate(path, await user.contactID);
+					}
+					return;
+				}
+
 				if (this.initiatedAppointmentID) {
 					if (appointmentID && this.initiatedAppointmentID !== appointmentID) {
 						await this.navigate('appointments', path, appointmentID);
@@ -312,6 +321,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly AccountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,

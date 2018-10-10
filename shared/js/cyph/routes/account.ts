@@ -147,13 +147,14 @@ export const account: Route	= {
 			data: {defaultSessionSubID: 'mail'}
 		},
 		{path: 'messages', component: AccountContactsComponent},
-		{path: 'messages/:contactID', component: AccountChatComponent},
-		{path: 'messages/:contactID/:sessionSubID', component: AccountChatComponent},
 		{
 			path: 'messages/ephemeral/:contactID/:sessionSubID',
 			component: AccountChatComponent,
 			data: {ephemeralSubSession: true}
 		},
+		{path: 'messages/user/:username', component: AccountChatComponent},
+		{path: 'messages/:contactID', component: AccountChatComponent},
+		{path: 'messages/:contactID/:sessionSubID', component: AccountChatComponent},
 		{
 			path: 'new-patient/:appointmentID',
 			component: AccountComposeComponent,
