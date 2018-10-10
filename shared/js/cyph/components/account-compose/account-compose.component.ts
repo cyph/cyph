@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {BehaviorSubject, combineLatest} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {User} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {States} from '../../chat/enums';
@@ -54,13 +54,7 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= toBehaviorSubject(
-		this.accountService.routeChanges.pipe(mergeMap(() => combineLatest(
-			this.activatedRoute.firstChild ?
-				this.activatedRoute.firstChild.data :
-				this.activatedRoute.data
-			,
-			this.activatedRoute.params
-		))).pipe(map(([o, params]) => {
+		this.accountService.combinedRouteData(this.activatedRoute).pipe(map(([o, params]) => {
 			const messageType: ChatMessageValue.Types	= o.messageType;
 
 			const value	= typeof o.value === 'function' ? o.value() : o.value;

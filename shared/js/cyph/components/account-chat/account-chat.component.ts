@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject, combineLatest} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';
@@ -58,7 +58,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** @see AccountCallWaiting.cancelRedirectsHome */
 	public readonly cancelRedirectsHome		=
-		this.activatedRoute.data.pipe(map(({cancelRedirectsHome}) =>
+		this.accountService.combinedRouteData(
+			this.activatedRoute
+		).pipe(map(([{cancelRedirectsHome}]) =>
 			cancelRedirectsHome === true
 		))
 	;
@@ -125,16 +127,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 		const lock	= lockFunction();
 
-		this.subscriptions.push(this.accountService.routeChanges.pipe(mergeMap(() => combineLatest(
-			this.activatedRoute.firstChild ?
-				this.activatedRoute.firstChild.data :
-				this.activatedRoute.data
-			,
-			this.activatedRoute.params,
-			this.activatedRoute.firstChild ?
-				this.activatedRoute.firstChild.url :
-				this.activatedRoute.url
-		))).subscribe(async ([
+		this.subscriptions.push(this.accountService.combinedRouteData(
+			this.activatedRoute
+		).subscribe(async ([
 			{callType, defaultSessionSubID, ephemeralSubSession, promptFollowup},
 			{appointmentID, contactID, sessionSubID},
 			[{path}]

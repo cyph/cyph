@@ -1,9 +1,17 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, NavigationStart, Router} from '@angular/router';
+import {
+	ActivatedRoute,
+	Data,
+	NavigationEnd,
+	NavigationStart,
+	Params,
+	Router,
+	UrlSegment
+} from '@angular/router';
 import * as Hammer from 'hammerjs';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -156,6 +164,33 @@ export class AccountService extends BaseProvider {
 	/** @ignore */
 	private get currentRoute () : string {
 		return this.routeChanges.value;
+	}
+
+	/** Activated route data combined with that of child. */
+	public combinedRouteData (activatedRoute: ActivatedRoute) : Observable<[
+		Data,
+		Params,
+		UrlSegment[]
+	]> {
+		return this.routeChanges.pipe(
+			mergeMap(() => combineLatest(
+				activatedRoute.data,
+				(activatedRoute.firstChild ? activatedRoute.firstChild.data : of({})),
+				activatedRoute.params,
+				(activatedRoute.firstChild ? activatedRoute.firstChild.params : of({})),
+				activatedRoute.url,
+				activatedRoute.firstChild ? activatedRoute.firstChild.url : of([])
+			)),
+			map(([data, childData, params, childParams, url, childURL]) : [
+				Data,
+				Params,
+				UrlSegment[]
+			] => [
+				{...data, ...childData},
+				{...params, ...childParams},
+				[...url, ...childURL]
+			])
+		);
 	}
 
 	/** Contact form dialog. */
