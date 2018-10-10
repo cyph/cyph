@@ -667,13 +667,7 @@ export class ChatService extends BaseProvider {
 				);
 			}
 
-			debugLogTime(() => 'Chat Message Add: setting chatMessage');
-
-			await this.chat.messages.setItem(id, chatMessage);
-
-			debugLogTime(() => 'Chat Message Add: set chatMessage');
-
-			return chatMessage;
+			return {chatMessage, setPromise: this.chat.messages.setItem(id, chatMessage)};
 		})));
 
 		if (newMessages.length < 1) {
@@ -682,38 +676,42 @@ export class ChatService extends BaseProvider {
 
 		debugLogTime(() => 'Chat Message Add: pushing message IDs');
 
-		await this.chat.messageList.pushItem(newMessages.map(chatMessage => chatMessage.id));
-
-		debugLogTime(() => 'Chat Message Add: pushed message IDs');
-
 		const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
 		await Promise.all([
-			...(!pendingMessageRoot ? [] : messageInputs.map(async ({author, id}) => {
-				if (author === this.sessionService.localUsername && pendingMessageRoot) {
-					await this.localStorageService.removeItem(`${pendingMessageRoot}/${id}`);
-				}
-			})),
-			...newMessages.map(async chatMessage => {
-				if (
-					chatMessage.hash &&
-					chatMessage.key &&
-					chatMessage.selfDestructTimeout !== undefined &&
-					!isNaN(chatMessage.selfDestructTimeout) &&
-					chatMessage.selfDestructTimeout > 0
-				) {
-					await sleep(chatMessage.selfDestructTimeout + 10000);
-
-					this.potassiumService.clearMemory(chatMessage.hash);
-					this.potassiumService.clearMemory(chatMessage.key);
-
-					chatMessage.hash	= undefined;
-					chatMessage.key		= undefined;
-
-					await this.chat.messages.setItem(chatMessage.id, chatMessage);
-				}
-			})
+			Promise.all(newMessages.map(async o => o.setPromise)),
+			this.chat.messageList.pushItem(
+				newMessages.map(({chatMessage}) => chatMessage.id)
+			).then(async () => Promise.all([
+				...(!pendingMessageRoot ? [] : messageInputs.map(async ({author, id}) => {
+					if (author === this.sessionService.localUsername && pendingMessageRoot) {
+						await this.localStorageService.removeItem(`${pendingMessageRoot}/${id}`);
+					}
+				}))
+			]))
 		]);
+
+		debugLogTime(() => 'Chat Message Add: pushed message IDs');
+
+		await Promise.all(newMessages.map(async ({chatMessage}) => {
+			if (
+				chatMessage.hash &&
+				chatMessage.key &&
+				chatMessage.selfDestructTimeout !== undefined &&
+				!isNaN(chatMessage.selfDestructTimeout) &&
+				chatMessage.selfDestructTimeout > 0
+			) {
+				await sleep(chatMessage.selfDestructTimeout + 10000);
+
+				this.potassiumService.clearMemory(chatMessage.hash);
+				this.potassiumService.clearMemory(chatMessage.key);
+
+				chatMessage.hash	= undefined;
+				chatMessage.key		= undefined;
+
+				await this.chat.messages.setItem(chatMessage.id, chatMessage);
+			}
+		}));
 
 		debugLogTime(() => 'Chat Message Add: done');
 	}

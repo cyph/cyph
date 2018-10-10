@@ -207,6 +207,7 @@ export class AccountChatService extends ChatService {
 						undefined,
 						undefined,
 						undefined,
+						true,
 						true
 					),
 					messages: this.accountDatabaseService.getAsyncMap(
