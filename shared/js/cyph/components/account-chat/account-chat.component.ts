@@ -244,28 +244,22 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					this.messageType.value === ChatMessageValue.Types.Text
 				);
 
-				try {
-					const chat	= await this.accountContactsService.getChatData(contactID);
+				const chat	= await this.accountContactsService.getChatData(contactID);
 
-					if (callType !== undefined && !sessionSubID) {
-						await this.accountChatService.setUser(chat);
-						return this.accountP2PService.beginCall(callType, path);
-					}
-					else {
-						this.initiating.next(false);
-
-						await this.accountChatService.setUser(
-							chat,
-							undefined,
-							callType,
-							sessionSubID,
-							ephemeralSubSession
-						);
-					}
+				if (callType !== undefined && !sessionSubID) {
+					await this.accountChatService.setUser(chat);
+					return this.accountP2PService.beginCall(callType, path);
 				}
-				catch {
-					this.router.navigate([accountRoot, '404']);
-					return;
+				else {
+					this.initiating.next(false);
+
+					await this.accountChatService.setUser(
+						chat,
+						undefined,
+						callType,
+						sessionSubID,
+						ephemeralSubSession
+					);
 				}
 
 				if (callType === undefined) {
@@ -303,6 +297,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 						}
 					}
 				});
+			}
+			catch {
+				this.router.navigate([accountRoot, '404']);
 			}
 			finally {
 				if (promptFollowup) {
