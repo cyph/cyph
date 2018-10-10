@@ -154,7 +154,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 			try {
 				if (username) {
-					const user	= await this.AccountUserLookupService.getUser(username, false);
+					const user	= await this.accountUserLookupService.getUser(username, false);
 					if (user) {
 						await this.navigate(path, await user.contactID);
 					}
@@ -323,7 +323,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly AccountUserLookupService: AccountUserLookupService,
+		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
