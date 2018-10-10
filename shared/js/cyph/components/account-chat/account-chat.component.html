@@ -16,7 +16,11 @@
 			fxLayout='row'
 			fxLayoutAlign='center center'
 			class='loading-indicator cyph-banner dark'
-			*ngIf='chat.state === states.chat && (accountChatService.uiReady | async) !== true'
+			*ngIf='
+				chat.state === states.chat &&
+				(accountChatService.uiReady | async) !== true &&
+				(initialCallPending | async) === false
+			'
 		>
 			<mat-progress-spinner
 				diameter='16'
@@ -32,7 +36,10 @@
 			fxFlexFill
 			[appointment]='appointment | async'
 			[cancelRedirectsHome]='cancelRedirectsHome | async'
-			*ngIf='initialCallPending | async'
+			*ngIf='
+				(initialCallPending | async) === true &&
+				(sessionSubID | async) !== undefined
+			'
 		></cyph-account-call-waiting>
 
 		<ng-container

@@ -1170,7 +1170,9 @@ export class ChatService extends BaseProvider {
 			const callType				= this.sessionInitService.callType;
 			const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
-			this.p2pWebRTCService.initialCallPending.next(callType !== undefined);
+			if (callType !== undefined) {
+				this.p2pWebRTCService.initialCallPending.next(true);
+			}
 
 			this.scrollService.resolveUnreadItems(this.getScrollServiceUnreadMessages());
 

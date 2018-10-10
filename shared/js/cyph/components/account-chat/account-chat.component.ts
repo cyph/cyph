@@ -79,7 +79,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	));
 
 	/** Initial load screen before a user is set. */
-	public readonly initiating				= new BehaviorSubject(true);
+	public readonly initiating				= new BehaviorSubject<boolean>(true);
 
 	/** @see ChatMessageValue.Types */
 	public readonly messageType				= new BehaviorSubject<ChatMessageValue.Types>(
@@ -92,6 +92,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	public readonly promptFollowup			=
 		new BehaviorSubject<string|undefined>(undefined)
 	;
+
+	/** Sub-session ID. */
+	public readonly sessionSubID			= new BehaviorSubject<string|undefined>(undefined);
 
 	/** @see States */
 	public readonly states					= States;
@@ -223,6 +226,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 						ChatMessageValue.Types.Quill :
 						ChatMessageValue.Types.Text
 				);
+
+				this.sessionSubID.next(sessionSubID);
+
+				this.p2pWebRTCService.initialCallPending.next(callType !== undefined);
 
 				this.accountChatService.enableVirtualScroll.next(
 					this.messageType.value === ChatMessageValue.Types.Text
