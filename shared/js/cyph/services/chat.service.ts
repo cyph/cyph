@@ -36,7 +36,7 @@ import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {lockFunction} from '../util/lock';
-import {debugLog} from '../util/log';
+import {debugLog, debugLogTime} from '../util/log';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
@@ -428,6 +428,8 @@ export class ChatService extends BaseProvider {
 				this.outgoingMessageQueue.length
 			);
 
+			debugLogTime(() => 'Chat Message Send: session send');
+
 			const {confirmPromise, newMessages}	= await this.sessionService.send(
 				...outgoingMessages.map(({messageData}) : [
 					string,
@@ -447,6 +449,8 @@ export class ChatService extends BaseProvider {
 							await Promise.all(messageData)
 						;
 
+						debugLogTime(() => 'Chat Message Send: hashing message');
+
 						const hash	= await this.messageValues.getItemHash(
 							id,
 							key,
@@ -458,6 +462,8 @@ export class ChatService extends BaseProvider {
 							}),
 							value
 						);
+
+						debugLogTime(() => 'Chat Message Send: hashed message');
 
 						return {
 							id,
@@ -473,13 +479,23 @@ export class ChatService extends BaseProvider {
 				])
 			);
 
-			this.messageSendInnerLock(async () => confirmPromise.then(async () => {
-				await this.addTextMessage(...newMessages.map(({data}) => data));
+			debugLogTime(() => 'Chat Message Send: acquiring lock');
 
-				for (const outgoingMessage of outgoingMessages) {
-					outgoingMessage.resolve();
-				}
-			}));
+			this.messageSendInnerLock(async () => {
+				debugLogTime(() => 'Chat Message Send: lock acquired');
+
+				return confirmPromise.then(async () => {
+					debugLogTime(() => 'Chat Message Send: confirmPromise resolved');
+
+					await this.addTextMessage(...newMessages.map(({data}) => data));
+
+					debugLogTime(() => 'Chat Message Send: done');
+
+					for (const outgoingMessage of outgoingMessages) {
+						outgoingMessage.resolve();
+					}
+				});
+			});
 
 			await sleep(this.outgoingMessageBatchDelay);
 		});
@@ -529,6 +545,8 @@ export class ChatService extends BaseProvider {
 
 	/** Adds a message to the chat. */
 	public async addMessage (...messageInputs: IChatMessageInput[]) : Promise<void> {
+		debugLogTime(() => 'Chat Message Add: start');
+
 		/* tslint:disable-next-line:cyclomatic-complexity */
 		const newMessages	= filterUndefined(await Promise.all(messageInputs.map(async ({
 			author,
@@ -595,7 +613,11 @@ export class ChatService extends BaseProvider {
 				}
 			}
 
+			debugLogTime(() => 'Chat Message Add: getting author ID');
+
 			const authorID	= await this.getAuthorID(author);
+
+			debugLogTime(() => 'Chat Message Add: got author ID');
 
 			const chatMessage: IChatMessage	= {
 				authorID,
@@ -614,14 +636,20 @@ export class ChatService extends BaseProvider {
 			};
 
 			if (value) {
+				debugLogTime(() => 'Chat Message Add: setting global message value');
+
 				const o	= await messageValues.setItem(
 					id,
 					value,
 					this.messageValueHasher(chatMessage)
 				);
 
+				debugLogTime(() => 'Chat Message Add: set global message value');
+
 				hash	= await o.getHash();
 				key		= o.encryptionKey;
+
+				debugLogTime(() => 'Chat Message Add: hashed');
 			}
 
 			chatMessage.hash	= hash;
@@ -639,7 +667,11 @@ export class ChatService extends BaseProvider {
 				);
 			}
 
+			debugLogTime(() => 'Chat Message Add: setting chatMessage');
+
 			await this.chat.messages.setItem(id, chatMessage);
+
+			debugLogTime(() => 'Chat Message Add: set chatMessage');
 
 			return chatMessage;
 		})));
@@ -648,7 +680,11 @@ export class ChatService extends BaseProvider {
 			return;
 		}
 
+		debugLogTime(() => 'Chat Message Add: pushing message IDs');
+
 		await this.chat.messageList.pushItem(newMessages.map(chatMessage => chatMessage.id));
+
+		debugLogTime(() => 'Chat Message Add: pushed message IDs');
 
 		const pendingMessageRoot	= this.chat.pendingMessageRoot;
 
@@ -678,6 +714,8 @@ export class ChatService extends BaseProvider {
 				}
 			})
 		]);
+
+		debugLogTime(() => 'Chat Message Add: done');
 	}
 
 	/** Begins chat. */
@@ -904,6 +942,8 @@ export class ChatService extends BaseProvider {
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
 	) : Promise<string|void> {
+		debugLogTime(() => 'Chat Message Send: start');
+
 		if (keepCurrentMessage === undefined) {
 			keepCurrentMessage	= message !== undefined;
 		}
