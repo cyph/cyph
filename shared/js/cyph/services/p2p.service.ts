@@ -229,7 +229,7 @@ export class P2PService extends BaseProvider {
 			return;
 		}
 
-		if (!this.p2pWebRTCService.isActive.value) {
+		if (!this.isActive.value) {
 			await this.request('video');
 		}
 		else if (this.p2pWebRTCService.videoEnabled.value) {
@@ -246,7 +246,7 @@ export class P2PService extends BaseProvider {
 			return;
 		}
 
-		if (!this.p2pWebRTCService.isActive.value) {
+		if (!this.isActive.value) {
 			await this.request('audio');
 		}
 		else {

@@ -52,7 +52,7 @@
 			<cyph-account-chat-message-box
 				[messageType]='chatMessageValueTypes.Text'
 				*ngIf='(accountP2PService.isActiveOrInitialCall | async) === false'
-				[class.visibility-hidden]='initialCallPending | async'
+				[fxHide]='initialCallPending | async'
 			></cyph-account-chat-message-box>
 		</ng-container>
 
