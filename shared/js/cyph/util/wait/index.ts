@@ -46,7 +46,8 @@ export const infiniteSleep	= async () : Promise<void> => {
 /** Runs f until it returns with no errors. */
 export const retryUntilSuccessful	= async <T> (
 	f: (lastErr?: any) => (MaybePromise<T>),
-	maxAttempts: number = 10
+	maxAttempts: number = 10,
+	delay: number = 250
 ) : Promise<T> => {
 	let lastErr: any|undefined;
 
@@ -61,7 +62,7 @@ export const retryUntilSuccessful	= async <T> (
 				throw err;
 			}
 			else {
-				await sleep();
+				await sleep(delay);
 			}
 		}
 	}

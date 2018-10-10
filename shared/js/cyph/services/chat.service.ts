@@ -39,7 +39,7 @@ import {lockFunction} from '../util/lock';
 import {debugLog, debugLogTime} from '../util/log';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {resolvable, sleep} from '../util/wait';
+import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -819,11 +819,23 @@ export class ChatService extends BaseProvider {
 				message.hash !== undefined &&
 				message.key !== undefined
 			) {
-				message.value	= await messageValues.getItem(
-					message.id,
-					message.key,
-					message.hash,
-					this.messageValueHasher(message)
+				const getMessageValue	= async () => {
+					if (message.hash === undefined || message.key === undefined) {
+						throw new Error('Message hash or key missing.');
+					}
+
+					return messageValues.getItem(
+						message.id,
+						message.key,
+						message.hash,
+						this.messageValueHasher(message)
+					);
+				};
+
+				message.value	= await (
+					messageValues === this.messageValues ?
+						retryUntilSuccessful(getMessageValue, 10, 500) :
+						getMessageValue()
 				).catch(
 					() => undefined
 				);
