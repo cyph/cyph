@@ -8,6 +8,7 @@ const logs: {
 	args: any[];
 	argsCopy: string;
 	error?: true;
+	timeDifference: number;
 	timestamp: number;
 }[]	= [];
 
@@ -19,7 +20,13 @@ if (env.debugLog) {
 const debugLogInternal	= async (
 	error: boolean,
 	argFunctions: (() => MaybePromise<any>)[]
-) : Promise<void> => {
+) : Promise<undefined|{
+	args: any[];
+	argsCopy: string;
+	error?: true;
+	timeDifference: number;
+	timestamp: number;
+}> => {
 	if (!env.debugLog) {
 		return;
 	}
@@ -41,13 +48,18 @@ const debugLogInternal	= async (
 	}
 	catch {}
 
-	logs.push({
+	/* tslint:disable-next-line:ban */
+	const timestamp	= Date.now();
+
+	const log	= {
 		args,
 		argsCopy,
-		/* tslint:disable-next-line:ban */
-		timestamp: Date.now(),
+		timeDifference: logs.length > 0 ? timestamp - logs.slice(-1)[0].timestamp : 0,
+		timestamp,
 		...(error ? {error} : {})
-	});
+	};
+
+	logs.push(log);
 
 	if (error) {
 		/* tslint:disable-next-line:no-console */
@@ -57,15 +69,26 @@ const debugLogInternal	= async (
 		/* tslint:disable-next-line:no-console */
 		console.log(...(argsString ? [argsString] : args));
 	}
+
+	return log;
 };
 
 
 /** Logs to console in local env. */
-export const debugLog	= async (...args: (() => MaybePromise<any>)[]) : Promise<void> =>
-	debugLogInternal(false, args)
-;
+export const debugLog	= async (...args: (() => MaybePromise<any>)[]) : Promise<void> => {
+	await debugLogInternal(false, args);
+};
 
 /** Logs error to console in local env. */
-export const debugLogError	= async (...args: (() => MaybePromise<any>)[]) : Promise<void> =>
-	debugLogInternal(true, args)
-;
+export const debugLogError	= async (...args: (() => MaybePromise<any>)[]) : Promise<void> => {
+	await debugLogInternal(true, args);
+};
+
+/** Logs time difference to console in local env. */
+export const debugLogTime	= async (...args: (() => MaybePromise<any>)[]) : Promise<void> => {
+	const o	= await debugLogInternal(false, args);
+	if (o) {
+		/* tslint:disable-next-line:no-console */
+		console.log(o.timeDifference);
+	}
+};
