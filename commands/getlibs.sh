@@ -282,8 +282,8 @@ done
 
 for m in libsodium* ; do cd ${m} ; mv package-${m}.json package.json ; cd .. ; done
 
-cp -f simplewebrtc/out/simplewebrtc-with-adapter.bundle.js simplewebrtc/src/simplewebrtc.js
-# sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.js
+rm -rf simplewebrtc/node_modules
+sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.js
 
 cat wowjs/dist/wow.js | perl -pe 's/this\.([A-Z][a-z])/self.\1/g' > wowjs/dist/wow.js.new
 mv wowjs/dist/wow.js.new wowjs/dist/wow.js

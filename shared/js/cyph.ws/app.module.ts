@@ -6,6 +6,7 @@ import '../standalone/global';
 import '../standalone/node-polyfills';
 
 import 'hammerjs';
+import 'webrtc-adapter';
 import '../standalone/init';
 import '../standalone/test-environment-setup';
 import '../standalone/translations';
