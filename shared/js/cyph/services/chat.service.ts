@@ -1036,7 +1036,7 @@ export class ChatService extends BaseProvider {
 		}
 
 		if (!keepCurrentMessage) {
-			this.updateChat();
+			this.messageChange();
 		}
 
 		const removeOldStorageItem	= () => oldLocalStorageKey ?
