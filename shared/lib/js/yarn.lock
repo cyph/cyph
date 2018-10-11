@@ -11987,11 +11987,6 @@ nativescript-local-notifications@^3.1.0:
   resolved "https://registry.yarnpkg.com/nativescript-local-notifications/-/nativescript-local-notifications-3.1.0.tgz#2d4c7a76dc8cbdda019a9f3a9e1d0dc42934cb63"
   integrity sha512-XvuARKy2NIVoYYQStrw9597ngnf2O37+6coR4Eup5VtSkks0AhsdwkVD1fI2qC8OpIxIu2zSCh0JtOAG5EUlUQ==
 
-nativescript-material-icons@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/nativescript-material-icons/-/nativescript-material-icons-1.0.3.tgz#77fa8fdb78ec091dc4a6a7854e7685ea2895008c"
-  integrity sha1-d/qP23jsCR3EpqeFTnaF6iiVAIw=
-
 nativescript-messenger@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/nativescript-messenger/-/nativescript-messenger-1.2.0.tgz#f0db919ba0932e559191d826cc5eb8fcf00212ab"
