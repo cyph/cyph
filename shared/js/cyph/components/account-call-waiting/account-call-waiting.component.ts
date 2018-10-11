@@ -38,13 +38,13 @@ export class AccountCallWaitingComponent
 extends BaseProvider
 implements AfterViewInit, OnChanges {
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+	public readonly accountUserTypes				= AccountUserTypes;
 
 	/** @see AccountChatComponent */
 	@Input() public appointment?: IAppointment&{id: string};
 
 	/** @see AccountUserTypes */
-	public readonly callTypes: typeof CallTypes	= CallTypes;
+	public readonly callTypes						= CallTypes;
 
 	/** If true, canceling the call will redirect home instead of to /messages. */
 	@Input() public cancelRedirectsHome: boolean	= false;
@@ -54,8 +54,8 @@ implements AfterViewInit, OnChanges {
 	public formCompose?: AccountComposeNoProvidersComponent;
 
 	/** Participants by type. */
-	public readonly participantsByType: BehaviorSubject<Map<AccountUserTypes, User[]>>	=
-		new BehaviorSubject(new Map())
+	public readonly participantsByType				=
+		new BehaviorSubject(new Map<AccountUserTypes, User[]>())
 	;
 
 	/** @inheritDoc */
