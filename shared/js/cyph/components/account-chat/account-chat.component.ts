@@ -22,6 +22,7 @@ import {AccountUserLookupService} from '../../services/account-user-lookup.servi
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
@@ -93,6 +94,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	public readonly promptFollowup			=
 		new BehaviorSubject<string|undefined>(undefined)
 	;
+
+	/** Max ring time. */
+	public readonly ringTimeout: number		= 60000;
 
 	/** Sub-session ID. */
 	public readonly sessionSubID			= new BehaviorSubject<string|undefined>(undefined);
@@ -266,6 +270,19 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
+				sleep(this.ringTimeout).then(() => {
+					if (
+						this.destroyed ||
+						this.p2pWebRTCService.loading.value ||
+						!this.p2pWebRTCService.initialCallPending.value
+					) {
+						return;
+					}
+
+					this.dialogService.toast(this.stringsService.p2pTimeout, 3000);
+					this.p2pWebRTCService.close();
+				});
+
 				this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
 					if (!this.destroyed) {
 						this.router.navigate(
@@ -324,6 +341,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

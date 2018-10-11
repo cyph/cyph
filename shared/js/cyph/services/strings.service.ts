@@ -683,6 +683,9 @@ export class StringsService extends BaseProvider {
 	public readonly p2pTitle: string					= `${this.internalProduct} Call`;
 
 	/** @see StringsService */
+	public readonly p2pTimeout: string					= `Your call was missed.`;
+
+	/** @see StringsService */
 	public readonly p2pWarning: string					=
 		`This may involve sharing your IP address with your ${this.internalFriend}. ` +
 		`Proceed if you trust your ${this.internalFriend}.`
