@@ -150,7 +150,7 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 		$textarea.on('keypress', e => {
 			if (
 				(this.envService.isMobileOS && this.virtualKeyboardWatcherService.isOpen.value) ||
-				e.keyCode !== 13 ||
+				e.which !== 13 ||
 				e.shiftKey
 			) {
 				resizeTextArea();
