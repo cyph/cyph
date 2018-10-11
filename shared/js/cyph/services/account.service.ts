@@ -16,15 +16,18 @@ import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
-import {StringProto} from '../proto';
+import {NeverProto, StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {toInt} from '../util/formatting';
 import {observableAll} from '../util/observable-all';
 import {prettyPrint, stringify} from '../util/serialization';
+import {getTimestamp} from '../util/time';
 import {translate} from '../util/translate';
 import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
+import {AccountUserLookupService} from './account-user-lookup.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -79,6 +82,13 @@ export class AccountService extends BaseProvider {
 			this.envService.environment.customBuild.config.enableWallets === true
 		)
 	;
+
+	/** Incoming call requests. */
+	public readonly incomingCalls						= this.accountDatabaseService.getAsyncMap(
+		'incomingCalls',
+		NeverProto,
+		SecurityModels.unprotected
+	);
 
 	/** Indicates the status of the interstitial. */
 	public readonly interstitial						= new BehaviorSubject<boolean>(false);
@@ -282,6 +292,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,
@@ -520,6 +533,69 @@ export class AccountService extends BaseProvider {
 						'100%' :
 						this.menuExpandedMinWidthPX
 		));
+
+
+		const respondedCallRequests	= new Set<string>();
+
+		this.subscriptions.push(this.incomingCalls.watchKeys().subscribe(async keys => {
+			for (const k of keys) {
+				if (respondedCallRequests.has(k)) {
+					continue;
+				}
+
+				try {
+					const [callType, username, id, expiresString]	= k.split('_');
+					const expires	= toInt(expiresString);
+					const timestamp	= await getTimestamp();
+
+
+					if (
+						(callType !== 'audio' && callType !== 'video') ||
+						!username ||
+						!id ||
+						isNaN(expires) ||
+						timestamp >= expires
+					) {
+						continue;
+					}
+
+					const user	= await this.accountUserLookupService.getUser(username);
+					if (!user) {
+						continue;
+					}
+
+					const {name, realUsername}	= await user.accountUserProfile.getValue();
+
+					const answered	= await this.dialogService.confirm({
+						bottomSheet: true,
+						cancel: this.stringsService.decline,
+						cancelFAB: 'close',
+						content: `${name} (@${realUsername})`,
+						ok: this.stringsService.answer,
+						okFAB: 'phone',
+						timeout: expires - timestamp,
+						title: callType === 'audio' ?
+							this.stringsService.incomingCallAudio :
+							this.stringsService.incomingCallVideo
+					});
+
+					if (answered) {
+						this.router.navigate([
+							accountRoot,
+							callType,
+							await user.contactID,
+							id,
+							expiresString
+						]);
+					}
+				}
+				catch {}
+				finally {
+					respondedCallRequests.add(k);
+					this.incomingCalls.removeItem(k).catch(() => {});
+				}
+			}
+		}));
 
 
 		let lastSection	= '';

@@ -32,9 +32,11 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		o: {
 			bottomSheet?: boolean;
 			cancel?: string;
+			cancelFAB?: string;
 			content: string;
 			form?: IForm;
 			ok?: string;
+			okFAB?: string;
 			markdown?: boolean;
 			placeholder?: string;
 			preFill?: string;
@@ -79,6 +81,8 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 				this.stringsService.cancel
 			;
 
+			instance.cancelFAB			= o.cancelFAB;
+
 			instance.form				= o.form;
 
 			instance.markdown			= !!o.markdown;
@@ -87,6 +91,8 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 				o.ok :
 				this.stringsService.ok
 			;
+
+			instance.okFAB				= o.okFAB;
 
 			instance.prompt				= prompt ? (o.preFill || '') : undefined;
 

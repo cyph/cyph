@@ -32,10 +32,13 @@ export class DialogService extends BaseProvider {
 	/** Displays interactive confirmation prompt. */
 	public async confirm (
 		_O: {
+			bottomSheet?: boolean;
 			cancel?: string;
+			cancelFAB?: string;
 			content: string;
 			markdown?: boolean;
 			ok?: string;
+			okFAB?: string;
 			timeout?: number;
 			title: string;
 		},

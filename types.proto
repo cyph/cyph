@@ -980,6 +980,7 @@ message LocalStorageValue {
 enum NotificationTypes {
 	Yo = 0;
 	CalendarEvent = 3;
+	Call = 6;
 	ContactAccept = 4;
 	ContactRequest = 5;
 	File = 1;

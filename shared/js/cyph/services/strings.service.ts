@@ -72,6 +72,9 @@ export class StringsService extends BaseProvider {
 	public readonly allow: string						= `Allow`;
 
 	/** @see StringsService */
+	public readonly answer: string						= `Answer`;
+
+	/** @see StringsService */
 	public readonly appointmentCalendar: string			= `Appointment Calendar`;
 
 	/** @see StringsService */
@@ -207,7 +210,7 @@ export class StringsService extends BaseProvider {
 	public readonly cypherToast3: string				= `Thou art amazed.`;
 
 	/** @see StringsService */
-	public readonly decline: string						= `decline`;
+	public readonly decline: string						= `Decline`;
 
 	/** @see StringsService */
 	public readonly deleteConfirm: string				= `Confirm Deletion`;
@@ -358,6 +361,12 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly incomingAppointments: string		= `Incoming Appointment Requests`;
+
+	/** @see StringsService */
+	public readonly incomingCallAudio: string			= `Incoming Call`;
+
+	/** @see StringsService */
+	public readonly incomingCallVideo: string			= `Incoming Video Call`;
 
 	/** @see StringsService */
 	public readonly incomingFile: string				= `Download File`;
@@ -683,7 +692,10 @@ export class StringsService extends BaseProvider {
 	public readonly p2pTitle: string					= `${this.internalProduct} Call`;
 
 	/** @see StringsService */
-	public readonly p2pTimeout: string					= `Your call was missed.`;
+	public readonly p2pTimeoutIncoming: string			= `Missed call.`;
+
+	/** @see StringsService */
+	public readonly p2pTimeoutOutgoing: string			= `Your call was missed.`;
 
 	/** @see StringsService */
 	public readonly p2pWarning: string					=

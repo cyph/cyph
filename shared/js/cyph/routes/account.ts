@@ -86,10 +86,9 @@ export const account: Route	= {
 			}
 		},
 		{
-			path: 'audio/:contactID/:sessionSubID/answer',
+			path: 'audio/:contactID/:sessionSubID/:answerExpireTime',
 			component: AccountChatComponent,
 			data: {
-				answering: true,
 				callType: 'audio',
 				ephemeralSubSession: true
 			}
@@ -109,10 +108,9 @@ export const account: Route	= {
 			}
 		},
 		{
-			path: 'call/:contactID/:sessionSubID/answer',
+			path: 'call/:contactID/:sessionSubID/:answerExpireTime',
 			component: AccountChatComponent,
 			data: {
-				answering: true,
 				callType: 'audio',
 				cancelRedirectsHome: true,
 				ephemeralSubSession: true
@@ -262,10 +260,9 @@ export const account: Route	= {
 			}
 		},
 		{
-			path: 'video/:contactID/:sessionSubID/answer',
+			path: 'video/:contactID/:sessionSubID/:answerExpireTime',
 			component: AccountChatComponent,
 			data: {
-				answering: true,
 				callType: 'video',
 				ephemeralSubSession: true
 			}

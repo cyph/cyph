@@ -29,7 +29,7 @@ import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
-import {getDateTimeString} from '../../util/time';
+import {getDateTimeString, getTimestamp} from '../../util/time';
 import {sleep} from '../../util/wait';
 
 
@@ -98,9 +98,6 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		new BehaviorSubject<string|undefined>(undefined)
 	;
 
-	/** Max ring time. */
-	public readonly ringTimeout: number		= 60000;
-
 	/** Sub-session ID. */
 	public readonly sessionSubID			= new BehaviorSubject<string|undefined>(undefined);
 
@@ -141,18 +138,23 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		this.subscriptions.push(this.accountService.combinedRouteData(
 			this.activatedRoute
 		).subscribe(async ([
-			{answering, callType, defaultSessionSubID, ephemeralSubSession, promptFollowup},
-			{appointmentID, contactID, sessionSubID, username},
+			{callType, defaultSessionSubID, ephemeralSubSession, promptFollowup},
+			{answerExpireTime, appointmentID, contactID, sessionSubID, username},
 			[{path}]
 		]: [
 			{
-				answering?: boolean;
 				callType?: 'audio'|'video';
 				defaultSessionSubID?: string;
 				ephemeralSubSession?: boolean;
 				promptFollowup?: boolean;
 			},
-			{appointmentID?: string; contactID?: string; sessionSubID?: string; username?: string},
+			{
+				answerExpireTime?: number;
+				appointmentID?: string;
+				contactID?: string;
+				sessionSubID?: string;
+				username?: string;
+			},
 			UrlSegment[]
 		/* tslint:disable-next-line:cyclomatic-complexity */
 		]) => lock(async () => {
@@ -160,7 +162,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				return;
 			}
 
-			this.answering.next(answering === true);
+			this.answering.next(answerExpireTime !== undefined);
 
 			try {
 				if (username) {
@@ -236,6 +238,15 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
+				if (
+					answerExpireTime !== undefined &&
+					answerExpireTime > (await getTimestamp())
+				) {
+					this.dialogService.toast(this.stringsService.p2pTimeoutIncoming, 3000);
+					this.router.navigate([accountRoot, 'messages', contactID]);
+					return;
+				}
+
 				if (defaultSessionSubID && !sessionSubID) {
 					sessionSubID	= defaultSessionSubID;
 				}
@@ -276,7 +287,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
-				sleep(this.ringTimeout).then(() => {
+				sleep(this.accountP2PService.ringTimeout).then(() => {
 					if (
 						this.destroyed ||
 						this.p2pWebRTCService.loading.value ||
@@ -285,7 +296,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 						return;
 					}
 
-					this.dialogService.toast(this.stringsService.p2pTimeout, 3000);
+					this.dialogService.toast(this.stringsService.p2pTimeoutOutgoing, 3000);
 					this.p2pWebRTCService.close();
 				});
 

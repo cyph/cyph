@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {NotificationTypes} from '../proto';
-import {ISessionMessageData, rpcEvents} from '../session';
+import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
-import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -22,12 +21,8 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountP2PService extends P2PService {
-	/** @ignore */
-	private getCallURL (callType: 'audio'|'video', contactID: string, id: string) : string {
-		return (
-			`#${accountRoot}${accountRoot === '' ? '' : '/'}${callType}/${contactID}/${id}/answer`
-		);
-	}
+	/** Max ring time. */
+	public readonly ringTimeout: number	= 60000;
 
 	/** @ignore */
 	protected async request (callType: 'audio'|'video') : Promise<void> {
@@ -55,40 +50,20 @@ export class AccountP2PService extends P2PService {
 		}
 
 		const id		= uuid();
-		const messageID	= uuid();
 		const username	= this.accountSessionService.remoteUser.value.username;
-		const contactID	= await this.accountSessionService.remoteUser.value.contactID;
-
-		await (await this.accountSessionService.send([
-			rpcEvents.accountP2P,
-			{command: {
-				additionalData: `${id}\n${messageID}`,
-				method: callType
-			}}
-		])).confirmPromise;
 
 		await Promise.all([
-			this.accountSessionService.remoteUser.value.accountUserProfile.getValue().then(
-				async ({realUsername}) => this.chatService.addMessage({
-					value: `${this.stringsService.youInvited} ${realUsername} ${
-						this.stringsService.toA
-					} ${
-						callType === 'video' ?
-							this.stringsService.videoCall :
-							this.stringsService.audioCall
-					}.`
-				})
-			),
-			this.accountContactsService.getCastleSessionID(username).then(async castleSessionID =>
+			getTimestamp().then(async timestamp =>
 				this.accountDatabaseService.notify(
 					username,
-					NotificationTypes.Message,
-					{castleSessionID, id: messageID}
+					NotificationTypes.Call,
+					{callType, expires: timestamp + this.ringTimeout, id}
 				)
+			),
+			this.accountSessionService.remoteUser.value.contactID.then(async contactID =>
+				this.router.navigate([accountRoot, route, contactID, id])
 			)
 		]);
-
-		await this.router.navigate([accountRoot, route, contactID, id]);
 	}
 
 	/** @inheritDoc */
@@ -113,6 +88,11 @@ export class AccountP2PService extends P2PService {
 		}
 	}
 
+	/** Gets URL to answer call. */
+	public getCallURL (callType: 'audio'|'video', contactID: string, id: string) : string[] {
+		return [accountRoot, callType, contactID, id, 'answer'];
+	}
+
 	/** @inheritDoc */
 	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
 		await super.init(localVideo, remoteVideo);
@@ -135,9 +115,6 @@ export class AccountP2PService extends P2PService {
 		private readonly router: Router,
 
 		/** @ignore */
-		private readonly accountContactsService: AccountContactsService,
-
-		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
@@ -151,41 +128,6 @@ export class AccountP2PService extends P2PService {
 			sessionCapabilitiesService,
 			sessionInitService,
 			stringsService
-		);
-
-		this.accountSessionService.on(
-			rpcEvents.accountP2P,
-			async (newEvents: ISessionMessageData[]) => {
-				for (const o of newEvents) {
-					if (!(
-						o.command &&
-						o.command.additionalData &&
-						(o.command.method === 'audio' || o.command.method === 'video') &&
-						this.accountSessionService.remoteUser.value
-					)) {
-						continue;
-					}
-
-					const [id, messageID]	= (o.command.additionalData || '').split('\n');
-					const callType			= o.command.method;
-
-					const [contactID, {realUsername}]	= await Promise.all([
-						this.accountSessionService.remoteUser.value.contactID,
-						this.accountSessionService.remoteUser.value.accountUserProfile.getValue()
-					]);
-
-					this.chatService.addMessage({
-						id: messageID,
-						value: `${realUsername} ${this.stringsService.hasInvitedYouToA} ${
-							callType === 'video' ?
-								this.stringsService.videoCall :
-								this.stringsService.audioCall
-						}. [${this.stringsService.clickHere}](${
-							this.getCallURL(callType, contactID, id)
-						}) ${this.stringsService.toJoin}.`
-					});
-				}
-			}
 		);
 	}
 }

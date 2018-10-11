@@ -73,16 +73,20 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.cancelFAB Currently unsupported (ignored).
 	 * @param o.markdown Currently unsupported (ignored).
+	 * @param o.okFAB Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async confirm (
 		o: {
 			cancel?: string;
+			cancelFAB?: string;
 			content: string;
 			markdown?: boolean;
 			ok?: string;
+			okFAB?: string;
 			timeout?: number;
 			title?: string;
 		},

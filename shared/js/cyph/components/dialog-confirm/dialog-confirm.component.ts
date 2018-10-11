@@ -32,6 +32,9 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 	/** Cancel button text. */
 	public cancel?: string;
 
+	/** Cancel button FAB icon. */
+	public cancelFAB?: string;
+
 	/** Content. */
 	public content?: string;
 
@@ -46,6 +49,9 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 
 	/** OK button text. */
 	public ok?: string;
+
+	/** OK button FAB icon. */
+	public okFAB?: string;
 
 	/** If not undefined, will prompt for input. */
 	public prompt?: string;

@@ -454,6 +454,11 @@ exports.userNotification	= functions.database.ref(
 						subject: `Calendar Invite from ${senderUsername}`,
 						text: `${targetName}, ${senderName} has sent an appointment request.`
 					} :
+				notification.type === NotificationTypes.Call ?
+					{
+						subject: `Incoming Call from ${senderUsername}`,
+						text: `${targetName}, ${senderUsername} is calling you.`
+					} :
 				notification.type === NotificationTypes.ContactAccept ?
 					{
 						subject: `Contact Confirmation from ${senderUsername}`,
@@ -493,7 +498,7 @@ exports.userNotification	= functions.database.ref(
 			);
 		})(),
 		(async () => {
-			if (!metadata.id) {
+			if (!metadata.id || typeof metadata.id !== 'string' || metadata.id.indexOf('_') > -1) {
 				return;
 			}
 
@@ -506,6 +511,20 @@ exports.userNotification	= functions.database.ref(
 			;
 
 			const path		=
+				(
+					notification.type === NotificationTypes.Call &&
+					(metadata.callType === 'audio' || metadata.callType === 'video') &&
+					(typeof metadata.expires === 'number' && metadata.expires > Date.now())
+				) ?
+					`incomingCalls/${
+						metadata.callType
+					}_${
+						senderUsername
+					}_${
+						metadata.id
+					}_${
+						metadata.expires.toString()
+					}` :
 				notification.type === NotificationTypes.File ?
 					!(await hasFile()) ?
 						(

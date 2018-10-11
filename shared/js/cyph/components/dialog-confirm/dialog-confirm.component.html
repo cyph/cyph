@@ -43,12 +43,26 @@
 	</ng-template>
 </div>
 <div mat-dialog-actions fxLayoutAlign='end center'>
-	<button mat-button class='cancel' (click)='close(false)'>{{cancel}}</button>
+	<button mat-button (click)='close(false)' *ngIf='!cancelFAB'>
+		{{cancel}}
+	</button>
+	<button mat-fab [matTooltip]='cancel' (click)='close(false)' *ngIf='!!cancelFAB'>
+		<mat-icon>{{cancelFAB}}</mat-icon>
+	</button>
+
 	<button
 		mat-button
-		class='ok'
 		(click)='dynamicForm ? dynamicForm.onSubmit() : close(true)'
+		*ngIf='!okFAB'
 	>
 		{{ok}}
+	</button>
+	<button
+		mat-fab
+		[matTooltip]='ok'
+		(click)='dynamicForm ? dynamicForm.onSubmit() : close(true)'
+		*ngIf='!!okFAB'
+	>
+		<mat-icon>{{okFAB}}</mat-icon>
 	</button>
 </div>
