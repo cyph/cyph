@@ -86,6 +86,15 @@ export const account: Route	= {
 			}
 		},
 		{
+			path: 'audio/:contactID/:sessionSubID/answer',
+			component: AccountChatComponent,
+			data: {
+				answering: true,
+				callType: 'audio',
+				ephemeralSubSession: true
+			}
+		},
+		{
 			path: 'call/:contactID',
 			component: AccountChatComponent,
 			data: {callType: 'audio'}
@@ -94,6 +103,16 @@ export const account: Route	= {
 			path: 'call/:contactID/:sessionSubID',
 			component: AccountChatComponent,
 			data: {
+				callType: 'audio',
+				cancelRedirectsHome: true,
+				ephemeralSubSession: true
+			}
+		},
+		{
+			path: 'call/:contactID/:sessionSubID/answer',
+			component: AccountChatComponent,
+			data: {
+				answering: true,
 				callType: 'audio',
 				cancelRedirectsHome: true,
 				ephemeralSubSession: true
@@ -238,6 +257,15 @@ export const account: Route	= {
 			path: 'video/:contactID/:sessionSubID',
 			component: AccountChatComponent,
 			data: {
+				callType: 'video',
+				ephemeralSubSession: true
+			}
+		},
+		{
+			path: 'video/:contactID/:sessionSubID/answer',
+			component: AccountChatComponent,
+			data: {
+				answering: true,
 				callType: 'video',
 				ephemeralSubSession: true
 			}

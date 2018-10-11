@@ -24,7 +24,8 @@
 			<ng-container *ngIf='participantsByType | async as participants'>
 				<div fxLayoutAlign='center center' *ngIf='!telehealthAppointment'>
 					<h1 *ngIf='(chatService.remoteUser | async)?.name | async as name'>
-						<span cyphTranslate>Calling</span>
+						<span cyphTranslate *ngIf='answering'>Answering</span>
+						<span cyphTranslate *ngIf='!answering'>Calling</span>
 						&ngsp;
 						<span>{{name}}...</span>
 					</h1>

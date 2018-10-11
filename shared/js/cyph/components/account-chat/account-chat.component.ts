@@ -53,6 +53,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes		= AccountUserTypes;
 
+	/** Indicates whether this user is the call recipient. */
+	public readonly answering				= new BehaviorSubject<boolean>(false);
+
 	/** Appointment data, when applicable. */
 	public readonly appointment				=
 		new BehaviorSubject<(IAppointment&{id: string})|undefined>(undefined)
@@ -138,11 +141,12 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		this.subscriptions.push(this.accountService.combinedRouteData(
 			this.activatedRoute
 		).subscribe(async ([
-			{callType, defaultSessionSubID, ephemeralSubSession, promptFollowup},
+			{answering, callType, defaultSessionSubID, ephemeralSubSession, promptFollowup},
 			{appointmentID, contactID, sessionSubID, username},
 			[{path}]
 		]: [
 			{
+				answering?: boolean;
 				callType?: 'audio'|'video';
 				defaultSessionSubID?: string;
 				ephemeralSubSession?: boolean;
@@ -155,6 +159,8 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 			if (this.destroyed) {
 				return;
 			}
+
+			this.answering.next(answering === true);
 
 			try {
 				if (username) {

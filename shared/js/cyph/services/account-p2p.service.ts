@@ -24,7 +24,9 @@ import {StringsService} from './strings.service';
 export class AccountP2PService extends P2PService {
 	/** @ignore */
 	private getCallURL (callType: 'audio'|'video', contactID: string, id: string) : string {
-		return `#${accountRoot}${accountRoot === '' ? '' : '/'}${callType}/${contactID}/${id}`;
+		return (
+			`#${accountRoot}${accountRoot === '' ? '' : '/'}${callType}/${contactID}/${id}/answer`
+		);
 	}
 
 	/** @ignore */

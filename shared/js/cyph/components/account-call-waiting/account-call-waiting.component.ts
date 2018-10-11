@@ -40,7 +40,10 @@ implements AfterViewInit, OnChanges {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes				= AccountUserTypes;
 
-	/** @see AccountChatComponent */
+	/** @see AccountChatComponent.answering */
+	@Input() public answering: boolean				= false;
+
+	/** @see AccountChatComponent.appointment */
 	@Input() public appointment?: IAppointment&{id: string};
 
 	/** @see AccountUserTypes */
