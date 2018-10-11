@@ -2,9 +2,9 @@
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, Observable, ReplaySubject, Subject, Subscription} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
-import * as SimpleWebRTC from 'simplewebrtc';
+import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
+import {take} from 'rxjs/operators';
+import SimplePeer from 'simple-peer';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
@@ -28,6 +28,19 @@ import {SessionService} from './session.service';
 /** @inheritDoc */
 @Injectable()
 export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService {
+	/** Constant values used by P2P. */
+	public static readonly constants			= {
+		accept: 'accept',
+		decline: 'decline',
+		kill: 'kill',
+		requestCall: 'requestCall',
+		webRTC: 'webRTC'
+	};
+
+	/** Indicates whether WebRTC is supported in the current environment. */
+	public static readonly isSupported: boolean	= SimplePeer.WEBRTC_SUPPORT;
+
+
 	/** @ignore */
 	private readonly _CHAT_SERVICE	= resolvable<ChatService>();
 
@@ -42,32 +55,6 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 
 	/** @ignore */
 	private readonly _REMOTE_VIDEO	= resolvable<() => JQuery>();
-
-	/** Constant values used by P2P. */
-	public static readonly constants	= {
-		accept: 'accept',
-		decline: 'decline',
-		kill: 'kill',
-		requestCall: 'requestCall',
-		webRTC: 'webRTC'
-	};
-
-	/** Indicates whether WebRTC is supported in the current environment. */
-	public static readonly isSupported: boolean	=
-		/* Temporarily blocking Edge until issue resolved in simplewebrtc/webrtc-adapter */
-		!(env.environment.production && env.isEdge) &&
-		/* Temporarily blocking Safari until it works */
-		!(env.environment.production && env.isSafari) &&
-		(() => {
-			try {
-				return new SimpleWebRTC({connection: {on: () => {}}}).capabilities.support;
-			}
-			catch {
-				return false;
-			}
-		})()
-	;
-
 
 	/** @ignore */
 	private readonly chatService: Promise<ChatService>	= this._CHAT_SERVICE.promise;
@@ -99,12 +86,15 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 			this.outgoingStream.next({audio: false, video: false});
 
 			if (this.webRTC.value) {
-				this.webRTC.value.mute();
-				this.webRTC.value.pauseVideo();
-				this.webRTC.value.stopLocalVideo();
-				this.webRTC.value.leaveRoom();
-				this.webRTC.value.disconnect();
+				for (const track of [
+					...this.webRTC.value.localStream.getAudioTracks(),
+					...this.webRTC.value.localStream.getVideoTracks()
+				]) {
+					track.enabled	= false;
+					track.stop();
+				}
 
+				this.webRTC.value.peer.destroy();
 				this.webRTC.next(undefined);
 				this.disconnectInternal.next();
 			}
@@ -119,15 +109,8 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 			}
 		},
 
-		webRTC: async (
-			data: {args: any[]; event: string},
-			waitForWebRTC: boolean = true
-		) : Promise<void> => {
-			if (waitForWebRTC) {
-				await this.getWebRTC();
-			}
-
-			this.webRTCEvents.next(data);
+		webRTC: async (data: SimplePeer.SignalData) : Promise<void> => {
+			(await this.getWebRTC()).peer.signal(data);
 		}
 	};
 
@@ -214,11 +197,11 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 	private readonly toggleLock						= lockFunction();
 
 	/** @ignore */
-	private readonly webRTC							= new BehaviorSubject<any>(undefined);
-
-	/** @ignore */
-	private readonly webRTCEvents					=
-		new ReplaySubject<{args: any[]; event: string}>()
+	private readonly webRTC							=
+		new BehaviorSubject<undefined|{
+			localStream: MediaStream;
+			peer: SimplePeer.Instance;
+		}>(undefined)
 	;
 
 	/** @inheritDoc */
@@ -256,20 +239,8 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 	public readonly videoEnabled					= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
-	private async getWebRTC () : Promise<any> {
+	private async getWebRTC () : Promise<{localStream: MediaStream; peer: SimplePeer.Instance}> {
 		return this.webRTC.pipe(filterUndefinedOperator(), take(1)).toPromise();
-	}
-
-	/** @ignore */
-	private async handleLoadingEvent (
-		webRTC: {on: (event: string, f: () => void) => void},
-		event: {name: string; occurred: boolean},
-		value: number|(() => void)
-	) : Promise<void> {
-		event.occurred	= false;
-		webRTC.on(event.name, typeof value === 'function' ? value : async () =>
-			this.progressUpdate(event, value)
-		);
 	}
 
 	/** @ignore */
@@ -469,106 +440,80 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 				return this.close();
 			}
 
-			const webRTC	= new SimpleWebRTC({
-				adjustPeerVolume: false,
-				autoRemoveVideos: true,
-				autoRequestMedia: false,
-				connection: {
-					disconnect: () => {
-						for (const subscription of webRTCSubscriptions) {
-							subscription.unsubscribe();
-						}
-					},
-					emit: (event: string, ...args: any[]) => {
-						const lastArg: any	= args.slice(-1)[0];
+			const localStream		=
+				await navigator.mediaDevices.getUserMedia(this.outgoingStream.value)
+			;
 
-						if (event === 'join' && typeof lastArg === 'function') {
-							lastArg(undefined, {clients: {friend: {video: true}}});
-						}
-						else if (
-							event === 'message' &&
-							typeof lastArg === 'object' &&
-							lastArg.type === 'connectivityError'
-						) {
-							this.close();
-						}
-						else {
-							this.sessionService.send([rpcEvents.p2p, {command: {
-								additionalData: p2pSessionData.id,
-								argument: msgpack.encode({args, event}),
-								method: P2PWebRTCService.constants.webRTC
-							}}]);
-						}
-					},
-					getSessionid: () => p2pSessionData.id,
-					on: (event: string, callback: Function) => {
-						webRTCSubscriptions.push(this.webRTCEvents.
-							pipe(filter(e => e.event === event)).
-							subscribe(({args}) => {
-								/* http://www.kapejod.org/en/2014/05/28/ */
-								if (event === 'message' && args[0].type === 'offer') {
-									args[0].payload.sdp	= (<string> args[0].payload.sdp).
-										split('\n').
-										filter(s => s.indexOf('ssrc-audio-level') < 0).
-										join('\n')
-									;
-								}
+			const localVideo		= <HTMLVideoElement> $localVideo[0];
+			localVideo.srcObject	= localStream;
+			localVideo.play();
 
-								callback.apply(webRTC, args);
-							})
-						);
-					}
-				},
-				debug: env.debugLog,
-				localVideoEl: $localVideo[0],
-				media: this.outgoingStream.value,
-				peerConnectionConfig:
-					!this.sessionService.apiFlags.disableP2P ?
-						{iceServers} :
-						{iceServers, iceTransportPolicy: 'relay'}
+			const peer				= new SimplePeer({
+				channelName: p2pSessionData.id,
+				config: !this.sessionService.apiFlags.disableP2P ?
+					{iceServers} :
+					{iceServers, iceTransportPolicy: 'relay'}
 				,
-				remoteVideosEl: $remoteVideo[0]
+				initiator: p2pSessionData.isAlice,
+				sdpTransform: (sdp: any) : any =>
+					/* http://www.kapejod.org/en/2014/05/28 */
+					typeof sdp === 'string' ?
+						sdp.split('\n').filter(s => s.indexOf('ssrc-audio-level') < 0).join('\n') :
+						sdp
+				,
+				stream: localStream
 			});
 
-			webRTC.connection.on(
-				'streamUpdate',
-				(incomingStream: {audio: boolean; video: boolean}) => {
-					this.incomingStream.next({
-						audio: !!incomingStream.audio,
-						video: !!incomingStream.video
-					});
+			peer.on('close', () => {
+				for (const subscription of webRTCSubscriptions) {
+					subscription.unsubscribe();
 				}
-			);
+				this.close();
+			});
 
-			webRTC.on('localMediaError', () => {
+			peer.on('connect', () => {
+				this.progressUpdate(this.loadingEvents.connectionReady, 40);
+			});
+
+			peer.on('data', (data: any) => {
+				try {
+					const o	= msgpack.decode(data);
+					this.incomingStream.next({audio: !!o.audio, video: !!o.video});
+				}
+				catch {}
+			});
+
+			peer.on('error', () => {
 				this.localMediaError.next(true);
 			});
 
-			this.handleLoadingEvent(webRTC, this.loadingEvents.readyToCall, () => {
-				webRTC.joinRoom(P2PWebRTCService.constants.webRTC);
+			peer.on('signal', (data: SimplePeer.SignalData) => {
+				this.sessionService.send([rpcEvents.p2p, {command: {
+					additionalData: p2pSessionData.id,
+					argument: msgpack.encode(data),
+					method: P2PWebRTCService.constants.webRTC
+				}}]);
 			});
 
-			this.handleLoadingEvent(webRTC, this.loadingEvents.started, 10);
-			this.handleLoadingEvent(webRTC, this.loadingEvents.localStream, 20);
-			this.handleLoadingEvent(webRTC, this.loadingEvents.connectionReady, 40);
-			this.handleLoadingEvent(webRTC, this.loadingEvents.createdPeer, 60);
-			this.handleLoadingEvent(webRTC, this.loadingEvents.joinedRoom, 75);
+			peer.on('stream', async (remoteStream: MediaStream) => {
+				this.incomingStream.next({
+					audio: remoteStream.getAudioTracks().length > 0,
+					video: remoteStream.getVideoTracks().length > 0
+				});
 
-			this.handleLoadingEvent(webRTC, this.loadingEvents.finished, async () => {
+				const remoteVideo		= document.createElement('video');
+				remoteVideo.srcObject	= remoteStream;
+				$remoteVideo.empty();
+				$remoteVideo[0].appendChild(remoteVideo);
+				remoteVideo.play();
+
 				await handlers.loaded();
+				this.progressUpdate(this.loadingEvents.finished, 100);
 				this.loading.next(false);
-				await this.progressUpdate(this.loadingEvents.finished, 100);
-				this.toggle('audio', !handlers.audioDefaultEnabled());
 			});
-
-			webRTC.startLocalVideo();
-
-			if (!p2pSessionData.isAlice) {
-				await this.commands.webRTC({args: [p2pSessionData.id], event: 'connect'}, false);
-			}
 
 			handlers.connected(true);
-			this.webRTC.next(webRTC);
+			this.webRTC.next({localStream, peer});
 
 			this.initialCallPending.next(false);
 		});
@@ -638,12 +583,8 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 
 				if (this.outgoingStream.value.audio !== audio) {
 					this.outgoingStream.next({...this.outgoingStream.value, audio});
-
-					if (audio) {
-						webRTC.unmute();
-					}
-					else {
-						webRTC.mute();
+					for (const track of webRTC.localStream.getAudioTracks()) {
+						track.enabled	= audio;
 					}
 				}
 			}
@@ -656,17 +597,13 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 
 				if (this.outgoingStream.value.video !== video) {
 					this.outgoingStream.next({...this.outgoingStream.value, video});
-
-					if (video) {
-						webRTC.resumeVideo();
-					}
-					else {
-						webRTC.pauseVideo();
+					for (const track of webRTC.localStream.getVideoTracks()) {
+						track.enabled	= video;
 					}
 				}
 			}
 
-			webRTC.connection.emit('streamUpdate', this.outgoingStream.value);
+			webRTC.peer.send(msgpack.encode(this.outgoingStream.value));
 		});
 	}
 

@@ -97,6 +97,7 @@ read -r -d '' modules <<- EOM
 	@types/pdfjs-dist
 	@types/pdfkit
 	@types/quill
+	@types/simple-peer
 	@types/stacktrace-js
 	@types/video.js
 	@yaga/leaflet-ng2
