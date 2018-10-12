@@ -4,6 +4,7 @@ import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
+import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
@@ -85,7 +86,11 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 
 			instance.cancelFAB			= o.cancelFAB;
 
-			instance.fabAvatar			= o.fabAvatar;
+			instance.fabAvatar			=
+				o.fabAvatar instanceof Observable || o.fabAvatar instanceof Promise ?
+					o.fabAvatar :
+					Promise.resolve(o.fabAvatar)
+			;
 
 			instance.form				= o.form;
 
