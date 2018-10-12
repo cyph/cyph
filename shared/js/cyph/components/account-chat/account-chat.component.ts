@@ -240,7 +240,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 				if (
 					answerExpireTime !== undefined &&
-					answerExpireTime > (await getTimestamp())
+					(await getTimestamp()) > answerExpireTime
 				) {
 					this.dialogService.toast(this.stringsService.p2pTimeoutIncoming, 3000);
 					this.router.navigate([accountRoot, 'messages', contactID]);
