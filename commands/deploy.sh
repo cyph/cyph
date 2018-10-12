@@ -895,6 +895,10 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 	)};`)'
 
 	npm install
+
+	# Workaround for Firebase bug
+	sed -i 's|navigator.appName|global.BALLS|g' node_modules/jsbn/index.js
+
 	cp ../../modules/database-service.js ~/.cyph/email-credentials.js ./
 	html-minifier --collapse-whitespace --minify-css --remove-comments email.html -o email.html
 
