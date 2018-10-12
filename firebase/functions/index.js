@@ -510,13 +510,13 @@ exports.userNotification	= functions.database.ref(
 				).exists()
 			;
 
-			const path		=
+			const [child, path]		=
 				(
 					notification.type === NotificationTypes.Call &&
 					(metadata.callType === 'audio' || metadata.callType === 'video') &&
 					(typeof metadata.expires === 'number' && metadata.expires > Date.now())
 				) ?
-					`incomingCalls/${
+					[false, `incomingCalls/${
 						metadata.callType
 					}_${
 						username
@@ -524,9 +524,9 @@ exports.userNotification	= functions.database.ref(
 						metadata.id
 					}_${
 						metadata.expires.toString()
-					}` :
+					}`] :
 				notification.type === NotificationTypes.File ?
-					!(await hasFile()) ?
+					[true, !(await hasFile()) ?
 						(
 							'unreadFiles/' + (
 								(
@@ -538,17 +538,17 @@ exports.userNotification	= functions.database.ref(
 							).toString()
 						) :
 						undefined
-					:
+					] :
 				notification.type === NotificationTypes.Message && metadata.castleSessionID ?
-					`unreadMessages/${metadata.castleSessionID}` :
-					undefined
+					[true, `unreadMessages/${metadata.castleSessionID}`] :
+					[]
 			;
 
 			if (!path) {
 				return;
 			}
 
-			await database.ref(`${userPath}/${path}/${metadata.id}`).set({
+			await database.ref(`${userPath}/${path}${child ? `/${metadata.id}` : ''}`).set({
 				data: '',
 				hash: '',
 				timestamp: admin.database.ServerValue.TIMESTAMP

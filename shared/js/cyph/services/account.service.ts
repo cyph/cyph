@@ -83,13 +83,6 @@ export class AccountService extends BaseProvider {
 		)
 	;
 
-	/** Incoming call requests. */
-	public readonly incomingCalls						= this.accountDatabaseService.getAsyncMap(
-		'incomingCalls',
-		NeverProto,
-		SecurityModels.unprotected
-	);
-
 	/** Indicates the status of the interstitial. */
 	public readonly interstitial						= new BehaviorSubject<boolean>(false);
 
@@ -277,6 +270,80 @@ export class AccountService extends BaseProvider {
 		this.transitionInternal.next(false);
 	}
 
+	/** Runs on user login. */
+	public async userInit () : Promise<void> {
+		await this.accountDatabaseService.currentUserFiltered.pipe(take(1)).toPromise();
+
+		const incomingCalls			= this.accountDatabaseService.getAsyncMap(
+			'incomingCalls',
+			NeverProto,
+			SecurityModels.unprotected
+		);
+
+		const respondedCallRequests	= new Set<string>();
+
+		this.subscriptions.push(incomingCalls.watchKeys().subscribe(async keys => {
+			for (const k of keys) {
+				if (respondedCallRequests.has(k)) {
+					continue;
+				}
+
+				try {
+					const [callType, username, id, expiresString]	= k.split('_');
+					const expires	= toInt(expiresString);
+					const timestamp	= await getTimestamp();
+
+
+					if (
+						(callType !== 'audio' && callType !== 'video') ||
+						!username ||
+						!id ||
+						isNaN(expires) ||
+						timestamp >= expires
+					) {
+						continue;
+					}
+
+					const user	= await this.accountUserLookupService.getUser(username);
+					if (!user) {
+						continue;
+					}
+
+					const {name, realUsername}	= await user.accountUserProfile.getValue();
+
+					const answered	= await this.dialogService.confirm({
+						bottomSheet: true,
+						cancel: this.stringsService.decline,
+						cancelFAB: 'close',
+						content: `${name} (@${realUsername})`,
+						fabAvatar: user.avatar,
+						ok: this.stringsService.answer,
+						okFAB: 'phone',
+						timeout: expires - timestamp,
+						title: callType === 'audio' ?
+							this.stringsService.incomingCallAudio :
+							this.stringsService.incomingCallVideo
+					});
+
+					if (answered) {
+						this.router.navigate([
+							accountRoot,
+							callType,
+							await user.contactID,
+							id,
+							expiresString
+						]);
+					}
+				}
+				catch {}
+				finally {
+					respondedCallRequests.add(k);
+					incomingCalls.removeItem(k).catch(() => {});
+				}
+			}
+		}));
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
@@ -345,6 +412,8 @@ export class AccountService extends BaseProvider {
 				this.interstitial.next(false);
 			};
 		}
+
+		this.userInit();
 
 		if (this.envService.isWeb && !this.envService.isCordova) {
 			self.addEventListener('popstate', () => {
@@ -533,70 +602,6 @@ export class AccountService extends BaseProvider {
 						'100%' :
 						this.menuExpandedMinWidthPX
 		));
-
-
-		const respondedCallRequests	= new Set<string>();
-
-		this.subscriptions.push(this.incomingCalls.watchKeys().subscribe(async keys => {
-			for (const k of keys) {
-				if (respondedCallRequests.has(k)) {
-					continue;
-				}
-
-				try {
-					const [callType, username, id, expiresString]	= k.split('_');
-					const expires	= toInt(expiresString);
-					const timestamp	= await getTimestamp();
-
-
-					if (
-						(callType !== 'audio' && callType !== 'video') ||
-						!username ||
-						!id ||
-						isNaN(expires) ||
-						timestamp >= expires
-					) {
-						continue;
-					}
-
-					const user	= await this.accountUserLookupService.getUser(username);
-					if (!user) {
-						continue;
-					}
-
-					const {name, realUsername}	= await user.accountUserProfile.getValue();
-
-					const answered	= await this.dialogService.confirm({
-						bottomSheet: true,
-						cancel: this.stringsService.decline,
-						cancelFAB: 'close',
-						content: `${name} (@${realUsername})`,
-						fabAvatar: user.avatar,
-						ok: this.stringsService.answer,
-						okFAB: 'phone',
-						timeout: expires - timestamp,
-						title: callType === 'audio' ?
-							this.stringsService.incomingCallAudio :
-							this.stringsService.incomingCallVideo
-					});
-
-					if (answered) {
-						this.router.navigate([
-							accountRoot,
-							callType,
-							await user.contactID,
-							id,
-							expiresString
-						]);
-					}
-				}
-				catch {}
-				finally {
-					respondedCallRequests.add(k);
-					this.incomingCalls.removeItem(k).catch(() => {});
-				}
-			}
-		}));
 
 
 		let lastSection	= '';
