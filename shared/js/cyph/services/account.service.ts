@@ -571,6 +571,7 @@ export class AccountService extends BaseProvider {
 						cancel: this.stringsService.decline,
 						cancelFAB: 'close',
 						content: `${name} (@${realUsername})`,
+						fabAvatar: user.avatar,
 						ok: this.stringsService.answer,
 						okFAB: 'phone',
 						timeout: expires - timestamp,

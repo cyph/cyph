@@ -9,6 +9,8 @@ import {
 } from '@angular/core';
 import {MatBottomSheetRef} from '@angular/material/bottom-sheet';
 import {MatDialogRef} from '@angular/material/dialog';
+import {SafeUrl} from '@angular/platform-browser';
+import {Async} from '../../async-type';
 import {BaseProvider} from '../../base-provider';
 import {IForm} from '../../proto';
 import {StringsService} from '../../services/strings.service';
@@ -41,6 +43,9 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 	/** @see DynamicFormComponent */
 	@ViewChild(DynamicFormComponent) public dynamicForm?: DynamicFormComponent;
 
+	/** Avatar to put in betwen FAB buttons. */
+	public fabAvatar?: Async<SafeUrl|string>;
+
 	/** Form for prompt. If defined, will render and return response. */
 	public form?: IForm;
 
@@ -70,6 +75,11 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 		else if (this.matBottomSheetRef) {
 			this.matBottomSheetRef.dismiss(ok);
 		}
+	}
+
+	/** Alternate UI based around FABs. */
+	public get fabMode () : boolean {
+		return !!(this.cancelFAB && this.okFAB);
 	}
 
 	/** @inheritDoc */

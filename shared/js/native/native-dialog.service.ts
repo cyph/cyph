@@ -5,6 +5,7 @@ import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
 import {alert, confirm, prompt} from 'tns-core-modules/ui/dialogs/dialogs';
 import {DialogMediaComponent} from './components/dialog-media';
+import {Async} from './js/cyph/async-type';
 import {BaseProvider} from './js/cyph/base-provider';
 import {IResolvable} from './js/cyph/iresolvable';
 import {LockFunction} from './js/cyph/lock-function-type';
@@ -73,7 +74,9 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.bottomSheet Currently unsupported (ignored).
 	 * @param o.cancelFAB Currently unsupported (ignored).
+	 * @param o.fabAvatar Currently unsupported (ignored).
 	 * @param o.markdown Currently unsupported (ignored).
 	 * @param o.okFAB Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
@@ -81,14 +84,16 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 */
 	public async confirm (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			cancelFAB?: string;
 			content: string;
+			fabAvatar?: Async<SafeUrl|string>;
 			markdown?: boolean;
 			ok?: string;
 			okFAB?: string;
 			timeout?: number;
-			title?: string;
+			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {

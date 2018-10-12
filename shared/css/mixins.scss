@@ -5,6 +5,8 @@ $accountPaddingLarge: 7.5vw;
 $accountPaddingMedium: 5vw;
 $accountPaddingSmall: 2.5vw;
 
+$default-white: map-get($mat-grey, 100);
+
 @mixin breathe {
 	@include animation-name(breathe !important);
 
@@ -347,6 +349,36 @@ $accountPaddingSmall: 2.5vw;
 
 	smd-fab-actions {
 		@include mat-button-theme($cyph-speed-dial-action-theme);
+	}
+
+	.green-button {
+		@include mat-button-theme(cyph-theme(
+			$cyph-white,
+			mat-palette($mat-green),
+			$cyph-warn,
+			$default-white,
+			$default-white,
+			true
+		));
+
+		button {
+			color: $default-white !important;
+		}
+	}
+
+	.red-button {
+		@include mat-button-theme(cyph-theme(
+			$cyph-white,
+			mat-palette($mat-red),
+			$cyph-warn,
+			$default-white,
+			$default-white,
+			true
+		));
+
+		button {
+			color: $default-white !important;
+		}
 	}
 
 	.alt {

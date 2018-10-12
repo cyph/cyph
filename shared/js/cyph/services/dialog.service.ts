@@ -1,6 +1,7 @@
 import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
+import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
@@ -36,6 +37,7 @@ export class DialogService extends BaseProvider {
 			cancel?: string;
 			cancelFAB?: string;
 			content: string;
+			fabAvatar?: Async<SafeUrl|string>;
 			markdown?: boolean;
 			ok?: string;
 			okFAB?: string;

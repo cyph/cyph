@@ -1,5 +1,5 @@
-<h1 matDialogTitle>{{title}}</h1>
-<div mat-dialog-content>
+<h1 matDialogTitle [class.text-center]='fabMode'>{{title}}</h1>
+<div mat-dialog-content [class.text-center]='fabMode'>
 	<cyph-markdown
 		[markdown]='content'
 		[targetSelf]='true'
@@ -42,7 +42,8 @@
 		</form>
 	</ng-template>
 </div>
-<div mat-dialog-actions fxLayoutAlign='end center'>
+
+<div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!fabMode'>
 	<button mat-button (click)='close(false)' *ngIf='!cancelFAB'>
 		{{cancel}}
 	</button>
@@ -65,4 +66,25 @@
 	>
 		<mat-icon>{{okFAB}}</mat-icon>
 	</button>
+</div>
+<div mat-dialog-actions class='fab-section' *ngIf='fabMode'>
+	<div fxFlex fxLayoutAlign='center center' class='red-button'>
+		<button mat-fab [matTooltip]='cancel' (click)='close(false)'>
+			<mat-icon>{{cancelFAB}}</mat-icon>
+		</button>
+	</div>
+
+	<div fxFlex fxLayoutAlign='center center' *ngIf='fabAvatar'>
+		<img class='fab-avatar' [src]='fabAvatar | async' alt='Avatar' cyphTranslate />
+	</div>
+
+	<div fxFlex fxLayoutAlign='center center' class='green-button'>
+		<button
+			mat-fab
+			[matTooltip]='ok'
+			(click)='dynamicForm ? dynamicForm.onSubmit() : close(true)'
+		>
+			<mat-icon>{{okFAB}}</mat-icon>
+		</button>
+	</div>
 </div>

@@ -5,6 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
 import {map} from 'rxjs/operators';
+import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
@@ -34,6 +35,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			cancel?: string;
 			cancelFAB?: string;
 			content: string;
+			fabAvatar?: Async<SafeUrl|string>;
 			form?: IForm;
 			ok?: string;
 			okFAB?: string;
@@ -82,6 +84,8 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			;
 
 			instance.cancelFAB			= o.cancelFAB;
+
+			instance.fabAvatar			= o.fabAvatar;
 
 			instance.form				= o.form;
 
@@ -189,12 +193,16 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	/** @inheritDoc */
 	public async confirm (
 		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
+			cancelFAB?: string;
 			content: string;
+			fabAvatar?: Async<SafeUrl|string>;
 			markdown?: boolean;
 			ok?: string;
+			okFAB?: string;
 			timeout?: number;
-			title?: string;
+			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
