@@ -534,6 +534,12 @@
 	}
 
 	&.audio-only {
+		&.mobile, &:not(.mobile) {
+			> .video-call.sidebar-open .buttons {
+				@include transform(none !important);
+			}
+		}
+
 		&:not(.mobile) {
 			.buttons {
 				bottom: 15vh;
