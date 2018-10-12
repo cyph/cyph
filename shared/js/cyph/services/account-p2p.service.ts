@@ -61,7 +61,7 @@ export class AccountP2PService extends P2PService {
 				)
 			),
 			this.accountSessionService.remoteUser.value.contactID.then(async contactID =>
-				this.router.navigate([accountRoot, route, contactID, id])
+				this.router.navigate([accountRoot, route, contactID, id], {replaceUrl: true})
 			)
 		]);
 	}
