@@ -22,7 +22,7 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountP2PService extends P2PService {
 	/** Max ring time. */
-	public readonly ringTimeout: number	= 60000;
+	public readonly ringTimeout: number	= 30000;
 
 	/** @ignore */
 	protected async request (callType: 'audio'|'video') : Promise<void> {
