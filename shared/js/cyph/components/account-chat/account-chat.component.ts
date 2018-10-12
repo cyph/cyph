@@ -287,6 +287,11 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
+				const callEndRoute	= appointmentID ?
+					[accountRoot, 'appointments', appointmentID, 'end'] :
+					[accountRoot, 'messages', contactID]
+				;
+
 				sleep(this.accountP2PService.ringTimeout).then(() => {
 					if (
 						this.destroyed ||
@@ -298,15 +303,12 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 					this.dialogService.toast(this.stringsService.p2pTimeoutOutgoing, 3000);
 					this.p2pWebRTCService.close();
+					this.router.navigate(callEndRoute);
 				});
 
 				this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
 					if (!this.destroyed) {
-						this.router.navigate(
-							appointmentID ?
-								[accountRoot, 'appointments', appointmentID, 'end'] :
-								[accountRoot, 'messages', contactID]
-						);
+						this.router.navigate(callEndRoute);
 
 						if (appointment && appointmentID) {
 							appointment.occurred	= true;
