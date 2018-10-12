@@ -405,7 +405,7 @@
 				}
 
 				.me {
-					@include transform(translateX(-25vw) scaleX(-1) !important);
+					@include transform(translateX(-25vw) !important);
 				}
 			}
 
@@ -463,7 +463,7 @@
 			}
 
 			.me {
-				@include transform(translateX(calc(65px - 100vw)) scaleX(-1) !important);
+				@include transform(translateX(calc(65px - 100vw)) !important);
 			}
 		}
 	}
