@@ -519,7 +519,7 @@ exports.userNotification	= functions.database.ref(
 					`incomingCalls/${
 						metadata.callType
 					}_${
-						senderUsername
+						username
 					}_${
 						metadata.id
 					}_${
