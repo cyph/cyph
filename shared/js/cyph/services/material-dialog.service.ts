@@ -4,7 +4,6 @@ import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
-import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
@@ -15,6 +14,7 @@ import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {IForm} from '../proto';
+import {asyncToObservable} from '../util/flatten-observable';
 import {lockFunction} from '../util/lock';
 import {resolvable, sleep} from '../util/wait';
 import {DialogService} from './dialog.service';
@@ -87,9 +87,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			instance.cancelFAB			= o.cancelFAB;
 
 			instance.fabAvatar			=
-				o.fabAvatar instanceof Observable || o.fabAvatar instanceof Promise ?
-					o.fabAvatar :
-					Promise.resolve(o.fabAvatar)
+				o.fabAvatar === undefined ? o.fabAvatar : asyncToObservable(o.fabAvatar)
 			;
 
 			instance.form				= o.form;

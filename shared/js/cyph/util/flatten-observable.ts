@@ -1,4 +1,5 @@
-import {BehaviorSubject, Observable, Observer, ReplaySubject, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Observer, of, ReplaySubject, Subscription} from 'rxjs';
+import {Async} from '../async-type';
 
 
 /** A possibly-async Observable. */
@@ -62,3 +63,8 @@ export const flattenObservable	= <T> (
 	const subscribe	= subscribeFactory(observable, subscriptions);
 	return new Observable<T>(observer => { subscribe(observer); });
 };
+
+/** Converts an Async value into an Observable. */
+export const asyncToObservable	= <T> (o: Async<T>) : Observable<T> =>
+	o instanceof Observable ? o : o instanceof Promise ? flattenObservable(o) : of(o)
+;
