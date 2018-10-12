@@ -9,6 +9,7 @@ import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
+import {QRService} from '../../services/qr.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {Timer} from '../../timer';
@@ -220,6 +221,9 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see QRService */
+		public readonly qrService: QRService,
 
 		/** @see SessionService */
 		public readonly sessionService: SessionService,

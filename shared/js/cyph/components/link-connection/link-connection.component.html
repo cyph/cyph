@@ -133,6 +133,22 @@
 
 	<ng-container *ngIf='!envService.isMobileOS'>
 		<br />
+
+		<div fxLayoutAlign='center center' *ngIf='envService.isLocalEnv'>
+			<img
+				cyphTranslate
+				alt='QR Code'
+				[src]='qrSrc'
+				*ngIf='
+					((qrService.getQRCode({
+						dotScale: 0.75,
+						size: 128,
+						text: (link | async)
+					}) | async) || "") as qrSrc
+				'
+			/>
+		</div>
+
 		<br />
 	</ng-container>
 

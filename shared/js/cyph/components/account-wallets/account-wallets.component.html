@@ -151,16 +151,17 @@
 							</h3>
 						</div>
 						<img
-							class='qr'
+							cyphTranslate
 							alt='QR Code'
-							[src]='
-								(qrService.getQRCode({
+							[src]='qrSrc'
+							*ngIf='
+								((qrService.getQRCode({
 									dotScale: 0.75,
 									size: 250,
 									text:
 										"bitcoin:" +
 										(cryptocurrencyService.getAddress(wallet.data) | async)
-								}) | async) || ""
+								}) | async) || "") as qrSrc
 							'
 						/>
 					</div>

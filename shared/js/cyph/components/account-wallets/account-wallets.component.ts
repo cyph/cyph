@@ -276,11 +276,11 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		/** @see EnvService */
 		public readonly envService: EnvService,
 
-		/** @see StringsService */
-		public readonly stringsService: StringsService,
-
 		/** @see QRService */
-		public readonly qrService: QRService
+		public readonly qrService: QRService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService
 	) {
 		super();
 	}
