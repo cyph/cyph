@@ -88,11 +88,6 @@ export class AccountP2PService extends P2PService {
 		}
 	}
 
-	/** Gets URL to answer call. */
-	public getCallURL (callType: 'audio'|'video', contactID: string, id: string) : string[] {
-		return [accountRoot, callType, contactID, id, 'answer'];
-	}
-
 	/** @inheritDoc */
 	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
 		await super.init(localVideo, remoteVideo);
