@@ -160,6 +160,10 @@ export class P2PService extends BaseProvider {
 
 	/** @ignore */
 	private async p2pWarningPersist (f: () => Promise<boolean>) : Promise<boolean> {
+		if (this.sessionInitService.ephemeral) {
+			return f();
+		}
+
 		let answer	=
 			await this.localStorageService.getItem('p2pWarning', BooleanProto).catch(() => false)
 		;
