@@ -283,6 +283,8 @@ export class AccountService extends BaseProvider {
 		const respondedCallRequests	= new Set<string>();
 
 		this.subscriptions.push(incomingCalls.watchKeys().subscribe(async keys => {
+			const removing	= [];
+
 			for (const k of keys) {
 				if (respondedCallRequests.has(k)) {
 					continue;
@@ -292,7 +294,6 @@ export class AccountService extends BaseProvider {
 					const [callType, username, id, expiresString]	= k.split('_');
 					const expires	= toInt(expiresString);
 					const timestamp	= await getTimestamp();
-
 
 					if (
 						(callType !== 'audio' && callType !== 'video') ||
@@ -309,7 +310,10 @@ export class AccountService extends BaseProvider {
 						continue;
 					}
 
-					const {name, realUsername}	= await user.accountUserProfile.getValue();
+					const [contactID, {name, realUsername}]	= await Promise.all([
+						user.contactID,
+						user.accountUserProfile.getValue()
+					]);
 
 					const answered	= await this.dialogService.confirm({
 						bottomSheet: true,
@@ -329,7 +333,7 @@ export class AccountService extends BaseProvider {
 						this.router.navigate([
 							accountRoot,
 							callType,
-							await user.contactID,
+							contactID,
 							id,
 							expiresString
 						]);
@@ -337,10 +341,17 @@ export class AccountService extends BaseProvider {
 				}
 				catch {}
 				finally {
-					respondedCallRequests.add(k);
-					incomingCalls.removeItem(k).catch(() => {});
+					if (!respondedCallRequests.has(k)) {
+						respondedCallRequests.add(k);
+						removing.push(k);
+					}
 				}
 			}
+
+			try {
+				await Promise.all(removing.map(async k => incomingCalls.removeItem(k)));
+			}
+			catch {}
 		}));
 	}
 

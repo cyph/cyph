@@ -108,6 +108,7 @@
 								) :
 								undefined
 						'
+						(click)='$event.stopPropagation()'
 						*ngIf='p2pSupported && !envService.isTelehealth'
 					>
 						<mat-icon>call</mat-icon>
@@ -159,6 +160,7 @@
 					undefined :
 					accountService.routeRoot + "profile/" + (username || "")
 				'
+				(click)='$event.stopPropagation()'
 			>
 				<mat-icon>person</mat-icon>
 			</button>
@@ -208,7 +210,10 @@
 					mat-icon-button
 					cyphTranslate
 					matTooltip='Accept Contact Request'
-					(click)='accountFilesService.acceptIncomingFile(groupData?.id)'
+					(click)='
+						accountFilesService.acceptIncomingFile(groupData?.id);
+						$event.stopPropagation();
+					'
 				>
 					<mat-icon>check</mat-icon>
 				</button>
@@ -216,7 +221,10 @@
 					mat-icon-button
 					cyphTranslate
 					matTooltip='Decline Contact Request'
-					(click)='accountFilesService.acceptIncomingFile(groupData?.id, false)'
+					(click)='
+						accountFilesService.acceptIncomingFile(groupData?.id, false);
+						$event.stopPropagation();
+					'
 				>
 					<mat-icon>close</mat-icon>
 				</button>

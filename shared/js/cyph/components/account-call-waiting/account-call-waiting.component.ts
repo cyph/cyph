@@ -49,9 +49,6 @@ implements AfterViewInit, OnChanges {
 	/** @see AccountUserTypes */
 	public readonly callTypes						= CallTypes;
 
-	/** If true, canceling the call will redirect home instead of to /messages. */
-	@Input() public cancelRedirectsHome: boolean	= false;
-
 	/** Component for composing forms. */
 	@ViewChild(AccountComposeNoProvidersComponent)
 	public formCompose?: AccountComposeNoProvidersComponent;

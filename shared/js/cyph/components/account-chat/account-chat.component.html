@@ -34,9 +34,7 @@
 
 		<cyph-account-call-waiting
 			fxFlexFill
-			[answering]='answering | async'
 			[appointment]='appointment | async'
-			[cancelRedirectsHome]='cancelRedirectsHome | async'
 			*ngIf='
 				(initialCallPending | async) === true &&
 				(answering | async) === false &&

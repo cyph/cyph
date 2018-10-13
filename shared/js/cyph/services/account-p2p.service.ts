@@ -68,28 +68,6 @@ export class AccountP2PService extends P2PService {
 	}
 
 	/** @inheritDoc */
-	public async closeButton (cancelRedirectsHome: boolean = false) : Promise<void> {
-		const [contactID]	= await Promise.all([
-			this.accountSessionService.remoteUser.value ?
-				this.accountSessionService.remoteUser.value.contactID :
-				Promise.resolve(undefined)
-			,
-			super.closeButton()
-		]);
-
-		if (!contactID) {
-			return;
-		}
-
-		if (cancelRedirectsHome) {
-			await this.router.navigate([accountRoot]);
-		}
-		else {
-			await this.router.navigate([accountRoot, 'messages', contactID]);
-		}
-	}
-
-	/** @inheritDoc */
 	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
 		await super.init(localVideo, remoteVideo);
 

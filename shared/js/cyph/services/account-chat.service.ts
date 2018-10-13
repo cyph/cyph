@@ -17,6 +17,7 @@ import {
 	SessionMessageDataList,
 	StringArrayProto
 } from '../proto';
+import {filterUndefinedOperator} from '../util/filter';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {resolvable} from '../util/wait';
@@ -57,9 +58,10 @@ export class AccountChatService extends ChatService {
 
 	/** @inheritDoc */
 	public readonly remoteUser: Observable<User|undefined>	=
-		this.sessionService.remoteUsername.pipe(mergeMap(async username =>
-			username ? this.accountUserLookupService.getUser(username, false) : undefined
-		))
+		this.sessionService.remoteUsername.pipe(
+			mergeMap(async username => this.accountUserLookupService.getUser(username, false)),
+			filterUndefinedOperator()
+		)
 	;
 
 	/** @inheritDoc */
