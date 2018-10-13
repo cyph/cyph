@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {INotificationService} from '../service-interfaces/inotification.service';
+import {sleep} from '../util/wait';
 import {EnvService} from './env.service';
 import {FaviconService} from './favicon.service';
 import {StringsService} from './strings.service';
@@ -27,6 +28,12 @@ export class NotificationService extends BaseProvider implements INotificationSe
 
 	/** Currently open notification objects. */
 	private readonly openNotifications: any[]	= [];
+
+	/** @ignore */
+	private readonly ringtone: HTMLAudioElement	= new Audio('/assets/audio/ring.mp3');
+
+	/** Max ring time. */
+	public readonly ringTimeout: number			= 30000;
 
 	/** @ignore */
 	private readonly tag: string				= 'NotificationService';
@@ -90,6 +97,25 @@ export class NotificationService extends BaseProvider implements INotificationSe
 		}
 	}
 
+	/**
+	 * Rings.
+	 * @returns True if accepted or false if timeout.
+	 */
+	public async ring (accept: Promise<boolean>) : Promise<boolean> {
+		try {
+			this.ringtone.currentTime	= 0;
+			await this.ringtone.play();
+
+			return await Promise.race([
+				accept,
+				sleep(this.ringTimeout).then(() => false)
+			]);
+		}
+		finally {
+			this.ringtone.pause();
+		}
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService,
@@ -114,6 +140,8 @@ export class NotificationService extends BaseProvider implements INotificationSe
 		else if (Audio) {
 			this.audio	= new Audio(this.config.audio);
 		}
+
+		this.ringtone.loop	= true;
 
 		this.subscriptions.push(this.windowWatcherService.visibility.subscribe(isVisible => {
 			if (isVisible) {

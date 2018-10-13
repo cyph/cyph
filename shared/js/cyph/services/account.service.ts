@@ -33,6 +33,7 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
+import {NotificationService} from './notification.service';
 import {StringsService} from './strings.service';
 import {WindowWatcherService} from './window-watcher.service';
 
@@ -315,19 +316,21 @@ export class AccountService extends BaseProvider {
 						user.accountUserProfile.getValue()
 					]);
 
-					const answered	= await this.dialogService.confirm({
-						bottomSheet: true,
-						cancel: this.stringsService.decline,
-						cancelFAB: 'close',
-						content: `${name} (@${realUsername})`,
-						fabAvatar: user.avatar,
-						ok: this.stringsService.answer,
-						okFAB: 'phone',
-						timeout: expires - timestamp,
-						title: callType === 'audio' ?
-							this.stringsService.incomingCallAudio :
-							this.stringsService.incomingCallVideo
-					});
+					const answered	= await this.notificationService.ring(
+						this.dialogService.confirm({
+							bottomSheet: true,
+							cancel: this.stringsService.decline,
+							cancelFAB: 'close',
+							content: `${name} (@${realUsername})`,
+							fabAvatar: user.avatar,
+							ok: this.stringsService.answer,
+							okFAB: 'phone',
+							timeout: expires - timestamp,
+							title: callType === 'audio' ?
+								this.stringsService.incomingCallAudio :
+								this.stringsService.incomingCallVideo
+						})
+					);
 
 					if (answered) {
 						this.router.navigate([
@@ -382,6 +385,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly notificationService: NotificationService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService,

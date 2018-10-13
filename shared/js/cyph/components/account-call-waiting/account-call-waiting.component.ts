@@ -114,7 +114,7 @@ implements AfterViewInit, OnChanges {
 
 			await sleep(0);
 
-			if (this.destroyed) {
+			if (this.destroyed.value) {
 				return;
 			}
 

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject, combineLatest} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {filter, map, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {BaseProvider} from '../../base-provider';
 import {States, UiStyles} from '../../chat/enums';
@@ -25,6 +25,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
+import {NotificationService} from '../../services/notification.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
@@ -115,7 +116,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** @ignore */
 	private async navigate (...url: string[]) : Promise<void> {
-		this.destroyed	= true;
+		this.destroyed.next(true);
 		this.router.navigate([accountRoot, 'chat-transition'], {skipLocationChange: true});
 		await sleep(0);
 		this.router.navigate([accountRoot, ...url]);
@@ -161,7 +162,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 			UrlSegment[]
 		/* tslint:disable-next-line:cyclomatic-complexity */
 		]) => lock(async () => {
-			if (this.destroyed) {
+			if (this.destroyed.value) {
 				return;
 			}
 
@@ -306,9 +307,12 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
-				sleep(this.accountP2PService.ringTimeout).then(() => {
+				this.notificationService.ring(Promise.race([
+					this.p2pWebRTCService.loading.pipe(filter(b => b), take(1)).toPromise(),
+					this.destroyed.pipe(filter(b => b), take(1)).toPromise().then(() => false)
+				])).then(() => {
 					if (
-						this.destroyed ||
+						this.destroyed.value ||
 						this.p2pWebRTCService.loading.value ||
 						!this.p2pWebRTCService.initialCallPending.value
 					) {
@@ -320,7 +324,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				});
 
 				this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
-					if (!this.destroyed) {
+					if (!this.destroyed.value) {
 						this.router.navigate(callEndRoute);
 
 						if (appointment && appointmentID) {
@@ -376,6 +380,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly notificationService: NotificationService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

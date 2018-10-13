@@ -142,7 +142,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 
 	/** @ignore */
 	private setQuillContent () : void {
-		if (!this.quill || this.destroyed) {
+		if (!this.quill || this.destroyed.value) {
 			return;
 		}
 
@@ -194,7 +194,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 
 		await sleep(0);
 
-		if (this.destroyed) {
+		if (this.destroyed.value) {
 			return;
 		}
 
@@ -253,7 +253,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 
 	/** @inheritDoc */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
-		if (this.destroyed) {
+		if (this.destroyed.value) {
 			return;
 		}
 

@@ -10,6 +10,7 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
+import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {P2PService} from './p2p.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -22,9 +23,6 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountP2PService extends P2PService {
-	/** Max ring time. */
-	public readonly ringTimeout: number	= 30000;
-
 	/** @ignore */
 	protected async request (callType: 'audio'|'video') : Promise<void> {
 		if (
@@ -58,7 +56,7 @@ export class AccountP2PService extends P2PService {
 				this.accountDatabaseService.notify(
 					username,
 					NotificationTypes.Call,
-					{callType, expires: timestamp + this.ringTimeout, id}
+					{callType, expires: timestamp + this.notificationService.ringTimeout, id}
 				)
 			),
 			this.accountSessionService.remoteUser.value.contactID.then(async contactID =>
@@ -93,7 +91,10 @@ export class AccountP2PService extends P2PService {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly accountSessionService: AccountSessionService
+		private readonly accountSessionService: AccountSessionService,
+
+		/** @ignore */
+		private readonly notificationService: NotificationService
 	) {
 		super(
 			chatService,

@@ -183,7 +183,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 
 
 		this.sessionService.one(events.abort).then(() => {
-			if (this.destroyed) {
+			if (this.destroyed.value) {
 				return;
 			}
 
@@ -192,7 +192,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 		});
 
 		this.sessionService.one(events.beginChatComplete).then(() => {
-			if (this.destroyed) {
+			if (this.destroyed.value) {
 				return;
 			}
 
@@ -200,7 +200,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 		});
 
 		this.sessionService.one(events.beginWaiting).then(() => {
-			if (this.destroyed) {
+			if (this.destroyed.value) {
 				return;
 			}
 
@@ -208,7 +208,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 		});
 
 		this.sessionService.connected.then(() => {
-			if (this.destroyed) {
+			if (this.destroyed.value) {
 				return;
 			}
 
@@ -216,7 +216,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 		});
 
 		this.sessionService.cyphNotFound.then(() => {
-			if (this.destroyed) {
+			if (this.destroyed.value) {
 				return;
 			}
 
@@ -228,7 +228,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 		if (this.cyphertextService.isEnabled) {
 			/* tslint:disable-next-line:no-unused-expression */
 			new Konami(async () => {
-				if (this.destroyed) {
+				if (this.destroyed.value) {
 					return;
 				}
 
