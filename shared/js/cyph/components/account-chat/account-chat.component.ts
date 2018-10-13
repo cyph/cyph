@@ -27,6 +27,7 @@ import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
+import {toBehaviorSubject} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
 import {getDateTimeString, getTimestamp} from '../../util/time';
@@ -62,13 +63,14 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	;
 
 	/** @see AccountCallWaiting.cancelRedirectsHome */
-	public readonly cancelRedirectsHome		=
+	public readonly cancelRedirectsHome		= toBehaviorSubject(
 		this.accountService.combinedRouteData(
 			this.activatedRoute
 		).pipe(map(([{cancelRedirectsHome}]) =>
 			cancelRedirectsHome === true
-		))
-	;
+		)),
+		false
+	);
 
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes	=
@@ -238,12 +240,19 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
+				const callEndRoute	= appointmentID ?
+					[accountRoot, 'appointments', appointmentID, 'end'] :
+				!this.cancelRedirectsHome.value ?
+					[accountRoot, 'messages', contactID] :
+					[accountRoot]
+				;
+
 				if (
 					answerExpireTime !== undefined &&
 					(await getTimestamp()) > answerExpireTime
 				) {
 					this.dialogService.toast(this.stringsService.p2pTimeoutIncoming, 3000);
-					this.router.navigate([accountRoot, 'messages', contactID]);
+					this.router.navigate(callEndRoute);
 					return;
 				}
 
@@ -286,11 +295,6 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				if (callType === undefined) {
 					return;
 				}
-
-				const callEndRoute	= appointmentID ?
-					[accountRoot, 'appointments', appointmentID, 'end'] :
-					[accountRoot, 'messages', contactID]
-				;
 
 				sleep(this.accountP2PService.ringTimeout).then(() => {
 					if (
