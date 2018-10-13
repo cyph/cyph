@@ -297,6 +297,15 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					return;
 				}
 
+				if (!(await (
+					this.answering.value ?
+						this.accountP2PService.handlers.acceptConfirm(callType) :
+						this.accountP2PService.handlers.requestConfirm(callType)
+				))) {
+					this.router.navigate(callEndRoute);
+					return;
+				}
+
 				sleep(this.accountP2PService.ringTimeout).then(() => {
 					if (
 						this.destroyed ||

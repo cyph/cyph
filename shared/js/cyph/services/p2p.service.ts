@@ -22,9 +22,9 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class P2PService extends BaseProvider {
-	/** @ignore */
-	protected readonly handlers: IP2PHandlers	= {
-		acceptConfirm: async (callType, timeout, isAccepted) => {
+	/** @see IP2PHandlers */
+	public readonly handlers: IP2PHandlers	= {
+		acceptConfirm: async (callType, timeout, isAccepted = false) => {
 			if (isAccepted) {
 				return true;
 			}
@@ -97,7 +97,7 @@ export class P2PService extends BaseProvider {
 				title: this.stringsService.p2pTitle
 			});
 		},
-		requestConfirm: async (callType, isAccepted) => {
+		requestConfirm: async (callType, isAccepted = false) => {
 			if (isAccepted) {
 				return true;
 			}
