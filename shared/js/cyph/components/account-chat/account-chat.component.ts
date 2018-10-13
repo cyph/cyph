@@ -64,10 +64,11 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** @see AccountCallWaiting.cancelRedirectsHome */
 	public readonly cancelRedirectsHome		= toBehaviorSubject(
-		this.accountService.combinedRouteData(
-			this.activatedRoute
-		).pipe(map(([{cancelRedirectsHome}]) =>
-			cancelRedirectsHome === true
+		combineLatest(
+			this.answering,
+			this.accountService.combinedRouteData(this.activatedRoute)
+		).pipe(map(([answering, [{cancelRedirectsHome}]]) =>
+			answering || cancelRedirectsHome === true
 		)),
 		false
 	);
