@@ -5,7 +5,7 @@
 	class='chat-main'
 	[class.accounts]='envService.isAccounts'
 	[class.audio-only]='(p2pWebRTCService.videoEnabled | async) !== true'
-	[class.video]='p2pService.isActive | async'
+	[class.video]='forceDisplayVideo || (p2pService.isActive | async)'
 	[class.mobile]='envService.isMobile | async'
 	[class.self-destruct]='chatService.chatSelfDestruct | async'
 	*ngIf='chatService.chatSubject | async as chat'
@@ -119,7 +119,7 @@
 
 	<div
 		fxFlex
-		[fxShow]='p2pService.isActive | async'
+		[fxShow]='forceDisplayVideo || (p2pService.isActive | async)'
 		class='video-call'
 		[class.sidebar-open]='p2pService.isSidebarOpen | async'
 		*ngIf='chat.state === states.chat'
@@ -323,7 +323,7 @@
 	<cyph-chat-message-box
 		class='video-call-message-box'
 		[messageType]='messageType'
-		*ngIf='p2pService.isActive | async'
+		*ngIf='forceDisplayVideo || (p2pService.isActive | async)'
 	></cyph-chat-message-box>
 
 	<div
@@ -331,7 +331,7 @@
 		*ngIf='
 			chat.state === states.chat &&
 			sessionInitService.ephemeral &&
-			(p2pService.isActive | async) === false
+			!(forceDisplayVideo || (p2pService.isActive | async) === true)
 		'
 		[@fadeIn]='"in"'
 	>
@@ -403,7 +403,11 @@
 		fxFlexFill
 		[chat]='chat'
 		[messageCountInTitle]='messageCountInTitle'
-		[mobile]='(envService.isMobile | async) || (p2pService.isActive | async)'
+		[mobile]='
+			(envService.isMobile | async) ||
+			forceDisplayVideo ||
+			(p2pService.isActive | async)
+		'
 		[persistentEndMessage]='persistentEndMessage'
 		[promptFollowup]='promptFollowup'
 		[showDisconnectMessage]='chat.isDisconnected && !hideDisconnectMessage'

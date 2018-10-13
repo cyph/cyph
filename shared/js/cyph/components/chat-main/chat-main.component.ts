@@ -32,6 +32,9 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 	/** Appointment associated with this call. */
 	@Input() public appointment?: IAppointment;
 
+	/** Force display video UI. */
+	@Input() public forceDisplayVideo: boolean			= false;
+
 	/** Indicates whether projected disconnection message should be hidden. */
 	@Input() public hideDisconnectMessage: boolean		= false;
 

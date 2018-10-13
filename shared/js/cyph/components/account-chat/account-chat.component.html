@@ -39,6 +39,7 @@
 			[cancelRedirectsHome]='cancelRedirectsHome | async'
 			*ngIf='
 				(initialCallPending | async) === true &&
+				(answering | async) === false &&
 				(sessionSubID | async) !== undefined
 			'
 		></cyph-account-call-waiting>
@@ -53,8 +54,12 @@
 						(appointment | async) :
 						undefined
 				'
+				[forceDisplayVideo]='answering | async'
 				[messageType]='messageType | async'
-				[class.visibility-hidden]='initialCallPending | async'
+				[class.visibility-hidden]='
+					(initialCallPending | async) === true &&
+					(answering | async) === false
+				'
 			></cyph-chat-main>
 
 			<cyph-account-chat-message-box
