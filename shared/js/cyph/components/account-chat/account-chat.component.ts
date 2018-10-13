@@ -308,7 +308,6 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 					this.dialogService.toast(this.stringsService.p2pTimeoutOutgoing, 3000);
 					this.p2pWebRTCService.close();
-					this.router.navigate(callEndRoute);
 				});
 
 				this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {

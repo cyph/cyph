@@ -73,9 +73,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 		},
 
 		kill: async () : Promise<void> => {
-			if (this.webRTC.value) {
-				this.disconnectInternal.next();
-			}
+			this.disconnectInternal.next();
 
 			const wasAccepted			= this.isAccepted;
 			const wasInitialCallPending	= this.initialCallPending.value;

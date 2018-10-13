@@ -50,10 +50,7 @@ export class P2PService extends BaseProvider {
 		},
 		audioDefaultEnabled: () => !this.chatService.walkieTalkieMode.value,
 		canceled: async () => {
-			await this.dialogService.alert({
-				content: this.stringsService.p2pCanceled,
-				title: this.stringsService.p2pTitle
-			});
+			await this.dialogService.toast(this.stringsService.p2pCanceled, 3000);
 		},
 		connected: async isConnected => {
 			if (isConnected) {
@@ -129,10 +126,7 @@ export class P2PService extends BaseProvider {
 			});
 		},
 		requestRejection: async () => {
-			await this.dialogService.alert({
-				content: this.stringsService.p2pDeny,
-				title: this.stringsService.p2pTitle
-			});
+			await this.dialogService.toast(this.stringsService.p2pDeny, 3000);
 		}
 	};
 
