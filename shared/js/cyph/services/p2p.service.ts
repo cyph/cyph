@@ -188,7 +188,7 @@ export class P2PService extends BaseProvider {
 			await this.p2pWebRTCService.close();
 		}
 		else {
-			await this.chatService.disconnectButton();
+			await this.chatService.disconnectButton(async () => this.p2pWebRTCService.close());
 		}
 	}
 
