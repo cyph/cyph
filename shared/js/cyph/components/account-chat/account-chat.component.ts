@@ -171,7 +171,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				if (username) {
 					const user	= await this.accountUserLookupService.getUser(username, false);
 					if (user) {
-						await this.navigate(path, await user.contactID);
+						this.router.navigate([path, await user.contactID], {replaceUrl: true});
 					}
 					return;
 				}
