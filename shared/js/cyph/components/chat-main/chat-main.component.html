@@ -322,6 +322,7 @@
 
 	<cyph-chat-message-box
 		class='video-call-message-box'
+		[autofocus]='false'
 		[messageType]='messageType'
 		*ngIf='forceDisplayVideo || (p2pService.isActive | async)'
 	></cyph-chat-message-box>
