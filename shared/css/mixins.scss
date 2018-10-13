@@ -99,11 +99,6 @@ $default-white: map-get($mat-grey, 100);
 		}
 	}
 
-	/* Temporary workaround pending https://github.com/angular/material2/issues/4116 */
-	mat-dialog-container, mat-option {
-		color: $cyph-foreground;
-	}
-
 	@if $cyph-is-dark {
 		mat-card, mat-dialog-container {
 			@include mat-form-field-theme($cyph-theme-white);
@@ -444,6 +439,7 @@ $default-white: map-get($mat-grey, 100);
 	@include mat-dialog-theme($theme);
 	@include mat-list-theme($theme);
 	@include mat-option-theme($theme);
+	@include mat-select-theme($theme);
 	@include mat-sidenav-theme($theme);
 	@include mat-tabs-theme($theme);
 
@@ -459,7 +455,6 @@ $default-white: map-get($mat-grey, 100);
 		@include mat-form-field-theme($theme);
 		@include mat-input-theme($theme);
 		@include cyph-progress-theme($theme-partial-inverted);
-		@include mat-select-theme($theme);
 		@include mat-tabs-theme($theme-partial-inverted);
 
 		$theme-foreground: map-get(map-get($theme-partial-inverted, foreground), base);
