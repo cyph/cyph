@@ -36,6 +36,7 @@ $mobileAppBarHeight: 56px;
 		scroll-behavior: smooth;
 		overflow-y: auto;
 		overflow-x: hidden;
+		z-index: 5;
 	}
 
 	.content-wrapper {

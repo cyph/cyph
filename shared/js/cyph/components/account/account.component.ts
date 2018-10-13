@@ -134,7 +134,8 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		this.accountDatabaseService.currentUser,
 		this.route,
 		this.routePath
-	).pipe(map(([currentUser, route, routePath]) => {
+	).pipe(map(([currentUser, route]) => {
+		/*
 		if (
 			[
 				'appointments',
@@ -147,6 +148,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		) {
 			return false;
 		}
+		*/
 
 		return currentUser !== undefined && [
 			'',
@@ -187,11 +189,14 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		!isMobile &&
 		[
 			'',
+			'audio',
+			'call',
 			'chat-transition',
 			'mail',
 			'messages',
 			'notifications',
-			'profile'
+			'profile',
+			'video'
 		].indexOf(route) > -1
 	));
 
