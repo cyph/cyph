@@ -109,7 +109,7 @@ input.text-security {
 	z-index: 2;
 }
 
-.card-list {
+.card-list, mat-card.file {
 	position: relative;
 
 	> div {
