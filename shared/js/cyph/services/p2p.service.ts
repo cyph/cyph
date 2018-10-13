@@ -57,10 +57,12 @@ export class P2PService extends BaseProvider {
 		},
 		connected: async isConnected => {
 			if (isConnected) {
-				await this.chatService.addMessage({
-					shouldNotify: false,
-					value: this.stringsService.p2pConnect
-				});
+				if (this.sessionInitService.ephemeral) {
+					await this.chatService.addMessage({
+						shouldNotify: false,
+						value: this.stringsService.p2pConnect
+					});
+				}
 			}
 			else {
 				if (this.timer.value) {
@@ -69,16 +71,12 @@ export class P2PService extends BaseProvider {
 
 				this.timer.next(undefined);
 
-				await Promise.all([
-					this.dialogService.alert({
-						content: this.stringsService.p2pDisconnect,
-						title: this.stringsService.p2pTitle
-					}),
-					this.chatService.addMessage({
+				if (this.sessionInitService.ephemeral) {
+					await this.chatService.addMessage({
 						shouldNotify: false,
 						value: this.stringsService.p2pDisconnect
-					})
-				]);
+					});
+				}
 			}
 		},
 		loaded: async () => {
