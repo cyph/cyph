@@ -9,6 +9,7 @@ import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
+import {LocalStorageService} from './local-storage.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {P2PService} from './p2p.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -101,6 +102,7 @@ export class AccountP2PService extends P2PService {
 		chatService: ChatService,
 		dialogService: DialogService,
 		envService: EnvService,
+		localStorageService: LocalStorageService,
 		p2pWebRTCService: P2PWebRTCService,
 		sessionCapabilitiesService: SessionCapabilitiesService,
 		sessionInitService: SessionInitService,
@@ -119,6 +121,7 @@ export class AccountP2PService extends P2PService {
 			chatService,
 			dialogService,
 			envService,
+			localStorageService,
 			p2pWebRTCService,
 			sessionCapabilitiesService,
 			sessionInitService,

@@ -3,13 +3,14 @@ import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
-import {IAppointment} from '../proto';
+import {BooleanProto, IAppointment} from '../proto';
 import {Timer} from '../timer';
 import {prettyPrint} from '../util/serialization';
 import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
+import {LocalStorageService} from './local-storage.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
@@ -28,7 +29,7 @@ export class P2PService extends BaseProvider {
 				return true;
 			}
 
-			return this.dialogService.confirm({
+			return this.p2pWarningPersist(async () => this.dialogService.confirm({
 				cancel: this.stringsService.decline,
 				content: `${
 					this.stringsService.p2pRequest
@@ -46,7 +47,7 @@ export class P2PService extends BaseProvider {
 				ok: this.stringsService.continueDialogAction,
 				timeout,
 				title: this.stringsService.p2pTitle
-			});
+			}));
 		},
 		audioDefaultEnabled: () => !this.chatService.walkieTalkieMode.value,
 		canceled: async () => {
@@ -101,7 +102,7 @@ export class P2PService extends BaseProvider {
 				return true;
 			}
 
-			return this.dialogService.confirm({
+			return this.p2pWarningPersist(async () => this.dialogService.confirm({
 				content: `${
 					this.stringsService.p2pInit
 				} ${
@@ -117,7 +118,7 @@ export class P2PService extends BaseProvider {
 				markdown: true,
 				ok: this.stringsService.continueDialogAction,
 				title: this.stringsService.p2pTitle
-			});
+			}));
 		},
 		requestConfirmation: async () => {
 			await this.chatService.addMessage({
@@ -155,6 +156,21 @@ export class P2PService extends BaseProvider {
 			this.stringsService.p2pWarningVPN :
 			this.stringsService.p2pWarning
 		;
+	}
+
+	/** @ignore */
+	private async p2pWarningPersist (f: () => Promise<boolean>) : Promise<boolean> {
+		let answer	=
+			await this.localStorageService.getItem('p2pWarning', BooleanProto).catch(() => false)
+		;
+
+		if (answer) {
+			return true;
+		}
+
+		answer	= await f();
+		this.localStorageService.setItem('p2pWarning', BooleanProto, answer);
+		return answer;
 	}
 
 	/** @see P2PWebRTCService.request */
@@ -257,6 +273,9 @@ export class P2PService extends BaseProvider {
 
 		/** @ignore */
 		protected readonly envService: EnvService,
+
+		/** @ignore */
+		protected readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		protected readonly p2pWebRTCService: P2PWebRTCService,
