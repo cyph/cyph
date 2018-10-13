@@ -122,7 +122,9 @@ export class P2PService extends BaseProvider {
 		requestConfirmation: async () => {
 			await this.chatService.addMessage({
 				shouldNotify: false,
-				value: this.stringsService.p2pRequestConfirmation
+				value: this.sessionInitService.ephemeral ?
+					this.stringsService.p2pRequestConfirmation :
+					this.stringsService.p2pAccountChatNotice
 			});
 		},
 		requestRejection: async () => {

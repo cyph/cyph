@@ -641,6 +641,11 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
+	public readonly p2pAccountChatNotice: string		=
+		`This is an ephemeral chat session available during your call. No logs will be saved.`
+	;
+
+	/** @see StringsService */
 	public readonly p2pCanceled: string					= `Call canceled.`;
 
 	/** @see StringsService */
