@@ -73,14 +73,16 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 		},
 
 		kill: async () : Promise<void> => {
+			if (this.webRTC.value) {
+				this.disconnectInternal.next();
+			}
+
 			const wasAccepted			= this.isAccepted;
 			const wasInitialCallPending	= this.initialCallPending.value;
 			this.isAccepted				= false;
 			this.isActive.next(false);
 			this.initialCallPending.next(false);
 			this.p2pSessionData			= undefined;
-
-			await sleep(500);
 
 			this.incomingStream.next({audio: false, video: false});
 			this.outgoingStream.next({audio: false, video: false});
@@ -96,7 +98,6 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 
 				this.webRTC.value.peer.destroy();
 				this.webRTC.next(undefined);
-				this.disconnectInternal.next();
 			}
 
 			const handlers	= await this.handlers;
