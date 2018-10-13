@@ -621,6 +621,20 @@
 						}
 					},
 
+					"incomingCalls": {
+						"$incomingCallID": {
+							"data": {
+								".validate": "newData.val() === ''"
+							},
+							"hash": {
+								".validate": "newData.val() === ''"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
 					"incomingFiles": {
 						"$incomingFile": {
 							".write": "($user + '@' + $DOMAIN) === auth.token.email || (!data.exists() && newData.exists())",
@@ -929,6 +943,9 @@
 					"unreadFiles": {
 						"$unreadFileType": {
 							"$unreadFileID": {
+								"data": {
+									".validate": "newData.val() === ''"
+								},
 								"hash": {
 									".validate": "newData.val() === ''"
 								},
