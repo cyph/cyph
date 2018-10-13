@@ -38,7 +38,10 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 	};
 
 	/** Indicates whether WebRTC is supported in the current environment. */
-	public static readonly isSupported: boolean	= SimplePeer.WEBRTC_SUPPORT;
+	public static readonly isSupported: boolean	=
+		SimplePeer.WEBRTC_SUPPORT &&
+		!env.isIOS
+	;
 
 
 	/** @ignore */
