@@ -119,7 +119,6 @@
 					mat-icon-button
 					matTooltip='Video Call'
 					(click)='mobileButtonHandlers.videoCall()'
-					[disabled]='(p2pService.isEnabled | async) === false'
 					*ngIf='(p2pService.isActive | async) === false'
 					cyphTranslate
 				>
@@ -129,7 +128,6 @@
 					mat-icon-button
 					matTooltip='Voice Call'
 					(click)='mobileButtonHandlers.voiceCall()'
-					[disabled]='(p2pService.isEnabled | async) === false'
 					*ngIf='(p2pService.isActive | async) === false'
 					cyphTranslate
 				>
@@ -201,9 +199,8 @@
 					cyphTranslate
 					matTooltip='Voice Call'
 					matTooltipPosition='left'
-					[disabled]='(p2pService.isEnabled | async) === false'
-					*ngIf='(p2pService.isActive | async) === false'
 					(click)='p2pService.voiceCallButton()'
+					*ngIf='(p2pService.isActive | async) === false'
 				>
 					<mat-icon>call</mat-icon>
 				</button>
@@ -212,9 +209,8 @@
 					cyphTranslate
 					matTooltip='Video Call'
 					matTooltipPosition='left'
-					[disabled]='(p2pService.isEnabled | async) === false'
-					*ngIf='(p2pService.isActive | async) === false'
 					(click)='p2pService.videoCallButton()'
+					*ngIf='(p2pService.isActive | async) === false'
 				>
 					<mat-icon>video_call</mat-icon>
 				</button>

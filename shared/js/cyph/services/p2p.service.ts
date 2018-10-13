@@ -192,14 +192,12 @@ export class P2PService extends BaseProvider {
 		}
 	}
 
-	/** If chat authentication is complete, alert that P2P is disabled. */
+	/** Creates alert about P2P being unsupported. */
 	public async disabledAlert () : Promise<void> {
-		if (this.chatService.chat.isConnected && !this.isEnabled.value) {
-			await this.dialogService.alert({
-				content: this.stringsService.p2pDisabled,
-				title: this.stringsService.p2pTitle
-			});
-		}
+		await this.dialogService.alert({
+			content: this.stringsService.p2pDisabled,
+			title: this.stringsService.p2pTitle
+		});
 	}
 
 	/** Initializes service. */
@@ -240,7 +238,7 @@ export class P2PService extends BaseProvider {
 	 */
 	public async videoCallButton () : Promise<void> {
 		if (!this.isEnabled.value) {
-			return;
+			return this.disabledAlert();
 		}
 
 		if (!this.isActive.value) {
@@ -257,7 +255,7 @@ export class P2PService extends BaseProvider {
 	 */
 	public async voiceCallButton () : Promise<void> {
 		if (!this.isEnabled.value) {
-			return;
+			return this.disabledAlert();
 		}
 
 		if (!this.isActive.value) {
