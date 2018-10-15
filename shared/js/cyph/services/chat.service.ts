@@ -1295,7 +1295,9 @@ export class ChatService extends BaseProvider {
 						this.updateChat();
 					}).catch(
 						() => {}
-					),
+					).then(() => {
+						this.resolvers.currentMessageSynced.resolve();
+					}),
 					this.localStorageService.lock(pendingMessageRoot, async () => {
 						const pendingMessages	= await this.localStorageService.getValues(
 							pendingMessageRoot,
@@ -1324,9 +1326,7 @@ export class ChatService extends BaseProvider {
 					}).catch(
 						() => {}
 					)
-				]).then(() => {
-					this.resolvers.currentMessageSynced.resolve();
-				});
+				]);
 			}
 			else {
 				this.resolvers.currentMessageSynced.resolve();
