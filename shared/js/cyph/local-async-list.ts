@@ -3,6 +3,7 @@ import {map} from 'rxjs/operators';
 import {IAsyncList} from './iasync-list';
 import {LocalAsyncValue} from './local-async-value';
 import {MaybePromise} from './maybe-promise-type';
+import {lockFunction} from './util/lock';
 
 
 /**
@@ -10,7 +11,10 @@ import {MaybePromise} from './maybe-promise-type';
  */
 export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncList<T> {
 	/** @ignore */
-	protected readonly pushes: ReplaySubject<{index: number; value: T}>	= new ReplaySubject();
+	private readonly popLock	= lockFunction();
+
+	/** @ignore */
+	protected readonly pushes	= new ReplaySubject<{index: number; value: T}>();
 
 	/** @inheritDoc */
 	public async clear () : Promise<void> {
@@ -41,9 +45,13 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 	public subscribeAndPop (f: (value: T) => MaybePromise<void>) : Subscription {
 		return this.pushes.subscribe(async ({index, value}) => {
 			try {
-				await f(value);
-				this.value.splice(index, 1);
-				this.subject.next(this.value);
+				const promise	= f(value);
+
+				await this.popLock(async () => {
+					await promise;
+					this.value.splice(index, 1);
+					this.subject.next(this.value);
+				});
 			}
 			catch {}
 		});
