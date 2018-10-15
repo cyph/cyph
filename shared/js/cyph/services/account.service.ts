@@ -292,7 +292,7 @@ export class AccountService extends BaseProvider {
 				}
 
 				try {
-					const [callType, username, id, expiresString]	= k.split('_');
+					const [callType, username, id, expiresString]	= k.split(',');
 					const expires	= toInt(expiresString);
 					const timestamp	= await getTimestamp();
 

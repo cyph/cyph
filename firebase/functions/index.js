@@ -498,7 +498,7 @@ exports.userNotification	= functions.database.ref(
 			);
 		})(),
 		(async () => {
-			if (!metadata.id || typeof metadata.id !== 'string' || metadata.id.indexOf('_') > -1) {
+			if (!metadata.id || typeof metadata.id !== 'string' || metadata.id.indexOf(',') > -1) {
 				return;
 			}
 
@@ -518,11 +518,11 @@ exports.userNotification	= functions.database.ref(
 				) ?
 					[false, `incomingCalls/${
 						metadata.callType
-					}_${
+					},${
 						username
-					}_${
+					},${
 						metadata.id
-					}_${
+					},${
 						metadata.expires.toString()
 					}`] :
 				notification.type === NotificationTypes.File ?
