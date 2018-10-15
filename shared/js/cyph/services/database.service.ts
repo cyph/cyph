@@ -513,7 +513,7 @@ export class DatabaseService extends DataManagerService {
 		return this.watchListKeyPushes(url, subscriptions).subscribe(async ({key}) => {
 			const fullURL	= Promise.resolve(url).then(s => `${s}/${key}`);
 
-			const promise	= fullURL.then(s => this.getItem(s, proto)).then(f);
+			const promise	= fullURL.then(async s => this.getItem(s, proto)).then(f);
 
 			await lock(async () => {
 				try {
