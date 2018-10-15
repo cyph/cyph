@@ -186,7 +186,8 @@ export class ChatService extends BaseProvider {
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers				= {
 		chatConnected: resolvable(),
-		currentMessageSynced: resolvable()
+		currentMessageSynced: resolvable(),
+		outgoingMessagesSynced: resolvable()
 	};
 
 	/** Resolves when UI is ready to be displayed. */
@@ -1069,7 +1070,7 @@ export class ChatService extends BaseProvider {
 		;
 
 		if (!oldLocalStorageKey) {
-			await this.resolvers.currentMessageSynced;
+			await this.resolvers.outgoingMessagesSynced.promise;
 		}
 
 		const predecessorsPromise	= (async () : Promise<IChatMessagePredecessor[]|undefined> => {
@@ -1325,11 +1326,14 @@ export class ChatService extends BaseProvider {
 						));
 					}).catch(
 						() => {}
-					)
+					).then(() => {
+						this.resolvers.outgoingMessagesSynced.resolve();
+					})
 				]);
 			}
 			else {
 				this.resolvers.currentMessageSynced.resolve();
+				this.resolvers.outgoingMessagesSynced.resolve();
 			}
 
 			beginChat.then(() => { this.begin(); });
