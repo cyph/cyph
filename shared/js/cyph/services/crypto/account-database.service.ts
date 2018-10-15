@@ -1125,14 +1125,15 @@ export class AccountDatabaseService extends BaseProvider {
 		const lock	= lockFunction();
 
 		return this.watchListKeyPushes(url, subscriptions).subscribe(async ({key}) => {
-			const fullURL	= `${await url}/${key}`;
+			const fullURL	= Promise.resolve(url).then(s => `${s}/${key}`);
+
+			const promise	=
+				this.getItem(fullURL, proto, securityModel, customKey, anonymous).then(f)
+			;
 
 			await lock(async () => {
 				try {
-					await f(
-						await this.getItem(fullURL, proto, securityModel, customKey, anonymous)
-					);
-
+					await promise;
 					await this.removeItem(fullURL);
 				}
 				catch (err) {

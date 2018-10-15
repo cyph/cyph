@@ -511,12 +511,14 @@ export class DatabaseService extends DataManagerService {
 		const lock	= lockFunction();
 
 		return this.watchListKeyPushes(url, subscriptions).subscribe(async ({key}) => {
-			const fullURL	= `${await url}/${key}`;
+			const fullURL	= Promise.resolve(url).then(s => `${s}/${key}`);
+
+			const promise	= fullURL.then(s => this.getItem(s, proto)).then(f);
 
 			await lock(async () => {
 				try {
-					await f(await this.getItem(fullURL, proto));
-					await this.removeItem(fullURL);
+					await promise;
+					await this.removeItem(await fullURL);
 				}
 				catch (err) {
 					debugLog(() => ({databaseSubscribeAndPopError: err}));
