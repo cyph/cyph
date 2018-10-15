@@ -77,7 +77,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	protected incomingMessageQueueLock: LockFunction					= lockFunction();
 
 	/** @ignore */
-	protected lastIncomingMessageTimestamps: Map<string, number>		= new Map();
+	protected lastIncomingMessageTimestamp: number						= 0;
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string>					= new Set<string>();
@@ -327,7 +327,6 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 					break;
 				}
 
-				const castleInstanceID	= data.instanceID;
 				const castleTimestamp	= data.timestamp;
 
 				const messages	=
@@ -347,24 +346,13 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 					/* Discard messages without valid timestamps */
 					if (
 						isNaN(message.data.timestamp) ||
-						message.data.timestamp < castleTimestamp ||
-						message.data.timestamp < (
-							this.lastIncomingMessageTimestamps.get(castleInstanceID) || 0
-						)
+						message.data.timestamp < castleTimestamp
 					) {
-						debugLog(() => ({cyphertextReceiveDiscardInvalidTimestamp: {
-							lastTimestamp: this.lastIncomingMessageTimestamps.get(castleInstanceID),
-							message
-						}}));
-
+						debugLog(() => ({cyphertextReceiveDiscardInvalidTimestamp: {message}}));
 						return;
 					}
 
-					this.lastIncomingMessageTimestamps.set(
-						castleInstanceID,
-						message.data.timestamp
-					);
-
+					this.lastIncomingMessageTimestamp	= message.data.timestamp;
 					(<any> message.data).author			= data.author;
 					message.data.authorID				= authorID;
 

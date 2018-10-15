@@ -26,11 +26,6 @@ export class EphemeralSessionService extends SessionService {
 	/** @ignore */
 	private pingPongTimeouts: number	= 0;
 
-	/** @ignore */
-	private get lastIncomingMessageTimestamp () : number {
-		return this.lastIncomingMessageTimestamps.values().next().value || 0;
-	}
-
 	/**
 	 * @ignore
 	 * Intermittent check to verify chat is still alive and send fake encrypted chatter.
