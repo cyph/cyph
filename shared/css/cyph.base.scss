@@ -237,6 +237,10 @@ a {
 	}
 }
 
+smd-fab-speed-dial:not(.smd-opened) {
+	pointer-events: none;
+}
+
 [mat-fab], smd-fab-speed-dial {
 	&.absolute-fab, &.fixed-fab {
 		right: 16px;
