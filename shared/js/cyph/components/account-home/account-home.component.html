@@ -121,6 +121,7 @@
 				matTooltipPosition='left'
 				[href]='envService.newCyphUrl'
 				(click)='isSpeedDialOpen.next(false)'
+				*ngIf='!envService.coBranded'
 			>
 				<mat-icon>link</mat-icon>
 			</a>
