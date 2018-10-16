@@ -946,8 +946,6 @@ export class ChatService extends BaseProvider {
 	 * sends appropriate typing indicator signals through session.
 	 */
 	public async messageChange (isText: boolean = false) : Promise<void> {
-		this.updateChat();
-
 		return this.messageChangeLock(async () => {
 			if (this.chat.pendingMessageRoot) {
 				await this.localStorageService.setItem<IChatMessageLiveValueSerialized>(
@@ -967,7 +965,6 @@ export class ChatService extends BaseProvider {
 			}
 
 			this.chat.previousMessage	= this.chat.currentMessage.text;
-			this.updateChat();
 
 			await sleep(this.outgoingMessageBatchDelay);
 
@@ -978,7 +975,7 @@ export class ChatService extends BaseProvider {
 
 			if (this.chat.isMessageChanged !== isMessageChanged) {
 				this.chat.isMessageChanged	= isMessageChanged;
-				this.updateChat();
+
 				this.sessionService.send([
 					rpcEvents.typing,
 					{chatState: {isTyping: this.chat.isMessageChanged}}
