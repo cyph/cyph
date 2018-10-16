@@ -162,13 +162,53 @@ export class ChatService extends BaseProvider {
 	/** List of messages. */
 	public readonly messages				= toBehaviorSubject(
 		this.chatSubject.pipe(mergeMap(chat =>
-			chat.messageList.watchFlat().pipe(mergeMap(async messageIDs =>
-				Promise.all(messageIDs.map(async id =>
-					chat.messages.getItem(id)
-				)).catch(() : IChatMessage[] =>
-					[]
-				)
-			))
+			chat.messageList.watchFlat().pipe(mergeMap(async messageIDs => {
+				const [messages, now]	= await Promise.all([
+					Promise.all(messageIDs.map(async id =>
+						chat.messages.getItem(id).catch(() => ({
+							authorType: ChatMessage.AuthorTypes.App,
+							hash: new Uint8Array(1),
+							id,
+							key: new Uint8Array(1),
+							predecessors: [],
+							timestamp: NaN
+						}))
+					)),
+					getTimestamp()
+				]);
+
+				for (let i = 0 ; i < messages.length ; ++i) {
+					const message	= messages[i];
+
+					if (!isNaN(message.timestamp)) {
+						continue;
+					}
+
+					for (let j = i - 1 ; j >= 0 ; --j) {
+						if (!isNaN(messages[j].timestamp)) {
+							message.timestamp	= messages[j].timestamp + 0.001;
+							break;
+						}
+					}
+
+					if (isNaN(message.timestamp)) {
+						for (let j = i + 1 ; j < messages.length ; ++j) {
+							if (!isNaN(messages[j].timestamp)) {
+								message.timestamp	= messages[j].timestamp - 0.001;
+								break;
+							}
+						}
+					}
+
+					if (isNaN(message.timestamp)) {
+						message.timestamp	= now;
+					}
+
+					messages[i]	= new ChatMessage(message, this.sessionService.appUsername);
+				}
+
+				return messages;
+			}))
 		)),
 		undefined,
 		this.subscriptions
