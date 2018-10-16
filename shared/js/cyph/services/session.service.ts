@@ -123,6 +123,9 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	public readonly freezePong: BehaviorSubject<boolean>	= new BehaviorSubject(false);
 
 	/** @inheritDoc */
+	public group?: SessionService[];
+
+	/** @inheritDoc */
 	public readonly localUsername: Observable<string>		= new BehaviorSubject<string>(
 		this.stringsService.me
 	);

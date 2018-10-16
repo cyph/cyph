@@ -64,7 +64,7 @@ export class AccountSessionService extends SessionService {
 	/** If true, this is an ephemeral sub-session. */
 	public ephemeralSubSession: boolean							= false;
 
-	/** Messaging group, if applicable. */
+	/** @inheritDoc */
 	public group?: AccountSessionService[];
 
 	/** @inheritDoc */

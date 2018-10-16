@@ -36,6 +36,9 @@ export interface ISessionService {
 	/** When true, blocks responding to pings. */
 	readonly freezePong: BehaviorSubject<boolean>;
 
+	/** Messaging group, if applicable. */
+	group?: ISessionService[];
+
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
 
