@@ -275,6 +275,10 @@ export class PairwiseSession {
 		/** @ignore */
 		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate> =
 			new LocalAsyncList([])
+		,
+
+		/** @ignore */
+		private readonly liteRatchetState?: IAsyncValue<Uint8Array>
 	) {
 		debugLog(() => ({pairwiseSessionStart: true}));
 
@@ -302,10 +306,14 @@ export class PairwiseSession {
 				/* Initialize symmetric ratchet */
 				else if (
 					currentStep === HandshakeSteps.PostBootstrap &&
-					this.potassium.isEmpty(await this.ratchetState.getValue().then(o =>
-						o.symmetric &&
-						o.symmetric.current &&
-						o.symmetric.current.incoming
+					this.potassium.isEmpty(await (
+						this.liteRatchetState ?
+							this.liteRatchetState.getValue() :
+							this.ratchetState.getValue().then(o =>
+								o.symmetric &&
+								o.symmetric.current &&
+								o.symmetric.current.incoming
+							)
 					))
 				) {
 					debugLog(() => ({castleHandshake: 'post-bootstrap'}));
@@ -316,27 +324,52 @@ export class PairwiseSession {
 						throw new Error('Invalid HandshakeSteps.PostBootstrap state.');
 					}
 
-					const symmetricKeys	= await Core.newSymmetricKeys(
-						this.potassium,
-						this.handshakeState.isAlice,
-						initialSecret
-					);
+					if (this.liteRatchetState) {
+						await Promise.all([
+							this.liteRatchetState.setValue(initialSecret),
+							this.ratchetState.setValue({
+								asymmetric: {
+									privateKey: new Uint8Array(0),
+									publicKey: new Uint8Array(0)
+								},
+								incomingMessageID: 0,
+								outgoingMessageID: 1,
+								symmetric: {
+									current: {
+										incoming: new Uint8Array(0),
+										outgoing: new Uint8Array(0)
+									},
+									next: {
+										incoming: new Uint8Array(0),
+										outgoing: new Uint8Array(0)
+									}
+								}
+							})
+						]);
+					}
+					else {
+						const symmetricKeys	= await Core.newSymmetricKeys(
+							this.potassium,
+							this.handshakeState.isAlice,
+							initialSecret
+						);
 
-					await this.ratchetState.setValue({
-						asymmetric: {
-							privateKey: new Uint8Array(0),
-							publicKey: new Uint8Array(0)
-						},
-						incomingMessageID: 0,
-						outgoingMessageID: 1,
-						symmetric: {
-							current: symmetricKeys,
-							next: {
-								incoming: new Uint8Array(symmetricKeys.incoming),
-								outgoing: new Uint8Array(symmetricKeys.outgoing)
+						await this.ratchetState.setValue({
+							asymmetric: {
+								privateKey: new Uint8Array(0),
+								publicKey: new Uint8Array(0)
+							},
+							incomingMessageID: 0,
+							outgoingMessageID: 1,
+							symmetric: {
+								current: symmetricKeys,
+								next: {
+									incoming: new Uint8Array(symmetricKeys.incoming),
+									outgoing: new Uint8Array(symmetricKeys.outgoing)
+								}
 							}
-						}
-					});
+						});
+					}
 				}
 
 				/* Ready to activate Core */
@@ -352,6 +385,11 @@ export class PairwiseSession {
 
 					this.lock(async o => {
 						this.pendingMessageResolvers	= pendingMessageResolvers;
+
+						const liteRatchetKey		= this.liteRatchetState ?
+							this.liteRatchetState.getValue() :
+							undefined
+						;
 
 						const initialRatchetUpdates	= await this.ratchetUpdateQueue.getValue();
 
@@ -400,6 +438,8 @@ export class PairwiseSession {
 									)
 								) :
 								await this.ratchetState.getValue()
+							,
+							await liteRatchetKey
 						);
 
 						if (!o.stillOwner.value) {
@@ -407,27 +447,33 @@ export class PairwiseSession {
 						}
 
 						const receiveLock	= lockFunction();
-						const sendLock		= lockFunction();
 
 						const decryptSub		= this.incomingMessageQueue.subscribeAndPop(
-							async ({cyphertext, newMessageID, resolve}) => receiveLock(async () => {
+							async ({cyphertext, newMessageID, resolve}) => {
 								this.transport.logCyphertext(this.remoteUser.username, cyphertext);
-								await this.processIncomingMessages(core, newMessageID, cyphertext);
-								resolve();
-							})
+								core.decryptSetup(cyphertext);
+
+								receiveLock(async () => {
+									await this.processIncomingMessages(
+										core,
+										newMessageID,
+										cyphertext
+									);
+									resolve();
+								});
+							}
 						);
 
 						const encryptSub		= this.outgoingMessageQueue.subscribeAndPop(
-							async message => sendLock(async () => core.encrypt(
+							async message => core.encrypt(
 								message,
 								messageID => {
-									const timestamp	=
+									pendingMessageResolvers.timestamps.set(
+										messageID,
 										this.potassium.toDataView(message).getFloat64(0, true)
-									;
-
-									pendingMessageResolvers.timestamps.set(messageID, timestamp);
+									);
 								}
-							))
+							)
 						);
 
 						const ratchetUpdateSub	= this.ratchetUpdateQueue.subscribeAndPop(

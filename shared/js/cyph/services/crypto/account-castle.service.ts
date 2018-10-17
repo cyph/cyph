@@ -151,6 +151,15 @@ export class AccountCastleService extends CastleService {
 							undefined,
 							false,
 							true
+						),
+						this.accountDatabaseService.getAsyncValue(
+							`${sessionURL}/liteRatchetState`,
+							BinaryProto,
+							undefined,
+							undefined,
+							undefined,
+							false,
+							true
 						)
 					);
 				}
