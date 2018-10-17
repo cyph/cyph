@@ -152,6 +152,8 @@ service firebase.storage {
 					allow read;
 				}
 
+				// match /incomingCalls/{hash} {}
+
 				match /incomingFiles/{incomingFile}/{hash} {
 					allow write: if
 						(
@@ -218,6 +220,10 @@ service firebase.storage {
 				// match /settings/{hash} {}
 
 				// match /signingKeyPair/{hash} {}
+
+				// match /unreadFiles/{hash} {}
+
+				// match /unreadMessages/{hash} {}
 			}
 		}
 	}
