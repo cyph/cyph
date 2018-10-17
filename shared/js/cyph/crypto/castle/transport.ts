@@ -48,7 +48,7 @@ export class Transport {
 	}
 
 	/** Send and/or receive incoming and outgoing messages. */
-	public async process (author: Observable<string>, lite: boolean, ...messages: {
+	public async process (author: Observable<string>, ...messages: {
 		cyphertext?: Uint8Array;
 		plaintext?: Uint8Array;
 	}[]) : Promise<void> {
@@ -60,7 +60,7 @@ export class Transport {
 						undefined
 				)
 			)),
-			this.send(lite, ...filterUndefined(
+			this.send(...filterUndefined(
 				messages.map(o =>
 					o.cyphertext && !potassiumUtil.isEmpty(o.cyphertext) ?
 						o.cyphertext :
@@ -94,15 +94,11 @@ export class Transport {
 	}
 
 	/** Send outgoing encrypted message. */
-	public async send (lite: boolean, ...cyphertexts: Uint8Array[]) : Promise<void> {
+	public async send (...cyphertexts: Uint8Array[]) : Promise<void> {
 		for (const cyphertext of cyphertexts) {
-			const messageID	= lite ?
-				undefined :
-				potassiumUtil.toDataView(cyphertext).getUint32(0, true)
-			;
+			const messageID	= potassiumUtil.toDataView(cyphertext).getUint32(0, true);
 
 			if (
-				messageID === undefined ||
 				this.lastOutgoingMessageID === undefined ||
 				messageID > this.lastOutgoingMessageID
 			) {
