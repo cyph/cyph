@@ -1090,6 +1090,10 @@ export class ChatService extends BaseProvider {
 			return removeOldStorageItem();
 		}
 
+		if (!oldLocalStorageKey) {
+			await this.resolvers.outgoingMessagesSynced.promise;
+		}
+
 		const localStoragePromise	= !this.chat.pendingMessageRoot ?
 			Promise.resolve() :
 			this.localStorageService.setItem<IChatPendingMessage>(
@@ -1105,10 +1109,6 @@ export class ChatService extends BaseProvider {
 				removeOldStorageItem
 			)
 		;
-
-		if (!oldLocalStorageKey) {
-			await this.resolvers.outgoingMessagesSynced.promise;
-		}
 
 		const predecessorsPromise	= (async () : Promise<IChatMessagePredecessor[]|undefined> => {
 			/* Redundant for 1:1 ephemeral chats since Castle already enforces message order */
