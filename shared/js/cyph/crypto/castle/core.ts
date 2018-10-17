@@ -1,5 +1,4 @@
 import {IAsyncList} from '../../iasync-list';
-import {LockFunction} from '../../lock-function-type';
 import {MaybePromise} from '../../maybe-promise-type';
 import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
 import {getOrSetDefault} from '../../util/get-or-set-default';
@@ -34,7 +33,7 @@ export class Core {
 
 
 	/** @ignore */
-	private readonly decryptCache						= new Map<number, {
+	private readonly decryptCache		= new Map<number, {
 		encrypted: Uint8Array;
 		messageID: number;
 		messageIDBytes: Uint8Array;
@@ -42,13 +41,13 @@ export class Core {
 	}>();
 
 	/** @ignore */
-	private readonly lock: LockFunction					= lockFunction();
+	private readonly lock				= lockFunction();
 
 	/** @ignore */
 	private oldRatchetState?: ICastleRatchetState;
 
 	/** @ignore */
-	private readonly updateRatchetLock: LockFunction	= lockFunction();
+	private readonly updateRatchetLock	= lockFunction();
 
 	/** @ignore */
 	private async asymmetricRatchet (incomingPublicKey?: Uint8Array) : Promise<Uint8Array> {
