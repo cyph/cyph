@@ -449,6 +449,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 			const localVideo		= <HTMLVideoElement> $localVideo[0];
 			localVideo.srcObject	= localStream;
 			localVideo.play();
+			localVideo.muted		= true;
 
 			const peer				= new SimplePeer({
 				channelName: p2pSessionData.id,
