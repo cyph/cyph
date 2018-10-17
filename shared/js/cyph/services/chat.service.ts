@@ -42,6 +42,7 @@ import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
+import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
@@ -236,6 +237,7 @@ export class ChatService extends BaseProvider {
 		Promise.all([
 			this.resolvers.chatConnected.promise,
 			this.resolvers.currentMessageSynced.promise,
+			this.castleService.initialMessagesDecrypted(),
 			this.channelService.initialMessagesProcessed.promise
 		]).then<true>(() =>
 			true
@@ -1213,6 +1215,9 @@ export class ChatService extends BaseProvider {
 	constructor (
 		/** @ignore */
 		protected readonly analyticsService: AnalyticsService,
+
+		/** @ignore */
+		protected readonly castleService: CastleService,
 
 		/** @ignore */
 		protected readonly channelService: ChannelService,

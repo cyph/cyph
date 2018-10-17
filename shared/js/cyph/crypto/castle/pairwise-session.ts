@@ -26,20 +26,23 @@ import {Transport} from './transport';
  */
 export class PairwiseSession {
 	/** @ignore */
-	private readonly incomingMessageQueue	= new LocalAsyncList<{
+	private readonly incomingMessageQueue		= new LocalAsyncList<{
 		cyphertext: Uint8Array;
 		newMessageID: number;
 		resolve: () => void;
 	}>([]);
 
 	/** @ignore */
-	private readonly instanceID: Uint8Array	= this.potassium.randomBytes(16);
+	private readonly instanceID: Uint8Array		= this.potassium.randomBytes(16);
 
 	/** @ignore */
 	private pendingMessageResolvers?: {
 		resolvers: Map<number, IResolvable<void>>;
 		timestamps: Map<number, number>;
 	};
+
+	/** Resolves when first chunk of incoming messages have been processed. */
+	public readonly initialMessagesDecrypted	= resolvable<void>();
 
 	/** @ignore */
 	private async abort () : Promise<void> {
@@ -401,6 +404,8 @@ export class PairwiseSession {
 							this.remoteUser.username,
 							...initialRatchetUpdates
 						);
+
+						this.initialMessagesDecrypted.resolve();
 
 						if (!o.stillOwner.value) {
 							return;

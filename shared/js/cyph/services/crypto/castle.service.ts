@@ -42,6 +42,11 @@ export class CastleService extends BaseProvider implements ICastle {
 		throw new Error('Must provide an implementation of CastleService.init.');
 	}
 
+	/** @see PairwiseSession.initialMessagesDecrypted */
+	public async initialMessagesDecrypted () : Promise<void> {
+		return (await this.getPairwiseSession()).initialMessagesDecrypted.promise;
+	}
+
 	/** @inheritDoc */
 	public async receive (cyphertext: Uint8Array) : Promise<void> {
 		return (await this.getPairwiseSession()).receive(cyphertext);

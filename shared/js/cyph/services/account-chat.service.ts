@@ -29,6 +29,7 @@ import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
@@ -242,6 +243,7 @@ export class AccountChatService extends ChatService {
 
 	constructor (
 		analyticsService: AnalyticsService,
+		castleService: CastleService,
 		channelService: ChannelService,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
@@ -273,6 +275,7 @@ export class AccountChatService extends ChatService {
 	) {
 		super(
 			analyticsService,
+			castleService,
 			channelService,
 			databaseService,
 			dialogService,
