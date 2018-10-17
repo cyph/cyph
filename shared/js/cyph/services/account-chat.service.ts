@@ -26,6 +26,7 @@ import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
+import {ChannelService} from './channel.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -241,6 +242,7 @@ export class AccountChatService extends ChatService {
 
 	constructor (
 		analyticsService: AnalyticsService,
+		channelService: ChannelService,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
 		envService: EnvService,
@@ -271,6 +273,7 @@ export class AccountChatService extends ChatService {
 	) {
 		super(
 			analyticsService,
+			channelService,
 			databaseService,
 			dialogService,
 			envService,

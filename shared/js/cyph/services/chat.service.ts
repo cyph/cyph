@@ -41,6 +41,7 @@ import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
+import {ChannelService} from './channel.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
@@ -234,7 +235,8 @@ export class ChatService extends BaseProvider {
 	public readonly uiReady: Promise<true>	=
 		Promise.all([
 			this.resolvers.chatConnected.promise,
-			this.resolvers.currentMessageSynced.promise
+			this.resolvers.currentMessageSynced.promise,
+			this.channelService.initialMessagesProcessed.promise
 		]).then<true>(() =>
 			true
 		)
@@ -1211,6 +1213,9 @@ export class ChatService extends BaseProvider {
 	constructor (
 		/** @ignore */
 		protected readonly analyticsService: AnalyticsService,
+
+		/** @ignore */
+		protected readonly channelService: ChannelService,
 
 		/** @ignore */
 		protected readonly databaseService: DatabaseService,

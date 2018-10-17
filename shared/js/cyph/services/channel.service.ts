@@ -42,6 +42,9 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	/** @ignore */
 	private readonly userID	= resolvable<string>();
 
+	/** Resolves when first batch of incoming messages have been processed. */
+	public readonly initialMessagesProcessed	= resolvable<void>();
+
 	/** @inheritDoc */
 	public async close () : Promise<void> {
 		if (this.isClosed || !this.ephemeral) {
@@ -99,6 +102,15 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 		this.userID.resolve(userID);
 
+		let initialMessageCount	= !this.ephemeral ?
+			(await this.databaseService.getListKeys(`${url}/messages`)).length :
+			0
+		;
+
+		if (initialMessageCount === 0) {
+			this.initialMessagesProcessed.resolve();
+		}
+
 		this.subscriptions.push(this.databaseService.watchListPushes(
 			`${url}/messages`,
 			ChannelMessage,
@@ -106,15 +118,26 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			true,
 			this.subscriptions
 		).subscribe(async message => {
-			if (message.value.author === userID) {
-				return;
-			}
+			try {
+				if (message.value.author === userID) {
+					return;
+				}
 
-			if (this.pauseLock) {
-				await this.pauseLock.toPromise();
-			}
+				if (this.pauseLock) {
+					await this.pauseLock.toPromise();
+				}
 
-			await handlers.onMessage(message.value.cyphertext);
+				await handlers.onMessage(message.value.cyphertext);
+			}
+			finally {
+				if (initialMessageCount > 0) {
+					--initialMessageCount;
+
+					if (initialMessageCount === 0) {
+						this.initialMessagesProcessed.resolve();
+					}
+				}
+			}
 
 			if (!this.ephemeral) {
 				await this.databaseService.removeItem(message.url).catch(() => {});
