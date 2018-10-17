@@ -1,60 +1,103 @@
 import {Observable, ReplaySubject, Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {IAsyncList} from './iasync-list';
-import {LocalAsyncValue} from './local-async-value';
+import {LocalAsyncMap} from './local-async-map';
+import {LockFunction} from './lock-function-type';
 import {MaybePromise} from './maybe-promise-type';
-import {lockFunction} from './util/lock';
 
 
 /**
  * IAsyncList implementation that wraps a local value.
  */
-export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncList<T> {
+export class LocalAsyncList<T> implements IAsyncList<T> {
 	/** @ignore */
-	private readonly popLock	= lockFunction();
+	protected readonly map: LocalAsyncMap<number, T>;
 
 	/** @ignore */
-	protected readonly pushes	= new ReplaySubject<{index: number; value: T}>();
+	protected nextID: number;
+
+	/** @ignore */
+	protected readonly pushes	= new ReplaySubject<{id: number; value: T}>();
+
+	/** @inheritDoc */
+	public readonly lock: LockFunction;
+
+	/** @ignore */
+	protected clearInternal (emit: boolean = true) : void {
+		this.nextID	= 0;
+		this.map.clearInternal(emit);
+	}
+
+	/** @ignore */
+	protected getValueInternal (map: Map<number, T> = this.map.value) : T[] {
+		return Array.from(map.entries()).sort((a, b) => a[0] - b[0]).map(arr => arr[1]);
+	}
+
+	/** @ignore */
+	protected async setValueInternal (value: T[]) : Promise<void> {
+		this.clearInternal(false);
+		for (const item of value) {
+			this.pushItemInternal(item, false);
+		}
+		this.map.emitInternal();
+	}
+
+	/** @ignore */
+	public pushItemInternal (value: T, emit: boolean = true) : void {
+		const id	= this.nextID++;
+		this.map.setItemInternal(id, value, emit);
+		this.pushes.next({id, value});
+	}
 
 	/** @inheritDoc */
 	public async clear () : Promise<void> {
-		this.value.splice(0);
-		this.subject.next(this.value);
+		this.clearInternal();
 	}
 
 	/** @inheritDoc */
 	public async getFlatValue () : Promise<T extends any[] ? T : T[]> {
-		return (await this.getValue()).reduce<any>((a, b) => a.concat(b), []);
+		return this.getValueInternal().reduce<any>((a, b) => a.concat(b), []);
+	}
+
+	/** @inheritDoc */
+	public async getValue () : Promise<T[]> {
+		return this.getValueInternal();
 	}
 
 	/** @inheritDoc */
 	public async pushItem (value: T) : Promise<void> {
-		this.pushes.next({index: this.value.push(value), value});
-		this.subject.next(this.value);
+		this.pushItemInternal(value);
 	}
 
 	/** @inheritDoc */
 	public async setValue (value: T[]) : Promise<void> {
-		await super.setValue(value);
-		for (let i = 0 ; i < value.length ; ++i) {
-			this.pushes.next({index: i, value: value[i]});
-		}
+		this.setValueInternal(value);
 	}
 
 	/** @inheritDoc */
 	public subscribeAndPop (f: (value: T) => MaybePromise<void>) : Subscription {
-		return this.pushes.subscribe(async ({index, value}) => {
+		return this.pushes.subscribe(async ({id, value}) => {
 			try {
-				const promise	= f(value);
-
-				await this.popLock(async () => {
-					await promise;
-					this.value.splice(index, 1);
-					this.subject.next(this.value);
-				});
+				await f(value);
+				this.map.removeItemInternal(id);
 			}
 			catch {}
 		});
+	}
+
+	/** @inheritDoc */
+	public async updateValue (f: (value: T[]) => Promise<T[]>) : Promise<void> {
+		await this.lock(async () => {
+			try {
+				this.setValueInternal(await f(this.getValueInternal()));
+			}
+			catch {}
+		});
+	}
+
+	/** @inheritDoc */
+	public watch () : Observable<T[]> {
+		return this.map.watch().pipe(map(map => this.getValueInternal(map)));
 	}
 
 	/** @inheritDoc */
@@ -70,6 +113,13 @@ export class LocalAsyncList<T> extends LocalAsyncValue<T[]> implements IAsyncLis
 	}
 
 	constructor (value?: T[]) {
-		super(value || []);
+		this.map	= new LocalAsyncMap<number, T>(
+			value ?
+				new Map<number, T>(value.map((v, i) : [number, T] => [i, v])) :
+				undefined
+		);
+
+		this.lock	= this.map.lock;
+		this.nextID	= value ? value.length : 0;
 	}
 }

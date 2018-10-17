@@ -1,7 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {IAsyncValue} from './iasync-value';
-import {LockFunction} from './lock-function-type';
 import {lockFunction} from './util/lock';
 
 
@@ -9,19 +8,14 @@ import {lockFunction} from './util/lock';
  * IAsyncValue implementation that wraps a local value.
  */
 export class LocalAsyncValue<T> implements IAsyncValue<T> {
+	/** @inheritDoc */
+	public readonly lock	= lockFunction();
+
 	/** @ignore */
-	protected readonly subject: BehaviorSubject<T>	= new BehaviorSubject(this.value);
+	public readonly subject	= new BehaviorSubject<T>(this.value);
 
-	/** @inheritDoc */
-	public readonly lock: LockFunction	= lockFunction();
-
-	/** @inheritDoc */
-	public async getValue () : Promise<T> {
-		return this.value;
-	}
-
-	/** @inheritDoc */
-	public async setValue (newValue: T) : Promise<void> {
+	/** @ignore */
+	public setValueInternal (newValue: T, emit: boolean = true) : void {
 		if (ArrayBuffer.isView(this.value)) {
 			potassiumUtil.clearMemory(this.value);
 		}
@@ -34,21 +28,29 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 		}
 
 		this.value	= newValue;
-		this.subject.next(this.value);
+
+		if (emit) {
+			this.subject.next(this.value);
+		}
+	}
+
+	/** @inheritDoc */
+	public async getValue () : Promise<T> {
+		return this.value;
+	}
+
+	/** @inheritDoc */
+	public async setValue (newValue: T) : Promise<void> {
+		this.setValueInternal(newValue);
 	}
 
 	/** @inheritDoc */
 	public async updateValue (f: (value: T) => Promise<T>) : Promise<void> {
 		await this.lock(async () => {
-			const value	= await this.getValue();
-			let newValue: T;
 			try {
-				newValue	= await f(value);
+				this.setValueInternal(await f(this.value));
 			}
-			catch {
-				return;
-			}
-			await this.setValue(newValue);
+			catch {}
 		});
 	}
 
@@ -59,6 +61,6 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 
 	constructor (
 		/** @ignore */
-		protected value: T
+		public value: T
 	) {}
 }

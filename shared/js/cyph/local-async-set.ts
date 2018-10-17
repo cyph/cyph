@@ -8,22 +8,27 @@ import {LocalAsyncValue} from './local-async-value';
  * Local async Set implementation.
  */
 export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> implements IAsyncSet<T> {
+	/** @ignore */
+	protected emitInternal () : void {
+		this.subject.next(new Set<T>(this.value));
+	}
+
 	/** @inheritDoc */
 	public async addItem (value: T) : Promise<void> {
 		this.value.add(value);
-		this.subject.next(this.value);
+		this.emitInternal();
 	}
 
 	/** @inheritDoc */
 	public async clear () : Promise<void> {
 		this.value.clear();
-		this.subject.next(this.value);
+		this.emitInternal();
 	}
 
 	/** @inheritDoc */
 	public async deleteItem (value: T) : Promise<void> {
 		this.value.delete(value);
-		this.subject.next(this.value);
+		this.emitInternal();
 	}
 
 	/** @see Set.entries */
@@ -50,7 +55,7 @@ export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> implements IAsyncS
 	public async replaceItem (oldValue: T, newValue: T) : Promise<void> {
 		this.value.delete(oldValue);
 		this.value.add(newValue);
-		this.subject.next(this.value);
+		this.emitInternal();
 	}
 
 	/** @inheritDoc */
