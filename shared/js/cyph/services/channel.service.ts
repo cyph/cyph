@@ -43,7 +43,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	private readonly userID	= resolvable<string>();
 
 	/** Resolves when first batch of incoming messages have been processed. */
-	public readonly initialMessagesProcessed	= resolvable<void>();
+	public readonly initialMessagesProcessed	= resolvable();
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {

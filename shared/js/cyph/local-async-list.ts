@@ -29,8 +29,8 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 	}
 
 	/** @ignore */
-	protected getValueInternal (map: Map<number, T> = this.map.value) : T[] {
-		return Array.from(map.entries()).sort((a, b) => a[0] - b[0]).map(arr => arr[1]);
+	protected getValueInternal (mapValue: Map<number, T> = this.map.value) : T[] {
+		return Array.from(mapValue.entries()).sort((a, b) => a[0] - b[0]).map(arr => arr[1]);
 	}
 
 	/** @ignore */
@@ -97,7 +97,7 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 
 	/** @inheritDoc */
 	public watch () : Observable<T[]> {
-		return this.map.watch().pipe(map(map => this.getValueInternal(map)));
+		return this.map.watch().pipe(map(mapValue => this.getValueInternal(mapValue)));
 	}
 
 	/** @inheritDoc */

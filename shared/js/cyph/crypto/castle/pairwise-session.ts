@@ -42,7 +42,7 @@ export class PairwiseSession {
 	};
 
 	/** Resolves when first chunk of incoming messages have been processed. */
-	public readonly initialMessagesDecrypted	= resolvable<void>();
+	public readonly initialMessagesDecrypted	= resolvable();
 
 	/** @ignore */
 	private async abort () : Promise<void> {
