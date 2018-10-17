@@ -1,6 +1,6 @@
 /* tslint:disable:max-file-line-count */
 
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, Optional} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, combineLatest, interval, Observable, of} from 'rxjs';
 import {filter, map, mergeMap, take, takeWhile} from 'rxjs/operators';
@@ -237,8 +237,8 @@ export class ChatService extends BaseProvider {
 		Promise.all([
 			this.resolvers.chatConnected.promise,
 			this.resolvers.currentMessageSynced.promise,
-			this.castleService.initialMessagesDecrypted(),
-			this.channelService.initialMessagesProcessed.promise
+			this.castleService && this.castleService.initialMessagesDecrypted(),
+			this.channelService && this.channelService.initialMessagesProcessed.promise
 		]).then<true>(() =>
 			true
 		)
@@ -1217,10 +1217,12 @@ export class ChatService extends BaseProvider {
 		protected readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
-		protected readonly castleService: CastleService,
+		@Inject(CastleService) @Optional()
+		protected readonly castleService: CastleService|undefined,
 
 		/** @ignore */
-		protected readonly channelService: ChannelService,
+		@Inject(ChannelService) @Optional()
+		protected readonly channelService: ChannelService|undefined,
 
 		/** @ignore */
 		protected readonly databaseService: DatabaseService,
