@@ -9,15 +9,15 @@ import {AppService} from '../../app.service';
 
 
 /**
- * Angular component for the Cyph trial signup screen.
+ * Angular component for the Cyph signup confirmation screen.
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	selector: 'cyph-trial-signup',
-	styleUrls: ['./trial-signup.component.scss'],
-	templateUrl: './trial-signup.component.html'
+	selector: 'cyph-signup-confirm',
+	styleUrls: ['./signup-confirm.component.scss'],
+	templateUrl: './signup-confirm.component.html'
 })
-export class TrialSignupComponent extends BaseProvider implements OnInit {
+export class SignupConfirmComponent extends BaseProvider implements OnInit {
 	/** Generated API key. */
 	public readonly apiKey: Observable<string|undefined>	=
 		this.activatedRoute.params.pipe(map(o => o.apiKey))

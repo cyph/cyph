@@ -854,6 +854,9 @@ export class StringsService extends BaseProvider {
 	public readonly shareEhrDataTitle: string			= `Share Medical Data from EHR`;
 
 	/** @see StringsService */
+	public readonly signupConfirmTitle: string			= `${this.internalProduct} Signup`;
+
+	/** @see StringsService */
 	public readonly signupFailed: string				=
 		`Signup failed. Please try again later.`
 	;
@@ -919,9 +922,6 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly transactionHistory: string			= `Transaction History`;
-
-	/** @see StringsService */
-	public readonly trialTitle: string					= `${this.internalProduct} Signup`;
 
 	/** @see StringsService */
 	public readonly unknown: string						= `Unknown`;

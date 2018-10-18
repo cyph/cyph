@@ -6,7 +6,7 @@ import {env} from '../cyph/env';
 import {account, accountRedirect, login, retry} from '../cyph/routes';
 import {AppService} from './app.service';
 import {EphemeralChatRootComponent} from './components/ephemeral-chat-root';
-import {TrialSignupComponent} from './components/trial-signup';
+import {SignupConfirmComponent} from './components/signup-confirm';
 
 
 account.canActivate	= [AppService];
@@ -18,7 +18,7 @@ export const appRoutes: Routes	= [
 	account,
 	...accountRedirect,
 	...(!(env.environment.customBuild && env.environment.customBuild.config.lockedDown) ? [] : [
-		{path: 'confirm/:apiKey', component: TrialSignupComponent},
+		{path: 'confirm/:apiKey', component: SignupConfirmComponent},
 		{path: 'unlock/:password', component: BlankComponent}
 	]),
 	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
