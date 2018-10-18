@@ -12,11 +12,7 @@ const potassium			= require('../modules/potassium');
 const addProCode	= async (projectId, name, password, namespace, email) => {
 
 
-throw new Error(
-	'Non-functional for now. ' +
-	'Trial codes can be generated at /trial-signup, and ' +
-	'prod codes can be obtained via Braintree checkout.'
-);
+throw new Error('Non-functional for now. Codes can be obtained via Braintree checkout.');
 
 
 if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {

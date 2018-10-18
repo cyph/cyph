@@ -15,6 +15,7 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {emailPattern} from '../../email-pattern';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -39,9 +40,6 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 	/** Amount in dollars. */
 	@Input() public amount: number			= 0;
 
-	/** Trial API key to upgrade. */
-	@Input() public apiKey?: string;
-
 	/** Item category ID number. */
 	@Input() public category?: number;
 
@@ -51,8 +49,8 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 	/** Indicates whether checkout is complete. */
 	public readonly complete				= new BehaviorSubject<boolean>(false);
 
-	/** Checkout confirmation event. */
-	@Output() public readonly confirmed		= new EventEmitter<void>();
+	/** Checkout confirmation event; emits API key if applicable. */
+	@Output() public readonly confirmed		= new EventEmitter<string|undefined>();
 
 	/** ID of Braintree container element. */
 	public readonly containerID: string		= `id-${uuid()}`;
@@ -78,6 +76,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 
 	/** Name. */
 	@Input() public name?: string;
+
+	/** Namespace to use for generating API key. */
+	@Input() public namespace?: string;
 
 	/** If true, will never stop spinning. */
 	@Input() public noSpinnerEnd: boolean	= false;
@@ -147,72 +148,76 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 
 	/** Submits payment. */
 	public async submit () : Promise<void> {
-		if (!this.braintreeInstance) {
+		try {
+			this.pending.next(true);
+
+			const paymentMethod	= await new Promise<any>((resolve, reject) => {
+				this.braintreeInstance.requestPaymentMethod((err: any, data: any) => {
+					if (data && !err) {
+						reject(err);
+					}
+					else {
+						resolve(err);
+					}
+				});
+			}).catch((err: any) => {
+				throw (err || new Error(this.stringsService.checkoutBraintreeError));
+			});
+
+			const apiKey	= await request({
+				data: {
+					amount: Math.floor(
+						this.amount *
+						100 *
+						(this.perUser ? this.users.value : 1)
+					),
+					creditCard: paymentMethod.type === 'CreditCard',
+					nonce: paymentMethod.nonce,
+					subscription: this.subscriptionType !== undefined,
+					url: location.toString(),
+					...(this.category !== undefined ? {category: this.category} : {}),
+					...(this.company !== undefined ? {company: this.company} : {}),
+					...(this.email !== undefined ? {email: this.email} : {}),
+					...(this.item !== undefined ? {item: this.item} : {}),
+					...(this.name !== undefined ? {name: this.name} : {}),
+					...(this.namespace !== undefined ? {namespace: this.namespace} : {})
+				},
+				method: 'POST',
+				url: this.envService.baseUrl + 'braintree'
+			});
+
+			this.confirmed.emit(apiKey ? apiKey : undefined);
+
+			if (!this.noSpinnerEnd) {
+				this.complete.next(true);
+				this.pending.next(false);
+				this.success.next(true);
+			}
+		}
+		catch (err) {
 			this.complete.next(true);
 			this.pending.next(false);
 			this.success.next(false);
 
-			throw new Error('Cannot process payment because Braintree failed to initialize.');
-		}
+			const errorMessage	= err ? (err.message || err.toString()) : undefined;
 
-		try {
-			this.pending.next(true);
-
-			const paymentMethod	= await new Promise<{
-				data: any;
-				err: any;
-			}>(resolve => {
-				this.braintreeInstance.requestPaymentMethod((err: any, data: any) => {
-					resolve({data, err});
-				});
+			await this.dialogService.alert({
+				content:
+					`${this.stringsService.checkoutErrorStart}${
+						errorMessage ? `: "${errorMessage}"` : ''
+					}. ${this.stringsService.checkoutErrorEnd}`
+				,
+				title: this.stringsService.checkoutErrorTitle
 			});
-
-			if (paymentMethod.err) {
-				throw paymentMethod.err;
-			}
-
-			const success	=
-				await request({
-					data: {
-						amount: Math.floor(
-							this.amount *
-							100 *
-							(this.perUser ? this.users.value : 1)
-						),
-						creditCard: paymentMethod.data.type === 'CreditCard',
-						nonce: paymentMethod.data.nonce,
-						subscription: this.subscriptionType !== undefined,
-						...(this.apiKey !== undefined ? {apiKey: this.apiKey} : {}),
-						...(this.category !== undefined ? {category: this.category} : {}),
-						...(this.company !== undefined ? {company: this.company} : {}),
-						...(this.email !== undefined ? {email: this.email} : {}),
-						...(this.item !== undefined ? {item: this.item} : {}),
-						...(this.name !== undefined ? {name: this.name} : {})
-					},
-					method: 'POST',
-					url: this.envService.baseUrl + 'braintree'
-				}).catch(
-					() => ''
-				) === 'true'
-			;
-
-			if (success) {
-				this.confirmed.emit();
-			}
-
-			if (!this.noSpinnerEnd) {
-				this.complete.next(true);
-				this.success.next(success);
-			}
-		}
-		finally {
-			this.pending.next(this.noSpinnerEnd);
 		}
 	}
 
 	constructor (
 		/** @ignore */
 		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

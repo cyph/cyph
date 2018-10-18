@@ -1210,14 +1210,14 @@
 						</div>
 						<cyph-checkout
 							[amount]='cart.amount'
-							[apiKey]='cart.apiKey'
 							[category]='cart.categoryID'
 							[item]='cart.itemID'
 							[itemName]='cart.itemName'
-							[noSpinnerEnd]='!!cart.apiKey'
+							[namespace]='cart.namespace'
+							[noSpinnerEnd]='!!cart.namespace'
 							[perUser]='cart.perUser'
 							[subscriptionType]='cart.subscriptionType'
-							(confirmed)='appService.checkoutConfirmed()'
+							(confirmed)='appService.checkoutConfirmed($event)'
 							*ngIf='appService.cart | async as cart'
 						>
 							<div

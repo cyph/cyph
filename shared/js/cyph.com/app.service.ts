@@ -37,11 +37,11 @@ export class AppService extends BaseProvider {
 	/** Amount, category, and item in cart. */
 	public readonly cart				= new BehaviorSubject<undefined|{
 		amount: number;
-		apiKey?: string;
 		categoryID: number;
 		categoryName: string;
 		itemID: number;
 		itemName: string;
+		namespace?: string;
 		perUser: boolean;
 		subscriptionType?: SubscriptionTypes;
 	}>(
@@ -184,8 +184,8 @@ export class AppService extends BaseProvider {
 
 		if (state === States.checkout) {
 			try {
-				const apiKey	= urlSegmentPaths[3] && urlSegmentPaths[3].length === 32 ?
-					urlSegmentPaths[3] :
+				const namespace	= urlSegmentPaths[3] && urlSegmentPaths[3].indexOf('_') > -1 ?
+					urlSegmentPaths[3].replace(/_/g, '.') :
 					undefined
 				;
 
@@ -198,8 +198,8 @@ export class AppService extends BaseProvider {
 						/-(.)/g,
 						(_, s) => s.toUpperCase()
 					),
-					!apiKey ? parseFloat(urlSegmentPaths[3]) : undefined,
-					apiKey
+					!namespace ? parseFloat(urlSegmentPaths[3]) : undefined,
+					namespace
 				);
 			}
 			catch {
@@ -262,9 +262,9 @@ export class AppService extends BaseProvider {
 	}
 
 	/** Checkout completion event handler. */
-	public checkoutConfirmed () : void {
-		if (this.cart.value && this.cart.value.apiKey && typeof this.queryParams.ref === 'string') {
-			location.href	= `${this.queryParams.ref}/confirm/${this.cart.value.apiKey}`;
+	public checkoutConfirmed (apiKey?: string) : void {
+		if (apiKey && typeof this.queryParams.ref === 'string') {
+			location.href	= `${this.queryParams.ref}/confirm/${apiKey}`;
 		}
 	}
 
@@ -273,7 +273,7 @@ export class AppService extends BaseProvider {
 		categoryName: string,
 		itemName: string,
 		customAmount?: number,
-		apiKey?: string
+		namespace?: string
 	) : void {
 		const category	= this.configService.pricingConfig.categories[categoryName];
 		const item		= category && category.items ? category.items[itemName] : undefined;
@@ -289,11 +289,11 @@ export class AppService extends BaseProvider {
 
 		this.cart.next({
 			amount,
-			apiKey,
 			categoryID: category.id,
 			categoryName,
 			itemID: item.id,
 			itemName,
+			namespace: namespace || category.namespace,
 			perUser: item.perUser === true,
 			subscriptionType: item.subscriptionType
 		});

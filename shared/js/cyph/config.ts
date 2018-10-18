@@ -81,6 +81,7 @@ export class Config {
 						subscriptionType?: SubscriptionTypes;
 					};
 				};
+				namespace?: string;
 			};
 		};
 	}	= {
@@ -114,7 +115,8 @@ export class Config {
 						id: 1,
 						subscriptionType: SubscriptionTypes.monthly
 					}
-				}
+				},
+				namespace: 'cyph.pro'
 			},
 			hint: {
 				id: 5,
@@ -131,7 +133,8 @@ export class Config {
 						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}
-				}
+				},
+				namespace: 'cyph.healthcare'
 			},
 			subscription: {
 				id: 1,
@@ -161,7 +164,8 @@ export class Config {
 						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}
-				}
+				},
+				namespace: 'cyph.healthcare'
 			},
 			telehealthPro: {
 				id: 6,
@@ -178,7 +182,8 @@ export class Config {
 						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}
-				}
+				},
+				namespace: 'cyph.healthcare'
 			}
 		}
 	};

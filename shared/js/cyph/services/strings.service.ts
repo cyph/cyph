@@ -164,6 +164,22 @@ export class StringsService extends BaseProvider {
 	public readonly changePinTitle: string				= `Change PIN`;
 
 	/** @see StringsService */
+	public readonly checkoutBraintreeError: string		= `Braintree failed to initialize.`;
+
+	/** @see StringsService */
+	public readonly checkoutErrorEnd: string			=
+		`Please check your payment credentials and try again.`
+	;
+
+	/** @see StringsService */
+	public readonly checkoutErrorStart: string			=
+		`Processing payment failed`
+	;
+
+	/** @see StringsService */
+	public readonly checkoutErrorTitle: string			= `Payment Failed`;
+
+	/** @see StringsService */
 	public readonly clickHere: string					= `Click here`;
 
 	/** @see StringsService */

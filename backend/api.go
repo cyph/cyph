@@ -24,7 +24,6 @@ func init() {
 	handleFuncs("/geolocation/{language}", Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
 	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
-	handleFuncs("/pro/trialsignup", Handlers{methods.POST: proTrialSignup})
 	handleFuncs("/pro/unlock", Handlers{methods.POST: proUnlock})
 	handleFuncs("/redox/apikey/delete", Handlers{methods.POST: redoxDeleteAPIKey})
 	handleFuncs("/redox/apikey/generate", Handlers{methods.POST: redoxGenerateAPIKey})
@@ -44,36 +43,78 @@ func main() {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
-	var err error
+	apiKey := ""
+	company := sanitize(h.Request.PostFormValue("company"))
+	name := sanitize(h.Request.PostFormValue("name"))
+	timestamp := getTimestamp()
 
-	company := ""
-	creditCard := false
-	email := ""
-	name := ""
-	namespace := ""
-	signupURL := "https://cyph.ws"
-	timestamp := int64(0)
+	email, err := getEmail(h.Request.PostFormValue("email"))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
 
-	apiKey := sanitize(h.Request.PostFormValue("apiKey"))
+	signupURL, err := getURL(h.Request.PostFormValue("url"))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
+	}
 
-	if apiKey == "" {
-		company = sanitize(h.Request.PostFormValue("company"))
-		creditCard = h.Request.PostFormValue("creditCard") == "true"
-		name = sanitize(h.Request.PostFormValue("name"))
+	/* API key setup */
 
-		email, err = getEmail(h.Request.PostFormValue("email"))
-		if err != nil {
-			return err.Error(), http.StatusBadRequest
-		}
+	namespace := h.Request.PostFormValue("namespace")
 
+	if namespace != "" {
 		namespace, err = getNamespace(h.Request.PostFormValue("namespace"))
 		if err != nil {
 			return err.Error(), http.StatusBadRequest
 		}
 
-		timestamp = getTimestamp()
+		customerEmail := &CustomerEmail{}
+		customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
+
+		if err = datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
+			return "API key already exists for this user", http.StatusForbidden
+		}
+
+		apiKey, customerKey, err := generateAPIKey(h, "Customer")
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		_, err = datastore.Put(
+			h.Context,
+			customerKey,
+			&Customer{
+				APIKey:    apiKey,
+				Company:   company,
+				Email:     email,
+				Name:      name,
+				Namespace: namespace,
+				SignupURL: signupURL,
+				Timestamp: timestamp,
+			},
+		)
+
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
+
+		_, err = datastore.Put(
+			h.Context,
+			customerEmailKey,
+			&CustomerEmail{
+				APIKey: apiKey,
+				Email:  email,
+			},
+		)
+
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
 	}
 
+	/* Payment processing */
+
+	creditCard := h.Request.PostFormValue("creditCard") == "true"
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
 	planID := ""
@@ -106,25 +147,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	if subscription {
 		var customerKey *datastore.Key
 
-		if apiKey != "" {
-			customerKey = datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
-			customer := &Customer{}
-
-			if err = datastore.Get(h.Context, customerKey, customer); err != nil {
-				return "invalid trial API key", http.StatusForbidden
-			}
-
-			company = customer.Company
-			email = customer.Email
-			name = customer.Name
-			namespace = customer.Namespace
-			signupURL = customer.SignupURL
-			timestamp = customer.Timestamp
-		} else {
-			apiKey, customerKey, err = generateAPIKey(h, "Customer")
-			if err != nil {
-				return err.Error(), http.StatusInternalServerError
-			}
+		if apiKey == "" {
+			return "Namespace required", http.StatusForbidden
 		}
 
 		names := strings.SplitN(name, " ", 2)
@@ -289,7 +313,11 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		"</div>"+
 		"")
 
-	return success, http.StatusOK
+	if success {
+		return apiKey, http.StatusOK
+	} else {
+		return "", http.StatusInternalServerError
+	}
 }
 
 func braintreeToken(h HandlerArgs) (interface{}, int) {
@@ -466,71 +494,6 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 	trackEvent(h, "session", "preauth", customer.APIKey, 1)
 
 	return "", http.StatusOK
-}
-
-func proTrialSignup(h HandlerArgs) (interface{}, int) {
-	company := sanitize(h.Request.PostFormValue("company"))
-	name := sanitize(h.Request.PostFormValue("name"))
-
-	email, err := getEmail(h.Request.PostFormValue("email"))
-	if err != nil {
-		return err.Error(), http.StatusBadRequest
-	}
-
-	namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
-	if err != nil {
-		return err.Error(), http.StatusBadRequest
-	}
-
-	url, err := getURL(h.Request.PostFormValue("url"))
-	if err != nil {
-		return err.Error(), http.StatusBadRequest
-	}
-
-	customerEmail := &CustomerEmail{}
-	customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
-
-	if err = datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
-		return "trial code already exists for this user", http.StatusForbidden
-	}
-
-	apiKey, customerKey, err := generateAPIKey(h, "Customer")
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	_, err = datastore.Put(
-		h.Context,
-		customerKey,
-		&Customer{
-			APIKey:    apiKey,
-			Company:   company,
-			Email:     email,
-			Name:      name,
-			Namespace: namespace,
-			SignupURL: url,
-			Timestamp: getTimestamp(),
-		},
-	)
-
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	_, err = datastore.Put(
-		h.Context,
-		customerEmailKey,
-		&CustomerEmail{
-			APIKey: apiKey,
-			Email:  email,
-		},
-	)
-
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	return apiKey, http.StatusOK
 }
 
 func proUnlock(h HandlerArgs) (interface{}, int) {

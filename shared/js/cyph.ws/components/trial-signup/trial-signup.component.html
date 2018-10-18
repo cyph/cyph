@@ -3,7 +3,6 @@
 		fxFlexFill
 		fxLayoutAlign='center center'
 		class='login-form'
-		[class.checking]='checking | async'
 	>
 		<mat-card fxFlex fxFlex.sm='95' fxFlex.md='75' fxFlex.gt-md='50'>
 			<cyph-logo cardHeader homeLink></cyph-logo>
@@ -20,87 +19,14 @@
 				</span>
 			</mat-card-subtitle>
 			<mat-card-content>
-				<form
-					ngNativeValidate
-					fxLayout='column'
-					fxLayoutGap='16px'
-					(submit)='submit()'
-					*ngIf='(apiKey | async) === undefined'
-				>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<h3
-							class='cyph-banner warn'
-							[style.visibility]='(error | async) ? "visible" : "hidden"'
-						>
-							<span cyphTranslate>
-								It looks like you've already signed up. If you believe this
-								message to be in error, please refresh and try again or
-							</span>
-							&ngsp;
-							<a
-								[href]='envService.homeUrl + "contact/help"'
-								cyphTranslate
-							>contact us</a>.
-						</h3>
-					</div>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
-							<input
-								matInput
-								cyphTranslate
-								[ngModel]='name | async'
-								(ngModelChange)='name.next($event)'
-								name='name'
-								type='text'
-								placeholder='Name'
-								cyphAutofocus
-								required
-							/>
-						</mat-form-field>
-					</div>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
-							<input
-								matInput
-								cyphTranslate
-								[ngModel]='company | async'
-								(ngModelChange)='company.next($event)'
-								name='company'
-								type='text'
-								placeholder='Company Name (optional)'
-							/>
-						</mat-form-field>
-					</div>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
-							<input
-								matInput
-								cyphTranslate
-								[ngModel]='email | async'
-								(ngModelChange)='email.next($event)'
-								[pattern]='emailPattern'
-								name='email'
-								type='email'
-								placeholder='Email'
-								required
-							/>
-						</mat-form-field>
-					</div>
-					<div></div>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<button mat-button type='submit' cyphTranslate>
-							Sign Up
-						</button>
-					</div>
-				</form>
-				<div *ngIf='(apiKey | async) !== undefined'>
+				<div *ngIf='apiKey | async as key'>
 					<br />
 					<h3 class='cyph-banner success'>
 						<div cyphTranslate>
 							Your account is now active. You can log in to this environment
 							using the following code:
 						</div>
-						<div class='xkcd-passphrase'>{{apiKey | async}}</div>
+						<div class='xkcd-passphrase'>{{key}}</div>
 						<div>
 							<span cyphTranslate>
 								If you ever need any help, or you're just bored and need

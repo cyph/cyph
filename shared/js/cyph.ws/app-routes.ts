@@ -19,7 +19,6 @@ export const appRoutes: Routes	= [
 	...accountRedirect,
 	...(!(env.environment.customBuild && env.environment.customBuild.config.lockedDown) ? [] : [
 		{path: 'confirm/:apiKey', component: TrialSignupComponent},
-		{path: 'signup/:category/:item', component: TrialSignupComponent},
 		{path: 'unlock/:password', component: BlankComponent}
 	]),
 	{path: '**', canActivate: [AppService], component: EphemeralChatRootComponent}
