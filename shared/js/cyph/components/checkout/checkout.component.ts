@@ -179,6 +179,7 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 							100 *
 							(this.perUser ? this.users.value : 1)
 						),
+						creditCard: paymentMethod.data.type === 'CreditCard',
 						nonce: paymentMethod.data.nonce,
 						subscription: this.subscriptionType !== undefined,
 						...(this.apiKey !== undefined ? {apiKey: this.apiKey} : {}),

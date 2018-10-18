@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lionelbarrow/braintree-go"
+	"github.com/braintree-go/braintree-go"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/mail"
@@ -47,6 +47,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	var err error
 
 	company := ""
+	creditCard := false
 	email := ""
 	name := ""
 	namespace := ""
@@ -57,6 +58,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	if apiKey == "" {
 		company = sanitize(h.Request.PostFormValue("company"))
+		creditCard = h.Request.PostFormValue("creditCard") == "true"
 		name = sanitize(h.Request.PostFormValue("name"))
 
 		email, err = getEmail(h.Request.PostFormValue("email"))
@@ -143,10 +145,20 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return err.Error(), http.StatusTeapot
 		}
 
-		paymentMethod, err := bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
-			CustomerId:         braintreeCustomer.Id,
-			PaymentMethodNonce: nonce,
-		})
+		var paymentMethod braintree.PaymentMethod
+
+		if creditCard {
+			paymentMethod, err = bt.CreditCard().Create(h.Context, &braintree.CreditCard{
+				CardholderName:     name,
+				CustomerId:         braintreeCustomer.Id,
+				PaymentMethodNonce: nonce,
+			})
+		} else {
+			paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
+				CustomerId:         braintreeCustomer.Id,
+				PaymentMethodNonce: nonce,
+			})
+		}
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot

@@ -17,9 +17,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/braintree-go/braintree-go"
 	"github.com/cbroglie/mustache"
 	"github.com/gorilla/mux"
-	"github.com/lionelbarrow/braintree-go"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
 	"golang.org/x/net/context"
