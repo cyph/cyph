@@ -47,7 +47,7 @@
 						<button
 							mat-button
 							cyphTranslate
-							[routerLink]='"/unlock/" + key'
+							(click)='unlock(key)'
 						>
 							Enter Cyph
 						</button>

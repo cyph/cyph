@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../../cyph/base-provider';
@@ -28,9 +28,18 @@ export class SignupConfirmComponent extends BaseProvider implements OnInit {
 		this.appService.loadComplete();
 	}
 
+	/** Tries unlocking with the given API key. */
+	public unlock (apiKey: string) : void {
+		this.appService.isLockedDown.next(true);
+		this.router.navigate(['unlock', apiKey]);
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly appService: AppService,
