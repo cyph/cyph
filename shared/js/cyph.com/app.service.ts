@@ -262,9 +262,9 @@ export class AppService extends BaseProvider {
 	}
 
 	/** Checkout completion event handler. */
-	public checkoutConfirmed (apiKey?: string) : void {
-		if (apiKey && typeof this.queryParams.ref === 'string') {
-			location.href	= `${this.queryParams.ref}/confirm/${apiKey}`;
+	public checkoutConfirmed ({apiKey, namespace}: {apiKey?: string; namespace?: string}) : void {
+		if (apiKey && namespace) {
+			location.href	= `https://${namespace}/confirm/${apiKey}`;
 		}
 	}
 

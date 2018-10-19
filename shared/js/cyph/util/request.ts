@@ -1,4 +1,5 @@
 import {
+	HttpErrorResponse,
 	HttpEventType,
 	HttpHeaders,
 	HttpRequest,
@@ -124,7 +125,17 @@ const baseRequest	= <R, T> (
 			}
 
 			if (!statusOk || response === undefined) {
-				const err	= error || response || new Error('Request failed.');
+				const err	=
+					(
+						error instanceof HttpErrorResponse && error.error ?
+							new Error(error.error) :
+							undefined
+					) ||
+					error ||
+					response ||
+					new Error('Request failed.')
+				;
+
 				progress.error(err);
 				throw err;
 			}

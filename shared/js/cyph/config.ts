@@ -134,7 +134,7 @@ export class Config {
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				},
-				namespace: 'cyph.healthcare'
+				namespace: 'video.cyph.healthcare'
 			},
 			subscription: {
 				id: 1,
@@ -165,7 +165,7 @@ export class Config {
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				},
-				namespace: 'cyph.healthcare'
+				namespace: 'video.cyph.healthcare'
 			},
 			telehealthPro: {
 				id: 6,
@@ -183,7 +183,7 @@ export class Config {
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				},
-				namespace: 'cyph.healthcare'
+				namespace: 'video.cyph.healthcare'
 			}
 		}
 	};

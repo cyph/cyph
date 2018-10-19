@@ -50,7 +50,10 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 	public readonly complete				= new BehaviorSubject<boolean>(false);
 
 	/** Checkout confirmation event; emits API key if applicable. */
-	@Output() public readonly confirmed		= new EventEmitter<string|undefined>();
+	@Output() public readonly confirmed		=new EventEmitter<{
+		apiKey?: string;
+		namespace?: string;
+	}>();
 
 	/** ID of Braintree container element. */
 	public readonly containerID: string		= `id-${uuid()}`;
@@ -154,10 +157,10 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 			const paymentMethod	= await new Promise<any>((resolve, reject) => {
 				this.braintreeInstance.requestPaymentMethod((err: any, data: any) => {
 					if (data && !err) {
-						reject(err);
+						resolve(data);
 					}
 					else {
-						resolve(err);
+						reject(err);
 					}
 				});
 			}).catch((err: any) => {
@@ -186,7 +189,7 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 				url: this.envService.baseUrl + 'braintree'
 			});
 
-			this.confirmed.emit(apiKey ? apiKey : undefined);
+			this.confirmed.emit({apiKey: apiKey || undefined, namespace: this.namespace});
 
 			if (!this.noSpinnerEnd) {
 				this.complete.next(true);
@@ -199,7 +202,12 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 			this.pending.next(false);
 			this.success.next(false);
 
-			const errorMessage	= err ? (err.message || err.toString()) : undefined;
+			const errorMessage	= err ?
+				(err.message || err.toString()).replace(/\s+/g, ' ').trim().replace(/\.$/, '') :
+				undefined
+			;
+
+			await sleep(1000);
 
 			await this.dialogService.alert({
 				content:

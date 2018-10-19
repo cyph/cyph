@@ -58,61 +58,22 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusBadRequest
 	}
 
-	/* API key setup */
-
-	namespace := h.Request.PostFormValue("namespace")
-
-	if namespace != "" {
-		namespace, err = getNamespace(h.Request.PostFormValue("namespace"))
-		if err != nil {
-			return err.Error(), http.StatusBadRequest
-		}
-
-		customerEmail := &CustomerEmail{}
-		customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
-
-		if err = datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
-			return "API key already exists for this user", http.StatusForbidden
-		}
-
-		apiKey, customerKey, err := generateAPIKey(h, "Customer")
-		if err != nil {
-			return err.Error(), http.StatusInternalServerError
-		}
-
-		_, err = datastore.Put(
-			h.Context,
-			customerKey,
-			&Customer{
-				APIKey:    apiKey,
-				Company:   company,
-				Email:     email,
-				Name:      name,
-				Namespace: namespace,
-				SignupURL: signupURL,
-				Timestamp: timestamp,
-			},
-		)
-
-		if err != nil {
-			return err.Error(), http.StatusInternalServerError
-		}
-
-		_, err = datastore.Put(
-			h.Context,
-			customerEmailKey,
-			&CustomerEmail{
-				APIKey: apiKey,
-				Email:  email,
-			},
-		)
-
-		if err != nil {
-			return err.Error(), http.StatusInternalServerError
-		}
+	namespace, err = getNamespace(h.Request.PostFormValue("namespace"))
+	if err != nil {
+		return err.Error(), http.StatusBadRequest
 	}
 
-	/* Payment processing */
+	customerEmail := &CustomerEmail{}
+	customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
+
+	if err = datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
+		return "API key already exists for this user", http.StatusForbidden
+	}
+
+	apiKey, customerKey, err := generateAPIKey(h, "Customer")
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
 
 	creditCard := h.Request.PostFormValue("creditCard") == "true"
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
@@ -146,10 +107,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	if subscription {
 		var customerKey *datastore.Key
-
-		if apiKey == "" {
-			return "Namespace required", http.StatusForbidden
-		}
 
 		names := strings.SplitN(name, " ", 2)
 		firstName := names[0]
@@ -281,9 +238,44 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		txLog = string(txJSON)
 	}
 
+	if !success {
+		return "", http.StatusInternalServerError
+	}
+
 	subject := "SALE SALE SALE"
 	if !isProd {
 		subject = "[sandbox] " + subject
+	}
+
+	_, err = datastore.Put(
+		h.Context,
+		customerKey,
+		&Customer{
+			APIKey:    apiKey,
+			Company:   company,
+			Email:     email,
+			Name:      name,
+			Namespace: namespace,
+			SignupURL: signupURL,
+			Timestamp: timestamp,
+		},
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	_, err = datastore.Put(
+		h.Context,
+		customerEmailKey,
+		&CustomerEmail{
+			APIKey: apiKey,
+			Email:  email,
+		},
+	)
+
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
 	}
 
 	mail.SendToAdmins(h.Context, &mail.Message{
@@ -313,11 +305,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		"</div>"+
 		"")
 
-	if success {
-		return apiKey, http.StatusOK
-	} else {
-		return "", http.StatusInternalServerError
-	}
+	return apiKey, http.StatusOK
 }
 
 func braintreeToken(h HandlerArgs) (interface{}, int) {
