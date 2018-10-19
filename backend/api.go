@@ -183,10 +183,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		success = tx.Status == braintree.SubscriptionStatusActive
-		txLog = "Subscription " + string(tx.Status)
+		txLog += "Subscription " + string(tx.Status)
 
 		if success {
-			txLog = txLog + "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
+			txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
 
 			_, err := datastore.Put(
 				h.Context,
@@ -204,7 +204,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			)
 
 			if err != nil {
-				txLog = "\n\nERROR: " + err.Error()
+				txLog += "\n\nERROR: " + err.Error()
 			}
 
 			_, err = datastore.Put(
@@ -217,7 +217,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			)
 
 			if err != nil {
-				txLog = "\n\nERROR: " + err.Error()
+				txLog += "\n\nERROR: " + err.Error()
 			}
 		}
 	} else {
@@ -235,7 +235,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		success = tx.Status == "authorized"
 		txJSON, _ := json.Marshal(tx)
-		txLog = string(txJSON)
+		txLog += string(txJSON)
 	}
 
 	if !success {
