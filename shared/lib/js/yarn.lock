@@ -6156,9 +6156,9 @@ ejs@^2.6.1:
   integrity sha512-0xy4A/twfrRCnkhfk8ErDi5DqdAsAqeGxht4xkCUrsvhhbQNs7E+4jV0CN7+NKIY0aHE72+XvqtBIXzD31ZbXQ==
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.79:
-  version "1.3.79"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.79.tgz#774718f06284a4bf8f578ac67e74508fe659f13a"
-  integrity sha512-LQdY3j4PxuUl6xfxiFruTSlCniTrTrzAd8/HfsLEMi0PUpaQ0Iy+Pr4N4VllDYjs0Hyu2lkTbvzqlG+PX9NsNw==
+  version "1.3.80"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.80.tgz#e99ec7efe64c2c6a269d3885ff411ea88852fa53"
+  integrity sha512-WClidEWEUNx7OfwXehB0qaxCuetjbKjev2SmXWgybWPLKAThBiMTF/2Pd8GSUDtoGOavxVzdkKwfFAPRSWlkLw==
 
 elliptic@=6.4.0:
   version "6.4.0"
@@ -8914,7 +8914,12 @@ i18next-xhr-backend@~1.5.1:
   resolved "https://registry.yarnpkg.com/i18next-xhr-backend/-/i18next-xhr-backend-1.5.1.tgz#50282610780c6a696d880dfa7f4ac1d01e8c3ad5"
   integrity sha512-9OLdC/9YxDvTFcgsH5t2BHCODHEotHCa6h7Ly0EUlUC7Y2GS09UeoHOGj3gWKQ3HCqXz8NlH4gOrK3NNc9vPuw==
 
-i18next@^11.6.0, i18next@~11.9.0:
+i18next@^11.6.0:
+  version "11.10.0"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-11.10.0.tgz#901231c840ba2bbf89b672a7f65d50fb2250626e"
+  integrity sha512-5ElF7gjvRztb7sxS9KOGQ7b8L6uJqysTuGNIwSEefVDE4yhEmIrD6SZB3Z90QtwLq9Ag7W6QJQGO/yAI8gPd1A==
+
+i18next@~11.9.0:
   version "11.9.1"
   resolved "https://registry.yarnpkg.com/i18next/-/i18next-11.9.1.tgz#f2718b11da2460e29e2dbd3dd8dea05dfc88e2dc"
   integrity sha512-sUAfCdKYi8EufO6B8aY5RF/hqweCpRKvbxUhlzlmlAr+LgJQ2kXe/5y02kaPu6ApFIiW5WOz8+3ehoy97LUtMw==
@@ -9979,11 +9984,6 @@ jpeg-js@^0.2.0:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
   integrity sha512-Ubldcmxp5np52/ENotGxlLe6aGMvmF4R8S6tZjsP6Knsaxd/xp3Zrh50cG93lR6nPXyUFwzN3ZSOQI0wRJNdGg==
-
-jquery@^1.11.2:
-  version "1.12.4"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-1.12.4.tgz#01e1dfba290fe73deba77ceeacb0f9ba2fec9e0c"
-  integrity sha1-AeHfuikP5z3rp3zurLD5ui/sngw=
 
 js-base64@^2.1.8, js-base64@^2.1.9:
   version "2.4.9"
@@ -17349,13 +17349,6 @@ thenify-all@^1.0.0, thenify-all@^1.6.0:
   dependencies:
     any-promise "^1.0.0"
 
-throttle-debounce@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-0.1.1.tgz#d286b6c5cb7b78e0bb81be034b29a22fb29455ae"
-  integrity sha1-0oa2xct7eOC7gb4DSymiL7KUVa4=
-  dependencies:
-    jquery "^1.11.2"
-
 through2@0.6.3:
   version "0.6.3"
   resolved "https://registry.yarnpkg.com/through2/-/through2-0.6.3.tgz#795292fde9f254c2a368b38f9cc5d1bd4663afb6"
@@ -18484,7 +18477,7 @@ video.js@>=6.0.0, video.js@>=6.2.7, "video.js@^6 || ^7", "video.js@^6.8.0 || ^7.
     videojs-vtt.js "0.14.1"
     xhr "2.4.0"
 
-video.js@^5.0.2, video.js@^5.10.1, video.js@^5.2.1, video.js@^5.6.0, video.js@^5.8.0:
+video.js@^5.0.2, video.js@^5.10.1, video.js@^5.2.1, video.js@^5.6.0:
   version "5.20.5"
   resolved "https://registry.yarnpkg.com/video.js/-/video.js-5.20.5.tgz#445cdae204bce459782d86a31b25a32afd6d8eff"
   integrity sha1-RFza4gS85Fl4LYajGyWjKv1tjv8=
@@ -18560,14 +18553,6 @@ videojs-record@^2.4.1:
     video.js ">=6.2.7"
     videojs-wavesurfer ">=2.5.0"
     webrtc-adapter ">=6.2.1"
-
-videojs-responsive-layout@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/videojs-responsive-layout/-/videojs-responsive-layout-1.1.1.tgz#29d2090b748f32c775af69cac8073b2330bff305"
-  integrity sha1-KdIJC3SPMsd1r2nKyAc7IzC/8wU=
-  dependencies:
-    throttle-debounce "^0.1.1"
-    video.js "^5.8.0"
 
 videojs-swf@5.4.1:
   version "5.4.1"

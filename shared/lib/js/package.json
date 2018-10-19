@@ -299,7 +299,6 @@
     "videojs-hotkeys": "^0.2.22",
     "videojs-playlist": "^4.2.6",
     "videojs-record": "^2.4.1",
-    "videojs-responsive-layout": "^1.1.1",
     "videojs-theater-mode": "^1.0.0",
     "videojs-wavesurfer": "^2.6.1",
     "wavesurfer.js": "^2.1.0",
