@@ -50,7 +50,7 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 	public readonly complete				= new BehaviorSubject<boolean>(false);
 
 	/** Checkout confirmation event; emits API key if applicable. */
-	@Output() public readonly confirmed		=new EventEmitter<{
+	@Output() public readonly confirmed		= new EventEmitter<{
 		apiKey?: string;
 		namespace?: string;
 	}>();
