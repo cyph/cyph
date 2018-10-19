@@ -239,7 +239,7 @@ read -r -d '' modules <<- EOM
 	retire
 	rlwe
 	rsvp
-	rxjs@~6.2
+	rxjs
 	rxjs-tslint
 	rxjs-tslint-rules
 	sass-loader
