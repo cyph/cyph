@@ -138,7 +138,7 @@ export class AccountService extends BaseProvider {
 	public readonly routeChanges						= toBehaviorSubject<string>(
 		this.router.events.pipe(
 			filter(event => event instanceof NavigationEnd && event.url !== this.currentRoute),
-			map(({url}: NavigationEnd) => url)
+			map(({url}: any) => url)
 		),
 		this.router.url,
 		this.subscriptions
