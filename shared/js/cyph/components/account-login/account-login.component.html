@@ -16,8 +16,6 @@
 		fxFlex.md='75'
 		fxFlex.gt-md='50'
 	>
-		<cyph-logo cardHeader homeLink></cyph-logo>
-
 		<mat-card-title cyphTranslate>
 			{{
 				(pinUnlock | async) ?
@@ -46,6 +44,8 @@
 				<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
 			</p>
 		</mat-card-subtitle>
+
+		<cyph-logo cardHeader homeLink></cyph-logo>
 
 		<mat-card-content fxLayout='row' fxLayoutAlign='center'>
 			<form ngNativeValidate fxFlex='80' fxLayout='column' (submit)='submit()'>

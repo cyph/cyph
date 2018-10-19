@@ -6,7 +6,6 @@
 		[class.checking]='checking | async'
 	>
 		<mat-card fxFlex fxFlex.sm='95' fxFlex.md='75' fxFlex.gt-md='50'>
-			<cyph-logo cardHeader homeLink></cyph-logo>
 			<mat-card-title>
 				{{stringsService.unlockTitle}}
 			</mat-card-title>
@@ -19,6 +18,7 @@
 					You must enter a password to access this environment.
 				</span>
 			</mat-card-subtitle>
+			<cyph-logo cardHeader homeLink></cyph-logo>
 			<mat-card-content>
 				<form ngNativeValidate (submit)='submit()'>
 					<div fxLayout='row' fxLayoutAlign='center center'>
