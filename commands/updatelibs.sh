@@ -124,6 +124,7 @@ read -r -d '' modules <<- EOM
 	comlinkjs
 	copy-webpack-plugin
 	core-js
+	cornerstone-core
 	crypto-browserify
 	css-loader
 	csv
@@ -134,6 +135,7 @@ read -r -d '' modules <<- EOM
 	dompurify
 	dope-qr
 	dropzone
+	dwv
 	extract-text-webpack-plugin
 	fast-crc32c
 	faye-websocket
@@ -281,7 +283,14 @@ read -r -d '' modules <<- EOM
 	unsemantic
 	url-loader
 	video.js
+	videojs-background
+	videojs-brand
+	videojs-bug
+	videojs-hotkeys
+	videojs-playlist
 	videojs-record
+	videojs-responsive-layout
+	videojs-theater-mode
 	videojs-wavesurfer
 	wavesurfer.js
 	web-animations-js

@@ -223,6 +223,8 @@ EOM
 
 for anyType in \
 	braintree-web-drop-in \
+	cornerstone-core \
+	dwv \
 	granim \
 	konami \
 	lamejs \
@@ -236,7 +238,13 @@ for anyType in \
 	simplewebrtc \
 	tab-indent \
 	u2f-api-polyfill \
+	videojs-background \
+	videojs-brand \
+	videojs-hotkeys \
+	videojs-playlist \
 	videojs-record \
+	videojs-responsive-layout \
+	videojs-theater-mode \
 	videojs-wavesurfer \
 	wavesurfer.js \
 	wowjs
