@@ -228,7 +228,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 	var apiKey string
 	if authHeader, ok := h.Request.Header["Authorization"]; ok && len(authHeader) > 0 {
-		apiKey = sanitize(authHeader[0])
+		apiKey = authHeader[0]
 	} else {
 		return nil, nil, errors.New("must include an API key")
 	}

@@ -106,8 +106,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	success := false
 
 	if subscription {
-		var customerKey *datastore.Key
-
 		names := strings.SplitN(name, " ", 2)
 		firstName := names[0]
 		lastName := ""
