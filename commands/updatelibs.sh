@@ -289,7 +289,6 @@ read -r -d '' modules <<- EOM
 	videojs-hotkeys
 	videojs-playlist
 	videojs-record
-	videojs-responsive-layout
 	videojs-theater-mode
 	videojs-wavesurfer
 	wavesurfer.js
