@@ -17,6 +17,12 @@ handlers:
   secure: always
   # default_headers
 
+- url: /
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Cache-Control
+
 - url: /blog/feed[/]?
   static_files: blog/feed/index.xml
   upload: blog/feed/index.xml
@@ -24,25 +30,20 @@ handlers:
   # default_headers Cache-Control
   ### Content-Type: text/plain
 
-# WPSTATIC
-- url: /PATH[/]?
-  static_files: PATH/index.html
-  upload: PATH/index.html
-  secure: always
-  # default_headers Cache-Control
-- url: /PATH/(.*?/amp)[/]?
-  static_files: PATH/\1/index.html
-  upload: PATH/.*
-  secure: always
-  # default_headers Cache-Control X-DNS-Prefetch-Control
-- url: /PATH/(.*?)[/]?
-  static_files: PATH/\1/index.html
-  upload: PATH/.*
-  secure: always
-  # default_headers Cache-Control
-
-- url: /(.*)
-  static_files: \1
+- url: /(css|fonts|img|js|wp-content|wp-includes)/(.*)
+  static_files: \1/\2
   upload: .*
   secure: always
   # default_headers
+
+- url: /(.*?)/amp[/]?
+  static_files: \1/amp/index.html
+  upload: .*
+  secure: always
+  # default_headers Cache-Control X-DNS-Prefetch-Control
+
+- url: /(.*?)[/]?
+  static_files: \1/index.html
+  upload: .*
+  secure: always
+  # default_headers Cache-Control

@@ -369,18 +369,4 @@ for f in $(grep -rl static_wordpress) ; do
 	sed -i 's|static_wordpress||g' ${f}
 done
 
-yamlFile=".build.yaml"
-if [ ! -f "${yamlFile}" ] ; then
-	yamlFile="$(ls *.yaml)"
-fi
-
-yaml="$(cat *.yaml | tr '\n' '\r')"
-wpstaticYaml="$(echo "${yaml}" | grep -oP '# WPSTATIC.*?\r\r')"
-
-for path in * ; do
-	yaml="${yaml//"${wpstaticYaml}"/"${wpstaticYaml}${wpstaticYaml//PATH/"${path}"}"}"
-done
-
-echo "${yaml//"${wpstaticYaml}"/}" | tr '\r' '\n' > *.yaml
-
 sshkill
