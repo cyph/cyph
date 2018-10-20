@@ -1,5 +1,4 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
-import * as $ from 'jquery';
 import {BaseProvider} from '../base-provider';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
@@ -14,9 +13,8 @@ import {translate} from '../util/translate';
 })
 export class TranslateDirective extends BaseProvider implements OnInit {
 	/** @ignore */
-	private handleElement (nativeElement: HTMLElement) : void {
-		const $element	= $(nativeElement);
-		const $children	= $element.children();
+	private handleElement (elem: Element) : void {
+		const children	= Array.from(elem.children);
 
 		for (const attr of [
 			'alt',
@@ -28,23 +26,25 @@ export class TranslateDirective extends BaseProvider implements OnInit {
 			'title'
 		]) {
 			this.translate(
-				$element.attr(attr) || '',
+				elem.getAttribute(attr) || '',
 				translation => {
-					this.renderer.setAttribute(nativeElement, attr, translation);
+					this.renderer.setAttribute(elem, attr, translation);
 				}
 			);
 		}
 
-		if ($children.length > 0) {
-			for (const child of $children.not('mat-icon, [cyphTranslate]').toArray()) {
-				this.handleElement(child);
+		if (children.length > 0) {
+			for (const child of children) {
+				if (child.tagName !== 'MAT-ICON' && !child.hasAttribute('cyphTranslate')) {
+					this.handleElement(child);
+				}
 			}
 		}
-		else if ($element.is(':not(mat-icon)')) {
+		else if (elem.tagName !== 'MAT-ICON') {
 			this.translate(
-				$element.text(),
+				elem.textContent || '',
 				translation => {
-					this.renderer.setValue(nativeElement, translation);
+					this.renderer.setValue(elem, translation);
 				}
 			);
 		}

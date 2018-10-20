@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import * as $ from 'jquery';
 import {BaseProvider} from '../base-provider';
 import {IFaviconSet} from '../favicon/ifavicon-set';
 import {EnvService} from './env.service';
@@ -12,11 +11,21 @@ import {EnvService} from './env.service';
 export class FaviconService extends BaseProvider {
 	/** @ignore */
 	private readonly elements	= {
-		apple: (size: string) => $(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`),
-		icon: (size: string) => $(`link[rel='icon'][sizes='${size}x${size}']`),
-		mask: () => $(`link[rel='mask-icon']`),
-		mstile: () => $(`meta[name='msapplication-TileImage']`),
-		shortcut: (size: string) => $(`link[rel='shortcut icon'][sizes='${size}x${size}']`)
+		apple: (size: string) => Array.from<HTMLLinkElement>(
+			document.querySelectorAll(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`)
+		),
+		icon: (size: string) => Array.from<HTMLLinkElement>(
+			document.querySelectorAll(`link[rel='icon'][sizes='${size}x${size}']`)
+		),
+		mask: () => Array.from<HTMLLinkElement>(
+			document.querySelectorAll(`link[rel='mask-icon']`)
+		),
+		mstile: () => Array.from<HTMLMetaElement>(
+			document.querySelectorAll(`meta[name='msapplication-TileImage']`)
+		),
+		shortcut: (size: string) => Array.from<HTMLLinkElement>(
+			document.querySelectorAll(`link[rel='shortcut icon'][sizes='${size}x${size}']`)
+		)
 	};
 
 	/** @ignore */
@@ -85,24 +94,36 @@ export class FaviconService extends BaseProvider {
 
 		this.activeFaviconSet	= this.faviconSets[name];
 
-		this.elements.apple('114').attr('href', this.activeFaviconSet.apple114);
-		this.elements.apple('120').attr('href', this.activeFaviconSet.apple120);
-		this.elements.apple('144').attr('href', this.activeFaviconSet.apple144);
-		this.elements.apple('152').attr('href', this.activeFaviconSet.apple152);
-		this.elements.apple('180').attr('href', this.activeFaviconSet.apple180);
-		this.elements.apple('57').attr('href', this.activeFaviconSet.apple57);
-		this.elements.apple('60').attr('href', this.activeFaviconSet.apple60);
-		this.elements.apple('72').attr('href', this.activeFaviconSet.apple72);
-		this.elements.apple('76').attr('href', this.activeFaviconSet.apple76);
-		this.elements.icon('16').attr('href', this.activeFaviconSet.icon16);
-		this.elements.icon('160').attr('href', this.activeFaviconSet.icon160);
-		this.elements.icon('192').attr('href', this.activeFaviconSet.icon192);
-		this.elements.icon('256').attr('href', this.activeFaviconSet.icon256);
-		this.elements.icon('32').attr('href', this.activeFaviconSet.icon32);
-		this.elements.icon('96').attr('href', this.activeFaviconSet.icon96);
-		this.elements.mask().attr('href', this.activeFaviconSet.mask);
-		this.elements.mstile().attr('content', this.activeFaviconSet.mstile);
-		this.elements.shortcut('196').attr('href', this.activeFaviconSet.shortcut196);
+		for (const [elements, icon] of <[HTMLElement[], string][]> [
+			[this.elements.apple('57'), this.activeFaviconSet.apple57],
+			[this.elements.apple('60'), this.activeFaviconSet.apple60],
+			[this.elements.apple('72'), this.activeFaviconSet.apple72],
+			[this.elements.apple('76'), this.activeFaviconSet.apple76],
+			[this.elements.apple('114'), this.activeFaviconSet.apple114],
+			[this.elements.apple('120'), this.activeFaviconSet.apple120],
+			[this.elements.apple('144'), this.activeFaviconSet.apple144],
+			[this.elements.apple('152'), this.activeFaviconSet.apple152],
+			[this.elements.apple('180'), this.activeFaviconSet.apple180],
+			[this.elements.icon('16'), this.activeFaviconSet.icon16],
+			[this.elements.icon('32'), this.activeFaviconSet.icon32],
+			[this.elements.icon('96'), this.activeFaviconSet.icon96],
+			[this.elements.icon('160'), this.activeFaviconSet.icon160],
+			[this.elements.icon('192'), this.activeFaviconSet.icon192],
+			[this.elements.icon('256'), this.activeFaviconSet.icon256],
+			[this.elements.mask(), this.activeFaviconSet.mask],
+			[this.elements.mstile(), this.activeFaviconSet.mstile],
+			[this.elements.shortcut('196'), this.activeFaviconSet.shortcut196],
+
+		]) {
+			for (const elem of elements) {
+				if (elem instanceof HTMLLinkElement) {
+					elem.href		= icon;
+				}
+				else if (elem instanceof HTMLMetaElement) {
+					elem.content	= icon;
+				}
+			}
+		}
 	}
 
 	/* tslint:disable-next-line:cyclomatic-complexity */
@@ -116,23 +137,25 @@ export class FaviconService extends BaseProvider {
 			return;
 		}
 
-		this.faviconSets.default.apple114		= this.elements.apple('114').attr('href') || '';
-		this.faviconSets.default.apple120		= this.elements.apple('120').attr('href') || '';
-		this.faviconSets.default.apple144		= this.elements.apple('144').attr('href') || '';
-		this.faviconSets.default.apple152		= this.elements.apple('152').attr('href') || '';
-		this.faviconSets.default.apple180		= this.elements.apple('180').attr('href') || '';
-		this.faviconSets.default.apple57		= this.elements.apple('57').attr('href') || '';
-		this.faviconSets.default.apple60		= this.elements.apple('60').attr('href') || '';
-		this.faviconSets.default.apple72		= this.elements.apple('72').attr('href') || '';
-		this.faviconSets.default.apple76		= this.elements.apple('76').attr('href') || '';
-		this.faviconSets.default.icon16			= this.elements.icon('16').attr('href') || '';
-		this.faviconSets.default.icon160		= this.elements.icon('160').attr('href') || '';
-		this.faviconSets.default.icon192		= this.elements.icon('192').attr('href') || '';
-		this.faviconSets.default.icon256		= this.elements.icon('256').attr('href') || '';
-		this.faviconSets.default.icon32			= this.elements.icon('32').attr('href') || '';
-		this.faviconSets.default.icon96			= this.elements.icon('96').attr('href') || '';
-		this.faviconSets.default.mask			= this.elements.mask().attr('href') || '';
-		this.faviconSets.default.mstile			= this.elements.mstile().attr('content') || '';
-		this.faviconSets.default.shortcut196	= this.elements.shortcut('196').attr('href') || '';
+		this.faviconSets.default.apple114		= (this.elements.apple('114')[0] || {}).href || '';
+		this.faviconSets.default.apple120		= (this.elements.apple('120')[0] || {}).href || '';
+		this.faviconSets.default.apple144		= (this.elements.apple('144')[0] || {}).href || '';
+		this.faviconSets.default.apple152		= (this.elements.apple('152')[0] || {}).href || '';
+		this.faviconSets.default.apple180		= (this.elements.apple('180')[0] || {}).href || '';
+		this.faviconSets.default.apple57		= (this.elements.apple('57')[0] || {}).href || '';
+		this.faviconSets.default.apple60		= (this.elements.apple('60')[0] || {}).href || '';
+		this.faviconSets.default.apple72		= (this.elements.apple('72')[0] || {}).href || '';
+		this.faviconSets.default.apple76		= (this.elements.apple('76')[0] || {}).href || '';
+		this.faviconSets.default.icon16			= (this.elements.icon('16')[0] || {}).href || '';
+		this.faviconSets.default.icon160		= (this.elements.icon('160')[0] || {}).href || '';
+		this.faviconSets.default.icon192		= (this.elements.icon('192')[0] || {}).href || '';
+		this.faviconSets.default.icon256		= (this.elements.icon('256')[0] || {}).href || '';
+		this.faviconSets.default.icon32			= (this.elements.icon('32')[0] || {}).href || '';
+		this.faviconSets.default.icon96			= (this.elements.icon('96')[0] || {}).href || '';
+		this.faviconSets.default.mask			= (this.elements.mask()[0] || {}).href || '';
+		this.faviconSets.default.mstile			= (this.elements.mstile()[0] || {}).content || '';
+		this.faviconSets.default.shortcut196	=
+			(this.elements.shortcut('196')[0] || {}).href || ''
+		;
 	}
 }
