@@ -385,26 +385,30 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 	defaultCSPString='DEFAULT_CSP'
 	fullCSP="$(cat shared/csp | tr -d '\n')"
 	webSignCSP="$(cat websign/csp | tr -d '\n')"
-	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g' | sed 's|connect-src|connect-src blob:|g')"
+
+	cyphComCSPSources="$(cat cyph.com/cspsources |
+		perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' |
+		tr '\n' ' '
+	)"
+	cyphComCSP="$(cat shared/csp |
+		tr -d '\n' |
+		perl -pe 's/(child-src )(.*?connect-src )(.*?frame-src )/\1☼\2☼\3☼/g' |
+		sed "s|☼|${cyphComCSPSources}|g"
+	)"
+
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
 	sed -i "s|${defaultCSPString}|${fullCSP}|g" shared/js/cyph/env-deploy.ts
 
-	# Expand connect-src and frame-src on wpstatic pages to support social media widgets and stuff
-
-	wpstaticCSPSources="$(cat cyph.com/wpstaticcsp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
-
 	cat cyph.com/cyph-com.yaml |
 		tr '\n' '☁' |
-		perl -pe 's/(\/PATH.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )/\1☼\2☼\3☼\4☼\5☼\6☼/g' |
-		sed "s|☼|${wpstaticCSPSources}|g" |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?connect-src )/\1https:\/\/google-analytics.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?connect-src )/\1https:\/\/*.google-analytics.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?font-src )/\1https:\/\/fonts.googleapis.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?font-src )/\1https:\/\/fonts.gstatic.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?style-src )/\1https:\/\/cdn.ampproject.org /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?style-src )/\1https:\/\/fonts.googleapis.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?script-src )/\1https:\/\/cdn.ampproject.org /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?connect-src )/\1https:\/\/google-analytics.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?connect-src )/\1https:\/\/*.google-analytics.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?font-src )/\1https:\/\/fonts.googleapis.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?font-src )/\1https:\/\/fonts.gstatic.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?style-src )/\1https:\/\/cdn.ampproject.org /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?style-src )/\1https:\/\/fonts.googleapis.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?script-src )/\1https:\/\/cdn.ampproject.org /g' |
 		tr '☁' '\n' |
 		sed "s|Cache-Control: private, max-age=31536000|Cache-Control: public, max-age=31536000|g" \
 	> cyph.com/new.yaml
