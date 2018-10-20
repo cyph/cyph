@@ -5,37 +5,17 @@ threadsafe: true
 
 handlers:
 
-- url: /
-  static_files: index.html
-  upload: index.html
+- url: /spa/(checkout|claimusername|contact|demo)(.*|[/]?$)
+  static_files: spa/index.html
+  upload: spa/index.html
   secure: always
   # default_headers Cache-Control
 
-- url: /claimusername/.*
-  static_files: index.html
-  upload: index.html
-  secure: always
-  # default_headers Cache-Control
-
-- url: /contact/.*
-  static_files: index.html
-  upload: index.html
-  secure: always
-  # default_headers Cache-Control
-
-- url: /unsupportedbrowser[/]?
-  static_files: unsupportedbrowser.html
-  upload: unsupportedbrowser.html
-  secure: always
-  # default_headers Cache-Control
-
-- url: /(.*\..*)
-  static_files: \1
-  upload: .*
+- url: /spa/(.*)
+  static_files: spa/\1
+  upload: spa/.*
   secure: always
   # default_headers
-  ### Access-Control-Allow-Origin: "*"
-  ### Access-Control-Allow-Methods: GET, OPTIONS
 
 - url: /blog/feed[/]?
   static_files: blog/feed/index.xml
@@ -61,8 +41,8 @@ handlers:
   secure: always
   # default_headers Cache-Control
 
-- url: /.*
-  static_files: index.html
-  upload: index.html
+- url: /(.*)
+  static_files: \1
+  upload: .*
   secure: always
-  # default_headers Cache-Control
+  # default_headers

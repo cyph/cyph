@@ -512,11 +512,12 @@ if [ "${cacheBustedProjects}" ] ; then
 			( [ ! '${site}' ] || [ '${site}' == cyph.com ] )
 		then
 			rm -rf wpstatic 2> /dev/null
-			mkdir -p wpstatic/blog
+			mkdir wpstatic
 			cp cyph.com/cyph-com.yaml wpstatic/
-			cd wpstatic/blog
-			../../commands/wpstatic.sh '${homeURL}' >> ../../.wpstatic.output 2>&1
-			cd ../..
+			cd wpstatic
+			../commands/wpstatic.sh $(test ${test} || echo '--prod') '${homeURL}' \
+				>> ../.wpstatic.output 2>&1
+			cd ..
 		fi
 
 		while [ ! -f .build.done ] ; do sleep 1 ; done
@@ -652,7 +653,13 @@ for d in $compiledProjects ; do
 	cd ..
 
 	mv "${d}" "${d}.src"
-	mv "${d}.src/dist" "${d}"
+
+	if [ "${d}" == 'cyph.com' ] ; then
+		mkdir "${d}"
+		mv "${d}.src/dist" "${d}/spa"
+	else
+		mv "${d}.src/dist" "${d}"
+	fi
 done
 touch .build.done
 
