@@ -8,7 +8,7 @@ import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
 import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
 import {lockFunction} from '../../util/lock';
-import {debugLog} from '../../util/log';
+import {debugLog, debugLogError} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
@@ -128,7 +128,23 @@ export class PairwiseSession {
 			this.handshakeState.initialSecretCyphertext.getValue()
 		]);
 
-		const maybeSignedSecret	= await this.potassium.box.open(cyphertext, encryptionKeyPair);
+		let maybeSignedSecret: Uint8Array;
+
+		try {
+			maybeSignedSecret	= await this.potassium.box.open(cyphertext, encryptionKeyPair);
+		}
+		catch (err) {
+			debugLogError(() => ({
+				ratchetBootstrapIncomingFailure: {
+					cyphertext,
+					encryptionKeyPair: () => encryptionKeyPair,
+					err,
+					publicSigningKey
+				}
+			}));
+
+			throw err;
+		}
 
 		await this.handshakeState.initialSecret.setValue(
 			publicSigningKey ?
@@ -296,7 +312,10 @@ export class PairwiseSession {
 
 				/* Bootstrap asymmetric ratchet */
 				else if (currentStep === HandshakeSteps.Start) {
-					debugLog(() => ({castleHandshake: 'start'}));
+					debugLog(() => ({
+						castleHandshake: 'start',
+						castleHandshakeState: this.handshakeState
+					}));
 
 					if (this.handshakeState.isAlice) {
 						await this.ratchetBootstrapOutgoing();
@@ -552,6 +571,11 @@ export class PairwiseSession {
 				}
 			}
 		}).catch(err => {
+			debugLogError(() => ({
+				castleHandshakeFailure: err,
+				castleHandshakeState: this.handshakeState
+			}));
+
 			this.abort();
 			throw err;
 		});
