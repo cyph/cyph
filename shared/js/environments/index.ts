@@ -23,6 +23,7 @@ if (customBuildBase64) {
 accountPrimaryTheme	= true;
 accountRoot			= 'account';
 
+/* tslint:disable-next-line:strict-type-predicates */
 if (typeof window === 'object') {
 	if (environment.customBuild) {
 		for (const k of Object.keys(Object.getPrototypeOf(environment.customBuild))) {

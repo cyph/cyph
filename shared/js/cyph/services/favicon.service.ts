@@ -112,7 +112,7 @@ export class FaviconService extends BaseProvider {
 			[this.elements.icon('256'), this.activeFaviconSet.icon256],
 			[this.elements.mask(), this.activeFaviconSet.mask],
 			[this.elements.mstile(), this.activeFaviconSet.mstile],
-			[this.elements.shortcut('196'), this.activeFaviconSet.shortcut196],
+			[this.elements.shortcut('196'), this.activeFaviconSet.shortcut196]
 
 		]) {
 			for (const elem of elements) {
