@@ -392,7 +392,7 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 	)"
 	cyphComCSP="$(cat shared/csp |
 		tr -d '\n' |
-		perl -pe 's/(child-src )(.*?connect-src )(.*?frame-src )/\1☼\2☼\3☼/g' |
+		perl -pe 's/(child-src )(.*?connect-src )(.*?frame-src )(.*?img-src )/\1☼\2☼\3☼\4☼/g' |
 		sed "s|☼|${cyphComCSPSources}|g"
 	)"
 
