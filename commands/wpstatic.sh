@@ -249,6 +249,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 			;
 
 			elem.attr(attr, \`/\${path}\`);
+			elem.removeAttr('srcset');
 			fs.writeFileSync(path, content);
 		}))
 	);
