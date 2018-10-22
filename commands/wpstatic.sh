@@ -281,7 +281,10 @@ if [ -f wp-content/plugins/pricing-table-by-supsystic/js/table.min.js ] ; then
 fi
 
 # Workaround for silly hack in Zephyr that violates CSP
-find . -type f -name us.core.min.js | xargs -I% sed -i "s|this\.options=this\.\\\$nav\.find('\.w-nav-options:first')\[0\]\.onclick()\|\|{};|try{this.options=JSON.parse(this.\$nav.find('.w-nav-options:first')[0].getAttribute('onclick').split('return')[1].trim());}catch(_){this.options={};}|g" %
+for f in $(find . -type f -name us.core.min.js) ; do
+	cat "${f}" | perl -pe "s/([^=,]+)\.onclick\(\)(\|\|\{\})?/\1.getAttribute('onclick')?JSON.parse(\1.getAttribute('onclick').split('return')[1].trim()):{}/g" > "${f}.new"
+	mv "${f}.new" "${f}"
+done
 
 grep -rl "'//' + disqus_shortname" |
 	xargs -I% sed -i "s|'//' + disqus_shortname|'/js/' + disqus_shortname|g" %
