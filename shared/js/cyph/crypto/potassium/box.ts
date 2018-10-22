@@ -233,27 +233,32 @@ export class Box implements IBox {
 	/** @inheritDoc */
 	public async keyPair () : Promise<IKeyPair> {
 		return retryUntilSuccessful(async () => {
-			const keyPairs	= {
-				classical: await this.classicalCypher.keyPair(),
-				mceliece: await mceliece.keyPair(),
-				ntru: await ntru.keyPair(),
-				sidh: await sidh.keyPair()
-			};
+			const [
+				classicalKeyPair,
+				mcelieceKeyPair,
+				ntruKeyPair,
+				sidhKeyPair
+			]	= await Promise.all([
+				this.classicalCypher.keyPair(),
+				mceliece.keyPair(),
+				ntru.keyPair(),
+				sidh.keyPair()
+			]);
 
 			const keyPair	= {
 				privateKey: potassiumUtil.concatMemory(
 					true,
-					keyPairs.classical.privateKey,
-					keyPairs.mceliece.privateKey,
-					keyPairs.ntru.privateKey,
-					keyPairs.sidh.privateKey
+					classicalKeyPair.privateKey,
+					mcelieceKeyPair.privateKey,
+					ntruKeyPair.privateKey,
+					sidhKeyPair.privateKey
 				),
 				publicKey: potassiumUtil.concatMemory(
 					true,
-					keyPairs.classical.publicKey,
-					keyPairs.mceliece.publicKey,
-					keyPairs.ntru.publicKey,
-					keyPairs.sidh.publicKey
+					classicalKeyPair.publicKey,
+					mcelieceKeyPair.publicKey,
+					ntruKeyPair.publicKey,
+					sidhKeyPair.publicKey
 				)
 			};
 
