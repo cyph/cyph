@@ -172,15 +172,23 @@ export class DatabaseService extends DataManagerService {
 			() => lockFactory(`${url}/${key}`)
 		);
 
-		const getItemInternal		= async (key: string) => getOrSetDefaultAsync(
-			itemCache,
-			key,
-			async () => this.localStorageService.getOrSetDefault(
-				`${method}/${url}/${key}`,
-				proto,
-				async () => this.getItem(`${url}/${key}`, proto)
-			)
-		);
+		const getItemInternal		= async (key: string) => {
+			const f	= async () => this.getItem(`${url}/${key}`, proto);
+
+			if (!staticValues) {
+				return f();
+			}
+
+			return getOrSetDefaultAsync(
+				itemCache,
+				key,
+				async () => this.localStorageService.getOrSetDefault(
+					`${method}/${url}/${key}`,
+					proto,
+					f
+				)
+			);
+		};
 
 		const getItem				= staticValues ?
 			getItemInternal :
@@ -201,7 +209,9 @@ export class DatabaseService extends DataManagerService {
 
 			await Promise.all([
 				this.removeItem(`${url}/${key}`),
-				this.localStorageService.removeItem(`${method}/${url}/${key}`)
+				staticValues ?
+					this.localStorageService.removeItem(`${method}/${url}/${key}`) :
+					undefined
 			]);
 		};
 
@@ -210,9 +220,11 @@ export class DatabaseService extends DataManagerService {
 				itemCache.set(key, value);
 			}
 
-			await Promise.all([
+			await Promise.all<any>([
 				this.setItem(`${url}/${key}`, proto, value, noBlobStorage),
-				this.localStorageService.setItem(`${method}/${url}/${key}`, proto, value)
+				staticValues ?
+					this.localStorageService.setItem(`${method}/${url}/${key}`, proto, value) :
+					undefined
 			]);
 		};
 

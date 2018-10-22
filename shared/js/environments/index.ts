@@ -3,7 +3,6 @@
  */
 
 
-import * as $ from 'jquery';
 import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {Environment} from '../proto';
 import {environment} from './environment';
@@ -25,7 +24,7 @@ accountPrimaryTheme	= true;
 accountRoot			= 'account';
 
 /* tslint:disable-next-line:strict-type-predicates */
-if (typeof $ === 'function' && typeof window === 'object') {
+if (typeof window === 'object') {
 	if (environment.customBuild) {
 		for (const k of Object.keys(Object.getPrototypeOf(environment.customBuild))) {
 			const o	= (<any> environment.customBuild)[k];
@@ -41,21 +40,24 @@ if (typeof $ === 'function' && typeof window === 'object') {
 		if (environment.customBuild.config.backgroundColor) {
 			accountPrimaryTheme	= false;
 
-			$('head').find(
-				'meta[name="theme-color"],' +
-				'meta[name="msapplication-TileColor"]'
-			).
-				attr('content', environment.customBuild.config.backgroundColor)
-			;
+			for (const elem of Array.from<HTMLMetaElement>(document.querySelectorAll(
+				'head meta[name="theme-color"],' +
+				'head meta[name="msapplication-TileColor"]'
+			))) {
+				elem.content	= environment.customBuild.config.backgroundColor;
+			}
 
-			$('head link[rel="mask-icon"]').attr(
-				'color',
-				environment.customBuild.config.backgroundColor
-			);
+			for (const elem of Array.from(document.querySelectorAll(
+				'head link[rel="mask-icon"]'
+			))) {
+				elem.setAttribute('color', environment.customBuild.config.backgroundColor);
+			}
 		}
 
 		if (environment.customBuild.config.title) {
-			$('title').text(environment.customBuild.config.title);
+			for (const elem of Array.from(document.getElementsByTagName('title'))) {
+				elem.textContent	= environment.customBuild.config.title;
+			}
 		}
 
 		if (environment.customBuild.css && document.head) {
@@ -66,28 +68,28 @@ if (typeof $ === 'function' && typeof window === 'object') {
 		}
 
 		if (environment.customBuild.favicon) {
-			$(document.body).addClass('cobranded');
+			document.body.classList.add('cobranded');
 
 			const faviconURI	=
 				`data:image/png;base64,${potassiumUtil.toBase64(environment.customBuild.favicon)}`
 			;
 
-			$('head').find(
-				'link[type="image/png"],' +
-				'meta[name="msapplication-TileImage"]'
-			).each((_, elem) => {
+			for (const elem of Array.from(document.querySelectorAll(
+				'head link[type="image/png"],' +
+				'head meta[name="msapplication-TileImage"]'
+			))) {
 				if (elem instanceof HTMLLinkElement) {
 					elem.href		= faviconURI;
 				}
 				else if (elem instanceof HTMLMetaElement) {
 					elem.content	= faviconURI;
 				}
-			});
+			}
 		}
 
 		if (environment.customBuild.config.telehealth) {
 			accountPrimaryTheme	= false;
-			$(document.body).addClass('telehealth');
+			document.body.classList.add('telehealth');
 		}
 	}
 }

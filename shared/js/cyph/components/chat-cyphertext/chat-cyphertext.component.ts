@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import * as $ from 'jquery';
 import {BaseProvider} from '../../base-provider';
 import {CyphertextService} from '../../services/cyphertext.service';
 import {EnvService} from '../../services/env.service';
@@ -24,8 +23,8 @@ export class ChatCyphertextComponent extends BaseProvider implements OnInit {
 		}
 
 		/* Close cyphertext on esc */
-		$(window).on('keyup', e => {
-			if (e.which === 27) {
+		window.addEventListener('keyup', e => {
+			if (e.key === 'Escape') {
 				this.cyphertextService.hide();
 			}
 		});

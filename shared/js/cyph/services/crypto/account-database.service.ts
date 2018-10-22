@@ -538,27 +538,27 @@ export class AccountDatabaseService extends BaseProvider {
 			);
 		})();
 
-		const getItemInternal	= async (key: string) => getOrSetDefaultAsync(
-			itemCache,
-			key,
-			async () => this.localStorageService.getOrSetDefault(
-				`${method}/${await url}/${key}`,
-				proto,
-				async () => (
-					await (
-						await this.getItemInternal(
-							`${await url}/${key}`,
-							proto,
-							securityModel,
-							customKey,
-							anonymous,
-							undefined,
-							true
-						)
-					).result
-				).value
-			)
-		);
+		const getItemInternal	= async (key: string) => {
+			const f	= async () => (
+				await (
+					await this.getItemInternal(
+						`${await url}/${key}`,
+						proto,
+						securityModel,
+						customKey,
+						anonymous,
+						undefined,
+						true
+					)
+				).result
+			).value;
+
+			if (!staticValues) {
+				return f();
+			}
+
+			return getOrSetDefaultAsync(itemCache, key, f);
+		};
 
 		const getItem			= staticValues ?
 			getItemInternal :
@@ -579,7 +579,9 @@ export class AccountDatabaseService extends BaseProvider {
 
 			await Promise.all([
 				this.removeItem(`${await url}/${key}`),
-				this.localStorageService.removeItem(`${method}/${await url}/${key}`)
+				staticValues ?
+					this.localStorageService.removeItem(`${method}/${await url}/${key}`) :
+					undefined
 			]);
 		};
 
@@ -588,7 +590,7 @@ export class AccountDatabaseService extends BaseProvider {
 				itemCache.set(key, value);
 			}
 
-			await Promise.all([
+			await Promise.all<any>([
 				this.setItemInternal(
 					`${await url}/${key}`,
 					proto,
@@ -597,7 +599,13 @@ export class AccountDatabaseService extends BaseProvider {
 					customKey,
 					noBlobStorage
 				),
-				this.localStorageService.setItem(`${method}/${await url}/${key}`, proto, value)
+				staticValues ?
+					this.localStorageService.setItem(
+						`${method}/${await url}/${key}`,
+						proto,
+						value
+					) :
+					undefined
 			]);
 		};
 
