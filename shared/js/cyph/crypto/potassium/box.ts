@@ -1,6 +1,7 @@
 import {sodium} from 'libsodium';
 import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
+import {sidh} from 'sidh';
 import {IKeyPair} from '../../proto';
 import {retryUntilSuccessful} from '../../util/wait';
 import {IBox} from './ibox';
@@ -63,6 +64,7 @@ export class Box implements IBox {
 	public readonly privateKeyBytes: Promise<number>	= (async () =>
 		(await mceliece.privateKeyBytes) +
 		(await ntru.privateKeyBytes) +
+		(await sidh.privateKeyBytes) +
 		(await this.classicalCypher.privateKeyBytes)
 	)();
 
@@ -70,6 +72,7 @@ export class Box implements IBox {
 	public readonly publicKeyBytes: Promise<number>		= (async () =>
 		(await mceliece.publicKeyBytes) +
 		(await ntru.publicKeyBytes) +
+		(await sidh.privateKeyBytes) +
 		(await this.classicalCypher.publicKeyBytes)
 	)();
 
@@ -156,6 +159,7 @@ export class Box implements IBox {
 		classical: Uint8Array;
 		mceliece: Uint8Array;
 		ntru: Uint8Array;
+		sidh: Uint8Array;
 	}> {
 		return {
 			classical: potassiumUtil.toBytes(
@@ -170,8 +174,20 @@ export class Box implements IBox {
 			),
 			ntru: potassiumUtil.toBytes(
 				privateKey,
-				(await this.classicalCypher.privateKeyBytes) + (await mceliece.privateKeyBytes),
+				(
+					(await this.classicalCypher.privateKeyBytes) +
+					(await mceliece.privateKeyBytes)
+				),
 				await ntru.privateKeyBytes
+			),
+			sidh: potassiumUtil.toBytes(
+				privateKey,
+				(
+					(await this.classicalCypher.privateKeyBytes) +
+					(await mceliece.privateKeyBytes) +
+					(await ntru.privateKeyBytes)
+				),
+				await sidh.privateKeyBytes
 			)
 		};
 	}
@@ -181,6 +197,7 @@ export class Box implements IBox {
 		classical: Uint8Array;
 		mceliece: Uint8Array;
 		ntru: Uint8Array;
+		sidh: Uint8Array;
 	}> {
 		return {
 			classical: potassiumUtil.toBytes(
@@ -195,8 +212,20 @@ export class Box implements IBox {
 			),
 			ntru: potassiumUtil.toBytes(
 				publicKey,
-				(await this.classicalCypher.publicKeyBytes) + (await mceliece.publicKeyBytes),
+				(
+					(await this.classicalCypher.publicKeyBytes) +
+					(await mceliece.publicKeyBytes)
+				),
 				await ntru.publicKeyBytes
+			),
+			sidh: potassiumUtil.toBytes(
+				publicKey,
+				(
+					(await this.classicalCypher.publicKeyBytes) +
+					(await mceliece.publicKeyBytes) +
+					(await ntru.publicKeyBytes)
+				),
+				await sidh.publicKeyBytes
 			)
 		};
 	}
@@ -207,7 +236,8 @@ export class Box implements IBox {
 			const keyPairs	= {
 				classical: await this.classicalCypher.keyPair(),
 				mceliece: await mceliece.keyPair(),
-				ntru: await ntru.keyPair()
+				ntru: await ntru.keyPair(),
+				sidh: await sidh.keyPair()
 			};
 
 			const keyPair	= {
@@ -215,13 +245,15 @@ export class Box implements IBox {
 					true,
 					keyPairs.classical.privateKey,
 					keyPairs.mceliece.privateKey,
-					keyPairs.ntru.privateKey
+					keyPairs.ntru.privateKey,
+					keyPairs.sidh.privateKey
 				),
 				publicKey: potassiumUtil.concatMemory(
 					true,
 					keyPairs.classical.publicKey,
 					keyPairs.mceliece.publicKey,
-					keyPairs.ntru.publicKey
+					keyPairs.ntru.publicKey,
+					keyPairs.sidh.publicKey
 				)
 			};
 
@@ -248,11 +280,16 @@ export class Box implements IBox {
 		return this.publicKeyDecrypt(
 			await this.publicKeyDecrypt(
 				await this.publicKeyDecrypt(
-					cyphertext,
+					await this.publicKeyDecrypt(
+						cyphertext,
+						privateSubKeys.sidh,
+						sidh,
+						'SIDH',
+						false
+					),
 					privateSubKeys.ntru,
 					ntru,
-					'NTRU',
-					false
+					'NTRU'
 				),
 				privateSubKeys.mceliece,
 				mceliece,
@@ -271,19 +308,24 @@ export class Box implements IBox {
 		return this.publicKeyEncrypt(
 			await this.publicKeyEncrypt(
 				await this.publicKeyEncrypt(
-					plaintext,
-					publicSubKeys.classical,
-					this.classicalCypher,
-					'Classical',
-					false
+					await this.publicKeyEncrypt(
+						plaintext,
+						publicSubKeys.classical,
+						this.classicalCypher,
+						'Classical',
+						false
+					),
+					publicSubKeys.mceliece,
+					mceliece,
+					'McEliece'
 				),
-				publicSubKeys.mceliece,
-				mceliece,
-				'McEliece'
+				publicSubKeys.ntru,
+				ntru,
+				'NTRU'
 			),
-			publicSubKeys.ntru,
-			ntru,
-			'NTRU'
+			publicSubKeys.sidh,
+			sidh,
+			'SIDH'
 		);
 	}
 
