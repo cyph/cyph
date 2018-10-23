@@ -149,7 +149,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		cyphID: new BehaviorSubject(''),
 		isAlice: new BehaviorSubject(false),
 		isAlive: new BehaviorSubject(true),
-		sharedSecret: new BehaviorSubject(''),
+		sharedSecret: new BehaviorSubject<string|undefined>(undefined),
 		startingNewCyph: new BehaviorSubject<boolean|undefined>(false),
 		wasInitiatedByAPI: new BehaviorSubject(false)
 	};
@@ -292,13 +292,13 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	) : Promise<void> {
 		switch (event) {
 			case CastleEvents.abort:
-				this.state.sharedSecret.next('');
+				this.state.sharedSecret.next(undefined);
 				this.errorService.log('CYPH AUTHENTICATION FAILURE');
 				this.trigger(events.connectFailure);
 				break;
 
 			case CastleEvents.connect:
-				this.state.sharedSecret.next('');
+				this.state.sharedSecret.next(undefined);
 				this.trigger(events.beginChat);
 
 				if (!this.resolveSymmetricKey) {
@@ -456,7 +456,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		});
 
 		await Promise.all([
-			this.castleService.init(this.potassiumService, this),
+			this.castleService.init(this),
 			this.channelService.init(channelID, userID, {
 				onClose: async () => this.channelOnClose(),
 				onConnect: async () => this.channelOnConnect(),

@@ -57,9 +57,7 @@ export class AccountSessionService extends SessionService {
 	private readonly stateResolver				= resolvable();
 
 	/** @inheritDoc */
-	protected readonly symmetricKey: Promise<Uint8Array>	=
-		this._ACCOUNTS_SYMMETRIC_KEY.promise
-	;
+	protected readonly symmetricKey				= this._ACCOUNTS_SYMMETRIC_KEY.promise;
 
 	/** If true, this is an ephemeral sub-session. */
 	public ephemeralSubSession: boolean							= false;
@@ -68,12 +66,10 @@ export class AccountSessionService extends SessionService {
 	public group?: AccountSessionService[];
 
 	/** @inheritDoc */
-	public readonly ready: Promise<void>						= this._READY.promise;
+	public readonly ready		= this._READY.promise;
 
 	/** Remote user. */
-	public readonly remoteUser: BehaviorSubject<User|undefined>	=
-		new BehaviorSubject<User|undefined>(undefined)
-	;
+	public readonly remoteUser	= new BehaviorSubject<{anonymous: true}|User|undefined>(undefined);
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {

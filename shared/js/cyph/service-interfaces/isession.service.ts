@@ -56,7 +56,7 @@ export interface ISessionService {
 		cyphID: BehaviorSubject<string>;
 		isAlice: BehaviorSubject<boolean>;
 		isAlive: BehaviorSubject<boolean>;
-		sharedSecret: BehaviorSubject<string>;
+		sharedSecret: BehaviorSubject<string|undefined>;
 		startingNewCyph: BehaviorSubject<boolean|undefined>;
 		wasInitiatedByAPI: BehaviorSubject<boolean>;
 	};

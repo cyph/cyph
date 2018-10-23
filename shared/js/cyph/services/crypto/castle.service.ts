@@ -7,7 +7,6 @@ import {ICastle} from '../../crypto/icastle';
 import {filterUndefinedOperator} from '../../util/filter';
 import {lockFunction} from '../../util/lock';
 import {SessionService} from '../session.service';
-import {PotassiumService} from './potassium.service';
 
 
 /**
@@ -35,10 +34,7 @@ export class CastleService extends BaseProvider implements ICastle {
 	}
 
 	/** Initializes service. */
-	public async init (
-		_POTASSIUM_SERVICE: PotassiumService,
-		_SESSION_SERVICE: SessionService
-	) : Promise<void> {
+	public async init (_SESSION_SERVICE: SessionService) : Promise<void> {
 		throw new Error('Must provide an implementation of CastleService.init.');
 	}
 
