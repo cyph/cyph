@@ -587,7 +587,7 @@ export class ChatService extends BaseProvider {
 	/** Global map of message IDs to values. */
 	protected get messageValues () : EncryptedAsyncMap<IChatMessageValue> {
 		return this.getMessageValues(this.messageValuesURL);
-	};
+	}
 
 	/** Aborts the process of chat initialisation and authentication. */
 	public async abortSetup () : Promise<void> {
