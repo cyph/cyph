@@ -173,7 +173,7 @@ export class EphemeralSessionService extends SessionService {
 			return;
 		}
 
-		if (id.indexOf('/')) {
+		if (id.indexOf('/') > -1) {
 			[username, id]	= id.split('/');
 		}
 
