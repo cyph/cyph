@@ -183,6 +183,8 @@ export class AccountSessionService extends SessionService {
 				throw new Error('No user signed in.');
 			}
 
+			this.accountService.setHeader({mobile: this.stringsService.anonymous});
+
 			this.accountSessionInitService.ephemeral	= true;
 			this.ephemeralSubSession					= true;
 

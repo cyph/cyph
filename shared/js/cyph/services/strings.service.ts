@@ -72,6 +72,9 @@ export class StringsService extends BaseProvider {
 	public readonly allow: string						= `Allow`;
 
 	/** @see StringsService */
+	public readonly anonymous: string					= `Anonymous`;
+
+	/** @see StringsService */
 	public readonly answer: string						= `Answer`;
 
 	/** @see StringsService */
