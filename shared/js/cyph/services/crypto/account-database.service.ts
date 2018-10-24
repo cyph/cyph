@@ -82,6 +82,11 @@ export class AccountDatabaseService extends BaseProvider {
 		) => {
 			const username	= await this.getUsernameFromURL(url, usernameOther);
 
+
+			/* Temporary workaround for migrating users to latest Potassium.Box */
+			await this.getUserPublicKeys(username);
+
+
 			return this.localStorageService.getOrSetDefault(
 				`AccountDatabaseService.open/${
 					username
@@ -864,7 +869,9 @@ export class AccountDatabaseService extends BaseProvider {
 
 		username	= normalize(username);
 
-		return this.localStorageService.getOrSetDefault(
+		/* Temporary workaround for migrating users to latest Potassium.Box */
+
+		const userPublicKeys	= await this.localStorageService.getOrSetDefault(
 			`AccountDatabaseService.getUserPublicKeys/${username}`,
 			AccountUserPublicKeys,
 			async () => {
@@ -906,17 +913,41 @@ export class AccountDatabaseService extends BaseProvider {
 					`users/${username}/publicEncryptionKey`
 				);
 
+
+				/* Temporary workaround for migrating users to latest Potassium.Box */
+
+				const publicEncryptionKey	= await this.potassiumHelpers.sign.open(
+					await this.databaseService.getItem(encryptionURL, BinaryProto),
+					cert.agsePKICSR.publicSigningKey,
+					encryptionURL,
+					true
+				);
+
+				if (
+					publicEncryptionKey.length !== (await this.potassiumService.box.publicKeyBytes)
+				) {
+					throw new Error('Invalid public encryption key.');
+				}
+
+
 				return {
-					encryption: await this.potassiumHelpers.sign.open(
-						await this.databaseService.getItem(encryptionURL, BinaryProto),
-						cert.agsePKICSR.publicSigningKey,
-						encryptionURL,
-						true
-					),
+					encryption: publicEncryptionKey,
 					signing: cert.agsePKICSR.publicSigningKey
 				};
 			}
 		);
+
+		if (
+			userPublicKeys.encryption.length !== (await this.potassiumService.box.publicKeyBytes)
+		) {
+			await this.localStorageService.removeItem(
+				`AccountDatabaseService.getUserPublicKeys/${username}`
+			);
+
+			return this.getUserPublicKeys(username);
+		}
+
+		return userPublicKeys;
 	}
 
 	/** @see DatabaseService.hasItem */

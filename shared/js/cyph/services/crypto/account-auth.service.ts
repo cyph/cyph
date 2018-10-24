@@ -17,11 +17,13 @@ import {
 	BinaryProto,
 	BooleanProto,
 	IAccountLoginData,
+	IKeyPair,
 	KeyPair,
 	NumberProto,
 	StringProto
 } from '../../proto';
 import {normalize} from '../../util/formatting';
+import {debugLog} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
 import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
@@ -294,6 +296,60 @@ export class AccountAuthService extends BaseProvider {
 				AccountLoginData,
 				masterKey
 			);
+
+
+			/* Temporary workaround for migrating users to latest Potassium.Box */
+
+			try {
+				await this.databaseService.login(username, loginData.secondaryPassword);
+			}
+			catch (err) {
+				if (loginData.oldSecondaryPassword) {
+					await this.databaseService.login(username, loginData.oldSecondaryPassword);
+				}
+				else {
+					throw err;
+				}
+			}
+
+			const oldEncryptionKeyPair	= await this.getItem<IKeyPair>(
+				`users/${username}/encryptionKeyPair`,
+				KeyPair,
+				loginData.symmetricKey
+			);
+
+			if (
+				oldEncryptionKeyPair.publicKey.length !==
+				(await this.potassiumService.box.publicKeyBytes)
+			) {
+				debugLog(() => 'Regenerating encryption key pair', () => ({oldEncryptionKeyPair}));
+
+				const newEncryptionKeyPair	= await this.potassiumService.box.keyPair();
+
+				await Promise.all([
+					this.setItem(
+						`users/${username}/encryptionKeyPair`,
+						KeyPair,
+						newEncryptionKeyPair,
+						loginData.symmetricKey
+					),
+					this.setItem(
+						`users/${username}/publicEncryptionKey`,
+						BinaryProto,
+						newEncryptionKeyPair.publicKey,
+						(await this.getItem(
+							`users/${username}/signingKeyPair`,
+							KeyPair,
+							loginData.symmetricKey
+						)).privateKey,
+						true,
+						true
+					)
+				]);
+
+				debugLog(() => 'Regenerated encryption key pair', () => ({newEncryptionKeyPair}));
+			}
+
 
 			errorLogMessage	= 'getting user';
 
