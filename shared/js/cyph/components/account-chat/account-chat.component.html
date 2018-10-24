@@ -65,7 +65,7 @@
 					(answering | async) === false
 				'
 			>
-				<div>{{stringsService.sessionComplete}}</div>
+				<ng-container *ngTemplateOutlet='sessionCompleteMessage'></ng-container>
 			</cyph-chat-main>
 
 			<cyph-account-chat-message-box
@@ -95,16 +95,19 @@
 					[showHeader]='true'
 					*ngIf='
 						(accountP2PService.isActiveOrInitialCall | async) === false;
-						else backupEndContent
+						else sessionCompleteMessage
 					'
 				></cyph-account-chat-message-box>
-				<ng-template #backupEndContent>
-					<div>{{stringsService.sessionComplete}}</div>
-				</ng-template>
 			</cyph-chat-main>
 		</ng-template>
 	</div>
 </div>
+
+<ng-template #sessionCompleteMessage>
+	<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
+		<div>{{stringsService.sessionComplete}}</div>
+	</div>
+</ng-template>
 
 
 </ng-container>
