@@ -287,7 +287,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 			const isEnd	= (i + 1) === arr.length;
 
 			return {
-				accounts: this.envService.isAccounts,
+				accounts: this.envService.isAccounts && !this.sessionInitService.ephemeral,
 				dateChange,
 				isEnd,
 				isFriendTyping: chat.isFriendTyping,

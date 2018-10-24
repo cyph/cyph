@@ -1,8 +1,9 @@
 /* tslint:disable:max-file-line-count */
 
 import {Inject, Injectable, Optional} from '@angular/core';
+import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, combineLatest, interval, Observable, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, Observable} from 'rxjs';
 import {filter, map, mergeMap, take, takeWhile} from 'rxjs/operators';
 import {User} from '../account/user';
 import {BaseProvider} from '../base-provider';
@@ -35,6 +36,7 @@ import {events, ISessionMessageAdditionalData, ISessionMessageData, rpcEvents} f
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {normalize} from '../util/formatting';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogTime} from '../util/log';
 import {getTimestamp} from '../util/time';
@@ -70,6 +72,23 @@ export class ChatService extends BaseProvider {
 
 
 	/** @ignore */
+	private readonly getMessageValues	= memoize(
+		(messageValuesURL: string) => new EncryptedAsyncMap<IChatMessageValue>(
+			this.potassiumService,
+			messageValuesURL,
+			ChatMessageValue,
+			this.databaseService.getAsyncMap(
+				messageValuesURL,
+				BinaryProto,
+				undefined,
+				undefined,
+				undefined,
+				this.subscriptions
+			)
+		)
+	);
+
+	/** @ignore */
 	private lastConfirmedMessageID?: string;
 
 	/** @ignore */
@@ -84,31 +103,9 @@ export class ChatService extends BaseProvider {
 	/** @ignore */
 	private readonly messageSendLock: LockFunction		= lockFunction();
 
-	/** @ignore */
-	private readonly messageValuesURL: string			= 'messageValues' + (
-		this.sessionInitService.ephemeral ? 'Ephemeral' : ''
-	);
-
 	/** IDs of fetched messages. */
 	protected readonly fetchedMessageIDs										=
 		new LocalAsyncSet<string>()
-	;
-
-	/** Global map of message IDs to values. */
-	protected readonly messageValues: EncryptedAsyncMap<IChatMessageValue>		=
-		new EncryptedAsyncMap<IChatMessageValue>(
-			this.potassiumService,
-			this.messageValuesURL,
-			ChatMessageValue,
-			this.databaseService.getAsyncMap(
-				this.messageValuesURL,
-				BinaryProto,
-				undefined,
-				undefined,
-				undefined,
-				this.subscriptions
-			)
-		)
 	;
 
 	/** Local version of messageValues (ephemeral chat optimization). */
@@ -223,7 +220,7 @@ export class ChatService extends BaseProvider {
 	}>();
 
 	/** Remote User object where applicable. */
-	public readonly remoteUser: Observable<User|undefined>	= of(undefined);
+	public readonly remoteUser				= new BehaviorSubject<User|undefined>(undefined);
 
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers				= {
@@ -450,7 +447,7 @@ export class ChatService extends BaseProvider {
 			proto: ChatMessageProto,
 			transform: (value: IChatMessageValue) : IChatMessage => ({
 				...message,
-				authorID: message.authorID || '',
+				authorID: message.authorID && this.remoteUser.value ? message.authorID : '',
 				authorType: ChatMessage.AuthorTypes.App,
 				hash: undefined,
 				key: undefined,
@@ -459,6 +456,11 @@ export class ChatService extends BaseProvider {
 				value
 			})
 		};
+	}
+
+	/** @ignore */
+	private get messageValuesURL () : string {
+		return `messageValues${this.sessionInitService.ephemeral ? 'Ephemeral' : ''}`;
 	}
 
 	/** @ignore */
@@ -547,8 +549,11 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** Gets author ID for including in message list item. */
-	protected async getAuthorID (_AUTHOR: Observable<string>) : Promise<string|undefined> {
-		return undefined;
+	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
+		return author === this.sessionService.remoteUsername ?
+			author.pipe(take(1)).toPromise().then(normalize).catch(() => undefined) :
+			undefined
+		;
 	}
 
 	/** Gets default chat data. */
@@ -578,6 +583,11 @@ export class ChatService extends BaseProvider {
 	protected getScrollServiceUnreadMessages () : MaybePromise<IAsyncSet<string>> {
 		return new LocalAsyncSet<string>();
 	}
+
+	/** Global map of message IDs to values. */
+	protected get messageValues () : EncryptedAsyncMap<IChatMessageValue> {
+		return this.getMessageValues(this.messageValuesURL);
+	};
 
 	/** Aborts the process of chat initialisation and authentication. */
 	public async abortSetup () : Promise<void> {

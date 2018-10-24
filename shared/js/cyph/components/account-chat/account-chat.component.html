@@ -11,7 +11,13 @@
 	(fileDrop)='fileTransferService.send($event)'
 	*ngIf='accountChatService.chatSubject | async as chat'
 >
-	<div fxFlex fxFlexFill fxLayout='column'>
+	<cyph-link-connection
+		fxFlex
+		fxFlexFill
+		*ngIf='chat.state === states.none'
+	></cyph-link-connection>
+
+	<div fxFlex fxFlexFill fxLayout='column' *ngIf='chat.state !== states.none'>
 		<div
 			fxLayout='row'
 			fxLayoutAlign='center center'
@@ -58,7 +64,9 @@
 					(initialCallPending | async) === true &&
 					(answering | async) === false
 				'
-			></cyph-chat-main>
+			>
+				<div>{{stringsService.sessionComplete}}</div>
+			</cyph-chat-main>
 
 			<cyph-account-chat-message-box
 				[messageType]='chatMessageValueTypes.Text'
@@ -85,8 +93,14 @@
 				<cyph-account-chat-message-box
 					[messageType]='messageType | async'
 					[showHeader]='true'
-					*ngIf='(accountP2PService.isActiveOrInitialCall | async) === false'
+					*ngIf='
+						(accountP2PService.isActiveOrInitialCall | async) === false;
+						else backupEndContent
+					'
 				></cyph-account-chat-message-box>
+				<ng-template #backupEndContent>
+					<div>{{stringsService.sessionComplete}}</div>
+				</ng-template>
 			</cyph-chat-main>
 		</ng-template>
 	</div>

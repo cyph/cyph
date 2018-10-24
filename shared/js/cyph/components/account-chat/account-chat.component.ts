@@ -22,16 +22,19 @@ import {AccountUserLookupService} from '../../services/account-user-lookup.servi
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {ConfigService} from '../../services/config.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
 import {NotificationService} from '../../services/notification.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
+import {SessionInitService} from '../../services/session-init.service';
 import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
 import {getDateTimeString, getTimestamp} from '../../util/time';
+import {readableID} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 
 
@@ -84,7 +87,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		this.p2pWebRTCService.initialCallPending,
 		this.p2pWebRTCService.loading
 	).pipe(map(([initialCallPending, loading]) =>
-		initialCallPending || loading
+		(initialCallPending || loading) && !this.sessionInitService.ephemeral
 	));
 
 	/** Initial load screen before a user is set. */
@@ -142,7 +145,13 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		this.subscriptions.push(this.accountService.combinedRouteData(
 			this.activatedRoute
 		).subscribe(async ([
-			{callType, defaultSessionSubID, ephemeralSubSession, promptFollowup},
+			{
+				callType,
+				defaultSessionSubID,
+				ephemeralSubSession,
+				generateAnonymousChannelID,
+				promptFollowup
+			},
 			{answerExpireTime, appointmentID, contactID, sessionSubID, username},
 			[{path}]
 		]: [
@@ -150,6 +159,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				callType?: 'audio'|'video';
 				defaultSessionSubID?: string;
 				ephemeralSubSession?: boolean;
+				generateAnonymousChannelID?: boolean;
 				promptFollowup?: boolean;
 			},
 			{
@@ -167,6 +177,11 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 			}
 
 			this.answering.next(answerExpireTime !== undefined);
+
+			const anonymousChannelID	= generateAnonymousChannelID ?
+				readableID(this.configService.cyphIDLength) :
+				undefined
+			;
 
 			try {
 				if (username) {
@@ -231,7 +246,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 							)
 					;
 
-					contactID		= await this.accountContactsService.getContactID(
+					contactID			= await this.accountContactsService.getContactID(
 						appointmentOther
 					);
 
@@ -241,7 +256,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				this.initiatedAppointmentID	= appointmentID;
 				this.initiatedContactID		= contactID;
 
-				if (!contactID) {
+				if (!contactID && !anonymousChannelID) {
 					return;
 				}
 
@@ -279,7 +294,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					this.messageType.value === ChatMessageValue.Types.Text
 				);
 
-				const chat	= await this.accountContactsService.getChatData(contactID);
+				const chat	= anonymousChannelID ?
+					{anonymousChannelID} :
+					await this.accountContactsService.getChatData(contactID)
+				;
 
 				if (callType !== undefined && !sessionSubID) {
 					await this.accountChatService.setUser(chat);
@@ -387,6 +405,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		/** @ignore */
 		private readonly notificationService: NotificationService,
 
+		/** @ignore */
+		private readonly sessionInitService: SessionInitService,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
@@ -407,6 +428,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 		/** @see AccountSessionService */
 		public readonly accountSessionService: AccountSessionService,
+
+		/** @see ConfigService */
+		public readonly configService: ConfigService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

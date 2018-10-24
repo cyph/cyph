@@ -831,6 +831,11 @@ export class StringsService extends BaseProvider {
 	public readonly session: string						= `${this.internalSession}`;
 
 	/** @see StringsService */
+	public readonly sessionComplete: string				=
+		`${this.internalSession[0].toUpperCase()}${this.internalSession.slice(1)} complete.`
+	;
+
+	/** @see StringsService */
 	public readonly share: string						= `Share`;
 
 	/** @see StringsService */
