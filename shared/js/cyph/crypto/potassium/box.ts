@@ -72,7 +72,7 @@ export class Box implements IBox {
 	public readonly publicKeyBytes: Promise<number>		= (async () =>
 		(await mceliece.publicKeyBytes) +
 		(await ntru.publicKeyBytes) +
-		(await sidh.privateKeyBytes) +
+		(await sidh.publicKeyBytes) +
 		(await this.classicalCypher.publicKeyBytes)
 	)();
 
