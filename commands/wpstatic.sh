@@ -258,11 +258,9 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 		return;
 	}
 
-	\$('head').append(\`
-		<script defer src='/spa/assets/node_modules/core-js/client/shim.js'></script>
-		<script defer src='/spa/assets/js/standalone/global.js'></script>
-		<script defer src='/spa/assets/js/standalone/analytics.js'></script>
-	\`);
+	\$('script').each((_, elem) => {
+		$(elem).attr('defer', '');
+	});
 
 	fs.writeFileSync('${f}', htmlMinifier.minify(
 		\$.html().trim(),
@@ -365,6 +363,14 @@ grep -rl http://localhost:42001 . | xargs -I% sed -i 's|http://localhost:42001||
 for f in $(find . -type f -name '*.html') ; do
 	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
 	mv "${f}.new" "${f}"
+done
+
+for f in $(find . -type f -name '*.js') ; do
+	terser "${f}" -o "${f}"
+done
+
+for f in $(find . -type f -name '*.css') ; do
+	cleancss --inline none "${f}" -o "${f}"
 done
 
 for f in $(grep -rl static_wordpress) ; do

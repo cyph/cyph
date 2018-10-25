@@ -19,6 +19,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {CheckoutComponent} from '../cyph/components/checkout';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
+import {AnalyticsService} from '../cyph/services/analytics.service';
 /*
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
@@ -30,6 +31,7 @@ import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {NotificationService} from '../cyph/services/notification.service';
 */
+import {email} from '../cyph/util/email';
 import {resolveStaticServices} from '../cyph/util/static-services';
 /*
 import {DemoComponent} from './components/demo';
@@ -100,12 +102,15 @@ export class AppModule implements DoBootstrap {
 		domSanitizer: DomSanitizer,
 		httpClient: HttpClient,
 		ngZone: NgZone,
+		_ANALYTICS_SERVICE: AnalyticsService,
 		dialogService: DialogService,
 		fileService: FileService,
 
 		/** @ignore */
 		private readonly injector: Injector
 	) {
+		(<any> self).sendEmail	= email;
+
 		resolveStaticServices({
 			dialogService,
 			domSanitizer,

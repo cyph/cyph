@@ -7,7 +7,7 @@ originalArgs="${*}"
 
 
 cacheBustedProjects='cyph.com cyph.ws'
-compiledProjects='cyph.com cyph.ws'
+compiledProjects='cyph.ws'
 webSignedProject='cyph.ws'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='im io video audio'
@@ -123,6 +123,10 @@ if [ "${site}" ] ; then
 	if [ "${site}" != "${webSignedProject}" ] ; then
 		websign=''
 	fi
+fi
+
+if [ "${simple}" ] || [ "${customBuild}" ] ; then
+	skipWebsite=true
 fi
 
 if [ "${skipWebsite}" ] ; then
@@ -506,13 +510,8 @@ if [ "${cacheBustedProjects}" ] ; then
 	bash -c "
 		touch .wpstatic.output
 
-		if [ '${websign}' ] ; then
-			while [ ! -f .build.done ] ; do sleep 1 ; done
-		fi
-
 		if \
 			[ ! '${skipWebsite}' ] && \
-			[ ! '${simple}' ] && \
 			( [ ! '${site}' ] || [ '${site}' == cyph.com ] )
 		then
 			rm -rf wpstatic 2> /dev/null
@@ -522,13 +521,8 @@ if [ "${cacheBustedProjects}" ] ; then
 			../commands/wpstatic.sh $(test ${test} || echo '--prod') '${homeURL}' \
 				>> ../.wpstatic.output 2>&1
 			cd ..
-		fi
-
-		while [ ! -f .build.done ] ; do sleep 1 ; done
-		rm .build.done
-		if [ -d wpstatic ] ; then
-			mv wpstatic/* cyph.com/
-			rmdir wpstatic
+			mv cyph.com cyph.com.src
+			mv wpstatic cyph.com
 		fi
 
 		# Cache bust
@@ -572,7 +566,7 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 fi
 
 
-if [ "${skipWebsite}" ] || [ "${customBuild}" ] ; then
+if [ "${skipWebsite}" ] ; then
 	mv cyph.com cyph.com.src
 fi
 
@@ -628,28 +622,7 @@ for d in $compiledProjects ; do
 		if [ "${simple}" ] && [ ! "${simpleWebSignBuild}" ] ; then
 			ls dist/*.js | xargs -I% terser % -bo %
 		fi
-	fi
-
-	if [ "${d}" == 'cyph.com' ] ; then node -e '
-		const $	= require("cheerio").load(fs.readFileSync("dist/index.html").toString());
-
-		$(`link[href="/assets/css/loading.css"]`).replaceWith(`<style>${
-			fs.readFileSync("dist/assets/css/loading.css").toString()
-		}</style>`);
-
-		$("script").each((_, elem) => $(elem).attr("defer", ""));
-
-		/*
-		$(`link[rel="stylesheet"]`).each((_, elem) => {
-			const $elem			= $(elem);
-			const $stylesheet	= $("<stylesheet></stylesheet>");
-			$stylesheet.attr("src", $elem.attr("href"));
-			$elem.replaceWith($stylesheet);
-		});
-		*/
-
-		fs.writeFileSync("dist/index.html", $.html().trim());
-	' ; fi
+	firebaseBackup
 
 	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
 	findmnt -t overlay -o TARGET -lun | grep "^${PWD}" | xargs sudo umount
@@ -657,15 +630,8 @@ for d in $compiledProjects ; do
 	cd ..
 
 	mv "${d}" "${d}.src"
-
-	if [ "${d}" == 'cyph.com' ] ; then
-		mkdir "${d}"
-		mv "${d}.src/dist" "${d}/spa"
-	else
-		mv "${d}.src/dist" "${d}"
-	fi
+	mv "${d}.src/dist" "${d}"
 done
-touch .build.done
 
 
 # WebSign packaging
