@@ -6,30 +6,32 @@ import '../standalone/global';
 import '../standalone/node-polyfills';
 
 import 'hammerjs';
+/*
 import 'jquery';
 import 'jquery.appear';
-import '../standalone/init';
 import '../standalone/translations';
-import './sham';
+*/
 
 import {HttpClient} from '@angular/common/http';
-import {NgModule, NgZone} from '@angular/core';
-import {MatToolbarModule} from '@angular/material/toolbar';
+import {DoBootstrap, Injector, NgModule, NgZone} from '@angular/core';
+import {createCustomElement} from '@angular/elements';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Router} from '@angular/router';
-import {BetaRegisterComponent} from '../cyph/components/beta-register';
 import {CheckoutComponent} from '../cyph/components/checkout';
-import {ClaimUsernameComponent} from '../cyph/components/claim-username';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
+/*
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {DatabaseService} from '../cyph/services/database.service';
+*/
 import {DialogService} from '../cyph/services/dialog.service';
 import {FileService} from '../cyph/services/file.service';
+/*
 import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {NotificationService} from '../cyph/services/notification.service';
+*/
 import {resolveStaticServices} from '../cyph/util/static-services';
+/*
 import {DemoComponent} from './components/demo';
 import {DemoChatRootComponent} from './components/demo-chat-root';
 import {DemoService} from './demo.service';
@@ -37,6 +39,7 @@ import {MockDatabaseService} from './mock-database.service';
 import {MockHtmlSanitizerService} from './mock-html-sanitizer.service';
 import {MockPotassiumService} from './mock-potassium.service';
 import {SilentNotificationService} from './silent-notification.service';
+*/
 
 
 /**
@@ -44,20 +47,24 @@ import {SilentNotificationService} from './silent-notification.service';
  */
 @NgModule({
 	declarations: [
-		BetaRegisterComponent,
+		CheckoutComponent
+		/*
 		DemoChatRootComponent,
-		CheckoutComponent,
-		ClaimUsernameComponent,
 		DemoComponent
+		*/
 	],
 	entryComponents: [
-		BetaRegisterComponent
+		CheckoutComponent
+		/*
+		DemoChatRootComponent,
+		DemoComponent
+		*/
 	],
 	imports: [
 		CyphCommonModule,
-		CyphWebModule,
-		MatToolbarModule
-	],
+		CyphWebModule
+	]
+	/*
 	providers: [
 		DemoService,
 		LocalStorageService,
@@ -78,23 +85,33 @@ import {SilentNotificationService} from './silent-notification.service';
 			useClass: MockPotassiumService
 		}
 	]
+	*/
 })
-export class AppModule {
+export class AppModule implements DoBootstrap {
+	/** @inheritdoc */
+	public ngDoBootstrap () : void {
+		customElements.define(
+			'cyph-checkout',
+			createCustomElement(CheckoutComponent, {injector: this.injector})
+		);
+	}
+
 	constructor (
 		domSanitizer: DomSanitizer,
 		httpClient: HttpClient,
 		ngZone: NgZone,
-		router: Router,
 		dialogService: DialogService,
-		fileService: FileService
+		fileService: FileService,
+
+		/** @ignore */
+		private readonly injector: Injector
 	) {
 		resolveStaticServices({
 			dialogService,
 			domSanitizer,
 			fileService,
 			httpClient,
-			ngZone,
-			router
+			ngZone
 		});
 	}
 }

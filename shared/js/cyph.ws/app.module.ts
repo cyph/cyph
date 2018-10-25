@@ -93,8 +93,7 @@ export class AppModule {
 			domSanitizer,
 			fileService,
 			httpClient,
-			ngZone,
-			router
+			ngZone
 		});
 	}
 }

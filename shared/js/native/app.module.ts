@@ -97,8 +97,7 @@ export class AppModule {
 			dialogService,
 			fileService,
 			httpClient,
-			ngZone,
-			router
+			ngZone
 		});
 	}
 }

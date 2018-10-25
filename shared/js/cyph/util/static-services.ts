@@ -1,7 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {NgZone} from '@angular/core';
 import {DomSanitizer, SafeValue} from '@angular/platform-browser';
-import {Router} from '@angular/router';
 import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
 import {FileService} from '../services/file.service';
@@ -65,27 +64,18 @@ const resolvableNgZone	= resolvable<NgZone>();
 export const staticNgZone: Promise<NgZone>	= resolvableNgZone.promise;
 
 
-/** Resolvable router. */
-const resolvableRouter	= resolvable<Router>();
-
-/** @see Router */
-export const staticRouter: Promise<Router>	= resolvableRouter.promise;
-
-
 export const resolveStaticServices	= ({
 	dialogService,
 	domSanitizer,
 	fileService,
 	httpClient,
-	ngZone,
-	router
+	ngZone
 }: {
 	dialogService?: DialogService;
 	domSanitizer?: DomSanitizer;
 	fileService?: FileService;
 	httpClient?: HttpClient;
 	ngZone: NgZone;
-	router: Router;
 }) => {
 	if (dialogService && resolvableDialogService) {
 		resolvableDialogService.resolve(dialogService);
@@ -104,5 +94,4 @@ export const resolveStaticServices	= ({
 	}
 
 	resolvableNgZone.resolve(ngZone);
-	resolvableRouter.resolve(router);
 };
