@@ -47,6 +47,11 @@ export const account: Route	= {
 			]
 		},
 		{path: '404', component: NotFoundComponent},
+		{
+			path: 'anonymous-chat',
+			component: AccountChatComponent,
+			data: {generateAnonymousChannelID: true}
+		},
 		{path: 'appointments', component: AccountAppointmentsComponent},
 		{
 			path: 'appointments/:appointmentID',

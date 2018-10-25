@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {take} from 'rxjs/operators';
 import {
+	AnonymousRemoteUser,
 	HandshakeSteps,
 	PairwiseSession,
 	RegisteredLocalUser,
@@ -26,7 +27,7 @@ import {PotassiumService} from './potassium.service';
 
 
 /**
- * Castle instance between two registered users.
+ * Castle instance for a registered user.
  */
 @Injectable()
 export class AccountCastleService extends CastleService {
@@ -36,10 +37,7 @@ export class AccountCastleService extends CastleService {
 	;
 
 	/** @inheritDoc */
-	public async init (
-		potassiumService: PotassiumService,
-		accountSessionService: AccountSessionService
-	) : Promise<void> {
+	public async init (accountSessionService: AccountSessionService) : Promise<void> {
 		const transport	= new Transport(accountSessionService);
 
 		this.subscriptions.push(accountSessionService.remoteUser.pipe(
@@ -47,6 +45,29 @@ export class AccountCastleService extends CastleService {
 			take(1)
 		).subscribe(async user => {
 			debugLog(() => ({startingAccountCastleSession: {user}}));
+
+			const localUser	= new RegisteredLocalUser(this.accountDatabaseService);
+
+			if (user.anonymous) {
+				const anonymousHandshakeState	= await accountSessionService.handshakeState();
+
+				const anonymousRemoteUser		= new AnonymousRemoteUser(
+					this.potassiumService,
+					anonymousHandshakeState,
+					undefined,
+					accountSessionService.remoteUsername
+				);
+
+				this.pairwiseSession.next(new PairwiseSession(
+					this.potassiumService,
+					transport,
+					localUser,
+					anonymousRemoteUser,
+					anonymousHandshakeState
+				));
+
+				return;
+			}
 
 			const castleSessionID	= await this.accountContactsService.
 				getCastleSessionID(user.username).
@@ -69,10 +90,6 @@ export class AccountCastleService extends CastleService {
 
 					const sessionURL		= `castleSessions/${castleSessionID}/session`;
 
-					const localUser			= new RegisteredLocalUser(
-						this.accountDatabaseService
-					);
-
 					const remoteUser		= new RegisteredRemoteUser(
 						this.accountDatabaseService,
 						user.realUsername
@@ -80,7 +97,7 @@ export class AccountCastleService extends CastleService {
 
 					if (accountSessionService.ephemeralSubSession) {
 						return new PairwiseSession(
-							potassiumService,
+							this.potassiumService,
 							transport,
 							localUser,
 							remoteUser,
@@ -110,7 +127,7 @@ export class AccountCastleService extends CastleService {
 					);
 
 					return new PairwiseSession(
-						potassiumService,
+						this.potassiumService,
 						transport,
 						localUser,
 						remoteUser,
@@ -171,7 +188,8 @@ export class AccountCastleService extends CastleService {
 	public spawn () : AccountCastleService {
 		return new AccountCastleService(
 			this.accountContactsService,
-			this.accountDatabaseService
+			this.accountDatabaseService,
+			this.potassiumService
 		);
 	}
 
@@ -180,7 +198,10 @@ export class AccountCastleService extends CastleService {
 		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService
+		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly potassiumService: PotassiumService
 	) {
 		super();
 	}

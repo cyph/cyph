@@ -115,7 +115,9 @@ export class AccountUserLookupService extends BaseProvider {
 				this.userCache,
 				username,
 				async () => {
-					if (!(await this.exists(username, lock))) {
+					/* Temporary workaround for migrating users to latest Potassium.Box */
+
+					if (!(await this.exists(username, lock, true))) {
 						throw new Error('User does not exist.');
 					}
 

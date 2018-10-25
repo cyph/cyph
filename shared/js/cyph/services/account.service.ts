@@ -511,6 +511,7 @@ export class AccountService extends BaseProvider {
 					].indexOf(route) > -1 ||
 					(
 						[
+							'anonymous-chat',
 							'appointments',
 							'audio',
 							'call',

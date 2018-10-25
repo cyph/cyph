@@ -163,12 +163,18 @@ export class EphemeralSessionService extends SessionService {
 			stringsService
 		);
 
+		let username: string|undefined;
+
 		let id	= this.sessionInitService.id;
 
 		if (id === '404') {
 			this.state.startingNewCyph.next(true);
 			this.trigger(events.cyphNotFound);
 			return;
+		}
+
+		if (id.indexOf('/') > -1) {
+			[username, id]	= id.split('/');
 		}
 
 		/* API flags */
@@ -206,7 +212,14 @@ export class EphemeralSessionService extends SessionService {
 					false
 		);
 
-		this.setID(id);
+		if (username) {
+			this.remoteUsername.next(username);
+			this.state.cyphID.next(id);
+			this.state.sharedSecret.next(undefined);
+		}
+		else {
+			this.setID(id);
+		}
 
 		const channelID: string	=
 			this.state.startingNewCyph.value === false ?

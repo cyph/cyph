@@ -15,7 +15,7 @@ export class AccountSessionInitService extends BaseProvider implements SessionIn
 	public callType?: 'audio'|'video';
 
 	/** @inheritDoc */
-	public readonly ephemeral: boolean	= false;
+	public ephemeral: boolean			= false;
 
 	/** @inheritDoc */
 	public readonly id: string			= '';

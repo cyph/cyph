@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, mergeMap, skip, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
@@ -18,10 +18,12 @@ import {
 	StringArrayProto
 } from '../proto';
 import {filterUndefinedOperator} from '../util/filter';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
+import {AccountSessionCapabilitiesService} from './account-session-capabilities.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -59,12 +61,14 @@ export class AccountChatService extends ChatService {
 	}>();
 
 	/** @inheritDoc */
-	public readonly remoteUser: Observable<User|undefined>	=
+	public readonly remoteUser			= toBehaviorSubject<User|undefined>(
 		this.sessionService.remoteUsername.pipe(
+			skip(1),
 			mergeMap(async username => this.accountUserLookupService.getUser(username, false)),
 			filterUndefinedOperator()
-		)
-	;
+		),
+		undefined
+	);
 
 	/** @inheritDoc */
 	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
@@ -79,6 +83,10 @@ export class AccountChatService extends ChatService {
 
 	/** Gets async set for scrollService.unreadMessages. */
 	protected async getScrollServiceUnreadMessages () : Promise<IAsyncSet<string>> {
+		if (this.sessionInitService.ephemeral) {
+			return super.getScrollServiceUnreadMessages();
+		}
+
 		const notificationData	= await this.notificationData.promise;
 
 		const asyncMap			= this.accountDatabaseService.getAsyncMap(
@@ -123,7 +131,13 @@ export class AccountChatService extends ChatService {
 			oldLocalStorageKey
 		);
 
-		if (!id) {
+		if (
+			!id ||
+			(
+				this.accountSessionService.remoteUser.value &&
+				this.accountSessionService.remoteUser.value.anonymous
+			)
+		) {
 			return;
 		}
 
@@ -142,12 +156,19 @@ export class AccountChatService extends ChatService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		chat: {group: IAccountMessagingGroup}|{username: string},
+		chat: {anonymousChannelID: string}|{group: IAccountMessagingGroup}|{username: string},
 		keepCurrentMessage: boolean = false,
 		callType?: 'audio'|'video',
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
+		if ('anonymousChannelID' in chat) {
+			this.accountSessionCapabilitiesService.initEphemeral();
+			await this.accountSessionService.setUser(chat);
+			this.resolvers.chatConnected.resolve();
+			return;
+		}
+
 		if ('username' in chat) {
 			chat.username	= this.accountSessionService.normalizeUsername(chat.username);
 		}
@@ -266,6 +287,9 @@ export class AccountChatService extends ChatService {
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService,
+
+		/** @ignore */
+		private readonly accountSessionCapabilitiesService: AccountSessionCapabilitiesService,
 
 		/** @ignore */
 		private readonly accountSessionInitService: AccountSessionInitService,

@@ -24,18 +24,20 @@ export class AnonymousLocalUser implements ILocalUser {
 			this.keyPair	= (async () => {
 				const keyPair		= await this.potassium.box.keyPair();
 
-				const sharedSecret	= (await this.potassium.passwordHash.hash(
-					this.sharedSecret,
-					AnonymousLocalUser.handshakeSalt
-				)).hash;
+				if (this.sharedSecret !== undefined) {
+					const sharedSecret	= (await this.potassium.passwordHash.hash(
+						this.sharedSecret,
+						AnonymousLocalUser.handshakeSalt
+					)).hash;
 
-				await this.handshakeState.localPublicKey.setValue(
-					await this.potassium.secretBox.seal(keyPair.publicKey, sharedSecret)
-				);
+					await this.handshakeState.localPublicKey.setValue(
+						await this.potassium.secretBox.seal(keyPair.publicKey, sharedSecret)
+					);
 
-				this.potassium.clearMemory(sharedSecret);
+					this.potassium.clearMemory(sharedSecret);
 
-				this.sharedSecret	= '';
+					this.sharedSecret	= undefined;
+				}
 
 				return keyPair;
 			})();
@@ -57,6 +59,6 @@ export class AnonymousLocalUser implements ILocalUser {
 		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
-		private sharedSecret: string
+		private sharedSecret?: string
 	) {}
 }

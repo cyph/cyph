@@ -13,6 +13,7 @@ import {QRService} from '../../services/qr.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {Timer} from '../../timer';
+import {filterUndefinedOperator} from '../../util/filter';
 import {lockTryOnce} from '../../util/lock';
 import {sleep, waitForIterable} from '../../util/wait';
 import {LinkConnectionEmailComponent} from '../link-connection-email';
@@ -109,6 +110,7 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 
 		const sharedSecret	=
 			await this.sessionService.state.sharedSecret.pipe(
+				filterUndefinedOperator(),
 				filter(s => s.length > 0),
 				take(1)
 			).toPromise()

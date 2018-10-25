@@ -72,6 +72,9 @@ export class StringsService extends BaseProvider {
 	public readonly allow: string						= `Allow`;
 
 	/** @see StringsService */
+	public readonly anonymous: string					= `Anonymous`;
+
+	/** @see StringsService */
 	public readonly answer: string						= `Answer`;
 
 	/** @see StringsService */
@@ -829,6 +832,11 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly session: string						= `${this.internalSession}`;
+
+	/** @see StringsService */
+	public readonly sessionComplete: string				=
+		`${this.internalSession[0].toUpperCase()}${this.internalSession.slice(1)} complete.`
+	;
 
 	/** @see StringsService */
 	public readonly share: string						= `Share`;

@@ -119,7 +119,7 @@
 				class='alt'
 				matTooltip='New Cyph Link'
 				matTooltipPosition='left'
-				[href]='envService.newCyphUrl'
+				[routerLink]='accountService.routeRoot + "anonymous-chat"'
 				(click)='isSpeedDialOpen.next(false)'
 				*ngIf='!envService.coBranded'
 			>

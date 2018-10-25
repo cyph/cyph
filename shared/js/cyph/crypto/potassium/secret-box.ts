@@ -140,7 +140,9 @@ export class SecretBox implements ISecretBox {
 				await this.getAdditionalData(additionalData)
 			);
 
-			potassiumUtil.clearMemory(dataToDecrypt);
+			if (dataToDecrypt !== symmetricCyphertext) {
+				potassiumUtil.clearMemory(dataToDecrypt);
+			}
 		}
 
 		if (!paddedPlaintext) {

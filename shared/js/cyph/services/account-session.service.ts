@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
@@ -14,9 +16,11 @@ import {filterUndefined} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {debugLog} from '../util/log';
+import {request} from '../util/request';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
+import {AccountSessionInitService} from './account-session-init.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {AnalyticsService} from './analytics.service';
@@ -57,22 +61,20 @@ export class AccountSessionService extends SessionService {
 	private readonly stateResolver				= resolvable();
 
 	/** @inheritDoc */
-	protected readonly symmetricKey: Promise<Uint8Array>	=
-		this._ACCOUNTS_SYMMETRIC_KEY.promise
-	;
+	protected readonly symmetricKey				= this._ACCOUNTS_SYMMETRIC_KEY.promise;
 
 	/** If true, this is an ephemeral sub-session. */
-	public ephemeralSubSession: boolean							= false;
+	public ephemeralSubSession: boolean	= false;
 
 	/** @inheritDoc */
 	public group?: AccountSessionService[];
 
 	/** @inheritDoc */
-	public readonly ready: Promise<void>						= this._READY.promise;
+	public readonly ready				= this._READY.promise;
 
 	/** Remote user. */
-	public readonly remoteUser: BehaviorSubject<User|undefined>	=
-		new BehaviorSubject<User|undefined>(undefined)
+	public readonly remoteUser			=
+		new BehaviorSubject<{anonymous: true}|User|undefined>(undefined)
 	;
 
 	/** @inheritDoc */
@@ -160,7 +162,7 @@ export class AccountSessionService extends SessionService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		chat: {group: IAccountMessagingGroup}|{username: string},
+		chat: {anonymousChannelID: string}|{group: IAccountMessagingGroup}|{username: string},
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false,
 		setHeader: boolean = true
@@ -175,6 +177,39 @@ export class AccountSessionService extends SessionService {
 			sessionSubID,
 			setHeader
 		}}));
+
+		if ('anonymousChannelID' in chat) {
+			if (!this.accountDatabaseService.currentUser.value) {
+				throw new Error('No user signed in.');
+			}
+
+			this.accountService.setHeader({mobile: this.stringsService.anonymous});
+
+			this.accountSessionInitService.ephemeral	= true;
+			this.ephemeralSubSession					= true;
+
+			const channelID	= uuid(true);
+
+			await request({
+				data: {channelID, proFeatures: this.proFeatures},
+				method: 'POST',
+				retries: 5,
+				url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
+			});
+
+			this.remoteUser.next({anonymous: true});
+			this.state.sharedSecret.next(
+				`${
+					this.accountDatabaseService.currentUser.value.user.username
+				}/${
+					chat.anonymousChannelID
+				}`
+			);
+			this.state.startingNewCyph.next(true);
+
+			this.resolveReady();
+			return this.init(channelID);
+		}
 
 		if ('username' in chat) {
 			chat.username	= this.normalizeUsername(chat.username);
@@ -410,12 +445,17 @@ export class AccountSessionService extends SessionService {
 			this.accountService,
 			this.accountContactsService,
 			this.accountDatabaseService,
+			this.accountSessionInitService,
 			this.accountUserLookupService
 		);
 	}
 
 	/** @inheritDoc */
 	public async yt () : Promise<void> {
+		if (this.sessionInitService.ephemeral) {
+			return;
+		}
+
 		if (this.group) {
 			await Promise.all(this.group.map(async session => session.yt()));
 			return;
@@ -457,6 +497,9 @@ export class AccountSessionService extends SessionService {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountSessionInitService: AccountSessionInitService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService

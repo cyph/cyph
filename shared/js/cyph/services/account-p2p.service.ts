@@ -25,10 +25,13 @@ import {StringsService} from './strings.service';
 export class AccountP2PService extends P2PService {
 	/** @ignore */
 	protected async request (callType: 'audio'|'video') : Promise<void> {
-		if (
-			!this.accountSessionService.remoteUser.value ||
-			!(await this.handlers.requestConfirm(callType, false))
-		) {
+		if (!this.accountSessionService.remoteUser.value) {
+			return;
+		}
+		if (this.accountSessionService.remoteUser.value.anonymous) {
+			return super.request(callType);
+		}
+		if (!(await this.handlers.requestConfirm(callType, false))) {
 			return;
 		}
 
@@ -44,7 +47,10 @@ export class AccountP2PService extends P2PService {
 
 	/** Initiates call. */
 	public async beginCall (callType: 'audio'|'video', route: string = callType) : Promise<void> {
-		if (!this.accountSessionService.remoteUser.value) {
+		if (
+			!this.accountSessionService.remoteUser.value ||
+			this.accountSessionService.remoteUser.value.anonymous
+		) {
 			return;
 		}
 

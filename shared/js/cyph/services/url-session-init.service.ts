@@ -50,7 +50,7 @@ export class UrlSessionInitService extends BaseProvider implements SessionInitSe
 					undefined
 		;
 
-		this.id	= urlSegmentPaths[this.callType ? 1 : 0] || '';
+		this.id	= urlSegmentPaths.slice(this.callType ? 1 : 0).join('/');
 
 		if (!this.callType) {
 			this.callType	= env.callType;

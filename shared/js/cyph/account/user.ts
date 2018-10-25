@@ -47,6 +47,9 @@ export class User {
 	/** @ignore */
 	private readonly fetchLock: {}	= {};
 
+	/** Indicates that user is not anonymous. */
+	public readonly anonymous: false							= false;
+
 	/** Image URI for avatar / profile picture. */
 	public readonly avatar: Observable<SafeUrl>					= toBehaviorSubject(
 		this.avatarInternal,

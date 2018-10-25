@@ -16,15 +16,21 @@ export class AnonymousRemoteUser implements IRemoteUser {
 	public async getPublicEncryptionKey () : Promise<Uint8Array> {
 		if (!this.publicKey) {
 			this.publicKey	= (async () => {
+				const sharedSecretString	= this.sharedSecret;
+
+				if (!sharedSecretString) {
+					throw new Error('Cannot get remote public key without a shared secret.');
+				}
+
 				const [encryptedPublicBoxKey, sharedSecret]	= await Promise.all([
 					this.handshakeState.remotePublicKey.getValue(),
 					(async () => {
 						const {hash}	= await this.potassium.passwordHash.hash(
-							this.sharedSecret,
+							sharedSecretString,
 							AnonymousLocalUser.handshakeSalt
 						);
 
-						this.sharedSecret	= '';
+						this.sharedSecret	= undefined;
 
 						return hash;
 					})()
@@ -58,7 +64,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
-		private sharedSecret: string,
+		private sharedSecret: string|undefined,
 
 		/** @inheritDoc */
 		public readonly username: Observable<string>
