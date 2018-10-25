@@ -100,6 +100,7 @@ read -r -d '' modules <<- EOM
 	@types/simple-peer
 	@types/stacktrace-js
 	@types/video.js
+	@webcomponents/custom-elements
 	@yaga/leaflet-ng2
 	angular-fittext
 	angular-material-clock-time-picker
