@@ -16,7 +16,7 @@ import {HttpClient} from '@angular/common/http';
 import {NgModule, NgZone} from '@angular/core';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Router, RouterModule} from '@angular/router';
+import {Router} from '@angular/router';
 import {BetaRegisterComponent} from '../cyph/components/beta-register';
 import {CheckoutComponent} from '../cyph/components/checkout';
 import {ClaimUsernameComponent} from '../cyph/components/claim-username';
@@ -30,12 +30,8 @@ import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {NotificationService} from '../cyph/services/notification.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
-import {appRoutes} from './app-routes';
-import {AppService} from './app.service';
-import {AppComponent} from './components/app';
 import {DemoComponent} from './components/demo';
 import {DemoChatRootComponent} from './components/demo-chat-root';
-import {RouterComponent} from './components/router';
 import {DemoService} from './demo.service';
 import {MockDatabaseService} from './mock-database.service';
 import {MockHtmlSanitizerService} from './mock-html-sanitizer.service';
@@ -47,27 +43,22 @@ import {SilentNotificationService} from './silent-notification.service';
  * Angular module for Cyph home page.
  */
 @NgModule({
-	bootstrap: [RouterComponent],
 	declarations: [
-		AppComponent,
 		BetaRegisterComponent,
 		DemoChatRootComponent,
 		CheckoutComponent,
 		ClaimUsernameComponent,
-		DemoComponent,
-		RouterComponent
+		DemoComponent
 	],
 	entryComponents: [
 		BetaRegisterComponent
 	],
 	imports: [
-		RouterModule.forRoot(appRoutes),
 		CyphCommonModule,
 		CyphWebModule,
 		MatToolbarModule
 	],
 	providers: [
-		AppService,
 		DemoService,
 		LocalStorageService,
 		{

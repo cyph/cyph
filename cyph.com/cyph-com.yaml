@@ -5,18 +5,6 @@ threadsafe: true
 
 handlers:
 
-- url: /spa/(checkout|claimusername|contact|demo)(.*|[/]?$)
-  static_files: spa/index.html
-  upload: spa/index.html
-  secure: always
-  # default_headers Cache-Control
-
-- url: /spa/(.*)
-  static_files: spa/\1
-  upload: spa/.*
-  secure: always
-  # default_headers
-
 - url: /
   static_files: index.html
   upload: index.html
