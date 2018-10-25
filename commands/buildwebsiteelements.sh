@@ -20,7 +20,7 @@ sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
 sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
 sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
-sed -i "s|${defaultHost}42001|${homeURL}|g" shared/js/cyph/env-deploy.ts
+sed -i "s|${defaultHost}43000|${homeURL}|g" shared/js/cyph/env-deploy.ts
 
 cd cyph.com
 ../commands/prodbuild.sh

@@ -358,7 +358,6 @@ find . -type f -name logo-amp.png -exec cp -f "${dir}/shared/assets/img/logo.amp
 
 rm -rf blog/amp
 find . -type d -name amp -not -path './blog/*' -exec rm -rf '{}' \; 2> /dev/null
-grep -rl http://localhost:42001 . | xargs -I% sed -i 's|http://localhost:42001||g' %
 
 for f in $(find . -type f -name '*.html') ; do
 	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
