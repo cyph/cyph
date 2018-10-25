@@ -10,7 +10,7 @@ firebaseBackup=''
 noLockDown=''
 e2e=''
 localSeleniumServer=''
-site=''
+site='cyph.ws'
 prod=''
 prodBuild=''
 environment='local'
@@ -48,7 +48,10 @@ if [ "${1}" == '--custom-build' ] ; then
 	customBuild="${1}"
 	shift
 fi
-if [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
+if [ "${1}" == 'all' ] ; then
+	site=''
+	shift
+elif [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
 	site="${1}"
 	shift
 fi
