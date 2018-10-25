@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {usernameMask} from '../../account';
-import {BaseProvider} from '../../base-provider';
-import {emailPattern} from '../../email-pattern';
-import {StringsService} from '../../services/strings.service';
-import {email} from '../../util/email';
-import {stringify} from '../../util/serialization';
+import {usernameMask} from '../../../cyph/account';
+import {BaseProvider} from '../../../cyph/base-provider';
+import {emailPattern} from '../../../cyph/email-pattern';
+import {StringsService} from '../../../cyph/services/strings.service';
+import {email} from '../../../cyph/util/email';
+import {stringify} from '../../../cyph/util/serialization';
 
 
 /**
