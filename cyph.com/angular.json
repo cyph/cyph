@@ -16,10 +16,7 @@
 						"main": "src/js/cyph.com/main.ts",
 						"tsConfig": "src/tsconfig.app.json",
 						"polyfills": "src/js/cyph.com/polyfills.ts",
-						"assets": [
-							"src/assets",
-							"src/favicon.ico"
-						],
+						"assets": [],
 						"styles": [
 							"src/css/cyph.com.scss"
 						],
@@ -275,10 +272,7 @@
 						"styles": [
 							"src/css/cyph.com.scss"
 						],
-						"assets": [
-							"src/assets",
-							"src/favicon.ico"
-						]
+						"assets": []
 					}
 				},
 				"lint": {
