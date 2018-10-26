@@ -25,5 +25,13 @@ sed -i "s|${defaultHost}43000|${homeURL}|g" shared/js/cyph/env-deploy.ts
 cd cyph.com
 ../commands/prodbuild.sh
 
+# Workaround for Braintree PayPal support
+payPalCheckoutJSRemote='https://www.paypalobjects.com/api/checkout.min.js'
+payPalCheckoutJSLocal='paypal-checkout.min.js'
+wget --tries=50 "${payPalCheckoutJSRemote}" -O paypal-checkout.js
+sed -i \
+	"s|${payPalCheckoutJSRemote}|/wp-content/themes/Zephyr-Cyph-Child/dist/paypal-checkout.js|g" \
+	vendor.js
+
 rm -rf "${dir}/cyph.com/dist"
 mv dist "${dir}/cyph.com/"
