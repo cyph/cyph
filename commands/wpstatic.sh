@@ -370,6 +370,31 @@ done
 for f in $(find . -type f -name '*.css') ; do
 	sed -i 's|<br />||g' "${f}"
 	cleancss --inline none "${f}" -o "${f}"
+
+	# Remove empty CSS files to prevent unnecessary console errors
+	if [ "$(wc -c "${f}" | awk '{print $1}')" == '0' ] ; then
+		rm "${f}"
+
+		for html in $(find . -name '*.html') ; do node -e "
+			const cheerio		= require('cheerio');
+			const htmlMinifier	= require('html-minifier');
+
+			const \$	= cheerio.load(fs.readFileSync('${html}').toString());
+			const elem	= \$('link[href*=\"/static_wordpress/${f}\"]');
+
+			if (elem.length > 0) {
+				elem.remove();
+
+				fs.writeFileSync('${html}', htmlMinifier.minify(
+					\$.html().trim(),
+					{
+						collapseWhitespace: true,
+						removeComments: true
+					}
+				));
+			}
+		" ; done
+	fi
 done
 
 # TODO: allow passing in a specific branch name
