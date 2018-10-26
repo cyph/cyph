@@ -32,12 +32,7 @@ export class EnvDeploy {
 	/** URL for Cyph website ("https://www.cyph.com/" or equivalent). */
 	public readonly homeUrl: string				= this.isOnion ?
 		`https://www.${config.onionRoot}/` :
-		`${locationData.protocol}//${locationData.hostname}:42001/`
-	;
-
-	/** URL for Cyph WordPress website (same as homeUrl except in local env). */
-	public readonly homeWordPressUrl: string	=
-		`${locationData.protocol}//${locationData.hostname}:43000/root/` || this.homeUrl
+		`${locationData.protocol}//${locationData.hostname}:43000/`
 	;
 
 	/** Base URL for a new cyph link ("https://cyph.ws/" or equivalent). */

@@ -80,15 +80,6 @@ html, body, #main, .cyph-foreground {
 	margin: 0;
 }
 
-html, body {
-	font-size: 14px;
-	font-weight: 300;
-}
-
-body.cordova * {
-	-webkit-tap-highlight-color: transparent !important;
-}
-
 img:not([src]) {
 	visibility: hidden !important;
 }
@@ -559,20 +550,6 @@ $nanoScrollbarWidth: 17px;
 	mat-dialog-container {
 		width: 80vw !important;
 	}
-}
-
-/* Readability improvement for large screens */
-
-@media (min-width: 1920px) {
-	html, body {
-		font-size: 17.5px;
-	}
-}
-
-/* Unsemantic */
-
-.grid-container {
-	max-width: initial;
 }
 
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/

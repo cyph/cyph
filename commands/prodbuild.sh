@@ -1,7 +1,12 @@
 #!/bin/bash
 
 
+fullMinify=''
 noBuild=''
+if [ "${1}" == '--full-minify' ] ; then
+	fullMinify=true
+	shift
+fi
 if [ "${1}" == '--no-build' ] ; then
 	noBuild=true
 	shift
@@ -21,7 +26,9 @@ onexit () {
 	done
 }
 
-if [ ! "${noBuild}" ] ; then
+if [ "${noBuild}" ] || [ "${fullMinify}" ] ; then
+	minifyScripts=''
+else
 	trap onexit EXIT
 fi
 

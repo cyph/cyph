@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, Optional} from '@angular/core';
 import {Env} from '../env';
 import {DataURIProto, StringProto} from '../proto';
 import {toInt} from '../util/formatting';
@@ -76,12 +76,14 @@ export class EnvService extends Env {
 	/** Package/environment name. */
 	public readonly packageName: Promise<string>	= (async () => {
 		try {
-			const timestamp	= toInt(
-				await this.localStorageService.getItem('webSignPackageTimestamp', StringProto)
-			);
+			if (this.localStorageService) {
+				const timestamp	= toInt(
+					await this.localStorageService.getItem('webSignPackageTimestamp', StringProto)
+				);
 
-			if (!isNaN(timestamp)) {
-				return `${this.host} ${timestamp.toString()}`;
+				if (!isNaN(timestamp)) {
+					return `${this.host} ${timestamp.toString()}`;
+				}
 			}
 		}
 		catch {}
@@ -121,17 +123,19 @@ export class EnvService extends Env {
 		];
 
 		try {
-			const isAffectedBrowser	= /\/#test$/.test(new Request('https://cyph.ws/#test').url);
-			const webSignHash		= await this.localStorageService.getItem(
-				'webSignHash',
-				StringProto
-			);
+			if (this.localStorageService) {
+				const isAffectedBrowser	= /\/#test$/.test(new Request('https://cyph.ws/#test').url);
+				const webSignHash		= await this.localStorageService.getItem(
+					'webSignHash',
+					StringProto
+				);
 
-			return isAffectedBrowser && affectedWebSignHashes.indexOf(webSignHash) > -1;
+				return isAffectedBrowser && affectedWebSignHashes.indexOf(webSignHash) > -1;
+			}
 		}
-		catch {
-			return false;
-		}
+		catch {}
+
+		return false;
 	})();
 
 	/** Version of newCyphUrl that triggers a retry. */
@@ -141,7 +145,8 @@ export class EnvService extends Env {
 
 	constructor (
 		/** @ignore */
-		private readonly localStorageService: LocalStorageService
+		@Inject(LocalStorageService) @Optional()
+		private readonly localStorageService: LocalStorageService|undefined
 	) {
 		super();
 	}

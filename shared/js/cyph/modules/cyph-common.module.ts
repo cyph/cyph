@@ -29,7 +29,6 @@ import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
 import {AffiliateService} from '../services/affiliate.service';
 import {AnalyticsService} from '../services/analytics.service';
-import {ConfigService} from '../services/config.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
 import {NotificationService} from '../services/notification.service';
@@ -130,7 +129,6 @@ import {CyphWebModule} from './cyph-web.module';
 	providers: [
 		AffiliateService,
 		AnalyticsService,
-		ConfigService,
 		ErrorService,
 		FileService,
 		NotificationService,

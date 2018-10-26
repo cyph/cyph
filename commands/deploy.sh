@@ -7,7 +7,7 @@ originalArgs="${*}"
 
 
 cacheBustedProjects='cyph.com cyph.ws'
-compiledProjects='cyph.com cyph.ws'
+compiledProjects='cyph.ws'
 webSignedProject='cyph.ws'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='im io video audio'
@@ -123,6 +123,10 @@ if [ "${site}" ] ; then
 	if [ "${site}" != "${webSignedProject}" ] ; then
 		websign=''
 	fi
+fi
+
+if [ "${simple}" ] || [ "${customBuild}" ] ; then
+	skipWebsite=true
 fi
 
 if [ "${skipWebsite}" ] ; then
@@ -385,26 +389,30 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 	defaultCSPString='DEFAULT_CSP'
 	fullCSP="$(cat shared/csp | tr -d '\n')"
 	webSignCSP="$(cat websign/csp | tr -d '\n')"
-	cyphComCSP="$(cat shared/csp | tr -d '\n' | sed 's|frame-src|frame-src https://*.facebook.com https://*.braintreegateway.com|g' | sed 's|connect-src|connect-src blob:|g')"
+
+	cyphComCSPSources="$(cat cyph.com/cspsources |
+		perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' |
+		tr '\n' ' '
+	)"
+	cyphComCSP="$(cat shared/csp |
+		tr -d '\n' |
+		perl -pe 's/(child-src )(.*?connect-src )(.*?frame-src )(.*?img-src )/\1☼\2☼\3☼\4☼/g' |
+		sed "s|☼|${cyphComCSPSources}|g"
+	)"
+
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
 	sed -i "s|${defaultCSPString}|${fullCSP}|g" shared/js/cyph/env-deploy.ts
 
-	# Expand connect-src and frame-src on wpstatic pages to support social media widgets and stuff
-
-	wpstaticCSPSources="$(cat cyph.com/wpstaticcsp | perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' | tr '\n' ' ')"
-
 	cat cyph.com/cyph-com.yaml |
 		tr '\n' '☁' |
-		perl -pe 's/(\/PATH.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )(.*?connect-src )(.*?frame-src )/\1☼\2☼\3☼\4☼\5☼\6☼/g' |
-		sed "s|☼|${wpstaticCSPSources}|g" |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?connect-src )/\1https:\/\/google-analytics.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?connect-src )/\1https:\/\/*.google-analytics.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?font-src )/\1https:\/\/fonts.googleapis.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?font-src )/\1https:\/\/fonts.gstatic.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?style-src )/\1https:\/\/cdn.ampproject.org /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?style-src )/\1https:\/\/fonts.googleapis.com /g' |
-		perl -pe 's/(\/PATH\/\(\.\*\?\/amp\)\[\/\]\?.*?script-src )/\1https:\/\/cdn.ampproject.org /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?connect-src )/\1https:\/\/google-analytics.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?connect-src )/\1https:\/\/*.google-analytics.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?font-src )/\1https:\/\/fonts.googleapis.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?font-src )/\1https:\/\/fonts.gstatic.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?style-src )/\1https:\/\/cdn.ampproject.org /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?style-src )/\1https:\/\/fonts.googleapis.com /g' |
+		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?script-src )/\1https:\/\/cdn.ampproject.org /g' |
 		tr '☁' '\n' |
 		sed "s|Cache-Control: private, max-age=31536000|Cache-Control: public, max-age=31536000|g" \
 	> cyph.com/new.yaml
@@ -435,7 +443,7 @@ if [ "${test}" ] ; then
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
 	sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}43000|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}42002|${newCyphURL}|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-IM|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
@@ -481,7 +489,7 @@ else
 
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
 	sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|${defaultHost}42001|${homeURL}|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}43000|${homeURL}|g" shared/js/cyph/env-deploy.ts
 fi
 
 if [ "${simple}" ] ; then
@@ -502,28 +510,19 @@ if [ "${cacheBustedProjects}" ] ; then
 	bash -c "
 		touch .wpstatic.output
 
-		if [ '${websign}' ] ; then
-			while [ ! -f .build.done ] ; do sleep 1 ; done
-		fi
-
 		if \
 			[ ! '${skipWebsite}' ] && \
-			[ ! '${simple}' ] && \
 			( [ ! '${site}' ] || [ '${site}' == cyph.com ] )
 		then
 			rm -rf wpstatic 2> /dev/null
-			mkdir -p wpstatic/blog
+			mkdir wpstatic
 			cp cyph.com/cyph-com.yaml wpstatic/
-			cd wpstatic/blog
-			../../commands/wpstatic.sh '${homeURL}' >> ../../.wpstatic.output 2>&1
-			cd ../..
-		fi
-
-		while [ ! -f .build.done ] ; do sleep 1 ; done
-		rm .build.done
-		if [ -d wpstatic ] ; then
-			mv wpstatic/* cyph.com/
-			rmdir wpstatic
+			cd wpstatic
+			../commands/wpstatic.sh $(test ${test} || echo '--prod') '${homeURL}' \
+				>> ../.wpstatic.output 2>&1
+			cd ..
+			mv cyph.com cyph.com.src
+			mv wpstatic cyph.com
 		fi
 
 		# Cache bust
@@ -567,7 +566,7 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 fi
 
 
-if [ "${skipWebsite}" ] || [ "${customBuild}" ] ; then
+if [ "${skipWebsite}" ] ; then
 	mv cyph.com cyph.com.src
 fi
 
@@ -623,28 +622,7 @@ for d in $compiledProjects ; do
 		if [ "${simple}" ] && [ ! "${simpleWebSignBuild}" ] ; then
 			ls dist/*.js | xargs -I% terser % -bo %
 		fi
-	fi
-
-	if [ "${d}" == 'cyph.com' ] ; then node -e '
-		const $	= require("cheerio").load(fs.readFileSync("dist/index.html").toString());
-
-		$(`link[href="/assets/css/loading.css"]`).replaceWith(`<style>${
-			fs.readFileSync("dist/assets/css/loading.css").toString()
-		}</style>`);
-
-		$("script").each((_, elem) => $(elem).attr("defer", ""));
-
-		/*
-		$(`link[rel="stylesheet"]`).each((_, elem) => {
-			const $elem			= $(elem);
-			const $stylesheet	= $("<stylesheet></stylesheet>");
-			$stylesheet.attr("src", $elem.attr("href"));
-			$elem.replaceWith($stylesheet);
-		});
-		*/
-
-		fs.writeFileSync("dist/index.html", $.html().trim());
-	' ; fi
+	firebaseBackup
 
 	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
 	findmnt -t overlay -o TARGET -lun | grep "^${PWD}" | xargs sudo umount
@@ -654,7 +632,6 @@ for d in $compiledProjects ; do
 	mv "${d}" "${d}.src"
 	mv "${d}.src/dist" "${d}"
 done
-touch .build.done
 
 
 # WebSign packaging

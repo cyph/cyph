@@ -5,24 +5,23 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 cd -
 
-getRoot=true
-if [ "${1}" == '--no-root' ] ; then
-	getRoot=''
+sshServer='wordpress.internal.cyph.com'
+if [ "${1}" != '--prod' ] ; then
+	sshServer="staging.${sshServer}"
 	shift
 fi
 
 rootURL="${1}"
 escapedRootURL="$(echo "${rootURL}" | sed 's|/|\\/|g')"
-fullDestinationURL="${rootURL}/blog"
+fullDestinationURL="${rootURL}/static_wordpress"
 destinationProtocol="$(echo "${fullDestinationURL}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${fullDestinationURL}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
-sshServer='wordpress.internal.cyph.com'
 sourcePort='43000'
 sourceOrigin="localhost:${sourcePort}"
 sourceURL="http://${sourceOrigin}"
 
-log 'Generating static blog'
+log 'Generating static WordPress site'
 
 checklock () {
 	ssh -i ~/.ssh/id_rsa_docker "${sshServer}" '
@@ -198,7 +197,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 
 			if (isScript) {
 				path	= \`js/\${hash}.js\`;
-				elem.attr('src', \`/blog/\${path}\`);
+				elem.attr('src', \`/static_wordpress/\${path}\`);
 			}
 			else if (!content) {
 				return;
@@ -208,17 +207,17 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 				elem.replaceWith(\`
 					<link
 						rel='stylesheet'
-						href='/blog/\${path}'
+						href='/static_wordpress/\${path}'
 					></link>
 				\`);
 			}
 
 			fs.writeFileSync(path, content);
 		}).concat(\$(
-			'amp-img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
-			'img[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
-			'script[src]:not([src^=\"/blog\"]):not([src^=\"${fullDestinationURL}\"]), ' +
-			'link[rel=\"stylesheet\"][href]:not([href^=\"/blog\"]):not([href^=\"${fullDestinationURL}\"])'
+			'amp-img[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]), ' +
+			'img[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]), ' +
+			'script[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]), ' +
+			'link[rel=\"stylesheet\"][href]:not([href^=\"/static_wordpress\"]):not([href^=\"${fullDestinationURL}\"])'
 		).toArray().concat(
 			/* Workaround for Supsystic table plugin dynamically generating this client-side */
 			\$('<link href=\"https://fonts.googleapis.com/css?family=Ubuntu\" />')
@@ -249,7 +248,8 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 				\`img/\${hash}.\${(imageType(content) || {ext: 'jpg'}).ext}\`
 			;
 
-			elem.attr(attr, \`/blog/\${path}\`);
+			elem.attr(attr, \`/\${path}\`);
+			elem.removeAttr('srcset');
 			fs.writeFileSync(path, content);
 		}))
 	);
@@ -257,12 +257,6 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 	if (isAmp) {
 		return;
 	}
-
-	\$('head').append(\`
-		<script defer src='/assets/node_modules/core-js/client/shim.js'></script>
-		<script defer src='/assets/js/standalone/global.js'></script>
-		<script defer src='/assets/js/standalone/analytics.js'></script>
-	\`);
 
 	fs.writeFileSync('${f}', htmlMinifier.minify(
 		\$.html().trim(),
@@ -282,10 +276,13 @@ if [ -f wp-content/plugins/pricing-table-by-supsystic/js/table.min.js ] ; then
 fi
 
 # Workaround for silly hack in Zephyr that violates CSP
-find . -type f -name us.core.min.js | xargs -I% sed -i "s|this\.options=this\.\\\$nav\.find('\.w-nav-options:first')\[0\]\.onclick()\|\|{};|try{this.options=JSON.parse(this.\$nav.find('.w-nav-options:first')[0].getAttribute('onclick').split('return')[1].trim());}catch(_){this.options={};}|g" %
+for f in $(find . -type f -name us.core.min.js) ; do
+	cat "${f}" | perl -pe "s/([^=,]+)\.onclick\(\)(\|\|\{\})?/\1.getAttribute('onclick')?JSON.parse(\1.getAttribute('onclick').split('return')[1].trim()):{}/g" > "${f}.new"
+	mv "${f}.new" "${f}"
+done
 
 grep -rl "'//' + disqus_shortname" |
-	xargs -I% sed -i "s|'//' + disqus_shortname|'/blog/js/' + disqus_shortname|g" %
+	xargs -I% sed -i "s|'//' + disqus_shortname|'/js/' + disqus_shortname|g" %
 
 for id in cyph cyphtest ; do
 	mkdir js/${id}.disqus.com
@@ -302,16 +299,21 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 			replace(/(\\d+):/g, '\"\$1\":')
 		;
 
-		const a	= JSON.parse(s.split('}')[0] + '}');
-		const b	= JSON.parse('{' + s.split('{').slice(-1)[0]);
+		try {
+			const a	= JSON.parse(s.split('}')[0] + '}');
+			const b	= JSON.parse('{' + s.split('{').slice(-1)[0]);
 
-		for (let k of Object.keys(a)) {
-			console.log(\`\${a[k]}.\${b[k]}.js\`);
+			for (let k of Object.keys(a)) {
+				console.log(\`\${a[k]}.\${b[k]}.js\`);
+			}
+		}
+		catch {
+			console.error('FAILED TO PARSE: ' + s);
 		}
 	" |
 		xargs -I% bash -c 'download "https://platform.twitter.com/js/%" "js/platform.twitter.com/js/%"'
 
-	sed -i 's|https://platform.twitter.com|/blog/js/platform.twitter.com|g' ${f}
+	sed -i 's|https://platform.twitter.com|/js/platform.twitter.com|g' ${f}
 done
 
 for f in $(find . -type f -name '*.css') ; do
@@ -331,7 +333,7 @@ for f in $(find . -type f -name '*.css') ; do
 					process.exit(1);
 				})\").${type}\";
 				download \"\${url}\" \"\${path}\";
-				grep -rl '%' | xargs -I{} sed -i \"s|%|/blog/\${path}|g\" {};
+				grep -rl '%' | xargs -I{} sed -i \"s|%|/\${path}|g\" {};
 			"
 	done
 done
@@ -350,34 +352,26 @@ done
 
 find . -type f -name logo-amp.png -exec cp -f "${dir}/shared/assets/img/logo.amp.png" "{}" \;
 
-rm -rf blog/amp root/index.html root/blog
-find root -type d -name amp -exec rm -rf '{}' \; 2> /dev/null
-grep -rl http://localhost:42001 . | xargs -I% sed -i 's|http://localhost:42001||g' %
-grep -rl /blog/root . | xargs -I% sed -i 's|/blog/root||g' %
+rm -rf blog/amp
+find . -type d -name amp -not -path './blog/*' -exec rm -rf '{}' \; 2> /dev/null
 
 for f in $(find . -type f -name '*.html') ; do
 	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
 	mv "${f}.new" "${f}"
 done
 
-if [ "${getRoot}" ] ; then
-	yamlFile="../.build.yaml"
-	if [ ! -f "${yamlFile}" ] ; then
-		yamlFile="$(ls ../*.yaml)"
-	fi
+for f in $(find . -type f -name '*.js') ; do
+	terser "${f}" -o "${f}"
+done
 
-	yaml="$(cat ../*.yaml | tr '\n' '\r')"
-	wpstaticYaml="$(echo "${yaml}" | grep -oP '# WPSTATIC.*?\r\r')"
+for f in $(find . -type f -name '*.css') ; do
+	cleancss --inline none "${f}" -o "${f}"
+done
 
-	for path in blog $(ls root) ; do
-		yaml="${yaml//"${wpstaticYaml}"/"${wpstaticYaml}${wpstaticYaml//PATH/"${path}"}"}"
-	done
-
-	echo "${yaml//"${wpstaticYaml}"/}" | tr '\r' '\n' > ../*.yaml
-	mv root/* ../
-	rmdir root
-else
-	rm -rf root
-fi
+for f in $(grep -rl static_wordpress) ; do
+	sed -i 's|static_wordpress/||g' ${f}
+	sed -i 's|/static_wordpress||g' ${f}
+	sed -i 's|static_wordpress||g' ${f}
+done
 
 sshkill

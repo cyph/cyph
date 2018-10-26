@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {BaseProvider} from '../../base-provider';
-import {EnvService} from '../../services/env.service';
-import {SignupService} from '../../services/signup.service';
-import {StringsService} from '../../services/strings.service';
+import {BaseProvider} from '../../../cyph/base-provider';
+import {EnvService} from '../../../cyph/services/env.service';
+import {SignupService} from '../../../cyph/services/signup.service';
+import {StringsService} from '../../../cyph/services/strings.service';
 
 
 /**
