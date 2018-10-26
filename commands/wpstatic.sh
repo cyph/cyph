@@ -258,10 +258,6 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 		return;
 	}
 
-	\$('script').each((_, elem) => {
-		$(elem).attr('defer', '');
-	});
-
 	fs.writeFileSync('${f}', htmlMinifier.minify(
 		\$.html().trim(),
 		{
