@@ -10,6 +10,20 @@ html, body {
 	width: 100% !important;
 	height: 100% !important;
 	overflow: hidden;
+	font-size: 14px;
+	font-weight: 300;
+}
+
+body.cordova * {
+	-webkit-tap-highlight-color: transparent !important;
+}
+
+/* Readability improvement for large screens */
+
+@media (min-width: 1920px) {
+	html, body {
+		font-size: 17.5px;
+	}
 }
 
 #main-chat-gradient {
