@@ -622,7 +622,7 @@ for d in $compiledProjects ; do
 		if [ "${simple}" ] && [ ! "${simpleWebSignBuild}" ] ; then
 			ls dist/*.js | xargs -I% terser % -bo %
 		fi
-	firebaseBackup
+	fi
 
 	mv *.html *.yaml sitemap.xml dist/ 2> /dev/null
 	findmnt -t overlay -o TARGET -lun | grep "^${PWD}" | xargs sudo umount
