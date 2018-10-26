@@ -1,27 +1,17 @@
 #!/usr/bin/env node
 
 
-const childProcess	= require('child_process');
 const fs			= require('fs');
 const glob			= require('glob');
-const mkdirp		= require('mkdirp');
 const superSphincs	= require('supersphincs');
 
 
 (async () => {
 
 
-const filesToCacheBust	= [
-	...glob.sync('*', {nodir: true}),
-	...glob.sync('assets/**', {nodir: true}),
-	...glob.sync('blog/**', {nodir: true})
-].filter(path =>
-	!path.endsWith('index.html')
-);
-
-const filesToModify		= glob.sync('**', {nodir: true}).filter(path =>
-	path.endsWith('.html') || path.endsWith('.js')
-);
+const files				= glob.sync('**', {nodir: true});
+const filesToCacheBust	= files.filter(path => !path.endsWith('index.html'));
+const filesToModify		= files.filter(path => path.endsWith('.html') || path.endsWith('.js'));
 
 const fileContents		= {};
 const cacheBustedFiles	= {};
