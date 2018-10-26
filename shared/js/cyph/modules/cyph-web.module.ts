@@ -1,31 +1,24 @@
 import {ScrollingModule as ExperimentalScrollingModule} from '@angular/cdk-experimental/scrolling';
 import {ScrollingModule} from '@angular/cdk/scrolling';
-import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
-import {FlexLayoutModule} from '@angular/flex-layout';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
-import {MatButtonModule} from '@angular/material/button';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
-import {MatInputModule} from '@angular/material/input';
 import {MatListModule} from '@angular/material/list';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatRadioModule} from '@angular/material/radio';
-import {MatSelectModule} from '@angular/material/select';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSliderModule} from '@angular/material/slider';
@@ -34,25 +27,21 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
-import {BrowserModule, DomSanitizer} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {DomSanitizer} from '@angular/platform-browser';
 import {RouterModule} from '@angular/router';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
 import {FullCalendarModule} from 'ng-fullcalendar';
 import {ImageCropperModule} from 'ngx-image-cropper';
-import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
-import {MarkdownComponent} from '../components/markdown';
 import {DialogService} from '../services/dialog.service';
-import {EnvService} from '../services/env.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
-import {StringsService} from '../services/strings.service';
 import {WebLocalStorageService} from '../services/web-local-storage.service';
+import {CyphSharedModule} from './cyph-shared.module';
 
 
 /**
@@ -60,55 +49,41 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
  */
 @NgModule({
 	declarations: [
-		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
-		DynamicFormComponent,
-		MarkdownComponent
+		DynamicFormComponent
 	],
 	entryComponents: [
-		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
-		DynamicFormComponent,
-		MarkdownComponent
+		DynamicFormComponent
 	],
 	exports: [
 		AngularDraggableModule,
-		BrowserAnimationsModule,
-		BrowserModule,
-		DialogAlertComponent,
+		CyphSharedModule,
 		DialogConfirmComponent,
 		DialogMediaComponent,
 		DynamicFormComponent,
 		ExperimentalScrollingModule,
-		FlexLayoutModule,
-		FormsModule,
 		FullCalendarModule,
 		ImageCropperModule,
-		MarkdownComponent,
 		MatAutocompleteModule,
 		MatBadgeModule,
 		MatBottomSheetModule,
-		MatButtonModule,
 		MatButtonToggleModule,
 		MatCardModule,
 		MatCheckboxModule,
 		MatChipsModule,
 		MatDatepickerModule,
-		MatDialogModule,
 		MatExpansionModule,
 		MatGridListModule,
 		MatIconModule,
-		MatInputModule,
 		MatListModule,
 		MatMenuModule,
 		MatNativeDateModule,
 		MatPaginatorModule,
 		MatProgressBarModule,
-		MatProgressSpinnerModule,
 		MatRadioModule,
-		MatSelectModule,
 		MatSidenavModule,
 		MatSliderModule,
 		MatSlideToggleModule,
@@ -125,35 +100,26 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 	],
 	imports: [
 		AngularDraggableModule,
-		BrowserAnimationsModule,
-		BrowserModule,
+		CyphSharedModule,
 		ExperimentalScrollingModule,
-		FlexLayoutModule,
-		FormsModule,
 		FullCalendarModule,
-		HttpClientModule,
 		ImageCropperModule,
 		MatAutocompleteModule,
 		MatBadgeModule,
 		MatBottomSheetModule,
-		MatButtonModule,
 		MatCardModule,
 		MatCheckboxModule,
 		MatChipsModule,
 		MatDatepickerModule,
-		MatDialogModule,
 		MatExpansionModule,
 		MatGridListModule,
 		MatIconModule,
-		MatInputModule,
 		MatListModule,
 		MatMenuModule,
 		MatNativeDateModule,
 		MatPaginatorModule,
 		MatProgressBarModule,
-		MatProgressSpinnerModule,
 		MatRadioModule,
-		MatSelectModule,
 		MatSidenavModule,
 		MatSliderModule,
 		MatSlideToggleModule,
@@ -169,12 +135,6 @@ import {WebLocalStorageService} from '../services/web-local-storage.service';
 		TextMaskModule
 	],
 	providers: [
-		EnvService,
-		StringsService,
-		{
-			provide: 'EnvService',
-			useExisting: EnvService
-		},
 		{
 			provide: DialogService,
 			useClass: MaterialDialogService

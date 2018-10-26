@@ -1,5 +1,5 @@
 import {ComponentType} from '@angular/cdk/portal';
-import {Injectable} from '@angular/core';
+import {Injectable, Optional} from '@angular/core';
 import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -331,13 +331,13 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 
 	constructor (
 		/** @ignore */
-		private readonly matBottomSheet: MatBottomSheet,
+		@Optional() private readonly matBottomSheet: MatBottomSheet,
 
 		/** @ignore */
-		private readonly matDialog: MatDialog,
+		@Optional() private readonly matDialog: MatDialog,
 
 		/** @ignore */
-		private readonly matSnackbar: MatSnackBar,
+		@Optional() private readonly matSnackbar: MatSnackBar,
 
 		/** @ignore */
 		private readonly stringsService: StringsService
