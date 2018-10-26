@@ -962,7 +962,13 @@ cd "${dir}"
 
 if [ "${saveBuildArtifacts}" ] ; then rm -rf .build 2> /dev/null ; fi
 
-if [ ! "${noSimple}" ] && [ "${test}" ] && [ ! "${simple}" ] && [ "${site}" != 'firebase' ] ; then
+if \
+	[ ! "${noSimple}" ] && \
+	[ "${test}" ] && \
+	[ ! "${simple}" ] && \
+	[ "${site}" != 'cyph.com' ] && \
+	[ "${site}" != 'firebase' ]
+then
 	mv ~/.build ~/.build.original
 	./commands/deploy.sh --simple $originalArgs
 elif [ "${saveBuildArtifacts}" ] && [ -d ~/.build.original ] ; then
