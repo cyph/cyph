@@ -11,6 +11,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {MarkdownComponent} from '../components/markdown';
+import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
 import {StringsService} from '../services/strings.service';
 
@@ -54,6 +55,7 @@ import {StringsService} from '../services/strings.service';
 		MatSelectModule
 	],
 	providers: [
+		ConfigService,
 		EnvService,
 		StringsService,
 		{

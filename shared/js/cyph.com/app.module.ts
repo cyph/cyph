@@ -14,6 +14,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {CheckoutComponent} from '../cyph/components/checkout';
 import {CyphSharedModule} from '../cyph/modules/cyph-shared.module';
 import {AnalyticsService} from '../cyph/services/analytics.service';
+import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {MaterialDialogService} from '../cyph/services/material-dialog.service';
 import {email} from '../cyph/util/email';
@@ -55,11 +56,13 @@ export class AppModule implements DoBootstrap {
 		httpClient: HttpClient,
 		ngZone: NgZone,
 		_ANALYTICS_SERVICE: AnalyticsService,
+		configService: ConfigService,
 		dialogService: DialogService,
 
 		/** @ignore */
 		private readonly injector: Injector
 	) {
+		(<any> self).cyphConfig	= configService;
 		(<any> self).sendEmail	= email;
 
 		resolveStaticServices({
