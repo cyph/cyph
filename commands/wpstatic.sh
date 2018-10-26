@@ -5,8 +5,11 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 cd -
 
+prod=true
 sshServer='wordpress.internal.cyph.com'
+
 if [ "${1}" != '--prod' ] ; then
+	prod=''
 	sshServer="staging.${sshServer}"
 	shift
 fi
@@ -368,6 +371,13 @@ for f in $(find . -type f -name '*.css') ; do
 	sed -i 's|<br />||g' "${f}"
 	cleancss --inline none "${f}" -o "${f}"
 done
+
+# TODO: allow passing in a specific branch name
+if [ ! "${prod}" ] ; then
+	sed -i \
+		's|api\.cyph\.com|staging-dot-cyphme.appspot.com|g' \
+		wp-content/themes/Zephyr-Cyph-Child/dist/main.js
+fi
 
 for f in $(grep -rl static_wordpress) ; do
 	sed -i 's|static_wordpress/||g' ${f}
