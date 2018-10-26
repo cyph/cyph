@@ -365,6 +365,7 @@ for f in $(find . -type f -name '*.js') ; do
 done
 
 for f in $(find . -type f -name '*.css') ; do
+	sed -i 's|<br />||g' "${f}"
 	cleancss --inline none "${f}" -o "${f}"
 done
 
