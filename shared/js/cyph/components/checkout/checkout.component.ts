@@ -7,6 +7,7 @@ import {
 	ElementRef,
 	EventEmitter,
 	Input,
+	OnInit,
 	Output
 } from '@angular/core';
 import * as braintreeDropIn from 'braintree-web-drop-in';
@@ -33,7 +34,7 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./checkout.component.scss'],
 	templateUrl: './checkout.component.html'
 })
-export class CheckoutComponent extends BaseProvider implements AfterViewInit {
+export class CheckoutComponent extends BaseProvider implements AfterViewInit, OnInit {
 	/* Braintree instance. */
 	private braintreeInstance: any;
 
@@ -109,6 +110,36 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit {
 
 	/** Number of users for per-user pricing. */
 	public readonly users					= new BehaviorSubject<number>(1);
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		/* Workaround for Angular Elements leaving inputs as strings */
+
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof this.amount === 'string' && this.amount) {
+			this.amount				= parseFloat(this.amount);
+		}
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof this.category === 'string' && this.category) {
+			this.category			= parseFloat(this.category);
+		}
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof this.item === 'string' && this.item) {
+			this.item				= parseFloat(this.item);
+		}
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof this.noSpinnerEnd === 'string') {
+			this.noSpinnerEnd		= this.noSpinnerEnd === 'true';
+		}
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof this.perUser === 'string') {
+			this.perUser			= this.perUser === 'true';
+		}
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof this.subscriptionType === 'string' && this.subscriptionType) {
+			this.subscriptionType	= parseFloat(this.subscriptionType);
+		}
+	}
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
