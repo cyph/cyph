@@ -3,6 +3,7 @@
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	EventEmitter,
@@ -139,6 +140,13 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 		if (typeof this.subscriptionType === 'string' && this.subscriptionType) {
 			this.subscriptionType	= parseFloat(this.subscriptionType);
 		}
+
+		(async () => {
+			while (!this.destroyed.value) {
+				this.changeDetectorRef.detectChanges();
+				await sleep();
+			}
+		})();
 	}
 
 	/** @inheritDoc */
@@ -252,6 +260,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly changeDetectorRef: ChangeDetectorRef,
+
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 
