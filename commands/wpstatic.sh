@@ -380,7 +380,7 @@ for f in $(find . -type f -name '*.css') ; do
 			const htmlMinifier	= require('html-minifier');
 
 			const \$	= cheerio.load(fs.readFileSync('${html}').toString());
-			const elem	= \$('link[href*=\"/static_wordpress/${f}\"]');
+			const elem	= \$('link[href*=\"/static_wordpress' + '${f}'.slice(1) + '\"]');
 
 			if (elem.length > 0) {
 				elem.remove();
