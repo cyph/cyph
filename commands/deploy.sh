@@ -23,6 +23,7 @@ allBranches=''
 firebaseBackup=''
 customBuild=''
 saveBuildArtifacts=''
+wpPromote=''
 debug=''
 debugProdBuild=''
 skipWebsite=''
@@ -96,6 +97,11 @@ fi
 
 if [ "${1}" == '--fast' ] ; then
 	fast=true
+	shift
+fi
+
+if [ "${1}" == '--wp-promote' ] ; then
+	wpPromote=true
 	shift
 fi
 
@@ -187,6 +193,9 @@ if [ "${allBranches}" ] ; then
 	if [ "${customBuild}" ] ; then
 		fail 'Cannot do customBuild allBranches deploy'
 	fi
+fi
+if [ "${test}" ] && [ "${wpPromote}" ] ; then
+	fail 'Cannot do WordPress promotion during test deploy'
 fi
 mainVersion="${branch}"
 if [ "${test}" ] && [ "${username}" != cyph ] ; then
@@ -514,6 +523,10 @@ if [ "${cacheBustedProjects}" ] ; then
 			[ ! '${skipWebsite}' ] && \
 			( [ ! '${site}' ] || [ '${site}' == cyph.com ] )
 		then
+			if [ '${wpPromote}' ] ; then
+				./commands/wppromote.sh >> ../.wpstatic.output 2>&1 || exit 1
+			fi
+
 			rm -rf wpstatic 2> /dev/null
 			mkdir wpstatic
 			cp cyph.com/cyph-com.yaml wpstatic/
