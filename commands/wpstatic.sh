@@ -401,7 +401,7 @@ done
 if [ ! "${prod}" ] ; then
 	sed -i \
 		's|api\.cyph\.com|staging-dot-cyphme.appspot.com|g' \
-		wp-content/themes/Zephyr-Cyph-Child/dist/main.js
+		wp-content/themes/Zephyr-Cyph-Child/*/*.js
 fi
 
 for f in $(grep -rl static_wordpress) ; do
