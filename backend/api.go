@@ -807,7 +807,9 @@ func signup(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusBadRequest
 	}
 
-	jsonSignup, _ := json.Marshal(signup)
+	jsonData := map[string]interface{}{}
+	jsonData["tester"] = signup
+	jsonSignup, _ := json.Marshal(jsonData)
 
 	resource := ""
 	method := methods.POST
