@@ -70,7 +70,7 @@ print \$0
 mv %.new %
 '
 
-find types.proto shared/css shared/js -type f -exec sed -i 's/\s*$//g' {} \;
+find commands serverconfig types.proto shared/css shared/js -type f -exec sed -i 's/\s*$//g' {} \;
 
 chmod -R 700 .
 git commit -S -a -m "cleanup: ${comment}"
