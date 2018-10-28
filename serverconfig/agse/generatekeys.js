@@ -72,7 +72,7 @@ const keyData	= await Promise.all(
 const backupKeyData	= await Promise.all(
 	keyPairs.map(async (keyPair) => superSphincs.exportKeys(
 		keyPair,
-		args.backupPasswords.aes 
+		args.backupPasswords.aes
 	))
 );
 

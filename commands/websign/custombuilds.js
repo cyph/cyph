@@ -61,7 +61,7 @@ for (const id of customBuildIds) {
 
 	if (o.favicon) {
 		$('head').find(
-			'link[type="image/png"],' + 
+			'link[type="image/png"],' +
 			'meta[name="msapplication-TileImage"]'
 		).
 			removeAttr('websign-sri-path').

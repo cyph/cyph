@@ -321,9 +321,9 @@ EOM
 # 	while true ; do
 # 		answer=\"\$(node -e '
 # 			const semver			= require(\"semver\");
-# 
+#
 # 			const modules			= \`${modules}\`;
-# 
+#
 # 			const getPinnedVersion	= package =>
 # 				(modules.match(new RegExp(
 # 					\`(^|\\\\s+)\${package}@((\\\\d|\\\\.)+)(\n|\$)\`

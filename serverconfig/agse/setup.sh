@@ -19,7 +19,7 @@ apt-get install console-data console-setup keyboard-configuration
 
 for i in `seq 1 ${activeKeys}` ; do
 	echo -n "Password for key #${i}: "
-	read passwords[${i}] 
+	read passwords[${i}]
 done
 
 reset

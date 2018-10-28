@@ -122,7 +122,7 @@ while [ ! -f index.html ] ; do
 			);
 
 			await browser.close();
-			process.exit();			
+			process.exit();
 		}
 	})().catch(() => process.exit(1))" 2> /dev/null | tail -n1)"
 

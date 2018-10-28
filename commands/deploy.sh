@@ -843,7 +843,7 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 			tail -n1 |
 			sed "s|\.|.replace('_', '.')|g"
 	)|g" database.rules.json
-	
+
 	sed -i "s|DOMAIN|namespace.split('_').join('.')|g" storage.rules
 
 	cd functions

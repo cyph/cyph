@@ -97,7 +97,7 @@ for (let subresource of subresources) {
 				`
 					<style>${subresource.content}</style>
 				`
-			)	
+			)
 	);
 }
 
