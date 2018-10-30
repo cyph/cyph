@@ -30,6 +30,12 @@ handlers:
   secure: always
   # default_headers Cache-Control X-DNS-Prefetch-Control
 
+- url: /(.*\..*)
+  static_files: \1
+  upload: .*
+  secure: always
+  # default_headers
+
 - url: /(.*?)[/]?
   static_files: \1/index.html
   upload: .*
