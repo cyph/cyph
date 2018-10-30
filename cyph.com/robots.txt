@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://www.cyph.com/sitemap_index.xml

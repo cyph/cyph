@@ -539,6 +539,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			cd ..
 			mv cyph.com cyph.com.src
 			mv wpstatic cyph.com
+			cp cyph.com.src/robots.txt cyph.com/
 		fi
 
 		# Cache bust
