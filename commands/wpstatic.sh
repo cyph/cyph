@@ -320,7 +320,7 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 done
 
 for f in $(find . -type f -name '*.css') ; do
-	sed -i "s|\.\./fonts|${sourceURL}/wp-content/themes/Zephyr/framework/fonts|g" "${f}"
+	sed -i "s|\.\./fonts|${sourceURL}/$(echo "${f}" | perl -pe 's/\/[^\/]+\/[^\/]+$//')/fonts|g" "${f}"
 
 	for type in eot svg ttf woff2 woff ; do
 		grep "\.${type}" "${f}" |
