@@ -182,7 +182,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 
 	await Promise.all(
 		\$(
-			'script:not([src]), style'
+			'script:not([src]):not([type=\"application/ld+json\"]), style'
 		).toArray().map(async elem => {
 			if (isAmp) {
 				return;
@@ -219,7 +219,7 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 		}).concat(\$(
 			'amp-img[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]), ' +
 			'img[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]), ' +
-			'script[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]), ' +
+			'script[src]:not([src^=\"/static_wordpress\"]):not([src^=\"${fullDestinationURL}\"]):not([type=\"application/ld+json\"]), ' +
 			'link[rel=\"stylesheet\"][href]:not([href^=\"/static_wordpress\"]):not([href^=\"${fullDestinationURL}\"])'
 		).toArray().concat(
 			/* Workaround for Supsystic table plugin dynamically generating this client-side */
