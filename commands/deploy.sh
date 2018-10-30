@@ -273,8 +273,11 @@ wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-ISP&suff
 )" -O geoisp.tar.gz
 tar xzf geoisp.tar.gz
 mv */*.mmdb GeoIP2-ISP.mmdb
-if [ ! -f GeoIP2-ISP.mmdb ] ; then
-	fail 'GeoIP2-ISP.mmdb missing'
+if [ -f GeoIP2-ISP.mmdb ] ; then
+	cp -f GeoIP2-ISP.mmdb ~/.cyph/
+else
+	log 'GeoIP2-ISP.mmdb missing'
+	cp ~/.cyph/GeoIP2-ISP.mmdb ./
 fi
 mv GeoIP2-ISP.mmdb ../backend/
 cd ..
