@@ -11,6 +11,7 @@ sshServer='wordpress.internal.cyph.com'
 if [ "${1}" != '--prod' ] ; then
 	prod=''
 	sshServer="staging.${sshServer}"
+else
 	shift
 fi
 
