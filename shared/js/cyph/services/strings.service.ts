@@ -745,7 +745,7 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly patents: string						=
-		`(US Patents   9,794,070  9,906,369)`
+		`US Patents 9,906,369 et al.`
 	;
 
 	/** @see StringsService */

@@ -3,13 +3,13 @@
 
 	<ng-container *ngIf='!envService.coBranded && !envService.isTelehealth'>
 		<div fxFlex='nogrow' fxLayoutAlign='center center'>
-			<a [href]='envService.homeUrl'>
-				<span>&copy; {{stringsService.company}} 2018</span>
+			<a [href]='envService.homeUrl'>&copy; {{stringsService.company}} 2018</a>
 
-				<span *ngIf='!envService.isAccounts' class='pre-spaced'>
-					&nbsp;&nbsp;&nbsp;{{stringsService.patents}}
-				</span>
-			</a>
+			<span *ngIf='!envService.isAccounts' class='pre-spaced'>
+				&nbsp;&nbsp;&nbsp;(<a
+					[href]='envService.homeUrl + "patents"'
+				>{{stringsService.patents}}</a>)
+			</span>
 		</div>
 
 		<div *ngIf='!envService.isAccounts'>&nbsp;&nbsp;</div>
@@ -50,7 +50,7 @@
 
 		<div fxFlex='nogrow' fxLayoutAlign='center center' *ngIf='!limited'>
 			<a [href]='envService.homeUrl + "pricing"' cyphTranslate>
-				Business Pricing
+				Pricing
 			</a>
 		</div>
 
@@ -67,7 +67,11 @@
 		</div>
 
 		<div fxFlex='nogrow' fxLayoutAlign='center center'>
-			<a [href]='envService.homeUrl + "terms-of-service"' cyphTranslate>
+			<a
+				[href]='envService.homeUrl + "terms-of-service"'
+				[style.margin-right]='!limited && !envService.isAccounts ? "20px" : undefined'
+				cyphTranslate
+			>
 				Terms of Service
 			</a>
 		</div>
