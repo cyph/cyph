@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
@@ -29,9 +29,6 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	private readonly localLock: LockFunction	= lockFunction();
 
 	/** @ignore */
-	private pauseLock?: Subject<void>;
-
-	/** @ignore */
 	private readonly resolveState: (state: {lock: LockFunction; url: string}) => void	=
 		this._STATE.resolve
 	;
@@ -58,7 +55,6 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 	/** @inheritDoc */
 	public destroy () : void {
-		this.pauseOnMessage(true);
 		/* tslint:disable-next-line:no-life-cycle-call */
 		this.ngOnDestroy();
 	}
@@ -119,12 +115,8 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			this.subscriptions
 		).subscribe(async message => {
 			try {
-				if (message.value.author === userID) {
+				if (message.value.author === userID || this.destroyed.value) {
 					return;
-				}
-
-				if (this.pauseLock) {
-					await this.pauseLock.toPromise();
 				}
 
 				await handlers.onMessage(message.value.cyphertext);
@@ -191,17 +183,6 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		reason?: string
 	) : Promise<T> {
 		return (await this.state).lock(f, reason);
-	}
-
-	/** Pauses handling of new messages. */
-	public pauseOnMessage (pause: boolean) : void {
-		if (pause && !this.pauseLock) {
-			this.pauseLock	= new Subject();
-		}
-		else if (!pause && this.pauseLock) {
-			this.pauseLock.complete();
-			this.pauseLock	= undefined;
-		}
 	}
 
 	/** @inheritDoc */
