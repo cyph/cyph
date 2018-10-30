@@ -8,6 +8,7 @@ import {ChannelMessage, IChannelMessage, StringProto} from '../proto';
 import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
 import {lockFunction} from '../util/lock';
+import {debugLog} from '../util/log';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {DatabaseService} from './database.service';
@@ -115,6 +116,12 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			this.subscriptions
 		).subscribe(async message => {
 			try {
+				debugLog(() => ({channelMessage: {
+					destroyed: this.destroyed.value,
+					message,
+					uuid
+				}}));
+
 				if (message.value.author === userID || this.destroyed.value) {
 					return;
 				}
