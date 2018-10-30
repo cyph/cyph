@@ -55,15 +55,16 @@ export class AppModule implements DoBootstrap {
 		domSanitizer: DomSanitizer,
 		httpClient: HttpClient,
 		ngZone: NgZone,
-		_ANALYTICS_SERVICE: AnalyticsService,
+		analyticsService: AnalyticsService,
 		configService: ConfigService,
 		dialogService: DialogService,
 
 		/** @ignore */
 		private readonly injector: Injector
 	) {
-		(<any> self).cyphConfig	= configService;
-		(<any> self).sendEmail	= email;
+		(<any> self).cyphAnalytics	= analyticsService;
+		(<any> self).cyphConfig		= configService;
+		(<any> self).sendEmail		= email;
 
 		resolveStaticServices({
 			dialogService,
