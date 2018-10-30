@@ -320,6 +320,9 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 done
 
 for f in $(find . -type f -name '*.css') ; do
+	# Special case fix for Better Font Awesome
+	sed -i "s|\.\./fonts/fontawesome|https://cdn.jsdelivr.net/fontawesome/latest/fonts/fontawesome|g" "${f}"
+
 	sed -i "s|\.\./fonts|${sourceURL}/$(echo "${f}" | perl -pe 's/\/[^\/]+\/[^\/]+$//')/fonts|g" "${f}"
 
 	for type in eot svg ttf woff2 woff ; do
