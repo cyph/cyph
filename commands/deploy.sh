@@ -337,7 +337,7 @@ getVersion () {
 	if [ ! "${1}" ] || [ "${1}" == '~/.build' ] || [ "${1}" == "${HOME}/.build" ] ; then
 		echo "${mainVersion}"
 	else
-		echo ${1} | perl -pe 's/.*\///'
+		echo "$(test "${simple}" && echo 'simple-')$(echo "${1}" | perl -pe 's/.*\///')"
 	fi
 }
 
