@@ -30,6 +30,19 @@
 	padding-left: 10px;
 }
 
+.add-time-select {
+	width: 12em;
+
+	&:not(.mobile) {
+		margin-right: -12em;
+	}
+
+	&.mobile {
+		display: block;
+		margin: 16px auto;
+	}
+}
+
 .self-destruct-timer {
 	top: 28px;
 	margin: auto auto auto 25px;

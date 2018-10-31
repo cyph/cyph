@@ -128,6 +128,29 @@
 			>
 				<mat-icon>alarm_add</mat-icon>
 			</button>
+
+			<ng-container *ngIf='envService.environment.customBuild?.config.pro'>
+				&ngsp;
+				<mat-select
+					cyphTranslate
+					class='add-time-select'
+					ngClass.lt-md='mobile'
+					placeholder='Add More Time'
+				>
+					<mat-option (click)='addTime(600000)'>
+						10 Minutes
+					</mat-option>
+					<mat-option (click)='addTime(1800000)'>
+						30 Minutes
+					</mat-option>
+					<mat-option (click)='addTime(3600000)'>
+						1 Hour
+					</mat-option>
+					<mat-option (click)='addTime(43200000)'>
+						12 Hours
+					</mat-option>
+				</mat-select>
+			</ng-container>
 		</div>
 	</div>
 
