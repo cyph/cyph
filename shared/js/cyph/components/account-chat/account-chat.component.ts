@@ -58,6 +58,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes		= AccountUserTypes;
 
+	/** Indicates whether an anonymous chat should be initiated. */
+	public readonly anonymousChatInitiating	= new BehaviorSubject<boolean>(false);
+
 	/** Indicates whether this user is the call recipient. */
 	public readonly answering				= new BehaviorSubject<boolean>(false);
 
@@ -177,6 +180,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 			}
 
 			this.answering.next(answerExpireTime !== undefined);
+			this.anonymousChatInitiating.next(generateAnonymousChannelID === true);
 
 			const anonymousChannelID	= generateAnonymousChannelID ?
 				readableID(this.configService.cyphIDLength) :

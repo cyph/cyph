@@ -14,7 +14,10 @@
 	<cyph-link-connection
 		fxFlex
 		fxFlexFill
-		*ngIf='chat.state === states.none'
+		*ngIf='
+			chat.state === states.none &&
+			(anonymousChatInitiating | async)
+		'
 	></cyph-link-connection>
 
 	<div fxFlex fxFlexFill fxLayout='column' *ngIf='chat.state !== states.none'>
