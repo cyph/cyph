@@ -150,18 +150,6 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 
 		if (this.sessionService.state.startingNewCyph.value !== true) {
 			this.appService.isLockedDown.next(false);
-
-			this.router.navigate(
-				(
-					this.router.routerState.snapshot.root.firstChild &&
-					this.router.routerState.snapshot.root.firstChild.url.length > 1
-				) ?
-					this.router.routerState.snapshot.root.firstChild.url.
-						slice(0, -1).
-						map(o => o.path)
-					:
-					['']
-			);
 		}
 
 		/* If unsupported, warn and then close window */
