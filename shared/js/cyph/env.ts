@@ -194,12 +194,17 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this is a WebKit/Blink browser. */
 	public readonly isWebKit: boolean			=
-		this.isChrome ||
-		this.isSafari ||
-		!!(
-			this.isWeb &&
-			document.documentElement &&
-			'WebkitAppearance' in document.documentElement.style
+		!(
+			this.isEdge ||
+			this.isFirefox
+		) && (
+			this.isChrome ||
+			this.isSafari ||
+			!!(
+				this.isWeb &&
+				document.documentElement &&
+				'WebkitAppearance' in document.documentElement.style
+			)
 		)
 	;
 
