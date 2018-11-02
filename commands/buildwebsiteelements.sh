@@ -23,7 +23,11 @@ sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.
 sed -i "s|${defaultHost}43000|${homeURL}|g" shared/js/cyph/env-deploy.ts
 
 cd cyph.com
+../commands/buildunbundledassets.sh
 ../commands/prodbuild.sh
 
+cp ../shared/assets/js/standalone/analytics.js dist/
+cp ../shared/assets/js/standalone/global.js dist/
+cp ../shared/assets/node_modules/core-js/client/shim.js dist/
 rm -rf "${dir}/cyph.com/dist"
 mv dist "${dir}/cyph.com/"

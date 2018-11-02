@@ -6,5 +6,4 @@
 import {Analytics} from '../cyph/analytics';
 
 
-/** @see Analytics */
-export const analytics	= new Analytics();
+(<any> self).cyphAnalytics	= new Analytics();
