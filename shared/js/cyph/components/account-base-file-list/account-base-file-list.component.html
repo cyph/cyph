@@ -303,6 +303,9 @@
 		cyphDropZone
 		cyphTranslate
 		(fileDrop)='accountFilesService.upload($event.name, $event)'
+		*ngIf='
+			((accountFilesService.filesTotalSize | async) || 0) <=
+			accountFilesService.fileStorageLimit'
 	>
 		<mat-icon>file_upload</mat-icon>
 	</div>

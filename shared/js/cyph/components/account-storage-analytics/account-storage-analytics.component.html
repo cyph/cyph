@@ -11,5 +11,8 @@
 			accountFilesService.fileStorageLimit *
 			100
 		'
+		[color]='
+			((accountFilesService.filesTotalSize | async) || 0) <=
+			accountFilesService.fileStorageLimit ? "" : "warn"'
 	></mat-progress-bar>
 </div>
