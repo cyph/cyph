@@ -108,7 +108,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles			= UiStyles;
 
-	/** @see */
+	/** @see CdkVirtualScrollViewport */
 	@ViewChild(CdkVirtualScrollViewport) public virtualScrollViewport?: CdkVirtualScrollViewport;
 
 	/** Data formatted for virtual scrolling. */
