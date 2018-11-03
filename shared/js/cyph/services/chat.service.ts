@@ -1279,6 +1279,20 @@ export class ChatService extends BaseProvider {
 			this.resolvers.currentMessageSynced.promise.then(() => {
 				debugLog(() => 'ChatService.resolvers.currentMessageSynced resolved');
 			});
+			(
+				this.castleService ?
+					this.castleService.initialMessagesDecrypted() :
+					Promise.resolve()
+			).then(() => {
+				debugLog(() => 'ChatService.castleService.initialMessagesDecrypted resolved');
+			});
+			(
+				this.channelService ?
+					this.channelService.initialMessagesProcessed.promise :
+					Promise.resolve()
+			).then(() => {
+				debugLog(() => 'ChatService.channelService.initialMessagesProcessed resolved');
+			});
 			this.uiReady.then(() => {
 				debugLog(() => 'ChatService.uiReady resolved');
 			});
