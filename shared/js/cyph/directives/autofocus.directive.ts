@@ -14,16 +14,14 @@ import {sleep, waitForIterable} from '../util/wait';
 export class AutofocusDirective extends BaseProvider implements OnChanges, OnInit {
 	/** @ignore */
 	private static readonly loadComplete: Promise<void>	=
-		waitForIterable(() =>
-			document.querySelectorAll('body.load-complete')
-		).then(async () => sleep(750))
+		waitForIterable(() => $('body.load-complete')).catch(() => {}).then(async () => sleep(750))
 	;
 
 	/** @ignore */
 	private static readonly loading: Promise<void>	= Promise.all([
 		AutofocusDirective.loadComplete,
 		new Promise<void>(resolve => {
-			document.body.addEventListener('mousedown', () => { resolve(); }, {once: true});
+			$(document.body).one('mousedown', () => { resolve(); });
 		})
 	]).then(async () =>
 		sleep(750)
@@ -49,11 +47,9 @@ export class AutofocusDirective extends BaseProvider implements OnChanges, OnIni
 
 		this.renderer.setAttribute(this.elementRef.nativeElement, 'autofocus', '');
 
-		if (this.elementRef.nativeElement instanceof HTMLElement) {
-			const $elem	= $(this.elementRef.nativeElement);
-			await waitForIterable(() => $elem.filter(':visible'));
-			this.elementRef.nativeElement.focus();
-		}
+		const $elem	= $(<HTMLElement> this.elementRef.nativeElement);
+		await waitForIterable(() => $elem.filter(':visible'));
+		$elem.trigger('focus');
 	}
 
 	/** @inheritDoc */

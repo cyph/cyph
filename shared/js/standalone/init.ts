@@ -6,6 +6,7 @@
  */
 
 
+import * as $ from 'jquery';
 import {env} from '../cyph/env';
 import {triggerClick} from '../cyph/util/input';
 import {sleep} from '../cyph/util/wait';
@@ -76,28 +77,23 @@ if (location.hash && location.hash.endsWith('/')) {
 	location.hash	= location.hash.slice(0, -1);
 }
 
-document.addEventListener(
-	'DOMContentLoaded',
-	async () => {
-		if (!env.isHomeSite) {
-			if (!env.isLocalEnv && document.head) {
-				/* In WebSigned environments, perform CSP Meta-Hardening */
-				await sleep(10000);
-				const metaCSP		= document.createElement('meta');
-				metaCSP.httpEquiv	= 'Content-Security-Policy';
-				metaCSP.content		= env.CSP;
-				document.head.appendChild(metaCSP);
-			}
-			else if (location.pathname !== '/') {
-				location.replace('/#' + location.pathname.slice(1));
-			}
+$(async () => {
+	if (!env.isHomeSite) {
+		if (!env.isLocalEnv && document.head) {
+			/* In WebSigned environments, perform CSP Meta-Hardening */
+			await sleep(10000);
+			$(document.head).append(
+				`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
+			);
 		}
+		else if (location.pathname !== '/') {
+			location.replace('/#' + location.pathname.slice(1));
+		}
+	}
 
-		/* Try again if page takes too long to initialize */
-		await sleep(120000);
-		if (!document.body.classList.contains('load-complete')) {
-			location.reload();
-		}
-	},
-	{once: true}
-);
+	/* Try again if page takes too long to initialize */
+	await sleep(120000);
+	if (!document.body.classList.contains('load-complete')) {
+		location.reload();
+	}
+});

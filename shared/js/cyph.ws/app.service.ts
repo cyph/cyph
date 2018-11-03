@@ -6,6 +6,7 @@ import {
 	Router,
 	RouterStateSnapshot
 } from '@angular/router';
+import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, first, take} from 'rxjs/operators';
 import {BaseProvider} from '../cyph/base-provider';
@@ -69,12 +70,9 @@ export class AppService extends BaseProvider implements CanActivate {
 
 	/** Marks load as complete. */
 	public async loadComplete () : Promise<void> {
-		document.body.classList.add('load-complete');
+		$(document.body).addClass('load-complete');
 		await sleep(5000);
-		const preLoad	= document.getElementById('pre-load');
-		if (preLoad) {
-			preLoad.remove();
-		}
+		$('#pre-load').remove();
 	}
 
 	/** Disables lockdown. */

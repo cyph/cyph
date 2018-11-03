@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {EnvDeploy, envDeploy} from './env-deploy';
 import {stringify} from './util/serialization/json';
@@ -57,12 +58,11 @@ export class Analytics {
 				throw new Error('Analytics disabled.');
 			}
 
-			const analFrame	= document.createElement('iframe');
+			this.analFrame	= document.createElement('iframe');
 
-			analFrame.sandbox.add('allow-scripts');
-			analFrame.sandbox.add('allow-same-origin');
+			(<any> this.analFrame).sandbox	= 'allow-scripts allow-same-origin';
 
-			analFrame.src	=
+			this.analFrame.src	=
 				this.env.baseUrl +
 				'analsandbox/' +
 				appName +
@@ -112,29 +112,16 @@ export class Analytics {
 				)
 			;
 
-			analFrame.style.display	= 'none';
+			this.analFrame.style.display	= 'none';
 
-			document.body.appendChild(analFrame);
+			document.body.appendChild(this.analFrame);
 
-			this.analFrame	= analFrame;
-
-			await Promise.all([
-				new Promise<void>(resolve => {
-					document.addEventListener(
-						'DOMContentLoaded',
-						() => { resolve(); },
-						{once: true}
-					);
-				}),
-				new Promise<void>(resolve => {
-					analFrame.addEventListener(
-						'load',
-						() => { resolve(); },
-						{once: true}
-					);
-				})
-			]);
-
+			await new Promise<void>(resolve => $(() => { resolve(); }));
+			await new Promise<void>(resolve => {
+				if (this.analFrame) {
+					$(this.analFrame).one('load', () => { resolve(); });
+				}
+			});
 			await sleep();
 
 			this.setEvent({appName, appVersion});

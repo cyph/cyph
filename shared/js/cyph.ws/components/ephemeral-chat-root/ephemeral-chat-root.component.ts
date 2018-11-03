@@ -1,5 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import {Router} from '@angular/router';
+import * as $ from 'jquery';
 import * as Konami from 'konami';
 import {fadeIn} from '../../../cyph/animations';
 import {BaseProvider} from '../../../cyph/base-provider';
@@ -141,7 +142,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 
 		if (this.sessionService.apiFlags.modestBranding) {
 			if (this.envService.isWeb) {
-				document.body.classList.add('modest');
+				$(document.body).addClass('modest');
 			}
 			else {
 				/* TODO: HANDLE NATIVE */

@@ -10,6 +10,7 @@ import {
 	SimpleChanges
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import * as $ from 'jquery';
 import * as Quill from 'quill';
 import Delta from 'quill-delta';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
@@ -197,7 +198,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 			return;
 		}
 
-		await waitForValue(() => document.getElementById(this.containerID));
+		await waitForIterable(() => $(`#${this.containerID}`));
 
 		/* Temporary workaround for https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18946 */
 		this.quill	= <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {
@@ -246,10 +247,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 			});
 		});
 
-		await waitForIterable(() => document.querySelectorAll(
-			`#${this.containerID} .ql-editor:not(.ql-blank)`
-		));
-
+		await waitForIterable(() => $(`#${this.containerID} .ql-editor:not(.ql-blank)`));
 		this.ready.emit();
 	}
 

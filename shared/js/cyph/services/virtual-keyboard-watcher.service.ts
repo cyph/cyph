@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {EnvService} from './env.service';
@@ -38,41 +39,32 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 
 		/* https://stackoverflow.com/a/11650231/459881 */
 
+		const $window	= $(window);
+
 		/* Android */
 		if (this.envService.isAndroid) {
-			window.addEventListener('resize', () => {
+			$window.on('resize', () => {
 				this.isOpen.next(window.innerHeight < this.initialScreenSize);
 			});
 		}
 		/* iOS/misc. */
 		else {
 			const inputSelector		= 'input, textarea';
-			const focusBlurListen	= (elements: Element[]) => {
-				for (const elem of elements) {
-					elem.addEventListener('blur', () => { this.isOpen.next(false); });
-					elem.addEventListener('focus', () => { this.isOpen.next(true); });
-				}
+			const focusBlurListen	= ($elem: JQuery<HTMLElement|Node[]>) => {
+				$elem.on('blur', () => { this.isOpen.next(false); });
+				$elem.on('focus', () => { this.isOpen.next(true); });
 			};
 
-			focusBlurListen(Array.from(document.querySelectorAll(inputSelector)));
-
+			focusBlurListen($(inputSelector));
 			new MutationObserver(mutations => {
 				focusBlurListen(
-					mutations.
-						map(mutationRecord => {
-							const elements	= <Element[]>
-								Array.from(mutationRecord.addedNodes).
-									filter(elem => elem instanceof Element)
-							;
-
-							return [
-								...elements.filter(elem => elem.matches(inputSelector)),
-								...elements.
-									map(elem => Array.from(elem.querySelectorAll(inputSelector))).
-									reduce((a, b) => [...a, ...b], [])
-							];
-						}).
-						reduce((a, b) => [...a, ...b], [])
+					$(mutations.
+						map(mutationRecord => Array.from(mutationRecord.addedNodes)).
+						reduce((a, b) => a.concat(b), [])
+					).
+						find(inputSelector).
+						addBack().
+						filter(inputSelector)
 				);
 			}).observe(document.body, {
 				attributes: false,
