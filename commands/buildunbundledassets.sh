@@ -200,6 +200,7 @@ for f in ${typescriptAssets} ; do
 				]
 			},
 			optimization: {
+				minimize: true,
 				minimizer: [
 					new TerserPlugin({
 						cache: true,
