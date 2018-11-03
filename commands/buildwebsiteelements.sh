@@ -24,7 +24,7 @@ sed -i "s|${defaultHost}43000|${homeURL}|g" shared/js/cyph/env-deploy.ts
 
 cd cyph.com
 ../commands/buildunbundledassets.sh
-../commands/prodbuild.sh
+../commands/prodbuild.sh --configuration prod
 
 cp ../shared/assets/js/standalone/analytics.js dist/
 cp ../shared/assets/js/standalone/global.js dist/
