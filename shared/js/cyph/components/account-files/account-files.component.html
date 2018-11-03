@@ -1,7 +1,10 @@
 <cyph-account-base-file-list>
 	<ng-container
-		*ngIf='((accountFilesService.filesTotalSize | async) || 0) <=
-				accountFilesService.fileStorageLimit; else blocked'
+		*ngIf='
+			((accountFilesService.filesTotalSize | async) || 0) <=
+			accountFilesService.fileStorageLimit;
+			else blocked
+		'
 	>
 		<button
 			mat-fab
@@ -17,7 +20,7 @@
 		</button>
 	</ng-container>
 	<ng-template #blocked>
-			<button
+		<button
 			mat-fab
 			class='fixed-fab'
 			color='primary'
