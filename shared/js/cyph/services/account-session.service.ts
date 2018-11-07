@@ -381,7 +381,8 @@ export class AccountSessionService extends SessionService {
 				});
 			}
 
-			if ((await this.accountDatabaseService.hasItem(symmetricKeyURL))) {
+			if (await this.accountDatabaseService.hasItem(symmetricKeyURL)) {
+				this.one(rpcEvents.symmetricKey);
 				return;
 			}
 
