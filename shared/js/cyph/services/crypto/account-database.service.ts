@@ -21,6 +21,7 @@ import {
 	NotificationTypes,
 	StringProto
 } from '../../proto';
+import {flattenArrays} from '../../util/arrays';
 import {filterUndefinedOperator} from '../../util/filter';
 import {cacheObservable, flattenObservable} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
@@ -489,8 +490,8 @@ export class AccountDatabaseService extends BaseProvider {
 			).pipe(map<ITimedValue<T>[], T[]>(
 				arr => arr.map(o => o.value)
 			))),
-			watchFlat: memoize(() => asyncList.watch().pipe(map(arr =>
-				arr.reduce<any>((a, b) => a.concat(b), [])
+			watchFlat: memoize((omitDuplicates?: boolean) => asyncList.watch().pipe<any>(map(arr =>
+				flattenArrays(arr, omitDuplicates)
 			))),
 			watchPushes: memoize(() => this.watchListPushes(
 				url,

@@ -1,3 +1,4 @@
+export * from './arrays';
 export * from './compare';
 export * from './email';
 export * from './filter';

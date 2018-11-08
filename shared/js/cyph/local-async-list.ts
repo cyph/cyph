@@ -4,6 +4,7 @@ import {IAsyncList} from './iasync-list';
 import {LocalAsyncMap} from './local-async-map';
 import {LockFunction} from './lock-function-type';
 import {MaybePromise} from './maybe-promise-type';
+import {flattenArrays} from './util/arrays';
 
 
 /**
@@ -101,10 +102,8 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 	}
 
 	/** @inheritDoc */
-	public watchFlat () : Observable<T extends any[] ? T : T[]> {
-		return this.watch().pipe(map(arr =>
-			arr.reduce<any>((a, b) => a.concat(b), [])
-		));
+	public watchFlat (omitDuplicates?: boolean) : Observable<T extends any[] ? T : T[]> {
+		return this.watch().pipe<any>(map(arr => flattenArrays(arr, omitDuplicates)));
 	}
 
 	/** @inheritDoc */

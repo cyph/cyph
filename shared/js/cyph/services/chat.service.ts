@@ -161,7 +161,7 @@ export class ChatService extends BaseProvider {
 	/** List of messages. */
 	public readonly messages				= toBehaviorSubject(
 		this.chatSubject.pipe(mergeMap(chat =>
-			chat.messageList.watchFlat().pipe(mergeMap(async messageIDs => {
+			chat.messageList.watchFlat(true).pipe(mergeMap(async messageIDs => {
 				const [messages, now]	= await Promise.all([
 					Promise.all(messageIDs.map(async id =>
 						chat.messages.getItem(id).catch(() => ({
@@ -323,7 +323,7 @@ export class ChatService extends BaseProvider {
 			if (selfDestructChat && o.text.selfDestructTimeout) {
 				this.chatSelfDestruct.next(true);
 
-				this.chat.messageList.watchFlat().pipe(
+				this.chat.messageList.watchFlat(true).pipe(
 					map(messageIDs => messageIDs.length === 0)
 				).subscribe(
 					this.chatSelfDestructed
@@ -1311,7 +1311,7 @@ export class ChatService extends BaseProvider {
 
 			this.subscriptions.push(combineLatest(
 				this.chat.lastConfirmedMessage.watch(),
-				this.chat.messageList.watchFlat()
+				this.chat.messageList.watchFlat(true)
 			).pipe(map(([lastConfirmedMessage, messageIDs]) => {
 				const unconfirmedMessages: {[id: string]: boolean}	= {};
 

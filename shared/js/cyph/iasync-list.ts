@@ -40,7 +40,7 @@ export interface IAsyncList<T> {
 	watch () : Observable<T[]>;
 
 	/** Subscribes to flattened value. */
-	watchFlat () : Observable<T extends any[] ? T : T[]>;
+	watchFlat (omitDuplicates?: boolean) : Observable<T extends any[] ? T : T[]>;
 
 	/** Subscribes to pushed values. */
 	watchPushes () : Observable<T>;

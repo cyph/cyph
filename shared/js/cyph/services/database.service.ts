@@ -14,6 +14,7 @@ import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {NotificationTypes} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
+import {flattenArrays} from '../util/arrays';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
@@ -135,8 +136,8 @@ export class DatabaseService extends DataManagerService {
 			watch: memoize(() => this.watchList(url, proto, undefined, subscriptions).pipe(
 				map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
 			)),
-			watchFlat: memoize(() => asyncList.watch().pipe(map(arr =>
-				arr.reduce<any>((a, b) => a.concat(b), [])
+			watchFlat: memoize((omitDuplicates?: boolean) => asyncList.watch().pipe<any>(map(arr =>
+				flattenArrays(arr, omitDuplicates)
 			))),
 			watchPushes: memoize(() =>
 				this.watchListPushes(url, proto, undefined, undefined, subscriptions).pipe(

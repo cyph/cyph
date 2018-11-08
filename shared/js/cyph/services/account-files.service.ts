@@ -957,7 +957,7 @@ export class AccountFilesService extends BaseProvider {
 			watch: memoize(() =>
 				asyncList.watch().pipe(map(deltas => deltas.map(delta => msgpack.decode(delta))))
 			),
-			watchFlat: () => docAsyncList.watch(),
+			watchFlat: (_OMIT_DUPLICATES?: boolean) => docAsyncList.watch(),
 			watchPushes: memoize(() =>
 				asyncList.watchPushes().pipe(skip(1), map(delta =>
 					delta.length > 0 ? msgpack.decode(delta) : {}
