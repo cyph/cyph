@@ -122,7 +122,7 @@
 
 		<div *ngIf='(envService.isMobile | async) === false'>
 			<mat-table matSort [dataSource]='
-				getTableDataSource(accountFilesService.config[recordType].list() | async)
+				getTableDataSource((accountFilesService.config[recordType].list() | async) || [])
 			'>
 				<ng-container matColumnDef='actions'>
 					<mat-header-cell fxFlex='144px' *matHeaderCellDef></mat-header-cell>
