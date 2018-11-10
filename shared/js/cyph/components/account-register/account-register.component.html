@@ -18,7 +18,7 @@
 	>
 		<div>
 			<ng-container *ngTemplateOutlet='
-				getMasterKeyOnly ? masterKeyUI : pinUI
+				getMasterKeyOnly ? masterKeyUI : lockScreenUI
 			'></ng-container>
 		</div>
 
@@ -392,7 +392,7 @@
 									<span cyphTranslate>PIN</span>
 								</ng-template>
 
-								<ng-container *ngTemplateOutlet='pinUI'></ng-container>
+								<ng-container *ngTemplateOutlet='lockScreenUI'></ng-container>
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
@@ -717,7 +717,7 @@
 	</div>
 </ng-template>
 
-<ng-template #pinUI>
+<ng-template #lockScreenUI>
 	<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
 		<div
 			fxLayout='row'
@@ -742,109 +742,131 @@
 			</span>
 		</div>
 
-		<div
-			fxLayout='row'
-			(click)='useLockScreenPIN.next(true)'
-			class='password-option'
-			[class.deselected]='(useLockScreenPIN | async) === false'
-		>
-			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h3 cyphTranslate>
-						Option #1: Four-Digit Number
-					</h3>
-				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<cyph-pin-input
-						fxFlex
-						fxFlex.sm='80'
-						fxFlex.gt-sm='60'
-						[ngModel]='lockScreenPIN | async'
-						(ngModelChange)='lockScreenPIN.next($event)'
-						name='lockScreenPIN'
-						[autofocus]='true'
-						[hide]='hidePassword.lockScreenPIN'
-						[required]='useLockScreenPIN | async'
-					></cyph-pin-input>
-				</div>
+		<ng-container *ngIf='envService.isMobileOS'>
+			<ng-container *ngTemplateOutlet='
+				lockScreenPinUI; context: {order: "1"}
+			'></ng-container>
+			<ng-container *ngTemplateOutlet='
+				lockScreenPasswordUI; context: {order: "2"}
+			'></ng-container>
+		</ng-container>
+
+		<ng-container *ngIf='!envService.isMobileOS'>
+			<ng-container *ngTemplateOutlet='
+				lockScreenPasswordUI; context: {order: "1"}
+			'></ng-container>
+			<ng-container *ngTemplateOutlet='
+				lockScreenPinUI; context: {order: "2"}
+			'></ng-container>
+		</ng-container>
+	</div>
+</ng-template>
+
+<ng-template #lockScreenPinUI let-order='order'>
+	<div
+		fxLayout='row'
+		(click)='useLockScreenPIN.next(true)'
+		class='password-option'
+		[class.deselected]='(useLockScreenPIN | async) === false'
+	>
+		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<h3 cyphTranslate>
+					Option #{{order}}: Four-Digit Number
+				</h3>
+			</div>
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<cyph-pin-input
+					fxFlex
+					fxFlex.sm='80'
+					fxFlex.gt-sm='60'
+					[ngModel]='lockScreenPIN | async'
+					(ngModelChange)='lockScreenPIN.next($event)'
+					name='lockScreenPIN'
+					[autofocus]='true'
+					[hide]='hidePassword.lockScreenPIN'
+					[required]='useLockScreenPIN | async'
+				></cyph-pin-input>
 			</div>
 		</div>
+	</div>
+</ng-template>
 
-		<div
-			fxLayout='row'
-			cyphTranslate
-			(click)='useLockScreenPIN.next(false)'
-			class='password-option'
-			[class.deselected]='useLockScreenPIN | async'
-		>
-			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h3 cyphTranslate>
-						Option #2: Custom Password
-					</h3>
-				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
-						<input
-							matInput
-							cyphTranslate
-							[ngModel]='lockScreenPassword | async'
-							(ngModelChange)='lockScreenPassword.next($event)'
-							name='lockScreenPassword'
-							[type]='(hidePassword.lockScreenPassword | async) ?
-								"password" :
-								"text"
-							'
-							placeholder='Lock Screen Password'
-							[required]='(useLockScreenPIN | async) === false'
-							[pattern]='".{" + lockScreenPasswordLength + ",}"'
-						/>
-						<mat-icon
-							matSuffix
-							class='suffix-button'
-							(click)='hidePassword.lockScreenPassword.next(
-								!hidePassword.lockScreenPassword.value
-							)'
-						>
-							{{
-								(hidePassword.lockScreenPassword | async) ?
-									'visibility' :
-									'visibility_off'
-							}}
-						</mat-icon>
-					</mat-form-field>
-				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
-						<input
-							matInput
-							cyphTranslate
-							[ngModel]='lockScreenPasswordConfirm | async'
-							(ngModelChange)='lockScreenPasswordConfirm.next($event)'
-							name='lockScreenPasswordConfirm'
-							[type]='(hidePassword.lockScreenPasswordConfirm | async) ?
-								"password" :
-								"text"
-							'
-							placeholder='Confirm Lock Screen Password'
-							[required]='(useLockScreenPIN | async) === false'
-							[pattern]='lockScreenPassword | async'
-						/>
-						<mat-icon
-							matSuffix
-							class='suffix-button'
-							(click)='hidePassword.lockScreenPasswordConfirm.next(
-								!hidePassword.lockScreenPasswordConfirm.value
-							)'
-						>
-							{{
-								(hidePassword.lockScreenPasswordConfirm | async) ?
-									'visibility' :
-									'visibility_off'
-							}}
-						</mat-icon>
-					</mat-form-field>
-				</div>
+<ng-template #lockScreenPasswordUI let-order='order'>
+	<div
+		fxLayout='row'
+		cyphTranslate
+		(click)='useLockScreenPIN.next(false)'
+		class='password-option'
+		[class.deselected]='useLockScreenPIN | async'
+	>
+		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<h3 cyphTranslate>
+					Option #{{order}}: Custom Password
+				</h3>
+			</div>
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+					<input
+						matInput
+						cyphTranslate
+						[ngModel]='lockScreenPassword | async'
+						(ngModelChange)='lockScreenPassword.next($event)'
+						name='lockScreenPassword'
+						[type]='(hidePassword.lockScreenPassword | async) ?
+							"password" :
+							"text"
+						'
+						placeholder='Lock Screen Password'
+						[required]='(useLockScreenPIN | async) === false'
+						[pattern]='".{" + lockScreenPasswordLength + ",}"'
+					/>
+					<mat-icon
+						matSuffix
+						class='suffix-button'
+						(click)='hidePassword.lockScreenPassword.next(
+							!hidePassword.lockScreenPassword.value
+						)'
+					>
+						{{
+							(hidePassword.lockScreenPassword | async) ?
+								'visibility' :
+								'visibility_off'
+						}}
+					</mat-icon>
+				</mat-form-field>
+			</div>
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+					<input
+						matInput
+						cyphTranslate
+						[ngModel]='lockScreenPasswordConfirm | async'
+						(ngModelChange)='lockScreenPasswordConfirm.next($event)'
+						name='lockScreenPasswordConfirm'
+						[type]='(hidePassword.lockScreenPasswordConfirm | async) ?
+							"password" :
+							"text"
+						'
+						placeholder='Confirm Lock Screen Password'
+						[required]='(useLockScreenPIN | async) === false'
+						[pattern]='lockScreenPassword | async'
+					/>
+					<mat-icon
+						matSuffix
+						class='suffix-button'
+						(click)='hidePassword.lockScreenPasswordConfirm.next(
+							!hidePassword.lockScreenPasswordConfirm.value
+						)'
+					>
+						{{
+							(hidePassword.lockScreenPasswordConfirm | async) ?
+								'visibility' :
+								'visibility_off'
+						}}
+					</mat-icon>
+				</mat-form-field>
 			</div>
 		</div>
 	</div>

@@ -164,7 +164,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly totalSteps: number					= 4;
 
 	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
-	public readonly useLockScreenPIN					= new BehaviorSubject<boolean>(true);
+	public readonly useLockScreenPIN					= new BehaviorSubject<boolean>(
+		this.envService.isMobileOS
+	);
 
 	/** Username. */
 	public readonly username							= new FormControl('', undefined, [
