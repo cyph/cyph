@@ -1,4 +1,6 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
 import {
 	AccountFileRecord,
@@ -17,7 +19,8 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {readableByteLength} from '../../util/formatting';
-import {getDateTimeString} from '../../util/time';
+import {getDateTimeString, watchRelativeDateString} from '../../util/time';
+import {waitForValue} from '../../util/wait';
 
 
 /**
@@ -31,10 +34,44 @@ import {getDateTimeString} from '../../util/time';
 })
 export class AccountBaseFileListComponent extends BaseProvider {
 	/** @see getDateTimeString */
-	public readonly getDateTimeString	= getDateTimeString;
+	public readonly getDateTimeString		= getDateTimeString;
+
+	/** Gets table columns. */
+	public readonly getTableColumns			=
+		memoize((recordType: AccountFileRecord.RecordTypes) => [
+			'type',
+			'name',
+			'timestamp',
+			...(recordType === AccountFileRecord.RecordTypes.File ? ['size'] : []),
+			'owner',
+			'actions'
+		])
+	;
+
+	/** Gets table data source. */
+	public readonly getTableDataSource		= memoize((data: {
+		data: any;
+		owner: string;
+		record: IAccountFileRecord;
+	}[]) => {
+		const dataSource		= new MatTableDataSource(data);
+
+		Promise.all([
+			waitForValue(() => this.paginator),
+			waitForValue(() => this.sort)
+		]).then(([paginator, sort]) => {
+			dataSource.paginator	= paginator;
+			dataSource.sort			= sort;
+		});
+
+		return dataSource;
+	});
+
+	/** @see MatPaginator */
+	@ViewChild(MatPaginator) paginator?: MatPaginator;
 
 	/** @see readableByteLength */
-	public readonly readableByteLength	= readableByteLength;
+	public readonly readableByteLength		= readableByteLength;
 
 	/** @see AccountFileRecord.RecordTypes */
 	@Input() public recordType: AccountFileRecord.RecordTypes	=
@@ -42,10 +79,16 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	;
 
 	/** @see AccountFileRecord.RecordTypes */
-	public readonly recordTypes			= AccountFileRecord.RecordTypes;
+	public readonly recordTypes				= AccountFileRecord.RecordTypes;
+
+	/** @see MatSort */
+	@ViewChild(MatSort) sort?: MatSort;
 
 	/** @see trackByID */
-	public readonly trackByID			= trackByID;
+	public readonly trackByID				= trackByID;
+
+	/** @see watchRelativeDateString */
+	public readonly watchRelativeDateString	= watchRelativeDateString;
 
 	/** Accepts incoming EHR API key. */
 	public async acceptEhrApiKey (

@@ -548,3 +548,8 @@ const relativeDateStringInternal	= memoize((now: number) =>
 export const relativeDateString	= async (date: number|Date, noToday: boolean = false) =>
 	relativeDateStringInternal(await getMidnightTimestamp())(date)(noToday)
 ;
+
+/** @see relativeDateString */
+export const watchRelativeDateString	= memoize((date: number|Date, noToday?: boolean) =>
+	watchDateChange(true).pipe(mergeMap(async () => relativeDateString(date, noToday)))
+);

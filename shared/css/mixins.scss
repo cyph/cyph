@@ -91,6 +91,10 @@ $default-white: map-get($mat-grey, 100);
 		.cyph-#{if($cyph-is-dark, 'dark', 'light')}-theme {
 			@include theme-alt($cyph-theme, $cyph-theme-partial-inverted);
 		}
+
+		mat-paginator .mat-select-value-text {
+			color: $cyph-foreground !important;
+		}
 	}
 
 	@if $cyph-loading-animation-filter != null {

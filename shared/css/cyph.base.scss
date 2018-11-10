@@ -261,6 +261,14 @@ mat-progress-spinner.global {
 	@include spinner-center;
 }
 
+mat-row.clickable {
+	cursor: pointer;
+
+	&:hover {
+		font-weight: bold;
+	}
+}
+
 [matDialogTitle] {
 	font-family: Ubuntu;
 	font-weight: initial !important;
