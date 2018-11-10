@@ -161,7 +161,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly tabIndex							= new BehaviorSubject<number>(3);
 
 	/** Total number of steps/tabs. */
-	public readonly totalSteps: number					= 4;
+	public readonly totalSteps: number					= 3;
 
 	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
 	public readonly useLockScreenPIN					= new BehaviorSubject<boolean>(

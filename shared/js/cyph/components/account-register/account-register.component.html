@@ -68,7 +68,7 @@
 								<ng-template mat-tab-label>
 									<mat-icon>radio_button_checked</mat-icon>
 									&nbsp;
-									<span cyphTranslate>Welcome</span>
+									<span cyphTranslate>Basic Information</span>
 								</ng-template>
 
 								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
@@ -130,39 +130,6 @@
 										Registering an account with us enables you to easily and
 										safely share medical records with your doctors, schedule
 										telehealth appointments, and more.
-									</div>
-								</div>
-							</mat-tab>
-							<mat-tab>
-								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 0'>
-										radio_button_checked
-									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 0'>
-										radio_button_unchecked
-									</mat-icon>
-									&nbsp;
-									<span cyphTranslate>Basic Information</span>
-								</ng-template>
-
-								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
-									<div
-										fxLayout='row'
-										fxLayoutAlign='center center'
-										class='description'
-									>
-										<span>
-											<span cyphTranslate>Who are you? Associate your</span>
-											&ngsp;
-											<span>{{stringsService.product}}</span>
-											&ngsp;
-											<span cyphTranslate *ngIf='!envService.isTelehealth'>
-												account with your identity or an alias.
-											</span>
-											<span cyphTranslate *ngIf='envService.isTelehealth'>
-												account with your identity.
-											</span>
-										</span>
 									</div>
 									<div fxLayout='row' fxLayoutAlign='center center'>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
@@ -348,10 +315,10 @@
 							</mat-tab>
 							<mat-tab *ngIf='false'>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 1'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 0'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 1'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 0'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -368,10 +335,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 1'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 0'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 1'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 0'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -382,10 +349,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 2'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 1'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 2'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 1'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -396,10 +363,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 3'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 2'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 3'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 2'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
