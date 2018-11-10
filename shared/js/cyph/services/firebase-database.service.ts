@@ -245,10 +245,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async callFunction (name: string, data: any) : Promise<any> {
+	public async callFunction (name: string, data: Record<string, any> = {}) : Promise<any> {
 		return requestMaybeJSON({
 			contentType: 'application/json',
-			data: stringify(data),
+			data: stringify({...data, namespace: this.namespace}),
 			method: 'POST',
 			url:
 				/* TODO: Determine how to detect this after more regions are supported */

@@ -67,7 +67,7 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** Calls a function. */
-	public async callFunction (_NAME: string, _DATA: any) : Promise<any> {
+	public async callFunction (_NAME: string, _DATA?: Record<string, any>) : Promise<any> {
 		throw new Error('Must provide an implementation of DatabaseService.callFunction.');
 	}
 
