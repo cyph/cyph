@@ -788,6 +788,24 @@ export class StringsService extends BaseProvider {
 	public readonly reasonForAppointment: string		= `Reason for Appointment`;
 
 	/** @see StringsService */
+	public readonly registerErrorInitializing: string	= `Registration form not yet initialized`;
+
+	/** @see StringsService */
+	public readonly registerErrorInviteCode: string		= `Invalid invite code`;
+
+	/** @see StringsService */
+	public readonly registerErrorLockScreen: string		= `Lock screen PIN/password not set`;
+
+	/** @see StringsService */
+	public readonly registerErrorMasterKey: string		= `Master key not set`;
+
+	/** @see StringsService */
+	public readonly registerErrorName: string			= `Name not set`;
+
+	/** @see StringsService */
+	public readonly registerErrorUsername: string		= `Username unavailable`;
+
+	/** @see StringsService */
 	public readonly registerTitle: string				= `Register for ${this.internalProduct}`;
 
 	/** @see StringsService */

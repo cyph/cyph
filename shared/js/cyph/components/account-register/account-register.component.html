@@ -199,7 +199,9 @@
 														</span>
 														<mat-icon
 															cyphTranslate
-															matTooltip='Username unavailable'
+															[matTooltip]='
+																stringsService.registerErrorUsername
+															'
 															*ngIf='
 																!currentUsername.pending &&
 																!!currentUsername.value &&
@@ -226,7 +228,7 @@
 															"usernameTaken"
 														)'
 													>
-														Username unavailable
+														{{stringsService.registerErrorUsername}}
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -308,7 +310,9 @@
 														</span>
 														<mat-icon
 															cyphTranslate
-															matTooltip='Invalid invite code'
+															[matTooltip]='
+																stringsService.registerErrorInviteCode
+															'
 															*ngIf='
 																!currentInviteCode.pending &&
 																!!currentInviteCode.value &&
@@ -334,7 +338,7 @@
 															"inviteCodeInvalid"
 														)
 													'>
-														Invalid invite code
+														{{stringsService.registerErrorInviteCode}}
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -467,19 +471,36 @@
 							</mat-tab>
 						</mat-tab-group>
 
-						<div
-							fxLayout='row'
-							fxLayoutAlign='center center'
-							*ngIf='((tabIndex | async) || 0) === totalSteps'
-						>
-							<button
-								mat-button
-								type='submit'
-								[disabled]='(readyToSubmit | async) === false'
-							>
-								<span cyphTranslate>Register</span>
-							</button>
-						</div>
+						<ng-container *ngIf='((tabIndex | async) || 0) === totalSteps'>
+							<ng-container *ngIf='submissionReadinessErrors | async as errors'>
+								<div
+									fxLayout='row'
+									fxLayoutAlign='center center'
+									class='cyph-banner default-align warn'
+									*ngIf='errors.length > 0'
+								>
+									<div>
+										<p>
+											<strong cyphTranslate>
+												Please correct the following issues:
+											</strong>
+										</p>
+										<ul>
+											<li *ngFor='let error of errors'>{{error}}</li>
+										</ul>
+									</div>
+								</div>
+								<div fxLayout='row' fxLayoutAlign='center center'>
+									<button
+										mat-button
+										type='submit'
+										[disabled]='errors.length > 0'
+									>
+										<span cyphTranslate>Register</span>
+									</button>
+								</div>
+							</ng-container>
+						</ng-container>
 					</form>
 				</div>
 				<div

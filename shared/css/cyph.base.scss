@@ -421,15 +421,18 @@ pre, code {
 .cyph-banner {
 	display: block;
 	font-size: 1rem;
-	line-height: 1rem;
+	line-height: 1.5rem;
 	font-weight: initial;
 	padding: 16px;
-	text-align: center;
 
 	&.emphasis {
 		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.16);
 
 		@include filter(brightness(1.05));
+	}
+
+	&:not(.default-align) {
+		text-align: center;
 	}
 }
 

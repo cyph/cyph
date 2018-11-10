@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
@@ -95,11 +95,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	]);
 
 	/** Watches invite code. */
-	public readonly inviteCodeWatcher					= combineLatest(
-		this.inviteCode.statusChanges,
-		this.inviteCode.valueChanges
-	).pipe(
-		map(() => this.inviteCode)
+	public readonly inviteCodeWatcher					= concat(
+		of(this.inviteCode),
+		combineLatest(
+			this.inviteCode.statusChanges,
+			this.inviteCode.valueChanges
+		).pipe(
+			map(() => this.inviteCode)
+		)
 	);
 
 	/** Lock screen password. */
@@ -132,11 +135,11 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Name. */
 	public readonly name								= new BehaviorSubject<string>('');
 
-	/** Indicates whether we're ready to initiate a registration attempt. */
-	public readonly readyToSubmit: BehaviorSubject<boolean>;
-
 	/** Sets a spoiler on generated master key. */
 	public readonly spoiler								= new BehaviorSubject<boolean>(true);
+
+	/** List of error messages blocking initiating a registration attempt. */
+	public readonly submissionReadinessErrors: BehaviorSubject<string[]>;
 
 	/**
 	 * Master key submission.
@@ -189,11 +192,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly useXkcdPassphrase					= new BehaviorSubject<boolean>(true);
 
 	/** Watches username. */
-	public readonly usernameWatcher						= combineLatest(
-		this.username.statusChanges,
-		this.username.valueChanges
-	).pipe(
-		map(() => this.username)
+	public readonly usernameWatcher						= concat(
+		of(this.username),
+		combineLatest(
+			this.username.statusChanges,
+			this.username.valueChanges
+		).pipe(
+			map(() => this.username)
+		)
 	);
 
 	/** Auto-generated password option. */
@@ -234,7 +240,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Initiates registration attempt. */
 	public async submit () : Promise<void> {
-		if (!this.readyToSubmit.value) {
+		if (this.submissionReadinessErrors.value.length > 0) {
 			this.checking.next(false);
 			this.error.next(true);
 			return;
@@ -364,7 +370,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			this.subscriptions
 		);
 
-		this.readyToSubmit				= toBehaviorSubject(
+		this.submissionReadinessErrors				= toBehaviorSubject(
 			combineLatest(
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
@@ -379,17 +385,39 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				name,
 				username,
 				xkcd
-			]) => !(
-				!inviteCode.value ||
-				inviteCode.errors ||
-				!lockScreenPasswordReady ||
-				!masterKeyReady ||
-				!name ||
-				!username.value ||
-				username.errors ||
-				xkcd.length < 1
-			))),
-			false,
+			]) => [
+				...(
+					!inviteCode.value || inviteCode.errors ?
+						[this.stringsService.registerErrorInviteCode] :
+						[]
+				),
+				...(
+					!lockScreenPasswordReady ?
+						[this.stringsService.registerErrorLockScreen] :
+						[]
+				),
+				...(
+					!masterKeyReady ?
+						[this.stringsService.registerErrorMasterKey] :
+						[]
+				),
+				...(
+					!name ?
+						[this.stringsService.registerErrorName] :
+						[]
+				),
+				...(
+					!username.value || username.errors ?
+						[this.stringsService.registerErrorUsername] :
+						[]
+				),
+				...(
+					xkcd.length < 1 ?
+						[this.stringsService.registerErrorInitializing] :
+						[]
+				)
+			])),
+			[this.stringsService.registerErrorInitializing],
 			this.subscriptions
 		);
 	}
