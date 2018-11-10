@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
@@ -17,6 +17,7 @@ import {emailPattern} from '../../email-pattern';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
+import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {safeStringCompare} from '../../util/compare';
@@ -36,6 +37,9 @@ import {sleep} from '../../util/wait';
 	templateUrl: './account-register.component.html'
 })
 export class AccountRegisterComponent extends BaseProvider implements OnInit {
+	/** @ignore */
+	private inviteCodeDebounceLast?: string;
+
 	/** @ignore */
 	private usernameDebounceLast?: string;
 
@@ -67,7 +71,36 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	};
 
 	/** Invite code. */
-	public readonly inviteCode							= new BehaviorSubject<string>('');
+	public readonly inviteCode							= new FormControl('', undefined, [
+		async control => {
+			const value					= control.value;
+			const id					= uuid();
+			this.inviteCodeDebounceLast	= id;
+
+			return (await sleep(500).then(async () =>
+				this.inviteCodeDebounceLast === id ?
+					!(await this.databaseService.callFunction(
+						'checkInviteCode',
+						{inviteCode: value}
+					).catch(
+						() => ({isValid: false})
+					)).isValid :
+					true
+			)) ?
+				{inviteCodeInvalid: {value}} :
+				/* tslint:disable-next-line:no-null-keyword */
+				null
+			;
+		}
+	]);
+
+	/** Watches invite code. */
+	public readonly inviteCodeWatcher					= combineLatest(
+		this.inviteCode.statusChanges,
+		this.inviteCode.valueChanges
+	).pipe(
+		map(() => this.inviteCode)
+	);
 
 	/** Lock screen password. */
 	public readonly lockScreenPassword					= new BehaviorSubject<string>('');
@@ -131,7 +164,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly useLockScreenPIN					= new BehaviorSubject<boolean>(true);
 
 	/** Username. */
-	public readonly username: FormControl				= new FormControl('', undefined, [
+	public readonly username							= new FormControl('', undefined, [
 		async control => {
 			const value					= control.value;
 			const id					= uuid();
@@ -156,7 +189,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly useXkcdPassphrase					= new BehaviorSubject<boolean>(true);
 
 	/** Watches username. */
-	public readonly usernameWatcher: Observable<FormControl>	= combineLatest(
+	public readonly usernameWatcher						= combineLatest(
 		this.username.statusChanges,
 		this.username.valueChanges
 	).pipe(
@@ -187,7 +220,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 				/* Allow "step" parameter to double up as invite code */
 				if (isNaN(step) && !this.inviteCode.value) {
-					this.inviteCode.next(o.step);
+					this.inviteCode.setValue(o.step);
 				}
 				else if (!isNaN(step) && step > 0 && step <= (this.totalSteps + 1)) {
 					this.tabIndex.next(step - 1);
@@ -234,6 +267,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		}
 
 		this.email.next('');
+		this.inviteCode.setValue('');
 		this.lockScreenPassword.next('');
 		this.lockScreenPasswordConfirm.next('');
 		this.lockScreenPIN.next('');
@@ -266,6 +300,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
@@ -329,7 +366,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		this.readyToSubmit				= toBehaviorSubject(
 			combineLatest(
-				this.inviteCode,
+				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
 				this.masterKeyReady,
 				this.name,
@@ -343,12 +380,13 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				username,
 				xkcd
 			]) => !(
-				!username.value ||
-				username.errors ||
-				!name ||
-				!inviteCode ||
+				!inviteCode.value ||
+				inviteCode.errors ||
 				!lockScreenPasswordReady ||
 				!masterKeyReady ||
+				!name ||
+				!username.value ||
+				username.errors ||
 				xkcd.length < 1
 			))),
 			false,

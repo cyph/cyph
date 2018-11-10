@@ -124,6 +124,15 @@ exports.channelDisconnect	= functions.database.ref(
 });
 
 
+exports.checkInviteCode	= onRequest(async (req, res, namespace) => {
+	const inviteCode		= validateInput(req.body.inviteCode);
+	const inviterRef		= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
+	const inviterUsername	= (await inviterRef.once('value')).val() || '';
+
+	res.send({isValid: !!inviterUsername});
+});
+
+
 /*
 TODO: Handle this as a cron job that searches for folders
 	with multiple items and deletes all but the oldest.

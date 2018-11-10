@@ -187,7 +187,7 @@
 													'>
 														<span
 															cyphTranslate
-															class='username-pending'
+															class='form-field-pending'
 															matTooltip='Checking availability...'
 															*ngIf='currentUsername.pending'
 														>
@@ -285,13 +285,57 @@
 													<input
 														matInput
 														cyphTranslate
-														[ngModel]='inviteCode | async'
-														(ngModelChange)='inviteCode.next($event)'
+														[formControl]='inviteCode'
 														name='inviteCode'
-														type='inviteCode'
 														placeholder='Invite Code'
 														required
 													/>
+													<div matSuffix *ngIf='
+														inviteCodeWatcher | async as
+														currentInviteCode
+													'>
+														<span
+															cyphTranslate
+															class='form-field-pending'
+															matTooltip='Checking invite code...'
+															*ngIf='currentInviteCode.pending'
+														>
+															<mat-progress-spinner
+																diameter='24'
+																strokeWidth='2'
+																mode='indeterminate'
+															></mat-progress-spinner>
+														</span>
+														<mat-icon
+															cyphTranslate
+															matTooltip='Invalid invite code'
+															*ngIf='
+																!currentInviteCode.pending &&
+																!!currentInviteCode.value &&
+																!!currentInviteCode.errors
+															'
+														>
+															error_outline
+														</mat-icon>
+														<mat-icon
+															cyphTranslate
+															matTooltip='Invite code confirmed'
+															*ngIf='
+																!currentInviteCode.pending &&
+																!!currentInviteCode.value &&
+																!currentInviteCode.errors
+															'
+														>
+															check
+														</mat-icon>
+													</div>
+													<mat-error cyphTranslate *ngIf='
+														(inviteCodeWatcher | async)?.hasError(
+															"inviteCodeInvalid"
+														)
+													'>
+														Invalid invite code
+													</mat-error>
 												</mat-form-field>
 											</div>
 										</div>
