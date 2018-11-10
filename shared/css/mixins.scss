@@ -169,6 +169,14 @@ $default-white: map-get($mat-grey, 100);
 			}
 		}
 
+		cyph-account-register .password-option.deselected {
+			border-color: $cyph-background;
+
+			&:hover {
+				border-color: rgba($cyph-background, 0.75);
+			}
+		}
+
 		.interstitial {
 			background-color: rgba(map-get($cyph-accent, 400), 0.69) !important;
 		}
