@@ -68,6 +68,14 @@ form {
 	width: 100%;
 }
 
+button {
+	@include transform(scale(1.15));
+}
+
+mat-card-content {
+	font-size: 1.15em;
+}
+
 :host ::ng-deep mat-tab-header {
 	margin-left: auto;
 	margin-right: auto;
