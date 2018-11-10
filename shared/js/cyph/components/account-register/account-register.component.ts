@@ -78,7 +78,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			this.inviteCodeDebounceLast	= id;
 
 			return (await sleep(500).then(async () =>
-				this.inviteCodeDebounceLast === id ?
+				this.inviteCodeDebounceLast === id && value ?
 					!(await this.databaseService.callFunction(
 						'checkInviteCode',
 						{inviteCode: value}
@@ -171,7 +171,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			this.usernameDebounceLast	= id;
 
 			return (await sleep(500).then(async () =>
-				this.usernameDebounceLast === id ?
+				this.usernameDebounceLast === id && value ?
 					this.accountUserLookupService.exists(value, false, false) :
 					true
 			)) ?
