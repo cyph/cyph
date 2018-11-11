@@ -1,5 +1,6 @@
 @import '../../../../css/mixins';
 
-mat-card-content {
-	font-size: 1.1em;
+:host > div {
+	font-size: 1.15em;
+	padding: 0 2em;
 }
