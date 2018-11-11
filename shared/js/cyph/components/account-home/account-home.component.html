@@ -8,7 +8,11 @@
 		[home]='true'
 		[searchMode]='searchMode | async'
 		(searchBarBlur)='router.navigate([accountService.routeRoot])'
-		*ngIf='envService.isMobile | async; else sidebarHome'
+		*ngIf='
+			(accountDatabaseService.currentUser | async)?.confirmed &&
+			envService.isMobile | async;
+			else sidebarHome
+		'
 	></cyph-account-contacts>
 </ng-template>
 

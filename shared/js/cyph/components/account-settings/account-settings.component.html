@@ -87,39 +87,41 @@
 			<div></div>
 			<div></div>
 
-			<mat-accordion>
-				<mat-expansion-panel>
-					<mat-expansion-panel-header>
-						<span cyphTranslate>Advanced</span>
-					</mat-expansion-panel-header>
-					<div fxFlex fxLayout='column'>
-						<mat-form-field>
-							<input
-								matInput
-								cyphTranslate
-								[ngModel]='(data | async)?.modified.realUsername'
-								(ngModelChange)='updateData({modified: {realUsername: $event}})'
-								[pattern]='(data | async)?.usernamePattern'
-								[textMask]='usernameMask'
-								name='realUsername'
-								placeholder='Username Capitalization'
-								required
-							/>
-							<mat-icon
-								matSuffix
-								[matTooltip]='stringsService.usernameCapitalizationHelp'
-								matTooltipPosition='above'
-							>
-								help
-							</mat-icon>
-						</mat-form-field>
-					</div>
-				</mat-expansion-panel>
-			</mat-accordion>
+			<ng-container *ngIf='(accountDatabaseService.currentUser | async)?.confirmed'>
+				<mat-accordion>
+					<mat-expansion-panel>
+						<mat-expansion-panel-header>
+							<span cyphTranslate>Advanced</span>
+						</mat-expansion-panel-header>
+						<div fxFlex fxLayout='column'>
+							<mat-form-field>
+								<input
+									matInput
+									cyphTranslate
+									[ngModel]='(data | async)?.modified.realUsername'
+									(ngModelChange)='updateData({modified: {realUsername: $event}})'
+									[pattern]='(data | async)?.usernamePattern'
+									[textMask]='usernameMask'
+									name='realUsername'
+									placeholder='Username Capitalization'
+									required
+								/>
+								<mat-icon
+									matSuffix
+									[matTooltip]='stringsService.usernameCapitalizationHelp'
+									matTooltipPosition='above'
+								>
+									help
+								</mat-icon>
+							</mat-form-field>
+						</div>
+					</mat-expansion-panel>
+				</mat-accordion>
 
-			<div></div>
-			<div></div>
-			<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</ng-container>
 
 			<div fxLayout='row' fxLayoutAlign='center'>
 				<button
