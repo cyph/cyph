@@ -542,6 +542,9 @@ if [ "${cacheBustedProjects}" ] ; then
 			cp cyph.com.src/robots.txt cyph.com/
 		fi
 
+		while [ ! -f .build.done ] ; do sleep 1 ; done
+		rm .build.done
+
 		# Cache bust
 		log 'Cache bust' >> .wpstatic.output 2>&1
 		for d in ${cacheBustedProjects} ; do
@@ -649,6 +652,7 @@ for d in $compiledProjects ; do
 	mv "${d}" "${d}.src"
 	mv "${d}.src/dist" "${d}"
 done
+touch .build.done
 
 
 # WebSign packaging

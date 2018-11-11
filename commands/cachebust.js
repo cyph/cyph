@@ -9,7 +9,11 @@ const superSphincs	= require('supersphincs');
 (async () => {
 
 
-const files				= glob.sync('**', {nodir: true});
+const files				= [
+	...glob.sync('*', {nodir: true}),
+	...glob.sync('!(node_modules)/**', {nodir: true})
+];
+
 const filesToCacheBust	= files.filter(path => !path.endsWith('index.html'));
 const filesToModify		= files.filter(path => path.endsWith('.html') || path.endsWith('.js'));
 
