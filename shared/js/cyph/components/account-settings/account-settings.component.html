@@ -15,7 +15,7 @@
 			(submit)='save()'
 			*ngIf='stateValue === states.default; else changePassword'
 		>
-			<mat-form-field>
+			<mat-form-field *ngIf='(accountDatabaseService.currentUser | async)?.confirmed'>
 				<input
 					matInput
 					cyphTranslate

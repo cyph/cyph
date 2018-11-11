@@ -404,7 +404,10 @@
 			;
 			$event.stopPropagation();
 		'
-		*ngIf='recordType !== recordTypes.EhrApiKey || o.data?.isMaster'
+		*ngIf='
+			currentUser.confirmed &&
+			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster)
+		'
 	>
 		<mat-icon>share</mat-icon>
 	</button>

@@ -98,7 +98,8 @@ export class AccountUserLookupService extends BaseProvider {
 	public async getUser (
 		user: string|User,
 		lock: boolean = true,
-		preFetch: boolean = false
+		preFetch: boolean = false,
+		skipExistsCheck: boolean = false
 	) : Promise<User|undefined> {
 		const userValue	= await (async () => {
 			if (!user) {
@@ -117,7 +118,7 @@ export class AccountUserLookupService extends BaseProvider {
 				async () => {
 					/* Temporary workaround for migrating users to latest Potassium.Box */
 
-					if (!(await this.exists(username, lock, true))) {
+					if (!skipExistsCheck && !(await this.exists(username, lock, true))) {
 						throw new Error('User does not exist.');
 					}
 

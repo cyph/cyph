@@ -193,7 +193,7 @@
 		[fxFlex]='accountService.menuExpandedMinWidthPX'
 		[fxShow]='
 			!envService.isTelehealth &&
-			(accountDatabaseService.currentUser | async) !== undefined
+			(accountDatabaseService.currentUser | async)?.confirmed
 		'
 		fxLayout='column'
 		class='sidebar contacts'

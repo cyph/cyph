@@ -119,6 +119,7 @@
 
 	<mat-nav-list>
 		<ng-container *ngIf='
+			currentUser.confirmed &&
 			envService.isTelehealth &&
 			(currentUser.user.userType | async) === accountUserTypes.Standard &&
 			(accountFilesService.incomingFilesFiltered.redoxPatients | async)?.length > 0
@@ -157,7 +158,7 @@
 			</a>
 		</ng-container>
 
-		<ng-container *ngIf='envService.isTelehealth'>
+		<ng-container *ngIf='currentUser.confirmed && envService.isTelehealth'>
 			<a
 				mat-list-item
 				cyphTranslate
@@ -174,6 +175,7 @@
 		</ng-container>
 
 		<ng-container *ngIf='
+			currentUser.confirmed &&
 			envService.isTelehealth &&
 			(currentUser.user.userType | async) !== accountUserTypes.TelehealthDoctor
 		'>
@@ -193,6 +195,7 @@
 		</ng-container>
 
 		<ng-container *ngIf='
+			currentUser.confirmed &&
 			envService.isTelehealth &&
 			(currentUser.user.userType | async) !== accountUserTypes.Standard
 		'>
@@ -239,7 +242,7 @@
 			</a>
 		</ng-container>
 
-		<ng-container *ngIf='!envService.isTelehealth'>
+		<ng-container *ngIf='currentUser.confirmed && !envService.isTelehealth'>
 			<a
 				mat-list-item
 				cyphTranslate

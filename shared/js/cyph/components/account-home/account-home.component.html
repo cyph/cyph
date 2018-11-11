@@ -41,7 +41,7 @@
 	</div>
 </ng-template>
 
-<div *ngIf='!envService.isTelehealth'>
+<div *ngIf='(accountDatabaseService.currentUser | async)?.confirmed && !envService.isTelehealth'>
 	<div
 		class='overlay clickable'
 		(click)='isSpeedDialOpen.next(false)'
@@ -127,4 +127,17 @@
 			</a>
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
+</div>
+
+<div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed && !envService.coBranded'>
+	<a
+		mat-fab
+		cyphTranslate
+		[class.absolute-fab]='(envService.isMobile | async) === false'
+		[class.fixed-fab]='envService.isMobile | async'
+		matTooltip='New Burner Chat'
+		[href]='envService.newCyphUrl'
+	>
+		<mat-icon>chat</mat-icon>
+	</a>
 </div>

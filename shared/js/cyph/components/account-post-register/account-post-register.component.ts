@@ -17,6 +17,7 @@ import {StringsService} from '../../services/strings.service';
 export class AccountPostRegisterComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		this.accountService.setHeader(this.stringsService.welcomeToProduct);
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
 	}

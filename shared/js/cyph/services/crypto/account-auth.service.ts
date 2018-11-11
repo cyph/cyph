@@ -353,13 +353,13 @@ export class AccountAuthService extends BaseProvider {
 
 			errorLogMessage	= 'getting user';
 
-			const user		= await this.accountUserLookupService.getUser(
-				username,
-				false
-			);
+			const [user, confirmed]		= await Promise.all([
+				this.accountUserLookupService.getUser(username, false, undefined, true),
+				this.accountUserLookupService.exists(username, false, true)
+			]);
 
 			if (!user) {
-				return true;
+				throw new Error('User does not exist.');
 			}
 
 			try {
@@ -390,7 +390,7 @@ export class AccountAuthService extends BaseProvider {
 				loginData.symmetricKey
 			);
 
-			if (!this.potassiumService.compareMemory(
+			if (confirmed && !this.potassiumService.compareMemory(
 				signingKeyPair.publicKey,
 				(await this.accountDatabaseService.getUserPublicKeys(username)).signing
 			)) {
@@ -400,6 +400,7 @@ export class AccountAuthService extends BaseProvider {
 			errorLogMessage	= 'getting encryptionKeyPair';
 
 			this.accountDatabaseService.currentUser.next({
+				confirmed,
 				keys: {
 					encryptionKeyPair: await this.getItem(
 						`users/${username}/encryptionKeyPair`,
@@ -489,7 +490,7 @@ export class AccountAuthService extends BaseProvider {
 				this.localStorageService.setItem(
 					'username',
 					StringProto,
-					(await user.accountUserProfile.getValue()).realUsername
+					confirmed ? (await user.accountUserProfile.getValue()).realUsername : username
 				),
 				this.savePIN(pinHash)
 			]);
@@ -616,8 +617,10 @@ export class AccountAuthService extends BaseProvider {
 				})()
 			]);
 
+			const masterKeyHashPromise	= this.passwordHash(username, masterKey);
+
 			await Promise.all([
-				this.passwordHash(username, masterKey).then(async masterKeyHash =>
+				masterKeyHashPromise.then(async masterKeyHash =>
 					this.setItem(
 						`users/${username}/loginData`,
 						AccountLoginData,
@@ -705,6 +708,8 @@ export class AccountAuthService extends BaseProvider {
 					true
 				)
 			]);
+
+			return this.login(username, await masterKeyHashPromise);
 		}
 		catch (errorCode) {
 			switch (errorCode) {
@@ -722,8 +727,6 @@ export class AccountAuthService extends BaseProvider {
 
 			return false;
 		}
-
-		return true;
 	}
 
 	/** Removes locally saved login credentials. */

@@ -80,7 +80,8 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 				'patients',
 				'profile',
 				'staff',
-				'video'
+				'video',
+				'welcome'
 			].indexOf(route) > -1
 		) || (
 			activatedRouteURL.length > 1 &&
@@ -180,7 +181,8 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			'settings',
 			'staff',
 			'video',
-			'wallets'
+			'wallets',
+			'welcome'
 		].indexOf(route) > -1;
 	}));
 
@@ -200,7 +202,8 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			'messages',
 			'notifications',
 			'profile',
-			'video'
+			'video',
+			'welcome'
 		].indexOf(route) > -1
 	));
 

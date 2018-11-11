@@ -16,8 +16,7 @@ implements CanActivate, CanActivateChild {
 		'logout',
 		'profile',
 		'register',
-		'upload-ehr-credentials',
-		'welcome'
+		'upload-ehr-credentials'
 	];
 
 	/** @ignore */

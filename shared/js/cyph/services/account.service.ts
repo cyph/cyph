@@ -558,7 +558,8 @@ export class AccountService extends BaseProvider {
 						'patients',
 						'settings',
 						'staff',
-						'wallets'
+						'wallets',
+						'welcome'
 					].indexOf(route) < 0 || (
 						[
 							'docs',
