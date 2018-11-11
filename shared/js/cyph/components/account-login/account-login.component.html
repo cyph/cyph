@@ -148,7 +148,7 @@
 			</form>
 		</div>
 
-		<i class='logout' fxFlex='5' fxFlexAlign='center center'>
+		<em class='logout' fxFlex='5' fxFlexAlign='center center'>
 			<ng-container *ngIf='(pinUnlock | async); else signup'>
 				<span cyphTranslate>Not</span>
 				&ngsp;
@@ -168,7 +168,7 @@
 					[routerLink]='accountService.routeRoot + "register"'
 				>{{stringsService.registerTitle}}</a>.
 			</ng-template>
-		</i>
+		</em>
 
 		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</div>
