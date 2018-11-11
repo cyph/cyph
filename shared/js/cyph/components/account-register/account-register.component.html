@@ -50,16 +50,17 @@
 			{{stringsService.registerTitle}}
 		</mat-card-title>
 		<cyph-logo cardHeader homeLink></cyph-logo>
-		<mat-card-content>
+		<mat-card-content [class.full-height]='(phase | async) === 3'>
 			<br />
-			<div fxLayout='column' fxLayoutGap='32px'>
+
+			<div fxLayout='column' fxLayoutGap='32px' *ngIf='(phase | async) === 0'>
 				<div fxLayout='row'>
 					<form
 						fxFlex
 						fxLayout='column'
 						fxLayoutGap='32px'
 						ngNativeValidate
-						(submit)='submit()'
+						(submit)='preSubmit()'
 					>
 						<mat-tab-group
 							[selectedIndex]='tabIndex | async'
@@ -343,20 +344,6 @@
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
-									<span cyphTranslate>Master Key</span>
-								</ng-template>
-
-								<ng-container *ngTemplateOutlet='masterKeyUI'></ng-container>
-							</mat-tab>
-							<mat-tab>
-								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 1'>
-										radio_button_checked
-									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 1'>
-										radio_button_unchecked
-									</mat-icon>
-									&nbsp;
 									<span cyphTranslate>PIN</span>
 								</ng-template>
 
@@ -364,10 +351,10 @@
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 2'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) > 1'>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 2'>
+									<mat-icon *ngIf='((tabIndex | async) || 0) <= 1'>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
@@ -386,15 +373,6 @@
 
 									<div fxLayout='row' fxLayoutAlign='center center'>
 										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<h3 class='cyph-banner warn' *ngIf='error | async'>
-													{{
-														(accountAuthService.errorMessage | async) ||
-														stringsService.signupFailed
-													}}
-												</h3>
-											</div>
-
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<strong cyphTranslate>Username:</strong>
 												&nbsp;
@@ -441,7 +419,7 @@
 
 						<ng-container *ngIf='((tabIndex | async) || 0) === totalSteps'>
 							<ng-container *ngIf='submissionReadinessErrors | async as errors'>
-								<div
+								<h3
 									fxLayout='row'
 									fxLayoutAlign='center center'
 									class='cyph-banner default-align warn'
@@ -457,7 +435,7 @@
 											<li *ngFor='let error of errors'>{{error}}</li>
 										</ul>
 									</div>
-								</div>
+								</h3>
 								<div fxLayout='row' fxLayoutAlign='center center'>
 									<button
 										mat-button
@@ -481,85 +459,168 @@
 					</button>
 				</div>
 			</div>
+
+			<div fxFlex fxLayout='column' fxLayoutGap='32px' *ngIf='(phase | async) === 1'>
+				<div fxLayout='row' fxLayoutAlign='center center' class='description'>
+					<strong cyphTranslate>One More Thing...</strong>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<div fxLayoutGap='16px'>
+						<p cyphTranslate>
+							The final step to get your account online is to
+							set up your Master Key.
+						</p>
+						<p cyphTranslate>
+							<span>This is a</span>
+							&ngsp;
+							<em>secret</em>
+							&ngsp;
+							<span>code that protects all your private data.</span>
+						</p>
+					</div>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<h3 class='cyph-banner warn' cyphTranslate>
+						Make sure that you're alone before you proceed!
+					</h3>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<button mat-button (click)='phase.next(2)'>
+						<span cyphTranslate>Master Key Setup</span>
+					</button>
+				</div>
+			</div>
+
+			<div fxFlex fxLayout='column' fxLayoutGap='32px' *ngIf='(phase | async) === 2'>
+				<ng-container *ngTemplateOutlet='masterKeyUI'></ng-container>
+
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<button
+						mat-button
+						[disabled]='(masterKeyReady | async) === false'
+						(click)='
+							phase.next(3);
+							spoiler.next(true);
+						'
+					>
+						<span cyphTranslate>Next</span>
+					</button>
+				</div>
+			</div>
+
+			<div
+				fxFlex
+				fxLayout='column'
+				fxLayoutGap='32px'
+				fxLayoutAlign='center stretch'
+				class='back-button-container'
+				*ngIf='(phase | async) === 3'
+			>
+				<button
+					mat-icon-button
+					cyphTranslate
+					class='back'
+					matTooltip='Back'
+					(click)='phase.next(2)'
+				>
+					<mat-icon>arrow_back</mat-icon>
+				</button>
+				<div fxLayout='row' fxLayoutAlign='center'>
+					<h3 class='cyph-banner warn' *ngIf='(submitError | async) !== undefined'>
+						{{submitError | async}}
+					</h3>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center'>
+					<div
+						fxFlex
+						fxFlex.sm='95'
+						fxFlex.md='75'
+						fxFlex.gt-md='50'
+						fxLayout='column'
+					>
+						<mat-form-field fxFlex>
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]='finalConfirmation.username'
+								[textMask]='usernameMask'
+								name='confirmCyphUsername'
+								placeholder='Confirm Username'
+								required
+							/>
+						</mat-form-field>
+						<mat-form-field fxFlex>
+							<input
+								matInput
+								[(ngModel)]='finalConfirmation.masterKey'
+								name='confirmMasterKey'
+								[type]='finalConfirmation.hideMasterKey ? "password" : "text"'
+								placeholder='Confirm Master Key'
+								required
+							/>
+							<mat-icon
+								matSuffix
+								class='suffix-button'
+								(click)='hidePassword.next(!hidePassword.value)'
+							>
+								{{
+									finalConfirmation.hideMasterKey ?
+										'visibility' :
+										'visibility_off'
+								}}
+							</mat-icon>
+						</mat-form-field>
+					</div>
+				</div>
+				<div fxLayout='row' fxLayoutAlign='center'>
+					<button mat-button (click)='submit()'>
+						<span cyphTranslate>Confirm Registration</span>
+					</button>
+				</div>
+			</div>
 		</mat-card-content>
 		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</mat-card>
 </div>
 
 <ng-template #masterKeyUI>
-	<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
-		<div
-			fxLayout='row'
-			fxLayoutAlign='center center'
-			class='description'
-		>
-			<span>
-				<span cyphTranslate>This is your</span>
-				&ngsp;
-				<span>{{stringsService.product}}</span>
-				&ngsp;
-				<span cyphTranslate>
-					master key. It's like a normal password, but must also
-					be mathematically strong enough to encrypt your data.
-				</span>
-			</span>
-		</div>
-
-		<div fxLayout='row' fxLayoutAlign='center center' cyphTranslate>
-			We've automatically generated a secure master key for you.
-			You may pick your own instead, but to ensure your privacy
-			it must be at least 20 characters and very difficult to
-			guess.
-		</div>
+	<div fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+		<div></div>
 
 		<div fxLayout='row' fxLayoutAlign='center center'>
-			<div
-				fxLayout='column'
-				fxLayoutGap='16px'
-				class='cyph-banner warn'
-			>
-				<div
-					fxLayout='row'
-					fxLayoutAlign='center center'
-				>
-					<span cyphTranslate>
-						<strong>WARNING:</strong>
-						&ngsp;
-						<span>
-							If you lose this key, you will not
-							be able to recover your data,
-							initialize new devices, or access
-							your account in any way.
-						</span>
-						&ngsp;
-						<span>Keep it somewhere safe and</span>
-						&ngsp;
-						<i>offline</i>.
-						&ngsp;
-						<span>
-							For example, write it down on paper
-							and hide it or lock it in a vault.
-						</span>
-					</span>
+			<h3 fxLayout='column' class='cyph-banner default-align warn'>
+				<div cyphTranslate>
+					<h4>
+						Master Key OPSEC Rules:
+					</h4>
+					<ol>
+						<li>You do not talk about your Master Key.</li>
+						<li><em>You do not talk about your Master Key.</em></li>
+						<li>But seriously, don't share it or reuse it as a password anywhere.</li>
+						<li>Don't even store it in an encrypted password manager.</li>
+						<li>
+							<strong>
+								<span>Write it down</span>
+								&ngsp;
+								<em>on paper</em>
+								&ngsp;
+								<span>and keep it well hidden.</span>
+							</strong>
+						</li>
+						<li>Don't lose it, because we can't help you recover or reset it.</li>
+					</ol>
 				</div>
-				<div
-					fxLayout='row'
-					fxLayoutAlign='center center'
-				>
-					<span cyphTranslate>
-						<span>And</span>
-						&ngsp;
-						<strong>DO NOT</strong>
-						&ngsp;
-						<span>
-							reuse this as a password for any
-							other service, or store it in a
-							third-party encrypted password
-							management service.
-						</span>
-					</span>
+				<div fxLayout='row' fxLayoutAlign='center center'>
+					<mat-checkbox
+						cyphTranslate
+						[ngModel]='opsecAcknowledgement | async'
+						(ngModelChange)='opsecAcknowledgement.next($event)'
+						required
+					>
+						I accept this responsibility
+					</mat-checkbox>
 				</div>
-			</div>
+			</h3>
 		</div>
 
 		<div
@@ -569,11 +630,7 @@
 			[class.deselected]='(useXkcdPassphrase | async) === false'
 		>
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h3 cyphTranslate>
-						Option #1: Securely Generated Master Key
-					</h3>
-				</div>
+				<div></div>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<div
 						fxFlex
@@ -591,7 +648,7 @@
 								*ngIf='spoiler | async'
 								class='animated fadeIn'
 							>
-								Click to Reveal
+								Click to Reveal Master Key
 							</span>
 							<span
 								*ngIf='(spoiler | async) === false'
@@ -602,86 +659,107 @@
 						</div>
 					</div>
 				</div>
+				<div></div>
 			</div>
 		</div>
 
-		<div
-			fxLayout='row'
-			cyphTranslate
-			(click)='useXkcdPassphrase.next(false)'
-			class='password-option'
-			[class.deselected]='useXkcdPassphrase | async'
-		>
-			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h3 cyphTranslate>
-						Option #2: Custom Master Key
-					</h3>
-				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
-						<input
-							matInput
+		<div></div>
+
+		<div fxLayout='row' fxLayoutAlign='center center'>
+			<mat-accordion>
+				<mat-expansion-panel (afterCollapse)='useXkcdPassphrase.next(true)'>
+					<mat-expansion-panel-header>
+						<span cyphTranslate>Advanced</span>
+					</mat-expansion-panel-header>
+					<div fxFlex fxLayout='column' fxLayoutGap='32px'>
+						<div fxLayout='row' fxLayoutAlign='center center' cyphTranslate>
+							You may pick your own instead, but to ensure your privacy
+							it must be at least 20 characters and very difficult to
+							guess.
+						</div>
+						<div
+							fxLayout='row'
 							cyphTranslate
-							[ngModel]='masterKey | async'
-							(ngModelChange)='masterKey.next($event)'
-							name='masterKey'
-							[type]='(hidePassword.masterKey | async) ?
-								"password" :
-								"text"
-							'
-							placeholder='Master Key'
-							[required]='(useXkcdPassphrase | async) === false'
-							[pattern]='".{" + masterKeyLength + ",}"'
-						/>
-						<mat-icon
-							matSuffix
-							class='suffix-button'
-							(click)='hidePassword.masterKey.next(
-								!hidePassword.masterKey.value
-							)'
+							(click)='useXkcdPassphrase.next(false)'
+							class='password-option'
+							[class.deselected]='useXkcdPassphrase | async'
 						>
-							{{
-								(hidePassword.masterKey | async) ?
-									'visibility' :
-									'visibility_off'
-							}}
-						</mat-icon>
-					</mat-form-field>
-				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
-						<input
-							matInput
-							cyphTranslate
-							[ngModel]='masterKeyConfirm | async'
-							(ngModelChange)='masterKeyConfirm.next($event)'
-							name='masterKeyConfirm'
-							[type]='(hidePassword.masterKeyConfirm | async) ?
-								"password" :
-								"text"
-							'
-							placeholder='Confirm Master Key'
-							[required]='(useXkcdPassphrase | async) === false'
-							[pattern]='masterKey | async'
-						/>
-						<mat-icon
-							matSuffix
-							class='suffix-button'
-							(click)='hidePassword.masterKeyConfirm.next(
-								!hidePassword.masterKeyConfirm.value
-							)'
-						>
-							{{
-								(hidePassword.masterKeyConfirm | async) ?
-									'visibility' :
-									'visibility_off'
-							}}
-						</mat-icon>
-					</mat-form-field>
-				</div>
-			</div>
+							<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+								<div fxLayout='row' fxLayoutAlign='center center'>
+									<h3 cyphTranslate>
+										Option #2: Custom Master Key
+									</h3>
+								</div>
+								<div fxLayout='row' fxLayoutAlign='center center'>
+									<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+										<input
+											matInput
+											cyphTranslate
+											[ngModel]='masterKey | async'
+											(ngModelChange)='masterKey.next($event)'
+											name='masterKey'
+											[type]='(hidePassword.masterKey | async) ?
+												"password" :
+												"text"
+											'
+											placeholder='Master Key'
+											[required]='(useXkcdPassphrase | async) === false'
+											[pattern]='".{" + masterKeyLength + ",}"'
+										/>
+										<mat-icon
+											matSuffix
+											class='suffix-button'
+											(click)='hidePassword.masterKey.next(
+												!hidePassword.masterKey.value
+											)'
+										>
+											{{
+												(hidePassword.masterKey | async) ?
+													'visibility' :
+													'visibility_off'
+											}}
+										</mat-icon>
+									</mat-form-field>
+								</div>
+								<div fxLayout='row' fxLayoutAlign='center center'>
+									<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+										<input
+											matInput
+											cyphTranslate
+											[ngModel]='masterKeyConfirm | async'
+											(ngModelChange)='masterKeyConfirm.next($event)'
+											name='masterKeyConfirm'
+											[type]='(hidePassword.masterKeyConfirm | async) ?
+												"password" :
+												"text"
+											'
+											placeholder='Confirm Master Key'
+											[required]='(useXkcdPassphrase | async) === false'
+											[pattern]='masterKey | async'
+										/>
+										<mat-icon
+											matSuffix
+											class='suffix-button'
+											(click)='hidePassword.masterKeyConfirm.next(
+												!hidePassword.masterKeyConfirm.value
+											)'
+										>
+											{{
+												(hidePassword.masterKeyConfirm | async) ?
+													'visibility' :
+													'visibility_off'
+											}}
+										</mat-icon>
+									</mat-form-field>
+								</div>
+							</div>
+						</div>
+					</div>
+				</mat-expansion-panel>
+			</mat-accordion>
 		</div>
+
+		<div></div>
 	</div>
 </ng-template>
 

@@ -23,6 +23,7 @@ import {StringsService} from '../../services/strings.service';
 import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {toInt} from '../../util/formatting';
+import {random} from '../../util/random';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 
@@ -52,8 +53,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** @see emailPattern */
 	public readonly emailPattern						= emailPattern;
 
-	/** Indicates whether the last registration attempt has failed. */
-	public readonly error								= new BehaviorSubject<boolean>(false);
+	/** Used for final confirmation of credentials. */
+	public readonly finalConfirmation					= {
+		hideMasterKey: true,
+		masterKey: '',
+		username: ''
+	};
 
 	/** If true, will display only the master key UI and output value upon submission. */
 	@Input() public getMasterKeyOnly: boolean			= false;
@@ -135,11 +140,22 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Name. */
 	public readonly name								= new BehaviorSubject<string>('');
 
+	/** Indicates whether master key OPSEC rules have been acknowledged. */
+	public readonly opsecAcknowledgement				= new BehaviorSubject<boolean>(false);
+
+	/** Phase of registration process. */
+	public readonly phase								= new BehaviorSubject<number>(0);
+
 	/** Sets a spoiler on generated master key. */
 	public readonly spoiler								= new BehaviorSubject<boolean>(true);
 
 	/** List of error messages blocking initiating a registration attempt. */
 	public readonly submissionReadinessErrors: BehaviorSubject<string[]>;
+
+	/** Set when the last registration attempt has failed. */
+	public readonly submitError							=
+		new BehaviorSubject<string|undefined>(undefined)
+	;
 
 	/**
 	 * Master key submission.
@@ -160,8 +176,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Form tab index. */
 	public readonly tabIndex							= new BehaviorSubject<number>(3);
 
-	/** Total number of steps/tabs. */
-	public readonly totalSteps: number					= 3;
+	/** Total number of steps/tabs (minus one). */
+	public readonly totalSteps: number					= 2;
 
 	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
 	public readonly useLockScreenPIN					= new BehaviorSubject<boolean>(
@@ -240,37 +256,66 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		}));
 	}
 
-	/** Initiates registration attempt. */
-	public async submit () : Promise<void> {
+	/** Switches from initial phase of registration process. */
+	public async preSubmit () : Promise<void> {
 		if (this.submissionReadinessErrors.value.length > 0) {
-			this.checking.next(false);
-			this.error.next(true);
 			return;
 		}
 
 		this.checking.next(true);
-		this.error.next(false);
+		this.submitError.next(undefined);
+		await sleep(random(750, 250));
+		this.phase.next(1);
+		this.checking.next(false);
+	}
 
-		this.error.next(!(await this.accountAuthService.register(
-			this.username.value,
+	/** Initiates registration attempt. */
+	public async submit () : Promise<void> {
+		this.checking.next(false);
+
+		if (this.submissionReadinessErrors.value.length > 0 || !this.masterKeyReady.value) {
+			this.submitError.next(this.stringsService.signupFailed);
+			return;
+		}
+
+		const masterKey	=
 			this.useXkcdPassphrase.value ?
 				this.xkcdPassphrase.value :
 				this.masterKey.value
-			,
-			{
-				isCustom: !this.useLockScreenPIN.value,
-				value: this.useLockScreenPIN.value ?
-					this.lockScreenPIN.value :
-					this.lockScreenPassword.value
-			},
-			this.name.value,
-			this.email.value,
-			this.inviteCode.value
-		)));
+		;
+
+		if (
+			this.username.value !== this.finalConfirmation.username ||
+			!safeStringCompare(masterKey, this.finalConfirmation.masterKey)
+		) {
+			this.submitError.next(this.stringsService.invalidCredentials);
+			return;
+		}
+
+		this.checking.next(true);
+		this.submitError.next(undefined);
+
+		this.submitError.next(
+			(await this.accountAuthService.register(
+				this.username.value,
+				masterKey,
+				{
+					isCustom: !this.useLockScreenPIN.value,
+					value: this.useLockScreenPIN.value ?
+						this.lockScreenPIN.value :
+						this.lockScreenPassword.value
+				},
+				this.name.value,
+				this.email.value,
+				this.inviteCode.value
+			)) ?
+				undefined :
+				(this.accountAuthService.errorMessage.value || this.stringsService.signupFailed)
+		);
 
 		this.checking.next(false);
 
-		if (this.error.value) {
+		if (this.submitError.value !== undefined) {
 			return;
 		}
 
@@ -353,20 +398,23 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			combineLatest(
 				this.masterKey,
 				this.masterKeyConfirm,
+				this.opsecAcknowledgement,
 				this.useXkcdPassphrase,
 				this.xkcdPassphraseHasBeenViewed
 			).pipe(map(([
 				masterKey,
 				masterKeyConfirm,
+				opsecAcknowledgement,
 				useXkcdPassphrase,
 				xkcdPassphraseHasBeenViewed
 			]) =>
-				useXkcdPassphrase ?
+				opsecAcknowledgement && (useXkcdPassphrase ?
 					xkcdPassphraseHasBeenViewed :
 					(
 						masterKey.length >= this.masterKeyLength &&
 						safeStringCompare(masterKey, masterKeyConfirm)
 					)
+				)
 			)),
 			false,
 			this.subscriptions
@@ -376,14 +424,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			combineLatest(
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
-				this.masterKeyReady,
 				this.name,
 				this.usernameWatcher,
 				this.xkcdPassphrase
 			).pipe(map(([
 				inviteCode,
 				lockScreenPasswordReady,
-				masterKeyReady,
 				name,
 				username,
 				xkcd
@@ -396,11 +442,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				...(
 					!lockScreenPasswordReady ?
 						[this.stringsService.registerErrorLockScreen] :
-						[]
-				),
-				...(
-					!masterKeyReady ?
-						[this.stringsService.registerErrorMasterKey] :
 						[]
 				),
 				...(

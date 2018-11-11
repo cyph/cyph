@@ -295,6 +295,10 @@ mat-card {
 		mat-card-title {
 			text-align: center !important;
 		}
+
+		mat-card-content.full-height {
+			min-height: calc(100% - 52px);
+		}
 	}
 
 	.card-header-logo {

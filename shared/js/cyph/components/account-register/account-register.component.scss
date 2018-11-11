@@ -68,12 +68,28 @@ form {
 	width: 100%;
 }
 
+.back-button-container {
+	position: relative;
+}
+
 button {
 	@include transform(scale(1.15));
+
+	&.back {
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
 }
 
 mat-card-content {
 	font-size: 1.15em;
+}
+
+.cyph-banner {
+	font-size: 1em;
+    line-height: 1.75em;
+    padding: 1em 2em;
 }
 
 :host ::ng-deep mat-tab-header {

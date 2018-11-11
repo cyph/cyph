@@ -161,7 +161,8 @@ $default-white: map-get($mat-grey, 100);
 			}
 		}
 
-		.file-upload, .password-option.deselected {
+		.file-upload, .password-option.deselected,
+		cyph-account-register mat-expansion-panel .password-option.deselected {
 			border-color: $cyph-foreground;
 
 			&:hover {
@@ -169,11 +170,24 @@ $default-white: map-get($mat-grey, 100);
 			}
 		}
 
-		cyph-account-register .password-option.deselected {
-			border-color: $cyph-background;
+		cyph-account-register {
+			@include mat-checkbox-theme($cyph-theme);
+			@include mat-expansion-panel-theme($cyph-theme);
 
-			&:hover {
-				border-color: rgba($cyph-background, 0.75);
+			mat-checkbox {
+				color: $cyph-foreground;
+			}
+
+			mat-expansion-panel {
+				@include mat-form-field-theme($cyph-theme);
+			}
+
+			.password-option.deselected {
+				border-color: $cyph-background;
+
+				&:hover {
+					border-color: rgba($cyph-background, 0.75);
+				}
 			}
 		}
 
