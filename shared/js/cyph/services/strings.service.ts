@@ -488,6 +488,12 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
+	public readonly lockScreenPassword: string			= `Custom Password`;
+
+	/** @see StringsService */
+	public readonly lockScreenPIN: string				= `Four-Digit PIN`;
+
+	/** @see StringsService */
 	public readonly localMediaError: string				= `Error loading webcam and/or microphone`;
 
 	/** @see StringsService */
@@ -794,7 +800,7 @@ export class StringsService extends BaseProvider {
 	public readonly registerErrorInviteCode: string		= `Invalid invite code`;
 
 	/** @see StringsService */
-	public readonly registerErrorLockScreen: string		= `Lock screen PIN/password not set`;
+	public readonly registerErrorLockScreen: string		= `Lock screen password not set`;
 
 	/** @see StringsService */
 	public readonly registerErrorMasterKey: string		= `Master key not set`;

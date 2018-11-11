@@ -344,7 +344,7 @@
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
-									<span cyphTranslate>PIN</span>
+									<span cyphTranslate>Lock Screen</span>
 								</ng-template>
 
 								<ng-container *ngTemplateOutlet='lockScreenUI'></ng-container>
@@ -395,21 +395,16 @@
 
 											<div fxLayout='row' fxLayoutAlign='center center'>
 												<strong cyphTranslate>
-													Lock Screen PIN/Password:
+													Lock Screen:
 												</strong>
 												&nbsp;
-												<span *ngIf='
-													(useLockScreenPIN | async) &&
-													(hidePassword.lockScreenPIN | async) === false;
-													else hiddenLockScreenPassword
-												'>
-													{{lockScreenPIN | async}}
+												<span>
+													{{
+														(useLockScreenPIN | async) ?
+															stringsService.lockScreenPIN :
+															stringsService.lockScreenPassword
+													}}
 												</span>
-												<ng-template #hiddenLockScreenPassword>
-													<span>
-														&#xfe61;&#xfe61;&#xfe61;&#xfe61;
-													</span>
-												</ng-template>
 											</div>
 										</div>
 									</div>
@@ -770,16 +765,15 @@
 			fxLayoutAlign='center center'
 			class='description'
 		>
-			This is a simple passcode used to lock your
-			account when you're away.
+			The lock screen password is used to block access to your
+			account while you're away.
 		</div>
 
 		<div fxLayout='row' fxLayoutAlign='center center'>
 			<span>
 				<span cyphTranslate>
-					A four-digit number is fine in most cases. However,
-					you may choose to use a longer custom password, which
-					will be more secure if you plan to sign in to
+					This should be simple and memorable. However, a longer
+					one will be more secure if you sign in to
 				</span>
 				&ngsp;
 				<span>{{stringsService.product}}</span>
@@ -817,8 +811,10 @@
 	>
 		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 			<div fxLayout='row' fxLayoutAlign='center center'>
-				<h3 cyphTranslate>
-					Option #{{order}}: Four-Digit Number
+				<h3>
+					<span cyphTranslate>Option</span>
+					&ngsp;
+					<span>#{{order}}: {{stringsService.lockScreenPIN}}</span>
 				</h3>
 			</div>
 			<div fxLayout='row' fxLayoutAlign='center center'>
@@ -848,8 +844,10 @@
 	>
 		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 			<div fxLayout='row' fxLayoutAlign='center center'>
-				<h3 cyphTranslate>
-					Option #{{order}}: Custom Password
+				<h3>
+					<span cyphTranslate>Option</span>
+					&ngsp;
+					<span>#{{order}}: {{stringsService.lockScreenPassword}}</span>
 				</h3>
 			</div>
 			<div fxLayout='row' fxLayoutAlign='center center'>
