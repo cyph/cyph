@@ -431,9 +431,17 @@
 										</ul>
 									</div>
 								</h3>
-								<div fxLayout='row' fxLayoutAlign='center center'>
+								<div></div>
+								<div
+									fxLayout='row'
+									fxLayoutAlign='center center'
+									fxLayoutGap='32px'
+								>
+									<button mat-button (click)='updateRoute(-1)'>
+										<span cyphTranslate>Previous</span>
+									</button>
 									<button
-										mat-button
+										mat-raised-button
 										type='submit'
 										[disabled]='errors.length > 0'
 									>
@@ -447,8 +455,16 @@
 				<div
 					fxLayout='row'
 					fxLayoutAlign='center center'
+					fxLayoutGap='32px'
 					*ngIf='((tabIndex | async) || 0) !== totalSteps'
 				>
+					<button
+						mat-button
+						(click)='updateRoute(-1)'
+						*ngIf='((tabIndex | async) || 0) > 0'
+					>
+						<span cyphTranslate>Previous</span>
+					</button>
 					<button mat-button (click)='updateRoute(1)'>
 						<span cyphTranslate>Next</span>
 					</button>
@@ -568,7 +584,7 @@
 					</div>
 				</div>
 				<div fxLayout='row' fxLayoutAlign='center'>
-					<button mat-button (click)='submit()'>
+					<button mat-raised-button (click)='submit()'>
 						<span cyphTranslate>Confirm Registration</span>
 					</button>
 				</div>
