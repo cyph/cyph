@@ -238,8 +238,8 @@ export const account: Route	= {
 			path: 'settings',
 			children: [
 				{path: '', component: AccountSettingsComponent, data: {state: 1}},
-				{path: 'master-key', component: AccountSettingsComponent, data: {state: 2}},
-				{path: 'pin', component: AccountSettingsComponent, data: {state: 3}}
+				{path: 'lock-screen', component: AccountSettingsComponent, data: {state: 3}},
+				{path: 'master-key', component: AccountSettingsComponent, data: {state: 2}}
 			]
 		},
 		{

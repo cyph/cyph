@@ -42,12 +42,12 @@
 
 			<div></div>
 			<div>
-				<strong>{{stringsService.pin}}:</strong>
+				<strong>{{stringsService.lockScreen}}:</strong>
 				&ngsp;
 				&nbsp;
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
 				&ngsp;
-				(<a routerLink='pin' cyphTranslate>change</a>)
+				(<a routerLink='lock-screen' cyphTranslate>change</a>)
 			</div>
 			<div>
 				<strong>{{stringsService.masterKey}}:</strong>
@@ -62,7 +62,7 @@
 
 			<div></div>
 			<div>
-				<strong cyphTranslate>Premium Status:</strong>
+				<strong cyphTranslate>Pro Status:</strong>
 				&ngsp;
 				&nbsp;
 				<span *ngIf='(user | async)?.hasPremium | async; else getPremium'>

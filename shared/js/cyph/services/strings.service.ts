@@ -164,7 +164,7 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
-	public readonly changePinTitle: string				= `Change PIN`;
+	public readonly changePinTitle: string				= `Change Lock Screen Password`;
 
 	/** @see StringsService */
 	public readonly checkoutBraintreeError: string		= `Braintree failed to initialize.`;
@@ -486,6 +486,9 @@ export class StringsService extends BaseProvider {
 	public readonly linkTooltip: string					=
 		`${this.capitalize(this.internalSession)} Link`
 	;
+
+	/** @see StringsService */
+	public readonly lockScreen: string					= `Lock Screen Password`;
 
 	/** @see StringsService */
 	public readonly lockScreenPassword: string			= `Custom Password`;
