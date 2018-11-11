@@ -55,7 +55,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Used for final confirmation of credentials. */
 	public readonly finalConfirmation					= {
-		hideMasterKey: true,
 		masterKey: '',
 		username: ''
 	};
@@ -68,6 +67,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Password visibility settings. */
 	public readonly hidePassword						= {
+		finalConfirmation: new BehaviorSubject<boolean>(true),
 		lockScreenPIN: new BehaviorSubject<boolean>(false),
 		lockScreenPassword: new BehaviorSubject<boolean>(true),
 		lockScreenPasswordConfirm: new BehaviorSubject<boolean>(true),

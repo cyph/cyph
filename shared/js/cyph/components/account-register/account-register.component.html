@@ -565,17 +565,22 @@
 								matInput
 								[(ngModel)]='finalConfirmation.masterKey'
 								name='confirmMasterKey'
-								[type]='finalConfirmation.hideMasterKey ? "password" : "text"'
+								[type]='(hidePassword.finalConfirmation | async) ?
+									"password" :
+									"text"
+								'
 								placeholder='Confirm Master Key'
 								required
 							/>
 							<mat-icon
 								matSuffix
 								class='suffix-button'
-								(click)='hidePassword.next(!hidePassword.value)'
+								(click)='hidePassword.finalConfirmation.next(
+									!hidePassword.finalConfirmation.value
+								)'
 							>
 								{{
-									finalConfirmation.hideMasterKey ?
+									(hidePassword.finalConfirmation | async) ?
 										'visibility' :
 										'visibility_off'
 								}}
