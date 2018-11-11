@@ -552,6 +552,7 @@
 						<mat-form-field fxFlex>
 							<input
 								matInput
+								cyphAutofocus
 								cyphTranslate
 								[(ngModel)]='finalConfirmation.username'
 								[textMask]='usernameMask'
@@ -846,7 +847,7 @@
 					[ngModel]='lockScreenPIN | async'
 					(ngModelChange)='lockScreenPIN.next($event)'
 					name='lockScreenPIN'
-					[autofocus]='true'
+					[autofocus]='order === "1"'
 					[hide]='hidePassword.lockScreenPIN'
 					[required]='useLockScreenPIN | async'
 				></cyph-pin-input>
@@ -878,6 +879,8 @@
 						cyphTranslate
 						[ngModel]='lockScreenPassword | async'
 						(ngModelChange)='lockScreenPassword.next($event)'
+						cyphAutofocus
+						[cyphAutofocusEnabled]='order === "1"'
 						name='lockScreenPassword'
 						[type]='(hidePassword.lockScreenPassword | async) ?
 							"password" :
