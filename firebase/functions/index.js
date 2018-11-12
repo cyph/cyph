@@ -87,6 +87,10 @@ const validateInput	= (input, regex) => {
 	return input;
 };
 
+const onCall	= f => functions.https.onCall(async (data, context) =>
+	f(data, context, validateInput(data.namespace.replace(/\./g, '_')))
+);
+
 const onRequest	= f => functions.https.onRequest((req, res) => cors(req, res, async () => {
 	try {
 		await f(req, res, validateInput(req.body.namespace.replace(/\./g, '_')));
@@ -124,12 +128,12 @@ exports.channelDisconnect	= functions.database.ref(
 });
 
 
-exports.checkInviteCode	= onRequest(async (req, res, namespace) => {
-	const inviteCode		= validateInput(req.body.inviteCode);
+exports.checkInviteCode	= onCall(async (data, context, namespace) => {
+	const inviteCode		= validateInput(data.inviteCode);
 	const inviterRef		= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
 	const inviterUsername	= (await inviterRef.once('value')).val() || '';
 
-	res.send({isValid: !!inviterUsername});
+	return {isValid: !!inviterUsername};
 });
 
 
