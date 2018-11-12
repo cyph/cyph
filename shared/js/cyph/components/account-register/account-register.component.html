@@ -553,9 +553,10 @@
 							<input
 								matInput
 								cyphTranslate
-								[ngModel]='usernameWatcher | async'
+								[ngModel]='(usernameWatcher | async)?.value'
 								name='confirmCyphUsername'
 								placeholder='Confirm Username'
+								disabled
 								required
 							/>
 						</mat-form-field>
