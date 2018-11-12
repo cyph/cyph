@@ -670,7 +670,9 @@
 							</span>
 							<span
 								*ngIf='(spoiler | async) === false'
-								class='animated fadeIn'
+								class='animated fadeIn no-select'
+								(copy)='$event.preventDefault()'
+								(cut)='$event.preventDefault()'
 							>
 								{{xkcdPassphrase | async}}
 							</span>

@@ -385,6 +385,10 @@ button, [mat-button], [mat-raised-button] {
 	pointer-events: none;
 }
 
+.no-select {
+	@include user-select(none);
+}
+
 blockquote {
 	padding-left: 10px;
 }
