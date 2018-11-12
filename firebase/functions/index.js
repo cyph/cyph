@@ -384,8 +384,10 @@ exports.userEmailSet	= functions.database.ref(
 	'{namespace}/users/{user}/email'
 ).onWrite(async ({after: data}, {params}) => {
 	const username					= params.user;
-	const internalURL				= `${params.namespace}/users/${username}/internal`;
+	const userURL					= `${params.namespace}/users/${username}`;
+	const internalURL				= `${userURL}/internal`;
 	const emailRef					= database.ref(`${internalURL}/email`);
+	const pseudoAccountRef			= database.ref(`${userURL}/pseudoAccountRef`);
 	const registrationEmailSentRef	= database.ref(`${internalURL}/registrationEmailSent`);
 
 	const email						= await getItem(
@@ -403,9 +405,14 @@ exports.userEmailSet	= functions.database.ref(
 		await emailRef.remove();
 	}
 
-	const registrationEmailSent		= (await registrationEmailSentRef.once('value')).val();
+	const [pseudoAccount, registrationEmailSent]	=
+		(await Promise.all([
+			pseudoAccountRef.once('value'),
+			registrationEmailSentRef.once('value')
+		])).map(o => o.val())
+	;
 
-	if (registrationEmailSent) {
+	if (pseudoAccount || registrationEmailSent) {
 		return;
 	}
 

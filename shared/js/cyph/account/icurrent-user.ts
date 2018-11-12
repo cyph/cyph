@@ -17,6 +17,9 @@ export interface ICurrentUser {
 	/** @see IAccountLoginData */
 	loginData: IAccountLoginData;
 
+	/** Indicates whether this is a pseudo-account. */
+	pseudoAccount: boolean;
+
 	/** @see User */
 	user: User;
 }

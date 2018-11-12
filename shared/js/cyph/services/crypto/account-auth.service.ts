@@ -353,9 +353,10 @@ export class AccountAuthService extends BaseProvider {
 
 			errorLogMessage	= 'getting user';
 
-			const [user, confirmed]		= await Promise.all([
+			const [user, confirmed, pseudoAccount]		= await Promise.all([
 				this.accountUserLookupService.getUser(username, false, undefined, true),
-				this.accountUserLookupService.exists(username, false, true)
+				this.accountUserLookupService.exists(username, false, true),
+				this.databaseService.hasItem(`users/${username}/pseudoAccount`)
 			]);
 
 			if (!user) {
@@ -411,6 +412,7 @@ export class AccountAuthService extends BaseProvider {
 					symmetricKey: loginData.symmetricKey
 				},
 				loginData,
+				pseudoAccount,
 				user
 			});
 
@@ -542,10 +544,10 @@ export class AccountAuthService extends BaseProvider {
 
 	/** Registers. */
 	public async register (
-		realUsername: string,
-		masterKey: string,
+		realUsername: string|{pseudoAccount: true},
+		masterKey: string|undefined,
 		pin: {isCustom: boolean; value: string},
-		name: string,
+		name: string = '',
 		email?: string,
 		inviteCode?: string
 	) : Promise<boolean> {
@@ -553,7 +555,13 @@ export class AccountAuthService extends BaseProvider {
 			return false;
 		}
 
-		const username	= normalize(realUsername);
+		let pseudoAccount	= false;
+		if (typeof realUsername !== 'string') {
+			pseudoAccount	= true;
+			realUsername	= uuid(true);
+		}
+
+		const username	=  normalize(realUsername);
 
 		const loginData: IAccountLoginData	= {
 			secondaryPassword: this.potassiumService.toBase64(
@@ -617,7 +625,12 @@ export class AccountAuthService extends BaseProvider {
 				})()
 			]);
 
-			const masterKeyHashPromise	= this.passwordHash(username, masterKey);
+			const masterKeyHashPromise	= typeof masterKey === 'string' ?
+				this.passwordHash(username, masterKey) :
+				this.potassiumService.secretBox.keyBytes.then(keyBytes =>
+					this.potassiumService.randomBytes(keyBytes)
+				)
+			;
 
 			await Promise.all([
 				masterKeyHashPromise.then(async masterKeyHash =>
@@ -675,16 +688,26 @@ export class AccountAuthService extends BaseProvider {
 					signingKeyPair,
 					loginData.symmetricKey
 				),
-				this.setItem(
-					`users/${username}/certificateRequest`,
-					AGSEPKICSR,
-					{
-						publicSigningKey: signingKeyPair.publicKey,
-						username
-					},
-					signingKeyPair.privateKey,
-					true
-				),
+				pseudoAccount ?
+					this.databaseService.setItem(
+						`users/${username}/pseudoAccount`,
+						BinaryProto,
+						new Uint8Array(0),
+						true
+					).then(
+						() => {}
+					) :
+					this.setItem(
+						`users/${username}/certificateRequest`,
+						AGSEPKICSR,
+						{
+							publicSigningKey: signingKeyPair.publicKey,
+							username
+						},
+						signingKeyPair.privateKey,
+						true
+					)
+				,
 				this.passwordHash(username, pin.value).then(async pinHash =>
 					this.setItem(
 						`users/${username}/pin/hash`,
