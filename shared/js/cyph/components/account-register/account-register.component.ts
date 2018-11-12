@@ -22,7 +22,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
-import {normalize, toInt} from '../../util/formatting';
+import {toInt} from '../../util/formatting';
 import {random} from '../../util/random';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
@@ -55,8 +55,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Used for final confirmation of credentials. */
 	public readonly finalConfirmation					= {
-		masterKey: '',
-		username: ''
+		masterKey: ''
 	};
 
 	/** If true, will display only the master key UI and output value upon submission. */
@@ -284,10 +283,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				this.masterKey.value
 		;
 
-		if (
-			normalize(this.username.value) !== normalize(this.finalConfirmation.username) ||
-			!safeStringCompare(masterKey, this.finalConfirmation.masterKey)
-		) {
+		if (!safeStringCompare(masterKey, this.finalConfirmation.masterKey)) {
 			this.submitError.next(this.stringsService.invalidCredentials);
 			return;
 		}

@@ -552,10 +552,8 @@
 						<mat-form-field fxFlex>
 							<input
 								matInput
-								cyphAutofocus
 								cyphTranslate
-								[(ngModel)]='finalConfirmation.username'
-								[textMask]='usernameMask'
+								[ngModel]='usernameWatcher | async'
 								name='confirmCyphUsername'
 								placeholder='Confirm Username'
 								required
@@ -564,6 +562,7 @@
 						<mat-form-field fxFlex>
 							<input
 								matInput
+								cyphAutofocus
 								[(ngModel)]='finalConfirmation.masterKey'
 								name='confirmMasterKey'
 								[type]='(hidePassword.finalConfirmation | async) ?
@@ -572,6 +571,7 @@
 								'
 								placeholder='Confirm Master Key'
 								required
+								(keyup.enter)='submit()'
 							/>
 							<mat-icon
 								matSuffix
