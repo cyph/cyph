@@ -645,6 +645,7 @@
 			(click)='useXkcdPassphrase.next(true)'
 			class='password-option'
 			[class.deselected]='(useXkcdPassphrase | async) === false'
+			[class.visibility-hidden]='(opsecAcknowledgement | async) === false'
 		>
 			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
 				<div></div>
@@ -682,7 +683,11 @@
 
 		<div></div>
 
-		<div fxLayout='row' fxLayoutAlign='center center'>
+		<div
+			fxLayout='row'
+			fxLayoutAlign='center center'
+			[class.visibility-hidden]='(opsecAcknowledgement | async) === false'
+		>
 			<mat-accordion>
 				<mat-expansion-panel (afterCollapse)='useXkcdPassphrase.next(true)'>
 					<mat-expansion-panel-header>
