@@ -9,7 +9,7 @@
 >
 
 
-<ng-container *ngIf='envService.environment.customBuild?.config.pseudoAccounts; else desktopView'>
+<ng-container *ngIf='accountAuthService.pseudoAccountLogin | async; else desktopView'>
 	<mat-card
 		fxFlex
 		fxFlex.sm='95'

@@ -46,7 +46,10 @@ export class AccountAuthService extends BaseProvider {
 	private connectTrackerCleanup?: () => void;
 
 	/** Error message. */
-	public readonly errorMessage	= new BehaviorSubject<string|undefined>(undefined);
+	public readonly errorMessage		= new BehaviorSubject<string|undefined>(undefined);
+
+	/** If true, the login prompt will be used to create a pseudo-account. */
+	public readonly pseudoAccountLogin	= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	private async getItem <T> (

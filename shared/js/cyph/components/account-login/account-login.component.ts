@@ -158,10 +158,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		this.checking.next(true);
 		this.error.next(false);
 
-		if (
-			this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.pseudoAccounts
-		) {
+		if (this.accountAuthService.pseudoAccountLogin.value) {
 			this.error.next(newPin ?
 				!(await this.accountAuthService.register(
 					{pseudoAccount: true},

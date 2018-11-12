@@ -20,6 +20,9 @@ implements CanActivate, CanActivateChild {
 	];
 
 	/** @ignore */
+	private readonly pseudoAccountRoutes: string[]			= [];
+
+	/** @ignore */
 	private getFullRoutePath (route: ActivatedRouteSnapshot) : string[] {
 		return route.url.map(o => o.path).concat(
 			route.children.
@@ -39,6 +42,10 @@ implements CanActivate, CanActivateChild {
 			)
 		) {
 			return true;
+		}
+
+		if (this.pseudoAccountRoutes.indexOf(route.url[0].path) > -1) {
+			this.accountAuthService.pseudoAccountLogin.next(true);
 		}
 
 		this.router.navigate([accountRoot, 'login'].concat(

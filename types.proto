@@ -743,20 +743,17 @@ message Environment {
 		/** Indicates whether this is a Cyph Pro environment. */
 		bool pro = 15;
 
-		/** Indicates whether environment should use pseudo-accounts. */
-		bool pseudoAccounts = 16;
-
 		/** Indicates whether this is the telehealth version. */
-		bool telehealth = 17;
+		bool telehealth = 16;
 
 		/** Page title of this Cyph instance. */
-		string title = 18;
+		string title = 17;
 
 		/** Indicates whether this environment should share the main Cyph database namespace. */
-		bool usePrimaryNamespace = 19;
+		bool usePrimaryNamespace = 18;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 20;
+		bool whiteLabel = 19;
 	}
 
 	/** Firebase configuration. */
