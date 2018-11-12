@@ -9,7 +9,7 @@
 >
 
 
-<ng-container *ngIf='(envService.isMobile | async) === false; else mobileView'>
+<ng-container *ngIf='envService.environment.customBuild?.config.pseudoAccounts; else desktopView'>
 	<mat-card
 		fxFlex
 		fxFlex.sm='95'
@@ -17,72 +17,107 @@
 		fxFlex.gt-md='50'
 	>
 		<mat-card-title cyphTranslate>
-			{{
-				(pinUnlock | async) ?
-					stringsService.unlockTitle :
-					stringsService.logInTitle
-			}}
+			Set Chat Unlock Password
 		</mat-card-title>
 
-		<mat-card-subtitle *ngIf='pinUnlock | async'>
-			<p>
-				<span cyphTranslate>Welcome back</span>
-				&ngsp;
-				<span>{{savedUsername | async}}!</span>
-				&ngsp;
-				<span cyphTranslate>Enter your PIN below.</span>
-			</p>
-			<p>
-				<span cyphTranslate>Not</span>
-				&ngsp;
-				<span>{{savedUsername | async}}?</span>
-				&ngsp;
-				<a cyphTranslate (click)='pinUnlock.next(false)'>Sign in as a different user</a>
-				&ngsp;
-				<span cyphTranslate>or</span>
-				&ngsp;
-				<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
-			</p>
+		<mat-card-subtitle cyphTranslate>
+			This should be simple and memorable. However, a longer
+			one will be more secure if this is a shared device.
 		</mat-card-subtitle>
 
 		<cyph-logo cardHeader homeLink></cyph-logo>
 
 		<mat-card-content fxLayout='row' fxLayoutAlign='center'>
-			<form ngNativeValidate fxFlex='80' fxLayout='column' (submit)='submit()'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h3
-						class='cyph-banner warn'
-						[style.visibility]='(error | async) ? "visible" : "hidden"'
-					>
-						{{
-							(pinUnlock | async) ?
-								stringsService.invalidPIN :
-								stringsService.invalidCredentials
-						}}
-					</h3>
-				</div>
-
-				<ng-container *ngTemplateOutlet='usernameField'></ng-container>
-
-				<ng-container *ngIf='(pinUnlock | async) === true; else login'>
-					<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
-				</ng-container>
-
-				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='
-					(
-						(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
-					) as buttonText
-				'>
-					<button mat-button type='submit'>
-						{{buttonText}}
-					</button>
-				</div>
-			</form>
+			<cyph-account-register
+				fxFlex='80'
+				[getPasswordSubmitText]='stringsService.continue'
+				[getPinOnly]='true'
+				(submitPIN)='submit($event)'
+			></cyph-account-register>
 		</mat-card-content>
 
 		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</mat-card>
 </ng-container>
+
+<ng-template #desktopView>
+	<ng-container *ngIf='(envService.isMobile | async) === false; else mobileView'>
+		<mat-card
+			fxFlex
+			fxFlex.sm='95'
+			fxFlex.md='75'
+			fxFlex.gt-md='50'
+		>
+			<mat-card-title>
+				{{
+					(pinUnlock | async) ?
+						stringsService.unlockTitle :
+						stringsService.logInTitle
+				}}
+			</mat-card-title>
+
+			<mat-card-subtitle *ngIf='pinUnlock | async'>
+				<p>
+					<span cyphTranslate>Welcome back</span>
+					&ngsp;
+					<span>{{savedUsername | async}}!</span>
+					&ngsp;
+					<span cyphTranslate>Enter your PIN below.</span>
+				</p>
+				<p>
+					<span cyphTranslate>Not</span>
+					&ngsp;
+					<span>{{savedUsername | async}}?</span>
+					&ngsp;
+					<a cyphTranslate (click)='pinUnlock.next(false)'>
+						Sign in as a different user
+					</a>
+					&ngsp;
+					<span cyphTranslate>or</span>
+					&ngsp;
+					<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
+				</p>
+			</mat-card-subtitle>
+
+			<cyph-logo cardHeader homeLink></cyph-logo>
+
+			<mat-card-content fxLayout='row' fxLayoutAlign='center'>
+				<form ngNativeValidate fxFlex='80' fxLayout='column' (submit)='submit()'>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<h3
+							class='cyph-banner warn'
+							[style.visibility]='(error | async) ? "visible" : "hidden"'
+						>
+							{{
+								(pinUnlock | async) ?
+									stringsService.invalidPIN :
+									stringsService.invalidCredentials
+							}}
+						</h3>
+					</div>
+
+					<ng-container *ngTemplateOutlet='usernameField'></ng-container>
+
+					<ng-container *ngIf='(pinUnlock | async) === true; else login'>
+						<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
+					</ng-container>
+
+					<div fxLayout='row' fxLayoutAlign='center center' *ngIf='
+						(
+							(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
+						) as buttonText
+					'>
+						<button mat-button type='submit'>
+							{{buttonText}}
+						</button>
+					</div>
+				</form>
+			</mat-card-content>
+
+			<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+		</mat-card>
+	</ng-container>
+</ng-template>
 
 <ng-template #mobileView>
 	<div fxFlexFill fxLayout='column'>

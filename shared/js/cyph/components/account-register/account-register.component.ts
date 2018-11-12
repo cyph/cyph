@@ -61,6 +61,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** If true, will display only the master key UI and output value upon submission. */
 	@Input() public getMasterKeyOnly: boolean			= false;
 
+	/** Submit button text when getting only master key or lock screen password. */
+	@Input() public getPasswordSubmitText: string		= this.stringsService.submit;
+
 	/** If true, will display only the lock screen password UI and output value upon submission. */
 	@Input() public getPinOnly: boolean					= false;
 
@@ -73,6 +76,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		masterKey: new BehaviorSubject<boolean>(true),
 		masterKeyConfirm: new BehaviorSubject<boolean>(true)
 	};
+
+	/** If true, will hide the top description text of the lock screen password UI. */
+	@Input() public hidePinDescription: boolean			= false;
 
 	/** Invite code. */
 	public readonly inviteCode							= new FormControl('', undefined, [

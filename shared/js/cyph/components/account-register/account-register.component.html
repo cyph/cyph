@@ -34,7 +34,7 @@
 					) === false
 				'
 			>
-				{{stringsService.submit}}
+				{{getPasswordSubmitText}}
 			</button>
 		</div>
 	</form>
@@ -790,27 +790,29 @@
 
 <ng-template #lockScreenUI>
 	<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
-		<div
-			fxLayout='row'
-			fxLayoutAlign='center center'
-			class='description'
-		>
-			The lock screen password is used to block access to your
-			account while you're away.
-		</div>
+		<ng-container *ngIf='!hidePinDescription'>
+			<div
+				fxLayout='row'
+				fxLayoutAlign='center center'
+				class='description'
+			>
+				The lock screen password is used to block access to your
+				account while you're away.
+			</div>
 
-		<div fxLayout='row' fxLayoutAlign='center center'>
-			<span>
-				<span cyphTranslate>
-					This should be simple and memorable. However, a longer
-					one will be more secure if you sign in to
+			<div fxLayout='row' fxLayoutAlign='center center'>
+				<span>
+					<span cyphTranslate>
+						This should be simple and memorable. However, a longer
+						one will be more secure if you sign in to
+					</span>
+					&ngsp;
+					<span>{{stringsService.product}}</span>
+					&ngsp;
+					<span cyphTranslate>on a shared device.</span>
 				</span>
-				&ngsp;
-				<span>{{stringsService.product}}</span>
-				&ngsp;
-				<span cyphTranslate>on a shared device.</span>
-			</span>
-		</div>
+			</div>
+		</ng-container>
 
 		<ng-container *ngIf='envService.isMobileOS'>
 			<ng-container *ngTemplateOutlet='

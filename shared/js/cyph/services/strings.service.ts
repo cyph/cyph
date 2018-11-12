@@ -204,6 +204,9 @@ export class StringsService extends BaseProvider {
 	public readonly contactSupport: string				= `Contact Support`;
 
 	/** @see StringsService */
+	public readonly continue: string					= `Continue`;
+
+	/** @see StringsService */
 	public readonly continueDialogAction: string		= `continue`;
 
 	/** @see StringsService */

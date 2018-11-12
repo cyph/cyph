@@ -81,7 +81,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		}
 
 		await this.router.navigate(
-			this.accountDatabaseService.currentUser.value.confirmed ?
+			(
+				this.accountDatabaseService.currentUser.value.confirmed &&
+				!this.accountDatabaseService.currentUser.value.pseudoAccount
+			) ?
 				this.activatedRoute.snapshot.url.length > 0 ?
 					this.activatedRoute.snapshot.url.map(o => o.path) :
 					[accountRoot]
@@ -151,22 +154,37 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	}
 
 	/** Initiates login attempt. */
-	public async submit () : Promise<void> {
+	public async submit (newPin?: {isCustom: boolean; value: string}) : Promise<void> {
 		this.checking.next(true);
 		this.error.next(false);
 
-		this.error.next(!(await (
-			this.pinUnlock.value && this.savedMasterKey.value && this.savedUsername.value ?
-				this.accountAuthService.login(
-					this.savedUsername.value,
-					this.savedMasterKey.value,
-					this.pin.value
-				) :
-				this.accountAuthService.login(
-					this.username.value,
-					this.masterKey.value
-				)
-		)));
+		if (
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.pseudoAccounts
+		) {
+			this.error.next(newPin ?
+				!(await this.accountAuthService.register(
+					{pseudoAccount: true},
+					undefined,
+					newPin
+				)) :
+				true
+			);
+		}
+		else {
+			this.error.next(!(await (
+				this.pinUnlock.value && this.savedMasterKey.value && this.savedUsername.value ?
+					this.accountAuthService.login(
+						this.savedUsername.value,
+						this.savedMasterKey.value,
+						this.pin.value
+					) :
+					this.accountAuthService.login(
+						this.username.value,
+						this.masterKey.value
+					)
+			)));
+		}
 
 		this.checking.next(false);
 
