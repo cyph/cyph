@@ -152,7 +152,7 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly changePinContent: string			=
-		`You are about to change your **PIN**. The PIN is a simple passcode used ` +
+		`You are about to change your **lock screen password**. This is a simple passcode used ` +
 		`to lock your account while you're away.\n\n` +
 		`You will be required to log in again from scratch next time you open ` +
 		`${this.internalProduct}. Continue?`
@@ -160,7 +160,7 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly changePinFailure: string			=
-		`Changing the PIN failed. Please try again later.`
+		`Changing the lock screen password failed. Please try again later.`
 	;
 
 	/** @see StringsService */
@@ -444,7 +444,7 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly invalidPIN: string					=
-		`Invalid PIN.`
+		`Invalid lock screen password.`
 	;
 
 	/** @see StringsService */
