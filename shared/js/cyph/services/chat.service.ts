@@ -222,8 +222,8 @@ export class ChatService extends BaseProvider {
 	/** Remote User object where applicable. */
 	public readonly remoteUser				=
 		new BehaviorSubject<
-			{anonymous: true; pseudoAccount: false; username: undefined}|
-			{anonymous: false; pseudoAccount: true; username: string}|
+			{anonymous: true; contactID: undefined; pseudoAccount: false; username: undefined}|
+			{anonymous: false; contactID: Promise<string>; pseudoAccount: true; username: string}|
 			User|
 			undefined
 		>(undefined)

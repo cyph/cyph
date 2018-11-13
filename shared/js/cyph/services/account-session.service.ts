@@ -75,8 +75,8 @@ export class AccountSessionService extends SessionService {
 	/** Remote user. */
 	public readonly remoteUser			=
 		new BehaviorSubject<
-			{anonymous: true; pseudoAccount: false; username: undefined}|
-			{anonymous: false; pseudoAccount: true; username: string}|
+			{anonymous: true; contactID: undefined; pseudoAccount: false; username: undefined}|
+			{anonymous: false; contactID: Promise<string>; pseudoAccount: true; username: string}|
 			User|
 			undefined
 		>(undefined)
@@ -202,7 +202,12 @@ export class AccountSessionService extends SessionService {
 				url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
 			});
 
-			this.remoteUser.next({anonymous: true, pseudoAccount: false, username: undefined});
+			this.remoteUser.next({
+				anonymous: true,
+				contactID: undefined,
+				pseudoAccount: false,
+				username: undefined
+			});
 			this.state.sharedSecret.next(
 				`${
 					this.accountDatabaseService.currentUser.value.user.username
@@ -422,7 +427,12 @@ export class AccountSessionService extends SessionService {
 		})();
 
 		if (await this.accountDatabaseService.hasItem(`users/${chat.username}/pseudoAccount`)) {
-			this.remoteUser.next({anonymous: false, pseudoAccount: true, username: chat.username});
+			this.remoteUser.next({
+				anonymous: false,
+				contactID: this.accountContactsService.getContactID(chat.username),
+				pseudoAccount: true,
+				username: chat.username
+			});
 			this.resolveReady();
 			return;
 		}
