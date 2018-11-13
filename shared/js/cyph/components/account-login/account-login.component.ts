@@ -82,8 +82,8 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 		await this.router.navigate(
 			(
-				this.accountDatabaseService.currentUser.value.confirmed &&
-				!this.accountDatabaseService.currentUser.value.pseudoAccount
+				this.accountDatabaseService.currentUser.value.confirmed ||
+				this.accountDatabaseService.currentUser.value.pseudoAccount
 			) ?
 				this.activatedRoute.snapshot.url.length > 0 ?
 					this.activatedRoute.snapshot.url.map(o => o.path) :
