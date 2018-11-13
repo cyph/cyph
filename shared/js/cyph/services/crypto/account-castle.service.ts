@@ -123,6 +123,10 @@ export class AccountCastleService extends CastleService {
 							undefined,
 							undefined,
 							true
+						),
+						(
+							(await localUser.getSigningKeyPair()) === undefined ||
+							(await remoteUser.getPublicSigningKey()) === undefined
 						)
 					);
 
