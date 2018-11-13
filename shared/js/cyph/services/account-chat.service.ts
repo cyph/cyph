@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap, skip, take} from 'rxjs/operators';
-import {SecurityModels, User} from '../account';
+import {map, take} from 'rxjs/operators';
+import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
 import {LocalAsyncList} from '../local-async-list';
@@ -17,8 +17,6 @@ import {
 	SessionMessageDataList,
 	StringArrayProto
 } from '../proto';
-import {filterUndefinedOperator} from '../util/filter';
-import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {resolvable} from '../util/wait';
@@ -26,7 +24,6 @@ import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionCapabilitiesService} from './account-session-capabilities.service';
 import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
-import {AccountUserLookupService} from './account-user-lookup.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ChatService} from './chat.service';
@@ -61,14 +58,7 @@ export class AccountChatService extends ChatService {
 	}>();
 
 	/** @inheritDoc */
-	public readonly remoteUser			= toBehaviorSubject<User|undefined>(
-		this.sessionService.remoteUsername.pipe(
-			skip(1),
-			mergeMap(async username => this.accountUserLookupService.getUser(username, false)),
-			filterUndefinedOperator()
-		),
-		undefined
-	);
+	public readonly remoteUser			= this.accountSessionService.remoteUser;
 
 	/** @inheritDoc */
 	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
@@ -292,10 +282,7 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionCapabilitiesService: AccountSessionCapabilitiesService,
 
 		/** @ignore */
-		private readonly accountSessionInitService: AccountSessionInitService,
-
-		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService
+		private readonly accountSessionInitService: AccountSessionInitService
 	) {
 		super(
 			analyticsService,

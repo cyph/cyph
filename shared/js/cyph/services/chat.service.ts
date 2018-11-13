@@ -220,7 +220,14 @@ export class ChatService extends BaseProvider {
 	}>();
 
 	/** Remote User object where applicable. */
-	public readonly remoteUser				= new BehaviorSubject<User|undefined>(undefined);
+	public readonly remoteUser				=
+		new BehaviorSubject<
+			{anonymous: true; pseudoAccount: false; username: undefined}|
+			{anonymous: false; pseudoAccount: true; username: string}|
+			User|
+			undefined
+		>(undefined)
+	;
 
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers				= {
@@ -447,7 +454,14 @@ export class ChatService extends BaseProvider {
 			proto: ChatMessageProto,
 			transform: (value: IChatMessageValue) : IChatMessage => ({
 				...message,
-				authorID: message.authorID && this.remoteUser.value ? message.authorID : '',
+				authorID: (
+					message.authorID &&
+					this.remoteUser.value &&
+					!this.remoteUser.value.anonymous
+				) ?
+					message.authorID :
+					''
+				,
 				authorType: ChatMessage.AuthorTypes.App,
 				hash: undefined,
 				key: undefined,
