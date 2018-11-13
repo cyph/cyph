@@ -4,10 +4,12 @@ import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
+import {IAsyncValue} from '../iasync-value';
 import {IResolvable} from '../iresolvable';
 import {
 	AccountContactState,
 	AccountFileRecord,
+	IAccountContactState,
 	IAccountMessagingGroup,
 	NeverProto,
 	NotificationTypes,
@@ -84,6 +86,20 @@ export class AccountContactsService extends BaseProvider {
 		])),
 		[],
 		this.subscriptions
+	);
+
+	/** Contact state. */
+	public readonly contactState	= memoize(
+		(username: string) : IAsyncValue<IAccountContactState> =>
+			this.accountDatabaseService.getAsyncValue(
+				this.contactURL(username),
+				AccountContactState,
+				SecurityModels.unprotected,
+				undefined,
+				undefined,
+				undefined,
+				true
+			)
 	);
 
 	/** Fully loads contact list. */

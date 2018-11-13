@@ -152,6 +152,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				callType,
 				defaultSessionSubID,
 				ephemeralSubSession,
+				externalUser,
 				generateAnonymousChannelID,
 				promptFollowup
 			},
@@ -162,6 +163,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				callType?: 'audio'|'video';
 				defaultSessionSubID?: string;
 				ephemeralSubSession?: boolean;
+				externalUser?: boolean;
 				generateAnonymousChannelID?: boolean;
 				promptFollowup?: boolean;
 			},
@@ -189,13 +191,20 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 			try {
 				if (username) {
-					const user	= await this.accountUserLookupService.getUser(username, false);
-					if (user) {
-						this.router.navigate(
-							[accountRoot, path, await user.contactID],
-							{replaceUrl: true}
-						);
+					let contactID: Promise<string>;
+
+					if (externalUser) {
+						contactID	= this.accountContactsService.getContactID(username);
 					}
+					else {
+						const user	= await this.accountUserLookupService.getUser(username, false);
+						if (!user) {
+							throw new Error('User not found.');
+						}
+						contactID	= user.contactID;
+					}
+
+					this.router.navigate([accountRoot, path, await contactID], {replaceUrl: true});
 					return;
 				}
 

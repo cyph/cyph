@@ -4,7 +4,6 @@ import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {LockFunction} from '../lock-function-type';
 import {
-	AccountContactState,
 	AccountUserPresence,
 	AccountUserProfile,
 	AccountUserProfileExtra,
@@ -149,15 +148,7 @@ export class AccountUserLookupService extends BaseProvider {
 								value :
 								undefined
 						)),
-						this.accountDatabaseService.getAsyncValue(
-							this.accountContactsService.contactURL(username),
-							AccountContactState,
-							SecurityModels.unprotected,
-							undefined,
-							undefined,
-							undefined,
-							true
-						),
+						this.accountContactsService.contactState(username),
 						this.databaseService.getAsyncValue(
 							`${url}/presence`,
 							AccountUserPresence

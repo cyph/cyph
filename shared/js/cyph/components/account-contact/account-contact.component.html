@@ -1,10 +1,22 @@
+<ng-container *ngIf='groupData === undefined && !!username; else groupContact'>
+
+
 <mat-card
 	class='contact animated'
 	[class.non-clickable]='!clickable'
 	[class.telehealth]='envService.isTelehealth'
 	[routerLink]='
-		!clickable ?
+		(
+			!clickable ||
+			(contactStateData.email && contactStateData.state !== accountContactStates.Confirmed)
+		) ?
 			undefined :
+		contactStateData.email ?
+			(
+				accountService.routeRoot +
+				"messages/external-user/" +
+				(username || "")
+			) :
 		envService.isTelehealth ?
 			accountService.routeRoot + "profile/" + (username || "") :
 		((user | async)?.contactID | async) ?
@@ -20,9 +32,9 @@
 			)
 	'
 	fxFlex
-	*ngIf='groupData === undefined && !!username; else groupContact'
+	*ngIf='accountContactsService.contactState(username).watch() | async as contactStateData'
 >
-	<ng-container *ngIf='(user | async)?.ready | async; else loading'>
+	<ng-container *ngIf='(user | async)?.ready | async; else externalContact'>
 		<mat-card-header
 			fxLayout='row'
 			fxLayoutAlign='stretch center'
@@ -150,6 +162,29 @@
 		</mat-card-header>
 	</ng-container>
 
+	<ng-template #externalContact>
+		<mat-card-header
+			class='pending'
+			fxLayout='row'
+			*ngIf='!!contactStateData.email; else loading'
+		>
+			<mat-icon mat-card-avatar>person</mat-icon>
+
+			<ng-container *ngIf='!!contactStateData.name'>
+				<mat-card-title class='truncate'>
+					{{contactStateData.name}}
+				</mat-card-title>
+				<mat-card-subtitle class='truncate'>
+					{{contactStateData.email}}
+				</mat-card-subtitle>
+			</ng-container>
+
+			<mat-card-title class='truncate' *ngIf='!contactStateData.name'>
+				{{contactStateData.email}}
+			</mat-card-title>
+		</mat-card-header>
+	</ng-template>
+
 	<ng-template #loading>
 		<mat-card-header class='pending' fxLayout='row'>
 			<button
@@ -168,6 +203,9 @@
 		</mat-card-header>
 	</ng-template>
 </mat-card>
+
+
+</ng-container>
 
 
 <ng-template #groupContact>

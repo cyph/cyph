@@ -182,6 +182,11 @@ export const account: Route	= {
 			component: AccountChatComponent,
 			data: {ephemeralSubSession: true}
 		},
+		{
+			path: 'messages/external-user/:username',
+			component: AccountChatComponent,
+			data: {externalUser: true}
+		},
 		{path: 'messages/user/:username', component: AccountChatComponent},
 		{path: 'messages/:contactID', component: AccountChatComponent},
 		{path: 'messages/:contactID/:sessionSubID', component: AccountChatComponent},
