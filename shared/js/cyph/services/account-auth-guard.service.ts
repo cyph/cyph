@@ -16,11 +16,14 @@ implements CanActivate, CanActivateChild {
 		'logout',
 		'profile',
 		'register',
+		'reject',
 		'upload-ehr-credentials'
 	];
 
 	/** @ignore */
-	private readonly pseudoAccountRoutes: string[]			= [];
+	private readonly pseudoAccountRoutes: string[]			= [
+		'accept'
+	];
 
 	/** @ignore */
 	private getFullRoutePath (route: ActivatedRouteSnapshot) : string[] {

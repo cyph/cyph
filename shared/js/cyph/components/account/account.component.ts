@@ -79,6 +79,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 				'messages',
 				'patients',
 				'profile',
+				'reject',
 				'staff',
 				'video',
 				'welcome'

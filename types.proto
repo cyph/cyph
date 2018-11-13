@@ -12,6 +12,12 @@ message AccountContactState {
 		Stranger = 4;
 	}
 
+	/** Optional email. */
+	string email = 2;
+
+	/** Optional name. */
+	string name = 3;
+
 	/** @see States */
 	required States state = 1;
 }

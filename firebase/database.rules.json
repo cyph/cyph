@@ -224,6 +224,12 @@
 				}
 			},
 
+			"pseudoRelationships": {
+				"$relationship": {
+					".validate": "newData.isString()"
+				}
+			},
+
 			"pendingSignups": {
 				"$username": {
 					"timestamp": {

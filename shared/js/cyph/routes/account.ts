@@ -2,6 +2,9 @@
 
 import {Route} from '@angular/router';
 import {AccountComponent} from '../components/account';
+import {
+	AccountAcceptPseudoRelationshipComponent
+} from '../components/account-accept-pseudo-relationship';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
@@ -51,6 +54,11 @@ export const account: Route	= {
 			path: 'anonymous-chat',
 			component: AccountChatComponent,
 			data: {generateAnonymousChannelID: true}
+		},
+		{
+			path: 'accept/:id',
+			component: AccountAcceptPseudoRelationshipComponent,
+			data: {accept: true}
 		},
 		{path: 'appointments', component: AccountAppointmentsComponent},
 		{
@@ -219,6 +227,11 @@ export const account: Route	= {
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', redirectTo: 'register/1'},
 		{path: 'register/:step', component: AccountRegisterComponent},
+		{
+			path: 'reject/:id',
+			component: AccountAcceptPseudoRelationshipComponent,
+			data: {accept: false}
+		},
 		{
 			path: 'request-appointment',
 			component: AccountComposeComponent,

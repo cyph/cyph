@@ -70,6 +70,8 @@ service firebase.storage {
 				;
 			}
 
+			// match /pseudoRelationships/{hash} {}
+
 			match /users/{user} {
 				match /{all=**} {
 					allow read, write: if

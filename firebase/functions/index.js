@@ -1,11 +1,11 @@
-const cors										= require('cors')({origin: true});
-const firebase									= require('firebase');
-const admin										= require('firebase-admin');
-const functions									= require('firebase-functions');
-const {sendMailInternal}						= require('./email');
-const {emailRegex}								= require('./email-regex');
-const namespaces								= require('./namespaces');
-const {normalize, retryUntilSuccessful, sleep}	= require('./util');
+const cors					= require('cors')({origin: true});
+const firebase				= require('firebase');
+const admin					= require('firebase-admin');
+const functions				= require('firebase-functions');
+const {sendMailInternal}	= require('./email');
+const {emailRegex}			= require('./email-regex');
+const namespaces			= require('./namespaces');
+const {sleep, uuid}			= require('./util');
 
 const {
 	AccountContactState,
@@ -88,7 +88,14 @@ const validateInput	= (input, regex) => {
 };
 
 const onCall	= f => functions.https.onCall(async (data, context) =>
-	f(data, context, validateInput(data.namespace.replace(/\./g, '_')))
+	f(
+		data,
+		context,
+		validateInput(data.namespace.replace(/\./g, '_')),
+		async () => context.auth ?
+			(await auth.getUser(context.auth.uid)).email.split('@')[0] :
+			undefined
+	)
 );
 
 const onRequest	= f => functions.https.onRequest((req, res) => cors(req, res, async () => {
@@ -101,6 +108,57 @@ const onRequest	= f => functions.https.onRequest((req, res) => cors(req, res, as
 		res.send({error: true});
 	}
 }));
+
+
+exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUsername) => {
+	const id				= validateInput(data.id);
+	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
+
+	const [alice, bob]	= await Promise.all([
+		relationshipRef.once('value').then(o => o.val()),
+		getUsername()
+	]);
+
+	if (!alice || !bob) {
+		throw new Error('Users not found.');
+	}
+
+	const {email, name}	= await getItem(
+		namespace,
+		`users/${alice}/contacts/${id}`,
+		AccountContactState
+	);
+
+	await Promise.all([
+		relationshipRef.remove(),
+		removeItem(
+			namespace,
+			`users/${alice}/contacts/${id}`
+		),
+		setItem(
+			namespace,
+			`users/${alice}/contacts/${bob}`,
+			AccountContactState,
+			{email, name, state: AccountContactState.States.Confirmed},
+			true
+		),
+		setItem(
+			namespace,
+			`users/${bob}/contacts/${alice}`,
+			AccountContactState,
+			{state: AccountContactState.States.Confirmed},
+			true
+		),
+		getName(namespace, alice).then(async aliceName => notify(
+			namespace,
+			alice,
+			`Contact Confirmation from ${email}`,
+			`${aliceName}, ${name} has accepted your contact request.`
+		))
+	]);
+
+	return alice;
+});
 
 
 exports.channelDisconnect	= functions.database.ref(
@@ -128,7 +186,7 @@ exports.channelDisconnect	= functions.database.ref(
 });
 
 
-exports.checkInviteCode	= onCall(async (data, context, namespace) => {
+exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) => {
 	const inviteCode		= validateInput(data.inviteCode);
 	const inviterRef		= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
 	const inviterUsername	= (await inviterRef.once('value')).val() || '';
@@ -194,6 +252,51 @@ exports.itemRemoved	= functions.database.ref(
 	}
 
 	return removeItem(params.namespace, getURL(data.adminRef, params.namespace));
+});
+
+
+exports.rejectPseudoRelationship	= onCall(async (data, context, namespace, getUsername) => {
+	const id				= validateInput(data.id);
+	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
+
+	const alice	= await relationshipRef.once('value').then(o => o.val());
+
+	if (!alice) {
+		throw new Error('Relationship request not found.');
+	}
+
+	await Promise.all([
+		relationshipRef.remove(),
+		removeItem(namespace, `users/${alice}/contacts/${id}`)
+	]);
+});
+
+
+exports.requestPseudoRelationship	= onCall(async (data, context, namespace, getUsername) => {
+	const {accountsURL}		= namespaces[namespace];
+	const email				= validateInput(data.email, emailRegex);
+	const name				= validateInput(data.name);
+	const id				= uuid();
+	const username			= await getUsername();
+	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
+
+	await Promise.all([
+		relationshipRef.set(username),
+		setItem(
+			namespace,
+			`users/${username}/contacts/${id}`,
+			AccountContactState,
+			{email, name, state: AccountContactState.States.OutgoingRequest},
+			true
+		),
+		getName(namespace, username).then(async aliceName => sendMailInternal(
+			email,
+			`Contact Request from ${aliceName}`,
+			`${name ? `${name}, ` : ''}${aliceName} has invited you to an encrypted Cyph chat.\n\n` +
+			`Click here to accept: ${accountsURL}accept/${id}\n` +
+			`Click here to reject: ${accountsURL}reject/${id}`
+		))
+	]);
 });
 
 

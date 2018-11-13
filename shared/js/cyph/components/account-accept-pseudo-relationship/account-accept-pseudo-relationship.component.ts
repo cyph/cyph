@@ -1,10 +1,16 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject} from 'rxjs';
+import {map, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
+import {DatabaseService} from '../../services/database.service';
 import {StringsService} from '../../services/strings.service';
+import {filterUndefinedOperator} from '../../util/filter';
 
 
 /**
- * Angular component for account accept pseudo relationship UI.
+ * Angular component for responding to a pseudo-relationship from a registered
+ * user and registering a new pseudo-account if necessary.
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,8 +18,62 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-accept-pseudo-relationship.component.scss'],
 	templateUrl: './account-accept-pseudo-relationship.component.html'
 })
-export class AccountAcceptPseudoRelationshipComponent extends BaseProvider {
+export class AccountAcceptPseudoRelationshipComponent extends BaseProvider implements OnInit {
+	/** Indicates whether request has been rejected. */
+	public readonly rejected	= new BehaviorSubject<boolean>(false);
+
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		const [accept, id]	= await Promise.all([
+			this.activatedRoute.data.pipe(
+				map((o: {accept?: boolean}) => o.accept),
+				filterUndefinedOperator(),
+				take(1)
+			).toPromise(),
+			this.activatedRoute.params.pipe(
+				map((o: {id?: string}) => o.id),
+				filterUndefinedOperator(),
+				take(1)
+			).toPromise()
+		]);
+
+		if (accept) {
+			const username	= await this.databaseService.callFunction(
+				'acceptPseudoRelationship',
+				{id}
+			);
+
+			await this.router.navigate(
+				typeof username === 'string' && username ?
+					[accountRoot, 'messages', 'user', username] :
+					[accountRoot, '404']
+			);
+		}
+		else {
+			try {
+				await this.databaseService.callFunction(
+					'rejectPseudoRelationship',
+					{id}
+				);
+
+				this.rejected.next(true);
+			}
+			catch {
+				await this.router.navigate([accountRoot, '404']);
+			}
+		}
+	}
+
 	constructor (
+		/** @ignore */
+		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly router: Router,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
