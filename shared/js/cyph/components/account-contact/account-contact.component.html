@@ -162,19 +162,19 @@
 			fxLayout='row'
 			*ngIf='!!contactState.email; else loading'
 		>
-			<mat-icon mat-card-avatar>person</mat-icon>
+			<mat-icon mat-card-avatar>contact_mail</mat-icon>
 
 			<ng-container *ngIf='!!contactState.name'>
 				<mat-card-title class='truncate'>
 					{{contactState.name}}
 				</mat-card-title>
 				<mat-card-subtitle class='truncate'>
-					{{contactState.email}}
+					<{{contactState.email}}>
 				</mat-card-subtitle>
 			</ng-container>
 
 			<mat-card-title class='truncate' *ngIf='!contactState.name'>
-				{{contactState.email}}
+				<{{contactState.email}}>
 			</mat-card-title>
 		</mat-card-header>
 	</ng-template>
