@@ -17,7 +17,7 @@ export class RegisteredRemoteUser implements IRemoteUser {
 			this.keys	= (async () => {
 				const username	= await this.username.pipe(take(1)).toPromise();
 
-				if (await this.accountDatabaseService.hasItem(`users/${username}/pseudoAccount`)) {
+				if (this.pseudoAccount) {
 					return {encryption: new Uint8Array(0)};
 				}
 				else {
@@ -42,6 +42,9 @@ export class RegisteredRemoteUser implements IRemoteUser {
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly pseudoAccount: boolean,
 
 		/** @inheritDoc */
 		public readonly username: Observable<string>

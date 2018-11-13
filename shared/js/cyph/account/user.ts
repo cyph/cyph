@@ -108,6 +108,9 @@ export class User {
 		''
 	);
 
+	/** Indicates that user is not a pseudo-account. */
+	public readonly pseudoAccount: false						= false;
+
 	/** Average rating. */
 	public readonly rating: () => Observable<number|undefined>	= memoize(() => toBehaviorSubject(
 		this.reviews.watch().pipe(map(reviews =>

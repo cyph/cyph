@@ -74,7 +74,12 @@ export class AccountSessionService extends SessionService {
 
 	/** Remote user. */
 	public readonly remoteUser			=
-		new BehaviorSubject<{anonymous: true}|User|undefined>(undefined)
+		new BehaviorSubject<
+			{anonymous: true; pseudoAccount: false; username: undefined}|
+			{anonymous: false; pseudoAccount: true; username: string}|
+			User|
+			undefined
+		>(undefined)
 	;
 
 	/** @inheritDoc */
@@ -197,7 +202,7 @@ export class AccountSessionService extends SessionService {
 				url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
 			});
 
-			this.remoteUser.next({anonymous: true});
+			this.remoteUser.next({anonymous: true, pseudoAccount: false, username: undefined});
 			this.state.sharedSecret.next(
 				`${
 					this.accountDatabaseService.currentUser.value.user.username
@@ -415,6 +420,12 @@ export class AccountSessionService extends SessionService {
 				await this.send([rpcEvents.requestSymmetricKey, {}]);
 			}
 		})();
+
+		if (await this.accountDatabaseService.hasItem(`users/${chat.username}/pseudoAccount`)) {
+			this.remoteUser.next({anonymous: false, pseudoAccount: true, username: chat.username});
+			this.resolveReady();
+			return;
+		}
 
 		const user	= await this.accountUserLookupService.getUser(chat.username, false);
 

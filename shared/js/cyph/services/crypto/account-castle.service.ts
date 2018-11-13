@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {of} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {
 	AnonymousRemoteUser,
@@ -92,7 +93,8 @@ export class AccountCastleService extends CastleService {
 
 					const remoteUser		= new RegisteredRemoteUser(
 						this.accountDatabaseService,
-						user.realUsername
+						user.pseudoAccount,
+						'realUsername' in user ? user.realUsername : of(user.username)
 					);
 
 					if (accountSessionService.ephemeralSubSession) {
