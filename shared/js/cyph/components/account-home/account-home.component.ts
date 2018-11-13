@@ -70,7 +70,7 @@ export class AccountHomeComponent extends BaseProvider implements AfterViewInit 
 		const email	= getFormValue(contactForm, 'string', 1, 0, 0);
 		const name	= getFormValue(contactForm, 'string', 2, 0, 0);
 
-		if (email) {
+		if (!email) {
 			return;
 		}
 
