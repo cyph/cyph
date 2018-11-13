@@ -8,10 +8,10 @@
 	[routerLink]='
 		(
 			!clickable ||
-			(contactStateData.email && contactStateData.state !== accountContactStates.Confirmed)
+			(contactState.email && contactState.state !== accountContactStates.Confirmed)
 		) ?
 			undefined :
-		contactStateData.email ?
+		contactState.email ?
 			(
 				accountService.routeRoot +
 				"messages/external-user/" +
@@ -32,7 +32,7 @@
 			)
 	'
 	fxFlex
-	*ngIf='accountContactsService.contactState(username).watch() | async as contactStateData'
+	*ngIf='accountContactsService.contactState(username).watch() | async as contactState'
 >
 	<ng-container *ngIf='(user | async)?.ready | async; else externalContact'>
 		<mat-card-header
@@ -44,12 +44,6 @@
 				(((user | async)?.unreadMessageCount | async) || 0) > 0
 			)'
 			matBadgePosition='above before'
-			*ngIf='
-				(
-					((user | async)?.contactState | async) ||
-					accountContactStates.Stranger
-				) as contactState
-			'
 		>
 			<img
 				mat-card-avatar
@@ -69,7 +63,7 @@
 			<div fxLayout='column' fxLayoutAlign='center start'>
 				<mat-card-title
 					class='truncate'
-					[class.incoming]='contactState === accountContactStates.IncomingRequest'
+					[class.incoming]='contactState.state === accountContactStates.IncomingRequest'
 				>
 					{{
 						((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor ?
@@ -80,7 +74,7 @@
 				</mat-card-title>
 				<mat-card-subtitle
 					class='truncate'
-					[class.incoming]='contactState === accountContactStates.IncomingRequest'
+					[class.incoming]='contactState.state === accountContactStates.IncomingRequest'
 				>
 					<ng-container *ngIf='
 						((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
@@ -106,7 +100,7 @@
 			></cyph-account-user-rating>
 
 			<div fxFlex fxLayoutAlign='end center' *ngIf='clickable'>
-				<ng-container *ngIf='contactState === accountContactStates.Confirmed'>
+				<ng-container *ngIf='contactState.state === accountContactStates.Confirmed'>
 					<button
 						mat-icon-button
 						cyphTranslate
@@ -126,7 +120,7 @@
 						<mat-icon>call</mat-icon>
 					</button>
 				</ng-container>
-				<ng-container *ngIf='contactState === accountContactStates.IncomingRequest'>
+				<ng-container *ngIf='contactState.state === accountContactStates.IncomingRequest'>
 					<button
 						mat-icon-button
 						cyphTranslate
@@ -150,7 +144,7 @@
 						<mat-icon>close</mat-icon>
 					</button>
 				</ng-container>
-				<ng-container *ngIf='contactState === accountContactStates.OutgoingRequest'>
+				<ng-container *ngIf='contactState.state === accountContactStates.OutgoingRequest'>
 					<mat-icon
 						cyphTranslate
 						matTooltip='Contact Request Pending'
@@ -166,21 +160,21 @@
 		<mat-card-header
 			class='pending'
 			fxLayout='row'
-			*ngIf='!!contactStateData.email; else loading'
+			*ngIf='!!contactState.email; else loading'
 		>
 			<mat-icon mat-card-avatar>person</mat-icon>
 
-			<ng-container *ngIf='!!contactStateData.name'>
+			<ng-container *ngIf='!!contactState.name'>
 				<mat-card-title class='truncate'>
-					{{contactStateData.name}}
+					{{contactState.name}}
 				</mat-card-title>
 				<mat-card-subtitle class='truncate'>
-					{{contactStateData.email}}
+					{{contactState.email}}
 				</mat-card-subtitle>
 			</ng-container>
 
-			<mat-card-title class='truncate' *ngIf='!contactStateData.name'>
-				{{contactStateData.email}}
+			<mat-card-title class='truncate' *ngIf='!contactState.name'>
+				{{contactState.email}}
 			</mat-card-title>
 		</mat-card-header>
 	</ng-template>
