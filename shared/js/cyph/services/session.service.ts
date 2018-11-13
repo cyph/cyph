@@ -402,13 +402,15 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		initialSecret: IAsyncValue<Uint8Array|undefined> =
 			new LocalAsyncValue<Uint8Array|undefined>(undefined)
 		,
-		reverseAlice: boolean = false
+		forceAlice?: boolean
 	) : Promise<IHandshakeState> {
 		await this.opened;
 
 		/* First person to join ephemeral session is "Bob" as optimization for Castle handshake */
 		const isAlice	=
-			this.sessionInitService.ephemeral || reverseAlice ?
+			typeof forceAlice === 'boolean' ?
+				forceAlice :
+			this.sessionInitService.ephemeral ?
 				!this.state.isAlice.value :
 				this.state.isAlice.value
 		;
