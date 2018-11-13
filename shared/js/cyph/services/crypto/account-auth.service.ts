@@ -119,7 +119,7 @@ export class AccountAuthService extends BaseProvider {
 	public async changeMasterKey (masterKey: string) : Promise<void> {
 		const currentUser	= await this.accountDatabaseService.getCurrentUser();
 
-		if (!currentUser.user.username || !masterKey) {
+		if (!currentUser.user.username || (masterKey === undefined || masterKey.length === 0)) {
 			return;
 		}
 
@@ -269,7 +269,7 @@ export class AccountAuthService extends BaseProvider {
 	) : Promise<boolean> {
 		await this.logout(false);
 
-		if (!username || !masterKey) {
+		if (!username || (masterKey === undefined || masterKey.length === 0)) {
 			return false;
 		}
 
@@ -554,14 +554,17 @@ export class AccountAuthService extends BaseProvider {
 		email?: string,
 		inviteCode?: string
 	) : Promise<boolean> {
-		if (!realUsername || !masterKey) {
-			return false;
-		}
-
 		let pseudoAccount	= false;
 		if (typeof realUsername !== 'string') {
 			pseudoAccount	= true;
 			realUsername	= uuid(true);
+		}
+
+		if (
+			!realUsername ||
+			(!pseudoAccount && (masterKey === undefined || masterKey.length === 0))
+		) {
+			return false;
 		}
 
 		const username	=  normalize(realUsername);
