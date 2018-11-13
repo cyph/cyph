@@ -27,6 +27,9 @@ import {
 } from '../components/account-notifications-subscribe';
 import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
+import {
+	AccountPseudoRelationshipResponseComponent
+} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {AccountStorageAnalyticsComponent} from '../components/account-storage-analytics';
@@ -90,6 +93,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotificationsSubscribeComponent,
 		AccountPostRegisterComponent,
 		AccountProfileComponent,
+		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
 		AccountStorageAnalyticsComponent,
@@ -128,6 +132,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotificationsSubscribeComponent,
 		AccountPostRegisterComponent,
 		AccountProfileComponent,
+		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
 		AccountStorageAnalyticsComponent,
@@ -166,6 +171,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotificationsSubscribeComponent,
 		AccountPostRegisterComponent,
 		AccountProfileComponent,
+		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
 		AccountSettingsComponent,
 		AccountStorageAnalyticsComponent,
