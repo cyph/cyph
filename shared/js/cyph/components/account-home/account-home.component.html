@@ -121,13 +121,12 @@
 				[class.open]='isSpeedDialOpen | async'
 				[matTooltip]='stringsService.addExternalContactTitle'
 				matTooltipPosition='left'
-				[cyphDropZoneClass]='false'
 				(click)='
 					addExternalContact();
 					isSpeedDialOpen.next(false);
 				'
 			>
-				<mat-icon>cloud_upload</mat-icon>
+				<mat-icon>person_add</mat-icon>
 			</button>
 			<a
 				mat-mini-fab
