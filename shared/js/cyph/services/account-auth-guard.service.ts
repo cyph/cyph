@@ -47,7 +47,7 @@ implements CanActivate, CanActivateChild {
 			return true;
 		}
 
-		if (this.pseudoAccountRoutes.indexOf(route.url[0].path) > -1) {
+		if (route.url.length > 0 && this.pseudoAccountRoutes.indexOf(route.url[0].path) > -1) {
 			this.accountAuthService.pseudoAccountLogin.next(true);
 		}
 
