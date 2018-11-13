@@ -66,6 +66,15 @@ export class StringsService extends BaseProvider {
 	public readonly access: string						= `Access`;
 
 	/** @see StringsService */
+	public readonly addExternalContactContent: string	=
+		`Friends with a loser who doesn't have a Cyph account? ` +
+		`Good news: you can still message them!`
+	;
+
+	/** @see StringsService */
+	public readonly addExternalContactTitle: string		= `Add External Contact`;
+
+	/** @see StringsService */
 	public readonly affTooltip: string					= `Opens in new tab`;
 
 	/** @see StringsService */
@@ -550,6 +559,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly name: string						= `Name`;
+
+	/** @see StringsService */
+	public readonly nameOptional: string				= `Name (optional)`;
 
 	/** @see StringsService */
 	public readonly nameOrPseudonym: string				= `Name or Pseudonym`;

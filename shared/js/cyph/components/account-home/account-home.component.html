@@ -116,6 +116,19 @@
 			>
 				<mat-icon>cloud_upload</mat-icon>
 			</button>
+			<button
+				mat-mini-fab
+				[class.open]='isSpeedDialOpen | async'
+				[matTooltip]='stringsService.addExternalContactTitle'
+				matTooltipPosition='left'
+				[cyphDropZoneClass]='false'
+				(click)='
+					addExternalContact();
+					isSpeedDialOpen.next(false);
+				'
+			>
+				<mat-icon>cloud_upload</mat-icon>
+			</button>
 			<a
 				mat-mini-fab
 				[class.open]='isSpeedDialOpen | async'
