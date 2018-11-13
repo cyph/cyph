@@ -38,6 +38,7 @@ export class AnonymousCastleService extends CastleService {
 			) :
 			new RegisteredRemoteUser(
 				this.accountDatabaseService,
+				false,
 				sessionService.remoteUsername
 			)
 		;
