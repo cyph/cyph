@@ -1,7 +1,7 @@
 /* tslint:disable:max-file-line-count */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {User} from '../account/user';
 import {
@@ -75,8 +75,20 @@ export class AccountSessionService extends SessionService {
 	/** Remote user. */
 	public readonly remoteUser			=
 		new BehaviorSubject<
-			{anonymous: true; contactID: undefined; pseudoAccount: false; username: undefined}|
-			{anonymous: false; contactID: Promise<string>; pseudoAccount: true; username: string}|
+			{
+				anonymous: true;
+				contactID: undefined;
+				name: undefined;
+				pseudoAccount: false;
+				username: undefined;
+			}|
+			{
+				anonymous: false;
+				contactID: Promise<string>;
+				name: Observable<string>;
+				pseudoAccount: true;
+				username: string;
+			}|
 			User|
 			undefined
 		>(undefined)
@@ -205,6 +217,7 @@ export class AccountSessionService extends SessionService {
 			this.remoteUser.next({
 				anonymous: true,
 				contactID: undefined,
+				name: undefined,
 				pseudoAccount: false,
 				username: undefined
 			});
@@ -427,12 +440,28 @@ export class AccountSessionService extends SessionService {
 		})();
 
 		if (await this.accountDatabaseService.hasItem(`users/${chat.username}/pseudoAccount`)) {
+			const contactState	=
+				await this.accountContactsService.contactState(chat.username).getValue()
+			;
+
+			const name			=
+				contactState.name ||
+				(contactState.email && `<${contactState.email}>`) ||
+				this.stringsService.friend
+			;
+
 			this.remoteUser.next({
 				anonymous: false,
 				contactID: this.accountContactsService.getContactID(chat.username),
+				name: of(name),
 				pseudoAccount: true,
 				username: chat.username
 			});
+
+			if (setHeader) {
+				this.accountService.setHeader({mobile: name});
+			}
+
 			this.resolveReady();
 			return;
 		}
