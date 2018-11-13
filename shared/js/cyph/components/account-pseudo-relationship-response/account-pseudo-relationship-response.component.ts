@@ -14,11 +14,11 @@ import {filterUndefinedOperator} from '../../util/filter';
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	selector: 'cyph-account-accept-pseudo-relationship',
-	styleUrls: ['./account-accept-pseudo-relationship.component.scss'],
-	templateUrl: './account-accept-pseudo-relationship.component.html'
+	selector: 'cyph-account-pseudo-relationship-response',
+	styleUrls: ['./account-pseudo-relationship-response.component.scss'],
+	templateUrl: './account-pseudo-relationship-response.component.html'
 })
-export class AccountAcceptPseudoRelationshipComponent extends BaseProvider implements OnInit {
+export class AccountPseudoRelationshipResponseComponent extends BaseProvider implements OnInit {
 	/** Indicates whether request has been rejected. */
 	public readonly rejected	= new BehaviorSubject<boolean>(false);
 

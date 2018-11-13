@@ -2,9 +2,6 @@
 
 import {Route} from '@angular/router';
 import {AccountComponent} from '../components/account';
-import {
-	AccountAcceptPseudoRelationshipComponent
-} from '../components/account-accept-pseudo-relationship';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
@@ -23,6 +20,9 @@ import {
 } from '../components/account-notifications-subscribe';
 import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
+import {
+	AccountPseudoRelationshipResponseComponent
+} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {AccountWalletsComponent} from '../components/account-wallets';
@@ -57,7 +57,7 @@ export const account: Route	= {
 		},
 		{
 			path: 'accept/:id',
-			component: AccountAcceptPseudoRelationshipComponent,
+			component: AccountPseudoRelationshipResponseComponent,
 			data: {accept: true}
 		},
 		{path: 'appointments', component: AccountAppointmentsComponent},
@@ -229,7 +229,7 @@ export const account: Route	= {
 		{path: 'register/:step', component: AccountRegisterComponent},
 		{
 			path: 'reject/:id',
-			component: AccountAcceptPseudoRelationshipComponent,
+			component: AccountPseudoRelationshipResponseComponent,
 			data: {accept: false}
 		},
 		{
