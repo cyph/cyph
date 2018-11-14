@@ -99,8 +99,8 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	}
 
 	/** This user's username. */
-	public get username () : string|undefined {
-		return this.contact ? this.contact.username : undefined;
+	public get username () : string {
+		return this.contact ? this.contact.username : '';
 	}
 
 	constructor (

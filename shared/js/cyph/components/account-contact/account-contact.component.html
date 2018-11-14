@@ -15,10 +15,10 @@
 			(
 				accountService.routeRoot +
 				"messages/external-user/" +
-				(username || "")
+				username
 			) :
 		envService.isTelehealth ?
-			accountService.routeRoot + "profile/" + (username || "") :
+			accountService.routeRoot + "profile/" + username :
 		((user | async)?.contactID | async) ?
 			(
 				accountService.routeRoot +
@@ -28,7 +28,7 @@
 			(
 				accountService.routeRoot +
 				"messages/user/" +
-				(username || "")
+				username
 			)
 	'
 	fxFlex
@@ -55,7 +55,7 @@
 				aria-label='clickable ? stringsService.openProfile : ""'
 				[routerLink]='!clickable ?
 					undefined :
-					accountService.routeRoot + "profile/" + (username || "")
+					accountService.routeRoot + "profile/" + username
 				'
 				(click)='$event.stopPropagation()'
 			/>
@@ -140,7 +140,7 @@
 				[matTooltip]='stringsService.openProfile'
 				[routerLink]='!clickable ?
 					undefined :
-					accountService.routeRoot + "profile/" + (username || "")
+					accountService.routeRoot + "profile/" + username
 				'
 				(click)='$event.stopPropagation()'
 			>
