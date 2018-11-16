@@ -70,7 +70,11 @@ export class AccountAuthService extends BaseProvider {
 	}
 
 	/** @ignore */
-	private async passwordHash (username: string, password: string) : Promise<Uint8Array> {
+	private async passwordHash (username: string, password?: string) : Promise<Uint8Array> {
+		if (password === undefined) {
+			return new Uint8Array(0);
+		}
+
 		username	= normalize(username);
 
 		return (
@@ -206,9 +210,13 @@ export class AccountAuthService extends BaseProvider {
 	/** Tries to get saved PIN hash. */
 	public async getSavedPIN () : Promise<Uint8Array|undefined> {
 		try {
-			const [pinDuration, pinHash, pinTimestamp, timestamp]	= await Promise.all([
+			const pinHash	= await this.localStorageService.getItem('pinHash', BinaryProto);
+			if (pinHash.length === 0) {
+				return pinHash;
+			}
+
+			const [pinDuration, pinTimestamp, timestamp]	= await Promise.all([
 				this.localStorageService.getItem('pinDuration', NumberProto),
-				this.localStorageService.getItem('pinHash', BinaryProto),
 				this.localStorageService.getItem('pinTimestamp', NumberProto),
 				getTimestamp()
 			]);
@@ -240,7 +248,10 @@ export class AccountAuthService extends BaseProvider {
 
 	/** Removes PIN from local storage. */
 	public async lock (reload: boolean = true) : Promise<void> {
-		await this.localStorageService.removeItem('pinHash');
+		const pinHash	= await this.localStorageService.getItem('pinHash', BinaryProto);
+		if (pinHash.length > 0) {
+			await this.localStorageService.removeItem('pinHash');
+		}
 
 		if (!reload) {
 			return;
@@ -283,7 +294,7 @@ export class AccountAuthService extends BaseProvider {
 
 				masterKey	= await this.passwordHash(username, masterKey);
 			}
-			else if (pin !== undefined) {
+			else if (pin !== undefined && pin.length > 0) {
 				errorLogMessage	= 'decrypting masterKey with PIN';
 
 				masterKey	= await this.potassiumService.secretBox.open(
@@ -482,10 +493,12 @@ export class AccountAuthService extends BaseProvider {
 					'masterKey',
 					BinaryProto,
 					/* Locally encrypt master key with PIN */
-					await this.potassiumService.secretBox.seal(
-						masterKey,
-						pinHash
-					)
+					pinHash.length > 0 ?
+						await this.potassiumService.secretBox.seal(
+							masterKey,
+							pinHash
+						) :
+						masterKey
 				),
 				this.localStorageService.setItem(
 					'pinIsCustom',
@@ -548,8 +561,8 @@ export class AccountAuthService extends BaseProvider {
 	/** Registers. */
 	public async register (
 		realUsername: string|{pseudoAccount: true},
-		masterKey: string|undefined,
-		pin: {isCustom: boolean; value: string},
+		masterKey?: string,
+		pin: {isCustom: boolean; value?: string} = {isCustom: true},
 		name: string = '',
 		email?: string,
 		inviteCode?: string
@@ -780,8 +793,8 @@ export class AccountAuthService extends BaseProvider {
 			pin
 		);
 
-		await Promise.all([
-			this.localStorageService.setItem(
+		await Promise.all<{}>([
+			pin.length === 0 ? Promise.resolve() : this.localStorageService.setItem(
 				'pinDuration',
 				NumberProto,
 				duration !== undefined ?
@@ -798,7 +811,7 @@ export class AccountAuthService extends BaseProvider {
 				BinaryProto,
 				pinHash
 			),
-			this.localStorageService.setItem(
+			pin.length === 0 ? Promise.resolve() : this.localStorageService.setItem(
 				'pinTimestamp',
 				NumberProto,
 				await getTimestamp()
