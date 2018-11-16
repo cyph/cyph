@@ -120,7 +120,7 @@
 	<mat-nav-list>
 		<ng-container *ngIf='
 			currentUser.confirmed &&
-			envService.isTelehealth &&
+			envService.isTelehealthFull &&
 			(currentUser.user.userType | async) === accountUserTypes.Standard &&
 			(accountFilesService.incomingFilesFiltered.redoxPatients | async)?.length > 0
 		'>
@@ -176,7 +176,7 @@
 
 		<ng-container *ngIf='
 			currentUser.confirmed &&
-			envService.isTelehealth &&
+			envService.isTelehealthFull &&
 			(currentUser.user.userType | async) !== accountUserTypes.TelehealthDoctor
 		'>
 			<a
@@ -196,7 +196,7 @@
 
 		<ng-container *ngIf='
 			currentUser.confirmed &&
-			envService.isTelehealth &&
+			envService.isTelehealthFull &&
 			(currentUser.user.userType | async) !== accountUserTypes.Standard
 		'>
 			<a
@@ -358,7 +358,7 @@
 				aria-label='Forms'
 				[routerLink]='accountService.routeRoot + "forms"'
 				(click)='click()'
-				*ngIf='!envService.environment.production || envService.isTelehealth'
+				*ngIf='!envService.environment.production || envService.isTelehealthFull'
 			>
 				<mat-icon
 					mat-list-icon

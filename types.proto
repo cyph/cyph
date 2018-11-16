@@ -751,14 +751,17 @@ message Environment {
 		/** Indicates whether this is the telehealth version. */
 		bool telehealth = 16;
 
+		/** Indicates whether this is the full telehealth version. */
+		bool telehealthFull = 17;
+
 		/** Page title of this Cyph instance. */
-		string title = 17;
+		string title = 18;
 
 		/** Indicates whether this environment should share the main Cyph database namespace. */
-		bool usePrimaryNamespace = 18;
+		bool usePrimaryNamespace = 19;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 19;
+		bool whiteLabel = 20;
 	}
 
 	/** Firebase configuration. */

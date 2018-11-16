@@ -189,7 +189,16 @@ export class Env extends EnvDeploy {
 	/** @see CustomBuildConfig.telehealth */
 	public readonly isTelehealth: boolean		=
 		environment.customBuild !== undefined &&
-		environment.customBuild.config.telehealth === true
+		(
+			environment.customBuild.config.telehealth === true ||
+			environment.customBuild.config.telehealthFull === true
+		)
+	;
+
+	/** @see CustomBuildConfig.telehealthFull */
+	public readonly isTelehealthFull: boolean	=
+		environment.customBuild !== undefined &&
+		environment.customBuild.config.telehealthFull === true
 	;
 
 	/** Indicates whether this is a WebKit/Blink browser. */
