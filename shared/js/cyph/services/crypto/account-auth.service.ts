@@ -625,7 +625,7 @@ export class AccountAuthService extends BaseProvider {
 							throw RegistrationErrorCodes.InvalidInviteCode;
 						}
 
-						await Promise.all<{}|void>([
+						await Promise.all<{}>([
 							this.setItem(
 								`users/${username}/inviterUsername`,
 								StringProto,
@@ -638,7 +638,7 @@ export class AccountAuthService extends BaseProvider {
 									AccountContactState,
 									{state: AccountContactState.States.OutgoingRequest}
 								) :
-								undefined
+								Promise.resolve()
 						]);
 					}
 				})()
@@ -651,7 +651,7 @@ export class AccountAuthService extends BaseProvider {
 				)
 			;
 
-			await Promise.all([
+			await Promise.all<{}>([
 				masterKeyHashPromise.then(async masterKeyHash =>
 					this.setItem(
 						`users/${username}/loginData`,
@@ -678,8 +678,6 @@ export class AccountAuthService extends BaseProvider {
 					`users/${username}/email`,
 					StringProto,
 					email
-				).then(
-					() => {}
 				)),
 				this.setItem(
 					`users/${username}/publicProfileExtra`,
@@ -713,8 +711,6 @@ export class AccountAuthService extends BaseProvider {
 						BinaryProto,
 						new Uint8Array(0),
 						true
-					).then(
-						() => {}
 					) :
 					this.setItem(
 						`users/${username}/certificateRequest`,
