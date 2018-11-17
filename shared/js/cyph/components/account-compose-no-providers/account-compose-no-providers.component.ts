@@ -4,6 +4,7 @@ import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
+import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
@@ -27,6 +28,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 
 	constructor (
 		activatedRoute: ActivatedRoute,
+		accountAuthService: AccountAuthService,
 		accountChatService: AccountChatService,
 		accountContactsService: AccountContactsService,
 		accountFilesService: AccountFilesService,
@@ -39,6 +41,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 	) {
 		super(
 			activatedRoute,
+			accountAuthService,
 			accountChatService,
 			accountContactsService,
 			accountFilesService,
