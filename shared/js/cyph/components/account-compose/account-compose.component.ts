@@ -5,12 +5,14 @@ import {map} from 'rxjs/operators';
 import {User} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {States} from '../../chat/enums';
+import {emailPattern} from '../../email-pattern';
 import {AccountFileRecord, AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
+import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
@@ -47,6 +49,19 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
 		ChatMessageValue.Types
+	;
+
+	/** @see emailPattern */
+	public readonly emailPattern											= emailPattern;
+
+	/** Email address to use for new pseudo-account. */
+	public readonly fromEmail												=
+		new BehaviorSubject<string>('')
+	;
+
+	/** Name to use for new pseudo-account. */
+	public readonly fromName												=
+		new BehaviorSubject<string>('')
 	;
 
 	/** Indicates whether this component is using its own service providers. */
@@ -135,7 +150,7 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 			const recipientUsers	= Array.from(this.recipients.value);
 			const recipients		= recipientUsers.map(o => o.username);
 
-			if (recipients.length < 1 || !this.accountDatabaseService.currentUser.value) {
+			if (recipients.length < 1) {
 				this.sent.next(false);
 				return;
 			}
@@ -155,9 +170,14 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 					),
 					{
 						calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,
+						fromEmail: this.fromEmail.value || undefined,
+						fromName: this.fromName.value || undefined,
 						participants: [
 							...recipients,
-							this.accountDatabaseService.currentUser.value.user.username
+							...(this.accountDatabaseService.currentUser.value ?
+								[this.accountDatabaseService.currentUser.value.user.username] :
+								[]
+							)
 						],
 						rsvpSessionSubID: uuid()
 					},
@@ -165,6 +185,24 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 				).result);
 			}
 			else {
+				if (
+					!this.accountDatabaseService.currentUser.value &&
+					!(await this.accountAuthService.register(
+						{pseudoAccount: true},
+						undefined,
+						undefined,
+						this.fromName.value,
+						this.fromEmail.value
+					))
+				) {
+					this.sent.next(false);
+					return;
+				}
+
+				if (recipients.length === 1) {
+					await this.accountContactsService.addContact(recipients[0]);
+				}
+
 				const chat	=
 					recipients.length === 1 ?
 						{username: recipients[0]} :
@@ -267,6 +305,9 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
 		private readonly accountChatService: AccountChatService,

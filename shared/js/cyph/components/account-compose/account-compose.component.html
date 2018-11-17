@@ -30,6 +30,33 @@
 					fxLayoutGap='8px'
 					[fxShow]='(sent | async) === false'
 				>
+					<ng-container *ngIf='
+						(accountDatabaseService.currentUser | async) === undefined
+					'>
+						<mat-form-field fxFlex>
+							<input
+								matInput
+								cyphTranslate
+								[ngModel]='fromName | async'
+								(ngModelChange)='fromName.next($event)'
+								name='name'
+								placeholder='Name'
+							/>
+						</mat-form-field>
+						<mat-form-field fxFlex>
+							<input
+								matInput
+								cyphTranslate
+								[ngModel]='fromEmail | async'
+								(ngModelChange)='fromEmail.next($event)'
+								name='email'
+								type='email'
+								[pattern]='emailPattern'
+								placeholder='Email'
+							/>
+						</mat-form-field>
+					</ng-container>
+
 					<cyph-account-contacts-search
 						#accountContactsSearch
 						[class.visibility-hidden]='!!searchUsername.value && (

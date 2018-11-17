@@ -355,6 +355,12 @@ message Appointment {
 	/** Relevant forms. */
 	repeated Form forms = 3;
 
+	/** Unregistered sender email address. */
+	string fromEmail = 8;
+
+	/** Unregistered sender email name. */
+	string fromName = 9;
+
 	/** Notes taken during the appointment. */
 	string notes = 4;
 

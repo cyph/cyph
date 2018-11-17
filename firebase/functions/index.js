@@ -373,13 +373,31 @@ exports.userContactSet	= functions.database.ref(
 		return removeItem(params.namespace, otherContactURL);
 	}
 
-	const otherContactState		= (await getItem(
-		params.namespace,
-		otherContactURL,
-		AccountContactState
-	).catch(
-		() => ({state: undefined})
-	)).state;
+	const pseudoAccountRef	= database.ref(`${params.namespace}/users/${username}/pseudoAccount`);
+
+	const [otherContactState, otherContactStateNewData]	= await Promise.all([
+		getItem(
+			params.namespace,
+			otherContactURL,
+			AccountContactState
+		).then(
+			o => o.state
+		).catch(
+			() => undefined
+		),
+		pseudoAccountRef.once('value').then(async o => !o.val() ? {} : {
+			email: ' ',
+			name: (await getItem(
+				params.namespace,
+				`users/${username}/publicProfile`,
+				AccountUserProfile,
+				true,
+				true
+			).catch(
+				() => ({})
+			)).name
+		})
+	]);
 
 	/* Handle all possible valid contact state pairings */
 	switch (contactState) {
@@ -402,7 +420,10 @@ exports.userContactSet	= functions.database.ref(
 						params.namespace,
 						otherContactURL,
 						AccountContactState,
-						{state: AccountContactState.States.Confirmed},
+						{
+							...otherContactStateNewData,
+							state: AccountContactState.States.Confirmed
+						},
 						true
 					);
 
@@ -419,7 +440,10 @@ exports.userContactSet	= functions.database.ref(
 							params.namespace,
 							otherContactURL,
 							AccountContactState,
-							{state: AccountContactState.States.IncomingRequest},
+							{
+								...otherContactStateNewData,
+								state: AccountContactState.States.IncomingRequest
+							},
 							true
 						)
 					]);
@@ -432,7 +456,10 @@ exports.userContactSet	= functions.database.ref(
 						params.namespace,
 						otherContactURL,
 						AccountContactState,
-						{state: AccountContactState.States.OutgoingRequest},
+						{
+							...otherContactStateNewData,
+							state: AccountContactState.States.OutgoingRequest
+						},
 						true
 					);
 
@@ -467,7 +494,10 @@ exports.userContactSet	= functions.database.ref(
 							params.namespace,
 							otherContactURL,
 							AccountContactState,
-							{state: AccountContactState.States.Confirmed},
+							{
+								...otherContactStateNewData,
+								state: AccountContactState.States.Confirmed
+							},
 							true
 						)
 					]);
@@ -477,7 +507,10 @@ exports.userContactSet	= functions.database.ref(
 						params.namespace,
 						otherContactURL,
 						AccountContactState,
-						{state: AccountContactState.States.IncomingRequest},
+						{
+							...otherContactStateNewData,
+							state: AccountContactState.States.IncomingRequest
+						},
 						true
 					);
 			}

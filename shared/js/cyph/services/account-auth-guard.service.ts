@@ -13,10 +13,12 @@ implements CanActivate, CanActivateChild {
 	/** @ignore */
 	private readonly anonymouslyAccessibleRoutes: string[]	= [
 		'404',
+		'compose',
 		'logout',
 		'profile',
 		'register',
 		'reject',
+		'request-appointment',
 		'upload-ehr-credentials'
 	];
 

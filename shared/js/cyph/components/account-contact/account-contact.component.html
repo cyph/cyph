@@ -117,7 +117,7 @@
 				<mat-card-title class='truncate'>
 					{{contactState.name}}
 				</mat-card-title>
-				<mat-card-subtitle class='truncate'>
+				<mat-card-subtitle class='truncate' *ngIf='contactState.email !== " "'>
 					<{{contactState.email}}>
 				</mat-card-subtitle>
 			</div>
