@@ -226,7 +226,12 @@
 
 			"pseudoRelationships": {
 				"$relationship": {
-					".validate": "newData.isString()"
+					"aliceUsername": {
+						".validate": "newData.isString()"
+					},
+					"bobEmail": {
+						".validate": "newData.isString()"
+					}
 				}
 			},
 

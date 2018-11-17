@@ -22,6 +22,7 @@ const {
 	functionsUser,
 	getHash,
 	getItem,
+	hasItem,
 	messaging,
 	removeItem,
 	setItem,
@@ -114,16 +115,19 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 	const id				= validateInput(data.id);
 	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
 
-	const [alice, bob]	= await Promise.all([
+	const [relationshipVal, bob]	= await Promise.all([
 		relationshipRef.once('value').then(o => o.val()),
 		getUsername()
 	]);
+
+	const alice	= relationshipVal.aliceUsername;
+	const email	= relationshipVal.bobEmail;
 
 	if (!alice || !bob) {
 		throw new Error('Users not found.');
 	}
 
-	const {email, name}	= await getItem(
+	const {name}	= await getItem(
 		namespace,
 		`users/${alice}/contacts/${id}`,
 		AccountContactState
@@ -148,6 +152,15 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 			AccountContactState,
 			{state: AccountContactState.States.Confirmed},
 			true
+		),
+		hasItem(namespace, `users/${bob}/email`).then(async hasEmail =>
+			hasEmail ? undefined : setItem(
+				namespace,
+				`users/${bob}/email`,
+				StringProto,
+				email,
+				true
+			)
 		),
 		getName(namespace, alice).then(async aliceName => notify(
 			namespace,
@@ -259,15 +272,15 @@ exports.rejectPseudoRelationship	= onCall(async (data, context, namespace, getUs
 	const id				= validateInput(data.id);
 	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
 
-	const alice	= await relationshipRef.once('value').then(o => o.val());
+	const {aliceUsername}	= await relationshipRef.once('value').then(o => o.val());
 
-	if (!alice) {
+	if (!aliceUsername) {
 		throw new Error('Relationship request not found.');
 	}
 
 	await Promise.all([
 		relationshipRef.remove(),
-		removeItem(namespace, `users/${alice}/contacts/${id}`)
+		removeItem(namespace, `users/${aliceUsername}/contacts/${id}`)
 	]);
 });
 
@@ -281,7 +294,7 @@ exports.requestPseudoRelationship	= onCall(async (data, context, namespace, getU
 	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
 
 	await Promise.all([
-		relationshipRef.set(username),
+		relationshipRef.set({aliceUsername: username, bobEmail: email}),
 		setItem(
 			namespace,
 			`users/${username}/contacts/${id}`,

@@ -677,7 +677,8 @@ export class AccountAuthService extends BaseProvider {
 				).then(async () => !email ? Promise.resolve() : this.databaseService.setItem(
 					`users/${username}/email`,
 					StringProto,
-					email
+					email,
+					true
 				)),
 				this.setItem(
 					`users/${username}/publicProfileExtra`,

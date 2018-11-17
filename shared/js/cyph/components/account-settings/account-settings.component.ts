@@ -46,7 +46,11 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	public readonly email: IAsyncValue<string>	= this.accountDatabaseService.getAsyncValue(
 		'email',
 		StringProto,
-		SecurityModels.unprotected
+		SecurityModels.unprotected,
+		undefined,
+		undefined,
+		undefined,
+		true
 	);
 
 	/** @see emailPattern */
