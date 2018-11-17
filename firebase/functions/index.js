@@ -1,11 +1,11 @@
-const cors					= require('cors')({origin: true});
-const firebase				= require('firebase');
-const admin					= require('firebase-admin');
-const functions				= require('firebase-functions');
-const {sendMailInternal}	= require('./email');
-const {emailRegex}			= require('./email-regex');
-const namespaces			= require('./namespaces');
-const {sleep, uuid}			= require('./util');
+const cors							= require('cors')({origin: true});
+const firebase						= require('firebase');
+const admin							= require('firebase-admin');
+const functions						= require('firebase-functions');
+const {sendMail, sendMailInternal}	= require('./email');
+const {emailRegex}					= require('./email-regex');
+const namespaces					= require('./namespaces');
+const {sleep, uuid}					= require('./util');
 
 const {
 	AccountContactState,
@@ -171,6 +171,37 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 	]);
 
 	return alice;
+});
+
+
+exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername) => {
+	const id				= uuid();
+	const inviterUsername	= await getUsername();
+
+	const url	=
+		`https://cyph.${
+			data.callType === 'audio' ?
+				'audio' :
+			data.callType === 'video' ?
+				'video' :
+				'im'
+		}/#${inviterUsername}/${id}`
+	;
+
+	await sendMail(
+		database,
+		namespace,
+		data.to,
+		'Cyph Appointment',
+		undefined,
+		{
+			endTime: data.eventDetails.endTime,
+			inviterUsername,
+			location: url,
+			startTime: data.eventDetails.startTime,
+			summary: 'Cyph Appointment'
+		}
+	);
 });
 
 
