@@ -40,7 +40,7 @@ const sendMailInternal	= async (
 	subject,
 	text,
 	eventDetails,
-	eventinviter,
+	eventInviter,
 	accountsURL
 ) => transporter.sendMail({
 	from: `Cyph <${auth.user}>`,
@@ -49,11 +49,11 @@ const sendMailInternal	= async (
 		content: ical({
 			domain: 'cyph.com',
 			events: [{
-				attendees: [to, eventinviter],
+				attendees: [to, eventInviter],
 				description: eventDetails.description,
 				end: new Date(eventDetails.endTime),
 				location: eventDetails.location,
-				organizer: eventinviter,
+				organizer: eventInviter,
 				start: new Date(eventDetails.startTime),
 				summary: eventDetails.summary
 			}],
@@ -67,9 +67,9 @@ const sendMailInternal	= async (
 	to:
 		typeof to === 'string' ?
 			to :
-		!eventinviter || !eventinviter.formatted ?
+		!eventInviter || !eventInviter.formatted ?
 			to.formatted :
-			[to.formatted, eventinviter.formatted]
+			[to.formatted, eventInviter.formatted]
 });
 
 /**
@@ -89,7 +89,7 @@ const sendMail			= async (database, namespace, username, subject, text, eventDet
 		return;
 	}
 
-	const eventinviter	= eventDetails && typeof eventDetails.inviterUsername === 'string' ?
+	const eventInviter	= eventDetails && typeof eventDetails.inviterUsername === 'string' ?
 		await getEmailAddress(database, namespace, eventDetails.inviterUsername) :
 		undefined
 	;
@@ -99,7 +99,7 @@ const sendMail			= async (database, namespace, username, subject, text, eventDet
 		subject,
 		text,
 		eventDetails,
-		eventinviter,
+		eventInviter,
 		namespaces[namespace].accountsURL
 	);
 };
