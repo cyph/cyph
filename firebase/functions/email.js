@@ -20,13 +20,21 @@ const template		= new Promise((resolve, reject) => {
 });
 
 const getEmailAddress	= async (database, namespace, username) => {
-	const internalURL	= `${namespace}/users/${normalize(username)}/internal`;
+	let email, name;
 
-	const [email, name]	= (await Promise.all(['email', 'name'].map(async k =>
-		database.ref(`${internalURL}/${k}`).once('value')
-	))).map(o =>
-		o.val() || undefined
-	);
+	if (typeof username === 'object') {
+		email	= username.email;
+		name	= username.name;
+	}
+	else {
+		const internalURL	= `${namespace}/users/${normalize(username)}/internal`;
+
+		[email, name]		= (await Promise.all(['email', 'name'].map(async k =>
+			database.ref(`${internalURL}/${k}`).once('value')
+		))).map(o =>
+			o.val() || undefined
+		);
+	}
 
 	return {
 		email,
