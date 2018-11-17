@@ -507,7 +507,7 @@ exports.userEmailSet	= functions.database.ref(
 	const userURL					= `${params.namespace}/users/${username}`;
 	const internalURL				= `${userURL}/internal`;
 	const emailRef					= database.ref(`${internalURL}/email`);
-	const pseudoAccountRef			= database.ref(`${userURL}/pseudoAccountRef`);
+	const pseudoAccountRef			= database.ref(`${userURL}/pseudoAccount`);
 	const registrationEmailSentRef	= database.ref(`${internalURL}/registrationEmailSent`);
 
 	const email						= await getItem(
