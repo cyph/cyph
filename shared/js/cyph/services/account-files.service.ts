@@ -1482,6 +1482,10 @@ export class AccountFilesService extends BaseProvider {
 			anonymous	= true;
 			username	= shareWithUser;
 		}
+		else if (shareWithUser instanceof Array && shareWithUser.length > 0) {
+			anonymous	= true;
+			username	= shareWithUser[0];
+		}
 		else {
 			throw new Error('Invalid AccountFilesService.upload input.');
 		}
