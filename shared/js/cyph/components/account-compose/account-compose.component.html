@@ -59,7 +59,7 @@
 
 					<cyph-account-contacts-search
 						#accountContactsSearch
-						[class.visibility-hidden]='!!searchUsername.value && (
+						fxHide='!!searchUsername.value && (
 							(messageType | async) === chatMessageValueTypes.CalendarInvite ||
 							(messageType | async) === chatMessageValueTypes.Form
 						)'
