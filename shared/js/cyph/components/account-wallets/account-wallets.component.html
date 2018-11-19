@@ -1,7 +1,7 @@
 <div
 	fxFlexFill
 	[class.initiating]='accountFilesService.showSpinner | async'
-	*ngIf='accountService.enableWallets'
+	*ngIf='accountService.enableWallets | async'
 >
 	<div
 		*ngIf='(accountFilesService.filesListFiltered.wallets | async)?.length < 1; else wallets'

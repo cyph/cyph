@@ -77,11 +77,15 @@ export class AccountService extends BaseProvider {
 	;
 
 	/** Indicates whether Wallets is enabled. */
-	public readonly enableWallets: boolean				=
-		this.envService.debug || (
-			!!this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.enableWallets === true
-		)
+	public readonly enableWallets						=
+		(
+			this.envService.debug || (
+				!!this.envService.environment.customBuild &&
+				this.envService.environment.customBuild.config.enableWallets === true
+			)
+		) ?
+			new BehaviorSubject<boolean>(true) :
+			this.envService.pro
 	;
 
 	/** Indicates the status of the interstitial. */

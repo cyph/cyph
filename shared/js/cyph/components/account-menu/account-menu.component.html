@@ -406,7 +406,7 @@
 				aria-label='Wallets'
 				[routerLink]='accountService.routeRoot + "wallets"'
 				(click)='click()'
-				*ngIf='accountService.enableWallets'
+				*ngIf='accountService.enableWallets | async'
 			>
 				<mat-icon
 					mat-list-icon
