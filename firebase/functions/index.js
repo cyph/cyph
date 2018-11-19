@@ -2,10 +2,11 @@ const cors							= require('cors')({origin: true});
 const firebase						= require('firebase');
 const admin							= require('firebase-admin');
 const functions						= require('firebase-functions');
+const {config}						= require('./config');
 const {sendMail, sendMailInternal}	= require('./email');
 const {emailRegex}					= require('./email-regex');
 const namespaces					= require('./namespaces');
-const {sleep, uuid}					= require('./util');
+const {readableID, sleep, uuid}		= require('./util');
 
 const {
 	AccountContactState,
@@ -175,7 +176,7 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 
 
 exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername) => {
-	const id				= uuid();
+	const id				= readableID(config.cyphIDLength);
 	const inviterUsername	= await getUsername();
 
 	const url	=
