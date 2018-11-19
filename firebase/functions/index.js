@@ -179,14 +179,31 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 	const id				= readableID(config.cyphIDLength);
 	const inviterUsername	= await getUsername();
 
-	const url	=
-		`https://cyph.${
-			data.callType === 'audio' ?
-				'audio' :
-			data.callType === 'video' ?
-				'video' :
-				'im'
-		}/#${inviterUsername}/${id}`
+	/* TODO: Generalize this after making ephemeral a sub-route of accounts */
+	const domain	=
+		namespace === 'cyph.healthcare' ?
+			(
+				data.callType === 'audio' ?
+					'audio.cyph.healthcare' :
+				data.callType === 'video' ?
+					'video.cyph.healthcare' :
+					'im.cyph.healthcare'
+			) :
+		namespace === 'cyph.pro' ?
+			(
+				data.callType === 'audio' ?
+					'audio.cyph.pro' :
+				data.callType === 'video' ?
+					'video.cyph.pro' :
+					'cyph.pro'
+			) :
+			(
+				data.callType === 'audio' ?
+					'cyph.audio' :
+				data.callType === 'video' ?
+					'cyph.video' :
+					'cyph.im'
+			)
 	;
 
 	await sendMail(
@@ -198,7 +215,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 		{
 			endTime: data.eventDetails.endTime,
 			inviterUsername,
-			location: url,
+			location: `https://${domain}/#${inviterUsername}/${id}`,
 			startTime: data.eventDetails.startTime,
 			summary: 'Cyph Appointment'
 		}
