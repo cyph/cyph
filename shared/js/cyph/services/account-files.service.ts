@@ -154,7 +154,7 @@ export class AccountFilesService extends BaseProvider {
 		subroutable: boolean;
 	}>	= {
 		[AccountFileRecord.RecordTypes.Appointment]: {
-			blockAnonymous: true,
+			blockAnonymous: false,
 			description: 'Appointment',
 			incoming: () => this.incomingFilesFiltered.appointments,
 			isOfType: (file: any) => typeof file.calendarInvite === 'object',
