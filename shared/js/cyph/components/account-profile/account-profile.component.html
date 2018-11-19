@@ -590,7 +590,7 @@
 										[routerLink]='
 											accountService.routeRoot +
 											"request-appointment/" +
-											(user.contactID | async)
+											((user.contactID | async) || ("user/" + user.username))
 										'
 									>
 										Request Appointment

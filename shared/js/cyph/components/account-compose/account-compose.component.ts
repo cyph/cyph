@@ -286,9 +286,10 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 
 		this.subscriptions.push(this.activatedRoute.params.subscribe(async o => {
 			const username: string|undefined	=
-				await this.accountContactsService.getContactUsername(o.contactID).catch(() =>
+				o.username ||
+				(await this.accountContactsService.getContactUsername(o.contactID).catch(() =>
 					undefined
-				)
+				))
 			;
 
 			if (!username) {

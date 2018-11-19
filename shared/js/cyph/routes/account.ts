@@ -140,6 +140,11 @@ export const account: Route	= {
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.Quill}
 		},
+		{
+			path: 'compose/user/:username',
+			component: AccountComposeComponent,
+			data: {messageType: ChatMessageValue.Types.Quill}
+		},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
 		{path: 'docs', component: AccountNotesComponent, data: {realTime: true}},
@@ -244,6 +249,11 @@ export const account: Route	= {
 		},
 		{
 			path: 'request-appointment/:contactID',
+			component: AccountComposeComponent,
+			data: {messageType: ChatMessageValue.Types.CalendarInvite}
+		},
+		{
+			path: 'request-appointment/user/:username',
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.CalendarInvite}
 		},
