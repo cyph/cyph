@@ -278,7 +278,12 @@ export class AccountService extends BaseProvider {
 		const incomingCalls			= this.accountDatabaseService.getAsyncMap(
 			'incomingCalls',
 			NeverProto,
-			SecurityModels.unprotected
+			SecurityModels.unprotected,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			this.subscriptions
 		);
 
 		const respondedCallRequests	= new Set<string>();

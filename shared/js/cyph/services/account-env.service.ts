@@ -9,7 +9,7 @@ import {LocalStorageService} from './local-storage.service';
 @Injectable()
 export class AccountEnvService extends EnvService {
 	/** @inheritDoc */
-	public readonly isAccounts: boolean			= true;
+	public readonly isAccounts: boolean	= true;
 
 	constructor (
 		localStorageService: LocalStorageService
