@@ -111,149 +111,157 @@
 				<mat-expansion-panel *ngFor='
 					let o of list | async; trackBy: trackByID; let i = index
 				'>
-					<mat-expansion-panel-header>
-						<mat-panel-title>
-							<div fxLayoutAlign='left center'>
-								<div>
-									<span>{{o.record.name}}</span>
-									&ngsp;
-									<ng-container *ngIf='
-										!o.record.wasAnonymousShare ||
-										!!(
-											o.friend ||
-											o.appointment.fromEmail ||
-											o.appointment.fromName
-										);
-										else invitedAnonymously
-									'>
-										<span fxHide.lt-md cyphTranslate>with</span>
+					<ng-container *ngIf='o.appointment.calendarInvite'>
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<div fxLayoutAlign='left center'>
+									<div>
+										<span>{{o.record.name}}</span>
 										&ngsp;
-										<a fxHide.lt-md *ngIf='!!o.friend' [routerLink]='
-											accountService.routeRoot +
-											"profile/" +
-											o.friend
-										'>{{
-											o.friend
-										}}</a>
-										<span fxHide.lt-md *ngIf='!o.friend'>
-											{{o.appointment.fromName || o.appointment.fromEmail}}
+										<ng-container *ngIf='
+											!o.record.wasAnonymousShare ||
+											!!(
+												o.friend ||
+												o.appointment.fromEmail ||
+												o.appointment.fromName
+											);
+											else invitedAnonymously
+										'>
+											<span fxHide.lt-md cyphTranslate>with</span>
+											&ngsp;
+											<a fxHide.lt-md *ngIf='!!o.friend' [routerLink]='
+												accountService.routeRoot +
+												"profile/" +
+												o.friend
+											'>{{
+												o.friend
+											}}</a>
+											<span fxHide.lt-md *ngIf='!o.friend'>
+												{{
+													o.appointment.fromName ||
+													o.appointment.fromEmail
+												}}
+											</span>
+											&ngsp;
+										</ng-container>
+										<ng-template #invitedAnonymously>
+											<span cyphTranslate>(invited anonymously)</span>
+										</ng-template>
+										<span fxHide.lt-md>
+											&mdash; {{getDateTimeString(
+												o.appointment.calendarInvite?.startTime
+											)}}
 										</span>
-										&ngsp;
-									</ng-container>
-									<ng-template #invitedAnonymously>
-										<span cyphTranslate>(invited anonymously)</span>
-									</ng-template>
-									<span fxHide.lt-md>
-										&mdash; {{getDateTimeString(
-											o.appointment.calendarInvite.startTime
-										)}}
-									</span>
+									</div>
 								</div>
-							</div>
-						</mat-panel-title>
-						<mat-panel-description>
-							<div fxFlex fxLayoutAlign='end center' fxLayoutGap='2px'>
-								<ng-container *ngIf='!incoming'>
-									<button
-										mat-icon-button
-										cyphTranslate
-										matTooltip='Start Call'
-										[disabled]='!canJoin'
-										[routerLink]='
-											accountService.routeRoot +
-											"appointments/" +
-											o.record.id +
-											"/call"
-										'
-										(click)='$event.stopPropagation()'
-									>
-										<mat-icon>play_arrow</mat-icon>
-									</button>
-									<button
-										mat-icon-button
-										cyphTranslate
-										matTooltip='Delete'
-										[disabled]='!canDelete'
-										(click)='
-											accountFilesService.remove(o.record);
-											$event.stopPropagation();
-										'
-									>
-										<mat-icon>delete</mat-icon>
-									</button>
-								</ng-container>
-								<ng-container *ngIf='incoming'>
-									<button
-										mat-icon-button
-										cyphTranslate
-										matTooltip='Accept'
-										(click)='
-											accept(o);
-											$event.stopPropagation();
-										'
-									>
-										<mat-icon>check</mat-icon>
-									</button>
-									<button
-										mat-icon-button
-										cyphTranslate
-										matTooltip='Reject'
-										(click)='
-											accountFilesService.acceptIncomingFile(o.record, false);
-											$event.stopPropagation();
-										'
-									>
-										<mat-icon>close</mat-icon>
-									</button>
-								</ng-container>
-							</div>
-						</mat-panel-description>
-					</mat-expansion-panel-header>
-					<div fxLayout='column'>
-						<div fxLayout='row' fxLayoutAlign='center' fxLayoutGap='5px' *ngFor='
-							let form of o.appointment.forms;
-							trackBy: trackByID;
-							let i = index;
-						'>
-							<button mat-raised-button [routerLink]='
-								accountService.routeRoot +
-								"appointments/" +
-								o.record.id +
-								"/forms/" +
-								i
+							</mat-panel-title>
+							<mat-panel-description>
+								<div fxFlex fxLayoutAlign='end center' fxLayoutGap='2px'>
+									<ng-container *ngIf='!incoming'>
+										<button
+											mat-icon-button
+											cyphTranslate
+											matTooltip='Start Call'
+											[disabled]='!canJoin'
+											[routerLink]='
+												accountService.routeRoot +
+												"appointments/" +
+												o.record.id +
+												"/call"
+											'
+											(click)='$event.stopPropagation()'
+										>
+											<mat-icon>play_arrow</mat-icon>
+										</button>
+										<button
+											mat-icon-button
+											cyphTranslate
+											matTooltip='Delete'
+											[disabled]='!canDelete'
+											(click)='
+												accountFilesService.remove(o.record);
+												$event.stopPropagation();
+											'
+										>
+											<mat-icon>delete</mat-icon>
+										</button>
+									</ng-container>
+									<ng-container *ngIf='incoming'>
+										<button
+											mat-icon-button
+											cyphTranslate
+											matTooltip='Accept'
+											(click)='
+												accept(o);
+												$event.stopPropagation();
+											'
+										>
+											<mat-icon>check</mat-icon>
+										</button>
+										<button
+											mat-icon-button
+											cyphTranslate
+											matTooltip='Reject'
+											(click)='
+												accountFilesService.acceptIncomingFile(
+													o.record,
+													false
+												);
+												$event.stopPropagation();
+											'
+										>
+											<mat-icon>close</mat-icon>
+										</button>
+									</ng-container>
+								</div>
+							</mat-panel-description>
+						</mat-expansion-panel-header>
+						<div fxLayout='column'>
+							<div fxLayout='row' fxLayoutAlign='center' fxLayoutGap='5px' *ngFor='
+								let form of o.appointment.forms;
+								trackBy: trackByID;
+								let i = index;
 							'>
-								{{stringsService.patientForm}} #{{i + 1}}
-							</button>
-						</div>
-						<div
-							*ngIf='envService.isTelehealth && o.appointment.forms.length < 1'
-							fxFlex='50'
-							fxLayoutGap='5px'
-							fxLayoutAlign='center center'
-							fxLayout='column'
-						>
-							<span>{{stringsService.patientFormsMissing}}</span>
-							<button
-								*ngIf='
-									(currentUser.user.userType | async) ===
-									accountUserTypes.Standard
-								'
-								mat-raised-button
-								[routerLink]='
+								<button mat-raised-button [routerLink]='
 									accountService.routeRoot +
-									"new-patient/" +
-									o.record.id
-								'
+									"appointments/" +
+									o.record.id +
+									"/forms/" +
+									i
+								'>
+									{{stringsService.patientForm}} #{{i + 1}}
+								</button>
+							</div>
+							<div
+								*ngIf='envService.isTelehealth && o.appointment.forms.length < 1'
+								fxFlex='50'
+								fxLayoutGap='5px'
+								fxLayoutAlign='center center'
+								fxLayout='column'
 							>
-								{{stringsService.submitPatientForms}}
-							</button>
-							<br />
+								<span>{{stringsService.patientFormsMissing}}</span>
+								<button
+									*ngIf='
+										(currentUser.user.userType | async) ===
+										accountUserTypes.Standard
+									'
+									mat-raised-button
+									[routerLink]='
+										accountService.routeRoot +
+										"new-patient/" +
+										o.record.id
+									'
+								>
+									{{stringsService.submitPatientForms}}
+								</button>
+								<br />
+							</div>
+							<cyph-calendar-invite
+								[isDisabled]='true'
+								[ngModel]='o.appointment.calendarInvite'
+							></cyph-calendar-invite>
 						</div>
-						<cyph-calendar-invite
-							[isDisabled]='true'
-							[ngModel]='o.appointment.calendarInvite'
-						></cyph-calendar-invite>
-					</div>
+					</ng-container>
 				</mat-expansion-panel>
 			</mat-accordion>
 		</div>
