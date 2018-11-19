@@ -18,6 +18,7 @@ import {AccountUserLookupService} from '../../services/account-user-lookup.servi
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
@@ -45,7 +46,7 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	/** Gets appointment. */
 	private readonly getAppointment:
 		(record: IAccountFileRecord) => Observable<
-			{appointment: IAppointment; friend: string}|undefined
+			{appointment: IAppointment; friend?: string}|undefined
 		>
 	= memoize(
 		(record: IAccountFileRecord) => this.accountFilesService.watchAppointment(record).pipe(
@@ -59,10 +60,6 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 				const friend		= (appointment.participants || []).
 					filter(participant => participant !== currentUser.user.username)
 				[0];
-
-				if (!friend) {
-					return;
-				}
 
 				return {appointment, friend};
 			})
@@ -160,7 +157,7 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	/** @ignore */
 	private getAppointments (recordsList: Observable<IAccountFileRecord[]>) : Observable<{
 		appointment: IAppointment;
-		friend: string;
+		friend?: string;
 		record: IAccountFileRecord;
 	}[]> {
 		return recordsList.pipe(
@@ -176,6 +173,34 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 			)),
 			map(filterUndefined)
 		);
+	}
+
+	/** Accepts appointment request. */
+	public async accept ({appointment, friend, record}: {
+		appointment: IAppointment;
+		friend?: string;
+		record: IAccountFileRecord;
+	}) : Promise<void> {
+		await Promise.all([
+			this.accountFilesService.acceptIncomingFile(record),
+			!friend && !appointment.fromEmail ? undefined : this.databaseService.callFunction(
+				'appointmentInvite',
+				{
+					callType:
+						appointment.calendarInvite.callType === CallTypes.Audio ?
+							'audio' :
+						appointment.calendarInvite.callType === CallTypes.Video ?
+							'video' :
+							undefined
+					,
+					eventDetails: {
+						endTime: appointment.calendarInvite.endTime,
+						startTime: appointment.calendarInvite.startTime
+					},
+					to: friend || {email: appointment.fromEmail, name: appointment.fromName}
+				}
+			)
+		]);
 	}
 
 	/** @inheritDoc */
@@ -200,6 +225,9 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	}
 
 	constructor (
+		/** @ignore */
+		public readonly databaseService: DatabaseService,
+
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 

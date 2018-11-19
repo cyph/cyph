@@ -117,21 +117,32 @@
 								<div>
 									<span>{{o.record.name}}</span>
 									&ngsp;
-									<ng-container *ngIf='!o.record.wasAnonymousShare'>
+									<ng-container *ngIf='
+										!o.record.wasAnonymousShare ||
+										!!(
+											o.friend ||
+											o.appointment.fromEmail ||
+											o.appointment.fromName
+										);
+										else invitedAnonymously
+									'>
 										<span fxHide.lt-md cyphTranslate>with</span>
 										&ngsp;
-										<a fxHide.lt-md [routerLink]='
+										<a fxHide.lt-md *ngIf='!!o.friend' [routerLink]='
 											accountService.routeRoot +
 											"profile/" +
 											o.friend
 										'>{{
 											o.friend
 										}}</a>
+										<span fxHide.lt-md *ngIf='!o.friend'>
+											{{o.appointment.fromName || o.appointment.fromEmail}}
+										</span>
 										&ngsp;
 									</ng-container>
-									<span cyphTranslate *ngIf='
-										incoming && o.record.wasAnonymousShare
-									'>(invited anonymously)</span>
+									<ng-template #invitedAnonymously>
+										<span cyphTranslate>(invited anonymously)</span>
+									</ng-template>
 									<span fxHide.lt-md>
 										&mdash; {{getDateTimeString(
 											o.appointment.calendarInvite.startTime
@@ -177,7 +188,7 @@
 										cyphTranslate
 										matTooltip='Accept'
 										(click)='
-											accountFilesService.acceptIncomingFile(o.record);
+											accept(o);
 											$event.stopPropagation();
 										'
 									>
