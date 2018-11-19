@@ -167,7 +167,26 @@
 				[routerLink]='accountService.routeRoot + "appointments"'
 				(click)='click()'
 			>
-				<mat-icon mat-list-icon>date_range</mat-icon>
+				<mat-icon
+					mat-list-icon
+					[matBadge]='
+						(
+							(
+								accountFilesService.incomingFilesFiltered.appointments | async
+							)?.length || 0
+						).toString()
+					'
+					[matBadgeHidden]='!(
+						(
+							(
+								accountFilesService.incomingFilesFiltered.appointments | async
+							)?.length || 0
+						) > 0
+					)'
+					matBadgePosition='above after'
+				>
+					date_range
+				</mat-icon>
 				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
 					Appointments
 				</h3>
