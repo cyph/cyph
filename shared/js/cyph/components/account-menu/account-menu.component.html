@@ -380,13 +380,13 @@
 						mat-list-icon
 						[matBadge]='
 							(
-								(accountFilesService.incomingFilesFiltered.files | async)?.length ||
+								(accountFilesService.incomingFilesFiltered.forms | async)?.length ||
 								0
 							).toString()
 						'
 						[matBadgeHidden]='!(
 							(
-								(accountFilesService.incomingFilesFiltered.files | async)?.length ||
+								(accountFilesService.incomingFilesFiltered.forms | async)?.length ||
 								0
 							) > 0
 						)'
