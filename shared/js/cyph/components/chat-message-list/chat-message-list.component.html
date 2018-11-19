@@ -112,7 +112,7 @@
 								fxLayoutGap='16px'
 								[fxHide]='
 									!sessionInitService.ephemeral ||
-									envService.environment.customBuild?.config.pro
+									(envService.pro | async)
 								'
 							>
 								<h2>{{stringsService.bannerText}}</h2>

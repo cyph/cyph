@@ -96,12 +96,6 @@ export class User {
 		))
 	;
 
-	/** @see IAccountUserProfile.hasPremium */
-	public readonly hasPremium: Observable<boolean|undefined>	= toBehaviorSubject(
-		this.accountUserProfile.watch().pipe(map(({hasPremium}) => hasPremium)),
-		undefined
-	);
-
 	/** @see IAccountUserProfile.name */
 	public readonly name: Observable<string>	= toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({name}) => name)),

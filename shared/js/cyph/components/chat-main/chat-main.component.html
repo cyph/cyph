@@ -189,7 +189,7 @@
 			[fxHide]='!(p2pWebRTCService.outgoingStream | async)?.video'
 			autoplay
 			muted
-			[ngDraggable]='envService.environment.customBuild?.config.pro'
+			[ngDraggable]='envService.pro | async'
 		></video>
 
 		<mat-progress-spinner
@@ -231,7 +231,7 @@
 			<mat-slide-toggle
 				[ngModel]='chatService.walkieTalkieMode | async'
 				(ngModelChange)='chatService.walkieTalkieMode.next($event)'
-				*ngIf='envService.environment.customBuild?.config.pro'
+				*ngIf='envService.pro | async'
 			>
 				<mat-icon svgIcon='walkie-talkie'></mat-icon>
 			</mat-slide-toggle>

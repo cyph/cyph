@@ -878,6 +878,11 @@
 						}
 					},
 
+					"pro": {
+						".write": false,
+						".validate": "newData.val() === now"
+					},
+
 					"pseudoAccount": {
 						".read": true,
 

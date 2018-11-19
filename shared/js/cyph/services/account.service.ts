@@ -275,6 +275,13 @@ export class AccountService extends BaseProvider {
 	public async userInit () : Promise<void> {
 		await this.accountDatabaseService.currentUserFiltered.pipe(take(1)).toPromise();
 
+		this.subscriptions.push(this.accountDatabaseService.watchExists(
+			'pro',
+			this.subscriptions
+		).subscribe(
+			this.envService.pro
+		));
+
 		const incomingCalls			= this.accountDatabaseService.getAsyncMap(
 			'incomingCalls',
 			NeverProto,

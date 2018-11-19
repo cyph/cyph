@@ -129,7 +129,7 @@
 				<mat-icon>alarm_add</mat-icon>
 			</button>
 
-			<ng-container *ngIf='envService.environment.customBuild?.config.pro'>
+			<ng-container *ngIf='envService.pro | async'>
 				&ngsp;
 				<mat-select
 					cyphTranslate
@@ -184,7 +184,7 @@
 				fxFlex
 				fxFlex.gt-md='50'
 				fxLayout='column'
-				*ngIf='envService.environment.customBuild?.config.pro'
+				*ngIf='envService.pro | async'
 			>
 				<div fxLayout='row' fxLayoutAlign='center center'>
 					<mat-slide-toggle

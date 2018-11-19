@@ -32,9 +32,7 @@
 					{{stringsService.footerMessageAPI}}
 				</strong>
 				<ng-template #proMessage>
-					<strong *ngIf='
-						envService.environment.customBuild?.config.pro; else defaultMessage
-					'>
+					<strong *ngIf='envService.pro | async; else defaultMessage'>
 						{{stringsService.footerMessagePro}}
 					</strong>
 				</ng-template>

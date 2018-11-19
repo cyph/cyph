@@ -666,7 +666,6 @@ export class AccountAuthService extends BaseProvider {
 					{
 						description: '',
 						externalUsernames: {},
-						hasPremium: false,
 						name,
 						realUsername,
 						userType: AccountUserTypes.Standard

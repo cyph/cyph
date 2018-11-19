@@ -260,6 +260,12 @@ export class Env extends EnvDeploy {
 			'unknown'
 	;
 
+	/** @see CustomBuildConfig.pro */
+	public readonly pro							= new BehaviorSubject<boolean>(
+		environment.customBuild !== undefined &&
+		environment.customBuild.config.pro === true
+	);
+
 	/** Complete (original case) language code, e.g. "en-US". */
 	public readonly realLanguage: string		= Env.language;
 

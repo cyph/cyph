@@ -836,10 +836,7 @@ export class ChatService extends BaseProvider {
 			this.chat.state	= States.chat;
 			this.updateChat();
 
-			if (
-				this.envService.environment.customBuild &&
-				this.envService.environment.customBuild.config.pro
-			) {
+			if (this.envService.pro.value) {
 				for (let i = 0 ; i < 15 ; ++i) {
 					if (this.chatSelfDestruct.value) {
 						break;

@@ -152,9 +152,6 @@ message AccountUserProfile {
 	/** Usernames and similar identifiers for external services like social media. */
 	map<string, string> externalUsernames = 2;
 
-	/** Premium account. */
-	required bool hasPremium = 3;
-
 	/** Full name. */
 	required string name = 4;
 
