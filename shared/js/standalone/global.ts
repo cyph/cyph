@@ -24,21 +24,11 @@ catch {}
 	typeof window === 'object'
 ;
 
-for (const k of ['window', 'document']) {
-	if (!(k in self)) {
-		(<any> self)[k]	= self;
-	}
-}
-
 for (const k of [
 	'accountPrimaryTheme',
 	'accountRoot',
-	'Audio',
 	'beforeUnloadMessage',
 	'customBuildBase64',
-	'history',
-	'location',
-	'navigator',
 	'testEnvironmentSetup',
 	'translations'
 ]) {
