@@ -56,7 +56,7 @@ nodeModulesAssets="$(
 )"
 
 typescriptAssets="$(
-	{;
+	{
 		echo cyph/config;
 		echo cyph/crypto/native-web-crypto-polyfill;
 		echo cyph/crypto/potassium/index;
