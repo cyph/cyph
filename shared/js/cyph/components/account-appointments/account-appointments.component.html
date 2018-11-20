@@ -108,10 +108,10 @@
 				class='appointment animated fadeInDown'
 				[class.bounceInRight]='(accountFilesService.initiated | async) === false'
 			>
-				<mat-expansion-panel *ngFor='
+				<ng-container *ngFor='
 					let o of list | async; trackBy: trackByID; let i = index
 				'>
-					<ng-container *ngIf='o.appointment.calendarInvite'>
+					<mat-expansion-panel *ngIf='o.appointment.calendarInvite'>
 						<mat-expansion-panel-header>
 							<mat-panel-title>
 								<div fxLayoutAlign='left center'>
@@ -261,8 +261,8 @@
 								[ngModel]='o.appointment.calendarInvite'
 							></cyph-calendar-invite>
 						</div>
-					</ng-container>
-				</mat-expansion-panel>
+					</mat-expansion-panel>
+				</ng-container>
 			</mat-accordion>
 		</div>
 	</mat-card>
