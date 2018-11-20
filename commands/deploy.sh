@@ -875,7 +875,7 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 				domain: path.split("/").slice(-2)[0],
 				...JSON.parse(fs.readFileSync(path).toString())
 			})).
-			filter(o => !o.usePrimaryNamespace).
+			filter(o => !o.useNamespace).
 			reduce(
 				(namespaces, {accountsOnly, domain}) => {
 					namespaces[domain]	= {

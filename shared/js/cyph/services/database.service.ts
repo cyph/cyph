@@ -40,10 +40,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** Namespace for database usage. */
 	public readonly namespace: string	=
-		(
-			this.envService.environment.customBuild !== undefined &&
-			this.envService.environment.customBuild.config.usePrimaryNamespace !== true
-		) ?
+		this.envService.environment.customBuild !== undefined ?
 			this.envService.environment.customBuild.namespace :
 			'cyph.ws'
 	;

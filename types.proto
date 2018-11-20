@@ -760,8 +760,8 @@ message Environment {
 		/** Page title of this Cyph instance. */
 		string title = 18;
 
-		/** Indicates whether this environment should share the main Cyph database namespace. */
-		bool usePrimaryNamespace = 19;
+		/** Indicates whether this environment should share a specific database namespace. */
+		string useNamespace = 19;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
 		bool whiteLabel = 20;

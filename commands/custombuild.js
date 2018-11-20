@@ -57,13 +57,13 @@ const customBuild	= (id, version) => {
 		hasUpdatedRepos	= true;
 	}
 
-	const root	= `${repoPath}/${id}`;
+	const root		= `${repoPath}/${id}`;
 
 	if (!fs.existsSync(root)) {
 		throw new Error(`Nonexistent custom build: ${id}.`);
 	}
 
-	const paths	= {
+	const paths		= {
 		audioImage: `${root}/audio-image.png`,
 		config: `${root}/config.json`,
 		errorImage: `${root}/error-image.png`,
@@ -74,15 +74,17 @@ const customBuild	= (id, version) => {
 		theme: `${root}/theme.scss`
 	};
 
-	const o	= {
+	const config	= tryReadFile(paths.config, true) || {};
+
+	const o			= {
 		audioImage: tryReadFile(paths.audioImage),
-		config: tryReadFile(paths.config, true) || {},
+		config,
 		errorImage: tryReadFile(paths.errorImage),
 		favicon: tryReadFile(paths.favicon),
 		id: typeof version === 'string' && version !== 'prod' && version ? `${version}.${id}` : id,
 		logoHorizontal: tryReadFile(paths.logoHorizontal),
 		logoVertical: tryReadFile(paths.logoVertical),
-		namespace: id,
+		namespace: config.useNamespace || id,
 		strings: tryReadFile(paths.strings, true)
 	};
 
