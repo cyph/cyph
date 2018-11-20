@@ -123,7 +123,7 @@ export class AccountAuthService extends BaseProvider {
 	public async changeMasterKey (masterKey: string) : Promise<void> {
 		const currentUser	= await this.accountDatabaseService.getCurrentUser();
 
-		if (!currentUser.user.username || (masterKey === undefined || masterKey.length === 0)) {
+		if (!currentUser.user.username || masterKey.length === 0) {
 			return;
 		}
 
@@ -273,6 +273,7 @@ export class AccountAuthService extends BaseProvider {
 	 * Logs in.
 	 * @returns Whether login was successful.
 	 */
+	/* tslint:disable-next-line:cyclomatic-complexity */
 	public async login (
 		username: string,
 		masterKey: string|Uint8Array,
@@ -280,7 +281,7 @@ export class AccountAuthService extends BaseProvider {
 	) : Promise<boolean> {
 		await this.logout(false);
 
-		if (!username || (masterKey === undefined || masterKey.length === 0)) {
+		if (!username || masterKey.length === 0) {
 			return false;
 		}
 
@@ -580,7 +581,7 @@ export class AccountAuthService extends BaseProvider {
 			return false;
 		}
 
-		const username	=  normalize(realUsername);
+		const username	= normalize(realUsername);
 
 		const loginData: IAccountLoginData	= {
 			secondaryPassword: this.potassiumService.toBase64(

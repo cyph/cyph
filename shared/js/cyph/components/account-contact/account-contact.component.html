@@ -118,12 +118,12 @@
 					{{contactState.name}}
 				</mat-card-title>
 				<mat-card-subtitle class='truncate' *ngIf='contactState.email !== " "'>
-					<{{contactState.email}}>
+					&lt;{{contactState.email}}&gt;
 				</mat-card-subtitle>
 			</div>
 
 			<mat-card-title class='truncate' *ngIf='!contactState.name'>
-				<{{contactState.email}}>
+				&lt;{{contactState.email}}&gt;
 			</mat-card-title>
 
 			<ng-container *ngTemplateOutlet='contactStateUI; context: {

@@ -213,7 +213,7 @@ export class StringsService extends BaseProvider {
 	public readonly contactSupport: string				= `Contact Support`;
 
 	/** @see StringsService */
-	public readonly continue: string					= `Continue`;
+	public readonly continueButton: string				= `Continue`;
 
 	/** @see StringsService */
 	public readonly continueDialogAction: string		= `continue`;

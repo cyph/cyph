@@ -191,20 +191,23 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 			try {
 				if (username) {
-					let contactID: Promise<string>;
+					let contactIDPromise: Promise<string>;
 
 					if (externalUser) {
-						contactID	= this.accountContactsService.getContactID(username);
+						contactIDPromise	= this.accountContactsService.getContactID(username);
 					}
 					else {
 						const user	= await this.accountUserLookupService.getUser(username, false);
 						if (!user) {
 							throw new Error('User not found.');
 						}
-						contactID	= user.contactID;
+						contactIDPromise	= user.contactID;
 					}
 
-					this.router.navigate([accountRoot, path, await contactID], {replaceUrl: true});
+					this.router.navigate(
+						[accountRoot, path, await contactIDPromise],
+						{replaceUrl: true}
+					);
 					return;
 				}
 
