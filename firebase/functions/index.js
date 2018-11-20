@@ -187,7 +187,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 					'audio.cyph.healthcare' :
 				data.callType === 'video' ?
 					'video.cyph.healthcare' :
-					'im.cyph.healthcare'
+					'chat.cyph.healthcare'
 			) :
 		namespace === 'cyph.pro' ?
 			(
