@@ -1,5 +1,5 @@
 import {Inject, Injectable, Optional} from '@angular/core';
-import {Env} from '../env';
+import {Env, env} from '../env';
 import {DataURIProto, StringProto} from '../proto';
 import {toInt} from '../util/formatting';
 import {request} from '../util/request';
@@ -90,6 +90,9 @@ export class EnvService extends Env {
 
 		return this.host;
 	})();
+
+	/** @inheritDoc */
+	public readonly pro								= env.pro;
 
 	/**
 	 * Indicates whether the currently pinned version of WebSign has a known issue

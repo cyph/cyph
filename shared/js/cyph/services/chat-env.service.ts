@@ -43,6 +43,9 @@ export class ChatEnvService extends EnvService {
 	/** @ignore */
 	private sessionService?: ISessionService;
 
+	/** @inheritDoc */
+	public readonly pro	= env.pro;
+
 	/** @ignore */
 	private newCyphUrlHelper (base: boolean) : string {
 		if (!this.configService || !this.sessionService) {
