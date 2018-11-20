@@ -19,52 +19,70 @@
 		fxLayout='row'
 		fxLayoutAlign='center center'
 		fxLayoutGap='16px'
-		*ngIf='
-			(isCurrentUser | async) === false &&
-			(accountDatabaseService.currentUser | async) !== undefined
-		'
 	>
-		<button
-			mat-mini-fab
-			cyphTranslate
-			class='animated flipInX _4'
-			matTooltip='Remove Contact'
-			(click)='accountContactsService.removeContact(user.username)'
-			*ngIf='isContact | async; else buttonsAddContact'
-		>
-			<mat-icon>delete</mat-icon>
-		</button>
-		<ng-template #buttonsAddContact>
+		<ng-container *ngIf='
+			(isCurrentUser | async) === false &&
+			(accountDatabaseService.currentUser | async) !== undefined;
+			else buttonsAnonymous
+		'>
 			<button
 				mat-mini-fab
 				cyphTranslate
 				class='animated flipInX _4'
-				matTooltip='Add Contact'
-				(click)='accountContactsService.addContact(user.username)'
+				matTooltip='Remove Contact'
+				(click)='accountContactsService.removeContact(user.username)'
+				*ngIf='isContact | async; else buttonsAddContact'
 			>
-				<mat-icon>person_add</mat-icon>
+				<mat-icon>delete</mat-icon>
+			</button>
+			<ng-template #buttonsAddContact>
+				<button
+					mat-mini-fab
+					cyphTranslate
+					class='animated flipInX _4'
+					matTooltip='Add Contact'
+					(click)='accountContactsService.addContact(user.username)'
+				>
+					<mat-icon>person_add</mat-icon>
+				</button>
+			</ng-template>
+
+			<button
+				mat-mini-fab
+				cyphTranslate
+				class='animated flipInX _4'
+				matTooltip='Open Mail'
+				[routerLink]='accountService.routeRoot + "mail/" + (user.contactID | async)'
+			>
+				<mat-icon>email</mat-icon>
+			</button>
+
+			<button
+				mat-mini-fab
+				cyphTranslate
+				class='animated flipInX _4'
+				matTooltip='Open Messages'
+				[routerLink]='accountService.routeRoot + "messages/" + (user.contactID | async)'
+			>
+				<mat-icon>message</mat-icon>
+			</button>
+		</ng-container>
+
+		<ng-template #buttonsAnonymous>
+			<button
+				mat-mini-fab
+				cyphTranslate
+				class='animated flipInX _4'
+				matTooltip='New Message'
+				[routerLink]='
+					accountService.routeRoot +
+					"compose/" +
+					((user.contactID | async) || ("user/" + user.username))
+				'
+			>
+				<mat-icon>email</mat-icon>
 			</button>
 		</ng-template>
-
-		<button
-			mat-mini-fab
-			cyphTranslate
-			class='animated flipInX _4'
-			matTooltip='Open Mail'
-			[routerLink]='accountService.routeRoot + "mail/" + (user.contactID | async)'
-		>
-			<mat-icon>email</mat-icon>
-		</button>
-
-		<button
-			mat-mini-fab
-			cyphTranslate
-			class='animated flipInX _4'
-			matTooltip='Open Messages'
-			[routerLink]='accountService.routeRoot + "messages/" + (user.contactID | async)'
-		>
-			<mat-icon>message</mat-icon>
-		</button>
 	</div>
 </ng-template>
 
@@ -173,44 +191,62 @@
 </ng-template>
 
 <ng-template #mailButtons let-patientData='patientData'>
-	<div fxLayout='row' fxLayoutGap='16px' *ngIf='
-		(accountDatabaseService.currentUser | async) !== undefined
-	'>
-		<button
-			mat-mini-fab
-			cyphTranslate
-			matTooltip='Open Mail'
-			[routerLink]='
-				accountService.routeRoot + "mail/" + (user.contactID | async)
-			'
-		>
-			<mat-icon>email</mat-icon>
-		</button>
+	<div fxLayout='row' fxLayoutGap='16px'>
+		<ng-container *ngIf='
+			(accountDatabaseService.currentUser | async) !== undefined;
+			else mailButtonsAnonymous
+		'>
+			<button
+				mat-mini-fab
+				cyphTranslate
+				matTooltip='Open Mail'
+				[routerLink]='
+					accountService.routeRoot + "mail/" + (user.contactID | async)
+				'
+			>
+				<mat-icon>email</mat-icon>
+			</button>
 
-		<button
-			mat-mini-fab
-			cyphTranslate
-			matTooltip='Open Messages'
-			[routerLink]='
-				accountService.routeRoot + "messages/" + (user.contactID | async)
-			'
-		>
-			<mat-icon>message</mat-icon>
-		</button>
+			<button
+				mat-mini-fab
+				cyphTranslate
+				matTooltip='Open Messages'
+				[routerLink]='
+					accountService.routeRoot + "messages/" + (user.contactID | async)
+				'
+			>
+				<mat-icon>message</mat-icon>
+			</button>
 
-		<button
-			mat-mini-fab
-			[matTooltip]='stringsService.shareEhrDataTitle'
-			(click)='shareEhrData()'
-			*ngIf='
-				patientData &&
-				(
-					(accountDatabaseService.currentUser | async)?.user.userType | async
-				) === accountUserTypes.TelehealthDoctor
-			'
-		>
-			<mat-icon svgIcon='doctor'></mat-icon>
-		</button>
+			<button
+				mat-mini-fab
+				[matTooltip]='stringsService.shareEhrDataTitle'
+				(click)='shareEhrData()'
+				*ngIf='
+					patientData &&
+					(
+						(accountDatabaseService.currentUser | async)?.user.userType | async
+					) === accountUserTypes.TelehealthDoctor
+				'
+			>
+				<mat-icon svgIcon='doctor'></mat-icon>
+			</button>
+		</ng-container>
+
+		<ng-template #mailButtonsAnonymous>
+			<button
+				mat-mini-fab
+				cyphTranslate
+				matTooltip='New Message'
+				[routerLink]='
+					accountService.routeRoot +
+					"compose/" +
+					((user.contactID | async) || ("user/" + user.username))
+				'
+			>
+				<mat-icon>email</mat-icon>
+			</button>
+		</ng-template>
 	</div>
 </ng-template>
 
