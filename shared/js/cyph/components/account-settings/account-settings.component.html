@@ -65,10 +65,10 @@
 				<strong cyphTranslate>Pro Status:</strong>
 				&ngsp;
 				&nbsp;
-				<span *ngIf='envService.pro | async; else getPremium'>
+				<span *ngIf='envService.pro | async; else getPro'>
 					{{stringsService.enabled}}
 				</span>
-				<ng-template #getPremium>
+				<ng-template #getPro>
 					<span>{{stringsService.disabled}}</span>
 					<ng-container *ngIf='false'>
 						&ngsp;

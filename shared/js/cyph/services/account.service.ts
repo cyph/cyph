@@ -77,14 +77,14 @@ export class AccountService extends BaseProvider {
 	;
 
 	/** Indicates whether Wallets is enabled. */
-	public readonly enableWallets						=
+	public readonly enableWallets: Observable<boolean>	=
 		(
 			this.envService.debug || (
 				!!this.envService.environment.customBuild &&
 				this.envService.environment.customBuild.config.enableWallets === true
 			)
 		) ?
-			new BehaviorSubject<boolean>(true) :
+			of(true) :
 			this.envService.pro
 	;
 
