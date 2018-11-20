@@ -729,7 +729,7 @@
 											'
 											placeholder='Master Key'
 											[required]='(useXkcdPassphrase | async) === false'
-											[pattern]='".{" + masterKeyLength + ",}"'
+											[minlength]='masterKeyLength'
 										/>
 										<mat-icon
 											matSuffix
@@ -898,7 +898,7 @@
 						'
 						placeholder='Lock Screen Password'
 						[required]='(useLockScreenPIN | async) === false'
-						[pattern]='".{" + lockScreenPasswordLength + ",}"'
+						[minlength]='lockScreenPasswordLength'
 					/>
 					<mat-icon
 						matSuffix
