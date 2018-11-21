@@ -22,6 +22,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
+import {formControlMatch, watchFormControl} from '../../util/form-controls';
 import {toInt} from '../../util/formatting';
 import {random} from '../../util/random';
 import {uuid} from '../../util/uuid';
@@ -97,7 +98,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					)).isValid :
 					true
 			)) ?
-				{inviteCodeInvalid: {value}} :
+				{inviteCodeInvalid: true} :
 				/* tslint:disable-next-line:no-null-keyword */
 				null
 			;
@@ -119,7 +120,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly lockScreenPassword					= new BehaviorSubject<string>('');
 
 	/** Lock screen password confirmation. */
-	public readonly lockScreenPasswordConfirm			= new BehaviorSubject<string>('');
+	public readonly lockScreenPasswordConfirm			= formControlMatch(this.lockScreenPassword);
+
+	/** Watches lockScreenPasswordConfirm. */
+	public readonly lockScreenPasswordConfirmWatcher	= watchFormControl(
+		this.lockScreenPasswordConfirm
+	);
 
 	/** Minimum length of lock screen PIN/password. */
 	public readonly lockScreenPasswordLength: number	= 4;
@@ -134,7 +140,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly masterKey							= new BehaviorSubject<string>('');
 
 	/** Master key confirmation. */
-	public readonly masterKeyConfirm					= new BehaviorSubject<string>('');
+	public readonly masterKeyConfirm					= formControlMatch(this.masterKey);
+
+	/** Watches masterKeyConfirm. */
+	public readonly masterKeyConfirmWatcher				= watchFormControl(this.masterKeyConfirm);
 
 	/** Minimum length of custom master key. */
 	public readonly masterKeyLength: number				= 20;
@@ -201,7 +210,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					this.accountUserLookupService.exists(value, false, false) :
 					true
 			)) ?
-				{usernameTaken: {value}} :
+				{usernameTaken: true} :
 				/* tslint:disable-next-line:no-null-keyword */
 				null
 			;
@@ -211,19 +220,11 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** @see usernameMask */
 	public readonly usernameMask						= usernameMask;
 
+	/** Watches username. */
+	public readonly usernameWatcher						= watchFormControl(this.username);
+
 	/** Indicates whether or not xkcdPassphrase should be used. */
 	public readonly useXkcdPassphrase					= new BehaviorSubject<boolean>(true);
-
-	/** Watches username. */
-	public readonly usernameWatcher						= concat(
-		of(this.username),
-		combineLatest(
-			this.username.statusChanges,
-			this.username.valueChanges
-		).pipe(
-			map(() => this.username)
-		)
-	);
 
 	/** Auto-generated password option. */
 	public readonly xkcdPassphrase						= toBehaviorSubject<string>(
@@ -324,10 +325,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.email.next('');
 		this.inviteCode.setValue('');
 		this.lockScreenPassword.next('');
-		this.lockScreenPasswordConfirm.next('');
+		this.lockScreenPasswordConfirm.setValue('');
 		this.lockScreenPIN.next('');
 		this.masterKey.next('');
-		this.masterKeyConfirm.next('');
+		this.masterKeyConfirm.setValue('');
 		this.name.next('');
 		this.username.setValue('');
 		this.useLockScreenPIN.next(false);
@@ -376,7 +377,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.lockScreenPasswordReady	= toBehaviorSubject(
 			combineLatest(
 				this.lockScreenPassword,
-				this.lockScreenPasswordConfirm,
+				this.lockScreenPasswordConfirmWatcher,
 				this.lockScreenPIN,
 				this.useLockScreenPIN
 			).pipe(map(([
@@ -389,7 +390,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					lockScreenPIN.length === this.lockScreenPasswordLength :
 					(
 						lockScreenPassword.length >= this.lockScreenPasswordLength &&
-						safeStringCompare(lockScreenPassword, lockScreenPasswordConfirm)
+						lockScreenPasswordConfirm.valid
 					)
 			)),
 			false,
@@ -399,7 +400,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.masterKeyReady				= toBehaviorSubject(
 			combineLatest(
 				this.masterKey,
-				this.masterKeyConfirm,
+				this.masterKeyConfirmWatcher,
 				this.opsecAcknowledgement,
 				this.useXkcdPassphrase,
 				this.xkcdPassphraseHasBeenViewed
@@ -414,7 +415,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					xkcdPassphraseHasBeenViewed :
 					(
 						masterKey.length >= this.masterKeyLength &&
-						safeStringCompare(masterKey, masterKeyConfirm)
+						masterKeyConfirm.valid
 					)
 				)
 			)),

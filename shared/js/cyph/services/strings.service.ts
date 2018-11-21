@@ -506,6 +506,9 @@ export class StringsService extends BaseProvider {
 	public readonly lockScreenPassword: string			= `Custom Password`;
 
 	/** @see StringsService */
+	public readonly lockScreenPasswordMismatch: string	= `Passwords don't match`;
+
+	/** @see StringsService */
 	public readonly lockScreenPIN: string				= `Four-Digit PIN`;
 
 	/** @see StringsService */
@@ -525,6 +528,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly masterKey: string					= `Master Key`;
+
+	/** @see StringsService */
+	public readonly masterKeyMismatch: string			= `Master Keys don't match`;
 
 	/** @see StringsService */
 	public readonly me: string							= `me`;

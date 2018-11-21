@@ -191,12 +191,11 @@
 															check
 														</mat-icon>
 													</div>
-													<mat-error
-														cyphTranslate
-														*ngIf='(usernameWatcher | async)?.hasError(
+													<mat-error *ngIf='
+														(usernameWatcher | async)?.hasError(
 															"usernameTaken"
-														)'
-													>
+														)
+													'>
 														{{stringsService.registerErrorUsername}}
 													</mat-error>
 												</mat-form-field>
@@ -302,7 +301,7 @@
 															check
 														</mat-icon>
 													</div>
-													<mat-error cyphTranslate *ngIf='
+													<mat-error *ngIf='
 														(inviteCodeWatcher | async)?.hasError(
 															"inviteCodeInvalid"
 														)
@@ -751,8 +750,7 @@
 										<input
 											matInput
 											cyphTranslate
-											[ngModel]='masterKeyConfirm | async'
-											(ngModelChange)='masterKeyConfirm.next($event)'
+											[formControl]='masterKeyConfirm'
 											name='masterKeyConfirm'
 											[type]='(hidePassword.masterKeyConfirm | async) ?
 												"password" :
@@ -760,7 +758,6 @@
 											'
 											placeholder='Confirm Master Key'
 											[required]='(useXkcdPassphrase | async) === false'
-											[pattern]='masterKey | async'
 										/>
 										<mat-icon
 											matSuffix
@@ -775,6 +772,11 @@
 													'visibility_off'
 											}}
 										</mat-icon>
+										<mat-error *ngIf='
+											(masterKeyConfirmWatcher | async)?.hasError("mismatch")
+										'>
+											{{stringsService.masterKeyMismatch}}
+										</mat-error>
 									</mat-form-field>
 								</div>
 							</div>
@@ -920,8 +922,7 @@
 					<input
 						matInput
 						cyphTranslate
-						[ngModel]='lockScreenPasswordConfirm | async'
-						(ngModelChange)='lockScreenPasswordConfirm.next($event)'
+						[formControl]='lockScreenPasswordConfirm'
 						name='lockScreenPasswordConfirm'
 						[type]='(hidePassword.lockScreenPasswordConfirm | async) ?
 							"password" :
@@ -929,7 +930,6 @@
 						'
 						placeholder='Confirm Lock Screen Password'
 						[required]='(useLockScreenPIN | async) === false'
-						[pattern]='lockScreenPassword | async'
 					/>
 					<mat-icon
 						matSuffix
@@ -944,6 +944,11 @@
 								'visibility_off'
 						}}
 					</mat-icon>
+					<mat-error *ngIf='
+						(lockScreenPasswordConfirmWatcher | async)?.hasError("mismatch")
+					'>
+						{{stringsService.lockScreenPasswordMismatch}}
+					</mat-error>
 				</mat-form-field>
 			</div>
 		</div>

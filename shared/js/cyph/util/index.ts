@@ -3,6 +3,7 @@ export * from './compare';
 export * from './email';
 export * from './filter';
 export * from './flatten-observable';
+export * from './form-controls';
 export * from './formatting';
 export * from './get-or-set-default';
 export * from './input';
