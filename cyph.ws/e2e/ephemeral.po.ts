@@ -8,7 +8,7 @@ import {browser, by, element, ExpectedConditions} from 'protractor';
  */
 export class EphemeralPage {
 	public async getFooterText () : Promise<string> {
-		return element(by.css('cyph-footer a > span:first-child')).getText();
+		return element(by.css('cyph-footer div:first-child > a')).getText();
 	}
 
 	public async navigateTo () : Promise<void> {

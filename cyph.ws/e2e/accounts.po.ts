@@ -1,3 +1,5 @@
+/// <reference path="../src/js/typings/index" />
+
 import '../src/js/standalone/global';
 
 import * as path from 'path';
@@ -17,10 +19,10 @@ export class AccountsPage {
 			root: () => element(by.css('cyph-dialog-confirm')),
 
 			cancel: () => this.elements.dialogConfirm.root().element(
-				by.css('button.cancel')
+				by.css('button:nth-of-type(1)')
 			),
 			ok: () => this.elements.dialogConfirm.root().element(
-				by.css('button.ok')
+				by.css('button:nth-of-type(2)')
 			)
 		},
 
@@ -28,29 +30,27 @@ export class AccountsPage {
 			root: () => element(by.css('cyph-account-files')),
 
 			allFiles: () => this.elements.files.root().all(
-				by.css('mat-card')
+				by.css('mat-row')
 			),
 			deleteFirstFile: () => this.elements.files.firstFile().element(
-				by.css('button.delete')
+				by.css('button[matTooltip="Delete"]')
 			),
 			firstFile: () => this.elements.files.root().element(
-				by.css('mat-card:first-of-type')
+				by.css('mat-row:first-of-type')
 			),
 			spinner: () => this.elements.files.root().element(
 				by.css('mat-progress-spinner')
 			),
-			upload: () => element(by.js(() => {
-				const elem: HTMLInputElement	= (<any> document).
-					querySelector("cyph-account-files .file-upload").
+			upload: () => element(by.js(() =>
+				(<any> document).
+					querySelector('cyph-account-files button.cyph-drop-zone').
 					dropzone.
 					hiddenFileInput
-				;
-				elem.style.height		= '1px';
-				elem.style.opacity		= '1';
-				elem.style.visibility	= 'visible';
-				elem.style.width		= '1px';
-				return elem;
-			}))
+			))
+		},
+
+		home: {
+			root: () => element(by.css('cyph-account-home'))
 		},
 
 		login: {
@@ -77,15 +77,11 @@ export class AccountsPage {
 		},
 
 		menu: {
-			root: () => element(by.css('cyph-account-menu')),
+			root: () => element(by.css('cyph-account-menu.sidebar')),
 
 			files: () => this.elements.menu.root().element(
-				by.css('.menu-root:not(.hidden) button.files')
+				by.css('a.files')
 			)
-		},
-
-		profile: {
-			root: () => element(by.css('cyph-account-profile'))
 		}
 	};
 
@@ -99,13 +95,16 @@ export class AccountsPage {
 				await elementFinder().click();
 				return;
 			}
-			catch {}
+			catch (err) {
+				console.error({clickElementError: err});
+			}
 		}
 	}
 
 	public async deleteAllFiles () : Promise<void> {
-		await this.waitForElement(this.elements.files.upload);
+		await this.waitForElement(this.elements.files.upload, false);
 		await browser.wait(ExpectedConditions.stalenessOf(this.elements.files.spinner()));
+		console.log('files list loaded');
 
 		while (true) {
 			try {
@@ -114,6 +113,8 @@ export class AccountsPage {
 				}
 
 				const fileCount	= (await this.elements.files.allFiles()).length;
+
+				console.log(`${fileCount.toString()} files remaining`);
 
 				await this.clickElement(this.elements.files.deleteFirstFile);
 				await this.clickElement(this.elements.dialogConfirm.ok);
@@ -153,14 +154,17 @@ export class AccountsPage {
 		}
 
 		await this.clickElement(this.elements.login.submit);
-		await (await this.waitForElement(this.elements.profile.root))
+		await (await this.waitForElement(this.elements.home.root));
 	}
 
 	public async navigateTo () : Promise<void> {
 		await browser.get('/#account');
 	}
 
-	public async waitForElement (elementFinder: () => ElementFinder) : Promise<ElementFinder> {
+	public async waitForElement (
+		elementFinder: () => ElementFinder,
+		checkVisibility: boolean = true
+	) : Promise<ElementFinder> {
 		await browser.wait(async () => {
 			try {
 				return (await elementFinder().isPresent());
@@ -169,7 +173,11 @@ export class AccountsPage {
 				return false;
 			}
 		});
-		await browser.wait(ExpectedConditions.visibilityOf(elementFinder()));
+
+		if (checkVisibility) {
+			await browser.wait(ExpectedConditions.visibilityOf(elementFinder()));
+		}
+
 		return elementFinder();
 	}
 }

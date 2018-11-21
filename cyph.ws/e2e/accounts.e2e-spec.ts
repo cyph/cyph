@@ -21,14 +21,15 @@ describe('Accounts', () => {
 	it('logs in', async () => {
 		await page.logIn();
 		expect(await page.elements.menu.root().isPresent()).toBe(true);
-		expect(await page.elements.profile.root().isPresent()).toBe(true);
+		expect(await page.elements.home.root().isPresent()).toBe(true);
 	});
 
 	/* TODO: Make concurrency-safe */
 	it('uploads file', async () => {
 		await page.logIn();
 		console.log('logged in');
-		page.clickElement(page.elements.menu.files);
+		await page.clickElement(page.elements.menu.files);
+		console.log('deleting all files');
 		await page.deleteAllFiles();
 		console.log('deleted all files');
 		expect(await page.elements.files.firstFile().isPresent()).toBe(false);
