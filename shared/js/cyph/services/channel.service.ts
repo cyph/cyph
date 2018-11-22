@@ -119,7 +119,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 				debugLog(() => ({channelMessage: {
 					destroyed: this.destroyed.value,
 					message,
-					uuid
+					userID
 				}}));
 
 				if (message.value.author === userID || this.destroyed.value) {
