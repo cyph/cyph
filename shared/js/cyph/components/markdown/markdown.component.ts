@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges} from '
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import * as $ from 'jquery';
-import * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
 import * as markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';
@@ -28,7 +28,7 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 	private initiated: boolean	= false;
 
 	/** @ignore */
-	private readonly markdownIt: MarkdownIt.MarkdownIt;
+	private readonly markdownIt: MarkdownIt;
 
 	/** Rendered HTML. */
 	public readonly html	= new BehaviorSubject<SafeHtml|undefined>(undefined);
