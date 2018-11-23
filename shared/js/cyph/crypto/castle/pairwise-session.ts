@@ -406,6 +406,8 @@ export class PairwiseSession {
 					};
 
 					this.lock(async o => {
+						debugLog(() => ({castleLockClaimed: o}));
+
 						this.pendingMessageResolvers	= pendingMessageResolvers;
 
 						const liteRatchetKey		= this.liteRatchetState ?
@@ -436,7 +438,7 @@ export class PairwiseSession {
 							).slice(-1)[0]
 						;
 
-						debugLog(() => ({castleLockClaimed: {
+						debugLog(() => ({castleProcessedInitialRatchetUpdates: {
 							initialRatchetUpdates,
 							lastRatchetUpdate
 						}}));
@@ -470,12 +472,26 @@ export class PairwiseSession {
 							return;
 						}
 
+						debugLog(() => ({castleCoreStarted: true}));
+
 						const receiveLock	= lockFunction();
 
 						const decryptSub		= this.incomingMessageQueue.subscribeAndPop(
 							async ({cyphertext, newMessageID, resolve}) => {
+								debugLog(() => ({castleIncomingCyphertext: {
+									author: this.remoteUser.username,
+									cyphertext,
+									newMessageID
+								}}));
+
 								this.transport.logCyphertext(this.remoteUser.username, cyphertext);
-								core.decryptSetup(cyphertext);
+
+								const decryptSetup	= core.decryptSetup(cyphertext);
+
+								debugLog(() => ({castleIncomingCyphertextDecryptSetup: {
+									decryptSetup,
+									newMessageID
+								}}));
 
 								receiveLock(async () => {
 									await this.processIncomingMessages(
