@@ -426,13 +426,16 @@ export class AccountService extends BaseProvider {
 						`${uuid()}.log`,
 						{
 							data: this.potassiumService.fromString(
-								(<Record<string, any>[]> (<any> self).logs).map(o =>
-									`${o.timestamp}${o.error ? ' (error)' : ''}: ${
-										o.argsCopy !== undefined ?
-											prettyPrint(o.argsCopy) :
-											stringify({keys: Object.keys(o.args)})
-									}`
-								).join('\n\n\n\n') + '\n'
+								[
+									(await envService.packageName) + '---',
+									...(<Record<string, any>[]> (<any> self).logs).map(o =>
+										`${o.timestamp}${o.error ? ' (error)' : ''}: ${
+											o.argsCopy !== undefined ?
+												prettyPrint(o.argsCopy) :
+												stringify({keys: Object.keys(o.args)})
+										}`
+									)
+								].join('\n\n\n\n') + '\n'
 							),
 							mediaType: 'text/plain',
 							name: ''
