@@ -405,7 +405,7 @@ export class PairwiseSession {
 						timestamps: new Map<number, number>()
 					};
 
-					this.lock(async o => {
+					return this.lock(async o => {
 						debugLog(() => ({castleLockClaimed: o}));
 
 						this.pendingMessageResolvers	= pendingMessageResolvers;
@@ -584,8 +584,6 @@ export class PairwiseSession {
 							resolver.resolve();
 						}
 					});
-
-					return;
 				}
 			}
 		}).catch(err => {
