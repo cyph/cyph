@@ -424,7 +424,9 @@ export class PairwiseSession {
 						await this.transport.process(
 							this.remoteUser.username,
 							...initialRatchetUpdates
-						);
+						).catch(err => {
+							debugLogError(() => ({castleProcessInitialRatchetUpdates: err}));
+						});
 
 						this.initialMessagesDecrypted.resolve();
 
