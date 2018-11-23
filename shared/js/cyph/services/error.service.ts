@@ -52,7 +52,7 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 		;
 
 		if (err) {
-			if (this.envService.debug) {
+			if (this.envService.debugLog) {
 				debugLogError(() => err);
 			}
 			else {
