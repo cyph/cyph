@@ -332,6 +332,8 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 				const castleTimestamp	= data.timestamp;
 
+				debugLog(() => ({sessionCastleReceive: data}));
+
 				const messages	=
 					(
 						await (async () =>
@@ -342,6 +344,8 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 					) ||
 					[]
 				;
+
+				debugLog(() => ({sessionCastleReceiveMessages: {data, messages}}));
 
 				const authorID	= normalize(await data.author.pipe(take(1)).toPromise());
 

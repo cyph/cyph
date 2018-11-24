@@ -52,6 +52,8 @@ export class Transport {
 		cyphertext?: Uint8Array;
 		plaintext?: Uint8Array;
 	}[]) : Promise<void> {
+		debugLog(() => ({pairwiseSessionProcessingMessages: {author, messages}}));
+
 		await Promise.all([
 			this.receive(author, ...filterUndefined(
 				messages.map(o =>
