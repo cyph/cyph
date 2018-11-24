@@ -427,7 +427,7 @@ export class AccountService extends BaseProvider {
 						{
 							data: this.potassiumService.fromString(
 								[
-									(await envService.packageName) + '---',
+									(await envService.packageName) + '\n---',
 									...(<Record<string, any>[]> (<any> self).logs).map(o =>
 										`${o.timestamp}${o.error ? ' (error)' : ''}: ${
 											o.argsCopy !== undefined ?
