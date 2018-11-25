@@ -76,6 +76,7 @@ export class Config {
 				items: {
 					[item: string]: {
 						amount?: number;
+						extraUserDiscount?: number;
 						id: number;
 						perUser?: boolean;
 						subscriptionType?: SubscriptionTypes;
@@ -91,16 +92,19 @@ export class Config {
 				items: {
 					gold: {
 						amount: 60,
+						extraUserDiscount: 20,
 						id: 1,
 						perUser: true
 					},
 					platinum: {
 						amount: 500,
+						extraUserDiscount: 100,
 						id: 2,
 						perUser: true
 					},
 					silver: {
 						amount: 12,
+						extraUserDiscount: 4,
 						id: 0,
 						perUser: true
 					}

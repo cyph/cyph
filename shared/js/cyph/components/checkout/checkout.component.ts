@@ -40,7 +40,7 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 	private braintreeInstance: any;
 
 	/** Amount in dollars. */
-	@Input() public amount: number			= 0;
+	@Input() public amount: number				= 0;
 
 	/** Item category ID number. */
 	@Input() public category?: number;
@@ -49,29 +49,32 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 	@Input() public company?: string;
 
 	/** Indicates whether checkout is complete. */
-	public readonly complete				= new BehaviorSubject<boolean>(false);
+	public readonly complete					= new BehaviorSubject<boolean>(false);
 
 	/** Checkout confirmation event; emits API key if applicable. */
-	@Output() public readonly confirmed		= new EventEmitter<{
+	@Output() public readonly confirmed			= new EventEmitter<{
 		apiKey?: string;
 		namespace?: string;
 	}>();
 
 	/** ID of Braintree container element. */
-	public readonly containerID: string		= `id-${uuid()}`;
+	public readonly containerID: string			= `id-${uuid()}`;
 
 	/** Email address. */
 	@Input() public email?: string;
 
 	/** @see emailPattern */
-	public readonly emailPattern			= emailPattern;
+	public readonly emailPattern				= emailPattern;
 
 	/** Formats item name. */
-	public readonly formatItemName			= memoize((itemName?: string) =>
+	public readonly formatItemName				= memoize((itemName?: string) =>
 		typeof itemName === 'string' ?
 			itemName.replace(/([A-Z])/g, ' $1').toUpperCase() :
 			undefined
 	);
+
+	/** Discount for each user after the first one. */
+	@Input() public extraUserDiscount: number	= 0;
 
 	/** Item ID number. */
 	@Input() public item?: number;
@@ -86,31 +89,31 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 	@Input() public namespace?: string;
 
 	/** If true, will never stop spinning. */
-	@Input() public noSpinnerEnd: boolean	= false;
+	@Input() public noSpinnerEnd: boolean		= false;
 
 	/** Indicates whether payment is pending. */
-	public readonly pending					= new BehaviorSubject<boolean>(false);
+	public readonly pending						= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether pricing is per-user. */
-	@Input() public perUser: boolean		= false;
+	@Input() public perUser: boolean			= false;
 
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
 
 	/** @see SubscriptionTypes */
-	public readonly subscriptionTypes		= SubscriptionTypes;
+	public readonly subscriptionTypes			= SubscriptionTypes;
 
 	/** Indicates whether checkout is complete. */
-	public readonly success					= new BehaviorSubject<boolean>(false);
+	public readonly success						= new BehaviorSubject<boolean>(false);
 
 	/** @see trackBySelf */
-	public readonly trackBySelf				= trackBySelf;
+	public readonly trackBySelf					= trackBySelf;
 
 	/** User count options. */
-	public readonly userOptions: number[]	= new Array(99).fill(0).map((_, i) => i + 2);
+	public readonly userOptions: number[]		= new Array(99).fill(0).map((_, i) => i + 2);
 
 	/** Number of users for per-user pricing. */
-	public readonly users					= new BehaviorSubject<number>(1);
+	public readonly users						= new BehaviorSubject<number>(1);
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -123,6 +126,10 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof this.category === 'string' && this.category) {
 			this.category			= parseFloat(this.category);
+		}
+		/* tslint:disable-next-line:strict-type-predicates */
+		if (typeof this.extraUserDiscount === 'string' && this.extraUserDiscount) {
+			this.extraUserDiscount	= parseFloat(this.extraUserDiscount);
 		}
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof this.item === 'string' && this.item) {
@@ -209,9 +216,15 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 			const apiKey	= await request({
 				data: {
 					amount: Math.floor(
-						this.amount *
-						100 *
-						(this.perUser ? this.users.value : 1)
+						(
+							this.amount *
+							100 *
+							(this.perUser ? this.users.value : 1)
+						) - (
+							this.extraUserDiscount *
+							100 *
+							(this.perUser ? (this.users.value - 1) : 0)
+						)
 					),
 					creditCard: paymentMethod.type === 'CreditCard',
 					nonce: paymentMethod.nonce,
