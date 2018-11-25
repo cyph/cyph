@@ -309,7 +309,7 @@ if [ "${allBranches}" ] ; then
 	cd ~/.build
 fi
 
-if [ "${branch}" == 'staging' ] ; then
+if [ ! "${test}" ] ; then
 	echo '  PROD: true' >> backend/app.yaml
 	cat ~/.cyph/backend.vars.prod >> backend/app.yaml
 else
