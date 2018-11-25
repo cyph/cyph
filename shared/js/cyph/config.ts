@@ -86,6 +86,26 @@ export class Config {
 		};
 	}	= {
 		categories: {
+			cyberMonday: {
+				id: 7,
+				items: {
+					gold: {
+						amount: 60,
+						id: 1,
+						perUser: true
+					},
+					platinum: {
+						amount: 500,
+						id: 2,
+						perUser: true
+					},
+					silver: {
+						amount: 12,
+						id: 0,
+						perUser: true
+					}
+				}
+			},
 			donation: {
 				id: 0,
 				items: {
