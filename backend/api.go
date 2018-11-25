@@ -43,7 +43,6 @@ func main() {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
-	apiKey := ""
 	company := sanitize(h.Request.PostFormValue("company"))
 	name := sanitize(h.Request.PostFormValue("name"))
 	timestamp := getTimestamp()
@@ -63,16 +62,20 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusBadRequest
 	}
 
+	var apiKey string
+	var customerKey *datastore.Key
+
 	customerEmail := &CustomerEmail{}
 	customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
 
 	if err = datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
-		return "API key already exists for this user", http.StatusForbidden
-	}
-
-	apiKey, customerKey, err := generateAPIKey(h, "Customer")
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
+		apiKey = customerEmail.APIKey
+		customerKey = datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
+	} else {
+		apiKey, customerKey, err = generateAPIKey(h, "Customer")
+		if err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
 	}
 
 	creditCard := h.Request.PostFormValue("creditCard") == "true"
