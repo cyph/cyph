@@ -68,11 +68,12 @@
 			</div>
 			<div [id]='containerID' class='braintree'></div>
 		</div>
-		<div fxLayoutAlign='center center'>
-			<mat-checkbox [(ngModel)]='affiliate' name='affiliate'>
-				{{affiliateService.checkout.text}}
-			</mat-checkbox>
 
+		<mat-checkbox [(ngModel)]='affiliate' name='affiliate'>
+			{{affiliateService.checkout.text}}
+		</mat-checkbox>
+
+		<div fxLayoutAlign='center center'>
 			<button mat-raised-button type='submit'>
 				<span cyphTranslate>Confirm</span>
 				&ngsp;
