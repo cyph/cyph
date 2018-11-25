@@ -16,7 +16,6 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
-import {emailPattern} from '../../email-pattern';
 import {AffiliateService} from '../../services/affiliate.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
@@ -67,9 +66,6 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 
 	/** Email address. */
 	@Input() public email?: string;
-
-	/** @see emailPattern */
-	public readonly emailPattern				= emailPattern;
 
 	/** Formats item name. */
 	public readonly formatItemName				= memoize((itemName?: string) =>
