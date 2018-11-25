@@ -17,7 +17,6 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {AffiliateService} from '../../services/affiliate.service';
-import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -66,6 +65,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 
 	/** Email address. */
 	@Input() public email?: string;
+
+	/** Error message. */
+	public readonly errorMessage				= new BehaviorSubject<string|undefined>(undefined);
 
 	/** Formats item name. */
 	public readonly formatItemName				= memoize((itemName?: string) =>
@@ -199,6 +201,7 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 	/** Submits payment. */
 	public async submit () : Promise<void> {
 		try {
+			this.errorMessage.next(undefined);
 			this.pending.next(true);
 
 			const paymentMethod	= await new Promise<any>((resolve, reject) => {
@@ -259,21 +262,15 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 			this.pending.next(false);
 			this.success.next(false);
 
-			const errorMessage	= err ?
-				(err.message || err.toString()).replace(/\s+/g, ' ').trim().replace(/\.$/, '') :
-				undefined
-			;
+			if (!err) {
+				return;
+			}
 
-			await sleep(1000);
-
-			await this.dialogService.alert({
-				content:
-					`${this.stringsService.checkoutErrorStart}${
-						errorMessage ? `: "${errorMessage}"` : ''
-					}. ${this.stringsService.checkoutErrorEnd}`
-				,
-				title: this.stringsService.checkoutErrorTitle
-			});
+			this.errorMessage.next(
+				`${this.stringsService.checkoutErrorStart}: "${
+					(err.message || err.toString()).replace(/\s+/g, ' ').trim().replace(/\.$/, '')
+				}".`
+			);
 		}
 	}
 
@@ -283,9 +280,6 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 
 		/** @ignore */
 		private readonly elementRef: ElementRef,
-
-		/** @ignore */
-		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly envService: EnvService,

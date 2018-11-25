@@ -4,13 +4,11 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatDialogModule} from '@angular/material/dialog';
 import {MatInputModule} from '@angular/material/input';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DialogAlertComponent} from '../components/dialog-alert';
 import {MarkdownComponent} from '../components/markdown';
 import {AffiliateService} from '../services/affiliate.service';
 import {ConfigService} from '../services/config.service';
@@ -24,24 +22,20 @@ import {StringsService} from '../services/strings.service';
  */
 @NgModule({
 	declarations: [
-		DialogAlertComponent,
 		MarkdownComponent
 	],
 	entryComponents: [
-		DialogAlertComponent,
 		MarkdownComponent
 	],
 	exports: [
 		BrowserAnimationsModule,
 		BrowserModule,
-		DialogAlertComponent,
 		FlexLayoutModule,
 		FormsModule,
 		HttpClientModule,
 		MarkdownComponent,
 		MatButtonModule,
 		MatCheckboxModule,
-		MatDialogModule,
 		MatInputModule,
 		MatProgressSpinnerModule,
 		MatSelectModule
@@ -54,7 +48,6 @@ import {StringsService} from '../services/strings.service';
 		HttpClientModule,
 		MatButtonModule,
 		MatCheckboxModule,
-		MatDialogModule,
 		MatInputModule,
 		MatProgressSpinnerModule,
 		MatSelectModule

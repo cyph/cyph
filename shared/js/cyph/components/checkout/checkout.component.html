@@ -100,11 +100,23 @@
 			</ng-container>
 		</ng-container>
 		<div *ngIf='(success | async) === false'>
-			<span cyphTranslate>Payment failed.</span>
-			&ngsp;
-			<span class='retry' (click)='ngAfterViewInit()' cyphTranslate>Click here</span>
-			&ngsp;
-			<span cyphTranslate>to try again.</span>
+			<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
+				<h2>{{stringsService.checkoutErrorTitle}}</h2>
+				<div *ngIf='errorMessage | async as err'>{{err}}</div>
+				<div>
+					<span cyphTranslate>
+						Please check your payment credentials and
+					</span>
+					&ngsp;
+					<span class='retry' (click)='ngAfterViewInit()' cyphTranslate>
+						click here
+					</span>
+					&ngsp;
+					<span cyphTranslate>
+						to try again.
+					</span>
+				</div>
+			</div>
 		</div>
 	</div>
 </form>
