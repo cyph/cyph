@@ -91,14 +91,10 @@
 		</div>
 	</div>
 	<div class='confirmation' *ngIf='complete | async'>
-		<ng-container *ngIf='success | async'>
-			<ng-container *ngIf='confirmed | async as confirmation'>
-				<div cyphTranslate *ngIf='confirmation.apiKey === undefined'>
-					Thanks a lot for your support! You will receive an
-					email confirmation momentarily.
-				</div>
-			</ng-container>
-		</ng-container>
+		<div cyphTranslate *ngIf='(success | async) && (confirmationMessage | async)'>
+			Thanks a lot for your support! You will receive an
+			email confirmation momentarily.
+		</div>
 		<div *ngIf='(success | async) === false'>
 			<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui failure'>
 				<h2>{{stringsService.checkoutErrorTitle}}</h2>

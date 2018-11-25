@@ -54,6 +54,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 	/** Indicates whether checkout is complete. */
 	public readonly complete					= new BehaviorSubject<boolean>(false);
 
+	/** Indicates whether confirmation message should be shown. */
+	public readonly confirmationMessage			= new BehaviorSubject<boolean>(false);
+
 	/** Checkout confirmation event; emits API key if applicable. */
 	@Output() public readonly confirmed			= new EventEmitter<{
 		apiKey?: string;
@@ -250,6 +253,7 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 			}
 
 			this.confirmed.emit({apiKey: apiKey || undefined, namespace: this.namespace});
+			this.confirmationMessage.next(!apiKey);
 
 			if (!this.noSpinnerEnd) {
 				this.complete.next(true);
