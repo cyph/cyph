@@ -11,6 +11,7 @@ export * from './lock';
 export * from './log';
 export * from './objects';
 export * from './observable-all';
+export * from './open-window';
 export * from './permissions';
 export * from './random';
 export * from './request';

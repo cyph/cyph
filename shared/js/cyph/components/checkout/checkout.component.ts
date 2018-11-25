@@ -17,10 +17,12 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {emailPattern} from '../../email-pattern';
+import {AffiliateService} from '../../services/affiliate.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
+import {openWindow} from '../../util/open-window';
 import {request} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
@@ -47,6 +49,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 
 	/** Company. */
 	@Input() public company?: string;
+
+	/** Indicates whether affiliate offer is accepted. */
+	public affiliate: boolean					= false;
 
 	/** Indicates whether checkout is complete. */
 	public readonly complete					= new BehaviorSubject<boolean>(false);
@@ -241,6 +246,10 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 				url: this.envService.baseUrl + 'braintree'
 			});
 
+			if (this.affiliate) {
+				openWindow(this.affiliateService.checkout.href);
+			}
+
 			this.confirmed.emit({apiKey: apiKey || undefined, namespace: this.namespace});
 
 			if (!this.noSpinnerEnd) {
@@ -284,6 +293,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 
 		/** @ignore */
 		private readonly envService: EnvService,
+
+		/** @see AffiliateService */
+		public readonly affiliateService: AffiliateService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

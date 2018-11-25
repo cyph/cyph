@@ -23,8 +23,13 @@ export class AffiliateService extends BaseProvider {
 		}
 	};
 
+	/** Checkout offer. */
+	public readonly checkout	=
+		{href: this.nordVPN.links.default, text: this.nordVPN.copy.recommended}
+	;
+
 	/** Affiliate link and ad copy. */
-	public readonly link	= this.splitTestingService.getValue('affiliatelink', [
+	public readonly link		= this.splitTestingService.getValue('affiliatelink', [
 		{href: this.nordVPN.links.doublevpn, text: this.nordVPN.copy.doublevpn},
 		{href: this.nordVPN.links.threeyear, text: this.nordVPN.copy.recommended},
 		{href: this.nordVPN.links.default, text: this.nordVPN.copy.protect},

@@ -98,6 +98,8 @@
 			["Math", "random", "Seriously?"],
 			["Number", "parseInt", "Use util.toInt"],
 			{"name": "parseInt", "message": "Use util.toInt"},
+			["window", "open", "Use util.openWindow"],
+			{"name": "open", "message": "Use util.openWindow"},
 			"setInterval",
 			"setTimeout"
 		],
