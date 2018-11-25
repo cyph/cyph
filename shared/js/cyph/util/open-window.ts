@@ -8,14 +8,9 @@ export const openWindow	= (url: string) : void => {
 		return;
 	}
 
-	const w	= open();
-
-	if (!w) {
-		return;
-	}
-
-	/* tslint:disable-next-line:no-null-keyword */
-	w.opener	= null;
-
-	w.location.replace(url);
+	const a		= document.createElement('a');
+	a.href		= url;
+	a.target	= '_blank';
+	a.rel		= 'noopener';
+	a.click();
 };
