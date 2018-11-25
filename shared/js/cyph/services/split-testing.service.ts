@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../base-provider';
 import {random} from '../util/random';
@@ -38,12 +38,14 @@ export class SplitTestingService extends BaseProvider {
 			index	= Math.floor(values.length * random());
 		}
 
-		this.analyticsService.sendEvent({
-			eventAction: index.toString(),
-			eventCategory: `abtesting-${analEvent}`,
-			eventValue: 1,
-			hitType: 'event'
-		});
+		if (this.analyticsService) {
+			this.analyticsService.sendEvent({
+				eventAction: index.toString(),
+				eventCategory: `abtesting-${analEvent}`,
+				eventValue: 1,
+				hitType: 'event'
+			});
+		}
 
 		return values === undefined ? index : values[index];
 	});
@@ -68,7 +70,8 @@ export class SplitTestingService extends BaseProvider {
 
 	constructor (
 		/** @ignore */
-		private readonly analyticsService: AnalyticsService
+		@Inject(AnalyticsService) @Optional()
+		private readonly analyticsService: AnalyticsService|undefined
 	) {
 		super();
 	}

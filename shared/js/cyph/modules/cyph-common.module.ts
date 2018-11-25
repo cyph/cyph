@@ -27,13 +27,11 @@ import {EnableLastPassDirective} from '../directives/enable-last-pass.directive'
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
-import {AffiliateService} from '../services/affiliate.service';
 import {AnalyticsService} from '../services/analytics.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
 import {NotificationService} from '../services/notification.service';
 import {SignupService} from '../services/signup.service';
-import {SplitTestingService} from '../services/split-testing.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
 import {WindowWatcherService} from '../services/window-watcher.service';
 import {CyphWebModule} from './cyph-web.module';
@@ -127,13 +125,11 @@ import {CyphWebModule} from './cyph-web.module';
 		CyphWebModule
 	],
 	providers: [
-		AffiliateService,
 		AnalyticsService,
 		ErrorService,
 		FileService,
 		NotificationService,
 		SignupService,
-		SplitTestingService,
 		Title,
 		VirtualKeyboardWatcherService,
 		WindowWatcherService,

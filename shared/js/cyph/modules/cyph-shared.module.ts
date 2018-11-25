@@ -12,8 +12,10 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {MarkdownComponent} from '../components/markdown';
+import {AffiliateService} from '../services/affiliate.service';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
+import {SplitTestingService} from '../services/split-testing.service';
 import {StringsService} from '../services/strings.service';
 
 
@@ -58,8 +60,10 @@ import {StringsService} from '../services/strings.service';
 		MatSelectModule
 	],
 	providers: [
+		AffiliateService,
 		ConfigService,
 		EnvService,
+		SplitTestingService,
 		StringsService,
 		{
 			provide: 'EnvService',
