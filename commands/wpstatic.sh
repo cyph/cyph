@@ -175,7 +175,10 @@ for f in $(find . -name '*.html') ; do node -e "(async () => {
 
 	const isAmp	= '${f}'.endsWith('/amp/index.html');
 
-	const \$	= cheerio.load(fs.readFileSync('${f}').toString());
+	const \$	= cheerio.load(fs.readFileSync('${f}').toString().
+		/* Workaround for Ultimate Addons for WPBakery Page Builder bug */
+		replace(/<div \"/g, '<div ')
+	);
 
 	\$('meta[name=\"twitter:card\"]').each((i, elem) =>
 		\$(elem).attr('content', 'summary_large_image')
