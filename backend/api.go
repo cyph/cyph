@@ -291,19 +291,39 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			""),
 	})
 
-	sendMail(h, email, "Cyph Purchase Confirmation", "", ""+
-		"Welcome to Cyph "+name+", and thanks for signing up!\n"+
-		"<div style='text-align: left'>"+
-		"Your access code is:&nbsp;&nbsp;"+
-		"<a style='font-family: monospace; font-size: 16px' href='"+
-		signupURL+"/unlock/"+apiKey+
-		"'>"+
-		apiKey+
-		"</a>"+
-		"</div>"+
-		"")
+	_, hasPlan := config.Plans[planID]
 
-	return apiKey, http.StatusOK
+	if subscription && hasPlan {
+		sendMail(h, email, "Cyph Purchase Confirmation", "", ""+
+			"Welcome to Cyph "+name+", and thanks for signing up!\n"+
+			"<div style='text-align: left'>"+
+			"Your access code is:&nbsp;&nbsp;"+
+			"<a style='font-family: monospace; font-size: 16px' href='"+
+			signupURL+"/unlock/"+apiKey+
+			"'>"+
+			apiKey+
+			"</a>"+
+			"</div>"+
+			"")
+
+		return apiKey, http.StatusOK
+	}
+
+	if planID == "10000-0" {
+		sendMail(h, email, "Thank You!", "", ""+
+			"Thanks so much for your donation "+name+"!\n"+
+			"Your support means a lot to us, and helps ensure "+
+			"that we're able to keep the lights on and continue "+
+			"our work to protect user privacy."+
+			"")
+	} else {
+		sendMail(h, email, "Cyph Purchase Confirmation", "", ""+
+			"Welcome to Cyph "+name+", and thanks for signing up!\n"+
+			"We'll follow up as soon as we have an update on your order."+
+			"")
+	}
+
+	return "", http.StatusOK
 }
 
 func braintreeToken(h HandlerArgs) (interface{}, int) {

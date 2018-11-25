@@ -111,7 +111,7 @@ export class Config {
 				}
 			},
 			donation: {
-				id: 0,
+				id: 10000,
 				items: {
 					donation: {id: 0}
 				}
