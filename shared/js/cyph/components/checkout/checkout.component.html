@@ -91,14 +91,14 @@
 		</div>
 	</div>
 	<div class='confirmation' *ngIf='complete | async'>
-		<ng-content *ngIf='success | async'>
-			<ng-content *ngIf='confirmed | async as confirmation'>
+		<ng-container *ngIf='success | async'>
+			<ng-container *ngIf='confirmed | async as confirmation'>
 				<div cyphTranslate *ngIf='confirmation.apiKey === undefined'>
 					Thanks a lot for your support! You will receive an
 					email confirmation momentarily.
 				</div>
-			</ng-content>
-		</ng-content>
+			</ng-container>
+		</ng-container>
 		<div *ngIf='(success | async) === false'>
 			<span cyphTranslate>Payment failed.</span>
 			&ngsp;
