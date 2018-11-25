@@ -92,21 +92,15 @@ export class Config {
 				items: {
 					gold: {
 						amount: 60,
-						extraUserDiscount: 20,
-						id: 1,
-						perUser: true
+						id: 1
 					},
 					platinum: {
 						amount: 500,
-						extraUserDiscount: 100,
-						id: 2,
-						perUser: true
+						id: 2
 					},
 					silver: {
 						amount: 12,
-						extraUserDiscount: 4,
-						id: 0,
-						perUser: true
+						id: 0
 					}
 				}
 			},
