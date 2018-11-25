@@ -19,6 +19,11 @@
 		color: #ffffffe0;
 	}
 
+	&.failure > div {
+		color: white;
+		font-size: 0.9em;
+	}
+
 	::ng-deep {
 		.braintree-option__card svg {
 			color: #663ab7;

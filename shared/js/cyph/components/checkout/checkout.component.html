@@ -100,7 +100,7 @@
 			</ng-container>
 		</ng-container>
 		<div *ngIf='(success | async) === false'>
-			<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
+			<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui failure'>
 				<h2>{{stringsService.checkoutErrorTitle}}</h2>
 				<div *ngIf='errorMessage | async as err'>{{err}}</div>
 				<div>
