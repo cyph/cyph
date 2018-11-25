@@ -10,20 +10,6 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AffiliateService extends BaseProvider {
 	/** @ignore */
-	private readonly amazon		= {
-		copy: {
-			snowden: translate('Watch Snowden (2016) on Prime Video'),
-			webcam1080p: translate('Recommended 1080p Webcam'),
-			webcam4k: translate('Recommended 4K Webcam')
-		},
-		links: {
-			snowden: 'https://amzn.to/2KWiTjl',
-			webcam1080p: 'https://amzn.to/2J6phHx',
-			webcam4k: 'https://amzn.to/2KOInzc'
-		}
-	};
-
-	/** @ignore */
 	private readonly nordVPN	= {
 		copy: {
 			doublevpn: translate('Double VPN Encryption'),
@@ -42,9 +28,6 @@ export class AffiliateService extends BaseProvider {
 		{href: this.nordVPN.links.doublevpn, text: this.nordVPN.copy.doublevpn},
 		{href: this.nordVPN.links.threeyear, text: this.nordVPN.copy.recommended},
 		{href: this.nordVPN.links.default, text: this.nordVPN.copy.protect},
-		{href: this.amazon.links.webcam4k, text: this.amazon.copy.webcam4k},
-		{href: this.amazon.links.webcam1080p, text: this.amazon.copy.webcam1080p},
-		{href: this.amazon.links.snowden, text: this.amazon.copy.snowden},
 		{href: this.envService.homeUrl + 'donate', text: this.stringsService.bannerTextAlt}
 	]);
 
