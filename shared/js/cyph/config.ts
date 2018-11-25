@@ -78,6 +78,7 @@ export class Config {
 						amount?: number;
 						extraUserDiscount?: number;
 						id: number;
+						name?: string;
 						perUser?: boolean;
 						subscriptionType?: SubscriptionTypes;
 					};
@@ -92,15 +93,18 @@ export class Config {
 				items: {
 					gold: {
 						amount: 60,
-						id: 1
+						id: 1,
+						name: 'Gold Plan'
 					},
 					platinum: {
 						amount: 500,
-						id: 2
+						id: 2,
+						name: 'Lifetime Platinum'
 					},
 					silver: {
 						amount: 12,
-						id: 0
+						id: 0,
+						name: 'Silver Plan'
 					}
 				}
 			},
