@@ -30,11 +30,11 @@ fi
 checkfail
 
 
-# Limit full CircleCI test runs to beta and prod
+# TODO: # Limit full CircleCI test runs to beta and prod
 if [ "${CIRCLECI}" ] && ( \
 	[ "${CIRCLE_PROJECT_USERNAME}" != 'cyph' ] ||
 	[ "${CIRCLE_PROJECT_REPONAME}" != 'internal' ] ||
-	( [ "${CIRCLE_BRANCH}" != 'prod' ] && [ "${CIRCLE_BRANCH}" != 'beta' ] )
+	true # ( [ "${CIRCLE_BRANCH}" != 'prod' ] && [ "${CIRCLE_BRANCH}" != 'beta' ] )
 ) ; then
 	pass
 fi
