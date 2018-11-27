@@ -314,7 +314,7 @@ for f in $(grep -rl https://platform.twitter.com) ; do
 				console.log(\`\${a[k]}.\${b[k]}.js\`);
 			}
 		}
-		catch {
+		catch (_) {
 			console.error('FAILED TO PARSE: ' + s);
 		}
 	" |
