@@ -527,7 +527,9 @@ if [ "${cacheBustedProjects}" ] ; then
 			( [ ! '${site}' ] || [ '${site}' == cyph.com ] )
 		then
 			if [ '${wpPromote}' ] ; then
-				./commands/wppromote.sh >> ../.wpstatic.output 2>&1 || exit 1
+				while true ; do
+					./commands/wppromote.sh >> ../.wpstatic.output 2>&1 && break
+				done
 			fi
 
 			rm -rf wpstatic 2> /dev/null
