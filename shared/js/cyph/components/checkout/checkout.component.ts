@@ -189,6 +189,9 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 					},
 					flow: 'vault'
 				},
+				paypalCredit: {
+					flow: 'vault'
+				},
 				selector: `#${this.containerID}`
 			},
 			(err: any, instance: any) => {

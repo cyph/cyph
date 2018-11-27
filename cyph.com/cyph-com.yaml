@@ -18,6 +18,12 @@ handlers:
   # default_headers Cache-Control
   ### Content-Type: text/plain
 
+- url: /checkout[/]?
+  static_files: checkout/index.html
+  upload: checkout/index.html
+  secure: always
+  # default_headers Cache-Control
+
 - url: /(css|fonts|img|js|wp-content|wp-includes)/(.*)
   static_files: \1/\2
   upload: .*
