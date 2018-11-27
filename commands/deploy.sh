@@ -527,9 +527,11 @@ if [ "${cacheBustedProjects}" ] ; then
 			( [ ! '${site}' ] || [ '${site}' == cyph.com ] )
 		then
 			if [ '${wpPromote}' ] ; then
+				log 'Promoting WordPress'
 				while true ; do
 					./commands/wppromote.sh >> ../.wpstatic.output 2>&1 && break
 				done
+				log 'WordPress promotion successful'
 			fi
 
 			rm -rf wpstatic 2> /dev/null
