@@ -54,6 +54,13 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @ignore */
+	private readonly internalProductTelehealth: string			=
+		this.customBuildStrings.internalProductTelehealth ||
+		this.customBuildStrings.internalProduct ||
+		`Cyph Telehealth`
+	;
+
+	/** @ignore */
 	private readonly internalSession: string					=
 		this.customBuildStrings.internalSession ||
 		`cyph`
@@ -798,6 +805,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly productShort: string				= `${this.internalProductShort}`;
+
+	/** @see StringsService */
+	public readonly productTelehealth: string			= `${this.internalProductTelehealth}`;
 
 	/** @see StringsService */
 	public readonly profile: string						= `profile`;

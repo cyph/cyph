@@ -215,6 +215,51 @@
 
 
 <ng-template #usernameField>
+	<ng-container *ngIf='(pinUnlock | async) === false'>
+		<div class='product-description' fxLayout='row' fxLayoutAlign='center'>
+			<ng-container *ngIf='!envService.isTelehealth'>
+				<span cyphTranslate>Welcome to</span>
+				&ngsp;
+				<span>{{stringsService.product}}!</span>
+				&ngsp;
+				<span cyphTranslate>
+					If you have an account, you can log in here.
+				</span>
+				<ng-container *ngIf='!envService.coBranded'>
+					<span cyphTranslate>
+						Otherwise, you can go ahead and
+					</span>
+					&ngsp;
+					<a
+						cyphTranslate
+						[href]='envService.homeUrl + "register"'
+					>join our waitlist</a>.
+				</ng-container>
+			</ng-container>
+
+			<ng-container *ngIf='envService.isTelehealth'>
+				<div fxLayout='column' fxLayoutGap='8px'>
+					<div>
+						<span cyphTranslate>Welcome to</span>
+						&ngsp;
+						<span>{{stringsService.productTelehealth}}!</span>
+						&ngsp;
+						<span cyphTranslate>
+							If you have an account, you can log in here.
+						</span>
+					</div>
+					<div cyphTranslate>
+						Otherwise, if you're a patient, please refer
+						to your care provider for guidance.
+					</div>
+				</div>
+			</ng-container>
+		</div>
+
+		<br />
+		<br />
+	</ng-container>
+
 	<div fxLayout='row' fxLayoutAlign='center'>
 		<mat-form-field fxFlex>
 			<input
