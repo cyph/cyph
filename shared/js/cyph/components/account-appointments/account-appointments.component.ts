@@ -182,7 +182,12 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 		record: IAccountFileRecord;
 	}) : Promise<void> {
 		await Promise.all([
-			this.accountFilesService.acceptIncomingFile(record),
+			this.accountFilesService.acceptIncomingFile(
+				record,
+				undefined,
+				undefined,
+				appointment
+			),
 			!friend && !appointment.fromEmail ? undefined : this.databaseService.callFunction(
 				'appointmentInvite',
 				{

@@ -257,8 +257,8 @@
 								<br />
 							</div>
 							<cyph-calendar-invite
-								[isDisabled]='true'
-								[ngModel]='o.appointment.calendarInvite'
+								[isDisabled]='!(incoming && !o.friend)'
+								[(ngModel)]='o.appointment.calendarInvite'
 							></cyph-calendar-invite>
 						</div>
 					</mat-expansion-panel>

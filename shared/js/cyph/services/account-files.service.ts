@@ -718,7 +718,8 @@ export class AccountFilesService extends BaseProvider {
 	public async acceptIncomingFile (
 		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
 		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true,
-		metadata?: string
+		metadata?: string,
+		data?: AccountFile|string
 	) : Promise<void> {
 		if (typeof options === 'boolean') {
 			options	= {reject: !options};
@@ -793,7 +794,7 @@ export class AccountFilesService extends BaseProvider {
 			}
 		}
 		else if (!options.reject && options.copy) {
-			const file	=
+			const file	= data || (
 				incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
 					(await this.getDoc(incomingFile).asyncList.getValue()) :
 				fileConfig.proto ?
@@ -803,7 +804,7 @@ export class AccountFilesService extends BaseProvider {
 						fileConfig.securityModel
 					).result :
 					undefined
-			;
+			);
 
 			if (!file) {
 				throw new Error('Cannot get file for copying.');
