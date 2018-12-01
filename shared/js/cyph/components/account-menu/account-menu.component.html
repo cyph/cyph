@@ -105,6 +105,7 @@
 					name='status'
 					class='status'
 					placeholder='Status'
+					*ngIf='!envService.isTelehealth'
 				>
 					<mat-option
 						*ngFor='let status of statuses; trackBy: trackByValue'
