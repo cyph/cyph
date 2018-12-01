@@ -41,6 +41,7 @@
 								(ngModelChange)='fromName.next($event)'
 								name='name'
 								placeholder='Name'
+								required
 							/>
 						</mat-form-field>
 						<mat-form-field fxFlex>
@@ -53,6 +54,7 @@
 								type='email'
 								[pattern]='emailPattern'
 								placeholder='Email'
+								required
 							/>
 						</mat-form-field>
 					</ng-container>
