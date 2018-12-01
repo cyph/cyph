@@ -616,8 +616,9 @@
 								[style.margin]='"20px"'
 								*ngIf='(isCurrentUser | async) === false'
 							>
-								<ng-container  *ngIf='
-									(user.userType | async) === accountUserTypes.TelehealthDoctor
+								<ng-container *ngIf='
+									(user.userType | async) === accountUserTypes.TelehealthDoctor;
+									else mailButtons
 								'>
 									<button
 										mat-raised-button
@@ -633,8 +634,6 @@
 									</button>
 									<div></div>
 								</ng-container>
-
-								<ng-container *ngTemplateOutlet='mailButtons'></ng-container>
 							</div>
 						</ng-container>
 
