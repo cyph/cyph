@@ -83,7 +83,7 @@
 		<mat-checkbox
 			[(ngModel)]='o.valueBoolean'
 			(ngModelChange)='changeForm.emit()'
-			[disabled]='isDisabled'
+			[class.no-pointer-events]='isDisabled'
 			[name]='getName(o)'
 			[required]='o.required'
 			*ngIf='o.type === types.Checkbox'

@@ -380,6 +380,10 @@ button, [mat-button], [mat-raised-button] {
 	text-decoration: line-through;
 }
 
+.no-pointer-events {
+	pointer-events: none;
+}
+
 .visibility-hidden {
 	visibility: hidden;
 	pointer-events: none;

@@ -290,7 +290,7 @@
 
 	<div fxFlex>
 		<mat-checkbox
-			[disabled]='isDisabledWrapper | async'
+			[class.no-pointer-events]='isDisabledWrapper | async'
 			[name]='"alternate-day-" + day.toString()'
 			[ngModel]='value.alternateDays[day]'
 			(ngModelChange)='value.alternateDays[day] = $event; valueChange(value)'
@@ -306,7 +306,7 @@
 
 	<div fxFlex>
 		<mat-checkbox
-			[disabled]='isDisabledWrapper | async'
+			[class.no-pointer-events]='isDisabledWrapper | async'
 			[name]='"alternate-time-frame-" + timeFrame.toString()'
 			[ngModel]='value.alternateTimeFrames[timeFrame]'
 			(ngModelChange)='value.alternateTimeFrames[timeFrame] = $event; valueChange(value)'
