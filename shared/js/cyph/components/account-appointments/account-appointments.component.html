@@ -64,12 +64,18 @@
 			title: stringsService.futureAppointments
 		}'></ng-container>
 
-		<ng-container *ngTemplateOutlet='appointmentList; context: {
-			canDelete: false,
-			canJoin: false,
-			list: appointments.past,
-			title: stringsService.pastAppointments
-		}'></ng-container>
+		<mat-accordion>
+			<mat-expansion-panel>
+				<mat-expansion-panel-header>
+					<h2>{{stringsService.pastAppointments}}</h2>
+				</mat-expansion-panel-header>
+				<ng-container *ngTemplateOutlet='appointmentListContent; context: {
+					canDelete: false,
+					canJoin: false,
+					list: appointments.past
+				}'></ng-container>
+			</mat-expansion-panel>
+		</mat-accordion>
 	</div>
 
 	<mat-progress-spinner
@@ -98,8 +104,25 @@
 	let-list='list'
 	let-title='title'
 >
-	<mat-card *ngIf='accountDatabaseService.currentUser | async as currentUser'>
+	<mat-card>
 		<h2>{{title}}</h2>
+		<ng-container *ngTemplateOutlet='appointmentListContent; context: {
+			canDelete: canDelete,
+			canJoin: canJoin,
+			incoming: incoming,
+			list: list
+		}'></ng-container>
+	</mat-card>
+</ng-template>
+
+<ng-template
+	#appointmentListContent
+	let-canDelete='canDelete'
+	let-canJoin='canJoin'
+	let-incoming='incoming'
+	let-list='list'
+>
+	<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
 		<h3 *ngIf='(list | async)?.length <= 0'>
 			{{stringsService.noAppointments}}
 		</h3>
@@ -265,5 +288,5 @@
 				</ng-container>
 			</mat-accordion>
 		</div>
-	</mat-card>
+	</ng-container>
 </ng-template>
