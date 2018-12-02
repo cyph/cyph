@@ -26,15 +26,14 @@
 			</ng-container>
 		</ng-container>
 
-		<ng-container *ngIf='
-			(currentUser?.user.userType | async) === accountUserTypes.TelehealthDoctor ||
-			(appointments.incoming | async)?.length > 0
-		'>
+		<ng-container *ngIf='(appointments.incoming | async)?.length > 0'>
 			<ng-container *ngTemplateOutlet='appointmentList; context: {
 				incoming: true,
 				list: appointments.incoming,
 				title: stringsService.incomingAppointments
 			}'></ng-container>
+			<br />
+			<br />
 		</ng-container>
 
 		<ng-container *ngTemplateOutlet='appointmentList; context: {
