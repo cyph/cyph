@@ -192,6 +192,7 @@
 												"/call"
 											'
 											(click)='$event.stopPropagation()'
+											*ngIf='envService.isTelehealthFull'
 										>
 											<mat-icon>play_arrow</mat-icon>
 										</button>
