@@ -205,7 +205,7 @@ export class EphemeralSessionService extends SessionService {
 
 		/* true = yes; false = no; undefined = maybe */
 		this.state.startingNewCyph.next(
-			this.state.wasInitiatedByAPI.value ?
+			this.state.wasInitiatedByAPI.value || username ?
 				undefined :
 				id.length < 1 ?
 					true :

@@ -205,10 +205,8 @@ export class AccountSessionService extends SessionService {
 			this.accountSessionInitService.ephemeral	= true;
 			this.ephemeralSubSession					= true;
 
-			const channelID	= uuid(true);
-
-			await request({
-				data: {channelID, proFeatures: this.proFeatures},
+			const channelID	= await request({
+				data: {channelID: uuid(true), proFeatures: this.proFeatures},
 				method: 'POST',
 				retries: 5,
 				url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`

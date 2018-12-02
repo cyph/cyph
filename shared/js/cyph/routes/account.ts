@@ -51,9 +51,39 @@ export const account: Route	= {
 		},
 		{path: '404', component: NotFoundComponent},
 		{
-			path: 'anonymous-chat',
+			path: 'anonymous/call',
+			component: AccountChatComponent,
+			data: {
+				callType: 'audio',
+				generateAnonymousChannelID: true
+			}
+		},
+		{
+			path: 'anonymous/call/:anonymousChannelID',
+			component: AccountChatComponent,
+			data: {callType: 'audio'}
+		},
+		{
+			path: 'anonymous/chat',
 			component: AccountChatComponent,
 			data: {generateAnonymousChannelID: true}
+		},
+		{
+			path: 'anonymous/chat/:anonymousChannelID',
+			component: AccountChatComponent
+		},
+		{
+			path: 'anonymous/video',
+			component: AccountChatComponent,
+			data: {
+				callType: 'video',
+				generateAnonymousChannelID: true
+			}
+		},
+		{
+			path: 'anonymous/video/:anonymousChannelID',
+			component: AccountChatComponent,
+			data: {callType: 'video'}
 		},
 		{
 			path: 'accept/:id',

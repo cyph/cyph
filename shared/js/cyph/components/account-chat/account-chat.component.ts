@@ -156,7 +156,14 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				generateAnonymousChannelID,
 				promptFollowup
 			},
-			{answerExpireTime, appointmentID, contactID, sessionSubID, username},
+			{
+				anonymousChannelID,
+				answerExpireTime,
+				appointmentID,
+				contactID,
+				sessionSubID,
+				username
+			},
 			[{path}]
 		]: [
 			{
@@ -168,6 +175,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				promptFollowup?: boolean;
 			},
 			{
+				anonymousChannelID?: string;
 				answerExpireTime?: number;
 				appointmentID?: string;
 				contactID?: string;
@@ -181,13 +189,12 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				return;
 			}
 
-			this.answering.next(answerExpireTime !== undefined);
-			this.anonymousChatInitiating.next(generateAnonymousChannelID === true);
+			if (!anonymousChannelID && generateAnonymousChannelID) {
+				anonymousChannelID	= readableID(this.configService.cyphIDLength);
+			}
 
-			const anonymousChannelID	= generateAnonymousChannelID ?
-				readableID(this.configService.cyphIDLength) :
-				undefined
-			;
+			this.answering.next(answerExpireTime !== undefined);
+			this.anonymousChatInitiating.next(!!anonymousChannelID);
 
 			try {
 				if (username) {
