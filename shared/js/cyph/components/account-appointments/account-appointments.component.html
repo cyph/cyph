@@ -90,6 +90,7 @@
 		matTooltipPosition='above'
 		[routerLink]='accountService.routeRoot + "request-appointment"'
 		class='fixed-fab'
+		*ngIf='!envService.isTelehealthFull'
 	>
 		<mat-icon>add</mat-icon>
 	</button>
