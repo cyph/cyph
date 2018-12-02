@@ -594,13 +594,22 @@ export const patientProfile		= () : IForm[] => [
 ];
 
 /** Doctor profile form. */
-export const doctorProfile				= () : IForm[] => [
+export const doctorProfile				= (data?: Record<string, string>) : IForm[] => [
 	newForm(
 		[
 			newFormComponent([title('Education & Training')]),
-			newFormComponent([newFormContainer([input({label: "Bachelor's"})])]),
-			newFormComponent([newFormContainer([input({label: 'Medical School'})])]),
-			newFormComponent([newFormContainer([input({label: 'Residency'})])])
+			newFormComponent([newFormContainer([input({
+				label: "Bachelor's",
+				value: data && data.bachelors
+			})])]),
+			newFormComponent([newFormContainer([input({
+				label: 'Medical School',
+				value: data && data.medSchool
+			})])]),
+			newFormComponent([newFormContainer([input({
+				label: 'Residency',
+				value: data && data.residency
+			})])])
 		],
 		undefined,
 		true
@@ -608,7 +617,10 @@ export const doctorProfile				= () : IForm[] => [
 	newForm(
 		[
 			newFormComponent([title('Misc')]),
-			newFormComponent([newFormContainer([input({label: 'NPI'})])])
+			newFormComponent([newFormContainer([input({
+				label: 'NPI',
+				value: data && data.npi
+			})])])
 		],
 		undefined,
 		true
