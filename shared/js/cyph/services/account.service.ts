@@ -115,7 +115,9 @@ export class AccountService extends BaseProvider {
 	public readonly menuExpanded: Observable<boolean>;
 
 	/** Minimum expanded menu width. */
-	public readonly menuExpandedMinWidth: number		= this.envService.isTelehealth ? 325 : 275;
+	public readonly menuExpandedMinWidth: number		=
+		this.envService.isTelehealthFull ? 325 : 275
+	;
 
 	/** Minimum expanded menu width pixels string. */
 	public readonly menuExpandedMinWidthPX: string		=
