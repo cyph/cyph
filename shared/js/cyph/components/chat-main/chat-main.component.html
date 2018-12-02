@@ -213,110 +213,121 @@
 			<mat-icon>forum</mat-icon>
 		</button>
 
-		<div
-			fxFlex
-			fxLayout='row'
-			fxLayoutAlign='center center'
-			[fxLayoutGap]='
-				(
+		<div class='buttons' fxFlex fxLayout='column'>
+			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='
+				envService.isTelehealth &&
+				!(
 					envService.isAccounts &&
-					(envService.isMobile | async) === false &&
-					(p2pWebRTCService.videoEnabled | async) !== true
-				) ?
-					"128px" :
-					"32px"
-			'
-			class='buttons'
-		>
-			<mat-slide-toggle
-				[ngModel]='chatService.walkieTalkieMode | async'
-				(ngModelChange)='chatService.walkieTalkieMode.next($event)'
-				*ngIf='envService.pro | async'
-			>
-				<mat-icon svgIcon='walkie-talkie'></mat-icon>
-			</mat-slide-toggle>
-			<button
-				mat-icon-button
-				class='video-call-button'
-				(click)='p2pService.videoCallButton()'
-				[matTooltip]='
-					!(p2pWebRTCService.outgoingStream | async)?.video ?
-						stringsService.cameraEnable :
-						stringsService.cameraDisable
+					!(p2pWebRTCService.outgoingStream | async)?.video
+				)
+			'>
+				<h3 class='timer'>
+					{{((p2pService.timer | async)?.timestamp | async) || '00:00'}}
+				</h3>
+			</div>
+			<div
+				fxLayout='row'
+				fxLayoutAlign='center center'
+				[fxLayoutGap]='
+					(
+						envService.isAccounts &&
+						(envService.isMobile | async) === false &&
+						(p2pWebRTCService.videoEnabled | async) !== true
+					) ?
+						"128px" :
+						"32px"
 				'
-				matTooltipPosition='above'
-				*ngIf='p2pWebRTCService.videoEnabled | async'
 			>
-				<mat-icon>
-					<ng-container *ngIf='
-						!(p2pWebRTCService.outgoingStream | async)?.video;
-						else videocamOff
-					'>
-						videocam
-					</ng-container>
-					<ng-template #videocamOff>
-						videocam_off
-					</ng-template>
-				</mat-icon>
-			</button>
-			<button
-				mat-icon-button
-				class='voice-call-button'
-				(click)='
-					!chatService.walkieTalkieMode.value ?
-						p2pService.voiceCallButton() :
-						undefined
-				'
-				(pointerenter)='
-					chatService.walkieTalkieMode.value ?
-						p2pWebRTCService.toggle("audio", false) :
-						undefined
-				'
-				(pointerleave)='
-					chatService.walkieTalkieMode.value ?
-						p2pWebRTCService.toggle("audio", true) :
-						undefined
-				'
-				[matTooltip]='
-					!(p2pWebRTCService.outgoingStream | async)?.audio ?
-						stringsService.micEnable :
-						stringsService.micDisable
-				'
-				matTooltipPosition='above'
-			>
-				<mat-icon>
-					<ng-container *ngIf='
-						!(p2pWebRTCService.outgoingStream | async)?.audio;
-						else micOff
-					'>
-						mic
-					</ng-container>
-					<ng-template #micOff>
-						mic_off
-					</ng-template>
-				</mat-icon>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				matTooltip='Notes'
-				matTooltipPosition='above'
-				(click)='p2pService.openNotes(appointment)'
-				*ngIf='appointment'
-			>
-				<mat-icon>notes</mat-icon>
-			</button>
-			<button
-				mat-icon-button
-				cyphTranslate
-				matTooltip='End Call'
-				matTooltipPosition='above'
-				color='warn'
-				class='close-button'
-				(click)='p2pService.closeButton()'
-			>
-				<mat-icon>call_end</mat-icon>
-			</button>
+				<mat-slide-toggle
+					[ngModel]='chatService.walkieTalkieMode | async'
+					(ngModelChange)='chatService.walkieTalkieMode.next($event)'
+					*ngIf='envService.pro | async'
+				>
+					<mat-icon svgIcon='walkie-talkie'></mat-icon>
+				</mat-slide-toggle>
+				<button
+					mat-icon-button
+					class='video-call-button'
+					(click)='p2pService.videoCallButton()'
+					[matTooltip]='
+						!(p2pWebRTCService.outgoingStream | async)?.video ?
+							stringsService.cameraEnable :
+							stringsService.cameraDisable
+					'
+					matTooltipPosition='above'
+					*ngIf='p2pWebRTCService.videoEnabled | async'
+				>
+					<mat-icon>
+						<ng-container *ngIf='
+							!(p2pWebRTCService.outgoingStream | async)?.video;
+							else videocamOff
+						'>
+							videocam
+						</ng-container>
+						<ng-template #videocamOff>
+							videocam_off
+						</ng-template>
+					</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					class='voice-call-button'
+					(click)='
+						!chatService.walkieTalkieMode.value ?
+							p2pService.voiceCallButton() :
+							undefined
+					'
+					(pointerenter)='
+						chatService.walkieTalkieMode.value ?
+							p2pWebRTCService.toggle("audio", false) :
+							undefined
+					'
+					(pointerleave)='
+						chatService.walkieTalkieMode.value ?
+							p2pWebRTCService.toggle("audio", true) :
+							undefined
+					'
+					[matTooltip]='
+						!(p2pWebRTCService.outgoingStream | async)?.audio ?
+							stringsService.micEnable :
+							stringsService.micDisable
+					'
+					matTooltipPosition='above'
+				>
+					<mat-icon>
+						<ng-container *ngIf='
+							!(p2pWebRTCService.outgoingStream | async)?.audio;
+							else micOff
+						'>
+							mic
+						</ng-container>
+						<ng-template #micOff>
+							mic_off
+						</ng-template>
+					</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip='Notes'
+					matTooltipPosition='above'
+					(click)='p2pService.openNotes(appointment)'
+					*ngIf='appointment'
+				>
+					<mat-icon>notes</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip='End Call'
+					matTooltipPosition='above'
+					color='warn'
+					class='close-button'
+					(click)='p2pService.closeButton()'
+				>
+					<mat-icon>call_end</mat-icon>
+				</button>
+			</div>
 		</div>
 	</div>
 
