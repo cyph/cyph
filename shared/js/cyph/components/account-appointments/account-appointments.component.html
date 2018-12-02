@@ -13,26 +13,6 @@
 		fxLayoutGap='16px'
 		fxLayoutGap.lt-md='8px'
 	>
-		<ng-container *ngIf='calendarOptions'>
-			<div class='cyph-inverted-theme'>
-				<mat-accordion class='calendar'>
-					<mat-expansion-panel>
-						<mat-expansion-panel-header>
-							<h2>{{stringsService.appointmentCalendar}}</h2>
-						</mat-expansion-panel-header>
-						<ng-fullcalendar
-							#calendar
-							[options]='calendarOptions'
-							(clickButton)='calendarClickButton($event.detail)'
-							(eventClick)='calendarEventClick($event.detail)'
-							(eventDrop)='calendarUpdateEvent($event.detail)'
-							(eventResize)='calendarUpdateEvent($event.detail)'
-						></ng-fullcalendar>
-					</mat-expansion-panel>
-				</mat-accordion>
-			</div>
-		</ng-container>
-
 		<ng-container *ngIf='appointments.current | async as currentAppointments'>
 			<ng-container *ngIf='currentAppointments.length > 0'>
 				<ng-container *ngTemplateOutlet='appointmentList; context: {
@@ -76,6 +56,26 @@
 				}'></ng-container>
 			</mat-expansion-panel>
 		</mat-accordion>
+
+		<ng-container *ngIf='calendarOptions'>
+			<div class='cyph-inverted-theme'>
+				<mat-accordion class='calendar'>
+					<mat-expansion-panel>
+						<mat-expansion-panel-header>
+							<h2>{{stringsService.appointmentCalendar}}</h2>
+						</mat-expansion-panel-header>
+						<ng-fullcalendar
+							#calendar
+							[options]='calendarOptions'
+							(clickButton)='calendarClickButton($event.detail)'
+							(eventClick)='calendarEventClick($event.detail)'
+							(eventDrop)='calendarUpdateEvent($event.detail)'
+							(eventResize)='calendarUpdateEvent($event.detail)'
+						></ng-fullcalendar>
+					</mat-expansion-panel>
+				</mat-accordion>
+			</div>
+		</ng-container>
 	</div>
 
 	<mat-progress-spinner
