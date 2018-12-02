@@ -63,7 +63,7 @@ const sendMailInternal	= async (
 				location: eventDetails.location,
 				organizer: eventInviter,
 				start: new Date(eventDetails.startTime),
-				summary: eventDetails.summary
+				summary: eventDetails.summary || subject
 			}],
 			prodId: '//cyph.com//cyph-appointment-scheduler//EN'
 		}).toString(),
@@ -72,12 +72,7 @@ const sendMailInternal	= async (
 	},
 	subject,
 	text: text || '',
-	to:
-		typeof to === 'string' ?
-			to :
-		!eventInviter || !eventInviter.formatted ?
-			to.formatted :
-			[to.formatted, eventInviter.formatted]
+	to: typeof to === 'string' ? to : to.formatted
 });
 
 /**

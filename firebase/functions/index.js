@@ -178,9 +178,10 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername) => {
 	const id				= readableID(config.cyphIDLength);
 	const inviterUsername	= await getUsername();
+	const {accountsURL}		= namespaces[namespace];
 
 	/* TODO: Generalize this after making ephemeral a sub-route of accounts */
-	const domain	=
+	const ephemeralDomain	=
 		namespace === 'inova.cyph.healthcare' ?
 			(
 				data.callType === 'audio' ?
@@ -214,20 +215,34 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 			)
 	;
 
-	await sendMail(
-		database,
-		namespace,
-		data.to,
-		'Cyph Appointment',
-		undefined,
-		{
-			endTime: data.eventDetails.endTime,
+	await Promise.all([
+		sendMail(
+			database,
+			namespace,
+			data.to,
+			`Cyph Appointment with @${inviterUsername}`,
+			undefined,
+			{
+				endTime: data.eventDetails.endTime,
+				inviterUsername,
+				location: `https://${ephemeralDomain}/#${inviterUsername}/${id}`,
+				startTime: data.eventDetails.startTime
+			}
+		),
+		sendMail(
+			database,
+			namespace,
 			inviterUsername,
-			location: `https://${domain}/#${inviterUsername}/${id}`,
-			startTime: data.eventDetails.startTime,
-			summary: 'Cyph Appointment'
-		}
-	);
+			`Cyph Appointment with ${data.to.name} <${data.to.email}>`,
+			undefined,
+			{
+				endTime: data.eventDetails.endTime,
+				inviterUsername: data.to,
+				location: `${accountsURL}anonymous/${data.callType || 'chat'}/${id}`,
+				startTime: data.eventDetails.startTime
+			}
+		)
+	]);
 });
 
 
