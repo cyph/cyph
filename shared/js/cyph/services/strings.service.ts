@@ -358,7 +358,7 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
-	public readonly futureAppointments: string			= `Future Appointments`;
+	public readonly futureAppointments: string			= `Appointments`;
 
 	/** @see StringsService */
 	public readonly getMessageValueFailure: string		=
