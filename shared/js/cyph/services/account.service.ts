@@ -525,7 +525,7 @@ export class AccountService extends BaseProvider {
 
 				/* Special case: set root header on mobile */
 				if (!route && isMobile) {
-					return this.envService.isTelehealth ?
+					return this.envService.isTelehealthFull ?
 						this.stringsService.profileHeader :
 						this.stringsService.messagesHeader
 					;

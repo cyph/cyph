@@ -4,7 +4,7 @@
 <mat-card
 	class='contact animated'
 	[class.non-clickable]='!clickable'
-	[class.telehealth]='envService.isTelehealth'
+	[class.telehealth]='envService.isTelehealthFull'
 	[routerLink]='
 		(
 			!clickable ||
@@ -17,7 +17,7 @@
 				"messages/external-user/" +
 				username
 			) :
-		envService.isTelehealth ?
+		envService.isTelehealthFull ?
 			accountService.routeRoot + "profile/" + username :
 		((user | async)?.contactID | async) ?
 			(
@@ -77,6 +77,7 @@
 					[class.incoming]='contactState.state === accountContactStates.IncomingRequest'
 				>
 					<ng-container *ngIf='
+						envService.isTelehealthFull &&
 						((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor;
 						else standardView
 					'>
@@ -95,7 +96,10 @@
 
 			<cyph-account-user-rating
 				[user]='user | async'
-				*ngIf='((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor'
+				*ngIf='
+					envService.isTelehealthFull &&
+					((user | async)?.userType | async) === accountUserTypes.TelehealthDoctor
+				'
 				fxHide.lt-md
 			></cyph-account-user-rating>
 
@@ -177,7 +181,7 @@
 						undefined
 				'
 				(click)='$event.stopPropagation()'
-				*ngIf='p2pSupported && !envService.isTelehealth'
+				*ngIf='p2pSupported && !envService.isTelehealthFull'
 			>
 				<mat-icon>call</mat-icon>
 			</button>
@@ -222,7 +226,7 @@
 	<mat-card
 		class='contact animated'
 		[class.non-clickable]='!clickable || groupData?.incoming'
-		[class.telehealth]='envService.isTelehealth'
+		[class.telehealth]='envService.isTelehealthFull'
 		[routerLink]='
 			!clickable || groupData?.incoming ?
 				undefined :
