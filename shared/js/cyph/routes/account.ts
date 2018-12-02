@@ -245,17 +245,17 @@ export const account: Route	= {
 		{
 			path: 'request-appointment',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValue.Types.CalendarInvite}
+			data: {form: newPatient, messageType: ChatMessageValue.Types.CalendarInvite}
 		},
 		{
 			path: 'request-appointment/:contactID',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValue.Types.CalendarInvite}
+			data: {form: newPatient, messageType: ChatMessageValue.Types.CalendarInvite}
 		},
 		{
 			path: 'request-appointment/user/:username',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValue.Types.CalendarInvite}
+			data: {form: newPatient, messageType: ChatMessageValue.Types.CalendarInvite}
 		},
 		{
 			path: 'request-followup/:contactID',

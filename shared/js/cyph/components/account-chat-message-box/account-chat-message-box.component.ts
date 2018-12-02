@@ -49,6 +49,9 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 	/** @see ChatMessageBoxComponent.messageType */
 	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
 
+	/** Send button text. */
+	@Input() public sendText: string			= this.stringsService.send;
+
 	/** Shows header. */
 	@Input() public showHeader: boolean			= false;
 

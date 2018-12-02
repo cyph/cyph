@@ -633,6 +633,9 @@ export class StringsService extends BaseProvider {
 	;
 
 	/** @see StringsService */
+	public readonly next: string						= `Next`;
+
+	/** @see StringsService */
 	public readonly no: string							= `no`;
 
 	/** @see StringsService */
@@ -887,6 +890,9 @@ export class StringsService extends BaseProvider {
 	public readonly selfDestructDeactivated: string		=
 		`Self-destruct deactivated.`
 	;
+
+	/** @see StringsService */
+	public readonly send: string						= `Send`;
 
 	/** @see StringsService */
 	public readonly session: string						= `${this.internalSession}`;

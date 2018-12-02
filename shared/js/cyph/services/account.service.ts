@@ -63,7 +63,15 @@ export class AccountService extends BaseProvider {
 	private readonly transitionInternal		= new BehaviorSubject<boolean>(false);
 
 	/** Active sidebar contact username. */
-	public readonly activeSidebarContact	= new BehaviorSubject<string|undefined>(undefined);
+	public readonly activeSidebarContact				=
+		new BehaviorSubject<string|undefined>(undefined)
+	;
+
+	/** Email address to use for new pseudo-account. */
+	public readonly fromEmail							= new BehaviorSubject<string>('');
+
+	/** Name to use for new pseudo-account. */
+	public readonly fromName							= new BehaviorSubject<string>('');
 
 	/** Header title for current section. */
 	public readonly header: Observable<{desktop?: string; mobile?: string}|User|undefined>;

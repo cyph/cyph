@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {User} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {States} from '../../chat/enums';
@@ -33,46 +33,42 @@ import {uuid} from '../../util/uuid';
 	templateUrl: './account-compose.component.html'
 })
 export class AccountComposeComponent extends BaseProvider implements OnDestroy, OnInit {
+	/** Indicates whether this component is using its own service providers. */
+	protected readonly hasOwnProviders: boolean	= true;
+
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+	public readonly accountUserTypes			= AccountUserTypes;
 
 	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
-	public readonly appointmentFollowUp: BehaviorSubject<boolean>			=
-		new BehaviorSubject(false)
-	;
+	public readonly appointmentFollowUp			= new BehaviorSubject<boolean>(false);
 
 	/** Data for attaching a form to an appointment. */
-	public readonly appointmentFormData: BehaviorSubject<{id: string; form: IForm}|undefined>	=
+	public readonly appointmentFormData			=
 		new BehaviorSubject<{id: string; form: IForm}|undefined>(undefined)
 	;
 
 	/** @see ChatMessageValue.Types */
-	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
-		ChatMessageValue.Types
-	;
+	public readonly chatMessageValueTypes		= ChatMessageValue.Types;
 
 	/** @see emailPattern */
-	public readonly emailPattern											= emailPattern;
+	public readonly emailPattern				= emailPattern;
 
-	/** Email address to use for new pseudo-account. */
-	public readonly fromEmail												=
-		new BehaviorSubject<string>('')
-	;
-
-	/** Name to use for new pseudo-account. */
-	public readonly fromName												=
-		new BehaviorSubject<string>('')
-	;
-
-	/** Indicates whether this component is using its own service providers. */
-	protected readonly hasOwnProviders: boolean								= true;
+	/** Indicates whether accountService.fromName and accountService.fromEmail were pre-set. */
+	public readonly fromDataPreSet				= new BehaviorSubject<boolean>(false);
 
 	/** @see AccountChatMessageBoxComponent.messageType */
-	public readonly messageType: BehaviorSubject<ChatMessageValue.Types>	= toBehaviorSubject(
+	public readonly messageType					= toBehaviorSubject(
 		this.accountService.combinedRouteData(this.activatedRoute).pipe(map(([o, params]) => {
 			const messageType: ChatMessageValue.Types	= o.messageType;
 
-			const value	= typeof o.value === 'function' ? o.value() : o.value;
+			const value	=
+				typeof o.value === 'function' ?
+					o.value({
+						email: this.accountService.fromEmail.value,
+						name: this.accountService.fromName.value
+					}) :
+					o.value
+			;
 
 			this.appointmentFollowUp.next(o.appointmentFollowUp === true);
 
@@ -118,15 +114,37 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 	);
 
 	/** @see SearchBarComponent.filter */
-	public readonly recipients: BehaviorSubject<Set<User>>				=
-		new BehaviorSubject<Set<User>>(new Set())
-	;
+	public readonly recipients					= new BehaviorSubject<Set<User>>(new Set());
 
 	/** @see AccountContactsSearchComponent.searchUsername */
-	public readonly searchUsername: BehaviorSubject<string>				= new BehaviorSubject('');
+	public readonly searchUsername				= new BehaviorSubject('');
 
 	/** Sends message. */
-	public readonly send: () => Promise<void>							= async () => {
+	public readonly send						= async () => {
+		const routeData	= await this.activatedRoute.data.pipe(take(1)).toPromise();
+
+		if (
+			this.envService.isTelehealth &&
+			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
+			typeof routeData.form === 'function' &&
+			(
+				this.accountDatabaseService.currentUser.value === undefined ||
+				(
+					await this.accountDatabaseService.currentUser.value.user.
+						accountUserProfile.
+						getValue()
+				).userType === AccountUserTypes.Standard
+			)
+		) {
+			this.accountChatService.chat.currentMessage.form	= routeData.form({
+				email: this.accountService.fromEmail.value,
+				name: this.accountService.fromName.value
+			});
+
+			this.messageType.next(ChatMessageValue.Types.Form);
+			return;
+		}
+
 		this.sent.next(undefined);
 
 		if (this.appointmentFormData.value !== undefined) {
@@ -154,6 +172,12 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 				this.sent.next(false);
 				return;
 			}
+			else if (
+				this.messageType.value === ChatMessageValue.Types.Form &&
+				routeData.messageType === ChatMessageValue.Types.CalendarInvite
+			) {
+				this.messageType.next(ChatMessageValue.Types.CalendarInvite);
+			}
 
 			if (
 				this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
@@ -170,8 +194,12 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 					),
 					{
 						calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,
-						fromEmail: this.fromEmail.value || undefined,
-						fromName: this.fromName.value || undefined,
+						forms: this.accountChatService.chat.currentMessage.form ?
+							[this.accountChatService.chat.currentMessage.form] :
+							undefined
+						,
+						fromEmail: this.accountService.fromEmail.value || undefined,
+						fromName: this.accountService.fromName.value || undefined,
 						participants: [
 							...recipients,
 							...(this.accountDatabaseService.currentUser.value ?
@@ -191,8 +219,8 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 						{pseudoAccount: true},
 						undefined,
 						undefined,
-						this.fromName.value,
-						this.fromEmail.value
+						this.accountService.fromName.value,
+						this.accountService.fromEmail.value
 					))
 				) {
 					this.sent.next(false);
@@ -255,17 +283,13 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 	};
 
 	/** Indicates whether message has been sent, or undefined for in-progress. */
-	public readonly sent: BehaviorSubject<boolean|undefined>		=
-		new BehaviorSubject<boolean|undefined>(false)
-	;
+	public readonly sent						= new BehaviorSubject<boolean|undefined>(false);
 
 	/** ID of a file that has been sent, if applicable. */
-	public readonly sentFileID: BehaviorSubject<string|undefined>	=
-		new BehaviorSubject<string|undefined>(undefined)
-	;
+	public readonly sentFileID					= new BehaviorSubject<string|undefined>(undefined);
 
 	/** Metadata of a message that has been sent, if applicable. */
-	public readonly sentMessage										=
+	public readonly sentMessage					=
 		new BehaviorSubject<{id: string; name?: string}|undefined>(undefined)
 	;
 
@@ -284,6 +308,10 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 		this.accountChatService.updateChat();
 		this.sessionService.state.isAlive.next(true);
 
+		if (this.accountService.fromEmail.value && this.accountService.fromName.value) {
+			this.fromDataPreSet.next(true);
+		}
+
 		this.subscriptions.push(this.activatedRoute.params.subscribe(async o => {
 			const username: string|undefined	=
 				o.username ||
@@ -301,12 +329,10 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 
 		this.scrollService.init();
 		this.accountService.transitionEnd();
+		this.accountService.resolveUiReady();
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly activatedRoute: ActivatedRoute,
-
 		/** @ignore */
 		private readonly accountAuthService: AccountAuthService,
 
@@ -324,6 +350,9 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @see ActivatedRoute */
+		public readonly activatedRoute: ActivatedRoute,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

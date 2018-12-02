@@ -322,17 +322,22 @@ export const phone		= (id: string = 'PhoneNumber.Home') : Form.IElement => {
 };
 
 /** Email address element row. */
-export const email		= (id: string = 'EmailAddresses[0]') : Form.IElement => {
-	return emailInput({id, label: 'Email', required: true});
-};
+export const email		= (
+	id: string = 'EmailAddresses[0]',
+	data?: Record<string, string>
+) : Form.IElement =>
+	emailInput({id, label: 'Email', required: true, value: data && data.email})
+;
 
 /** Name element row. */
-export const name		= (id?: string) : Form.IElementContainer => {
+export const name		= (id?: string, data?: Record<string, string>) : Form.IElementContainer => {
+	const nameSplit	= data && data.name ? data.name.split(' ') : [];
+
 	return newFormContainer(
 		[
-			input({id: 'FirstName', label: 'First Name', required: true}),
+			input({id: 'FirstName', label: 'First Name', required: true, value: nameSplit[0]}),
 			input({id: 'MiddleName', label: 'Middle Name'}),
-			input({id: 'LastName', label: 'Last Name', required: true})
+			input({id: 'LastName', label: 'Last Name', required: true, value: nameSplit[1]})
 		],
 		id
 	);
@@ -395,12 +400,12 @@ export const ssn		= (id: string = 'SSN') : Form.IElement => {
 };
 
 /** Contact information component. */
-export const contact			= (id?: string) : Form.IComponent => {
+export const contact		= (id?: string, data?: Record<string, string>) : Form.IComponent => {
 	return newFormComponent(
 		[
-			name(),
+			name(undefined, data),
 			newFormContainer([
-				email(),
+				email(undefined, data),
 				phone(),
 				ssn()
 			]),
@@ -412,7 +417,7 @@ export const contact			= (id?: string) : Form.IComponent => {
 };
 
 /** Contact information components. */
-export const contactSplit		= (id?: string) : Form.IComponent[] => {
+export const contactSplit	= (id?: string) : Form.IComponent[] => {
 	return [
 		newFormComponent(
 			[name()],
@@ -531,10 +536,10 @@ export const optInOut			= () : Form.IComponent => newFormComponent([
 ]);
 
 /** New patient form. */
-export const newPatient			= () : IForm => newForm(
+export const newPatient			= (data?: Record<string, string>) : IForm => newForm(
 	[
 		newFormComponent([title('Basic Information')]),
-		contact('redoxPatient.Demographics'),
+		contact('redoxPatient.Demographics', data),
 		basicInfo('redoxPatient.Demographics'),
 		insuranceComponent(),
 		optInOut()

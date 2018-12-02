@@ -31,14 +31,16 @@
 					[fxShow]='(sent | async) === false'
 				>
 					<ng-container *ngIf='
-						(accountDatabaseService.currentUser | async) === undefined
+						(accountDatabaseService.currentUser | async) === undefined &&
+						(messageType | async) !== chatMessageValueTypes.Form &&
+						(fromDataPreSet | async) === false
 					'>
 						<mat-form-field fxFlex>
 							<input
 								matInput
 								cyphTranslate
-								[ngModel]='fromName | async'
-								(ngModelChange)='fromName.next($event)'
+								[ngModel]='accountService.fromName | async'
+								(ngModelChange)='accountService.fromName.next($event)'
 								name='name'
 								placeholder='Name'
 								required
@@ -48,8 +50,8 @@
 							<input
 								matInput
 								cyphTranslate
-								[ngModel]='fromEmail | async'
-								(ngModelChange)='fromEmail.next($event)'
+								[ngModel]='accountService.fromEmail | async'
+								(ngModelChange)='accountService.fromEmail.next($event)'
 								name='email'
 								type='email'
 								[pattern]='emailPattern'
@@ -76,6 +78,14 @@
 						[calendarInviteFollowUp]='appointmentFollowUp | async'
 						[disableSend]='((recipients | async)?.size || 0) < 1'
 						[messageType]='messageType | async'
+						[sendText]='
+							(
+								(messageType | async) === chatMessageValueTypes.CalendarInvite &&
+								(activatedRoute.data | async)?.form !== undefined
+							) ?
+								stringsService.next :
+								stringsService.send
+						'
 						[showHeader]='true'
 						[showUnreadCount]='false'
 					></cyph-account-chat-message-box>

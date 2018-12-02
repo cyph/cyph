@@ -84,13 +84,14 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 	/** Data source to pull data from on init and save data to on submit. */
 	@Input() public dataSource?: MaybePromise<IAsyncValue<any>|undefined>	=
-		this.envService.isAccounts && this.accountDatabaseService && this.envService.isTelehealth ?
-			this.accountDatabaseService.getCurrentUser().then(() =>
-				this.accountDatabaseService ?
-					this.accountDatabaseService.getAsyncValue('patientInfo', PatientInfo) :
-					undefined
-			) :
-			undefined
+	(
+		this.envService.isAccounts &&
+		this.accountDatabaseService &&
+		this.envService.isTelehealth &&
+		this.accountDatabaseService.currentUser.value
+	) ?
+		this.accountDatabaseService.getAsyncValue('patientInfo', PatientInfo) :
+		undefined
 	;
 
 	/** @see emailPattern */

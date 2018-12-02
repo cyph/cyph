@@ -27,26 +27,26 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 	protected readonly hasOwnProviders: boolean	= false;
 
 	constructor (
-		activatedRoute: ActivatedRoute,
 		accountAuthService: AccountAuthService,
 		accountChatService: AccountChatService,
 		accountContactsService: AccountContactsService,
 		accountFilesService: AccountFilesService,
 		scrollService: ScrollService,
 		sessionService: SessionService,
+		activatedRoute: ActivatedRoute,
 		accountService: AccountService,
 		accountDatabaseService: AccountDatabaseService,
 		envService: EnvService,
 		stringsService: StringsService
 	) {
 		super(
-			activatedRoute,
 			accountAuthService,
 			accountChatService,
 			accountContactsService,
 			accountFilesService,
 			scrollService,
 			sessionService,
+			activatedRoute,
 			accountService,
 			accountDatabaseService,
 			envService,

@@ -245,7 +245,7 @@
 								trackBy: trackByID;
 								let i = index;
 							'>
-								<button mat-raised-button [routerLink]='
+								<button mat-raised-button [disabled]='incoming' [routerLink]='
 									accountService.routeRoot +
 									"appointments/" +
 									o.record.id +
