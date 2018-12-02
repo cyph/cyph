@@ -45,7 +45,7 @@
 	</div>
 </ng-template>
 
-<div *ngIf='(accountDatabaseService.currentUser | async)?.confirmed && !envService.isTelehealth'>
+<div *ngIf='(accountDatabaseService.currentUser | async)?.confirmed && !envService.isTelehealthFull'>
 	<div
 		class='overlay clickable'
 		(click)='isSpeedDialOpen.next(false)'
@@ -56,8 +56,8 @@
 		[forceTooltips]='envService.isMobile | async'
 		[open]='isSpeedDialOpen | async'
 		(mouseleave)='!envService.isMobile.value ? isSpeedDialOpen.next(false) : undefined'
-		[class.absolute-fab]='!((envService.isMobile | async) || envService.isTelehealth)'
-		[class.fixed-fab]='(envService.isMobile | async) || envService.isTelehealth'
+		[class.absolute-fab]='!((envService.isMobile | async) || envService.isTelehealthFull)'
+		[class.fixed-fab]='(envService.isMobile | async) || envService.isTelehealthFull'
 	>
 		<smd-fab-trigger
 			[spin]='true'
