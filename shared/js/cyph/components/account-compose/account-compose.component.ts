@@ -120,6 +120,7 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 	public readonly searchUsername				= new BehaviorSubject('');
 
 	/** Sends message. */
+	/* tslint:disable-next-line:cyclomatic-complexity */
 	public readonly send						= async () => {
 		const routeData	= await this.activatedRoute.data.pipe(take(1)).toPromise();
 
