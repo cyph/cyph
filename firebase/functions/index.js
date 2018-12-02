@@ -181,6 +181,14 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 
 	/* TODO: Generalize this after making ephemeral a sub-route of accounts */
 	const domain	=
+		namespace === 'inova.cyph.healthcare' ?
+			(
+				data.callType === 'audio' ?
+					'audio.inova.cyph.healthcare' :
+				data.callType === 'video' ?
+					'video.inova.cyph.healthcare' :
+					'chat.inova.cyph.healthcare'
+			) :
 		namespace === 'cyph.healthcare' ?
 			(
 				data.callType === 'audio' ?
