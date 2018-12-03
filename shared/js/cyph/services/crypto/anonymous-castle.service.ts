@@ -21,7 +21,13 @@ export class AnonymousCastleService extends CastleService {
 	public async init (sessionService: SessionService) : Promise<void> {
 		const transport			= new Transport(sessionService);
 
-		const handshakeState	= await sessionService.handshakeState();
+		const handshakeState	= await sessionService.handshakeState(
+			undefined,
+			undefined,
+			sessionService.state.sharedSecret.value ?
+				undefined :
+				true
+		);
 
 		const localUser			= new AnonymousLocalUser(
 			this.potassiumService,

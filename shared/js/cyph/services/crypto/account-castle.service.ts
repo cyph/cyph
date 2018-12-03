@@ -50,7 +50,11 @@ export class AccountCastleService extends CastleService {
 			const localUser	= new RegisteredLocalUser(this.accountDatabaseService);
 
 			if (user.anonymous) {
-				const anonymousHandshakeState	= await accountSessionService.handshakeState();
+				const anonymousHandshakeState	= await accountSessionService.handshakeState(
+					undefined,
+					undefined,
+					false
+				);
 
 				const anonymousRemoteUser		= new AnonymousRemoteUser(
 					this.potassiumService,
