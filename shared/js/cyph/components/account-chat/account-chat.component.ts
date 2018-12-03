@@ -318,7 +318,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				);
 
 				const chat	= anonymousChannelID ?
-					{anonymousChannelID} :
+					{anonymousChannelID, passive: !generateAnonymousChannelID} :
 					await this.accountContactsService.getChatData(contactID)
 				;
 

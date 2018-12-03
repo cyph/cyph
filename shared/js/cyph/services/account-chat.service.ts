@@ -146,7 +146,11 @@ export class AccountChatService extends ChatService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		chat: {anonymousChannelID: string}|{group: IAccountMessagingGroup}|{username: string},
+		chat:
+			{anonymousChannelID: string; passive?: boolean}|
+			{group: IAccountMessagingGroup}|
+			{username: string}
+		,
 		keepCurrentMessage: boolean = false,
 		callType?: 'audio'|'video',
 		sessionSubID?: string,

@@ -179,7 +179,11 @@ export class AccountSessionService extends SessionService {
 
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
-		chat: {anonymousChannelID: string}|{group: IAccountMessagingGroup}|{username: string},
+		chat:
+			{anonymousChannelID: string; passive?: boolean}|
+			{group: IAccountMessagingGroup}|
+			{username: string}
+		,
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false,
 		setHeader: boolean = true
@@ -226,7 +230,7 @@ export class AccountSessionService extends SessionService {
 					chat.anonymousChannelID
 				}`
 			);
-			this.state.startingNewCyph.next(true);
+			this.state.startingNewCyph.next(chat.passive ? undefined : true);
 
 			this.resolveReady();
 			return this.init(channelID);
