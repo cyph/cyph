@@ -49,7 +49,7 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 	public forceFocus: boolean			= true;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
-	public readonly isPassive			= new BehaviorSubject<boolean>(false);
+	public readonly isPassive			= new BehaviorSubject<boolean>(true);
 
 	/** The link to join this connection. */
 	public readonly link				= new BehaviorSubject<string>('');
@@ -116,9 +116,10 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 			).toPromise()
 		;
 
-		this.isPassive.next(this.sessionService.state.wasInitiatedByAPI.value);
-
-		if (this.isPassive.value || !this.sessionService.state.startingNewCyph.value) {
+		if (
+			this.sessionService.state.wasInitiatedByAPI.value ||
+			!this.sessionService.state.startingNewCyph.value
+		) {
 			return;
 		}
 
@@ -137,6 +138,8 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 		this.linkSMS.next(this.domSanitizer.bypassSecurityTrustUrl(
 			this.envService.smsUriBase + linkEncoded
 		));
+
+		this.isPassive.next(false);
 
 		if (this.elementRef.nativeElement && this.envService.isWeb) {
 			const $element		= $(this.elementRef.nativeElement);
