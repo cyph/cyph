@@ -92,7 +92,7 @@ const sendMail			= async (database, namespace, username, subject, text, eventDet
 		return;
 	}
 
-	const eventInviter	= eventDetails && typeof eventDetails.inviterUsername === 'string' ?
+	const eventInviter	= eventDetails && eventDetails.inviterUsername ?
 		await getEmailAddress(database, namespace, eventDetails.inviterUsername) :
 		undefined
 	;
