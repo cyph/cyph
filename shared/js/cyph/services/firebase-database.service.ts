@@ -26,7 +26,7 @@ import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {MaybePromise} from '../maybe-promise-type';
-import {BinaryProto, NotificationTypes, StringProto} from '../proto';
+import {BinaryProto, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {getOrSetDefault, getOrSetDefaultObservable} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
@@ -719,23 +719,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 		await this.ngZone.runOutsideAngular(async () => retryUntilSuccessful(async () =>
 			(await this.app).auth().signOut()
 		));
-	}
-
-	/** @inheritDoc */
-	public async notify (
-		urlPromise: MaybePromise<string>,
-		targetPromise: MaybePromise<string>,
-		notificationType: NotificationTypes,
-		metadata?: {id: string}&{[k: string]: any}
-	) : Promise<void> {
-		const url		= await urlPromise;
-		const target	= await targetPromise;
-
-		await this.ngZone.runOutsideAngular(async () =>
-			(await this.getDatabaseRef(url)).push(
-				{target, type: notificationType, ...(metadata ? {metadata} : {})}
-			).then()
-		);
 	}
 
 	/** @inheritDoc */

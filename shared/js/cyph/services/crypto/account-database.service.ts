@@ -1039,18 +1039,17 @@ export class AccountDatabaseService extends BaseProvider {
 		return `users/${currentUser.user.username}/${url}`;
 	}
 
-	/** @see DatabaseService.notify */
+	/** Triggers a push notification. */
 	public async notify (
 		username: MaybePromise<string>,
 		notificationType: NotificationTypes,
 		metadata?: {id: string}&{[k: string]: any}
 	) : Promise<void> {
-		await this.databaseService.notify(
-			await this.normalizeURL('notifications'),
+		await this.databaseService.callFunction('userNotification', {
 			username,
-			notificationType,
-			metadata
-		);
+			type: notificationType,
+			...(metadata ? {metadata} : {})
+		});
 	}
 
 	/** @see DatabaseService.pushItem */

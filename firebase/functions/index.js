@@ -36,6 +36,10 @@ const {notify}	= require('./notify')(database, messaging);
 const channelDisconnectTimeout	= 5000;
 
 const getRealUsername	= async (namespace, username) => {
+	if (!username) {
+		return 'unregistered';
+	}
+
 	try {
 		const realUsername	=
 			(await database.ref(
@@ -53,6 +57,10 @@ const getRealUsername	= async (namespace, username) => {
 };
 
 const getName	= async (namespace, username) => {
+	if (!username) {
+		return 'Someone';
+	}
+
 	try {
 		const name	=
 			(await database.ref(
@@ -659,11 +667,9 @@ exports.userEmailSet	= functions.database.ref(
 
 
 /* TODO: Translations and user block lists. */
-exports.userNotification	= functions.database.ref(
-	'{namespace}/users/{user}/notifications/{notification}'
-).onCreate(async (data, {params}) => {
-	const username		= params.user;
-	const notification	= data.val();
+exports.userNotification	= onCall(async (data, context, namespace, getUsername) => {
+	const username		= await getUsername();
+	const notification	= data;
 	const metadata		= typeof notification.metadata === 'object' ? notification.metadata : {};
 	const now			= Date.now();
 
@@ -674,9 +680,9 @@ exports.userNotification	= functions.database.ref(
 	await Promise.all([
 		(async () => {
 			const [senderName, senderUsername, targetName]	= await Promise.all([
-				getName(params.namespace, username),
-				getRealUsername(params.namespace, username),
-				getName(params.namespace, notification.target)
+				getName(namespace, username),
+				getRealUsername(namespace, username),
+				getName(namespace, notification.target)
 			]);
 
 			const {eventDetails, subject, text}	=
@@ -730,7 +736,7 @@ exports.userNotification	= functions.database.ref(
 			;
 
 			await notify(
-				params.namespace,
+				namespace,
 				notification.target,
 				subject,
 				text,
@@ -743,7 +749,7 @@ exports.userNotification	= functions.database.ref(
 				return;
 			}
 
-			const userPath	= `${params.namespace}/users/${notification.target}`;
+			const userPath	= `${namespace}/users/${notification.target}`;
 
 			const hasFile	= async () =>
 				(

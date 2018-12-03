@@ -12,7 +12,6 @@ import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
-import {NotificationTypes} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {flattenArrays} from '../util/arrays';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
@@ -419,16 +418,6 @@ export class DatabaseService extends DataManagerService {
 	/** Logs out. */
 	public async logout () : Promise<void> {
 		throw new Error('Must provide an implementation of DatabaseService.logout.');
-	}
-
-	/** Triggers a push notification. */
-	public async notify (
-		_URL: MaybePromise<string>,
-		_TARGET: MaybePromise<string>,
-		_NOTIFICATION_TYPE: NotificationTypes,
-		_METADATA?: {id: string}&{[k: string]: any}
-	) : Promise<void> {
-		throw new Error('Must provide an implementation of DatabaseService.notify.');
 	}
 
 	/**

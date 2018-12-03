@@ -799,20 +799,6 @@
 						}
 					},
 
-					"notifications": {
-						"$notification": {
-							"metadata": {
-								".validate": "newData.hasChildren()"
-							},
-							"target": {
-								".validate": "newData.isString()"
-							},
-							"type": {
-								".validate": "newData.isNumber()"
-							}
-						}
-					},
-
 					"organizationMembers": {
 						".read": true,
 
