@@ -322,7 +322,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					await this.accountContactsService.getChatData(contactID)
 				;
 
-				if (callType !== undefined && !sessionSubID) {
+				if (callType !== undefined && anonymousChannelID) {
+					return this.accountChatService.setUser(chat, undefined, callType);
+				}
+				else if (callType !== undefined && !sessionSubID) {
 					await this.accountChatService.setUser(chat);
 					return this.accountP2PService.beginCall(callType, path);
 				}
