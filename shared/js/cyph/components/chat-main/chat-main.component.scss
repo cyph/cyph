@@ -497,6 +497,13 @@
 	text-align: center;
 }
 
+h3.timer {
+	color: rgba(244, 244, 244, 0.5);
+	font-size: 2em;
+	margin-top: 0.5em;
+	font-weight: 500;
+}
+
 .accounts {
 	.cover-image.call {
 		position: absolute;
@@ -519,13 +526,6 @@
 		color: rgba(244, 244, 244, 0.9);
 		margin-bottom: 0.5em;
 		font-size: 2em;
-	}
-
-	h3.timer {
-		color: rgba(244, 244, 244, 0.5);
-		font-size: 2em;
-		margin-top: 0.5em;
-		font-weight: 500;
 	}
 
 	div.contact {
