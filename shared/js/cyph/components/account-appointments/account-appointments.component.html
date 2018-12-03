@@ -13,6 +13,16 @@
 		fxLayoutGap='16px'
 		fxLayoutGap.lt-md='8px'
 	>
+		<ng-container *ngIf='(appointments.incoming | async)?.length > 0'>
+			<ng-container *ngTemplateOutlet='appointmentList; context: {
+				incoming: true,
+				list: appointments.incoming,
+				title: stringsService.incomingAppointments
+			}'></ng-container>
+			<br />
+			<br />
+		</ng-container>
+
 		<ng-container *ngIf='appointments.current | async as currentAppointments'>
 			<ng-container *ngIf='currentAppointments.length > 0'>
 				<ng-container *ngTemplateOutlet='appointmentList; context: {
@@ -24,16 +34,6 @@
 						stringsService.currentAppointments
 				}'></ng-container>
 			</ng-container>
-		</ng-container>
-
-		<ng-container *ngIf='(appointments.incoming | async)?.length > 0'>
-			<ng-container *ngTemplateOutlet='appointmentList; context: {
-				incoming: true,
-				list: appointments.incoming,
-				title: stringsService.incomingAppointments
-			}'></ng-container>
-			<br />
-			<br />
 		</ng-container>
 
 		<ng-container *ngTemplateOutlet='appointmentList; context: {
