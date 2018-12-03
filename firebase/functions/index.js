@@ -182,7 +182,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 
 	/* TODO: Generalize this after making ephemeral a sub-route of accounts */
 	const ephemeralDomain	=
-		namespace === 'inova.cyph.healthcare' ?
+		namespace === 'inova_cyph_healthcare' ?
 			(
 				data.callType === 'audio' ?
 					'audio.inova.cyph.healthcare' :
@@ -190,7 +190,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 					'video.inova.cyph.healthcare' :
 					'chat.inova.cyph.healthcare'
 			) :
-		namespace === 'cyph.healthcare' ?
+		namespace === 'cyph_healthcare' ?
 			(
 				data.callType === 'audio' ?
 					'audio.cyph.healthcare' :
@@ -198,7 +198,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 					'video.cyph.healthcare' :
 					'chat.cyph.healthcare'
 			) :
-		namespace === 'cyph.pro' ?
+		namespace === 'cyph_pro' ?
 			(
 				data.callType === 'audio' ?
 					'audio.cyph.pro' :
