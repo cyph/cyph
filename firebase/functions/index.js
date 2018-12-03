@@ -667,7 +667,7 @@ exports.userEmailSet	= functions.database.ref(
 
 
 /* TODO: Translations and user block lists. */
-exports.userNotification	= onCall(async (data, context, namespace, getUsername) => {
+exports.userNotify	= onCall(async (data, context, namespace, getUsername) => {
 	const username		= await getUsername();
 	const notification	= data;
 	const metadata		= typeof notification.metadata === 'object' ? notification.metadata : {};
