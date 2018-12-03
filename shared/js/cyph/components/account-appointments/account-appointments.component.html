@@ -13,14 +13,16 @@
 		fxLayoutGap='16px'
 		fxLayoutGap.lt-md='8px'
 	>
-		<ng-container *ngIf='(appointments.incoming | async)?.length > 0'>
-			<ng-container *ngTemplateOutlet='appointmentList; context: {
-				incoming: true,
-				list: appointments.incoming,
-				title: stringsService.incomingAppointments
-			}'></ng-container>
-			<br />
-			<br />
+		<ng-container *ngIf='appointments.incoming | async as incomingAppointments'>
+			<ng-container *ngIf='incomingAppointments.length > 0'>
+				<ng-container *ngTemplateOutlet='appointmentList; context: {
+					incoming: true,
+					list: incomingAppointments,
+					title: stringsService.incomingAppointments
+				}'></ng-container>
+				<br />
+				<br />
+			</ng-container>
 		</ng-container>
 
 		<ng-container *ngIf='appointments.current | async as currentAppointments'>
@@ -28,7 +30,7 @@
 				<ng-container *ngTemplateOutlet='appointmentList; context: {
 					canDelete: true,
 					canJoin: true,
-					list: appointments.current,
+					list: currentAppointments,
 					title: currentAppointments.length === 1 ?
 						stringsService.currentAppointment :
 						stringsService.currentAppointments
@@ -39,7 +41,7 @@
 		<ng-container *ngTemplateOutlet='appointmentList; context: {
 			canDelete: true,
 			canJoin: false,
-			list: appointments.future,
+			list: appointments.future | async,
 			title: stringsService.futureAppointments
 		}'></ng-container>
 
@@ -51,7 +53,7 @@
 				<ng-container *ngTemplateOutlet='appointmentListContent; context: {
 					canDelete: false,
 					canJoin: false,
-					list: appointments.past
+					list: appointments.past | async
 				}'></ng-container>
 			</mat-expansion-panel>
 		</mat-accordion>
@@ -123,7 +125,7 @@
 	let-list='list'
 >
 	<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
-		<h3 *ngIf='(list | async)?.length <= 0'>
+		<h3 *ngIf='list.length <= 0'>
 			{{stringsService.noAppointments}}
 		</h3>
 		<div class='cyph-inverted-theme' *ngIf='timestampWatcher | async as now'>
@@ -132,7 +134,7 @@
 				[class.bounceInRight]='(accountFilesService.initiated | async) === false'
 			>
 				<ng-container *ngFor='
-					let o of list | async; trackBy: trackByID; let i = index
+					let o of list; trackBy: trackByID; let i = index
 				'>
 					<mat-expansion-panel *ngIf='o.appointment.calendarInvite'>
 						<mat-expansion-panel-header>
