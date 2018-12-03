@@ -1324,10 +1324,6 @@ export class AccountFilesService extends BaseProvider {
 			return;
 		}
 
-		if (accountFileReferenceContainer.anonymousShare) {
-			return;
-		}
-
 		await this.accountDatabaseService.notify(
 			username,
 			NotificationTypes.File,
