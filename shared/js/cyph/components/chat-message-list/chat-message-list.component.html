@@ -112,6 +112,7 @@
 								fxLayoutGap='16px'
 								[fxHide]='
 									!sessionInitService.ephemeral ||
+									envService.isTelehealth ||
 									(envService.pro | async)
 								'
 							>
