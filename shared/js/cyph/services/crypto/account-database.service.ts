@@ -1046,8 +1046,8 @@ export class AccountDatabaseService extends BaseProvider {
 		metadata?: {id: string}&{[k: string]: any}
 	) : Promise<void> {
 		await this.databaseService.callFunction('userNotification', {
-			username,
 			type: notificationType,
+			username,
 			...(metadata ? {metadata} : {})
 		});
 	}
