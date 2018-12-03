@@ -225,7 +225,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 			{
 				endTime: data.eventDetails.endTime,
 				inviterUsername,
-				location: `https://${ephemeralDomain}/#${inviterUsername}/${id}`,
+				location: `https://${ephemeralDomain}/${inviterUsername}/${id}`,
 				startTime: data.eventDetails.startTime
 			}
 		),
