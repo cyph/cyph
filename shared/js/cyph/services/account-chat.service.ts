@@ -152,6 +152,8 @@ export class AccountChatService extends ChatService {
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
+		this.accountSessionInitService.callType	= callType || this.envService.callType;
+
 		if ('anonymousChannelID' in chat) {
 			this.accountSessionCapabilitiesService.initEphemeral();
 			await this.accountSessionService.setUser(chat);
@@ -181,8 +183,6 @@ export class AccountChatService extends ChatService {
 		this.notificationData.resolve(notificationData);
 
 		const url	= `castleSessions/${notificationData.castleSessionID}`;
-
-		this.accountSessionInitService.callType	= callType || this.envService.callType;
 
 		this.chatSubject.next(ephemeralSubSession ?
 			{
