@@ -7,11 +7,19 @@ cd "$(mktemp -d)"
 sourcePort='43000'
 sourceOrigin="localhost:${sourcePort}"
 sourceURL="http://${sourceOrigin}"
-sshServer='wordpress.internal.cyph.com'
+sshTarget='wordpress.internal.cyph.com'
+sshSource="staging.${sshTarget}"
+
+if [ "${1}" == '--rollback' ] ; then
+	sshTargetTmp="${sshTarget}"
+	sshTarget="${sshSource}"
+	sshSource="${sshTargetTmp}"
+	sshTargetTmp=''
+fi
 
 sshkill () {
 	ps ux |
-		grep -P "ssh.*${sshServer}" |
+		grep -P "ssh.*${sshTarget}" |
 		grep -v grep |
 		awk '{print $2}' |
 		xargs -r kill -9
@@ -19,7 +27,7 @@ sshkill () {
 
 
 sshkill
-ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "staging.${sshServer}" &> /dev/null
+ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshSource}" &> /dev/null
 
 commandComment="# wppromote-download $(node -e '
 	console.log(crypto.randomBytes(32).toString("hex"))
@@ -70,7 +78,7 @@ eval "${command}"
 
 
 sshkill
-ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshServer}" &> /dev/null
+ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshTarget}" &> /dev/null
 
 failure=''
 
