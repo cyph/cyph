@@ -243,7 +243,7 @@ read -r -d '' modules <<- EOM
 	rlwe
 	rsvp
 	rxjs
-	rxjs-tslint
+	rxjs-tslint@0.1.5
 	rxjs-tslint-rules
 	sass-loader
 	script-ext-html-webpack-plugin
