@@ -64,11 +64,11 @@
 		>
 			<a
 				class='affiliate'
-				[href]='affiliateService.link.href'
+				[href]='affiliateService.bannerAds.href'
 				target='_blank'
 				[matTooltip]='stringsService.affTooltip'
 			>
-				{{affiliateService.link.text}}
+				<img [src]='affiliateService.bannerAds.img' />
 			</a>
 		</cyph-link-connection>
 

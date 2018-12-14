@@ -10,11 +10,27 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AffiliateService extends BaseProvider {
 	/** @ignore */
+	private readonly lifeLock	= {
+		banners: {
+			databreach: {
+				href: 'http://www.kqzyfj.com/q3122wktqks7GHDCGGF79B8F8DFE',
+				img: 'assets/img/banners/lifelock.breach.jpg'
+			}
+		}
+	}
+	
+	/** @ignore */
 	private readonly nordVPN	= {
 		copy: {
 			doublevpn: translate('Double VPN Encryption'),
 			protect: translate('Protect your browsing online with NordVPN'),
 			recommended: translate("Get Cyph's recommended VPN service — NordVPN")
+		},
+		banners: {
+			animated: {
+				href: 'https://go.nordvpn.net/SH1F4',
+				img: 'assets/img/banners/nord.animated.gif'
+			}
 		},
 		links: {
 			default: 'https://go.nordvpn.net/SH1F4',
@@ -22,6 +38,11 @@ export class AffiliateService extends BaseProvider {
 			threeyear: 'https://go.nordvpn.net/SH1F8'
 		}
 	};
+
+	public readonly bannerAds	= this.splitTestingService.getValue('bannerad', [
+		{href: this.lifeLock.banners.databreach.href, img: this.lifeLock.banners.databreach.img},
+		{href: this.nordVPN.banners.animated.href, img: this.nordVPN.banners.animated.img}
+	]);
 
 	/** Checkout offer. */
 	public readonly checkout	=
