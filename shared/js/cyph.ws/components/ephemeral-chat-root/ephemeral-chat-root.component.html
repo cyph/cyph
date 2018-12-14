@@ -55,6 +55,41 @@
 			</ng-template>
 		</cyph-chat-main>
 
+		<ng-template #ad>
+			<ng-container *ngIf='envService.isMobile | async'>
+				<ng-container *ngIf='envService.isAndroid'>
+					<a
+						class='affiliate'
+						[href]='affiliateService.bannerAdsAndroid.href'
+						target='_blank'
+						[matTooltip]='stringsService.affTooltip'
+					>
+						<img [src]='affiliateService.bannerAdsAndroid.img' />
+					</a>
+				</ng-container>
+				<ng-container *ngIf='envService.isIOS'>
+					<a
+						class='affiliate'
+						[href]='affiliateService.bannerAdsIOS.href'
+						target='_blank'
+						[matTooltip]='stringsService.affTooltip'
+					>
+						<img [src]='affiliateService.bannerAdsIOS.img' />
+					</a>
+				</ng-container>
+			</ng-container>
+			<ng-container *ngIf='!(envService.isMobile | async)'>
+				<a
+					class='affiliate'
+					[href]='affiliateService.bannerAds.href'
+					target='_blank'
+					[matTooltip]='stringsService.affTooltip'
+				>
+					<img [src]='affiliateService.bannerAds.img' />
+				</a>
+			</ng-container>
+		</ng-template>
+
 		<cyph-link-connection
 			fxFlex
 			fxFlexFill
@@ -62,14 +97,7 @@
 			*ngIf='(appService.chatRootState | async) === chatRootStates.waitingForFriend'
 			[@fadeIn]='"in"'
 		>
-			<a
-				class='affiliate'
-				[href]='affiliateService.bannerAds.href'
-				target='_blank'
-				[matTooltip]='stringsService.affTooltip'
-			>
-				<img [src]='affiliateService.bannerAds.img' />
-			</a>
+			<ng-container *ngIf='(envService.showAds | async); else ad'></ng-container>
 		</cyph-link-connection>
 
 		<cyph-not-found

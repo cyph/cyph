@@ -158,7 +158,7 @@
 	<ng-container *ngIf='!envService.isMobileOS'>
 		<br />
 
-		<div fxLayoutAlign='center center' *ngIf='envService.isLocalEnv'>
+		<div fxLayoutAlign='center center' *ngIf='false'>
 			<img
 				cyphTranslate
 				alt='QR Code'
@@ -176,7 +176,12 @@
 		<br />
 	</ng-container>
 
-	<div fxLayout='row' fxLayoutAlign='center center'>
+	<div
+		fxLayout='row'
+		fxLayoutAlign='center center'
+		[class.ad]='envService.showAds'
+		[class.mobile]='envService.isMobile | async'
+	>
 		<ng-container *ngIf='envService.showAds; else proContent'>
 			<ng-content></ng-content>
 		</ng-container>

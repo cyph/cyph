@@ -15,6 +15,16 @@ export class AffiliateService extends BaseProvider {
 			databreach: {
 				href: 'http://www.kqzyfj.com/q3122wktqks7GHDCGGF79B8F8DFE',
 				img: 'assets/img/banners/lifelock.breach.jpg'
+			},
+			mobile: {
+				android: {
+					href: '',
+					img: ''
+				},
+				ios: {
+					href: '',
+					img: ''
+				}
 			}
 		}
 	}
@@ -30,6 +40,16 @@ export class AffiliateService extends BaseProvider {
 			animated: {
 				href: 'https://go.nordvpn.net/SH1F4',
 				img: 'assets/img/banners/nord.animated.gif'
+			},
+			mobile: {
+				android: {
+					href: 'https://go.nordvpn.net/SH1in',
+					img: 'assets/img/banners/nord.android.small.jpg'
+				},
+				ios: {
+					href: 'https://go.nordvpn.net/SH1il',
+					img: 'assets/img/banners/nord.ios.small.jpg'
+				}
 			}
 		},
 		links: {
@@ -39,9 +59,19 @@ export class AffiliateService extends BaseProvider {
 		}
 	};
 
-	public readonly bannerAds	= this.splitTestingService.getValue('bannerad', [
+	public readonly bannerAds	= this.splitTestingService.getValue('bannerAd', [
 		{href: this.lifeLock.banners.databreach.href, img: this.lifeLock.banners.databreach.img},
 		{href: this.nordVPN.banners.animated.href, img: this.nordVPN.banners.animated.img}
+	]);
+
+	public readonly bannerAdsAndroid	= this.splitTestingService.getValue('bannerAdAndroid', [
+		//{href: this.lifeLock.banners.mobile.android.href, img: this.lifeLock.banners.mobile.android.img},
+		{href: this.nordVPN.banners.mobile.android.href, img: this.nordVPN.banners.mobile.android.img}
+	]);
+
+	public readonly bannerAdsIOS	= this.splitTestingService.getValue('bannerAdIOS', [
+		//{href: this.lifeLock.banners.mobile.ios.href, img: this.lifeLock.banners.mobile.ios.img},
+		{href: this.nordVPN.banners.mobile.ios.href, img: this.nordVPN.banners.mobile.ios.img}
 	]);
 
 	/** Checkout offer. */
