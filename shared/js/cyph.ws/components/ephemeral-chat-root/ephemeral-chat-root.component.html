@@ -56,36 +56,45 @@
 		</cyph-chat-main>
 
 		<ng-template #ad>
-			<ng-container *ngIf='envService.isMobile | async'>
-				<ng-container *ngIf='envService.isAndroid'>
+			<ng-container *ngIf='envService.isMobileOS'>
+				<ng-container *ngIf='!envService.isIOS'>
 					<a
 						class='affiliate'
-						[href]='affiliateService.bannerAdsAndroid.href'
+						[href]='affiliateService.bannerAdAndroid.href'
 						target='_blank'
 						[matTooltip]='stringsService.affTooltip'
 					>
-						<img [src]='affiliateService.bannerAdsAndroid.img' />
+						<img
+							[alt]='stringsService.affAlt'
+							[src]='affiliateService.bannerAdAndroid.img'
+						/>
 					</a>
 				</ng-container>
 				<ng-container *ngIf='envService.isIOS'>
 					<a
 						class='affiliate'
-						[href]='affiliateService.bannerAdsIOS.href'
+						[href]='affiliateService.bannerAdIOS.href'
 						target='_blank'
 						[matTooltip]='stringsService.affTooltip'
 					>
-						<img [src]='affiliateService.bannerAdsIOS.img' />
+						<img
+							[alt]='stringsService.affAlt'
+							[src]='affiliateService.bannerAdIOS.img'
+						/>
 					</a>
 				</ng-container>
 			</ng-container>
-			<ng-container *ngIf='!(envService.isMobile | async)'>
+			<ng-container *ngIf='!envService.isMobileOS'>
 				<a
 					class='affiliate'
-					[href]='affiliateService.bannerAds.href'
+					[href]='affiliateService.bannerAd.href'
 					target='_blank'
 					[matTooltip]='stringsService.affTooltip'
 				>
-					<img [src]='affiliateService.bannerAds.img' />
+					<img
+						[alt]='stringsService.affAlt'
+						[src]='affiliateService.bannerAd.img'
+					/>
 				</a>
 			</ng-container>
 		</ng-template>

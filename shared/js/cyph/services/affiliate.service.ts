@@ -13,7 +13,7 @@ export class AffiliateService extends BaseProvider {
 	private readonly lifeLock	= {
 		banners: {
 			databreach: {
-				href: 'http://www.kqzyfj.com/q3122wktqks7GHDCGGF79B8F8DFE',
+				href: 'https://www.kqzyfj.com/q3122wktqks7GHDCGGF79B8F8DFE',
 				img: 'assets/img/banners/lifelock.breach.jpg'
 			},
 			mobile: {
@@ -59,28 +59,53 @@ export class AffiliateService extends BaseProvider {
 		}
 	};
 
-	public readonly bannerAds	= this.splitTestingService.getValue('bannerAd', [
-		{href: this.lifeLock.banners.databreach.href, img: this.lifeLock.banners.databreach.img},
-		{href: this.nordVPN.banners.animated.href, img: this.nordVPN.banners.animated.img}
+	/** Banner ad for desktop. */
+	public readonly bannerAd		= this.splitTestingService.getValue('bannerAd', [
+		{
+			href: this.lifeLock.banners.databreach.href,
+			img: this.lifeLock.banners.databreach.img
+		},
+		{
+			href: this.nordVPN.banners.animated.href,
+			img: this.nordVPN.banners.animated.img
+		}
 	]);
 
-	public readonly bannerAdsAndroid	= this.splitTestingService.getValue('bannerAdAndroid', [
-		//{href: this.lifeLock.banners.mobile.android.href, img: this.lifeLock.banners.mobile.android.img},
-		{href: this.nordVPN.banners.mobile.android.href, img: this.nordVPN.banners.mobile.android.img}
+	/** Banner ad for Android. */
+	public readonly bannerAdAndroid	= this.splitTestingService.getValue('bannerAdAndroid', [
+		/*
+		{
+			href: this.lifeLock.banners.mobile.android.href,
+			img: this.lifeLock.banners.mobile.android.img
+		},
+		*/
+		{
+			href: this.nordVPN.banners.mobile.android.href,
+			img: this.nordVPN.banners.mobile.android.img
+		}
 	]);
 
-	public readonly bannerAdsIOS	= this.splitTestingService.getValue('bannerAdIOS', [
-		//{href: this.lifeLock.banners.mobile.ios.href, img: this.lifeLock.banners.mobile.ios.img},
-		{href: this.nordVPN.banners.mobile.ios.href, img: this.nordVPN.banners.mobile.ios.img}
+	/** Banner ad for iOS. */
+	public readonly bannerAdIOS		= this.splitTestingService.getValue('bannerAdIOS', [
+		/*
+		{
+			href: this.lifeLock.banners.mobile.ios.href,
+			img: this.lifeLock.banners.mobile.ios.img
+		},
+		*/
+		{
+			href: this.nordVPN.banners.mobile.ios.href,
+			img: this.nordVPN.banners.mobile.ios.img
+		}
 	]);
 
 	/** Checkout offer. */
-	public readonly checkout	=
+	public readonly checkout		=
 		{href: this.nordVPN.links.default, text: this.nordVPN.copy.recommended}
 	;
 
 	/** Affiliate link and ad copy. */
-	public readonly link		= this.splitTestingService.getValue('affiliatelink', [
+	public readonly link			= this.splitTestingService.getValue('affiliatelink', [
 		{href: this.nordVPN.links.doublevpn, text: this.nordVPN.copy.doublevpn},
 		{href: this.nordVPN.links.threeyear, text: this.nordVPN.copy.recommended},
 		{href: this.nordVPN.links.default, text: this.nordVPN.copy.protect},

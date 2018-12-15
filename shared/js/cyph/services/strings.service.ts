@@ -82,6 +82,9 @@ export class StringsService extends BaseProvider {
 	public readonly addExternalContactTitle: string		= `Add External Contact`;
 
 	/** @see StringsService */
+	public readonly affAlt: string						= `Non-targeted banner ad`;
+
+	/** @see StringsService */
 	public readonly affTooltip: string					= `Opens in new tab`;
 
 	/** @see StringsService */

@@ -45,7 +45,10 @@
 	</div>
 </ng-template>
 
-<div *ngIf='(accountDatabaseService.currentUser | async)?.confirmed && !envService.isTelehealthFull'>
+<div *ngIf='
+	(accountDatabaseService.currentUser | async)?.confirmed &&
+	!envService.isTelehealthFull
+'>
 	<div
 		class='overlay clickable'
 		(click)='isSpeedDialOpen.next(false)'
