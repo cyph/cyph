@@ -69,9 +69,11 @@
 	position: fixed;
 	left: 0;
 	right: 0;
-	&:not(.mobile){
+
+	&:not(.mobile) {
 		bottom: 8.5%;
 	}
+
 	&.mobile {
 		bottom: 25px;
 	}

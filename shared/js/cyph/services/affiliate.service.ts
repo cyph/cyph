@@ -28,7 +28,7 @@ export class AffiliateService extends BaseProvider {
 			}
 		}
 	}
-	
+
 	/** @ignore */
 	private readonly nordVPN	= {
 		copy: {
