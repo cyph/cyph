@@ -106,7 +106,7 @@
 			*ngIf='(appService.chatRootState | async) === chatRootStates.waitingForFriend'
 			[@fadeIn]='"in"'
 		>
-			<ng-container *ngIf='(envService.showAds | async); else ad'></ng-container>
+			<ng-container *ngIf='envService.showAds; else ad'></ng-container>
 		</cyph-link-connection>
 
 		<cyph-not-found
