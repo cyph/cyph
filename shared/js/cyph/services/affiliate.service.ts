@@ -27,15 +27,10 @@ export class AffiliateService extends BaseProvider {
 				}
 			}
 		}
-	}
+	};
 
 	/** @ignore */
 	private readonly nordVPN	= {
-		copy: {
-			doublevpn: translate('Double VPN Encryption'),
-			protect: translate('Protect your browsing online with NordVPN'),
-			recommended: translate("Get Cyph's recommended VPN service — NordVPN")
-		},
 		banners: {
 			animated: {
 				href: 'https://go.nordvpn.net/SH1F4',
@@ -51,6 +46,11 @@ export class AffiliateService extends BaseProvider {
 					img: 'assets/img/banners/nord.ios.small.jpg'
 				}
 			}
+		},
+		copy: {
+			doublevpn: translate('Double VPN Encryption'),
+			protect: translate('Protect your browsing online with NordVPN'),
+			recommended: translate("Get Cyph's recommended VPN service — NordVPN")
 		},
 		links: {
 			default: 'https://go.nordvpn.net/SH1F4',

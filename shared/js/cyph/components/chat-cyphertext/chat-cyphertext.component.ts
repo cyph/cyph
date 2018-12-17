@@ -25,7 +25,7 @@ export class ChatCyphertextComponent extends BaseProvider implements OnInit {
 
 		/* Close cyphertext on esc */
 		$(window).on('keyup', e => {
-			if (e.which === 27) {
+			if (e.key === 'Escape') {
 				this.cyphertextService.hide();
 			}
 		});

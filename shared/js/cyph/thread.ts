@@ -237,6 +237,7 @@ export class Thread<T> implements IThread<T> {
 				this.worker.postMessage(locals);
 			}
 			else if (e.data === 'cyphThreadRunning') {
+				/* tslint:disable-next-line:no-unnecessary-type-assertion */
 				this.apiResolver.resolve(<any> Comlink.proxy(this.worker));
 			}
 			else if (e.data === 'cyphThreadClose') {
