@@ -504,7 +504,7 @@ export const insurance			= (id?: string) : Form.IElementContainer => {
 			input({label: "Insured's name"}),
 			input({label: 'Relationship'}),
 			input({label: 'Employer'}),
-			input({label: 'Phone Number'})
+			phone()
 		],
 		id
 	);
