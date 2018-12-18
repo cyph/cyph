@@ -24,6 +24,7 @@ import {trackBySelf} from '../../track-by/track-by-self';
 import {filterUndefined} from '../../util/filter';
 import {toFloat, toInt} from '../../util/formatting';
 import {getOrSetDefault} from '../../util/get-or-set-default';
+import {saveFile} from '../../util/save-file';
 import {parse} from '../../util/serialization';
 import {timestampToDate} from '../../util/time';
 import {uuid} from '../../util/uuid';
@@ -116,6 +117,9 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile?: boolean;
+
+	/** @see saveFile */
+	public readonly saveFile									= saveFile;
 
 	/** @see Form */
 	@Output() public readonly submitForm						= new EventEmitter<IForm>();

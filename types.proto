@@ -853,6 +853,7 @@ message Form {
 			Checkbox = 1;
 			Datepicker = 2;
 			Email = 3;
+			File = 14;
 			Input = 4;
 			Number = 5;
 			Password = 6;
@@ -865,6 +866,9 @@ message Form {
 			URL = 13;
 		}
 
+		/** File name. */
+		string fileName = 16;
+
 		/** @see Form.id */
 		string id = 1;
 
@@ -876,6 +880,9 @@ message Form {
 
 		/** Maximum numerical value. */
 		double max = 4;
+
+		/** File MIME type. */
+		string mediaType = 17;
 
 		/** Minimum numerical value. */
 		double min = 5;

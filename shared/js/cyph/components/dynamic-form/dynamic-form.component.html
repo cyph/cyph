@@ -133,6 +133,34 @@
 			/>
 		</mat-form-field>
 
+		<ng-container *ngIf='o.type === types.File'>
+			<h3 class='label'>{{o.label}}</h3>
+
+			<button
+				mat-button
+				(click)='saveFile(o.valueBytes, o.fileName, o.mediaType)'
+				*ngIf='o.valueBytes?.length > 0'
+			>
+				{{o.fileName}}
+			</button>
+
+			<button
+				mat-fab
+				color='primary'
+				[matTooltip]='stringsService.uploadFile'
+				cyphDropZone
+				(fileDrop)='
+					o.mediaType = $event.mediaType;
+					o.fileName = $event.name;
+					o.valueBytes = $event.data;
+					changeForm.emit();
+				'
+				*ngIf='!isDisabled'
+			>
+				<mat-icon>file_upload</mat-icon>
+			</button>
+		</ng-container>
+
 		<ng-container *ngIf='o.type === types.Input'>
 			<mat-form-field>
 				<input

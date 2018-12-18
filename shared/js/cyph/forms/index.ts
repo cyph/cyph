@@ -113,10 +113,12 @@ export const newFormContainer	= (
 
 
 export const newFormElement	= <T extends {
+	fileName?: string;
 	id?: string;
 	label?: string;
 	mask?: any;
 	max?: number;
+	mediaType?: string;
 	min?: number;
 	noGrow?: boolean;
 	options?: string[];
@@ -126,10 +128,12 @@ export const newFormElement	= <T extends {
 	width?: number;
 }> (elementType: Form.Element.Types) => (o?: T) => {
 	const element: Form.IElement	= {
+		fileName: o && o.fileName,
 		id: o && o.id,
 		label: o && o.label,
 		mask: o && o.mask && msgpack.encode(o.mask),
 		max: o && o.max,
+		mediaType: o && o.mediaType,
 		min: o && o.min,
 		noGrow: o && o.noGrow === true,
 		options: o && o.options,
@@ -185,6 +189,18 @@ export const emailInput		= newFormElement<{
 	value?: string;
 	width?: number;
 }>(Form.Element.Types.Email);
+
+/** Creates a new file input form element. */
+export const fileInput		= newFormElement<{
+	fileName?: string;
+	id?: string;
+	label?: string;
+	mediaType?: string;
+	noGrow?: boolean;
+	required?: boolean;
+	value?: Uint8Array;
+	width?: number;
+}>(Form.Element.Types.File);
 
 /** Creates a new text input form element. */
 export const input			= newFormElement<{

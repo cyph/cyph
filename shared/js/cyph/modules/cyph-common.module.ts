@@ -22,7 +22,6 @@ import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
 import {AnchorDirective} from '../directives/anchor.directive';
 import {AutofocusDirective} from '../directives/autofocus.directive';
-import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {EnableLastPassDirective} from '../directives/enable-last-pass.directive';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {RouterLinkDirective} from '../directives/router-link.directive';
@@ -56,7 +55,6 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageBoxInheritNgFormComponent,
 		ChatMessageListComponent,
 		ContactComponent,
-		DropZoneDirective,
 		EnableLastPassDirective,
 		HelpComponent,
 		LogoComponent,
@@ -107,7 +105,6 @@ import {CyphWebModule} from './cyph-web.module';
 		CommonModule,
 		ContactComponent,
 		CyphWebModule,
-		DropZoneDirective,
 		EnableLastPassDirective,
 		HelpComponent,
 		LogoComponent,
