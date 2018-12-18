@@ -14,6 +14,13 @@ export const {getFormValue}		= class {
 	) : boolean|undefined;
 	public static getFormValue (
 		form: IForm|undefined,
+		value: 'bytes',
+		componentIndex: number,
+		containerIndex: number,
+		elementIndex: number
+	) : boolean|undefined;
+	public static getFormValue (
+		form: IForm|undefined,
 		value: 'number',
 		componentIndex: number,
 		containerIndex: number,
@@ -28,11 +35,11 @@ export const {getFormValue}		= class {
 	) : string|undefined;
 	public static getFormValue (
 		form: IForm|undefined,
-		value: 'boolean'|'number'|'string',
+		value: 'boolean'|'bytes'|'number'|'string',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
-	) : boolean|number|string|undefined {
+	) : boolean|number|string|Uint8Array|undefined {
 		const component	= form && form.components ? form.components[componentIndex] : undefined;
 
 		if (!component) {
@@ -53,6 +60,8 @@ export const {getFormValue}		= class {
 
 		return value === 'boolean' ?
 			element.element.valueBoolean :
+		value === 'bytes' ?
+			element.element.valueBytes :
 		value === 'number' ?
 			element.element.valueNumber :
 		value === 'string' ?
@@ -113,7 +122,7 @@ export const newFormElement	= <T extends {
 	options?: string[];
 	required?: boolean;
 	step?: number;
-	value?: boolean|number|string;
+	value?: boolean|number|string|Uint8Array;
 	width?: number;
 }> (elementType: Form.Element.Types) => (o?: T) => {
 	const element: Form.IElement	= {
@@ -132,6 +141,9 @@ export const newFormElement	= <T extends {
 
 	if (o && typeof o.value === 'boolean') {
 		element.valueBoolean	= o.value;
+	}
+	else if (o && o.value instanceof Uint8Array) {
+		element.valueBytes		= o.value;
 	}
 	else if (o && typeof o.value === 'number') {
 		element.valueNumber		= o.value;

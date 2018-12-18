@@ -147,13 +147,15 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	}
 
 	/** @ignore */
-	private getElementValue (element: Form.IElement) : boolean|number|string|undefined {
+	private getElementValue (element: Form.IElement) : boolean|number|string|Uint8Array|undefined {
 		return (
 			element.valueBoolean !== undefined ?
 				element.valueBoolean :
 			element.valueNumber !== undefined ?
 				element.valueNumber :
-				element.valueString
+			element.valueString !== undefined ?
+				element.valueString :
+				element.valueBytes
 		);
 	}
 
@@ -164,8 +166,8 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 			id: string,
 			segments: (number|string)[],
 			element: Form.IElement|undefined,
-			elementValue: boolean|number|string|undefined,
-			getElementValue: ((val: string) => (boolean|number|string)[])|undefined
+			elementValue: boolean|number|string|Uint8Array|undefined,
+			getElementValue: ((val: string) => (boolean|number|string|Uint8Array)[])|undefined
 		) => void
 	) : void {
 		if (!this.form || !this.form.components) {
@@ -326,6 +328,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 			!this.hideEmptyElements ||
 			!this.isDisabled ||
 			element.valueBoolean ||
+			(element.valueBytes && element.valueBytes.length > 0) ||
 			element.valueNumber ||
 			element.valueString
 		);
