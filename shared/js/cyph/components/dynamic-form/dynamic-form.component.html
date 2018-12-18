@@ -101,13 +101,14 @@
 						o.valueNumber = $event ? $event.getTime() : 0;
 						changeForm.emit();
 					'
-					[disabled]='isDisabled'
 					[name]='getName(o)'
 					[placeholder]='o.label'
+					[readonly]='isDisabled'
 					[required]='o.required'
 				/>
 				<mat-datepicker-toggle
 					matSuffix
+					[class.no-pointer-events]='isDisabled'
 					[for]='datepicker'
 				></mat-datepicker-toggle>
 			</mat-form-field>
@@ -126,14 +127,14 @@
 				[name]='getName(o)'
 				type='email'
 				[pattern]='emailPattern'
-				[disabled]='isDisabled'
 				[placeholder]='o.label'
+				[readonly]='isDisabled'
 				[required]='o.required'
 			/>
 		</mat-form-field>
 
-		<ng-container  *ngIf='o.type === types.Input'>
-			<mat-form-field *ngIf='!isDisabled'>
+		<ng-container *ngIf='o.type === types.Input'>
+			<mat-form-field>
 				<input
 					matInput
 					[textMask]='getMask(o)'
@@ -142,14 +143,10 @@
 					[name]='getName(o)'
 					type='text'
 					[placeholder]='o.label'
+					[readonly]='isDisabled'
 					[required]='o.required'
 				/>
 			</mat-form-field>
-			<div *ngIf='isDisabled'>
-				<strong>{{o.label}}:</strong>
-				&ngsp;
-				<span>{{o.valueString}}</span>
-			</div>
 		</ng-container>
 
 		<mat-form-field *ngIf='o.type === types.Number'>
@@ -167,8 +164,8 @@
 				[name]='getName(o)'
 				[step]='o.step'
 				type='number'
-				[disabled]='isDisabled'
 				[placeholder]='o.label'
+				[readonly]='isDisabled'
 				[required]='o.required'
 			/>
 		</mat-form-field>
@@ -181,8 +178,8 @@
 				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				[type]='isDisabled ? "text" : "password"'
-				[disabled]='isDisabled'
 				[placeholder]='o.label'
+				[readonly]='isDisabled'
 				[required]='o.required'
 			/>
 		</mat-form-field>
@@ -192,8 +189,8 @@
 			fxFlex
 			[(ngModel)]='o.valueString'
 			(ngModelChange)='changeForm.emit()'
+			[class.no-pointer-events]='isDisabled'
 			[name]='getName(o)'
-			[disabled]='isDisabled'
 			[required]='o.required'
 			*ngIf='o.type === types.Radio'
 		>
@@ -205,13 +202,16 @@
 			</mat-radio-button>
 		</mat-radio-group>
 
-		<mat-form-field fxFlex *ngIf='o.type === types.Select'>
+		<mat-form-field
+			fxFlex
+			[class.no-pointer-events]='isDisabled'
+			*ngIf='o.type === types.Select'
+		>
 			<mat-select
 				fxFlex
 				[(ngModel)]='o.valueString'
 				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
-				[disabled]='isDisabled'
 				[placeholder]='o.label'
 				[required]='o.required'
 			>
@@ -237,8 +237,8 @@
 
 		<mat-slide-toggle
 			[(ngModel)]='o.valueBoolean'
+			[class.no-pointer-events]='isDisabled'
 			[name]='getName(o)'
-			[disabled]='isDisabled'
 			[required]='o.required'
 			*ngIf='o.type === types.SlideToggle'
 		>
@@ -254,8 +254,8 @@
 				[(ngModel)]='o.valueString'
 				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
-				[disabled]='isDisabled'
 				[placeholder]='o.label'
+				[readonly]='isDisabled'
 				[required]='o.required'
 			></textarea>
 		</mat-form-field>
@@ -268,8 +268,8 @@
 				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				type='time'
-				[disabled]='isDisabled'
 				[placeholder]='o.label'
+				[readonly]='isDisabled'
 				[required]='o.required'
 			/>
 		</mat-form-field>
@@ -282,8 +282,8 @@
 				(ngModelChange)='changeForm.emit()'
 				[name]='getName(o)'
 				type='url'
-				[disabled]='isDisabled'
 				[placeholder]='o.label'
+				[readonly]='isDisabled'
 				[required]='o.required'
 			/>
 		</mat-form-field>
