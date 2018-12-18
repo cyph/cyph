@@ -7,7 +7,7 @@
 	[class.initiating]='showSpinner | async'
 	*ngIf='(realTime | async) === false || accountService.enableDocs'
 >
-	<mat-card fxFlex class='note'>
+	<mat-card fxFlex class='partial-width'>
 		<div fxLayout='column'>
 			<div fxLayoutAlign='center center' fxLayout='row'>
 				<mat-card-title [class.editable]='noteEditable | async' fxFlex>

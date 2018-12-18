@@ -1,14 +1,5 @@
 @import '../../../../css/mixins';
 
-mat-card.note {
-	margin: 2%;
-	overflow: -webkit-paged-x;
-
-	mat-card:not(.editable) {
-		box-shadow: none;
-	}
-}
-
 mat-card-title {
 	> div {
 		padding-top: 29px;

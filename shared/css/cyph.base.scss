@@ -128,6 +128,11 @@ input.text-security {
 	}
 }
 
+mat-card.partial-width {
+	margin: 2%;
+	overflow: -webkit-paged-x;
+}
+
 body.mobile .card-list {
 	mat-card {
 		padding: 20px;

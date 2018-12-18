@@ -129,7 +129,11 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			[
 				'appointments',
 				'notes'
-			].indexOf(route) > -1
+			].indexOf(route) > -1 &&
+			!(
+				activatedRouteURL.length > 2 &&
+				activatedRouteURL[2].path === 'forms'
+			)
 		)
 	));
 

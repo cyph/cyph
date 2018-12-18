@@ -547,7 +547,10 @@ export class AccountService extends BaseProvider {
 							'video'
 						].indexOf(route) > -1 &&
 						routePath.length > 1 &&
-						routePath[1] !== 'end'
+						[
+							'end',
+							'forms'
+						].indexOf(routePath[1]) > -1
 					)
 				) {
 					return undefined;
@@ -591,6 +594,7 @@ export class AccountService extends BaseProvider {
 						'welcome'
 					].indexOf(route) < 0 || (
 						[
+							'appointments',
 							'docs',
 							'ehr-access',
 							'files',
