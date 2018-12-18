@@ -125,7 +125,7 @@
 	let-list='list'
 >
 	<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
-		<h3 *ngIf='list.length <= 0'>
+		<h3 *ngIf='list?.length <= 0'>
 			{{stringsService.noAppointments}}
 		</h3>
 		<div class='cyph-inverted-theme' *ngIf='timestampWatcher | async as now'>
@@ -259,7 +259,7 @@
 								</button>
 							</div>
 							<div
-								*ngIf='envService.isTelehealth && o.appointment.forms.length < 1'
+								*ngIf='envService.isTelehealth && o.appointment.forms?.length < 1'
 								fxFlex='50'
 								fxLayoutGap='5px'
 								fxLayoutAlign='center center'
