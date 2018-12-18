@@ -126,6 +126,7 @@ export const newFormElement	= <T extends {
 	step?: number;
 	value?: boolean|number|string|Uint8Array;
 	width?: number;
+/* tslint:disable-next-line:cyclomatic-complexity */
 }> (elementType: Form.Element.Types) => (o?: T) => {
 	const element: Form.IElement	= {
 		fileName: o && o.fileName,
