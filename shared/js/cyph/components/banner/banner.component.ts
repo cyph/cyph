@@ -12,7 +12,7 @@ import {StringsService} from '../../services/strings.service';
 })
 export class BannerComponent {
 	/** Close event. */
-	@Output() public readonly close	= new EventEmitter<void>();
+	@Output() public readonly closeBanner	= new EventEmitter<void>();
 
 	constructor (
 		/** @see EnvService */

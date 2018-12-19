@@ -426,7 +426,9 @@
 											</strong>
 										</p>
 										<ul>
-											<li *ngFor='let error of errors'>{{error}}</li>
+											<li *ngFor='let error of errors; trackBy: trackBySelf'>
+												{{error}}
+											</li>
 										</ul>
 									</div>
 								</h3>

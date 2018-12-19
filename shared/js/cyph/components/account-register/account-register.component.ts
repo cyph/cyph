@@ -20,6 +20,7 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {formControlMatch, watchFormControl} from '../../util/form-controls';
@@ -192,6 +193,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Total number of steps/tabs (minus one). */
 	public readonly totalSteps: number					= 2;
+
+	/** @see trackBySelf */
+	public readonly trackBySelf							= trackBySelf;
 
 	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
 	public readonly useLockScreenPIN					= new BehaviorSubject<boolean>(

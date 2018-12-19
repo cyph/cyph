@@ -44,7 +44,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	private readonly maskDefaultKey: Uint8Array				= new Uint8Array(0);
 
 	/** @ignore */
-	private readonly maskCache: Map<Uint8Array, any>		= new Map<Uint8Array, any>();
+	private readonly maskCache: Map<Uint8Array, any>		= new Map();
 
 	/** @ignore */
 	private readonly processCalcs	= memoize((formula: string) : string => {
