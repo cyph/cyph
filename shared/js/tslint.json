@@ -194,7 +194,7 @@
 		"class-name": true,
 		"comment-format": [true, "check-space", "check-uppercase"],
 		"comment-type": [true, "directive", "doc", "multiline"],
-		"completed-docs": [false, { /* Pending https://github.com/palantir/tslint/issues/3365: true, */
+		"completed-docs": [true, {
 			"classes": {"visibilities": ["exported"]},
 			"enums": {"visibilities": ["exported"]},
 			"functions": {"visibilities": ["exported"]},
