@@ -195,18 +195,43 @@
 		"comment-format": [true, "check-space", "check-uppercase"],
 		"comment-type": [true, "directive", "doc", "multiline"],
 		"completed-docs": [true, {
-			"classes": {"visibilities": ["exported"]},
-			"enums": {"visibilities": ["exported"]},
-			"functions": {"visibilities": ["exported"]},
-			"interfaces": {"visibilities": ["exported"]},
-			"methods": {"privacies": ["protected", "public"]},
-			"namespaces": {"visibilities": ["exported"]},
-			"properties": {"privacies": ["protected", "public"]},
-			"types": {"visibilities": ["exported"]},
-			"variables": {"visibilities": ["exported"]},
-			"tags": {
-				"content": {"see": [".*"]},
-				"exists": ["inheritDoc"]
+			"classes": {
+				"tags": {"existence": ["inheritDoc", "see"]},
+				"visibilities": ["exported"]
+			},
+			"enums": {
+				"tags": {"existence": ["inheritDoc", "see"]},
+				"visibilities": ["exported"]
+			},
+			"functions": {
+				"tags": {"existence": ["inheritDoc", "see"]},
+				"visibilities": ["exported"]
+			},
+			"interfaces": {
+				"tags": {"existence": ["inheritDoc", "see"]},
+				"visibilities": ["exported"]
+			},
+			"methods": {
+				"locations": "all",
+				"privacies": ["protected", "public"],
+				"tags": {"existence": ["inheritDoc", "see"]}
+			},
+			"namespaces": {
+				"tags": {"existence": ["inheritDoc", "see"]},
+				"visibilities": ["exported"]
+			},
+			"properties": {
+				"locations": "all",
+				"privacies": ["protected", "public"],
+				"tags": {"existence": ["inheritDoc", "see"]}
+			},
+			"types": {
+				"tags": {"existence": ["inheritDoc", "see"]},
+				"visibilities": ["exported"]
+			},
+			"variables": {
+				"tags": {"existence": ["inheritDoc", "see"]},
+				"visibilities": ["exported"]
 			}
 		}],
 		"encoding": true,

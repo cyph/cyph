@@ -71,6 +71,7 @@ export const {getFormValue}		= class {
 	}
 };
 
+/** Creates a new form. */
 export const newForm			= (
 	components: Form.IComponent[],
 	id?: string,
@@ -81,6 +82,7 @@ export const newForm			= (
 	isExpansionPanel
 });
 
+/** Creates a new form component. */
 export const newFormComponent	= (
 	containers: (Form.IElementContainer|Form.IElementContainer[])[],
 	id?: string,
@@ -91,6 +93,7 @@ export const newFormComponent	= (
 	isColumn
 });
 
+/** Creates a new form container. */
 export const newFormContainer	= (
 	elements: (Form.IElement|Form.IElement[]|Form.IElementContainer)[],
 	id?: string,
@@ -111,7 +114,7 @@ export const newFormContainer	= (
 	isColumn
 });
 
-
+/** Creates a new form element. */
 export const newFormElement	= <T extends {
 	fileName?: string;
 	id?: string;

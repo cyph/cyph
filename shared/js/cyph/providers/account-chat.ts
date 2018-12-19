@@ -17,6 +17,7 @@ import {SessionInitService} from '../services/session-init.service';
 import {SessionService} from '../services/session.service';
 
 
+/** Providers for chats in an Accounts context. */
 export const accountChatProviders	= [
 	AccountChatService,
 	AccountP2PService,

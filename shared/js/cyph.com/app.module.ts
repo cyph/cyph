@@ -43,7 +43,7 @@ import {resolveStaticServices} from '../cyph/util/static-services';
 	]
 })
 export class AppModule implements DoBootstrap {
-	/** @inheritdoc */
+	/** @inheritDoc */
 	public ngDoBootstrap () : void {
 		customElements.define(
 			'cyph-checkout',
