@@ -8,6 +8,7 @@
 		/* TypeScript-Specific */
 
 		"adjacent-overload-signatures": true,
+		"ban-ts-ignore": true,
 		"ban-types": [
 			true,
 			["Boolean", "Use boolean."],
@@ -106,6 +107,7 @@
 		"ban-comma-operator": true,
 		"curly": true,
 		"forin": true,
+		"function-constructor": true,
 		"import-blacklist": false,
 		"label-position": true,
 		"no-arg": true,
@@ -170,6 +172,7 @@
 		"max-file-line-count": [true, 500],
 		"max-line-length": [true, 100],
 		"no-default-export": true,
+		"no-default-import": false,
 		"no-duplicate-imports": true,
 		"no-mergeable-namespace": true,
 		"no-require-imports": true,
@@ -190,6 +193,7 @@
 		"callable-types": true,
 		"class-name": true,
 		"comment-format": [true, "check-space", "check-uppercase"],
+		"comment-type": [true, "directive", "doc", "multiline"],
 		"completed-docs": [false, { /* Pending https://github.com/palantir/tslint/issues/3365: true, */
 			"classes": {"visibilities": ["exported"]},
 			"enums": {"visibilities": ["exported"]},
@@ -209,6 +213,7 @@
 		"file-header": false,
 		"file-name-casing": [false, "kebab-case"],
 		"import-spacing": true,
+		"increment-decrement": false,
 		"interface-name": [true, "always-prefix"],
 		"interface-over-type-literal": true,
 		"jsdoc-format": true,
@@ -244,6 +249,8 @@
 		"space-within-parens": false,
 		"switch-final-break": true,
 		"type-literal-delimiter": true,
+		"unnecessary-bind": true,
+		"unnecessary-constructor": false,
 		"variable-name": [true, "ban-keywords", "check-format"],
 		"whitespace": [
 			true,
@@ -367,6 +374,7 @@
 		"rxjs-no-nested-subscribe": true,
 		"rxjs-no-operator": false,
 		"rxjs-no-patched": false,
+		"rxjs-no-sharereplay": true,
 		"rxjs-no-subclass": true,
 		"rxjs-no-subject-unsubscribe": true,
 		"rxjs-no-subject-value": false,
