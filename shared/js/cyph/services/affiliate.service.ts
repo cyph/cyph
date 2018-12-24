@@ -10,6 +10,26 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AffiliateService extends BaseProvider {
 	/** @ignore */
+	private readonly hideMyAssVPN	= {
+		banners: {
+			onlinePrivacy: {
+				href: 'http://www.dpbolvw.net/click-8954887-13477306',
+				img: 'assets/img/banners/hma.vpn.animated.gif'
+			},
+			mobile: {
+				android: {
+					href: 'http://www.tkqlhce.com/click-8954887-13477315',
+					img: 'assets/img/banners/hma.vpn.animated.small.gif'
+				},
+				ios: {
+					href: 'http://www.tkqlhce.com/click-8954887-13477315',
+					img: 'assets/img/banners/hma.vpn.animated.small.gif'
+				}
+			}
+		}
+	};
+
+	/** @ignore */
 	private readonly lifeLock	= {
 		banners: {
 			databreach: {
@@ -73,12 +93,10 @@ export class AffiliateService extends BaseProvider {
 
 	/** Banner ad for Android. */
 	public readonly bannerAdAndroid	= this.splitTestingService.getValue('bannerAdAndroid', [
-		/*
 		{
-			href: this.lifeLock.banners.mobile.android.href,
-			img: this.lifeLock.banners.mobile.android.img
+			href: this.hideMyAssVPN.banners.mobile.android.href,
+			img: this.hideMyAssVPN.banners.mobile.android.img
 		},
-		*/
 		{
 			href: this.nordVPN.banners.mobile.android.href,
 			img: this.nordVPN.banners.mobile.android.img
@@ -87,12 +105,10 @@ export class AffiliateService extends BaseProvider {
 
 	/** Banner ad for iOS. */
 	public readonly bannerAdIOS		= this.splitTestingService.getValue('bannerAdIOS', [
-		/*
 		{
-			href: this.lifeLock.banners.mobile.ios.href,
-			img: this.lifeLock.banners.mobile.ios.img
+			href: this.hideMyAssVPN.banners.mobile.ios.href,
+			img: this.hideMyAssVPN.banners.mobile.ios.img
 		},
-		*/
 		{
 			href: this.nordVPN.banners.mobile.ios.href,
 			img: this.nordVPN.banners.mobile.ios.img
