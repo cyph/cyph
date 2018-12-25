@@ -217,7 +217,7 @@
 <ng-template #usernameField>
 	<ng-container *ngIf='(pinUnlock | async) === false'>
 		<div class='product-description' fxLayout='row' fxLayoutAlign='center'>
-			<ng-container *ngIf='!envService.isTelehealth'>
+			<div *ngIf='!envService.isTelehealth'>
 				<span cyphTranslate>Welcome to</span>
 				&ngsp;
 				<span>{{stringsService.product}}!</span>
@@ -235,7 +235,7 @@
 						[href]='envService.homeUrl + "register"'
 					>join our waitlist</a>.
 				</ng-container>
-			</ng-container>
+			</div>
 
 			<ng-container *ngIf='envService.isTelehealth'>
 				<div fxLayout='column' fxLayoutGap='8px'>
