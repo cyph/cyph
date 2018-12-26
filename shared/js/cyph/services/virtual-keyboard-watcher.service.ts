@@ -50,7 +50,7 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 		/* iOS/misc. */
 		else {
 			const inputSelector		= 'input, textarea';
-			const focusBlurListen	= ($elem: JQuery<HTMLElement|Node[]>) => {
+			const focusBlurListen	= ($elem: JQuery) => {
 				$elem.on('blur', () => { this.isOpen.next(false); });
 				$elem.on('focus', () => { this.isOpen.next(true); });
 			};
