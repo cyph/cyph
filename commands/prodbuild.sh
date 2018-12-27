@@ -37,9 +37,9 @@ for minifyScript in ${minifyScripts} ; do
 
 	commandsDir="$(cd "$(dirname "$0")" ; pwd)"
 
-	sed -i "s|^\s*compress:.*,|compress: typeof compress === 'undefined' \|\| (typeof compress === 'boolean' \&\& compress === true) ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" ${minifyScript}
+	sed -i "s|^\s*compress:.*,|compress: compress === false ? false : {...(typeof compress === 'object' ? compress : {}), sequences: false},|g" ${minifyScript}
 
-	sed -i "s/mangle:.*,/mangle: typeof mangle === 'boolean' \&\& mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" ${minifyScript}
+	sed -i "s/^\s*mangle:.*,/mangle: mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" ${minifyScript}
 
 	sed -i "s/safari10 = .*;/safari10 = true;/g" ${minifyScript}
 done
