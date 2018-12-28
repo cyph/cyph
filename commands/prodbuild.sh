@@ -16,8 +16,13 @@ fi
 # Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
 
 minifyScripts='
-	/node_modules/terser-webpack-plugin/dist/minify.js
-	/node_modules/uglifyjs-webpack-plugin/dist/minify.js
+	/node_modules/terser/dist/bundle.js
+	/node_modules/terser/lib/compress.js
+	/node_modules/terser/lib/minify.js
+	/node_modules/uglify-es/lib/compress.js
+	/node_modules/uglify-es/lib/minify.js
+	/node_modules/uglify-js/lib/compress.js
+	/node_modules/uglify-js/lib/minify.js
 '
 
 onexit () {
@@ -37,9 +42,10 @@ for minifyScript in ${minifyScripts} ; do
 
 	commandsDir="$(cd "$(dirname "$0")" ; pwd)"
 
-	sed -i "s|^\s*compress:.*,|compress: typeof compress === 'undefined' \|\| (typeof compress === 'boolean' \&\& compress === true) ? {sequences: false} : typeof compress === 'object' ? {...compress, sequences: false} : compress,|g" ${minifyScript}
+	sed -i "s/this\.options\[['\"]sequences['\"]\]/this.options.sequences/g" ${minifyScript}
+	sed -i "s/this\.options\.sequences/this.options.sequences = false/g" ${minifyScript}
 
-	sed -i "s/mangle:.*,/mangle: typeof mangle === 'boolean' \&\& mangle === false ? false : {...(typeof mangle === 'object' ? mangle : {}), reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions},/g" ${minifyScript}
+	sed -i "s/reserved:\s*\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions/g" ${minifyScript}
 
 	sed -i "s/safari10 = .*;/safari10 = true;/g" ${minifyScript}
 done

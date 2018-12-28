@@ -15,9 +15,6 @@ export class Transport {
 	private static readonly cyphertextLimit: number	= 200000;
 
 
-	/** @ignore */
-	private lastOutgoingMessageID?: number;
-
 	/** Triggers abortion event. */
 	public abort () : void {
 		this.sessionService.castleHandler(CastleEvents.abort);
@@ -100,16 +97,9 @@ export class Transport {
 		for (const cyphertext of cyphertexts) {
 			const messageID	= potassiumUtil.toDataView(cyphertext).getUint32(0, true);
 
-			if (
-				this.lastOutgoingMessageID === undefined ||
-				messageID > this.lastOutgoingMessageID
-			) {
-				debugLog(() => ({pairwiseSessionOutgoingMessageSend: {cyphertext, messageID}}));
-				await this.sessionService.castleHandler(CastleEvents.send, cyphertext);
-				this.logCyphertext(this.sessionService.localUsername, cyphertext);
-
-				this.lastOutgoingMessageID	= messageID;
-			}
+			debugLog(() => ({pairwiseSessionOutgoingMessageSend: {cyphertext, messageID}}));
+			await this.sessionService.castleHandler(CastleEvents.send, cyphertext);
+			this.logCyphertext(this.sessionService.localUsername, cyphertext);
 		}
 	}
 
