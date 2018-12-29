@@ -74,7 +74,7 @@ export class Transport {
 		author: Observable<string>,
 		...plaintexts: Uint8Array[]
 	) : Promise<void> {
-		for (const plaintext of plaintexts) {
+		await Promise.all(plaintexts.map(async plaintext => {
 			debugLog(() => ({pairwiseSessionDecrypted: {plaintext}}));
 
 			const timestamp		= potassiumUtil.toDataView(plaintext).getFloat64(0, true);
@@ -89,18 +89,18 @@ export class Transport {
 					timestamp
 				});
 			}
-		}
+		}));
 	}
 
 	/** Send outgoing encrypted message. */
 	public async send (...cyphertexts: Uint8Array[]) : Promise<void> {
-		for (const cyphertext of cyphertexts) {
+		await Promise.all(cyphertexts.map(async cyphertext => {
 			const messageID	= potassiumUtil.toDataView(cyphertext).getUint32(0, true);
 
 			debugLog(() => ({pairwiseSessionOutgoingMessageSend: {cyphertext, messageID}}));
 			await this.sessionService.castleHandler(CastleEvents.send, cyphertext);
 			this.logCyphertext(this.sessionService.localUsername, cyphertext);
-		}
+		}));
 	}
 
 	constructor (
