@@ -75,7 +75,8 @@ export class AccountCastleService extends CastleService {
 			}
 
 			const castleSessionID	= await this.accountContactsService.
-				getCastleSessionID(user.username).
+				getCastleSessionData(user.username).
+				then(o => o.castleSessionID).
 				catch(() => undefined)
 			;
 

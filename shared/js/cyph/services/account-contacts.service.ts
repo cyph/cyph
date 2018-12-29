@@ -118,8 +118,11 @@ export class AccountContactsService extends BaseProvider {
 			)
 	);
 
-	/** Gets Castle session ID based on username. */
-	public readonly getCastleSessionID	= memoize(async (username: string) : Promise<string> => {
+	/** Gets Castle session data based on username. */
+	public readonly getCastleSessionData	= memoize(async (username: string) : Promise<{
+		castleSessionID: string;
+		castleSessionURL: string;
+	}> => {
 		const currentUserUsername	=
 			(await this.accountDatabaseService.getCurrentUser()).user.username
 		;
@@ -127,14 +130,23 @@ export class AccountContactsService extends BaseProvider {
 		const [userA, userB]		= normalizeArray([currentUserUsername, username]);
 
 		if (!(userA && userB)) {
-			return '';
+			return {
+				castleSessionID: '',
+				castleSessionURL: ''
+			};
 		}
 
-		return this.databaseService.getOrSetDefault(
-			`castleSessionIDs/${userA}/${userB}`,
-			StringProto,
-			() => uuid(true)
-		);
+		const castleSessionURL	= `castleSessions/${userA}/${userB}`;
+
+		return {
+			castleSessionID: await this.databaseService.getOrSetDefault(
+				`${castleSessionURL}/id`,
+				StringProto,
+				() => uuid(true),
+				true
+			),
+			castleSessionURL
+		};
 	});
 
 	/** Gets contact username or group metadata based on ID. */
