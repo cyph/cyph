@@ -1031,7 +1031,10 @@ export class AccountDatabaseService extends BaseProvider {
 	public async normalizeURL (url: MaybePromise<string>) : Promise<string> {
 		url	= (await url).replace(/^\//, '');
 
-		if (url.match(/^users/)) {
+		if (url.match(/^root\//)) {
+			return url.slice(5);
+		}
+		else if (url.match(/^users\//)) {
 			return url;
 		}
 

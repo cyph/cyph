@@ -183,7 +183,9 @@ export class AccountUserLookupService extends BaseProvider {
 						),
 						(async () => this.accountDatabaseService.getAsyncMap(
 							`unreadMessages/${
-								await this.accountContactsService.getCastleSessionID(username)
+								(await this.accountContactsService.getCastleSessionData(
+									username
+								)).castleSessionID
 							}`,
 							NeverProto,
 							SecurityModels.unprotected

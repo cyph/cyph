@@ -171,9 +171,9 @@ export class AccountChatService extends ChatService {
 
 		const notificationData	= 'username' in chat ?
 			{
-				castleSessionID: await this.accountContactsService.getCastleSessionID(
+				castleSessionID: (await this.accountContactsService.getCastleSessionData(
 					chat.username
-				),
+				)).castleSessionID,
 				usernames: [chat.username]
 			} :
 			{

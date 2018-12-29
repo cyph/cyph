@@ -337,8 +337,8 @@ export class AccountSessionService extends SessionService {
 		/* Pairwise session init */
 
 		(async () => {
-			const castleSessionID	=
-				await this.accountContactsService.getCastleSessionID(chat.username)
+			const {castleSessionID}	=
+				await this.accountContactsService.getCastleSessionData(chat.username)
 			;
 
 			if (ephemeralSubSession) {
