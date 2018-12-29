@@ -21,12 +21,6 @@ export class RpcEvents {
 	public readonly pong: string				= 'pong';
 
 	/** @see RpcEvents */
-	public readonly requestSymmetricKey: string	= 'requestSymmetricKey';
-
-	/** @see RpcEvents */
-	public readonly symmetricKey: string		= 'symmetricKey';
-
-	/** @see RpcEvents */
 	public readonly text: string				= 'text';
 
 	/** @see RpcEvents */

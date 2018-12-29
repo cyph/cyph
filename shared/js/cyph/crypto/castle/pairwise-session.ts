@@ -415,6 +415,17 @@ export class PairwiseSession {
 							undefined
 						;
 
+						(
+							liteRatchetKey ||
+							this.handshakeState.initialSecret.getValue()
+						).then(symmetricKey => {
+							if (symmetricKey === undefined) {
+								throw new Error('Castle session symmetric key not found.');
+							}
+
+							this.transport.setSymmetricKey(symmetricKey);
+						});
+
 						const initialRatchetUpdates	= await this.ratchetUpdateQueue.getValue();
 
 						if (!o.stillOwner.value) {

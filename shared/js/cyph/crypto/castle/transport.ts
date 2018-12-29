@@ -103,6 +103,11 @@ export class Transport {
 		}));
 	}
 
+	/** Sets session symmetric key. */
+	public setSymmetricKey (symmetricKey: Uint8Array) : void {
+		this.sessionService.symmetricKey.next(symmetricKey);
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly sessionService: ISessionService

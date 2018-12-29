@@ -106,7 +106,6 @@ service firebase.storage {
 				// 		/outgoingMessageQueue/{hash} {}
 				// 		/ratchetState/{hash} {}
 				// 		/ratchetUpdateQueue/{hash} {}
-				// 		/symmetricKey/{hash} {}
 				// 	}
 				// }
 

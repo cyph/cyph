@@ -5,7 +5,6 @@ import {BehaviorSubject, Observable, of} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {User} from '../account/user';
 import {
-	BinaryProto,
 	IAccountMessagingGroup,
 	ISessionMessage,
 	SessionMessageList,
@@ -41,27 +40,13 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountSessionService extends SessionService {
 	/** @ignore */
-	private readonly _ACCOUNTS_SYMMETRIC_KEY	= resolvable<Uint8Array>();
-
-	/** @ignore */
 	private readonly _READY						= resolvable();
 
 	/** @ignore */
 	private initiated: boolean					= false;
 
 	/** @ignore */
-	private readonly resolveAccountsSymmetricKey: (symmetricKey: Uint8Array) => void	=
-		this._ACCOUNTS_SYMMETRIC_KEY.resolve
-	;
-
-	/** @ignore */
 	private readonly resolveReady: () => void	= this._READY.resolve;
-
-	/** @ignore */
-	private readonly stateResolver				= resolvable();
-
-	/** @inheritDoc */
-	protected readonly symmetricKey				= this._ACCOUNTS_SYMMETRIC_KEY.promise;
 
 	/** If true, this is an ephemeral sub-session. */
 	public ephemeralSubSession: boolean	= false;
@@ -112,7 +97,6 @@ export class AccountSessionService extends SessionService {
 		}
 
 		await super.channelOnOpen(isAlice);
-		this.stateResolver.resolve();
 	}
 
 	/** @inheritDoc */
@@ -357,8 +341,7 @@ export class AccountSessionService extends SessionService {
 				return;
 			}
 
-			const sessionURL		= `castleSessions/${castleSessionID}/session`;
-			const symmetricKeyURL	= `${sessionURL}/symmetricKey`;
+			const sessionURL				= `castleSessions/${castleSessionID}/session`;
 
 			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(
 				`${sessionURL}/incomingMessageQueue`,
@@ -382,63 +365,6 @@ export class AccountSessionService extends SessionService {
 				undefined,
 				true
 			));
-
-
-			const symmetricKeyPromise	= this.accountDatabaseService.getAsyncValue(
-				symmetricKeyURL,
-				BinaryProto,
-				undefined,
-				undefined,
-				undefined,
-				true,
-				true
-			).getValue();
-
-			symmetricKeyPromise.then(symmetricKey => {
-				this.resolveAccountsSymmetricKey(symmetricKey);
-			});
-
-			await this.stateResolver.promise;
-
-			if (this.state.isAlice.value) {
-				this.on(rpcEvents.requestSymmetricKey, async () => {
-					this.send([rpcEvents.symmetricKey, {bytes: await symmetricKeyPromise}]);
-				});
-			}
-
-			if (await this.accountDatabaseService.hasItem(symmetricKeyURL)) {
-				this.one(rpcEvents.symmetricKey);
-				return;
-			}
-
-			if (this.state.isAlice.value) {
-				const symmetricKey	= this.potassiumService.randomBytes(
-					await this.potassiumService.secretBox.keyBytes
-				);
-
-				await Promise.all([
-					this.accountDatabaseService.setItem(
-						symmetricKeyURL,
-						BinaryProto,
-						symmetricKey
-					),
-					this.send([
-						rpcEvents.symmetricKey,
-						{bytes: symmetricKey}
-					])
-				]);
-			}
-			else {
-				this.one<ISessionMessageData[]>(rpcEvents.symmetricKey).then(async newEvents =>
-					this.accountDatabaseService.setItem(
-						symmetricKeyURL,
-						BinaryProto,
-						(newEvents[0] || {bytes: undefined}).bytes || new Uint8Array(0)
-					)
-				);
-
-				await this.send([rpcEvents.requestSymmetricKey, {}]);
-			}
 		})();
 
 		if (await this.accountDatabaseService.hasItem(`users/${chat.username}/pseudoAccount`)) {

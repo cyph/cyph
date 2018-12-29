@@ -28,7 +28,7 @@ import {
 	ProFeatures,
 	rpcEvents
 } from '../session';
-import {filterUndefined} from '../util/filter';
+import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
@@ -56,9 +56,6 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	private readonly _OPENED			= resolvable(true);
 
 	/** @ignore */
-	private readonly _SYMMETRIC_KEY		= resolvable<Uint8Array>();
-
-	/** @ignore */
 	private readonly correctSubSession	= (message: ISessionMessage) : boolean =>
 		(message.data.sessionSubID || undefined) === this.sessionSubID
 	/* tslint:disable-next-line:semicolon */
@@ -84,19 +81,6 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @ignore */
 	protected readonly resolveOpened: () => void						= this._OPENED.resolve;
-
-	/** @ignore */
-	protected resolveSymmetricKey?: (symmetricKey: Uint8Array) => void	=
-		this._SYMMETRIC_KEY.resolve
-	;
-
-	/**
-	 * Session key for misc stuff like locking.
-	 * TODO: Either change how AccountSessionService.setUser works or make this an observable.
-	 */
-	protected readonly symmetricKey: Promise<Uint8Array>				=
-		this._SYMMETRIC_KEY.promise
-	;
 
 	/** @inheritDoc */
 	public readonly apiFlags								= {
@@ -153,6 +137,11 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		startingNewCyph: new BehaviorSubject<boolean|undefined>(false),
 		wasInitiatedByAPI: new BehaviorSubject(false)
 	};
+
+	/** @inheritDoc */
+	public readonly symmetricKey							=
+		new BehaviorSubject<Uint8Array|undefined>(undefined)
+	;
 
 	/** Sends messages through Castle. */
 	protected async castleSendMessages (messages: ISessionMessage[]) : Promise<void> {
@@ -240,6 +229,14 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	) : Promise<Observable<string>|void> {}
 
 	/** @ignore */
+	protected async getSymmetricKey () : Promise<Uint8Array> {
+		return (
+			this.symmetricKey.value ||
+			(await this.symmetricKey.pipe(filterUndefinedOperator(), take(1)).toPromise())
+		);
+	}
+
+	/** @ignore */
 	protected async newMessages (
 		messages: [
 			string,
@@ -301,29 +298,6 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 				await this.connected;
 				this.state.sharedSecret.next(undefined);
 				this.trigger(events.beginChat);
-
-				if (!this.resolveSymmetricKey) {
-					return;
-				}
-
-				if (this.state.isAlice.value) {
-					const potassiumService	= this.potassiumService;
-					const symmetricKey		= potassiumService.randomBytes(
-						await potassiumService.secretBox.keyBytes
-					);
-					this.resolveSymmetricKey(symmetricKey);
-					this.send([rpcEvents.symmetricKey, {bytes: symmetricKey}]);
-				}
-				else {
-					this.resolveSymmetricKey(
-						(
-							(await this.one<ISessionMessageData[]>(rpcEvents.symmetricKey))[0] ||
-							{bytes: undefined}
-						).bytes ||
-						new Uint8Array(0)
-					);
-				}
-
 				break;
 
 			case CastleEvents.receive:
@@ -486,7 +460,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 					o.reason	= this.potassiumService.toString(
 						await this.potassiumService.secretBox.open(
 							this.potassiumService.fromBase64(o.reason),
-							await this.symmetricKey
+							await this.getSymmetricKey()
 						)
 					);
 				}
@@ -496,7 +470,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 			!reason ? undefined : this.potassiumService.toBase64(
 				await this.potassiumService.secretBox.seal(
 					this.potassiumService.fromString(reason),
-					await this.symmetricKey
+					await this.getSymmetricKey()
 				)
 			)
 		);

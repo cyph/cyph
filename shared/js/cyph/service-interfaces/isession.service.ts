@@ -61,6 +61,9 @@ export interface ISessionService {
 		wasInitiatedByAPI: BehaviorSubject<boolean>;
 	};
 
+	/** Session key for misc stuff like locking. */
+	readonly symmetricKey: BehaviorSubject<Uint8Array|undefined>;
+
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (
 		event: CastleEvents,
