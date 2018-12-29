@@ -15,10 +15,12 @@ import {
 	NeverProto,
 	NotificationTypes,
 	SessionMessageDataList,
-	StringArrayProto
+	StringArrayProto,
+	StringProto
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionCapabilitiesService} from './account-session-capabilities.service';
@@ -305,5 +307,29 @@ export class AccountChatService extends ChatService {
 			sessionInitService,
 			stringsService
 		);
+
+		/* For debugging */
+		if (this.envService.debug) {
+			(<any> self).resetSessionState	= async () => {
+				if (!this.remoteUser.value || !this.remoteUser.value.username) {
+					return;
+				}
+
+				const {castleSessionURL}	=
+					await this.accountContactsService.getCastleSessionData(
+						this.remoteUser.value.username
+					)
+				;
+
+				await this.databaseService.setItem(
+					`${castleSessionURL}/id`,
+					StringProto,
+					uuid(true),
+					true
+				);
+
+				location.reload();
+			};
+		}
 	}
 }
