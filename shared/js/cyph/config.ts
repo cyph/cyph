@@ -1,3 +1,4 @@
+import {CyphPlans} from './account/enums/cyph-plans';
 import {SubscriptionTypes} from './checkout';
 import {ISessionService} from './service-interfaces/isession.service';
 
@@ -67,6 +68,24 @@ export class Config {
 
 	/** URL for Cyph Tor site. */
 	public readonly onionRoot: string			= 'cyphdbyhiddenbhs.onion';
+
+	/** Configuration options for Cyph plans. */
+	public readonly planConfig: Record<CyphPlans, {
+		storageCapGB: number;
+	}>	= {
+		[CyphPlans.free]: {
+			storageCapGB: 1
+		},
+		[CyphPlans.gold]: {
+			storageCapGB: 25
+		},
+		[CyphPlans.lifetime]: {
+			storageCapGB: 100
+		},
+		[CyphPlans.silver]: {
+			storageCapGB: 5
+		}
+	};
 
 	/** Pricing-related config. */
 	public readonly pricingConfig: {

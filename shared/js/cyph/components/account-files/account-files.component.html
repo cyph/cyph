@@ -2,7 +2,7 @@
 	<ng-container
 		*ngIf='
 			((accountFilesService.filesTotalSize | async) || 0) <=
-			accountFilesService.fileStorageLimit;
+			((accountFilesService.fileStorageLimit | async) || 0);
 			else blocked
 		'
 	>

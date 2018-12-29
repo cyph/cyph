@@ -331,7 +331,7 @@
 		(fileDrop)='accountFilesService.upload($event.name, $event)'
 		*ngIf='
 			((accountFilesService.filesTotalSize | async) || 0) <=
-			accountFilesService.fileStorageLimit
+			((accountFilesService.fileStorageLimit | async) || 0)
 		'
 	>
 		<mat-icon>file_upload</mat-icon>

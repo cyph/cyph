@@ -55,6 +55,8 @@ import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {awaitAsync, resolvable, sleep} from '../util/wait';
+import {AccountSettingsService} from './account-settings.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -362,7 +364,7 @@ export class AccountFilesService extends BaseProvider {
 	};
 
 	/** Total size of all files in list. */
-	public readonly filesTotalSize: Observable<number>	= combineLatest(
+	public readonly filesTotalSize					= combineLatest(
 		this.filesListFiltered.files,
 		this.accountDatabaseService.currentUser
 	).pipe(map(([files, currentUser]) => files.reduce(
@@ -374,7 +376,12 @@ export class AccountFilesService extends BaseProvider {
 	)));
 
 	/** Total storage limit. */
-	public readonly fileStorageLimit: number	= convertStorageUnitsToBytes(1, StorageUnits.gb);
+	public readonly fileStorageLimit				=
+		this.accountSettingsService.plan.pipe(map(plan => convertStorageUnitsToBytes(
+			this.configService.planConfig[plan].storageCapGB,
+			StorageUnits.gb
+		)))
+	;
 
 	/** List of file record types. */
 	public readonly fileTypes: AccountFileRecord.RecordTypes[]	= [
@@ -1692,6 +1699,12 @@ export class AccountFilesService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,

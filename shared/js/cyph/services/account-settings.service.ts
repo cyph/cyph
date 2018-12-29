@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {SecurityModels} from '../account';
+import {BehaviorSubject} from 'rxjs';
+import {CyphPlans, SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
 import {BinaryProto} from '../proto';
@@ -12,6 +13,9 @@ import {FileService} from './file.service';
  */
 @Injectable()
 export class AccountSettingsService extends BaseProvider {
+	/** User's plan / premium status. */
+	public readonly plan	= new BehaviorSubject<CyphPlans>(CyphPlans.free);
+
 	/** @ignore */
 	private async setImage (file: IFile, prop: 'avatar'|'coverImage') : Promise<void> {
 		await this.accountDatabaseService.setItem(
