@@ -98,6 +98,12 @@ export class ChatService extends BaseProvider {
 	private readonly messageConfirmLock: LockFunction	= lockFunction();
 
 	/** @ignore */
+	private readonly messageInputQueues					= {
+		addMessage: <IChatMessageInput[]> [],
+		addTextMessage: <ISessionMessageData[]> []
+	};
+
+	/** @ignore */
 	private readonly messageSendInnerLock: LockFunction	= lockFunction();
 
 	/** @ignore */
@@ -118,7 +124,7 @@ export class ChatService extends BaseProvider {
 	;
 
 	/** Batch messages together that were sent within this interval. */
-	protected readonly outgoingMessageBatchDelay: number						= 1776;
+	protected readonly outgoingMessageBatchDelay: number						= 1250;
 
 	/** Queue of messages to be sent. */
 	protected readonly outgoingMessageQueue: {
@@ -274,6 +280,17 @@ export class ChatService extends BaseProvider {
 
 	/** @ignore */
 	private async addTextMessage (...textMessageInputs: ISessionMessageData[]) : Promise<void> {
+		this.messageInputQueues.addTextMessage.push(...textMessageInputs);
+		await sleep(this.outgoingMessageBatchDelay);
+		textMessageInputs	= this.messageInputQueues.addTextMessage.splice(
+			0,
+			this.messageInputQueues.addTextMessage.length
+		);
+
+		if (textMessageInputs.length < 1) {
+			return;
+		}
+
 		const messageInputs	= filterUndefined(await Promise.all(textMessageInputs.map(async o => {
 			if (!o.text) {
 				return;
@@ -628,6 +645,17 @@ export class ChatService extends BaseProvider {
 
 	/** Adds a message to the chat. */
 	public async addMessage (...messageInputs: IChatMessageInput[]) : Promise<void> {
+		this.messageInputQueues.addMessage.push(...messageInputs);
+		await sleep(this.outgoingMessageBatchDelay);
+		messageInputs	= this.messageInputQueues.addMessage.splice(
+			0,
+			this.messageInputQueues.addMessage.length
+		);
+
+		if (messageInputs.length < 1) {
+			return;
+		}
+
 		debugLogTime(() => 'Chat Message Add: start');
 
 		/* tslint:disable-next-line:cyclomatic-complexity */
