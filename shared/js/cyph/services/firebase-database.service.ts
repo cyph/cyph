@@ -1171,30 +1171,35 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const onValue	= async (snapshot: DataSnapshot|null) => {
 					const url	= await urlPromise;
 
-					if (!snapshot || !snapshot.exists()) {
+					try {
+						if (!snapshot || !snapshot.exists()) {
+							throw new Error('Data not found.');
+						}
+						else {
+							const result	= await (await this.downloadItem(url, proto)).result;
+
+							if (
+								result.value !== lastValue &&
+								!(
+									ArrayBuffer.isView(result.value) &&
+									ArrayBuffer.isView(lastValue) &&
+									this.potassiumService.compareMemory(
+										result.value,
+										lastValue
+									)
+								)
+							) {
+								this.ngZone.run(() => { observer.next(result); });
+							}
+
+							lastValue		= result.value;
+						}
+					}
+					catch {
 						const timestamp	= await getTimestamp();
 						this.ngZone.run(() => {
 							observer.next({timestamp, value: proto.create()});
 						});
-					}
-					else {
-						const result	= await (await this.downloadItem(url, proto)).result;
-
-						if (
-							result.value !== lastValue &&
-							!(
-								ArrayBuffer.isView(result.value) &&
-								ArrayBuffer.isView(lastValue) &&
-								this.potassiumService.compareMemory(
-									result.value,
-									lastValue
-								)
-							)
-						) {
-							this.ngZone.run(() => { observer.next(result); });
-						}
-
-						lastValue		= result.value;
 					}
 				};
 
