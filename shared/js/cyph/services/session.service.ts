@@ -232,7 +232,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	protected async getSymmetricKey () : Promise<Uint8Array> {
 		return (
 			this.symmetricKey.value ||
-			(await this.symmetricKey.pipe(filterUndefinedOperator(), take(1)).toPromise())
+			this.symmetricKey.pipe(filterUndefinedOperator(), take(1)).toPromise()
 		);
 	}
 
