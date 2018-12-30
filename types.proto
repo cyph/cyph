@@ -668,8 +668,8 @@ message CyphPlan {
 
 /** Cyph plans. */
 enum CyphPlans {
-	FoundersAndFriends = 4;
 	Free = 0;
+	FoundersAndFriends = 4;
 	Gold = 2;
 	LifetimePlatinum = 3;
 	Silver = 1;
