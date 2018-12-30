@@ -16,7 +16,7 @@ import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
-import {NeverProto, StringProto} from '../proto';
+import {CyphPlans, NeverProto, StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
 import {observableAll} from '../util/observable-all';
@@ -27,6 +27,7 @@ import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
+import {AccountSettingsService} from './account-settings.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -93,7 +94,9 @@ export class AccountService extends BaseProvider {
 			)
 		) ?
 			of(true) :
-			this.envService.pro
+			this.accountSettingsService.plan.pipe(map(plan =>
+				plan === CyphPlans.FoundersAndFriends
+			))
 	;
 
 	/** Indicates the status of the interstitial. */
@@ -289,10 +292,9 @@ export class AccountService extends BaseProvider {
 	public async userInit () : Promise<void> {
 		await this.accountDatabaseService.currentUserFiltered.pipe(take(1)).toPromise();
 
-		this.subscriptions.push(this.accountDatabaseService.watchExists(
-			'pro',
-			this.subscriptions
-		).subscribe(
+		this.subscriptions.push(this.accountSettingsService.plan.pipe(map(plan =>
+			plan > CyphPlans.Free
+		)).subscribe(
 			this.envService.pro
 		));
 
@@ -399,6 +401,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,

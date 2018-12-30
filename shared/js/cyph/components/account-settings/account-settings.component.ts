@@ -6,7 +6,7 @@ import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {IAsyncValue} from '../../iasync-value';
-import {StringProto} from '../../proto';
+import {CyphPlans, StringProto} from '../../proto';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -15,6 +15,7 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
+import {titleize} from '../../util/titleize';
 
 
 /**
@@ -27,8 +28,11 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 	templateUrl: './account-settings.component.html'
 })
 export class AccountSettingsComponent extends BaseProvider implements OnInit {
+	/** @see CyphPlans */
+	public readonly cyphPlans		= CyphPlans;
+
 	/** Data. */
-	public readonly data	= new BehaviorSubject({
+	public readonly data			= new BehaviorSubject({
 		current: {
 			email: '',
 			name: '',
@@ -73,6 +77,9 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		masterKey: 2,
 		pin: 3
 	};
+
+	/** @see titleize */
+	public readonly titleize		= titleize;
 
 	/** User. */
 	public readonly user			= new BehaviorSubject<User|undefined>(undefined);

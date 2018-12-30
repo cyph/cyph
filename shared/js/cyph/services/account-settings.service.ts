@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {CyphPlans, SecurityModels} from '../account';
+import {map} from 'rxjs/operators';
+import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
-import {BinaryProto} from '../proto';
+import {BinaryProto, CyphPlan, CyphPlans} from '../proto';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {FileService} from './file.service';
 
@@ -14,7 +15,20 @@ import {FileService} from './file.service';
 @Injectable()
 export class AccountSettingsService extends BaseProvider {
 	/** User's plan / premium status. */
-	public readonly plan	= new BehaviorSubject<CyphPlans>(CyphPlans.free);
+	public readonly plan	= toBehaviorSubject(
+		this.accountDatabaseService.watch(
+			'plan',
+			CyphPlan,
+			SecurityModels.unprotected,
+			undefined,
+			undefined,
+			this.subscriptions
+		).pipe(map(o =>
+			o.value.plan
+		)),
+		CyphPlans.Free,
+		this.subscriptions
+	);
 
 	/** @ignore */
 	private async setImage (file: IFile, prop: 'avatar'|'coverImage') : Promise<void> {

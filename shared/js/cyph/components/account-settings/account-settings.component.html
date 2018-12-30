@@ -62,22 +62,25 @@
 
 			<div></div>
 			<div>
-				<strong cyphTranslate>Pro Status:</strong>
+				<strong cyphTranslate>Plan:</strong>
 				&ngsp;
 				&nbsp;
-				<span *ngIf='envService.pro | async; else getPro'>
-					{{stringsService.enabled}}
+				<span>
+					{{titleize(cyphPlans[
+						(accountSettingsService.plan | async) ||
+						cyphPlans.Free
+					])}}
 				</span>
-				<ng-template #getPro>
-					<span>{{stringsService.disabled}}</span>
-					<ng-container *ngIf='false'>
-						&ngsp;
-						(<a
-							[href]='envService.homeUrl + "pricing"'
-							cyphTranslate
-						>upgrade now</a>)
-					</ng-container>
-				</ng-template>
+				<ng-container *ngIf='
+					false &&
+					(envService.accountSettingsService | async) === cyphPlans.Free
+				'>
+					&ngsp;
+					(<a
+						[href]='envService.homeUrl + "pricing"'
+						cyphTranslate
+					>upgrade now</a>)
+				</ng-container>
 			</div>
 
 			<div></div>

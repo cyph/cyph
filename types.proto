@@ -660,6 +660,21 @@ enum Currencies {
 	TWD = 21;
 }
 
+/** A Cyph plan. */
+message CyphPlan {
+	/** @see CyphPlans */
+	required CyphPlans plan = 1;
+}
+
+/** Cyph plans. */
+enum CyphPlans {
+	FoundersAndFriends = 4;
+	Free = 0;
+	Gold = 2;
+	LifetimePlatinum = 3;
+	Silver = 1;
+}
+
 /** An EHR integration API key. */
 message EhrApiKey {
 	/** API key. */

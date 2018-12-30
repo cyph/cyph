@@ -20,6 +20,7 @@ export * from './save-file';
 export * from './serialization';
 export * from './static-services';
 export * from './time';
+export * from './titleize';
 export * from './translate';
 export * from './uuid';
 export * from './wait';

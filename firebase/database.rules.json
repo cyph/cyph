@@ -841,8 +841,8 @@
 						}
 					},
 
-					"presence": {
-						".read": true,
+					"plan": {
+						".write": false,
 
 						"data": {
 							".validate": "newData.isString()"
@@ -855,9 +855,18 @@
 						}
 					},
 
-					"pro": {
-						".write": false,
-						".validate": "newData.val() === now"
+					"presence": {
+						".read": true,
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
 					},
 
 					"pseudoAccount": {

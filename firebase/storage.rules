@@ -198,11 +198,11 @@ service firebase.storage {
 				// 	match /isCustom/{hash} {}
 				// }
 
+				// match /plan/{hash} {}
+
 				match /presence/{hash} {
 					allow read;
 				}
-
-				// match /pro/{hash} {}
 
 				// match /pseudoAccount/{hash} {}
 

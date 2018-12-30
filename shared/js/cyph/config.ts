@@ -1,4 +1,4 @@
-import {CyphPlans} from './account/enums/cyph-plans';
+import {CyphPlans} from '../proto';
 import {SubscriptionTypes} from './checkout';
 import {ISessionService} from './service-interfaces/isession.service';
 
@@ -73,16 +73,19 @@ export class Config {
 	public readonly planConfig: Record<CyphPlans, {
 		storageCapGB: number;
 	}>	= {
-		[CyphPlans.free]: {
-			storageCapGB: 1
-		},
-		[CyphPlans.gold]: {
-			storageCapGB: 25
-		},
-		[CyphPlans.lifetime]: {
+		[CyphPlans.FoundersAndFriends]: {
 			storageCapGB: 100
 		},
-		[CyphPlans.silver]: {
+		[CyphPlans.Free]: {
+			storageCapGB: 1
+		},
+		[CyphPlans.Gold]: {
+			storageCapGB: 25
+		},
+		[CyphPlans.LifetimePlatinum]: {
+			storageCapGB: 100
+		},
+		[CyphPlans.Silver]: {
 			storageCapGB: 5
 		}
 	};
