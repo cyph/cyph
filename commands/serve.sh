@@ -14,6 +14,7 @@ site='cyph.ws'
 prod=''
 prodBuild=''
 environment='local'
+poll=''
 if [ "${1}" == '--environment' ] ; then
 	shift
 	environment="${1}"
@@ -30,6 +31,13 @@ fi
 if [ "${1}" == '--no-lock-down' ] ; then
 	noLockDown='--no-lock-down'
 	shift
+fi
+if [ "${1}" == '--poll' ] ; then
+	poll=true
+	shift
+fi
+if [ -f /windows ] ; then
+	poll=true
 fi
 if [ "${1}" == '--prod' ] ; then
 	prod=true
@@ -114,7 +122,7 @@ ngserve () {
 			../commands/prodbuild.sh --no-build |
 				grep -vP '(build-optimizer|extract-css|extract-licenses|named-chunks|output-hashing)'
 		fi) \
-		$(if [ -f /windows ] ; then echo '--poll 1000' ; fi) \
+		$(if [ "${poll}" ] ; then echo '--poll 1000' ; fi) \
 		${args} \
 		"${@}"
 }
