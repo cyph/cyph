@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import clipboard from 'clipboard-polyfill';
+import * as clipboard from 'clipboard-polyfill';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
