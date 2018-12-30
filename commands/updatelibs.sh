@@ -272,6 +272,7 @@ read -r -d '' modules <<- EOM
 	ts-loader
 	ts-node
 	tslint
+	tslint-consistent-codestyle
 	tslint-eslint-rules
 	tslint-immutable
 	tslint-microsoft-contrib
