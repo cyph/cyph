@@ -112,7 +112,9 @@ export class StringsService extends BaseProvider {
 	public readonly bannerText: string					= `Help Defend Internet Privacy: `;
 
 	/** @see StringsService */
-	public readonly bannerTextAlt: string				= `Help Defend Internet Privacy: Donate to Cyph`;
+	public readonly bannerTextAlt: string				=
+		`Help Defend Internet Privacy: Donate to ${this.internalCompany}`
+	;
 
 	/** @see StringsService */
 	public readonly bitcoinAmountLabel: string			= `Amount (BTC)`;
