@@ -23,12 +23,6 @@
 		fxLayoutAlign='center center'
 		[class.initiating]='accountFilesService.uploadSpinner | async'
 	>
-	<div
-		fxFlex
-		fxFlexFill
-		fxLayoutAlign='center center'
-		[class.initiating]='accountFilesService.uploadSpinner | async'
-	>
 		<cyph-logo
 			class='logo'
 			icon
@@ -52,7 +46,7 @@
 				[routerLink]='accountService.routeRoot + "anonymous/chat"'
 			>
 				<mat-icon>whatshot</mat-icon>
-				&ngsp;
+				&nbsp;
 				<span>New Burner Chat</span>
 			</button>
 			<button
@@ -66,7 +60,7 @@
 				(fileDrop)='accountFilesService.upload($event.name, $event)'
 			>
 				<mat-icon>cloud_upload</mat-icon>
-				&ngsp; &ngsp;
+				&nbsp;
 				<span>Upload File to Vault</span>
 			</button>
 			<button
@@ -78,7 +72,7 @@
 				[routerLink]='accountService.routeRoot + "notes/new"'
 			>
 				<mat-icon>note_add</mat-icon>
-				&ngsp; &ngsp;
+				&nbsp;
 				<span>New Secure Note</span>
 			</button>
 		</div>
@@ -87,7 +81,6 @@
 			mode='indeterminate'
 			*ngIf='accountFilesService.uploadSpinner | async'
 		></mat-progress-spinner>
-	</div>
 	</div>
 </ng-template>
 <div *ngIf='
@@ -181,6 +174,7 @@
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
 </div>
+
 <div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed && !envService.coBranded'>
 	<a
 		mat-fab

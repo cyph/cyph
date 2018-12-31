@@ -96,6 +96,7 @@
 			<button
 				mat-menu-item
 				[matTooltip]='stringsService.addContactTooltipInternal'
+				[matTooltipPosition]='(envService.isMobile | async) ? "right" : "left"'
 				(click)='accountContactsService.addContactPrompt()'
 			>
 				{{stringsService.addContactButtonInternal}}
@@ -103,6 +104,7 @@
 			<button
 				mat-menu-item
 				[matTooltip]='stringsService.addContactTooltipExternal'
+				[matTooltipPosition]='(envService.isMobile | async) ? "right" : "left"'
 				(click)='accountContactsService.addContactPrompt(true)'
 			>
 				{{stringsService.addContactButtonExternal}}

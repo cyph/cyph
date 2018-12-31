@@ -18,7 +18,7 @@
 				(click)='generate(newWalletOptions.generate)'
 			>
 				<mat-icon svgIcon='key-add-color'></mat-icon>
-				&ngsp;
+				&nbsp;
 				<span>{{stringsService.newWalletGenerate}}</span>
 			</button>
 			<button
@@ -29,7 +29,7 @@
 				(click)='generate(newWalletOptions.importKey)'
 			>
 				<mat-icon svgIcon='key-upload-color'></mat-icon>
-				&ngsp;
+				&nbsp;
 				<span>{{stringsService.newWalletImportKey}}</span>
 			</button>
 			<button
@@ -40,7 +40,7 @@
 				(click)='generate(newWalletOptions.importAddress)'
 			>
 				<mat-icon>remove_red_eye</mat-icon>
-				&ngsp;
+				&nbsp;
 				<span>{{stringsService.newWalletImportAddress}}</span>
 			</button>
 		</div>
@@ -67,7 +67,7 @@
 							*ngIf='wallet.data.cryptocurrency === cryptocurrencies.BTC'
 						>
 							<mat-icon svgIcon='bitcoin'></mat-icon>
-							&ngsp;
+							&nbsp;
 							<span cyphTranslate>Bitcoin</span>
 						</mat-chip>
 						<button
