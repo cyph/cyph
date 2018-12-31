@@ -1,9 +1,11 @@
 @import '../../../../css/mixins';
 
 .logo {
-	height: 15em;
-	opacity: 0.85;
+	height: 22em;
+	opacity: 0.42;
+	position: absolute;
 	pointer-events: none;
+	margin-top: 1.42em;
 }
 
 /* Offset height of speed dial + 16px above and below */

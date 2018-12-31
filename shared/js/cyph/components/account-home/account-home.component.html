@@ -23,6 +23,12 @@
 		fxLayoutAlign='center center'
 		[class.initiating]='accountFilesService.uploadSpinner | async'
 	>
+	<div
+		fxFlex
+		fxFlexFill
+		fxLayoutAlign='center center'
+		[class.initiating]='accountFilesService.uploadSpinner | async'
+	>
 		<cyph-logo
 			class='logo'
 			icon
@@ -37,17 +43,57 @@
 				src='/assets/img/logo.purple.alt.icon.png'
 			/>
 		</ng-template>
+		<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px' class='actions'>
+			<button
+				mat-raised-button
+				color='accent'
+				matTooltip='Get a Cyph link'
+				matTooltipPosition='above'
+				[routerLink]='accountService.routeRoot + "anonymous/chat"'
+			>
+				<mat-icon>whatshot</mat-icon>
+				&ngsp;
+				<span>New Burner Chat</span>
+			</button>
+			<button
+				mat-raised-button
+				color='accent'
+				cyphTranslate
+				matTooltip='Upload File'
+				matTooltipPosition='above'
+				cyphDropZone
+				[cyphDropZoneClass]='false'
+				(fileDrop)='accountFilesService.upload($event.name, $event)'
+			>
+				<mat-icon>cloud_upload</mat-icon>
+				&ngsp; &ngsp;
+				<span>Upload File to Vault</span>
+			</button>
+			<button
+				mat-raised-button
+				color='accent'
+				cyphTranslate
+				matTooltip='New Note'
+				matTooltipPosition='above'
+				[routerLink]='accountService.routeRoot + "notes/new"'
+			>
+				<mat-icon>note_add</mat-icon>
+				&ngsp; &ngsp;
+				<span>New Secure Note</span>
+			</button>
+		</div>
 
 		<mat-progress-spinner
 			mode='indeterminate'
 			*ngIf='accountFilesService.uploadSpinner | async'
 		></mat-progress-spinner>
 	</div>
+	</div>
 </ng-template>
-
 <div *ngIf='
 	(accountDatabaseService.currentUser | async)?.confirmed &&
-	!envService.isTelehealthFull
+	!envService.isTelehealthFull &&
+	(envService.isMobile | async)
 '>
 	<div
 		class='overlay clickable'
@@ -135,7 +181,6 @@
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
 </div>
-
 <div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed && !envService.coBranded'>
 	<a
 		mat-fab
