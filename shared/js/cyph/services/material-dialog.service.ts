@@ -1,5 +1,5 @@
 import {ComponentType} from '@angular/cdk/portal';
-import {Injectable, Optional} from '@angular/core';
+import {ChangeDetectorRef, Injectable, Optional} from '@angular/core';
 import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -176,20 +176,45 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => MaybePromise<void>,
-		closeFunction?: IResolvable<() => void>
+		closeFunction?: IResolvable<() => void>,
+		bottomSheet: boolean = false
 	) : Promise<void> {
 		return this.lock(async () => {
-			const matDialogRef	= this.matDialog.open(componentType);
+			const matDialogRef	= bottomSheet ?
+				this.matBottomSheet.open(componentType) :
+				this.matDialog.open(componentType)
+			;
+
+			const afterClosed	= 'close' in matDialogRef ?
+				() => matDialogRef.afterClosed() :
+				() => matDialogRef.afterDismissed()
+			;
+
+			const close			= 'close' in matDialogRef ?
+				(closeOK?: boolean) => { matDialogRef.close(closeOK); } :
+				(closeOK?: boolean) => { matDialogRef.dismiss(closeOK); }
+			;
+
+			const instance: T&{changeDetectorRef?: ChangeDetectorRef}	=
+				'componentInstance' in matDialogRef ?
+					matDialogRef.componentInstance :
+					matDialogRef.instance
+			;
 
 			if (closeFunction) {
-				closeFunction.resolve(() => { matDialogRef.close(); });
+				closeFunction.resolve(() => { close(); });
 			}
 
 			if (setInputs) {
-				await setInputs(matDialogRef.componentInstance);
+				await setInputs(instance);
+				await matDialogRef.afterOpened();
+
+				if (instance.changeDetectorRef) {
+					instance.changeDetectorRef.markForCheck();
+				}
 			}
 
-			await matDialogRef.afterClosed().toPromise();
+			await afterClosed().toPromise();
 		});
 	}
 

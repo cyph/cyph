@@ -25,7 +25,8 @@ export class DialogService extends BaseProvider {
 	public async baseDialog<T> (
 		_COMPONENT_TYPE: ComponentType<T>,
 		_SET_INPUTS?: (componentInstance: T) => MaybePromise<void>,
-		_CLOSE_FUNCTION?: IResolvable<() => void>
+		_CLOSE_FUNCTION?: IResolvable<() => void>,
+		_BOTTOM_SHEET?: boolean
 	) : Promise<void> {
 		throw new Error('Must provide an implementation of DialogService.baseDialog.');
 	}

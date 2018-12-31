@@ -43,6 +43,8 @@
 	</ng-template>
 </div>
 
+<br *ngIf='bottomSheet' />
+
 <div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!fabMode'>
 	<button mat-button (click)='close(false)' *ngIf='!cancelFAB'>
 		{{cancel}}

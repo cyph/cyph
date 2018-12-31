@@ -86,6 +86,30 @@
 			</div>
 			-->
 		</ng-template>
+
+		<br />
+
+		<button mat-button [matMenuTriggerFor]='addContactMenu'>
+			{{stringsService.addContactTitle}}
+		</button>
+		<mat-menu #addContactMenu='matMenu'>
+			<button
+				mat-menu-item
+				[matTooltip]='stringsService.addContactTooltipInternal'
+				(click)='accountContactsService.addContactPrompt()'
+			>
+				{{stringsService.addContactButtonInternal}}
+			</button>
+			<button
+				mat-menu-item
+				[matTooltip]='stringsService.addContactTooltipExternal'
+				(click)='accountContactsService.addContactPrompt(true)'
+			>
+				{{stringsService.addContactButtonExternal}}
+			</button>
+		</mat-menu>
+
+		<br />
 	</div>
 
 	<mat-progress-spinner

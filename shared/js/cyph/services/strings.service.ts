@@ -73,13 +73,23 @@ export class StringsService extends BaseProvider {
 	public readonly access: string						= `Access`;
 
 	/** @see StringsService */
-	public readonly addExternalContactContent: string	=
-		`Friends with a loser who doesn't have a Cyph account? ` +
-		`Good news: you can still message them!`
+	public readonly addContactButtonExternal: string	= `External Contact`;
+
+	/** @see StringsService */
+	public readonly addContactButtonInternal: string	= `${this.internalProductShort} User`;
+
+	/** @see StringsService */
+	public readonly addContactTitle: string				= `Add Contact`;
+
+	/** @see StringsService */
+	public readonly addContactTooltipExternal: string	=
+		`Add someone using their email address`
 	;
 
 	/** @see StringsService */
-	public readonly addExternalContactTitle: string		= `Add External Contact`;
+	public readonly addContactTooltipInternal: string	=
+		`Add someone using their ${this.internalProductShort} username`
+	;
 
 	/** @see StringsService */
 	public readonly affAlt: string						= `Non-targeted banner ad`;

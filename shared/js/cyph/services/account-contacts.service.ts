@@ -1,9 +1,18 @@
+import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
 import {IContactListItem, SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
+import {
+	emailInput,
+	getFormValue,
+	input,
+	newForm,
+	newFormComponent,
+	newFormContainer
+} from '../forms';
 import {IAsyncValue} from '../iasync-value';
 import {IResolvable} from '../iresolvable';
 import {
@@ -24,6 +33,8 @@ import {AccountFilesService} from './account-files.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
+import {DialogService} from './dialog.service';
+import {StringsService} from './strings.service';
 
 
 /**
@@ -31,6 +42,21 @@ import {DatabaseService} from './database.service';
  */
 @Injectable()
 export class AccountContactsService extends BaseProvider {
+	/**
+	 * Resolves circular dependency needed for addContactPrompt to work.
+	 * @see AccountContactsSearchComponent
+	 */
+	public static readonly accountContactsSearchComponent	=
+		resolvable<ComponentType<{
+			chipInput: boolean;
+			contactList: Observable<(IContactListItem|User)[]>|undefined;
+			externalUsers: boolean;
+			getContacts?: IResolvable<User[]>;
+			title?: string;
+		}>>()
+	;
+
+
 	/** @ignore */
 	private readonly accountUserLookupService: IResolvable<AccountUserLookupService>	=
 		resolvable()
@@ -241,6 +267,73 @@ export class AccountContactsService extends BaseProvider {
 		);
 	}
 
+	/**
+	 * Displays prompt to add a new contact.
+	 * @param external Adds an external contact via pseudo-relationship.
+	 */
+	public async addContactPrompt (external: boolean = false) : Promise<void> {
+		if (!external) {
+			const closeFunction	= resolvable<() => void>();
+			const getContacts	= resolvable<User[]>();
+
+			this.dialogService.baseDialog(
+				await AccountContactsService.accountContactsSearchComponent.promise,
+				o => {
+					o.chipInput		= true;
+					o.contactList	= undefined;
+					o.externalUsers	= true;
+					o.getContacts	= getContacts;
+					o.title			= this.stringsService.addContactTitle;
+				},
+				closeFunction,
+				true
+			);
+
+			try {
+				const contacts	= await getContacts.promise;
+				await Promise.all(contacts.map(async user => this.addContact(user.username)));
+			}
+			finally {
+				(await closeFunction.promise)();
+			}
+
+			return;
+		}
+
+		const contactForm	= await this.dialogService.prompt({
+			bottomSheet: true,
+			content: '',
+			form: newForm([
+				newFormComponent([
+					newFormContainer([
+						input({
+							label: this.stringsService.nameOptional
+						})
+					]),
+					newFormContainer([
+						emailInput({
+							label: this.stringsService.email,
+							required: true
+						})
+					])
+				])
+			]),
+			title: this.stringsService.addContactTitle
+		});
+
+		const email	= getFormValue(contactForm, 'string', 0, 1, 0);
+		const name	= getFormValue(contactForm, 'string', 0, 0, 0);
+
+		if (!email) {
+			return;
+		}
+
+		await this.databaseService.callFunction(
+			'requestPseudoRelationship',
+			{email, name}
+		);
+	}
+
 	/** Contact URL. */
 	public contactURL (username: string) : string {
 		return `contacts/${normalize(username)}`;
@@ -290,7 +383,13 @@ export class AccountContactsService extends BaseProvider {
 		private readonly accountFilesService: AccountFilesService,
 
 		/** @ignore */
-		private readonly databaseService: DatabaseService
+		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		super();
 

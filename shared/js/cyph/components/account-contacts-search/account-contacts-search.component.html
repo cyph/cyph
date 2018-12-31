@@ -1,3 +1,5 @@
+<h1 matDialogTitle *ngIf='title'>{{title}}</h1>
+
 <cyph-search-bar
 	#searchBar
 	[autofocus]='autofocus'
@@ -13,3 +15,19 @@
 	(filterChange)='userFilterChange.emit($event)'
 	(inputBlur)='searchBarBlur.emit()'
 ></cyph-search-bar>
+
+<div fxLayoutAlign='end center' *ngIf='getContacts'>
+	<button
+		mat-button
+		(click)='submitContacts([])'
+	>
+		{{stringsService.cancel}}
+	</button>
+	<button
+		mat-button
+		[disabled]='(searchBar?.filter | async)?.size < 1'
+		(click)='submitContacts()'
+	>
+		{{stringsService.ok}}
+	</button>
+</div>
