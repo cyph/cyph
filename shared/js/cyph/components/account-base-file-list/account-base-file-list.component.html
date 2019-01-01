@@ -353,7 +353,6 @@
 				accountFilesService.downloadAndSave(o.record.id);
 				$event.stopPropagation();
 			'
-			*ngIf='accountFilesService.isMedia(o.record.id) | async'
 		>
 			<mat-icon>cloud_download</mat-icon>
 		</button>
