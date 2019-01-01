@@ -1560,19 +1560,36 @@ export class ChatService extends BaseProvider {
 							continue;
 						}
 
-						const id			= o.textConfirmation.id;
-						const messageIDs	= await this.chat.messageList.getFlatValue();
+						const id	= o.textConfirmation.id;
 
-						let newLastConfirmedMessage: IChatLastConfirmedMessage|undefined;
-						for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
-							if (messageIDs[i] === id) {
-								newLastConfirmedMessage	= {id, index: i};
-								break;
+						const getNewLastConfirmedMesssage	=
+							(messageIDs: string[]) : IChatLastConfirmedMessage|void => {
+								for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
+									if (messageIDs[i] === id) {
+										return {id, index: i};
+									}
+								}
 							}
-						}
+						;
+
+						let newLastConfirmedMessage	= getNewLastConfirmedMesssage(
+							await this.chat.messageList.getFlatValue()
+						);
 
 						if (!newLastConfirmedMessage) {
-							continue;
+							const pendingMessageIDs	=
+								(await this.chat.pendingMessages.getFlatValue()).map(o => o.id)
+							;
+
+							if (getNewLastConfirmedMesssage(pendingMessageIDs) === undefined) {
+								continue;
+							}
+
+							newLastConfirmedMessage	= await this.chat.messageList.watchFlat().pipe(
+								map(getNewLastConfirmedMesssage),
+								filterUndefinedOperator(),
+								take(1)
+							).toPromise();
 						}
 
 						this.chat.lastConfirmedMessage.updateValue(async lastConfirmedMessage => {
