@@ -46,10 +46,10 @@ export class EnvDeploy {
 		`CYPH-IM/`
 	;
 
-	/** URL for an accounts link ("https://cyph.me/" or equivalent). */
-	public readonly cyphMeUrl: string			= this.isOnion ?
+	/** URL for an accounts link ("https://cyph.app/" or equivalent). */
+	public readonly cyphAppUrl: string			= this.isOnion ?
 		`https://me.${config.onionRoot}/` :
-		`CYPH-ME/`
+		`CYPH-APP/`
 	;
 
 	/** URL for starting a new io cyph ("https://cyph.io/" or equivalent). */

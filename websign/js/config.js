@@ -12,6 +12,7 @@ var config	= {
 	],
 
 	cyphBrandedPackages: {
+		'cyph.app': true,
 		'cyph.audio': true,
 		'cyph.chat': true,
 		'cyph.im': true,

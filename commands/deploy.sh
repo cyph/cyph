@@ -463,9 +463,9 @@ if [ "${test}" ] ; then
 	sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}43000|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}42002|${newCyphURL}|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-APP|https://${version}-dot-cyph-app-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-IM|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 
@@ -489,18 +489,18 @@ else
 		homeURL='https://debug-dot-cyph-com-dot-cyphme.appspot.com'
 
 		sed -i "s|${defaultHost}42002|https://debug.cyph.ws|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-APP|https://debug.cyph.ws/#account|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://debug.cyph.ws|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IO|https://debug.cyph.ws/#io|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-ME|https://debug.cyph.ws/#account|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-VIDEO|https://debug.cyph.ws/#video|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-AUDIO|https://debug.cyph.ws/#audio|g" shared/js/cyph/env-deploy.ts
 	else
 		homeURL='https://www.cyph.com'
 
 		sed -i "s|${defaultHost}42002|https://cyph.ws|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-APP|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
 	fi
@@ -896,8 +896,8 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 					return namespaces;
 				},
 				{
-					"cyph.ws": {accountsURL: "https://cyph.me/", domain: "cyph.me"},
-					"cyph_ws": {accountsURL: "https://cyph.me/", domain: "cyph.me"}
+					"cyph.ws": {accountsURL: "https://cyph.app/", domain: "cyph.app"},
+					"cyph_ws": {accountsURL: "https://cyph.app/", domain: "cyph.app"}
 				}
 			)
 	)};`)'

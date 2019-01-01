@@ -51,6 +51,12 @@ export class Env extends EnvDeploy {
 		environment.customBuild.favicon !== undefined
 	;
 
+	/** Base URL for an accounts link ("https://cyph.ws/#account/" or equivalent). */
+	public readonly cyphAppBaseUrl: string;
+
+	/** @inheritDoc */
+	public readonly cyphAppUrl: string;
+
 	/** Base URL for a new audio cyph link ("https://cyph.ws/#audio/" or equivalent). */
 	public readonly cyphAudioBaseUrl: string;
 
@@ -62,12 +68,6 @@ export class Env extends EnvDeploy {
 
 	/** @inheritDoc */
 	public readonly cyphIoUrl: string;
-
-	/** Base URL for an accounts link ("https://cyph.ws/#account/" or equivalent). */
-	public readonly cyphMeBaseUrl: string;
-
-	/** @inheritDoc */
-	public readonly cyphMeUrl: string;
 
 	/** Base URL for a new video cyph link ("https://cyph.ws/#video/" or equivalent). */
 	public readonly cyphVideoBaseUrl: string;
@@ -307,12 +307,12 @@ export class Env extends EnvDeploy {
 
 		this.cyphAudioBaseUrl	= `${this.newCyphBaseUrl}#audio/`;
 		this.cyphIoBaseUrl		= `${this.newCyphBaseUrl}#io/`;
-		this.cyphMeBaseUrl		= `${this.newCyphBaseUrl}#account/`;
+		this.cyphAppBaseUrl		= `${this.newCyphBaseUrl}#account/`;
 		this.cyphVideoBaseUrl	= `${this.newCyphBaseUrl}#video/`;
 
 		this.cyphAudioUrl	= this.useBaseUrl ? this.cyphAudioBaseUrl : envDeploy.cyphAudioUrl;
 		this.cyphIoUrl		= this.useBaseUrl ? this.cyphIoBaseUrl : envDeploy.cyphIoUrl;
-		this.cyphMeUrl		= this.useBaseUrl ? this.cyphMeBaseUrl : envDeploy.cyphMeUrl;
+		this.cyphAppUrl		= this.useBaseUrl ? this.cyphAppBaseUrl : envDeploy.cyphAppUrl;
 		this.cyphVideoUrl	= this.useBaseUrl ? this.cyphVideoBaseUrl : envDeploy.cyphVideoUrl;
 
 		if (this.isExtension || !this.isWeb) {

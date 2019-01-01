@@ -35,7 +35,7 @@ if (
 		'addredoxcredentials ' +
 		'(--prod) ' +
 		'[Cyph environment URL, e.g. ' +
-			'https://cyph.me, ' +
+			'https://cyph.app, ' +
 			'https://cyph.ws/#account, ' +
 			'or https://cyph.wang/simple-master#account' +
 		'] ' +
