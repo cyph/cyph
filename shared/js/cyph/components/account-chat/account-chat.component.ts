@@ -125,7 +125,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 		this.destroyed.next(true);
 		this.router.navigate(['chat-transition'], {skipLocationChange: true});
 		await sleep(0);
-		this.router.navigate(url);
+		this.router.navigate(['', ...url]);
 	}
 
 	/** @inheritDoc */
@@ -287,7 +287,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					['appointments', appointmentID, 'end'] :
 				!this.cancelRedirectsHome.value ?
 					['messages', contactID] :
-					[]
+					['']
 				;
 
 				if (
