@@ -84,7 +84,7 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether debug logging is enabled (true by default when debug is true). */
 	public readonly debugLog: boolean			=
-		(environment.customBuild && environment.customBuild.config.accountsOnly) ||
+		!(environment.customBuild && environment.customBuild.config.burnerOnly) ||
 		this.debug
 	;
 
@@ -235,9 +235,9 @@ export class Env extends EnvDeploy {
 	/** @inheritDoc */
 	public readonly newCyphBaseUrl: string		=
 		(
-			environment.customBuild &&
 			!environment.local &&
-			!environment.customBuild.config.accountsOnly
+			environment.customBuild &&
+			environment.customBuild.config.burnerOnly
 		) ?
 			`https://${environment.customBuild.id}/` :
 			envDeploy.newCyphBaseUrl

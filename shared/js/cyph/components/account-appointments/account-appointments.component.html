@@ -90,7 +90,7 @@
 		color='primary'
 		matTooltip='New Appointment Request'
 		matTooltipPosition='above'
-		[routerLink]='accountService.routeRoot + "request-appointment"'
+		routerLink='/request-appointment'
 		class='fixed-fab'
 		*ngIf='!envService.isTelehealthFull'
 	>
@@ -155,8 +155,7 @@
 											<span fxHide.lt-md cyphTranslate>with</span>
 											&ngsp;
 											<a fxHide.lt-md *ngIf='!!o.friend' [routerLink]='
-												accountService.routeRoot +
-												"profile/" +
+												"/profile/" +
 												o.friend
 											'>{{
 												o.friend
@@ -189,8 +188,7 @@
 											matTooltip='Start Call'
 											[disabled]='!canJoin'
 											[routerLink]='
-												accountService.routeRoot +
-												"appointments/" +
+												"/appointments/" +
 												o.record.id +
 												"/call"
 											'
@@ -249,8 +247,7 @@
 								let i = index;
 							'>
 								<button mat-raised-button [disabled]='incoming' [routerLink]='
-									accountService.routeRoot +
-									"appointments/" +
+									"/appointments/" +
 									o.record.id +
 									"/forms/" +
 									i
@@ -272,11 +269,7 @@
 										accountUserTypes.Standard
 									'
 									mat-raised-button
-									[routerLink]='
-										accountService.routeRoot +
-										"new-patient/" +
-										o.record.id
-									'
+									[routerLink]='"/new-patient/" + o.record.id'
 								>
 									{{stringsService.submitPatientForms}}
 								</button>

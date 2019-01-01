@@ -1233,7 +1233,7 @@ export class AccountFilesService extends BaseProvider {
 				content: `${this.stringsService.deleteMessage} ${file.name}?`,
 				title: this.stringsService.deleteConfirm
 			})) {
-				this.router.navigate([accountRoot, this.config[file.recordType].route]);
+				this.router.navigate([this.config[file.recordType].route]);
 				await sleep();
 			}
 			else {

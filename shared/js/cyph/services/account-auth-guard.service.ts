@@ -53,11 +53,10 @@ implements CanActivate, CanActivateChild {
 			this.accountAuthService.pseudoAccountLogin.next(true);
 		}
 
-		this.router.navigate([accountRoot, 'login'].concat(
-			route.url.length > 0 ?
-				(accountRoot ? [accountRoot] : []).concat(this.getFullRoutePath(route)) :
-				[]
-		));
+		this.router.navigate([
+			'login',
+			...(route.url.length > 0 ? this.getFullRoutePath(route) : [])
+		]);
 
 		return false;
 	}

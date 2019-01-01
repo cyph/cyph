@@ -161,11 +161,6 @@ export class AccountService extends BaseProvider {
 		this.subscriptions
 	);
 
-	/** Root for account routes. */
-	public readonly routeRoot: string					=
-		accountRoot === '' ? '/' : `/${accountRoot}/`
-	;
-
 	/** Indicates when view is in transition. */
 	public readonly transition: Observable<boolean>		= this.transitionInternal;
 
@@ -362,7 +357,6 @@ export class AccountService extends BaseProvider {
 
 					if (answered) {
 						this.router.navigate([
-							accountRoot,
 							callType,
 							contactID,
 							id,

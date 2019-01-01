@@ -51,11 +51,7 @@
 						else incomingTitleDefault
 					'>
 						<div *ngIf='!o.record.wasAnonymousShare'>
-							<a [routerLink]='
-								accountService.routeRoot +
-								"profile/" +
-								o.owner
-							'>
+							<a [routerLink]='"/profile/" + o.owner'>
 								@{{o.owner}}
 							</a>
 						</div>
@@ -85,7 +81,7 @@
 					<div *ngIf='!o.record.wasAnonymousShare'>
 						<span cyphTranslate>Shared by</span>
 						&ngsp;
-						<a [routerLink]='accountService.routeRoot + "profile/" + o.owner'>
+						<a [routerLink]='"/profile/" + o.owner'>
 							{{o.owner}}
 						</a>
 					</div>
@@ -150,7 +146,7 @@
 					</mat-header-cell>
 					<mat-cell fxFlex='96px' *matCellDef='let o'>
 						<a
-							[routerLink]='accountService.routeRoot + "profile/" + o.owner'
+							[routerLink]='"/profile/" + o.owner'
 							*ngIf='
 								!o.record.wasAnonymousShare &&
 								currentUser.user.username !== o.owner;
@@ -209,7 +205,7 @@
 						accountFilesService.config[recordType].subroutable
 					'
 					[routerLink]='
-						accountService.routeRoot +
+						"/" +
 						accountFilesService.config[recordType].route +
 						(
 							accountFilesService.config[recordType].subroutable ?
@@ -235,7 +231,7 @@
 					let i = index;
 				'
 				[routerLink]='
-					accountService.routeRoot +
+					"/" +
 					accountFilesService.config[recordType].route +
 					(accountFilesService.config[recordType].subroutable ? ("/" + o.record.id) : "")
 				'
@@ -276,7 +272,7 @@
 						'>
 							<span cyphTranslate>Owner:</span>
 							&ngsp;
-							<a [routerLink]='accountService.routeRoot + "profile/" + o.owner'>
+							<a [routerLink]='"/profile/" + o.owner'>
 								{{o.owner}}
 							</a>
 						</div>
@@ -383,7 +379,7 @@
 			cyphTranslate
 			matTooltip='Edit'
 			[routerLink]='
-				accountService.routeRoot +
+				"/" +
 				accountFilesService.config[recordType].route +
 				"/" + o.record.id + "/edit"
 			'

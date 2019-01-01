@@ -171,11 +171,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 						value: user.username
 					})),
 					topOption: externalUser === undefined ? undefined : {
-						routerLink:
-							`/${accountRoot}${accountRoot === '' ? '' : '/'}profile/${
-								externalUser
-							}`
-						,
+						routerLink: `/profile/${externalUser}`,
 						text:
 							`${this.stringsService.open} ` +
 							`@${externalUser}${this.stringsService.s} ` +

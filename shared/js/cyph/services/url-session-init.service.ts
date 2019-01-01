@@ -38,7 +38,10 @@ export class UrlSessionInitService extends BaseProvider implements SessionInitSe
 
 		const urlSegmentPaths	=
 			this.router.routerState.snapshot.root.firstChild ?
-				this.router.routerState.snapshot.root.firstChild.url.map(o => o.path) :
+				this.router.routerState.snapshot.root.firstChild.url.
+					slice(burnerRoot === '' ? 0 : 1).
+					map(o => o.path)
+				:
 				[]
 		;
 

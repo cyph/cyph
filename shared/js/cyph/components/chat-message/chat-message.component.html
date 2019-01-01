@@ -73,11 +73,7 @@
 							cyphTranslate
 							class='avatar-image'
 							[src]='message?.authorUser?.avatar | async'
-							[routerLink]='
-								accountService?.routeRoot +
-								"profile/" +
-								message?.authorUser?.username
-							'
+							[routerLink]='"/profile/" + message?.authorUser?.username'
 							alt='User Avatar'
 							*ngIf='accountService && !!message?.authorUser'
 						/>

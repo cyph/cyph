@@ -45,8 +45,8 @@ export class AccountPseudoRelationshipResponseComponent extends BaseProvider imp
 
 			await this.router.navigate(
 				typeof username === 'string' && username ?
-					[accountRoot, 'messages', 'user', username] :
-					[accountRoot, '404']
+					['messages', 'user', username] :
+					['404']
 			);
 		}
 		else {
@@ -59,7 +59,7 @@ export class AccountPseudoRelationshipResponseComponent extends BaseProvider imp
 				this.rejected.next(true);
 			}
 			catch {
-				await this.router.navigate([accountRoot, '404']);
+				await this.router.navigate(['404']);
 			}
 		}
 	}

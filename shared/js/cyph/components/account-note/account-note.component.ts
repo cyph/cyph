@@ -90,7 +90,7 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 			await this.accountFilesService.upload(this.stringsService.untitled, []).result
 		);
 
-		this.router.navigate([accountRoot, 'docs', this.noteData.value.id, 'edit']);
+		this.router.navigate(['docs', this.noteData.value.id, 'edit']);
 	}
 
 	/** @ignore */
@@ -199,7 +199,7 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 				}
 			}
 			catch {
-				this.router.navigate([accountRoot, '404']);
+				this.router.navigate(['404']);
 			}
 		}));
 	}
@@ -290,7 +290,7 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 			this.noteData.next(noteData);
 
 			if (noteData.id) {
-				this.router.navigate([accountRoot, 'notes', noteData.id]);
+				this.router.navigate(['notes', noteData.id]);
 				await sleep();
 				this.accountService.interstitial.next(false);
 				this.dialogService.toast(this.stringsService.noteSaved, 2500);

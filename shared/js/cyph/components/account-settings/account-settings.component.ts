@@ -123,7 +123,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			});
 		}
 
-		this.router.navigate([accountRoot, 'settings']);
+		this.router.navigate(['settings']);
 		this.loading.next(false);
 	}
 

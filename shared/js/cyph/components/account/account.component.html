@@ -98,11 +98,7 @@
 						<a
 							fxFlex
 							class='profile-link'
-							[routerLink]='
-								accountService.routeRoot +
-								"profile/" +
-								header.username
-							'
+							[routerLink]='"/profile/" + header.username'
 							*ngIf='!!header.avatar; else stringHeader'
 						>
 							<div
@@ -153,7 +149,7 @@
 					mat-icon-button
 					cyphTranslate
 					aria-label='Search'
-					[routerLink]='accountService.routeRoot + "search"'
+					routerLink='/search'
 					fxHide.gt-sm
 					*ngIf='!envService.isTelehealth'
 				>

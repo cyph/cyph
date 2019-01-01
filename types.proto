@@ -721,14 +721,14 @@ message Environment {
 
 	/** Custom build configuration. */
 	message CustomBuildConfig {
-		/** Indicates whether environment should be accounts-only (no ephemeral). */
-		bool accountsOnly = 1;
+		/** Optional custom background color. */
+		string backgroundColor = 1;
 
 		/** Indicates whether this is for a browser extension. */
 		bool browserExtension = 2;
 
-		/** Optional custom background color. */
-		string backgroundColor = 3;
+		/** Indicates whether environment should be accounts-only (no ephemeral). */
+		bool burnerOnly = 3;
 
 		/** If true, performs audio call by default. */
 		bool callTypeAudio = 4;

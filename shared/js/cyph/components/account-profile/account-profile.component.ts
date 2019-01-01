@@ -151,7 +151,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				this.accountDatabaseService.currentUser.value &&
 				this.accountDatabaseService.currentUser.value.user.username === username
 			) {
-				this.router.navigate([accountRoot, 'profile'], {replaceUrl: true});
+				this.router.navigate(['profile'], {replaceUrl: true});
 			}
 			else if (
 				!username &&
@@ -167,7 +167,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				) === AccountUserTypes.Standard
 			) {
 				/* Redirect telehealth patient home page to /doctors */
-				this.router.navigate([accountRoot, 'doctors']);
+				this.router.navigate(['doctors']);
 			}
 			else if (user) {
 				await user.fetch();
@@ -179,7 +179,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				this.accountService.resolveUiReady();
 			}
 			else {
-				this.router.navigate([accountRoot, username ? '404' : 'login']);
+				this.router.navigate([username ? '404' : 'login']);
 			}
 		}));
 	}
@@ -296,7 +296,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 		}
 
 		this.draft.next({});
-		this.router.navigate([accountRoot, 'profile', ...(editMode ? ['edit'] : [])]);
+		this.router.navigate(['profile', ...(editMode ? ['edit'] : [])]);
 		this.accountService.setHeader(this.accountDatabaseService.currentUser.value.user);
 
 		const user	= this.userProfile.value;

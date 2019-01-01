@@ -26,8 +26,8 @@ catch {}
 
 for (const k of [
 	'accountPrimaryTheme',
-	'accountRoot',
 	'beforeUnloadMessage',
+	'burnerRoot',
 	'customBuildBase64',
 	'testEnvironmentSetup',
 	'translations'

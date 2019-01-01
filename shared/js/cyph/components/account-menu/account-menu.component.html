@@ -62,7 +62,7 @@
 			cyphTranslate
 			class='home'
 			aria-label='Home'
-			[routerLink]='accountService.routeRoot'
+			routerLink='/'
 			(click)='click()'
 		>
 			<cyph-logo
@@ -88,7 +88,7 @@
 				[ngClass]='userPresence[(currentUser.user.status | async) || 0]'
 				alt='Profile Picture'
 				[src]='currentUser.user.avatar | async'
-				[routerLink]='accountService.routeRoot + "profile"'
+				routerLink='/profile'
 				(click)='click()'
 			/>
 			<h3 matLine [fxShow]='menuExpanded | async'>
@@ -130,7 +130,7 @@
 				cyphTranslate
 				class='incoming-patient-info emphasis'
 				aria-label='Incoming Patient Info'
-				[routerLink]='accountService.routeRoot + "incoming-patient-info"'
+				routerLink='/incoming-patient-info'
 				(click)='click()'
 			>
 				<mat-icon
@@ -165,7 +165,7 @@
 				cyphTranslate
 				class='appointments'
 				aria-label='Appointments'
-				[routerLink]='accountService.routeRoot + "appointments"'
+				routerLink='/appointments'
 				(click)='click()'
 			>
 				<mat-icon
@@ -204,7 +204,7 @@
 				cyphTranslate
 				class='doctors'
 				aria-label='Doctors'
-				[routerLink]='accountService.routeRoot + "doctors"'
+				routerLink='/doctors'
 				(click)='click()'
 			>
 				<mat-icon mat-list-icon svgIcon='doctor'></mat-icon>
@@ -224,7 +224,7 @@
 				cyphTranslate
 				class='patients'
 				aria-label='Patients'
-				[routerLink]='accountService.routeRoot + "patients"'
+				routerLink='/patients'
 				(click)='click()'
 			>
 				<mat-icon mat-list-icon>local_hospital</mat-icon>
@@ -238,7 +238,7 @@
 				cyphTranslate
 				class='staff'
 				aria-label='Staff'
-				[routerLink]='accountService.routeRoot + "staff"'
+				routerLink='/staff'
 				(click)='click()'
 			>
 				<mat-icon mat-list-icon>people</mat-icon>
@@ -252,7 +252,7 @@
 				cyphTranslate
 				class='ehr-access'
 				aria-label='EHR Access'
-				[routerLink]='accountService.routeRoot + "ehr-access"'
+				routerLink='/ehr-access'
 				(click)='click()'
 			>
 				<mat-icon mat-list-icon>vpn_key</mat-icon>
@@ -268,7 +268,7 @@
 				cyphTranslate
 				class='contacts'
 				aria-label='Messages'
-				[routerLink]='accountService.routeRoot'
+				routerLink='/'
 				(click)='click()'
 			>
 				<mat-icon
@@ -294,7 +294,7 @@
 				cyphTranslate
 				class='files'
 				aria-label='Files'
-				[routerLink]='accountService.routeRoot + "files"'
+				routerLink='/files'
 				(click)='click()'
 			>
 				<mat-icon
@@ -321,7 +321,7 @@
 				cyphTranslate
 				class='notes'
 				aria-label='Notes'
-				[routerLink]='accountService.routeRoot + "notes"'
+				routerLink='/notes'
 				(click)='click()'
 			>
 				<mat-icon
@@ -348,7 +348,7 @@
 				cyphTranslate
 				class='docs'
 				aria-label='Docs'
-				[routerLink]='accountService.routeRoot + "docs"'
+				routerLink='/docs'
 				(click)='click()'
 				*ngIf='accountService.enableDocs'
 			>
@@ -376,7 +376,7 @@
 				cyphTranslate
 				class='forms'
 				aria-label='Forms'
-				[routerLink]='accountService.routeRoot + "forms"'
+				routerLink='/forms'
 				(click)='click()'
 				*ngIf='!envService.environment.production || envService.isTelehealthFull'
 			>
@@ -424,7 +424,7 @@
 				cyphTranslate
 				class='wallets'
 				aria-label='Wallets'
-				[routerLink]='accountService.routeRoot + "wallets"'
+				routerLink='/wallets'
 				(click)='click()'
 				*ngIf='accountService.enableWallets | async'
 			>
@@ -462,7 +462,7 @@
 			cyphTranslate
 			class='settings'
 			aria-label='Settings'
-			[routerLink]='accountService.routeRoot + "settings"'
+			routerLink='/settings'
 			(click)='click()'
 		>
 			<mat-icon mat-list-icon>settings</mat-icon>
@@ -489,7 +489,7 @@
 			cyphTranslate
 			class='logout'
 			aria-label='Log Out'
-			[routerLink]='accountService.routeRoot + "logout"'
+			routerLink='/logout'
 			(click)='click()'
 		>
 			<mat-icon mat-list-icon>exit_to_app</mat-icon>

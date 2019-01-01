@@ -35,6 +35,41 @@ const {notify}	= require('./notify')(database, messaging);
 
 const channelDisconnectTimeout	= 5000;
 
+const getFullBurnerURL	= (namespace, callType) => {
+	const {burnerURL}	= namespaces[namespace];
+
+	return namespace === 'cyph_healthcare' ?
+		(
+			callType === 'audio' ?
+				'https://audio.cyph.healthcare/' :
+			callType === 'video' ?
+				'https://video.cyph.healthcare/' :
+				'https://chat.cyph.healthcare/'
+		) :
+	namespace === 'cyph_pro' ?
+		(
+			callType === 'audio' ?
+				'https://audio.cyph.pro/' :
+			callType === 'video' ?
+				'https://video.cyph.pro/' :
+				'https://cyph.pro/'
+		) :
+	namespace === 'cyph_ws' ?
+		(
+			callType === 'audio' ?
+				'https://cyph.audio/' :
+			callType === 'video' ?
+				'https://cyph.video/' :
+				'https://cyph.im/'
+		) :
+	callType === 'audio' ?
+		`${burnerURL}audio/` :
+	callType === 'video' ?
+		`${burnerURL}video/` :
+		burnerURL
+	;
+};
+
 const getRealUsername	= async (namespace, username) => {
 	if (!username) {
 		return 'unregistered';
@@ -188,41 +223,6 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 	const inviterUsername	= await getUsername();
 	const {accountsURL}		= namespaces[namespace];
 
-	/* TODO: Generalize this after making ephemeral a sub-route of accounts */
-	const ephemeralDomain	=
-		namespace === 'inova_cyph_healthcare' ?
-			(
-				data.callType === 'audio' ?
-					'audio.inova.cyph.healthcare' :
-				data.callType === 'video' ?
-					'video.inova.cyph.healthcare' :
-					'chat.inova.cyph.healthcare'
-			) :
-		namespace === 'cyph_healthcare' ?
-			(
-				data.callType === 'audio' ?
-					'audio.cyph.healthcare' :
-				data.callType === 'video' ?
-					'video.cyph.healthcare' :
-					'chat.cyph.healthcare'
-			) :
-		namespace === 'cyph_pro' ?
-			(
-				data.callType === 'audio' ?
-					'audio.cyph.pro' :
-				data.callType === 'video' ?
-					'video.cyph.pro' :
-					'cyph.pro'
-			) :
-			(
-				data.callType === 'audio' ?
-					'cyph.audio' :
-				data.callType === 'video' ?
-					'cyph.video' :
-					'cyph.im'
-			)
-	;
-
 	await Promise.all([
 		sendMail(
 			database,
@@ -233,7 +233,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 			{
 				endTime: data.eventDetails.endTime,
 				inviterUsername,
-				location: `https://${ephemeralDomain}/${inviterUsername}/${id}`,
+				location: `${getFullBurnerURL(namespace, data.callType)}${inviterUsername}/${id}`,
 				startTime: data.eventDetails.startTime
 			}
 		),

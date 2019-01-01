@@ -52,7 +52,7 @@
 				cyphTranslate
 				class='animated flipInX _4'
 				matTooltip='Open Mail'
-				[routerLink]='accountService.routeRoot + "mail/" + (user.contactID | async)'
+				[routerLink]='"/mail/" + (user.contactID | async)'
 			>
 				<mat-icon>email</mat-icon>
 			</button>
@@ -62,7 +62,7 @@
 				cyphTranslate
 				class='animated flipInX _4'
 				matTooltip='Open Messages'
-				[routerLink]='accountService.routeRoot + "messages/" + (user.contactID | async)'
+				[routerLink]='"/messages/" + (user.contactID | async)'
 			>
 				<mat-icon>message</mat-icon>
 			</button>
@@ -75,8 +75,7 @@
 				class='animated flipInX _4'
 				matTooltip='New Message'
 				[routerLink]='
-					accountService.routeRoot +
-					"compose/" +
+					"/compose/" +
 					((user.contactID | async) || ("user/" + user.username))
 				'
 			>
@@ -200,9 +199,7 @@
 				mat-mini-fab
 				cyphTranslate
 				matTooltip='Open Mail'
-				[routerLink]='
-					accountService.routeRoot + "mail/" + (user.contactID | async)
-				'
+				[routerLink]='"/mail/" + (user.contactID | async)'
 			>
 				<mat-icon>email</mat-icon>
 			</button>
@@ -211,9 +208,7 @@
 				mat-mini-fab
 				cyphTranslate
 				matTooltip='Open Messages'
-				[routerLink]='
-					accountService.routeRoot + "messages/" + (user.contactID | async)
-				'
+				[routerLink]='"/messages/" + (user.contactID | async)'
 			>
 				<mat-icon>message</mat-icon>
 			</button>
@@ -239,8 +234,7 @@
 				cyphTranslate
 				matTooltip='New Message'
 				[routerLink]='
-					accountService.routeRoot +
-					"compose/" +
+					"/compose/" +
 					((user.contactID | async) || ("user/" + user.username))
 				'
 			>
@@ -553,8 +547,7 @@
 								<div
 									fxLayout='row'
 									[routerLink]='
-										accountService.routeRoot +
-										"profile/" +
+										"/profile/" +
 										(userOrganiztion | async)?.username
 									'
 								>
@@ -625,8 +618,7 @@
 										cyphTranslate
 										color='primary'
 										[routerLink]='
-											accountService.routeRoot +
-											"request-appointment/" +
+											"/request-appointment/" +
 											((user.contactID | async) || ("user/" + user.username))
 										'
 									>

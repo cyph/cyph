@@ -887,17 +887,26 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 			})).
 			filter(o => !o.useNamespace).
 			reduce(
-				(namespaces, {accountsOnly, domain}) => {
+				(namespaces, {burnerOnly, domain}) => {
 					namespaces[domain]	= {
-						accountsURL: `https://${domain}/${accountsOnly ? "" : "account/"}`,
+						accountsURL: `https://${domain}/`,
+						burnerURL: `https://${domain}/${burnerOnly ? "" : "#burner/"}`,
 						domain
 					};
 					namespaces[domain.replace(/\./g, "_")]	= namespaces[domain];
 					return namespaces;
 				},
 				{
-					"cyph.ws": {accountsURL: "https://cyph.app/", domain: "cyph.app"},
-					"cyph_ws": {accountsURL: "https://cyph.app/", domain: "cyph.app"}
+					"cyph.ws": {
+						accountsURL: "https://cyph.app/",
+						burnerURL: "https://cyph.app/#burner/",
+						domain: "cyph.app"
+					},
+					"cyph_ws": {
+						accountsURL: "https://cyph.app/",
+						burnerURL: "https://cyph.app/#burner/",
+						domain: "cyph.app"
+					}
 				}
 			)
 	)};`)'

@@ -20,7 +20,7 @@ export class Thread<T> implements IThread<T> {
 
 		/* Inherit these from main thread */
 
-		(<any> self).accountRoot		= threadSetupVars.accountRoot;
+		(<any> self).burnerRoot			= threadSetupVars.burnerRoot;
 		(<any> self).locationData		= threadSetupVars.locationData;
 		(<any> self).navigatorData		= threadSetupVars.navigatorData;
 		(<any> self).translations		= threadSetupVars.translations;
@@ -153,7 +153,7 @@ export class Thread<T> implements IThread<T> {
 		const seedBytes	= potassiumUtil.randomBytes(32);
 
 		const threadSetupVars	= {
-			accountRoot,
+			burnerRoot,
 			isLocalEnv: env.isLocalEnv,
 			locationData: {
 				hash: locationData.hash,

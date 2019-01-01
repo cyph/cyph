@@ -82,7 +82,7 @@ export class AppService extends BaseProvider implements CanActivate {
 		}
 
 		this.isLockedDown.next(false);
-		this.router.navigateByUrl(await this.lockedDownRoute);
+		this.router.navigateByUrl(`${burnerRoot}/${await this.lockedDownRoute}`);
 	}
 
 	constructor (
@@ -116,14 +116,6 @@ export class AppService extends BaseProvider implements CanActivate {
 			faviconService.setFavicon('telehealth');
 		}
 
-		if (accountRoot !== '') {
-			self.addEventListener('hashchange', () => {
-				if (!locationData.hash.match(new RegExp(`^#?/?${accountRoot}(/|$)`))) {
-					location.reload();
-				}
-			});
-		}
-
 		ngZone.runOutsideAngular(async () => {
 			/* Redirect clients that cannot support native crypto when required */
 			if (
@@ -147,10 +139,10 @@ export class AppService extends BaseProvider implements CanActivate {
 			const urlSegmentPaths	= router.url.split('/');
 
 			if (this.envService.isExtension) {
-				router.navigate([accountRoot, 'contacts']);
+				router.navigate(['contacts']);
 			}
 
-			if (accountRoot === '' || urlSegmentPaths[0] === accountRoot) {
+			if (burnerRoot !== '' && urlSegmentPaths[0] !== burnerRoot) {
 				await this.accountService.uiReady;
 			}
 			else {

@@ -123,9 +123,9 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	/** @ignore */
 	private async navigate (...url: string[]) : Promise<void> {
 		this.destroyed.next(true);
-		this.router.navigate([accountRoot, 'chat-transition'], {skipLocationChange: true});
+		this.router.navigate(['chat-transition'], {skipLocationChange: true});
 		await sleep(0);
-		this.router.navigate([accountRoot, ...url]);
+		this.router.navigate(url);
 	}
 
 	/** @inheritDoc */
@@ -212,7 +212,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					}
 
 					this.router.navigate(
-						[accountRoot, path, await contactIDPromise],
+						[path, await contactIDPromise],
 						{replaceUrl: true}
 					);
 					return;
@@ -284,10 +284,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				}
 
 				const callEndRoute	= appointmentID ?
-					[accountRoot, 'appointments', appointmentID, 'end'] :
+					['appointments', appointmentID, 'end'] :
 				!this.cancelRedirectsHome.value ?
-					[accountRoot, 'messages', contactID] :
-					[accountRoot]
+					['messages', contactID] :
+					[]
 				;
 
 				if (
@@ -399,7 +399,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				});
 			}
 			catch {
-				this.router.navigate([accountRoot, '404']);
+				this.router.navigate(['404']);
 			}
 			finally {
 				if (promptFollowup) {

@@ -22,7 +22,7 @@ if (customBuildBase64) {
 }
 
 accountPrimaryTheme	= true;
-accountRoot			= 'account';
+burnerRoot			= 'burner';
 
 /* tslint:disable-next-line:strict-type-predicates */
 if (typeof $ === 'function' && typeof window === 'object') {
@@ -34,8 +34,8 @@ if (typeof $ === 'function' && typeof window === 'object') {
 			}
 		}
 
-		if (environment.customBuild.config.accountsOnly) {
-			accountRoot	= '';
+		if (environment.customBuild.config.burnerOnly) {
+			burnerRoot	= '';
 		}
 
 		if (environment.customBuild.config.backgroundColor) {

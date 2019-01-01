@@ -7,7 +7,7 @@
 	<cyph-account-contacts
 		[home]='true'
 		[searchMode]='searchMode | async'
-		(searchBarBlur)='router.navigate([accountService.routeRoot])'
+		(searchBarBlur)='router.navigate([])'
 		*ngIf='
 			(accountDatabaseService.currentUser | async)?.confirmed &&
 			envService.isMobile | async;
@@ -43,7 +43,7 @@
 				color='accent'
 				matTooltip='Get a Cyph link'
 				matTooltipPosition='above'
-				[routerLink]='accountService.routeRoot + "anonymous/chat"'
+				routerLink='/anonymous/chat'
 			>
 				<mat-icon>whatshot</mat-icon>
 				&nbsp;
@@ -69,7 +69,7 @@
 				cyphTranslate
 				matTooltip='New Note'
 				matTooltipPosition='above'
-				[routerLink]='accountService.routeRoot + "notes/new"'
+				routerLink='/notes/new'
 			>
 				<mat-icon>note_add</mat-icon>
 				&nbsp;
@@ -121,7 +121,7 @@
 				matTooltipPosition='left'
 				[routerLink]='
 					(isSpeedDialOpen | async) ?
-						accountService.routeRoot + "compose/" :
+						"/compose/" :
 						undefined
 				'
 				(click)='
@@ -140,7 +140,7 @@
 				cyphTranslate
 				matTooltip='New Note'
 				matTooltipPosition='left'
-				[routerLink]='accountService.routeRoot + "notes/new"'
+				routerLink='/notes/new'
 				(click)='isSpeedDialOpen.next(false)'
 			>
 				<mat-icon>note_add</mat-icon>
@@ -165,7 +165,7 @@
 				class='alt'
 				matTooltip='New Burner Link'
 				matTooltipPosition='left'
-				[routerLink]='accountService.routeRoot + "anonymous/chat"'
+				routerLink='/anonymous/chat'
 				(click)='isSpeedDialOpen.next(false)'
 				*ngIf='!envService.coBranded'
 			>

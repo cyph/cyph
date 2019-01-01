@@ -83,7 +83,7 @@ export class AccountFormComponent extends BaseProvider implements OnInit {
 				}
 			}
 			catch {
-				this.router.navigate([accountRoot, '404']);
+				this.router.navigate(['404']);
 			}
 		}));
 	}

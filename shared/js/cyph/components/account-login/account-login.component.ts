@@ -87,9 +87,9 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			) ?
 				this.activatedRoute.snapshot.url.length > 0 ?
 					this.activatedRoute.snapshot.url.map(o => o.path) :
-					[accountRoot]
+					[]
 				:
-				[accountRoot, 'welcome']
+				['welcome']
 		);
 
 		if (this.envService.isCordova && this.envService.isAndroid) {

@@ -262,7 +262,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				}
 			}
 
-			this.router.navigate([accountRoot, 'register', '1']);
+			this.router.navigate(['register', '1']);
 		}));
 	}
 
@@ -339,13 +339,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.useXkcdPassphrase.next(false);
 		this.xkcdPassphrase.next('');
 
-		this.router.navigate([accountRoot, 'welcome']);
+		this.router.navigate(['welcome']);
 	}
 
 	/** Updates route for consistency with tabIndex. */
 	public updateRoute (increment: number = 0, tabIndex: number = this.tabIndex.value) : void {
 		this.router.navigate([
-			accountRoot,
 			'register',
 			(tabIndex + increment + 1).toString()
 		]);

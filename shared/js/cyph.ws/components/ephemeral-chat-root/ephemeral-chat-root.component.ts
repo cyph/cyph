@@ -209,7 +209,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 			}
 
 			this.appService.chatRootState.next(ChatRootStates.error);
-			this.router.navigate(['404']);
+			this.router.navigate([burnerRoot, '404']);
 		});
 
 		/* Cyphertext easter egg */

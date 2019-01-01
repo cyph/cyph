@@ -106,10 +106,9 @@
 								<span cyphTranslate>Message sent to</span>
 								&ngsp;
 								<a [routerLink]='
-									accountService.routeRoot +
 									((messageType | async) === chatMessageValueTypes.Quill ?
-										"mail/" :
-										"messages/"
+										"/mail/" :
+										"/messages/"
 									) +
 									sentMessageData.id
 								'>
@@ -149,11 +148,7 @@
 											mat-raised-button
 											cyphTranslate
 											color='accent'
-											[routerLink]='
-												accountService.routeRoot +
-												"new-patient/" +
-												(sentFileID | async)
-											'
+											[routerLink]='"/new-patient/" + (sentFileID | async)'
 										>
 											Patient Forms
 										</button>
@@ -162,7 +157,7 @@
 											mat-raised-button
 											cyphTranslate
 											color='primary'
-											[routerLink]='accountService.routeRoot + "appointments"'
+											routerLink='/appointments'
 										>
 											I'll do this later
 										</button>
@@ -174,7 +169,7 @@
 										mat-raised-button
 										cyphTranslate
 										color='accent'
-										[routerLink]='accountService.routeRoot + "appointments"'
+										routerLink='/appointments'
 									>
 										Back to Appointments
 									</button>
@@ -197,8 +192,7 @@
 									<a
 										cyphTranslate
 										[routerLink]='
-											accountService.routeRoot +
-											"profile/" +
+											"/profile/" +
 											((searchUsername | async) || "")
 										'
 									>go back</a>.

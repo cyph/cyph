@@ -12,24 +12,15 @@
 		) ?
 			undefined :
 		contactState.email ?
-			(
-				accountService.routeRoot +
-				"messages/external-user/" +
-				username
-			) :
+			"/messages/external-user/" + username :
 		envService.isTelehealthFull ?
-			accountService.routeRoot + "profile/" + username :
+			"/profile/" + username :
 		((user | async)?.contactID | async) ?
 			(
-				accountService.routeRoot +
-				"messages/" +
+				"/messages/" +
 				(((user | async)?.contactID | async) || "")
 			) :
-			(
-				accountService.routeRoot +
-				"messages/user/" +
-				username
-			)
+			"/messages/user/" + username
 	'
 	fxFlex
 	*ngIf='accountContactsService.contactState(username).watch() | async as contactState'
@@ -55,7 +46,7 @@
 				aria-label='clickable ? stringsService.openProfile : ""'
 				[routerLink]='!clickable ?
 					undefined :
-					accountService.routeRoot + "profile/" + username
+					"/profile/" + username
 				'
 				(click)='$event.stopPropagation()'
 			/>
@@ -144,7 +135,7 @@
 				[matTooltip]='stringsService.openProfile'
 				[routerLink]='!clickable ?
 					undefined :
-					accountService.routeRoot + "profile/" + username
+					"/profile/" + username
 				'
 				(click)='$event.stopPropagation()'
 			>
@@ -174,8 +165,7 @@
 				[routerLink]='
 					((user | async)?.contactID | async) ?
 						(
-							accountService.routeRoot +
-							"call/" +
+							"/call/" +
 							(((user | async)?.contactID | async) || "")
 						) :
 						undefined
@@ -231,8 +221,7 @@
 			!clickable || groupData?.incoming ?
 				undefined :
 				(
-					accountService.routeRoot +
-					(groupData?.group.mailUIDefault ? "mail/" : "messages/") +
+					(groupData?.group.mailUIDefault ? "/mail/" : "/messages/") +
 					groupData?.id
 				)
 		'

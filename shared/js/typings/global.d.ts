@@ -1,11 +1,5 @@
 /**
  * @global
- * The root route of accounts.
- */
-declare let accountRoot: string;
-
-/**
- * @global
  * If true, primary accounts theme will be applied.
  */
 declare let accountPrimaryTheme: boolean;
@@ -15,6 +9,12 @@ declare let accountPrimaryTheme: boolean;
  * Message to return for beforeunload event.
  */
 declare let beforeUnloadMessage: string|undefined;
+
+/**
+ * @global
+ * The root route of Burner.
+ */
+declare let burnerRoot: string;
 
 /**
  * @global

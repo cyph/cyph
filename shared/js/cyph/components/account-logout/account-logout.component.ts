@@ -39,7 +39,7 @@ export class AccountLogoutComponent extends BaseProvider implements OnInit {
 			}
 		}
 		else {
-			await this.router.navigate([accountRoot, 'login']);
+			await this.router.navigate(['login']);
 		}
 	}
 
