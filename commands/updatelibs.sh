@@ -22,7 +22,7 @@ read -r -d '' modules <<- EOM
 	@angular/compiler-cli
 	@angular/core
 	@angular/elements
-	@angular/flex-layout
+	@angular/flex-layout@6.0.0-beta.16
 	@angular/forms
 	@angular/http
 	@angular/material
