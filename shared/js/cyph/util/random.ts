@@ -27,16 +27,15 @@ export const random	= (max?: number, min: number = 0) : number => {
 	if (max === undefined) {
 		return randomFloat;
 	}
-	else if (isNaN(max) || max <= 0) {
+	if (isNaN(max) || max <= 0) {
 		throw new Error('Upper bound must be a positive non-zero number.');
 	}
-	else if (isNaN(min) || min < 0) {
+	if (isNaN(min) || min < 0) {
 		throw new Error('Lower bound must be a positive number or zero.');
 	}
-	else if (min >= max) {
+	if (min >= max) {
 		throw new Error('Upper bound must be greater than lower bound.');
 	}
-	else {
-		return Math.floor((randomFloat * (max - min)) + min);
-	}
+
+	return Math.floor((randomFloat * (max - min)) + min);
 };

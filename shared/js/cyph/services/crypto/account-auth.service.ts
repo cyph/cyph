@@ -599,49 +599,51 @@ export class AccountAuthService extends BaseProvider {
 				(async () => {
 					await this.databaseService.register(username, loginData.secondaryPassword);
 
-					if (inviteCode) {
-						await Promise.all([
-							this.databaseService.removeItem(`users/${username}/inviteCode`),
-							this.databaseService.removeItem(
-								`users/${username}/inviterUsernamePlaintext`
-							)
-						]);
-
-						await this.databaseService.setItem(
-							`users/${username}/inviteCode`,
-							StringProto,
-							inviteCode
-						);
-
-						const inviterUsername	=
-							await this.databaseService.getAsyncValue(
-								`users/${username}/inviterUsernamePlaintext`,
-								StringProto,
-								undefined,
-								true
-							).getValue()
-						;
-
-						if (!inviterUsername) {
-							throw RegistrationErrorCodes.InvalidInviteCode;
-						}
-
-						await Promise.all<{}>([
-							this.setItem(
-								`users/${username}/inviterUsername`,
-								StringProto,
-								inviterUsername,
-								loginData.symmetricKey
-							),
-							username !== inviterUsername ?
-								this.databaseService.setItem(
-									`users/${username}/contacts/${inviterUsername}`,
-									AccountContactState,
-									{state: AccountContactState.States.OutgoingRequest}
-								) :
-								Promise.resolve()
-						]);
+					if (!inviteCode) {
+						return;
 					}
+
+					await Promise.all([
+						this.databaseService.removeItem(`users/${username}/inviteCode`),
+						this.databaseService.removeItem(
+							`users/${username}/inviterUsernamePlaintext`
+						)
+					]);
+
+					await this.databaseService.setItem(
+						`users/${username}/inviteCode`,
+						StringProto,
+						inviteCode
+					);
+
+					const inviterUsername	=
+						await this.databaseService.getAsyncValue(
+							`users/${username}/inviterUsernamePlaintext`,
+							StringProto,
+							undefined,
+							true
+						).getValue()
+					;
+
+					if (!inviterUsername) {
+						throw RegistrationErrorCodes.InvalidInviteCode;
+					}
+
+					await Promise.all<{}>([
+						this.setItem(
+							`users/${username}/inviterUsername`,
+							StringProto,
+							inviterUsername,
+							loginData.symmetricKey
+						),
+						username !== inviterUsername ?
+							this.databaseService.setItem(
+								`users/${username}/contacts/${inviterUsername}`,
+								AccountContactState,
+								{state: AccountContactState.States.OutgoingRequest}
+							) :
+							Promise.resolve()
+					]);
 				})()
 			]);
 

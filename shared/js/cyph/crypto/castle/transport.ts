@@ -81,14 +81,16 @@ export class Transport {
 			const instanceID	= potassiumUtil.toBytes(plaintext, 8, 16);
 			const data			= potassiumUtil.toBytes(plaintext, 24);
 
-			if (data.length > 0) {
-				await this.sessionService.castleHandler(CastleEvents.receive, {
-					author,
-					instanceID: potassiumUtil.toHex(instanceID),
-					plaintext: data,
-					timestamp
-				});
+			if (data.length < 1) {
+				return;
 			}
+
+			await this.sessionService.castleHandler(CastleEvents.receive, {
+				author,
+				instanceID: potassiumUtil.toHex(instanceID),
+				plaintext: data,
+				timestamp
+			});
 		}));
 	}
 

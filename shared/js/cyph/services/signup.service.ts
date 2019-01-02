@@ -36,7 +36,7 @@ export class SignupService extends BaseProvider {
 			this.state.next(this.state.value + 1);
 		}
 
-		const signupResult: string	= await request({
+		const signupResult	= await request({
 			data: {
 				email: this.data.email.value,
 				inviteCode: this.data.inviteCode.value,
@@ -59,14 +59,16 @@ export class SignupService extends BaseProvider {
 			hitType: 'event'
 		});
 
-		if (this.promo.value) {
-			this.analyticsService.sendEvent({
-				hitType: 'social',
-				socialAction: 'signup',
-				socialNetwork: 'promo-' + this.promo.value,
-				socialTarget: this.data.email.value
-			});
+		if (!this.promo.value) {
+			return;
 		}
+
+		this.analyticsService.sendEvent({
+			hitType: 'social',
+			socialAction: 'signup',
+			socialNetwork: 'promo-' + this.promo.value,
+			socialTarget: this.data.email.value
+		});
 	}
 
 	constructor (

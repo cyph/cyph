@@ -31,7 +31,8 @@ export const mergeObjects	= async <T> (proto: IProto<T>, ...objects: T[]) : Prom
 	if (typeof first !== 'object') {
 		throw new Error('Cannot merge non-object values.');
 	}
-	else if (objects.length < 1) {
+
+	if (objects.length < 1) {
 		return first;
 	}
 

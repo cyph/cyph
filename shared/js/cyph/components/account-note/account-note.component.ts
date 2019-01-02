@@ -214,7 +214,8 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 			this.updateNoteData({content: change.content});
 			return;
 		}
-		else if (this.note.value && this.note.value.doc) {
+
+		if (this.note.value && this.note.value.doc) {
 			this.note.value.doc.deltaSendQueue.push(change.delta);
 			this.note.next({...this.note.value});
 		}
@@ -228,7 +229,8 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 		if (!this.realTime.value) {
 			return;
 		}
-		else if (this.note.value && this.note.value.doc) {
+
+		if (this.note.value && this.note.value.doc) {
 			this.note.value.doc.selectionSendQueue	= change.range;
 			this.note.next({...this.note.value});
 		}
@@ -289,12 +291,14 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 
 			this.noteData.next(noteData);
 
-			if (noteData.id) {
-				this.router.navigate(['notes', noteData.id]);
-				await sleep();
-				this.accountService.interstitial.next(false);
-				this.dialogService.toast(this.stringsService.noteSaved, 2500);
+			if (!noteData.id) {
+				return;
 			}
+
+			this.router.navigate(['notes', noteData.id]);
+			await sleep();
+			this.accountService.interstitial.next(false);
+			this.dialogService.toast(this.stringsService.noteSaved, 2500);
 		});
 	}
 

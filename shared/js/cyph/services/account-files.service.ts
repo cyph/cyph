@@ -1023,7 +1023,7 @@ export class AccountFilesService extends BaseProvider {
 		if (ehrApiKeys.length < 1) {
 			throw new Error('No EHR API keys.');
 		}
-		else if (ehrApiKeys.length > 1) {
+		if (ehrApiKeys.length > 1) {
 			throw new Error('More than one EHR API key.');
 		}
 
@@ -1040,9 +1040,7 @@ export class AccountFilesService extends BaseProvider {
 			if (maybeFileReference.owner !== undefined && maybeFileReference.key !== undefined) {
 				return maybeFileReference;
 			}
-			else {
-				id	= id.id;
-			}
+			id	= id.id;
 		}
 
 		await this.accountDatabaseService.getCurrentUser();

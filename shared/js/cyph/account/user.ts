@@ -195,9 +195,9 @@ export class User {
 		private readonly unreadMessages: MaybePromise<IAsyncMap<string, never>>,
 
 		/** Indicates whether we should immediately start fetching this user's data. */
-		preFetch: boolean = false
+		private readonly preFetch: boolean = false
 	) {
-		if (preFetch) {
+		if (this.preFetch) {
 			this.fetch();
 		}
 	}

@@ -80,9 +80,9 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 			/* Images */
 			replace(
 				/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-				(_: string, value: string) => {
-					const img: HTMLImageElement	= document.createElement('img');
-					img.src	= value;
+				(_, value: string) => {
+					const img	= document.createElement('img');
+					img.src		= value;
 					return img.outerHTML;
 				}
 			)
@@ -128,7 +128,7 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 
 		this.markdownIt	= new MarkdownIt({
 			breaks: true,
-			highlight: (s: string) => microlight.process(
+			highlight: s => microlight.process(
 				s,
 				$(this.elementRef.nativeElement).css('color')
 			),

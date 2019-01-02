@@ -445,11 +445,13 @@ export class AccountSessionService extends SessionService {
 
 			const f		= (newEvents: ISessionMessageData[]) => {
 				for (const o of newEvents) {
-					if (o.command && o.command.method === id) {
-						this.off(rpcEvents.pong, f);
-						resolve();
-						return;
+					if (!(o.command && o.command.method === id)) {
+						continue;
 					}
+
+					this.off(rpcEvents.pong, f);
+					resolve();
+					return;
 				}
 			};
 

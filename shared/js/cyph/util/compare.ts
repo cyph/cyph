@@ -29,12 +29,12 @@ export const compareValues	= <T> (a: T, b: T, ...values: T[]) : boolean => {
 	if (a instanceof Array) {
 		return compareArrays(a, <any> b, ...(<any> values));
 	}
-	else if (values.length === 0) {
+
+	if (values.length === 0) {
 		return a === b;
 	}
-	else {
-		return values.concat(b).filter(t => t !== a).length < 1;
-	}
+
+	return values.concat(b).filter(t => t !== a).length < 1;
 };
 
 /** Constant time string comparison. */

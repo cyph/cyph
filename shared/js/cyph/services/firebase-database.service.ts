@@ -303,11 +303,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				/* tslint:disable-next-line:no-null-keyword */
 				const onValue		= async (snapshot: DataSnapshot|null) => {
-					if (snapshot) {
-						this.ngZone.run(() => {
-							observer.next(snapshot.val() === true);
-						});
+					if (!snapshot) {
+						return;
 					}
+
+					this.ngZone.run(() => {
+						observer.next(snapshot.val() === true);
+					});
 				};
 
 				connectedRef.on('value', onValue);
@@ -1058,15 +1060,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				uploadTask.on(
 					'state_changed',
-					o => {
-						if (o) {
-							const snapshot	= o;
-							this.ngZone.run(() => {
-								progress.next(
-									snapshot.bytesTransferred / snapshot.totalBytes * 100
-								);
-							});
+					snapshot => {
+						if (!snapshot) {
+							return;
 						}
+
+						this.ngZone.run(() => {
+							progress.next(
+								snapshot.bytesTransferred / snapshot.totalBytes * 100
+							);
+						});
 					},
 					reject,
 					() => {
@@ -1175,25 +1178,24 @@ export class FirebaseDatabaseService extends DatabaseService {
 						if (!snapshot || !snapshot.exists()) {
 							throw new Error('Data not found.');
 						}
-						else {
-							const result	= await (await this.downloadItem(url, proto)).result;
 
-							if (
-								result.value !== lastValue &&
-								!(
-									ArrayBuffer.isView(result.value) &&
-									ArrayBuffer.isView(lastValue) &&
-									this.potassiumService.compareMemory(
-										result.value,
-										lastValue
-									)
+						const result	= await (await this.downloadItem(url, proto)).result;
+
+						if (
+							result.value !== lastValue &&
+							!(
+								ArrayBuffer.isView(result.value) &&
+								ArrayBuffer.isView(lastValue) &&
+								this.potassiumService.compareMemory(
+									result.value,
+									lastValue
 								)
-							) {
-								this.ngZone.run(() => { observer.next(result); });
-							}
-
-							lastValue		= result.value;
+							)
+						) {
+							this.ngZone.run(() => { observer.next(result); });
 						}
+
+						lastValue		= result.value;
 					}
 					catch {
 						const timestamp	= await getTimestamp();
@@ -1322,7 +1324,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						) {
 							return onChildAdded(await this.waitForValue(`${url}/${snapshot.key}`));
 						}
-						else if (
+						if (
 							!snapshot ||
 							!snapshot.key ||
 							data.has(snapshot.key) ||
@@ -1434,7 +1436,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								previousKey
 							);
 						}
-						else if (!snapshot || !snapshot.exists() || !snapshot.key) {
+						if (!snapshot || !snapshot.exists() || !snapshot.key) {
 							return;
 						}
 
@@ -1485,7 +1487,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							return;
 						}
 
-						const val: any	= snapshot.val() || {};
+						const val		= snapshot.val() || {};
 						const newKeys	= this.getListKeysInternal(val, noFilter);
 
 						if (!noFilter) {
@@ -1559,7 +1561,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								previousKey
 							);
 						}
-						else if (!snapshot || !snapshot.exists() || !snapshot.key) {
+						if (!snapshot || !snapshot.exists() || !snapshot.key) {
 							return;
 						}
 

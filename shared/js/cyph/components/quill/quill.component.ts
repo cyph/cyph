@@ -289,11 +289,14 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 						if (!this.quill) {
 							throw new Error('No Quill.');
 						}
-						else if (delta.clientID !== this.clientID) {
-							this.quill.updateContents(
-								<any> new Delta(this.stripExternalSubresources(delta).ops)
-							);
+
+						if (delta.clientID === this.clientID) {
+							return;
 						}
+
+						this.quill.updateContents(
+							<any> new Delta(this.stripExternalSubresources(delta).ops)
+						);
 					});
 
 					break;
@@ -332,7 +335,8 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 							if (!this.quill) {
 								throw new Error('No Quill.');
 							}
-							else if (range.clientID !== this.clientID) {
+
+							if (range.clientID !== this.clientID) {
 								this.quill.setSelection(range.index, range.length);
 							}
 						});

@@ -131,12 +131,14 @@ implements OnChanges, OnDestroy, OnInit {
 			this.querySubscription.unsubscribe();
 		}
 
-		if (this.query) {
-			this.querySubscription	= this.query.subscribe(value => {
-				this.control.setValue(value);
-				this.pushToFilter(value);
-			});
+		if (!this.query) {
+			return;
 		}
+
+		this.querySubscription	= this.query.subscribe(value => {
+			this.control.setValue(value);
+			this.pushToFilter(value);
+		});
 	}
 
 	/** @inheritDoc */
@@ -161,14 +163,15 @@ implements OnChanges, OnDestroy, OnInit {
 				this.filter.next(newFilterValue.add(o));
 				this.clearInput();
 			}
+
+			return;
+		}
+
+		if (o !== undefined) {
+			this.filter.next(new Set([o]));
 		}
 		else {
-			if (o !== undefined) {
-				this.filter.next(new Set([o]));
-			}
-			else {
-				this.clearFilter();
-			}
+			this.clearFilter();
 		}
 	}
 
@@ -178,10 +181,10 @@ implements OnChanges, OnDestroy, OnInit {
 			const newFilterValue	= new Set(this.filter.value);
 			newFilterValue.delete(value);
 			this.filter.next(newFilterValue);
+			return;
 		}
-		else {
-			this.clearFilter();
-		}
+
+		this.clearFilter();
 	}
 
 	constructor (

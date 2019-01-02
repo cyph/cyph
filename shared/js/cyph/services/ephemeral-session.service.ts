@@ -91,26 +91,28 @@ export class EphemeralSessionService extends SessionService {
 
 		if (this.state.isAlice.value) {
 			this.trigger(events.beginWaiting);
+			return;
 		}
-		else {
-			this.pingPong();
 
-			this.analyticsService.sendEvent({
-				eventAction: 'started',
-				eventCategory: 'cyph',
-				eventValue: 1,
-				hitType: 'event'
-			});
+		this.pingPong();
 
-			if (this.state.wasInitiatedByAPI.value) {
-				this.analyticsService.sendEvent({
-					eventAction: 'started',
-					eventCategory: 'api-initiated-cyph',
-					eventValue: 1,
-					hitType: 'event'
-				});
-			}
+		this.analyticsService.sendEvent({
+			eventAction: 'started',
+			eventCategory: 'cyph',
+			eventValue: 1,
+			hitType: 'event'
+		});
+
+		if (!this.state.wasInitiatedByAPI.value) {
+			return;
 		}
+
+		this.analyticsService.sendEvent({
+			eventAction: 'started',
+			eventCategory: 'api-initiated-cyph',
+			eventValue: 1,
+			hitType: 'event'
+		});
 	}
 
 	/** @inheritDoc */
@@ -221,11 +223,7 @@ export class EphemeralSessionService extends SessionService {
 			this.setID(id);
 		}
 
-		const channelID: string	=
-			this.state.startingNewCyph.value === false ?
-				'' :
-				uuid(true)
-		;
+		const channelID	= this.state.startingNewCyph.value === false ? '' : uuid(true);
 
 		(async () => {
 			try {

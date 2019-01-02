@@ -426,12 +426,12 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 				if (!messages || messages.length < 1) {
 					return;
 				}
-				else if (!this.correctSubSession(messages[0])) {
+
+				if (!this.correctSubSession(messages[0])) {
 					throw new Error('Different sub-session.');
 				}
-				else {
-					await this.cyphertextReceiveHandler(messages);
-				}
+
+				await this.cyphertextReceiveHandler(messages);
 			});
 
 			await Promise.race([this.closed, o.stillOwner.toPromise()]);
@@ -443,8 +443,8 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 			this.channelService.init(channelID, userID, {
 				onClose: async () => this.channelOnClose(),
 				onConnect: async () => this.channelOnConnect(),
-				onMessage: async (message: Uint8Array) => this.channelOnMessage(message),
-				onOpen: async (isAlice: boolean) => this.channelOnOpen(isAlice)
+				onMessage: async message => this.channelOnMessage(message),
+				onOpen: async isAlice => this.channelOnOpen(isAlice)
 			})
 		]);
 	}

@@ -80,21 +80,23 @@ export class NotificationService extends BaseProvider implements INotificationSe
 		}
 		catch {}
 
-		if (!this.disableNotify && !this.windowWatcherService.visibility.value) {
-			this.disableNotify	= true;
-
-			try {
-				const notification		= await this.createNotification(message);
-
-				notification.onclick	= () => {
-					notification.close();
-					self.focus();
-				};
-
-				this.openNotifications.push(notification);
-			}
-			catch {}
+		if (this.disableNotify || this.windowWatcherService.visibility.value) {
+			return;
 		}
+
+		this.disableNotify	= true;
+
+		try {
+			const notification		= await this.createNotification(message);
+
+			notification.onclick	= () => {
+				notification.close();
+				self.focus();
+			};
+
+			this.openNotifications.push(notification);
+		}
+		catch {}
 	}
 
 	/**
@@ -144,19 +146,19 @@ export class NotificationService extends BaseProvider implements INotificationSe
 		this.ringtone.loop	= true;
 
 		this.subscriptions.push(this.windowWatcherService.visibility.subscribe(isVisible => {
-			if (isVisible) {
-				for (const notification of this.openNotifications) {
-					try {
-						notification.close();
-					}
-					catch {}
-				}
-
-				this.openNotifications.length	= 0;
-			}
-			else {
+			if (!isVisible) {
 				this.disableNotify	= false;
+				return;
 			}
+
+			for (const notification of this.openNotifications) {
+				try {
+					notification.close();
+				}
+				catch {}
+			}
+
+			this.openNotifications.length	= 0;
 		}));
 
 		try {

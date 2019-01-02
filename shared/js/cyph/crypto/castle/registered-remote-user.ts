@@ -20,9 +20,8 @@ export class RegisteredRemoteUser implements IRemoteUser {
 				if (this.pseudoAccount) {
 					return {encryption: new Uint8Array(0)};
 				}
-				else {
-					return this.accountDatabaseService.getUserPublicKeys(username);
-				}
+
+				return this.accountDatabaseService.getUserPublicKeys(username);
 			})();
 		}
 

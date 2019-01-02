@@ -43,7 +43,7 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 			return;
 		}
 
-		const exception: string	=
+		const exception	=
 			`${errorMessage}\n\n${
 				err instanceof Error ?
 					(await fromError(err)).join('\n') :

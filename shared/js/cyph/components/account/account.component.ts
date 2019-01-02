@@ -230,31 +230,33 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			return;
 		}
 
-		if (this.envService.showGranim) {
-			await initGranim({
-				direction: 'radial',
-				element: '.cyph-gradient',
-				isPausedWhenNotInView: true,
-				name: 'basic-gradient',
-				opacity: [1, 0.5, 0],
-				states: {
-					'default-state': {
-						gradients: !this.envService.isTelehealth ?
-							[
-								['#f5f5f6', '#cccccc'],
-								['#cccccc', '#f5f5f6']
-							] :
-							[
-								['#eeecf1', '#b7bccb'],
-								['#b7bccb', '#eeecf1']
-							]
-						,
-						loop: false,
-						transitionSpeed: 5000
-					}
-				}
-			});
+		if (!this.envService.showGranim) {
+			return;
 		}
+
+		await initGranim({
+			direction: 'radial',
+			element: '.cyph-gradient',
+			isPausedWhenNotInView: true,
+			name: 'basic-gradient',
+			opacity: [1, 0.5, 0],
+			states: {
+				'default-state': {
+					gradients: !this.envService.isTelehealth ?
+						[
+							['#f5f5f6', '#cccccc'],
+							['#cccccc', '#f5f5f6']
+						] :
+						[
+							['#eeecf1', '#b7bccb'],
+							['#b7bccb', '#eeecf1']
+						]
+					,
+					loop: false,
+					transitionSpeed: 5000
+				}
+			}
+		});
 	}
 
 	constructor (

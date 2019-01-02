@@ -213,20 +213,23 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 		});
 
 		/* Cyphertext easter egg */
-		if (this.cyphertextService.isEnabled) {
-			/* tslint:disable-next-line:no-unused-expression */
-			new Konami(async () => {
-				if (this.destroyed.value) {
-					return;
-				}
 
-				while (this.chatService.chat.state !== ChatStates.chat) {
-					await sleep();
-				}
-
-				this.cyphertextService.show();
-			});
+		if (!this.cyphertextService.isEnabled) {
+			return;
 		}
+
+		/* tslint:disable-next-line:no-unused-expression */
+		new Konami(async () => {
+			if (this.destroyed.value) {
+				return;
+			}
+
+			while (this.chatService.chat.state !== ChatStates.chat) {
+				await sleep();
+			}
+
+			this.cyphertextService.show();
+		});
 	}
 
 	constructor (

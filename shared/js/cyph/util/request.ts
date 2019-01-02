@@ -38,12 +38,12 @@ const baseRequest	= <R, T> (
 		result: (async () => {
 			const httpClient	= await staticHttpClient;
 
-			const headers			= o.headers || {};
-			const method: string	= o.method || 'GET';
-			const retries: number	= o.retries === undefined ? 0 : o.retries;
-			let contentType: string	= o.contentType || '';
-			let data: any			= o.data;
-			let url: string			= o.url;
+			const headers	= o.headers || {};
+			const method	= o.method || 'GET';
+			const retries	= o.retries === undefined ? 0 : o.retries;
+			let contentType	= o.contentType || '';
+			let data		= o.data;
+			let url			= o.url;
 
 			if (!contentType) {
 				if (url.slice(-5) === '.json') {

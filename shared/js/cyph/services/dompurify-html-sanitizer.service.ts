@@ -30,7 +30,7 @@ export class DOMPurifyHtmlSanitizerService extends BaseProvider implements HtmlS
 		/* Add a hook to enforce URI scheme whitelist */
 		DOMPurify.addHook('afterSanitizeAttributes', node => {
 			/* Build an anchor to map URLs to */
-			const anchor: HTMLAnchorElement	= document.createElement('a');
+			const anchor	= document.createElement('a');
 
 			/* Check all href attributes for validity */
 			if (node.hasAttribute('href')) {

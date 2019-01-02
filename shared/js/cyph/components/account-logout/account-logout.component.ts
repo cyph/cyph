@@ -26,20 +26,21 @@ export class AccountLogoutComponent extends BaseProvider implements OnInit {
 		await sleep(500);
 
 		/* Full reload to get rid of any data still sitting in memory */
-		if (loggedOut) {
-			if ((<any> self).androidBackbuttonReady) {
-				(<any> self).plugins.appMinimize.minimize();
-			}
 
-			if (this.envService.isWeb) {
-				location.reload();
-			}
-			else {
-				/* TODO: HANDLE NATIVE */
-			}
+		if (!loggedOut) {
+			await this.router.navigate(['login']);
+			return;
+		}
+
+		if ((<any> self).androidBackbuttonReady) {
+			(<any> self).plugins.appMinimize.minimize();
+		}
+
+		if (this.envService.isWeb) {
+			location.reload();
 		}
 		else {
-			await this.router.navigate(['login']);
+			/* TODO: HANDLE NATIVE */
 		}
 	}
 

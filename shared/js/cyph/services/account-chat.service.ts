@@ -309,27 +309,30 @@ export class AccountChatService extends ChatService {
 		);
 
 		/* For debugging */
-		if (this.envService.debug) {
-			(<any> self).resetSessionState	= async () => {
-				if (!this.remoteUser.value || !this.remoteUser.value.username) {
-					return;
-				}
 
-				const {castleSessionURL}	=
-					await this.accountContactsService.getCastleSessionData(
-						this.remoteUser.value.username
-					)
-				;
-
-				await this.databaseService.setItem(
-					`${castleSessionURL}/id`,
-					StringProto,
-					uuid(true),
-					true
-				);
-
-				location.reload();
-			};
+		if (!this.envService.debug) {
+			return;
 		}
+
+		(<any> self).resetSessionState	= async () => {
+			if (!this.remoteUser.value || !this.remoteUser.value.username) {
+				return;
+			}
+
+			const {castleSessionURL}	=
+				await this.accountContactsService.getCastleSessionData(
+					this.remoteUser.value.username
+				)
+			;
+
+			await this.databaseService.setItem(
+				`${castleSessionURL}/id`,
+				StringProto,
+				uuid(true),
+				true
+			);
+
+			location.reload();
+		};
 	}
 }

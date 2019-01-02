@@ -9,7 +9,6 @@ import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
-import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes, CallTypes, IAccountFileRecord, IAppointment} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -44,12 +43,10 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
 
 	/** Gets appointment. */
-	private readonly getAppointment:
-		(record: IAccountFileRecord) => Observable<
+	private readonly getAppointment	= memoize(
+		(record: IAccountFileRecord) : Observable<
 			{appointment: IAppointment; friend?: string}|undefined
-		>
-	= memoize(
-		(record: IAccountFileRecord) => this.accountFilesService.watchAppointment(record).pipe(
+		> => this.accountFilesService.watchAppointment(record).pipe(
 			map(appointment => {
 				const currentUser	= this.accountDatabaseService.currentUser.value;
 
@@ -73,10 +70,10 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	);
 
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+	public readonly accountUserTypes			= AccountUserTypes;
 
 	/** Appointment lists. */
-	public readonly appointments	= {
+	public readonly appointments				= {
 		current: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
 			map(([appointments, now]) => appointments.filter(({appointment}) =>
 				!appointment.occurred &&
@@ -127,20 +124,18 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	};
 
 	/** @see CallTypes */
-	public readonly callTypes: typeof CallTypes	= CallTypes;
+	public readonly callTypes					= CallTypes;
 
 	/** @see getDateTimeSting */
-	public readonly getDateTimeString: typeof getDateTimeString				= getDateTimeString;
+	public readonly getDateTimeString			= getDateTimeString;
 
 	/** Gets user. */
-	public readonly getUser: (username: string) => Promise<User|undefined>	=
-		memoize(async (username: string) =>
-			this.accountUserLookupService.getUser(username, false)
-		)
-	;
+	public readonly getUser						= memoize(async (username: string) =>
+		this.accountUserLookupService.getUser(username, false)
+	);
 
 	/** @see trackByID */
-	public readonly trackByID: typeof trackByID		= trackByID;
+	public readonly trackByID					= trackByID;
 
 	/** Calendar clickButton event handler. */
 	public calendarClickButton (_EVENT_DETAIL: any) : void {}
@@ -152,7 +147,7 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	public calendarUpdateEvent (_EVENT_DETAIL: any) : void {}
 
 	/** Current time - used to check if appointment is within range. */
-	public readonly timestampWatcher: Observable<number>	= watchTimestamp();
+	public readonly timestampWatcher			= watchTimestamp();
 
 	/** @ignore */
 	private getAppointments (recordsList: Observable<IAccountFileRecord[]>) : Observable<{

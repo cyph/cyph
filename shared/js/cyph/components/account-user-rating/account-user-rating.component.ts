@@ -19,10 +19,10 @@ import {numberToString} from '../../util/formatting';
 })
 export class AccountUserRatingComponent extends BaseProvider {
 	/** @ignore */
-	private readonly uiMaxRating: number	= 5;
+	private readonly uiMaxRating	= 5;
 
 	/** Array of star icons based on rating. */
-	public readonly getStars	= memoize((rating: number) : [
+	public readonly getStars		= memoize((rating: number) : [
 		('star'|'star_border'|'star_half'),
 		('star'|'star_border'|'star_half'),
 		('star'|'star_border'|'star_half'),
@@ -41,13 +41,13 @@ export class AccountUserRatingComponent extends BaseProvider {
 	});
 
 	/** @see numberToString */
-	public readonly numberToString: typeof numberToString	= numberToString;
+	public readonly numberToString	= numberToString;
 
 	/** Factor to adjust ratings by for display in UI. */
-	public readonly ratingFactor: number	= this.uiMaxRating / reviewMax;
+	public readonly ratingFactor	= this.uiMaxRating / reviewMax;
 
 	/** @see trackByIndex */
-	public readonly trackByIndex: typeof trackByIndex	= trackByIndex;
+	public readonly trackByIndex	= trackByIndex;
 
 	/** @see User */
 	@Input() public user?: User;

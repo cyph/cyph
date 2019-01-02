@@ -55,11 +55,10 @@ export class FileService extends BaseProvider {
 					);
 				});
 			}
-			else {
-				return potassiumUtil.fromBase64(
-					canvas.toDataURL(outputType, outputQuality).split(',')[1]
-				);
-			}
+
+			return potassiumUtil.fromBase64(
+				canvas.toDataURL(outputType, outputQuality).split(',')[1]
+			);
 		}
 		catch {}
 

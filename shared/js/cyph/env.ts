@@ -219,7 +219,7 @@ export class Env extends EnvDeploy {
 
 	/** Normalized language code, used for translations. */
 	public readonly language: string			= (() => {
-		const language: string	= this.fullLanguage.split('-')[0];
+		const language	= this.fullLanguage.split('-')[0];
 
 		/* Consistency in special cases */
 		return language === 'nb' ?

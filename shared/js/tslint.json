@@ -333,6 +333,28 @@
 		"use-view-encapsulation": true,
 
 
+		/* Consistent Code Style */
+
+		"const-parameters": true,
+		"early-exit": true,
+		"ext-curly": false,
+		"naming-convention": false,
+		"no-as-type-assertion": true,
+		"no-accessor-recursion": true,
+		"no-collapsible-if": true,
+		"no-else-after-return": false,
+		"no-return-undefined": false,
+		"no-static-this": true,
+		"no-unnecessary-else": true,
+		"no-unnecessary-type-annotation": false /* Pending fix: true */,
+		"no-unused": false /* Pending fix: true */,
+		"no-var-before-return": true,
+		"object-shorthand-properties-first": false,
+		"oddness-check": false,
+		"parameter-properties": [true, "member-access", "trailing"],
+		"prefer-const-enum": true,
+
+
 		/* Microsoft Contrib */
 
 		"export-name": false,
@@ -422,6 +444,7 @@
 		"/node_modules/codelyzer",
 		"/node_modules/rxjs-tslint",
 		"/node_modules/rxjs-tslint-rules/dist/rules",
+		"/node_modules/tslint-consistent-codestyle/rules",
 		"/node_modules/tslint-microsoft-contrib",
 		"tslint-rules"
 	]

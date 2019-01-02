@@ -38,11 +38,9 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	@Input() public contact?: IContactListItem|User;
 
 	/** Gets user org. */
-	public readonly getUserOrg: (username: string) => Promise<User|undefined>	=
-		memoize(async (username: string) =>
-			this.accountOrganizationsService.getOrganization(username)
-		)
-	;
+	public readonly getUserOrg								= memoize(async (username: string) =>
+		this.accountOrganizationsService.getOrganization(username)
+	);
 
 	/** @see P2PWebRTCService.isSupported */
 	public readonly p2pSupported							= P2PWebRTCService.isSupported;

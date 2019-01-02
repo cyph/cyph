@@ -476,12 +476,14 @@ export class AccountService extends BaseProvider {
 					return;
 				}
 
-				if (this.mobileMenuOpenInternal.value) {
-					this.mobileMenuOpenInternal.next(false);
+				if (!this.mobileMenuOpenInternal.value) {
+					return;
+				}
 
-					if (!this.envService.isCordova) {
-						history.back();
-					}
+				this.mobileMenuOpenInternal.next(false);
+
+				if (!this.envService.isCordova) {
+					history.back();
 				}
 			});
 

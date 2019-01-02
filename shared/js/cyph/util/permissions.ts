@@ -19,23 +19,23 @@ export const requestPermissions	= async (...permissions: string[]) : Promise<boo
 				(had: Record<string, boolean>) => {
 					const newPermissions	= permissions.filter(permission => !had[permission]);
 
-					if (newPermissions.length > 0) {
-						(<any> self).plugins.Permission.request(
-							newPermissions,
-							(granted: Record<string, boolean>) => {
-								if (newPermissions.find(permission => !granted[permission])) {
-									reject();
-								}
-								else {
-									resolve();
-								}
-							},
-							reject
-						);
-					}
-					else {
+					if (newPermissions.length < 1) {
 						resolve();
+						return;
 					}
+
+					(<any> self).plugins.Permission.request(
+						newPermissions,
+						(granted: Record<string, boolean>) => {
+							if (newPermissions.find(permission => !granted[permission])) {
+								reject();
+							}
+							else {
+								resolve();
+							}
+						},
+						reject
+					);
 				},
 				reject
 			);

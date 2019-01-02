@@ -325,21 +325,19 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				if (callType !== undefined && anonymousChannelID) {
 					return this.accountChatService.setUser(chat, undefined, callType);
 				}
-				else if (callType !== undefined && !sessionSubID) {
+				if (callType !== undefined && !sessionSubID) {
 					await this.accountChatService.setUser(chat);
 					return this.accountP2PService.beginCall(callType, path);
 				}
-				else {
-					this.initiating.next(false);
 
-					await this.accountChatService.setUser(
-						chat,
-						undefined,
-						callType,
-						sessionSubID,
-						ephemeralSubSession
-					);
-				}
+				this.initiating.next(false);
+				await this.accountChatService.setUser(
+					chat,
+					undefined,
+					callType,
+					sessionSubID,
+					ephemeralSubSession
+				);
 
 				if (callType === undefined) {
 					return;
@@ -371,31 +369,37 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 				});
 
 				this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
-					if (!this.destroyed.value) {
-						this.router.navigate(callEndRoute);
-
-						if (appointment && appointmentID) {
-							appointment.occurred	= true;
-
-							await this.accountFilesService.updateAppointment(
-								appointmentID,
-								appointment,
-								undefined,
-								true
-							);
-
-							if (appointment.notes && appointmentOther) {
-								await this.accountFilesService.upload(
-									`Notes about ${appointmentOther} (${
-										appointment.calendarInvite.title
-									}, ${
-										getDateTimeString(appointment.calendarInvite.startTime)
-									})`,
-									appointment.notes
-								);
-							}
-						}
+					if (this.destroyed.value) {
+						return;
 					}
+
+					this.router.navigate(callEndRoute);
+
+					if (!(appointment && appointmentID)) {
+						return;
+					}
+
+					appointment.occurred	= true;
+
+					await this.accountFilesService.updateAppointment(
+						appointmentID,
+						appointment,
+						undefined,
+						true
+					);
+
+					if (!(appointment.notes && appointmentOther)) {
+						return;
+					}
+
+					await this.accountFilesService.upload(
+						`Notes about ${appointmentOther} (${
+							appointment.calendarInvite.title
+						}, ${
+							getDateTimeString(appointment.calendarInvite.startTime)
+						})`,
+						appointment.notes
+					);
 				});
 			}
 			catch {

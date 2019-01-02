@@ -15,7 +15,7 @@ export class CastleIncomingMessagesProto {
 		const incomingMessages	= await deserialize(CastleIncomingMessages, bytes);
 
 		if (!incomingMessages || !incomingMessages.queue) {
-			return this.create();
+			return CastleIncomingMessagesProto.create();
 		}
 
 		const {queue}	= incomingMessages;

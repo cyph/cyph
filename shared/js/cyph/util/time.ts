@@ -44,9 +44,8 @@ const timestampData	= {
 		if (server > start && server < end) {
 			return 0;
 		}
-		else {
-			return server - end;
-		}
+
+		return server - end;
 	}).catch(
 		() => 0
 	),
@@ -72,9 +71,8 @@ export const getHourAndMinuteOfTime	= (time: Time|string) : {hour: number; minut
 		const [hour, minute]	= time.split(':').map(toInt);
 		return {hour, minute};
 	}
-	else {
-		return {hour: Math.floor(time / 60), minute: time % 60};
-	}
+
+	return {hour: Math.floor(time / 60), minute: time % 60};
 };
 
 /** Converts hour and minute into Time. */
@@ -309,7 +307,7 @@ const getTimestampLock		= lockFunction();
  */
 export const getTimestamp	= async () => getTimestampLock(async () => {
 	/* tslint:disable-next-line:ban */
-	let unixMilliseconds: number	= Date.now() + (await timestampData.offset);
+	let unixMilliseconds	= Date.now() + (await timestampData.offset);
 
 	if (unixMilliseconds === timestampData.last) {
 		timestampData.subtime += random() / 100;
@@ -341,32 +339,32 @@ export const timestampTo24HourTimeString	= memoize((
 	if (minHours === undefined && minMinutes !== undefined) {
 		throw new Error('Cannot use minMinutes without minHours.');
 	}
-	else if (maxHours === undefined && maxMinutes !== undefined) {
+	if (maxHours === undefined && maxMinutes !== undefined) {
 		throw new Error('Cannot use maxMinutes without maxHours.');
 	}
-	else if (minHours !== undefined && (isNaN(minHours) || minHours < 0 || minHours > 23)) {
+	if (minHours !== undefined && (isNaN(minHours) || minHours < 0 || minHours > 23)) {
 		throw new Error('Invalid minHours.');
 	}
-	else if (
+	if (
 		minMinutes !== undefined && (isNaN(minMinutes) || minMinutes < 0 || minMinutes > 59)
 	) {
 		throw new Error('Invalid minMinutes.');
 	}
-	else if (maxHours !== undefined && (isNaN(maxHours) || maxHours < 0 || maxHours > 23)) {
+	if (maxHours !== undefined && (isNaN(maxHours) || maxHours < 0 || maxHours > 23)) {
 		throw new Error('Invalid maxHours.');
 	}
-	else if (
+	if (
 		maxMinutes !== undefined && (isNaN(maxMinutes) || maxMinutes < 0 || maxMinutes > 59)
 	) {
 		throw new Error('Invalid maxMinutes.');
 	}
-	else if (
+	if (
 		((minHours || 0) * 3600 + (minMinutes || 0) * 60) >
 		((maxHours || 0) * 3600 + (maxMinutes || 0) * 60)
 	) {
 		throw new Error('Lower bound cannot exceed upper bound.');
 	}
-	else if (roundToHalfHour && (
+	if (roundToHalfHour && (
 		(minMinutes !== undefined && minMinutes !== 0 && minMinutes !== 30) ||
 		(maxMinutes !== undefined && maxMinutes !== 0 && maxMinutes !== 30)
 	)) {

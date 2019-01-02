@@ -51,9 +51,8 @@ export class ChatEnvService extends EnvService {
 		if (!this.configService || !this.sessionService) {
 			return base ? env.newCyphBaseUrl : env.newCyphUrl;
 		}
-		else {
-			return this.newCyphUrlHelperInternal(base, this.sessionService);
-		}
+
+		return this.newCyphUrlHelperInternal(base, this.sessionService);
 	}
 
 	/** EnvService.newCyphBaseUrl adjusted for session API flags and initial call type. */

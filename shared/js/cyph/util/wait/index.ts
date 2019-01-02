@@ -61,9 +61,8 @@ export const retryUntilSuccessful	= async <T> (
 			if (i > maxAttempts) {
 				throw err;
 			}
-			else {
-				await sleep(delay);
-			}
+
+			await sleep(delay);
 		}
 	}
 };
@@ -73,7 +72,7 @@ export const waitForValue	= async <T> (
 	f: () => T|undefined,
 	condition?: (value: T) => boolean
 ) : Promise<T> => {
-	let value: T|undefined	= f();
+	let value	= f();
 	while (value === undefined || (condition && !condition(value))) {
 		await sleep();
 		value	= f();

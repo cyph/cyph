@@ -289,10 +289,10 @@ export class AccountDatabaseService extends BaseProvider {
 			if (securityModel === SecurityModels.public) {
 				return this.openHelpers.sign(data, url, true);
 			}
-			else if (securityModel === SecurityModels.publicFromOtherUsers) {
+			if (securityModel === SecurityModels.publicFromOtherUsers) {
 				return this.openHelpers.sign(data, url, true, true);
 			}
-			else if (securityModel === SecurityModels.unprotected) {
+			if (securityModel === SecurityModels.unprotected) {
 				return data;
 			}
 
@@ -637,7 +637,7 @@ export class AccountDatabaseService extends BaseProvider {
 			lock: async (f, reason) => (await baseAsyncMap).lock(f, reason),
 			removeItem: async key => lockItem(key)(async () => removeItemInternal(key)),
 			setItem: async (key, value) => lockItem(key)(async () => setItemInternal(key, value)),
-			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
+			setValue: async mapValue => localLock(async () => {
 				await asyncMap.clear();
 				await Promise.all(Array.from(mapValue.entries()).map(async ([key, value]) =>
 					asyncMap.setItem(key, value)
@@ -1034,7 +1034,7 @@ export class AccountDatabaseService extends BaseProvider {
 		if (url.match(/^root\//)) {
 			return url.slice(5);
 		}
-		else if (url.match(/^users\//)) {
+		if (url.match(/^users\//)) {
 			return url;
 		}
 

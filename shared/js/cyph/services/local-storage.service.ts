@@ -171,19 +171,20 @@ export class LocalStorageService extends DataManagerService {
 			if (lockValue !== undefined && lockValue[1].id === id) {
 				break;
 			}
-			else if (
+
+			if (!(
 				lockValue === undefined ||
 				!lockValue[1].id ||
 				isNaN(lockValue[2]) ||
 				(timestamp - lockValue[2]) > this.lockConfig.timeout
-			) {
-				lastReason	= lockValue ? lockValue[1].reason : undefined;
-				await this.setItem(lockURL, LocalStorageLockMetadata, metadata);
-				await sleep(this.lockConfig.claimDelay);
-			}
-			else {
+			)) {
 				await sleep(this.lockConfig.interval);
+				continue;
 			}
+
+			lastReason	= lockValue ? lockValue[1].reason : undefined;
+			await this.setItem(lockURL, LocalStorageLockMetadata, metadata);
+			await sleep(this.lockConfig.claimDelay);
 		}
 
 		debugLog(() => ({localStorageLockClaimed: {id, lockURL, stillOwner}}));
@@ -200,10 +201,9 @@ export class LocalStorageService extends DataManagerService {
 				stillOwner.next(false);
 				return promise;
 			}
-			else {
-				await this.setItem(lockURL, LocalStorageLockMetadata, metadata);
-				await sleep(this.lockConfig.interval);
-			}
+
+			await this.setItem(lockURL, LocalStorageLockMetadata, metadata);
+			await sleep(this.lockConfig.interval);
 		}
 
 		try {

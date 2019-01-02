@@ -238,7 +238,7 @@ export class DatabaseService extends DataManagerService {
 			lock,
 			removeItem: async key => lockItem(key)(async () => removeItemInternal(key)),
 			setItem: async (key, value) => lockItem(key)(async () => setItemInternal(key, value)),
-			setValue: async (mapValue: Map<string, T>) => localLock(async () => {
+			setValue: async mapValue => localLock(async () => {
 				await asyncMap.clear();
 				await Promise.all(Array.from(mapValue.entries()).map(async ([key, value]) =>
 					asyncMap.setItem(key, value)
@@ -301,7 +301,8 @@ export class DatabaseService extends DataManagerService {
 				if (currentHash === hash) {
 					return currentValue;
 				}
-				else if (ArrayBuffer.isView(currentValue)) {
+
+				if (ArrayBuffer.isView(currentValue)) {
 					potassiumUtil.clearMemory(currentValue);
 				}
 

@@ -104,7 +104,7 @@ export class AccountUserLookupService extends BaseProvider {
 			if (!user) {
 				return;
 			}
-			else if (user instanceof User) {
+			if (user instanceof User) {
 				return user;
 			}
 

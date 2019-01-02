@@ -12,13 +12,13 @@ if (!('crypto' in self) && 'msCrypto' in self) {
 if (!('crypto' in self)) {
 	(<any> self).crypto	= {
 		getRandomValues: (array: number[]|Uint8Array) => {
-			const bytes: number	=
+			const bytes	=
 				array instanceof Array ?
 					4 :
 					array.BYTES_PER_ELEMENT
 			;
 
-			const max: number	= Math.pow(2, bytes * 8) - 1;
+			const max	= Math.pow(2, bytes * 8) - 1;
 
 			for (let i = 0 ; i < array.length ; ++i) {
 				/* tslint:disable-next-line:ban insecure-random */

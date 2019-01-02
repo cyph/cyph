@@ -348,10 +348,9 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		if (wasManuallyDismissed) {
 			return true;
 		}
-		else {
-			await sleep(500);
-			return false;
-		}
+
+		await sleep(500);
+		return false;
 	}
 
 	constructor (

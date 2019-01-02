@@ -221,7 +221,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	/** @inheritDoc */
 	public async toast (content: string, duration: number, action?: string) : Promise<boolean> {
 		if (action !== undefined) {
-			const args: any	= await this.snackbar.action({
+			const args	= await this.snackbar.action({
 				actionText: action.toUpperCase(),
 				hideDelay: duration,
 				snackText: content

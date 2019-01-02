@@ -12,13 +12,15 @@ import {BaseProvider} from '../base-provider';
 export class AnchorDirective extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		if (this.elementRef.nativeElement) {
-			this.renderer.setAttribute(
-				this.elementRef.nativeElement,
-				'rel',
-				'noopener noreferrer'
-			);
+		if (!this.elementRef.nativeElement) {
+			return;
 		}
+
+		this.renderer.setAttribute(
+			this.elementRef.nativeElement,
+			'rel',
+			'noopener noreferrer'
+		);
 	}
 
 	constructor (

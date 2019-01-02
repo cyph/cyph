@@ -327,14 +327,16 @@ export class ChatService extends BaseProvider {
 					this.lastConfirmedMessageID	= o.id;
 
 					this.messageConfirmLock(async () => {
-						if (this.lastConfirmedMessageID === o.id) {
-							await this.sessionService.send([
-								rpcEvents.confirm,
-								{textConfirmation: {id: o.id}}
-							]);
-
-							await sleep(this.outgoingMessageBatchDelay);
+						if (this.lastConfirmedMessageID !== o.id) {
+							return;
 						}
+
+						await this.sessionService.send([
+							rpcEvents.confirm,
+							{textConfirmation: {id: o.id}}
+						]);
+
+						await sleep(this.outgoingMessageBatchDelay);
 					});
 				}
 			}
@@ -403,22 +405,24 @@ export class ChatService extends BaseProvider {
 				});
 			}
 
-			if (o.selfDestructChat && this.chatSelfDestructTimer.value) {
-				await this.chatSelfDestructTimer.value.start();
-				this.chatSelfDestructEffect.next(true);
-				await sleep(500);
+			if (!(o.selfDestructChat && this.chatSelfDestructTimer.value)) {
+				return;
+			}
 
-				await Promise.all([
-					this.chat.messages.clear(),
-					this.chat.messageList.clear(),
-					sleep(1000)
-				]);
+			await this.chatSelfDestructTimer.value.start();
+			this.chatSelfDestructEffect.next(true);
+			await sleep(500);
 
-				this.chatSelfDestructEffect.next(false);
+			await Promise.all([
+				this.chat.messages.clear(),
+				this.chat.messageList.clear(),
+				sleep(1000)
+			]);
 
-				if (o.author !== this.sessionService.localUsername) {
-					await this.close();
-				}
+			this.chatSelfDestructEffect.next(false);
+
+			if (o.author !== this.sessionService.localUsername) {
+				await this.close();
 			}
 		}));
 	}
@@ -432,7 +436,8 @@ export class ChatService extends BaseProvider {
 			this.sessionService.close();
 			return;
 		}
-		else if (this.chat.state === States.aborted) {
+
+		if (this.chat.state === States.aborted) {
 			return;
 		}
 
@@ -483,7 +488,7 @@ export class ChatService extends BaseProvider {
 	} {
 		return {
 			proto: ChatMessageProto,
-			transform: (value: IChatMessageValue) : IChatMessage => ({
+			transform: value => ({
 				...message,
 				authorID: (
 					message.authorID &&
@@ -805,23 +810,25 @@ export class ChatService extends BaseProvider {
 		debugLogTime(() => 'Chat Message Add: pushed message IDs');
 
 		await Promise.all(newMessages.map(async ({chatMessage}) => {
-			if (
+			if (!(
 				chatMessage.hash &&
 				chatMessage.key &&
 				chatMessage.selfDestructTimeout !== undefined &&
 				!isNaN(chatMessage.selfDestructTimeout) &&
 				chatMessage.selfDestructTimeout > 0
-			) {
-				await sleep(chatMessage.selfDestructTimeout + 10000);
-
-				this.potassiumService.clearMemory(chatMessage.hash);
-				this.potassiumService.clearMemory(chatMessage.key);
-
-				chatMessage.hash	= undefined;
-				chatMessage.key		= undefined;
-
-				await this.chat.messages.setItem(chatMessage.id, chatMessage);
+			)) {
+				return;
 			}
+
+			await sleep(chatMessage.selfDestructTimeout + 10000);
+
+			this.potassiumService.clearMemory(chatMessage.hash);
+			this.potassiumService.clearMemory(chatMessage.key);
+
+			chatMessage.hash	= undefined;
+			chatMessage.key		= undefined;
+
+			await this.chat.messages.setItem(chatMessage.id, chatMessage);
 		}));
 
 		debugLogTime(() => 'Chat Message Add: done');
@@ -899,18 +906,20 @@ export class ChatService extends BaseProvider {
 
 	/** After confirmation dialog, this kills the chat. */
 	public async disconnectButton (beforeClose?: () => MaybePromise<void>) : Promise<void> {
-		if (await this.dialogService.confirm({
+		if (!(await this.dialogService.confirm({
 			cancel: this.stringsService.cancel,
 			content: this.stringsService.disconnectConfirm,
 			ok: this.stringsService.continueDialogAction,
 			title: this.stringsService.disconnectTitle
-		})) {
-			if (beforeClose) {
-				await beforeClose();
-			}
-
-			await this.close();
+		}))) {
+			return;
 		}
+
+		if (beforeClose) {
+			await beforeClose();
+		}
+
+		await this.close();
 	}
 
 	/** Gets message value if not already set. */
@@ -925,36 +934,38 @@ export class ChatService extends BaseProvider {
 		;
 
 		for (const messageValues of [this.messageValuesLocal, this.messageValues]) {
-			if (
+			if (!(
 				referencesValue &&
 				message.value === undefined &&
 				message.hash !== undefined &&
 				message.key !== undefined
-			) {
-				const getMessageValue	= async () => {
-					if (message.hash === undefined || message.key === undefined) {
-						throw new Error('Message hash or key missing.');
-					}
+			)) {
+				continue;
+			}
 
-					return messageValues.getItem(
-						message.id,
-						message.key,
-						message.hash,
-						this.messageValueHasher(message)
-					);
-				};
-
-				message.value	= await (
-					messageValues === this.messageValues ?
-						retryUntilSuccessful(getMessageValue, 10, 500) :
-						getMessageValue()
-				).catch(
-					() => undefined
-				);
-
-				if (message.value !== undefined) {
-					await this.fetchedMessageIDs.addItem(message.id);
+			const getMessageValue	= async () => {
+				if (message.hash === undefined || message.key === undefined) {
+					throw new Error('Message hash or key missing.');
 				}
+
+				return messageValues.getItem(
+					message.id,
+					message.key,
+					message.hash,
+					this.messageValueHasher(message)
+				);
+			};
+
+			message.value	= await (
+				messageValues === this.messageValues ?
+					retryUntilSuccessful(getMessageValue, 10, 500) :
+					getMessageValue()
+			).catch(
+				() => undefined
+			);
+
+			if (message.value !== undefined) {
+				await this.fetchedMessageIDs.addItem(message.id);
 			}
 		}
 
@@ -1040,14 +1051,16 @@ export class ChatService extends BaseProvider {
 				this.chat.currentMessage.text !== this.chat.previousMessage
 			;
 
-			if (this.chat.isMessageChanged !== isMessageChanged) {
-				this.chat.isMessageChanged	= isMessageChanged;
-
-				this.sessionService.send([
-					rpcEvents.typing,
-					{chatState: {isTyping: this.chat.isMessageChanged}}
-				]);
+			if (this.chat.isMessageChanged === isMessageChanged) {
+				return;
 			}
+
+			this.chat.isMessageChanged	= isMessageChanged;
+
+			this.sessionService.send([
+				rpcEvents.typing,
+				{chatState: {isTyping: this.chat.isMessageChanged}}
+			]);
 		});
 	}
 
@@ -1069,10 +1082,8 @@ export class ChatService extends BaseProvider {
 
 		const id	= uuid(true);
 
-		const value: IChatMessageValue				= {};
-		const currentMessage: IChatMessageLiveValue	=
-			keepCurrentMessage ? {} : this.chat.currentMessage
-		;
+		const value: IChatMessageValue	= {};
+		const currentMessage			= keepCurrentMessage ? {} : this.chat.currentMessage;
 
 		let emptyValue	= false;
 
@@ -1197,18 +1208,20 @@ export class ChatService extends BaseProvider {
 				const isLocal	= !lastLocal && o.authorType === ChatMessage.AuthorTypes.Local;
 				const isRemote	= !lastRemote && o.authorType === ChatMessage.AuthorTypes.Remote;
 
-				if (
+				if (!(
 					(isLocal || isRemote) &&
 					o.id &&
 					(o.hash && o.hash.length > 0) &&
 					(await this.messageHasValidHash(o))
-				) {
-					if (isLocal) {
-						lastLocal	= {hash: o.hash, id: o.id};
-					}
-					else if (isRemote) {
-						lastRemote	= {hash: o.hash, id: o.id};
-					}
+				)) {
+					continue;
+				}
+
+				if (isLocal) {
+					lastLocal	= {hash: o.hash, id: o.id};
+				}
+				else if (isRemote) {
+					lastRemote	= {hash: o.hash, id: o.id};
 				}
 			}
 
@@ -1380,9 +1393,8 @@ export class ChatService extends BaseProvider {
 					if (id === lastConfirmedMessage.id) {
 						break;
 					}
-					else {
-						unconfirmedMessages[id]	= true;
-					}
+
+					unconfirmedMessages[id]	= true;
 				}
 
 				return unconfirmedMessages;
@@ -1631,10 +1643,13 @@ export class ChatService extends BaseProvider {
 		});
 
 		/* For automated tests */
-		if (this.envService.isWeb) {
-			(<any> self).sendMessage	= async (message?: string, selfDestructTimeout?: number) =>
-				this.send(undefined, {text: message}, selfDestructTimeout)
-			;
+
+		if (!this.envService.isWeb) {
+			return;
 		}
+
+		(<any> self).sendMessage	= async (message?: string, selfDestructTimeout?: number) =>
+			this.send(undefined, {text: message}, selfDestructTimeout)
+		;
 	}
 }

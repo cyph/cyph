@@ -96,7 +96,7 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 						const elem: HTMLElement	= this.elementRef.nativeElement;
 
 						const handler			= async () => {
-							const o: any	= await (<any> self).chooser.getFile(this.accept);
+							const o	= await (<any> self).chooser.getFile(this.accept);
 
 							if (
 								typeof o === 'object' &&

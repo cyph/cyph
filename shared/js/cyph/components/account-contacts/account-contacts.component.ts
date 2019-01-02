@@ -75,7 +75,7 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 		;
 
 		let userTypeFilter: AccountUserTypes|undefined	= data.userTypeFilter;
-		let userTypeFilterOut: boolean					= data.userTypeFilterOut === true;
+		let userTypeFilterOut							= data.userTypeFilterOut === true;
 
 		/* Filter out patients for healthcare workers in general case */
 		if (this.envService.isTelehealth && userTypeFilter === undefined) {
@@ -159,8 +159,8 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 				this.contactList !== this.accountContactsService.contactList ?
 					o.filteredContactList :
 					[
-						...(o.filteredContactList.filter((_: any, i: number) => counts[i] > 0)),
-						...(o.filteredContactList.filter((_: any, i: number) => counts[i] < 1))
+						...o.filteredContactList.filter((_: any, i: number) => counts[i] > 0),
+						...o.filteredContactList.filter((_: any, i: number) => counts[i] < 1)
 					]
 			))
 		))

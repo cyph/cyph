@@ -11,21 +11,7 @@ export class SecretBox implements ISecretBox {
 	private readonly chunkSize: number	= 33554432;
 
 	/** @ignore */
-	private readonly helpers: {
-		nonceBytes: Promise<number>;
-		open: (
-			cyphertext: Uint8Array,
-			nonce: Uint8Array,
-			key: Uint8Array,
-			additionalData?: Uint8Array
-		) => Promise<Uint8Array>;
-		seal: (
-			plaintext: Uint8Array,
-			nonce: Uint8Array,
-			key: Uint8Array,
-			additionalData?: Uint8Array
-		) => Promise<Uint8Array>;
-	}	= {
+	private readonly helpers	= {
 		nonceBytes: sodium.ready.then(() =>
 			this.isNative ?
 				NativeCrypto.secretBox.nonceBytes :

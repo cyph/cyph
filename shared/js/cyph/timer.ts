@@ -66,7 +66,8 @@ export class Timer {
 		if (this.isStopped) {
 			return;
 		}
-		else if (this.startPromise) {
+
+		if (this.startPromise) {
 			return this.startPromise;
 		}
 

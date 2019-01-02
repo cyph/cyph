@@ -10,13 +10,13 @@ import {resolvable} from './util/wait';
 export class Thread<T> implements IThread<T> {
 	/** @ignore */
 	private static stringifyFunction (f: Function) : string {
-		const s: string	= f.toString();
+		const s	= f.toString();
 		return s.slice(s.indexOf('{')).replace(/use strict/g, '');
 	}
 
 	/** @ignore */
 	private static threadEnvSetup () : void {
-		let threadSetupVars: any	= (<any> self).threadSetupVars;
+		let threadSetupVars	= (<any> self).threadSetupVars;
 
 		/* Inherit these from main thread */
 
@@ -31,7 +31,7 @@ export class Thread<T> implements IThread<T> {
 
 		if (threadSetupVars.isLocalEnv) {
 			const oldImportScripts	= importScripts;
-			importScripts			= (script: string) => {
+			importScripts			= script => {
 				oldImportScripts(`${
 					(<any> self).locationData.protocol
 				}//${
@@ -45,7 +45,7 @@ export class Thread<T> implements IThread<T> {
 			};
 		}
 		else {
-			importScripts			= (script: string) => {
+			importScripts			= script => {
 				throw new Error(`Cannot load external script ${script}.`);
 			};
 		}
@@ -226,7 +226,7 @@ export class Thread<T> implements IThread<T> {
 		}
 
 
-		this.worker.onmessage	= (e: MessageEvent) => {
+		this.worker.onmessage	= e => {
 			if (e.data === 'cyphThreadReady') {
 				try {
 					URL.revokeObjectURL(blobURL);

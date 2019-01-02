@@ -37,7 +37,7 @@ export const fromQueryString	= (search: string = locationData.search.slice(1)) :
 export const toQueryString	= (o: any, parent?: string) : string =>
 	Object.keys(o).
 		map((k: string) => {
-			const key: string	= parent ? `${parent}[${k}]` : k;
+			const key	= parent ? `${parent}[${k}]` : k;
 
 			return typeof o[k] === 'object' ?
 				toQueryString(o[k], key) :

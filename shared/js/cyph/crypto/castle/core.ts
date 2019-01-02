@@ -114,16 +114,14 @@ export class Core {
 			);
 		}
 
-		if (outgoingPublicKey) {
-			return this.potassium.concatMemory(
+		return outgoingPublicKey ?
+			this.potassium.concatMemory(
 				true,
 				new Uint8Array([1]),
 				outgoingPublicKey
-			);
-		}
-		else {
-			return new Uint8Array([0]);
-		}
+			) :
+			new Uint8Array([0])
+		;
 	}
 
 	/**
@@ -216,7 +214,8 @@ export class Core {
 				this.decryptCache.delete(messageID);
 				return;
 			}
-			else if (messageID - this.ratchetState.incomingMessageID === 1) {
+
+			if (messageID - this.ratchetState.incomingMessageID === 1) {
 				++this.ratchetState.incomingMessageID;
 				this.decryptCache.delete(messageID);
 			}

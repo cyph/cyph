@@ -44,13 +44,13 @@ export class AccountNotificationsSubscribeComponent extends BaseProvider {
 			await this.email.setValue('');
 			return {email: oldEmail, unsubscribed: true};
 		}
-		else if (email) {
+
+		if (email) {
 			await this.email.setValue(email);
 			return {email, subscribed: true};
 		}
-		else {
-			return {email: await this.email.getValue().catch(() => '')};
-		}
+
+		return {email: await this.email.getValue().catch(() => '')};
 	}));
 
 	constructor (

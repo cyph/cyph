@@ -19,15 +19,15 @@ const subscribeFactory	= <T> (observable: AsyncObservable<T>, subscriptions?: Su
 	async (observer: Observer<T>) => {
 		const o	= await (typeof observable === 'function' ? observable() : observable);
 
-		if (o instanceof Observable) {
-			const sub	= o.subscribe(observer);
-
-			if (subscriptions) {
-				subscriptions.push(sub);
-			}
-		}
-		else {
+		if (!(o instanceof Observable)) {
 			observer.next(o);
+			return;
+		}
+
+		const sub	= o.subscribe(observer);
+
+		if (subscriptions) {
+			subscriptions.push(sub);
 		}
 	}
 ;

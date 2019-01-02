@@ -11,10 +11,9 @@ export const flattenArrays	= <T> (
 					if (seen.has(t)) {
 						return false;
 					}
-					else {
-						seen.set(t, true);
-						return true;
-					}
+
+					seen.set(t, true);
+					return true;
 				}));
 			}
 			else if (!seen.has(b)) {

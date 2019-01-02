@@ -63,9 +63,8 @@ export class AppService extends BaseProvider implements CanActivate {
 			this.resolveLockedDownRoute(state.url);
 			return false;
 		}
-		else {
-			return true;
-		}
+
+		return true;
 	}
 
 	/** Marks load as complete. */

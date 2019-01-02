@@ -8,12 +8,10 @@ import {resolvable} from './wait';
 
 
 /** @ignore */
-const getOrSetDefaultAsyncData: Map<Map<any, any>, Map<any, {
+const getOrSetDefaultAsyncData	= new Map<Map<any, any>, Map<any, {
 	setLock: LockFunction;
 	setResolver: IResolvable<void>;
-}>>				=
-	new Map()
-;
+}>>();
 
 /** Gets a value from a map and sets a default value if none had previously been set. */
 export const getOrSetDefault	= <K, V> (
@@ -76,15 +74,17 @@ export const getOrSetDefaultAsync	= async <K, V> (
 
 		if (lock) {
 			await setLock(async () => {
-				if (!m.has(k)) {
-					const v	= await Promise.race([
-						defaultValue(),
-						setResolver.promise
-					]);
+				if (m.has(k)) {
+					return;
+				}
 
-					if (v !== undefined && !m.has(k)) {
-						setValue(v);
-					}
+				const v	= await Promise.race([
+					defaultValue(),
+					setResolver.promise
+				]);
+
+				if (v !== undefined && !m.has(k)) {
+					setValue(v);
 				}
 			}).catch(
 				() => {}

@@ -9,7 +9,6 @@ import {isNativeCryptoSupported} from '../../crypto/potassium/is-native-crypto-s
 import {ISecretBox} from '../../crypto/potassium/isecret-box';
 import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
-import {IKeyPair} from '../../proto';
 import {EnvService} from '../env.service';
 import {WorkerService} from '../worker.service';
 
@@ -65,10 +64,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		keyPair: async () =>
 			(await this.potassium).boxKeyPair()
 		,
-		open: async (
-			cyphertext: Uint8Array,
-			keyPair: IKeyPair
-		) =>
+		open: async (cyphertext, keyPair) =>
 			(await this.potassium).boxOpen(cyphertext, keyPair)
 		,
 		privateKeyBytes:
@@ -77,10 +73,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		publicKeyBytes:
 			this.potassium.then(async o => o.boxPublicKeyBytes())
 		,
-		seal: async (
-			plaintext: Uint8Array,
-			publicKey: Uint8Array
-		) =>
+		seal: async (plaintext, publicKey) =>
 			(await this.potassium).boxSeal(plaintext, publicKey)
 	};
 
@@ -89,13 +82,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		aliceKeyPair: async () =>
 			(await this.potassium).ephemeralKeyExchangeAliceKeyPair()
 		,
-		aliceSecret: async (
-			publicKey: Uint8Array,
-			privateKey: Uint8Array
-		) =>
+		aliceSecret: async (publicKey, privateKey) =>
 			(await this.potassium).ephemeralKeyExchangeAliceSecret(publicKey, privateKey)
 		,
-		bobSecret: async (alicePublicKey: Uint8Array) =>
+		bobSecret: async alicePublicKey =>
 			(await this.potassium).ephemeralKeyExchangeBobSecret(alicePublicKey)
 		,
 		privateKeyBytes:
@@ -113,20 +103,16 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		bytes:
 			this.potassium.then(async o => o.hashBytes())
 		,
-		deriveKey: async (
-			input: Uint8Array,
-			outputBytes?: number,
-			clearInput?: boolean
-		) => {
+		deriveKey: async (input, outputBytes, clearInput) => {
 			const output	= (await this.potassium).hashDeriveKey(input, outputBytes);
 
-			if (clearInput) {
+			if (clearInput && input instanceof Uint8Array) {
 				this.clearMemory(input);
 			}
 
 			return output;
 		},
-		hash: async (plaintext: Uint8Array|string) =>
+		hash: async plaintext =>
 			(await this.potassium).hashHash(plaintext)
 	};
 
@@ -138,14 +124,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		keyBytes:
 			this.potassium.then(async o => o.oneTimeAuthKeyBytes())
 		,
-		sign: async (message: Uint8Array, key: Uint8Array) =>
+		sign: async (message, key) =>
 			(await this.potassium).oneTimeAuthSign(message, key)
 		,
-		verify: async (
-			mac: Uint8Array,
-			message: Uint8Array,
-			key: Uint8Array
-		) =>
+		verify: async (mac, message, key) =>
 			(await this.potassium).oneTimeAuthVerify(mac, message, key)
 	};
 
@@ -155,12 +137,12 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			this.potassium.then(async o => o.passwordHashAlgorithm())
 		,
 		hash: async (
-			plaintext: Uint8Array|string,
-			salt?: Uint8Array|string,
-			outputBytes?: number,
-			opsLimit?: number,
-			memLimit?: number,
-			clearInput?: boolean
+			plaintext,
+			salt,
+			outputBytes,
+			opsLimit,
+			memLimit,
+			clearInput
 		) => {
 			const output	= (await this.potassium).passwordHashHash(
 				plaintext,
@@ -191,7 +173,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		opsLimitSensitive:
 			this.potassium.then(async o => o.passwordHashOpsLimitSensitive())
 		,
-		parseMetadata: async (metadata: Uint8Array) =>
+		parseMetadata: async metadata =>
 			(await this.potassium).passwordHashParseMetadata(metadata)
 		,
 		saltBytes:
@@ -206,18 +188,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		keyBytes:
 			this.potassium.then(async o => o.secretBoxKeyBytes())
 		,
-		open: async (
-			cyphertext: Uint8Array,
-			key: Uint8Array,
-			additionalData?: Uint8Array|string
-		) =>
+		open: async (cyphertext, key, additionalData) =>
 			(await this.potassium).secretBoxOpen(cyphertext, key, additionalData)
 		,
-		seal: async (
-			plaintext: Uint8Array,
-			key: Uint8Array,
-			additionalData?: Uint8Array|string
-		) =>
+		seal: async (plaintext, key, additionalData) =>
 			(await this.potassium).secretBoxSeal(plaintext, key, additionalData)
 	};
 
@@ -226,21 +200,13 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		bytes:
 			this.potassium.then(async o => o.signBytes())
 		,
-		importSuperSphincsPublicKeys: async (
-			rsa: string,
-			sphincs: string
-		) =>
+		importSuperSphincsPublicKeys: async (rsa, sphincs) =>
 			(await this.potassium).signImportSuperSphincsPublicKeys(rsa, sphincs)
 		,
 		keyPair: async () =>
 			(await this.potassium).signKeyPair()
 		,
-		open: async (
-			signed: Uint8Array|string,
-			publicKey: Uint8Array,
-			additionalData?: Uint8Array|string,
-			decompress?: boolean
-		) =>
+		open: async (signed, publicKey, additionalData, decompress) =>
 			(await this.potassium).signOpen(signed, publicKey, additionalData, decompress)
 		,
 		privateKeyBytes:
@@ -249,27 +215,13 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		publicKeyBytes:
 			this.potassium.then(async o => o.signPublicKeyBytes())
 		,
-		sign: async (
-			message: Uint8Array|string,
-			privateKey: Uint8Array,
-			additionalData?: Uint8Array|string,
-			compress?: boolean
-		) =>
+		sign: async (message, privateKey, additionalData, compress) =>
 			(await this.potassium).signSign(message, privateKey, additionalData, compress)
 		,
-		signDetached: async (
-			message: Uint8Array|string,
-			privateKey: Uint8Array,
-			additionalData?: Uint8Array|string
-		) =>
+		signDetached: async (message, privateKey, additionalData) =>
 			(await this.potassium).signSignDetached(message, privateKey, additionalData)
 		,
-		verifyDetached: async (
-			signature: Uint8Array|string,
-			message: Uint8Array|string,
-			publicKey: Uint8Array,
-			additionalData?: Uint8Array|string
-		) =>
+		verifyDetached: async (signature, message, publicKey, additionalData) =>
 			(await this.potassium).signVerifyDetached(
 				signature,
 				message,

@@ -11,7 +11,7 @@ import {resolvable} from './wait';
 const resolvableDialogService	= !env.isMainThread ? undefined : resolvable<DialogService>();
 
 /** @ignore */
-export const staticDialogService: Promise<DialogService>	= resolvableDialogService ?
+export const staticDialogService	= resolvableDialogService ?
 	resolvableDialogService.promise :
 	Promise.reject('Dialog service not found.')
 ;
@@ -28,20 +28,20 @@ if (!(env.isMainThread && env.isWeb)) {
 		bypassSecurityTrustResourceUrl: notImplemented,
 		bypassSecurityTrustScript: notImplemented,
 		bypassSecurityTrustStyle: notImplemented,
-		bypassSecurityTrustUrl: (data: string) => data,
+		bypassSecurityTrustUrl: data => data,
 		sanitize: (_: any, data: SafeValue) => <string> data
 	});
 }
 
 /** @see DomSanitizer */
-export const staticDomSanitizer: Promise<DomSanitizer>	= resolvableDomSanitizer.promise;
+export const staticDomSanitizer	= resolvableDomSanitizer.promise;
 
 
 /** Resolvable fileService. */
 const resolvableFileService	= !env.isMainThread ? undefined : resolvable<FileService>();
 
 /** @ignore */
-export const staticFileService: Promise<FileService>	= resolvableFileService ?
+export const staticFileService	= resolvableFileService ?
 	resolvableFileService.promise :
 	Promise.reject('File service not found.')
 ;
@@ -51,7 +51,7 @@ export const staticFileService: Promise<FileService>	= resolvableFileService ?
 const resolvableHttpClient	= !env.isMainThread ? undefined : resolvable<HttpClient>();
 
 /** @see HttpClient */
-export const staticHttpClient: Promise<HttpClient>	= resolvableHttpClient ?
+export const staticHttpClient	= resolvableHttpClient ?
 	resolvableHttpClient.promise :
 	Promise.reject('HTTP service not found.')
 ;
@@ -61,7 +61,7 @@ export const staticHttpClient: Promise<HttpClient>	= resolvableHttpClient ?
 const resolvableNgZone	= resolvable<NgZone>();
 
 /** @see NgZone */
-export const staticNgZone: Promise<NgZone>	= resolvableNgZone.promise;
+export const staticNgZone	= resolvableNgZone.promise;
 
 
 export const resolveStaticServices	= ({

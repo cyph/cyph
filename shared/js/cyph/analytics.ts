@@ -50,8 +50,8 @@ export class Analytics {
 		private readonly env: EnvDeploy = envDeploy
 	) {
 		this.enabled	= Promise.resolve().then(async () => {
-			const appName: string		= this.env.host;
-			const appVersion: string	= this.env.isWeb ? 'Web' : 'Native';
+			const appName		= this.env.host;
+			const appVersion	= this.env.isWeb ? 'Web' : 'Native';
 
 			/* TODO: HANDLE NATIVE */
 			if (this.env.isOnion || this.env.isLocalEnv || !this.env.isWeb) {

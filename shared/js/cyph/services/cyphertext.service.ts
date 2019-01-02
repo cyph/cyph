@@ -102,13 +102,15 @@ export class CyphertextService extends BaseProvider {
 	) {
 		super();
 
-		if (this.isEnabled) {
-			this.sessionService.on(
-				events.cyphertext,
-				(o: {author: Observable<string>; cyphertext: Uint8Array}) => {
-					this.log(o.author, potassiumUtil.toBase64(o.cyphertext));
-				}
-			);
+		if (!this.isEnabled) {
+			return;
 		}
+
+		this.sessionService.on(
+			events.cyphertext,
+			(o: {author: Observable<string>; cyphertext: Uint8Array}) => {
+				this.log(o.author, potassiumUtil.toBase64(o.cyphertext));
+			}
+		);
 	}
 }

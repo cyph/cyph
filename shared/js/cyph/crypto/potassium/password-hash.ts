@@ -9,15 +9,7 @@ import {potassiumUtil} from './potassium-util';
 /** @inheritDoc */
 export class PasswordHash implements IPasswordHash {
 	/** @ignore */
-	private readonly helpers: {
-		hash: (
-			plaintext: Uint8Array,
-			salt: Uint8Array,
-			outputBytes: number,
-			opsLimit: number,
-			memLimit: number
-		) => Promise<Uint8Array>;
-	}	= {
+	private readonly helpers	= {
 		hash: async (
 			plaintext: Uint8Array,
 			salt: Uint8Array,

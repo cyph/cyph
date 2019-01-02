@@ -478,7 +478,7 @@ export class P2PWebRTCService extends BaseProvider implements IP2PWebRTCService 
 				this.progressUpdate(this.loadingEvents.connectionReady, 40);
 			});
 
-			peer.on('data', (data: any) => {
+			peer.on('data', data => {
 				try {
 					const o	= msgpack.decode(data);
 					this.incomingStream.next({audio: !!o.audio, video: !!o.video});

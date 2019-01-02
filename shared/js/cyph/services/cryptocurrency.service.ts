@@ -98,16 +98,15 @@ export class CryptocurrencyService extends BaseProvider {
 			const exchangeRate	= (await getExchangeRates())[Currencies[output.currency]];
 			return amount * exchangeRate;
 		}
-		else if (input.cryptocurrency === undefined && output.cryptocurrency !== undefined) {
+		if (input.cryptocurrency === undefined && output.cryptocurrency !== undefined) {
 			const exchangeRate	= (await getExchangeRates())[Currencies[input.currency]];
 			return amount / exchangeRate;
 		}
-		else if (input.cryptocurrency !== undefined && output.cryptocurrency !== undefined) {
+		if (input.cryptocurrency !== undefined && output.cryptocurrency !== undefined) {
 			return amount;
 		}
-		else {
-			throw new Error('Converting between non-Bitcoin currencies is currently unsupported.');
-		}
+
+		throw new Error('Converting between non-Bitcoin currencies is currently unsupported.');
 	}
 
 	/** Generates new wallet. */

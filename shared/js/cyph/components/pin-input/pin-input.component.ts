@@ -71,11 +71,13 @@ export class PinInputComponent extends BaseProvider implements ControlValueAcces
 				this.onChange(s);
 			}
 
-			if (this.pinInput && this.pinInput.nativeElement) {
-				const input	= <HTMLInputElement> this.pinInput.nativeElement;
-				input.value	= '';
-				input.value	= s;
+			if (!(this.pinInput && this.pinInput.nativeElement)) {
+				return;
 			}
+
+			const input	= <HTMLInputElement> this.pinInput.nativeElement;
+			input.value	= '';
+			input.value	= s;
 		}));
 	}
 

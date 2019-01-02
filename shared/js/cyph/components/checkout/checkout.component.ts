@@ -173,7 +173,7 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 
 		this.complete.next(false);
 
-		const authorization: string	= await request({
+		const authorization	= await request({
 			retries: 5,
 			url: this.envService.baseUrl + 'braintree'
 		});
@@ -219,7 +219,7 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 						reject(err);
 					}
 				});
-			}).catch((err: any) => {
+			}).catch(err => {
 				throw (err || new Error(this.stringsService.checkoutBraintreeError));
 			});
 

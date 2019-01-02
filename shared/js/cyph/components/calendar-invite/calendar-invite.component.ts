@@ -221,17 +221,19 @@ implements ControlValueAccessor, OnChanges, OnInit {
 		/* Two weeks from this Monday. */
 		const timestamp	= now.getTime() + (1 - now.getDay()) * 86400000 + 1209600000;
 
-		if (this.calendarInvite.value === undefined) {
-			this.calendarInvite.next({
-				alternateDays: {},
-				alternateTimeFrames: {},
-				callType: this.envService.isTelehealth ? CallTypes.Video : CallTypes.None,
-				description: '',
-				endTime: timestamp + this.duration,
-				startTime: timestamp,
-				title: this.defaultReasonForAppointment
-			});
+		if (this.calendarInvite.value !== undefined) {
+			return;
 		}
+
+		this.calendarInvite.next({
+			alternateDays: {},
+			alternateTimeFrames: {},
+			callType: this.envService.isTelehealth ? CallTypes.Video : CallTypes.None,
+			description: '',
+			endTime: timestamp + this.duration,
+			startTime: timestamp,
+			title: this.defaultReasonForAppointment
+		});
 	}
 
 	/** @inheritDoc */

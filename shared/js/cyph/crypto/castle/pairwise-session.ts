@@ -311,7 +311,7 @@ export class PairwiseSession {
 				}
 
 				/* Bootstrap asymmetric ratchet */
-				else if (currentStep === HandshakeSteps.Start) {
+				if (currentStep === HandshakeSteps.Start) {
 					debugLog(() => ({
 						castleHandshake: 'start',
 						castleHandshakeState: this.handshakeState

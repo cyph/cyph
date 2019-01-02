@@ -173,7 +173,8 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 				this.sent.next(false);
 				return;
 			}
-			else if (
+
+			if (
 				this.messageType.value === ChatMessageValue.Types.Form &&
 				routeData.messageType === ChatMessageValue.Types.CalendarInvite
 			) {

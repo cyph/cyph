@@ -47,7 +47,8 @@ export const webCryptoPolyfill	= (seed: Uint8Array) => {
 
 				return array;
 			}
-			else if (!sodiumExists) {
+
+			if (!sodiumExists) {
 				throw new Error('No CSPRNG found.');
 			}
 
