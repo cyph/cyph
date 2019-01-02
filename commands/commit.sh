@@ -73,7 +73,15 @@ mv %.new %
 find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash -c '
 	curl -sf "$(node -e "console.log(JSON.parse('"'"'$(
 		curl -s --user api:$(cat ~/.cyph/tinypng.key) --data-binary "@{}" https://api.tinify.com/shrink
-	)'"'"').output.url)")" -o "{}"
+	)'"'"').output.url)")" -o "{}.tinypng"
+
+	originalSize="$(stat --printf="%s" {})"
+	newSize="$(stat --printf="%s" {}.tinypng)"
+	if [ "$(expr "${originalSize}" - "${newSize}")" -gt 256 ] ; then
+		mv {}.tinypng {}
+	else
+		rm {}.tinypng
+	fi
 ' \;
 
 find commands serverconfig types.proto shared/css shared/js -type f -exec sed -i 's/\s*$//g' {} \;
