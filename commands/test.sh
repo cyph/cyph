@@ -42,7 +42,7 @@ fi
 
 export CHROME_BIN="$(node -e 'console.log(require("puppeteer").executablePath())')"
 
-cd cyph.ws
+cd cyph.app
 ../commands/ngprojectinit.sh
 
 if [ "${unit}" ] ; then
@@ -52,7 +52,7 @@ if [ "${unit}" ] ; then
 fi
 
 if [ "${e2e}" ] ; then
-	../commands/serve.sh --e2e "${@}" cyph.ws
+	../commands/serve.sh --e2e "${@}" cyph.app
 	checkfail
 fi
 

@@ -10,7 +10,7 @@ firebaseBackup=''
 noLockDown=''
 e2e=''
 localSeleniumServer=''
-site='cyph.ws'
+site='cyph.app'
 prod=''
 prodBuild=''
 environment='local'
@@ -59,7 +59,7 @@ fi
 if [ "${1}" == 'all' ] ; then
 	site=''
 	shift
-elif [ "${1}" == 'cyph.ws' ] || [ "${1}" == 'cyph.com' ] ; then
+elif [ "${1}" == 'cyph.app' ] || [ "${1}" == 'cyph.com' ] ; then
 	site="${1}"
 	shift
 fi
@@ -161,7 +161,7 @@ dev_appserver.py \
 
 log 'Starting ng serve'
 
-for arr in 'cyph.ws 42002' 'cyph.com 42001' ; do
+for arr in 'cyph.app 42002' 'cyph.com 42001' ; do
 	read -ra arr <<< "${arr}"
 
 	if [ ! "${site}" ] || [ "${site}" == "${arr[0]}" ] ; then

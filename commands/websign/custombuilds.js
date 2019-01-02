@@ -22,7 +22,7 @@ const args			= {
 
 
 const subresourceDir		= 'custom-builds';
-const subresourceDirParent	= `${args.outputPath}/cyph.ws-subresources`;
+const subresourceDirParent	= `${args.outputPath}/cyph.app-subresources`;
 
 mkdirp.sync(`${subresourceDirParent}/${subresourceDir}`);
 

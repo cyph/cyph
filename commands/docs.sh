@@ -6,7 +6,7 @@ dir="$PWD"
 
 
 ./commands/copyworkspace.sh ~/docs
-cd ~/docs/cyph.ws
+cd ~/docs/cyph.app
 
 cp ../README.md ../LICENSE ./
 echo -e "\n---\n\n$(cat ../PATENTS)" >> README.md

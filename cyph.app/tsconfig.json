@@ -10,6 +10,6 @@
 		]
 	},
 	"files": [
-		"src/js/cyph.ws/main.ts"
+		"src/js/cyph.app/main.ts"
 	]
 }

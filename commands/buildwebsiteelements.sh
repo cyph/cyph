@@ -12,7 +12,7 @@ cd ~/.build
 # TODO: Factor this out of deploy.sh
 defaultHost='${locationData.protocol}//${locationData.hostname}:'
 homeURL='https://www.cyph.com'
-sed -i "s|${defaultHost}42002|https://cyph.ws|g" shared/js/cyph/env-deploy.ts
+sed -i "s|${defaultHost}42002|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-APP|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
 sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts

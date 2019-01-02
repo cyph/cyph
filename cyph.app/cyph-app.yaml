@@ -1,4 +1,4 @@
-service: cyph-ws
+service: cyph-app
 runtime: python27
 api_version: 1
 threadsafe: true

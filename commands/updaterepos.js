@@ -48,15 +48,15 @@ const updateRepos	= () => {
 	const cyphBranches	= new Set(
 		getSubdirectories(`${repoRoot}/cdn`).
 			filter(d =>
-				d.endsWith('.cyph.ws') &&
-				d !== 'debug.cyph.ws' &&
+				d.endsWith('.cyph.app') &&
+				d !== 'debug.cyph.app' &&
 				d !== 'websign' &&
 				d !== 'cyph' &&
 				!d.startsWith('staging.') &&
 				!d.startsWith('simple-') &&
 				!customBuilds.has(d)
 			).map(d =>
-				d.replace(/\.cyph\.ws$/, '')
+				d.replace(/\.cyph\.app$/, '')
 			).concat(
 				'prod'
 			)

@@ -6,9 +6,9 @@ dir="$PWD"
 originalArgs="${*}"
 
 
-cacheBustedProjects='cyph.com cyph.ws'
-compiledProjects='cyph.ws'
-webSignedProject='cyph.ws'
+cacheBustedProjects='cyph.app cyph.com'
+compiledProjects='cyph.app'
+webSignedProject='cyph.app'
 prodOnlyProjects='nakedredirect test websign'
 shortlinkProjects='im io video audio'
 site=''
@@ -442,10 +442,10 @@ simpleWebSignPackageName=''
 homeURL=''
 
 if [ "${test}" ] ; then
-	newCyphURL="https://${version}.cyph.ws"
+	newCyphURL="https://${version}.cyph.app"
 
 	if [ "${simple}" ] ; then
-		newCyphURL="https://${version}-dot-cyph-ws-dot-cyphme.appspot.com"
+		newCyphURL="https://${version}-dot-cyph-app-dot-cyphme.appspot.com"
 	fi
 	if [ "${simpleWebSignBuild}" ] ; then
 		simpleWebSignPackageName="$(echo "${newCyphURL}" | perl -pe 's/^.*?:\/\///')"
@@ -488,16 +488,16 @@ else
 	if [ "${debug}" ] ; then
 		homeURL='https://debug-dot-cyph-com-dot-cyphme.appspot.com'
 
-		sed -i "s|${defaultHost}42002|https://debug.cyph.ws|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-APP|https://debug.cyph.ws/#account|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-IM|https://debug.cyph.ws|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-IO|https://debug.cyph.ws/#io|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-VIDEO|https://debug.cyph.ws/#video|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-AUDIO|https://debug.cyph.ws/#audio|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|${defaultHost}42002|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-APP|https://debug.cyph.app/#account|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IM|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IO|https://debug.cyph.app/#io|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-VIDEO|https://debug.cyph.app/#video|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-AUDIO|https://debug.cyph.app/#audio|g" shared/js/cyph/env-deploy.ts
 	else
 		homeURL='https://www.cyph.com'
 
-		sed -i "s|${defaultHost}42002|https://cyph.ws|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|${defaultHost}42002|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-APP|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
@@ -630,7 +630,7 @@ for d in $compiledProjects ; do
 
 	if [ "${websign}" ] && [ "${d}" == "${webSignedProject}" ] ; then
 		# Merge in base64'd images, fonts, video, and audio
-		../commands/websign/subresourceinline.js ../pkg/cyph.ws-subresources
+		../commands/websign/subresourceinline.js ../pkg/cyph.app-subresources
 	fi
 
 	node -e 'console.log(`
@@ -667,14 +667,14 @@ touch .build.done
 
 # WebSign packaging
 if [ "${pack}" ] ; then
-	log "Pack $(projectname cyph.ws ${branchDir})"
+	log "Pack $(projectname cyph.app ${branchDir})"
 
 	cd "${webSignedProject}"
 
 	# Merge imported libraries into threads
 	find . -type f -name '*.js' | xargs -I% ../commands/websign/threadpack.js % || fail
 
-	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.ws
+	../commands/websign/pack.js --sri --minify index.html ../pkg/cyph.app
 
 	cd ..
 fi
@@ -685,7 +685,7 @@ done
 
 
 if [ "${websign}" ] ; then
-	package="$(projectname cyph.ws)"
+	package="$(projectname cyph.app)"
 
 	log "WebSign ${package}"
 
@@ -695,7 +695,7 @@ if [ "${websign}" ] ; then
 	customBuilds=''
 
 	if [ "${username}" == 'cyph' ] && [ "${branch}" == 'staging' ] && [ ! "${debug}" ] ; then
-		./commands/websign/custombuilds.js pkg/cyph.ws pkg "${mainVersion}"
+		./commands/websign/custombuilds.js pkg/cyph.app pkg "${mainVersion}"
 		checkfail
 		customBuilds="$(cat pkg/custombuilds.list)"
 		rm pkg/custombuilds.list
@@ -704,13 +704,13 @@ if [ "${websign}" ] ; then
 	packages="${package} ${customBuilds}"
 
 	if [ "${test}" ] || [ "${debug}" ] ; then
-		mv pkg/cyph.ws "pkg/${package}"
+		mv pkg/cyph.app "pkg/${package}"
 
 		for branchDir in ${branchDirs} ; do
-			branchPackage=$(projectname cyph.ws ${branchDir})
+			branchPackage=$(projectname cyph.app ${branchDir})
 			packages="${branchPackage} ${packages}"
 
-			mv ${branchDir}/pkg/cyph.ws pkg/${branchPackage}
+			mv ${branchDir}/pkg/cyph.app pkg/${branchPackage}
 		done
 	fi
 
@@ -732,17 +732,17 @@ if [ "${websign}" ] ; then
 
 	log 'Compressing resources for deployment to CDN'
 
-	if [ -d pkg/cyph.ws-subresources ] ; then
-		find pkg/cyph.ws-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
+	if [ -d pkg/cyph.app-subresources ] ; then
+		find pkg/cyph.app-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
 			zopfli -i1000 %; \
 			brotli -Zk %; \
 		'
 
-		cp -a pkg/cyph.ws-subresources/* cdn/${package}/
+		cp -a pkg/cyph.app-subresources/* cdn/${package}/
 
 		for customBuild in ${customBuilds} ; do
 			cd cdn/${customBuild}
-			for subresource in $(ls ../../pkg/cyph.ws-subresources | grep -vP '\.(css|js)$') ; do
+			for subresource in $(ls ../../pkg/cyph.app-subresources | grep -vP '\.(css|js)$') ; do
 				ln -s ../${package}/${subresource} ${subresource}
 				chmod 700 ${subresource}
 				git add ${subresource}
@@ -753,8 +753,8 @@ if [ "${websign}" ] ; then
 	fi
 
 	for branchDir in ${branchDirs} ; do
-		branchPackage=$(projectname cyph.ws ${branchDir})
-		branchSubresources=${branchDir}/pkg/cyph.ws-subresources
+		branchPackage=$(projectname cyph.app ${branchDir})
+		branchSubresources=${branchDir}/pkg/cyph.app-subresources
 
 		if [ -d ${branchSubresources} ] ; then
 			mv ${branchSubresources}/* cdn/${branchPackage}/
@@ -822,11 +822,11 @@ if [ ! "${simple}" ] ; then
 		d="cyph.${suffix}"
 		project="cyph-${suffix}"
 
-		# Special case for cyph.im to directly redirect to cyph.ws instead of cyph.ws/#im
+		# Special case for cyph.im to directly redirect to cyph.app instead of cyph.app/#im
 		if [ "${suffix}" == 'im' ] ; then suffix='' ; fi
 
 		mkdir "${d}"
-		cat cyph.ws/cyph-ws.yaml | sed "s|cyph-ws|${project}|g" > "${d}/${project}.yaml"
+		cat cyph.app/cyph-app.yaml | sed "s|cyph-app|${project}|g" > "${d}/${project}.yaml"
 		./commands/websign/createredirect.sh "${suffix}" "${d}" "${package}" "${test}"
 	done
 fi

@@ -20,7 +20,7 @@ else
 	./commands/protobuf.sh
 fi
 
-projects='cyph.com cyph.ws'
+projects='cyph.app cyph.com'
 
 log 'Starting Angular AOT build'
 for d in ${projects} ; do

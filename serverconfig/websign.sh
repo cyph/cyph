@@ -8,7 +8,7 @@ rekeyscript='BASE64 hpkpsuicide.sh'
 PROMPT apikey
 PROMPT orderid
 PROMPT githubToken
-csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyph.ws'
+csrSubject='/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=cyph.app'
 
 
 mkdir /etc/nginx/ssl
@@ -36,10 +36,11 @@ while true ; do
 	git pull || break
 
 	node -e "console.log([
+		'cyph.audio',
 		'cyph.im',
 		'cyph.io',
 		'cyph.video',
-		'cyph.audio'
+		'cyph.ws'
 	].concat(
 		fs.readdirSync('.').filter(f =>
 			f !== '.git' &&

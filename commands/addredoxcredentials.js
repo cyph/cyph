@@ -35,9 +35,7 @@ if (
 		'addredoxcredentials ' +
 		'(--prod) ' +
 		'[Cyph environment URL, e.g. ' +
-			'https://cyph.app, ' +
-			'https://cyph.ws/#account, ' +
-			'or https://cyph.wang/simple-master#account' +
+			'https://cyph.app or https://cyph.wang/simple-master' +
 		'] ' +
 		'[org Cyph username] ' +
 		'[Redox API key] ' +

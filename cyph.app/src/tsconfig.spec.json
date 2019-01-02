@@ -12,7 +12,7 @@
 	},
 	"files": [
 		"test.ts",
-		"js/cyph.ws/polyfills.ts"
+		"js/cyph.app/polyfills.ts"
 	],
 	"include": [
 		"**/*.spec.ts",
