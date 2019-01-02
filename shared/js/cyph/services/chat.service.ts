@@ -1578,7 +1578,7 @@ export class ChatService extends BaseProvider {
 
 						if (!newLastConfirmedMessage) {
 							const pendingMessageIDs	=
-								(await this.chat.pendingMessages.getFlatValue()).map(o => o.id)
+								(await this.chat.pendingMessages.getFlatValue()).map(m => m.id)
 							;
 
 							if (getNewLastConfirmedMesssage(pendingMessageIDs) === undefined) {
