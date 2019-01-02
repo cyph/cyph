@@ -115,6 +115,14 @@ export class AppService extends BaseProvider implements CanActivate {
 			faviconService.setFavicon('telehealth');
 		}
 
+		self.addEventListener('hashchange', e => {
+			if (e.oldURL.split(location.origin)[1].match(
+				new RegExp(`^/?#?/?${burnerRoot}(/|$)`)
+			)) {
+				location.reload();
+			}
+		});
+
 		ngZone.runOutsideAngular(async () => {
 			/* Redirect clients that cannot support native crypto when required */
 			if (
