@@ -23,6 +23,12 @@ export class EnvDeploy {
 	/** Indicates whether this is (the main thread of) a Web environment. */
 	public readonly isWeb: boolean				= IS_WEB;
 
+	/** URL for an accounts link ("https://cyph.app/" or equivalent). */
+	public readonly appUrl: string				= this.isOnion ?
+		`https://cyph.${config.onionRoot}/` :
+		`${locationData.protocol}//${locationData.hostname}:42002/`
+	;
+
 	/** URL for backend API ("https://api.cyph.com/" or equivalent). */
 	public readonly baseUrl: string				= this.isOnion ?
 		`https://api.${config.onionRoot}/` :
@@ -35,39 +41,37 @@ export class EnvDeploy {
 		`${locationData.protocol}//${locationData.hostname}:43000/`
 	;
 
-	/** Base URL for a new cyph link ("https://cyph.ws/" or equivalent). */
-	public readonly newCyphBaseUrl: string		=
-		`${locationData.protocol}//${locationData.hostname}:42002/`
+	/** Base URL for a new cyph link ("https://cyph.app/#burner/" or equivalent). */
+	public readonly newCyphBaseUrl: string		= `${this.appUrl}#burner/`;
+
+	/** URL for starting a new audio cyph ("https://cyph.audio/" or equivalent). */
+	public readonly cyphAudioUrl: string		= this.isOnion ?
+		`https://audio.${config.onionRoot}/` :
+		`CYPH-AUDIO/`
 	;
 
 	/** URL for starting a new cyph ("https://cyph.im/" or equivalent). */
-	public readonly newCyphUrl: string			= this.isOnion ?
+	public readonly cyphImUrl: string			= this.isOnion ?
 		`https://im.${config.onionRoot}/` :
 		`CYPH-IM/`
 	;
 
-	/** URL for an accounts link ("https://cyph.app/" or equivalent). */
-	public readonly cyphAppUrl: string			= this.isOnion ?
-		`https://me.${config.onionRoot}/` :
-		`CYPH-APP/`
-	;
-
-	/** URL for starting a new io cyph ("https://cyph.io/" or equivalent). */
+	/** URL for starting a new file transfer cyph ("https://cyph.io/" or equivalent). */
 	public readonly cyphIoUrl: string			= this.isOnion ?
 		`https://io.${config.onionRoot}/` :
 		`CYPH-IO/`
+	;
+
+	/** URL for an accounts profile link ("https://cyph.me/" or equivalent). */
+	public readonly cyphMeUrl: string			= this.isOnion ?
+		`https://me.${config.onionRoot}/` :
+		`CYPH-ME/`
 	;
 
 	/** URL for starting a new video cyph ("https://cyph.video/" or equivalent). */
 	public readonly cyphVideoUrl: string		= this.isOnion ?
 		`https://video.${config.onionRoot}/` :
 		`CYPH-VIDEO/`
-	;
-
-	/** URL for starting a new audio cyph ("https://cyph.audio/" or equivalent). */
-	public readonly cyphAudioUrl: string		= this.isOnion ?
-		`https://audio.${config.onionRoot}/` :
-		`CYPH-AUDIO/`
 	;
 
 	/** Content Security Policy defined in shared/csp. */

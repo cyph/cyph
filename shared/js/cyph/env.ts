@@ -31,6 +31,17 @@ export class Env extends EnvDeploy {
 	/** @ignore */
 	private readonly useBaseUrl: boolean		= !!environment.customBuild || environment.local;
 
+	/** @inheritDoc */
+	public readonly appUrl: string				=
+		(
+			environment.local ||
+			!environment.customBuild ||
+			environment.customBuild.config.burnerOnly
+		) ?
+			envDeploy.newCyphBaseUrl :
+			`https://${environment.customBuild.id}/`
+	;
+
 	/** If applicable, default call type. */
 	public readonly callType?: 'audio'|'video'	= (
 		environment.customBuild && environment.customBuild.config.callTypeVideo ?
@@ -51,25 +62,29 @@ export class Env extends EnvDeploy {
 		environment.customBuild.favicon !== undefined
 	;
 
-	/** Base URL for an accounts link ("https://cyph.ws/#account/" or equivalent). */
-	public readonly cyphAppBaseUrl: string;
-
-	/** @inheritDoc */
-	public readonly cyphAppUrl: string;
-
-	/** Base URL for a new audio cyph link ("https://cyph.ws/#audio/" or equivalent). */
+	/** Base URL for a new audio cyph link ("https://cyph.app/#burner/audio/" or equivalent). */
 	public readonly cyphAudioBaseUrl: string;
 
 	/** @inheritDoc */
 	public readonly cyphAudioUrl: string;
 
-	/** Base URL for a new io cyph link ("https://cyph.ws/#io/" or equivalent). */
+	/** @inheritDoc */
+	public readonly cyphImUrl: string;
+
+	/** Base URL for a new io cyph link ("https://cyph.app/#burner/io/" or equivalent). */
 	public readonly cyphIoBaseUrl: string;
 
 	/** @inheritDoc */
 	public readonly cyphIoUrl: string;
 
-	/** Base URL for a new video cyph link ("https://cyph.ws/#video/" or equivalent). */
+	/** @inheritDoc */
+	public readonly cyphMeUrl: string			=
+		this.appUrl === envDeploy.appUrl ?
+			envDeploy.cyphMeUrl :
+			`${this.appUrl}profile/`
+	;
+
+	/** Base URL for a new video cyph link ("https://cyph.app/#burner/video/" or equivalent). */
 	public readonly cyphVideoBaseUrl: string;
 
 	/** @inheritDoc */
@@ -234,19 +249,11 @@ export class Env extends EnvDeploy {
 
 	/** @inheritDoc */
 	public readonly newCyphBaseUrl: string		=
-		(
-			!environment.local &&
-			environment.customBuild &&
-			environment.customBuild.config.burnerOnly
-		) ?
-			`https://${environment.customBuild.id}/` :
-			envDeploy.newCyphBaseUrl
-	;
-
-	/** @inheritDoc */
-	public readonly newCyphUrl: string			= this.useBaseUrl ?
-		this.newCyphBaseUrl :
-		envDeploy.newCyphUrl
+		environment.local || !environment.customBuild ?
+			envDeploy.newCyphBaseUrl :
+			`https://${environment.customBuild.id}/${
+				environment.customBuild.config.burnerOnly ? '' : '#burner/'
+			}`
 	;
 
 	/** Platform name ("android", "ios", "unknown", "web"). */
@@ -305,14 +312,18 @@ export class Env extends EnvDeploy {
 	constructor () {
 		super();
 
-		this.cyphAudioBaseUrl	= `${this.newCyphBaseUrl}#audio/`;
-		this.cyphIoBaseUrl		= `${this.newCyphBaseUrl}#io/`;
-		this.cyphAppBaseUrl		= `${this.newCyphBaseUrl}#account/`;
-		this.cyphVideoBaseUrl	= `${this.newCyphBaseUrl}#video/`;
+		const newCyphBaseUrl	=
+			this.newCyphBaseUrl +
+			(this.newCyphBaseUrl.indexOf('#') > -1 ? '' : '#')
+		;
+
+		this.cyphAudioBaseUrl	= `${newCyphBaseUrl}audio/`;
+		this.cyphIoBaseUrl		= `${newCyphBaseUrl}io/`;
+		this.cyphVideoBaseUrl	= `${newCyphBaseUrl}video/`;
 
 		this.cyphAudioUrl	= this.useBaseUrl ? this.cyphAudioBaseUrl : envDeploy.cyphAudioUrl;
+		this.cyphImUrl		= this.useBaseUrl ? this.newCyphBaseUrl : envDeploy.cyphImUrl;
 		this.cyphIoUrl		= this.useBaseUrl ? this.cyphIoBaseUrl : envDeploy.cyphIoUrl;
-		this.cyphAppUrl		= this.useBaseUrl ? this.cyphAppBaseUrl : envDeploy.cyphAppUrl;
 		this.cyphVideoUrl	= this.useBaseUrl ? this.cyphVideoBaseUrl : envDeploy.cyphVideoUrl;
 
 		if (this.isExtension || !this.isWeb) {

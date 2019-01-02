@@ -31,7 +31,7 @@ export class ChatEnvService extends EnvService {
 							(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
 							undefined
 			) || (
-				base ? env.newCyphBaseUrl : env.newCyphUrl
+				base ? env.newCyphBaseUrl : env.cyphImUrl
 			);
 
 			const divider	= baseURL.indexOf('#') < 0 ? '#' : '';
@@ -49,11 +49,19 @@ export class ChatEnvService extends EnvService {
 	/** @ignore */
 	private newCyphUrlHelper (base: boolean) : string {
 		if (!this.configService || !this.sessionService) {
-			return base ? env.newCyphBaseUrl : env.newCyphUrl;
+			return base ? env.newCyphBaseUrl : env.cyphImUrl;
 		}
 
 		return this.newCyphUrlHelperInternal(base, this.sessionService);
 	}
+
+	/** EnvService.newCyphUrl adjusted for session API flags and initial call type. */
+	public get cyphImUrl () : string {
+		return this.newCyphUrlHelper(this.isOnion);
+	}
+
+	/** @ignore */
+	public set cyphImUrl (_: string) {}
 
 	/** EnvService.newCyphBaseUrl adjusted for session API flags and initial call type. */
 	public get newCyphBaseUrl () : string {
@@ -62,14 +70,6 @@ export class ChatEnvService extends EnvService {
 
 	/** @ignore */
 	public set newCyphBaseUrl (_: string) {}
-
-	/** EnvService.newCyphUrl adjusted for session API flags and initial call type. */
-	public get newCyphUrl () : string {
-		return this.newCyphUrlHelper(this.isOnion);
-	}
-
-	/** @ignore */
-	public set newCyphUrl (_: string) {}
 
 	constructor (
 		localStorageService: LocalStorageService,

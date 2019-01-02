@@ -124,8 +124,8 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 		}
 
 		this.linkConstant	=
-			this.envService.newCyphUrl +
-			(this.envService.newCyphUrl.indexOf('#') > -1 ? '' : '#') +
+			this.envService.cyphImUrl +
+			(this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#') +
 			sharedSecret
 		;
 

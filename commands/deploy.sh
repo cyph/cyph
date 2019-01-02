@@ -441,14 +441,14 @@ simpleWebSignPackageName=''
 homeURL=''
 
 if [ "${test}" ] ; then
-	newCyphURL="https://${version}.cyph.app"
+	appURL="https://${version}.cyph.app"
 
 	if [ "${simple}" ] ; then
-		newCyphURL="https://${version}-dot-cyph-app-dot-cyphme.appspot.com"
+		appURL="https://${version}-dot-cyph-app-dot-cyphme.appspot.com"
 	fi
 	if [ "${simpleWebSignBuild}" ] ; then
-		simpleWebSignPackageName="$(echo "${newCyphURL}" | perl -pe 's/^.*?:\/\///')"
-		newCyphURL="https://${version}-dot-websign-dot-cyphme.appspot.com"
+		simpleWebSignPackageName="$(echo "${appURL}" | perl -pe 's/^.*?:\/\///')"
+		appURL="https://${version}-dot-websign-dot-cyphme.appspot.com"
 	fi
 
 	if [ "${simpleProdBuild}" ] ; then
@@ -461,12 +461,12 @@ if [ "${test}" ] ; then
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
 	sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}43000|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|${defaultHost}42002|${newCyphURL}|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|CYPH-APP|https://${version}-dot-cyph-app-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}42002|${appURL}|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-IM|https://${version}-dot-cyph-im-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-IO|https://${version}-dot-cyph-io-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|CYPH-ME|https://${version}-dot-cyph-me-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
-	sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
@@ -488,20 +488,20 @@ else
 		homeURL='https://debug-dot-cyph-com-dot-cyphme.appspot.com'
 
 		sed -i "s|${defaultHost}42002|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-APP|https://debug.cyph.app/#account|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-IM|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-IO|https://debug.cyph.app/#io|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-VIDEO|https://debug.cyph.app/#video|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-AUDIO|https://debug.cyph.app/#audio|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-AUDIO|https://debug.cyph.app/#burner/audio|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IM|https://debug.cyph.app/#burner|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IO|https://debug.cyph.app/#burner/io|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-ME|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-VIDEO|https://debug.cyph.app/#burner/video|g" shared/js/cyph/env-deploy.ts
 	else
 		homeURL='https://www.cyph.com'
 
 		sed -i "s|${defaultHost}42002|https://cyph.app|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-APP|https://cyph.app|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IO|https://cyph.io|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-ME|https://cyph.me|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
 	fi
 
 	sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go

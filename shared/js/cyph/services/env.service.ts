@@ -146,7 +146,7 @@ export class EnvService extends Env {
 
 	/** Version of newCyphUrl that triggers a retry. */
 	public get newCyphUrlRetry () : string {
-		return '/retry/' + this.newCyphUrl.replace(/^.*?(\/#|$)/, '');
+		return '/retry/' + this.cyphImUrl.replace(/^.*?(\/#|$)/, '');
 	}
 
 	constructor (
