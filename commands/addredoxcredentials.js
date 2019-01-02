@@ -12,10 +12,8 @@ const addRedoxCredentials	= async (isProd, url, username, redoxApiKey, redoxSecr
 url	=
 	typeof url !== 'string' ?
 		undefined :
-	url.endsWith('/#') || url.endsWith('/#account/') ?
+	url.endsWith('/#') ?
 		url :
-	url.endsWith('#account') ?
-		`${url}/` :
 	url.endsWith('/#/') ?
 		url.slice(0, -1) :
 	url.indexOf('#') < 0 ?
