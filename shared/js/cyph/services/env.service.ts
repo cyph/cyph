@@ -127,7 +127,10 @@ export class EnvService extends Env {
 
 		try {
 			if (this.localStorageService) {
-				const isAffectedBrowser	= /\/#test$/.test(new Request('https://cyph.ws/#test').url);
+				const isAffectedBrowser	=
+					/\/#test$/.test(new Request('https://cyph.app/#test').url)
+				;
+
 				const webSignHash		= await this.localStorageService.getItem(
 					'webSignHash',
 					StringProto
