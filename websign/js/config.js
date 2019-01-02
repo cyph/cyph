@@ -6,22 +6,10 @@ var config	= {
 	defaultContinent: 'eu',
 
 	cyphBranches: [
-		/^beta\./,
-		/^master\./,
-		/^staging\./
+		'beta',
+		'master',
+		'staging'
 	],
-
-	cyphBrandedPackages: {
-		'cyph.app': true,
-		'cyph.audio': true,
-		'cyph.chat': true,
-		'cyph.im': true,
-		'cyph.io': true,
-		'cyph.me': true,
-		'cyph.pro': true,
-		'cyph.video': true,
-		'cyph.ws': true,
-	},
 
 	files: [
 		'/',

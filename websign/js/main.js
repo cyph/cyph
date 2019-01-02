@@ -3,15 +3,12 @@
 
 /* Initialize ServiceWorker where possible */
 try {
-	navigator.serviceWorker.
-		register('/serviceworker.js').
-		catch(function () {})
-	;
+	navigator.serviceWorker.register('/serviceworker.js').catch(function () {});
 }
 catch (_) {}
 /* Request Persistent Storage permission to mitigate edge case eviction of ServiceWorker/AppCache */
 try {
-	navigator.storage.persist();
+	navigator.storage.persist().catch(function () {});
 }
 catch (_) {}
 
@@ -32,12 +29,12 @@ else if (!isHiddenService && !localStorage.webSignWWWPinned) {
 	location.host					= 'www.' + location.host;
 }
 
-if (
-	config.cyphBrandedPackages[packageName] ||
-	config.cyphBranches.filter(function (branch) {
-		return config.cyphBrandedPackages[packageName.replace(branch, '')];
-	}).length > 0
-) {
+/* Different styling between the main Cyph environments and others */
+var packageNameSplit	= packageName.split('.');
+if (config.cyphBranches.indexOf(packageNameSplit[0]) > -1) {
+	packageNameSplit	= packageNameSplit.slice(1);
+}
+if (packageNameSplit.length === 2 && packageNameSplit[0] === 'cyph') {
 	document.getElementById('websign-load').className	= 'cyph-branded';
 }
 
