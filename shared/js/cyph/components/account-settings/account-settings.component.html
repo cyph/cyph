@@ -73,7 +73,7 @@
 				</span>
 				<ng-container *ngIf='
 					false &&
-					(envService.accountSettingsService | async) === cyphPlans.Free
+					(accountSettingsService.plan | async) === cyphPlans.Free
 				'>
 					&ngsp;
 					(<a

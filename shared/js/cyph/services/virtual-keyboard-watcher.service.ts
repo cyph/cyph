@@ -59,7 +59,9 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 			new MutationObserver(mutations => {
 				focusBlurListen(
 					$(mutations.
-						map(mutationRecord => Array.from(mutationRecord.addedNodes)).
+						map(mutationRecord =>
+							<HTMLElement[]> Array.from(mutationRecord.addedNodes)
+						).
 						reduce((a, b) => a.concat(b), [])
 					).
 						find(inputSelector).
