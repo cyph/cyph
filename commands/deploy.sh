@@ -899,12 +899,12 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 				{
 					"cyph.ws": {
 						accountsURL: "https://cyph.app/",
-						burnerURL: "https://cyph.app/#burner/",
+						burnerURL: "https://cyph.im/#",
 						domain: "cyph.app"
 					},
 					"cyph_ws": {
 						accountsURL: "https://cyph.app/",
-						burnerURL: "https://cyph.app/#burner/",
+						burnerURL: "https://cyph.im/#",
 						domain: "cyph.app"
 					}
 				}

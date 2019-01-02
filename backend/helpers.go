@@ -365,7 +365,7 @@ func initHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Public-Key-Pins", config.HPKPHeader)
 	w.Header().Set("Strict-Transport-Security", config.HSTSHeader)
 
-	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || appengine.IsDevAppServer() {
+	if ok || strings.HasSuffix(origin, ".pki.ws") || strings.HasSuffix(origin, ".cyph.ws") || strings.HasSuffix(origin, ".cyph.app") || appengine.IsDevAppServer() {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		w.Header().Add("Access-Control-Allow-Headers", config.AllowedHeaders)
