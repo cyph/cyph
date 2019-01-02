@@ -105,6 +105,16 @@ read -r -d '' nginxconf <<- EOM
 
 	server {
 		\${sslconf}
+		server_name audio.${onionaddress};
+		\$(proxysite https://prod-dot-cyph-audio-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
+		server_name burner.${onionaddress};
+		\$(proxysite https://prod-dot-burner-cyph-app-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
 		server_name im.${onionaddress};
 		\$(proxysite https://prod-dot-cyph-im-dot-cyphme.appspot.com)
 	}
@@ -115,13 +125,18 @@ read -r -d '' nginxconf <<- EOM
 	}
 	server {
 		\${sslconf}
+		server_name me.${onionaddress};
+		\$(proxysite https://prod-dot-cyph-me-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
 		server_name video.${onionaddress};
 		\$(proxysite https://prod-dot-cyph-video-dot-cyphme.appspot.com)
 	}
 	server {
 		\${sslconf}
-		server_name audio.${onionaddress};
-		\$(proxysite https://prod-dot-cyph-audio-dot-cyphme.appspot.com)
+		server_name ws.${onionaddress};
+		\$(proxysite https://prod-dot-cyph-ws-dot-cyphme.appspot.com)
 	}
 
 	server {

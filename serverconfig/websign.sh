@@ -36,9 +36,11 @@ while true ; do
 	git pull || break
 
 	node -e "console.log([
+		'burner.cyph.app',
 		'cyph.audio',
 		'cyph.im',
 		'cyph.io',
+		'cyph.me',
 		'cyph.video',
 		'cyph.ws'
 	].concat(
@@ -71,6 +73,16 @@ EndOfMessage
 read -r -d '' nginxconf <<- EOM
 	server {
 		\${sslconf}
+		server_name burner.cyph.app www.burner.cyph.app;
+		\$(proxysite https://prod-dot-burner-cyph-app-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
+		server_name cyph.audio www.cyph.audio;
+		\$(proxysite https://prod-dot-cyph-audio-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
 		server_name cyph.im www.cyph.im;
 		\$(proxysite https://prod-dot-cyph-im-dot-cyphme.appspot.com)
 	}
@@ -81,13 +93,18 @@ read -r -d '' nginxconf <<- EOM
 	}
 	server {
 		\${sslconf}
+		server_name cyph.me www.cyph.me;
+		\$(proxysite https://prod-dot-cyph-me-dot-cyphme.appspot.com)
+	}
+	server {
+		\${sslconf}
 		server_name cyph.video www.cyph.video;
 		\$(proxysite https://prod-dot-cyph-video-dot-cyphme.appspot.com)
 	}
 	server {
 		\${sslconf}
-		server_name cyph.audio www.cyph.audio;
-		\$(proxysite https://prod-dot-cyph-audio-dot-cyphme.appspot.com)
+		server_name cyph.ws www.cyph.ws;
+		\$(proxysite https://prod-dot-cyph-ws-dot-cyphme.appspot.com)
 	}
 
 	server {

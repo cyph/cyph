@@ -46,7 +46,7 @@ cat > "${domain}/index.html.tmp" <<- EOM
 
 					if (isHiddenService) {
 						host	=
-							host.replace(/\\.ws\$/, '').replace(/\\./g, '_') +
+							host.replace(/\\.app\$/, '').replace(/\\./g, '_') +
 							'.cyphdbyhiddenbhs.onion'
 						;
 					}

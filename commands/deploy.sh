@@ -10,7 +10,6 @@ cacheBustedProjects='cyph.app cyph.com'
 compiledProjects='cyph.app'
 webSignedProject='cyph.app'
 prodOnlyProjects='nakedredirect test websign'
-shortlinkProjects='im io video audio'
 site=''
 noSimple=''
 simple=''
@@ -771,13 +770,15 @@ if [ "${websign}" ] ; then
 			cd websign/test
 		fi
 
-		plink=$(echo ${p} | sed 's/\.ws$//')
-		if (echo ${p} | grep -P '\.ws$' > /dev/null) && ! [ -L ${plink} ] ; then
-			ln -s ${p} ${plink}
-			chmod 700 ${plink}
-			git add ${plink}
-			git commit -S -m ${plink} ${plink} &> /dev/null
-		fi
+		for ext in app ws ; do
+			plink=$(echo ${p} | sed "s/\\.${ext}\$//")
+			if (echo ${p} | grep -P "\\.${ext}\$" > /dev/null) && ! [ -L ${plink} ] ; then
+				ln -s ${p} ${plink}
+				chmod 700 ${plink}
+				git add ${plink}
+				git commit -S -m ${plink} ${plink} &> /dev/null
+			fi
+		done
 
 		cp ${p}/current ${p}/pkg.srihash
 
@@ -818,17 +819,24 @@ cd ${branchDir}
 
 # WebSign redirects
 if [ ! "${simple}" ] ; then
-	for suffix in ${shortlinkProjects} ; do
-		d="cyph.${suffix}"
-		project="cyph-${suffix}"
+	createRedirect () {
+		domain="${1}"
+		path="${2}"
 
-		# Special case for cyph.im to directly redirect to cyph.app instead of cyph.app/#im
-		if [ "${suffix}" == 'im' ] ; then suffix='' ; fi
+		project="${domain/./-}"
 
-		mkdir "${d}"
-		cat cyph.app/cyph-app.yaml | sed "s|cyph-app|${project}|g" > "${d}/${project}.yaml"
-		./commands/websign/createredirect.sh "${suffix}" "${d}" "${package}" "${test}"
-	done
+		mkdir "${domain}"
+		cat cyph.app/cyph-app.yaml | sed "s|cyph-app|${project}|g" > "${domain}/${project}.yaml"
+		./commands/websign/createredirect.sh "${path}" "${domain}" "${package}" "${test}"
+	}
+
+	createRedirect 'burner.cyph.app' 'burner'
+	createRedirect 'cyph.audio' 'burner/audio'
+	createRedirect 'cyph.im' 'burner'
+	createRedirect 'cyph.io' 'burner/io'
+	createRedirect 'cyph.me' 'profile'
+	createRedirect 'cyph.video' 'burner/video'
+	createRedirect 'cyph.ws' 'burner'
 fi
 
 
