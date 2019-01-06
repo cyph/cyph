@@ -51,7 +51,7 @@ export const account: Route	= {
 		},
 		{path: '404', component: NotFoundComponent},
 		{
-			path: 'anonymous/call',
+			path: 'account-burner/call',
 			component: AccountChatComponent,
 			data: {
 				callType: 'audio',
@@ -59,21 +59,21 @@ export const account: Route	= {
 			}
 		},
 		{
-			path: 'anonymous/call/:anonymousChannelID',
+			path: 'account-burner/call/:anonymousChannelID',
 			component: AccountChatComponent,
 			data: {callType: 'audio'}
 		},
 		{
-			path: 'anonymous/chat',
+			path: 'account-burner/chat',
 			component: AccountChatComponent,
 			data: {generateAnonymousChannelID: true}
 		},
 		{
-			path: 'anonymous/chat/:anonymousChannelID',
+			path: 'account-burner/chat/:anonymousChannelID',
 			component: AccountChatComponent
 		},
 		{
-			path: 'anonymous/video',
+			path: 'account-burner/video',
 			component: AccountChatComponent,
 			data: {
 				callType: 'video',
@@ -81,7 +81,7 @@ export const account: Route	= {
 			}
 		},
 		{
-			path: 'anonymous/video/:anonymousChannelID',
+			path: 'account-burner/video/:anonymousChannelID',
 			component: AccountChatComponent,
 			data: {callType: 'video'}
 		},

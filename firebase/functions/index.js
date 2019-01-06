@@ -246,7 +246,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 			{
 				endTime: data.eventDetails.endTime,
 				inviterUsername: data.to,
-				location: `${accountsURL}anonymous/${data.callType || 'chat'}/${id}`,
+				location: `${accountsURL}account-burner/${data.callType || 'chat'}/${id}`,
 				startTime: data.eventDetails.startTime
 			}
 		)

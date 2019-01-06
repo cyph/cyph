@@ -541,7 +541,7 @@ export class AccountService extends BaseProvider {
 					].indexOf(route) > -1 ||
 					(
 						[
-							'anonymous',
+							'account-burner',
 							'appointments',
 							'audio',
 							'call',

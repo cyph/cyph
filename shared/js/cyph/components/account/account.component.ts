@@ -69,7 +69,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		(
 			[
 				'',
-				'anonymous',
+				'account-burner',
 				'audio',
 				'call',
 				'contacts',
@@ -115,7 +115,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			].indexOf(route) > -1
 		) || (
 			[
-				'anonymous',
+				'account-burner',
 				'audio',
 				'call',
 				'mail',
@@ -161,7 +161,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		return currentUser !== undefined && [
 			'',
 			'404',
-			'anonymous',
+			'account-burner',
 			'appointments',
 			'audio',
 			'call',
@@ -199,7 +199,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		!isMobile &&
 		[
 			'',
-			'anonymous',
+			'account-burner',
 			'audio',
 			'call',
 			'chat-transition',
