@@ -5,7 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
-import {SecurityModels, UserPresence, userPresenceSelectOptions, User} from '../../account';
+import {SecurityModels, User, UserPresence, userPresenceSelectOptions} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {
 	doctorProfile,

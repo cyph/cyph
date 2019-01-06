@@ -3,6 +3,7 @@ import {ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router} from '@an
 import {BaseProvider} from '../base-provider';
 import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {EnvService} from './env.service';
 import {StringsService} from './strings.service';
 
 
@@ -41,7 +42,7 @@ implements CanActivate, CanActivateChild {
 	public async canActivate (route: ActivatedRouteSnapshot) : Promise<boolean> {
 		if (
 			beforeUnloadMessage &&
-			typeof confirm === 'function' &&
+			this.envService.isWeb &&
 			!confirm(`${beforeUnloadMessage} ${this.stringsService.continuePrompt}`)
 		) {
 			return false;
@@ -84,6 +85,9 @@ implements CanActivate, CanActivateChild {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService
