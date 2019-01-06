@@ -3,6 +3,7 @@ import {ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router} from '@an
 import {BaseProvider} from '../base-provider';
 import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {StringsService} from './strings.service';
 
 
 /** Auth guard for accounts routing. */
@@ -39,6 +40,14 @@ implements CanActivate, CanActivateChild {
 	/** @inheritDoc */
 	public async canActivate (route: ActivatedRouteSnapshot) : Promise<boolean> {
 		if (
+			beforeUnloadMessage &&
+			typeof confirm === 'function' &&
+			!confirm(`${beforeUnloadMessage} ${this.stringsService.continuePrompt}`)
+		) {
+			return false;
+		}
+
+		if (
 			this.accountDatabaseService.currentUser.value !== undefined ||
 			(
 				route.url.length > 0 &&
@@ -74,7 +83,10 @@ implements CanActivate, CanActivateChild {
 		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService
+		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		super();
 	}
