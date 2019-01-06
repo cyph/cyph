@@ -295,7 +295,7 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly disconnectWarning: string			=
-		`After closing ${this.internalProduct}, your messages will no longer be retrievable.`
+		`After closing this ${this.internalSession}, your messages will no longer be retrievable.`
 	;
 
 	/** @see StringsService */
