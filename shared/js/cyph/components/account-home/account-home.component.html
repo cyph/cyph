@@ -167,7 +167,6 @@
 				matTooltipPosition='left'
 				routerLink='/account-burner/chat'
 				(click)='isSpeedDialOpen.next(false)'
-				*ngIf='!envService.coBranded'
 			>
 				<mat-icon>link</mat-icon>
 			</a>
@@ -175,7 +174,7 @@
 	</smd-fab-speed-dial>
 </div>
 
-<div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed && !envService.coBranded'>
+<div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'>
 	<a
 		mat-fab
 		cyphTranslate
