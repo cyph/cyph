@@ -517,6 +517,11 @@ export class StringsService extends BaseProvider {
 	public readonly linkExpiresAt: string				= `Link expires at`;
 
 	/** @see StringsService */
+	public readonly linkGet: string						=
+		`Get new ${this.internalProduct} link`
+	;
+
+	/** @see StringsService */
 	public readonly linkTooltip: string					=
 		`${this.capitalize(this.internalSession)} Link`
 	;

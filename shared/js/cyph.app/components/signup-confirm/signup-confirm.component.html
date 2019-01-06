@@ -44,12 +44,10 @@
 					</h3>
 					<br />
 					<div fxLayoutAlign='center'>
-						<button
-							mat-button
-							cyphTranslate
-							(click)='unlock(key)'
-						>
-							Enter Cyph
+						<button mat-button (click)='unlock(key)'>
+							<span cyphTranslate>Enter</span>
+							&ngsp;
+							<span>{{stringsService.product}}</span>
 						</button>
 					</div>
 					<br />
