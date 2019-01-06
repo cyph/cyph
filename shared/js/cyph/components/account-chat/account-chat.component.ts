@@ -317,10 +317,20 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 					this.messageType.value === ChatMessageValue.Types.Text
 				);
 
-				const chat	= anonymousChannelID ?
+				const chat		= anonymousChannelID ?
 					{anonymousChannelID, passive: !generateAnonymousChannelID} :
 					await this.accountContactsService.getChatData(contactID)
 				;
+
+				const destroyed	= this.destroyed.pipe(filter(b => b), take(1)).toPromise();
+
+				if (anonymousChannelID) {
+					beforeUnloadMessage	= this.stringsService.disconnectWarning;
+
+					destroyed.then(() => {
+						beforeUnloadMessage	= undefined;
+					});
+				}
 
 				if (callType !== undefined && anonymousChannelID) {
 					return this.accountChatService.setUser(chat, undefined, callType);
@@ -354,7 +364,7 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 				this.notificationService.ring(Promise.race([
 					this.p2pWebRTCService.loading.pipe(filter(b => b), take(1)).toPromise(),
-					this.destroyed.pipe(filter(b => b), take(1)).toPromise().then(() => false)
+					destroyed.then(() => false)
 				])).then(() => {
 					if (
 						this.destroyed.value ||
