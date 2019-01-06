@@ -175,7 +175,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 				return;
 			}
 
-			beforeUnloadMessage				= undefined;
+			beforeUnloadMessage	= undefined;
 			this.appService.chatRootState.next(ChatRootStates.chat);
 		});
 
