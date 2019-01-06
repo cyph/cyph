@@ -204,6 +204,8 @@ service firebase.storage {
 					allow read;
 				}
 
+				// match /profileVisible/{hash} {}
+
 				// match /pseudoAccount/{hash} {}
 
 				match /publicEncryptionKey/{hash} {

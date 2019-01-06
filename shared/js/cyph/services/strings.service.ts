@@ -845,6 +845,13 @@ export class StringsService extends BaseProvider {
 	public readonly profileSave: string					= `Save Profile`;
 
 	/** @see StringsService */
+	public readonly profileVisibility: string			=
+		`NOT a security feature — any information in your profile ` +
+		`should be considered public regardless. This only controls ` +
+		`whether the Cyph client will display it.`
+	;
+
+	/** @see StringsService */
 	public readonly queuedMessageSaved: string			= `Queued message saved.`;
 
 	/** @see StringsService */

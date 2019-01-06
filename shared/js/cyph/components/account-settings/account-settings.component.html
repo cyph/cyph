@@ -95,7 +95,17 @@
 						<mat-expansion-panel-header>
 							<span cyphTranslate>Advanced</span>
 						</mat-expansion-panel-header>
-						<div fxFlex fxLayout='column'>
+						<div fxFlex fxLayout='column' fxLayoutGap='32px'>
+							<mat-slide-toggle
+								[ngModel]='(data | async)?.modified.profileVisible'
+								(ngModelChange)='updateData({modified: {profileVisible: $event}})'
+								[matTooltip]='stringsService.profileVisibility'
+								name='profileVisible'
+								cyphTranslate
+							>
+								Profile Visible to Anonymous Users
+							</mat-slide-toggle>
+
 							<mat-form-field>
 								<input
 									matInput

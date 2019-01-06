@@ -5,8 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
-import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
-import {User} from '../../account/user';
+import {SecurityModels, UserPresence, userPresenceSelectOptions, User} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {
 	doctorProfile,
@@ -15,7 +14,7 @@ import {
 	telehealthStaffProfile
 } from '../../forms';
 import {IFile} from '../../ifile';
-import {AccountUserTypes, DataURIProto, IForm} from '../../proto';
+import {AccountUserTypes, BooleanProto, DataURIProto, IForm} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
@@ -170,6 +169,23 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				this.router.navigate(['doctors']);
 			}
 			else if (user) {
+				/* Hide non-visible profiles from anonymous users */
+				if (
+					!this.accountDatabaseService.currentUser.value &&
+					!(await this.accountDatabaseService.getItem(
+						`users/${username}/profileVisible`,
+						BooleanProto,
+						SecurityModels.unprotected,
+						undefined,
+						true
+					).catch(() =>
+						false
+					))
+				) {
+					this.router.navigate(['404']);
+					return;
+				}
+
 				await user.fetch();
 
 				if (!this.destroyed.value) {

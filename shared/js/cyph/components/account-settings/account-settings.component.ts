@@ -1,12 +1,11 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
-import {IAsyncValue} from '../../iasync-value';
-import {CyphPlans, StringProto} from '../../proto';
+import {BooleanProto, CyphPlans, StringProto} from '../../proto';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -36,25 +35,28 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		current: {
 			email: '',
 			name: '',
+			profileVisible: false,
 			realUsername: ''
 		},
 		modified: {
 			email: '',
 			name: '',
+			profileVisible: false,
 			realUsername: ''
 		},
 		usernamePattern: ''
 	});
 
 	/** Email address. */
-	public readonly email: IAsyncValue<string>	= this.accountDatabaseService.getAsyncValue(
+	public readonly email			= this.accountDatabaseService.getAsyncValue(
 		'email',
 		StringProto,
 		SecurityModels.unprotected,
 		undefined,
 		undefined,
 		undefined,
-		true
+		true,
+		this.subscriptions
 	);
 
 	/** @see emailPattern */
@@ -63,11 +65,23 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	/** Indicates whether page is loading. */
 	public readonly loading			= new BehaviorSubject(true);
 
+	/** Indicates whether profile is visible to anonymous users. */
+	public readonly profileVisible	= this.accountDatabaseService.getAsyncValue(
+		'profileVisible',
+		BooleanProto,
+		SecurityModels.unprotected,
+		undefined,
+		undefined,
+		undefined,
+		true,
+		this.subscriptions
+	);
+
 	/** Indicates whether data is ready to save. */
 	public readonly ready: BehaviorSubject<boolean>;
 
 	/** UI state. */
-	public readonly state: Observable<number>			= this.activatedRoute.data.pipe(map(o =>
+	public readonly state			= this.activatedRoute.data.pipe(map(o =>
 		typeof o.state === 'number' ? o.state : this.states.default
 	));
 
@@ -163,14 +177,16 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 		this.user.next(user);
 
-		const [email, {name, realUsername}]	= await Promise.all([
+		const [email, profileVisible, {name, realUsername}]	= await Promise.all([
 			this.email.getValue(),
+			this.profileVisible.getValue(),
 			user.accountUserProfile.getValue()
 		]);
 
 		const current	= {
 			email,
 			name,
+			profileVisible,
 			realUsername: realUsername.toLowerCase() === user.username ?
 				realUsername :
 				user.username
@@ -194,22 +210,27 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 		this.loading.next(true);
 
-		const data			= this.data.value;
-		const email			= data.modified.email.trim();
-		const name			= data.modified.name.trim();
-		const realUsername	= data.modified.realUsername.trim();
+		const data				= this.data.value;
+		const email				= data.modified.email.trim();
+		const name				= data.modified.name.trim();
+		const profileVisible	= data.modified.profileVisible;
+		const realUsername		= data.modified.realUsername.trim();
 
 		await Promise.all([
 			data.current.email === email ?
 				undefined :
 				this.email.setValue(email)
 			,
+			data.current.profileVisible === profileVisible ?
+				undefined :
+				this.profileVisible.setValue(profileVisible)
+			,
 			data.current.name === name && data.current.realUsername === realUsername ?
 				undefined :
 				user.accountUserProfile.updateValue(async o => ({...o, name, realUsername}))
 		]);
 
-		this.updateData({current: {email, name, realUsername}});
+		this.updateData({current: {email, name, profileVisible, realUsername}});
 
 		this.loading.next(false);
 	}
@@ -219,11 +240,13 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		current?: {
 			email?: string;
 			name?: string;
+			profileVisible?: boolean;
 			realUsername?: string;
 		};
 		modified?: {
 			email?: string;
 			name?: string;
+			profileVisible?: boolean;
 			realUsername?: string;
 		};
 		usernamePattern?: string;
@@ -277,6 +300,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 				(
 					data.current.email !== data.modified.email ||
 					data.current.name !== data.modified.name ||
+					data.current.profileVisible !== data.modified.profileVisible ||
 					data.current.realUsername !== data.modified.realUsername
 				) &&
 				!!data.modified.name &&
