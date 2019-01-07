@@ -248,7 +248,7 @@ read -r -d '' modules <<- EOM
 	sass-loader
 	script-ext-html-webpack-plugin
 	sidh
-	simple-peer@https://github.com/feross/simple-peer
+	simple-peer
 	simplebtc
 	simplewebrtc
 	sodiumutil
