@@ -39,7 +39,7 @@ import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
-/* import {WorkerService} from './worker.service'; */
+import {WorkerService} from './worker.service';
 
 
 /**
@@ -108,9 +108,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 				};
 			}
 
-			/*
-			Disable ServiceWorker push notifications for now until they work reliably.
-
 			const app						= await this.app;
 			const messaging					= app.messaging();
 			const serviceWorkerRegistration	= await this.workerService.serviceWorkerRegistration;
@@ -118,7 +115,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			await this.workerService.serviceWorkerFunction(
 				'FCM',
 				this.envService.firebaseConfig,
-				/* tslint:disable-next-line:no-shadowed-variable *
+				/* tslint:disable-next-line:no-shadowed-variable */
 				config => {
 					importScripts('/assets/node_modules/firebase/firebase-app.js');
 					importScripts('/assets/node_modules/firebase/firebase-messaging.js');
@@ -131,9 +128,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 			messaging.useServiceWorker(serviceWorkerRegistration);
 			await messaging.requestPermission();
 			return {token: (await messaging.getToken()) || undefined};
-			*/
-
-			return {};
 		}).catch(
 			() => ({})
 		)
@@ -1625,10 +1619,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 		potassiumService: PotassiumService,
 
 		/** @ignore */
-		private readonly ngZone: NgZone
+		private readonly ngZone: NgZone,
 
 		/** @ignore */
-		/* private readonly workerService: WorkerService */
+		private readonly workerService: WorkerService
 	) {
 		super(
 			envService,
