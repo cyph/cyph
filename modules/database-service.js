@@ -43,7 +43,6 @@ if (typeof config === 'string') {
 const app			= admin.initializeApp(config.firebase, uuid());
 const auth			= app.auth();
 const database		= app.database();
-const functionsUser	= functions.auth.user();
 const messaging		= app.messaging();
 const storage		= new Storage(config.storage).bucket(`${config.project.id}.appspot.com`);
 
@@ -72,7 +71,6 @@ const databaseService	= {
 	app,
 	auth,
 	database,
-	functionsUser,
 	getHash,
 	messaging,
 	processURL,

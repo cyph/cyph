@@ -20,7 +20,6 @@ const {
 const {
 	auth,
 	database,
-	functionsUser,
 	getHash,
 	getItem,
 	hasItem,
@@ -838,7 +837,7 @@ exports.userPublicProfileSet	= functions.database.ref(
 });
 
 
-exports.userRegister	= functionsUser.onCreate(async (userRecord, {params}) => {
+exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params}) => {
 	const emailSplit	= (userRecord.email || '').split('@');
 
 	if (emailSplit.length !== 2 || (
