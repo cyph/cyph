@@ -5,6 +5,30 @@ domain="${2}"
 package="${3}"
 test="${4}"
 
+project="${domain//./-}"
+
+mkdir "${domain}"
+cp $(cd "$(dirname "$0")" ; pwd)/../../websign/redirect.py "${domain}/"
+
+cat > "${domain}/${project}.yaml" << EOM
+service: ${project}
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+
+- url: /
+  static_files: index.html
+  upload: index.html
+  secure: always
+  # default_headers Strict-Transport-Security
+
+- url: /.*
+  script: redirect.app
+  secure: always
+EOM
+
 cat > "${domain}/index.html.tmp" <<- EOM
 	<html☁manifest='/appcache.appcache'>
 		<body>
@@ -46,7 +70,7 @@ cat > "${domain}/index.html.tmp" <<- EOM
 
 					if (isHiddenService) {
 						host	=
-							host.replace(/\\.app\$/, '').replace(/\\./g, '_') +
+							host.replace(/\\.(app|ws)\$/, '').replace(/\\./g, '_') +
 							'.cyphdbyhiddenbhs.onion'
 						;
 					}

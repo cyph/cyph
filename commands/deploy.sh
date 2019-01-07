@@ -823,10 +823,6 @@ if [ ! "${simple}" ] ; then
 		domain="${1}"
 		path="${2}"
 
-		project="${domain//./-}"
-
-		mkdir "${domain}"
-		cat cyph.app/cyph-app.yaml | sed "s|cyph-app|${project}|g" > "${domain}/${project}.yaml"
 		./commands/websign/createredirect.sh "${path}" "${domain}" "${package}" "${test}"
 	}
 
