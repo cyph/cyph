@@ -172,7 +172,7 @@ read -r -d '' modules <<- EOM
 	karma-cli
 	karma-coverage-istanbul-reporter
 	karma-jasmine
-	karma-jasmine-html-reporter@0
+	karma-jasmine-html-reporter
 	konami
 	lamejs
 	lazy
