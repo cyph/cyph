@@ -29,25 +29,26 @@ handlers:
   secure: always
 EOM
 
-cat > "${domain}/index.html.tmp" <<- EOM
-	<html☁manifest='/appcache.appcache'>
+cat > "${domain}/index.html" <<- EOM
+	<!DOCTYPE html>
+	<html manifest='/appcache.appcache'>
 		<body>
 			<script>
-				function☁redirect () {
-					var☁storage	= {};
+				function redirect () {
+					var storage	= {};
 					try {
 						localStorage.isPersistent	= 'true';
 						storage						= localStorage;
 					}
 					catch (_) {}
 
-					var☁isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
+					var isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
 
 					$(if [ ! "${test}" ] ; then echo "
 						if (location.host.indexOf('www.') === 0) {
 							location.host	= location.host.replace('www.', '');
 						}
-						else☁if (
+						else if (
 							!isHiddenService &&
 							storage.isPersistent &&
 							!storage.webSignWWWPinned
@@ -57,7 +58,7 @@ cat > "${domain}/index.html.tmp" <<- EOM
 						}
 					" ; fi)
 
-					var☁path	= (
+					var path	= (
 						'/#' +
 						'$(if [ "${path}" ] ; then echo "${path}/" ; fi)' +
 						location.toString().
@@ -66,7 +67,7 @@ cat > "${domain}/index.html.tmp" <<- EOM
 							replace(/^\\//, '')
 					).replace(/\\/\$/, '');
 
-					var☁host	= '${package}';
+					var host	= '${package}';
 
 					if (isHiddenService) {
 						host	=
@@ -81,11 +82,11 @@ cat > "${domain}/index.html.tmp" <<- EOM
 				try {
 					Promise.resolve().
 						then(function () {
-							return☁navigator.serviceWorker.register('/serviceworker.js');
+							return navigator.serviceWorker.register('/serviceworker.js');
 						}).
 						catch(function () {}).
 						then(function () {
-							return☁navigator.storage.persist();
+							return navigator.storage.persist();
 						}).
 						catch(function () {}).
 						then(redirect)
@@ -166,6 +167,4 @@ cat > "${domain}/serviceworker.js" <<- EOM
 	});
 EOM
 
-echo -n '<!DOCTYPE html>' > "${domain}/index.html"
-cat "${domain}/index.html.tmp" | perl -pe 's/\s+//g' | tr '☁' ' ' >> "${domain}/index.html"
-rm "${domain}/index.html.tmp"
+html-minifier --minify-js true "${domain}/index.html" -o "${domain}/index.html"
