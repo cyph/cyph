@@ -7,19 +7,18 @@ cd "$(mktemp -d)"
 sourcePort='43000'
 sourceOrigin="localhost:${sourcePort}"
 sourceURL="http://${sourceOrigin}"
-sshTarget='wordpress.internal.cyph.com'
-sshSource="staging.${sshTarget}"
+sshBase='wordpress.internal.cyph.com'
+sshSource="staging.${sshBase}"
+sshTarget="${sshBase}"
 
 if [ "${1}" == '--rollback' ] ; then
-	sshTargetTmp="${sshTarget}"
 	sshTarget="${sshSource}"
-	sshSource="${sshTargetTmp}"
-	sshTargetTmp=''
+	sshSource="${sshBase}"
 fi
 
 sshkill () {
 	ps ux |
-		grep -P "ssh.*${sshTarget}" |
+		grep -P "ssh.*${sshBase}" |
 		grep -v grep |
 		awk '{print $2}' |
 		xargs -r kill -9
@@ -27,7 +26,7 @@ sshkill () {
 
 
 sshkill
-ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshSource}" &> /dev/null
+ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${sourcePort}:${sourceOrigin}" "${sshSource}"
 
 commandComment="# wppromote-download $(node -e '
 	console.log(crypto.randomBytes(32).toString("hex"))
@@ -39,7 +38,7 @@ command="$(node -e "(async () => {
 
 	setTimeout(() => process.exit(1), 600000);
 
-	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_export');
+	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_export', {timeout: 0});
 
 	await page.waitForSelector('#user_login');
 	await page.type('#user_login', 'admin');
@@ -47,7 +46,7 @@ command="$(node -e "(async () => {
 	await page.keyboard.press('Enter');
 	await page.waitForNavigation();
 
-	await page.waitForSelector('.ai1wm-button-main');
+	await page.waitForSelector('.ai1wm-button-main', {timeout: 0});
 	await page.click('.ai1wm-button-main');
 	await page.click('#ai1wm-export-file');
 	await page.waitForSelector('a[href\$=\".wpress\"]', {timeout: 0});
@@ -78,7 +77,7 @@ eval "${command}"
 
 
 sshkill
-ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshTarget}" &> /dev/null
+ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${sourcePort}:${sourceOrigin}" "${sshTarget}"
 
 failure=''
 
@@ -88,7 +87,7 @@ node -e "(async () => {
 
 	setTimeout(() => process.exit(1), 600000);
 
-	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_import');
+	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_import', {timeout: 0});
 
 	await page.waitForSelector('#user_login');
 	await page.type('#user_login', 'admin');
@@ -96,7 +95,7 @@ node -e "(async () => {
 	await page.keyboard.press('Enter');
 	await page.waitForNavigation();
 
-	await page.waitForSelector('.ai1wm-button-main');
+	await page.waitForSelector('.ai1wm-button-main', {timeout: 0});
 	await page.click('.ai1wm-button-main');
 	await page.waitForSelector('#ai1wm-select-file');
 
