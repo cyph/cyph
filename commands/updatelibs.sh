@@ -162,7 +162,7 @@ read -r -d '' modules <<- EOM
 	htmlencode
 	htmllint
 	image-type
-	jasmine-core@2
+	jasmine-core
 	jasmine-spec-reporter
 	jquery
 	jquery.appear@https://github.com/morr/jquery.appear
