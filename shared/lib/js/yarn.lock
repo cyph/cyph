@@ -154,10 +154,10 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/cdk-experimental@^7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@angular/cdk-experimental/-/cdk-experimental-7.2.0.tgz#08eef0efb73ff444c049467bf22015948e93c9e7"
-  integrity sha512-RH4GpFnTwfGF5A8Wf+zQnaHhOXyeyD4KbpgzFtqGnID1R/J1ZoY1U5KEQ3WneinRGG8JN8j5+M/MuEjEP7x6Pw==
+"@angular/cdk-experimental@^7.2.1":
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@angular/cdk-experimental/-/cdk-experimental-7.2.1.tgz#065b222967e630e0817bd9313cb7953ea07f6041"
+  integrity sha512-czNwZDJXuO6/trTeAOqKhVGLIe+3HXzdEpmpf+eQif4PhOnF/ZxEU7bIBtM3Aykb6vYY+zyWSzs03cTcm4/ykA==
   dependencies:
     tslib "^1.7.1"
 
@@ -168,10 +168,10 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/cdk@^7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-7.2.0.tgz#03bfbbcd5882fbdab71e6d5b5f36b612589724b4"
-  integrity sha512-ANGNIvyEdkMW6APl+6XDQC5VBS+mS/M+3UB/ROnj+7Om3xe2DSbEjqDXB/SpeJYUp6Qg/wQoWmyvd4y8HfjMwA==
+"@angular/cdk@^7.2.1":
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-7.2.1.tgz#f3673d026a0a38f93629bbd67039bbbb50a36f1c"
+  integrity sha512-oU1Pjq3JkDtkXquLxWK84A2jOCeYRf352dVGbQCxWoSOQ5KBtMAd42huGidPiOSHN6/f7xZwL3n4fq3fVIut8A==
   dependencies:
     tslib "^1.7.1"
   optionalDependencies:
@@ -300,10 +300,10 @@
   dependencies:
     tslib "^1.7.1"
 
-"@angular/material@^7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-7.2.0.tgz#35088eacf27645c9f01f054caf4011318db6e0f4"
-  integrity sha512-ZLgpZ6hVJABMu6lk+97esN9TmLvBjeAgTbszLBJHOeSKocUGaWeKsdiUweMCdNgWrYNMowIAVKGqwavmaj7XTQ==
+"@angular/material@^7.2.1":
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-7.2.1.tgz#b2820ed32bcbfad4db9498689ee7afc523da2e59"
+  integrity sha512-d2O+7dDjIl7W1qlOdTfsAgMSrz9NNmPV6zJKqsRpZtkywAwKSwqzOs29XN3GjN2wYxZCnCpQi99l4GgmzPxRzg==
   dependencies:
     tslib "^1.7.1"
 
@@ -6229,9 +6229,9 @@ ejs@^2.6.1:
   integrity sha512-0xy4A/twfrRCnkhfk8ErDi5DqdAsAqeGxht4xkCUrsvhhbQNs7E+4jV0CN7+NKIY0aHE72+XvqtBIXzD31ZbXQ==
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.96:
-  version "1.3.98"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.98.tgz#f200bdac84b1110d7d9904f34f4fc6d5573a8a9c"
-  integrity sha512-WIZdNuvE3dFr6kkPgv4d/cfswNZD6XbeLBM8baOIQTsnbf4xWrVEaLvp7oNnbnMWWXDqq7Tbv+H5JfciLTJm4Q==
+  version "1.3.100"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.100.tgz#899fb088def210aee6b838a47655bbb299190e13"
+  integrity sha512-cEUzis2g/RatrVf8x26L8lK5VEls1AGnLHk6msluBUg/NTB4wcXzExTsGscFq+Vs4WBBU2zbLLySvD4C0C3hwg==
 
 elliptic@=6.4.0:
   version "6.4.0"
@@ -7028,9 +7028,9 @@ fast-diff@1.2.0:
   integrity sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==
 
 fast-glob@^2.0.2:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-2.2.5.tgz#e03dd265921cfb7a11a896048ab9bb818a944d50"
-  integrity sha512-8E7F/dTYpMFiZpz8U9h87AMDaAWkkLrNzxAcolwwvlOURzFqeRS0XaiKeUEUcH1kWWPTXGPALq/ue7652YygzA==
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-2.2.6.tgz#a5d5b697ec8deda468d85a74035290a025a95295"
+  integrity sha512-0BvMaZc1k9F+MeWWMe8pL6YltFzZYcJsYU7D4JyDA6PAczaXvxqQQ/z+mDF7/4Mw01DeUc+i3CTKajnkANkV4w==
   dependencies:
     "@mrmlnc/readdir-enhanced" "^2.2.1"
     "@nodelib/fs.stat" "^1.1.2"
@@ -18117,12 +18117,12 @@ typescript@2.9.1:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.1.tgz#fdb19d2c67a15d11995fd15640e373e09ab09961"
   integrity sha512-h6pM2f/GDchCFlldnriOhs1QHuwbnmj6/v7499eMHqPeW4V2G0elua2eIc2nu8v2NdHV0Gm+tzX83Hr6nUFjQA==
 
-typescript@3.1.6, typescript@~3.1.1:
+typescript@3.1, typescript@3.1.6, typescript@~3.1.1:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.6.tgz#b6543a83cfc8c2befb3f4c8fba6896f5b0c9be68"
   integrity sha512-tDMYfVtvpb96msS1lDX9MEdHrW4yOuZ4Kdc4Him9oU796XldPYF/t2+uKoX0BBa0hXXwDlqYQbXY5Rzjzc5hBA==
 
-typescript@3.2, typescript@3.2.x:
+typescript@3.2.x:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.2.tgz#fe8101c46aa123f8353523ebdcf5730c2ae493e5"
   integrity sha512-VCj5UiSyHBjwfYacmDuc/NOk4QQixbE+Wn7MFJuS0nRuPQbof132Pw4u53dm264O8LPc2MVsc7RJNml5szurkg==
@@ -18805,10 +18805,10 @@ videojs-playlist@^4.2.6:
     global "^4.3.2"
     video.js "^6 || ^7"
 
-videojs-record@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/videojs-record/-/videojs-record-3.2.0.tgz#8ef2a513087c89edd6a7d2c9f530bc0084a7e3ed"
-  integrity sha512-1vhZaM1HT2wgj120PJqOVuDI1zOojxvCuJoDakZEWsQJHgeykg8JOo66YKWQAmZOpLlZC632NXavJdmLLXc1pw==
+videojs-record@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/videojs-record/-/videojs-record-3.2.1.tgz#ca1587fc81269907762a90833d3988f2b813edc4"
+  integrity sha512-XGoZgIBkQZrqKd4jEvW5SZsv9o+I9SSeHxSB4OaoDUR8qHdIVo+y8QhZvkxWsGSkpJ1q2vSh5V69Q4rqpzX2Mw==
   dependencies:
     recordrtc ">=5.5.0"
     video.js ">=6.2.7"
