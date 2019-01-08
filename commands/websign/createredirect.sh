@@ -24,6 +24,18 @@ handlers:
   secure: always
   # default_headers Strict-Transport-Security
 
+- url: /appcache.appcache
+  static_files: appcache.appcache
+  upload: appcache.appcache
+  secure: always
+  # default_headers Strict-Transport-Security
+
+- url: /serviceworker.js
+  static_files: serviceworker.js
+  upload: serviceworker.js
+  secure: always
+  # default_headers Strict-Transport-Security
+
 - url: /.*
   script: redirect.app
   secure: always
