@@ -1,5 +1,30 @@
 <h1 matDialogTitle [class.text-center]='fabMode'>{{title}}</h1>
-<div mat-dialog-content [class.text-center]='fabMode'>
+
+<div [class.text-center]='fabMode' *ngIf='bottomSheet'>
+	<ng-container *ngTemplateOutlet='dialogContent'></ng-container>
+</div>
+<div mat-dialog-content [class.text-center]='fabMode' *ngIf='!bottomSheet'>
+	<ng-container *ngTemplateOutlet='dialogContent'></ng-container>
+</div>
+
+<br *ngIf='bottomSheet' />
+
+<div fxLayoutAlign='end center' *ngIf='bottomSheet && !fabMode'>
+	<ng-container *ngTemplateOutlet='dialogActionsDefault'></ng-container>
+</div>
+<div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!bottomSheet && !fabMode'>
+	<ng-container *ngTemplateOutlet='dialogActionsDefault'></ng-container>
+</div>
+
+<div class='fab-section' *ngIf='bottomSheet && fabMode'>
+	<ng-container *ngTemplateOutlet='dialogActionsFab'></ng-container>
+</div>
+<div mat-dialog-actions class='fab-section' *ngIf='!bottomSheet && fabMode'>
+	<ng-container *ngTemplateOutlet='dialogActionsFab'></ng-container>
+</div>
+
+
+<ng-template #dialogContent>
 	<cyph-markdown
 		[markdown]='content'
 		[targetSelf]='true'
@@ -41,11 +66,9 @@
 			</mat-form-field>
 		</form>
 	</ng-template>
-</div>
+</ng-template>
 
-<br *ngIf='bottomSheet' />
-
-<div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!fabMode'>
+<ng-template #dialogActionsDefault>
 	<button mat-button (click)='close(false)' *ngIf='!cancelFAB'>
 		{{cancel}}
 	</button>
@@ -68,8 +91,9 @@
 	>
 		<mat-icon>{{okFAB}}</mat-icon>
 	</button>
-</div>
-<div mat-dialog-actions class='fab-section' *ngIf='fabMode'>
+</ng-template>
+
+<ng-template #dialogActionsFab>
 	<div fxFlex fxLayoutAlign='center center' class='red-button'>
 		<button mat-fab [matTooltip]='cancel' (click)='close(false)'>
 			<mat-icon>{{cancelFAB}}</mat-icon>
@@ -89,4 +113,4 @@
 			<mat-icon>{{okFAB}}</mat-icon>
 		</button>
 	</div>
-</div>
+</ng-template>
