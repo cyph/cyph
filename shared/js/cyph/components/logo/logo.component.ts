@@ -17,6 +17,9 @@ import {urlToSafeStyle} from '../../util/safe-values';
 })
 export class LogoComponent extends BaseProvider {
 	/** @ignore */
+	private altInternal: boolean		= false;
+
+	/** @ignore */
 	private cardHeaderInternal: boolean	= false;
 
 	/** @ignore */
@@ -28,6 +31,12 @@ export class LogoComponent extends BaseProvider {
 	/** Possible logos. */
 	private readonly logos	= {
 		horizontal: {
+			alt: urlToSafeStyle(
+				this.envService.customBuildImages.logoHorizontal ||
+				this.domSanitizer.bypassSecurityTrustUrl(
+					'/assets/img/logo.purple.horizontal.png'
+				)
+			),
 			main: urlToSafeStyle(
 				this.envService.customBuildImages.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
@@ -42,6 +51,12 @@ export class LogoComponent extends BaseProvider {
 			)
 		},
 		icon: {
+			alt: urlToSafeStyle(
+				this.envService.customBuildImages.favicon ||
+				this.domSanitizer.bypassSecurityTrustUrl(
+					'/assets/img/logo.purple.icon.png'
+				)
+			),
 			main: urlToSafeStyle(
 				this.envService.customBuildImages.favicon ||
 				this.domSanitizer.bypassSecurityTrustUrl(
@@ -56,6 +71,12 @@ export class LogoComponent extends BaseProvider {
 			)
 		},
 		vertical: {
+			alt: urlToSafeStyle(
+				this.envService.customBuildImages.logoVertical ||
+				this.domSanitizer.bypassSecurityTrustUrl(
+					'/assets/img/logo.purple.vertical.png'
+				)
+			),
 			main: urlToSafeStyle(
 				this.envService.customBuildImages.logoVertical ||
 				this.domSanitizer.bypassSecurityTrustUrl(
@@ -70,6 +91,12 @@ export class LogoComponent extends BaseProvider {
 			)
 		},
 		video: {
+			alt: urlToSafeStyle(
+				this.envService.customBuildImages.logoHorizontal ||
+				this.domSanitizer.bypassSecurityTrustUrl(
+					'/assets/img/betalogo.mobile.png'
+				)
+			),
 			main: urlToSafeStyle(
 				this.envService.customBuildImages.logoHorizontal ||
 				this.domSanitizer.bypassSecurityTrustUrl(
@@ -96,6 +123,15 @@ export class LogoComponent extends BaseProvider {
 
 	/** Alignment of logo position. */
 	@Input() public alignment: 'bottom'|'center'|'left'|'right'|'top'	= 'center';
+
+	/** Indicates whether to use alt version where available. */
+	@Input()
+	public get alt () : boolean {
+		return this.altInternal;
+	}
+	public set alt (value: boolean) {
+		this.altInternal	= (<any> value) === '' ? true : value;
+	}
 
 	/** Indicates whether image is a logo in a card. */
 	@HostBinding('class.card-header-logo')
@@ -137,7 +173,12 @@ export class LogoComponent extends BaseProvider {
 						this.logos.horizontal
 		;
 
-		return this.envService.isTelehealth ? logoSet.telehealth : logoSet.main;
+		return this.envService.isTelehealth ?
+			logoSet.telehealth :
+		this.alt ?
+			logoSet.alt :
+			logoSet.main
+		;
 	}
 
 	/** Indicates whether to use vertical image. */

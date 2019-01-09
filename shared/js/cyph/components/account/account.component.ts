@@ -119,7 +119,6 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 				'audio',
 				'call',
 				'mail',
-				'messages',
 				'profile',
 				'video',
 				'wallets'
@@ -128,6 +127,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			activatedRouteURL.length > 1 &&
 			[
 				'appointments',
+				'messages',
 				'notes'
 			].indexOf(route) > -1 &&
 			!(

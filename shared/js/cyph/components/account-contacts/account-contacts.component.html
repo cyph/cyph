@@ -9,6 +9,18 @@
 	'
 >
 	<div fxFlex fxLayout='column' fxLayoutAlign='start stretch'>
+		<ng-container *ngIf='(accountDatabaseService.currentUser | async)?.pseudoAccount === true'>
+			<br />
+			<br />
+			<div fxFlex='48px' fxLayoutAlign='center'>
+				<cyph-logo
+					alt
+					homeLink
+					[white]='envService.environment.customBuild?.config.dark'
+				></cyph-logo>
+			</div>
+		</ng-container>
+
 		<br *ngIf='envService.isMobile | async' />
 
 		<cyph-account-contacts-search
@@ -89,7 +101,12 @@
 
 		<br />
 
-		<button mat-button [matMenuTriggerFor]='addContactMenu' class='add-contact'>
+		<button
+			mat-button
+			[matMenuTriggerFor]='addContactMenu'
+			class='add-contact'
+			*ngIf='(accountDatabaseService.currentUser | async)?.confirmed === true'
+		>
 			{{stringsService.addContactTitle}}
 		</button>
 		<mat-menu #addContactMenu='matMenu'>

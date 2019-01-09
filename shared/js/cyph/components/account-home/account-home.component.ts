@@ -33,6 +33,14 @@ export class AccountHomeComponent extends BaseProvider implements AfterViewInit 
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
+		if (
+			this.accountDatabaseService.currentUser.value &&
+			this.accountDatabaseService.currentUser.value.pseudoAccount
+		) {
+			this.router.navigate(['messages']);
+			return;
+		}
+
 		this.accountService.transitionEnd();
 	}
 
