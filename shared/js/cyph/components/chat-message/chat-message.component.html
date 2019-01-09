@@ -79,7 +79,11 @@
 							[src]='message?.authorUser?.avatar | async'
 							[routerLink]='"/profile/" + message?.authorUser?.username'
 							alt='User Avatar'
-							*ngIf='accountService && !!message?.authorUser'
+							*ngIf='
+								accountService &&
+								!!message?.authorUser &&
+								!!message?.authorUser?.avatar
+							'
 						/>
 						<mat-card-title fxFlex>
 							<div fxFlex [fxLayout]='mobile ? "column" : "row"'>

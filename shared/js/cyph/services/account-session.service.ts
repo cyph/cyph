@@ -183,6 +183,7 @@ export class AccountSessionService extends SessionService {
 
 			this.remoteUser.next({
 				anonymous: true,
+				avatar: undefined,
 				contactID: undefined,
 				name: undefined,
 				pseudoAccount: false,
@@ -361,6 +362,7 @@ export class AccountSessionService extends SessionService {
 
 			this.remoteUser.next({
 				anonymous: false,
+				avatar: undefined,
 				contactID: this.accountContactsService.getContactID(chat.username),
 				name: of(name),
 				pseudoAccount: true,

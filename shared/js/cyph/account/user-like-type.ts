@@ -6,6 +6,7 @@ import {User} from './user';
 export type UserLike	=
 	{
 		anonymous: true;
+		avatar: undefined;
 		contactID: undefined;
 		name: undefined;
 		pseudoAccount: false;
@@ -13,6 +14,7 @@ export type UserLike	=
 	}|
 	{
 		anonymous: false;
+		avatar: undefined;
 		contactID: Promise<string>;
 		name: Observable<string>;
 		pseudoAccount: true;
