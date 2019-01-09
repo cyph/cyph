@@ -148,11 +148,20 @@
 		</span>
 	</ng-container>
 	<ng-template #messageConfirmed>
-		<ng-container *ngIf='confirmed; else messageUnconfirmed'>
+		<ng-container *ngIf='confirmed; else messagePartialConfirmed'>
 			<span class='confirmation-checks'>
 				<mat-icon>check</mat-icon>
 				&ngsp;
 				<mat-icon>check</mat-icon>
+			</span>
+		</ng-container>
+	</ng-template>
+	<ng-template #messagePartialConfirmed>
+		<ng-container *ngIf='!chatService.deliveryReceipts; else messageUnconfirmed'>
+			<span class='confirmation-checks'>
+				<mat-icon>check</mat-icon>
+				&ngsp;
+				<mat-icon class='visibility-hidden'>check</mat-icon>
 			</span>
 		</ng-container>
 	</ng-template>

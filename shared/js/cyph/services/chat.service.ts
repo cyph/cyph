@@ -158,6 +158,9 @@ export class ChatService extends BaseProvider {
 	/** Timer for chat self-destruction. */
 	public readonly chatSelfDestructTimer	= new BehaviorSubject<Timer|undefined>(undefined);
 
+	/** Indicates whether delivery receipts are enabled. */
+	public readonly deliveryReceipts		= this.sessionInitService.ephemeral;
+
 	/** Indicates whether chat virtual scrolling should be enabled if possible. */
 	public readonly enableVirtualScroll		= new BehaviorSubject<boolean>(false);
 
@@ -304,7 +307,7 @@ export class ChatService extends BaseProvider {
 					);
 				}
 
-				if (this.sessionInitService.ephemeral) {
+				if (this.deliveryReceipts) {
 					this.lastConfirmedMessageID	= o.id;
 
 					this.messageConfirmLock(async () => {
@@ -1544,7 +1547,7 @@ export class ChatService extends BaseProvider {
 				this.abortSetup()
 			);
 
-			if (this.sessionInitService.ephemeral) {
+			if (this.deliveryReceipts) {
 				this.sessionService.on(rpcEvents.confirm, async (
 					newEvents: ISessionMessageData[]
 				) => {
