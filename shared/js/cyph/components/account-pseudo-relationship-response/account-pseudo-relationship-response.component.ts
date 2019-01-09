@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
+import {AccountService} from '../../services/account.service';
 import {DatabaseService} from '../../services/database.service';
 import {StringsService} from '../../services/strings.service';
 import {filterUndefinedOperator} from '../../util/filter';
@@ -57,6 +58,7 @@ export class AccountPseudoRelationshipResponseComponent extends BaseProvider imp
 				);
 
 				this.rejected.next(true);
+				this.accountService.resolveUiReady();
 			}
 			catch {
 				await this.router.navigate(['404']);
@@ -70,6 +72,9 @@ export class AccountPseudoRelationshipResponseComponent extends BaseProvider imp
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountService: AccountService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
