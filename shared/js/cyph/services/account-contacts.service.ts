@@ -307,7 +307,8 @@ export class AccountContactsService extends BaseProvider {
 				newFormComponent([
 					newFormContainer([
 						input({
-							label: this.stringsService.nameOptional
+							label: this.stringsService.name,
+							required: true
 						})
 					]),
 					newFormContainer([
@@ -324,7 +325,7 @@ export class AccountContactsService extends BaseProvider {
 		const email	= getFormValue(contactForm, 'string', 0, 1, 0);
 		const name	= getFormValue(contactForm, 'string', 0, 0, 0);
 
-		if (!email) {
+		if (!email || !name) {
 			return;
 		}
 
