@@ -81,7 +81,10 @@
 					aria-label='Menu'
 					(click)='accountService.toggleMobileMenu()'
 					fxHide.gt-sm
-					*ngIf='(accountDatabaseService.currentUser | async) !== undefined'
+					*ngIf='
+						(accountDatabaseService.currentUser | async) !== undefined &&
+						(accountDatabaseService.currentUser | async)?.pseudoAccount === false
+					'
 				>
 					<cyph-logo icon white></cyph-logo>
 				</button>

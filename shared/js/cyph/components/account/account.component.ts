@@ -158,7 +158,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 		}
 		*/
 
-		return currentUser !== undefined && [
+		return currentUser !== undefined && !currentUser.pseudoAccount && [
 			'',
 			'404',
 			'account-burner',
