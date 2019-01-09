@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -38,6 +39,11 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 	/** Indicates whether the last login attempt has failed. */
 	public readonly error				= new BehaviorSubject<boolean>(false);
+
+	/** Memoized AccountAuthService.hasSavedCredentials. */
+	public readonly hasSavedCredentials	= memoize(async () =>
+		this.accountAuthService.hasSavedCredentials()
+	);
 
 	/** Password visibility setting. */
 	public readonly hidePassword		= new BehaviorSubject<boolean>(true);

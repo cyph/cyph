@@ -16,28 +16,54 @@
 		fxFlex.md='75'
 		fxFlex.gt-md='50'
 	>
-		<mat-card-title cyphTranslate>
-			Set Chat Unlock Password
-		</mat-card-title>
+		<ng-container *ngIf='(hasSavedCredentials() | async) === true'>
+			<mat-card-title cyphTranslate>
+				External Contact Request
+			</mat-card-title>
 
-		<mat-card-subtitle cyphTranslate>
-			This should be simple and memorable. However, a longer
-			one will be more secure if this is a shared device.
-		</mat-card-subtitle>
+			<mat-card-subtitle></mat-card-subtitle>
 
-		<cyph-logo cardHeader homeLink></cyph-logo>
+			<cyph-logo cardHeader homeLink></cyph-logo>
 
-		<mat-card-content fxLayout='row' fxLayoutAlign='center'>
-			<cyph-account-register
-				fxFlex='80'
-				[getPasswordSubmitText]='stringsService.continueButton'
-				[getPinOnly]='true'
-				[hidePinDescription]='true'
-				(submitPIN)='submit($event)'
-			></cyph-account-register>
-		</mat-card-content>
+			<mat-card-content fxLayout='column' fxLayoutAlign='center' fxLayoutGap='16px'>
+				<div></div>
+				<div cyphTranslate>
+					It appears that you're already logged in here. For now, this
+					feature can only be used in a browser session where no
+					existing login credentials have been saved.
+				</div>
+				<div cyphTranslate>
+					If you just want to test it out, you can use your browser's
+					incognito or private browsing mode &mdash; but be aware that the
+					chat history will no longer be accessible after closing out of
+					the incognito window.
+				</div>
+			</mat-card-content>
+		</ng-container>
+		<ng-container *ngIf='(hasSavedCredentials() | async) === false'>
+			<mat-card-title cyphTranslate>
+				Set Chat Unlock Password
+			</mat-card-title>
 
-		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+			<mat-card-subtitle cyphTranslate>
+				This should be simple and memorable. However, a longer
+				one will be more secure if this is a shared device.
+			</mat-card-subtitle>
+
+			<cyph-logo cardHeader homeLink></cyph-logo>
+
+			<mat-card-content fxLayout='row' fxLayoutAlign='center'>
+				<cyph-account-register
+					fxFlex='80'
+					[getPasswordSubmitText]='stringsService.continueButton'
+					[getPinOnly]='true'
+					[hidePinDescription]='true'
+					(submitPIN)='submit($event)'
+				></cyph-account-register>
+			</mat-card-content>
+
+			<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+		</ng-container>
 	</mat-card>
 </ng-container>
 
