@@ -41,9 +41,11 @@
 				class='message-timestamp'
 			>
 				<div fxLayout='row'>
+					<!--
 					<div *ngIf='mobile && message?.authorType === authorTypes.Local'>
 						{{message?.author | async}} &nbsp;&mdash;&nbsp;
 					</div>
+					-->
 
 					<div>{{message?.timeString}}</div>
 
@@ -53,9 +55,11 @@
 						<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>
 					</div>
 
+					<!--
 					<div *ngIf='mobile && message?.authorType === authorTypes.Remote'>
 						&nbsp;&mdash;&nbsp;&ngsp;{{message?.author | async}}
 					</div>
+					-->
 				</div>
 			</div>
 		</div>
