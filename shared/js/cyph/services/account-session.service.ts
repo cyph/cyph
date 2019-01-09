@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
-import {User} from '../account/user';
+import {UserLike} from '../account/user-like-type';
 import {
 	IAccountMessagingGroup,
 	ISessionMessage,
@@ -58,26 +58,7 @@ export class AccountSessionService extends SessionService {
 	public readonly ready				= this._READY.promise;
 
 	/** Remote user. */
-	public readonly remoteUser			=
-		new BehaviorSubject<
-			{
-				anonymous: true;
-				contactID: undefined;
-				name: undefined;
-				pseudoAccount: false;
-				username: undefined;
-			}|
-			{
-				anonymous: false;
-				contactID: Promise<string>;
-				name: Observable<string>;
-				pseudoAccount: true;
-				username: string;
-			}|
-			User|
-			undefined
-		>(undefined)
-	;
+	public readonly remoteUser			= new BehaviorSubject<UserLike|undefined>(undefined);
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
@@ -385,6 +366,8 @@ export class AccountSessionService extends SessionService {
 				pseudoAccount: true,
 				username: chat.username
 			});
+
+			this.remoteUsername.next(chat.username);
 
 			if (setHeader) {
 				this.accountService.setHeader({mobile: name});

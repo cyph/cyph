@@ -1,5 +1,5 @@
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {User} from '../account/user';
+import {UserLike} from '../account/user-like-type';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {
 	ChatMessage as ChatMessageInternal,
@@ -88,8 +88,8 @@ export class ChatMessage implements IChatMessage {
 		/** Author of this message. */
 		public readonly author: Observable<string>,
 
-		/** Author User object, if available. */
-		public readonly authorUser?: User
+		/** Author UserLike object, if available. */
+		public readonly authorUser?: UserLike
 	) {
 		if (
 			this.message.selfDestructTimeout === undefined ||

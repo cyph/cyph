@@ -5,7 +5,7 @@ import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, combineLatest, interval, Observable} from 'rxjs';
 import {filter, map, mergeMap, take, takeWhile} from 'rxjs/operators';
-import {User} from '../account/user';
+import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
 import {ChatMessage, IChatData, IChatMessageInput, IChatMessageLiveValue, States} from '../chat';
 import {HelpComponent} from '../components/help';
@@ -226,26 +226,7 @@ export class ChatService extends BaseProvider {
 	}>();
 
 	/** Remote User object where applicable. */
-	public readonly remoteUser				=
-		new BehaviorSubject<
-			{
-				anonymous: true;
-				contactID: undefined;
-				name: undefined;
-				pseudoAccount: false;
-				username: undefined;
-			}|
-			{
-				anonymous: false;
-				contactID: Promise<string>;
-				name: Observable<string>;
-				pseudoAccount: true;
-				username: string;
-			}|
-			User|
-			undefined
-		>(undefined)
-	;
+	public readonly remoteUser				= new BehaviorSubject<UserLike|undefined>(undefined);
 
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers				= {

@@ -16,7 +16,7 @@ import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
-import {User} from '../../account/user';
+import {User, UserLike} from '../../account';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
@@ -198,7 +198,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 							}
 
 							let author: Observable<string>;
-							let authorUser: User|undefined;
+							let authorUser: UserLike|undefined;
 
 							if (message.authorType === ChatMessage.AuthorTypes.App) {
 								author	= this.sessionService.appUsername;
@@ -222,18 +222,28 @@ implements AfterViewInit, OnChanges, OnDestroy {
 									authorUser	= (
 										this.envService.isAccounts && this.accountUserLookupService
 									) ?
-										await this.accountUserLookupService.getUser(
-											message.authorID,
-											false
-										) :
+										(
+											this.chatService.remoteUser.value &&
+											this.chatService.remoteUser.value.username ===
+												message.authorID
+										) ?
+											this.chatService.remoteUser.value :
+											await this.accountUserLookupService.getUser(
+												message.authorID,
+												false
+											)
+										:
 										undefined
 									;
 								}
 								catch {}
 
-								author	= authorUser === undefined ?
-									this.sessionService.remoteUsername :
-									authorUser.realUsername
+								author	=
+									authorUser && authorUser.pseudoAccount ?
+										authorUser.name :
+									authorUser instanceof User ?
+										authorUser.realUsername :
+										this.sessionService.remoteUsername
 								;
 							}
 

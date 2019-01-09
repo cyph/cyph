@@ -6,4 +6,5 @@ export * from './icurrent-user';
 export * from './public-signing-keys';
 export * from './review-max';
 export * from './user';
+export * from './user-like-type';
 export * from './username-mask';
