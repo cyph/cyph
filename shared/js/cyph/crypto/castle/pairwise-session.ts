@@ -10,7 +10,7 @@ import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../
 import {lockFunction} from '../../util/lock';
 import {debugLog, debugLogError} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
-import {resolvable, retryUntilSuccessful} from '../../util/wait';
+import {resolvable, retryUntilSuccessful, sleep} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';
@@ -405,7 +405,23 @@ export class PairwiseSession {
 						timestamps: new Map<number, number>()
 					};
 
+					/*
+						Honeybadger workaround: if lock isn't claimed for a while,
+						resolve this prematurely to dismiss unneeded loading banner.
+
+						Longer-term, perhaps have a signal sent from the client with
+						the lock to this one that initialMessagesDecrypted is done.
+					*/
+					let lockClaimed	= false;
+					sleep(2500).then(() => {
+						if (!lockClaimed) {
+							this.initialMessagesDecrypted.resolve();
+						}
+					});
+
 					return this.lock(async o => {
+						lockClaimed	= true;
+
 						debugLog(() => ({castleLockClaimed: o}));
 
 						this.pendingMessageResolvers	= pendingMessageResolvers;
