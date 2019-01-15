@@ -625,7 +625,7 @@ export class AccountAuthService extends BaseProvider {
 						).getValue()
 					;
 
-					if (!inviterUsername) {
+					if (inviterUsername === ' ') {
 						throw RegistrationErrorCodes.InvalidInviteCode;
 					}
 
@@ -636,7 +636,7 @@ export class AccountAuthService extends BaseProvider {
 							inviterUsername,
 							loginData.symmetricKey
 						),
-						username !== inviterUsername ?
+						inviterUsername && inviterUsername !== username ?
 							this.databaseService.setItem(
 								`users/${username}/contacts/${inviterUsername}`,
 								AccountContactState,

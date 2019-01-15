@@ -281,9 +281,9 @@ exports.channelDisconnect	= functions.database.ref(
 exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) => {
 	const inviteCode		= validateInput(data.inviteCode);
 	const inviterRef		= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
-	const inviterUsername	= (await inviterRef.once('value')).val() || '';
+	const inviterUsername	= (await inviterRef.once('value')).val();
 
-	return {isValid: !!inviterUsername};
+	return {isValid: typeof inviterUsername === 'string'};
 });
 
 
@@ -411,7 +411,7 @@ exports.userConsumeInvite	= functions.database.ref(
 	}
 
 	const inviterRef		= database.ref(`${params.namespace}/inviteCodes/${inviteCode}`);
-	const inviterUsername	= (await inviterRef.once('value')).val() || '';
+	const inviterUsername	= (await inviterRef.once('value')).val();
 
 	return Promise.all([
 		inviterRef.remove(),
@@ -419,7 +419,7 @@ exports.userConsumeInvite	= functions.database.ref(
 			params.namespace,
 			`users/${username}/inviterUsernamePlaintext`,
 			StringProto,
-			inviterUsername
+			inviterUsername || ' '
 		),
 		!inviterUsername ?
 			undefined :

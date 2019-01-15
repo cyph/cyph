@@ -50,7 +50,9 @@ await Promise.all(inviteCodes.map(async ({codes, username}) =>
 	Promise.all(codes.map(async code =>
 		Promise.all([
 			database.ref(`${namespace.replace(/\./g, '_')}/inviteCodes/${code}`).set(username),
-			setItem(namespace, `users/${username}/inviteCodes/${code}`, BooleanProto, true)
+			username ?
+				setItem(namespace, `users/${username}/inviteCodes/${code}`, BooleanProto, true) :
+				undefined
 		])
 	))
 ));
@@ -70,9 +72,9 @@ return inviteCodes.reduce(
 if (require.main === module) {
 	(async () => {
 		const projectId			= process.argv[2];
-		const username			= process.argv[3];
-		const count				= toInt(process.argv[4]);
-		const namespace			= process.argv[5];
+		const count				= toInt(process.argv[3]);
+		const namespace			= process.argv[4];
+		const username			= process.argv[5] || '';
 		const countByUser		= {};
 		countByUser[username]	= isNaN(count) ? 1 : count;
 
