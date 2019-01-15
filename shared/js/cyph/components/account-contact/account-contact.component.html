@@ -161,20 +161,48 @@
 			<button
 				mat-icon-button
 				cyphTranslate
-				aria-label='Call'
-				[routerLink]='
+				aria-label='Contact Menu'
+				[matMenuTriggerFor]='contactMenu'
+				(click)='$event.stopPropagation()'
+				*ngIf='p2pSupported && !envService.isTelehealthFull'
+			>
+				<mat-icon>more_vert</mat-icon>
+			</button>
+			<mat-menu #contactMenu='matMenu'>
+				<button mat-menu-item [routerLink]='
+					((user | async)?.contactID | async) ?
+						(
+							"/messages/" +
+							(((user | async)?.contactID | async) || "")
+						) :
+						undefined
+				'>
+					<mat-icon>chat</mat-icon>
+					<span cyphTranslate>Chat</span>
+				</button>
+				<button mat-menu-item [routerLink]='
 					((user | async)?.contactID | async) ?
 						(
 							"/call/" +
 							(((user | async)?.contactID | async) || "")
 						) :
 						undefined
-				'
-				(click)='$event.stopPropagation()'
-				*ngIf='p2pSupported && !envService.isTelehealthFull'
-			>
-				<mat-icon>call</mat-icon>
-			</button>
+				'>
+					<mat-icon>call</mat-icon>
+					<span cyphTranslate>Call</span>
+				</button>
+				<button mat-menu-item [routerLink]='
+					((user | async)?.contactID | async) ?
+						(
+							"/video/" +
+							(((user | async)?.contactID | async) || "")
+						) :
+						undefined
+				'>
+					<mat-icon>video_call</mat-icon>
+					<span cyphTranslate>Video Call</span>
+				</button>
+			</mat-menu>
 		</ng-container>
 		<ng-container *ngIf='contactState.state === accountContactStates.IncomingRequest'>
 			<button
