@@ -98,7 +98,7 @@ const commandScript			=
 const isAgseDeploy			=
 	(
 		args.command === 'certsign' &&
-		process.argv[3] === 'cyphme'
+		(!process.argv[3] || process.argv[3] === 'cyphme')
 	) || (
 		args.command === 'deploy' &&
 		!args.simple &&
