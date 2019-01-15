@@ -80,19 +80,17 @@ for (const username of Object.keys(pendingSignups)) {
 					namespace,
 					`users/${username}/inviterUsernamePlaintext`,
 					StringProto
-				).catch(() => undefined)
-			)
+				).catch(() => ' ')
+			) !== ' '
 		)
 	) {
 		usernames.push(username);
 	}
 	/* Otherwise, if signup has been pending for at least 3 hours, delete the user */
-	else if ((Date.now() - pendingSignup.timestamp) > 10800) {
-		await Promise.all([
-			auth.deleteUser(pendingSignup.uid),
-			database.ref(`${pendingSignupsURL}/${username}`).remove(),
-			removeItem(namespace, `users/${username}`)
-		]);
+	else if ((Date.now() - pendingSignup.timestamp) > 10800000) {
+		await auth.deleteUser(pendingSignup.uid);
+		await database.ref(`${pendingSignupsURL}/${username}`).remove();
+		await removeItem(namespace, `users/${username}`);
 
 		/* Avoid {"code":400,"message":"QUOTA_EXCEEDED : Exceeded quota for deleting accounts."} */
 		await sleep(1000);
