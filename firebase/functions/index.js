@@ -156,13 +156,14 @@ const onRequest	= f => functions.https.onRequest((req, res) => cors(req, res, as
 
 exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUsername) => {
 	const id				= validateInput(data.id);
-	const bobNameRef		= database.ref(`users/${bob}/internal/name`);
 	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
 
 	const [relationshipVal, bob]	= await Promise.all([
 		relationshipRef.once('value').then(o => o.val()),
 		getUsername()
 	]);
+
+	const bobNameRef	= database.ref(`${namespace}/users/${bob}/internal/name`);
 
 	const alice	= relationshipVal.aliceUsername;
 	const email	= relationshipVal.bobEmail;
@@ -201,7 +202,11 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 				true
 			)
 		),
-		!(await bobNameRef.once('value')).val() ? bobNameRef.set(name) : undefined,
+		bobNameRef.once('value').then(o => o.val()).then(async oldBobName =>
+			!oldBobName || oldBobName === bob ?
+				bobNameRef.set(name) :
+				undefined
+		),
 		getName(namespace, alice).then(async aliceName => notify(
 			namespace,
 			alice,
@@ -416,7 +421,7 @@ exports.userConsumeInvite	= functions.database.ref(
 			params.namespace,
 			`users/${username}/inviterUsernamePlaintext`,
 			StringProto,
-			inviterUsername || ' '
+			typeof inviterUsername === 'string' ? inviterUsername : ' '
 		),
 		!inviterUsername ?
 			undefined :
@@ -820,10 +825,12 @@ exports.userPublicProfileSet	= functions.database.ref(
 	);
 
 	return Promise.all([
-		nameRef.set(
+		nameRef.once('value').then(o => o.val()).then(async oldName =>
 			publicProfile && publicProfile.name ?
-				publicProfile.name :
-				username
+				nameRef.set(publicProfile.name) :
+			!oldName ?
+				nameRef.set(username) :
+				undefined
 		),
 		realUsernameRef.set(
 			publicProfile && publicProfile.realUsername.toLowerCase() === username ?
