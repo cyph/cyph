@@ -4,16 +4,30 @@
 '></cyph-account-profile>
 
 <ng-template #contactsHome>
-	<cyph-account-contacts
-		[home]='true'
-		[searchMode]='searchMode | async'
-		(searchBarBlur)='router.navigate([])'
-		*ngIf='
-			(accountDatabaseService.currentUser | async)?.confirmed &&
-			envService.isMobile | async;
-			else sidebarHome
-		'
-	></cyph-account-contacts>
+	<ng-container *ngIf='
+		(accountDatabaseService.currentUser | async)?.confirmed &&
+		envService.isMobile | async;
+		else sidebarHome
+	'>
+		<cyph-account-contacts
+			[home]='true'
+			[searchMode]='searchMode | async'
+			(searchBarBlur)='router.navigate([])'
+		></cyph-account-contacts>
+
+		<div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'>
+			<a
+				mat-fab
+				cyphTranslate
+				[class.absolute-fab]='(envService.isMobile | async) === false'
+				[class.fixed-fab]='envService.isMobile | async'
+				matTooltip='New Burner Chat'
+				[href]='envService.cyphImUrl'
+			>
+				<mat-icon>chat</mat-icon>
+			</a>
+		</div>
+	</ng-container>
 </ng-template>
 
 <ng-template #sidebarHome>
@@ -44,11 +58,25 @@
 				[matTooltip]='stringsService.linkGet'
 				matTooltipPosition='above'
 				routerLink='/account-burner/chat'
+				*ngIf='(accountDatabaseService.currentUser | async)?.confirmed'
 			>
 				<mat-icon>whatshot</mat-icon>
 				&nbsp;
-				<span>New Burner Chat</span>
+				<span cyphTranslate>New Burner Chat</span>
 			</button>
+			<button
+				mat-raised-button
+				color='accent'
+				[matTooltip]='stringsService.linkGet'
+				matTooltipPosition='above'
+				[href]='envService.cyphImUrl'
+				*ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'
+			>
+				<mat-icon>whatshot</mat-icon>
+				&nbsp;
+				<span cyphTranslate>New Burner Chat</span>
+			</button>
+
 			<button
 				mat-raised-button
 				color='accent'
@@ -63,6 +91,7 @@
 				&nbsp;
 				<span>Upload File to Vault</span>
 			</button>
+
 			<button
 				mat-raised-button
 				color='accent'
@@ -172,17 +201,4 @@
 			</a>
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
-</div>
-
-<div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'>
-	<a
-		mat-fab
-		cyphTranslate
-		[class.absolute-fab]='(envService.isMobile | async) === false'
-		[class.fixed-fab]='envService.isMobile | async'
-		matTooltip='New Burner Chat'
-		[href]='envService.cyphImUrl'
-	>
-		<mat-icon>chat</mat-icon>
-	</a>
 </div>
