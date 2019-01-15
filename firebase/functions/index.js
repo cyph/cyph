@@ -156,6 +156,7 @@ const onRequest	= f => functions.https.onRequest((req, res) => cors(req, res, as
 
 exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUsername) => {
 	const id				= validateInput(data.id);
+	const bobNameRef		= database.ref(`users/${bob}/internal/name`);
 	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
 
 	const [relationshipVal, bob]	= await Promise.all([
@@ -165,16 +166,11 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 
 	const alice	= relationshipVal.aliceUsername;
 	const email	= relationshipVal.bobEmail;
+	const name	= relationshipVal.bobName;
 
-	if (!alice || !bob) {
+	if (!alice || !bob || !email || !name) {
 		throw new Error('Users not found.');
 	}
-
-	const {name}	= await getItem(
-		namespace,
-		`users/${alice}/contacts/${id}`,
-		AccountContactState
-	);
 
 	await Promise.all([
 		relationshipRef.remove(),
@@ -205,6 +201,7 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 				true
 			)
 		),
+		!(await bobNameRef.once('value')).val() ? bobNameRef.set(name) : undefined,
 		getName(namespace, alice).then(async aliceName => notify(
 			namespace,
 			alice,
@@ -367,13 +364,13 @@ exports.rejectPseudoRelationship	= onCall(async (data, context, namespace, getUs
 exports.requestPseudoRelationship	= onCall(async (data, context, namespace, getUsername) => {
 	const {accountsURL}		= namespaces[namespace];
 	const email				= validateInput(data.email, emailRegex);
-	const name				= validateInput(data.name);
+	const name				= validateInput(data.name) || 'User';
 	const id				= uuid();
 	const username			= await getUsername();
 	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
 
 	await Promise.all([
-		relationshipRef.set({aliceUsername: username, bobEmail: email}),
+		relationshipRef.set({aliceUsername: username, bobEmail: email, bobName: name}),
 		setItem(
 			namespace,
 			`users/${username}/contacts/${id}`,

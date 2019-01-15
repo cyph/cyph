@@ -233,6 +233,9 @@
 					},
 					"bobEmail": {
 						".validate": "newData.isString()"
+					},
+					"bobName": {
+						".validate": "newData.isString()"
 					}
 				}
 			},
