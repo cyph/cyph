@@ -6,7 +6,8 @@ const byteConversions	= {
 	b: 1,
 	gb: 1073741824,
 	kb: 1024,
-	mb: 1048576
+	mb: 1048576,
+	tb: 1099511627776
 };
 
 /** Converts number of specified units to bytes. */
@@ -18,6 +19,8 @@ export const convertStorageUnitsToBytes	=
 			byteConversions.mb :
 		storageUnit === StorageUnits.gb ?
 			byteConversions.gb :
+		storageUnit === StorageUnits.tb ?
+			byteConversions.tb :
 			byteConversions.b
 	)
 ;
@@ -54,18 +57,21 @@ const readableByteLengthInternal	= memoize((n: number) =>
 	memoize((storageUnit?: StorageUnits) : string => {
 		const b	= convertStorageUnitsToBytes(n, storageUnit);
 
+		const tb	= b / byteConversions.tb;
 		const gb	= b / byteConversions.gb;
 		const mb	= b / byteConversions.mb;
 		const kb	= b / byteConversions.kb;
 
 		const o	=
+			tb >= 1 ?
+				{n: tb, s: 'T'} :
 			gb >= 1 ?
 				{n: gb, s: 'G'} :
-				mb >= 1 ?
-					{n: mb, s: 'M'} :
-					kb >= 1 ?
-						{n: kb, s: 'K'} :
-						{n: b, s: ''}
+			mb >= 1 ?
+				{n: mb, s: 'M'} :
+			kb >= 1 ?
+				{n: kb, s: 'K'} :
+				{n: b, s: ''}
 		;
 
 		return `${numberToString(o.n)} ${o.s}B`;

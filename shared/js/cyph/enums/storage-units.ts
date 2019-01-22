@@ -3,5 +3,6 @@ export enum StorageUnits {
 	b,
 	gb,
 	kb,
-	mb
+	mb,
+	tb
 }
