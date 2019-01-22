@@ -232,6 +232,8 @@ service firebase.storage {
 
 				// match /signingKeyPair/{hash} {}
 
+				// match /storageCap/{hash} {}
+
 				// match /unreadFiles/{hash} {}
 
 				// match /unreadMessages/{hash} {}

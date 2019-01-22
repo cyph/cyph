@@ -42,6 +42,7 @@ import {
 	IRedoxPatient,
 	IWallet,
 	NotificationTypes,
+	NumberProto,
 	RedoxPatient,
 	Wallet
 } from '../proto';
@@ -377,8 +378,20 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Total storage limit. */
 	public readonly fileStorageLimit				=
-		this.accountSettingsService.plan.pipe(map(plan => convertStorageUnitsToBytes(
-			this.configService.planConfig[plan].storageCapGB,
+		combineLatest(
+			this.accountSettingsService.plan,
+			this.accountDatabaseService.watch(
+				'storageCap',
+				NumberProto,
+				SecurityModels.unprotected,
+				undefined,
+				undefined,
+				this.subscriptions
+			).pipe(map(o =>
+				o.value
+			))
+		).pipe(map(([plan, storageCap]) => convertStorageUnitsToBytes(
+			storageCap || this.configService.planConfig[plan].storageCapGB,
 			StorageUnits.gb
 		)))
 	;
