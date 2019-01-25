@@ -3,7 +3,7 @@ function cachingFetch (url) {
 
 	return superSphincs.hash(url).then(function (hash) {
 		key	= 'websign-fetch/' + hash.hex;
-		return localforage.ready();
+		return localforage.ready().catch(function () {});
 	}).then(function () {
 		return localforage.getItem(key).catch(function () {});
 	}).then(function (value) {
