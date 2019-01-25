@@ -15,17 +15,15 @@ try {
 }
 catch (_) {}
 
-var localStorageSupported	= false;
+var storage	= {};
 try {
-	localStorage.setItem('supported', 'true');
-	localStorage.removeItem('supported');
-	localStorageSupported		= true;
+	localStorage.setItem('isPersistent', 'true');
+	storage	= localStorage;
 }
 catch (_) {}
 
 if (!(
 	cryptoSupported &&
-	localStorageSupported &&
 	'Promise' in self &&
 	'Worker' in self &&
 	'history' in self &&
