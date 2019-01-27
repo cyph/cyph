@@ -277,8 +277,8 @@ cat > cdnupdate.sh <<- EOM
 	head="\\\$(getHead)"
 
 	sleep 60
-	cachePaths "\\\$(git ls-files | grep -P '^cyph\.ws/')"
-	cachePaths "\\\$(git ls-files | grep -vP '^cyph\.ws/')"
+	cachePaths "\\\$(git ls-files | grep -P '^cyph\.app/')"
+	cachePaths "\\\$(git ls-files | grep -vP '^cyph\.app/')"
 
 	while true ; do
 		sleep 60

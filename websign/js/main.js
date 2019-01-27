@@ -172,7 +172,7 @@ then(function (results) {
 		downloadMetadata.packageTimestamp !== opened.timestamp ||
 		(
 			packageName !== opened.packageName &&
-			packageName !== opened.packageName.replace(/\.ws$/, '')
+			packageName !== opened.packageName.replace(/\.(app|ws)$/, '')
 		)
 	) {
 		throw new Error('Stale or invalid data.');
