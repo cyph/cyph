@@ -25,11 +25,11 @@ export class ChatEnvService extends EnvService {
 			const baseURL	= (
 				this.callType === this.sessionInitService.callType ?
 					undefined :
-					this.sessionInitService.callType === 'audio' ?
-						(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
-						this.sessionInitService.callType === 'video' ?
-							(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
-							undefined
+				this.sessionInitService.callType === 'audio' ?
+					(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
+				this.sessionInitService.callType === 'video' ?
+					(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
+					undefined
 			) || (
 				base ? env.newCyphBaseUrl : env.cyphImUrl
 			);
