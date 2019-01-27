@@ -16,7 +16,6 @@ else
 fi
 
 rootURL="${1}"
-escapedRootURL="$(echo "${rootURL}" | sed 's|/|\\/|g')"
 fullDestinationURL="${rootURL}/static_wordpress"
 destinationProtocol="$(echo "${fullDestinationURL}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${fullDestinationURL}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
@@ -365,9 +364,12 @@ find . -type f -name logo-amp.png -exec cp -f "${dir}/shared/assets/img/logo.amp
 rm -rf blog/amp
 find . -type d -name amp -not -path './blog/*' -exec rm -rf '{}' \; 2> /dev/null
 
-for f in $(find . -type f -name '*.html') ; do
-	cat "${f}" | perl -pe "s/\"${escapedRootURL}\/([^\"]*)\?/\"\/\1\?/g" > "${f}.new"
-	mv "${f}.new" "${f}"
+for f in $(find . -type f -not -name '*.xml') ; do
+	sed -i "s|${rootURL}/|/|g" "${f}"
+
+	# Special cases where full URL should be preserved
+	sed -i "s|<link rel=\"canonical\" href=\"/\">|<link rel=\"canonical\" href=\"${rootURL}/\">|g" "${f}"
+	sed -i "s|<meta property=\"og:url\" content=\"/\">|<meta property=\"og:url\" content=\"${rootURL}/\">|g" "${f}"
 done
 
 for f in $(find . -type f -name '*.js') ; do
