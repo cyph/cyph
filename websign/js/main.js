@@ -48,7 +48,7 @@ Promise.resolve().then(function () {
 		return null;
 	}
 
-	return fetch(config.continentUrl).then(function (response) {
+	return fetchRetry(config.continentUrl).then(function (response) {
 		return response.text();
 	}).then(function (s) {
 		return s.trim();
@@ -69,7 +69,7 @@ then(function (continent) {
 
 		return Promise.race([
 			new Promise(function (_, reject) { setTimeout(reject, 30000); }),
-			fetch(
+			fetchRetry(
 				cdnUrl + 'current?' + Date.now()
 			).then(function (response) {
 				return response.text();
@@ -198,7 +198,7 @@ catch(function () {
 	return Promise.all([
 		package,
 		Promise.all(config.files.map(function (file) {
-			return fetch(file).then(function (response) {
+			return fetchRetry(file).then(function (response) {
 				return response.text();
 			});
 		}))
@@ -266,7 +266,7 @@ catch(function (err) {
 		messageElement.style.display	= 'block';
 
 		/* Also try to warn us, though in a serious attack this may be blocked */
-		fetch('https://mandrillapp.com/api/1.0/messages/send.json', {
+		fetchRetry('https://mandrillapp.com/api/1.0/messages/send.json', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

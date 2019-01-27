@@ -50,24 +50,6 @@ function webSignSRI_Process (baseUrl) {
 				return;
 			}
 
-			var fetchContent	= function (retries) {
-				return fetch(
-					baseUrl +
-					path.replace(/^\//, '') +
-					'?' +
-					expectedHash
-				).then(function (response) {
-					return response.text();
-				}).catch(function (err) {
-					if (retries > 0) {
-						return fetchContent(retries - 1);
-					}
-					else {
-						return Promise.reject(err);
-					}
-				});
-			};
-
 			return localforage.getItem(localStorageKey).then(function (content) {
 				if (!content) {
 					throw new Error('Content not in WebSign-SRI cache.');
@@ -75,7 +57,11 @@ function webSignSRI_Process (baseUrl) {
 
 				return content;
 			}).catch(function () {
-				return fetchContent(5).then(function (s) {
+				return fetchRetry(
+					baseUrl + path.replace(/^\//, '') + '?' + expectedHash
+				).then(function (response) {
+					return response.text();
+				}).then(function (s) {
 					var content	= s.trim();
 
 					return Promise.all([
