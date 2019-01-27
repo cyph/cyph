@@ -46,8 +46,8 @@ export class Analytics {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly env: EnvDeploy = envDeploy
+		/** @see EnvDeploy */
+		public readonly env: EnvDeploy = envDeploy
 	) {
 		this.enabled	= Promise.resolve().then(async () => {
 			const appName		= this.env.host;
