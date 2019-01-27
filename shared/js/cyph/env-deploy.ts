@@ -25,7 +25,7 @@ export class EnvDeploy {
 
 	/** URL for an accounts link ("https://cyph.app/" or equivalent). */
 	public readonly appUrl: string				= this.isOnion ?
-		`https://cyph.${config.onionRoot}/` :
+		`https://app.${config.onionRoot}/` :
 		`${locationData.protocol}//${locationData.hostname}:42002/`
 	;
 
