@@ -57,7 +57,7 @@ export class ChatEnvService extends EnvService {
 
 	/** EnvService.newCyphUrl adjusted for session API flags and initial call type. */
 	public get cyphImUrl () : string {
-		return this.newCyphUrlHelper(this.isOnion);
+		return this.newCyphUrlHelper(false);
 	}
 
 	/** @ignore */
