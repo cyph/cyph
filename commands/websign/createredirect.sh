@@ -83,7 +83,11 @@ cat > "${domain}/index.html" <<- EOM
 
 					if (isHiddenService) {
 						host	=
-							host.replace(/\\.(app|ws)\$/, '').replace(/\\./g, '_') +
+							(
+								host === 'cyph.app' ?
+									'app' :
+									host.replace(/\\.(app|ws)\$/, '').replace(/\\./g, '_')
+							) +
 							'.cyphdbyhiddenbhs.onion'
 						;
 					}
