@@ -44,6 +44,9 @@ EOM
 cat > "${domain}/index.html" <<- EOM
 	<!DOCTYPE html>
 	<html manifest='/appcache.appcache'>
+		<head>
+			<meta charset='utf-8' />
+		</head>
 		<body>
 			<script>
 				function redirect () {
