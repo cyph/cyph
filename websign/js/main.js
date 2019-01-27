@@ -12,14 +12,15 @@ try {
 }
 catch (_) {}
 
-var isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
+var hostSplit		= location.host.split('.');
+var isHiddenService	= hostSplit.slice(-1)[0] === 'onion';
 
 var packageName		=
 	!isHiddenService ?
 		location.host :
-	location.host === 'app' ?
+	hostSplit[0] === 'app' ?
 		'cyph.app' :
-		location.host.split('.')[0].replace(/_/g, '.')
+		hostSplit[0].replace(/_/g, '.')
 ;
 
 /* Set pin on www subdomain on first use, then force naked domain */
