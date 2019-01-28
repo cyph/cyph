@@ -6,11 +6,10 @@ class Redirect (webapp2.RequestHandler):
 		location = '/#' + path
 
 		# Workaround for Tor server configuration
-		if 'Host' in self.request.headers and self.request.headers['Host'].endswith(':8081'):
-			location = 'https://' + self.request.headers['Host'].split(':')[0] + location
+		if 'X-Forwarded-Host' in self.request.headers:
+			location = 'https://' + self.request.headers['X-Forwarded-Host'] + location
 
-		self.response.headers.add_header('Location', location)
-		self.response.status	= 301
+		self.redirect(location, True)
 
 	def get (self, path):
 		self.decorateHeaders(path)
