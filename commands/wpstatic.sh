@@ -364,7 +364,7 @@ find . -type f -name logo-amp.png -exec cp -f "${dir}/shared/assets/img/logo.amp
 rm -rf blog/amp
 find . -type d -name amp -not -path './blog/*' -exec rm -rf '{}' \; 2> /dev/null
 
-for f in $(find . -type f -not -name '*.xml' -and -not -path './wp-content/themes/Zephyr-Cyph-Child/*') ; do
+for f in $(find . -type f -not -name '*.xml' -and -not -path './wp-content/themes/Zephyr-Cyph-Child/*.js') ; do
 	sed -i "s|${rootURL}/|/|g" "${f}"
 
 	# Special cases where full URL should be preserved
