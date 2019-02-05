@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {memoize} from 'lodash-es';
 import {map} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -38,6 +39,13 @@ export class AccountUserLookupService extends BaseProvider {
 
 	/** @ignore */
 	private readonly userCache: Map<string, User>		= new Map<string, User>();
+
+	/** Checks to see if a username is blacklisted. */
+	public readonly usernameBlacklisted					= memoize(async (username: string) =>
+		this.databaseService.callFunction('usernameBlacklisted', {username}).
+			then((o: any) => typeof o === 'object' && o.isBlacklisted === true).
+			catch(() => true)
+	);
 
 	/**
 	 * Checks to see if a username is owned by an existing user.

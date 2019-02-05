@@ -12,7 +12,8 @@
 		"lz4": "*",
 		"mustache": "*",
 		"nodemailer": "4",
-		"sanitize-html": "*"
+		"sanitize-html": "*",
+		"username-blacklist": "https://github.com/cyph/The-Big-Username-Blacklist"
 	},
 	"private": true
 }

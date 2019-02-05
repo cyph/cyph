@@ -2,6 +2,7 @@ const cors							= require('cors')({origin: true});
 const firebase						= require('firebase');
 const admin							= require('firebase-admin');
 const functions						= require('firebase-functions');
+const usernameBlacklist				= new Set(require('username-blacklist'));
 const {config}						= require('./config');
 const {sendMail, sendMailInternal}	= require('./email');
 const {emailRegex}					= require('./email-regex');
@@ -401,7 +402,12 @@ exports.userConsumeInvite	= functions.database.ref(
 		return;
 	}
 
-	const username		= params.user;
+	const username	= params.user;
+
+	if (usernameBlacklist.has(username)) {
+		return;
+	}
+
 	const inviteCode	= await getItem(
 		params.namespace,
 		`users/${username}/inviteCode`,
@@ -667,6 +673,13 @@ exports.userEmailSet	= functions.database.ref(
 });
 
 
+exports.usernameBlacklisted	= onCall(async (data, context, namespace, getUsername) => {
+	const username	= validateInput(data.username);
+
+	return {isBlacklisted: usernameBlacklist.has(username)};
+});
+
+
 /* TODO: Translations and user block lists. */
 exports.userNotify	= onCall(async (data, context, namespace, getUsername) => {
 	const username		= await getUsername();
@@ -843,18 +856,21 @@ exports.userPublicProfileSet	= functions.database.ref(
 
 exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params}) => {
 	const emailSplit	= (userRecord.email || '').split('@');
+	const username		= emailSplit[0];
+	const namespace		= emailSplit[1].replace(/\./g, '_');
 
-	if (emailSplit.length !== 2 || (
-		userRecord.providerData && userRecord.providerData.find(o =>
-			o.providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
+	if (
+		emailSplit.length !== 2 ||
+		usernameBlacklist.has(username) ||
+		(
+			userRecord.providerData && userRecord.providerData.find(o =>
+				o.providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
+			)
 		)
-	)) {
+	) {
 		console.error(`Deleting user: ${JSON.stringify(userRecord)}`);
 		return auth.deleteUser(userRecord.uid);
 	}
-
-	const username	= emailSplit[0];
-	const namespace	= emailSplit[1].replace(/\./g, '_');
 
 	return Promise.all([
 		database.ref(`${namespace}/pendingSignups/${username}`).set({

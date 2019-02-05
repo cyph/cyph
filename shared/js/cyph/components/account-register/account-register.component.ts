@@ -211,7 +211,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 			return (await sleep(500).then(async () =>
 				this.usernameDebounceLast === id && value ?
-					this.accountUserLookupService.exists(value, false, false) :
+					(
+						(await this.accountUserLookupService.usernameBlacklisted(value)) ||
+						(await this.accountUserLookupService.exists(value, false, false))
+					) :
 					true
 			)) ?
 				{usernameTaken: true} :
