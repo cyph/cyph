@@ -179,6 +179,7 @@ cat > server.js <<- EOM
 			ctx.set('Strict-Transport-Security', 'max-age=31536000; includeSubdomains');
 
 			if (!ctx.path || ctx.path === '/') {
+				ctx.set('Content-Type', 'text/plain');
 				ctx.body	= 'Welcome to Cyph, lad';
 				ctx.status	= 200;
 				return;
