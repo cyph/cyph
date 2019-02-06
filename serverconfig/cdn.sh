@@ -375,7 +375,7 @@ cat > cdnupdate.sh <<- EOM
 
 	while true ; do
 		sleep 60
-		git pull || break
+		git pull
 
 		newHead="\\\$(getHead)"
 		if [ "\\\${head}" == "\\\${newHead}" ] ; then
@@ -386,14 +386,6 @@ cat > cdnupdate.sh <<- EOM
 
 		head="\\\${newHead}"
 	done
-
-	# Start from scratch when pull fails
-	cd
-	rm -rf cdn
-	./cdnupdate.sh &
-	while [ ! -d cdn ] ; do sleep 5 ; done
-	killall node
-	./server.js &
 EOM
 chmod +x cdnupdate.sh
 

@@ -33,7 +33,7 @@ cd /cdn
 sleep 60
 
 while true ; do
-	git pull || break
+	git pull
 
 	node -e "console.log([
 		'burner.cyph.app',
@@ -63,10 +63,6 @@ while true ; do
 
 	sleep 90m
 done
-
-# Start from scratch when pull fails
-rm -rf /cdn
-/certupdate.sh &
 EndOfMessage
 
 
