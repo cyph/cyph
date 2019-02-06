@@ -21,17 +21,18 @@ openssl dhparam -out dhparams.pem 2048
 keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 backupHash='V3Khw3OOrzNle8puKasf47gcsFk9QqKP5wy0WWodtgA='
 
-npm install koa
+npm install glob koa
 
 
 cat > server.js <<- EOM
 	#!/usr/bin/env node
 
-	const app			= new (require('koa'))();
 	const childProcess	= require('child_process');
 	const crypto		= require('crypto');
 	const fs			= require('fs');
+	const glob			= require('glob');
 	const http2			= require('http2');
+	const app			= new (require('koa'))();
 
 	const cache			= {
 		br: {
@@ -118,6 +119,10 @@ cat > server.js <<- EOM
 		]).stdout.toString());
 
 		fs.unlinkSync('csr.pem');
+
+		for (const f of glob.sync('*_*.pem')) {
+			fs.unlinkSync(f);
+		}
 
 		if (!fs.existsSync(certPath)) {
 			throw new Error('No cert.');
