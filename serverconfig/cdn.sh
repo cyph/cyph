@@ -21,18 +21,19 @@ openssl dhparam -out dhparams.pem 2048
 keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 backupHash='V3Khw3OOrzNle8puKasf47gcsFk9QqKP5wy0WWodtgA='
 
-npm install glob koa
+npm install koa
 
 
 cat > server.js <<- EOM
 	#!/usr/bin/env node
 
+
 	const childProcess	= require('child_process');
 	const crypto		= require('crypto');
 	const fs			= require('fs');
-	const glob			= require('glob');
 	const http2			= require('http2');
 	const app			= new (require('koa'))();
+	const util			= require('util');
 
 	const cache			= {
 		br: {
@@ -49,40 +50,53 @@ cat > server.js <<- EOM
 
 	const cdnPath		= './cdn/';
 	const certPath		= 'cert.pem';
-	const keyPath		= 'key.pem';
 	const dhparamPath	= 'dhparams.pem';
+	const keyPath		= 'key.pem';
 
-	const getNewCert	= () => {
+	const spawn			= async (command, args) => {
+		for await (const data of childProcess.spawn(command, args).stdout) {
+			return data.toString().trim();
+		}
+		return '';
+	};
+
+	const getDomains	= async () => {
+		const ipAddress	= await spawn(
+			'curl',
+			['-s', 'https://checkip.amazonaws.com']
+		);
+
+		return (
+			await Promise.all(['af', 'as', 'eu', 'na', 'oc', 'sa'].
+				map(s => s + '.cdn.cyph.com').
+				map(async domain =>
+					(await spawn('getent', ['hosts', domain])).
+						replace(/ .*/g, '').
+						split('\n').
+						indexOf(ipAddress)
+					> -1 ?
+						domain :
+						undefined
+				)
+			)
+		).filter(domain =>
+			domain
+		);
+	};
+
+	const getNewCert	= async () => {
 		try {
-			fs.unlinkSync(certPath);
+			await util.promisify(fs.unlink)(certPath);
 		}
 		catch {}
 
-		const ipAddress	=
-			childProcess.spawnSync(
-				'curl',
-				['-s', 'https://checkip.amazonaws.com']
-			).stdout.toString().trim()
-		;
-
-		const domains	= ['af', 'as', 'eu', 'na', 'oc', 'sa'].
-			map(s => s + '.cdn.cyph.com').
-			filter(d =>
-				childProcess.spawnSync('getent', ['hosts', d]).stdout.
-					toString().
-					replace(/ .*/g, '').
-					trim().
-					split('\n').
-					indexOf(ipAddress)
-				> -1
-			)
-		;
+		const domains	= await getDomains();
 
 		if (domains.length < 1) {
 			throw new Error('No domains.');
 		}
 
-		fs.writeFileSync('sans.txt', (
+		await util.promisify(fs.writeFile)('sans.txt', (
 			'[req]\nreq_extensions=req_ext\ndistinguished_name=dn\n\n' +
 			'[dn]\nC=US\nST=Delaware\nL=Wilmington\nO=Cyph, Inc.\nCN=' + domains[0] + '\n\n' +
 			'[req_ext]\nsubjectAltName=@alt_names\n\n' +
@@ -90,7 +104,7 @@ cat > server.js <<- EOM
 			domains.map((d, i) => 'DNS.' + (i + 1).toString() + '=' + d).join('\n')
 		));
 
-		childProcess.spawnSync('openssl', [
+		await spawn('openssl', [
 			'req',
 			'-new',
 			'-out',
@@ -103,9 +117,9 @@ cat > server.js <<- EOM
 			'sans.txt'
 		]);
 
-		fs.unlinkSync('sans.txt');
+		await util.promisify(fs.unlink)('sans.txt');
 
-		console.log(childProcess.spawnSync('certbot', [
+		console.log(await spawn('certbot', [
 			'certonly',
 			'-n',
 			'--agree-tos',
@@ -116,15 +130,11 @@ cat > server.js <<- EOM
 			__dirname + '/csr.pem',
 			'--fullchain-path',
 			__dirname + '/' + certPath
-		]).stdout.toString());
+		]));
 
-		fs.unlinkSync('csr.pem');
+		await util.promisify(childProcess.exec)('rm csr.pem *_*.pem');
 
-		for (const f of glob.sync('*_*.pem')) {
-			fs.unlinkSync(f);
-		}
-
-		if (!fs.existsSync(certPath)) {
+		if (!(await util.promisify(fs.exists)(certPath))) {
 			throw new Error('No cert.');
 		}
 	};
@@ -295,7 +305,7 @@ cat > server.js <<- EOM
 	(async () => { while (true) {
 		while (true) {
 			try {
-				getNewCert();
+				await getNewCert();
 				break;
 			}
 			catch (err) {
@@ -308,12 +318,18 @@ cat > server.js <<- EOM
 			await new Promise(resolve => server.close(resolve));
 		}
 
+		const [cert, dhparam, key]	= await Promise.all([
+			util.promisify(fs.readFile)(certPath),
+			util.promisify(fs.readFile)(dhparamPath),
+			util.promisify(fs.readFile)(keyPath)
+		]);
+
 		server	= http2.createSecureServer(
 			{
 				allowHTTP1: true,
-				cert: fs.readFileSync(certPath),
-				key: fs.readFileSync(keyPath),
-				dhparam: fs.readFileSync(dhparamPath),
+				cert,
+				dhparam,
+				key,
 				secureOptions: crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_TLSv1
 			},
 			app.callback()
