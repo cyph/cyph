@@ -6,10 +6,6 @@
 PROMPT key
 PROMPT githubToken
 
-ipAddress="$(curl -s https://checkip.amazonaws.com)"
-
-adduser --gecos '' --disabled-password --home /home/cyph cyph || exit 1
-
 
 cd $(cd "$(dirname "$0")"; pwd)
 
@@ -17,7 +13,7 @@ cd $(cd "$(dirname "$0")"; pwd)
 cat > /tmp/setup.sh << EndOfMessage
 #!/bin/bash
 
-cd /home/cyph
+cd
 
 echo '${key}' > key.pem
 openssl dhparam -out dhparams.pem 2048
@@ -56,7 +52,17 @@ cat > server.js <<- EOM
 	const dhparamPath	= 'dhparams.pem';
 
 	const getNewCert	= () => {
-		fs.unlinkSync(certPath);
+		try {
+			fs.unlinkSync(certPath);
+		}
+		catch {}
+
+		const ipAddress	=
+			childProcess.spawnSync(
+				'curl',
+				['-s', 'https://checkip.amazonaws.com']
+			).stdout.toString().trim()
+		;
 
 		const domains	= ['af', 'as', 'eu', 'na', 'oc', 'sa'].
 			map(s => s + '.cdn.cyph.com').
@@ -66,7 +72,7 @@ cat > server.js <<- EOM
 					replace(/ .*/g, '').
 					trim().
 					split('\n').
-					indexOf('${ipAddress}')
+					indexOf(ipAddress)
 				> -1
 			)
 		;
@@ -98,8 +104,7 @@ cat > server.js <<- EOM
 
 		fs.unlinkSync('sans.txt');
 
-		childProcess.spawnSync('sudo', [
-			'certbot',
+		childProcess.spawnSync('certbot', [
 			'certonly',
 			'-n',
 			'--agree-tos',
@@ -392,8 +397,8 @@ EndOfMessage
 
 
 chmod 777 /tmp/setup.sh
-su cyph -c /tmp/setup.sh
+/tmp/setup.sh
 rm /tmp/setup.sh
 
 
-echo 'su cyph -c /home/cyph/cdnupdate.sh &' >> /init.sh
+echo '~/cdnupdate.sh &' >> /init.sh
