@@ -3,10 +3,10 @@
 # CDN node setup script
 
 
-PROMPT cert
 PROMPT key
 PROMPT githubToken
 
+ipAddress="$(curl -s https://checkip.amazonaws.com)"
 
 adduser --gecos '' --disabled-password --home /home/cyph cyph || exit 1
 
@@ -19,7 +19,6 @@ cat > /tmp/setup.sh << EndOfMessage
 
 cd /home/cyph
 
-echo '${cert}' > cert.pem
 echo '${key}' > key.pem
 openssl dhparam -out dhparams.pem 2048
 
@@ -55,6 +54,66 @@ cat > server.js <<- EOM
 	const certPath		= 'cert.pem';
 	const keyPath		= 'key.pem';
 	const dhparamPath	= 'dhparams.pem';
+
+	const getNewCert	= () => {
+		fs.unlinkSync(certPath);
+
+		const domains	= ['af', 'as', 'eu', 'na', 'oc', 'sa'].
+			map(s => s + '.cdn.cyph.com').
+			filter(d =>
+				childProcess.spawnSync('getent', ['hosts', d]).stdout.
+					toString().
+					replace(/ .*/g, '').
+					trim().
+					split('\n').
+					indexOf('${ipAddress}')
+				> -1
+			)
+		;
+
+		if (domains.length < 1) {
+			throw new Error('No domains.');
+		}
+
+		fs.writeFileSync('sans.txt', (
+			'[req]\nreq_extensions=req_ext\ndistinguished_name=dn\n\n' +
+			'[dn]\nC=US\nST=Delaware\nL=Wilmington\nO=Cyph, Inc.\nCN=' + domains[0] + '\n\n' +
+			'[req_ext]\nsubjectAltName=@alt_names\n\n' +
+			'[alt_names]\n' +
+			domains.map((d, i) => 'DNS.' + i.toString() + '=' + d).slice(1).join('\n')
+		));
+
+		childProcess.spawnSync('openssl', [
+			'req',
+			'-new',
+			'-out',
+			'csr.pem',
+			'-key',
+			keyPath,
+			'-subj',
+			'/C=US/ST=Delaware/L=Wilmington/O=Cyph, Inc./CN=' + domains[0],
+			'-config',
+			'sans.txt'
+		]);
+
+		fs.unlinkSync('sans.txt');
+
+		childProcess.spawnSync('sudo', [
+			'certbot',
+			'certonly',
+			'-n',
+			'--agree-tos',
+			'--expand',
+			'--standalone',
+			'--register-unsafely-without-email',
+			'--csr',
+			__dirname + '/csr.pem',
+			'--fullchain-path',
+			__dirname + '/' + certPath
+		]);
+
+		fs.unlinkSync('csr.pem');
+	};
 
 	const getFileName	= (ctx, ext) => async () => new Promise((resolve, reject) => {
 		if (ctx.request.path.indexOf('..') > -1) {
@@ -215,18 +274,41 @@ cat > server.js <<- EOM
 		}
 	});
 
-	http2.createSecureServer(
-		{
-			allowHTTP1: true,
-			cert: fs.readFileSync(certPath),
-			key: fs.readFileSync(keyPath),
-			dhparam: fs.readFileSync(dhparamPath),
-			secureOptions: crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_TLSv1
-		},
-		app.callback()
-	).listen(
-		31337
-	);
+
+	let server;
+
+	(async () => { while (true) {
+		while (true) {
+			try {
+				getNewCert();
+				break;
+			}
+			catch (err) {
+				console.error(err);
+				await new Promise(resolve => setTimeout(resolve, 30000));
+			}
+		}
+
+		if (server) {
+			await new Promise(resolve => server.close(resolve));
+		}
+
+		server	= http2.createSecureServer(
+			{
+				allowHTTP1: true,
+				cert: fs.readFileSync(certPath),
+				key: fs.readFileSync(keyPath),
+				dhparam: fs.readFileSync(dhparamPath),
+				secureOptions: crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_TLSv1
+			},
+			app.callback()
+		);
+
+		server.listen(31337);
+
+		/* 30 days */
+		await new Promise(resolve => setTimeout(resolve, 2592000000));
+	} })();
 EOM
 chmod +x server.js
 

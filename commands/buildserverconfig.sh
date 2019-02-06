@@ -29,6 +29,7 @@ apt-get -y --allow-downgrades install \
 	dpkg \
 	git \
 	gnupg2 \
+	letsencrypt \
 	lsb-release \
 	nginx \
 	openssl \
