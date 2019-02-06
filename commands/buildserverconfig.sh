@@ -31,6 +31,7 @@ apt-get -y --allow-downgrades install \
 	gnupg2 \
 	letsencrypt \
 	lsb-release \
+	nano \
 	nginx \
 	openssl \
 	psmisc \
