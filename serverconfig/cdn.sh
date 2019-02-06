@@ -21,19 +21,22 @@ openssl dhparam -out dhparams.pem 2048
 keyHash="\$(openssl rsa -in key.pem -outform der -pubout | openssl dgst -sha256 -binary | openssl enc -base64)"
 backupHash='V3Khw3OOrzNle8puKasf47gcsFk9QqKP5wy0WWodtgA='
 
-npm install koa
+npm install koa lodash rxjs
 
 
 cat > server.js <<- EOM
 	#!/usr/bin/env node
 
 
-	const childProcess	= require('child_process');
-	const crypto		= require('crypto');
-	const fs			= require('fs');
-	const http2			= require('http2');
-	const app			= new (require('koa'))();
-	const util			= require('util');
+	const childProcess				= require('child_process');
+	const crypto					= require('crypto');
+	const fs						= require('fs');
+	const http2						= require('http2');
+	const app						= new (require('koa'))();
+	const {isEqual}					= require('lodash');
+	const {ReplaySubject, timer}	= require('rxjs');
+	const {filter, mergeMap, take}	= require('rxjs/operators');
+	const util						= require('util');
 
 	const cache			= {
 		br: {
@@ -84,17 +87,11 @@ cat > server.js <<- EOM
 		);
 	};
 
-	const getNewCert	= async () => {
+	const getNewCert	= async domains => {
 		try {
 			await util.promisify(fs.unlink)(certPath);
 		}
 		catch {}
-
-		const domains	= await getDomains();
-
-		if (domains.length < 1) {
-			throw new Error('No domains.');
-		}
 
 		await util.promisify(fs.writeFile)('sans.txt', (
 			'[req]\nreq_extensions=req_ext\ndistinguished_name=dn\n\n' +
@@ -302,15 +299,25 @@ cat > server.js <<- EOM
 
 	let server;
 
+	const domainWatcher	= new ReplaySubject(1);
+	timer(0, 60000).pipe(mergeMap(getDomains)).subscribe(domainWatcher);
+
 	(async () => { while (true) {
+		const domains	=
+			await domainWatcher.pipe(
+				filter(newDomains => newDomains.length > 0),
+				take(1)
+			).toPromise()
+		;
+
 		while (true) {
 			try {
-				await getNewCert();
+				await getNewCert(domains);
 				break;
 			}
 			catch (err) {
 				console.error(err);
-				await new Promise(resolve => setTimeout(resolve, 30000));
+				await util.promisify(setTimeout)(30000);
 			}
 		}
 
@@ -337,9 +344,16 @@ cat > server.js <<- EOM
 
 		server.listen(31337);
 
-		/* 30 days */
-		await new Promise(resolve => setTimeout(resolve, 1296000000));
-		await new Promise(resolve => setTimeout(resolve, 1296000000));
+		/* Regenerate cert in 30 days or when domains change, whatever comes first */
+		await Promise.race([
+			util.promisify(setTimeout)(1296000000).then(async () =>
+				util.promisify(setTimeout)(1296000000)
+			),
+			domainWatcher.pipe(
+				filter(newDomains => !isEqual(domains, newDomains)),
+				take(1)
+			).toPromise()
+		]);
 	} })();
 EOM
 chmod +x server.js
