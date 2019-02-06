@@ -86,7 +86,7 @@ cat > server.js <<- EOM
 			'[dn]\nC=US\nST=Delaware\nL=Wilmington\nO=Cyph, Inc.\nCN=' + domains[0] + '\n\n' +
 			'[req_ext]\nsubjectAltName=@alt_names\n\n' +
 			'[alt_names]\n' +
-			domains.map((d, i) => 'DNS.' + i.toString() + '=' + d).slice(1).join('\n')
+			domains.map((d, i) => 'DNS.' + (i + 1).toString() + '=' + d).join('\n')
 		));
 
 		childProcess.spawnSync('openssl', [
