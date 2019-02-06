@@ -104,7 +104,7 @@ cat > server.js <<- EOM
 
 		fs.unlinkSync('sans.txt');
 
-		childProcess.spawnSync('certbot', [
+		console.log(childProcess.spawnSync('certbot', [
 			'certonly',
 			'-n',
 			'--agree-tos',
@@ -115,9 +115,13 @@ cat > server.js <<- EOM
 			__dirname + '/csr.pem',
 			'--fullchain-path',
 			__dirname + '/' + certPath
-		]);
+		]).stdout.toString());
 
 		fs.unlinkSync('csr.pem');
+
+		if (!fs.existsSync(certPath)) {
+			throw new Error('No cert.');
+		}
 	};
 
 	const getFileName	= (ctx, ext) => async () => new Promise((resolve, reject) => {
@@ -312,7 +316,8 @@ cat > server.js <<- EOM
 		server.listen(31337);
 
 		/* 30 days */
-		await new Promise(resolve => setTimeout(resolve, 2592000000));
+		await new Promise(resolve => setTimeout(resolve, 1296000000));
+		await new Promise(resolve => setTimeout(resolve, 1296000000));
 	} })();
 EOM
 chmod +x server.js
