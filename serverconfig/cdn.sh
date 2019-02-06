@@ -365,7 +365,7 @@ cat > cdnupdate.sh <<- EOM
 
 	git pull
 
-	bash -c 'cd ; npm update ; ./server.js' &
+	bash -c 'cd ; npm update ; ./server.js >> server.log' &
 
 	head="\\\$(getHead)"
 
