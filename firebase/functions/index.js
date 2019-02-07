@@ -921,6 +921,7 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 	) {
 		console.error(`Deleting user: ${JSON.stringify({
 			emailSplit,
+			inviteCode,
 			inviteData,
 			planConfig: config.planConfig[plan],
 			username,
