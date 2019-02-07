@@ -919,7 +919,14 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 		username.length < config.planConfig[plan].usernameMinLength ||
 		(await usernameBlacklisted(params.namespace, username, inviteData.reservedUsername))
 	) {
-		console.error(`Deleting user: ${JSON.stringify(userRecord)}`);
+		console.error(`Deleting user: ${JSON.stringify({
+			emailSplit,
+			inviteData,
+			planConfig: config.planConfig[plan],
+			username,
+			userRecord
+		})}`);
+
 		return auth.deleteUser(userRecord.uid);
 	}
 
