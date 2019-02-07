@@ -7,16 +7,6 @@ const {config}						= require('./config');
 const {sendMail, sendMailInternal}	= require('./email');
 const {emailRegex}					= require('./email-regex');
 const namespaces					= require('./namespaces');
-const {readableID, sleep, uuid}		= require('./util');
-
-const {
-	AccountContactState,
-	AccountFileRecord,
-	AccountUserProfile,
-	NotificationTypes,
-	NumberProto,
-	StringProto
-}	= require('./proto');
 
 const {
 	auth,
@@ -29,6 +19,21 @@ const {
 	setItem,
 	storage
 }	= require('./database-service')(functions.config(), true);
+
+const {
+	AccountContactState,
+	AccountFileRecord,
+	AccountUserProfile,
+	NotificationTypes,
+	NumberProto,
+	StringProto
+}	= require('./proto');
+
+const {
+	readableID,
+	sleep,
+	uuid
+}	= require('./util');
 
 const {notify}	= require('./notify')(database, messaging);
 
