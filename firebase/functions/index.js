@@ -903,7 +903,7 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 	const inviteCode	= validateInput(
 		await getItem(namespace, `preRegistrations/${username}`, StringProto)
 	);
-	const inviteDataRef	= database.ref(`${params.namespace}/inviteCodes/${inviteCode}`);
+	const inviteDataRef	= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
 	const inviteData	= (await inviteDataRef.once('value')).val() || {};
 
 	const plan			= inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
@@ -917,7 +917,7 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 		) ||
 		typeof inviteData.inviterUsername !== 'string' ||
 		username.length < config.planConfig[plan].usernameMinLength ||
-		(await usernameBlacklisted(params.namespace, username, inviteData.reservedUsername))
+		(await usernameBlacklisted(namespace, username, inviteData.reservedUsername))
 	) {
 		console.error(`Deleting user: ${JSON.stringify({
 			emailSplit,
