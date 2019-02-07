@@ -19,6 +19,7 @@ import {emailPattern} from '../../email-pattern';
 import {CyphPlans} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
+import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
@@ -48,10 +49,11 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		inviteCode?: string;
 		inviterUsername?: string;
 		isValid: boolean;
-		plan?: CyphPlans;
+		plan: CyphPlans;
 		reservedUsername?: string;
 	}>({
-		isValid: false
+		isValid: false,
+		plan: CyphPlans.Free
 	});
 
 	/** @ignore */
@@ -127,7 +129,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					isValid: o.isValid === true,
 					plan: o.plan in CyphPlans ?
 						o.plan :
-						undefined
+						CyphPlans.Free
 					,
 					reservedUsername: typeof o.reservedUsername === 'string' ?
 						o.reservedUsername :
@@ -137,6 +139,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 			if (this.inviteCodeData.value.reservedUsername && !this.username.value) {
 				this.username.setValue(this.inviteCodeData.value.reservedUsername);
+			}
+			else {
+				/* Trigger validator function */
+				this.username.setValue(this.username.value);
 			}
 
 			return !this.inviteCodeData.value.isValid ?
@@ -253,6 +259,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			return (await sleep(500).then(async () =>
 				this.usernameDebounceLast === id && value ?
 					(
+						value.length < this.configService.planConfig[
+							this.inviteCodeData.value.plan
+						].usernameMinLength ||
 						(await this.accountUserLookupService.usernameBlacklisted(
 							value,
 							this.inviteCodeData.value.reservedUsername
@@ -406,6 +415,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,

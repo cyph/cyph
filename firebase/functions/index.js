@@ -308,7 +308,7 @@ exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) =
 	return {
 		inviterUsername,
 		isValid: typeof inviterUsername === 'string',
-		plan: plan in CyphPlans ? plan : undefined,
+		plan: plan in CyphPlans ? plan : CyphPlans.Free,
 		reservedUsername
 	};
 });
@@ -457,21 +457,18 @@ exports.userConsumeInvite	= functions.database.ref(
 			typeof inviterUsername === 'string' ? inviterUsername : ' ',
 			true
 		),
+		setItem(
+			params.namespace,
+			`users/${username}/plan`,
+			CyphPlan,
+			{plan: plan in CyphPlans ? plan : CyphPlans.Free},
+			true
+		),
 		!inviterUsername ?
 			undefined :
 			removeItem(
 				params.namespace,
 				`users/${inviterUsername}/inviteCodes/${inviteCode}`
-			)
-		,
-		!(plan in CyphPlans) ?
-			undefined :
-			setItem(
-				params.namespace,
-				`users/${username}/plan`,
-				CyphPlan,
-				{plan},
-				true
 			)
 		,
 		!reservedUsername ?
@@ -909,6 +906,8 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 	const inviteDataRef	= database.ref(`${params.namespace}/inviteCodes/${inviteCode}`);
 	const inviteData	= (await inviteDataRef.once('value')).val() || {};
 
+	const plan			= inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
+
 	if (
 		emailSplit.length !== 2 ||
 		(
@@ -917,6 +916,7 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 			)
 		) ||
 		typeof inviteData.inviterUsername !== 'string' ||
+		username.length < config.planConfig[plan].usernameMinLength ||
 		(await usernameBlacklisted(params.namespace, username, inviteData.reservedUsername))
 	) {
 		console.error(`Deleting user: ${JSON.stringify(userRecord)}`);
