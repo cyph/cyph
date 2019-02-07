@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {
 	ChangeDetectionStrategy,
 	Component,
@@ -107,22 +109,18 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 				return {
 					inviteCode: value,
-					inviterUsername:
-						typeof o.inviterUsername === 'string' ?
-							o.inviterUsername :
-							undefined
+					inviterUsername: typeof o.inviterUsername === 'string' ?
+						o.inviterUsername :
+						undefined
 					,
 					isValid: o.isValid === true,
-					plan:
-						o.plan in CyphPlans ?
-							o.plan :
-							undefined
+					plan: o.plan in CyphPlans ?
+						o.plan :
+						undefined
 					,
-					reservedUsername:
-						typeof o.reservedUsername === 'string' ?
-							o.reservedUsername :
-							undefined
-					,
+					reservedUsername: typeof o.reservedUsername === 'string' ?
+						o.reservedUsername :
+						undefined
 				};
 			}));
 
@@ -259,7 +257,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 							value,
 							this.inviteCodeData.value.reservedUsername
 						)) ||
-						(await this.accountUserLookupService.exists(value, false, false))
+						this.accountUserLookupService.exists(value, false, false)
 					) :
 					true
 			)) ?

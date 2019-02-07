@@ -46,10 +46,9 @@ export class AccountUserLookupService extends BaseProvider {
 		reservedUsername?: string
 	) =>
 		!(reservedUsername && normalize(username) === normalize(reservedUsername)) &&
-		(await this.databaseService.callFunction('usernameBlacklisted', {username}).
+		this.databaseService.callFunction('usernameBlacklisted', {username}).
 			then((o: any) => typeof o === 'object' && o.isBlacklisted === true).
 			catch(() => true)
-		)
 	);
 
 	/**
