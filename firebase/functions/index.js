@@ -901,7 +901,7 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 	const namespace		= emailSplit[1].replace(/\./g, '_');
 
 	const inviteCode	= validateInput(
-		await getItem(namespace, `preRegistrations/${username}`, StringProto)
+		await getItem(namespace, `pendingSignupInviteCodes/${username}`, StringProto)
 	);
 	const inviteDataRef	= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
 	const inviteData	= (await inviteDataRef.once('value')).val() || {};
@@ -940,7 +940,7 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 			'user-registrations@cyph.com',
 			`Cyph User Registration: ${userRecord.email}`
 		),
-		removeItem(namespace, `preRegistrations/${username}`),
+		removeItem(namespace, `pendingSignupInviteCodes/${username}`),
 		setItem(
 			namespace,
 			`users/${username}/inviteCode`,

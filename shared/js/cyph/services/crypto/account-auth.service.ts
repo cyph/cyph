@@ -599,7 +599,7 @@ export class AccountAuthService extends BaseProvider {
 				this.potassiumService.sign.keyPair(),
 				(async () => {
 					await this.databaseService.setItem(
-						`preRegistrations/${username}`,
+						`pendingSignupInviteCodes/${username}`,
 						StringProto,
 						inviteCode,
 						true

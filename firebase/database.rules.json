@@ -245,7 +245,7 @@
 				}
 			},
 
-			"preRegistrations": {
+			"pendingSignupInviteCodes": {
 				".read": false,
 				".write": true,
 
