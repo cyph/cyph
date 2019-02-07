@@ -576,7 +576,8 @@ export class AccountAuthService extends BaseProvider {
 
 		if (
 			!realUsername ||
-			(!pseudoAccount && (masterKey === undefined || masterKey.length === 0))
+			(!pseudoAccount && (masterKey === undefined || masterKey.length === 0)) ||
+			!inviteCode
 		) {
 			return false;
 		}
@@ -597,24 +598,14 @@ export class AccountAuthService extends BaseProvider {
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
 				(async () => {
-					await this.databaseService.register(username, loginData.secondaryPassword);
-
-					if (!inviteCode) {
-						return;
-					}
-
-					await Promise.all([
-						this.databaseService.removeItem(`users/${username}/inviteCode`),
-						this.databaseService.removeItem(
-							`users/${username}/inviterUsernamePlaintext`
-						)
-					]);
-
 					await this.databaseService.setItem(
-						`users/${username}/inviteCode`,
+						`preRegistrations/${username}`,
 						StringProto,
-						inviteCode
+						inviteCode,
+						true
 					);
+
+					await this.databaseService.register(username, loginData.secondaryPassword);
 
 					const inviterUsername	=
 						await this.databaseService.getAsyncValue(

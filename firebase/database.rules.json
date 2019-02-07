@@ -166,7 +166,15 @@
 
 			"inviteCodes": {
 				"$code": {
-					".validate": "newData.isString()"
+					"inviterUsername": {
+						".validate": "newData.isString()"
+					},
+					"plan": {
+						".validate": "newData.isString()"
+					},
+					"reservedUsername": {
+						".validate": "newData.isString()"
+					}
 				}
 			},
 
@@ -226,6 +234,34 @@
 				}
 			},
 
+			"pendingSignups": {
+				"$username": {
+					"timestamp": {
+						".validate": "newData.val() === now"
+					},
+					"uid": {
+						".validate": "newData.isString()"
+					}
+				}
+			},
+
+			"preRegistrations": {
+				".read": false,
+				".write": true,
+
+				"$username": {
+					"data": {
+						".validate": "newData.isString()"
+					},
+					"hash": {
+						".validate": "newData.isString()"
+					},
+					"timestamp": {
+						".validate": "newData.val() === now"
+					}
+				}
+			},
+
 			"pseudoRelationships": {
 				"$relationship": {
 					"aliceUsername": {
@@ -240,14 +276,9 @@
 				}
 			},
 
-			"pendingSignups": {
-				"$username": {
-					"timestamp": {
-						".validate": "newData.val() === now"
-					},
-					"uid": {
-						".validate": "newData.isString()"
-					}
+			"reservedUsernames": {
+				"$reservedUsername": {
+					".validate": "newData.val() === ''"
 				}
 			},
 

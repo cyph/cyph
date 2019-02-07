@@ -124,6 +124,13 @@ const getURL	= (adminRef, namespace) => {
 	return url;
 };
 
+const usernameBlacklisted	= async (namespace, username, reservedUsername) =>
+	username !== reservedUsername && (
+		usernameBlacklist.has(username) ||
+		(await database.ref(`${namespace}/reservedUsernames/${username}`).once('value')).exists()
+	)
+;
+
 const validateInput	= (input, regex) => {
 	if (!input || input.indexOf('/') > -1 || (regex && !regex.test(input))) {
 		throw new Error('Invalid data.');
@@ -282,11 +289,19 @@ exports.channelDisconnect	= functions.database.ref(
 
 
 exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) => {
-	const inviteCode		= validateInput(data.inviteCode);
-	const inviterRef		= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
-	const inviterUsername	= (await inviterRef.once('value')).val();
+	const inviteCode	= validateInput(data.inviteCode);
+	const inviteDataRef	= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
 
-	return {isValid: typeof inviterUsername === 'string'};
+	const {inviterUsername, plan, reservedUsername}	=
+		(await inviteDataRef.once('value')).val() || {}
+	;
+
+	return {
+		inviterUsername,
+		isValid: typeof inviterUsername === 'string',
+		plan,
+		reservedUsername
+	};
 });
 
 
@@ -404,10 +419,6 @@ exports.userConsumeInvite	= functions.database.ref(
 
 	const username	= params.user;
 
-	if (usernameBlacklist.has(username)) {
-		return;
-	}
-
 	const inviteCode	= await getItem(
 		params.namespace,
 		`users/${username}/inviteCode`,
@@ -418,16 +429,24 @@ exports.userConsumeInvite	= functions.database.ref(
 		return;
 	}
 
-	const inviterRef		= database.ref(`${params.namespace}/inviteCodes/${inviteCode}`);
-	const inviterUsername	= (await inviterRef.once('value')).val();
+	const inviteDataRef	= database.ref(`${params.namespace}/inviteCodes/${inviteCode}`);
+
+	const {inviterUsername, plan, reservedUsername}	=
+		(await inviteDataRef.once('value')).val() || {}
+	;
+
+	if (await usernameBlacklisted(params.namespace, username, reservedUsername)) {
+		return;
+	}
 
 	return Promise.all([
-		inviterRef.remove(),
+		inviteDataRef.remove(),
 		setItem(
 			params.namespace,
 			`users/${username}/inviterUsernamePlaintext`,
 			StringProto,
-			typeof inviterUsername === 'string' ? inviterUsername : ' '
+			typeof inviterUsername === 'string' ? inviterUsername : ' ',
+			true
 		),
 		!inviterUsername ?
 			undefined :
@@ -435,6 +454,18 @@ exports.userConsumeInvite	= functions.database.ref(
 				params.namespace,
 				`users/${inviterUsername}/inviteCodes/${inviteCode}`
 			)
+		,
+		!plan ?
+			undefined :
+			database.ref(`${params.namespace}/users/${username}/plan`).set({
+				data: plan,
+				hash: '',
+				timestamp: admin.database.ServerValue.TIMESTAMP
+			})
+		,
+		!reservedUsername ?
+			undefined :
+			database.ref(`${params.namespace}/reservedUsernames/${reservedUsername}`).remove()
 	]);
 });
 
@@ -676,7 +707,7 @@ exports.userEmailSet	= functions.database.ref(
 exports.usernameBlacklisted	= onCall(async (data, context, namespace, getUsername) => {
 	const username	= validateInput(data.username);
 
-	return {isBlacklisted: usernameBlacklist.has(username)};
+	return {isBlacklisted: await usernameBlacklisted(namespace, username)};
 });
 
 
@@ -859,14 +890,21 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 	const username		= emailSplit[0];
 	const namespace		= emailSplit[1].replace(/\./g, '_');
 
+	const inviteCode	= validateInput(
+		await getItem(namespace, `preRegistrations/${username}`, StringProto)
+	);
+	const inviteDataRef	= database.ref(`${params.namespace}/inviteCodes/${inviteCode}`);
+	const inviteData	= (await inviteDataRef.once('value')).val() || {};
+
 	if (
 		emailSplit.length !== 2 ||
-		usernameBlacklist.has(username) ||
 		(
 			userRecord.providerData && userRecord.providerData.find(o =>
 				o.providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID
 			)
-		)
+		) ||
+		typeof inviteData.inviterUsername !== 'string' ||
+		(await usernameBlacklisted(params.namespace, username, inviteData.reservedUsername))
 	) {
 		console.error(`Deleting user: ${JSON.stringify(userRecord)}`);
 		return auth.deleteUser(userRecord.uid);
@@ -880,6 +918,14 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 		sendMailInternal(
 			'user-registrations@cyph.com',
 			`Cyph User Registration: ${userRecord.email}`
+		),
+		removeItem(namespace, `preRegistrations/${username}`),
+		setItem(
+			namespace,
+			`users/${username}/inviteCode`,
+			StringProto,
+			inviteCode,
+			true
 		)
 	]);
 });

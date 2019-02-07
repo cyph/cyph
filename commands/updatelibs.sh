@@ -284,6 +284,7 @@ read -r -d '' modules <<- EOM
 	uglifyjs-webpack-plugin
 	unsemantic
 	url-loader
+	username-blacklist@https://github.com/cyph/The-Big-Username-Blacklist
 	video.js
 	videojs-background
 	videojs-brand

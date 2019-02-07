@@ -89,22 +89,64 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			const id					= uuid();
 			this.inviteCodeDebounceLast	= id;
 
-			return (await sleep(500).then(async () =>
-				this.inviteCodeDebounceLast === id && value ?
-					!(await this.databaseService.callFunction(
+			this.inviteCodeData.next(await sleep(500).then(async () => {
+				let o	= this.inviteCodeDebounceLast === id && value ?
+					await this.databaseService.callFunction(
 						'checkInviteCode',
 						{inviteCode: value}
 					).catch(
-						() => ({isValid: false})
-					)).isValid :
-					true
-			)) ?
+						() => undefined
+					) :
+					undefined
+				;
+
+				if (typeof o !== 'object') {
+					o	= {};
+				}
+
+				return {
+					inviteCode: value,
+					inviterUsername:
+						typeof o.inviterUsername === 'string' ?
+							o.inviterUsername :
+							undefined
+					,
+					isValid: o.isValid === true,
+					plan:
+						typeof o.plan === 'string' ?
+							o.plan :
+							undefined
+					,
+					reservedUsername:
+						typeof o.reservedUsername === 'string' ?
+							o.reservedUsername :
+							undefined
+					,
+				};
+			}));
+
+			if (this.inviteCodeData.value.reservedUsername && !this.username.value) {
+				this.username.setValue(this.inviteCodeData.value.reservedUsername);
+			}
+
+			return !this.inviteCodeData.value.isValid ?
 				{inviteCodeInvalid: true} :
 				/* tslint:disable-next-line:no-null-keyword */
 				null
 			;
 		}
 	]);
+
+	/** Metadata pulled for current invite code. */
+	public readonly inviteCodeData						= new BehaviorSubject<{
+		inviteCode?: string;
+		inviterUsername?: string;
+		isValid: boolean;
+		plan?: string;
+		reservedUsername?: string;
+	}>({
+		isValid: false
+	});
 
 	/** Watches invite code. */
 	public readonly inviteCodeWatcher					= concat(

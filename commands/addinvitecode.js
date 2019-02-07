@@ -4,12 +4,13 @@
 const firebase						= require('firebase-admin');
 const fs							= require('fs');
 const os							= require('os');
+const usernameBlacklist				= new Set(require('username-blacklist'));
 const databaseService				= require('../modules/database-service');
 const {BooleanProto, StringProto}	= require('../modules/proto');
 const {readableID, toInt}			= require('../modules/util');
 
 
-const addInviteCode	= async (projectId, countByUser, namespace) => {
+const addInviteCode	= async (projectId, countByUser, namespace, plan, reservedUsername) => {
 
 
 if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
@@ -19,9 +20,15 @@ if (typeof namespace !== 'string' || !namespace) {
 	namespace	= 'cyph.ws';
 }
 
+/* TODO: Add flag to explicitly override the blacklist and reserve a non-standard username */
+if (reservedUsername && usernameBlacklist.has(reservedUsername)) {
+	throw new Error('Cannot reserve blacklisted username.');
+}
+
 
 const configDir		= `${os.homedir()}/.cyph`;
 const keyFilename	= `${configDir}/firebase-credentials/${projectId}.json`;
+const namespacePath	= namespace.replace(/\./g, '_');
 
 
 const {
@@ -41,29 +48,36 @@ const {
 });
 
 
-const inviteCodes	= Object.keys(countByUser).map(username => ({
-	codes: new Array(countByUser[username]).fill('').map(() => readableID(15)),
-	username
+const inviteCodes	= Object.keys(countByUser).map(inviterUsername => ({
+	codes: new Array(countByUser[inviterUsername]).fill('').map(() => readableID(15)),
+	inviterUsername
 }));
 
-await Promise.all(inviteCodes.map(async ({codes, username}) =>
+await Promise.all(inviteCodes.map(async ({codes, inviterUsername}) =>
 	Promise.all(codes.map(async code =>
 		Promise.all([
-			database.ref(`${namespace.replace(/\./g, '_')}/inviteCodes/${code}`).set(username),
-			username ?
-				setItem(namespace, `users/${username}/inviteCodes/${code}`, BooleanProto, true) :
+			database.ref(`${namespacePath}/inviteCodes/${code}`).set({
+				inviterUsername,
+				plan,
+				reservedUsername
+			}),
+			inviterUsername ?
+				setItem(
+					namespace,
+					`users/${inviterUsername}/inviteCodes/${code}`,
+					BooleanProto,
+					true
+				) :
+				undefined
+			,
+			reservedUsername ?
+				database.ref(`${namespacePath}/reservedUsernames/${reservedUsername}`).set('') :
 				undefined
 		])
 	))
 ));
 
-return inviteCodes.reduce(
-	(o, {codes, username}) => {
-		o[username]	= codes;
-		return o;
-	},
-	{}
-);
+return inviteCodes.reduce((o, {codes, inviterUsername}) => ({...o, [inviterUsername]: codes}), {});
 
 
 };
@@ -74,11 +88,18 @@ if (require.main === module) {
 		const projectId			= process.argv[2];
 		const count				= toInt(process.argv[3]);
 		const namespace			= process.argv[4];
-		const username			= process.argv[5] || '';
-		const countByUser		= {};
-		countByUser[username]	= isNaN(count) ? 1 : count;
+		const inviterUsername	= process.argv[5] || '';
+		const plan				= process.argv[6];
+		const reservedUsername	= process.argv[7];
 
-		console.log(JSON.stringify(await addInviteCode(projectId, countByUser, namespace)));
+		console.log(JSON.stringify(await addInviteCode(
+			projectId,
+			{[inviterUsername]: isNaN(count) ? 1 : count},
+			namespace,
+			plan,
+			reservedUsername
+		)));
+
 		process.exit(0);
 	})().catch(err => {
 		console.error(err);

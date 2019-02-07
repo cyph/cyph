@@ -38,6 +38,8 @@ service firebase.storage {
 				allow read;
 			}
 
+			// match /inviteCodes/{hash} {}
+
 			match /fileTransfers/{file}/{hash} {
 				allow read;
 				allow write: if
@@ -74,7 +76,13 @@ service firebase.storage {
 				;
 			}
 
+			// match /pendingSignups/{hash} {}
+
+			// match /preRegistrations/{hash} {}
+
 			// match /pseudoRelationships/{hash} {}
+
+			// match /reservedUsernames/{hash} {}
 
 			match /users/{user} {
 				match /{all=**} {
