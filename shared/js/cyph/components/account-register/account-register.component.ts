@@ -43,6 +43,17 @@ import {sleep} from '../../util/wait';
 	templateUrl: './account-register.component.html'
 })
 export class AccountRegisterComponent extends BaseProvider implements OnInit {
+	/** Metadata pulled for current invite code. */
+	private readonly inviteCodeData	= new BehaviorSubject<{
+		inviteCode?: string;
+		inviterUsername?: string;
+		isValid: boolean;
+		plan?: CyphPlans;
+		reservedUsername?: string;
+	}>({
+		isValid: false
+	});
+
 	/** @ignore */
 	private inviteCodeDebounceLast?: string;
 
@@ -135,17 +146,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			;
 		}
 	]);
-
-	/** Metadata pulled for current invite code. */
-	public readonly inviteCodeData						= new BehaviorSubject<{
-		inviteCode?: string;
-		inviterUsername?: string;
-		isValid: boolean;
-		plan?: CyphPlans;
-		reservedUsername?: string;
-	}>({
-		isValid: false
-	});
 
 	/** Watches invite code. */
 	public readonly inviteCodeWatcher					= concat(
