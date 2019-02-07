@@ -170,7 +170,7 @@
 						".validate": "newData.isString()"
 					},
 					"plan": {
-						".validate": "newData.isString()"
+						".validate": "newData.isNumber()"
 					},
 					"reservedUsername": {
 						".validate": "newData.isString()"

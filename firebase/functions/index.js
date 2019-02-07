@@ -24,6 +24,8 @@ const {
 	AccountContactState,
 	AccountFileRecord,
 	AccountUserProfile,
+	CyphPlan,
+	CyphPlans,
 	NotificationTypes,
 	NumberProto,
 	StringProto
@@ -306,7 +308,7 @@ exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) =
 	return {
 		inviterUsername,
 		isValid: typeof inviterUsername === 'string',
-		plan,
+		plan: plan in CyphPlans ? plan : undefined,
 		reservedUsername
 	};
 });
@@ -462,13 +464,15 @@ exports.userConsumeInvite	= functions.database.ref(
 				`users/${inviterUsername}/inviteCodes/${inviteCode}`
 			)
 		,
-		!plan ?
+		!(plan in CyphPlans) ?
 			undefined :
-			database.ref(`${params.namespace}/users/${username}/plan`).set({
-				data: plan,
-				hash: '',
-				timestamp: admin.database.ServerValue.TIMESTAMP
-			})
+			setItem(
+				params.namespace,
+				`users/${username}/plan`,
+				CyphPlan,
+				{plan},
+				true
+			)
 		,
 		!reservedUsername ?
 			undefined :

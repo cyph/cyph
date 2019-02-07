@@ -6,7 +6,7 @@ const fs								= require('fs');
 const os								= require('os');
 const usernameBlacklist					= new Set(require('username-blacklist'));
 const databaseService					= require('../modules/database-service');
-const {BooleanProto, StringProto}		= require('../modules/proto');
+const {BooleanProto, CyphPlans}			= require('../modules/proto');
 const {normalize, readableID, toInt}	= require('../modules/util');
 
 
@@ -18,6 +18,10 @@ if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
 }
 if (typeof namespace !== 'string' || !namespace) {
 	namespace	= 'cyph.ws';
+}
+
+if (plan && !(plan in CyphPlans)) {
+	throw new Error('Invalid plan.');
 }
 
 /* TODO: Add flag to explicitly override the blacklist and reserve a non-standard username */
@@ -58,7 +62,7 @@ await Promise.all(inviteCodes.map(async ({codes, inviterUsername}) =>
 		Promise.all([
 			database.ref(`${namespacePath}/inviteCodes/${code}`).set({
 				inviterUsername,
-				plan,
+				plan: CyphPlans[plan],
 				reservedUsername
 			}),
 			inviterUsername ?

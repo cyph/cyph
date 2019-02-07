@@ -14,6 +14,7 @@ import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
+import {CyphPlans} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -113,7 +114,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					,
 					isValid: o.isValid === true,
 					plan:
-						typeof o.plan === 'string' ?
+						o.plan in CyphPlans ?
 							o.plan :
 							undefined
 					,
@@ -142,7 +143,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		inviteCode?: string;
 		inviterUsername?: string;
 		isValid: boolean;
-		plan?: string;
+		plan?: CyphPlans;
 		reservedUsername?: string;
 	}>({
 		isValid: false
