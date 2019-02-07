@@ -4,6 +4,7 @@ const mustache		= require('mustache');
 const nodemailer	= require('nodemailer');
 const auth			= require('./email-credentials');
 const namespaces	= require('./namespaces');
+const {normalize}	= require('./util');
 
 
 const transporter	= nodemailer.createTransport({auth, service: 'gmail'});

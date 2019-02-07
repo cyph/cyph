@@ -41,10 +41,15 @@ export class AccountUserLookupService extends BaseProvider {
 	private readonly userCache: Map<string, User>		= new Map<string, User>();
 
 	/** Checks to see if a username is blacklisted. */
-	public readonly usernameBlacklisted					= memoize(async (username: string) =>
-		this.databaseService.callFunction('usernameBlacklisted', {username}).
+	public readonly usernameBlacklisted					= memoize(async (
+		username: string,
+		reservedUsername?: string
+	) =>
+		!(reservedUsername && normalize(username) === normalize(reservedUsername)) &&
+		(await this.databaseService.callFunction('usernameBlacklisted', {username}).
 			then((o: any) => typeof o === 'object' && o.isBlacklisted === true).
 			catch(() => true)
+		)
 	);
 
 	/**

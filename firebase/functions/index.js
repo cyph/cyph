@@ -30,6 +30,7 @@ const {
 }	= require('./proto');
 
 const {
+	normalize,
 	readableID,
 	sleep,
 	uuid
@@ -130,7 +131,8 @@ const getURL	= (adminRef, namespace) => {
 };
 
 const usernameBlacklisted	= async (namespace, username, reservedUsername) =>
-	username !== reservedUsername && (
+	!(reservedUsername && username === normalize(reservedUsername)) &&
+	(
 		usernameBlacklist.has(username) ||
 		(await database.ref(`${namespace}/reservedUsernames/${username}`).once('value')).exists()
 	)
@@ -470,7 +472,9 @@ exports.userConsumeInvite	= functions.database.ref(
 		,
 		!reservedUsername ?
 			undefined :
-			database.ref(`${params.namespace}/reservedUsernames/${reservedUsername}`).remove()
+			database.ref(
+				`${params.namespace}/reservedUsernames/${normalize(reservedUsername)}`
+			).remove()
 	]);
 });
 
@@ -710,7 +714,7 @@ exports.userEmailSet	= functions.database.ref(
 
 
 exports.usernameBlacklisted	= onCall(async (data, context, namespace, getUsername) => {
-	const username	= validateInput(data.username);
+	const username	= normalize(validateInput(data.username));
 
 	return {isBlacklisted: await usernameBlacklisted(namespace, username)};
 });
@@ -882,7 +886,7 @@ exports.userPublicProfileSet	= functions.database.ref(
 				undefined
 		),
 		realUsernameRef.set(
-			publicProfile && publicProfile.realUsername.toLowerCase() === username ?
+			publicProfile && normalize(publicProfile.realUsername) === username ?
 				publicProfile.realUsername :
 				username
 		)
@@ -892,7 +896,7 @@ exports.userPublicProfileSet	= functions.database.ref(
 
 exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params}) => {
 	const emailSplit	= (userRecord.email || '').split('@');
-	const username		= emailSplit[0];
+	const username		= normalize(emailSplit[0]);
 	const namespace		= emailSplit[1].replace(/\./g, '_');
 
 	const inviteCode	= validateInput(

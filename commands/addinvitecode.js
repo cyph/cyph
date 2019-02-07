@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 
-const firebase						= require('firebase-admin');
-const fs							= require('fs');
-const os							= require('os');
-const usernameBlacklist				= new Set(require('username-blacklist'));
-const databaseService				= require('../modules/database-service');
-const {BooleanProto, StringProto}	= require('../modules/proto');
-const {readableID, toInt}			= require('../modules/util');
+const firebase							= require('firebase-admin');
+const fs								= require('fs');
+const os								= require('os');
+const usernameBlacklist					= new Set(require('username-blacklist'));
+const databaseService					= require('../modules/database-service');
+const {BooleanProto, StringProto}		= require('../modules/proto');
+const {normalize, readableID, toInt}	= require('../modules/util');
 
 
 const addInviteCode	= async (projectId, countByUser, namespace, plan, reservedUsername) => {
@@ -21,7 +21,7 @@ if (typeof namespace !== 'string' || !namespace) {
 }
 
 /* TODO: Add flag to explicitly override the blacklist and reserve a non-standard username */
-if (reservedUsername && usernameBlacklist.has(reservedUsername)) {
+if (reservedUsername && usernameBlacklist.has(normalize(reservedUsername))) {
 	throw new Error('Cannot reserve blacklisted username.');
 }
 
@@ -71,7 +71,9 @@ await Promise.all(inviteCodes.map(async ({codes, inviterUsername}) =>
 				undefined
 			,
 			reservedUsername ?
-				database.ref(`${namespacePath}/reservedUsernames/${reservedUsername}`).set('') :
+				database.ref(
+					`${namespacePath}/reservedUsernames/${normalize(reservedUsername)}`
+				).set('') :
 				undefined
 		])
 	))

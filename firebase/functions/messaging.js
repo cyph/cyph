@@ -1,3 +1,6 @@
+const {normalize}	= require('./util');
+
+
 const sendMessage	= async (database, messaging, namespace, username, body) => {
 	const ref	= database.ref(`${namespace}/users/${normalize(username)}/messagingTokens`);
 
