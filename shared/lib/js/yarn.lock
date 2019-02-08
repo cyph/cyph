@@ -1418,10 +1418,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^10.1.0", "@types/node@^10.12.21":
-  version "10.12.21"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.21.tgz#7e8a0c34cf29f4e17a36e9bd0ea72d45ba03908e"
-  integrity sha512-CBgLNk4o3XMnqMc0rhb6lc77IwShMEglz05deDcn2lQxyXEZivfwgYJu7SMha9V5XcrP6qZuevTHV/QrN2vjKQ==
+"@types/node@*", "@types/node@^10.1.0", "@types/node@^10.12.22":
+  version "10.12.22"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.22.tgz#eb2a8a1c24ee4a59cf87549cc67d60976ebaebd2"
+  integrity sha512-sozsyYqmHUD1OKzMb61UH4Es1oMLLA4g4eX6Zu1i8ZpG1sTlmZClL9ZU9GuNQQ2fHDKmaRUWlDSvzQ/aIDaIiQ==
 
 "@types/node@^8.0.53", "@types/node@^8.0.7":
   version "8.10.39"
@@ -1553,10 +1553,10 @@
     "@types/unist" "*"
     "@types/vfile-message" "*"
 
-"@types/video.js@^7.2.7":
-  version "7.2.7"
-  resolved "https://registry.yarnpkg.com/@types/video.js/-/video.js-7.2.7.tgz#4f85b671783950299ee683738fe45ef5387ddab6"
-  integrity sha512-W7dwAcSB9kDgRsFZfEyWhjb3brgLtlgtJ/oPESwz4ZIW2coi1YIR87mBPpma+fn2+yu6X8Owp1wviAfqEDjylg==
+"@types/video.js@^7.2.8":
+  version "7.2.8"
+  resolved "https://registry.yarnpkg.com/@types/video.js/-/video.js-7.2.8.tgz#af85f22ff13f6612b6a587056262efb10328b06d"
+  integrity sha512-+hXmmW9onuTLGDjuu3bttZQ5y3r9K4dFQkweRWKKAWdGH00BOamqqUCF4S/gWOYVO1cciRyxpoG5FD/uW1kXxA==
 
 "@types/webpack-sources@^0.1.5":
   version "0.1.5"
@@ -5363,9 +5363,9 @@ d3-drag@1:
     d3-selection "1"
 
 d3-dsv@1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/d3-dsv/-/d3-dsv-1.1.0.tgz#8514357d989252c75c318b7989aab7687fa47529"
-  integrity sha512-FFcClWUzNS6amFTbKzo5SuBrWXBIDX3I5EM7Lqx9yWz9C2iEruYuzHw1jTdyBb3XEOq5bteeD4L6EsRJsvO3Fg==
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/d3-dsv/-/d3-dsv-1.1.1.tgz#aaa830ecb76c4b5015572c647cc6441e3c7bb701"
+  integrity sha512-1EH1oRGSkeDUlDRbhsFytAXU6cAmXFzc52YUe6MRlPClmWb85MP1J5x+YJRzya4ynZWnbELdSAvATFW/MbxaXw==
   dependencies:
     commander "2"
     iconv-lite "0.4"
@@ -7755,6 +7755,13 @@ gcs-resumable-upload@^0.14.1:
     pumpify "^1.5.1"
     request "^2.87.0"
     stream-events "^1.0.4"
+
+generate-rsa-keypair@*:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/generate-rsa-keypair/-/generate-rsa-keypair-0.1.2.tgz#e85ca67cb442b8cdec679f9135c9f0953417af7d"
+  integrity sha512-lsCCunZyKbpsFL3Toz7OTha9Xwn+E9RVko52fZzWFq9jwnEWJCvRovKhJRVjk5aFE+yJRsjzOWG1OrNcoFM97Q==
+  dependencies:
+    nan "^2.10.0"
 
 genfun@^5.0.0:
   version "5.0.0"
@@ -11920,11 +11927,6 @@ nan@^2.0.0, nan@^2.0.9, nan@^2.10.0, nan@^2.9.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.1.tgz#7b1aa193e9aa86057e3c7bbd0ac448e770925552"
   integrity sha512-JY7V6lRkStKcKTvHO5NVSQRv+RV+FIL5pvDoLiAtSL9pKlC5x9PKQcZDsq7m4FO4d57mkhC6Z+QhAh3Jdk5JFw==
 
-nan@~2.3.3:
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.3.5.tgz#822a0dc266290ce4cd3a12282ca3e7e364668a08"
-  integrity sha1-gioNwmYpDOTNOhIoLKPn42Rmigg=
-
 nanoid@^1.0.7:
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-1.3.4.tgz#ad89f62c9d1f4fd69710d4a90953d2893d2d31f4"
@@ -15607,20 +15609,13 @@ router@^1.3.1:
     setprototypeof "1.1.0"
     utils-merge "1.0.1"
 
-rsa-keygen@*:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/rsa-keygen/-/rsa-keygen-1.0.6.tgz#3da3bf8147c96247cf695681b0bda17a6efa4086"
-  integrity sha1-PaO/gUfJYkfPaVaBsL2hem76QIY=
-  dependencies:
-    nan "~2.3.3"
-
 rsasign@*:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.1.8.tgz#0b990b845bea81b5137473f30b1c2b2402f70ea4"
-  integrity sha512-5LBYi4H9uUl/eWklYQ8zKTwCeWAkKtkEknDbvloLjdFbBWbmbA3Y3Gk6iwRyNn6q9gn65JA+gqFI04mfl1XBjA==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.2.0.tgz#a6198d508649780c41947d3fd97154dfecb127d0"
+  integrity sha512-BaWUO8vNh+xh4Qsm3+P+aa0/9JzPsqdiX2GbXtTCZpbWGI//NANsHS6AVh9UU41oBTYWC0FSDVUeMBzoRfztKg==
   dependencies:
+    generate-rsa-keypair "*"
     pem-jwk-norecompute "*"
-    rsa-keygen "*"
     sodiumutil "*"
 
 rsvp@^3.6.2:
