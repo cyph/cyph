@@ -409,9 +409,11 @@
 		"rxjs-finnish": false,
 		"rxjs-just": false,
 		"rxjs-no-add": false,
+		"rxjs-no-compat": true,
 		"rxjs-no-create": false /* Pending fix: true */,
 		"rxjs-no-deep-operators": false,
 		"rxjs-no-do": false /* Pending fix: true */,
+		"rxjs-no-exposed-subjects": false,
 		"rxjs-no-finnish": false /* Pending fix: true */,
 		"rxjs-no-ignored-error": false,
 		"rxjs-no-ignored-notifier": true,
@@ -438,6 +440,7 @@
 		"rxjs-prefer-add": false,
 		"rxjs-prefer-async-pipe": false,
 		"rxjs-prefer-observer": false,
+		"rxjs-suffix-subjects": false,
 		"rxjs-throw-error": false
 	},
 	"rulesDirectory": [
