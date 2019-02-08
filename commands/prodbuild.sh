@@ -17,8 +17,6 @@ fi
 
 minifyScripts='
 	/node_modules/terser/dist/bundle.js
-	/node_modules/terser/lib/compress.js
-	/node_modules/terser/lib/minify.js
 	/node_modules/uglify-es/lib/compress.js
 	/node_modules/uglify-es/lib/minify.js
 	/node_modules/uglify-js/lib/compress.js
@@ -29,6 +27,11 @@ onexit () {
 	for minifyScript in ${minifyScripts} ; do
 		mv ${minifyScript}.bak ${minifyScript} 2> /dev/null
 	done
+
+	mv \
+		/node_modules/terser/dist/bundle.min.js.bak \
+		/node_modules/terser/dist/bundle.min.js \
+	2> /dev/null
 }
 
 if [ "${noBuild}" ] || [ "${fullMinify}" ] ; then
@@ -48,7 +51,11 @@ for minifyScript in ${minifyScripts} ; do
 	sed -i "s/reserved:\s*\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions/g" ${minifyScript}
 
 	sed -i "s/safari10 = .*;/safari10 = true;/g" ${minifyScript}
+	sed -i "s/safari10\s*:\s*false/safari10: true/g" ${minifyScript}
 done
+
+mv /node_modules/terser/dist/bundle.min.js /node_modules/terser/dist/bundle.min.js.bak
+cp /node_modules/terser/dist/bundle.js /node_modules/terser/dist/bundle.min.js
 
 
 # Workaround for https://github.com/angular/angular-cli/issues/10612
