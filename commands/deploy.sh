@@ -866,7 +866,7 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 		mv firebase/functions/index.new.js firebase/functions/index.js
 	fi
 
-	./commands/buildunbundledassets.sh
+	./commands/buildunbundledassets.sh || fail
 	./commands/updaterepos.js
 
 	cd firebase
