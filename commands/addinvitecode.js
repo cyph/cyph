@@ -61,9 +61,9 @@ await Promise.all(inviteCodes.map(async ({codes, inviterUsername}) =>
 	Promise.all(codes.map(async code =>
 		Promise.all([
 			database.ref(`${namespacePath}/inviteCodes/${code}`).set({
-				inviterUsername,
 				plan: CyphPlans[plan],
-				reservedUsername
+				...(inviterUsername ? {inviterUsername} : {}),
+				...(reservedUsername ? {reservedUsername} : {})
 			}),
 			inviterUsername ?
 				setItem(
