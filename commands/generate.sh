@@ -150,7 +150,7 @@ file="shared/js/cyph/directives/${selector}.directive.ts"
 
 cat > ${file} << EOM
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
-import {BaseProvider} from '../../base-provider';
+import {BaseProvider} from '../base-provider';
 
 
 /**
@@ -169,7 +169,9 @@ export class ${class} extends BaseProvider implements OnInit {
 
 		/** @ignore */
 		private readonly renderer: Renderer2
-	) {}
+	) {
+		super();
+	}
 }
 EOM
 
@@ -216,7 +218,7 @@ file="shared/js/cyph/services/${selector}.service.ts"
 
 cat > ${file} << EOM
 import {Injectable} from '@angular/core';
-import {BaseProvider} from '../../base-provider';
+import {BaseProvider} from '../base-provider';
 
 
 /**
@@ -224,7 +226,9 @@ import {BaseProvider} from '../../base-provider';
  */
 @Injectable()
 export class ${class} extends BaseProvider {
-	constructor () {}
+	constructor () {
+		super();
+	}
 }
 EOM
 
