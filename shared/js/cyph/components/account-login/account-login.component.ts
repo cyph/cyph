@@ -113,6 +113,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		}
 
 		try {
+			if (this.accountAuthService.pseudoAccountLogin.value) {
+				return;
+			}
+
 			const [pinIsCustom, savedMasterKey, savedUsername]	= await Promise.all([
 				this.localStorageService.getItem('pinIsCustom', BooleanProto).catch(() => true),
 				this.localStorageService.getItem('masterKey', BinaryProto).catch(() => undefined),
