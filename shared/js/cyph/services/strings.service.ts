@@ -79,6 +79,9 @@ export class StringsService extends BaseProvider {
 	public readonly addContactButtonInternal: string	= `${this.internalProductShort} User`;
 
 	/** @see StringsService */
+	public readonly addContactButtonInvite: string		= `Invite to ${this.internalProductShort}`;
+
+	/** @see StringsService */
 	public readonly addContactTitle: string				= `Add Contact`;
 
 	/** @see StringsService */
@@ -89,6 +92,11 @@ export class StringsService extends BaseProvider {
 	/** @see StringsService */
 	public readonly addContactTooltipInternal: string	=
 		`Add someone using their ${this.internalProductShort} username`
+	;
+
+	/** @see StringsService */
+	public readonly addContactTooltipInvite: string		=
+		`Invite a friend to make their own ${this.internalProductShort} account`
 	;
 
 	/** @see StringsService */
@@ -480,6 +488,9 @@ export class StringsService extends BaseProvider {
 	public readonly invalidPIN: string					=
 		`Invalid lock screen password.`
 	;
+
+	/** @see StringsService */
+	public readonly inviteContactTitle: string			= `Invite Contact`;
 
 	/** @see StringsService */
 	public readonly linkCopied: string					=

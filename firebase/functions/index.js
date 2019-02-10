@@ -399,6 +399,11 @@ exports.requestPseudoRelationship	= onCall(async (data, context, namespace, getU
 	const username			= await getUsername();
 	const relationshipRef	= database.ref(`${namespace}/pseudoRelationships/${id}`);
 
+	const [aliceName, aliceRealUsername]	= await Promise.all([
+		getName(namespace, username),
+		getRealUsername(namespace, username)
+	]);
+
 	await Promise.all([
 		relationshipRef.set({aliceUsername: username, bobEmail: email, bobName: name}),
 		setItem(
@@ -408,13 +413,42 @@ exports.requestPseudoRelationship	= onCall(async (data, context, namespace, getU
 			{email, name, state: AccountContactState.States.OutgoingRequest},
 			true
 		),
-		getName(namespace, username).then(async aliceName => sendMailInternal(
+		sendMailInternal(
 			email,
-			`Contact Request from ${aliceName}`,
-			`${name ? `${name}, ` : ''}${aliceName} has invited you to an encrypted Cyph chat.\n\n` +
+			`Contact Request from ${aliceName} (@${aliceRealUsername})`,
+			`${name}, ${aliceName} has invited you to an encrypted Cyph chat.\n\n` +
 			`Click here to accept: ${accountsURL}accept/${id}\n` +
 			`Click here to reject: ${accountsURL}reject/${id}`
-		))
+		)
+	]);
+});
+
+
+exports.sendInvite	= onCall(async (data, context, namespace, getUsername) => {
+	const {accountsURL}		= namespaces[namespace];
+	const email				= validateInput(data.email, emailRegex);
+	const name				= validateInput(data.name);
+	const inviterUsername	= await getUsername();
+	const inviteCodesRef	= database.ref(`${namespace}/users/${inviterUsername}/inviteCodes`);
+
+	const [inviterName, inviterRealUsername, inviteCode]	= await Promise.all([
+		getName(namespace, inviterUsername),
+		getRealUsername(namespace, inviterUsername),
+		inviteCodesRef.once('value').then(snapshot => Object.keys(snapshot.val() || {})[0])
+	]);
+
+	if (!inviteCode) {
+		throw new Error('No available invites.');
+	}
+
+	await Promise.all([
+		inviteCodesRef.child(inviteCode).remove(),
+		sendMailInternal(
+			email,
+			`Cyph Invite from ${inviterName} (@${inviterRealUsername})`,
+			`${name ? `${name}, ` : ''}${inviterName} has invited you to join Cyph!\n\n` +
+			`Click here to use your invitation: ${accountsURL}register/${inviteCode}`
+		)
 	]);
 });
 
@@ -469,6 +503,8 @@ exports.userConsumeInvite	= functions.database.ref(
 			removeItem(
 				params.namespace,
 				`users/${inviterUsername}/inviteCodes/${inviteCode}`
+			).catch(
+				() => {}
 			)
 		,
 		!reservedUsername ?

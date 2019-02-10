@@ -14,11 +14,12 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
-import {IContactListItem, User, UserPresence} from '../../account';
+import {IContactListItem, NewContactTypes, User, UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountInviteService} from '../../services/account-invite.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -173,6 +174,9 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	/** Indicates whether to use inverted theme. */
 	@Input() public invertedTheme: boolean										= false;
 
+	/** @see NewContactTypes */
+	public readonly newContactTypes												= NewContactTypes;
+
 	/** @see AccountContactsSearchComponent.searchBarBlur */
 	@Output() public readonly searchBarBlur										=
 		new EventEmitter<void>()
@@ -188,10 +192,10 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	@Input() public sidebar: boolean											= false;
 
 	/** @see trackByUser */
-	public readonly trackByUser: typeof trackByUser								= trackByUser;
+	public readonly trackByUser													= trackByUser;
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence							= UserPresence;
+	public readonly userPresence												= UserPresence;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
@@ -267,6 +271,9 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see AccountInviteService */
+		public readonly accountInviteService: AccountInviteService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

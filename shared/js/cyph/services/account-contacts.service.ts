@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
-import {IContactListItem, SecurityModels, User} from '../account';
+import {IContactListItem, NewContactTypes, SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {
 	emailInput,
@@ -30,6 +30,7 @@ import {normalize, normalizeArray} from '../util/formatting';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
+import {AccountInviteService} from './account-invite.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -267,12 +268,11 @@ export class AccountContactsService extends BaseProvider {
 		);
 	}
 
-	/**
-	 * Displays prompt to add a new contact.
-	 * @param external Adds an external contact via pseudo-relationship.
-	 */
-	public async addContactPrompt (external: boolean = false) : Promise<void> {
-		if (!external) {
+	/** Displays prompt to add a new contact. */
+	public async addContactPrompt (
+		newContactType: NewContactTypes = NewContactTypes.default
+	) : Promise<void> {
+		if (newContactType === NewContactTypes.default) {
 			const closeFunction	= resolvable<() => void>();
 			const getContacts	= resolvable<User[]>();
 
@@ -319,7 +319,9 @@ export class AccountContactsService extends BaseProvider {
 					])
 				])
 			]),
-			title: this.stringsService.addContactTitle
+			title: newContactType === NewContactTypes.external ?
+				this.stringsService.addContactTitle :
+				this.stringsService.inviteContactTitle
 		});
 
 		const email	= getFormValue(contactForm, 'string', 0, 1, 0);
@@ -329,10 +331,15 @@ export class AccountContactsService extends BaseProvider {
 			return;
 		}
 
-		await this.databaseService.callFunction(
-			'requestPseudoRelationship',
-			{email, name}
-		);
+		if (newContactType === NewContactTypes.external) {
+			await this.databaseService.callFunction(
+				'requestPseudoRelationship',
+				{email, name}
+			);
+		}
+		else {
+			await this.accountInviteService.send(email, name);
+		}
 	}
 
 	/** Contact URL. */
@@ -382,6 +389,9 @@ export class AccountContactsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly accountInviteService: AccountInviteService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,

@@ -43,6 +43,7 @@ import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credential
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
+import {AccountInviteService} from '../services/account-invite.service';
 import {AccountOrganizationsService} from '../services/account-organizations.service';
 import {AccountSettingsService} from '../services/account-settings.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
@@ -193,6 +194,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountContactsService,
 		AccountDatabaseService,
 		AccountFilesService,
+		AccountInviteService,
 		AccountOrganizationsService,
 		AccountService,
 		AccountSettingsService,

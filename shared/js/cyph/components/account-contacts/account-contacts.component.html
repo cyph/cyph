@@ -107,7 +107,15 @@
 			class='add-contact'
 			*ngIf='(accountDatabaseService.currentUser | async)?.confirmed === true'
 		>
-			{{stringsService.addContactTitle}}
+			<span
+				[matBadge]='((accountInviteService.count | async) || 0).toString()'
+				[matBadgeHidden]='!(((accountInviteService.count | async) || 0) > 0)'
+				matBadgePosition='above before'
+			>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				{{stringsService.addContactTitle}}
+				&nbsp;&nbsp;&nbsp;&nbsp;
+			</span>
 		</button>
 		<mat-menu #addContactMenu='matMenu'>
 			<button
@@ -122,9 +130,18 @@
 				mat-menu-item
 				[matTooltip]='stringsService.addContactTooltipExternal'
 				[matTooltipPosition]='(envService.isMobile | async) ? "right" : "left"'
-				(click)='accountContactsService.addContactPrompt(true)'
+				(click)='accountContactsService.addContactPrompt(newContactTypes.external)'
 			>
 				{{stringsService.addContactButtonExternal}}
+			</button>
+			<button
+				mat-menu-item
+				[matTooltip]='stringsService.addContactTooltipInvite'
+				[matTooltipPosition]='(envService.isMobile | async) ? "right" : "left"'
+				(click)='accountContactsService.addContactPrompt(newContactTypes.invite)'
+				*ngIf='((accountInviteService.count | async) || 0) > 0'
+			>
+				<strong>{{stringsService.addContactButtonInvite}}</strong>
 			</button>
 		</mat-menu>
 
