@@ -12,6 +12,12 @@ import {triggerClick} from '../cyph/util/input';
 import {sleep} from '../cyph/util/wait';
 
 
+/** Handle redirection in local env before ServiceWorker is initialized */
+
+if (env.isLocalEnv && location.pathname !== '/') {
+	location.replace('/#' + location.pathname.slice(1));
+}
+
 /* Mobile CSS class */
 
 env.isMobile.subscribe(isMobile => {
@@ -78,17 +84,12 @@ if (location.hash && location.hash.endsWith('/')) {
 }
 
 $(async () => {
-	if (!env.isHomeSite) {
-		if (!env.isLocalEnv && document.head) {
-			/* In WebSigned environments, perform CSP Meta-Hardening */
-			await sleep(10000);
-			$(document.head).append(
-				`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
-			);
-		}
-		else if (location.pathname !== '/') {
-			location.replace('/#' + location.pathname.slice(1));
-		}
+	if (!env.isHomeSite && !env.isLocalEnv && document.head) {
+		/* In WebSigned environments, perform CSP Meta-Hardening */
+		await sleep(10000);
+		$(document.head).append(
+			`<meta http-equiv="Content-Security-Policy" content="${env.CSP}" />`
+		);
 	}
 
 	/* Try again if page takes too long to initialize */
