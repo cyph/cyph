@@ -33,11 +33,9 @@ export class Env extends EnvDeploy {
 
 	/** @inheritDoc */
 	public readonly appUrl: string				=
-		(
-			environment.local ||
-			!environment.customBuild ||
-			environment.customBuild.config.burnerOnly
-		) ?
+		environment.local || this.isOnion ?
+			envDeploy.appUrl :
+		!environment.customBuild || environment.customBuild.config.burnerOnly ?
 			envDeploy.newCyphBaseUrl :
 			`https://${environment.customBuild.id}/`
 	;
@@ -79,7 +77,7 @@ export class Env extends EnvDeploy {
 
 	/** @inheritDoc */
 	public readonly cyphMeUrl: string			=
-		this.appUrl === envDeploy.appUrl ?
+		!environment.local && this.appUrl === envDeploy.appUrl ?
 			envDeploy.cyphMeUrl :
 			`${this.appUrl}profile/`
 	;
