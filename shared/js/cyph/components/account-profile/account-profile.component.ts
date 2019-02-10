@@ -30,6 +30,7 @@ import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
 import {cacheObservable, toBehaviorSubject} from '../../util/flatten-observable';
+import {normalize} from '../../util/formatting';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {serialize} from '../../util/serialization';
 
@@ -146,7 +147,12 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 		this.accountService.transitionEnd();
 
 		this.subscriptions.push(this.userInternal.subscribe(async ({user, username}) => {
-			if (
+			const normalizedUsername	= username ? normalize(username) : username;
+
+			if (username !== normalizedUsername) {
+				this.router.navigate(['profile', normalizedUsername], {replaceUrl: true});
+			}
+			else if (
 				this.accountDatabaseService.currentUser.value &&
 				this.accountDatabaseService.currentUser.value.user.username === username
 			) {
