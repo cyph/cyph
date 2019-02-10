@@ -396,7 +396,13 @@
 					<ng-container *ngTemplateOutlet='name; context: {
 						readViewClasses: "animated flipInX _2"
 					}'></ng-container>
-					<div class='username animated flipInX _2'>@{{user.realUsername | async}}</div>
+					<a
+						class='username animated flipInX _2'
+						[href]='envService.cyphMeUrl + user.username'
+						target='_self'
+					>
+						<span>@</span><span>{{user.realUsername | async}}</span>
+					</a>
 					<ng-container *ngTemplateOutlet='description; context: {
 						divider: (editMode | async) === false,
 						readViewClasses: "animated flipInX _3"
@@ -533,12 +539,14 @@
 							>
 								Doctors
 							</div>
-							<div
+							<a
 								class='username animated flipInX _2'
+								[href]='envService.cyphMeUrl + user.username'
+								target='_self'
 								*ngIf='(user.userType | async) === accountUserTypes.Standard'
 							>
-								@{{user.realUsername | async}}
-							</div>
+								<span>@</span><span>{{user.realUsername | async}}</span>
+							</a>
 							<div
 								class='practice'
 								fxLayout='row'

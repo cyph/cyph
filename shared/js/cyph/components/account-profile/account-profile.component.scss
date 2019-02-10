@@ -124,6 +124,11 @@ $header-size: 135px;
 	.username {
 		font-size: 24px;
 		opacity: 0.6;
+		text-decoration: none;
+
+		&:hover > span:nth-child(2) {
+			border-bottom: 1px solid;
+		}
 	}
 
 	.description {
