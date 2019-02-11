@@ -577,7 +577,7 @@ export class AccountAuthService extends BaseProvider {
 		if (
 			!realUsername ||
 			(!pseudoAccount && (masterKey === undefined || masterKey.length === 0)) ||
-			!inviteCode
+			(!pseudoAccount && !inviteCode)
 		) {
 			return false;
 		}
@@ -598,14 +598,20 @@ export class AccountAuthService extends BaseProvider {
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
 				(async () => {
-					await this.databaseService.setItem(
-						`pendingSignupInviteCodes/${username}`,
-						StringProto,
-						inviteCode,
-						true
-					);
+					if (inviteCode) {
+						await this.databaseService.setItem(
+							`pendingSignupInviteCodes/${username}`,
+							StringProto,
+							inviteCode,
+							true
+						);
+					}
 
 					await this.databaseService.register(username, loginData.secondaryPassword);
+
+					if (!inviteCode) {
+						return;
+					}
 
 					const inviterUsername	=
 						await this.databaseService.getAsyncValue(
