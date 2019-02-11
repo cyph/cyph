@@ -126,6 +126,7 @@ read -r -d '' modules <<- EOM
 	copy-webpack-plugin
 	core-js
 	cornerstone-core
+	cors
 	crypto-browserify
 	css-loader
 	csv
@@ -162,6 +163,7 @@ read -r -d '' modules <<- EOM
 	html-webpack-plugin
 	htmlencode
 	htmllint
+	ical-generator@~0.2
 	image-type
 	jasmine-core
 	jasmine-spec-reporter
@@ -216,6 +218,7 @@ read -r -d '' modules <<- EOM
 	ngx-image-cropper
 	node-fetch
 	node-sass
+	nodemailer@4
 	notify-cli
 	ntru
 	opentok
@@ -246,6 +249,7 @@ read -r -d '' modules <<- EOM
 	rxjs
 	rxjs-tslint@0.1.5
 	rxjs-tslint-rules
+	sanitize-html
 	sass-loader
 	script-ext-html-webpack-plugin
 	sidh
