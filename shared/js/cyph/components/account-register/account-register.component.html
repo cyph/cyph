@@ -22,7 +22,19 @@
 			'></ng-container>
 		</div>
 
-		<div fxLayoutAlign='center center'>
+		<div fxLayoutAlign='center center' fxLayoutGap='22px'>
+			<button
+				mat-button
+				cyphTranslate
+				fxFlex
+				fxFlex.gt-sm='initial'
+				type='submit'
+				(click)='submitPIN.emit(undefined)'
+				*ngIf='getPinOnly && pinSkippable'
+			>
+				Skip
+			</button>
+
 			<button
 				mat-raised-button
 				fxFlex

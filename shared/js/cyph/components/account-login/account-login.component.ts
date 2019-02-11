@@ -113,10 +113,6 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		}
 
 		try {
-			if (this.accountAuthService.pseudoAccountLogin.value) {
-				return;
-			}
-
 			const [pinIsCustom, savedMasterKey, savedUsername]	= await Promise.all([
 				this.localStorageService.getItem('pinIsCustom', BooleanProto).catch(() => true),
 				this.localStorageService.getItem('masterKey', BinaryProto).catch(() => undefined),
@@ -127,7 +123,20 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			this.savedMasterKey.next(savedMasterKey);
 			this.savedUsername.next(savedUsername);
 
-			if (!(savedMasterKey && savedUsername)) {
+			if (
+				!(savedMasterKey && savedUsername) ||
+				this.accountAuthService.pseudoAccountLogin.value
+			) {
+				/* If we decide to skip the lock screen password setup by default:
+
+				if (
+					!(savedMasterKey && savedUsername) &&
+					this.accountAuthService.pseudoAccountLogin.value
+				) {
+					await this.submit();
+				}
+				*/
+
 				return;
 			}
 
@@ -169,14 +178,11 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		this.error.next(false);
 
 		if (this.accountAuthService.pseudoAccountLogin.value) {
-			this.error.next(newPin ?
-				!(await this.accountAuthService.register(
-					{pseudoAccount: true},
-					undefined,
-					newPin
-				)) :
-				true
-			);
+			this.error.next(!(await this.accountAuthService.register(
+				{pseudoAccount: true},
+				undefined,
+				newPin
+			)));
 		}
 		else {
 			this.error.next(!(await (

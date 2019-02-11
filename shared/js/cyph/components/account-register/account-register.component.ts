@@ -208,6 +208,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Phase of registration process. */
 	public readonly phase								= new BehaviorSubject<number>(0);
 
+	/** If true, may skip setting lock screen password. */
+	@Input() public pinSkippable: boolean				= false;
+
 	/** Sets a spoiler on generated master key. */
 	public readonly spoiler								= new BehaviorSubject<boolean>(true);
 
@@ -223,16 +226,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	 * Master key submission.
 	 * @see getMasterKeyOnly
 	 */
-	@Output() public readonly submitMasterKey: EventEmitter<string>	=
-		new EventEmitter<string>()
-	;
+	@Output() public readonly submitMasterKey			= new EventEmitter<string>();
 
 	/**
 	 * Lock screen password submission.
 	 * @see getPinOnly
 	 */
-	@Output() public readonly submitPIN: EventEmitter<{isCustom: boolean; value: string}>	=
-		new EventEmitter<{isCustom: boolean; value: string}>()
+	@Output() public readonly submitPIN					=
+		new EventEmitter<{isCustom: boolean; value: string}|undefined>()
 	;
 
 	/** Form tab index. */
