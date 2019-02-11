@@ -4,9 +4,12 @@
 const firebase							= require('firebase-admin');
 const fs								= require('fs');
 const os								= require('os');
+const {config}							= require('../modules/config');
 const databaseService					= require('../modules/database-service');
 const potassium							= require('../modules/potassium');
+const {CyphPlan, CyphPlans}				= require('../modules/proto');
 const {deserialize, serialize, sleep}	= require('../modules/util');
+const {addInviteCode}					= require('./addinvitecode');
 const {agsePublicSigningKeys, sign}		= require('./sign');
 
 const {
@@ -233,7 +236,7 @@ await setItem(namespace, 'certificateHistory', BinaryProto, potassium.concatMemo
 	signedInputs[0]
 ));
 
-await Promise.all(signedInputs.slice(1).map(async (cert, i) => {
+const plans	= await Promise.all(signedInputs.slice(1).map(async (cert, i) => {
 	const csr		= csrs[i];
 
 	const fullCert	= potassium.concatMemory(
@@ -249,14 +252,29 @@ await Promise.all(signedInputs.slice(1).map(async (cert, i) => {
 
 	potassium.clearMemory(cert);
 	potassium.clearMemory(fullCert);
+
+	return [csr.username, await getItem(namespace, `users/${csr.username}/plan`, CyphPlan).
+		then(o => o.plan).
+		catch(() => CyphPlans.Free)
+	];
 }));
 
-await Promise.all(usernames.map(async username => {
-	const url	= `users/${username}/certificateRequest`;
+await Promise.all([
+	addInviteCode(
+		projectId,
+		plans.reduce(
+			(o, [username, plan]) => ({...o, [username]: config.planConfig[plan].initialInvites}),
+			{}
+		),
+		namespace
+	),
+	...usernames.map(async username => {
+		const url	= `users/${username}/certificateRequest`;
 
-	await removeItem(namespace, url);
-	await database.ref(`${pendingSignupsURL}/${username}`).remove();
-}));
+		await removeItem(namespace, url);
+		await database.ref(`${pendingSignupsURL}/${username}`).remove();
+	})
+]);
 
 console.log('Certificate signing complete.');
 if (standalone) {

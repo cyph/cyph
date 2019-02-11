@@ -71,26 +71,32 @@ export class Config {
 
 	/** Configuration options for Cyph plans. */
 	public readonly planConfig: Record<CyphPlans, {
+		initialInvites: number;
 		storageCapGB: number;
 		usernameMinLength: number;
 	}>	= {
 		[CyphPlans.FoundersAndFriends]: {
+			initialInvites: 15,
 			storageCapGB: 100,
 			usernameMinLength: 1
 		},
 		[CyphPlans.Free]: {
+			initialInvites: 0,
 			storageCapGB: 1,
 			usernameMinLength: 5
 		},
 		[CyphPlans.Gold]: {
+			initialInvites: 10,
 			storageCapGB: 25,
 			usernameMinLength: 5
 		},
 		[CyphPlans.LifetimePlatinum]: {
+			initialInvites: 15,
 			storageCapGB: 100,
 			usernameMinLength: 1
 		},
 		[CyphPlans.Silver]: {
+			initialInvites: 3,
 			storageCapGB: 5,
 			usernameMinLength: 5
 		}
