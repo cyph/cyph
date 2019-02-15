@@ -234,7 +234,7 @@
     "opentok": "^2.8.0",
     "opus-recorder": "^6.1.1",
     "parchment": "^1.1.4",
-    "pdfjs-dist": "^2.2.2",
+    "pdfjs-dist": "^2.0.943",
     "pdfkit": "^0.9.0",
     "primeng": "^7.0.5",
     "promise-semaphore": "^0.2.8",
