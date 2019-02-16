@@ -800,8 +800,7 @@ exports.userNotify	= onCall(async (data, context, namespace, getUsername) => {
 				notification.type === NotificationTypes.ContactAccept ?
 					{
 						subject: `Contact Confirmation from ${senderUsername}`,
-						text:
-							`${targetName}, ${senderName} has accepted your contact request.`
+						text: `${targetName}, ${senderName} has accepted your contact request.`
 					} :
 				notification.type === NotificationTypes.ContactRequest ?
 					{
@@ -820,11 +819,17 @@ exports.userNotify	= onCall(async (data, context, namespace, getUsername) => {
 						subject: `New Message from ${senderUsername}`,
 						text: `${targetName}, ${senderName} has sent you a message.`
 					} :
+				notification.type === NotificationTypes.Yo ?
 					{
 						subject: `Sup Dog, it's ${senderUsername}`,
 						text: `${targetName}, ${senderName} says yo.`
-					}
+					} :
+					{}
 			;
+
+			if (!subject || !text) {
+				throw new Error(`Invalid notification type: ${notification.type}`);
+			}
 
 			await notify(
 				namespace,
