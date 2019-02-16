@@ -8,6 +8,7 @@
 		"firebase-admin": "*",
 		"firebase-functions": "*",
 		"ical-generator": "~0.2",
+		"jsdom": "*",
 		"libsodium-wrappers-sumo": "https://github.com/jedisct1/libsodium.js",
 		"lz4": "*",
 		"mustache": "*",
