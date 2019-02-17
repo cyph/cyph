@@ -1,10 +1,11 @@
-const fs			= require('fs');
-const ical			= require('ical-generator');
-const mustache		= require('mustache');
-const nodemailer	= require('nodemailer');
-const auth			= require('./email-credentials');
-const namespaces	= require('./namespaces');
-const {normalize}	= require('./util');
+const fs						= require('fs');
+const ical						= require('ical-generator');
+const mustache					= require('mustache');
+const nodemailer				= require('nodemailer');
+const auth						= require('./email-credentials');
+const {render, renderTemplate}	= require('./markdown-templating');
+const namespaces				= require('./namespaces');
+const {normalize}				= require('./util');
 
 
 const transporter	= nodemailer.createTransport({auth, service: 'gmail'});
@@ -51,30 +52,49 @@ const sendMailInternal	= async (
 	eventDetails,
 	eventInviter,
 	accountsURL
-) => transporter.sendMail({
-	from: `Cyph <${auth.user}>`,
-	html: !text ? '' : mustache.render(await template, {accountsURL, lines: text.split('\n')}),
-	icalEvent: !eventDetails ? undefined : {
-		content: ical({
-			domain: 'cyph.com',
-			events: [{
-				attendees: [to, eventInviter],
-				description: eventDetails.description,
-				end: new Date(eventDetails.endTime),
-				location: eventDetails.location,
-				organizer: eventInviter,
-				start: new Date(eventDetails.startTime),
-				summary: eventDetails.summary || subject
-			}],
-			prodId: '//cyph.com//cyph-appointment-scheduler//EN'
-		}).toString(),
-		filename: 'invite.ics',
-		method: 'request'
-	},
-	subject,
-	text: text || '',
-	to: typeof to === 'string' ? to : to.formatted
-});
+) => {
+	if (typeof text === 'object') {
+		text	=
+			text.template ?
+				render(text.template, text.data) :
+			text.templateName ?
+				await renderTemplate(text.templateName, text.data) :
+				undefined
+		;
+	}
+
+	return transporter.sendMail({
+		from: `Cyph <${auth.user}>`,
+		html: !text ? '' : mustache.render(await template, {
+			accountsURL,
+			...(
+				typeof text === 'object' ?
+					{html: text.html} :
+					{lines: text.split('\n')}
+			)
+		}),
+		icalEvent: !eventDetails ? undefined : {
+			content: ical({
+				domain: 'cyph.com',
+				events: [{
+					attendees: [to, eventInviter],
+					description: eventDetails.description,
+					end: new Date(eventDetails.endTime),
+					location: eventDetails.location,
+					organizer: eventInviter,
+					start: new Date(eventDetails.startTime),
+					summary: eventDetails.summary || subject
+				}],
+				prodId: '//cyph.com//cyph-appointment-scheduler//EN'
+			}).toString(),
+			filename: 'invite.ics',
+			method: 'request'
+		},
+		subject,
+		text: (typeof text === 'object' ? text.markdown : text) || '',
+		to: typeof to === 'string' ? to : to.formatted
+	});
+};
 
 /**
  * @param {{
@@ -85,6 +105,11 @@ const sendMailInternal	= async (
  *     startTime: number;
  *     summary: string;
  * }} eventDetails
+ * @param {(
+ *     {data?: Record<string, string>; template: string}|
+ *     {data?: Record<string, string>; templateName: string}|
+ *     string
+ * )} text
  */
 const sendMail			= async (database, namespace, username, subject, text, eventDetails) => {
 	const to	= await getEmailAddress(database, namespace, username);

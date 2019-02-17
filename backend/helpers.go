@@ -437,16 +437,13 @@ func getFileText(path string) string {
 
 func sendMail(h HandlerArgs, to string, subject string, text string, html string) {
 	lines := []string{}
-	htmlLines := []string{}
 
 	if text != "" {
+		html = ""
 		lines = strings.Split(text, "\n")
 	}
-	if html != "" {
-		htmlLines = strings.Split(html, "\n")
-	}
 
-	body, err := emailTemplate.Render(map[string]interface{}{"htmlLines": htmlLines, "lines": lines})
+	body, err := emailTemplate.Render(map[string]interface{}{"html": html, "lines": lines})
 
 	if err != nil {
 		log.Errorf(h.Context, "Failed to render email body: %v", err)
