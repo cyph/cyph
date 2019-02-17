@@ -851,9 +851,9 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 			firebaseProjects='cyph-test cyph-test2 cyph-test-e2e cyph-test-local'
 
 			if [ "${allBranches}" ] ; then
-				firebaseProjects="${firebaseProjects} cyph-test-staging cyph-test-beta cyph-test-master"
+				firebaseProjects="cyph-test-staging cyph-test-beta cyph-test-master ${firebaseProjects}"
 			elif [ "${mainEnvironment}" != 'dev' ] ; then
-				firebaseProjects="${firebaseProjects} cyph-test-${branch}"
+				firebaseProjects="cyph-test-${branch} ${firebaseProjects}"
 			fi
 		fi
 
