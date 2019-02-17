@@ -192,6 +192,7 @@ read -r -d '' modules <<- EOM
 	long
 	lunr
 	lz4
+	markdown-escapes
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
