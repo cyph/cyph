@@ -7,7 +7,8 @@ const {window}	= new (require('jsdom').JSDOM)();
 
 module.exports	= new DOMPurifyHtmlSanitizer(
 	require('dompurify')(window),
-	window.document
+	window.document,
+	['http', 'https']
 );
 
 module.exports.dompurifyHtmlSanitizer	= module.exports;

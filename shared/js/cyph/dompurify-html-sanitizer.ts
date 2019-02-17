@@ -17,13 +17,12 @@ export class DOMPurifyHtmlSanitizer {
 		private readonly domPurify: typeof DOMPurify,
 
 		/** @see Document */
-		private readonly document: Document = self.document
-	) {
-		/* Allowed URI schemes */
-		const whitelist	= ['http', 'https', 'ftp'];
+		private readonly document: Document = self.document,
 
-		/* Build fitting regex */
-		const regex		= new RegExp(`^(${whitelist.join('|')}):`, 'im');
+		/** Allowed URI schemes */
+		private readonly whitelist: string[] = ['http', 'https', 'ftp']
+	) {
+		const regex	= new RegExp(`^(${this.whitelist.join('|')}):`, 'im');
 
 		/* Add a hook to enforce URI scheme whitelist */
 		this.domPurify.addHook('afterSanitizeAttributes', node => {
