@@ -1,8 +1,8 @@
-const admin			= require('firebase-admin');
-const sanitize		= require('sanitize-html');
-const {sendMail}	= require('./email');
-const {sendMessage}	= require('./messaging');
-const {normalize}	= require('./util');
+const admin						= require('firebase-admin');
+const {dompurifyHtmlSanitizer}	= require('./dompurify-html-sanitizer');
+const {sendMail}				= require('./email');
+const {sendMessage}				= require('./messaging');
+const {normalize}				= require('./util');
 
 
 const emailNotificationRateLimit	= 3600000;
@@ -10,8 +10,8 @@ const emailNotificationRateLimit	= 3600000;
 
 module.exports	= (database, messaging) => ({
 	notify: async (namespace, username, subject, text, eventDetails, preferPush) => {
-		subject	= sanitize(subject);
-		text	= sanitize(text);
+		subject	= dompurifyHtmlSanitizer.sanitize(subject);
+		text	= typeof text === 'string' ? dompurifyHtmlSanitizer.sanitize(text) : text;
 
 		const notifyMail	= async () =>
 			sendMail(database, namespace, username, subject, text, eventDetails)

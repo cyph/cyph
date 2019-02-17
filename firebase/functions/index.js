@@ -228,7 +228,7 @@ exports.acceptPseudoRelationship	= onCall(async (data, context, namespace, getUs
 			namespace,
 			alice,
 			`Contact Confirmation from ${email}`,
-			`${aliceName}, ${name} has accepted your contact request.`
+			{data: {aliceName, name}, templateName: 'external-contact-accept'}
 		))
 	]);
 
@@ -416,9 +416,7 @@ exports.requestPseudoRelationship	= onCall(async (data, context, namespace, getU
 		sendMailInternal(
 			email,
 			`Contact Request from ${aliceName} (@${aliceRealUsername})`,
-			`${name}, ${aliceName} has invited you to an encrypted Cyph chat.\n\n` +
-			`Click here to accept: ${accountsURL}accept/${id}\n` +
-			`Click here to reject: ${accountsURL}reject/${id}`
+			{data: {aliceName, id, name}, templateName: 'external-contact-invite'}
 		)
 	]);
 });
@@ -446,8 +444,7 @@ exports.sendInvite	= onCall(async (data, context, namespace, getUsername) => {
 		sendMailInternal(
 			email,
 			`Cyph Invite from ${inviterName} (@${inviterRealUsername})`,
-			`${name ? `${name}, ` : ''}${inviterName} has invited you to join Cyph!\n\n` +
-			`Click here to use your invitation: ${accountsURL}register/${inviteCode}`
+			{data: {inviteCode, inviterName, name}, templateName: 'invite-from-user'}
 		)
 	]);
 });
@@ -742,10 +739,7 @@ exports.userEmailSet	= functions.database.ref(
 		params.namespace,
 		username,
 		`Your Registration is Being Processed, ${realUsername}`,
-		`We've received your registration request, and your account is on the way!\n` +
-			`You'll receive a follow-up email as soon as one of the Cyph founders ` +
-			`(Ryan or Josh) activates your account using their personal ` +
-			`Air Gapped Signing Environment.`
+		{templateName: 'registration-pending'}
 	);
 });
 
@@ -1009,16 +1003,14 @@ exports.userRegisterConfirmed	= functions.database.ref(
 			params.namespace,
 			username,
 			`Welcome to Cyph, ${realUsername}`,
-			`Congratulations ${name}, your account is now activated!\n` +
-				`Sign in at ${namespaces[params.namespace].accountsURL}login.` +
-				/* Temporary, pending app's public release */
-				(
-					params.namespace !== 'cyph_ws' ? '' : (
-						`\nYou'll receive an invite to access the iOS app shortly, ` +
-						`and the Android app is available here: ` +
-						`https://play.google.com/apps/testing/com.cyph.app`
-					)
-				)
+			{
+				data: {
+					name,
+					/* Temporary, pending app's public release */
+					nativeAppStillPrivate: params.namespace === 'cyph_ws'
+				},
+				templateName: 'registration-confirmed'
+			}
 		),
 		registrationEmailSentRef.set(true)
 	]);

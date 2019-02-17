@@ -22,8 +22,7 @@ const inviteCode	= (await addInviteCode(
 await sendMail(
 	!email ? undefined : !name ? email : `${name} <${email}>`,
 	'Your Cyph Invite',
-	`Hello${name ? ` ${name},` : ''} you've been invited to join Cyph!\n\n` +
-	`Click here to use your invitation: ${accountsURL}register/${inviteCode}`
+	{data: {name, inviteCode}, templateName: 'new-cyph-invite'}
 );
 
 return inviteCode;

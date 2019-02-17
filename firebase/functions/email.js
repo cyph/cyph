@@ -2,6 +2,7 @@ const fs						= require('fs');
 const ical						= require('ical-generator');
 const mustache					= require('mustache');
 const nodemailer				= require('nodemailer');
+const {dompurifyHtmlSanitizer}	= require('./dompurify-html-sanitizer');
 const auth						= require('./email-credentials');
 const {render, renderTemplate}	= require('./markdown-templating');
 const namespaces				= require('./namespaces');
@@ -54,25 +55,32 @@ const sendMailInternal	= async (
 	accountsURL
 ) => {
 	if (typeof text === 'object') {
+		const data	= {
+			...(typeof text.data === 'object' ? text.data : {}),
+			accountsURL
+		};
+
 		text	=
 			text.template ?
-				render(text.template, text.data) :
+				render(text.template, data) :
 			text.templateName ?
-				await renderTemplate(text.templateName, text.data) :
+				await renderTemplate(text.templateName, data) :
 				undefined
 		;
 	}
 
 	return transporter.sendMail({
 		from: `Cyph <${auth.user}>`,
-		html: !text ? '' : mustache.render(await template, {
-			accountsURL,
-			...(
-				typeof text === 'object' ?
-					{html: text.html} :
-					{lines: text.split('\n')}
-			)
-		}),
+		html: !text ? '' : dompurifyHtmlSanitizer.sanitize(
+			mustache.render(await template, {
+				accountsURL,
+				...(
+					typeof text === 'object' ?
+						{html: text.html} :
+						{lines: text.split('\n')}
+				)
+			})
+		),
 		icalEvent: !eventDetails ? undefined : {
 			content: ical({
 				domain: 'cyph.com',

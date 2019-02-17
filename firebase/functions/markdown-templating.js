@@ -3,7 +3,7 @@ const memoize					= require('lodash/memoize');
 const markdownEscapes			= require('markdown-escapes');
 const MarkdownIt				= require('markdown-it');
 const mustache					= require('mustache');
-const dompurifyHtmlSanitizer	= require('./dompurify-html-sanitizer');
+const {dompurifyHtmlSanitizer}	= require('./dompurify-html-sanitizer');
 
 
 const markdownIt		= new MarkdownIt();
