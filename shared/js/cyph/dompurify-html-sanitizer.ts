@@ -14,7 +14,10 @@ export class DOMPurifyHtmlSanitizer {
 
 	constructor (
 		/** @see DOMPurify */
-		private readonly domPurify: typeof DOMPurify
+		private readonly domPurify: typeof DOMPurify,
+
+		/** @see Document */
+		private readonly document = self.document
 	) {
 		/* Allowed URI schemes */
 		const whitelist	= ['http', 'https', 'ftp'];
@@ -25,7 +28,7 @@ export class DOMPurifyHtmlSanitizer {
 		/* Add a hook to enforce URI scheme whitelist */
 		this.domPurify.addHook('afterSanitizeAttributes', node => {
 			/* Build an anchor to map URLs to */
-			const anchor	= document.createElement('a');
+			const anchor	= this.document.createElement('a');
 
 			/* Check all href attributes for validity */
 			if (node.hasAttribute('href')) {
@@ -52,8 +55,8 @@ export class DOMPurifyHtmlSanitizer {
 			}
 
 			/* Block window.opener in new window */
-			if (node instanceof HTMLAnchorElement) {
-				node.rel	= 'noopener noreferrer';
+			if (node.tagName === 'A') {
+				(<HTMLAnchorElement> node).rel	= 'noopener noreferrer';
 			}
 
 			return node;
