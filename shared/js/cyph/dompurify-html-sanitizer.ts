@@ -17,7 +17,7 @@ export class DOMPurifyHtmlSanitizer {
 		private readonly domPurify: typeof DOMPurify,
 
 		/** @see Document */
-		private readonly document = self.document
+		private readonly document: Document = self.document
 	) {
 		/* Allowed URI schemes */
 		const whitelist	= ['http', 'https', 'ftp'];
