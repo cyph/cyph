@@ -919,11 +919,6 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 	cp ../../modules/database-service.js ~/.cyph/email-credentials.js ./
 	html-minifier --collapse-whitespace --minify-css --remove-comments email.html -o email.html
 
-	# Temporary workaround for Cloud Functions using an outdated Node.js LTS
-	for f in *.js ; do mv "${f}" "$(echo "${f}" | sed 's|\.js$|.ts|')" ; done
-	for f in *.ts ; do tsc "${f}" &> /dev/null ; done
-	rm *.ts
-
 	cp -rf ../../shared/assets/js ./
 	cd ..
 
