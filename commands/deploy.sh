@@ -931,7 +931,7 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 		firebase use --add "${firebaseProject}"
 		firebase functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
-		firebase deploy
+		firebase deploy || fail
 	done
 
 	rm -rf functions/node_modules functions/package-lock.json
