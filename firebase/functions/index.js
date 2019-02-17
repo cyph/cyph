@@ -416,7 +416,11 @@ exports.requestPseudoRelationship	= onCall(async (data, context, namespace, getU
 		sendMailInternal(
 			email,
 			`Contact Request from ${aliceName} (@${aliceRealUsername})`,
-			{data: {aliceName, id, name}, templateName: 'external-contact-invite'}
+			{
+				data: {aliceName, id, name},
+				namespace,
+				templateName: 'external-contact-invite'
+			}
 		)
 	]);
 });
@@ -444,7 +448,11 @@ exports.sendInvite	= onCall(async (data, context, namespace, getUsername) => {
 		sendMailInternal(
 			email,
 			`Cyph Invite from ${inviterName} (@${inviterRealUsername})`,
-			{data: {inviteCode, inviterName, name}, templateName: 'invite-from-user'}
+			{
+				data: {inviteCode, inviterName, name},
+				namespace,
+				templateName: 'invite-from-user'
+			}
 		)
 	]);
 });

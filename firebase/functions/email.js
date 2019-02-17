@@ -55,6 +55,10 @@ const sendMailInternal	= async (
 	accountsURL
 ) => {
 	if (typeof text === 'object') {
+		if (!accountsURL && text.namespace) {
+			accountsURL	= namespaces[text.namespace].accountsURL;
+		}
+
 		const data	= {
 			...(typeof text.data === 'object' ? text.data : {}),
 			accountsURL
