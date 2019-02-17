@@ -94,7 +94,7 @@ const getRealUsername	= async (namespace, username) => {
 			return realUsername;
 		}
 	}
-	catch {}
+	catch (_) {}
 
 	return username;
 };
@@ -115,7 +115,7 @@ const getName	= async (namespace, username) => {
 			return name;
 		}
 	}
-	catch {}
+	catch (_) {}
 
 	return getRealUsername(namespace, username);
 };
