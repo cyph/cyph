@@ -4,6 +4,7 @@
 	"dependencies": {
 		"@google-cloud/storage": "*",
 		"cors": "*",
+		"dompurify": "*",
 		"firebase": "*",
 		"firebase-admin": "*",
 		"firebase-functions": "*",
