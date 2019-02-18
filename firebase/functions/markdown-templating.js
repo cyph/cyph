@@ -48,7 +48,11 @@ const render			= (template, data) => {
 	;
 
 	return {
-		html: dompurifyHtmlSanitizer.sanitize(markdownIt.render(markdown)).trim(),
+		html:
+			dompurifyHtmlSanitizer.sanitize(
+				markdownIt.render(markdown).replace(/\s+/g, ' ')
+			).trim()
+		,
 		markdown
 	};
 };

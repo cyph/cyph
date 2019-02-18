@@ -8,35 +8,41 @@ Hello{{#name}} {{name}}{{/name}},
 
 {{#planFoundersAndFriends}}
 |||
-| -------------------- | :--------------------: |
-| Your Status: &#160;  | **Founders & Friends** |
-|                      | Lifetime Platinum      |
-|                      | Gold                   |
-|                      | Silver                 |
+| ------------ | :--------------------: |
+| Your Status: | **Founders & Friends** |
+|              | Lifetime Platinum      |
+|              | Gold                   |
+|              | Silver                 |
+
+---
 {{/planFoundersAndFriends}}
 {{#planLifetimePlatinum}}
 |||
-| -------------------- | :--------------------: |
-| Your Status: &#160;  | **Lifetime Platinum**  |
-|                      | Gold                   |
-|                      | Silver                 |
+| ------------ | :--------------------: |
+| Your Status: | **Lifetime Platinum**  |
+|              | Gold                   |
+|              | Silver                 |
+
+---
 {{/planLifetimePlatinum}}
 {{#planGold}}
 |||
-| -------------------- | :--------------------: |
-|                      | Lifetime Platinum      |
-| Your Status: &#160;  | **Gold**               |
-|                      | Silver                 |
+| ------------ | :--------------------: |
+|              | Lifetime Platinum      |
+| Your Status: | **Gold**               |
+|              | Silver                 |
+
+---
 {{/planGold}}
 {{#planSilver}}
 |||
-| -------------------- | :--------------------: |
-|                      | Lifetime Platinum      |
-|                      | Gold                   |
-| Your Status: &#160;  | **Silver**             |
-{{/planSilver}}
+| ------------ | :--------------------: |
+|              | Lifetime Platinum      |
+|              | Gold                   |
+| Your Status: | **Silver**             |
 
 ---
+{{/planSilver}}
 
 We highly recommend that you sign up from your desktop or laptop in a location where you have
 some privacy. Afterwards, you'll have three options to securely message your friends:
