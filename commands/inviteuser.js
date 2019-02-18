@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 
+const {config}			= require('../modules/config');
+const {CyphPlans}		= require('../modules/proto');
 const {addInviteCode}	= require('./addinvitecode');
 const {sendMail}		= require('./email');
 
@@ -19,10 +21,29 @@ const inviteCode	= (await addInviteCode(
 	reservedUsername
 ))[''][0];
 
+const cyphPlan		= CyphPlans[plan] || CyphPlans.Free;
+const planConfig	= config.planConfig[cyphPlan];
+
 await sendMail(
 	!email ? undefined : !name ? email : `${name} <${email}>`,
 	'Your Cyph Invite',
-	{data: {name, inviteCode}, templateName: 'new-cyph-invite'}
+	{
+		data: {
+			...planConfig,
+			inviteCode,
+			name,
+			planFoundersAndFriends: cyphPlan === CyphPlans.FoundersAndFriends,
+			planFree: cyphPlan === CyphPlans.Free,
+			planGold: cyphPlan === CyphPlans.Gold,
+			planLifetimePlatinum: cyphPlan === CyphPlans.LifetimePlatinum,
+			planSilver: cyphPlan === CyphPlans.Silver,
+			platinumFeatures: planConfig.usernameMinLength === 1
+		},
+		templateName: 'new-cyph-invite'
+	},
+	undefined,
+	undefined,
+	accountsURL
 );
 
 return inviteCode;

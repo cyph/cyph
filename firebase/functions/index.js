@@ -443,15 +443,35 @@ exports.sendInvite	= onCall(async (data, context, namespace, getUsername) => {
 		throw new Error('No available invites.');
 	}
 
+	const inviteDataRef	= database.ref(`${namespace}/inviteCodes/${inviteCode}`);
+
+	const plan			=
+		((await inviteDataRef.once('value')).val() || {}).plan ||
+		CyphPlans.Free
+	;
+
+	const planConfig	= config.planConfig[plan];
+
 	await Promise.all([
 		inviteCodesRef.child(inviteCode).remove(),
 		sendMailInternal(
 			email,
 			`Cyph Invite from ${inviterName} (@${inviterRealUsername})`,
 			{
-				data: {inviteCode, inviterName, name},
+				data: {
+					...planConfig,
+					inviteCode,
+					inviterName,
+					name,
+					planFoundersAndFriends: plan === CyphPlans.FoundersAndFriends,
+					planFree: plan === CyphPlans.Free,
+					planGold: plan === CyphPlans.Gold,
+					planLifetimePlatinum: plan === CyphPlans.LifetimePlatinum,
+					planSilver: plan === CyphPlans.Silver,
+					platinumFeatures: planConfig.usernameMinLength === 1
+				},
 				namespace,
-				templateName: 'invite-from-user'
+				templateName: 'new-cyph-invite'
 			}
 		)
 	]);

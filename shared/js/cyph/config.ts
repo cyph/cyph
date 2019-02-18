@@ -74,11 +74,13 @@ export class Config {
 		initialInvites: number;
 		storageCapGB: number;
 		usernameMinLength: number;
+		walletEarlyAccess?: string;
 	}>	= {
 		[CyphPlans.FoundersAndFriends]: {
 			initialInvites: 15,
 			storageCapGB: 100,
-			usernameMinLength: 1
+			usernameMinLength: 1,
+			walletEarlyAccess: 'alpha'
 		},
 		[CyphPlans.Free]: {
 			initialInvites: 0,
@@ -88,12 +90,14 @@ export class Config {
 		[CyphPlans.Gold]: {
 			initialInvites: 10,
 			storageCapGB: 25,
-			usernameMinLength: 5
+			usernameMinLength: 5,
+			walletEarlyAccess: 'beta'
 		},
 		[CyphPlans.LifetimePlatinum]: {
 			initialInvites: 15,
 			storageCapGB: 100,
-			usernameMinLength: 1
+			usernameMinLength: 1,
+			walletEarlyAccess: 'alpha'
 		},
 		[CyphPlans.Silver]: {
 			initialInvites: 3,
