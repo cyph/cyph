@@ -83,7 +83,7 @@ export class Config {
 			walletEarlyAccess: 'alpha'
 		},
 		[CyphPlans.Free]: {
-			initialInvites: 0,
+			initialInvites: 2,
 			storageCapGB: 1,
 			usernameMinLength: 5
 		},
@@ -100,7 +100,7 @@ export class Config {
 			walletEarlyAccess: 'alpha'
 		},
 		[CyphPlans.Silver]: {
-			initialInvites: 3,
+			initialInvites: 5,
 			storageCapGB: 5,
 			usernameMinLength: 5
 		}
