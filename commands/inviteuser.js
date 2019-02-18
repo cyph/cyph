@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 
-const {config}			= require('../modules/config');
-const {CyphPlans}		= require('../modules/proto');
-const {addInviteCode}	= require('./addinvitecode');
-const {sendMail}		= require('./email');
+const {config}				= require('../modules/config');
+const {CyphPlans}			= require('../modules/proto');
+const {readableByteLength}	= require('../modules/util');
+const {addInviteCode}		= require('./addinvitecode');
+const {sendMail}			= require('./email');
 
 
 const inviteUser	= async (projectId, email, name, plan, reservedUsername) => {
@@ -37,7 +38,8 @@ await sendMail(
 			planGold: cyphPlan === CyphPlans.Gold,
 			planLifetimePlatinum: cyphPlan === CyphPlans.LifetimePlatinum,
 			planSilver: cyphPlan === CyphPlans.Silver,
-			platinumFeatures: planConfig.usernameMinLength === 1
+			platinumFeatures: planConfig.usernameMinLength === 1,
+			storageCap: readableByteLength(planConfig.storageCapGB, 'gb')
 		},
 		templateName: 'new-cyph-invite'
 	},

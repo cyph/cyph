@@ -33,6 +33,7 @@ const {
 
 const {
 	normalize,
+	readableByteLength,
 	readableID,
 	sleep,
 	uuid
@@ -468,7 +469,8 @@ exports.sendInvite	= onCall(async (data, context, namespace, getUsername) => {
 					planGold: plan === CyphPlans.Gold,
 					planLifetimePlatinum: plan === CyphPlans.LifetimePlatinum,
 					planSilver: plan === CyphPlans.Silver,
-					platinumFeatures: planConfig.usernameMinLength === 1
+					platinumFeatures: planConfig.usernameMinLength === 1,
+					storageCap: readableByteLength(planConfig.storageCapGB, 'gb')
 				},
 				namespace,
 				templateName: 'new-cyph-invite'

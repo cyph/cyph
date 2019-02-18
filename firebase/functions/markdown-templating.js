@@ -22,7 +22,7 @@ const markdownEscape	= markdown => typeof markdown === 'string' ?
 ;
 
 const mustacheUnescape	= memoize(template =>
-	template.replace(/\{?\{\{(.*?)\}\}\}?/g, '{{{$1}}}')
+	template.replace(/\{?\{\{([^#\^\/].*?)\}\}\}?/g, '{{{$1}}}')
 );
 
 const getTemplate		= memoize(async templateName => new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ const render			= (template, data) => {
 				(o, [k, v]) => ({...o, [k]: markdownEscape(v)}),
 				{}
 			)
-		).trim()
+		).trim().replace(/\n\n+/g, '\n\n')
 	;
 
 	return {

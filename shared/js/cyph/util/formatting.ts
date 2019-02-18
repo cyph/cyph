@@ -83,8 +83,14 @@ const readableByteLengthInternal	= memoize((n: number) =>
  * @param n Number of specified storage unit (bytes by default).
  * @example 32483478 -> "30.97 MB".
  */
-export const readableByteLength	= (n: number, storageUnit?: StorageUnits) : string =>
-	readableByteLengthInternal(n)(storageUnit)
+export const readableByteLength	= (n: number, storageUnit?: StorageUnits|string) : string =>
+	readableByteLengthInternal(n)(
+		typeof storageUnit !== 'string' ?
+			storageUnit :
+		storageUnit in StorageUnits ?
+			(<any> StorageUnits)[storageUnit] :
+			undefined
+	)
 ;
 
 /** Parses number. */

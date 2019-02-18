@@ -1,4 +1,4 @@
-Hello{{#name}} {{name}},{{/name},
+Hello{{#name}} {{name}}{{/name}},
 
 {{#inviterName}}{{inviterName}} has invited you to join Cyph!{{/inviterName}}
 {{^inviterName}}Your Cyph invite has arrived!{{/inviterName}}
@@ -11,28 +11,28 @@ Click [**here**]({{accountsURL}}register/{{inviteCode}}) to get started.
 |                      | Lifetime Platinum      |
 |                      | Gold                   |
 |                      | Silver                 |
-{{/planFoundersAndFriends}}}}
+{{/planFoundersAndFriends}}
 {{#planLifetimePlatinum}}
 |||
 | -------------------- | :--------------------: |
 | Your Status: &#160;  | **Lifetime Platinum**  |
 |                      | Gold                   |
 |                      | Silver                 |
-{{/planLifetimePlatinum}}}}
+{{/planLifetimePlatinum}}
 {{#planGold}}
 |||
 | -------------------- | :--------------------: |
 |                      | Lifetime Platinum      |
 | Your Status: &#160;  | **Gold**               |
 |                      | Silver                 |
-{{/planGold}}}}
+{{/planGold}}
 {{#planSilver}}
 |||
 | -------------------- | :--------------------: |
 |                      | Lifetime Platinum      |
 |                      | Gold                   |
 | Your Status: &#160;  | **Silver**             |
-{{/planSilver}}}}
+{{/planSilver}}
 
 The invite link above will walk you through creating a Cyph beta account. We highly recommend that
 you do this from your desktop or laptop in a location where you have some privacy.
@@ -48,7 +48,9 @@ chat
 
 Your {{#planFree}}account{{/planFree}}{{^planFree}}plan{{/planFree}} also includes:
 
-* {{storageCapGB}} storage
+{{#storageCap}}
+* {{storageCap}} storage
+{{/storageCap}}
 
 {{#initialInvites}}
 * {{initialInvites}} more invites to share with your friends
