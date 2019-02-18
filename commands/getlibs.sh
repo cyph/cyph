@@ -304,8 +304,11 @@ for f in $(grep -rl lodash html-to-text) ; do
 	mv ${f}.new ${f}
 done
 
+# Temporary workaround for broken dependency
+rm -rf google-auth-library/node_modules/fast-text-encoding &> /dev/null
+
 # Temporary workaround for simple btc rxjs version difference
-rm -rf simplebtc/node_modules
+rm -rf simplebtc/node_modules &> /dev/null
 
 # Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
 rm -rf ng-fullcalendar/node_modules &> /dev/null
