@@ -210,7 +210,7 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-typescript
 	nativescript-dev-webpack
 	nativescript-theme-core
-	ng-fullcalendar
+	ng-fullcalendar@https://github.com/buu700/ng-fullcalendar-tmp
 	ng-packagr
 	ng2-fittext
 	ng2-pdf-viewer
