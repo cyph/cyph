@@ -21,7 +21,7 @@ import {
 	Reference as StorageReference
 } from '@firebase/storage-types';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {skip} from 'rxjs/operators';
+import {filter, skip, take} from 'rxjs/operators';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
@@ -537,6 +537,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				});
 
 				const surrenderLock		= async () => {
+					if (!isActive) {
+						return;
+					}
+
 					isActive	= false;
 
 					if (lockData.stillOwner.value) {
@@ -578,6 +582,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 						}
 					})().
 						catch(() => {}).
+						then(surrenderLock)
+					;
+
+					/* Kill lock on disconnect */
+					this.connectionStatus().
+						pipe(filter(b => !b), take(1)).
+						toPromise().
 						then(surrenderLock)
 					;
 
