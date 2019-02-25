@@ -629,8 +629,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							}
 							*/
 
-							const contenders	= Object.keys(value).
-								map(k => value[k]).
+							const contenders	= Object.values(value).
 								filter(contender =>
 									typeof contender.claimTimestamp === 'number' &&
 									!isNaN(contender.claimTimestamp) &&
