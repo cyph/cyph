@@ -313,9 +313,13 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 				this.p2pWebRTCService.initialCallPending.next(callType !== undefined);
 
+				/*
+				TODO: Either find a way to make virtual scrolling work or remove it entirely.
+
 				this.accountChatService.enableVirtualScroll.next(
 					this.messageType.value === ChatMessageValue.Types.Text
 				);
+				*/
 
 				const chat		= anonymousChannelID ?
 					{anonymousChannelID, passive: !generateAnonymousChannelID} :
