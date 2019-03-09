@@ -1,3 +1,8 @@
+<ng-container *ngIf='
+	!hideCurrentUser ||
+	(accountDatabaseService.currentUser | async)?.user?.username !== username
+'>
+
 <ng-container *ngIf='groupData === undefined && !!username; else groupContact'>
 
 
@@ -151,6 +156,8 @@
 	</ng-template>
 </mat-card>
 
+
+</ng-container>
 
 </ng-container>
 

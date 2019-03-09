@@ -1,5 +1,9 @@
 @import '../../../../css/mixins';
 
+:host:empty {
+	display: none;
+}
+
 .contact {
 	overflow: hidden;
 	margin-left: auto;

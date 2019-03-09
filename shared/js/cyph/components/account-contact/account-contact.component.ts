@@ -42,6 +42,9 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 		this.accountOrganizationsService.getOrganization(username)
 	);
 
+	/** If true, will hide itself if `this.contact` is the same as the currently logged in user. */
+	@Input() public hideCurrentUser: boolean				= false;
+
 	/** @see P2PWebRTCService.isSupported */
 	public readonly p2pSupported							= P2PWebRTCService.isSupported;
 
@@ -102,14 +105,14 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly accountDatabaseService: AccountDatabaseService,
-
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
 		/** @see AccountContactsService */
 		public readonly accountContactsService: AccountContactsService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,

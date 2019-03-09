@@ -48,6 +48,7 @@
 					class='active animated slideInDown'
 					[class.cyph-inverted-theme]='invertedTheme'
 					[contact]='accountContactsSearch?.searchBar?.filterSingle | async'
+					[hideCurrentUser]='true'
 					[showUnreadMessageCount]='true'
 					(click)='accountContactsSearch?.searchBar?.clearFilter()'
 					*ngIf='(accountContactsSearch?.searchBar?.filterSingle | async) !== undefined'
@@ -57,6 +58,7 @@
 					class='active animated slideInDown'
 					[class.cyph-inverted-theme]='invertedTheme'
 					[contact]='activeUser | async'
+					[hideCurrentUser]='true'
 					[showUnreadMessageCount]='true'
 					*ngIf='(accountContactsSearch?.searchBar?.filterSingle | async) === undefined'
 				></cyph-account-contact>
@@ -138,6 +140,7 @@
 <ng-template #listItem let-item='item'>
 	<cyph-account-contact
 		[contact]='item'
+		[hideCurrentUser]='true'
 		[showUnreadMessageCount]='true'
 		[class.cyph-inverted-theme]='invertedTheme'
 	></cyph-account-contact>
