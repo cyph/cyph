@@ -1,5 +1,3 @@
-import {ScrollingModule as ExperimentalScrollingModule} from '@angular/cdk-experimental/scrolling';
-import {ScrollingModule} from '@angular/cdk/scrolling';
 import {NgModule} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
@@ -72,7 +70,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DialogMediaComponent,
 		DropZoneDirective,
 		DynamicFormComponent,
-		ExperimentalScrollingModule,
 		FullCalendarModule,
 		ImageCropperModule,
 		MatAutocompleteModule,
@@ -103,14 +100,12 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatTooltipModule,
 		ReactiveFormsModule,
 		RouterModule,
-		ScrollingModule,
 		SmdFabSpeedDialModule,
 		TextMaskModule
 	],
 	imports: [
 		AngularDraggableModule,
 		CyphSharedModule,
-		ExperimentalScrollingModule,
 		FullCalendarModule,
 		ImageCropperModule,
 		MatAutocompleteModule,
@@ -140,7 +135,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatTooltipModule,
 		ReactiveFormsModule,
 		RouterModule,
-		ScrollingModule,
 		SmdFabSpeedDialModule,
 		TextMaskModule
 	],

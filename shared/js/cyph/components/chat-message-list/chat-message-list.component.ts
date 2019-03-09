@@ -1,4 +1,3 @@
-import {CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
@@ -8,8 +7,7 @@ import {
 	Input,
 	OnChanges,
 	OnDestroy,
-	Optional,
-	ViewChild
+	Optional
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
 import * as Hammer from 'hammerjs';
@@ -19,7 +17,7 @@ import {map, mergeMap} from 'rxjs/operators';
 import {User, UserLike} from '../../account';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
-import {ChatMessage, IChatData, IVsItem, UiStyles} from '../../chat';
+import {ChatMessage, IChatData, IMessageListItem, UiStyles} from '../../chat';
 import {MaybePromise} from '../../maybe-promise-type';
 import {IChatMessage} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -32,14 +30,13 @@ import {ScrollService} from '../../services/scroll.service';
 import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
-import {trackByVsItem} from '../../track-by/track-by-vs-item';
+import {trackByMessageListItem} from '../../track-by/track-by-message-list-item';
 import {filterUndefinedOperator} from '../../util/filter';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {compareDates, relativeDateString, watchDateChange} from '../../util/time';
-import {sleep, waitForIterable} from '../../util/wait';
 
 
 /**
@@ -87,6 +84,11 @@ implements AfterViewInit, OnChanges, OnDestroy {
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean		= false;
 
+	/** Data formatted for message list. */
+	public readonly messageListItems					=
+		new BehaviorSubject<IMessageListItem[]>([])
+	;
+
 	/** @see ChatMessageComponent.mobile */
 	@Input() public mobile: boolean						= false;
 
@@ -99,20 +101,14 @@ implements AfterViewInit, OnChanges, OnDestroy {
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean		= false;
 
-	/** @see trackByVsItem */
-	public readonly trackByVsItem: typeof trackByVsItem	= trackByVsItem;
+	/** @see trackByMessageListItem */
+	public readonly trackByMessageListItem				= trackByMessageListItem;
 
 	/** @see ChatMainComponent.uiStyle */
 	@Input() public uiStyle: UiStyles					= UiStyles.default;
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles			= UiStyles;
-
-	/** @see CdkVirtualScrollViewport */
-	@ViewChild(CdkVirtualScrollViewport) public virtualScrollViewport?: CdkVirtualScrollViewport;
-
-	/** Data formatted for virtual scrolling. */
-	public readonly vsData: BehaviorSubject<IVsItem[]>	= new BehaviorSubject<IVsItem[]>([]);
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -316,34 +312,8 @@ implements AfterViewInit, OnChanges, OnDestroy {
 				unconfirmedMessages: observables.unconfirmedMessages
 			};
 		}))).subscribe(
-			this.vsData
+			this.messageListItems
 		));
-
-		if (!this.envService.isWeb) {
-			return;
-		}
-
-		const virtualScrollViewport		= this.virtualScrollViewport;
-
-		if (!virtualScrollViewport) {
-			return;
-		}
-
-		const $virtualScrollViewport	= $(virtualScrollViewport.elementRef.nativeElement);
-
-		await waitForIterable(() => $virtualScrollViewport.find('cyph-chat-message'));
-
-		virtualScrollViewport.checkViewportSize();
-		await sleep();
-		virtualScrollViewport.scrollTo({bottom: 0});
-		await sleep();
-		virtualScrollViewport.checkViewportSize();
-		this.initialScrollDown.next(false);
-
-		this.subscriptions.push(this.vsData.subscribe(async () => {
-			await sleep();
-			virtualScrollViewport.checkViewportSize();
-		}));
 	}
 
 	/** @inheritDoc */

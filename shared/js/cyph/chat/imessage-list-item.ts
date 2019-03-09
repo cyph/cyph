@@ -3,8 +3,8 @@ import {ChatMessage} from './chat-message';
 import {UiStyles} from './enums';
 
 
-/** One item in the message list virtual scrolling UI. */
-export interface IVsItem {
+/** One item in the message list UI. */
+export interface IMessageListItem {
 	/** @see ChatMessageListComponent.accounts */
 	accounts: boolean;
 

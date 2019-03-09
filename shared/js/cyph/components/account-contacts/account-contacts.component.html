@@ -75,28 +75,6 @@
 					</div>
 				</div>
 			</div>
-
-			<!--
-			<div fxFlex>
-				<div cyphNanoScroller>
-					<cdk-virtual-scroll-viewport
-						fxFlexFill
-						[itemSize]='86 + ((envService.isMobile | async) ? 8 : 16)'
-						class='contact-list'
-					>
-						<ng-container *cdkVirtualFor='
-							let item of filteredContactList;
-							templateCacheSize: 0;
-							trackBy: trackByUser;
-						'>
-							<ng-container *ngTemplateOutlet='listItem; context: {
-								item: item
-							}'></ng-container>
-						</ng-container>
-					</cdk-virtual-scroll-viewport>
-				</div>
-			</div>
-			-->
 		</ng-template>
 
 		<br />
