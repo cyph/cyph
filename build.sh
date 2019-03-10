@@ -24,6 +24,10 @@ echo -e '\n\nADD PLATFORMS\n\n'
 
 npm -g install cordova
 
+# Temporary workaround for Cordova bugs
+npm -g install cordova-common
+rm -rf ~/node_modules/*/node_modules/cordova-common
+
 if [ "${1}" != 'ios' ] ; then
 	cordova platform add android
 fi
