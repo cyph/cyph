@@ -118,6 +118,9 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 	/** @see ChatMessage.AuthorTypes */
 	public readonly authorTypes: typeof ChatMessage.AuthorTypes		= ChatMessage.AuthorTypes;
 
+	/** Fires after message is fully loaded. */
+	@Output() public readonly loaded								= new EventEmitter<void>();
+
 	/** @see ChatMessage */
 	@Input() public message?: ChatMessage;
 

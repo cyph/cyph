@@ -38,6 +38,7 @@ import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
+import {InitDirective} from '../directives/init.directive';
 import {DialogService} from '../services/dialog.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
@@ -54,7 +55,8 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DialogConfirmComponent,
 		DialogMediaComponent,
 		DropZoneDirective,
-		DynamicFormComponent
+		DynamicFormComponent,
+		InitDirective
 	],
 	entryComponents: [
 		DialogAlertComponent,
@@ -72,6 +74,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DynamicFormComponent,
 		FullCalendarModule,
 		ImageCropperModule,
+		InitDirective,
 		MatAutocompleteModule,
 		MatBadgeModule,
 		MatBottomSheetModule,

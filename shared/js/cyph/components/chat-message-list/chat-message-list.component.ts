@@ -7,13 +7,14 @@ import {
 	Input,
 	OnChanges,
 	OnDestroy,
-	Optional
+	Optional,
+	ViewChild
 } from '@angular/core';
 import {SafeStyle} from '@angular/platform-browser';
 import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {User, UserLike} from '../../account';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
@@ -30,8 +31,10 @@ import {ScrollService} from '../../services/scroll.service';
 import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
+import {WindowWatcherService} from '../../services/window-watcher.service';
 import {trackByMessageListItem} from '../../track-by/track-by-message-list-item';
 import {filterUndefinedOperator} from '../../util/filter';
+import {toBehaviorSubject} from '../../util/flatten-observable';
 import {getOrSetDefault, getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
@@ -52,21 +55,43 @@ import {compareDates, relativeDateString, watchDateChange} from '../../util/time
 export class ChatMessageListComponent
 extends BaseProvider
 implements AfterViewInit, OnChanges, OnDestroy {
-	/** @ignore */
-	private readonly changes			= new BehaviorSubject<void>(undefined);
+	/** Full list of message items, not just what's being displayed. */
+	private readonly allMessageListItems	= new BehaviorSubject<IMessageListItem[]>([]);
 
 	/** @ignore */
-	private readonly messageCache		= new Map<string, {
+	private readonly changes				= new BehaviorSubject<void>(undefined);
+
+	/** @ignore */
+	private readonly infiniteScrollingData	= {
+		initStep: 0,
+		items: <IMessageListItem[]> [],
+		messageBottomOffset: 1,
+		viewportMessageCount: 0
+	};
+
+	/** Number of "pages" into the message list, starting from the bottom. */
+	private readonly messageBottomOffset	= new BehaviorSubject<number>(1);
+
+	/** @ignore */
+	private readonly messageCache			= new Map<string, {
 		dateChange?: string;
 		message: ChatMessage;
 		pending: boolean;
 	}>();
 
 	/** @ignore */
-	private readonly observableCache	= new Map<IChatData, {
+	private readonly observableCache		= new Map<IChatData, {
 		messages: Observable<{dateChange?: string; message: ChatMessage; pending: boolean}[]>;
 		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}|undefined>;
 	}>();
+
+	/** Number of messages to render on the screen at any given time. */
+	private readonly viewportMessageCount	= toBehaviorSubject(
+		this.windowWatcherService.height.pipe(map(height =>
+			Math.ceil((height + 400) / 47)
+		)),
+		0
+	);
 
 	/** @see IChatData */
 	@Input() public chat?: IChatData;
@@ -85,9 +110,27 @@ implements AfterViewInit, OnChanges, OnDestroy {
 	@Input() public messageCountInTitle: boolean		= false;
 
 	/** Data formatted for message list. */
-	public readonly messageListItems					=
-		new BehaviorSubject<IMessageListItem[]>([])
-	;
+	public readonly messageListItems					= combineLatest(
+		this.allMessageListItems,
+		this.messageBottomOffset,
+		this.viewportMessageCount
+	).pipe(map(([allMessageListItems, messageBottomOffset, viewportMessageCount]) => {
+		const start = Math.max(
+			0,
+			allMessageListItems.length - (
+				Math.max(messageBottomOffset, 1) *
+				viewportMessageCount
+			)
+		);
+
+		this.infiniteScrollingData.items.splice(
+			0,
+			this.infiniteScrollingData.items.length,
+			...allMessageListItems.slice(start, start + viewportMessageCount)
+		);
+
+		return this.infiniteScrollingData.items;
+	}));
 
 	/** @see ChatMessageComponent.mobile */
 	@Input() public mobile: boolean						= false;
@@ -97,6 +140,9 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 	/** Contact ID for follow-up appointment button. */
 	@Input() public promptFollowup?: string;
+
+	/** Scroll view element. */
+	@ViewChild('scrollView') public scrollView?: ElementRef;
 
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean		= false;
@@ -312,8 +358,15 @@ implements AfterViewInit, OnChanges, OnDestroy {
 				unconfirmedMessages: observables.unconfirmedMessages
 			};
 		}))).subscribe(
-			this.messageListItems
+			this.allMessageListItems
 		));
+
+		this.messageListItems.pipe(
+			filter(messageListItems => messageListItems.length > 0),
+			take(1)
+		).toPromise().then(() => {
+			++this.infiniteScrollingData.initStep;
+		});
 	}
 
 	/** @inheritDoc */
@@ -324,6 +377,71 @@ implements AfterViewInit, OnChanges, OnDestroy {
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
 		this.changes.complete();
+	}
+
+	/** Handles first message load. */
+	public async onMessageListInit () : Promise<void> {
+		if (this.infiniteScrollingData.initStep !== 1) {
+			return;
+		}
+
+		++this.infiniteScrollingData.initStep;
+
+		const scrollView	= this.scrollView && this.scrollView.nativeElement;
+
+		if (!(scrollView instanceof HTMLElement)) {
+			return;
+		}
+
+		scrollView.scroll(0, scrollView.scrollHeight + scrollView.clientHeight);
+	}
+
+	/** Scroll event handler. */
+	public onScroll (e: UIEvent) : void {
+		if (this.infiniteScrollingData.initStep === 2) {
+			++this.infiniteScrollingData.initStep;
+			return;
+		}
+		else if (this.infiniteScrollingData.initStep !== 3) {
+			return;
+		}
+
+		const target	= e.target;
+		if (!(target instanceof HTMLElement)) {
+			return;
+		}
+
+		const bottom	= target.scrollTop >= (target.scrollHeight - target.clientHeight - 1);
+		if (!(bottom || target.scrollTop === 0)) {
+			return;
+		}
+
+		const messageBottomOffset	= Math.min(
+			Math.max(
+				this.messageBottomOffset.value + (bottom ? -1 : 1),
+				1
+			),
+			Math.ceil(
+				this.allMessageListItems.value.length /
+				this.viewportMessageCount.value
+			)
+		);
+
+		if (
+			this.infiniteScrollingData.messageBottomOffset === messageBottomOffset &&
+			this.infiniteScrollingData.viewportMessageCount === this.viewportMessageCount.value
+		) {
+			return;
+		}
+
+		--this.infiniteScrollingData.initStep;
+
+		this.infiniteScrollingData.messageBottomOffset = messageBottomOffset;
+		this.infiniteScrollingData.viewportMessageCount = this.viewportMessageCount.value;
+
+		target.scroll(0, bottom ? 0 : target.scrollHeight + target.clientHeight);
+
+		this.messageBottomOffset.next(messageBottomOffset);
 	}
 
 	constructor (
@@ -343,6 +461,9 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly windowWatcherService: WindowWatcherService,
 
 		/** @see AccountService */
 		@Inject(AccountService) @Optional()

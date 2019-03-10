@@ -1,4 +1,4 @@
-<div cyphNanoScroller>
+<div #scrollView cyphNanoScroller (scroll)='onScroll($event)'>
 	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
 		<ng-container *ngFor='
 			let item of messageListItems | async;
@@ -41,6 +41,7 @@
 				[scrollIntoView]='item.scrollIntoView'
 				[uiStyle]='item.uiStyle'
 				[unconfirmedMessages]='item.unconfirmedMessages | async'
+				(loaded)='item.isEnd ? onMessageListInit() : undefined'
 				(scrolledIntoView)='initialScrollDown.next(false)'
 				*ngIf='item.message !== undefined'
 			></cyph-chat-message>

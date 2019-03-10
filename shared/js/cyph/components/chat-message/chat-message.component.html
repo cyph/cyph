@@ -179,7 +179,7 @@
 </ng-template>
 
 <ng-template #messageContent let-value='value'>
-	<span fxFlex>
+	<span fxFlex (init)='loaded.emit()'>
 		<cyph-calendar-invite
 			[isDisabled]='true'
 			[mobile]='mobile'
