@@ -44,7 +44,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 	templateUrl: './chat-message.component.html'
 })
 export class ChatMessageComponent extends BaseProvider implements OnChanges, OnDestroy {
-	/** Temporary workaround pending ACCOUNTS-36. */
+	/** @ignore */
 	private static readonly appeared: BehaviorSubject<Set<string>>	= (() => {
 		const ids		= new Set<string>();
 		const subject	= new BehaviorSubject(ids);
@@ -105,7 +105,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 		return subject;
 	})();
 
-	/** Temporary workaround pending ACCOUNTS-36. */
+	/** @ignore */
 	private static services?: {
 		p2pService: {
 			isActive: BehaviorSubject<boolean>;
@@ -225,7 +225,6 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		await this.windowWatcherService.waitUntilVisible();
 
-		/* Temporary workaround pending ACCOUNTS-36 */
 		await ChatMessageComponent.appeared.
 			pipe(filter(arr => arr.has(id)), take(1)).
 			toPromise()
