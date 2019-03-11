@@ -418,7 +418,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 		const messageBottomOffset	= Math.min(
 			Math.max(
-				this.messageBottomOffset.value + (bottom ? -1 : 1),
+				this.messageBottomOffset.value + (bottom ? -0.5 : 0.5),
 				1
 			),
 			Math.ceil(
@@ -439,7 +439,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		this.infiniteScrollingData.messageBottomOffset = messageBottomOffset;
 		this.infiniteScrollingData.viewportMessageCount = this.viewportMessageCount.value;
 
-		target.scroll(0, bottom ? 0 : target.scrollHeight + target.clientHeight);
+		target.scroll(0, (target.scrollHeight + target.clientHeight) / 2);
 
 		this.messageBottomOffset.next(messageBottomOffset);
 	}
