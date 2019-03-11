@@ -16,7 +16,7 @@
 	[class.self-destruct]='chatService.chatSelfDestruct | async'
 	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
 	[class.visibility-hidden]='(viewReady | async) === false'
-	[id]='message ? "message-id-" + message?.id : undefined'
+	[attr.data-message-id]='message?.id'
 	*ngIf='message?.valueWatcher | async as value; else messageLoading'
 >
 	<div>

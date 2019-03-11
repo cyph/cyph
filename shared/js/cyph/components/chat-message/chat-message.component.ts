@@ -68,11 +68,11 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 				const idCount	= ids.size;
 				const elements	= document.querySelectorAll(
-					'cyph-chat-message > .message-item[id]'
+					'cyph-chat-message > .message-item[data-message-id]'
 				);
 
 				for (const elem of Array.from(elements)) {
-					const id	= (elem.id || '').split('message-id-')[1];
+					const id	= elem.getAttribute('data-message-id');
 					if (!id || ids.has(id)) {
 						continue;
 					}
