@@ -9,23 +9,7 @@
 		cyph-account-chat-message-box {
 			padding-bottom: 1em;
 		}
-
-		.loading-indicator {
-			left: 2px;
-			width: calc(100% - 3px);
-		}
 	}
-}
-
-.loading-indicator {
-	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 24px;
-	width: 100%;
-	z-index: 10;
-	padding: 0;
 }
 
 .cyph-foreground.initiating > div:first-child {

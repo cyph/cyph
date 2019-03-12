@@ -24,10 +24,13 @@
 		<div
 			fxLayout='row'
 			fxLayoutAlign='center center'
-			class='loading-indicator cyph-banner dark'
+			class='cyph-loading-indicator cyph-banner dark'
 			*ngIf='
 				chat.state === states.chat &&
-				(accountChatService.uiReady | async) !== true &&
+				(
+					(accountChatService.scrollTransition | async) === true ||
+					(accountChatService.uiReady | async) !== true
+				) &&
 				(initialCallPending | async) === false
 			'
 		>

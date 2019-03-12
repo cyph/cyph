@@ -455,6 +455,38 @@ pre, code {
 	}
 }
 
+@include keyframes(flashIn) {
+	50% {
+		@include filter(brightness(5) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5)));
+	}
+}
+
+.cyph-flash-in {
+	@include animation-name(flashIn);
+
+	@include animation-duration(2s);
+
+	@include animation-timing-function(ease-out);
+
+	@include animation-iteration-count(1);
+}
+
+.cyph-loading-indicator {
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 24px;
+	width: 100%;
+	z-index: 10 !important;
+	padding: 0;
+}
+
+body:not(.mobile) .cyph-loading-indicator {
+	left: 2px;
+	width: calc(100% - 3px);
+}
+
 mat-icon.gdpr {
 	@include icon-size(42px);
 }

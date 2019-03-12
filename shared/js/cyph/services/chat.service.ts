@@ -235,6 +235,9 @@ export class ChatService extends BaseProvider {
 		outgoingMessagesSynced: resolvable()
 	};
 
+	/** Indicates whether an infinite scroll transition is in progress. */
+	public readonly scrollTransition		= new BehaviorSubject<boolean>(false);
+
 	/** Resolves when UI is ready to be displayed. */
 	public readonly uiReady: Promise<true>	=
 		Promise.all([

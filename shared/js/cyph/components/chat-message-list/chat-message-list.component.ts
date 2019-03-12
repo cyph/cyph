@@ -7,6 +7,7 @@ import {
 	Input,
 	OnChanges,
 	OnDestroy,
+	OnInit,
 	Optional,
 	ViewChild
 } from '@angular/core';
@@ -17,7 +18,7 @@ import debounce from 'lodash-es/debounce';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {User, UserLike} from '../../account';
-import {fadeInOut, flashIn} from '../../animations';
+import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, IChatData, IMessageListItem, UiStyles} from '../../chat';
 import {MaybePromise} from '../../maybe-promise-type';
@@ -48,7 +49,7 @@ import {sleep} from '../../util/wait';
  * Angular component for chat message list.
  */
 @Component({
-	animations: [fadeInOut, flashIn],
+	animations: [fadeInOut],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-message-list',
 	styleUrls: ['./chat-message-list.component.scss'],
@@ -56,7 +57,7 @@ import {sleep} from '../../util/wait';
 })
 export class ChatMessageListComponent
 extends BaseProvider
-implements AfterViewInit, OnChanges, OnDestroy {
+implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	/** Full list of message items, not just what's being displayed. */
 	private readonly allMessageListItems	= new BehaviorSubject<IMessageListItem[]>([]);
 
@@ -153,6 +154,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 		await sleep();
 		scrollView.scroll(0, (scrollView.scrollHeight - scrollView.clientHeight) / 2);
+		this.chatService.scrollTransition.next(false);
 	}, 250);
 
 	/** Overrides showDisconnectMessage and always displays the end message. */
@@ -175,6 +177,20 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 	/** @see UiStyles */
 	public readonly uiStyles: typeof UiStyles			= UiStyles;
+
+	/** Triggers message flash animation. */
+	public async flashMessage (elem: HTMLElement) : Promise<void> {
+		if (this.infiniteScrollingData.initStep < 3) {
+			return;
+		}
+
+		await this.chatService.scrollTransition.pipe(
+			filter(b => !b),
+			take(1)
+		).toPromise();
+
+		elem.classList.add('cyph-flash-in');
+	}
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -399,6 +415,11 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		this.changes.complete();
 	}
 
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.chatService.scrollTransition.next(true);
+	}
+
 	/** Handles first message load. */
 	public async onMessageListInit () : Promise<void> {
 		if (this.infiniteScrollingData.initStep !== 1) {
@@ -414,6 +435,7 @@ implements AfterViewInit, OnChanges, OnDestroy {
 		}
 
 		scrollView.scroll(0, scrollView.scrollHeight + scrollView.clientHeight);
+		this.chatService.scrollTransition.next(false);
 	}
 
 	/** Scroll event handler. */
@@ -458,6 +480,10 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 		this.infiniteScrollingData.messageBottomOffset = messageBottomOffset;
 		this.infiniteScrollingData.viewportMessageCount = this.viewportMessageCount.value;
+
+		if (messageBottomOffset > 1) {
+			this.chatService.scrollTransition.next(true);
+		}
 
 		this.messageBottomOffset.next(messageBottomOffset);
 	}

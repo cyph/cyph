@@ -1,4 +1,9 @@
-<div #scrollView cyphNanoScroller (scroll)='onScroll($event)'>
+<div
+	#scrollView
+	cyphNanoScroller
+	[style.overflow]='(chatService.scrollTransition | async) ? "hidden" : ""'
+	(scroll)='onScroll($event)'
+>
 	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
 		<ng-container *ngFor='
 			let item of messageListItems | async;
@@ -15,7 +20,7 @@
 ></div>
 
 <ng-template #listItem let-item='item'>
-	<div fxLayout='row' [@flashIn]='"in"'>
+	<div fxLayout='row' (init)='flashMessage($event)'>
 		<div fxFlex fxLayout='column'>
 			<div fxLayout='row' *ngIf='!item.mobile && item.isStart'>
 				<div fxLayout='column' fxLayoutGap='15px'>
