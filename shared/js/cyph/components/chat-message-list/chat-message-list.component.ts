@@ -17,7 +17,7 @@ import debounce from 'lodash-es/debounce';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {User, UserLike} from '../../account';
-import {fadeInOut} from '../../animations';
+import {fadeInOut, flashIn} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, IChatData, IMessageListItem, UiStyles} from '../../chat';
 import {MaybePromise} from '../../maybe-promise-type';
@@ -48,7 +48,7 @@ import {sleep} from '../../util/wait';
  * Angular component for chat message list.
  */
 @Component({
-	animations: [fadeInOut],
+	animations: [fadeInOut, flashIn],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-message-list',
 	styleUrls: ['./chat-message-list.component.scss'],

@@ -15,7 +15,7 @@
 ></div>
 
 <ng-template #listItem let-item='item'>
-	<div fxLayout='row'>
+	<div fxLayout='row' [@flashIn]='"in"'>
 		<div fxFlex fxLayout='column'>
 			<div fxLayout='row' *ngIf='!item.mobile && item.isStart'>
 				<div fxLayout='column' fxLayoutGap='15px'>
