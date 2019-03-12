@@ -444,7 +444,11 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 			++this.infiniteScrollingData.initStep;
 			return;
 		}
-		else if (this.infiniteScrollingData.initStep !== 3) {
+
+		if (
+			this.infiniteScrollingData.initStep !== 3 ||
+			this.allMessageListItems.value.length <= this.viewportMessageCount.value
+		) {
 			return;
 		}
 
