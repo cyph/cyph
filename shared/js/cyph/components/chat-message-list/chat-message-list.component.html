@@ -41,7 +41,7 @@
 				[scrollIntoView]='item.scrollIntoView'
 				[uiStyle]='item.uiStyle'
 				[unconfirmedMessages]='item.unconfirmedMessages | async'
-				(loaded)='item.isEnd ? onMessageListInit() : undefined'
+				(loaded)='item.isEnd ? onMessageListInit() : onNewMessageLoad()'
 				(scrolledIntoView)='initialScrollDown.next(false)'
 				*ngIf='item.message !== undefined'
 			></cyph-chat-message>

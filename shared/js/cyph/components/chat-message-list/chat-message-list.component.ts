@@ -13,6 +13,7 @@ import {
 import {SafeStyle} from '@angular/platform-browser';
 import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
+import debounce from 'lodash-es/debounce';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap, take} from 'rxjs/operators';
 import {User, UserLike} from '../../account';
@@ -40,6 +41,7 @@ import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {compareDates, relativeDateString, watchDateChange} from '../../util/time';
+import {sleep} from '../../util/wait';
 
 
 /**
@@ -134,6 +136,24 @@ implements AfterViewInit, OnChanges, OnDestroy {
 
 	/** @see ChatMessageComponent.mobile */
 	@Input() public mobile: boolean						= false;
+
+	/** Handles new message load. */
+	public readonly onNewMessageLoad					= debounce(async () => {
+		if (this.infiniteScrollingData.initStep !== 4) {
+			return;
+		}
+
+		const scrollView	= this.scrollView && this.scrollView.nativeElement;
+
+		if (!(scrollView instanceof HTMLElement)) {
+			return;
+		}
+
+		this.infiniteScrollingData.initStep -= 2;
+
+		await sleep();
+		scrollView.scroll(0, (scrollView.scrollHeight - scrollView.clientHeight) / 2);
+	}, 250);
 
 	/** Overrides showDisconnectMessage and always displays the end message. */
 	@Input() public persistentEndMessage: boolean		= false;
@@ -434,12 +454,10 @@ implements AfterViewInit, OnChanges, OnDestroy {
 			return;
 		}
 
-		--this.infiniteScrollingData.initStep;
+		++this.infiniteScrollingData.initStep;
 
 		this.infiniteScrollingData.messageBottomOffset = messageBottomOffset;
 		this.infiniteScrollingData.viewportMessageCount = this.viewportMessageCount.value;
-
-		target.scroll(0, (target.scrollHeight + target.clientHeight) / 2);
 
 		this.messageBottomOffset.next(messageBottomOffset);
 	}
