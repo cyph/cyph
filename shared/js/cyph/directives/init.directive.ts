@@ -10,10 +10,10 @@ import {Directive, ElementRef, EventEmitter, OnInit, Output} from '@angular/core
 })
 export class InitDirective implements OnInit {
 	/** Init event. */
-	@Output() readonly init	= new EventEmitter<HTMLElement|undefined>();
+	@Output() public readonly init	= new EventEmitter<HTMLElement|undefined>();
 
 	/** @inheritDoc */
-	ngOnInit() {
+	public ngOnInit () : void {
 		this.init.emit(
 			this.elementRef.nativeElement instanceof HTMLElement ?
 				this.elementRef.nativeElement :

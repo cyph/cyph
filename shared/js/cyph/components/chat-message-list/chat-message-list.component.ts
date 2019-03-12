@@ -1,3 +1,5 @@
+/* tslint:disable:max-file-line-count */
+
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
@@ -139,23 +141,26 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	@Input() public mobile: boolean						= false;
 
 	/** Handles new message load. */
-	public readonly onNewMessageLoad					= debounce(async () => {
-		if (this.infiniteScrollingData.initStep !== 4) {
-			return;
-		}
+	public readonly onNewMessageLoad					= debounce(
+		async () => {
+			if (this.infiniteScrollingData.initStep !== 4) {
+				return;
+			}
 
-		const scrollView	= this.scrollView && this.scrollView.nativeElement;
+			const scrollView	= this.scrollView && this.scrollView.nativeElement;
 
-		if (!(scrollView instanceof HTMLElement)) {
-			return;
-		}
+			if (!(scrollView instanceof HTMLElement)) {
+				return;
+			}
 
-		this.infiniteScrollingData.initStep -= 2;
+			this.infiniteScrollingData.initStep -= 2;
 
-		await sleep();
-		scrollView.scroll(0, (scrollView.scrollHeight - scrollView.clientHeight) / 2);
-		this.chatService.scrollTransition.next(false);
-	}, 250);
+			await sleep();
+			scrollView.scroll(0, (scrollView.scrollHeight - scrollView.clientHeight) / 2);
+			this.chatService.scrollTransition.next(false);
+		},
+		250
+	);
 
 	/** Overrides showDisconnectMessage and always displays the end message. */
 	@Input() public persistentEndMessage: boolean		= false;
@@ -482,8 +487,8 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 
 		++this.infiniteScrollingData.initStep;
 
-		this.infiniteScrollingData.messageBottomOffset = messageBottomOffset;
-		this.infiniteScrollingData.viewportMessageCount = this.viewportMessageCount.value;
+		this.infiniteScrollingData.messageBottomOffset	= messageBottomOffset;
+		this.infiniteScrollingData.viewportMessageCount	= this.viewportMessageCount.value;
 
 		if (messageBottomOffset > 1) {
 			this.chatService.scrollTransition.next(true);
