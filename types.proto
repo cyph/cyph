@@ -772,14 +772,23 @@ message Environment {
 		/** Indicates whether this is the full telehealth version. */
 		bool telehealthFull = 17;
 
+		/**
+		 * If true, will switch to a more relaxed threat model that disables some of
+		 * the more obscure/non-critical protective measures that are suspected to be
+		 * causing performance or reliability issues as currently implemented.
+		 *
+		 * Currently used only in a non-production build for debugging purposes.
+		 */
+		bool threatModelBasic = 18;
+
 		/** Page title of this Cyph instance. */
-		string title = 18;
+		string title = 19;
 
 		/** Indicates whether this environment should share a specific database namespace. */
-		string useNamespace = 19;
+		string useNamespace = 20;
 
 		/** If true, environment will be full white label, with no "Powered by Cyph" notices. */
-		bool whiteLabel = 20;
+		bool whiteLabel = 21;
 	}
 
 	/** Firebase configuration. */
