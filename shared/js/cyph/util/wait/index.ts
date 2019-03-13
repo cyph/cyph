@@ -4,6 +4,7 @@ import {Async} from '../../async-type';
 import {config} from '../../config';
 import {IResolvable} from '../../iresolvable';
 import {MaybePromise} from '../../maybe-promise-type';
+import {debugLogError} from '../log';
 import {sleep} from './sleep';
 
 export * from './sleep';
@@ -56,9 +57,15 @@ export const retryUntilSuccessful	= async <T> (
 			return await f(lastErr);
 		}
 		catch (err) {
-			lastErr	= err;
+			const throwing	= i > maxAttempts;
+			lastErr			= err;
 
-			if (i > maxAttempts) {
+			debugLogError(
+				() => `retryUntilSuccessful ${throwing ? 'throwing' : 'ignoring'} error`,
+				() => err
+			);
+
+			if (throwing) {
 				throw err;
 			}
 
