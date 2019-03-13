@@ -175,8 +175,7 @@ export class Config {
 						id: 1,
 						subscriptionType: SubscriptionTypes.monthly
 					}
-				},
-				namespace: 'cyph.pro'
+				}
 			},
 			hint: {
 				id: 5,
