@@ -1165,7 +1165,13 @@ export class ChatService extends BaseProvider {
 
 		const predecessorsPromise	= (async () : Promise<IChatMessagePredecessor[]|undefined> => {
 			/* Redundant for 1:1 chats since Castle already enforces message order */
-			if (!this.sessionService.group) {
+			if (
+				!this.sessionService.group ||
+				(
+					this.envService.environment.customBuild &&
+					this.envService.environment.customBuild.config.threatModelBasic
+				)
+			) {
 				return [];
 			}
 
