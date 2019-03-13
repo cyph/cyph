@@ -57,6 +57,11 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusBadRequest
 	}
 
+	/* If checking out from the Cyph website, assume our Pro environment */
+	if signupURL == "https://www.cyph.com" {
+		signupURL = "https://cyph.pro"
+	}
+
 	namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
 	if err != nil {
 		return err.Error(), http.StatusBadRequest
