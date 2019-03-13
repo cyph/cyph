@@ -28,19 +28,22 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 	private correctPassword?: string;
 
 	/** Indicates whether unlock attempt is in progress. */
-	public readonly checking	= new BehaviorSubject<boolean>(false);
+	public readonly checking		= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the last unlock attempt has failed. */
-	public readonly error		= new BehaviorSubject<boolean>(false);
+	public readonly error			= new BehaviorSubject<boolean>(false);
+
+	/** Password visibility setting. */
+	public readonly hidePassword	= new BehaviorSubject<boolean>(true);
 
 	/** Unlock attempt lock. */
-	public readonly lock		= lockFunction();
+	public readonly lock			= lockFunction();
 
 	/** Password to be used for unlock attempt. */
-	public readonly password	= new BehaviorSubject<string>('');
+	public readonly password		= new BehaviorSubject<string>('');
 
 	/** Indicates whether component has been initiated. */
-	public readonly ready		= new BehaviorSubject<boolean>(false);
+	public readonly ready			= new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	private async tryUnlock (password: string, passive: boolean = false) : Promise<boolean> {

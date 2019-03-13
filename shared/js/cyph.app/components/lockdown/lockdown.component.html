@@ -43,6 +43,13 @@
 								placeholder='Password'
 								required
 							/>
+							<mat-icon
+								matSuffix
+								class='suffix-button'
+								(click)='hidePassword.next(!hidePassword.value)'
+							>
+								{{(hidePassword | async) ? 'visibility' : 'visibility_off'}}
+							</mat-icon>
 						</mat-form-field>
 					</div>
 					<div fxLayout='row' fxLayoutAlign='center center'>
