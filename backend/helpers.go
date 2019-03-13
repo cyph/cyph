@@ -164,22 +164,32 @@ func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
 	}
 }
 
-func getSignupFromRequest(h HandlerArgs) map[string]interface{} {
-	_, _, _, countryCode := geolocate(h)
+func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
+	_, _, country, countryCode := geolocate(h)
 
 	signup := map[string]interface{}{}
 	profile := map[string]interface{}{}
 
+	betaSignup := BetaSignup{
+		Comment:  sanitize(h.Request.PostFormValue("Comment"), config.MaxSignupValueLength),
+		Country:  country,
+		Email:    sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength),
+		Language: sanitize(h.Request.PostFormValue("language"), config.MaxSignupValueLength),
+		Name:     sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength),
+		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
+		Time:     time.Now().Unix(),
+	}
+
 	profile["country"] = countryCode
-	profile["first_name"] = sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength)
-	profile["http_referrer"] = sanitize(h.Request.Referer(), config.MaxSignupValueLength)
-	profile["locale"] = sanitize(h.Request.PostFormValue("language"), config.MaxSignupValueLength)
+	profile["first_name"] = betaSignup.Name
+	profile["http_referrer"] = betaSignup.Referer
+	profile["locale"] = betaSignup.Language
 	profile["custom_var1"] = sanitize(h.Request.PostFormValue("inviteCode"), config.MaxSignupValueLength)
 	profile["custom_var2"] = sanitize(h.Request.PostFormValue("featureInterest"), config.MaxSignupValueLength)
-	signup["email"] = sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength)
+	signup["email"] = betaSignup.Email
 	signup["profile"] = profile
 
-	return signup
+	return betaSignup, signup
 }
 
 func getOrg(h HandlerArgs) string {

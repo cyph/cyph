@@ -829,11 +829,37 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 }
 
 func signup(h HandlerArgs) (interface{}, int) {
-	signup := getSignupFromRequest(h)
+	betaSignup, signup := getSignupFromRequest(h)
 
 	email, err := getEmail(signup["email"].(string))
 	if err != nil {
 		return err.Error(), http.StatusBadRequest
+	}
+
+	betaSignupKey := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
+	existingBetaSignup := new(BetaSignup)
+	if err := datastore.Get(h.Context, betaSignupKey, existingBetaSignup); err == nil {
+		if existingBetaSignup.Comment != "" {
+			betaSignup.Comment = existingBetaSignup.Comment
+		}
+		if existingBetaSignup.Country != "" {
+			betaSignup.Country = existingBetaSignup.Country
+		}
+		if existingBetaSignup.Language != "" {
+			betaSignup.Language = existingBetaSignup.Language
+		}
+		if existingBetaSignup.Name != "" {
+			betaSignup.Name = existingBetaSignup.Name
+		}
+		if existingBetaSignup.Referer != "" {
+			betaSignup.Referer = existingBetaSignup.Referer
+		}
+		if existingBetaSignup.Time != 0 {
+			betaSignup.Time = existingBetaSignup.Time
+		}
+	}
+	if _, err := datastore.Put(h.Context, betaSignupKey, &betaSignup); err != nil {
+		return err.Error(), http.StatusInternalServerError
 	}
 
 	jsonData := map[string]interface{}{}

@@ -7,6 +7,17 @@ import (
 
 type none struct{}
 
+// BetaSignup : Data of user in waitlist
+type BetaSignup struct {
+	Comment  string
+	Country  string
+	Email    string
+	Language string
+	Name     string
+	Referer  string
+	Time     int64
+}
+
 // Customer : Customer with API key
 type Customer struct {
 	APIKey       string
