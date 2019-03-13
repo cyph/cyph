@@ -124,7 +124,7 @@ if (testSign) {
 	return resolve({
 		rsaIndex: 0,
 		signedInputs: await Promise.all(inputs.map(async ({additionalData, message}) =>
-			new Buffer(await superSphincs.sign(
+			Buffer.from(await superSphincs.sign(
 				message,
 				testKeyPair.privateKey,
 				additionalData
