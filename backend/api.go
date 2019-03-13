@@ -211,8 +211,11 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 			if err != nil {
 				txLog += "\n\nERROR: " + err.Error()
+				success = false
 			}
+		}
 
+		if success {
 			_, err = datastore.Put(
 				h.Context,
 				datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil),
@@ -224,6 +227,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 			if err != nil {
 				txLog += "\n\nERROR: " + err.Error()
+				success = false
 			}
 		}
 	} else {
@@ -242,46 +246,53 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		success = tx.Status == "authorized"
 		txJSON, _ := json.Marshal(tx)
 		txLog += string(txJSON)
-	}
 
-	if !success {
-		return "", http.StatusInternalServerError
+		if success {
+			txLog += "\nAPI key: " + apiKey
+
+			_, err = datastore.Put(
+				h.Context,
+				customerKey,
+				&Customer{
+					APIKey:    apiKey,
+					Company:   company,
+					Email:     email,
+					Name:      name,
+					Namespace: namespace,
+					SignupURL: signupURL,
+					Timestamp: timestamp,
+				},
+			)
+
+			if err != nil {
+				txLog += "\n\nERROR: " + err.Error()
+				success = false
+			}
+		}
+
+		if success {
+			_, err = datastore.Put(
+				h.Context,
+				customerEmailKey,
+				&CustomerEmail{
+					APIKey: apiKey,
+					Email:  email,
+				},
+			)
+
+			if err != nil {
+				txLog += "\n\nERROR: " + err.Error()
+				success = false
+			}
+		}
 	}
 
 	subject := "SALE SALE SALE"
 	if !isProd {
 		subject = "[sandbox] " + subject
 	}
-
-	_, err = datastore.Put(
-		h.Context,
-		customerKey,
-		&Customer{
-			APIKey:    apiKey,
-			Company:   company,
-			Email:     email,
-			Name:      name,
-			Namespace: namespace,
-			SignupURL: signupURL,
-			Timestamp: timestamp,
-		},
-	)
-
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	_, err = datastore.Put(
-		h.Context,
-		customerEmailKey,
-		&CustomerEmail{
-			APIKey: apiKey,
-			Email:  email,
-		},
-	)
-
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
+	if !success {
+		subject = "FAILED: " + subject
 	}
 
 	mail.SendToAdmins(h.Context, &mail.Message{
@@ -298,6 +309,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			"\n\n" + txLog +
 			""),
 	})
+
+	if !success {
+		return "", http.StatusInternalServerError
+	}
 
 	_, hasPlan := config.Plans[planID]
 
