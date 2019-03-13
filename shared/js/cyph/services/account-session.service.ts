@@ -331,8 +331,7 @@ export class AccountSessionService extends SessionService {
 				undefined,
 				undefined,
 				undefined,
-				false,
-				true
+				false
 			);
 
 			this.incomingMessageQueueLock	= this.accountDatabaseService.lockFunction(
@@ -342,10 +341,7 @@ export class AccountSessionService extends SessionService {
 			this.init(castleSessionID, await this.accountDatabaseService.getOrSetDefault(
 				`${sessionURL}/channelUserID`,
 				StringProto,
-				() => uuid(true),
-				undefined,
-				undefined,
-				true
+				() => uuid(true)
 			));
 		})();
 

@@ -121,11 +121,7 @@ export class AccountContactsService extends BaseProvider {
 			this.accountDatabaseService.getAsyncValue(
 				this.contactURL(username),
 				AccountContactState,
-				SecurityModels.unprotected,
-				undefined,
-				undefined,
-				undefined,
-				true
+				SecurityModels.unprotected
 			)
 	);
 
@@ -169,8 +165,7 @@ export class AccountContactsService extends BaseProvider {
 			castleSessionID: await this.databaseService.getOrSetDefault(
 				`${castleSessionURL}/id`,
 				StringProto,
-				() => uuid(true),
-				true
+				() => uuid(true)
 			),
 			castleSessionURL
 		};
@@ -240,9 +235,7 @@ export class AccountContactsService extends BaseProvider {
 			this.contactURL(username),
 			AccountContactState,
 			{state: AccountContactState.States.Confirmed},
-			SecurityModels.unprotected,
-			undefined,
-			true
+			SecurityModels.unprotected
 		);
 
 		await this.accountDatabaseService.notify(
@@ -257,9 +250,7 @@ export class AccountContactsService extends BaseProvider {
 			this.contactURL(username),
 			AccountContactState,
 			{state: AccountContactState.States.OutgoingRequest},
-			SecurityModels.unprotected,
-			undefined,
-			true
+			SecurityModels.unprotected
 		);
 
 		await this.accountDatabaseService.notify(

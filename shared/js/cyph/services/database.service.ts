@@ -34,9 +34,6 @@ export class DatabaseService extends DataManagerService {
 		updateInterval: 30000
 	};
 
-	/** Max number of bytes to upload to non-blob storage. */
-	protected readonly nonBlobStorageLimit: number	= 8192;
-
 	/** Namespace for database usage. */
 	public readonly namespace: string	=
 		this.envService.environment.customBuild !== undefined ?
@@ -104,7 +101,6 @@ export class DatabaseService extends DataManagerService {
 		url: string,
 		proto: IProto<T>,
 		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
-		noBlobStorage: boolean = false,
 		subscriptions?: Subscription[]
 	) : IAsyncList<T> {
 		const lock		= lockFactory(url);
@@ -120,10 +116,10 @@ export class DatabaseService extends DataManagerService {
 			getValue: async () => localLock(async () => this.getList(url, proto)),
 			lock,
 			pushItem: async value => localLock(async () => {
-				await this.pushItem(url, proto, value, noBlobStorage);
+				await this.pushItem(url, proto, value);
 			}),
 			setValue: async value => localLock(async () =>
-				this.setList(url, proto, value, noBlobStorage)
+				this.setList(url, proto, value)
 			),
 			subscribeAndPop: f => this.subscribeAndPop(url, proto, f),
 			updateValue: async f => asyncList.lock(async () =>
@@ -153,7 +149,6 @@ export class DatabaseService extends DataManagerService {
 		url: string,
 		proto: IProto<T>,
 		lockFactory: (url: string) => LockFunction = k => this.lockFunction(k),
-		noBlobStorage: boolean = false,
 		staticValues: boolean = false,
 		subscriptions?: Subscription[]
 	) : IAsyncMap<string, T> {
@@ -218,7 +213,7 @@ export class DatabaseService extends DataManagerService {
 			}
 
 			await Promise.all<any>([
-				this.setItem(`${url}/${key}`, proto, value, noBlobStorage),
+				this.setItem(`${url}/${key}`, proto, value),
 				staticValues ?
 					this.localStorageService.setItem(`${method}/${url}/${key}`, proto, value) :
 					undefined
@@ -282,7 +277,6 @@ export class DatabaseService extends DataManagerService {
 		proto: IProto<T>,
 		lockFactory: (k: string) => LockFunction = k => this.lockFunction(k),
 		blockGetValue: boolean = false,
-		noBlobStorage: boolean = false,
 		subscriptions?: Subscription[]
 	) : IAsyncValue<T> {
 		const lock			= lockFactory(url);
@@ -325,7 +319,7 @@ export class DatabaseService extends DataManagerService {
 			setValue: async value => localLock(async () => {
 				const oldValue	= currentValue;
 
-				currentHash		= (await this.setItem(url, proto, value, noBlobStorage)).hash;
+				currentHash		= (await this.setItem(url, proto, value)).hash;
 				currentValue	= value;
 
 				if (ArrayBuffer.isView(oldValue)) {
@@ -432,8 +426,7 @@ export class DatabaseService extends DataManagerService {
 			key: string,
 			previousKey: () => Promise<string|undefined>,
 			o: {callback?: () => MaybePromise<void>}
-		) => MaybePromise<T>),
-		_NO_BLOB_STORAGE?: boolean
+		) => MaybePromise<T>)
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -476,25 +469,23 @@ export class DatabaseService extends DataManagerService {
 	public async setItem<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T,
-		noBlobStorage?: boolean
+		value: T
 	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
-		return this.uploadItem(url, proto, value, noBlobStorage).result;
+		return this.uploadItem(url, proto, value).result;
 	}
 
 	/** Sets a list's value. */
 	public async setList<T> (
 		url: string,
 		proto: IProto<T>,
-		value: T[],
-		noBlobStorage: boolean = false
+		value: T[]
 	) : Promise<void> {
 		await this.removeItem(url);
 		for (const v of value) {
-			await this.pushItem(url, proto, v, noBlobStorage);
+			await this.pushItem(url, proto, v);
 		}
 	}
 
@@ -543,8 +534,7 @@ export class DatabaseService extends DataManagerService {
 	public uploadItem<T> (
 		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
-		_VALUE: T,
-		_NO_BLOB_STORAGE?: boolean
+		_VALUE: T
 	) : {
 		cancel: () => void;
 		progress: Observable<number>;

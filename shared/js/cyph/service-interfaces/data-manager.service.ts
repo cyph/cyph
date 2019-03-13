@@ -17,15 +17,14 @@ export class DataManagerService extends BaseProvider {
 	public async getOrSetDefault<T> (
 		url: string,
 		proto: IProto<T>,
-		defaultValue: () => MaybePromise<T>,
-		noBlobStorage?: boolean
+		defaultValue: () => MaybePromise<T>
 	) : Promise<T> {
 		try {
 			return await this.getItem(url, proto);
 		}
 		catch {
 			const value	= await defaultValue();
-			this.setItem(url, proto, value, noBlobStorage).catch(() => {});
+			this.setItem(url, proto, value).catch(() => {});
 			return value;
 		}
 	}
@@ -53,8 +52,7 @@ export class DataManagerService extends BaseProvider {
 	public async setItem<T> (
 		_URL: string,
 		_PROTO: IProto<T>,
-		_VALUE: T,
-		_NO_BLOB_STORAGE?: boolean
+		_VALUE: T
 	) : Promise<{url: string}> {
 		throw new Error('Must provide an implementation of setItem.');
 	}

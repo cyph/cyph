@@ -20,6 +20,9 @@ const {
 	uuid
 }	= require('./util');
 
+/** Max number of bytes to upload to non-blob storage. */
+const nonBlobStorageLimit	= 8192;
+
 
 module.exports	= (config, isCloudFunction) => {
 
@@ -119,11 +122,24 @@ const databaseService	= {
 			await retry(async () => database.ref(url).remove());
 		}
 	},
-	async setItem (namespace, url, proto, value, noBlobStorage) {
-		url	= processURL(namespace, url);
+	async setItem (namespace, url, proto, value) {
+		return databaseService.setItemInternal(
+			processURL(namespace, url),
+			await serialize(proto, value)
+		);
+	},
+	async setItemInternal (url, value, hash) {
+		const [bytes, bytesBase64]	=
+			typeof value === 'string' ?
+				[Buffer.from(value, 'base64'), value] :
+				[value, value.toString('base64')]
+		;
 
-		const bytes	= await serialize(proto, value);
-		const hash	= getHash(bytes);
+		const noBlobStorage	= bytes.length <= nonBlobStorageLimit;
+
+		if (hash === undefined) {
+			hash	= getHash(bytes);
+		}
 
 		if (!noBlobStorage) {
 			await retry(async () => storage.file(`${url}/${hash}`).save(bytes));
@@ -133,7 +149,7 @@ const databaseService	= {
 			hash,
 			timestamp: admin.database.ServerValue.TIMESTAMP,
 			...(!noBlobStorage ? {} : {
-				data: bytes.toString('base64')
+				data: bytesBase64
 			})
 		}));
 	},

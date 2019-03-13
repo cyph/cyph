@@ -72,7 +72,6 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			proto,
 			undefined,
 			blockGetValue,
-			undefined,
 			subscriptions
 		);
 	}
@@ -152,7 +151,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 				)
 			).indexOf(userID) < 0
 		) {
-			await this.databaseService.pushItem(`${url}/users`, StringProto, userID, true);
+			await this.databaseService.pushItem(`${url}/users`, StringProto, userID);
 		}
 
 		let isOpen	= false;
@@ -198,8 +197,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		await this.localLock(async () => this.databaseService.pushItem<IChannelMessage>(
 			`${(await this.state).url}/messages`,
 			ChannelMessage,
-			{author: await this.userID.promise, cyphertext},
-			true
+			{author: await this.userID.promise, cyphertext}
 		));
 	}
 

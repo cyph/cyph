@@ -17,6 +17,7 @@ const {
 	messaging,
 	removeItem,
 	setItem,
+	setItemInternal,
 	storage
 }	= require('./database-service')(functions.config(), true);
 
@@ -312,6 +313,27 @@ exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) =
 		plan: plan in CyphPlans ? plan : CyphPlans.Free,
 		reservedUsername
 	};
+});
+
+
+exports.itemDataSet	= functions.database.ref(
+	'{namespace}'
+).onWrite(async ({after: data}, {params}) => {
+	if (!data.exists()) {
+		return;
+	}
+
+	const o	= data.val();
+
+	if (typeof o.data !== 'string' || typeof o.hash !== 'string') {
+		return;
+	}
+
+	return setItemInternal(
+		getURL(data.adminRef.parent),
+		o.data,
+		o.hash
+	);
 });
 
 

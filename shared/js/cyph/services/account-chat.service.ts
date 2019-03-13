@@ -207,7 +207,6 @@ export class AccountChatService extends ChatService {
 						undefined,
 						undefined,
 						undefined,
-						true,
 						true
 					),
 					initProgress: new BehaviorSubject(0),
@@ -228,7 +227,6 @@ export class AccountChatService extends ChatService {
 						undefined,
 						undefined,
 						undefined,
-						true,
 						true
 					),
 					messages: this.accountDatabaseService.getAsyncMap(
@@ -237,7 +235,6 @@ export class AccountChatService extends ChatService {
 						undefined,
 						undefined,
 						undefined,
-						true,
 						true
 					),
 					pendingMessageRoot: `${url}/pendingMessages`,
@@ -328,8 +325,7 @@ export class AccountChatService extends ChatService {
 			await this.databaseService.setItem(
 				`${castleSessionURL}/id`,
 				StringProto,
-				uuid(true),
-				true
+				uuid(true)
 			);
 
 			location.reload();

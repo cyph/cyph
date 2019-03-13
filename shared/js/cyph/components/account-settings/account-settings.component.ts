@@ -55,7 +55,6 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		undefined,
 		undefined,
 		undefined,
-		true,
 		this.subscriptions
 	);
 
@@ -73,7 +72,6 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		undefined,
 		undefined,
 		undefined,
-		true,
 		this.subscriptions
 	);
 

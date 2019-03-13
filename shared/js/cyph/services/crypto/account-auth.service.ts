@@ -602,8 +602,7 @@ export class AccountAuthService extends BaseProvider {
 						await this.databaseService.setItem(
 							`pendingSignupInviteCodes/${username}`,
 							StringProto,
-							inviteCode,
-							true
+							inviteCode
 						);
 					}
 
@@ -676,8 +675,7 @@ export class AccountAuthService extends BaseProvider {
 				).then(async () => !email ? Promise.resolve() : this.databaseService.setItem(
 					`users/${username}/email`,
 					StringProto,
-					email,
-					true
+					email
 				)),
 				this.setItem(
 					`users/${username}/publicProfileExtra`,
@@ -709,8 +707,7 @@ export class AccountAuthService extends BaseProvider {
 					this.databaseService.setItem(
 						`users/${username}/pseudoAccount`,
 						BinaryProto,
-						new Uint8Array(0),
-						true
+						new Uint8Array(0)
 					) :
 					this.setItem(
 						`users/${username}/certificateRequest`,

@@ -735,8 +735,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			key: string,
 			previousKey: () => Promise<string|undefined>,
 			o: {callback?: () => MaybePromise<void>}
-		) => MaybePromise<T>),
-		noBlobStorage: boolean = false
+		) => MaybePromise<T>)
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -796,7 +795,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				;
 			}
 
-			const result	= await this.setItem(`${url}/${key}`, proto, value, noBlobStorage);
+			const result	= await this.setItem(`${url}/${key}`, proto, value);
 			await itemRefOnDisconnect.cancel();
 
 			if (o.callback) {
@@ -939,8 +938,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async setItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T,
-		noBlobStorage: boolean = false
+		value: T
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -955,20 +953,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			/* tslint:disable-next-line:possible-timing-attack */
 			if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
-				if (noBlobStorage && data.length < this.nonBlobStorageLimit) {
-					await (await this.getDatabaseRef(url)).set({
-						data: this.potassiumService.toBase64(data),
-						hash,
-						timestamp: ServerValue.TIMESTAMP
-					}).then();
-				}
-				else {
-					await (await this.getStorageRef(url, hash)).put(new Blob([data])).then();
-					await (await this.getDatabaseRef(url)).set({
-						hash,
-						timestamp: ServerValue.TIMESTAMP
-					}).then();
-				}
+				await (await this.getDatabaseRef(url)).set({
+					data: this.potassiumService.toBase64(data),
+					hash,
+					timestamp: ServerValue.TIMESTAMP
+				}).then();
 
 				this.cacheSet(url, data, hash);
 			}
@@ -1018,8 +1007,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public uploadItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T,
-		noBlobStorage: boolean = false
+		value: T
 	) : {
 		cancel: () => void;
 		progress: Observable<number>;
@@ -1029,76 +1017,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const progress	= new BehaviorSubject(0);
 
 		const result	= this.ngZone.runOutsideAngular(async () => {
-			if (noBlobStorage) {
-				const setItemResult	= await this.setItem(urlPromise, proto, value, true);
-				this.ngZone.run(() => {
-					progress.next(100);
-					progress.complete();
-				});
-				return setItemResult;
-			}
+			const setItemResult	= await this.setItem(urlPromise, proto, value);
 
-			const url	= await urlPromise;
-
-			const data	= await serialize(proto, value);
-			const hash	= this.potassiumService.toHex(
-				await this.potassiumService.hash.hash(data)
-			);
-
-			/* tslint:disable-next-line:possible-timing-attack */
-			if (hash === (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
-				this.ngZone.run(() => {
-					progress.next(100);
-					progress.complete();
-				});
-				return {hash, url};
-			}
-
-			return new Promise<{hash: string; url: string}>(async (resolve, reject) => {
-				const uploadTask	= (await this.getStorageRef(url, hash)).put(new Blob([data]));
-
-				cancel.promise.then(() => {
-					reject('Upload canceled.');
-					uploadTask.cancel();
-				});
-
-				uploadTask.on(
-					'state_changed',
-					snapshot => {
-						if (!snapshot) {
-							return;
-						}
-
-						this.ngZone.run(() => {
-							progress.next(
-								snapshot.bytesTransferred / snapshot.totalBytes * 100
-							);
-						});
-					},
-					reject,
-					() => {
-						(async () => {
-							try {
-								await (await this.getDatabaseRef(url)).set({
-									hash,
-									timestamp: ServerValue.TIMESTAMP
-								}).then();
-								this.cacheSet(url, data, hash);
-								this.ngZone.run(() => {
-									progress.next(100);
-									progress.complete();
-								});
-								resolve({hash, url});
-							}
-							catch (err) {
-								reject(err);
-							}
-						})();
-
-						return undefined;
-					}
-				);
+			/* TODO: Do this for real */
+			this.ngZone.run(() => {
+				progress.next(100);
+				progress.complete();
 			});
+
+			return setItemResult;
 		});
 
 		return {cancel: cancel.resolve, progress, result};

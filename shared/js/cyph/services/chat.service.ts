@@ -82,7 +82,6 @@ export class ChatService extends BaseProvider {
 				BinaryProto,
 				undefined,
 				undefined,
-				undefined,
 				this.subscriptions
 			)
 		)

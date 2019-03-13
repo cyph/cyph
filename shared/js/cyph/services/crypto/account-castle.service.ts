@@ -115,21 +115,11 @@ export class AccountCastleService extends CastleService {
 					const handshakeState	= await accountSessionService.handshakeState(
 						this.accountDatabaseService.getAsyncValue<HandshakeSteps>(
 							`${sessionURL}/handshake/currentStep`,
-							Uint32Proto,
-							undefined,
-							undefined,
-							undefined,
-							undefined,
-							true
+							Uint32Proto
 						),
 						this.accountDatabaseService.getAsyncValue(
 							`${sessionURL}/handshake/initialSecret`,
-							MaybeBinaryProto,
-							undefined,
-							undefined,
-							undefined,
-							undefined,
-							true
+							MaybeBinaryProto
 						),
 						(
 							(await localUser.getSigningKeyPair()) === undefined ||
@@ -150,12 +140,7 @@ export class AccountCastleService extends CastleService {
 						handshakeState,
 						this.accountDatabaseService.getAsyncValue(
 							`${sessionURL}/incomingMessages`,
-							CastleIncomingMessagesProto,
-							undefined,
-							undefined,
-							undefined,
-							undefined,
-							true
+							CastleIncomingMessagesProto
 						),
 						this.accountDatabaseService.getAsyncList(
 							`${sessionURL}/outgoingMessageQueue`,
@@ -163,18 +148,12 @@ export class AccountCastleService extends CastleService {
 							undefined,
 							undefined,
 							undefined,
-							false,
-							true
+							false
 						),
 						this.accountDatabaseService.lockFunction(`${sessionURL}/lock`),
 						this.accountDatabaseService.getAsyncValue(
 							`${sessionURL}/ratchetState`,
-							CastleRatchetState,
-							undefined,
-							undefined,
-							undefined,
-							undefined,
-							true
+							CastleRatchetState
 						),
 						this.accountDatabaseService.getAsyncList(
 							`${sessionURL}/ratchetUpdateQueue`,
@@ -182,8 +161,7 @@ export class AccountCastleService extends CastleService {
 							undefined,
 							undefined,
 							undefined,
-							false,
-							true
+							false
 						),
 						this.accountDatabaseService.getAsyncValue(
 							`${sessionURL}/liteRatchetState`,
@@ -191,8 +169,7 @@ export class AccountCastleService extends CastleService {
 							undefined,
 							undefined,
 							undefined,
-							false,
-							true
+							false
 						)
 					);
 				}
