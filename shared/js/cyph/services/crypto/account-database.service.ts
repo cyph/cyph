@@ -251,6 +251,8 @@ export class AccountDatabaseService extends BaseProvider {
 		anonymous: boolean = false,
 		immutable: boolean = true
 	) : Promise<ITimedValue<T>[]> {
+		immutable	= this.setImmutable(immutable);
+
 		if (head !== undefined) {
 			keys	= keys.slice(0, keys.lastIndexOf(head) + 1);
 		}
@@ -368,6 +370,17 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** @ignore */
+	private setImmutable (immutable: boolean) : boolean {
+		return (
+			this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.threatModelBasic
+		) ?
+			false :
+			immutable
+		;
+	}
+
+	/** @ignore */
 	public async setItemInternal<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
@@ -434,6 +447,8 @@ export class AccountDatabaseService extends BaseProvider {
 		noBlobStorage: boolean = false,
 		subscriptions?: Subscription[]
 	) : IAsyncList<T> {
+		immutable	= this.setImmutable(immutable);
+
 		const localLock	= lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
@@ -795,6 +810,8 @@ export class AccountDatabaseService extends BaseProvider {
 		anonymous: boolean = false,
 		immutable: boolean = true
 	) : Promise<T[]> {
+		immutable	= this.setImmutable(immutable);
+
 		url	= await this.normalizeURL(url);
 
 		const [keys, head]	= await Promise.all([
@@ -1065,6 +1082,8 @@ export class AccountDatabaseService extends BaseProvider {
 		immutable: boolean = true,
 		noBlobStorage: boolean = false
 	) : Promise<{hash: string; url: string}> {
+		immutable	= this.setImmutable(immutable);
+
 		url	= await this.normalizeURL(url);
 
 		return this.databaseService.pushItem(
@@ -1133,6 +1152,8 @@ export class AccountDatabaseService extends BaseProvider {
 		immutable: boolean = true,
 		noBlobStorage: boolean = false
 	) : Promise<void> {
+		immutable	= this.setImmutable(immutable);
+
 		url	= await this.normalizeURL(url);
 
 		return this.lock(url, async () => {
@@ -1310,6 +1331,8 @@ export class AccountDatabaseService extends BaseProvider {
 		immutable: boolean = true,
 		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>[]> {
+		immutable	= this.setImmutable(immutable);
+
 		const cache: {head?: string; keys: number; value: ITimedValue<T>[]}	= {keys: 0, value: []};
 
 		const keysWatcher	= () => this.watchListKeys(url, subscriptions);
@@ -1421,6 +1444,8 @@ export class AccountDatabaseService extends BaseProvider {
 		immutable: boolean = true,
 		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>> {
+		immutable	= this.setImmutable(immutable);
+
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
 				mergeMap(async () => {
