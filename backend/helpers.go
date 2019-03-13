@@ -64,7 +64,7 @@ var methods = struct {
 	"CONNECT",
 }
 
-var namespace = strings.Split(strings.Split(config.RootURL, "/")[2], ":")[0]
+var apiNamespace = strings.Split(strings.Split(config.RootURL, "/")[2], ":")[0]
 
 var router = mux.NewRouter()
 var isRouterActive = false
@@ -328,7 +328,7 @@ func handleFuncs(pattern string, handlers Handlers) {
 				responseBody = config.AllowedMethods
 				responseCode = http.StatusOK
 			} else {
-				context, err := appengine.Namespace(appengine.NewContext(r), namespace)
+				context, err := appengine.Namespace(appengine.NewContext(r), apiNamespace)
 				if err != nil {
 					responseBody = "Failed to create context."
 					responseCode = http.StatusInternalServerError

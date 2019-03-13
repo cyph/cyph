@@ -57,7 +57,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusBadRequest
 	}
 
-	namespace, err = getNamespace(h.Request.PostFormValue("namespace"))
+	namespace, err := getNamespace(h.Request.PostFormValue("namespace"))
 	if err != nil {
 		return err.Error(), http.StatusBadRequest
 	}
