@@ -449,12 +449,20 @@ func sendMail(h HandlerArgs, to string, subject string, text string, html string
 		log.Errorf(h.Context, "Failed to render email body: %v", err)
 	}
 
-	err = mail.Send(h.Context, &mail.Message{
+	email := &mail.Message{
 		Sender:   "Cyph <noreply@cyph.com>",
 		Subject:  subject,
 		To:       []string{to},
 		HTMLBody: body,
-	})
+	}
+
+	if b, err := json.Marshal(email); err == nil {
+		log.Infof(h.Context, "Sending email: %v", string(b))
+	} else {
+		log.Errorf(h.Context, "Failed to log outgoing email.")
+	}
+
+	err = mail.Send(h.Context, email)
 
 	if err != nil {
 		log.Errorf(h.Context, "Failed to send email: %v", err)
