@@ -317,7 +317,7 @@ exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) =
 
 
 exports.itemDataSet	= functions.database.ref(
-	'{namespace}'
+	'data'
 ).onWrite(async ({after: data}, {params}) => {
 	if (!data.exists()) {
 		return;
@@ -332,7 +332,8 @@ exports.itemDataSet	= functions.database.ref(
 	return setItemInternal(
 		getURL(data.adminRef.parent),
 		o.data,
-		o.hash
+		o.hash,
+		true
 	);
 });
 

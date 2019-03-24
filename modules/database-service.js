@@ -128,7 +128,7 @@ const databaseService	= {
 			await serialize(proto, value)
 		);
 	},
-	async setItemInternal (url, value, hash) {
+	async setItemInternal (url, value, hash, dataAlreadySet) {
 		const [bytes, bytesBase64]	=
 			typeof value === 'string' ?
 				[Buffer.from(value, 'base64'), value] :
@@ -143,6 +143,9 @@ const databaseService	= {
 
 		if (!noBlobStorage) {
 			await retry(async () => storage.file(`${url}/${hash}`).save(bytes));
+		}
+		else if (dataAlreadySet) {
+			return;
 		}
 
 		await retry(async () => database.ref(url).set({
