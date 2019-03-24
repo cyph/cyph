@@ -275,7 +275,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 
 
 exports.channelDisconnect	= functions.database.ref(
-	'{namespace}/channels/{channel}/disconnects/{user}'
+	'/{namespace}/channels/{channel}/disconnects/{user}'
 ).onWrite(async ({after: data}, {params}) => {
 	if (!data.exists()) {
 		return;
@@ -361,7 +361,7 @@ exports.itemHashChange	= functions.database.ref(
 
 
 exports.itemRemoved	= functions.database.ref(
-	'{namespace}'
+	'hash'
 ).onDelete(async (data, {params}) => {
 	if (data.exists()) {
 		return;
@@ -477,7 +477,7 @@ exports.sendInvite	= onCall(async (data, context, namespace, getUsername) => {
 
 
 exports.userConsumeInvite	= functions.database.ref(
-	'{namespace}/users/{user}/inviteCode'
+	'/{namespace}/users/{user}/inviteCode'
 ).onWrite(async (data, {params}) => {
 	if (!data.after.val()) {
 		return;
@@ -540,7 +540,7 @@ exports.userConsumeInvite	= functions.database.ref(
 
 
 exports.userContactSet	= functions.database.ref(
-	'{namespace}/users/{user}/contacts/{contact}'
+	'/{namespace}/users/{user}/contacts/{contact}'
 ).onWrite(async ({after: data}, {params}) => {
 	const contact			= params.contact;
 	const username			= params.user;
@@ -712,7 +712,7 @@ exports.userContactSet	= functions.database.ref(
 
 
 exports.userDisconnect	= functions.database.ref(
-	'{namespace}/users/{user}/clientConnections'
+	'/{namespace}/users/{user}/clientConnections'
 ).onDelete(async (data, {params}) => {
 	const username	= params.user;
 
@@ -721,7 +721,7 @@ exports.userDisconnect	= functions.database.ref(
 
 
 exports.userEmailSet	= functions.database.ref(
-	'{namespace}/users/{user}/email'
+	'/{namespace}/users/{user}/email'
 ).onWrite(async ({after: data}, {params}) => {
 	const username					= params.user;
 	const userURL					= `${params.namespace}/users/${username}`;
@@ -922,7 +922,7 @@ exports.userNotify	= onCall(async (data, context, namespace, getUsername) => {
 
 
 exports.userPublicProfileSet	= functions.database.ref(
-	'{namespace}/users/{user}/publicProfile'
+	'/{namespace}/users/{user}/publicProfile'
 ).onWrite(async ({after: data}, {params}) => {
 	const username			= params.user;
 	const internalURL		= `${params.namespace}/users/${username}/internal`;
@@ -1014,7 +1014,7 @@ exports.userRegister	= functions.auth.user().onCreate(async (userRecord, {params
 
 
 exports.userRegisterConfirmed	= functions.database.ref(
-	'{namespace}/users/{user}/certificate'
+	'/{namespace}/users/{user}/certificate'
 ).onCreate(async (data, {params}) => {
 	const username	= params.user;
 
