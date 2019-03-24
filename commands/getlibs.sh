@@ -339,8 +339,6 @@ find firebase @firebase -type f -name '*.node.js' -exec bash -c '
 	cp -f {} $(echo "{}" | sed "s|\.node\.js$|.js|")
 ' \;
 
-cp @firebase/database/dist/packages/database/index.d.ts @firebase/database/dist/
-
 cd @types
 for d in * ; do if [ ! -f ${d}/package.json ] ; then
 cat > ${d}/package.json << EOM
