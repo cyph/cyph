@@ -316,14 +316,10 @@ exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) =
 });
 
 
-/*
-TODO: Handle this as a cron job that searches for folders
-	with multiple items and deletes all but the oldest.
-
 exports.itemHashChange	= functions.database.ref(
-	'{namespace}'
+	'hash'
 ).onUpdate(async ({after: data}, {params}) => {
-	if (!data.exists() || data.key !== 'hash') {
+	if (!data.exists()) {
 		return;
 	}
 
@@ -333,7 +329,7 @@ exports.itemHashChange	= functions.database.ref(
 		return;
 	}
 
-	const url		= getURL(data.adminRef.parent);
+	const url	= getURL(data.adminRef.parent);
 
 	const files	= await Promise.all(
 		(await storage.getFiles({prefix: `${url}/`}))[0].map(async file => {
@@ -362,7 +358,6 @@ exports.itemHashChange	= functions.database.ref(
 		});
 	}
 });
-*/
 
 
 exports.itemRemoved	= functions.database.ref(
