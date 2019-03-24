@@ -316,28 +316,6 @@ exports.checkInviteCode	= onCall(async (data, context, namespace, getUsername) =
 });
 
 
-exports.itemDataSet	= functions.database.ref(
-	'data'
-).onWrite(async ({after: data}, {params}) => {
-	if (!data.exists()) {
-		return;
-	}
-
-	const o	= data.val();
-
-	if (typeof o.data !== 'string' || typeof o.hash !== 'string') {
-		return;
-	}
-
-	return setItemInternal(
-		getURL(data.adminRef.parent),
-		o.data,
-		o.hash,
-		true
-	);
-});
-
-
 /*
 TODO: Handle this as a cron job that searches for folders
 	with multiple items and deletes all but the oldest.

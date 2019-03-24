@@ -133,6 +133,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 		)
 	;
 
+	/** Max number of bytes to upload to non-blob storage. */
+	private readonly nonBlobStorageLimit	= 8192;
+
 	/** @ignore */
 	private readonly observableCaches	= {
 		watch: new Map<string, Observable<ITimedValue<any>>>(),
@@ -953,11 +956,20 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			/* tslint:disable-next-line:possible-timing-attack */
 			if (hash !== (await this.getMetadata(url).catch(() => ({hash: undefined}))).hash) {
-				await (await this.getDatabaseRef(url)).set({
-					data: this.potassiumService.toBase64(data),
-					hash,
-					timestamp: ServerValue.TIMESTAMP
-				}).then();
+				if (data.length < this.nonBlobStorageLimit) {
+					await (await this.getDatabaseRef(url)).set({
+						data: this.potassiumService.toBase64(data),
+						hash,
+						timestamp: ServerValue.TIMESTAMP
+					}).then();
+				}
+				else {
+					await (await this.getStorageRef(url, hash)).put(new Blob([data])).then();
+					await (await this.getDatabaseRef(url)).set({
+						hash,
+						timestamp: ServerValue.TIMESTAMP
+					}).then();
+				}
 
 				this.cacheSet(url, data, hash);
 			}
