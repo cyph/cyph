@@ -23,20 +23,19 @@ export class SplitTestingService extends BaseProvider {
 		else if (values.length < 1) {
 			throw new Error('No values.');
 		}
-		else {
-			values	= (<any[]> values).
-				map(o =>
-					typeof o === 'object' && 'value' in o && typeof o.weight === 'number' ?
-						new Array(o.weight).fill(o.value) :
-						[o]
-				).reduce(
-					(a, b) => a.concat(b),
-					[]
-				)
-			;
 
-			index	= Math.floor(values.length * random());
-		}
+		values	= (<any[]> values).
+			map(o =>
+				typeof o === 'object' && 'value' in o && typeof o.weight === 'number' ?
+					new Array(o.weight).fill(o.value) :
+					[o]
+			).reduce(
+				(a, b) => a.concat(b),
+				[]
+			)
+		;
+
+		index	= Math.floor(values.length * random());
 
 		if (this.analyticsService) {
 			this.analyticsService.sendEvent({

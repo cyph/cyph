@@ -4,6 +4,7 @@ import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
 
 
+/** Convenience method for extracting a value from an IForm object. */
 export const {getFormValue}		= class {
 	public static getFormValue (
 		form: IForm|undefined,
