@@ -125,6 +125,8 @@ read -r -d '' modules <<- EOM
 	comlinkjs
 	copy-webpack-plugin
 	core-js
+	core-js-bundle
+	core-js-pure
 	cornerstone-core
 	cors
 	crypto-browserify

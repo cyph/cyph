@@ -44,7 +44,7 @@ cp assets/js/standalone/global.js bundle.js
 echo >> bundle.js
 cat app/bundle.js >> bundle.js
 
-cp /node_modules/core-js/client/shim.js starter.js
+cp /node_modules/core-js-bundle/minified.js starter.js
 echo >> starter.js
 cat assets/js/standalone/global.js >> starter.js
 echo >> starter.js

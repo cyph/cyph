@@ -53,7 +53,7 @@ export class Thread<T> implements IThread<T> {
 
 		/* Normalisation to increase compatibility with web libraries */
 
-		importScripts('/assets/node_modules/core-js/client/shim.js');
+		importScripts('/assets/node_modules/core-js-bundle/minified.js');
 		importScripts('/assets/js/standalone/global.js');
 		/* Import when needed: /assets/js/standalone/node-polyfills.js */
 

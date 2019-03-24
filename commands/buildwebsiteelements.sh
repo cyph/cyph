@@ -28,6 +28,6 @@ cd cyph.com
 
 cp ../shared/assets/js/standalone/analytics.js dist/
 cp ../shared/assets/js/standalone/global.js dist/
-cp ../shared/assets/node_modules/core-js/client/shim.js dist/
+cp ../shared/assets/node_modules/core-js-bundle/minified.js dist/
 rm -rf "${dir}/cyph.com/dist"
 mv dist "${dir}/cyph.com/"
