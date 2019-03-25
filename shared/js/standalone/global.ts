@@ -8,6 +8,9 @@
 if (typeof self === 'undefined' && typeof global !== 'undefined') {
 	(<any> global).self	= global;
 }
+else {
+	(<any> self).global	= self;
+}
 
 try {
 	if (!self.crypto && (<any> self).msCrypto) {
