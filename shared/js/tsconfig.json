@@ -20,6 +20,8 @@
 		"paths": {
 			"_stream_duplex": ["js/externals/_stream_duplex"],
 			"_stream_writable": ["js/externals/_stream_writable"],
+			"core-js/es6/*": ["../node_modules/core-js/es"],
+			"core-js/es7/reflect": ["../node_modules/core-js/proposals/reflect-metadata"],
 			"crypto": ["js/externals/crypto"],
 			"faye-websocket": ["js/externals/faye-websocket"],
 			"fs": ["js/externals/fs"],
