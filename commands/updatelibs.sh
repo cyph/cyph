@@ -111,7 +111,6 @@ read -r -d '' modules <<- EOM
 	animated-scroll-to
 	awesome-typescript-loader
 	babel-core
-	babel-loader
 	babel-preset-env
 	babel-preset-es2015
 	bourbon@4.2.7
@@ -123,14 +122,12 @@ read -r -d '' modules <<- EOM
 	clipboard-polyfill
 	codelyzer
 	comlinkjs
-	copy-webpack-plugin
 	core-js
 	core-js-bundle
 	core-js-pure
 	cornerstone-core
 	cors
 	crypto-browserify
-	css-loader
 	csv
 	csv-parse
 	csv-stringify
@@ -140,12 +137,10 @@ read -r -d '' modules <<- EOM
 	dope-qr
 	dropzone
 	dwv
-	extract-text-webpack-plugin
 	fast-crc32c
 	fast-text-encoding@https://github.com/buu700/fast-text-encoding
 	faye-websocket
 	fg-loadcss
-	file-loader
 	file-saver
 	firebase
 	firebase-admin
@@ -159,10 +154,8 @@ read -r -d '' modules <<- EOM
 	gulp
 	hammerjs
 	highlight.js
-	html-loader
 	html-minifier
 	html-to-text
-	html-webpack-plugin
 	htmlencode
 	htmllint
 	ical-generator@~0.2
@@ -239,7 +232,6 @@ read -r -d '' modules <<- EOM
 	quill-delta
 	quill-delta-to-html
 	quill-markdown
-	raw-loader
 	read
 	readable-stream
 	recorder.js
@@ -247,15 +239,12 @@ read -r -d '' modules <<- EOM
 	reflect-metadata
 	request
 	resize-observer-polyfill
-	resolve-url-loader
 	retire
 	rlwe
 	rsvp
 	rxjs
 	rxjs-tslint@0.1.5
 	rxjs-tslint-rules
-	sass-loader
-	script-ext-html-webpack-plugin
 	sidh
 	simple-peer
 	simplebtc
@@ -263,7 +252,6 @@ read -r -d '' modules <<- EOM
 	sodiumutil
 	sphincs
 	stacktrace-js
-	style-loader
 	stylelint
 	stylelint-scss
 	supersphincs
@@ -277,7 +265,6 @@ read -r -d '' modules <<- EOM
 	tns-core-modules-widgets
 	tns-ios
 	tns-platform-declarations
-	ts-loader
 	ts-node
 	tslint
 	tslint-consistent-codestyle
@@ -289,9 +276,7 @@ read -r -d '' modules <<- EOM
 	typescript@3.2
 	u2f-api-polyfill
 	uglify-es
-	uglifyjs-webpack-plugin
 	unsemantic
-	url-loader
 	username-blacklist@https://github.com/cyph/The-Big-Username-Blacklist
 	video.js
 	videojs-background
@@ -306,9 +291,6 @@ read -r -d '' modules <<- EOM
 	web-animations-js
 	webpack
 	webpack-cli
-	webpack-closure-compiler
-	webpack-dev-server
-	webpack-sources
 	webrtc-adapter
 	webrtcsupport
 	whatwg-fetch
