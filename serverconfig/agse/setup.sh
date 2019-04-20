@@ -37,6 +37,7 @@ echo 'FYI, login password must be under 64 characters.'
 adduser ${username}
 adduser ${username} admin
 echo "${username} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+agseDir="/home/${username}/agse"
 
 cat >> /etc/network/interfaces << EndOfMessage
 auto eth0
@@ -58,12 +59,12 @@ apt-get -y --allow-downgrades install sudo nodejs ecryptfs-utils lsof
 
 npm -g install xkcd-passphrase
 
-mkdir -p /tmp/agse
-cp "$(dirname "$0")"/* /tmp/agse/
-chmod -R 777 /tmp/agse
+mkdir -p ${agseDir}
+cp "$(dirname "$0")"/* ${agseDir}/
+chmod -R 777 ${agseDir}
 
-if [ -f /tmp/agse/keybackup ] ; then
-	eval "$(/tmp/agse/getbackuppassword.js)"
+if [ -f ${agseDir}/keybackup ] ; then
+	eval "$(${agseDir}/getbackuppassword.js)"
 else
 	backupPasswordAes="$(xkcd-passphrase 256)"
 	backupPasswordSodium="$(xkcd-passphrase 256)"
@@ -74,7 +75,7 @@ fi
 reset
 
 
-cat > /tmp/agse/setup.sh << EndOfMessage
+cat > ${agseDir}/setup.sh << EndOfMessage
 #!/bin/bash
 
 cd /home/${username}
@@ -82,10 +83,10 @@ cd /home/${username}
 npm install level libsodium-wrappers node-fetch read supersphincs validator
 echo
 
-/tmp/agse/generatekeys.js \
+${agseDir}/generatekeys.js \
 	"${activeKeys}" \
 	"${backupKeys}" \
-	"$(ls /tmp/agse/keybackup 2> /dev/null)" \
+	"$(ls ${agseDir}/keybackup 2> /dev/null)" \
 	"${passwords[1]}" \
 	"${passwords[2]}" \
 	"${passwords[3]}" \
@@ -93,7 +94,7 @@ echo
 	"${backupPasswordAes}" \
 	"${backupPasswordSodium}"
 
-if [ ! -f /tmp/agse/keybackup ] ; then
+if [ ! -f ${agseDir}/keybackup ] ; then
 	echo
 	echo -n "Before committing, you must validate that the SHA-512 of "
 	echo -n "the public key JSON you've been emailed matches the above."
@@ -104,7 +105,7 @@ if [ ! -f /tmp/agse/keybackup ] ; then
 	read
 fi
 
-mv /tmp/agse/server.js ./
+mv ${agseDir}/server.js ./
 
 
 cat >> .bashrc <<- EOM
@@ -131,11 +132,11 @@ cat >> .bashrc <<- EOM
 	fi
 EOM
 EndOfMessage
-chmod 777 /tmp/agse/setup.sh
+chmod 777 ${agseDir}/setup.sh
 
 
-su ${username} -c /tmp/agse/setup.sh
-rm -rf /tmp/agse
+su ${username} -c ${agseDir}/setup.sh
+rm -rf ${agseDir}
 
 modprobe ecryptfs
 ecryptfs-migrate-home -u ${username}
