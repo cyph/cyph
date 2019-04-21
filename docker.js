@@ -451,21 +451,15 @@ if (isWindows && isAgseDeploy) {
 let exitCleanup	= () => {};
 let initPromise	= Promise.resolve();
 
+if (isAgseDeploy) {
+	commandAdditionalArgs.push('-p');
+	commandAdditionalArgs.push('31337:31337/udp');
+
+	exitCleanup	= () => fs.appendFileSync(agseTempFile);
+	initPromise	= runScript(shellScripts.agseInit);
+}
+
 switch (args.command) {
-	case 'certsign':
-	case 'deploy':
-	case 'sign':
-		if (!isAgseDeploy) {
-			break;
-		}
-
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('31337:31337/udp');
-
-		exitCleanup	= () => fs.appendFileSync(agseTempFile);
-		initPromise	= runScript(shellScripts.agseInit);
-		break;
-
 	case 'editimage':
 		editImage(`source ~/.bashrc ; ${baseShellCommandArgs[0]}`);
 		break;
