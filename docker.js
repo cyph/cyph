@@ -97,6 +97,9 @@ const commandScript			=
 
 const isAgseDeploy			=
 	(
+		args.command === 'sign' &&
+		process.argv[4] !== '--test'
+	) || (
 		args.command === 'certsign' &&
 		(!process.argv[3] || process.argv[3] === 'cyphme')
 	) || (
@@ -451,6 +454,7 @@ let initPromise	= Promise.resolve();
 switch (args.command) {
 	case 'certsign':
 	case 'deploy':
+	case 'sign':
 		if (!isAgseDeploy) {
 			break;
 		}
