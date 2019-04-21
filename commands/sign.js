@@ -23,17 +23,6 @@ const macAddress	= Buffer.from(
 	).toString().trim()
 );
 
-const publicKeysJS	= fs.readFileSync(
-	`${__dirname}/../websign/js/keys.js`
-).toString();
-const publicKeys	= JSON.parse(
-	publicKeysJS.
-		substring(publicKeysJS.indexOf('=') + 1).
-		split(';')[0].
-		trim().
-		replace(/\/\*.*?\*\//g, '')
-);
-
 
 const testKeyPair	= {
 	privateKey: sodiumUtil.from_base64(
@@ -117,7 +106,20 @@ const testKeyPair	= {
 };
 
 
-const sign	= async (inputs, testSign) => new Promise(async (resolve, reject) => {
+const sign	= async (inputs, testSign, demoSign) => new Promise(async (resolve, reject) => {
+
+
+const publicKeysJS	= fs.readFileSync(
+	`${__dirname}/../${demoSign ? 'shared/assets/demoagsekeys.json' : 'websign/js/keys.js'}`
+).toString();
+
+const publicKeys	= JSON.parse(
+	publicKeysJS.
+		substring(publicKeysJS.indexOf('=') + 1).
+		split(';')[0].
+		trim().
+		replace(/\/\*.*?\*\//g, '')
+);
 
 
 if (testSign) {
@@ -298,12 +300,13 @@ if (require.main === module) {
 		const args		= process.argv.slice(2);
 		const inputs	= args[0];
 		const testSign	= args[1] === '--test';
+		const demoSign	= args[1] === '--demo';
 
 		if (typeof inputs !== 'string' || !inputs) {
 			throw './sign.js \'{"message": "data to sign"}\'';
 		}
 
-		const signed	= await sign(JSON.parse(inputs), testSign);
+		const signed	= await sign(JSON.parse(inputs), testSign, demoSign);
 
 		console.log({
 			...signed,
