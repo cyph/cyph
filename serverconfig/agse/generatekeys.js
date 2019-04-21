@@ -3,7 +3,7 @@
 
 const fs			= require('fs');
 const level			= require('level');
-const sodium		= require('libsodium-wrappers');
+const sodium		= require('libsodium-wrappers-sumo');
 const fetch			= require('node-fetch');
 const superSphincs	= require('supersphincs');
 
