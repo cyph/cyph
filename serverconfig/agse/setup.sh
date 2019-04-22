@@ -55,7 +55,7 @@ echo "deb https://deb.nodesource.com/node_10.x ${distro} main" >> /etc/apt/sourc
 curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 apt-get -y --allow-downgrades update
 apt-get -y --allow-downgrades upgrade
-apt-get -y --allow-downgrades install sudo nodejs ecryptfs-utils lsof
+apt-get -y --allow-downgrades install ecryptfs-utils less lsof nodejs sudo
 
 npm -g install xkcd-passphrase
 
