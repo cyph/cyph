@@ -80,7 +80,7 @@ cat > ${agseDir}/setup.sh << EndOfMessage
 
 cd /home/${username}
 
-npm install level libsodium-wrappers-sumo node-fetch read supersphincs validator
+npm install level libsodium-wrappers-sumo node-fetch read supersphincs@5 validator
 echo
 
 ${agseDir}/generatekeys.js \
