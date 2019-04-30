@@ -143,7 +143,7 @@
 <ng-template #messageConfirmation>
 	<ng-container *ngIf='
 		pending || message?.authorType !== authorTypes.Local;
-		else messageConfirmed
+		else messagePartialConfirmed
 	'>
 		<span class='confirmation-checks visibility-hidden'>
 			<mat-icon>check</mat-icon>
@@ -151,21 +151,21 @@
 			<mat-icon>check</mat-icon>
 		</span>
 	</ng-container>
-	<ng-template #messageConfirmed>
-		<ng-container *ngIf='confirmed; else messagePartialConfirmed'>
-			<span class='confirmation-checks'>
-				<mat-icon>check</mat-icon>
-				&ngsp;
-				<mat-icon>check</mat-icon>
-			</span>
-		</ng-container>
-	</ng-template>
 	<ng-template #messagePartialConfirmed>
-		<ng-container *ngIf='!chatService.deliveryReceipts; else messageUnconfirmed'>
+		<ng-container *ngIf='!chatService.deliveryReceipts; else messageConfirmed'>
 			<span class='confirmation-checks'>
 				<mat-icon>check</mat-icon>
 				&ngsp;
 				<mat-icon class='visibility-hidden'>check</mat-icon>
+			</span>
+		</ng-container>
+	</ng-template>
+	<ng-template #messageConfirmed>
+		<ng-container *ngIf='confirmed; else messageUnconfirmed'>
+			<span class='confirmation-checks'>
+				<mat-icon>check</mat-icon>
+				&ngsp;
+				<mat-icon>check</mat-icon>
 			</span>
 		</ng-container>
 	</ng-template>
