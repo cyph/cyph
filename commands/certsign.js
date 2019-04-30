@@ -10,7 +10,7 @@ const potassium							= require('../modules/potassium');
 const {CyphPlan, CyphPlans}				= require('../modules/proto');
 const {deserialize, serialize, sleep}	= require('../modules/util');
 const {addInviteCode}					= require('./addinvitecode');
-const {agsePublicSigningKeys, sign}		= require('./sign');
+const {getPublicKeys, sign}				= require('./sign');
 
 const {
 	AGSEPKICert,
@@ -104,6 +104,8 @@ if (usernames.length < 1) {
 	console.log('No certificate requests.');
 	process.exit(0);
 }
+
+const agsePublicSigningKeys	= getPublicKeys();
 
 const issuanceHistory	= await (async () => {
 	const bytes				= await getItem(namespace, 'certificateHistory', BinaryProto);

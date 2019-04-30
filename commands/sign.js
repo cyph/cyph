@@ -106,20 +106,22 @@ const testKeyPair	= {
 };
 
 
+const getPublicKeys	= demoSign => {
+	const publicKeysJS	= fs.readFileSync(
+		`${__dirname}/../${demoSign ? 'shared/assets/demoagsekeys.json' : 'websign/js/keys.js'}`
+	).toString();
+
+	return JSON.parse(
+		publicKeysJS.
+			substring(publicKeysJS.indexOf('=') + 1).
+			split(';')[0].
+			trim().
+			replace(/\/\*.*?\*\//g, '')
+	);
+};
+
+
 const sign	= async (inputs, testSign, demoSign) => new Promise(async (resolve, reject) => {
-
-
-const publicKeysJS	= fs.readFileSync(
-	`${__dirname}/../${demoSign ? 'shared/assets/demoagsekeys.json' : 'websign/js/keys.js'}`
-).toString();
-
-const publicKeys	= JSON.parse(
-	publicKeysJS.
-		substring(publicKeysJS.indexOf('=') + 1).
-		split(';')[0].
-		trim().
-		replace(/\/\*.*?\*\//g, '')
-);
 
 
 if (testSign) {
@@ -136,6 +138,8 @@ if (testSign) {
 	});
 }
 
+
+const publicKeys	= getPublicKeys(demoSign);
 
 const binaryInputs	= inputs.map(({additionalData, message}) => ({
 	additionalData,
@@ -319,5 +323,5 @@ if (require.main === module) {
 	});
 }
 else {
-	module.exports	= {agsePublicSigningKeys: publicKeys, sign};
+	module.exports	= {getPublicKeys, sign};
 }
