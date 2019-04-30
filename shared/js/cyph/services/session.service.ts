@@ -157,7 +157,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @see IChannelHandlers.onClose */
 	protected async channelOnClose () : Promise<void> {
-		this.destroy();
+		await this.destroy();
 	}
 
 	/** @see IChannelHandlers.onConnect */
