@@ -302,7 +302,7 @@ export class PairwiseSession {
 		debugLog(() => ({pairwiseSessionStart: true}));
 
 		retryUntilSuccessful(async () => {
-			while (true) {
+			while (this.transport.isAlive) {
 				const currentStep	= await this.handshakeState.currentStep.getValue();
 
 				if (currentStep === HandshakeSteps.Aborted) {
