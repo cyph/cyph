@@ -419,7 +419,7 @@ export class PairwiseSession {
 						}
 					});
 
-					while (this.transport.isAlive) { await this.lock(async o => {
+					return this.lock(async o => {
 						lockClaimed	= true;
 
 						debugLog(() => ({castleLockClaimed: o}));
@@ -610,7 +610,7 @@ export class PairwiseSession {
 						)) {
 							resolver.resolve();
 						}
-					}); }
+					});
 				}
 			}
 		}).catch(err => {
