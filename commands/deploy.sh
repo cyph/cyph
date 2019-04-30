@@ -805,6 +805,7 @@ if [ "${websign}" ] ; then
 		cd "${dir}"
 		git remote add public git@github.com:cyph/cyph.git 2> /dev/null
 		git push public HEAD:master
+		git push origin public
 		cd -
 	fi
 fi
