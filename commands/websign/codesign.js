@@ -18,7 +18,7 @@ const args			= {
 };
 
 
-const signatureTTL	= 2.5; // Months
+const signatureTTL	= 8; // Months
 const timestamp		= Date.now();
 
 const inputs		= args.inputs.map(s => s.split('=')).map(arr => ({
