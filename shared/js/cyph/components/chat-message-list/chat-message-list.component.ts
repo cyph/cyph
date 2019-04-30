@@ -18,7 +18,7 @@ import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import debounce from 'lodash-es/debounce';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map, mergeMap, take} from 'rxjs/operators';
+import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {User, UserLike} from '../../account';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
@@ -421,8 +421,14 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	}
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
+	public async ngOnInit () : Promise<void> {
 		this.chatService.scrollTransition.next(true);
+
+		const messageListItems	= await this.messageListItems.pipe(skip(1), take(1)).toPromise();
+
+		if (messageListItems.length < 1) {
+			this.chatService.scrollTransition.next(false);
+		}
 	}
 
 	/** Handles first message load. */
@@ -463,7 +469,21 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 		}
 
 		const bottom	= target.scrollTop >= (target.scrollHeight - target.clientHeight - 1);
-		if (!(bottom || target.scrollTop === 0)) {
+
+		if (
+			!(bottom || target.scrollTop === 0) ||
+			(
+				!bottom &&
+				this.infiniteScrollingData.items[0] &&
+				this.infiniteScrollingData.items[0].message &&
+				this.infiniteScrollingData.items[0].message.id ===
+				(
+					this.allMessageListItems.value[0] &&
+					this.allMessageListItems.value[0].message &&
+					this.allMessageListItems.value[0].message.id
+				)
+			)
+		) {
 			return;
 		}
 
@@ -489,6 +509,8 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 
 		this.infiniteScrollingData.messageBottomOffset	= messageBottomOffset;
 		this.infiniteScrollingData.viewportMessageCount	= this.viewportMessageCount.value;
+
+		debugLog(() => ({messageBottomOffset}));
 
 		if (messageBottomOffset > 1) {
 			this.chatService.scrollTransition.next(true);
