@@ -43,6 +43,9 @@ export class ScrollService extends BaseProvider {
 	/** @ignore */
 	private readonly scrollDownLock: {}	= {};
 
+	/** Quick fix to make scrollDown behave sensibly with infinite scrolling. */
+	public enableScrollDown: boolean						= true;
+
 	/** Scroll position deemed high enough that it makes sense to display unread indicator. */
 	public readonly minScroll: number						= 256;
 
@@ -141,6 +144,10 @@ export class ScrollService extends BaseProvider {
 
 	/** Scrolls to bottom. */
 	public async scrollDown (force: boolean = true, delay: number = 0) : Promise<void> {
+		if (!this.enableScrollDown) {
+			return;
+		}
+
 		if (!(force || (this.scrollPosition.value < this.minScroll))) {
 			return;
 		}

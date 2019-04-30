@@ -516,6 +516,8 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 			this.chatService.scrollTransition.next(true);
 		}
 
+		this.scrollService.enableScrollDown	= messageBottomOffset <= 1;
+
 		this.messageBottomOffset.next(messageBottomOffset);
 	}
 
