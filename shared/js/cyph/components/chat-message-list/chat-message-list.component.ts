@@ -505,14 +505,13 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 			return;
 		}
 
-		++this.infiniteScrollingData.initStep;
-
 		this.infiniteScrollingData.messageBottomOffset	= messageBottomOffset;
 		this.infiniteScrollingData.viewportMessageCount	= this.viewportMessageCount.value;
 
 		debugLog(() => ({messageBottomOffset}));
 
 		if (messageBottomOffset > 1) {
+			++this.infiniteScrollingData.initStep;
 			this.chatService.scrollTransition.next(true);
 		}
 
