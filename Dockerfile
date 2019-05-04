@@ -42,6 +42,7 @@ RUN apt-get -y --allow-downgrades install \
 	pinentry-curses \
 	procps \
 	python \
+	python-pip \
 	ruby \
 	ruby-dev \
 	shellcheck \
@@ -55,6 +56,7 @@ RUN apt-get -y --allow-downgrades update
 RUN apt-get -y --allow-downgrades upgrade
 RUN apt-get -y --allow-downgrades autoremove
 
+RUN pip install grpcio
 RUN gem update
 RUN gem install sass
 
