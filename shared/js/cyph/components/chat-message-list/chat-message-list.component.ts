@@ -510,7 +510,7 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 
 		debugLog(() => ({messageBottomOffset}));
 
-		if (messageBottomOffset > 1) {
+		if (messageBottomOffset > 1 || this.messageBottomOffset.value > 1) {
 			++this.infiniteScrollingData.initStep;
 			this.chatService.scrollTransition.next(true);
 		}
