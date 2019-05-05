@@ -164,6 +164,7 @@ read -r -d '' modules <<- EOM
 	jasmine-spec-reporter
 	jquery
 	jquery.appear@https://github.com/morr/jquery.appear
+	jsdoc@3.5.5
 	jsdom
 	jspdf
 	karma
