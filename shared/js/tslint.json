@@ -168,7 +168,7 @@
 		/* Maintainability */
 
 		"cyclomatic-complexity": true,
-		"deprecation": true,
+		"deprecation": false /* Pending fix: true */,
 		"eofline": true,
 		"indent": [true, "tabs"],
 		"linebreak-style": [true, "LF"],
