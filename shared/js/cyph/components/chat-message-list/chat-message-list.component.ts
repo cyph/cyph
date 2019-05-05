@@ -60,6 +60,20 @@ import {sleep} from '../../util/wait';
 export class ChatMessageListComponent
 extends BaseProvider
 implements AfterViewInit, OnChanges, OnDestroy, OnInit {
+	/** @ignore */
+	private static readonly messageCache	= new Map<string, {
+		dateChange?: string;
+		message: ChatMessage;
+		pending: boolean;
+	}>();
+
+	/** @ignore */
+	private static readonly observableCache	= new Map<IChatData, {
+		messages: Observable<{dateChange?: string; message: ChatMessage; pending: boolean}[]>;
+		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}|undefined>;
+	}>();
+
+
 	/** Full list of message items, not just what's being displayed. */
 	private readonly allMessageListItems	= new BehaviorSubject<IMessageListItem[]>([]);
 
@@ -76,19 +90,6 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 
 	/** Number of "pages" into the message list, starting from the bottom. */
 	private readonly messageBottomOffset	= new BehaviorSubject<number>(1);
-
-	/** @ignore */
-	private readonly messageCache			= new Map<string, {
-		dateChange?: string;
-		message: ChatMessage;
-		pending: boolean;
-	}>();
-
-	/** @ignore */
-	private readonly observableCache		= new Map<IChatData, {
-		messages: Observable<{dateChange?: string; message: ChatMessage; pending: boolean}[]>;
-		unconfirmedMessages: Observable<{[id: string]: boolean|undefined}|undefined>;
-	}>();
 
 	/** Number of messages to render on the screen at any given time. */
 	private readonly viewportMessageCount	= toBehaviorSubject(
@@ -226,10 +227,11 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 		}
 
 		const chat				= this.chat;
-
 		const lastUnreadMessage	= await chat.lastUnreadMessage;
+		const messageCache		= ChatMessageListComponent.messageCache;
+		const observableCache	= ChatMessageListComponent.observableCache;
 
-		const observables		= getOrSetDefault(this.observableCache, chat, () => ({
+		const observables		= getOrSetDefault(observableCache, chat, () => ({
 			messages: combineLatest(
 				this.chatService.messages.pipe(filterUndefinedOperator<IChatMessage[]>()),
 				chat.pendingMessages.watch(),
@@ -265,11 +267,11 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 						(message.sessionSubID || undefined) === this.sessionService.sessionSubID
 					).
 					map(async message => getOrSetDefaultAsync(
-						this.messageCache,
+						messageCache,
 						message.id + (message.pending ? 'pending' : 'online'),
 						async () => {
 							if (!message.pending) {
-								const cached	= this.messageCache.get(message.id + 'pending');
+								const cached	= messageCache.get(message.id + 'pending');
 								if (cached) {
 									cached.message.updateTimestamp(message.timestamp);
 									return {
