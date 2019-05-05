@@ -9,7 +9,9 @@ import {isNativeCryptoSupported} from '../../crypto/potassium/is-native-crypto-s
 import {ISecretBox} from '../../crypto/potassium/isecret-box';
 import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
+import {BinaryProto} from '../../proto';
 import {EnvService} from '../env.service';
+import {LocalStorageService} from '../local-storage.service';
 import {WorkerService} from '../worker.service';
 
 
@@ -189,10 +191,31 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			this.potassium.then(async o => o.secretBoxKeyBytes())
 		,
 		open: async (cyphertext, key, additionalData) =>
-			(await this.potassium).secretBoxOpen(cyphertext, key, additionalData)
+			this.localStorageService.getOrSetDefault(
+				this.secretBoxCacheKey(cyphertext, additionalData),
+				BinaryProto,
+				async () => (await this.potassium).secretBoxOpen(
+					cyphertext,
+					key,
+					additionalData
+				)
+			)
 		,
-		seal: async (plaintext, key, additionalData) =>
-			(await this.potassium).secretBoxSeal(plaintext, key, additionalData)
+		seal: async (plaintext, key, additionalData) => {
+			const cyphertext: Uint8Array	= (await this.potassium).secretBoxSeal(
+				plaintext,
+				key,
+				additionalData
+			);
+
+			this.localStorageService.setItem(
+				this.secretBoxCacheKey(cyphertext, additionalData),
+				BinaryProto,
+				cyphertext
+			);
+
+			return cyphertext;
+		}
 	};
 
 	/** @inheritDoc */
@@ -230,6 +253,18 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			)
 	};
 
+	/** Returns cache key for caching SecretBox results. */
+	private secretBoxCacheKey (
+		cyphertext: Uint8Array,
+		additionalData: string|Uint8Array|undefined
+	) : string {
+		return `ThreadedPotassiumService.secretBox\n${this.toHex(cyphertext)}${
+			additionalData !== undefined ?
+				`\n${this.toHex(additionalData)}` :
+				''
+		}`;
+	}
+
 	/** @inheritDoc */
 	public async isNativeCryptoSupported () : Promise<boolean> {
 		return isNativeCryptoSupported();
@@ -246,6 +281,9 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly workerService: WorkerService
