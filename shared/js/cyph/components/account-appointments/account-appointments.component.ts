@@ -74,14 +74,14 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 
 	/** Appointment lists. */
 	public readonly appointments				= {
-		current: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
+		current: combineLatest([this.unfilteredAppointments, watchTimestamp()]).pipe(
 			map(([appointments, now]) => appointments.filter(({appointment}) =>
 				!appointment.occurred &&
 				(now + this.appointmentGracePeriod) >= appointment.calendarInvite.startTime &&
 				(now - this.appointmentGracePeriod) <= appointment.calendarInvite.endTime
 			))
 		),
-		future: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
+		future: combineLatest([this.unfilteredAppointments, watchTimestamp()]).pipe(
 			map(([appointments, now]) => appointments.filter(({appointment}) =>
 				!appointment.occurred &&
 				(now + this.appointmentGracePeriod) < appointment.calendarInvite.startTime
@@ -90,7 +90,7 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 		incoming: this.getAppointments(
 			this.accountFilesService.incomingFilesFiltered.appointments
 		),
-		past: combineLatest(this.unfilteredAppointments, watchTimestamp()).pipe(
+		past: combineLatest([this.unfilteredAppointments, watchTimestamp()]).pipe(
 			map(([appointments, now]) => appointments.filter(({appointment}) =>
 				appointment.occurred || (
 					(now - this.appointmentGracePeriod) > appointment.calendarInvite.endTime

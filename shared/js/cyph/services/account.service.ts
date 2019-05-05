@@ -141,10 +141,10 @@ export class AccountService extends BaseProvider {
 	;
 
 	/** Indicates whether mobile menu is open. */
-	public readonly mobileMenuOpen: Observable<boolean>	= combineLatest(
+	public readonly mobileMenuOpen: Observable<boolean>	= combineLatest([
 		this.envService.isMobile,
 		this.mobileMenuOpenInternal
-	).pipe(map(([isMobile, mobileMenuOpen]) =>
+	]).pipe(map(([isMobile, mobileMenuOpen]) =>
 		isMobile && mobileMenuOpen
 	));
 
@@ -189,14 +189,14 @@ export class AccountService extends BaseProvider {
 		UrlSegment[]
 	]> {
 		return this.routeChanges.pipe(
-			mergeMap(() => combineLatest(
+			mergeMap(() => combineLatest([
 				activatedRoute.data,
 				(activatedRoute.firstChild ? activatedRoute.firstChild.data : of({})),
 				activatedRoute.params,
 				(activatedRoute.firstChild ? activatedRoute.firstChild.params : of({})),
 				activatedRoute.url,
 				activatedRoute.firstChild ? activatedRoute.firstChild.url : of([])
-			)),
+			])),
 			map(([data, childData, params, childParams, url, childURL]) : [
 				Data,
 				Params,
@@ -506,12 +506,12 @@ export class AccountService extends BaseProvider {
 			});
 		}
 
-		this.header	= combineLatest(
+		this.header	= combineLatest([
 			this.activeSidebarContact,
 			this.headerInternal,
 			this.envService.isMobile,
 			this.transitionInternal
-		).pipe(
+		]).pipe(
 			map(([activeSidebarContact, header, isMobile, _]) => {
 				const routePath	= this.routePath;
 				const route		= routePath[0];
@@ -622,19 +622,19 @@ export class AccountService extends BaseProvider {
 			)
 		);
 
-		this.menuExpandable	= combineLatest(
+		this.menuExpandable	= combineLatest([
 			this.menuReduced,
 			this.windowWatcherService.width
-		).pipe(map(([menuReduced, width]) =>
+		]).pipe(map(([menuReduced, width]) =>
 			!menuReduced && width >= this.menuMinWidth
 		));
 
-		this.menuExpanded	= combineLatest(
+		this.menuExpanded	= combineLatest([
 			this.menuExpandedInternal,
 			this.menuExpandable,
 			this.mobileMenuOpen,
 			this.windowWatcherService.width
-		).pipe(map(([menuExpandedInternal, menuExpandable, mobileMenuOpen, width]) =>
+		]).pipe(map(([menuExpandedInternal, menuExpandable, mobileMenuOpen, width]) =>
 			mobileMenuOpen || (
 				menuExpandedInternal &&
 				menuExpandable &&
@@ -642,10 +642,10 @@ export class AccountService extends BaseProvider {
 			)
 		));
 
-		this.menuMaxWidth	= combineLatest(
+		this.menuMaxWidth	= combineLatest([
 			this.menuExpanded,
 			this.windowWatcherService.width
-		).pipe(map(([menuExpanded, width]) =>
+		]).pipe(map(([menuExpanded, width]) =>
 			width <= this.configService.responsiveMaxWidths.xs ?
 				'100%' :
 				!menuExpanded ?

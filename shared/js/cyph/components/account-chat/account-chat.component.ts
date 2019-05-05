@@ -71,10 +71,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** @see AccountCallWaiting.cancelRedirectsHome */
 	public readonly cancelRedirectsHome		= toBehaviorSubject(
-		combineLatest(
+		combineLatest([
 			this.answering,
 			this.accountService.combinedRouteData(this.activatedRoute)
-		).pipe(map(([answering, [{cancelRedirectsHome}]]) =>
+		]).pipe(map(([answering, [{cancelRedirectsHome}]]) =>
 			answering || cancelRedirectsHome === true
 		)),
 		false
@@ -86,10 +86,10 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	;
 
 	/** Indicates whether call is pending or not yet loaded. */
-	public readonly initialCallPending		= combineLatest(
+	public readonly initialCallPending		= combineLatest([
 		this.p2pWebRTCService.initialCallPending,
 		this.p2pWebRTCService.loading
-	).pipe(map(([initialCallPending, loading]) =>
+	]).pipe(map(([initialCallPending, loading]) =>
 		(initialCallPending || loading) && !this.sessionInitService.ephemeral
 	));
 

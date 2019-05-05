@@ -98,11 +98,11 @@ export class AccountContactsService extends BaseProvider {
 
 	/** List of contacts for current user, sorted alphabetically by username. */
 	public readonly contactList: Observable<(IContactListItem|User)[]>	= toBehaviorSubject(
-		combineLatest(
+		combineLatest([
 			this.accountFilesService.filesListFilteredWithData.messagingGroups(),
 			this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
 			this.accountDatabaseService.watchListKeys('contacts', this.subscriptions)
-		).pipe(mergeMap(async ([groups, incomingGroups, usernames]) => [
+		]).pipe(mergeMap(async ([groups, incomingGroups, usernames]) => [
 			...[
 				...incomingGroups.map(o => ({group: o.data, id: o.record.id, incoming: true})),
 				...groups.map(o => ({group: o.data, id: o.record.id, incoming: false}))

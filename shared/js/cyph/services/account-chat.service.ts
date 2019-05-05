@@ -87,10 +87,10 @@ export class AccountChatService extends ChatService {
 			SecurityModels.unprotected
 		);
 
-		const watch	= memoize(() => combineLatest(
+		const watch	= memoize(() => combineLatest([
 			asyncMap.watchKeys(),
 			this.fetchedMessageIDs.watch()
-		).pipe(map(([keys, fetchedMessageIDs]) => new Set(
+		]).pipe(map(([keys, fetchedMessageIDs]) => new Set(
 			keys.filter(k => fetchedMessageIDs.has(k))
 		))));
 

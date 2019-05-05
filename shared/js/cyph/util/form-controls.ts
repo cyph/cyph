@@ -18,10 +18,10 @@ export const formControlMatch	= (o: {value: string}, initialValue: string = '') 
 /** Observes a form control. */
 export const watchFormControl	= memoize((control: FormControl) => concat(
 	of(control),
-	combineLatest(
+	combineLatest([
 		control.statusChanges,
 		control.valueChanges
-	).pipe(
+	]).pipe(
 		map(() => control)
 	)
 ));

@@ -33,10 +33,10 @@ export class AccountFormComponent extends BaseProvider implements OnInit {
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
-		this.subscriptions.push(combineLatest(
+		this.subscriptions.push(combineLatest([
 			this.activatedRoute.data,
 			this.activatedRoute.params
-		).subscribe(async ([data, params]) => {
+		]).subscribe(async ([data, params]) => {
 			try {
 				const appointmentID: string|undefined	= params.appointmentID;
 				const id: string|undefined				= params.id;

@@ -65,7 +65,7 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** Indicates whether or not the edit view should be displayed. */
 	public readonly noteEditable: Observable<boolean>	=
-		combineLatest(this.editView, this.newNote).pipe(map(([editView, newNote]) =>
+		combineLatest([this.editView, this.newNote]).pipe(map(([editView, newNote]) =>
 			editView || newNote
 		))
 	;
@@ -79,7 +79,7 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** Indicates whether spinner should be displayed. */
 	public readonly showSpinner: Observable<boolean>	=
-		combineLatest(this.newNote, this.realTime).pipe(map(([newNote, realTime]) =>
+		combineLatest([this.newNote, this.realTime]).pipe(map(([newNote, realTime]) =>
 			newNote && realTime
 		))
 	;
@@ -173,10 +173,10 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 			this.setURL(url);
 		}));
 
-		this.subscriptions.push(combineLatest(
+		this.subscriptions.push(combineLatest([
 			this.activatedRoute.params,
 			this.realTime
-		).subscribe(async ([o, realTime]) => {
+		]).subscribe(async ([o, realTime]) => {
 			try {
 				const id: string|undefined	= o.id;
 

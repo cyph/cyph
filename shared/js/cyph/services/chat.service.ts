@@ -1355,7 +1355,7 @@ export class ChatService extends BaseProvider {
 
 			this.scrollService.resolveUnreadItems(this.getScrollServiceUnreadMessages());
 
-			this.subscriptions.push(combineLatest(
+			this.subscriptions.push(combineLatest([
 				this.chat.lastConfirmedMessage.watch(),
 				this.chat.messageList.watchFlat(true).pipe(mergeMap(async messageIDs =>
 					filterUndefined(await Promise.all(messageIDs.map(async id =>
@@ -1364,7 +1364,7 @@ export class ChatService extends BaseProvider {
 						o.authorType === ChatMessage.AuthorTypes.Local
 					)
 				))
-			).pipe(map(([lastConfirmedMessage, outgoingMessages]) => {
+			]).pipe(map(([lastConfirmedMessage, outgoingMessages]) => {
 				const unconfirmedMessages: {[id: string]: boolean}	= {};
 
 				for (let i = outgoingMessages.length - 1 ; i >= 0 ; --i) {

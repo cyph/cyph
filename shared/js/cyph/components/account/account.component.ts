@@ -62,10 +62,10 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	private readonly resolveViewInitiated: () => void	= this._VIEW_INITIATED.resolve;
 
 	/** Indicates whether section should take up 100% height. */
-	public readonly fullHeight: Observable<boolean>			= combineLatest(
+	public readonly fullHeight: Observable<boolean>			= combineLatest([
 		this.activatedRouteURL,
 		this.route
-	).pipe(map(([activatedRouteURL, route]) =>
+	]).pipe(map(([activatedRouteURL, route]) =>
 		(
 			[
 				'',
@@ -93,11 +93,11 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	));
 
 	/** Indicates whether section should take up 100% width. */
-	public readonly fullWidth: Observable<boolean>			= combineLatest(
+	public readonly fullWidth: Observable<boolean>			= combineLatest([
 		this.activatedRouteURL,
 		this.envService.isMobile,
 		this.route
-	).pipe(map(([activatedRouteURL, isMobile, route]) =>
+	]).pipe(map(([activatedRouteURL, isMobile, route]) =>
 		isMobile || (
 			this.envService.isTelehealth &&
 			[
@@ -138,11 +138,11 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	));
 
 	/** Indicates whether menu should be displayed. */
-	public readonly menuVisible: Observable<boolean>		= combineLatest(
+	public readonly menuVisible: Observable<boolean>		= combineLatest([
 		this.accountDatabaseService.currentUser,
 		this.route,
 		this.routePath
-	).pipe(map(([currentUser, route]) => {
+	]).pipe(map(([currentUser, route]) => {
 		/*
 		if (
 			[
@@ -192,10 +192,10 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	}));
 
 	/** Indicates whether sidebar should be displayed. */
-	public readonly sidebarVisible: Observable<boolean>		= combineLatest(
+	public readonly sidebarVisible: Observable<boolean>		= combineLatest([
 		this.envService.isMobile,
 		this.route
-	).pipe(map(([isMobile, route]) =>
+	]).pipe(map(([isMobile, route]) =>
 		!isMobile &&
 		[
 			'',

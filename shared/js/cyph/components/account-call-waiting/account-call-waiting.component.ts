@@ -118,12 +118,12 @@ implements AfterViewInit, OnChanges {
 				return;
 			}
 
-			this.subscriptions.push(combineLatest(
+			this.subscriptions.push(combineLatest([
 				this.accountDatabaseService.currentUser.pipe(mergeMap(o =>
 					o ? o.user.userType : of(undefined)
 				)),
 				this.formCompose.sent
-			).pipe(map(([userType, sent]) =>
+			]).pipe(map(([userType, sent]) =>
 				sent !== true && userType === AccountUserTypes.Standard
 			)).subscribe(
 				this.sessionService.freezePong

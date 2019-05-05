@@ -156,10 +156,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Watches invite code. */
 	public readonly inviteCodeWatcher					= concat(
 		of(this.inviteCode),
-		combineLatest(
+		combineLatest([
 			this.inviteCode.statusChanges,
 			this.inviteCode.valueChanges
-		).pipe(
+		]).pipe(
 			map(() => this.inviteCode)
 		)
 	);
@@ -438,12 +438,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		super();
 
 		this.lockScreenPasswordReady	= toBehaviorSubject(
-			combineLatest(
+			combineLatest([
 				this.lockScreenPassword,
 				this.lockScreenPasswordConfirmWatcher,
 				this.lockScreenPIN,
 				this.useLockScreenPIN
-			).pipe(map(([
+			]).pipe(map(([
 				lockScreenPassword,
 				lockScreenPasswordConfirm,
 				lockScreenPIN,
@@ -461,13 +461,13 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		);
 
 		this.masterKeyReady				= toBehaviorSubject(
-			combineLatest(
+			combineLatest([
 				this.masterKey,
 				this.masterKeyConfirmWatcher,
 				this.opsecAcknowledgement,
 				this.useXkcdPassphrase,
 				this.xkcdPassphraseHasBeenViewed
-			).pipe(map(([
+			]).pipe(map(([
 				masterKey,
 				masterKeyConfirm,
 				opsecAcknowledgement,
@@ -487,13 +487,13 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		);
 
 		this.submissionReadinessErrors				= toBehaviorSubject(
-			combineLatest(
+			combineLatest([
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
 				this.name,
 				this.usernameWatcher,
 				this.xkcdPassphrase
-			).pipe(map(([
+			]).pipe(map(([
 				inviteCode,
 				lockScreenPasswordReady,
 				name,

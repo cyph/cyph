@@ -116,11 +116,11 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	@Input() public messageCountInTitle: boolean		= false;
 
 	/** Data formatted for message list. */
-	public readonly messageListItems					= combineLatest(
+	public readonly messageListItems					= combineLatest([
 		this.allMessageListItems,
 		this.messageBottomOffset,
 		this.viewportMessageCount
-	).pipe(map(([allMessageListItems, messageBottomOffset, viewportMessageCount]) => {
+	]).pipe(map(([allMessageListItems, messageBottomOffset, viewportMessageCount]) => {
 		const start = Math.max(
 			0,
 			allMessageListItems.length - (
@@ -232,11 +232,11 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 		const observableCache	= ChatMessageListComponent.observableCache;
 
 		const observables		= getOrSetDefault(observableCache, chat, () => ({
-			messages: combineLatest(
+			messages: combineLatest([
 				this.chatService.messages.pipe(filterUndefinedOperator<IChatMessage[]>()),
 				chat.pendingMessages.watch(),
 				watchDateChange(true)
-			).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
+			]).pipe(mergeMap(async ([onlineMessages, pendingMessages]) => {
 				debugLog(() => ({chatMessageList: {onlineMessages, pendingMessages}}));
 
 				if (
@@ -372,10 +372,10 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 			unconfirmedMessages: chat.unconfirmedMessages
 		}));
 
-		this.subscriptions.push(combineLatest(
+		this.subscriptions.push(combineLatest([
 			observables.messages,
 			this.changes
-		).pipe(map(([messages]) => (
+		]).pipe(map(([messages]) => (
 			<({dateChange?: string; message?: ChatMessage; pending: boolean})[]>
 			(messages.length < 1 ? [{pending: false}] : messages)
 		).map(({dateChange, message, pending}, i, arr) => {

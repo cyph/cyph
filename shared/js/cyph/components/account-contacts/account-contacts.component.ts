@@ -56,11 +56,11 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	private readonly routeReactiveContactList: Observable<{
 		activeUser?: IContactListItem|User|undefined;
 		filteredContactList: (IContactListItem|User)[];
-	}>	= combineLatest(
+	}>	= combineLatest([
 		this.contactListInternal,
 		this.activatedRoute.data,
 		this.accountService.routeChanges
-	).pipe(mergeMap(async ([contactList, data]) => {
+	]).pipe(mergeMap(async ([contactList, data]) => {
 		const snapshot			= this.activatedRoute.snapshot.firstChild ?
 			this.activatedRoute.snapshot.firstChild :
 			this.activatedRoute.snapshot
@@ -208,10 +208,10 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 		}
 
 		this.subscriptions.push(
-			combineLatest(
+			combineLatest([
 				this.activeUser,
 				this.accountContactsSearch.searchBar.filterSingle
-			).subscribe(([a, b]) => {
+			]).subscribe(([a, b]) => {
 				this.accountService.activeSidebarContact.next(
 					a ? a.username : b ? b.username : undefined
 				);

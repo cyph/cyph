@@ -32,10 +32,10 @@ export class AccountNotificationsSubscribeComponent extends BaseProvider {
 		email?: string;
 		subscribed?: boolean;
 		unsubscribed?: boolean;
-	}>	= combineLatest(
+	}>	= combineLatest([
 		this.activatedRoute.data,
 		this.activatedRoute.params
-	).pipe(mergeMap(async ([{unsubscribe}, {email}]: [
+	]).pipe(mergeMap(async ([{unsubscribe}, {email}]: [
 		{unsubscribe?: boolean},
 		{email?: string}
 	]) => {

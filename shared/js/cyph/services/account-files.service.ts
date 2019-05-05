@@ -365,10 +365,10 @@ export class AccountFilesService extends BaseProvider {
 	};
 
 	/** Total size of all files in list. */
-	public readonly filesTotalSize					= combineLatest(
+	public readonly filesTotalSize					= combineLatest([
 		this.filesListFiltered.files,
 		this.accountDatabaseService.currentUser
-	).pipe(map(([files, currentUser]) => files.reduce(
+	]).pipe(map(([files, currentUser]) => files.reduce(
 		(n, {owner, size}) =>
 			n +
 			(currentUser && currentUser.user.username === owner ? size : 0)
@@ -378,7 +378,7 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Total storage limit. */
 	public readonly fileStorageLimit				=
-		combineLatest(
+		combineLatest([
 			this.accountSettingsService.plan,
 			this.accountDatabaseService.watch(
 				'storageCap',
@@ -390,7 +390,7 @@ export class AccountFilesService extends BaseProvider {
 			).pipe(map(o =>
 				o.value
 			))
-		).pipe(map(([plan, storageCap]) => convertStorageUnitsToBytes(
+		]).pipe(map(([plan, storageCap]) => convertStorageUnitsToBytes(
 			storageCap || this.configService.planConfig[plan].storageCapGB,
 			StorageUnits.gb
 		)))

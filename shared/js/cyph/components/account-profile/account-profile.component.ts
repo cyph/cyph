@@ -476,10 +476,10 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		this.username			= combineLatest(
+		this.username			= combineLatest([
 			this.activatedRoute.params,
 			this.doctorListOnly
-		).pipe(map(([params, doctorListOnly]: [{username?: string}, boolean]) =>
+		]).pipe(map(([params, doctorListOnly]: [{username?: string}, boolean]) =>
 			/* Temporary workaround for listing doctors */
 			(
 				doctorListOnly &&
@@ -491,10 +491,10 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 		));
 
 		this.userInternal		= cacheObservable(
-			combineLatest(
+			combineLatest([
 				this.username,
 				this.accountDatabaseService.currentUser
-			).pipe(mergeMap(async ([username, currentUser]) =>
+			]).pipe(mergeMap(async ([username, currentUser]) =>
 				username ?
 					{
 						isCurrentUser: false,

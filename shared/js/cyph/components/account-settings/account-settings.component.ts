@@ -293,7 +293,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		super();
 
 		this.ready	= toBehaviorSubject(
-			combineLatest(this.data, this.user).pipe(map(([data, user]) =>
+			combineLatest([this.data, this.user]).pipe(map(([data, user]) =>
 				!!user &&
 				(
 					data.current.email !== data.modified.email ||
