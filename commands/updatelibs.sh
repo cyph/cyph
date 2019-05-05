@@ -226,7 +226,7 @@ read -r -d '' modules <<- EOM
 	primeng
 	promise-semaphore
 	protobufjs
-	protractor
+	protractor@^6
 	puppeteer
 	quill@https://github.com/buu700/quill-tmp
 	quill-delta
@@ -239,7 +239,7 @@ read -r -d '' modules <<- EOM
 	reflect-metadata
 	request
 	resize-observer-polyfill
-	retire
+	retire@^2
 	rlwe
 	rsvp
 	rxjs
