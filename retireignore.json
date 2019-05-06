@@ -1,5 +1,9 @@
 [
 	{
+		"path": "@angular-devkit/build-angular/node_modules/webpack-dev-server",
+		"justification": "Dev dependency"
+	},
+	{
 		"path": "@google-cloud",
 		"justification": "Dev dependencies"
 	},
