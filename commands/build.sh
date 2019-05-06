@@ -31,7 +31,7 @@ done
 ./commands/ngassets.sh
 for d in ${projects} ; do
 	cd "${d}"
-	ng build --aot true
+	ng build --aot true --sourceMap false
 	checkfail
 	cd ..
 done
