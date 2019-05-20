@@ -23,7 +23,10 @@ import {Transport} from './transport';
  */
 export class PairwiseSessionLite implements IPairwiseSession {
 	/** @ignore */
-	private readonly key	= (async () => {
+	private readonly instanceID	= this.potassium.randomBytes(16);
+
+	/** @ignore */
+	private readonly key		= (async () => {
 		let secret = await this.handshakeState.initialSecret.getValue();
 
 		if (this.handshakeState.isAlice) {
@@ -96,11 +99,24 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	}
 
 	/** @inheritDoc */
-	public async send (plaintext: string|ArrayBufferView, _TIMESTAMP: number) : Promise<void> {
+	public async send (plaintext: string|ArrayBufferView, timestamp: number) : Promise<void> {
+		const plaintextBytes	= this.potassium.fromString(plaintext);
+		const timestampBytes	= new Float64Array([timestamp]);
+
+		const outgoingMessage	= this.potassium.concatMemory(
+			false,
+			timestampBytes,
+			this.instanceID,
+			plaintextBytes
+		);
+
+		this.potassium.clearMemory(plaintextBytes);
+		this.potassium.clearMemory(timestampBytes);
+
 		await this.transport.process(
 			this.remoteUser.username,
 			{cyphertext: await this.potassium.secretBox.seal(
-				this.potassium.fromString(plaintext),
+				outgoingMessage,
 				await this.key
 			)}
 		);
