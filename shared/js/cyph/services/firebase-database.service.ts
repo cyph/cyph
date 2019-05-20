@@ -507,7 +507,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const mutex	= await queue.push().then();
 
 				const getLockTimestamp	= async () => {
-					const o	= (await mutex.once('value')).val();
+					const o	= (await mutex.once('value')).val() || {};
 
 					if (
 						typeof o.id !== 'string' ||
