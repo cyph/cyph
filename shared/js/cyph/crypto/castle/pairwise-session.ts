@@ -17,14 +17,13 @@ import {HandshakeSteps} from './enums';
 import {ICastleIncomingMessages} from './icastle-incoming-messages';
 import {IHandshakeState} from './ihandshake-state';
 import {ILocalUser} from './ilocal-user';
+import {IPairwiseSession} from './ipairwise-session';
 import {IRemoteUser} from './iremote-user';
 import {Transport} from './transport';
 
 
-/**
- * Represents a pairwise (one-to-one) Castle session.
- */
-export class PairwiseSession {
+/** @inheritDoc */
+export class PairwiseSession implements IPairwiseSession {
 	/** @ignore */
 	private readonly incomingMessageQueue		= new LocalAsyncList<{
 		cyphertext: Uint8Array;
@@ -41,7 +40,7 @@ export class PairwiseSession {
 		timestamps: Map<number, number>;
 	};
 
-	/** Resolves when first chunk of incoming messages have been processed. */
+	/** @inheritDoc */
 	public readonly initialMessagesDecrypted	= resolvable();
 
 	/** @ignore */
@@ -192,7 +191,7 @@ export class PairwiseSession {
 		await this.handshakeState.currentStep.setValue(HandshakeSteps.PostBootstrap);
 	}
 
-	/** Receive/decrypt incoming message. */
+	/** @inheritDoc */
 	public async receive (cyphertext: Uint8Array) : Promise<void> {
 		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
 			return this.abort();
@@ -209,7 +208,7 @@ export class PairwiseSession {
 		return promise;
 	}
 
-	/** Send/encrypt outgoing message. */
+	/** @inheritDoc */
 	public async send (plaintext: string|ArrayBufferView, timestamp: number) : Promise<void> {
 		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
 			return this.abort();

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
-import {PairwiseSession} from '../../crypto/castle/pairwise-session';
+import {IPairwiseSession} from '../../crypto/castle/ipairwise-session';
 import {ICastle} from '../../crypto/icastle';
 import {filterUndefinedOperator} from '../../util/filter';
 import {lockFunction} from '../../util/lock';
@@ -16,14 +16,14 @@ import {SessionService} from '../session.service';
 export class CastleService extends BaseProvider implements ICastle {
 	/** @ignore */
 	protected readonly pairwiseSession		=
-		new BehaviorSubject<PairwiseSession|undefined>(undefined)
+		new BehaviorSubject<IPairwiseSession|undefined>(undefined)
 	;
 
 	/** @ignore */
 	protected readonly pairwiseSessionLock	= lockFunction();
 
 	/** @ignore */
-	protected async getPairwiseSession () : Promise<PairwiseSession> {
+	protected async getPairwiseSession () : Promise<IPairwiseSession> {
 		if (this.pairwiseSession.value) {
 			return this.pairwiseSession.value;
 		}
