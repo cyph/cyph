@@ -4,7 +4,9 @@ import {take} from 'rxjs/operators';
 import {
 	AnonymousRemoteUser,
 	HandshakeSteps,
+	IPairwiseSession,
 	PairwiseSession,
+	PairwiseSessionLite,
 	RegisteredLocalUser,
 	RegisteredRemoteUser,
 	Transport
@@ -33,8 +35,8 @@ import {PotassiumService} from './potassium.service';
 @Injectable()
 export class AccountCastleService extends CastleService {
 	/** @ignore */
-	private readonly pairwiseSessions: Map<string, PairwiseSession>	=
-		new Map<string, PairwiseSession>()
+	private readonly pairwiseSessions: Map<string, IPairwiseSession>	=
+		new Map<string, IPairwiseSession>()
 	;
 
 	/** @inheritDoc */
@@ -132,7 +134,7 @@ export class AccountCastleService extends CastleService {
 							undefined
 					);
 
-					return new PairwiseSession(
+					return new PairwiseSessionLite(
 						this.potassiumService,
 						transport,
 						localUser,
