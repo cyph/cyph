@@ -10,6 +10,7 @@ import {ISecretBox} from '../../crypto/potassium/isecret-box';
 import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 import {BinaryProto} from '../../proto';
+import {lockFunction} from '../../util/lock';
 import {EnvService} from '../env.service';
 import {LocalStorageService} from '../local-storage.service';
 import {WorkerService} from '../worker.service';
@@ -20,6 +21,9 @@ import {WorkerService} from '../worker.service';
  */
 @Injectable()
 export class ThreadedPotassiumService extends PotassiumUtil implements IPotassium {
+	/** @ignore */
+	private readonly lock = lockFunction();
+
 	/** Flattened proxy for a Potassium object inside a worker. */
 	private readonly potassium	= this.workerService.createThread<any>(
 		/* tslint:disable-next-line:only-arrow-functions */
@@ -63,33 +67,34 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 
 	/** @inheritDoc */
 	public readonly box: IBox	= {
-		keyPair: async () =>
+		keyPair: async () => this.lock(async () =>
 			(await this.potassium).boxKeyPair()
-		,
-		open: async (cyphertext, keyPair) =>
+		),
+		open: async (cyphertext, keyPair) => this.lock(async () =>
 			(await this.potassium).boxOpen(cyphertext, keyPair)
-		,
+		),
 		privateKeyBytes:
 			this.potassium.then(async o => o.boxPrivateKeyBytes())
 		,
 		publicKeyBytes:
 			this.potassium.then(async o => o.boxPublicKeyBytes())
 		,
-		seal: async (plaintext, publicKey) =>
+		seal: async (plaintext, publicKey) => this.lock(async () =>
 			(await this.potassium).boxSeal(plaintext, publicKey)
+		)
 	};
 
 	/** @inheritDoc */
 	public readonly ephemeralKeyExchange: IEphemeralKeyExchange	= {
-		aliceKeyPair: async () =>
+		aliceKeyPair: async () => this.lock(async () =>
 			(await this.potassium).ephemeralKeyExchangeAliceKeyPair()
-		,
-		aliceSecret: async (publicKey, privateKey) =>
+		),
+		aliceSecret: async (publicKey, privateKey) => this.lock(async () =>
 			(await this.potassium).ephemeralKeyExchangeAliceSecret(publicKey, privateKey)
-		,
-		bobSecret: async alicePublicKey =>
+		),
+		bobSecret: async alicePublicKey => this.lock(async () =>
 			(await this.potassium).ephemeralKeyExchangeBobSecret(alicePublicKey)
-		,
+		),
 		privateKeyBytes:
 			this.potassium.then(async o => o.ephemeralKeyExchangePrivateKeyBytes())
 		,
@@ -105,7 +110,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		bytes:
 			this.potassium.then(async o => o.hashBytes())
 		,
-		deriveKey: async (input, outputBytes, clearInput) => {
+		deriveKey: async (input, outputBytes, clearInput) => this.lock(async () => {
 			const output	= (await this.potassium).hashDeriveKey(input, outputBytes);
 
 			if (clearInput && input instanceof Uint8Array) {
@@ -113,9 +118,10 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			}
 
 			return output;
-		},
-		hash: async plaintext =>
+		}),
+		hash: async plaintext => this.lock(async () =>
 			(await this.potassium).hashHash(plaintext)
+		)
 	};
 
 	/** @inheritDoc */
@@ -126,11 +132,12 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		keyBytes:
 			this.potassium.then(async o => o.oneTimeAuthKeyBytes())
 		,
-		sign: async (message, key) =>
+		sign: async (message, key) => this.lock(async () =>
 			(await this.potassium).oneTimeAuthSign(message, key)
-		,
-		verify: async (mac, message, key) =>
+		),
+		verify: async (mac, message, key) => this.lock(async () =>
 			(await this.potassium).oneTimeAuthVerify(mac, message, key)
+		)
 	};
 
 	/** @inheritDoc */
@@ -145,7 +152,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			opsLimit,
 			memLimit,
 			clearInput
-		) => {
+		) => this.lock(async () => {
 			const output	= (await this.potassium).passwordHashHash(
 				plaintext,
 				salt,
@@ -162,7 +169,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			}
 
 			return output;
-		},
+		}),
 		memLimitInteractive:
 			this.potassium.then(async o => o.passwordHashMemLimitInteractive())
 		,
@@ -175,9 +182,9 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		opsLimitSensitive:
 			this.potassium.then(async o => o.passwordHashOpsLimitSensitive())
 		,
-		parseMetadata: async metadata =>
+		parseMetadata: async metadata => this.lock(async () =>
 			(await this.potassium).passwordHashParseMetadata(metadata)
-		,
+		),
 		saltBytes:
 			this.potassium.then(async o => o.passwordHashSaltBytes())
 	};
@@ -194,14 +201,14 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			this.localStorageService.getOrSetDefault(
 				this.secretBoxCacheKey(cyphertext, additionalData),
 				BinaryProto,
-				async () => (await this.potassium).secretBoxOpen(
+				async () => this.lock(async () => (await this.potassium).secretBoxOpen(
 					cyphertext,
 					key,
 					additionalData
 				)
-			)
+			))
 		,
-		seal: async (plaintext, key, additionalData) => {
+		seal: async (plaintext, key, additionalData) => this.lock(async () => {
 			const cyphertext: Uint8Array	= (await this.potassium).secretBoxSeal(
 				plaintext,
 				key,
@@ -215,7 +222,7 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 			);
 
 			return cyphertext;
-		}
+		})
 	};
 
 	/** @inheritDoc */
@@ -223,33 +230,35 @@ export class ThreadedPotassiumService extends PotassiumUtil implements IPotassiu
 		bytes:
 			this.potassium.then(async o => o.signBytes())
 		,
-		importSuperSphincsPublicKeys: async (rsa, sphincs) =>
+		importSuperSphincsPublicKeys: async (rsa, sphincs) => this.lock(async () =>
 			(await this.potassium).signImportSuperSphincsPublicKeys(rsa, sphincs)
-		,
-		keyPair: async () =>
+		),
+		keyPair: async () => this.lock(async () =>
 			(await this.potassium).signKeyPair()
-		,
-		open: async (signed, publicKey, additionalData, decompress) =>
+		),
+		open: async (signed, publicKey, additionalData, decompress) => this.lock(async () =>
 			(await this.potassium).signOpen(signed, publicKey, additionalData, decompress)
-		,
+		),
 		privateKeyBytes:
 			this.potassium.then(async o => o.signPrivateKeyBytes())
 		,
 		publicKeyBytes:
 			this.potassium.then(async o => o.signPublicKeyBytes())
 		,
-		sign: async (message, privateKey, additionalData, compress) =>
+		sign: async (message, privateKey, additionalData, compress) => this.lock(async () =>
 			(await this.potassium).signSign(message, privateKey, additionalData, compress)
-		,
-		signDetached: async (message, privateKey, additionalData) =>
+		),
+		signDetached: async (message, privateKey, additionalData) => this.lock(async () =>
 			(await this.potassium).signSignDetached(message, privateKey, additionalData)
-		,
+		),
 		verifyDetached: async (signature, message, publicKey, additionalData) =>
-			(await this.potassium).signVerifyDetached(
-				signature,
-				message,
-				publicKey,
-				additionalData
+			this.lock(async () =>
+				(await this.potassium).signVerifyDetached(
+					signature,
+					message,
+					publicKey,
+					additionalData
+				)
 			)
 	};
 
