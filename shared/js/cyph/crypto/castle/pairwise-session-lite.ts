@@ -174,10 +174,6 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		/** @ignore */
 		protected readonly _RATCHET_UPDATE_QUEUE: IAsyncList<ICastleRatchetUpdate> =
 			new LocalAsyncList([])
-		,
-
-		/** @ignore */
-		protected readonly _LITE_RATCHET_STATE: IAsyncValue<Uint8Array>
 	) {
 		this.initialMessagesDecrypted.resolve();
 

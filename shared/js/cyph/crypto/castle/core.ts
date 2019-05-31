@@ -142,7 +142,7 @@ export class Core {
 		};
 
 		await this.updateRatchetLock(async () => {
-			if (this.oldRatchetState && !this.liteRatchetKey) {
+			if (this.oldRatchetState) {
 				if (
 					this.oldRatchetState.asymmetric.privateKey !==
 					ratchetState.asymmetric.privateKey
@@ -203,7 +203,7 @@ export class Core {
 			return;
 		}
 
-		const {encrypted, messageIDBytes, plaintextPromise}	= setupData;
+		const {encrypted, messageIDBytes}	= setupData;
 
 		return this.lock(async () => {
 			const ephemeralKeyExchangePublicKeyBytes	=
@@ -221,11 +221,6 @@ export class Core {
 			}
 			else {
 				throw new Error('Out of order incoming message.');
-			}
-
-			if (plaintextPromise) {
-				this.updateRatchetState({plaintext: await plaintextPromise});
-				return;
 			}
 
 			let lastErrorMessage	= '';
@@ -286,7 +281,6 @@ export class Core {
 		encrypted: Uint8Array;
 		messageID: number;
 		messageIDBytes: Uint8Array;
-		plaintextPromise?: Promise<Uint8Array>;
 	} {
 		const messageID	= this.potassium.toDataView(cyphertext).getUint32(0, true);
 
@@ -298,12 +292,7 @@ export class Core {
 			const messageIDBytes	= this.potassium.toBytes(cyphertext, 0, 4);
 			const encrypted			= this.potassium.toBytes(cyphertext, 4);
 
-			const plaintextPromise	= this.liteRatchetKey ?
-				this.potassium.secretBox.open(encrypted, this.liteRatchetKey, messageIDBytes) :
-				undefined
-			;
-
-			return {encrypted, messageID, messageIDBytes, plaintextPromise};
+			return {encrypted, messageID, messageIDBytes};
 		});
 	}
 
@@ -324,20 +313,6 @@ export class Core {
 
 			if (getMessageID) {
 				await getMessageID(messageID);
-			}
-
-			if (this.liteRatchetKey) {
-				this.updateRatchetState({cyphertext: this.potassium.concatMemory(
-					true,
-					messageIDBytes,
-					await this.potassium.secretBox.seal(
-						plaintext,
-						this.liteRatchetKey,
-						messageIDBytes
-					)
-				)});
-
-				return;
 			}
 
 			const ratchetData	= await this.asymmetricRatchet();
@@ -372,9 +347,6 @@ export class Core {
 		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate>,
 
 		/** @see ICastleRatchetState */
-		public readonly ratchetState: ICastleRatchetState,
-
-		/** @ignore */
-		private readonly liteRatchetKey?: Uint8Array
+		public readonly ratchetState: ICastleRatchetState
 	) {}
 }

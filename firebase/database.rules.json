@@ -422,17 +422,6 @@
 										".validate": "newData.val() === now"
 									}
 								},
-								"liteRatchetState": {
-									"data": {
-										".validate": "newData.isString()"
-									},
-									"hash": {
-										".validate": "newData.isString()"
-									},
-									"timestamp": {
-										".validate": "newData.val() === now"
-									}
-								},
 								"outgoingMessageQueue": {
 									"$outgoingMessage": {
 										"data": {

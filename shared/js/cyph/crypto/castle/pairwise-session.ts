@@ -293,10 +293,6 @@ export class PairwiseSession implements IPairwiseSession {
 		/** @ignore */
 		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate> =
 			new LocalAsyncList([])
-		,
-
-		/** @ignore */
-		private readonly liteRatchetState?: IAsyncValue<Uint8Array>
 	) {
 		debugLog(() => ({pairwiseSessionStart: true}));
 
@@ -327,14 +323,10 @@ export class PairwiseSession implements IPairwiseSession {
 				/* Initialize symmetric ratchet */
 				else if (
 					currentStep === HandshakeSteps.PostBootstrap &&
-					this.potassium.isEmpty(await (
-						this.liteRatchetState ?
-							this.liteRatchetState.getValue() :
-							this.ratchetState.getValue().then(o =>
-								o.symmetric &&
-								o.symmetric.current &&
-								o.symmetric.current.incoming
-							)
+					this.potassium.isEmpty(await this.ratchetState.getValue().then(o =>
+						o.symmetric &&
+						o.symmetric.current &&
+						o.symmetric.current.incoming
 					))
 				) {
 					debugLog(() => ({castleHandshake: 'post-bootstrap'}));
@@ -345,52 +337,27 @@ export class PairwiseSession implements IPairwiseSession {
 						throw new Error('Invalid HandshakeSteps.PostBootstrap state.');
 					}
 
-					if (this.liteRatchetState) {
-						await Promise.all([
-							this.liteRatchetState.setValue(initialSecret),
-							this.ratchetState.setValue({
-								asymmetric: {
-									privateKey: new Uint8Array(0),
-									publicKey: new Uint8Array(0)
-								},
-								incomingMessageID: 0,
-								outgoingMessageID: 1,
-								symmetric: {
-									current: {
-										incoming: new Uint8Array(0),
-										outgoing: new Uint8Array(0)
-									},
-									next: {
-										incoming: new Uint8Array(0),
-										outgoing: new Uint8Array(0)
-									}
-								}
-							})
-						]);
-					}
-					else {
-						const symmetricKeys	= await Core.newSymmetricKeys(
-							this.potassium,
-							this.handshakeState.isAlice,
-							initialSecret
-						);
+					const symmetricKeys	= await Core.newSymmetricKeys(
+						this.potassium,
+						this.handshakeState.isAlice,
+						initialSecret
+					);
 
-						await this.ratchetState.setValue({
-							asymmetric: {
-								privateKey: new Uint8Array(0),
-								publicKey: new Uint8Array(0)
-							},
-							incomingMessageID: 0,
-							outgoingMessageID: 1,
-							symmetric: {
-								current: symmetricKeys,
-								next: {
-									incoming: new Uint8Array(symmetricKeys.incoming),
-									outgoing: new Uint8Array(symmetricKeys.outgoing)
-								}
+					await this.ratchetState.setValue({
+						asymmetric: {
+							privateKey: new Uint8Array(0),
+							publicKey: new Uint8Array(0)
+						},
+						incomingMessageID: 0,
+						outgoingMessageID: 1,
+						symmetric: {
+							current: symmetricKeys,
+							next: {
+								incoming: new Uint8Array(symmetricKeys.incoming),
+								outgoing: new Uint8Array(symmetricKeys.outgoing)
 							}
-						});
-					}
+						}
+					});
 				}
 
 				/* Ready to activate Core */
@@ -425,15 +392,7 @@ export class PairwiseSession implements IPairwiseSession {
 
 						this.pendingMessageResolvers	= pendingMessageResolvers;
 
-						const liteRatchetKey		= this.liteRatchetState ?
-							this.liteRatchetState.getValue() :
-							undefined
-						;
-
-						(
-							liteRatchetKey ||
-							this.handshakeState.initialSecret.getValue()
-						).then(symmetricKey => {
+						this.handshakeState.initialSecret.getValue().then(symmetricKey => {
 							if (symmetricKey === undefined) {
 								throw new Error('Castle session symmetric key not found.');
 							}
@@ -492,8 +451,6 @@ export class PairwiseSession implements IPairwiseSession {
 									)
 								) :
 								await this.ratchetState.getValue()
-							,
-							await liteRatchetKey
 						);
 
 						if (!o.stillOwner.value) {
