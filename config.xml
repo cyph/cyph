@@ -206,7 +206,7 @@
 		<allow-intent href="itms:*" />
 		<allow-intent href="itms-apps:*" />
 
-		<preference name="UseSwiftLanguageVersion" value="3.3" />
+		<preference name="UseSwiftLanguageVersion" value="5.0" />
 
 		<resource-file src="GoogleService-Info.plist" />
 
@@ -245,5 +245,5 @@
 	</platform>
 
 	<engine name="android" spec="^8" />
-	<engine name="ios" spec="^8" />
+	<engine name="ios" spec="^4" />
 </widget>
