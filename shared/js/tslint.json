@@ -345,6 +345,7 @@
 		"template-use-track-by-function": true,
 		"use-component-selector": true,
 		"use-component-view-encapsulation": true,
+		"use-injectable-provided-in": false /* TODO: true */,
 		"use-lifecycle-interface": true,
 		"use-pipe-decorator": true,
 		"use-pipe-transform-interface": true,
