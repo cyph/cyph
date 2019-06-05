@@ -212,7 +212,7 @@ export class AccountChatService extends ChatService {
 					initProgress: new BehaviorSubject(0),
 					isConnected: true,
 					isDisconnected: false,
-					isFriendTyping: new BehaviorSubject(false),
+					isFriendTyping: new BehaviorSubject<boolean>(false),
 					isMessageChanged: false,
 					lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
 						`${url}/lastConfirmedMessage`,

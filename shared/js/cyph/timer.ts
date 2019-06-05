@@ -21,10 +21,10 @@ export class Timer {
 	public readonly countUp: boolean;
 
 	/** Indicates whether timer's count has completed. */
-	public isComplete: Subject<boolean>	= new BehaviorSubject(false);
+	public isComplete: Subject<boolean>	= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether timer's count has started. */
-	public isStarted: Subject<boolean>	= new BehaviorSubject(false);
+	public isStarted: Subject<boolean>	= new BehaviorSubject<boolean>(false);
 
 	/** Duration in milliseconds. */
 	public time: number;

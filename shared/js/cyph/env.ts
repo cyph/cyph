@@ -325,7 +325,7 @@ export class Env extends EnvDeploy {
 		this.cyphVideoUrl	= this.useBaseUrl ? this.cyphVideoBaseUrl : envDeploy.cyphVideoUrl;
 
 		if (this.isExtension || !this.isWeb) {
-			this.isMobile	= new BehaviorSubject(true);
+			this.isMobile	= new BehaviorSubject<boolean>(true);
 			return;
 		}
 

@@ -186,7 +186,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	@Input() public searchProfileExtra: boolean					= false;
 
 	/** @see SearchBarComponent.spinner */
-	public readonly searchSpinner: BehaviorSubject<boolean>		= new BehaviorSubject(false);
+	public readonly searchSpinner: BehaviorSubject<boolean>		= new BehaviorSubject<boolean>(false);
 
 	/** @see SearchBarComponent.query */
 	@Input() public searchUsername?: Observable<string>;

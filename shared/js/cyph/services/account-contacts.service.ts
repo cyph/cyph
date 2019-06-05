@@ -227,7 +227,7 @@ export class AccountContactsService extends BaseProvider {
 	});
 
 	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner: BehaviorSubject<boolean>	= new BehaviorSubject(true);
+	public readonly showSpinner: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(true);
 
 	/** Accepts incoming contact request. */
 	public async acceptContactRequest (username: string) : Promise<void> {

@@ -155,7 +155,7 @@ export class LocalStorageService extends DataManagerService {
 		const lockURL		= `${this.lockConfig.root}/${url}`;
 		const id			= uuid();
 		const metadata		= {id, reason};
-		const stillOwner	= new BehaviorSubject(true);
+		const stillOwner	= new BehaviorSubject<boolean>(true);
 
 		debugLog(() => ({localStorageLockWaiting: {id, lockURL, stillOwner}}));
 

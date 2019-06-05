@@ -501,7 +501,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					reason?: string;
 					stillOwner: BehaviorSubject<boolean>;
 				}	= {
-					stillOwner: new BehaviorSubject(false)
+					stillOwner: new BehaviorSubject<boolean>(false)
 				};
 
 				const mutex	= await queue.push().then();

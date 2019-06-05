@@ -157,7 +157,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};
 
 	/** Indicates whether view is ready. */
-	public readonly viewReady: BehaviorSubject<boolean>				= new BehaviorSubject(false);
+	public readonly viewReady: BehaviorSubject<boolean>				= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
