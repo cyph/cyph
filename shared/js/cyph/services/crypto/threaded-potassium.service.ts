@@ -22,7 +22,7 @@ import {WorkerService} from '../worker.service';
 @Injectable()
 export class ThreadedPotassiumService extends PotassiumUtil implements IPotassium {
 	/** @ignore */
-	private readonly lock = lockFunction();
+	private readonly lock		= lockFunction();
 
 	/** Flattened proxy for a Potassium object inside a worker. */
 	private readonly potassium	= this.workerService.createThread<any>(
