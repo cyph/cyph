@@ -675,13 +675,23 @@ then(function (results) {
 
 /* Successfully execute package */
 then(function (package) {
-	document.head.innerHTML	= package.split('<head>')[1].split('</head>')[0];
-	document.body.innerHTML	= package.split('<body>')[1].split('</body>')[0];
+	function executePackage () {
+		document.head.innerHTML	= package.split('<head>')[1].split('</head>')[0];
+		document.body.innerHTML	= package.split('<body>')[1].split('</body>')[0];
 
-	webSignSRI(localStorage.webSignCdnUrl).catch(function (err) {
-		document.head.innerHTML		= '';
-		document.body.textContent	= err;
-	});
+		webSignSRI(localStorage.webSignCdnUrl).catch(function (err) {
+			document.head.innerHTML		= '';
+			document.body.textContent	= err;
+		});
+	}
+
+	/* Possible workaround for net::ERR_INSUFFICIENT_RESOURCES */
+	if (device.platform === 'Android') {
+		setTimeout(executePackage, 250);
+	}
+	else {
+		executePackage();
+	}
 }).
 
 /* Display either abortion screen or panic screen, depening on the error */
