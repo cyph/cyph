@@ -62,7 +62,7 @@ elif [ "${password}" != "" ] ; then
 	fi
 
 	if [ "${1}" != 'android' ] ; then
-		cordova build ios --debug --device \
+		cordova build ios --buildFlag='-UseModernBuildSystem=0' --debug --device \
 			--codeSignIdentity='iPhone Developer' \
 			--developmentTeam='SXZZ8WLPV2' \
 			--packageType='development' \
@@ -72,7 +72,7 @@ elif [ "${password}" != "" ] ; then
 
 		mv platforms/ios/build/device ios-debug
 
-		cordova build ios --release --device \
+		cordova build ios --buildFlag='-UseModernBuildSystem=0' --release --device \
 			--codeSignIdentity='iPhone Distribution' \
 			--developmentTeam='SXZZ8WLPV2' \
 			--packageType='app-store' \
