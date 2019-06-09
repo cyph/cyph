@@ -66,7 +66,7 @@ elif [ "${password}" != "" ] ; then
 			--codeSignIdentity='iPhone Developer' \
 			--developmentTeam='SXZZ8WLPV2' \
 			--packageType='development' \
-			--provisioningProfile='5d62676b-6683-44f6-be18-5ee7f1b02fff'
+			--provisioningProfile='861ab366-ee4a-4eb5-af69-5694ab52b6e8'
 
 		if [ ! -f platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
 
