@@ -90,9 +90,12 @@ export class Env extends EnvDeploy {
 
 	/** Debug mode (true by default in local env). */
 	public readonly debug: boolean				=
-		typeof environment.debug === 'boolean' ?
-			environment.debug :
-			environment.local
+		(
+			typeof environment.debug === 'boolean' ?
+				environment.debug :
+				environment.local
+		) ||
+		localStorage.getItem('debug') === 'true'
 	;
 
 	/** Indicates whether debug logging is enabled (true by default when debug is true). */
