@@ -248,7 +248,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
-			document.body.classList.remove('primary-account-theme');
+			document.body.classList.add('primary-account-theme');
 		}
 	}
 }
