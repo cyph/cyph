@@ -108,7 +108,7 @@ export class Env extends EnvDeploy {
 	public readonly firebaseConfig				= {
 		apiKey: environment.firebase.apiKey,
 		authDomain: `${environment.firebase.project}.firebaseapp.com`,
-		databaseURL: `wss://${environment.firebase.project}.firebaseio.com`,
+		databaseURL: `https://${environment.firebase.project}.firebaseio.com`,
 		messagingSenderId: environment.firebase.messagingSenderId,
 		projectId: environment.firebase.project,
 		storageBucket: `${environment.firebase.project}.appspot.com`
