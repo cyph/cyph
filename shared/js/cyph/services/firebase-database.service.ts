@@ -29,6 +29,14 @@ import {LocalStorageService} from './local-storage.service';
 import {WorkerService} from './worker.service';
 
 
+/*
+	https://stackoverflow.com/a/50604478/459881
+
+	If this ever causes issues, see https://github.com/firebase/firebase-js-sdk/issues/187
+*/
+(<any> firebase.database).INTERNAL.forceLongPolling();
+
+
 /**
  * DatabaseService implementation built on Firebase.
  */
