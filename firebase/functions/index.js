@@ -1032,8 +1032,7 @@ exports.userRegisterConfirmed	= functions.database.ref(
 			{
 				data: {
 					name,
-					/* Temporary, pending app's public release */
-					nativeAppStillPrivate: params.namespace === 'cyph_ws'
+					primaryNamespace: params.namespace === 'cyph_ws'
 				},
 				templateName: 'registration-confirmed'
 			}
