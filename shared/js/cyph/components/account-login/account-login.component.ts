@@ -48,6 +48,9 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** Password visibility setting. */
 	public readonly hidePassword		= new BehaviorSubject<boolean>(true);
 
+	/** TODO */
+	public readonly loggingIn			= new BehaviorSubject<boolean>(false);
+
 	/** Master key to be used for login attempt. */
 	public readonly masterKey			= new BehaviorSubject<string>('');
 
@@ -172,6 +175,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		this.savedUsername.next(undefined);
 	}
 
+	public async startLogIn () : Promise<void> {
+		this.loggingIn.next(true);
+	}
+
 	/** Initiates login attempt. */
 	public async submit (newPin?: {isCustom: boolean; value: string}) : Promise<void> {
 		this.checking.next(true);
@@ -248,7 +255,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof document === 'object' && typeof document.body === 'object') {
-			document.body.classList.add('primary-account-theme');
+			document.body.classList.remove('primary-account-theme');
 		}
 	}
 }
