@@ -588,7 +588,7 @@ export class ChatService extends BaseProvider {
 			initProgress: new BehaviorSubject(0),
 			isConnected: false,
 			isDisconnected: false,
-			isFriendTyping: new BehaviorSubject(false),
+			isFriendTyping: new BehaviorSubject<boolean>(false),
 			isMessageChanged: false,
 			lastConfirmedMessage: new LocalAsyncValue({id: '', index: 0}),
 			lastUnreadMessage: Promise.resolve(undefined),

@@ -104,7 +104,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	public readonly cyphNotFound: Promise<void>				= this.one<void>(events.cyphNotFound);
 
 	/** @inheritDoc */
-	public readonly freezePong: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	public readonly freezePong: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
 	public group?: SessionService[];
@@ -131,11 +131,11 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	/** @inheritDoc */
 	public readonly state									= {
 		cyphID: new BehaviorSubject(''),
-		isAlice: new BehaviorSubject(false),
-		isAlive: new BehaviorSubject(true),
+		isAlice: new BehaviorSubject<boolean>(false),
+		isAlive: new BehaviorSubject<boolean>(true),
 		sharedSecret: new BehaviorSubject<string|undefined>(undefined),
 		startingNewCyph: new BehaviorSubject<boolean|undefined>(false),
-		wasInitiatedByAPI: new BehaviorSubject(false)
+		wasInitiatedByAPI: new BehaviorSubject<boolean>(false)
 	};
 
 	/** @inheritDoc */

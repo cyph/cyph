@@ -62,7 +62,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	public readonly emailPattern	= emailPattern;
 
 	/** Indicates whether page is loading. */
-	public readonly loading			= new BehaviorSubject(true);
+	public readonly loading			= new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether profile is visible to anonymous users. */
 	public readonly profileVisible	= this.accountDatabaseService.getAsyncValue(

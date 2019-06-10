@@ -14,7 +14,7 @@ export const lock	= async <T> (
 
 	const promise	= mutex.promise.then(async lastReason => {
 		mutex.isOwned	= true;
-		return f({reason: lastReason, stillOwner: new BehaviorSubject(true)});
+		return f({reason: lastReason, stillOwner: new BehaviorSubject<boolean>(true)});
 	});
 
 	mutex.promise	= promise.catch(() => {}).then(() => {

@@ -24,10 +24,10 @@ export class UploadEhrCredentialsComponent extends BaseProvider implements OnIni
 	public readonly apiKey: BehaviorSubject<string>	= new BehaviorSubject('');
 
 	/** Indicates whether operation is done. */
-	public readonly done: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	public readonly done: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether operation failed. */
-	public readonly error: BehaviorSubject<boolean>	= new BehaviorSubject(false);
+	public readonly error: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {

@@ -90,16 +90,19 @@ export class Env extends EnvDeploy {
 
 	/** Debug mode (true by default in local env). */
 	public readonly debug: boolean				=
-		typeof environment.debug === 'boolean' ?
-			environment.debug :
-			environment.local
+		(
+			typeof environment.debug === 'boolean' ?
+				environment.debug :
+				environment.local
+		) || (
+			typeof localStorage === 'object' && 
+			typeof localStorage.getItem === 'function' &&
+			localStorage.getItem('debug') === 'true'
+		)
 	;
 
 	/** Indicates whether debug logging is enabled (true by default when debug is true). */
-	public readonly debugLog: boolean			=
-		!(environment.customBuild && environment.customBuild.config.burnerOnly) ||
-		this.debug
-	;
+	public readonly debugLog: boolean			= this.debug;
 
 	/** @see IEnvironment */
 	public readonly environment: IEnvironment	= environment;
@@ -325,7 +328,7 @@ export class Env extends EnvDeploy {
 		this.cyphVideoUrl	= this.useBaseUrl ? this.cyphVideoBaseUrl : envDeploy.cyphVideoUrl;
 
 		if (this.isExtension || !this.isWeb) {
-			this.isMobile	= new BehaviorSubject(true);
+			this.isMobile	= new BehaviorSubject<boolean>(true);
 			return;
 		}
 

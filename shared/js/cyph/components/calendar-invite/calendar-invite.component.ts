@@ -124,7 +124,7 @@ implements ControlValueAccessor, OnChanges, OnInit {
 	@Input() public isDisabled: boolean								= false;
 
 	/** isDisabled wrapper for ControlValueAccessor. */
-	public readonly isDisabledWrapper								= new BehaviorSubject(false);
+	public readonly isDisabledWrapper								= new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean									= this.envService.isMobile.value;

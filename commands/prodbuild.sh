@@ -62,14 +62,14 @@ cp /node_modules/terser/dist/bundle.js /node_modules/terser/dist/bundle.min.js
 
 ngProdFlags='
 	--aot true
-	--build-optimizer true
-	--extract-css true
-	--extract-licenses true
-	--named-chunks false
+	--buildOptimizer true
+	--extractCss true
+	--extractLicenses true
+	--namedChunks false
 	--optimization true
 	--output-hashing none
-	--source-map false
-	--vendor-chunk true
+	--sourceMap false
+	--vendorChunk true
 '
 
 if [ ! "${noBuild}" ] ; then

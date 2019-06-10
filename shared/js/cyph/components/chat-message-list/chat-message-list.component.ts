@@ -110,7 +110,7 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	;
 
 	/** Used for initial scroll down on load. */
-	public readonly initialScrollDown					= new BehaviorSubject(true);
+	public readonly initialScrollDown					= new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean		= false;
