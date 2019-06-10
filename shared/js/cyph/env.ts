@@ -95,7 +95,7 @@ export class Env extends EnvDeploy {
 				environment.debug :
 				environment.local
 		) || (
-			typeof localStorage === 'object' && 
+			typeof localStorage === 'object' &&
 			typeof localStorage.getItem === 'function' &&
 			localStorage.getItem('debug') === 'true'
 		)
