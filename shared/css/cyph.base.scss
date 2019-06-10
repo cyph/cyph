@@ -209,7 +209,7 @@ a {
 	text-align: center;
 }
 
-[mat-button], [mat-raised-button] {
+[mat-button], [mat-flat-button], [mat-raised-button], [mat-stroked-button] {
 	text-transform: uppercase;
 }
 
@@ -310,11 +310,11 @@ mat-card {
 		position: absolute;
 		height: 2em;
 		max-width: 20em;
-		top: 24px;
+		top: 16px;
 		right: 0;
 
 		> * {
-			background-position-x: calc(100% - 24px);
+			background-position-x: calc(100% - 16px);
 		}
 	}
 
