@@ -102,7 +102,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 							/* Avoid redirecting from /login/login to /login */
 							slice(
 								(
-									typeof this.activatedRoute.snapshot.url[0] === 'object' &&
+									this.activatedRoute.snapshot.url.length > 0 &&
 									this.activatedRoute.snapshot.url[0].path === 'login'
 								) ?
 									1 :
@@ -257,9 +257,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 		this.loggingIn	= combineLatest([
 			this.pinUnlock,
-			this.activatedRoute.url.pipe(map(url =>
-				typeof url[0] === 'object' && url[0].path === 'login'
-			))
+			this.activatedRoute.url.pipe(map(url => url.length > 0 && url[0].path === 'login'))
 		]).pipe(map(([pinUnlock, loginStep2]) =>
 			pinUnlock || loginStep2
 		));
