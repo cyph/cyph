@@ -94,8 +94,11 @@ export class Env extends EnvDeploy {
 			typeof environment.debug === 'boolean' ?
 				environment.debug :
 				environment.local
-		) ||
-		localStorage.getItem('debug') === 'true'
+		) || (
+			typeof localStorage === 'object' && 
+			typeof localStorage.getItem === 'function' &&
+			localStorage.getItem('debug') === 'true'
+		)
 	;
 
 	/** Indicates whether debug logging is enabled (true by default when debug is true). */
