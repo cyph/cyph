@@ -48,7 +48,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** Password visibility setting. */
 	public readonly hidePassword		= new BehaviorSubject<boolean>(true);
 
-	/** TODO */
+	/** Indicates whether user has chosen to log in. */
 	public readonly loggingIn			= new BehaviorSubject<boolean>(false);
 
 	/** Master key to be used for login attempt. */
@@ -173,10 +173,6 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		this.pinUnlock.next(false);
 		this.savedMasterKey.next(undefined);
 		this.savedUsername.next(undefined);
-	}
-
-	public async startLogIn () : Promise<void> {
-		this.loggingIn.next(true);
 	}
 
 	/** Initiates login attempt. */

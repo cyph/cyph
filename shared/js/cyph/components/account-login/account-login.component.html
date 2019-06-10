@@ -126,7 +126,7 @@
 
 					<ng-container *ngTemplateOutlet='usernameField'></ng-container>
 
-					<ng-container *ngIf="loggingIn | async">
+					<ng-container *ngIf='loggingIn | async'>
 						<ng-container *ngIf='(pinUnlock | async) === true; else login'>
 							<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
 						</ng-container>
@@ -139,11 +139,21 @@
 							(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
 						) as buttonText
 					'>
-						<button *ngIf="(loggingIn | async)" mat-raised-button color='primary' type='submit'>
+						<button
+							mat-raised-button
+							color='primary'
+							type='submit'
+							*ngIf='loggingIn | async'
+						>
 							{{buttonText}}
 						</button>
 
-						<button *ngIf="(loggingIn | async) === false" mat-raised-button color='primary' (click)='startLogIn()'>
+						<button
+							mat-raised-button
+							color='primary'
+							(click)='loggingIn.next(true)'
+							*ngIf='(loggingIn | async) === false'
+						>
 							{{buttonText}}
 						</button>
 						
@@ -156,8 +166,8 @@
 								"register?username=" +
 								((username | async) || "")
 							'
-							target="_self"
-							*ngIf="(loggingIn | async) === false"
+							target='_self'
+							*ngIf='(loggingIn | async) === false'
 						>
 							Register
 						</a>
@@ -227,7 +237,7 @@
 
 					<ng-container *ngTemplateOutlet='usernameField'></ng-container>
 
-					<ng-container *ngIf="loggingIn | async">
+					<ng-container *ngIf='loggingIn | async'>
 						<ng-container *ngIf='(pinUnlock | async) === true; else login'>
 							<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
 						</ng-container>
@@ -236,7 +246,7 @@
 					<div
 						fxFlex
 						fxLayout='column'
-						fxLayoutGap="5%"
+						fxLayoutGap='5%'
 						fxLayoutAlign='center center'
 						*ngIf='
 							(
@@ -244,11 +254,21 @@
 							) as buttonText
 						'
 					>
-						<button *ngIf="(loggingIn | async)" mat-raised-button color='primary' type='submit'>
+						<button
+							mat-raised-button
+							color='primary'
+							type='submit'
+							*ngIf='loggingIn | async'
+						>
 							{{buttonText}}
 						</button>
 
-						<button *ngIf="(loggingIn | async) === false" mat-raised-button color='primary' (click)='startLogIn()'>
+						<button
+							mat-raised-button
+							color='primary'
+							(click)='loggingIn.next(true)'
+							*ngIf='(loggingIn | async) === false'
+						>
 							{{buttonText}}
 						</button>
 
@@ -262,12 +282,17 @@
 								((username | async) || "")
 							'
 							fxFlex
-							target="_self"
-							*ngIf="(loggingIn | async) === false"
+							target='_self'
+							*ngIf='(loggingIn | async) === false'
 						>
 							Register
 						</a>
-						<a mat-raised-button *ngIf='(loggingIn | async) === false' fxFlex routerLink='/burner'>
+						<a
+							mat-raised-button
+							fxFlex
+							routerLink='/burner'
+							*ngIf='(loggingIn | async) === false'
+						>
 							<span cyphTranslate>Use</span>
 							&ngsp;
 							<span>{{stringsService.product}}</span>
@@ -351,7 +376,7 @@
 </ng-template>
 
 <ng-template #login>
-	<div fxLayout='row' fxLayoutAlign='center' class="animated fadeIn">
+	<div fxLayout='row' fxLayoutAlign='center' class='animated fadeIn'>
 		<mat-form-field fxFlex>
 			<input
 				matInput
