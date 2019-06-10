@@ -248,10 +248,7 @@ export class AccountAuthService extends BaseProvider {
 
 	/** Removes PIN from local storage. */
 	public async lock (reload: boolean = true) : Promise<void> {
-		const pinHash	= await this.localStorageService.getItem('pinHash', BinaryProto);
-		if (pinHash.length > 0) {
-			await this.localStorageService.removeItem('pinHash');
-		}
+		await this.localStorageService.removeItem('pinHash');
 
 		if (!reload) {
 			return;
