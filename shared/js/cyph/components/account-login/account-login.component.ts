@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {BinaryProto, BooleanProto, StringProto} from '../../proto';
@@ -49,7 +50,9 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	public readonly hidePassword		= new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether user has chosen to log in. */
-	public readonly loggingIn			= new BehaviorSubject<boolean>(false);
+	public readonly loggingIn			= this.activatedRoute.url.pipe(map(url =>
+		typeof url[0] === 'object' && url[0].path === 'login'
+	));
 
 	/** Master key to be used for login attempt. */
 	public readonly masterKey			= new BehaviorSubject<string>('');
