@@ -1607,15 +1607,22 @@ export class ChatService extends BaseProvider {
 				}
 			});
 
-			this.chat.receiveTextLock(async lockData => {
-				const f	= async (newEvents: ISessionMessageData[]) =>
-					this.addTextMessage(...newEvents)
-				;
+			(async () => {
+				while (this.sessionService.state.isAlive) {
+					await this.chat.receiveTextLock(async lockData => {
+						const f	= async (newEvents: ISessionMessageData[]) =>
+							this.addTextMessage(...newEvents)
+						;
 
-				this.sessionService.on(rpcEvents.text, f);
-				await Promise.race([this.sessionService.closed, lockData.stillOwner.toPromise()]);
-				this.sessionService.off(rpcEvents.text, f);
-			});
+						this.sessionService.on(rpcEvents.text, f);
+						await Promise.race([
+							this.sessionService.closed,
+							lockData.stillOwner.toPromise()
+						]);
+						this.sessionService.off(rpcEvents.text, f);
+					});
+				}
+			})();
 		});
 
 		this.sessionCapabilitiesService.capabilities.walkieTalkieMode.then(walkieTalkieMode => {
