@@ -22,8 +22,9 @@ cyph-pin-input {
 	text-align: center;
 
 	cyph-logo {
-		height: 3.5em;
 		margin-bottom: 20px;
+		max-width: 75%;
+		max-height: 75%;
 	}
 
 	form > div:last-child {
@@ -37,7 +38,7 @@ cyph-pin-input {
 	}
 
 	.unlock-string span {
-		font-size: 1.35em;
+		font-size: 2em;
 	}
 
 	.mat-card, .mat-card-content {
@@ -59,8 +60,10 @@ cyph-pin-input {
 		}
 	}
 
-	button {
-		margin-top: 45px;
+	button, a {
+		&.mat-primary{
+			margin-top: 45px;
+		}
 		width: 100%;
 	}
 }

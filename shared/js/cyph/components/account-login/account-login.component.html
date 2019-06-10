@@ -14,7 +14,7 @@
 		fxFlex
 		fxFlex.sm='95'
 		fxFlex.md='75'
-		fxFlex.gt-md='66'
+		fxFlex.gt-md='33'
 	>
 		<ng-container *ngIf='(hasSavedCredentials() | async) === true'>
 			<mat-card-title cyphTranslate>
@@ -74,7 +74,7 @@
 			fxFlex
 			fxFlex.sm='95'
 			fxFlex.md='75'
-			fxFlex.gt-md='50'
+			fxFlex.gt-md='33'
 		>
 			<mat-card-title>
 				{{
@@ -126,18 +126,51 @@
 
 					<ng-container *ngTemplateOutlet='usernameField'></ng-container>
 
-					<ng-container *ngIf='(pinUnlock | async) === true; else login'>
-						<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
+					<ng-container *ngIf="loggingIn | async">
+						<ng-container *ngIf='(pinUnlock | async) === true; else login'>
+							<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
+						</ng-container>
 					</ng-container>
 
-					<div fxLayout='row' fxLayoutAlign='center center' *ngIf='
+					<br />
+
+					<div fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='24px' *ngIf='
 						(
 							(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
 						) as buttonText
 					'>
-						<button mat-button type='submit'>
+						<button *ngIf="(loggingIn | async)" mat-raised-button color='primary' type='submit'>
 							{{buttonText}}
 						</button>
+
+						<button *ngIf="(loggingIn | async) === false" mat-raised-button color='primary' (click)='startLogIn()'>
+							{{buttonText}}
+						</button>
+						
+						<a
+							cyphTranslate
+							mat-raised-button
+							color='accent'
+							[href]='
+								envService.homeUrl +
+								"register?username=" +
+								((username | async) || "")
+							'
+							target="_self"
+							*ngIf="(loggingIn | async) === false"
+						>
+							Register
+						</a>
+					</div>
+
+					<div fxLayout='row'>
+						<a mat-button fxFlex routerLink='/burner'>
+							<span cyphTranslate>Use</span>
+							&ngsp;
+							<span>{{stringsService.product}}</span>
+							&ngsp;
+							<span cyphTranslate>without an account</span>
+						</a>
 					</div>
 				</form>
 			</mat-card-content>
@@ -149,89 +182,121 @@
 
 <ng-template #mobileView>
 	<div fxFlexFill fxLayout='column'>
-		<cyph-logo homeLink></cyph-logo>
+		<div fxFlex='15'></div>
+		<div fxFlex='50'>
+			<cyph-logo icon homeLink></cyph-logo>
 
-		<div class='unlock-string' fxLayoutAlign='center' fxLayoutAlign.xs='center end'>
-			<span fxFlex cyphTranslate>
-				<ng-container *ngIf='(pinUnlock | async); else loginText'>
-					<span cyphTranslate>Enter your</span>
-					&ngsp;
-					<span>
-						{{
-							(pinIsCustom | async) ?
-								stringsService.unlockPassword :
-								stringsService.pin
-						}}
-					</span>
-					&ngsp;
-					<span cyphTranslate>below</span>.
-				</ng-container>
-				<ng-template #loginText>{{stringsService.logInTitle}}</ng-template>
-			</span>
+			<div class='unlock-string'>
+				<span fxFlex cyphTranslate>
+					<ng-container *ngIf='(pinUnlock | async); else loginText'>
+						<span cyphTranslate>Enter your</span>
+						&ngsp;
+						<span>
+							{{
+								(pinIsCustom | async) ?
+									stringsService.unlockPassword :
+									stringsService.pin
+							}}
+						</span>
+						&ngsp;
+						<span cyphTranslate>below</span>.
+					</ng-container>
+					<ng-template #loginText>{{stringsService.logInTitle}}</ng-template>
+				</span>
+			</div>
 		</div>
 
-		<div fxFlex fxLayoutAlign='center center'>
-			<form
-				ngNativeValidate
-				fxFlex
-				fxLayout='column'
-				fxLayoutAlign='center'
-				(submit)='submit()'
-			>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h3 class='cyph-banner warn' [fxShow]='error | async'>
-						{{
-							(pinUnlock | async) ?
-								stringsService.invalidPIN :
-								stringsService.invalidCredentials
-						}}
-					</h3>
-				</div>
-
-				<ng-container *ngTemplateOutlet='usernameField'></ng-container>
-
-				<ng-container *ngIf='(pinUnlock | async) === true; else login'>
-					<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
-				</ng-container>
-
-				<div
+		<div fxFlex='30'>
+			<div fxFlex fxLayoutAlign='center center'>
+				<form
+					ngNativeValidate
 					fxFlex
-					fxLayout='row'
-					fxLayoutAlign='center center'
-					*ngIf='
-						(
-							(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
-						) as buttonText
-					'
+					fxLayout='column'
+					fxLayoutAlign='center'
+					(submit)='submit()'
 				>
-					<button fxFlex mat-raised-button type='submit'>
-						{{buttonText}}
-					</button>
-				</div>
-			</form>
+					<div fxLayout='row' fxLayoutAlign='center center'>
+						<h3 class='cyph-banner warn' [fxShow]='error | async'>
+							{{
+								(pinUnlock | async) ?
+									stringsService.invalidPIN :
+									stringsService.invalidCredentials
+							}}
+						</h3>
+					</div>
+
+					<ng-container *ngTemplateOutlet='usernameField'></ng-container>
+
+					<ng-container *ngIf="loggingIn | async">
+						<ng-container *ngIf='(pinUnlock | async) === true; else login'>
+							<ng-container *ngTemplateOutlet='pinUnlockFields'></ng-container>
+						</ng-container>
+					</ng-container>
+
+					<div
+						fxFlex
+						fxLayout='column'
+						fxLayoutGap="5%"
+						fxLayoutAlign='center center'
+						*ngIf='
+							(
+								(pinUnlock | async) ? stringsService.unlock : stringsService.logIn
+							) as buttonText
+						'
+					>
+						<button *ngIf="(loggingIn | async)" mat-raised-button color='primary' type='submit'>
+							{{buttonText}}
+						</button>
+
+						<button *ngIf="(loggingIn | async) === false" mat-raised-button color='primary' (click)='startLogIn()'>
+							{{buttonText}}
+						</button>
+
+						<a
+							cyphTranslate
+							mat-raised-button
+							color='accent'
+							[href]='
+								envService.homeUrl +
+								"register?username=" +
+								((username | async) || "")
+							'
+							fxFlex
+							target="_self"
+							*ngIf="(loggingIn | async) === false"
+						>
+							Register
+						</a>
+						<a mat-raised-button *ngIf='(loggingIn | async) === false' fxFlex routerLink='/burner'>
+							<span cyphTranslate>Use</span>
+							&ngsp;
+							<span>{{stringsService.product}}</span>
+							&ngsp;
+							<span cyphTranslate>without an account</span>
+						</a>
+					</div>
+				</form>
+			</div>
+
+			<em class='logout' fxFlex='5' fxFlexAlign='center center'>
+				<ng-container *ngIf='(pinUnlock | async) && !envService.isTelehealth; else burner'>
+					<span cyphTranslate>Not</span>
+					&ngsp;
+					<span>{{savedUsername | async}}?</span>
+					&ngsp;
+					<a cyphTranslate (click)='pinUnlock.next(false)'>Sign in as a different user</a>
+					&ngsp;
+					<span cyphTranslate>or</span>
+					&ngsp;
+					<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
+				</ng-container>
+
+				<ng-template #burner>
+					
+				</ng-template>
+			</em>
 		</div>
-
-		<em class='logout' fxFlex='5' fxFlexAlign='center center'>
-			<ng-container *ngIf='(pinUnlock | async); else signup'>
-				<span cyphTranslate>Not</span>
-				&ngsp;
-				<span>{{savedUsername | async}}?</span>
-				&ngsp;
-				<a cyphTranslate (click)='pinUnlock.next(false)'>Sign in as a different user</a>
-				&ngsp;
-				<span cyphTranslate>or</span>
-				&ngsp;
-				<a cyphTranslate (click)='removeSavedCredentials()'>log out</a>.
-			</ng-container>
-
-			<ng-template #signup>
-				<span cyphTranslate>Don't have your account yet?</span>
-				&ngsp;
-				<a
-					routerLink='/register'
-				>{{stringsService.registerTitle}}</a>.
-			</ng-template>
-		</em>
+		<div fxFlex='5'></div>
 
 		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
 	</div>
@@ -244,26 +309,6 @@
 <ng-template #usernameField>
 	<ng-container *ngIf='(pinUnlock | async) === false'>
 		<div class='product-description' fxLayout='row' fxLayoutAlign='center'>
-			<div *ngIf='!envService.isTelehealth'>
-				<span cyphTranslate>Welcome to</span>
-				&ngsp;
-				<span>{{stringsService.product}}!</span>
-				&ngsp;
-				<span cyphTranslate>
-					If you have an account, you can log in here.
-				</span>
-				<ng-container *ngIf='!envService.coBranded'>
-					<span cyphTranslate>
-						Otherwise, you can go ahead and
-					</span>
-					&ngsp;
-					<a
-						cyphTranslate
-						[href]='envService.homeUrl + "register"'
-					>join our waitlist</a>.
-				</ng-container>
-			</div>
-
 			<ng-container *ngIf='envService.isTelehealth'>
 				<div fxLayout='column' fxLayoutGap='8px'>
 					<div>
@@ -306,7 +351,7 @@
 </ng-template>
 
 <ng-template #login>
-	<div fxLayout='row' fxLayoutAlign='center'>
+	<div fxLayout='row' fxLayoutAlign='center' class="animated fadeIn">
 		<mat-form-field fxFlex>
 			<input
 				matInput
