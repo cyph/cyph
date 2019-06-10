@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {BinaryProto, BooleanProto, StringProto} from '../../proto';
@@ -48,6 +49,9 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** Password visibility setting. */
 	public readonly hidePassword		= new BehaviorSubject<boolean>(true);
 
+	/** Indicates whether user has chosen to log in. */
+	public readonly loggingIn: Observable<boolean>;
+
 	/** Master key to be used for login attempt. */
 	public readonly masterKey			= new BehaviorSubject<string>('');
 
@@ -92,7 +96,20 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 				this.accountDatabaseService.currentUser.value.pseudoAccount
 			) ?
 				this.activatedRoute.snapshot.url.length > 0 ?
-					['', ...this.activatedRoute.snapshot.url.map(o => o.path)] :
+					[
+						'',
+						...this.activatedRoute.snapshot.url.
+							/* Avoid redirecting from /login/login to /login */
+							slice(
+								(
+									this.activatedRoute.snapshot.url.length > 0 &&
+									this.activatedRoute.snapshot.url[0].path === 'login'
+								) ?
+									1 :
+									0
+							).
+							map(o => o.path)
+					] :
 					['']
 				:
 				['welcome']
@@ -237,6 +254,13 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		public readonly stringsService: StringsService
 	) {
 		super();
+
+		this.loggingIn	= combineLatest([
+			this.pinUnlock,
+			this.activatedRoute.url.pipe(map(url => url.length > 0 && url[0].path === 'login'))
+		]).pipe(map(([pinUnlock, loginStep2]) =>
+			pinUnlock || loginStep2
+		));
 
 		if (
 			(<any> self).androidBackbuttonReady &&

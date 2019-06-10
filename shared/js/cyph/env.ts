@@ -95,8 +95,10 @@ export class Env extends EnvDeploy {
 				environment.debug :
 				environment.local
 		) || (
-			typeof localStorage === 'object' && 
-			typeof localStorage.getItem === 'function' &&
+			typeof (<any> localStorage) === 'object' &&
+			/* tslint:disable-next-line:no-unbound-method */
+			typeof (<any> localStorage).getItem === 'function' &&
+			/* tslint:disable-next-line:ban */
 			localStorage.getItem('debug') === 'true'
 		)
 	;
