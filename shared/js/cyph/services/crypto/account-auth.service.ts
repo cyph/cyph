@@ -551,7 +551,7 @@ export class AccountAuthService extends BaseProvider {
 		if (clearSavedCredentials) {
 			await Promise.all([
 				this.databaseService.logout(),
-				this.localStorageService.clear()
+				this.removeSavedCredentials()
 			]);
 		}
 
@@ -766,14 +766,21 @@ export class AccountAuthService extends BaseProvider {
 
 	/** Removes locally saved login credentials. */
 	public async removeSavedCredentials () : Promise<void> {
-		await Promise.all([
-			this.localStorageService.removeItem('masterKey'),
-			this.localStorageService.removeItem('pinDuration'),
-			this.localStorageService.removeItem('pinHash'),
-			this.localStorageService.removeItem('pinIsCustom'),
-			this.localStorageService.removeItem('pinTimestamp'),
-			this.localStorageService.removeItem('username')
-		]);
+		/*
+			This was okay initially, but now doesn't take into account
+			ThreadedPotassiumService caching:
+
+			await Promise.all([
+				this.localStorageService.removeItem('masterKey'),
+				this.localStorageService.removeItem('pinDuration'),
+				this.localStorageService.removeItem('pinHash'),
+				this.localStorageService.removeItem('pinIsCustom'),
+				this.localStorageService.removeItem('pinTimestamp'),
+				this.localStorageService.removeItem('username')
+			]);
+		*/
+
+		await this.localStorageService.clear();
 	}
 
 	/**
