@@ -170,14 +170,17 @@ func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
 	signup := map[string]interface{}{}
 	profile := map[string]interface{}{}
 
+	usernameRequest := sanitize(h.Request.PostFormValue("usernameRequest"), config.MaxSignupValueLength)
+
 	betaSignup := BetaSignup{
-		Comment:  sanitize(h.Request.PostFormValue("Comment"), config.MaxSignupValueLength),
-		Country:  country,
-		Email:    sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength),
-		Language: sanitize(h.Request.PostFormValue("language"), config.MaxSignupValueLength),
-		Name:     sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength),
-		Referer:  sanitize(h.Request.Referer(), config.MaxSignupValueLength),
-		Time:     time.Now().Unix(),
+		Comment:         sanitize(h.Request.PostFormValue("comment"), config.MaxSignupValueLength),
+		Country:         country,
+		Email:           sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength),
+		Language:        sanitize(h.Request.PostFormValue("language"), config.MaxSignupValueLength),
+		Name:            sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength),
+		Referer:         sanitize(h.Request.Referer(), config.MaxSignupValueLength),
+		Time:            time.Now().Unix(),
+		UsernameRequest: usernameRequest,
 	}
 
 	profile["country"] = countryCode
@@ -186,6 +189,7 @@ func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
 	profile["locale"] = betaSignup.Language
 	profile["custom_var1"] = sanitize(h.Request.PostFormValue("inviteCode"), config.MaxSignupValueLength)
 	profile["custom_var2"] = sanitize(h.Request.PostFormValue("featureInterest"), config.MaxSignupValueLength)
+	profile["custom_var3"] = usernameRequest
 	signup["email"] = betaSignup.Email
 	signup["profile"] = profile
 
