@@ -9,13 +9,14 @@ type none struct{}
 
 // BetaSignup : Data of user in waitlist
 type BetaSignup struct {
-	Comment  string
-	Country  string
-	Email    string
-	Language string
-	Name     string
-	Referer  string
-	Time     int64
+	Comment         string
+	Country         string
+	Email           string
+	Language        string
+	Name            string
+	Referer         string
+	Time            int64
+	UsernameRequest string
 }
 
 // Customer : Customer with API key
@@ -113,28 +114,28 @@ var config = struct {
 	"GET,HEAD,POST,PUT,DELETE,OPTIONS",
 
 	map[string]none{
-		"cyph.com":                                      empty,
-		"www.cyph.com":                                  empty,
-		"cyph.ws":                                       empty,
-		"www.cyph.ws":                                   empty,
-		"cyph.app":                                      empty,
-		"www.cyph.app":                                  empty,
-		"cyph.im":                                       empty,
-		"www.cyph.im":                                   empty,
-		"cyph.me":                                       empty,
-		"www.cyph.me":                                   empty,
-		"cyph.video":                                    empty,
-		"www.cyph.video":                                empty,
-		"cyph.audio":                                    empty,
-		"www.cyph.audio":                                empty,
-		"api.cyph.com":                                  empty,
-		"cyphdbyhiddenbhs.onion":                        empty,
-		"www.cyphdbyhiddenbhs.onion":                    empty,
-		"im.cyphdbyhiddenbhs.onion":                     empty,
-		"me.cyphdbyhiddenbhs.onion":                     empty,
-		"video.cyphdbyhiddenbhs.onion":                  empty,
-		"audio.cyphdbyhiddenbhs.onion":                  empty,
-		"api.cyphdbyhiddenbhs.onion":                    empty,
+		"cyph.com":                     empty,
+		"www.cyph.com":                 empty,
+		"cyph.ws":                      empty,
+		"www.cyph.ws":                  empty,
+		"cyph.app":                     empty,
+		"www.cyph.app":                 empty,
+		"cyph.im":                      empty,
+		"www.cyph.im":                  empty,
+		"cyph.me":                      empty,
+		"www.cyph.me":                  empty,
+		"cyph.video":                   empty,
+		"www.cyph.video":               empty,
+		"cyph.audio":                   empty,
+		"www.cyph.audio":               empty,
+		"api.cyph.com":                 empty,
+		"cyphdbyhiddenbhs.onion":       empty,
+		"www.cyphdbyhiddenbhs.onion":   empty,
+		"im.cyphdbyhiddenbhs.onion":    empty,
+		"me.cyphdbyhiddenbhs.onion":    empty,
+		"video.cyphdbyhiddenbhs.onion": empty,
+		"audio.cyphdbyhiddenbhs.onion": empty,
+		"api.cyphdbyhiddenbhs.onion":   empty,
 		"prod-dot-default-dot-cyphme.appspot.com":       empty,
 		"staging-dot-cyph-com-dot-cyphme.appspot.com":   empty,
 		"staging-dot-cyph-ws-dot-cyphme.appspot.com":    empty,
