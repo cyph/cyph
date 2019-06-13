@@ -1608,7 +1608,7 @@ export class ChatService extends BaseProvider {
 			});
 
 			(async () => {
-				while (this.sessionService.state.isAlive) {
+				while (this.sessionService.state.isAlive.value) {
 					await this.chat.receiveTextLock(async lockData => {
 						const f	= async (newEvents: ISessionMessageData[]) =>
 							this.addTextMessage(...newEvents)
