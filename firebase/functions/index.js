@@ -43,7 +43,7 @@ const {
 const {notify}	= require('./notify')(database, messaging);
 
 
-const channelDisconnectTimeout	= 5000;
+const channelDisconnectTimeout	= 20000;
 
 const getFullBurnerURL	= (namespace, callType) => {
 	const {burnerURL}	= namespaces[namespace];

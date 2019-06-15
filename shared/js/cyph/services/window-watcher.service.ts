@@ -35,10 +35,22 @@ export class WindowWatcherService extends BaseProvider {
 
 	/**
 	 * Waits for the visibility to change once.
+	 * @param visible If specified, waits until changes to this state.
 	 */
-	public async waitForVisibilityChange () : Promise<boolean> {
+	public async waitForVisibilityChange (visible?: boolean) : Promise<boolean> {
 		const initialValue	= this.visibility.value;
-		return this.visibility.pipe(filter(value => value !== initialValue), take(1)).toPromise();
+		const newValue 		=
+			await this.visibility.pipe(
+				filter(value => value !== initialValue),
+				take(1)
+			).toPromise()
+		;
+
+		if (typeof visible === 'boolean' && newValue !== visible) {
+			return this.waitForVisibilityChange(visible);
+		}
+
+		return newValue;
 	}
 
 	/**

@@ -1591,12 +1591,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 			potassiumService
 		);
 
-		this.subscriptions.push(
-			this.windowWatcherService.visibility.pipe(skip(1)).subscribe(visible => {
-				if (visible) {
-					this.refreshConnection();
-				}
-			})
-		);
+		(async () => {
+			while (!this.destroyed.value) {
+				await Promise.race([
+					sleep(300000),
+					this.windowWatcherService.waitForVisibilityChange(true)
+				]);
+
+				await this.refreshConnection();
+			}
+		})();
 	}
 }
