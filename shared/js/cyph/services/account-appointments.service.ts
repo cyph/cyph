@@ -7,8 +7,8 @@ import {IAccountFileRecord, IAppointment} from '../proto';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {watchTimestamp} from '../util/time';
-import {AccountDatabaseService} from './crypto/account-database.service';
 import {AccountFilesService} from './account-files.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 
 
 /**
