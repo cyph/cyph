@@ -303,6 +303,14 @@ export class Env extends EnvDeploy {
 	/** Base URI for sending an SMS. */
 	public readonly smsUriBase: string			= `sms:${this.isIOS ? '&' : '?'}body=`;
 
+	/** If true, telehealth theme is enabled. */
+	public readonly telehealthTheme: boolean	=
+		this.isTelehealth || (
+			environment.customBuild !== undefined &&
+			environment.customBuild.config.telehealthTheme === true
+		)
+	;
+
 	/** Current user agent (lowercase). */
 	public readonly userAgent: string			= Env.UA;
 

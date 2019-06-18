@@ -85,7 +85,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 		this.appService.chatRootState.next(ChatRootStates.blank);
 
 		const granimStates	= {
-			'default-state': !this.envService.isTelehealth ?
+			'default-state': !this.envService.telehealthTheme ?
 				{
 					gradients: [
 						['#392859', '#624599'],
@@ -105,7 +105,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 					transitionSpeed: 2500
 				}
 			,
-			'paused': !this.envService.isTelehealth ?
+			'paused': !this.envService.telehealthTheme ?
 				{
 					gradients: [
 						['#624599', '#8b62d9'],

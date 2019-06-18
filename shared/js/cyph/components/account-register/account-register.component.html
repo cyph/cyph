@@ -105,7 +105,7 @@
 										</ng-container>
 										<ng-template #telehealthWelcomeMessage>
 											<ng-container *ngIf='
-												envService.isTelehealth;
+												envService.telehealthTheme;
 												else mainBasicWelcomeMessage
 											'>
 												<span cyphTranslate>

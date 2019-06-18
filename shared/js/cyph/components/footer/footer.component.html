@@ -1,5 +1,5 @@
 <div fxFlex fxLayout='row wrap' fxLayoutAlign='center center' fxLayoutGap='32px' class='footer'>
-	<div fxFlex *ngIf='envService.isTelehealth'></div>
+	<div fxFlex *ngIf='envService.telehealthTheme'></div>
 
 	<ng-container *ngIf='!envService.coBranded && !envService.isTelehealth'>
 		<div fxFlex='nogrow' fxLayoutAlign='center center'>
@@ -91,7 +91,7 @@
 		</div>
 	</ng-container>
 
-	<ng-container *ngIf='envService.isTelehealth'>
+	<ng-container *ngIf='envService.telehealthTheme'>
 		<div fxFlex fxLayoutAlign='end center'>
 			<div cyphTranslate fxLayout='row'>
 				<img src='/assets/img/websign.icon.png' alt='WebSign Validated' />
