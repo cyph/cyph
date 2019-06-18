@@ -405,6 +405,7 @@ export class AccountDatabaseService extends BaseProvider {
 				anonymous
 			);
 
+			/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 			downloadTask.progress.subscribe(
 				n => { progress.next(n); },
 				err => { progress.error(err); },
@@ -1191,6 +1192,7 @@ export class AccountDatabaseService extends BaseProvider {
 
 			cancel.promise.then(() => { uploadTask.cancel(); });
 
+			/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 			uploadTask.progress.subscribe(
 				n => { progress.next(n); },
 				err => { progress.error(err); },

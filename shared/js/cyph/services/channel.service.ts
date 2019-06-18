@@ -56,7 +56,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 	/** @inheritDoc */
 	public destroy () : void {
-		/* tslint:disable-next-line:no-life-cycle-call */
+		/* tslint:disable-next-line:no-lifecycle-call */
 		this.ngOnDestroy();
 	}
 

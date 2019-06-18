@@ -527,7 +527,7 @@ export class AccountAuthService extends BaseProvider {
 			return false;
 		}
 
-		/* tslint:disable-next-line:no-life-cycle-call */
+		/* tslint:disable-next-line:no-lifecycle-call */
 		this.ngOnDestroy();
 
 		if (this.connectTrackerCleanup) {

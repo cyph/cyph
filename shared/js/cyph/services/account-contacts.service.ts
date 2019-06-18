@@ -327,10 +327,11 @@ export class AccountContactsService extends BaseProvider {
 				'requestPseudoRelationship',
 				{email, name}
 			);
+
+			return;
 		}
-		else {
-			await this.accountInviteService.send(email, name);
-		}
+
+		await this.accountInviteService.send(email, name);
 	}
 
 	/** Contact URL. */

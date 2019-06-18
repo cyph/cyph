@@ -235,7 +235,7 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
 		this.activeUser.next(undefined);
-		/* tslint:disable-next-line:no-life-cycle-call */
+		/* tslint:disable-next-line:no-lifecycle-call */
 		super.ngOnDestroy();
 	}
 

@@ -144,7 +144,7 @@ implements OnChanges, OnDestroy, OnInit {
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
 		this.clearFilter();
-		/* tslint:disable-next-line:no-life-cycle-call */
+		/* tslint:disable-next-line:no-lifecycle-call */
 		super.ngOnDestroy();
 	}
 

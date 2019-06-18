@@ -90,6 +90,7 @@ const baseRequest	= <R, T> (
 						new Promise<HttpResponse<T>>((resolve, reject) => {
 							let last: HttpResponse<T>;
 
+							/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 							req.subscribe(
 								e => {
 									if (e.type === HttpEventType.DownloadProgress) {

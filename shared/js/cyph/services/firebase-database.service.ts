@@ -361,6 +361,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					url: await retryUntilSuccessful(async () => storageRef.getDownloadURL())
 				});
 
+				/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 				req.progress.subscribe(
 					n => { this.ngZone.run(() => { progress.next(n); }); },
 					err => { this.ngZone.run(() => { progress.next(err); }); }

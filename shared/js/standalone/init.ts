@@ -20,6 +20,7 @@ if (env.isLocalEnv && location.pathname !== '/') {
 
 /* Mobile CSS class */
 
+/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 env.isMobile.subscribe(isMobile => {
 	document.body.classList.toggle('mobile', isMobile);
 });

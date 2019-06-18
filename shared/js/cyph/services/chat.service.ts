@@ -339,6 +339,7 @@ export class ChatService extends BaseProvider {
 
 				this.chat.messageList.watchFlat(true).pipe(
 					map(messageIDs => messageIDs.length === 0)
+				/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 				).subscribe(
 					this.chatSelfDestructed
 				);
@@ -403,7 +404,7 @@ export class ChatService extends BaseProvider {
 
 	/** This kills the chat. */
 	private async close () : Promise<void> {
-		/* tslint:disable-next-line:no-life-cycle-call */
+		/* tslint:disable-next-line:no-lifecycle-call */
 		this.ngOnDestroy();
 
 		if (!this.sessionInitService.ephemeral) {
