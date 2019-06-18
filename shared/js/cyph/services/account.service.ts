@@ -25,6 +25,7 @@ import {getTimestamp} from '../util/time';
 import {translate} from '../util/translate';
 import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
+import {AccountAppointmentsService} from './account-appointments.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
 import {AccountSettingsService} from './account-settings.service';
@@ -71,8 +72,30 @@ export class AccountService extends BaseProvider {
 	/** Email address to use for new pseudo-account. */
 	public readonly fromEmail							= new BehaviorSubject<string>('');
 
+	/** `fromEmail` autocomplete options. */
+	public readonly fromEmailOptions					=
+		combineLatest([
+			this.accountAppointmentsService.pastEmailContacts,
+			this.fromEmail
+		]).pipe(map(([options, email]) => {
+			email	= email.trim().toLowerCase();
+			return options.filter(option => option.email.startsWith(email));
+		}))
+	;
+
 	/** Name to use for new pseudo-account. */
 	public readonly fromName							= new BehaviorSubject<string>('');
+
+	/** `fromName` autocomplete options. */
+	public readonly fromNameOptions						=
+		combineLatest([
+			this.accountAppointmentsService.pastEmailContacts,
+			this.fromName
+		]).pipe(map(([options, name]) => {
+			name	= name.trim().toLowerCase();
+			return options.filter(option => option.name.toLowerCase().startsWith(name));
+		}))
+	;
 
 	/** Header title for current section. */
 	public readonly header: Observable<{desktop?: string; mobile?: string}|User|undefined>;
@@ -385,6 +408,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountAppointmentsService: AccountAppointmentsService,
 
 		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,

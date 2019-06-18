@@ -173,7 +173,7 @@ export class LogoComponent extends BaseProvider {
 						this.logos.horizontal
 		;
 
-		return this.envService.isTelehealth ?
+		return this.envService.telehealthTheme ?
 			logoSet.telehealth :
 		this.alt ?
 			logoSet.alt :

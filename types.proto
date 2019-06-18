@@ -772,14 +772,8 @@ message Environment {
 		/** Indicates whether this is the full telehealth version. */
 		bool telehealthFull = 17;
 
-		/**
-		 * If true, will switch to a more relaxed threat model that disables some of
-		 * the more obscure/non-critical protective measures that are suspected to be
-		 * causing performance or reliability issues as currently implemented.
-		 *
-		 * Currently used only in a non-production build for debugging purposes.
-		 */
-		bool threatModelBasic = 18;
+		/** Enables just the telehealth theme (no change in functionality). */
+		bool telehealthTheme = 18;
 
 		/** Page title of this Cyph instance. */
 		string title = 19;

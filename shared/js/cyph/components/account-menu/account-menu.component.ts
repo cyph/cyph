@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
+import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -25,27 +25,27 @@ import {urlToSafeStyle} from '../../util/safe-values';
 })
 export class AccountMenuComponent extends BaseProvider {
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes: typeof AccountUserTypes	= AccountUserTypes;
+	public readonly accountUserTypes		= AccountUserTypes;
 
 	/** @see AccountService.menuExpanded */
-	public readonly menuExpanded: Observable<boolean>			=
+	public readonly menuExpanded			=
 		this.accountService.menuExpanded.pipe(map(menuExpanded => this.sidenav || menuExpanded))
 	;
 
 	/** If true, is inside a sidenav. */
-	@Input() public sidenav: boolean							= false;
+	@Input() public sidenav: boolean		= false;
 
 	/** @see UserPresence */
-	public readonly statuses									= userPresenceSelectOptions;
+	public readonly statuses				= userPresenceSelectOptions;
 
 	/** @see trackByValue */
-	public readonly trackByValue								= trackByValue;
+	public readonly trackByValue			= trackByValue;
 
 	/** @see urlToSafeStyle */
-	public readonly urlToSafeStyle								= urlToSafeStyle;
+	public readonly urlToSafeStyle			= urlToSafeStyle;
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence			= UserPresence;
+	public readonly userPresence			= UserPresence;
 
 	/** Handler for button clicks. */
 	public click () : void {
@@ -61,6 +61,9 @@ export class AccountMenuComponent extends BaseProvider {
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountAppointmentsService */
+		public readonly accountAppointmentsService: AccountAppointmentsService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,

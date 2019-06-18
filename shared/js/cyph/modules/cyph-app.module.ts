@@ -40,6 +40,7 @@ import {LinkConnectionComponent} from '../components/link-connection';
 import {LinkConnectionEmailComponent} from '../components/link-connection-email';
 import {NotFoundComponent} from '../components/not-found';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
+import {AccountAppointmentsService} from '../services/account-appointments.service';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
@@ -189,6 +190,7 @@ import {CyphWebModule} from './cyph-web.module';
 		CyphWebModule
 	],
 	providers: [
+		AccountAppointmentsService,
 		AccountAuthGuardService,
 		AccountAuthService,
 		AccountContactsService,

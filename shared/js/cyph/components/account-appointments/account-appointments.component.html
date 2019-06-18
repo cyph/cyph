@@ -13,7 +13,9 @@
 		fxLayoutGap='16px'
 		fxLayoutGap.lt-md='8px'
 	>
-		<ng-container *ngIf='appointments.incoming | async as incomingAppointments'>
+		<ng-container *ngIf='
+			accountAppointmentsService.appointments.incoming | async as incomingAppointments
+		'>
 			<ng-container *ngIf='incomingAppointments.length > 0'>
 				<ng-container *ngTemplateOutlet='appointmentList; context: {
 					incoming: true,
@@ -25,7 +27,9 @@
 			</ng-container>
 		</ng-container>
 
-		<ng-container *ngIf='appointments.current | async as currentAppointments'>
+		<ng-container *ngIf='
+			accountAppointmentsService.appointments.current | async as currentAppointments
+		'>
 			<ng-container *ngIf='currentAppointments.length > 0'>
 				<ng-container *ngTemplateOutlet='appointmentList; context: {
 					canDelete: true,
@@ -41,7 +45,7 @@
 		<ng-container *ngTemplateOutlet='appointmentList; context: {
 			canDelete: true,
 			canJoin: false,
-			list: appointments.future | async,
+			list: accountAppointmentsService.appointments.future | async,
 			title: stringsService.futureAppointments
 		}'></ng-container>
 
@@ -53,7 +57,7 @@
 				<ng-container *ngTemplateOutlet='appointmentListContent; context: {
 					canDelete: false,
 					canJoin: false,
-					list: appointments.past | async
+					list: accountAppointmentsService.appointments.past | async
 				}'></ng-container>
 			</mat-expansion-panel>
 		</mat-accordion>

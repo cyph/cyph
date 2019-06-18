@@ -39,6 +39,7 @@
 							<input
 								matInput
 								cyphTranslate
+								[matAutocomplete]='fromNameAutocomplete'
 								[ngModel]='accountService.fromName | async'
 								(ngModelChange)='accountService.fromName.next($event)'
 								name='name'
@@ -46,10 +47,17 @@
 								required
 							/>
 						</mat-form-field>
+						<mat-autocomplete #fromNameAutocomplete='matAutocomplete'>
+							<ng-container *ngTemplateOutlet='emailContactOptions; context: {
+								options: accountService.fromNameOptions
+							}'></ng-container>
+						</mat-autocomplete>
+
 						<mat-form-field fxFlex>
 							<input
 								matInput
 								cyphTranslate
+								[matAutocomplete]='fromEmailAutocomplete'
 								[ngModel]='accountService.fromEmail | async'
 								(ngModelChange)='accountService.fromEmail.next($event)'
 								name='email'
@@ -59,6 +67,25 @@
 								required
 							/>
 						</mat-form-field>
+						<mat-autocomplete #fromEmailAutocomplete='matAutocomplete'>
+							<ng-container *ngTemplateOutlet='emailContactOptions; context: {
+								options: accountService.fromEmailOptions
+							}'></ng-container>
+						</mat-autocomplete>
+
+						<ng-template #emailContactOptions let-options='options'>
+							<mat-option
+								(click)='
+									accountService.fromEmail.next(option.email);
+									accountService.fromName.next(option.name);
+								'
+								*ngFor='let option of options | async'
+							>
+								<span>{{option.name}}</span>
+								&ngsp;
+								<small><{{option.email}}></small>
+							</mat-option>
+						</ng-template>
 					</ng-container>
 
 					<cyph-account-contacts-search
@@ -126,79 +153,101 @@
 						<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='5px'>
 							<h1 cyphTranslate>Your appointment has been requested!</h1>
 
-							<ng-container *ngIf='
-								accountDatabaseService.currentUser | async as currentUser;
-								else unregisteredPostRequest
-							'>
+							<ng-container *ngIf='envService.isTelehealth'>
 								<ng-container *ngIf='
-									envService.isTelehealth &&
-									(sentFileID | async) !== undefined &&
-									(currentUser.user.userType | async) ===
-										accountUserTypes.Standard
-									;
-									else doctorView
+									accountDatabaseService.currentUser | async as currentUser;
+									else unregisteredPostRequest
 								'>
-									<h2 cyphTranslate>
-										Why don't you get ahead on those medical forms while you're
-										waiting for confirmation?
-									</h2>
-									<br />
-									<div fxLayout='row' fxLayoutGap='7px'>
+									<ng-container *ngIf='
+										!envService.isTelehealthFull;
+										else promptForm
+									'>
+										<br />
 										<button
 											mat-raised-button
 											cyphTranslate
 											color='accent'
-											[routerLink]='"/new-patient/" + (sentFileID | async)'
+											routerLink='/'
 										>
-											Patient Forms
+											Back
 										</button>
+									</ng-container>
 
+									<ng-template #promptForm>
+										<ng-container *ngIf='
+											(sentFileID | async) !== undefined &&
+											(currentUser.user.userType | async) ===
+												accountUserTypes.Standard
+											;
+											else doctorView
+										'>
+											<h2 cyphTranslate>
+												Why don't you get ahead on those medical forms
+												while you're waiting for confirmation?
+											</h2>
+											<br />
+											<div fxLayout='row' fxLayoutGap='7px'>
+												<button
+													mat-raised-button
+													cyphTranslate
+													color='accent'
+													[routerLink]='
+														"/new-patient/" +
+														(sentFileID | async)
+													'
+												>
+													Patient Forms
+												</button>
+
+												<button
+													mat-raised-button
+													cyphTranslate
+													color='primary'
+													routerLink='/appointments'
+												>
+													I'll do this later
+												</button>
+											</div>
+										</ng-container>
+									</ng-template>
+
+									<ng-template #doctorView>
+										<br />
 										<button
 											mat-raised-button
 											cyphTranslate
-											color='primary'
+											color='accent'
 											routerLink='/appointments'
 										>
-											I'll do this later
+											Back to Appointments
 										</button>
-									</div>
+									</ng-template>
 								</ng-container>
-								<ng-template #doctorView>
+
+								<ng-template #unregisteredPostRequest>
 									<br />
-									<button
-										mat-raised-button
-										cyphTranslate
-										color='accent'
-										routerLink='/appointments'
-									>
-										Back to Appointments
-									</button>
+									<br />
+									<div cyphTranslate>
+										Your request has been submitted to the doctor, and
+										you will receive a confirmation via email as soon
+										as it's accepted or rejected.
+									</div>
+									<br />
+									<div>
+										<span cyphTranslate>
+											In the meantime, you may close this window or
+										</span>
+										<a
+											cyphTranslate
+											[routerLink]='
+												"/profile/" +
+												((searchUsername | async) || "")
+											'
+										>go back</a>.
+									</div>
+									<br />
 								</ng-template>
 							</ng-container>
-
-							<ng-template #unregisteredPostRequest>
-								<br />
-								<br />
-								<div cyphTranslate>
-									Your request has been submitted to the doctor, and
-									you will receive a confirmation via email as soon
-									as it's accepted or rejected.
-								</div>
-								<br />
-								<div>
-									<span cyphTranslate>
-										In the meantime, you may close this window or
-									</span>
-									<a
-										cyphTranslate
-										[routerLink]='
-											"/profile/" +
-											((searchUsername | async) || "")
-										'
-									>go back</a>.
-								</div>
-								<br />
-							</ng-template>
 						</div>
 					</ng-template>
 				</div>

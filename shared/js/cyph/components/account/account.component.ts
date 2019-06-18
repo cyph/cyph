@@ -242,7 +242,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 			opacity: [1, 0.5, 0],
 			states: {
 				'default-state': {
-					gradients: !this.envService.isTelehealth ?
+					gradients: !this.envService.telehealthTheme ?
 						[
 							['#f5f5f6', '#cccccc'],
 							['#cccccc', '#f5f5f6']

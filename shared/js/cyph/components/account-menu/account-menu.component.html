@@ -15,7 +15,7 @@
 		fxLayout='column'
 		fxLayoutAlign='center stretch'
 	>
-		<ng-container *ngTemplateOutlet='buttons'></ng-container>
+		<ng-container *ngTemplateOutlet='menuContent'></ng-container>
 	</div>
 
 	<button
@@ -41,83 +41,30 @@
 	'></div>
 </div>
 
-<ng-template #buttons>
-	<div fxFlex><div cyphNanoScroller><div fxFlex fxFlexFill>
 
+<ng-template #appointmentList>
+	<mat-nav-list *ngIf='
+		accountAppointmentsService.appointments.upcoming | async as upcomingAppointments
+	'>
+		<h3 matLine cyphTranslate>
+			Upcoming Appointments
+		</h3>
 
-	<div
-		class='cover-image'
-		[class.hidden]='envService.isTelehealth'
-		[style.background-image]='urlToSafeStyle(currentUser.user.coverImage | async) | async'
-		*ngIf='menuExpanded | async'
-	></div>
-
-	<div class='context-menu' *ngIf='menuExpanded | async'>
-		<ng-content></ng-content>
-	</div>
-
-	<mat-nav-list class='home-list'>
-		<a
-			mat-list-item
-			cyphTranslate
-			class='home'
-			aria-label='Home'
-			routerLink='/'
-			(click)='click()'
-		>
-			<cyph-logo
-				mat-list-icon
-				icon
-				white
-				*ngIf='(menuExpanded | async) === false'
-			></cyph-logo>
-			<cyph-logo
-				matLine
-				white
-				*ngIf='menuExpanded | async'
-			></cyph-logo>
-		</a>
-	</mat-nav-list>
-
-	<mat-list class='avatar-list'>
-		<mat-list-item>
-			<img
-				cyphTranslate
-				matListAvatar
-				class='avatar'
-				[ngClass]='userPresence[(currentUser.user.status | async) || 0]'
-				alt='Profile Picture'
-				[src]='currentUser.user.avatar | async'
-				routerLink='/profile'
-				(click)='click()'
-			/>
-			<h3 matLine [fxShow]='menuExpanded | async'>
-				{{currentUser.user.name | async}}
-			</h3>
-			<div matLine [fxShow]='menuExpanded | async' fxLayoutAlign='row'>
-				<div class='username'>@{{currentUser.user.realUsername | async}}</div>
-				<mat-select
-					cyphTranslate
-					[ngModel]='currentUser.user.status | async'
-					(ngModelChange)='
-						currentUser.user.accountUserPresence.setValue({status: $event})
-					'
-					name='status'
-					class='status'
-					placeholder='Status'
-					*ngIf='!envService.isTelehealth'
-				>
-					<mat-option
-						*ngFor='let status of statuses; trackBy: trackByValue'
-						[value]='status.value'
-					>
-						{{status.text}}
-					</mat-option>
-				</mat-select>
-			</div>
+		<mat-list-item *ngFor='let o of upcomingAppointments'>
+			<strong>{{o.record.name}}</strong>
+			<small>
+				{{getDateTimeString(o.appointment.calendarInvite.startTime)}}
+				&ngsp;
+				&ndash;
+				&ngsp;
+				{{getDateTimeString(o.appointment.calendarInvite.endTime)}}
+			</small>
 		</mat-list-item>
-	</mat-list>
+	</mat-nav-list>
+</ng-template>
 
+
+<ng-template #buttons>
 	<mat-nav-list>
 		<ng-container *ngIf='
 			currentUser.confirmed &&
@@ -450,9 +397,96 @@
 			</a>
 		</ng-container>
 	</mat-nav-list>
+</ng-template>
 
 
-	</div></div></div>
+<ng-template #menuContent>
+	<div fxFlex>
+		<div cyphNanoScroller>
+			<div fxFlex fxFlexFill>
+				<div
+					class='cover-image'
+					[class.hidden]='envService.isTelehealth'
+					[style.background-image]='
+						urlToSafeStyle(currentUser.user.coverImage | async) | async
+					'
+					*ngIf='menuExpanded | async'
+				></div>
+
+				<div class='context-menu' *ngIf='menuExpanded | async'>
+					<ng-content></ng-content>
+				</div>
+
+				<mat-nav-list class='home-list'>
+					<a
+						mat-list-item
+						cyphTranslate
+						class='home'
+						aria-label='Home'
+						routerLink='/'
+						(click)='click()'
+					>
+						<cyph-logo
+							mat-list-icon
+							icon
+							white
+							*ngIf='(menuExpanded | async) === false'
+						></cyph-logo>
+						<cyph-logo
+							matLine
+							white
+							*ngIf='menuExpanded | async'
+						></cyph-logo>
+					</a>
+				</mat-nav-list>
+
+				<mat-list class='avatar-list'>
+					<mat-list-item>
+						<img
+							cyphTranslate
+							matListAvatar
+							class='avatar'
+							[ngClass]='userPresence[(currentUser.user.status | async) || 0]'
+							alt='Profile Picture'
+							[src]='currentUser.user.avatar | async'
+							routerLink='/profile'
+							(click)='click()'
+						/>
+						<h3 matLine [fxShow]='menuExpanded | async'>
+							{{currentUser.user.name | async}}
+						</h3>
+						<div matLine [fxShow]='menuExpanded | async' fxLayoutAlign='row'>
+							<div class='username'>@{{currentUser.user.realUsername | async}}</div>
+							<mat-select
+								cyphTranslate
+								[ngModel]='currentUser.user.status | async'
+								(ngModelChange)='
+									currentUser.user.accountUserPresence.setValue({status: $event})
+								'
+								name='status'
+								class='status'
+								placeholder='Status'
+								*ngIf='!envService.isTelehealth'
+							>
+								<mat-option
+									*ngFor='let status of statuses; trackBy: trackByValue'
+									[value]='status.value'
+								>
+									{{status.text}}
+								</mat-option>
+							</mat-select>
+						</div>
+					</mat-list-item>
+				</mat-list>
+
+				<ng-container *ngTemplateOutlet='
+					envService.isTelehealth && !envService.isTelehealthFull ?
+						appointmentList :
+						buttons
+				'></ng-container>
+			</div>
+		</div>
+	</div>
 
 	<mat-nav-list>
 		<mat-divider></mat-divider>

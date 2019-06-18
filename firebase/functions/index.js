@@ -43,7 +43,7 @@ const {
 const {notify}	= require('./notify')(database, messaging);
 
 
-const channelDisconnectTimeout	= 5000;
+const channelDisconnectTimeout	= 20000;
 
 const getFullBurnerURL	= (namespace, callType) => {
 	const {burnerURL}	= namespaces[namespace];
@@ -55,14 +55,6 @@ const getFullBurnerURL	= (namespace, callType) => {
 			callType === 'video' ?
 				'https://video.cyph.healthcare/' :
 				'https://chat.cyph.healthcare/'
-		) :
-	namespace === 'cyph_pro' ?
-		(
-			callType === 'audio' ?
-				'https://audio.cyph.pro/' :
-			callType === 'video' ?
-				'https://video.cyph.pro/' :
-				'https://cyph.pro/'
 		) :
 	namespace === 'cyph_ws' ?
 		(

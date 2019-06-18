@@ -1164,13 +1164,7 @@ export class ChatService extends BaseProvider {
 
 		const predecessorsPromise	= (async () : Promise<IChatMessagePredecessor[]|undefined> => {
 			/* Redundant for 1:1 chats since Castle already enforces message order */
-			if (
-				!this.sessionService.group ||
-				(
-					this.envService.environment.customBuild &&
-					this.envService.environment.customBuild.config.threatModelBasic
-				)
-			) {
+			if (!this.sessionService.group) {
 				return [];
 			}
 
@@ -1608,7 +1602,7 @@ export class ChatService extends BaseProvider {
 			});
 
 			(async () => {
-				while (this.sessionService.state.isAlive) {
+				while (this.sessionService.state.isAlive.value) {
 					await this.chat.receiveTextLock(async lockData => {
 						const f	= async (newEvents: ISessionMessageData[]) =>
 							this.addTextMessage(...newEvents)
