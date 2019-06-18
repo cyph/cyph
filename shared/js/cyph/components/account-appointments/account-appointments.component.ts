@@ -7,8 +7,7 @@ import {
 import {Options} from 'fullcalendar';
 import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
-import {combineLatest, Observable, of} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes, CallTypes, IAccountFileRecord, IAppointment} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -17,12 +16,11 @@ import {AccountUserLookupService} from '../../services/account-user-lookup.servi
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
-import {filterUndefined} from '../../util/filter';
-import {observableAll} from '../../util/observable-all';
 import {getDateTimeString, watchTimestamp} from '../../util/time';
 
 
@@ -36,68 +34,11 @@ import {getDateTimeString, watchTimestamp} from '../../util/time';
 	templateUrl: './account-appointments.component.html'
 })
 export class AccountAppointmentsComponent extends BaseProvider implements AfterViewInit {
-	/** Time in ms when user can check in - also used as cuttoff point for end time. */
-	private readonly appointmentGracePeriod: number	= 600000;
-
 	/** @ignore */
 	private calendarEvents: {end: number; start: number; title: string}[]	= [];
 
-	/** Gets appointment. */
-	private readonly getAppointment	= memoize(
-		(record: IAccountFileRecord) : Observable<
-			{appointment: IAppointment; friend?: string}|undefined
-		> => this.accountFilesService.watchAppointment(record).pipe(
-			map(appointment => {
-				const currentUser	= this.accountDatabaseService.currentUser.value;
-
-				if (!currentUser) {
-					return;
-				}
-
-				const friend		= (appointment.participants || []).
-					filter(participant => participant !== currentUser.user.username)
-				[0];
-
-				return {appointment, friend};
-			})
-		),
-		(record: IAccountFileRecord) => record.id
-	);
-
-	/** @ignore */
-	private readonly unfilteredAppointments	= this.getAppointments(
-		this.accountFilesService.filesListFiltered.appointments
-	);
-
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes			= AccountUserTypes;
-
-	/** Appointment lists. */
-	public readonly appointments				= {
-		current: combineLatest([this.unfilteredAppointments, watchTimestamp()]).pipe(
-			map(([appointments, now]) => appointments.filter(({appointment}) =>
-				!appointment.occurred &&
-				(now + this.appointmentGracePeriod) >= appointment.calendarInvite.startTime &&
-				(now - this.appointmentGracePeriod) <= appointment.calendarInvite.endTime
-			))
-		),
-		future: combineLatest([this.unfilteredAppointments, watchTimestamp()]).pipe(
-			map(([appointments, now]) => appointments.filter(({appointment}) =>
-				!appointment.occurred &&
-				(now + this.appointmentGracePeriod) < appointment.calendarInvite.startTime
-			))
-		),
-		incoming: this.getAppointments(
-			this.accountFilesService.incomingFilesFiltered.appointments
-		),
-		past: combineLatest([this.unfilteredAppointments, watchTimestamp()]).pipe(
-			map(([appointments, now]) => appointments.filter(({appointment}) =>
-				appointment.occurred || (
-					(now - this.appointmentGracePeriod) > appointment.calendarInvite.endTime
-				)
-			))
-		)
-	};
 
 	/** @see CalendarComponent */
 	@ViewChild(CalendarComponent) public calendar?: CalendarComponent;
@@ -149,27 +90,6 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	/** Current time - used to check if appointment is within range. */
 	public readonly timestampWatcher			= watchTimestamp();
 
-	/** @ignore */
-	private getAppointments (recordsList: Observable<IAccountFileRecord[]>) : Observable<{
-		appointment: IAppointment;
-		friend?: string;
-		record: IAccountFileRecord;
-	}[]> {
-		return recordsList.pipe(
-			mergeMap(records => observableAll(
-				records.map(record =>
-					this.getAppointment(record).pipe(map(appointment =>
-						appointment ? {id: record.id, record, ...appointment} : undefined
-					))
-				).concat(
-					/* Workaround for it not emitting when recordsList changes */
-					of(undefined)
-				)
-			)),
-			map(filterUndefined)
-		);
-	}
-
 	/** Accepts appointment request. */
 	public async accept ({appointment, friend, record}: {
 		appointment: IAppointment;
@@ -211,22 +131,27 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 			await this.calendar.initialized.pipe(take(1)).toPromise();
 		}
 
-		this.subscriptions.push(this.unfilteredAppointments.subscribe(appointments => {
-			this.calendarEvents	= appointments.map(({appointment}) => ({
-				end: appointment.calendarInvite.endTime,
-				start: appointment.calendarInvite.startTime,
-				title: appointment.calendarInvite.title
-			}));
+		this.subscriptions.push(
+			this.accountAppointmentsService.allAppointments.subscribe(appointments => {
+				this.calendarEvents	= appointments.map(({appointment}) => ({
+					end: appointment.calendarInvite.endTime,
+					start: appointment.calendarInvite.startTime,
+					title: appointment.calendarInvite.title
+				}));
 
-			if (this.calendar) {
-				this.calendar.fullCalendar('refetchEvents');
-			}
-		}));
+				if (this.calendar) {
+					this.calendar.fullCalendar('refetchEvents');
+				}
+			})
+		);
 	}
 
 	constructor (
 		/** @ignore */
 		public readonly databaseService: DatabaseService,
+
+		/** @see AccountAppointmentsService */
+		public readonly accountAppointmentsService: AccountAppointmentsService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
