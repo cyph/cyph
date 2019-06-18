@@ -89,6 +89,24 @@ export class AccountAppointmentsService extends BaseProvider {
 		)
 	};
 
+	/** List of email contacts from all appointments. */
+	public readonly pastEmailContacts	= this.allAppointments.pipe(
+		map(appointments =>
+			Object.entries(
+				appointments.
+					map(({appointment}) => ({
+						email: (appointment.fromEmail || '').trim().toLowerCase(),
+						name: (appointment.fromName || '').trim()
+					})).
+					filter(({email}) => email).
+					reduce<Record<string, string>>(
+						(o, {email, name}) => ({...o, [email]: name}),
+						{}
+					)
+			).map(([email, name]) => ({email, name}))
+		)
+	);
+
 	/** @ignore */
 	private getAppointments (recordsList: Observable<IAccountFileRecord[]>) : Observable<{
 		appointment: IAppointment;

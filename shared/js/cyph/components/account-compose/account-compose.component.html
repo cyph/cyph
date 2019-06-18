@@ -39,6 +39,7 @@
 							<input
 								matInput
 								cyphTranslate
+								[matAutocomplete]='fromNameAutocomplete'
 								[ngModel]='accountService.fromName | async'
 								(ngModelChange)='accountService.fromName.next($event)'
 								name='name'
@@ -46,10 +47,17 @@
 								required
 							/>
 						</mat-form-field>
+						<mat-autocomplete #fromNameAutocomplete='matAutocomplete'>
+							<ng-container *ngTemplateOutlet='emailContactOptions; context: {
+								options: accountService.fromNameOptions
+							}'></ng-container>
+						</mat-autocomplete>
+
 						<mat-form-field fxFlex>
 							<input
 								matInput
 								cyphTranslate
+								[matAutocomplete]='fromEmailAutocomplete'
 								[ngModel]='accountService.fromEmail | async'
 								(ngModelChange)='accountService.fromEmail.next($event)'
 								name='email'
@@ -59,6 +67,25 @@
 								required
 							/>
 						</mat-form-field>
+						<mat-autocomplete #fromEmailAutocomplete='matAutocomplete'>
+							<ng-container *ngTemplateOutlet='emailContactOptions; context: {
+								options: accountService.fromEmailOptions
+							}'></ng-container>
+						</mat-autocomplete>
+
+						<ng-template #emailContactOptions let-options='options'>
+							<mat-option
+								(click)='
+									accountService.fromEmail.next(option.email);
+									accountService.fromName.next(option.name);
+								'
+								*ngFor='let option of options | async'
+							>
+								<span>{{option.name}}</span>
+								&ngsp;
+								<small><{{option.email}}></small>
+							</mat-option>
+						</ng-template>
 					</ng-container>
 
 					<cyph-account-contacts-search
