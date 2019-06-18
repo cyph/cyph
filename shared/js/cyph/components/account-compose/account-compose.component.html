@@ -132,40 +132,58 @@
 									else unregisteredPostRequest
 								'>
 									<ng-container *ngIf='
-										(sentFileID | async) !== undefined &&
-										(currentUser.user.userType | async) ===
-											accountUserTypes.Standard
-										;
-										else doctorView
+										!envService.isTelehealthFull;
+										else promptForm
 									'>
-										<h2 cyphTranslate>
-											Why don't you get ahead on those medical forms
-											while you're waiting for confirmation?
-										</h2>
 										<br />
-										<div fxLayout='row' fxLayoutGap='7px'>
-											<button
-												mat-raised-button
-												cyphTranslate
-												color='accent'
-												[routerLink]='
-													"/new-patient/" +
-													(sentFileID | async)
-												'
-											>
-												Patient Forms
-											</button>
-
-											<button
-												mat-raised-button
-												cyphTranslate
-												color='primary'
-												routerLink='/appointments'
-											>
-												I'll do this later
-											</button>
-										</div>
+										<button
+											mat-raised-button
+											cyphTranslate
+											color='accent'
+											routerLink='/'
+										>
+											Back
+										</button>
 									</ng-container>
+
+									<ng-template #promptForm>
+										<ng-container *ngIf='
+											(sentFileID | async) !== undefined &&
+											(currentUser.user.userType | async) ===
+												accountUserTypes.Standard
+											;
+											else doctorView
+										'>
+											<h2 cyphTranslate>
+												Why don't you get ahead on those medical forms
+												while you're waiting for confirmation?
+											</h2>
+											<br />
+											<div fxLayout='row' fxLayoutGap='7px'>
+												<button
+													mat-raised-button
+													cyphTranslate
+													color='accent'
+													[routerLink]='
+														"/new-patient/" +
+														(sentFileID | async)
+													'
+												>
+													Patient Forms
+												</button>
+
+												<button
+													mat-raised-button
+													cyphTranslate
+													color='primary'
+													routerLink='/appointments'
+												>
+													I'll do this later
+												</button>
+											</div>
+										</ng-container>
+									</ng-template>
+
 									<ng-template #doctorView>
 										<br />
 										<button

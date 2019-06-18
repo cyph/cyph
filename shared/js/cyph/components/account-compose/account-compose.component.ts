@@ -125,7 +125,7 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 		const routeData	= await this.activatedRoute.data.pipe(take(1)).toPromise();
 
 		if (
-			this.envService.isTelehealth &&
+			this.envService.isTelehealthFull &&
 			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
 			typeof routeData.form === 'function' &&
 			(
