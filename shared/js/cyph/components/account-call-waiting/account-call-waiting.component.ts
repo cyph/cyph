@@ -50,7 +50,7 @@ implements AfterViewInit, OnChanges {
 	public readonly callTypes						= CallTypes;
 
 	/** Component for composing forms. */
-	@ViewChild(AccountComposeNoProvidersComponent)
+	@ViewChild(AccountComposeNoProvidersComponent, {static: false})
 	public formCompose?: AccountComposeNoProvidersComponent;
 
 	/** Participants by type. */

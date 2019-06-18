@@ -41,7 +41,7 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	public readonly accountUserTypes			= AccountUserTypes;
 
 	/** @see CalendarComponent */
-	@ViewChild(CalendarComponent) public calendar?: CalendarComponent;
+	@ViewChild(CalendarComponent, {static: false}) public calendar?: CalendarComponent;
 
 	/** Calendar configuration. */
 	public readonly calendarOptions: Options	= {

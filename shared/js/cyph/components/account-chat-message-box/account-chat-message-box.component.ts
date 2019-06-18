@@ -29,7 +29,7 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 	;
 
 	/** @see ChatMessageBoxInheritNgFormComponent */
-	@ViewChild(ChatMessageBoxInheritNgFormComponent)
+	@ViewChild(ChatMessageBoxInheritNgFormComponent, {static: false})
 	public chatMessageBox?: ChatMessageBoxInheritNgFormComponent;
 
 	/** @see ChatMessageValue.Types */

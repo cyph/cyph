@@ -170,7 +170,7 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	@Input() public promptFollowup?: string;
 
 	/** Scroll view element. */
-	@ViewChild('scrollView') public scrollView?: ElementRef;
+	@ViewChild('scrollView', {static: false}) public scrollView?: ElementRef;
 
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean		= false;

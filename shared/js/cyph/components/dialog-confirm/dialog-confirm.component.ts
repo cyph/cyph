@@ -41,7 +41,7 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 	public content?: string;
 
 	/** @see DynamicFormComponent */
-	@ViewChild(DynamicFormComponent) public dynamicForm?: DynamicFormComponent;
+	@ViewChild(DynamicFormComponent, {static: false}) public dynamicForm?: DynamicFormComponent;
 
 	/** Avatar to put in betwen FAB buttons. */
 	public fabAvatar?: Observable<SafeUrl|string|undefined>;

@@ -43,7 +43,7 @@ export class PinInputComponent extends BaseProvider implements ControlValueAcces
 	public readonly isDisabled						= new BehaviorSubject<boolean>(false);
 
 	/** Input. */
-	@ViewChild('pinInput') public pinInput?: ElementRef;
+	@ViewChild('pinInput', {static: false}) public pinInput?: ElementRef;
 
 	/** Form name. */
 	@Input() public name: string					= '';

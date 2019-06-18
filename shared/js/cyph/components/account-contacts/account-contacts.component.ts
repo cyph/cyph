@@ -135,7 +135,7 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	}));
 
 	/** @see AccountContactsSearchComponent */
-	@ViewChild(AccountContactsSearchComponent)
+	@ViewChild(AccountContactsSearchComponent, {static: false})
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Full contact list with active contact filtered out. */
