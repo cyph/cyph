@@ -56,14 +56,6 @@ const getFullBurnerURL	= (namespace, callType) => {
 				'https://video.cyph.healthcare/' :
 				'https://chat.cyph.healthcare/'
 		) :
-	namespace === 'cyph_pro' ?
-		(
-			callType === 'audio' ?
-				'https://audio.cyph.pro/' :
-			callType === 'video' ?
-				'https://video.cyph.pro/' :
-				'https://cyph.pro/'
-		) :
 	namespace === 'cyph_ws' ?
 		(
 			callType === 'audio' ?
