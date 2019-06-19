@@ -15,23 +15,25 @@ fi
 
 # Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
 
-minifyScripts='
-	/node_modules/terser/dist/bundle.js
-	/node_modules/uglify-es/lib/compress.js
-	/node_modules/uglify-es/lib/minify.js
-	/node_modules/uglify-js/lib/compress.js
-	/node_modules/uglify-js/lib/minify.js
-'
+minifyScripts="$(
+	grep -rlP "this\.options\[['\"]sequences['\"]\]" \
+		/node_modules/@angular* \
+		/node_modules/ng-* \
+		/node_modules/*terse* \
+		/node_modules/*uglify* \
+		/node_modules/*webpack*
+)"
 
 onexit () {
 	for minifyScript in ${minifyScripts} ; do
-		mv ${minifyScript}.bak ${minifyScript} 2> /dev/null
-	done
+		minifyScriptMin="$(echo "${minifyScript}" | sed 's|\.js$|.min.js|')"
 
-	mv \
-		/node_modules/terser/dist/bundle.min.js.bak \
-		/node_modules/terser/dist/bundle.min.js \
-	2> /dev/null
+		mv ${minifyScript}.bak ${minifyScript} 2> /dev/null
+
+		if [ -f "${minifyScriptMin}.bak" ] ; then
+			mv ${minifyScriptMin}.bak ${minifyScriptMin}
+		fi
+	done
 }
 
 if [ "${noBuild}" ] || [ "${fullMinify}" ] ; then
@@ -41,6 +43,8 @@ else
 fi
 
 for minifyScript in ${minifyScripts} ; do
+	minifyScriptMin="$(echo "${minifyScript}" | sed 's|\.js$|.min.js|')"
+
 	cp ${minifyScript} ${minifyScript}.bak
 
 	commandsDir="$(cd "$(dirname "$0")" ; pwd)"
@@ -52,10 +56,12 @@ for minifyScript in ${minifyScripts} ; do
 
 	sed -i "s/safari10 = .*;/safari10 = true;/g" ${minifyScript}
 	sed -i "s/safari10\s*:\s*false/safari10: true/g" ${minifyScript}
-done
 
-mv /node_modules/terser/dist/bundle.min.js /node_modules/terser/dist/bundle.min.js.bak
-cp /node_modules/terser/dist/bundle.js /node_modules/terser/dist/bundle.min.js
+	if [ -f "${minifyScriptMin}" ] ; then
+		mv ${minifyScriptMin} ${minifyScriptMin}.bak
+		cp ${minifyScript} ${minifyScriptMin}
+	fi
+done
 
 
 # Workaround for https://github.com/angular/angular-cli/issues/10612
