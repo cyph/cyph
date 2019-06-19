@@ -12,6 +12,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';
 import {urlToSafeStyle} from '../../util/safe-values';
+import {getDateTimeString} from '../../util/time';
 
 
 /**
@@ -26,6 +27,9 @@ import {urlToSafeStyle} from '../../util/safe-values';
 export class AccountMenuComponent extends BaseProvider {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes		= AccountUserTypes;
+
+	/** @see getDateTimeSting */
+	public readonly getDateTimeString		= getDateTimeString;
 
 	/** @see AccountService.menuExpanded */
 	public readonly menuExpanded			=
