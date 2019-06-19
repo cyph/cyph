@@ -289,10 +289,10 @@
   dependencies:
     tslib "^1.9.0"
 
-"@angular/flex-layout@6.0.0-beta.16":
-  version "6.0.0-beta.16"
-  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-6.0.0-beta.16.tgz#e2749c2609743ff4655b09ae8873709c7a62aeae"
-  integrity sha512-0AYtIBGrEJshdFMc6TXGloCkD19YTCRKVJl6xZHX4H5dLnUn+daqXcbh4UsWhayevnLp85HEf2ViHLmTa6jv3g==
+"@angular/flex-layout@^8.0.0-beta.26":
+  version "8.0.0-beta.26"
+  resolved "https://registry.yarnpkg.com/@angular/flex-layout/-/flex-layout-8.0.0-beta.26.tgz#05807e4daeb7c70da5653b681f8e8c0da87d133e"
+  integrity sha512-lXDLlMSNQhidW0grvisIsj/3gqLuYyN2MvABuRYybnFTc233sXGZuOAaulqq663LA0/DP/GNcz6a+A4ZAAlmPA==
   dependencies:
     tslib "^1.7.1"
 
