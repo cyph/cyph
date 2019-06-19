@@ -618,6 +618,7 @@
 								*ngIf='(isCurrentUser | async) === false'
 							>
 								<ng-container *ngIf='
+									envService.isTelehealthFull &&
 									(user.userType | async) === accountUserTypes.TelehealthDoctor;
 									else mailButtons
 								'>

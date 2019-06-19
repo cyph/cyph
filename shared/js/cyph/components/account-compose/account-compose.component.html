@@ -31,7 +31,6 @@
 					[fxShow]='(sent | async) === false'
 				>
 					<ng-container *ngIf='
-						(accountDatabaseService.currentUser | async) === undefined &&
 						(messageType | async) !== chatMessageValueTypes.Form &&
 						(fromDataPreSet | async) === false
 					'>

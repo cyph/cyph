@@ -52,58 +52,73 @@
 			/>
 		</ng-template>
 		<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px' class='actions'>
-			<button
-				mat-raised-button
-				color='accent'
-				[matTooltip]='stringsService.linkGet'
-				matTooltipPosition='above'
-				routerLink='/account-burner/chat'
-				*ngIf='(accountDatabaseService.currentUser | async)?.confirmed'
-			>
-				<mat-icon>whatshot</mat-icon>
-				&nbsp;
-				<span cyphTranslate>New Burner Chat</span>
-			</button>
-			<a
-				mat-raised-button
-				color='accent'
-				[matTooltip]='stringsService.linkGet'
-				matTooltipPosition='above'
-				[href]='envService.cyphImUrl'
-				*ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'
-			>
-				<mat-icon>whatshot</mat-icon>
-				&nbsp;
-				<span cyphTranslate>New Burner Chat</span>
-			</a>
+			<ng-container *ngIf='!envService.isTelehealth; else telehealthButtons'>
+				<button
+					mat-raised-button
+					color='accent'
+					[matTooltip]='stringsService.linkGet'
+					matTooltipPosition='above'
+					routerLink='/account-burner/chat'
+					*ngIf='(accountDatabaseService.currentUser | async)?.confirmed'
+				>
+					<mat-icon>whatshot</mat-icon>
+					&nbsp;
+					<span cyphTranslate>New Burner Chat</span>
+				</button>
+				<a
+					mat-raised-button
+					color='accent'
+					[matTooltip]='stringsService.linkGet'
+					matTooltipPosition='above'
+					[href]='envService.cyphImUrl'
+					*ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'
+				>
+					<mat-icon>whatshot</mat-icon>
+					&nbsp;
+					<span cyphTranslate>New Burner Chat</span>
+				</a>
 
-			<button
-				mat-raised-button
-				color='accent'
-				cyphTranslate
-				matTooltip='Upload File'
-				matTooltipPosition='above'
-				cyphDropZone
-				[cyphDropZoneClass]='false'
-				(fileDrop)='accountFilesService.upload($event.name, $event)'
-			>
-				<mat-icon>cloud_upload</mat-icon>
-				&nbsp;
-				<span>Upload File to Vault</span>
-			</button>
+				<button
+					mat-raised-button
+					color='accent'
+					cyphTranslate
+					matTooltip='Upload File'
+					matTooltipPosition='above'
+					cyphDropZone
+					[cyphDropZoneClass]='false'
+					(fileDrop)='accountFilesService.upload($event.name, $event)'
+				>
+					<mat-icon>cloud_upload</mat-icon>
+					&nbsp;
+					<span>Upload File to Vault</span>
+				</button>
 
-			<button
-				mat-raised-button
-				color='accent'
-				cyphTranslate
-				matTooltip='New Note'
-				matTooltipPosition='above'
-				routerLink='/notes/new'
-			>
-				<mat-icon>note_add</mat-icon>
-				&nbsp;
-				<span>New Secure Note</span>
-			</button>
+				<button
+					mat-raised-button
+					color='accent'
+					cyphTranslate
+					matTooltip='New Note'
+					matTooltipPosition='above'
+					routerLink='/notes/new'
+				>
+					<mat-icon>note_add</mat-icon>
+					&nbsp;
+					<span>New Secure Note</span>
+				</button>
+			</ng-container>
+
+			<ng-template #telehealthButtons>
+				<button
+					mat-raised-button
+					cyphTranslate
+					color='accent'
+					matTooltip='New Appointment Request'
+					matTooltipPosition='above'
+					routerLink='/request-appointment'
+				>
+					<mat-icon>add</mat-icon>
+				</button>
+			</ng-template>
 		</div>
 
 		<mat-progress-spinner
@@ -112,9 +127,10 @@
 		></mat-progress-spinner>
 	</div>
 </ng-template>
+
 <div *ngIf='
 	(accountDatabaseService.currentUser | async)?.confirmed &&
-	!envService.isTelehealthFull &&
+	!envService.isTelehealth &&
 	(envService.isMobile | async)
 '>
 	<div
@@ -201,4 +217,23 @@
 			</a>
 		</smd-fab-actions>
 	</smd-fab-speed-dial>
+</div>
+
+<div *ngIf='
+	(accountDatabaseService.currentUser | async)?.confirmed &&
+	envService.isTelehealth &&
+	!envService.isTelehealthFull &&
+	(envService.isMobile | async)
+'>
+	<button
+		mat-fab
+		cyphTranslate
+		color='primary'
+		matTooltip='New Appointment Request'
+		matTooltipPosition='above'
+		routerLink='/request-appointment'
+		class='fixed-fab'
+	>
+		<mat-icon>add</mat-icon>
+	</button>
 </div>
