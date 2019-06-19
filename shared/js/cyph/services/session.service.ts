@@ -68,7 +68,9 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	private readonly openEvents			= new Set<string>();
 
 	/** @ignore */
-	protected incomingMessageQueue: IAsyncList<ISessionMessageList>		= new LocalAsyncList();
+	protected incomingMessageQueue: IAsyncList<ISessionMessageList>		=
+		new LocalAsyncList<ISessionMessageList>()
+	;
 
 	/** @ignore */
 	protected incomingMessageQueueLock: LockFunction					= lockFunction();
