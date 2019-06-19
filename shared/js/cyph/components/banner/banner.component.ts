@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Output} from '@angular/core';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -6,6 +6,7 @@ import {StringsService} from '../../services/strings.service';
  * Angular component for Cyph banner.
  */
 @Component({
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-banner',
 	styleUrls: ['./banner.component.scss'],
 	templateUrl: './banner.component.html'

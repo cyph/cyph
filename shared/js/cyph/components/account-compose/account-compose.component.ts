@@ -18,6 +18,7 @@ import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {uuid} from '../../util/uuid';
 
@@ -294,6 +295,9 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 	public readonly sentMessage					=
 		new BehaviorSubject<{id: string; name?: string}|undefined>(undefined)
 	;
+
+	/** @see trackBySelf */
+	public readonly trackBySelf					= trackBySelf;
 
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {

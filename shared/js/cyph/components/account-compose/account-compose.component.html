@@ -79,7 +79,7 @@
 									accountService.fromEmail.next(option.email);
 									accountService.fromName.next(option.name);
 								'
-								*ngFor='let option of options | async'
+								*ngFor='let option of options | async; trackBy: trackBySelf'
 							>
 								<span>{{option.name}}</span>
 								&ngsp;
