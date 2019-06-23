@@ -664,7 +664,10 @@ export class AccountAuthService extends BaseProvider {
 						externalUsernames: {},
 						name,
 						realUsername,
-						userType: AccountUserTypes.Standard
+						userType:
+							this.envService.isTelehealth && !this.envService.isTelehealthFull ?
+								AccountUserTypes.TelehealthDoctor :
+								AccountUserTypes.Standard
 					},
 					signingKeyPair.privateKey,
 					true,
