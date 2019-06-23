@@ -170,7 +170,14 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 			const recipientUsers	= Array.from(this.recipients.value);
 			const recipients		= recipientUsers.map(o => o.username);
 
-			if (recipients.length < 1) {
+			if (
+				recipients.length < 1 &&
+				!(
+					this.accountDatabaseService.currentUser.value &&
+					this.accountService.fromEmail.value &&
+					this.accountService.fromName.value
+				)
+			) {
 				this.sent.next(false);
 				return;
 			}
