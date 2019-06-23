@@ -450,38 +450,36 @@ export class AccountService extends BaseProvider {
 	) {
 		super();
 
-		if (this.envService.debugLog) {
-			(<any> self).shareLogsWithCyph	= async () => {
-				await this.interstitial.pipe(filter(b => !b), take(1)).toPromise();
-				this.interstitial.next(true);
+		(<any> self).shareLogsWithCyph	= async () => {
+			await this.interstitial.pipe(filter(b => !b), take(1)).toPromise();
+			this.interstitial.next(true);
 
-				await Promise.all([
-					this.accountFilesService.upload(
-						`${uuid()}.log`,
-						{
-							data: this.potassiumService.fromString(
-								[
-									(await envService.packageName) + '\n---',
-									...(<Record<string, any>[]> (<any> self).logs).map(o =>
-										`${o.timestamp}${o.error ? ' (error)' : ''}: ${
-											o.argsCopy !== undefined ?
-												prettyPrint(o.argsCopy) :
-												stringify({keys: Object.keys(o.args)})
-										}`
-									)
-								].join('\n\n\n\n') + '\n'
-							),
-							mediaType: 'text/plain',
-							name: ''
-						},
-						'cyph'
-					),
-					sleep(1000)
-				]);
+			await Promise.all([
+				this.accountFilesService.upload(
+					`${uuid()}.log`,
+					{
+						data: this.potassiumService.fromString(
+							[
+								(await envService.packageName) + '\n---',
+								...(<Record<string, any>[]> (<any> self).logs).map(o =>
+									`${o.timestamp}${o.error ? ' (error)' : ''}: ${
+										o.argsCopy !== undefined ?
+											prettyPrint(o.argsCopy) :
+											stringify({keys: Object.keys(o.args)})
+									}`
+								)
+							].join('\n\n\n\n') + '\n'
+						),
+						mediaType: 'text/plain',
+						name: ''
+					},
+					'cyph'
+				),
+				sleep(1000)
+			]);
 
-				this.interstitial.next(false);
-			};
-		}
+			this.interstitial.next(false);
+		};
 
 		this.userInit();
 
