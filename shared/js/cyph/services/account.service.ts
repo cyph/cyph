@@ -555,6 +555,8 @@ export class AccountService extends BaseProvider {
 				if (!route && isMobile) {
 					return this.envService.isTelehealthFull ?
 						this.stringsService.profileHeader :
+					this.envService.isTelehealth ?
+						this.stringsService.productTelehealth :
 						this.stringsService.messagesHeader
 					;
 				}
