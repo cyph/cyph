@@ -11,9 +11,19 @@
 	'>
 		<cyph-account-contacts
 			[home]='true'
+			[fxHide]='envService.isTelehealth'
 			[searchMode]='searchMode | async'
 			(searchBarBlur)='router.navigate([])'
 		></cyph-account-contacts>
+
+		<div
+			fxFlex
+			fxFlexFill
+			fxLayoutAlign='center center'
+			*ngIf='envService.isTelehealth'
+		>
+			<ng-container *ngTemplateOutlet='logoTemplate'></ng-container>
+		</div>
 
 		<div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'>
 			<a
@@ -37,20 +47,8 @@
 		fxLayoutAlign='center center'
 		[class.initiating]='accountFilesService.uploadSpinner | async'
 	>
-		<cyph-logo
-			class='logo'
-			icon
-			[white]='envService.environment.customBuild?.config.dark'
-			*ngIf='envService.coBranded; else cyphAltLogo'
-		></cyph-logo>
-		<ng-template #cyphAltLogo>
-			<img
-				class='logo'
-				cyphTranslate
-				alt='Logo'
-				src='/assets/img/logo.purple.alt.icon.png'
-			/>
-		</ng-template>
+		<ng-container *ngTemplateOutlet='logoTemplate'></ng-container>
+
 		<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px' class='actions'>
 			<ng-container *ngIf='!envService.isTelehealth; else telehealthButtons'>
 				<button
@@ -236,3 +234,20 @@
 		<mat-icon>add</mat-icon>
 	</button>
 </div>
+
+<ng-template #logoTemplate>
+	<cyph-logo
+		class='logo'
+		icon
+		[white]='envService.environment.customBuild?.config.dark'
+		*ngIf='envService.coBranded; else cyphAltLogo'
+	></cyph-logo>
+	<ng-template #cyphAltLogo>
+		<img
+			class='logo'
+			cyphTranslate
+			alt='Logo'
+			src='/assets/img/logo.purple.alt.icon.png'
+		/>
+	</ng-template>
+</ng-template>

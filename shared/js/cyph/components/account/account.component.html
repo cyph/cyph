@@ -191,7 +191,7 @@
 	<div
 		[fxFlex]='accountService.menuExpandedMinWidthPX'
 		[fxShow]='
-			!envService.isTelehealthFull &&
+			!envService.isTelehealth &&
 			(accountDatabaseService.currentUser | async)?.confirmed === true
 		'
 		fxLayout='column'
