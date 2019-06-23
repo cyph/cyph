@@ -102,7 +102,13 @@
 					<cyph-account-chat-message-box
 						[customSendFunction]='send'
 						[calendarInviteFollowUp]='appointmentFollowUp | async'
-						[disableSend]='((recipients | async)?.size || 0) < 1'
+						[disableSend]='
+							((recipients | async)?.size || 0) < 1 &&
+							(
+								!(accountService.fromEmail | async) ||
+								!(accountService.fromName | async)
+							)
+						'
 						[messageType]='messageType | async'
 						[sendText]='
 							(
