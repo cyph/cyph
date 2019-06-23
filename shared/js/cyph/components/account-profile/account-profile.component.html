@@ -461,7 +461,7 @@
 <div
 	[class.editing]='(isEditorFocused | async) && (editMode | async)'
 	[class.initiating]='accountFilesService.uploadSpinner | async'
-	*ngIf='!envService.isTelehealth'
+	*ngIf='!envService.isTelehealthFull'
 >
 	<ng-container *ngTemplateOutlet='standardProfile'></ng-container>
 
@@ -478,7 +478,7 @@
 	class='telehealth'
 	[class.editing]='(isEditorFocused | async) && (editMode | async)'
 	[class.initiating]='accountFilesService.uploadSpinner | async'
-	*ngIf='envService.isTelehealth'
+	*ngIf='envService.isTelehealthFull'
 >
 	<div fxLayout='row'>
 		<div
