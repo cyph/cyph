@@ -175,7 +175,7 @@ $default-white: map-get($mat-grey, 100);
 			@include mat-expansion-panel-theme($cyph-theme);
 
 			mat-checkbox {
-				color: $cyph-foreground;
+				color: $cyph-foreground !important;
 			}
 
 			mat-expansion-panel {
