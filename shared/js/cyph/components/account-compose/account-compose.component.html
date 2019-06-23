@@ -105,8 +105,8 @@
 						[disableSend]='
 							((recipients | async)?.size || 0) < 1 &&
 							(
-								!(accountService.fromEmail | async) ||
-								!(accountService.fromName | async)
+								(accountService.fromEmail | async)?.length < 1 ||
+								(accountService.fromName | async)?.length < 1
 							)
 						'
 						[messageType]='messageType | async'
