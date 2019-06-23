@@ -102,9 +102,20 @@ mat-divider {
 	height: 2px;
 }
 
-.collapsed ::ng-deep .mat-list-item .mat-list-item-content {
-	position: relative;
-	left: 12px;
+.upcoming-appointments {
+	text-align: center;
+}
+
+.collapsed {
+	.upcoming-appointments {
+		font-size: 0.85em;
+	}
+
+
+	::ng-deep .mat-list-item .mat-list-item-content {
+		position: relative;
+		left: 12px;
+	}
 }
 
 .status {
