@@ -102,6 +102,10 @@ mat-divider {
 	height: 2px;
 }
 
+.appointment-list-item {
+	padding: 8px;
+}
+
 .upcoming-appointments {
 	text-align: center;
 }
@@ -110,7 +114,6 @@ mat-divider {
 	.upcoming-appointments {
 		font-size: 0.85em;
 	}
-
 
 	::ng-deep .mat-list-item .mat-list-item-content {
 		position: relative;

@@ -50,16 +50,19 @@
 			Upcoming Appointments
 		</h3>
 
-		<mat-list-item *ngFor='let o of upcomingAppointments'>
-			<strong>{{o.record.name}}</strong>
-			<small>
-				{{getDateTimeString(o.appointment.calendarInvite.startTime)}}
-				&ngsp;
-				&ndash;
-				&ngsp;
-				{{getDateTimeString(o.appointment.calendarInvite.endTime)}}
-			</small>
-		</mat-list-item>
+		<small>
+			<div class='appointment-list-item' *ngFor='let o of upcomingAppointments'>
+				<strong>{{o.record.name}}</strong>
+				<br />
+				<small>
+					{{getDateTimeString(o.appointment.calendarInvite.startTime)}}
+					&ngsp;
+					&ndash;
+					&ngsp;
+					{{getDateTimeString(o.appointment.calendarInvite.endTime)}}
+				</small>
+			</div>
+		</small>
 	</mat-nav-list>
 </ng-template>
 
