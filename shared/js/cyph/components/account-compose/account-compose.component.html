@@ -106,6 +106,7 @@
 						[messageType]='messageType | async'
 						[sendText]='
 							(
+								envService.isTelehealthFull &&
 								(messageType | async) === chatMessageValueTypes.CalendarInvite &&
 								(activatedRoute.data | async)?.form !== undefined
 							) ?
