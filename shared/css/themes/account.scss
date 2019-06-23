@@ -52,4 +52,8 @@ body.primary-account-theme {
 		color: $cyph-background-main;
 		background-color: $cyph-background;
 	}
+
+	cyph-account-register .cyph-banner mat-checkbox {
+		color: $cyph-foreground;
+	}
 }
