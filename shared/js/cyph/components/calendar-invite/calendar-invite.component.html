@@ -331,11 +331,11 @@
 			name='notes'
 			[ngModel]='value.description'
 			(ngModelChange)='value.description = $event; valueChange(value)'
-			[placeholder]='stringsService.notes'
+			[placeholder]='stringsService.messageTitle'
 		></textarea>
 	</mat-form-field>
 
-	<h4 fxFlex *ngIf='isDisabledWrapper | async'>{{stringsService.notes}}</h4>
+	<h4 fxFlex *ngIf='isDisabledWrapper | async'>{{stringsService.messageTitle}}</h4>
 	<div fxFlex class='notes' *ngIf='isDisabledWrapper | async'>{{value.description}}</div>
 </div>
 

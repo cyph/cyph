@@ -588,6 +588,9 @@ export class StringsService extends BaseProvider {
 	public readonly messagesHeader: string				= `Messages`;
 
 	/** @see StringsService */
+	public readonly messageTitle: string				= `Message`;
+
+	/** @see StringsService */
 	public readonly messageUnconfirmed: string			=
 		`Message delivery unconfirmed`
 	;
