@@ -293,13 +293,13 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 			case CastleEvents.abort:
 				this.state.sharedSecret.next(undefined);
 				this.errorService.log('CYPH AUTHENTICATION FAILURE');
-				this.trigger(events.connectFailure);
+				await this.trigger(events.connectFailure);
 				break;
 
 			case CastleEvents.connect:
 				await this.connected;
 				this.state.sharedSecret.next(undefined);
-				this.trigger(events.beginChat);
+				await this.trigger(events.beginChat);
 				break;
 
 			case CastleEvents.receive:
@@ -366,7 +366,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		}
 
 		this.state.isAlive.next(false);
-		this.trigger(events.closeChat);
+		await this.trigger(events.closeChat);
 
 		for (const event of Array.from(this.openEvents)) {
 			this.off(event);

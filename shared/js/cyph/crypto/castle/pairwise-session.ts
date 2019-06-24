@@ -47,7 +47,7 @@ export class PairwiseSession implements IPairwiseSession {
 	private async abort () : Promise<void> {
 		debugLog(() => ({castleHandshake: 'abort'}));
 		await this.handshakeState.currentStep.setValue(HandshakeSteps.Aborted);
-		this.transport.abort();
+		await this.transport.abort();
 	}
 
 	/** @ignore */
@@ -59,7 +59,7 @@ export class PairwiseSession implements IPairwiseSession {
 		}
 
 		await this.handshakeState.currentStep.setValue(HandshakeSteps.Complete);
-		this.transport.connect();
+		await this.transport.connect();
 	}
 
 	/** @ignore */

@@ -16,8 +16,8 @@ export class Transport {
 
 
 	/** Triggers abortion event. */
-	public abort () : void {
-		this.sessionService.castleHandler(CastleEvents.abort);
+	public async abort () : Promise<void> {
+		await this.sessionService.castleHandler(CastleEvents.abort);
 	}
 
 	/** @see ISessionService.closed */
@@ -26,8 +26,8 @@ export class Transport {
 	}
 
 	/** Triggers connection event. */
-	public connect () : void {
-		this.sessionService.castleHandler(CastleEvents.connect);
+	public async connect () : Promise<void> {
+		await this.sessionService.castleHandler(CastleEvents.connect);
 	}
 
 	/** Indicates whether or not this transport is still usable. */

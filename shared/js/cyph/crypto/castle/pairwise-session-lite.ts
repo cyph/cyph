@@ -177,10 +177,10 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	) {
 		this.initialMessagesDecrypted.resolve();
 
-		this.key.then(() => {
-			this.transport.connect();
-		}).catch(() => {
-			this.transport.abort();
-		});
+		this.key.then(async () =>
+			this.transport.connect()
+		).catch(async () =>
+			this.transport.abort()
+		);
 	}
 }
