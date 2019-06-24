@@ -1,5 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
+import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
 import {ISessionMessage, ISessionMessageData as ISessionMessageDataInternal} from '../proto';
 import {
@@ -38,6 +39,9 @@ export interface ISessionService {
 
 	/** Messaging group, if applicable. */
 	group?: ISessionService[];
+
+	/** Resolves when first batch of incoming messages have been processed. */
+	readonly initialMessagesProcessed: IResolvable<void>;
 
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;

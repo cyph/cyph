@@ -242,6 +242,7 @@ export class ChatService extends BaseProvider {
 		Promise.all([
 			this.resolvers.chatConnected.promise,
 			this.resolvers.currentMessageSynced.promise,
+			this.sessionService.initialMessagesProcessed.promise,
 			this.castleService && this.castleService.initialMessagesProcessed(),
 			this.channelService && this.channelService.initialMessagesProcessed.promise
 		]).then<true>(() =>

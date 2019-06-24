@@ -36,7 +36,7 @@ import {debugLog} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {resolvable} from '../util/wait';
+import {resolvable, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
@@ -107,6 +107,9 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public readonly freezePong: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(false);
+
+	/** @inheritDoc */
+	public readonly initialMessagesProcessed				= resolvable();
 
 	/** @inheritDoc */
 	public group?: SessionService[];
@@ -423,17 +426,47 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public async init (channelID?: string, userID?: string) : Promise<void> {
+		/*
+			Honeybadger workaround: see comment on the equivalent logic in the
+			PairwiseSession constructor
+		*/
+		let lockClaimed	= false;
+		sleep(2500).then(() => {
+			if (!lockClaimed) {
+				this.initialMessagesProcessed.resolve();
+			}
+		});
+
 		this.incomingMessageQueueLock(async o => {
+			lockClaimed	= true;
+
+			let initialMessageCount	= (await this.incomingMessageQueue.getValue()).length;
+
+			if (initialMessageCount === 0) {
+				this.initialMessagesProcessed.resolve();
+			}
+
 			const sub	= this.incomingMessageQueue.subscribeAndPop(async ({messages}) => {
-				if (!messages || messages.length < 1) {
-					return;
-				}
+				try {
+					if (!messages || messages.length < 1) {
+						return;
+					}
 
-				if (!this.correctSubSession(messages[0])) {
-					throw new Error('Different sub-session.');
-				}
+					if (!this.correctSubSession(messages[0])) {
+						throw new Error('Different sub-session.');
+					}
 
-				await this.cyphertextReceiveHandler(messages);
+					await this.cyphertextReceiveHandler(messages);
+				}
+				finally {
+					if (initialMessageCount > 0) {
+						--initialMessageCount;
+
+						if (initialMessageCount === 0) {
+							this.initialMessagesProcessed.resolve();
+						}
+					}
+				}
 			});
 
 			await Promise.race([this.closed, o.stillOwner.toPromise()]);
