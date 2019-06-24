@@ -41,7 +41,7 @@ export class PairwiseSession implements IPairwiseSession {
 	};
 
 	/** @inheritDoc */
-	public readonly initialMessagesDecrypted	= resolvable();
+	public readonly initialMessagesProcessed	= resolvable();
 
 	/** @ignore */
 	private async abort () : Promise<void> {
@@ -376,12 +376,12 @@ export class PairwiseSession implements IPairwiseSession {
 						resolve this prematurely to dismiss unneeded loading banner.
 
 						Longer-term, perhaps have a signal sent from the client with
-						the lock to this one that initialMessagesDecrypted is done.
+						the lock to this one that initialMessagesProcessed is done.
 					*/
 					let lockClaimed	= false;
 					sleep(2500).then(() => {
 						if (!lockClaimed) {
-							this.initialMessagesDecrypted.resolve();
+							this.initialMessagesProcessed.resolve();
 						}
 					});
 
@@ -413,7 +413,7 @@ export class PairwiseSession implements IPairwiseSession {
 							debugLogError(() => ({castleProcessInitialRatchetUpdates: err}));
 						});
 
-						this.initialMessagesDecrypted.resolve();
+						this.initialMessagesProcessed.resolve();
 
 						if (!o.stillOwner.value) {
 							return;

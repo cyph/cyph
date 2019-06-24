@@ -242,7 +242,7 @@ export class ChatService extends BaseProvider {
 		Promise.all([
 			this.resolvers.chatConnected.promise,
 			this.resolvers.currentMessageSynced.promise,
-			this.castleService && this.castleService.initialMessagesDecrypted(),
+			this.castleService && this.castleService.initialMessagesProcessed(),
 			this.channelService && this.channelService.initialMessagesProcessed.promise
 		]).then<true>(() =>
 			true
@@ -1322,10 +1322,10 @@ export class ChatService extends BaseProvider {
 			});
 			(
 				this.castleService ?
-					this.castleService.initialMessagesDecrypted() :
+					this.castleService.initialMessagesProcessed() :
 					Promise.resolve()
 			).then(() => {
-				debugLog(() => 'ChatService.castleService.initialMessagesDecrypted resolved');
+				debugLog(() => 'ChatService.castleService.initialMessagesProcessed resolved');
 			});
 			(
 				this.channelService ?

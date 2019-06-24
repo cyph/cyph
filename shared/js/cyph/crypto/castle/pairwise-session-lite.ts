@@ -85,7 +85,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	})();
 
 	/** @inheritDoc */
-	public readonly initialMessagesDecrypted	= resolvable();
+	public readonly initialMessagesProcessed	= resolvable();
 
 	/** @inheritDoc */
 	public async receive (cyphertext: Uint8Array) : Promise<void> {
@@ -177,7 +177,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	) {
 		this.key.then(async () => {
 			await this.transport.connect();
-			this.initialMessagesDecrypted.resolve();
+			this.initialMessagesProcessed.resolve();
 		}).catch(async () =>
 			this.transport.abort()
 		);
