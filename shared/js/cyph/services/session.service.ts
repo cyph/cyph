@@ -440,33 +440,25 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		this.incomingMessageQueueLock(async o => {
 			lockClaimed	= true;
 
-			let initialMessageCount	= (await this.incomingMessageQueue.getValue()).length;
+			await this.cyphertextReceiveHandler(
+				(await this.incomingMessageQueue.getValue()).
+					map(({messages}) => messages || []).
+					reduce((a, b) => a.concat(b), []).
+					filter(this.correctSubSession)
+			);
 
-			if (initialMessageCount === 0) {
-				this.initialMessagesProcessed.resolve();
-			}
+			this.initialMessagesProcessed.resolve();
 
 			const sub	= this.incomingMessageQueue.subscribeAndPop(async ({messages}) => {
-				try {
-					if (!messages || messages.length < 1) {
-						return;
-					}
-
-					if (!this.correctSubSession(messages[0])) {
-						throw new Error('Different sub-session.');
-					}
-
-					await this.cyphertextReceiveHandler(messages);
+				if (!messages || messages.length < 1) {
+					return;
 				}
-				finally {
-					if (initialMessageCount > 0) {
-						--initialMessageCount;
 
-						if (initialMessageCount === 0) {
-							this.initialMessagesProcessed.resolve();
-						}
-					}
+				if (!this.correctSubSession(messages[0])) {
+					throw new Error('Different sub-session.');
 				}
+
+				await this.cyphertextReceiveHandler(messages);
 			});
 
 			await Promise.race([this.closed, o.stillOwner.toPromise()]);
