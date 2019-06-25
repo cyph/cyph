@@ -158,6 +158,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
+	/* tslint:disable-next-line:no-async-without-await */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
@@ -172,6 +173,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<IForm|undefined>;
+	/* tslint:disable-next-line:no-async-without-await */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;

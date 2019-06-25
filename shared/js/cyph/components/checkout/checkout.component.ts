@@ -143,11 +143,11 @@ export class CheckoutComponent extends BaseProvider implements AfterViewInit, On
 		}
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof this.noSpinnerEnd === 'string') {
-			this.noSpinnerEnd		= this.noSpinnerEnd === 'true';
+			this.noSpinnerEnd		= (<any> this.noSpinnerEnd) === 'true';
 		}
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof this.perUser === 'string') {
-			this.perUser			= this.perUser === 'true';
+			this.perUser			= (<any> this.perUser) === 'true';
 		}
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof this.subscriptionType === 'string' && this.subscriptionType) {

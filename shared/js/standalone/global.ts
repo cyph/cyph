@@ -92,4 +92,5 @@ if (!IS_WEB) {
 
 /* Make sure compiler adds necessary helpers to global scope in threads */
 
+/* tslint:disable-next-line:no-async-without-await */
 (async (_O: any, ..._) => {})({...{a: true}, ...{b: false}}, ...Array.from([]));
