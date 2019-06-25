@@ -36,7 +36,7 @@ export class AccountFormComponent extends BaseProvider implements OnInit {
 		this.subscriptions.push(combineLatest([
 			this.activatedRoute.data,
 			this.activatedRoute.params
-		]).subscribe(async ([data, params]) => {
+		]).subscribe(([data, params]) => {
 			try {
 				const appointmentID: string|undefined	= params.appointmentID;
 				const id: string|undefined				= params.id;

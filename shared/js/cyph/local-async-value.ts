@@ -1,3 +1,5 @@
+/* tslint:disable:no-async-without-await */
+
 import {BehaviorSubject, Observable} from 'rxjs';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {IAsyncValue} from './iasync-value';

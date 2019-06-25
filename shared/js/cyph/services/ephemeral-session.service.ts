@@ -74,15 +74,16 @@ export class EphemeralSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
-		super.channelOnClose();
-
-		/* If aborting before the cyph begins, block friend from trying to join */
-		request({
-			method: 'POST',
-			url: `${env.baseUrl}channels/${this.state.cyphID.value}`
-		}).catch(
-			() => {}
-		);
+		await Promise.all([
+			super.channelOnClose(),
+			/* If aborting before the cyph begins, block friend from trying to join */
+			request({
+				method: 'POST',
+				url: `${env.baseUrl}channels/${this.state.cyphID.value}`
+			}).catch(
+				() => {}
+			)
+		]);
 	}
 
 	/** @inheritDoc */

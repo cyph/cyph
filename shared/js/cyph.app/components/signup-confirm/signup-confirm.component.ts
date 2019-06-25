@@ -24,7 +24,7 @@ export class SignupConfirmComponent extends BaseProvider implements OnInit {
 	;
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public ngOnInit () : void {
 		this.appService.loadComplete();
 	}
 

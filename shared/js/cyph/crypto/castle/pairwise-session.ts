@@ -478,7 +478,7 @@ export class PairwiseSession implements IPairwiseSession {
 									newMessageID
 								}}));
 
-								receiveLock(async () => {
+								await receiveLock(async () => {
 									await this.processIncomingMessages(
 										core,
 										newMessageID,

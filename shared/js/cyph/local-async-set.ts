@@ -1,3 +1,5 @@
+/* tslint:disable:no-async-without-await */
+
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {IAsyncSet} from './iasync-set';

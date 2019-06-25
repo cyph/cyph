@@ -178,6 +178,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	}
 
 	/** @see IChannelHandlers.onOpen */
+	/* tslint:disable-next-line:no-async-without-await */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		this.state.isAlice.next(isAlice);
 		this.resolveOpened();
@@ -229,6 +230,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	}
 
 	/** @ignore */
+	/* tslint:disable-next-line:no-async-without-await */
 	protected async getSessionMessageAuthor (
 		_MESSAGE: ISessionMessageDataInternal
 	) : Promise<Observable<string>|void> {}
@@ -567,6 +569,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	}
 
 	/** @inheritDoc */
+	/* tslint:disable-next-line:no-async-without-await */
 	public async yt () : Promise<void> {}
 
 	constructor (

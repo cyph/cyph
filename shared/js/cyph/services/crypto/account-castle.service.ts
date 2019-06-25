@@ -40,6 +40,7 @@ export class AccountCastleService extends CastleService {
 	;
 
 	/** @inheritDoc */
+	/* tslint:disable-next-line:no-async-without-await */
 	public async init (accountSessionService: AccountSessionService) : Promise<void> {
 		const transport	= new Transport(accountSessionService);
 

@@ -1,3 +1,5 @@
+/* tslint:disable:no-async-without-await */
+
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {IProto} from '../iproto';

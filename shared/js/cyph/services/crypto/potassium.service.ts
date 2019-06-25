@@ -92,6 +92,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	};
 
 	/** @inheritDoc */
+	/* tslint:disable-next-line:no-async-without-await */
 	public async isNativeCryptoSupported () : Promise<boolean> {
 		throw new Error(
 			'Must provide an implementation of PotassiumService.isNativeCryptoSupported.'

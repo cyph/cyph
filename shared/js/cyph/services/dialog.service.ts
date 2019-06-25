@@ -1,3 +1,5 @@
+/* tslint:disable:no-async-without-await */
+
 import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';

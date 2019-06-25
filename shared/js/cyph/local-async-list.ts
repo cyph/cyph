@@ -1,3 +1,5 @@
+/* tslint:disable:no-async-without-await */
+
 import {Observable, ReplaySubject, Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {IAsyncList} from './iasync-list';
@@ -35,7 +37,7 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 	}
 
 	/** @ignore */
-	protected async setValueInternal (value: T[]) : Promise<void> {
+	protected setValueInternal (value: T[]) : void {
 		this.clearInternal(false);
 		for (const item of value) {
 			this.pushItemInternal(item, false);

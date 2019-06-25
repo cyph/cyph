@@ -1,3 +1,5 @@
+/* tslint:disable:no-async-without-await */
+
 import {BaseProvider} from '../base-provider';
 import {IProto} from '../iproto';
 import {MaybePromise} from '../maybe-promise-type';

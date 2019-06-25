@@ -1,4 +1,5 @@
 /* tslint:disable:max-file-line-count no-import-side-effect */
+/* tslint:disable:no-async-without-await */
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';

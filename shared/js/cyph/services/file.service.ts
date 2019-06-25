@@ -47,7 +47,7 @@ export class FileService extends BaseProvider {
 			if (canvas.toBlob && !(this.envService.isCordova && this.envService.isAndroid)) {
 				return await new Promise<Uint8Array>(resolve => {
 					canvas.toBlob(
-						async blob => {
+						blob => {
 							resolve(!blob ? new Uint8Array(0) : potassiumUtil.fromBlob(blob));
 						},
 						outputType,

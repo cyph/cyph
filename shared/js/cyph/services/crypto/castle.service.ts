@@ -34,6 +34,7 @@ export class CastleService extends BaseProvider implements ICastle {
 	}
 
 	/** Initializes service. */
+	/* tslint:disable-next-line:no-async-without-await */
 	public async init (_SESSION_SERVICE: SessionService) : Promise<void> {
 		throw new Error('Must provide an implementation of CastleService.init.');
 	}

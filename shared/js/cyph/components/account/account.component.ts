@@ -219,7 +219,7 @@ export class AccountComponent extends BaseProvider implements AfterViewInit, OnI
 	public readonly viewInitiated: Promise<void>			= this._VIEW_INITIATED.promise;
 
 	/** @inheritDoc */
-	public async ngAfterViewInit () : Promise<void> {
+	public ngAfterViewInit () : void {
 		this.resolveViewInitiated();
 	}
 

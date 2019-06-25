@@ -143,7 +143,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	public readonly userProfile: BehaviorSubject<User|undefined>;
 
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
 		this.subscriptions.push(this.userInternal.subscribe(async ({user, username}) => {

@@ -255,7 +255,7 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 		const $message	= await waitForIterable(() => $elem.find('.message'));
 
 		await Promise.all($message.children().toArray().map(async element => {
-			const promise	= new Promise<void>(async resolve => {
+			const promise	= new Promise<void>(resolve => {
 				$(element).one('transitionend', () => { resolve(); });
 			});
 
