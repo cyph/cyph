@@ -536,6 +536,7 @@ export class AccountService extends BaseProvider {
 			this.envService.isMobile,
 			this.transitionInternal
 		]).pipe(
+			/* tslint:disable-next-line:cyclomatic-complexity */
 			map(([activeSidebarContact, header, isMobile, _]) => {
 				const routePath	= this.routePath;
 				const route		= routePath[0];
