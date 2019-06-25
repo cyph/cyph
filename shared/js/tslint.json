@@ -111,6 +111,7 @@
 		"import-blacklist": false,
 		"label-position": true,
 		"no-arg": true,
+		"no-async-without-await": true,
 		"no-bitwise": true,
 		"no-conditional-assignment": true,
 		"no-console": [true, "error", "log"],
@@ -157,6 +158,10 @@
 		"restrict-plus-operands": true,
 		"static-this": true,
 		"strict-boolean-expressions": false,
+		"strict-comparisons": [true, {
+			"allow-object-equal-comparison": true,
+			"allow-string-order-comparison": true
+		}],
 		"switch-default": false,
 		"strict-type-predicates": true,
 		"triple-equals": true,
