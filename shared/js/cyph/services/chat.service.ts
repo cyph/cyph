@@ -1321,6 +1321,9 @@ export class ChatService extends BaseProvider {
 			this.resolvers.currentMessageSynced.promise.then(() => {
 				debugLog(() => 'ChatService.resolvers.currentMessageSynced resolved');
 			});
+			this.sessionService.initialMessagesProcessed.promise.then(() => {
+				debugLog(() => 'ChatService.sessionService.initialMessagesProcessed resolved');
+			});
 			(
 				this.castleService ?
 					this.castleService.initialMessagesProcessed() :
