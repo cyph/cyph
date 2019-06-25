@@ -302,9 +302,10 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 				break;
 
 			case CastleEvents.connect:
-				await this.connected;
-				this.state.sharedSecret.next(undefined);
-				await this.trigger(events.beginChat);
+				this.connected.then(async () => {
+					this.state.sharedSecret.next(undefined);
+					await this.trigger(events.beginChat);
+				});
 				break;
 
 			case CastleEvents.receive:
