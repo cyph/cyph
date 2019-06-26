@@ -209,7 +209,7 @@ export class Config {
 				}
 			},
 			telehealth: {
-				id: 8,
+				id: 3,
 				items: {
 					annual: {
 						amount: 420,
@@ -225,24 +225,6 @@ export class Config {
 					}
 				},
 				namespace: 'cyph.healthcare'
-			},
-			telehealthBasic: {
-				id: 3,
-				items: {
-					annual: {
-						amount: 228,
-						id: 2,
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					monthly: {
-						amount: 29,
-						id: 1,
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				},
-				namespace: 'video.cyph.healthcare'
 			},
 			telehealthPro: {
 				id: 6,
