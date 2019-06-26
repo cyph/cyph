@@ -302,6 +302,30 @@ var config = struct {
 			},
 			SessionCountLimit: -1,
 		},
+		"8-1": Plan{
+			ProFeatures: map[string]bool{
+				"api":            true,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     true,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"8-2": Plan{
+			ProFeatures: map[string]bool{
+				"api":            true,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     true,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
 	},
 
 	"http://localhost:42000",
