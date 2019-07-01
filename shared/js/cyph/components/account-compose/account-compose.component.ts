@@ -6,7 +6,13 @@ import {User} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {States} from '../../chat/enums';
 import {emailPattern} from '../../email-pattern';
-import {AccountFileRecord, AccountUserTypes, ChatMessageValue, IForm} from '../../proto';
+import {
+	AccountFileRecord,
+	AccountUserTypes,
+	CallTypes,
+	ChatMessageValue,
+	IForm
+} from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -14,6 +20,7 @@ import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
@@ -193,34 +200,66 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 				this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
 				this.accountChatService.chat.currentMessage.calendarInvite !== undefined
 			) {
-				this.sentFileID.next(await this.accountFilesService.upload(
-					(
+				const {calendarInvite}	= this.accountChatService.chat.currentMessage;
+
+				const [sentFileID]		= await Promise.all([
+					this.accountFilesService.upload(
 						(
-							this.envService.isTelehealth ?
-								`${this.stringsService.telehealthCallAbout} ` :
-								''
-						) +
-						(this.accountChatService.chat.currentMessage.calendarInvite.title || '?')
-					),
-					{
-						calendarInvite: this.accountChatService.chat.currentMessage.calendarInvite,
-						forms: this.accountChatService.chat.currentMessage.form ?
-							[this.accountChatService.chat.currentMessage.form] :
-							undefined
-						,
-						fromEmail: this.accountService.fromEmail.value || undefined,
-						fromName: this.accountService.fromName.value || undefined,
-						participants: [
-							...recipients,
-							...(this.accountDatabaseService.currentUser.value ?
-								[this.accountDatabaseService.currentUser.value.user.username] :
-								[]
-							)
-						],
-						rsvpSessionSubID: uuid()
-					},
-					recipients
-				).result);
+							(
+								this.envService.isTelehealth ?
+									`${this.stringsService.telehealthCallAbout} ` :
+									''
+							) +
+							(calendarInvite.title || '?')
+						),
+						{
+							calendarInvite: calendarInvite,
+							forms: this.accountChatService.chat.currentMessage.form ?
+								[this.accountChatService.chat.currentMessage.form] :
+								undefined
+							,
+							fromEmail: this.accountService.fromEmail.value || undefined,
+							fromName: this.accountService.fromName.value || undefined,
+							participants: [
+								...recipients,
+								...(this.accountDatabaseService.currentUser.value ?
+									[this.accountDatabaseService.currentUser.value.user.username] :
+									[]
+								)
+							],
+							rsvpSessionSubID: uuid()
+						},
+						recipients
+					).result,
+					(
+						this.envService.isTelehealth &&
+						!this.envService.isTelehealthFull &&
+						this.accountDatabaseService.currentUser.value
+					) ?
+						this.databaseService.callFunction(
+							'appointmentInvite',
+							{
+								callType:
+									calendarInvite.callType === CallTypes.Audio ?
+										'audio' :
+									calendarInvite.callType === CallTypes.Video ?
+										'video' :
+										undefined
+								,
+								eventDetails: {
+									endTime: calendarInvite.endTime,
+									startTime: calendarInvite.startTime
+								},
+								to: {
+									email: this.accountService.fromEmail.value,
+									name: this.accountService.fromName.value
+								}
+							}
+						) :
+						undefined
+				]);
+
+				this.sentFileID.next(sentFileID);
 			}
 			else {
 				if (
@@ -359,6 +398,9 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,
