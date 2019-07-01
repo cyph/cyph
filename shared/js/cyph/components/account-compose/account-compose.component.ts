@@ -213,7 +213,7 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 							(calendarInvite.title || '?')
 						),
 						{
-							calendarInvite: calendarInvite,
+							calendarInvite,
 							forms: this.accountChatService.chat.currentMessage.form ?
 								[this.accountChatService.chat.currentMessage.form] :
 								undefined
