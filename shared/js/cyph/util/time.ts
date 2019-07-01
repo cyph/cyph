@@ -225,7 +225,7 @@ const getStartPaddingInternal	=
 				if (
 					(typeof now !== 'number' && !(now instanceof Date)) ||
 					(typeof startTime !== 'number' && !(startTime instanceof Date)) ||
-					!compareDates(now, startTime)
+					!compareDates(now, startTime, true)
 				) {
 					return 0;
 				}
