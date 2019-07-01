@@ -244,7 +244,7 @@ exports.appointmentInvite	= onCall(async (data, context, namespace, getUsername)
 			undefined,
 			{
 				endTime: data.eventDetails.endTime,
-				inviterUsername,
+				inviterUsername: data.to,
 				location: `${getFullBurnerURL(namespace, data.callType)}${inviterUsername}/${id}`,
 				startTime: data.eventDetails.startTime
 			}
