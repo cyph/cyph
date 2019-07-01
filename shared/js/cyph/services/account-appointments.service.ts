@@ -84,6 +84,10 @@ export class AccountAppointmentsService extends BaseProvider {
 					!appointment.occurred &&
 					now < appointment.calendarInvite.endTime
 				).
+				sort((a, b) =>
+					a.appointment.calendarInvite.startTime -
+					b.appointment.calendarInvite.startTime
+				).
 				slice(0, 5)
 			)
 		)
