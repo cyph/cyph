@@ -285,6 +285,8 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 		this.accountChatService.chat.currentMessage.form			= undefined;
 		this.accountChatService.chat.currentMessage.quill			= undefined;
 		this.accountChatService.chat.currentMessage.text			= '';
+		this.accountService.fromEmail.next('');
+		this.accountService.fromName.next('');
 
 		this.accountChatService.updateChat();
 
