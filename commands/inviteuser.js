@@ -57,18 +57,25 @@ return inviteCode;
 if (require.main === module) {
 	(async () => {
 		const projectId			= process.argv[2];
-		const email				= process.argv[3];
-		const name				= process.argv[4];
-		const plan				= process.argv[5];
-		const reservedUsername	= process.argv[6];
 
-		console.log(`Invited with invite code ${await inviteUser(
-			projectId,
+		for (const [
 			email,
 			name,
 			plan,
 			reservedUsername
-		)}`);
+		] of (
+			process.argv[3] === '--users' ?
+				JSON.parse(process.argv[4]) :
+				[process.argv.slice(2)]
+		)) {
+			console.log(`Invited ${email} with invite code ${await inviteUser(
+				projectId,
+				email,
+				name,
+				plan,
+				reservedUsername
+			)}`);
+		}
 
 		process.exit(0);
 	})().catch(err => {
