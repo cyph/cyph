@@ -58,15 +58,25 @@ if (require.main === module) {
 	(async () => {
 		const projectId			= process.argv[2];
 
-		for (const [
+		for (const {
 			email,
 			name,
 			plan,
 			reservedUsername
-		] of (
+		} of (
 			process.argv[3] === '--users' ?
-				JSON.parse(process.argv[4]) :
-				[process.argv.slice(2)]
+				JSON.parse(process.argv[4]).map(arr => ({
+					email: arr[0],
+					name: arr[1],
+					plan: process.argv[5],
+					reservedUsername: arr[2]
+				})) :
+				[{
+					email: process.argv[3],
+					name: process.argv[4],
+					plan: process.argv[5],
+					reservedUsername: process.argv[6]
+				}]
 		)) {
 			console.log(`Invited ${email} with invite code ${await inviteUser(
 				projectId,
