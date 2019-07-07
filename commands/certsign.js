@@ -91,6 +91,10 @@ for (const username of Object.keys(pendingSignups)) {
 	}
 	/* Otherwise, if signup has been pending for at least 3 hours, delete the user */
 	else if ((Date.now() - pendingSignup.timestamp) > 10800000) {
+		/* For now, just log to console and handle deletion manually */
+		console.error(`INVALID PENDING USER: @${username}`);
+		continue;
+
 		await auth.deleteUser(pendingSignup.uid);
 		await database.ref(`${pendingSignupsURL}/${username}`).remove();
 		await removeItem(namespace, `users/${username}`);
