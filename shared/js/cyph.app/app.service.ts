@@ -47,7 +47,7 @@ export class AppService extends BaseProvider implements CanActivate {
 			'confirm',
 			'signup'
 		].indexOf(locationData.hash.slice(1).split('/')[0]) > -1 ||
-		(locationData.hash.split('/').slice(-1)[0] || '').match(
+		locationData.hash.split('/')[0].match(
 			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
 		)
 	));
