@@ -11,6 +11,9 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class FileService extends BaseProvider {
+	/** Upper limit in bytes for a file to get the multimedia treatment. */
+	public readonly mediaSizeLimit	= 5242880;
+
 	/** @ignore */
 	private async compressImage (image: HTMLImageElement, file: Blob|IFile) : Promise<Uint8Array> {
 		try {
@@ -71,7 +74,11 @@ export class FileService extends BaseProvider {
 	}
 
 	/** Converts data URI to blob. */
-	public fromDataURI (dataURI: string) : Blob {
+	public fromDataURI (dataURI: Blob|string) : Blob {
+		if (dataURI instanceof Blob) {
+			return dataURI;
+		}
+
 		const arr		= dataURI.split(';base64,');
 		const mediaType	= arr[0].slice(5);
 		const bytes		= potassiumUtil.fromBase64(arr[1]);
@@ -163,6 +170,9 @@ export class FileService extends BaseProvider {
 			this.isAudio(file) ||
 			this.isImage(file, includeSVG) ||
 			this.isVideo(file)
+		) && !(
+			(file instanceof Blob || typeof file === 'string') &&
+			this.fromDataURI(file).size > this.mediaSizeLimit
 		);
 	}
 
