@@ -34,7 +34,6 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 		if (this.envService.isCordova) {
 			self.addEventListener('keyboardDidHide', () => { this.isOpen.next(false); });
 			self.addEventListener('keyboardDidShow', () => { this.isOpen.next(true); });
-			return;
 		}
 
 		/* https://stackoverflow.com/a/11650231/459881 */
