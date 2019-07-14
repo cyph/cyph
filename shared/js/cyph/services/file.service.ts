@@ -6,6 +6,9 @@ import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 
 
+/** Union of possible types that represent files. */
+type FileLike	= Blob|IFile|string|{mediaType: string};
+
 /**
  * Manages files.
  */
@@ -69,21 +72,31 @@ export class FileService extends BaseProvider {
 	}
 
 	/** @ignore */
-	private getMediaType (file: Blob|string|{mediaType: string}) : string {
+	private getMediaType (file: FileLike) : string {
 		return typeof file === 'string' ? file : file instanceof Blob ? file.type : file.mediaType;
 	}
 
 	/** Converts data URI to blob. */
-	public fromDataURI (dataURI: Blob|string) : Blob {
+	public fromDataURI (dataURI: FileLike) : Blob {
 		if (dataURI instanceof Blob) {
 			return dataURI;
 		}
 
-		const arr		= dataURI.split(';base64,');
-		const mediaType	= arr[0].slice(5);
-		const bytes		= potassiumUtil.fromBase64(arr[1]);
+		const {data, mediaType}	=
+			typeof dataURI === 'string' ?
+				(() => {
+					const arr	= dataURI.split(';base64,');
+					return {
+						data: potassiumUtil.fromBase64(arr[1]),
+						mediaType: arr[0].slice(5)
+					};
+				})() :
+			'data' in dataURI ?
+				dataURI :
+				{...dataURI, data: new Uint8Array(0)}
+		;
 
-		return new Blob([bytes], {type: mediaType});
+		return new Blob([data], {type: mediaType});
 	}
 
 	/**
@@ -150,12 +163,12 @@ export class FileService extends BaseProvider {
 	}
 
 	/** Indicates whether a File/Blob is audio. */
-	public isAudio (file: Blob|string|{mediaType: string}) : boolean {
+	public isAudio (file: FileLike) : boolean {
 		return this.getMediaType(file).startsWith('audio/');
 	}
 
 	/** Indicates whether a File/Blob is an image. */
-	public isImage (file: Blob|string|{mediaType: string}, includeSVG: boolean = false) : boolean {
+	public isImage (file: FileLike, includeSVG: boolean = false) : boolean {
 		const mediaType	= this.getMediaType(file);
 
 		return (
@@ -165,19 +178,18 @@ export class FileService extends BaseProvider {
 	}
 
 	/** Indicates whether a File/Blob is multimedia. */
-	public isMedia (file: Blob|string|{mediaType: string}, includeSVG: boolean = false) : boolean {
+	public isMedia (file: FileLike, includeSVG: boolean = false) : boolean {
 		return (
 			this.isAudio(file) ||
 			this.isImage(file, includeSVG) ||
 			this.isVideo(file)
-		) && !(
-			(file instanceof Blob || typeof file === 'string') &&
-			this.fromDataURI(file).size > this.mediaSizeLimit
+		) && (
+			this.fromDataURI(file).size <= this.mediaSizeLimit
 		);
 	}
 
 	/** Indicates whether a File/Blob is a video. */
-	public isVideo (file: Blob|string|{mediaType: string}) : boolean {
+	public isVideo (file: FileLike) : boolean {
 		return this.getMediaType(file).startsWith('video/');
 	}
 

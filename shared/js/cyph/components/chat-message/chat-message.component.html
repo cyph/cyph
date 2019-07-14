@@ -188,7 +188,13 @@
 		></cyph-calendar-invite>
 		<ng-template #fileTransferValue>
 			<div *ngIf='value.fileTransfer; else formValue'>
-				<ng-container *ngIf='value.fileTransfer.media; else saveFile'>
+				<ng-container *ngIf='
+					(
+						value.fileTransfer.media &&
+						value.fileTransfer.size <= fileService.mediaSizeLimit
+					);
+					else saveFile
+				'>
 					<ng-container *ngIf='
 						fileTransferService.getMedia(value.fileTransfer) | async as media;
 						else mediaLoading
