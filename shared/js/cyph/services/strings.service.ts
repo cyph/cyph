@@ -73,7 +73,7 @@ export class StringsService extends BaseProvider {
 	public readonly access: string						= `Access`;
 
 	/** @see StringsService */
-	public readonly addContactButtonExternal: string	= `External Contact`;
+	public readonly addContactButtonExternal: string	= `Coming Soon: External Contact`;
 
 	/** @see StringsService */
 	public readonly addContactButtonInternal: string	= `${this.internalProductShort} User`;
