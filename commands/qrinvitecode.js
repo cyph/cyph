@@ -3,18 +3,27 @@
 
 const childProcess		= require('child_process');
 const fs				= require('fs');
+const mkdirp			= require('mkdirp');
 const {addInviteCode}	= require('./addinvitecode');
 const {getQR}			= require('./qr');
 
 
-const qrInviteCodeDir	= `${__dirname}/../qr-invite-codes`;
+const businessCardBackground	= `${__dirname}/../shared/assets/img/business-card-back.png`;
+const businessCardInvite		= `${__dirname}/../shared/assets/img/business-card-invite.png`;
+
+const qrInviteCodeDir				= `${__dirname}/../qr-invite-codes`;
+const qrInviteCodeBusinessCardDir	= `${__dirname}/../qr-invite-codes/business-cards`;
+const qrInviteCodeQRDir				= `${__dirname}/../qr-invite-codes/qrs`;
+const qrInviteCodeURLDir			= `${__dirname}/../qr-invite-codes/urls`;
 
 
 const qrInviteCode	= async (countByUser, plan) => {
 
 
 childProcess.spawnSync('rm', ['-rf', qrInviteCodeDir]);
-fs.mkdirSync(qrInviteCodeDir);
+mkdirp.sync(qrInviteCodeBusinessCardDir);
+mkdirp.sync(qrInviteCodeQRDir);
+mkdirp.sync(qrInviteCodeURLDir);
 
 const inviteCodes	= Object.values(
 	await addInviteCode('cyphme', countByUser, undefined, plan)
@@ -23,8 +32,28 @@ const inviteCodes	= Object.values(
 for (let i = 0 ; i < inviteCodes.length ; ++i) {
 	const url	= `https://cyph.app/register/${inviteCodes[i]}`;
 
-	await getQR(url, `${qrInviteCodeDir}/${i}.png`);
-	fs.writeFileSync(`${qrInviteCodeDir}/${i}.txt`, url);
+	const businessCardPath	= `${qrInviteCodeBusinessCardDir}/${i}.png`;
+	const qrPath			= `${qrInviteCodeQRDir}/${i}.png`;
+	const urlPath			= `${qrInviteCodeURLDir}/${i}.txt`;
+
+	fs.writeFileSync(urlPath, url);
+	await getQR(url, qrPath);
+
+	childProcess.spawnSync('convert', [qrPath, '-resize', '675x675', businessCardPath]);
+	childProcess.spawnSync('composite', [
+		'-geometry',
+		'+956+290',
+		businessCardPath,
+		businessCardBackground,
+		businessCardPath
+	]);
+	childProcess.spawnSync('composite', [
+		'-geometry',
+		'+444+48',
+		businessCardInvite,
+		businessCardPath,
+		businessCardPath
+	]);
 }
 
 
