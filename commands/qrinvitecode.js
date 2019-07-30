@@ -62,7 +62,7 @@ for (let i = 0 ; i < inviteCodes.length ; ++i) {
 		'-gravity',
 		'center',
 		'-geometry',
-		'+0+638',
+		'+0+590',
 		businessCardPath,
 		businessCardBackground,
 		businessCardPath
@@ -76,7 +76,7 @@ for (let i = 0 ; i < inviteCodes.length ; ++i) {
 	]);
 	childProcess.spawnSync('composite', [
 		'-geometry',
-		'+444+48',
+		'+444+96',
 		businessCardInvite,
 		businessCardPath,
 		businessCardPath
