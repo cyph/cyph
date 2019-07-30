@@ -34,17 +34,44 @@ for (let i = 0 ; i < inviteCodes.length ; ++i) {
 
 	const businessCardPath	= `${qrInviteCodeBusinessCardDir}/${i}.png`;
 	const qrPath			= `${qrInviteCodeQRDir}/${i}.png`;
+	const qrTmpPath			= `${qrInviteCodeQRDir}/.${i}.tmp.png`;
 	const urlPath			= `${qrInviteCodeURLDir}/${i}.txt`;
 
 	fs.writeFileSync(urlPath, url);
 	await getQR(url, qrPath);
 
-	childProcess.spawnSync('convert', [qrPath, '-resize', '675x675', businessCardPath]);
+	childProcess.spawnSync('convert', [
+		qrPath,
+		'-resize',
+		'675x675',
+		qrTmpPath
+	]);
+	childProcess.spawnSync('convert', [
+		'-background',
+		'transparent',
+		'-fill',
+		'rgba(255, 255, 255, 0.66)',
+		'-font',
+		'ArialB',
+		'-pointsize',
+		'48',
+		`url:${url}`,
+		businessCardPath
+	]);
+	childProcess.spawnSync('composite', [
+		'-gravity',
+		'center',
+		'-geometry',
+		'+0+638',
+		businessCardPath,
+		businessCardBackground,
+		businessCardPath
+	]);
 	childProcess.spawnSync('composite', [
 		'-geometry',
 		'+956+290',
+		qrTmpPath,
 		businessCardPath,
-		businessCardBackground,
 		businessCardPath
 	]);
 	childProcess.spawnSync('composite', [
@@ -54,6 +81,8 @@ for (let i = 0 ; i < inviteCodes.length ; ++i) {
 		businessCardPath,
 		businessCardPath
 	]);
+
+	fs.unlinkSync(qrTmpPath);
 }
 
 
