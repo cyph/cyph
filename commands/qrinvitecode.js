@@ -52,10 +52,10 @@ for (let i = 0 ; i < inviteCodes.length ; ++i) {
 		'-fill',
 		'rgba(255, 255, 255, 0.66)',
 		'-font',
-		'ArialB',
+		'Helvetica-Bold',
 		'-pointsize',
 		'48',
-		`url:${url}`,
+		`label:${url}`,
 		businessCardPath
 	]);
 	childProcess.spawnSync('composite', [
