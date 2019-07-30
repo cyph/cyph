@@ -31,7 +31,7 @@ const getQR	= async (text, path) => {
 		`${__dirname}/../shared/assets/img/cyph.icon.png`
 	);
 
-	await util.promisify(setTimeout)(250);
+	await util.promisify(setTimeout)(1000);
 	await page.evaluate(() => j_generate());
 	await page.waitForSelector('#qrcode');
 
