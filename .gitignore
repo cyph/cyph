@@ -1,5 +1,6 @@
 /.bootstrap.original
 /.build
+/qr-invite-codes
 /threadpack.log
 .build.yaml
 *.mmdb
