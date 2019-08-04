@@ -79,6 +79,46 @@ read -r -d '' modules <<- EOM
 	@ngxs/store
 	@opentok/client
 	@rign/angular2-filemanager
+	@syncfusion/ej2
+	@syncfusion/ej2-barcode-generator
+	@syncfusion/ej2-base
+	@syncfusion/ej2-buttons
+	@syncfusion/ej2-calendars
+	@syncfusion/ej2-charts
+	@syncfusion/ej2-circulargauge
+	@syncfusion/ej2-compression
+	@syncfusion/ej2-data
+	@syncfusion/ej2-diagrams
+	@syncfusion/ej2-documenteditor
+	@syncfusion/ej2-drawings
+	@syncfusion/ej2-dropdowns
+	@syncfusion/ej2-excel-export
+	@syncfusion/ej2-file-utils
+	@syncfusion/ej2-filemanager
+	@syncfusion/ej2-gantt
+	@syncfusion/ej2-grids
+	@syncfusion/ej2-heatmap
+	@syncfusion/ej2-icons
+	@syncfusion/ej2-inplace-editor
+	@syncfusion/ej2-inputs
+	@syncfusion/ej2-layouts
+	@syncfusion/ej2-lineargauge
+	@syncfusion/ej2-lists
+	@syncfusion/ej2-maps
+	@syncfusion/ej2-navigations
+	@syncfusion/ej2-notifications
+	@syncfusion/ej2-office-chart
+	@syncfusion/ej2-pdf-export
+	@syncfusion/ej2-pdfviewer
+	@syncfusion/ej2-pivotview
+	@syncfusion/ej2-popups
+	@syncfusion/ej2-querybuilder
+	@syncfusion/ej2-richtexteditor
+	@syncfusion/ej2-schedule
+	@syncfusion/ej2-splitbuttons
+	@syncfusion/ej2-svg-base
+	@syncfusion/ej2-treegrid
+	@syncfusion/ej2-treemap
 	@types/braintree-web
 	@types/dompurify
 	@types/dropzone
