@@ -272,7 +272,6 @@ const containerName		= command => `${image}_${command}`.replace(/\//g, '_');
 const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOutput) => {
 	const processArgs	= [
 		'run',
-		'--privileged',
 		getOutput ? '-i' : '-it'
 	].concat(
 		name ? [`--name=${name}`] : []
