@@ -316,6 +316,7 @@ read -r -d '' modules <<- EOM
 	rxjs
 	rxjs-tslint@0.1.5
 	rxjs-tslint-rules
+	sass
 	sidh
 	simple-peer
 	simplebtc

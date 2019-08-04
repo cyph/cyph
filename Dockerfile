@@ -58,8 +58,6 @@ RUN apt-get -y --allow-downgrades upgrade
 RUN apt-get -y --allow-downgrades autoremove
 
 RUN pip install grpcio
-RUN gem update
-RUN gem install sass
 
 RUN echo '\
 	source /home/gibson/emsdk-portable/emsdk_env.sh &> /dev/null; \
