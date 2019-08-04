@@ -121,7 +121,7 @@ const isCyphInternal		= fs.existsSync(path.join(homeDir, '.cyph'));
 
 const mounts				= [
 	`${__dirname}:/cyph`,
-	...(!isCyphInternal ? [] : [
+	...(!isCyphInternal || isWindows ? [] : [
 		`${path.join(homeDir, '.cyph')}:${dockerHomeDir}/.cyph`,
 		`${path.join(homeDir, '.gitconfig')}:${dockerHomeDir}/.gitconfig`,
 		`${path.join(homeDir, '.gnupg')}:${dockerHomeDir}/.gnupg.original`,
