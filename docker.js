@@ -363,7 +363,9 @@ const pullUpdates		= () => {
 		didUpdate ?
 			undefined :
 			editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition)
-	).then(() => {
+	);
+	/*
+	.then(() => {
 		const libNative	= path.join('shared', 'lib', 'native');
 		const ready		= path.join(__dirname, libNative, '.ready');
 
@@ -379,6 +381,7 @@ const pullUpdates		= () => {
 
 		fs.writeFileSync(ready, '');
 	});
+	*/
 };
 
 const removeImage		= (name, opts) => {
