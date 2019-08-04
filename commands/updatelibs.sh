@@ -80,6 +80,36 @@ read -r -d '' modules <<- EOM
 	@opentok/client
 	@rign/angular2-filemanager
 	@syncfusion/ej2
+	@syncfusion/ej2-angular-barcode-generator
+	@syncfusion/ej2-angular-base
+	@syncfusion/ej2-angular-buttons
+	@syncfusion/ej2-angular-calendars
+	@syncfusion/ej2-angular-charts
+	@syncfusion/ej2-angular-circulargauge
+	@syncfusion/ej2-angular-diagrams
+	@syncfusion/ej2-angular-documenteditor
+	@syncfusion/ej2-angular-dropdowns
+	@syncfusion/ej2-angular-filemanager
+	@syncfusion/ej2-angular-gantt
+	@syncfusion/ej2-angular-grids
+	@syncfusion/ej2-angular-heatmap
+	@syncfusion/ej2-angular-inplace-editor
+	@syncfusion/ej2-angular-inputs
+	@syncfusion/ej2-angular-layouts
+	@syncfusion/ej2-angular-lineargauge
+	@syncfusion/ej2-angular-lists
+	@syncfusion/ej2-angular-maps
+	@syncfusion/ej2-angular-navigations
+	@syncfusion/ej2-angular-notifications
+	@syncfusion/ej2-angular-pdfviewer
+	@syncfusion/ej2-angular-pivotview
+	@syncfusion/ej2-angular-popups
+	@syncfusion/ej2-angular-querybuilder
+	@syncfusion/ej2-angular-richtexteditor
+	@syncfusion/ej2-angular-schedule
+	@syncfusion/ej2-angular-splitbuttons
+	@syncfusion/ej2-angular-treegrid
+	@syncfusion/ej2-angular-treemap
 	@syncfusion/ej2-barcode-generator
 	@syncfusion/ej2-base
 	@syncfusion/ej2-buttons
