@@ -117,12 +117,16 @@ const image					= 'cyph/' + (
 		split(/\s+/)[1]
 ).toLowerCase();
 
+const isCyphInternal		= fs.existsSync(path.join(homeDir, '.cyph'));
+
 const mounts				= [
 	`${__dirname}:/cyph`,
-	`${path.join(homeDir, '.cyph')}:${dockerHomeDir}/.cyph`,
-	`${path.join(homeDir, '.gitconfig')}:${dockerHomeDir}/.gitconfig`,
-	`${path.join(homeDir, '.gnupg')}:${dockerHomeDir}/.gnupg.original`,
-	`${path.join(homeDir, '.ssh')}:${dockerHomeDir}/.ssh`
+	...(!isCyphInternal ? [] : [
+		`${path.join(homeDir, '.cyph')}:${dockerHomeDir}/.cyph`,
+		`${path.join(homeDir, '.gitconfig')}:${dockerHomeDir}/.gitconfig`,
+		`${path.join(homeDir, '.gnupg')}:${dockerHomeDir}/.gnupg.original`,
+		`${path.join(homeDir, '.ssh')}:${dockerHomeDir}/.ssh`
+	])
 ].map(
 	s => ['-v', s]
 ).reduce(
@@ -233,7 +237,7 @@ const shellScripts			= {
 
 
 const backup			= () => {
-	if (isWindows) {
+	if (!isCyphInternal || isWindows) {
 		return;
 	}
 
