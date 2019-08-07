@@ -40,7 +40,7 @@
 		"@covalent/http": "^2.1.0",
 		"@covalent/markdown": "^2.1.0",
 		"@ctrl/ngx-rightclick": "^1.1.4",
-		"@cyph/prettier": "^2.0.3",
+		"@cyph/prettier": "^2.0.5",
 		"@firebase/app": "^0.4.13",
 		"@firebase/app-types": "^0.4.3",
 		"@firebase/auth": "^0.11.7",

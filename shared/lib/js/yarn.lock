@@ -687,10 +687,10 @@
   dependencies:
     tslib "^1.9.0"
 
-"@cyph/prettier@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@cyph/prettier/-/prettier-2.0.3.tgz#45117aabcfa0c691db0acf5deb98265970ce05fc"
-  integrity sha512-6a6cWcSBPkOnaj1z1Prfr+XthyCQAe+LvjhxXI/PyIzsnxRPOdgXX8DISsCAPEvMMObelWmKfAAZ1c8bOl2UxA==
+"@cyph/prettier@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@cyph/prettier/-/prettier-2.0.5.tgz#3b049cd76ae71e273b027043e836b07471d52427"
+  integrity sha512-Vk2ojAfiYNQseMtcREl2QaLEN6GdgMB1eV7z+CxJ/uwi5XNcaYkEW7kXMFWcgBvgLuGwl2kO5cDK+7m+7kwyqA==
 
 "@dsherret/to-absolute-glob@^2.0.2":
   version "2.0.2"
