@@ -528,18 +528,21 @@ export class AccountSessionService extends SessionService {
 
 		this.on(rpcEvents.ping, async (newEvents: ISessionMessageData[]) => {
 			for (const o of newEvents) {
-				if (o.command && o.command.method) {
-					await this.freezePong
-						.pipe(
-							filter(b => !b),
-							take(1)
-						)
-						.toPromise();
-					this.send([
-						rpcEvents.pong,
-						{command: {method: o.command.method}}
-					]);
+				if (!o.command || !o.command.method) {
+					continue;
 				}
+
+				await this.freezePong
+					.pipe(
+						filter(b => !b),
+						take(1)
+					)
+					.toPromise();
+
+				this.send([
+					rpcEvents.pong,
+					{command: {method: o.command.method}}
+				]);
 			}
 		});
 	}

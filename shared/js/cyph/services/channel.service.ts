@@ -150,12 +150,14 @@ export class ChannelService extends BaseProvider implements IChannelService {
 						}
 					}
 
-					if (!this.ephemeral) {
-						debugLog(() => ({channelMessageDelete: {message}}));
-						await this.databaseService
-							.removeItem(message.url)
-							.catch(() => {});
+					if (this.ephemeral) {
+						return;
 					}
+
+					debugLog(() => ({channelMessageDelete: {message}}));
+					await this.databaseService
+						.removeItem(message.url)
+						.catch(() => {});
 				})
 		);
 

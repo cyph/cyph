@@ -280,11 +280,13 @@ export class AccountComponent extends BaseProvider
 		super();
 
 		/* tslint:disable-next-line:strict-type-predicates */
-		if (typeof document === 'object' && typeof document.body === 'object') {
-			document.body.classList.toggle(
-				'primary-account-theme',
-				accountPrimaryTheme
-			);
+		if (!(typeof document === 'object' && typeof document.body === 'object')) {
+			return;
 		}
+
+		document.body.classList.toggle(
+			'primary-account-theme',
+			accountPrimaryTheme
+		);
 	}
 }

@@ -45,16 +45,18 @@ export class EnableLastPassDirective extends BaseProvider implements OnInit {
 		}
 
 		if (
-			!this.elementRef.nativeElement.id ||
-			this.elementRef.nativeElement.id.startsWith('mat-input-')
+			this.elementRef.nativeElement.id &&
+			!this.elementRef.nativeElement.id.startsWith('mat-input-')
 		) {
-			await sleep(0);
-			this.renderer.setAttribute(
-				this.elementRef.nativeElement,
-				'id',
-				getID()
-			);
+			return;
 		}
+
+		await sleep(0);
+		this.renderer.setAttribute(
+			this.elementRef.nativeElement,
+			'id',
+			getID()
+		);
 	}
 
 	constructor (

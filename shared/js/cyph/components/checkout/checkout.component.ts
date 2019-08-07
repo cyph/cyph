@@ -137,8 +137,8 @@ export class CheckoutComponent extends BaseProvider
 		if (typeof this.category === 'string' && this.category) {
 			this.category = parseFloat(this.category);
 		}
-		/* tslint:disable-next-line:strict-type-predicates */
 		if (
+			/* tslint:disable-next-line:strict-type-predicates */
 			typeof this.extraUserDiscount === 'string' &&
 			this.extraUserDiscount
 		) {
@@ -156,8 +156,8 @@ export class CheckoutComponent extends BaseProvider
 		if (typeof this.perUser === 'string') {
 			this.perUser = <any> this.perUser === 'true';
 		}
-		/* tslint:disable-next-line:strict-type-predicates */
 		if (
+			/* tslint:disable-next-line:strict-type-predicates */
 			typeof this.subscriptionType === 'string' &&
 			this.subscriptionType
 		) {

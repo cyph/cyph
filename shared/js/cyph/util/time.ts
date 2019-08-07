@@ -337,8 +337,8 @@ export const getTimeString = memoize((timestamp?: number): string =>
 );
 
 /** Converts a timestamp into a 24-hour time. */
-/* tslint:disable-next-line:cyclomatic-complexity */
 export const timestampTo24HourTimeString = memoize(
+	/* tslint:disable-next-line:cyclomatic-complexity */
 	(
 		timestamp?: number,
 		roundToHalfHour: boolean = false,

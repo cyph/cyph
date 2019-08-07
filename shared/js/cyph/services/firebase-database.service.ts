@@ -562,12 +562,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const metadata = await this.getMetadata(url);
 
-				if (metadata.data === undefined) {
-					await (await this.getStorageRef(
-						url,
-						metadata.hash
-					)).getDownloadURL();
+				if (metadata.data !== undefined) {
+					return;
 				}
+
+				await (await this.getStorageRef(
+					url,
+					metadata.hash
+				)).getDownloadURL();
 			})
 			.then(() => true)
 			.catch(() => false);
@@ -1114,8 +1116,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 				await this.potassiumService.hash.hash(data)
 			);
 
-			/* tslint:disable-next-line:possible-timing-attack */
 			if (
+				/* tslint:disable-next-line:possible-timing-attack */
 				hash !==
 				(await this.getMetadata(url).catch(() => ({hash: undefined})))
 					.hash
@@ -1554,11 +1556,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 										initiated = true;
 										return;
 									}
-									if (snapshot && !snapshot.exists()) {
-										this.ngZone.run(() => {
-											observer.complete();
-										});
+									if (!snapshot || snapshot.exists()) {
+										return;
 									}
+
+									this.ngZone.run(() => {
+										observer.complete();
+									});
 								};
 
 								for (const key of Object.keys(initialValues)) {
@@ -1860,11 +1864,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 										initiated = true;
 										return;
 									}
-									if (snapshot && !snapshot.exists()) {
-										this.ngZone.run(() => {
-											observer.complete();
-										});
+									if (!snapshot || snapshot.exists()) {
+										return;
 									}
+
+									this.ngZone.run(() => {
+										observer.complete();
+									});
 								};
 
 								listRef.on('child_added', onChildAdded);

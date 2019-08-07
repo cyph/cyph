@@ -207,20 +207,21 @@ export class ChatService extends BaseProvider {
 							}
 
 							for (let j = i - 1; j >= 0; --j) {
-								if (!isNaN(messages[j].timestamp)) {
-									message.timestamp =
-										messages[j].timestamp + 0.001;
-									break;
+								if (isNaN(messages[j].timestamp)) {
+									continue;
 								}
+
+								message.timestamp = messages[j].timestamp + 0.001;
+								break;
 							}
 
 							if (isNaN(message.timestamp)) {
 								for (let j = i + 1; j < messages.length; ++j) {
-									if (!isNaN(messages[j].timestamp)) {
-										message.timestamp =
-											messages[j].timestamp - 0.001;
-										break;
+									if (isNaN(messages[j].timestamp)) {
+										continue;
 									}
+
+									message.timestamp = messages[j].timestamp - 0.001;
 								}
 							}
 
@@ -384,8 +385,8 @@ export class ChatService extends BaseProvider {
 							.watchFlat(true)
 							.pipe(
 								map(messageIDs => messageIDs.length === 0)
-								/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 							)
+							/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 							.subscribe(this.chatSelfDestructed);
 
 						this.chatSelfDestructTimer.next(
@@ -731,10 +732,10 @@ export class ChatService extends BaseProvider {
 
 		debugLogTime(() => 'Chat Message Add: start');
 
-		/* tslint:disable-next-line:cyclomatic-complexity */
 		const newMessages = filterUndefined(
 			await Promise.all(
 				messageInputs.map(
+					/* tslint:disable-next-line:cyclomatic-complexity */
 					async ({
 						author,
 						hash,
@@ -898,14 +899,16 @@ export class ChatService extends BaseProvider {
 							[] :
 							messageInputs.map(async ({author, id}) => {
 								if (
-									author ===
-										this.sessionService.localUsername &&
-									pendingMessageRoot
+									author !==
+										this.sessionService.localUsername ||
+									!pendingMessageRoot
 								) {
-									await this.localStorageService.removeItem(
-										`${pendingMessageRoot}/${id}`
-									);
+									return;
 								}
+
+								await this.localStorageService.removeItem(
+									`${pendingMessageRoot}/${id}`
+								);
 							}))
 					])
 				)

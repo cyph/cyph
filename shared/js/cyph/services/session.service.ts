@@ -219,13 +219,15 @@ export abstract class SessionService extends BaseProvider
 
 				this.receivedMessages.add(message.data.id);
 
-				if (message.event && message.event in rpcEvents) {
-					getOrSetDefault(
-						messageGroups,
-						message.event,
-						() => []
-					).push(message.data);
+				if (!(message.event && message.event in rpcEvents)) {
+					return;
 				}
+
+				getOrSetDefault(
+					messageGroups,
+					message.event,
+					() => []
+				).push(message.data);
 			})
 		);
 

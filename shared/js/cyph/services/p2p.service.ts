@@ -181,12 +181,12 @@ export class P2PService extends BaseProvider {
 			this.sessionInitService.callType === undefined
 		) {
 			await this.p2pWebRTCService.close();
+			return;
 		}
-		else {
-			await this.chatService.disconnectButton(async () =>
-				this.p2pWebRTCService.close()
-			);
-		}
+
+		await this.chatService.disconnectButton(async () =>
+			this.p2pWebRTCService.close()
+		);
 	}
 
 	/** Creates alert about P2P being unsupported. */

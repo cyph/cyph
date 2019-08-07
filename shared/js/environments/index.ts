@@ -23,10 +23,11 @@ if (customBuildBase64) {
 accountPrimaryTheme = true;
 burnerRoot = 'burner';
 
-/* tslint:disable-next-line:strict-type-predicates */
 if (
 	environment.customBuild &&
+	/* tslint:disable-next-line:strict-type-predicates */
 	typeof $ === 'function' &&
+	/* tslint:disable-next-line:strict-type-predicates */
 	typeof window === 'object'
 ) {
 	for (const k of Object.keys(

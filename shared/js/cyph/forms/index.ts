@@ -126,6 +126,7 @@ export const newFormContainer = (
 });
 
 /** Creates a new form element. */
+/* tslint:disable-next-line:cyclomatic-complexity */
 export const newFormElement = <
 	T extends {
 		fileName?: string;
@@ -141,7 +142,6 @@ export const newFormElement = <
 		step?: number;
 		value?: boolean | number | string | Uint8Array;
 		width?: number;
-		/* tslint:disable-next-line:cyclomatic-complexity */
 	}
 >(
 	elementType: Form.Element.Types
@@ -557,8 +557,8 @@ export const basicInfo = (id?: string): Form.IComponent => {
 				datepicker({
 					id: 'DOB',
 					label: 'Date of Birth',
-					width: 20,
-					required: true
+					required: true,
+					width: 20
 				}),
 				select({
 					id: 'Sex',
@@ -574,8 +574,8 @@ export const basicInfo = (id?: string): Form.IComponent => {
 				numberInput({
 					label: 'Weight (lbs)',
 					max: 1500,
-					width: 15,
-					required: false
+					required: false,
+					width: 15
 				}),
 				height()
 			])

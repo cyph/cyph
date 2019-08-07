@@ -350,12 +350,14 @@ export class QuillComponent extends BaseProvider
 									throw new Error('No Quill.');
 								}
 
-								if (range.clientID !== this.clientID) {
-									this.quill.setSelection(
-										range.index,
-										range.length
-									);
+								if (range.clientID === this.clientID) {
+									return;
 								}
+
+								this.quill.setSelection(
+									range.index,
+									range.length
+								);
 							});
 						}
 					);

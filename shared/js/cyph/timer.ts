@@ -106,8 +106,8 @@ export class Timer {
 					}),
 					takeWhile(o => o.continue),
 					map(o => o.next)
-					/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 				)
+				/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 				.subscribe(
 					s => {
 						this.timestamp.next(s);
