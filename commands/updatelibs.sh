@@ -220,7 +220,6 @@ read -r -d '' modules <<- EOM
 	firebase-tools
 	fullcalendar@3.6.1
 	glob
-	google-closure-compiler
 	granim
 	gulp
 	hammerjs
