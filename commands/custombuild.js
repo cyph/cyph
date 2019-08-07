@@ -26,11 +26,11 @@ const compileSCSS = scss =>
 			input: childProcess
 				.spawnSync('scss', ['-s', '-C', `-I${cssRoot}`], {
 					input: `
-				@import '~bourbon/app/assets/stylesheets/bourbon';
-				${fs.readFileSync(`${cssRoot}/mixins.scss`).toString()}
-				${fs.readFileSync(`${cssRoot}/theme.scss`).toString()}
-				${scss}
-			`
+						@import '~bourbon/app/assets/stylesheets/bourbon';
+						${fs.readFileSync(`${cssRoot}/mixins.scss`).toString()}
+						${fs.readFileSync(`${cssRoot}/theme.scss`).toString()}
+						${scss}
+					`
 						.replace(/@import '\.\/mixins';/g, '')
 						.replace(/@import '~/g, "@import '/node_modules/")
 				})
@@ -113,10 +113,10 @@ const customBuild = (id, version) => {
 			!preLoadBackgroundColor ?
 				'' :
 				`
-			html > body {
-				background-color: ${preLoadBackgroundColor} !important;
-			}
-		`
+					html > body {
+						background-color: ${preLoadBackgroundColor} !important;
+					}
+				`
 		}
 	`.trim();
 
@@ -146,24 +146,24 @@ const customBuild = (id, version) => {
 			!o.config.backgroundColor ?
 				'' :
 				`
-			$cyph-background: ${o.config.backgroundColor};
-		`
+					$cyph-background: ${o.config.backgroundColor};
+				`
 		}
 
 		${
 			o.config.dark === undefined ?
 				'' :
 				`
-			$cyph-is-dark: ${o.config.dark.toString()};
-		`
+					$cyph-is-dark: ${o.config.dark.toString()};
+				`
 		}
 
 		${
 			!o.config.foregroundColor ?
 				'' :
 				`
-			$cyph-foreground: ${o.config.foregroundColor};
-		`
+					$cyph-foreground: ${o.config.foregroundColor};
+				`
 		}
 
 		${(tryReadFile(paths.theme) || '').toString()}

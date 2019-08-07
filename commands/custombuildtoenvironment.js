@@ -27,28 +27,28 @@ const {customBuild} = require('./custombuild');
 	fs.writeFileSync(
 		`${__dirname}/../shared/js/environments/.environment.tmp.ts`,
 		`
-		/* tslint:disable */
-		import {environment} from './environment.${baseEnvironment}';
+			/* tslint:disable */
+			import {environment} from './environment.${baseEnvironment}';
 
 
-		environment.envName	= 'tmp';
-		environment.local	= true;
+			environment.envName = 'tmp';
+			environment.local = true;
 
-		environment.customBuild	= {${Object.keys(o)
-			.map(
-				k =>
-					`${k}:${
-						o[k] instanceof Uint8Array ?
-							`new Uint8Array(${JSON.stringify(
-								Array.from(o[k])
-							)})` :
-							JSON.stringify(o[k])
-					}`
-			)
-			.join(',')}};
+			environment.customBuild	= {${Object.keys(o)
+				.map(
+					k =>
+						`${k}:${
+							o[k] instanceof Uint8Array ?
+								`new Uint8Array(${JSON.stringify(
+									Array.from(o[k])
+								)})` :
+								JSON.stringify(o[k])
+						}`
+				)
+				.join(',')}};
 
-		export {environment};
-	`.trim()
+			export {environment};
+		`.trim()
 	);
 })().catch(err => {
 	console.error(err);

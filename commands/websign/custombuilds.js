@@ -30,18 +30,18 @@ const {customBuild, customBuildIds} = require('../custombuild');
 		$('head').append(
 			(name.endsWith('.js') ?
 				`
-			<script
-				websign-sri-path='${path}'
-				websign-sri-hash='${hash}'
-			></script>
-		` :
+					<script
+						websign-sri-path='${path}'
+						websign-sri-hash='${hash}'
+					></script>
+				` :
 				`
-			<link
-				rel='stylesheet'
-				websign-sri-path='${path}'
-				websign-sri-hash='${hash}'
-			></link>
-		`
+					<link
+						rel='stylesheet'
+						websign-sri-path='${path}'
+						websign-sri-hash='${hash}'
+					></link>
+				`
 			).trim()
 		);
 
@@ -82,10 +82,10 @@ const {customBuild, customBuildIds} = require('../custombuild');
 			$,
 			`${o.id}.js`,
 			`
-		self.customBuildBase64	= '${potassium.toBase64(
-			await serialize(Environment.CustomBuild, o)
-		)}';
-	`
+				self.customBuildBase64	= '${potassium.toBase64(
+					await serialize(Environment.CustomBuild, o)
+				)}';
+			`
 		);
 
 		fs.writeFileSync(`${args.outputPath}/${o.id}`, $.html().trim());
