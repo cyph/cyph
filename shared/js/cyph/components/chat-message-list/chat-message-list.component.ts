@@ -371,17 +371,20 @@ export class ChatMessageListComponent extends BaseProvider
 													this
 														.accountUserLookupService ?
 														this.chatService
-															.remoteUser.value &&
-														this.chatService
-															.remoteUser.value
-															.username ===
-															message.authorID ?
-														this.chatService
-															.remoteUser.value :
-													await this.accountUserLookupService.getUser(
-															message.authorID,
-															false
-														) :
+																.remoteUser
+																.value &&
+														  this.chatService
+																.remoteUser
+																.value
+																.username ===
+																message.authorID ?
+															this.chatService
+																.remoteUser
+																.value :
+															await this.accountUserLookupService.getUser(
+																message.authorID,
+																false
+															) :
 														undefined;
 											}
 											catch {}

@@ -292,10 +292,10 @@ export class AccountChatComponent extends BaseProvider
 									callType = promptFollowup ?
 										undefined :
 									appointment.calendarInvite.callType ===
-										  CallTypes.Video ?
+									CallTypes.Video ?
 										'video' :
 									appointment.calendarInvite.callType ===
-										  CallTypes.Audio ?
+										CallTypes.Audio ?
 										'audio' :
 										undefined;
 

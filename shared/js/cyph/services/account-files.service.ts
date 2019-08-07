@@ -1315,14 +1315,16 @@ export class AccountFilesService extends BaseProvider {
 
 		return fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
 			file instanceof Array ?
-			file.map(o => msgpack.encode(o).length).reduce((a, b) => a + b, 0) :
-		0 :
+				file
+					.map(o => msgpack.encode(o).length)
+					.reduce((a, b) => a + b, 0) :
+				0 :
 		fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
 			file instanceof Blob ?
-			file.size :
-		'mediaType' in file ?
-			file.data.length :
-		NaN :
+				file.size :
+			'mediaType' in file ?
+				file.data.length :
+				NaN :
 		fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
 			msgpack.encode(<IQuillDelta> file).length :
 		fileConfig.proto ?
@@ -1820,20 +1822,20 @@ export class AccountFilesService extends BaseProvider {
 				})() :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
 				file instanceof Blob ?
-				this.accountDatabaseService.uploadItem(
-					url,
-					BlobProto,
-					file,
-					undefined,
-					key
-				) :
-			this.accountDatabaseService.uploadItem(
-					url,
-					BinaryProto,
-					'mediaType' in file ? file.data : new Uint8Array(0),
-					undefined,
-					key
-				) :
+					this.accountDatabaseService.uploadItem(
+						url,
+						BlobProto,
+						file,
+						undefined,
+						key
+					) :
+					this.accountDatabaseService.uploadItem(
+						url,
+						BinaryProto,
+						'mediaType' in file ? file.data : new Uint8Array(0),
+						undefined,
+						key
+					) :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
 				this.accountDatabaseService.uploadItem(
 					url,

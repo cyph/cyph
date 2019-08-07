@@ -547,8 +547,8 @@ const relativeDateStringInternal = memoize((now: number) =>
 
 			return compareDates(date, now, true) ?
 				noToday ?
-				undefined :
-			strings.today :
+					undefined :
+					strings.today :
 			compareDates(date, now - 86400000, true) ?
 				strings.yesterday :
 			date.getFullYear() === timestampToDate(now).getFullYear() ?

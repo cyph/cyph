@@ -43,7 +43,7 @@ export class Env extends EnvDeploy {
 		environment.customBuild.config.callTypeVideo ?
 			'video' :
 		environment.customBuild &&
-			  environment.customBuild.config.callTypeAudio ?
+			environment.customBuild.config.callTypeAudio ?
 			'audio' :
 			undefined;
 

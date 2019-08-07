@@ -24,12 +24,12 @@ export class ChatEnvService extends EnvService {
 					undefined :
 				this.sessionInitService.callType === 'audio' ?
 					base ?
-					env.cyphAudioBaseUrl :
-				env.cyphAudioUrl :
+						env.cyphAudioBaseUrl :
+						env.cyphAudioUrl :
 				this.sessionInitService.callType === 'video' ?
 					base ?
-					env.cyphVideoBaseUrl :
-				env.cyphVideoUrl :
+						env.cyphVideoBaseUrl :
+						env.cyphVideoUrl :
 					undefined) || (base ? env.newCyphBaseUrl : env.cyphImUrl);
 
 			const divider = baseURL.indexOf('#') < 0 ? '#' : '';

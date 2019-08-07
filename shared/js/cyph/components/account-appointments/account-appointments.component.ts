@@ -120,13 +120,13 @@ export class AccountAppointmentsComponent extends BaseProvider
 			),
 			!friend && !appointment.fromEmail ?
 				undefined :
-			this.databaseService.callFunction('appointmentInvite', {
+				this.databaseService.callFunction('appointmentInvite', {
 					callType:
 						appointment.calendarInvite.callType ===
 						CallTypes.Audio ?
 							'audio' :
 						appointment.calendarInvite.callType ===
-							  CallTypes.Video ?
+							CallTypes.Video ?
 							'video' :
 							undefined,
 					eventDetails: {

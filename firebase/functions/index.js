@@ -49,16 +49,16 @@ const getFullBurnerURL = (namespace, callType) => {
 
 	return namespace === 'cyph_healthcare' ?
 		callType === 'audio' ?
-		'https://audio.cyph.healthcare/' :
-	callType === 'video' ?
-		'https://video.cyph.healthcare/' :
-	'https://chat.cyph.healthcare/' :
+			'https://audio.cyph.healthcare/' :
+		callType === 'video' ?
+			'https://video.cyph.healthcare/' :
+			'https://chat.cyph.healthcare/' :
 	namespace === 'cyph_ws' ?
 		callType === 'audio' ?
-		'https://cyph.audio/' :
-	callType === 'video' ?
-		'https://cyph.video/' :
-	'https://cyph.im/' :
+			'https://cyph.audio/' :
+		callType === 'video' ?
+			'https://cyph.video/' :
+			'https://cyph.im/' :
 	callType === 'audio' ?
 		`${burnerURL}audio/` :
 	callType === 'video' ?
@@ -936,7 +936,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 							undefined
 					] :
 				notification.type === NotificationTypes.Message &&
-					  metadata.castleSessionID ?
+					metadata.castleSessionID ?
 					[true, `unreadMessages/${metadata.castleSessionID}`] :
 					[];
 			if (!path) {

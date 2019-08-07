@@ -97,20 +97,20 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			this.accountDatabaseService.currentUser.value.confirmed ||
 				this.accountDatabaseService.currentUser.value.pseudoAccount ?
 				this.activatedRoute.snapshot.url.length > 0 ?
-				[
-					'',
-					...this.activatedRoute.snapshot.url
-						/* Avoid redirecting from /login/login to /login */
-						.slice(
-							this.activatedRoute.snapshot.url.length > 0 &&
-								this.activatedRoute.snapshot.url[0].path ===
-									'login' ?
-								1 :
-								0
-						)
-						.map(o => o.path)
-				] :
-			[''] :
+					[
+						'',
+						...this.activatedRoute.snapshot.url
+							/* Avoid redirecting from /login/login to /login */
+							.slice(
+								this.activatedRoute.snapshot.url.length > 0 &&
+									this.activatedRoute.snapshot.url[0].path ===
+										'login' ?
+									1 :
+									0
+							)
+							.map(o => o.path)
+					] :
+					[''] :
 				['welcome']
 		);
 
