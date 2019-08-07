@@ -49,7 +49,6 @@ export class ChatMessageBoxComponent extends BaseProvider
 	/** Default sendFunction value. */
 	private readonly defaultSendFunction: () => Promise<void> = async () => {
 		await this.chatService.send(this.messageType);
-		/* tslint:disable-next-line:semicolon */
 	};
 
 	/** If true, autofocuses. */

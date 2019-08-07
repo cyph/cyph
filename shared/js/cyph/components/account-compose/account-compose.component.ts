@@ -341,7 +341,6 @@ export class AccountComposeComponent extends BaseProvider
 		this.accountChatService.updateChat();
 
 		this.sent.next(true);
-		/* tslint:disable-next-line:semicolon */
 	};
 
 	/** Indicates whether message has been sent, or undefined for in-progress. */

@@ -63,7 +63,6 @@ export class CalendarInviteComponent extends BaseProvider
 	/** Date filter to prevent forbidden days from being selected. */
 	public readonly dateFilter = (d: Date): boolean =>
 		this.forbiddenDays.indexOf(d.getDay()) < 0;
-	/* tslint:disable-next-line:semicolon */
 
 	/** @see CalendarInvite.DaysOfWeek */
 	public readonly daysOfWeek = CalendarInvite.DaysOfWeek;

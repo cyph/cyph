@@ -50,7 +50,6 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 		smallText?: Async<string | undefined>;
 		text: Async<string>;
 	} = value => ({text: <any> value});
-	/* tslint:disable-next-line:semicolon */
 
 	/** Search bar control. */
 	@Input() public control: FormControl = new FormControl();

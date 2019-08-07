@@ -215,7 +215,6 @@ export class AccountContactsSearchComponent extends BaseProvider {
 				smallText: user.realUsername.pipe(map(s => `@${s}`)),
 				text: user.name
 			};
-	/* tslint:disable-next-line:semicolon */
 
 	/** @see SearchBarComponent.filterChange */
 	@Output() public readonly userFilterChange: EventEmitter<
@@ -227,7 +226,6 @@ export class AccountContactsSearchComponent extends BaseProvider {
 		username: string
 	) => Async<User | undefined> = async username =>
 		this.accountUserLookupService.getUser(username, false);
-	/* tslint:disable-next-line:semicolon */
 
 	/** Default placeholder. */
 	public get defaultPlaceHolder () : string {
