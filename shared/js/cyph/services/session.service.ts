@@ -275,6 +275,7 @@ export abstract class SessionService extends BaseProvider
 		messages: [
 			string,
 
+
 				| ISessionMessageAdditionalData
 				| ((
 						timestamp: number
@@ -591,6 +592,7 @@ export abstract class SessionService extends BaseProvider
 	public async send (
 		...messages: [
 			string,
+
 
 				| ISessionMessageAdditionalData
 				| ((

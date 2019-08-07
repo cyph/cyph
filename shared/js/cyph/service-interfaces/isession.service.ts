@@ -123,6 +123,7 @@ export interface ISessionService {
 		...messages: [
 			string,
 
+
 				| ISessionMessageAdditionalData
 				| ((
 						timestamp: number

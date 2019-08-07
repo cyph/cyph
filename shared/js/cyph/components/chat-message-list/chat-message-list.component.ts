@@ -467,9 +467,7 @@ export class ChatMessageListComponent extends BaseProvider
 								message?: ChatMessage;
 								pending: boolean;
 							})[]
-						> (messages.length < 1 ?
-							[{pending: false}] :
-							messages)).map(
+						> (messages.length < 1 ? [{pending: false}] : messages)).map(
 							({dateChange, message, pending}, i, arr) => {
 								const isEnd = i + 1 === arr.length;
 

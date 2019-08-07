@@ -760,13 +760,9 @@ export class AccountFilesService extends BaseProvider {
 			result: result.then(async o => {
 				this.showSpinner.next(false);
 
-				return o.value instanceof Blob ?
-					<any> (
-							new Blob([o.value], {
-								type: (await filePromise).mediaType
-							})
-					  ) :
-					o.value;
+				return o.value instanceof Blob ? <any> new Blob([o.value], {
+							type: (await filePromise).mediaType
+					  }) : o.value;
 			})
 		};
 	}
