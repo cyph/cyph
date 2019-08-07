@@ -62,8 +62,7 @@ export class ChatMessageBoxComponent extends BaseProvider
 	@Input() public calendarInviteReasons?: string[];
 
 	/** @see ChatMessageValue.Types */
-	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types =
-		ChatMessageValue.Types;
+	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
 	/** Custom send function. */
 	@Input() public customSendFunction?: () => Promise<void>;
@@ -113,7 +112,7 @@ export class ChatMessageBoxComponent extends BaseProvider
 	@Input() public showUnreadCount: boolean = true;
 
 	/** @see States */
-	public readonly states: typeof States = States;
+	public readonly states = States;
 
 	/** @ignore */
 	private mobileButtonWrapper (leaveFocused: boolean, f: () => void) : void {

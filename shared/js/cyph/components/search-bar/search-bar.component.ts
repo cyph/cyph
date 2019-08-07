@@ -103,7 +103,7 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 	@Input() public query?: Observable<string>;
 
 	/** @see trackByValue */
-	public readonly trackByValue: typeof trackByValue = trackByValue;
+	public readonly trackByValue = trackByValue;
 
 	/** @ignore */
 	private clearInput () : void {

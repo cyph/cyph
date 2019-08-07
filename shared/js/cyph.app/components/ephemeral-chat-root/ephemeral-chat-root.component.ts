@@ -73,10 +73,10 @@ import {ChatRootStates} from '../../enums';
 export class EphemeralChatRootComponent extends BaseProvider
 	implements AfterViewInit {
 	/** @see ChatRootStates */
-	public readonly chatRootStates: typeof ChatRootStates = ChatRootStates;
+	public readonly chatRootStates = ChatRootStates;
 
 	/** @see ChatStates */
-	public readonly chatStates: typeof ChatStates = ChatStates;
+	public readonly chatStates = ChatStates;
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {

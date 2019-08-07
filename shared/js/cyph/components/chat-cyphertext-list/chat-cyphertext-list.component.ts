@@ -18,7 +18,7 @@ export class ChatCyphertextListComponent extends BaseProvider {
 	@Input() public messages?: ChatMessage[];
 
 	/** @see trackByID */
-	public readonly trackByID: typeof trackByID = trackByID;
+	public readonly trackByID = trackByID;
 
 	constructor (
 		/** @see StringsService */

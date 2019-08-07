@@ -121,8 +121,7 @@ export class ChatMessageComponent extends BaseProvider
 	};
 
 	/** @see ChatMessage.AuthorTypes */
-	public readonly authorTypes: typeof ChatMessage.AuthorTypes =
-		ChatMessage.AuthorTypes;
+	public readonly authorTypes = ChatMessage.AuthorTypes;
 
 	/** Fires after message is fully loaded. */
 	@Output() public readonly loaded = new EventEmitter<void>();
@@ -142,7 +141,7 @@ export class ChatMessageComponent extends BaseProvider
 	> = new BehaviorSubject<IQuillDelta | undefined>(undefined);
 
 	/** @see readableByteLength */
-	public readonly readableByteLength: typeof readableByteLength = readableByteLength;
+	public readonly readableByteLength = readableByteLength;
 
 	/** If true, will scroll into view. */
 	@Input() public scrollIntoView: boolean = false;
@@ -153,13 +152,13 @@ export class ChatMessageComponent extends BaseProvider
 	> = new EventEmitter<void>();
 
 	/** @see trackBySelf */
-	public readonly trackBySelf: typeof trackBySelf = trackBySelf;
+	public readonly trackBySelf = trackBySelf;
 
 	/** @see ChatMainComponent.uiStyle */
 	@Input() public uiStyle: UiStyles = UiStyles.default;
 
 	/** @see UiStyles */
-	public readonly uiStyles: typeof UiStyles = UiStyles;
+	public readonly uiStyles = UiStyles;
 
 	/** @see IChatData.unconfirmedMessages */
 	@Input() public unconfirmedMessages?: {[id: string]: boolean | undefined};

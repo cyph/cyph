@@ -18,7 +18,7 @@ import {readableByteLength} from '../../util/formatting';
 })
 export class AccountStorageAnalyticsComponent extends BaseProvider {
 	/** @see readableByteLength */
-	public readonly readableByteLength: typeof readableByteLength = readableByteLength;
+	public readonly readableByteLength = readableByteLength;
 
 	constructor (
 		/** @see AccountService */

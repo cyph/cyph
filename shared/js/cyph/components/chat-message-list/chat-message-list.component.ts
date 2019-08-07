@@ -208,7 +208,7 @@ export class ChatMessageListComponent extends BaseProvider
 	@Input() public uiStyle: UiStyles = UiStyles.default;
 
 	/** @see UiStyles */
-	public readonly uiStyles: typeof UiStyles = UiStyles;
+	public readonly uiStyles = UiStyles;
 
 	/** Triggers message flash animation. */
 	public async flashMessage (elem: HTMLElement) : Promise<void> {

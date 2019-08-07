@@ -15,8 +15,7 @@ import {sleep} from '../util/wait';
 export class ChatMessage implements IChatMessage {
 	/** @see ChatMessageInternal.AuthorTypes */
 	/* tslint:disable-next-line:variable-name */
-	public static readonly AuthorTypes: typeof ChatMessageInternal.AuthorTypes =
-		ChatMessageInternal.AuthorTypes;
+	public static readonly AuthorTypes = ChatMessageInternal.AuthorTypes;
 
 	/** @inheritDoc */
 	public authorID?: string = this.message.authorID;

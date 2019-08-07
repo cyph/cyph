@@ -77,10 +77,10 @@ export class AccountFileSharingComponent extends BaseProvider {
 	});
 
 	/** @see isNaN */
-	public readonly isNaN: typeof isNaN = isNaN;
+	public readonly isNaN = isNaN;
 
 	/** @see readableByteLength */
-	public readonly readableByteLength: typeof readableByteLength = readableByteLength;
+	public readonly readableByteLength = readableByteLength;
 
 	/** Usernames to share with. */
 	private get usernames () : string[] {

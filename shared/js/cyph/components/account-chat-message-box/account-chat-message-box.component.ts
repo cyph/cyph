@@ -36,8 +36,7 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 	public chatMessageBox?: ChatMessageBoxInheritNgFormComponent;
 
 	/** @see ChatMessageValue.Types */
-	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types =
-		ChatMessageValue.Types;
+	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
 	/** @see ChatMessageBoxComponent.customSendFunction */
 	@Input() public customSendFunction?: () => Promise<void>;

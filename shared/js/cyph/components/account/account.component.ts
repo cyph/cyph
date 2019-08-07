@@ -219,7 +219,7 @@ export class AccountComponent extends BaseProvider
 	);
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence = UserPresence;
+	public readonly userPresence = UserPresence;
 
 	/** Resolves after view init. */
 	public readonly viewInitiated: Promise<void> = this._VIEW_INITIATED.promise;

@@ -65,7 +65,7 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	> = new BehaviorSubject<User | undefined>(undefined);
 
 	/** @see UserPresence */
-	public readonly userPresence: typeof UserPresence = UserPresence;
+	public readonly userPresence = UserPresence;
 
 	/** @see IContactListItem.groupData */
 	public get groupData () :

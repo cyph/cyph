@@ -41,10 +41,10 @@ export class AccountIncomingPatientInfoComponent extends BaseProvider
 	);
 
 	/** @see prettyPrint */
-	public readonly prettyPrint: typeof prettyPrint = memoize(prettyPrint);
+	public readonly prettyPrint = memoize(prettyPrint);
 
 	/** @see trackByID */
-	public readonly trackByID: typeof trackByID = trackByID;
+	public readonly trackByID = trackByID;
 
 	/** Accepts incoming patient data. */
 	public async accept (

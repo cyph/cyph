@@ -53,7 +53,7 @@ export class CalendarInviteComponent extends BaseProvider
 	>(undefined);
 
 	/** @see CallTypes */
-	public readonly callTypes: typeof CallTypes = CallTypes;
+	public readonly callTypes = CallTypes;
 
 	/** Current date. */
 	public readonly currentDate: BehaviorSubject<
@@ -66,8 +66,7 @@ export class CalendarInviteComponent extends BaseProvider
 	/* tslint:disable-next-line:semicolon */
 
 	/** @see CalendarInvite.DaysOfWeek */
-	public readonly daysOfWeek: typeof CalendarInvite.DaysOfWeek =
-		CalendarInvite.DaysOfWeek;
+	public readonly daysOfWeek = CalendarInvite.DaysOfWeek;
 
 	/** @see CalendarInvite.DaysOfWeek */
 	public readonly dayOfWeekValues: CalendarInvite.DaysOfWeek[] = [
@@ -101,10 +100,10 @@ export class CalendarInviteComponent extends BaseProvider
 	);
 
 	/** @see getDurationString */
-	public readonly getDurationString: typeof getDurationString = getDurationString;
+	public readonly getDurationString = getDurationString;
 
 	/** @see getStartPadding */
-	public readonly getStartPadding: typeof getStartPadding = getStartPadding;
+	public readonly getStartPadding = getStartPadding;
 
 	/** Returns a human-readable time frame string (e.g. "Morning"). */
 	public readonly getTimeFrameString = memoize(
@@ -113,7 +112,7 @@ export class CalendarInviteComponent extends BaseProvider
 	);
 
 	/** @see getTimes */
-	public readonly getTimes: typeof getTimes = getTimes;
+	public readonly getTimes = getTimes;
 
 	/** Indicates whether input is disabled. */
 	@Input() public isDisabled: boolean = false;
@@ -134,8 +133,7 @@ export class CalendarInviteComponent extends BaseProvider
 	@Input() public reasons?: string[];
 
 	/** @see CalendarInvite.TimeFrames */
-	public readonly timeFrames: typeof CalendarInvite.TimeFrames =
-		CalendarInvite.TimeFrames;
+	public readonly timeFrames = CalendarInvite.TimeFrames;
 
 	/** @see CalendarInvite.DaysOfWeek */
 	public readonly timeFrameValues: CalendarInvite.TimeFrames[] = [
@@ -154,19 +152,19 @@ export class CalendarInviteComponent extends BaseProvider
 	};
 
 	/** @see timestampTo24HourTimeString */
-	public readonly timestampTo24HourTimeString: typeof timestampTo24HourTimeString = timestampTo24HourTimeString;
+	public readonly timestampTo24HourTimeString = timestampTo24HourTimeString;
 
 	/** @see timestampToDate */
-	public readonly timestampToDate: typeof timestampToDate = timestampToDate;
+	public readonly timestampToDate = timestampToDate;
 
 	/** @see timestampToTime */
-	public readonly timestampToTime: typeof timestampToTime = timestampToTime;
+	public readonly timestampToTime = timestampToTime;
 
 	/** @see timestampUpdate */
-	public readonly timestampUpdate: typeof timestampUpdate = timestampUpdate;
+	public readonly timestampUpdate = timestampUpdate;
 
 	/** @see timeToString */
-	public readonly timeToString: typeof timeToString = timeToString;
+	public readonly timeToString = timeToString;
 
 	/** Tomorrow's date. */
 	public readonly tomorrow: Promise<Date> = getTimestamp().then(timestamp =>
@@ -174,7 +172,7 @@ export class CalendarInviteComponent extends BaseProvider
 	);
 
 	/** @see trackBySelf */
-	public readonly trackBySelf: typeof trackBySelf = trackBySelf;
+	public readonly trackBySelf = trackBySelf;
 
 	/** Default appointment reason dropdown selection. */
 	public get defaultReasonForAppointment () : string {

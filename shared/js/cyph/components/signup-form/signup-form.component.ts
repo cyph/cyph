@@ -23,7 +23,7 @@ import {sleep} from '../../util/wait';
 })
 export class SignupFormComponent extends BaseProvider {
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern = emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** Indicates whether or not to display invite-code-related UI. */
 	@Input() public invite: boolean = false;
