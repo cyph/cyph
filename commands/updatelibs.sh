@@ -52,6 +52,7 @@ read -r -d '' modules <<- EOM
 	@covalent/http
 	@covalent/markdown
 	@ctrl/ngx-rightclick
+	@cyph/prettier
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth

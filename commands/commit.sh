@@ -53,7 +53,7 @@ find shared/css shared/js \
 	' \
 \;
 
-prettier --write 'shared/{css,js}/**/*.scss'
+cyphPrettier --write '**/*.{css,html,js,json,md,scss,ts,tsx,yaml,yml}'
 
 find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash -c '
 	curl -sf "$(node -e "console.log(JSON.parse('"'"'$(
