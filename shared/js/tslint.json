@@ -2,7 +2,7 @@
 	"rules": {
 		/* Custom */
 
-		"tab-equals": true,
+		"tab-equals": false,
 
 		/* TypeScript-Specific */
 
@@ -180,7 +180,7 @@
 		"linebreak-style": [true, "LF"],
 		"max-classes-per-file": [true, 1],
 		"max-file-line-count": [true, 500],
-		"max-line-length": [true, 100],
+		"max-line-length": false,
 		"no-default-export": true,
 		"no-default-import": false,
 		"no-duplicate-imports": true,
@@ -194,7 +194,7 @@
 
 		/* Style */
 
-		"align": [true, "arguments", "parameters", "statements"],
+		"align": [true, "parameters", "statements"],
 		"array-type": [true, "array"],
 		"arrow-parens": [true, "ban-single-arg-parens"],
 		"arrow-return-shorthand": true,
@@ -281,7 +281,7 @@
 		"prefer-while": true,
 		"quotemark": [true, "single", "avoid-escape"],
 		"return-undefined": false,
-		"semicolon": [true, "always"],
+		"semicolon": false,
 		"space-before-function-paren": [true, "always"],
 		"space-within-parens": false,
 		"switch-final-break": true,
