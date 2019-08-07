@@ -53,22 +53,7 @@ find shared/css shared/js \
 	' \
 \;
 
-find shared/css shared/js \
-	-type f \
-	-name '*.scss' \
-	-not -name theme.scss \
-	-not -name mixins.scss \
-	-not -path 'shared/css/themes/*' \
-| xargs -I% bash -c '
-sed -i "s|>>>|::ng-deep|g" %
-sed -i "s|/deep/|::ng-deep|g" %
-sass-convert --from scss --to scss --dasherize --indent t % | awk "{
-if (\$1 != \"/*\")
-	gsub(/\"/, \"'"'"'\", \$0)
-print \$0
-}" > %.new
-mv %.new %
-'
+prettier --write 'shared/{css,js}/**/*.scss'
 
 find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash -c '
 	curl -sf "$(node -e "console.log(JSON.parse('"'"'$(

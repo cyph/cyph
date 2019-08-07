@@ -1,0 +1,14 @@
+arrowParens: 'avoid'
+bracketSpacing: false
+endOfLine: 'lf'
+htmlWhitespaceSensitivity: 'ignore'
+jsxBracketSameLine: false
+jsxSingleQuote: false
+printWidth: 80
+proseWrap: 'always'
+quoteProps: 'consistent'
+semi: true
+singleQuote: true
+tabWidth: 4
+trailingComma: 'none'
+useTabs: true

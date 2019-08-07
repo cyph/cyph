@@ -303,6 +303,7 @@ read -r -d '' modules <<- EOM
 	quill-delta
 	quill-delta-to-html
 	quill-markdown
+	prettier
 	read
 	readable-stream
 	recorder.js

@@ -300,7 +300,7 @@ cp -rf ../../css/* ./
 grep -rl "@import '~" | xargs -I% sed -i "s|@import '~|@import '/node_modules/|g" %
 
 for f in ${scssAssets} ; do
-	scss "${f}.scss" "${f}.css"
+	sass "${f}.scss" "${f}.css"
 	checkfail
 	cleancss --inline none "${f}.css" -o "${f}.css"
 	checkfail
