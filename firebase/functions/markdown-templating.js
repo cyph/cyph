@@ -10,11 +10,11 @@ const markdownIt = new MarkdownIt();
 const markdownEscape = markdown =>
 	typeof markdown === 'string' ?
 		markdownEscapes.commonmark.reduce((s, c) => {
-				while (s.indexOf(c) > -1) {
-					s = s.replace(c, '\n');
-				}
-				return s.replace(/\n/g, `\\${c}`);
-		  }, markdown.replace(/\s+/g, ' ').trim()) :
+			while (s.indexOf(c) > -1) {
+				s = s.replace(c, '\n');
+			}
+			return s.replace(/\n/g, `\\${c}`);
+		}, markdown.replace(/\s+/g, ' ').trim()) :
 		markdown;
 const mustacheUnescape = memoize(template =>
 	template.replace(/\{?\{\{([^#\^\/].*?)\}\}\}?/g, '{{{$1}}}')

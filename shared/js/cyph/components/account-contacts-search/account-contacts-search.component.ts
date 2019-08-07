@@ -77,9 +77,9 @@ export class AccountContactsSearchComponent extends BaseProvider {
 
 			const users = this.contactList ?
 				await this.accountContactsService
-						.fullyLoadContactList(this.contactList)
-						.pipe(take(1))
-						.toPromise() :
+					.fullyLoadContactList(this.contactList)
+					.pipe(take(1))
+					.toPromise() :
 				[];
 
 			const results = filterUndefined(

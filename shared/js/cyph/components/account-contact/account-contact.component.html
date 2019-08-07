@@ -222,7 +222,7 @@
 					[routerLink]="
 						((user | async)?.contactID | async) ?
 							'/messages/' +
-							  (((user | async)?.contactID | async) || '') :
+							(((user | async)?.contactID | async) || '') :
 							undefined
 					"
 				>
@@ -234,7 +234,7 @@
 					[routerLink]="
 						((user | async)?.contactID | async) ?
 							'/call/' +
-							  (((user | async)?.contactID | async) || '') :
+							(((user | async)?.contactID | async) || '') :
 							undefined
 					"
 				>
@@ -246,7 +246,7 @@
 					[routerLink]="
 						((user | async)?.contactID | async) ?
 							'/video/' +
-							  (((user | async)?.contactID | async) || '') :
+							(((user | async)?.contactID | async) || '') :
 							undefined
 					"
 				>

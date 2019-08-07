@@ -150,8 +150,7 @@ export class StringsService extends BaseProvider {
 	public readonly cancel = `cancel`;
 
 	/** @see StringsService */
-	public readonly changeMasterKeyContent =
-		`You are about to change your **master key**. This is not reversible. If you lose the new master key, **your account cannot be recovered**.\n\nYou will be required to log in again from scratch next time you open ${this.internalProduct}. Continue?`;
+	public readonly changeMasterKeyContent = `You are about to change your **master key**. This is not reversible. If you lose the new master key, **your account cannot be recovered**.\n\nYou will be required to log in again from scratch next time you open ${this.internalProduct}. Continue?`;
 
 	/** @see StringsService */
 	public readonly changeMasterKeyFailure = `Changing the master key failed. Please try again later.`;
@@ -160,8 +159,7 @@ export class StringsService extends BaseProvider {
 	public readonly changeMasterKeyTitle = `Change Master Key`;
 
 	/** @see StringsService */
-	public readonly changePinContent =
-		`You are about to change your **lock screen password**. This is a simple passcode used to lock your account while you're away.\n\nYou will be required to log in again from scratch next time you open ${this.internalProduct}. Continue?`;
+	public readonly changePinContent = `You are about to change your **lock screen password**. This is a simple passcode used to lock your account while you're away.\n\nYou will be required to log in again from scratch next time you open ${this.internalProduct}. Continue?`;
 
 	/** @see StringsService */
 	public readonly changePinFailure = `Changing the lock screen password failed. Please try again later.`;
@@ -343,15 +341,13 @@ export class StringsService extends BaseProvider {
 	public readonly here = `here`;
 
 	/** @see StringsService */
-	public readonly gdprContactForm =
-		`I understand that this form is email-based (NOT ${this.internalProduct} encryption) and provide consent for ${this.internalCompany} to store any information submitted herein.`;
+	public readonly gdprContactForm = `I understand that this form is email-based (NOT ${this.internalProduct} encryption) and provide consent for ${this.internalCompany} to store any information submitted herein.`;
 
 	/** @see StringsService */
 	public readonly gdprContactFormShort = `Data Collection Consent`;
 
 	/** @see StringsService */
-	public readonly gdprSignupForm =
-		`By submitting your email address and/or name to the waitlist, you consent for ${this.internalCompany} to view and store this data.`;
+	public readonly gdprSignupForm = `By submitting your email address and/or name to the waitlist, you consent for ${this.internalCompany} to view and store this data.`;
 
 	/** @see StringsService */
 	public readonly incoming = `Incoming`;
@@ -369,8 +365,7 @@ export class StringsService extends BaseProvider {
 	public readonly incomingFile = `Download File`;
 
 	/** @see StringsService */
-	public readonly incomingFileSave =
-		`This file has not been scanned for malware; you may download it _at your own risk_. Save this file?`;
+	public readonly incomingFileSave = `This file has not been scanned for malware; you may download it _at your own risk_. Save this file?`;
 
 	/** @see StringsService */
 	public readonly incomingFileSaveError = `Failed to save the following file:`;
@@ -382,8 +377,7 @@ export class StringsService extends BaseProvider {
 	public readonly incomingFileUploadError = `Failed to upload the following file:`;
 
 	/** @see StringsService */
-	public readonly incomingPatientInfo =
-		`Your doctor has shared this medical data to be saved in your account to auto-fill forms on your behalf in the future. Would you like to accept it?`;
+	public readonly incomingPatientInfo = `Your doctor has shared this medical data to be saved in your account to auto-fill forms on your behalf in the future. Would you like to accept it?`;
 
 	/** @see StringsService */
 	public readonly incomingPatientInfoTitle = `Saving Incoming Patient Info`;
@@ -421,12 +415,10 @@ export class StringsService extends BaseProvider {
 	public readonly linkEmailSubjectTelehealth = `Your Telehealth Appointment`;
 
 	/** @see StringsService */
-	public readonly linkEmailText =
-		`I'm inviting you to chat with me securely via ${this.internalProductShort}!\n\nI'll be waiting here: \${LINK}`;
+	public readonly linkEmailText = `I'm inviting you to chat with me securely via ${this.internalProductShort}!\n\nI'll be waiting here: \${LINK}`;
 
 	/** @see StringsService */
-	public readonly linkEmailTextTelehealth =
-		`Your telehealth appointment is starting now.\n\nYour doctor is waiting here: \${LINK} (click to join)`;
+	public readonly linkEmailTextTelehealth = `Your telehealth appointment is starting now.\n\nYour doctor is waiting here: \${LINK} (click to join)`;
 
 	/** @see StringsService */
 	public readonly linkExpiresAt = `Link expires at`;
@@ -629,12 +621,10 @@ export class StringsService extends BaseProvider {
 	public readonly p2pDeny = `Your "${this.internalFriend}" has rejected your call.`;
 
 	/** @see StringsService */
-	public readonly p2pDisabled =
-		`Your or your ${this.internalFriend}'s browser may lack support for video calling. Try again with the latest Chrome or Firefox.`;
+	public readonly p2pDisabled = `Your or your ${this.internalFriend}'s browser may lack support for video calling. Try again with the latest Chrome or Firefox.`;
 
 	/** @see StringsService */
-	public readonly p2pDisabledLocal =
-		`Your browser does not support voice or video calling. Try again with the latest Chrome or Firefox.`;
+	public readonly p2pDisabledLocal = `Your browser does not support voice or video calling. Try again with the latest Chrome or Firefox.`;
 
 	/** @see StringsService */
 	public readonly p2pDisabledLocalIOS = `Voice/video calling is currently unsupported on iOS.`;
@@ -661,12 +651,10 @@ export class StringsService extends BaseProvider {
 	public readonly p2pTimeoutOutgoing = `Your call was missed.`;
 
 	/** @see StringsService */
-	public readonly p2pWarning =
-		`This may involve sharing your IP address with your ${this.internalFriend}. Proceed if you trust your ${this.internalFriend}.`;
+	public readonly p2pWarning = `This may involve sharing your IP address with your ${this.internalFriend}. Proceed if you trust your ${this.internalFriend}.`;
 
 	/** @see StringsService */
-	public readonly p2pWarningVPN =
-		`This may involve sharing your IP address with your ${this.internalFriend}. Proceed if you trust your ${this.internalFriend} or hide your IP by [connecting through a VPN](https://go.nordvpn.net/SH1F4).`;
+	public readonly p2pWarningVPN = `This may involve sharing your IP address with your ${this.internalFriend}. Proceed if you trust your ${this.internalFriend} or hide your IP by [connecting through a VPN](https://go.nordvpn.net/SH1F4).`;
 
 	/** @see StringsService */
 	public readonly p2pWarningAudioPassive = `Starting voice call (P2P).`;
@@ -717,8 +705,7 @@ export class StringsService extends BaseProvider {
 	public readonly profileSave = `Save Profile`;
 
 	/** @see StringsService */
-	public readonly profileVisibility =
-		`NOT a security feature — any information in your profile should be considered public regardless. This only controls whether the Cyph client will display it.`;
+	public readonly profileVisibility = `NOT a security feature — any information in your profile should be considered public regardless. This only controls whether the Cyph client will display it.`;
 
 	/** @see StringsService */
 	public readonly queuedMessageSaved = `Queued message saved.`;
@@ -800,8 +787,7 @@ export class StringsService extends BaseProvider {
 	public readonly share = `Share`;
 
 	/** @see StringsService */
-	public readonly shareEhrData =
-		`You are about to request data about this patient from your organization's EHR system and share it with this patient. If accepted, it will be used to auto-fill forms on their behalf. Continue?`;
+	public readonly shareEhrData = `You are about to request data about this patient from your organization's EHR system and share it with this patient. If accepted, it will be used to auto-fill forms on their behalf. Continue?`;
 
 	/** @see StringsService */
 	public readonly shareEhrDataFailure = `Sharing medical data failed.`;
@@ -819,8 +805,7 @@ export class StringsService extends BaseProvider {
 	public readonly signupFailed = `Signup failed. Please try again later.`;
 
 	/** @see StringsService */
-	public readonly signupMessage =
-		`Enjoying the service? Join our waitlist for ${this.internalProductShort} v2! More details are on the way, but the next version of ${this.internalProductShort} will include group messaging, user accounts, and encrypted chat history.`;
+	public readonly signupMessage = `Enjoying the service? Join our waitlist for ${this.internalProductShort} v2! More details are on the way, but the next version of ${this.internalProductShort} will include group messaging, user accounts, and encrypted chat history.`;
 
 	/** @see StringsService */
 	public readonly startDate = `Start Date`;
@@ -904,8 +889,7 @@ export class StringsService extends BaseProvider {
 	public readonly userAvatar = `User Avatar`;
 
 	/** @see StringsService */
-	public readonly usernameCapitalizationHelp =
-		`You may change the casing of your username. For example, @johntitor could become @JohnTitor or @JOHNTITOR.`;
+	public readonly usernameCapitalizationHelp = `You may change the casing of your username. For example, @johntitor could become @JohnTitor or @JOHNTITOR.`;
 
 	/** @see StringsService */
 	public readonly users = `Users`;
@@ -932,8 +916,7 @@ export class StringsService extends BaseProvider {
 	public readonly waitingRoomNotReadyForms = `Please ensure you've submitted all required patient forms.`;
 
 	/** @see StringsService */
-	public readonly waitingRoomNotReadyTime =
-		`It's not time to check in for your appointment yet. You can check in up to 20 minutes before your scheduled appointment.`;
+	public readonly waitingRoomNotReadyTime = `It's not time to check in for your appointment yet. You can check in up to 20 minutes before your scheduled appointment.`;
 
 	/** @see StringsService */
 	public readonly warningTitle = `Warning`;

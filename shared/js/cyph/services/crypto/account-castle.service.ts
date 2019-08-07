@@ -148,10 +148,10 @@ export class AccountCastleService extends CastleService {
 										(await remoteUser.getPublicSigningKey()) ===
 											undefined ?
 										this.accountDatabaseService.currentUser
-												.value &&
-												this.accountDatabaseService
-													.currentUser.value
-													.pseudoAccount :
+											.value &&
+											this.accountDatabaseService
+												.currentUser.value
+												.pseudoAccount :
 										undefined
 								);
 

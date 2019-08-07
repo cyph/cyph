@@ -61,7 +61,7 @@ export class CalendarInviteComponent extends BaseProvider
 	> = new BehaviorSubject<Date | undefined>(undefined);
 
 	/** Date filter to prevent forbidden days from being selected. */
-	public readonly dateFilter = (d: Date): boolean =>
+	public readonly dateFilter = (d: Date) : boolean =>
 		this.forbiddenDays.indexOf(d.getDay()) < 0;
 
 	/** @see CalendarInvite.DaysOfWeek */

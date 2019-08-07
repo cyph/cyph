@@ -13,7 +13,7 @@ const byteConversions = {
 export const convertStorageUnitsToBytes = (
 	n: number,
 	storageUnit: StorageUnits = StorageUnits.b
-): number =>
+) : number =>
 	n *
 	(storageUnit === StorageUnits.kb ?
 		byteConversions.kb :
@@ -26,7 +26,7 @@ export const convertStorageUnitsToBytes = (
 		byteConversions.b);
 
 /** Strips non-alphanumeric-or-underscore characters and converts to lowercase. */
-export const normalize = memoize((s: string): string =>
+export const normalize = memoize((s: string) : string =>
 	s.toLowerCase().replace(/[^0-9a-z_]/g, '')
 );
 
@@ -45,16 +45,16 @@ export const normalizeArray = memoize(
 	(
 		arr: string[],
 		compareFn?: ((a: string, b: string) => number) | false
-	): string[] => normalizeArrayInternal(arr)(compareFn)
+	) : string[] => normalizeArrayInternal(arr)(compareFn)
 );
 
 /** Converts number to readable string. */
-export const numberToString = memoize((n: number): string =>
+export const numberToString = memoize((n: number) : string =>
 	n.toFixed(2).replace(/\.?0+$/, '')
 );
 
 const readableByteLengthInternal = memoize((n: number) =>
-	memoize((storageUnit?: StorageUnits): string => {
+	memoize((storageUnit?: StorageUnits) : string => {
 		const b = convertStorageUnitsToBytes(n, storageUnit);
 
 		const tb = b / byteConversions.tb;
@@ -85,7 +85,7 @@ const readableByteLengthInternal = memoize((n: number) =>
 export const readableByteLength = (
 	n: number,
 	storageUnit?: StorageUnits | string
-): string =>
+) : string =>
 	readableByteLengthInternal(n)(
 		typeof storageUnit !== 'string' ?
 			storageUnit :
@@ -100,7 +100,7 @@ export const toFloat = (
 	max?: number,
 	min: number = 0,
 	force: boolean = false
-): number => {
+) : number => {
 	if (force) {
 		s = (s.match(/(\d+|\.)/g) || []).join('');
 	}
@@ -111,6 +111,6 @@ export const toFloat = (
 };
 
 /** Stricter parseInt. */
-export const toInt = (s: string): number =>
+export const toInt = (s: string) : number =>
 	/* tslint:disable-next-line:ban */
 	/^\d+$/.test(s) ? parseInt(s, 10) : NaN;

@@ -161,9 +161,9 @@ export class PairwiseSession implements IPairwiseSession {
 		await this.handshakeState.initialSecret.setValue(
 			publicSigningKey ?
 				await this.potassium.sign.open(
-						maybeSignedSecret,
-						publicSigningKey
-				  ) :
+					maybeSignedSecret,
+					publicSigningKey
+				) :
 				maybeSignedSecret
 		);
 
@@ -200,9 +200,9 @@ export class PairwiseSession implements IPairwiseSession {
 			await this.potassium.box.seal(
 				signingKeyPair ?
 					await this.potassium.sign.sign(
-							initialSecret,
-							signingKeyPair.privateKey
-					  ) :
+						initialSecret,
+						signingKeyPair.privateKey
+					) :
 					initialSecret,
 				publicEncryptionKey
 			)
@@ -497,12 +497,12 @@ export class PairwiseSession implements IPairwiseSession {
 							this.ratchetUpdateQueue,
 							lastRatchetUpdate ?
 								await deserialize(
+									CastleRatchetState,
+									await serialize(
 										CastleRatchetState,
-										await serialize(
-											CastleRatchetState,
-											lastRatchetUpdate.ratchetState
-										)
-								  ) :
+										lastRatchetUpdate.ratchetState
+									)
+								) :
 								await this.ratchetState.getValue()
 						);
 
@@ -610,8 +610,8 @@ export class PairwiseSession implements IPairwiseSession {
 								const resolver =
 									timestamp !== undefined ?
 										pendingMessageResolvers.resolvers.get(
-												timestamp
-										  ) :
+											timestamp
+										) :
 										undefined;
 
 								debugLog(() => ({

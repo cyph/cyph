@@ -109,10 +109,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					let o =
 						this.inviteCodeDebounceLast === id && value ?
 							await this.databaseService
-									.callFunction('checkInviteCode', {
-										inviteCode: value
-									})
-									.catch(() => undefined) :
+								.callFunction('checkInviteCode', {
+									inviteCode: value
+								})
+								.catch(() => undefined) :
 							undefined;
 
 					if (typeof o !== 'object') {
@@ -264,18 +264,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			return (await sleep(500).then(async () =>
 				this.usernameDebounceLast === id && value ?
 					value.length <
-							this.configService.planConfig[
-								this.inviteCodeData.value.plan
-							].usernameMinLength ||
-					  (await this.accountUserLookupService.usernameBlacklisted(
-							value,
-							this.inviteCodeData.value.reservedUsername
-					  )) ||
-					  this.accountUserLookupService.exists(
-							value,
-							false,
-							false
-					  ) :
+						this.configService.planConfig[
+							this.inviteCodeData.value.plan
+						].usernameMinLength ||
+					(await this.accountUserLookupService.usernameBlacklisted(
+						value,
+						this.inviteCodeData.value.reservedUsername
+					)) ||
+					this.accountUserLookupService.exists(value, false, false) :
 					true
 			)) ?
 				{usernameTaken: true} :
@@ -472,7 +468,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					]) =>
 						useLockScreenPIN ?
 							lockScreenPIN.length ===
-							  this.lockScreenPasswordLength :
+							this.lockScreenPasswordLength :
 							lockScreenPassword.length >=
 								this.lockScreenPasswordLength &&
 							lockScreenPasswordConfirm.valid

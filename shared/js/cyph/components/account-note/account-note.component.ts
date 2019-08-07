@@ -286,8 +286,8 @@ export class AccountNoteComponent extends BaseProvider
 				noteData.content =
 					this.note.value && this.note.value.content ?
 						await this.note.value.content
-								.pipe(take(1))
-								.toPromise() :
+							.pipe(take(1))
+							.toPromise() :
 						<IQuillDelta> (<any> {clientID: '', ops: []});
 			}
 

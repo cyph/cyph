@@ -9,7 +9,7 @@ import {staticDomSanitizer} from './static-services';
 export const urlToSafeStyle = memoize(
 	async (
 		url: MaybePromise<string | SafeUrl | null | undefined>
-	): Promise<SafeStyle> => {
+	) : Promise<SafeStyle> => {
 		const domSanitizer = await staticDomSanitizer;
 
 		const urlValue = await url;

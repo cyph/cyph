@@ -7,7 +7,7 @@ export * from './json';
 export const deserialize = async <T>(
 	proto: IProto<T>,
 	bytes: Uint8Array | string
-): Promise<T> => {
+) : Promise<T> => {
 	return proto.decode(potassiumUtil.fromBase64(bytes));
 };
 
@@ -15,7 +15,7 @@ export const deserialize = async <T>(
 export const serialize = async <T>(
 	proto: IProto<T>,
 	data: T
-): Promise<Uint8Array> => {
+) : Promise<Uint8Array> => {
 	const err = await proto.verify(data);
 	if (err) {
 		throw new Error(err);
@@ -27,7 +27,7 @@ export const serialize = async <T>(
 /** Parses query string (no nested URI component decoding for now). */
 export const fromQueryString = (
 	search: string = locationData.search.slice(1)
-): any =>
+) : any =>
 	!search ?
 		{} :
 		search
@@ -45,7 +45,7 @@ export const fromQueryString = (
  * Serializes o to a query string (cf. jQuery.param).
  * @param parent Ignore this (internal use).
  */
-export const toQueryString = (o: any, parent?: string): string =>
+export const toQueryString = (o: any, parent?: string) : string =>
 	Object.keys(o)
 		.map((k: string) => {
 			const key = parent ? `${parent}[${k}]` : k;

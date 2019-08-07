@@ -49,16 +49,16 @@ const getFullBurnerURL = (namespace, callType) => {
 
 	return namespace === 'cyph_healthcare' ?
 		callType === 'audio' ?
-			'https://audio.cyph.healthcare/' :
-		callType === 'video' ?
-			'https://video.cyph.healthcare/' :
-		'https://chat.cyph.healthcare/' :
+		'https://audio.cyph.healthcare/' :
+	callType === 'video' ?
+		'https://video.cyph.healthcare/' :
+	'https://chat.cyph.healthcare/' :
 	namespace === 'cyph_ws' ?
 		callType === 'audio' ?
-			'https://cyph.audio/' :
-		callType === 'video' ?
-			'https://cyph.video/' :
-		'https://cyph.im/' :
+		'https://cyph.audio/' :
+	callType === 'video' ?
+		'https://cyph.video/' :
+	'https://cyph.im/' :
 	callType === 'audio' ?
 		`${burnerURL}audio/` :
 	callType === 'video' ?
@@ -833,53 +833,53 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			const {eventDetails, subject, text} =
 				notification.type === NotificationTypes.CalendarEvent ?
 					{
-							eventDetails: {
-								description: metadata.description,
-								endTime: isNaN(metadata.endTime) ?
-									now + 3600000 :
-									metadata.endTime,
-								inviterUsername: senderUsername,
-								location: metadata.location,
-								startTime: isNaN(metadata.startTime) ?
-									now + 1800000 :
-									metadata.startTime,
-								summary: metadata.summary || 'Cyph Appointment'
-							},
-							subject: `Calendar Invite from ${senderUsername}`,
-							text: `${targetName}, ${senderName} has sent an appointment request.`
-					  } :
+						eventDetails: {
+							description: metadata.description,
+							endTime: isNaN(metadata.endTime) ?
+								now + 3600000 :
+								metadata.endTime,
+							inviterUsername: senderUsername,
+							location: metadata.location,
+							startTime: isNaN(metadata.startTime) ?
+								now + 1800000 :
+								metadata.startTime,
+							summary: metadata.summary || 'Cyph Appointment'
+						},
+						subject: `Calendar Invite from ${senderUsername}`,
+						text: `${targetName}, ${senderName} has sent an appointment request.`
+					} :
 				notification.type === NotificationTypes.Call ?
 					{
-							subject: `Incoming Call from ${senderUsername}`,
-							text: `${targetName}, ${senderUsername} is calling you.`
-					  } :
+						subject: `Incoming Call from ${senderUsername}`,
+						text: `${targetName}, ${senderUsername} is calling you.`
+					} :
 				notification.type === NotificationTypes.ContactAccept ?
 					{
-							subject: `Contact Confirmation from ${senderUsername}`,
-							text: `${targetName}, ${senderName} has accepted your contact request.`
-					  } :
+						subject: `Contact Confirmation from ${senderUsername}`,
+						text: `${targetName}, ${senderName} has accepted your contact request.`
+					} :
 				notification.type === NotificationTypes.ContactRequest ?
 					{
-							subject: `Contact Request from ${senderUsername}`,
-							text:
-								`${targetName}, ${senderName} wants to be your contact. ` +
-								`Log in to accept or decline.`
-					  } :
+						subject: `Contact Request from ${senderUsername}`,
+						text:
+							`${targetName}, ${senderName} wants to be your contact. ` +
+							`Log in to accept or decline.`
+					} :
 				notification.type === NotificationTypes.File ?
 					{
-							subject: `Incoming Data from ${senderUsername}`,
-							text: `${targetName}, ${senderName} has shared something with you.`
-					  } :
+						subject: `Incoming Data from ${senderUsername}`,
+						text: `${targetName}, ${senderName} has shared something with you.`
+					} :
 				notification.type === NotificationTypes.Message ?
 					{
-							subject: `New Message from ${senderUsername}`,
-							text: `${targetName}, ${senderName} has sent you a message.`
-					  } :
+						subject: `New Message from ${senderUsername}`,
+						text: `${targetName}, ${senderName} has sent you a message.`
+					} :
 				notification.type === NotificationTypes.Yo ?
 					{
-							subject: `Sup Dog, it's ${senderUsername}`,
-							text: `${targetName}, ${senderName} says yo.`
-					  } :
+						subject: `Sup Dog, it's ${senderUsername}`,
+						text: `${targetName}, ${senderName} says yo.`
+					} :
 					{};
 			if (!subject || !text) {
 				throw new Error(
@@ -918,24 +918,23 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				(typeof metadata.expires === 'number' &&
 					metadata.expires > Date.now()) ?
 					[
-							false,
-							`incomingCalls/${metadata.callType},${username},${
-								metadata.id
-							},${metadata.expires.toString()}`
-					  ] :
+						false,
+						`incomingCalls/${metadata.callType},${username},${
+							metadata.id
+						},${metadata.expires.toString()}`
+					] :
 				notification.type === NotificationTypes.File ?
 					[
-							true,
-							!(await hasFile()) ?
-								'unreadFiles/' +
-								  (!isNaN(metadata.fileType) &&
-								  metadata.fileType in
-										AccountFileRecord.RecordTypes ?
-										metadata.fileType :
-										AccountFileRecord.RecordTypes.File
-								  ).toString() :
-								undefined
-					  ] :
+						true,
+						!(await hasFile()) ?
+							'unreadFiles/' +
+							(!isNaN(metadata.fileType) &&
+							metadata.fileType in AccountFileRecord.RecordTypes ?
+								metadata.fileType :
+								AccountFileRecord.RecordTypes.File
+							).toString() :
+							undefined
+					] :
 				notification.type === NotificationTypes.Message &&
 					  metadata.castleSessionID ?
 					[true, `unreadMessages/${metadata.castleSessionID}`] :

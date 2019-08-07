@@ -77,20 +77,20 @@ const addInviteCode = async (
 							}),
 						inviterUsername ?
 							setItem(
-									namespace,
-									`users/${inviterUsername}/inviteCodes/${code}`,
-									BooleanProto,
-									true
-							  ) :
+								namespace,
+								`users/${inviterUsername}/inviteCodes/${code}`,
+								BooleanProto,
+								true
+							) :
 							undefined,
 						reservedUsername ?
 							database
-									.ref(
-										`${namespacePath}/reservedUsernames/${normalize(
-											reservedUsername
-										)}`
-									)
-									.set('') :
+								.ref(
+									`${namespacePath}/reservedUsernames/${normalize(
+										reservedUsername
+									)}`
+								)
+								.set('') :
 							undefined
 					])
 				)

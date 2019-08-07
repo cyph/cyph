@@ -187,17 +187,17 @@ export class AccountChatService extends ChatService {
 		const notificationData =
 			'username' in chat ?
 				{
-						castleSessionID: (await this.accountContactsService.getCastleSessionData(
-							chat.username
-						)).castleSessionID,
-						usernames: [chat.username]
-				  } :
+					castleSessionID: (await this.accountContactsService.getCastleSessionData(
+						chat.username
+					)).castleSessionID,
+					usernames: [chat.username]
+				} :
 				{
 					castleSessionID: chat.group.castleSessionID,
 					usernames: chat.group.usernames ?
 						this.accountSessionService.normalizeUsername(
-								chat.group.usernames
-						  ) :
+							chat.group.usernames
+						) :
 						[]
 				};
 
@@ -208,10 +208,10 @@ export class AccountChatService extends ChatService {
 		this.chatSubject.next(
 			ephemeralSubSession ?
 				{
-						...this.getDefaultChatData(),
-						isConnected: true,
-						state: States.chat
-				  } :
+					...this.getDefaultChatData(),
+					isConnected: true,
+					state: States.chat
+				} :
 				getOrSetDefault(
 					this.chats,
 					'username' in chat ?

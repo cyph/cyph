@@ -351,7 +351,7 @@ export class ChatMessageListComponent extends BaseProvider
 												this.envService.isAccounts &&
 												this.accountDatabaseService ?
 													this.accountDatabaseService
-															.currentUser.value :
+														.currentUser.value :
 													undefined;
 
 											authorUser =
@@ -371,20 +371,17 @@ export class ChatMessageListComponent extends BaseProvider
 													this
 														.accountUserLookupService ?
 														this.chatService
-																.remoteUser
-																.value &&
-														  this.chatService
-																.remoteUser
-																.value
-																.username ===
-																message.authorID ?
-															this.chatService
-																	.remoteUser
-																	.value :
-														await this.accountUserLookupService.getUser(
-																message.authorID,
-																false
-															) :
+															.remoteUser.value &&
+														this.chatService
+															.remoteUser.value
+															.username ===
+															message.authorID ?
+														this.chatService
+															.remoteUser.value :
+													await this.accountUserLookupService.getUser(
+															message.authorID,
+															false
+														) :
 														undefined;
 											}
 											catch {}
@@ -434,9 +431,9 @@ export class ChatMessageListComponent extends BaseProvider
 													true
 												) ?
 													await relativeDateString(
-															o.message.timestamp,
-															last === undefined
-													  ) :
+														o.message.timestamp,
+														last === undefined
+													) :
 													undefined
 										})
 									})
@@ -488,7 +485,7 @@ export class ChatMessageListComponent extends BaseProvider
 										this.initialScrollDown.value &&
 										(lastUnreadMessage ?
 											(message && message.id) ===
-											  lastUnreadMessage :
+											lastUnreadMessage :
 											isEnd),
 									showDisconnectMessage: this
 										.showDisconnectMessage,

@@ -23,7 +23,7 @@ export const getOrSetDefault = <K, V>(
 	map: Map<K, V> | undefined,
 	key: K | undefined,
 	defaultValue: () => V
-): V => {
+) : V => {
 	if (map === undefined || key === undefined) {
 		return defaultValue();
 	}
@@ -47,7 +47,7 @@ export const getOrSetDefaultAsync = async <K, V>(
 	key: MaybePromise<K | undefined>,
 	defaultValue: () => MaybePromise<V>,
 	lock: boolean = true
-): Promise<V> => {
+) : Promise<V> => {
 	const k = await key;
 	const m = await map;
 
@@ -119,7 +119,7 @@ export const getOrSetDefaultObservable = <K, V>(
 	key: MaybePromise<K>,
 	defaultValue: () => MaybePromise<Observable<V>>,
 	subscriptions?: Subscription[]
-): Observable<V> =>
+) : Observable<V> =>
 	cacheObservable<V>(
 		getOrSetDefaultAsync(map, key, defaultValue),
 		subscriptions

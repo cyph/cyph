@@ -32,7 +32,7 @@ export class CryptocurrencyService extends BaseProvider {
 
 	/** Gets address of a wallet. */
 	public readonly getAddress = memoize(
-		async (wallet: IWallet): Promise<string> => {
+		async (wallet: IWallet) : Promise<string> => {
 			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
 				throw new Error('Unsupported cryptocurrency.');
 			}
@@ -47,7 +47,7 @@ export class CryptocurrencyService extends BaseProvider {
 			amount: number,
 			input: GenericCurrency,
 			output: GenericCurrency
-		): Observable<number> =>
+		) : Observable<number> =>
 			timer(0, 900000).pipe(
 				mergeMap(async () => this.convert(amount, input, output))
 			)
@@ -55,7 +55,7 @@ export class CryptocurrencyService extends BaseProvider {
 
 	/** Watches new transactions as they occur. */
 	public readonly watchNewTransactions = memoize(
-		(wallet: IWallet): Observable<Transaction> => {
+		(wallet: IWallet) : Observable<Transaction> => {
 			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
 				throw new Error('Unsupported cryptocurrency.');
 			}
@@ -66,7 +66,7 @@ export class CryptocurrencyService extends BaseProvider {
 
 	/** Watches full transaction history sorted in descending order by timestamp. */
 	public readonly watchTransactionHistory = memoize(
-		(wallet: IWallet): Observable<Transaction[]> => {
+		(wallet: IWallet) : Observable<Transaction[]> => {
 			if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
 				throw new Error('Unsupported cryptocurrency.');
 			}

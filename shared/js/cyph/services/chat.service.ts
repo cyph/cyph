@@ -211,7 +211,8 @@ export class ChatService extends BaseProvider {
 									continue;
 								}
 
-								message.timestamp = messages[j].timestamp + 0.001;
+								message.timestamp =
+									messages[j].timestamp + 0.001;
 								break;
 							}
 
@@ -221,7 +222,8 @@ export class ChatService extends BaseProvider {
 										continue;
 									}
 
-									message.timestamp = messages[j].timestamp - 0.001;
+									message.timestamp =
+										messages[j].timestamp - 0.001;
 								}
 							}
 
@@ -305,24 +307,24 @@ export class ChatService extends BaseProvider {
 							o.text.predecessors &&
 							o.text.predecessors.length > 0 ?
 								(await Promise.all(
-										o.text.predecessors.map(
-											async predecessor => ({
-												hasValidHash: await this.messageHasValidHash(
-													predecessor.id,
-													predecessor.hash
-												),
-												predecessor
-											})
-										)
-								  ))
-										.filter(
-											unobservedPredecessor =>
-												!unobservedPredecessor.hasValidHash
-										)
-										.map(
-											unobservedPredecessor =>
-												unobservedPredecessor.predecessor
-										) :
+									o.text.predecessors.map(
+										async predecessor => ({
+											hasValidHash: await this.messageHasValidHash(
+												predecessor.id,
+												predecessor.hash
+											),
+											predecessor
+										})
+									)
+								))
+									.filter(
+										unobservedPredecessor =>
+											!unobservedPredecessor.hasValidHash
+									)
+									.map(
+										unobservedPredecessor =>
+											unobservedPredecessor.predecessor
+									) :
 								undefined;
 
 						if (
@@ -383,9 +385,7 @@ export class ChatService extends BaseProvider {
 
 						this.chat.messageList
 							.watchFlat(true)
-							.pipe(
-								map(messageIDs => messageIDs.length === 0)
-							)
+							.pipe(map(messageIDs => messageIDs.length === 0))
 							/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 							.subscribe(this.chatSelfDestructed);
 
@@ -577,7 +577,7 @@ export class ChatService extends BaseProvider {
 				confirmPromise,
 				newMessages
 			} = await this.sessionService.send(
-				...outgoingMessages.map(({messageData}): [
+				...outgoingMessages.map(({messageData}) : [
 					string,
 					(
 						timestamp: number
@@ -659,10 +659,10 @@ export class ChatService extends BaseProvider {
 	) : Promise<string | undefined> {
 		return author === this.sessionService.remoteUsername ?
 			author
-					.pipe(take(1))
-					.toPromise()
-					.then(normalize)
-					.catch(() => undefined) :
+				.pipe(take(1))
+				.toPromise()
+				.then(normalize)
+				.catch(() => undefined) :
 			undefined;
 	}
 
@@ -1157,8 +1157,8 @@ export class ChatService extends BaseProvider {
 						...this.chat.currentMessage,
 						quill: this.chat.currentMessage.quill ?
 							msgpack.encode({
-									ops: this.chat.currentMessage.quill.ops
-							  }) :
+								ops: this.chat.currentMessage.quill.ops
+							}) :
 							undefined
 					}
 				);
@@ -1256,8 +1256,8 @@ export class ChatService extends BaseProvider {
 						msgpack.encode({ops: message.quill.ops}) :
 					this.chat.currentMessage.quill ?
 						msgpack.encode({
-								ops: this.chat.currentMessage.quill.ops
-						  }) :
+							ops: this.chat.currentMessage.quill.ops
+						}) :
 						undefined;
 				currentMessage.quill = undefined;
 
@@ -1315,7 +1315,7 @@ export class ChatService extends BaseProvider {
 				)
 				.then(removeOldStorageItem);
 
-		const predecessorsPromise = (async (): Promise<
+		const predecessorsPromise = (async () : Promise<
 			IChatMessagePredecessor[] | undefined
 		> => {
 			/* Redundant for 1:1 chats since Castle already enforces message order */
@@ -1378,7 +1378,7 @@ export class ChatService extends BaseProvider {
 			getTimestamp(),
 			localStoragePromise
 		]).then(
-			async ([authorID, timestamp]): Promise<IChatMessage> => ({
+			async ([authorID, timestamp]) : Promise<IChatMessage> => ({
 				authorID,
 				authorType: ChatMessage.AuthorTypes.Local,
 				id,
@@ -1610,14 +1610,14 @@ export class ChatService extends BaseProvider {
 								(messageLiveValue.quill &&
 									messageLiveValue.quill.length > 0) ?
 									{
-											ops:
-												messageLiveValue.quill instanceof
-												Uint8Array ?
-													msgpack.decode(
-															messageLiveValue.quill
-													  ) :
-													[]
-									  } :
+										ops:
+											messageLiveValue.quill instanceof
+											Uint8Array ?
+												msgpack.decode(
+													messageLiveValue.quill
+												) :
+												[]
+									} :
 									undefined;
 
 							this.chat.currentMessage.text =
@@ -1651,12 +1651,12 @@ export class ChatService extends BaseProvider {
 													pendingMessage.message.quill
 														.length > 0 ?
 														{
-																ops: msgpack.decode(
-																	pendingMessage
-																		.message
-																		.quill
-																)
-														  } :
+															ops: msgpack.decode(
+																pendingMessage
+																	.message
+																	.quill
+															)
+														} :
 														undefined
 											},
 											pendingMessage.selfDestructTimeout,
@@ -1774,7 +1774,7 @@ export class ChatService extends BaseProvider {
 
 							const getNewLastConfirmedMesssage = (
 								messageIDs: string[]
-							): IChatLastConfirmedMessage | void => {
+							) : IChatLastConfirmedMessage | void => {
 								for (
 									let i = messageIDs.length - 1;
 									i >= 0;

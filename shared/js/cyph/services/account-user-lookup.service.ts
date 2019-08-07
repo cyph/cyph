@@ -98,8 +98,8 @@ export class AccountUserLookupService extends BaseProvider {
 				this.userCache.has(username) ||
 				(await (confirmedOnly ?
 					(lock ? this.downloadLock(getProfile) : getProfile())
-							.then(() => true)
-							.catch(() => false) :
+						.then(() => true)
+						.catch(() => false) :
 					this.accountDatabaseService.hasItem(
 						`${url}/publicProfile`
 					))));

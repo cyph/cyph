@@ -229,7 +229,7 @@ export class AccountService extends BaseProvider {
 						of([])
 				])
 			),
-			map(([data, childData, params, childParams, url, childURL]): [
+			map(([data, childData, params, childParams, url, childURL]) : [
 				Data,
 				Params,
 				UrlSegment[]

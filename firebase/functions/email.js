@@ -141,10 +141,10 @@ const sendMail = async (
 	const eventInviter =
 		eventDetails && eventDetails.inviterUsername ?
 			await getEmailAddress(
-					database,
-					namespace,
-					eventDetails.inviterUsername
-			  ) :
+				database,
+				namespace,
+				eventDetails.inviterUsername
+			) :
 			undefined;
 	await sendMailInternal(
 		to,

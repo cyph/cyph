@@ -918,7 +918,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				throw new Error(`Failed to push item to ${url}.`);
 			}
 
-			const previousKey = async (): Promise<string | undefined> =>
+			const previousKey = async () : Promise<string | undefined> =>
 				retryUntilSuccessful(async () => {
 					const listValueMap: {[k: string]: any} = (await listRef
 						.orderByKey()
@@ -1009,9 +1009,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 					.then(),
 				oldMessagingToken && oldMessagingToken !== messaging.token ?
 					ref
-							.child(oldMessagingToken)
-							.remove()
-							.then() :
+						.child(oldMessagingToken)
+						.remove()
+						.then() :
 					undefined
 			]);
 		});
@@ -1499,7 +1499,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								const onChildAdded = async (
 									/* tslint:disable-next-line:no-null-keyword */
 									snapshot: firebase.database.DataSnapshot | null
-								): Promise<void> => {
+								) : Promise<void> => {
 									if (
 										snapshot &&
 										snapshot.key &&
@@ -1640,7 +1640,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									previousKey?: string | null
 								) =>
 									this.ngZone.run(
-										async (): Promise<void> => {
+										async () : Promise<void> => {
 											if (
 												snapshot &&
 												snapshot.key &&
@@ -1808,7 +1808,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								const onChildAdded = async (
 									snapshot: firebase.database.DataSnapshot | null,
 									previousKey?: string | null
-								): Promise<void> => {
+								) : Promise<void> => {
 									if (
 										snapshot &&
 										snapshot.key &&

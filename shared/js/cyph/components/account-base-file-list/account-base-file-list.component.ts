@@ -120,9 +120,9 @@ export class AccountBaseFileListComponent extends BaseProvider {
 			this.accountFilesService.remove(o.record),
 			o.record.metadata ?
 				this.ehrIntegrationService.deleteApiKey(
-						o.data.apiKey,
-						o.record.metadata
-				  ) :
+					o.data.apiKey,
+					o.record.metadata
+				) :
 				undefined
 		]);
 	}

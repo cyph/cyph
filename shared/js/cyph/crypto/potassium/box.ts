@@ -16,7 +16,7 @@ export class Box implements IBox {
 	private readonly classicalCypher = {
 		decrypt: this.isNative ?
 			async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
-					NativeCrypto.box.open(cyphertext, keyPair) :
+				NativeCrypto.box.open(cyphertext, keyPair) :
 			async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
 				sodium.ready.then(() =>
 					sodium.crypto_box_curve25519xchacha20poly1305_seal_open(
@@ -27,7 +27,7 @@ export class Box implements IBox {
 				),
 		encrypt: this.isNative ?
 			async (plaintext: Uint8Array, publicKey: Uint8Array) =>
-					NativeCrypto.box.seal(plaintext, publicKey) :
+				NativeCrypto.box.seal(plaintext, publicKey) :
 			async (plaintext: Uint8Array, publicKey: Uint8Array) =>
 				sodium.ready.then(() =>
 					sodium.crypto_box_curve25519xchacha20poly1305_seal(

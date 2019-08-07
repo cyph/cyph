@@ -15,10 +15,10 @@ export interface ISign {
 	importSuperSphincsPublicKeys (
 		rsa: string,
 		sphincs: string
-	): Promise<Uint8Array>;
+	) : Promise<Uint8Array>;
 
 	/** Generates key pair. */
-	keyPair (): Promise<IKeyPair>;
+	keyPair () : Promise<IKeyPair>;
 
 	/** Verifies combined signature and returns original message. */
 	open (
@@ -26,7 +26,7 @@ export interface ISign {
 		publicKey: Uint8Array,
 		additionalData?: Uint8Array | string,
 		decompress?: boolean
-	): Promise<Uint8Array>;
+	) : Promise<Uint8Array>;
 
 	/** Signs message and returns it combined with signature. */
 	sign (
@@ -34,14 +34,14 @@ export interface ISign {
 		privateKey: Uint8Array,
 		additionalData?: Uint8Array | string,
 		compress?: boolean
-	): Promise<Uint8Array>;
+	) : Promise<Uint8Array>;
 
 	/** Signs message and returns only the signature. */
 	signDetached (
 		message: Uint8Array | string,
 		privateKey: Uint8Array,
 		additionalData?: Uint8Array | string
-	): Promise<Uint8Array>;
+	) : Promise<Uint8Array>;
 
 	/** Verifies signature. */
 	verifyDetached (
@@ -49,5 +49,5 @@ export interface ISign {
 		message: Uint8Array | string,
 		publicKey: Uint8Array,
 		additionalData?: Uint8Array | string
-	): Promise<boolean>;
+	) : Promise<boolean>;
 }

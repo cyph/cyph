@@ -40,8 +40,8 @@ const {customBuild} = require('./custombuild');
 					`${k}:${
 						o[k] instanceof Uint8Array ?
 							`new Uint8Array(${JSON.stringify(
-									Array.from(o[k])
-							  )})` :
+								Array.from(o[k])
+							)})` :
 							JSON.stringify(o[k])
 					}`
 			)

@@ -86,15 +86,14 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 
 		return groupData && groupData.group.usernames ?
 			'@' +
-					normalizeArray(
-						groupData.group.usernames.filter(
-							username =>
-								!this.accountDatabaseService.currentUser
-									.value ||
-								this.accountDatabaseService.currentUser.value
-									.user.username !== username
-						)
-					).join(', @') :
+				normalizeArray(
+					groupData.group.usernames.filter(
+						username =>
+							!this.accountDatabaseService.currentUser.value ||
+							this.accountDatabaseService.currentUser.value.user
+								.username !== username
+					)
+				).join(', @') :
 			undefined;
 	}
 

@@ -25,7 +25,7 @@ const baseRequest = <R, T>(
 	},
 	responseType: 'arraybuffer' | 'blob' | 'json' | 'text',
 	getResponseData: (res: HttpResponse<T>) => MaybePromise<R>
-): {
+) : {
 	progress: Observable<number>;
 	result: Promise<R>;
 } => {
@@ -169,7 +169,7 @@ export const request = async (o: {
 	retries?: number;
 	timeout?: number;
 	url: string;
-}): Promise<string> => {
+}) : Promise<string> => {
 	return (await baseRequest<string, string>(o, 'text', res =>
 		(res.body || '').trim()
 	)).result;
@@ -184,7 +184,7 @@ export const requestByteStream = (o: {
 	retries?: number;
 	timeout?: number;
 	url: string;
-}): {
+}) : {
 	progress: Observable<number>;
 	result: Promise<Uint8Array>;
 } => {
@@ -202,7 +202,7 @@ export const requestBytes = async (o: {
 	retries?: number;
 	timeout?: number;
 	url: string;
-}): Promise<Uint8Array> => {
+}) : Promise<Uint8Array> => {
 	return requestByteStream(o).result;
 };
 
@@ -215,7 +215,7 @@ export const requestMaybeJSON = async (o: {
 	retries?: number;
 	timeout?: number;
 	url: string;
-}): Promise<any> => {
+}) : Promise<any> => {
 	const response = await request(o);
 
 	try {
@@ -235,6 +235,6 @@ export const requestJSON = async (o: {
 	retries?: number;
 	timeout?: number;
 	url: string;
-}): Promise<any> => {
+}) : Promise<any> => {
 	return (await baseRequest<any, any>(o, 'json', res => res.body)).result;
 };

@@ -8,15 +8,15 @@ export interface IThread<T> {
 	/**
 	 * Indicates whether this thread is active.
 	 */
-	isAlive (): boolean;
+	isAlive () : boolean;
 
 	/**
 	 * Sends a message to this thread.
 	 */
-	postMessage (o: any): void;
+	postMessage (o: any) : void;
 
 	/**
 	 * This kills the thread.
 	 */
-	stop (): void;
+	stop () : void;
 }

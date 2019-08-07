@@ -366,9 +366,9 @@ export class AccountChatComponent extends BaseProvider
 
 								const chat = anonymousChannelID ?
 									{
-											anonymousChannelID,
-											passive: !generateAnonymousChannelID
-									  } :
+										anonymousChannelID,
+										passive: !generateAnonymousChannelID
+									} :
 									await this.accountContactsService.getChatData(
 										contactID
 									);
@@ -423,8 +423,8 @@ export class AccountChatComponent extends BaseProvider
 								if (
 									!(await (this.answering.value ?
 										this.accountP2PService.handlers.acceptConfirm(
-												callType
-										  ) :
+											callType
+										) :
 										this.accountP2PService.handlers.requestConfirm(
 											callType
 										)))

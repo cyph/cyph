@@ -5,7 +5,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
  */
 export interface IAsyncValue<T> {
 	/** Gets value. */
-	getValue (): Promise<T>;
+	getValue () : Promise<T>;
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	lock<L> (
@@ -14,14 +14,14 @@ export interface IAsyncValue<T> {
 			stillOwner: BehaviorSubject<boolean>;
 		}) => Promise<L>,
 		reason?: string
-	): Promise<L>;
+	) : Promise<L>;
 
 	/** Sets value. */
-	setValue (value: T): Promise<void>;
+	setValue (value: T) : Promise<void>;
 
 	/** Uses a function to transform value. Throwing aborts modification. */
-	updateValue (f: (value: T) => Promise<T>): Promise<void>;
+	updateValue (f: (value: T) => Promise<T>) : Promise<void>;
 
 	/** Subscribes to value. */
-	watch (): Observable<T>;
+	watch () : Observable<T>;
 }

@@ -82,7 +82,7 @@ export const newForm = (
 	components: Form.IComponent[],
 	id?: string,
 	isExpansionPanel?: boolean
-): IForm => ({
+) : IForm => ({
 	components,
 	id,
 	isExpansionPanel
@@ -93,7 +93,7 @@ export const newFormComponent = (
 	containers: (Form.IElementContainer | Form.IElementContainer[])[],
 	id?: string,
 	isColumn?: boolean
-): Form.IComponent => ({
+) : Form.IComponent => ({
 	containers: containers.reduce<Form.IElementContainer[]>(
 		(a, b) => a.concat(b),
 		[]
@@ -108,7 +108,7 @@ export const newFormContainer = (
 	id?: string,
 	isColumn?: boolean,
 	formula?: string
-): Form.IElementContainer => ({
+) : Form.IElementContainer => ({
 	elements: elements.reduce<Form.IElementOrElementContainer[]>(
 		(arr, elem) =>
 			arr.concat(
@@ -347,12 +347,12 @@ export const urlInput = newFormElement<{
 }>(Form.Element.Types.URL);
 
 /** Form title element row. */
-export const title = (titleText: string): Form.IElementContainer => {
+export const title = (titleText: string) : Form.IElementContainer => {
 	return newFormContainer([text({label: titleText, width: 100})]);
 };
 
 /** Phone number element row. */
-export const phone = (id: string = 'PhoneNumber.Home'): Form.IElement => {
+export const phone = (id: string = 'PhoneNumber.Home') : Form.IElement => {
 	return input({
 		id,
 		label: 'Phone Number',
@@ -383,14 +383,14 @@ export const phone = (id: string = 'PhoneNumber.Home'): Form.IElement => {
 export const email = (
 	id: string = 'EmailAddresses[0]',
 	data?: Record<string, string>
-): Form.IElement =>
+) : Form.IElement =>
 	emailInput({id, label: 'Email', required: true, value: data && data.email});
 
 /** Name element row. */
 export const name = (
 	id?: string,
 	data?: Record<string, string>
-): Form.IElementContainer => {
+) : Form.IElementContainer => {
 	const nameSplit = data && data.name ? data.name.split(' ') : [];
 
 	return newFormContainer(
@@ -414,7 +414,7 @@ export const name = (
 };
 
 /** Address element row. */
-export const address = (id: string = 'Address'): Form.IElementContainer => {
+export const address = (id: string = 'Address') : Form.IElementContainer => {
 	return newFormContainer(
 		[
 			input({id: 'StreetAddress', label: 'Address'}),
@@ -430,7 +430,7 @@ export const address = (id: string = 'Address'): Form.IElementContainer => {
 /** Street address element row. */
 export const streetAddress = (
 	id: string = 'StreetAddress'
-): Form.IElementContainer => {
+) : Form.IElementContainer => {
 	return newFormContainer(
 		[input({id: 'StreetAddress', label: 'Address', width: 50})],
 		id,
@@ -441,7 +441,7 @@ export const streetAddress = (
 /** Address details element row. */
 export const addressDetails = (
 	id: string = 'AddressDetails'
-): Form.IElementContainer => {
+) : Form.IElementContainer => {
 	return newFormContainer(
 		[
 			input({id: 'City', label: 'City', width: 15}),
@@ -454,7 +454,7 @@ export const addressDetails = (
 };
 
 /** SSN element row. */
-export const ssn = (id: string = 'SSN'): Form.IElement => {
+export const ssn = (id: string = 'SSN') : Form.IElement => {
 	return input({
 		id,
 		label: 'Social Security Number',
@@ -483,7 +483,7 @@ export const ssn = (id: string = 'SSN'): Form.IElement => {
 export const contact = (
 	id?: string,
 	data?: Record<string, string>
-): Form.IComponent => {
+) : Form.IComponent => {
 	return newFormComponent(
 		[
 			name(undefined, data),
@@ -496,7 +496,7 @@ export const contact = (
 };
 
 /** Contact information components. */
-export const contactSplit = (id?: string): Form.IComponent[] => {
+export const contactSplit = (id?: string) : Form.IComponent[] => {
 	return [
 		newFormComponent([name()], id),
 		newFormComponent([newFormContainer([email(), phone(), ssn()])], id),
@@ -526,7 +526,7 @@ export const contactSplit = (id?: string): Form.IComponent[] => {
 };
 
 /** Height. */
-export const height = (id: string = 'height'): Form.IElementContainer =>
+export const height = (id: string = 'height') : Form.IElementContainer =>
 	newFormContainer(
 		[
 			numberInput({
@@ -550,7 +550,7 @@ export const height = (id: string = 'height'): Form.IElementContainer =>
 	);
 
 /** Basic patient info for telehealth patients. */
-export const basicInfo = (id?: string): Form.IComponent => {
+export const basicInfo = (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
 			newFormContainer([
@@ -585,7 +585,7 @@ export const basicInfo = (id?: string): Form.IComponent => {
 };
 
 /** Insurance information element row. */
-export const insurance = (id?: string): Form.IElementContainer => {
+export const insurance = (id?: string) : Form.IElementContainer => {
 	return newFormContainer(
 		[
 			input({label: "Insured's name"}),
@@ -598,7 +598,7 @@ export const insurance = (id?: string): Form.IElementContainer => {
 };
 
 /** Insurance information component. */
-export const insuranceComponent = (id?: string): Form.IComponent => {
+export const insuranceComponent = (id?: string) : Form.IComponent => {
 	return newFormComponent(
 		[
 			title('Primary Insurance'),
@@ -615,7 +615,7 @@ export const insuranceComponent = (id?: string): Form.IComponent => {
 };
 
 /** Opt in or out of Cyph as preferred contact method & mailing list. */
-export const optInOut = (): Form.IComponent =>
+export const optInOut = () : Form.IComponent =>
 	newFormComponent([
 		newFormContainer([
 			checkbox({
@@ -631,7 +631,7 @@ export const optInOut = (): Form.IComponent =>
 	]);
 
 /** New patient form. */
-export const newPatient = (data?: Record<string, string>): IForm =>
+export const newPatient = (data?: Record<string, string>) : IForm =>
 	newForm(
 		[
 			newFormComponent([title('Basic Information')]),
@@ -644,7 +644,7 @@ export const newPatient = (data?: Record<string, string>): IForm =>
 	);
 
 /** Private patient profile form. */
-export const patientProfilePrivate = (): IForm[] => [
+export const patientProfilePrivate = () : IForm[] => [
 	newForm(
 		[
 			newFormComponent([title('Basic Info')]),
@@ -683,12 +683,12 @@ export const patientProfilePrivate = (): IForm[] => [
 ];
 
 /** Patient profile form. */
-export const patientProfile = (): IForm[] => [
+export const patientProfile = () : IForm[] => [
 	newForm([newFormComponent([title('Patient Profile')])], undefined, true)
 ];
 
 /** Doctor profile form. */
-export const doctorProfile = (data?: Record<string, string>): IForm[] => [
+export const doctorProfile = (data?: Record<string, string>) : IForm[] => [
 	newForm(
 		[
 			newFormComponent([title('Education & Training')]),
@@ -738,11 +738,11 @@ export const doctorProfile = (data?: Record<string, string>): IForm[] => [
 ];
 
 /** Telehealth organization profile form. */
-export const telehealthOrgProfile = (): IForm[] => [
+export const telehealthOrgProfile = () : IForm[] => [
 	newForm([newFormComponent([title('Org Profile')])], undefined, true)
 ];
 
 /** Telehealth staff profile form. */
-export const telehealthStaffProfile = (): IForm[] => [
+export const telehealthStaffProfile = () : IForm[] => [
 	newForm([newFormComponent([title('Staff Profile')])], undefined, true)
 ];

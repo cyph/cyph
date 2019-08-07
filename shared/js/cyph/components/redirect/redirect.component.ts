@@ -23,8 +23,8 @@ export class RedirectComponent extends BaseProvider implements OnInit {
 				this.router.routerState.snapshot.root.firstChild.firstChild.url
 					.length > 0 ?
 				this.router.routerState.snapshot.root.firstChild.firstChild.url.map(
-						o => o.path
-				  ) :
+					o => o.path
+				) :
 				['']
 		);
 	}

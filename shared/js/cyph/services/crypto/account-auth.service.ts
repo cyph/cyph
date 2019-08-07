@@ -108,11 +108,11 @@ export class AccountAuthService extends BaseProvider {
 			BinaryProto,
 			isPublic ?
 				await this.potassiumService.sign.sign(
-						accountFormattedData.value,
-						key,
-						accountFormattedData.url,
-						compressed
-				  ) :
+					accountFormattedData.value,
+					key,
+					accountFormattedData.url,
+					compressed
+				) :
 				await this.potassiumService.secretBox.seal(
 					accountFormattedData.value,
 					key,
@@ -554,9 +554,9 @@ export class AccountAuthService extends BaseProvider {
 					/* Locally encrypt master key with PIN */
 					pinHash.length > 0 ?
 						await this.potassiumService.secretBox.seal(
-								masterKey,
-								pinHash
-						  ) :
+							masterKey,
+							pinHash
+						) :
 						masterKey
 				),
 				this.localStorageService.setItem(
@@ -572,7 +572,7 @@ export class AccountAuthService extends BaseProvider {
 					StringProto,
 					confirmed ?
 						(await user.accountUserProfile.getValue())
-								.realUsername :
+							.realUsername :
 						username
 				),
 				this.savePIN(pinHash)
@@ -717,14 +717,14 @@ export class AccountAuthService extends BaseProvider {
 						),
 						inviterUsername && inviterUsername !== username ?
 							this.databaseService.setItem(
-									`users/${username}/contacts/${inviterUsername}`,
-									AccountContactState,
-									{
-										state:
-											AccountContactState.States
-												.OutgoingRequest
-									}
-							  ) :
+								`users/${username}/contacts/${inviterUsername}`,
+								AccountContactState,
+								{
+									state:
+										AccountContactState.States
+											.OutgoingRequest
+								}
+							) :
 							Promise.resolve()
 					]);
 				})()
@@ -800,10 +800,10 @@ export class AccountAuthService extends BaseProvider {
 				),
 				pseudoAccount ?
 					this.databaseService.setItem(
-							`users/${username}/pseudoAccount`,
-							BinaryProto,
-							new Uint8Array(0)
-					  ) :
+						`users/${username}/pseudoAccount`,
+						BinaryProto,
+						new Uint8Array(0)
+					) :
 					this.setItem(
 						`users/${username}/certificateRequest`,
 						AGSEPKICSR,

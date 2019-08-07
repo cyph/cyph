@@ -746,10 +746,8 @@ export class AccountFilesService extends BaseProvider {
 			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
 			<any> proto === DataURIProto ?
 				<any> (
-						new DataURIProto(
-							filePromise.then(file => file.mediaType)
-						)
-				  ) :
+					new DataURIProto(filePromise.then(file => file.mediaType))
+				) :
 				proto,
 			securityModel,
 			filePromise.then(file => file.key)
@@ -761,8 +759,8 @@ export class AccountFilesService extends BaseProvider {
 				this.showSpinner.next(false);
 
 				return o.value instanceof Blob ? <any> new Blob([o.value], {
-							type: (await filePromise).mediaType
-					  }) : o.value;
+						type: (await filePromise).mediaType
+					}) : o.value;
 			})
 		};
 	}
@@ -966,10 +964,10 @@ export class AccountFilesService extends BaseProvider {
 					await this.getDoc(incomingFile).asyncList.getValue() :
 				fileConfig.proto ?
 					await this.downloadItem<any>(
-							incomingFile,
-							fileConfig.proto,
-							fileConfig.securityModel
-					  ).result :
+						incomingFile,
+						fileConfig.proto,
+						fileConfig.securityModel
+					).result :
 					undefined);
 
 			if (!file) {
@@ -1133,7 +1131,7 @@ export class AccountFilesService extends BaseProvider {
 				awaitAsync(id).then(
 					async (
 						o
-					): Promise<
+					) : Promise<
 						[string, IAccountFileRecord & IAccountFileReference]
 					> => [o.id, await this.getFile(o)]
 				);
@@ -1317,16 +1315,14 @@ export class AccountFilesService extends BaseProvider {
 
 		return fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
 			file instanceof Array ?
-				file
-						.map(o => msgpack.encode(o).length)
-						.reduce((a, b) => a + b, 0) :
-			0 :
+			file.map(o => msgpack.encode(o).length).reduce((a, b) => a + b, 0) :
+		0 :
 		fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
 			file instanceof Blob ?
-				file.size :
-			'mediaType' in file ?
-				file.data.length :
-			NaN :
+			file.size :
+		'mediaType' in file ?
+			file.data.length :
+		NaN :
 		fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
 			msgpack.encode(<IQuillDelta> file).length :
 		fileConfig.proto ?
@@ -1420,9 +1416,9 @@ export class AccountFilesService extends BaseProvider {
 				...usernames,
 				...(this.accountDatabaseService.currentUser.value ?
 					[
-							this.accountDatabaseService.currentUser.value.user
-								.username
-					  ] :
+						this.accountDatabaseService.currentUser.value.user
+							.username
+					] :
 					[])
 			]
 		};
@@ -1797,55 +1793,55 @@ export class AccountFilesService extends BaseProvider {
 		const {progress, result} =
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
 				(() => {
-						const doc = file instanceof Array ? file : [];
-						const docProgress = new BehaviorSubject(0);
+					const doc = file instanceof Array ? file : [];
+					const docProgress = new BehaviorSubject(0);
 
-						return {
-							progress: docProgress,
-							result: (async () => {
-								for (let i = 0; i < doc.length; ++i) {
-									docProgress.next(
-										Math.round((i / doc.length) * 100)
-									);
+					return {
+						progress: docProgress,
+						result: (async () => {
+							for (let i = 0; i < doc.length; ++i) {
+								docProgress.next(
+									Math.round((i / doc.length) * 100)
+								);
 
-									await this.accountDatabaseService.pushItem(
-										`users/${username}/docs/${id}`,
-										BinaryProto,
-										msgpack.encode(doc[i]),
-										undefined,
-										key
-									);
-								}
+								await this.accountDatabaseService.pushItem(
+									`users/${username}/docs/${id}`,
+									BinaryProto,
+									msgpack.encode(doc[i]),
+									undefined,
+									key
+								);
+							}
 
-								docProgress.next(100);
-								return {hash: '', url: ''};
-							})()
-						};
-				  })() :
+							docProgress.next(100);
+							return {hash: '', url: ''};
+						})()
+					};
+				})() :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
 				file instanceof Blob ?
-					this.accountDatabaseService.uploadItem(
-							url,
-							BlobProto,
-							file,
-							undefined,
-							key
-					  ) :
 				this.accountDatabaseService.uploadItem(
-						url,
-						BinaryProto,
-						'mediaType' in file ? file.data : new Uint8Array(0),
-						undefined,
-						key
-					) :
+					url,
+					BlobProto,
+					file,
+					undefined,
+					key
+				) :
+			this.accountDatabaseService.uploadItem(
+					url,
+					BinaryProto,
+					'mediaType' in file ? file.data : new Uint8Array(0),
+					undefined,
+					key
+				) :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
 				this.accountDatabaseService.uploadItem(
-						url,
-						BinaryProto,
-						msgpack.encode(<IQuillDelta> file),
-						undefined,
-						key
-				  ) :
+					url,
+					BinaryProto,
+					msgpack.encode(<IQuillDelta> file),
+					undefined,
+					key
+				) :
 				this.accountDatabaseService.uploadItem(
 					url,
 					<any> fileConfig.proto,

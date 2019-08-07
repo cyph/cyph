@@ -143,7 +143,7 @@ export class AccountContactsService extends BaseProvider {
 
 	/** Contact state. */
 	public readonly contactState = memoize(
-		(username: string): IAsyncValue<IAccountContactState> =>
+		(username: string) : IAsyncValue<IAccountContactState> =>
 			this.accountDatabaseService.getAsyncValue(
 				this.contactURL(username),
 				AccountContactState,
@@ -155,7 +155,7 @@ export class AccountContactsService extends BaseProvider {
 	public readonly fullyLoadContactList = memoize(
 		(
 			contactList: Observable<(IContactListItem | User)[]>
-		): Observable<User[]> =>
+		) : Observable<User[]> =>
 			toBehaviorSubject(
 				contactList.pipe(
 					mergeMap(async contacts =>
@@ -179,7 +179,7 @@ export class AccountContactsService extends BaseProvider {
 	public readonly getCastleSessionData = memoize(
 		async (
 			username: string
-		): Promise<{
+		) : Promise<{
 			castleSessionID: string;
 			castleSessionURL: string;
 		}> => {
@@ -215,7 +215,7 @@ export class AccountContactsService extends BaseProvider {
 	public readonly getChatData = memoize(
 		async (
 			id?: string
-		): Promise<{group: IAccountMessagingGroup} | {username: string}> => {
+		) : Promise<{group: IAccountMessagingGroup} | {username: string}> => {
 			if (!id) {
 				throw new Error('Invalid contact ID.');
 			}
@@ -236,7 +236,7 @@ export class AccountContactsService extends BaseProvider {
 
 	/** Gets contact ID based on username. */
 	public readonly getContactID = memoize(
-		async (username?: string): Promise<string> =>
+		async (username?: string) : Promise<string> =>
 			!username ?
 				'' :
 				this.accountDatabaseService.getOrSetDefault(
@@ -260,7 +260,7 @@ export class AccountContactsService extends BaseProvider {
 
 	/** Gets contact username based on ID. */
 	public readonly getContactUsername = memoize(
-		async (id?: string): Promise<string> => {
+		async (id?: string) : Promise<string> => {
 			if (!id) {
 				throw new Error('Invalid contact ID.');
 			}

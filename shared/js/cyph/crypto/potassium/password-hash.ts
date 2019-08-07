@@ -15,15 +15,15 @@ export class PasswordHash implements IPasswordHash {
 			outputBytes: number,
 			opsLimit: number,
 			memLimit: number
-		): Promise<Uint8Array> =>
+		) : Promise<Uint8Array> =>
 			this.isNative ?
 				NativeCrypto.passwordHash.hash(
-						plaintext,
-						salt,
-						outputBytes,
-						opsLimit,
-						memLimit
-				  ) :
+					plaintext,
+					salt,
+					outputBytes,
+					opsLimit,
+					memLimit
+				) :
 				sodium.ready.then(() =>
 					sodium.crypto_pwhash(
 						outputBytes,
@@ -40,8 +40,8 @@ export class PasswordHash implements IPasswordHash {
 	public readonly algorithm: Promise<string> = Promise.resolve(
 		this.isNative ?
 			NativeCrypto.passwordHash.algorithm.name +
-					'/' +
-					NativeCrypto.passwordHash.algorithm.hash.name :
+				'/' +
+				NativeCrypto.passwordHash.algorithm.hash.name :
 			'argon2'
 	);
 

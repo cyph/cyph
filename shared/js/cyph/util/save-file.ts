@@ -9,7 +9,7 @@ export const saveFile = async (
 	content: Uint8Array,
 	fileName: string,
 	mediaType?: string
-): Promise<void> => {
+) : Promise<void> => {
 	/* TODO: HANDLE NATIVE */
 	if (!env.isWeb) {
 		return;

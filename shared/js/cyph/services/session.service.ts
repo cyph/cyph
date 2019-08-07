@@ -56,7 +56,7 @@ export abstract class SessionService extends BaseProvider
 	private readonly _OPENED = resolvable(true);
 
 	/** @ignore */
-	private readonly correctSubSession = (message: ISessionMessage): boolean =>
+	private readonly correctSubSession = (message: ISessionMessage) : boolean =>
 		(message.data.sessionSubID || undefined) === this.sessionSubID;
 
 	/** @ignore */
@@ -223,11 +223,9 @@ export abstract class SessionService extends BaseProvider
 					return;
 				}
 
-				getOrSetDefault(
-					messageGroups,
-					message.event,
-					() => []
-				).push(message.data);
+				getOrSetDefault(messageGroups, message.event, () => []).push(
+					message.data
+				);
 			})
 		);
 

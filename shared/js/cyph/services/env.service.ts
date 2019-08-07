@@ -38,41 +38,41 @@ export class EnvService extends Env {
 			this.environment.customBuild &&
 			this.environment.customBuild.audioImage ?
 				deserialize(
-						DataURIProto,
-						this.environment.customBuild.audioImage
-				  ) :
+					DataURIProto,
+					this.environment.customBuild.audioImage
+				) :
 				undefined,
 		errorImage:
 			this.environment.customBuild &&
 			this.environment.customBuild.errorImage ?
 				deserialize(
-						DataURIProto,
-						this.environment.customBuild.errorImage
-				  ) :
+					DataURIProto,
+					this.environment.customBuild.errorImage
+				) :
 				undefined,
 		favicon:
 			this.environment.customBuild &&
 			this.environment.customBuild.favicon ?
 				deserialize(
-						DataURIProto,
-						this.environment.customBuild.favicon
-				  ) :
+					DataURIProto,
+					this.environment.customBuild.favicon
+				) :
 				undefined,
 		logoHorizontal:
 			this.environment.customBuild &&
 			this.environment.customBuild.logoHorizontal ?
 				deserialize(
-						DataURIProto,
-						this.environment.customBuild.logoHorizontal
-				  ) :
+					DataURIProto,
+					this.environment.customBuild.logoHorizontal
+				) :
 				undefined,
 		logoVertical:
 			this.environment.customBuild &&
 			this.environment.customBuild.logoVertical ?
 				deserialize(
-						DataURIProto,
-						this.environment.customBuild.logoVertical
-				  ) :
+					DataURIProto,
+					this.environment.customBuild.logoVertical
+				) :
 				undefined
 	};
 

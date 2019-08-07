@@ -8,17 +8,17 @@ import {IChannelHandlers} from '../session';
  */
 export interface IChannelService {
 	/** Closes and deletes the channel. */
-	close (): Promise<void>;
+	close () : Promise<void>;
 
 	/** Cleans things up and tears down event handlers. */
-	destroy (): void;
+	destroy () : void;
 
 	/** @see DatabaseService.getAsyncValue */
 	getAsyncValue<T> (
 		url: string,
 		proto: IProto<T>,
 		blockGetValue?: boolean
-	): Promise<IAsyncValue<T>>;
+	) : Promise<IAsyncValue<T>>;
 
 	/**
 	 * Initializes service.
@@ -28,7 +28,7 @@ export interface IChannelService {
 		channelID: string | undefined,
 		userID: string | undefined,
 		handlers: IChannelHandlers
-	): Promise<void>;
+	) : Promise<void>;
 
 	/** @see DatabaseService.lock */
 	lock<T> (
@@ -37,11 +37,11 @@ export interface IChannelService {
 			stillOwner: BehaviorSubject<boolean>;
 		}) => Promise<T>,
 		reason?: string
-	): Promise<T>;
+	) : Promise<T>;
 
 	/** Sends a message through the channel. */
-	send (cyphertext: Uint8Array): Promise<void>;
+	send (cyphertext: Uint8Array) : Promise<void>;
 
 	/** Creates and returns a new instance. */
-	spawn (): IChannelService;
+	spawn () : IChannelService;
 }

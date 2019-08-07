@@ -60,7 +60,7 @@ export class EphemeralSessionService extends SessionService {
 			!id
 				.split('')
 				.reduce(
-					(isValid: boolean, c: string): boolean =>
+					(isValid: boolean, c: string) : boolean =>
 						isValid &&
 						this.configService.readableIDCharacters.indexOf(c) > -1,
 					true

@@ -83,25 +83,25 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 		).then(() => {
 			const dropZone = !this.envService.isCordova ?
 				(() => {
-						const dz = new Dropzone(`.${this.id}`, {
-							accept: async (file, done) => {
-								done('ignore');
-								dz.removeAllFiles();
+					const dz = new Dropzone(`.${this.id}`, {
+						accept: async (file, done) => {
+							done('ignore');
+							dz.removeAllFiles();
 
-								if (!(await this.confirm(file))) {
-									return;
-								}
+							if (!(await this.confirm(file))) {
+								return;
+							}
 
-								this.fileDrop.emit(
-									await this.fileService.getIFile(file)
-								);
-							},
-							url: 'data:text/plain;ascii,',
-							...(this.accept ? {acceptedFiles: this.accept} : {})
-						});
+							this.fileDrop.emit(
+								await this.fileService.getIFile(file)
+							);
+						},
+						url: 'data:text/plain;ascii,',
+						...(this.accept ? {acceptedFiles: this.accept} : {})
+					});
 
-						return dz;
-				  })() :
+					return dz;
+				})() :
 				(() => {
 					const elem: HTMLElement = this.elementRef.nativeElement;
 

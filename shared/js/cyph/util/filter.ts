@@ -7,7 +7,7 @@ import {compareValues} from './compare';
 export const filterAsync = async <T>(
 	arr: T[],
 	f: (value: T) => MaybePromise<boolean>
-): Promise<T[]> =>
+) : Promise<T[]> =>
 	(await Promise.all(
 		arr.map(async value => ({filter: await f(value), value}))
 	))
@@ -15,7 +15,7 @@ export const filterAsync = async <T>(
 		.map(o => o.value);
 
 /** rxjs operator that filters out consecutive duplicate values. */
-export const filterDuplicatesOperator = <T>(): ((
+export const filterDuplicatesOperator = <T>() : ((
 	source: Observable<T>
 ) => Observable<T>) => {
 	let last: T;
@@ -28,7 +28,7 @@ export const filterDuplicatesOperator = <T>(): ((
 };
 
 /** Filters out undefined values. */
-export const filterUndefined = <T>(arr: (T | undefined | void)[]): T[] =>
+export const filterUndefined = <T>(arr: (T | undefined | void)[]) : T[] =>
 	<T[]> arr.filter(t => t !== undefined);
 
 /** rxjs operator that filters out undefined values. */

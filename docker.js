@@ -323,10 +323,10 @@ const editImage = (command, condition, useOriginal) =>
 		return Promise.resolve(
 			useOriginal ?
 				spawnAsync('docker', [
-						'tag',
-						`${image}_original:latest`,
-						`${image}:latest`
-				  ]) :
+					'tag',
+					`${image}_original:latest`,
+					`${image}:latest`
+				]) :
 				undefined
 		)
 			.then(() =>

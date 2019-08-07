@@ -66,10 +66,10 @@ export class AccountIncomingPatientInfoComponent extends BaseProvider
 			.updateValue(async patientInfo => {
 				patientInfo.redoxPatient = patientInfo.redoxPatient ?
 					await mergeObjects(
-							RedoxPatient,
-							redoxPatientData,
-							patientInfo.redoxPatient
-					  ) :
+						RedoxPatient,
+						redoxPatientData,
+						patientInfo.redoxPatient
+					) :
 					redoxPatientData;
 
 				return patientInfo;

@@ -127,7 +127,7 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 	constructor (value?: T[]) {
 		this.map = new LocalAsyncMap<number, T>(
 			value ?
-				new Map<number, T>(value.map((v, i): [number, T] => [i, v])) :
+				new Map<number, T>(value.map((v, i) : [number, T] => [i, v])) :
 				undefined
 		);
 

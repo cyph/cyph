@@ -42,7 +42,7 @@ export class FileTransferService extends BaseProvider {
 	public readonly getMedia = memoize(
 		async (
 			fileTransfer: IFileTransfer
-		): Promise<{
+		) : Promise<{
 			success: boolean;
 			uri?: SafeUrl;
 		}> => {

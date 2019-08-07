@@ -39,10 +39,9 @@ export class UrlSessionInitService extends BaseProvider
 		const urlSegmentPaths = this.router.routerState.snapshot.root
 			.firstChild ?
 			(
-					this.router.routerState.snapshot.root.firstChild
-						.firstChild ||
-					this.router.routerState.snapshot.root.firstChild
-			  ).url.map(o => o.path) :
+				this.router.routerState.snapshot.root.firstChild.firstChild ||
+				this.router.routerState.snapshot.root.firstChild
+			).url.map(o => o.path) :
 			[];
 
 		this.callType =

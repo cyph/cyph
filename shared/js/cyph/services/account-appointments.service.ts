@@ -22,7 +22,7 @@ export class AccountAppointmentsService extends BaseProvider {
 	private readonly getAppointment = memoize(
 		(
 			record: IAccountFileRecord
-		): Observable<
+		) : Observable<
 			{appointment: IAppointment; friend?: string} | undefined
 		> =>
 			this.accountFilesService.watchAppointment(record).pipe(
@@ -150,10 +150,10 @@ export class AccountAppointmentsService extends BaseProvider {
 								map(appointment =>
 									appointment ?
 										{
-												id: record.id,
-												record,
-												...appointment
-										  } :
+											id: record.id,
+											record,
+											...appointment
+										} :
 										undefined
 								)
 							)

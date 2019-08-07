@@ -34,11 +34,11 @@ export class AnonymousCastleService extends CastleService {
 
 		const remoteUser = sessionService.state.sharedSecret.value ?
 			new AnonymousRemoteUser(
-					this.potassiumService,
-					handshakeState,
-					sessionService.state.sharedSecret.value,
-					sessionService.remoteUsername
-			  ) :
+				this.potassiumService,
+				handshakeState,
+				sessionService.state.sharedSecret.value,
+				sessionService.remoteUsername
+			) :
 			new RegisteredRemoteUser(
 				this.accountDatabaseService,
 				false,

@@ -224,7 +224,7 @@ export class DatabaseService extends DataManagerService {
 			new Map<string, T>(
 				await Promise.all(
 					keys.map(
-						async (key): Promise<[string, T]> => [
+						async (key) : Promise<[string, T]> => [
 							key,
 							await getItem(key)
 						]
@@ -241,8 +241,8 @@ export class DatabaseService extends DataManagerService {
 				this.removeItem(`${url}/${key}`),
 				staticValues ?
 					this.localStorageService.removeItem(
-							`${method}/${url}/${key}`
-					  ) :
+						`${method}/${url}/${key}`
+					) :
 					undefined
 			]);
 		};
@@ -256,10 +256,10 @@ export class DatabaseService extends DataManagerService {
 				this.setItem(`${url}/${key}`, proto, value),
 				staticValues ?
 					this.localStorageService.setItem(
-							`${method}/${url}/${key}`,
-							proto,
-							value
-					  ) :
+						`${method}/${url}/${key}`,
+						proto,
+						value
+					) :
 					undefined
 			]);
 		};
@@ -347,7 +347,7 @@ export class DatabaseService extends DataManagerService {
 		const asyncValue: IAsyncValue<T> = {
 			getValue: async () =>
 				localLock(
-					async (): Promise<T> => {
+					async () : Promise<T> => {
 						const {hash} = await this.getMetadata(url);
 
 						/* tslint:disable-next-line:possible-timing-attack */
@@ -374,9 +374,9 @@ export class DatabaseService extends DataManagerService {
 				).catch(async () =>
 					blockGetValue ?
 						asyncValue
-								.watch()
-								.pipe(take(2))
-								.toPromise() :
+							.watch()
+							.pipe(take(2))
+							.toPromise() :
 						proto.create()
 				),
 			lock,

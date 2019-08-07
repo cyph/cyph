@@ -1,7 +1,7 @@
 import {env} from '../env';
 
 /** Opens the specified URL in a new window. */
-export const openWindow = (url: string): void => {
+export const openWindow = (url: string) : void => {
 	/* TODO: HANDLE NATIVE */
 	if (!env.isWeb) {
 		return;

@@ -46,7 +46,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	private readonly maskCache: Map<Uint8Array, any> = new Map();
 
 	/** @ignore */
-	private readonly processCalcs = memoize((formula: string): string => {
+	private readonly processCalcs = memoize((formula: string) : string => {
 		return formula.replace(/calc\([^\s]+\)/g, s => {
 			let calcEnd = Array.from(s)
 				.slice(5)
@@ -91,9 +91,9 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 		this.envService.isTelehealth &&
 		this.accountDatabaseService.currentUser.value ?
 			this.accountDatabaseService.getAsyncValue(
-					'patientInfo',
-					PatientInfo
-			  ) :
+				'patientInfo',
+				PatientInfo
+			) :
 			undefined;
 
 	/** @see emailPattern */
@@ -189,7 +189,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 			const getContainers = (
 				containers: Form.IElementContainer[]
-			): Form.IElementContainer[] =>
+			) : Form.IElementContainer[] =>
 				containers.length < 1 ?
 					containers :
 					containers.concat(

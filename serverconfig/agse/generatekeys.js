@@ -30,8 +30,8 @@ const superSphincs = require('supersphincs');
 	const keyPairs = await Promise.all(
 		!args.keyBackupPath ?
 			Array(args.numActiveKeys + args.numBackupKeys)
-					.fill(0)
-					.map(async () => superSphincs.keyPair()) :
+				.fill(0)
+				.map(async () => superSphincs.keyPair()) :
 			JSON.parse(
 				sodium.crypto_secretbox_open_easy(
 					sodium.from_base64(

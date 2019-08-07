@@ -60,23 +60,23 @@ export class ScrollService extends BaseProvider {
 		this.rootElement.then(rootElement =>
 			rootElement ?
 				new Observable<number>(observer => {
-						const handler = () => {
-							observer.next(
-								Math.max(
-									rootElement[0].scrollHeight -
-										(rootElement[0].scrollTop +
-											rootElement[0].clientHeight),
-									0
-								)
-							);
-						};
+					const handler = () => {
+						observer.next(
+							Math.max(
+								rootElement[0].scrollHeight -
+									(rootElement[0].scrollTop +
+										rootElement[0].clientHeight),
+								0
+							)
+						);
+					};
 
-						rootElement.on('scroll', handler);
+					rootElement.on('scroll', handler);
 
-						return () => {
-							rootElement.off('scroll', handler);
-						};
-				  }) :
+					return () => {
+						rootElement.off('scroll', handler);
+					};
+				}) :
 				0
 		),
 		this.minScroll,

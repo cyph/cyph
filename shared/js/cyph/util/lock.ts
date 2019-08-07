@@ -9,7 +9,7 @@ export const lock = async <T>(
 		stillOwner: BehaviorSubject<boolean>;
 	}) => Promise<T>,
 	reason?: string
-): Promise<T> => {
+) : Promise<T> => {
 	if (!mutex.promise) {
 		mutex.promise = Promise.resolve(undefined);
 	}
@@ -33,7 +33,7 @@ export const lock = async <T>(
 };
 
 /** Creates and returns a lock function that uses util/lock. */
-export const lockFunction = (): LockFunction => {
+export const lockFunction = () : LockFunction => {
 	const mutex = {};
 	return async <T>(
 		f: (o: {
@@ -52,7 +52,7 @@ export const lockFunction = (): LockFunction => {
 export const lockTryOnce = async (
 	mutex: {isOwned?: boolean; promise?: Promise<string | undefined>},
 	f: () => Promise<void>
-): Promise<boolean> => {
+) : Promise<boolean> => {
 	if (!mutex.isOwned) {
 		await lock(mutex, f);
 		return true;

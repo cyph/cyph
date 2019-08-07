@@ -53,9 +53,9 @@ export class PairwiseSessionLite implements IPairwiseSession {
 					await this.potassium.box.seal(
 						signingKeyPair ?
 							await this.potassium.sign.sign(
-									secret,
-									signingKeyPair.privateKey
-							  ) :
+								secret,
+								signingKeyPair.privateKey
+							) :
 							secret,
 						publicEncryptionKey
 					)
@@ -84,9 +84,9 @@ export class PairwiseSessionLite implements IPairwiseSession {
 
 			secret = publicSigningKey ?
 				await this.potassium.sign.open(
-						maybeSignedSecret,
-						publicSigningKey
-				  ) :
+					maybeSignedSecret,
+					publicSigningKey
+				) :
 				maybeSignedSecret;
 
 			await this.handshakeState.initialSecret.setValue(secret);

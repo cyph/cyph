@@ -3,7 +3,7 @@ import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {random} from './random';
 
 /** Random ID meant optimized for readability by humans. Uses Config.readableIDCharacters. */
-export const readableID = (length: number = 20): string => {
+export const readableID = (length: number = 20) : string => {
 	let id = '';
 	for (let i = 0; i < length; ++i) {
 		id +=
@@ -15,7 +15,7 @@ export const readableID = (length: number = 20): string => {
 };
 
 /** Creates a hex string containing 16 random bytes (or optionally 64 + timestamp). */
-export const uuid = (long: boolean = false): string => {
+export const uuid = (long: boolean = false) : string => {
 	const bytes = !long ?
 		potassiumUtil.randomBytes(16) :
 		potassiumUtil.concatMemory(

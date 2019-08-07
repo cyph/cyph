@@ -8,7 +8,7 @@ export const email = async (
 	message: string = '',
 	fromEmail?: string,
 	fromName: string = 'Mandrill'
-): Promise<void> => {
+) : Promise<void> => {
 	await request({
 		data: {
 			key: 'HNz4JExN1MtpKz8uP2RD1Q',

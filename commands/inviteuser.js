@@ -58,11 +58,11 @@ if (require.main === module) {
 		for (const {email, name, plan, reservedUsername} of process.argv[3] ===
 		'--users' ?
 			JSON.parse(process.argv[4]).map(arr => ({
-					email: arr[0],
-					name: arr[1],
-					plan: process.argv[5],
-					reservedUsername: arr[2]
-			  })) :
+				email: arr[0],
+				name: arr[1],
+				plan: process.argv[5],
+				reservedUsername: arr[2]
+			})) :
 			[
 				{
 					email: process.argv[3],

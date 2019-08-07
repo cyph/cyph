@@ -44,7 +44,7 @@ const subscribeFactory = <T>(
 export const cacheObservable = <T>(
 	observable: AsyncObservable<T>,
 	subscriptions?: Subscription[]
-): Observable<T> => {
+) : Observable<T> => {
 	const subscribe = subscribeFactory(observable, subscriptions);
 	const subject = new ReplaySubject<T>();
 	subscribe(subject);
@@ -56,7 +56,7 @@ export const toBehaviorSubject = <T>(
 	observable: AsyncObservable<T>,
 	initialValue: T,
 	subscriptions?: Subscription[]
-): BehaviorSubject<T> => {
+) : BehaviorSubject<T> => {
 	const subscribe = subscribeFactory(observable, subscriptions);
 	const subject = new BehaviorSubject(initialValue);
 	subscribe(subject);
@@ -67,7 +67,7 @@ export const toBehaviorSubject = <T>(
 export const flattenObservable = <T>(
 	observable: AsyncObservable<T>,
 	subscriptions?: Subscription[]
-): Observable<T> => {
+) : Observable<T> => {
 	const subscribe = subscribeFactory(observable, subscriptions);
 	return new Observable<T>(observer => {
 		subscribe(observer);
@@ -75,7 +75,7 @@ export const flattenObservable = <T>(
 };
 
 /** Converts an Async value into an Observable. */
-export const asyncToObservable = <T>(o: Async<T>): Observable<T> =>
+export const asyncToObservable = <T>(o: Async<T>) : Observable<T> =>
 	o instanceof Observable ?
 		o :
 	o instanceof Promise ?

@@ -97,12 +97,12 @@ export class FileService extends BaseProvider {
 		const {data, mediaType} =
 			typeof dataURI === 'string' ?
 				(() => {
-						const arr = dataURI.split(';base64,');
-						return {
-							data: potassiumUtil.fromBase64(arr[1]),
-							mediaType: arr[0].slice(5)
-						};
-				  })() :
+					const arr = dataURI.split(';base64,');
+					return {
+						data: potassiumUtil.fromBase64(arr[1]),
+						mediaType: arr[0].slice(5)
+					};
+				})() :
 			'data' in dataURI ?
 				dataURI :
 				{...dataURI, data: new Uint8Array(0)};

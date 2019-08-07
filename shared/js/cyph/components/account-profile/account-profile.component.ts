@@ -251,18 +251,18 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				let descriptionTrimmed =
 					description !== undefined ?
 						description
-								.trim()
-								.slice(
-									0,
-									this.accountService.maxDescriptionLength
-								) :
+							.trim()
+							.slice(
+								0,
+								this.accountService.maxDescriptionLength
+							) :
 						undefined;
 
 				let nameTrimmed =
 					name !== undefined ?
 						name
-								.trim()
-								.slice(0, this.accountService.maxNameLength) :
+							.trim()
+							.slice(0, this.accountService.maxNameLength) :
 						undefined;
 
 				await user.accountUserProfile.updateValue(async o => {
@@ -422,9 +422,9 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 					MiddleName:
 						firstSpaceIndex > -1 ?
 							accountUserProfile.name.slice(
-									firstSpaceIndex + 1,
-									lastSpaceIndex
-							  ) :
+								firstSpaceIndex + 1,
+								lastSpaceIndex
+							) :
 							''
 				}
 			});
@@ -518,7 +518,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				this.envService.environment.customBuild &&
 				this.envService.environment.customBuild.config.organization ?
 					this.envService.environment.customBuild.config
-							.organization :
+						.organization :
 					params.username
 			)
 		);
@@ -531,18 +531,18 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				mergeMap(async ([username, currentUser]) =>
 					username ?
 						{
-								isCurrentUser: false,
-								user: await this.accountUserLookupService.getUser(
-									username,
-									false
-								),
-								username
-						  } :
+							isCurrentUser: false,
+							user: await this.accountUserLookupService.getUser(
+								username,
+								false
+							),
+							username
+						} :
 					currentUser ?
 						{
-								isCurrentUser: currentUser.confirmed,
-								user: currentUser.user
-						  } :
+							isCurrentUser: currentUser.confirmed,
+							user: currentUser.user
+						} :
 						{
 							isCurrentUser: false
 						}
@@ -586,9 +586,9 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				mergeMap(username =>
 					username ?
 						this.accountContactsService.watchIfContact(
-								username,
-								this.subscriptions
-						  ) :
+							username,
+							this.subscriptions
+						) :
 						of(false)
 				)
 			),

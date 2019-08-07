@@ -6,7 +6,7 @@ import {env} from '../env';
  */
 export const requestPermissions = async (
 	...permissions: string[]
-): Promise<boolean> => {
+) : Promise<boolean> => {
 	if (!(env.isCordova && env.isAndroid)) {
 		return true;
 	}

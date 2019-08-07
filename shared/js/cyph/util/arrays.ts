@@ -2,7 +2,7 @@
 export const flattenArrays = <T>(
 	arrays: (T | T[])[],
 	omitDuplicates: boolean = false
-): T[] =>
+) : T[] =>
 	!omitDuplicates ?
 		arrays.reduce<T[]>((a, b) => a.concat(b), []) :
 		arrays.reduce<{arr: T[]; seen: Map<T, true>}>(

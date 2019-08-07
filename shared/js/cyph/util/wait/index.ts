@@ -10,7 +10,7 @@ import {sleep} from './sleep';
 export * from './sleep';
 
 /** Converts Async to awaitable Promise. */
-export const awaitAsync = async <T>(value: Async<T>): Promise<T> => {
+export const awaitAsync = async <T>(value: Async<T>) : Promise<T> => {
 	if (value instanceof Observable) {
 		return value.pipe(take(1)).toPromise();
 	}
@@ -19,7 +19,7 @@ export const awaitAsync = async <T>(value: Async<T>): Promise<T> => {
 };
 
 /** Returns a promise and its resolver function. */
-export const resolvable = <T = void>(value?: T): IResolvable<T> => {
+export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 	let resolve: ((t?: T | PromiseLike<T>) => void) | undefined;
 	let reject: ((err?: any) => void) | undefined;
 
@@ -42,7 +42,7 @@ export const resolvable = <T = void>(value?: T): IResolvable<T> => {
 };
 
 /** Sleeps forever. */
-export const infiniteSleep = async (): Promise<void> => {
+export const infiniteSleep = async () : Promise<void> => {
 	while (true) {
 		await sleep(config.maxInt32);
 	}
@@ -53,7 +53,7 @@ export const retryUntilSuccessful = async <T>(
 	f: (lastErr?: any) => MaybePromise<T>,
 	maxAttempts: number = 10,
 	delay: number = 250
-): Promise<T> => {
+) : Promise<T> => {
 	let lastErr: any | undefined;
 
 	for (let i = 0; true; ++i) {
@@ -85,7 +85,7 @@ export const retryUntilSuccessful = async <T>(
 export const waitForValue = async <T>(
 	f: () => T | undefined,
 	condition?: (value: T) => boolean
-): Promise<T> => {
+) : Promise<T> => {
 	let value = f();
 	while (value === undefined || (condition && !condition(value))) {
 		await sleep();
@@ -98,7 +98,7 @@ export const waitForValue = async <T>(
 export const waitForIterable = async <T>(
 	f: () => T & {length: number} | undefined,
 	minLength: number = 1
-): Promise<T> => {
+) : Promise<T> => {
 	return waitForValue<T & {length: number}>(
 		f,
 		value => value.length >= minLength
@@ -106,6 +106,6 @@ export const waitForIterable = async <T>(
 };
 
 /** Waits until function returns true. */
-export const waitUntilTrue = async (f: () => boolean): Promise<void> => {
+export const waitUntilTrue = async (f: () => boolean) : Promise<void> => {
 	await waitForValue(() => f() || undefined);
 };

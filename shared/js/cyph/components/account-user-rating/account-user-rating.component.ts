@@ -21,7 +21,7 @@ export class AccountUserRatingComponent extends BaseProvider {
 	private readonly uiMaxRating = 5;
 
 	/** Array of star icons based on rating. */
-	public readonly getStars = memoize((rating: number): [
+	public readonly getStars = memoize((rating: number) : [
 		('star' | 'star_border' | 'star_half'),
 		('star' | 'star_border' | 'star_half'),
 		('star' | 'star_border' | 'star_half'),

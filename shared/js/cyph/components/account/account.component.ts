@@ -280,7 +280,9 @@ export class AccountComponent extends BaseProvider
 		super();
 
 		/* tslint:disable-next-line:strict-type-predicates */
-		if (!(typeof document === 'object' && typeof document.body === 'object')) {
+		if (
+			!(typeof document === 'object' && typeof document.body === 'object')
+		) {
 			return;
 		}
 

@@ -158,25 +158,22 @@ const sign = async (inputs, testSign, demoSign) =>
 						additionalData:
 							o.additionalData instanceof Uint8Array ?
 								{
-										data: sodiumUtil.to_base64(
-											o.additionalData
-										),
-										isUint8Array: true
-								  } :
+									data: sodiumUtil.to_base64(
+										o.additionalData
+									),
+									isUint8Array: true
+								} :
 							o.additionalData === undefined ?
 								{none: true} :
 								o.additionalData,
 						message:
 							o.message instanceof Uint8Array ?
 								{
-										data: sodiumUtil.to_base64(
-											await superSphincs.hash(
-												o.message,
-												true
-											)
-										),
-										isBinaryHash: true
-								  } :
+									data: sodiumUtil.to_base64(
+										await superSphincs.hash(o.message, true)
+									),
+									isBinaryHash: true
+								} :
 								o.message
 					}))
 				)

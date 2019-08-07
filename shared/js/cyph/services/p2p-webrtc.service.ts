@@ -62,15 +62,15 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** @ignore */
 	private readonly commands = {
-		accept: async (): Promise<void> => this.join(),
-		decline: async (): Promise<void> => {
+		accept: async () : Promise<void> => this.join(),
+		decline: async () : Promise<void> => {
 			this.isAccepted = false;
 			this.p2pSessionData = undefined;
 
 			(await this.handlers).requestRejection();
 		},
 
-		kill: async (): Promise<void> => {
+		kill: async () : Promise<void> => {
 			this.disconnectInternal.next();
 
 			const wasAccepted = this.isAccepted;
@@ -106,7 +106,7 @@ export class P2PWebRTCService extends BaseProvider
 			}
 		},
 
-		webRTC: async (data: SimplePeer.SignalData): Promise<void> => {
+		webRTC: async (data: SimplePeer.SignalData) : Promise<void> => {
 			(await this.getWebRTC()).peer.signal(data);
 		}
 	};
@@ -448,9 +448,8 @@ export class P2PWebRTCService extends BaseProvider
 								o.urls :
 							o.urls instanceof Array ?
 								o.urls.filter(
-										(url: string) =>
-											url.indexOf('stun:') !== 0
-								  ) :
+									(url: string) => url.indexOf('stun:') !== 0
+								) :
 								[];
 					}
 
@@ -507,13 +506,13 @@ export class P2PWebRTCService extends BaseProvider
 					{iceServers} :
 					{iceServers, iceTransportPolicy: 'relay'},
 				initiator: p2pSessionData.isAlice,
-				sdpTransform: (sdp: any): any =>
+				sdpTransform: (sdp: any) : any =>
 					/* http://www.kapejod.org/en/2014/05/28 */
 					typeof sdp === 'string' ?
 						sdp
-								.split('\n')
-								.filter(s => s.indexOf('ssrc-audio-level') < 0)
-								.join('\n') :
+							.split('\n')
+							.filter(s => s.indexOf('ssrc-audio-level') < 0)
+							.join('\n') :
 						sdp,
 				stream: localStream
 			});
@@ -618,8 +617,8 @@ export class P2PWebRTCService extends BaseProvider
 				command: {
 					additionalData: this.p2pSessionData ?
 						this.p2pSessionData.id +
-						  '\n' +
-						  this.p2pSessionData.iceServers :
+						'\n' +
+						this.p2pSessionData.iceServers :
 						undefined,
 					method: callType
 				}

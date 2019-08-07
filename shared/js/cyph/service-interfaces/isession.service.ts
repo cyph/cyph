@@ -81,19 +81,19 @@ export interface ISessionService {
 					plaintext: Uint8Array;
 					timestamp: number;
 			  }
-	): Promise<void>;
+	) : Promise<void>;
 
 	/** This kills the cyph. */
-	close (): void;
+	close () : void;
 
 	/** Cleans things up and tears down event handlers. */
-	destroy (): void;
+	destroy () : void;
 
 	/** @see IHandshakeState */
-	handshakeState (): Promise<IHandshakeState>;
+	handshakeState () : Promise<IHandshakeState>;
 
 	/** Initializes service. */
-	init (channelID: string, userID?: string): void;
+	init (channelID: string, userID?: string) : void;
 
 	/** @see ChannelService.lock */
 	lock<T> (
@@ -102,21 +102,21 @@ export interface ISessionService {
 			stillOwner: BehaviorSubject<boolean>;
 		}) => Promise<T>,
 		reason?: string
-	): Promise<T>;
+	) : Promise<T>;
 
 	/** Remove event listener. */
-	off<T> (event: string, handler?: (data: T) => void): void;
+	off<T> (event: string, handler?: (data: T) => void) : void;
 
 	/** Add event listener. */
-	on<T> (event: string, handler: (data: T) => void): void;
+	on<T> (event: string, handler: (data: T) => void) : void;
 
 	/** Returns first occurrence of event. */
-	one<T> (event: string): Promise<T>;
+	one<T> (event: string) : Promise<T>;
 
 	/** Converts an ISessionMessageDataInternal into an ISessionMessageData. */
 	processMessageData (
 		data: ISessionMessageDataInternal
-	): Promise<ISessionMessageData>;
+	) : Promise<ISessionMessageData>;
 
 	/** Send at least one message through the session. */
 	send (
@@ -129,17 +129,17 @@ export interface ISessionService {
 						timestamp: number
 				  ) => MaybePromise<ISessionMessageAdditionalData>)
 		][]
-	): Promise<{
+	) : Promise<{
 		confirmPromise: Promise<void>;
 		newMessages: (ISessionMessage & {data: ISessionMessageData})[];
 	}>;
 
 	/** Creates and returns a new instance. */
-	spawn (): ISessionService;
+	spawn () : ISessionService;
 
 	/** Trigger event, passing in optional data. */
-	trigger (event: string, data?: any): Promise<void>;
+	trigger (event: string, data?: any) : Promise<void>;
 
 	/** Resolves when other user is online. */
-	yt (): Promise<void>;
+	yt () : Promise<void>;
 }

@@ -47,7 +47,7 @@ export class ThreadedPotassiumService extends PotassiumUtil
 								[`${k}${k2[0].toUpperCase()}${k2.slice(1)}`]:
 									typeof potassium[k][k2] === 'function' ?
 										(...args: any[]) =>
-												potassium[k][k2](...args) :
+											potassium[k][k2](...args) :
 										() => potassium[k][k2]
 							}))
 						)

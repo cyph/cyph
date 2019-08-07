@@ -114,8 +114,8 @@ export class Analytics {
 						.map((s: string) => /\/\/.*?\.?cyph\.[a-z]+\/?/.test(s))
 						.reduce((a: boolean, b: boolean) => a || b) ?
 						(locationData.search ? '&' : '?') +
-						  'ref=' +
-						  encodeURIComponent(document.referrer) :
+						'ref=' +
+						encodeURIComponent(document.referrer) :
 						'');
 
 				this.analFrame.style.display = 'none';

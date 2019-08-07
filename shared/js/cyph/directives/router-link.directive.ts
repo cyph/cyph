@@ -15,10 +15,7 @@ export class RouterLinkDirective extends BaseProvider implements OnInit {
 			return;
 		}
 
-		this.renderer.addClass(
-			this.elementRef.nativeElement,
-			'router-link'
-		);
+		this.renderer.addClass(this.elementRef.nativeElement, 'router-link');
 	}
 
 	constructor (

@@ -76,13 +76,13 @@ const pack = async (dir, inputPath, enableMinify, enableSRI, outputPath) => {
 		subresource.$elem.replaceWith(
 			subresource.tagName === 'script' ?
 				subresource.sri ?
-					`
+				`
 					<script
 						websign-sri-path='${subresource.path}'
 						websign-sri-hash='${subresource.hash}'
 					></script>
 				` :
-				`
+			`
 					<script>${subresource.content.replace(/<\/script>/g, '<\\/script>')}</script>
 				` :
 			subresource.sri ?
@@ -102,11 +102,11 @@ const pack = async (dir, inputPath, enableMinify, enableSRI, outputPath) => {
 	const output = (html =>
 		enableMinify ?
 			htmlMinifier.minify(html, {
-					collapseWhitespace: true,
-					minifyCSS: false,
-					minifyJS: false,
-					removeComments: true
-			  }) :
+				collapseWhitespace: true,
+				minifyCSS: false,
+				minifyJS: false,
+				removeComments: true
+			}) :
 			html)($.html().trim());
 
 	if (outputPath) {

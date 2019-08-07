@@ -5,8 +5,8 @@ import {IKeyPair} from '../../proto';
  */
 export interface ILocalUser {
 	/** Potassium.Box key pair. */
-	getEncryptionKeyPair (): Promise<IKeyPair>;
+	getEncryptionKeyPair () : Promise<IKeyPair>;
 
 	/** Potassium.Sign key pair. If undefined, handshake will be unsigned. */
-	getSigningKeyPair (): Promise<IKeyPair | undefined>;
+	getSigningKeyPair () : Promise<IKeyPair | undefined>;
 }

@@ -18,7 +18,7 @@ if (env.debugLog) {
 const debugLogInternal = async (
 	error: boolean,
 	argFunctions: (() => MaybePromise<any>)[]
-): Promise<
+) : Promise<
 	| undefined
 	| {
 			args: any[];
@@ -77,21 +77,21 @@ const debugLogInternal = async (
 /** Logs to console in local env. */
 export const debugLog = async (
 	...args: (() => MaybePromise<any>)[]
-): Promise<void> => {
+) : Promise<void> => {
 	await debugLogInternal(false, args);
 };
 
 /** Logs error to console in local env. */
 export const debugLogError = async (
 	...args: (() => MaybePromise<any>)[]
-): Promise<void> => {
+) : Promise<void> => {
 	await debugLogInternal(true, args);
 };
 
 /** Logs time difference to console in local env. */
 export const debugLogTime = async (
 	...args: (() => MaybePromise<any>)[]
-): Promise<void> => {
+) : Promise<void> => {
 	const o = await debugLogInternal(false, args);
 	if (o) {
 		/* tslint:disable-next-line:no-console */

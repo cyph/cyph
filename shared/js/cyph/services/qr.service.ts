@@ -15,7 +15,7 @@ import {LocalStorageService} from './local-storage.service';
 export class QRService extends BaseProvider {
 	/** Generates a QR code and caches to local storage. */
 	public readonly getQRCode = memoize(
-		async (options: DopeQrOptions): Promise<SafeUrl> =>
+		async (options: DopeQrOptions) : Promise<SafeUrl> =>
 			DataURIProto.decode(
 				await this.localStorageService.getOrSetDefault(
 					`QRService/${this.potassiumService.toHex(

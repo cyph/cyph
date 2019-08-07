@@ -118,10 +118,10 @@ export class Core {
 
 		return outgoingPublicKey ?
 			this.potassium.concatMemory(
-					true,
-					new Uint8Array([1]),
-					outgoingPublicKey
-			  ) :
+				true,
+				new Uint8Array([1]),
+				outgoingPublicKey
+			) :
 			new Uint8Array([0]);
 	}
 

@@ -13,7 +13,7 @@ export const dismissKeyboard = () => {
 };
 
 /** Simulates a click on elem. */
-export const triggerClick = (elem: HTMLElement): void => {
+export const triggerClick = (elem: HTMLElement) : void => {
 	if (!env.isWeb) {
 		/* TODO: HANDLE NATIVE */
 		return;

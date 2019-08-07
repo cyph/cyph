@@ -67,8 +67,8 @@ export class MaterialDialogService extends BaseProvider
 			const close =
 				'close' in matDialogRef ?
 					(closeOK?: boolean) => {
-							matDialogRef.close(closeOK);
-					  } :
+						matDialogRef.close(closeOK);
+					} :
 					(closeOK?: boolean) => {
 						matDialogRef.dismiss(closeOK);
 					};
@@ -186,8 +186,8 @@ export class MaterialDialogService extends BaseProvider
 			const close =
 				'close' in matDialogRef ?
 					(closeOK?: boolean) => {
-							matDialogRef.close(closeOK);
-					  } :
+						matDialogRef.close(closeOK);
+					} :
 					(closeOK?: boolean) => {
 						matDialogRef.dismiss(closeOK);
 					};

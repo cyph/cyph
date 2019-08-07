@@ -27,7 +27,7 @@ const mergeObjectsInternal = (o: any, objects: any[]) => {
 export const mergeObjects = async <T>(
 	proto: IProto<T>,
 	...objects: T[]
-): Promise<T> => {
+) : Promise<T> => {
 	const first = objects.shift();
 
 	if (typeof first !== 'object') {

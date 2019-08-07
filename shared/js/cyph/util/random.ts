@@ -8,7 +8,7 @@ import {potassiumUtil} from '../crypto/potassium/potassium-util';
  * @returns If max is specified, returns integer in range [min, max);
  * otherwise, returns float in range [0, 1) (like Math.random).
  */
-export const random = (max?: number, min: number = 0): number => {
+export const random = (max?: number, min: number = 0) : number => {
 	const randomData = potassiumUtil.randomBytes(6);
 
 	let randomUint = 0;

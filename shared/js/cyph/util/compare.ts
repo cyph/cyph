@@ -2,7 +2,11 @@
  * Compares two or more arrays.
  * @returns True if equal, false otherwise.
  */
-export const compareArrays = <T>(a: T[], b: T[], ...arrays: T[][]): boolean => {
+export const compareArrays = <T>(
+	a: T[],
+	b: T[],
+	...arrays: T[][]
+) : boolean => {
 	const length = a.length;
 	arrays = arrays.concat([b]);
 
@@ -25,7 +29,7 @@ export const compareArrays = <T>(a: T[], b: T[], ...arrays: T[][]): boolean => {
  * Compares two or more values.
  * @returns True if equal, false otherwise.
  */
-export const compareValues = <T>(a: T, b: T, ...values: T[]): boolean => {
+export const compareValues = <T>(a: T, b: T, ...values: T[]) : boolean => {
 	if (a instanceof Array) {
 		return compareArrays(a, <any> b, ...(<any> values));
 	}
@@ -38,7 +42,7 @@ export const compareValues = <T>(a: T, b: T, ...values: T[]): boolean => {
 };
 
 /** Constant time string comparison. */
-export const safeStringCompare = (a: string, b: string): boolean => {
+export const safeStringCompare = (a: string, b: string) : boolean => {
 	let mismatch: number;
 
 	const length = a.length;

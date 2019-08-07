@@ -8,7 +8,7 @@ import {waitForIterable} from './util/wait';
  */
 export const initGranim = async (
 	opts: Record<string, any>
-): Promise<
+) : Promise<
 	| undefined
 	| {
 			changeState: (state: string) => void;

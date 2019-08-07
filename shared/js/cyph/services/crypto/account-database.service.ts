@@ -101,7 +101,7 @@ export class AccountDatabaseService extends BaseProvider {
 						this.currentUser.value &&
 							username === this.currentUser.value.user.username ?
 							this.currentUser.value.keys.signingKeyPair
-									.publicKey :
+								.publicKey :
 							(await this.getUserPublicKeys(username)).signing,
 						url,
 
@@ -118,7 +118,7 @@ export class AccountDatabaseService extends BaseProvider {
 				cyphertext: Uint8Array,
 				key: Uint8Array,
 				additionalData: string
-			): Promise<Uint8Array> =>
+			) : Promise<Uint8Array> =>
 				this.potassiumService.secretBox.open(
 					cyphertext,
 					key,
@@ -128,7 +128,7 @@ export class AccountDatabaseService extends BaseProvider {
 				plaintext: Uint8Array,
 				key: Uint8Array,
 				additionalData: string
-			): Promise<Uint8Array> =>
+			) : Promise<Uint8Array> =>
 				this.potassiumService.secretBox.seal(
 					plaintext,
 					key,
@@ -141,7 +141,7 @@ export class AccountDatabaseService extends BaseProvider {
 				publicKey: Uint8Array,
 				additionalData: string,
 				decompress: boolean
-			): Promise<Uint8Array> =>
+			) : Promise<Uint8Array> =>
 				this.potassiumService.sign.open(
 					signed,
 					publicKey,
@@ -153,7 +153,7 @@ export class AccountDatabaseService extends BaseProvider {
 				privateKey: Uint8Array,
 				additionalData: string,
 				compress: boolean
-			): Promise<Uint8Array> =>
+			) : Promise<Uint8Array> =>
 				this.potassiumService.sign.sign(
 					message,
 					privateKey,
@@ -621,7 +621,7 @@ export class AccountDatabaseService extends BaseProvider {
 			new Map<string, T>(
 				await Promise.all(
 					keys.map(
-						async (key): Promise<[string, T]> => [
+						async (key) : Promise<[string, T]> => [
 							key,
 							await getItem(key)
 						]
@@ -638,8 +638,8 @@ export class AccountDatabaseService extends BaseProvider {
 				this.removeItem(`${await url}/${key}`),
 				staticValues ?
 					this.localStorageService.removeItem(
-							`${method}/${await url}/${key}`
-					  ) :
+						`${method}/${await url}/${key}`
+					) :
 					undefined
 			]);
 		};
@@ -659,10 +659,10 @@ export class AccountDatabaseService extends BaseProvider {
 				),
 				staticValues ?
 					this.localStorageService.setItem(
-							`${method}/${await url}/${key}`,
-							proto,
-							value
-					  ) :
+						`${method}/${await url}/${key}`,
+						proto,
+						value
+					) :
 					undefined
 			]);
 		};
@@ -797,8 +797,8 @@ export class AccountDatabaseService extends BaseProvider {
 				}).catch(async () =>
 					blockGetValue ?
 						watch()
-								.pipe(take(2))
-								.toPromise() :
+							.pipe(take(2))
+							.toPromise() :
 						proto.create()
 				),
 			lock: async (f, reason) => (await asyncValue).lock(f, reason),
@@ -1433,17 +1433,15 @@ export class AccountDatabaseService extends BaseProvider {
 
 		const watcher = immutable ?
 			headWatcher().pipe(
-					mergeMap(
-						async (
-							head
-						): Promise<[string[], ITimedValue<string>]> => [
-							await this.getListKeys(url),
-							head
-						]
-					)
-			  ) :
+				mergeMap(
+					async (head) : Promise<[string[], ITimedValue<string>]> => [
+						await this.getListKeys(url),
+						head
+					]
+				)
+			) :
 			keysWatcher().pipe(
-				map((keys): [string[], ITimedValue<string>] => [
+				map((keys) : [string[], ITimedValue<string>] => [
 					keys,
 					{timestamp: NaN, value: ''}
 				])

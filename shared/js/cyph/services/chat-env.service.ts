@@ -14,7 +14,7 @@ import {SessionInitService} from './session-init.service';
 export class ChatEnvService extends EnvService {
 	/** @ignore */
 	private readonly newCyphUrlHelperInternal = memoize(
-		(base: boolean, sessionService: ISessionService): string => {
+		(base: boolean, sessionService: ISessionService) : string => {
 			const flags = this.configService.apiFlags
 				.map(flag => (flag.get(sessionService) ? flag.character : ''))
 				.join('');
@@ -24,12 +24,12 @@ export class ChatEnvService extends EnvService {
 					undefined :
 				this.sessionInitService.callType === 'audio' ?
 					base ?
-						env.cyphAudioBaseUrl :
-					env.cyphAudioUrl :
+					env.cyphAudioBaseUrl :
+				env.cyphAudioUrl :
 				this.sessionInitService.callType === 'video' ?
 					base ?
-						env.cyphVideoBaseUrl :
-					env.cyphVideoUrl :
+					env.cyphVideoBaseUrl :
+				env.cyphVideoUrl :
 					undefined) || (base ? env.newCyphBaseUrl : env.cyphImUrl);
 
 			const divider = baseURL.indexOf('#') < 0 ? '#' : '';

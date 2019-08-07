@@ -7,7 +7,7 @@ import {env} from '../env';
 export const translate = (
 	text: string,
 	defaultValue: string = text
-): string => {
+) : string => {
 	if (
 		!translations ||
 		!translations[env.language] ||

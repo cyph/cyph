@@ -78,9 +78,9 @@ export class AccountComposeComponent extends BaseProvider
 				const value =
 					typeof o.value === 'function' ?
 						o.value({
-								email: this.accountService.fromEmail.value,
-								name: this.accountService.fromName.value
-						  }) :
+							email: this.accountService.fromEmail.value,
+							name: this.accountService.fromName.value
+						}) :
 						o.value;
 
 				this.appointmentFollowUp.next(o.appointmentFollowUp === true);
@@ -217,9 +217,9 @@ export class AccountComposeComponent extends BaseProvider
 							forms: this.accountChatService.chat.currentMessage
 								.form ?
 								[
-										this.accountChatService.chat
-											.currentMessage.form
-								  ] :
+									this.accountChatService.chat.currentMessage
+										.form
+								] :
 								undefined,
 							fromEmail:
 								this.accountService.fromEmail.value ||
@@ -231,9 +231,9 @@ export class AccountComposeComponent extends BaseProvider
 								...(this.accountDatabaseService.currentUser
 									.value ?
 									[
-											this.accountDatabaseService
-												.currentUser.value.user.username
-									  ] :
+										this.accountDatabaseService.currentUser
+											.value.user.username
+									] :
 									[])
 							],
 							rsvpSessionSubID: uuid()
@@ -244,23 +244,21 @@ export class AccountComposeComponent extends BaseProvider
 					!this.envService.isTelehealthFull &&
 					this.accountDatabaseService.currentUser.value ?
 						this.databaseService.callFunction('appointmentInvite', {
-								callType:
-									calendarInvite.callType ===
-									CallTypes.Audio ?
-										'audio' :
-									calendarInvite.callType ===
-										  CallTypes.Video ?
-										'video' :
-										undefined,
-								eventDetails: {
-									endTime: calendarInvite.endTime,
-									startTime: calendarInvite.startTime
-								},
-								to: {
-									email: this.accountService.fromEmail.value,
-									name: this.accountService.fromName.value
-								}
-						  }) :
+							callType:
+								calendarInvite.callType === CallTypes.Audio ?
+									'audio' :
+								calendarInvite.callType === CallTypes.Video ?
+									'video' :
+									undefined,
+							eventDetails: {
+								endTime: calendarInvite.endTime,
+								startTime: calendarInvite.startTime
+							},
+							to: {
+								email: this.accountService.fromEmail.value,
+								name: this.accountService.fromName.value
+							}
+						}) :
 						undefined
 				]);
 

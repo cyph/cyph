@@ -97,21 +97,20 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			this.accountDatabaseService.currentUser.value.confirmed ||
 				this.accountDatabaseService.currentUser.value.pseudoAccount ?
 				this.activatedRoute.snapshot.url.length > 0 ?
-					[
-							'',
-							...this.activatedRoute.snapshot.url
-								/* Avoid redirecting from /login/login to /login */
-								.slice(
-									this.activatedRoute.snapshot.url.length >
-										0 &&
-										this.activatedRoute.snapshot.url[0]
-											.path === 'login' ?
-										1 :
-										0
-								)
-								.map(o => o.path)
-					  ] :
-				[''] :
+				[
+					'',
+					...this.activatedRoute.snapshot.url
+						/* Avoid redirecting from /login/login to /login */
+						.slice(
+							this.activatedRoute.snapshot.url.length > 0 &&
+								this.activatedRoute.snapshot.url[0].path ===
+									'login' ?
+								1 :
+								0
+						)
+						.map(o => o.path)
+				] :
+			[''] :
 				['welcome']
 		);
 
@@ -226,10 +225,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 				this.savedMasterKey.value &&
 				this.savedUsername.value ?
 					this.accountAuthService.login(
-							this.savedUsername.value,
-							this.savedMasterKey.value,
-							this.pin.value
-					  ) :
+						this.savedUsername.value,
+						this.savedMasterKey.value,
+						this.pin.value
+					) :
 					this.accountAuthService.login(
 						this.username.value,
 						this.masterKey.value

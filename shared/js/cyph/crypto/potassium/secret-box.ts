@@ -22,14 +22,14 @@ export class SecretBox implements ISecretBox {
 			nonce: Uint8Array,
 			key: Uint8Array,
 			additionalData?: Uint8Array
-		): Promise<Uint8Array> =>
+		) : Promise<Uint8Array> =>
 			this.isNative ?
 				NativeCrypto.secretBox.open(
-						cyphertext,
-						nonce,
-						key,
-						additionalData
-				  ) :
+					cyphertext,
+					nonce,
+					key,
+					additionalData
+				) :
 				sodium.ready.then(() =>
 					sodium.crypto_aead_xchacha20poly1305_ietf_decrypt(
 						undefined,
@@ -44,14 +44,14 @@ export class SecretBox implements ISecretBox {
 			nonce: Uint8Array,
 			key: Uint8Array,
 			additionalData?: Uint8Array
-		): Promise<Uint8Array> =>
+		) : Promise<Uint8Array> =>
 			this.isNative ?
 				NativeCrypto.secretBox.seal(
-						plaintext,
-						nonce,
-						key,
-						additionalData
-				  ) :
+					plaintext,
+					nonce,
+					key,
+					additionalData
+				) :
 				sodium.ready.then(() =>
 					sodium.crypto_aead_xchacha20poly1305_ietf_encrypt(
 						plaintext,

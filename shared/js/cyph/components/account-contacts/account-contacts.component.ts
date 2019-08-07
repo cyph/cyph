@@ -115,15 +115,15 @@ export class AccountContactsComponent extends BaseProvider
 
 			const index = username ?
 				contactList.findIndex(
-						contact => contact.username === username
-				  ) :
+					contact => contact.username === username
+				) :
 			snapshot.params.contactID ?
 				contactList.findIndex(
-						contact =>
-							'groupData' in contact &&
-							contact.groupData !== undefined &&
-							contact.groupData.id === snapshot.params.contactID
-				  ) :
+					contact =>
+						'groupData' in contact &&
+						contact.groupData !== undefined &&
+						contact.groupData.id === snapshot.params.contactID
+				) :
 				-1;
 
 			if (index < 0) {
