@@ -284,7 +284,7 @@ const dockerRun = (
 	additionalArgs,
 	getOutput
 ) => {
-	const processArgs = ['run', getOutput ? '-i' : '-it']
+	const processArgs = ['run', '--privileged', getOutput ? '-i' : '-it']
 		.concat(name ? [`--name=${name}`] : [])
 		.concat(background ? [`-d`] : [])
 		.concat(!noCleanup ? [`--rm=true`] : [])
