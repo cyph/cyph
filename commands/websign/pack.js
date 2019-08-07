@@ -77,14 +77,14 @@ const pack = async (dir, inputPath, enableMinify, enableSRI, outputPath) => {
 			subresource.tagName === 'script' ?
 				subresource.sri ?
 					`
-						<script
-							websign-sri-path='${subresource.path}'
-							websign-sri-hash='${subresource.hash}'
-						></script>
-					` :
+					<script
+						websign-sri-path='${subresource.path}'
+						websign-sri-hash='${subresource.hash}'
+					></script>
+				` :
 					`
-						<script>${subresource.content.replace(/<\/script>/g, '<\\/script>')}</script>
-					` :
+					<script>${subresource.content.replace(/<\/script>/g, '<\\/script>')}</script>
+				` :
 			subresource.sri ?
 				`
 					<link
