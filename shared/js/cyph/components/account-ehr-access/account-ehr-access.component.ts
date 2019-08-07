@@ -6,7 +6,6 @@ import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for EHR access UI.
  */
@@ -18,7 +17,7 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountEhrAccessComponent extends BaseProvider implements OnInit {
 	/** @see AccountFileRecord.RecordTypes */
-	public readonly recordType	= AccountFileRecord.RecordTypes.EhrApiKey;
+	public readonly recordType = AccountFileRecord.RecordTypes.EhrApiKey;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

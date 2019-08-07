@@ -2,5 +2,4 @@
 
 /** @file vm external. */
 
-
 export default undefined;

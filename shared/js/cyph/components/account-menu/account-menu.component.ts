@@ -14,7 +14,6 @@ import {trackByValue} from '../../track-by/track-by-value';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {getDateTimeString} from '../../util/time';
 
-
 /**
  * Angular component for account home UI.
  */
@@ -26,30 +25,30 @@ import {getDateTimeString} from '../../util/time';
 })
 export class AccountMenuComponent extends BaseProvider {
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes		= AccountUserTypes;
+	public readonly accountUserTypes = AccountUserTypes;
 
 	/** @see getDateTimeSting */
-	public readonly getDateTimeString		= getDateTimeString;
+	public readonly getDateTimeString = getDateTimeString;
 
 	/** @see AccountService.menuExpanded */
-	public readonly menuExpanded			=
-		this.accountService.menuExpanded.pipe(map(menuExpanded => this.sidenav || menuExpanded))
-	;
+	public readonly menuExpanded = this.accountService.menuExpanded.pipe(
+		map(menuExpanded => this.sidenav || menuExpanded)
+	);
 
 	/** If true, is inside a sidenav. */
-	@Input() public sidenav: boolean		= false;
+	@Input() public sidenav: boolean = false;
 
 	/** @see UserPresence */
-	public readonly statuses				= userPresenceSelectOptions;
+	public readonly statuses = userPresenceSelectOptions;
 
 	/** @see trackByValue */
-	public readonly trackByValue			= trackByValue;
+	public readonly trackByValue = trackByValue;
 
 	/** @see urlToSafeStyle */
-	public readonly urlToSafeStyle			= urlToSafeStyle;
+	public readonly urlToSafeStyle = urlToSafeStyle;
 
 	/** @see UserPresence */
-	public readonly userPresence			= UserPresence;
+	public readonly userPresence = UserPresence;
 
 	/** Handler for button clicks. */
 	public click () : void {

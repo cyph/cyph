@@ -8,19 +8,18 @@ import {filterUndefinedOperator} from '../../util/filter';
 import {lockFunction} from '../../util/lock';
 import {SessionService} from '../session.service';
 
-
 /**
  * @see ICastle
  */
 @Injectable()
 export class CastleService extends BaseProvider implements ICastle {
 	/** @ignore */
-	protected readonly pairwiseSession		=
-		new BehaviorSubject<IPairwiseSession|undefined>(undefined)
-	;
+	protected readonly pairwiseSession = new BehaviorSubject<
+		IPairwiseSession | undefined
+	>(undefined);
 
 	/** @ignore */
-	protected readonly pairwiseSessionLock	= lockFunction();
+	protected readonly pairwiseSessionLock = lockFunction();
 
 	/** @ignore */
 	protected async getPairwiseSession () : Promise<IPairwiseSession> {
@@ -29,19 +28,27 @@ export class CastleService extends BaseProvider implements ICastle {
 		}
 
 		return this.pairwiseSessionLock(async () =>
-			this.pairwiseSession.pipe(filterUndefinedOperator(), take(1)).toPromise()
+			this.pairwiseSession
+				.pipe(
+					filterUndefinedOperator(),
+					take(1)
+				)
+				.toPromise()
 		);
 	}
 
 	/** Initializes service. */
 	/* tslint:disable-next-line:no-async-without-await */
 	public async init (_SESSION_SERVICE: SessionService) : Promise<void> {
-		throw new Error('Must provide an implementation of CastleService.init.');
+		throw new Error(
+			'Must provide an implementation of CastleService.init.'
+		);
 	}
 
 	/** @see PairwiseSession.initialMessagesProcessed */
 	public async initialMessagesProcessed () : Promise<void> {
-		return (await this.getPairwiseSession()).initialMessagesProcessed.promise;
+		return (await this.getPairwiseSession()).initialMessagesProcessed
+			.promise;
 	}
 
 	/** @inheritDoc */
@@ -50,7 +57,10 @@ export class CastleService extends BaseProvider implements ICastle {
 	}
 
 	/** @inheritDoc */
-	public async send (plaintext: string|ArrayBufferView, timestamp: number) : Promise<void> {
+	public async send (
+		plaintext: string | ArrayBufferView,
+		timestamp: number
+	) : Promise<void> {
 		return (await this.getPairwiseSession()).send(plaintext, timestamp);
 	}
 

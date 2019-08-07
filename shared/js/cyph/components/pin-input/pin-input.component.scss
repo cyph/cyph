@@ -12,13 +12,19 @@
 			}
 
 			@for $i from 0 to 5 {
-				$translateX: -(2.5 * $fontSize) + $i * 0.75 * $fontSize + 10.5px;
+				$translateX: -(2.5 * $fontSize) +
+					$i *
+					0.75 *
+					$fontSize +
+					10.5px;
 
 				&.length-#{$i} {
 					@include transform(translateX($translateX));
 
 					&.text-security {
-						@include transform(translate($translateX + 4.5px, -8px));
+						@include transform(
+							translate($translateX + 4.5px, -8px)
+						);
 					}
 				}
 			}
@@ -34,13 +40,15 @@
 }
 
 .input-wrapper-outer {
-	&, .input-wrapper-inner {
+	&,
+	.input-wrapper-inner {
 		overflow: hidden;
 		position: relative;
 	}
 
 	.input-wrapper-inner {
-		input, &:after {
+		input,
+		&:after {
 			font-family: 'Ubuntu Mono';
 			text-align: center;
 		}

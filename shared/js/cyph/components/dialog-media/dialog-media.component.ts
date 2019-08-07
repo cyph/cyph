@@ -8,7 +8,6 @@ import {DataURIProto} from '../../proto';
 import {FileService} from '../../services/file.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for image dialog.
  */
@@ -23,26 +22,33 @@ export class DialogMediaComponent extends BaseProvider {
 	public cropAspectRatio?: number;
 
 	/** Callback for cropping image. */
-	public cropResult?: IResolvable<SafeUrl|undefined>;
+	public cropResult?: IResolvable<SafeUrl | undefined>;
 
 	/** In-progress cropped image. */
 	public cropped?: string;
 
 	/** MIME type. */
-	public mediaType: string	= 'image/png';
+	public mediaType: string = 'image/png';
 
 	/** @see DataURIProto.safeUrlToString */
-	public readonly safeUrlToString	= memoize(async (data?: SafeUrl|string, mediaType?: string) =>
-		!data ? undefined : DataURIProto.safeUrlToString(data, mediaType).catch(() => undefined)
+	public readonly safeUrlToString = memoize(
+		async (data?: SafeUrl | string, mediaType?: string) =>
+			!data ?
+				undefined :
+				DataURIProto.safeUrlToString(data, mediaType).catch(
+					() => undefined
+				)
 	);
 
 	/** String to SafeUrl. */
-	public readonly stringToSafeUrl	= memoize((data?: SafeUrl|string) =>
-		typeof data !== 'string' ? data : this.domSanitizer.bypassSecurityTrustUrl(data)
+	public readonly stringToSafeUrl = memoize((data?: SafeUrl | string) =>
+		typeof data !== 'string' ?
+			data :
+			this.domSanitizer.bypassSecurityTrustUrl(data)
 	);
 
 	/** Image src. */
-	public src?: SafeUrl|string;
+	public src?: SafeUrl | string;
 
 	/** Image title. */
 	public title?: string;

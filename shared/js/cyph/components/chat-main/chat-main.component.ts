@@ -1,4 +1,10 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input
+} from '@angular/core';
 import * as $ from 'jquery';
 import {fadeIn} from '../../animations';
 import {BaseProvider} from '../../base-provider';
@@ -17,7 +23,6 @@ import {trackByTransfer} from '../../track-by/track-by-transfer';
 import {readableByteLength} from '../../util/formatting';
 import {urlToSafeStyle} from '../../util/safe-values';
 
-
 /**
  * Angular component for main chat UI.
  */
@@ -33,40 +38,41 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 	@Input() public appointment?: IAppointment;
 
 	/** Force display video UI. */
-	@Input() public forceDisplayVideo: boolean			= false;
+	@Input() public forceDisplayVideo: boolean = false;
 
 	/** Indicates whether projected disconnection message should be hidden. */
-	@Input() public hideDisconnectMessage: boolean		= false;
+	@Input() public hideDisconnectMessage: boolean = false;
 
 	/** @see ChatMessageListComponent.messageCountInTitle */
-	@Input() public messageCountInTitle: boolean		= false;
+	@Input() public messageCountInTitle: boolean = false;
 
 	/** @see ChatMessageBoxComponent.messageType */
-	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
+	@Input() public messageType: ChatMessageValue.Types =
+		ChatMessageValue.Types.Text;
 
 	/** @see ChatMessageListComponent.persistentEndMessage */
-	@Input() public persistentEndMessage: boolean		= false;
+	@Input() public persistentEndMessage: boolean = false;
 
 	/** @see ChatMessageListComponent.promptFollowup */
 	@Input() public promptFollowup?: string;
 
 	/** @see readableByteLength */
-	public readonly readableByteLength					= readableByteLength;
+	public readonly readableByteLength = readableByteLength;
 
 	/** @see States */
-	public readonly states								= States;
+	public readonly states = States;
 
 	/** @see trackByTransfer */
-	public readonly trackByTransfer						= trackByTransfer;
+	public readonly trackByTransfer = trackByTransfer;
 
 	/** Indicates which version of the UI should be displayed. */
-	@Input() public uiStyle: UiStyles					= UiStyles.default;
+	@Input() public uiStyle: UiStyles = UiStyles.default;
 
 	/** @see UiStyles */
-	public readonly uiStyles							= UiStyles;
+	public readonly uiStyles = UiStyles;
 
 	/** @see urlToSafeStyle */
-	public readonly urlToSafeStyle						= urlToSafeStyle;
+	public readonly urlToSafeStyle = urlToSafeStyle;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
@@ -75,7 +81,7 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 			return;
 		}
 
-		const $element	= $(this.elementRef.nativeElement);
+		const $element = $(this.elementRef.nativeElement);
 
 		this.p2pService.init(
 			() => $element.find('.video-call .me'),

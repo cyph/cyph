@@ -17,9 +17,7 @@
 						"tsConfig": "src/tsconfig.app.json",
 						"polyfills": "src/js/cyph.com/polyfills.ts",
 						"assets": [],
-						"styles": [
-							"src/css/cyph.com.scss"
-						],
+						"styles": ["src/css/cyph.com.scss"],
 						"scripts": []
 					},
 					"configurations": {
@@ -269,9 +267,7 @@
 						"polyfills": "src/js/cyph.com/polyfills.ts",
 						"tsConfig": "src/tsconfig.spec.json",
 						"scripts": [],
-						"styles": [
-							"src/css/cyph.com.scss"
-						],
+						"styles": ["src/css/cyph.com.scss"],
 						"assets": []
 					}
 				},
@@ -304,9 +300,7 @@
 				"lint": {
 					"builder": "@angular-devkit/build-angular:tslint",
 					"options": {
-						"tsConfig": [
-							"e2e/tsconfig.e2e.json"
-						],
+						"tsConfig": ["e2e/tsconfig.e2e.json"],
 						"exclude": []
 					}
 				}

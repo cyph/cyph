@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	OnDestroy,
+	OnInit
+} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import Delta from 'quill-delta';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
@@ -18,7 +23,6 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 import {lockFunction} from '../../util/lock';
 import {sleep} from '../../util/wait';
 
-
 /**
  * Angular component for an individual note.
  */
@@ -28,66 +32,67 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-note.component.scss'],
 	templateUrl: './account-note.component.html'
 })
-export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnInit {
+export class AccountNoteComponent extends BaseProvider
+	implements OnDestroy, OnInit {
 	/** @ignore */
-	private readonly editView	= new BehaviorSubject<boolean>(false);
+	private readonly editView = new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
-	private readonly saveLock	= lockFunction();
+	private readonly saveLock = lockFunction();
 
 	/** Indicates whether or not this is a new note. */
-	public readonly newNote	= new BehaviorSubject<boolean>(false);
+	public readonly newNote = new BehaviorSubject<boolean>(false);
 
 	/** Currently active note. */
-	public readonly note	= new BehaviorSubject<undefined|{
-		content?: Observable<IQuillDelta>;
-		doc?: {
-			asyncList: IAsyncList<IQuillDelta|IQuillRange>;
-			deltas: Observable<IQuillDelta>;
-			deltaSendQueue: IQuillDelta[];
-			selections: Observable<IQuillRange>;
-			selectionSendQueue?: IQuillRange;
-		};
-		metadata: Observable<IAccountFileRecord>;
-	}>(
-		undefined
-	);
+	public readonly note = new BehaviorSubject<
+		| undefined
+		| {
+				content?: Observable<IQuillDelta>;
+				doc?: {
+					asyncList: IAsyncList<IQuillDelta | IQuillRange>;
+					deltas: Observable<IQuillDelta>;
+					deltaSendQueue: IQuillDelta[];
+					selections: Observable<IQuillRange>;
+					selectionSendQueue?: IQuillRange;
+				};
+				metadata: Observable<IAccountFileRecord>;
+		  }
+	>(undefined);
 
 	/** Most recent note data. */
-	public readonly noteData	= new BehaviorSubject<{
+	public readonly noteData = new BehaviorSubject<{
 		content?: IQuillDelta;
 		id?: string;
 		nameChange?: string;
 		owner?: string;
-	}>(
-		{}
-	);
+	}>({});
 
 	/** Indicates whether or not the edit view should be displayed. */
-	public readonly noteEditable: Observable<boolean>	=
-		combineLatest([this.editView, this.newNote]).pipe(map(([editView, newNote]) =>
-			editView || newNote
-		))
-	;
+	public readonly noteEditable: Observable<boolean> = combineLatest([
+		this.editView,
+		this.newNote
+	]).pipe(map(([editView, newNote]) => editView || newNote));
 
 	/** Indicates whether or not the real-time doc UI is enabled. */
-	public readonly realTime: BehaviorSubject<boolean>	= toBehaviorSubject(
+	public readonly realTime: BehaviorSubject<boolean> = toBehaviorSubject(
 		this.activatedRoute.data.pipe(map(o => o.realTime)),
 		false,
 		this.subscriptions
 	);
 
 	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner: Observable<boolean>	=
-		combineLatest([this.newNote, this.realTime]).pipe(map(([newNote, realTime]) =>
-			newNote && realTime
-		))
-	;
+	public readonly showSpinner: Observable<boolean> = combineLatest([
+		this.newNote,
+		this.realTime
+	]).pipe(map(([newNote, realTime]) => newNote && realTime));
 
 	/** @ignore */
 	private async initDoc () : Promise<void> {
 		await this.setNote(
-			await this.accountFilesService.upload(this.stringsService.untitled, []).result
+			await this.accountFilesService.upload(
+				this.stringsService.untitled,
+				[]
+			).result
 		);
 
 		this.router.navigate(['docs', this.noteData.value.id, 'edit']);
@@ -95,8 +100,13 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 
 	/** @ignore */
 	private async setNote (id: string) : Promise<void> {
-		const metadata		= this.accountFilesService.watchMetadata(id);
-		const metadataValue	= await metadata.pipe(filter(o => !!o.id), take(1)).toPromise();
+		const metadata = this.accountFilesService.watchMetadata(id);
+		const metadataValue = await metadata
+			.pipe(
+				filter(o => !!o.id),
+				take(1)
+			)
+			.toPromise();
 
 		this.note.next({metadata});
 		this.updateNoteData({
@@ -119,18 +129,21 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 					this.note.value.doc &&
 					this.noteData.value.id === metadataValue.id
 				) {
-					const doc	= this.note.value.doc;
+					const doc = this.note.value.doc;
 
 					if (doc.deltaSendQueue.length > 0) {
 						await doc.asyncList.pushItem({
 							clientID: doc.deltaSendQueue[0].clientID,
-							ops: doc.deltaSendQueue.splice(
-								0,
-								doc.deltaSendQueue.length
-							).reduce(
-								(delta, {ops}) => ops ? delta.compose(new Delta(ops)) : delta,
-								new Delta()
-							).ops || []
+							ops:
+								doc.deltaSendQueue
+									.splice(0, doc.deltaSendQueue.length)
+									.reduce(
+										(delta, {ops}) =>
+											ops ?
+												delta.compose(new Delta(ops)) :
+												delta,
+										new Delta()
+									).ops || []
 						});
 					}
 
@@ -169,39 +182,46 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 
 		this.setURL(this.router.url);
 
-		this.subscriptions.push(this.accountService.routeChanges.subscribe(url => {
-			this.setURL(url);
-		}));
+		this.subscriptions.push(
+			this.accountService.routeChanges.subscribe(url => {
+				this.setURL(url);
+			})
+		);
 
-		this.subscriptions.push(combineLatest([
-			this.activatedRoute.params,
-			this.realTime
-		]).subscribe(async ([o, realTime]) => {
-			try {
-				const id: string|undefined	= o.id;
+		this.subscriptions.push(
+			combineLatest([
+				this.activatedRoute.params,
+				this.realTime
+			]).subscribe(async ([o, realTime]) => {
+				try {
+					const id: string | undefined = o.id;
 
-				if (!id) {
-					throw new Error('Invalid note ID.');
-				}
+					if (!id) {
+						throw new Error('Invalid note ID.');
+					}
 
-				if (id === 'new') {
-					this.newNote.next(true);
-					this.note.next(undefined);
-					this.updateNoteData({content: undefined, id: undefined});
+					if (id === 'new') {
+						this.newNote.next(true);
+						this.note.next(undefined);
+						this.updateNoteData({
+							content: undefined,
+							id: undefined
+						});
 
-					if (realTime) {
-						await this.initDoc();
+						if (realTime) {
+							await this.initDoc();
+						}
+					}
+					else {
+						this.newNote.next(false);
+						await this.setNote(id);
 					}
 				}
-				else {
-					this.newNote.next(false);
-					await this.setNote(id);
+				catch {
+					this.router.navigate(['404']);
 				}
-			}
-			catch {
-				this.router.navigate(['404']);
-			}
-		}));
+			})
+		);
 	}
 
 	/** Note change handler. */
@@ -231,7 +251,7 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 		}
 
 		if (this.note.value && this.note.value.doc) {
-			this.note.value.doc.selectionSendQueue	= change.range;
+			this.note.value.doc.selectionSendQueue = change.range;
 			this.note.next({...this.note.value});
 		}
 	}
@@ -242,7 +262,7 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 			return;
 		}
 
-		const name	= this.noteData.value.nameChange;
+		const name = this.noteData.value.nameChange;
 		this.updateNoteData({nameChange: undefined});
 
 		this.saveLock(async () => {
@@ -250,37 +270,41 @@ export class AccountNoteComponent extends BaseProvider implements OnDestroy, OnI
 				return;
 			}
 
-			return this.accountFilesService.updateMetadata(this.noteData.value.id, {name});
+			return this.accountFilesService.updateMetadata(
+				this.noteData.value.id,
+				{name}
+			);
 		});
 	}
 
 	/** Saves note. */
 	public saveNote () : void {
 		this.saveLock(async () => {
-			const noteData	= {...this.noteData.value};
+			const noteData = {...this.noteData.value};
 
 			if (!noteData.content) {
-				noteData.content	= this.note.value && this.note.value.content ?
-					await this.note.value.content.pipe(take(1)).toPromise() :
-					<IQuillDelta> (<any> {clientID: '', ops: []})
-				;
+				noteData.content =
+					this.note.value && this.note.value.content ?
+						await this.note.value.content
+								.pipe(take(1))
+								.toPromise() :
+						<IQuillDelta> (<any> {clientID: '', ops: []});
 			}
 
 			this.accountService.interstitial.next(true);
 
 			if (this.newNote.value) {
-				noteData.id	=
-					await this.accountFilesService.upload(
-						noteData.nameChange || '',
-						noteData.content
-					).result
-				;
+				noteData.id = await this.accountFilesService.upload(
+					noteData.nameChange || '',
+					noteData.content
+				).result;
 
 				await this.setNote(noteData.id);
 			}
 			else if (
 				this.note.value &&
-				(await this.note.value.metadata.pipe(take(1)).toPromise()).id === noteData.id
+				(await this.note.value.metadata.pipe(take(1)).toPromise())
+					.id === noteData.id
 			) {
 				await this.accountFilesService.updateNote(
 					noteData.id,

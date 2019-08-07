@@ -1,33 +1,33 @@
 <div
 	fxFlex
 	fxFlexFill
-	fxLayout='column'
-	class='chat-main'
-	[class.accounts]='envService.isAccounts'
-	[class.audio-only]='(p2pWebRTCService.videoEnabled | async) !== true'
-	[class.video]='forceDisplayVideo || (p2pService.isActive | async)'
-	[class.mobile]='envService.isMobile | async'
-	[class.self-destruct]='chatService.chatSelfDestruct | async'
-	*ngIf='chatService.chatSubject | async as chat'
+	fxLayout="column"
+	class="chat-main"
+	[class.accounts]="envService.isAccounts"
+	[class.audio-only]="(p2pWebRTCService.videoEnabled | async) !== true"
+	[class.video]="forceDisplayVideo || (p2pService.isActive | async)"
+	[class.mobile]="envService.isMobile | async"
+	[class.self-destruct]="chatService.chatSelfDestruct | async"
+	*ngIf="chatService.chatSubject | async as chat"
 >
 	<div
 		fxFlex
-		fxLayout='column'
-		fxLayoutAlign='center stretch'
-		class='loading'
-		*ngIf='
+		fxLayout="column"
+		fxLayoutAlign="center stretch"
+		class="loading"
+		*ngIf="
 			chat.state === states.keyExchange ||
 			chat.state === states.chatBeginMessage
-		'
-		[@fadeIn]='"in"'
+		"
+		[@fadeIn]="'in'"
 	>
 		<div
-			class='logo-animation'
-			[class.connected]='chat.state === states.chatBeginMessage'
-			*ngIf='
+			class="logo-animation"
+			[class.connected]="chat.state === states.chatBeginMessage"
+			*ngIf="
 				chat.state === states.keyExchange ||
 				chat.state === states.chatBeginMessage
-			'
+			"
 		>
 			<div></div>
 			<div></div>
@@ -36,81 +36,85 @@
 			<div></div>
 		</div>
 
-		<div
-			cyphTranslate
-			*ngIf='chat.state === states.keyExchange'
-		>
+		<div cyphTranslate *ngIf="chat.state === states.keyExchange">
 			Initiating Key Exchange...
 		</div>
-		<div
-			cyphTranslate
-			*ngIf='chat.state === states.chatBeginMessage'
-		>
+		<div cyphTranslate *ngIf="chat.state === states.chatBeginMessage">
 			Securely Connected!
 		</div>
 
 		<mat-progress-bar
-			class='key-exchange-progress'
-			[value]='(chat.initProgress | async) || 0'
+			class="key-exchange-progress"
+			[value]="(chat.initProgress | async) || 0"
 		></mat-progress-bar>
 	</div>
 
 	<div
 		fxFlex
-		fxLayout='column'
-		fxLayoutAlign='center stretch'
-		class='abort-screen loading'
-		*ngIf='chat.state === states.aborted'
-		[@fadeIn]='"in"'
+		fxLayout="column"
+		fxLayoutAlign="center stretch"
+		class="abort-screen loading"
+		*ngIf="chat.state === states.aborted"
+		[@fadeIn]="'in'"
 	>
-		<div class='image'>
+		<div class="image">
 			<img
-				*ngIf='!(
-					envService.telehealthTheme ||
-					envService.customBuildImages.errorImage
-				)'
-				src='/assets/img/walken.png'
-				alt='Definitely not Christopher Walken'
+				*ngIf="
+					!(
+						envService.telehealthTheme ||
+						envService.customBuildImages.errorImage
+					)
+				"
+				src="/assets/img/walken.png"
+				alt="Definitely not Christopher Walken"
 				cyphTranslate
 			/>
 			<img
-				*ngIf='!!envService.customBuildImages.errorImage'
-				[src]='envService.customBuildImages.errorImage | async'
-				alt='Error'
+				*ngIf="!!envService.customBuildImages.errorImage"
+				[src]="envService.customBuildImages.errorImage | async"
+				alt="Error"
 				cyphTranslate
 			/>
 		</div>
-		<div *ngIf='!envService.isTelehealth'>
+		<div *ngIf="!envService.isTelehealth">
 			<span cyphTranslate>This</span>
 			&ngsp;
-			<span>{{stringsService.session}}</span>
+			<span>{{ stringsService.session }}</span>
 			&ngsp;
 			<span cyphTranslate>has been aborted.</span>
-			<ng-container *ngIf='!envService.isAccounts'>
+			<ng-container *ngIf="!envService.isAccounts">
 				<br />
 				<br />
 				<span cyphTranslate>Please</span>
 				&ngsp;
-				<a cyphTranslate [routerLink]='envService.newCyphUrlRetry'>try again</a>.
+				<a cyphTranslate [routerLink]="envService.newCyphUrlRetry">
+					try again
+				</a>
+				.
 			</ng-container>
 		</div>
-		<div *ngIf='envService.isTelehealth'>
+		<div *ngIf="envService.isTelehealth">
 			<span cyphTranslate>This telehealth session has been aborted.</span>
-			<ng-container *ngIf='!envService.isAccounts'>
+			<ng-container *ngIf="!envService.isAccounts">
 				<br />
 				<br />
-				<ng-container *ngIf='sessionService.state.isAlice | async'>
+				<ng-container *ngIf="sessionService.state.isAlice | async">
 					<span cyphTranslate>
-						If this was a mistake or error,
-						you may generate a new link and
+						If this was a mistake or error, you may generate a new
+						link and
 					</span>
 					&ngsp;
-					<a cyphTranslate [routerLink]='envService.newCyphUrlRetry'>try again</a>.
+					<a cyphTranslate [routerLink]="envService.newCyphUrlRetry">
+						try again
+					</a>
+					.
 				</ng-container>
-				<ng-container *ngIf='(sessionService.state.isAlice | async) === false'>
+				<ng-container
+					*ngIf="(sessionService.state.isAlice | async) === false"
+				>
 					<span cyphTranslate>
-						If this was a mistake or error,
-						your practitoner will send you a new link.
+						If this was a mistake or error, your practitoner will
+						send you a new link.
 					</span>
 				</ng-container>
 			</ng-container>
@@ -119,149 +123,179 @@
 
 	<div
 		fxFlex
-		[fxShow]='forceDisplayVideo || (p2pService.isActive | async)'
-		class='video-call'
-		[class.sidebar-open]='p2pService.isSidebarOpen | async'
-		*ngIf='chat.state === states.chat'
+		[fxShow]="forceDisplayVideo || (p2pService.isActive | async)"
+		class="video-call"
+		[class.sidebar-open]="p2pService.isSidebarOpen | async"
+		*ngIf="chat.state === states.chat"
 	>
-		<a class='logo' [href]='envService.homeUrl'>
-			<cyph-logo alignment='left' video></cyph-logo>
+		<a class="logo" [href]="envService.homeUrl">
+			<cyph-logo alignment="left" video></cyph-logo>
 		</a>
 		<div
-			class='friend stream'
-			[fxHide]='
+			class="friend stream"
+			[fxHide]="
 				!(p2pWebRTCService.incomingStream | async)?.video ||
 				(p2pWebRTCService.loading | async)
-			'
+			"
 		></div>
-		<ng-container *ngIf='!envService.isAccounts; else accountsAudioCall'>
+		<ng-container *ngIf="!envService.isAccounts; else accountsAudioCall">
 			<img
-				*ngIf='!envService.customBuildImages.audioImage'
-				class='friend'
-				[fxHide]='
+				*ngIf="!envService.customBuildImages.audioImage"
+				class="friend"
+				[fxHide]="
 					(p2pWebRTCService.incomingStream | async)?.video ||
 					(p2pWebRTCService.loading | async)
-				'
-				src='/assets/img/voicecall.jpg'
-				alt='Voice call'
+				"
+				src="/assets/img/voicecall.jpg"
+				alt="Voice call"
 				cyphTranslate
 			/>
 			<img
-				*ngIf='!!envService.customBuildImages.audioImage'
-				class='friend'
-				[fxHide]='
+				*ngIf="!!envService.customBuildImages.audioImage"
+				class="friend"
+				[fxHide]="
 					(p2pWebRTCService.incomingStream | async)?.video ||
 					(p2pWebRTCService.loading | async)
-				'
-				[src]='envService.customBuildImages.audioImage | async'
-				alt='Voice call'
+				"
+				[src]="envService.customBuildImages.audioImage | async"
+				alt="Voice call"
 				cyphTranslate
 			/>
 		</ng-container>
 		<ng-template #accountsAudioCall>
-			<ng-container *ngIf='(p2pWebRTCService.incomingStream | async)?.video !== true'>
+			<ng-container
+				*ngIf="
+					(p2pWebRTCService.incomingStream | async)?.video !== true
+				"
+			>
 				<div
 					fxFlexFill
-					class='cover-image call'
-					[style.background-image]='urlToSafeStyle(
-						(chatService.remoteUser | async)?.coverImage | async
-					) | async'
+					class="cover-image call"
+					[style.background-image]="
+						urlToSafeStyle(
+							(chatService.remoteUser | async)?.coverImage | async
+						) | async
+					"
 				></div>
-				<div class='contact' fxFlex fxLayout='column' fxLayoutAlign='center center'>
-					<h2 class='name'>
-						{{((chatService.remoteUser | async)?.name | async) || ""}}
+				<div
+					class="contact"
+					fxFlex
+					fxLayout="column"
+					fxLayoutAlign="center center"
+				>
+					<h2 class="name">
+						{{
+							((chatService.remoteUser | async)?.name | async) ||
+								''
+						}}
 					</h2>
 					<img
 						cyphTranslate
-						class='avatar call'
-						[src]='avatar'
-						alt='User Avatar'
-						*ngIf='(chatService.remoteUser | async)?.avatar | async as avatar'
+						class="avatar call"
+						[src]="avatar"
+						alt="User Avatar"
+						*ngIf="
+							(chatService.remoteUser | async)?.avatar
+								| async as avatar
+						"
 					/>
-					<h3 class='timer'>
-						{{((p2pService.timer | async)?.timestamp | async) || '00:00'}}
+					<h3 class="timer">
+						{{
+							((p2pService.timer | async)?.timestamp | async) ||
+								'00:00'
+						}}
 					</h3>
 				</div>
 			</ng-container>
 		</ng-template>
 		<video
-			class='me'
-			[fxHide]='!(p2pWebRTCService.outgoingStream | async)?.video'
+			class="me"
+			[fxHide]="!(p2pWebRTCService.outgoingStream | async)?.video"
 			autoplay
 			muted
-			[ngDraggable]='envService.pro | async'
+			[ngDraggable]="envService.pro | async"
 		></video>
 
 		<mat-progress-spinner
-			mode='indeterminate'
-			*ngIf='p2pWebRTCService.loading | async'
+			mode="indeterminate"
+			*ngIf="p2pWebRTCService.loading | async"
 		></mat-progress-spinner>
 
 		<button
 			mat-icon-button
 			cyphTranslate
-			[matBadge]='((scrollService.watchUnreadCount() | async) || 0).toString()'
-			[matBadgeHidden]='!(
-				((scrollService.watchUnreadCount() | async) || 0) > 0
-			)'
-			matBadgePosition='above before'
-			class='sidebar'
-			matTooltip='Toggle Chat Sidebar'
-			(click)='p2pService.toggleSidebar()'
-			*ngIf='uiStyle !== uiStyles.mail'
+			[matBadge]="
+				((scrollService.watchUnreadCount() | async) || 0).toString()
+			"
+			[matBadgeHidden]="
+				!(((scrollService.watchUnreadCount() | async) || 0) > 0)
+			"
+			matBadgePosition="above before"
+			class="sidebar"
+			matTooltip="Toggle Chat Sidebar"
+			(click)="p2pService.toggleSidebar()"
+			*ngIf="uiStyle !== uiStyles.mail"
 		>
 			<mat-icon>forum</mat-icon>
 		</button>
 
-		<div class='buttons' fxFlex fxLayout='column'>
-			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='
-				envService.isTelehealth &&
-				!(
-					envService.isAccounts &&
-					!(p2pWebRTCService.outgoingStream | async)?.video
-				)
-			'>
-				<h3 class='timer'>
-					{{((p2pService.timer | async)?.timestamp | async) || '00:00'}}
+		<div class="buttons" fxFlex fxLayout="column">
+			<div
+				fxLayout="row"
+				fxLayoutAlign="center center"
+				*ngIf="
+					envService.isTelehealth &&
+					!(
+						envService.isAccounts &&
+						!(p2pWebRTCService.outgoingStream | async)?.video
+					)
+				"
+			>
+				<h3 class="timer">
+					{{
+						((p2pService.timer | async)?.timestamp | async) ||
+							'00:00'
+					}}
 				</h3>
 			</div>
 			<div
-				fxLayout='row'
-				fxLayoutAlign='center center'
-				[fxLayoutGap]='
-					(
-						envService.isAccounts &&
-						(envService.isMobile | async) === false &&
-						(p2pWebRTCService.videoEnabled | async) !== true
-					) ?
-						"128px" :
-						"32px"
-				'
+				fxLayout="row"
+				fxLayoutAlign="center center"
+				[fxLayoutGap]="
+					envService.isAccounts &&
+					(envService.isMobile | async) === false &&
+					(p2pWebRTCService.videoEnabled | async) !== true ?
+						'128px' :
+						'32px'
+				"
 			>
 				<mat-slide-toggle
-					[ngModel]='chatService.walkieTalkieMode | async'
-					(ngModelChange)='chatService.walkieTalkieMode.next($event)'
-					*ngIf='envService.pro | async'
+					[ngModel]="chatService.walkieTalkieMode | async"
+					(ngModelChange)="chatService.walkieTalkieMode.next($event)"
+					*ngIf="envService.pro | async"
 				>
-					<mat-icon svgIcon='walkie-talkie'></mat-icon>
+					<mat-icon svgIcon="walkie-talkie"></mat-icon>
 				</mat-slide-toggle>
 				<button
 					mat-icon-button
-					class='video-call-button'
-					(click)='p2pService.videoCallButton()'
-					[matTooltip]='
+					class="video-call-button"
+					(click)="p2pService.videoCallButton()"
+					[matTooltip]="
 						!(p2pWebRTCService.outgoingStream | async)?.video ?
 							stringsService.cameraEnable :
 							stringsService.cameraDisable
-					'
-					matTooltipPosition='above'
-					*ngIf='p2pWebRTCService.videoEnabled | async'
+					"
+					matTooltipPosition="above"
+					*ngIf="p2pWebRTCService.videoEnabled | async"
 				>
 					<mat-icon>
-						<ng-container *ngIf='
-							!(p2pWebRTCService.outgoingStream | async)?.video;
-							else videocamOff
-						'>
+						<ng-container
+							*ngIf="
+								!(p2pWebRTCService.outgoingStream | async)
+									?.video;
+								else videocamOff
+							"
+						>
 							videocam
 						</ng-container>
 						<ng-template #videocamOff>
@@ -271,34 +305,37 @@
 				</button>
 				<button
 					mat-icon-button
-					class='voice-call-button'
-					(click)='
+					class="voice-call-button"
+					(click)="
 						!chatService.walkieTalkieMode.value ?
 							p2pService.voiceCallButton() :
 							undefined
-					'
-					(pointerenter)='
+					"
+					(pointerenter)="
 						chatService.walkieTalkieMode.value ?
-							p2pWebRTCService.toggle("audio", false) :
+							p2pWebRTCService.toggle('audio', false) :
 							undefined
-					'
-					(pointerleave)='
+					"
+					(pointerleave)="
 						chatService.walkieTalkieMode.value ?
-							p2pWebRTCService.toggle("audio", true) :
+							p2pWebRTCService.toggle('audio', true) :
 							undefined
-					'
-					[matTooltip]='
+					"
+					[matTooltip]="
 						!(p2pWebRTCService.outgoingStream | async)?.audio ?
 							stringsService.micEnable :
 							stringsService.micDisable
-					'
-					matTooltipPosition='above'
+					"
+					matTooltipPosition="above"
 				>
 					<mat-icon>
-						<ng-container *ngIf='
-							!(p2pWebRTCService.outgoingStream | async)?.audio;
-							else micOff
-						'>
+						<ng-container
+							*ngIf="
+								!(p2pWebRTCService.outgoingStream | async)
+									?.audio;
+								else micOff
+							"
+						>
 							mic
 						</ng-container>
 						<ng-template #micOff>
@@ -309,21 +346,21 @@
 				<button
 					mat-icon-button
 					cyphTranslate
-					matTooltip='Notes'
-					matTooltipPosition='above'
-					(click)='p2pService.openNotes(appointment)'
-					*ngIf='appointment'
+					matTooltip="Notes"
+					matTooltipPosition="above"
+					(click)="p2pService.openNotes(appointment)"
+					*ngIf="appointment"
 				>
 					<mat-icon>notes</mat-icon>
 				</button>
 				<button
 					mat-icon-button
 					cyphTranslate
-					matTooltip='End Call'
-					matTooltipPosition='above'
-					color='warn'
-					class='close-button'
-					(click)='p2pService.closeButton()'
+					matTooltip="End Call"
+					matTooltipPosition="above"
+					color="warn"
+					class="close-button"
+					(click)="p2pService.closeButton()"
 				>
 					<mat-icon>call_end</mat-icon>
 				</button>
@@ -332,51 +369,60 @@
 	</div>
 
 	<cyph-chat-message-box
-		class='video-call-message-box'
-		[autofocus]='false'
-		[messageType]='messageType'
-		*ngIf='forceDisplayVideo || (p2pService.isActive | async)'
+		class="video-call-message-box"
+		[autofocus]="false"
+		[messageType]="messageType"
+		*ngIf="forceDisplayVideo || (p2pService.isActive | async)"
 	></cyph-chat-message-box>
 
 	<div
-		class='transfer-list'
-		*ngIf='
+		class="transfer-list"
+		*ngIf="
 			chat.state === states.chat &&
 			sessionInitService.ephemeral &&
 			!(forceDisplayVideo || (p2pService.isActive | async) === true)
-		'
-		[@fadeIn]='"in"'
+		"
+		[@fadeIn]="'in'"
 	>
-		<div fxFlex fxLayout='column'>
-			<div fxLayout='row' *ngFor='
-				let transfer of fileTransferService.transfers.watch() | async;
-				trackBy: trackByTransfer
-			'>
-				<div fxFlex fxLayout='column' fxLayoutAlign='center stretch' class='transfer-item'>
-					<div fxLayout='row'>
+		<div fxFlex fxLayout="column">
+			<div
+				fxLayout="row"
+				*ngFor="
+					let transfer of fileTransferService.transfers.watch()
+						| async;
+					trackBy: trackByTransfer
+				"
+			>
+				<div
+					fxFlex
+					fxLayout="column"
+					fxLayoutAlign="center stretch"
+					class="transfer-item"
+				>
+					<div fxLayout="row">
 						<span
-							fxLayout='column'
-							*ngIf='transfer.metadata.isOutgoing'
+							fxLayout="column"
+							*ngIf="transfer.metadata.isOutgoing"
 							cyphTranslate
 						>
 							Sending
 						</span>
 						<span
-							fxLayout='column'
-							*ngIf='!transfer.metadata.isOutgoing'
+							fxLayout="column"
+							*ngIf="!transfer.metadata.isOutgoing"
 							cyphTranslate
 						>
 							Receiving
 						</span>
 						&nbsp;
-						<span fxFlex fxLayout='column'>
-							{{transfer.metadata.name}}
-							({{readableByteLength(transfer.metadata.size)}}):
+						<span fxFlex fxLayout="column">
+							{{ transfer.metadata.name }}
+							({{ readableByteLength(transfer.metadata.size) }}):
 						</span>
 					</div>
 					<mat-progress-bar
-						fxLayout='row'
-						[value]='(transfer.progress | async) || 0'
+						fxLayout="row"
+						[value]="(transfer.progress | async) || 0"
 					></mat-progress-bar>
 				</div>
 			</div>
@@ -386,46 +432,53 @@
 	<div
 		fxFlex
 		fxFlexFill
-		*ngIf='(chatService.initiated | async) && (chatService.chatSelfDestructEffect | async)'
-		class='poof'
+		*ngIf="
+			(chatService.initiated | async) &&
+			(chatService.chatSelfDestructEffect | async)
+		"
+		class="poof"
 	>
-		<video autoplay src='/assets/video/poof.webm'></video>
+		<video autoplay src="/assets/video/poof.webm"></video>
 	</div>
 
 	<div
-		fxLayout='row'
-		fxLayoutAlign='center center'
-		fxLayoutGap='10px'
-		class='self-destruct-timer'
-		[style.visibility]='(chatService.initiated | async) ? undefined : "hidden"'
-		*ngIf='
+		fxLayout="row"
+		fxLayoutAlign="center center"
+		fxLayoutGap="10px"
+		class="self-destruct-timer"
+		[style.visibility]="
+			(chatService.initiated | async) ? undefined : 'hidden'
+		"
+		*ngIf="
 			(chatService.chatSelfDestructed | async) === false &&
-			((chatService.chatSelfDestructTimer | async)?.isStarted | async) === true &&
-			((chatService.chatSelfDestructTimer | async)?.isComplete | async) === false
-		'
+			((chatService.chatSelfDestructTimer | async)?.isStarted | async) ===
+				true &&
+			((chatService.chatSelfDestructTimer | async)?.isComplete
+				| async) === false
+		"
 	>
 		<div cyphTranslate>Message will self-destruct in</div>
-		<div class='countdown'>
-			{{(chatService.chatSelfDestructTimer | async)?.timestamp | async}}
+		<div class="countdown">
+			{{ (chatService.chatSelfDestructTimer | async)?.timestamp | async }}
 		</div>
 	</div>
 
 	<cyph-chat-message-list
 		fxFlex
 		fxFlexFill
-		[chat]='chat'
-		[messageCountInTitle]='messageCountInTitle'
-		[mobile]='
+		[chat]="chat"
+		[messageCountInTitle]="messageCountInTitle"
+		[mobile]="
 			(envService.isMobile | async) ||
 			forceDisplayVideo ||
 			(p2pService.isActive | async)
-		'
-		[persistentEndMessage]='persistentEndMessage'
-		[promptFollowup]='promptFollowup'
-		[showDisconnectMessage]='chat.isDisconnected && !hideDisconnectMessage'
-		[uiStyle]='uiStyle'
-		*ngIf='chat.state === states.chat'
-		[@fadeIn]='"in"'
+		"
+		[persistentEndMessage]="persistentEndMessage"
+		[promptFollowup]="promptFollowup"
+		[showDisconnectMessage]="chat.isDisconnected && !hideDisconnectMessage"
+		[uiStyle]="uiStyle"
+		*ngIf="chat.state === states.chat"
+		[@fadeIn]="'in'"
 	>
 		<ng-content></ng-content>
 	</cyph-chat-message-list>

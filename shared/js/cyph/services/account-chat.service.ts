@@ -44,55 +44,65 @@ import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Account chat service.
  */
 @Injectable()
 export class AccountChatService extends ChatService {
 	/** @ignore */
-	private readonly chats				= new Map<string, IChatData>();
+	private readonly chats = new Map<string, IChatData>();
 
 	/** @ignore */
-	private readonly notificationData	= resolvable<{
+	private readonly notificationData = resolvable<{
 		castleSessionID: string;
 		usernames: string[];
 	}>();
 
 	/** @inheritDoc */
-	public readonly remoteUser			= this.accountSessionService.remoteUser;
+	public readonly remoteUser = this.accountSessionService.remoteUser;
 
 	/** @inheritDoc */
-	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
-		return (
-			author === this.sessionService.appUsername ?
-				undefined :
-			author === this.sessionService.localUsername ?
-				(await this.accountDatabaseService.getCurrentUser()).user.username :
-				author.pipe(take(1)).toPromise().then(normalize).catch(() => undefined)
-		);
+	protected async getAuthorID (
+		author: Observable<string>
+	) : Promise<string | undefined> {
+		return author === this.sessionService.appUsername ?
+			undefined :
+		author === this.sessionService.localUsername ?
+			(await this.accountDatabaseService.getCurrentUser()).user.username :
+			author
+				.pipe(take(1))
+				.toPromise()
+				.then(normalize)
+				.catch(() => undefined);
 	}
 
 	/** Gets async set for scrollService.unreadMessages. */
-	protected async getScrollServiceUnreadMessages () : Promise<IAsyncSet<string>> {
+	protected async getScrollServiceUnreadMessages () : Promise<
+		IAsyncSet<string>
+	> {
 		if (this.sessionInitService.ephemeral) {
 			return super.getScrollServiceUnreadMessages();
 		}
 
-		const notificationData	= await this.notificationData.promise;
+		const notificationData = await this.notificationData.promise;
 
-		const asyncMap			= this.accountDatabaseService.getAsyncMap(
+		const asyncMap = this.accountDatabaseService.getAsyncMap(
 			`unreadMessages/${notificationData.castleSessionID}`,
 			NeverProto,
 			SecurityModels.unprotected
 		);
 
-		const watch	= memoize(() => combineLatest([
-			asyncMap.watchKeys(),
-			this.fetchedMessageIDs.watch()
-		]).pipe(map(([keys, fetchedMessageIDs]) => new Set(
-			keys.filter(k => fetchedMessageIDs.has(k))
-		))));
+		const watch = memoize(() =>
+			combineLatest([
+				asyncMap.watchKeys(),
+				this.fetchedMessageIDs.watch()
+			]).pipe(
+				map(
+					([keys, fetchedMessageIDs]) =>
+						new Set(keys.filter(k => fetchedMessageIDs.has(k)))
+				)
+			)
+		);
 
 		return {
 			/* tslint:disable-next-line:no-async-without-await */
@@ -114,8 +124,8 @@ export class AccountChatService extends ChatService {
 		selfDestructChat?: boolean,
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
-	) : Promise<string|void> {
-		const id	= await super.send(
+	) : Promise<string | void> {
+		const id = await super.send(
 			messageType,
 			message,
 			selfDestructTimeout,
@@ -126,23 +136,23 @@ export class AccountChatService extends ChatService {
 
 		if (
 			!id ||
-			(
-				this.accountSessionService.remoteUser.value &&
-				this.accountSessionService.remoteUser.value.anonymous
-			)
+			(this.accountSessionService.remoteUser.value &&
+				this.accountSessionService.remoteUser.value.anonymous)
 		) {
 			return;
 		}
 
-		const notificationData	= await this.notificationData.promise;
+		const notificationData = await this.notificationData.promise;
 
-		await Promise.all(notificationData.usernames.map(async username =>
-			this.accountDatabaseService.notify(
-				username,
-				NotificationTypes.Message,
-				{castleSessionID: notificationData.castleSessionID, id}
+		await Promise.all(
+			notificationData.usernames.map(async username =>
+				this.accountDatabaseService.notify(
+					username,
+					NotificationTypes.Message,
+					{castleSessionID: notificationData.castleSessionID, id}
+				)
 			)
-		));
+		);
 
 		return id;
 	}
@@ -150,16 +160,16 @@ export class AccountChatService extends ChatService {
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
 		chat:
-			{anonymousChannelID: string; passive?: boolean}|
-			{group: IAccountMessagingGroup}|
-			{username: string}
-		,
+			| {anonymousChannelID: string; passive?: boolean}
+			| {group: IAccountMessagingGroup}
+			| {username: string},
 		keepCurrentMessage: boolean = false,
-		callType?: 'audio'|'video',
+		callType?: 'audio' | 'video',
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
-		this.accountSessionInitService.callType	= callType || this.envService.callType;
+		this.accountSessionInitService.callType =
+			callType || this.envService.callType;
 
 		if ('anonymousChannelID' in chat) {
 			this.accountSessionCapabilitiesService.initEphemeral();
@@ -169,90 +179,104 @@ export class AccountChatService extends ChatService {
 		}
 
 		if ('username' in chat) {
-			chat.username	= this.accountSessionService.normalizeUsername(chat.username);
+			chat.username = this.accountSessionService.normalizeUsername(
+				chat.username
+			);
 		}
 
-		const notificationData	= 'username' in chat ?
-			{
-				castleSessionID: (await this.accountContactsService.getCastleSessionData(
-					chat.username
-				)).castleSessionID,
-				usernames: [chat.username]
-			} :
-			{
-				castleSessionID: chat.group.castleSessionID,
-				usernames: chat.group.usernames ?
-					this.accountSessionService.normalizeUsername(chat.group.usernames) :
-					[]
-			}
-		;
+		const notificationData =
+			'username' in chat ?
+				{
+						castleSessionID: (await this.accountContactsService.getCastleSessionData(
+							chat.username
+						)).castleSessionID,
+						usernames: [chat.username]
+				  } :
+				{
+					castleSessionID: chat.group.castleSessionID,
+					usernames: chat.group.usernames ?
+						this.accountSessionService.normalizeUsername(
+								chat.group.usernames
+						  ) :
+						[]
+				};
 
 		this.notificationData.resolve(notificationData);
 
-		const url	= `castleSessions/${notificationData.castleSessionID}`;
+		const url = `castleSessions/${notificationData.castleSessionID}`;
 
-		this.chatSubject.next(ephemeralSubSession ?
-			{
-				...this.getDefaultChatData(),
-				isConnected: true,
-				state: States.chat
-			} :
-			getOrSetDefault(
-				this.chats,
-				'username' in chat ? chat.username : `group: ${chat.group.castleSessionID}`,
-				() => ({
-					currentMessage: keepCurrentMessage ? this.chat.currentMessage : {},
-					futureMessages: this.accountDatabaseService.getAsyncMap(
-						`${url}/futureMessages`,
-						SessionMessageDataList,
-						undefined,
-						undefined,
-						undefined,
-						true
-					),
-					initProgress: new BehaviorSubject(0),
-					isConnected: true,
-					isDisconnected: false,
-					isFriendTyping: new BehaviorSubject<boolean>(false),
-					isMessageChanged: false,
-					lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
-						`${url}/lastConfirmedMessage`,
-						ChatLastConfirmedMessage
-					),
-					lastUnreadMessage: this.accountDatabaseService.getLatestKey(
-						`unreadMessages/${notificationData.castleSessionID}`
-					),
-					messageList: this.accountDatabaseService.getAsyncList(
-						`${url}/messageList`,
-						StringArrayProto,
-						undefined,
-						undefined,
-						undefined,
-						true
-					),
-					messages: this.accountDatabaseService.getAsyncMap(
-						`${url}/messages`,
-						ChatMessage,
-						undefined,
-						undefined,
-						undefined,
-						true
-					),
-					pendingMessageRoot: `${url}/pendingMessages`,
-					pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
-					receiveTextLock: this.accountDatabaseService.lockFunction(
-						`${url}/receiveTextLock`
-					),
-					state: States.chat,
-					unconfirmedMessages:
-						new BehaviorSubject<{[id: string]: boolean|undefined}|undefined>(
-							undefined
-						)
-				})
-			)
+		this.chatSubject.next(
+			ephemeralSubSession ?
+				{
+						...this.getDefaultChatData(),
+						isConnected: true,
+						state: States.chat
+				  } :
+				getOrSetDefault(
+					this.chats,
+					'username' in chat ?
+						chat.username :
+						`group: ${chat.group.castleSessionID}`,
+					() => ({
+						currentMessage: keepCurrentMessage ?
+							this.chat.currentMessage :
+							{},
+						futureMessages: this.accountDatabaseService.getAsyncMap(
+							`${url}/futureMessages`,
+							SessionMessageDataList,
+							undefined,
+							undefined,
+							undefined,
+							true
+						),
+						initProgress: new BehaviorSubject(0),
+						isConnected: true,
+						isDisconnected: false,
+						isFriendTyping: new BehaviorSubject<boolean>(false),
+						isMessageChanged: false,
+						lastConfirmedMessage: this.accountDatabaseService.getAsyncValue(
+							`${url}/lastConfirmedMessage`,
+							ChatLastConfirmedMessage
+						),
+						lastUnreadMessage: this.accountDatabaseService.getLatestKey(
+							`unreadMessages/${notificationData.castleSessionID}`
+						),
+						messageList: this.accountDatabaseService.getAsyncList(
+							`${url}/messageList`,
+							StringArrayProto,
+							undefined,
+							undefined,
+							undefined,
+							true
+						),
+						messages: this.accountDatabaseService.getAsyncMap(
+							`${url}/messages`,
+							ChatMessage,
+							undefined,
+							undefined,
+							undefined,
+							true
+						),
+						pendingMessageRoot: `${url}/pendingMessages`,
+						pendingMessages: new LocalAsyncList<
+							IChatMessage & {pending: true}
+						>(),
+						receiveTextLock: this.accountDatabaseService.lockFunction(
+							`${url}/receiveTextLock`
+						),
+						state: States.chat,
+						unconfirmedMessages: new BehaviorSubject<
+							{[id: string]: boolean | undefined} | undefined
+						>(undefined)
+					})
+				)
 		);
 
-		await this.accountSessionService.setUser(chat, sessionSubID, ephemeralSubSession);
+		await this.accountSessionService.setUser(
+			chat,
+			sessionSubID,
+			ephemeralSubSession
+		);
 		this.resolvers.chatConnected.resolve();
 	}
 
@@ -312,16 +336,16 @@ export class AccountChatService extends ChatService {
 			return;
 		}
 
-		(<any> self).resetSessionState	= async () => {
+		(<any> self).resetSessionState = async () => {
 			if (!this.remoteUser.value || !this.remoteUser.value.username) {
 				return;
 			}
 
-			const {castleSessionURL}	=
-				await this.accountContactsService.getCastleSessionData(
-					this.remoteUser.value.username
-				)
-			;
+			const {
+				castleSessionURL
+			} = await this.accountContactsService.getCastleSessionData(
+				this.remoteUser.value.username
+			);
 
 			await this.databaseService.setItem(
 				`${castleSessionURL}/id`,

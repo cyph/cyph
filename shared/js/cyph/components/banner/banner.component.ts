@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Output} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	EventEmitter,
+	Output
+} from '@angular/core';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -13,7 +18,7 @@ import {StringsService} from '../../services/strings.service';
 })
 export class BannerComponent {
 	/** Close event. */
-	@Output() public readonly closeBanner	= new EventEmitter<void>();
+	@Output() public readonly closeBanner = new EventEmitter<void>();
 
 	constructor (
 		/** @see EnvService */

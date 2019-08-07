@@ -5,7 +5,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
-import {SecurityModels, User, UserPresence, userPresenceSelectOptions} from '../../account';
+import {
+	SecurityModels,
+	User,
+	UserPresence,
+	userPresenceSelectOptions
+} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {
 	doctorProfile,
@@ -29,11 +34,13 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
-import {cacheObservable, toBehaviorSubject} from '../../util/flatten-observable';
+import {
+	cacheObservable,
+	toBehaviorSubject
+} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {serialize} from '../../util/serialization';
-
 
 /**
  * Angular component for account profile UI.
@@ -53,44 +60,42 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	}>;
 
 	/** @ignore */
-	private readonly username: Observable<string|undefined>;
+	private readonly username: Observable<string | undefined>;
 
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes					= AccountUserTypes;
+	public readonly accountUserTypes = AccountUserTypes;
 
 	/** Current draft of user profile. */
-	public readonly draft								= new BehaviorSubject<{
+	public readonly draft = new BehaviorSubject<{
 		avatar?: IFile;
 		coverImage?: IFile;
 		description?: string;
 		forms?: IForm[];
 		name?: string;
-	}>(
-		{}
-	);
+	}>({});
 
 	/** @see AccountProfileComponent.doctorListOnly */
-	public readonly doctorListOnly: Observable<boolean>	= cacheObservable(
+	public readonly doctorListOnly: Observable<boolean> = cacheObservable(
 		this.activatedRoute.data.pipe(map(o => o.doctorListOnly === true)),
 		this.subscriptions
 	);
 
 	/** Profile edit mode. */
-	public readonly editMode: BehaviorSubject<boolean>	= toBehaviorSubject(
-		this.accountService.routeChanges.pipe(map(url =>
-			url.split('/').slice(-1)[0] === 'edit'
-		)),
+	public readonly editMode: BehaviorSubject<boolean> = toBehaviorSubject(
+		this.accountService.routeChanges.pipe(
+			map(url => url.split('/').slice(-1)[0] === 'edit')
+		),
 		false,
 		this.subscriptions
 	);
 
 	/** Gets data URI of file. */
-	public readonly getDataURI							= memoize(async (file?: IFile) =>
+	public readonly getDataURI = memoize(async (file?: IFile) =>
 		!file ? undefined : DataURIProto.decode(file.data, file.mediaType)
 	);
 
 	/** Indicates whether this is home component. */
-	@Input() public home: boolean						= false;
+	@Input() public home: boolean = false;
 
 	/** @see AccountContactsService.watchIfContact */
 	public readonly isContact: Observable<boolean>;
@@ -99,111 +104,117 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	public readonly isCurrentUser: BehaviorSubject<boolean>;
 
 	/** Indicates whether the profile editor is in focus. */
-	public readonly isEditorFocused						= new BehaviorSubject<boolean>(false);
+	public readonly isEditorFocused = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether profile is ready to save. */
-	public readonly readyToSave: Observable<boolean>	= this.draft.pipe(map(draft =>
-		(
-			draft.avatar !== undefined ||
-			draft.coverImage !== undefined ||
-			draft.description !== undefined ||
-			draft.forms !== undefined ||
-			draft.name !== undefined
-		) && (
-			draft.description === undefined ||
-			draft.description.length <= this.accountService.maxDescriptionLength
-		) && (
-			draft.name === undefined ||
-			draft.name.length <= this.accountService.maxNameLength
+	public readonly readyToSave: Observable<boolean> = this.draft.pipe(
+		map(
+			draft =>
+				(draft.avatar !== undefined ||
+					draft.coverImage !== undefined ||
+					draft.description !== undefined ||
+					draft.forms !== undefined ||
+					draft.name !== undefined) &&
+				(draft.description === undefined ||
+					draft.description.length <=
+						this.accountService.maxDescriptionLength) &&
+				(draft.name === undefined ||
+					draft.name.length <= this.accountService.maxNameLength)
 		)
-	));
+	);
 
 	/** @see UserPresence */
-	public readonly statuses							= userPresenceSelectOptions;
+	public readonly statuses = userPresenceSelectOptions;
 
 	/** @see trackBySelf */
-	public readonly trackBySelf							= trackBySelf;
+	public readonly trackBySelf = trackBySelf;
 
 	/** @see trackByValue */
-	public readonly trackByValue						= trackByValue;
+	public readonly trackByValue = trackByValue;
 
 	/** @see urlToSafeStyle */
-	public readonly urlToSafeStyle						= urlToSafeStyle;
+	public readonly urlToSafeStyle = urlToSafeStyle;
 
 	/** List of members, if user is an organization. */
-	public readonly userMembers: Observable<User[]|undefined>;
+	public readonly userMembers: Observable<User[] | undefined>;
 
 	/** User parent organization profile. */
-	public readonly userOrganiztion: Observable<User|undefined>;
+	public readonly userOrganiztion: Observable<User | undefined>;
 
 	/** @see UserPresence */
-	public readonly userPresence						= UserPresence;
+	public readonly userPresence = UserPresence;
 
 	/** User profile. */
-	public readonly userProfile: BehaviorSubject<User|undefined>;
+	public readonly userProfile: BehaviorSubject<User | undefined>;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
-		this.subscriptions.push(this.userInternal.subscribe(async ({user, username}) => {
-			const normalizedUsername	= username ? normalize(username) : username;
+		this.subscriptions.push(
+			this.userInternal.subscribe(async ({user, username}) => {
+				const normalizedUsername = username ?
+					normalize(username) :
+					username;
 
-			if (username !== normalizedUsername) {
-				this.router.navigate(['profile', normalizedUsername], {replaceUrl: true});
-			}
-			else if (
-				this.accountDatabaseService.currentUser.value &&
-				this.accountDatabaseService.currentUser.value.user.username === username
-			) {
-				this.router.navigate(['profile'], {replaceUrl: true});
-			}
-			else if (
-				!username &&
-				this.envService.isTelehealth &&
-				this.envService.environment.customBuild &&
-				this.envService.environment.customBuild.config.organization &&
-				this.home &&
-				this.accountDatabaseService.currentUser.value &&
-				(
-					await this.accountDatabaseService.currentUser.value.user.userType.pipe(
-						take(1)
-					).toPromise()
-				) === AccountUserTypes.Standard
-			) {
-				/* Redirect telehealth patient home page to /doctors */
-				this.router.navigate(['doctors']);
-			}
-			else if (user) {
-				/* Hide non-visible profiles from anonymous users */
-				if (
-					!this.accountDatabaseService.currentUser.value &&
-					!(await this.accountDatabaseService.getItem(
-						`users/${username}/profileVisible`,
-						BooleanProto,
-						SecurityModels.unprotected,
-						undefined,
-						true
-					).catch(() =>
-						false
-					))
+				if (username !== normalizedUsername) {
+					this.router.navigate(['profile', normalizedUsername], {
+						replaceUrl: true
+					});
+				}
+				else if (
+					this.accountDatabaseService.currentUser.value &&
+					this.accountDatabaseService.currentUser.value.user
+						.username === username
 				) {
-					this.router.navigate(['404']);
-					return;
+					this.router.navigate(['profile'], {replaceUrl: true});
 				}
-
-				await user.fetch();
-
-				if (!this.destroyed.value) {
-					this.accountService.setHeader(user);
+				else if (
+					!username &&
+					this.envService.isTelehealth &&
+					this.envService.environment.customBuild &&
+					this.envService.environment.customBuild.config
+						.organization &&
+					this.home &&
+					this.accountDatabaseService.currentUser.value &&
+					(await this.accountDatabaseService.currentUser.value.user.userType
+						.pipe(take(1))
+						.toPromise()) === AccountUserTypes.Standard
+				) {
+					/* Redirect telehealth patient home page to /doctors */
+					this.router.navigate(['doctors']);
 				}
+				else if (user) {
+					/* Hide non-visible profiles from anonymous users */
+					if (
+						!this.accountDatabaseService.currentUser.value &&
+						!(await this.accountDatabaseService
+							.getItem(
+								`users/${username}/profileVisible`,
+								BooleanProto,
+								SecurityModels.unprotected,
+								undefined,
+								true
+							)
+							.catch(() => false))
+					) {
+						this.router.navigate(['404']);
+						return;
+					}
 
-				this.accountService.resolveUiReady();
-			}
-			else {
-				this.router.navigate([username ? '404' : 'login']);
-			}
-		}));
+					await user.fetch();
+
+					if (!this.destroyed.value) {
+						this.accountService.setHeader(user);
+					}
+
+					this.accountService.resolveUiReady();
+				}
+				else {
+					this.router.navigate([username ? '404' : 'login']);
+				}
+			})
+		);
 	}
 
 	/** Publishes new user description. */
@@ -213,7 +224,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 		description?: string;
 		forms?: IForm[];
 	}) : Promise<void> {
-		const user	= this.userProfile.value;
+		const user = this.userProfile.value;
 
 		if (!user || !this.isCurrentUser.value) {
 			throw new Error("Cannot save another user's profile.");
@@ -221,62 +232,68 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 		this.accountService.interstitial.next(true);
 
-		const {
-			avatar,
-			coverImage,
-			description,
-			forms,
-			name
-		}	= !draft ?
+		const {avatar, coverImage, description, forms, name} = !draft ?
 			this.draft.value :
-			{...this.draft.value, ...draft}
-		;
+			{...this.draft.value, ...draft};
 
 		await Promise.all([
 			avatar === undefined ?
 				undefined :
-				this.accountSettingsService.setAvatar(avatar)
-			,
+				this.accountSettingsService.setAvatar(avatar),
 			coverImage === undefined ?
 				undefined :
-				this.accountSettingsService.setCoverImage(coverImage)
-			,
+				this.accountSettingsService.setCoverImage(coverImage),
 			(async () => {
 				if (description === undefined && name === undefined) {
 					return;
 				}
 
-				let descriptionTrimmed	=
+				let descriptionTrimmed =
 					description !== undefined ?
-						description.trim().slice(0, this.accountService.maxDescriptionLength) :
-						undefined
-				;
+						description
+								.trim()
+								.slice(
+									0,
+									this.accountService.maxDescriptionLength
+								) :
+						undefined;
 
-				let nameTrimmed			=
+				let nameTrimmed =
 					name !== undefined ?
-						name.trim().slice(0, this.accountService.maxNameLength) :
-						undefined
-				;
+						name
+								.trim()
+								.slice(0, this.accountService.maxNameLength) :
+						undefined;
 
 				await user.accountUserProfile.updateValue(async o => {
 					if (descriptionTrimmed === undefined) {
-						descriptionTrimmed	= o.description;
+						descriptionTrimmed = o.description;
 					}
 
 					if (nameTrimmed === undefined) {
-						nameTrimmed	= o.name;
+						nameTrimmed = o.name;
 					}
 
-					if (o.description === descriptionTrimmed && o.name === nameTrimmed) {
+					if (
+						o.description === descriptionTrimmed &&
+						o.name === nameTrimmed
+					) {
 						throw new Error();
 					}
 
-					return {...o, description: descriptionTrimmed, name: nameTrimmed};
+					return {
+						...o,
+						description: descriptionTrimmed,
+						name: nameTrimmed
+					};
 				});
 			})(),
 			forms === undefined ?
 				undefined :
-				user.accountUserProfileExtra.updateValue(async o => ({...o, forms}))
+				user.accountUserProfileExtra.updateValue(async o => ({
+					...o,
+					forms
+				}))
 		]);
 
 		this.accountService.interstitial.next(false);
@@ -289,20 +306,24 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		const title	= avatar.name;
-		const src	= await this.getDataURI(avatar);
+		const title = avatar.name;
+		const src = await this.getDataURI(avatar);
 
 		if (!src || !this.editMode.value) {
 			return;
 		}
 
-		const dataURI	= await this.dialogService.cropImage({aspectRatio: 1, src, title});
+		const dataURI = await this.dialogService.cropImage({
+			aspectRatio: 1,
+			src,
+			title
+		});
 
 		if (!dataURI || !this.editMode.value) {
 			return;
 		}
 
-		const cropped	= await serialize(DataURIProto, dataURI);
+		const cropped = await serialize(DataURIProto, dataURI);
 
 		if (!this.editMode.value) {
 			return;
@@ -313,30 +334,35 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 	/** Sets edit mode. */
 	public async setEditMode (editMode: boolean) : Promise<void> {
-		if (!this.isCurrentUser.value || !this.accountDatabaseService.currentUser.value) {
+		if (
+			!this.isCurrentUser.value ||
+			!this.accountDatabaseService.currentUser.value
+		) {
 			throw new Error("Cannot edit another user's profile.");
 		}
 
 		this.draft.next({});
 		this.router.navigate(['profile', ...(editMode ? ['edit'] : [])]);
-		this.accountService.setHeader(this.accountDatabaseService.currentUser.value.user);
+		this.accountService.setHeader(
+			this.accountDatabaseService.currentUser.value.user
+		);
 
-		const user	= this.userProfile.value;
+		const user = this.userProfile.value;
 
 		if (!(editMode && this.envService.isTelehealth && user)) {
 			return;
 		}
 
-		const profilePromise	= user.accountUserProfile.getValue();
+		const profilePromise = user.accountUserProfile.getValue();
 
 		await user.accountUserProfileExtra.updateValue(async extra => {
 			if (extra.forms && extra.forms.length > 0) {
 				throw new Error();
 			}
 
-			const {userType}	= await profilePromise;
+			const {userType} = await profilePromise;
 
-			const forms			=
+			const forms =
 				userType === AccountUserTypes.Org ?
 					telehealthOrgProfile() :
 				userType === AccountUserTypes.Standard ?
@@ -345,8 +371,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 					telehealthStaffProfile() :
 				userType === AccountUserTypes.TelehealthDoctor ?
 					doctorProfile() :
-					undefined
-			;
+					undefined;
 
 			if (forms === undefined) {
 				throw new Error();
@@ -358,42 +383,49 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 	/** Shares medical data from EHR system with the patient. */
 	public async shareEhrData () : Promise<void> {
-		const user	= this.userProfile.value;
+		const user = this.userProfile.value;
 
-		if (!user || !(await this.dialogService.confirm({
-			content: this.stringsService.shareEhrData,
-			title: this.stringsService.shareEhrDataTitle
-		}))) {
+		if (
+			!user ||
+			!(await this.dialogService.confirm({
+				content: this.stringsService.shareEhrData,
+				title: this.stringsService.shareEhrDataTitle
+			}))
+		) {
 			return;
 		}
 
 		this.accountService.interstitial.next(true);
 
-		let alertPromise	= Promise.resolve();
+		let alertPromise = Promise.resolve();
 
 		try {
 			/* TODO: Allow doctor to use PatientInfo for this. */
-			const [{apiKey}, accountUserProfile]	= await Promise.all([
+			const [{apiKey}, accountUserProfile] = await Promise.all([
 				this.accountFilesService.getEhrApiKey(),
 				user.accountUserProfile.getValue()
 			]);
 
-			const firstSpaceIndex	= accountUserProfile.name.indexOf(' ');
-			const lastSpaceIndex	= accountUserProfile.name.lastIndexOf(' ');
+			const firstSpaceIndex = accountUserProfile.name.indexOf(' ');
+			const lastSpaceIndex = accountUserProfile.name.lastIndexOf(' ');
 
-			const redoxPatient	= await this.ehrService.getPatient(apiKey, {
+			const redoxPatient = await this.ehrService.getPatient(apiKey, {
 				Demographics: {
-					FirstName: firstSpaceIndex > -1 ?
-						accountUserProfile.name.slice(0, firstSpaceIndex) :
-						accountUserProfile.name
-					,
-					LastName: firstSpaceIndex > -1 ?
-						accountUserProfile.name.slice(lastSpaceIndex + 1) :
-						''
-					,
-					MiddleName: firstSpaceIndex > -1 ?
-						accountUserProfile.name.slice(firstSpaceIndex + 1, lastSpaceIndex) :
-						''
+					FirstName:
+						firstSpaceIndex > -1 ?
+							accountUserProfile.name.slice(0, firstSpaceIndex) :
+							accountUserProfile.name,
+					LastName:
+						firstSpaceIndex > -1 ?
+							accountUserProfile.name.slice(lastSpaceIndex + 1) :
+							'',
+					MiddleName:
+						firstSpaceIndex > -1 ?
+							accountUserProfile.name.slice(
+									firstSpaceIndex + 1,
+									lastSpaceIndex
+							  ) :
+							''
 				}
 			});
 
@@ -403,13 +435,13 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				user.username
 			).result;
 
-			alertPromise	= this.dialogService.alert({
+			alertPromise = this.dialogService.alert({
 				content: this.stringsService.shareEhrDataSuccess,
 				title: this.stringsService.shareEhrDataTitle
 			});
 		}
 		catch (_) {
-			alertPromise	= this.dialogService.alert({
+			alertPromise = this.dialogService.alert({
 				content: this.stringsService.shareEhrDataFailure,
 				title: this.stringsService.shareEhrDataTitle
 			});
@@ -476,76 +508,95 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		this.username			= combineLatest([
+		this.username = combineLatest([
 			this.activatedRoute.params,
 			this.doctorListOnly
-		]).pipe(map(([params, doctorListOnly]: [{username?: string}, boolean]) =>
-			/* Temporary workaround for listing doctors */
-			(
+		]).pipe(
+			map(([params, doctorListOnly]: [{username?: string}, boolean]) =>
+				/* Temporary workaround for listing doctors */
 				doctorListOnly &&
 				this.envService.environment.customBuild &&
-				this.envService.environment.customBuild.config.organization
-			) ?
-				this.envService.environment.customBuild.config.organization :
-				params.username
-		));
+				this.envService.environment.customBuild.config.organization ?
+					this.envService.environment.customBuild.config
+							.organization :
+					params.username
+			)
+		);
 
-		this.userInternal		= cacheObservable(
+		this.userInternal = cacheObservable(
 			combineLatest([
 				this.username,
 				this.accountDatabaseService.currentUser
-			]).pipe(mergeMap(async ([username, currentUser]) =>
-				username ?
-					{
-						isCurrentUser: false,
-						user: await this.accountUserLookupService.getUser(username, false),
-						username
-					} :
-				currentUser ?
-					{
-						isCurrentUser: currentUser.confirmed,
-						user: currentUser.user
-					} :
-					{
-						isCurrentUser: false
-					}
-			)),
+			]).pipe(
+				mergeMap(async ([username, currentUser]) =>
+					username ?
+						{
+								isCurrentUser: false,
+								user: await this.accountUserLookupService.getUser(
+									username,
+									false
+								),
+								username
+						  } :
+					currentUser ?
+						{
+								isCurrentUser: currentUser.confirmed,
+								user: currentUser.user
+						  } :
+						{
+							isCurrentUser: false
+						}
+				)
+			),
 			this.subscriptions
 		);
 
-		this.userProfile		= toBehaviorSubject(
+		this.userProfile = toBehaviorSubject(
 			this.userInternal.pipe(map(o => o.user)),
 			undefined,
 			this.subscriptions
 		);
 
-		this.userMembers		= toBehaviorSubject(
-			this.userProfile.pipe(mergeMap(user =>
-				user ? this.accountOrganizationsService.getMembers(user) : of(undefined)
-			)),
+		this.userMembers = toBehaviorSubject(
+			this.userProfile.pipe(
+				mergeMap(user =>
+					user ?
+						this.accountOrganizationsService.getMembers(user) :
+						of(undefined)
+				)
+			),
 			undefined,
 			this.subscriptions
 		);
 
-		this.userOrganiztion	= toBehaviorSubject(
-			this.userProfile.pipe(mergeMap(async user =>
-				user ? this.accountOrganizationsService.getOrganization(user) : undefined
-			)),
+		this.userOrganiztion = toBehaviorSubject(
+			this.userProfile.pipe(
+				mergeMap(async user =>
+					user ?
+						this.accountOrganizationsService.getOrganization(user) :
+						undefined
+				)
+			),
 			undefined,
 			this.subscriptions
 		);
 
-		this.isContact			= toBehaviorSubject(
-			this.username.pipe(mergeMap(username =>
-				username ?
-					this.accountContactsService.watchIfContact(username, this.subscriptions) :
-					of(false)
-			)),
+		this.isContact = toBehaviorSubject(
+			this.username.pipe(
+				mergeMap(username =>
+					username ?
+						this.accountContactsService.watchIfContact(
+								username,
+								this.subscriptions
+						  ) :
+						of(false)
+				)
+			),
 			false,
 			this.subscriptions
 		);
 
-		this.isCurrentUser		= toBehaviorSubject(
+		this.isCurrentUser = toBehaviorSubject(
 			this.userInternal.pipe(map(o => o.isCurrentUser)),
 			false,
 			this.subscriptions

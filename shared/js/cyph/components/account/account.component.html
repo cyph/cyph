@@ -1,13 +1,16 @@
 <div
 	fxFlexFill
-	fxLayout='row'
-	fxLayout.xs='column'
-	[class.mobile]='envService.isMobile | async'
-	[class.transition]='accountService.transition | async'
+	fxLayout="row"
+	fxLayout.xs="column"
+	[class.mobile]="envService.isMobile | async"
+	[class.transition]="accountService.transition | async"
 >
-	<div *ngIf='accountService.interstitial | async' class='interstitial animated fadeIn'>
-		<div class='loading'>
-			<div class='logo-animation'>
+	<div
+		*ngIf="accountService.interstitial | async"
+		class="interstitial animated fadeIn"
+	>
+		<div class="loading">
+			<div class="logo-animation">
 				<div></div>
 				<div></div>
 				<div></div>
@@ -17,74 +20,81 @@
 		</div>
 	</div>
 
-	<canvas [fxShow]='envService.showGranim' class='cyph-gradient animated fadeIn'></canvas>
+	<canvas
+		[fxShow]="envService.showGranim"
+		class="cyph-gradient animated fadeIn"
+	></canvas>
 
 	<cyph-account-menu
-		[fxFlex]='accountService.menuMaxWidth | async'
+		[fxFlex]="accountService.menuMaxWidth | async"
 		fxHide.lt-md
-		fxLayout='column'
-		class='sidebar animated slideInLeft _0'
-		*ngIf='menuVisible | async'
+		fxLayout="column"
+		class="sidebar animated slideInLeft _0"
+		*ngIf="menuVisible | async"
 	>
 		<button
 			mat-icon-button
 			cyphTranslate
-			aria-label='Context Menu'
-			[matMenuTriggerFor]='contextMenu'
+			aria-label="Context Menu"
+			[matMenuTriggerFor]="contextMenu"
 		>
 			<mat-icon>more_vert</mat-icon>
 		</button>
 	</cyph-account-menu>
 
-	<div class='content' fxFlex fxFlexFill fxLayout='column' fxLayout.xs='row'>
+	<div class="content" fxFlex fxFlexFill fxLayout="column" fxLayout.xs="row">
 		<mat-sidenav-container
 			fxFlexFill
-			fxLayout='column'
-			(backdropClick)='accountService.toggleMobileMenu(false)'
+			fxLayout="column"
+			(backdropClick)="accountService.toggleMobileMenu(false)"
 		>
 			<mat-sidenav
 				#sidenav
-				ngClass.gt-sm='disabled'
-				position='start'
-				[opened]='accountService.mobileMenuOpen | async'
+				ngClass.gt-sm="disabled"
+				position="start"
+				[opened]="accountService.mobileMenuOpen | async"
 			>
-				<cyph-account-menu [sidenav]='true'></cyph-account-menu>
+				<cyph-account-menu [sidenav]="true"></cyph-account-menu>
 			</mat-sidenav>
 
 			<div
-				fxLayout='row'
-				class='header slideInDown'
-				[class.animated]='(envService.isMobile | async) === false'
-				[class.fadeOutUp]='accountService.transition | async'
-				fxLayoutAlign='stretch center'
-				fxLayoutGap='8px'
-				*ngIf='
+				fxLayout="row"
+				class="header slideInDown"
+				[class.animated]="(envService.isMobile | async) === false"
+				[class.fadeOutUp]="accountService.transition | async"
+				fxLayoutAlign="stretch center"
+				fxLayoutGap="8px"
+				*ngIf="
 					(accountService.header | async) !== undefined &&
 					!(
 						(envService.isMobile | async) &&
-						(accountService.header | async)?.desktop !== undefined &&
+						(accountService.header | async)?.desktop !==
+							undefined &&
 						(accountService.header | async)?.mobile === undefined
 					) &&
 					!(
 						(envService.isMobile | async) === false &&
-						(accountService.header | async)?.desktop === undefined &&
+						(accountService.header | async)?.desktop ===
+							undefined &&
 						(accountService.header | async)?.mobile !== undefined
 					)
-				'
+				"
 			>
 				<div></div>
 
 				<button
 					mat-icon-button
 					cyphTranslate
-					class='logo-icon'
-					aria-label='Menu'
-					(click)='accountService.toggleMobileMenu()'
+					class="logo-icon"
+					aria-label="Menu"
+					(click)="accountService.toggleMobileMenu()"
 					fxHide.gt-sm
-					*ngIf='
-						(accountDatabaseService.currentUser | async) !== undefined &&
-						(accountDatabaseService.currentUser | async)?.pseudoAccount === false
-					'
+					*ngIf="
+						(accountDatabaseService.currentUser | async) !==
+							undefined &&
+						(accountDatabaseService.currentUser | async)
+							?.pseudoAccount === false
+					"
 				>
 					<cyph-logo icon white></cyph-logo>
 				</button>
@@ -93,49 +103,60 @@
 				<div></div>
 				<div></div>
 
-				<div class='header-content' fxFlex fxLayout='row'>
-					<ng-container *ngIf='
-						accountService.header | async as header;
-						else emptyHeader
-					'>
+				<div class="header-content" fxFlex fxLayout="row">
+					<ng-container
+						*ngIf="
+							accountService.header | async as header;
+							else emptyHeader
+						"
+					>
 						<a
 							fxFlex
-							class='profile-link'
-							[routerLink]='"/profile/" + header.username'
-							*ngIf='!!header.avatar; else stringHeader'
+							class="profile-link"
+							[routerLink]="'/profile/' + header.username"
+							*ngIf="!!header.avatar; else stringHeader"
 						>
 							<div
 								fxFlex
-								fxLayout='row'
-								fxLayoutAlign='start center'
-								fxLayoutGap='16px'
+								fxLayout="row"
+								fxLayoutAlign="start center"
+								fxLayoutGap="16px"
 							>
 								<img
 									cyphTranslate
-									class='avatar'
-									[ngClass]='userPresence[(header.status | async) || 0]'
-									alt='Profile Picture'
-									[src]='header.avatar | async'
+									class="avatar"
+									[ngClass]="
+										userPresence[
+											(header.status | async) || 0
+										]
+									"
+									alt="Profile Picture"
+									[src]="header.avatar | async"
 								/>
 
-								<h1 *ngIf='header.name | async as name; else usernameHeader'>
-									{{name}}
+								<h1
+									*ngIf="
+										header.name | async as name;
+										else usernameHeader
+									"
+								>
+									{{ name }}
 								</h1>
 
 								<ng-template #usernameHeader>
-									<h1>@{{header.realUsername | async}}</h1>
+									<h1>@{{ header.realUsername | async }}</h1>
 								</ng-template>
 							</div>
 						</a>
 
 						<ng-template #stringHeader>
-							<h1 fxFlex>{{
-								(
-									(envService.isMobile | async) ?
+							<h1 fxFlex>
+								{{
+									((envService.isMobile | async) ?
 										header.mobile :
-										header.desktop
-								) || ''
-							}}</h1>
+										header.desktop) || ''
+								}}
+							</h1>
 						</ng-template>
 					</ng-container>
 					<ng-template #emptyHeader>
@@ -164,8 +185,8 @@
 					mat-icon-button
 					fxHide.gt-sm
 					cyphTranslate
-					aria-label='Context Menu'
-					[matMenuTriggerFor]='contextMenu'
+					aria-label="Context Menu"
+					[matMenuTriggerFor]="contextMenu"
 				>
 					<mat-icon>more_vert</mat-icon>
 				</button>
@@ -175,13 +196,13 @@
 
 			<div
 				fxFlex
-				class='content-wrapper animated'
-				[class.fadeOutUp]='accountService.transition | async'
-				[class.full-height]='fullHeight | async'
-				[class.padding]='(fullWidth | async) === false'
-				ngClass.lt-md='small'
-				ngClass.md='medium'
-				ngClass.gt-md='large'
+				class="content-wrapper animated"
+				[class.fadeOutUp]="accountService.transition | async"
+				[class.full-height]="fullHeight | async"
+				[class.padding]="(fullWidth | async) === false"
+				ngClass.lt-md="small"
+				ngClass.md="medium"
+				ngClass.gt-md="large"
 			>
 				<router-outlet></router-outlet>
 			</div>
@@ -189,28 +210,34 @@
 	</div>
 
 	<div
-		[fxFlex]='accountService.menuExpandedMinWidthPX'
-		[fxShow]='
+		[fxFlex]="accountService.menuExpandedMinWidthPX"
+		[fxShow]="
 			!envService.isTelehealth &&
 			(accountDatabaseService.currentUser | async)?.confirmed === true
-		'
-		fxLayout='column'
-		class='sidebar contacts'
-		*ngIf='sidebarVisible | async'
+		"
+		fxLayout="column"
+		class="sidebar contacts"
+		*ngIf="sidebarVisible | async"
 	>
-		<div fxFlexFill fxLayout='row'>
-			<cyph-account-contacts fxFlex [sidebar]='true'></cyph-account-contacts>
+		<div fxFlexFill fxLayout="row">
+			<cyph-account-contacts
+				fxFlex
+				[sidebar]="true"
+			></cyph-account-contacts>
 		</div>
 	</div>
 </div>
 
-<mat-menu #contextMenu='matMenu'>
-	<button mat-menu-item (click)='accountService.contactFormDialog("help")'>
+<mat-menu #contextMenu="matMenu">
+	<button mat-menu-item (click)="accountService.contactFormDialog('help')">
 		<mat-icon>help</mat-icon>
-		<span>{{stringsService.contactSupport}}</span>
+		<span>{{ stringsService.contactSupport }}</span>
 	</button>
-	<button mat-menu-item (click)='accountService.contactFormDialog("feedback")'>
+	<button
+		mat-menu-item
+		(click)="accountService.contactFormDialog('feedback')"
+	>
 		<mat-icon>feedback</mat-icon>
-		<span>{{stringsService.feedback}}</span>
+		<span>{{ stringsService.feedback }}</span>
 	</button>
 </mat-menu>

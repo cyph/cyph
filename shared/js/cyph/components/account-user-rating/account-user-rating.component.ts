@@ -7,7 +7,6 @@ import {StringsService} from '../../services/strings.service';
 import {trackByIndex} from '../../track-by/track-by-index';
 import {numberToString} from '../../util/formatting';
 
-
 /**
  * Angular component for account user rating UI.
  */
@@ -19,15 +18,15 @@ import {numberToString} from '../../util/formatting';
 })
 export class AccountUserRatingComponent extends BaseProvider {
 	/** @ignore */
-	private readonly uiMaxRating	= 5;
+	private readonly uiMaxRating = 5;
 
 	/** Array of star icons based on rating. */
-	public readonly getStars		= memoize((rating: number) : [
-		('star'|'star_border'|'star_half'),
-		('star'|'star_border'|'star_half'),
-		('star'|'star_border'|'star_half'),
-		('star'|'star_border'|'star_half'),
-		('star'|'star_border'|'star_half')
+	public readonly getStars = memoize((rating: number): [
+		('star' | 'star_border' | 'star_half'),
+		('star' | 'star_border' | 'star_half'),
+		('star' | 'star_border' | 'star_half'),
+		('star' | 'star_border' | 'star_half'),
+		('star' | 'star_border' | 'star_half')
 	] => {
 		rating *= this.ratingFactor;
 
@@ -41,13 +40,13 @@ export class AccountUserRatingComponent extends BaseProvider {
 	});
 
 	/** @see numberToString */
-	public readonly numberToString	= numberToString;
+	public readonly numberToString = numberToString;
 
 	/** Factor to adjust ratings by for display in UI. */
-	public readonly ratingFactor	= this.uiMaxRating / reviewMax;
+	public readonly ratingFactor = this.uiMaxRating / reviewMax;
 
 	/** @see trackByIndex */
-	public readonly trackByIndex	= trackByIndex;
+	public readonly trackByIndex = trackByIndex;
 
 	/** @see User */
 	@Input() public user?: User;

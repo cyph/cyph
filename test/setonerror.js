@@ -1,13 +1,12 @@
-self.setOnerror	= function () {
-	self.onerror	= function (err) {
+self.setOnerror = function ()  {
+	self.onerror = function (err)  {
 		if (err === 'Script error.') {
 			return;
 		}
 
-		document.body.innerHTML	=
+		document.body.innerHTML =
 			'<pre style="font-size: 24px; white-space: pre-wrap;">' +
-				JSON.stringify(arguments, null, '\t') +
-			'</pre>'
-		;
+			JSON.stringify(arguments, null, '\t') +
+			'</pre>';
 	};
 };

@@ -45,7 +45,6 @@ import {MaterialDialogService} from '../services/material-dialog.service';
 import {WebLocalStorageService} from '../services/web-local-storage.service';
 import {CyphSharedModule} from './cyph-shared.module';
 
-
 /**
  * Common module with shared imports for web projects.
  */
@@ -158,47 +157,65 @@ export class CyphWebModule {
 
 		matIconRegistry.addSvgIcon(
 			'bitcoin',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/cryptocurrencies/BTC.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/icons/cryptocurrencies/BTC.svg'
+			)
 		);
 
 		matIconRegistry.addSvgIcon(
 			'doctor',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/doctor.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/iconfinder/doctor.svg'
+			)
 		);
 
 		matIconRegistry.addSvgIcon(
 			'gdpr',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/gdpr.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/iconfinder/gdpr.svg'
+			)
 		);
 
 		matIconRegistry.addSvgIcon(
 			'key-add-color',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-color.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/icons/key-add-color.svg'
+			)
 		);
 
 		matIconRegistry.addSvgIcon(
 			'key-add-light',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-add-light.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/icons/key-add-light.svg'
+			)
 		);
 
 		matIconRegistry.addSvgIcon(
 			'key-upload',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/icons/key-upload.svg'
+			)
 		);
 
 		matIconRegistry.addSvgIcon(
 			'key-upload-color',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/icons/key-upload-color.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/icons/key-upload-color.svg'
+			)
 		);
 
 		matIconRegistry.addSvgIcon(
 			'medical-forms',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/medical-forms.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/iconfinder/medical-forms.svg'
+			)
 		);
 
 		matIconRegistry.addSvgIcon(
 			'walkie-talkie',
-			sanitizer.bypassSecurityTrustResourceUrl('/assets/img/iconfinder/walkie-talkie.svg')
+			sanitizer.bypassSecurityTrustResourceUrl(
+				'/assets/img/iconfinder/walkie-talkie.svg'
+			)
 		);
 	}
 }

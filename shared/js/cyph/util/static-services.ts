@@ -6,22 +6,23 @@ import {DialogService} from '../services/dialog.service';
 import {FileService} from '../services/file.service';
 import {resolvable} from './wait';
 
-
 /** Resolvable dialogService. */
-const resolvableDialogService	= !env.isMainThread ? undefined : resolvable<DialogService>();
+const resolvableDialogService = !env.isMainThread ?
+	undefined :
+	resolvable<DialogService>();
 
 /** @ignore */
-export const staticDialogService	= resolvableDialogService ?
+export const staticDialogService = resolvableDialogService ?
 	resolvableDialogService.promise :
-	Promise.reject('Dialog service not found.')
-;
-
+	Promise.reject('Dialog service not found.');
 
 /** Resolvable domSanitizer. */
-const resolvableDomSanitizer	= resolvable<DomSanitizer>();
+const resolvableDomSanitizer = resolvable<DomSanitizer>();
 
 if (!(env.isMainThread && env.isWeb)) {
-	const notImplemented	= () => { throw new Error('Not implemented.'); };
+	const notImplemented = () => {
+		throw new Error('Not implemented.');
+	};
 
 	resolvableDomSanitizer.resolve({
 		bypassSecurityTrustHtml: notImplemented,
@@ -34,37 +35,35 @@ if (!(env.isMainThread && env.isWeb)) {
 }
 
 /** @see DomSanitizer */
-export const staticDomSanitizer	= resolvableDomSanitizer.promise;
-
+export const staticDomSanitizer = resolvableDomSanitizer.promise;
 
 /** Resolvable fileService. */
-const resolvableFileService	= !env.isMainThread ? undefined : resolvable<FileService>();
+const resolvableFileService = !env.isMainThread ?
+	undefined :
+	resolvable<FileService>();
 
 /** @ignore */
-export const staticFileService	= resolvableFileService ?
+export const staticFileService = resolvableFileService ?
 	resolvableFileService.promise :
-	Promise.reject('File service not found.')
-;
-
+	Promise.reject('File service not found.');
 
 /** Resolvable httpClient. */
-const resolvableHttpClient	= !env.isMainThread ? undefined : resolvable<HttpClient>();
+const resolvableHttpClient = !env.isMainThread ?
+	undefined :
+	resolvable<HttpClient>();
 
 /** @see HttpClient */
-export const staticHttpClient	= resolvableHttpClient ?
+export const staticHttpClient = resolvableHttpClient ?
 	resolvableHttpClient.promise :
-	Promise.reject('HTTP service not found.')
-;
-
+	Promise.reject('HTTP service not found.');
 
 /** Resolvable ngZone. */
-const resolvableNgZone	= resolvable<NgZone>();
+const resolvableNgZone = resolvable<NgZone>();
 
 /** @see NgZone */
-export const staticNgZone	= resolvableNgZone.promise;
+export const staticNgZone = resolvableNgZone.promise;
 
-
-export const resolveStaticServices	= ({
+export const resolveStaticServices = ({
 	dialogService,
 	domSanitizer,
 	fileService,

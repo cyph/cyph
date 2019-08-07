@@ -7,8 +7,12 @@ export interface IOneTimeAuth {
 	readonly keyBytes: Promise<number>;
 
 	/** Signs message. */
-	sign (message: Uint8Array, key: Uint8Array) : Promise<Uint8Array>;
+	sign (message: Uint8Array, key: Uint8Array): Promise<Uint8Array>;
 
 	/** Verifies MAC. */
-	verify (mac: Uint8Array, message: Uint8Array, key: Uint8Array) : Promise<boolean>;
+	verify (
+		mac: Uint8Array,
+		message: Uint8Array,
+		key: Uint8Array
+	): Promise<boolean>;
 }

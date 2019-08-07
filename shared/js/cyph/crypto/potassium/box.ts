@@ -10,106 +10,135 @@ import {ISecretBox} from './isecret-box';
 import * as NativeCrypto from './native-crypto';
 import {potassiumUtil} from './potassium-util';
 
-
 /** @inheritDoc */
 export class Box implements IBox {
 	/** @ignore */
-	private readonly classicalCypher	= {
+	private readonly classicalCypher = {
 		decrypt: this.isNative ?
 			async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
-				NativeCrypto.box.open(cyphertext, keyPair)
-			:
-			async (cyphertext: Uint8Array, keyPair: IKeyPair) => sodium.ready.then(() =>
-				sodium.crypto_box_curve25519xchacha20poly1305_seal_open(
-					cyphertext,
-					keyPair.publicKey,
-					keyPair.privateKey
-				)
-			)
-		,
-
+					NativeCrypto.box.open(cyphertext, keyPair) :
+			async (cyphertext: Uint8Array, keyPair: IKeyPair) =>
+				sodium.ready.then(() =>
+					sodium.crypto_box_curve25519xchacha20poly1305_seal_open(
+						cyphertext,
+						keyPair.publicKey,
+						keyPair.privateKey
+					)
+				),
 		encrypt: this.isNative ?
 			async (plaintext: Uint8Array, publicKey: Uint8Array) =>
-				NativeCrypto.box.seal(plaintext, publicKey)
-			:
-			async (plaintext: Uint8Array, publicKey: Uint8Array) => sodium.ready.then(() =>
-				sodium.crypto_box_curve25519xchacha20poly1305_seal(plaintext, publicKey)
-			)
-		,
-
+					NativeCrypto.box.seal(plaintext, publicKey) :
+			async (plaintext: Uint8Array, publicKey: Uint8Array) =>
+				sodium.ready.then(() =>
+					sodium.crypto_box_curve25519xchacha20poly1305_seal(
+						plaintext,
+						publicKey
+					)
+				),
 		keyPair: this.isNative ?
 			async () => NativeCrypto.box.keyPair() :
-			async () => sodium.ready.then(() =>
-				sodium.crypto_box_curve25519xchacha20poly1305_keypair()
-			)
-		,
-
-		nonceBytes: sodium.ready.then(() => this.isNative ?
-			NativeCrypto.secretBox.nonceBytes :
-			sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
+			async () =>
+				sodium.ready.then(() =>
+					sodium.crypto_box_curve25519xchacha20poly1305_keypair()
+				),
+		nonceBytes: sodium.ready.then(() =>
+			this.isNative ?
+				NativeCrypto.secretBox.nonceBytes :
+				sodium.crypto_box_curve25519xchacha20poly1305_NONCEBYTES
 		),
 
-		privateKeyBytes: sodium.ready.then(() => this.isNative ?
-			NativeCrypto.box.privateKeyBytes :
-			sodium.crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES
+		privateKeyBytes: sodium.ready.then(() =>
+			this.isNative ?
+				NativeCrypto.box.privateKeyBytes :
+				sodium.crypto_box_curve25519xchacha20poly1305_SECRETKEYBYTES
 		),
 
-		publicKeyBytes: sodium.ready.then(() => this.isNative ?
-			NativeCrypto.box.publicKeyBytes :
-			sodium.crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES
+		publicKeyBytes: sodium.ready.then(() =>
+			this.isNative ?
+				NativeCrypto.box.publicKeyBytes :
+				sodium.crypto_box_curve25519xchacha20poly1305_PUBLICKEYBYTES
 		)
 	};
 
 	/** @inheritDoc */
-	public readonly privateKeyBytes: Promise<number>	= (async () =>
+	public readonly privateKeyBytes: Promise<number> = (async () =>
 		(await mceliece.privateKeyBytes) +
 		(await ntru.privateKeyBytes) +
 		(await sidh.privateKeyBytes) +
-		(await this.classicalCypher.privateKeyBytes)
-	)();
+		(await this.classicalCypher.privateKeyBytes))();
 
 	/** @inheritDoc */
-	public readonly publicKeyBytes: Promise<number>		= (async () =>
+	public readonly publicKeyBytes: Promise<number> = (async () =>
 		(await mceliece.publicKeyBytes) +
 		(await ntru.publicKeyBytes) +
 		(await sidh.publicKeyBytes) +
-		(await this.classicalCypher.publicKeyBytes)
-	)();
+		(await this.classicalCypher.publicKeyBytes))();
 
 	/** @ignore */
-	private async publicKeyDecrypt<SK extends IKeyPair|Uint8Array> (
+	private async publicKeyDecrypt<SK extends IKeyPair | Uint8Array> (
 		cyphertext: Uint8Array,
 		privateKey: SK,
-		cypher: {decrypt: (cyphertext: Uint8Array, keyPair: SK) => Promise<Uint8Array>},
+		cypher: {
+			decrypt: (
+				cyphertext: Uint8Array,
+				keyPair: SK
+			) => Promise<Uint8Array>;
+		},
 		name: string,
 		clearCyphertext: boolean = true
 	) : Promise<Uint8Array> {
-		const oneTimeAuthBytes		= await this.oneTimeAuth.bytes;
-		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
+		const oneTimeAuthBytes = await this.oneTimeAuth.bytes;
+		const oneTimeAuthKeyBytes = await this.oneTimeAuth.keyBytes;
 
 		try {
-			const [asymmetricCyphertext, symmetricCyphertext]	= potassiumUtil.splitBytes(cyphertext);
+			const [
+				asymmetricCyphertext,
+				symmetricCyphertext
+			] = potassiumUtil.splitBytes(cyphertext);
 
-			const mac			= potassiumUtil.toBytes(asymmetricCyphertext, 0, oneTimeAuthBytes);
-			const encrypted		= potassiumUtil.toBytes(asymmetricCyphertext, oneTimeAuthBytes);
-			const decrypted		= await cypher.decrypt(encrypted, privateKey);
-			const authKey		= potassiumUtil.toBytes(decrypted, 0, oneTimeAuthKeyBytes);
-			const symmetricKey	= potassiumUtil.toBytes(decrypted, oneTimeAuthKeyBytes);
-			const isValid		= await this.oneTimeAuth.verify(mac, encrypted, authKey);
+			const mac = potassiumUtil.toBytes(
+				asymmetricCyphertext,
+				0,
+				oneTimeAuthBytes
+			);
+			const encrypted = potassiumUtil.toBytes(
+				asymmetricCyphertext,
+				oneTimeAuthBytes
+			);
+			const decrypted = await cypher.decrypt(encrypted, privateKey);
+			const authKey = potassiumUtil.toBytes(
+				decrypted,
+				0,
+				oneTimeAuthKeyBytes
+			);
+			const symmetricKey = potassiumUtil.toBytes(
+				decrypted,
+				oneTimeAuthKeyBytes
+			);
+			const isValid = await this.oneTimeAuth.verify(
+				mac,
+				encrypted,
+				authKey
+			);
 
 			try {
 				if (!isValid) {
 					throw new Error(`${name} auth validation failed.`);
 				}
 
-				return await this.secretBox.open(symmetricCyphertext, symmetricKey);
+				return await this.secretBox.open(
+					symmetricCyphertext,
+					symmetricKey
+				);
 			}
 			finally {
 				potassiumUtil.clearMemory(decrypted);
 			}
 		}
 		catch (err) {
-			throw new Error(`${name} decryption error: ${err ? err.message : 'undefined'}`);
+			throw new Error(
+				`${name} decryption error: ${err ? err.message : 'undefined'}`
+			);
 		}
 		finally {
 			if (clearCyphertext) {
@@ -122,30 +151,59 @@ export class Box implements IBox {
 	private async publicKeyEncrypt (
 		plaintext: Uint8Array,
 		publicKey: Uint8Array,
-		cypher: {encrypt: (plaintext: Uint8Array, publicKey: Uint8Array) => Promise<Uint8Array>},
+		cypher: {
+			encrypt: (
+				plaintext: Uint8Array,
+				publicKey: Uint8Array
+			) => Promise<Uint8Array>;
+		},
 		name: string,
 		clearPlaintext: boolean = true
 	) : Promise<Uint8Array> {
-		const oneTimeAuthKeyBytes	= await this.oneTimeAuth.keyBytes;
-		const secretBoxKeyBytes		= await this.secretBox.keyBytes;
+		const oneTimeAuthKeyBytes = await this.oneTimeAuth.keyBytes;
+		const secretBoxKeyBytes = await this.secretBox.keyBytes;
 
 		try {
-			const asymmetricPlaintext	= potassiumUtil.randomBytes(oneTimeAuthKeyBytes + secretBoxKeyBytes);
+			const asymmetricPlaintext = potassiumUtil.randomBytes(
+				oneTimeAuthKeyBytes + secretBoxKeyBytes
+			);
 
-			const symmetricKey			= potassiumUtil.toBytes(asymmetricPlaintext, oneTimeAuthKeyBytes);
-			const symmetricCyphertext	= await this.secretBox.seal(plaintext, symmetricKey);
+			const symmetricKey = potassiumUtil.toBytes(
+				asymmetricPlaintext,
+				oneTimeAuthKeyBytes
+			);
+			const symmetricCyphertext = await this.secretBox.seal(
+				plaintext,
+				symmetricKey
+			);
 
-			const authKey				= potassiumUtil.toBytes(asymmetricPlaintext, 0, oneTimeAuthKeyBytes);
-			const encrypted				= await cypher.encrypt(asymmetricPlaintext, publicKey);
-			const mac					= await this.oneTimeAuth.sign(encrypted, authKey);
-			const asymmetricCyphertext	= potassiumUtil.concatMemory(true, mac, encrypted);
+			const authKey = potassiumUtil.toBytes(
+				asymmetricPlaintext,
+				0,
+				oneTimeAuthKeyBytes
+			);
+			const encrypted = await cypher.encrypt(
+				asymmetricPlaintext,
+				publicKey
+			);
+			const mac = await this.oneTimeAuth.sign(encrypted, authKey);
+			const asymmetricCyphertext = potassiumUtil.concatMemory(
+				true,
+				mac,
+				encrypted
+			);
 
 			potassiumUtil.clearMemory(asymmetricPlaintext);
 
-			return potassiumUtil.joinBytes(asymmetricCyphertext, symmetricCyphertext);
+			return potassiumUtil.joinBytes(
+				asymmetricCyphertext,
+				symmetricCyphertext
+			);
 		}
 		catch (err) {
-			throw new Error(`${name} encryption error: ${err ? err.message : 'undefined'}`);
+			throw new Error(
+				`${name} encryption error: ${err ? err.message : 'undefined'}`
+			);
 		}
 		finally {
 			if (clearPlaintext) {
@@ -155,7 +213,9 @@ export class Box implements IBox {
 	}
 
 	/** @ignore */
-	private async splitPrivateKey (privateKey: Uint8Array) : Promise<{
+	private async splitPrivateKey (
+		privateKey: Uint8Array
+	) : Promise<{
 		classical: Uint8Array;
 		mceliece: Uint8Array;
 		ntru: Uint8Array;
@@ -174,26 +234,24 @@ export class Box implements IBox {
 			),
 			ntru: potassiumUtil.toBytes(
 				privateKey,
-				(
-					(await this.classicalCypher.privateKeyBytes) +
-					(await mceliece.privateKeyBytes)
-				),
+				(await this.classicalCypher.privateKeyBytes) +
+					(await mceliece.privateKeyBytes),
 				await ntru.privateKeyBytes
 			),
 			sidh: potassiumUtil.toBytes(
 				privateKey,
-				(
-					(await this.classicalCypher.privateKeyBytes) +
+				(await this.classicalCypher.privateKeyBytes) +
 					(await mceliece.privateKeyBytes) +
-					(await ntru.privateKeyBytes)
-				),
+					(await ntru.privateKeyBytes),
 				await sidh.privateKeyBytes
 			)
 		};
 	}
 
 	/** @ignore */
-	private async splitPublicKey (publicKey: Uint8Array) : Promise<{
+	private async splitPublicKey (
+		publicKey: Uint8Array
+	) : Promise<{
 		classical: Uint8Array;
 		mceliece: Uint8Array;
 		ntru: Uint8Array;
@@ -212,19 +270,15 @@ export class Box implements IBox {
 			),
 			ntru: potassiumUtil.toBytes(
 				publicKey,
-				(
-					(await this.classicalCypher.publicKeyBytes) +
-					(await mceliece.publicKeyBytes)
-				),
+				(await this.classicalCypher.publicKeyBytes) +
+					(await mceliece.publicKeyBytes),
 				await ntru.publicKeyBytes
 			),
 			sidh: potassiumUtil.toBytes(
 				publicKey,
-				(
-					(await this.classicalCypher.publicKeyBytes) +
+				(await this.classicalCypher.publicKeyBytes) +
 					(await mceliece.publicKeyBytes) +
-					(await ntru.publicKeyBytes)
-				),
+					(await ntru.publicKeyBytes),
 				await sidh.publicKeyBytes
 			)
 		};
@@ -238,14 +292,14 @@ export class Box implements IBox {
 				mcelieceKeyPair,
 				ntruKeyPair,
 				sidhKeyPair
-			]	= await Promise.all([
+			] = await Promise.all([
 				this.classicalCypher.keyPair(),
 				mceliece.keyPair(),
 				ntru.keyPair(),
 				sidh.keyPair()
 			]);
 
-			const keyPair	= {
+			const keyPair = {
 				privateKey: potassiumUtil.concatMemory(
 					true,
 					classicalKeyPair.privateKey,
@@ -262,14 +316,16 @@ export class Box implements IBox {
 				)
 			};
 
-			const testInput	= potassiumUtil.randomBytes(32);
-			if (!potassiumUtil.compareMemory(
-				testInput,
-				await this.open(
-					await this.seal(testInput, keyPair.publicKey),
-					keyPair
+			const testInput = potassiumUtil.randomBytes(32);
+			if (
+				!potassiumUtil.compareMemory(
+					testInput,
+					await this.open(
+						await this.seal(testInput, keyPair.publicKey),
+						keyPair
+					)
 				)
-			)) {
+			) {
 				throw new Error('Corrupt Potassium.Box key.');
 			}
 
@@ -278,9 +334,12 @@ export class Box implements IBox {
 	}
 
 	/** @inheritDoc */
-	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
-		const privateSubKeys	= await this.splitPrivateKey(keyPair.privateKey);
-		const publicSubKeys		= await this.splitPublicKey(keyPair.publicKey);
+	public async open (
+		cyphertext: Uint8Array,
+		keyPair: IKeyPair
+	) : Promise<Uint8Array> {
+		const privateSubKeys = await this.splitPrivateKey(keyPair.privateKey);
+		const publicSubKeys = await this.splitPublicKey(keyPair.publicKey);
 
 		return this.publicKeyDecrypt(
 			await this.publicKeyDecrypt(
@@ -300,15 +359,21 @@ export class Box implements IBox {
 				mceliece,
 				'McEliece'
 			),
-			{privateKey: privateSubKeys.classical, publicKey: publicSubKeys.classical},
+			{
+				privateKey: privateSubKeys.classical,
+				publicKey: publicSubKeys.classical
+			},
 			this.classicalCypher,
 			'Classical'
 		);
 	}
 
 	/** @inheritDoc */
-	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
-		const publicSubKeys	= await this.splitPublicKey(publicKey);
+	public async seal (
+		plaintext: Uint8Array,
+		publicKey: Uint8Array
+	) : Promise<Uint8Array> {
+		const publicSubKeys = await this.splitPublicKey(publicKey);
 
 		return this.publicKeyEncrypt(
 			await this.publicKeyEncrypt(

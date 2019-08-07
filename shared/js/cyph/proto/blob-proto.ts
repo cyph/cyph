@@ -1,6 +1,5 @@
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 
-
 /** Blob encoder/decoder. (Doesn't actually use Protocol Buffers.) */
 export class BlobProto {
 	/** @see IProto.create */
@@ -14,7 +13,9 @@ export class BlobProto {
 	}
 
 	/** @see IProto.encode */
-	public static async encode (data: Blob|ArrayBufferView) : Promise<Uint8Array> {
+	public static async encode (
+		data: Blob | ArrayBufferView
+	) : Promise<Uint8Array> {
 		return potassiumUtil.fromBlob(data);
 	}
 

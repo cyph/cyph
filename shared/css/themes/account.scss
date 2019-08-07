@@ -8,30 +8,38 @@ $cyph-progress-foreground: #e7c447;
 $cyph-speed-dial-action-alt-background: $cyph-foreground;
 $cyph-speed-dial-action-alt-foreground: $cyph-inverted;
 
-$cyph-message-box-colors: map-merge($cyph-message-box-colors, (
-	desktopBackground: white,
-	desktopGlow: $cyph-progress-foreground,
-	text: black
-));
-
-$cyph-message-colors: map-merge($cyph-message-colors, (
-	app: (
-		desktop: transparent,
-		mobile: transparent,
-		mobileText: $cyph-foreground,
-		text: $cyph-foreground
-	),
-	me: (
-		desktop: transparent,
-		mobile: rgba(map-get(map-get($cyph-message-colors, me), mobile), 0.9),
-		text: $cyph-foreground
-	),
-	other: (
-		desktop: transparent,
-		mobile: rgba(map-get(map-get($cyph-message-colors, other), mobile), 0.7),
-		text: $cyph-foreground
+$cyph-message-box-colors: map-merge(
+	$cyph-message-box-colors,
+	(
+		desktopBackground: white,
+		desktopGlow: $cyph-progress-foreground,
+		text: black
 	)
-));
+);
+
+$cyph-message-colors: map-merge(
+	$cyph-message-colors,
+	(
+		app: (
+			desktop: transparent,
+			mobile: transparent,
+			mobileText: $cyph-foreground,
+			text: $cyph-foreground
+		),
+		me: (
+			desktop: transparent,
+			mobile:
+				rgba(map-get(map-get($cyph-message-colors, me), mobile), 0.9),
+			text: $cyph-foreground
+		),
+		other: (
+			desktop: transparent,
+			mobile:
+				rgba(map-get(map-get($cyph-message-colors, other), mobile), 0.7),
+			text: $cyph-foreground
+		)
+	)
+);
 
 body.primary-account-theme {
 	@include cyph-apply-theme(false, true);
@@ -40,7 +48,8 @@ body.primary-account-theme {
 		color: white;
 	}
 
-	cyph-account cyph-not-found img, cyph-account-home > div > cyph-logo {
+	cyph-account cyph-not-found img,
+	cyph-account-home > div > cyph-logo {
 		@include filter(brightness(0.25));
 	}
 

@@ -1,9 +1,14 @@
-import {ChangeDetectionStrategy, Component, Inject, OnInit, Optional} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	Inject,
+	OnInit,
+	Optional
+} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-
 
 /**
  * Angular component for the cyph not found screen.
@@ -25,8 +30,9 @@ export class NotFoundComponent extends BaseProvider implements OnInit {
 
 	constructor (
 		/** @ignore */
-		@Inject(AccountService) @Optional()
-		private readonly accountService: AccountService|undefined,
+		@Inject(AccountService)
+		@Optional()
+		private readonly accountService: AccountService | undefined,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

@@ -1,11 +1,10 @@
 import {CyphPage} from './app.po';
 
-
 describe('cyph.com', () => {
 	let page: CyphPage;
 
 	beforeEach(() => {
-		page	= new CyphPage();
+		page = new CyphPage();
 	});
 
 	it('should display footer', async () => {

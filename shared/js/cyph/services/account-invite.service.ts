@@ -7,21 +7,20 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 
-
 /**
  * Angular service for managing Accounts invites.
  */
 @Injectable()
 export class AccountInviteService extends BaseProvider {
 	/** @ignore */
-	private readonly codes	= this.accountDatabaseService.getAsyncMap(
+	private readonly codes = this.accountDatabaseService.getAsyncMap(
 		'inviteCodes',
 		BooleanProto,
 		SecurityModels.unprotected
 	);
 
 	/** Number of available invites. */
-	public readonly count	= toBehaviorSubject(
+	public readonly count = toBehaviorSubject(
 		this.codes.watchKeys().pipe(map(arr => arr.length)),
 		0
 	);

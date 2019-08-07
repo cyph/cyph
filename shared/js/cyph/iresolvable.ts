@@ -9,5 +9,5 @@ export interface IResolvable<T> {
 	reject: (err?: any) => void;
 
 	/** Resolves promise. */
-	resolve: (t?: T|PromiseLike<T>) => void;
+	resolve: (t?: T | PromiseLike<T>) => void;
 }

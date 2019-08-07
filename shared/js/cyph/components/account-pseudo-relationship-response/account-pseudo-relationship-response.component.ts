@@ -8,7 +8,6 @@ import {DatabaseService} from '../../services/database.service';
 import {StringsService} from '../../services/strings.service';
 import {filterUndefinedOperator} from '../../util/filter';
 
-
 /**
  * Angular component for responding to a pseudo-relationship from a registered
  * user and registering a new pseudo-account if necessary.
@@ -19,27 +18,32 @@ import {filterUndefinedOperator} from '../../util/filter';
 	styleUrls: ['./account-pseudo-relationship-response.component.scss'],
 	templateUrl: './account-pseudo-relationship-response.component.html'
 })
-export class AccountPseudoRelationshipResponseComponent extends BaseProvider implements OnInit {
+export class AccountPseudoRelationshipResponseComponent extends BaseProvider
+	implements OnInit {
 	/** Indicates whether request has been rejected. */
-	public readonly rejected	= new BehaviorSubject<boolean>(false);
+	public readonly rejected = new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		const [accept, id]	= await Promise.all([
-			this.activatedRoute.data.pipe(
-				map((o: {accept?: boolean}) => o.accept),
-				filterUndefinedOperator(),
-				take(1)
-			).toPromise(),
-			this.activatedRoute.params.pipe(
-				map((o: {id?: string}) => o.id),
-				filterUndefinedOperator(),
-				take(1)
-			).toPromise()
+		const [accept, id] = await Promise.all([
+			this.activatedRoute.data
+				.pipe(
+					map((o: {accept?: boolean}) => o.accept),
+					filterUndefinedOperator(),
+					take(1)
+				)
+				.toPromise(),
+			this.activatedRoute.params
+				.pipe(
+					map((o: {id?: string}) => o.id),
+					filterUndefinedOperator(),
+					take(1)
+				)
+				.toPromise()
 		]);
 
 		if (accept) {
-			const username	= await this.databaseService.callFunction(
+			const username = await this.databaseService.callFunction(
 				'acceptPseudoRelationship',
 				{id}
 			);

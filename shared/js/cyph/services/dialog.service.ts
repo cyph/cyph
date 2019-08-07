@@ -9,7 +9,6 @@ import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
 import {IForm} from '../proto';
 
-
 /**
  * Provides modal/dialog functionality.
  */
@@ -20,7 +19,9 @@ export class DialogService extends BaseProvider {
 		_O: {content: string; markdown?: boolean; ok?: string; title?: string},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<void> {
-		throw new Error('Must provide an implementation of DialogService.alert.');
+		throw new Error(
+			'Must provide an implementation of DialogService.alert.'
+		);
 	}
 
 	/** Generic modal implementation that takes a template / content. */
@@ -30,7 +31,9 @@ export class DialogService extends BaseProvider {
 		_CLOSE_FUNCTION?: IResolvable<() => void>,
 		_BOTTOM_SHEET?: boolean
 	) : Promise<void> {
-		throw new Error('Must provide an implementation of DialogService.baseDialog.');
+		throw new Error(
+			'Must provide an implementation of DialogService.baseDialog.'
+		);
 	}
 
 	/** Displays interactive confirmation prompt. */
@@ -40,7 +43,7 @@ export class DialogService extends BaseProvider {
 			cancel?: string;
 			cancelFAB?: string;
 			content: string;
-			fabAvatar?: Async<SafeUrl|string>;
+			fabAvatar?: Async<SafeUrl | string>;
 			markdown?: boolean;
 			ok?: string;
 			okFAB?: string;
@@ -49,29 +52,37 @@ export class DialogService extends BaseProvider {
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<boolean> {
-		throw new Error('Must provide an implementation of DialogService.confirm.');
+		throw new Error(
+			'Must provide an implementation of DialogService.confirm.'
+		);
 	}
 
 	/** Allows a user to crop an image and returns the result. */
 	public async cropImage (_O: {
 		aspectRatio?: number;
-		src: SafeUrl|string;
+		src: SafeUrl | string;
 		title?: string;
-	}) : Promise<SafeUrl|undefined> {
-		throw new Error('Must provide an implementation of DialogService.cropImage.');
+	}) : Promise<SafeUrl | undefined> {
+		throw new Error(
+			'Must provide an implementation of DialogService.cropImage.'
+		);
 	}
 
 	/** If applicable, dismisses active toast. */
 	public async dismissToast () : Promise<void> {
-		throw new Error('Must provide an implementation of DialogService.dismissToast.');
+		throw new Error(
+			'Must provide an implementation of DialogService.dismissToast.'
+		);
 	}
 
 	/** Displays multimedia. Default mediaType is image/png. */
 	public async media (
-		_O: {mediaType?: string; src: SafeUrl|string; title?: string},
+		_O: {mediaType?: string; src: SafeUrl | string; title?: string},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<void> {
-		throw new Error('Must provide an implementation of DialogService.media.');
+		throw new Error(
+			'Must provide an implementation of DialogService.media.'
+		);
 	}
 
 	/** Prompts for input. */
@@ -88,7 +99,7 @@ export class DialogService extends BaseProvider {
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
-	) : Promise<IForm|undefined>;
+	) : Promise<IForm | undefined>;
 	public async prompt (
 		_O: {
 			bottomSheet?: boolean;
@@ -101,7 +112,7 @@ export class DialogService extends BaseProvider {
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
-	) : Promise<string|undefined>;
+	) : Promise<string | undefined>;
 	public async prompt (
 		_O: {
 			bottomSheet?: boolean;
@@ -115,16 +126,24 @@ export class DialogService extends BaseProvider {
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
-	) : Promise<string|IForm|undefined> {
-		throw new Error('Must provide an implementation of DialogService.prompt.');
+	) : Promise<string | IForm | undefined> {
+		throw new Error(
+			'Must provide an implementation of DialogService.prompt.'
+		);
 	}
 
 	/**
 	 * Displays toast notification.
 	 * @returns Whether it was manually dismissed.
 	 */
-	public async toast (_CONTENT: string, _DURATION: number, _ACTION?: string) : Promise<boolean> {
-		throw new Error('Must provide an implementation of DialogService.toast.');
+	public async toast (
+		_CONTENT: string,
+		_DURATION: number,
+		_ACTION?: string
+	) : Promise<boolean> {
+		throw new Error(
+			'Must provide an implementation of DialogService.toast.'
+		);
 	}
 
 	constructor () {

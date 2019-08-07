@@ -1,64 +1,68 @@
-<div fxLayout='row'>
-	<h1 matDialogTitle *ngIf='title'>{{title}}</h1>
+<div fxLayout="row">
+	<h1 matDialogTitle *ngIf="title">{{ title }}</h1>
 	<div fxFlex></div>
-	<div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!cropResult'>
-		<button
-			matDialogClose
-			mat-icon-button
-			cyphTranslate
-			matTooltip='Close'
-		>
+	<div mat-dialog-actions fxLayoutAlign="end center" *ngIf="!cropResult">
+		<button matDialogClose mat-icon-button cyphTranslate matTooltip="Close">
 			<mat-icon>close</mat-icon>
 		</button>
 	</div>
 </div>
 
 <div mat-dialog-content>
-	<div fxFlex [class.crop-container]='!!cropResult'>
-		<ng-container *ngIf='!cropResult; else imageCropUI'>
+	<div fxFlex [class.crop-container]="!!cropResult">
+		<ng-container *ngIf="!cropResult; else imageCropUI">
 			<audio
 				cyphTranslate
 				autoplay
 				controls
-				aria-label='Audio'
-				*ngIf='fileService.isAudio(mediaType)'
+				aria-label="Audio"
+				*ngIf="fileService.isAudio(mediaType)"
 			>
-				<source [type]='mediaType' [src]='stringToSafeUrl(src)' />
+				<source [type]="mediaType" [src]="stringToSafeUrl(src)" />
 			</audio>
 
 			<img
 				cyphTranslate
-				alt='Full size image'
-				[src]='stringToSafeUrl(src)'
-				*ngIf='fileService.isImage(mediaType)'
+				alt="Full size image"
+				[src]="stringToSafeUrl(src)"
+				*ngIf="fileService.isImage(mediaType)"
 			/>
 
 			<video
 				cyphTranslate
 				autoplay
 				controls
-				aria-label='Video'
-				*ngIf='fileService.isVideo(mediaType)'
+				aria-label="Video"
+				*ngIf="fileService.isVideo(mediaType)"
 			>
-				<source [type]='mediaType' [src]='stringToSafeUrl(src)' />
+				<source [type]="mediaType" [src]="stringToSafeUrl(src)" />
 			</video>
 		</ng-container>
 
 		<ng-template #imageCropUI>
 			<image-cropper
-				format='png'
-				[aspectRatio]='cropAspectRatio'
-				[imageBase64]='imageBase64'
-				[maintainAspectRatio]='!!cropAspectRatio'
-				(imageCroppedBase64)='cropped = $event'
-				(loadImageFailed)='crop(false)'
-				*ngIf='safeUrlToString(src, mediaType) | async as imageBase64'
+				format="png"
+				[aspectRatio]="cropAspectRatio"
+				[imageBase64]="imageBase64"
+				[maintainAspectRatio]="!!cropAspectRatio"
+				(imageCroppedBase64)="cropped = $event"
+				(loadImageFailed)="crop(false)"
+				*ngIf="safeUrlToString(src, mediaType) | async as imageBase64"
 			></image-cropper>
 		</ng-template>
 	</div>
 </div>
 
-<div mat-dialog-actions class='crop-actions' fxLayoutAlign='end center' *ngIf='!!cropResult'>
-	<button mat-button class='cancel' (click)='crop(false)'>{{stringsService.cancel}}</button>
-	<button mat-button class='ok' (click)='crop(true)'>{{stringsService.ok}}</button>
+<div
+	mat-dialog-actions
+	class="crop-actions"
+	fxLayoutAlign="end center"
+	*ngIf="!!cropResult"
+>
+	<button mat-button class="cancel" (click)="crop(false)">
+		{{ stringsService.cancel }}
+	</button>
+	<button mat-button class="ok" (click)="crop(true)">
+		{{ stringsService.ok }}
+	</button>
 </div>

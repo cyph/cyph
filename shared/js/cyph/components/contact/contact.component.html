@@ -1,143 +1,163 @@
-<div fxLayout='column'>
-	<div fxLayout='row' fxLayoutAlign='center start'>
+<div fxLayout="column">
+	<div fxLayout="row" fxLayoutAlign="center start">
 		<form
 			ngNativeValidate
 			fxFlex
-			fxFlex.gt-md='75'
-			fxFlex.gt-lg='50'
-			fxLayout='column'
-			fxLayoutGap='16px'
-			(submit)='send()'
-			*ngIf='(sent | async) === false'
+			fxFlex.gt-md="75"
+			fxFlex.gt-lg="50"
+			fxLayout="column"
+			fxLayoutGap="16px"
+			(submit)="send()"
+			*ngIf="(sent | async) === false"
 		>
-			<div fxLayout='row' fxLayoutAlign='center center' *ngIf='feedbackForm | async'>
+			<div
+				fxLayout="row"
+				fxLayoutAlign="center center"
+				*ngIf="feedbackForm | async"
+			>
 				<h3>
 					<span cyphTranslate>Submit Feedback to</span>
 					&ngsp;
-					<span>{{stringsService.company}}</span>
+					<span>{{ stringsService.company }}</span>
 				</h3>
 			</div>
-			<ng-container *ngIf='(feedbackForm | async) === false'>
-				<div fxLayout='row' fxLayoutAlign='center center' *ngIf='hideToDropdown'>
-					<h3>{{stringsService.contactCyph}}</h3>
+			<ng-container *ngIf="(feedbackForm | async) === false">
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					*ngIf="hideToDropdown"
+				>
+					<h3>{{ stringsService.contactCyph }}</h3>
 				</div>
-				<div fxLayout='row' *ngIf='!hideToDropdown'>
+				<div fxLayout="row" *ngIf="!hideToDropdown">
 					<mat-form-field fxFlex>
 						<mat-select
 							cyphTranslate
 							fxFlex
-							[(ngModel)]='to'
-							name='to'
-							[placeholder]='stringsService.teamToContact'
+							[(ngModel)]="to"
+							name="to"
+							[placeholder]="stringsService.teamToContact"
 						>
 							<mat-option
-								*ngFor='
+								*ngFor="
 									let address of configService.contactEmailAddresses;
-									trackBy: trackBySelf;
-								'
-								[value]='address'
+									trackBy: trackBySelf
+								"
+								[value]="address"
 							>
-								{{address}}
+								{{ address }}
 							</mat-option>
 						</mat-select>
 					</mat-form-field>
 				</div>
 			</ng-container>
-			<div fxLayout='row' *ngIf='(feedbackForm | async) === false'>
+			<div fxLayout="row" *ngIf="(feedbackForm | async) === false">
 				<mat-form-field fxFlex>
 					<input
 						matInput
 						cyphTranslate
-						[(ngModel)]='subject'
-						name='subject'
-						placeholder='Subject'
+						[(ngModel)]="subject"
+						name="subject"
+						placeholder="Subject"
 					/>
 				</mat-form-field>
 			</div>
-			<div fxLayout='row' *ngIf='(responseRequired | async) || (responseRequested | async)'>
-				<div fxFlex fxLayout.lt-md='column' fxLayoutGap='16px'>
+			<div
+				fxLayout="row"
+				*ngIf="
+					(responseRequired | async) || (responseRequested | async)
+				"
+			>
+				<div fxFlex fxLayout.lt-md="column" fxLayoutGap="16px">
 					<mat-form-field fxFlex>
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='fromName'
-							name='name'
-							placeholder='Name'
+							[(ngModel)]="fromName"
+							name="name"
+							placeholder="Name"
 						/>
 					</mat-form-field>
 					<mat-form-field fxFlex>
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='fromEmail'
-							name='email'
-							type='email'
-							[pattern]='emailPattern'
-							placeholder='Email'
+							[(ngModel)]="fromEmail"
+							name="email"
+							type="email"
+							[pattern]="emailPattern"
+							placeholder="Email"
 							required
 						/>
 					</mat-form-field>
 				</div>
 			</div>
-			<div fxLayout='row'>
+			<div fxLayout="row">
 				<mat-form-field fxFlex>
 					<textarea
 						matInput
 						cyphTranslate
-						[(ngModel)]='message'
-						name='message'
-						placeholder='Message'
+						[(ngModel)]="message"
+						name="message"
+						placeholder="Message"
 						required
 					></textarea>
 				</mat-form-field>
 			</div>
-			<div fxLayout='row'>
+			<div fxLayout="row">
 				<mat-checkbox
-					[ngModel]='responseRequested | async'
-					(ngModelChange)='responseRequested.next($event)'
-					name='response'
+					[ngModel]="responseRequested | async"
+					(ngModelChange)="responseRequested.next($event)"
+					name="response"
 					cyphTranslate
-					*ngIf='(responseRequired | async) === false'
+					*ngIf="(responseRequired | async) === false"
 				>
 					Response Requested
 				</mat-checkbox>
 			</div>
-			<div fxLayout='row'>
+			<div fxLayout="row">
 				<mat-checkbox
-					[ngModel]='gdprConsent | async'
-					(ngModelChange)='gdprConsent.next($event)'
-					name='gdpr'
-					[matTooltip]='stringsService.gdprContactForm'
+					[ngModel]="gdprConsent | async"
+					(ngModelChange)="gdprConsent.next($event)"
+					name="gdpr"
+					[matTooltip]="stringsService.gdprContactForm"
 					required
 				>
-					<div fxLayout='row' fxLayoutAlign='start center'>
-						<span>{{stringsService.gdprContactFormShort}}</span>
-						&nbsp;
-						&nbsp;
-						<mat-icon class='gdpr' svgIcon='gdpr'></mat-icon>
+					<div fxLayout="row" fxLayoutAlign="start center">
+						<span>{{ stringsService.gdprContactFormShort }}</span>
+						&nbsp; &nbsp;
+						<mat-icon class="gdpr" svgIcon="gdpr"></mat-icon>
 					</div>
 				</mat-checkbox>
 			</div>
 			<div></div>
-			<div fxLayout='row' fxLayoutAlign='center'>
+			<div fxLayout="row" fxLayoutAlign="center">
 				<button
 					mat-button
 					cyphTranslate
-					type='submit'
-					*ngIf='(envService.isMobile | async) === false; else mobileButton'
+					type="submit"
+					*ngIf="
+						(envService.isMobile | async) === false;
+						else mobileButton
+					"
 				>
 					Send
 				</button>
 				<ng-template #mobileButton>
-					<button mat-raised-button cyphTranslate fxFlex type='submit'>
+					<button
+						mat-raised-button
+						cyphTranslate
+						fxFlex
+						type="submit"
+					>
 						Send
 					</button>
 				</ng-template>
 			</div>
 		</form>
-		<div *ngIf='sent | async' cyphTranslate>
-			Your email has been sent! If you requested a response,
-			someone on the team will get back to you shortly.
+		<div *ngIf="sent | async" cyphTranslate>
+			Your email has been sent! If you requested a response, someone on
+			the team will get back to you shortly.
 		</div>
 	</div>
 </div>

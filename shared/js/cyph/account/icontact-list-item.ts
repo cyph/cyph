@@ -2,7 +2,6 @@ import {Observable} from 'rxjs';
 import {IAccountMessagingGroup} from '../proto';
 import {User} from './user';
 
-
 /** A contact list item. */
 export interface IContactListItem {
 	/** Group messaging session data. */
@@ -16,7 +15,7 @@ export interface IContactListItem {
 	unreadMessageCount: Observable<number>;
 
 	/** @see User */
-	user: Promise<User|undefined>;
+	user: Promise<User | undefined>;
 
 	/** @see User.username */
 	username: string;

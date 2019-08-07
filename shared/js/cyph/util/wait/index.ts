@@ -9,9 +9,8 @@ import {sleep} from './sleep';
 
 export * from './sleep';
 
-
 /** Converts Async to awaitable Promise. */
-export const awaitAsync	= async <T> (value: Async<T>) : Promise<T> => {
+export const awaitAsync = async <T>(value: Async<T>): Promise<T> => {
 	if (value instanceof Observable) {
 		return value.pipe(take(1)).toPromise();
 	}
@@ -20,14 +19,19 @@ export const awaitAsync	= async <T> (value: Async<T>) : Promise<T> => {
 };
 
 /** Returns a promise and its resolver function. */
-export const resolvable	= <T = void> (value?: T) : IResolvable<T> => {
-	let resolve: ((t?: T|PromiseLike<T>) => void)|undefined;
-	let reject: ((err?: any) => void)|undefined;
+export const resolvable = <T = void>(value?: T): IResolvable<T> => {
+	let resolve: ((t?: T | PromiseLike<T>) => void) | undefined;
+	let reject: ((err?: any) => void) | undefined;
 
 	/* tslint:disable-next-line:promise-must-complete */
-	const promise	= new Promise<T>((promiseResolve, promiseReject) => {
-		resolve	= value === undefined ? promiseResolve : () => { promiseResolve(value); };
-		reject	= promiseReject;
+	const promise = new Promise<T>((promiseResolve, promiseReject) => {
+		resolve =
+			value === undefined ?
+				promiseResolve :
+				() => {
+					promiseResolve(value);
+				};
+		reject = promiseReject;
 	});
 
 	if (!resolve || !reject) {
@@ -38,30 +42,33 @@ export const resolvable	= <T = void> (value?: T) : IResolvable<T> => {
 };
 
 /** Sleeps forever. */
-export const infiniteSleep	= async () : Promise<void> => {
+export const infiniteSleep = async (): Promise<void> => {
 	while (true) {
 		await sleep(config.maxInt32);
 	}
 };
 
 /** Runs f until it returns with no errors. */
-export const retryUntilSuccessful	= async <T> (
-	f: (lastErr?: any) => (MaybePromise<T>),
+export const retryUntilSuccessful = async <T>(
+	f: (lastErr?: any) => MaybePromise<T>,
 	maxAttempts: number = 10,
 	delay: number = 250
-) : Promise<T> => {
-	let lastErr: any|undefined;
+): Promise<T> => {
+	let lastErr: any | undefined;
 
-	for (let i = 0 ; true ; ++i) {
+	for (let i = 0; true; ++i) {
 		try {
 			return await f(lastErr);
 		}
 		catch (err) {
-			const throwing	= i > maxAttempts;
-			lastErr			= err;
+			const throwing = i > maxAttempts;
+			lastErr = err;
 
 			debugLogError(
-				() => `retryUntilSuccessful ${throwing ? 'throwing' : 'ignoring'} error`,
+				() =>
+					`retryUntilSuccessful ${
+						throwing ? 'throwing' : 'ignoring'
+					} error`,
 				() => err
 			);
 
@@ -75,27 +82,30 @@ export const retryUntilSuccessful	= async <T> (
 };
 
 /** Waits until value exists before resolving it in promise. */
-export const waitForValue	= async <T> (
-	f: () => T|undefined,
+export const waitForValue = async <T>(
+	f: () => T | undefined,
 	condition?: (value: T) => boolean
-) : Promise<T> => {
-	let value	= f();
+): Promise<T> => {
+	let value = f();
 	while (value === undefined || (condition && !condition(value))) {
 		await sleep();
-		value	= f();
+		value = f();
 	}
 	return value;
 };
 
 /** Waits for iterable value to exist and have at least minLength elements. */
-export const waitForIterable	= async <T> (
-	f: () => T&{length: number}|undefined,
+export const waitForIterable = async <T>(
+	f: () => T & {length: number} | undefined,
 	minLength: number = 1
-) : Promise<T> => {
-	return waitForValue<T&{length: number}>(f, value => value.length >= minLength);
+): Promise<T> => {
+	return waitForValue<T & {length: number}>(
+		f,
+		value => value.length >= minLength
+	);
 };
 
 /** Waits until function returns true. */
-export const waitUntilTrue	= async (f: () => boolean) : Promise<void> => {
+export const waitUntilTrue = async (f: () => boolean): Promise<void> => {
 	await waitForValue(() => f() || undefined);
 };

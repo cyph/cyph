@@ -4,50 +4,50 @@ import {BaseProvider} from '../base-provider';
 import {random} from '../util/random';
 import {AnalyticsService} from './analytics.service';
 
-
 /** Used for very basic A/B testing. */
 @Injectable()
 export class SplitTestingService extends BaseProvider {
 	/** @ignore */
-	private readonly getValueInternal	= memoize((analEvent: string, values: any) => {
-		if (values === undefined) {
-			values	= [true, false];
+	private readonly getValueInternal = memoize(
+		(analEvent: string, values: any) => {
+			if (values === undefined) {
+				values = [true, false];
+			}
+
+			let index: number;
+
+			if (typeof values === 'number') {
+				index = random(values);
+				values = undefined;
+			}
+			else if (values.length < 1) {
+				throw new Error('No values.');
+			}
+
+			values = (<any[]> values)
+				.map(o =>
+					typeof o === 'object' &&
+					'value' in o &&
+					typeof o.weight === 'number' ?
+						new Array(o.weight).fill(o.value) :
+						[o]
+				)
+				.reduce((a, b) => a.concat(b), []);
+
+			index = Math.floor(values.length * random());
+
+			if (this.analyticsService) {
+				this.analyticsService.sendEvent({
+					eventAction: index.toString(),
+					eventCategory: `abtesting-${analEvent}`,
+					eventValue: 1,
+					hitType: 'event'
+				});
+			}
+
+			return values === undefined ? index : values[index];
 		}
-
-		let index: number;
-
-		if (typeof values === 'number') {
-			index	= random(values);
-			values	= undefined;
-		}
-		else if (values.length < 1) {
-			throw new Error('No values.');
-		}
-
-		values	= (<any[]> values).
-			map(o =>
-				typeof o === 'object' && 'value' in o && typeof o.weight === 'number' ?
-					new Array(o.weight).fill(o.value) :
-					[o]
-			).reduce(
-				(a, b) => a.concat(b),
-				[]
-			)
-		;
-
-		index	= Math.floor(values.length * random());
-
-		if (this.analyticsService) {
-			this.analyticsService.sendEvent({
-				eventAction: index.toString(),
-				eventCategory: `abtesting-${analEvent}`,
-				eventValue: 1,
-				hitType: 'event'
-			});
-		}
-
-		return values === undefined ? index : values[index];
-	});
+	);
 
 	/**
 	 * Gets value based on split testing group and logs analytics event.
@@ -62,15 +62,19 @@ export class SplitTestingService extends BaseProvider {
 	 */
 	public getValue (analEvent: string, values?: never) : boolean;
 	public getValue (analEvent: string, values: number) : number;
-	public getValue <T> (analEvent: string, values: (T|{value: T; weight: number})[]) : T;
+	public getValue<T> (
+		analEvent: string,
+		values: (T | {value: T; weight: number})[]
+	) : T;
 	public getValue (analEvent: string, values: any) : any {
 		return this.getValueInternal(analEvent, values);
 	}
 
 	constructor (
 		/** @ignore */
-		@Inject(AnalyticsService) @Optional()
-		private readonly analyticsService: AnalyticsService|undefined
+		@Inject(AnalyticsService)
+		@Optional()
+		private readonly analyticsService: AnalyticsService | undefined
 	) {
 		super();
 	}

@@ -3,25 +3,24 @@ import * as localforage from 'localforage';
 import {StringProto} from '../proto';
 import {LocalStorageService} from './local-storage.service';
 
-
 /**
  * Provides local storage functionality for the web.
  */
 @Injectable()
 export class WebLocalStorageService extends LocalStorageService {
 	/** @ignore */
-	private readonly ready: Promise<void>	= (async () => {
+	private readonly ready: Promise<void> = (async () => {
 		try {
 			await localforage.ready();
 		}
 		catch {}
 		try {
 			await Promise.all(
-				Object.keys(localStorage).
-					filter(key => !key.startsWith('localforage/')).
-					map(async key => {
+				Object.keys(localStorage)
+					.filter(key => !key.startsWith('localforage/'))
+					.map(async key => {
 						/* tslint:disable-next-line:ban */
-						const value	= localStorage.getItem(key);
+						const value = localStorage.getItem(key);
 						if (value) {
 							await this.setItem(key, StringProto, value, false);
 						}
@@ -41,7 +40,10 @@ export class WebLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
-	protected async getItemInternal (url: string, waitForReady: boolean) : Promise<Uint8Array> {
+	protected async getItemInternal (
+		url: string,
+		waitForReady: boolean
+	) : Promise<Uint8Array> {
 		if (waitForReady) {
 			await this.ready;
 		}
@@ -50,7 +52,9 @@ export class WebLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
-	protected async getKeysInternal (waitForReady: boolean) : Promise<string[]> {
+	protected async getKeysInternal (
+		waitForReady: boolean
+	) : Promise<string[]> {
 		if (waitForReady) {
 			await this.ready;
 		}
@@ -59,7 +63,10 @@ export class WebLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
-	protected async removeItemInternal (url: string, waitForReady: boolean) : Promise<void> {
+	protected async removeItemInternal (
+		url: string,
+		waitForReady: boolean
+	) : Promise<void> {
 		if (waitForReady) {
 			await this.ready;
 		}

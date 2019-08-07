@@ -33,7 +33,6 @@ import {sleep} from '../../../cyph/util/wait';
 import {AppService} from '../../app.service';
 import {ChatRootStates} from '../../enums';
 
-
 /**
  * Angular component for chat UI root to share services.
  */
@@ -71,12 +70,13 @@ import {ChatRootStates} from '../../enums';
 	styleUrls: ['./ephemeral-chat-root.component.scss'],
 	templateUrl: './ephemeral-chat-root.component.html'
 })
-export class EphemeralChatRootComponent extends BaseProvider implements AfterViewInit {
+export class EphemeralChatRootComponent extends BaseProvider
+	implements AfterViewInit {
 	/** @see ChatRootStates */
-	public readonly chatRootStates: typeof ChatRootStates	= ChatRootStates;
+	public readonly chatRootStates: typeof ChatRootStates = ChatRootStates;
 
 	/** @see ChatStates */
-	public readonly chatStates: typeof ChatStates			= ChatStates;
+	public readonly chatStates: typeof ChatStates = ChatStates;
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
@@ -84,46 +84,44 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 
 		this.appService.chatRootState.next(ChatRootStates.blank);
 
-		const granimStates	= {
+		const granimStates = {
 			'default-state': !this.envService.telehealthTheme ?
 				{
-					gradients: [
-						['#392859', '#624599'],
-						['#9368e6', '#624599']
-					],
-					loop: true,
-					transitionSpeed: 5000
-				} :
+						gradients: [
+							['#392859', '#624599'],
+							['#9368e6', '#624599']
+						],
+						loop: true,
+						transitionSpeed: 5000
+				  } :
 				{
 					direction: 'diagonal',
-					gradients: [
-						['#eeecf1', '#fbf8fe'],
-						['#fbf8fe', '#eeecf1']
-					],
+					gradients: [['#eeecf1', '#fbf8fe'], ['#fbf8fe', '#eeecf1']],
 					loop: true,
 					opacity: [0.75, 0.5],
 					transitionSpeed: 2500
-				}
-			,
+				},
 			'paused': !this.envService.telehealthTheme ?
 				{
-					gradients: [
-						['#624599', '#8b62d9'],
-						['#9368e6', '#624599']
-					],
-					transitionSpeed: 5000
-				} :
+						gradients: [
+							['#624599', '#8b62d9'],
+							['#9368e6', '#624599']
+						],
+						transitionSpeed: 5000
+				  } :
 				undefined
 		};
 
-		const granim	= !this.envService.showGranim ? undefined : await initGranim({
-			direction: 'radial',
-			element: '#main-chat-gradient',
-			isPausedWhenNotInView: true,
-			name: 'basic-gradient',
-			opacity: [1, 1],
-			states: granimStates
-		});
+		const granim = !this.envService.showGranim ?
+			undefined :
+			await initGranim({
+				direction: 'radial',
+				element: '#main-chat-gradient',
+				isPausedWhenNotInView: true,
+				name: 'basic-gradient',
+				opacity: [1, 1],
+				states: granimStates
+			});
 
 		if (granim) {
 			(async () => {
@@ -158,8 +156,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 			await this.dialogService.alert({
 				content: this.envService.isIOS ?
 					this.stringsService.p2pDisabledLocalIOS :
-					this.stringsService.p2pDisabledLocal
-				,
+					this.stringsService.p2pDisabledLocal,
 				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
 			});
@@ -169,13 +166,12 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 			return;
 		}
 
-
 		this.sessionService.one(events.abort).then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
 
-			beforeUnloadMessage	= undefined;
+			beforeUnloadMessage = undefined;
 			this.appService.chatRootState.next(ChatRootStates.chat);
 		});
 
@@ -184,7 +180,7 @@ export class EphemeralChatRootComponent extends BaseProvider implements AfterVie
 				return;
 			}
 
-			beforeUnloadMessage	= this.stringsService.disconnectWarning;
+			beforeUnloadMessage = this.stringsService.disconnectWarning;
 		});
 
 		this.sessionService.one(events.beginWaiting).then(() => {

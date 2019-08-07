@@ -4,23 +4,24 @@ import {BaseProvider} from '../base-provider';
 import {IFaviconSet} from '../favicon/ifavicon-set';
 import {EnvService} from './env.service';
 
-
 /**
  * Manages favicon.
  */
 @Injectable()
 export class FaviconService extends BaseProvider {
 	/** @ignore */
-	private readonly elements	= {
-		apple: (size: string) => $(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`),
+	private readonly elements = {
+		apple: (size: string) =>
+			$(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`),
 		icon: (size: string) => $(`link[rel='icon'][sizes='${size}x${size}']`),
 		mask: () => $(`link[rel='mask-icon']`),
 		mstile: () => $(`meta[name='msapplication-TileImage']`),
-		shortcut: (size: string) => $(`link[rel='shortcut icon'][sizes='${size}x${size}']`)
+		shortcut: (size: string) =>
+			$(`link[rel='shortcut icon'][sizes='${size}x${size}']`)
 	};
 
 	/** @ignore */
-	private readonly faviconSets: {[name: string]: IFaviconSet}	= {
+	private readonly faviconSets: {[name: string]: IFaviconSet} = {
 		default: {
 			apple114: '',
 			apple120: '',
@@ -42,15 +43,24 @@ export class FaviconService extends BaseProvider {
 			shortcut196: ''
 		},
 		telehealth: {
-			apple114: '/assets/img/favicon/telehealth/apple-touch-icon-114x114.png',
-			apple120: '/assets/img/favicon/telehealth/apple-touch-icon-120x120.png',
-			apple144: '/assets/img/favicon/telehealth/apple-touch-icon-144x144.png',
-			apple152: '/assets/img/favicon/telehealth/apple-touch-icon-152x152.png',
-			apple180: '/assets/img/favicon/telehealth/apple-touch-icon-180x180.png',
-			apple57: '/assets/img/favicon/telehealth/apple-touch-icon-57x57.png',
-			apple60: '/assets/img/favicon/telehealth/apple-touch-icon-60x60.png',
-			apple72: '/assets/img/favicon/telehealth/apple-touch-icon-72x72.png',
-			apple76: '/assets/img/favicon/telehealth/apple-touch-icon-76x76.png',
+			apple114:
+				'/assets/img/favicon/telehealth/apple-touch-icon-114x114.png',
+			apple120:
+				'/assets/img/favicon/telehealth/apple-touch-icon-120x120.png',
+			apple144:
+				'/assets/img/favicon/telehealth/apple-touch-icon-144x144.png',
+			apple152:
+				'/assets/img/favicon/telehealth/apple-touch-icon-152x152.png',
+			apple180:
+				'/assets/img/favicon/telehealth/apple-touch-icon-180x180.png',
+			apple57:
+				'/assets/img/favicon/telehealth/apple-touch-icon-57x57.png',
+			apple60:
+				'/assets/img/favicon/telehealth/apple-touch-icon-60x60.png',
+			apple72:
+				'/assets/img/favicon/telehealth/apple-touch-icon-72x72.png',
+			apple76:
+				'/assets/img/favicon/telehealth/apple-touch-icon-76x76.png',
 			icon16: '/assets/img/favicon/telehealth/favicon-16x16.png',
 			icon160: '/assets/img/favicon/telehealth/favicon-160x160.png',
 			icon192: '/assets/img/favicon/telehealth/favicon-192x192.png',
@@ -64,13 +74,13 @@ export class FaviconService extends BaseProvider {
 	};
 
 	/** Active favicon set. */
-	public activeFaviconSet: IFaviconSet	= this.faviconSets.default;
+	public activeFaviconSet: IFaviconSet = this.faviconSets.default;
 
 	/**
 	 * Changes favicon at run-time for non-co-branded instances.
 	 * @param name Name of folder containing alternate favicon set under /assets/img/favicons.
 	 */
-	public setFavicon (name: 'default'|'telehealth' = 'default') : void {
+	public setFavicon (name: 'default' | 'telehealth' = 'default') : void {
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
@@ -83,7 +93,7 @@ export class FaviconService extends BaseProvider {
 			return;
 		}
 
-		this.activeFaviconSet	= this.faviconSets[name];
+		this.activeFaviconSet = this.faviconSets[name];
 
 		this.elements.apple('114').attr('href', this.activeFaviconSet.apple114);
 		this.elements.apple('120').attr('href', this.activeFaviconSet.apple120);
@@ -102,7 +112,9 @@ export class FaviconService extends BaseProvider {
 		this.elements.icon('96').attr('href', this.activeFaviconSet.icon96);
 		this.elements.mask().attr('href', this.activeFaviconSet.mask);
 		this.elements.mstile().attr('content', this.activeFaviconSet.mstile);
-		this.elements.shortcut('196').attr('href', this.activeFaviconSet.shortcut196);
+		this.elements
+			.shortcut('196')
+			.attr('href', this.activeFaviconSet.shortcut196);
 	}
 
 	/* tslint:disable-next-line:cyclomatic-complexity */
@@ -116,23 +128,40 @@ export class FaviconService extends BaseProvider {
 			return;
 		}
 
-		this.faviconSets.default.apple114		= this.elements.apple('114').attr('href') || '';
-		this.faviconSets.default.apple120		= this.elements.apple('120').attr('href') || '';
-		this.faviconSets.default.apple144		= this.elements.apple('144').attr('href') || '';
-		this.faviconSets.default.apple152		= this.elements.apple('152').attr('href') || '';
-		this.faviconSets.default.apple180		= this.elements.apple('180').attr('href') || '';
-		this.faviconSets.default.apple57		= this.elements.apple('57').attr('href') || '';
-		this.faviconSets.default.apple60		= this.elements.apple('60').attr('href') || '';
-		this.faviconSets.default.apple72		= this.elements.apple('72').attr('href') || '';
-		this.faviconSets.default.apple76		= this.elements.apple('76').attr('href') || '';
-		this.faviconSets.default.icon16			= this.elements.icon('16').attr('href') || '';
-		this.faviconSets.default.icon160		= this.elements.icon('160').attr('href') || '';
-		this.faviconSets.default.icon192		= this.elements.icon('192').attr('href') || '';
-		this.faviconSets.default.icon256		= this.elements.icon('256').attr('href') || '';
-		this.faviconSets.default.icon32			= this.elements.icon('32').attr('href') || '';
-		this.faviconSets.default.icon96			= this.elements.icon('96').attr('href') || '';
-		this.faviconSets.default.mask			= this.elements.mask().attr('href') || '';
-		this.faviconSets.default.mstile			= this.elements.mstile().attr('content') || '';
-		this.faviconSets.default.shortcut196	= this.elements.shortcut('196').attr('href') || '';
+		this.faviconSets.default.apple114 =
+			this.elements.apple('114').attr('href') || '';
+		this.faviconSets.default.apple120 =
+			this.elements.apple('120').attr('href') || '';
+		this.faviconSets.default.apple144 =
+			this.elements.apple('144').attr('href') || '';
+		this.faviconSets.default.apple152 =
+			this.elements.apple('152').attr('href') || '';
+		this.faviconSets.default.apple180 =
+			this.elements.apple('180').attr('href') || '';
+		this.faviconSets.default.apple57 =
+			this.elements.apple('57').attr('href') || '';
+		this.faviconSets.default.apple60 =
+			this.elements.apple('60').attr('href') || '';
+		this.faviconSets.default.apple72 =
+			this.elements.apple('72').attr('href') || '';
+		this.faviconSets.default.apple76 =
+			this.elements.apple('76').attr('href') || '';
+		this.faviconSets.default.icon16 =
+			this.elements.icon('16').attr('href') || '';
+		this.faviconSets.default.icon160 =
+			this.elements.icon('160').attr('href') || '';
+		this.faviconSets.default.icon192 =
+			this.elements.icon('192').attr('href') || '';
+		this.faviconSets.default.icon256 =
+			this.elements.icon('256').attr('href') || '';
+		this.faviconSets.default.icon32 =
+			this.elements.icon('32').attr('href') || '';
+		this.faviconSets.default.icon96 =
+			this.elements.icon('96').attr('href') || '';
+		this.faviconSets.default.mask = this.elements.mask().attr('href') || '';
+		this.faviconSets.default.mstile =
+			this.elements.mstile().attr('content') || '';
+		this.faviconSets.default.shortcut196 =
+			this.elements.shortcut('196').attr('href') || '';
 	}
 }

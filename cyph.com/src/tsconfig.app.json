@@ -10,9 +10,5 @@
 		"baseUrl": "",
 		"types": []
 	},
-	"exclude": [
-		"js/native",
-		"test.ts",
-		"**/*.spec.ts"
-	]
+	"exclude": ["js/native", "test.ts", "**/*.spec.ts"]
 }

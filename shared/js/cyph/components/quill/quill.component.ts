@@ -22,8 +22,12 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {lockFunction} from '../../util/lock';
 import {uuid} from '../../util/uuid';
-import {resolvable, sleep, waitForIterable, waitForValue} from '../../util/wait';
-
+import {
+	resolvable,
+	sleep,
+	waitForIterable,
+	waitForValue
+} from '../../util/wait';
 
 /**
  * Angular component for Quill editor.
@@ -41,11 +45,10 @@ import {resolvable, sleep, waitForIterable, waitForValue} from '../../util/wait'
 	styleUrls: ['./quill.component.scss'],
 	templateUrl: './quill.component.html'
 })
-export class QuillComponent
-extends BaseProvider
-implements AfterViewInit, ControlValueAccessor, OnChanges {
+export class QuillComponent extends BaseProvider
+	implements AfterViewInit, ControlValueAccessor, OnChanges {
 	/** @ignore */
-	private readonly clientID: string	= uuid();
+	private readonly clientID: string = uuid();
 
 	/** @ignore */
 	private deltasSubscription?: Subscription;
@@ -66,13 +69,13 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 	private resolveEditablePromise?: () => void;
 
 	/** @ignore */
-	private readonly selectionLock: LockFunction	= lockFunction();
+	private readonly selectionLock: LockFunction = lockFunction();
 
 	/** @ignore */
 	private selectionsSubscription?: Subscription;
 
 	/** ID of Quill container element. */
-	public readonly containerID: string	= `id-${uuid()}`;
+	public readonly containerID: string = `id-${uuid()}`;
 
 	/** Entire contents of the editor. */
 	@Input() public content?: IQuillDelta;
@@ -82,42 +85,40 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 		content: IQuillDelta;
 		delta: IQuillDelta;
 		oldContent: IQuillDelta;
-	}>	=
-		new EventEmitter<{
-			content: IQuillDelta;
-			delta: IQuillDelta;
-			oldContent: IQuillDelta;
-		}>()
-	;
+	}> = new EventEmitter<{
+		content: IQuillDelta;
+		delta: IQuillDelta;
+		oldContent: IQuillDelta;
+	}>();
 
 	/** Stream of deltas to apply. */
 	@Input() public deltas?: Observable<IQuillDelta>;
 
 	/** Indicates whether editor should be read-only. */
-	@Input() public isDisabled: boolean	= false;
+	@Input() public isDisabled: boolean = false;
 
 	/** isDisabled wrapper for ControlValueAccessor. */
-	public readonly isDisabledWrapper	= new BehaviorSubject<boolean>(false);
+	public readonly isDisabledWrapper = new BehaviorSubject<boolean>(false);
 
 	/** Emits on ready. */
-	@Output() public readonly ready: EventEmitter<void>	= new EventEmitter<void>();
+	@Output() public readonly ready: EventEmitter<void> = new EventEmitter<
+		void
+	>();
 
 	/** Emits on selection change. */
 	@Output() public readonly selectionChange: EventEmitter<{
 		oldRange: IQuillRange;
 		range: IQuillRange;
-	}>	=
-		new EventEmitter<{
-			oldRange: IQuillRange;
-			range: IQuillRange;
-		}>()
-	;
+	}> = new EventEmitter<{
+		oldRange: IQuillRange;
+		range: IQuillRange;
+	}>();
 
 	/** Stream of selections to apply. */
 	@Input() public selections?: Observable<IQuillRange>;
 
 	/** Toolbar configuration. */
-	@Input() public toolbar: any	= [
+	@Input() public toolbar: any = [
 		[{size: []}],
 		['bold', 'italic', 'underline', 'strike'],
 		[{color: []}, {background: []}],
@@ -130,13 +131,13 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 	];
 
 	/** @ignore */
-	private addClientID<T> (t: T|undefined) : T&{clientID: string} {
+	private addClientID<T> (t: T | undefined) : T & {clientID: string} {
 		if (!t) {
 			return <any> {clientID: this.clientID};
 		}
 
-		const newT		= <any> t;
-		newT.clientID	= this.clientID;
+		const newT = <any> t;
+		newT.clientID = this.clientID;
 		return newT;
 	}
 
@@ -147,9 +148,9 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 		}
 
 		this.quill.setContents(<any> (
-			this.content ?
+			(this.content ?
 				new Delta(this.stripExternalSubresources(this.content).ops) :
-				new Delta()
+				new Delta())
 		));
 	}
 
@@ -165,19 +166,26 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 			}
 
 			for (const k of ['image', 'video']) {
-				const url	= !insert[k] ? undefined : insert[k].url ? insert[k].url : insert[k];
+				const url = !insert[k] ?
+					undefined :
+				insert[k].url ?
+					insert[k].url :
+					insert[k];
 				if (
 					(typeof url !== 'string' || url.startsWith('data:')) &&
-					!(typeof url === 'string' && url.startsWith('data:image/svg'))
+					!(
+						typeof url === 'string' &&
+						url.startsWith('data:image/svg')
+					)
 				) {
 					continue;
 				}
 
 				if (insert[k].url) {
-					insert[k].url	= '';
+					insert[k].url = '';
 				}
 				else {
-					insert[k]		= '';
+					insert[k] = '';
 				}
 			}
 		}
@@ -201,7 +209,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 		await waitForIterable(() => $(`#${this.containerID}`));
 
 		/* Temporary workaround for https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18946 */
-		this.quill	= <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {
+		this.quill = <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {
 			modules: {toolbar: this.toolbar},
 			theme: 'snow'
 		});
@@ -211,7 +219,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 				return;
 			}
 
-			const content	= this.addClientID(oldDelta.compose(delta));
+			const content = this.addClientID(oldDelta.compose(delta));
 
 			this.contentChange.emit({
 				content,
@@ -224,30 +232,35 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 			}
 		});
 
-		this.quill.on('selection-change', (
-			range: Quill.RangeStatic|undefined,
-			oldRange: Quill.RangeStatic|undefined,
-			source
-		) => {
-			if (source !== 'user') {
-				return;
+		this.quill.on(
+			'selection-change',
+			(
+				range: Quill.RangeStatic | undefined,
+				oldRange: Quill.RangeStatic | undefined,
+				source
+			) => {
+				if (source !== 'user') {
+					return;
+				}
+
+				if (
+					this.onTouched &&
+					(!range || range.length === 0) &&
+					(!oldRange || oldRange.length === 0)
+				) {
+					this.onTouched();
+				}
+
+				this.selectionChange.emit({
+					oldRange: this.addClientID(oldRange),
+					range: this.addClientID(range)
+				});
 			}
+		);
 
-			if (
-				this.onTouched &&
-				(!range || range.length === 0) &&
-				(!oldRange || oldRange.length === 0)
-			) {
-				this.onTouched();
-			}
-
-			this.selectionChange.emit({
-				oldRange: this.addClientID(oldRange),
-				range: this.addClientID(range)
-			});
-		});
-
-		await waitForIterable(() => $(`#${this.containerID} .ql-editor:not(.ql-blank)`));
+		await waitForIterable(() =>
+			$(`#${this.containerID} .ql-editor:not(.ql-blank)`)
+		);
 		this.ready.emit();
 	}
 
@@ -285,7 +298,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 						break;
 					}
 
-					this.deltasSubscription	= this.deltas.subscribe(delta => {
+					this.deltasSubscription = this.deltas.subscribe(delta => {
 						if (!this.quill) {
 							throw new Error('No Quill.');
 						}
@@ -294,25 +307,25 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 							return;
 						}
 
-						this.quill.updateContents(
-							<any> new Delta(this.stripExternalSubresources(delta).ops)
-						);
+						this.quill.updateContents(<any> (
+							new Delta(this.stripExternalSubresources(delta).ops)
+						));
 					});
 
 					break;
 
 				case 'isDisabled':
 					if (this.isDisabled) {
-						const {resolve, promise}	= resolvable();
-						this.editablePromise		= promise;
-						this.resolveEditablePromise	= resolve;
+						const {resolve, promise} = resolvable();
+						this.editablePromise = promise;
+						this.resolveEditablePromise = resolve;
 						this.quill.disable();
 					}
 					else {
 						if (this.resolveEditablePromise) {
 							this.resolveEditablePromise();
-							this.editablePromise		= undefined;
-							this.resolveEditablePromise	= undefined;
+							this.editablePromise = undefined;
+							this.resolveEditablePromise = undefined;
 						}
 						this.quill.enable();
 					}
@@ -328,31 +341,36 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 						break;
 					}
 
-					this.selectionsSubscription	= this.selections.subscribe(range => {
-						this.selectionLock(async () => {
-							await this.editablePromise;
+					this.selectionsSubscription = this.selections.subscribe(
+						range => {
+							this.selectionLock(async () => {
+								await this.editablePromise;
 
-							if (!this.quill) {
-								throw new Error('No Quill.');
-							}
+								if (!this.quill) {
+									throw new Error('No Quill.');
+								}
 
-							if (range.clientID !== this.clientID) {
-								this.quill.setSelection(range.index, range.length);
-							}
-						});
-					});
+								if (range.clientID !== this.clientID) {
+									this.quill.setSelection(
+										range.index,
+										range.length
+									);
+								}
+							});
+						}
+					);
 			}
 		}
 	}
 
 	/** @inheritDoc */
 	public registerOnChange (f: (content: IQuillDelta) => void) : void {
-		this.onChange	= f;
+		this.onChange = f;
 	}
 
 	/** @inheritDoc */
 	public registerOnTouched (f: () => void) : void {
-		this.onTouched	= f;
+		this.onTouched = f;
 	}
 
 	/** @inheritDoc */
@@ -365,7 +383,7 @@ implements AfterViewInit, ControlValueAccessor, OnChanges {
 	/** @inheritDoc */
 	public writeValue (value: IQuillDelta) : void {
 		if (this.content !== value) {
-			this.content	= value;
+			this.content = value;
 		}
 
 		this.setQuillContent();

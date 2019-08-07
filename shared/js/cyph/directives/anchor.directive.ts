@@ -1,7 +1,6 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 
-
 /**
  * Adds rel='noopener noreferrer' to all anchor elements.
  */

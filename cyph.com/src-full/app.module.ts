@@ -36,7 +36,6 @@ import {MockHtmlSanitizerService} from './mock-html-sanitizer.service';
 import {MockPotassiumService} from './mock-potassium.service';
 import {SilentNotificationService} from './silent-notification.service';
 
-
 /**
  * Angular module for Cyph home page.
  */
@@ -55,10 +54,7 @@ import {SilentNotificationService} from './silent-notification.service';
 		DemoChatRootComponent,
 		DemoComponent
 	],
-	imports: [
-		CyphCommonModule,
-		CyphWebModule
-	],
+	imports: [CyphCommonModule, CyphWebModule],
 	providers: [
 		DemoService,
 		LocalStorageService,
@@ -85,7 +81,9 @@ export class AppModule implements DoBootstrap {
 	public ngDoBootstrap () : void {
 		customElements.define(
 			'beta-register',
-			createCustomElement(BetaRegisterComponent, {injector: this.injector})
+			createCustomElement(BetaRegisterComponent, {
+				injector: this.injector
+			})
 		);
 
 		customElements.define(
@@ -95,7 +93,9 @@ export class AppModule implements DoBootstrap {
 
 		customElements.define(
 			'cyph-claim-username',
-			createCustomElement(ClaimUsernameComponent, {injector: this.injector})
+			createCustomElement(ClaimUsernameComponent, {
+				injector: this.injector
+			})
 		);
 
 		customElements.define(
@@ -115,7 +115,7 @@ export class AppModule implements DoBootstrap {
 		/** @ignore */
 		private readonly injector: Injector
 	) {
-		(<any> self).sendEmail	= email;
+		(<any> self).sendEmail = email;
 
 		resolveStaticServices({
 			dialogService,

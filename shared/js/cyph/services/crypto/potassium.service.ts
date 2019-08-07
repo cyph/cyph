@@ -10,22 +10,22 @@ import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
 import {EnvService} from '../env.service';
 
-
 /**
  * @see IPotassium
  */
 @Injectable()
 export class PotassiumService extends PotassiumUtil implements IPotassium {
 	/** @ignore */
-	private readonly errorFunction: () => Promise<never>	= async () => this.errorValue;
+	private readonly errorFunction: () => Promise<never> = async () =>
+		this.errorValue;
 
 	/** @ignore */
-	private readonly errorValue: Promise<never>	= Promise.reject(
+	private readonly errorValue: Promise<never> = Promise.reject(
 		'Must provide an implementation of PotassiumService'
 	);
 
 	/** @inheritDoc */
-	public readonly box: IBox	= {
+	public readonly box: IBox = {
 		keyPair: this.errorFunction,
 		open: this.errorFunction,
 		privateKeyBytes: this.errorValue,
@@ -34,7 +34,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	};
 
 	/** @inheritDoc */
-	public readonly ephemeralKeyExchange: IEphemeralKeyExchange	= {
+	public readonly ephemeralKeyExchange: IEphemeralKeyExchange = {
 		aliceKeyPair: this.errorFunction,
 		aliceSecret: this.errorFunction,
 		bobSecret: this.errorFunction,
@@ -44,14 +44,14 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	};
 
 	/** @inheritDoc */
-	public readonly hash: IHash	= {
+	public readonly hash: IHash = {
 		bytes: this.errorValue,
 		deriveKey: this.errorFunction,
 		hash: this.errorFunction
 	};
 
 	/** @inheritDoc */
-	public readonly oneTimeAuth: IOneTimeAuth	= {
+	public readonly oneTimeAuth: IOneTimeAuth = {
 		bytes: this.errorValue,
 		keyBytes: this.errorValue,
 		sign: this.errorFunction,
@@ -59,7 +59,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	};
 
 	/** @inheritDoc */
-	public readonly passwordHash: IPasswordHash	= {
+	public readonly passwordHash: IPasswordHash = {
 		algorithm: this.errorValue,
 		hash: this.errorFunction,
 		memLimitInteractive: this.errorValue,
@@ -71,7 +71,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	};
 
 	/** @inheritDoc */
-	public readonly secretBox: ISecretBox	= {
+	public readonly secretBox: ISecretBox = {
 		aeadBytes: this.errorValue,
 		keyBytes: this.errorValue,
 		open: this.errorFunction,
@@ -79,7 +79,7 @@ export class PotassiumService extends PotassiumUtil implements IPotassium {
 	};
 
 	/** @inheritDoc */
-	public readonly sign: ISign	= {
+	public readonly sign: ISign = {
 		bytes: this.errorValue,
 		importSuperSphincsPublicKeys: this.errorFunction,
 		keyPair: this.errorFunction,

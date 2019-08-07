@@ -20,20 +20,13 @@ import {MaterialDialogService} from '../cyph/services/material-dialog.service';
 import {email} from '../cyph/util/email';
 import {resolveStaticServices} from '../cyph/util/static-services';
 
-
 /**
  * Angular module for Cyph home page.
  */
 @NgModule({
-	declarations: [
-		CheckoutComponent
-	],
-	entryComponents: [
-		CheckoutComponent
-	],
-	imports: [
-		CyphSharedModule
-	],
+	declarations: [CheckoutComponent],
+	entryComponents: [CheckoutComponent],
+	imports: [CyphSharedModule],
 	providers: [
 		AnalyticsService,
 		{
@@ -62,9 +55,9 @@ export class AppModule implements DoBootstrap {
 		/** @ignore */
 		private readonly injector: Injector
 	) {
-		(<any> self).cyphAnalytics	= analyticsService;
-		(<any> self).cyphConfig		= configService;
-		(<any> self).sendEmail		= email;
+		(<any> self).cyphAnalytics = analyticsService;
+		(<any> self).cyphConfig = configService;
+		(<any> self).sendEmail = email;
 
 		resolveStaticServices({
 			dialogService,

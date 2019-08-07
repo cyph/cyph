@@ -1,81 +1,111 @@
 <div
 	fxFlexFill
-	fxLayout='row'
-	fxLayoutAlign='center start'
-	class='card-list'
-	[class.initiating]='accountFilesService.showSpinner | async'
-	*ngIf='accountDatabaseService.currentUser | async as currentUser'
+	fxLayout="row"
+	fxLayoutAlign="center start"
+	class="card-list"
+	[class.initiating]="accountFilesService.showSpinner | async"
+	*ngIf="accountDatabaseService.currentUser | async as currentUser"
 >
 	<div
-		fxFlex='95'
-		fxLayout='column'
-		fxLayoutAlign='center stretch'
-		fxLayoutGap='16px'
-		fxLayoutGap.lt-md='8px'
+		fxFlex="95"
+		fxLayout="column"
+		fxLayoutAlign="center stretch"
+		fxLayoutGap="16px"
+		fxLayoutGap.lt-md="8px"
 	>
-		<ng-container *ngIf='
-			accountAppointmentsService.appointments.incoming | async as incomingAppointments
-		'>
-			<ng-container *ngIf='incomingAppointments.length > 0'>
-				<ng-container *ngTemplateOutlet='appointmentList; context: {
-					incoming: true,
-					list: incomingAppointments,
-					title: stringsService.incomingAppointments
-				}'></ng-container>
+		<ng-container
+			*ngIf="
+				accountAppointmentsService.appointments.incoming
+					| async as incomingAppointments
+			"
+		>
+			<ng-container *ngIf="incomingAppointments.length > 0">
+				<ng-container
+					*ngTemplateOutlet="
+						appointmentList;
+						context: {
+							incoming: true,
+							list: incomingAppointments,
+							title: stringsService.incomingAppointments
+						}
+					"
+				></ng-container>
 				<br />
 				<br />
 			</ng-container>
 		</ng-container>
 
-		<ng-container *ngIf='
-			accountAppointmentsService.appointments.current | async as currentAppointments
-		'>
-			<ng-container *ngIf='currentAppointments.length > 0'>
-				<ng-container *ngTemplateOutlet='appointmentList; context: {
+		<ng-container
+			*ngIf="
+				accountAppointmentsService.appointments.current
+					| async as currentAppointments
+			"
+		>
+			<ng-container *ngIf="currentAppointments.length > 0">
+				<ng-container
+					*ngTemplateOutlet="
+						appointmentList;
+						context: {
+							canDelete: true,
+							canJoin: true,
+							list: currentAppointments,
+							title:
+								currentAppointments.length === 1 ?
+									stringsService.currentAppointment :
+									stringsService.currentAppointments
+						}
+					"
+				></ng-container>
+			</ng-container>
+		</ng-container>
+
+		<ng-container
+			*ngTemplateOutlet="
+				appointmentList;
+				context: {
 					canDelete: true,
-					canJoin: true,
-					list: currentAppointments,
-					title: currentAppointments.length === 1 ?
-						stringsService.currentAppointment :
-						stringsService.currentAppointments
-				}'></ng-container>
-			</ng-container>
-		</ng-container>
-
-		<ng-container *ngTemplateOutlet='appointmentList; context: {
-			canDelete: true,
-			canJoin: false,
-			list: accountAppointmentsService.appointments.future | async,
-			title: stringsService.futureAppointments
-		}'></ng-container>
+					canJoin: false,
+					list:
+						accountAppointmentsService.appointments.future | async,
+					title: stringsService.futureAppointments
+				}
+			"
+		></ng-container>
 
 		<mat-accordion>
 			<mat-expansion-panel>
 				<mat-expansion-panel-header>
-					<h2>{{stringsService.pastAppointments}}</h2>
+					<h2>{{ stringsService.pastAppointments }}</h2>
 				</mat-expansion-panel-header>
-				<ng-container *ngTemplateOutlet='appointmentListContent; context: {
-					canDelete: false,
-					canJoin: false,
-					list: accountAppointmentsService.appointments.past | async
-				}'></ng-container>
+				<ng-container
+					*ngTemplateOutlet="
+						appointmentListContent;
+						context: {
+							canDelete: false,
+							canJoin: false,
+							list:
+								accountAppointmentsService.appointments.past
+								| async
+						}
+					"
+				></ng-container>
 			</mat-expansion-panel>
 		</mat-accordion>
 
-		<ng-container *ngIf='calendarOptions'>
-			<div class='cyph-inverted-theme'>
-				<mat-accordion class='calendar'>
+		<ng-container *ngIf="calendarOptions">
+			<div class="cyph-inverted-theme">
+				<mat-accordion class="calendar">
 					<mat-expansion-panel>
 						<mat-expansion-panel-header>
-							<h2>{{stringsService.appointmentCalendar}}</h2>
+							<h2>{{ stringsService.appointmentCalendar }}</h2>
 						</mat-expansion-panel-header>
 						<ng-fullcalendar
 							#calendar
-							[options]='calendarOptions'
-							(clickButton)='calendarClickButton($event.detail)'
-							(eventClick)='calendarEventClick($event.detail)'
-							(eventDrop)='calendarUpdateEvent($event.detail)'
-							(eventResize)='calendarUpdateEvent($event.detail)'
+							[options]="calendarOptions"
+							(clickButton)="calendarClickButton($event.detail)"
+							(eventClick)="calendarEventClick($event.detail)"
+							(eventDrop)="calendarUpdateEvent($event.detail)"
+							(eventResize)="calendarUpdateEvent($event.detail)"
 						></ng-fullcalendar>
 					</mat-expansion-panel>
 				</mat-accordion>
@@ -84,19 +114,19 @@
 	</div>
 
 	<mat-progress-spinner
-		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner | async'
+		mode="indeterminate"
+		*ngIf="accountFilesService.showSpinner | async"
 	></mat-progress-spinner>
 
 	<button
 		mat-fab
 		cyphTranslate
-		color='primary'
-		matTooltip='New Appointment Request'
-		matTooltipPosition='above'
-		routerLink='/request-appointment'
-		class='fixed-fab'
-		*ngIf='!envService.isTelehealthFull'
+		color="primary"
+		matTooltip="New Appointment Request"
+		matTooltipPosition="above"
+		routerLink="/request-appointment"
+		class="fixed-fab"
+		*ngIf="!envService.isTelehealthFull"
 	>
 		<mat-icon>add</mat-icon>
 	</button>
@@ -104,139 +134,174 @@
 
 <ng-template
 	#appointmentList
-	let-canDelete='canDelete'
-	let-canJoin='canJoin'
-	let-incoming='incoming'
-	let-list='list'
-	let-title='title'
+	let-canDelete="canDelete"
+	let-canJoin="canJoin"
+	let-incoming="incoming"
+	let-list="list"
+	let-title="title"
 >
 	<mat-card>
-		<h2>{{title}}</h2>
-		<ng-container *ngTemplateOutlet='appointmentListContent; context: {
-			canDelete: canDelete,
-			canJoin: canJoin,
-			incoming: incoming,
-			list: list
-		}'></ng-container>
+		<h2>{{ title }}</h2>
+		<ng-container
+			*ngTemplateOutlet="
+				appointmentListContent;
+				context: {
+					canDelete: canDelete,
+					canJoin: canJoin,
+					incoming: incoming,
+					list: list
+				}
+			"
+		></ng-container>
 	</mat-card>
 </ng-template>
 
 <ng-template
 	#appointmentListContent
-	let-canDelete='canDelete'
-	let-canJoin='canJoin'
-	let-incoming='incoming'
-	let-list='list'
+	let-canDelete="canDelete"
+	let-canJoin="canJoin"
+	let-incoming="incoming"
+	let-list="list"
 >
-	<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
-		<h3 *ngIf='list?.length <= 0'>
-			{{stringsService.noAppointments}}
+	<ng-container
+		*ngIf="accountDatabaseService.currentUser | async as currentUser"
+	>
+		<h3 *ngIf="list?.length <= 0">
+			{{ stringsService.noAppointments }}
 		</h3>
-		<div class='cyph-inverted-theme' *ngIf='timestampWatcher | async as now'>
+		<div
+			class="cyph-inverted-theme"
+			*ngIf="timestampWatcher | async as now"
+		>
 			<mat-accordion
-				class='appointment animated fadeInDown'
-				[class.bounceInRight]='(accountFilesService.initiated | async) === false'
+				class="appointment animated fadeInDown"
+				[class.bounceInRight]="
+					(accountFilesService.initiated | async) === false
+				"
 			>
-				<ng-container *ngFor='
-					let o of list; trackBy: trackByID; let i = index
-				'>
-					<mat-expansion-panel *ngIf='o.appointment.calendarInvite'>
+				<ng-container
+					*ngFor="let o of list; trackBy: trackByID; let i = index"
+				>
+					<mat-expansion-panel *ngIf="o.appointment.calendarInvite">
 						<mat-expansion-panel-header>
 							<mat-panel-title>
-								<div fxLayoutAlign='left center'>
+								<div fxLayoutAlign="left center">
 									<div>
-										<span>{{o.record.name}}</span>
+										<span>{{ o.record.name }}</span>
 										&ngsp;
-										<ng-container *ngIf='
-											!o.record.wasAnonymousShare ||
-											!!(
-												o.friend ||
-												o.appointment.fromEmail ||
-												o.appointment.fromName
-											);
-											else invitedAnonymously
-										'>
-											<span fxHide.lt-md cyphTranslate>with</span>
+										<ng-container
+											*ngIf="
+												!o.record.wasAnonymousShare ||
+													!!(
+														o.friend ||
+														o.appointment
+															.fromEmail ||
+														o.appointment.fromName
+													);
+												else invitedAnonymously
+											"
+										>
+											<span fxHide.lt-md cyphTranslate>
+												with
+											</span>
 											&ngsp;
-											<a fxHide.lt-md *ngIf='!!o.friend' [routerLink]='
-												"/profile/" +
-												o.friend
-											'>{{
-												o.friend
-											}}</a>
-											<span fxHide.lt-md *ngIf='!o.friend'>
+											<a
+												fxHide.lt-md
+												*ngIf="!!o.friend"
+												[routerLink]="
+													'/profile/' + o.friend
+												"
+											>
+												{{ o.friend }}
+											</a>
+											<span
+												fxHide.lt-md
+												*ngIf="!o.friend"
+											>
 												{{
 													o.appointment.fromName ||
-													o.appointment.fromEmail
+														o.appointment.fromEmail
 												}}
 											</span>
 											&ngsp;
 										</ng-container>
 										<ng-template #invitedAnonymously>
-											<span cyphTranslate>(invited anonymously)</span>
+											<span cyphTranslate>
+												(invited anonymously)
+											</span>
 										</ng-template>
 										<span fxHide.lt-md>
-											&mdash; {{getDateTimeString(
-												o.appointment.calendarInvite?.startTime
-											)}}
+											&mdash;
+											{{
+												getDateTimeString(
+													o.appointment.calendarInvite
+														?.startTime
+												)
+											}}
 										</span>
 									</div>
 								</div>
 							</mat-panel-title>
 							<mat-panel-description>
-								<div fxFlex fxLayoutAlign='end center' fxLayoutGap='2px'>
-									<ng-container *ngIf='!incoming'>
+								<div
+									fxFlex
+									fxLayoutAlign="end center"
+									fxLayoutGap="2px"
+								>
+									<ng-container *ngIf="!incoming">
 										<button
 											mat-icon-button
 											cyphTranslate
-											matTooltip='Start Call'
-											[disabled]='!canJoin'
-											[routerLink]='
-												"/appointments/" +
+											matTooltip="Start Call"
+											[disabled]="!canJoin"
+											[routerLink]="
+												'/appointments/' +
 												o.record.id +
-												"/call"
-											'
-											(click)='$event.stopPropagation()'
-											*ngIf='envService.isTelehealthFull'
+												'/call'
+											"
+											(click)="$event.stopPropagation()"
+											*ngIf="envService.isTelehealthFull"
 										>
 											<mat-icon>play_arrow</mat-icon>
 										</button>
 										<button
 											mat-icon-button
 											cyphTranslate
-											matTooltip='Delete'
-											[disabled]='!canDelete'
-											(click)='
-												accountFilesService.remove(o.record);
-												$event.stopPropagation();
-											'
+											matTooltip="Delete"
+											[disabled]="!canDelete"
+											(click)="
+												accountFilesService.remove(
+													o.record
+												);
+												$event.stopPropagation()
+											"
 										>
 											<mat-icon>delete</mat-icon>
 										</button>
 									</ng-container>
-									<ng-container *ngIf='incoming'>
+									<ng-container *ngIf="incoming">
 										<button
 											mat-icon-button
 											cyphTranslate
-											matTooltip='Accept'
-											(click)='
+											matTooltip="Accept"
+											(click)="
 												accept(o);
-												$event.stopPropagation();
-											'
+												$event.stopPropagation()
+											"
 										>
 											<mat-icon>check</mat-icon>
 										</button>
 										<button
 											mat-icon-button
 											cyphTranslate
-											matTooltip='Reject'
-											(click)='
+											matTooltip="Reject"
+											(click)="
 												accountFilesService.acceptIncomingFile(
 													o.record,
 													false
 												);
-												$event.stopPropagation();
-											'
+												$event.stopPropagation()
+											"
 										>
 											<mat-icon>close</mat-icon>
 										</button>
@@ -244,44 +309,60 @@
 								</div>
 							</mat-panel-description>
 						</mat-expansion-panel-header>
-						<div fxLayout='column'>
-							<div fxLayout='row' fxLayoutAlign='center' fxLayoutGap='5px' *ngFor='
-								let form of o.appointment.forms;
-								trackBy: trackByID;
-								let i = index;
-							'>
-								<button mat-raised-button [disabled]='incoming' [routerLink]='
-									"/appointments/" +
-									o.record.id +
-									"/forms/" +
-									i
-								'>
-									{{stringsService.patientForm}} #{{i + 1}}
+						<div fxLayout="column">
+							<div
+								fxLayout="row"
+								fxLayoutAlign="center"
+								fxLayoutGap="5px"
+								*ngFor="
+									let form of o.appointment.forms;
+									trackBy: trackByID;
+									let i = index
+								"
+							>
+								<button
+									mat-raised-button
+									[disabled]="incoming"
+									[routerLink]="
+										'/appointments/' +
+										o.record.id +
+										'/forms/' +
+										i
+									"
+								>
+									{{ stringsService.patientForm }} #{{
+										i + 1
+									}}
 								</button>
 							</div>
 							<div
-								*ngIf='envService.isTelehealth && o.appointment.forms?.length < 1'
-								fxFlex='50'
-								fxLayoutGap='5px'
-								fxLayoutAlign='center center'
-								fxLayout='column'
+								*ngIf="
+									envService.isTelehealth &&
+									o.appointment.forms?.length < 1
+								"
+								fxFlex="50"
+								fxLayoutGap="5px"
+								fxLayoutAlign="center center"
+								fxLayout="column"
 							>
-								<span>{{stringsService.patientFormsMissing}}</span>
+								<span>
+									{{ stringsService.patientFormsMissing }}
+								</span>
 								<button
-									*ngIf='
+									*ngIf="
 										(currentUser.user.userType | async) ===
 										accountUserTypes.Standard
-									'
+									"
 									mat-raised-button
-									[routerLink]='"/new-patient/" + o.record.id'
+									[routerLink]="'/new-patient/' + o.record.id"
 								>
-									{{stringsService.submitPatientForms}}
+									{{ stringsService.submitPatientForms }}
 								</button>
 								<br />
 							</div>
 							<cyph-calendar-invite
-								[isDisabled]='!(incoming && !o.friend)'
-								[(ngModel)]='o.appointment.calendarInvite'
+								[isDisabled]="!(incoming && !o.friend)"
+								[(ngModel)]="o.appointment.calendarInvite"
 							></cyph-calendar-invite>
 						</div>
 					</mat-expansion-panel>

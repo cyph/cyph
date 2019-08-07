@@ -13,7 +13,6 @@ import {requestJSON} from '../../../cyph/util/request';
 import {sleep} from '../../../cyph/util/wait';
 import {AppService} from '../../app.service';
 
-
 /**
  * Angular component for the Cyph lockdown screen.
  */
@@ -28,70 +27,73 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 	private correctPassword?: string;
 
 	/** Indicates whether unlock attempt is in progress. */
-	public readonly checking		= new BehaviorSubject<boolean>(false);
+	public readonly checking = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the last unlock attempt has failed. */
-	public readonly error			= new BehaviorSubject<boolean>(false);
+	public readonly error = new BehaviorSubject<boolean>(false);
 
 	/** Password visibility setting. */
-	public readonly hidePassword	= new BehaviorSubject<boolean>(true);
+	public readonly hidePassword = new BehaviorSubject<boolean>(true);
 
 	/** Unlock attempt lock. */
-	public readonly lock			= lockFunction();
+	public readonly lock = lockFunction();
 
 	/** Password to be used for unlock attempt. */
-	public readonly password		= new BehaviorSubject<string>('');
+	public readonly password = new BehaviorSubject<string>('');
 
 	/** Indicates whether component has been initiated. */
-	public readonly ready			= new BehaviorSubject<boolean>(false);
+	public readonly ready = new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
-	private async tryUnlock (password: string, passive: boolean = false) : Promise<boolean> {
+	private async tryUnlock (
+		password: string,
+		passive: boolean = false
+	) : Promise<boolean> {
 		return this.lock(async () => {
 			if (!this.appService.isLockedDown.value) {
 				return true;
 			}
 
-			let success	= false;
+			let success = false;
 
 			if (this.correctPassword) {
 				/* tslint:disable-next-line:possible-timing-attack */
-				success	= this.password.value === this.correctPassword;
+				success = this.password.value === this.correctPassword;
 
 				if (!passive) {
 					await sleep(random(1000, 250));
 				}
 			}
 			else if (password) {
-				let name: string|undefined;
+				let name: string | undefined;
 
 				try {
-					const o	= await requestJSON({
+					const o = await requestJSON({
 						headers: {Authorization: password},
 						method: 'POST',
 						url: this.envService.baseUrl + 'pro/unlock'
 					});
 
 					if (o.namespace === this.databaseService.namespace) {
-						name	=
-							typeof o.company === 'string' && o.company.length > 0 ?
+						name =
+							typeof o.company === 'string' &&
+							o.company.length > 0 ?
 								o.company :
 							typeof o.name === 'string' && o.name.length > 0 ?
 								o.name :
-								undefined
-						;
+								undefined;
 					}
 				}
 				catch {}
 
 				if (name) {
-					success	= true;
+					success = true;
 
 					if (!passive) {
 						await this.dialogService.alert({
-							content: `${this.stringsService.welcomeComma} ${name}${
-								name.endsWith('.') ? '' : '.'
-							}`,
+							content: `${
+								this.stringsService.welcomeComma
+							} ${name}${name.endsWith('.') ? '' : '.'}`,
 							title: this.stringsService.unlockedTitle
 						});
 					}
@@ -103,7 +105,11 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 					this.appService.unlock(),
 					passive ?
 						Promise.resolve(undefined) :
-						this.localStorageService.setItem('password', StringProto, password)
+						this.localStorageService.setItem(
+							'password',
+							StringProto,
+							password
+						)
 				]);
 			}
 
@@ -113,13 +119,12 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		this.correctPassword	=
-			this.envService.environment.customBuild ?
-				this.envService.environment.customBuild.config.password :
-				undefined
-		;
+		this.correctPassword = this.envService.environment.customBuild ?
+			this.envService.environment.customBuild.config.password :
+			undefined;
 
-		const urlPassword		= (locationData.hash.match(/#unlock\/([^\/]+)$/) || [])[1];
+		const urlPassword = (locationData.hash.match(/#unlock\/([^\/]+)$/) ||
+			[])[1];
 
 		if (urlPassword) {
 			this.appService.resolveLockedDownRoute('');
@@ -132,7 +137,9 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 		}
 
 		await this.tryUnlock(
-			await this.localStorageService.getItem('password', StringProto).catch(() => ''),
+			await this.localStorageService
+				.getItem('password', StringProto)
+				.catch(() => ''),
 			true
 		);
 

@@ -7,7 +7,6 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {readableByteLength} from '../../util/formatting';
 
-
 /**
  * Angular component for account settings UI.
  */
@@ -19,7 +18,7 @@ import {readableByteLength} from '../../util/formatting';
 })
 export class AccountStorageAnalyticsComponent extends BaseProvider {
 	/** @see readableByteLength */
-	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
+	public readonly readableByteLength: typeof readableByteLength = readableByteLength;
 
 	constructor (
 		/** @see AccountService */

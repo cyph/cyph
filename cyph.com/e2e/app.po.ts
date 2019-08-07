@@ -1,6 +1,5 @@
 import {browser, element, by} from 'protractor';
 
-
 export class CyphPage {
 	public async navigateTo () : Promise<any> {
 		await browser.waitForAngularEnabled(false);

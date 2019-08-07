@@ -16,7 +16,8 @@
 	}
 
 	&.non-clickable {
-		&, .router-link {
+		&,
+		.router-link {
 			cursor: initial !important;
 		}
 	}

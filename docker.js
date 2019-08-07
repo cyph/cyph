@@ -1,53 +1,60 @@
 #!/usr/bin/env node
 
+const childProcess = require('child_process');
+const crypto = require('crypto');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 
-const childProcess	= require('child_process');
-const crypto		= require('crypto');
-const fs			= require('fs');
-const os			= require('os');
-const path			= require('path');
-
-const cat			= f => {
+const cat = f => {
 	try {
-		return fs.readFileSync(f).toString().trim();
+		return fs
+			.readFileSync(f)
+			.toString()
+			.trim();
 	}
 	catch (_) {
 		return '';
 	}
 };
 
-const exec			= command => childProcess.execSync(
-	command,
-	{cwd: __dirname}
-).toString().trim();
+const exec = command =>
+	childProcess
+		.execSync(command, {cwd: __dirname})
+		.toString()
+		.trim();
 
-const spawn			= (command, args, cwd) => (
-	childProcess.spawnSync(
-		command,
-		args,
-		{cwd: path.join(__dirname, cwd || '')}
-	).stdout || ''
-).toString().trim();
-
-const spawnAsync	= (command, args, cwd) => new Promise(resolve =>
-	childProcess.spawn(
-		command,
-		args,
-		{cwd: path.join(__dirname, cwd || ''), stdio: 'inherit'}
-	).on(
-		'exit',
-		() => { resolve(); }
+const spawn = (command, args, cwd) =>
+	(
+		childProcess.spawnSync(command, args, {
+			cwd: path.join(__dirname, cwd || '')
+		}).stdout || ''
 	)
-);
+		.toString()
+		.trim();
 
-const runScript		= script => {
-	const tmpFile	= path.join(os.tmpdir(), crypto.randomBytes(32).toString('hex'));
+const spawnAsync = (command, args, cwd) =>
+	new Promise(resolve =>
+		childProcess
+			.spawn(command, args, {
+				cwd: path.join(__dirname, cwd || ''),
+				stdio: 'inherit'
+			})
+			.on('exit', () => {
+				resolve();
+			})
+	);
+
+const runScript = script => {
+	const tmpFile = path.join(
+		os.tmpdir(),
+		crypto.randomBytes(32).toString('hex')
+	);
 	fs.writeFileSync(tmpFile, script);
 	return spawnAsync('bash', [tmpFile]);
 };
 
-
-const args	= {
+const args = {
 	command: process.argv[2],
 	background: process.argv.indexOf('--background') > -1,
 	noUpdates: process.argv.indexOf('--no-updates') > -1,
@@ -56,84 +63,75 @@ const args	= {
 		process.argv.indexOf('--simple-custom-build') > -1 ||
 		process.argv.indexOf('--simple-prod-build') > -1 ||
 		process.argv.indexOf('--simple-websign-build') > -1 ||
-		process.argv.indexOf('--simple-websign-prod-build') > -1
-	,
-	site: process.argv[(process.argv.indexOf('--site') + 1) || undefined] || (
-		process.argv.indexOf('--firebase-local') > -1 ?
-			'firebase' :
-			undefined
-	)
+		process.argv.indexOf('--simple-websign-prod-build') > -1,
+	site:
+		process.argv[process.argv.indexOf('--site') + 1 || undefined] ||
+		(process.argv.indexOf('--firebase-local') > -1 ? 'firebase' : undefined)
 };
 
-const baseShellCommandArgs	= process.argv.
-	slice(3).
-	filter(s => s !== '--background' && s !== '--no-updates')
-;
-
-const shellCommandArgs		= baseShellCommandArgs.
-	map(s => s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`).
-	join(' ')
-;
-
-const isWindows				= process.platform === 'win32';
-const homeDir				= os.homedir();
-const backupDir				= path.join(homeDir, '.cyphbackup');
-const backupTargets			= ['gitconfig', 'gnupg', 'ssh'];
-const dockerHomeDir			= '/home/gibson';
-const agseRemoteAddress		= '10.0.0.42';
-const agseLocalAddress		= '10.0.0.43';
-const agseRemoteMAC			= cat(path.join(homeDir, '.cyph', 'agse.remote.mac'));
-const agseLocalInterface	= cat(path.join(homeDir, '.cyph', 'agse.local.interface'));
-const agseTempFile			= path.join(os.tmpdir(), 'balls');
-const commandAdditionalArgs	= [];
-
-const commandScript			=
-	fs.existsSync(path.join(__dirname, 'commands', `${args.command}.sh`)) ?
-		`${args.command}.sh` :
-		fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
-			`${args.command}.js` :
-			undefined
-;
-
-const isAgseDeploy			=
-	(
-		args.command === 'sign' &&
-		process.argv[4] !== '--test'
-	) || (
-		args.command === 'certsign' &&
-		(!process.argv[3] || process.argv[3] === 'cyphme')
-	) || (
-		args.command === 'deploy' &&
-		!args.simple &&
-		(!args.site || args.site === 'cyph.app')
-	)
-;
-
-const image					= 'cyph/' + (
-	spawn('git', ['describe', '--tags', '--exact-match']) ||
-	spawn('git', ['branch']).
-		split('\n').
-		filter(s => s && s.indexOf('*') === 0)[0].
-		split(/\s+/)[1]
-).toLowerCase();
-
-const isCyphInternal		= fs.existsSync(path.join(homeDir, '.cyph'));
-
-const mounts				= [
-	`${__dirname}:/cyph`,
-	...(!isCyphInternal || isWindows ? [] : [
-		`${path.join(homeDir, '.cyph')}:${dockerHomeDir}/.cyph`,
-		`${path.join(homeDir, '.gitconfig')}:${dockerHomeDir}/.gitconfig`,
-		`${path.join(homeDir, '.gnupg')}:${dockerHomeDir}/.gnupg.original`,
-		`${path.join(homeDir, '.ssh')}:${dockerHomeDir}/.ssh`
-	])
-].map(
-	s => ['-v', s]
-).reduce(
-	(a, b) => a.concat(b), []
+const baseShellCommandArgs = process.argv
+	.slice(3)
+	.filter(s => s !== '--background' && s !== '--no-updates');
+const shellCommandArgs = baseShellCommandArgs
+	.map(s => (s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`))
+	.join(' ');
+const isWindows = process.platform === 'win32';
+const homeDir = os.homedir();
+const backupDir = path.join(homeDir, '.cyphbackup');
+const backupTargets = ['gitconfig', 'gnupg', 'ssh'];
+const dockerHomeDir = '/home/gibson';
+const agseRemoteAddress = '10.0.0.42';
+const agseLocalAddress = '10.0.0.43';
+const agseRemoteMAC = cat(path.join(homeDir, '.cyph', 'agse.remote.mac'));
+const agseLocalInterface = cat(
+	path.join(homeDir, '.cyph', 'agse.local.interface')
 );
+const agseTempFile = path.join(os.tmpdir(), 'balls');
+const commandAdditionalArgs = [];
 
-const windowsWorkaround		= !isWindows ? '' : `
+const commandScript = fs.existsSync(
+	path.join(__dirname, 'commands', `${args.command}.sh`)
+) ?
+	`${args.command}.sh` :
+fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
+	`${args.command}.js` :
+	undefined;
+const isAgseDeploy =
+	(args.command === 'sign' && process.argv[4] !== '--test') ||
+	(args.command === 'certsign' &&
+		(!process.argv[3] || process.argv[3] === 'cyphme')) ||
+	(args.command === 'deploy' &&
+		!args.simple &&
+		(!args.site || args.site === 'cyph.app'));
+const image =
+	'cyph/' +
+	(
+		spawn('git', ['describe', '--tags', '--exact-match']) ||
+		spawn('git', ['branch'])
+			.split('\n')
+			.filter(s => s && s.indexOf('*') === 0)[0]
+			.split(/\s+/)[1]
+	).toLowerCase();
+
+const isCyphInternal = fs.existsSync(path.join(homeDir, '.cyph'));
+
+const mounts = [
+	`${__dirname}:/cyph`,
+	...(!isCyphInternal || isWindows ?
+		[] :
+		[
+			`${path.join(homeDir, '.cyph')}:${dockerHomeDir}/.cyph`,
+			`${path.join(homeDir, '.gitconfig')}:${dockerHomeDir}/.gitconfig`,
+			`${path.join(homeDir, '.gnupg')}:${dockerHomeDir}/.gnupg.original`,
+			`${path.join(homeDir, '.ssh')}:${dockerHomeDir}/.ssh`
+		])
+]
+	.map(s => ['-v', s])
+	.reduce((a, b) => a.concat(b), []);
+
+const windowsWorkaround = !isWindows ?
+	'' :
+	`
 	sudo touch /windows
 	sudo mv /bin/ln /bin/ln.old
 	echo '
@@ -153,7 +151,7 @@ const windowsWorkaround		= !isWindows ? '' : `
 	sudo chmod +x /bin/ln
 `;
 
-const shellScripts			= {
+const shellScripts = {
 	agseInit: `
 		echo 'Need root for AGSE connection setup.'
 		sudo echo
@@ -235,8 +233,7 @@ const shellScripts			= {
 	`
 };
 
-
-const backup			= () => {
+const backup = () => {
 	if (!isCyphInternal || isWindows) {
 		return;
 	}
@@ -252,11 +249,21 @@ const backup			= () => {
 	catch (_) {}
 
 	for (const d of backupTargets) {
-		spawn('cp', ['-a', path.join(homeDir, `.${d}`), path.join(backupDir, d)]);
+		spawn('cp', [
+			'-a',
+			path.join(homeDir, `.${d}`),
+			path.join(backupDir, d)
+		]);
 	}
 
-	for (const d of fs.readdirSync(path.join(homeDir, '.cyph')).filter(d => d !== 'cdn')) {
-		spawn('cp', ['-a', path.join(homeDir, '.cyph', d), path.join(backupDir, 'cyph', d)]);
+	for (const d of fs
+		.readdirSync(path.join(homeDir, '.cyph'))
+		.filter(d => d !== 'cdn')) {
+		spawn('cp', [
+			'-a',
+			path.join(homeDir, '.cyph', d),
+			path.join(backupDir, 'cyph', d)
+		]);
 	}
 
 	childProcess.spawnSync('git', ['add', '.'], {cwd: backupDir});
@@ -267,28 +274,23 @@ const backup			= () => {
 	);
 };
 
-const containerName		= command => `${image}_${command}`.replace(/\//g, '_');
+const containerName = command => `${image}_${command}`.replace(/\//g, '_');
 
-const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOutput) => {
-	const processArgs	= [
-		'run',
-		getOutput ? '-i' : '-it'
-	].concat(
-		name ? [`--name=${name}`] : []
-	).concat(
-		background ? [`-d`] : []
-	).concat(
-		!noCleanup ? [`--rm=true`] : []
-	).concat(
-		mounts
-	).concat(
-		additionalArgs || []
-	).concat([
-		image,
-		'bash',
-		'-c',
-		command
-	]);
+const dockerRun = (
+	command,
+	name,
+	background,
+	noCleanup,
+	additionalArgs,
+	getOutput
+) => {
+	const processArgs = ['run', getOutput ? '-i' : '-it']
+		.concat(name ? [`--name=${name}`] : [])
+		.concat(background ? [`-d`] : [])
+		.concat(!noCleanup ? [`--rm=true`] : [])
+		.concat(mounts)
+		.concat(additionalArgs || [])
+		.concat([image, 'bash', '-c', command]);
 
 	if (getOutput) {
 		return spawn('docker', processArgs);
@@ -298,58 +300,61 @@ const dockerRun			= (command, name, background, noCleanup, additionalArgs, getOu
 	}
 };
 
-const editImage			= (command, condition, useOriginal) => Promise.resolve().then(() => {
-	if (
-		condition &&
-		dockerRun(
-			`if ${condition}\nthen echo dothemove\nfi`,
-			undefined,
-			undefined,
-			undefined,
-			undefined,
-			true
-		) !== 'dothemove'
-	) {
-		return false;
-	}
+const editImage = (command, condition, useOriginal) =>
+	Promise.resolve().then(() => {
+		if (
+			condition &&
+			dockerRun(
+				`if ${condition}\nthen echo dothemove\nfi`,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				true
+			) !== 'dothemove'
+		) {
+			return false;
+		}
 
-	const tmpContainer	= containerName('tmp');
+		const tmpContainer = containerName('tmp');
 
-	spawn('docker', ['rm', '-f', tmpContainer]);
+		spawn('docker', ['rm', '-f', tmpContainer]);
 
-	return Promise.resolve(
-		useOriginal ?
-			spawnAsync('docker', ['tag', `${image}_original:latest`, `${image}:latest`]) :
-			undefined
-	).then(() =>
-		dockerRun(command, tmpContainer, undefined, true, ['-p', '9005:9005'])
-	).then(() =>
-		spawnAsync('docker', ['commit', tmpContainer, image])
-	).then(() =>
-		spawnAsync('docker', ['rm', '-f', tmpContainer])
-	).then(() =>
-		spawnAsync('docker', ['system', 'prune', '-f'])
-	).then(() =>
-		true
-	);
-});
+		return Promise.resolve(
+			useOriginal ?
+				spawnAsync('docker', [
+						'tag',
+						`${image}_original:latest`,
+						`${image}:latest`
+				  ]) :
+				undefined
+		)
+			.then(() =>
+				dockerRun(command, tmpContainer, undefined, true, [
+					'-p',
+					'9005:9005'
+				])
+			)
+			.then(() => spawnAsync('docker', ['commit', tmpContainer, image]))
+			.then(() => spawnAsync('docker', ['rm', '-f', tmpContainer]))
+			.then(() => spawnAsync('docker', ['system', 'prune', '-f']))
+			.then(() => true);
+	});
 
-const killContainer		= name => {
-	for (
-		const pid of spawn('docker', ['ps', '-a']).
-			split('\n').
-			slice(1).
-			filter(s => s.indexOf(name) > -1).
-			map(s => s.split(/\s+/)[0])
-	) {
+const killContainer = name => {
+	for (const pid of spawn('docker', ['ps', '-a'])
+		.split('\n')
+		.slice(1)
+		.filter(s => s.indexOf(name) > -1)
+		.map(s => s.split(/\s+/)[0])) {
 		console.log(spawn('docker', ['kill', '-s', '9', pid]));
 		console.log(spawn('docker', ['rm', '-f', pid]));
 	}
 };
 
-const killEverything	= () => killContainer('cyph');
+const killEverything = () => killContainer('cyph');
 
-const pullUpdates		= () => {
+const pullUpdates = () => {
 	if (args.noUpdates) {
 		return Promise.resolve();
 	}
@@ -361,7 +366,10 @@ const pullUpdates		= () => {
 	).then(didUpdate =>
 		didUpdate ?
 			undefined :
-			editImage(shellScripts.aptUpdate.command, shellScripts.aptUpdate.condition)
+			editImage(
+				shellScripts.aptUpdate.command,
+				shellScripts.aptUpdate.condition
+			)
 	);
 	/*
 	.then(() => {
@@ -383,48 +391,56 @@ const pullUpdates		= () => {
 	*/
 };
 
-const removeImage		= (name, opts) => {
-	for (
-		const imageId of spawn('docker', ['images'].concat(opts || [])).
-			split('\n').
-			slice(1).
-			filter(s => name ? s.indexOf(name) > -1 : true).
-			map(s => s.split(/\s+/)[2])
-	) {
+const removeImage = (name, opts) => {
+	for (const imageId of spawn('docker', ['images'].concat(opts || []))
+		.split('\n')
+		.slice(1)
+		.filter(s => (name ? s.indexOf(name) > -1 : true))
+		.map(s => s.split(/\s+/)[2])) {
 		console.log(spawn('docker', ['rmi', '-f', imageId]));
 	}
 };
 
-const updateCircleCI	= () => {
+const updateCircleCI = () => {
 	if (args.noUpdates) {
 		return Promise.resolve();
 	}
 
 	fs.writeFileSync(
 		'Dockerfile.tmp',
-		fs.readFileSync('Dockerfile').
-			toString().
-			split('\n').
-			filter(s => !s.startsWith('VOLUME')).
-			join('\n').
-			replace('WORKDIR /cyph/commands', 'WORKDIR /cyph').
-			replace(/#CIRCLECI:/g, '').
-			replace(/BASE64_FILES/, [
-				'commands/dockerpostmake.sh',
-				'commands/getlibs.sh',
-				'commands/libclone.sh',
-				'commands/updatedockerimage.sh',
-				'native/plugins.list',
-				'shared/lib/js/package.json',
-				'shared/lib/js/yarn.lock'
-			].map(filePath => fs.readFileSync(filePath).toString().
-				match(/(.|\n){1,32768}/g).
-				map(s => Buffer.from(s).toString('base64')).
-				map(base64 => `RUN echo '${base64}' | base64 --decode >> ~/getlibs/${filePath}`).
-				join('\n')
-			).join(
-				'\n'
-			))
+		fs
+			.readFileSync('Dockerfile')
+			.toString()
+			.split('\n')
+			.filter(s => !s.startsWith('VOLUME'))
+			.join('\n')
+			.replace('WORKDIR /cyph/commands', 'WORKDIR /cyph')
+			.replace(/#CIRCLECI:/g, '')
+			.replace(
+				/BASE64_FILES/,
+				[
+					'commands/dockerpostmake.sh',
+					'commands/getlibs.sh',
+					'commands/libclone.sh',
+					'commands/updatedockerimage.sh',
+					'native/plugins.list',
+					'shared/lib/js/package.json',
+					'shared/lib/js/yarn.lock'
+				]
+					.map(filePath =>
+						fs
+							.readFileSync(filePath)
+							.toString()
+							.match(/(.|\n){1,32768}/g)
+							.map(s => Buffer.from(s).toString('base64'))
+							.map(
+								base64 =>
+									`RUN echo '${base64}' | base64 --decode >> ~/getlibs/${filePath}`
+							)
+							.join('\n')
+					)
+					.join('\n')
+			)
 	);
 
 	return spawnAsync('docker', [
@@ -434,35 +450,36 @@ const updateCircleCI	= () => {
 		'-f',
 		'Dockerfile.tmp',
 		'.'
-	]).then(() =>
-		spawnAsync('docker', ['push', 'cyph/circleci:latest'])
-	).then(() => {
-		fs.unlinkSync('Dockerfile.tmp');
-	}).then(() => Promise.all(
-		spawn('docker', ['images', '-a']).
-			split('\n').
-			slice(1).
-			filter(s => s.indexOf('cyph/circleci') > -1).
-			map(s => spawnAsync('docker', ['rmi', s.split(/\s+/)[0]]))
-	)).then(() =>
-		spawnAsync('docker', ['system', 'prune', '-f'])
-	);
+	])
+		.then(() => spawnAsync('docker', ['push', 'cyph/circleci:latest']))
+		.then(() => {
+			fs.unlinkSync('Dockerfile.tmp');
+		})
+		.then(() =>
+			Promise.all(
+				spawn('docker', ['images', '-a'])
+					.split('\n')
+					.slice(1)
+					.filter(s => s.indexOf('cyph/circleci') > -1)
+					.map(s => spawnAsync('docker', ['rmi', s.split(/\s+/)[0]]))
+			)
+		)
+		.then(() => spawnAsync('docker', ['system', 'prune', '-f']));
 };
-
 
 if (isWindows && isAgseDeploy) {
 	throw new Error('AGSE not yet supported on Windows.');
 }
 
-let exitCleanup	= () => {};
-let initPromise	= Promise.resolve();
+let exitCleanup = () => {};
+let initPromise = Promise.resolve();
 
 if (isAgseDeploy) {
 	commandAdditionalArgs.push('-p');
 	commandAdditionalArgs.push('31337:31337/udp');
 
-	exitCleanup	= () => fs.appendFileSync(agseTempFile);
-	initPromise	= runScript(shellScripts.agseInit);
+	exitCleanup = () => fs.appendFileSync(agseTempFile);
+	initPromise = runScript(shellScripts.agseInit);
 }
 
 switch (args.command) {
@@ -476,15 +493,23 @@ switch (args.command) {
 
 	case 'make':
 		killEverything();
-		initPromise	= spawnAsync('docker', ['build', '-t', image, '.']).then(() =>
-			spawnAsync('docker', ['tag', `${image}:latest`, `${image}_original:latest`])
-		).then(() =>
-			pullUpdates()
-		).then(() =>
-			editImage(shellScripts.setup)
-		).then(() =>
-			spawnAsync('docker', ['tag', `${image}:latest`, `${image}_original:latest`])
-		);
+		initPromise = spawnAsync('docker', ['build', '-t', image, '.'])
+			.then(() =>
+				spawnAsync('docker', [
+					'tag',
+					`${image}:latest`,
+					`${image}_original:latest`
+				])
+			)
+			.then(() => pullUpdates())
+			.then(() => editImage(shellScripts.setup))
+			.then(() =>
+				spawnAsync('docker', [
+					'tag',
+					`${image}:latest`,
+					`${image}_original:latest`
+				])
+			);
 		break;
 
 	case 'makeclean':
@@ -504,10 +529,10 @@ switch (args.command) {
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('44000:44000');
 
-		const base		= 'http://localhost';
-		const projects	= ['backend', 'cyph.app', 'cyph.com'];
+		const base = 'http://localhost';
+		const projects = ['backend', 'cyph.app', 'cyph.com'];
 
-		for (let i = 0 ; i < projects.length ; ++i) {
+		for (let i = 0; i < projects.length; ++i) {
 			console.log(`${projects[i]}: ${base}:4200${i}`);
 		}
 
@@ -549,21 +574,23 @@ initPromise.then(() => {
 	backup();
 	killContainer(containerName(args.command));
 
-	pullUpdates().then(() => {
-		if (args.command === 'getlibs') {
-			return;
-		}
+	pullUpdates()
+		.then(() => {
+			if (args.command === 'getlibs') {
+				return;
+			}
 
-		return dockerRun(
-			shellScripts.command,
-			containerName(args.command),
-			args.background,
-			false,
-			commandAdditionalArgs
-		);
-	}).then(() => {
-		if (args.command === 'updatelibs') {
-			updateCircleCI();
-		}
-	});
+			return dockerRun(
+				shellScripts.command,
+				containerName(args.command),
+				args.background,
+				false,
+				commandAdditionalArgs
+			);
+		})
+		.then(() => {
+			if (args.command === 'updatelibs') {
+				updateCircleCI();
+			}
+		});
 });

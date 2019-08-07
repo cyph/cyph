@@ -29,7 +29,6 @@ import {parse} from '../../util/serialization';
 import {timestampToDate} from '../../util/time';
 import {uuid} from '../../util/uuid';
 
-
 /**
  * Angular component for dynamic form.
  */
@@ -41,38 +40,40 @@ import {uuid} from '../../util/uuid';
 })
 export class DynamicFormComponent extends BaseProvider implements OnInit {
 	/** @ignore */
-	private readonly maskDefaultKey: Uint8Array				= new Uint8Array(0);
+	private readonly maskDefaultKey: Uint8Array = new Uint8Array(0);
 
 	/** @ignore */
-	private readonly maskCache: Map<Uint8Array, any>		= new Map();
+	private readonly maskCache: Map<Uint8Array, any> = new Map();
 
 	/** @ignore */
-	private readonly processCalcs	= memoize((formula: string) : string => {
+	private readonly processCalcs = memoize((formula: string): string => {
 		return formula.replace(/calc\([^\s]+\)/g, s => {
-			let calcEnd	= Array.from(s).slice(5).concat(' ').reduce(
-				(o: {left: number; right: number}|number, c, i) =>
-					typeof o === 'number' ?
-						o :
-					o.left === o.right ?
-						i :
-						{
-							left: o.left + (c === '(' ? 1 : 0),
-							right: o.right + (c === ')' ? 1 : 0)
-						}
-				,
-				{left: 1, right: 0}
-			);
+			let calcEnd = Array.from(s)
+				.slice(5)
+				.concat(' ')
+				.reduce(
+					(o: {left: number; right: number} | number, c, i) =>
+						typeof o === 'number' ?
+							o :
+						o.left === o.right ?
+							i :
+							{
+								left: o.left + (c === '(' ? 1 : 0),
+								right: o.right + (c === ')' ? 1 : 0)
+							},
+					{left: 1, right: 0}
+				);
 
 			if (typeof calcEnd === 'number') {
 				calcEnd += 5;
 			}
 			else {
-				calcEnd	= s.length;
+				calcEnd = s.length;
 			}
 
-			let result	= 0;
+			let result = 0;
 			try {
-				result	= mexp.eval(s.slice(5, calcEnd - 1));
+				result = mexp.eval(s.slice(5, calcEnd - 1));
 			}
 			catch {}
 
@@ -81,86 +82,87 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 	});
 
 	/** Emits when form changes. */
-	@Output() public readonly changeForm						= new EventEmitter<void>();
+	@Output() public readonly changeForm = new EventEmitter<void>();
 
 	/** Data source to pull data from on init and save data to on submit. */
-	@Input() public dataSource?: MaybePromise<IAsyncValue<any>|undefined>	=
-	(
+	@Input() public dataSource?: MaybePromise<IAsyncValue<any> | undefined> =
 		this.envService.isAccounts &&
 		this.accountDatabaseService &&
 		this.envService.isTelehealth &&
-		this.accountDatabaseService.currentUser.value
-	) ?
-		this.accountDatabaseService.getAsyncValue('patientInfo', PatientInfo) :
-		undefined
-	;
+		this.accountDatabaseService.currentUser.value ?
+			this.accountDatabaseService.getAsyncValue(
+					'patientInfo',
+					PatientInfo
+			  ) :
+			undefined;
 
 	/** @see emailPattern */
-	public readonly emailPattern								= emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** @see Form */
 	@Input() public form?: IForm;
 
 	/** Gets a random unique name for the specified Form item. */
-	public readonly getName	= memoize(
-		(_O: IForm|Form.IComponent|Form.IElement|Form.IElementContainer) => uuid()
+	public readonly getName = memoize(
+		(
+			_O: IForm | Form.IComponent | Form.IElement | Form.IElementContainer
+		) => uuid()
 	);
 
 	/** Hides all elements with empty values when isDisabled is true. */
-	@Input() public hideEmptyElements: boolean					= false;
+	@Input() public hideEmptyElements: boolean = false;
 
 	/** Hides submit button. */
-	@Input() public hideSubmitButton: boolean					= false;
+	@Input() public hideSubmitButton: boolean = false;
 
 	/** Indicates whether input is disabled/read-only. */
-	@Input() public isDisabled: boolean							= false;
+	@Input() public isDisabled: boolean = false;
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile?: boolean;
 
 	/** @see saveFile */
-	public readonly saveFile									= saveFile;
+	public readonly saveFile = saveFile;
 
 	/** @see Form */
-	@Output() public readonly submitForm						= new EventEmitter<IForm>();
+	@Output() public readonly submitForm = new EventEmitter<IForm>();
 
 	/** Submit button text. */
-	@Input() public submitText: string							= this.stringsService.submit;
+	@Input() public submitText: string = this.stringsService.submit;
 
 	/** @see timestampToDate */
-	public readonly timestampToDate								= timestampToDate;
+	public readonly timestampToDate = timestampToDate;
 
 	/** @see toFloat */
-	public readonly toFloat										= toFloat;
+	public readonly toFloat = toFloat;
 
 	/** @see trackByIndex */
-	public readonly trackByIndex								= trackByIndex;
+	public readonly trackByIndex = trackByIndex;
 
 	/** @see trackBySelf */
-	public readonly trackBySelf									= trackBySelf;
+	public readonly trackBySelf = trackBySelf;
 
 	/** @see Form.FormElement.Types */
-	public readonly types										= Form.Element.Types;
+	public readonly types = Form.Element.Types;
 
 	/** @ignore */
-	private async getDataSource () : Promise<IAsyncValue<any>|undefined> {
+	private async getDataSource () : Promise<IAsyncValue<any> | undefined> {
 		return this.dataSource instanceof Promise ?
 			this.dataSource.catch(() => undefined) :
-			this.dataSource
-		;
+			this.dataSource;
 	}
 
 	/** @ignore */
-	private getElementValue (element: Form.IElement) : boolean|number|string|Uint8Array|undefined {
-		return (
-			element.valueBoolean !== undefined ?
-				element.valueBoolean :
-			element.valueNumber !== undefined ?
-				element.valueNumber :
-			element.valueString !== undefined ?
-				element.valueString :
-				element.valueBytes
-		);
+	private getElementValue (
+		element: Form.IElement
+	) : boolean | number | string | Uint8Array | undefined {
+		return element.valueBoolean !== undefined ?
+			element.valueBoolean :
+		element.valueNumber !== undefined ?
+			element.valueNumber :
+		element.valueString !== undefined ?
+			element.valueString :
+			element.valueBytes;
 	}
 
 	/** @ignore */
@@ -168,10 +170,12 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 		f: (
 			hasOwnID: boolean,
 			id: string,
-			segments: (number|string)[],
-			element: Form.IElement|undefined,
-			elementValue: boolean|number|string|Uint8Array|undefined,
-			getElementValue: ((val: string) => (boolean|number|string|Uint8Array)[])|undefined
+			segments: (number | string)[],
+			element: Form.IElement | undefined,
+			elementValue: boolean | number | string | Uint8Array | undefined,
+			getElementValue:
+				| ((val: string) => (boolean | number | string | Uint8Array)[])
+				| undefined
 		) => void
 	) : void {
 		if (!this.form || !this.form.components) {
@@ -183,120 +187,127 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 				continue;
 			}
 
-			const getContainers	=
-				(containers: Form.IElementContainer[]) : Form.IElementContainer[] =>
-					containers.length < 1 ?
-						containers :
-						containers.concat(getContainers(containers.map(o =>
-							filterUndefined((o.elements || []).map(elem => elem.elementContainer))
-						).reduce(
-							(a, b) => a.concat(b),
-							[]
-						)))
-			;
+			const getContainers = (
+				containers: Form.IElementContainer[]
+			): Form.IElementContainer[] =>
+				containers.length < 1 ?
+					containers :
+					containers.concat(
+						getContainers(
+							containers
+								.map(o =>
+									filterUndefined(
+										(o.elements || []).map(
+											elem => elem.elementContainer
+										)
+									)
+								)
+								.reduce((a, b) => a.concat(b), [])
+						)
+					);
 
 			for (const container of getContainers(component.containers)) {
-				const containerElements	=
-					filterUndefined((container.elements || []).map(elem => elem.element))
-				;
+				const containerElements = filterUndefined(
+					(container.elements || []).map(elem => elem.element)
+				);
 
 				if (containerElements.length < 1) {
 					continue;
 				}
 
-				const containerID		= !container.id ?
+				const containerID = !container.id ?
 					undefined :
-					(component.id ? `${component.id}.` : '') + container.id
-				;
+					(component.id ? `${component.id}.` : '') + container.id;
 
-				const containerFormula	= containerID && container.formula ?
-					container.formula :
-					undefined
-				;
+				const containerFormula =
+					containerID && container.formula ?
+						container.formula :
+						undefined;
 
-				const containerValue	= !containerFormula ?
+				const containerValue = !containerFormula ?
 					undefined :
 					this.processCalcs(
-						containerElements.
-							map(element =>
-								this.getElementValue(element)
-							).
-							reduce(
-								(s: string, elementValue, i) => s.replace(
-									new RegExp(`\\\$\\{${i}\\}`, 'g'),
-									(elementValue || '').toString()
-								),
+						containerElements
+							.map(element => this.getElementValue(element))
+							.reduce(
+								(s: string, elementValue, i) =>
+									s.replace(
+										new RegExp(`\\\$\\{${i}\\}`, 'g'),
+										(elementValue || '').toString()
+									),
 								containerFormula.split('\n')[0]
 							)
-					)
-				;
+					);
 
-				const reverseContainerFormula	= memoize((val: string) => {
-					const arr	= !containerFormula ?
+				const reverseContainerFormula = memoize((val: string) => {
+					const arr = !containerFormula ?
 						undefined :
 						parse<any>(
 							this.processCalcs(
-								containerFormula.split('\n')[1].replace(/\$\{val\}/g, val)
+								containerFormula
+									.split('\n')[1]
+									.replace(/\$\{val\}/g, val)
 							)
-						)
-					;
+						);
 
-					return (
-						arr instanceof Array &&
+					return arr instanceof Array &&
 						arr.reduce(
-							(b, o) => b && (
-								typeof o === 'boolean' ||
-								typeof o === 'number' ||
-								typeof o === 'string'
-							),
+							(b, o) =>
+								b &&
+								(typeof o === 'boolean' ||
+									typeof o === 'number' ||
+									typeof o === 'string'),
 							true
-						)
-					) ?
+						) ?
 						arr :
-						[]
-					;
+						[];
 				});
 
-				const elements	= [
+				const elements = [
 					...containerElements.map(element => ({
 						element,
 						elementValue: this.getElementValue(element),
 						hasOwnID: !!element.id,
 						id: !element.id ?
 							containerID :
-							(
-								(component.id ? `${component.id}.` : '') +
-								(container.id ? `${container.id}.` : '') +
-								element.id
-							)
+							(component.id ? `${component.id}.` : '') +
+							(container.id ? `${container.id}.` : '') +
+							element.id
 					})),
-					...(!containerFormula ? [] : [{
-						element: undefined,
-						elementValue: containerValue,
-						hasOwnID: true,
-						id: containerID
-					}])
+					...(!containerFormula ?
+						[] :
+						[
+							{
+								element: undefined,
+								elementValue: containerValue,
+								hasOwnID: true,
+								id: containerID
+							}
+						])
 				];
 
-				for (let i = 0 ; i < elements.length ; ++i) {
-					const {element, elementValue, hasOwnID, id}	= elements[i];
+				for (let i = 0; i < elements.length; ++i) {
+					const {element, elementValue, hasOwnID, id} = elements[i];
 
 					if (!id) {
 						continue;
 					}
 
-					const segments	= id.split('.').
-						map(s => {
-							const arrayIndex	= (s.match(/\[\d+\]$/) || [])[0];
-							return !arrayIndex ? s : [
-								s.slice(0, 0 - arrayIndex.length),
-								toInt(arrayIndex.slice(1, -1))
-							];
-						}).reduce(
-							(arr: (number|string)[], s) => arr.concat(s),
+					const segments = id
+						.split('.')
+						.map(s => {
+							const arrayIndex = (s.match(/\[\d+\]$/) || [])[0];
+							return !arrayIndex ?
+								s :
+								[
+									s.slice(0, 0 - arrayIndex.length),
+									toInt(arrayIndex.slice(1, -1))
+								];
+						})
+						.reduce(
+							(arr: (number | string)[], s) => arr.concat(s),
 							[]
-						)
-					;
+						);
 
 					f(
 						hasOwnID,
@@ -315,12 +326,10 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 	/** Decode mask bytes. */
 	public getMask ({mask}: Form.IElement) : any {
-		const maskBytes	= !mask || mask.length < 1 ? this.maskDefaultKey : mask;
+		const maskBytes = !mask || mask.length < 1 ? this.maskDefaultKey : mask;
 
-		return getOrSetDefault(
-			this.maskCache,
-			maskBytes,
-			() => maskBytes !== this.maskDefaultKey ?
+		return getOrSetDefault(this.maskCache, maskBytes, () =>
+			maskBytes !== this.maskDefaultKey ?
 				msgpack.decode(maskBytes) :
 				{mask: false}
 		);
@@ -340,97 +349,112 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		const dataSource	= await this.getDataSource();
+		const dataSource = await this.getDataSource();
 
-		if (this.isDisabled || !dataSource || !this.form || !this.form.components) {
+		if (
+			this.isDisabled ||
+			!dataSource ||
+			!this.form ||
+			!this.form.components
+		) {
 			return;
 		}
 
-		const value	= await dataSource.getValue();
+		const value = await dataSource.getValue();
 
-		this.iterateFormValues((_, id, segments, element, _ELEMENT_VALUE, getElementValue) => {
-			if (element === undefined) {
-				return;
-			}
+		this.iterateFormValues(
+			(_, id, segments, element, _ELEMENT_VALUE, getElementValue) => {
+				if (element === undefined) {
+					return;
+				}
 
-			let elementValue	= segments.reduce(
-				(v, segment) =>
-					(
+				let elementValue = segments.reduce(
+					(v, segment) =>
 						(typeof segment === 'number' && v instanceof Array) ||
-						(typeof segment === 'string' && typeof v === 'object')
-					) ?
-						v[segment] :
-						undefined
-				,
-				value
-			);
+						(typeof segment === 'string' && typeof v === 'object') ?
+							v[segment] :
+							undefined,
+					value
+				);
 
-			if (elementValue !== undefined && getElementValue) {
-				elementValue	= getElementValue(elementValue.toString());
+				if (elementValue !== undefined && getElementValue) {
+					elementValue = getElementValue(elementValue.toString());
+				}
+
+				if (elementValue === undefined) {
+					return;
+				}
+
+				switch (typeof elementValue) {
+					case 'boolean':
+						element.valueBoolean = elementValue;
+						break;
+
+					case 'number':
+						element.valueNumber = elementValue;
+						break;
+
+					case 'string':
+						element.valueString = elementValue;
+						break;
+
+					default:
+						throw new Error(`Invalid form value at ${id}`);
+				}
 			}
-
-			if (elementValue === undefined) {
-				return;
-			}
-
-			switch (typeof elementValue) {
-				case 'boolean':
-					element.valueBoolean	= elementValue;
-					break;
-
-				case 'number':
-					element.valueNumber		= elementValue;
-					break;
-
-				case 'string':
-					element.valueString		= elementValue;
-					break;
-
-				default:
-					throw new Error(`Invalid form value at ${id}`);
-			}
-		});
+		);
 	}
 
 	/** Submit handler. */
 	public async onSubmit () : Promise<void> {
-		const dataSource	= await this.getDataSource();
+		const dataSource = await this.getDataSource();
 
 		if (dataSource) {
 			await dataSource.updateValue(value => {
-				this.iterateFormValues((hasOwnID, _ID, segments, _, elementValue) => {
-					if (!hasOwnID) {
-						return;
-					}
-
-					const lastSegment	= segments.length > 0 ? segments.slice(-1)[0] : undefined;
-
-					if (elementValue === undefined || lastSegment === undefined) {
-						return;
-					}
-
-					let parentValue	= value;
-
-					for (let i = 0 ; i < segments.length - 1 ; ++i) {
-						const segment		= segments[i];
-						const nextSegment	= segments[i + 1];
-						const nextValue		= parentValue[segment];
-
-						if (typeof nextSegment === 'number' && !(nextValue instanceof Array)) {
-							parentValue[segment]	= [];
+				this.iterateFormValues(
+					(hasOwnID, _ID, segments, _, elementValue) => {
+						if (!hasOwnID) {
+							return;
 						}
-						else if (
-							typeof nextSegment === 'string' &&
-							typeof nextValue !== 'object'
+
+						const lastSegment =
+							segments.length > 0 ?
+								segments.slice(-1)[0] :
+								undefined;
+
+						if (
+							elementValue === undefined ||
+							lastSegment === undefined
 						) {
-							parentValue[segment]	= {};
+							return;
 						}
 
-						parentValue	= parentValue[segment];
-					}
+						let parentValue = value;
 
-					parentValue[lastSegment]	= elementValue;
-				});
+						for (let i = 0; i < segments.length - 1; ++i) {
+							const segment = segments[i];
+							const nextSegment = segments[i + 1];
+							const nextValue = parentValue[segment];
+
+							if (
+								typeof nextSegment === 'number' &&
+								!(nextValue instanceof Array)
+							) {
+								parentValue[segment] = [];
+							}
+							else if (
+								typeof nextSegment === 'string' &&
+								typeof nextValue !== 'object'
+							) {
+								parentValue[segment] = {};
+							}
+
+							parentValue = parentValue[segment];
+						}
+
+						parentValue[lastSegment] = elementValue;
+					}
+				);
 
 				return value;
 			});
@@ -441,8 +465,11 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 	constructor (
 		/** @ignore */
-		@Inject(AccountDatabaseService) @Optional()
-		private readonly accountDatabaseService: AccountDatabaseService|undefined,
+		@Inject(AccountDatabaseService)
+		@Optional()
+		private readonly accountDatabaseService:
+			| AccountDatabaseService
+			| undefined,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

@@ -5,16 +5,15 @@ import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {IAsyncValue} from './iasync-value';
 import {lockFunction} from './util/lock';
 
-
 /**
  * IAsyncValue implementation that wraps a local value.
  */
 export class LocalAsyncValue<T> implements IAsyncValue<T> {
 	/** @inheritDoc */
-	public readonly lock	= lockFunction();
+	public readonly lock = lockFunction();
 
 	/** @ignore */
-	public readonly subject	= new BehaviorSubject<T>(this.value);
+	public readonly subject = new BehaviorSubject<T>(this.value);
 
 	/** @ignore */
 	public setValueInternal (newValue: T, emit: boolean = true) : void {
@@ -29,7 +28,7 @@ export class LocalAsyncValue<T> implements IAsyncValue<T> {
 			}
 		}
 
-		this.value	= newValue;
+		this.value = newValue;
 
 		if (emit) {
 			this.subject.next(this.value);

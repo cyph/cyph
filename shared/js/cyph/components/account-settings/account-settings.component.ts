@@ -16,7 +16,6 @@ import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {titleize} from '../../util/titleize';
 
-
 /**
  * Angular component for account settings UI.
  */
@@ -28,10 +27,10 @@ import {titleize} from '../../util/titleize';
 })
 export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	/** @see CyphPlans */
-	public readonly cyphPlans		= CyphPlans;
+	public readonly cyphPlans = CyphPlans;
 
 	/** Data. */
-	public readonly data			= new BehaviorSubject({
+	public readonly data = new BehaviorSubject({
 		current: {
 			email: '',
 			name: '',
@@ -48,7 +47,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	});
 
 	/** Email address. */
-	public readonly email			= this.accountDatabaseService.getAsyncValue(
+	public readonly email = this.accountDatabaseService.getAsyncValue(
 		'email',
 		StringProto,
 		SecurityModels.unprotected,
@@ -59,13 +58,13 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	);
 
 	/** @see emailPattern */
-	public readonly emailPattern	= emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** Indicates whether page is loading. */
-	public readonly loading			= new BehaviorSubject<boolean>(true);
+	public readonly loading = new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether profile is visible to anonymous users. */
-	public readonly profileVisible	= this.accountDatabaseService.getAsyncValue(
+	public readonly profileVisible = this.accountDatabaseService.getAsyncValue(
 		'profileVisible',
 		BooleanProto,
 		SecurityModels.unprotected,
@@ -79,34 +78,34 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	public readonly ready: BehaviorSubject<boolean>;
 
 	/** UI state. */
-	public readonly state			= this.activatedRoute.data.pipe(map(o =>
-		typeof o.state === 'number' ? o.state : this.states.default
-	));
+	public readonly state = this.activatedRoute.data.pipe(
+		map(o => (typeof o.state === 'number' ? o.state : this.states.default))
+	);
 
 	/** UI states. */
-	public readonly states			= {
+	public readonly states = {
 		default: 1,
 		masterKey: 2,
 		pin: 3
 	};
 
 	/** @see titleize */
-	public readonly titleize		= titleize;
+	public readonly titleize = titleize;
 
 	/** User. */
-	public readonly user			= new BehaviorSubject<User|undefined>(undefined);
+	public readonly user = new BehaviorSubject<User | undefined>(undefined);
 
 	/** @see usernameMask */
-	public readonly usernameMask	= usernameMask;
+	public readonly usernameMask = usernameMask;
 
 	/** @ignore */
-	private async changePasswordInternal <T> (
+	private async changePasswordInternal<T> (
 		password: T,
 		requiredState: number,
 		dialogConfig: {content: string; failureContent: string; title: string},
 		changePassword: (password: T) => Promise<void>
 	) : Promise<void> {
-		const user	= this.user.value;
+		const user = this.user.value;
 		if (
 			!user ||
 			(await this.state.pipe(take(1)).toPromise()) !== requiredState
@@ -114,11 +113,13 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		if (!(await this.dialogService.confirm({
-			content: dialogConfig.content,
-			markdown: true,
-			title: dialogConfig.title
-		}))) {
+		if (
+			!(await this.dialogService.confirm({
+				content: dialogConfig.content,
+				markdown: true,
+				title: dialogConfig.title
+			}))
+		) {
 			return;
 		}
 
@@ -154,7 +155,10 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	}
 
 	/** Saves lock screen password update. */
-	public async changePIN (pin: {isCustom: boolean; value: string}) : Promise<void> {
+	public async changePIN (pin: {
+		isCustom: boolean;
+		value: string;
+	}) : Promise<void> {
 		return this.changePasswordInternal(
 			pin,
 			this.states.pin,
@@ -171,29 +175,37 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
 
-		const {user}	= await this.accountDatabaseService.getCurrentUser();
+		const {user} = await this.accountDatabaseService.getCurrentUser();
 
 		this.user.next(user);
 
-		const [email, profileVisible, {name, realUsername}]	= await Promise.all([
+		const [
+			email,
+			profileVisible,
+			{name, realUsername}
+		] = await Promise.all([
 			this.email.getValue(),
 			this.profileVisible.getValue(),
 			user.accountUserProfile.getValue()
 		]);
 
-		const current	= {
+		const current = {
 			email,
 			name,
 			profileVisible,
-			realUsername: realUsername.toLowerCase() === user.username ?
-				realUsername :
-				user.username
+			realUsername:
+				realUsername.toLowerCase() === user.username ?
+					realUsername :
+					user.username
 		};
 
 		this.updateData({
 			current,
 			modified: current,
-			usernamePattern: user.username.split('').map(c => `[${c.toUpperCase()}${c}]`).join('')
+			usernamePattern: user.username
+				.split('')
+				.map(c => `[${c.toUpperCase()}${c}]`)
+				.join('')
 		});
 
 		this.loading.next(false);
@@ -201,31 +213,34 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 	/** Saves data updates. */
 	public async save () : Promise<void> {
-		const user	= this.user.value;
+		const user = this.user.value;
 		if (!user || !this.ready.value) {
 			return;
 		}
 
 		this.loading.next(true);
 
-		const data				= this.data.value;
-		const email				= data.modified.email.trim();
-		const name				= data.modified.name.trim();
-		const profileVisible	= data.modified.profileVisible;
-		const realUsername		= data.modified.realUsername.trim();
+		const data = this.data.value;
+		const email = data.modified.email.trim();
+		const name = data.modified.name.trim();
+		const profileVisible = data.modified.profileVisible;
+		const realUsername = data.modified.realUsername.trim();
 
 		await Promise.all([
 			data.current.email === email ?
 				undefined :
-				this.email.setValue(email)
-			,
+				this.email.setValue(email),
 			data.current.profileVisible === profileVisible ?
 				undefined :
-				this.profileVisible.setValue(profileVisible)
-			,
-			data.current.name === name && data.current.realUsername === realUsername ?
+				this.profileVisible.setValue(profileVisible),
+			data.current.name === name &&
+			data.current.realUsername === realUsername ?
 				undefined :
-				user.accountUserProfile.updateValue(async o => ({...o, name, realUsername}))
+				user.accountUserProfile.updateValue(async o => ({
+					...o,
+					name,
+					realUsername
+				}))
 		]);
 
 		this.updateData({current: {email, name, profileVisible, realUsername}});
@@ -258,7 +273,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 				...this.data.value.modified,
 				...data.modified
 			},
-			usernamePattern: data.usernamePattern || this.data.value.usernamePattern
+			usernamePattern:
+				data.usernamePattern || this.data.value.usernamePattern
 		});
 	}
 
@@ -292,18 +308,22 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		this.ready	= toBehaviorSubject(
-			combineLatest([this.data, this.user]).pipe(map(([data, user]) =>
-				!!user &&
-				(
-					data.current.email !== data.modified.email ||
-					data.current.name !== data.modified.name ||
-					data.current.profileVisible !== data.modified.profileVisible ||
-					data.current.realUsername !== data.modified.realUsername
-				) &&
-				!!data.modified.name &&
-				data.modified.realUsername.toLowerCase() === user.username
-			)),
+		this.ready = toBehaviorSubject(
+			combineLatest([this.data, this.user]).pipe(
+				map(
+					([data, user]) =>
+						!!user &&
+						(data.current.email !== data.modified.email ||
+							data.current.name !== data.modified.name ||
+							data.current.profileVisible !==
+								data.modified.profileVisible ||
+							data.current.realUsername !==
+								data.modified.realUsername) &&
+						!!data.modified.name &&
+						data.modified.realUsername.toLowerCase() ===
+							user.username
+				)
+			),
 			false,
 			this.subscriptions
 		);

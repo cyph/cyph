@@ -6,7 +6,6 @@ import {
 	ISessionTextConfirmation
 } from '../proto';
 
-
 /** Optional properties of ISessionMessageData. */
 export interface ISessionMessageAdditionalData {
 	/** @see ISessionMessageData.bytes */

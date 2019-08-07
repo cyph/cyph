@@ -1,38 +1,40 @@
-<cyph-account-profile [home]='true' *ngIf='
-	envService.isTelehealthFull;
-	else contactsHome
-'></cyph-account-profile>
+<cyph-account-profile
+	[home]="true"
+	*ngIf="envService.isTelehealthFull; else contactsHome"
+></cyph-account-profile>
 
 <ng-template #contactsHome>
-	<ng-container *ngIf='
-		(accountDatabaseService.currentUser | async)?.confirmed &&
-		envService.isMobile | async;
-		else sidebarHome
-	'>
+	<ng-container
+		*ngIf="
+			(accountDatabaseService.currentUser | async)?.confirmed &&
+				envService.isMobile | async;
+			else sidebarHome
+		"
+	>
 		<cyph-account-contacts
-			[home]='true'
-			[fxHide]='envService.isTelehealth'
-			[searchMode]='searchMode | async'
-			(searchBarBlur)='router.navigate([])'
+			[home]="true"
+			[fxHide]="envService.isTelehealth"
+			[searchMode]="searchMode | async"
+			(searchBarBlur)="router.navigate([])"
 		></cyph-account-contacts>
 
 		<div
 			fxFlex
 			fxFlexFill
-			fxLayoutAlign='center center'
-			*ngIf='envService.isTelehealth'
+			fxLayoutAlign="center center"
+			*ngIf="envService.isTelehealth"
 		>
-			<ng-container *ngTemplateOutlet='logoTemplate'></ng-container>
+			<ng-container *ngTemplateOutlet="logoTemplate"></ng-container>
 		</div>
 
-		<div *ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'>
+		<div *ngIf="!(accountDatabaseService.currentUser | async)?.confirmed">
 			<a
 				mat-fab
 				cyphTranslate
-				[class.absolute-fab]='(envService.isMobile | async) === false'
-				[class.fixed-fab]='envService.isMobile | async'
-				matTooltip='New Burner Chat'
-				[href]='envService.cyphImUrl'
+				[class.absolute-fab]="(envService.isMobile | async) === false"
+				[class.fixed-fab]="envService.isMobile | async"
+				matTooltip="New Burner Chat"
+				[href]="envService.cyphImUrl"
 			>
 				<mat-icon>chat</mat-icon>
 			</a>
@@ -44,20 +46,29 @@
 	<div
 		fxFlex
 		fxFlexFill
-		fxLayoutAlign='center center'
-		[class.initiating]='accountFilesService.uploadSpinner | async'
+		fxLayoutAlign="center center"
+		[class.initiating]="accountFilesService.uploadSpinner | async"
 	>
-		<ng-container *ngTemplateOutlet='logoTemplate'></ng-container>
+		<ng-container *ngTemplateOutlet="logoTemplate"></ng-container>
 
-		<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px' class='actions'>
-			<ng-container *ngIf='!envService.isTelehealth; else telehealthButtons'>
+		<div
+			fxLayout="row"
+			fxLayout.lt-md="column"
+			fxLayoutGap="16px"
+			class="actions"
+		>
+			<ng-container
+				*ngIf="!envService.isTelehealth; else telehealthButtons"
+			>
 				<button
 					mat-raised-button
-					color='accent'
-					[matTooltip]='stringsService.linkGet'
-					matTooltipPosition='above'
-					routerLink='/account-burner/chat'
-					*ngIf='(accountDatabaseService.currentUser | async)?.confirmed'
+					color="accent"
+					[matTooltip]="stringsService.linkGet"
+					matTooltipPosition="above"
+					routerLink="/account-burner/chat"
+					*ngIf="
+						(accountDatabaseService.currentUser | async)?.confirmed
+					"
 				>
 					<mat-icon>whatshot</mat-icon>
 					&nbsp;
@@ -65,11 +76,13 @@
 				</button>
 				<a
 					mat-raised-button
-					color='accent'
-					[matTooltip]='stringsService.linkGet'
-					matTooltipPosition='above'
-					[href]='envService.cyphImUrl'
-					*ngIf='!(accountDatabaseService.currentUser | async)?.confirmed'
+					color="accent"
+					[matTooltip]="stringsService.linkGet"
+					matTooltipPosition="above"
+					[href]="envService.cyphImUrl"
+					*ngIf="
+						!(accountDatabaseService.currentUser | async)?.confirmed
+					"
 				>
 					<mat-icon>whatshot</mat-icon>
 					&nbsp;
@@ -78,13 +91,13 @@
 
 				<button
 					mat-raised-button
-					color='accent'
+					color="accent"
 					cyphTranslate
-					matTooltip='Upload File'
-					matTooltipPosition='above'
+					matTooltip="Upload File"
+					matTooltipPosition="above"
 					cyphDropZone
-					[cyphDropZoneClass]='false'
-					(fileDrop)='accountFilesService.upload($event.name, $event)'
+					[cyphDropZoneClass]="false"
+					(fileDrop)="accountFilesService.upload($event.name, $event)"
 				>
 					<mat-icon>cloud_upload</mat-icon>
 					&nbsp;
@@ -93,11 +106,11 @@
 
 				<button
 					mat-raised-button
-					color='accent'
+					color="accent"
 					cyphTranslate
-					matTooltip='New Note'
-					matTooltipPosition='above'
-					routerLink='/notes/new'
+					matTooltip="New Note"
+					matTooltipPosition="above"
+					routerLink="/notes/new"
 				>
 					<mat-icon>note_add</mat-icon>
 					&nbsp;
@@ -109,9 +122,9 @@
 				<button
 					mat-raised-button
 					cyphTranslate
-					color='accent'
-					matTooltipPosition='above'
-					routerLink='/request-appointment'
+					color="accent"
+					matTooltipPosition="above"
+					routerLink="/request-appointment"
 				>
 					New Appointment Request
 				</button>
@@ -119,96 +132,110 @@
 		</div>
 
 		<mat-progress-spinner
-			mode='indeterminate'
-			*ngIf='accountFilesService.uploadSpinner | async'
+			mode="indeterminate"
+			*ngIf="accountFilesService.uploadSpinner | async"
 		></mat-progress-spinner>
 	</div>
 </ng-template>
 
-<div *ngIf='
-	(accountDatabaseService.currentUser | async)?.confirmed &&
-	!envService.isTelehealth &&
-	(envService.isMobile | async)
-'>
+<div
+	*ngIf="
+		(accountDatabaseService.currentUser | async)?.confirmed &&
+		!envService.isTelehealth &&
+		(envService.isMobile | async)
+	"
+>
 	<div
-		class='overlay clickable'
-		(click)='isSpeedDialOpen.next(false)'
-		*ngIf='(envService.isMobile | async) && (isSpeedDialOpen | async)'
+		class="overlay clickable"
+		(click)="isSpeedDialOpen.next(false)"
+		*ngIf="(envService.isMobile | async) && (isSpeedDialOpen | async)"
 	></div>
 	<smd-fab-speed-dial
-		animationMode='scale'
-		[forceTooltips]='envService.isMobile | async'
-		[open]='isSpeedDialOpen | async'
-		(mouseleave)='!envService.isMobile.value ? isSpeedDialOpen.next(false) : undefined'
-		[class.absolute-fab]='!((envService.isMobile | async) || envService.isTelehealthFull)'
-		[class.fixed-fab]='(envService.isMobile | async) || envService.isTelehealthFull'
+		animationMode="scale"
+		[forceTooltips]="envService.isMobile | async"
+		[open]="isSpeedDialOpen | async"
+		(mouseleave)="
+			!envService.isMobile.value ? isSpeedDialOpen.next(false) : undefined
+		"
+		[class.absolute-fab]="
+			!((envService.isMobile | async) || envService.isTelehealthFull)
+		"
+		[class.fixed-fab]="
+			(envService.isMobile | async) || envService.isTelehealthFull
+		"
 	>
 		<smd-fab-trigger
-			[spin]='true'
-			(mouseenter)='!envService.isMobile.value ? isSpeedDialOpen.next(true) : undefined'
+			[spin]="true"
+			(mouseenter)="
+				!envService.isMobile.value ?
+					isSpeedDialOpen.next(true) :
+					undefined
+			"
 		>
 			<button
 				mat-fab
-				[color]='(envService.isMobile | async) ? "primary" : "accent"'
-				[attr.aria-label]='
-					(envService.isMobile | async) && (isSpeedDialOpen | async) === false ?
+				[color]="(envService.isMobile | async) ? 'primary' : 'accent'"
+				[attr.aria-label]="
+					(envService.isMobile | async) &&
+					(isSpeedDialOpen | async) === false ?
 						stringsService.openMenu :
 						undefined
-				'
-				[matTooltip]='
-					(envService.isMobile | async) === false || (isSpeedDialOpen | async) ?
+				"
+				[matTooltip]="
+					(envService.isMobile | async) === false ||
+					(isSpeedDialOpen | async) ?
 						stringsService.composeMessage :
 						undefined
-				'
-				matTooltipPosition='left'
-				[routerLink]='
-					(isSpeedDialOpen | async) ?
-						"/compose/" :
-						undefined
-				'
-				(click)='
+				"
+				matTooltipPosition="left"
+				[routerLink]="
+					(isSpeedDialOpen | async) ? '/compose/' : undefined
+				"
+				(click)="
 					envService.isMobile.value ?
 						isSpeedDialOpen.next(!isSpeedDialOpen.value) :
 						undefined
-				'
+				"
 			>
-				<mat-icon>{{(isSpeedDialOpen | async) ? 'message' : 'add'}}</mat-icon>
+				<mat-icon>
+					{{ (isSpeedDialOpen | async) ? 'message' : 'add' }}
+				</mat-icon>
 			</button>
 		</smd-fab-trigger>
 		<smd-fab-actions>
 			<button
 				mat-mini-fab
-				[class.open]='isSpeedDialOpen | async'
+				[class.open]="isSpeedDialOpen | async"
 				cyphTranslate
-				matTooltip='New Note'
-				matTooltipPosition='left'
-				routerLink='/notes/new'
-				(click)='isSpeedDialOpen.next(false)'
+				matTooltip="New Note"
+				matTooltipPosition="left"
+				routerLink="/notes/new"
+				(click)="isSpeedDialOpen.next(false)"
 			>
 				<mat-icon>note_add</mat-icon>
 			</button>
 			<button
 				mat-mini-fab
-				[class.open]='isSpeedDialOpen | async'
+				[class.open]="isSpeedDialOpen | async"
 				cyphTranslate
-				matTooltip='Upload File'
-				matTooltipPosition='left'
+				matTooltip="Upload File"
+				matTooltipPosition="left"
 				cyphDropZone
-				[cyphDropZoneClass]='false'
-				(fileDrop)='accountFilesService.upload($event.name, $event)'
-				(click)='isSpeedDialOpen.next(false)'
+				[cyphDropZoneClass]="false"
+				(fileDrop)="accountFilesService.upload($event.name, $event)"
+				(click)="isSpeedDialOpen.next(false)"
 			>
 				<mat-icon>cloud_upload</mat-icon>
 			</button>
 			<a
 				mat-mini-fab
-				[class.open]='isSpeedDialOpen | async'
+				[class.open]="isSpeedDialOpen | async"
 				cyphTranslate
-				class='alt'
-				matTooltip='New Burner Link'
-				matTooltipPosition='left'
-				routerLink='/account-burner/chat'
-				(click)='isSpeedDialOpen.next(false)'
+				class="alt"
+				matTooltip="New Burner Link"
+				matTooltipPosition="left"
+				routerLink="/account-burner/chat"
+				(click)="isSpeedDialOpen.next(false)"
 			>
 				<mat-icon>link</mat-icon>
 			</a>
@@ -216,20 +243,22 @@
 	</smd-fab-speed-dial>
 </div>
 
-<div *ngIf='
-	(accountDatabaseService.currentUser | async)?.confirmed &&
-	envService.isTelehealth &&
-	!envService.isTelehealthFull &&
-	(envService.isMobile | async)
-'>
+<div
+	*ngIf="
+		(accountDatabaseService.currentUser | async)?.confirmed &&
+		envService.isTelehealth &&
+		!envService.isTelehealthFull &&
+		(envService.isMobile | async)
+	"
+>
 	<button
 		mat-fab
 		cyphTranslate
-		color='primary'
-		matTooltip='New Appointment Request'
-		matTooltipPosition='above'
-		routerLink='/request-appointment'
-		class='fixed-fab'
+		color="primary"
+		matTooltip="New Appointment Request"
+		matTooltipPosition="above"
+		routerLink="/request-appointment"
+		class="fixed-fab"
 	>
 		<mat-icon>add</mat-icon>
 	</button>
@@ -237,17 +266,17 @@
 
 <ng-template #logoTemplate>
 	<cyph-logo
-		class='logo'
+		class="logo"
 		icon
-		[white]='envService.environment.customBuild?.config.dark'
-		*ngIf='envService.coBranded; else cyphAltLogo'
+		[white]="envService.environment.customBuild?.config.dark"
+		*ngIf="envService.coBranded; else cyphAltLogo"
 	></cyph-logo>
 	<ng-template #cyphAltLogo>
 		<img
-			class='logo'
+			class="logo"
 			cyphTranslate
-			alt='Logo'
-			src='/assets/img/logo.purple.alt.icon.png'
+			alt="Logo"
+			src="/assets/img/logo.purple.alt.icon.png"
 		/>
 	</ng-template>
 </ng-template>

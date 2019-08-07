@@ -33,7 +33,6 @@ import {trackBySelf} from '../../track-by/track-by-self';
 import {readableByteLength} from '../../util/formatting';
 import {sleep, waitForIterable} from '../../util/wait';
 
-
 /**
  * Angular component for chat message.
  */
@@ -43,11 +42,12 @@ import {sleep, waitForIterable} from '../../util/wait';
 	styleUrls: ['./chat-message.component.scss'],
 	templateUrl: './chat-message.component.html'
 })
-export class ChatMessageComponent extends BaseProvider implements OnChanges, OnDestroy {
+export class ChatMessageComponent extends BaseProvider
+	implements OnChanges, OnDestroy {
 	/** @ignore */
-	private static readonly appeared: BehaviorSubject<Set<string>>	= (() => {
-		const ids		= new Set<string>();
-		const subject	= new BehaviorSubject(ids);
+	private static readonly appeared: BehaviorSubject<Set<string>> = (() => {
+		const ids = new Set<string>();
+		const subject = new BehaviorSubject(ids);
 
 		(async () => {
 			while (true) {
@@ -61,37 +61,43 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 				if (
 					ChatMessageComponent.services.p2pService.isActive.value &&
-					!ChatMessageComponent.services.p2pService.isSidebarOpen.value
+					!ChatMessageComponent.services.p2pService.isSidebarOpen
+						.value
 				) {
 					continue;
 				}
 
-				const idCount	= ids.size;
-				const elements	= document.querySelectorAll(
+				const idCount = ids.size;
+				const elements = document.querySelectorAll(
 					'cyph-chat-message > .message-item[data-message-id]'
 				);
 
 				for (const elem of Array.from(elements)) {
-					const id	= elem.getAttribute('data-message-id');
+					const id = elem.getAttribute('data-message-id');
 					if (!id || ids.has(id)) {
 						continue;
 					}
 
-					const rootElement	=
+					const rootElement =
 						elem.parentElement &&
 						elem.parentElement.parentElement &&
 						elem.parentElement.parentElement.parentElement &&
-						elem.parentElement.parentElement.parentElement.parentElement &&
-						elem.parentElement.parentElement.parentElement.parentElement.parentElement
-					;
+						elem.parentElement.parentElement.parentElement
+							.parentElement &&
+						elem.parentElement.parentElement.parentElement
+							.parentElement.parentElement;
 
 					if (!rootElement) {
 						continue;
 					}
 
-					const offset	= $(elem).offset();
+					const offset = $(elem).offset();
 
-					if (offset && offset.top > 0 && offset.top < rootElement.clientHeight) {
+					if (
+						offset &&
+						offset.top > 0 &&
+						offset.top < rootElement.clientHeight
+					) {
 						ids.add(id);
 					}
 				}
@@ -114,67 +120,69 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 		windowWatcherService: {waitUntilVisible: () => Promise<void>};
 	};
 
-
 	/** @see ChatMessage.AuthorTypes */
-	public readonly authorTypes: typeof ChatMessage.AuthorTypes		= ChatMessage.AuthorTypes;
+	public readonly authorTypes: typeof ChatMessage.AuthorTypes =
+		ChatMessage.AuthorTypes;
 
 	/** Fires after message is fully loaded. */
-	@Output() public readonly loaded								= new EventEmitter<void>();
+	@Output() public readonly loaded = new EventEmitter<void>();
 
 	/** @see ChatMessage */
 	@Input() public message?: ChatMessage;
 
 	/** Indicates whether mobile version should be displayed. */
-	@Input() public mobile: boolean									= false;
+	@Input() public mobile: boolean = false;
 
 	/** Indicates whether message is pending locally. */
-	@Input() public pending: boolean								= false;
+	@Input() public pending: boolean = false;
 
 	/** @see ChatMessageValue.quill */
-	public readonly quill: BehaviorSubject<IQuillDelta|undefined>	=
-		new BehaviorSubject<IQuillDelta|undefined>(undefined)
-	;
+	public readonly quill: BehaviorSubject<
+		IQuillDelta | undefined
+	> = new BehaviorSubject<IQuillDelta | undefined>(undefined);
 
 	/** @see readableByteLength */
-	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
+	public readonly readableByteLength: typeof readableByteLength = readableByteLength;
 
 	/** If true, will scroll into view. */
-	@Input() public scrollIntoView: boolean							= false;
+	@Input() public scrollIntoView: boolean = false;
 
 	/** Fires after scrolling into view. */
-	@Output() public readonly scrolledIntoView: EventEmitter<void>	= new EventEmitter<void>();
+	@Output() public readonly scrolledIntoView: EventEmitter<
+		void
+	> = new EventEmitter<void>();
 
 	/** @see trackBySelf */
-	public readonly trackBySelf: typeof trackBySelf					= trackBySelf;
+	public readonly trackBySelf: typeof trackBySelf = trackBySelf;
 
 	/** @see ChatMainComponent.uiStyle */
-	@Input() public uiStyle: UiStyles								= UiStyles.default;
+	@Input() public uiStyle: UiStyles = UiStyles.default;
 
 	/** @see UiStyles */
-	public readonly uiStyles: typeof UiStyles						= UiStyles;
+	public readonly uiStyles: typeof UiStyles = UiStyles;
 
 	/** @see IChatData.unconfirmedMessages */
-	@Input() public unconfirmedMessages?: {[id: string]: boolean|undefined};
+	@Input() public unconfirmedMessages?: {[id: string]: boolean | undefined};
 
 	/** Indicates whether view is ready. */
-	public readonly viewReady: BehaviorSubject<boolean>				= new BehaviorSubject<boolean>(false);
+	public readonly viewReady: BehaviorSubject<boolean> = new BehaviorSubject<
+		boolean
+	>(false);
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
 		return !!(
 			this.message &&
 			this.unconfirmedMessages &&
-			(
-				this.message.authorType !== ChatMessage.AuthorTypes.Local ||
-				!(this.message.id in this.unconfirmedMessages)
-			)
+			(this.message.authorType !== ChatMessage.AuthorTypes.Local ||
+				!(this.message.id in this.unconfirmedMessages))
 		);
 	}
 
 	/** @inheritDoc */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
 		if (!ChatMessageComponent.services) {
-			ChatMessageComponent.services	= {
+			ChatMessageComponent.services = {
 				p2pService: this.p2pService,
 				windowWatcherService: this.windowWatcherService
 			};
@@ -184,32 +192,38 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 			return;
 		}
 
-		const id	= this.message.id;
+		const id = this.message.id;
 
 		await this.chatService.getMessageValue(this.message);
 
 		this.quill.next(
-			this.message.value && this.message.value.quill && this.message.value.quill.length > 0 ?
+			this.message.value &&
+				this.message.value.quill &&
+				this.message.value.quill.length > 0 ?
 				msgpack.decode(this.message.value.quill) :
 				undefined
 		);
 
 		/* Run it here when it won't be triggered by an event handler in the template. */
-		if (this.message.value && !(
-			this.message.value.quill && this.message.value.quill.length > 0
-		)) {
+		if (
+			this.message.value &&
+			!(this.message.value.quill && this.message.value.quill.length > 0)
+		) {
 			this.resolveViewReady();
 		}
 
 		if (this.scrollIntoView) {
 			if (
 				this.elementRef.nativeElement &&
-				typeof this.elementRef.nativeElement.scrollIntoView === 'function' &&
+				typeof this.elementRef.nativeElement.scrollIntoView ===
+					'function' &&
 				/* Leave email-style UI at the top for now */
 				this.uiStyle !== UiStyles.mail
 			) {
 				await this.waitUntilInitiated();
-				this.elementRef.nativeElement.scrollIntoView(undefined, {behavior: 'instant'});
+				this.elementRef.nativeElement.scrollIntoView(undefined, {
+					behavior: 'instant'
+				});
 			}
 
 			this.scrolledIntoView.emit();
@@ -225,10 +239,12 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 		await this.windowWatcherService.waitUntilVisible();
 
-		await ChatMessageComponent.appeared.
-			pipe(filter(arr => arr.has(id)), take(1)).
-			toPromise()
-		;
+		await ChatMessageComponent.appeared
+			.pipe(
+				filter(arr => arr.has(id)),
+				take(1)
+			)
+			.toPromise();
 
 		if (this.message === changes.message.currentValue) {
 			await this.scrollService.setRead(this.message.id);
@@ -249,20 +265,32 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 
 	/** Resolves after view init. */
 	public async waitUntilInitiated () : Promise<void> {
-		await this.viewReady.pipe(filter(b => b), take(1)).toPromise();
+		await this.viewReady
+			.pipe(
+				filter(b => b),
+				take(1)
+			)
+			.toPromise();
 
-		const $elem		= $(this.elementRef.nativeElement);
-		const $message	= await waitForIterable(() => $elem.find('.message'));
+		const $elem = $(this.elementRef.nativeElement);
+		const $message = await waitForIterable(() => $elem.find('.message'));
 
-		await Promise.all($message.children().toArray().map(async element => {
-			const promise	= new Promise<void>(resolve => {
-				$(element).one('transitionend', () => { resolve(); });
-			});
+		await Promise.all(
+			$message
+				.children()
+				.toArray()
+				.map(async element => {
+					const promise = new Promise<void>(resolve => {
+						$(element).one('transitionend', () => {
+							resolve();
+						});
+					});
 
-			this.renderer.addClass(element, 'transitionend');
-			await Promise.race([promise, sleep(3000)]);
-			this.renderer.removeClass(element, 'transitionend');
-		}));
+					this.renderer.addClass(element, 'transitionend');
+					await Promise.race([promise, sleep(3000)]);
+					this.renderer.removeClass(element, 'transitionend');
+				})
+		);
 	}
 
 	constructor (
@@ -282,8 +310,9 @@ export class ChatMessageComponent extends BaseProvider implements OnChanges, OnD
 		private readonly windowWatcherService: WindowWatcherService,
 
 		/** @see AccountService */
-		@Optional() @Inject(AccountService)
-		public readonly accountService: AccountService|undefined,
+		@Optional()
+		@Inject(AccountService)
+		public readonly accountService: AccountService | undefined,
 
 		/** @see ChatService */
 		public readonly chatService: ChatService,

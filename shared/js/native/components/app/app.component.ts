@@ -4,7 +4,6 @@ import {BaseProvider} from '../../js/cyph/base-provider';
 import {EnvService} from '../../js/cyph/services/env.service';
 import {StringsService} from '../../js/cyph/services/strings.service';
 
-
 /**
  * Angular component for Cyph native UI.
  */

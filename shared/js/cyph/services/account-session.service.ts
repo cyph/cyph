@@ -33,37 +33,40 @@ import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Account session service.
  */
 @Injectable()
 export class AccountSessionService extends SessionService {
 	/** @ignore */
-	private readonly _READY						= resolvable();
+	private readonly _READY = resolvable();
 
 	/** @ignore */
-	private initiated: boolean					= false;
+	private initiated: boolean = false;
 
 	/** @ignore */
-	private readonly resolveReady: () => void	= this._READY.resolve;
+	private readonly resolveReady: () => void = this._READY.resolve;
 
 	/** If true, this is an ephemeral sub-session. */
-	public ephemeralSubSession: boolean	= false;
+	public ephemeralSubSession: boolean = false;
 
 	/** @inheritDoc */
 	public group?: AccountSessionService[];
 
 	/** @inheritDoc */
-	public readonly ready				= this._READY.promise;
+	public readonly ready = this._READY.promise;
 
 	/** Remote user. */
-	public readonly remoteUser			= new BehaviorSubject<UserLike|undefined>(undefined);
+	public readonly remoteUser = new BehaviorSubject<UserLike | undefined>(
+		undefined
+	);
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
 		if (this.group) {
-			throw new Error('Master channelOnClose should not be used in a group session.');
+			throw new Error(
+				'Master channelOnClose should not be used in a group session.'
+			);
 		}
 
 		if (this.ephemeralSubSession) {
@@ -74,7 +77,9 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		if (this.group) {
-			throw new Error('Master channelOnOpen should not be used in a group session.');
+			throw new Error(
+				'Master channelOnOpen should not be used in a group session.'
+			);
 		}
 
 		await super.channelOnOpen(isAlice);
@@ -83,12 +88,15 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected async getSessionMessageAuthor (
 		message: ISessionMessageData
-	) : Promise<Observable<string>|void> {
+	) : Promise<Observable<string> | void> {
 		if (!message.authorID) {
 			return;
 		}
 
-		const user	= await this.accountUserLookupService.getUser(message.authorID, false);
+		const user = await this.accountUserLookupService.getUser(
+			message.authorID,
+			false
+		);
 
 		if (user) {
 			return user.realUsername;
@@ -96,11 +104,15 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** @inheritDoc */
-	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
+	protected async plaintextSendHandler (
+		messages: ISessionMessage[]
+	) : Promise<void> {
 		if (this.group) {
-			await Promise.all(this.group.map(async session =>
-				session.plaintextSendHandler(messages)
-			));
+			await Promise.all(
+				this.group.map(async session =>
+					session.plaintextSendHandler(messages)
+				)
+			);
 			return;
 		}
 
@@ -124,18 +136,18 @@ export class AccountSessionService extends SessionService {
 	/** Normalizes username or username list. */
 	public normalizeUsername (username: string) : string;
 	public normalizeUsername (username: string[]) : string[];
-	public normalizeUsername (username: string|string[]) : string|string[];
-	public normalizeUsername (username: string|string[]) : string|string[] {
+	public normalizeUsername (username: string | string[]) : string | string[];
+	public normalizeUsername (username: string | string[]) : string | string[] {
 		if (username instanceof Array) {
-			username	= normalizeArray(username);
+			username = normalizeArray(username);
 
 			if (this.accountDatabaseService.currentUser.value) {
-				const {user}	= this.accountDatabaseService.currentUser.value;
-				username		= username.filter(s => s !== user.username);
+				const {user} = this.accountDatabaseService.currentUser.value;
+				username = username.filter(s => s !== user.username);
 			}
 
 			if (username.length === 1) {
-				username	= username[0];
+				username = username[0];
 			}
 		}
 
@@ -145,10 +157,9 @@ export class AccountSessionService extends SessionService {
 	/** Sets the remote user we're chatting with. */
 	public async setUser (
 		chat:
-			{anonymousChannelID: string; passive?: boolean}|
-			{group: IAccountMessagingGroup}|
-			{username: string}
-		,
+			| {anonymousChannelID: string; passive?: boolean}
+			| {group: IAccountMessagingGroup}
+			| {username: string},
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false,
 		setHeader: boolean = true
@@ -157,24 +168,28 @@ export class AccountSessionService extends SessionService {
 			throw new Error('User already set.');
 		}
 
-		debugLog(() => ({accountSessionInit: {
-			chat,
-			ephemeralSubSession,
-			sessionSubID,
-			setHeader
-		}}));
+		debugLog(() => ({
+			accountSessionInit: {
+				chat,
+				ephemeralSubSession,
+				sessionSubID,
+				setHeader
+			}
+		}));
 
 		if ('anonymousChannelID' in chat) {
 			if (!this.accountDatabaseService.currentUser.value) {
 				throw new Error('No user signed in.');
 			}
 
-			this.accountService.setHeader({mobile: this.stringsService.anonymous});
+			this.accountService.setHeader({
+				mobile: this.stringsService.anonymous
+			});
 
-			this.accountSessionInitService.ephemeral	= true;
-			this.ephemeralSubSession					= true;
+			this.accountSessionInitService.ephemeral = true;
+			this.ephemeralSubSession = true;
 
-			const channelID	= await request({
+			const channelID = await request({
 				data: {channelID: uuid(true), proFeatures: this.proFeatures},
 				method: 'POST',
 				retries: 5,
@@ -190,11 +205,7 @@ export class AccountSessionService extends SessionService {
 				username: undefined
 			});
 			this.state.sharedSecret.next(
-				`${
-					this.accountDatabaseService.currentUser.value.user.username
-				}/${
-					chat.anonymousChannelID
-				}`
+				`${this.accountDatabaseService.currentUser.value.user.username}/${chat.anonymousChannelID}`
 			);
 			this.state.startingNewCyph.next(chat.passive ? undefined : true);
 
@@ -203,46 +214,50 @@ export class AccountSessionService extends SessionService {
 		}
 
 		if ('username' in chat) {
-			chat.username	= this.normalizeUsername(chat.username);
+			chat.username = this.normalizeUsername(chat.username);
 		}
 
-		this.initiated		= true;
-		this.sessionSubID	= sessionSubID;
-
+		this.initiated = true;
+		this.sessionSubID = sessionSubID;
 
 		/* Group session init */
 
 		if ('group' in chat) {
 			if (setHeader) {
-				this.accountService.setHeader({mobile: this.stringsService.group});
+				this.accountService.setHeader({
+					mobile: this.stringsService.group
+				});
 			}
 
 			/* Create N pairwise sessions, one for each other group member */
 
-			this.sessionSubID	=
-				`group-${
-					chat.group.castleSessionID
-				}${
-					this.sessionSubID ? `-${this.sessionSubID}` : ''
-				}`
-			;
+			this.sessionSubID = `group-${chat.group.castleSessionID}${
+				this.sessionSubID ? `-${this.sessionSubID}` : ''
+			}`;
 
-			const group	= await Promise.all(this.normalizeUsername(
-				chat.group.usernames || []
-			).map(async username => {
-				const session	= this.spawn();
-				await session.setUser({username}, this.sessionSubID, ephemeralSubSession, false);
-				return session;
-			}));
+			const group = await Promise.all(
+				this.normalizeUsername(chat.group.usernames || []).map(
+					async username => {
+						const session = this.spawn();
+						await session.setUser(
+							{username},
+							this.sessionSubID,
+							ephemeralSubSession,
+							false
+						);
+						return session;
+					}
+				)
+			);
 
-			this.group	= group;
+			this.group = group;
 
 			/*
 				Handle events on individual pairwise sessions and perform equivalent behavior.
 				Note: rpcEvents.typing is ignored because it's unsupported in accounts.
 			*/
 
-			const confirmations	= new Map<string, Set<AccountSessionService>>();
+			const confirmations = new Map<string, Set<AccountSessionService>>();
 
 			Promise.all(group.map(async session => session.opened)).then(() => {
 				this.resolveOpened();
@@ -255,8 +270,8 @@ export class AccountSessionService extends SessionService {
 				{all: false, event: events.connectFailure},
 				{all: false, event: events.cyphNotFound}
 			]) {
-				const promises	= group.map(async session => session.one(event));
-				const callback	= async () => this.trigger(event);
+				const promises = group.map(async session => session.one(event));
+				const callback = async () => this.trigger(event);
 
 				if (all) {
 					Promise.all(promises).then(callback);
@@ -271,27 +286,41 @@ export class AccountSessionService extends SessionService {
 					this.trigger(rpcEvents.text, newEvents)
 				);
 
-				session.on(rpcEvents.confirm, async (newEvents: ISessionMessageData[]) =>
-					this.trigger(rpcEvents.confirm, filterUndefined(newEvents.map(o => {
-						if (!o.textConfirmation || !o.textConfirmation.id) {
-							return;
-						}
+				session.on(
+					rpcEvents.confirm,
+					async (newEvents: ISessionMessageData[]) =>
+						this.trigger(
+							rpcEvents.confirm,
+							filterUndefined(
+								newEvents.map(o => {
+									if (
+										!o.textConfirmation ||
+										!o.textConfirmation.id
+									) {
+										return;
+									}
 
-						const confirmedSessions	= getOrSetDefault(
-							confirmations,
-							o.textConfirmation.id,
-							() => new Set<AccountSessionService>()
-						);
+									const confirmedSessions = getOrSetDefault(
+										confirmations,
+										o.textConfirmation.id,
+										() => new Set<AccountSessionService>()
+									);
 
-						confirmedSessions.add(session);
+									confirmedSessions.add(session);
 
-						if (confirmedSessions.size === group.length) {
-							confirmations.delete(o.textConfirmation.id);
-							return o;
-						}
+									if (
+										confirmedSessions.size === group.length
+									) {
+										confirmations.delete(
+											o.textConfirmation.id
+										);
+										return o;
+									}
 
-						return;
-					})))
+									return;
+								})
+							)
+						)
 				);
 			}
 
@@ -299,33 +328,38 @@ export class AccountSessionService extends SessionService {
 			return;
 		}
 
-
 		/* Pairwise session init */
 
 		(async () => {
-			const {castleSessionID}	=
-				await this.accountContactsService.getCastleSessionData(chat.username)
-			;
+			const {
+				castleSessionID
+			} = await this.accountContactsService.getCastleSessionData(
+				chat.username
+			);
 
 			if (ephemeralSubSession) {
 				if (!this.sessionSubID) {
-					throw new Error('Cannot start ephemeral sub-session without sessionSubID.');
+					throw new Error(
+						'Cannot start ephemeral sub-session without sessionSubID.'
+					);
 				}
 
-				this.ephemeralSubSession	= true;
+				this.ephemeralSubSession = true;
 
-				this.init(this.potassiumService.toHex(
-					await this.potassiumService.hash.hash(
-						`${castleSessionID}-${this.sessionSubID}`
+				this.init(
+					this.potassiumService.toHex(
+						await this.potassiumService.hash.hash(
+							`${castleSessionID}-${this.sessionSubID}`
+						)
 					)
-				));
+				);
 
 				return;
 			}
 
-			const sessionURL				= `castleSessions/${castleSessionID}/session`;
+			const sessionURL = `castleSessions/${castleSessionID}/session`;
 
-			this.incomingMessageQueue		= this.accountDatabaseService.getAsyncList(
+			this.incomingMessageQueue = this.accountDatabaseService.getAsyncList(
 				`${sessionURL}/incomingMessageQueue`,
 				SessionMessageList,
 				undefined,
@@ -334,32 +368,42 @@ export class AccountSessionService extends SessionService {
 				false
 			);
 
-			this.incomingMessageQueueLock	= this.accountDatabaseService.lockFunction(
-				`${sessionURL}/incomingMessageQueueLock${sessionSubID ? `/${sessionSubID}` : ''}`
+			this.incomingMessageQueueLock = this.accountDatabaseService.lockFunction(
+				`${sessionURL}/incomingMessageQueueLock${
+					sessionSubID ? `/${sessionSubID}` : ''
+				}`
 			);
 
-			this.init(castleSessionID, await this.accountDatabaseService.getOrSetDefault(
-				`${sessionURL}/channelUserID`,
-				StringProto,
-				() => uuid(true)
-			));
+			this.init(
+				castleSessionID,
+				await this.accountDatabaseService.getOrSetDefault(
+					`${sessionURL}/channelUserID`,
+					StringProto,
+					() => uuid(true)
+				)
+			);
 		})();
 
-		if (await this.accountDatabaseService.hasItem(`users/${chat.username}/pseudoAccount`)) {
-			const contactState	=
-				await this.accountContactsService.contactState(chat.username).getValue()
-			;
+		if (
+			await this.accountDatabaseService.hasItem(
+				`users/${chat.username}/pseudoAccount`
+			)
+		) {
+			const contactState = await this.accountContactsService
+				.contactState(chat.username)
+				.getValue();
 
-			const name			=
+			const name =
 				contactState.name ||
 				(contactState.email && `<${contactState.email}>`) ||
-				this.stringsService.friend
-			;
+				this.stringsService.friend;
 
 			this.remoteUser.next({
 				anonymous: false,
 				avatar: undefined,
-				contactID: this.accountContactsService.getContactID(chat.username),
+				contactID: this.accountContactsService.getContactID(
+					chat.username
+				),
 				name: of(name),
 				pseudoAccount: true,
 				username: chat.username
@@ -375,10 +419,15 @@ export class AccountSessionService extends SessionService {
 			return;
 		}
 
-		const user	= await this.accountUserLookupService.getUser(chat.username, false);
+		const user = await this.accountUserLookupService.getUser(
+			chat.username,
+			false
+		);
 
 		if (user) {
-			this.subscriptions.push(user.realUsername.subscribe(this.remoteUsername));
+			this.subscriptions.push(
+				user.realUsername.subscribe(this.remoteUsername)
+			);
 
 			if (setHeader) {
 				this.accountService.setHeader(user);
@@ -422,9 +471,9 @@ export class AccountSessionService extends SessionService {
 		}
 
 		return new Promise<void>(resolve => {
-			const id	= uuid();
+			const id = uuid();
 
-			const f		= (newEvents: ISessionMessageData[]) => {
+			const f = (newEvents: ISessionMessageData[]) => {
 				for (const o of newEvents) {
 					if (!(o.command && o.command.method === id)) {
 						continue;
@@ -480,8 +529,16 @@ export class AccountSessionService extends SessionService {
 		this.on(rpcEvents.ping, async (newEvents: ISessionMessageData[]) => {
 			for (const o of newEvents) {
 				if (o.command && o.command.method) {
-					await this.freezePong.pipe(filter(b => !b), take(1)).toPromise();
-					this.send([rpcEvents.pong, {command: {method: o.command.method}}]);
+					await this.freezePong
+						.pipe(
+							filter(b => !b),
+							take(1)
+						)
+						.toPromise();
+					this.send([
+						rpcEvents.pong,
+						{command: {method: o.command.method}}
+					]);
 				}
 			}
 		});

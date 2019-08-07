@@ -16,17 +16,16 @@ import {StringsService} from './js/cyph/services/strings.service';
 import {lockFunction} from './js/cyph/util/lock';
 import {sleep} from './js/cyph/util/wait';
 
-
 /**
  * DialogService implementation for NativeScript.
  */
 @Injectable()
 export class NativeDialogService extends BaseProvider implements DialogService {
 	/** @ignore */
-	private readonly lock: LockFunction	= lockFunction();
+	private readonly lock: LockFunction = lockFunction();
 
 	/** @ignore */
-	private readonly snackbar: SnackBar	= new SnackBar();
+	private readonly snackbar: SnackBar = new SnackBar();
 
 	/**
 	 * @inheritDoc
@@ -38,13 +37,16 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
-			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
+			throw new Error(
+				'NativeDialogService.baseDialog closeFunction is unsupported.'
+			);
 		}
 
 		return this.lock(async () => {
 			return alert({
 				message: o.content,
-				okButtonText: o.ok !== undefined ? o.ok : this.stringsService.ok,
+				okButtonText:
+					o.ok !== undefined ? o.ok : this.stringsService.ok,
 				title: o.title
 			});
 		});
@@ -61,10 +63,14 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (setInputs) {
-			throw new Error('NativeDialogService.baseDialog setInputs is unsupported.');
+			throw new Error(
+				'NativeDialogService.baseDialog setInputs is unsupported.'
+			);
 		}
 		if (closeFunction) {
-			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
+			throw new Error(
+				'NativeDialogService.baseDialog closeFunction is unsupported.'
+			);
 		}
 
 		return this.lock(async () => {
@@ -88,7 +94,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			cancel?: string;
 			cancelFAB?: string;
 			content: string;
-			fabAvatar?: Async<SafeUrl|string>;
+			fabAvatar?: Async<SafeUrl | string>;
 			markdown?: boolean;
 			ok?: string;
 			okFAB?: string;
@@ -98,14 +104,18 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
 		if (closeFunction) {
-			throw new Error('NativeDialogService.confirm closeFunction is unsupported.');
+			throw new Error(
+				'NativeDialogService.confirm closeFunction is unsupported.'
+			);
 		}
 
 		return this.lock(async () => {
 			return !!(await confirm({
-				cancelButtonText: o.ok !== undefined ? o.cancel : this.stringsService.cancel,
+				cancelButtonText:
+					o.ok !== undefined ? o.cancel : this.stringsService.cancel,
 				message: o.content,
-				okButtonText: o.ok !== undefined ? o.ok : this.stringsService.ok,
+				okButtonText:
+					o.ok !== undefined ? o.ok : this.stringsService.ok,
 				title: o.title
 			}));
 		});
@@ -117,7 +127,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 */
 	public async cropImage (o: {
 		aspectRatio?: number;
-		src: SafeUrl|string;
+		src: SafeUrl | string;
 		title?: string;
 	}) : Promise<SafeUrl> {
 		return <SafeUrl> o.src;
@@ -133,11 +143,13 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async media (
-		o: {src: SafeUrl|string; title?: string},
+		o: {src: SafeUrl | string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {
-			throw new Error('NativeDialogService.media closeFunction is unsupported.');
+			throw new Error(
+				'NativeDialogService.media closeFunction is unsupported.'
+			);
 		}
 
 		if (typeof o.src !== 'string') {
@@ -145,7 +157,9 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		}
 
 		return this.lock(async () => {
-			await this.modalDialogService.showModal(DialogMediaComponent, {context: o});
+			await this.modalDialogService.showModal(DialogMediaComponent, {
+				context: o
+			});
 		});
 	}
 
@@ -172,7 +186,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<IForm|undefined>;
+	) : Promise<IForm | undefined>;
 	/* tslint:disable-next-line:no-async-without-await */
 	public async prompt (
 		o: {
@@ -186,7 +200,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<string|undefined>;
+	) : Promise<string | undefined>;
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
@@ -200,19 +214,24 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<string|IForm|undefined> {
+	) : Promise<string | IForm | undefined> {
 		if (closeFunction) {
-			throw new Error('NativeDialogService.baseDialog closeFunction is unsupported.');
+			throw new Error(
+				'NativeDialogService.baseDialog closeFunction is unsupported.'
+			);
 		}
 
 		return this.lock(async () => {
-			const {result, text}	= await prompt({
-				cancelButtonText: o.ok !== undefined ? o.cancel : this.stringsService.cancel,
+			const {result, text} = await prompt({
+				cancelButtonText:
+					o.ok !== undefined ? o.cancel : this.stringsService.cancel,
 				defaultText:
-					o.placeholder !== undefined ? o.placeholder : this.stringsService.response
-				,
+					o.placeholder !== undefined ?
+						o.placeholder :
+						this.stringsService.response,
 				message: o.content,
-				okButtonText: o.ok !== undefined ? o.ok : this.stringsService.ok,
+				okButtonText:
+					o.ok !== undefined ? o.ok : this.stringsService.ok,
 				title: o.title
 			});
 
@@ -221,9 +240,13 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	}
 
 	/** @inheritDoc */
-	public async toast (content: string, duration: number, action?: string) : Promise<boolean> {
+	public async toast (
+		content: string,
+		duration: number,
+		action?: string
+	) : Promise<boolean> {
 		if (action !== undefined) {
-			const args	= await this.snackbar.action({
+			const args = await this.snackbar.action({
 				actionText: action.toUpperCase(),
 				hideDelay: duration,
 				snackText: content
@@ -232,9 +255,9 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			return args.command === 'Action';
 		}
 
-		let isPending	= true;
+		let isPending = true;
 		this.snackbar.simple(content).then(() => {
-			isPending	= false;
+			isPending = false;
 		});
 
 		await sleep(duration);

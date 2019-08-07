@@ -5,7 +5,6 @@ import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
 import {translate} from '../util/translate';
 
-
 /**
  * Angular directive for translation.
  */
@@ -15,8 +14,8 @@ import {translate} from '../util/translate';
 export class TranslateDirective extends BaseProvider implements OnInit {
 	/** @ignore */
 	private handleElement (nativeElement: HTMLElement) : void {
-		const $element	= $(nativeElement);
-		const $children	= $element.children();
+		const $element = $(nativeElement);
+		const $children = $element.children();
 
 		for (const attr of [
 			'alt',
@@ -27,36 +26,35 @@ export class TranslateDirective extends BaseProvider implements OnInit {
 			'placeholder',
 			'title'
 		]) {
-			this.translate(
-				$element.attr(attr) || '',
-				translation => {
-					this.renderer.setAttribute(nativeElement, attr, translation);
-				}
-			);
+			this.translate($element.attr(attr) || '', translation => {
+				this.renderer.setAttribute(nativeElement, attr, translation);
+			});
 		}
 
 		if ($children.length > 0) {
-			for (const child of $children.not('mat-icon, [cyphTranslate]').toArray()) {
+			for (const child of $children
+				.not('mat-icon, [cyphTranslate]')
+				.toArray()) {
 				this.handleElement(child);
 			}
 		}
 		else if ($element.is(':not(mat-icon)')) {
-			this.translate(
-				$element.text(),
-				translation => {
-					this.renderer.setValue(nativeElement, translation);
-				}
-			);
+			this.translate($element.text(), translation => {
+				this.renderer.setValue(nativeElement, translation);
+			});
 		}
 	}
 
 	/** @ignore */
-	private translate (value: string, callback: (translation: string) => void) : void {
+	private translate (
+		value: string,
+		callback: (translation: string) => void
+	) : void {
 		if (!value) {
 			return;
 		}
 
-		const translation	= translate(value.trim(), undefined);
+		const translation = translate(value.trim(), undefined);
 
 		if (!translation) {
 			return;

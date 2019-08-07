@@ -1,267 +1,281 @@
-<ng-container *ngIf='chatService.chatSubject | async as chat'>
-
-
-<div fxFlexFill *ngIf='chat.state === states.chat && (sessionService.state.isAlive | async)'>
+<ng-container *ngIf="chatService.chatSubject | async as chat">
 	<div
-		class='calendar-invite-message-box'
-		[class.mobile]='envService.isMobile | async'
 		fxFlexFill
-		*ngIf='messageType === chatMessageValueTypes.CalendarInvite'
+		*ngIf="
+			chat.state === states.chat && (sessionService.state.isAlive | async)
+		"
 	>
-		<button
-			mat-icon-button
-			matTooltip='Send'
-			(click)='send()'
-			cyphTranslate
-			*ngIf='showSendButton'
+		<div
+			class="calendar-invite-message-box"
+			[class.mobile]="envService.isMobile | async"
+			fxFlexFill
+			*ngIf="messageType === chatMessageValueTypes.CalendarInvite"
 		>
-			<mat-icon>send</mat-icon>
-		</button>
-		<cyph-calendar-invite
-			fxFlexFill
-			name='calendar-invite-message'
-			[(ngModel)]='chat.currentMessage.calendarInvite'
-			(ngModelChange)='chatService.messageChange()'
-			[followUp]='calendarInviteFollowUp'
-			[reasons]='calendarInviteReasons'
-			*ngIf='!inheritsNgForm'
-		></cyph-calendar-invite>
-		<cyph-calendar-invite-inherit-ng-form
-			fxFlexFill
-			name='calendar-invite-message'
-			[(ngModel)]='chat.currentMessage.calendarInvite'
-			(ngModelChange)='chatService.messageChange()'
-			[followUp]='calendarInviteFollowUp'
-			[reasons]='calendarInviteReasons'
-			*ngIf='inheritsNgForm'
-		></cyph-calendar-invite-inherit-ng-form>
-	</div>
-
-	<div
-		class='form-message-box'
-		[class.mobile]='envService.isMobile | async'
-		fxFlexFill
-		*ngIf='messageType === chatMessageValueTypes.Form'
-	>
-		<cyph-dynamic-form
-			[form]='chat.currentMessage.form'
-			(submitForm)='chat.currentMessage.form = $event; chatService.updateChat(); send()'
-		></cyph-dynamic-form>
-	</div>
-
-	<div
-		class='quill-message-box'
-		[class.mobile]='envService.isMobile | async'
-		fxFlexFill
-		*ngIf='messageType === chatMessageValueTypes.Quill'
-	>
-		<button
-			mat-icon-button
-			matTooltip='Send'
-			(click)='send()'
-			cyphTranslate
-			*ngIf='showSendButton'
-		>
-			<mat-icon>send</mat-icon>
-		</button>
-		<cyph-quill
-			fxFlexFill
-			name='quill-message'
-			[(ngModel)]='chat.currentMessage.quill'
-			(ngModelChange)='chatService.messageChange()'
-		></cyph-quill>
-	</div>
-
-	<div
-		class='text-message-box'
-		[class.mobile]='envService.isMobile | async'
-		fxFlexFill
-		*ngIf='messageType === chatMessageValueTypes.Text'
-	>
-		<div fxFlex>
-			<textarea
-				fxFlex
-				class='message-box tabIndent'
-				name='text-message'
-				[(ngModel)]='chat.currentMessage.text'
-				(ngModelChange)='chatService.messageChange(true)'
-				placeholder='Send a secure message...'
-				cyphTranslate
-			></textarea>
-			<textarea
-				fxFlex
-				class='message-box tabIndent fake'
-				name='text-message-fake'
-			></textarea>
-		</div>
-
-		<div *ngIf='envService.isMobile | async'>
-			<div
-				class='message-box-button-group'
-				*ngIf='showSendButton && !!chat.currentMessage.text'
-				[@slideInOutBottom]='"in"'
-			>
-				<button
-					mat-icon-button
-					matTooltip='Send'
-					(click)='mobileButtonHandlers.send()'
-					cyphTranslate
-				>
-					<mat-icon>send</mat-icon>
-				</button>
-			</div>
-			<div
-				class='message-box-button-group'
-				*ngIf='!chat.currentMessage.text'
-				[@slideInOutBottom]='"in"'
-			>
-				<button
-					mat-icon-button
-					matTooltip='Video Call'
-					(click)='mobileButtonHandlers.videoCall()'
-					*ngIf='(p2pService.isActive | async) === false'
-					cyphTranslate
-				>
-					<mat-icon>video_call</mat-icon>
-				</button>
-				<button
-					mat-icon-button
-					matTooltip='Voice Call'
-					(click)='mobileButtonHandlers.voiceCall()'
-					*ngIf='(p2pService.isActive | async) === false'
-					cyphTranslate
-				>
-					<mat-icon>call</mat-icon>
-				</button>
-				<button
-					mat-icon-button
-					matTooltip='Send File or Photo'
-					cyphDropZone
-					cyphTranslate
-					[accept]='fileAccept'
-					[cyphDropZoneClass]='false'
-					(fileDrop)='mobileButtonHandlers.fileTransfer($event)'
-				>
-					<mat-icon>attach_file</mat-icon>
-				</button>
-			</div>
-
 			<button
 				mat-icon-button
-				[matMenuTriggerFor]='menu'
-				class='menu-button'
-				*ngIf='!envService.isAccounts'
+				matTooltip="Send"
+				(click)="send()"
+				cyphTranslate
+				*ngIf="showSendButton"
 			>
-				<mat-icon>more_horiz</mat-icon>
+				<mat-icon>send</mat-icon>
 			</button>
-			<mat-menu #menu='matMenu'>
-				<button mat-menu-item (click)='chatService.helpButton()'>
-					<mat-icon>help_outline</mat-icon>
-					<span>{{stringsService.help}}</span>
-				</button>
-				<button
-					mat-menu-item
-					(click)='chatService.disconnectButton()'
-					*ngIf='!envService.isAccounts'
-				>
-					<mat-icon>close</mat-icon>
-					<span>{{stringsService.disconnect}}</span>
-				</button>
-			</mat-menu>
+			<cyph-calendar-invite
+				fxFlexFill
+				name="calendar-invite-message"
+				[(ngModel)]="chat.currentMessage.calendarInvite"
+				(ngModelChange)="chatService.messageChange()"
+				[followUp]="calendarInviteFollowUp"
+				[reasons]="calendarInviteReasons"
+				*ngIf="!inheritsNgForm"
+			></cyph-calendar-invite>
+			<cyph-calendar-invite-inherit-ng-form
+				fxFlexFill
+				name="calendar-invite-message"
+				[(ngModel)]="chat.currentMessage.calendarInvite"
+				(ngModelChange)="chatService.messageChange()"
+				[followUp]="calendarInviteFollowUp"
+				[reasons]="calendarInviteReasons"
+				*ngIf="inheritsNgForm"
+			></cyph-calendar-invite-inherit-ng-form>
 		</div>
 
-		<smd-fab-speed-dial
-			animationMode='scale'
-			[open]='isSpeedDialOpen | async'
-			(mouseleave)='isSpeedDialOpen.next(false)'
-			*ngIf='(envService.isMobile | async) === false'
+		<div
+			class="form-message-box"
+			[class.mobile]="envService.isMobile | async"
+			fxFlexFill
+			*ngIf="messageType === chatMessageValueTypes.Form"
 		>
-			<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen.next(true)'>
-				<button mat-fab>
-					<mat-icon>add</mat-icon>
-				</button>
-			</smd-fab-trigger>
-			<smd-fab-actions>
-				<button
-					mat-mini-fab
-					cyphDropZone
-					cyphTranslate
-					matTooltip='Send File or Photo'
-					matTooltipPosition='left'
-					[accept]='fileAccept'
-					[cyphDropZoneClass]='false'
-					(fileDrop)='fileTransferService.send($event)'
-				>
-					<mat-icon>attach_file</mat-icon>
-				</button>
-				<button
-					mat-mini-fab
-					cyphTranslate
-					matTooltip='Voice Call'
-					matTooltipPosition='left'
-					(click)='p2pService.voiceCallButton()'
-					*ngIf='(p2pService.isActive | async) === false'
-				>
-					<mat-icon>call</mat-icon>
-				</button>
-				<button
-					mat-mini-fab
-					cyphTranslate
-					matTooltip='Video Call'
-					matTooltipPosition='left'
-					(click)='p2pService.videoCallButton()'
-					*ngIf='(p2pService.isActive | async) === false'
-				>
-					<mat-icon>video_call</mat-icon>
-				</button>
-				<button
-					mat-mini-fab
-					cyphTranslate
-					class='alt'
-					[matTooltip]='stringsService.help'
-					matTooltipPosition='left'
-					(click)='chatService.helpButton()'
-				>
-					<mat-icon>help_outline</mat-icon>
-				</button>
-				<button
-					mat-mini-fab
-					cyphTranslate
-					class='alt'
-					[matTooltip]='stringsService.disconnect'
-					matTooltipPosition='left'
-					(click)='chatService.disconnectButton()'
-					*ngIf='!envService.isAccounts'
-				>
-					<mat-icon>close</mat-icon>
-				</button>
-			</smd-fab-actions>
-		</smd-fab-speed-dial>
+			<cyph-dynamic-form
+				[form]="chat.currentMessage.form"
+				(submitForm)="
+					chat.currentMessage.form = $event;
+					chatService.updateChat();
+					send()
+				"
+			></cyph-dynamic-form>
+		</div>
 
-		<ng-container *ngIf='showUnreadCount'>
-			<ng-container *ngIf='scrollService.watchUnreadCount() | async as unreadItemCount'>
-				<h3
+		<div
+			class="quill-message-box"
+			[class.mobile]="envService.isMobile | async"
+			fxFlexFill
+			*ngIf="messageType === chatMessageValueTypes.Quill"
+		>
+			<button
+				mat-icon-button
+				matTooltip="Send"
+				(click)="send()"
+				cyphTranslate
+				*ngIf="showSendButton"
+			>
+				<mat-icon>send</mat-icon>
+			</button>
+			<cyph-quill
+				fxFlexFill
+				name="quill-message"
+				[(ngModel)]="chat.currentMessage.quill"
+				(ngModelChange)="chatService.messageChange()"
+			></cyph-quill>
+		</div>
+
+		<div
+			class="text-message-box"
+			[class.mobile]="envService.isMobile | async"
+			fxFlexFill
+			*ngIf="messageType === chatMessageValueTypes.Text"
+		>
+			<div fxFlex>
+				<textarea
 					fxFlex
-					class='new-messages cyph-banner emphasis'
-					(click)='scrollDown()'
-					*ngIf='
-						unreadItemCount > 0 &&
-						((scrollService.scrollPosition | async) || 0) > scrollService.minScroll
-					'
+					class="message-box tabIndent"
+					name="text-message"
+					[(ngModel)]="chat.currentMessage.text"
+					(ngModelChange)="chatService.messageChange(true)"
+					placeholder="Send a secure message..."
+					cyphTranslate
+				></textarea>
+				<textarea
+					fxFlex
+					class="message-box tabIndent fake"
+					name="text-message-fake"
+				></textarea>
+			</div>
+
+			<div *ngIf="envService.isMobile | async">
+				<div
+					class="message-box-button-group"
+					*ngIf="showSendButton && !!chat.currentMessage.text"
+					[@slideInOutBottom]="'in'"
 				>
-					↓&nbsp;
-					{{unreadItemCount}}
-					{{stringsService.newString}}
-					{{
-						unreadItemCount === 1 ?
-							stringsService.message :
-							stringsService.messages
-					}}
-				</h3>
+					<button
+						mat-icon-button
+						matTooltip="Send"
+						(click)="mobileButtonHandlers.send()"
+						cyphTranslate
+					>
+						<mat-icon>send</mat-icon>
+					</button>
+				</div>
+				<div
+					class="message-box-button-group"
+					*ngIf="!chat.currentMessage.text"
+					[@slideInOutBottom]="'in'"
+				>
+					<button
+						mat-icon-button
+						matTooltip="Video Call"
+						(click)="mobileButtonHandlers.videoCall()"
+						*ngIf="(p2pService.isActive | async) === false"
+						cyphTranslate
+					>
+						<mat-icon>video_call</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						matTooltip="Voice Call"
+						(click)="mobileButtonHandlers.voiceCall()"
+						*ngIf="(p2pService.isActive | async) === false"
+						cyphTranslate
+					>
+						<mat-icon>call</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						matTooltip="Send File or Photo"
+						cyphDropZone
+						cyphTranslate
+						[accept]="fileAccept"
+						[cyphDropZoneClass]="false"
+						(fileDrop)="mobileButtonHandlers.fileTransfer($event)"
+					>
+						<mat-icon>attach_file</mat-icon>
+					</button>
+				</div>
+
+				<button
+					mat-icon-button
+					[matMenuTriggerFor]="menu"
+					class="menu-button"
+					*ngIf="!envService.isAccounts"
+				>
+					<mat-icon>more_horiz</mat-icon>
+				</button>
+				<mat-menu #menu="matMenu">
+					<button mat-menu-item (click)="chatService.helpButton()">
+						<mat-icon>help_outline</mat-icon>
+						<span>{{ stringsService.help }}</span>
+					</button>
+					<button
+						mat-menu-item
+						(click)="chatService.disconnectButton()"
+						*ngIf="!envService.isAccounts"
+					>
+						<mat-icon>close</mat-icon>
+						<span>{{ stringsService.disconnect }}</span>
+					</button>
+				</mat-menu>
+			</div>
+
+			<smd-fab-speed-dial
+				animationMode="scale"
+				[open]="isSpeedDialOpen | async"
+				(mouseleave)="isSpeedDialOpen.next(false)"
+				*ngIf="(envService.isMobile | async) === false"
+			>
+				<smd-fab-trigger
+					[spin]="true"
+					(mouseenter)="isSpeedDialOpen.next(true)"
+				>
+					<button mat-fab>
+						<mat-icon>add</mat-icon>
+					</button>
+				</smd-fab-trigger>
+				<smd-fab-actions>
+					<button
+						mat-mini-fab
+						cyphDropZone
+						cyphTranslate
+						matTooltip="Send File or Photo"
+						matTooltipPosition="left"
+						[accept]="fileAccept"
+						[cyphDropZoneClass]="false"
+						(fileDrop)="fileTransferService.send($event)"
+					>
+						<mat-icon>attach_file</mat-icon>
+					</button>
+					<button
+						mat-mini-fab
+						cyphTranslate
+						matTooltip="Voice Call"
+						matTooltipPosition="left"
+						(click)="p2pService.voiceCallButton()"
+						*ngIf="(p2pService.isActive | async) === false"
+					>
+						<mat-icon>call</mat-icon>
+					</button>
+					<button
+						mat-mini-fab
+						cyphTranslate
+						matTooltip="Video Call"
+						matTooltipPosition="left"
+						(click)="p2pService.videoCallButton()"
+						*ngIf="(p2pService.isActive | async) === false"
+					>
+						<mat-icon>video_call</mat-icon>
+					</button>
+					<button
+						mat-mini-fab
+						cyphTranslate
+						class="alt"
+						[matTooltip]="stringsService.help"
+						matTooltipPosition="left"
+						(click)="chatService.helpButton()"
+					>
+						<mat-icon>help_outline</mat-icon>
+					</button>
+					<button
+						mat-mini-fab
+						cyphTranslate
+						class="alt"
+						[matTooltip]="stringsService.disconnect"
+						matTooltipPosition="left"
+						(click)="chatService.disconnectButton()"
+						*ngIf="!envService.isAccounts"
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</smd-fab-actions>
+			</smd-fab-speed-dial>
+
+			<ng-container *ngIf="showUnreadCount">
+				<ng-container
+					*ngIf="
+						scrollService.watchUnreadCount()
+							| async as unreadItemCount
+					"
+				>
+					<h3
+						fxFlex
+						class="new-messages cyph-banner emphasis"
+						(click)="scrollDown()"
+						*ngIf="
+							unreadItemCount > 0 &&
+							((scrollService.scrollPosition | async) || 0) >
+								scrollService.minScroll
+						"
+					>
+						↓&nbsp;
+						{{ unreadItemCount }}
+						{{ stringsService.newString }}
+						{{
+							unreadItemCount === 1 ?
+								stringsService.message :
+								stringsService.messages
+						}}
+					</h3>
+				</ng-container>
 			</ng-container>
-		</ng-container>
+		</div>
 	</div>
-</div>
-
-
 </ng-container>

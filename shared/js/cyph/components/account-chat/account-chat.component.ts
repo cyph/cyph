@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	OnDestroy,
+	OnInit
+} from '@angular/core';
 import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
 import {BehaviorSubject, combineLatest} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
@@ -37,7 +42,6 @@ import {getDateTimeString, getTimestamp} from '../../util/time';
 import {readableID} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 
-
 /**
  * Angular component for account chat UI.
  */
@@ -48,7 +52,8 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./account-chat.component.scss'],
 	templateUrl: './account-chat.component.html'
 })
-export class AccountChatComponent extends BaseProvider implements OnDestroy, OnInit {
+export class AccountChatComponent extends BaseProvider
+	implements OnDestroy, OnInit {
 	/** @ignore */
 	private initiatedAppointmentID?: string;
 
@@ -56,69 +61,78 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	private initiatedContactID?: string;
 
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes		= AccountUserTypes;
+	public readonly accountUserTypes = AccountUserTypes;
 
 	/** Indicates whether an anonymous chat should be initiated. */
-	public readonly anonymousChatInitiating	= new BehaviorSubject<boolean>(false);
+	public readonly anonymousChatInitiating = new BehaviorSubject<boolean>(
+		false
+	);
 
 	/** Indicates whether this user is the call recipient. */
-	public readonly answering				= new BehaviorSubject<boolean>(false);
+	public readonly answering = new BehaviorSubject<boolean>(false);
 
 	/** Appointment data, when applicable. */
-	public readonly appointment				=
-		new BehaviorSubject<(IAppointment&{id: string})|undefined>(undefined)
-	;
+	public readonly appointment = new BehaviorSubject<
+		(IAppointment & {id: string}) | undefined
+	>(undefined);
 
 	/** @see AccountCallWaiting.cancelRedirectsHome */
-	public readonly cancelRedirectsHome		= toBehaviorSubject(
+	public readonly cancelRedirectsHome = toBehaviorSubject(
 		combineLatest([
 			this.answering,
 			this.accountService.combinedRouteData(this.activatedRoute)
-		]).pipe(map(([answering, [{cancelRedirectsHome}]]) =>
-			answering || cancelRedirectsHome === true
-		)),
+		]).pipe(
+			map(
+				([answering, [{cancelRedirectsHome}]]) =>
+					answering || cancelRedirectsHome === true
+			)
+		),
 		false
 	);
 
 	/** @see ChatMessageValue.Types */
-	public readonly chatMessageValueTypes	=
-		ChatMessageValue.Types
-	;
+	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
 	/** Indicates whether call is pending or not yet loaded. */
-	public readonly initialCallPending		= combineLatest([
+	public readonly initialCallPending = combineLatest([
 		this.p2pWebRTCService.initialCallPending,
 		this.p2pWebRTCService.loading
-	]).pipe(map(([initialCallPending, loading]) =>
-		(initialCallPending || loading) && !this.sessionInitService.ephemeral
-	));
+	]).pipe(
+		map(
+			([initialCallPending, loading]) =>
+				(initialCallPending || loading) &&
+				!this.sessionInitService.ephemeral
+		)
+	);
 
 	/** Initial load screen before a user is set. */
-	public readonly initiating				= new BehaviorSubject<boolean>(true);
+	public readonly initiating = new BehaviorSubject<boolean>(true);
 
 	/** @see ChatMessageValue.Types */
-	public readonly messageType				= new BehaviorSubject<ChatMessageValue.Types>(
+	public readonly messageType = new BehaviorSubject<ChatMessageValue.Types>(
 		this.envService.isTelehealth ?
 			ChatMessageValue.Types.Quill :
 			ChatMessageValue.Types.Text
 	);
 
 	/** @see ChatMessageList.promptFollowup */
-	public readonly promptFollowup			=
-		new BehaviorSubject<string|undefined>(undefined)
-	;
+	public readonly promptFollowup = new BehaviorSubject<string | undefined>(
+		undefined
+	);
 
 	/** Sub-session ID. */
-	public readonly sessionSubID			= new BehaviorSubject<string|undefined>(undefined);
+	public readonly sessionSubID = new BehaviorSubject<string | undefined>(
+		undefined
+	);
 
 	/** @see States */
-	public readonly states					= States;
+	public readonly states = States;
 
 	/** @see UiStyles */
-	public readonly uiStyles				= UiStyles;
+	public readonly uiStyles = UiStyles;
 
 	/** @see UserPresence */
-	public readonly userPresence			= UserPresence;
+	public readonly userPresence = UserPresence;
 
 	/** @ignore */
 	private async navigate (...url: string[]) : Promise<void> {
@@ -143,283 +157,370 @@ export class AccountChatComponent extends BaseProvider implements OnDestroy, OnI
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
-		const lock	= lockFunction();
+		const lock = lockFunction();
 
-		this.subscriptions.push(this.accountService.combinedRouteData(
-			this.activatedRoute
-		).subscribe(async ([
-			{
-				callType,
-				defaultSessionSubID,
-				ephemeralSubSession,
-				externalUser,
-				generateAnonymousChannelID,
-				promptFollowup
-			},
-			{
-				anonymousChannelID,
-				answerExpireTime,
-				appointmentID,
-				contactID,
-				sessionSubID,
-				username
-			},
-			[{path}]
-		]: [
-			{
-				callType?: 'audio'|'video';
-				defaultSessionSubID?: string;
-				ephemeralSubSession?: boolean;
-				externalUser?: boolean;
-				generateAnonymousChannelID?: boolean;
-				promptFollowup?: boolean;
-			},
-			{
-				anonymousChannelID?: string;
-				answerExpireTime?: number;
-				appointmentID?: string;
-				contactID?: string;
-				sessionSubID?: string;
-				username?: string;
-			},
-			UrlSegment[]
-		/* tslint:disable-next-line:cyclomatic-complexity */
-		]) => lock(async () => {
-			if (this.destroyed.value) {
-				return;
-			}
-
-			if (!anonymousChannelID && generateAnonymousChannelID) {
-				anonymousChannelID	= readableID(this.configService.cyphIDLength);
-			}
-
-			this.answering.next(answerExpireTime !== undefined);
-			this.anonymousChatInitiating.next(!!anonymousChannelID);
-
-			try {
-				if (username) {
-					let contactIDPromise: Promise<string>;
-
-					if (externalUser) {
-						contactIDPromise	= this.accountContactsService.getContactID(username);
-					}
-					else {
-						const user	= await this.accountUserLookupService.getUser(username, false);
-						if (!user) {
-							throw new Error('User not found.');
-						}
-						contactIDPromise	= user.contactID;
-					}
-
-					this.router.navigate(
-						[path, await contactIDPromise],
-						{replaceUrl: true}
-					);
-					return;
-				}
-
-				if (this.initiatedAppointmentID) {
-					if (appointmentID && this.initiatedAppointmentID !== appointmentID) {
-						await this.navigate('appointments', path, appointmentID);
-					}
-
-					return;
-				}
-
-				if (this.initiatedContactID) {
-					if (contactID && this.initiatedContactID !== contactID) {
-						await this.navigate(path, contactID);
-					}
-
-					return;
-				}
-
-				let appointment: IAppointment&{id: string};
-				let appointmentOther: string|undefined;
-
-				if (appointmentID) {
-					appointment			= {
-						id: appointmentID,
-						...(await this.accountFilesService.downloadFile(
+		this.subscriptions.push(
+			this.accountService
+				.combinedRouteData(this.activatedRoute)
+				.subscribe(
+					async ([
+						{
+							callType,
+							defaultSessionSubID,
+							ephemeralSubSession,
+							externalUser,
+							generateAnonymousChannelID,
+							promptFollowup
+						},
+						{
+							anonymousChannelID,
+							answerExpireTime,
 							appointmentID,
-							AccountFileRecord.RecordTypes.Appointment
-						).result)
-					};
+							contactID,
+							sessionSubID,
+							username
+						},
+						[{path}]
+					]: [
+						{
+							callType?: 'audio' | 'video';
+							defaultSessionSubID?: string;
+							ephemeralSubSession?: boolean;
+							externalUser?: boolean;
+							generateAnonymousChannelID?: boolean;
+							promptFollowup?: boolean;
+						},
+						{
+							anonymousChannelID?: string;
+							answerExpireTime?: number;
+							appointmentID?: string;
+							contactID?: string;
+							sessionSubID?: string;
+							username?: string;
+						},
+						UrlSegment[]
+						/* tslint:disable-next-line:cyclomatic-complexity */
+					]) =>
+						lock(async () => {
+							if (this.destroyed.value) {
+								return;
+							}
 
-					callType			=
-						promptFollowup ?
-							undefined :
-						appointment.calendarInvite.callType === CallTypes.Video ?
-							'video' :
-						appointment.calendarInvite.callType === CallTypes.Audio ?
-							'audio' :
-							undefined
-					;
+							if (
+								!anonymousChannelID &&
+								generateAnonymousChannelID
+							) {
+								anonymousChannelID = readableID(
+									this.configService.cyphIDLength
+								);
+							}
 
-					sessionSubID		= appointmentID;
+							this.answering.next(answerExpireTime !== undefined);
+							this.anonymousChatInitiating.next(
+								!!anonymousChannelID
+							);
 
-					appointmentOther	=
-						appointment.participants === undefined ?
-							undefined :
-							appointment.participants.find(participant =>
-								this.accountDatabaseService.currentUser.value !== undefined &&
-								(
-									this.accountDatabaseService.currentUser.value.user.username
-								) !== normalize(participant)
-							)
-					;
+							try {
+								if (username) {
+									let contactIDPromise: Promise<string>;
 
-					contactID			= await this.accountContactsService.getContactID(
-						appointmentOther
-					);
+									if (externalUser) {
+										contactIDPromise = this.accountContactsService.getContactID(
+											username
+										);
+									}
+									else {
+										const user = await this.accountUserLookupService.getUser(
+											username,
+											false
+										);
+										if (!user) {
+											throw new Error('User not found.');
+										}
+										contactIDPromise = user.contactID;
+									}
 
-					this.appointment.next(appointment);
-				}
+									this.router.navigate(
+										[path, await contactIDPromise],
+										{replaceUrl: true}
+									);
+									return;
+								}
 
-				this.initiatedAppointmentID	= appointmentID;
-				this.initiatedContactID		= contactID;
+								if (this.initiatedAppointmentID) {
+									if (
+										appointmentID &&
+										this.initiatedAppointmentID !==
+											appointmentID
+									) {
+										await this.navigate(
+											'appointments',
+											path,
+											appointmentID
+										);
+									}
 
-				if (!contactID && !anonymousChannelID) {
-					return;
-				}
+									return;
+								}
 
-				const callEndRoute	= appointmentID ?
-					['appointments', appointmentID, 'end'] :
-				!this.cancelRedirectsHome.value ?
-					['messages', contactID] :
-					['']
-				;
+								if (this.initiatedContactID) {
+									if (
+										contactID &&
+										this.initiatedContactID !== contactID
+									) {
+										await this.navigate(path, contactID);
+									}
 
-				if (
-					answerExpireTime !== undefined &&
-					(await getTimestamp()) > answerExpireTime
-				) {
-					this.dialogService.toast(this.stringsService.p2pTimeoutIncoming, 3000);
-					this.router.navigate(callEndRoute);
-					return;
-				}
+									return;
+								}
 
-				if (defaultSessionSubID && !sessionSubID) {
-					sessionSubID	= defaultSessionSubID;
-				}
+								let appointment: IAppointment & {id: string};
+								let appointmentOther: string | undefined;
 
-				this.messageType.next(
-					sessionSubID === 'mail' || this.envService.isTelehealth ?
-						ChatMessageValue.Types.Quill :
-						ChatMessageValue.Types.Text
-				);
+								if (appointmentID) {
+									appointment = {
+										id: appointmentID,
+										...(await this.accountFilesService.downloadFile(
+											appointmentID,
+											AccountFileRecord.RecordTypes
+												.Appointment
+										).result)
+									};
 
-				this.sessionSubID.next(sessionSubID);
+									callType = promptFollowup ?
+										undefined :
+									appointment.calendarInvite.callType ===
+										  CallTypes.Video ?
+										'video' :
+									appointment.calendarInvite.callType ===
+										  CallTypes.Audio ?
+										'audio' :
+										undefined;
 
-				this.p2pWebRTCService.initialCallPending.next(callType !== undefined);
+									sessionSubID = appointmentID;
 
-				const chat		= anonymousChannelID ?
-					{anonymousChannelID, passive: !generateAnonymousChannelID} :
-					await this.accountContactsService.getChatData(contactID)
-				;
+									appointmentOther =
+										appointment.participants === undefined ?
+											undefined :
+											appointment.participants.find(
+												participant =>
+													this.accountDatabaseService
+														.currentUser.value !==
+														undefined &&
+													this.accountDatabaseService
+														.currentUser.value.user
+														.username !==
+														normalize(participant)
+											);
 
-				const destroyed	= this.destroyed.pipe(filter(b => b), take(1)).toPromise();
+									contactID = await this.accountContactsService.getContactID(
+										appointmentOther
+									);
 
-				if (anonymousChannelID) {
-					beforeUnloadMessage	= this.stringsService.disconnectWarning;
+									this.appointment.next(appointment);
+								}
 
-					destroyed.then(() => {
-						beforeUnloadMessage	= undefined;
-					});
-				}
+								this.initiatedAppointmentID = appointmentID;
+								this.initiatedContactID = contactID;
 
-				if (callType !== undefined && anonymousChannelID) {
-					return this.accountChatService.setUser(chat, undefined, callType);
-				}
-				if (callType !== undefined && !sessionSubID) {
-					await this.accountChatService.setUser(chat);
-					return this.accountP2PService.beginCall(callType, path);
-				}
+								if (!contactID && !anonymousChannelID) {
+									return;
+								}
 
-				this.initiating.next(false);
-				await this.accountChatService.setUser(
-					chat,
-					undefined,
-					callType,
-					sessionSubID,
-					ephemeralSubSession
-				);
+								const callEndRoute = appointmentID ?
+									['appointments', appointmentID, 'end'] :
+								!this.cancelRedirectsHome.value ?
+									['messages', contactID] :
+									[''];
 
-				if (callType === undefined) {
-					return;
-				}
+								if (
+									answerExpireTime !== undefined &&
+									(await getTimestamp()) > answerExpireTime
+								) {
+									this.dialogService.toast(
+										this.stringsService.p2pTimeoutIncoming,
+										3000
+									);
+									this.router.navigate(callEndRoute);
+									return;
+								}
 
-				if (!(await (
-					this.answering.value ?
-						this.accountP2PService.handlers.acceptConfirm(callType) :
-						this.accountP2PService.handlers.requestConfirm(callType)
-				))) {
-					this.router.navigate(callEndRoute);
-					return;
-				}
+								if (defaultSessionSubID && !sessionSubID) {
+									sessionSubID = defaultSessionSubID;
+								}
 
-				this.notificationService.ring(Promise.race([
-					this.p2pWebRTCService.loading.pipe(filter(b => b), take(1)).toPromise(),
-					destroyed.then(() => false)
-				])).then(() => {
-					if (
-						this.destroyed.value ||
-						this.p2pWebRTCService.loading.value ||
-						!this.p2pWebRTCService.initialCallPending.value
-					) {
-						return;
-					}
+								this.messageType.next(
+									sessionSubID === 'mail' ||
+										this.envService.isTelehealth ?
+										ChatMessageValue.Types.Quill :
+										ChatMessageValue.Types.Text
+								);
 
-					this.dialogService.toast(this.stringsService.p2pTimeoutOutgoing, 3000);
-					this.p2pWebRTCService.close();
-				});
+								this.sessionSubID.next(sessionSubID);
 
-				this.p2pWebRTCService.disconnect.pipe(take(1)).toPromise().then(async () => {
-					if (this.destroyed.value) {
-						return;
-					}
+								this.p2pWebRTCService.initialCallPending.next(
+									callType !== undefined
+								);
 
-					this.router.navigate(callEndRoute);
+								const chat = anonymousChannelID ?
+									{
+											anonymousChannelID,
+											passive: !generateAnonymousChannelID
+									  } :
+									await this.accountContactsService.getChatData(
+										contactID
+									);
 
-					if (!(appointment && appointmentID)) {
-						return;
-					}
+								const destroyed = this.destroyed
+									.pipe(
+										filter(b => b),
+										take(1)
+									)
+									.toPromise();
 
-					appointment.occurred	= true;
+								if (anonymousChannelID) {
+									beforeUnloadMessage = this.stringsService
+										.disconnectWarning;
 
-					await this.accountFilesService.updateAppointment(
-						appointmentID,
-						appointment,
-						undefined,
-						true
-					);
+									destroyed.then(() => {
+										beforeUnloadMessage = undefined;
+									});
+								}
 
-					if (!(appointment.notes && appointmentOther)) {
-						return;
-					}
+								if (
+									callType !== undefined &&
+									anonymousChannelID
+								) {
+									return this.accountChatService.setUser(
+										chat,
+										undefined,
+										callType
+									);
+								}
+								if (callType !== undefined && !sessionSubID) {
+									await this.accountChatService.setUser(chat);
+									return this.accountP2PService.beginCall(
+										callType,
+										path
+									);
+								}
 
-					await this.accountFilesService.upload(
-						`Notes about ${appointmentOther} (${
-							appointment.calendarInvite.title
-						}, ${
-							getDateTimeString(appointment.calendarInvite.startTime)
-						})`,
-						appointment.notes
-					);
-				});
-			}
-			catch {
-				this.router.navigate(['404']);
-			}
-			finally {
-				if (promptFollowup) {
-					this.promptFollowup.next(contactID || this.initiatedContactID);
-				}
-				else {
-					this.promptFollowup.next(undefined);
-				}
-			}
-		})));
+								this.initiating.next(false);
+								await this.accountChatService.setUser(
+									chat,
+									undefined,
+									callType,
+									sessionSubID,
+									ephemeralSubSession
+								);
+
+								if (callType === undefined) {
+									return;
+								}
+
+								if (
+									!(await (this.answering.value ?
+										this.accountP2PService.handlers.acceptConfirm(
+												callType
+										  ) :
+										this.accountP2PService.handlers.requestConfirm(
+											callType
+										)))
+								) {
+									this.router.navigate(callEndRoute);
+									return;
+								}
+
+								this.notificationService
+									.ring(
+										Promise.race([
+											this.p2pWebRTCService.loading
+												.pipe(
+													filter(b => b),
+													take(1)
+												)
+												.toPromise(),
+											destroyed.then(() => false)
+										])
+									)
+									.then(() => {
+										if (
+											this.destroyed.value ||
+											this.p2pWebRTCService.loading
+												.value ||
+											!this.p2pWebRTCService
+												.initialCallPending.value
+										) {
+											return;
+										}
+
+										this.dialogService.toast(
+											this.stringsService
+												.p2pTimeoutOutgoing,
+											3000
+										);
+										this.p2pWebRTCService.close();
+									});
+
+								this.p2pWebRTCService.disconnect
+									.pipe(take(1))
+									.toPromise()
+									.then(async () => {
+										if (this.destroyed.value) {
+											return;
+										}
+
+										this.router.navigate(callEndRoute);
+
+										if (!(appointment && appointmentID)) {
+											return;
+										}
+
+										appointment.occurred = true;
+
+										await this.accountFilesService.updateAppointment(
+											appointmentID,
+											appointment,
+											undefined,
+											true
+										);
+
+										if (
+											!(
+												appointment.notes &&
+												appointmentOther
+											)
+										) {
+											return;
+										}
+
+										await this.accountFilesService.upload(
+											`Notes about ${appointmentOther} (${
+												appointment.calendarInvite.title
+											}, ${getDateTimeString(
+												appointment.calendarInvite
+													.startTime
+											)})`,
+											appointment.notes
+										);
+									});
+							}
+							catch {
+								this.router.navigate(['404']);
+							}
+							finally {
+								if (promptFollowup) {
+									this.promptFollowup.next(
+										contactID || this.initiatedContactID
+									);
+								}
+								else {
+									this.promptFollowup.next(undefined);
+								}
+							}
+						})
+				)
+		);
 	}
 
 	constructor (

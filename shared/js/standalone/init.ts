@@ -5,12 +5,10 @@
  * routine of all Web projects.
  */
 
-
 import * as $ from 'jquery';
 import {env} from '../cyph/env';
 import {triggerClick} from '../cyph/util/input';
 import {sleep} from '../cyph/util/wait';
-
 
 /** Handle redirection in local env before ServiceWorker is initialized */
 
@@ -31,20 +29,23 @@ document.body.classList.toggle('cordova', env.isCordova);
 
 document.body.classList.toggle(
 	'disable-drop-shadow',
-	env.isMacOS && env.isChrome && env.chromeVersion >= 65 && env.chromeVersion < 68
+	env.isMacOS &&
+		env.isChrome &&
+		env.chromeVersion >= 65 &&
+		env.chromeVersion < 68
 );
 
 /* Cordova back button support */
 
 if (env.isCordova) {
-	(<any> self).onbackbutton	= async () => {
+	(<any> self).onbackbutton = async () => {
 		for (const selector of [
 			'.overlay.clickable',
 			'.cdk-overlay-pane.mat-tooltip-panel',
 			'.cdk-overlay-backdrop.cdk-overlay-backdrop-showing',
 			'.mat-drawer-backdrop.mat-drawer-shown'
 		]) {
-			const clickableOverlay	= document.querySelector(selector);
+			const clickableOverlay = document.querySelector(selector);
 
 			if (clickableOverlay instanceof HTMLElement) {
 				clickableOverlay.click();
@@ -65,7 +66,7 @@ if (env.isCordova) {
 
 window.addEventListener('beforeunload', e => {
 	if (beforeUnloadMessage !== undefined) {
-		e.returnValue	= beforeUnloadMessage;
+		e.returnValue = beforeUnloadMessage;
 	}
 });
 
@@ -74,14 +75,14 @@ window.addEventListener('beforeunload', e => {
 /* tslint:disable-next-line:no-unbound-method */
 if (!HTMLElement.prototype.click) {
 	/* tslint:disable-next-line:only-arrow-functions no-unbound-method */
-	HTMLElement.prototype.click	= function (this: HTMLElement) : void {
+	HTMLElement.prototype.click = function (this: HTMLElement) : void {
 		/* tslint:disable-next-line:no-invalid-this */
 		triggerClick(this);
 	};
 }
 
 if (location.hash && location.hash.endsWith('/')) {
-	location.hash	= location.hash.slice(0, -1);
+	location.hash = location.hash.slice(0, -1);
 }
 
 $(async () => {

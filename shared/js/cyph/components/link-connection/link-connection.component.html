@@ -1,11 +1,11 @@
 <div
 	fxFlex
 	fxFlexFill
-	fxLayout='column'
-	fxLayoutAlign='center stretch'
-	class='link-connection loading'
+	fxLayout="column"
+	fxLayoutAlign="center stretch"
+	class="link-connection loading"
 >
-	<div class='logo-animation'>
+	<div class="logo-animation">
 		<div></div>
 		<div></div>
 		<div></div>
@@ -14,96 +14,109 @@
 	</div>
 	<br />
 	<div>
-		<span *ngIf='(isPassive | async) && !envService.isTelehealth' cyphTranslate>
+		<span
+			*ngIf="(isPassive | async) && !envService.isTelehealth"
+			cyphTranslate
+		>
 			Waiting for user to join...
 		</span>
-		<span *ngIf='(isPassive | async) && envService.isTelehealth' cyphTranslate>
-			You have successfully checked in. Your telehealth session
-			will begin when the other party connects.
+		<span
+			*ngIf="(isPassive | async) && envService.isTelehealth"
+			cyphTranslate
+		>
+			You have successfully checked in. Your telehealth session will begin
+			when the other party connects.
 		</span>
-		<div *ngIf='(isPassive | async) === false'>
-			<span *ngIf='envService.isTelehealth' cyphTranslate>
-				Send the link below to the patient. When they open it,
-				your telehealth session will begin.
+		<div *ngIf="(isPassive | async) === false">
+			<span *ngIf="envService.isTelehealth" cyphTranslate>
+				Send the link below to the patient. When they open it, your
+				telehealth session will begin.
 			</span>
 			<span
-				class='description'
-				[class.mobile]='envService.isMobileOS'
-				*ngIf='!envService.isTelehealth'
+				class="description"
+				[class.mobile]="envService.isMobileOS"
+				*ngIf="!envService.isTelehealth"
 				cyphTranslate
 			>
-				Send the link below to another user. When they open it,
-				you'll be securely connected.
+				Send the link below to another user. When they open it, you'll
+				be securely connected.
 			</span>
 			<br />
 			<br />
 
-			<div fxLayoutAlign='center center' *ngIf='!envService.isMobileOS'>
-				<mat-form-field fxFlex='50'>
+			<div fxLayoutAlign="center center" *ngIf="!envService.isMobileOS">
+				<mat-form-field fxFlex="50">
 					<input
 						matInput
-						class='connect-link-input'
-						[ngModel]='link | async'
-						(ngModelChange)='resetLinkValue($event)'
-						(blur)='onBlur()'
-						(click)='onBlur()'
-						(keydown)='onBlur()'
-						[matTooltip]='stringsService.linkTooltip'
+						class="connect-link-input"
+						[ngModel]="link | async"
+						(ngModelChange)="resetLinkValue($event)"
+						(blur)="onBlur()"
+						(click)="onBlur()"
+						(keydown)="onBlur()"
+						[matTooltip]="stringsService.linkTooltip"
 					/>
 				</mat-form-field>
 				<button
 					mat-icon-button
-					matTooltip='Email'
-					(click)='email()'
+					matTooltip="Email"
+					(click)="email()"
 					cyphTranslate
 				>
 					<mat-icon>email</mat-icon>
 				</button>
 				<button
 					mat-icon-button
-					matTooltip='Copy to Clipboard'
-					(click)='copyToClipboard()'
+					matTooltip="Copy to Clipboard"
+					(click)="copyToClipboard()"
 					cyphTranslate
 				>
 					<mat-icon>content_copy</mat-icon>
 				</button>
 			</div>
 
-			<div class='connect-link-mobile' *ngIf='envService.isMobileOS'>
+			<div class="connect-link-mobile" *ngIf="envService.isMobileOS">
 				<a
-					class='connect-link-link'
-					[href]='linkHref | async'
-					[matTooltip]='stringsService.linkTooltip'
-				>{{link | async}}</a>
+					class="connect-link-link"
+					[href]="linkHref | async"
+					[matTooltip]="stringsService.linkTooltip"
+				>
+					{{ link | async }}
+				</a>
 
 				<br />
 				<br />
 
-				<a mat-mini-fab matTooltip='SMS' [href]='linkSMS | async' cyphTranslate>
+				<a
+					mat-mini-fab
+					matTooltip="SMS"
+					[href]="linkSMS | async"
+					cyphTranslate
+				>
 					<mat-icon>textsms</mat-icon>
 				</a>
 
-				<span class='divider'>
+				<span class="divider">
 					&nbsp;
 				</span>
 
 				<button
 					mat-mini-fab
-					matTooltip='Email'
-					(click)='email()'
+					matTooltip="Email"
+					(click)="email()"
 					cyphTranslate
 				>
 					<mat-icon>email</mat-icon>
 				</button>
 
-				<span class='divider'>
+				<span class="divider">
 					&nbsp;
 				</span>
 
 				<button
 					mat-mini-fab
-					matTooltip='Copy to Clipboard'
-					(click)='copyToClipboard()'
+					matTooltip="Copy to Clipboard"
+					(click)="copyToClipboard()"
 					cyphTranslate
 				>
 					<mat-icon>content_copy</mat-icon>
@@ -112,42 +125,42 @@
 		</div>
 
 		<br />
-		<div class='timer' *ngIf='(isPassive | async) === false'>
+		<div class="timer" *ngIf="(isPassive | async) === false">
 			<span cyphTranslate>
 				Link expires in
 			</span>
 			&ngsp;
-			<span class='countdown'>
-				{{timer.timestamp | async}}
+			<span class="countdown">
+				{{ timer.timestamp | async }}
 			</span>
 			&ngsp;
 			<button
 				mat-icon-button
-				(click)='addTime(60000)'
-				matTooltip='Increase Time by One Minute'
+				(click)="addTime(60000)"
+				matTooltip="Increase Time by One Minute"
 				cyphTranslate
 			>
 				<mat-icon>alarm_add</mat-icon>
 			</button>
 
-			<ng-container *ngIf='envService.pro | async'>
+			<ng-container *ngIf="envService.pro | async">
 				&ngsp;
 				<mat-select
 					cyphTranslate
-					class='add-time-select'
-					ngClass.lt-md='mobile'
-					placeholder='Add More Time'
+					class="add-time-select"
+					ngClass.lt-md="mobile"
+					placeholder="Add More Time"
 				>
-					<mat-option (click)='addTime(600000)'>
+					<mat-option (click)="addTime(600000)">
 						10 Minutes
 					</mat-option>
-					<mat-option (click)='addTime(1800000)'>
+					<mat-option (click)="addTime(1800000)">
 						30 Minutes
 					</mat-option>
-					<mat-option (click)='addTime(3600000)'>
+					<mat-option (click)="addTime(3600000)">
 						1 Hour
 					</mat-option>
-					<mat-option (click)='addTime(43200000)'>
+					<mat-option (click)="addTime(43200000)">
 						12 Hours
 					</mat-option>
 				</mat-select>
@@ -155,21 +168,21 @@
 		</div>
 	</div>
 
-	<ng-container *ngIf='!envService.isMobileOS'>
+	<ng-container *ngIf="!envService.isMobileOS">
 		<br />
 
-		<div fxLayoutAlign='center center' *ngIf='false'>
+		<div fxLayoutAlign="center center" *ngIf="false">
 			<img
 				cyphTranslate
-				alt='QR Code'
-				[src]='qrSrc'
-				*ngIf='
-					((qrService.getQRCode({
+				alt="QR Code"
+				[src]="qrSrc"
+				*ngIf="
+					(qrService.getQRCode({
 						dotScale: 0.75,
 						size: 128,
-						text: (link | async) || ""
-					}) | async) || "") as qrSrc
-				'
+						text: (link | async) || ''
+					}) | async) || '' as qrSrc
+				"
 			/>
 		</div>
 
@@ -177,93 +190,118 @@
 	</ng-container>
 
 	<div
-		fxLayout='row'
-		fxLayoutAlign='center center'
-		[class.ad]='envService.showAds'
-		[class.mobile]='envService.isMobile | async'
+		fxLayout="row"
+		fxLayoutAlign="center center"
+		[class.ad]="envService.showAds"
+		[class.mobile]="envService.isMobile | async"
 	>
-		<ng-container *ngIf='envService.showAds; else proContent'>
+		<ng-container *ngIf="envService.showAds; else proContent">
 			<ng-content></ng-content>
 		</ng-container>
 		<ng-template #proContent>
 			<div
 				fxFlex
-				fxFlex.gt-md='50'
-				fxLayout='column'
-				*ngIf='envService.pro | async'
+				fxFlex.gt-md="50"
+				fxLayout="column"
+				*ngIf="envService.pro | async"
 			>
-				<div fxLayout='row' fxLayoutAlign='center center'>
+				<div fxLayout="row" fxLayoutAlign="center center">
 					<mat-slide-toggle
-						[ngModel]='advancedFeatures | async'
-						(ngModelChange)='advancedFeatures.next($event)'
+						[ngModel]="advancedFeatures | async"
+						(ngModelChange)="advancedFeatures.next($event)"
 						cyphTranslate
 					>
 						Advanced Features
 					</mat-slide-toggle>
 				</div>
 
-				<div fxLayout='row' fxLayoutGap='16px' *ngIf='advancedFeatures | async'>
-					<mat-form-field fxFlex fxLayout='column'>
+				<div
+					fxLayout="row"
+					fxLayoutGap="16px"
+					*ngIf="advancedFeatures | async"
+				>
+					<mat-form-field fxFlex fxLayout="column">
 						<textarea
 							matInput
 							cyphTranslate
-							[ngModel]='queuedMessageDraft | async'
-							(ngModelChange)='queuedMessageDraft.next($event)'
-							placeholder='Queue up first message'
-							rows='3'
+							[ngModel]="queuedMessageDraft | async"
+							(ngModelChange)="queuedMessageDraft.next($event)"
+							placeholder="Queue up first message"
+							rows="3"
 						></textarea>
 					</mat-form-field>
-					<div fxLayout='row'>
-						<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
+					<div fxLayout="row">
+						<div
+							fxLayout="column"
+							fxLayoutAlign="center center"
+							fxLayoutGap="8px"
+						>
 							<button
 								mat-icon-button
-								matTooltip='Save'
+								matTooltip="Save"
 								cyphTranslate
-								(click)='chatService.setQueuedMessage(queuedMessageDraft.value)'
+								(click)="
+									chatService.setQueuedMessage(
+										queuedMessageDraft.value
+									)
+								"
 							>
 								<mat-icon>save</mat-icon>
 							</button>
 							<mat-button-toggle
-								matTooltip='Self-Destruct'
+								matTooltip="Self-Destruct"
 								cyphTranslate
-								[checked]='chatService.chatSelfDestruct | async'
-								(change)='chatService.chatSelfDestruct.next(
-									!chatService.chatSelfDestruct.value
-								)'
+								[checked]="chatService.chatSelfDestruct | async"
+								(change)="
+									chatService.chatSelfDestruct.next(
+										!chatService.chatSelfDestruct.value
+									)
+								"
 							>
 								<mat-icon>timer</mat-icon>
 							</mat-button-toggle>
 						</div>
 						<div
-							*ngIf='chatService.chatSelfDestruct | async'
-							class='self-destruct-timer'
+							*ngIf="chatService.chatSelfDestruct | async"
+							class="self-destruct-timer"
 						>
 							<mat-form-field>
 								<input
 									matInput
-									[ngModel]='chatService.chatSelfDestructTimeout | async'
-									(ngModelChange)='
-										chatService.chatSelfDestructTimeout.next($event)
-									'
-									name='timer'
-									max='9999'
-									type='number'
+									[ngModel]="
+										chatService.chatSelfDestructTimeout
+											| async
+									"
+									(ngModelChange)="
+										chatService.chatSelfDestructTimeout.next(
+											$event
+										)
+									"
+									name="timer"
+									max="9999"
+									type="number"
 								/>
 							</mat-form-field>
 							&nbsp;
 							<span cyphTranslate>Seconds</span>
 						</div>
 					</div>
-					<div fxLayout='column' fxLayoutAlign='center center' fxLayoutGap='8px'>
+					<div
+						fxLayout="column"
+						fxLayoutAlign="center center"
+						fxLayoutGap="8px"
+					>
 						<mat-button-toggle
-							matTooltip='Walkie Talkie Mode'
+							matTooltip="Walkie Talkie Mode"
 							cyphTranslate
-							[checked]='chatService.walkieTalkieMode | async'
-							(change)='chatService.walkieTalkieMode.next(
-								!chatService.walkieTalkieMode.value
-							)'
+							[checked]="chatService.walkieTalkieMode | async"
+							(change)="
+								chatService.walkieTalkieMode.next(
+									!chatService.walkieTalkieMode.value
+								)
+							"
 						>
-							<mat-icon svgIcon='walkie-talkie'></mat-icon>
+							<mat-icon svgIcon="walkie-talkie"></mat-icon>
 						</mat-button-toggle>
 					</div>
 				</div>

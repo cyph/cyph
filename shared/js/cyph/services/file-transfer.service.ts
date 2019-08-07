@@ -5,7 +5,12 @@ import {Observable, of} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
 import {LocalAsyncSet} from '../local-async-set';
-import {BinaryProto, ChatMessageValue, DataURIProto, IFileTransfer} from '../proto';
+import {
+	BinaryProto,
+	ChatMessageValue,
+	DataURIProto,
+	IFileTransfer
+} from '../proto';
 import {readableByteLength} from '../util/formatting';
 import {saveFile} from '../util/save-file';
 import {uuid} from '../util/uuid';
@@ -19,7 +24,6 @@ import {FileService} from './file.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Manages file transfers within a chat.
  */
@@ -29,49 +33,60 @@ export class FileTransferService extends BaseProvider {
 	public readonly transfers: LocalAsyncSet<{
 		metadata: IFileTransfer;
 		progress: Observable<number>;
-	}>	= new LocalAsyncSet<{
+	}> = new LocalAsyncSet<{
 		metadata: IFileTransfer;
 		progress: Observable<number>;
 	}>();
 
 	/** Downloads multimedia. */
-	public readonly getMedia	= memoize(async (fileTransfer: IFileTransfer) : Promise<{
-		success: boolean;
-		uri?: SafeUrl;
-	}> => {
-		try {
-			if (!fileTransfer.media) {
-				throw new Error('Not multimedia.');
-			}
+	public readonly getMedia = memoize(
+		async (
+			fileTransfer: IFileTransfer
+		): Promise<{
+			success: boolean;
+			uri?: SafeUrl;
+		}> => {
+			try {
+				if (!fileTransfer.media) {
+					throw new Error('Not multimedia.');
+				}
 
-			return {
-				success: true,
-				uri: await DataURIProto.decode(
-					await this.receiveInternal(fileTransfer),
-					fileTransfer.mediaType
-				)
-			};
+				return {
+					success: true,
+					uri: await DataURIProto.decode(
+						await this.receiveInternal(fileTransfer),
+						fileTransfer.mediaType
+					)
+				};
+			}
+			catch {
+				return {success: false};
+			}
 		}
-		catch {
-			return {success: false};
-		}
-	});
+	);
 
 	/** TODO: Get rid of this and add upload and download methods to EncryptedAsyncMap. */
-	private async encryptFile (plaintext: Uint8Array, url: string) : Promise<{
+	private async encryptFile (
+		plaintext: Uint8Array,
+		url: string
+	) : Promise<{
 		cyphertext: Uint8Array;
 		hash: Uint8Array;
 		key: Uint8Array;
 	}> {
-		const [hash, {cyphertext, key}]	= await Promise.all([
+		const [hash, {cyphertext, key}] = await Promise.all([
 			this.potassiumService.hash.hash(plaintext),
 			(async () => {
-				const k	= this.potassiumService.randomBytes(
+				const k = this.potassiumService.randomBytes(
 					await this.potassiumService.secretBox.keyBytes
 				);
 
 				return {
-					cyphertext: await this.potassiumService.secretBox.seal(plaintext, k, url),
+					cyphertext: await this.potassiumService.secretBox.seal(
+						plaintext,
+						k,
+						url
+					),
 					key: k
 				};
 			})()
@@ -82,11 +97,16 @@ export class FileTransferService extends BaseProvider {
 
 	/** Storage root path. */
 	public get path () : string {
-		return 'fileTransfers' + (this.sessionInitService.ephemeral ? 'Ephemeral' : '');
+		return (
+			'fileTransfers' +
+			(this.sessionInitService.ephemeral ? 'Ephemeral' : '')
+		);
 	}
 
 	/** @ignore */
-	private async receiveInternal (fileTransfer: IFileTransfer) : Promise<Uint8Array> {
+	private async receiveInternal (
+		fileTransfer: IFileTransfer
+	) : Promise<Uint8Array> {
 		if (
 			!(fileTransfer.hash && fileTransfer.hash.length > 0) ||
 			!(fileTransfer.key && fileTransfer.key.length > 0)
@@ -94,28 +114,38 @@ export class FileTransferService extends BaseProvider {
 			throw new Error('Invalid file transfer.');
 		}
 
-		fileTransfer.isOutgoing	= false;
-		const {hash, key}		= fileTransfer;
-		const url				= `${this.path}/${fileTransfer.id}`;
-		const downloadTask		= this.databaseService.downloadItem(url, BinaryProto);
-		const transfer			= {metadata: fileTransfer, progress: downloadTask.progress};
+		fileTransfer.isOutgoing = false;
+		const {hash, key} = fileTransfer;
+		const url = `${this.path}/${fileTransfer.id}`;
+		const downloadTask = this.databaseService.downloadItem(
+			url,
+			BinaryProto
+		);
+		const transfer = {
+			metadata: fileTransfer,
+			progress: downloadTask.progress
+		};
 
 		if (!(await downloadTask.alreadyCached)) {
 			await this.transfers.addItem(transfer);
 		}
 
-		const plaintext	= await (async () =>
-			this.potassiumService.secretBox.open((await downloadTask.result).value, key, url)
-		)().catch(
-			() => undefined
-		);
+		const plaintext = await (async () =>
+			this.potassiumService.secretBox.open(
+				(await downloadTask.result).value,
+				key,
+				url
+			))().catch(() => undefined);
 
 		await this.transfers.deleteItem(transfer);
 
-		if (!plaintext || !this.potassiumService.compareMemory(
-			hash,
-			await this.potassiumService.hash.hash(plaintext)
-		)) {
+		if (
+			!plaintext ||
+			!this.potassiumService.compareMemory(
+				hash,
+				await this.potassiumService.hash.hash(plaintext)
+			)
+		) {
 			throw new Error('Invalid file.');
 		}
 
@@ -124,20 +154,26 @@ export class FileTransferService extends BaseProvider {
 
 	/** Downloads and saves file. */
 	public async saveFile (fileTransfer: IFileTransfer) : Promise<void> {
-		if (!(await this.dialogService.confirm({
-			content: this.stringsService.incomingFileSave,
-			markdown: true,
-			ok: this.stringsService.save,
-			title: `${this.stringsService.incomingFile}: ${fileTransfer.name} (${
-				readableByteLength(fileTransfer.size)
-			})`
-		}))) {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.incomingFileSave,
+				markdown: true,
+				ok: this.stringsService.save,
+				title: `${this.stringsService.incomingFile}: ${
+					fileTransfer.name
+				} (${readableByteLength(fileTransfer.size)})`
+			}))
+		) {
 			return;
 		}
 
 		try {
-			const plaintext	= await this.receiveInternal(fileTransfer);
-			await saveFile(plaintext, fileTransfer.name, fileTransfer.mediaType);
+			const plaintext = await this.receiveInternal(fileTransfer);
+			await saveFile(
+				plaintext,
+				fileTransfer.name,
+				fileTransfer.mediaType
+			);
 		}
 		catch {
 			await this.chatService.addMessage({
@@ -172,7 +208,7 @@ export class FileTransferService extends BaseProvider {
 			});
 		}
 
-		const fileTransfer: IFileTransfer	= {
+		const fileTransfer: IFileTransfer = {
 			id: uuid(true),
 			isOutgoing: true,
 			media,
@@ -181,22 +217,29 @@ export class FileTransferService extends BaseProvider {
 			size: file.data.length
 		};
 
-		const transferPlaceholder	= {metadata: fileTransfer, progress: of(0)};
-		let transfer				= transferPlaceholder;
+		const transferPlaceholder = {metadata: fileTransfer, progress: of(0)};
+		let transfer = transferPlaceholder;
 
 		try {
 			await this.transfers.addItem(transfer);
 
-			const url						= `${this.path}/${fileTransfer.id}`;
-			const plaintext					= await this.fileService.getBytes(file, media);
-			const {cyphertext, hash, key}	= await this.encryptFile(plaintext, url);
+			const url = `${this.path}/${fileTransfer.id}`;
+			const plaintext = await this.fileService.getBytes(file, media);
+			const {cyphertext, hash, key} = await this.encryptFile(
+				plaintext,
+				url
+			);
 
-			const uploadTask	= this.databaseService.uploadItem(url, BinaryProto, cyphertext);
+			const uploadTask = this.databaseService.uploadItem(
+				url,
+				BinaryProto,
+				cyphertext
+			);
 
-			fileTransfer.hash	= hash;
-			fileTransfer.key	= key;
+			fileTransfer.hash = hash;
+			fileTransfer.key = key;
 
-			transfer	= {metadata: fileTransfer, progress: uploadTask.progress};
+			transfer = {metadata: fileTransfer, progress: uploadTask.progress};
 			await this.transfers.replaceItem(transferPlaceholder, transfer);
 
 			this.analyticsService.sendEvent({

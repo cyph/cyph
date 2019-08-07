@@ -7,7 +7,6 @@ import {EnvService} from '../../../cyph/services/env.service';
 import {StringsService} from '../../../cyph/services/strings.service';
 import {AppService} from '../../app.service';
 
-
 /**
  * Angular component for the Cyph signup confirmation screen.
  */
@@ -19,9 +18,9 @@ import {AppService} from '../../app.service';
 })
 export class SignupConfirmComponent extends BaseProvider implements OnInit {
 	/** Generated API key. */
-	public readonly apiKey: Observable<string|undefined>	=
-		this.activatedRoute.params.pipe(map(o => o.apiKey))
-	;
+	public readonly apiKey: Observable<
+		string | undefined
+	> = this.activatedRoute.params.pipe(map(o => o.apiKey));
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

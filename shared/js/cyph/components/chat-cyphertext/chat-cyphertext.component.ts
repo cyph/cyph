@@ -5,7 +5,6 @@ import {CyphertextService} from '../../services/cyphertext.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for chat cyphertext UI.
  */

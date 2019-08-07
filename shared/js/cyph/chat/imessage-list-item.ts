@@ -2,7 +2,6 @@ import {Observable} from 'rxjs';
 import {ChatMessage} from './chat-message';
 import {UiStyles} from './enums';
 
-
 /** One item in the message list UI. */
 export interface IMessageListItem {
 	/** @see ChatMessageListComponent.accounts */
@@ -42,5 +41,7 @@ export interface IMessageListItem {
 	uiStyle: UiStyles;
 
 	/** @see IChatData.unconfirmedMessages */
-	unconfirmedMessages: Observable<{[id: string]: boolean|undefined}|undefined>;
+	unconfirmedMessages: Observable<
+		{[id: string]: boolean | undefined} | undefined
+	>;
 }

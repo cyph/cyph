@@ -1,541 +1,642 @@
-<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
-
-
-<div
-	fxFlexFill
-	fxLayout='row'
-	[class.collapsed]='(menuExpanded | async) === false'
-	[class.menu]='!sidenav'
-	[class.menu-root]='!sidenav'
-	[class.mobile]='envService.isMobile | async'
-	[class.sidenav]='sidenav'
->
+<ng-container *ngIf="accountDatabaseService.currentUser | async as currentUser">
 	<div
-		fxFlex
-		fxLayout='column'
-		fxLayoutAlign='center stretch'
+		fxFlexFill
+		fxLayout="row"
+		[class.collapsed]="(menuExpanded | async) === false"
+		[class.menu]="!sidenav"
+		[class.menu-root]="!sidenav"
+		[class.mobile]="envService.isMobile | async"
+		[class.sidenav]="sidenav"
 	>
-		<ng-container *ngTemplateOutlet='menuContent'></ng-container>
+		<div fxFlex fxLayout="column" fxLayoutAlign="center stretch">
+			<ng-container *ngTemplateOutlet="menuContent"></ng-container>
+		</div>
+
+		<button
+			mat-button
+			fxFlex="25px"
+			fxHide.lt-md
+			cyphTranslate
+			class="menu-toggle"
+			matTooltip="Toggle Menu"
+			matTooltipPosition="right"
+			(click)="accountService.toggleMenu()"
+			*ngIf="accountService.menuExpandable | async"
+		>
+			<mat-icon [class.flipped]="(menuExpanded | async) === false">
+				keyboard_arrow_left
+			</mat-icon>
+		</button>
+
+		<div
+			fxFlex="10px"
+			*ngIf="
+				!sidenav &&
+				(accountService.menuExpandable | async) === false &&
+				(accountService.menuReduced | async) === false
+			"
+		></div>
 	</div>
 
-	<button
-		mat-button
-		fxFlex='25px'
-		fxHide.lt-md
-		cyphTranslate
-		class='menu-toggle'
-		matTooltip='Toggle Menu'
-		matTooltipPosition='right'
-		(click)='accountService.toggleMenu()'
-		*ngIf='accountService.menuExpandable | async'
-	>
-		<mat-icon [class.flipped]='(menuExpanded | async) === false'>
-			keyboard_arrow_left
-		</mat-icon>
-	</button>
+	<ng-template #appointmentList>
+		<mat-nav-list
+			*ngIf="
+				accountAppointmentsService.appointments.upcoming
+					| async as upcomingAppointments
+			"
+		>
+			<h3 matLine cyphTranslate class="upcoming-appointments">
+				Upcoming Appointments
+			</h3>
 
-	<div fxFlex='10px' *ngIf='
-		!sidenav &&
-		(accountService.menuExpandable | async) === false &&
-		(accountService.menuReduced | async) === false
-	'></div>
-</div>
-
-
-<ng-template #appointmentList>
-	<mat-nav-list *ngIf='
-		accountAppointmentsService.appointments.upcoming | async as upcomingAppointments
-	'>
-		<h3 matLine cyphTranslate class='upcoming-appointments'>
-			Upcoming Appointments
-		</h3>
-
-		<small>
-			<div class='appointment-list-item' *ngFor='let o of upcomingAppointments'>
-				<strong>{{o.record.name}}</strong>
-				<br />
-				<small>
-					{{getDateTimeString(o.appointment.calendarInvite.startTime)}}
-					&ngsp;
-					&ndash;
-					&ngsp;
-					{{getDateTimeString(o.appointment.calendarInvite.endTime)}}
-				</small>
-			</div>
-		</small>
-	</mat-nav-list>
-</ng-template>
-
-
-<ng-template #buttons>
-	<mat-nav-list>
-		<ng-container *ngIf='
-			currentUser.confirmed &&
-			envService.isTelehealthFull &&
-			(currentUser.user.userType | async) === accountUserTypes.Standard &&
-			(accountFilesService.incomingFilesFiltered.redoxPatients | async)?.length > 0
-		'>
-			<a
-				mat-list-item
-				cyphTranslate
-				class='incoming-patient-info emphasis'
-				aria-label='Incoming Patient Info'
-				routerLink='/incoming-patient-info'
-				(click)='click()'
-			>
-				<mat-icon
-					mat-list-icon
-					[matBadge]='
-						(
-							(
-								accountFilesService.incomingFilesFiltered.redoxPatients | async
-							)?.length || 0
-						).toString()
-					'
-					[matBadgeHidden]='!(
-						(
-							(
-								accountFilesService.incomingFilesFiltered.redoxPatients | async
-							)?.length || 0
-						) > 0
-					)'
-					matBadgePosition='above after'
+			<small>
+				<div
+					class="appointment-list-item"
+					*ngFor="let o of upcomingAppointments"
 				>
-					local_hospital
-				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Incoming
-				</h3>
-			</a>
-		</ng-container>
+					<strong>{{ o.record.name }}</strong>
+					<br />
+					<small>
+						{{
+							getDateTimeString(
+								o.appointment.calendarInvite.startTime
+							)
+						}}
+						&ngsp; &ndash; &ngsp;
+						{{
+							getDateTimeString(
+								o.appointment.calendarInvite.endTime
+							)
+						}}
+					</small>
+				</div>
+			</small>
+		</mat-nav-list>
+	</ng-template>
 
-		<ng-container *ngIf='currentUser.confirmed && envService.isTelehealth'>
-			<a
-				mat-list-item
-				cyphTranslate
-				class='appointments'
-				aria-label='Appointments'
-				routerLink='/appointments'
-				(click)='click()'
+	<ng-template #buttons>
+		<mat-nav-list>
+			<ng-container
+				*ngIf="
+					currentUser.confirmed &&
+					envService.isTelehealthFull &&
+					(currentUser.user.userType | async) ===
+						accountUserTypes.Standard &&
+					(
+						accountFilesService.incomingFilesFiltered.redoxPatients
+						| async
+					)?.length > 0
+				"
 			>
-				<mat-icon
-					mat-list-icon
-					[matBadge]='
-						(
-							(
-								accountFilesService.incomingFilesFiltered.appointments | async
-							)?.length || 0
-						).toString()
-					'
-					[matBadgeHidden]='!(
-						(
-							(
-								accountFilesService.incomingFilesFiltered.appointments | async
-							)?.length || 0
-						) > 0
-					)'
-					matBadgePosition='above after'
+				<a
+					mat-list-item
+					cyphTranslate
+					class="incoming-patient-info emphasis"
+					aria-label="Incoming Patient Info"
+					routerLink="/incoming-patient-info"
+					(click)="click()"
 				>
-					date_range
-				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Appointments
-				</h3>
-			</a>
-		</ng-container>
-
-		<ng-container *ngIf='
-			currentUser.confirmed &&
-			envService.isTelehealthFull &&
-			(currentUser.user.userType | async) !== accountUserTypes.TelehealthDoctor
-		'>
-			<a
-				mat-list-item
-				cyphTranslate
-				class='doctors'
-				aria-label='Doctors'
-				routerLink='/doctors'
-				(click)='click()'
-			>
-				<mat-icon mat-list-icon svgIcon='doctor'></mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Doctors
-				</h3>
-			</a>
-		</ng-container>
-
-		<ng-container *ngIf='
-			currentUser.confirmed &&
-			envService.isTelehealthFull &&
-			(currentUser.user.userType | async) !== accountUserTypes.Standard
-		'>
-			<a
-				mat-list-item
-				cyphTranslate
-				class='patients'
-				aria-label='Patients'
-				routerLink='/patients'
-				(click)='click()'
-			>
-				<mat-icon mat-list-icon>local_hospital</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Patients
-				</h3>
-			</a>
-
-			<a
-				mat-list-item
-				cyphTranslate
-				class='staff'
-				aria-label='Staff'
-				routerLink='/staff'
-				(click)='click()'
-			>
-				<mat-icon mat-list-icon>people</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Staff
-				</h3>
-			</a>
-
-			<a
-				mat-list-item
-				cyphTranslate
-				class='ehr-access'
-				aria-label='EHR Access'
-				routerLink='/ehr-access'
-				(click)='click()'
-			>
-				<mat-icon mat-list-icon>vpn_key</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					EHR Access
-				</h3>
-			</a>
-		</ng-container>
-
-		<ng-container *ngIf='currentUser.confirmed && !envService.isTelehealthFull'>
-			<a
-				mat-list-item
-				cyphTranslate
-				class='contacts'
-				aria-label='Messages'
-				routerLink='/'
-				(click)='click()'
-			>
-				<mat-icon
-					mat-list-icon
-					[matBadge]='((accountService.unreadMessages | async) || 0).toString()'
-					[matBadgeHidden]='!(((accountService.unreadMessages | async) || 0) > 0)'
-					matBadgePosition='above after'
-				>
-					message
-				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Messages
-				</h3>
-			</a>
-		</ng-container>
-
-		<ng-container *ngIf='!envService.isTelehealth || (
-			envService.isTelehealth &&
-			(currentUser.user.userType | async) !== accountUserTypes.Standard
-		)'>
-			<a
-				mat-list-item
-				cyphTranslate
-				class='files'
-				aria-label='Files'
-				routerLink='/files'
-				(click)='click()'
-			>
-				<mat-icon
-					mat-list-icon
-					[matBadge]='
-						(
-							(accountFilesService.incomingFilesFiltered.files | async)?.length || 0
-						).toString()
-					'
-					[matBadgeHidden]='!(
-						((accountFilesService.incomingFilesFiltered.files | async)?.length || 0) > 0
-					)'
-					matBadgePosition='above after'
-				>
-					folder
-				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Files
-				</h3>
-			</a>
-
-			<a
-				mat-list-item
-				cyphTranslate
-				class='notes'
-				aria-label='Notes'
-				routerLink='/notes'
-				(click)='click()'
-			>
-				<mat-icon
-					mat-list-icon
-					[matBadge]='
-						(
-							(accountFilesService.incomingFilesFiltered.notes | async)?.length || 0
-						).toString()
-					'
-					[matBadgeHidden]='!(
-						((accountFilesService.incomingFilesFiltered.notes | async)?.length || 0) > 0
-					)'
-					matBadgePosition='above after'
-				>
-					create
-				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Notes
-				</h3>
-			</a>
-
-			<a
-				mat-list-item
-				cyphTranslate
-				class='docs'
-				aria-label='Docs'
-				routerLink='/docs'
-				(click)='click()'
-				*ngIf='accountService.enableDocs'
-			>
-				<mat-icon
-					mat-list-icon
-					[matBadge]='
-						(
-							(accountFilesService.incomingFilesFiltered.docs | async)?.length || 0
-						).toString()
-					'
-					[matBadgeHidden]='!(
-						((accountFilesService.incomingFilesFiltered.docs | async)?.length || 0) > 0
-					)'
-					matBadgePosition='above after'
-				>
-					library_books
-				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Docs
-				</h3>
-			</a>
-
-			<a
-				mat-list-item
-				cyphTranslate
-				class='forms'
-				aria-label='Forms'
-				routerLink='/forms'
-				(click)='click()'
-				*ngIf='!envService.environment.production || envService.isTelehealthFull'
-			>
-				<mat-icon
-					mat-list-icon
-					[matBadge]='
-						(
-							(accountFilesService.incomingFilesFiltered.forms | async)?.length || 0
-						).toString()
-					'
-					[matBadgeHidden]='!(
-						((accountFilesService.incomingFilesFiltered.forms | async)?.length || 0) > 0
-					)'
-					matBadgePosition='above after'
-					*ngIf='!envService.isTelehealth; else medicalFormsIcon'
-				>
-					content_paste
-				</mat-icon>
-				<ng-template #medicalFormsIcon>
 					<mat-icon
 						mat-list-icon
-						[matBadge]='
+						[matBadge]="
 							(
-								(accountFilesService.incomingFilesFiltered.forms | async)?.length ||
-								0
+								(
+									accountFilesService.incomingFilesFiltered
+										.redoxPatients | async
+								)?.length || 0
 							).toString()
-						'
-						[matBadgeHidden]='!(
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.redoxPatients | async
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						local_hospital
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Incoming
+					</h3>
+				</a>
+			</ng-container>
+
+			<ng-container
+				*ngIf="currentUser.confirmed && envService.isTelehealth"
+			>
+				<a
+					mat-list-item
+					cyphTranslate
+					class="appointments"
+					aria-label="Appointments"
+					routerLink="/appointments"
+					(click)="click()"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
 							(
-								(accountFilesService.incomingFilesFiltered.forms | async)?.length ||
+								(
+									accountFilesService.incomingFilesFiltered
+										.appointments | async
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.appointments | async
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						date_range
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Appointments
+					</h3>
+				</a>
+			</ng-container>
+
+			<ng-container
+				*ngIf="
+					currentUser.confirmed &&
+					envService.isTelehealthFull &&
+					(currentUser.user.userType | async) !==
+						accountUserTypes.TelehealthDoctor
+				"
+			>
+				<a
+					mat-list-item
+					cyphTranslate
+					class="doctors"
+					aria-label="Doctors"
+					routerLink="/doctors"
+					(click)="click()"
+				>
+					<mat-icon mat-list-icon svgIcon="doctor"></mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Doctors
+					</h3>
+				</a>
+			</ng-container>
+
+			<ng-container
+				*ngIf="
+					currentUser.confirmed &&
+					envService.isTelehealthFull &&
+					(currentUser.user.userType | async) !==
+						accountUserTypes.Standard
+				"
+			>
+				<a
+					mat-list-item
+					cyphTranslate
+					class="patients"
+					aria-label="Patients"
+					routerLink="/patients"
+					(click)="click()"
+				>
+					<mat-icon mat-list-icon>local_hospital</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Patients
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
+					class="staff"
+					aria-label="Staff"
+					routerLink="/staff"
+					(click)="click()"
+				>
+					<mat-icon mat-list-icon>people</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Staff
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
+					class="ehr-access"
+					aria-label="EHR Access"
+					routerLink="/ehr-access"
+					(click)="click()"
+				>
+					<mat-icon mat-list-icon>vpn_key</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						EHR Access
+					</h3>
+				</a>
+			</ng-container>
+
+			<ng-container
+				*ngIf="currentUser.confirmed && !envService.isTelehealthFull"
+			>
+				<a
+					mat-list-item
+					cyphTranslate
+					class="contacts"
+					aria-label="Messages"
+					routerLink="/"
+					(click)="click()"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(accountService.unreadMessages | async) || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((accountService.unreadMessages | async) || 0) >
 								0
-							) > 0
-						)'
-						matBadgePosition='above after'
-						svgIcon='medical-forms'
-					></mat-icon>
-				</ng-template>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Forms
+							)
+						"
+						matBadgePosition="above after"
+					>
+						message
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Messages
+					</h3>
+				</a>
+			</ng-container>
+
+			<ng-container
+				*ngIf="
+					!envService.isTelehealth ||
+					(envService.isTelehealth &&
+						(currentUser.user.userType | async) !==
+							accountUserTypes.Standard)
+				"
+			>
+				<a
+					mat-list-item
+					cyphTranslate
+					class="files"
+					aria-label="Files"
+					routerLink="/files"
+					(click)="click()"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(
+									accountFilesService.incomingFilesFiltered
+										.files | async
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.files | async
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						folder
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Files
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
+					class="notes"
+					aria-label="Notes"
+					routerLink="/notes"
+					(click)="click()"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(
+									accountFilesService.incomingFilesFiltered
+										.notes | async
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.notes | async
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						create
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Notes
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
+					class="docs"
+					aria-label="Docs"
+					routerLink="/docs"
+					(click)="click()"
+					*ngIf="accountService.enableDocs"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(
+									accountFilesService.incomingFilesFiltered
+										.docs | async
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.docs | async
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						library_books
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Docs
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
+					class="forms"
+					aria-label="Forms"
+					routerLink="/forms"
+					(click)="click()"
+					*ngIf="
+						!envService.environment.production ||
+						envService.isTelehealthFull
+					"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(
+									accountFilesService.incomingFilesFiltered
+										.forms | async
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.forms | async
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+						*ngIf="!envService.isTelehealth; else medicalFormsIcon"
+					>
+						content_paste
+					</mat-icon>
+					<ng-template #medicalFormsIcon>
+						<mat-icon
+							mat-list-icon
+							[matBadge]="
+								(
+									(
+										accountFilesService
+											.incomingFilesFiltered.forms | async
+									)?.length || 0
+								).toString()
+							"
+							[matBadgeHidden]="
+								!(
+									((
+										accountFilesService
+											.incomingFilesFiltered.forms | async
+									)?.length || 0) > 0
+								)
+							"
+							matBadgePosition="above after"
+							svgIcon="medical-forms"
+						></mat-icon>
+					</ng-template>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Forms
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
+					class="wallets"
+					aria-label="Wallets"
+					routerLink="/wallets"
+					(click)="click()"
+					*ngIf="accountService.enableWallets | async"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(
+									accountFilesService.incomingFilesFiltered
+										.wallets | async
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.wallets | async
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						account_balance_wallet
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Wallets
+					</h3>
+				</a>
+			</ng-container>
+		</mat-nav-list>
+	</ng-template>
+
+	<ng-template #menuContent>
+		<div fxFlex>
+			<div cyphNanoScroller>
+				<div fxFlex fxFlexFill>
+					<div
+						class="cover-image"
+						[class.hidden]="envService.isTelehealth"
+						[style.background-image]="
+							urlToSafeStyle(currentUser.user.coverImage | async)
+								| async
+						"
+						*ngIf="menuExpanded | async"
+					></div>
+
+					<div class="context-menu" *ngIf="menuExpanded | async">
+						<ng-content></ng-content>
+					</div>
+
+					<mat-nav-list class="home-list">
+						<a
+							mat-list-item
+							cyphTranslate
+							class="home"
+							aria-label="Home"
+							routerLink="/"
+							(click)="click()"
+						>
+							<cyph-logo
+								mat-list-icon
+								icon
+								white
+								*ngIf="(menuExpanded | async) === false"
+							></cyph-logo>
+							<cyph-logo
+								matLine
+								white
+								*ngIf="menuExpanded | async"
+							></cyph-logo>
+						</a>
+					</mat-nav-list>
+
+					<mat-list class="avatar-list">
+						<mat-list-item>
+							<img
+								cyphTranslate
+								matListAvatar
+								class="avatar"
+								[ngClass]="
+									userPresence[
+										(currentUser.user.status | async) || 0
+									]
+								"
+								alt="Profile Picture"
+								[src]="currentUser.user.avatar | async"
+								routerLink="/profile"
+								(click)="click()"
+							/>
+							<h3 matLine [fxShow]="menuExpanded | async">
+								{{ currentUser.user.name | async }}
+							</h3>
+							<div
+								matLine
+								[fxShow]="menuExpanded | async"
+								fxLayoutAlign="row"
+							>
+								<div class="username">
+									@{{ currentUser.user.realUsername | async }}
+								</div>
+								<mat-select
+									cyphTranslate
+									[ngModel]="currentUser.user.status | async"
+									(ngModelChange)="
+										currentUser.user.accountUserPresence.setValue(
+											{status: $event}
+										)
+									"
+									name="status"
+									class="status"
+									placeholder="Status"
+									*ngIf="!envService.isTelehealth"
+								>
+									<mat-option
+										*ngFor="
+											let status of statuses;
+											trackBy: trackByValue
+										"
+										[value]="status.value"
+									>
+										{{ status.text }}
+									</mat-option>
+								</mat-select>
+							</div>
+						</mat-list-item>
+					</mat-list>
+
+					<ng-container
+						*ngTemplateOutlet="
+							envService.isTelehealth &&
+							!envService.isTelehealthFull ?
+								appointmentList :
+								buttons
+						"
+					></ng-container>
+				</div>
+			</div>
+		</div>
+
+		<mat-nav-list>
+			<mat-divider></mat-divider>
+
+			<a
+				mat-list-item
+				cyphTranslate
+				class="settings"
+				aria-label="Settings"
+				routerLink="/settings"
+				(click)="click()"
+			>
+				<mat-icon mat-list-icon>settings</mat-icon>
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					Settings
 				</h3>
 			</a>
 
 			<a
 				mat-list-item
 				cyphTranslate
-				class='wallets'
-				aria-label='Wallets'
-				routerLink='/wallets'
-				(click)='click()'
-				*ngIf='accountService.enableWallets | async'
+				class="lock"
+				aria-label="Lock"
+				(click)="accountAuthService.lock()"
 			>
-				<mat-icon
-					mat-list-icon
-					[matBadge]='
-						(
-							(accountFilesService.incomingFilesFiltered.wallets | async)?.length || 0
-						).toString()
-					'
-					[matBadgeHidden]='!(
-						(
-							(accountFilesService.incomingFilesFiltered.wallets | async)?.length || 0
-						) > 0
-					)'
-					matBadgePosition='above after'
-				>
-					account_balance_wallet
-				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-					Wallets
+				<mat-icon mat-list-icon>lock</mat-icon>
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					Lock
 				</h3>
 			</a>
-		</ng-container>
-	</mat-nav-list>
-</ng-template>
 
-
-<ng-template #menuContent>
-	<div fxFlex>
-		<div cyphNanoScroller>
-			<div fxFlex fxFlexFill>
-				<div
-					class='cover-image'
-					[class.hidden]='envService.isTelehealth'
-					[style.background-image]='
-						urlToSafeStyle(currentUser.user.coverImage | async) | async
-					'
-					*ngIf='menuExpanded | async'
-				></div>
-
-				<div class='context-menu' *ngIf='menuExpanded | async'>
-					<ng-content></ng-content>
-				</div>
-
-				<mat-nav-list class='home-list'>
-					<a
-						mat-list-item
-						cyphTranslate
-						class='home'
-						aria-label='Home'
-						routerLink='/'
-						(click)='click()'
-					>
-						<cyph-logo
-							mat-list-icon
-							icon
-							white
-							*ngIf='(menuExpanded | async) === false'
-						></cyph-logo>
-						<cyph-logo
-							matLine
-							white
-							*ngIf='menuExpanded | async'
-						></cyph-logo>
-					</a>
-				</mat-nav-list>
-
-				<mat-list class='avatar-list'>
-					<mat-list-item>
-						<img
-							cyphTranslate
-							matListAvatar
-							class='avatar'
-							[ngClass]='userPresence[(currentUser.user.status | async) || 0]'
-							alt='Profile Picture'
-							[src]='currentUser.user.avatar | async'
-							routerLink='/profile'
-							(click)='click()'
-						/>
-						<h3 matLine [fxShow]='menuExpanded | async'>
-							{{currentUser.user.name | async}}
-						</h3>
-						<div matLine [fxShow]='menuExpanded | async' fxLayoutAlign='row'>
-							<div class='username'>@{{currentUser.user.realUsername | async}}</div>
-							<mat-select
-								cyphTranslate
-								[ngModel]='currentUser.user.status | async'
-								(ngModelChange)='
-									currentUser.user.accountUserPresence.setValue({status: $event})
-								'
-								name='status'
-								class='status'
-								placeholder='Status'
-								*ngIf='!envService.isTelehealth'
-							>
-								<mat-option
-									*ngFor='let status of statuses; trackBy: trackByValue'
-									[value]='status.value'
-								>
-									{{status.text}}
-								</mat-option>
-							</mat-select>
-						</div>
-					</mat-list-item>
-				</mat-list>
-
-				<ng-container *ngTemplateOutlet='
-					envService.isTelehealth && !envService.isTelehealthFull ?
-						appointmentList :
-						buttons
-				'></ng-container>
-			</div>
-		</div>
-	</div>
-
-	<mat-nav-list>
-		<mat-divider></mat-divider>
-
-		<a
-			mat-list-item
-			cyphTranslate
-			class='settings'
-			aria-label='Settings'
-			routerLink='/settings'
-			(click)='click()'
-		>
-			<mat-icon mat-list-icon>settings</mat-icon>
-			<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-				Settings
-			</h3>
-		</a>
-
-		<a
-			mat-list-item
-			cyphTranslate
-			class='lock'
-			aria-label='Lock'
-			(click)='accountAuthService.lock()'
-		>
-			<mat-icon mat-list-icon>lock</mat-icon>
-			<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-				Lock
-			</h3>
-		</a>
-
-		<a
-			mat-list-item
-			cyphTranslate
-			class='logout'
-			aria-label='Log Out'
-			routerLink='/logout'
-			(click)='click()'
-		>
-			<mat-icon mat-list-icon>exit_to_app</mat-icon>
-			<h3 matLine cyphTranslate *ngIf='menuExpanded | async'>
-				Log Out
-			</h3>
-		</a>
-	</mat-nav-list>
-</ng-template>
-
-
+			<a
+				mat-list-item
+				cyphTranslate
+				class="logout"
+				aria-label="Log Out"
+				routerLink="/logout"
+				(click)="click()"
+			>
+				<mat-icon mat-list-icon>exit_to_app</mat-icon>
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					Log Out
+				</h3>
+			</a>
+		</mat-nav-list>
+	</ng-template>
 </ng-container>

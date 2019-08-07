@@ -4,17 +4,16 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {EnvService} from './env.service';
 
-
 /**
  * Keeps track of whether an on-screen virtual keyboard is open.
  */
 @Injectable()
 export class VirtualKeyboardWatcherService extends BaseProvider {
 	/** @ignore */
-	private readonly initialScreenSize: number	= self.innerHeight;
+	private readonly initialScreenSize: number = self.innerHeight;
 
 	/** Indicates whether the virtual keyboard is currently open. */
-	public readonly isOpen	= new BehaviorSubject<boolean>(false);
+	public readonly isOpen = new BehaviorSubject<boolean>(false);
 
 	constructor (
 		/** @ignore */
@@ -32,13 +31,17 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 		}
 
 		if (this.envService.isCordova) {
-			self.addEventListener('keyboardDidHide', () => { this.isOpen.next(false); });
-			self.addEventListener('keyboardDidShow', () => { this.isOpen.next(true); });
+			self.addEventListener('keyboardDidHide', () => {
+				this.isOpen.next(false);
+			});
+			self.addEventListener('keyboardDidShow', () => {
+				this.isOpen.next(true);
+			});
 		}
 
 		/* https://stackoverflow.com/a/11650231/459881 */
 
-		const $window	= $(window);
+		const $window = $(window);
 
 		/* Android */
 		if (this.envService.isAndroid) {
@@ -48,24 +51,32 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 		}
 		/* iOS/misc. */
 		else {
-			const inputSelector		= 'input, textarea';
-			const focusBlurListen	= ($elem: JQuery) => {
-				$elem.on('blur', () => { this.isOpen.next(false); });
-				$elem.on('focus', () => { this.isOpen.next(true); });
+			const inputSelector = 'input, textarea';
+			const focusBlurListen = ($elem: JQuery) => {
+				$elem.on('blur', () => {
+					this.isOpen.next(false);
+				});
+				$elem.on('focus', () => {
+					this.isOpen.next(true);
+				});
 			};
 
 			focusBlurListen($(inputSelector));
 			new MutationObserver(mutations => {
 				focusBlurListen(
-					$(mutations.
-						map(mutationRecord =>
-							<HTMLElement[]> Array.from(mutationRecord.addedNodes)
-						).
-						reduce((a, b) => a.concat(b), [])
-					).
-						find(inputSelector).
-						addBack().
-						filter(inputSelector)
+					$(
+						mutations
+							.map(
+								mutationRecord =>
+									<HTMLElement[]> (
+										Array.from(mutationRecord.addedNodes)
+									)
+							)
+							.reduce((a, b) => a.concat(b), [])
+					)
+						.find(inputSelector)
+						.addBack()
+						.filter(inputSelector)
 				);
 			}).observe(document.body, {
 				attributes: false,

@@ -4,7 +4,6 @@ import {ChatMessage} from '../../chat';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 
-
 /**
  * Angular component for cyphertext message list.
  */
@@ -19,7 +18,7 @@ export class ChatCyphertextListComponent extends BaseProvider {
 	@Input() public messages?: ChatMessage[];
 
 	/** @see trackByID */
-	public readonly trackByID: typeof trackByID	= trackByID;
+	public readonly trackByID: typeof trackByID = trackByID;
 
 	constructor (
 		/** @see StringsService */

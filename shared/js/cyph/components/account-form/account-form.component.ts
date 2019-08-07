@@ -9,7 +9,6 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {toInt} from '../../util/formatting';
 
-
 /**
  * Angular component for an individual form.
  */
@@ -21,71 +20,79 @@ import {toInt} from '../../util/formatting';
 })
 export class AccountFormComponent extends BaseProvider implements OnInit {
 	/** Current form. */
-	public readonly form	= new BehaviorSubject<{
-		data: Promise<IForm>;
-		downloadProgress: Observable<number>;
-		editable: boolean;
-		metadata?: Observable<IAccountFileRecord>;
-		name?: Promise<string>;
-	}|undefined>(undefined);
+	public readonly form = new BehaviorSubject<
+		| {
+				data: Promise<IForm>;
+				downloadProgress: Observable<number>;
+				editable: boolean;
+				metadata?: Observable<IAccountFileRecord>;
+				name?: Promise<string>;
+		  }
+		| undefined
+	>(undefined);
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
-		this.subscriptions.push(combineLatest([
-			this.activatedRoute.data,
-			this.activatedRoute.params
-		]).subscribe(([data, params]) => {
-			try {
-				const appointmentID: string|undefined	= params.appointmentID;
-				const id: string|undefined				= params.id;
-				const editable							= data.editable === true;
+		this.subscriptions.push(
+			combineLatest([
+				this.activatedRoute.data,
+				this.activatedRoute.params
+			]).subscribe(([data, params]) => {
+				try {
+					const appointmentID: string | undefined =
+						params.appointmentID;
+					const id: string | undefined = params.id;
+					const editable = data.editable === true;
 
-				if (appointmentID && id) {
-					const i				= toInt(id);
-					const downloadTask	= this.accountFilesService.downloadFile(
-						appointmentID,
-						AccountFileRecord.RecordTypes.Appointment
-					);
+					if (appointmentID && id) {
+						const i = toInt(id);
+						const downloadTask = this.accountFilesService.downloadFile(
+							appointmentID,
+							AccountFileRecord.RecordTypes.Appointment
+						);
 
-					this.form.next({
-						data: downloadTask.result.then(o => {
-							const form	= o.forms ? o.forms[i] : undefined;
-							if (!form) {
-								throw new Error('Invalid form index.');
-							}
-							return form;
-						}),
-						downloadProgress: downloadTask.progress,
-						editable,
-						name: downloadTask.result.then(o =>
-							o.calendarInvite.title || this.stringsService.form
-						)
-					});
-				}
-				else if (id) {
-					const downloadTask	= this.accountFilesService.downloadFile(
-						id,
-						AccountFileRecord.RecordTypes.Form
-					);
+						this.form.next({
+							data: downloadTask.result.then(o => {
+								const form = o.forms ? o.forms[i] : undefined;
+								if (!form) {
+									throw new Error('Invalid form index.');
+								}
+								return form;
+							}),
+							downloadProgress: downloadTask.progress,
+							editable,
+							name: downloadTask.result.then(
+								o =>
+									o.calendarInvite.title ||
+									this.stringsService.form
+							)
+						});
+					}
+					else if (id) {
+						const downloadTask = this.accountFilesService.downloadFile(
+							id,
+							AccountFileRecord.RecordTypes.Form
+						);
 
-					this.form.next({
-						data: downloadTask.result,
-						downloadProgress: downloadTask.progress,
-						editable,
-						metadata: this.accountFilesService.watchMetadata(id)
-					});
+						this.form.next({
+							data: downloadTask.result,
+							downloadProgress: downloadTask.progress,
+							editable,
+							metadata: this.accountFilesService.watchMetadata(id)
+						});
+					}
+					else {
+						this.form.next(undefined);
+						throw new Error('Invalid form ID.');
+					}
 				}
-				else {
-					this.form.next(undefined);
-					throw new Error('Invalid form ID.');
+				catch {
+					this.router.navigate(['404']);
 				}
-			}
-			catch {
-				this.router.navigate(['404']);
-			}
-		}));
+			})
+		);
 	}
 
 	constructor (

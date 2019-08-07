@@ -4,7 +4,6 @@ import {EnvService} from '../../../cyph/services/env.service';
 import {SignupService} from '../../../cyph/services/signup.service';
 import {StringsService} from '../../../cyph/services/strings.service';
 
-
 /**
  * Angular component for beta register UI.
  */
@@ -16,7 +15,7 @@ import {StringsService} from '../../../cyph/services/strings.service';
 })
 export class BetaRegisterComponent extends BaseProvider {
 	/** @see SignupFormComponent.invite */
-	@Input() public invite: boolean	= false;
+	@Input() public invite: boolean = false;
 
 	constructor (
 		/** @see EnvService */

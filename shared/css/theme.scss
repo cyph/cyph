@@ -20,7 +20,6 @@ $cyph-progress-foreground: $cyph-foreground;
 $cyph-speed-dial-action-alt-background: $cyph-inverted;
 $cyph-speed-dial-action-alt-foreground: $cyph-foreground;
 
-
 $cyph-message-box-colors: (
 	background: $cyph-foreground,
 	buttons: #757575,
@@ -58,9 +57,12 @@ $cyph-checkout-theme: mat-light-theme(
 
 $cyph-cyphertext-theme: cyph-theme(
 	mat-palette($mat-green),
-	map-merge(mat-palette($mat-grey, 900, 800, 900), (
-		default-contrast: $cyph-cyphertext-foreground
-	)),
+	map-merge(
+		mat-palette($mat-grey, 900, 800, 900),
+		(
+			default-contrast: $cyph-cyphertext-foreground
+		)
+	),
 	$cyph-warn,
 	black,
 	$cyph-cyphertext-foreground,

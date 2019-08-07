@@ -2,7 +2,6 @@ import {Directive, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {EnvService} from '../services/env.service';
 
-
 /**
  * Adds macOS-style scrollbars (generally intended for use
  * only when the scrollbar explicitly needs to be auto-hidden).
@@ -12,14 +11,13 @@ import {EnvService} from '../services/env.service';
 })
 export class NanoScrollerDirective extends BaseProvider implements OnInit {
 	/** If true, sets nano class on this element. */
-	@Input() public cyphNanoScrollerNoParent: boolean	= false;
+	@Input() public cyphNanoScrollerNoParent: boolean = false;
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		const element	= this.cyphNanoScrollerNoParent ?
+		const element = this.cyphNanoScrollerNoParent ?
 			this.elementRef.nativeElement :
-			this.renderer.parentNode(this.elementRef.nativeElement)
-		;
+			this.renderer.parentNode(this.elementRef.nativeElement);
 
 		this.renderer.addClass(element, 'nano');
 

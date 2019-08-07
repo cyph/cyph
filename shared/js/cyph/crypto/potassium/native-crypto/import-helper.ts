@@ -1,7 +1,6 @@
 import {parse, stringify} from '../../../util/serialization';
 import {potassiumUtil} from '../potassium-util';
 
-
 /**
  * Wrapper for SubtleCrypto key import and export APIs.
  */
@@ -27,11 +26,7 @@ export class ImportHelper {
 		cryptoKey: CryptoKey,
 		algorithmName: string
 	) : Promise<Uint8Array> {
-		return (<any> crypto.subtle).exportKey(
-			'raw',
-			cryptoKey,
-			algorithmName
-		);
+		return (<any> crypto.subtle).exportKey('raw', cryptoKey, algorithmName);
 	}
 
 	/** Converts JWK byte array into CryptoKey object. */
@@ -72,4 +67,4 @@ export class ImportHelper {
 }
 
 /** @see ImportHelper */
-export const importHelper	= new ImportHelper();
+export const importHelper = new ImportHelper();

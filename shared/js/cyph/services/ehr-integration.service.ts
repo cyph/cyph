@@ -4,7 +4,6 @@ import {request, requestJSON, requestMaybeJSON} from '../util/request';
 import {stringify} from '../util/serialization';
 import {EnvService} from './env.service';
 
-
 /**
  * Angular service for EHR/EMR system integration.
  */
@@ -30,7 +29,10 @@ export class EHRIntegrationService extends BaseProvider {
 	}
 
 	/** Deletes an API key issued with this master API key. */
-	public async deleteApiKey (apiKey: string, masterApiKey: string) : Promise<void> {
+	public async deleteApiKey (
+		apiKey: string,
+		masterApiKey: string
+	) : Promise<void> {
 		await request({
 			data: {
 				apiKey,
@@ -42,7 +44,10 @@ export class EHRIntegrationService extends BaseProvider {
 	}
 
 	/** Generates a new API key for the specified user using a master API key. */
-	public async generateApiKey (username: string, masterApiKey: string) : Promise<string> {
+	public async generateApiKey (
+		username: string,
+		masterApiKey: string
+	) : Promise<string> {
 		return request({
 			data: {
 				masterAPIKey: masterApiKey,
@@ -66,8 +71,10 @@ export class EHRIntegrationService extends BaseProvider {
 	}
 
 	/** Verifies an API key. */
-	public async verifyApiKey (apiKey: string) : Promise<{isMaster: boolean; isValid: boolean}> {
-		const response	= await requestJSON({
+	public async verifyApiKey (
+		apiKey: string
+	) : Promise<{isMaster: boolean; isValid: boolean}> {
+		const response = await requestJSON({
 			data: {
 				apiKeyOrMasterAPIKey: apiKey
 			},

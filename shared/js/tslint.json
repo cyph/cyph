@@ -4,7 +4,6 @@
 
 		"tab-equals": true,
 
-
 		/* TypeScript-Specific */
 
 		"adjacent-overload-signatures": true,
@@ -43,7 +42,7 @@
 		"no-magic-numbers": false,
 		"no-namespace": true,
 		"no-non-null-assertion": true,
-		"no-parameter-reassignment": false, /* TODO: true */
+		"no-parameter-reassignment": false /* TODO: true */,
 		"no-reference": true,
 		"no-unnecessary-type-assertion": true,
 		"no-var-requires": true,
@@ -75,11 +74,11 @@
 		],
 		"unified-signatures": true,
 
-
 		/* Functionality */
 
 		"await-promise": false,
-		"ban": [true,
+		"ban": [
+			true,
 			["crypto", "getRandomValues", "Prefer potassiumUtil.randomBytes"],
 			["crypto", "randomBytes", "Prefer potassiumUtil.randomBytes"],
 			["Date", "now", "Prefer util.timestamp"],
@@ -158,17 +157,19 @@
 		"restrict-plus-operands": true,
 		"static-this": true,
 		"strict-boolean-expressions": false,
-		"strict-comparisons": [true, {
-			"allow-object-equal-comparison": true,
-			"allow-string-order-comparison": true
-		}],
+		"strict-comparisons": [
+			true,
+			{
+				"allow-object-equal-comparison": true,
+				"allow-string-order-comparison": true
+			}
+		],
 		"switch-default": false,
 		"strict-type-predicates": true,
 		"triple-equals": true,
-		"typeof-compare": false, /* Deprecated */
+		"typeof-compare": false /* Deprecated */,
 		"use-default-type-parameter": true,
 		"use-isnan": true,
-
 
 		/* Maintainability */
 
@@ -191,7 +192,6 @@
 		"prefer-readonly": true,
 		"trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
 
-
 		/* Style */
 
 		"align": [true, "arguments", "parameters", "statements"],
@@ -203,46 +203,49 @@
 		"class-name": true,
 		"comment-format": [true, "check-space", "check-uppercase"],
 		"comment-type": [true, "directive", "doc", "multiline"],
-		"completed-docs": [true, {
-			"classes": {
-				"tags": {"existence": ["inheritDoc", "see"]},
-				"visibilities": ["exported"]
-			},
-			"enums": {
-				"tags": {"existence": ["inheritDoc", "see"]},
-				"visibilities": ["exported"]
-			},
-			"functions": {
-				"tags": {"existence": ["inheritDoc", "see"]},
-				"visibilities": ["exported"]
-			},
-			"interfaces": {
-				"tags": {"existence": ["inheritDoc", "see"]},
-				"visibilities": ["exported"]
-			},
-			"methods": {
-				"locations": "all",
-				"privacies": ["protected", "public"],
-				"tags": {"existence": ["inheritDoc", "see"]}
-			},
-			"namespaces": {
-				"tags": {"existence": ["inheritDoc", "see"]},
-				"visibilities": ["exported"]
-			},
-			"properties": {
-				"locations": "all",
-				"privacies": ["protected", "public"],
-				"tags": {"existence": ["inheritDoc", "see"]}
-			},
-			"types": {
-				"tags": {"existence": ["inheritDoc", "see"]},
-				"visibilities": ["exported"]
-			},
-			"variables": {
-				"tags": {"existence": ["inheritDoc", "see"]},
-				"visibilities": ["exported"]
+		"completed-docs": [
+			true,
+			{
+				"classes": {
+					"tags": {"existence": ["inheritDoc", "see"]},
+					"visibilities": ["exported"]
+				},
+				"enums": {
+					"tags": {"existence": ["inheritDoc", "see"]},
+					"visibilities": ["exported"]
+				},
+				"functions": {
+					"tags": {"existence": ["inheritDoc", "see"]},
+					"visibilities": ["exported"]
+				},
+				"interfaces": {
+					"tags": {"existence": ["inheritDoc", "see"]},
+					"visibilities": ["exported"]
+				},
+				"methods": {
+					"locations": "all",
+					"privacies": ["protected", "public"],
+					"tags": {"existence": ["inheritDoc", "see"]}
+				},
+				"namespaces": {
+					"tags": {"existence": ["inheritDoc", "see"]},
+					"visibilities": ["exported"]
+				},
+				"properties": {
+					"locations": "all",
+					"privacies": ["protected", "public"],
+					"tags": {"existence": ["inheritDoc", "see"]}
+				},
+				"types": {
+					"tags": {"existence": ["inheritDoc", "see"]},
+					"visibilities": ["exported"]
+				},
+				"variables": {
+					"tags": {"existence": ["inheritDoc", "see"]},
+					"visibilities": ["exported"]
+				}
 			}
-		}],
+		],
 		"encoding": true,
 		"file-header": false,
 		"file-name-casing": [false, "kebab-case"],
@@ -296,7 +299,6 @@
 			"check-type",
 			"check-typecast"
 		],
-
 
 		/* Codelyzer */
 
@@ -355,7 +357,6 @@
 		"use-pipe-decorator": true,
 		"use-pipe-transform-interface": true,
 
-
 		/* Consistent Code Style */
 
 		"const-parameters": true,
@@ -376,7 +377,6 @@
 		"oddness-check": false,
 		"parameter-properties": [true, "member-access", "trailing"],
 		"prefer-const-enum": true,
-
 
 		/* Microsoft Contrib */
 
@@ -414,14 +414,12 @@
 		"promise-must-complete": true,
 		"use-named-parameter": true,
 
-
 		/* rxjs-tslint */
 
 		"rxjs-collapse-imports": true,
 		"rxjs-no-static-observable-methods": true,
 		"rxjs-pipeable-operators-only": true,
 		"rxjs-proper-imports": true,
-
 
 		/* rxjs-tslint-rules */
 

@@ -2,7 +2,6 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {ChatService} from '../services/chat.service';
 
-
 /**
  * Manages P2P WebRTC logic.
  */
@@ -38,10 +37,10 @@ export interface IP2PWebRTCService {
 	 * Accepts current call request (or preemptively accepts future call requests,
 	 * disabling the confirmation dialog).
 	 */
-	accept (callType?: 'audio'|'video', isPassive?: boolean) : void;
+	accept (callType?: 'audio' | 'video', isPassive?: boolean): void;
 
 	/** This kills the P2P session. */
-	close () : Promise<void>;
+	close (): Promise<void>;
 
 	/** Initializes service. */
 	init (
@@ -49,19 +48,19 @@ export interface IP2PWebRTCService {
 		handlers: IP2PHandlers,
 		localVideo: () => JQuery,
 		remoteVideo: () => JQuery
-	) : void;
+	): void;
 
 	/** Sets up a new P2P session. */
-	join () : void;
+	join (): void;
 
 	/**
 	 * Sends a new call request to the other party.
 	 * @param callType Requested session type.
 	 */
-	request (callType: 'audio'|'video', isPassive?: boolean) : Promise<void>;
+	request (callType: 'audio' | 'video', isPassive?: boolean): Promise<void>;
 
 	/** Resolves ready. */
-	resolveReady () : void;
+	resolveReady (): void;
 
 	/**
 	 * Pauses all or a subset of the current outgoing stream.
@@ -71,5 +70,5 @@ export interface IP2PWebRTCService {
 	 * @param shouldPause If not specified, will switch to the opposite
 	 * of the current state.
 	 */
-	toggle (medium?: 'audio'|'video', shouldPause?: boolean) : void;
+	toggle (medium?: 'audio' | 'video', shouldPause?: boolean): void;
 }

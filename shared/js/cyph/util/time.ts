@@ -14,41 +14,48 @@ import {request} from './request';
 import {translate} from './translate';
 import {sleep} from './wait';
 
-
 /** @ignore */
-const stringFormats	= {
-	date: {day: 'numeric', hour: 'numeric', minute: 'numeric', month: 'short', year: 'numeric'},
+const stringFormats = {
+	date: {
+		day: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+		month: 'short',
+		year: 'numeric'
+	},
 	time: {hour: 'numeric', minute: 'numeric'}
 };
 
 /** @ignore */
-const strings	= {
+const strings = {
 	today: translate('Today'),
 	yesterday: translate('Yesterday')
 };
 
 /** @ignore */
-const timestampData	= {
+const timestampData = {
 	last: 0,
-	offset: sleep(0).then(async () => {
-		/* tslint:disable-next-line:ban */
-		const start		= Date.now();
-		const server	= parseFloat(await request({
-			retries: 1,
-			timeout: 1000,
-			url: env.baseUrl + 'timestamp?' + start.toString()
-		}));
-		/* tslint:disable-next-line:ban */
-		const end		= Date.now();
+	offset: sleep(0)
+		.then(async () => {
+			/* tslint:disable-next-line:ban */
+			const start = Date.now();
+			const server = parseFloat(
+				await request({
+					retries: 1,
+					timeout: 1000,
+					url: env.baseUrl + 'timestamp?' + start.toString()
+				})
+			);
+			/* tslint:disable-next-line:ban */
+			const end = Date.now();
 
-		if (server > start && server < end) {
-			return 0;
-		}
+			if (server > start && server < end) {
+				return 0;
+			}
 
-		return server - end;
-	}).catch(
-		() => 0
-	),
+			return server - end;
+		})
+		.catch(() => 0),
 	subtime: 0
 };
 
@@ -56,19 +63,25 @@ const timestampData	= {
  * Fork of https://stackoverflow.com/a/44418732/459881
  * TODO: translations?
  */
-const getOrdinal	= memoize((n: number) : string => {
-	const nAbs	= Math.abs(n);
+const getOrdinal = memoize((n: number): string => {
+	const nAbs = Math.abs(n);
 
-	return n.toString() + (nAbs > 0 ?
-		['th', 'st', 'nd', 'rd'][(nAbs > 3 && nAbs < 21) || nAbs % 10 > 3 ? 0 : nAbs % 10] :
-		'th'
+	return (
+		n.toString() +
+		(nAbs > 0 ?
+			['th', 'st', 'nd', 'rd'][
+					(nAbs > 3 && nAbs < 21) || nAbs % 10 > 3 ? 0 : nAbs % 10
+			  ] :
+			'th')
 	);
 });
 
 /** Gets hour and minute of a Time or string of the form "hh:mm". */
-export const getHourAndMinuteOfTime	= (time: Time|string) : {hour: number; minute: number} => {
+export const getHourAndMinuteOfTime = (
+	time: Time | string
+): {hour: number; minute: number} => {
 	if (typeof time === 'string') {
-		const [hour, minute]	= time.split(':').map(toInt);
+		const [hour, minute] = time.split(':').map(toInt);
 		return {hour, minute};
 	}
 
@@ -76,38 +89,39 @@ export const getHourAndMinuteOfTime	= (time: Time|string) : {hour: number; minut
 };
 
 /** Converts hour and minute into Time. */
-export const hourAndMinuteToTime	= (o: {hour: number; minute: number}) : Time =>
-	o.hour * 60 + o.minute
-;
+export const hourAndMinuteToTime = (o: {hour: number; minute: number}): Time =>
+	o.hour * 60 + o.minute;
 
 /** @ignore */
-const getTimesInternal	= (
+const getTimesInternal = (
 	timeRange: ITimeRange,
 	increment: number,
 	startPadding: number,
 	endPadding: number
-) : Time[] => {
+): Time[] => {
 	if (
-		timeRange.start.hour === 0 && timeRange.start.minute === 0 &&
-		timeRange.end.hour === 24 && timeRange.end.minute === 0
+		timeRange.start.hour === 0 &&
+		timeRange.start.minute === 0 &&
+		timeRange.end.hour === 24 &&
+		timeRange.end.minute === 0
 	) {
-		startPadding	= 0;
-		endPadding		= 0;
+		startPadding = 0;
+		endPadding = 0;
 	}
 	else {
-		startPadding	= Math.ceil(startPadding / increment) * increment;
-		endPadding		= Math.ceil(endPadding / increment) * increment;
+		startPadding = Math.ceil(startPadding / increment) * increment;
+		endPadding = Math.ceil(endPadding / increment) * increment;
 	}
 
-	const times: Time[]	= [];
-	const endTime		= hourAndMinuteToTime(timeRange.end) - endPadding;
+	const times: Time[] = [];
+	const endTime = hourAndMinuteToTime(timeRange.end) - endPadding;
 
 	for (
-		let {hour, minute}	= {
+		let {hour, minute} = {
 			hour: timeRange.start.hour,
 			minute: timeRange.start.minute + startPadding
 		};
-		(hour * 60 + minute) <= endTime;
+		hour * 60 + minute <= endTime;
 		minute += increment
 	) {
 		while (minute >= 60) {
@@ -126,23 +140,24 @@ const getTimesInternal	= (
 };
 
 /** @ignore */
-const getTimesInternalWrapper	=
-	memoize((endHour: number) =>
-		memoize((endMinute: number) =>
-			memoize((startHour: number) =>
-				memoize((startMinute: number) =>
-					memoize((increment: number) =>
-						memoize((startPadding: number) =>
-							memoize((endPadding: number) =>
-								getTimesInternal(
-									{
-										end: {hour: endHour, minute: endMinute},
-										start: {hour: startHour, minute: startMinute}
-									},
-									increment,
-									startPadding,
-									endPadding
-								)
+const getTimesInternalWrapper = memoize((endHour: number) =>
+	memoize((endMinute: number) =>
+		memoize((startHour: number) =>
+			memoize((startMinute: number) =>
+				memoize((increment: number) =>
+					memoize((startPadding: number) =>
+						memoize((endPadding: number) =>
+							getTimesInternal(
+								{
+									end: {hour: endHour, minute: endMinute},
+									start: {
+										hour: startHour,
+										minute: startMinute
+									}
+								},
+								increment,
+								startPadding,
+								endPadding
 							)
 						)
 					)
@@ -150,110 +165,114 @@ const getTimesInternalWrapper	=
 			)
 		)
 	)
-;
+);
 
 /** @ignore */
-const timestampToDateInternal	=
-	memoize((noZero: boolean) =>
-		memoize((timestamp?: number) : Date =>
-			timestamp === undefined || isNaN(timestamp) || (noZero && timestamp === 0) ?
+const timestampToDateInternal = memoize((noZero: boolean) =>
+	memoize(
+		(timestamp?: number): Date =>
+			timestamp === undefined ||
+			isNaN(timestamp) ||
+			(noZero && timestamp === 0) ?
 				new Date() :
 				new Date(timestamp)
-		)
 	)
-;
+);
 
 /** Converts a timestamp into a Date. */
-export const timestampToDate	= (timestamp?: number|Date, noZero: boolean = false) : Date =>
-	timestamp instanceof Date ? timestamp : timestampToDateInternal(noZero)(timestamp)
-;
+export const timestampToDate = (
+	timestamp?: number | Date,
+	noZero: boolean = false
+): Date =>
+	timestamp instanceof Date ?
+		timestamp :
+		timestampToDateInternal(noZero)(timestamp);
 
 /** @ignore */
-const getTimeStringInternal	= (timestamp: number|Date, includeDate: boolean) : string =>
-	timestampToDate(timestamp).toLocaleString(
-		undefined,
-		includeDate ? stringFormats.date : stringFormats.time
-	).replace(
-		' AM',
-		'am'
-	).replace(
-		' PM',
-		'pm'
+const getTimeStringInternal = (
+	timestamp: number | Date,
+	includeDate: boolean
+): string =>
+	timestampToDate(timestamp)
+		.toLocaleString(
+			undefined,
+			includeDate ? stringFormats.date : stringFormats.time
+		)
+		.replace(' AM', 'am')
+		.replace(' PM', 'pm');
+
+/** @ignore */
+const compareDatesInternal = memoize((a: Date | number) =>
+	memoize((b: Date | number) =>
+		memoize((local: boolean): boolean => {
+			if (typeof a === 'number') {
+				if (isNaN(a)) {
+					return false;
+				}
+
+				a = timestampToDate(a);
+			}
+			if (typeof b === 'number') {
+				if (isNaN(b)) {
+					return false;
+				}
+
+				b = timestampToDate(b);
+			}
+
+			return local ?
+				a.getFullYear() === b.getFullYear() &&
+						a.getMonth() === b.getMonth() &&
+						a.getDate() === b.getDate() :
+				a.getUTCFullYear() === b.getUTCFullYear() &&
+					a.getUTCMonth() === b.getUTCMonth() &&
+					a.getUTCDate() === b.getUTCDate();
+		})
 	)
-;
-
-/** @ignore */
-const compareDatesInternal	=
-	memoize((a: Date|number) => memoize((b: Date|number) => memoize((local: boolean) : boolean => {
-		if (typeof a === 'number') {
-			if (isNaN(a)) {
-				return false;
-			}
-
-			a	= timestampToDate(a);
-		}
-		if (typeof b === 'number') {
-			if (isNaN(b)) {
-				return false;
-			}
-
-			b	= timestampToDate(b);
-		}
-
-		return local ? (
-			a.getFullYear() === b.getFullYear() &&
-			a.getMonth() === b.getMonth() &&
-			a.getDate() === b.getDate()
-		) : (
-			a.getUTCFullYear() === b.getUTCFullYear() &&
-			a.getUTCMonth() === b.getUTCMonth() &&
-			a.getUTCDate() === b.getUTCDate()
-		);
-	})))
-;
+);
 
 /** Returns true if both Dates/timestamps represent the same year, month, and day. */
-export const compareDates	= (a: Date|number, b: Date|number, local: boolean = false) : boolean =>
-	compareDatesInternal(a)(b)(local)
-;
+export const compareDates = (
+	a: Date | number,
+	b: Date | number,
+	local: boolean = false
+): boolean => compareDatesInternal(a)(b)(local);
 
 /** @ignore */
-const getStartPaddingInternal	=
-	memoize((timeRange: ITimeRange) =>
-		memoize((now?: Date|number) =>
-			memoize((startTime?: Date|number) : number => {
-				if (
-					(typeof now !== 'number' && !(now instanceof Date)) ||
-					(typeof startTime !== 'number' && !(startTime instanceof Date)) ||
-					!compareDates(now, startTime, true)
-				) {
-					return 0;
-				}
+const getStartPaddingInternal = memoize((timeRange: ITimeRange) =>
+	memoize((now?: Date | number) =>
+		memoize((startTime?: Date | number): number => {
+			if (
+				(typeof now !== 'number' && !(now instanceof Date)) ||
+				(typeof startTime !== 'number' &&
+					!(startTime instanceof Date)) ||
+				!compareDates(now, startTime, true)
+			) {
+				return 0;
+			}
 
-				if (typeof now === 'number') {
-					now	= timestampToDate(now);
-				}
+			if (typeof now === 'number') {
+				now = timestampToDate(now);
+			}
 
-				return (
-					(now.getMinutes() + (now.getHours() * 60)) -
-					(timeRange.start.minute + (timeRange.start.hour * 60))
-				);
-			})
-		)
+			return (
+				now.getMinutes() +
+				now.getHours() * 60 -
+				(timeRange.start.minute + timeRange.start.hour * 60)
+			);
+		})
 	)
-;
+);
 
 /** Calculates start time padding (minutes) to disallow times on this day before right now. */
-export const getStartPadding	= (
+export const getStartPadding = (
 	timeRange: ITimeRange,
-	now?: Date|number,
-	startTime?: Date|number
-) : number =>
-	getStartPaddingInternal(timeRange)(now)(startTime)
-;
+	now?: Date | number,
+	startTime?: Date | number
+): number => getStartPaddingInternal(timeRange)(now)(startTime);
 
 /** Returns a human-readable representation of the date and time (e.g. "Jan 1, 2018, 3:37pm"). */
-export const getDateTimeString	= memoize((timestamp: number) : string =>
+export const getDateTimeString = memoize((timestamp: number): string =>
 	getTimeStringInternal(timestamp, true)
 );
 
@@ -261,11 +280,11 @@ export const getDateTimeString	= memoize((timestamp: number) : string =>
  * Returns a human-readable representation of an amount of time (e.g. "1 Hour").
  * @param time Number of milliseconds.
  */
-export const getDurationString	= memoize((time: number) : string => {
-	const {n, unit}	= time < 3600000 ?
-		{n: (time / 60000).toString(), unit: 'Minute'} :
-		{n: (time / 3600000).toFixed(1).replace('.0', ''), unit: 'Hour'}
-	;
+export const getDurationString = memoize((time: number): string => {
+	const {n, unit} =
+		time < 3600000 ?
+			{n: (time / 60000).toString(), unit: 'Minute'} :
+			{n: (time / 3600000).toFixed(1).replace('.0', ''), unit: 'Hour'};
 
 	return `${n} ${translate(`${unit}${n === '1' ? '' : 's'}`)}`;
 });
@@ -276,148 +295,163 @@ export const getDurationString	= memoize((time: number) : string => {
  * @param startPadding Skips this number of minutes at the start.
  * @param endPadding Stops this number of minutes before the end.
  */
-export const getTimes	= (
+export const getTimes = (
 	timeRange: ITimeRange,
 	increment: number = 30,
 	startPadding: number = 0,
 	endPadding: number = 0
-) : Time[] =>
-	getTimesInternalWrapper(
-		timeRange.end.hour
-	)(
-		timeRange.end.minute
-	)(
+): Time[] =>
+	getTimesInternalWrapper(timeRange.end.hour)(timeRange.end.minute)(
 		timeRange.start.hour
-	)(
-		timeRange.start.minute
-	)(
-		increment
-	)(
-		startPadding
-	)(
-		endPadding
-	)
-;
+	)(timeRange.start.minute)(increment)(startPadding)(endPadding);
 
-const getTimestampLock		= lockFunction();
+const getTimestampLock = lockFunction();
 
 /**
  * Returns current timestamp, with logic to correct for incorrect
  * local clocks and ensure each output is unique.
  */
-export const getTimestamp	= async () => getTimestampLock(async () => {
-	/* tslint:disable-next-line:ban */
-	let unixMilliseconds	= Date.now() + (await timestampData.offset);
+export const getTimestamp = async () =>
+	getTimestampLock(async () => {
+		/* tslint:disable-next-line:ban */
+		let unixMilliseconds = Date.now() + (await timestampData.offset);
 
-	if (unixMilliseconds === timestampData.last) {
-		timestampData.subtime += random() / 100;
-		unixMilliseconds += timestampData.subtime;
-	}
-	else {
-		timestampData.last		= unixMilliseconds;
-		timestampData.subtime	= 0;
-	}
+		if (unixMilliseconds === timestampData.last) {
+			timestampData.subtime += random() / 100;
+			unixMilliseconds += timestampData.subtime;
+		}
+		else {
+			timestampData.last = unixMilliseconds;
+			timestampData.subtime = 0;
+		}
 
-	return unixMilliseconds;
-});
+		return unixMilliseconds;
+	});
 
 /** Returns a human-readable representation of the time (e.g. "3:37pm"). */
-export const getTimeString	= memoize((timestamp?: number) : string =>
-	getTimeStringInternal(timestamp === undefined ? new Date() : timestamp, false)
+export const getTimeString = memoize((timestamp?: number): string =>
+	getTimeStringInternal(
+		timestamp === undefined ? new Date() : timestamp,
+		false
+	)
 );
 
 /** Converts a timestamp into a 24-hour time. */
 /* tslint:disable-next-line:cyclomatic-complexity */
-export const timestampTo24HourTimeString	= memoize((
-	timestamp?: number,
-	roundToHalfHour: boolean = false,
-	minHours?: number,
-	minMinutes?: number,
-	maxHours?: number,
-	maxMinutes?: number
-) : string => {
-	if (minHours === undefined && minMinutes !== undefined) {
-		throw new Error('Cannot use minMinutes without minHours.');
-	}
-	if (maxHours === undefined && maxMinutes !== undefined) {
-		throw new Error('Cannot use maxMinutes without maxHours.');
-	}
-	if (minHours !== undefined && (isNaN(minHours) || minHours < 0 || minHours > 23)) {
-		throw new Error('Invalid minHours.');
-	}
-	if (
-		minMinutes !== undefined && (isNaN(minMinutes) || minMinutes < 0 || minMinutes > 59)
-	) {
-		throw new Error('Invalid minMinutes.');
-	}
-	if (maxHours !== undefined && (isNaN(maxHours) || maxHours < 0 || maxHours > 23)) {
-		throw new Error('Invalid maxHours.');
-	}
-	if (
-		maxMinutes !== undefined && (isNaN(maxMinutes) || maxMinutes < 0 || maxMinutes > 59)
-	) {
-		throw new Error('Invalid maxMinutes.');
-	}
-	if (
-		((minHours || 0) * 3600 + (minMinutes || 0) * 60) >
-		((maxHours || 0) * 3600 + (maxMinutes || 0) * 60)
-	) {
-		throw new Error('Lower bound cannot exceed upper bound.');
-	}
-	if (roundToHalfHour && (
-		(minMinutes !== undefined && minMinutes !== 0 && minMinutes !== 30) ||
-		(maxMinutes !== undefined && maxMinutes !== 0 && maxMinutes !== 30)
-	)) {
-		throw new Error('minMinutes and maxMinutes must conform to roundToHalfHour.');
-	}
-
-	const date	= timestampToDate(timestamp);
-	let hours	= date.getHours();
-	let minutes	= date.getMinutes();
-
-	if (roundToHalfHour) {
-		if (minutes < 15) {
-			minutes	= 0;
+export const timestampTo24HourTimeString = memoize(
+	(
+		timestamp?: number,
+		roundToHalfHour: boolean = false,
+		minHours?: number,
+		minMinutes?: number,
+		maxHours?: number,
+		maxMinutes?: number
+	): string => {
+		if (minHours === undefined && minMinutes !== undefined) {
+			throw new Error('Cannot use minMinutes without minHours.');
 		}
-		else if (minutes >= 45 && hours < 23) {
-			minutes	= 0;
-			++hours;
+		if (maxHours === undefined && maxMinutes !== undefined) {
+			throw new Error('Cannot use maxMinutes without maxHours.');
 		}
-		else {
-			minutes	= 30;
+		if (
+			minHours !== undefined &&
+			(isNaN(minHours) || minHours < 0 || minHours > 23)
+		) {
+			throw new Error('Invalid minHours.');
 		}
-	}
+		if (
+			minMinutes !== undefined &&
+			(isNaN(minMinutes) || minMinutes < 0 || minMinutes > 59)
+		) {
+			throw new Error('Invalid minMinutes.');
+		}
+		if (
+			maxHours !== undefined &&
+			(isNaN(maxHours) || maxHours < 0 || maxHours > 23)
+		) {
+			throw new Error('Invalid maxHours.');
+		}
+		if (
+			maxMinutes !== undefined &&
+			(isNaN(maxMinutes) || maxMinutes < 0 || maxMinutes > 59)
+		) {
+			throw new Error('Invalid maxMinutes.');
+		}
+		if (
+			(minHours || 0) * 3600 + (minMinutes || 0) * 60 >
+			(maxHours || 0) * 3600 + (maxMinutes || 0) * 60
+		) {
+			throw new Error('Lower bound cannot exceed upper bound.');
+		}
+		if (
+			roundToHalfHour &&
+			((minMinutes !== undefined &&
+				minMinutes !== 0 &&
+				minMinutes !== 30) ||
+				(maxMinutes !== undefined &&
+					maxMinutes !== 0 &&
+					maxMinutes !== 30))
+		) {
+			throw new Error(
+				'minMinutes and maxMinutes must conform to roundToHalfHour.'
+			);
+		}
 
-	if (minHours !== undefined && hours <= minHours) {
-		hours	= minHours;
-		if (minMinutes !== undefined && minutes < minMinutes) {
-			minutes	= minMinutes;
-		}
-	}
+		const date = timestampToDate(timestamp);
+		let hours = date.getHours();
+		let minutes = date.getMinutes();
 
-	if (maxHours !== undefined && hours >= maxHours) {
-		hours	= maxHours;
-		if (maxMinutes !== undefined && minutes > maxMinutes) {
-			minutes	= maxMinutes;
+		if (roundToHalfHour) {
+			if (minutes < 15) {
+				minutes = 0;
+			}
+			else if (minutes >= 45 && hours < 23) {
+				minutes = 0;
+				++hours;
+			}
+			else {
+				minutes = 30;
+			}
 		}
-	}
 
-	return `${`0${hours.toString()}`.slice(-2)}:${`0${minutes.toString()}`.slice(-2)}`;
-});
+		if (minHours !== undefined && hours <= minHours) {
+			hours = minHours;
+			if (minMinutes !== undefined && minutes < minMinutes) {
+				minutes = minMinutes;
+			}
+		}
+
+		if (maxHours !== undefined && hours >= maxHours) {
+			hours = maxHours;
+			if (maxMinutes !== undefined && minutes > maxMinutes) {
+				minutes = maxMinutes;
+			}
+		}
+
+		return `${`0${hours.toString()}`.slice(
+			-2
+		)}:${`0${minutes.toString()}`.slice(-2)}`;
+	}
+);
 
 /** Converts a timestamp into a Time. */
-export const timestampToTime	= memoize((timestamp?: number) : Time => {
-	const date	= timestampToDate(timestamp);
-	return hourAndMinuteToTime({hour: date.getHours(), minute: date.getMinutes()});
-});
+export const timestampToTime = memoize(
+	(timestamp?: number): Time => {
+		const date = timestampToDate(timestamp);
+		return hourAndMinuteToTime({
+			hour: date.getHours(),
+			minute: date.getMinutes()
+		});
+	}
+);
 
 /**
  * Changes the date and/or time of a timestamp.
  * @param time 24-hour time or ITime.
  */
-export const timestampUpdate	= memoize(
-	(timestamp: number, date?: Date, time?: string|Time) : number => {
-		const timestampDate		= timestampToDate(timestamp);
+export const timestampUpdate = memoize(
+	(timestamp: number, date?: Date, time?: string | Time): number => {
+		const timestampDate = timestampToDate(timestamp);
 
 		if (date !== undefined) {
 			timestampDate.setDate(date.getDate());
@@ -426,7 +460,7 @@ export const timestampUpdate	= memoize(
 		}
 
 		if (time !== undefined) {
-			const {hour, minute}	= getHourAndMinuteOfTime(time);
+			const {hour, minute} = getHourAndMinuteOfTime(time);
 
 			timestampDate.setHours(hour || 0);
 			timestampDate.setMinutes(minute || 0);
@@ -434,23 +468,21 @@ export const timestampUpdate	= memoize(
 
 		return timestampDate.getTime();
 	},
-	(timestamp: number, date?: Date, time?: string|Time) => {
+	(timestamp: number, date?: Date, time?: string | Time) => {
 		let timeString: string;
 
 		if (typeof time === 'string') {
-			timeString	= time;
+			timeString = time;
 		}
 		else if (time === undefined) {
-			timeString	= '';
+			timeString = '';
 		}
 		else {
-			const {hour, minute}	= getHourAndMinuteOfTime(time);
+			const {hour, minute} = getHourAndMinuteOfTime(time);
 
-			timeString	= `${
-				('0' + hour.toString()).slice(-2)
-			}:${
-				('0' + minute.toString()).slice(-2)
-			}`;
+			timeString = `${('0' + hour.toString()).slice(-2)}:${(
+				'0' + minute.toString()
+			).slice(-2)}`;
 		}
 
 		return (
@@ -462,9 +494,9 @@ export const timestampUpdate	= memoize(
 );
 
 /** Returns a human-readable representation of a Time (e.g. "3:37pm"). */
-export const timeToString	= memoize((time: Time) => {
-	const {hour, minute}	= getHourAndMinuteOfTime(time);
-	const date				= new Date();
+export const timeToString = memoize((time: Time) => {
+	const {hour, minute} = getHourAndMinuteOfTime(time);
+	const date = new Date();
 
 	date.setHours(hour);
 	date.setMinutes(minute);
@@ -473,16 +505,16 @@ export const timeToString	= memoize((time: Time) => {
 });
 
 /** Watches timestamp with the specified interval. */
-export const watchTimestamp	= memoize((msInterval: number = 1000) =>
+export const watchTimestamp = memoize((msInterval: number = 1000) =>
 	interval(msInterval).pipe(mergeMap(getTimestamp))
 );
 
 /** @see getTimestamp */
-export const getDate	= async () => timestampToDate(await getTimestamp());
+export const getDate = async () => timestampToDate(await getTimestamp());
 
 /** Gets timestamp of current date with time set to midnight local time. */
-export const getMidnightTimestamp	= async () : Promise<number> => {
-	const date	= await getDate();
+export const getMidnightTimestamp = async (): Promise<number> => {
+	const date = await getDate();
 
 	date.setHours(0);
 	date.setMinutes(0);
@@ -493,45 +525,41 @@ export const getMidnightTimestamp	= async () : Promise<number> => {
 };
 
 /** Watches for date changes. */
-export const watchDateChange	= memoize((emitImmediately: boolean = false) =>
+export const watchDateChange = memoize((emitImmediately: boolean = false) =>
 	flattenObservable(async () => {
-		const dateChanges	= timer(
-			86400000 - ((await getTimestamp()) - (await getMidnightTimestamp())),
+		const dateChanges = timer(
+			86400000 -
+				((await getTimestamp()) - (await getMidnightTimestamp())),
 			86400000
-		).pipe(
-			map(() => {})
-		);
+		).pipe(map(() => {}));
 
-		return !emitImmediately ? dateChanges : concat(of(undefined), dateChanges);
+		return !emitImmediately ?
+			dateChanges :
+			concat(of(undefined), dateChanges);
 	})
 );
 
 /** @ignore */
-const relativeDateStringInternal	= memoize((now: number) =>
-	memoize((date: number|Date) =>
-		memoize((noToday: boolean) : string|undefined => {
-			date	= timestampToDate(date);
+const relativeDateStringInternal = memoize((now: number) =>
+	memoize((date: number | Date) =>
+		memoize((noToday: boolean): string | undefined => {
+			date = timestampToDate(date);
 
 			return compareDates(date, now, true) ?
-				noToday ? undefined : strings.today :
+				noToday ?
+					undefined :
+				strings.today :
 			compareDates(date, now - 86400000, true) ?
 				strings.yesterday :
 			date.getFullYear() === timestampToDate(now).getFullYear() ?
-				`${
-					date.toLocaleDateString(undefined, {weekday: 'long'})
-				}, ${
-					date.toLocaleDateString(undefined, {month: 'long'})
-				} ${
-					getOrdinal(date.getDate())
-				}` :
-				`${
-					date.toLocaleDateString(undefined, {month: 'long'})
-				} ${
-					getOrdinal(date.getDate())
-				}, ${
-					date.getFullYear()
-				}`
-			;
+				`${date.toLocaleDateString(undefined, {
+						weekday: 'long'
+				  })}, ${date.toLocaleDateString(undefined, {
+						month: 'long'
+				  })} ${getOrdinal(date.getDate())}` :
+				`${date.toLocaleDateString(undefined, {
+					month: 'long'
+				})} ${getOrdinal(date.getDate())}, ${date.getFullYear()}`;
 		})
 	)
 );
@@ -543,11 +571,15 @@ const relativeDateStringInternal	= memoize((now: number) =>
  * @example Monday, June 18th
  * @example December 31, 2017
  */
-export const relativeDateString	= async (date: number|Date, noToday: boolean = false) =>
-	relativeDateStringInternal(await getMidnightTimestamp())(date)(noToday)
-;
+export const relativeDateString = async (
+	date: number | Date,
+	noToday: boolean = false
+) => relativeDateStringInternal(await getMidnightTimestamp())(date)(noToday);
 
 /** @see relativeDateString */
-export const watchRelativeDateString	= memoize((date: number|Date, noToday?: boolean) =>
-	watchDateChange(true).pipe(mergeMap(async () => relativeDateString(date, noToday)))
+export const watchRelativeDateString = memoize(
+	(date: number | Date, noToday?: boolean) =>
+		watchDateChange(true).pipe(
+			mergeMap(async () => relativeDateString(date, noToday))
+		)
 );

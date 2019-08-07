@@ -5,7 +5,6 @@ import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for forms UI.
  */
@@ -17,7 +16,7 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountFormsComponent extends BaseProvider implements OnInit {
 	/** @see AccountFileRecord.RecordTypes */
-	public readonly recordType	= AccountFileRecord.RecordTypes.Form;
+	public readonly recordType = AccountFileRecord.RecordTypes.Form;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

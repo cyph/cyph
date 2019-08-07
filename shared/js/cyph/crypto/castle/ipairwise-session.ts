@@ -1,6 +1,5 @@
 import {IResolvable} from '../../iresolvable';
 
-
 /**
  * Represents a pairwise (one-to-one) Castle session.
  */
@@ -9,8 +8,11 @@ export interface IPairwiseSession {
 	readonly initialMessagesProcessed: IResolvable<void>;
 
 	/** Receive/decrypt incoming message. */
-	receive (cyphertext: Uint8Array) : Promise<void>;
+	receive (cyphertext: Uint8Array): Promise<void>;
 
 	/** Send/encrypt outgoing message. */
-	send (plaintext: string|ArrayBufferView, timestamp: number) : Promise<void>;
+	send (
+		plaintext: string | ArrayBufferView,
+		timestamp: number
+	): Promise<void>;
 }

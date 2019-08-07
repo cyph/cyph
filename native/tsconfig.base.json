@@ -16,9 +16,5 @@
 			"simplewebrtc": ["app/externals/simplewebrtc"]
 		}
 	},
-	"exclude": [
-		"node_modules",
-		"platforms",
-		"**/*.aot.ts"
-	]
+	"exclude": ["node_modules", "platforms", "**/*.aot.ts"]
 }

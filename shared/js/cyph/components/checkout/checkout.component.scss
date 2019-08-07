@@ -34,18 +34,21 @@
 		}
 
 		.mat-form-field {
-			.mat-form-field-label, input {
+			.mat-form-field-label,
+			input {
 				color: rgba(255, 255, 255, 0.54) !important;
 			}
 
 			&.mat-form-field-invalid {
-				.mat-form-field-label, input {
+				.mat-form-field-label,
+				input {
 					color: #d32f2f !important;
 				}
 			}
 
 			&:not(.mat-form-field-invalid) {
-				.mat-form-field-underline, .mat-form-field-ripple {
+				.mat-form-field-underline,
+				.mat-form-field-ripple {
 					background-color: rgba(255, 255, 255, 0.54) !important;
 				}
 			}
@@ -55,7 +58,8 @@
 			color: white;
 		}
 
-		[data-braintree-id='choose-a-way-to-pay'], [data-braintree-id='methods-label'] {
+		[data-braintree-id='choose-a-way-to-pay'],
+		[data-braintree-id='methods-label'] {
 			position: absolute;
 			text-align: center;
 			margin-left: auto;

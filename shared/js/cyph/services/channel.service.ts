@@ -13,35 +13,36 @@ import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {DatabaseService} from './database.service';
 
-
 /** @inheritDoc */
 @Injectable()
 export class ChannelService extends BaseProvider implements IChannelService {
 	/** @ignore */
-	private readonly _STATE		= resolvable<{lock: LockFunction; url: string}>();
+	private readonly _STATE = resolvable<{lock: LockFunction; url: string}>();
 
 	/** @ignore */
-	private ephemeral: boolean	= false;
+	private ephemeral: boolean = false;
 
 	/** @ignore */
-	private isClosed: boolean	= false;
+	private isClosed: boolean = false;
 
 	/** @ignore */
-	private readonly localLock: LockFunction	= lockFunction();
+	private readonly localLock: LockFunction = lockFunction();
 
 	/** @ignore */
-	private readonly resolveState: (state: {lock: LockFunction; url: string}) => void	=
-		this._STATE.resolve
-	;
+	private readonly resolveState: (state: {
+		lock: LockFunction;
+		url: string;
+	}) => void = this._STATE.resolve;
 
 	/** @ignore */
-	private readonly state: Promise<{lock: LockFunction; url: string}>	= this._STATE.promise;
+	private readonly state: Promise<{lock: LockFunction; url: string}> = this
+		._STATE.promise;
 
 	/** @ignore */
-	private readonly userID	= resolvable<string>();
+	private readonly userID = resolvable<string>();
 
 	/** Resolves when first batch of incoming messages have been processed. */
-	public readonly initialMessagesProcessed	= resolvable();
+	public readonly initialMessagesProcessed = resolvable();
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {
@@ -49,7 +50,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			return;
 		}
 
-		this.isClosed	= true;
+		this.isClosed = true;
 
 		await this.databaseService.removeItem((await this.state).url);
 	}
@@ -78,115 +79,139 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 	/** @inheritDoc */
 	public async init (
-		channelID: string|undefined,
-		userID: string|undefined,
+		channelID: string | undefined,
+		userID: string | undefined,
 		handlers: IChannelHandlers
 	) : Promise<void> {
 		if (!channelID) {
 			throw new Error('Invalid channel ID.');
 		}
 
-		const url	= `channels/${channelID}`;
+		const url = `channels/${channelID}`;
 
-		this.resolveState({lock: this.databaseService.lockFunction(`${url}/lock`), url});
+		this.resolveState({
+			lock: this.databaseService.lockFunction(`${url}/lock`),
+			url
+		});
 
 		if (!userID) {
-			userID			= uuid();
-			this.ephemeral	= true;
-			this.databaseService.setDisconnectTracker(`${url}/disconnects/${userID}`);
+			userID = uuid();
+			this.ephemeral = true;
+			this.databaseService.setDisconnectTracker(
+				`${url}/disconnects/${userID}`
+			);
 		}
 
 		this.userID.resolve(userID);
 
-		let initialMessageCount	= !this.ephemeral ?
+		let initialMessageCount = !this.ephemeral ?
 			(await this.databaseService.getListKeys(`${url}/messages`)).length :
-			0
-		;
+			0;
 
 		if (initialMessageCount === 0) {
 			this.initialMessagesProcessed.resolve();
 		}
 
-		this.subscriptions.push(this.databaseService.watchListPushes(
-			`${url}/messages`,
-			ChannelMessage,
-			undefined,
-			true,
-			this.subscriptions
-		).subscribe(async message => {
-			try {
-				debugLog(() => ({channelMessage: {
-					destroyed: this.destroyed.value,
-					message,
-					userID
-				}}));
+		this.subscriptions.push(
+			this.databaseService
+				.watchListPushes(
+					`${url}/messages`,
+					ChannelMessage,
+					undefined,
+					true,
+					this.subscriptions
+				)
+				.subscribe(async message => {
+					try {
+						debugLog(() => ({
+							channelMessage: {
+								destroyed: this.destroyed.value,
+								message,
+								userID
+							}
+						}));
 
-				if (message.value.author === userID || this.destroyed.value) {
-					return;
-				}
+						if (
+							message.value.author === userID ||
+							this.destroyed.value
+						) {
+							return;
+						}
 
-				await handlers.onMessage(message.value.cyphertext);
-			}
-			finally {
-				if (initialMessageCount > 0) {
-					--initialMessageCount;
-
-					if (initialMessageCount === 0) {
-						this.initialMessagesProcessed.resolve();
+						await handlers.onMessage(message.value.cyphertext);
 					}
-				}
-			}
+					finally {
+						if (initialMessageCount > 0) {
+							--initialMessageCount;
 
-			if (!this.ephemeral) {
-				debugLog(() => ({channelMessageDelete: {message}}));
-				await this.databaseService.removeItem(message.url).catch(() => {});
-			}
-		}));
+							if (initialMessageCount === 0) {
+								this.initialMessagesProcessed.resolve();
+							}
+						}
+					}
+
+					if (!this.ephemeral) {
+						debugLog(() => ({channelMessageDelete: {message}}));
+						await this.databaseService
+							.removeItem(message.url)
+							.catch(() => {});
+					}
+				})
+		);
 
 		if (
 			this.ephemeral ||
-			(
-				await this.databaseService.getList(`${url}/users`, StringProto).catch(
-					() => <string[]> []
-				)
-			).indexOf(userID) < 0
+			(await this.databaseService
+				.getList(`${url}/users`, StringProto)
+				.catch(() => <string[]> [])).indexOf(userID) < 0
 		) {
-			await this.databaseService.pushItem(`${url}/users`, StringProto, userID);
+			await this.databaseService.pushItem(
+				`${url}/users`,
+				StringProto,
+				userID
+			);
 		}
 
-		let isOpen	= false;
-		this.subscriptions.push(this.databaseService.watchList(
-			`${url}/users`,
-			StringProto,
-			true,
-			this.subscriptions
-		).subscribe(
-			users => {
-				if (users.length < 1) {
-					return;
-				}
-				if (!isOpen) {
-					isOpen	= true;
-					handlers.onOpen(users[0].value === userID);
-				}
-				if (users.length < 2) {
-					return;
-				}
-				handlers.onConnect();
-			},
-			err => {
-				handlers.onClose();
-				throw err;
-			},
-			() => {
-				handlers.onClose();
-			}
-		));
+		let isOpen = false;
+		this.subscriptions.push(
+			this.databaseService
+				.watchList(
+					`${url}/users`,
+					StringProto,
+					true,
+					this.subscriptions
+				)
+				.subscribe(
+					users => {
+						if (users.length < 1) {
+							return;
+						}
+						if (!isOpen) {
+							isOpen = true;
+							handlers.onOpen(users[0].value === userID);
+						}
+						if (users.length < 2) {
+							return;
+						}
+						handlers.onConnect();
+					},
+					err => {
+						handlers.onClose();
+						throw err;
+					},
+					() => {
+						handlers.onClose();
+					}
+				)
+		);
 	}
 
 	/** @inheritDoc */
 	public async lock<T> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
 		return (await this.state).lock(f, reason);
@@ -194,11 +219,13 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 	/** @inheritDoc */
 	public async send (cyphertext: Uint8Array) : Promise<void> {
-		await this.localLock(async () => this.databaseService.pushItem<IChannelMessage>(
-			`${(await this.state).url}/messages`,
-			ChannelMessage,
-			{author: await this.userID.promise, cyphertext}
-		));
+		await this.localLock(async () =>
+			this.databaseService.pushItem<IChannelMessage>(
+				`${(await this.state).url}/messages`,
+				ChannelMessage,
+				{author: await this.userID.promise, cyphertext}
+			)
+		);
 	}
 
 	/** @inheritDoc */

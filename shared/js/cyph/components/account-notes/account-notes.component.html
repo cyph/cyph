@@ -1,14 +1,16 @@
 <cyph-account-base-file-list
-	[recordType]='recordType | async'
-	*ngIf='(realTime | async) === false || accountService.enableDocs'
+	[recordType]="recordType | async"
+	*ngIf="(realTime | async) === false || accountService.enableDocs"
 >
 	<button
 		mat-fab
-		color='primary'
-		[matTooltip]='(realTime | async) ? stringsService.newDoc : stringsService.newNote'
-		matTooltipPosition='above'
-		routerLink='new'
-		class='fixed-fab'
+		color="primary"
+		[matTooltip]="
+			(realTime | async) ? stringsService.newDoc : stringsService.newNote
+		"
+		matTooltipPosition="above"
+		routerLink="new"
+		class="fixed-fab"
 	>
 		<mat-icon>note_add</mat-icon>
 	</button>

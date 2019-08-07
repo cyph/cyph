@@ -6,7 +6,8 @@
 @import './themes/modest';
 @import './themes/telehealth';
 
-html, body {
+html,
+body {
 	width: 100% !important;
 	height: 100% !important;
 	overflow: hidden;
@@ -21,7 +22,8 @@ body.cordova * {
 /* Readability improvement for large screens */
 
 @media (min-width: 1920px) {
-	html, body {
+	html,
+	body {
 		font-size: 17.5px;
 	}
 }

@@ -1,6 +1,5 @@
 import * as DOMPurify from 'dompurify';
 
-
 /**
  * HtmlSanitizerService implementation built on DOMPurify.
  * Uses Cure53's DOMPurify href URI scheme whitelist hook, copied from
@@ -22,16 +21,16 @@ export class DOMPurifyHtmlSanitizer {
 		/** Allowed URI schemes */
 		private readonly whitelist: string[] = ['http', 'https', 'ftp']
 	) {
-		const regex	= new RegExp(`^(${this.whitelist.join('|')}):`, 'im');
+		const regex = new RegExp(`^(${this.whitelist.join('|')}):`, 'im');
 
 		/* Add a hook to enforce URI scheme whitelist */
 		this.domPurify.addHook('afterSanitizeAttributes', node => {
 			/* Build an anchor to map URLs to */
-			const anchor	= this.document.createElement('a');
+			const anchor = this.document.createElement('a');
 
 			/* Check all href attributes for validity */
 			if (node.hasAttribute('href')) {
-				anchor.href	= node.getAttribute('href') || '';
+				anchor.href = node.getAttribute('href') || '';
 				if (!regex.test(anchor.protocol)) {
 					node.removeAttribute('href');
 				}
@@ -39,7 +38,7 @@ export class DOMPurifyHtmlSanitizer {
 
 			/* Check all action attributes for validity */
 			if (node.hasAttribute('action')) {
-				anchor.href	= node.getAttribute('action') || '';
+				anchor.href = node.getAttribute('action') || '';
 				if (!regex.test(anchor.protocol)) {
 					node.removeAttribute('action');
 				}
@@ -47,7 +46,7 @@ export class DOMPurifyHtmlSanitizer {
 
 			/* Check all xlink:href attributes for validity */
 			if (node.hasAttribute('xlink:href')) {
-				anchor.href	= node.getAttribute('xlink:href') || '';
+				anchor.href = node.getAttribute('xlink:href') || '';
 				if (!regex.test(anchor.protocol)) {
 					node.removeAttribute('xlink:href');
 				}
@@ -55,7 +54,7 @@ export class DOMPurifyHtmlSanitizer {
 
 			/* Block window.opener in new window */
 			if (node.tagName === 'A') {
-				(<HTMLAnchorElement> node).rel	= 'noopener noreferrer';
+				(<HTMLAnchorElement> node).rel = 'noopener noreferrer';
 			}
 
 			return node;

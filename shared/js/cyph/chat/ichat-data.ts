@@ -4,10 +4,13 @@ import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
 import {LockFunction} from '../lock-function-type';
-import {IChatLastConfirmedMessage, IChatMessage, ISessionMessageDataList} from '../proto';
+import {
+	IChatLastConfirmedMessage,
+	IChatMessage,
+	ISessionMessageDataList
+} from '../proto';
 import {States} from './enums';
 import {IChatMessageLiveValue} from './ichat-message-live-value';
-
 
 /**
  * Represents data in a chat.
@@ -41,7 +44,7 @@ export interface IChatData {
 	lastConfirmedMessage: IAsyncValue<IChatLastConfirmedMessage>;
 
 	/** ID of most recent unread message. */
-	lastUnreadMessage: Promise<string|undefined>;
+	lastUnreadMessage: Promise<string | undefined>;
 
 	/** Ordered message list of messge IDs. */
 	messageList: IAsyncList<string[]>;
@@ -53,7 +56,7 @@ export interface IChatData {
 	pendingMessageRoot?: string;
 
 	/** Local message outbox. */
-	pendingMessages: LocalAsyncList<IChatMessage&{pending: true}>;
+	pendingMessages: LocalAsyncList<IChatMessage & {pending: true}>;
 
 	/** The previous message sent. */
 	previousMessage?: string;
@@ -68,5 +71,7 @@ export interface IChatData {
 	state: States;
 
 	/** List of unconfirmed outgoing message IDs, based on lastConfirmedMessage. */
-	unconfirmedMessages: BehaviorSubject<{[id: string]: boolean|undefined}|undefined>;
+	unconfirmedMessages: BehaviorSubject<
+		{[id: string]: boolean | undefined} | undefined
+	>;
 }

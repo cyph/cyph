@@ -19,6 +19,8 @@
 		"nodemailer": "4",
 		"username-blacklist": "https://github.com/cyph/The-Big-Username-Blacklist"
 	},
-	"engines": {"node": "8"},
+	"engines": {
+		"node": "8"
+	},
 	"private": true
 }

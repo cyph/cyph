@@ -8,7 +8,6 @@ import {AccountService} from '../../services/account.service';
 import {EHRIntegrationService} from '../../services/ehr-integration.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for uploading EHR credentials.
  * Used by addredoxcredentials script; not intended for user interaction.
@@ -19,15 +18,20 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./upload-ehr-credentials.component.scss'],
 	templateUrl: './upload-ehr-credentials.component.html'
 })
-export class UploadEhrCredentialsComponent extends BaseProvider implements OnInit {
+export class UploadEhrCredentialsComponent extends BaseProvider
+	implements OnInit {
 	/** Generated API key. */
-	public readonly apiKey: BehaviorSubject<string>	= new BehaviorSubject('');
+	public readonly apiKey: BehaviorSubject<string> = new BehaviorSubject('');
 
 	/** Indicates whether operation is done. */
-	public readonly done: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(false);
+	public readonly done: BehaviorSubject<boolean> = new BehaviorSubject<
+		boolean
+	>(false);
 
 	/** Indicates whether operation failed. */
-	public readonly error: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(false);
+	public readonly error: BehaviorSubject<boolean> = new BehaviorSubject<
+		boolean
+	>(false);
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
@@ -35,23 +39,27 @@ export class UploadEhrCredentialsComponent extends BaseProvider implements OnIni
 			this.accountService.resolveUiReady();
 			this.accountService.transitionEnd();
 
-			const {cyphAdminKey, redoxApiKey, redoxSecret, username}	= <{
-				cyphAdminKey: string;
-				redoxApiKey: string;
-				redoxSecret: string;
-				username: string;
-			}>
-				await this.activatedRoute.params.pipe(take(1)).toPromise()
-			;
+			const {cyphAdminKey, redoxApiKey, redoxSecret, username} = <
+				{
+					cyphAdminKey: string;
+					redoxApiKey: string;
+					redoxSecret: string;
+					username: string;
+				}
+			> await this.activatedRoute.params.pipe(take(1)).toPromise();
 
-			const apiKey	= await this.ehrIntegrationService.addCredentials(
+			const apiKey = await this.ehrIntegrationService.addCredentials(
 				cyphAdminKey,
 				redoxApiKey,
 				redoxSecret,
 				username
 			);
 
-			await this.accountFilesService.upload('', {apiKey, isMaster: true}, username).result;
+			await this.accountFilesService.upload(
+				'',
+				{apiKey, isMaster: true},
+				username
+			).result;
 
 			this.apiKey.next(apiKey);
 			this.done.next(true);

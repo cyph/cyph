@@ -46,46 +46,45 @@ import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Manages a session.
  */
 @Injectable()
-export abstract class SessionService extends BaseProvider implements ISessionService {
+export abstract class SessionService extends BaseProvider
+	implements ISessionService {
 	/** @ignore */
-	private readonly _OPENED			= resolvable(true);
+	private readonly _OPENED = resolvable(true);
 
 	/** @ignore */
-	private readonly correctSubSession	= (message: ISessionMessage) : boolean =>
-		(message.data.sessionSubID || undefined) === this.sessionSubID
+	private readonly correctSubSession = (message: ISessionMessage): boolean =>
+		(message.data.sessionSubID || undefined) === this.sessionSubID;
 	/* tslint:disable-next-line:semicolon */
-	;
 
 	/** @ignore */
-	private readonly eventManager		= new EventManager();
+	private readonly eventManager = new EventManager();
 
 	/** @ignore */
-	private readonly openEvents			= new Set<string>();
+	private readonly openEvents = new Set<string>();
 
 	/** @ignore */
-	protected incomingMessageQueue: IAsyncList<ISessionMessageList>		=
-		new LocalAsyncList<ISessionMessageList>()
-	;
+	protected incomingMessageQueue: IAsyncList<
+		ISessionMessageList
+	> = new LocalAsyncList<ISessionMessageList>();
 
 	/** @ignore */
-	protected incomingMessageQueueLock: LockFunction					= lockFunction();
+	protected incomingMessageQueueLock: LockFunction = lockFunction();
 
 	/** @ignore */
-	protected lastIncomingMessageTimestamp: number						= 0;
+	protected lastIncomingMessageTimestamp: number = 0;
 
 	/** @ignore */
-	protected readonly receivedMessages: Set<string>					= new Set<string>();
+	protected readonly receivedMessages: Set<string> = new Set<string>();
 
 	/** @ignore */
-	protected readonly resolveOpened: () => void						= this._OPENED.resolve;
+	protected readonly resolveOpened: () => void = this._OPENED.resolve;
 
 	/** @inheritDoc */
-	public readonly apiFlags								= {
+	public readonly apiFlags = {
 		disableP2P: !!(
 			this.envService.environment.customBuild &&
 			this.envService.environment.customBuild.config.disableP2P
@@ -94,62 +93,68 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	};
 
 	/** @inheritDoc */
-	public readonly appUsername: Observable<string>			= of('');
+	public readonly appUsername: Observable<string> = of('');
 
 	/** @inheritDoc */
-	public readonly closed: Promise<void>					= this.one<void>(events.closeChat);
+	public readonly closed: Promise<void> = this.one<void>(events.closeChat);
 
 	/** @inheritDoc */
-	public readonly connected: Promise<void>				= this.one<void>(events.connect);
+	public readonly connected: Promise<void> = this.one<void>(events.connect);
 
 	/** @inheritDoc */
-	public readonly cyphNotFound: Promise<void>				= this.one<void>(events.cyphNotFound);
+	public readonly cyphNotFound: Promise<void> = this.one<void>(
+		events.cyphNotFound
+	);
 
 	/** @inheritDoc */
-	public readonly freezePong: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(false);
+	public readonly freezePong: BehaviorSubject<boolean> = new BehaviorSubject<
+		boolean
+	>(false);
 
 	/** @inheritDoc */
-	public readonly initialMessagesProcessed				= resolvable();
+	public readonly initialMessagesProcessed = resolvable();
 
 	/** @inheritDoc */
 	public group?: SessionService[];
 
 	/** @inheritDoc */
-	public readonly localUsername: Observable<string>		= new BehaviorSubject<string>(
-		this.stringsService.me
-	);
+	public readonly localUsername: Observable<string> = new BehaviorSubject<
+		string
+	>(this.stringsService.me);
 
 	/** @ignore */
-	public readonly opened: Promise<boolean>				= this._OPENED.promise;
+	public readonly opened: Promise<boolean> = this._OPENED.promise;
 
 	/** @inheritDoc */
-	public readonly ready: Promise<void>					= Promise.resolve();
+	public readonly ready: Promise<void> = Promise.resolve();
 
 	/** @inheritDoc */
-	public readonly remoteUsername: BehaviorSubject<string>	= new BehaviorSubject<string>(
-		this.stringsService.friend
-	);
+	public readonly remoteUsername: BehaviorSubject<
+		string
+	> = new BehaviorSubject<string>(this.stringsService.friend);
 
 	/** @see ISessionMessageData.sessionSubID */
 	public sessionSubID?: string;
 
 	/** @inheritDoc */
-	public readonly state									= {
+	public readonly state = {
 		cyphID: new BehaviorSubject(''),
 		isAlice: new BehaviorSubject<boolean>(false),
 		isAlive: new BehaviorSubject<boolean>(true),
-		sharedSecret: new BehaviorSubject<string|undefined>(undefined),
-		startingNewCyph: new BehaviorSubject<boolean|undefined>(false),
+		sharedSecret: new BehaviorSubject<string | undefined>(undefined),
+		startingNewCyph: new BehaviorSubject<boolean | undefined>(false),
 		wasInitiatedByAPI: new BehaviorSubject<boolean>(false)
 	};
 
 	/** @inheritDoc */
-	public readonly symmetricKey							=
-		new BehaviorSubject<Uint8Array|undefined>(undefined)
-	;
+	public readonly symmetricKey = new BehaviorSubject<Uint8Array | undefined>(
+		undefined
+	);
 
 	/** Sends messages through Castle. */
-	protected async castleSendMessages (messages: ISessionMessage[]) : Promise<void> {
+	protected async castleSendMessages (
+		messages: ISessionMessage[]
+	) : Promise<void> {
 		if (messages.length < 1) {
 			return;
 		}
@@ -185,40 +190,57 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	}
 
 	/** @ignore */
-	protected async cyphertextReceiveHandler (messages: ISessionMessage[]) : Promise<void> {
+	protected async cyphertextReceiveHandler (
+		messages: ISessionMessage[]
+	) : Promise<void> {
 		debugLog(() => ({cyphertextReceiveHandler: {messages}}));
 
-		const messageGroups				= new Map<string, ISessionMessageDataInternal[]>();
+		const messageGroups = new Map<string, ISessionMessageDataInternal[]>();
 
-		const otherSubSessionMessages	=
-			messages.filter(message => !this.correctSubSession(message))
-		;
+		const otherSubSessionMessages = messages.filter(
+			message => !this.correctSubSession(message)
+		);
 
 		if (otherSubSessionMessages.length > 0) {
-			await this.incomingMessageQueue.pushItem({messages: otherSubSessionMessages});
+			await this.incomingMessageQueue.pushItem({
+				messages: otherSubSessionMessages
+			});
 		}
 
-		await Promise.all(messages.filter(this.correctSubSession).map(async message => {
-			if (!message.data.id || this.receivedMessages.has(message.data.id)) {
-				return;
-			}
+		await Promise.all(
+			messages.filter(this.correctSubSession).map(async message => {
+				if (
+					!message.data.id ||
+					this.receivedMessages.has(message.data.id)
+				) {
+					return;
+				}
 
-			message.data	= await this.processMessageData(message.data);
+				message.data = await this.processMessageData(message.data);
 
-			this.receivedMessages.add(message.data.id);
+				this.receivedMessages.add(message.data.id);
 
-			if (message.event && message.event in rpcEvents) {
-				getOrSetDefault(messageGroups, message.event, () => []).push(message.data);
-			}
-		}));
+				if (message.event && message.event in rpcEvents) {
+					getOrSetDefault(
+						messageGroups,
+						message.event,
+						() => []
+					).push(message.data);
+				}
+			})
+		);
 
-		await Promise.all(Array.from(messageGroups.entries()).map(async ([event, data]) =>
-			this.trigger(event, data)
-		));
+		await Promise.all(
+			Array.from(messageGroups.entries()).map(async ([event, data]) =>
+				this.trigger(event, data)
+			)
+		);
 	}
 
 	/** @ignore */
-	protected async cyphertextSendHandler (message: Uint8Array) : Promise<void> {
+	protected async cyphertextSendHandler (
+		message: Uint8Array
+	) : Promise<void> {
 		await this.channelService.send(message);
 
 		this.analyticsService.sendEvent({
@@ -233,13 +255,18 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	/* tslint:disable-next-line:no-async-without-await */
 	protected async getSessionMessageAuthor (
 		_MESSAGE: ISessionMessageDataInternal
-	) : Promise<Observable<string>|void> {}
+	) : Promise<Observable<string> | void> {}
 
 	/** @ignore */
 	protected async getSymmetricKey () : Promise<Uint8Array> {
 		return (
 			this.symmetricKey.value ||
-			this.symmetricKey.pipe(filterUndefinedOperator(), take(1)).toPromise()
+			this.symmetricKey
+				.pipe(
+					filterUndefinedOperator(),
+					take(1)
+				)
+				.toPromise()
 		);
 	}
 
@@ -247,52 +274,60 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	protected async newMessages (
 		messages: [
 			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
+
+				| ISessionMessageAdditionalData
+				| ((
+						timestamp: number
+				  ) => MaybePromise<ISessionMessageAdditionalData>)
 		][]
-	) : Promise<(ISessionMessage&{data: ISessionMessageData})[]> {
-		return Promise.all(messages.map(async message => {
-			const timestamp		= await getTimestamp();
-			const event			= message[0];
-			let additionalData	= message[1];
+	) : Promise<(ISessionMessage & {data: ISessionMessageData})[]> {
+		return Promise.all(
+			messages.map(async message => {
+				const timestamp = await getTimestamp();
+				const event = message[0];
+				let additionalData = message[1];
 
-			if (typeof additionalData === 'function') {
-				additionalData	= await additionalData(timestamp);
-			}
+				if (typeof additionalData === 'function') {
+					additionalData = await additionalData(timestamp);
+				}
 
-			return {
-				data: {
-					author: this.localUsername,
-					bytes: additionalData.bytes,
-					capabilities: additionalData.capabilities,
-					chatState: additionalData.chatState,
-					command: additionalData.command,
-					id: additionalData.id || uuid(),
-					sessionSubID: this.sessionSubID,
-					text: additionalData.text,
-					textConfirmation: additionalData.textConfirmation,
-					timestamp
-				},
-				event
-			};
-		}));
+				return {
+					data: {
+						author: this.localUsername,
+						bytes: additionalData.bytes,
+						capabilities: additionalData.capabilities,
+						chatState: additionalData.chatState,
+						command: additionalData.command,
+						id: additionalData.id || uuid(),
+						sessionSubID: this.sessionSubID,
+						text: additionalData.text,
+						textConfirmation: additionalData.textConfirmation,
+						timestamp
+					},
+					event
+				};
+			})
+		);
 	}
 
 	/** @ignore */
-	protected async plaintextSendHandler (messages: ISessionMessage[]) : Promise<void> {
+	protected async plaintextSendHandler (
+		messages: ISessionMessage[]
+	) : Promise<void> {
 		await this.castleSendMessages(messages);
 	}
 
 	/** @inheritDoc */
 	public async castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{
-			author: Observable<string>;
-			instanceID: string;
-			plaintext: Uint8Array;
-			timestamp: number;
-		}
+		data?:
+			| Uint8Array
+			| {
+					author: Observable<string>;
+					instanceID: string;
+					plaintext: Uint8Array;
+					timestamp: number;
+			  }
 	) : Promise<void> {
 		switch (event) {
 			case CastleEvents.abort:
@@ -313,41 +348,48 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 					break;
 				}
 
-				const castleTimestamp	= data.timestamp;
+				const castleTimestamp = data.timestamp;
 
 				debugLog(() => ({sessionCastleReceive: data}));
 
-				const messages	=
-					(
-						await (async () =>
-							(
-								await deserialize(SessionMessageList, data.plaintext)
-							).messages
-						)().catch(() => undefined)
-					) ||
-					[]
-				;
+				const messages =
+					(await (async () =>
+						(await deserialize(SessionMessageList, data.plaintext))
+							.messages)().catch(() => undefined)) || [];
 
-				debugLog(() => ({sessionCastleReceiveMessages: {data, messages}}));
+				debugLog(() => ({
+					sessionCastleReceiveMessages: {data, messages}
+				}));
 
-				const authorID	= normalize(await data.author.pipe(take(1)).toPromise());
+				const authorID = normalize(
+					await data.author.pipe(take(1)).toPromise()
+				);
 
-				await this.cyphertextReceiveHandler(filterUndefined(messages.map(message => {
-					/* Discard messages without valid timestamps */
-					if (
-						isNaN(message.data.timestamp) ||
-						message.data.timestamp < castleTimestamp
-					) {
-						debugLog(() => ({cyphertextReceiveDiscardInvalidTimestamp: {message}}));
-						return;
-					}
+				await this.cyphertextReceiveHandler(
+					filterUndefined(
+						messages.map(message => {
+							/* Discard messages without valid timestamps */
+							if (
+								isNaN(message.data.timestamp) ||
+								message.data.timestamp < castleTimestamp
+							) {
+								debugLog(() => ({
+									cyphertextReceiveDiscardInvalidTimestamp: {
+										message
+									}
+								}));
+								return;
+							}
 
-					this.lastIncomingMessageTimestamp	= message.data.timestamp;
-					(<any> message.data).author			= data.author;
-					message.data.authorID				= authorID;
+							this.lastIncomingMessageTimestamp =
+								message.data.timestamp;
+							(<any> message.data).author = data.author;
+							message.data.authorID = authorID;
 
-					return message;
-				})));
+							return message;
+						})
+					)
+				);
 
 				break;
 
@@ -383,24 +425,23 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public async handshakeState (
-		currentStep: IAsyncValue<HandshakeSteps> =
-			new LocalAsyncValue(HandshakeSteps.Start)
-		,
-		initialSecret: IAsyncValue<Uint8Array|undefined> =
-			new LocalAsyncValue<Uint8Array|undefined>(undefined)
-		,
+		currentStep: IAsyncValue<HandshakeSteps> = new LocalAsyncValue(
+			HandshakeSteps.Start
+		),
+		initialSecret: IAsyncValue<
+			Uint8Array | undefined
+		> = new LocalAsyncValue<Uint8Array | undefined>(undefined),
 		forceAlice?: boolean
 	) : Promise<IHandshakeState> {
 		await this.opened;
 
 		/* First person to join ephemeral session is "Bob" as optimization for Castle handshake */
-		const isAlice	=
+		const isAlice =
 			typeof forceAlice === 'boolean' ?
 				forceAlice :
 			this.sessionInitService.ephemeral ?
 				!this.state.isAlice.value :
-				this.state.isAlice.value
-		;
+				this.state.isAlice.value;
 
 		return {
 			currentStep,
@@ -433,7 +474,7 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 			Honeybadger workaround: see comment on the equivalent logic in the
 			PairwiseSession constructor
 		*/
-		let lockClaimed	= false;
+		let lockClaimed = false;
 		sleep(2500).then(() => {
 			if (!lockClaimed) {
 				this.initialMessagesProcessed.resolve();
@@ -441,28 +482,30 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 		});
 
 		this.incomingMessageQueueLock(async o => {
-			lockClaimed	= true;
+			lockClaimed = true;
 
 			await this.cyphertextReceiveHandler(
-				(await this.incomingMessageQueue.getValue()).
-					map(({messages}) => messages || []).
-					reduce((a, b) => a.concat(b), []).
-					filter(this.correctSubSession)
+				(await this.incomingMessageQueue.getValue())
+					.map(({messages}) => messages || [])
+					.reduce((a, b) => a.concat(b), [])
+					.filter(this.correctSubSession)
 			);
 
 			this.initialMessagesProcessed.resolve();
 
-			const sub	= this.incomingMessageQueue.subscribeAndPop(async ({messages}) => {
-				if (!messages || messages.length < 1) {
-					return;
-				}
+			const sub = this.incomingMessageQueue.subscribeAndPop(
+				async ({messages}) => {
+					if (!messages || messages.length < 1) {
+						return;
+					}
 
-				if (!this.correctSubSession(messages[0])) {
-					throw new Error('Different sub-session.');
-				}
+					if (!this.correctSubSession(messages[0])) {
+						throw new Error('Different sub-session.');
+					}
 
-				await this.cyphertextReceiveHandler(messages);
-			});
+					await this.cyphertextReceiveHandler(messages);
+				}
+			);
 
 			await Promise.race([this.closed, o.stillOwner.toPromise()]);
 			sub.unsubscribe();
@@ -481,13 +524,16 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public async lock<T> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
 		return this.channelService.lock(
 			async o => {
 				if (o.reason) {
-					o.reason	= this.potassiumService.toString(
+					o.reason = this.potassiumService.toString(
 						await this.potassiumService.secretBox.open(
 							this.potassiumService.fromBase64(o.reason),
 							await this.getSymmetricKey()
@@ -497,12 +543,14 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 				return f(o);
 			},
-			!reason ? undefined : this.potassiumService.toBase64(
-				await this.potassiumService.secretBox.seal(
-					this.potassiumService.fromString(reason),
-					await this.getSymmetricKey()
+			!reason ?
+				undefined :
+				this.potassiumService.toBase64(
+					await this.potassiumService.secretBox.seal(
+						this.potassiumService.fromString(reason),
+						await this.getSymmetricKey()
+					)
 				)
-			)
 		);
 	}
 
@@ -527,9 +575,9 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	public async processMessageData (
 		data: ISessionMessageDataInternal
 	) : Promise<ISessionMessageData> {
-		const author	= await this.getSessionMessageAuthor(data);
+		const author = await this.getSessionMessageAuthor(data);
 		if (author) {
-			(<any> data).author	= author;
+			(<any> data).author = author;
 		}
 		return <any> data;
 	}
@@ -543,15 +591,17 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 	public async send (
 		...messages: [
 			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
+
+				| ISessionMessageAdditionalData
+				| ((
+						timestamp: number
+				  ) => MaybePromise<ISessionMessageAdditionalData>)
 		][]
 	) : Promise<{
 		confirmPromise: Promise<void>;
-		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+		newMessages: (ISessionMessage & {data: ISessionMessageData})[];
 	}> {
-		const newMessages	= await this.newMessages(messages);
+		const newMessages = await this.newMessages(messages);
 
 		return {
 			confirmPromise: this.plaintextSendHandler(newMessages),
@@ -561,7 +611,9 @@ export abstract class SessionService extends BaseProvider implements ISessionSer
 
 	/** @inheritDoc */
 	public spawn () : SessionService {
-		throw new Error('Must provide an implementation of SessionService.spawn.');
+		throw new Error(
+			'Must provide an implementation of SessionService.spawn.'
+		);
 	}
 
 	/** @inheritDoc */

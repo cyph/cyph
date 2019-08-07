@@ -7,7 +7,6 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
 
-
 /**
  * Angular component for account logout UI.
  */
@@ -22,7 +21,7 @@ export class AccountLogoutComponent extends BaseProvider implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
 
-		const loggedOut	= await this.accountAuthService.logout();
+		const loggedOut = await this.accountAuthService.logout();
 		await sleep(500);
 
 		/* Full reload to get rid of any data still sitting in memory */

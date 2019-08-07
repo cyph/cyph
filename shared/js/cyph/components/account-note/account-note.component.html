@@ -1,136 +1,143 @@
-<ng-container *ngIf='accountDatabaseService.currentUser | async as currentUser'>
-
-
-<div
-	fxFlexFill
-	fxLayoutAlign='center start'
-	[class.initiating]='showSpinner | async'
-	*ngIf='(realTime | async) === false || accountService.enableDocs'
->
-	<mat-card fxFlex class='partial-width'>
-		<div fxLayout='column'>
-			<div fxLayoutAlign='center center' fxLayout='row'>
-				<mat-card-title [class.editable]='noteEditable | async' fxFlex>
-					<div *ngIf='(noteEditable | async) === false'>
-						{{((note | async)?.metadata | async)?.name || stringsService.untitled}}
-					</div>
-					<mat-form-field fxFlex *ngIf='noteEditable | async'>
-						<input
-							matInput
-							cyphTranslate
-							[ngModel]='
+<ng-container *ngIf="accountDatabaseService.currentUser | async as currentUser">
+	<div
+		fxFlexFill
+		fxLayoutAlign="center start"
+		[class.initiating]="showSpinner | async"
+		*ngIf="(realTime | async) === false || accountService.enableDocs"
+	>
+		<mat-card fxFlex class="partial-width">
+			<div fxLayout="column">
+				<div fxLayoutAlign="center center" fxLayout="row">
+					<mat-card-title
+						[class.editable]="noteEditable | async"
+						fxFlex
+					>
+						<div *ngIf="(noteEditable | async) === false">
+							{{
 								((note | async)?.metadata | async)?.name ||
-								stringsService.untitled
-							'
-							(ngModelChange)='updateNoteData({nameChange: $event})'
-							(blur)='realTimeTitleUpdate()'
-							[maxlength]='accountFilesService.maxNameLength'
-							required
-						/>
-					</mat-form-field>
-				</mat-card-title>
-				<mat-card-header fxLayout='row'>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Close Editor'
-						[routerLink]='(newNote | async) ? ".." : "."'
-						*ngIf='noteEditable | async'
-					>
-						<mat-icon>close</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Back'
-						routerLink='..'
-						*ngIf='(noteEditable | async) === false'
-					>
-						<mat-icon>arrow_back</mat-icon>
-					</button>
+									stringsService.untitled
+							}}
+						</div>
+						<mat-form-field fxFlex *ngIf="noteEditable | async">
+							<input
+								matInput
+								cyphTranslate
+								[ngModel]="
+									((note | async)?.metadata | async)?.name ||
+									stringsService.untitled
+								"
+								(ngModelChange)="
+									updateNoteData({nameChange: $event})
+								"
+								(blur)="realTimeTitleUpdate()"
+								[maxlength]="accountFilesService.maxNameLength"
+								required
+							/>
+						</mat-form-field>
+					</mat-card-title>
+					<mat-card-header fxLayout="row">
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Close Editor"
+							[routerLink]="(newNote | async) ? '..' : '.'"
+							*ngIf="noteEditable | async"
+						>
+							<mat-icon>close</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Back"
+							routerLink=".."
+							*ngIf="(noteEditable | async) === false"
+						>
+							<mat-icon>arrow_back</mat-icon>
+						</button>
 
-					<div fxFlex></div>
+						<div fxFlex></div>
 
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Edit'
-						routerLink='edit'
-						*ngIf='
-							(noteEditable | async) === false &&
-							currentUser.user.username === (noteData | async)?.owner
-						'
-					>
-						<mat-icon>edit</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Share'
-						(click)='
-							accountFilesService.shareFilePrompt(metadata);
-							$event.stopPropagation();
-						'
-						*ngIf='(note | async)?.metadata | async as metadata'
-					>
-						<mat-icon>share</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Save'
-						(click)='saveNote()'
-						*ngIf='
-							(noteEditable | async) &&
-							(realTime | async) === false &&
-							(
-								(newNote | async) ||
-								currentUser.user.username === (noteData | async)?.owner
-							)
-						'
-					>
-						<mat-icon>save</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip='Delete'
-						*ngIf='(newNote | async) === false'
-						(click)='accountFilesService.remove(note.value?.metadata)'
-					>
-						<mat-icon>delete</mat-icon>
-					</button>
-				</mat-card-header>
-			</div>
-			<mat-card-content fxFlex fxLayout='column'>
-				<div class='cyph-light-theme'>
-					<mat-card [class.editable]='noteEditable | async'>
-						<mat-card-content>
-							<cyph-quill
-								[content]='(note | async)?.content | async'
-								[deltas]='(note | async)?.doc?.deltas'
-								[isDisabled]='(noteEditable | async) === false'
-								(contentChange)='onChange($event)'
-							></cyph-quill>
-							<!--
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Edit"
+							routerLink="edit"
+							*ngIf="
+								(noteEditable | async) === false &&
+								currentUser.user.username ===
+									(noteData | async)?.owner
+							"
+						>
+							<mat-icon>edit</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Share"
+							(click)="
+								accountFilesService.shareFilePrompt(metadata);
+								$event.stopPropagation()
+							"
+							*ngIf="(note | async)?.metadata | async as metadata"
+						>
+							<mat-icon>share</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Save"
+							(click)="saveNote()"
+							*ngIf="
+								(noteEditable | async) &&
+								(realTime | async) === false &&
+								((newNote | async) ||
+									currentUser.user.username ===
+										(noteData | async)?.owner)
+							"
+						>
+							<mat-icon>save</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Delete"
+							*ngIf="(newNote | async) === false"
+							(click)="
+								accountFilesService.remove(note.value?.metadata)
+							"
+						>
+							<mat-icon>delete</mat-icon>
+						</button>
+					</mat-card-header>
+				</div>
+				<mat-card-content fxFlex fxLayout="column">
+					<div class="cyph-light-theme">
+						<mat-card [class.editable]="noteEditable | async">
+							<mat-card-content>
+								<cyph-quill
+									[content]="(note | async)?.content | async"
+									[deltas]="(note | async)?.doc?.deltas"
+									[isDisabled]="
+										(noteEditable | async) === false
+									"
+									(contentChange)="onChange($event)"
+								></cyph-quill>
+								<!--
 								[selections]='(note | async)?.doc?.selections'
 								(selectionChange)='onSelectionChange($event)'
 							-->
-						</mat-card-content>
-					</mat-card>
-				</div>
-			</mat-card-content>
-		</div>
-	</mat-card>
+							</mat-card-content>
+						</mat-card>
+					</div>
+				</mat-card-content>
+			</div>
+		</mat-card>
 
-	<mat-progress-spinner
-		mode='indeterminate'
-		*ngIf='showSpinner | async'
-	></mat-progress-spinner>
-</div>
+		<mat-progress-spinner
+			mode="indeterminate"
+			*ngIf="showSpinner | async"
+		></mat-progress-spinner>
+	</div>
 
-
-<router-outlet></router-outlet>
-
-
+	<router-outlet></router-outlet>
 </ng-container>

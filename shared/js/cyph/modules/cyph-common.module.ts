@@ -35,7 +35,6 @@ import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watche
 import {WindowWatcherService} from '../services/window-watcher.service';
 import {CyphWebModule} from './cyph-web.module';
 
-
 /**
  * Common module with shared imports for all projects.
  */
@@ -117,10 +116,7 @@ import {CyphWebModule} from './cyph-web.module';
 		SignupFormComponent,
 		TranslateDirective
 	],
-	imports: [
-		CommonModule,
-		CyphWebModule
-	],
+	imports: [CommonModule, CyphWebModule],
 	providers: [
 		AnalyticsService,
 		ErrorService,

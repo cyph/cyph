@@ -1,28 +1,34 @@
-<form #messageForm='ngForm' fxFlexFill fxLayout='column' fxLayoutGap='8px' (submit)='submit()'>
+<form
+	#messageForm="ngForm"
+	fxFlexFill
+	fxLayout="column"
+	fxLayoutGap="8px"
+	(submit)="submit()"
+>
 	<cyph-chat-message-box-inherit-ng-form
 		#chatMessageBox
-		[calendarInviteFollowUp]='calendarInviteFollowUp'
-		[calendarInviteReasons]='calendarInviteReasons'
-		[customSendFunction]='customSendFunction'
-		[fileAccept]='fileAccept'
-		[messageType]='messageType'
-		[showSendButton]='!showHeader'
-		[showUnreadCount]='showUnreadCount'
+		[calendarInviteFollowUp]="calendarInviteFollowUp"
+		[calendarInviteReasons]="calendarInviteReasons"
+		[customSendFunction]="customSendFunction"
+		[fileAccept]="fileAccept"
+		[messageType]="messageType"
+		[showSendButton]="!showHeader"
+		[showUnreadCount]="showUnreadCount"
 	></cyph-chat-message-box-inherit-ng-form>
 
 	<div
-		fxLayoutAlign='left'
-		*ngIf='showHeader && messageType !== chatMessageValueTypes.Form'
+		fxLayoutAlign="left"
+		*ngIf="showHeader && messageType !== chatMessageValueTypes.Form"
 	>
 		<button
 			mat-raised-button
-			color='accent'
+			color="accent"
 			fxFlex
-			fxFlex.gt-sm='initial'
-			[disabled]='disableSend || messageForm.invalid'
-			type='submit'
+			fxFlex.gt-sm="initial"
+			[disabled]="disableSend || messageForm.invalid"
+			type="submit"
 		>
-			{{sendText}}
+			{{ sendText }}
 		</button>
 	</div>
 </form>

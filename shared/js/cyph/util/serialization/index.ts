@@ -3,47 +3,56 @@ import {IProto} from '../../iproto';
 
 export * from './json';
 
-
 /** Deserializes bytes to data. */
-export const deserialize	= async <T> (
+export const deserialize = async <T>(
 	proto: IProto<T>,
-	bytes: Uint8Array|string
-) : Promise<T> => {
+	bytes: Uint8Array | string
+): Promise<T> => {
 	return proto.decode(potassiumUtil.fromBase64(bytes));
 };
 
 /** Serializes data value to binary byte array. */
-export const serialize	= async <T> (proto: IProto<T>, data: T) : Promise<Uint8Array> => {
-	const err	= await proto.verify(data);
+export const serialize = async <T>(
+	proto: IProto<T>,
+	data: T
+): Promise<Uint8Array> => {
+	const err = await proto.verify(data);
 	if (err) {
 		throw new Error(err);
 	}
-	const o	= await proto.encode(data);
+	const o = await proto.encode(data);
 	return o instanceof Uint8Array ? o : o.finish();
 };
 
 /** Parses query string (no nested URI component decoding for now). */
-export const fromQueryString	= (search: string = locationData.search.slice(1)) : any =>
-	!search ? {} : search.split('&').map(p => p.split('=')).reduce<any>(
-		(o, [key, value]) => ({...o, [decodeURIComponent(key)]: decodeURIComponent(value)}),
-		{}
-	)
-;
+export const fromQueryString = (
+	search: string = locationData.search.slice(1)
+): any =>
+	!search ?
+		{} :
+		search
+			.split('&')
+			.map(p => p.split('='))
+			.reduce<any>(
+				(o, [key, value]) => ({
+					...o,
+					[decodeURIComponent(key)]: decodeURIComponent(value)
+				}),
+				{}
+			);
 
 /**
  * Serializes o to a query string (cf. jQuery.param).
  * @param parent Ignore this (internal use).
  */
-export const toQueryString	= (o: any, parent?: string) : string =>
-	Object.keys(o).
-		map((k: string) => {
-			const key	= parent ? `${parent}[${k}]` : k;
+export const toQueryString = (o: any, parent?: string): string =>
+	Object.keys(o)
+		.map((k: string) => {
+			const key = parent ? `${parent}[${k}]` : k;
 
 			return typeof o[k] === 'object' ?
 				toQueryString(o[k], key) :
-				`${encodeURIComponent(key)}=${encodeURIComponent(o[k])}`
-			;
-		}).
-		join('&').
-		replace(/%20/g, '+')
-;
+				`${encodeURIComponent(key)}=${encodeURIComponent(o[k])}`;
+		})
+		.join('&')
+		.replace(/%20/g, '+');

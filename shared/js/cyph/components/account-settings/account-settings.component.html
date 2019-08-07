@@ -1,29 +1,31 @@
-<div fxFlexFill fxLayout='column' fxLayoutGap='32px'>
+<div fxFlexFill fxLayout="column" fxLayoutGap="32px">
 	<div
-		fxLayoutAlign='center'
-		[class.initiating]='loading | async'
-		*ngIf='state | async as stateValue'
+		fxLayoutAlign="center"
+		[class.initiating]="loading | async"
+		*ngIf="state | async as stateValue"
 	>
 		<form
 			ngNativeValidate
 			fxFlex
-			fxFlex.gt-md='75'
-			fxFlex.gt-lg='50'
-			fxLayout='column'
-			fxLayoutGap='16px'
-			[class.mobile]='envService.isMobile | async'
-			(submit)='save()'
-			*ngIf='stateValue === states.default; else changePassword'
+			fxFlex.gt-md="75"
+			fxFlex.gt-lg="50"
+			fxLayout="column"
+			fxLayoutGap="16px"
+			[class.mobile]="envService.isMobile | async"
+			(submit)="save()"
+			*ngIf="stateValue === states.default; else changePassword"
 		>
-			<mat-form-field *ngIf='(accountDatabaseService.currentUser | async)?.confirmed'>
+			<mat-form-field
+				*ngIf="(accountDatabaseService.currentUser | async)?.confirmed"
+			>
 				<input
 					matInput
 					cyphTranslate
-					[maxlength]='accountService.maxNameLength'
-					[ngModel]='(data | async)?.modified.name'
-					(ngModelChange)='updateData({modified: {name: $event}})'
-					name='name'
-					placeholder='Name'
+					[maxlength]="accountService.maxNameLength"
+					[ngModel]="(data | async)?.modified.name"
+					(ngModelChange)="updateData({modified: {name: $event}})"
+					name="name"
+					placeholder="Name"
 					required
 				/>
 			</mat-form-field>
@@ -31,55 +33,60 @@
 				<input
 					matInput
 					cyphTranslate
-					[ngModel]='(data | async)?.modified.email'
-					(ngModelChange)='updateData({modified: {email: $event}})'
-					name='email'
-					type='email'
-					[pattern]='emailPattern'
-					placeholder='Email'
+					[ngModel]="(data | async)?.modified.email"
+					(ngModelChange)="updateData({modified: {email: $event}})"
+					name="email"
+					type="email"
+					[pattern]="emailPattern"
+					placeholder="Email"
 				/>
 			</mat-form-field>
 
 			<div></div>
 			<div>
-				<strong>{{stringsService.lockScreen}}:</strong>
-				&ngsp;
-				&nbsp;
+				<strong>{{ stringsService.lockScreen }}:</strong>
+				&ngsp; &nbsp;
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
-				&ngsp;
-				(<a routerLink='lock-screen' cyphTranslate>change</a>)
+				&ngsp; (
+				<a routerLink="lock-screen" cyphTranslate>change</a>
+				)
 			</div>
 			<div>
-				<strong>{{stringsService.masterKey}}:</strong>
-				&ngsp;
-				&nbsp;
+				<strong>{{ stringsService.masterKey }}:</strong>
+				&ngsp; &nbsp;
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
-				&ngsp;
-				(<a routerLink='master-key' cyphTranslate>change</a>)
+				&ngsp; (
+				<a routerLink="master-key" cyphTranslate>change</a>
+				)
 			</div>
 
 			<div></div>
 			<div>
 				<strong cyphTranslate>Plan:</strong>
-				&ngsp;
-				&nbsp;
+				&ngsp; &nbsp;
 				<span>
-					{{titleize(cyphPlans[
-						(accountSettingsService.plan | async) ||
-						cyphPlans.Free
-					])}}
+					{{
+						titleize(
+							cyphPlans[
+								(accountSettingsService.plan | async) ||
+									cyphPlans.Free
+							]
+						)
+					}}
 				</span>
-				<ng-container *ngIf='
-					false &&
-					(accountSettingsService.plan | async) === cyphPlans.Free
-				'>
-					&ngsp;
-					(<a
-						[href]='envService.homeUrl + "pricing"'
-						cyphTranslate
-					>upgrade now</a>)
+				<ng-container
+					*ngIf="
+						false &&
+						(accountSettingsService.plan | async) === cyphPlans.Free
+					"
+				>
+					&ngsp; (
+					<a [href]="envService.homeUrl + 'pricing'" cyphTranslate>
+						upgrade now
+					</a>
+					)
 				</ng-container>
 			</div>
 
@@ -89,18 +96,26 @@
 			<div></div>
 			<div></div>
 
-			<ng-container *ngIf='(accountDatabaseService.currentUser | async)?.confirmed'>
+			<ng-container
+				*ngIf="(accountDatabaseService.currentUser | async)?.confirmed"
+			>
 				<mat-accordion>
 					<mat-expansion-panel>
 						<mat-expansion-panel-header>
 							<span cyphTranslate>Advanced</span>
 						</mat-expansion-panel-header>
-						<div fxFlex fxLayout='column' fxLayoutGap='32px'>
+						<div fxFlex fxLayout="column" fxLayoutGap="32px">
 							<mat-slide-toggle
-								[ngModel]='(data | async)?.modified.profileVisible'
-								(ngModelChange)='updateData({modified: {profileVisible: $event}})'
-								[matTooltip]='stringsService.profileVisibility'
-								name='profileVisible'
+								[ngModel]="
+									(data | async)?.modified.profileVisible
+								"
+								(ngModelChange)="
+									updateData({
+										modified: {profileVisible: $event}
+									})
+								"
+								[matTooltip]="stringsService.profileVisibility"
+								name="profileVisible"
 								cyphTranslate
 							>
 								Profile Visible to Anonymous Users
@@ -110,18 +125,26 @@
 								<input
 									matInput
 									cyphTranslate
-									[ngModel]='(data | async)?.modified.realUsername'
-									(ngModelChange)='updateData({modified: {realUsername: $event}})'
-									[pattern]='(data | async)?.usernamePattern'
-									[textMask]='usernameMask'
-									name='realUsername'
-									placeholder='Username Capitalization'
+									[ngModel]="
+										(data | async)?.modified.realUsername
+									"
+									(ngModelChange)="
+										updateData({
+											modified: {realUsername: $event}
+										})
+									"
+									[pattern]="(data | async)?.usernamePattern"
+									[textMask]="usernameMask"
+									name="realUsername"
+									placeholder="Username Capitalization"
 									required
 								/>
 								<mat-icon
 									matSuffix
-									[matTooltip]='stringsService.usernameCapitalizationHelp'
-									matTooltipPosition='above'
+									[matTooltip]="
+										stringsService.usernameCapitalizationHelp
+									"
+									matTooltipPosition="above"
 								>
 									help
 								</mat-icon>
@@ -135,14 +158,14 @@
 				<div></div>
 			</ng-container>
 
-			<div fxLayout='row' fxLayoutAlign='center'>
+			<div fxLayout="row" fxLayoutAlign="center">
 				<button
 					mat-raised-button
 					cyphTranslate
 					fxFlex
-					fxFlex.gt-sm='initial'
-					type='submit'
-					[disabled]='(ready | async) === false'
+					fxFlex.gt-sm="initial"
+					type="submit"
+					[disabled]="(ready | async) === false"
 				>
 					Save
 				</button>
@@ -150,38 +173,44 @@
 		</form>
 
 		<ng-template #changePassword>
-			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-				<div fxLayout='row' fxLayoutAlign='center center' class='password-title'>
-					<h2>{{
-						stateValue === states.masterKey ?
-							stringsService.changeMasterKeyTitle :
-						stateValue === states.pin ?
-							stringsService.changePinTitle :
-							''
-					}}</h2>
+			<div fxFlex fxLayout="column" fxLayoutGap="16px">
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					class="password-title"
+				>
+					<h2>
+						{{
+							stateValue === states.masterKey ?
+								stringsService.changeMasterKeyTitle :
+							stateValue === states.pin ?
+								stringsService.changePinTitle :
+								''
+						}}
+					</h2>
 					<button
 						mat-icon-button
 						cyphTranslate
-						class='back'
-						matTooltip='Back'
-						routerLink='..'
+						class="back"
+						matTooltip="Back"
+						routerLink=".."
 					>
 						<mat-icon>arrow_back</mat-icon>
 					</button>
 				</div>
 
 				<cyph-account-register
-					[getMasterKeyOnly]='stateValue === states.masterKey'
-					[getPinOnly]='stateValue === states.pin'
-					(submitMasterKey)='changeMasterKey($event)'
-					(submitPIN)='changePIN($event)'
+					[getMasterKeyOnly]="stateValue === states.masterKey"
+					[getPinOnly]="stateValue === states.pin"
+					(submitMasterKey)="changeMasterKey($event)"
+					(submitPIN)="changePIN($event)"
 				></cyph-account-register>
 			</div>
 		</ng-template>
 
 		<mat-progress-spinner
-			mode='indeterminate'
-			*ngIf='loading | async'
+			mode="indeterminate"
+			*ngIf="loading | async"
 		></mat-progress-spinner>
 	</div>
 

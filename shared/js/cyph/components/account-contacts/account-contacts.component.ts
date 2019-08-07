@@ -14,7 +14,12 @@ import {
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
-import {IContactListItem, NewContactTypes, User, UserPresence} from '../../account';
+import {
+	IContactListItem,
+	NewContactTypes,
+	User,
+	UserPresence
+} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -32,7 +37,6 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 import {observableAll} from '../../util/observable-all';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
-
 /**
  * Angular component for account contacts UI.
  */
@@ -43,159 +47,178 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 	templateUrl: './account-contacts.component.html'
 })
 export class AccountContactsComponent extends BaseProvider
-implements AfterViewInit, OnChanges, OnDestroy, OnInit {
+	implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	/** @ignore */
-	private readonly contactListInternal: BehaviorSubject<(IContactListItem|User)[]>	=
-		new BehaviorSubject<(IContactListItem|User)[]>([])
-	;
+	private readonly contactListInternal: BehaviorSubject<
+		(IContactListItem | User)[]
+	> = new BehaviorSubject<(IContactListItem | User)[]>([]);
 
 	/** @ignore */
 	private contactListSubscription?: Subscription;
 
 	/** @ignore */
 	private readonly routeReactiveContactList: Observable<{
-		activeUser?: IContactListItem|User|undefined;
-		filteredContactList: (IContactListItem|User)[];
-	}>	= combineLatest([
+		activeUser?: IContactListItem | User | undefined;
+		filteredContactList: (IContactListItem | User)[];
+	}> = combineLatest([
 		this.contactListInternal,
 		this.activatedRoute.data,
 		this.accountService.routeChanges
-	]).pipe(mergeMap(async ([contactList, data]) => {
-		const snapshot			= this.activatedRoute.snapshot.firstChild ?
-			this.activatedRoute.snapshot.firstChild :
-			this.activatedRoute.snapshot
-		;
+	]).pipe(
+		mergeMap(async ([contactList, data]) => {
+			const snapshot = this.activatedRoute.snapshot.firstChild ?
+				this.activatedRoute.snapshot.firstChild :
+				this.activatedRoute.snapshot;
 
-		const username			=
-			typeof snapshot.params.username === 'string' ?
-				snapshot.params.username :
-				(await this.accountContactsService.getContactUsername(
-					snapshot.params.contactID
-				).catch(() =>
-					undefined
-				))
-		;
+			const username =
+				typeof snapshot.params.username === 'string' ?
+					snapshot.params.username :
+					await this.accountContactsService
+						.getContactUsername(snapshot.params.contactID)
+						.catch(() => undefined);
 
-		let userTypeFilter: AccountUserTypes|undefined	= data.userTypeFilter;
-		let userTypeFilterOut							= data.userTypeFilterOut === true;
+			let userTypeFilter: AccountUserTypes | undefined =
+				data.userTypeFilter;
+			let userTypeFilterOut = data.userTypeFilterOut === true;
 
-		/* Filter out patients for healthcare workers in general case */
-		if (this.envService.isTelehealth && userTypeFilter === undefined) {
-			userTypeFilter		= AccountUserTypes.Standard;
-			userTypeFilterOut	= true;
-		}
-
-		if (userTypeFilter !== undefined) {
-			contactList	= filterUndefined(
-				await Promise.all(contactList.map(async contact => {
-					const user	= contact instanceof User ? contact : await contact.user;
-					return !user ? undefined : {
-						user,
-						userType: (await user.accountUserProfile.getValue()).userType
-					};
-				}))
-			).filter(contact =>
-				userTypeFilterOut ?
-					contact.userType !== userTypeFilter :
-					contact.userType === userTypeFilter
-			).map(contact =>
-				contact.user
-			);
-		}
-
-		const index	=
-			username ?
-				contactList.findIndex(contact => contact.username === username) :
-			snapshot.params.contactID ?
-				contactList.findIndex(contact =>
-					'groupData' in contact &&
-					contact.groupData !== undefined &&
-					contact.groupData.id === snapshot.params.contactID
-				) :
-				-1
-		;
-
-		if (index < 0) {
-			if (!username) {
-				return {filteredContactList: contactList};
+			/* Filter out patients for healthcare workers in general case */
+			if (this.envService.isTelehealth && userTypeFilter === undefined) {
+				userTypeFilter = AccountUserTypes.Standard;
+				userTypeFilterOut = true;
 			}
 
-			this.accountService.activeSidebarContact.next(username);
+			if (userTypeFilter !== undefined) {
+				contactList = filterUndefined(
+					await Promise.all(
+						contactList.map(async contact => {
+							const user =
+								contact instanceof User ?
+									contact :
+									await contact.user;
+							return !user ?
+								undefined :
+								{
+									user,
+									userType: (await user.accountUserProfile.getValue())
+										.userType
+								};
+						})
+					)
+				)
+					.filter(contact =>
+						userTypeFilterOut ?
+							contact.userType !== userTypeFilter :
+							contact.userType === userTypeFilter
+					)
+					.map(contact => contact.user);
+			}
+
+			const index = username ?
+				contactList.findIndex(
+						contact => contact.username === username
+				  ) :
+			snapshot.params.contactID ?
+				contactList.findIndex(
+						contact =>
+							'groupData' in contact &&
+							contact.groupData !== undefined &&
+							contact.groupData.id === snapshot.params.contactID
+				  ) :
+				-1;
+
+			if (index < 0) {
+				if (!username) {
+					return {filteredContactList: contactList};
+				}
+
+				this.accountService.activeSidebarContact.next(username);
+
+				return {
+					activeUser: await this.accountUserLookupService.getUser(
+						username,
+						false
+					),
+					filteredContactList: contactList
+				};
+			}
 
 			return {
-				activeUser: await this.accountUserLookupService.getUser(username, false),
+				activeUser: contactList[index],
 				filteredContactList: contactList
+					.slice(0, index)
+					.concat(contactList.slice(index + 1))
 			};
-		}
-
-		return {
-			activeUser: contactList[index],
-			filteredContactList: contactList.slice(0, index).concat(contactList.slice(index + 1))
-		};
-	}));
+		})
+	);
 
 	/** @see AccountContactsSearchComponent */
 	@ViewChild(AccountContactsSearchComponent, {static: false})
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Full contact list with active contact filtered out. */
-	public readonly activeUser													=
-		toBehaviorSubject(
-			this.routeReactiveContactList.pipe(map(o => o.activeUser)),
-			undefined,
-			this.subscriptions
-		)
-	;
+	public readonly activeUser = toBehaviorSubject(
+		this.routeReactiveContactList.pipe(map(o => o.activeUser)),
+		undefined,
+		this.subscriptions
+	);
 
 	/** List of users to search. */
-	@Input() public contactList: Observable<(IContactListItem|User)[]>			=
-		this.accountContactsService.contactList
-	;
+	@Input() public contactList: Observable<(IContactListItem | User)[]> = this
+		.accountContactsService.contactList;
 
 	/** Full contact list with active contact removed and users with unread messages on top. */
-	public readonly filteredContactList: Observable<(IContactListItem|User)[]>	=
-		this.routeReactiveContactList.pipe(mergeMap(o =>
+	public readonly filteredContactList: Observable<
+		(IContactListItem | User)[]
+	> = this.routeReactiveContactList.pipe(
+		mergeMap(o =>
 			observableAll(
-				o.filteredContactList.map(({unreadMessageCount}) => unreadMessageCount)
-			).pipe(map(counts =>
-				this.contactList !== this.accountContactsService.contactList ?
-					o.filteredContactList :
-					[
-						...o.filteredContactList.filter((_: any, i: number) => counts[i] > 0),
-						...o.filteredContactList.filter((_: any, i: number) => counts[i] < 1)
-					]
-			))
-		))
-	;
+				o.filteredContactList.map(
+					({unreadMessageCount}) => unreadMessageCount
+				)
+			).pipe(
+				map(counts =>
+					this.contactList !==
+					this.accountContactsService.contactList ?
+						o.filteredContactList :
+						[
+							...o.filteredContactList.filter(
+								(_: any, i: number) => counts[i] > 0
+							),
+							...o.filteredContactList.filter(
+								(_: any, i: number) => counts[i] < 1
+							)
+						]
+				)
+			)
+		)
+	);
 
 	/** Indicates whether this is home component. */
-	@Input() public home: boolean												= false;
+	@Input() public home: boolean = false;
 
 	/** Indicates whether to use inverted theme. */
-	@Input() public invertedTheme: boolean										= false;
+	@Input() public invertedTheme: boolean = false;
 
 	/** @see NewContactTypes */
-	public readonly newContactTypes												= NewContactTypes;
+	public readonly newContactTypes = NewContactTypes;
 
 	/** @see AccountContactsSearchComponent.searchBarBlur */
-	@Output() public readonly searchBarBlur										=
-		new EventEmitter<void>()
-	;
+	@Output() public readonly searchBarBlur = new EventEmitter<void>();
 
 	/** Search mode. */
-	@Input() public searchMode: boolean											= false;
+	@Input() public searchMode: boolean = false;
 
 	/** @see AccountContactsSearchComponent.searchProfileExtra */
-	@Input() public searchProfileExtra: boolean									= false;
+	@Input() public searchProfileExtra: boolean = false;
 
 	/** Indicates whether being used in the sidebar. */
-	@Input() public sidebar: boolean											= false;
+	@Input() public sidebar: boolean = false;
 
 	/** @see trackByUser */
-	public readonly trackByUser													= trackByUser;
+	public readonly trackByUser = trackByUser;
 
 	/** @see UserPresence */
-	public readonly userPresence												= UserPresence;
+	public readonly userPresence = UserPresence;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
@@ -229,7 +252,9 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 			this.contactListSubscription.unsubscribe();
 		}
 
-		this.contactListSubscription	= this.contactList.subscribe(this.contactListInternal);
+		this.contactListSubscription = this.contactList.subscribe(
+			this.contactListInternal
+		);
 	}
 
 	/** @inheritDoc */
@@ -241,7 +266,9 @@ implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.contactListSubscription	= this.contactList.subscribe(this.contactListInternal);
+		this.contactListSubscription = this.contactList.subscribe(
+			this.contactListInternal
+		);
 		this.accountService.transitionEnd();
 	}
 

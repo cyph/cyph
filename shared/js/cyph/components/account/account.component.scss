@@ -182,7 +182,8 @@ $mobileAppBarHeight: 56px;
 			margin: 20px 20px 20px -120px !important;
 		}
 
-		.dz-success-mark, .dz-error-mark {
+		.dz-success-mark,
+		.dz-error-mark {
 			float: left;
 			display: inherit;
 			margin-top: 15px;
@@ -199,7 +200,8 @@ $mobileAppBarHeight: 56px;
 		position: relative;
 	}
 
-	.header, .sidebar {
+	.header,
+	.sidebar {
 		z-index: 3;
 	}
 
@@ -207,7 +209,8 @@ $mobileAppBarHeight: 56px;
 		mat-card {
 			padding: 18px 24px;
 
-			mat-card-subtitle, mat-card-title {
+			mat-card-subtitle,
+			mat-card-title {
 				max-width: 120px !important;
 
 				&.incoming {
@@ -271,7 +274,9 @@ $mobileAppBarHeight: 56px;
 		}
 
 		.card-list {
-			min-height: calc(100vh - #{$mobileAppBarHeight} - 2em - 32px) !important;
+			min-height: calc(
+				100vh - #{$mobileAppBarHeight} - 2em - 32px
+			) !important;
 		}
 	}
 
@@ -313,7 +318,8 @@ $mobileAppBarHeight: 56px;
 			font-size: 24px;
 		}
 
-		cyph-logo, mat-icon {
+		cyph-logo,
+		mat-icon {
 			@include icon-size(24px);
 		}
 

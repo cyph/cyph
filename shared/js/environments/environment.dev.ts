@@ -1,8 +1,7 @@
 import {IEnvironment} from '../cyph/proto';
 
-
 /** @inheritDoc */
-export const environment: IEnvironment	= {
+export const environment: IEnvironment = {
 	envName: 'dev',
 	firebase: {
 		apiKey: 'AIzaSyBQmgjG4klHr0TWUrBsGAgKPGSFFM1FSeI',

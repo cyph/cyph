@@ -6,25 +6,26 @@ import {LocalStorageService} from './js/cyph/services/local-storage.service';
 import {lockFunction} from './js/cyph/util/lock';
 import {parse, stringify} from './js/cyph/util/serialization';
 
-
 /**
  * Provides local storage functionality for native app.
  */
 @Injectable()
 export class NativeLocalStorageService extends LocalStorageService {
 	/** @ignore */
-	private readonly keysURL: string		= 'NativeLocalStorageService-keys';
+	private readonly keysURL: string = 'NativeLocalStorageService-keys';
 
 	/** @ignore */
-	private readonly setLock: LockFunction	= lockFunction();
+	private readonly setLock: LockFunction = lockFunction();
 
 	/** @ignore */
-	private readonly storage: SecureStorage	= new SecureStorage();
+	private readonly storage: SecureStorage = new SecureStorage();
 
 	/** @ignore */
 	private async getKeysObject () : Promise<{[key: string]: boolean}> {
 		try {
-			return parse<{[key: string]: boolean}>(await this.storage.get({key: this.keysURL}));
+			return parse<{[key: string]: boolean}>(
+				await this.storage.get({key: this.keysURL})
+			);
 		}
 		catch {
 			return {};
@@ -49,7 +50,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 		_WAIT_FOR_READY: boolean
 	) : Promise<Uint8Array> {
 		return this.setLock(async () => {
-			const value	= await this.storage.get({key: url});
+			const value = await this.storage.get({key: url});
 
 			if (typeof value !== 'string') {
 				throw new Error(`Item ${url} not found.`);
@@ -60,12 +61,19 @@ export class NativeLocalStorageService extends LocalStorageService {
 	}
 
 	/** @inheritDoc */
-	protected async getKeysInternal (_WAIT_FOR_READY: boolean) : Promise<string[]> {
-		return this.setLock(async () => Object.keys(await this.getKeysObject()));
+	protected async getKeysInternal (
+		_WAIT_FOR_READY: boolean
+	) : Promise<string[]> {
+		return this.setLock(async () =>
+			Object.keys(await this.getKeysObject())
+		);
 	}
 
 	/** @inheritDoc */
-	protected async removeItemInternal (url: string, _WAIT_FOR_READY: boolean) : Promise<void> {
+	protected async removeItemInternal (
+		url: string,
+		_WAIT_FOR_READY: boolean
+	) : Promise<void> {
 		await this.setLock(async () => {
 			await this.storage.set({
 				key: this.keysURL,

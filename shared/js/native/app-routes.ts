@@ -3,9 +3,5 @@
 import {Routes} from '@angular/router';
 import {account, retry} from './js/cyph/routes';
 
-
 /** @see Routes */
-export const appRoutes: Routes	= [
-	account,
-	retry
-];
+export const appRoutes: Routes = [account, retry];

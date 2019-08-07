@@ -4,7 +4,6 @@ import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 
-
 /**
  * Keeps track of this window.
  */
@@ -21,15 +20,17 @@ export class WindowWatcherService extends BaseProvider {
 	}
 
 	/** Window height. */
-	public readonly height: BehaviorSubject<number>			= new BehaviorSubject(
+	public readonly height: BehaviorSubject<number> = new BehaviorSubject(
 		this.envService.isWeb ? this.windowHeight : 0
 	);
 
 	/** Indicates whether the window is currently visible. */
-	public readonly visibility: BehaviorSubject<boolean>	= new BehaviorSubject(!document.hidden);
+	public readonly visibility: BehaviorSubject<boolean> = new BehaviorSubject(
+		!document.hidden
+	);
 
 	/** Window width. */
-	public readonly width: BehaviorSubject<number>			= new BehaviorSubject(
+	public readonly width: BehaviorSubject<number> = new BehaviorSubject(
 		this.envService.isWeb ? this.windowWidth : 0
 	);
 
@@ -37,14 +38,16 @@ export class WindowWatcherService extends BaseProvider {
 	 * Waits for the visibility to change once.
 	 * @param visible If specified, waits until changes to this state.
 	 */
-	public async waitForVisibilityChange (visible?: boolean) : Promise<boolean> {
-		const initialValue	= this.visibility.value;
-		const newValue 		=
-			await this.visibility.pipe(
+	public async waitForVisibilityChange (
+		visible?: boolean
+	) : Promise<boolean> {
+		const initialValue = this.visibility.value;
+		const newValue = await this.visibility
+			.pipe(
 				filter(value => value !== initialValue),
 				take(1)
-			).toPromise()
-		;
+			)
+			.toPromise();
 
 		if (typeof visible === 'boolean' && newValue !== visible) {
 			return this.waitForVisibilityChange(visible);
@@ -66,7 +69,8 @@ export class WindowWatcherService extends BaseProvider {
 
 	constructor (
 		/** @ignore */
-		@Inject('EnvService') private readonly envService: {isMobileOS: boolean; isWeb: boolean}
+		@Inject('EnvService')
+		private readonly envService: {isMobileOS: boolean; isWeb: boolean}
 	) {
 		super();
 
@@ -75,7 +79,7 @@ export class WindowWatcherService extends BaseProvider {
 			return;
 		}
 
-		const $window	= $(window);
+		const $window = $(window);
 
 		if (this.envService.isMobileOS) {
 			document.addEventListener('visibilitychange', () => {
@@ -83,10 +87,13 @@ export class WindowWatcherService extends BaseProvider {
 			});
 		}
 		else {
-			$window.
-				on('focus', () => { this.visibility.next(true); }).
-				on('blur', () => { this.visibility.next(false); })
-			;
+			$window
+				.on('focus', () => {
+					this.visibility.next(true);
+				})
+				.on('blur', () => {
+					this.visibility.next(false);
+				});
 		}
 
 		$window.on('resize', () => {

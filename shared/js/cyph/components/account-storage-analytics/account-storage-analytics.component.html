@@ -1,23 +1,29 @@
-<div fxLayout='column'>
+<div fxLayout="column">
 	<h3>
-		{{stringsService.totalSpace}}
-		{{readableByteLength((accountFilesService.filesTotalSize | async) || 0)}}
+		{{ stringsService.totalSpace }}
+		{{
+			readableByteLength(
+				(accountFilesService.filesTotalSize | async) || 0
+			)
+		}}
 		/
-		{{readableByteLength(((accountFilesService.fileStorageLimit | async) || 0))}}
+		{{
+			readableByteLength(
+				(accountFilesService.fileStorageLimit | async) || 0
+			)
+		}}
 	</h3>
 	<mat-progress-bar
-		[value]='
-			((accountFilesService.filesTotalSize | async) || 0) /
-			((accountFilesService.fileStorageLimit | async) || 0) *
+		[value]="
+			(((accountFilesService.filesTotalSize | async) || 0) /
+				((accountFilesService.fileStorageLimit | async) || 0)) *
 			100
-		'
-		[color]='
-			(
-				((accountFilesService.filesTotalSize | async) || 0) <=
-				((accountFilesService.fileStorageLimit | async) || 0)
-			) ?
-				"" :
-				"warn"
-		'
+		"
+		[color]="
+			((accountFilesService.filesTotalSize | async) || 0) <=
+			((accountFilesService.fileStorageLimit | async) || 0) ?
+				'' :
+				'warn'
+		"
 	></mat-progress-bar>
 </div>

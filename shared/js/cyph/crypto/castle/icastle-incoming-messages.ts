@@ -4,5 +4,5 @@ export interface ICastleIncomingMessages {
 	max: number;
 
 	/** @see CastleIncomingMessages.queue */
-	queue: {[id: number]: Uint8Array[]|undefined};
+	queue: {[id: number]: Uint8Array[] | undefined};
 }

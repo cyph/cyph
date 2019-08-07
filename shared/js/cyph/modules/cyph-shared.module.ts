@@ -16,17 +16,12 @@ import {EnvService} from '../services/env.service';
 import {SplitTestingService} from '../services/split-testing.service';
 import {StringsService} from '../services/strings.service';
 
-
 /**
  * Common module shared by cyph.com and CyphWebModule.
  */
 @NgModule({
-	declarations: [
-		MarkdownComponent
-	],
-	entryComponents: [
-		MarkdownComponent
-	],
+	declarations: [MarkdownComponent],
+	entryComponents: [MarkdownComponent],
 	exports: [
 		BrowserAnimationsModule,
 		BrowserModule,

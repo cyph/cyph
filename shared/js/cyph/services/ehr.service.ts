@@ -11,17 +11,17 @@ import {EHRIntegrationService} from './ehr-integration.service';
 export class EHRService extends BaseProvider {
 	/** @ignore */
 	private throwErrors (response: any) : void {
-		if (
-			typeof response === 'object' &&
-			response.Errors instanceof Array
-		) {
+		if (typeof response === 'object' && response.Errors instanceof Array) {
 			throw response.Errors;
 		}
 	}
 
 	/** Adds new patient. */
-	public async addPatient (apiKey: string, patient: IRedoxPatient) : Promise<void> {
-		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
+	public async addPatient (
+		apiKey: string,
+		patient: IRedoxPatient
+	) : Promise<void> {
+		const response = await this.ehrIntegrationService.runCommand(apiKey, {
 			Meta: {
 				DataModel: 'PatientAdmin',
 				EventType: 'NewPatient'
@@ -33,7 +33,10 @@ export class EHRService extends BaseProvider {
 	}
 
 	/** Adds or updates patient. */
-	public async addOrUpdatePatient (apiKey: string, patient: IRedoxPatient) : Promise<void> {
+	public async addOrUpdatePatient (
+		apiKey: string,
+		patient: IRedoxPatient
+	) : Promise<void> {
 		try {
 			await this.updatePatient(apiKey, patient);
 		}
@@ -46,8 +49,11 @@ export class EHRService extends BaseProvider {
 	 * Searches for patient.
 	 * TODO: Provide some way to choose between potential matches.
 	 */
-	public async getPatient (apiKey: string, patient: IRedoxPatient) : Promise<IRedoxPatient> {
-		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
+	public async getPatient (
+		apiKey: string,
+		patient: IRedoxPatient
+	) : Promise<IRedoxPatient> {
+		const response = await this.ehrIntegrationService.runCommand(apiKey, {
 			Meta: {
 				DataModel: 'PatientSearch',
 				EventType: 'Query'
@@ -66,7 +72,10 @@ export class EHRService extends BaseProvider {
 			throw new Error('Patient not found.');
 		}
 
-		return deserialize(RedoxPatient, await serialize(RedoxPatient, response.Patient));
+		return deserialize(
+			RedoxPatient,
+			await serialize(RedoxPatient, response.Patient)
+		);
 	}
 
 	/** Schedules a new appointment. */
@@ -74,7 +83,7 @@ export class EHRService extends BaseProvider {
 		apiKey: string,
 		appointment: IRedoxAppointment
 	) : Promise<void> {
-		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
+		const response = await this.ehrIntegrationService.runCommand(apiKey, {
 			...appointment,
 			Meta: {
 				DataModel: 'Scheduling',
@@ -86,8 +95,11 @@ export class EHRService extends BaseProvider {
 	}
 
 	/** Updates existing patient. */
-	public async updatePatient (apiKey: string, patient: IRedoxPatient) : Promise<void> {
-		const response	= await this.ehrIntegrationService.runCommand(apiKey, {
+	public async updatePatient (
+		apiKey: string,
+		patient: IRedoxPatient
+	) : Promise<void> {
+		const response = await this.ehrIntegrationService.runCommand(apiKey, {
 			Meta: {
 				DataModel: 'PatientAdmin',
 				EventType: 'PatientUpdate'

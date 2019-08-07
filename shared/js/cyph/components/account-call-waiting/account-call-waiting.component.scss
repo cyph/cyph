@@ -6,12 +6,15 @@ cyph-logo {
 	margin-bottom: 1em;
 }
 
-.content, mat-card-content {
+.content,
+mat-card-content {
 	> :last-child {
 		margin-bottom: auto;
 	}
 
-	h1, h2, h5 {
+	h1,
+	h2,
+	h5 {
 		text-align: center;
 	}
 }

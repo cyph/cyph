@@ -20,13 +20,13 @@ export interface IPasswordHash {
 
 	/** Hashes plaintext. */
 	hash (
-		plaintext: Uint8Array|string,
-		salt?: Uint8Array|string,
+		plaintext: Uint8Array | string,
+		salt?: Uint8Array | string,
 		outputBytes?: number,
 		opsLimit?: number,
 		memLimit?: number,
 		clearInput?: boolean
-	) : Promise<{
+	): Promise<{
 		hash: Uint8Array;
 		metadata: Uint8Array;
 		metadataObject: {
@@ -38,7 +38,9 @@ export interface IPasswordHash {
 	}>;
 
 	/** Parses metadata byte array into usable object. */
-	parseMetadata (metadata: Uint8Array) : Promise<{
+	parseMetadata (
+		metadata: Uint8Array
+	): Promise<{
 		algorithm: string;
 		memLimit: number;
 		opsLimit: number;

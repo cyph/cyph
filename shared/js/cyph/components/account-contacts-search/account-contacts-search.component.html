@@ -1,33 +1,30 @@
-<h1 matDialogTitle *ngIf='title'>{{title}}</h1>
+<h1 matDialogTitle *ngIf="title">{{ title }}</h1>
 
 <cyph-search-bar
 	#searchBar
-	[autofocus]='autofocus'
-	[chipInput]='chipInput'
-	[chipTransform]='userChipTransform'
-	[control]='searchControl'
-	[filterTransform]='userFilterTransform'
-	[listLength]='searchListLength'
-	[options]='searchOptions'
-	[placeholder]='placeholder || defaultPlaceHolder'
-	[query]='searchUsername'
-	[spinner]='searchSpinner'
-	(filterChange)='userFilterChange.emit($event)'
-	(inputBlur)='searchBarBlur.emit()'
+	[autofocus]="autofocus"
+	[chipInput]="chipInput"
+	[chipTransform]="userChipTransform"
+	[control]="searchControl"
+	[filterTransform]="userFilterTransform"
+	[listLength]="searchListLength"
+	[options]="searchOptions"
+	[placeholder]="placeholder || defaultPlaceHolder"
+	[query]="searchUsername"
+	[spinner]="searchSpinner"
+	(filterChange)="userFilterChange.emit($event)"
+	(inputBlur)="searchBarBlur.emit()"
 ></cyph-search-bar>
 
-<div fxLayoutAlign='end center' *ngIf='getContacts'>
-	<button
-		mat-button
-		(click)='submitContacts([])'
-	>
-		{{stringsService.cancel}}
+<div fxLayoutAlign="end center" *ngIf="getContacts">
+	<button mat-button (click)="submitContacts([])">
+		{{ stringsService.cancel }}
 	</button>
 	<button
 		mat-button
-		[disabled]='(searchBar?.filter | async)?.size < 1'
-		(click)='submitContacts()'
+		[disabled]="(searchBar?.filter | async)?.size < 1"
+		(click)="submitContacts()"
 	>
-		{{stringsService.ok}}
+		{{ stringsService.ok }}
 	</button>
 </div>

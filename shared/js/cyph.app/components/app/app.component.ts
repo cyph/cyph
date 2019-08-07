@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {AppService} from '../../app.service';
 
-
 /**
  * Angular component for Cyph web UI.
  */

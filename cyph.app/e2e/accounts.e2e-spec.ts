@@ -1,11 +1,10 @@
 import {AccountsPage} from './accounts.po';
 
-
 describe('Accounts', () => {
 	let page: AccountsPage;
 
-	beforeEach(async (done) => {
-		page	= new AccountsPage();
+	beforeEach(async done => {
+		page = new AccountsPage();
 		await page.navigateTo();
 		done();
 	});

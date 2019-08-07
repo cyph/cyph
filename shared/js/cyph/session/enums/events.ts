@@ -3,34 +3,34 @@
  */
 export class Events {
 	/** @see Events */
-	public readonly abort: string				= 'abort';
+	public readonly abort: string = 'abort';
 
 	/** @see Events */
-	public readonly beginChat: string			= 'beginChat';
+	public readonly beginChat: string = 'beginChat';
 
 	/** @see Events */
-	public readonly beginChatComplete: string	= 'beginChatComplete';
+	public readonly beginChatComplete: string = 'beginChatComplete';
 
 	/** @see Events */
-	public readonly beginWaiting: string		= 'beginWaiting';
+	public readonly beginWaiting: string = 'beginWaiting';
 
 	/** @see Events */
-	public readonly closeChat: string			= 'closeChat';
+	public readonly closeChat: string = 'closeChat';
 
 	/** @see Events */
-	public readonly connect: string				= 'connect';
+	public readonly connect: string = 'connect';
 
 	/** @see Events */
-	public readonly connectFailure: string		= 'connectFailure';
+	public readonly connectFailure: string = 'connectFailure';
 
 	/** @see Events */
-	public readonly cyphertext: string			= 'cyphertext';
+	public readonly cyphertext: string = 'cyphertext';
 
 	/** @see Events */
-	public readonly cyphNotFound: string		= 'cyphNotFound';
+	public readonly cyphNotFound: string = 'cyphNotFound';
 
 	constructor () {}
 }
 
 /** @see Events */
-export const events	= new Events();
+export const events = new Events();

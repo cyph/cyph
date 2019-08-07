@@ -2,5 +2,4 @@
 
 /** @file faye-websocket external. */
 
-
-export const Client	= (<any> self).WebSocket;
+export const Client = (<any> self).WebSocket;

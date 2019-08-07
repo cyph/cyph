@@ -2,14 +2,16 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
-import {ISessionMessage, ISessionMessageData as ISessionMessageDataInternal} from '../proto';
+import {
+	ISessionMessage,
+	ISessionMessageData as ISessionMessageDataInternal
+} from '../proto';
 import {
 	CastleEvents,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
 	ProFeatures
 } from '../session';
-
 
 /**
  * Encapsulates an end-to-end encrypted communication session.
@@ -60,76 +62,83 @@ export interface ISessionService {
 		cyphID: BehaviorSubject<string>;
 		isAlice: BehaviorSubject<boolean>;
 		isAlive: BehaviorSubject<boolean>;
-		sharedSecret: BehaviorSubject<string|undefined>;
-		startingNewCyph: BehaviorSubject<boolean|undefined>;
+		sharedSecret: BehaviorSubject<string | undefined>;
+		startingNewCyph: BehaviorSubject<boolean | undefined>;
 		wasInitiatedByAPI: BehaviorSubject<boolean>;
 	};
 
 	/** Session key for misc stuff like locking. */
-	readonly symmetricKey: BehaviorSubject<Uint8Array|undefined>;
+	readonly symmetricKey: BehaviorSubject<Uint8Array | undefined>;
 
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{
-			author: Observable<string>;
-			instanceID: string;
-			plaintext: Uint8Array;
-			timestamp: number;
-		}
-	) : Promise<void>;
+		data?:
+			| Uint8Array
+			| {
+					author: Observable<string>;
+					instanceID: string;
+					plaintext: Uint8Array;
+					timestamp: number;
+			  }
+	): Promise<void>;
 
 	/** This kills the cyph. */
-	close () : void;
+	close (): void;
 
 	/** Cleans things up and tears down event handlers. */
-	destroy () : void;
+	destroy (): void;
 
 	/** @see IHandshakeState */
-	handshakeState () : Promise<IHandshakeState>;
+	handshakeState (): Promise<IHandshakeState>;
 
 	/** Initializes service. */
-	init (channelID: string, userID?: string) : void;
+	init (channelID: string, userID?: string): void;
 
 	/** @see ChannelService.lock */
 	lock<T> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<T>,
 		reason?: string
-	) : Promise<T>;
+	): Promise<T>;
 
 	/** Remove event listener. */
-	off<T> (event: string, handler?: (data: T) => void) : void;
+	off<T> (event: string, handler?: (data: T) => void): void;
 
 	/** Add event listener. */
-	on<T> (event: string, handler: (data: T) => void) : void;
+	on<T> (event: string, handler: (data: T) => void): void;
 
 	/** Returns first occurrence of event. */
-	one<T> (event: string) : Promise<T>;
+	one<T> (event: string): Promise<T>;
 
 	/** Converts an ISessionMessageDataInternal into an ISessionMessageData. */
 	processMessageData (
 		data: ISessionMessageDataInternal
-	) : Promise<ISessionMessageData>;
+	): Promise<ISessionMessageData>;
 
 	/** Send at least one message through the session. */
 	send (
 		...messages: [
 			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
+
+				| ISessionMessageAdditionalData
+				| ((
+						timestamp: number
+				  ) => MaybePromise<ISessionMessageAdditionalData>)
 		][]
-	) : Promise<{
+	): Promise<{
 		confirmPromise: Promise<void>;
-		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+		newMessages: (ISessionMessage & {data: ISessionMessageData})[];
 	}>;
 
 	/** Creates and returns a new instance. */
-	spawn () : ISessionService;
+	spawn (): ISessionService;
 
 	/** Trigger event, passing in optional data. */
-	trigger (event: string, data?: any) : Promise<void>;
+	trigger (event: string, data?: any): Promise<void>;
 
 	/** Resolves when other user is online. */
-	yt () : Promise<void>;
+	yt (): Promise<void>;
 }

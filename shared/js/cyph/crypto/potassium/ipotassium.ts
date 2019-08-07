@@ -7,7 +7,6 @@ import {ISecretBox} from './isecret-box';
 import {ISign} from './isign';
 import {PotassiumUtil} from './potassium-util';
 
-
 /**
  * libsodium-inspired wrapper for the post-quantum primitives used by Cyph.
  * Outside of this class, libsodium and other cryptographic implementations
@@ -36,8 +35,8 @@ export interface IPotassium extends PotassiumUtil {
 	readonly sign: ISign;
 
 	/** Indicates whether native crypto API is supported in this environment. */
-	isNativeCryptoSupported () : Promise<boolean>;
+	isNativeCryptoSupported (): Promise<boolean>;
 
 	/** Indicates whether this Potassium instance is using native crypto. */
-	native () : Promise<boolean>;
+	native (): Promise<boolean>;
 }

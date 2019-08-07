@@ -1,36 +1,36 @@
-<div fxLayout='column'>
-	<div fxLayout='row' fxLayoutAlign='center start'>
+<div fxLayout="column">
+	<div fxLayout="row" fxLayoutAlign="center start">
 		<form
 			ngNativeValidate
 			fxFlex
-			fxFlex.gt-md='75'
-			fxFlex.gt-lg='50'
-			fxLayout='column'
-			fxLayoutGap='8px'
-			(submit)='submit()'
-			*ngIf='(submitted | async) === false'
+			fxFlex.gt-md="75"
+			fxFlex.gt-lg="50"
+			fxLayout="column"
+			fxLayoutGap="8px"
+			(submit)="submit()"
+			*ngIf="(submitted | async) === false"
 		>
 			<div>
 				<span cyphTranslate>
-					Congratulations! If you're seeing this page, it means
-					you've been invited to reserve your
+					Congratulations! If you're seeing this page, it means you've
+					been invited to reserve your
 				</span>
 				&ngsp;
-				<span>{{stringsService.product}}</span>
+				<span>{{ stringsService.product }}</span>
 				&ngsp;
 				<span cyphTranslate>
 					username before the general public.
 				</span>
 			</div>
 			<div cyphTranslate>
-				There's no character minimum, allowing you to reserve premium short usernames;
-				however, please note that your username isn't guaranteed until you've received
-				our confirmation. We suggest using 5+ characters and setting a realistic alternate
-				choice.
+				There's no character minimum, allowing you to reserve premium
+				short usernames; however, please note that your username isn't
+				guaranteed until you've received our confirmation. We suggest
+				using 5+ characters and setting a realistic alternate choice.
 			</div>
 			<div cyphTranslate>
-				Your username cannot exceed 50 characters, and is limited to alphanumeric
-				characters (0-9, A-Z, a-z) and underscores (_).
+				Your username cannot exceed 50 characters, and is limited to
+				alphanumeric characters (0-9, A-Z, a-z) and underscores (_).
 			</div>
 			<div></div>
 			<div></div>
@@ -42,11 +42,11 @@
 					<input
 						matInput
 						cyphTranslate
-						[(ngModel)]='email'
-						name='email'
-						type='email'
-						[pattern]='emailPattern'
-						placeholder='Email'
+						[(ngModel)]="email"
+						name="email"
+						type="email"
+						[pattern]="emailPattern"
+						placeholder="Email"
 						required
 					/>
 				</mat-form-field>
@@ -56,10 +56,10 @@
 					<input
 						matInput
 						cyphTranslate
-						[textMask]='usernameMask'
-						[(ngModel)]='username'
-						name='username'
-						placeholder='Requested Username'
+						[textMask]="usernameMask"
+						[(ngModel)]="username"
+						name="username"
+						placeholder="Requested Username"
 						required
 					/>
 				</mat-form-field>
@@ -69,50 +69,53 @@
 					<input
 						matInput
 						cyphTranslate
-						[textMask]='usernameMask'
-						[(ngModel)]='usernameAlternate'
-						name='usernameAlternate'
-						placeholder='Alternate Username (optional)'
+						[textMask]="usernameMask"
+						[(ngModel)]="usernameAlternate"
+						name="usernameAlternate"
+						placeholder="Alternate Username (optional)"
 					/>
 				</mat-form-field>
 			</div>
 			<div></div>
 			<div></div>
 			<div>
-				<button mat-button fxFlex cyphTranslate type='submit'>
+				<button mat-button fxFlex cyphTranslate type="submit">
 					Submit
 				</button>
 			</div>
 		</form>
 		<div
 			fxFlex
-			fxFlex.gt-md='75'
-			fxFlex.gt-lg='50'
-			fxLayout='column'
-			fxLayoutGap='16px'
-			*ngIf='submitted | async'
+			fxFlex.gt-md="75"
+			fxFlex.gt-lg="50"
+			fxLayout="column"
+			fxLayoutGap="16px"
+			*ngIf="submitted | async"
 		>
 			<div>
 				<span cyphTranslate>
-					Your username request has been submitted! If you are
-					on our approved list of users, then
+					Your username request has been submitted! If you are on our
+					approved list of users, then
 				</span>
 				&ngsp;
-				<span>{{username}}</span>
+				<span>{{ username }}</span>
 				&ngsp;
 				<span cyphTranslate>
 					will be set aside as reserved for you.
 				</span>
 			</div>
 			<div cyphTranslate>
-				Usernames will be granted based on waitlist priority and first-come, first-serve.
-				If you are unable to reserve your desired username or alternate, we will email you
-				with your options.
+				Usernames will be granted based on waitlist priority and
+				first-come, first-serve. If you are unable to reserve your
+				desired username or alternate, we will email you with your
+				options.
 			</div>
 			<div>
-				<span cyphTranslate>Thank you for your continued support of</span>
+				<span cyphTranslate>
+					Thank you for your continued support of
+				</span>
 				&ngsp;
-				<span>{{stringsService.company}}!</span>
+				<span>{{ stringsService.company }}!</span>
 			</div>
 		</div>
 	</div>

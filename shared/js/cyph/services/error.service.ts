@@ -7,14 +7,13 @@ import {debugLogError} from '../util/log';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 
-
 /**
  * Handles error logging.
  */
 @Injectable()
 export class ErrorService extends BaseProvider implements ErrorHandler {
 	/** @ignore */
-	private readonly numEmails: Map<string, number>	= new Map<string, number>();
+	private readonly numEmails: Map<string, number> = new Map<string, number>();
 
 	/** @inheritDoc */
 	public handleError (err: any) : void {
@@ -28,7 +27,11 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 		requireErrorMessage: boolean = false,
 		debugOnly: boolean = false
 	) : Promise<void> {
-		const errorMessage: string	= !err ? '' : err.message ? err.message : err.toString();
+		const errorMessage: string = !err ?
+			'' :
+		err.message ?
+			err.message :
+			err.toString();
 
 		if (
 			(debugOnly && !this.envService.debug) ||
@@ -36,20 +39,17 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 			/* Annoying useless iframe-related spam */
 			errorMessage === 'Script error.' ||
 			/* Google Search iOS app bug */
-			errorMessage === "TypeError: null is not an object (evaluating 'elt.parentNode')" ||
+			errorMessage ===
+				"TypeError: null is not an object (evaluating 'elt.parentNode')" ||
 			/* Temporary workaround for Firebase Auth issue */
 			(this.envService.isIOS && errorMessage === 'Network Error')
 		) {
 			return;
 		}
 
-		const exception	=
-			`${errorMessage}\n\n${
-				err instanceof Error ?
-					(await fromError(err)).join('\n') :
-					''
-			}`.replace(/\/#.*/g, '')
-		;
+		const exception = `${errorMessage}\n\n${
+			err instanceof Error ? (await fromError(err)).join('\n') : ''
+		}`.replace(/\/#.*/g, '');
 
 		if (err) {
 			if (this.envService.debugLog) {
@@ -61,7 +61,7 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 			}
 		}
 
-		const numEmails	= getOrSetDefault(this.numEmails, subject, () => 0) + 1;
+		const numEmails = getOrSetDefault(this.numEmails, subject, () => 0) + 1;
 		this.numEmails.set(subject, numEmails);
 
 		if (numEmails < 50) {

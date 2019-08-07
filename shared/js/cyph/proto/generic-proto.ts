@@ -1,6 +1,5 @@
 import {IProto} from '../iproto';
 
-
 /** Generic/primitive value encoder/decoder. */
 export class GenericProto<T> implements IProto<T> {
 	/** @inheritDoc */
@@ -15,7 +14,7 @@ export class GenericProto<T> implements IProto<T> {
 
 	/** @inheritDoc */
 	public async encode (data: T) : Promise<Uint8Array> {
-		const o	= await this.proto.encode({data});
+		const o = await this.proto.encode({data});
 		return o instanceof Uint8Array ? o : o.finish();
 	}
 

@@ -3,26 +3,33 @@ import {take} from 'rxjs/operators';
 import {filterUndefinedOperator} from './util/filter';
 import {getOrSetDefault} from './util/get-or-set-default';
 
-
 /**
  * Event manager.
  */
 export class EventManager {
 	/** @ignore */
-	private readonly eventMappings	= new Map<string, BehaviorSubject<Set<Function>|undefined>>();
+	private readonly eventMappings = new Map<
+		string,
+		BehaviorSubject<Set<Function> | undefined>
+	>();
 
 	/** @ignore */
-	private getEventMapping (event: string) : BehaviorSubject<Set<Function>|undefined> {
+	private getEventMapping (
+		event: string
+	) : BehaviorSubject<Set<Function> | undefined> {
 		return getOrSetDefault(
 			this.eventMappings,
 			event,
-			() => new BehaviorSubject<Set<Function>|undefined>(undefined)
+			() => new BehaviorSubject<Set<Function> | undefined>(undefined)
 		);
 	}
 
 	/** Removes handler from event. */
-	public async off<T> (event: string, handler?: (data: T) => void) : Promise<void> {
-		const eventMapping	= await this.getEventMapping(event);
+	public async off<T> (
+		event: string,
+		handler?: (data: T) => void
+	) : Promise<void> {
+		const eventMapping = await this.getEventMapping(event);
 
 		if (eventMapping.value === undefined) {
 			return;
@@ -39,7 +46,7 @@ export class EventManager {
 
 	/** Attaches handler to event. */
 	public on<T> (event: string, handler: (data: T) => void) : void {
-		const eventMapping	= this.getEventMapping(event);
+		const eventMapping = this.getEventMapping(event);
 
 		if (eventMapping.value) {
 			eventMapping.value.add(handler);
@@ -52,7 +59,7 @@ export class EventManager {
 	/** Resolves on first occurrence of event. */
 	public async one<T> (event: string) : Promise<T> {
 		return new Promise<T>(resolve => {
-			const f	= (data: T) => {
+			const f = (data: T) => {
 				this.off(event, f);
 				resolve(data);
 			};
@@ -66,18 +73,21 @@ export class EventManager {
 	 * If no event handlers are yet set, wait for one.
 	 * Resolve after all handlers have been run, throwing error if any one fails.
 	 */
-	public async trigger<T> (
-		event: string,
-		data?: T
-	) : Promise<void> {
-		const eventMapping	= this.getEventMapping(event);
+	public async trigger<T> (event: string, data?: T) : Promise<void> {
+		const eventMapping = this.getEventMapping(event);
 
-		const handlers		=
+		const handlers =
 			eventMapping.value ||
-			(await eventMapping.pipe(filterUndefinedOperator(), take(1)).toPromise())
-		;
+			(await eventMapping
+				.pipe(
+					filterUndefinedOperator(),
+					take(1)
+				)
+				.toPromise());
 
-		await Promise.all(Array.from(handlers).map(async handler => handler(data)));
+		await Promise.all(
+			Array.from(handlers).map(async handler => handler(data))
+		);
 	}
 
 	constructor () {}

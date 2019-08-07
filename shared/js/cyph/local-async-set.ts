@@ -5,11 +5,11 @@ import {map} from 'rxjs/operators';
 import {IAsyncSet} from './iasync-set';
 import {LocalAsyncValue} from './local-async-value';
 
-
 /**
  * Local async Set implementation.
  */
-export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> implements IAsyncSet<T> {
+export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>>
+	implements IAsyncSet<T> {
 	/** @ignore */
 	protected emitInternal () : void {
 		this.subject.next(new Set<T>(this.value));
@@ -39,7 +39,9 @@ export class LocalAsyncSet<T> extends LocalAsyncValue<Set<T>> implements IAsyncS
 	}
 
 	/** @see Set.forEach */
-	public async forEach (callback: (a: T, b: T, value: Set<T>) => void) : Promise<void> {
+	public async forEach (
+		callback: (a: T, b: T, value: Set<T>) => void
+	) : Promise<void> {
 		this.value.forEach(callback);
 	}
 

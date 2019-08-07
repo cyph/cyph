@@ -6,7 +6,8 @@
 			display: inline;
 		}
 
-		> :not(p), > p:not(:only-child) {
+		> :not(p),
+		> p:not(:only-child) {
 			margin: 10px;
 		}
 

@@ -2,5 +2,4 @@
 
 /** @file request external. */
 
-
 export default undefined;

@@ -4,7 +4,6 @@ import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for files UI.
  */

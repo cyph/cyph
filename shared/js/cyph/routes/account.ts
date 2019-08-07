@@ -15,14 +15,10 @@ import {AccountIncomingPatientInfoComponent} from '../components/account-incomin
 import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
-import {
-	AccountNotificationsSubscribeComponent
-} from '../components/account-notifications-subscribe';
+import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
-import {
-	AccountPseudoRelationshipResponseComponent
-} from '../components/account-pseudo-relationship-response';
+import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {AccountWalletsComponent} from '../components/account-wallets';
@@ -34,9 +30,8 @@ import {newPatient} from '../forms';
 import {AccountUserTypes, ChatMessageValue} from '../proto';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 
-
 /** Routing configuration for accounts UI. */
-export const account: Route	= {
+export const account: Route = {
 	path: '',
 	component: AccountComponent,
 	canActivate: [AccountAuthGuardService],
@@ -45,9 +40,7 @@ export const account: Route	= {
 		{
 			path: '',
 			component: AccountHomeComponent,
-			children: [
-				{path: 'search', component: BlankComponent}
-			]
+			children: [{path: 'search', component: BlankComponent}]
 		},
 		{path: '404', component: NotFoundComponent},
 		{
@@ -114,7 +107,10 @@ export const account: Route	= {
 				}
 			]
 		},
-		{path: 'appointments/:appointmentID/forms/:id', component: AccountFormComponent},
+		{
+			path: 'appointments/:appointmentID/forms/:id',
+			component: AccountFormComponent
+		},
 		{
 			path: 'audio/:contactID',
 			component: AccountChatComponent,
@@ -177,26 +173,25 @@ export const account: Route	= {
 		},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},
-		{path: 'docs', component: AccountNotesComponent, data: {realTime: true}},
+		{
+			path: 'docs',
+			component: AccountNotesComponent,
+			data: {realTime: true}
+		},
 		{
 			path: 'docs/:id',
 			component: AccountNoteComponent,
 			data: {realTime: true},
-			children: [
-				{path: 'edit', component: BlankComponent}
-			]
+			children: [{path: 'edit', component: BlankComponent}]
 		},
 		{
 			path: 'doctors',
 			component:
-				(
-					env.isTelehealth &&
-					env.environment.customBuild &&
-					env.environment.customBuild.config.organization
-				) ?
+				env.isTelehealth &&
+				env.environment.customBuild &&
+				env.environment.customBuild.config.organization ?
 					AccountProfileComponent :
-					AccountContactsComponent
-			,
+					AccountContactsComponent,
 			data: {doctorListOnly: true}
 		},
 		{path: 'ehr-access', component: AccountEhrAccessComponent},
@@ -204,7 +199,10 @@ export const account: Route	= {
 		{path: 'forms', component: AccountFormsComponent},
 		{path: 'forms/:id', component: AccountFormComponent},
 		{path: 'home', redirectTo: ''},
-		{path: 'incoming-patient-info', component: AccountIncomingPatientInfoComponent},
+		{
+			path: 'incoming-patient-info',
+			component: AccountIncomingPatientInfoComponent
+		},
 		{path: 'logout', component: AccountLogoutComponent},
 		{
 			path: 'mail/:contactID',
@@ -224,20 +222,25 @@ export const account: Route	= {
 		},
 		{path: 'messages/user/:username', component: AccountChatComponent},
 		{path: 'messages/:contactID', component: AccountChatComponent},
-		{path: 'messages/:contactID/:sessionSubID', component: AccountChatComponent},
+		{
+			path: 'messages/:contactID/:sessionSubID',
+			component: AccountChatComponent
+		},
 		{
 			path: 'new-patient/:appointmentID',
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.Form, value: newPatient}
 		},
-		{path: 'notes', component: AccountNotesComponent, data: {realTime: false}},
+		{
+			path: 'notes',
+			component: AccountNotesComponent,
+			data: {realTime: false}
+		},
 		{
 			path: 'notes/:id',
 			component: AccountNoteComponent,
 			data: {realTime: false},
-			children: [
-				{path: 'edit', component: BlankComponent}
-			]
+			children: [{path: 'edit', component: BlankComponent}]
 		},
 		{
 			path: 'notifications',
@@ -260,9 +263,7 @@ export const account: Route	= {
 		{
 			path: 'profile',
 			component: AccountProfileComponent,
-			children: [
-				{path: 'edit', component: BlankComponent}
-			]
+			children: [{path: 'edit', component: BlankComponent}]
 		},
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', redirectTo: 'register/1'},
@@ -275,29 +276,53 @@ export const account: Route	= {
 		{
 			path: 'request-appointment',
 			component: AccountComposeComponent,
-			data: {form: newPatient, messageType: ChatMessageValue.Types.CalendarInvite}
+			data: {
+				form: newPatient,
+				messageType: ChatMessageValue.Types.CalendarInvite
+			}
 		},
 		{
 			path: 'request-appointment/:contactID',
 			component: AccountComposeComponent,
-			data: {form: newPatient, messageType: ChatMessageValue.Types.CalendarInvite}
+			data: {
+				form: newPatient,
+				messageType: ChatMessageValue.Types.CalendarInvite
+			}
 		},
 		{
 			path: 'request-appointment/user/:username',
 			component: AccountComposeComponent,
-			data: {form: newPatient, messageType: ChatMessageValue.Types.CalendarInvite}
+			data: {
+				form: newPatient,
+				messageType: ChatMessageValue.Types.CalendarInvite
+			}
 		},
 		{
 			path: 'request-followup/:contactID',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValue.Types.CalendarInvite, appointmentFollowUp: true}
+			data: {
+				messageType: ChatMessageValue.Types.CalendarInvite,
+				appointmentFollowUp: true
+			}
 		},
 		{
 			path: 'settings',
 			children: [
-				{path: '', component: AccountSettingsComponent, data: {state: 1}},
-				{path: 'lock-screen', component: AccountSettingsComponent, data: {state: 3}},
-				{path: 'master-key', component: AccountSettingsComponent, data: {state: 2}}
+				{
+					path: '',
+					component: AccountSettingsComponent,
+					data: {state: 1}
+				},
+				{
+					path: 'lock-screen',
+					component: AccountSettingsComponent,
+					data: {state: 3}
+				},
+				{
+					path: 'master-key',
+					component: AccountSettingsComponent,
+					data: {state: 2}
+				}
 			]
 		},
 		{
@@ -306,7 +331,8 @@ export const account: Route	= {
 			data: {userTypeFilter: AccountUserTypes.TelehealthAdmin}
 		},
 		{
-			path: 'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',
+			path:
+				'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',
 			component: UploadEhrCredentialsComponent
 		},
 		{

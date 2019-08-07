@@ -5,14 +5,12 @@ import {RuleWalker} from 'tslint/lib/language/walker';
 import {AbstractRule} from 'tslint/lib/rules';
 import * as ts from 'tslint/node_modules/typescript';
 
-
 export class Rule extends AbstractRule {
-	public static metadata: IRuleMetadata	= {
+	public static metadata: IRuleMetadata = {
 		ruleName: 'tab-equals',
 		description:
 			'Requires = in variable assignment to be preceded by tab(s)' +
-			'and followed by either a newline or exactly one space.'
-		,
+			'and followed by either a newline or exactly one space.',
 		descriptionDetails: 'For alignment.',
 		optionsDescription: 'Not configurable.',
 		options: null,
@@ -21,62 +19,55 @@ export class Rule extends AbstractRule {
 		typescriptOnly: false
 	};
 
-	public static FAILURE_STRING: string	=
-		'assignment operator must be preceded by tab(s) and followed by newline or space'
-	;
+	public static FAILURE_STRING: string =
+		'assignment operator must be preceded by tab(s) and followed by newline or space';
 
 	public static isCompliant (node: ts.Node) : boolean {
 		if (
 			node.kind === ts.SyntaxKind.CallExpression ||
 			node.kind === ts.SyntaxKind.Parameter ||
-			(
-				node.parent && (
-					node.parent.kind === ts.SyntaxKind.Block ||
+			(node.parent &&
+				(node.parent.kind === ts.SyntaxKind.Block ||
 					node.parent.kind === ts.SyntaxKind.Constructor ||
 					node.parent.kind === ts.SyntaxKind.FunctionDeclaration ||
 					node.parent.kind === ts.SyntaxKind.MethodDeclaration ||
 					node.parent.kind === ts.SyntaxKind.Parameter ||
-					node.parent.kind === ts.SyntaxKind.VariableDeclarationList ||
-					(
-						node.parent.parent && (
-							node.parent.parent.kind === ts.SyntaxKind.Parameter
-						)
-					)
-				)
-			)
+					node.parent.kind ===
+						ts.SyntaxKind.VariableDeclarationList ||
+					(node.parent.parent &&
+						node.parent.parent.kind === ts.SyntaxKind.Parameter)))
 		) {
 			return true;
 		}
 
-		const equalsSplit	= node.getText().
-			replace(/=>/g, '').
-			replace(/>=/g, '').
-			replace(/<=/g, '').
-			replace(/!==/g, '').
-			replace(/!=/g, '').
-			replace(/===/g, '').
-			replace(/==/g, '').
-			replace(/\+=/g, '').
-			replace(/-=/g, '').
-			replace(/\*=/g, '').
-			replace(/\/=/g, '').
-			split(/['"`]/g)[0].
-			split('=')
-		;
+		const equalsSplit = node
+			.getText()
+			.replace(/=>/g, '')
+			.replace(/>=/g, '')
+			.replace(/<=/g, '')
+			.replace(/!==/g, '')
+			.replace(/!=/g, '')
+			.replace(/===/g, '')
+			.replace(/==/g, '')
+			.replace(/\+=/g, '')
+			.replace(/-=/g, '')
+			.replace(/\*=/g, '')
+			.replace(/\/=/g, '')
+			.split(/['"`]/g)[0]
+			.split('=');
 
 		if (equalsSplit.length < 2) {
 			return true;
 		}
 
-		const equalsPrefix	= (equalsSplit[0].match(/\s+$/) || [''])[0];
-		const equalsSuffix	= (equalsSplit[1].match(/^\s+/) || [''])[0];
+		const equalsPrefix = (equalsSplit[0].match(/\s+$/) || [''])[0];
+		const equalsSuffix = (equalsSplit[1].match(/^\s+/) || [''])[0];
 
 		return !!(
-			(equalsPrefix.match(/\t/) && !equalsPrefix.match(/ /)) &&
-			(
-				(equalsSuffix[0] === '\n' && !equalsSuffix.match(/ /)) ||
-				(equalsSuffix[0] === ' ' && equalsSuffix.length === 1)
-			)
+			equalsPrefix.match(/\t/) &&
+			!equalsPrefix.match(/ /) &&
+			((equalsSuffix[0] === '\n' && !equalsSuffix.match(/ /)) ||
+				(equalsSuffix[0] === ' ' && equalsSuffix.length === 1))
 		);
 	}
 
@@ -88,7 +79,9 @@ export class Rule extends AbstractRule {
 }
 
 class TabEqualsWalker extends RuleWalker {
-	public visitPropertyAccessExpression (node: ts.PropertyAccessExpression) : void {
+	public visitPropertyAccessExpression (
+		node: ts.PropertyAccessExpression
+	) : void {
 		try {
 			if (node.parent === undefined) {
 				return;

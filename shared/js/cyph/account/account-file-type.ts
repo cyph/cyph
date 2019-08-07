@@ -9,17 +9,15 @@ import {
 	IWallet
 } from '../proto';
 
-
 /** Any type of account "file". */
-export type AccountFile	=
-	IAccountMessagingGroup|
-	IAppointment|
-	IEhrApiKey|
-	IFile|
-	IForm|
-	IQuillDelta|
-	IQuillDelta[]|
-	IRedoxPatient|
-	IWallet|
-	File
-;
+export type AccountFile =
+	| IAccountMessagingGroup
+	| IAppointment
+	| IEhrApiKey
+	| IFile
+	| IForm
+	| IQuillDelta
+	| IQuillDelta[]
+	| IRedoxPatient
+	| IWallet
+	| File;

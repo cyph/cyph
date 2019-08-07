@@ -49,7 +49,10 @@ import {
 import {filterUndefined} from '../util/filter';
 import {flattenObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {convertStorageUnitsToBytes} from '../util/formatting';
-import {getOrSetDefault, getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {
+	getOrSetDefault,
+	getOrSetDefaultAsync
+} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
@@ -65,7 +68,6 @@ import {DialogService} from './dialog.service';
 import {FileService} from './file.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Account file service.
  */
@@ -75,24 +77,22 @@ export class AccountFilesService extends BaseProvider {
 	 * Resolves circular dependency needed for shareFilePrompt to work.
 	 * @see AccountFileSharingComponent
 	 */
-	public static readonly accountFileSharingComponent	=
-		resolvable<ComponentType<{
+	public static readonly accountFileSharingComponent = resolvable<
+		ComponentType<{
 			closeFunction?: IResolvable<() => void>;
 			file?: AccountFileShare;
-		}>>()
-	;
-
+		}>
+	>();
 
 	/** @ignore */
 	private readonly incomingFileCache: Map<
 		Uint8Array,
-		IAccountFileRecord&IAccountFileReference
-	>	=
-		new Map<Uint8Array, IAccountFileRecord&IAccountFileReference>()
-	;
+		IAccountFileRecord & IAccountFileReference
+	> = new Map<Uint8Array, IAccountFileRecord & IAccountFileReference>();
 
 	/** @ignore */
-	private readonly nonexistentFile: IAccountFileRecord&IAccountFileReference	= {
+	private readonly nonexistentFile: IAccountFileRecord &
+		IAccountFileReference = {
 		id: '',
 		key: new Uint8Array(0),
 		mediaType: '',
@@ -105,57 +105,74 @@ export class AccountFilesService extends BaseProvider {
 	};
 
 	/** @ignore */
-	private readonly watchAppointmentCache	=
-		new Map<string|IAccountFileRecord, Observable<IAppointment>>()
-	;
+	private readonly watchAppointmentCache = new Map<
+		string | IAccountFileRecord,
+		Observable<IAppointment>
+	>();
 
 	/** @ignore */
-	private readonly watchFile	= memoize(
+	private readonly watchFile = memoize(
 		(value: IAccountFileReference) =>
-			!value.owner ? undefined : this.accountDatabaseService.watch(
-				`users/${value.owner}/fileRecords/${value.id}`,
-				AccountFileRecord,
-				undefined,
-				value.key,
-				undefined,
-				this.subscriptions
-			).pipe(map(o => ({
-				timestamp: o.timestamp,
-				value: {
-					...o.value,
-					name: o.value.name.slice(0, this.maxNameLength),
-					owner: value.owner
-				}
-			})))
-		,
+			!value.owner ?
+				undefined :
+				this.accountDatabaseService
+					.watch(
+						`users/${value.owner}/fileRecords/${value.id}`,
+						AccountFileRecord,
+						undefined,
+						value.key,
+						undefined,
+						this.subscriptions
+					)
+					.pipe(
+						map(o => ({
+							timestamp: o.timestamp,
+							value: {
+								...o.value,
+								name: o.value.name.slice(0, this.maxNameLength),
+								owner: value.owner
+							}
+						}))
+					),
 		(value: IAccountFileReference) => value.id
 	);
 
 	/** @ignore */
-	private readonly watchFileDataCache	= new Map<string, Observable<any>>();
+	private readonly watchFileDataCache = new Map<string, Observable<any>>();
 
 	/** @ignore */
-	private readonly watchMetadataCache	=
-		new Map<string|IAccountFileRecord, Observable<IAccountFileRecord&IAccountFileReference>>()
-	;
+	private readonly watchMetadataCache = new Map<
+		string | IAccountFileRecord,
+		Observable<IAccountFileRecord & IAccountFileReference>
+	>();
 
 	/** @ignore */
-	private readonly watchNoteCache		= new Map<string, Observable<IQuillDelta>>();
+	private readonly watchNoteCache = new Map<
+		string,
+		Observable<IQuillDelta>
+	>();
 
 	/** File type configurations. */
-	public readonly config: Record<AccountFileRecord.RecordTypes, {
-		blockAnonymous: boolean;
-		description: string;
-		incoming: () => Observable<{data: any; owner: string; record: IAccountFileRecord}[]>;
-		isOfType: (file: any) => boolean;
-		list: () => Observable<{data: any; owner: string; record: IAccountFileRecord}[]>;
-		mediaType?: string;
-		proto?: IProto<any>;
-		recordType: AccountFileRecord.RecordTypes;
-		route: string;
-		securityModel?: SecurityModels;
-		subroutable: boolean;
-	}>	= {
+	public readonly config: Record<
+		AccountFileRecord.RecordTypes,
+		{
+			blockAnonymous: boolean;
+			description: string;
+			incoming: () => Observable<
+				{data: any; owner: string; record: IAccountFileRecord}[]
+			>;
+			isOfType: (file: any) => boolean;
+			list: () => Observable<
+				{data: any; owner: string; record: IAccountFileRecord}[]
+			>;
+			mediaType?: string;
+			proto?: IProto<any>;
+			recordType: AccountFileRecord.RecordTypes;
+			route: string;
+			securityModel?: SecurityModels;
+			subroutable: boolean;
+		}
+	> = {
 		[AccountFileRecord.RecordTypes.Appointment]: {
 			blockAnonymous: false,
 			description: 'Appointment',
@@ -188,8 +205,7 @@ export class AccountFilesService extends BaseProvider {
 			incoming: () => this.incomingFilesFilteredWithData.ehrApiKeys(),
 			isOfType: (file: any) =>
 				typeof file.apiKey === 'string' &&
-				typeof file.isMaster === 'boolean'
-			,
+				typeof file.isMaster === 'boolean',
 			list: () => this.filesListFilteredWithData.ehrApiKeys(),
 			mediaType: 'cyph/ehr-api-key',
 			proto: EhrApiKey,
@@ -204,8 +220,8 @@ export class AccountFilesService extends BaseProvider {
 			incoming: () => this.incomingFilesFiltered.files,
 			isOfType: (file: any) =>
 				file instanceof Blob ||
-				(file.data instanceof Uint8Array && typeof file.mediaType === 'string')
-			,
+				(file.data instanceof Uint8Array &&
+					typeof file.mediaType === 'string'),
 			list: () => this.filesListFiltered.files,
 			mediaType: undefined,
 			proto: BlobProto,
@@ -244,7 +260,8 @@ export class AccountFilesService extends BaseProvider {
 			blockAnonymous: false,
 			description: 'Note',
 			incoming: () => this.incomingFilesFiltered.notes,
-			isOfType: (file: any) => typeof file.chop === 'function' || file.ops instanceof Array,
+			isOfType: (file: any) =>
+				typeof file.chop === 'function' || file.ops instanceof Array,
 			list: () => this.filesListFiltered.notes,
 			mediaType: 'cyph/note',
 			proto: BinaryProto,
@@ -282,8 +299,10 @@ export class AccountFilesService extends BaseProvider {
 	};
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
-	public readonly filesList: Observable<(IAccountFileRecord&{owner: string})[]>	=
-		this.accountDatabaseService.watchList(
+	public readonly filesList: Observable<
+		(IAccountFileRecord & {owner: string})[]
+	> = this.accountDatabaseService
+		.watchList(
 			'fileReferences',
 			AccountFileReference,
 			undefined,
@@ -291,42 +310,71 @@ export class AccountFilesService extends BaseProvider {
 			undefined,
 			false,
 			this.subscriptions
-		).pipe(
-			mergeMap(references => observableAll(filterUndefined(references.map(({value}) =>
-				this.watchFile(value)
-			)))),
-			map(records => records.
-				filter(o => !isNaN(o.timestamp)).
-				sort((a, b) => b.timestamp - a.timestamp).
-				map(o => o.value)
-			)
 		)
-	;
+		.pipe(
+			mergeMap(references =>
+				observableAll(
+					filterUndefined(
+						references.map(({value}) => this.watchFile(value))
+					)
+				)
+			),
+			map(records =>
+				records
+					.filter(o => !isNaN(o.timestamp))
+					.sort((a, b) => b.timestamp - a.timestamp)
+					.map(o => o.value)
+			)
+		);
 
 	/**
 	 * Files filtered by record type.
 	 * @see files
 	 */
-	public readonly filesListFiltered	= {
-		appointments: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Appointment),
-		docs: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Doc),
-		ehrApiKeys: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.EhrApiKey),
-		files: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.File),
-		forms: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Form),
+	public readonly filesListFiltered = {
+		appointments: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.Appointment
+		),
+		docs: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.Doc
+		),
+		ehrApiKeys: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.EhrApiKey
+		),
+		files: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.File
+		),
+		forms: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.Form
+		),
 		messagingGroups: this.filterFiles(
 			this.filesList,
 			AccountFileRecord.RecordTypes.MessagingGroup
 		),
-		notes: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Note),
-		redoxPatients: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.RedoxPatient),
-		wallets: this.filterFiles(this.filesList, AccountFileRecord.RecordTypes.Wallet)
+		notes: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.Note
+		),
+		redoxPatients: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.RedoxPatient
+		),
+		wallets: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.Wallet
+		)
 	};
 
 	/**
 	 * Includes downloaded data, where applicable.
 	 * @see filesListFiltered
 	 */
-	public readonly filesListFilteredWithData	= {
+	public readonly filesListFilteredWithData = {
 		appointments: this.getFiles(
 			this.filesListFiltered.appointments,
 			AccountFileRecord.RecordTypes.Appointment,
@@ -365,39 +413,46 @@ export class AccountFilesService extends BaseProvider {
 	};
 
 	/** Total size of all files in list. */
-	public readonly filesTotalSize					= combineLatest([
+	public readonly filesTotalSize = combineLatest([
 		this.filesListFiltered.files,
 		this.accountDatabaseService.currentUser
-	]).pipe(map(([files, currentUser]) => files.reduce(
-		(n, {owner, size}) =>
-			n +
-			(currentUser && currentUser.user.username === owner ? size : 0)
-		,
-		0
-	)));
+	]).pipe(
+		map(([files, currentUser]) =>
+			files.reduce(
+				(n, {owner, size}) =>
+					n +
+					(currentUser && currentUser.user.username === owner ?
+						size :
+						0),
+				0
+			)
+		)
+	);
 
 	/** Total storage limit. */
-	public readonly fileStorageLimit				=
-		combineLatest([
-			this.accountSettingsService.plan,
-			this.accountDatabaseService.watch(
+	public readonly fileStorageLimit = combineLatest([
+		this.accountSettingsService.plan,
+		this.accountDatabaseService
+			.watch(
 				'storageCap',
 				NumberProto,
 				SecurityModels.unprotected,
 				undefined,
 				undefined,
 				this.subscriptions
-			).pipe(map(o =>
-				o.value
-			))
-		]).pipe(map(([plan, storageCap]) => convertStorageUnitsToBytes(
-			storageCap || this.configService.planConfig[plan].storageCapGB,
-			StorageUnits.gb
-		)))
-	;
+			)
+			.pipe(map(o => o.value))
+	]).pipe(
+		map(([plan, storageCap]) =>
+			convertStorageUnitsToBytes(
+				storageCap || this.configService.planConfig[plan].storageCapGB,
+				StorageUnits.gb
+			)
+		)
+	);
 
 	/** List of file record types. */
-	public readonly fileTypes: AccountFileRecord.RecordTypes[]	= [
+	public readonly fileTypes: AccountFileRecord.RecordTypes[] = [
 		AccountFileRecord.RecordTypes.Appointment,
 		AccountFileRecord.RecordTypes.Doc,
 		AccountFileRecord.RecordTypes.EhrApiKey,
@@ -410,9 +465,11 @@ export class AccountFilesService extends BaseProvider {
 	];
 
 	/** Incoming files. */
-	public readonly incomingFiles	=
-		toBehaviorSubject<(IAccountFileRecord&IAccountFileReference)[]>(
-			this.accountDatabaseService.watchList(
+	public readonly incomingFiles = toBehaviorSubject<
+		(IAccountFileRecord & IAccountFileReference)[]
+	>(
+		this.accountDatabaseService
+			.watchList(
 				'incomingFiles',
 				BinaryProto,
 				SecurityModels.unprotected,
@@ -420,121 +477,163 @@ export class AccountFilesService extends BaseProvider {
 				undefined,
 				false,
 				this.subscriptions
-			).pipe(mergeMap(async arr =>
-				(await Promise.all(arr.map(async ({value}) => getOrSetDefaultAsync(
-					this.incomingFileCache,
-					value,
-					async () => {
-						try {
-							const currentUser	= this.accountDatabaseService.currentUser.value;
+			)
+			.pipe(
+				mergeMap(async arr =>
+					(await Promise.all(
+						arr.map(async ({value}) =>
+							getOrSetDefaultAsync(
+								this.incomingFileCache,
+								value,
+								async () => {
+									try {
+										const currentUser = this
+											.accountDatabaseService.currentUser
+											.value;
 
-							if (!currentUser) {
-								return this.nonexistentFile;
-							}
+										if (!currentUser) {
+											return this.nonexistentFile;
+										}
 
-							const referenceContainer	= await deserialize(
-								AccountFileReferenceContainer,
-								await this.potassiumService.box.open(
-									value,
-									currentUser.keys.encryptionKeyPair
-								)
-							);
+										const referenceContainer = await deserialize(
+											AccountFileReferenceContainer,
+											await this.potassiumService.box.open(
+												value,
+												currentUser.keys
+													.encryptionKeyPair
+											)
+										);
 
-							let record: IAccountFileRecord;
-							let reference: IAccountFileReference;
+										let record: IAccountFileRecord;
+										let reference: IAccountFileReference;
 
-							if (referenceContainer.anonymousShare) {
-								record	= referenceContainer.anonymousShare.accountFileRecord;
-								record.wasAnonymousShare	= true;
+										if (referenceContainer.anonymousShare) {
+											record =
+												referenceContainer
+													.anonymousShare
+													.accountFileRecord;
+											record.wasAnonymousShare = true;
 
-								reference	= {
-									id: record.id,
-									key: referenceContainer.anonymousShare.key,
-									owner: currentUser.user.username
-								};
-							}
-							else if (referenceContainer.signedShare) {
-								reference	= await deserialize(
-									AccountFileReference,
-									await this.potassiumService.sign.open(
-										referenceContainer.signedShare.accountFileReference,
-										(await this.accountDatabaseService.getUserPublicKeys(
-											referenceContainer.signedShare.owner
-										)).signing
-									)
-								);
+											reference = {
+												id: record.id,
+												key:
+													referenceContainer
+														.anonymousShare.key,
+												owner: currentUser.user.username
+											};
+										}
+										else if (
+											referenceContainer.signedShare
+										) {
+											reference = await deserialize(
+												AccountFileReference,
+												await this.potassiumService.sign.open(
+													referenceContainer
+														.signedShare
+														.accountFileReference,
+													(await this.accountDatabaseService.getUserPublicKeys(
+														referenceContainer
+															.signedShare.owner
+													)).signing
+												)
+											);
 
-								record	= await this.accountDatabaseService.getItem(
-									`users/${reference.owner}/fileRecords/${reference.id}`,
-									AccountFileRecord,
-									undefined,
-									reference.key
-								);
-							}
-							else {
-								return this.nonexistentFile;
-							}
+											record = await this.accountDatabaseService.getItem(
+												`users/${reference.owner}/fileRecords/${reference.id}`,
+												AccountFileRecord,
+												undefined,
+												reference.key
+											);
+										}
+										else {
+											return this.nonexistentFile;
+										}
 
-							const incomingFile	= {
-								id: record.id,
-								key: reference.key,
-								mediaType: record.mediaType,
-								name: record.name,
-								owner: reference.owner,
-								recordType: record.recordType,
-								size: record.size,
-								timestamp: record.timestamp,
-								wasAnonymousShare: record.wasAnonymousShare
-							};
+										const incomingFile = {
+											id: record.id,
+											key: reference.key,
+											mediaType: record.mediaType,
+											name: record.name,
+											owner: reference.owner,
+											recordType: record.recordType,
+											size: record.size,
+											timestamp: record.timestamp,
+											wasAnonymousShare:
+												record.wasAnonymousShare
+										};
 
-							if (await this.hasFile(incomingFile.id)) {
-								await this.acceptIncomingFile(incomingFile, false);
-								return this.nonexistentFile;
-							}
+										if (
+											await this.hasFile(incomingFile.id)
+										) {
+											await this.acceptIncomingFile(
+												incomingFile,
+												false
+											);
+											return this.nonexistentFile;
+										}
 
-							return incomingFile;
-						}
-						catch {
-							return this.nonexistentFile;
-						}
-					}
-				)))).
-					filter(file => file !== this.nonexistentFile)
-			)),
-			[]
-		)
-	;
+										return incomingFile;
+									}
+									catch {
+										return this.nonexistentFile;
+									}
+								}
+							)
+						)
+					)).filter(file => file !== this.nonexistentFile)
+				)
+			),
+		[]
+	);
 
 	/**
 	 * Incoming files filtered by record type.
 	 * @see files
 	 */
-	public readonly incomingFilesFiltered	= {
+	public readonly incomingFilesFiltered = {
 		appointments: this.filterFiles(
 			this.incomingFiles,
 			AccountFileRecord.RecordTypes.Appointment
 		),
-		docs: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Doc),
-		ehrApiKeys: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.EhrApiKey),
-		files: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.File),
-		forms: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Form),
+		docs: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.Doc
+		),
+		ehrApiKeys: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.EhrApiKey
+		),
+		files: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.File
+		),
+		forms: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.Form
+		),
 		messagingGroups: this.filterFiles(
 			this.incomingFiles,
 			AccountFileRecord.RecordTypes.MessagingGroup
 		),
-		notes: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Note),
+		notes: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.Note
+		),
 		redoxPatients: this.filterFiles(
 			this.incomingFiles,
 			AccountFileRecord.RecordTypes.RedoxPatient
 		),
-		wallets: this.filterFiles(this.incomingFiles, AccountFileRecord.RecordTypes.Wallet)
+		wallets: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.Wallet
+		)
 	};
 
 	/**
 	 * Includes downloaded data, where applicable.
 	 * @see incomingFilesFiltered
 	 */
-	public readonly incomingFilesFilteredWithData	= {
+	public readonly incomingFilesFilteredWithData = {
 		appointments: this.getFiles(
 			this.incomingFilesFiltered.appointments,
 			AccountFileRecord.RecordTypes.Appointment,
@@ -573,57 +672,66 @@ export class AccountFilesService extends BaseProvider {
 	};
 
 	/** Indicates whether the first load has completed. */
-	public readonly initiated				= new BehaviorSubject<boolean>(false);
+	public readonly initiated = new BehaviorSubject<boolean>(false);
 
 	/** Determines whether file should be treated as multimedia. */
-	public readonly isMedia					= memoize(async (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference
-	)) =>
-		this.fileService.isMedia(await this.getFile(id))
+	public readonly isMedia = memoize(
+		async (
+			id:
+				| string
+				| IAccountFileRecord
+				| (IAccountFileRecord & IAccountFileReference)
+		) => this.fileService.isMedia(await this.getFile(id))
 	);
 
 	/** Maximum number of characters in a file name. */
-	public readonly maxNameLength: number	= 80;
+	public readonly maxNameLength: number = 80;
 
 	/** Returns a snippet of a note to use as a preview. */
-	public readonly noteSnippet				= memoize((id: string) => toBehaviorSubject<string>(
-		(async () => {
-			const limit		= 75;
-			const file		= await this.getFile(id);
-			const content	= this.deltaToString(
-				msgpack.decode(
-					await this.accountDatabaseService.getItem(
-						`users/${file.owner}/files/${id}`,
-						BinaryProto,
-						undefined,
-						file.key
+	public readonly noteSnippet = memoize((id: string) =>
+		toBehaviorSubject<string>(
+			async () => {
+				const limit = 75;
+				const file = await this.getFile(id);
+				const content = this.deltaToString(
+					msgpack.decode(
+						await this.accountDatabaseService.getItem(
+							`users/${file.owner}/files/${id}`,
+							BinaryProto,
+							undefined,
+							file.key
+						)
 					)
-				)
-			);
+				);
 
-			return content.length > limit ?
-				`${content.substr(0, limit)}...` :
-				content
-			;
-		}),
-		'...',
-		this.subscriptions
-	));
+				return content.length > limit ?
+					`${content.substr(0, limit)}...` :
+					content;
+			},
+			'...',
+			this.subscriptions
+		)
+	);
 
 	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner				= new BehaviorSubject<boolean>(true);
+	public readonly showSpinner = new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether spinner for uploads should be displayed. */
-	public readonly uploadSpinner			= this.showSpinner.pipe(skip(1));
+	public readonly uploadSpinner = this.showSpinner.pipe(skip(1));
 
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
-		return htmlToText.fromString(new QuillDeltaToHtmlConverter(delta.ops || []).convert());
+		return htmlToText.fromString(
+			new QuillDeltaToHtmlConverter(delta.ops || []).convert()
+		);
 	}
 
 	/** @ignore */
 	private downloadItem<T> (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		proto: IProto<T>,
 		securityModel?: SecurityModels
 	) : {
@@ -632,158 +740,200 @@ export class AccountFilesService extends BaseProvider {
 	} {
 		this.showSpinner.next(true);
 
-		const filePromise	= this.getFile(id);
+		const filePromise = this.getFile(id);
 
-		const {progress, result}	= this.accountDatabaseService.downloadItem(
+		const {progress, result} = this.accountDatabaseService.downloadItem(
 			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-			(<any> proto) === DataURIProto ?
-				<any> new DataURIProto(filePromise.then(file => file.mediaType)) :
-				proto
-			,
+			<any> proto === DataURIProto ?
+				<any> (
+						new DataURIProto(
+							filePromise.then(file => file.mediaType)
+						)
+				  ) :
+				proto,
 			securityModel,
 			filePromise.then(file => file.key)
 		);
 
-		return {progress, result: result.then(async o => {
-			this.showSpinner.next(false);
+		return {
+			progress,
+			result: result.then(async o => {
+				this.showSpinner.next(false);
 
-			return o.value instanceof Blob ?
-				<any> new Blob([o.value], {type: (await filePromise).mediaType}) :
-				o.value
-			;
-		})};
+				return o.value instanceof Blob ?
+					<any> (
+							new Blob([o.value], {
+								type: (await filePromise).mediaType
+							})
+					  ) :
+					o.value;
+			})
+		};
 	}
 
 	/** @ignore */
 	private filterFiles (
-		filesList: Observable<(IAccountFileRecord&{owner: string})[]>,
+		filesList: Observable<(IAccountFileRecord & {owner: string})[]>,
 		filterRecordTypes: AccountFileRecord.RecordTypes
 	) : Observable<
-		(IAccountFileRecord&{
+		(IAccountFileRecord & {
 			data: undefined;
 			owner: string;
 			record: IAccountFileRecord;
 		})[]
 	> {
-		return filesList.pipe(map(files => files.filter(({owner, recordType, wasAnonymousShare}) =>
-			!!owner &&
-			recordType === filterRecordTypes &&
-			!(this.config[recordType].blockAnonymous && wasAnonymousShare)
-		).map(record => ({
-			...record,
-			data: undefined,
-			record
-		}))));
+		return filesList.pipe(
+			map(files =>
+				files
+					.filter(
+						({owner, recordType, wasAnonymousShare}) =>
+							!!owner &&
+							recordType === filterRecordTypes &&
+							!(
+								this.config[recordType].blockAnonymous &&
+								wasAnonymousShare
+							)
+					)
+					.map(record => ({
+						...record,
+						data: undefined,
+						record
+					}))
+			)
+		);
 	}
 
 	/** @ignore */
 	private getFiles<T, TRecord extends {owner: string}> (
-		filesList: Observable<(IAccountFileRecord&TRecord)[]>,
+		filesList: Observable<(IAccountFileRecord & TRecord)[]>,
 		recordType: AccountFileRecord.RecordTypes,
 		_CONFIG: {proto?: IProto<T>}
-	) : () => Observable<{
-		data: T;
-		owner: string;
-		record: IAccountFileRecord;
-	}[]> {
-		return memoize(() => toBehaviorSubject<{
+	) : () => Observable<
+		{
 			data: T;
 			owner: string;
 			record: IAccountFileRecord;
-		}[]>(
-			filesList.pipe(
-				mergeMap(records => observableAll(records.map(record =>
-					this.watchFileData(record, recordType).pipe(map(data => ({
-						data,
-						owner: record.owner,
-						record
-					})))
-				))),
-				map(files =>
-					<any> files.filter(o => o.data !== undefined)
-				)
-			),
-			[]
-		));
+		}[]
+	> {
+		return memoize(() =>
+			toBehaviorSubject<
+				{
+					data: T;
+					owner: string;
+					record: IAccountFileRecord;
+				}[]
+			>(
+				filesList.pipe(
+					mergeMap(records =>
+						observableAll(
+							records.map(record =>
+								this.watchFileData(record, recordType).pipe(
+									map(data => ({
+										data,
+										owner: record.owner,
+										record
+									}))
+								)
+							)
+						)
+					),
+					map(files => <any> files.filter(o => o.data !== undefined))
+				),
+				[]
+			)
+		);
 	}
 
 	/** @ignore */
 	private watchFileData<T> (
-		id: string|IAccountFileRecord,
+		id: string | IAccountFileRecord,
 		recordType: AccountFileRecord.RecordTypes
-	) : Observable<T|undefined> {
-		const {proto, securityModel}	= this.config[recordType];
+	) : Observable<T | undefined> {
+		const {proto, securityModel} = this.config[recordType];
 
 		return getOrSetDefault(
 			this.watchFileDataCache,
 			typeof id === 'string' ? id : id.id,
 			() => {
-				const filePromise	= this.getFile(id);
+				const filePromise = this.getFile(id);
 
-				return this.accountDatabaseService.watch(
-					filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-					<any> proto,
-					securityModel,
-					filePromise.then(file => file.key),
-					undefined,
-					this.subscriptions
-				).pipe(map(o =>
-					isNaN(o.timestamp) ? undefined : o.value
-				));
+				return this.accountDatabaseService
+					.watch(
+						filePromise.then(
+							file => `users/${file.owner}/files/${file.id}`
+						),
+						<any> proto,
+						securityModel,
+						filePromise.then(file => file.key),
+						undefined,
+						this.subscriptions
+					)
+					.pipe(map(o => (isNaN(o.timestamp) ? undefined : o.value)));
 			}
 		);
 	}
 
 	/** Accepts or rejects incoming file. */
 	public async acceptIncomingFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
-		options: boolean|{copy?: boolean; name?: string; reject?: boolean} = true,
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
+		options:
+			| boolean
+			| {copy?: boolean; name?: string; reject?: boolean} = true,
 		metadata?: string,
-		data?: AccountFile|string
+		data?: AccountFile | string
 	) : Promise<void> {
 		if (typeof options === 'boolean') {
-			options	= {reject: !options};
+			options = {reject: !options};
 		}
 
-		const incomingFile				=
+		const incomingFile =
 			typeof id === 'object' && 'key' in id ?
 				id :
 			typeof id === 'object' ?
 				this.incomingFiles.value.find(o => o.id === id.id) :
-				this.incomingFiles.value.find(o => o.id === id)
-		;
+				this.incomingFiles.value.find(o => o.id === id);
 
 		if (incomingFile === undefined) {
 			throw new Error('Incoming file not found.');
 		}
 
-		const fileConfig				= this.config[incomingFile.recordType];
+		const fileConfig = this.config[incomingFile.recordType];
 
-		const promises: Promise<any>[]	= [
-			this.accountDatabaseService.removeItem(`incomingFiles/${incomingFile.id}`)
+		const promises: Promise<any>[] = [
+			this.accountDatabaseService.removeItem(
+				`incomingFiles/${incomingFile.id}`
+			)
 		];
 
 		if (options.name) {
-			incomingFile.name	= options.name;
+			incomingFile.name = options.name;
 		}
 
 		if (incomingFile.wasAnonymousShare) {
-			options.copy	= true;
+			options.copy = true;
 		}
 
 		if (!options.reject && !options.copy) {
-			promises.push(this.accountDatabaseService.setItem<IAccountFileReference>(
-				`fileReferences/${incomingFile.id}`,
-				AccountFileReference,
-				{
-					id: incomingFile.id,
-					key: incomingFile.key,
-					metadata,
-					owner: incomingFile.owner
-				}
-			));
+			promises.push(
+				this.accountDatabaseService.setItem<IAccountFileReference>(
+					`fileReferences/${incomingFile.id}`,
+					AccountFileReference,
+					{
+						id: incomingFile.id,
+						key: incomingFile.key,
+						metadata,
+						owner: incomingFile.owner
+					}
+				)
+			);
 
-			if (incomingFile.recordType === AccountFileRecord.RecordTypes.Appointment) {
+			if (
+				incomingFile.recordType ===
+				AccountFileRecord.RecordTypes.Appointment
+			) {
 				/*
 				Temporarily commented out pending final appointments architecture
 
@@ -814,23 +964,25 @@ export class AccountFilesService extends BaseProvider {
 			}
 		}
 		else if (!options.reject && options.copy) {
-			const file	= data || (
-				incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
-					(await this.getDoc(incomingFile).asyncList.getValue()) :
+			const file =
+				data ||
+				(incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
+					await this.getDoc(incomingFile).asyncList.getValue() :
 				fileConfig.proto ?
 					await this.downloadItem<any>(
-						incomingFile,
-						fileConfig.proto,
-						fileConfig.securityModel
-					).result :
-					undefined
-			);
+							incomingFile,
+							fileConfig.proto,
+							fileConfig.securityModel
+					  ).result :
+					undefined);
 
 			if (!file) {
 				throw new Error('Cannot get file for copying.');
 			}
 
-			promises.push(this.upload(incomingFile.name, file, undefined, metadata).result);
+			promises.push(
+				this.upload(incomingFile.name, file, undefined, metadata).result
+			);
 		}
 
 		if (incomingFile.wasAnonymousShare) {
@@ -841,78 +993,102 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Downloads and saves file. */
-	public downloadAndSave (id: string) : {
+	public downloadAndSave (
+		id: string
+	) : {
 		progress: Observable<number>;
 		result: Promise<void>;
 	} {
-		const {progress, result}	= this.downloadItem(id, BinaryProto);
+		const {progress, result} = this.downloadItem(id, BinaryProto);
 
 		return {
 			progress,
 			result: (async () => {
-				const file	= await this.getFile(id);
+				const file = await this.getFile(id);
 
-				await saveFile(
-					await result,
-					file.name,
-					file.mediaType
-				);
+				await saveFile(await result, file.name, file.mediaType);
 			})()
 		};
 	}
 
 	/** Downloads and returns file. */
 	public downloadFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.Appointment
 	) : {
 		progress: Observable<number>;
 		result: Promise<IAppointment>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.Doc
 	) : never;
 	public downloadFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.EhrApiKey
 	) : {
 		progress: Observable<number>;
 		result: Promise<IEhrApiKey>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
-		recordType: AccountFileRecord.RecordTypes.File|AccountFileRecord.RecordTypes.Note
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
+		recordType:
+			| AccountFileRecord.RecordTypes.File
+			| AccountFileRecord.RecordTypes.Note
 	) : {
 		progress: Observable<number>;
 		result: Promise<Uint8Array>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.Form
 	) : {
 		progress: Observable<number>;
 		result: Promise<IForm>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.MessagingGroup
 	) : {
 		progress: Observable<number>;
 		result: Promise<IAccountMessagingGroup>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes.RedoxPatient
 	) : {
 		progress: Observable<number>;
 		result: Promise<IRedoxPatient>;
 	};
 	public downloadFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType: AccountFileRecord.RecordTypes
 	) : any {
-		const fileConfig	= this.config[recordType];
+		const fileConfig = this.config[recordType];
 
 		if (!fileConfig || !fileConfig.proto) {
 			throw new Error(
@@ -920,19 +1096,27 @@ export class AccountFilesService extends BaseProvider {
 			);
 		}
 
-		return this.downloadItem<any>(id, fileConfig.proto, fileConfig.securityModel);
+		return this.downloadItem<any>(
+			id,
+			fileConfig.proto,
+			fileConfig.securityModel
+		);
 	}
 
 	/** Downloads file and returns as data URI. */
-	public downloadURI (id: string|IAccountFileRecord) : {
+	public downloadURI (
+		id: string | IAccountFileRecord
+	) : {
 		progress: Observable<number>;
-		result: Promise<SafeUrl|string>;
+		result: Promise<SafeUrl | string>;
 	} {
 		return this.downloadItem(id, DataURIProto);
 	}
 
 	/** Downloads file and returns wallet. */
-	public downloadWallet (id: string|IAccountFileRecord) : {
+	public downloadWallet (
+		id: string | IAccountFileRecord
+	) : {
 		progress: Observable<number>;
 		result: Promise<IWallet>;
 	} {
@@ -940,74 +1124,114 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Gets a doc in the form of an async list. */
-	public getDoc (id: string|Async<IAccountFileRecord>) : {
-		asyncList: IAsyncList<IQuillDelta|IQuillRange>;
+	public getDoc (
+		id: string | Async<IAccountFileRecord>
+	) : {
+		asyncList: IAsyncList<IQuillDelta | IQuillRange>;
 		deltas: Observable<IQuillDelta>;
 		selections: Observable<IQuillRange>;
 	} {
-		const file	= typeof id === 'string' ?
-			Promise.all([id, this.getFile(id)]) :
-			awaitAsync(id).then(
-				async (o) : Promise<[string, IAccountFileRecord&IAccountFileReference]> =>
-					[o.id, await this.getFile(o)]
-			)
-		;
+		const file =
+			typeof id === 'string' ?
+				Promise.all([id, this.getFile(id)]) :
+				awaitAsync(id).then(
+					async (
+						o
+					): Promise<
+						[string, IAccountFileRecord & IAccountFileReference]
+					> => [o.id, await this.getFile(o)]
+				);
 
-		const asyncList	= this.accountDatabaseService.getAsyncList(
+		const asyncList = this.accountDatabaseService.getAsyncList(
 			file.then(([fileID, {owner}]) => `users/${owner}/docs/${fileID}`),
 			BinaryProto,
 			undefined,
 			file.then(([_, {key}]) => key)
 		);
 
-		const docAsyncList: IAsyncList<IQuillDelta|IQuillRange>	= {
+		const docAsyncList: IAsyncList<IQuillDelta | IQuillRange> = {
 			clear: async () => asyncList.clear(),
 			getFlatValue: async () => docAsyncList.getValue(),
-			getValue: async () => (await asyncList.getValue()).map(bytes => msgpack.decode(bytes)),
+			getValue: async () =>
+				(await asyncList.getValue()).map(bytes =>
+					msgpack.decode(bytes)
+				),
 			lock: async (f, reason) => asyncList.lock(f, reason),
 			pushItem: async delta => asyncList.pushItem(msgpack.encode(delta)),
 			setValue: async deltas =>
-				asyncList.setValue(deltas.map(delta => msgpack.encode(delta)))
-			,
-			subscribeAndPop: f => asyncList.subscribeAndPop(bytes => f(msgpack.decode(bytes))),
-			updateValue: async f => asyncList.updateValue(async bytesArray =>
-				(await f(bytesArray.map(bytes => msgpack.decode(bytes)))).map(delta =>
-					msgpack.encode(delta)
-				)
-			),
+				asyncList.setValue(deltas.map(delta => msgpack.encode(delta))),
+			subscribeAndPop: f =>
+				asyncList.subscribeAndPop(bytes => f(msgpack.decode(bytes))),
+			updateValue: async f =>
+				asyncList.updateValue(async bytesArray =>
+					(await f(
+						bytesArray.map(bytes => msgpack.decode(bytes))
+					)).map(delta => msgpack.encode(delta))
+				),
 			watch: memoize(() =>
-				asyncList.watch().pipe(map(deltas => deltas.map(delta => msgpack.decode(delta))))
+				asyncList
+					.watch()
+					.pipe(
+						map(deltas =>
+							deltas.map(delta => msgpack.decode(delta))
+						)
+					)
 			),
 			watchFlat: (_OMIT_DUPLICATES?: boolean) => docAsyncList.watch(),
 			watchPushes: memoize(() =>
-				asyncList.watchPushes().pipe(skip(1), map(delta =>
-					delta.length > 0 ? msgpack.decode(delta) : {}
-				))
+				asyncList.watchPushes().pipe(
+					skip(1),
+					map(delta =>
+						delta.length > 0 ? msgpack.decode(delta) : {}
+					)
+				)
 			)
 		};
 
-		const watchers	= docAsyncList.getValue().then(deltas => {
-			const pushes	= docAsyncList.watchPushes().pipe(skip(deltas.length));
+		const watchers = docAsyncList.getValue().then(deltas => {
+			const pushes = docAsyncList.watchPushes().pipe(skip(deltas.length));
 
 			return {
 				deltas: <Observable<IQuillDelta>> concat(
 					of({
 						clientID: '',
-						ops: deltas.length < 1 ? [] : deltas.
-							filter(o => o && typeof (<any> o).index !== 'number').
-							map<DeltaOperation[]|undefined>(o => (<any> o).ops).
-							reduce<Delta>(
-								(delta, ops) => ops ? delta.compose(new Delta(ops)) : delta,
-								new Delta()
-							).ops || []
+						ops:
+							deltas.length < 1 ?
+								[] :
+								deltas
+									.filter(
+										o =>
+											o &&
+											typeof (<any> o).index !== 'number'
+									)
+									.map<DeltaOperation[] | undefined>(
+										o => (<any> o).ops
+									)
+									.reduce<Delta>(
+										(delta, ops) =>
+											ops ?
+												delta.compose(new Delta(ops)) :
+												delta,
+										new Delta()
+									).ops || []
 					}),
-					pushes.pipe(filter((o: any) =>
-						o && typeof o.index !== 'number' && o.ops !== undefined
-					))
+					pushes.pipe(
+						filter(
+							(o: any) =>
+								o &&
+								typeof o.index !== 'number' &&
+								o.ops !== undefined
+						)
+					)
 				),
-				selections: <Observable<IQuillRange>> pushes.pipe(
-					filter((o: any) =>
-						o && typeof o.index === 'number' && typeof o.length === 'number'
+				selections: <Observable<IQuillRange>> (
+					pushes.pipe(
+						filter(
+							(o: any) =>
+								o &&
+								typeof o.index === 'number' &&
+								typeof o.length === 'number'
+						)
 					)
 				)
 			};
@@ -1031,7 +1255,9 @@ export class AccountFilesService extends BaseProvider {
 	 * TODO: Support cases where user has multiple EHR API keys to choose from.
 	 */
 	public async getEhrApiKey () : Promise<IEhrApiKey> {
-		const ehrApiKeys	= await this.filesListFiltered.ehrApiKeys.pipe(take(1)).toPromise();
+		const ehrApiKeys = await this.filesListFiltered.ehrApiKeys
+			.pipe(take(1))
+			.toPromise();
 
 		if (ehrApiKeys.length < 1) {
 			throw new Error('No EHR API keys.');
@@ -1040,30 +1266,39 @@ export class AccountFilesService extends BaseProvider {
 			throw new Error('More than one EHR API key.');
 		}
 
-		return this.downloadFile(ehrApiKeys[0], AccountFileRecord.RecordTypes.EhrApiKey).result;
+		return this.downloadFile(
+			ehrApiKeys[0],
+			AccountFileRecord.RecordTypes.EhrApiKey
+		).result;
 	}
 
 	/** Gets the specified file record. */
 	public async getFile (
-		id: string|IAccountFileRecord|(IAccountFileRecord&IAccountFileReference),
+		id:
+			| string
+			| IAccountFileRecord
+			| (IAccountFileRecord & IAccountFileReference),
 		recordType?: AccountFileRecord.RecordTypes
-	) : Promise<IAccountFileRecord&IAccountFileReference> {
+	) : Promise<IAccountFileRecord & IAccountFileReference> {
 		if (typeof id !== 'string') {
-			const maybeFileReference: any	= id;
-			if (maybeFileReference.owner !== undefined && maybeFileReference.key !== undefined) {
+			const maybeFileReference: any = id;
+			if (
+				maybeFileReference.owner !== undefined &&
+				maybeFileReference.key !== undefined
+			) {
 				return maybeFileReference;
 			}
-			id	= id.id;
+			id = id.id;
 		}
 
 		await this.accountDatabaseService.getCurrentUser();
 
-		const reference	= await this.accountDatabaseService.getItem(
+		const reference = await this.accountDatabaseService.getItem(
 			`fileReferences/${id}`,
 			AccountFileReference
 		);
 
-		const record	= await this.accountDatabaseService.getItem(
+		const record = await this.accountDatabaseService.getItem(
 			`users/${reference.owner}/fileRecords/${reference.id}`,
 			AccountFileRecord,
 			undefined,
@@ -1082,27 +1317,31 @@ export class AccountFilesService extends BaseProvider {
 		file: AccountFile,
 		{recordType}: {recordType: AccountFileRecord.RecordTypes}
 	) : Promise<number> {
-		const fileConfig	= this.config[recordType];
+		const fileConfig = this.config[recordType];
 
-		return (
-			fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
-				(
-					file instanceof Array ?
-						file.map(o => msgpack.encode(o).length).reduce((a, b) => a + b, 0) :
-						0
-				) :
-			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
-				(file instanceof Blob ? file.size : 'mediaType' in file ? file.data.length : NaN) :
-			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
-				msgpack.encode(<IQuillDelta> file).length :
-			fileConfig.proto ?
-				(await serialize<any>(fileConfig.proto, file)).length :
-				NaN
-		);
+		return fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
+			file instanceof Array ?
+				file
+						.map(o => msgpack.encode(o).length)
+						.reduce((a, b) => a + b, 0) :
+			0 :
+		fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
+			file instanceof Blob ?
+				file.size :
+			'mediaType' in file ?
+				file.data.length :
+			NaN :
+		fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
+			msgpack.encode(<IQuillDelta> file).length :
+		fileConfig.proto ?
+			(await serialize<any>(fileConfig.proto, file)).length :
+			NaN;
 	}
 
 	/** Gets file type. */
-	public getFileType (file: AccountFile|IAccountFileRecord) : AccountFileRecord.RecordTypes {
+	public getFileType (
+		file: AccountFile | IAccountFileRecord
+	) : AccountFileRecord.RecordTypes {
 		if ('recordType' in file) {
 			return file.recordType;
 		}
@@ -1144,7 +1383,7 @@ export class AccountFilesService extends BaseProvider {
 				return 'account_balance_wallet';
 		}
 
-		const typeCategory	= mediaType.split('/')[0];
+		const typeCategory = mediaType.split('/')[0];
 
 		switch (typeCategory) {
 			case 'audio':
@@ -1176,18 +1415,19 @@ export class AccountFilesService extends BaseProvider {
 		group: IAccountMessagingGroup;
 		id: string;
 	}> {
-		const group	= {
+		const group = {
 			castleSessionID: uuid(true),
 			description,
 			mailUIDefault,
 			title,
 			usernames: [
 				...usernames,
-				...(
-					this.accountDatabaseService.currentUser.value ?
-						[this.accountDatabaseService.currentUser.value.user.username] :
-						[]
-				)
+				...(this.accountDatabaseService.currentUser.value ?
+					[
+							this.accountDatabaseService.currentUser.value.user
+								.username
+					  ] :
+					[])
 			]
 		};
 
@@ -1210,8 +1450,8 @@ export class AccountFilesService extends BaseProvider {
 	public async openMedia (id: string) : Promise<boolean> {
 		this.showSpinner.next(true);
 
-		const file		= await this.getFile(id);
-		const isMedia	= await this.isMedia(file);
+		const file = await this.getFile(id);
+		const isMedia = await this.isMedia(file);
 
 		if (isMedia) {
 			this.dialogService.media({
@@ -1226,24 +1466,26 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Removes a file. */
 	public async remove (
-		id: string|Async<IAccountFileRecord>,
+		id: string | Async<IAccountFileRecord>,
 		confirmAndRedirect: boolean = true
 	) : Promise<void> {
 		if (typeof id !== 'string') {
-			id	= await awaitAsync(id);
+			id = await awaitAsync(id);
 		}
 
-		const file	= await this.getFile(id);
+		const file = await this.getFile(id);
 
 		if (typeof id !== 'string') {
-			id	= id.id;
+			id = id.id;
 		}
 
 		if (confirmAndRedirect) {
-			if (await this.dialogService.confirm({
-				content: `${this.stringsService.deleteMessage} ${file.name}?`,
-				title: this.stringsService.deleteConfirm
-			})) {
+			if (
+				await this.dialogService.confirm({
+					content: `${this.stringsService.deleteMessage} ${file.name}?`,
+					title: this.stringsService.deleteConfirm
+				})
+			) {
 				this.router.navigate([this.config[file.recordType].route]);
 				await sleep();
 			}
@@ -1252,19 +1494,28 @@ export class AccountFilesService extends BaseProvider {
 			}
 		}
 
-		const promises	= [
+		const promises = [
 			this.accountDatabaseService.removeItem(`fileReferences/${id}`)
 		];
 
 		if (
 			this.accountDatabaseService.currentUser.value &&
-			file.owner === this.accountDatabaseService.currentUser.value.user.username
+			file.owner ===
+				this.accountDatabaseService.currentUser.value.user.username
 		) {
-			promises.push(...[
-				this.accountDatabaseService.removeItem(`users/${file.owner}/docs/${id}`),
-				this.accountDatabaseService.removeItem(`users/${file.owner}/files/${id}`),
-				this.accountDatabaseService.removeItem(`users/${file.owner}/fileRecords/${id}`)
-			]);
+			promises.push(
+				...[
+					this.accountDatabaseService.removeItem(
+						`users/${file.owner}/docs/${id}`
+					),
+					this.accountDatabaseService.removeItem(
+						`users/${file.owner}/files/${id}`
+					),
+					this.accountDatabaseService.removeItem(
+						`users/${file.owner}/fileRecords/${id}`
+					)
+				]
+			);
 		}
 
 		await Promise.all(promises);
@@ -1272,54 +1523,57 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Shares file with another user. */
 	public async shareFile (
-		id: string|AccountFileReferenceContainer.IAnonymousShare,
+		id: string | AccountFileReferenceContainer.IAnonymousShare,
 		username: string
 	) : Promise<void> {
 		if (
 			this.accountDatabaseService.currentUser.value &&
-			this.accountDatabaseService.currentUser.value.user.username === username
+			this.accountDatabaseService.currentUser.value.user.username ===
+				username
 		) {
 			return;
 		}
 
 		let accountFileReferenceContainer: IAccountFileReferenceContainer;
 
-		const fileType	=
+		const fileType =
 			typeof id !== 'string' ?
 				id.accountFileRecord.recordType :
-				this.accountDatabaseService.getItem(
-					`fileReferences/${id}`,
-					AccountFileReference
-				).then(async o =>
-					this.accountDatabaseService.getItem(
-						`users/${o.owner}/fileRecords/${id}`,
-						AccountFileRecord,
-						undefined,
-						o.key
+				this.accountDatabaseService
+					.getItem(`fileReferences/${id}`, AccountFileReference)
+					.then(async o =>
+						this.accountDatabaseService.getItem(
+							`users/${o.owner}/fileRecords/${id}`,
+							AccountFileRecord,
+							undefined,
+							o.key
+						)
 					)
-				).then(o =>
-					o.recordType
-				)
-		;
+					.then(o => o.recordType);
 
 		/* Anonymous */
 		if (typeof id !== 'string') {
-			accountFileReferenceContainer	= {anonymousShare: id};
-			id	= id.accountFileRecord.id;
+			accountFileReferenceContainer = {anonymousShare: id};
+			id = id.accountFileRecord.id;
 		}
 		/* Non-anonymous/signed */
 		else if (this.accountDatabaseService.currentUser.value) {
-			const data	=
-				await this.accountDatabaseService.getItem(`fileReferences/${id}`, BinaryProto)
-			;
+			const data = await this.accountDatabaseService.getItem(
+				`fileReferences/${id}`,
+				BinaryProto
+			);
 
-			accountFileReferenceContainer	= {signedShare: {
-				accountFileReference: await this.potassiumService.sign.sign(
-					data,
-					this.accountDatabaseService.currentUser.value.keys.signingKeyPair.privateKey
-				),
-				owner: this.accountDatabaseService.currentUser.value.user.username
-			}};
+			accountFileReferenceContainer = {
+				signedShare: {
+					accountFileReference: await this.potassiumService.sign.sign(
+						data,
+						this.accountDatabaseService.currentUser.value.keys
+							.signingKeyPair.privateKey
+					),
+					owner: this.accountDatabaseService.currentUser.value.user
+						.username
+				}
+			};
 		}
 		/* Invalid attempt to perform signed share */
 		else {
@@ -1331,8 +1585,13 @@ export class AccountFilesService extends BaseProvider {
 				`users/${username}/incomingFiles/${id}`,
 				BinaryProto,
 				await this.potassiumService.box.seal(
-					await serialize(AccountFileReferenceContainer, accountFileReferenceContainer),
-					(await this.accountDatabaseService.getUserPublicKeys(username)).encryption
+					await serialize(
+						AccountFileReferenceContainer,
+						accountFileReferenceContainer
+					),
+					(await this.accountDatabaseService.getUserPublicKeys(
+						username
+					)).encryption
 				)
 			);
 		}
@@ -1351,13 +1610,13 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Creates a dialog to share a file with another user. */
 	public async shareFilePrompt (file: AccountFileShare) : Promise<void> {
-		const closeFunction	= resolvable<() => void>();
+		const closeFunction = resolvable<() => void>();
 
 		await this.dialogService.baseDialog(
 			await AccountFilesService.accountFileSharingComponent.promise,
 			o => {
-				o.closeFunction	= closeFunction;
-				o.file			= file;
+				o.closeFunction = closeFunction;
+				o.file = file;
 			},
 			closeFunction
 		);
@@ -1370,21 +1629,24 @@ export class AccountFilesService extends BaseProvider {
 		name?: string,
 		onlyIfOwner: boolean = false
 	) : Promise<void> {
-		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Appointment);
+		const file = await this.getFile(
+			id,
+			AccountFileRecord.RecordTypes.Appointment
+		);
 
 		if (
-			onlyIfOwner && (
-				!this.accountDatabaseService.currentUser.value ||
-				file.owner !== this.accountDatabaseService.currentUser.value.user.username
-			)
+			onlyIfOwner &&
+			(!this.accountDatabaseService.currentUser.value ||
+				file.owner !==
+					this.accountDatabaseService.currentUser.value.user.username)
 		) {
 			return;
 		}
 
-		file.timestamp	= await getTimestamp();
+		file.timestamp = await getTimestamp();
 
 		if (name) {
-			file.name	= name;
+			file.name = name;
 		}
 
 		await Promise.all([
@@ -1406,8 +1668,11 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Overwrites an existing doc. */
-	public async updateDoc (id: string, delta: IQuillDelta|IQuillRange) : Promise<void> {
-		const file	= await this.getFile(id);
+	public async updateDoc (
+		id: string,
+		delta: IQuillDelta | IQuillRange
+	) : Promise<void> {
+		const file = await this.getFile(id);
 
 		await this.accountDatabaseService.pushItem(
 			`users/${file.owner}/docs/${id}`,
@@ -1419,25 +1684,30 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Updates file record with new metadata. */
-	public async updateMetadata (id: string, metadata: {
-		mediaType?: string;
-		name?: string;
-		size?: number;
-	}) : Promise<void> {
-		const original	= await this.getFile(id);
+	public async updateMetadata (
+		id: string,
+		metadata: {
+			mediaType?: string;
+			name?: string;
+			size?: number;
+		}
+	) : Promise<void> {
+		const original = await this.getFile(id);
 
 		await this.accountDatabaseService.setItem(
 			`users/${original.owner}/fileRecords/${id}`,
 			AccountFileRecord,
 			{
 				id,
-				mediaType: metadata.mediaType === undefined ?
-					original.mediaType :
-					metadata.mediaType
-				,
-				name: metadata.name === undefined ? original.name : metadata.name,
+				mediaType:
+					metadata.mediaType === undefined ?
+						original.mediaType :
+						metadata.mediaType,
+				name:
+					metadata.name === undefined ? original.name : metadata.name,
 				recordType: original.recordType,
-				size: metadata.size === undefined ? original.size : metadata.size,
+				size:
+					metadata.size === undefined ? original.size : metadata.size,
 				timestamp: await getTimestamp()
 			},
 			undefined,
@@ -1446,13 +1716,19 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Overwrites an existing note. */
-	public async updateNote (id: string, content: IQuillDelta, name?: string) : Promise<void> {
-		const file		= await this.getFile(id, AccountFileRecord.RecordTypes.Note);
-		file.size		= this.potassiumService.fromString(this.deltaToString(content)).length;
-		file.timestamp	= await getTimestamp();
+	public async updateNote (
+		id: string,
+		content: IQuillDelta,
+		name?: string
+	) : Promise<void> {
+		const file = await this.getFile(id, AccountFileRecord.RecordTypes.Note);
+		file.size = this.potassiumService.fromString(
+			this.deltaToString(content)
+		).length;
+		file.timestamp = await getTimestamp();
 
 		if (name) {
-			file.name	= name;
+			file.name = name;
 		}
 
 		await Promise.all([
@@ -1480,26 +1756,27 @@ export class AccountFilesService extends BaseProvider {
 	 */
 	public upload (
 		name: string,
-		data: AccountFile|string,
-		shareWithUser?: string|string[],
+		data: AccountFile | string,
+		shareWithUser?: string | string[],
 		metadata?: string
 	) : {
 		progress: Observable<number>;
 		result: Promise<string>;
 	} {
-		let anonymous	= false;
+		let anonymous = false;
 		let username: string;
 
 		if (this.accountDatabaseService.currentUser.value) {
-			username	= this.accountDatabaseService.currentUser.value.user.username;
+			username = this.accountDatabaseService.currentUser.value.user
+				.username;
 		}
 		else if (typeof shareWithUser === 'string') {
-			anonymous	= true;
-			username	= shareWithUser;
+			anonymous = true;
+			username = shareWithUser;
 		}
 		else if (shareWithUser instanceof Array && shareWithUser.length > 0) {
-			anonymous	= true;
-			username	= shareWithUser[0];
+			anonymous = true;
+			username = shareWithUser[0];
 		}
 		else {
 			throw new Error('Invalid AccountFilesService.upload input.');
@@ -1507,89 +1784,90 @@ export class AccountFilesService extends BaseProvider {
 
 		this.showSpinner.next(true);
 
-		const id			= uuid();
-		const key			= (async () => this.potassiumService.randomBytes(
-			await this.potassiumService.secretBox.keyBytes
-		))();
-		const url			= `users/${username}/files/${id}`;
+		const id = uuid();
+		const key = (async () =>
+			this.potassiumService.randomBytes(
+				await this.potassiumService.secretBox.keyBytes
+			))();
+		const url = `users/${username}/files/${id}`;
 
-		const file			=
+		const file =
 			typeof data === 'string' ?
 				<IQuillDelta> new Delta().insert(data) :
-				data
-		;
+				data;
 
-		const fileConfig	= this.config[this.getFileType(file)];
+		const fileConfig = this.config[this.getFileType(file)];
 
-		const {progress, result}	=
+		const {progress, result} =
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
 				(() => {
-					const doc			= file instanceof Array ? file : [];
-					const docProgress	= new BehaviorSubject(0);
+						const doc = file instanceof Array ? file : [];
+						const docProgress = new BehaviorSubject(0);
 
-					return {progress: docProgress, result: (async () => {
-						for (let i = 0 ; i < doc.length ; ++i) {
-							docProgress.next(Math.round(i / doc.length * 100));
+						return {
+							progress: docProgress,
+							result: (async () => {
+								for (let i = 0; i < doc.length; ++i) {
+									docProgress.next(
+										Math.round((i / doc.length) * 100)
+									);
 
-							await this.accountDatabaseService.pushItem(
-								`users/${username}/docs/${id}`,
-								BinaryProto,
-								msgpack.encode(doc[i]),
-								undefined,
-								key
-							);
-						}
+									await this.accountDatabaseService.pushItem(
+										`users/${username}/docs/${id}`,
+										BinaryProto,
+										msgpack.encode(doc[i]),
+										undefined,
+										key
+									);
+								}
 
-						docProgress.next(100);
-						return {hash: '', url: ''};
-					})()};
-				})() :
+								docProgress.next(100);
+								return {hash: '', url: ''};
+							})()
+						};
+				  })() :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
-				(
-					file instanceof Blob ?
-						this.accountDatabaseService.uploadItem(
+				file instanceof Blob ?
+					this.accountDatabaseService.uploadItem(
 							url,
 							BlobProto,
 							file,
 							undefined,
 							key
-						) :
-						this.accountDatabaseService.uploadItem(
-							url,
-							BinaryProto,
-							'mediaType' in file ? file.data : new Uint8Array(0),
-							undefined,
-							key
-						)
-				) :
+					  ) :
+				this.accountDatabaseService.uploadItem(
+						url,
+						BinaryProto,
+						'mediaType' in file ? file.data : new Uint8Array(0),
+						undefined,
+						key
+					) :
 			fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
 				this.accountDatabaseService.uploadItem(
-					url,
-					BinaryProto,
-					msgpack.encode(<IQuillDelta> file),
-					undefined,
-					key
-				) :
+						url,
+						BinaryProto,
+						msgpack.encode(<IQuillDelta> file),
+						undefined,
+						key
+				  ) :
 				this.accountDatabaseService.uploadItem(
 					url,
 					<any> fileConfig.proto,
 					file,
 					fileConfig.securityModel,
 					key
-				)
-		;
+				);
 
 		return {
 			progress,
 			result: result.then(async () => {
-				const accountFileRecord	= {
+				const accountFileRecord = {
 					id,
 					mediaType:
 						fileConfig.mediaType ||
 						(file instanceof Blob ? file.type : undefined) ||
 						('mediaType' in file ? file.mediaType : undefined) ||
-						'application/octet-stream'
-					,
+						'application/octet-stream',
 					name,
 					recordType: fileConfig.recordType,
 					size: await this.getFileSize(file, fileConfig),
@@ -1597,7 +1875,10 @@ export class AccountFilesService extends BaseProvider {
 				};
 
 				if (anonymous) {
-					await this.shareFile({accountFileRecord, key: await key}, username);
+					await this.shareFile(
+						{accountFileRecord, key: await key},
+						username
+					);
 				}
 				else {
 					await this.accountDatabaseService.setItem(
@@ -1623,7 +1904,9 @@ export class AccountFilesService extends BaseProvider {
 						await this.shareFile(id, shareWithUser);
 					}
 					else if (shareWithUser instanceof Array) {
-						await Promise.all(shareWithUser.map(async u => this.shareFile(id, u)));
+						await Promise.all(
+							shareWithUser.map(async u => this.shareFile(id, u))
+						);
 					}
 				}
 
@@ -1635,71 +1918,91 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Watches appointment. */
-	public watchAppointment (id: string|IAccountFileRecord) : Observable<IAppointment> {
+	public watchAppointment (
+		id: string | IAccountFileRecord
+	) : Observable<IAppointment> {
 		return getOrSetDefault(
 			this.watchAppointmentCache,
 			typeof id === 'string' ? id : id.id,
 			() => {
-				const filePromise	= this.getFile(id);
+				const filePromise = this.getFile(id);
 
-				return this.accountDatabaseService.watch(
-					filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-					Appointment,
-					undefined,
-					filePromise.then(file => file.key),
-					undefined,
-					this.subscriptions
-				).pipe(map(o =>
-					o.value
-				));
+				return this.accountDatabaseService
+					.watch(
+						filePromise.then(
+							file => `users/${file.owner}/files/${file.id}`
+						),
+						Appointment,
+						undefined,
+						filePromise.then(file => file.key),
+						undefined,
+						this.subscriptions
+					)
+					.pipe(map(o => o.value));
 			}
 		);
 	}
 
 	/** Watches file record. */
-	public watchMetadata (id: string|IAccountFileRecord) : Observable<
-		IAccountFileRecord&IAccountFileReference
-	> {
+	public watchMetadata (
+		id: string | IAccountFileRecord
+	) : Observable<IAccountFileRecord & IAccountFileReference> {
 		return getOrSetDefault(
 			this.watchMetadataCache,
 			typeof id === 'string' ? id : id.id,
 			() => {
-				const filePromise	= this.getFile(id);
+				const filePromise = this.getFile(id);
 
-				return this.accountDatabaseService.watch(
-					filePromise.then(file => `users/${file.owner}/fileRecords/${file.id}`),
-					AccountFileRecord,
-					undefined,
-					filePromise.then(file => file.key),
-					undefined,
-					this.subscriptions
-				).pipe(mergeMap(async o => ({
-					...o.value,
-					...(await filePromise),
-					name: o.value.name.slice(0, this.maxNameLength)
-				})));
+				return this.accountDatabaseService
+					.watch(
+						filePromise.then(
+							file => `users/${file.owner}/fileRecords/${file.id}`
+						),
+						AccountFileRecord,
+						undefined,
+						filePromise.then(file => file.key),
+						undefined,
+						this.subscriptions
+					)
+					.pipe(
+						mergeMap(async o => ({
+							...o.value,
+							...(await filePromise),
+							name: o.value.name.slice(0, this.maxNameLength)
+						}))
+					);
 			}
 		);
 	}
 
 	/** Watches note. */
-	public watchNote (id: string|IAccountFileRecord) : Observable<IQuillDelta> {
+	public watchNote (
+		id: string | IAccountFileRecord
+	) : Observable<IQuillDelta> {
 		return getOrSetDefault(
 			this.watchNoteCache,
 			typeof id === 'string' ? id : id.id,
 			() => {
-				const filePromise	= this.getFile(id);
+				const filePromise = this.getFile(id);
 
-				return this.accountDatabaseService.watch(
-					filePromise.then(file => `users/${file.owner}/files/${file.id}`),
-					BinaryProto,
-					undefined,
-					filePromise.then(file => file.key),
-					undefined,
-					this.subscriptions
-				).pipe(map(o =>
-					o.value.length > 0 ? msgpack.decode(o.value) : {ops: []}
-				));
+				return this.accountDatabaseService
+					.watch(
+						filePromise.then(
+							file => `users/${file.owner}/files/${file.id}`
+						),
+						BinaryProto,
+						undefined,
+						filePromise.then(file => file.key),
+						undefined,
+						this.subscriptions
+					)
+					.pipe(
+						map(o =>
+							o.value.length > 0 ?
+								msgpack.decode(o.value) :
+								{ops: []}
+						)
+					);
 			}
 		);
 	}
@@ -1735,18 +2038,25 @@ export class AccountFilesService extends BaseProvider {
 		super();
 
 		(async () => {
-			if ((await this.accountDatabaseService.getListKeys('fileReferences')).length === 0) {
+			if (
+				(await this.accountDatabaseService.getListKeys(
+					'fileReferences'
+				)).length === 0
+			) {
 				this.initiated.next(true);
 				this.showSpinner.next(false);
 			}
 			else {
-				this.filesList.pipe(
-					filter(arr => arr.length > 0),
-					take(1)
-				).toPromise().then(() => {
-					this.initiated.next(true);
-					this.showSpinner.next(false);
-				});
+				this.filesList
+					.pipe(
+						filter(arr => arr.length > 0),
+						take(1)
+					)
+					.toPromise()
+					.then(() => {
+						this.initiated.next(true);
+						this.showSpinner.next(false);
+					});
 			}
 		})();
 	}

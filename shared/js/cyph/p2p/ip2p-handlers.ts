@@ -1,13 +1,12 @@
 import {MaybePromise} from '../maybe-promise-type';
 
-
 /**
  * P2P handlers.
  */
 export interface IP2PHandlers {
 	/** Request accept confirm handler. */
 	acceptConfirm: (
-		callType: 'audio'|'video',
+		callType: 'audio' | 'video',
 		timeout?: number,
 		isAccepted?: boolean
 	) => Promise<boolean>;
@@ -28,7 +27,10 @@ export interface IP2PHandlers {
 	localVideoConfirm: (video: boolean) => Promise<boolean>;
 
 	/** Request confirm handler. */
-	requestConfirm: (callType: 'audio'|'video', isAccepted?: boolean) => Promise<boolean>;
+	requestConfirm: (
+		callType: 'audio' | 'video',
+		isAccepted?: boolean
+	) => Promise<boolean>;
 
 	/** Request confirmation handler. */
 	requestConfirmation: () => MaybePromise<void>;

@@ -17,14 +17,13 @@ import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Manages ephemeral session.
  */
 @Injectable()
 export class EphemeralSessionService extends SessionService {
 	/** @ignore */
-	private pingPongTimeouts: number	= 0;
+	private pingPongTimeouts: number = 0;
 
 	/**
 	 * @ignore
@@ -36,7 +35,8 @@ export class EphemeralSessionService extends SessionService {
 
 			if (
 				this.lastIncomingMessageTimestamp !== 0 &&
-				(await getTimestamp()) - this.lastIncomingMessageTimestamp > 180000 &&
+				(await getTimestamp()) - this.lastIncomingMessageTimestamp >
+					180000 &&
 				this.pingPongTimeouts++ < 2
 			) {
 				this.analyticsService.sendEvent({
@@ -56,19 +56,22 @@ export class EphemeralSessionService extends SessionService {
 		if (
 			/* Too short */
 			id.length < this.configService.secretLength ||
-
 			/* Contains invalid character(s) */
-			!id.split('').reduce(
-				(isValid: boolean, c: string) : boolean =>
-					isValid && this.configService.readableIDCharacters.indexOf(c) > -1
-				,
-				true
-			)
+			!id
+				.split('')
+				.reduce(
+					(isValid: boolean, c: string): boolean =>
+						isValid &&
+						this.configService.readableIDCharacters.indexOf(c) > -1,
+					true
+				)
 		) {
-			id	= readableID(this.configService.secretLength);
+			id = readableID(this.configService.secretLength);
 		}
 
-		this.state.cyphID.next(id.substring(0, this.configService.cyphIDLength));
+		this.state.cyphID.next(
+			id.substring(0, this.configService.cyphIDLength)
+		);
 		this.state.sharedSecret.next(this.state.sharedSecret.value || id);
 	}
 
@@ -80,9 +83,7 @@ export class EphemeralSessionService extends SessionService {
 			request({
 				method: 'POST',
 				url: `${env.baseUrl}channels/${this.state.cyphID.value}`
-			}).catch(
-				() => {}
-			)
+			}).catch(() => {})
 		]);
 	}
 
@@ -166,9 +167,9 @@ export class EphemeralSessionService extends SessionService {
 			stringsService
 		);
 
-		let username: string|undefined;
+		let username: string | undefined;
 
-		let id	= this.sessionInitService.id;
+		let id = this.sessionInitService.id;
 
 		if (id === '404') {
 			this.state.startingNewCyph.next(true);
@@ -177,7 +178,7 @@ export class EphemeralSessionService extends SessionService {
 		}
 
 		if (id.indexOf('/') > -1) {
-			[username, id]	= id.split('/');
+			[username, id] = id.split('/');
 		}
 
 		/* API flags */
@@ -186,7 +187,7 @@ export class EphemeralSessionService extends SessionService {
 				continue;
 			}
 
-			id	= id.substring(1);
+			id = id.substring(1);
 			flag.set(this);
 
 			this.analyticsService.sendEvent({
@@ -198,21 +199,24 @@ export class EphemeralSessionService extends SessionService {
 		}
 
 		if (this.envService.isTelehealth) {
-			this.remoteUsername.next(this.state.isAlice.value ?
-				this.stringsService.patient :
-				this.stringsService.doctor
+			this.remoteUsername.next(
+				this.state.isAlice.value ?
+					this.stringsService.patient :
+					this.stringsService.doctor
 			);
 		}
 
-		this.state.wasInitiatedByAPI.next(id.length > this.configService.secretLength);
+		this.state.wasInitiatedByAPI.next(
+			id.length > this.configService.secretLength
+		);
 
 		/* true = yes; false = no; undefined = maybe */
 		this.state.startingNewCyph.next(
 			this.state.wasInitiatedByAPI.value || username ?
 				undefined :
-				id.length < 1 ?
-					true :
-					false
+			id.length < 1 ?
+				true :
+				false
 		);
 
 		if (username) {
@@ -224,7 +228,8 @@ export class EphemeralSessionService extends SessionService {
 			this.setID(id);
 		}
 
-		const channelID	= this.state.startingNewCyph.value === false ? '' : uuid(true);
+		const channelID =
+			this.state.startingNewCyph.value === false ? '' : uuid(true);
 
 		(async () => {
 			try {

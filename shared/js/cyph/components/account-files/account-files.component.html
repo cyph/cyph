@@ -1,20 +1,20 @@
 <cyph-account-base-file-list>
 	<ng-container
-		*ngIf='
+		*ngIf="
 			((accountFilesService.filesTotalSize | async) || 0) <=
-			((accountFilesService.fileStorageLimit | async) || 0);
+				((accountFilesService.fileStorageLimit | async) || 0);
 			else blocked
-		'
+		"
 	>
 		<button
 			mat-fab
-			class='fixed-fab'
-			color='primary'
-			matTooltip='Upload File'
-			matTooltipPosition='left'
+			class="fixed-fab"
+			color="primary"
+			matTooltip="Upload File"
+			matTooltipPosition="left"
 			cyphDropZone
 			cyphTranslate
-			(fileDrop)='accountFilesService.upload($event.name, $event)'
+			(fileDrop)="accountFilesService.upload($event.name, $event)"
 		>
 			<mat-icon>file_upload</mat-icon>
 		</button>
@@ -22,10 +22,10 @@
 	<ng-template #blocked>
 		<button
 			mat-fab
-			class='fixed-fab'
-			color='primary'
-			matTooltip='You are at your storage limit'
-			matTooltipPosition='left'
+			class="fixed-fab"
+			color="primary"
+			matTooltip="You are at your storage limit"
+			matTooltipPosition="left"
 			cyphTranslate
 			disabled
 		>

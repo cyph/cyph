@@ -11,7 +11,6 @@ import {AccountDatabaseService} from './account-database.service';
 import {CastleService} from './castle.service';
 import {PotassiumService} from './potassium.service';
 
-
 /**
  * Castle instance for an anonymous user.
  */
@@ -19,43 +18,42 @@ import {PotassiumService} from './potassium.service';
 export class AnonymousCastleService extends CastleService {
 	/** @inheritDoc */
 	public async init (sessionService: SessionService) : Promise<void> {
-		const transport			= new Transport(sessionService);
+		const transport = new Transport(sessionService);
 
-		const handshakeState	= await sessionService.handshakeState(
+		const handshakeState = await sessionService.handshakeState(
 			undefined,
 			undefined,
-			sessionService.state.sharedSecret.value ?
-				undefined :
-				true
+			sessionService.state.sharedSecret.value ? undefined : true
 		);
 
-		const localUser			= new AnonymousLocalUser(
+		const localUser = new AnonymousLocalUser(
 			this.potassiumService,
 			handshakeState,
 			sessionService.state.sharedSecret.value
 		);
 
-		const remoteUser		= sessionService.state.sharedSecret.value ?
+		const remoteUser = sessionService.state.sharedSecret.value ?
 			new AnonymousRemoteUser(
-				this.potassiumService,
-				handshakeState,
-				sessionService.state.sharedSecret.value,
-				sessionService.remoteUsername
-			) :
+					this.potassiumService,
+					handshakeState,
+					sessionService.state.sharedSecret.value,
+					sessionService.remoteUsername
+			  ) :
 			new RegisteredRemoteUser(
 				this.accountDatabaseService,
 				false,
 				sessionService.remoteUsername
-			)
-		;
+			);
 
-		this.pairwiseSession.next(new PairwiseSession(
-			this.potassiumService,
-			transport,
-			localUser,
-			remoteUser,
-			handshakeState
-		));
+		this.pairwiseSession.next(
+			new PairwiseSession(
+				this.potassiumService,
+				transport,
+				localUser,
+				remoteUser,
+				handshakeState
+			)
+		);
 	}
 
 	constructor (

@@ -1,6 +1,5 @@
 /* tslint:disable:no-import-side-effect no-reference */
 
-
 /// <reference path="./js/typings/index.d.ts" />
 
 import 'nativescript-websockets';
@@ -8,7 +7,12 @@ import './js/standalone/test-environment-setup';
 import './js/standalone/translations';
 
 import {HttpClient} from '@angular/common/http';
-import {NgModule, NgModuleFactoryLoader, NgZone, NO_ERRORS_SCHEMA} from '@angular/core';
+import {
+	NgModule,
+	NgModuleFactoryLoader,
+	NgZone,
+	NO_ERRORS_SCHEMA
+} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {NativeScriptAnimationsModule} from 'nativescript-angular/animations';
@@ -16,7 +20,10 @@ import {NativeScriptFormsModule} from 'nativescript-angular/forms';
 import {NativeScriptHttpModule} from 'nativescript-angular/http';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
-import {NativeScriptRouterModule, NSModuleFactoryLoader} from 'nativescript-angular/router';
+import {
+	NativeScriptRouterModule,
+	NSModuleFactoryLoader
+} from 'nativescript-angular/router';
 import {appRoutes} from './app-routes';
 import {AppService} from './app.service';
 import {AppComponent} from './components/app';
@@ -33,20 +40,13 @@ import {NativeDialogService} from './native-dialog.service';
 import {NativeLocalStorageService} from './native-local-storage.service';
 import {NativeTitleService} from './native-title.service';
 
-
 /**
  * Angular module for Cyph native UI.
  */
 @NgModule({
 	bootstrap: [AppComponent],
-	declarations: [
-		AppComponent,
-		DialogMediaComponent
-	],
-	entryComponents: [
-		AppComponent,
-		DialogMediaComponent
-	],
+	declarations: [AppComponent, DialogMediaComponent],
+	entryComponents: [AppComponent, DialogMediaComponent],
 	imports: [
 		NativeScriptRouterModule.forRoot([]),
 		CyphAppModule,

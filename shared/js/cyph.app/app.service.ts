@@ -19,46 +19,57 @@ import {translate} from '../cyph/util/translate';
 import {resolvable, sleep, waitForValue} from '../cyph/util/wait';
 import {ChatRootStates} from './enums';
 
-
 /**
  * Angular service for Cyph web UI.
  */
 @Injectable()
 export class AppService extends BaseProvider implements CanActivate {
 	/** @ignore */
-	private readonly _LOCKED_DOWN_ROUTE					= resolvable<string>();
+	private readonly _LOCKED_DOWN_ROUTE = resolvable<string>();
 
 	/** @ignore */
-	private readonly lockedDownRoute: Promise<string>	= this._LOCKED_DOWN_ROUTE.promise;
+	private readonly lockedDownRoute: Promise<string> = this._LOCKED_DOWN_ROUTE
+		.promise;
 
 	/** @see ChatRootStates */
-	public readonly chatRootState	= new BehaviorSubject<ChatRootStates>(ChatRootStates.blank);
+	public readonly chatRootState = new BehaviorSubject<ChatRootStates>(
+		ChatRootStates.blank
+	);
 
 	/** If true, app is locked down. */
-	public readonly isLockedDown	= new BehaviorSubject<boolean>(!(
+	public readonly isLockedDown = new BehaviorSubject<boolean>(
 		!(
-			this.envService.environment.customBuild &&
-			(
-				this.envService.environment.customBuild.config.lockedDown ||
-				this.envService.environment.customBuild.config.password
-			)
-		) ||
-		[
-			'confirm',
-			'signup'
-		].indexOf(locationData.hash.slice(1).split('/')[0]) > -1 ||
-		locationData.hash.replace(/^#burner\//, '').split('/')[0].match(
-			new RegExp(`[${config.readableIDCharacters.join('|')}]{${config.secretLength}}$`)
+			!(
+				this.envService.environment.customBuild &&
+				(this.envService.environment.customBuild.config.lockedDown ||
+					this.envService.environment.customBuild.config.password)
+			) ||
+			['confirm', 'signup'].indexOf(
+				locationData.hash.slice(1).split('/')[0]
+			) > -1 ||
+			locationData.hash
+				.replace(/^#burner\//, '')
+				.split('/')[0]
+				.match(
+					new RegExp(
+						`[${config.readableIDCharacters.join('|')}]{${
+							config.secretLength
+						}}$`
+					)
+				)
 		)
-	));
+	);
 
 	/** Resolves route to redirect to after unlock. */
-	public readonly resolveLockedDownRoute: (lockedDownRoute: string) => void	=
-		this._LOCKED_DOWN_ROUTE.resolve
-	;
+	public readonly resolveLockedDownRoute: (
+		lockedDownRoute: string
+	) => void = this._LOCKED_DOWN_ROUTE.resolve;
 
 	/** @inheritDoc */
-	public canActivate (_: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {
+	public canActivate (
+		_: ActivatedRouteSnapshot,
+		state: RouterStateSnapshot
+	) : boolean {
 		if (this.isLockedDown.value) {
 			this.resolveLockedDownRoute(state.url);
 			return false;
@@ -81,7 +92,9 @@ export class AppService extends BaseProvider implements CanActivate {
 		}
 
 		this.isLockedDown.next(false);
-		this.router.navigateByUrl(`${burnerRoot}/${await this.lockedDownRoute}`);
+		this.router.navigateByUrl(
+			`${burnerRoot}/${await this.lockedDownRoute}`
+		);
 	}
 
 	constructor (
@@ -116,9 +129,11 @@ export class AppService extends BaseProvider implements CanActivate {
 		}
 
 		self.addEventListener('hashchange', e => {
-			if (e.oldURL.split(location.origin)[1].match(
-				new RegExp(`^/?#?/?${burnerRoot}(/|$)`)
-			)) {
+			if (
+				e.oldURL
+					.split(location.origin)[1]
+					.match(new RegExp(`^/?#?/?${burnerRoot}(/|$)`))
+			) {
 				location.reload();
 			}
 		});
@@ -129,7 +144,7 @@ export class AppService extends BaseProvider implements CanActivate {
 				(await potassiumService.native()) &&
 				!(await potassiumService.isNativeCryptoSupported())
 			) {
-				location.pathname	= '/unsupportedbrowser';
+				location.pathname = '/unsupportedbrowser';
 				return;
 			}
 
@@ -137,13 +152,13 @@ export class AppService extends BaseProvider implements CanActivate {
 				this.loadComplete();
 			}
 
-			await (
-				await waitForValue(() =>
-					router.routerState.root.firstChild || undefined
-				)
-			).url.pipe(first()).toPromise();
+			await (await waitForValue(
+				() => router.routerState.root.firstChild || undefined
+			)).url
+				.pipe(first())
+				.toPromise();
 
-			const urlSegmentPaths	= router.url.split('/');
+			const urlSegmentPaths = router.url.split('/');
 
 			if (this.envService.isExtension) {
 				router.navigate(['contacts']);
@@ -153,10 +168,12 @@ export class AppService extends BaseProvider implements CanActivate {
 				await this.accountService.uiReady;
 			}
 			else {
-				await this.chatRootState.pipe(
-					filter(state => state !== ChatRootStates.blank),
-					take(1)
-				).toPromise();
+				await this.chatRootState
+					.pipe(
+						filter(state => state !== ChatRootStates.blank),
+						take(1)
+					)
+					.toPromise();
 
 				await sleep();
 			}

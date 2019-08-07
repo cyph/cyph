@@ -9,7 +9,6 @@ import {StringProto} from '../../proto';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for account notifications subscribe UI.
  */
@@ -21,7 +20,9 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountNotificationsSubscribeComponent extends BaseProvider {
 	/** @ignore */
-	private readonly email: IAsyncValue<string>	= this.accountDatabaseService.getAsyncValue(
+	private readonly email: IAsyncValue<
+		string
+	> = this.accountDatabaseService.getAsyncValue(
 		'email',
 		StringProto,
 		SecurityModels.unprotected
@@ -32,26 +33,32 @@ export class AccountNotificationsSubscribeComponent extends BaseProvider {
 		email?: string;
 		subscribed?: boolean;
 		unsubscribed?: boolean;
-	}>	= combineLatest([
+	}> = combineLatest([
 		this.activatedRoute.data,
 		this.activatedRoute.params
-	]).pipe(mergeMap(async ([{unsubscribe}, {email}]: [
-		{unsubscribe?: boolean},
-		{email?: string}
-	]) => {
-		if (unsubscribe) {
-			const oldEmail	= await this.email.getValue().catch(() => '');
-			await this.email.setValue('');
-			return {email: oldEmail, unsubscribed: true};
-		}
+	]).pipe(
+		mergeMap(
+			async ([{unsubscribe}, {email}]: [
+				{unsubscribe?: boolean},
+				{email?: string}
+			]) => {
+				if (unsubscribe) {
+					const oldEmail = await this.email
+						.getValue()
+						.catch(() => '');
+					await this.email.setValue('');
+					return {email: oldEmail, unsubscribed: true};
+				}
 
-		if (email) {
-			await this.email.setValue(email);
-			return {email, subscribed: true};
-		}
+				if (email) {
+					await this.email.setValue(email);
+					return {email, subscribed: true};
+				}
 
-		return {email: await this.email.getValue().catch(() => '')};
-	}));
+				return {email: await this.email.getValue().catch(() => '')};
+			}
+		)
+	);
 
 	constructor (
 		/** @ignore */

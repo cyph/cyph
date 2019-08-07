@@ -1,5 +1,10 @@
-import {Directive, ElementRef, EventEmitter, OnInit, Output} from '@angular/core';
-
+import {
+	Directive,
+	ElementRef,
+	EventEmitter,
+	OnInit,
+	Output
+} from '@angular/core';
 
 /**
  * Event that fires on element load.
@@ -10,7 +15,9 @@ import {Directive, ElementRef, EventEmitter, OnInit, Output} from '@angular/core
 })
 export class InitDirective implements OnInit {
 	/** Init event. */
-	@Output() public readonly init	= new EventEmitter<HTMLElement|undefined>();
+	@Output() public readonly init = new EventEmitter<
+		HTMLElement | undefined
+	>();
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

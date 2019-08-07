@@ -1,67 +1,74 @@
-<h1 matDialogTitle [class.text-center]='fabMode'>{{title}}</h1>
+<h1 matDialogTitle [class.text-center]="fabMode">{{ title }}</h1>
 
-<div [class.text-center]='fabMode' *ngIf='bottomSheet'>
-	<ng-container *ngTemplateOutlet='dialogContent'></ng-container>
+<div [class.text-center]="fabMode" *ngIf="bottomSheet">
+	<ng-container *ngTemplateOutlet="dialogContent"></ng-container>
 </div>
-<div mat-dialog-content [class.text-center]='fabMode' *ngIf='!bottomSheet'>
-	<ng-container *ngTemplateOutlet='dialogContent'></ng-container>
-</div>
-
-<br *ngIf='bottomSheet' />
-
-<div fxLayoutAlign='end center' *ngIf='bottomSheet && !fabMode'>
-	<ng-container *ngTemplateOutlet='dialogActionsDefault'></ng-container>
-</div>
-<div mat-dialog-actions fxLayoutAlign='end center' *ngIf='!bottomSheet && !fabMode'>
-	<ng-container *ngTemplateOutlet='dialogActionsDefault'></ng-container>
+<div mat-dialog-content [class.text-center]="fabMode" *ngIf="!bottomSheet">
+	<ng-container *ngTemplateOutlet="dialogContent"></ng-container>
 </div>
 
-<div class='fab-section' *ngIf='bottomSheet && fabMode'>
-	<ng-container *ngTemplateOutlet='dialogActionsFab'></ng-container>
+<br *ngIf="bottomSheet" />
+
+<div fxLayoutAlign="end center" *ngIf="bottomSheet && !fabMode">
+	<ng-container *ngTemplateOutlet="dialogActionsDefault"></ng-container>
 </div>
-<div mat-dialog-actions class='fab-section' *ngIf='!bottomSheet && fabMode'>
-	<ng-container *ngTemplateOutlet='dialogActionsFab'></ng-container>
+<div
+	mat-dialog-actions
+	fxLayoutAlign="end center"
+	*ngIf="!bottomSheet && !fabMode"
+>
+	<ng-container *ngTemplateOutlet="dialogActionsDefault"></ng-container>
 </div>
 
+<div class="fab-section" *ngIf="bottomSheet && fabMode">
+	<ng-container *ngTemplateOutlet="dialogActionsFab"></ng-container>
+</div>
+<div mat-dialog-actions class="fab-section" *ngIf="!bottomSheet && fabMode">
+	<ng-container *ngTemplateOutlet="dialogActionsFab"></ng-container>
+</div>
 
 <ng-template #dialogContent>
 	<cyph-markdown
-		[markdown]='content'
-		[targetSelf]='true'
-		*ngIf='markdown; else text'
+		[markdown]="content"
+		[targetSelf]="true"
+		*ngIf="markdown; else text"
 	></cyph-markdown>
 	<ng-template #text>
-		<div>{{content}}</div>
+		<div>{{ content }}</div>
 	</ng-template>
 	<cyph-dynamic-form
 		#dynamicForm
-		[form]='form'
-		[hideSubmitButton]='true'
-		(submitForm)='close(true)'
-		*ngIf='form !== undefined; else stringPrompt'
+		[form]="form"
+		[hideSubmitButton]="true"
+		(submitForm)="close(true)"
+		*ngIf="form !== undefined; else stringPrompt"
 	></cyph-dynamic-form>
 	<ng-template #stringPrompt>
-		<form ngNativeValidate *ngIf='prompt !== undefined' (submit)='close(true)'>
+		<form
+			ngNativeValidate
+			*ngIf="prompt !== undefined"
+			(submit)="close(true)"
+		>
 			<br />
 			<mat-form-field>
 				<input
 					matInput
 					cyphTranslate
-					[(ngModel)]='prompt'
-					[placeholder]='promptPlaceholder || stringsService.response'
-					name='prompt'
+					[(ngModel)]="prompt"
+					[placeholder]="promptPlaceholder || stringsService.response"
+					name="prompt"
 					required
-					type='text'
-					*ngIf='!bottomSheet'
+					type="text"
+					*ngIf="!bottomSheet"
 				/>
 				<textarea
 					matInput
 					matTextareaAutosize
-					[(ngModel)]='prompt'
-					[placeholder]='promptPlaceholder || stringsService.response'
-					name='prompt'
+					[(ngModel)]="prompt"
+					[placeholder]="promptPlaceholder || stringsService.response"
+					name="prompt"
 					required
-					*ngIf='bottomSheet'
+					*ngIf="bottomSheet"
 				></textarea>
 			</mat-form-field>
 		</form>
@@ -69,48 +76,58 @@
 </ng-template>
 
 <ng-template #dialogActionsDefault>
-	<button mat-button (click)='close(false)' *ngIf='!cancelFAB'>
-		{{cancel}}
+	<button mat-button (click)="close(false)" *ngIf="!cancelFAB">
+		{{ cancel }}
 	</button>
-	<button mat-fab [matTooltip]='cancel' (click)='close(false)' *ngIf='!!cancelFAB'>
-		<mat-icon>{{cancelFAB}}</mat-icon>
+	<button
+		mat-fab
+		[matTooltip]="cancel"
+		(click)="close(false)"
+		*ngIf="!!cancelFAB"
+	>
+		<mat-icon>{{ cancelFAB }}</mat-icon>
 	</button>
 
 	<button
 		mat-button
-		(click)='dynamicForm ? dynamicForm.onSubmit() : close(true)'
-		*ngIf='!okFAB'
+		(click)="dynamicForm ? dynamicForm.onSubmit() : close(true)"
+		*ngIf="!okFAB"
 	>
-		{{ok}}
+		{{ ok }}
 	</button>
 	<button
 		mat-fab
-		[matTooltip]='ok'
-		(click)='dynamicForm ? dynamicForm.onSubmit() : close(true)'
-		*ngIf='!!okFAB'
+		[matTooltip]="ok"
+		(click)="dynamicForm ? dynamicForm.onSubmit() : close(true)"
+		*ngIf="!!okFAB"
 	>
-		<mat-icon>{{okFAB}}</mat-icon>
+		<mat-icon>{{ okFAB }}</mat-icon>
 	</button>
 </ng-template>
 
 <ng-template #dialogActionsFab>
-	<div fxFlex fxLayoutAlign='center center' class='red-button'>
-		<button mat-fab [matTooltip]='cancel' (click)='close(false)'>
-			<mat-icon>{{cancelFAB}}</mat-icon>
+	<div fxFlex fxLayoutAlign="center center" class="red-button">
+		<button mat-fab [matTooltip]="cancel" (click)="close(false)">
+			<mat-icon>{{ cancelFAB }}</mat-icon>
 		</button>
 	</div>
 
-	<div fxFlex fxLayoutAlign='center center' *ngIf='fabAvatar'>
-		<img class='fab-avatar' [src]='fabAvatar | async' alt='Avatar' cyphTranslate />
+	<div fxFlex fxLayoutAlign="center center" *ngIf="fabAvatar">
+		<img
+			class="fab-avatar"
+			[src]="fabAvatar | async"
+			alt="Avatar"
+			cyphTranslate
+		/>
 	</div>
 
-	<div fxFlex fxLayoutAlign='center center' class='green-button'>
+	<div fxFlex fxLayoutAlign="center center" class="green-button">
 		<button
 			mat-fab
-			[matTooltip]='ok'
-			(click)='dynamicForm ? dynamicForm.onSubmit() : close(true)'
+			[matTooltip]="ok"
+			(click)="dynamicForm ? dynamicForm.onSubmit() : close(true)"
 		>
-			<mat-icon>{{okFAB}}</mat-icon>
+			<mat-icon>{{ okFAB }}</mat-icon>
 		</button>
 	</div>
 </ng-template>

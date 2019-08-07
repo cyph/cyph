@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	Input,
+	ViewChild
+} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import once from 'lodash-es/once';
 import {AccountFileShare} from '../../account';
@@ -11,7 +16,6 @@ import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
 import {readableByteLength} from '../../util/formatting';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
-
 
 /**
  * Angular component for account file sharing UI.
@@ -34,17 +38,17 @@ export class AccountFileSharingComponent extends BaseProvider {
 	@Input() public file?: AccountFileShare;
 
 	/** Gets file. */
-	public readonly getFile	= memoize(async (username: string = '') => {
-		let file	= await this.file;
+	public readonly getFile = memoize(async (username: string = '') => {
+		let file = await this.file;
 
 		if (typeof file === 'function') {
-			file	= await file(username);
+			file = await file(username);
 		}
 		if (file === undefined) {
 			return {file: undefined, fileConfig: undefined};
 		}
 
-		const fileConfig	= this.accountFilesService.config[
+		const fileConfig = this.accountFilesService.config[
 			'recordType' in file ?
 				file.recordType :
 				this.accountFilesService.getFileType(file.data)
@@ -53,64 +57,67 @@ export class AccountFileSharingComponent extends BaseProvider {
 		return {
 			file,
 			fileConfig,
-			mediaType: fileConfig.mediaType || (
-				!('data' in file) ?
+			mediaType:
+				fileConfig.mediaType ||
+				(!('data' in file) ?
 					'' :
 				file.data instanceof Blob ?
 					file.data.type :
 				'mediaType' in file.data ?
 					file.data.mediaType :
-					''
-			),
-			size: 'size' in file ?
-				file.size :
-				await this.accountFilesService.getFileSize(file.data, fileConfig)
+					''),
+			size:
+				'size' in file ?
+					file.size :
+					await this.accountFilesService.getFileSize(
+						file.data,
+						fileConfig
+					)
 		};
 	});
 
 	/** @see isNaN */
-	public readonly isNaN: typeof isNaN								= isNaN;
+	public readonly isNaN: typeof isNaN = isNaN;
 
 	/** @see readableByteLength */
-	public readonly readableByteLength: typeof readableByteLength	= readableByteLength;
+	public readonly readableByteLength: typeof readableByteLength = readableByteLength;
 
 	/** Usernames to share with. */
 	private get usernames () : string[] {
 		return Array.from(
-			(
-				this.accountContactsSearch &&
+			(this.accountContactsSearch &&
 				this.accountContactsSearch.searchBar &&
-				this.accountContactsSearch.searchBar.filter.value
-			) || []
-		).map(o =>
-			o.username
-		);
+				this.accountContactsSearch.searchBar.filter.value) ||
+				[]
+		).map(o => o.username);
 	}
 
 	/** Shares file. */
-	public readonly share	= once(async () =>
-		Promise.all(this.usernames.map(async username => {
-			const {file}	= await this.getFile(username);
-			if (file === undefined) {
-				return;
-			}
+	public readonly share = once(async () =>
+		Promise.all(
+			this.usernames.map(async username => {
+				const {file} = await this.getFile(username);
+				if (file === undefined) {
+					return;
+				}
 
-			if ('data' in file) {
-				await this.accountFilesService.upload(
-					file.name,
-					file.data,
-					username,
-					file.metadata
-				);
-			}
-			else {
-				await this.accountFilesService.shareFile(file.id, username);
-			}
+				if ('data' in file) {
+					await this.accountFilesService.upload(
+						file.name,
+						file.data,
+						username,
+						file.metadata
+					);
+				}
+				else {
+					await this.accountFilesService.shareFile(file.id, username);
+				}
 
-			if (this.closeFunction) {
-				(await this.closeFunction.promise)();
-			}
-		}))
+				if (this.closeFunction) {
+					(await this.closeFunction.promise)();
+				}
+			})
+		)
 	);
 
 	constructor (
@@ -133,5 +140,6 @@ export class AccountFileSharingComponent extends BaseProvider {
 	}
 }
 
-
-AccountFilesService.accountFileSharingComponent.resolve(AccountFileSharingComponent);
+AccountFilesService.accountFileSharingComponent.resolve(
+	AccountFileSharingComponent
+);

@@ -1,6 +1,5 @@
 import {IProto} from '../iproto';
 
-
 /** Generic/primitive map value encoder/decoder. */
 export class GenericMapProto<T> implements IProto<{[k: string]: T}> {
 	/** @inheritDoc */
@@ -15,7 +14,7 @@ export class GenericMapProto<T> implements IProto<{[k: string]: T}> {
 
 	/** @inheritDoc */
 	public async encode (data: {[k: string]: T}) : Promise<Uint8Array> {
-		const o	= await this.proto.encode({data});
+		const o = await this.proto.encode({data});
 		return o instanceof Uint8Array ? o : o.finish();
 	}
 
@@ -26,6 +25,6 @@ export class GenericMapProto<T> implements IProto<{[k: string]: T}> {
 
 	constructor (
 		/** @ignore */
-		private readonly proto: IProto<{data: {[k: string]: T}|undefined}>
+		private readonly proto: IProto<{data: {[k: string]: T} | undefined}>
 	) {}
 }

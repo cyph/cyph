@@ -1,55 +1,55 @@
 <h1 matDialogTitle cyphTranslate>Invite to Chat</h1>
-<div mat-dialog-content fxLayout='column'>
+<div mat-dialog-content fxLayout="column">
 	<mat-form-field>
 		<input
 			matInput
 			cyphTranslate
-			[(ngModel)]='to'
-			(ngModelChange)='update()'
-			placeholder='To'
-			type='email'
-			[pattern]='emailPattern'
+			[(ngModel)]="to"
+			(ngModelChange)="update()"
+			placeholder="To"
+			type="email"
+			[pattern]="emailPattern"
 		/>
 	</mat-form-field>
 	<mat-form-field>
 		<input
 			matInput
 			cyphTranslate
-			[(ngModel)]='subject'
-			(ngModelChange)='update()'
-			placeholder='Subject'
-			type='text'
+			[(ngModel)]="subject"
+			(ngModelChange)="update()"
+			placeholder="Subject"
+			type="text"
 		/>
 	</mat-form-field>
 	<mat-form-field>
 		<textarea
 			matInput
 			cyphTranslate
-			[(ngModel)]='text'
-			(ngModelChange)='update()'
-			placeholder='Message Text'
-			matTooltip='${LINK} will be replaced with the actual link.'
+			[(ngModel)]="text"
+			(ngModelChange)="update()"
+			placeholder="Message Text"
+			matTooltip="${LINK} will be replaced with the actual link."
 		></textarea>
 	</mat-form-field>
 	<mat-checkbox
 		cyphTranslate
-		[(ngModel)]='saveToLocalStorage'
-		matTooltip='Saves message to local browser storage and reuses next time'
+		[(ngModel)]="saveToLocalStorage"
+		matTooltip="Saves message to local browser storage and reuses next time"
 	>
 		Save for Next Time
 	</mat-checkbox>
 </div>
-<div mat-dialog-actions fxLayoutAlign='end center'>
-	<button mat-button class='cancel' (click)='matDialogRef.close(false)'>
-		{{stringsService.cancel}}
+<div mat-dialog-actions fxLayoutAlign="end center">
+	<button mat-button class="cancel" (click)="matDialogRef.close(false)">
+		{{ stringsService.cancel }}
 	</button>
 	<a
 		mat-button
 		cyphTranslate
-		class='ok'
-		[target]='linkTarget'
-		[href]='linkMailto | async'
-		(click)='matDialogRef.close(true)'
+		class="ok"
+		[target]="linkTarget"
+		[href]="linkMailto | async"
+		(click)="matDialogRef.close(true)"
 	>
 		Compose Email
 	</a>

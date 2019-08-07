@@ -1,7 +1,6 @@
 import {IAccountLoginData, IKeyPair} from '../proto';
 import {User} from './user';
 
-
 /** Current user data. */
 export interface ICurrentUser {
 	/** Indicates whether the current User's account has been certified via AGSE-PKI. */

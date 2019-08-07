@@ -3,57 +3,63 @@
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
 
-
 /** Convenience method for extracting a value from an IForm object. */
-export const {getFormValue}		= class {
+export const {getFormValue} = class {
 	public static getFormValue (
-		form: IForm|undefined,
+		form: IForm | undefined,
 		value: 'boolean',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
-	) : boolean|undefined;
+	) : boolean | undefined;
 	public static getFormValue (
-		form: IForm|undefined,
+		form: IForm | undefined,
 		value: 'bytes',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
-	) : boolean|undefined;
+	) : boolean | undefined;
 	public static getFormValue (
-		form: IForm|undefined,
+		form: IForm | undefined,
 		value: 'number',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
-	) : number|undefined;
+	) : number | undefined;
 	public static getFormValue (
-		form: IForm|undefined,
+		form: IForm | undefined,
 		value: 'string',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
-	) : string|undefined;
+	) : string | undefined;
 	public static getFormValue (
-		form: IForm|undefined,
-		value: 'boolean'|'bytes'|'number'|'string',
+		form: IForm | undefined,
+		value: 'boolean' | 'bytes' | 'number' | 'string',
 		componentIndex: number,
 		containerIndex: number,
 		elementIndex: number
-	) : boolean|number|string|Uint8Array|undefined {
-		const component	= form && form.components ? form.components[componentIndex] : undefined;
+	) : boolean | number | string | Uint8Array | undefined {
+		const component =
+			form && form.components ?
+				form.components[componentIndex] :
+				undefined;
 
 		if (!component) {
 			return;
 		}
 
-		const container	= component.containers ? component.containers[containerIndex] : undefined;
+		const container = component.containers ?
+			component.containers[containerIndex] :
+			undefined;
 
 		if (!container) {
 			return;
 		}
 
-		const element	= container.elements ? container.elements[elementIndex] : undefined;
+		const element = container.elements ?
+			container.elements[elementIndex] :
+			undefined;
 
 		if (!element || !element.element) {
 			return;
@@ -67,47 +73,51 @@ export const {getFormValue}		= class {
 			element.element.valueNumber :
 		value === 'string' ?
 			element.element.valueString :
-			undefined
-		;
+			undefined;
 	}
 };
 
 /** Creates a new form. */
-export const newForm			= (
+export const newForm = (
 	components: Form.IComponent[],
 	id?: string,
 	isExpansionPanel?: boolean
-) : IForm => ({
+): IForm => ({
 	components,
 	id,
 	isExpansionPanel
 });
 
 /** Creates a new form component. */
-export const newFormComponent	= (
-	containers: (Form.IElementContainer|Form.IElementContainer[])[],
+export const newFormComponent = (
+	containers: (Form.IElementContainer | Form.IElementContainer[])[],
 	id?: string,
 	isColumn?: boolean
-) : Form.IComponent => ({
-	containers: containers.reduce<Form.IElementContainer[]>((a, b) => a.concat(b), []),
+): Form.IComponent => ({
+	containers: containers.reduce<Form.IElementContainer[]>(
+		(a, b) => a.concat(b),
+		[]
+	),
 	id,
 	isColumn
 });
 
 /** Creates a new form container. */
-export const newFormContainer	= (
-	elements: (Form.IElement|Form.IElement[]|Form.IElementContainer)[],
+export const newFormContainer = (
+	elements: (Form.IElement | Form.IElement[] | Form.IElementContainer)[],
 	id?: string,
 	isColumn?: boolean,
 	formula?: string
-) : Form.IElementContainer => ({
+): Form.IElementContainer => ({
 	elements: elements.reduce<Form.IElementOrElementContainer[]>(
-		(arr, elem) => arr.concat(
-			'type' in elem ?
-				{element: elem} :
-			elem instanceof Array ?
-				elem.map(element => ({element})) :
-				{elementContainer: elem}),
+		(arr, elem) =>
+			arr.concat(
+				'type' in elem ?
+					{element: elem} :
+				elem instanceof Array ?
+					elem.map(element => ({element})) :
+					{elementContainer: elem}
+			),
 		[]
 	),
 	formula,
@@ -116,23 +126,27 @@ export const newFormContainer	= (
 });
 
 /** Creates a new form element. */
-export const newFormElement	= <T extends {
-	fileName?: string;
-	id?: string;
-	label?: string;
-	mask?: any;
-	max?: number;
-	mediaType?: string;
-	min?: number;
-	noGrow?: boolean;
-	options?: string[];
-	required?: boolean;
-	step?: number;
-	value?: boolean|number|string|Uint8Array;
-	width?: number;
-/* tslint:disable-next-line:cyclomatic-complexity */
-}> (elementType: Form.Element.Types) => (o?: T) => {
-	const element: Form.IElement	= {
+export const newFormElement = <
+	T extends {
+		fileName?: string;
+		id?: string;
+		label?: string;
+		mask?: any;
+		max?: number;
+		mediaType?: string;
+		min?: number;
+		noGrow?: boolean;
+		options?: string[];
+		required?: boolean;
+		step?: number;
+		value?: boolean | number | string | Uint8Array;
+		width?: number;
+		/* tslint:disable-next-line:cyclomatic-complexity */
+	}
+>(
+	elementType: Form.Element.Types
+) => (o?: T) => {
+	const element: Form.IElement = {
 		fileName: o && o.fileName,
 		id: o && o.id,
 		label: o && o.label,
@@ -149,23 +163,23 @@ export const newFormElement	= <T extends {
 	};
 
 	if (o && typeof o.value === 'boolean') {
-		element.valueBoolean	= o.value;
+		element.valueBoolean = o.value;
 	}
 	else if (o && o.value instanceof Uint8Array) {
-		element.valueBytes		= o.value;
+		element.valueBytes = o.value;
 	}
 	else if (o && typeof o.value === 'number') {
-		element.valueNumber		= o.value;
+		element.valueNumber = o.value;
 	}
 	else if (o && typeof o.value === 'string') {
-		element.valueString		= o.value;
+		element.valueString = o.value;
 	}
 
 	return element;
 };
 
 /** Creates a new checkbox form element. */
-export const checkbox		= newFormElement<{
+export const checkbox = newFormElement<{
 	id?: string;
 	label?: string;
 	noGrow?: boolean;
@@ -175,7 +189,7 @@ export const checkbox		= newFormElement<{
 }>(Form.Element.Types.Checkbox);
 
 /** Creates a new datepicker form element. */
-export const datepicker		= newFormElement<{
+export const datepicker = newFormElement<{
 	id?: string;
 	label?: string;
 	noGrow?: boolean;
@@ -185,7 +199,7 @@ export const datepicker		= newFormElement<{
 }>(Form.Element.Types.Datepicker);
 
 /** Creates a new email input form element. */
-export const emailInput		= newFormElement<{
+export const emailInput = newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
@@ -196,7 +210,7 @@ export const emailInput		= newFormElement<{
 }>(Form.Element.Types.Email);
 
 /** Creates a new file input form element. */
-export const fileInput		= newFormElement<{
+export const fileInput = newFormElement<{
 	fileName?: string;
 	id?: string;
 	label?: string;
@@ -208,7 +222,7 @@ export const fileInput		= newFormElement<{
 }>(Form.Element.Types.File);
 
 /** Creates a new text input form element. */
-export const input			= newFormElement<{
+export const input = newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
@@ -219,7 +233,7 @@ export const input			= newFormElement<{
 }>(Form.Element.Types.Input);
 
 /** Creates a new number input form element. */
-export const numberInput	= newFormElement<{
+export const numberInput = newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
@@ -233,7 +247,7 @@ export const numberInput	= newFormElement<{
 }>(Form.Element.Types.Number);
 
 /** Creates a new password input form element. */
-export const passwordInput	= newFormElement<{
+export const passwordInput = newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
@@ -244,7 +258,7 @@ export const passwordInput	= newFormElement<{
 }>(Form.Element.Types.Password);
 
 /** Creates a new radio button group form element. */
-export const radio			= newFormElement<{
+export const radio = newFormElement<{
 	id?: string;
 	label?: string;
 	noGrow?: boolean;
@@ -255,7 +269,7 @@ export const radio			= newFormElement<{
 }>(Form.Element.Types.Radio);
 
 /** Creates a new select dropdown form element. */
-export const select			= newFormElement<{
+export const select = newFormElement<{
 	id?: string;
 	label?: string;
 	noGrow?: boolean;
@@ -266,7 +280,7 @@ export const select			= newFormElement<{
 }>(Form.Element.Types.Select);
 
 /** Creates a new slider form element. */
-export const slider			= newFormElement<{
+export const slider = newFormElement<{
 	id?: string;
 	label?: string;
 	max?: number;
@@ -278,7 +292,7 @@ export const slider			= newFormElement<{
 }>(Form.Element.Types.Slider);
 
 /** Creates a new slide toggle button form element. */
-export const slideToggle	= newFormElement<{
+export const slideToggle = newFormElement<{
 	id?: string;
 	label?: string;
 	noGrow?: boolean;
@@ -288,7 +302,7 @@ export const slideToggle	= newFormElement<{
 }>(Form.Element.Types.SlideToggle);
 
 /** Creates a new text form element. */
-export const text			= newFormElement<{
+export const text = newFormElement<{
 	id?: string;
 	label?: string;
 	noGrow?: boolean;
@@ -297,7 +311,7 @@ export const text			= newFormElement<{
 }>(Form.Element.Types.Text);
 
 /** Creates a new textbox form element. */
-export const textarea		= newFormElement<{
+export const textarea = newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
@@ -308,7 +322,7 @@ export const textarea		= newFormElement<{
 }>(Form.Element.Types.Textarea);
 
 /** Creates a new time input form element. */
-export const timeInput		= newFormElement<{
+export const timeInput = newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
@@ -322,7 +336,7 @@ export const timeInput		= newFormElement<{
 }>(Form.Element.Types.Time);
 
 /** Creates a new URL input form element. */
-export const urlInput		= newFormElement<{
+export const urlInput = newFormElement<{
 	id?: string;
 	label?: string;
 	mask?: any;
@@ -333,20 +347,31 @@ export const urlInput		= newFormElement<{
 }>(Form.Element.Types.URL);
 
 /** Form title element row. */
-export const title		= (titleText: string) : Form.IElementContainer => {
+export const title = (titleText: string): Form.IElementContainer => {
 	return newFormContainer([text({label: titleText, width: 100})]);
 };
 
 /** Phone number element row. */
-export const phone		= (id: string = 'PhoneNumber.Home') : Form.IElement => {
+export const phone = (id: string = 'PhoneNumber.Home'): Form.IElement => {
 	return input({
 		id,
 		label: 'Phone Number',
 		mask: {
 			mask: [
-				'(', /[1-9]/, /\d/, /\d/, ')', ' ',
-				/\d/, /\d/, /\d/, '-',
-				/\d/, /\d/, /\d/, /\d/
+				'(',
+				/[1-9]/,
+				/\d/,
+				/\d/,
+				')',
+				' ',
+				/\d/,
+				/\d/,
+				/\d/,
+				'-',
+				/\d/,
+				/\d/,
+				/\d/,
+				/\d/
 			],
 			showMask: true
 		},
@@ -355,29 +380,41 @@ export const phone		= (id: string = 'PhoneNumber.Home') : Form.IElement => {
 };
 
 /** Email address element row. */
-export const email		= (
+export const email = (
 	id: string = 'EmailAddresses[0]',
 	data?: Record<string, string>
-) : Form.IElement =>
-	emailInput({id, label: 'Email', required: true, value: data && data.email})
-;
+): Form.IElement =>
+	emailInput({id, label: 'Email', required: true, value: data && data.email});
 
 /** Name element row. */
-export const name		= (id?: string, data?: Record<string, string>) : Form.IElementContainer => {
-	const nameSplit	= data && data.name ? data.name.split(' ') : [];
+export const name = (
+	id?: string,
+	data?: Record<string, string>
+): Form.IElementContainer => {
+	const nameSplit = data && data.name ? data.name.split(' ') : [];
 
 	return newFormContainer(
 		[
-			input({id: 'FirstName', label: 'First Name', required: true, value: nameSplit[0]}),
+			input({
+				id: 'FirstName',
+				label: 'First Name',
+				required: true,
+				value: nameSplit[0]
+			}),
 			input({id: 'MiddleName', label: 'Middle Name'}),
-			input({id: 'LastName', label: 'Last Name', required: true, value: nameSplit[1]})
+			input({
+				id: 'LastName',
+				label: 'Last Name',
+				required: true,
+				value: nameSplit[1]
+			})
 		],
 		id
 	);
 };
 
 /** Address element row. */
-export const address	= (id: string = 'Address') : Form.IElementContainer => {
+export const address = (id: string = 'Address'): Form.IElementContainer => {
 	return newFormContainer(
 		[
 			input({id: 'StreetAddress', label: 'Address'}),
@@ -391,18 +428,20 @@ export const address	= (id: string = 'Address') : Form.IElementContainer => {
 };
 
 /** Street address element row. */
-export const streetAddress	= (id: string = 'StreetAddress') : Form.IElementContainer => {
+export const streetAddress = (
+	id: string = 'StreetAddress'
+): Form.IElementContainer => {
 	return newFormContainer(
-		[
-			input({id: 'StreetAddress', label: 'Address', width: 50})
-		],
+		[input({id: 'StreetAddress', label: 'Address', width: 50})],
 		id,
 		false
 	);
 };
 
 /** Address details element row. */
-export const addressDetails	= (id: string = 'AddressDetails') : Form.IElementContainer => {
+export const addressDetails = (
+	id: string = 'AddressDetails'
+): Form.IElementContainer => {
 	return newFormContainer(
 		[
 			input({id: 'City', label: 'City', width: 15}),
@@ -415,15 +454,23 @@ export const addressDetails	= (id: string = 'AddressDetails') : Form.IElementCon
 };
 
 /** SSN element row. */
-export const ssn		= (id: string = 'SSN') : Form.IElement => {
+export const ssn = (id: string = 'SSN'): Form.IElement => {
 	return input({
 		id,
 		label: 'Social Security Number',
 		mask: {
 			mask: [
-				/\d/, /\d/, /\d/, '-',
-				/\d/, /\d/, '-',
-				/\d/, /\d/, /\d/, /\d/
+				/\d/,
+				/\d/,
+				/\d/,
+				'-',
+				/\d/,
+				/\d/,
+				'-',
+				/\d/,
+				/\d/,
+				/\d/,
+				/\d/
 			],
 			placeholderChar: '#',
 			showMask: true
@@ -433,15 +480,14 @@ export const ssn		= (id: string = 'SSN') : Form.IElement => {
 };
 
 /** Contact information component. */
-export const contact		= (id?: string, data?: Record<string, string>) : Form.IComponent => {
+export const contact = (
+	id?: string,
+	data?: Record<string, string>
+): Form.IComponent => {
 	return newFormComponent(
 		[
 			name(undefined, data),
-			newFormContainer([
-				email(undefined, data),
-				phone(),
-				ssn()
-			]),
+			newFormContainer([email(undefined, data), phone(), ssn()]),
 			address()
 		],
 		id,
@@ -450,79 +496,87 @@ export const contact		= (id?: string, data?: Record<string, string>) : Form.ICom
 };
 
 /** Contact information components. */
-export const contactSplit	= (id?: string) : Form.IComponent[] => {
+export const contactSplit = (id?: string): Form.IComponent[] => {
 	return [
+		newFormComponent([name()], id),
+		newFormComponent([newFormContainer([email(), phone(), ssn()])], id),
 		newFormComponent(
-			[name()],
+			[
+				newFormContainer(
+					[input({id: 'StreetAddress', label: 'Address'})],
+					'Address'
+				)
+			],
 			id
 		),
 		newFormComponent(
-			[newFormContainer([
-				email(),
-				phone(),
-				ssn()
-			])],
-			id
-		),
-		newFormComponent(
-			[newFormContainer(
-				[
-					input({id: 'StreetAddress', label: 'Address'})
-				],
-				'Address'
-			)],
-			id
-		),
-		newFormComponent(
-			[newFormContainer(
-				[
-					input({id: 'City', label: 'City'}),
-					input({id: 'State', label: 'State', width: 10}),
-					input({id: 'ZIP', label: 'Zip', width: 25})
-				],
-				'Address'
-			)],
+			[
+				newFormContainer(
+					[
+						input({id: 'City', label: 'City'}),
+						input({id: 'State', label: 'State', width: 10}),
+						input({id: 'ZIP', label: 'Zip', width: 25})
+					],
+					'Address'
+				)
+			],
 			id
 		)
 	];
 };
 
 /** Height. */
-export const height		= (id: string = 'height') : Form.IElementContainer => newFormContainer(
-	[
-		numberInput({
-			label: 'Height: ft',
-			max: 11,
-			min: 0,
-			width: 10
-		}),
-		numberInput({
-			label: 'Height: in',
-			max: 11,
-			min: 0,
-			width: 10
-		})
-	],
-	id,
-	false,
-	/* ${val}/12-((${val}/12)Mod1)) is a workaround pending mexp support for floor(${val}/12) */
-	/* tslint:disable-next-line:no-invalid-template-strings */
-	'calc(${0}*12+${1})\n[calc(${val}/12-((${val}/12)Mod1)), calc(${val}Mod12)]'
-);
+export const height = (id: string = 'height'): Form.IElementContainer =>
+	newFormContainer(
+		[
+			numberInput({
+				label: 'Height: ft',
+				max: 11,
+				min: 0,
+				width: 10
+			}),
+			numberInput({
+				label: 'Height: in',
+				max: 11,
+				min: 0,
+				width: 10
+			})
+		],
+		id,
+		false,
+		/* ${val}/12-((${val}/12)Mod1)) is a workaround pending mexp support for floor(${val}/12) */
+		/* tslint:disable-next-line:no-invalid-template-strings */
+		'calc(${0}*12+${1})\n[calc(${val}/12-((${val}/12)Mod1)), calc(${val}Mod12)]'
+	);
 
 /** Basic patient info for telehealth patients. */
-export const basicInfo			= (id?: string) : Form.IComponent => {
+export const basicInfo = (id?: string): Form.IComponent => {
 	return newFormComponent(
 		[
 			newFormContainer([
-				datepicker({id: 'DOB', label: 'Date of Birth', width: 20, required: true}),
-				select({id: 'Sex', label: 'Sex', options: ['Male', 'Female'], required: true}),
+				datepicker({
+					id: 'DOB',
+					label: 'Date of Birth',
+					width: 20,
+					required: true
+				}),
+				select({
+					id: 'Sex',
+					label: 'Sex',
+					options: ['Male', 'Female'],
+					required: true
+				}),
 				select({
 					id: 'MaritalStatus',
 					label: 'Marital Status',
 					options: ['Single', 'Married']
 				}),
-				numberInput({label: 'Weight (lbs)', max: 1500, width: 15, required: false}),
+				numberInput({
+					label: 'Weight (lbs)',
+					max: 1500,
+					width: 15,
+					required: false
+				}),
 				height()
 			])
 		],
@@ -531,7 +585,7 @@ export const basicInfo			= (id?: string) : Form.IComponent => {
 };
 
 /** Insurance information element row. */
-export const insurance			= (id?: string) : Form.IElementContainer => {
+export const insurance = (id?: string): Form.IElementContainer => {
 	return newFormContainer(
 		[
 			input({label: "Insured's name"}),
@@ -544,7 +598,7 @@ export const insurance			= (id?: string) : Form.IElementContainer => {
 };
 
 /** Insurance information component. */
-export const insuranceComponent	= (id?: string) : Form.IComponent => {
+export const insuranceComponent = (id?: string): Form.IComponent => {
 	return newFormComponent(
 		[
 			title('Primary Insurance'),
@@ -561,54 +615,67 @@ export const insuranceComponent	= (id?: string) : Form.IComponent => {
 };
 
 /** Opt in or out of Cyph as preferred contact method & mailing list. */
-export const optInOut			= () : Form.IComponent => newFormComponent([
-	newFormContainer([
-		checkbox({label: 'Use Cyph as preferred contact method', noGrow: true, value: true}),
-		checkbox({label: 'Opt-In to receive updates & tips from Cyph', noGrow: true})
-	])
-]);
+export const optInOut = (): Form.IComponent =>
+	newFormComponent([
+		newFormContainer([
+			checkbox({
+				label: 'Use Cyph as preferred contact method',
+				noGrow: true,
+				value: true
+			}),
+			checkbox({
+				label: 'Opt-In to receive updates & tips from Cyph',
+				noGrow: true
+			})
+		])
+	]);
 
 /** New patient form. */
-export const newPatient			= (data?: Record<string, string>) : IForm => newForm(
-	[
-		newFormComponent([title('Basic Information')]),
-		contact('redoxPatient.Demographics', data),
-		basicInfo('redoxPatient.Demographics'),
-		insuranceComponent(),
-		optInOut()
-	],
-	'patient'
-);
+export const newPatient = (data?: Record<string, string>): IForm =>
+	newForm(
+		[
+			newFormComponent([title('Basic Information')]),
+			contact('redoxPatient.Demographics', data),
+			basicInfo('redoxPatient.Demographics'),
+			insuranceComponent(),
+			optInOut()
+		],
+		'patient'
+	);
 
 /** Private patient profile form. */
-export const patientProfilePrivate		= () : IForm[] => [
+export const patientProfilePrivate = (): IForm[] => [
 	newForm(
 		[
 			newFormComponent([title('Basic Info')]),
 			...contactSplit('redoxPatient.Demographics'),
-			newFormComponent([newFormContainer([
-				datepicker({
-					id: 'DOB',
-					label: 'Date of Birth'
-				}),
-				select({
-					id: 'Sex',
-					label: 'Sex',
-					options: ['Male', 'Female']
-				}),
-				select({
-					id: 'MaritalStatus',
-					label: 'Marital Status',
-					options: ['Single', 'Married']
-				})
-			])]),
-			newFormComponent([newFormContainer([
-				numberInput({
-					label: 'Weight (lbs)',
-					max: 1500
-				}),
-				height()
-			])])
+			newFormComponent([
+				newFormContainer([
+					datepicker({
+						id: 'DOB',
+						label: 'Date of Birth'
+					}),
+					select({
+						id: 'Sex',
+						label: 'Sex',
+						options: ['Male', 'Female']
+					}),
+					select({
+						id: 'MaritalStatus',
+						label: 'Marital Status',
+						options: ['Single', 'Married']
+					})
+				])
+			]),
+			newFormComponent([
+				newFormContainer([
+					numberInput({
+						label: 'Weight (lbs)',
+						max: 1500
+					}),
+					height()
+				])
+			])
 		],
 		undefined,
 		true
@@ -616,33 +683,39 @@ export const patientProfilePrivate		= () : IForm[] => [
 ];
 
 /** Patient profile form. */
-export const patientProfile		= () : IForm[] => [
-	newForm(
-		[
-			newFormComponent([title('Patient Profile')])
-		],
-		undefined,
-		true
-	)
+export const patientProfile = (): IForm[] => [
+	newForm([newFormComponent([title('Patient Profile')])], undefined, true)
 ];
 
 /** Doctor profile form. */
-export const doctorProfile				= (data?: Record<string, string>) : IForm[] => [
+export const doctorProfile = (data?: Record<string, string>): IForm[] => [
 	newForm(
 		[
 			newFormComponent([title('Education & Training')]),
-			newFormComponent([newFormContainer([input({
-				label: "Bachelor's",
-				value: data && data.bachelors
-			})])]),
-			newFormComponent([newFormContainer([input({
-				label: 'Medical School',
-				value: data && data.medSchool
-			})])]),
-			newFormComponent([newFormContainer([input({
-				label: 'Residency',
-				value: data && data.residency
-			})])])
+			newFormComponent([
+				newFormContainer([
+					input({
+						label: "Bachelor's",
+						value: data && data.bachelors
+					})
+				])
+			]),
+			newFormComponent([
+				newFormContainer([
+					input({
+						label: 'Medical School',
+						value: data && data.medSchool
+					})
+				])
+			]),
+			newFormComponent([
+				newFormContainer([
+					input({
+						label: 'Residency',
+						value: data && data.residency
+					})
+				])
+			])
 		],
 		undefined,
 		true
@@ -650,10 +723,14 @@ export const doctorProfile				= (data?: Record<string, string>) : IForm[] => [
 	newForm(
 		[
 			newFormComponent([title('Misc')]),
-			newFormComponent([newFormContainer([input({
-				label: 'NPI',
-				value: data && data.npi
-			})])])
+			newFormComponent([
+				newFormContainer([
+					input({
+						label: 'NPI',
+						value: data && data.npi
+					})
+				])
+			])
 		],
 		undefined,
 		true
@@ -661,23 +738,11 @@ export const doctorProfile				= (data?: Record<string, string>) : IForm[] => [
 ];
 
 /** Telehealth organization profile form. */
-export const telehealthOrgProfile		= () : IForm[] => [
-	newForm(
-		[
-			newFormComponent([title('Org Profile')])
-		],
-		undefined,
-		true
-	)
+export const telehealthOrgProfile = (): IForm[] => [
+	newForm([newFormComponent([title('Org Profile')])], undefined, true)
 ];
 
 /** Telehealth staff profile form. */
-export const telehealthStaffProfile		= () : IForm[] => [
-	newForm(
-		[
-			newFormComponent([title('Staff Profile')])
-		],
-		undefined,
-		true
-	)
+export const telehealthStaffProfile = (): IForm[] => [
+	newForm([newFormComponent([title('Staff Profile')])], undefined, true)
 ];
