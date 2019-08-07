@@ -265,13 +265,15 @@ export class AccountUserLookupService extends BaseProvider {
 			userType
 		} = await this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue();
 
-		if (userType === AccountUserTypes.Standard) {
-			return [
-				AccountUserTypes.Org,
-				AccountUserTypes.TelehealthAdmin,
-				AccountUserTypes.TelehealthDoctor
-			];
+		if (userType !== AccountUserTypes.Standard) {
+			return;
 		}
+
+		return [
+			AccountUserTypes.Org,
+			AccountUserTypes.TelehealthAdmin,
+			AccountUserTypes.TelehealthDoctor
+		];
 	}
 
 	constructor (

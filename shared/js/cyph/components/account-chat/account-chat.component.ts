@@ -165,7 +165,6 @@ export class AccountChatComponent extends BaseProvider
 			this.accountService
 				.combinedRouteData(this.activatedRoute)
 				.subscribe(
-					/* tslint:disable-next-line:cyclomatic-complexity */
 					async ([
 						{
 							callType,
@@ -203,6 +202,7 @@ export class AccountChatComponent extends BaseProvider
 						},
 						UrlSegment[]
 					]) =>
+						/* tslint:disable-next-line:cyclomatic-complexity */
 						lock(async () => {
 							if (this.destroyed.value) {
 								return;

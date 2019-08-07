@@ -176,7 +176,7 @@
 		"cyclomatic-complexity": true,
 		"deprecation": false /* Pending fix: true */,
 		"eofline": true,
-		"indent": [true, "tabs"],
+		"indent": false,
 		"linebreak-style": [true, "LF"],
 		"max-classes-per-file": [true, 1],
 		"max-file-line-count": [true, 500],

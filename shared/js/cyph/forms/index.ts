@@ -126,7 +126,6 @@ export const newFormContainer = (
 });
 
 /** Creates a new form element. */
-/* tslint:disable-next-line:cyclomatic-complexity */
 export const newFormElement = <
 	T extends {
 		fileName?: string;
@@ -145,38 +144,40 @@ export const newFormElement = <
 	}
 >(
 	elementType: Form.Element.Types
-) => (o?: T) => {
-	const element: Form.IElement = {
-		fileName: o && o.fileName,
-		id: o && o.id,
-		label: o && o.label,
-		mask: o && o.mask && msgpack.encode(o.mask),
-		max: o && o.max,
-		mediaType: o && o.mediaType,
-		min: o && o.min,
-		noGrow: o && o.noGrow === true,
-		options: o && o.options,
-		required: o && o.required,
-		step: o && o.step,
-		type: elementType,
-		width: o && o.width
+) =>
+	/* tslint:disable-next-line:cyclomatic-complexity */
+	(o?: T) => {
+		const element: Form.IElement = {
+			fileName: o && o.fileName,
+			id: o && o.id,
+			label: o && o.label,
+			mask: o && o.mask && msgpack.encode(o.mask),
+			max: o && o.max,
+			mediaType: o && o.mediaType,
+			min: o && o.min,
+			noGrow: o && o.noGrow === true,
+			options: o && o.options,
+			required: o && o.required,
+			step: o && o.step,
+			type: elementType,
+			width: o && o.width
+		};
+
+		if (o && typeof o.value === 'boolean') {
+			element.valueBoolean = o.value;
+		}
+		else if (o && o.value instanceof Uint8Array) {
+			element.valueBytes = o.value;
+		}
+		else if (o && typeof o.value === 'number') {
+			element.valueNumber = o.value;
+		}
+		else if (o && typeof o.value === 'string') {
+			element.valueString = o.value;
+		}
+
+		return element;
 	};
-
-	if (o && typeof o.value === 'boolean') {
-		element.valueBoolean = o.value;
-	}
-	else if (o && o.value instanceof Uint8Array) {
-		element.valueBytes = o.value;
-	}
-	else if (o && typeof o.value === 'number') {
-		element.valueNumber = o.value;
-	}
-	else if (o && typeof o.value === 'string') {
-		element.valueString = o.value;
-	}
-
-	return element;
-};
 
 /** Creates a new checkbox form element. */
 export const checkbox = newFormElement<{
