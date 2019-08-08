@@ -14,7 +14,7 @@
 	"attr-name-style": false,
 	"attr-no-dup": true,
 	"attr-no-unsafe-char": false,
-	"attr-quote-style": "single",
+	"attr-quote-style": "double",
 	"attr-req-value": false,
 	"class-no-dup": false,
 	"class-style": false,

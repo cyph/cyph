@@ -60,7 +60,7 @@
 						"
 						[src]="(user | async)?.avatar | async"
 						alt="User Avatar"
-						aria-label='clickable ? stringsService.openProfile : ""'
+						aria-label="clickable ? stringsService.openProfile : ''"
 						[routerLink]="
 							!clickable ? undefined : '/profile/' + username
 						"
