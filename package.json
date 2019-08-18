@@ -1,0 +1,10 @@
+{
+	"name": "cyph",
+	"version": "0.0.0",
+	"license": "Ms-RSL",
+	"husky": {
+		"hooks": {
+			"pre-commit": "cyph-pretty-quick --staged --pattern '**/*.{css,html,js,json,scss,ts,tsx}'"
+		}
+	}
+}

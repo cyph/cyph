@@ -53,6 +53,7 @@ read -r -d '' modules <<- EOM
 	@covalent/markdown
 	@ctrl/ngx-rightclick
 	@cyph/prettier
+	@cyph/pretty-quick
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth
@@ -228,6 +229,7 @@ read -r -d '' modules <<- EOM
 	html-to-text
 	htmlencode
 	htmllint
+	husky
 	ical-generator@~0.2
 	image-type
 	jasmine-core

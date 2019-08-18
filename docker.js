@@ -369,14 +369,21 @@ const pullUpdates = () => {
 		shellScripts.libUpdate.command,
 		shellScripts.libUpdate.condition,
 		true
-	).then(didUpdate =>
-		didUpdate ?
-			undefined :
-			editImage(
-				shellScripts.aptUpdate.command,
-				shellScripts.aptUpdate.condition
-			)
-	);
+	)
+		.then(didUpdate =>
+			didUpdate ?
+				undefined :
+				editImage(
+					shellScripts.aptUpdate.command,
+					shellScripts.aptUpdate.condition
+				)
+		)
+		.then(() => {
+			spawn('node', [
+				'node_modules/husky/lib/installer/bin.js',
+				'install'
+			]);
+		});
 	/*
 	.then(() => {
 		const libNative	= path.join('shared', 'lib', 'native');
