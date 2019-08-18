@@ -227,9 +227,15 @@ const shellScripts = {
 		/cyph/commands/dockerpostmake.sh
 		source ~/.bashrc
 		notify 'Make complete'
-		gcloud init
-		echo
-		firebase login
+		${
+			!isCyphInternal ?
+				'' :
+				`
+					gcloud init
+					echo
+					firebase login
+				`
+		}
 	`
 };
 
@@ -467,6 +473,9 @@ const updateCircleCI = () => {
 		.then(() => spawnAsync('docker', ['system', 'prune', '-f']));
 };
 
+if (!isCyphInternal && isAgseDeploy) {
+	throw new Error('Non-Cyph-employee. AGSE unsupported.');
+}
 if (isWindows && isAgseDeploy) {
 	throw new Error('AGSE not yet supported on Windows.');
 }
