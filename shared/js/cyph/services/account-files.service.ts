@@ -932,19 +932,19 @@ export class AccountFilesService extends BaseProvider {
 				Temporarily commented out pending final appointments architecture
 
 				promises.push((async () => {
-					const currentUser	= this.accountDatabaseService.currentUser.value;
+					const currentUser = this.accountDatabaseService.currentUser.value;
 
 					if (!currentUser) {
 						throw new Error('User not signed in. Cannot RSVP.');
 					}
 
-					const appointment	= await this.downloadAppointment(incomingFile).result;
+					const appointment = await this.downloadAppointment(incomingFile).result;
 
 					if (!appointment.rsvps) {
-						appointment.rsvps	= {};
+						appointment.rsvps = {};
 					}
 
-					appointment.rsvps[currentUser.user.username]	= Appointment.RSVP.Yes;
+					appointment.rsvps[currentUser.user.username] = Appointment.RSVP.Yes;
 
 					return this.accountDatabaseService.setItem(
 						`users/${incomingFile.owner}/files/${incomingFile.id}`,

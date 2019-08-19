@@ -82,7 +82,7 @@ const {customBuild, customBuildIds} = require('../custombuild');
 			$,
 			`${o.id}.js`,
 			`
-				self.customBuildBase64	= '${potassium.toBase64(
+				self.customBuildBase64 = '${potassium.toBase64(
 					await serialize(Environment.CustomBuild, o)
 				)}';
 			`

@@ -50,30 +50,30 @@ cat > "${domain}/index.html" <<- EOM
 		<body>
 			<script>
 				function redirect () {
-					var storage	= {};
+					var storage = {};
 					try {
-						localStorage.isPersistent	= 'true';
-						storage						= localStorage;
+						localStorage.isPersistent = 'true';
+						storage = localStorage;
 					}
 					catch (_) {}
 
-					var isHiddenService	= location.host.split('.').slice(-1)[0] === 'onion';
+					var isHiddenService = location.host.split('.').slice(-1)[0] === 'onion';
 
 					$(if [ ! "${test}" ] ; then echo "
 						if (location.host.indexOf('www.') === 0) {
-							location.host	= location.host.replace('www.', '');
+							location.host = location.host.replace('www.', '');
 						}
 						else if (
 							!isHiddenService &&
 							storage.isPersistent &&
 							!storage.webSignWWWPinned
 						) {
-							storage.webSignWWWPinned	= true;
-							location.host				= 'www.' + location.host;
+							storage.webSignWWWPinned = true;
+							location.host = 'www.' + location.host;
 						}
 					" ; fi)
 
-					var path	= (
+					var path = (
 						'/#' +
 						'$(if [ "${path}" ] ; then echo "${path}/" ; fi)' +
 						location.toString().
@@ -82,10 +82,10 @@ cat > "${domain}/index.html" <<- EOM
 							replace(/^\\//, '')
 					).replace(/\\/\$/, '');
 
-					var host	= '${package}';
+					var host = '${package}';
 
 					if (isHiddenService) {
-						host	=
+						host =
 							(
 								host === 'cyph.app' ?
 									'app' :
@@ -95,7 +95,7 @@ cat > "${domain}/index.html" <<- EOM
 						;
 					}
 
-					location	= 'https://' + host + (path === '/#' ? '' : path);
+					location = 'https://' + host + (path === '/#' ? '' : path);
 				}
 
 				try {
@@ -132,7 +132,7 @@ cat > "${domain}/appcache.appcache" <<- EOM
 EOM
 
 cat > "${domain}/serviceworker.js" <<- EOM
-	var files	= [
+	var files = [
 		'/',
 		'/appcache.appcache',
 		'/serviceworker.js'
@@ -140,7 +140,7 @@ cat > "${domain}/serviceworker.js" <<- EOM
 		return new Request(file);
 	});
 
-	var root	= files[0].url.replace(/(.*)\\/\$/, '\$1');
+	var root = files[0].url.replace(/(.*)\\/\$/, '\$1');
 
 	self.addEventListener('install', function () {
 		Promise.all([
@@ -149,8 +149,8 @@ cat > "${domain}/serviceworker.js" <<- EOM
 				return fetch(file, {credentials: 'include'});
 			}))
 		]).then(function (results) {
-			var cache		= results[0];
-			var responses	= results[1];
+			var cache = results[0];
+			var responses = results[1];
 
 			for (var i = 0 ; i < responses.length ; ++i) {
 				cache.put(files[i], responses[i]);
@@ -174,8 +174,8 @@ cat > "${domain}/serviceworker.js" <<- EOM
 					caches.open('cache'),
 					fetch(e.request.clone())
 				]).then(function (results) {
-					var cache		= results[0];
-					var response	= results[1];
+					var cache = results[0];
+					var response = results[1];
 
 					cache.put(e.request, response.clone());
 

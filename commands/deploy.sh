@@ -893,12 +893,12 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 			filter(o => !o.useNamespace).
 			reduce(
 				(namespaces, {burnerOnly, domain}) => {
-					namespaces[domain]	= {
+					namespaces[domain] = {
 						accountsURL: `https://${domain}/`,
 						burnerURL: `https://${domain}/${burnerOnly ? "" : "#burner/"}`,
 						domain
 					};
-					namespaces[domain.replace(/\./g, "_")]	= namespaces[domain];
+					namespaces[domain.replace(/\./g, "_")] = namespaces[domain];
 					return namespaces;
 				},
 				{

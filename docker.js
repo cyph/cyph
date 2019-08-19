@@ -386,8 +386,8 @@ const pullUpdates = () => {
 		});
 	/*
 	.then(() => {
-		const libNative	= path.join('shared', 'lib', 'native');
-		const ready		= path.join(__dirname, libNative, '.ready');
+		const libNative = path.join('shared', 'lib', 'native');
+		const ready = path.join(__dirname, libNative, '.ready');
 
 		if (fs.existsSync(ready)) {
 			return;

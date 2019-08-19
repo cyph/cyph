@@ -34,7 +34,7 @@ const {customBuild} = require('./custombuild');
 			environment.envName = 'tmp';
 			environment.local = true;
 
-			environment.customBuild	= {${Object.keys(o)
+			environment.customBuild = {${Object.keys(o)
 				.map(
 					k =>
 						`${k}:${

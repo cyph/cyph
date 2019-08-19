@@ -147,24 +147,24 @@ done
 cd ../js
 
 node -e "
-	const tsconfig	= JSON.parse(
+	const tsconfig = JSON.parse(
 		fs.readFileSync('../../js/tsconfig.json').toString().
 			split('\n').
 			filter(s => s.trim()[0] !== '/').
 			join('\n')
 	);
 
-	tsconfig.compilerOptions.baseUrl	= '../../js';
-	tsconfig.compilerOptions.rootDir	= '../../js';
-	tsconfig.compilerOptions.outDir		= '.';
+	tsconfig.compilerOptions.baseUrl = '../../js';
+	tsconfig.compilerOptions.rootDir = '../../js';
+	tsconfig.compilerOptions.outDir = '.';
 
-	tsconfig.files	= [
+	tsconfig.files = [
 		'../../js/standalone/global.ts',
 		'../../js/typings/index.d.ts'
 	];
 
 	for (const k of Object.keys(tsconfig.compilerOptions.paths)) {
-		tsconfig.compilerOptions.paths[k]	=
+		tsconfig.compilerOptions.paths[k] =
 			tsconfig.compilerOptions.paths[k].map(s =>
 				s.replace(/^js\//, '')
 			)
@@ -183,12 +183,12 @@ for f in ${typescriptAssets} ; do
 	m="$(echo ${f} | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g')"
 
 	cat > webpack.js <<- EOM
-		const {TsConfigPathsPlugin}	= require('awesome-typescript-loader');
-		const path					= require('path');
-		const TerserPlugin			= require('terser-webpack-plugin');
-		const {mangleExceptions}	= require('../../../commands/mangleexceptions');
+		const {TsConfigPathsPlugin} = require('awesome-typescript-loader');
+		const path = require('path');
+		const TerserPlugin = require('terser-webpack-plugin');
+		const {mangleExceptions} = require('../../../commands/mangleexceptions');
 
-		module.exports	= {
+		module.exports = {
 			entry: {
 				app: '../../js/${f}'
 			},
@@ -270,12 +270,12 @@ for f in ${typescriptAssets} ; do
 		echo '(function () {';
 		cat "${f}.js";
 		echo "
-			self.${m}	= ${m};
+			self.${m} = ${m};
 
-			var keys	= Object.keys(${m});
+			var keys = Object.keys(${m});
 			for (var i = 0 ; i < keys.length ; ++i) {
-				var key		= keys[i];
-				self[key]	= ${m}[key];
+				var key = keys[i];
+				self[key] = ${m}[key];
 			}
 		" |
 			uglify \

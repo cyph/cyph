@@ -296,34 +296,34 @@ http.createServer((req, res) =>
 		.then(() => {
 			return 200;
 			/*
-	const urlSplit		= req.url.split('/');
+			const urlSplit = req.url.split('/');
 
-	if (urlSplit[1] === '_ah') {
-		return 200;
-	}
-	else if (req.headers.authorization !== process.env.AUTH) {
-		return 403;
-	}
-	else if (urlSplit.length !== 4) {
-		return 404;
-	}
+			if (urlSplit[1] === '_ah') {
+				return 200;
+			}
+			else if (req.headers.authorization !== process.env.AUTH) {
+				return 403;
+			}
+			else if (urlSplit.length !== 4) {
+				return 404;
+			}
 
-	const backendURL	= `https://${urlSplit[1]}`;
-	const homeURL		= `https://${urlSplit[2]}`;
-	const newCyphURL	= `https://${urlSplit[3]}`;
-	const id			= backendURL + homeURL + newCyphURL;
+			const backendURL = `https://${urlSplit[1]}`;
+			const homeURL = `https://${urlSplit[2]}`;
+			const newCyphURL = `https://${urlSplit[3]}`;
+			const id = backendURL + homeURL + newCyphURL;
 
-	setImmediate(() => {
-		try {
-			runTests(backendURL, homeURL, newCyphURL, id);
-		}
-		catch (err) {
-			console.error(err);
-		}
-	});
+			setImmediate(() => {
+				try {
+					runTests(backendURL, homeURL, newCyphURL, id);
+				}
+				catch (err) {
+					console.error(err);
+				}
+			});
 
-	return isTestPassing(id).then(() => 200);
-	*/
+			return isTestPassing(id).then(() => 200);
+			*/
 		})
 		.catch(err => {
 			if (err) {

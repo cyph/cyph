@@ -70,38 +70,38 @@ import {StringsService} from '../../services/strings.service';
 })
 export class ${class} extends BaseProvider implements ControlValueAccessor {
 	/** Change event callback. */
-	private onChange: (value: string) => void	= () => {};
+	private onChange: (value: string) => void = () => {};
 
 	/** Indicates whether input is disabled. */
-	public isDisabled: boolean					= false;
+	public isDisabled: boolean = false;
 
 	/** Touch event callback. */
-	public onTouched: () => void				= () => {};
+	public onTouched: () => void = () => {};
 
 	/** Value. */
-	public value: string						= '';
+	public value: string = '';
 
 	/** @inheritDoc */
 	public registerOnChange (f: (value: string) => void) : void {
-		this.onChange	= f;
+		this.onChange = f;
 	}
 
 	/** @inheritDoc */
 	public registerOnTouched (f: () => void) : void {
-		this.onTouched	= f;
+		this.onTouched = f;
 	}
 
 	/** @inheritDoc */
 	public setDisabledState (isDisabled: boolean) : void {
 		if (this.isDisabled !== isDisabled) {
-			this.isDisabled	= isDisabled;
+			this.isDisabled = isDisabled;
 		}
 	}
 
 	/** @inheritDoc */
 	public writeValue (value: string) : void {
 		if (this.value !== value) {
-			this.value	= value;
+			this.value = value;
 		}
 	}
 

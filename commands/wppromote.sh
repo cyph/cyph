@@ -33,8 +33,8 @@ commandComment="# wppromote-download $(node -e '
 ')"
 
 command="$(node -e "(async () => {
-	const browser	= await require('puppeteer').launch();
-	const page		= await browser.newPage();
+	const browser = await require('puppeteer').launch();
+	const page = await browser.newPage();
 
 	setTimeout(() => process.exit(1), 600000);
 
@@ -51,11 +51,11 @@ command="$(node -e "(async () => {
 	await page.click('#ai1wm-export-file');
 	await page.waitForSelector('a[href\$=\".wpress\"]', {timeout: 0});
 
-	const url		= await page.evaluate(() =>
+	const url = await page.evaluate(() =>
 		(document.querySelectorAll('a[href\$=\".wpress\"]')[0] || {}).href
 	);
 
-	const cookies	=
+	const cookies =
 		(await page.cookies()).map(o => \`\${o.name}=\${o.value}\`).join('; ')
 	;
 
@@ -82,8 +82,8 @@ ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${sourcePort}:${sourceOrigin}" "${sshTa
 failure=''
 
 node -e "(async () => {
-	const browser	= await require('puppeteer').launch();
-	const page		= await browser.newPage();
+	const browser = await require('puppeteer').launch();
+	const page = await browser.newPage();
 
 	setTimeout(() => process.exit(1), 600000);
 
@@ -99,7 +99,7 @@ node -e "(async () => {
 	await page.click('.ai1wm-button-main');
 	await page.waitForSelector('#ai1wm-select-file');
 
-	const selectFile	= await page.\$('#ai1wm-select-file');
+	const selectFile = await page.\$('#ai1wm-select-file');
 
 	await selectFile.uploadFile('${PWD}/staging.wpress');
 

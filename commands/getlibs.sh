@@ -11,7 +11,7 @@ installPackages () {
 	mkdir node_modules
 	yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 		$(node -e "
-			const package	= JSON.parse(
+			const package = JSON.parse(
 				fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
 			);
 

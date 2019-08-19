@@ -742,20 +742,25 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 									/* Clean up expired lock claims. TODO: Handle as Cloud Function.
 
-							for (const expiredContenderKey of Object.keys(value).filter(k => {
-								const contender	= value[k];
-								return (
-									typeof contender.timestamp === 'number' &&
-									!isNaN(contender.timestamp) &&
-									(
-										timestamp - contender.timestamp
-									) >= this.lockLeaseConfig.expirationLimit
-								);
-							})) {
-								queue.child(expiredContenderKey).remove();
-								delete value[expiredContenderKey];
-							}
-							*/
+									for (const expiredContenderKey of Object.keys(
+										value
+									).filter(k => {
+										const contender = value[k];
+										return (
+											typeof contender.timestamp ===
+												'number' &&
+											!isNaN(contender.timestamp) &&
+											timestamp - contender.timestamp >=
+												this.lockLeaseConfig
+													.expirationLimit
+										);
+									})) {
+										queue
+											.child(expiredContenderKey)
+											.remove();
+										delete value[expiredContenderKey];
+									}
+									*/
 
 									const contenders = Object.values(value)
 										.filter(

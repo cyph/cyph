@@ -179,10 +179,10 @@ export class Thread<T> implements IThread<T> {
 					Thread.stringifyFunction(Thread.threadEnvSetup)
 				}
 
-				self.onmessage	= function (e) {
-					self.threadLocals	= e.data;
-					self.onmessage		= undefined;
-					e					= undefined;
+				self.onmessage = function (e) {
+					self.threadLocals = e.data;
+					self.onmessage = undefined;
+					e = undefined;
 
 					${Thread.stringifyFunction(f)}
 

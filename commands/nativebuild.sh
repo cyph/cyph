@@ -50,18 +50,18 @@ cat assets/js/standalone/global.js >> starter.js
 echo >> starter.js
 cat assets/js/cyph/crypto/native-web-crypto-polyfill.js >> starter.js
 node -e 'console.log(`
-	var crypto	= self.crypto;
+	var crypto = self.crypto;
 
 	(function () {
-		var exports	= undefined;
-		var print	= function (s) { console.log(s); };
+		var exports = undefined;
+		var print = function (s) { console.log(s); };
 		importScripts("/assets/node_modules/libsodium-sumo/dist/modules-sumo/libsodium-sumo.js");
 		importScripts(
 			"/assets/node_modules/libsodium-wrappers-sumo/dist/modules-sumo/libsodium-wrappers.js"
 		);
 	})();
 
-	self.translations	= ${JSON.stringify(require("../commands/translations").translations)};
+	self.translations = ${JSON.stringify(require("../commands/translations").translations)};
 `)' >> starter.js
 cat app/starter.js >> starter.js
 

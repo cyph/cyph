@@ -101,14 +101,14 @@ dependencyModules="$(
 ng eject --prod --output-hashing none "${@}"
 
 cat > webpack.js <<- EOM
-	const HtmlWebpackPlugin		= require('html-webpack-plugin');
-	const path					= require('path');
-	const TerserPlugin			= require('terser-webpack-plugin');
-	const {CommonsChunkPlugin}	= require('webpack').optimize;
-	const {mangleExceptions}	= require('../commands/mangleexceptions');
-	const config				= require('./webpack.config.js');
+	const HtmlWebpackPlugin = require('html-webpack-plugin');
+	const path = require('path');
+	const TerserPlugin = require('terser-webpack-plugin');
+	const {CommonsChunkPlugin} = require('webpack').optimize;
+	const {mangleExceptions} = require('../commands/mangleexceptions');
+	const config = require('./webpack.config.js');
 
-	const chunks	=
+	const chunks =
 		'${dependencyModules}'.
 			trim().
 			split(/\s+/).
@@ -127,12 +127,12 @@ cat > webpack.js <<- EOM
 			}))
 	;
 
-	const entryPoints	= ['inline', 'polyfills', 'sw-register', 'styles'].
+	const entryPoints = ['inline', 'polyfills', 'sw-register', 'styles'].
 		concat(chunks.map(chunk => chunk.name)).
 		concat(['vendor', 'main'])
 	;
 
-	const commonsChunkIndex	= config.plugins.indexOf(
+	const commonsChunkIndex = config.plugins.indexOf(
 		config.plugins.find(o => o instanceof CommonsChunkPlugin)
 	);
 
@@ -150,7 +150,7 @@ cat > webpack.js <<- EOM
 		);
 	}
 
-	const htmlWebpackIndex	= config.plugins.indexOf(
+	const htmlWebpackIndex = config.plugins.indexOf(
 		config.plugins.find(o => o instanceof HtmlWebpackPlugin)
 	);
 
@@ -171,8 +171,8 @@ cat > webpack.js <<- EOM
 				chunks: 'all',
 				xhtml: true,
 				chunksSortMode: (left, right) => {
-					let leftIndex	= entryPoints.indexOf(left.names[0]);
-					let rightindex	= entryPoints.indexOf(right.names[0]);
+					let leftIndex = entryPoints.indexOf(left.names[0]);
+					let rightindex = entryPoints.indexOf(right.names[0]);
 
 					if (leftIndex > rightindex) {
 						return 1;
@@ -188,23 +188,23 @@ cat > webpack.js <<- EOM
 		);
 	}
 
-	const terserIndex	= config.plugins.indexOf(
+	const terserIndex = config.plugins.indexOf(
 		config.plugins.find(o => o instanceof TerserPlugin)
 	);
 
 	if (terserIndex > -1) {
-		const {options}	= config.plugins[terserIndex];
+		const {options} = config.plugins[terserIndex];
 
-		options.terserOptions.compress.sequences	= false;
-		options.terserOptions.mangle				= {reserved: mangleExceptions};
+		options.terserOptions.compress.sequences = false;
+		options.terserOptions.mangle = {reserved: mangleExceptions};
 
 		config.plugins.splice(terserIndex, 1, new TerserPlugin(options));
 	}
 
-	config.output.filename		= '[name].js';
-	config.output.chunkFilename	= config.output.filename;
+	config.output.filename = '[name].js';
+	config.output.chunkFilename = config.output.filename;
 
-	module.exports	= config;
+	module.exports = config;
 EOM
 
 webpack --config webpack.js

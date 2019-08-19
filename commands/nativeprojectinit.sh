@@ -8,18 +8,18 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 cd native
 
 node -e "
-	const package		= JSON.parse(fs.readFileSync('package.base.json').toString());
-	const nativePackage	= JSON.parse(
+	const package = JSON.parse(fs.readFileSync('package.base.json').toString());
+	const nativePackage = JSON.parse(
 		fs.readFileSync('../shared/lib/native/package.json').toString()
 	);
 
-	const id	= package.nativescript.id;
+	const id = package.nativescript.id;
 
 	for (const k of ['dependencies', 'devDependencies', 'nativescript']) {
-		package[k]	= nativePackage[k];
+		package[k] = nativePackage[k];
 	}
 
-	package.nativescript.id	= id;
+	package.nativescript.id = id;
 
 	fs.writeFileSync('package.json', JSON.stringify(package));
 "
@@ -67,8 +67,8 @@ for plugin in $(cat plugins.list) ; do
 		EOM
 	fi
 	node -e "
-		const tsconfig	= JSON.parse(fs.readFileSync('tsconfig.json').toString());
-		tsconfig.compilerOptions.paths['${plugin}']	= ['app/externals/${plugin}'];
+		const tsconfig = JSON.parse(fs.readFileSync('tsconfig.json').toString());
+		tsconfig.compilerOptions.paths['${plugin}'] = ['app/externals/${plugin}'];
 		fs.writeFileSync('tsconfig.json', JSON.stringify(tsconfig));
 	"
 done
@@ -95,10 +95,10 @@ newExceptions="Array.from(new Set(${exceptions}.concat(require('../commands/mang
 sed -i "s|${exceptions}|${newExceptions}|g" webpack.config.js
 
 node -e "
-	const tsconfig		= JSON.parse(fs.readFileSync('tsconfig.json').toString());
-	const aotTsconfig	= JSON.parse(fs.readFileSync('tsconfig.aot.json').toString());
+	const tsconfig = JSON.parse(fs.readFileSync('tsconfig.json').toString());
+	const aotTsconfig = JSON.parse(fs.readFileSync('tsconfig.aot.json').toString());
 	for (const k of Object.keys(tsconfig.compilerOptions.paths)) {
-		aotTsconfig.compilerOptions.paths[k]	= tsconfig.compilerOptions.paths[k];
+		aotTsconfig.compilerOptions.paths[k] = tsconfig.compilerOptions.paths[k];
 	}
 	fs.writeFileSync('tsconfig.aot.json', JSON.stringify(aotTsconfig));
 "

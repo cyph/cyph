@@ -387,11 +387,11 @@ EOM
 # script -fc "
 # 	while true ; do
 # 		answer=\"\$(node -e '
-# 			const semver			= require(\"semver\");
+# 			const semver = require(\"semver\");
 #
-# 			const modules			= \`${modules}\`;
+# 			const modules = \`${modules}\`;
 #
-# 			const getPinnedVersion	= package =>
+# 			const getPinnedVersion = package =>
 # 				(modules.match(new RegExp(
 # 					\`(^|\\\\s+)\${package}@((\\\\d|\\\\.)+)(\n|\$)\`
 # 				)) || [])[2]
@@ -407,9 +407,9 @@ EOM
 # 					section.match(/\"[^\\n]+\" which resolved to \"[^\\n]+\"/g) || []
 # 				).
 # 					map((s, i) => {
-# 						const split			= s.split(\"\\\"\");
-# 						const version		= split[3];
-# 						const pinnedVersion	= getPinnedVersion(split[1].split(\"@\")[0]);
+# 						const split = s.split(\"\\\"\");
+# 						const version = split[3];
+# 						const pinnedVersion = getPinnedVersion(split[1].split(\"@\")[0]);
 #
 # 						return {
 # 							index: i + 1,
