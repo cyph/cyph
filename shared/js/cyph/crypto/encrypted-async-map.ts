@@ -203,11 +203,14 @@ export class EncryptedAsyncMap<T> {
 			encryptionKey
 		);
 
-		this.map.setItem(key, cyphertext);
+		const hash = Promise.all([
+			this.hash(value, plaintext, hasher, true),
+			this.map.setItem(key, cyphertext)
+		]).then(([h]) => h);
 
 		return {
 			encryptionKey,
-			getHash: async () => this.hash(value, plaintext, hasher, true)
+			getHash: async () => hash
 		};
 	}
 
