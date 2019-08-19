@@ -67,7 +67,7 @@ export class EnvDeploy {
 		`CYPH-VIDEO/`;
 
 	/** Content Security Policy defined in shared/csp. */
-	public readonly CSP: string = 'DEFAULT_CSP';
+	public readonly CSP: string = "'DEFAULT_CSP'";
 
 	/** Firebase-related config. */
 	// public readonly localFirebaseDatabaseURL: string	= `ws://${`${locationData.hostname}.`.replace(/(localhost|127\.0\.0\.1|0\.0\.0\.0)\.$/, '127.0.1')}:44000`;

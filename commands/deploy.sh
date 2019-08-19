@@ -417,7 +417,7 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
-	sed -i "s|${defaultCSPString}|${fullCSP}|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|'${defaultCSPString}'|${fullCSP}|g" shared/js/cyph/env-deploy.ts
 
 	cat cyph.com/cyph-com.yaml |
 		tr '\n' '☁' |
