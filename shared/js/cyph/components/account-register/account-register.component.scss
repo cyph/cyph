@@ -100,6 +100,10 @@ mat-card-content {
 .welcome-letter {
 	font-size: 0.8em;
 
+	> mat-card {
+		padding-bottom: 26px;
+	}
+
 	::ng-deep a {
 		color: map-get($mat-blue, 700);
 
@@ -107,6 +111,7 @@ mat-card-content {
 			color: rgb(96, 51, 163);
 			font-weight: bold;
 			text-decoration: none;
+			margin-left: 10px;
 		}
 	}
 }
