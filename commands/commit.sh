@@ -33,7 +33,7 @@ git fetch --all
 git pull
 chmod -R 700 .
 git add .
-git commit -S -a -m "${comment}"
+git commit --no-verify -S -a -m "${comment}"
 
 if [ "${noCleanup}" ] ; then
 	git push
@@ -72,7 +72,7 @@ find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash 
 find commands serverconfig types.proto shared/css shared/js -type f -exec sed -i 's/\s*$//g' {} \;
 
 chmod -R 700 .
-git commit -S -a -m "cleanup: ${comment}"
+git commit --no-verify -S -a -m "cleanup: ${comment}"
 
 if [ "${blockFailingBuild}" ] ; then
 	./commands/build.sh || fail
