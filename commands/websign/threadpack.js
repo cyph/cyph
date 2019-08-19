@@ -12,7 +12,7 @@ const terser = require('terser');
 		.readFileSync(args.path)
 		.toString()
 		.replace(
-			/importScripts\(["'](.*?)["']\)/g,
+			/importScripts\(\s*["'](.*?)["']\s*\)/g,
 			(_, value) =>
 				'\n\n' +
 				fs
