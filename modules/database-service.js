@@ -5,7 +5,6 @@
 const {Storage} = require('@google-cloud/storage');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
-const functions = require('firebase-functions');
 const fs = require('fs');
 const lz4 = require('lz4');
 const os = require('os');
@@ -77,6 +76,7 @@ module.exports = (config, isCloudFunction) => {
 		});
 
 	const databaseService = {
+		admin,
 		app,
 		auth,
 		database,

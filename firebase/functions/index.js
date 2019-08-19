@@ -1,6 +1,4 @@
 const cors = require('cors')({origin: true});
-const firebase = require('firebase');
-const admin = require('firebase-admin');
 const functions = require('firebase-functions');
 const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
@@ -10,6 +8,7 @@ const {renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
 
 const {
+	admin,
 	auth,
 	database,
 	getHash,
@@ -1044,9 +1043,8 @@ exports.userRegister = functions.auth
 			emailSplit.length !== 2 ||
 			(userRecord.providerData &&
 				userRecord.providerData.find(
-					o =>
-						o.providerId !==
-						firebase.auth.EmailAuthProvider.PROVIDER_ID
+					o => o.providerId !== 'password'
+					// firebase.auth.EmailAuthProvider.PROVIDER_ID
 				)) ||
 			typeof inviteData.inviterUsername !== 'string' ||
 			username.length < config.planConfig[plan].usernameMinLength ||
