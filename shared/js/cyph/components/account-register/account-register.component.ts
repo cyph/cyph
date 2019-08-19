@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
@@ -103,13 +103,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	});
 
 	/** Watches invite code. */
-	public readonly inviteCodeWatcher = concat(
-		of(this.inviteCode),
-		combineLatest([
-			this.inviteCode.statusChanges,
-			this.inviteCode.valueChanges
-		]).pipe(map(() => this.inviteCode))
-	);
+	public readonly inviteCodeWatcher: Observable<FormControl>;
 
 	/** Lock screen password. */
 	public readonly lockScreenPassword = new BehaviorSubject<string>('');
@@ -462,6 +456,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					null;
 			}
 		]);
+
+		this.inviteCodeWatcher = concat(
+			of(this.inviteCode),
+			combineLatest([
+				this.inviteCode.statusChanges,
+				this.inviteCode.valueChanges
+			]).pipe(map(() => this.inviteCode))
+		);
 
 		this.lockScreenPasswordReady = toBehaviorSubject(
 			combineLatest([
