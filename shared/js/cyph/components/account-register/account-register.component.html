@@ -145,19 +145,16 @@
 										>
 											<div
 												class="cyph-light-theme welcome-letter"
+												*ngIf="
+													(inviteCodeData | async)
+														?.welcomeLetter as welcomeLetter;
+													else mainBasicWelcomeMessage
+												"
 											>
 												<mat-card>
 													<cyph-markdown
 														[markdown]="
 															welcomeLetter
-														"
-														*ngIf="
-															(
-																inviteCodeData
-																| async
-															)
-																?.welcomeLetter as welcomeLetter;
-															else mainBasicWelcomeMessage
 														"
 													></cyph-markdown>
 													<br />
