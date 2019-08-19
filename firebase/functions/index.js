@@ -336,11 +336,9 @@ exports.checkInviteCode = onCall(
 		const {inviterUsername, plan, reservedUsername} =
 			(await inviteDataRef.once('value')).val() || {};
 
-		const inviterName = await getName(namespace, inviterUsername);
-
 		const templateData = getInviteTemplateData(
 			inviteCode,
-			inviterName,
+			undefined,
 			undefined,
 			plan,
 			true
