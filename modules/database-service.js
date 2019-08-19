@@ -40,9 +40,7 @@ module.exports = (config, isCloudFunction) => {
 		};
 	}
 
-	const app = admin.initializeApp(
-		...(isCloudFunction ? [] : [config.firebase, uuid()])
-	);
+	const app = admin.initializeApp(config.firebase, uuid());
 	const auth = app.auth();
 	const database = app.database();
 	const messaging = app.messaging();
