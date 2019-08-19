@@ -244,9 +244,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
-		this.accountService.resolveUiReady();
 
 		if (this.getMasterKeyOnly || this.getPinOnly) {
+			this.accountService.resolveUiReady();
 			return;
 		}
 
@@ -265,6 +265,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						step <= this.totalSteps + 1
 					) {
 						this.tabIndex.next(step - 1);
+						this.accountService.resolveUiReady();
 						return;
 					}
 				}
@@ -449,6 +450,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					/* Trigger validator function */
 					this.username.setValue(this.username.value);
 				}
+
+				this.accountService.resolveUiReady();
 
 				return !this.inviteCodeData.value.isValid ?
 					{inviteCodeInvalid: true} :
