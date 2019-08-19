@@ -43,20 +43,6 @@ import {sleep} from '../../util/wait';
 	templateUrl: './account-register.component.html'
 })
 export class AccountRegisterComponent extends BaseProvider implements OnInit {
-	/** Metadata pulled for current invite code. */
-	public readonly inviteCodeData = new BehaviorSubject<{
-		inviteCode?: string;
-		inviterUsername?: string;
-		isValid: boolean;
-		plan: CyphPlans;
-		reservedUsername?: string;
-		welcomeLetter?: string;
-	}>({
-		inviteCode: '',
-		isValid: false,
-		plan: CyphPlans.Free
-	});
-
 	/** @ignore */
 	private inviteCodeDebounceLast?: string;
 
@@ -100,69 +86,21 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	@Input() public hidePinDescription: boolean = false;
 
 	/** Invite code. */
-	public readonly inviteCode = new FormControl('', undefined, [
-		async control => {
-			const value = control.value;
-			const id = uuid();
-			this.inviteCodeDebounceLast = id;
+	public readonly inviteCode: FormControl;
 
-			this.inviteCodeData.next(
-				await (this.inviteCodeData.value.inviteCode === '' ?
-					Promise.resolve() :
-					sleep(500)
-				).then(async () => {
-					let o =
-						this.inviteCodeDebounceLast === id && value ?
-							await this.databaseService
-								.callFunction('checkInviteCode', {
-									inviteCode: value
-								})
-								.catch(() => undefined) :
-							undefined;
-
-					if (typeof o !== 'object') {
-						o = {};
-					}
-
-					return {
-						inviteCode: value,
-						inviterUsername:
-							typeof o.inviterUsername === 'string' ?
-								o.inviterUsername :
-								undefined,
-						isValid: o.isValid === true,
-						plan: o.plan in CyphPlans ? o.plan : CyphPlans.Free,
-						reservedUsername:
-							typeof o.reservedUsername === 'string' ?
-								o.reservedUsername :
-								undefined,
-						welcomeLetter:
-							typeof o.welcomeLetter === 'string' ?
-								o.welcomeLetter :
-								undefined
-					};
-				})
-			);
-
-			if (
-				this.inviteCodeData.value.reservedUsername &&
-				!this.username.value
-			) {
-				this.username.setValue(
-					this.inviteCodeData.value.reservedUsername
-				);
-			}
-			else {
-				/* Trigger validator function */
-				this.username.setValue(this.username.value);
-			}
-
-			return !this.inviteCodeData.value.isValid ?
-				{inviteCodeInvalid: true} :
-				/* tslint:disable-next-line:no-null-keyword */
-				null;
-		}
-	]);
+	/** Metadata pulled for current invite code. */
+	public readonly inviteCodeData = new BehaviorSubject<{
+		inviteCode?: string;
+		inviterUsername?: string;
+		isValid: boolean;
+		plan: CyphPlans;
+		reservedUsername?: string;
+		welcomeLetter?: string;
+	}>({
+		inviteCode: '',
+		isValid: false,
+		plan: CyphPlans.Free
+	});
 
 	/** Watches invite code. */
 	public readonly inviteCodeWatcher = concat(
@@ -460,6 +398,70 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		public readonly stringsService: StringsService
 	) {
 		super();
+
+		this.inviteCode = new FormControl('', undefined, [
+			async control => {
+				const value = control.value;
+				const id = uuid();
+				this.inviteCodeDebounceLast = id;
+
+				this.inviteCodeData.next(
+					await (this.inviteCodeData.value.inviteCode === '' ?
+						Promise.resolve() :
+						sleep(500)
+					).then(async () => {
+						let o =
+							this.inviteCodeDebounceLast === id && value ?
+								await this.databaseService
+									.callFunction('checkInviteCode', {
+										inviteCode: value
+									})
+									.catch(() => undefined) :
+								undefined;
+
+						if (typeof o !== 'object') {
+							o = {};
+						}
+
+						return {
+							inviteCode: value,
+							inviterUsername:
+								typeof o.inviterUsername === 'string' ?
+									o.inviterUsername :
+									undefined,
+							isValid: o.isValid === true,
+							plan: o.plan in CyphPlans ? o.plan : CyphPlans.Free,
+							reservedUsername:
+								typeof o.reservedUsername === 'string' ?
+									o.reservedUsername :
+									undefined,
+							welcomeLetter:
+								typeof o.welcomeLetter === 'string' ?
+									o.welcomeLetter :
+									undefined
+						};
+					})
+				);
+
+				if (
+					this.inviteCodeData.value.reservedUsername &&
+					!this.username.value
+				) {
+					this.username.setValue(
+						this.inviteCodeData.value.reservedUsername
+					);
+				}
+				else {
+					/* Trigger validator function */
+					this.username.setValue(this.username.value);
+				}
+
+				return !this.inviteCodeData.value.isValid ?
+					{inviteCodeInvalid: true} :
+					/* tslint:disable-next-line:no-null-keyword */
+					null;
+			}
+		]);
 
 		this.lockScreenPasswordReady = toBehaviorSubject(
 			combineLatest([
