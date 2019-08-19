@@ -287,8 +287,6 @@ do
 	echo "module.exports = ${arr[1]};" >> "${arr[0]}"
 done
 
-for m in libsodium* ; do cd ${m} ; mv package-${m}.json package.json ; cd .. ; done
-
 rm -rf simplewebrtc/node_modules
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.js
 

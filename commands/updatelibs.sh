@@ -249,10 +249,10 @@ read -r -d '' modules <<- EOM
 	lamejs
 	lazy
 	leaflet
-	libsodium@https://github.com/jedisct1/libsodium.js#9d4455c
-	libsodium-sumo@https://github.com/jedisct1/libsodium.js#9d4455c
-	libsodium-wrappers@https://github.com/jedisct1/libsodium.js#9d4455c
-	libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js#9d4455c
+	libsodium
+	libsodium-sumo
+	libsodium-wrappers
+	libsodium-wrappers-sumo
 	libvorbis.js
 	localforage
 	lodash
