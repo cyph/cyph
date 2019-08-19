@@ -16,7 +16,7 @@ fi
 # Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
 
 minifyScripts="$(
-	grep -rlP "this\.options\[['\"]sequences['\"]\]" \
+	grep -rlP "this\.options(\.sequences|\[['\"]sequences['\"]\])" \
 		/node_modules/@angular* \
 		/node_modules/ng-* \
 		/node_modules/*terse* \
@@ -49,13 +49,14 @@ for minifyScript in ${minifyScripts} ; do
 
 	commandsDir="$(cd "$(dirname "$0")" ; pwd)"
 
-	sed -i "s/this\.options\[['\"]sequences['\"]\]/this.options.sequences/g" ${minifyScript}
-	sed -i "s/this\.options\.sequences/this.options.sequences = false/g" ${minifyScript}
-
-	sed -i "s/reserved:\s*\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions/g" ${minifyScript}
-
-	sed -i "s/safari10 = .*;/safari10 = true;/g" ${minifyScript}
-	sed -i "s/safari10\s*:\s*false/safari10: true/g" ${minifyScript}
+	cat ${minifyScript} |
+		perl -pe "s/this\.options\[['\"]sequences['\"]\]/this.options.sequences/g" |
+		perl -pe "s/this\.options\.sequences/this.options.sequences = false/g" |
+		perl -pe "s/reserved:\s*?\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions/g" |
+		perl -pe "s/safari10\s*?=.*?;/safari10 = true;/g" |
+		perl -pe "s/safari10\s*?:\s*?false/safari10: true/g" \
+	> ${minifyScript}.new
+	mv ${minifyScript}.new ${minifyScript}
 
 	if [ -f "${minifyScriptMin}" ] ; then
 		mv ${minifyScriptMin} ${minifyScriptMin}.bak
