@@ -19,7 +19,12 @@ export class DOMPurifyHtmlSanitizer {
 		private readonly document: Document = self.document,
 
 		/** Allowed URI schemes */
-		private readonly whitelist: string[] = ['http', 'https', 'ftp']
+		private readonly whitelist: string[] = [
+			'http',
+			'https',
+			'ftp',
+			'mailto'
+		]
 	) {
 		const regex = new RegExp(`^(${this.whitelist.join('|')}):`, 'im');
 
