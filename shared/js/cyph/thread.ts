@@ -99,7 +99,10 @@ export class Thread<T> implements IThread<T> {
 			threadSetupVars.seed[i] = 0;
 		}
 		importScripts(
-			'/assets/node_modules/libsodium/dist/browsers-sumo/sodium.js'
+			'/assets/node_modules/libsodium-sumo/dist/modules-sumo/libsodium-sumo.js'
+		);
+		importScripts(
+			'/assets/node_modules/libsodium-wrappers-sumo/dist/modules-sumo/libsodium-wrappers.js'
 		);
 
 		threadSetupVars = undefined;
