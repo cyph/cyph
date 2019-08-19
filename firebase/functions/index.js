@@ -6,6 +6,7 @@ const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
 const {sendMail, sendMailInternal} = require('./email');
 const {emailRegex} = require('./email-regex');
+const {renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
 
 const {
@@ -100,6 +101,31 @@ const getName = async (namespace, username) => {
 	catch (_) {}
 
 	return getRealUsername(namespace, username);
+};
+
+const getInviteTemplateData = (
+	inviteCode,
+	inviterName,
+	name,
+	plan,
+	fromApp
+) => {
+	const planConfig = config.planConfig[plan];
+
+	return {
+		...planConfig,
+		fromApp,
+		inviteCode,
+		inviterName,
+		name,
+		planFoundersAndFriends: plan === CyphPlans.FoundersAndFriends,
+		planFree: plan === CyphPlans.Free,
+		planGold: plan === CyphPlans.Gold,
+		planLifetimePlatinum: plan === CyphPlans.LifetimePlatinum,
+		planSilver: plan === CyphPlans.Silver,
+		platinumFeatures: planConfig.usernameMinLength === 1,
+		storageCap: readableByteLength(planConfig.storageCapGB, 'gb')
+	};
 };
 
 const getURL = (adminRef, namespace) => {
@@ -309,11 +335,27 @@ exports.checkInviteCode = onCall(
 
 		const {inviterUsername, plan, reservedUsername} =
 			(await inviteDataRef.once('value')).val() || {};
+
+		const inviterName = await getName(namespace, inviterUsername);
+
+		const templateData = getInviteTemplateData(
+			inviteCode,
+			inviterName,
+			undefined,
+			plan,
+			true
+		);
+
 		return {
 			inviterUsername,
 			isValid: typeof inviterUsername === 'string',
 			plan: plan in CyphPlans ? plan : CyphPlans.Free,
-			reservedUsername
+			reservedUsername,
+			welcomeLetter: (await renderTemplate(
+				'new-cyph-invite',
+				templateData,
+				true
+			)).markdown
 		};
 	}
 );
@@ -470,7 +512,6 @@ exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
 	const plan =
 		((await inviteDataRef.once('value')).val() || {}).plan ||
 		CyphPlans.Free;
-	const planConfig = config.planConfig[plan];
 
 	await Promise.all([
 		inviteCodesRef.child(inviteCode).remove(),
@@ -478,23 +519,12 @@ exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
 			email,
 			`Cyph Invite from ${inviterName} (@${inviterRealUsername})`,
 			{
-				data: {
-					...planConfig,
+				data: getInviteTemplateData(
 					inviteCode,
 					inviterName,
 					name,
-					planFoundersAndFriends:
-						plan === CyphPlans.FoundersAndFriends,
-					planFree: plan === CyphPlans.Free,
-					planGold: plan === CyphPlans.Gold,
-					planLifetimePlatinum: plan === CyphPlans.LifetimePlatinum,
-					planSilver: plan === CyphPlans.Silver,
-					platinumFeatures: planConfig.usernameMinLength === 1,
-					storageCap: readableByteLength(
-						planConfig.storageCapGB,
-						'gb'
-					)
-				},
+					plan
+				),
 				namespace,
 				templateName: 'new-cyph-invite'
 			}

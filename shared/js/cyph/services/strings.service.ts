@@ -826,6 +826,9 @@ export class StringsService extends BaseProvider {
 	public readonly teamToContact = `${this.internalCompany} Team to Contact`;
 
 	/** @see StringsService */
+	public readonly teamValediction = `- The ${this.internalCompany} Team`;
+
+	/** @see StringsService */
 	public readonly telehealthCallAbout = `Telehealth Call About`;
 
 	/** @see StringsService */

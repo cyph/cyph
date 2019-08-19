@@ -44,13 +44,15 @@ import {sleep} from '../../util/wait';
 })
 export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Metadata pulled for current invite code. */
-	private readonly inviteCodeData = new BehaviorSubject<{
+	public readonly inviteCodeData = new BehaviorSubject<{
 		inviteCode?: string;
 		inviterUsername?: string;
 		isValid: boolean;
 		plan: CyphPlans;
 		reservedUsername?: string;
+		welcomeLetter?: string;
 	}>({
+		inviteCode: '',
 		isValid: false,
 		plan: CyphPlans.Free
 	});
@@ -105,7 +107,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			this.inviteCodeDebounceLast = id;
 
 			this.inviteCodeData.next(
-				await sleep(500).then(async () => {
+				await (this.inviteCodeData.value.inviteCode === '' ?
+					Promise.resolve() :
+					sleep(500)
+				).then(async () => {
 					let o =
 						this.inviteCodeDebounceLast === id && value ?
 							await this.databaseService
@@ -130,6 +135,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						reservedUsername:
 							typeof o.reservedUsername === 'string' ?
 								o.reservedUsername :
+								undefined,
+						welcomeLetter:
+							typeof o.welcomeLetter === 'string' ?
+								o.welcomeLetter :
 								undefined
 					};
 				})

@@ -37,7 +37,7 @@ const getTemplate = memoize(
 		})
 );
 
-const render = (template, data) => {
+const render = (template, data, markdownOnly) => {
 	const markdown = mustache
 		.render(
 			mustacheUnescape(template),
@@ -48,15 +48,18 @@ const render = (template, data) => {
 		)
 		.trim()
 		.replace(/\n\n+/g, '\n\n');
+
 	return {
-		html: dompurifyHtmlSanitizer
-			.sanitize(markdownIt.render(markdown).replace(/\s+/g, ' '))
-			.trim(),
+		html: markdownOnly ?
+			'' :
+			dompurifyHtmlSanitizer
+				.sanitize(markdownIt.render(markdown).replace(/\s+/g, ' '))
+				.trim(),
 		markdown
 	};
 };
 
-const renderTemplate = async (templateName, data) =>
-	render(await getTemplate(templateName), data);
+const renderTemplate = async (templateName, data, markdownOnly) =>
+	render(await getTemplate(templateName), data, markdownOnly);
 
 module.exports = {render, renderTemplate};

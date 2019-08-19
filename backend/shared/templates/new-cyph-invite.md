@@ -1,8 +1,13 @@
 Hello{{#name}} {{name}}{{/name}},
 
+{{^fromApp}}
 {{#inviterName}}{{inviterName}} has invited you to join Cyph!{{/inviterName}}
 {{^inviterName}}Your Cyph invite has arrived!{{/inviterName}}
 [**Click here to set up your Cyph beta account.**]({{accountsURL}}register/{{inviteCode}})
+{{/fromApp}}
+{{#fromApp}}
+Congratulations on securing your Cyph account invite!
+{{/fromApp}}
 
 ---
 

@@ -132,13 +132,47 @@
 											<ng-container
 												*ngIf="
 													envService.telehealthTheme;
-													else mainBasicWelcomeMessage
+													else mainInviteCodeWelcomeMessage
 												"
 											>
 												<span cyphTranslate>
 													Welcome to Cyph Telehealth!
 												</span>
 											</ng-container>
+										</ng-template>
+										<ng-template
+											#mainInviteCodeWelcomeMessage
+										>
+											<div
+												class="cyph-light-theme welcome-letter"
+											>
+												<mat-card>
+													<cyph-markdown
+														[markdown]="
+															welcomeLetter
+														"
+														*ngIf="
+															(
+																inviteCodeData
+																| async
+															)
+																?.welcomeLetter as welcomeLetter;
+															else mainBasicWelcomeMessage
+														"
+													></cyph-markdown>
+													<br />
+													<a
+														class="team-valediction"
+														[href]="
+															envService.homeUrl
+														"
+													>
+														{{
+															stringsService.teamValediction
+														}}
+													</a>
+												</mat-card>
+											</div>
 										</ng-template>
 										<ng-template #mainBasicWelcomeMessage>
 											<span>
@@ -161,7 +195,11 @@
 										fxLayout="row"
 										fxLayoutAlign="center center"
 										cyphTranslate
-										*ngIf="!envService.isTelehealth"
+										*ngIf="
+											!envService.isTelehealth &&
+											(inviteCodeData | async)
+												?.welcomeLetter === undefined
+										"
 									>
 										You'll be getting early access to
 										premium features, and will still be able
@@ -206,7 +244,6 @@
 														"
 														name="cyphUsername"
 														placeholder="Username"
-														cyphAutofocus
 														required
 													/>
 													<div
