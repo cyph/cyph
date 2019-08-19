@@ -693,10 +693,10 @@
   resolved "https://registry.yarnpkg.com/@cyph/prettier/-/prettier-2.0.5.tgz#3b049cd76ae71e273b027043e836b07471d52427"
   integrity sha512-Vk2ojAfiYNQseMtcREl2QaLEN6GdgMB1eV7z+CxJ/uwi5XNcaYkEW7kXMFWcgBvgLuGwl2kO5cDK+7m+7kwyqA==
 
-"@cyph/pretty-quick@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@cyph/pretty-quick/-/pretty-quick-3.0.0.tgz#b75d4c303deace13227c31ce6c332a4e866801c3"
-  integrity sha512-6XWOc+9JJBzo1b+7l2yaKLDDMB6bY/+9h5XgPKWhVhquiLa6rLI+cPlxzLJ69YIgn9aKxZQPv0cF+yz5EYbtJw==
+"@cyph/pretty-quick@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@cyph/pretty-quick/-/pretty-quick-3.0.1.tgz#ac1409ba0ca8e1ae901df168596aa335a11c8237"
+  integrity sha512-O7NM2TBF5sQq9I3Ln7ta03D2Yh2yOwEpnFknA5UzPOn1rLyVbYJD9hmjGIFKxTbUZ/MwP1lL+dGD9q4QentW0g==
   dependencies:
     chalk "^2.3.0"
     execa "^0.8.0"
