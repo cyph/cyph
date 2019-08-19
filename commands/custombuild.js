@@ -24,7 +24,7 @@ const compileSCSS = scss =>
 	childProcess
 		.spawnSync('cleancss', [], {
 			input: childProcess
-				.spawnSync('scss', ['-s', '-C', `-I${cssRoot}`], {
+				.spawnSync('sass', ['--stdin', `-I${cssRoot}`], {
 					input: `
 						@import '~bourbon/app/assets/stylesheets/bourbon';
 						${fs.readFileSync(`${cssRoot}/mixins.scss`).toString()}
@@ -38,6 +38,7 @@ const compileSCSS = scss =>
 		})
 		.stdout.toString()
 		.trim();
+
 const tryReadFile = (path, jsonParse) => {
 	const buffer = fs.existsSync(path) ? fs.readFileSync(path) : undefined;
 	if (buffer && jsonParse) {
