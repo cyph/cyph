@@ -115,17 +115,17 @@
 											"
 										>
 											<span>
-												<span cyphTranslate>
-													Welcome to
-												</span>
+												<span cyphTranslate
+													>Welcome to</span
+												>
 												&ngsp;
-												<span>
-													{{ stringsService.product }}
-												</span>
+												<span>{{
+													stringsService.product
+												}}</span>
 												&ngsp;
-												<span cyphTranslate>
-													powered by Cyph!
-												</span>
+												<span cyphTranslate
+													>powered by Cyph!</span
+												>
 											</span>
 										</ng-container>
 										<ng-template #telehealthWelcomeMessage>
@@ -181,13 +181,13 @@
 													your
 												</span>
 												&ngsp;
-												<span>
-													{{ stringsService.product }}
-												</span>
+												<span>{{
+													stringsService.product
+												}}</span>
 												&ngsp;
-												<span cyphTranslate>
-													account invite!
-												</span>
+												<span cyphTranslate
+													>account invite!</span
+												>
 											</span>
 										</ng-template>
 									</div>
@@ -467,9 +467,9 @@
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
-									<span cyphTranslate>
-										Patient Info & Insurance
-									</span>
+									<span cyphTranslate
+										>Patient Info & Insurance</span
+									>
 								</ng-template>
 								<div
 									fxLayout="row"
@@ -544,27 +544,23 @@
 												fxLayout="row"
 												fxLayoutAlign="center center"
 											>
-												<strong cyphTranslate>
-													Username:
-												</strong>
+												<strong cyphTranslate
+													>Username:</strong
+												>
 												&nbsp;
-												<span>
-													{{
-														(
-															usernameWatcher
-															| async
-														)?.value
-													}}
-												</span>
+												<span>{{
+													(usernameWatcher | async)
+														?.value
+												}}</span>
 											</div>
 
 											<div
 												fxLayout="row"
 												fxLayoutAlign="center center"
 											>
-												<strong cyphTranslate>
-													Name:
-												</strong>
+												<strong cyphTranslate
+													>Name:</strong
+												>
 												&nbsp;
 												<span>{{ name | async }}</span>
 											</div>
@@ -573,9 +569,9 @@
 												fxLayout="row"
 												fxLayoutAlign="center center"
 											>
-												<strong cyphTranslate>
-													Email:
-												</strong>
+												<strong cyphTranslate
+													>Email:</strong
+												>
 												&nbsp;
 												<span>
 													{{
@@ -708,9 +704,9 @@
 							&ngsp;
 							<em>secret</em>
 							&ngsp;
-							<span>
-								code that protects all your private data.
-							</span>
+							<span
+								>code that protects all your private data.</span
+							>
 						</p>
 					</div>
 				</div>
@@ -1143,9 +1139,9 @@
 				<h3>
 					<span cyphTranslate>Option</span>
 					&ngsp;
-					<span>
-						#{{ order }}: {{ stringsService.lockScreenPIN }}
-					</span>
+					<span
+						>#{{ order }}: {{ stringsService.lockScreenPIN }}</span
+					>
 				</h3>
 			</div>
 			<div fxLayout="row" fxLayoutAlign="center center">
@@ -1178,9 +1174,10 @@
 				<h3>
 					<span cyphTranslate>Option</span>
 					&ngsp;
-					<span>
-						#{{ order }}: {{ stringsService.lockScreenPassword }}
-					</span>
+					<span
+						>#{{ order }}:
+						{{ stringsService.lockScreenPassword }}</span
+					>
 				</h3>
 			</div>
 			<div fxLayout="row" fxLayoutAlign="center center">

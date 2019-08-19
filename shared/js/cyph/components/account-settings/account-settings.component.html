@@ -47,9 +47,7 @@
 				<strong>{{ stringsService.lockScreen }}:</strong>
 				&ngsp; &nbsp;
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
-				&ngsp; (
-				<a routerLink="lock-screen" cyphTranslate>change</a>
-				)
+				&ngsp; (<a routerLink="lock-screen" cyphTranslate>change</a>)
 			</div>
 			<div>
 				<strong>{{ stringsService.masterKey }}:</strong>
@@ -57,9 +55,7 @@
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
 				<span>&#xfe61;&#xfe61;&#xfe61;&#xfe61;&#xfe61;</span>
-				&ngsp; (
-				<a routerLink="master-key" cyphTranslate>change</a>
-				)
+				&ngsp; (<a routerLink="master-key" cyphTranslate>change</a>)
 			</div>
 
 			<div></div>
@@ -82,11 +78,11 @@
 						(accountSettingsService.plan | async) === cyphPlans.Free
 					"
 				>
-					&ngsp; (
-					<a [href]="envService.homeUrl + 'pricing'" cyphTranslate>
-						upgrade now
-					</a>
-					)
+					&ngsp; (<a
+						[href]="envService.homeUrl + 'pricing'"
+						cyphTranslate
+						>upgrade now</a
+					>)
 				</ng-container>
 			</div>
 

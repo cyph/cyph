@@ -38,10 +38,9 @@
 				<p *ngIf="!envService.isAccounts">
 					<span cyphTranslate>Please</span>
 					&ngsp;
-					<a cyphTranslate [routerLink]="envService.newCyphUrlRetry">
-						try again
-					</a>
-					.
+					<a cyphTranslate [routerLink]="envService.newCyphUrlRetry"
+						>try again</a
+					>.
 				</p>
 				<p cyphTranslate>Reasons why you may have landed here:</p>
 				<ul>
@@ -51,9 +50,9 @@
 							&ngsp;
 							<span>{{ stringsService.session }}</span>
 							&ngsp;
-							<span cyphTranslate>
-								you're looking for has expired
-							</span>
+							<span cyphTranslate
+								>you're looking for has expired</span
+							>
 						</li>
 						<li cyphTranslate>
 							<span cyphTranslate>The</span>

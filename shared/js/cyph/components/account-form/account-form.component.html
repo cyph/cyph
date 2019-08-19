@@ -7,9 +7,9 @@
 				fxLayout="row"
 				*ngIf="!!o?.metadata; else nameHeader"
 			>
-				<mat-card-title>
-					{{ (o?.metadata | async)?.name }}
-				</mat-card-title>
+				<mat-card-title>{{
+					(o?.metadata | async)?.name
+				}}</mat-card-title>
 				<div fxFlex fxLayoutAlign="end center">
 					<button
 						mat-icon-button

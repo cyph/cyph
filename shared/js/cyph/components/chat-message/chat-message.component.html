@@ -103,11 +103,11 @@
 						<mat-card-title fxFlex>
 							<div fxFlex [fxLayout]="mobile ? 'column' : 'row'">
 								<span *ngIf="!!message?.authorUser">
-									<strong>
-										{{
+									<strong
+										>{{
 											message?.authorUser?.name | async
-										}}&nbsp;
-									</strong>
+										}}&nbsp;</strong
+									>
 									&ngsp;
 									<small>
 										{{
@@ -330,11 +330,9 @@
 						</ng-template>
 						<ng-template #mediaFailure>
 							<div class="centered">
-								<span>
-									{{
-										stringsService.incomingFileSaveMediaError
-									}}
-								</span>
+								<span>{{
+									stringsService.incomingFileSaveMediaError
+								}}</span>
 								<h4 class="media-title">
 									{{ value.fileTransfer.name }}
 								</h4>

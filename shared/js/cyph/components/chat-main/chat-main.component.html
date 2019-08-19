@@ -87,10 +87,9 @@
 				<br />
 				<span cyphTranslate>Please</span>
 				&ngsp;
-				<a cyphTranslate [routerLink]="envService.newCyphUrlRetry">
-					try again
-				</a>
-				.
+				<a cyphTranslate [routerLink]="envService.newCyphUrlRetry"
+					>try again</a
+				>.
 			</ng-container>
 		</div>
 		<div *ngIf="envService.isTelehealth">
@@ -104,10 +103,9 @@
 						link and
 					</span>
 					&ngsp;
-					<a cyphTranslate [routerLink]="envService.newCyphUrlRetry">
-						try again
-					</a>
-					.
+					<a cyphTranslate [routerLink]="envService.newCyphUrlRetry"
+						>try again</a
+					>.
 				</ng-container>
 				<ng-container
 					*ngIf="(sessionService.state.isAlice | async) === false"

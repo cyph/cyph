@@ -201,9 +201,9 @@
 												else invitedAnonymously
 											"
 										>
-											<span fxHide.lt-md cyphTranslate>
-												with
-											</span>
+											<span fxHide.lt-md cyphTranslate
+												>with</span
+											>
 											&ngsp;
 											<a
 												fxHide.lt-md
@@ -211,9 +211,8 @@
 												[routerLink]="
 													'/profile/' + o.friend
 												"
+												>{{ o.friend }}</a
 											>
-												{{ o.friend }}
-											</a>
 											<span
 												fxHide.lt-md
 												*ngIf="!o.friend"
@@ -226,9 +225,9 @@
 											&ngsp;
 										</ng-container>
 										<ng-template #invitedAnonymously>
-											<span cyphTranslate>
-												(invited anonymously)
-											</span>
+											<span cyphTranslate
+												>(invited anonymously)</span
+											>
 										</ng-template>
 										<span fxHide.lt-md>
 											&mdash;
@@ -345,9 +344,9 @@
 								fxLayoutAlign="center center"
 								fxLayout="column"
 							>
-								<span>
-									{{ stringsService.patientFormsMissing }}
-								</span>
+								<span>{{
+									stringsService.patientFormsMissing
+								}}</span>
 								<button
 									*ngIf="
 										(currentUser.user.userType | async) ===

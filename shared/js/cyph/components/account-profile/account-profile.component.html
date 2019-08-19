@@ -359,9 +359,9 @@
 					"
 				>
 					<mat-icon *ngIf="editMode | async">save</mat-icon>
-					<mat-icon *ngIf="(editMode | async) === false">
-						edit
-					</mat-icon>
+					<mat-icon *ngIf="(editMode | async) === false"
+						>edit</mat-icon
+					>
 				</button>
 			</div>
 		</ng-template>
@@ -472,8 +472,8 @@
 								[href]="envService.cyphMeUrl + user.username"
 								target="_self"
 							>
-								<span>@</span>
-								<span>{{ user.realUsername | async }}</span>
+								<span>@</span
+								><span>{{ user.realUsername | async }}</span>
 							</a>
 							<ng-container
 								*ngTemplateOutlet="
@@ -649,10 +649,10 @@
 											accountUserTypes.Standard
 										"
 									>
-										<span>@</span>
-										<span>
-											{{ user.realUsername | async }}
-										</span>
+										<span>@</span
+										><span>{{
+											user.realUsername | async
+										}}</span>
 									</a>
 									<div
 										class="practice"

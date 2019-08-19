@@ -69,9 +69,9 @@
 					placeholder="Number of Users"
 					required
 				>
-					<mat-option [value]="1">
-						1 {{ stringsService.user }}
-					</mat-option>
+					<mat-option [value]="1"
+						>1 {{ stringsService.user }}</mat-option
+					>
 					<mat-option
 						*ngFor="let n of userOptions; trackBy: trackBySelf"
 						[value]="n"
@@ -91,14 +91,14 @@
 			<button mat-raised-button type="submit">
 				<span cyphTranslate>Confirm</span>
 				&ngsp;
-				<span>
-					${{ amount * (perUser ? (users | async) || 1 : 1) }}
-				</span>
+				<span
+					>${{ amount * (perUser ? (users | async) || 1 : 1) }}</span
+				>
 				&ngsp;
 				<span>
-					<span *ngIf="subscriptionType === undefined" cyphTranslate>
-						payment
-					</span>
+					<span *ngIf="subscriptionType === undefined" cyphTranslate
+						>payment</span
+					>
 					<span
 						*ngIf="subscriptionType === subscriptionTypes.annual"
 						cyphTranslate
@@ -140,9 +140,8 @@
 						class="retry"
 						(click)="ngAfterViewInit()"
 						cyphTranslate
+						>click here</span
 					>
-						click here
-					</span>
 					&ngsp;
 					<span cyphTranslate>
 						to try again.

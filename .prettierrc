@@ -1,7 +1,7 @@
 arrowParens: 'avoid'
 bracketSpacing: false
 endOfLine: 'lf'
-htmlWhitespaceSensitivity: 'ignore'
+htmlWhitespaceSensitivity: 'css'
 jsxBracketSameLine: false
 jsxSingleQuote: false
 printWidth: 80

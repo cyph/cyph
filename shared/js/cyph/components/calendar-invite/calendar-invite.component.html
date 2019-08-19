@@ -100,15 +100,15 @@
 					[placeholder]="stringsService.callType"
 					required
 				>
-					<mat-option [value]="callTypes.None">
-						{{ stringsService.noCall }}
-					</mat-option>
-					<mat-option [value]="callTypes.Audio">
-						{{ stringsService.voice }}
-					</mat-option>
-					<mat-option [value]="callTypes.Video">
-						{{ stringsService.video }}
-					</mat-option>
+					<mat-option [value]="callTypes.None">{{
+						stringsService.noCall
+					}}</mat-option>
+					<mat-option [value]="callTypes.Audio">{{
+						stringsService.voice
+					}}</mat-option>
+					<mat-option [value]="callTypes.Video">{{
+						stringsService.video
+					}}</mat-option>
 				</mat-select>
 			</mat-form-field>
 

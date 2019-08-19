@@ -102,10 +102,9 @@
 						&ngsp;
 						<span cyphTranslate>or</span>
 						&ngsp;
-						<a cyphTranslate (click)="removeSavedCredentials()">
-							log out
-						</a>
-						.
+						<a cyphTranslate (click)="removeSavedCredentials()"
+							>log out</a
+						>.
 					</p>
 				</mat-card-subtitle>
 
@@ -346,16 +345,15 @@
 					&ngsp;
 					<span>{{ savedUsername | async }}?</span>
 					&ngsp;
-					<a cyphTranslate (click)="pinUnlock.next(false)">
-						Sign in as a different user
-					</a>
+					<a cyphTranslate (click)="pinUnlock.next(false)"
+						>Sign in as a different user</a
+					>
 					&ngsp;
 					<span cyphTranslate>or</span>
 					&ngsp;
-					<a cyphTranslate (click)="removeSavedCredentials()">
-						log out
-					</a>
-					.
+					<a cyphTranslate (click)="removeSavedCredentials()"
+						>log out</a
+					>.
 				</em>
 			</div>
 

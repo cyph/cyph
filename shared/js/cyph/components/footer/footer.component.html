@@ -9,16 +9,15 @@
 
 	<ng-container *ngIf="!envService.coBranded && !envService.isTelehealth">
 		<div fxFlex="nogrow" fxLayoutAlign="center center">
-			<a [href]="envService.homeUrl">
-				&copy; {{ stringsService.company }} 2019
-			</a>
+			<a [href]="envService.homeUrl"
+				>&copy; {{ stringsService.company }} 2019</a
+			>
 
 			<span *ngIf="!envService.isAccounts" class="pre-spaced">
-				&nbsp;&nbsp;&nbsp;(
-				<a [href]="envService.homeUrl + 'patents'">
-					{{ stringsService.patents }}
-				</a>
-				)
+				&nbsp;&nbsp;&nbsp;(<a [href]="envService.homeUrl + 'patents'">{{
+					stringsService.patents
+				}}</a
+				>)
 			</span>
 		</div>
 

@@ -132,8 +132,8 @@
 					>
 						<div fxLayout="column">
 							<h3>
-								<span cyphTranslate>Wallet Address</span>
-								: &ngsp;
+								<span cyphTranslate>Wallet Address</span>:
+								&ngsp;
 								<span>
 									{{
 										cryptocurrencyService.getAddress(
@@ -144,23 +144,17 @@
 							</h3>
 
 							<h3>
-								<span cyphTranslate>Current Balance</span>
-								: &ngsp;
-								<span>
-									{{
-										(cryptocurrencyService.watchBalance(
-											wallet.data
-										) | async) || 0
-									}}
-								</span>
+								<span cyphTranslate>Current Balance</span>:
 								&ngsp;
-								<span>
-									{{
-										cryptocurrencies[
-											wallet.data.cryptocurrency
-										]
-									}}
-								</span>
+								<span>{{
+									(cryptocurrencyService.watchBalance(
+										wallet.data
+									) | async) || 0
+								}}</span>
+								&ngsp;
+								<span>{{
+									cryptocurrencies[wallet.data.cryptocurrency]
+								}}</span>
 								&ngsp; | &ngsp;
 								<span>
 									~${{
@@ -331,9 +325,9 @@
 				matTooltipPosition="left"
 				(click)="generate(newWalletOptions.generate)"
 			>
-				<mat-icon *ngIf="(isSpeedDialOpen | async) === false">
-					add
-				</mat-icon>
+				<mat-icon *ngIf="(isSpeedDialOpen | async) === false"
+					>add</mat-icon
+				>
 				<mat-icon
 					svgIcon="key-add-light"
 					*ngIf="isSpeedDialOpen | async"
