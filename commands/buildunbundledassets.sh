@@ -49,7 +49,7 @@ find shared/js -type f -name '*.js' -not -path 'shared/js/proto/*' -exec rm {} \
 
 
 nodeModulesAssets="$(
-	grep -roP "importScripts\('/assets/node_modules/.*?\.js'\)" shared/js |
+	grep -roP "'/assets/node_modules/.*?\.js'" shared/js |
 		perl -pe "s/^.*?'\/assets\/node_modules\/(.*?)\.js'.*/\1/g" |
 		sort |
 		uniq
@@ -78,8 +78,8 @@ typescriptAssets="$(
 scssAssets="$(
 	{
 		echo app;
-		grep -oP "href='/assets/css/.*?\.css'" */src/index.html |
-			perl -pe "s/^.*?'\/assets\/css\/(.*?)\.css'.*/\1/g" \
+		grep -oP 'href="/assets/css/.*?\.css"' */src/index.html |
+			perl -pe 's/^.*?"\/assets\/css\/(.*?)\.css".*/\1/g' \
 		;
 	} |
 		sort |
