@@ -6,7 +6,7 @@ import '../standalone/global';
 import '../standalone/node-polyfills';
 
 import 'hammerjs';
-import 'jquery.appear';
+import 'jquery-appear-original';
 import '../standalone/translations';
 
 import {HttpClient} from '@angular/common/http';

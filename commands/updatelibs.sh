@@ -235,7 +235,7 @@ read -r -d '' modules <<- EOM
 	jasmine-core
 	jasmine-spec-reporter
 	jquery
-	jquery.appear@https://github.com/morr/jquery.appear
+	jquery-appear-original
 	jsdoc@3.5.5
 	jsdom
 	jspdf
