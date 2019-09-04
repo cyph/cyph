@@ -1877,5 +1877,16 @@ export class ChatService extends BaseProvider {
 			message?: string,
 			selfDestructTimeout?: number
 		) => this.send(undefined, {text: message}, selfDestructTimeout);
+
+		/* For debugging */
+
+		if (!this.envService.debug) {
+			return;
+		}
+
+		(<any> self).bypassAbortion = async () => {
+			this.chat.state = States.chat;
+			this.updateChat();
+		};
 	}
 }
