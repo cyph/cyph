@@ -1884,7 +1884,7 @@ export class ChatService extends BaseProvider {
 			return;
 		}
 
-		(<any> self).bypassAbortion = async () => {
+		(<any> self).bypassAbortion = () => {
 			this.chat.state = States.chat;
 			this.updateChat();
 		};
