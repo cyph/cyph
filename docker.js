@@ -132,24 +132,27 @@ const mounts = [
 const windowsWorkaround = !isWindows ?
 	'' :
 	`
-	sudo touch /windows
-	sudo mv /bin/ln /bin/ln.old
-	echo '
-		#!/bin/bash
+		sudo touch /windows
+		sudo mv /bin/ln /bin/ln.old
+		echo '
+			#!/bin/bash
 
-		if [ "\${1}" != '-s' -o "\${#}" != '3' ] ; then
-			/bin/ln.old "\${@}"
-		elif [ -f "\${2}" ] ; then
-			cp -f "\${2}" "\${3}"
-		else
-			rm -rf "\${3}" 2> /dev/null
-			mkdir "\${3}"
-			sudo mount --bind "\${2}" "\${3}"
-		fi
-	' |
-		sudo tee -a /bin/ln > /dev/null
-	sudo chmod +x /bin/ln
-`;
+			if [ "\${1}" != '-s' -o "\${#}" != '3' ] ; then
+				/bin/ln.old "\${@}"
+			elif [ -f "\${2}" ] ; then
+				cp -f "\${2}" "\${3}"
+			else
+				rm -rf "\${3}" 2> /dev/null
+				mkdir "\${3}"
+				sudo mount --bind "\${2}" "\${3}"
+			fi
+		' |
+			sudo tee -a /bin/ln > /dev/null
+		sudo chmod +x /bin/ln
+
+		rg -l '\\r' /cyph | xargs dos2unix
+	`
+;
 
 const shellScripts = {
 	agseInit: `
@@ -199,6 +202,7 @@ const shellScripts = {
 	`,
 	aptUpdate: {
 		command: `
+			${windowsWorkaround}
 			/cyph/commands/updatedockerimage.sh
 		`,
 		condition: `
@@ -206,15 +210,15 @@ const shellScripts = {
 		`
 	},
 	command: `
-		source ~/.bashrc
 		${windowsWorkaround}
+		source ~/.bashrc
 		/cyph/commands/${commandScript} ${shellCommandArgs}
 		notify 'Command complete: ${args.command}' &> /dev/null
 	`,
 	libUpdate: {
 		command: `
-			source ~/.bashrc
 			${windowsWorkaround}
+			source ~/.bashrc
 			/cyph/commands/updatedockerimage.sh
 			/cyph/commands/getlibs.sh
 		`,
@@ -224,6 +228,7 @@ const shellScripts = {
 		`
 	},
 	setup: `
+		${windowsWorkaround}
 		/cyph/commands/dockerpostmake.sh
 		source ~/.bashrc
 		notify 'Make complete'

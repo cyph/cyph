@@ -1,9 +1,15 @@
-FROM debian:stretch
+FROM debian:buster
 
 LABEL Name="cyph"
 
 RUN apt-get -y --allow-downgrades update
-RUN apt-get -y --allow-downgrades install apt-transport-https apt-utils curl gnupg lsb-release
+RUN apt-get -y --allow-downgrades install \
+	apt-transport-https \
+	apt-utils \
+	curl \
+	gnupg \
+	lsb-release \
+	software-properties-common
 
 RUN dpkg --add-architecture i386
 RUN echo "deb https://deb.nodesource.com/node_10.x stretch main" >> /etc/apt/sources.list
@@ -20,6 +26,7 @@ RUN apt-get -y --allow-downgrades install \
 	build-essential \
 	cmake \
 	devscripts \
+	dos2unix \
 	expect \
 	gcc-6 \
 	g++ \
@@ -44,6 +51,7 @@ RUN apt-get -y --allow-downgrades install \
 	procps \
 	python \
 	python-pip \
+	ripgrep \
 	ruby \
 	ruby-dev \
 	shellcheck \
