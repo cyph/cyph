@@ -28,14 +28,14 @@ RUN apt-get -y --allow-downgrades install \
 	devscripts \
 	dos2unix \
 	expect \
-	gcc-6 \
+	gcc-8 \
 	g++ \
 	git \
 	golang-go \
 	haxe \
 	imagemagick \
 	inotify-tools \
-	lib32ncurses5 \
+	lib32ncurses6 \
 	lib32z1 \
 	libbz2-1.0:i386 \
 	libgconf-2-4 \
@@ -45,7 +45,7 @@ RUN apt-get -y --allow-downgrades install \
 	mono-complete \
 	nano \
 	nodejs \
-	openjdk-8-jdk \
+	openjdk-11-jdk \
 	perl \
 	pinentry-curses \
 	procps \
