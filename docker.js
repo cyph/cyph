@@ -96,6 +96,7 @@ const commandScript = fs.existsSync(
 fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 	`${args.command}.js` :
 	undefined;
+
 const isAgseDeploy =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
 	(args.command === 'certsign' &&
@@ -103,6 +104,7 @@ const isAgseDeploy =
 	(args.command === 'deploy' &&
 		!args.simple &&
 		(!args.site || args.site === 'cyph.app'));
+
 const image =
 	'cyph/' +
 	(
@@ -389,24 +391,24 @@ const pullUpdates = () => {
 				'install'
 			]);
 		});
-	/*
-	.then(() => {
-		const libNative = path.join('shared', 'lib', 'native');
-		const ready = path.join(__dirname, libNative, '.ready');
+		/*
+		.then(() => {
+			const libNative = path.join('shared', 'lib', 'native');
+			const ready = path.join(__dirname, libNative, '.ready');
 
-		if (fs.existsSync(ready)) {
-			return;
-		}
+			if (fs.existsSync(ready)) {
+				return;
+			}
 
-		console.log(spawn('npm', ['-g', 'update']));
-		console.log(spawn('npm', ['-g', 'install', 'nativescript']));
-		for (const platform of ['android', 'ios']) {
-			spawn('tns', ['platform', 'add', platform], libNative);
-		}
+			console.log(spawn('npm', ['-g', 'update']));
+			console.log(spawn('npm', ['-g', 'install', 'nativescript']));
+			for (const platform of ['android', 'ios']) {
+				spawn('tns', ['platform', 'add', platform], libNative);
+			}
 
-		fs.writeFileSync(ready, '');
-	});
-	*/
+			fs.writeFileSync(ready, '');
+		});
+		*/
 };
 
 const removeImage = (name, opts) => {
