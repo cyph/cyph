@@ -9,6 +9,7 @@
 nohup.out
 *.swp
 *.orig
+firebase-debug.log
 npm-debug.log
 node_modules
 Dockerfile.tmp

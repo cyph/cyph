@@ -111,7 +111,7 @@ RUN wget \
 	https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz \
 	-O ~/emsdk.tar.gz
 RUN wget \
-	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-150.0.0-linux-x86_64.tar.gz \
+	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-250.0.0-linux-x86_64.tar.gz \
 	-O ~/gcloud-sdk.tar.gz
 RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
 RUN rm ~/*.tar.gz

@@ -153,8 +153,7 @@ const windowsWorkaround = !isWindows ?
 		sudo chmod +x /bin/ln
 
 		rg -l '\\r' /cyph | xargs dos2unix
-	`
-;
+	`;
 
 const shellScripts = {
 	agseInit: `
@@ -240,7 +239,7 @@ const shellScripts = {
 				`
 					gcloud init
 					echo
-					firebase login
+					firebase login --no-localhost
 				`
 		}
 	`
@@ -391,7 +390,7 @@ const pullUpdates = () => {
 				'install'
 			]);
 		});
-		/*
+	/*
 		.then(() => {
 			const libNative = path.join('shared', 'lib', 'native');
 			const ready = path.join(__dirname, libNative, '.ready');
