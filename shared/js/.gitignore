@@ -1,7 +1,6 @@
 *.js
 *.map
 *.tmp
-/docs
 /environments/.environment.tmp.ts
 /proto
 /tsconfig.tslint.json

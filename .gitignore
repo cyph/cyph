@@ -1,5 +1,6 @@
 /.bootstrap.original
 /.build
+/docs
 /qr-invite-codes
 /threadpack.log
 .build.yaml
