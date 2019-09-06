@@ -171,7 +171,7 @@ const containerInitScript =
 				sudo tee -a /bin/ln > /dev/null
 			sudo chmod +x /bin/ln
 
-			rg -l '\\r' /cyph | xargs dos2unix
+			rg --hidden -l '\\r' /cyph | xargs dos2unix
 	`);
 
 const shellScripts = {
