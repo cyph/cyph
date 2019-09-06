@@ -97,6 +97,9 @@ fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 	`${args.command}.js` :
 	undefined;
 
+const gitconfigPath = path.join(homeDir, '.gitconfig');
+const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
+
 const isAgseDeploy =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
 	(args.command === 'certsign' &&
@@ -123,7 +126,6 @@ const mounts = [
 		[] :
 		[
 			`${path.join(homeDir, '.cyph')}:${dockerHomeDir}/.cyph`,
-			`${path.join(homeDir, '.gitconfig')}:${dockerHomeDir}/.gitconfig`,
 			...(isWindows ?
 				[] :
 				[
@@ -138,29 +140,39 @@ const mounts = [
 	.map(s => ['-v', s])
 	.reduce((a, b) => a.concat(b), []);
 
-const windowsWorkaround = !isWindows ?
-	'' :
-	`
-		sudo touch /windows
-		sudo mv /bin/ln /bin/ln.old
-		echo '
-			#!/bin/bash
+const windowsWorkaround =
+	(!fs.existsSync(gitconfigPath) ?
+		'' :
+		`
+			echo '${fs
+						.readFileSync(gitconfigPath)
+						.toString(
+							'base64'
+						)}' | base64 --decode > ${gitconfigDockerPath}
+		`) +
+	(!isWindows ?
+		'' :
+		`
+			sudo touch /windows
+			sudo mv /bin/ln /bin/ln.old
+			echo '
+				#!/bin/bash
 
-			if [ "\${1}" != '-s' -o "\${#}" != '3' ] ; then
-				/bin/ln.old "\${@}"
-			elif [ -f "\${2}" ] ; then
-				cp -f "\${2}" "\${3}"
-			else
-				rm -rf "\${3}" 2> /dev/null
-				mkdir "\${3}"
-				sudo mount --bind "\${2}" "\${3}"
-			fi
-		' |
-			sudo tee -a /bin/ln > /dev/null
-		sudo chmod +x /bin/ln
+				if [ "\${1}" != '-s' -o "\${#}" != '3' ] ; then
+					/bin/ln.old "\${@}"
+				elif [ -f "\${2}" ] ; then
+					cp -f "\${2}" "\${3}"
+				else
+					rm -rf "\${3}" 2> /dev/null
+					mkdir "\${3}"
+					sudo mount --bind "\${2}" "\${3}"
+				fi
+			' |
+				sudo tee -a /bin/ln > /dev/null
+			sudo chmod +x /bin/ln
 
-		rg -l '\\r' /cyph | xargs dos2unix
-	`;
+			rg -l '\\r' /cyph | xargs dos2unix
+	`);
 
 const shellScripts = {
 	agseInit: `
