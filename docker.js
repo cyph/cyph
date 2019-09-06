@@ -57,6 +57,9 @@ const runScript = script => {
 const args = {
 	command: process.argv[2],
 	background: process.argv.indexOf('--background') > -1,
+	noAutoMake:
+		process.argv[2] === 'make' ||
+		process.argv.indexOf('--no-auto-make') > -1,
 	noUpdates: process.argv.indexOf('--no-updates') > -1,
 	simple:
 		process.argv.indexOf('--simple') > -1 ||
@@ -71,7 +74,12 @@ const args = {
 
 const baseShellCommandArgs = process.argv
 	.slice(3)
-	.filter(s => s !== '--background' && s !== '--no-updates');
+	.filter(
+		s =>
+			s !== '--background' &&
+			s !== '--no-auto-make' &&
+			s !== '--no-updates'
+	);
 const shellCommandArgs = baseShellCommandArgs
 	.map(s => (s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`))
 	.join(' ');
@@ -117,6 +125,11 @@ const image =
 			.filter(s => s && s.indexOf('*') === 0)[0]
 			.split(/\s+/)[1]
 	).toLowerCase();
+
+const imageAlreadyBuilt = spawn('docker', ['images'])
+	.split('\n')
+	.slice(1)
+	.some(s => s.trim().split(/\s+/)[0] === image);
 
 const isCyphInternal = fs.existsSync(path.join(homeDir, '.cyph'));
 
@@ -515,6 +528,36 @@ if (isWindows && isAgseDeploy) {
 let exitCleanup = () => {};
 let initPromise = Promise.resolve();
 
+const make = () => {
+	killEverything();
+	initPromise = spawnAsync('docker', ['build', '-t', image, '.'])
+		.then(() =>
+			spawnAsync('docker', [
+				'tag',
+				`${image}:latest`,
+				`${image}_original:latest`
+			])
+		)
+		.then(() => pullUpdates())
+		.then(() => editImage(shellScripts.setup))
+		.then(() =>
+			spawnAsync('docker', [
+				'tag',
+				`${image}:latest`,
+				`${image}_original:latest`
+			])
+		);
+};
+
+if (!imageAlreadyBuilt) {
+	if (args.noAutoMake) {
+		throw new Error('Image not yet built. Run `./docker.js make` first.');
+	}
+	else {
+		make();
+	}
+}
+
 if (isAgseDeploy) {
 	commandAdditionalArgs.push('-p');
 	commandAdditionalArgs.push('31337:31337/udp');
@@ -533,24 +576,7 @@ switch (args.command) {
 		break;
 
 	case 'make':
-		killEverything();
-		initPromise = spawnAsync('docker', ['build', '-t', image, '.'])
-			.then(() =>
-				spawnAsync('docker', [
-					'tag',
-					`${image}:latest`,
-					`${image}_original:latest`
-				])
-			)
-			.then(() => pullUpdates())
-			.then(() => editImage(shellScripts.setup))
-			.then(() =>
-				spawnAsync('docker', [
-					'tag',
-					`${image}:latest`,
-					`${image}_original:latest`
-				])
-			);
+		make();
 		break;
 
 	case 'makeclean':
