@@ -576,8 +576,7 @@ if (!imageAlreadyBuilt) {
 }
 
 if (isAgseDeploy) {
-	commandAdditionalArgs.push('-p');
-	commandAdditionalArgs.push('31337:31337/udp');
+	commandAdditionalArgs.push('-p', '31337:31337/udp');
 
 	exitCleanup = () => fs.appendFileSync(agseTempFile);
 	initPromise = runScript(shellScripts.agseInit);
@@ -603,38 +602,27 @@ switch (args.command) {
 		break;
 
 	case 'serve':
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42000:42000');
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42001:42001');
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42002:42002');
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42003:42003');
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('44000:44000');
-
 		const base = 'http://localhost';
 		const projects = ['backend', 'cyph.com', 'cyph.app', 'docs'];
 
 		for (let i = 0; i < projects.length; ++i) {
-			console.log(`${projects[i]}: ${base}:4200${i}`);
+			const port = `4200${i}`;
+
+			commandAdditionalArgs.push('-p', `${port}:${port}`);
+			console.log(`${projects[i]}: ${base}:${port}`);
 		}
+
+		commandAdditionalArgs.push('-p', '44000:44000');
 
 		console.log('\n\n');
 		break;
 
 	case 'test':
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('9876:9876');
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42000:42000');
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42001:42001');
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('42002:42002');
-		commandAdditionalArgs.push('-p');
-		commandAdditionalArgs.push('44000:44000');
+		commandAdditionalArgs.push('-p', '9876:9876');
+		commandAdditionalArgs.push('-p', '42000:42000');
+		commandAdditionalArgs.push('-p', '42001:42001');
+		commandAdditionalArgs.push('-p', '42002:42002');
+		commandAdditionalArgs.push('-p', '44000:44000');
 		break;
 
 	case 'updatecircleci':
