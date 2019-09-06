@@ -140,7 +140,7 @@ const mounts = [
 	.map(s => ['-v', s])
 	.reduce((a, b) => a.concat(b), []);
 
-const windowsWorkaround =
+const containerInitScript =
 	(!fs.existsSync(gitconfigPath) ?
 		'' :
 		`
@@ -222,7 +222,7 @@ const shellScripts = {
 	`,
 	aptUpdate: {
 		command: `
-			${windowsWorkaround}
+			${containerInitScript}
 			/cyph/commands/updatedockerimage.sh
 		`,
 		condition: `
@@ -230,14 +230,14 @@ const shellScripts = {
 		`
 	},
 	command: `
-		${windowsWorkaround}
+		${containerInitScript}
 		source ~/.bashrc
 		/cyph/commands/${commandScript} ${shellCommandArgs}
 		notify 'Command complete: ${args.command}' &> /dev/null
 	`,
 	libUpdate: {
 		command: `
-			${windowsWorkaround}
+			${containerInitScript}
 			source ~/.bashrc
 			/cyph/commands/updatedockerimage.sh
 			/cyph/commands/getlibs.sh
@@ -248,7 +248,7 @@ const shellScripts = {
 		`
 	},
 	setup: `
-		${windowsWorkaround}
+		${containerInitScript}
 		/cyph/commands/dockerpostmake.sh
 		source ~/.bashrc
 		notify 'Make complete'
@@ -556,7 +556,6 @@ switch (args.command) {
 	case 'makeclean':
 		killEverything();
 		removeImage('cyph');
-		removeImage('google/cloud-sdk');
 		removeImage(undefined, ['--filter', 'dangling=true']);
 		break;
 
