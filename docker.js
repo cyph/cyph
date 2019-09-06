@@ -54,6 +54,11 @@ const runScript = script => {
 	return spawnAsync('bash', [tmpFile]);
 };
 
+const fail = errorMessage => {
+	console.error(`ERROR: ${errorMessage}`);
+	process.exit(0);
+};
+
 const args = {
 	command: process.argv[2],
 	background: process.argv.indexOf('--background') > -1,
@@ -519,10 +524,10 @@ const updateCircleCI = () => {
 };
 
 if (!isCyphInternal && isAgseDeploy) {
-	throw new Error('Non-Cyph-employee. AGSE unsupported.');
+	fail('Non-Cyph-employee. AGSE unsupported.');
 }
 if (isWindows && isAgseDeploy) {
-	throw new Error('AGSE not yet supported on Windows.');
+	fail('AGSE not yet supported on Windows.');
 }
 
 let exitCleanup = () => {};
@@ -551,7 +556,7 @@ const make = () => {
 
 if (!imageAlreadyBuilt) {
 	if (args.noAutoMake) {
-		throw new Error('Image not yet built. Run `./docker.js make` first.');
+		fail('Image not yet built. Run `./docker.js make` first.');
 	}
 	else {
 		make();
@@ -624,7 +629,7 @@ switch (args.command) {
 
 	default:
 		if (!commandScript) {
-			throw new Error('fak u gooby');
+			fail('fak u gooby');
 		}
 }
 
