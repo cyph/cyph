@@ -22,5 +22,8 @@
 		"tabWidth": 4,
 		"trailingComma": "none",
 		"useTabs": true
+	},
+	"scripts": {
+		"serve": "./docker.js serve"
 	}
 }
