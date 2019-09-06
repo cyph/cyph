@@ -193,7 +193,7 @@ uglify standalone/global.js -o standalone/global.js
 checkfail
 
 for f in ${typescriptAssets} ; do
-	m="$(getmodulename ${f})"
+	m="$(getmodulename "${f}")"
 
 	cat > "$(echo "${f}" | sha).webpack.js" <<- EOM
 		const {TsConfigPathsPlugin} = require('awesome-typescript-loader');
@@ -281,7 +281,7 @@ echo ${typescriptAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash 
 checkfail
 echo -e '\n'
 for f in ${typescriptAssets} ; do
-	m="$(getmodulename ${f})"
+	m="$(getmodulename "${f}")"
 
 	rm "$(echo "${f}" | sha).webpack.js"
 
