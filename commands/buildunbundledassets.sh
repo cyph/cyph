@@ -4,7 +4,7 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
-parallelProcesses=6
+parallelProcesses=4
 
 prodTest=''
 if [ "${1}" == '--prod-test' ] ; then
