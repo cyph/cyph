@@ -4,6 +4,8 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+parallelProcesses=6
+
 prodTest=''
 if [ "${1}" == '--prod-test' ] ; then
 	prodTest=true
@@ -22,6 +24,14 @@ if [ "${1}" == '--test' ] ; then
 	shift
 fi
 
+
+getmodulename () {
+	echo "${1}" | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g'
+}
+
+mkparentdir () {
+	mkdir -p "$(echo "${1}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
+}
 
 uglify () {
 	if [ "${test}" ] ; then
@@ -99,8 +109,7 @@ hash="${serviceWorker}${test}$(
 		\)) \
 		$(find shared/css -type f -name '*.scss') \
 	|
-		shasum -a 512 |
-		awk '{print $1}'
+		sha
 )"
 
 
@@ -132,16 +141,20 @@ fi
 
 cd node_modules
 
+export test
+export -f uglify
 for f in ${nodeModulesAssets} ; do
-	mkdir -p "$(echo "${f}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
-
+	mkparentdir "${f}"
+done
+echo ${nodeModulesAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash -c '
+	f="%"
 	path="/node_modules/${f}.js"
 	if [ ! "${test}" ] && [ -f "/node_modules/${f}.min.js" ] ; then
 		path="/node_modules/${f}.min.js"
 	fi
 
 	uglify -cm "${path}" -o "${f}.js"
-done
+'
 
 
 cd ../js
@@ -180,9 +193,9 @@ uglify standalone/global.js -o standalone/global.js
 checkfail
 
 for f in ${typescriptAssets} ; do
-	m="$(echo ${f} | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g')"
+	m="$(getmodulename ${f})"
 
-	cat > webpack.js <<- EOM
+	cat > "$(echo "${f}" | sha).webpack.js" <<- EOM
 		const {TsConfigPathsPlugin} = require('awesome-typescript-loader');
 		const path = require('path');
 		const TerserPlugin = require('terser-webpack-plugin');
@@ -261,10 +274,16 @@ for f in ${typescriptAssets} ; do
 			}
 		};
 	EOM
+done
+echo ${typescriptAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash -c '
+	webpack --config "$(echo "%" | sha).webpack.js"
+'
+checkfail
+echo -e '\n'
+for f in ${typescriptAssets} ; do
+	m="$(getmodulename ${f})"
 
-	webpack --config webpack.js
-	checkfail
-	rm webpack.js
+	rm "$(echo "${f}" | sha).webpack.js"
 
 	{
 		echo '(function () {';
@@ -287,10 +306,7 @@ for f in ${typescriptAssets} ; do
 	checkfail
 
 	mv "${f}.js.tmp" "${f}.js"
-
-	echo
 	ls -lh "${f}.js"
-	echo -e '\n'
 done
 
 
@@ -299,12 +315,12 @@ cd ../css
 cp -rf ../../css/* ./
 grep -rl "@import '~" | xargs -I% sed -i "s|@import '~|@import '/node_modules/|g" %
 
-for f in ${scssAssets} ; do
-	sass "${f}.scss" "${f}.css"
-	checkfail
-	cleancss --inline none "${f}.css" -o "${f}.css"
-	checkfail
-done
+echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
+	sass '%.scss' '%.css'
+checkfail
+echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
+	cleancss --inline none '%.css' -o '%.css'
+checkfail
 
 
 cd ..

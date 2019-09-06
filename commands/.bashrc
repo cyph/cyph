@@ -57,6 +57,10 @@ pass () {
 	exit 0
 }
 
+sha () {
+	shasum -a 512 "${@}" | awk '{print $1}'
+}
+
 unbindmount () {
 	if [ ! "${CIRCLECI}" ] ; then
 		sudo umount "${1}"
@@ -74,6 +78,7 @@ export -f log
 export -f ng
 export -f notify
 export -f pass
+export -f sha
 export -f unbindmount
 
 
