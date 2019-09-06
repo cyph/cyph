@@ -85,6 +85,12 @@ if [ -f ~/.cyph/notify.key ] && [ -f /node_modules/.bin/notify ] ; then
 fi
 
 
+# Setup for documentation generation
+cp -f /cyph/LICENSE /cyph/README.md /cyph/cyph.app/
+echo -e '\n---\n' >> /cyph/cyph.app/README.md
+cat /cyph/PATENTS >> /cyph/cyph.app/README.md
+
+
 # Workaround for localhost not working in CircleCI
 if [ "${CIRCLECI}" ] ; then
 	sed -i 's|localhost|0.0.0.0|g' /cyph/commands/serve.sh /cyph/*/protractor.conf.js

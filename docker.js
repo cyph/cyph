@@ -610,16 +610,18 @@ switch (args.command) {
 		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('42002:42002');
 		commandAdditionalArgs.push('-p');
+		commandAdditionalArgs.push('42003:42003');
+		commandAdditionalArgs.push('-p');
 		commandAdditionalArgs.push('44000:44000');
 
 		const base = 'http://localhost';
-		const projects = ['backend', 'cyph.app', 'cyph.com'];
+		const projects = ['backend', 'cyph.com', 'cyph.app', 'docs'];
 
 		for (let i = 0; i < projects.length; ++i) {
 			console.log(`${projects[i]}: ${base}:4200${i}`);
 		}
 
-		console.log(`docs: ${base}:42001/js/docs/index.html\n\n`);
+		console.log('\n\n');
 		break;
 
 	case 'test':

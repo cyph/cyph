@@ -10,6 +10,7 @@
 nohup.out
 *.swp
 *.orig
+documentation
 firebase-debug.log
 npm-debug.log
 node_modules

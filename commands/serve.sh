@@ -115,6 +115,20 @@ ngserve () {
 	cd "${project}"
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
+
+	if [ ! "${e2e}" ] && [ "${project}" == 'cyph.app' ] ; then
+		compodoc \
+			-s \
+			-t \
+			-r 42003 \
+			-n 'Cyph Docs' \
+			-p src/tsconfig.app.json \
+			--disablePrivate \
+			--disableProtected \
+			--disableInternal \
+		&> /dev/null &
+	fi
+
 	ngserveInternal \
 		--host '0.0.0.0' \
 		--port "${port}" \
