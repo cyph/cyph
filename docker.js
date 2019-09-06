@@ -158,7 +158,7 @@ const containerInitScript =
 			echo '
 				#!/bin/bash
 
-				if [ "\${1}" != '-s' -o "\${#}" != '3' ] ; then
+				if [ "\${1}" != "-s" -o "\${#}" != "3" ] ; then
 					/bin/ln.old "\${@}"
 				elif [ -f "\${2}" ] ; then
 					cp -f "\${2}" "\${3}"
