@@ -59,6 +59,19 @@ const fail = errorMessage => {
 	process.exit(0);
 };
 
+const isMacOS = process.platform === 'darwin';
+const isWindows = process.platform === 'win32';
+
+if (!spawn('docker', ['-v'])) {
+	fail(
+		`Install Docker first and try again: ${
+			isMacOS || isWindows ?
+				'https://www.docker.com/products/docker-desktop' :
+				'https://docs.docker.com/install/#server'
+		}`
+	);
+}
+
 const args = {
 	command: process.argv[2],
 	background: process.argv.indexOf('--background') > -1,
@@ -88,7 +101,6 @@ const baseShellCommandArgs = process.argv
 const shellCommandArgs = baseShellCommandArgs
 	.map(s => (s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`))
 	.join(' ');
-const isWindows = process.platform === 'win32';
 const homeDir = os.homedir();
 const backupDir = path.join(homeDir, '.cyphbackup');
 const backupTargets = ['gitconfig', 'gnupg', 'ssh'];
