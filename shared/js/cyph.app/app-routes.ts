@@ -19,7 +19,7 @@ const burner = [
 ];
 
 /** @see Routes */
-export const appRoutes: Routes = [
+export const appRoutes = <Routes> [
 	...(!(
 		env.environment.customBuild &&
 		env.environment.customBuild.config.lockedDown
