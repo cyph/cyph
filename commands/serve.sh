@@ -175,6 +175,7 @@ dev_appserver.py \
 
 log 'Starting ng serve'
 
+ports=''
 for arr in 'cyph.app 42002' 'cyph.com 42001' ; do
 	read -ra arr <<< "${arr}"
 
@@ -183,10 +184,20 @@ for arr in 'cyph.app 42002' 'cyph.com 42001' ; do
 			ngserve "${arr[0]}" "${arr[1]}"
 			exit $?
 		else
+			ports="${ports} ${arr[1]}"
+			if [ "${arr[0]}" == 'cyph.app' ] ; then
+				ports="${ports} 42003"
+			fi
+
 			ngserve "${arr[0]}" "${arr[1]}" &
 			sleep 60
 		fi
 	fi
 done
+
+for p in ${ports} ; do
+	while ! curl http://localhost:${p} &> /dev/null ; do sleep 1 ; done
+done
+echo "${ports}" > serve.ready
 
 sleep Infinity

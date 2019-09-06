@@ -292,6 +292,7 @@ read -r -d '' modules <<- EOM
 	notify-cli
 	ntru
 	opentok
+	opn
 	opus-recorder
 	parchment
 	pdfjs-dist

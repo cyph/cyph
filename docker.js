@@ -24,6 +24,9 @@ const exec = command =>
 		.toString()
 		.trim();
 
+const open = url =>
+	require(path.join(__dirname, 'shared', 'node_modules', 'opn'))(url);
+
 const spawn = (command, args, cwd) =>
 	(
 		childProcess.spawnSync(command, args, {
@@ -124,6 +127,7 @@ fs.existsSync(path.join(__dirname, 'commands', `${args.command}.js`)) ?
 
 const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
+const serveReadyPath = path.join(__dirname, 'serve.ready');
 
 const isAgseDeploy =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
@@ -435,7 +439,15 @@ const pullUpdates = () => {
 		)
 		.then(() => {
 			spawn('node', [
-				'node_modules/husky/lib/installer/bin.js',
+				path.join(
+					__dirname,
+					'shared',
+					'node_modules',
+					'husky',
+					'lib',
+					'installer',
+					'bin.js'
+				),
 				'install'
 			]);
 		});
@@ -615,6 +627,32 @@ switch (args.command) {
 		commandAdditionalArgs.push('-p', '44000:44000');
 
 		console.log('\n\n');
+
+		if (fs.existsSync(serveReadyPath)) {
+			fs.unlinkSync(serveReadyPath);
+		}
+
+		const waitUntilServeReady = () =>
+			new Promise(resolve => setTimeout(resolve, 5000))
+				.then(
+					() =>
+						new Promise(resolve =>
+							fs.exists(serveReadyPath, resolve)
+						)
+				)
+				.then(exists =>
+					exists ?
+						fs
+							.readFileSync(serveReadyPath)
+							.toString()
+							.trim()
+							.split(' ') :
+						waitUntilServeReady()
+				);
+
+		waitUntilServeReady().then(ports =>
+			Promise.all(ports.map(port => open(`http://localhost:${port}`)))
+		);
 		break;
 
 	case 'test':

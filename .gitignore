@@ -2,6 +2,7 @@
 /.build
 /docs
 /qr-invite-codes
+/serve.ready
 /threadpack.log
 .build.yaml
 *.mmdb
