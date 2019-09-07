@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
 	"strconv"
 	"strings"
 	"time"
@@ -18,6 +19,7 @@ import (
 )
 
 func init() {
+	handleFuncs("/analytics/*", Handlers{methods.GET: analytics})
 	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
@@ -40,6 +42,12 @@ func init() {
 
 func main() {
 	appengine.Main()
+}
+
+func analytics(h HandlerArgs) (interface{}, int) {
+	proxy := httputil.NewSingleHostReverseProxy(analURL)
+	proxy.ServeHTTP(h.Writer, h.Request)
+	return nil, -1
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {

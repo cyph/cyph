@@ -2,6 +2,12 @@ runtime: go
 api_version: go1
 
 handlers:
+- url: /anal.js
+  static_files: anal.js
+  upload: anal.js
+  secure: always
+  # default_headers Cache-Control X-Frame-Options Content-Security-Policy
+
 - url: /analsandbox/.*
   static_files: anal.html
   upload: anal.html

@@ -1,6 +1,23 @@
 <html>
 	<body>
 		<script>
+			/*
+			 * Google Analytics is used for traffic logging and event tracking.
+			 * To reduce trust in Google, the following steps are taken:
+			 *
+			 * * The JS is run in a sandboxed iframe (hence isn't problematic
+			 *   for the threat model of WebSign)
+			 *
+			 * * We're hosting the JS ourselves
+			 *
+			 * * IP anonymization is enabled:
+			 *   https://support.google.com/analytics/answer/2763052
+			 *
+			 * * Rather than make a direct connection from the client to GA,
+			 *   we're proxying all requests as per
+			 *   https://github.com/ZitRos/save-analytics-from-content-blockers
+			 */
+
 			try {
 				(function (i, s, o, g, r, a, m)  {
 					i['GoogleAnalyticsObject'] = r;
@@ -15,13 +32,7 @@
 					a.async = 1;
 					a.src = g;
 					m.parentNode.insertBefore(a, m);
-				})(
-					window,
-					document,
-					'script',
-					'https://www.google-analytics.com/analytics.js',
-					'ga'
-				);
+				})(window, document, 'script', '/anal.js', 'ga');
 
 				ga('create', 'UA-56220601-1', 'auto');
 
