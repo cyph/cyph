@@ -36,6 +36,7 @@
 		*/,
 		"no-any": false,
 		"no-empty-interface": true,
+		"no-for-in": true,
 		"no-import-side-effect": true,
 		"no-inferrable-types": [true, "ignore-params", "ignore-properties"],
 		"no-internal-module": true,
@@ -132,6 +133,7 @@
 		"no-null-keyword": true,
 		"no-null-undefined-union": false,
 		"no-object-literal-type-assertion": false,
+		"no-promise-as-boolean": true,
 		"no-restricted-globals": [true, "event", "length", "name"],
 		"no-return-await": true,
 		"no-shadowed-variable": true,
@@ -164,6 +166,7 @@
 				"allow-string-order-comparison": true
 			}
 		],
+		"strict-string-expressions": true,
 		"switch-default": false,
 		"strict-type-predicates": true,
 		"triple-equals": true,
@@ -175,6 +178,7 @@
 
 		"cyclomatic-complexity": true,
 		"deprecation": false /* Pending fix: true */,
+		"invalid-void": true,
 		"eofline": true,
 		"indent": false,
 		"linebreak-style": [true, "LF"],
