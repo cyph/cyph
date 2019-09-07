@@ -272,9 +272,12 @@ export class ChatService extends BaseProvider {
 		this.resolvers.chatConnected.promise,
 		this.resolvers.currentMessageSynced.promise,
 		this.sessionService.initialMessagesProcessed.promise,
-		this.castleService && this.castleService.initialMessagesProcessed(),
-		this.channelService &&
-			this.channelService.initialMessagesProcessed.promise
+		this.castleService ?
+			this.castleService.initialMessagesProcessed() :
+			undefined,
+		this.channelService ?
+			this.channelService.initialMessagesProcessed.promise :
+			undefined
 	]).then<true>(() => true);
 
 	/** Indicates whether "walkie talkie" mode is enabled for calls. */

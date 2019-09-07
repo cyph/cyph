@@ -48,7 +48,7 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>>
 	/** @ignore */
 	public getItemInternal (key: K) : V {
 		if (!this.value.has(key)) {
-			throw new Error(`No item ${key} in async map.`);
+			throw new Error(`No item ${key.toString()} in async map.`);
 		}
 
 		return <V> this.value.get(key);

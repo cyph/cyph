@@ -1086,7 +1086,9 @@ export class AccountFilesService extends BaseProvider {
 
 		if (!fileConfig || !fileConfig.proto) {
 			throw new Error(
-				`Cannot download file ${id} of type ${AccountFileRecord.RecordTypes[recordType]}`
+				`Cannot download file ${
+					typeof id === 'string' ? id : id.id
+				} of type ${AccountFileRecord.RecordTypes[recordType]}`
 			);
 		}
 
@@ -1530,14 +1532,16 @@ export class AccountFilesService extends BaseProvider {
 
 		let accountFileReferenceContainer: IAccountFileReferenceContainer;
 
+		const constID = id;
+
 		const fileType =
-			typeof id !== 'string' ?
-				id.accountFileRecord.recordType :
+			typeof constID !== 'string' ?
+				constID.accountFileRecord.recordType :
 				this.accountDatabaseService
-					.getItem(`fileReferences/${id}`, AccountFileReference)
+					.getItem(`fileReferences/${constID}`, AccountFileReference)
 					.then(async o =>
 						this.accountDatabaseService.getItem(
-							`users/${o.owner}/fileRecords/${id}`,
+							`users/${o.owner}/fileRecords/${constID}`,
 							AccountFileRecord,
 							undefined,
 							o.key
