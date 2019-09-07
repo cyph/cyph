@@ -583,6 +583,9 @@ if (!imageAlreadyBuilt) {
 		fail('Image not yet built. Run `./docker.js make` first.');
 	}
 	else {
+		console.error(
+			'WARNING: Building your local development image. This may take a while.'
+		);
 		make();
 	}
 }
