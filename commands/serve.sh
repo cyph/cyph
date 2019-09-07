@@ -184,10 +184,10 @@ for arr in 'cyph.app 42002' 'cyph.com 42001' ; do
 			ngserve "${arr[0]}" "${arr[1]}"
 			exit $?
 		else
-			ports="${ports} ${arr[1]}"
 			if [ "${arr[0]}" == 'cyph.app' ] ; then
 				ports="${ports} 42003"
 			fi
+			ports="${ports} ${arr[1]}"
 
 			ngserve "${arr[0]}" "${arr[1]}" &
 			sleep 60

@@ -616,12 +616,13 @@ switch (args.command) {
 	case 'serve':
 		const base = 'http://localhost';
 		const projects = ['backend', 'cyph.com', 'cyph.app', 'docs'];
+		const postOpenLogs = [];
 
 		for (let i = 0; i < projects.length; ++i) {
 			const port = `4200${i}`;
 
 			commandAdditionalArgs.push('-p', `${port}:${port}`);
-			console.log(`${projects[i]}: ${base}:${port}`);
+			postOpenLogs.push(`${projects[i]}: ${base}:${port}`);
 		}
 
 		commandAdditionalArgs.push('-p', '44000:44000');
@@ -650,9 +651,19 @@ switch (args.command) {
 						waitUntilServeReady()
 				);
 
-		waitUntilServeReady().then(ports =>
-			Promise.all(ports.map(port => open(`http://localhost:${port}`)))
-		);
+		waitUntilServeReady()
+			.then(ports =>
+				ports.reduce(
+					(p, port) => p.then(() => open(`http://localhost:${port}`)),
+					Promise.resolve()
+				)
+			)
+			.then(() => {
+				for (const postOpenLog of postOpenLogs) {
+					console.log(postOpenLog);
+				}
+				fs.unlinkSync(serveReadyPath);
+			});
 		break;
 
 	case 'test':
