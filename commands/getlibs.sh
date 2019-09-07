@@ -319,7 +319,7 @@ sed -i \
 # Temporary workaround for https://github.com/dcodeIO/protobuf.js/issues/863
 while true ; do
 	for host in raw.githubusercontent.com cdn.rawgit.com rawgit.com ; do
-		if [ "$(sha protobufjs/cli/pbts.js)" == '5e0f68e44f1a7a1f0ad64ef36fcaf04f4903e4af75cd403d40a46115d2506e16111a52359a12c93d238db034dc707e4bdd8d5945a9d5aebeaf87bf55fe8a0c59' ] ; then
+		if [ "$(shasum -a 512 protobufjs/cli/pbts.js | awk '{print $1}')" == '5e0f68e44f1a7a1f0ad64ef36fcaf04f4903e4af75cd403d40a46115d2506e16111a52359a12c93d238db034dc707e4bdd8d5945a9d5aebeaf87bf55fe8a0c59' ] ; then
 			break 2
 		fi
 
