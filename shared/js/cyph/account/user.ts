@@ -54,6 +54,7 @@ export class User {
 	public readonly avatar: Observable<SafeUrl> = toBehaviorSubject(
 		this.avatarInternal,
 		User.defaultAvatar
+		/* tslint:disable-next-line:no-promise-as-boolean */
 	).pipe(mergeMap(async avatar => avatar || User.defaultAvatar));
 
 	/** @see IAccountContactState.state */
@@ -68,6 +69,7 @@ export class User {
 	public readonly coverImage: Observable<SafeUrl> = toBehaviorSubject(
 		this.coverImageInternal,
 		User.defaultCoverImage
+		/* tslint:disable-next-line:no-promise-as-boolean */
 	).pipe(mergeMap(async coverImage => coverImage || User.defaultCoverImage));
 
 	/** @see IAccountUserProfile.description */

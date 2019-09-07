@@ -212,6 +212,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						value,
 						this.inviteCodeData.value.reservedUsername
 					)) ||
+					/* tslint:disable-next-line:no-promise-as-boolean */
 					this.accountUserLookupService.exists(value, false, false) :
 					true
 			)) ?

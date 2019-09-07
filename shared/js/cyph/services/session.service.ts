@@ -260,6 +260,7 @@ export abstract class SessionService extends BaseProvider
 	protected async getSymmetricKey () : Promise<Uint8Array> {
 		return (
 			this.symmetricKey.value ||
+			/* tslint:disable-next-line:no-promise-as-boolean */
 			this.symmetricKey
 				.pipe(
 					filterUndefinedOperator(),

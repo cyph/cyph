@@ -46,6 +46,7 @@ export class AccountUserLookupService extends BaseProvider {
 				reservedUsername &&
 				normalize(username) === normalize(reservedUsername)
 			) &&
+			/* tslint:disable-next-line:no-promise-as-boolean */
 			this.databaseService
 				.callFunction('usernameBlacklisted', {username})
 				.then(
