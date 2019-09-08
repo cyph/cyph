@@ -28,6 +28,7 @@ import {deserialize, serialize} from '../../util/serialization';
 import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
 import {AccountUserLookupService} from '../account-user-lookup.service';
+import {AnalyticsService} from '../analytics.service';
 import {DatabaseService} from '../database.service';
 import {EnvService} from '../env.service';
 import {ErrorService} from '../error.service';
@@ -588,6 +589,13 @@ export class AccountAuthService extends BaseProvider {
 			return false;
 		}
 
+		this.analyticsService.sendEvent({
+			eventAction: 'success',
+			eventCategory: 'login',
+			eventValue: 1,
+			hitType: 'event'
+		});
+
 		return true;
 	}
 
@@ -929,6 +937,9 @@ export class AccountAuthService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
