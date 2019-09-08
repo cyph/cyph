@@ -128,6 +128,9 @@ mat-divider {
 }
 
 .status {
+	/* Disable statuses for now */
+	visibility: hidden;
+
 	right: 25px;
 	position: absolute;
 	width: 80px;

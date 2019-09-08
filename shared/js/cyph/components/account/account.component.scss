@@ -130,6 +130,11 @@ $mobileAppBarHeight: 56px;
 
 		@include transition(border 0.75s ease);
 
+		/* Disable statuses for now */
+		border-color: rgba(0, 0, 0, 0.1) !important;
+		background-color: rgba(0, 0, 0, 0.1) !important;
+
+		/*
 		&.Online {
 			border-color: map-get($mat-green, 700) !important;
 			background-color: map-get($mat-green, 700) !important;
@@ -149,6 +154,7 @@ $mobileAppBarHeight: 56px;
 			border-color: map-get($mat-grey, 900) !important;
 			background-color: map-get($mat-grey, 900) !important;
 		}
+		*/
 	}
 
 	.cover-image {

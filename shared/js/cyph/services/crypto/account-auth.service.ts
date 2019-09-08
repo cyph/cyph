@@ -2,14 +2,12 @@
 
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {skip} from 'rxjs/operators';
 import {RegistrationErrorCodes} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {IProto} from '../../iproto';
 import {
 	AccountContactState,
 	AccountLoginData,
-	AccountUserPresence,
 	AccountUserProfile,
 	AccountUserProfileExtra,
 	AccountUserTypes,
@@ -418,7 +416,7 @@ export class AccountAuthService extends BaseProvider {
 			try {
 				/* Test to see if we can fetch user data before initiating fresh log-in */
 				await this.databaseService.getItem(
-					`users/${username}/lastPresence`,
+					`users/${username}/plan`,
 					BinaryProto
 				);
 			}
@@ -482,6 +480,9 @@ export class AccountAuthService extends BaseProvider {
 				user
 			});
 
+			/*
+			Disable statuses for now:
+
 			errorLogMessage = 'tracking presence';
 
 			this.connectTrackerCleanup = await this.databaseService.setConnectTracker(
@@ -534,6 +535,7 @@ export class AccountAuthService extends BaseProvider {
 						);
 					})
 			);
+			*/
 
 			this.databaseService
 				.registerPushNotifications(`users/${username}/messagingTokens`)
@@ -788,12 +790,16 @@ export class AccountAuthService extends BaseProvider {
 					true,
 					true
 				),
+				/*
+				Disable statuses for now:
+
 				this.setItem(
 					`users/${username}/lastPresence`,
 					AccountUserPresence,
 					{status: AccountUserPresence.Statuses.Online},
 					loginData.symmetricKey
 				),
+				*/
 				this.setItem(
 					`users/${username}/encryptionKeyPair`,
 					KeyPair,
