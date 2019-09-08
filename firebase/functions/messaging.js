@@ -33,8 +33,7 @@ const sendMessage = async (database, messaging, namespace, username, body) => {
 				{
 					notification: {
 						...notification,
-						icon:
-							'https://www.cyph.com/assets/img/favicon/favicon-256x256.png'
+						icon: 'https://cyph.app/img/favicon/favicon-256x256.png'
 					}
 				}
 			]
