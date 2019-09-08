@@ -71,8 +71,6 @@ var isRouterActive = false
 
 var sanitizer = bluemonday.StrictPolicy()
 
-var analURL, _ = parseURL("https://www.google-analytics.com")
-
 var emailTemplate, _ = mustache.ParseString(getFileText("shared/email.html"))
 
 var countrydb, _ = geoip2.Open("GeoIP2-Country.mmdb")

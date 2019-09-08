@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"net/http/httputil"
 	"strconv"
 	"strings"
 	"time"
@@ -45,9 +44,18 @@ func main() {
 }
 
 func analytics(h HandlerArgs) (interface{}, int) {
-	proxy := httputil.NewSingleHostReverseProxy(analURL)
-	proxy.ServeHTTP(h.Writer, h.Request)
-	return nil, -1
+	client := urlfetch.Client(h.Context)
+
+	h.Request.RequestURI = ""
+	h.Request.URL.Host = "www.google-analytics.com"
+	h.Request.URL.Scheme = "https"
+
+	resp, err := client.Do(h.Request)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return resp.Body, resp.StatusCode
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
