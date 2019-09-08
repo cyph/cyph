@@ -68,8 +68,6 @@ RUN apt-get -y --allow-downgrades autoremove
 RUN pip install grpcio
 
 RUN echo '\
-	source /home/gibson/emsdk/emsdk_env.sh &> /dev/null; \
-\
 	export GIT_EDITOR="vim"; \
 	export GOPATH="/home/gibson/go"; \
 	export ANDROID_HOME="/home/gibson/androidsdk"; \
