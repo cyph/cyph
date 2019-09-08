@@ -8,6 +8,18 @@ const bootstrapString = async () => {
 
 	const index = await pack(path, 'index.html');
 
+	/* special case; add general solution when needed */
+	const serviceWorker =
+		fs
+			.readFileSync(`${path}/lib/localforage.js`)
+			.toString()
+			.trim() +
+		'\n' +
+		fs
+			.readFileSync(`${path}/serviceworker.js`)
+			.toString()
+			.trim();
+
 	const files = JSON.parse(
 		fs
 			.readFileSync(`${path}/js/config.js`)
@@ -24,6 +36,8 @@ const bootstrapString = async () => {
 				':\n\n' +
 				(file === '/' ?
 					index :
+				file === '/serviceworker.js' ?
+					serviceWorker :
 					fs
 						.readFileSync(
 							`${path}/${

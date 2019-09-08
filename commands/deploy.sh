@@ -591,6 +591,10 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 
 	cp -rf ../shared/favicon.ico ../shared/assets/img ./
 	../commands/websign/pack.js index.html index.html
+
+	# special case; add general solution when needed
+	node -e "fs.writeFileSync('serviceworker.js', fs.readFileSync('lib/localforage.js').toString().trim() + '\n' + fs.readFileSync('serviceworker.js').toString())"
+
 	cd ..
 fi
 
