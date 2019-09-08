@@ -580,7 +580,9 @@ const make = () => {
 
 if (!imageAlreadyBuilt) {
 	if (args.noAutoMake) {
-		fail('Image not yet built. Run `./docker.js make` first.');
+		if (args.command !== 'make') {
+			fail('Image not yet built. Run `./docker.js make` first.');
+		}
 	}
 	else {
 		console.error(
