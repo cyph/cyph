@@ -5,6 +5,8 @@ var files	= [
 	'/serviceworker.js',
 	'/unsupportedbrowser',
 	'/favicon.ico',
+	'/img/favicon/favicon-256x256.png',
+	'/img/favicon/favicon-196x196.png',
 	'/img/favicon/favicon-192x192.png',
 	'/img/favicon/favicon-160x160.png',
 	'/img/favicon/favicon-96x96.png',
@@ -19,6 +21,7 @@ var files	= [
 	'/img/favicon/apple-touch-icon-72x72.png',
 	'/img/favicon/apple-touch-icon-60x60.png',
 	'/img/favicon/apple-touch-icon-57x57.png',
+	'/img/favicon/mask.svg',
 	'/img/favicon/mstile-144x144.png',
 	'/img/logo.white.vertical.png'
 ].map(function (file) {
