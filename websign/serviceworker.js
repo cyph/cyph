@@ -114,16 +114,16 @@ function runStoredFunction (name) {
 	});
 }
 
-self.addEventListener('install', function (e) {
-	e.waitUntil(localforage.getItem(storedFunctionRoot).then(function (storedFunctionList) {
+self.addEventListener('install', function () {
+	localforage.getItem(storedFunctionRoot).then(function (storedFunctionList) {
 		if (!storedFunctionList) {
 			return;
 		}
 
-		return Promise.all(storedFunctionList.map(function (name) {
-			return runStoredFunction(name);
-		}));
-	}));
+		storedFunctionList.forEach(function (name) {
+			runStoredFunction(name);
+		});
+	});
 });
 
 self.addEventListener('message', function (e) {
