@@ -93,38 +93,70 @@ self.addEventListener('activate', function (e) {
 
 /* Enable running functions provided by the application */
 
-var executedScripts	= {};
+var storedFunctionResults	= {};
+var storedFunctionRoot		= 'websign-stored-functions';
+
+function runStoredFunction (name) {
+	return localforage.getItem(storedFunctionRoot + '/' + name).then(function (data) {
+		var importedFunction;
+
+		if (!(data.name in storedFunctionResults)) {
+			eval(data.scriptText);
+
+			if (typeof importedFunction !== 'function') {
+				return Promise.reject({noFunctionProvided: true});
+			}
+
+			storedFunctionResults[data.name]	= importedFunction(data.input);
+		}
+
+		return storedFunctionResults[data.name];
+	});
+}
+
+self.addEventListener('install', function (e) {
+	e.waitUntil(localforage.getItem(storedFunctionRoot).then(function (storedFunctionList) {
+		if (!storedFunctionList) {
+			return;
+		}
+
+		return Promise.all(storedFunctionList.map(function (name) {
+			return runStoredFunction(name);
+		}));
+	}));
+});
 
 self.addEventListener('message', function (e) {
 	if (
 		!e.data ||
 		e.data.cyphFunction !== true ||
 		!e.data.name ||
-		typeof e.data.scriptURL !== 'string' ||
-		!e.data.scriptURL.startsWith('blob:')
+		typeof e.data.scriptText !== 'string' ||
+		!e.data.scriptText.startsWith('importedFunction = ')
 	) {
 		return;
 	}
 
-	new Promise(function (resolve, reject) {
-		var importedFunction;
-
-		var alreadyExecuted				= executedScripts[e.data.name];
-		executedScripts[e.data.name]	= true;
-
-		if (!alreadyExecuted) {
-			importScripts(e.data.scriptURL);
-
-			importedFunction		= self.importedFunction;
-			self.importedFunction	= undefined;
+	localforage.setItem(
+		storedFunctionRoot + '/' + e.data.name,
+		e.data
+	).then(function () {
+		return localforage.getItem(storedFunctionRoot);
+	}).then(function (storedFunctionList) {
+		if (!storedFunctionList) {
+			storedFunctionList	= [];
 		}
 
-		if (typeof importedFunction !== 'function') {
-			reject(alreadyExecuted ? {alreadyExecuted: true} : {noFunctionProvided: true});
+		if (storedFunctionList.indexOf(e.data.name) > -1) {
+			return;
 		}
-		else {
-			resolve(importedFunction(e.data.input));
-		}
+
+		return localforage.setItem(
+			storedFunctionRoot,
+			storedFunctionList.concat(e.data.name)
+		);
+	}).then(function () {
+		return runStoredFunction(e.data.name);
 	}).then(function (output) {
 		return {id: e.data.id, output: output};
 	}).catch(function (err) {

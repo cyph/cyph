@@ -53,22 +53,17 @@ export class WorkerService extends BaseProvider {
 		const serviceWorker = await this.serviceWorker;
 		const id = uuid();
 		const output = resolvable<O>();
-		const scriptURL = URL.createObjectURL(
-			new Blob([`self.importedFunction = ${f.toString()};`], {
-				type: 'text/javascript'
-			})
-		);
+		const scriptText = `importedFunction = ${f.toString()};`;
 
 		this.serviceWorkerResolvers.set(id, output);
+
 		serviceWorker.postMessage({
 			cyphFunction: true,
 			id,
 			input: await input,
 			name,
-			scriptURL
+			scriptText
 		});
-		await output.promise;
-		URL.revokeObjectURL(scriptURL);
 
 		return output.promise;
 	}
