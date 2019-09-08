@@ -68,7 +68,7 @@ RUN apt-get -y --allow-downgrades autoremove
 RUN pip install grpcio
 
 RUN echo '\
-	source /home/gibson/emsdk-portable/emsdk_env.sh &> /dev/null; \
+	source /home/gibson/emsdk/emsdk_env.sh &> /dev/null; \
 \
 	export GIT_EDITOR="vim"; \
 	export GOPATH="/home/gibson/go"; \
@@ -107,9 +107,7 @@ USER gibson
 ENV HOME /home/gibson
 
 
-RUN wget \
-	https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz \
-	-O ~/emsdk.tar.gz
+RUN git clone https://github.com/emscripten-core/emsdk.git
 RUN wget \
 	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-250.0.0-linux-x86_64.tar.gz \
 	-O ~/gcloud-sdk.tar.gz
