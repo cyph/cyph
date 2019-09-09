@@ -26,7 +26,7 @@ git pull
 chmod -R 777 .
 
 source ~/emsdk/emsdk_env.sh &> /dev/null
-emsdk update
+bash -c 'cd ~/emsdk ; git pull'
 emsdk install latest-upstream
 emsdk activate latest-upstream
 
