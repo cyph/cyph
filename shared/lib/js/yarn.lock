@@ -2709,10 +2709,10 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
-"@types/pdfjs-dist@^2.0.1", "@types/pdfjs-dist@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@types/pdfjs-dist/-/pdfjs-dist-2.1.0.tgz#a2801b998520ead71764d5d7abb213602f21a2a7"
-  integrity sha512-o3iR6SfgZPJuemnn9J91iH2nhoSMDuLRqm7rPaUXJs5anEWgOc7HaUkvsZSTCukZQIk74TW2etve2IiDT4AU+Q==
+"@types/pdfjs-dist@^2.0.1", "@types/pdfjs-dist@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@types/pdfjs-dist/-/pdfjs-dist-2.1.1.tgz#78706cda0927c3188f6bc2e6d22322acad28afc8"
+  integrity sha512-p7R1cIT6wIbhqb7HW70KVWWvMDYFABqQvIWAXVfdsDU12lrsOWl0IAkY13A+WjZiJ3bTtC0p3Qz8yCJo2qmZBQ==
 
 "@types/pdfkit@^0.10.2":
   version "0.10.2"
@@ -9299,9 +9299,9 @@ gcp-metadata@^2.0.0:
     json-bigint "^0.3.0"
 
 gcs-resumable-upload@^2.0.0:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/gcs-resumable-upload/-/gcs-resumable-upload-2.2.4.tgz#c81f58c456cbc6c14c71f12c51779de454d1ccad"
-  integrity sha512-UqoGRLImof+6DRv/7QnMGP3ot+RKhsIS2dVziGFe+ajFDW0cnit7xYyViFA99utDQB0RD+fSqKBkYwNXX3Y42w==
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/gcs-resumable-upload/-/gcs-resumable-upload-2.2.5.tgz#13e832130eb8c12be6d80f4bdc6fc0c410f73ad1"
+  integrity sha512-r98Hnxza8oYT21MzpziAB2thz3AURGz54+osWtczxGNxH7Fodb0HVUEtfqTwBS5vcf9RnKwR7c0EMaI8R39feg==
   dependencies:
     abort-controller "^3.0.0"
     configstore "^5.0.0"
@@ -14010,9 +14010,9 @@ node-pre-gyp@^0.13.0:
     quill "^1.3.6"
 
 node-releases@^1.1.25, node-releases@^1.1.29:
-  version "1.1.29"
-  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.29.tgz#86a57c6587a30ecd6726449e5d293466b0a0bb86"
-  integrity sha512-R5bDhzh6I+tpi/9i2hrrvGJ3yKPYzlVOORDkXhnZuwi5D3q1I5w4vYy24PJXTcLk9Q0kws9TO77T75bcK8/ysQ==
+  version "1.1.30"
+  resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.30.tgz#35eebf129c63baeb6d8ddeda3c35b05abfd37f7f"
+  integrity sha512-BHcr1g6NeUH12IL+X3Flvs4IOnl1TL0JczUhEZjDE+FXXPQcVCNr8NEPb01zqGxzhTpdyJL5GXemaCW7aw6Khw==
   dependencies:
     semver "^5.3.0"
 
@@ -16009,9 +16009,9 @@ pseudomap@^1.0.2:
   integrity sha1-8FKijacOYYkX7wqKw0wa5aaChrM=
 
 psl@^1.1.24, psl@^1.1.28:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/psl/-/psl-1.3.1.tgz#d5aa3873a35ec450bc7db9012ad5a7246f6fc8bd"
-  integrity sha512-2KLd5fKOdAfShtY2d/8XDWVRnmp3zp40Qt6ge2zBPFARLXOGUf2fHD5eg+TV/5oxBtQKVhjUaKFsAaE4HnwfSA==
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/psl/-/psl-1.4.0.tgz#5dd26156cdb69fa1fdb8ab1991667d3f80ced7c2"
+  integrity sha512-HZzqCGPecFLyoRj5HLfuDSKYTJkAfB5thKBIkRHtGjWwY7p1dAyveIbXIq4tO0KYfDF2tHqPUgY9SDnGm00uFw==
 
 public-encrypt@^4.0.0:
   version "4.0.3"
@@ -17209,10 +17209,10 @@ router@^1.3.1:
     setprototypeof "1.1.0"
     utils-merge "1.0.1"
 
-rsasign@^1.3.0-next:
-  version "1.3.0-next"
-  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.3.0-next.tgz#3cd3282340e40b2f524c70b59e711ecde21f70a1"
-  integrity sha512-+J7BsKiWUcJ7jFhr/6m+QPv6uk6lxC9xjGLAAXLrVDq08U6ZRGMTU8p5ek45RGKKwtcvgWp5DHMZQbohwIAc0w==
+rsasign@^1.3.1-next:
+  version "1.3.1-next"
+  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.3.1-next.tgz#5b03aef61e178e3d52a75d9ca985a0b8b25e3c26"
+  integrity sha512-Tx1TXH2TYMCPv7UAGk0W5OAbUL4ddusiKcN+TqrSoFhJWC0p4PagLqyct1TCXG4yJF5jaaHLVc4cDUcwU2SUvA==
   dependencies:
     generate-rsa-keypair "*"
     pem-jwk-norecompute "*"
@@ -18822,12 +18822,12 @@ superagent@^3.8.1:
     qs "^6.5.1"
     readable-stream "^2.3.5"
 
-supersphincs@^6.2.1-next:
-  version "6.2.1-next"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.2.1-next.tgz#2617f38541364e297e159a1431d0af74e12bf631"
-  integrity sha512-+cqnG4Q7C2XoAF3GQbIDtfmTryNaqxhm3wKtl9QVzGXlKslHThXGt3YTrV3jIiO7nP+A+hJoBpRAEEooPFuCUQ==
+supersphincs@^6.2.2-next:
+  version "6.2.2-next"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.2.2-next.tgz#73c1ca8f2d17b75d0776c99e12e3051179009b7d"
+  integrity sha512-kWq4Y38AnSfw5XP7kd+dpZmPp9YCggwK5BlEcwX2jE11UVhFw3O6kDuJe12wP8jeYGg/lr8uoyTBW/b7ATS6AA==
   dependencies:
-    rsasign "^1.3.0-next"
+    rsasign "^1.3.1-next"
     sodiumutil "*"
     sphincs "^2.3.0-next"
 
@@ -19139,10 +19139,10 @@ terser@4.1.4:
     source-map "~0.6.1"
     source-map-support "~0.5.12"
 
-terser@^4.1.2, terser@^4.2.1, terser@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/terser/-/terser-4.3.0.tgz#0259070576ff34d89c5cd2b8d91055cdce0212d5"
-  integrity sha512-w5CzrvQOwYAH54aG22IrUJI4yX1w62XQmMdEOM6H4w0ii6rc3HJ89fmcOGN5mRwBWfUgaqO7RJTp4aoY/uE+qQ==
+terser@^4.1.2, terser@^4.2.1, terser@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/terser/-/terser-4.3.1.tgz#09820bcb3398299c4b48d9a86aefc65127d0ed65"
+  integrity sha512-pnzH6dnFEsR2aa2SJaKb1uSCl3QmIsJ8dEkj0Fky+2AwMMcC9doMqLOQIH6wVTEKaVfKVvLSk5qxPBEZT9mywg==
   dependencies:
     commander "^2.20.0"
     source-map "~0.6.1"
