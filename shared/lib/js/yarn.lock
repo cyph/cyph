@@ -17209,10 +17209,10 @@ router@^1.3.1:
     setprototypeof "1.1.0"
     utils-merge "1.0.1"
 
-rsasign@^1.3.1-next:
-  version "1.3.1-next"
-  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.3.1-next.tgz#5b03aef61e178e3d52a75d9ca985a0b8b25e3c26"
-  integrity sha512-Tx1TXH2TYMCPv7UAGk0W5OAbUL4ddusiKcN+TqrSoFhJWC0p4PagLqyct1TCXG4yJF5jaaHLVc4cDUcwU2SUvA==
+rsasign@^1.3.2-next:
+  version "1.3.2-next"
+  resolved "https://registry.yarnpkg.com/rsasign/-/rsasign-1.3.2-next.tgz#73d0de3a2a197ca06e03ea0b437c3a68ac283b71"
+  integrity sha512-WUH/cntlMein0gK9G1d8+bOfxVnoezM845OFit31bcXc+uBS2VpbggEtEhiRbMEOKXEqpCLpnyQqJTO2gwIt3g==
   dependencies:
     generate-rsa-keypair "*"
     pem-jwk-norecompute "*"
@@ -18822,12 +18822,12 @@ superagent@^3.8.1:
     qs "^6.5.1"
     readable-stream "^2.3.5"
 
-supersphincs@^6.2.2-next:
-  version "6.2.2-next"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.2.2-next.tgz#73c1ca8f2d17b75d0776c99e12e3051179009b7d"
-  integrity sha512-kWq4Y38AnSfw5XP7kd+dpZmPp9YCggwK5BlEcwX2jE11UVhFw3O6kDuJe12wP8jeYGg/lr8uoyTBW/b7ATS6AA==
+supersphincs@^6.2.3-next:
+  version "6.2.3-next"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.2.3-next.tgz#1a4024ca5392dde9f759e8dd3d511c5de1d34504"
+  integrity sha512-tOcxNcA9M5iRAH3Wf0umOxTRCfGm1x41lgPq82juUO0FoXlownRbi+Gl0cUGMQOGsNx21N4y2f/A/kUyvjvkHg==
   dependencies:
-    rsasign "^1.3.1-next"
+    rsasign "^1.3.2-next"
     sodiumutil "*"
     sphincs "^2.3.0-next"
 

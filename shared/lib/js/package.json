@@ -340,7 +340,7 @@
 		"stacktrace-js": "^2.0.0",
 		"stylelint": "^10.1.0",
 		"stylelint-scss": "^3.10.1",
-		"supersphincs": "^6.2.2-next",
+		"supersphincs": "^6.2.3-next",
 		"tab-indent": "^1.0.2",
 		"terser": "^4.3.1",
 		"terser-webpack-plugin": "^2.0.1",
