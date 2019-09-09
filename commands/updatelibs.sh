@@ -266,7 +266,7 @@ read -r -d '' modules <<- EOM
 	markdown-it-sup
 	mat-video
 	math-expression-evaluator
-	mceliece
+	mceliece@next
 	microlight-string
 	mkdirp
 	moment
@@ -290,7 +290,7 @@ read -r -d '' modules <<- EOM
 	node-sass
 	nodemailer@4
 	notify-cli
-	ntru
+	ntru@next
 	opentok
 	opn
 	opus-recorder
@@ -315,22 +315,22 @@ read -r -d '' modules <<- EOM
 	request
 	resize-observer-polyfill
 	retire@^2
-	rlwe
+	rlwe@next
 	rsvp
 	rxjs
 	rxjs-tslint@0.1.5
 	rxjs-tslint-rules
 	sass
-	sidh
+	sidh@next
 	simple-peer
 	simplebtc
 	simplewebrtc
 	sodiumutil
-	sphincs
+	sphincs@next
 	stacktrace-js
 	stylelint
 	stylelint-scss
-	supersphincs
+	supersphincs@next
 	tab-indent
 	terser
 	terser-webpack-plugin
@@ -371,7 +371,7 @@ read -r -d '' modules <<- EOM
 	webrtcsupport
 	whatwg-fetch
 	wowjs
-	xkcd-passphrase
+	xkcd-passphrase@next
 	zone.js
 	$(cat ${dir}/native/plugins.list)
 EOM
