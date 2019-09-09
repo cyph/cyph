@@ -25,6 +25,7 @@ cd ~/easyoptions
 git pull
 chmod -R 777 .
 
+source ~/emsdk/emsdk_env.sh &> /dev/null
 emsdk update
 emsdk install latest-upstream
 emsdk activate latest-upstream
