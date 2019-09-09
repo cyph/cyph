@@ -852,7 +852,7 @@ export class AccountFilesService extends BaseProvider {
 				const filePromise = this.getFile(id);
 
 				return this.accountDatabaseService
-					.watch(
+					.watch<any>(
 						filePromise.then(
 							file => `users/${file.owner}/files/${file.id}`
 						),
