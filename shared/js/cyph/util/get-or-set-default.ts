@@ -88,7 +88,7 @@ export const getOrSetDefaultAsync = async <K, V>(
 				}
 
 				const v = await Promise.race([
-					defaultValue(),
+					Promise.resolve(defaultValue()),
 					setResolver.promise
 				]);
 
