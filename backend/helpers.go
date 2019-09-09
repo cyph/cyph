@@ -376,7 +376,7 @@ func handleFuncs(pattern string, handlers Handlers) {
 	}
 
 	if strings.HasSuffix(pattern, "/*") {
-		router.PathPrefix(pattern[0:len(pattern) - 1]).Handler(http.HandlerFunc(handlerWrapper))
+		router.PathPrefix(pattern[0 : len(pattern)-1]).Handler(http.HandlerFunc(handlerWrapper))
 	} else {
 		router.HandleFunc(pattern, handlerWrapper)
 	}
