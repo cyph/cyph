@@ -113,7 +113,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const serviceWorkerRegistration = await this.workerService
 				.serviceWorkerRegistration;
 
-			await this.workerService.serviceWorkerFunction(
+			await this.workerService.registerServiceWorkerFunction(
 				'FCM',
 				this.envService.firebaseConfig,
 				/* tslint:disable-next-line:no-shadowed-variable */

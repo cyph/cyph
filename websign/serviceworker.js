@@ -130,7 +130,19 @@ self.addEventListener('message', function (e) {
 	if (
 		!e.data ||
 		e.data.cyphFunction !== true ||
-		!e.data.name ||
+		!e.data.name
+	) {
+		return;
+	}
+
+	var storedFunctionKey = storedFunctionRoot + '/' + e.data.name;
+
+	if (e.data.unregister === true) {
+		localforage.removeItem(storedFunctionKey);
+		return;
+	}
+
+	if (
 		typeof e.data.scriptText !== 'string' ||
 		!e.data.scriptText.startsWith('importedFunction = ')
 	) {
@@ -138,7 +150,7 @@ self.addEventListener('message', function (e) {
 	}
 
 	localforage.setItem(
-		storedFunctionRoot + '/' + e.data.name,
+		storedFunctionKey,
 		e.data
 	).then(function () {
 		return localforage.getItem(storedFunctionRoot);

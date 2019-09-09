@@ -45,7 +45,7 @@ export class WorkerService extends BaseProvider {
 	}
 
 	/** Runs a function in the context of the ServiceWorker. */
-	public async serviceWorkerFunction<I, O> (
+	public async registerServiceWorkerFunction<I, O> (
 		name: string,
 		input: MaybePromise<I>,
 		f: (input: I, ...localVars: any[]) => MaybePromise<O>
@@ -66,6 +66,19 @@ export class WorkerService extends BaseProvider {
 		});
 
 		return output.promise;
+	}
+
+	/** Removes a previously set ServiceWorker function. */
+	public async unregisterServiceWorkerFunction (
+		name: string
+	) : Promise<void> {
+		const serviceWorker = await this.serviceWorker;
+
+		serviceWorker.postMessage({
+			cyphFunction: true,
+			name,
+			unregister: true
+		});
 	}
 
 	constructor (

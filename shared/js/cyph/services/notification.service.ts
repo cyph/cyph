@@ -178,7 +178,7 @@ export class NotificationService extends BaseProvider
 		catch {}
 
 		this.workerService
-			.serviceWorkerFunction(this.tag, this.tag, tag => {
+			.registerServiceWorkerFunction(this.tag, this.tag, tag => {
 				self.addEventListener('notificationclick', (e: any) => {
 					try {
 						if (e.notification.tag !== tag) {
