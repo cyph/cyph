@@ -443,6 +443,7 @@
 		"rxjs-no-explicit-generics": false,
 		"rxjs-no-exposed-subjects": false,
 		"rxjs-no-finnish": true,
+		"rxjs-no-index": true,
 		"rxjs-no-ignored-error": false,
 		"rxjs-no-ignored-notifier": true,
 		"rxjs-no-ignored-observable": true,
