@@ -1,4 +1,7 @@
-/shared/assets
+assets
+dist
+docs
+documentation
 /shared/lib/native
 /shared/js/native/js
 /websign
