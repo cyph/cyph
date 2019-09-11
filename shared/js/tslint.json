@@ -177,7 +177,7 @@
 		/* Maintainability */
 
 		"cyclomatic-complexity": true,
-		"deprecation": false /* Pending fix: true */,
+		"deprecation": true,
 		"invalid-void": true,
 		"eofline": true,
 		"indent": false,
@@ -335,7 +335,7 @@
 		"prefer-inline-decorator": false,
 		"prefer-on-push-component-change-detection": true,
 		"prefer-output-readonly": true,
-		"relative-url-prefix": false /* Pending fix: true */,
+		"relative-url-prefix": true,
 		"template-accessibility-alt-text": true,
 		"template-accessibility-elements-content": false /* TODO: true */,
 		"template-accessibility-label-for": true,
