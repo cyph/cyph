@@ -173,7 +173,7 @@ export class NotificationService extends BaseProvider
 		);
 
 		try {
-			(<any> self).Notification.requestPermission();
+			(<any> self).Notification.requestPermission().catch(() => {});
 		}
 		catch {}
 

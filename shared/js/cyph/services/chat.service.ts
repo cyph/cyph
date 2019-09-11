@@ -1201,7 +1201,7 @@ export class ChatService extends BaseProvider {
 		selfDestructChat: boolean = false,
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
-	) : Promise<string | void> {
+	) : Promise<string | undefined> {
 		debugLogTime(() => 'Chat Message Send: start');
 
 		if (keepCurrentMessage === undefined) {
@@ -1290,9 +1290,11 @@ export class ChatService extends BaseProvider {
 			this.messageChange();
 		}
 
-		const removeOldStorageItem = () =>
+		const removeOldStorageItem = async () =>
 			oldLocalStorageKey ?
-				this.localStorageService.removeItem(oldLocalStorageKey) :
+				this.localStorageService
+					.removeItem(oldLocalStorageKey)
+					.then(() => undefined) :
 				undefined;
 
 		if (emptyValue) {
@@ -1777,7 +1779,7 @@ export class ChatService extends BaseProvider {
 
 							const getNewLastConfirmedMesssage = (
 								messageIDs: string[]
-							) : IChatLastConfirmedMessage | void => {
+							) : IChatLastConfirmedMessage | undefined => {
 								for (
 									let i = messageIDs.length - 1;
 									i >= 0;
@@ -1787,6 +1789,8 @@ export class ChatService extends BaseProvider {
 										return {id, index: i};
 									}
 								}
+
+								return;
 							};
 
 							let newLastConfirmedMessage = getNewLastConfirmedMesssage(

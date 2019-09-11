@@ -95,15 +95,13 @@ export abstract class SessionService extends BaseProvider
 	public readonly appUsername: Observable<string> = of('');
 
 	/** @inheritDoc */
-	public readonly closed: Promise<void> = this.one<void>(events.closeChat);
+	public readonly closed: Promise<void> = this.one(events.closeChat);
 
 	/** @inheritDoc */
-	public readonly connected: Promise<void> = this.one<void>(events.connect);
+	public readonly connected: Promise<void> = this.one(events.connect);
 
 	/** @inheritDoc */
-	public readonly cyphNotFound: Promise<void> = this.one<void>(
-		events.cyphNotFound
-	);
+	public readonly cyphNotFound: Promise<void> = this.one(events.cyphNotFound);
 
 	/** @inheritDoc */
 	public readonly freezePong: BehaviorSubject<boolean> = new BehaviorSubject<
@@ -254,7 +252,9 @@ export abstract class SessionService extends BaseProvider
 	/* tslint:disable-next-line:no-async-without-await */
 	protected async getSessionMessageAuthor (
 		_MESSAGE: ISessionMessageDataInternal
-	) : Promise<Observable<string> | void> {}
+	) : Promise<Observable<string> | undefined> {
+		return;
+	}
 
 	/** @ignore */
 	protected async getSymmetricKey () : Promise<Uint8Array> {
@@ -567,7 +567,8 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async one<T> (event: string) : Promise<T> {
+	/* tslint:disable-next-line:invalid-void */
+	public async one<T = void> (event: string) : Promise<T> {
 		this.openEvents.add(event);
 		return this.eventManager.one<T>(event);
 	}

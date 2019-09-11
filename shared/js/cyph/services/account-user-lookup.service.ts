@@ -253,7 +253,9 @@ export class AccountUserLookupService extends BaseProvider {
 	}
 
 	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
-	public async userTypeWhitelist () : Promise<AccountUserTypes[] | void> {
+	public async userTypeWhitelist () : Promise<
+		AccountUserTypes[] | undefined
+	> {
 		if (!this.envService.isTelehealth) {
 			return [AccountUserTypes.Org, AccountUserTypes.Standard];
 		}

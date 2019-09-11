@@ -131,7 +131,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			);
 
 			messaging.useServiceWorker(serviceWorkerRegistration);
-			await messaging.requestPermission();
+			await (<any> self).Notification.requestPermission();
 			return {token: (await messaging.getToken()) || undefined};
 		})
 		.catch(() => ({}));

@@ -124,7 +124,7 @@ export class AccountChatService extends ChatService {
 		selfDestructChat?: boolean,
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
-	) : Promise<string | void> {
+	) : Promise<string | undefined> {
 		const id = await super.send(
 			messageType,
 			message,

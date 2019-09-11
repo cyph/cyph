@@ -88,7 +88,7 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	protected async getSessionMessageAuthor (
 		message: ISessionMessageData
-	) : Promise<Observable<string> | void> {
+	) : Promise<Observable<string> | undefined> {
 		if (!message.authorID) {
 			return;
 		}
@@ -101,6 +101,8 @@ export class AccountSessionService extends SessionService {
 		if (user) {
 			return user.realUsername;
 		}
+
+		return;
 	}
 
 	/** @inheritDoc */

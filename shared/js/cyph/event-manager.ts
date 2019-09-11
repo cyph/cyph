@@ -57,7 +57,8 @@ export class EventManager {
 	}
 
 	/** Resolves on first occurrence of event. */
-	public async one<T> (event: string) : Promise<T> {
+	/* tslint:disable-next-line:invalid-void */
+	public async one<T = void> (event: string) : Promise<T> {
 		return new Promise<T>(resolve => {
 			const f = (data: T) => {
 				this.off(event, f);

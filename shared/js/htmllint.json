@@ -16,6 +16,7 @@
 	"attr-no-unsafe-char": false,
 	"attr-quote-style": "double",
 	"attr-req-value": false,
+	"attr-validate": false,
 	"class-no-dup": false,
 	"class-style": false,
 	"href-style": false,

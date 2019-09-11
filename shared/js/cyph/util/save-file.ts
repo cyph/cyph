@@ -29,11 +29,9 @@ export const saveFile = async (
 			'application/octet-stream';
 
 	const save = () => {
-		fileSaver.saveAs(
-			new Blob([content], {type: fileMediaType}),
-			fileName,
-			false
-		);
+		fileSaver.saveAs(new Blob([content], {type: fileMediaType}), fileName, {
+			autoBom: false
+		});
 	};
 
 	if (env.isCordova) {

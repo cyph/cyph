@@ -19,6 +19,7 @@ export const awaitAsync = async <T>(value: Async<T>) : Promise<T> => {
 };
 
 /** Returns a promise and its resolver function. */
+/* tslint:disable-next-line:invalid-void */
 export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 	let resolve: ((t?: T | PromiseLike<T>) => void) | undefined;
 	let reject: ((err?: any) => void) | undefined;

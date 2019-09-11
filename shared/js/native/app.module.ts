@@ -7,12 +7,7 @@ import './js/standalone/test-environment-setup';
 import './js/standalone/translations';
 
 import {HttpClient} from '@angular/common/http';
-import {
-	NgModule,
-	NgModuleFactoryLoader,
-	NgZone,
-	NO_ERRORS_SCHEMA
-} from '@angular/core';
+import {NgModule, NgZone, NO_ERRORS_SCHEMA} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {NativeScriptAnimationsModule} from 'nativescript-angular/animations';
@@ -20,10 +15,7 @@ import {NativeScriptFormsModule} from 'nativescript-angular/forms';
 import {NativeScriptHttpModule} from 'nativescript-angular/http';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
-import {
-	NativeScriptRouterModule,
-	NSModuleFactoryLoader
-} from 'nativescript-angular/router';
+import {NativeScriptRouterModule} from 'nativescript-angular/router';
 import {appRoutes} from './app-routes';
 import {AppService} from './app.service';
 import {AppComponent} from './components/app';
@@ -67,10 +59,6 @@ import {NativeTitleService} from './native-title.service';
 		{
 			provide: LocalStorageService,
 			useClass: NativeLocalStorageService
-		},
-		{
-			provide: NgModuleFactoryLoader,
-			useClass: NSModuleFactoryLoader
 		},
 		{
 			provide: PotassiumService,
