@@ -118,7 +118,7 @@ if [ ! "${htmlOnly}" ] ; then
 	)"
 fi
 
-if [ "${htmlOnly}" ] || [ "${fast}" ] ; then
+if [ "${htmlOnly}" ] || [ ! "${fast}" ] ; then
 	# htmllint
 
 	output="${output}$({
