@@ -178,7 +178,7 @@
 
 		"cyclomatic-complexity": true,
 		"deprecation": false /* Pending fix: true */,
-		"invalid-void": false,
+		"invalid-void": true,
 		"eofline": true,
 		"indent": false,
 		"linebreak-style": [true, "LF"],
