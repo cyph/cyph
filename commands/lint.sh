@@ -118,39 +118,38 @@ if [ ! "${htmlOnly}" ] ; then
 	)"
 fi
 
-if [ "${htmlOnly}" ] || [ ! "${fast}" ] ; then
-	# htmllint
+# htmllint
 
-	output="${output}$({
-		find js \
-			-type f \
-			-name '*.html' \
-			-not -name '*.native.html' \
-			-not -name dynamic-form.html \
-			-exec node -e '(async () => {
-				const result = await require("htmllint")(
-					fs.readFileSync("{}").toString().
-						replace(/accept='"'"'[^'"'"']+'"'"'/g, "").
-						replace(/\[([A-Za-z0-9]+)\.([A-Za-z0-9]+)\]='"'"'[^'"'"']+'"'"'/g, "").
-						// replace(/\[([A-Za-z0-9\.]+)\]='"'"'[^'"'"']+'"'"'/g, "$1='"'"'balls'"'"'").
-						replace(/\(([A-Za-z0-9\.]+)\)/g, "$1").
-						replace(/\[([A-Za-z0-9\.]+)\]/g, "$1")
-					,
-					JSON.parse(fs.readFileSync("js/htmllint.json").toString())
-				);
+output="${output}$({
+	find js \
+		-type f \
+		-name '*.html' \
+		-not -name '*.native.html' \
+		-not -name dynamic-form.html \
+		-exec node -e '(async () => {
+			const result = await require("htmllint")(
+				fs.readFileSync("{}").toString().
+					replace(/accept='"'"'[^'"'"']+'"'"'/g, "").
+					replace(/\[([A-Za-z0-9]+)\.([A-Za-z0-9]+)\]='"'"'[^'"'"']+'"'"'/g, "").
+					// replace(/\[([A-Za-z0-9\.]+)\]='"'"'[^'"'"']+'"'"'/g, "$1='"'"'balls'"'"'").
+					replace(/\(([A-Za-z0-9\.]+)\)/g, "$1").
+					replace(/\[([A-Za-z0-9\.]+)\]/g, "$1")
+				,
+				JSON.parse(fs.readFileSync("js/htmllint.json").toString())
+			);
 
-				if (result.length === 0) {
-					return;
-				}
+			if (result.length === 0) {
+				return;
+			}
 
-				console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
-			})().catch(err => {
-				console.error({file: "{}", err});
-				process.exit(1);
-			})' \
-		\;;
-	} 2>&1)"
-fi
+			console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
+		})().catch(err => {
+			console.error({file: "{}", err});
+			process.exit(1);
+		})' \
+	\;;
+} 2>&1)"
+
 if [ ! "${htmlOnly}" ] && [ ! "${fast}" ] ; then
 	# Retire.js
 
