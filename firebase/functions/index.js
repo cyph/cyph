@@ -109,7 +109,8 @@ const getInviteTemplateData = (
 	plan,
 	fromApp
 ) => {
-	const planConfig = config.planConfig[plan];
+	const planConfig =
+		config.planConfig[plan] || config.planConfig[CyphPlans.Free];
 
 	return {
 		...planConfig,
@@ -332,8 +333,10 @@ exports.checkInviteCode = onCall(
 			`${namespace}/inviteCodes/${inviteCode}`
 		);
 
-		const {inviterUsername, plan, reservedUsername} =
-			(await inviteDataRef.once('value')).val() || {};
+		const inviteData = (await inviteDataRef.once('value')).val() || {};
+		const {inviterUsername, reservedUsername} = inviteData;
+		const plan =
+			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
 		const templateData = getInviteTemplateData(
 			inviteCode,
@@ -346,7 +349,7 @@ exports.checkInviteCode = onCall(
 		return {
 			inviterUsername,
 			isValid: typeof inviterUsername === 'string',
-			plan: plan in CyphPlans ? plan : CyphPlans.Free,
+			plan,
 			reservedUsername,
 			welcomeLetter: (await renderTemplate(
 				'new-cyph-invite',
@@ -506,9 +509,9 @@ exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
 		`${namespace}/inviteCodes/${inviteCode}`
 	);
 
+	const inviteData = (await inviteDataRef.once('value')).val() || {};
 	const plan =
-		((await inviteDataRef.once('value')).val() || {}).plan ||
-		CyphPlans.Free;
+		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
 	await Promise.all([
 		inviteCodesRef.child(inviteCode).remove(),
@@ -552,8 +555,11 @@ exports.userConsumeInvite = functions.database
 			`${params.namespace}/inviteCodes/${inviteCode}`
 		);
 
-		const {inviterUsername, plan, reservedUsername} =
-			(await inviteDataRef.once('value')).val() || {};
+		const inviteData = (await inviteDataRef.once('value')).val() || {};
+		const {inviterUsername, reservedUsername} = inviteData;
+		const plan =
+			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
+
 		if (
 			await usernameBlacklisted(
 				params.namespace,
@@ -577,7 +583,7 @@ exports.userConsumeInvite = functions.database
 				params.namespace,
 				`users/${username}/plan`,
 				CyphPlan,
-				{plan: plan in CyphPlans ? plan : CyphPlans.Free},
+				{plan},
 				true
 			),
 			!inviterUsername ?
@@ -1034,8 +1040,8 @@ exports.userRegister = functions.auth
 		const inviteDataRef = database.ref(
 			`${namespace}/inviteCodes/${inviteCode}`
 		);
-		const inviteData = (await inviteDataRef.once('value')).val() || {};
 
+		const inviteData = (await inviteDataRef.once('value')).val() || {};
 		const plan =
 			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
