@@ -5,6 +5,9 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
 parallelProcesses=4
+if [ "${CIRCLECI}" ] ; then
+	parallelProcesses=2
+fi
 
 prodTest=''
 if [ "${1}" == '--prod-test' ] ; then
