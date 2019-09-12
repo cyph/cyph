@@ -41,7 +41,9 @@
 								[ngModel]="password | async"
 								(ngModelChange)="password.next($event)"
 								name="password"
-								type="password"
+								[type]="
+									(hidePassword | async) ? 'password' : 'text'
+								"
 								placeholder="Password"
 								required
 							/>
