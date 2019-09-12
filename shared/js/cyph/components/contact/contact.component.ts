@@ -69,8 +69,12 @@ export class ContactComponent extends BaseProvider implements OnInit {
 			this.to,
 			this.subject,
 			this.message,
-			this.responseRequested.value ? this.fromEmail : '',
-			this.responseRequested.value ? this.fromName : ''
+			this.responseRequested.value || this.responseRequired.value ?
+				this.fromEmail :
+				'',
+			this.responseRequested.value || this.responseRequired.value ?
+				this.fromName :
+				''
 		);
 
 		this.sent.next(true);
