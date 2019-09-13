@@ -162,6 +162,17 @@
 
 
 <script src='cordova.js'></script>
+
+<script>
+	try {
+		self.ElectronCustomTitlebar = require('custom-electron-titlebar');
+
+		self.electronTitlebar = new ElectronCustomTitlebar.Titlebar({
+			backgroundColor: ElectronCustomTitlebar.Color.fromHex('#673ab7')
+		});
+	}
+	catch (_) {}
+</script>
 		
 					<script>try {
 	if (!self.crypto && self.msCrypto) {

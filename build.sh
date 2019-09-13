@@ -40,7 +40,7 @@ cd ../cyph-phonegap-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
 
-npm install cordova
+npm install
 
 
 if [ "${android}" ] ; then
@@ -95,6 +95,10 @@ fi
 
 if [ "${electron}" ] ; then
 	npx cordova build electron --release
+
+	cp platforms/electron/build/*.dmg build/cyph.dmg || exit 1
+	cp platforms/electron/build/*.exe build/cyph.exe || exit 1
+	cp platforms/electron/build/*.tar.gz build/cyph.tar.gz || exit 1
 fi
 
 if [ "${iOS}" ] ; then

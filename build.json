@@ -1,0 +1,11 @@
+{
+	"electron": {
+		"linux": {},
+		"mac": {
+			"package": ["dmg", "mas"]
+		},
+		"windows": {
+			"package": ["appx", "nsis"]
+		}
+	}
+}

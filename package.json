@@ -1,5 +1,8 @@
 {
 	"name": "cyph-phonegap-app",
-	"version": "1.0.0",
-	"author": "Cyph, Inc. <phonegap-app@cyph.com> (https://github.com/cyph)"
+	"author": "Cyph, Inc. <phonegap-app@cyph.com> (https://github.com/cyph)",
+	"dependencies": {
+		"cordova": "*",
+		"custom-electron-titlebar": "*"
+	}
 }
