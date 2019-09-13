@@ -116,7 +116,7 @@ if [ "${iOS}" ] ; then
 		--codeSignIdentity='iPhone Distribution' \
 		--developmentTeam='SXZZ8WLPV2' \
 		--packageType='app-store' \
-		--provisioningProfile='5ed3df4c-a57b-4108-9abf-a8930e12a4f9'
+		--provisioningProfile='a973b22b-73bc-4dfa-b6ec-f60a493dc37f'
 
 	if [ ! -f platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
 
