@@ -42,10 +42,6 @@ echo -e '\n\nADD PLATFORMS\n\n'
 
 npm -g install cordova
 
-# Temporary workaround for Cordova bugs
-npm -g install cordova-common
-rm -rf ~/node_modules/*/node_modules/cordova-common
-
 
 if [ "${android}" ] ; then
 	sed -i 's|<plugin name="cordova-plugin-ionic-keyboard" spec="\*" />|<plugin name="cordova-plugin-ionic-keyboard" spec="^1" />|' config.xml
