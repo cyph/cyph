@@ -40,18 +40,18 @@ cd ../cyph-phonegap-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
 
-npm -g install cordova
+npm install cordova
 
 
 if [ "${android}" ] ; then
 	sed -i 's|<plugin name="cordova-plugin-ionic-keyboard" spec="\*" />|<plugin name="cordova-plugin-ionic-keyboard" spec="^1" />|' config.xml
 	sed -i 's|<plugin name="cordova-plugin-ionic-webview" spec="\*" />|<plugin name="cordova-plugin-ionic-webview" spec="^1" />|' config.xml
 
-	cordova platform add android
+	npx cordova platform add android
 fi
 
 if [ "${electron}" ] ; then
-	cordova platform add electron
+	npx cordova platform add electron
 fi
 
 if [ "${iOS}" ] ; then
@@ -63,8 +63,8 @@ if [ "${iOS}" ] ; then
 		gem install cocoapods
 	fi
 
-	npm -g install xcode
-	cordova platform add ios
+	npm install xcode
+	npx cordova platform add ios
 	pod install --project-directory=platforms/ios
 fi
 
@@ -72,19 +72,19 @@ fi
 echo -e '\n\nBUILD\n\n'
 
 if [ "${iOSEmulator}" ] ; then
-	cordova build --debug --emulator || exit 1
+	npx cordova build --debug --emulator || exit 1
 	exit
 fi
 
 if [ "${password}" == "" ] ; then
-	cordova build --debug --device || exit 1
+	npx cordova build --debug --device || exit 1
 	cp platforms/android/app/build/outputs/apk/debug/app-debug.apk build/cyph.debug.apk
 	exit
 fi
 
 
 if [ "${android}" ] ; then
-	cordova build android --release --device -- \
+	npx cordova build android --release --device -- \
 		--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
 		--alias=cyph \
 		--storePassword="${password}" \
@@ -94,11 +94,11 @@ if [ "${android}" ] ; then
 fi
 
 if [ "${electron}" ] ; then
-	cordova build electron --release
+	npx cordova build electron --release
 fi
 
 if [ "${iOS}" ] ; then
-	cordova build ios --buildFlag='-UseModernBuildSystem=0' --debug --device \
+	npx cordova build ios --buildFlag='-UseModernBuildSystem=0' --debug --device \
 		--codeSignIdentity='iPhone Developer' \
 		--developmentTeam='SXZZ8WLPV2' \
 		--packageType='development' \
@@ -108,7 +108,7 @@ if [ "${iOS}" ] ; then
 
 	mv platforms/ios/build/device ios-debug
 
-	cordova build ios --buildFlag='-UseModernBuildSystem=0' --release --device \
+	npx cordova build ios --buildFlag='-UseModernBuildSystem=0' --release --device \
 		--codeSignIdentity='iPhone Distribution' \
 		--developmentTeam='SXZZ8WLPV2' \
 		--packageType='app-store' \
