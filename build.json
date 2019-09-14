@@ -2,7 +2,7 @@
 	"electron": {
 		"linux": {},
 		"mac": {
-			"package": ["dmg", "mas"],
+			"package": ["mas"],
 			"signing": {
 				"store": {
 					"provisioningProfile": "~/.cyph/nativereleasesigning/apple/macOS_Distribution.provisionprofile"
@@ -10,7 +10,7 @@
 			}
 		},
 		"windows": {
-			"package": ["appx", "nsis"]
+			"package": ["appx"]
 		}
 	}
 }

@@ -102,9 +102,7 @@ if [ "${electron}" ] ; then
 	npx cordova build electron --release
 
 	cp -a platforms/electron/build/mas/*.pkg build/cyph.pkg || exit 1
-	cp platforms/electron/build/*.dmg build/cyph.dmg || exit 1
 	cp platforms/electron/build/*.appx build/cyph.appx || exit 1
-	cp platforms/electron/build/*.exe build/cyph.exe || exit 1
 	cp platforms/electron/build/*.tar.gz build/cyph.tar.gz || exit 1
 fi
 
