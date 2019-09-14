@@ -82,7 +82,7 @@ as you'd like
 Twitter's
 
 * **Lifetime priority support:** Email us any time at founders@cyph.com — or just add
-[@ryan](https://cyph.me/ryan) and [@josh](https://cyph.me/josh) on Cyph :)
+@ryan and @josh on Cyph :)
 {{/platinumFeatures}}
 
 ---
