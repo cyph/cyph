@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget
-	id="com.cyph.app"
+	id="com.cyph.desktop"
+	android-packageName="com.cyph.app"
+	ios-CFBundleIdentifier="com.cyph.app"
 	xmlns="http://www.w3.org/ns/widgets"
 	xmlns:cdv="http://cordova.apache.org/ns/1.0"
 	xmlns:android="http://schemas.android.com/apk/res/android"
@@ -205,6 +207,9 @@
 
 	<platform name="electron">
 		<preference name="ElectronSettingsFilePath" value="electron.json" />
+		<preference name="WindowsStoreIdentityName" value="Cyph.Cyph" />
+		<preference name="WindowsStorePublisherName" value="CN=D116D532-5873-4FAE-9CA2-6E026A5288B7" />
+
 		<icon src="res/icon/ios/icon-1024.png" />
 	</platform>
 
