@@ -1,6 +1,9 @@
 {
 	"electron": {
-		"linux": {},
+		"linux": {
+			"category": "Network",
+			"package": ["AppImage", "snap"]
+		},
 		"mac": {
 			"package": ["mas"],
 			"signing": {

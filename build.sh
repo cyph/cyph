@@ -103,7 +103,8 @@ if [ "${electron}" ] ; then
 
 	cp -a platforms/electron/build/mas/*.pkg build/cyph.pkg || exit 1
 	cp platforms/electron/build/*.appx build/cyph.appx || exit 1
-	cp platforms/electron/build/*.tar.gz build/cyph.tar.gz || exit 1
+	cp platforms/electron/build/*.AppImage build/cyph.AppImage || exit 1
+	cp platforms/electron/build/*.snap build/cyph.snap || exit 1
 fi
 
 if [ "${iOS}" ] ; then
