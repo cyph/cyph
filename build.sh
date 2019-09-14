@@ -23,11 +23,14 @@ if [ "${1}" == 'emulator' ] ; then
 fi
 
 password='balls'
-if [ "${android}" ] ; then
+if [ "${android}" ] || [ "${electron}" ] ; then
 	echo -n 'Password (leave blank for Android-only debug mode): '
 	read -s password
+	export CSC_KEY_PASSWORD="${password}"
 	echo
 fi
+
+export CSC_KEYCHAIN="${HOME}/.cyph/nativereleasesigning/apple/cyph.keychain"
 
 rm -rf ../cyph-phonegap-build 2> /dev/null || true
 mkdir -p ../cyph-phonegap-build/build
@@ -39,6 +42,8 @@ done
 cd ../cyph-phonegap-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
+
+sed -i "s|~|${HOME}|g" build.json
 
 npm install
 
@@ -96,6 +101,7 @@ fi
 if [ "${electron}" ] ; then
 	npx cordova build electron --release
 
+	cp -a platforms/electron/build/mas/*.pkg build/cyph.pkg || exit 1
 	cp platforms/electron/build/*.dmg build/cyph.dmg || exit 1
 	cp platforms/electron/build/*.exe build/cyph.exe || exit 1
 	cp platforms/electron/build/*.tar.gz build/cyph.tar.gz || exit 1
