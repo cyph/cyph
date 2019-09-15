@@ -203,6 +203,12 @@
 		<splash density="port-xhdpi" src="res/screen/android/drawable-port-xhdpi-screen.png" />
 		<splash density="port-xxhdpi" src="res/screen/android/drawable-port-xxhdpi-screen.png" />
 		<splash density="port-xxxhdpi" src="res/screen/android/drawable-port-xxxhdpi-screen.png" />
+		<splash density="ldpi" src="res/screen/android/drawable-port-ldpi-screen.png" />
+		<splash density="mdpi" src="res/screen/android/drawable-port-mdpi-screen.png" />
+		<splash density="hdpi" src="res/screen/android/drawable-port-hdpi-screen.png" />
+		<splash density="xhdpi" src="res/screen/android/drawable-port-xhdpi-screen.png" />
+		<splash density="xxhdpi" src="res/screen/android/drawable-port-xxhdpi-screen.png" />
+		<splash density="xxxhdpi" src="res/screen/android/drawable-port-xxxhdpi-screen.png" />
 	</platform>
 
 	<platform name="electron">
