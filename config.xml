@@ -254,4 +254,7 @@
 		<splash height="960" platform="ios" src="res/screen/ios/Default@2x~iphone.png" width="640" />
 		<splash height="480" platform="ios" src="res/screen/ios/Default~iphone.png" width="320" />
 	</platform>
+
+	<engine name="android" spec="^8" />
+	<engine name="ios" spec="^4" />
 </widget>
