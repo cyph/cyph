@@ -2,6 +2,7 @@
 	"electron": {
 		"linux": {
 			"category": "Network",
+			"executableName": "cyph",
 			"package": ["AppImage", "snap"]
 		},
 		"mac": {
