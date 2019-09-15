@@ -99,7 +99,28 @@ if [ "${android}" ] ; then
 fi
 
 if [ "${electron}" ] ; then
-	npx cordova build electron --release
+	# npx cordova build electron --release
+
+	# Workaround for Cordova and/or Electron and/or Parallels bug
+	node -e "
+		const buildConfig = JSON.parse(fs.readFileSync('build.json').toString());
+		const {windows} = buildConfig.electron;
+
+		const build = () => {
+			fs.writeFileSync('build.json', JSON.stringify(buildConfig));
+
+			child_process.spawnSync(
+				'npx',
+				['cordova', 'build', 'electron', '--release'],
+				{stdio: 'inherit'}
+			);
+		};
+
+		delete buildConfig.electron.windows;
+		build();
+		buildConfig.electron = {windows};
+		build();
+	"
 
 	cp -a platforms/electron/build/mas/*.pkg build/cyph.pkg || exit 1
 	cp platforms/electron/build/*.appx build/cyph.appx || exit 1
