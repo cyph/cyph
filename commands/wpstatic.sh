@@ -124,7 +124,11 @@ while [ ! -f index.html ] ; do
 			await browser.close();
 			process.exit();
 		}
-	})().catch(() => process.exit(1))" 2> /dev/null | tail -n1)"
+	})().catch(err => {
+		console.error(err);
+		console.error('\n\nRetrying.\n');
+		process.exit(1);
+	})" | tail -n1)"
 
 	if [ "$(echo "${command}" | grep "${commandComment}")" ] ; then
 		log "${command}"
