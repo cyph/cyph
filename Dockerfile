@@ -42,6 +42,7 @@ RUN apt-get -y --allow-downgrades install \
 	libsodium-dev \
 	libstdc++6:i386 \
 	libtool \
+	libxss1 \
 	mono-complete \
 	nano \
 	nodejs \
