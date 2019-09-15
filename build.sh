@@ -116,6 +116,21 @@ if [ "${electron}" ] ; then
 			);
 		};
 
+		// Workraound for Cordova oversight
+		const originalOptionsSet = 'this.options = (0, _builderUtil().deepAssign)({}, this.packager.platformSpecificBuildOptions, this.packager.config.appx);';
+		fs.writeFileSync(
+			'node_modules/app-builder-lib/out/targets/AppxTarget.js',
+			fs.readFileSync(
+				'node_modules/app-builder-lib/out/targets/AppxTarget.js'
+			).toString().replace(
+				originalOptionsSet,
+				originalOptionsSet + '\n' +
+					'this.options.applicationId = \'' + windows.applicationId + '\';\n' +
+					'this.options.identityName = this.options.applicationId;\n' +
+					'this.options.publisher = \'' + windows.publisher + '\';\n'
+			)
+		);
+
 		delete buildConfig.electron.windows;
 		build();
 		buildConfig.electron = {windows};
