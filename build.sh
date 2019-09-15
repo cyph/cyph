@@ -49,9 +49,6 @@ npm install
 
 
 if [ "${android}" ] ; then
-	sed -i 's|<plugin name="cordova-plugin-ionic-keyboard" spec="\*" />|<plugin name="cordova-plugin-ionic-keyboard" spec="^1" />|' config.xml
-	sed -i 's|<plugin name="cordova-plugin-ionic-webview" spec="\*" />|<plugin name="cordova-plugin-ionic-webview" spec="^1" />|' config.xml
-
 	npx cordova platform add android
 fi
 
