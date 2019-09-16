@@ -2,4 +2,5 @@ object-src 'none';
 referrer no-referrer;
 script-src 'self' 'unsafe-inline' blob:;
 style-src 'self' 'unsafe-inline';
-upgrade-insecure-requests
+upgrade-insecure-requests;
+worker-src 'self' 'unsafe-eval' blob:

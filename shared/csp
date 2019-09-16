@@ -11,4 +11,4 @@ referrer no-referrer;
 script-src 'self' blob:;
 style-src 'self' 'unsafe-inline';
 upgrade-insecure-requests;
-worker-src 'self' blob:
+worker-src 'self' 'unsafe-eval' blob:
