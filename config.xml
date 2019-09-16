@@ -16,6 +16,8 @@
 		Cyph, Inc.
 	</author>
 
+	<icon src="res/icon/ios/icon-1024.png" />
+
 	<!-- <plugin name="cordova-call" spec="*" /> -->
 	<plugin name="cordova-plugin-add-swift-support" spec="*" />
 	<plugin name="cordova-plugin-appminimize" spec="*" />
@@ -213,8 +215,6 @@
 
 	<platform name="electron">
 		<preference name="ElectronSettingsFilePath" value="electron.json" />
-
-		<icon src="res/icon/ios/icon-1024.png" />
 	</platform>
 
 	<platform name="ios">
