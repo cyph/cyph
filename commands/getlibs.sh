@@ -388,5 +388,5 @@ rm -rf lib
 if [ ! -d oldsupersphincs ] ; then
 	mkdir oldsupersphincs
 	cd oldsupersphincs
-	yarn add supersphincs@^5
+	yarn add supersphincs@old
 fi
