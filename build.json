@@ -6,7 +6,7 @@
 			"package": ["AppImage", "snap"]
 		},
 		"mac": {
-			"package": ["mas"],
+			"package": ["dmg", "mas"],
 			"signing": {
 				"store": {
 					"provisioningProfile": "~/.cyph/nativereleasesigning/apple/macOS_Distribution.provisionprofile"
