@@ -91,9 +91,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			if (this.envService.isCordova) {
 				const cordova = (<any> self).PushNotification.init({
 					android: {
-						color: '#8b62d9',
+						color: 'white',
 						icon: 'notification_icon',
-						iconColor: 'white'
+						iconColor: '#8b62d9'
 					},
 					ios: {
 						alert: true,
