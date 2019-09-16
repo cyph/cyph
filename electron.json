@@ -1,11 +1,11 @@
 {
 	"browserWindow": {
 		"backgroundColor": "#8b62d9",
-		"height": 768,
+		"height": 800,
 		"title": "Cyph – Encrypted Messenger",
 		"webPreferences": {
 			"nodeIntegration": false
 		},
-		"width": 1024
+		"width": 1280
 	}
 }
