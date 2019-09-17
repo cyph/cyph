@@ -17770,10 +17770,10 @@ showdown@^1.9.0:
   dependencies:
     yargs "^10.0.3"
 
-sidh@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/sidh/-/sidh-5.1.0.tgz#b6a927e6d0dbfce0f9afb04c84a191d04515f3c9"
-  integrity sha512-sS4uUhX1qsEA2ON98mFxI4rgB5CTIj/xXa2Xi0sIRxUQ1up4NeTUBdg3RTKvZUnJG0GJ06RXBiIgVkFkN+ReHQ==
+sidh@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/sidh/-/sidh-5.1.1.tgz#9e642ef0e491aaaa62a4a45c38abdef717293a49"
+  integrity sha512-oa0zwJjDi0mp6j/zlQcknQv0knLPLJCJ2DUzY9L9/yr1PzY06DbiOVNVLd1PnYRVbYuaA3gMJ8zFCwAuKBAYQQ==
 
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
@@ -21276,10 +21276,10 @@ xhr@^2.0.1:
     parse-headers "^2.0.0"
     xtend "^4.0.0"
 
-xkcd-passphrase@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-3.3.0.tgz#acc0a4c49ab0eac1e4d6f1ff242af1a01149064e"
-  integrity sha512-lb8glkJ6qOgV0Z7szZA/Ys4u4cP1CFodtN07hC6UBvGtULer44iXxXpKo9YC5sbZtQ6jYlJ7w1oPgWKj40LgPA==
+xkcd-passphrase@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/xkcd-passphrase/-/xkcd-passphrase-3.3.1.tgz#b6e157a400044b7438d147730e96d3323efe6f70"
+  integrity sha512-BBIREbdV83KD6HopFUZNFLhJ/LwghTUsmo/oZfrTCkYC6n+o3f2BMLXCP7h1hRM0WB2jXH0DwvR8U4xfsS9UXg==
 
 "xml-name-validator@>= 2.0.1 < 3.0.0", xml-name-validator@^2.0.1:
   version "2.0.1"
