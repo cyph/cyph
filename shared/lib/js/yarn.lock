@@ -17770,10 +17770,10 @@ showdown@^1.9.0:
   dependencies:
     yargs "^10.0.3"
 
-sidh@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/sidh/-/sidh-5.1.1.tgz#9e642ef0e491aaaa62a4a45c38abdef717293a49"
-  integrity sha512-oa0zwJjDi0mp6j/zlQcknQv0knLPLJCJ2DUzY9L9/yr1PzY06DbiOVNVLd1PnYRVbYuaA3gMJ8zFCwAuKBAYQQ==
+sidh@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/sidh/-/sidh-5.1.2.tgz#e6e2e3987168ce7b35f62c6b134e0124536fc2dd"
+  integrity sha512-rdD7srAQnnMI7KVIo6kT4YcfE0B4HZgqdGhu5IZxxpdXPSUHBP7+ArTnVtlUs8VpZj6DKLftzYINjcdEg1WYBw==
 
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.2"
