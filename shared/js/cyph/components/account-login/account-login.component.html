@@ -185,7 +185,12 @@
 									'register' +
 									((username | async) ?
 										'?username=' +
-										((username | async) || '') :
+										((username | async) || '') +
+										(envService.isCordova ?
+											'&hideHeaderAndFooter=true' :
+											'') :
+									envService.isCordova ?
+										'?hideHeaderAndFooter=true' :
 										'')
 								"
 								target="_self"
