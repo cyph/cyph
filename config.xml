@@ -16,7 +16,7 @@
 		Cyph, Inc.
 	</author>
 
-	<icon src="res/icon/ios/icon-1024.png" />
+	<icon src="res/icon/default.png" />
 
 	<!-- <plugin name="cordova-call" spec="*" /> -->
 	<plugin name="cordova-plugin-add-swift-support" spec="*" />
@@ -215,6 +215,15 @@
 
 	<platform name="electron">
 		<preference name="ElectronSettingsFilePath" value="electron.json" />
+
+		<icon src="res/icon/windows/storelogo.png" target="StoreLogo" />
+		<icon src="res/icon/windows/smalllogo.png" target="Square30x30Logo" />
+		<icon src="res/icon/windows/Square44x44Logo.png" target="Square44x44Logo" />
+		<icon src="res/icon/windows/Square70x70Logo.png" target="Square70x70Logo" />
+		<icon src="res/icon/windows/Square71x71Logo.png" target="Square71x71Logo" />
+		<icon src="res/icon/windows/Square150x150Logo.png" target="Square150x150Logo" />
+		<icon src="res/icon/windows/Square310x310Logo.png" target="Square310x310Logo" />
+		<icon src="res/icon/windows/Wide310x150Logo.png" target="Wide310x150Logo" />
 	</platform>
 
 	<platform name="ios">
@@ -247,7 +256,7 @@
 		<icon height="29" platform="ios" src="res/icon/ios/icon-small.png" width="29" />
 		<icon height="58" platform="ios" src="res/icon/ios/icon-small@2x.png" width="58" />
 		<icon height="87" platform="ios" src="res/icon/ios/icon-small@3x.png" width="87" />
-		<icon height="1024" platform="ios" src="res/icon/ios/icon-1024.png" width="1024" />
+		<icon height="1024" platform="ios" src="res/icon/default.png" width="1024" />
 
 		<splash height="1136" platform="ios" src="res/screen/ios/Default-568h@2x~iphone.png" width="640" />
 		<splash height="1334" platform="ios" src="res/screen/ios/Default-667h.png" width="750" />
