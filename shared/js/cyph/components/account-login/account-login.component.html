@@ -272,7 +272,6 @@
 						</ng-container>
 
 						<div
-							fxFlex
 							fxLayout="column"
 							fxLayoutGap="16px"
 							fxLayoutAlign="center center"
@@ -312,7 +311,6 @@
 										((username | async) || '') :
 										'')
 								"
-								fxFlex
 								target="_self"
 								*ngIf="(loggingIn | async) === false"
 							>
@@ -321,7 +319,6 @@
 
 							<a
 								mat-stroked-button
-								fxFlex
 								routerLink="/burner"
 								*ngIf="(loggingIn | async) === false"
 							>
