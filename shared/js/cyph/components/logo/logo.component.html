@@ -4,7 +4,10 @@
 	[class.white]="white"
 	[style.background-image]="logo | async"
 	[title]="stringsService.logo"
-	*ngIf="homeLink && !envService.coBranded; else noLink"
+	*ngIf="
+		homeLink && !envService.coBranded && !envService.isCordova;
+		else noLink
+	"
 ></a>
 
 <ng-template #noLink>

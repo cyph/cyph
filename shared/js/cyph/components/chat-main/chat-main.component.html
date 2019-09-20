@@ -126,9 +126,7 @@
 		[class.sidebar-open]="p2pService.isSidebarOpen | async"
 		*ngIf="chat.state === states.chat"
 	>
-		<a class="logo" [href]="envService.homeUrl">
-			<cyph-logo alignment="left" video></cyph-logo>
-		</a>
+		<cyph-logo alignment="left" homeLink video></cyph-logo>
 		<div
 			class="friend stream"
 			[fxHide]="

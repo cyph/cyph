@@ -120,6 +120,7 @@
 								fxLayoutGap="16px"
 								[fxHide]="
 									!sessionInitService.ephemeral ||
+									envService.isCordova ||
 									envService.isTelehealth ||
 									(envService.pro | async)
 								"

@@ -75,6 +75,7 @@
 				<ng-container
 					*ngIf="
 						false &&
+						!envService.isCordova &&
 						(accountSettingsService.plan | async) === cyphPlans.Free
 					"
 				>

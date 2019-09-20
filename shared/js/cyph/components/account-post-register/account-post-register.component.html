@@ -7,7 +7,13 @@
 				founders using their personal
 			</span>
 			&ngsp;
-			<a [href]="envService.homeUrl + 'agse'" cyphTranslate
+			<a
+				[href]="
+					envService.homeUrl +
+					'agse' +
+					(envService.isCordova ? '?hideHeaderAndFooter=true' : '')
+				"
+				cyphTranslate
 				>Air Gapped Signing Environment</a
 			>
 			&ngsp;
