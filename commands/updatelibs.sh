@@ -298,6 +298,7 @@ read -r -d '' modules <<- EOM
 	parchment
 	pdfjs-dist
 	pdfkit
+	pinch-zoom-js
 	prettier
 	primeng
 	promise-semaphore
