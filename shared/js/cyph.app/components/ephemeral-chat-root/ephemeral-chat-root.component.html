@@ -112,7 +112,9 @@
 					</a>
 				</ng-container>
 			</ng-container>
-			<ng-container *ngIf="!envService.isMobileOS">
+			<ng-container
+				*ngIf="!envService.isMobileOS && !envService.isCordova"
+			>
 				<a
 					class="affiliate"
 					[href]="affiliateService.bannerAd.href"
@@ -136,7 +138,7 @@
 			"
 			[@fadeIn]="'in'"
 		>
-			<ng-container *ngIf="envService.showAds; else ad"></ng-container>
+			<ng-container *ngIf="!envService.showAds; else ad"></ng-container>
 		</cyph-link-connection>
 
 		<cyph-not-found

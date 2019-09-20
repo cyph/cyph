@@ -4,6 +4,11 @@ a.affiliate {
 	font-family: Roboto;
 	font-weight: 200;
 	font-size: 0.9em;
+	margin-bottom: 16px;
+
+	img {
+		max-width: 500px;
+	}
 }
 
 :host > span.initiating > cyph-chat-cyphertext {
