@@ -823,6 +823,9 @@ export class StringsService extends BaseProvider {
 	public readonly suregoahead = `sure, go ahead`;
 
 	/** @see StringsService */
+	public readonly takeScreenshot = `Take Screenshot`;
+
+	/** @see StringsService */
 	public readonly teamToContact = `${this.internalCompany} Team to Contact`;
 
 	/** @see StringsService */

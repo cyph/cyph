@@ -50,29 +50,7 @@ export class FileService extends BaseProvider {
 				Math.min(960 / Math.max(canvas.width, canvas.height), 1) :
 				undefined;
 
-			/* tslint:disable-next-line:no-unbound-method */
-			if (
-				canvas.toBlob &&
-				!(this.envService.isCordova && this.envService.isAndroid)
-			) {
-				return await new Promise<Uint8Array>(resolve => {
-					canvas.toBlob(
-						blob => {
-							resolve(
-								!blob ?
-									new Uint8Array(0) :
-									potassiumUtil.fromBlob(blob)
-							);
-						},
-						outputType,
-						outputQuality
-					);
-				});
-			}
-
-			return potassiumUtil.fromBase64(
-				canvas.toDataURL(outputType, outputQuality).split(',')[1]
-			);
+			return this.canvasToBytes(canvas, outputType, outputQuality);
 		}
 		catch {}
 
@@ -86,6 +64,37 @@ export class FileService extends BaseProvider {
 		file instanceof Blob ?
 			file.type :
 			file.mediaType;
+	}
+
+	/** Extracts data from a canvas. */
+	public async canvasToBytes (
+		canvas: HTMLCanvasElement,
+		outputType: string = 'image/png',
+		outputQuality?: number
+	) : Promise<Uint8Array> {
+		/* tslint:disable-next-line:no-unbound-method */
+		if (
+			canvas.toBlob &&
+			!(this.envService.isCordova && this.envService.isAndroid)
+		) {
+			return await new Promise<Uint8Array>(resolve => {
+				canvas.toBlob(
+					blob => {
+						resolve(
+							!blob ?
+								new Uint8Array(0) :
+								potassiumUtil.fromBlob(blob)
+						);
+					},
+					outputType,
+					outputQuality
+				);
+			});
+		}
+
+		return potassiumUtil.fromBase64(
+			canvas.toDataURL(outputType, outputQuality).split(',')[1]
+		);
 	}
 
 	/** Converts data URI to blob. */

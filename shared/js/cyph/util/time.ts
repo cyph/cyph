@@ -191,13 +191,14 @@ export const timestampToDate = (
 /** @ignore */
 const getTimeStringInternal = (
 	timestamp: number | Date,
-	includeDate: boolean
+	includeDate: boolean,
+	includeSecond: boolean
 ) : string =>
 	timestampToDate(timestamp)
-		.toLocaleString(
-			undefined,
-			includeDate ? stringFormats.date : stringFormats.time
-		)
+		.toLocaleString(undefined, {
+			...(includeDate ? stringFormats.date : stringFormats.time),
+			...(includeSecond ? {second: 'numeric'} : {})
+		})
 		.replace(' AM', 'am')
 		.replace(' PM', 'pm');
 
@@ -273,7 +274,7 @@ export const getStartPadding = (
 
 /** Returns a human-readable representation of the date and time (e.g. "Jan 1, 2018, 3:37pm"). */
 export const getDateTimeString = memoize((timestamp: number) : string =>
-	getTimeStringInternal(timestamp, true)
+	getTimeStringInternal(timestamp, true, false)
 );
 
 /**
@@ -288,6 +289,14 @@ export const getDurationString = memoize((time: number) : string => {
 
 	return `${n} ${translate(`${unit}${n === '1' ? '' : 's'}`)}`;
 });
+
+/** Returns an ISO 8601 representation of the date (e.g. "2018-01-01"). */
+export const geISODateString = memoize(
+	(timestamp?: number) : string =>
+		timestampToDate(timestamp)
+			.toISOString()
+			.split('T')[0]
+);
 
 /**
  * Converts a time range into a list of times.
@@ -329,12 +338,15 @@ export const getTimestamp = async () =>
 	});
 
 /** Returns a human-readable representation of the time (e.g. "3:37pm"). */
-export const getTimeString = memoize((timestamp?: number) : string =>
+export const getTimeString = (
+	timestamp?: number,
+	includeSecond: boolean = false
+) : string =>
 	getTimeStringInternal(
 		timestamp === undefined ? new Date() : timestamp,
-		false
-	)
-);
+		false,
+		includeSecond
+	);
 
 /** Converts a timestamp into a 24-hour time. */
 export const timestampTo24HourTimeString = memoize(
@@ -501,7 +513,7 @@ export const timeToString = memoize((time: Time) => {
 	date.setHours(hour);
 	date.setMinutes(minute);
 
-	return getTimeStringInternal(date, false);
+	return getTimeStringInternal(date, false, false);
 });
 
 /** Watches timestamp with the specified interval. */

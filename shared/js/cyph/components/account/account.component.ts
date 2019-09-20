@@ -15,6 +15,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {ScreenshotService} from '../../services/screenshot.service';
 import {StringsService} from '../../services/strings.service';
 import {resolvable} from '../../util/wait';
 
@@ -273,6 +274,9 @@ export class AccountComponent extends BaseProvider
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see ScreenshotService */
+		public readonly screenshotService: ScreenshotService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

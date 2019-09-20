@@ -240,4 +240,8 @@
 		<mat-icon>feedback</mat-icon>
 		<span>{{ stringsService.feedback }}</span>
 	</button>
+	<button mat-menu-item (click)="screenshotService.saveScreenshot()">
+		<mat-icon>fullscreen</mat-icon>
+		<span>{{ stringsService.takeScreenshot }}</span>
+	</button>
 </mat-menu>
