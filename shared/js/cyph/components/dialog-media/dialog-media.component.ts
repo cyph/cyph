@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	OnInit
+} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
@@ -17,7 +22,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./dialog-media.component.scss'],
 	templateUrl: './dialog-media.component.html'
 })
-export class DialogMediaComponent extends BaseProvider {
+export class DialogMediaComponent extends BaseProvider implements OnInit {
 	/** Aspect ratio for cropping. */
 	public cropAspectRatio?: number;
 
@@ -72,9 +77,50 @@ export class DialogMediaComponent extends BaseProvider {
 		this.matDialogRef.close();
 	}
 
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		await this.matDialogRef.afterOpened().toPromise();
+
+		if (!(this.elementRef.nativeElement instanceof HTMLElement)) {
+			return;
+		}
+
+		const parent = this.elementRef.nativeElement.parentElement;
+		if (!parent) {
+			return;
+		}
+
+		const grandparent = parent.parentElement;
+		if (!grandparent) {
+			return;
+		}
+
+		const ancestorStyles = `
+			border-radius: 0 !important;
+			width: 100vw !important;
+			max-width: 100vw !important;
+			height: 100vh !important;
+			max-height: 100vh !important;
+			pointer-events: all !important;
+			visibility: visible !important;
+		`;
+
+		grandparent.classList.add('cyph-light-theme');
+
+		parent.style.cssText = `
+			${ancestorStyles}
+			padding: 8px !important;
+		`;
+
+		grandparent.style.cssText = ancestorStyles;
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly domSanitizer: DomSanitizer,
+
+		/** @ignore */
+		private readonly elementRef: ElementRef,
 
 		/** @ignore */
 		private readonly matDialogRef: MatDialogRef<DialogMediaComponent>,

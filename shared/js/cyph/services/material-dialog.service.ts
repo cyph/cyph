@@ -242,7 +242,10 @@ export class MaterialDialogService extends BaseProvider
 		title?: string;
 	}) : Promise<SafeUrl | undefined> {
 		return this.lock(async () => {
-			const matDialogRef = this.matDialog.open(DialogMediaComponent);
+			const matDialogRef = this.matDialog.open(DialogMediaComponent, {
+				hasBackdrop: false,
+				panelClass: 'visibility-hidden'
+			});
 			const cropResult = resolvable<SafeUrl | undefined>();
 
 			matDialogRef.componentInstance.cropAspectRatio = o.aspectRatio;
@@ -269,7 +272,10 @@ export class MaterialDialogService extends BaseProvider
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
-			const matDialogRef = this.matDialog.open(DialogMediaComponent);
+			const matDialogRef = this.matDialog.open(DialogMediaComponent, {
+				hasBackdrop: false,
+				panelClass: 'visibility-hidden'
+			});
 
 			matDialogRef.componentInstance.src = o.src;
 			matDialogRef.componentInstance.title = o.title;
