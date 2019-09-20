@@ -182,9 +182,9 @@
 								color="accent"
 								[href]="
 									envService.homeUrl +
-									'register' +
+									'register?hideHeaderAndFooter=true' +
 									((username | async) ?
-										'?username=' +
+										'&username=' +
 										((username | async) || '') :
 										'')
 								"
