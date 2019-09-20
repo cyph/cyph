@@ -227,6 +227,7 @@ read -r -d '' modules <<- EOM
 	highlight.js
 	html-minifier
 	html-to-text
+	html2canvas
 	htmlencode
 	htmllint
 	husky
