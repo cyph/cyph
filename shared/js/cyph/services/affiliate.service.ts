@@ -13,16 +13,16 @@ export class AffiliateService extends BaseProvider {
 		banners: {
 			mobile: {
 				android: {
-					href: 'http://www.tkqlhce.com/click-8954887-13477315',
+					href: 'https://www.tkqlhce.com/click-8954887-13477315',
 					img: 'assets/img/banners/hma.vpn.animated.small.gif'
 				},
 				ios: {
-					href: 'http://www.tkqlhce.com/click-8954887-13477315',
+					href: 'https://www.tkqlhce.com/click-8954887-13477315',
 					img: 'assets/img/banners/hma.vpn.animated.small.gif'
 				}
 			},
 			onlinePrivacy: {
-				href: 'http://www.dpbolvw.net/click-8954887-13477306',
+				href: 'https://www.dpbolvw.net/click-8954887-13477306',
 				img: 'assets/img/banners/hma.vpn.animated.gif'
 			}
 		}
