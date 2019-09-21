@@ -91,14 +91,17 @@ export class AccountContactsService extends BaseProvider {
 				`${groupData.id} ${groupData.incoming.toString()}`
 		),
 		user: memoize(async (username: string) => {
-			const user = (await this.accountUserLookupService.promise).getUser(
-				username
-			);
+			const accountUserLookupService = await this.accountUserLookupService
+				.promise;
+
+			const user = accountUserLookupService.getUser(username);
 
 			return {
 				unreadMessageCount: toBehaviorSubject<number>(
 					user.then(async o => (o ? o.unreadMessageCount : 0)),
-					0,
+					await (await accountUserLookupService.getUnreadMessagesFromUser(
+						username
+					)).size(),
 					this.subscriptions
 				),
 				user,

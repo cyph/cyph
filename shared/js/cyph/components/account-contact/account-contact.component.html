@@ -170,7 +170,20 @@
 			</ng-template>
 
 			<ng-template #loading>
-				<mat-card-header class="pending" fxLayout="row">
+				<mat-card-header
+					class="pending"
+					fxLayout="row"
+					[matBadge]="
+						((contact?.unreadMessageCount | async) || 0).toString()
+					"
+					[matBadgeHidden]="
+						!(
+							showUnreadMessageCount &&
+							((contact?.unreadMessageCount | async) || 0) > 0
+						)
+					"
+					matBadgePosition="above before"
+				>
 					<button
 						mat-card-avatar
 						mat-icon-button

@@ -39,6 +39,19 @@ export class AccountUserLookupService extends BaseProvider {
 	/** @ignore */
 	private readonly userCache: Map<string, User> = new Map<string, User>();
 
+	/** Gets map of unread messages from a user. */
+	public readonly getUnreadMessagesFromUser = memoize(async username =>
+		this.accountDatabaseService.getAsyncMap(
+			`unreadMessages/${
+				(await this.accountContactsService.getCastleSessionData(
+					username
+				)).castleSessionID
+			}`,
+			NeverProto,
+			SecurityModels.unprotected
+		)
+	);
+
 	/** Checks to see if a username is blacklisted. */
 	public readonly usernameBlacklisted = memoize(
 		async (username: string, reservedUsername?: string) =>
@@ -217,16 +230,7 @@ export class AccountUserLookupService extends BaseProvider {
 							undefined,
 							true
 						),
-						(async () =>
-							this.accountDatabaseService.getAsyncMap(
-								`unreadMessages/${
-									(await this.accountContactsService.getCastleSessionData(
-										username
-									)).castleSessionID
-								}`,
-								NeverProto,
-								SecurityModels.unprotected
-							))(),
+						this.getUnreadMessagesFromUser(username),
 						preFetch
 					);
 				},
