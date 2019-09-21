@@ -131,6 +131,34 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					(<any> self).firebase.initializeApp(config);
 					(<any> self).messaging = (<any> self).firebase.messaging();
+
+					(<any> self).addEventListener(
+						'notificationclick',
+						(e: any) => {
+							const clients = (<any> self).clients;
+
+							e.notification.close();
+
+							e.waitUntil(
+								clients
+									.matchAll({
+										type: 'window'
+									})
+									.then((clientList: any[]) => {
+										const client = clientList.find(
+											c => 'focus' in c
+										);
+
+										if (client) {
+											return client.focus();
+										}
+										if (clients.openWindow) {
+											return clients.openWindow('/');
+										}
+									})
+							);
+						}
+					);
 				}
 			);
 
