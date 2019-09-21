@@ -114,7 +114,7 @@ function runStoredFunction (name) {
 	});
 }
 
-self.addEventListener('install', function () {
+function initStoredFunctions () {
 	localforage.getItem(storedFunctionRoot).then(function (storedFunctionList) {
 		if (!storedFunctionList) {
 			return;
@@ -124,7 +124,10 @@ self.addEventListener('install', function () {
 			runStoredFunction(name);
 		});
 	});
-});
+}
+
+initStoredFunctions();
+self.addEventListener('install', initStoredFunctions);
 
 self.addEventListener('message', function (e) {
 	if (
