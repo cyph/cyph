@@ -97,12 +97,8 @@ export class AccountContactsService extends BaseProvider {
 			const user = accountUserLookupService.getUser(username);
 
 			return {
-				unreadMessageCount: toBehaviorSubject<number>(
-					user.then(async o => (o ? o.unreadMessageCount : 0)),
-					await (await accountUserLookupService.getUnreadMessagesFromUser(
-						username
-					)).size(),
-					this.subscriptions
+				unreadMessageCount: accountUserLookupService.getUnreadMessageCount(
+					username
 				),
 				user,
 				username

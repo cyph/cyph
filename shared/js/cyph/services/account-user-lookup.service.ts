@@ -14,6 +14,7 @@ import {
 	NeverProto,
 	Review
 } from '../proto';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
@@ -39,16 +40,22 @@ export class AccountUserLookupService extends BaseProvider {
 	/** @ignore */
 	private readonly userCache: Map<string, User> = new Map<string, User>();
 
-	/** Gets map of unread messages from a user. */
-	public readonly getUnreadMessagesFromUser = memoize(async username =>
-		this.accountDatabaseService.getAsyncMap(
-			`unreadMessages/${
-				(await this.accountContactsService.getCastleSessionData(
-					username
-				)).castleSessionID
-			}`,
-			NeverProto,
-			SecurityModels.unprotected
+	/** Gets count of unread messages from a user. */
+	public readonly getUnreadMessageCount = memoize(username =>
+		toBehaviorSubject<number>(
+			async () =>
+				this.accountDatabaseService
+					.getAsyncMap(
+						`unreadMessages/${
+							(await this.accountContactsService.getCastleSessionData(
+								username
+							)).castleSessionID
+						}`,
+						NeverProto,
+						SecurityModels.unprotected
+					)
+					.watchSize(),
+			0
 		)
 	);
 
@@ -230,7 +237,7 @@ export class AccountUserLookupService extends BaseProvider {
 							undefined,
 							true
 						),
-						this.getUnreadMessagesFromUser(username),
+						this.getUnreadMessageCount(username),
 						preFetch
 					);
 				},
