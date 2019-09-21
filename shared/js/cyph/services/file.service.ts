@@ -77,7 +77,7 @@ export class FileService extends BaseProvider {
 			canvas.toBlob &&
 			!(this.envService.isCordova && this.envService.isAndroid)
 		) {
-			return await new Promise<Uint8Array>(resolve => {
+			return new Promise<Uint8Array>(resolve => {
 				canvas.toBlob(
 					blob => {
 						resolve(
