@@ -22,7 +22,8 @@ export class ScreenshotService extends BaseProvider {
 			`Screenshot ${geISODateString()} at ${getTimeString(
 				undefined,
 				true
-			).replace(/:/g, '.')}.png`
+			).replace(/:/g, '.')}.png`,
+			'image/png'
 		);
 	}
 
