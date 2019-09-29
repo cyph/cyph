@@ -106,6 +106,7 @@ if [ "${electron}" ] ; then
 	# npx cordova build electron --release
 
 	# Workaround for Cordova and/or Electron and/or Parallels bug
+	cp build.json build.json.bak
 	node -e "
 		const buildConfig = JSON.parse(fs.readFileSync('build.json').toString());
 		const {windows} = buildConfig.electron;
@@ -146,12 +147,25 @@ if [ "${electron}" ] ; then
 		buildConfig.electron = {windows};
 		build();
 	"
+	cp -f build.json.bak build.json
 
 	cp -a platforms/electron/build/mas/*.pkg build/cyph.pkg || exit 1
 	cp platforms/electron/build/*.appx build/cyph.appx || exit 1
 	cp platforms/electron/build/*.AppImage build/cyph.AppImage || exit 1
 	cp platforms/electron/build/*.dmg build/cyph.dmg || exit 1
 	cp platforms/electron/build/*.snap build/cyph.snap || exit 1
+
+	node -e "
+		const buildConfig = JSON.parse(fs.readFileSync('build.json').toString());
+		const {mac} = buildConfig.electron;
+		mac.package = ['dmg'];
+		buildConfig.electron = {mac};
+		fs.writeFileSync('build.json', JSON.stringify(buildConfig));
+	"
+	npx cordova build electron --debug
+
+	cp platforms/electron/build/*.dmg build/cyph.debug.dmg || exit 1
+	mv build.json.bak build.json
 fi
 
 if [ "${iOS}" ] ; then
