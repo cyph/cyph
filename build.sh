@@ -103,6 +103,8 @@ if [ "${android}" ] ; then
 fi
 
 if [ "${electron}" ] ; then
+	cat electron.js >> platforms/electron/platform_www/cdv-electron-main.js
+
 	# npx cordova build electron --release
 
 	# Workaround for Cordova and/or Electron and/or Parallels bug
