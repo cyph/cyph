@@ -18,6 +18,12 @@ declare let burnerRoot: string;
 
 /**
  * @global
+ * Run-time `require` function specific to Cordova environments.
+ */
+declare let cordovaRequire: NodeRequire | undefined;
+
+/**
+ * @global
  * Base64-encoded custom build object.
  */
 declare let customBuildBase64: string | undefined;

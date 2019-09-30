@@ -34,6 +34,7 @@ import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
+import {NotificationService} from './notification.service';
 import {WindowWatcherService} from './window-watcher.service';
 import {WorkerService} from './worker.service';
 
@@ -110,6 +111,46 @@ export class FirebaseDatabaseService extends DatabaseService {
 						});
 					})
 				};
+			}
+
+			if (
+				this.envService.isCordovaDesktop &&
+				typeof cordovaRequire === 'function'
+			) {
+				const {ipcRenderer} = cordovaRequire('electron');
+				const {
+					NOTIFICATION_RECEIVED,
+					NOTIFICATION_SERVICE_STARTED,
+					START_NOTIFICATION_SERVICE
+				} = cordovaRequire('electron-push-receiver/src/constants');
+
+				ipcRenderer.on(
+					NOTIFICATION_RECEIVED,
+					(_: any, notification: any) => {
+						if (
+							typeof notification === 'object' &&
+							typeof notification.body === 'string' &&
+							notification.body
+						) {
+							this.notificationService.notify(notification.body);
+						}
+					}
+				);
+
+				const tokenPromise = new Promise<string>(resolve => {
+					const f = (_: any, token: string) => {
+						resolve(token);
+						ipcRenderer.off(NOTIFICATION_SERVICE_STARTED, f);
+					};
+					ipcRenderer.on(NOTIFICATION_SERVICE_STARTED, f);
+				});
+
+				ipcRenderer.send(
+					START_NOTIFICATION_SERVICE,
+					this.envService.firebaseConfig.messagingSenderId
+				);
+
+				return {token: await tokenPromise};
 			}
 
 			const app = await this.app;
@@ -1940,6 +1981,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		/** @ignore */
 		private readonly ngZone: NgZone,
+
+		/** @ignore */
+		private readonly notificationService: NotificationService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService,
