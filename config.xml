@@ -43,6 +43,9 @@
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
+	<plugin name="phonegap-plugin-push" spec="*">
+		<variable name="FCM_VERSION" value="17.3.0" />
+	</plugin>
 
 	<access origin="*" />
 	<allow-intent href="http://*/*" />
@@ -68,9 +71,6 @@
 	<platform name="android">
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
-		<plugin name="phonegap-plugin-push" spec="*">
-			<variable name="FCM_VERSION" value="17.3.0" />
-		</plugin>
 
 		<preference
 			name="OverrideUserAgent"
@@ -230,9 +230,6 @@
 	<platform name="ios">
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
-		<plugin name="phonegap-plugin-push" spec="*">
-			<variable name="FCM_VERSION" value="17.3.0" />
-		</plugin>
 
 		<allow-intent href="itms:*" />
 		<allow-intent href="itms-apps:*" />
