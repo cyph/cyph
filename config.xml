@@ -18,7 +18,8 @@
 
 	<icon src="res/icon/default.png" />
 
-	<!-- <plugin name="cordova-call" spec="*" /> -->
+	<!-- <plugin name="cordova-call" spec="*" /> --> -->
+	<plugin name="cordova-clipboard" spec="*" />
 	<plugin name="cordova-plugin-add-swift-support" spec="*" />
 	<plugin name="cordova-plugin-appminimize" spec="*" />
 	<plugin name="cordova-plugin-battery-status" spec="*" />
