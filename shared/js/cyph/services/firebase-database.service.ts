@@ -88,7 +88,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		token?: string;
 	}> = this.ngZone
 		.runOutsideAngular(async () => {
-			if (this.envService.isCordova) {
+			if (this.envService.isCordovaMobile) {
 				const cordova = (<any> self).PushNotification.init({
 					android: {
 						color: 'white',

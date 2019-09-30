@@ -154,7 +154,12 @@ export class FileService extends BaseProvider {
 		}
 
 		return new Promise<Uint8Array>((resolve, reject) => {
-			const reader = new FileReader();
+			/* Workaround for Electron */
+			let reader = new FileReader();
+			if ((<any> reader)._realReader) {
+				reader = (<any> reader)._realReader;
+			}
+
 			reader.onerror = reject;
 			reader.onload = () => {
 				resolve(

@@ -81,7 +81,7 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 		this.dropZone = waitUntilTrue(() =>
 			document.body.contains(this.elementRef.nativeElement)
 		).then(() => {
-			const dropZone = !this.envService.isCordova ?
+			const dropZone = !this.envService.isCordovaMobile ?
 				(() => {
 					const dz = new Dropzone(`.${this.id}`, {
 						accept: async (file, done) => {

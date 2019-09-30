@@ -126,6 +126,12 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is Cordova. */
 	public readonly isCordova: boolean = (<any> self).cordova !== undefined;
 
+	/** Indicates whether this is Cordova on a desktop OS. */
+	public readonly isCordovaDesktop: boolean;
+
+	/** Indicates whether this is Cordova on a mobile OS. */
+	public readonly isCordovaMobile: boolean;
+
 	/** Indicates whether this is Edge. */
 	public readonly isEdge: boolean = /edge\/\d+/.test(Env.UA);
 
@@ -227,7 +233,7 @@ export class Env extends EnvDeploy {
 				environment.customBuild.config.burnerOnly ? '' : '#burner/'
 			}`;
 
-	/** Platform name ("android", "ios", "unknown", "web"). */
+	/** Platform name ("android", "electron", "ios", "unknown", "web"). */
 	public readonly platform: string =
 		!this.isCordova && this.isWeb ?
 			'web' :
@@ -235,6 +241,8 @@ export class Env extends EnvDeploy {
 			'android' :
 		this.isIOS ?
 			'ios' :
+		!this.isMobileOS ?
+			'electron' :
 			'unknown';
 
 	/** @see CustomBuildConfig.pro */
@@ -283,6 +291,9 @@ export class Env extends EnvDeploy {
 
 	constructor () {
 		super();
+
+		this.isCordovaDesktop = this.isCordova && !this.isMobileOS;
+		this.isCordovaMobile = this.isCordova && this.isMobileOS;
 
 		const newCyphBaseUrl =
 			this.newCyphBaseUrl +

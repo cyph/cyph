@@ -34,7 +34,7 @@ export const saveFile = async (
 		});
 	};
 
-	if (env.isCordova) {
+	if (env.isCordovaMobile) {
 		await new Promise<void>((resolve, reject) => {
 			(<any> self).plugins.socialsharing.shareWithOptions(
 				{

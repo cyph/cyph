@@ -47,7 +47,7 @@ export class AutofocusDirective extends BaseProvider
 			return;
 		}
 
-		if (this.envService.isCordova) {
+		if (this.envService.isCordovaMobile) {
 			await AutofocusDirective.loadComplete;
 		}
 		else if (this.envService.isMobileOS) {
