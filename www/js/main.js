@@ -8,6 +8,8 @@ document.addEventListener('backbutton', function (e) {
 	}
 });
 
+self.cordovaParent	= location.toString() + '/../';
+
 /* Initialize ServiceWorker where possible */
 try {
 	navigator.serviceWorker.register('serviceworker.js').catch(function () {});
