@@ -103,7 +103,7 @@ if [ "${android}" ] ; then
 fi
 
 if [ "${electron}" ] ; then
-	cat electron.js >> platforms/electron/platform_www/cdv-electron-main.js
+	cp -f electron.js platforms/electron/platform_www/cdv-electron-main.js
 
 	# npx cordova build electron --release
 
