@@ -326,11 +326,6 @@ export class Config {
 	/** Length of random IDs in cyph links. */
 	public readonly secretLength: number = 25;
 
-	/** WebSign-related config. */
-	public readonly webSignConfig = {
-		serviceWorker: 'serviceworker.js'
-	};
-
 	constructor () {}
 }
 

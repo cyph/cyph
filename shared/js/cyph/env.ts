@@ -284,6 +284,12 @@ export class Env extends EnvDeploy {
 	/** Current user agent (lowercase). */
 	public readonly userAgent: string = Env.UA;
 
+	/** Paths to WebSign subresources. */
+	public readonly webSignPaths = {
+		serviceWorker: `${(<any> self).cordovaParent || '/'}serviceworker.js`,
+		worker: `${(<any> self).cordovaParent || '/'}worker.js`
+	};
+
 	/** Indicates whether this is a full white label instance of Cyph. */
 	public readonly whiteLabel: boolean =
 		environment.customBuild !== undefined &&

@@ -217,7 +217,7 @@ export class Thread<T> implements IThread<T> {
 				throw err;
 			}
 
-			this.worker = new Worker('worker.js');
+			this.worker = new Worker(env.webSignPaths.worker);
 
 			/* tslint:disable-next-line:deprecation */
 			this.worker.postMessage(threadBody);

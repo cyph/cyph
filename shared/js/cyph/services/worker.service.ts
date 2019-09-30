@@ -5,7 +5,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {Thread} from '../thread';
 import {uuid} from '../util/uuid';
 import {resolvable, waitForValue} from '../util/wait';
-import {ConfigService} from './config.service';
+import {EnvService} from './env.service';
 
 /**
  * Angular service for managing Workers.
@@ -29,7 +29,7 @@ export class WorkerService extends BaseProvider {
 		ServiceWorkerRegistration
 	> = (async () =>
 		navigator.serviceWorker.register(
-			this.configService.webSignConfig.serviceWorker
+			this.envService.webSignPaths.serviceWorker
 		))();
 
 	/** @see Thread */
@@ -83,7 +83,7 @@ export class WorkerService extends BaseProvider {
 
 	constructor (
 		/** @ignore */
-		private readonly configService: ConfigService
+		private readonly envService: EnvService
 	) {
 		super();
 
