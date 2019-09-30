@@ -19,7 +19,8 @@
 
 const fs = require('fs');
 // Module to control application life, browser window and tray.
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, Menu, shell} = require('electron');
+const {setup: setupPushReceiver} = require('electron-push-receiver');
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
 
@@ -50,6 +51,9 @@ function createWindow ()  {
 	// and load the index.html of the app.
 	// TODO: possibly get this data from config.xml
 	mainWindow.loadURL(`file://${__dirname}/index.html`);
+
+	setupPushReceiver(mainWindow.webContents);
+
 	mainWindow.webContents.on('did-finish-load', function ()  {
 		mainWindow.webContents.send('window-id', mainWindow.id);
 	});
@@ -90,16 +94,6 @@ app.on('activate', () => {
 	}
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
-
-const {Menu, shell} = require('electron');
-const {setup: setupPushReceiver} = require('electron-push-receiver');
-
-if (mainWindow) {
-	setupPushReceiver(mainWindow.webContents);
-}
 
 const menuItems = {
 	about: {
