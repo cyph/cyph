@@ -8,6 +8,17 @@ document.addEventListener('backbutton', function (e) {
 	}
 });
 
+/* Initialize ServiceWorker where possible */
+try {
+	navigator.serviceWorker.register('serviceworker.js').catch(function () {});
+}
+catch (_) {}
+/* Request Persistent Storage permission to mitigate edge case eviction of ServiceWorker/AppCache */
+try {
+	navigator.storage.persist().catch(function () {});
+}
+catch (_) {}
+
 var isHiddenService	= false;
 var packageName		= 'cyph.app';
 

@@ -11,13 +11,5 @@ var config	= {
 		'staging'
 	],
 
-	files: [
-		'/',
-		'/appcache.appcache',
-		'/manifest.json',
-		'/serviceworker.js',
-		'/unsupportedbrowser'
-	],
-
 	publicKeys: PUBLIC_KEYS
 };
