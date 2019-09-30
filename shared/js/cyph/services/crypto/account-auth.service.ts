@@ -25,6 +25,7 @@ import {debugLog} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
 import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
+import {reloadWindow} from '../../util/window';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {AnalyticsService} from '../analytics.service';
 import {DatabaseService} from '../database.service';
@@ -279,12 +280,7 @@ export class AccountAuthService extends BaseProvider {
 			(<any> self).plugins.appMinimize.minimize();
 		}
 
-		if (this.envService.isWeb) {
-			location.reload();
-		}
-		else {
-			/* TODO: HANDLE NATIVE */
-		}
+		reloadWindow();
 	}
 
 	/**

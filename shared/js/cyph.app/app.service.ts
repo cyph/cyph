@@ -17,6 +17,7 @@ import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {translate} from '../cyph/util/translate';
 import {resolvable, sleep, waitForValue} from '../cyph/util/wait';
+import {reloadWindow} from '../cyph/util/window';
 import {ChatRootStates} from './enums';
 
 /**
@@ -134,7 +135,7 @@ export class AppService extends BaseProvider implements CanActivate {
 					.split(location.origin)[1]
 					.match(new RegExp(`^/?#?/?${burnerRoot}(/|$)`))
 			) {
-				location.reload();
+				reloadWindow();
 			}
 		});
 

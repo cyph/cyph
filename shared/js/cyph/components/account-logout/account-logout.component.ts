@@ -3,9 +3,9 @@ import {Router} from '@angular/router';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
-import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
+import {reloadWindow} from '../../util/window';
 
 /**
  * Angular component for account logout UI.
@@ -35,20 +35,12 @@ export class AccountLogoutComponent extends BaseProvider implements OnInit {
 			(<any> self).plugins.appMinimize.minimize();
 		}
 
-		if (this.envService.isWeb) {
-			location.reload();
-		}
-		else {
-			/* TODO: HANDLE NATIVE */
-		}
+		reloadWindow();
 	}
 
 	constructor (
 		/** @ignore */
 		private readonly router: Router,
-
-		/** @ignore */
-		private readonly envService: EnvService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

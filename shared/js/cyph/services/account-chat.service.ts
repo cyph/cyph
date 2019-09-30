@@ -22,6 +22,7 @@ import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
+import {reloadWindow} from '../util/window';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionCapabilitiesService} from './account-session-capabilities.service';
 import {AccountSessionInitService} from './account-session-init.service';
@@ -353,7 +354,7 @@ export class AccountChatService extends ChatService {
 				uuid(true)
 			);
 
-			location.reload();
+			reloadWindow();
 		};
 	}
 }

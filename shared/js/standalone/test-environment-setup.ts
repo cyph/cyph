@@ -2,6 +2,7 @@ import {potassiumUtil} from '../cyph/crypto/potassium/potassium-util';
 import {BinaryProto} from '../cyph/proto';
 import {DatabaseService} from '../cyph/services/database.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
+import {reloadWindow} from '../cyph/util/window';
 
 testEnvironmentSetup = async (
 	databaseService: DatabaseService,
@@ -61,6 +62,6 @@ testEnvironmentSetup = async (
 	}
 
 	if (localTestDataVersion !== undefined) {
-		location.reload();
+		reloadWindow();
 	}
 };

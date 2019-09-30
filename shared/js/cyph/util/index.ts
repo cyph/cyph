@@ -25,3 +25,4 @@ export * from './titleize';
 export * from './translate';
 export * from './uuid';
 export * from './wait';
+export * from './window';

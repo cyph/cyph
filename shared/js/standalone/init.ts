@@ -9,6 +9,7 @@ import * as $ from 'jquery';
 import {env} from '../cyph/env';
 import {triggerClick} from '../cyph/util/input';
 import {sleep} from '../cyph/util/wait';
+import {reloadWindow} from '../cyph/util/window';
 
 /** Handle redirection in local env before ServiceWorker is initialized */
 
@@ -97,6 +98,6 @@ $(async () => {
 	/* Try again if page takes too long to initialize */
 	await sleep(120000);
 	if (!document.body.classList.contains('load-complete')) {
-		location.reload();
+		reloadWindow();
 	}
 });
