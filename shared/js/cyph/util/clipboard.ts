@@ -14,7 +14,7 @@ export const copyToClipboard = async (text: string) : Promise<void> => {
 			throw err;
 		}
 
-		await new Promise((resolve, reject) => {
+		await new Promise<any>((resolve, reject) => {
 			(<any> self).cordova.plugins.clipboard.copy(text, resolve, reject);
 		});
 	}
