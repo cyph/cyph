@@ -31,6 +31,26 @@ const menuItems = {
 	separator: {type: 'separator'}
 };
 
+const menuSections = {
+	edit: {
+		role: 'editMenu'
+		/*
+			label: 'Edit',
+			submenu: [
+				{accelerator: 'CmdOrCtrl+Z', role: 'undo'},
+				{accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo'},
+				menuItems.separator,
+				{accelerator: 'CmdOrCtrl+X', role: 'cut'},
+				{accelerator: 'CmdOrCtrl+C', role: 'copy'},
+				{accelerator: 'CmdOrCtrl+V', role: 'paste'},
+				{accelerator: 'CmdOrCtrl+Shift+V', role: 'pasteAndMatchStyle'},
+				{accelerator: 'CmdOrCtrl+A', role: 'selectAll'}
+			]
+		*/
+	},
+	window: {role: 'windowMenu'}
+};
+
 
 const menu = Menu.buildFromTemplate(
 	process.platform === 'darwin' ?
@@ -49,7 +69,9 @@ const menu = Menu.buildFromTemplate(
 					menuItems.newWindow,
 					menuItems.closeWindow
 				]
-			}
+			},
+			menuSections.edit,
+			menuSections.window
 		] :
 		[
 			{
@@ -61,6 +83,8 @@ const menu = Menu.buildFromTemplate(
 					menuItems.quit
 				]
 			},
+			menuSections.edit,
+			menuSections.window,
 			{
 				label: 'Help',
 				submenu: [
