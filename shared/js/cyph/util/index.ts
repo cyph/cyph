@@ -1,4 +1,5 @@
 export * from './arrays';
+export * from './clipboard';
 export * from './compare';
 export * from './email';
 export * from './filter';

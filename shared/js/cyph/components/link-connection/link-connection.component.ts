@@ -5,7 +5,6 @@ import {
 	ElementRef
 } from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import * as clipboard from 'clipboard-polyfill';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
@@ -18,6 +17,7 @@ import {QRService} from '../../services/qr.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {Timer} from '../../timer';
+import {copyToClipboard} from '../../util/clipboard';
 import {filterUndefinedOperator} from '../../util/filter';
 import {lockTryOnce} from '../../util/lock';
 import {sleep, waitForIterable} from '../../util/wait';
@@ -91,8 +91,7 @@ export class LinkConnectionComponent extends BaseProvider
 	public async copyToClipboard () : Promise<void> {
 		await lockTryOnce(this.copyLock, async () => {
 			await this.dialogService.toast(
-				await clipboard
-					.writeText(this.linkConstant)
+				await copyToClipboard(this.linkConstant)
 					.then(() => this.stringsService.linkCopied)
 					.catch(() => this.stringsService.linkCopyFail),
 				2500
