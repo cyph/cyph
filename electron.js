@@ -1,4 +1,10 @@
 const {Menu, shell} = require('electron');
+const {setup: setupPushReceiver} = require('electron-push-receiver');
+
+
+if (mainWindow) {
+	setupPushReceiver(mainWindow.webContents);
+}
 
 
 const menuItems = {

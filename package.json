@@ -2,6 +2,7 @@
 	"name": "cyph-phonegap-app",
 	"author": "Cyph, Inc. <phonegap-app@cyph.com> (https://github.com/cyph)",
 	"dependencies": {
-		"cordova": "*"
+		"cordova": "*",
+		"electron-push-receiver": "*"
 	}
 }
