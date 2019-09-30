@@ -43,8 +43,6 @@ cd ../cyph-phonegap-build
 
 echo -e '\n\nADD PLATFORMS\n\n'
 
-chmod -R 777 .
-
 sed -i "s|~|${HOME}|g" build.json
 
 npm install
@@ -76,23 +74,18 @@ fi
 echo -e '\n\nBUILD\n\n'
 
 if [ "${iOSEmulator}" ] ; then
-	chmod -R 777 .
 	npx cordova build --debug --emulator || exit 1
 	exit
 fi
 
 if [ "${password}" == "" ] ; then
-	chmod -R 777 .
 	npx cordova build --debug --device || exit 1
-	cp platforms/android/app/build/outputs/apk/debug/app-debug.apk build/cyph.debug.apk || exit 1
-	chmod -R 777 .
+	cp platforms/android/app/build/outputs/apk/debug/app-debug.apk build/cyph.debug.apk
 	exit
 fi
 
 
 if [ "${android}" ] ; then
-	chmod -R 777 .
-
 	npx cordova build android --release --device -- \
 		--keystore="${HOME}/.cyph/nativereleasesigning/android/cyph.jks" \
 		--alias=cyph \
@@ -115,12 +108,6 @@ if [ "${electron}" ] ; then
 
 		const build = () => {
 			fs.writeFileSync('build.json', JSON.stringify(buildConfig));
-
-			child_process.spawnSync(
-				'chmod',
-				['-R', '777', '.'],
-				{stdio: 'inherit'}
-			);
 
 			child_process.spawnSync(
 				'npx',
@@ -171,8 +158,6 @@ if [ "${electron}" ] ; then
 fi
 
 if [ "${iOS}" ] ; then
-	chmod -R 777 .
-
 	# npx cordova build ios --buildFlag='-UseModernBuildSystem=0' --debug --device \
 	# 	--codeSignIdentity='iPhone Developer' \
 	# 	--developmentTeam='SXZZ8WLPV2' \
@@ -200,5 +185,3 @@ if [ "${iOS}" ] ; then
 	# cp platforms/ios/build/device/debug/Cyph.ipa build/cyph.debug.ipa
 	cp platforms/ios/build/device/release/Cyph.ipa build/cyph.ipa
 fi
-
-chmod -R 777 .
