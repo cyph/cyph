@@ -4,7 +4,7 @@
 		"height": 800,
 		"title": "Cyph – Encrypted Messenger",
 		"webPreferences": {
-			"nodeIntegration": false
+			"nodeIntegration": true
 		},
 		"width": 1280
 	}

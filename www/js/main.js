@@ -9,6 +9,7 @@ document.addEventListener('backbutton', function (e) {
 });
 
 self.cordovaParent	= location.toString() + '/../';
+self.cordovaRequire	= self.require;
 
 /* Initialize ServiceWorker where possible */
 try {
