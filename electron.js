@@ -48,7 +48,16 @@ const menuSections = {
 			]
 		*/
 	},
-	window: {role: 'windowMenu'}
+	window: {
+		label: 'Window',
+		submenu: [
+			{role: 'minimize'},
+			...(process.platform !== 'darwin' ? [] : [
+				menuItems.separator,
+				{role: 'front'}
+			])
+		]
+	}
 };
 
 
