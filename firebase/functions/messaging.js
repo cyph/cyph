@@ -21,14 +21,18 @@ const sendMessage = async (database, messaging, namespace, username, body) => {
 				{data: notification}
 			],
 			[
-				tokens.filter(token => tokenPlatforms[token] === 'ios'),
+				tokens.filter(
+					token =>
+						tokenPlatforms[token] === 'electron' ||
+						tokenPlatforms[token] === 'ios'
+				),
 				{notification}
 			],
 			[
 				tokens.filter(
 					token =>
-						tokenPlatforms[token] === 'web' ||
-						tokenPlatforms[token] === 'unknown'
+						tokenPlatforms[token] === 'unknown' ||
+						tokenPlatforms[token] === 'web'
 				),
 				{
 					notification: {
