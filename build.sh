@@ -98,6 +98,9 @@ fi
 if [ "${electron}" ] ; then
 	cp -f electron.js platforms/electron/platform_www/cdv-electron-main.js
 
+	mkdir -p platforms/electron/build-res/appx 2> /dev/null
+	cp -f res/icon/windows/* platforms/electron/build-res/appx/
+
 	# npx cordova build electron --release
 
 	# Workaround for Cordova and/or Electron and/or Parallels bug
