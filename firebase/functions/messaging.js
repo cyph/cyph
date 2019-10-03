@@ -23,7 +23,7 @@ const sendMessage = async (database, messaging, namespace, username, body) => {
 			[
 				tokens.filter(
 					token =>
-						tokenPlatforms[token] === 'electron' ||
+						// tokenPlatforms[token] === 'electron' ||
 						tokenPlatforms[token] === 'ios'
 				),
 				{notification}
