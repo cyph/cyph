@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, concat, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
@@ -33,7 +33,6 @@ import {random} from '../../util/random';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 
-
 /**
  * Angular component for account register UI.
  */
@@ -44,18 +43,6 @@ import {sleep} from '../../util/wait';
 	templateUrl: './account-register.component.html'
 })
 export class AccountRegisterComponent extends BaseProvider implements OnInit {
-	/** Metadata pulled for current invite code. */
-	private readonly inviteCodeData	= new BehaviorSubject<{
-		inviteCode?: string;
-		inviterUsername?: string;
-		isValid: boolean;
-		plan: CyphPlans;
-		reservedUsername?: string;
-	}>({
-		isValid: false,
-		plan: CyphPlans.Free
-	});
-
 	/** @ignore */
 	private inviteCodeDebounceLast?: string;
 
@@ -63,30 +50,30 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	private usernameDebounceLast?: string;
 
 	/** Indicates whether registration attempt is in progress. */
-	public readonly checking							= new BehaviorSubject<boolean>(false);
+	public readonly checking = new BehaviorSubject<boolean>(false);
 
 	/** Email addres. */
-	public readonly email								= new BehaviorSubject<string>('');
+	public readonly email = new BehaviorSubject<string>('');
 
 	/** @see emailPattern */
-	public readonly emailPattern						= emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** Used for final confirmation of credentials. */
-	public readonly finalConfirmation					= {
+	public readonly finalConfirmation = {
 		masterKey: ''
 	};
 
 	/** If true, will display only the master key UI and output value upon submission. */
-	@Input() public getMasterKeyOnly: boolean			= false;
+	@Input() public getMasterKeyOnly: boolean = false;
 
 	/** Submit button text when getting only master key or lock screen password. */
-	@Input() public getPasswordSubmitText: string		= this.stringsService.submit;
+	@Input() public getPasswordSubmitText: string = this.stringsService.submit;
 
 	/** If true, will display only the lock screen password UI and output value upon submission. */
-	@Input() public getPinOnly: boolean					= false;
+	@Input() public getPinOnly: boolean = false;
 
 	/** Password visibility settings. */
-	public readonly hidePassword						= {
+	public readonly hidePassword = {
 		finalConfirmation: new BehaviorSubject<boolean>(true),
 		lockScreenPIN: new BehaviorSubject<boolean>(false),
 		lockScreenPassword: new BehaviorSubject<boolean>(true),
@@ -96,231 +83,197 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	};
 
 	/** If true, will hide the top description text of the lock screen password UI. */
-	@Input() public hidePinDescription: boolean			= false;
+	@Input() public hidePinDescription: boolean = false;
 
 	/** Invite code. */
-	public readonly inviteCode							= new FormControl('', undefined, [
-		async control => {
-			const value					= control.value;
-			const id					= uuid();
-			this.inviteCodeDebounceLast	= id;
+	public readonly inviteCode: FormControl;
 
-			this.inviteCodeData.next(await sleep(500).then(async () => {
-				let o	= this.inviteCodeDebounceLast === id && value ?
-					await this.databaseService.callFunction(
-						'checkInviteCode',
-						{inviteCode: value}
-					).catch(
-						() => undefined
-					) :
-					undefined
-				;
-
-				if (typeof o !== 'object') {
-					o	= {};
-				}
-
-				return {
-					inviteCode: value,
-					inviterUsername: typeof o.inviterUsername === 'string' ?
-						o.inviterUsername :
-						undefined
-					,
-					isValid: o.isValid === true,
-					plan: o.plan in CyphPlans ?
-						o.plan :
-						CyphPlans.Free
-					,
-					reservedUsername: typeof o.reservedUsername === 'string' ?
-						o.reservedUsername :
-						undefined
-				};
-			}));
-
-			if (this.inviteCodeData.value.reservedUsername && !this.username.value) {
-				this.username.setValue(this.inviteCodeData.value.reservedUsername);
-			}
-			else {
-				/* Trigger validator function */
-				this.username.setValue(this.username.value);
-			}
-
-			return !this.inviteCodeData.value.isValid ?
-				{inviteCodeInvalid: true} :
-				/* tslint:disable-next-line:no-null-keyword */
-				null
-			;
-		}
-	]);
+	/** Metadata pulled for current invite code. */
+	public readonly inviteCodeData = new BehaviorSubject<{
+		inviteCode?: string;
+		inviterUsername?: string;
+		isValid: boolean;
+		plan: CyphPlans;
+		reservedUsername?: string;
+		welcomeLetter?: string;
+	}>({
+		inviteCode: '',
+		isValid: false,
+		plan: CyphPlans.Free
+	});
 
 	/** Watches invite code. */
-	public readonly inviteCodeWatcher					= concat(
-		of(this.inviteCode),
-		combineLatest([
-			this.inviteCode.statusChanges,
-			this.inviteCode.valueChanges
-		]).pipe(
-			map(() => this.inviteCode)
-		)
-	);
+	public readonly inviteCodeWatcher: Observable<FormControl>;
 
 	/** Lock screen password. */
-	public readonly lockScreenPassword					= new BehaviorSubject<string>('');
+	public readonly lockScreenPassword = new BehaviorSubject<string>('');
 
 	/** Lock screen password confirmation. */
-	public readonly lockScreenPasswordConfirm			= formControlMatch(this.lockScreenPassword);
+	public readonly lockScreenPasswordConfirm = formControlMatch(
+		this.lockScreenPassword
+	);
 
 	/** Watches lockScreenPasswordConfirm. */
-	public readonly lockScreenPasswordConfirmWatcher	= watchFormControl(
+	public readonly lockScreenPasswordConfirmWatcher = watchFormControl(
 		this.lockScreenPasswordConfirm
 	);
 
 	/** Minimum length of lock screen PIN/password. */
-	public readonly lockScreenPasswordLength: number	= 4;
+	public readonly lockScreenPasswordLength: number = 4;
 
 	/** Indicates whether the lock screen password is viable. */
 	public readonly lockScreenPasswordReady: BehaviorSubject<boolean>;
 
 	/** Lock screen PIN. */
-	public readonly lockScreenPIN						= new BehaviorSubject<string>('');
+	public readonly lockScreenPIN = new BehaviorSubject<string>('');
 
 	/** Master key (main account password). */
-	public readonly masterKey							= new BehaviorSubject<string>('');
+	public readonly masterKey = new BehaviorSubject<string>('');
 
 	/** Master key confirmation. */
-	public readonly masterKeyConfirm					= formControlMatch(this.masterKey);
+	public readonly masterKeyConfirm = formControlMatch(this.masterKey);
 
 	/** Watches masterKeyConfirm. */
-	public readonly masterKeyConfirmWatcher				= watchFormControl(this.masterKeyConfirm);
+	public readonly masterKeyConfirmWatcher = watchFormControl(
+		this.masterKeyConfirm
+	);
 
 	/** Minimum length of custom master key. */
-	public readonly masterKeyLength: number				= 20;
+	public readonly masterKeyLength: number = 20;
 
 	/** Indicates whether the master key is viable. */
 	public readonly masterKeyReady: BehaviorSubject<boolean>;
 
 	/** Name. */
-	public readonly name								= new BehaviorSubject<string>('');
+	public readonly name = new BehaviorSubject<string>('');
 
 	/** Indicates whether master key OPSEC rules have been acknowledged. */
-	public readonly opsecAcknowledgement				= new BehaviorSubject<boolean>(false);
+	public readonly opsecAcknowledgement = new BehaviorSubject<boolean>(false);
 
 	/** Phase of registration process. */
-	public readonly phase								= new BehaviorSubject<number>(0);
+	public readonly phase = new BehaviorSubject<number>(0);
 
 	/** If true, may skip setting lock screen password. */
-	@Input() public pinSkippable: boolean				= false;
+	@Input() public pinSkippable: boolean = false;
 
 	/** Sets a spoiler on generated master key. */
-	public readonly spoiler								= new BehaviorSubject<boolean>(true);
+	public readonly spoiler = new BehaviorSubject<boolean>(true);
 
 	/** List of error messages blocking initiating a registration attempt. */
 	public readonly submissionReadinessErrors: BehaviorSubject<string[]>;
 
 	/** Set when the last registration attempt has failed. */
-	public readonly submitError							=
-		new BehaviorSubject<string|undefined>(undefined)
-	;
+	public readonly submitError = new BehaviorSubject<string | undefined>(
+		undefined
+	);
 
 	/**
 	 * Master key submission.
 	 * @see getMasterKeyOnly
 	 */
-	@Output() public readonly submitMasterKey			= new EventEmitter<string>();
+	@Output() public readonly submitMasterKey = new EventEmitter<string>();
 
 	/**
 	 * Lock screen password submission.
 	 * @see getPinOnly
 	 */
-	@Output() public readonly submitPIN					=
-		new EventEmitter<{isCustom: boolean; value: string}|undefined>()
-	;
+	@Output() public readonly submitPIN = new EventEmitter<
+		{isCustom: boolean; value: string} | undefined
+	>();
 
 	/** Form tab index. */
-	public readonly tabIndex							= new BehaviorSubject<number>(3);
+	public readonly tabIndex = new BehaviorSubject<number>(3);
 
 	/** Total number of steps/tabs (minus one). */
-	public readonly totalSteps: number					= 2;
+	public readonly totalSteps: number = 2;
 
 	/** @see trackBySelf */
-	public readonly trackBySelf							= trackBySelf;
+	public readonly trackBySelf = trackBySelf;
 
 	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
-	public readonly useLockScreenPIN					= new BehaviorSubject<boolean>(
+	public readonly useLockScreenPIN = new BehaviorSubject<boolean>(
 		this.envService.isMobileOS
 	);
 
 	/** Username. */
-	public readonly username							= new FormControl('', undefined, [
+	public readonly username = new FormControl('', undefined, [
 		async control => {
-			const value					= control.value;
-			const id					= uuid();
-			this.usernameDebounceLast	= id;
+			const value = control.value;
+			const id = uuid();
+			this.usernameDebounceLast = id;
 
 			return (await sleep(500).then(async () =>
 				this.usernameDebounceLast === id && value ?
-					(
-						value.length < this.configService.planConfig[
+					value.length <
+						this.configService.planConfig[
 							this.inviteCodeData.value.plan
 						].usernameMinLength ||
-						(await this.accountUserLookupService.usernameBlacklisted(
-							value,
-							this.inviteCodeData.value.reservedUsername
-						)) ||
-						this.accountUserLookupService.exists(value, false, false)
-					) :
+					(await this.accountUserLookupService.usernameBlacklisted(
+						value,
+						this.inviteCodeData.value.reservedUsername
+					)) ||
+					/* tslint:disable-next-line:no-promise-as-boolean */
+					this.accountUserLookupService.exists(value, false, false) :
 					true
 			)) ?
 				{usernameTaken: true} :
 				/* tslint:disable-next-line:no-null-keyword */
-				null
-			;
+				null;
 		}
 	]);
 
 	/** @see usernameMask */
-	public readonly usernameMask						= usernameMask;
+	public readonly usernameMask = usernameMask;
 
 	/** Watches username. */
-	public readonly usernameWatcher						= watchFormControl(this.username);
+	public readonly usernameWatcher = watchFormControl(this.username);
 
 	/** Indicates whether or not xkcdPassphrase should be used. */
-	public readonly useXkcdPassphrase					= new BehaviorSubject<boolean>(true);
+	public readonly useXkcdPassphrase = new BehaviorSubject<boolean>(true);
 
 	/** Auto-generated password option. */
-	public readonly xkcdPassphrase						= toBehaviorSubject<string>(
+	public readonly xkcdPassphrase = toBehaviorSubject<string>(
 		xkcdPassphrase.generate(),
 		''
 	);
 
 	/** Indicates whether xkcdPassphrase has been viewed. */
-	public readonly xkcdPassphraseHasBeenViewed			= new BehaviorSubject<boolean>(false);
+	public readonly xkcdPassphraseHasBeenViewed = new BehaviorSubject<boolean>(
+		false
+	);
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
-		this.accountService.resolveUiReady();
 
 		if (this.getMasterKeyOnly || this.getPinOnly) {
+			this.accountService.resolveUiReady();
 			return;
 		}
 
-		this.subscriptions.push(this.activatedRoute.params.subscribe(async o => {
-			if (typeof o.step === 'string') {
-				const step	= toInt(o.step);
+		this.subscriptions.push(
+			this.activatedRoute.params.subscribe(async o => {
+				if (typeof o.step === 'string') {
+					const step = toInt(o.step);
 
-				/* Allow "step" parameter to double up as invite code */
-				if (isNaN(step) && !this.inviteCode.value) {
-					this.inviteCode.setValue(o.step);
+					/* Allow "step" parameter to double up as invite code */
+					if (isNaN(step) && !this.inviteCode.value) {
+						this.inviteCode.setValue(o.step);
+					}
+					else if (
+						!isNaN(step) &&
+						step > 0 &&
+						step <= this.totalSteps + 1
+					) {
+						this.tabIndex.next(step - 1);
+						this.accountService.resolveUiReady();
+						return;
+					}
 				}
-				else if (!isNaN(step) && step > 0 && step <= (this.totalSteps + 1)) {
-					this.tabIndex.next(step - 1);
-					return;
-				}
-			}
 
-			this.router.navigate(['register', '1']);
-		}));
+				this.router.navigate(['register', '1']);
+			})
+		);
 	}
 
 	/** Switches from initial phase of registration process. */
@@ -340,16 +293,17 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public async submit () : Promise<void> {
 		this.checking.next(false);
 
-		if (this.submissionReadinessErrors.value.length > 0 || !this.masterKeyReady.value) {
+		if (
+			this.submissionReadinessErrors.value.length > 0 ||
+			!this.masterKeyReady.value
+		) {
 			this.submitError.next(this.stringsService.signupFailed);
 			return;
 		}
 
-		const masterKey	=
-			this.useXkcdPassphrase.value ?
-				this.xkcdPassphrase.value :
-				this.masterKey.value
-		;
+		const masterKey = this.useXkcdPassphrase.value ?
+			this.xkcdPassphrase.value :
+			this.masterKey.value;
 
 		if (!safeStringCompare(masterKey, this.finalConfirmation.masterKey)) {
 			this.submitError.next(this.stringsService.invalidCredentials);
@@ -374,7 +328,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				this.inviteCode.value
 			)) ?
 				undefined :
-				(this.accountAuthService.errorMessage.value || this.stringsService.signupFailed)
+				this.accountAuthService.errorMessage.value ||
+					this.stringsService.signupFailed
 		);
 
 		this.checking.next(false);
@@ -400,7 +355,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	}
 
 	/** Updates route for consistency with tabIndex. */
-	public updateRoute (increment: number = 0, tabIndex: number = this.tabIndex.value) : void {
+	public updateRoute (
+		increment: number = 0,
+		tabIndex: number = this.tabIndex.value
+	) : void {
 		this.router.navigate([
 			'register',
 			(tabIndex + increment + 1).toString()
@@ -437,95 +395,167 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		this.lockScreenPasswordReady	= toBehaviorSubject(
+		this.inviteCode = new FormControl('', undefined, [
+			async control => {
+				const value = control.value;
+				const id = uuid();
+				this.inviteCodeDebounceLast = id;
+
+				this.inviteCodeData.next(
+					await (this.inviteCodeData.value.inviteCode === '' ?
+						Promise.resolve() :
+						sleep(500)
+					).then(async () => {
+						let o =
+							this.inviteCodeDebounceLast === id && value ?
+								await this.databaseService
+									.callFunction('checkInviteCode', {
+										inviteCode: value
+									})
+									.catch(() => undefined) :
+								undefined;
+
+						if (typeof o !== 'object') {
+							o = {};
+						}
+
+						return {
+							inviteCode: value,
+							inviterUsername:
+								typeof o.inviterUsername === 'string' ?
+									o.inviterUsername :
+									undefined,
+							isValid: o.isValid === true,
+							plan: o.plan in CyphPlans ? o.plan : CyphPlans.Free,
+							reservedUsername:
+								typeof o.reservedUsername === 'string' ?
+									o.reservedUsername :
+									undefined,
+							welcomeLetter:
+								typeof o.welcomeLetter === 'string' ?
+									o.welcomeLetter :
+									undefined
+						};
+					})
+				);
+
+				if (
+					this.inviteCodeData.value.reservedUsername &&
+					!this.username.value
+				) {
+					this.username.setValue(
+						this.inviteCodeData.value.reservedUsername
+					);
+				}
+				else {
+					/* Trigger validator function */
+					this.username.setValue(this.username.value);
+				}
+
+				this.accountService.resolveUiReady();
+
+				return !this.inviteCodeData.value.isValid ?
+					{inviteCodeInvalid: true} :
+					/* tslint:disable-next-line:no-null-keyword */
+					null;
+			}
+		]);
+
+		this.inviteCodeWatcher = concat(
+			of(this.inviteCode),
+			combineLatest([
+				this.inviteCode.statusChanges,
+				this.inviteCode.valueChanges
+			]).pipe(map(() => this.inviteCode))
+		);
+
+		this.lockScreenPasswordReady = toBehaviorSubject(
 			combineLatest([
 				this.lockScreenPassword,
 				this.lockScreenPasswordConfirmWatcher,
 				this.lockScreenPIN,
 				this.useLockScreenPIN
-			]).pipe(map(([
-				lockScreenPassword,
-				lockScreenPasswordConfirm,
-				lockScreenPIN,
-				useLockScreenPIN
-			]) =>
-				useLockScreenPIN ?
-					lockScreenPIN.length === this.lockScreenPasswordLength :
-					(
-						lockScreenPassword.length >= this.lockScreenPasswordLength &&
-						lockScreenPasswordConfirm.valid
-					)
-			)),
+			]).pipe(
+				map(
+					([
+						lockScreenPassword,
+						lockScreenPasswordConfirm,
+						lockScreenPIN,
+						useLockScreenPIN
+					]) =>
+						useLockScreenPIN ?
+							lockScreenPIN.length ===
+							this.lockScreenPasswordLength :
+							lockScreenPassword.length >=
+								this.lockScreenPasswordLength &&
+							lockScreenPasswordConfirm.valid
+				)
+			),
 			false,
 			this.subscriptions
 		);
 
-		this.masterKeyReady				= toBehaviorSubject(
+		this.masterKeyReady = toBehaviorSubject(
 			combineLatest([
 				this.masterKey,
 				this.masterKeyConfirmWatcher,
 				this.opsecAcknowledgement,
 				this.useXkcdPassphrase,
 				this.xkcdPassphraseHasBeenViewed
-			]).pipe(map(([
-				masterKey,
-				masterKeyConfirm,
-				opsecAcknowledgement,
-				useXkcdPassphrase,
-				xkcdPassphraseHasBeenViewed
-			]) =>
-				opsecAcknowledgement && (useXkcdPassphrase ?
-					xkcdPassphraseHasBeenViewed :
-					(
-						masterKey.length >= this.masterKeyLength &&
-						masterKeyConfirm.valid
-					)
+			]).pipe(
+				map(
+					([
+						masterKey,
+						masterKeyConfirm,
+						opsecAcknowledgement,
+						useXkcdPassphrase,
+						xkcdPassphraseHasBeenViewed
+					]) =>
+						opsecAcknowledgement &&
+						(useXkcdPassphrase ?
+							xkcdPassphraseHasBeenViewed :
+							masterKey.length >= this.masterKeyLength &&
+							masterKeyConfirm.valid)
 				)
-			)),
+			),
 			false,
 			this.subscriptions
 		);
 
-		this.submissionReadinessErrors				= toBehaviorSubject(
+		this.submissionReadinessErrors = toBehaviorSubject(
 			combineLatest([
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
 				this.name,
 				this.usernameWatcher,
 				this.xkcdPassphrase
-			]).pipe(map(([
-				inviteCode,
-				lockScreenPasswordReady,
-				name,
-				username,
-				xkcd
-			]) => [
-				...(
-					!inviteCode.value || inviteCode.errors ?
-						[this.stringsService.registerErrorInviteCode] :
-						[]
-				),
-				...(
-					!lockScreenPasswordReady ?
-						[this.stringsService.registerErrorLockScreen] :
-						[]
-				),
-				...(
-					!name ?
-						[this.stringsService.registerErrorName] :
-						[]
-				),
-				...(
-					!username.value || username.errors ?
-						[this.stringsService.registerErrorUsername] :
-						[]
-				),
-				...(
-					xkcd.length < 1 ?
-						[this.stringsService.registerErrorInitializing] :
-						[]
+			]).pipe(
+				map(
+					([
+						inviteCode,
+						lockScreenPasswordReady,
+						name,
+						username,
+						xkcd
+					]) => [
+						...(!inviteCode.value || inviteCode.errors ?
+							[this.stringsService.registerErrorInviteCode] :
+							[]),
+						...(!lockScreenPasswordReady ?
+							[this.stringsService.registerErrorLockScreen] :
+							[]),
+						...(!name ?
+							[this.stringsService.registerErrorName] :
+							[]),
+						...(!username.value || username.errors ?
+							[this.stringsService.registerErrorUsername] :
+							[]),
+						...(xkcd.length < 1 ?
+							[this.stringsService.registerErrorInitializing] :
+							[])
+					]
 				)
-			])),
+			),
 			[this.stringsService.registerErrorInitializing],
 			this.subscriptions
 		);

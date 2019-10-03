@@ -1,6 +1,10 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef
+} from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
-import * as clipboard from 'clipboard-polyfill';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
@@ -13,11 +17,11 @@ import {QRService} from '../../services/qr.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {Timer} from '../../timer';
+import {copyToClipboard} from '../../util/clipboard';
 import {filterUndefinedOperator} from '../../util/filter';
 import {lockTryOnce} from '../../util/lock';
 import {sleep, waitForIterable} from '../../util/wait';
 import {LinkConnectionEmailComponent} from '../link-connection-email';
-
 
 /**
  * Angular component for a link-based initial connection screen
@@ -29,92 +33,94 @@ import {LinkConnectionEmailComponent} from '../link-connection-email';
 	styleUrls: ['./link-connection.component.scss'],
 	templateUrl: './link-connection.component.html'
 })
-export class LinkConnectionComponent extends BaseProvider implements AfterViewInit {
+export class LinkConnectionComponent extends BaseProvider
+	implements AfterViewInit {
 	/** @ignore */
-	private readonly addTimeLock: {}	= {};
+	private readonly addTimeLock: {} = {};
 
 	/** @ignore */
 	private connectLinkInput?: HTMLInputElement;
 
 	/** @ignore */
-	private readonly copyLock: {}		= {};
+	private readonly copyLock: {} = {};
 
 	/** @ignore */
-	private linkConstant: string		= '';
+	private linkConstant: string = '';
 
 	/** Indicates whether the advanced features menu is open. */
-	public readonly advancedFeatures	= new BehaviorSubject<boolean>(false);
+	public readonly advancedFeatures = new BehaviorSubject<boolean>(false);
 
 	/** Forces focus on input. */
-	public forceFocus: boolean			= true;
+	public forceFocus: boolean = true;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
-	public readonly isPassive			= new BehaviorSubject<boolean>(true);
+	public readonly isPassive = new BehaviorSubject<boolean>(true);
 
 	/** The link to join this connection. */
-	public readonly link				= new BehaviorSubject<string>('');
+	public readonly link = new BehaviorSubject<string>('');
 
 	/** Safe version of this link. */
-	public readonly linkHref			= new BehaviorSubject<SafeUrl|undefined>(undefined);
+	public readonly linkHref = new BehaviorSubject<SafeUrl | undefined>(
+		undefined
+	);
 
 	/** Safe SMS version of this link. */
-	public readonly linkSMS				= new BehaviorSubject<SafeUrl|undefined>(undefined);
+	public readonly linkSMS = new BehaviorSubject<SafeUrl | undefined>(
+		undefined
+	);
 
 	/** Draft of queued message. */
-	public readonly queuedMessageDraft	= new BehaviorSubject<string>('');
+	public readonly queuedMessageDraft = new BehaviorSubject<string>('');
 
 	/** Counts down until link expires. */
-	public readonly timer				= new Timer(this.configService.cyphCountdown, false);
+	public readonly timer = new Timer(this.configService.cyphCountdown, false);
 
 	/** Extends the countdown duration. */
 	public async addTime (milliseconds: number) : Promise<void> {
 		this.timer.addTime(milliseconds);
 
-		await lockTryOnce(
-			this.addTimeLock,
-			async () => { await this.dialogService.toast(
+		await lockTryOnce(this.addTimeLock, async () => {
+			await this.dialogService.toast(
 				this.stringsService.timeExtended,
 				2500
-			); }
-		);
+			);
+		});
 	}
 
 	/** Copies link to clipboard. */
 	public async copyToClipboard () : Promise<void> {
-		await lockTryOnce(
-			this.copyLock,
-			async () => { await this.dialogService.toast(
-				await clipboard.writeText(this.linkConstant).
-					then(() => this.stringsService.linkCopied).
-					catch(() => this.stringsService.linkCopyFail)
-				,
+		await lockTryOnce(this.copyLock, async () => {
+			await this.dialogService.toast(
+				await copyToClipboard(this.linkConstant)
+					.then(() => this.stringsService.linkCopied)
+					.catch(() => this.stringsService.linkCopyFail),
 				2500
-			); }
-		);
+			);
+		});
 	}
 
 	/** Emails link. */
 	public async email () : Promise<void> {
-		this.forceFocus	= false;
+		this.forceFocus = false;
 
 		await this.dialogService.baseDialog(LinkConnectionEmailComponent, o => {
-			o.link	= this.linkConstant;
+			o.link = this.linkConstant;
 		});
 
-		this.forceFocus	= true;
+		this.forceFocus = true;
 	}
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
-		let isWaiting		= true;
+		let isWaiting = true;
 
-		const sharedSecret	=
-			await this.sessionService.state.sharedSecret.pipe(
+		const sharedSecret = await this.sessionService.state.sharedSecret
+			.pipe(
 				filterUndefinedOperator(),
 				filter(s => s.length > 0),
 				take(1)
-			).toPromise()
-		;
+			)
+			.toPromise();
 
 		if (
 			this.sessionService.state.wasInitiatedByAPI.value ||
@@ -123,39 +129,44 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 			return;
 		}
 
-		this.linkConstant	=
+		this.linkConstant =
 			this.envService.cyphImUrl +
 			(this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#') +
-			sharedSecret
-		;
+			sharedSecret;
 
-		const linkEncoded	= encodeURIComponent(this.linkConstant);
+		const linkEncoded = encodeURIComponent(this.linkConstant);
 
 		this.link.next(this.linkConstant);
 
 		this.linkHref.next(this.linkConstant);
 
-		this.linkSMS.next(this.domSanitizer.bypassSecurityTrustUrl(
-			this.envService.smsUriBase + linkEncoded
-		));
+		this.linkSMS.next(
+			this.domSanitizer.bypassSecurityTrustUrl(
+				this.envService.smsUriBase + linkEncoded
+			)
+		);
 
 		this.isPassive.next(false);
 
 		if (this.elementRef.nativeElement && this.envService.isWeb) {
-			const $element		= $(this.elementRef.nativeElement);
+			const $element = $(this.elementRef.nativeElement);
 
 			if (this.envService.isMobileOS) {
-				const $connectLinkLink	= await waitForIterable(
-					() => $element.find('.connect-link-link')
+				const $connectLinkLink = await waitForIterable(() =>
+					$element.find('.connect-link-link')
 				);
 
 				/* Only allow right-clicking (for copying the link) */
-				$connectLinkLink.on('click', e => { e.preventDefault(); });
+				$connectLinkLink.on('click', e => {
+					e.preventDefault();
+				});
 			}
 			else {
-				this.connectLinkInput	= <HTMLInputElement> (await waitForIterable(
-					() => document.querySelectorAll('.connect-link-input')
-				))[0];
+				this.connectLinkInput = <HTMLInputElement> (
+					(await waitForIterable(() =>
+						document.querySelectorAll('.connect-link-input')
+					))[0]
+				);
 
 				this.onBlur();
 			}
@@ -167,8 +178,8 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 		}
 
 		this.sessionService.connected.then(() => {
-			isWaiting			= false;
-			this.linkConstant	= '';
+			isWaiting = false;
+			this.linkConstant = '';
 
 			this.link.next('');
 			this.linkHref.next(undefined);
@@ -181,7 +192,7 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 		await this.timer.start();
 
 		if (isWaiting) {
-			isWaiting	= false;
+			isWaiting = false;
 			this.chatService.abortSetup();
 		}
 	}
@@ -190,7 +201,11 @@ export class LinkConnectionComponent extends BaseProvider implements AfterViewIn
 	public async onBlur () : Promise<void> {
 		await sleep(0);
 
-		if (!this.forceFocus || !this.connectLinkInput || this.advancedFeatures.value) {
+		if (
+			!this.forceFocus ||
+			!this.connectLinkInput ||
+			this.advancedFeatures.value
+		) {
 			return;
 		}
 

@@ -22,14 +22,10 @@ import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMenuComponent} from '../components/account-menu';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
-import {
-	AccountNotificationsSubscribeComponent
-} from '../components/account-notifications-subscribe';
+import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
-import {
-	AccountPseudoRelationshipResponseComponent
-} from '../components/account-pseudo-relationship-response';
+import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {AccountStorageAnalyticsComponent} from '../components/account-storage-analytics';
@@ -62,7 +58,6 @@ import {QRService} from '../services/qr.service';
 import {WorkerService} from '../services/worker.service';
 import {CyphCommonModule} from './cyph-common.module';
 import {CyphWebModule} from './cyph-web.module';
-
 
 /**
  * Common module with shared imports for application projects.
@@ -185,10 +180,7 @@ import {CyphWebModule} from './cyph-web.module';
 		NotFoundComponent,
 		UploadEhrCredentialsComponent
 	],
-	imports: [
-		CyphCommonModule,
-		CyphWebModule
-	],
+	imports: [CyphCommonModule, CyphWebModule],
 	providers: [
 		AccountAppointmentsService,
 		AccountAuthGuardService,

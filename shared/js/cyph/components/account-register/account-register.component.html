@@ -1,36 +1,42 @@
-<ng-container *ngIf='getMasterKeyOnly || getPinOnly'>
+<ng-container *ngIf="getMasterKeyOnly || getPinOnly">
 	<form
 		fxFlex
-		fxLayout='column'
-		fxLayoutGap='32px'
+		fxLayout="column"
+		fxLayoutGap="32px"
 		ngNativeValidate
-		(submit)='
+		(submit)="
 			getMasterKeyOnly && masterKeyReady.value ?
-				submitMasterKey.emit(useXkcdPassphrase.value ? xkcd : masterKey.value) :
+				submitMasterKey.emit(
+					useXkcdPassphrase.value ? xkcd : masterKey.value
+				) :
 			getPinOnly && lockScreenPasswordReady.value ?
 				submitPIN.emit({
 					isCustom: !useLockScreenPIN.value,
-					value: useLockScreenPIN.value ? lockScreenPIN.value : lockScreenPassword.value
+					value: useLockScreenPIN.value ?
+						lockScreenPIN.value :
+						lockScreenPassword.value
 				}) :
 				undefined
-		'
-		*ngIf='xkcdPassphrase | async as xkcd'
+		"
+		*ngIf="xkcdPassphrase | async as xkcd"
 	>
 		<div>
-			<ng-container *ngTemplateOutlet='
-				getMasterKeyOnly ? masterKeyUI : lockScreenUI
-			'></ng-container>
+			<ng-container
+				*ngTemplateOutlet="
+					getMasterKeyOnly ? masterKeyUI : lockScreenUI
+				"
+			></ng-container>
 		</div>
 
-		<div fxLayoutAlign='center center' fxLayoutGap='22px'>
+		<div fxLayoutAlign="center center" fxLayoutGap="22px">
 			<button
 				mat-button
 				cyphTranslate
 				fxFlex
-				fxFlex.gt-sm='initial'
-				type='submit'
-				(click)='submitPIN.emit(undefined)'
-				*ngIf='getPinOnly && pinSkippable'
+				fxFlex.gt-sm="initial"
+				type="submit"
+				(click)="submitPIN.emit(undefined)"
+				*ngIf="getPinOnly && pinSkippable"
 			>
 				Skip
 			</button>
@@ -38,45 +44,51 @@
 			<button
 				mat-raised-button
 				fxFlex
-				fxFlex.gt-sm='initial'
-				type='submit'
-				[disabled]='
-					(
-						(getMasterKeyOnly ? masterKeyReady : lockScreenPasswordReady) | async
-					) === false
-				'
+				fxFlex.gt-sm="initial"
+				type="submit"
+				[disabled]="
+					((getMasterKeyOnly ?
+						masterKeyReady :
+						lockScreenPasswordReady) | async) === false
+				"
 			>
-				{{getPasswordSubmitText}}
+				{{ getPasswordSubmitText }}
 			</button>
 		</div>
 	</form>
 </ng-container>
 
 <div
-	class='login-form'
-	[class.checking]='checking | async'
-	*ngIf='!getMasterKeyOnly && !getPinOnly'
+	class="login-form"
+	[class.checking]="checking | async"
+	*ngIf="!getMasterKeyOnly && !getPinOnly"
 >
-	<mat-card fxFlex class='fullscreen'>
+	<mat-card fxFlex class="fullscreen">
 		<mat-card-title>
-			{{stringsService.registerTitle}}
+			{{ stringsService.registerTitle }}
 		</mat-card-title>
 		<cyph-logo cardHeader homeLink></cyph-logo>
-		<mat-card-content [class.full-height]='(phase | async) === 3'>
+		<mat-card-content [class.full-height]="(phase | async) === 3">
 			<br />
 
-			<div fxLayout='column' fxLayoutGap='32px' *ngIf='(phase | async) === 0'>
-				<div fxLayout='row'>
+			<div
+				fxLayout="column"
+				fxLayoutGap="32px"
+				*ngIf="(phase | async) === 0"
+			>
+				<div fxLayout="row">
 					<form
 						fxFlex
-						fxLayout='column'
-						fxLayoutGap='32px'
+						fxLayout="column"
+						fxLayoutGap="32px"
 						ngNativeValidate
-						(submit)='preSubmit()'
+						(submit)="preSubmit()"
 					>
 						<mat-tab-group
-							[selectedIndex]='tabIndex | async'
-							(selectedIndexChange)='tabIndex.next($event); updateRoute(0, $event)'
+							[selectedIndex]="tabIndex | async"
+							(selectedIndexChange)="
+								tabIndex.next($event); updateRoute(0, $event)
+							"
 						>
 							<mat-tab>
 								<ng-template mat-tab-label>
@@ -85,240 +97,353 @@
 									<span cyphTranslate>Basic Information</span>
 								</ng-template>
 
-								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+								<div
+									fxFlex
+									fxLayout="column"
+									fxLayoutGap="48px"
+								>
 									<div
-										fxLayout='row'
-										fxLayoutAlign='center center'
-										class='description'
+										fxLayout="row"
+										fxLayoutAlign="center center"
+										class="description"
 									>
-										<ng-container *ngIf='
-											envService.coBranded && !envService.whiteLabel;
-											else telehealthWelcomeMessage
-										'>
+										<ng-container
+											*ngIf="
+												envService.coBranded &&
+													!envService.whiteLabel;
+												else telehealthWelcomeMessage
+											"
+										>
 											<span>
-												<span cyphTranslate>Welcome to</span>
+												<span cyphTranslate
+													>Welcome to</span
+												>
 												&ngsp;
-												<span>{{stringsService.product}}</span>
+												<span>{{
+													stringsService.product
+												}}</span>
 												&ngsp;
-												<span cyphTranslate>powered by Cyph!</span>
+												<span cyphTranslate
+													>powered by Cyph!</span
+												>
 											</span>
 										</ng-container>
 										<ng-template #telehealthWelcomeMessage>
-											<ng-container *ngIf='
-												envService.telehealthTheme;
-												else mainBasicWelcomeMessage
-											'>
+											<ng-container
+												*ngIf="
+													envService.telehealthTheme;
+													else mainInviteCodeWelcomeMessage
+												"
+											>
 												<span cyphTranslate>
 													Welcome to Cyph Telehealth!
 												</span>
 											</ng-container>
 										</ng-template>
+										<ng-template
+											#mainInviteCodeWelcomeMessage
+										>
+											<div
+												class="cyph-light-theme welcome-letter"
+												*ngIf="
+													(inviteCodeData | async)
+														?.welcomeLetter as welcomeLetter;
+													else mainBasicWelcomeMessage
+												"
+											>
+												<mat-card>
+													<cyph-markdown
+														[markdown]="
+															welcomeLetter
+														"
+													></cyph-markdown>
+													<br />
+													<a
+														class="team-valediction"
+														[href]="
+															envService.homeUrl
+														"
+													>
+														{{
+															stringsService.teamValediction
+														}}
+													</a>
+												</mat-card>
+											</div>
+										</ng-template>
 										<ng-template #mainBasicWelcomeMessage>
 											<span>
 												<span cyphTranslate>
-													Congratulations on securing your
+													Congratulations on securing
+													your
 												</span>
 												&ngsp;
-												<span>{{stringsService.product}}</span>
+												<span>{{
+													stringsService.product
+												}}</span>
 												&ngsp;
-												<span cyphTranslate>account invite!</span>
+												<span cyphTranslate
+													>account invite!</span
+												>
 											</span>
 										</ng-template>
 									</div>
 									<div
-										fxLayout='row'
-										fxLayoutAlign='center center'
+										fxLayout="row"
+										fxLayoutAlign="center center"
 										cyphTranslate
-										*ngIf='!envService.isTelehealth'
+										*ngIf="
+											!envService.isTelehealth &&
+											(inviteCodeData | async)
+												?.welcomeLetter === undefined
+										"
 									>
-										You'll be getting early access to premium features, and
-										will still be able to easily communicate with anyone who
+										You'll be getting early access to
+										premium features, and will still be able
+										to easily communicate with anyone who
 										doesn't have an account yet.
 									</div>
 									<div
-										fxLayout='row'
-										fxLayoutAlign='center center'
+										fxLayout="row"
+										fxLayoutAlign="center center"
 										cyphTranslate
-										*ngIf='envService.isTelehealth'
+										*ngIf="envService.isTelehealth"
 									>
-										Registering an account with us enables you to easily and
-										safely share medical records with your doctors, schedule
+										Registering an account with us enables
+										you to easily and safely share medical
+										records with your doctors, schedule
 										telehealth appointments, and more.
 									</div>
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
+									<div
+										fxLayout="row"
+										fxLayoutAlign="center center"
+									>
+										<div
+											fxFlex
+											fxLayout="column"
+											fxLayoutGap="16px"
+										>
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
+											>
 												<mat-form-field
 													fxFlex
-													fxFlex.sm='80'
-													fxFlex.gt-sm='60'
+													fxFlex.sm="80"
+													fxFlex.gt-sm="60"
 												>
 													<input
 														matInput
 														cyphTranslate
-														[formControl]='username'
-														[textMask]='usernameMask'
-														name='cyphUsername'
-														placeholder='Username'
-														cyphAutofocus
+														[formControl]="username"
+														[textMask]="
+															usernameMask
+														"
+														name="cyphUsername"
+														placeholder="Username"
 														required
 													/>
-													<div matSuffix *ngIf='
-														usernameWatcher | async as currentUsername
-													'>
+													<div
+														matSuffix
+														*ngIf="
+															usernameWatcher
+																| async as currentUsername
+														"
+													>
 														<span
 															cyphTranslate
-															class='form-field-pending'
-															matTooltip='Checking availability...'
-															*ngIf='currentUsername.pending'
+															class="form-field-pending"
+															matTooltip="Checking availability..."
+															*ngIf="
+																currentUsername.pending
+															"
 														>
 															<mat-progress-spinner
-																diameter='24'
-																strokeWidth='2'
-																mode='indeterminate'
+																diameter="24"
+																strokeWidth="2"
+																mode="indeterminate"
 															></mat-progress-spinner>
 														</span>
 														<mat-icon
 															cyphTranslate
-															[matTooltip]='
+															[matTooltip]="
 																stringsService.registerErrorUsername
-															'
-															*ngIf='
+															"
+															*ngIf="
 																!currentUsername.pending &&
 																!!currentUsername.value &&
 																!!currentUsername.errors
-															'
+															"
 														>
 															error_outline
 														</mat-icon>
 														<mat-icon
 															cyphTranslate
-															matTooltip='Username available!'
-															*ngIf='
+															matTooltip="Username available!"
+															*ngIf="
 																!currentUsername.pending &&
 																!!currentUsername.value &&
 																!currentUsername.errors
-															'
+															"
 														>
 															check
 														</mat-icon>
 													</div>
-													<mat-error *ngIf='
-														(usernameWatcher | async)?.hasError(
-															"usernameTaken"
-														)
-													'>
-														{{stringsService.registerErrorUsername}}
+													<mat-error
+														*ngIf="
+															(
+																usernameWatcher
+																| async
+															)?.hasError(
+																'usernameTaken'
+															)
+														"
+													>
+														{{
+															stringsService.registerErrorUsername
+														}}
 													</mat-error>
 												</mat-form-field>
 											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
+											>
 												<mat-form-field
 													fxFlex
-													fxFlex.sm='80'
-													fxFlex.gt-sm='60'
+													fxFlex.sm="80"
+													fxFlex.gt-sm="60"
 												>
 													<input
 														matInput
 														cyphTranslate
-														[maxlength]='accountService.maxNameLength'
-														[ngModel]='name | async'
-														(ngModelChange)='name.next($event)'
-														name='name'
-														[placeholder]='envService.isTelehealth ?
-															stringsService.name :
-															stringsService.nameOrPseudonym
-														'
+														[maxlength]="
+															accountService.maxNameLength
+														"
+														[ngModel]="name | async"
+														(ngModelChange)="
+															name.next($event)
+														"
+														name="name"
+														[placeholder]="
+															envService.isTelehealth ?
+																stringsService.name :
+																stringsService.nameOrPseudonym
+														"
 														required
-													/>
-												</mat-form-field>
-											</div>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<mat-form-field
-													fxFlex
-													fxFlex.sm='80'
-													fxFlex.gt-sm='60'
-												>
-													<input
-														matInput
-														cyphTranslate
-														[ngModel]='email | async'
-														(ngModelChange)='email.next($event)'
-														name='email'
-														type='email'
-														[pattern]='emailPattern'
-														[placeholder]='envService.isTelehealth ?
-															stringsService.email :
-															stringsService.emailOptional
-														'
-														[required]='envService.isTelehealth'
 													/>
 												</mat-form-field>
 											</div>
 											<div
-												fxLayout='row'
-												fxLayoutAlign='center center'
+												fxLayout="row"
+												fxLayoutAlign="center center"
 											>
 												<mat-form-field
 													fxFlex
-													fxFlex.sm='80'
-													fxFlex.gt-sm='60'
+													fxFlex.sm="80"
+													fxFlex.gt-sm="60"
 												>
 													<input
 														matInput
 														cyphTranslate
-														[formControl]='inviteCode'
-														name='inviteCode'
-														placeholder='Invite Code'
+														[ngModel]="
+															email | async
+														"
+														(ngModelChange)="
+															email.next($event)
+														"
+														name="email"
+														type="email"
+														[pattern]="emailPattern"
+														[placeholder]="
+															envService.isTelehealth ?
+																stringsService.email :
+																stringsService.emailOptional
+														"
+														[required]="
+															envService.isTelehealth
+														"
+													/>
+												</mat-form-field>
+											</div>
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
+											>
+												<mat-form-field
+													fxFlex
+													fxFlex.sm="80"
+													fxFlex.gt-sm="60"
+												>
+													<input
+														matInput
+														cyphTranslate
+														[formControl]="
+															inviteCode
+														"
+														name="inviteCode"
+														placeholder="Invite Code"
 														required
 													/>
-													<div matSuffix *ngIf='
-														inviteCodeWatcher | async as
-														currentInviteCode
-													'>
+													<div
+														matSuffix
+														*ngIf="
+															inviteCodeWatcher
+																| async as currentInviteCode
+														"
+													>
 														<span
 															cyphTranslate
-															class='form-field-pending'
-															matTooltip='Checking invite code...'
-															*ngIf='currentInviteCode.pending'
+															class="form-field-pending"
+															matTooltip="Checking invite code..."
+															*ngIf="
+																currentInviteCode.pending
+															"
 														>
 															<mat-progress-spinner
-																diameter='24'
-																strokeWidth='2'
-																mode='indeterminate'
+																diameter="24"
+																strokeWidth="2"
+																mode="indeterminate"
 															></mat-progress-spinner>
 														</span>
 														<mat-icon
 															cyphTranslate
-															[matTooltip]='
+															[matTooltip]="
 																stringsService.registerErrorInviteCode
-															'
-															*ngIf='
+															"
+															*ngIf="
 																!currentInviteCode.pending &&
 																!!currentInviteCode.value &&
 																!!currentInviteCode.errors
-															'
+															"
 														>
 															error_outline
 														</mat-icon>
 														<mat-icon
 															cyphTranslate
-															matTooltip='Invite code confirmed'
-															*ngIf='
+															matTooltip="Invite code confirmed"
+															*ngIf="
 																!currentInviteCode.pending &&
 																!!currentInviteCode.value &&
 																!currentInviteCode.errors
-															'
+															"
 														>
 															check
 														</mat-icon>
 													</div>
-													<mat-error *ngIf='
-														(inviteCodeWatcher | async)?.hasError(
-															"inviteCodeInvalid"
-														)
-													'>
-														{{stringsService.registerErrorInviteCode}}
+													<mat-error
+														*ngIf="
+															(
+																inviteCodeWatcher
+																| async
+															)?.hasError(
+																'inviteCodeInvalid'
+															)
+														"
+													>
+														{{
+															stringsService.registerErrorInviteCode
+														}}
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -326,92 +451,145 @@
 									</div>
 								</div>
 							</mat-tab>
-							<mat-tab *ngIf='false'>
+							<mat-tab *ngIf="false">
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 0'>
+									<mat-icon
+										*ngIf="((tabIndex | async) || 0) > 0"
+									>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 0'>
+									<mat-icon
+										*ngIf="((tabIndex | async) || 0) <= 0"
+									>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
-									<span cyphTranslate>Patient Info & Insurance</span>
+									<span cyphTranslate
+										>Patient Info & Insurance</span
+									>
 								</ng-template>
 								<div
-									fxLayout='row'
-									fxLayoutAlign='center center'
-									class='description'
+									fxLayout="row"
+									fxLayoutAlign="center center"
+									class="description"
 								>
 									TODO: Add new patient forms & insurance
-									TODO: Reimplement tabIndex to work with variable sections
+									TODO: Reimplement tabIndex to work with
+									variable sections
 								</div>
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 0'>
+									<mat-icon
+										*ngIf="((tabIndex | async) || 0) > 0"
+									>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 0'>
+									<mat-icon
+										*ngIf="((tabIndex | async) || 0) <= 0"
+									>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
 									<span cyphTranslate>Lock Screen</span>
 								</ng-template>
 
-								<ng-container *ngTemplateOutlet='lockScreenUI'></ng-container>
+								<ng-container
+									*ngTemplateOutlet="lockScreenUI"
+								></ng-container>
 							</mat-tab>
 							<mat-tab>
 								<ng-template mat-tab-label>
-									<mat-icon *ngIf='((tabIndex | async) || 0) > 1'>
+									<mat-icon
+										*ngIf="((tabIndex | async) || 0) > 1"
+									>
 										radio_button_checked
 									</mat-icon>
-									<mat-icon *ngIf='((tabIndex | async) || 0) <= 1'>
+									<mat-icon
+										*ngIf="((tabIndex | async) || 0) <= 1"
+									>
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
 									<span cyphTranslate>Confirm</span>
 								</ng-template>
 
-								<div fxFlex fxLayout='column' fxLayoutGap='48px'>
+								<div
+									fxFlex
+									fxLayout="column"
+									fxLayoutGap="48px"
+								>
 									<div
-										fxLayout='row'
-										fxLayoutAlign='center center'
-										class='description'
+										fxLayout="row"
+										fxLayoutAlign="center center"
+										class="description"
 										cyphTranslate
 									>
 										Does this all look right?
 									</div>
 
-									<div fxLayout='row' fxLayoutAlign='center center'>
-										<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<strong cyphTranslate>Username:</strong>
+									<div
+										fxLayout="row"
+										fxLayoutAlign="center center"
+									>
+										<div
+											fxFlex
+											fxLayout="column"
+											fxLayoutGap="16px"
+										>
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
+											>
+												<strong cyphTranslate
+													>Username:</strong
+												>
 												&nbsp;
-												<span>{{(usernameWatcher | async)?.value}}</span>
+												<span>{{
+													(usernameWatcher | async)
+														?.value
+												}}</span>
 											</div>
 
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<strong cyphTranslate>Name:</strong>
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
+											>
+												<strong cyphTranslate
+													>Name:</strong
+												>
 												&nbsp;
-												<span>{{name | async}}</span>
+												<span>{{ name | async }}</span>
 											</div>
 
-											<div fxLayout='row' fxLayoutAlign='center center'>
-												<strong cyphTranslate>Email:</strong>
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
+											>
+												<strong cyphTranslate
+													>Email:</strong
+												>
 												&nbsp;
 												<span>
-													{{(email | async) || stringsService.omitted}}
+													{{
+														(email | async) ||
+															stringsService.omitted
+													}}
 												</span>
 											</div>
 
-											<div fxLayout='row' fxLayoutAlign='center center'>
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
+											>
 												<strong cyphTranslate>
 													Lock Screen:
 												</strong>
 												&nbsp;
 												<span>
 													{{
-														(useLockScreenPIN | async) ?
+														(useLockScreenPIN
+														| async) ?
 															stringsService.lockScreenPIN :
 															stringsService.lockScreenPassword
 													}}
@@ -423,40 +601,55 @@
 							</mat-tab>
 						</mat-tab-group>
 
-						<ng-container *ngIf='((tabIndex | async) || 0) === totalSteps'>
-							<ng-container *ngIf='submissionReadinessErrors | async as errors'>
+						<ng-container
+							*ngIf="((tabIndex | async) || 0) === totalSteps"
+						>
+							<ng-container
+								*ngIf="
+									submissionReadinessErrors | async as errors
+								"
+							>
 								<h3
-									fxLayout='row'
-									fxLayoutAlign='center center'
-									class='cyph-banner default-align warn'
-									*ngIf='errors.length > 0'
+									fxLayout="row"
+									fxLayoutAlign="center center"
+									class="cyph-banner default-align warn"
+									*ngIf="errors.length > 0"
 								>
 									<div>
 										<p>
 											<strong cyphTranslate>
-												Please correct the following issues:
+												Please correct the following
+												issues:
 											</strong>
 										</p>
 										<ul>
-											<li *ngFor='let error of errors; trackBy: trackBySelf'>
-												{{error}}
+											<li
+												*ngFor="
+													let error of errors;
+													trackBy: trackBySelf
+												"
+											>
+												{{ error }}
 											</li>
 										</ul>
 									</div>
 								</h3>
 								<div></div>
 								<div
-									fxLayout='row'
-									fxLayoutAlign='center center'
-									fxLayoutGap='32px'
+									fxLayout="row"
+									fxLayoutAlign="center center"
+									fxLayoutGap="32px"
 								>
-									<button mat-button (click)='updateRoute(-1)'>
+									<button
+										mat-button
+										(click)="updateRoute(-1)"
+									>
 										<span cyphTranslate>Previous</span>
 									</button>
 									<button
 										mat-raised-button
-										type='submit'
-										[disabled]='errors.length > 0'
+										type="submit"
+										[disabled]="errors.length > 0"
 									>
 										<span cyphTranslate>Register</span>
 									</button>
@@ -466,66 +659,79 @@
 					</form>
 				</div>
 				<div
-					fxLayout='row'
-					fxLayoutAlign='center center'
-					fxLayoutGap='32px'
-					*ngIf='((tabIndex | async) || 0) !== totalSteps'
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					fxLayoutGap="32px"
+					*ngIf="((tabIndex | async) || 0) !== totalSteps"
 				>
 					<button
 						mat-button
-						(click)='updateRoute(-1)'
-						*ngIf='((tabIndex | async) || 0) > 0'
+						(click)="updateRoute(-1)"
+						*ngIf="((tabIndex | async) || 0) > 0"
 					>
 						<span cyphTranslate>Previous</span>
 					</button>
-					<button mat-button (click)='updateRoute(1)'>
+					<button mat-button (click)="updateRoute(1)">
 						<span cyphTranslate>Next</span>
 					</button>
 				</div>
 			</div>
 
-			<div fxFlex fxLayout='column' fxLayoutGap='32px' *ngIf='(phase | async) === 1'>
-				<div fxLayout='row' fxLayoutAlign='center center' class='description'>
+			<div
+				fxFlex
+				fxLayout="column"
+				fxLayoutGap="32px"
+				*ngIf="(phase | async) === 1"
+			>
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					class="description"
+				>
 					<strong cyphTranslate>One More Thing...</strong>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<div fxLayoutGap='16px'>
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<div fxLayoutGap="16px">
 						<p cyphTranslate>
-							The final step to get your account online is to
-							set up your Master Key.
+							The final step to get your account online is to set
+							up your Master Key.
 						</p>
 						<p cyphTranslate>
 							<span>This is a</span>
 							&ngsp;
 							<em>secret</em>
 							&ngsp;
-							<span>code that protects all your private data.</span>
+							<span
+								>code that protects all your private data.</span
+							>
 						</p>
 					</div>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<h3 class='cyph-banner warn' cyphTranslate>
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<h3 class="cyph-banner warn" cyphTranslate>
 						Make sure that you're alone before you proceed!
 					</h3>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<button mat-button (click)='phase.next(2)'>
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<button mat-button (click)="phase.next(2)">
 						<span cyphTranslate>Master Key Setup</span>
 					</button>
 				</div>
 			</div>
 
-			<div fxFlex fxLayout='column' fxLayoutGap='32px' *ngIf='(phase | async) === 2'>
-				<ng-container *ngTemplateOutlet='masterKeyUI'></ng-container>
+			<div
+				fxFlex
+				fxLayout="column"
+				fxLayoutGap="32px"
+				*ngIf="(phase | async) === 2"
+			>
+				<ng-container *ngTemplateOutlet="masterKeyUI"></ng-container>
 
-				<div fxLayout='row' fxLayoutAlign='center center'>
+				<div fxLayout="row" fxLayoutAlign="center center">
 					<button
 						mat-button
-						[disabled]='(masterKeyReady | async) === false'
-						(click)='
-							phase.next(3);
-							spoiler.next(true);
-						'
+						[disabled]="(masterKeyReady | async) === false"
+						(click)="phase.next(3); spoiler.next(true)"
 					>
 						<span cyphTranslate>Next</span>
 					</button>
@@ -534,41 +740,44 @@
 
 			<div
 				fxFlex
-				fxLayout='column'
-				fxLayoutGap='32px'
-				fxLayoutAlign='center stretch'
-				class='back-button-container'
-				*ngIf='(phase | async) === 3'
+				fxLayout="column"
+				fxLayoutGap="32px"
+				fxLayoutAlign="center stretch"
+				class="back-button-container"
+				*ngIf="(phase | async) === 3"
 			>
 				<button
 					mat-icon-button
 					cyphTranslate
-					class='back'
-					matTooltip='Back'
-					(click)='phase.next(2)'
+					class="back"
+					matTooltip="Back"
+					(click)="phase.next(2)"
 				>
 					<mat-icon>arrow_back</mat-icon>
 				</button>
-				<div fxLayout='row' fxLayoutAlign='center'>
-					<h3 class='cyph-banner warn' *ngIf='(submitError | async) !== undefined'>
-						{{submitError | async}}
+				<div fxLayout="row" fxLayoutAlign="center">
+					<h3
+						class="cyph-banner warn"
+						*ngIf="(submitError | async) !== undefined"
+					>
+						{{ submitError | async }}
 					</h3>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center'>
+				<div fxLayout="row" fxLayoutAlign="center">
 					<div
 						fxFlex
-						fxFlex.sm='95'
-						fxFlex.md='75'
-						fxFlex.gt-md='50'
-						fxLayout='column'
+						fxFlex.sm="95"
+						fxFlex.md="75"
+						fxFlex.gt-md="50"
+						fxLayout="column"
 					>
 						<mat-form-field fxFlex>
 							<input
 								matInput
 								cyphTranslate
-								[ngModel]='(usernameWatcher | async)?.value'
-								name='confirmCyphUsername'
-								placeholder='Confirm Username'
+								[ngModel]="(usernameWatcher | async)?.value"
+								name="confirmCyphUsername"
+								placeholder="Confirm Username"
 								disabled
 								required
 							/>
@@ -577,22 +786,25 @@
 							<input
 								matInput
 								cyphAutofocus
-								[(ngModel)]='finalConfirmation.masterKey'
-								name='confirmMasterKey'
-								[type]='(hidePassword.finalConfirmation | async) ?
-									"password" :
-									"text"
-								'
-								placeholder='Confirm Master Key'
+								[(ngModel)]="finalConfirmation.masterKey"
+								name="confirmMasterKey"
+								[type]="
+									(hidePassword.finalConfirmation | async) ?
+										'password' :
+										'text'
+								"
+								placeholder="Confirm Master Key"
 								required
-								(keyup.enter)='submit()'
+								(keyup.enter)="submit()"
 							/>
 							<mat-icon
 								matSuffix
-								class='suffix-button'
-								(click)='hidePassword.finalConfirmation.next(
-									!hidePassword.finalConfirmation.value
-								)'
+								class="suffix-button"
+								(click)="
+									hidePassword.finalConfirmation.next(
+										!hidePassword.finalConfirmation.value
+									)
+								"
 							>
 								{{
 									(hidePassword.finalConfirmation | async) ?
@@ -603,23 +815,26 @@
 						</mat-form-field>
 					</div>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center'>
-					<button mat-raised-button (click)='submit()'>
+				<div fxLayout="row" fxLayoutAlign="center">
+					<button mat-raised-button (click)="submit()">
 						<span cyphTranslate>Confirm Registration</span>
 					</button>
 				</div>
 			</div>
 		</mat-card-content>
-		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+		<mat-progress-spinner
+			class="global"
+			mode="indeterminate"
+		></mat-progress-spinner>
 	</mat-card>
 </div>
 
 <ng-template #masterKeyUI>
-	<div fxLayout='column' fxLayoutGap='48px' cyphTranslate>
+	<div fxLayout="column" fxLayoutGap="48px" cyphTranslate>
 		<div></div>
 
-		<div fxLayout='row' fxLayoutAlign='center center'>
-			<h3 fxLayout='column' class='cyph-banner default-align warn'>
+		<div fxLayout="row" fxLayoutAlign="center center">
+			<h3 fxLayout="column" class="cyph-banner default-align warn">
 				<div cyphTranslate>
 					<h4>
 						Master Key OPSEC Rules:
@@ -627,8 +842,14 @@
 					<ol>
 						<li>You do not talk about your Master Key.</li>
 						<li><em>You do not talk about your Master Key.</em></li>
-						<li>But seriously, don't share it or reuse it as a password anywhere.</li>
-						<li>Don't even store it in an encrypted password manager.</li>
+						<li>
+							But seriously, don't share it or reuse it as a
+							password anywhere.
+						</li>
+						<li>
+							Don't even store it in an encrypted password
+							manager.
+						</li>
 						<li>
 							<strong>
 								<span>Write it down</span>
@@ -638,14 +859,17 @@
 								<span>and keep it well hidden.</span>
 							</strong>
 						</li>
-						<li>Don't lose it, because we can't help you recover or reset it.</li>
+						<li>
+							Don't lose it, because we can't help you recover or
+							reset it.
+						</li>
 					</ol>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
+				<div fxLayout="row" fxLayoutAlign="center center">
 					<mat-checkbox
 						cyphTranslate
-						[ngModel]='opsecAcknowledgement | async'
-						(ngModelChange)='opsecAcknowledgement.next($event)'
+						[ngModel]="opsecAcknowledgement | async"
+						(ngModelChange)="opsecAcknowledgement.next($event)"
 						required
 					>
 						I accept this responsibility
@@ -655,40 +879,40 @@
 		</div>
 
 		<div
-			fxLayout='row'
-			(click)='useXkcdPassphrase.next(true)'
-			class='password-option'
-			[class.deselected]='(useXkcdPassphrase | async) === false'
-			[class.visibility-hidden]='(opsecAcknowledgement | async) === false'
+			fxLayout="row"
+			(click)="useXkcdPassphrase.next(true)"
+			class="password-option"
+			[class.deselected]="(useXkcdPassphrase | async) === false"
+			[class.visibility-hidden]="(opsecAcknowledgement | async) === false"
 		>
-			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+			<div fxFlex fxLayout="column" fxLayoutGap="16px">
 				<div></div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
+				<div fxLayout="row" fxLayoutAlign="center center">
 					<div
 						fxFlex
-						fxFlex.sm='80'
-						fxFlex.gt-sm='60'
-						class='spoiler'
-						[class.revealed]='(spoiler | async) === false'
-						(click)='
+						fxFlex.sm="80"
+						fxFlex.gt-sm="60"
+						class="spoiler"
+						[class.revealed]="(spoiler | async) === false"
+						(click)="
 							spoiler.next(!spoiler.value);
-							xkcdPassphraseHasBeenViewed.next(true);
-						'
+							xkcdPassphraseHasBeenViewed.next(true)
+						"
 					>
-						<div class='xkcd-passphrase animated fadeIn'>
+						<div class="xkcd-passphrase animated fadeIn">
 							<span
-								*ngIf='spoiler | async'
-								class='animated fadeIn'
+								*ngIf="spoiler | async"
+								class="animated fadeIn"
 							>
 								Click to Reveal Master Key
 							</span>
 							<span
-								*ngIf='(spoiler | async) === false'
-								class='animated fadeIn no-select'
-								(copy)='$event.preventDefault()'
-								(cut)='$event.preventDefault()'
+								*ngIf="(spoiler | async) === false"
+								class="animated fadeIn no-select"
+								(copy)="$event.preventDefault()"
+								(cut)="$event.preventDefault()"
 							>
-								{{xkcdPassphrase | async}}
+								{{ xkcdPassphrase | async }}
 							</span>
 						</div>
 					</div>
@@ -700,96 +924,146 @@
 		<div></div>
 
 		<div
-			fxLayout='row'
-			fxLayoutAlign='center center'
-			[class.visibility-hidden]='(opsecAcknowledgement | async) === false'
+			fxLayout="row"
+			fxLayoutAlign="center center"
+			[class.visibility-hidden]="(opsecAcknowledgement | async) === false"
 		>
 			<mat-accordion>
-				<mat-expansion-panel (afterCollapse)='useXkcdPassphrase.next(true)'>
+				<mat-expansion-panel
+					(afterCollapse)="useXkcdPassphrase.next(true)"
+				>
 					<mat-expansion-panel-header>
 						<span cyphTranslate>Advanced</span>
 					</mat-expansion-panel-header>
-					<div fxFlex fxLayout='column' fxLayoutGap='32px'>
-						<div fxLayout='row' fxLayoutAlign='center center' cyphTranslate>
-							You may pick your own instead, but to ensure your privacy
-							it must be at least 20 characters and very difficult to
-							guess.
+					<div fxFlex fxLayout="column" fxLayoutGap="32px">
+						<div
+							fxLayout="row"
+							fxLayoutAlign="center center"
+							cyphTranslate
+						>
+							You may pick your own instead, but to ensure your
+							privacy it must be at least 20 characters and very
+							difficult to guess.
 						</div>
 						<div
-							fxLayout='row'
+							fxLayout="row"
 							cyphTranslate
-							(click)='useXkcdPassphrase.next(false)'
-							class='password-option'
-							[class.deselected]='useXkcdPassphrase | async'
+							(click)="useXkcdPassphrase.next(false)"
+							class="password-option"
+							[class.deselected]="useXkcdPassphrase | async"
 						>
-							<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-								<div fxLayout='row' fxLayoutAlign='center center'>
+							<div fxFlex fxLayout="column" fxLayoutGap="16px">
+								<div
+									fxLayout="row"
+									fxLayoutAlign="center center"
+								>
 									<h3 cyphTranslate>
 										Option #2: Custom Master Key
 									</h3>
 								</div>
-								<div fxLayout='row' fxLayoutAlign='center center'>
-									<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+								<div
+									fxLayout="row"
+									fxLayoutAlign="center center"
+								>
+									<mat-form-field
+										fxFlex
+										fxFlex.sm="80"
+										fxFlex.gt-sm="60"
+									>
 										<input
 											matInput
 											cyphTranslate
-											[ngModel]='masterKey | async'
-											(ngModelChange)='masterKey.next($event)'
-											name='masterKey'
-											[type]='(hidePassword.masterKey | async) ?
-												"password" :
-												"text"
-											'
-											placeholder='Master Key'
-											[required]='(useXkcdPassphrase | async) === false'
-											[minlength]='masterKeyLength'
+											[ngModel]="masterKey | async"
+											(ngModelChange)="
+												masterKey.next($event)
+											"
+											name="masterKey"
+											[type]="
+												(hidePassword.masterKey
+												| async) ?
+													'password' :
+													'text'
+											"
+											placeholder="Master Key"
+											[required]="
+												(useXkcdPassphrase | async) ===
+												false
+											"
+											[minlength]="masterKeyLength"
 										/>
 										<mat-icon
 											matSuffix
-											class='suffix-button'
-											(click)='hidePassword.masterKey.next(
-												!hidePassword.masterKey.value
-											)'
+											class="suffix-button"
+											(click)="
+												hidePassword.masterKey.next(
+													!hidePassword.masterKey
+														.value
+												)
+											"
 										>
 											{{
-												(hidePassword.masterKey | async) ?
+												(hidePassword.masterKey
+												| async) ?
 													'visibility' :
 													'visibility_off'
 											}}
 										</mat-icon>
 									</mat-form-field>
 								</div>
-								<div fxLayout='row' fxLayoutAlign='center center'>
-									<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+								<div
+									fxLayout="row"
+									fxLayoutAlign="center center"
+								>
+									<mat-form-field
+										fxFlex
+										fxFlex.sm="80"
+										fxFlex.gt-sm="60"
+									>
 										<input
 											matInput
 											cyphTranslate
-											[formControl]='masterKeyConfirm'
-											name='masterKeyConfirm'
-											[type]='(hidePassword.masterKeyConfirm | async) ?
-												"password" :
-												"text"
-											'
-											placeholder='Confirm Master Key'
-											[required]='(useXkcdPassphrase | async) === false'
+											[formControl]="masterKeyConfirm"
+											name="masterKeyConfirm"
+											[type]="
+												(hidePassword.masterKeyConfirm
+												| async) ?
+													'password' :
+													'text'
+											"
+											placeholder="Confirm Master Key"
+											[required]="
+												(useXkcdPassphrase | async) ===
+												false
+											"
 										/>
 										<mat-icon
 											matSuffix
-											class='suffix-button'
-											(click)='hidePassword.masterKeyConfirm.next(
-												!hidePassword.masterKeyConfirm.value
-											)'
+											class="suffix-button"
+											(click)="
+												hidePassword.masterKeyConfirm.next(
+													!hidePassword
+														.masterKeyConfirm.value
+												)
+											"
 										>
 											{{
-												(hidePassword.masterKeyConfirm | async) ?
+												(hidePassword.masterKeyConfirm
+												| async) ?
 													'visibility' :
 													'visibility_off'
 											}}
 										</mat-icon>
-										<mat-error *ngIf='
-											(masterKeyConfirmWatcher | async)?.hasError("mismatch")
-										'>
-											{{stringsService.masterKeyMismatch}}
+										<mat-error
+											*ngIf="
+												(
+													masterKeyConfirmWatcher
+													| async
+												)?.hasError('mismatch')
+											"
+										>
+											{{
+												stringsService.masterKeyMismatch
+											}}
 										</mat-error>
 									</mat-form-field>
 								</div>
@@ -805,123 +1079,131 @@
 </ng-template>
 
 <ng-template #lockScreenUI>
-	<div fxFlex fxLayout='column' fxLayoutGap='48px' cyphTranslate>
-		<ng-container *ngIf='!hidePinDescription'>
+	<div fxFlex fxLayout="column" fxLayoutGap="48px" cyphTranslate>
+		<ng-container *ngIf="!hidePinDescription">
 			<div
-				fxLayout='row'
-				fxLayoutAlign='center center'
-				class='description'
+				fxLayout="row"
+				fxLayoutAlign="center center"
+				class="description"
 			>
-				The lock screen password is used to block access to your
-				account while you're away.
+				The lock screen password is used to block access to your account
+				while you're away.
 			</div>
 
-			<div fxLayout='row' fxLayoutAlign='center center'>
+			<div fxLayout="row" fxLayoutAlign="center center">
 				<span>
 					<span cyphTranslate>
 						This should be simple and memorable. However, a longer
 						one will be more secure if you sign in to
 					</span>
 					&ngsp;
-					<span>{{stringsService.product}}</span>
+					<span>{{ stringsService.product }}</span>
 					&ngsp;
 					<span cyphTranslate>on a shared device.</span>
 				</span>
 			</div>
 		</ng-container>
 
-		<ng-container *ngIf='envService.isMobileOS'>
-			<ng-container *ngTemplateOutlet='
-				lockScreenPinUI; context: {order: "1"}
-			'></ng-container>
-			<ng-container *ngTemplateOutlet='
-				lockScreenPasswordUI; context: {order: "2"}
-			'></ng-container>
+		<ng-container *ngIf="envService.isMobileOS">
+			<ng-container
+				*ngTemplateOutlet="lockScreenPinUI; context: {order: '1'}"
+			></ng-container>
+			<ng-container
+				*ngTemplateOutlet="lockScreenPasswordUI; context: {order: '2'}"
+			></ng-container>
 		</ng-container>
 
-		<ng-container *ngIf='!envService.isMobileOS'>
-			<ng-container *ngTemplateOutlet='
-				lockScreenPasswordUI; context: {order: "1"}
-			'></ng-container>
-			<ng-container *ngTemplateOutlet='
-				lockScreenPinUI; context: {order: "2"}
-			'></ng-container>
+		<ng-container *ngIf="!envService.isMobileOS">
+			<ng-container
+				*ngTemplateOutlet="lockScreenPasswordUI; context: {order: '1'}"
+			></ng-container>
+			<ng-container
+				*ngTemplateOutlet="lockScreenPinUI; context: {order: '2'}"
+			></ng-container>
 		</ng-container>
 	</div>
 </ng-template>
 
-<ng-template #lockScreenPinUI let-order='order'>
+<ng-template #lockScreenPinUI let-order="order">
 	<div
-		fxLayout='row'
-		(click)='useLockScreenPIN.next(true)'
-		class='password-option'
-		[class.deselected]='(useLockScreenPIN | async) === false'
+		fxLayout="row"
+		(click)="useLockScreenPIN.next(true)"
+		class="password-option"
+		[class.deselected]="(useLockScreenPIN | async) === false"
 	>
-		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-			<div fxLayout='row' fxLayoutAlign='center center'>
+		<div fxFlex fxLayout="column" fxLayoutGap="16px">
+			<div fxLayout="row" fxLayoutAlign="center center">
 				<h3>
 					<span cyphTranslate>Option</span>
 					&ngsp;
-					<span>#{{order}}: {{stringsService.lockScreenPIN}}</span>
+					<span
+						>#{{ order }}: {{ stringsService.lockScreenPIN }}</span
+					>
 				</h3>
 			</div>
-			<div fxLayout='row' fxLayoutAlign='center center'>
+			<div fxLayout="row" fxLayoutAlign="center center">
 				<cyph-pin-input
 					fxFlex
-					fxFlex.sm='80'
-					fxFlex.gt-sm='60'
-					[ngModel]='lockScreenPIN | async'
-					(ngModelChange)='lockScreenPIN.next($event)'
-					name='lockScreenPIN'
-					[autofocus]='order === "1"'
-					[hide]='hidePassword.lockScreenPIN'
-					[required]='useLockScreenPIN | async'
+					fxFlex.sm="80"
+					fxFlex.gt-sm="60"
+					[ngModel]="lockScreenPIN | async"
+					(ngModelChange)="lockScreenPIN.next($event)"
+					name="lockScreenPIN"
+					[autofocus]="order === '1'"
+					[hide]="hidePassword.lockScreenPIN"
+					[required]="useLockScreenPIN | async"
 				></cyph-pin-input>
 			</div>
 		</div>
 	</div>
 </ng-template>
 
-<ng-template #lockScreenPasswordUI let-order='order'>
+<ng-template #lockScreenPasswordUI let-order="order">
 	<div
-		fxLayout='row'
+		fxLayout="row"
 		cyphTranslate
-		(click)='useLockScreenPIN.next(false)'
-		class='password-option'
-		[class.deselected]='useLockScreenPIN | async'
+		(click)="useLockScreenPIN.next(false)"
+		class="password-option"
+		[class.deselected]="useLockScreenPIN | async"
 	>
-		<div fxFlex fxLayout='column' fxLayoutGap='16px'>
-			<div fxLayout='row' fxLayoutAlign='center center'>
+		<div fxFlex fxLayout="column" fxLayoutGap="16px">
+			<div fxLayout="row" fxLayoutAlign="center center">
 				<h3>
 					<span cyphTranslate>Option</span>
 					&ngsp;
-					<span>#{{order}}: {{stringsService.lockScreenPassword}}</span>
+					<span
+						>#{{ order }}:
+						{{ stringsService.lockScreenPassword }}</span
+					>
 				</h3>
 			</div>
-			<div fxLayout='row' fxLayoutAlign='center center'>
-				<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+			<div fxLayout="row" fxLayoutAlign="center center">
+				<mat-form-field fxFlex fxFlex.sm="80" fxFlex.gt-sm="60">
 					<input
 						matInput
 						cyphTranslate
-						[ngModel]='lockScreenPassword | async'
-						(ngModelChange)='lockScreenPassword.next($event)'
+						[ngModel]="lockScreenPassword | async"
+						(ngModelChange)="lockScreenPassword.next($event)"
 						cyphAutofocus
-						[cyphAutofocusEnabled]='order === "1"'
-						name='lockScreenPassword'
-						[type]='(hidePassword.lockScreenPassword | async) ?
-							"password" :
-							"text"
-						'
-						placeholder='Lock Screen Password'
-						[required]='(useLockScreenPIN | async) === false'
-						[minlength]='lockScreenPasswordLength'
+						[cyphAutofocusEnabled]="order === '1'"
+						name="lockScreenPassword"
+						[type]="
+							(hidePassword.lockScreenPassword | async) ?
+								'password' :
+								'text'
+						"
+						placeholder="Lock Screen Password"
+						[required]="(useLockScreenPIN | async) === false"
+						[minlength]="lockScreenPasswordLength"
 					/>
 					<mat-icon
 						matSuffix
-						class='suffix-button'
-						(click)='hidePassword.lockScreenPassword.next(
-							!hidePassword.lockScreenPassword.value
-						)'
+						class="suffix-button"
+						(click)="
+							hidePassword.lockScreenPassword.next(
+								!hidePassword.lockScreenPassword.value
+							)
+						"
 					>
 						{{
 							(hidePassword.lockScreenPassword | async) ?
@@ -931,26 +1213,29 @@
 					</mat-icon>
 				</mat-form-field>
 			</div>
-			<div fxLayout='row' fxLayoutAlign='center center'>
-				<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+			<div fxLayout="row" fxLayoutAlign="center center">
+				<mat-form-field fxFlex fxFlex.sm="80" fxFlex.gt-sm="60">
 					<input
 						matInput
 						cyphTranslate
-						[formControl]='lockScreenPasswordConfirm'
-						name='lockScreenPasswordConfirm'
-						[type]='(hidePassword.lockScreenPasswordConfirm | async) ?
-							"password" :
-							"text"
-						'
-						placeholder='Confirm Lock Screen Password'
-						[required]='(useLockScreenPIN | async) === false'
+						[formControl]="lockScreenPasswordConfirm"
+						name="lockScreenPasswordConfirm"
+						[type]="
+							(hidePassword.lockScreenPasswordConfirm | async) ?
+								'password' :
+								'text'
+						"
+						placeholder="Confirm Lock Screen Password"
+						[required]="(useLockScreenPIN | async) === false"
 					/>
 					<mat-icon
 						matSuffix
-						class='suffix-button'
-						(click)='hidePassword.lockScreenPasswordConfirm.next(
-							!hidePassword.lockScreenPasswordConfirm.value
-						)'
+						class="suffix-button"
+						(click)="
+							hidePassword.lockScreenPasswordConfirm.next(
+								!hidePassword.lockScreenPasswordConfirm.value
+							)
+						"
 					>
 						{{
 							(hidePassword.lockScreenPasswordConfirm | async) ?
@@ -958,10 +1243,14 @@
 								'visibility_off'
 						}}
 					</mat-icon>
-					<mat-error *ngIf='
-						(lockScreenPasswordConfirmWatcher | async)?.hasError("mismatch")
-					'>
-						{{stringsService.lockScreenPasswordMismatch}}
+					<mat-error
+						*ngIf="
+							(
+								lockScreenPasswordConfirmWatcher | async
+							)?.hasError('mismatch')
+						"
+					>
+						{{ stringsService.lockScreenPasswordMismatch }}
 					</mat-error>
 				</mat-form-field>
 			</div>

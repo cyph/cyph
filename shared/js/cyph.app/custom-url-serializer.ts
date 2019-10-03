@@ -1,6 +1,5 @@
 import {DefaultUrlSerializer, UrlTree} from '@angular/router';
 
-
 /** https://github.com/angular/angular/issues/16621 */
 export class CustomUrlSerializer extends DefaultUrlSerializer {
 	/** @inheritDoc */

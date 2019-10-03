@@ -6,17 +6,22 @@ import {cacheObservable} from './flatten-observable';
 import {lockFunction} from './lock';
 import {resolvable} from './wait';
 
-
 /** @ignore */
-const getOrSetDefaultAsyncData	= new Map<Map<any, any>, Map<any, {
-	setLock: LockFunction;
-	setResolver: IResolvable<void>;
-}>>();
+const getOrSetDefaultAsyncData = new Map<
+	Map<any, any>,
+	Map<
+		any,
+		{
+			setLock: LockFunction;
+			setResolver: IResolvable<void>;
+		}
+	>
+>();
 
 /** Gets a value from a map and sets a default value if none had previously been set. */
-export const getOrSetDefault	= <K, V> (
-	map: Map<K, V>|undefined,
-	key: K|undefined,
+export const getOrSetDefault = <K, V>(
+	map: Map<K, V> | undefined,
+	key: K | undefined,
 	defaultValue: () => V
 ) : V => {
 	if (map === undefined || key === undefined) {
@@ -27,7 +32,7 @@ export const getOrSetDefault	= <K, V> (
 		map.set(key, defaultValue());
 	}
 
-	const value	= map.get(key);
+	const value = map.get(key);
 
 	if (value === undefined) {
 		throw new Error("util/getOrSetDefault doesn't support nullable types.");
@@ -37,28 +42,32 @@ export const getOrSetDefault	= <K, V> (
 };
 
 /** Async variant of getOrSetDefault. */
-export const getOrSetDefaultAsync	= async <K, V> (
-	map: MaybePromise<Map<K, V>|undefined>,
-	key: MaybePromise<K|undefined>,
+export const getOrSetDefaultAsync = async <K, V>(
+	map: MaybePromise<Map<K, V> | undefined>,
+	key: MaybePromise<K | undefined>,
 	defaultValue: () => MaybePromise<V>,
 	lock: boolean = true
 ) : Promise<V> => {
-	const k	= await key;
-	const m	= await map;
+	const k = await key;
+	const m = await map;
 
 	if (m === undefined || k === undefined) {
 		return defaultValue();
 	}
 
 	if (!m.has(k)) {
-		const {setLock, setResolver}	= getOrSetDefault(
+		const {setLock, setResolver} = getOrSetDefault(
 			getOrSetDefault(
 				getOrSetDefaultAsyncData,
 				m,
-				() => new Map<any, {
-					setLock: LockFunction;
-					setResolver: IResolvable<void>;
-				}>()
+				() =>
+					new Map<
+						any,
+						{
+							setLock: LockFunction;
+							setResolver: IResolvable<void>;
+						}
+					>()
 			),
 			k,
 			() => ({
@@ -67,7 +76,7 @@ export const getOrSetDefaultAsync	= async <K, V> (
 			})
 		);
 
-		const setValue		= (v: V) => {
+		const setValue = (v: V) => {
 			m.set(k, v);
 			setResolver.resolve();
 		};
@@ -78,39 +87,40 @@ export const getOrSetDefaultAsync	= async <K, V> (
 					return;
 				}
 
-				const v	= await Promise.race([
-					defaultValue(),
+				const v = await Promise.race([
+					Promise.resolve(defaultValue()),
 					setResolver.promise
 				]);
 
 				if (v !== undefined && !m.has(k)) {
 					setValue(v);
 				}
-			}).catch(
-				() => {}
-			);
+			}).catch(() => {});
 		}
 		else {
 			setValue(await defaultValue());
 		}
 	}
 
-	const value	= m.get(k);
+	const value = m.get(k);
 
 	if (value === undefined) {
-		throw new Error("util/getOrSetDefaultAsync doesn't support nullable types.");
+		throw new Error(
+			"util/getOrSetDefaultAsync doesn't support nullable types."
+		);
 	}
 
 	return value;
 };
 
 /** Observable variant of getOrSetDefault. */
-export const getOrSetDefaultObservable	= <K, V> (
+export const getOrSetDefaultObservable = <K, V>(
 	map: MaybePromise<Map<K, Observable<V>>>,
 	key: MaybePromise<K>,
 	defaultValue: () => MaybePromise<Observable<V>>,
 	subscriptions?: Subscription[]
-) : Observable<V> => cacheObservable<V>(
-	getOrSetDefaultAsync(map, key, defaultValue),
-	subscriptions
-);
+) : Observable<V> =>
+	cacheObservable<V>(
+		getOrSetDefaultAsync(map, key, defaultValue),
+		subscriptions
+	);

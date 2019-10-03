@@ -11,93 +11,104 @@ import {parse, stringify, toQueryString} from './serialization';
 import {staticHttpClient} from './static-services';
 import {sleep} from './wait';
 
-
 /** Performs HTTP request. */
-const baseRequest	= <R, T> (
+const baseRequest = <R, T>(
 	o: {
 		contentType?: string;
 		data?: any;
 		discardErrors?: boolean;
-		headers?: Record<string, string|string[]>;
+		headers?: Record<string, string | string[]>;
 		method?: string;
 		retries?: number;
 		timeout?: number;
 		url: string;
 	},
-	responseType: 'arraybuffer'|'blob'|'json'|'text',
+	responseType: 'arraybuffer' | 'blob' | 'json' | 'text',
 	getResponseData: (res: HttpResponse<T>) => MaybePromise<R>
 ) : {
 	progress: Observable<number>;
 	result: Promise<R>;
 } => {
-	const progress	= new BehaviorSubject(0);
+	const progress = new BehaviorSubject(0);
 
 	return {
 		progress,
 		/* tslint:disable-next-line:cyclomatic-complexity */
 		result: (async () => {
-			const httpClient	= await staticHttpClient;
+			const httpClient = await staticHttpClient;
 
-			const headers	= o.headers || {};
-			const method	= o.method || 'GET';
-			const retries	= o.retries === undefined ? 0 : o.retries;
-			let contentType	= o.contentType || '';
-			let data		= o.data;
-			let url			= o.url;
+			const headers = o.headers || {};
+			const method = o.method || 'GET';
+			const retries = o.retries === undefined ? 0 : o.retries;
+			let contentType = o.contentType || '';
+			let data = o.data;
+			let url = o.url;
 
 			if (!contentType) {
 				if (url.slice(-5) === '.json') {
-					contentType	= 'application/json';
+					contentType = 'application/json';
 				}
 				else if (responseType === 'json' || responseType === 'text') {
-					contentType	= 'application/x-www-form-urlencoded';
+					contentType = 'application/x-www-form-urlencoded';
 				}
 			}
 
 			if (data && method === 'GET') {
-				url += '?' + (
-					typeof data === 'object' ?
+				url +=
+					'?' +
+					(typeof data === 'object' ?
 						toQueryString(data) :
-						(<string> data.toString())
-				);
+						<string> data.toString());
 
-				data	= undefined;
+				data = undefined;
 			}
 			else if (typeof data === 'object') {
-				data	= contentType === 'application/json' ?
-					stringify(data) :
-					toQueryString(data)
-				;
+				data =
+					contentType === 'application/json' ?
+						stringify(data) :
+						toQueryString(data);
 			}
 
-			let response: R|undefined;
-			let error: Error|undefined;
-			let statusOk	= false;
+			let response: R | undefined;
+			let error: Error | undefined;
+			let statusOk = false;
 
-			for (let i = 0 ; !statusOk && i <= retries ; ++i) {
+			for (let i = 0; !statusOk && i <= retries; ++i) {
 				try {
 					progress.next(0);
 
-					const req	= httpClient.request<T>(new HttpRequest(method, url, data, {
-						headers: new HttpHeaders({
-							...(contentType ? {'Content-Type': contentType} : {}),
-							...headers
-						}),
-						responseType
-					}));
+					const req = httpClient.request<T>(
+						new HttpRequest(method, url, data, {
+							headers: new HttpHeaders({
+								...(contentType ?
+									{'Content-Type': contentType} :
+									{}),
+								...headers
+							}),
+							responseType
+						})
+					);
 
-					const res	= await Promise.race([
+					const res = await Promise.race([
 						new Promise<HttpResponse<T>>((resolve, reject) => {
 							let last: HttpResponse<T>;
 
 							/* tslint:disable-next-line:rxjs-no-ignored-subscription */
 							req.subscribe(
 								e => {
-									if (e.type === HttpEventType.DownloadProgress) {
-										progress.next(e.loaded / (e.total || e.loaded) * 100);
+									if (
+										e.type ===
+										HttpEventType.DownloadProgress
+									) {
+										progress.next(
+											(e.loaded / (e.total || e.loaded)) *
+												100
+										);
 									}
-									else if (e.type === HttpEventType.Response) {
-										last	= e;
+									else if (
+										e.type === HttpEventType.Response
+									) {
+										last = e;
 									}
 								},
 								reject,
@@ -111,31 +122,32 @@ const baseRequest	= <R, T> (
 								}
 							);
 						}),
-						...(!o.timeout ? [] : [
-							sleep(o.timeout).then(async () => Promise.reject('Request timeout.'))
-						])
+						...(!o.timeout ?
+							[] :
+							[
+								sleep(o.timeout).then(async () =>
+									Promise.reject('Request timeout.')
+								)
+							])
 					]);
 
-					statusOk	= res.ok;
-					response	= await getResponseData(res);
+					statusOk = res.ok;
+					response = await getResponseData(res);
 				}
 				catch (err) {
-					error		= err;
-					statusOk	= false;
+					error = err;
+					statusOk = false;
 				}
 			}
 
 			if (!statusOk || response === undefined) {
-				const err	=
-					(
-						error instanceof HttpErrorResponse && error.error ?
-							new Error(error.error) :
-							undefined
-					) ||
+				const err =
+					(error instanceof HttpErrorResponse && error.error ?
+						new Error(error.error) :
+						undefined) ||
 					error ||
 					response ||
-					new Error('Request failed.')
-				;
+					new Error('Request failed.');
 
 				progress.error(err);
 				throw err;
@@ -149,10 +161,10 @@ const baseRequest	= <R, T> (
 };
 
 /** Performs HTTP request. */
-export const request	= async (o: {
+export const request = async (o: {
 	contentType?: string;
 	data?: any;
-	headers?: Record<string, string|string[]>;
+	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
@@ -164,10 +176,10 @@ export const request	= async (o: {
 };
 
 /** Performs HTTP request. */
-export const requestByteStream	= (o: {
+export const requestByteStream = (o: {
 	contentType?: string;
 	data?: any;
-	headers?: Record<string, string|string[]>;
+	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
@@ -182,10 +194,10 @@ export const requestByteStream	= (o: {
 };
 
 /** Performs HTTP request. */
-export const requestBytes	= async (o: {
+export const requestBytes = async (o: {
 	contentType?: string;
 	data?: any;
-	headers?: Record<string, string|string[]>;
+	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
@@ -195,16 +207,16 @@ export const requestBytes	= async (o: {
 };
 
 /** Performs HTTP request. */
-export const requestMaybeJSON	= async (o: {
+export const requestMaybeJSON = async (o: {
 	contentType?: string;
 	data?: any;
-	headers?: Record<string, string|string[]>;
+	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
 	url: string;
 }) : Promise<any> => {
-	const response	= await request(o);
+	const response = await request(o);
 
 	try {
 		return parse(response);
@@ -215,16 +227,14 @@ export const requestMaybeJSON	= async (o: {
 };
 
 /** Performs HTTP request. */
-export const requestJSON	= async (o: {
+export const requestJSON = async (o: {
 	contentType?: string;
 	data?: any;
-	headers?: Record<string, string|string[]>;
+	headers?: Record<string, string | string[]>;
 	method?: string;
 	retries?: number;
 	timeout?: number;
 	url: string;
 }) : Promise<any> => {
-	return (await baseRequest<any, any>(o, 'json', res =>
-		res.body
-	)).result;
+	return (await baseRequest<any, any>(o, 'json', res => res.body)).result;
 };

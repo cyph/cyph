@@ -131,7 +131,8 @@
 			}
 		}
 
-		h4.media-title, .mat-button-wrapper {
+		h4.media-title,
+		.mat-button-wrapper {
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			overflow-x: hidden;
@@ -142,7 +143,8 @@
 			@include center;
 		}
 
-		.centered, .centered-fake {
+		.centered,
+		.centered-fake {
 			max-width: 50%;
 			max-height: 75%;
 
@@ -178,14 +180,14 @@
 		&.self-destruct {
 			text-align: center;
 
-									/*
-									From ec9eaff, for reference if wanted in the future:
+			/*
+												From ec9eaff, for reference if wanted in the future:
 
-									.message-text * {
-										height: 100vh;
-										font-weight: 25vh;
-									}
-									*/
+												.message-text * {
+													height: 100vh;
+													font-weight: 25vh;
+												}
+												*/
 		}
 
 		.self-destruct-cover {
@@ -245,7 +247,8 @@
 				max-height: 50vh;
 			}
 
-			.centered, .centered-fake {
+			.centered,
+			.centered-fake {
 				max-width: 100%;
 			}
 		}

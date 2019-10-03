@@ -2,40 +2,33 @@
  * @file Redirect browsers known not to work with Cyph.
  */
 
+const userAgent = navigator.userAgent.toLowerCase();
 
-const userAgent			= navigator.userAgent.toLowerCase();
+const isIOS = /ipad|iphone|ipod/.test(userAgent);
 
-const isIOS				= /ipad|iphone|ipod/.test(userAgent);
-
-
-const isFirefoxOS		=
+const isFirefoxOS =
 	/firefox/.test(userAgent) &&
 	/mobile/.test(userAgent) &&
-	!/android/.test(userAgent)
-;
+	!/android/.test(userAgent);
 
-const isOldIOS			=
+const isOldIOS =
 	isIOS &&
 	/* tslint:disable-next-line:ban */
-	(parseInt((userAgent.match(/os (\d+)_(\d+)_?(\d+)?/) || [])[1], 10) || 0) < 9
-;
+	(parseInt((userAgent.match(/os (\d+)_(\d+)_?(\d+)?/) || [])[1], 10) || 0) <
+		9;
 
-const isOldSafari		=
+const isOldSafari =
 	!isIOS &&
 	navigator.vendor === 'Apple Computer, Inc.' &&
 	/* tslint:disable-next-line:ban */
-	(parseInt((userAgent.match(/version\/(\d+)/) || [])[1], 10) || 0) < 9
-;
+	(parseInt((userAgent.match(/version\/(\d+)/) || [])[1], 10) || 0) < 9;
 
-const isStockAndroid	=
-	/android/.test(userAgent) &&
-	/version\/\d\.\d/.test(userAgent)
-;
+const isStockAndroid =
+	/android/.test(userAgent) && /version\/\d\.\d/.test(userAgent);
 
-const isOldOpera		= /opera/.test(navigator.userAgent);
+const isOldOpera = /opera/.test(navigator.userAgent);
 
-const isIE				= /msie |trident\/|iemobile/.test(userAgent);
-
+const isIE = /msie |trident\/|iemobile/.test(userAgent);
 
 if (
 	isFirefoxOS ||
@@ -45,5 +38,5 @@ if (
 	isOldOpera ||
 	isIE
 ) {
-	location.pathname	= '/unsupportedbrowser';
+	location.pathname = '/unsupportedbrowser';
 }

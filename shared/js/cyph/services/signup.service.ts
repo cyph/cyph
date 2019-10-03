@@ -5,24 +5,23 @@ import {request} from '../util/request';
 import {AnalyticsService} from './analytics.service';
 import {EnvService} from './env.service';
 
-
 /**
  * Angular service that handles waitlist signups.
  */
 @Injectable()
 export class SignupService extends BaseProvider {
 	/** Signup data entered by user. */
-	public readonly data	= {
+	public readonly data = {
 		email: new BehaviorSubject<string>(''),
 		inviteCode: new BehaviorSubject<string>(''),
 		name: new BehaviorSubject<string>('')
 	};
 
 	/** Used to track which users signed up through a promo page. */
-	public readonly promo	= new BehaviorSubject<string>('');
+	public readonly promo = new BehaviorSubject<string>('');
 
 	/** Ordinal number indicating which screen of this form is active. */
-	public readonly state	= new BehaviorSubject<number>(0);
+	public readonly state = new BehaviorSubject<number>(0);
 
 	/** Submits signup data to server. */
 	public async submit () : Promise<void> {
@@ -36,7 +35,7 @@ export class SignupService extends BaseProvider {
 			this.state.next(this.state.value + 1);
 		}
 
-		const signupResult	= await request({
+		const signupResult = await request({
 			data: {
 				email: this.data.email.value,
 				inviteCode: this.data.inviteCode.value,

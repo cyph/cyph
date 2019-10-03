@@ -1,7 +1,6 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 
-
 /**
  * Adds router-link CSS class to router links.
  */
@@ -12,9 +11,11 @@ import {BaseProvider} from '../base-provider';
 export class RouterLinkDirective extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		if (this.elementRef.nativeElement) {
-			this.renderer.addClass(this.elementRef.nativeElement, 'router-link');
+		if (!this.elementRef.nativeElement) {
+			return;
 		}
+
+		this.renderer.addClass(this.elementRef.nativeElement, 'router-link');
 	}
 
 	constructor (

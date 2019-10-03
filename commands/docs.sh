@@ -8,9 +8,7 @@ dir="$PWD"
 ./commands/copyworkspace.sh ~/docs
 cd ~/docs/cyph.app
 
-cp ../README.md ../LICENSE ./
-echo -e "\n---\n\n$(cat ../PATENTS)" >> README.md
-rm -rf src/js/cyph.com src/js/native src/js/tslint-rules "${dir}/shared/js/docs"
+rm -rf src/js/cyph.com src/js/native src/js/tslint-rules "${dir}/docs"
 
 compodoc \
 	-n 'Cyph Docs' \
@@ -19,4 +17,4 @@ compodoc \
 	--disableProtected \
 	--disableInternal
 
-mv documentation "${dir}/shared/js/docs"
+mv documentation "${dir}/docs"

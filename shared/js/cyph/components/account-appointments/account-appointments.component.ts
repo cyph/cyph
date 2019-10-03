@@ -9,7 +9,12 @@ import memoize from 'lodash-es/memoize';
 import {CalendarComponent} from 'ng-fullcalendar';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
-import {AccountUserTypes, CallTypes, IAccountFileRecord, IAppointment} from '../../proto';
+import {
+	AccountUserTypes,
+	CallTypes,
+	IAccountFileRecord,
+	IAppointment
+} from '../../proto';
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -23,7 +28,6 @@ import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {getDateTimeString, watchTimestamp} from '../../util/time';
 
-
 /**
  * Angular component for account appointments UI.
  */
@@ -33,25 +37,32 @@ import {getDateTimeString, watchTimestamp} from '../../util/time';
 	styleUrls: ['./account-appointments.component.scss'],
 	templateUrl: './account-appointments.component.html'
 })
-export class AccountAppointmentsComponent extends BaseProvider implements AfterViewInit {
+export class AccountAppointmentsComponent extends BaseProvider
+	implements AfterViewInit {
 	/** @ignore */
-	private calendarEvents: {end: number; start: number; title: string}[]	= [];
+	private calendarEvents: {end: number; start: number; title: string}[] = [];
 
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes			= AccountUserTypes;
+	public readonly accountUserTypes = AccountUserTypes;
 
 	/** @see CalendarComponent */
-	@ViewChild(CalendarComponent, {static: false}) public calendar?: CalendarComponent;
+	@ViewChild(CalendarComponent, {static: false})
+	public calendar?: CalendarComponent;
 
 	/** Calendar configuration. */
-	public readonly calendarOptions: Options	= {
+	public readonly calendarOptions: Options = {
 		aspectRatio: 1.5,
 		defaultView: 'agendaDay',
 		editable: false,
 		eventLimit: false,
 		eventSources: [
 			{
-				events: (_START: any, _END: any, _TIMEZONE: any, callback: Function) => {
+				events: (
+					_START: any,
+					_END: any,
+					_TIMEZONE: any,
+					callback: Function
+				) => {
 					callback(this.calendarEvents);
 				}
 			}
@@ -65,18 +76,18 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	};
 
 	/** @see CallTypes */
-	public readonly callTypes					= CallTypes;
+	public readonly callTypes = CallTypes;
 
 	/** @see getDateTimeSting */
-	public readonly getDateTimeString			= getDateTimeString;
+	public readonly getDateTimeString = getDateTimeString;
 
 	/** Gets user. */
-	public readonly getUser						= memoize(async (username: string) =>
+	public readonly getUser = memoize(async (username: string) =>
 		this.accountUserLookupService.getUser(username, false)
 	);
 
 	/** @see trackByID */
-	public readonly trackByID					= trackByID;
+	public readonly trackByID = trackByID;
 
 	/** Calendar clickButton event handler. */
 	public calendarClickButton (_EVENT_DETAIL: any) : void {}
@@ -88,10 +99,14 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 	public calendarUpdateEvent (_EVENT_DETAIL: any) : void {}
 
 	/** Current time - used to check if appointment is within range. */
-	public readonly timestampWatcher			= watchTimestamp();
+	public readonly timestampWatcher = watchTimestamp();
 
 	/** Accepts appointment request. */
-	public async accept ({appointment, friend, record}: {
+	public async accept ({
+		appointment,
+		friend,
+		record
+	}: {
 		appointment: IAppointment;
 		friend?: string;
 		record: IAccountFileRecord;
@@ -103,23 +118,26 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 				undefined,
 				appointment
 			),
-			!friend && !appointment.fromEmail ? undefined : this.databaseService.callFunction(
-				'appointmentInvite',
-				{
+			!friend && !appointment.fromEmail ?
+				undefined :
+				this.databaseService.callFunction('appointmentInvite', {
 					callType:
-						appointment.calendarInvite.callType === CallTypes.Audio ?
+						appointment.calendarInvite.callType ===
+						CallTypes.Audio ?
 							'audio' :
-						appointment.calendarInvite.callType === CallTypes.Video ?
+						appointment.calendarInvite.callType ===
+							CallTypes.Video ?
 							'video' :
-							undefined
-					,
+							undefined,
 					eventDetails: {
 						endTime: appointment.calendarInvite.endTime,
 						startTime: appointment.calendarInvite.startTime
 					},
-					to: friend || {email: appointment.fromEmail, name: appointment.fromName}
-				}
-			)
+					to: friend || {
+						email: appointment.fromEmail,
+						name: appointment.fromName
+					}
+				})
 		]);
 	}
 
@@ -132,17 +150,19 @@ export class AccountAppointmentsComponent extends BaseProvider implements AfterV
 		}
 
 		this.subscriptions.push(
-			this.accountAppointmentsService.allAppointments.subscribe(appointments => {
-				this.calendarEvents	= appointments.map(({appointment}) => ({
-					end: appointment.calendarInvite.endTime,
-					start: appointment.calendarInvite.startTime,
-					title: appointment.calendarInvite.title
-				}));
+			this.accountAppointmentsService.allAppointments.subscribe(
+				appointments => {
+					this.calendarEvents = appointments.map(({appointment}) => ({
+						end: appointment.calendarInvite.endTime,
+						start: appointment.calendarInvite.startTime,
+						title: appointment.calendarInvite.title
+					}));
 
-				if (this.calendar) {
-					this.calendar.fullCalendar('refetchEvents');
+					if (this.calendar) {
+						this.calendar.fullCalendar('refetchEvents');
+					}
 				}
-			})
+			)
 		);
 	}
 

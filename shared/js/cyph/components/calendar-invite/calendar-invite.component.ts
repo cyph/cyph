@@ -29,7 +29,6 @@ import {
 } from '../../util/time';
 import {translate} from '../../util/translate';
 
-
 /**
  * Angular component for calendar invite UI.
  */
@@ -46,33 +45,30 @@ import {translate} from '../../util/translate';
 	styleUrls: ['./calendar-invite.component.scss'],
 	templateUrl: './calendar-invite.component.html'
 })
-export class CalendarInviteComponent
-extends BaseProvider
-implements ControlValueAccessor, OnChanges, OnInit {
+export class CalendarInviteComponent extends BaseProvider
+	implements ControlValueAccessor, OnChanges, OnInit {
 	/** Value. */
-	public readonly calendarInvite									=
-		new BehaviorSubject<ICalendarInvite|undefined>(undefined)
-	;
+	public readonly calendarInvite = new BehaviorSubject<
+		ICalendarInvite | undefined
+	>(undefined);
 
 	/** @see CallTypes */
-	public readonly callTypes: typeof CallTypes						= CallTypes;
+	public readonly callTypes = CallTypes;
 
 	/** Current date. */
-	public readonly currentDate: BehaviorSubject<Date|undefined>	=
-		new BehaviorSubject<Date|undefined>(undefined)
-	;
+	public readonly currentDate: BehaviorSubject<
+		Date | undefined
+	> = new BehaviorSubject<Date | undefined>(undefined);
 
 	/** Date filter to prevent forbidden days from being selected. */
-	public readonly dateFilter										= (d: Date) : boolean =>
-		this.forbiddenDays.indexOf(d.getDay()) < 0
-	/* tslint:disable-next-line:semicolon */
-	;
+	public readonly dateFilter = (d: Date) : boolean =>
+		this.forbiddenDays.indexOf(d.getDay()) < 0;
 
 	/** @see CalendarInvite.DaysOfWeek */
-	public readonly daysOfWeek: typeof CalendarInvite.DaysOfWeek	= CalendarInvite.DaysOfWeek;
+	public readonly daysOfWeek = CalendarInvite.DaysOfWeek;
 
 	/** @see CalendarInvite.DaysOfWeek */
-	public readonly dayOfWeekValues: CalendarInvite.DaysOfWeek[]	= [
+	public readonly dayOfWeekValues: CalendarInvite.DaysOfWeek[] = [
 		CalendarInvite.DaysOfWeek.Sunday,
 		CalendarInvite.DaysOfWeek.Monday,
 		CalendarInvite.DaysOfWeek.Tuesday,
@@ -83,104 +79,99 @@ implements ControlValueAccessor, OnChanges, OnInit {
 	];
 
 	/** Duration (milliseconds). */
-	@Input() public duration: number								= 1800000;
+	@Input() public duration: number = 1800000;
 
 	/** List of possible durations (milliseconds). */
-	@Input() public durations: number[]								= [1800000, 3600000];
+	@Input() public durations: number[] = [1800000, 3600000];
 
 	/** Defaults selection to a follow-up apointment. */
-	@Input() public followUp: boolean								= false;
+	@Input() public followUp: boolean = false;
 
 	/** Disallowed days of the week (Saturday and Sunday by default). */
-	@Input() public forbiddenDays: CalendarInvite.DaysOfWeek[]		= [
+	@Input() public forbiddenDays: CalendarInvite.DaysOfWeek[] = [
 		CalendarInvite.DaysOfWeek.Sunday,
 		CalendarInvite.DaysOfWeek.Saturday
 	];
 
 	/** Returns a human-readable day abbreviation (e.g. "SUN"). */
-	public readonly getDayString									= memoize(
-		(day: CalendarInvite.DaysOfWeek) => translate(
-			this.daysOfWeek[day].toUpperCase().slice(0, 3)
-		)
+	public readonly getDayString = memoize((day: CalendarInvite.DaysOfWeek) =>
+		translate(this.daysOfWeek[day].toUpperCase().slice(0, 3))
 	);
 
 	/** @see getDurationString */
-	public readonly getDurationString: typeof getDurationString		= getDurationString;
+	public readonly getDurationString = getDurationString;
 
 	/** @see getStartPadding */
-	public readonly getStartPadding: typeof getStartPadding			= getStartPadding;
+	public readonly getStartPadding = getStartPadding;
 
 	/** Returns a human-readable time frame string (e.g. "Morning"). */
-	public readonly getTimeFrameString								= memoize(
-		(timeFrame: CalendarInvite.TimeFrames) => translate(
-			CalendarInvite.TimeFrames[timeFrame]
-		)
+	public readonly getTimeFrameString = memoize(
+		(timeFrame: CalendarInvite.TimeFrames) =>
+			translate(CalendarInvite.TimeFrames[timeFrame])
 	);
 
 	/** @see getTimes */
-	public readonly getTimes: typeof getTimes						= getTimes;
+	public readonly getTimes = getTimes;
 
 	/** Indicates whether input is disabled. */
-	@Input() public isDisabled: boolean								= false;
+	@Input() public isDisabled: boolean = false;
 
 	/** isDisabled wrapper for ControlValueAccessor. */
-	public readonly isDisabledWrapper								= new BehaviorSubject<boolean>(false);
+	public readonly isDisabledWrapper = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether mobile version should be displayed. */
-	@Input() public mobile: boolean									= this.envService.isMobile.value;
+	@Input() public mobile: boolean = this.envService.isMobile.value;
 
 	/** Change event callback. */
-	public onChange: (value: ICalendarInvite) => void				= () => {};
+	public onChange: (value: ICalendarInvite) => void = () => {};
 
 	/** Touch event callback. */
-	public onTouched: () => void									= () => {};
+	public onTouched: () => void = () => {};
 
 	/** List of possible reasons for this invite. */
 	@Input() public reasons?: string[];
 
 	/** @see CalendarInvite.TimeFrames */
-	public readonly timeFrames: typeof CalendarInvite.TimeFrames	= CalendarInvite.TimeFrames;
+	public readonly timeFrames = CalendarInvite.TimeFrames;
 
 	/** @see CalendarInvite.DaysOfWeek */
-	public readonly timeFrameValues: CalendarInvite.TimeFrames[]	= [
+	public readonly timeFrameValues: CalendarInvite.TimeFrames[] = [
 		CalendarInvite.TimeFrames.Morning,
 		CalendarInvite.TimeFrames.Afternoon,
 		CalendarInvite.TimeFrames.Evening
 	];
 
 	/** Number of minutes in between times. */
-	@Input() public timeIncrement: number							= 30;
+	@Input() public timeIncrement: number = 30;
 
 	/** List of possible reasons for this invite. */
-	@Input() public timeRange: ITimeRange							= {
+	@Input() public timeRange: ITimeRange = {
 		end: {hour: 17, minute: 0},
 		start: {hour: 9, minute: 0}
 	};
 
 	/** @see timestampTo24HourTimeString */
-	public readonly timestampTo24HourTimeString: typeof timestampTo24HourTimeString	=
-		timestampTo24HourTimeString
-	;
+	public readonly timestampTo24HourTimeString = timestampTo24HourTimeString;
 
 	/** @see timestampToDate */
-	public readonly timestampToDate: typeof timestampToDate			= timestampToDate;
+	public readonly timestampToDate = timestampToDate;
 
 	/** @see timestampToTime */
-	public readonly timestampToTime: typeof timestampToTime			= timestampToTime;
+	public readonly timestampToTime = timestampToTime;
 
 	/** @see timestampUpdate */
-	public readonly timestampUpdate: typeof timestampUpdate			= timestampUpdate;
+	public readonly timestampUpdate = timestampUpdate;
 
 	/** @see timeToString */
-	public readonly timeToString: typeof timeToString				= timeToString;
+	public readonly timeToString = timeToString;
 
 	/** Tomorrow's date. */
-	public readonly tomorrow: Promise<Date>							=
-		getTimestamp().then(timestamp => timestampToDate(timestamp + 86400000))
-	;
+	public readonly tomorrow: Promise<Date> = getTimestamp().then(timestamp =>
+		timestampToDate(timestamp + 86400000)
+	);
 
 	/** @see trackBySelf */
-	public readonly trackBySelf: typeof trackBySelf					= trackBySelf;
+	public readonly trackBySelf = trackBySelf;
 
 	/** Default appointment reason dropdown selection. */
 	public get defaultReasonForAppointment () : string {
@@ -205,21 +196,24 @@ implements ControlValueAccessor, OnChanges, OnInit {
 		}
 
 		if (!this.reasons) {
-			this.reasons	= [this.stringsService.followUpNoun];
+			this.reasons = [this.stringsService.followUpNoun];
 		}
 		else if (this.reasons.indexOf(this.stringsService.followUpNoun) < 0) {
-			this.reasons	= [this.stringsService.followUpNoun].concat(this.reasons);
+			this.reasons = [this.stringsService.followUpNoun].concat(
+				this.reasons
+			);
 		}
 	}
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		const now	= await getDate();
+		const now = await getDate();
 
 		this.currentDate.next(now);
 
 		/* Two weeks from this Monday. */
-		const timestamp	= now.getTime() + (1 - now.getDay()) * 86400000 + 1209600000;
+		const timestamp =
+			now.getTime() + (1 - now.getDay()) * 86400000 + 1209600000;
 
 		if (this.calendarInvite.value !== undefined) {
 			return;
@@ -228,7 +222,9 @@ implements ControlValueAccessor, OnChanges, OnInit {
 		this.calendarInvite.next({
 			alternateDays: {},
 			alternateTimeFrames: {},
-			callType: this.envService.isTelehealth ? CallTypes.Video : CallTypes.None,
+			callType: this.envService.isTelehealth ?
+				CallTypes.Video :
+				CallTypes.None,
 			description: '',
 			endTime: timestamp + this.duration,
 			startTime: timestamp,
@@ -238,12 +234,12 @@ implements ControlValueAccessor, OnChanges, OnInit {
 
 	/** @inheritDoc */
 	public registerOnChange (f: (value: ICalendarInvite) => void) : void {
-		this.onChange	= f;
+		this.onChange = f;
 	}
 
 	/** @inheritDoc */
 	public registerOnTouched (f: () => void) : void {
-		this.onTouched	= f;
+		this.onTouched = f;
 	}
 
 	/** @inheritDoc */
@@ -259,13 +255,13 @@ implements ControlValueAccessor, OnChanges, OnInit {
 			return;
 		}
 
-		const timestamp	= new Date(await getTimestamp()).setMinutes(0);
+		const timestamp = new Date(await getTimestamp()).setMinutes(0);
 
 		this.currentDate.next(timestampToDate(timestamp - 172800000));
 
-		const duration		= 14400000;
-		this.forbiddenDays	= [];
-		this.timeRange		= {
+		const duration = 14400000;
+		this.forbiddenDays = [];
+		this.timeRange = {
 			end: {hour: 24, minute: 0},
 			start: {hour: 0, minute: 0}
 		};
@@ -274,12 +270,12 @@ implements ControlValueAccessor, OnChanges, OnInit {
 			this.durations.push(duration);
 		}
 
-		this.duration	= duration;
+		this.duration = duration;
 
 		this.valueChange({
 			...this.calendarInvite.value,
-			endTime: timestamp + (duration / 2),
-			startTime: timestamp - (duration / 2)
+			endTime: timestamp + duration / 2,
+			startTime: timestamp - duration / 2
 		});
 
 		this.changeDetectorRef.markForCheck();

@@ -9,7 +9,6 @@ import {readableID} from '../cyph/util/uuid';
 import {sleep} from '../cyph/util/wait';
 import {ChatData} from './chat-data';
 
-
 /**
  * Angular service for Cyph chat demo.
  */
@@ -19,44 +18,48 @@ export class DemoService extends BaseProvider {
 	public readonly desktop: ChatData;
 
 	/** Data URI to use for placeholder for Facebook joke. */
-	public readonly facebookPicDataUri: Promise<string>		= (
-		!this.envService.isMobileOS ?
-			Promise.reject('') :
-			request({retries: 5, url: '/assets/img/fbimagealt.txt'})
+	public readonly facebookPicDataUri: Promise<string> = (!this.envService
+		.isMobileOS ?
+		Promise.reject('') :
+		request({retries: 5, url: '/assets/img/fbimagealt.txt'})
 	).catch(
-		() => 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
+		() =>
+			'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs='
 	);
 
 	/** Frame containing Facebook profile picture. */
-	public readonly facebookPicFrame: string			= this.envService.isMobileOS ? '' : `
+	public readonly facebookPicFrame: string = this.envService.isMobileOS ?
+		'' :
+		`
 		<div class='facebook-pic image-frame real'>
 			<iframe
-				src='https://www.facebook.com/plugins/comments.php?href=https://www.${
-					readableID(random(20, 5))
-				}.com&width=1000'
+				src='https://www.facebook.com/plugins/comments.php?href=https://www.${readableID(
+							random(20, 5)
+						)}.com&width=1000'
 				frameBorder='0'
 			></iframe>
 		</div>
 	`;
 
 	/** Complete message to use as placeholder for Facebook joke. */
-	public readonly facebookPicMessage: Promise<string>	= (async () =>
-		`![](${await this.facebookPicDataUri})\n\n#### mynewpic.jpg`
-	)();
+	public readonly facebookPicMessage: Promise<string> = (async () =>
+		`![](${await this.facebookPicDataUri})\n\n#### mynewpic.jpg`)();
 
 	/** Placeholder div for absolutely positioned iframe to sit on top of. */
-	public readonly facebookPicPlaceholder: string		= `
+	public readonly facebookPicPlaceholder: string = `
 		<div class='facebook-pic image-frame'>&nbsp;</div>
 	`;
 
 	/** Indicates whether demo is in active state. */
-	public readonly isActive	= new BehaviorSubject<boolean>(false);
+	public readonly isActive = new BehaviorSubject<boolean>(false);
 
 	/** Messages to send during demo. */
-	public readonly messages: Promise<{
-		isMobile: boolean;
-		text: string;
-	}[]>	= (async () => [
+	public readonly messages: Promise<
+		{
+			isMobile: boolean;
+			text: string;
+		}[]
+	> = (async () => [
 		{
 			isMobile: true,
 			text: `why did we have to switch from Facebook?`
@@ -120,15 +123,15 @@ export class DemoService extends BaseProvider {
 		this.mobile.resolveStart();
 		await sleep(2500);
 
-		const messages				= await this.messages;
-		const facebookPicMessage	= await this.facebookPicMessage;
+		const messages = await this.messages;
+		const facebookPicMessage = await this.facebookPicMessage;
 
 		for (const message of messages) {
-			const chatData	= message.isMobile ? this.mobile : this.desktop;
-			const other		= message.isMobile ? this.desktop : this.mobile;
-			const text		= translate(message.text);
-			const maxDelay	= text.length > 15 ? 1000 : 700;
-			const minDelay	= text.length > 15 ? 500 : 350;
+			const chatData = message.isMobile ? this.mobile : this.desktop;
+			const other = message.isMobile ? this.desktop : this.mobile;
+			const text = translate(message.text);
+			const maxDelay = text.length > 15 ? 1000 : 700;
+			const minDelay = text.length > 15 ? 500 : 350;
 
 			await sleep(random(maxDelay, minDelay));
 
@@ -161,8 +164,8 @@ export class DemoService extends BaseProvider {
 	) {
 		super();
 
-		this.desktop	= new ChatData(false);
-		this.mobile		= new ChatData(
+		this.desktop = new ChatData(false);
+		this.mobile = new ChatData(
 			true,
 			this.desktop.channelOutgoing,
 			this.desktop.channelIncoming

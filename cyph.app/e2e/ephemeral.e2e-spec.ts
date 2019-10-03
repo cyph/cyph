@@ -1,11 +1,10 @@
 import {EphemeralPage} from './ephemeral.po';
 
-
 describe('Ephemeral chat', () => {
 	let page: EphemeralPage;
 
-	beforeEach(async (done) => {
-		page	= new EphemeralPage();
+	beforeEach(async done => {
+		page = new EphemeralPage();
 		await page.navigateTo();
 		done();
 	});

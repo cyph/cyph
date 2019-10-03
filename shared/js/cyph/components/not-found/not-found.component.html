@@ -1,14 +1,14 @@
-<ng-container *ngIf='envService.telehealthTheme; else standardView'>
+<ng-container *ngIf="envService.telehealthTheme; else standardView">
 	<div
 		fxFlex
 		fxFlexFill
-		fxLayout='column'
-		fxLayoutAlign='center center'
-		fxLayoutGap='16px'
+		fxLayout="column"
+		fxLayoutAlign="center center"
+		fxLayoutGap="16px"
 	>
-		<cyph-logo icon fxFlex='15'></cyph-logo>
+		<cyph-logo icon fxFlex="15"></cyph-logo>
 
-		<h1>{{stringsService.notFound}}</h1>
+		<h1>{{ stringsService.notFound }}</h1>
 	</div>
 </ng-container>
 <ng-template #standardView>
@@ -16,47 +16,53 @@
 		<div
 			fxFlex
 			fxFlexFill
-			fxLayout='column'
-			class='not-found'
-			[class.mobile]='envService.isMobile | async'
+			fxLayout="column"
+			class="not-found"
+			[class.mobile]="envService.isMobile | async"
 		>
 			<div>
 				<h1>
 					<span cyphTranslate>I'm sorry, but your</span>
 					&ngsp;
-					<span>{{stringsService.session}}</span>
+					<span>{{ stringsService.session }}</span>
 					&ngsp;
 					<span cyphTranslate>is in another castle...</span>
 				</h1>
 			</div>
-			<img src='/assets/img/404.png' alt='Funny Mario reference' cyphTranslate />
-			<div class='explanation'>
-				<p *ngIf='!envService.isAccounts'>
+			<img
+				src="/assets/img/404.png"
+				alt="Funny Mario reference"
+				cyphTranslate
+			/>
+			<div class="explanation">
+				<p *ngIf="!envService.isAccounts">
 					<span cyphTranslate>Please</span>
 					&ngsp;
-					<a
-						cyphTranslate
-						[routerLink]='envService.newCyphUrlRetry'
-					>try again</a>.
+					<a cyphTranslate [routerLink]="envService.newCyphUrlRetry"
+						>try again</a
+					>.
 				</p>
 				<p cyphTranslate>Reasons why you may have landed here:</p>
 				<ul>
-					<ng-container *ngIf='!envService.isAccounts'>
+					<ng-container *ngIf="!envService.isAccounts">
 						<li>
 							<span cyphTranslate>The</span>
 							&ngsp;
-							<span>{{stringsService.session}}</span>
+							<span>{{ stringsService.session }}</span>
 							&ngsp;
-							<span cyphTranslate>you're looking for has expired</span>
+							<span cyphTranslate
+								>you're looking for has expired</span
+							>
 						</li>
 						<li cyphTranslate>
 							<span cyphTranslate>The</span>
 							&ngsp;
-							<span>{{stringsService.session}}</span>
+							<span>{{ stringsService.session }}</span>
 							&ngsp;
 							<span cyphTranslate>
 								you're looking for has already been connected to
-								(someone else got there first, or you clicked twice)
+								(someone else got there first, or you clicked
+								twice)
 							</span>
 						</li>
 					</ng-container>
@@ -74,4 +80,3 @@
 		</div>
 	</div>
 </ng-template>
-

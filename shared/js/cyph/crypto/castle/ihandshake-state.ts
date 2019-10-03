@@ -1,14 +1,13 @@
 import {IAsyncValue} from '../../iasync-value';
 import {HandshakeSteps} from './enums';
 
-
 /** Pairwise session handshake state. */
 export interface IHandshakeState {
 	/* Current step of the handshake process. */
 	currentStep: IAsyncValue<HandshakeSteps>;
 
 	/* Initial secret to bootstrap Castle Core asymmetric ratchet. */
-	initialSecret: IAsyncValue<Uint8Array|undefined>;
+	initialSecret: IAsyncValue<Uint8Array | undefined>;
 
 	/* Initial secret to bootstrap Castle Core asymmetric ratchet, encrypted with Potassium.Box. */
 	initialSecretCyphertext: IAsyncValue<Uint8Array>;

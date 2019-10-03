@@ -1,28 +1,33 @@
-<div fxLayout='column' fxLayoutAlign='center' fxLayoutGap='16px' *ngIf='getFile() | async as o'>
+<div
+	fxLayout="column"
+	fxLayoutAlign="center"
+	fxLayoutGap="16px"
+	*ngIf="getFile() | async as o"
+>
 	<cyph-account-contacts-search
 		#accountContactsSearch
-		[chipInput]='true'
-		[placeholder]='stringsService.to'
+		[chipInput]="true"
+		[placeholder]="stringsService.to"
 	></cyph-account-contacts-search>
 
-	<mat-card class='file'>
-		<mat-card-header fxLayout='row'>
+	<mat-card class="file">
+		<mat-card-header fxLayout="row">
 			<mat-icon mat-card-avatar>
-				{{accountFilesService.getThumbnail(o.mediaType)}}
+				{{ accountFilesService.getThumbnail(o.mediaType) }}
 			</mat-icon>
 			<mat-card-title>
-				{{o.file?.name}}
+				{{ o.file?.name }}
 			</mat-card-title>
 			<mat-card-subtitle>
 				<div>
 					<span cyphTranslate>Type:</span>
 					&ngsp;
-					<span>{{o.fileConfig?.mediaType}}</span>
+					<span>{{ o.fileConfig?.mediaType }}</span>
 				</div>
-				<div *ngIf='!isNaN(o?.size)'>
+				<div *ngIf="!isNaN(o?.size)">
 					<span cyphTranslate>Size:</span>
 					&ngsp;
-					<span>{{readableByteLength(o?.size)}}</span>
+					<span>{{ readableByteLength(o?.size) }}</span>
 				</div>
 			</mat-card-subtitle>
 		</mat-card-header>
@@ -30,15 +35,17 @@
 
 	<div></div>
 
-	<div fxLayoutAlign='center'>
+	<div fxLayoutAlign="center">
 		<button
 			mat-raised-button
 			fxFlex
-			fxFlex.gt-sm='initial'
-			[disabled]='(accountContactsSearch.searchBar?.filter | async)?.size < 1'
-			(click)='share()'
+			fxFlex.gt-sm="initial"
+			[disabled]="
+				(accountContactsSearch.searchBar?.filter | async)?.size < 1
+			"
+			(click)="share()"
 		>
-			{{stringsService.share}} {{o.fileConfig?.description}}
+			{{ stringsService.share }} {{ o.fileConfig?.description }}
 		</button>
 	</div>
 </div>

@@ -17,14 +17,12 @@
  * Learn more in https://angular.io/docs/ts/latest/guide/browser-support.html
  */
 
-
 /***************************************************************************************************
  * BROWSER POLYFILLS
  */
 
 import 'core-js';
 import 'zone.js/dist/zone';
-
 
 /***************************************************************************************************
  * APPLICATION IMPORTS

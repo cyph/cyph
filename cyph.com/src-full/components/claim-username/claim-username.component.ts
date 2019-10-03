@@ -7,7 +7,6 @@ import {StringsService} from '../../../cyph/services/strings.service';
 import {email} from '../../../cyph/util/email';
 import {stringify} from '../../../cyph/util/serialization';
 
-
 /**
  * Angular component for claim username UI.
  */
@@ -19,22 +18,22 @@ import {stringify} from '../../../cyph/util/serialization';
 })
 export class ClaimUsernameComponent extends BaseProvider {
 	/** User's email address. */
-	@Input() public email: string				= '';
+	@Input() public email: string = '';
 
 	/** @see emailPattern */
-	public readonly emailPattern				= emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** Indicates whether form has been submitted. */
-	public readonly submitted					= new BehaviorSubject<boolean>(false);
+	public readonly submitted = new BehaviorSubject<boolean>(false);
 
 	/** Requested username. */
-	@Input() public username: string			= '';
+	@Input() public username: string = '';
 
 	/** Requested username alternate/backup. */
-	@Input() public usernameAlternate: string	= '';
+	@Input() public usernameAlternate: string = '';
 
 	/** @see usernameMask */
-	public readonly usernameMask: any			= usernameMask;
+	public readonly usernameMask: any = usernameMask;
 
 	/** Submits form. */
 	public submit () : void {

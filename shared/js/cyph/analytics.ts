@@ -4,7 +4,6 @@ import {EnvDeploy, envDeploy} from './env-deploy';
 import {stringify} from './util/serialization/json';
 import {sleep} from './util/wait/sleep';
 
-
 /**
  * Handles analytics events by calling the Google Analytics SDK in a sandboxed iframe.
  * (https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
@@ -17,7 +16,10 @@ export class Analytics {
 	private readonly enabled: Promise<boolean>;
 
 	/** @ignore */
-	private async baseEventSubmit (method: string, args: any[]) : Promise<void> {
+	private async baseEventSubmit (
+		method: string,
+		args: any[]
+	) : Promise<void> {
 		if (!(await this.enabled)) {
 			return;
 		}
@@ -49,86 +51,96 @@ export class Analytics {
 		/** @see EnvDeploy */
 		public readonly env: EnvDeploy = envDeploy
 	) {
-		this.enabled	= Promise.resolve().then(async () => {
-			const appName		= this.env.host;
-			const appVersion	= this.env.isWeb ? 'Web' : 'Native';
+		this.enabled = Promise.resolve()
+			.then(async () => {
+				const appName = this.env.host;
+				const appVersion = this.env.isWeb ? 'Web' : 'Native';
 
-			/* TODO: HANDLE NATIVE */
-			if (this.env.isOnion || this.env.isLocalEnv || !this.env.isWeb) {
-				throw new Error('Analytics disabled.');
-			}
+				/* TODO: HANDLE NATIVE */
+				if (
+					this.env.isOnion ||
+					this.env.isLocalEnv ||
+					!this.env.isWeb
+				) {
+					throw new Error('Analytics disabled.');
+				}
 
-			this.analFrame	= document.createElement('iframe');
+				this.analFrame = document.createElement('iframe');
 
-			(<any> this.analFrame).sandbox	= 'allow-scripts allow-same-origin';
+				(<any> this.analFrame).sandbox =
+					'allow-scripts allow-same-origin';
 
-			this.analFrame.src	=
-				this.env.baseUrl +
-				'analsandbox/' +
-				appName +
-				locationData.pathname +
-				locationData.search +
-				(
+				this.analFrame.src =
+					this.env.baseUrl +
+					'analsandbox/' +
+					appName +
+					locationData.pathname +
+					locationData.search +
 					/* Set referrer except when it's a Cyph URL or an encoded form
 						of a Cyph URL, particularly to avoid leaking shared secret */
-					(
-						document.referrer &&
-						![document.referrer].
-							concat(
-								(
-									document.referrer.match(/[0-9a-fA-F]+/g) || []
-								).map((s: string) => {
+					(document.referrer &&
+					![document.referrer]
+						.concat(
+							(
+								document.referrer.match(/[0-9a-fA-F]+/g) || []
+							).map((s: string) => {
+								try {
+									return potassiumUtil.toString(
+										potassiumUtil.fromHex(s)
+									);
+								}  catch (e) {
+									return '';
+								}
+							})
+						)
+						.concat(
+							(
+								'&' +
+								document.referrer.substring(
+									document.referrer.indexOf('?') + 1
+								)
+							)
+								.split(/\&.*?=/g)
+								.map((s: string) => {
 									try {
-										return potassiumUtil.toString(potassiumUtil.fromHex(s));
-									}
-									catch (e) {
+										return potassiumUtil.toString(
+											potassiumUtil.fromBase64(s)
+										);
+									}  catch (e) {
 										return '';
 									}
 								})
-							).concat(
-								(
-									'&' + document.referrer.substring(
-										document.referrer.indexOf('?') + 1
-									)
-								).split(/\&.*?=/g).map((s: string) => {
-									try {
-										return potassiumUtil.toString(potassiumUtil.fromBase64(s));
-									}
-									catch (e) {
-										return '';
-									}
-								})
-							).map((s: string) =>
-								/\/\/.*?\.?cyph\.[a-z]+\/?/.test(s)
-							).
-							reduce((a: boolean, b: boolean) => a || b)
-					) ?
-						(
-							(locationData.search ? '&' : '?') +
-							'ref=' +
-							encodeURIComponent(document.referrer)
-						) :
-						''
-				)
-			;
+						)
+						.map((s: string) => /\/\/.*?\.?cyph\.[a-z]+\/?/.test(s))
+						.reduce((a: boolean, b: boolean) => a || b) ?
+						(locationData.search ? '&' : '?') +
+						'ref=' +
+						encodeURIComponent(document.referrer) :
+						'');
 
-			this.analFrame.style.display	= 'none';
+				this.analFrame.style.display = 'none';
 
-			document.body.appendChild(this.analFrame);
+				document.body.appendChild(this.analFrame);
 
-			await new Promise<void>(resolve => $(() => { resolve(); }));
-			await new Promise<void>(resolve => {
-				if (this.analFrame) {
-					$(this.analFrame).one('load', () => { resolve(); });
-				}
-			});
-			await sleep();
+				await new Promise<void>(resolve =>
+					$(() => {
+						resolve();
+					})
+				);
+				await new Promise<void>(resolve => {
+					if (!this.analFrame) {
+						return;
+					}
+					$(this.analFrame).one('load', () => {
+						resolve();
+					});
+				});
+				await sleep();
 
-			this.setEvent({appName, appVersion});
+				this.setEvent({appName, appVersion});
 
-			return true;
-		}).catch(() =>
-			false
-		);
+				return true;
+			})
+			.catch(() => false);
 	}
 }

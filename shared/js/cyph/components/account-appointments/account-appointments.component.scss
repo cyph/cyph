@@ -16,7 +16,8 @@
 		background: #7986cb !important;
 	}
 
-	.fc-list-heading td, .fc-header {
+	.fc-list-heading td,
+	.fc-header {
 		background: unset !important;
 	}
 }
@@ -31,7 +32,8 @@ mat-card h2 {
 	padding-bottom: 0.25rem;
 }
 
-h2, h3 {
+h2,
+h3 {
 	text-align: center;
 	margin-left: auto;
 	margin-right: auto;

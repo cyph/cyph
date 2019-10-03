@@ -9,29 +9,35 @@ $cyph-progress-foreground: #e7c447;
 $cyph-speed-dial-action-alt-background: $cyph-background;
 $cyph-speed-dial-action-alt-foreground: $cyph-foreground;
 
-$cyph-message-box-colors: map-merge($cyph-message-box-colors, (
-	desktopBackground: rgba(146, 149, 163, 0.5),
-	desktopGlow: $cyph-progress-foreground,
-	text: black
-));
-
-$cyph-message-colors: map-merge($cyph-message-colors, (
-	app: (
-		desktop: transparent,
-		mobile: transparent,
-		text: $cyph-foreground
-	),
-	me: (
-		desktop: transparent,
-		mobile: map-get($mat-amber, 400),
-		text: $cyph-foreground
-	),
-	other: (
-		desktop: transparent,
-		mobile: map-get($mat-yellow, 600),
-		text: $cyph-foreground
+$cyph-message-box-colors: map-merge(
+	$cyph-message-box-colors,
+	(
+		desktopBackground: rgba(146, 149, 163, 0.5),
+		desktopGlow: $cyph-progress-foreground,
+		text: black
 	)
-));
+);
+
+$cyph-message-colors: map-merge(
+	$cyph-message-colors,
+	(
+		app: (
+			desktop: transparent,
+			mobile: transparent,
+			text: $cyph-foreground
+		),
+		me: (
+			desktop: transparent,
+			mobile: map-get($mat-amber, 400),
+			text: $cyph-foreground
+		),
+		other: (
+			desktop: transparent,
+			mobile: map-get($mat-yellow, 600),
+			text: $cyph-foreground
+		)
+	)
+);
 
 body.telehealth {
 	@include cyph-apply-theme;
@@ -45,7 +51,8 @@ body.telehealth {
 	&:not(.cobranded) .loading {
 		font-size: 1.43rem;
 
-		> .image, > .logo-animation {
+		> .image,
+		> .logo-animation {
 			height: 33vh;
 			width: 33vh;
 			min-height: 33vh;
@@ -56,7 +63,8 @@ body.telehealth {
 			position: relative;
 			background-image: none !important;
 
-			&:after, &:before {
+			&:after,
+			&:before {
 				content: '';
 				background-repeat: no-repeat;
 				background-size: 42.71vh 42.71vh;
@@ -85,7 +93,9 @@ body.telehealth {
 		border: 0 !important;
 	}
 
-	cyph-chat-message-list > .background-image, .chat-disconnect-message, .abort-screen .image {
+	cyph-chat-message-list > .background-image,
+	.chat-disconnect-message,
+	.abort-screen .image {
 		display: none !important;
 	}
 }

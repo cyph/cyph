@@ -3,28 +3,27 @@ import {superSphincs} from 'supersphincs';
 import {IHash} from './ihash';
 import {potassiumUtil} from './potassium-util';
 
-
 /** @inheritDoc */
 export class Hash implements IHash {
 	/** @inheritDoc */
-	public readonly bytes: Promise<number>	= superSphincs.hashBytes;
+	public readonly bytes: Promise<number> = superSphincs.hashBytes;
 
 	/** @inheritDoc */
 	public async deriveKey (
-		input: Uint8Array|string,
+		input: Uint8Array | string,
 		outputBytes?: number,
 		clearInput?: boolean
 	) : Promise<Uint8Array> {
 		if (typeof input === 'string') {
-			input		= potassiumUtil.fromString(input);
-			clearInput	= true;
+			input = potassiumUtil.fromString(input);
+			clearInput = true;
 		}
 
 		try {
-			const bytes	= await this.bytes;
+			const bytes = await this.bytes;
 
 			if (!outputBytes) {
-				outputBytes	= input.length;
+				outputBytes = input.length;
 			}
 
 			if (outputBytes > bytes) {
@@ -38,7 +37,7 @@ export class Hash implements IHash {
 				return sodium.crypto_generichash(outputBytes, input);
 			}
 
-			const hash	= await this.hash(input);
+			const hash = await this.hash(input);
 			return potassiumUtil.toBytes(hash, 0, outputBytes);
 		}
 		finally {
@@ -49,7 +48,7 @@ export class Hash implements IHash {
 	}
 
 	/** @inheritDoc */
-	public async hash (plaintext: Uint8Array|string) : Promise<Uint8Array> {
+	public async hash (plaintext: Uint8Array | string) : Promise<Uint8Array> {
 		return superSphincs.hash(plaintext, true);
 	}
 

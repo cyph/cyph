@@ -2,16 +2,20 @@
  * Compares two or more arrays.
  * @returns True if equal, false otherwise.
  */
-export const compareArrays	= <T> (a: T[], b: T[], ...arrays: T[][]) : boolean => {
-	const length	= a.length;
-	arrays			= arrays.concat([b]);
+export const compareArrays = <T>(
+	a: T[],
+	b: T[],
+	...arrays: T[][]
+) : boolean => {
+	const length = a.length;
+	arrays = arrays.concat([b]);
 
 	if (arrays.find(arr => arr.length !== length)) {
 		return false;
 	}
 
 	for (const arr of arrays) {
-		for (let j = 0 ; j < length ; ++j) {
+		for (let j = 0; j < length; ++j) {
 			if (arr[j] !== a[j]) {
 				return false;
 			}
@@ -25,7 +29,7 @@ export const compareArrays	= <T> (a: T[], b: T[], ...arrays: T[][]) : boolean =>
  * Compares two or more values.
  * @returns True if equal, false otherwise.
  */
-export const compareValues	= <T> (a: T, b: T, ...values: T[]) : boolean => {
+export const compareValues = <T>(a: T, b: T, ...values: T[]) : boolean => {
 	if (a instanceof Array) {
 		return compareArrays(a, <any> b, ...(<any> values));
 	}
@@ -38,22 +42,22 @@ export const compareValues	= <T> (a: T, b: T, ...values: T[]) : boolean => {
 };
 
 /** Constant time string comparison. */
-export const safeStringCompare	= (a: string, b: string) : boolean => {
+export const safeStringCompare = (a: string, b: string) : boolean => {
 	let mismatch: number;
 
-	const length	= a.length;
+	const length = a.length;
 
 	if (b.length === length) {
-		mismatch	= 0;
+		mismatch = 0;
 	}
 	else {
-		mismatch	= 1;
-		b			= a;
+		mismatch = 1;
+		b = a;
 	}
 
-	for (let i = 0 ; i < length ; ++i) {
+	for (let i = 0; i < length; ++i) {
 		/* tslint:disable-next-line:no-bitwise */
-		mismatch	|= (a.charCodeAt(i) ^ b.charCodeAt(i));
+		mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
 	}
 
 	return mismatch === 0;

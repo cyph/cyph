@@ -5,6 +5,5 @@
 import {Buffer} from 'buffer';
 import * as process from 'process';
 
-
-(<any> self).Buffer		= Buffer;
-(<any> self).process	= process;
+(<any> self).Buffer = Buffer;
+(<any> self).process = process;

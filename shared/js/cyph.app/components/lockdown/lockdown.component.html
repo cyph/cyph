@@ -1,18 +1,18 @@
-<section fxFlexFill fxLayout='column' id='main' *ngIf='ready | async'>
+<section fxFlexFill fxLayout="column" id="main" *ngIf="ready | async">
 	<div
 		fxFlexFill
-		fxLayoutAlign='center center'
-		class='login-form'
-		[class.checking]='checking | async'
+		fxLayoutAlign="center center"
+		class="login-form"
+		[class.checking]="checking | async"
 	>
-		<mat-card fxFlex fxFlex.sm='95' fxFlex.md='75' fxFlex.gt-md='50'>
+		<mat-card fxFlex fxFlex.sm="95" fxFlex.md="75" fxFlex.gt-md="50">
 			<mat-card-title>
-				{{stringsService.unlockTitle}}
+				{{ stringsService.unlockTitle }}
 			</mat-card-title>
 			<mat-card-subtitle>
 				<span cyphTranslate>Welcome to</span>
 				&ngsp;
-				<span>{{stringsService.product}}!</span>
+				<span>{{ stringsService.product }}!</span>
 				&ngsp;
 				<span cyphTranslate>
 					You must enter a password to access this environment.
@@ -20,46 +20,57 @@
 			</mat-card-subtitle>
 			<cyph-logo cardHeader homeLink></cyph-logo>
 			<mat-card-content>
-				<form ngNativeValidate (submit)='submit()'>
-					<div fxLayout='row' fxLayoutAlign='center center'>
+				<form ngNativeValidate (submit)="submit()">
+					<div fxLayout="row" fxLayoutAlign="center center">
 						<h3
-							class='cyph-banner warn'
-							[style.visibility]='(error | async) ? "visible" : "hidden"'
+							class="cyph-banner warn"
+							[style.visibility]="
+								(error | async) ? 'visible' : 'hidden'
+							"
 						>
-							{{stringsService.invalidPassword}}
+							{{ stringsService.invalidPassword }}
 						</h3>
 					</div>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<mat-form-field fxFlex fxFlex.sm='80' fxFlex.gt-sm='60'>
+					<div fxLayout="row" fxLayoutAlign="center center">
+						<mat-form-field fxFlex fxFlex.sm="80" fxFlex.gt-sm="60">
 							<input
 								matInput
 								cyphAutofocus
 								cyphEnableLastPass
 								cyphTranslate
-								[ngModel]='password | async'
-								(ngModelChange)='password.next($event)'
-								name='password'
-								type='password'
-								placeholder='Password'
+								[ngModel]="password | async"
+								(ngModelChange)="password.next($event)"
+								name="password"
+								[type]="
+									(hidePassword | async) ? 'password' : 'text'
+								"
+								placeholder="Password"
 								required
 							/>
 							<mat-icon
 								matSuffix
-								class='suffix-button'
-								(click)='hidePassword.next(!hidePassword.value)'
+								class="suffix-button"
+								(click)="hidePassword.next(!hidePassword.value)"
 							>
-								{{(hidePassword | async) ? 'visibility' : 'visibility_off'}}
+								{{
+									(hidePassword | async) ?
+										'visibility' :
+										'visibility_off'
+								}}
 							</mat-icon>
 						</mat-form-field>
 					</div>
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<button mat-button type='submit' cyphTranslate>
+					<div fxLayout="row" fxLayoutAlign="center center">
+						<button mat-button type="submit" cyphTranslate>
 							Log In
 						</button>
 					</div>
 				</form>
 			</mat-card-content>
-			<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+			<mat-progress-spinner
+				class="global"
+				mode="indeterminate"
+			></mat-progress-spinner>
 		</mat-card>
 	</div>
 </section>

@@ -1,23 +1,30 @@
-<mat-progress-spinner mode='indeterminate' *ngIf='pending | async'></mat-progress-spinner>
-<form ngNativeValidate (submit)='submit()'>
-	<div fxLayout='column' fxLayoutGap='16px' *ngIf='(complete | async) === false'>
-		<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui'>
-			<h2 *ngIf='itemName'>
-				<span>{{formatItemName(itemName)}}</span>
-				<ng-container *ngIf='subscriptionType !== undefined'>
+<mat-progress-spinner
+	mode="indeterminate"
+	*ngIf="pending | async"
+></mat-progress-spinner>
+<form ngNativeValidate (submit)="submit()">
+	<div
+		fxLayout="column"
+		fxLayoutGap="16px"
+		*ngIf="(complete | async) === false"
+	>
+		<div fxLayout="column" fxLayoutGap="16px" class="checkout-ui">
+			<h2 *ngIf="itemName">
+				<span>{{ formatItemName(itemName) }}</span>
+				<ng-container *ngIf="subscriptionType !== undefined">
 					&ngsp;
 					<span cyphTranslate>SUBSCRIPTION</span>
 				</ng-container>
 			</h2>
 			<div>
-				<div fxLayout='column' fxLayout.gt-md='row' fxLayoutGap='16px'>
+				<div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="16px">
 					<mat-form-field fxFlex>
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='name'
-							name='name'
-							placeholder='Full Name'
+							[(ngModel)]="name"
+							name="name"
+							placeholder="Full Name"
 							required
 						/>
 					</mat-form-field>
@@ -25,10 +32,10 @@
 						<input
 							matInput
 							cyphTranslate
-							[(ngModel)]='email'
-							name='email'
-							type='email'
-							placeholder='Email'
+							[(ngModel)]="email"
+							name="email"
+							type="email"
+							placeholder="Email"
 							required
 						/>
 					</mat-form-field>
@@ -39,76 +46,102 @@
 					<input
 						matInput
 						cyphTranslate
-						[(ngModel)]='company'
-						name='company'
-						[placeholder]='formatItemName(itemName)?.includes("BUSINESS") ?
-							"Company" :
-							"Company (optional)"
-						'
-						[required]='formatItemName(itemName)?.includes("BUSINESS")'
+						[(ngModel)]="company"
+						name="company"
+						[placeholder]="
+							formatItemName(itemName)?.includes('BUSINESS') ?
+								'Company' :
+								'Company (optional)'
+						"
+						[required]="
+							formatItemName(itemName)?.includes('BUSINESS')
+						"
 					/>
 				</mat-form-field>
 			</div>
-			<div *ngIf='perUser'>
+			<div *ngIf="perUser">
 				<mat-select
 					cyphTranslate
 					fxFlex
-					[ngModel]='users | async'
-					(ngModelChange)='users.next($event)'
-					name='users'
-					placeholder='Number of Users'
+					[ngModel]="users | async"
+					(ngModelChange)="users.next($event)"
+					name="users"
+					placeholder="Number of Users"
 					required
 				>
-					<mat-option [value]='1'>1 {{stringsService.user}}</mat-option>
-					<mat-option *ngFor='let n of userOptions; trackBy: trackBySelf' [value]='n'>
-						{{n.toString()}} {{stringsService.users}}
+					<mat-option [value]="1"
+						>1 {{ stringsService.user }}</mat-option
+					>
+					<mat-option
+						*ngFor="let n of userOptions; trackBy: trackBySelf"
+						[value]="n"
+					>
+						{{ n.toString() }} {{ stringsService.users }}
 					</mat-option>
 				</mat-select>
 			</div>
-			<div [id]='containerID' class='braintree'></div>
+			<div [id]="containerID" class="braintree"></div>
 		</div>
 
-		<mat-checkbox [(ngModel)]='affiliate' name='affiliate'>
-			{{affiliateService.checkout.text}}
+		<mat-checkbox [(ngModel)]="affiliate" name="affiliate">
+			{{ affiliateService.checkout.text }}
 		</mat-checkbox>
 
-		<div fxLayoutAlign='center center'>
-			<button mat-raised-button type='submit'>
+		<div fxLayoutAlign="center center">
+			<button mat-raised-button type="submit">
 				<span cyphTranslate>Confirm</span>
 				&ngsp;
-				<span>${{amount * (perUser ? ((users | async) || 1) : 1)}}</span>
+				<span
+					>${{ amount * (perUser ? (users | async) || 1 : 1) }}</span
+				>
 				&ngsp;
 				<span>
-					<span *ngIf='subscriptionType === undefined' cyphTranslate>payment</span>
-					<span *ngIf='subscriptionType === subscriptionTypes.annual' cyphTranslate>
+					<span *ngIf="subscriptionType === undefined" cyphTranslate
+						>payment</span
+					>
+					<span
+						*ngIf="subscriptionType === subscriptionTypes.annual"
+						cyphTranslate
+					>
 						annual subscription
 					</span>
-					<span *ngIf='subscriptionType === subscriptionTypes.monthly' cyphTranslate>
+					<span
+						*ngIf="subscriptionType === subscriptionTypes.monthly"
+						cyphTranslate
+					>
 						monthly subscription
 					</span>
 				</span>
 			</button>
 		</div>
 	</div>
-	<div class='confirmation' *ngIf='complete | async'>
-		<div cyphTranslate *ngIf='(success | async) && (confirmationMessage | async)'>
-			Thanks a lot for your support! You will receive an
-			email confirmation momentarily.
+	<div class="confirmation" *ngIf="complete | async">
+		<div
+			cyphTranslate
+			*ngIf="(success | async) && (confirmationMessage | async)"
+		>
+			Thanks a lot for your support! You will receive an email
+			confirmation momentarily.
 		</div>
-		<div *ngIf='(success | async) === false'>
-			<div fxLayout='column' fxLayoutGap='16px' class='checkout-ui failure'>
-				<h2>{{stringsService.checkoutErrorTitle}}</h2>
-				<div *ngIf='errorMessage | async as err'>{{err}}</div>
+		<div *ngIf="(success | async) === false">
+			<div
+				fxLayout="column"
+				fxLayoutGap="16px"
+				class="checkout-ui failure"
+			>
+				<h2>{{ stringsService.checkoutErrorTitle }}</h2>
+				<div *ngIf="errorMessage | async as err">{{ err }}</div>
 				<div>
 					<span cyphTranslate>
 						Please check your payment credentials and
 					</span>
 					&ngsp;
 					<span
-						class='retry'
-						(click)='ngAfterViewInit()'
+						class="retry"
+						(click)="ngAfterViewInit()"
 						cyphTranslate
-					>click here</span>
+						>click here</span
+					>
 					&ngsp;
 					<span cyphTranslate>
 						to try again.

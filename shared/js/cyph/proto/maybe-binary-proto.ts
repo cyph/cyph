@@ -1,12 +1,12 @@
 /** Possibly-undefined binary encoder/decoder. (Doesn't actually use Protocol Buffers.) */
 export class MaybeBinaryProto {
 	/** @see IProto.create */
-	public static create () : Uint8Array|undefined {
+	public static create () : Uint8Array | undefined {
 		return undefined;
 	}
 
 	/** @see IProto.decode */
-	public static decode (bytes: Uint8Array) : Uint8Array|undefined {
+	public static decode (bytes: Uint8Array) : Uint8Array | undefined {
 		return bytes.length === 0 ? undefined : bytes;
 	}
 

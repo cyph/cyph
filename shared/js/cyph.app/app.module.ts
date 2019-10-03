@@ -34,7 +34,6 @@ import {LockdownComponent} from './components/lockdown';
 import {SignupConfirmComponent} from './components/signup-confirm';
 import {CustomUrlSerializer} from './custom-url-serializer';
 
-
 /**
  * Angular module for Cyph web UI.
  */
@@ -53,7 +52,10 @@ import {CustomUrlSerializer} from './custom-url-serializer';
 		SignupConfirmComponent
 	],
 	imports: [
-		RouterModule.forRoot([], {onSameUrlNavigation: 'reload', useHash: true}),
+		RouterModule.forRoot([], {
+			onSameUrlNavigation: 'reload',
+			useHash: true
+		}),
 		CyphAppModule,
 		CyphCommonModule,
 		CyphWebModule

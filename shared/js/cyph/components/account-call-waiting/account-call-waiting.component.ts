@@ -24,7 +24,6 @@ import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
 import {AccountComposeNoProvidersComponent} from '../account-compose-no-providers';
 
-
 /**
  * Angular component for account call waiting UI.
  */
@@ -34,29 +33,28 @@ import {AccountComposeNoProvidersComponent} from '../account-compose-no-provider
 	styleUrls: ['./account-call-waiting.component.scss'],
 	templateUrl: './account-call-waiting.component.html'
 })
-export class AccountCallWaitingComponent
-extends BaseProvider
-implements AfterViewInit, OnChanges {
+export class AccountCallWaitingComponent extends BaseProvider
+	implements AfterViewInit, OnChanges {
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes				= AccountUserTypes;
+	public readonly accountUserTypes = AccountUserTypes;
 
 	/** @see AccountChatComponent.answering */
-	@Input() public answering: boolean				= false;
+	@Input() public answering: boolean = false;
 
 	/** @see AccountChatComponent.appointment */
-	@Input() public appointment?: IAppointment&{id: string};
+	@Input() public appointment?: IAppointment & {id: string};
 
 	/** @see AccountUserTypes */
-	public readonly callTypes						= CallTypes;
+	public readonly callTypes = CallTypes;
 
 	/** Component for composing forms. */
 	@ViewChild(AccountComposeNoProvidersComponent, {static: false})
 	public formCompose?: AccountComposeNoProvidersComponent;
 
 	/** Participants by type. */
-	public readonly participantsByType				=
-		new BehaviorSubject(new Map<AccountUserTypes, User[]>())
-	;
+	public readonly participantsByType = new BehaviorSubject(
+		new Map<AccountUserTypes, User[]>()
+	);
 
 	/** @inheritDoc */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
@@ -64,7 +62,7 @@ implements AfterViewInit, OnChanges {
 			return;
 		}
 
-		const participantsByType	= new Map<AccountUserTypes, User[]>();
+		const participantsByType = new Map<AccountUserTypes, User[]>();
 
 		try {
 			if (
@@ -75,20 +73,29 @@ implements AfterViewInit, OnChanges {
 				return;
 			}
 
-			const users	= await Promise.all(this.appointment.participants.map(async username => {
-				const user	= await this.accountUserLookupService.getUser(username, false);
-				if (!user) {
-					return user;
-				}
-				return {user, userType: (await user.accountUserProfile.getValue()).userType};
-			}));
+			const users = await Promise.all(
+				this.appointment.participants.map(async username => {
+					const user = await this.accountUserLookupService.getUser(
+						username,
+						false
+					);
+					if (!user) {
+						return user;
+					}
+					return {
+						user,
+						userType: (await user.accountUserProfile.getValue())
+							.userType
+					};
+				})
+			);
 
 			for (const o of users) {
 				if (!o) {
 					continue;
 				}
 
-				const arr	= participantsByType.get(o.userType) || [];
+				const arr = participantsByType.get(o.userType) || [];
 				arr.push(o.user);
 				participantsByType.set(o.userType, arr);
 			}
@@ -105,10 +112,14 @@ implements AfterViewInit, OnChanges {
 				throw new Error('No formCompose.');
 			}
 
-			if (!(
-				this.envService.isTelehealth &&
-				(this.appointment && this.appointment.forms && this.appointment.forms.length < 1)
-			)) {
+			if (
+				!(
+					this.envService.isTelehealth &&
+					(this.appointment &&
+						this.appointment.forms &&
+						this.appointment.forms.length < 1)
+				)
+			) {
 				return;
 			}
 
@@ -118,16 +129,22 @@ implements AfterViewInit, OnChanges {
 				return;
 			}
 
-			this.subscriptions.push(combineLatest([
-				this.accountDatabaseService.currentUser.pipe(mergeMap(o =>
-					o ? o.user.userType : of(undefined)
-				)),
-				this.formCompose.sent
-			]).pipe(map(([userType, sent]) =>
-				sent !== true && userType === AccountUserTypes.Standard
-			)).subscribe(
-				this.sessionService.freezePong
-			));
+			this.subscriptions.push(
+				combineLatest([
+					this.accountDatabaseService.currentUser.pipe(
+						mergeMap(o => (o ? o.user.userType : of(undefined)))
+					),
+					this.formCompose.sent
+				])
+					.pipe(
+						map(
+							([userType, sent]) =>
+								sent !== true &&
+								userType === AccountUserTypes.Standard
+						)
+					)
+					.subscribe(this.sessionService.freezePong)
+			);
 		}
 		finally {
 			this.accountService.transitionEnd();

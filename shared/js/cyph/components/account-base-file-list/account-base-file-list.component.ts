@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	Input,
+	ViewChild
+} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
@@ -22,7 +27,6 @@ import {readableByteLength} from '../../util/formatting';
 import {getDateTimeString, watchRelativeDateString} from '../../util/time';
 import {waitForValue} from '../../util/wait';
 
-
 /**
  * Angular component for "file" list UI.
  */
@@ -34,65 +38,70 @@ import {waitForValue} from '../../util/wait';
 })
 export class AccountBaseFileListComponent extends BaseProvider {
 	/** @see getDateTimeString */
-	public readonly getDateTimeString		= getDateTimeString;
+	public readonly getDateTimeString = getDateTimeString;
 
 	/** Gets table columns. */
-	public readonly getTableColumns			=
-		memoize((recordType: AccountFileRecord.RecordTypes) => [
+	public readonly getTableColumns = memoize(
+		(recordType: AccountFileRecord.RecordTypes) => [
 			'type',
 			'name',
 			'timestamp',
-			...(recordType === AccountFileRecord.RecordTypes.File ? ['size'] : []),
+			...(recordType === AccountFileRecord.RecordTypes.File ?
+				['size'] :
+				[]),
 			'owner',
 			'actions'
-		])
-	;
+		]
+	);
 
 	/** Gets table data source. */
-	public readonly getTableDataSource		= memoize((data: {
-		data: any;
-		owner: string;
-		record: IAccountFileRecord;
-	}[]) => {
-		const dataSource		= new MatTableDataSource(data);
+	public readonly getTableDataSource = memoize(
+		(
+			data: {
+				data: any;
+				owner: string;
+				record: IAccountFileRecord;
+			}[]
+		) => {
+			const dataSource = new MatTableDataSource(data);
 
-		Promise.all([
-			waitForValue(() => this.paginator),
-			waitForValue(() => this.sort)
-		]).then(([paginator, sort]) => {
-			dataSource.paginator	= paginator;
-			dataSource.sort			= sort;
-		});
+			Promise.all([
+				waitForValue(() => this.paginator),
+				waitForValue(() => this.sort)
+			]).then(([paginator, sort]) => {
+				dataSource.paginator = paginator;
+				dataSource.sort = sort;
+			});
 
-		return dataSource;
-	});
+			return dataSource;
+		}
+	);
 
 	/** @see MatPaginator */
 	@ViewChild(MatPaginator, {static: false}) public paginator?: MatPaginator;
 
 	/** @see readableByteLength */
-	public readonly readableByteLength		= readableByteLength;
+	public readonly readableByteLength = readableByteLength;
 
 	/** @see AccountFileRecord.RecordTypes */
-	@Input() public recordType: AccountFileRecord.RecordTypes	=
-		AccountFileRecord.RecordTypes.File
-	;
+	@Input() public recordType: AccountFileRecord.RecordTypes =
+		AccountFileRecord.RecordTypes.File;
 
 	/** @see AccountFileRecord.RecordTypes */
-	public readonly recordTypes				= AccountFileRecord.RecordTypes;
+	public readonly recordTypes = AccountFileRecord.RecordTypes;
 
 	/** @see MatSort */
 	@ViewChild(MatSort, {static: false}) public sort?: MatSort;
 
 	/** @see trackByID */
-	public readonly trackByID				= trackByID;
+	public readonly trackByID = trackByID;
 
 	/** @see watchRelativeDateString */
-	public readonly watchRelativeDateString	= watchRelativeDateString;
+	public readonly watchRelativeDateString = watchRelativeDateString;
 
 	/** Accepts incoming EHR API key. */
 	public async acceptEhrApiKey (
-		record: IAccountFileRecord&IAccountFileReference
+		record: IAccountFileRecord & IAccountFileReference
 	) : Promise<void> {
 		await this.accountFilesService.acceptIncomingFile(record, {
 			copy: true,
@@ -105,12 +114,15 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	/** Removes an EHR API key. */
 	public async removeEhrApiKey (o: {
 		data: IEhrApiKey;
-		record: IAccountFileRecord&IAccountFileReference;
+		record: IAccountFileRecord & IAccountFileReference;
 	}) : Promise<void> {
 		await Promise.all([
 			this.accountFilesService.remove(o.record),
 			o.record.metadata ?
-				this.ehrIntegrationService.deleteApiKey(o.data.apiKey, o.record.metadata) :
+				this.ehrIntegrationService.deleteApiKey(
+					o.data.apiKey,
+					o.record.metadata
+				) :
 				undefined
 		]);
 	}
@@ -118,7 +130,7 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	/** Creates and shares new EHR API key. */
 	public async shareEhrApiKey (o: {
 		data: IEhrApiKey;
-		record: IAccountFileRecord&IAccountFileReference;
+		record: IAccountFileRecord & IAccountFileReference;
 	}) : Promise<void> {
 		await this.accountFilesService.shareFilePrompt(async username => ({
 			data: {

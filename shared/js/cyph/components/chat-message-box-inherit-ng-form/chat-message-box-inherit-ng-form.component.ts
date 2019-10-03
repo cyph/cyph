@@ -11,7 +11,6 @@ import {StringsService} from '../../services/strings.service';
 import {VirtualKeyboardWatcherService} from '../../services/virtual-keyboard-watcher.service';
 import {ChatMessageBoxComponent} from '../chat-message-box';
 
-
 /**
  * Provides existing NgForm.
  * @see ChatMessageBoxComponent
@@ -26,7 +25,7 @@ import {ChatMessageBoxComponent} from '../chat-message-box';
 })
 export class ChatMessageBoxInheritNgFormComponent extends ChatMessageBoxComponent {
 	/** @inheritDoc */
-	public readonly inheritsNgForm: boolean	= true;
+	public readonly inheritsNgForm: boolean = true;
 
 	constructor (
 		elementRef: ElementRef,

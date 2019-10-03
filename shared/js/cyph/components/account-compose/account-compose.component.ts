@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	OnDestroy,
+	OnInit
+} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
@@ -29,7 +34,6 @@ import {trackBySelf} from '../../track-by/track-by-self';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {uuid} from '../../util/uuid';
 
-
 /**
  * Angular component for account compose UI.
  */
@@ -40,112 +44,111 @@ import {uuid} from '../../util/uuid';
 	styleUrls: ['./account-compose.component.scss'],
 	templateUrl: './account-compose.component.html'
 })
-export class AccountComposeComponent extends BaseProvider implements OnDestroy, OnInit {
+export class AccountComposeComponent extends BaseProvider
+	implements OnDestroy, OnInit {
 	/** Indicates whether this component is using its own service providers. */
-	protected readonly hasOwnProviders: boolean	= true;
+	protected readonly hasOwnProviders: boolean = true;
 
 	/** @see AccountUserTypes */
-	public readonly accountUserTypes			= AccountUserTypes;
+	public readonly accountUserTypes = AccountUserTypes;
 
 	/** @see AccountChatMessageBoxComponent.calendarInviteFollowUp */
-	public readonly appointmentFollowUp			= new BehaviorSubject<boolean>(false);
+	public readonly appointmentFollowUp = new BehaviorSubject<boolean>(false);
 
 	/** Data for attaching a form to an appointment. */
-	public readonly appointmentFormData			=
-		new BehaviorSubject<{id: string; form: IForm}|undefined>(undefined)
-	;
+	public readonly appointmentFormData = new BehaviorSubject<
+		{id: string; form: IForm} | undefined
+	>(undefined);
 
 	/** @see ChatMessageValue.Types */
-	public readonly chatMessageValueTypes		= ChatMessageValue.Types;
+	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
 	/** @see emailPattern */
-	public readonly emailPattern				= emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** Indicates whether accountService.fromName and accountService.fromEmail were pre-set. */
-	public readonly fromDataPreSet				= new BehaviorSubject<boolean>(false);
+	public readonly fromDataPreSet = new BehaviorSubject<boolean>(false);
 
 	/** @see AccountChatMessageBoxComponent.messageType */
-	public readonly messageType					= toBehaviorSubject(
-		this.accountService.combinedRouteData(this.activatedRoute).pipe(map(([o, params]) => {
-			const messageType: ChatMessageValue.Types	= o.messageType;
+	public readonly messageType = toBehaviorSubject(
+		this.accountService.combinedRouteData(this.activatedRoute).pipe(
+			map(([o, params]) => {
+				const messageType: ChatMessageValue.Types = o.messageType;
 
-			const value	=
-				typeof o.value === 'function' ?
-					o.value({
-						email: this.accountService.fromEmail.value,
-						name: this.accountService.fromName.value
-					}) :
-					o.value
-			;
+				const value =
+					typeof o.value === 'function' ?
+						o.value({
+							email: this.accountService.fromEmail.value,
+							name: this.accountService.fromName.value
+						}) :
+						o.value;
 
-			this.appointmentFollowUp.next(o.appointmentFollowUp === true);
+				this.appointmentFollowUp.next(o.appointmentFollowUp === true);
 
-			if (value !== undefined) {
-				switch (messageType) {
-					case ChatMessageValue.Types.CalendarInvite:
-						this.accountChatService.chat.currentMessage.calendarInvite	= value;
-						break;
+				if (value !== undefined) {
+					switch (messageType) {
+						case ChatMessageValue.Types.CalendarInvite:
+							this.accountChatService.chat.currentMessage.calendarInvite = value;
+							break;
 
-					case ChatMessageValue.Types.FileTransfer:
-						this.accountChatService.chat.currentMessage.fileTransfer	= value;
-						break;
+						case ChatMessageValue.Types.FileTransfer:
+							this.accountChatService.chat.currentMessage.fileTransfer = value;
+							break;
 
-					case ChatMessageValue.Types.Form:
-						this.accountChatService.chat.currentMessage.form			= value;
+						case ChatMessageValue.Types.Form:
+							this.accountChatService.chat.currentMessage.form = value;
 
-						this.appointmentFormData.next(
-							typeof params.appointmentID === 'string' ?
-								{id: params.appointmentID, form: value} :
-								undefined
-						);
+							this.appointmentFormData.next(
+								typeof params.appointmentID === 'string' ?
+									{id: params.appointmentID, form: value} :
+									undefined
+							);
 
-						break;
+							break;
 
-					case ChatMessageValue.Types.Quill:
-						this.accountChatService.chat.currentMessage.quill			= value;
-						break;
+						case ChatMessageValue.Types.Quill:
+							this.accountChatService.chat.currentMessage.quill = value;
+							break;
 
-					case ChatMessageValue.Types.Text:
-						this.accountChatService.chat.currentMessage.text			= value;
-						break;
+						case ChatMessageValue.Types.Text:
+							this.accountChatService.chat.currentMessage.text = value;
+							break;
 
-					default:
-						throw new Error('Invalid chat message type.');
+						default:
+							throw new Error('Invalid chat message type.');
+					}
+
+					this.accountChatService.updateChat();
 				}
 
-				this.accountChatService.updateChat();
-			}
-
-			return messageType;
-		})),
+				return messageType;
+			})
+		),
 		ChatMessageValue.Types.Quill
 	);
 
 	/** @see SearchBarComponent.filter */
-	public readonly recipients					= new BehaviorSubject<Set<User>>(new Set());
+	public readonly recipients = new BehaviorSubject<Set<User>>(new Set());
 
 	/** @see AccountContactsSearchComponent.searchUsername */
-	public readonly searchUsername				= new BehaviorSubject('');
+	public readonly searchUsername = new BehaviorSubject('');
 
 	/** Sends message. */
 	/* tslint:disable-next-line:cyclomatic-complexity */
-	public readonly send						= async () => {
-		const routeData	= await this.activatedRoute.data.pipe(take(1)).toPromise();
+	public readonly send = async () => {
+		const routeData = await this.activatedRoute.data
+			.pipe(take(1))
+			.toPromise();
 
 		if (
 			this.envService.isTelehealthFull &&
 			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
 			typeof routeData.form === 'function' &&
-			(
-				this.accountDatabaseService.currentUser.value === undefined ||
-				(
-					await this.accountDatabaseService.currentUser.value.user.
-						accountUserProfile.
-						getValue()
-				).userType === AccountUserTypes.Standard
-			)
+			(this.accountDatabaseService.currentUser.value === undefined ||
+				(await this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue())
+					.userType === AccountUserTypes.Standard)
 		) {
-			this.accountChatService.chat.currentMessage.form	= routeData.form({
+			this.accountChatService.chat.currentMessage.form = routeData.form({
 				email: this.accountService.fromEmail.value,
 				name: this.accountService.fromName.value
 			});
@@ -157,25 +160,23 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 		this.sent.next(undefined);
 
 		if (this.appointmentFormData.value !== undefined) {
-			const {id, form}	= this.appointmentFormData.value;
+			const {id, form} = this.appointmentFormData.value;
 
-			const appointment	=
-				await this.accountFilesService.downloadFile(
-					id,
-					AccountFileRecord.RecordTypes.Appointment
-				).result
-			;
+			const appointment = await this.accountFilesService.downloadFile(
+				id,
+				AccountFileRecord.RecordTypes.Appointment
+			).result;
 
 			if (appointment.forms === undefined) {
-				appointment.forms	= [];
+				appointment.forms = [];
 			}
 			appointment.forms.push(form);
 
 			await this.accountFilesService.updateAppointment(id, appointment);
 		}
 		else {
-			const recipientUsers	= Array.from(this.recipients.value);
-			const recipients		= recipientUsers.map(o => o.username);
+			const recipientUsers = Array.from(this.recipients.value);
+			const recipients = recipientUsers.map(o => o.username);
 
 			if (
 				recipients.length < 1 &&
@@ -197,65 +198,67 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 			}
 
 			if (
-				this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
-				this.accountChatService.chat.currentMessage.calendarInvite !== undefined
+				this.messageType.value ===
+					ChatMessageValue.Types.CalendarInvite &&
+				this.accountChatService.chat.currentMessage.calendarInvite !==
+					undefined
 			) {
-				const {calendarInvite}	= this.accountChatService.chat.currentMessage;
+				const {
+					calendarInvite
+				} = this.accountChatService.chat.currentMessage;
 
-				const [sentFileID]		= await Promise.all([
+				const [sentFileID] = await Promise.all([
 					this.accountFilesService.upload(
-						(
-							(
-								this.envService.isTelehealth ?
-									`${this.stringsService.telehealthCallAbout} ` :
-									''
-							) +
-							(calendarInvite.title || '?')
-						),
+						(this.envService.isTelehealth ?
+							`${this.stringsService.telehealthCallAbout} ` :
+							'') + (calendarInvite.title || '?'),
 						{
 							calendarInvite,
-							forms: this.accountChatService.chat.currentMessage.form ?
-								[this.accountChatService.chat.currentMessage.form] :
-								undefined
-							,
-							fromEmail: this.accountService.fromEmail.value || undefined,
-							fromName: this.accountService.fromName.value || undefined,
+							forms: this.accountChatService.chat.currentMessage
+								.form ?
+								[
+									this.accountChatService.chat.currentMessage
+										.form
+								] :
+								undefined,
+							fromEmail:
+								this.accountService.fromEmail.value ||
+								undefined,
+							fromName:
+								this.accountService.fromName.value || undefined,
 							participants: [
 								...recipients,
-								...(this.accountDatabaseService.currentUser.value ?
-									[this.accountDatabaseService.currentUser.value.user.username] :
-									[]
-								)
+								...(this.accountDatabaseService.currentUser
+									.value ?
+									[
+										this.accountDatabaseService.currentUser
+											.value.user.username
+									] :
+									[])
 							],
 							rsvpSessionSubID: uuid()
 						},
 						recipients
 					).result,
-					(
-						this.envService.isTelehealth &&
-						!this.envService.isTelehealthFull &&
-						this.accountDatabaseService.currentUser.value
-					) ?
-						this.databaseService.callFunction(
-							'appointmentInvite',
-							{
-								callType:
-									calendarInvite.callType === CallTypes.Audio ?
-										'audio' :
-									calendarInvite.callType === CallTypes.Video ?
-										'video' :
-										undefined
-								,
-								eventDetails: {
-									endTime: calendarInvite.endTime,
-									startTime: calendarInvite.startTime
-								},
-								to: {
-									email: this.accountService.fromEmail.value,
-									name: this.accountService.fromName.value
-								}
+					this.envService.isTelehealth &&
+					!this.envService.isTelehealthFull &&
+					this.accountDatabaseService.currentUser.value ?
+						this.databaseService.callFunction('appointmentInvite', {
+							callType:
+								calendarInvite.callType === CallTypes.Audio ?
+									'audio' :
+								calendarInvite.callType === CallTypes.Video ?
+									'video' :
+									undefined,
+							eventDetails: {
+								endTime: calendarInvite.endTime,
+								startTime: calendarInvite.startTime
+							},
+							to: {
+								email: this.accountService.fromEmail.value,
+								name: this.accountService.fromName.value
 							}
-						) :
+						}) :
 						undefined
 				]);
 
@@ -280,22 +283,25 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 					await this.accountContactsService.addContact(recipients[0]);
 				}
 
-				const chat	=
+				const chat =
 					recipients.length === 1 ?
 						{username: recipients[0]} :
-						(await this.accountFilesService.initMessagingGroup(
+						await this.accountFilesService.initMessagingGroup(
 							recipients,
-							this.messageType.value === ChatMessageValue.Types.Quill
-						))
-				;
+							this.messageType.value ===
+								ChatMessageValue.Types.Quill
+						);
 
 				if ('username' in chat) {
-					const [id, {name, realUsername}]	= await Promise.all([
+					const [id, {name, realUsername}] = await Promise.all([
 						recipientUsers[0].contactID,
 						recipientUsers[0].accountUserProfile.getValue()
 					]);
 
-					this.sentMessage.next({id, name: `${name} (@${realUsername})`});
+					this.sentMessage.next({
+						id,
+						name: `${name} (@${realUsername})`
+					});
 				}
 				else {
 					this.sentMessage.next({id: chat.id});
@@ -305,10 +311,13 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 					chat,
 					true,
 					undefined,
-					this.messageType.value === ChatMessageValue.Types.Quill ? 'mail' : undefined
+					this.messageType.value === ChatMessageValue.Types.Quill ?
+						'mail' :
+						undefined
 				);
 
-				await this.accountChatService.resolvers.currentMessageSynced.promise;
+				await this.accountChatService.resolvers.currentMessageSynced
+					.promise;
 
 				await this.accountChatService.send(
 					this.messageType.value,
@@ -320,32 +329,33 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 			}
 		}
 
-		this.accountChatService.chat.currentMessage.calendarInvite	= undefined;
-		this.accountChatService.chat.currentMessage.form			= undefined;
-		this.accountChatService.chat.currentMessage.quill			= undefined;
-		this.accountChatService.chat.currentMessage.text			= '';
+		this.accountChatService.chat.currentMessage.calendarInvite = undefined;
+		this.accountChatService.chat.currentMessage.form = undefined;
+		this.accountChatService.chat.currentMessage.quill = undefined;
+		this.accountChatService.chat.currentMessage.text = '';
 		this.accountService.fromEmail.next('');
 		this.accountService.fromName.next('');
 
 		this.accountChatService.updateChat();
 
 		this.sent.next(true);
-	/* tslint:disable-next-line:semicolon */
 	};
 
 	/** Indicates whether message has been sent, or undefined for in-progress. */
-	public readonly sent						= new BehaviorSubject<boolean|undefined>(false);
+	public readonly sent = new BehaviorSubject<boolean | undefined>(false);
 
 	/** ID of a file that has been sent, if applicable. */
-	public readonly sentFileID					= new BehaviorSubject<string|undefined>(undefined);
+	public readonly sentFileID = new BehaviorSubject<string | undefined>(
+		undefined
+	);
 
 	/** Metadata of a message that has been sent, if applicable. */
-	public readonly sentMessage					=
-		new BehaviorSubject<{id: string; name?: string}|undefined>(undefined)
-	;
+	public readonly sentMessage = new BehaviorSubject<
+		{id: string; name?: string} | undefined
+	>(undefined);
 
 	/** @see trackBySelf */
-	public readonly trackBySelf					= trackBySelf;
+	public readonly trackBySelf = trackBySelf;
 
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
@@ -358,28 +368,32 @@ export class AccountComposeComponent extends BaseProvider implements OnDestroy, 
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.accountChatService.chat.state	= States.chat;
+		this.accountChatService.chat.state = States.chat;
 		this.accountChatService.updateChat();
 		this.sessionService.state.isAlive.next(true);
 
-		if (this.accountService.fromEmail.value && this.accountService.fromName.value) {
+		if (
+			this.accountService.fromEmail.value &&
+			this.accountService.fromName.value
+		) {
 			this.fromDataPreSet.next(true);
 		}
 
-		this.subscriptions.push(this.activatedRoute.params.subscribe(async o => {
-			const username: string|undefined	=
-				o.username ||
-				(await this.accountContactsService.getContactUsername(o.contactID).catch(() =>
-					undefined
-				))
-			;
+		this.subscriptions.push(
+			this.activatedRoute.params.subscribe(async o => {
+				const username: string | undefined =
+					o.username ||
+					(await this.accountContactsService
+						.getContactUsername(o.contactID)
+						.catch(() => undefined));
 
-			if (!username) {
-				return;
-			}
+				if (!username) {
+					return;
+				}
 
-			this.searchUsername.next(username);
-		}));
+				this.searchUsername.next(username);
+			})
+		);
 
 		this.scrollService.init();
 		this.accountService.transitionEnd();

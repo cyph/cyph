@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {Potassium} from '../../crypto/potassium/potassium';
 import {EnvService} from '../env.service';
 
-
 /**
  * Potassium implementation that runs it on the current thread.
  */

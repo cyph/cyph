@@ -14,6 +14,7 @@ import {
 	NeverProto,
 	Review
 } from '../proto';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
@@ -22,32 +23,57 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
 
-
 /**
  * Account user lookup service.
  */
 @Injectable()
 export class AccountUserLookupService extends BaseProvider {
 	/** @ignore */
-	private readonly downloadLock: LockFunction			= lockFunction();
+	private readonly downloadLock: LockFunction = lockFunction();
 
 	/** @ignore */
-	private readonly existsCache: Set<string>			= new Set<string>();
+	private readonly existsCache: Set<string> = new Set<string>();
 
 	/** @ignore */
-	private readonly existsConfirmedCache: Set<string>	= new Set<string>();
+	private readonly existsConfirmedCache: Set<string> = new Set<string>();
 
 	/** @ignore */
-	private readonly userCache: Map<string, User>		= new Map<string, User>();
+	private readonly userCache: Map<string, User> = new Map<string, User>();
+
+	/** Gets count of unread messages from a user. */
+	public readonly getUnreadMessageCount = memoize(username =>
+		toBehaviorSubject<number>(
+			async () =>
+				this.accountDatabaseService
+					.getAsyncMap(
+						`unreadMessages/${
+							(await this.accountContactsService.getCastleSessionData(
+								username
+							)).castleSessionID
+						}`,
+						NeverProto,
+						SecurityModels.unprotected
+					)
+					.watchSize(),
+			0
+		)
+	);
 
 	/** Checks to see if a username is blacklisted. */
-	public readonly usernameBlacklisted					= memoize(
+	public readonly usernameBlacklisted = memoize(
 		async (username: string, reservedUsername?: string) =>
-			!(reservedUsername && normalize(username) === normalize(reservedUsername)) &&
-			this.databaseService.callFunction('usernameBlacklisted', {username}).
-				then((o: any) => typeof o === 'object' && o.isBlacklisted === true).
-				catch(() => true)
-		,
+			!(
+				reservedUsername &&
+				normalize(username) === normalize(reservedUsername)
+			) &&
+			/* tslint:disable-next-line:no-promise-as-boolean */
+			this.databaseService
+				.callFunction('usernameBlacklisted', {username})
+				.then(
+					(o: any) =>
+						typeof o === 'object' && o.isBlacklisted === true
+				)
+				.catch(() => true),
 		(username: string, reservedUsername?: string) =>
 			typeof reservedUsername === 'string' ?
 				`${username}\n${reservedUsername}` :
@@ -69,33 +95,35 @@ export class AccountUserLookupService extends BaseProvider {
 			return false;
 		}
 
-		username	= normalize(username);
-		const url	= `users/${username}`;
+		username = normalize(username);
+		const url = `users/${username}`;
 
 		if (!username) {
 			return false;
 		}
 
-		const getProfile	= async () => this.accountDatabaseService.getItem(
-			`${url}/publicProfile`,
-			AccountUserProfile,
-			SecurityModels.public,
-			undefined,
-			true
-		);
+		const getProfile = async () =>
+			this.accountDatabaseService.getItem(
+				`${url}/publicProfile`,
+				AccountUserProfile,
+				SecurityModels.public,
+				undefined,
+				true
+			);
 
-		const exists	= username.length > 0 && (
-			(confirmedOnly ? this.existsConfirmedCache : this.existsCache).has(username) ||
-			this.userCache.has(username) ||
-			await (confirmedOnly ?
-				(lock ? this.downloadLock(getProfile) : getProfile()).then(
-					() => true
-				).catch(
-					() => false
-				) :
-				this.accountDatabaseService.hasItem(`${url}/publicProfile`)
-			)
-		);
+		const exists =
+			username.length > 0 &&
+			((confirmedOnly ? this.existsConfirmedCache : this.existsCache).has(
+				username
+			) ||
+				this.userCache.has(username) ||
+				(await (confirmedOnly ?
+					(lock ? this.downloadLock(getProfile) : getProfile())
+						.then(() => true)
+						.catch(() => false) :
+					this.accountDatabaseService.hasItem(
+						`${url}/publicProfile`
+					))));
 
 		if (exists) {
 			this.existsCache.add(username);
@@ -110,12 +138,12 @@ export class AccountUserLookupService extends BaseProvider {
 
 	/** Tries to to get User object for the specified user. */
 	public async getUser (
-		user: string|User,
+		user: string | User,
 		lock: boolean = true,
 		preFetch: boolean = false,
 		skipExistsCheck: boolean = false
-	) : Promise<User|undefined> {
-		const userValue	= await (async () => {
+	) : Promise<User | undefined> {
+		const userValue = await (async () => {
 			if (!user) {
 				return;
 			}
@@ -123,8 +151,8 @@ export class AccountUserLookupService extends BaseProvider {
 				return user;
 			}
 
-			const username	= normalize(user);
-			const url		= `users/${username}`;
+			const username = normalize(user);
+			const url = `users/${username}`;
 
 			return getOrSetDefaultAsync(
 				this.userCache,
@@ -132,37 +160,50 @@ export class AccountUserLookupService extends BaseProvider {
 				async () => {
 					/* Temporary workaround for migrating users to latest Potassium.Box */
 
-					if (!skipExistsCheck && !(await this.exists(username, lock, true))) {
+					if (
+						!skipExistsCheck &&
+						!(await this.exists(username, lock, true))
+					) {
 						throw new Error('User does not exist.');
 					}
 
 					return new User(
 						username,
 						this.accountContactsService.getContactID(username),
-						this.accountDatabaseService.watch(
-							`${url}/avatar`,
-							DataURIProto,
-							SecurityModels.public,
-							undefined,
-							true
-						).pipe(map(({value}) =>
-							/* tslint:disable-next-line:strict-type-predicates */
-							typeof value === 'string' || Object.keys(value).length > 0 ?
-								value :
-								undefined
-						)),
-						this.accountDatabaseService.watch(
-							`${url}/coverImage`,
-							DataURIProto,
-							SecurityModels.public,
-							undefined,
-							true
-						).pipe(map(({value}) =>
-							/* tslint:disable-next-line:strict-type-predicates */
-							typeof value === 'string' || Object.keys(value).length > 0 ?
-								value :
-								undefined
-						)),
+						this.accountDatabaseService
+							.watch(
+								`${url}/avatar`,
+								DataURIProto,
+								SecurityModels.public,
+								undefined,
+								true
+							)
+							.pipe(
+								map(({value}) =>
+									/* tslint:disable-next-line:strict-type-predicates */
+									typeof value === 'string' ||
+									Object.keys(value).length > 0 ?
+										value :
+										undefined
+								)
+							),
+						this.accountDatabaseService
+							.watch(
+								`${url}/coverImage`,
+								DataURIProto,
+								SecurityModels.public,
+								undefined,
+								true
+							)
+							.pipe(
+								map(({value}) =>
+									/* tslint:disable-next-line:strict-type-predicates */
+									typeof value === 'string' ||
+									Object.keys(value).length > 0 ?
+										value :
+										undefined
+								)
+							),
 						this.accountContactsService.contactState(username),
 						this.databaseService.getAsyncValue(
 							`${url}/presence`,
@@ -196,33 +237,25 @@ export class AccountUserLookupService extends BaseProvider {
 							undefined,
 							true
 						),
-						(async () => this.accountDatabaseService.getAsyncMap(
-							`unreadMessages/${
-								(await this.accountContactsService.getCastleSessionData(
-									username
-								)).castleSessionID
-							}`,
-							NeverProto,
-							SecurityModels.unprotected
-						))(),
+						this.getUnreadMessageCount(username),
 						preFetch
 					);
 				},
 				lock
-			).catch(
-				() => undefined
-			);
+			).catch(() => undefined);
 		})();
 
 		if (!userValue) {
 			return;
 		}
 
-		const userTypeWhitelist	= await this.userTypeWhitelist();
+		const userTypeWhitelist = await this.userTypeWhitelist();
 
 		if (
 			userTypeWhitelist !== undefined &&
-			userTypeWhitelist.indexOf((await userValue.accountUserProfile.getValue()).userType) < 0
+			userTypeWhitelist.indexOf(
+				(await userValue.accountUserProfile.getValue()).userType
+			) < 0
 		) {
 			return;
 		}
@@ -231,32 +264,30 @@ export class AccountUserLookupService extends BaseProvider {
 	}
 
 	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
-	public async userTypeWhitelist () : Promise<AccountUserTypes[]|void> {
-		if (this.envService.isTelehealth) {
-			if (!this.accountDatabaseService.currentUser.value) {
-				return;
-			}
-
-			const {userType}	= await this.accountDatabaseService.currentUser.value.
-				user.
-				accountUserProfile.
-				getValue()
-			;
-
-			if (userType === AccountUserTypes.Standard) {
-				return [
-					AccountUserTypes.Org,
-					AccountUserTypes.TelehealthAdmin,
-					AccountUserTypes.TelehealthDoctor
-				];
-			}
+	public async userTypeWhitelist () : Promise<
+		AccountUserTypes[] | undefined
+	> {
+		if (!this.envService.isTelehealth) {
+			return [AccountUserTypes.Org, AccountUserTypes.Standard];
 		}
-		else {
-			return [
-				AccountUserTypes.Org,
-				AccountUserTypes.Standard
-			];
+
+		if (!this.accountDatabaseService.currentUser.value) {
+			return;
 		}
+
+		const {
+			userType
+		} = await this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue();
+
+		if (userType !== AccountUserTypes.Standard) {
+			return;
+		}
+
+		return [
+			AccountUserTypes.Org,
+			AccountUserTypes.TelehealthAdmin,
+			AccountUserTypes.TelehealthDoctor
+		];
 	}
 
 	constructor (

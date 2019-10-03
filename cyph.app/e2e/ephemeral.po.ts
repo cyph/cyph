@@ -1,6 +1,5 @@
 import {browser, by, element, ExpectedConditions} from 'protractor';
 
-
 /**
  * Note: Because loading ephemeral chat currently requires setting
  * waitForAngularEnabled to false, tests that could apply to either
@@ -14,7 +13,9 @@ export class EphemeralPage {
 	public async navigateTo () : Promise<void> {
 		await browser.waitForAngularEnabled(false);
 		await browser.get('/');
-		await browser.wait(ExpectedConditions.presenceOf(element(by.css('body.load-complete'))));
+		await browser.wait(
+			ExpectedConditions.presenceOf(element(by.css('body.load-complete')))
+		);
 	}
 
 	public async reenableAngularWaiting () : Promise<void> {

@@ -1,6 +1,5 @@
 import {IKeyPair} from '../../proto';
 
-
 /** Equivalent to sodium.crypto_box. */
 export interface IBox {
 	/** Private key length. */

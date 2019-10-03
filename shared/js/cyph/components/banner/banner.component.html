@@ -1,21 +1,23 @@
-<div class='banner' fxFlex fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='16px'>
-	<div fxFlex fxLayout='row' fxLayoutAlign='center center' fxLayoutGap='16px'>
-		<h2>{{stringsService.bannerText}}</h2>
+<div
+	class="banner"
+	fxFlex
+	fxLayout="row"
+	fxLayoutAlign="center center"
+	fxLayoutGap="16px"
+>
+	<div fxFlex fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
+		<h2>{{ stringsService.bannerText }}</h2>
 		<a
 			mat-raised-button
 			cyphTranslate
-			class='breathe'
-			[href]='envService.homeUrl + "donate"'
+			class="breathe"
+			[href]="envService.homeUrl + 'donate'"
 		>
 			Donate
 		</a>
 	</div>
-	<div class='close-banner'>
-		<a
-			mat-icon-button
-			cyphTranslate
-			(click)='closeBanner.emit()'
-		>
+	<div class="close-banner">
+		<a mat-icon-button cyphTranslate (click)="closeBanner.emit()">
 			<mat-icon>close</mat-icon>
 		</a>
 	</div>

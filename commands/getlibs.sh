@@ -11,7 +11,7 @@ installPackages () {
 	mkdir node_modules
 	yarn add --ignore-engines --ignore-platform --ignore-scripts --non-interactive \
 		$(node -e "
-			const package	= JSON.parse(
+			const package = JSON.parse(
 				fs.readFileSync('${dir}/shared/lib/js/package.json').toString()
 			);
 
@@ -287,8 +287,6 @@ do
 	echo "module.exports = ${arr[1]};" >> "${arr[0]}"
 done
 
-for m in libsodium* ; do cd ${m} ; mv package-${m}.json package.json ; cd .. ; done
-
 rm -rf simplewebrtc/node_modules
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.js
 
@@ -390,5 +388,5 @@ rm -rf lib
 if [ ! -d oldsupersphincs ] ; then
 	mkdir oldsupersphincs
 	cd oldsupersphincs
-	yarn add supersphincs@^5
+	yarn add supersphincs@old
 fi

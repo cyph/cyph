@@ -17,7 +17,6 @@ import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
 import {DynamicFormComponent} from '../dynamic-form';
 
-
 /**
  * Angular component for confirm dialog.
  */
@@ -27,9 +26,10 @@ import {DynamicFormComponent} from '../dynamic-form';
 	styleUrls: ['./dialog-confirm.component.scss'],
 	templateUrl: './dialog-confirm.component.html'
 })
-export class DialogConfirmComponent extends BaseProvider implements AfterViewInit {
+export class DialogConfirmComponent extends BaseProvider
+	implements AfterViewInit {
 	/** Indicates whether this is a bottom sheet. */
-	public bottomSheet: boolean	= false;
+	public bottomSheet: boolean = false;
 
 	/** Cancel button text. */
 	public cancel?: string;
@@ -41,16 +41,17 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 	public content?: string;
 
 	/** @see DynamicFormComponent */
-	@ViewChild(DynamicFormComponent, {static: false}) public dynamicForm?: DynamicFormComponent;
+	@ViewChild(DynamicFormComponent, {static: false})
+	public dynamicForm?: DynamicFormComponent;
 
 	/** Avatar to put in betwen FAB buttons. */
-	public fabAvatar?: Observable<SafeUrl|string|undefined>;
+	public fabAvatar?: Observable<SafeUrl | string | undefined>;
 
 	/** Form for prompt. If defined, will render and return response. */
 	public form?: IForm;
 
 	/** Indicates whether content is Markdown. */
-	public markdown: boolean	= false;
+	public markdown: boolean = false;
 
 	/** OK button text. */
 	public ok?: string;
@@ -93,12 +94,18 @@ export class DialogConfirmComponent extends BaseProvider implements AfterViewIni
 		private readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** @ignore */
-		@Optional() @Inject(MatBottomSheetRef)
-		private readonly matBottomSheetRef: MatBottomSheetRef<DialogConfirmComponent>|undefined,
+		@Optional()
+		@Inject(MatBottomSheetRef)
+		private readonly matBottomSheetRef:
+			| MatBottomSheetRef<DialogConfirmComponent>
+			| undefined,
 
 		/** @ignore */
-		@Optional() @Inject(MatDialogRef)
-		private readonly matDialogRef: MatDialogRef<DialogConfirmComponent>|undefined,
+		@Optional()
+		@Inject(MatDialogRef)
+		private readonly matDialogRef:
+			| MatDialogRef<DialogConfirmComponent>
+			| undefined,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

@@ -22,9 +22,7 @@
 							"src/manifest.json",
 							"src/serviceworker.js"
 						],
-						"styles": [
-							"src/css/cyph.app.scss"
-						],
+						"styles": ["src/css/cyph.app.scss"],
 						"scripts": []
 					},
 					"configurations": {
@@ -274,9 +272,7 @@
 						"polyfills": "src/js/cyph.app/polyfills.ts",
 						"tsConfig": "src/tsconfig.spec.json",
 						"scripts": [],
-						"styles": [
-							"src/css/cyph.app.scss"
-						],
+						"styles": ["src/css/cyph.app.scss"],
 						"assets": [
 							"src/assets",
 							"src/favicon.ico",
@@ -314,9 +310,7 @@
 				"lint": {
 					"builder": "@angular-devkit/build-angular:tslint",
 					"options": {
-						"tsConfig": [
-							"e2e/tsconfig.e2e.json"
-						],
+						"tsConfig": ["e2e/tsconfig.e2e.json"],
 						"exclude": []
 					}
 				}

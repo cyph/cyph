@@ -38,23 +38,23 @@ if [ ! "${htmlOnly}" ] ; then
 
 	componentConsistency="$(
 		node -e '
-			const glob	= require("glob");
+			const glob = require("glob");
 
-			const componentFiles	= glob.sync("js/cyph/components/**", {nodir: true});
+			const componentFiles = glob.sync("js/cyph/components/**", {nodir: true});
 
-			const webTemplates		= componentFiles.filter(s =>
+			const webTemplates = componentFiles.filter(s =>
 				s.endsWith(".html") && !s.endsWith(".native.html")
 			);
 
-			const nativeTemplates	= componentFiles.filter(s =>
+			const nativeTemplates = componentFiles.filter(s =>
 				s.endsWith(".native.html")
 			);
 
-			const webStylesheets	= componentFiles.filter(s =>
+			const webStylesheets = componentFiles.filter(s =>
 				s.endsWith(".scss") && !s.endsWith(".native.scss")
 			);
 
-			const nativeStylesheets	= componentFiles.filter(s =>
+			const nativeStylesheets = componentFiles.filter(s =>
 				s.endsWith(".native.scss")
 			);
 
@@ -87,16 +87,16 @@ if [ ! "${htmlOnly}" ] ; then
 	tsc --skipLibCheck js/tslint-rules/*.ts || fail
 
 	node -e "
-		const tsconfig	= JSON.parse(
+		const tsconfig = JSON.parse(
 			fs.readFileSync('js/tsconfig.json').toString().
 				split('\n').
 				filter(s => s.trim()[0] !== '/').
 				join('\n')
 		);
 
-		tsconfig.compilerOptions.paths	= undefined;
+		tsconfig.compilerOptions.paths = undefined;
 
-		tsconfig.files	=
+		tsconfig.files =
 			'$(cd js ; find . -type f -name '*.ts' | tr '\n' ' ')typings/index.d.ts'.split(' ')
 		;
 
@@ -105,24 +105,6 @@ if [ ! "${htmlOnly}" ] ; then
 			JSON.stringify(tsconfig)
 		);
 	"
-
-	# Temporary workaround for https://github.com/palantir/tslint/issues/3709
-	if [ ! "${CIRCLECI}" ] ; then
-		node -e "
-			const tslint	= JSON.parse(
-				fs.readFileSync('js/tslint.json').toString().
-					replace(/\n/g, ' ').
-					replace(/\/\*.*?\*\//g, '')
-			);
-
-			tslint.rules.whitespace	= false;
-
-			fs.writeFileSync(
-				'js/tslint.json',
-				JSON.stringify(tslint)
-			);
-		"
-	fi
 
 	cp ${dir}/shared/lib/js/package.json ./
 
@@ -136,39 +118,38 @@ if [ ! "${htmlOnly}" ] ; then
 	)"
 fi
 
-if [ "${htmlOnly}" ] || [ "${fast}" ] ; then
-	# htmllint
+# htmllint
 
-	output="${output}$({
-		find js \
-			-type f \
-			-name '*.html' \
-			-not -name '*.native.html' \
-			-not -name dynamic-form.html \
-			-exec node -e '(async () => {
-				const result	= await require("htmllint")(
-					fs.readFileSync("{}").toString().
-						replace(/accept='"'"'[^'"'"']+'"'"'/g, "").
-						replace(/\[([A-Za-z0-9]+)\.([A-Za-z0-9]+)\]='"'"'[^'"'"']+'"'"'/g, "").
-						// replace(/\[([A-Za-z0-9\.]+)\]='"'"'[^'"'"']+'"'"'/g, "$1='"'"'balls'"'"'").
-						replace(/\(([A-Za-z0-9\.]+)\)/g, "$1").
-						replace(/\[([A-Za-z0-9\.]+)\]/g, "$1")
-					,
-					JSON.parse(fs.readFileSync("js/htmllint.json").toString())
-				);
+output="${output}$({
+	find js \
+		-type f \
+		-name '*.html' \
+		-not -name '*.native.html' \
+		-not -name dynamic-form.html \
+		-exec node -e '(async () => {
+			const result = await require("htmllint")(
+				fs.readFileSync("{}").toString().
+					replace(/accept='"'"'[^'"'"']+'"'"'/g, "").
+					replace(/\[([A-Za-z0-9]+)\.([A-Za-z0-9]+)\]='"'"'[^'"'"']+'"'"'/g, "").
+					// replace(/\[([A-Za-z0-9\.]+)\]='"'"'[^'"'"']+'"'"'/g, "$1='"'"'balls'"'"'").
+					replace(/\(([A-Za-z0-9\.]+)\)/g, "$1").
+					replace(/\[([A-Za-z0-9\.]+)\]/g, "$1")
+				,
+				JSON.parse(fs.readFileSync("js/htmllint.json").toString())
+			);
 
-				if (result.length === 0) {
-					return;
-				}
+			if (result.length === 0) {
+				return;
+			}
 
-				console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
-			})().catch(err => {
-				console.error({file: "{}", err});
-				process.exit(1);
-			})' \
-		\;;
-	} 2>&1)"
-fi
+			console.log("{}: " + JSON.stringify(result, undefined, "\t") + "\n\n");
+		})().catch(err => {
+			console.error({file: "{}", err});
+			process.exit(1);
+		})' \
+	\;;
+} 2>&1)"
+
 if [ ! "${htmlOnly}" ] && [ ! "${fast}" ] ; then
 	# Retire.js
 
@@ -182,7 +163,7 @@ if [ ! "${htmlOnly}" ] && [ ! "${fast}" ] ; then
 			).map(o => !o.path ?
 				[o] :
 				[o, Object.keys(o).reduce((acc, k) => {
-					acc[k]	= k === "path" ? `/node_modules/${o[k]}` : o[k];
+					acc[k] = k === "path" ? `/node_modules/${o[k]}` : o[k];
 					return acc;
 				}, {})]
 			).reduce(

@@ -2,5 +2,4 @@
 
 /** @file simplewebrtc external. */
 
-
 export default {};

@@ -1,104 +1,126 @@
 <form
 	ngNativeValidate
 	fxFlexFill
-	fxLayout='column'
-	fxLayoutGap='16px'
-	(submit)='submit()'
+	fxLayout="column"
+	fxLayoutGap="16px"
+	(submit)="submit()"
 >
-	<div fxFlexFill *ngIf='(signupService.state | async) === 0'>
-		<div fxLayout='row'>
+	<div fxFlexFill *ngIf="(signupService.state | async) === 0">
+		<div fxLayout="row">
 			<ng-content></ng-content>
 		</div>
-		<div fxLayout='row'>
+		<div fxLayout="row">
 			<div
-				fxFlex='50'
-				fxLayout='column'
-				fxLayoutAlign='center stretch'
-				*ngIf='(envService.isMobile | async) === false'
+				fxFlex="50"
+				fxLayout="column"
+				fxLayoutAlign="center stretch"
+				*ngIf="(envService.isMobile | async) === false"
 			>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex='80'>
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<mat-form-field fxFlex="80">
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]='signupService.data.email | async'
-							(ngModelChange)='signupService.data.email.next($event)'
-							name='email'
-							type='email'
-							[pattern]='emailPattern'
-							placeholder='Email'
+							[ngModel]="signupService.data.email | async"
+							(ngModelChange)="
+								signupService.data.email.next($event)
+							"
+							name="email"
+							type="email"
+							[pattern]="emailPattern"
+							placeholder="Email"
 						/>
 					</mat-form-field>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex='80'>
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<mat-form-field fxFlex="80">
 						<input
 							matInput
 							cyphTranslate
-							name='password'
-							type='password'
-							placeholder='Password'
-							[disabled]='true'
+							name="password"
+							type="password"
+							placeholder="Password"
+							[disabled]="true"
 						/>
 					</mat-form-field>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex='80'>
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<mat-form-field fxFlex="80">
 						<input
 							matInput
 							cyphTranslate
-							name='confirmPassword'
-							type='password'
-							placeholder='Confirm Password'
-							[disabled]='true'
+							name="confirmPassword"
+							type="password"
+							placeholder="Confirm Password"
+							[disabled]="true"
 						/>
 					</mat-form-field>
 				</div>
-				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex='80'>
+				<div
+					*ngIf="invite"
+					fxLayout="row"
+					fxLayoutAlign="center center"
+				>
+					<mat-form-field fxFlex="80">
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]='signupService.data.inviteCode | async'
-							(ngModelChange)='signupService.data.inviteCode.next($event)'
-							name='inviteCode'
-							type='text'
-							placeholder='Invite Code'
+							[ngModel]="signupService.data.inviteCode | async"
+							(ngModelChange)="
+								signupService.data.inviteCode.next($event)
+							"
+							name="inviteCode"
+							type="text"
+							placeholder="Invite Code"
 						/>
 					</mat-form-field>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center end' class='register-button'>
-					<button mat-button type='submit' [disabled]='true' cyphTranslate>
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center end"
+					class="register-button"
+				>
+					<button
+						mat-button
+						type="submit"
+						[disabled]="true"
+						cyphTranslate
+					>
 						Register
 					</button>
 				</div>
 			</div>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<p fxFlex='80' cyphTranslate>
+			<div fxFlex fxLayout="column">
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<p fxFlex="80" cyphTranslate>
 						We are currently at capacity and registration is closed,
-						but you can sign up for the waitlist to reserve your spot
-						in line for an account.
+						but you can sign up for the waitlist to reserve your
+						spot in line for an account.
 					</p>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<p fxFlex='80'>
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<p fxFlex="80">
 						<span cyphTranslate>
 							However, you don't need an account to use
 						</span>
 						&ngsp;
-						<span>{{stringsService.product}};</span>
+						<span>{{ stringsService.product }};</span>
 						&ngsp;
 						<span cyphTranslate>
-							just click the "start new cyph" button on the homepage. Our beta
-							accounts program only provides early access to more advanced
-							functionality and cool new features.
+							just click the "start new cyph" button on the
+							homepage. Our beta accounts program only provides
+							early access to more advanced functionality and cool
+							new features.
 						</span>
 					</p>
 					<br />
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center end' class='register-button'>
-					<button mat-button type='submit' cyphTranslate>
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center end"
+					class="register-button"
+				>
+					<button mat-button type="submit" cyphTranslate>
 						Waitlist Signup
 					</button>
 				</div>
@@ -106,48 +128,55 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf='(signupService.state | async) === 1'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex='80'>
+	<div fxFlexFill *ngIf="(signupService.state | async) === 1">
+		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
+			<div fxFlex fxLayout="column">
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<mat-form-field fxFlex="80">
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]='signupService.data.email | async'
-							(ngModelChange)='signupService.data.email.next($event)'
-							name='email'
-							type='email'
-							[pattern]='emailPattern'
-							placeholder='Email'
+							[ngModel]="signupService.data.email | async"
+							(ngModelChange)="
+								signupService.data.email.next($event)
+							"
+							name="email"
+							type="email"
+							[pattern]="emailPattern"
+							placeholder="Email"
 							required
 						/>
 					</mat-form-field>
 				</div>
-				<div *ngIf='invite' fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex='80'>
+				<div
+					*ngIf="invite"
+					fxLayout="row"
+					fxLayoutAlign="center center"
+				>
+					<mat-form-field fxFlex="80">
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]='signupService.data.inviteCode | async'
-							(ngModelChange)='signupService.data.inviteCode.next($event)'
-							name='inviteCode'
-							type='text'
-							placeholder='Invite Code'
+							[ngModel]="signupService.data.inviteCode | async"
+							(ngModelChange)="
+								signupService.data.inviteCode.next($event)
+							"
+							name="inviteCode"
+							type="text"
+							placeholder="Invite Code"
 							required
 						/>
 					</mat-form-field>
 				</div>
 				<br />
-				<div fxLayout='row' fxLayoutAlign='start center'>
-					<mat-icon class='gdpr' svgIcon='gdpr'></mat-icon>
-					&nbsp;
-					&nbsp;
-					<small>{{stringsService.gdprSignupForm}}</small>
+				<div fxLayout="row" fxLayoutAlign="start center">
+					<mat-icon class="gdpr" svgIcon="gdpr"></mat-icon>
+					&nbsp; &nbsp;
+					<small>{{ stringsService.gdprSignupForm }}</small>
 				</div>
 				<br />
-				<div fxLayout='row' fxLayoutAlign='center end'>
-					<button mat-button type='submit' cyphTranslate>
+				<div fxLayout="row" fxLayoutAlign="center end">
+					<button mat-button type="submit" cyphTranslate>
 						Waitlist Signup
 					</button>
 				</div>
@@ -155,23 +184,25 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf='(signupService.state | async) === 2'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex fxLayout='column'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<mat-form-field fxFlex='80'>
+	<div fxFlexFill *ngIf="(signupService.state | async) === 2">
+		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
+			<div fxFlex fxLayout="column">
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<mat-form-field fxFlex="80">
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]='signupService.data.name | async'
-							(ngModelChange)='signupService.data.name.next($event)'
-							name='name'
-							placeholder='Name (optional)'
+							[ngModel]="signupService.data.name | async"
+							(ngModelChange)="
+								signupService.data.name.next($event)
+							"
+							name="name"
+							placeholder="Name (optional)"
 						/>
 					</mat-form-field>
 				</div>
-				<div fxLayout='row' fxLayoutAlign='center end'>
-					<button mat-button type='submit' cyphTranslate>
+				<div fxLayout="row" fxLayoutAlign="center end">
+					<button mat-button type="submit" cyphTranslate>
 						Waitlist Signup
 					</button>
 				</div>
@@ -179,16 +210,18 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf='(signupService.state | async) === 3'>
-		<div fxFlex fxLayout='row' fxLayoutAlign='center center'>
-			<div fxFlex='50' fxLayout='column'>
-				<div fxLayout='row' fxLayoutAlign='center center'>
-					<p fxFlex='80'>
+	<div fxFlexFill *ngIf="(signupService.state | async) === 3">
+		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
+			<div fxFlex="50" fxLayout="column">
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<p fxFlex="80">
 						<span cyphTranslate>Thanks for subscribing,</span>
 						&ngsp;
-						<span>{{signupService.data.name | async}}!</span>
+						<span>{{ signupService.data.name | async }}!</span>
 						&ngsp;
-						<span cyphTranslate>We'll email you when your invite is ready.</span>
+						<span cyphTranslate
+							>We'll email you when your invite is ready.</span
+						>
 					</p>
 				</div>
 			</div>

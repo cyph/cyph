@@ -4,12 +4,14 @@ import {BaseProvider} from '../base-provider';
 import {DOMPurifyHtmlSanitizer} from '../dompurify-html-sanitizer';
 import {HtmlSanitizerService} from './html-sanitizer.service';
 
-
 /** @see DOMPurifyHtmlSanitizer */
 @Injectable()
-export class DOMPurifyHtmlSanitizerService extends BaseProvider implements HtmlSanitizerService {
+export class DOMPurifyHtmlSanitizerService extends BaseProvider
+	implements HtmlSanitizerService {
 	/** @ignore */
-	private readonly domPurifyHtmlSanitizer	= new DOMPurifyHtmlSanitizer(DOMPurify);
+	private readonly domPurifyHtmlSanitizer = new DOMPurifyHtmlSanitizer(
+		DOMPurify
+	);
 
 	/** @inheritDoc */
 	public sanitize (html: string) : string {

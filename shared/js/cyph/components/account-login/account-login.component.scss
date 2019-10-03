@@ -41,7 +41,8 @@ cyph-pin-input {
 		font-size: 2em;
 	}
 
-	.mat-card, .mat-card-content {
+	.mat-card,
+	.mat-card-content {
 		width: 100%;
 	}
 
@@ -60,7 +61,8 @@ cyph-pin-input {
 		}
 	}
 
-	button, a {
+	button,
+	a {
 		&.mat-primary {
 			margin-top: 45px;
 		}

@@ -5,11 +5,11 @@ export interface IHash {
 
 	/** Stretches input to the specified number of bytes. */
 	deriveKey (
-		input: Uint8Array|string,
+		input: Uint8Array | string,
 		outputBytes?: number,
 		clearInput?: boolean
 	) : Promise<Uint8Array>;
 
 	/** Hashes plaintext. */
-	hash (plaintext: Uint8Array|string) : Promise<Uint8Array>;
+	hash (plaintext: Uint8Array | string) : Promise<Uint8Array>;
 }

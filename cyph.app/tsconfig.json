@@ -5,11 +5,7 @@
 		"baseUrl": "src",
 		"declaration": false,
 		"outDir": "./dist/out-tsc",
-		"typeRoots": [
-			"node_modules/@types"
-		]
+		"typeRoots": ["node_modules/@types"]
 	},
-	"files": [
-		"src/js/cyph.app/main.ts"
-	]
+	"files": ["src/js/cyph.app/main.ts"]
 }

@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for alert dialog.
  */
@@ -17,7 +16,7 @@ export class DialogAlertComponent extends BaseProvider {
 	public content?: string;
 
 	/** Indicates whether content is Markdown. */
-	public markdown: boolean	= false;
+	public markdown: boolean = false;
 
 	/** OK button text. */
 	public ok?: string;

@@ -19,13 +19,15 @@ mat-dialog-container {
 }
 
 /* Workaround for mobile Chrome vh bug */
-.cdk-global-overlay-wrapper, .cdk-overlay-container {
+.cdk-global-overlay-wrapper,
+.cdk-overlay-container {
 	height: 100%;
 }
 
 /* Workaround for https://bugs.chromium.org/p/chromium/issues/detail?id=821876 */
 body.disable-drop-shadow {
-	.loading > .logo-animation, cyph-chat-message-list .message-list-background {
+	.loading > .logo-animation,
+	cyph-chat-message-list .message-list-background {
 		@include filter(none !important);
 	}
 }
@@ -42,7 +44,8 @@ mat-sidenav {
 	visibility: hidden;
 
 	.mat-button {
-		mat-icon, img {
+		mat-icon,
+		img {
 			margin-right: 5px;
 		}
 	}
@@ -76,7 +79,10 @@ body.load-complete #pre-load {
 	opacity: 0;
 }
 
-html, body, #main, .cyph-foreground {
+html,
+body,
+#main,
+.cyph-foreground {
 	margin: 0;
 }
 
@@ -93,14 +99,16 @@ input.text-security {
 	font-family: text-security-disc !important;
 }
 
-#footer, .footer {
+#footer,
+.footer {
 	margin-top: 0;
 	position: relative;
 	text-align: center;
 	z-index: 2;
 }
 
-.card-list, mat-card.file {
+.card-list,
+mat-card.file {
 	position: relative;
 
 	> div {
@@ -118,7 +126,8 @@ input.text-security {
 		font-size: 1em !important;
 	}
 
-	mat-card-title.truncate, mat-card-subtitle.truncate {
+	mat-card-title.truncate,
+	mat-card-subtitle.truncate {
 		overflow-x: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -154,7 +163,8 @@ body.mobile .card-list {
 	> :first-child:not(mat-progress-spinner) {
 		opacity: 0.5 !important;
 
-		&, * {
+		&,
+		* {
 			pointer-events: none !important;
 		}
 	}
@@ -166,7 +176,8 @@ body.mobile .card-list {
 	}
 }
 
-.cyph-foreground, cyph-chat-message .message-item.ui-style-default .ql-container {
+.cyph-foreground,
+cyph-chat-message .message-item.ui-style-default .ql-container {
 	font-size: 1.08rem;
 }
 
@@ -184,8 +195,10 @@ a {
 	}
 }
 
-.cyph-drop-zone, button {
-	mat-icon, .mat-button-wrapper {
+.cyph-drop-zone,
+button {
+	mat-icon,
+	.mat-button-wrapper {
 		pointer-events: none;
 	}
 }
@@ -209,7 +222,10 @@ a {
 	text-align: center;
 }
 
-[mat-button], [mat-flat-button], [mat-raised-button], [mat-stroked-button] {
+[mat-button],
+[mat-flat-button],
+[mat-raised-button],
+[mat-stroked-button] {
 	text-transform: uppercase;
 }
 
@@ -237,8 +253,10 @@ smd-fab-speed-dial:not(.smd-opened) {
 	pointer-events: none;
 }
 
-[mat-fab], smd-fab-speed-dial {
-	&.absolute-fab, &.fixed-fab {
+[mat-fab],
+smd-fab-speed-dial {
+	&.absolute-fab,
+	&.fixed-fab {
 		right: 16px;
 		bottom: 16px;
 
@@ -345,15 +363,24 @@ mat-progress-bar > svg.mat-progress-bar-background {
 	pointer-events: none;
 }
 
-html, button, input, select, textarea {
+html,
+button,
+input,
+select,
+textarea {
 	font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
 	font-size: 100%;
 }
 
-button, [mat-button], [mat-raised-button] {
+button,
+[mat-button],
+[mat-raised-button] {
 	img {
 		pointer-events: none;
 	}
@@ -402,7 +429,8 @@ blockquote {
 	padding-left: 10px;
 }
 
-#footer, .footer {
+#footer,
+.footer {
 	a:not(:hover) {
 		text-decoration: none;
 	}
@@ -412,7 +440,8 @@ blockquote {
 	background-image: none !important;
 }
 
-pre, code {
+pre,
+code {
 	font-family: 'Ubuntu Mono', monospace;
 	white-space: pre-wrap;
 
@@ -432,7 +461,8 @@ pre, code {
 	}
 }
 
-#main, .cyph-foreground {
+#main,
+.cyph-foreground {
 	position: relative;
 	z-index: 2;
 }
@@ -457,10 +487,11 @@ pre, code {
 
 @include keyframes(flashIn) {
 	50% {
-		@include filter(brightness(5) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5)));
+		@include filter(
+			brightness(5) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5))
+		);
 	}
 }
-
 
 .cyph-flash-in {
 	@include animation-name(flashIn);
@@ -493,7 +524,8 @@ mat-icon.gdpr {
 }
 
 @include keyframes(breathe) {
-	0%, 100% {
+	0%,
+	100% {
 		@include filter(brightness(1));
 	}
 
@@ -501,7 +533,6 @@ mat-icon.gdpr {
 		@include filter(brightness(1.25));
 	}
 }
-
 
 .breathe {
 	@include breathe;
@@ -556,7 +587,8 @@ $nanoScrollbarWidth: 17px;
 		}
 
 		&.edge {
-			@at-root #{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+			@at-root #{nanoTabGroupTarget()},
+				#{nanoDefaultTarget()} {
 				-ms-overflow-style: -ms-autohiding-scrollbar;
 			}
 		}
@@ -574,7 +606,8 @@ $nanoScrollbarWidth: 17px;
 
 		&.other {
 			@at-root {
-				@at-root #{nanoTabGroupTarget()}, #{nanoDefaultTarget()} {
+				@at-root #{nanoTabGroupTarget()},
+					#{nanoDefaultTarget()} {
 					width: calc(100% + #{$nanoScrollbarWidth});
 					overflow-y: scroll;
 				}
@@ -644,7 +677,9 @@ $nanoScrollbarWidth: 17px;
 }
 
 @include keyframes(ellipsis-spinner) {
-	0%, 80%, 100% {
+	0%,
+	80%,
+	100% {
 		@include transform(scale(0));
 	}
 

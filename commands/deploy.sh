@@ -417,7 +417,7 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 
 	ls cyph.com/*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${cyphComCSP}\"|g" %
 	ls */*.yaml | xargs -I% sed -i "s|${defaultCSPString}|\"${webSignCSP}\"|g" %
-	sed -i "s|${defaultCSPString}|${fullCSP}|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|'${defaultCSPString}'|${fullCSP}|g" shared/js/cyph/env-deploy.ts
 
 	cat cyph.com/cyph-com.yaml |
 		tr '\n' '☁' |
@@ -591,6 +591,10 @@ if [ ! "${site}" ] || ( [ "${site}" == websign ] || [ "${site}" == "${webSignedP
 
 	cp -rf ../shared/favicon.ico ../shared/assets/img ./
 	../commands/websign/pack.js index.html index.html
+
+	# special case; add general solution when needed
+	node -e "fs.writeFileSync('serviceworker.js', fs.readFileSync('lib/localforage.js').toString().trim() + '\n' + fs.readFileSync('serviceworker.js').toString())"
+
 	cd ..
 fi
 
@@ -893,12 +897,12 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 			filter(o => !o.useNamespace).
 			reduce(
 				(namespaces, {burnerOnly, domain}) => {
-					namespaces[domain]	= {
+					namespaces[domain] = {
 						accountsURL: `https://${domain}/`,
 						burnerURL: `https://${domain}/${burnerOnly ? "" : "#burner/"}`,
 						domain
 					};
-					namespaces[domain.replace(/\./g, "_")]	= namespaces[domain];
+					namespaces[domain.replace(/\./g, "_")] = namespaces[domain];
 					return namespaces;
 				},
 				{
@@ -927,7 +931,16 @@ if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ 
 		firebase use --add "${firebaseProject}"
 		firebase functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
-		firebase deploy || fail
+
+		i=0
+		while true ; do
+			firebase deploy && break
+
+			i=$((i+1))
+			if [ $i -gt 5 ] ; then fail ; fi
+
+			sleep 10
+		done
 	done
 
 	rm -rf functions/node_modules functions/package-lock.json

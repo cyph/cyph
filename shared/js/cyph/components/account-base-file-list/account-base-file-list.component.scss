@@ -31,6 +31,7 @@ cyph-account-storage-analytics.mobile {
 	top: -15px;
 }
 
-mat-card-subtitle, mat-card-title {
+mat-card-subtitle,
+mat-card-title {
 	@include word-wrap;
 }

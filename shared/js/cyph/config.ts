@@ -2,37 +2,34 @@ import {CyphPlans} from '../proto';
 import {SubscriptionTypes} from './checkout';
 import {ISessionService} from './service-interfaces/isession.service';
 
-
 /**
  * Static/constant configuration values.
  */
 export class Config {
 	/** Configuration of available API flags. */
-	public readonly apiFlags	= [
+	public readonly apiFlags = [
 		{
 			analEvent: 'modest-branding',
 			character: '!',
 			get: (sessionService: ISessionService) =>
-				sessionService.apiFlags.modestBranding
-			,
+				sessionService.apiFlags.modestBranding,
 			set: (sessionService: ISessionService) => {
-				sessionService.apiFlags.modestBranding	= true;
+				sessionService.apiFlags.modestBranding = true;
 			}
 		},
 		{
 			analEvent: 'force-turn',
 			character: '$',
 			get: (sessionService: ISessionService) =>
-				sessionService.apiFlags.disableP2P
-			,
+				sessionService.apiFlags.disableP2P,
 			set: (sessionService: ISessionService) => {
-				sessionService.apiFlags.disableP2P		= true;
+				sessionService.apiFlags.disableP2P = true;
 			}
 		}
 	];
 
 	/** User-facing email addresses to include in places like contact forms. */
-	public readonly contactEmailAddresses: string[]	= [
+	public readonly contactEmailAddresses: string[] = [
 		'hello',
 		'help',
 		'feedback',
@@ -43,39 +40,42 @@ export class Config {
 	];
 
 	/** Number of milliseconds before new cyph wait screen will abort. */
-	public readonly cyphCountdown: number		= 600000;
+	public readonly cyphCountdown: number = 600000;
 
 	/** Length of server ID for a cyph. */
-	public readonly cyphIDLength: number		= 7;
+	public readonly cyphIDLength: number = 7;
 
 	/** Indicates the original language of any content to be translated. */
-	public readonly defaultLanguage: string		= 'en';
+	public readonly defaultLanguage: string = 'en';
 
 	/** File-transfer-related config (used by Files.Files). */
-	public readonly filesConfig	= {
+	public readonly filesConfig = {
 		maxImageWidth: 1920,
 		maxSize: 268435456
 	};
 
 	/** Max signed 32-bit integer. */
-	public readonly maxInt32: number			= 2147483647;
+	public readonly maxInt32: number = 2147483647;
 
 	/** Max unsigned 48-bit integer + 1, used by util/random. */
-	public readonly maxSafeUint: number			= 281474976710656;
+	public readonly maxSafeUint: number = 281474976710656;
 
 	/** Max unsigned 32-bit integer. */
-	public readonly maxUint32: number			= 4294967295;
+	public readonly maxUint32: number = 4294967295;
 
 	/** URL for Cyph Tor site. */
-	public readonly onionRoot: string			= 'cyphdbyhiddenbhs.onion';
+	public readonly onionRoot: string = 'cyphdbyhiddenbhs.onion';
 
 	/** Configuration options for Cyph plans. */
-	public readonly planConfig: Record<CyphPlans, {
-		initialInvites: number;
-		storageCapGB: number;
-		usernameMinLength: number;
-		walletEarlyAccess?: string;
-	}>	= {
+	public readonly planConfig: Record<
+		CyphPlans,
+		{
+			initialInvites: number;
+			storageCapGB: number;
+			usernameMinLength: number;
+			walletEarlyAccess?: string;
+		}
+	> = {
 		[CyphPlans.FoundersAndFriends]: {
 			initialInvites: 15,
 			storageCapGB: 100,
@@ -124,7 +124,7 @@ export class Config {
 				namespace?: string;
 			};
 		};
-	}	= {
+	} = {
 		categories: {
 			cyberMonday: {
 				id: 7,
@@ -251,17 +251,71 @@ export class Config {
 	 * Characters used by util/readableID (includes all alphanumeric
 	 * characters except 'l' and 'I').
 	 */
-	public readonly readableIDCharacters: string[]	= [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-		'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
-		'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
-		'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-		'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+	public readonly readableIDCharacters: string[] = [
+		'0',
+		'1',
+		'2',
+		'3',
+		'4',
+		'5',
+		'6',
+		'7',
+		'8',
+		'9',
+		'a',
+		'b',
+		'c',
+		'd',
+		'e',
+		'f',
+		'g',
+		'h',
+		'i',
+		'j',
+		'k',
+		'm',
+		'n',
+		'o',
+		'p',
+		'q',
+		'r',
+		's',
+		't',
+		'u',
+		'v',
+		'w',
+		'x',
+		'y',
+		'z',
+		'A',
+		'B',
+		'C',
+		'D',
+		'E',
+		'F',
+		'G',
+		'H',
+		'J',
+		'K',
+		'L',
+		'M',
+		'N',
+		'O',
+		'P',
+		'Q',
+		'R',
+		'S',
+		'T',
+		'U',
+		'V',
+		'W',
+		'X',
+		'Y',
+		'Z'
 	];
 
 	/** @see {@link https://github.com/angular/flex-layout/wiki/Responsive-API} */
-	public readonly responsiveMaxWidths		= {
+	public readonly responsiveMaxWidths = {
 		lg: 1919,
 		md: 1279,
 		sm: 959,
@@ -270,15 +324,10 @@ export class Config {
 	};
 
 	/** Length of random IDs in cyph links. */
-	public readonly secretLength: number	= 25;
-
-	/** WebSign-related config. */
-	public readonly webSignConfig			= {
-		serviceWorker: 'serviceworker.js'
-	};
+	public readonly secretLength: number = 25;
 
 	constructor () {}
 }
 
 /** @see Config */
-export const config	= new Config();
+export const config = new Config();

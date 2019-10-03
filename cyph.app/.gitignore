@@ -8,6 +8,11 @@ src/css
 src/js
 src/templates
 
+# Docs (see commands/.bashrc)
+
+/LICENSE
+/README.md
+
 # compiled output
 /dist
 /tmp

@@ -3,7 +3,12 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
-import {IContactListItem, NewContactTypes, SecurityModels, User} from '../account';
+import {
+	IContactListItem,
+	NewContactTypes,
+	SecurityModels,
+	User
+} from '../account';
 import {BaseProvider} from '../base-provider';
 import {
 	emailInput,
@@ -37,7 +42,6 @@ import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Account contacts service.
  */
@@ -47,32 +51,37 @@ export class AccountContactsService extends BaseProvider {
 	 * Resolves circular dependency needed for addContactPrompt to work.
 	 * @see AccountContactsSearchComponent
 	 */
-	public static readonly accountContactsSearchComponent	=
-		resolvable<ComponentType<{
+	public static readonly accountContactsSearchComponent = resolvable<
+		ComponentType<{
 			chipInput: boolean;
-			contactList: Observable<(IContactListItem|User)[]>|undefined;
+			contactList: Observable<(IContactListItem | User)[]> | undefined;
 			externalUsers: boolean;
 			getContacts?: IResolvable<User[]>;
 			title?: string;
-		}>>()
-	;
-
+		}>
+	>();
 
 	/** @ignore */
-	private readonly accountUserLookupService: IResolvable<AccountUserLookupService>	=
-		resolvable()
-	;
+	private readonly accountUserLookupService: IResolvable<
+		AccountUserLookupService
+	> = resolvable();
 
-	private readonly contactListHelpers	= {
+	private readonly contactListHelpers = {
 		groupData: memoize(
-			(groupData: {group: IAccountMessagingGroup; id: string; incoming: boolean}) => ({
+			(groupData: {
+				group: IAccountMessagingGroup;
+				id: string;
+				incoming: boolean;
+			}) => ({
 				groupData,
 				unreadMessageCount: toBehaviorSubject<number>(
-					this.accountDatabaseService.getAsyncMap(
-						`unreadMessages/${groupData.group.castleSessionID}`,
-						NeverProto,
-						SecurityModels.unprotected
-					).watchSize(),
+					this.accountDatabaseService
+						.getAsyncMap(
+							`unreadMessages/${groupData.group.castleSessionID}`,
+							NeverProto,
+							SecurityModels.unprotected
+						)
+						.watchSize(),
 					0
 				),
 				user: Promise.resolve(undefined),
@@ -82,13 +91,14 @@ export class AccountContactsService extends BaseProvider {
 				`${groupData.id} ${groupData.incoming.toString()}`
 		),
 		user: memoize(async (username: string) => {
-			const user	= (await this.accountUserLookupService.promise).getUser(username);
+			const accountUserLookupService = await this.accountUserLookupService
+				.promise;
+
+			const user = accountUserLookupService.getUser(username);
 
 			return {
-				unreadMessageCount: toBehaviorSubject<number>(
-					user.then(async o => o ? o.unreadMessageCount : 0),
-					0,
-					this.subscriptions
+				unreadMessageCount: accountUserLookupService.getUnreadMessageCount(
+					username
 				),
 				user,
 				username
@@ -97,26 +107,41 @@ export class AccountContactsService extends BaseProvider {
 	};
 
 	/** List of contacts for current user, sorted alphabetically by username. */
-	public readonly contactList: Observable<(IContactListItem|User)[]>	= toBehaviorSubject(
+	public readonly contactList: Observable<
+		(IContactListItem | User)[]
+	> = toBehaviorSubject(
 		combineLatest([
 			this.accountFilesService.filesListFilteredWithData.messagingGroups(),
 			this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
-			this.accountDatabaseService.watchListKeys('contacts', this.subscriptions)
-		]).pipe(mergeMap(async ([groups, incomingGroups, usernames]) => [
-			...[
-				...incomingGroups.map(o => ({group: o.data, id: o.record.id, incoming: true})),
-				...groups.map(o => ({group: o.data, id: o.record.id, incoming: false}))
-			].map(
-				this.contactListHelpers.groupData
-			),
-			...(await Promise.all(normalizeArray(usernames).map(this.contactListHelpers.user)))
-		])),
+			this.accountDatabaseService.watchListKeys(
+				'contacts',
+				this.subscriptions
+			)
+		]).pipe(
+			mergeMap(async ([groups, incomingGroups, usernames]) => [
+				...[
+					...incomingGroups.map(o => ({
+						group: o.data,
+						id: o.record.id,
+						incoming: true
+					})),
+					...groups.map(o => ({
+						group: o.data,
+						id: o.record.id,
+						incoming: false
+					}))
+				].map(this.contactListHelpers.groupData),
+				...(await Promise.all(
+					normalizeArray(usernames).map(this.contactListHelpers.user)
+				))
+			])
+		),
 		[],
 		this.subscriptions
 	);
 
 	/** Contact state. */
-	public readonly contactState	= memoize(
+	public readonly contactState = memoize(
 		(username: string) : IAsyncValue<IAccountContactState> =>
 			this.accountDatabaseService.getAsyncValue(
 				this.contactURL(username),
@@ -126,108 +151,131 @@ export class AccountContactsService extends BaseProvider {
 	);
 
 	/** Fully loads contact list. */
-	public readonly fullyLoadContactList	= memoize(
-		(contactList: Observable<(IContactListItem|User)[]>) : Observable<User[]> =>
+	public readonly fullyLoadContactList = memoize(
+		(
+			contactList: Observable<(IContactListItem | User)[]>
+		) : Observable<User[]> =>
 			toBehaviorSubject(
-				contactList.pipe(mergeMap(async contacts =>
-					filterUndefined(await Promise.all(
-						contacts.map(async contact =>
-							contact instanceof User ? contact : contact.user
+				contactList.pipe(
+					mergeMap(async contacts =>
+						filterUndefined(
+							await Promise.all(
+								contacts.map(async contact =>
+									contact instanceof User ?
+										contact :
+										contact.user
+								)
+							)
 						)
-					))
-				)),
+					)
+				),
 				[],
 				this.subscriptions
 			)
 	);
 
 	/** Gets Castle session data based on username. */
-	public readonly getCastleSessionData	= memoize(async (username: string) : Promise<{
-		castleSessionID: string;
-		castleSessionURL: string;
-	}> => {
-		const currentUserUsername	=
-			(await this.accountDatabaseService.getCurrentUser()).user.username
-		;
+	public readonly getCastleSessionData = memoize(
+		async (
+			username: string
+		) : Promise<{
+			castleSessionID: string;
+			castleSessionURL: string;
+		}> => {
+			const currentUserUsername = (await this.accountDatabaseService.getCurrentUser())
+				.user.username;
 
-		const [userA, userB]		= normalizeArray([currentUserUsername, username]);
+			const [userA, userB] = normalizeArray([
+				currentUserUsername,
+				username
+			]);
 
-		if (!(userA && userB)) {
+			if (!(userA && userB)) {
+				return {
+					castleSessionID: '',
+					castleSessionURL: ''
+				};
+			}
+
+			const castleSessionURL = `castleSessions/${userA}/${userB}`;
+
 			return {
-				castleSessionID: '',
-				castleSessionURL: ''
+				castleSessionID: await this.databaseService.getOrSetDefault(
+					`${castleSessionURL}/id`,
+					StringProto,
+					() => uuid(true)
+				),
+				castleSessionURL
 			};
 		}
-
-		const castleSessionURL	= `castleSessions/${userA}/${userB}`;
-
-		return {
-			castleSessionID: await this.databaseService.getOrSetDefault(
-				`${castleSessionURL}/id`,
-				StringProto,
-				() => uuid(true)
-			),
-			castleSessionURL
-		};
-	});
+	);
 
 	/** Gets contact username or group metadata based on ID. */
-	public readonly getChatData			= memoize(async (id?: string) : Promise<
-		{group: IAccountMessagingGroup}|{username: string}
-	> => {
-		if (!id) {
-			throw new Error('Invalid contact ID.');
-		}
+	public readonly getChatData = memoize(
+		async (
+			id?: string
+		) : Promise<{group: IAccountMessagingGroup} | {username: string}> => {
+			if (!id) {
+				throw new Error('Invalid contact ID.');
+			}
 
-		try {
-			return {username: await this.getContactUsername(id)};
+			try {
+				return {username: await this.getContactUsername(id)};
+			}
+			catch {
+				return {
+					group: await this.accountFilesService.downloadFile(
+						id,
+						AccountFileRecord.RecordTypes.MessagingGroup
+					).result
+				};
+			}
 		}
-		catch {
-			return {
-				group: await this.accountFilesService.downloadFile(
-					id,
-					AccountFileRecord.RecordTypes.MessagingGroup
-				).result
-			};
-		}
-	});
+	);
 
 	/** Gets contact ID based on username. */
-	public readonly getContactID		= memoize(async (username?: string) : Promise<string> =>
-		!username ? '' : this.accountDatabaseService.getOrSetDefault(
-			`contactIDs/${username}`,
-			StringProto,
-			async () => {
-				const id	= uuid();
-
-				await this.accountDatabaseService.setItem(
-					`contactUsernames/${id}`,
+	public readonly getContactID = memoize(
+		async (username?: string) : Promise<string> =>
+			!username ?
+				'' :
+				this.accountDatabaseService.getOrSetDefault(
+					`contactIDs/${username}`,
 					StringProto,
-					username,
-					SecurityModels.unprotected
-				);
+					async () => {
+						const id = uuid();
 
-				return id;
-			},
-			SecurityModels.unprotected
-		)
+						await this.accountDatabaseService.setItem(
+							`contactUsernames/${id}`,
+							StringProto,
+							username,
+							SecurityModels.unprotected
+						);
+
+						return id;
+					},
+					SecurityModels.unprotected
+				)
 	);
 
 	/** Gets contact username based on ID. */
-	public readonly getContactUsername	= memoize(async (id?: string) : Promise<string> => {
-		if (!id) {
-			throw new Error('Invalid contact ID.');
-		}
+	public readonly getContactUsername = memoize(
+		async (id?: string) : Promise<string> => {
+			if (!id) {
+				throw new Error('Invalid contact ID.');
+			}
 
-		return this.accountDatabaseService.getItem(
-			`contactUsernames/${id}`,
-			StringProto,
-			SecurityModels.unprotected
-		);
-	});
+			return this.accountDatabaseService.getItem(
+				`contactUsernames/${id}`,
+				StringProto,
+				SecurityModels.unprotected
+			);
+		}
+	);
 
 	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner: BehaviorSubject<boolean>	= new BehaviorSubject<boolean>(true);
+	public readonly showSpinner: BehaviorSubject<boolean> = new BehaviorSubject<
+		boolean
+	>(true);
 
 	/** Accepts incoming contact request. */
 	public async acceptContactRequest (username: string) : Promise<void> {
@@ -264,25 +312,28 @@ export class AccountContactsService extends BaseProvider {
 		newContactType: NewContactTypes = NewContactTypes.default
 	) : Promise<void> {
 		if (newContactType === NewContactTypes.default) {
-			const closeFunction	= resolvable<() => void>();
-			const getContacts	= resolvable<User[]>();
+			const closeFunction = resolvable<() => void>();
+			const getContacts = resolvable<User[]>();
 
 			this.dialogService.baseDialog(
-				await AccountContactsService.accountContactsSearchComponent.promise,
+				await AccountContactsService.accountContactsSearchComponent
+					.promise,
 				o => {
-					o.chipInput		= true;
-					o.contactList	= undefined;
-					o.externalUsers	= true;
-					o.getContacts	= getContacts;
-					o.title			= this.stringsService.addContactTitle;
+					o.chipInput = true;
+					o.contactList = undefined;
+					o.externalUsers = true;
+					o.getContacts = getContacts;
+					o.title = this.stringsService.addContactTitle;
 				},
 				closeFunction,
 				true
 			);
 
 			try {
-				const contacts	= await getContacts.promise;
-				await Promise.all(contacts.map(async user => this.addContact(user.username)));
+				const contacts = await getContacts.promise;
+				await Promise.all(
+					contacts.map(async user => this.addContact(user.username))
+				);
 			}
 			finally {
 				(await closeFunction.promise)();
@@ -291,7 +342,7 @@ export class AccountContactsService extends BaseProvider {
 			return;
 		}
 
-		const contactForm	= await this.dialogService.prompt({
+		const contactForm = await this.dialogService.prompt({
 			bottomSheet: true,
 			content: '',
 			form: newForm([
@@ -310,13 +361,14 @@ export class AccountContactsService extends BaseProvider {
 					])
 				])
 			]),
-			title: newContactType === NewContactTypes.external ?
-				this.stringsService.addContactTitle :
-				this.stringsService.inviteContactTitle
+			title:
+				newContactType === NewContactTypes.external ?
+					this.stringsService.addContactTitle :
+					this.stringsService.inviteContactTitle
 		});
 
-		const email	= getFormValue(contactForm, 'string', 0, 1, 0);
-		const name	= getFormValue(contactForm, 'string', 0, 0, 0);
+		const email = getFormValue(contactForm, 'string', 0, 1, 0);
+		const name = getFormValue(contactForm, 'string', 0, 0, 0);
 
 		if (!email || !name) {
 			return;
@@ -402,8 +454,14 @@ export class AccountContactsService extends BaseProvider {
 			}
 		});
 
-		this.contactList.pipe(skip(1), take(1)).toPromise().then(() => {
-			this.showSpinner.next(false);
-		});
+		this.contactList
+			.pipe(
+				skip(1),
+				take(1)
+			)
+			.toPromise()
+			.then(() => {
+				this.showSpinner.next(false);
+			});
 	}
 }

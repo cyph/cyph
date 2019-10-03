@@ -1,126 +1,148 @@
 <div
 	#scrollView
 	cyphNanoScroller
-	[style.overflow]='(chatService.scrollTransition | async) ? "hidden" : ""'
-	(scroll)='onScroll($event)'
+	[style.overflow]="(chatService.scrollTransition | async) ? 'hidden' : ''"
+	(scroll)="onScroll($event)"
 >
-	<div fxLayout='column' fxLayoutGap='4px' class='message-list-background'>
-		<ng-container *ngFor='
-			let item of messageListItems | async;
-			trackBy: trackByMessageListItem
-		'>
-			<ng-container *ngTemplateOutlet='listItem; context: {item: item}'></ng-container>
+	<div fxLayout="column" fxLayoutGap="4px" class="message-list-background">
+		<ng-container
+			*ngFor="
+				let item of messageListItems | async;
+				trackBy: trackByMessageListItem
+			"
+		>
+			<ng-container
+				*ngTemplateOutlet="listItem; context: {item: item}"
+			></ng-container>
 		</ng-container>
 	</div>
 </div>
 
 <div
-	class='background-image'
-	[style.background-image]='customBackgroundImage | async'
+	class="background-image"
+	[style.background-image]="customBackgroundImage | async"
 ></div>
 
-<ng-template #listItem let-item='item'>
-	<div fxLayout='row' (init)='flashMessage($event)'>
-		<div fxFlex fxLayout='column'>
-			<div fxLayout='row' *ngIf='!item.mobile && item.isStart'>
-				<div fxLayout='column' fxLayoutGap='15px'>
+<ng-template #listItem let-item="item">
+	<div fxLayout="row" (init)="flashMessage($event)">
+		<div fxFlex fxLayout="column">
+			<div fxLayout="row" *ngIf="!item.mobile && item.isStart">
+				<div fxLayout="column" fxLayoutGap="15px">
 					<div></div>
 					<div></div>
 				</div>
 			</div>
 
-			<div class='date-change' fxLayout='row' *ngIf='
-				item.uiStyle !== uiStyles.mail &&
-				item.dateChange !== undefined
-			'>
-				<div class='line' fxFlex><hr /></div>
-				<h3 class='text'>{{item.dateChange}}</h3>
-				<div class='line' fxFlex><hr /></div>
+			<div
+				class="date-change"
+				fxLayout="row"
+				*ngIf="
+					item.uiStyle !== uiStyles.mail &&
+					item.dateChange !== undefined
+				"
+			>
+				<div class="line" fxFlex><hr /></div>
+				<h3 class="text">{{ item.dateChange }}</h3>
+				<div class="line" fxFlex><hr /></div>
 			</div>
 
 			<cyph-chat-message
-				fxLayout='row'
-				[message]='item.message'
-				[mobile]='item.mobile'
-				[pending]='item.pending'
-				[scrollIntoView]='item.scrollIntoView'
-				[uiStyle]='item.uiStyle'
-				[unconfirmedMessages]='item.unconfirmedMessages | async'
-				(loaded)='item.isEnd ? onMessageListInit() : onNewMessageLoad()'
-				(scrolledIntoView)='initialScrollDown.next(false)'
-				*ngIf='item.message !== undefined'
+				fxLayout="row"
+				[message]="item.message"
+				[mobile]="item.mobile"
+				[pending]="item.pending"
+				[scrollIntoView]="item.scrollIntoView"
+				[uiStyle]="item.uiStyle"
+				[unconfirmedMessages]="item.unconfirmedMessages | async"
+				(loaded)="item.isEnd ? onMessageListInit() : onNewMessageLoad()"
+				(scrolledIntoView)="initialScrollDown.next(false)"
+				*ngIf="item.message !== undefined"
 			></cyph-chat-message>
 
-			<div fxLayout='row' *ngIf='item.isEnd'>
-				<div fxFlex fxLayout='column' fxLayoutGap='4px'>
+			<div fxLayout="row" *ngIf="item.isEnd">
+				<div fxFlex fxLayout="column" fxLayoutGap="4px">
 					<div></div>
 
-					<div fxLayout='row' class='friend-is-typing'>
+					<div fxLayout="row" class="friend-is-typing">
 						<div
-							[matTooltip]='stringsService.friendIsTyping'
+							[matTooltip]="stringsService.friendIsTyping"
 							cyphTranslate
-							class='ellipsis-spinner'
-							*ngIf='!item.accounts && (item.isFriendTyping | async)'
-							[@fadeInOut]='"in"'
+							class="ellipsis-spinner"
+							*ngIf="
+								!item.accounts && (item.isFriendTyping | async)
+							"
+							[@fadeInOut]="'in'"
 						>
-							<div class='bounce1'></div>
+							<div class="bounce1"></div>
 							&ngsp;
-							<div class='bounce2'></div>
+							<div class="bounce2"></div>
 							&ngsp;
-							<div class='bounce3'></div>
+							<div class="bounce3"></div>
 						</div>
 					</div>
 
 					<div
-						fxLayoutAlign='center center'
-						*ngIf='!!promptFollowup && !!accountService; else chatEndMessage'
+						fxLayoutAlign="center center"
+						*ngIf="
+							!!promptFollowup && !!accountService;
+							else chatEndMessage
+						"
 					>
 						<button
 							fxLayout
 							mat-raised-button
-							class='follow-up'
-							color='accent'
+							class="follow-up"
+							color="accent"
 							cyphTranslate
-							[routerLink]='
-								"/request-followup/" +
-								(promptFollowup || "")
-							'
+							[routerLink]="
+								'/request-followup/' + (promptFollowup || '')
+							"
 						>
 							Click to Schedule Follow-up Appointment
 						</button>
 					</div>
 					<ng-template #chatEndMessage>
 						<div
-							fxLayout='column'
-							class='chat-end-message'
-							[class.chat-disconnect-message]='!item.persistentEndMessage'
-							[class.cyph-light-theme]='item.persistentEndMessage'
-							*ngIf='item.persistentEndMessage || item.showDisconnectMessage'
+							fxLayout="column"
+							class="chat-end-message"
+							[class.chat-disconnect-message]="
+								!item.persistentEndMessage
+							"
+							[class.cyph-light-theme]="item.persistentEndMessage"
+							*ngIf="
+								item.persistentEndMessage ||
+								item.showDisconnectMessage
+							"
 						>
 							<div
-								fxLayout='row'
-								fxLayoutAlign='center center'
-								fxLayoutGap='16px'
-								[fxHide]='
+								fxLayout="row"
+								fxLayoutAlign="center center"
+								fxLayoutGap="16px"
+								[fxHide]="
 									!sessionInitService.ephemeral ||
+									envService.isCordova ||
 									envService.isTelehealth ||
 									(envService.pro | async)
-								'
+								"
 							>
-								<h2>{{stringsService.bannerText}}</h2>
+								<h2>{{ stringsService.bannerText }}</h2>
 								<a
 									mat-raised-button
 									cyphTranslate
-									class='breathe'
-									[href]='envService.homeUrl + "donate"'
+									class="breathe"
+									[href]="envService.homeUrl + 'donate'"
 								>
 									Donate
 								</a>
 							</div>
-							<div fxFlexFill fxLayoutAlign='center center'>
+							<div fxFlexFill fxLayoutAlign="center center">
 								<mat-card
-									[fxFlex]='item.persistentEndMessage ? 95 : 90'
-									[fxFlex.gt-sm]='item.persistentEndMessage ? 90 : 50'
+									[fxFlex]="
+										item.persistentEndMessage ? 95 : 90
+									"
+									[fxFlex.gt-sm]="
+										item.persistentEndMessage ? 90 : 50
+									"
 								>
 									<mat-card-content>
 										<ng-content></ng-content>

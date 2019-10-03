@@ -15,17 +15,19 @@ import {deserialize, serialize} from '../cyph/util/serialization';
 import {getTimestamp} from '../cyph/util/time';
 import {sleep} from '../cyph/util/wait';
 
-
 /**
  * Mocks storage subset of database service.
  */
 @Injectable()
 export class MockDatabaseService extends DatabaseService {
 	/** @ignore */
-	private readonly locks: Map<string, LockFunction>	= new Map();
+	private readonly locks: Map<string, LockFunction> = new Map();
 
 	/** @ignore */
-	private readonly uploadedItems: Map<string, Uint8Array>	= new Map<string, Uint8Array>();
+	private readonly uploadedItems: Map<string, Uint8Array> = new Map<
+		string,
+		Uint8Array
+	>();
 
 	/** @ignore */
 	private async pretendToTransferData (
@@ -33,16 +35,16 @@ export class MockDatabaseService extends DatabaseService {
 		size: number,
 		progress: BehaviorSubject<number>
 	) : Promise<void> {
-		let bytesTransferred	= 0;
-		const increment			= (mbps * 131072) / 4;
+		let bytesTransferred = 0;
+		const increment = (mbps * 131072) / 4;
 
 		while (bytesTransferred < size) {
 			await sleep();
-			bytesTransferred	= Math.min(
-				bytesTransferred + (random() * increment * 2),
+			bytesTransferred = Math.min(
+				bytesTransferred + random() * increment * 2,
 				size
 			);
-			progress.next(bytesTransferred / size * 100);
+			progress.next((bytesTransferred / size) * 100);
 		}
 
 		progress.next(100);
@@ -50,15 +52,18 @@ export class MockDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public downloadItem<T> (url: string, proto: IProto<T>) : {
+	public downloadItem<T> (
+		url: string,
+		proto: IProto<T>
+	) : {
 		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
 		result: Promise<ITimedValue<T>>;
 	} {
-		const progress	= new BehaviorSubject(0);
+		const progress = new BehaviorSubject(0);
 
-		const result	= (async () => {
-			const value	= this.uploadedItems.get(url);
+		const result = (async () => {
+			const value = this.uploadedItems.get(url);
 			if (!value) {
 				throw new Error('Item not found.');
 			}
@@ -75,7 +80,10 @@ export class MockDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public async lock<T> (
 		url: MaybePromise<string>,
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<T>,
 		reason?: string,
 		_GLOBAL?: boolean
 	) : Promise<T> {
@@ -93,10 +101,10 @@ export class MockDatabaseService extends DatabaseService {
 		progress: Observable<number>;
 		result: Promise<{hash: string; url: string}>;
 	} {
-		const progress	= new BehaviorSubject(0);
+		const progress = new BehaviorSubject(0);
 
-		const result	= (async () => {
-			const data	= await serialize(proto, value);
+		const result = (async () => {
+			const data = await serialize(proto, value);
 			await this.pretendToTransferData(15, data.length, progress);
 			this.uploadedItems.set(url, data);
 			return {hash: '', url};

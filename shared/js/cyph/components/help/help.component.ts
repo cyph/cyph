@@ -3,7 +3,6 @@ import {BaseProvider} from '../../base-provider';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for help UI.
  */

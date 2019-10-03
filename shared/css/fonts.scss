@@ -193,5 +193,6 @@ Since fonts are big, uncomment these as they actually get used.
 
 @font-face {
 	font-family: 'text-security-disc';
-	src: url('/assets/fonts/text-security/text-security-disc.woff') format('woff');
+	src: url('/assets/fonts/text-security/text-security-disc.woff')
+		format('woff');
 }

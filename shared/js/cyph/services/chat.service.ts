@@ -7,7 +7,13 @@ import {BehaviorSubject, combineLatest, interval, Observable} from 'rxjs';
 import {filter, map, mergeMap, take, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
-import {ChatMessage, IChatData, IChatMessageInput, IChatMessageLiveValue, States} from '../chat';
+import {
+	ChatMessage,
+	IChatData,
+	IChatMessageInput,
+	IChatMessageLiveValue,
+	States
+} from '../chat';
 import {HelpComponent} from '../components/help';
 import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
 import {IAsyncSet} from '../iasync-set';
@@ -32,7 +38,12 @@ import {
 	IChatPendingMessage,
 	ISessionMessageDataList
 } from '../proto';
-import {events, ISessionMessageAdditionalData, ISessionMessageData, rpcEvents} from '../session';
+import {
+	events,
+	ISessionMessageAdditionalData,
+	ISessionMessageData,
+	rpcEvents
+} from '../session';
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
@@ -58,206 +69,227 @@ import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Manages a chat.
  */
 @Injectable()
 export class ChatService extends BaseProvider {
 	/** @ignore */
-	private static readonly approximateKeyExchangeTime: number	= 9000;
+	private static readonly approximateKeyExchangeTime: number = 9000;
 
 	/** @ignore */
-	private static readonly p2pPassiveConnectTime: number		= 5000;
-
+	private static readonly p2pPassiveConnectTime: number = 5000;
 
 	/** @ignore */
-	private readonly getMessageValues	= memoize(
-		(messageValuesURL: string) => new EncryptedAsyncMap<IChatMessageValue>(
-			this.potassiumService,
-			messageValuesURL,
-			ChatMessageValue,
-			this.databaseService.getAsyncMap(
+	private readonly getMessageValues = memoize(
+		(messageValuesURL: string) =>
+			new EncryptedAsyncMap<IChatMessageValue>(
+				this.potassiumService,
 				messageValuesURL,
-				BinaryProto,
-				undefined,
-				undefined,
-				this.subscriptions
+				ChatMessageValue,
+				this.databaseService.getAsyncMap(
+					messageValuesURL,
+					BinaryProto,
+					undefined,
+					undefined,
+					this.subscriptions
+				)
 			)
-		)
 	);
 
 	/** @ignore */
 	private lastConfirmedMessageID?: string;
 
 	/** @ignore */
-	private readonly messageChangeLock: LockFunction	= lockFunction();
+	private readonly messageChangeLock: LockFunction = lockFunction();
 
 	/** @ignore */
-	private readonly messageConfirmLock: LockFunction	= lockFunction();
+	private readonly messageConfirmLock: LockFunction = lockFunction();
 
 	/** @ignore */
-	private readonly messageInputQueues					= {
+	private readonly messageInputQueues = {
 		addMessage: <IChatMessageInput[]> [],
 		addTextMessage: <ISessionMessageData[]> []
 	};
 
 	/** @ignore */
-	private readonly messageSendInnerLock: LockFunction	= lockFunction();
+	private readonly messageSendInnerLock: LockFunction = lockFunction();
 
 	/** @ignore */
-	private readonly messageSendLock: LockFunction		= lockFunction();
+	private readonly messageSendLock: LockFunction = lockFunction();
 
 	/** IDs of fetched messages. */
-	protected readonly fetchedMessageIDs										=
-		new LocalAsyncSet<string>()
-	;
+	protected readonly fetchedMessageIDs = new LocalAsyncSet<string>();
 
 	/** Local version of messageValues (ephemeral chat optimization). */
-	protected readonly messageValuesLocal: EncryptedAsyncMap<IChatMessageValue>	=
-		new EncryptedAsyncMap<IChatMessageValue>(
-			this.potassiumService,
-			this.messageValuesURL,
-			ChatMessageValue
-		)
-	;
+	protected readonly messageValuesLocal: EncryptedAsyncMap<
+		IChatMessageValue
+	> = new EncryptedAsyncMap<IChatMessageValue>(
+		this.potassiumService,
+		this.messageValuesURL,
+		ChatMessageValue
+	);
 
 	/** Batch messages together that were sent within this interval. */
-	protected readonly outgoingMessageBatchDelay: number						= 1250;
+	protected readonly outgoingMessageBatchDelay: number = 1250;
 
 	/** Queue of messages to be sent. */
 	protected readonly outgoingMessageQueue: {
 		messageData: [
 			Promise<IChatMessage>,
 			string,
-			Promise<IChatMessagePredecessor[]|undefined>,
+			Promise<IChatMessagePredecessor[] | undefined>,
 			Promise<Uint8Array>,
-			boolean|undefined,
-			number|undefined,
+			boolean | undefined,
+			number | undefined,
 			IChatMessageValue
 		];
 		resolve: () => void;
-	}[]	= [];
+	}[] = [];
 
 	/** @see IChatData */
-	public readonly chatSubject				= new BehaviorSubject(this.getDefaultChatData());
+	public readonly chatSubject = new BehaviorSubject(
+		this.getDefaultChatData()
+	);
 
 	/** Indicates whether the chat is self-destructing. */
-	public readonly chatSelfDestruct		= new BehaviorSubject<boolean>(false);
+	public readonly chatSelfDestruct = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the chat is self-destructed. */
-	public readonly chatSelfDestructed		= new BehaviorSubject<boolean>(false);
+	public readonly chatSelfDestructed = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the chat self-destruction effect should be running. */
-	public readonly chatSelfDestructEffect	= new BehaviorSubject<boolean>(false);
+	public readonly chatSelfDestructEffect = new BehaviorSubject<boolean>(
+		false
+	);
 
 	/** Time in seconds until chat self-destructs. */
-	public readonly chatSelfDestructTimeout	= new BehaviorSubject<number>(5);
+	public readonly chatSelfDestructTimeout = new BehaviorSubject<number>(5);
 
 	/** Timer for chat self-destruction. */
-	public readonly chatSelfDestructTimer	= new BehaviorSubject<Timer|undefined>(undefined);
+	public readonly chatSelfDestructTimer = new BehaviorSubject<
+		Timer | undefined
+	>(undefined);
 
 	/** Indicates whether delivery receipts are enabled. */
-	public readonly deliveryReceipts		= this.sessionInitService.ephemeral;
+	public readonly deliveryReceipts = this.sessionInitService.ephemeral;
 
 	/** Indicates whether the chat is ready to be displayed. */
-	public readonly initiated				= new BehaviorSubject<boolean>(false);
+	public readonly initiated = new BehaviorSubject<boolean>(false);
 
 	/** List of messages. */
-	public readonly messages				= toBehaviorSubject(
-		this.chatSubject.pipe(mergeMap(chat =>
-			chat.messageList.watchFlat(true).pipe(mergeMap(async messageIDs => {
-				const [messages, now]	= await Promise.all([
-					Promise.all(messageIDs.map(async id =>
-						chat.messages.getItem(id).catch(() => ({
-							authorType: ChatMessage.AuthorTypes.App,
-							hash: new Uint8Array(1),
-							id,
-							key: new Uint8Array(1),
-							predecessors: [],
-							timestamp: NaN
-						}))
-					)),
-					getTimestamp()
-				]);
+	public readonly messages = toBehaviorSubject(
+		this.chatSubject.pipe(
+			mergeMap(chat =>
+				chat.messageList.watchFlat(true).pipe(
+					mergeMap(async messageIDs => {
+						const [messages, now] = await Promise.all([
+							Promise.all(
+								messageIDs.map(async id =>
+									chat.messages.getItem(id).catch(() => ({
+										authorType: ChatMessage.AuthorTypes.App,
+										hash: new Uint8Array(1),
+										id,
+										key: new Uint8Array(1),
+										predecessors: [],
+										timestamp: NaN
+									}))
+								)
+							),
+							getTimestamp()
+						]);
 
-				for (let i = 0 ; i < messages.length ; ++i) {
-					const message	= messages[i];
+						for (let i = 0; i < messages.length; ++i) {
+							const message = messages[i];
 
-					if (!isNaN(message.timestamp)) {
-						continue;
-					}
+							if (!isNaN(message.timestamp)) {
+								continue;
+							}
 
-					for (let j = i - 1 ; j >= 0 ; --j) {
-						if (!isNaN(messages[j].timestamp)) {
-							message.timestamp	= messages[j].timestamp + 0.001;
-							break;
-						}
-					}
+							for (let j = i - 1; j >= 0; --j) {
+								if (isNaN(messages[j].timestamp)) {
+									continue;
+								}
 
-					if (isNaN(message.timestamp)) {
-						for (let j = i + 1 ; j < messages.length ; ++j) {
-							if (!isNaN(messages[j].timestamp)) {
-								message.timestamp	= messages[j].timestamp - 0.001;
+								message.timestamp =
+									messages[j].timestamp + 0.001;
 								break;
 							}
+
+							if (isNaN(message.timestamp)) {
+								for (let j = i + 1; j < messages.length; ++j) {
+									if (isNaN(messages[j].timestamp)) {
+										continue;
+									}
+
+									message.timestamp =
+										messages[j].timestamp - 0.001;
+								}
+							}
+
+							if (isNaN(message.timestamp)) {
+								message.timestamp = now;
+							}
+
+							messages[i] = new ChatMessage(
+								message,
+								this.sessionService.appUsername
+							);
 						}
-					}
 
-					if (isNaN(message.timestamp)) {
-						message.timestamp	= now;
-					}
-
-					messages[i]	= new ChatMessage(message, this.sessionService.appUsername);
-				}
-
-				return messages;
-			}))
-		)),
+						return messages;
+					})
+				)
+			)
+		),
 		undefined,
 		this.subscriptions
 	);
 
 	/** @see P2PService */
-	public readonly p2pService				= resolvable<{
+	public readonly p2pService = resolvable<{
 		isActive: BehaviorSubject<boolean>;
 		isSidebarOpen: BehaviorSubject<boolean>;
 	}>();
 
 	/** Remote User object where applicable. */
-	public readonly remoteUser				= new BehaviorSubject<UserLike|undefined>(undefined);
+	public readonly remoteUser = new BehaviorSubject<UserLike | undefined>(
+		undefined
+	);
 
 	/** Sub-resolvables of uiReady. */
-	public readonly resolvers				= {
+	public readonly resolvers = {
 		chatConnected: resolvable(),
 		currentMessageSynced: resolvable(),
 		outgoingMessagesSynced: resolvable()
 	};
 
 	/** Indicates whether an infinite scroll transition is in progress. */
-	public readonly scrollTransition		= new BehaviorSubject<boolean>(false);
+	public readonly scrollTransition = new BehaviorSubject<boolean>(false);
 
 	/** Resolves when UI is ready to be displayed. */
-	public readonly uiReady: Promise<true>	=
-		Promise.all([
-			this.resolvers.chatConnected.promise,
-			this.resolvers.currentMessageSynced.promise,
-			this.sessionService.initialMessagesProcessed.promise,
-			this.castleService && this.castleService.initialMessagesProcessed(),
-			this.channelService && this.channelService.initialMessagesProcessed.promise
-		]).then<true>(() =>
-			true
-		)
-	;
+	public readonly uiReady: Promise<true> = Promise.all([
+		this.resolvers.chatConnected.promise,
+		this.resolvers.currentMessageSynced.promise,
+		this.sessionService.initialMessagesProcessed.promise,
+		this.castleService ?
+			this.castleService.initialMessagesProcessed() :
+			undefined,
+		this.channelService ?
+			this.channelService.initialMessagesProcessed.promise :
+			undefined
+	]).then<true>(() => true);
 
 	/** Indicates whether "walkie talkie" mode is enabled for calls. */
-	public readonly walkieTalkieMode		= new BehaviorSubject<boolean>(false);
+	public readonly walkieTalkieMode = new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
-	private async addTextMessage (...textMessageInputs: ISessionMessageData[]) : Promise<void> {
+	private async addTextMessage (
+		...textMessageInputs: ISessionMessageData[]
+	) : Promise<void> {
 		this.messageInputQueues.addTextMessage.push(...textMessageInputs);
 		await sleep(this.outgoingMessageBatchDelay);
-		textMessageInputs	= this.messageInputQueues.addTextMessage.splice(
+		textMessageInputs = this.messageInputQueues.addTextMessage.splice(
 			0,
 			this.messageInputQueues.addTextMessage.length
 		);
@@ -266,99 +298,120 @@ export class ChatService extends BaseProvider {
 			return;
 		}
 
-		const messageInputs	= filterUndefined(await Promise.all(textMessageInputs.map(async o => {
-			if (!o.text) {
-				return;
-			}
+		const messageInputs = filterUndefined(
+			await Promise.all(
+				textMessageInputs.map(async o => {
+					if (!o.text) {
+						return;
+					}
 
-			if (o.author !== this.sessionService.localUsername) {
-				const unobservedPredecessors	=
-					o.text.predecessors && o.text.predecessors.length > 0 ?
-						(await Promise.all(o.text.predecessors.map(async predecessor => ({
-							hasValidHash: await this.messageHasValidHash(
-								predecessor.id,
-								predecessor.hash
-							),
-							predecessor
-						})))).
-							filter(unobservedPredecessor => !unobservedPredecessor.hasValidHash).
-							map(unobservedPredecessor => unobservedPredecessor.predecessor)
-						:
-						undefined
-				;
+					if (o.author !== this.sessionService.localUsername) {
+						const unobservedPredecessors =
+							o.text.predecessors &&
+							o.text.predecessors.length > 0 ?
+								(await Promise.all(
+									o.text.predecessors.map(
+										async predecessor => ({
+											hasValidHash: await this.messageHasValidHash(
+												predecessor.id,
+												predecessor.hash
+											),
+											predecessor
+										})
+									)
+								))
+									.filter(
+										unobservedPredecessor =>
+											!unobservedPredecessor.hasValidHash
+									)
+									.map(
+										unobservedPredecessor =>
+											unobservedPredecessor.predecessor
+									) :
+								undefined;
 
-				if (unobservedPredecessors && unobservedPredecessors.length > 0) {
-					return this.chat.futureMessages.updateItem(
-						unobservedPredecessors[0].id,
-						async futureMessages => ({
-							messages: futureMessages && futureMessages.messages ?
-								futureMessages.messages.concat(o) :
-								[o]
-						})
-					);
-				}
-
-				if (this.deliveryReceipts) {
-					this.lastConfirmedMessageID	= o.id;
-
-					this.messageConfirmLock(async () => {
-						if (this.lastConfirmedMessageID !== o.id) {
-							return;
+						if (
+							unobservedPredecessors &&
+							unobservedPredecessors.length > 0
+						) {
+							return this.chat.futureMessages.updateItem(
+								unobservedPredecessors[0].id,
+								async futureMessages => ({
+									messages:
+										futureMessages &&
+										futureMessages.messages ?
+											futureMessages.messages.concat(o) :
+											[o]
+								})
+							);
 						}
 
-						await this.sessionService.send([
-							rpcEvents.confirm,
-							{textConfirmation: {id: o.id}}
-						]);
+						if (this.deliveryReceipts) {
+							this.lastConfirmedMessageID = o.id;
 
-						await sleep(this.outgoingMessageBatchDelay);
-					});
-				}
-			}
+							this.messageConfirmLock(async () => {
+								if (this.lastConfirmedMessageID !== o.id) {
+									return;
+								}
 
-			const selfDestructChat	= !!(
-				o.text.selfDestructChat &&
-				(
-					o.text.selfDestructTimeout !== undefined &&
-					!isNaN(o.text.selfDestructTimeout) &&
-					o.text.selfDestructTimeout > 0
-				) &&
-				await (async () => {
-					const messageIDs	= await this.chat.messageList.getFlatValue();
+								await this.sessionService.send([
+									rpcEvents.confirm,
+									{textConfirmation: {id: o.id}}
+								]);
 
-					return messageIDs.length === 0 || (
-						messageIDs.length === 1 &&
-						(
-							await this.chat.messages.getItem(messageIDs[0])
-						).authorType === ChatMessage.AuthorTypes.App
+								await sleep(this.outgoingMessageBatchDelay);
+							});
+						}
+					}
+
+					const selfDestructChat = !!(
+						o.text.selfDestructChat &&
+						(o.text.selfDestructTimeout !== undefined &&
+							!isNaN(o.text.selfDestructTimeout) &&
+							o.text.selfDestructTimeout > 0) &&
+						(await (async () => {
+							const messageIDs = await this.chat.messageList.getFlatValue();
+
+							return (
+								messageIDs.length === 0 ||
+								(messageIDs.length === 1 &&
+									(await this.chat.messages.getItem(
+										messageIDs[0]
+									)).authorType ===
+										ChatMessage.AuthorTypes.App)
+							);
+						})())
 					);
-				})()
-			);
 
-			if (selfDestructChat && o.text.selfDestructTimeout) {
-				this.chatSelfDestruct.next(true);
+					if (selfDestructChat && o.text.selfDestructTimeout) {
+						this.chatSelfDestruct.next(true);
 
-				this.chat.messageList.watchFlat(true).pipe(
-					map(messageIDs => messageIDs.length === 0)
-				/* tslint:disable-next-line:rxjs-no-ignored-subscription */
-				).subscribe(
-					this.chatSelfDestructed
-				);
+						this.chat.messageList
+							.watchFlat(true)
+							.pipe(map(messageIDs => messageIDs.length === 0))
+							/* tslint:disable-next-line:rxjs-no-ignored-subscription */
+							.subscribe(this.chatSelfDestructed);
 
-				this.chatSelfDestructTimer.next(new Timer(o.text.selfDestructTimeout));
-			}
+						this.chatSelfDestructTimer.next(
+							new Timer(o.text.selfDestructTimeout)
+						);
+					}
 
-			return {
-				author: o.author,
-				hash: o.text.hash,
-				id: o.id,
-				key: o.text.key,
-				predecessors: o.text.predecessors,
-				selfDestructChat,
-				selfDestructTimeout: selfDestructChat ? undefined : o.text.selfDestructTimeout,
-				timestamp: o.timestamp
-			};
-		})));
+					return {
+						author: o.author,
+						hash: o.text.hash,
+						id: o.id,
+						key: o.text.key,
+						predecessors: o.text.predecessors,
+						selfDestructChat,
+						selfDestructTimeout: selfDestructChat ?
+							undefined :
+							o.text.selfDestructTimeout,
+						timestamp: o.timestamp
+					};
+				})
+			)
+		);
 
 		if (messageInputs.length < 1) {
 			return;
@@ -366,41 +419,51 @@ export class ChatService extends BaseProvider {
 
 		await this.addMessage(...messageInputs);
 
-		await Promise.all(messageInputs.map(async o => {
-			if (o.author !== this.sessionService.localUsername) {
-				await this.chat.futureMessages.updateItem(o.id, async futureMessages => {
-					if (futureMessages && futureMessages.messages) {
-						await Promise.all(futureMessages.messages.map(async futureMessage =>
-							this.addTextMessage(
-								await this.sessionService.processMessageData(futureMessage)
-							)
-						));
-					}
+		await Promise.all(
+			messageInputs.map(async o => {
+				if (o.author !== this.sessionService.localUsername) {
+					await this.chat.futureMessages.updateItem(
+						o.id,
+						async futureMessages => {
+							if (futureMessages && futureMessages.messages) {
+								await Promise.all(
+									futureMessages.messages.map(
+										async futureMessage =>
+											this.addTextMessage(
+												await this.sessionService.processMessageData(
+													futureMessage
+												)
+											)
+									)
+								);
+							}
 
-					return undefined;
-				});
-			}
+							return undefined;
+						}
+					);
+				}
 
-			if (!(o.selfDestructChat && this.chatSelfDestructTimer.value)) {
-				return;
-			}
+				if (!(o.selfDestructChat && this.chatSelfDestructTimer.value)) {
+					return;
+				}
 
-			await this.chatSelfDestructTimer.value.start();
-			this.chatSelfDestructEffect.next(true);
-			await sleep(500);
+				await this.chatSelfDestructTimer.value.start();
+				this.chatSelfDestructEffect.next(true);
+				await sleep(500);
 
-			await Promise.all([
-				this.chat.messages.clear(),
-				this.chat.messageList.clear(),
-				sleep(1000)
-			]);
+				await Promise.all([
+					this.chat.messages.clear(),
+					this.chat.messageList.clear(),
+					sleep(1000)
+				]);
 
-			this.chatSelfDestructEffect.next(false);
+				this.chatSelfDestructEffect.next(false);
 
-			if (o.author !== this.sessionService.localUsername) {
-				await this.close();
-			}
-		}));
+				if (o.author !== this.sessionService.localUsername) {
+					await this.close();
+				}
+			})
+		);
 	}
 
 	/** This kills the chat. */
@@ -425,11 +488,13 @@ export class ChatService extends BaseProvider {
 			await this.abortSetup();
 		}
 		else if (!this.chat.isDisconnected) {
-			this.chat.isDisconnected	= true;
+			this.chat.isDisconnected = true;
 			this.updateChat();
 
 			if (!this.chatSelfDestruct.value) {
-				this.addMessage({value: this.stringsService.disconnectNotification});
+				this.addMessage({
+					value: this.stringsService.disconnectNotification
+				});
 			}
 
 			this.sessionService.close();
@@ -438,19 +503,25 @@ export class ChatService extends BaseProvider {
 
 	/** @ignore */
 	private async messageHasValidHash (
-		message: IChatMessage|string|undefined,
+		message: IChatMessage | string | undefined,
 		expectedHash?: Uint8Array
 	) : Promise<boolean> {
 		if (typeof message === 'string') {
-			message	= await this.chat.messages.getItem(message).catch(() => undefined);
+			message = await this.chat.messages
+				.getItem(message)
+				.catch(() => undefined);
 		}
 
 		if (message && message.id && message.hash && message.hash.length > 0) {
 			await this.getMessageValue(message);
 
-			return message.value !== undefined && (
-				expectedHash === undefined ||
-				this.potassiumService.compareMemory(message.hash, expectedHash)
+			return (
+				message.value !== undefined &&
+				(expectedHash === undefined ||
+					this.potassiumService.compareMemory(
+						message.hash,
+						expectedHash
+					))
 			);
 		}
 
@@ -458,7 +529,9 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** @ignore */
-	private messageValueHasher (message: IChatMessage) : {
+	private messageValueHasher (
+		message: IChatMessage
+	) : {
 		proto: IProto<IChatMessage>;
 		transform: (value: IChatMessageValue) => IChatMessage;
 	} {
@@ -466,14 +539,12 @@ export class ChatService extends BaseProvider {
 			proto: ChatMessageProto,
 			transform: value => ({
 				...message,
-				authorID: (
+				authorID:
 					message.authorID &&
 					this.remoteUser.value &&
-					!this.remoteUser.value.anonymous
-				) ?
-					message.authorID :
-					''
-				,
+					!this.remoteUser.value.anonymous ?
+						message.authorID :
+						'',
 				authorType: ChatMessage.AuthorTypes.App,
 				hash: undefined,
 				key: undefined,
@@ -486,7 +557,9 @@ export class ChatService extends BaseProvider {
 
 	/** @ignore */
 	private get messageValuesURL () : string {
-		return `messageValues${this.sessionInitService.ephemeral ? 'Ephemeral' : ''}`;
+		return `messageValues${
+			this.sessionInitService.ephemeral ? 'Ephemeral' : ''
+		}`;
 	}
 
 	/** @ignore */
@@ -496,17 +569,22 @@ export class ChatService extends BaseProvider {
 				return;
 			}
 
-			const outgoingMessages	= this.outgoingMessageQueue.splice(
+			const outgoingMessages = this.outgoingMessageQueue.splice(
 				0,
 				this.outgoingMessageQueue.length
 			);
 
 			debugLogTime(() => 'Chat Message Send: session send');
 
-			const {confirmPromise, newMessages}	= await this.sessionService.send(
+			const {
+				confirmPromise,
+				newMessages
+			} = await this.sessionService.send(
 				...outgoingMessages.map(({messageData}) : [
 					string,
-					(timestamp: number) => Promise<ISessionMessageAdditionalData>
+					(
+						timestamp: number
+					) => Promise<ISessionMessageAdditionalData>
 				] => [
 					rpcEvents.text,
 					async timestamp => {
@@ -518,13 +596,13 @@ export class ChatService extends BaseProvider {
 							selfDestructChat,
 							selfDestructTimeout,
 							value
-						]	=
-							await Promise.all(messageData)
-						;
+						] = await Promise.all(messageData);
 
-						debugLogTime(() => 'Chat Message Send: hashing message');
+						debugLogTime(
+							() => 'Chat Message Send: hashing message'
+						);
 
-						const hash	= await this.messageValues.getItemHash(
+						const hash = await this.messageValues.getItemHash(
 							id,
 							key,
 							this.messageValueHasher({
@@ -558,9 +636,13 @@ export class ChatService extends BaseProvider {
 				debugLogTime(() => 'Chat Message Send: lock acquired');
 
 				return confirmPromise.then(async () => {
-					debugLogTime(() => 'Chat Message Send: confirmPromise resolved');
+					debugLogTime(
+						() => 'Chat Message Send: confirmPromise resolved'
+					);
 
-					await this.addTextMessage(...newMessages.map(({data}) => data));
+					await this.addTextMessage(
+						...newMessages.map(({data}) => data)
+					);
 
 					debugLogTime(() => 'Chat Message Send: done');
 
@@ -575,18 +657,26 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** Gets author ID for including in message list item. */
-	protected async getAuthorID (author: Observable<string>) : Promise<string|undefined> {
+	protected async getAuthorID (
+		author: Observable<string>
+	) : Promise<string | undefined> {
 		return author === this.sessionService.remoteUsername ?
-			author.pipe(take(1)).toPromise().then(normalize).catch(() => undefined) :
-			undefined
-		;
+			author
+				.pipe(take(1))
+				.toPromise()
+				.then(normalize)
+				.catch(() => undefined) :
+			undefined;
 	}
 
 	/** Gets default chat data. */
 	protected getDefaultChatData () : IChatData {
 		return {
 			currentMessage: {},
-			futureMessages: new LocalAsyncMap<string, ISessionMessageDataList>(),
+			futureMessages: new LocalAsyncMap<
+				string,
+				ISessionMessageDataList
+			>(),
 			initProgress: new BehaviorSubject(0),
 			isConnected: false,
 			isDisconnected: false,
@@ -596,17 +686,21 @@ export class ChatService extends BaseProvider {
 			lastUnreadMessage: Promise.resolve(undefined),
 			messageList: new LocalAsyncList<string[]>(),
 			messages: new LocalAsyncMap<string, IChatMessage>(),
-			pendingMessages: new LocalAsyncList<IChatMessage&{pending: true}>(),
+			pendingMessages: new LocalAsyncList<
+				IChatMessage & {pending: true}
+			>(),
 			receiveTextLock: lockFunction(),
 			state: States.none,
-			unconfirmedMessages: new BehaviorSubject<{[id: string]: boolean|undefined}|undefined>(
-				undefined
-			)
+			unconfirmedMessages: new BehaviorSubject<
+				{[id: string]: boolean | undefined} | undefined
+			>(undefined)
 		};
 	}
 
 	/** Gets async set for scrollService.unreadMessages. */
-	protected getScrollServiceUnreadMessages () : MaybePromise<IAsyncSet<string>> {
+	protected getScrollServiceUnreadMessages () : MaybePromise<
+		IAsyncSet<string>
+	> {
 		return new LocalAsyncSet<string>();
 	}
 
@@ -617,7 +711,7 @@ export class ChatService extends BaseProvider {
 
 	/** Aborts the process of chat initialisation and authentication. */
 	public async abortSetup () : Promise<void> {
-		this.chat.state	= States.aborted;
+		this.chat.state = States.aborted;
 		this.updateChat();
 		this.sessionService.trigger(events.abort);
 		this.sessionService.close();
@@ -625,10 +719,12 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** Adds a message to the chat. */
-	public async addMessage (...messageInputs: IChatMessageInput[]) : Promise<void> {
+	public async addMessage (
+		...messageInputs: IChatMessageInput[]
+	) : Promise<void> {
 		this.messageInputQueues.addMessage.push(...messageInputs);
 		await sleep(this.outgoingMessageBatchDelay);
-		messageInputs	= this.messageInputQueues.addMessage.splice(
+		messageInputs = this.messageInputQueues.addMessage.splice(
 			0,
 			this.messageInputQueues.addMessage.length
 		);
@@ -639,128 +735,154 @@ export class ChatService extends BaseProvider {
 
 		debugLogTime(() => 'Chat Message Add: start');
 
-		/* tslint:disable-next-line:cyclomatic-complexity */
-		const newMessages	= filterUndefined(await Promise.all(messageInputs.map(async ({
-			author,
-			hash,
-			id,
-			key,
-			predecessors,
-			selfDestructTimeout,
-			shouldNotify,
-			timestamp,
-			value
-		}) => {
-			if (author === undefined) {
-				author			= this.sessionService.appUsername;
-			}
-			if (id === undefined) {
-				id				= uuid(true);
-			}
-			if (shouldNotify === undefined) {
-				shouldNotify	= author !== this.sessionService.localUsername;
-			}
-			if (timestamp === undefined) {
-				timestamp		= await getTimestamp();
-			}
+		const newMessages = filterUndefined(
+			await Promise.all(
+				messageInputs.map(
+					/* tslint:disable-next-line:cyclomatic-complexity */
+					async ({
+						author,
+						hash,
+						id,
+						key,
+						predecessors,
+						selfDestructTimeout,
+						shouldNotify,
+						timestamp,
+						value
+					}) => {
+						if (author === undefined) {
+							author = this.sessionService.appUsername;
+						}
+						if (id === undefined) {
+							id = uuid(true);
+						}
+						if (shouldNotify === undefined) {
+							shouldNotify =
+								author !== this.sessionService.localUsername;
+						}
+						if (timestamp === undefined) {
+							timestamp = await getTimestamp();
+						}
 
-			const messageValues	=
-				this.sessionInitService.ephemeral && author === this.sessionService.appUsername ?
-					this.messageValuesLocal :
-					this.messageValues
-			;
+						const messageValues =
+							this.sessionInitService.ephemeral &&
+							author === this.sessionService.appUsername ?
+								this.messageValuesLocal :
+								this.messageValues;
 
-			if (typeof value === 'string') {
-				value	= {text: value};
-			}
+						if (typeof value === 'string') {
+							value = {text: value};
+						}
 
-			if (
-				(
-					value !== undefined &&
-					!(
-						value.calendarInvite ||
-						value.form ||
-						(value.quill && value.quill.length > 0) ||
-						value.text
-					)
-				) ||
-				this.chat.state === States.aborted ||
-				(author !== this.sessionService.appUsername && this.chat.isDisconnected)
-			) {
-				return;
-			}
+						if (
+							(value !== undefined &&
+								!(
+									value.calendarInvite ||
+									value.form ||
+									(value.quill && value.quill.length > 0) ||
+									value.text
+								)) ||
+							this.chat.state === States.aborted ||
+							(author !== this.sessionService.appUsername &&
+								this.chat.isDisconnected)
+						) {
+							return;
+						}
 
-			while (author !== this.sessionService.appUsername && !this.chat.isConnected) {
-				await sleep(500);
-			}
+						while (
+							author !== this.sessionService.appUsername &&
+							!this.chat.isConnected
+						) {
+							await sleep(500);
+						}
 
-			if (shouldNotify) {
-				if (author !== this.sessionService.appUsername) {
-					if (this.sessionInitService.ephemeral) {
-						this.notificationService.notify(this.stringsService.newMessageNotification);
+						if (shouldNotify) {
+							if (author !== this.sessionService.appUsername) {
+								if (this.sessionInitService.ephemeral) {
+									this.notificationService.notify(
+										this.stringsService
+											.newMessageNotification
+									);
+								}
+							}
+							else if (value && value.text) {
+								this.notificationService.notify(value.text);
+							}
+						}
+
+						debugLogTime(
+							() => 'Chat Message Add: getting author ID'
+						);
+
+						const authorID = await this.getAuthorID(author);
+
+						debugLogTime(() => 'Chat Message Add: got author ID');
+
+						const chatMessage: IChatMessage = {
+							authorID,
+							authorType:
+								author === this.sessionService.appUsername ?
+									ChatMessage.AuthorTypes.App :
+								author === this.sessionService.localUsername ?
+									ChatMessage.AuthorTypes.Local :
+									ChatMessage.AuthorTypes.Remote,
+							id,
+							predecessors,
+							selfDestructTimeout,
+							sessionSubID: this.sessionService.sessionSubID,
+							timestamp
+						};
+
+						if (value) {
+							debugLogTime(
+								() =>
+									'Chat Message Add: setting global message value'
+							);
+
+							const o = await messageValues.setItem(
+								id,
+								value,
+								this.messageValueHasher(chatMessage)
+							);
+
+							debugLogTime(
+								() =>
+									'Chat Message Add: set global message value'
+							);
+
+							hash = await o.getHash();
+							key = o.encryptionKey;
+
+							debugLogTime(() => 'Chat Message Add: hashed');
+						}
+
+						chatMessage.hash = hash;
+						chatMessage.key = key;
+
+						if (
+							this.sessionInitService.ephemeral &&
+							author === this.sessionService.remoteUsername
+						) {
+							const p2pService = await this.p2pService.promise;
+
+							await this.scrollService.trackItem(
+								id,
+								p2pService.isActive.value &&
+									!p2pService.isSidebarOpen.value
+							);
+						}
+
+						return {
+							chatMessage,
+							setPromise: this.chat.messages.setItem(
+								id,
+								chatMessage
+							)
+						};
 					}
-				}
-				else if (value && value.text) {
-					this.notificationService.notify(value.text);
-				}
-			}
-
-			debugLogTime(() => 'Chat Message Add: getting author ID');
-
-			const authorID	= await this.getAuthorID(author);
-
-			debugLogTime(() => 'Chat Message Add: got author ID');
-
-			const chatMessage: IChatMessage	= {
-				authorID,
-				authorType:
-					author === this.sessionService.appUsername ?
-						ChatMessage.AuthorTypes.App :
-					author === this.sessionService.localUsername ?
-						ChatMessage.AuthorTypes.Local :
-						ChatMessage.AuthorTypes.Remote
-				,
-				id,
-				predecessors,
-				selfDestructTimeout,
-				sessionSubID: this.sessionService.sessionSubID,
-				timestamp
-			};
-
-			if (value) {
-				debugLogTime(() => 'Chat Message Add: setting global message value');
-
-				const o	= await messageValues.setItem(
-					id,
-					value,
-					this.messageValueHasher(chatMessage)
-				);
-
-				debugLogTime(() => 'Chat Message Add: set global message value');
-
-				hash	= await o.getHash();
-				key		= o.encryptionKey;
-
-				debugLogTime(() => 'Chat Message Add: hashed');
-			}
-
-			chatMessage.hash	= hash;
-			chatMessage.key		= key;
-
-			if (
-				this.sessionInitService.ephemeral &&
-				author === this.sessionService.remoteUsername
-			) {
-				const p2pService	= await this.p2pService.promise;
-
-				await this.scrollService.trackItem(
-					id,
-					p2pService.isActive.value && !p2pService.isSidebarOpen.value
-				);
-			}
-
-			return {chatMessage, setPromise: this.chat.messages.setItem(id, chatMessage)};
-		})));
+				)
+			)
+		);
 
 		if (newMessages.length < 1) {
 			return;
@@ -768,44 +890,60 @@ export class ChatService extends BaseProvider {
 
 		debugLogTime(() => 'Chat Message Add: pushing message IDs');
 
-		const pendingMessageRoot	= this.chat.pendingMessageRoot;
+		const pendingMessageRoot = this.chat.pendingMessageRoot;
 
 		await Promise.all([
 			Promise.all(newMessages.map(async o => o.setPromise)),
-			this.chat.messageList.pushItem(
-				newMessages.map(({chatMessage}) => chatMessage.id)
-			).then(async () => Promise.all([
-				...(!pendingMessageRoot ? [] : messageInputs.map(async ({author, id}) => {
-					if (author === this.sessionService.localUsername && pendingMessageRoot) {
-						await this.localStorageService.removeItem(`${pendingMessageRoot}/${id}`);
-					}
-				}))
-			]))
+			this.chat.messageList
+				.pushItem(newMessages.map(({chatMessage}) => chatMessage.id))
+				.then(async () =>
+					Promise.all([
+						...(!pendingMessageRoot ?
+							[] :
+							messageInputs.map(async ({author, id}) => {
+								if (
+									author !==
+										this.sessionService.localUsername ||
+									!pendingMessageRoot
+								) {
+									return;
+								}
+
+								await this.localStorageService.removeItem(
+									`${pendingMessageRoot}/${id}`
+								);
+							}))
+					])
+				)
 		]);
 
 		debugLogTime(() => 'Chat Message Add: pushed message IDs');
 
-		await Promise.all(newMessages.map(async ({chatMessage}) => {
-			if (!(
-				chatMessage.hash &&
-				chatMessage.key &&
-				chatMessage.selfDestructTimeout !== undefined &&
-				!isNaN(chatMessage.selfDestructTimeout) &&
-				chatMessage.selfDestructTimeout > 0
-			)) {
-				return;
-			}
+		await Promise.all(
+			newMessages.map(async ({chatMessage}) => {
+				if (
+					!(
+						chatMessage.hash &&
+						chatMessage.key &&
+						chatMessage.selfDestructTimeout !== undefined &&
+						!isNaN(chatMessage.selfDestructTimeout) &&
+						chatMessage.selfDestructTimeout > 0
+					)
+				) {
+					return;
+				}
 
-			await sleep(chatMessage.selfDestructTimeout + 10000);
+				await sleep(chatMessage.selfDestructTimeout + 10000);
 
-			this.potassiumService.clearMemory(chatMessage.hash);
-			this.potassiumService.clearMemory(chatMessage.key);
+				this.potassiumService.clearMemory(chatMessage.hash);
+				this.potassiumService.clearMemory(chatMessage.key);
 
-			chatMessage.hash	= undefined;
-			chatMessage.key		= undefined;
+				chatMessage.hash = undefined;
+				chatMessage.key = undefined;
 
-			await this.chat.messages.setItem(chatMessage.id, chatMessage);
-		}));
+				await this.chat.messages.setItem(chatMessage.id, chatMessage);
+			})
+		);
 
 		debugLogTime(() => 'Chat Message Add: done');
 	}
@@ -825,17 +963,18 @@ export class ChatService extends BaseProvider {
 				{text: this.chat.queuedMessage},
 				this.chatSelfDestruct.value ?
 					this.chatSelfDestructTimeout.value * 1000 :
-					undefined
-				,
+					undefined,
 				this.chatSelfDestruct.value
 			);
 		}
 
 		if (this.sessionInitService.ephemeral) {
-			this.notificationService.notify(this.stringsService.connectedNotification);
+			this.notificationService.notify(
+				this.stringsService.connectedNotification
+			);
 
 			this.initProgressFinish();
-			this.chat.state	= States.chatBeginMessage;
+			this.chat.state = States.chatBeginMessage;
 			this.updateChat();
 
 			await sleep(3000);
@@ -846,11 +985,11 @@ export class ChatService extends BaseProvider {
 
 			this.sessionService.trigger(events.beginChatComplete);
 
-			this.chat.state	= States.chat;
+			this.chat.state = States.chat;
 			this.updateChat();
 
 			if (this.envService.pro.value) {
-				for (let i = 0 ; i < 15 ; ++i) {
+				for (let i = 0; i < 15; ++i) {
 					if (this.chatSelfDestruct.value) {
 						break;
 					}
@@ -871,7 +1010,7 @@ export class ChatService extends BaseProvider {
 			this.resolvers.chatConnected.resolve();
 		}
 
-		this.chat.isConnected	= true;
+		this.chat.isConnected = true;
 		this.updateChat();
 	}
 
@@ -881,13 +1020,17 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** After confirmation dialog, this kills the chat. */
-	public async disconnectButton (beforeClose?: () => MaybePromise<void>) : Promise<void> {
-		if (!(await this.dialogService.confirm({
-			cancel: this.stringsService.cancel,
-			content: this.stringsService.disconnectConfirm,
-			ok: this.stringsService.continueDialogAction,
-			title: this.stringsService.disconnectTitle
-		}))) {
+	public async disconnectButton (
+		beforeClose?: () => MaybePromise<void>
+	) : Promise<void> {
+		if (
+			!(await this.dialogService.confirm({
+				cancel: this.stringsService.cancel,
+				content: this.stringsService.disconnectConfirm,
+				ok: this.stringsService.continueDialogAction,
+				title: this.stringsService.disconnectTitle
+			}))
+		) {
 			return;
 		}
 
@@ -899,27 +1042,34 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** Gets message value if not already set. */
-	public async getMessageValue (message: IChatMessage) : Promise<IChatMessage> {
+	public async getMessageValue (
+		message: IChatMessage
+	) : Promise<IChatMessage> {
 		if (message.value !== undefined) {
 			return message;
 		}
 
-		const referencesValue	=
-			(message.hash && message.hash.length > 0) &&
-			(message.key && message.key.length > 0)
-		;
+		const referencesValue =
+			message.hash &&
+			message.hash.length > 0 &&
+			(message.key && message.key.length > 0);
 
-		for (const messageValues of [this.messageValuesLocal, this.messageValues]) {
-			if (!(
-				referencesValue &&
-				message.value === undefined &&
-				message.hash !== undefined &&
-				message.key !== undefined
-			)) {
+		for (const messageValues of [
+			this.messageValuesLocal,
+			this.messageValues
+		]) {
+			if (
+				!(
+					referencesValue &&
+					message.value === undefined &&
+					message.hash !== undefined &&
+					message.key !== undefined
+				)
+			) {
 				continue;
 			}
 
-			const getMessageValue	= async () => {
+			const getMessageValue = async () => {
 				if (message.hash === undefined || message.key === undefined) {
 					throw new Error('Message hash or key missing.');
 				}
@@ -932,13 +1082,10 @@ export class ChatService extends BaseProvider {
 				);
 			};
 
-			message.value	= await (
-				messageValues === this.messageValues ?
-					retryUntilSuccessful(getMessageValue, 10, 500) :
-					getMessageValue()
-			).catch(
-				() => undefined
-			);
+			message.value = await (messageValues === this.messageValues ?
+				retryUntilSuccessful(getMessageValue, 10, 500) :
+				getMessageValue()
+			).catch(() => undefined);
 
 			if (message.value !== undefined) {
 				await this.fetchedMessageIDs.addItem(message.id);
@@ -947,7 +1094,7 @@ export class ChatService extends BaseProvider {
 
 		if (message instanceof ChatMessage) {
 			if (referencesValue && message.value === undefined) {
-				message.value	= {
+				message.value = {
 					failure: true,
 					text: this.stringsService.getMessageValueFailure
 				};
@@ -981,14 +1128,16 @@ export class ChatService extends BaseProvider {
 		totalTime: number = ChatService.approximateKeyExchangeTime,
 		timeInterval: number = 250
 	) : void {
-		const increment	= timeInterval / totalTime;
+		const increment = timeInterval / totalTime;
 
-		this.subscriptions.push(interval(timeInterval).pipe(
-			takeWhile(() => this.chat.initProgress.value < 125),
-			map(() => this.chat.initProgress.value + (increment * 100))
-		).subscribe(
-			this.chat.initProgress
-		));
+		this.subscriptions.push(
+			interval(timeInterval)
+				.pipe(
+					takeWhile(() => this.chat.initProgress.value < 125),
+					map(() => this.chat.initProgress.value + increment * 100)
+				)
+				.subscribe(this.chat.initProgress)
+		);
 	}
 
 	/**
@@ -1002,13 +1151,17 @@ export class ChatService extends BaseProvider {
 	public async messageChange (isText: boolean = false) : Promise<void> {
 		return this.messageChangeLock(async () => {
 			if (this.chat.pendingMessageRoot) {
-				await this.localStorageService.setItem<IChatMessageLiveValueSerialized>(
+				await this.localStorageService.setItem<
+					IChatMessageLiveValueSerialized
+				>(
 					`${this.chat.pendingMessageRoot}-live`,
 					ChatMessageLiveValueSerialized,
 					{
 						...this.chat.currentMessage,
 						quill: this.chat.currentMessage.quill ?
-							msgpack.encode({ops: this.chat.currentMessage.quill.ops}) :
+							msgpack.encode({
+								ops: this.chat.currentMessage.quill.ops
+							}) :
 							undefined
 					}
 				);
@@ -1018,20 +1171,19 @@ export class ChatService extends BaseProvider {
 				return;
 			}
 
-			this.chat.previousMessage	= this.chat.currentMessage.text;
+			this.chat.previousMessage = this.chat.currentMessage.text;
 
 			await sleep(this.outgoingMessageBatchDelay);
 
-			const isMessageChanged	=
+			const isMessageChanged =
 				this.chat.currentMessage.text !== '' &&
-				this.chat.currentMessage.text !== this.chat.previousMessage
-			;
+				this.chat.currentMessage.text !== this.chat.previousMessage;
 
 			if (this.chat.isMessageChanged === isMessageChanged) {
 				return;
 			}
 
-			this.chat.isMessageChanged	= isMessageChanged;
+			this.chat.isMessageChanged = isMessageChanged;
 
 			this.sessionService.send([
 				rpcEvents.typing,
@@ -1049,80 +1201,83 @@ export class ChatService extends BaseProvider {
 		selfDestructChat: boolean = false,
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
-	) : Promise<string|void> {
+	) : Promise<string | undefined> {
 		debugLogTime(() => 'Chat Message Send: start');
 
 		if (keepCurrentMessage === undefined) {
-			keepCurrentMessage	= message !== undefined;
+			keepCurrentMessage = message !== undefined;
 		}
 
-		const id	= uuid(true);
+		const id = uuid(true);
 
-		const value: IChatMessageValue	= {};
-		const currentMessage			= keepCurrentMessage ? {} : this.chat.currentMessage;
+		const value: IChatMessageValue = {};
+		const currentMessage = keepCurrentMessage ?
+			{} :
+			this.chat.currentMessage;
 
-		let emptyValue	= false;
+		let emptyValue = false;
 
 		switch (messageType) {
 			case ChatMessageValue.Types.CalendarInvite:
-				value.calendarInvite			=
+				value.calendarInvite =
 					(message && message.calendarInvite) ||
-					this.chat.currentMessage.calendarInvite
-				;
-				currentMessage.calendarInvite	= undefined;
+					this.chat.currentMessage.calendarInvite;
+				currentMessage.calendarInvite = undefined;
 
 				if (!value.calendarInvite) {
-					emptyValue	= true;
+					emptyValue = true;
 				}
 
 				break;
 
 			case ChatMessageValue.Types.FileTransfer:
-				value.fileTransfer	=
+				value.fileTransfer =
 					(message && message.fileTransfer) ||
-					this.chat.currentMessage.fileTransfer
-				;
-				currentMessage.fileTransfer	= undefined;
+					this.chat.currentMessage.fileTransfer;
+				currentMessage.fileTransfer = undefined;
 
 				if (!value.fileTransfer) {
-					emptyValue	= true;
+					emptyValue = true;
 				}
 
 				break;
 
 			case ChatMessageValue.Types.Form:
-				value.form	= (message && message.form) || this.chat.currentMessage.form;
-				currentMessage.form	= undefined;
+				value.form =
+					(message && message.form) || this.chat.currentMessage.form;
+				currentMessage.form = undefined;
 
 				if (!value.form) {
-					emptyValue	= true;
+					emptyValue = true;
 				}
 
 				break;
 
 			case ChatMessageValue.Types.Quill:
-				value.quill	=
+				value.quill =
 					message && message.quill ?
 						msgpack.encode({ops: message.quill.ops}) :
-						this.chat.currentMessage.quill ?
-							msgpack.encode({ops: this.chat.currentMessage.quill.ops}) :
-							undefined
-				;
-				currentMessage.quill	= undefined;
+					this.chat.currentMessage.quill ?
+						msgpack.encode({
+							ops: this.chat.currentMessage.quill.ops
+						}) :
+						undefined;
+				currentMessage.quill = undefined;
 
 				if (!value.quill) {
-					emptyValue	= true;
+					emptyValue = true;
 				}
 
 				break;
 
 			case ChatMessageValue.Types.Text:
-				value.text	= (message && message.text) || this.chat.currentMessage.text;
-				currentMessage.text	= '';
+				value.text =
+					(message && message.text) || this.chat.currentMessage.text;
+				currentMessage.text = '';
 				this.messageChange();
 
 				if (!value.text) {
-					emptyValue	= true;
+					emptyValue = true;
 				}
 
 				break;
@@ -1135,10 +1290,12 @@ export class ChatService extends BaseProvider {
 			this.messageChange();
 		}
 
-		const removeOldStorageItem	= () => oldLocalStorageKey ?
-			this.localStorageService.removeItem(oldLocalStorageKey) :
-			undefined
-		;
+		const removeOldStorageItem = async () =>
+			oldLocalStorageKey ?
+				this.localStorageService
+					.removeItem(oldLocalStorageKey)
+					.then(() => undefined) :
+				undefined;
 
 		if (emptyValue) {
 			return removeOldStorageItem();
@@ -1148,78 +1305,95 @@ export class ChatService extends BaseProvider {
 			await this.resolvers.outgoingMessagesSynced.promise;
 		}
 
-		const localStoragePromise	= !this.chat.pendingMessageRoot ?
+		const localStoragePromise = !this.chat.pendingMessageRoot ?
 			Promise.resolve() :
-			this.localStorageService.setItem<IChatPendingMessage>(
-				`${this.chat.pendingMessageRoot}/${id}`,
-				ChatPendingMessage,
-				{
-					message: value,
-					messageType,
-					selfDestructChat,
-					selfDestructTimeout
-				}
-			).then(
-				removeOldStorageItem
-			)
-		;
+			this.localStorageService
+				.setItem<IChatPendingMessage>(
+					`${this.chat.pendingMessageRoot}/${id}`,
+					ChatPendingMessage,
+					{
+						message: value,
+						messageType,
+						selfDestructChat,
+						selfDestructTimeout
+					}
+				)
+				.then(removeOldStorageItem);
 
-		const predecessorsPromise	= (async () : Promise<IChatMessagePredecessor[]|undefined> => {
+		const predecessorsPromise = (async () : Promise<
+			IChatMessagePredecessor[] | undefined
+		> => {
 			/* Redundant for 1:1 chats since Castle already enforces message order */
 			if (!this.sessionService.group) {
 				return [];
 			}
 
-			let lastLocal: IChatMessagePredecessor|undefined;
-			let lastRemote: IChatMessagePredecessor|undefined;
+			let lastLocal: IChatMessagePredecessor | undefined;
+			let lastRemote: IChatMessagePredecessor | undefined;
 
-			const messages	=
+			const messages =
 				this.messages.value ||
-				(await this.messages.pipe(filterUndefinedOperator(), take(1)).toPromise())
-			;
+				(await this.messages
+					.pipe(
+						filterUndefinedOperator(),
+						take(1)
+					)
+					.toPromise());
 
-			for (let i = messages.length - 1 ; i >= 0 ; --i) {
-				const o	= messages[i];
+			for (let i = messages.length - 1; i >= 0; --i) {
+				const o = messages[i];
 
-				const isLocal	= !lastLocal && o.authorType === ChatMessage.AuthorTypes.Local;
-				const isRemote	= !lastRemote && o.authorType === ChatMessage.AuthorTypes.Remote;
+				const isLocal =
+					!lastLocal &&
+					o.authorType === ChatMessage.AuthorTypes.Local;
+				const isRemote =
+					!lastRemote &&
+					o.authorType === ChatMessage.AuthorTypes.Remote;
 
-				if (!(
-					(isLocal || isRemote) &&
-					o.id &&
-					(o.hash && o.hash.length > 0) &&
-					(await this.messageHasValidHash(o))
-				)) {
+				if (
+					!(
+						(isLocal || isRemote) &&
+						o.id &&
+						(o.hash && o.hash.length > 0) &&
+						(await this.messageHasValidHash(o))
+					)
+				) {
 					continue;
 				}
 
 				if (isLocal) {
-					lastLocal	= {hash: o.hash, id: o.id};
+					lastLocal = {hash: o.hash, id: o.id};
 				}
 				else if (isRemote) {
-					lastRemote	= {hash: o.hash, id: o.id};
+					lastRemote = {hash: o.hash, id: o.id};
 				}
 			}
 
-			return [...(lastLocal ? [lastLocal] : []), ...(lastRemote ? [lastRemote] : [])];
+			return [
+				...(lastLocal ? [lastLocal] : []),
+				...(lastRemote ? [lastRemote] : [])
+			];
 		})();
 
-		const uploadPromise	= (async () =>
-			(await this.messageValues.setItem(id, value)).encryptionKey
-		)();
+		const uploadPromise = (async () =>
+			(await this.messageValues.setItem(id, value)).encryptionKey)();
 
-		const chatMessagePromise	= Promise.all([
+		const chatMessagePromise = Promise.all([
 			this.getAuthorID(this.sessionService.localUsername),
 			getTimestamp(),
 			localStoragePromise
-		]).then(async ([authorID, timestamp]) : Promise<IChatMessage> => ({
-			authorID,
-			authorType: ChatMessage.AuthorTypes.Local,
-			id,
-			selfDestructTimeout: selfDestructChat ? undefined : selfDestructTimeout,
-			sessionSubID: this.sessionService.sessionSubID,
-			timestamp
-		}));
+		]).then(
+			async ([authorID, timestamp]) : Promise<IChatMessage> => ({
+				authorID,
+				authorType: ChatMessage.AuthorTypes.Local,
+				id,
+				selfDestructTimeout: selfDestructChat ?
+					undefined :
+					selfDestructTimeout,
+				sessionSubID: this.sessionService.sessionSubID,
+				timestamp
+			})
+		);
 
 		chatMessagePromise.then(async chatMessage => {
 			await this.chat.pendingMessages.pushItem({
@@ -1231,7 +1405,7 @@ export class ChatService extends BaseProvider {
 			await this.scrollService.scrollDown(false, 250);
 		});
 
-		const resolver	= resolvable();
+		const resolver = resolvable();
 
 		this.outgoingMessageQueue.push({
 			messageData: [
@@ -1254,7 +1428,7 @@ export class ChatService extends BaseProvider {
 
 	/** Sets queued message to be sent after handshake. */
 	public setQueuedMessage (messageText: string) : void {
-		this.chat.queuedMessage	= messageText;
+		this.chat.queuedMessage = messageText;
 		this.updateChat();
 		this.dialogService.toast(this.stringsService.queuedMessageSaved, 2500);
 	}
@@ -1269,12 +1443,14 @@ export class ChatService extends BaseProvider {
 		protected readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
-		@Inject(CastleService) @Optional()
-		protected readonly castleService: CastleService|undefined,
+		@Inject(CastleService)
+		@Optional()
+		protected readonly castleService: CastleService | undefined,
 
 		/** @ignore */
-		@Inject(ChannelService) @Optional()
-		protected readonly channelService: ChannelService|undefined,
+		@Inject(ChannelService)
+		@Optional()
+		protected readonly channelService: ChannelService | undefined,
 
 		/** @ignore */
 		protected readonly databaseService: DatabaseService,
@@ -1319,24 +1495,33 @@ export class ChatService extends BaseProvider {
 				debugLog(() => 'ChatService.resolvers.chatConnected resolved');
 			});
 			this.resolvers.currentMessageSynced.promise.then(() => {
-				debugLog(() => 'ChatService.resolvers.currentMessageSynced resolved');
+				debugLog(
+					() => 'ChatService.resolvers.currentMessageSynced resolved'
+				);
 			});
 			this.sessionService.initialMessagesProcessed.promise.then(() => {
-				debugLog(() => 'ChatService.sessionService.initialMessagesProcessed resolved');
+				debugLog(
+					() =>
+						'ChatService.sessionService.initialMessagesProcessed resolved'
+				);
 			});
-			(
-				this.castleService ?
-					this.castleService.initialMessagesProcessed() :
-					Promise.resolve()
+			(this.castleService ?
+				this.castleService.initialMessagesProcessed() :
+				Promise.resolve()
 			).then(() => {
-				debugLog(() => 'ChatService.castleService.initialMessagesProcessed resolved');
+				debugLog(
+					() =>
+						'ChatService.castleService.initialMessagesProcessed resolved'
+				);
 			});
-			(
-				this.channelService ?
-					this.channelService.initialMessagesProcessed.promise :
-					Promise.resolve()
+			(this.channelService ?
+				this.channelService.initialMessagesProcessed.promise :
+				Promise.resolve()
 			).then(() => {
-				debugLog(() => 'ChatService.channelService.initialMessagesProcessed resolved');
+				debugLog(
+					() =>
+						'ChatService.channelService.initialMessagesProcessed resolved'
+				);
 			});
 			this.uiReady.then(() => {
 				debugLog(() => 'ChatService.uiReady resolved');
@@ -1344,119 +1529,153 @@ export class ChatService extends BaseProvider {
 		}
 
 		this.sessionService.ready.then(() => {
-			const beginChat				= this.sessionService.one(events.beginChat);
-			const callType				= this.sessionInitService.callType;
-			const pendingMessageRoot	= this.chat.pendingMessageRoot;
+			const beginChat = this.sessionService.one(events.beginChat);
+			const callType = this.sessionInitService.callType;
+			const pendingMessageRoot = this.chat.pendingMessageRoot;
 
 			if (callType !== undefined) {
 				this.p2pWebRTCService.initialCallPending.next(true);
 			}
 
-			this.scrollService.resolveUnreadItems(this.getScrollServiceUnreadMessages());
+			this.scrollService.resolveUnreadItems(
+				this.getScrollServiceUnreadMessages()
+			);
 
-			this.subscriptions.push(combineLatest([
-				this.chat.lastConfirmedMessage.watch(),
-				this.chat.messageList.watchFlat(true).pipe(mergeMap(async messageIDs =>
-					filterUndefined(await Promise.all(messageIDs.map(async id =>
-						this.chat.messages.getItem(id).catch(() => undefined)
-					))).filter(o =>
-						o.authorType === ChatMessage.AuthorTypes.Local
+			this.subscriptions.push(
+				combineLatest([
+					this.chat.lastConfirmedMessage.watch(),
+					this.chat.messageList
+						.watchFlat(true)
+						.pipe(
+							mergeMap(async messageIDs =>
+								filterUndefined(
+									await Promise.all(
+										messageIDs.map(async id =>
+											this.chat.messages
+												.getItem(id)
+												.catch(() => undefined)
+										)
+									)
+								).filter(
+									o =>
+										o.authorType ===
+										ChatMessage.AuthorTypes.Local
+								)
+							)
+						)
+				])
+					.pipe(
+						map(([lastConfirmedMessage, outgoingMessages]) => {
+							const unconfirmedMessages: {
+								[id: string]: boolean;
+							} = {};
+
+							for (
+								let i = outgoingMessages.length - 1;
+								i >= 0;
+								--i
+							) {
+								const {id} = outgoingMessages[i];
+
+								if (id === lastConfirmedMessage.id) {
+									break;
+								}
+
+								unconfirmedMessages[id] = true;
+							}
+
+							return unconfirmedMessages;
+						})
 					)
-				))
-			]).pipe(map(([lastConfirmedMessage, outgoingMessages]) => {
-				const unconfirmedMessages: {[id: string]: boolean}	= {};
-
-				for (let i = outgoingMessages.length - 1 ; i >= 0 ; --i) {
-					const {id}	= outgoingMessages[i];
-
-					if (id === lastConfirmedMessage.id) {
-						break;
-					}
-
-					unconfirmedMessages[id]	= true;
-				}
-
-				return unconfirmedMessages;
-			})).subscribe(
-				this.chat.unconfirmedMessages
-			));
+					.subscribe(this.chat.unconfirmedMessages)
+			);
 
 			if (pendingMessageRoot) {
 				Promise.all([
-					this.localStorageService.getItem(
-						`${this.chat.pendingMessageRoot}-live`,
-						ChatMessageLiveValueSerialized
-					).then(messageLiveValue => {
-						this.chat.currentMessage.calendarInvite	=
-							this.chat.currentMessage.calendarInvite ||
-							messageLiveValue.calendarInvite
-						;
+					this.localStorageService
+						.getItem(
+							`${this.chat.pendingMessageRoot}-live`,
+							ChatMessageLiveValueSerialized
+						)
+						.then(messageLiveValue => {
+							this.chat.currentMessage.calendarInvite =
+								this.chat.currentMessage.calendarInvite ||
+								messageLiveValue.calendarInvite;
 
-						this.chat.currentMessage.fileTransfer	=
-							this.chat.currentMessage.fileTransfer ||
-							messageLiveValue.fileTransfer
-						;
+							this.chat.currentMessage.fileTransfer =
+								this.chat.currentMessage.fileTransfer ||
+								messageLiveValue.fileTransfer;
 
-						this.chat.currentMessage.form			=
-							this.chat.currentMessage.form ||
-							messageLiveValue.form
-						;
+							this.chat.currentMessage.form =
+								this.chat.currentMessage.form ||
+								messageLiveValue.form;
 
-						this.chat.currentMessage.quill			=
-							this.chat.currentMessage.quill ||
-							(
-								messageLiveValue.quill &&
-								messageLiveValue.quill.length > 0
-							) ?
-								{ops:
-									messageLiveValue.quill instanceof Uint8Array ?
-										msgpack.decode(messageLiveValue.quill) :
-										[]
-								} :
-								undefined
-						;
+							this.chat.currentMessage.quill =
+								this.chat.currentMessage.quill ||
+								(messageLiveValue.quill &&
+									messageLiveValue.quill.length > 0) ?
+									{
+										ops:
+											messageLiveValue.quill instanceof
+											Uint8Array ?
+												msgpack.decode(
+													messageLiveValue.quill
+												) :
+												[]
+									} :
+									undefined;
 
-						this.chat.currentMessage.text			=
-							this.chat.currentMessage.text ||
-							messageLiveValue.text
-						;
+							this.chat.currentMessage.text =
+								this.chat.currentMessage.text ||
+								messageLiveValue.text;
 
-						this.updateChat();
-					}).catch(
-						() => {}
-					).then(() => {
-						this.resolvers.currentMessageSynced.resolve();
-					}),
-					this.localStorageService.lock(pendingMessageRoot, async () => {
-						const pendingMessages	= await this.localStorageService.getValues(
-							pendingMessageRoot,
-							ChatPendingMessage,
-							true
-						);
+							this.updateChat();
+						})
+						.catch(() => {})
+						.then(() => {
+							this.resolvers.currentMessageSynced.resolve();
+						}),
+					this.localStorageService
+						.lock(pendingMessageRoot, async () => {
+							const pendingMessages = await this.localStorageService.getValues(
+								pendingMessageRoot,
+								ChatPendingMessage,
+								true
+							);
 
-						await Promise.all(pendingMessages.map(async ([key, pendingMessage]) =>
-							this.send(
-								pendingMessage.messageType,
-								{
-									...pendingMessage.message,
-									quill: (
-										pendingMessage.message.quill &&
-										pendingMessage.message.quill.length > 0
-									) ?
-										{ops: msgpack.decode(pendingMessage.message.quill)} :
-										undefined
-								},
-								pendingMessage.selfDestructTimeout,
-								pendingMessage.selfDestructChat,
-								true,
-								key
-							)
-						));
-					}).catch(
-						() => {}
-					).then(() => {
-						this.resolvers.outgoingMessagesSynced.resolve();
-					})
+							await Promise.all(
+								pendingMessages.map(
+									async ([key, pendingMessage]) =>
+										this.send(
+											pendingMessage.messageType,
+											{
+												...pendingMessage.message,
+												quill:
+													pendingMessage.message
+														.quill &&
+													pendingMessage.message.quill
+														.length > 0 ?
+														{
+															ops: msgpack.decode(
+																pendingMessage
+																	.message
+																	.quill
+															)
+														} :
+														undefined
+											},
+											pendingMessage.selfDestructTimeout,
+											pendingMessage.selfDestructChat,
+											true,
+											key
+										)
+								)
+							);
+						})
+						.catch(() => {})
+						.then(() => {
+							this.resolvers.outgoingMessagesSynced.resolve();
+						})
 				]);
 			}
 			else {
@@ -1464,41 +1683,46 @@ export class ChatService extends BaseProvider {
 				this.resolvers.outgoingMessagesSynced.resolve();
 			}
 
-			beginChat.then(() => { this.begin(); });
+			beginChat.then(() => {
+				this.begin();
+			});
 
-			this.sessionService.closed.then(async () =>
-				this.close()
-			);
+			this.sessionService.closed.then(async () => this.close());
 
 			this.sessionService.connected.then(async () => {
-				this.sessionCapabilitiesService.resolveWalkieTalkieMode(this.walkieTalkieMode.value);
+				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
+					this.walkieTalkieMode.value
+				);
 
-				debugLog(async () => ({chat: {
-					futureMessages: await this.chat.futureMessages.getValue(),
-					lastConfirmedMessage: await this.chat.lastConfirmedMessage.getValue(),
-					lastUnreadMessage: await this.chat.lastUnreadMessage,
-					messageList: await this.chat.messageList.getValue(),
-					messages: await this.chat.messages.getValue(),
-					unconfirmedMessages: this.chat.unconfirmedMessages.value
-				}}));
+				debugLog(async () => ({
+					chat: {
+						futureMessages: await this.chat.futureMessages.getValue(),
+						lastConfirmedMessage: await this.chat.lastConfirmedMessage.getValue(),
+						lastUnreadMessage: await this.chat.lastUnreadMessage,
+						messageList: await this.chat.messageList.getValue(),
+						messages: await this.chat.messages.getValue(),
+						unconfirmedMessages: this.chat.unconfirmedMessages.value
+					}
+				}));
 
 				if (callType !== undefined) {
 					this.sessionService.yt().then(async () => {
-						await this.sessionService.freezePong.pipe(
-							filter(b => !b),
-							take(1)
-						).toPromise();
+						await this.sessionService.freezePong
+							.pipe(
+								filter(b => !b),
+								take(1)
+							)
+							.toPromise();
 
 						if (!this.sessionInitService.ephemeral) {
 							this.p2pWebRTCService.loading.next(true);
 							this.initProgressStart(42000);
 						}
 
-						const canceled	= await this.dialogService.toast(
+						const canceled = await this.dialogService.toast(
 							callType === 'video' ?
 								this.stringsService.p2pWarningVideoPassive :
-								this.stringsService.p2pWarningAudioPassive
-							,
+								this.stringsService.p2pWarningAudioPassive,
 							ChatService.p2pPassiveConnectTime,
 							this.stringsService.cancel
 						);
@@ -1533,85 +1757,105 @@ export class ChatService extends BaseProvider {
 					return;
 				}
 
-				this.chat.state	= States.keyExchange;
+				this.chat.state = States.keyExchange;
 				this.updateChat();
 				this.initProgressStart();
 			});
 
-			this.sessionService.one(events.connectFailure).then(async () =>
-				this.abortSetup()
-			);
+			this.sessionService
+				.one(events.connectFailure)
+				.then(async () => this.abortSetup());
 
 			if (this.deliveryReceipts) {
-				this.sessionService.on(rpcEvents.confirm, async (
-					newEvents: ISessionMessageData[]
-				) => {
-					for (const o of newEvents) {
-						if (!o.textConfirmation || !o.textConfirmation.id) {
-							continue;
-						}
+				this.sessionService.on(
+					rpcEvents.confirm,
+					async (newEvents: ISessionMessageData[]) => {
+						for (const o of newEvents) {
+							if (!o.textConfirmation || !o.textConfirmation.id) {
+								continue;
+							}
 
-						const id	= o.textConfirmation.id;
+							const id = o.textConfirmation.id;
 
-						const getNewLastConfirmedMesssage	=
-							(messageIDs: string[]) : IChatLastConfirmedMessage|void => {
-								for (let i = messageIDs.length - 1 ; i >= 0 ; --i) {
+							const getNewLastConfirmedMesssage = (
+								messageIDs: string[]
+							) : IChatLastConfirmedMessage | undefined => {
+								for (
+									let i = messageIDs.length - 1;
+									i >= 0;
+									--i
+								) {
 									if (messageIDs[i] === id) {
 										return {id, index: i};
 									}
 								}
+
+								return;
+							};
+
+							let newLastConfirmedMessage = getNewLastConfirmedMesssage(
+								await this.chat.messageList.getFlatValue()
+							);
+
+							if (!newLastConfirmedMessage) {
+								const pendingMessageIDs = (await this.chat.pendingMessages.getFlatValue()).map(
+									m => m.id
+								);
+
+								if (
+									getNewLastConfirmedMesssage(
+										pendingMessageIDs
+									) === undefined
+								) {
+									continue;
+								}
+
+								newLastConfirmedMessage = await this.chat.messageList
+									.watchFlat()
+									.pipe(
+										map(getNewLastConfirmedMesssage),
+										filterUndefinedOperator(),
+										take(1)
+									)
+									.toPromise();
 							}
-						;
 
-						let newLastConfirmedMessage	= getNewLastConfirmedMesssage(
-							await this.chat.messageList.getFlatValue()
-						);
+							this.chat.lastConfirmedMessage.updateValue(
+								async lastConfirmedMessage => {
+									if (
+										!newLastConfirmedMessage ||
+										lastConfirmedMessage.id ===
+											newLastConfirmedMessage.id ||
+										lastConfirmedMessage.index >
+											newLastConfirmedMessage.index
+									) {
+										throw newLastConfirmedMessage;
+									}
 
-						if (!newLastConfirmedMessage) {
-							const pendingMessageIDs	=
-								(await this.chat.pendingMessages.getFlatValue()).map(m => m.id)
-							;
-
-							if (getNewLastConfirmedMesssage(pendingMessageIDs) === undefined) {
-								continue;
-							}
-
-							newLastConfirmedMessage	= await this.chat.messageList.watchFlat().pipe(
-								map(getNewLastConfirmedMesssage),
-								filterUndefinedOperator(),
-								take(1)
-							).toPromise();
+									return newLastConfirmedMessage;
+								}
+							);
 						}
-
-						this.chat.lastConfirmedMessage.updateValue(async lastConfirmedMessage => {
-							if (
-								!newLastConfirmedMessage ||
-								lastConfirmedMessage.id === newLastConfirmedMessage.id ||
-								lastConfirmedMessage.index > newLastConfirmedMessage.index
-							) {
-								throw newLastConfirmedMessage;
-							}
-
-							return newLastConfirmedMessage;
-						});
 					}
-				});
+				);
 			}
 
-			this.sessionService.on(rpcEvents.typing, (newEvents: ISessionMessageData[]) => {
-				for (const o of newEvents) {
-					if (o.chatState) {
-						this.chat.isFriendTyping.next(o.chatState.isTyping);
+			this.sessionService.on(
+				rpcEvents.typing,
+				(newEvents: ISessionMessageData[]) => {
+					for (const o of newEvents) {
+						if (o.chatState) {
+							this.chat.isFriendTyping.next(o.chatState.isTyping);
+						}
 					}
 				}
-			});
+			);
 
 			(async () => {
 				while (this.sessionService.state.isAlive.value) {
 					await this.chat.receiveTextLock(async lockData => {
-						const f	= async (newEvents: ISessionMessageData[]) =>
-							this.addTextMessage(...newEvents)
-						;
+						const f = async (newEvents: ISessionMessageData[]) =>
+							this.addTextMessage(...newEvents);
 
 						this.sessionService.on(rpcEvents.text, f);
 						await Promise.race([
@@ -1624,9 +1868,11 @@ export class ChatService extends BaseProvider {
 			})();
 		});
 
-		this.sessionCapabilitiesService.capabilities.walkieTalkieMode.then(walkieTalkieMode => {
-			this.walkieTalkieMode.next(walkieTalkieMode);
-		});
+		this.sessionCapabilitiesService.capabilities.walkieTalkieMode.then(
+			walkieTalkieMode => {
+				this.walkieTalkieMode.next(walkieTalkieMode);
+			}
+		);
 
 		/* For automated tests */
 
@@ -1634,8 +1880,20 @@ export class ChatService extends BaseProvider {
 			return;
 		}
 
-		(<any> self).sendMessage	= async (message?: string, selfDestructTimeout?: number) =>
-			this.send(undefined, {text: message}, selfDestructTimeout)
-		;
+		(<any> self).sendMessage = async (
+			message?: string,
+			selfDestructTimeout?: number
+		) => this.send(undefined, {text: message}, selfDestructTimeout);
+
+		/* For debugging */
+
+		if (!this.envService.debug) {
+			return;
+		}
+
+		(<any> self).bypassAbortion = () => {
+			this.chat.state = States.chat;
+			this.updateChat();
+		};
 	}
 }

@@ -20,14 +20,14 @@ import {resolvable, sleep} from '../util/wait';
 import {DialogService} from './dialog.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * DialogService implementation built on Angular Material.
  */
 @Injectable()
-export class MaterialDialogService extends BaseProvider implements DialogService {
+export class MaterialDialogService extends BaseProvider
+	implements DialogService {
 	/** @ignore */
-	private readonly lock: LockFunction	= lockFunction();
+	private readonly lock: LockFunction = lockFunction();
 
 	/** @ignore */
 	private async confirmHelper (
@@ -36,7 +36,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			cancel?: string;
 			cancelFAB?: string;
 			content: string;
-			fabAvatar?: Async<SafeUrl|string>;
+			fabAvatar?: Async<SafeUrl | string>;
 			form?: IForm;
 			ok?: string;
 			okFAB?: string;
@@ -48,79 +48,75 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		},
 		closeFunction?: IResolvable<() => void>,
 		prompt: boolean = false
-	) : Promise<{ok: boolean; promptResponse: string|IForm|undefined}> {
+	) : Promise<{ok: boolean; promptResponse: string | IForm | undefined}> {
 		return this.lock(async () => {
-			const matDialogRef	= o.bottomSheet ?
+			const matDialogRef = o.bottomSheet ?
 				this.matBottomSheet.open(DialogConfirmComponent) :
-				this.matDialog.open(DialogConfirmComponent)
-			;
+				this.matDialog.open(DialogConfirmComponent);
 
-			const afterClosed	= 'close' in matDialogRef ?
-				() => matDialogRef.afterClosed() :
-				() => matDialogRef.afterDismissed()
-			;
+			const afterClosed =
+				'close' in matDialogRef ?
+					() => matDialogRef.afterClosed() :
+					() => matDialogRef.afterDismissed();
 
-			const beforeClosed	= 'close' in matDialogRef ?
-				() => matDialogRef.beforeClosed() :
-				() => matDialogRef.backdropClick()
-			;
+			const beforeClosed =
+				'close' in matDialogRef ?
+					() => matDialogRef.beforeClosed() :
+					() => matDialogRef.backdropClick();
 
-			const close			= 'close' in matDialogRef ?
-				(closeOK?: boolean) => { matDialogRef.close(closeOK); } :
-				(closeOK?: boolean) => { matDialogRef.dismiss(closeOK); }
-			;
+			const close =
+				'close' in matDialogRef ?
+					(closeOK?: boolean) => {
+						matDialogRef.close(closeOK);
+					} :
+					(closeOK?: boolean) => {
+						matDialogRef.dismiss(closeOK);
+					};
 
-			const instance		= 'componentInstance' in matDialogRef ?
-				matDialogRef.componentInstance :
-				matDialogRef.instance
-			;
+			const instance =
+				'componentInstance' in matDialogRef ?
+					matDialogRef.componentInstance :
+					matDialogRef.instance;
 
-			instance.bottomSheet		= o.bottomSheet || false;
+			instance.bottomSheet = o.bottomSheet || false;
 
-			instance.content			= o.content;
+			instance.content = o.content;
 
-			instance.cancel				= o.cancel !== undefined ?
-				o.cancel :
-				this.stringsService.cancel
-			;
+			instance.cancel =
+				o.cancel !== undefined ? o.cancel : this.stringsService.cancel;
 
-			instance.cancelFAB			= o.cancelFAB;
+			instance.cancelFAB = o.cancelFAB;
 
-			instance.fabAvatar			=
-				o.fabAvatar === undefined ? o.fabAvatar : asyncToObservable(o.fabAvatar)
-			;
+			instance.fabAvatar =
+				o.fabAvatar === undefined ?
+					o.fabAvatar :
+					asyncToObservable(o.fabAvatar);
 
-			instance.form				= o.form;
+			instance.form = o.form;
 
-			instance.markdown			= !!o.markdown;
+			instance.markdown = !!o.markdown;
 
-			instance.ok					= o.ok !== undefined ?
-				o.ok :
-				this.stringsService.ok
-			;
+			instance.ok = o.ok !== undefined ? o.ok : this.stringsService.ok;
 
-			instance.okFAB				= o.okFAB;
+			instance.okFAB = o.okFAB;
 
-			instance.prompt				= prompt ? (o.preFill || '') : undefined;
+			instance.prompt = prompt ? o.preFill || '' : undefined;
 
-			instance.promptPlaceholder	= o.placeholder;
+			instance.promptPlaceholder = o.placeholder;
 
-			instance.title				= o.title !== undefined ?
-				o.title :
-				''
-			;
+			instance.title = o.title !== undefined ? o.title : '';
 
 			if (closeFunction) {
 				closeFunction.resolve(close);
 			}
 
-			const ok				= afterClosed().toPromise<boolean|undefined>();
+			const ok = afterClosed().toPromise<boolean | undefined>();
 
-			const promptResponse	= beforeClosed().toPromise().then(() =>
-				instance.form || instance.prompt
-			);
+			const promptResponse = beforeClosed()
+				.toPromise()
+				.then(() => instance.form || instance.prompt);
 
-			let hasReturned	= false;
+			let hasReturned = false;
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
 				(async () => {
 					await sleep(o.timeout);
@@ -137,7 +133,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 				};
 			}
 			finally {
-				hasReturned	= true;
+				hasReturned = true;
 			}
 		});
 	}
@@ -148,24 +144,22 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
-			const matDialogRef	= this.matDialog.open(DialogAlertComponent);
+			const matDialogRef = this.matDialog.open(DialogAlertComponent);
 
-			matDialogRef.componentInstance.content	= o.content;
+			matDialogRef.componentInstance.content = o.content;
 
-			matDialogRef.componentInstance.markdown	= !!o.markdown;
+			matDialogRef.componentInstance.markdown = !!o.markdown;
 
-			matDialogRef.componentInstance.ok		= o.ok !== undefined ?
-				o.ok :
-				this.stringsService.ok
-			;
+			matDialogRef.componentInstance.ok =
+				o.ok !== undefined ? o.ok : this.stringsService.ok;
 
-			matDialogRef.componentInstance.title	= o.title !== undefined ?
-				o.title :
-				''
-			;
+			matDialogRef.componentInstance.title =
+				o.title !== undefined ? o.title : '';
 
 			if (closeFunction) {
-				closeFunction.resolve(() => { matDialogRef.close(); });
+				closeFunction.resolve(() => {
+					matDialogRef.close();
+				});
 			}
 
 			await matDialogRef.afterClosed().toPromise();
@@ -180,29 +174,33 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 		bottomSheet: boolean = false
 	) : Promise<void> {
 		return this.lock(async () => {
-			const matDialogRef	= bottomSheet ?
+			const matDialogRef = bottomSheet ?
 				this.matBottomSheet.open(componentType) :
-				this.matDialog.open(componentType)
-			;
+				this.matDialog.open(componentType);
 
-			const afterClosed	= 'close' in matDialogRef ?
-				() => matDialogRef.afterClosed() :
-				() => matDialogRef.afterDismissed()
-			;
+			const afterClosed =
+				'close' in matDialogRef ?
+					() => matDialogRef.afterClosed() :
+					() => matDialogRef.afterDismissed();
 
-			const close			= 'close' in matDialogRef ?
-				(closeOK?: boolean) => { matDialogRef.close(closeOK); } :
-				(closeOK?: boolean) => { matDialogRef.dismiss(closeOK); }
-			;
+			const close =
+				'close' in matDialogRef ?
+					(closeOK?: boolean) => {
+						matDialogRef.close(closeOK);
+					} :
+					(closeOK?: boolean) => {
+						matDialogRef.dismiss(closeOK);
+					};
 
-			const instance: T&{changeDetectorRef?: ChangeDetectorRef}	=
+			const instance: T & {changeDetectorRef?: ChangeDetectorRef} =
 				'componentInstance' in matDialogRef ?
 					matDialogRef.componentInstance :
-					matDialogRef.instance
-			;
+					matDialogRef.instance;
 
 			if (closeFunction) {
-				closeFunction.resolve(() => { close(); });
+				closeFunction.resolve(() => {
+					close();
+				});
 			}
 
 			if (setInputs) {
@@ -225,7 +223,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			cancel?: string;
 			cancelFAB?: string;
 			content: string;
-			fabAvatar?: Async<SafeUrl|string>;
+			fabAvatar?: Async<SafeUrl | string>;
 			markdown?: boolean;
 			ok?: string;
 			okFAB?: string;
@@ -240,17 +238,20 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 	/** @inheritDoc */
 	public async cropImage (o: {
 		aspectRatio?: number;
-		src: SafeUrl|string;
+		src: SafeUrl | string;
 		title?: string;
-	}) : Promise<SafeUrl|undefined> {
+	}) : Promise<SafeUrl | undefined> {
 		return this.lock(async () => {
-			const matDialogRef	= this.matDialog.open(DialogMediaComponent);
-			const cropResult	= resolvable<SafeUrl|undefined>();
+			const matDialogRef = this.matDialog.open(DialogMediaComponent, {
+				hasBackdrop: false,
+				panelClass: 'visibility-hidden'
+			});
+			const cropResult = resolvable<SafeUrl | undefined>();
 
-			matDialogRef.componentInstance.cropAspectRatio	= o.aspectRatio;
-			matDialogRef.componentInstance.cropResult		= cropResult;
-			matDialogRef.componentInstance.src				= o.src;
-			matDialogRef.componentInstance.title			= o.title;
+			matDialogRef.componentInstance.cropAspectRatio = o.aspectRatio;
+			matDialogRef.componentInstance.cropResult = cropResult;
+			matDialogRef.componentInstance.src = o.src;
+			matDialogRef.componentInstance.title = o.title;
 
 			return Promise.race([
 				cropResult.promise,
@@ -267,21 +268,26 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 
 	/** @inheritDoc */
 	public async media (
-		o: {mediaType?: string; src: SafeUrl|string; title?: string},
+		o: {mediaType?: string; src: SafeUrl | string; title?: string},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
-			const matDialogRef	= this.matDialog.open(DialogMediaComponent);
+			const matDialogRef = this.matDialog.open(DialogMediaComponent, {
+				hasBackdrop: false,
+				panelClass: 'visibility-hidden'
+			});
 
-			matDialogRef.componentInstance.src		= o.src;
-			matDialogRef.componentInstance.title	= o.title;
+			matDialogRef.componentInstance.src = o.src;
+			matDialogRef.componentInstance.title = o.title;
 
 			if (o.mediaType) {
-				matDialogRef.componentInstance.mediaType	= o.mediaType;
+				matDialogRef.componentInstance.mediaType = o.mediaType;
 			}
 
 			if (closeFunction) {
-				closeFunction.resolve(() => { matDialogRef.close(); });
+				closeFunction.resolve(() => {
+					matDialogRef.close();
+				});
 			}
 
 			await matDialogRef.afterClosed().toPromise();
@@ -303,7 +309,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<IForm|undefined>;
+	) : Promise<IForm | undefined>;
 	/* tslint:disable-next-line:no-async-without-await */
 	public async prompt (
 		o: {
@@ -317,7 +323,7 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<string|undefined>;
+	) : Promise<string | undefined>;
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
@@ -331,22 +337,32 @@ export class MaterialDialogService extends BaseProvider implements DialogService
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<string|IForm|undefined> {
-		const {ok, promptResponse}	= await this.confirmHelper(o, closeFunction, true);
+	) : Promise<string | IForm | undefined> {
+		const {ok, promptResponse} = await this.confirmHelper(
+			o,
+			closeFunction,
+			true
+		);
 		return ok ? promptResponse : undefined;
 	}
 
 	/** @inheritDoc */
-	public async toast (content: string, duration: number, action?: string) : Promise<boolean> {
-		const snackbar				= this.matSnackbar.open(
+	public async toast (
+		content: string,
+		duration: number,
+		action?: string
+	) : Promise<boolean> {
+		const snackbar = this.matSnackbar.open(
 			content,
 			action === undefined ? undefined : action.toUpperCase(),
 			{duration}
 		);
 
-		const wasManuallyDismissed	=
-			(await snackbar.onAction().pipe(map(() => true)).toPromise()) || false
-		;
+		const wasManuallyDismissed =
+			(await snackbar
+				.onAction()
+				.pipe(map(() => true))
+				.toPromise()) || false;
 
 		if (wasManuallyDismissed) {
 			return true;

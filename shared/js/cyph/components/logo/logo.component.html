@@ -1,17 +1,20 @@
 <a
-	[href]='envService.homeUrl'
-	[ngClass]='"alignment-" + alignment'
-	[class.white]='white'
-	[style.background-image]='logo | async'
-	[title]='stringsService.logo'
-	*ngIf='homeLink && !envService.coBranded; else noLink'
+	[href]="envService.homeUrl"
+	[ngClass]="'alignment-' + alignment"
+	[class.white]="white"
+	[style.background-image]="logo | async"
+	[title]="stringsService.logo"
+	*ngIf="
+		homeLink && !envService.coBranded && !envService.isCordova;
+		else noLink
+	"
 ></a>
 
 <ng-template #noLink>
 	<div
-		[ngClass]='"alignment-" + alignment'
-		[class.white]='white'
-		[style.background-image]='logo | async'
-		[title]='stringsService.logo'
+		[ngClass]="'alignment-' + alignment"
+		[class.white]="white"
+		[style.background-image]="logo | async"
+		[title]="stringsService.logo"
 	></div>
 </ng-template>

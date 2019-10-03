@@ -2,5 +2,4 @@
 
 /** @file supersphincs external. */
 
-
-export const superSphincs	= <any> {};
+export const superSphincs = <any> {};

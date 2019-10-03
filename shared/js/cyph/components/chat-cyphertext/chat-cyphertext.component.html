@@ -1,13 +1,16 @@
-<div class='chat-cyphertext mat-app-background' *ngIf='cyphertextService.isEnabled'>
+<div
+	class="chat-cyphertext mat-app-background"
+	*ngIf="cyphertextService.isEnabled"
+>
 	<cyph-chat-cyphertext-list
-		[messages]='cyphertextService.messages.watch() | async'
+		[messages]="cyphertextService.messages.watch() | async"
 	></cyph-chat-cyphertext-list>
 	<button
 		mat-fab
 		cyphTranslate
-		matTooltip='Close Cyphertext'
-		class='close-button'
-		(click)='cyphertextService.hide()'
+		matTooltip="Close Cyphertext"
+		class="close-button"
+		(click)="cyphertextService.hide()"
 	>
 		<mat-icon>close</mat-icon>
 	</button>

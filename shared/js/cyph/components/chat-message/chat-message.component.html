@@ -1,58 +1,71 @@
 <div
-	[fxFlex]='mobile && uiStyle === uiStyles.default ? "nogrow" : ""'
-	class='message-item'
-	[ngClass]='"ui-style-" + uiStyles[uiStyle]'
-	[class.full-width]='
+	[fxFlex]="mobile && uiStyle === uiStyles.default ? 'nogrow' : ''"
+	class="message-item"
+	[ngClass]="'ui-style-' + uiStyles[uiStyle]"
+	[class.full-width]="
 		uiStyle === uiStyles.default &&
 		value.fileTransfer &&
 		!value.fileTransfer.media
-	'
-	[class.mobile]='mobile'
-	[class.author-app]='message?.authorType === authorTypes.App'
-	[class.author-local]='message?.authorType === authorTypes.Local'
-	[class.author-remote]='message?.authorType === authorTypes.Remote'
-	[class.file-transfer]='message?.value?.fileTransfer !== undefined'
-	[class.get-value-failure]='message?.value?.failure'
-	[class.self-destruct]='chatService.chatSelfDestruct | async'
-	[class.self-destructed]='message?.selfDestructTimer?.isComplete | async'
-	[class.visibility-hidden]='(viewReady | async) === false'
-	[attr.data-message-id]='message?.id'
-	*ngIf='message?.valueWatcher | async as value; else messageLoading'
+	"
+	[class.mobile]="mobile"
+	[class.author-app]="message?.authorType === authorTypes.App"
+	[class.author-local]="message?.authorType === authorTypes.Local"
+	[class.author-remote]="message?.authorType === authorTypes.Remote"
+	[class.file-transfer]="message?.value?.fileTransfer !== undefined"
+	[class.get-value-failure]="message?.value?.failure"
+	[class.self-destruct]="chatService.chatSelfDestruct | async"
+	[class.self-destructed]="message?.selfDestructTimer?.isComplete | async"
+	[class.visibility-hidden]="(viewReady | async) === false"
+	[attr.data-message-id]="message?.id"
+	*ngIf="message?.valueWatcher | async as value; else messageLoading"
 >
 	<div>
-		<div fxLayout='row' *ngIf='uiStyle === uiStyles.default; else mailUI'>
-			<div class='message' fxFlex>
-				<div fxLayout='row' fxLayoutAlign='start center'>
+		<div fxLayout="row" *ngIf="uiStyle === uiStyles.default; else mailUI">
+			<div class="message" fxFlex>
+				<div fxLayout="row" fxLayoutAlign="start center">
 					<strong
-						class='message-author'
-						*ngIf='!mobile && message?.authorType !== authorTypes.App'
+						class="message-author"
+						*ngIf="
+							!mobile && message?.authorType !== authorTypes.App
+						"
 					>
-						{{message?.author | async}}:
+						{{ message?.author | async }}:
 					</strong>
 					&nbsp;
-					<ng-container *ngTemplateOutlet='messageContent; context: {
-						value: value
-					}'></ng-container>
+					<ng-container
+						*ngTemplateOutlet="
+							messageContent;
+							context: {
+								value: value
+							}
+						"
+					></ng-container>
 				</div>
 			</div>
 			<div
-				[fxFlex]='mobile ? undefined : "6em"'
-				fxLayoutAlign='end center'
-				class='message-timestamp'
+				[fxFlex]="mobile ? undefined : '6em'"
+				fxLayoutAlign="end center"
+				class="message-timestamp"
 			>
-				<div fxLayout='row'>
+				<div fxLayout="row">
 					<!--
 					<div *ngIf='mobile && message?.authorType === authorTypes.Local'>
 						{{message?.author | async}} &nbsp;&mdash;&nbsp;
 					</div>
 					-->
 
-					<div>{{message?.timeString}}</div>
+					<div>{{ message?.timeString }}</div>
 
-					<div *ngIf='!mobile || message?.authorType === authorTypes.Local'>
+					<div
+						*ngIf="
+							!mobile || message?.authorType === authorTypes.Local
+						"
+					>
 						<span>&nbsp;</span>
 						&ngsp;
-						<ng-container *ngTemplateOutlet='messageConfirmation'></ng-container>
+						<ng-container
+							*ngTemplateOutlet="messageConfirmation"
+						></ng-container>
 					</div>
 
 					<!--
@@ -66,103 +79,122 @@
 
 		<ng-template #mailUI>
 			<div
-				fxLayout='row'
-				class='cyph-light-theme mail-ui'
-				[class.mail-local]='message?.authorType === authorTypes.Local'
+				fxLayout="row"
+				class="cyph-light-theme mail-ui"
+				[class.mail-local]="message?.authorType === authorTypes.Local"
 			>
 				<mat-card fxFlex>
 					<mat-card-header>
 						<img
 							mat-card-avatar
 							cyphTranslate
-							class='avatar-image'
-							[src]='message?.authorUser?.avatar | async'
-							[routerLink]='"/profile/" + message?.authorUser?.username'
-							alt='User Avatar'
-							*ngIf='
+							class="avatar-image"
+							[src]="message?.authorUser?.avatar | async"
+							[routerLink]="
+								'/profile/' + message?.authorUser?.username
+							"
+							alt="User Avatar"
+							*ngIf="
 								accountService &&
 								!!message?.authorUser &&
 								!!message?.authorUser?.avatar
-							'
+							"
 						/>
 						<mat-card-title fxFlex>
-							<div fxFlex [fxLayout]='mobile ? "column" : "row"'>
-								<span *ngIf='!!message?.authorUser'>
-									<strong>{{message?.authorUser?.name | async}}&nbsp;</strong>
+							<div fxFlex [fxLayout]="mobile ? 'column' : 'row'">
+								<span *ngIf="!!message?.authorUser">
+									<strong
+										>{{
+											message?.authorUser?.name | async
+										}}&nbsp;</strong
+									>
 									&ngsp;
 									<small>
 										{{
-											message?.authorType === authorTypes.Remote ?
+											message?.authorType ===
+											authorTypes.Remote ?
 												'@' :
 												''
-										}}{{message?.author | async}}
+										}}{{ message?.author | async }}
 									</small>
 								</span>
-								<strong *ngIf='!message?.authorUser'>
+								<strong *ngIf="!message?.authorUser">
 									{{
-										message?.authorType === authorTypes.Remote ?
+										message?.authorType ===
+										authorTypes.Remote ?
 											'@' :
 											''
-									}}{{message?.author | async}}
+									}}{{ message?.author | async }}
 								</strong>
-								<div fxFlex *ngIf='!mobile'></div>
+								<div fxFlex *ngIf="!mobile"></div>
 								<div>
-									<span>{{message?.dateTimeString}}</span>
+									<span>{{ message?.dateTimeString }}</span>
 									&ngsp;
 									<ng-container
-										*ngTemplateOutlet='messageConfirmation'
+										*ngTemplateOutlet="messageConfirmation"
 									></ng-container>
 								</div>
 							</div>
 						</mat-card-title>
 					</mat-card-header>
-					<div class='mail-divider' mat-card-image></div>
+					<div class="mail-divider" mat-card-image></div>
 					<mat-card-content>
-						<ng-container *ngTemplateOutlet='messageContent; context: {
-							value: value
-						}'></ng-container>
+						<ng-container
+							*ngTemplateOutlet="
+								messageContent;
+								context: {
+									value: value
+								}
+							"
+						></ng-container>
 					</mat-card-content>
 				</mat-card>
 			</div>
 		</ng-template>
 
 		<div
-			fxLayout='row'
-			fxLayoutAlign='center center'
-			fxLayoutGap='10px'
-			class='self-destruct-timer'
-			*ngIf='message?.selfDestructTimer'
+			fxLayout="row"
+			fxLayoutAlign="center center"
+			fxLayoutGap="10px"
+			class="self-destruct-timer"
+			*ngIf="message?.selfDestructTimer"
 		>
 			<div cyphTranslate>Message will self-destruct in</div>
-			<div class='countdown'>{{message?.selfDestructTimer?.timestamp | async}}</div>
+			<div class="countdown">
+				{{ message?.selfDestructTimer?.timestamp | async }}
+			</div>
 		</div>
 	</div>
-	<div class='self-destruct-cover'></div>
+	<div class="self-destruct-cover"></div>
 </div>
 
 <ng-template #messageConfirmation>
-	<ng-container *ngIf='
-		pending || message?.authorType !== authorTypes.Local;
-		else messagePartialConfirmed
-	'>
-		<span class='confirmation-checks visibility-hidden'>
+	<ng-container
+		*ngIf="
+			pending || message?.authorType !== authorTypes.Local;
+			else messagePartialConfirmed
+		"
+	>
+		<span class="confirmation-checks visibility-hidden">
 			<mat-icon>check</mat-icon>
 			&ngsp;
 			<mat-icon>check</mat-icon>
 		</span>
 	</ng-container>
 	<ng-template #messagePartialConfirmed>
-		<ng-container *ngIf='!chatService.deliveryReceipts; else messageConfirmed'>
-			<span class='confirmation-checks'>
+		<ng-container
+			*ngIf="!chatService.deliveryReceipts; else messageConfirmed"
+		>
+			<span class="confirmation-checks">
 				<mat-icon>check</mat-icon>
 				&ngsp;
-				<mat-icon class='visibility-hidden'>check</mat-icon>
+				<mat-icon class="visibility-hidden">check</mat-icon>
 			</span>
 		</ng-container>
 	</ng-template>
 	<ng-template #messageConfirmed>
-		<ng-container *ngIf='confirmed; else messageUnconfirmed'>
-			<span class='confirmation-checks'>
+		<ng-container *ngIf="confirmed; else messageUnconfirmed">
+			<span class="confirmation-checks">
 				<mat-icon>check</mat-icon>
 				&ngsp;
 				<mat-icon>check</mat-icon>
@@ -170,113 +202,136 @@
 		</ng-container>
 	</ng-template>
 	<ng-template #messageUnconfirmed>
-		<span class='confirmation-checks' [matTooltip]='stringsService.messageUnconfirmed'>
+		<span
+			class="confirmation-checks"
+			[matTooltip]="stringsService.messageUnconfirmed"
+		>
 			<mat-icon>check</mat-icon>
 			&ngsp;
-			<mat-icon class='visibility-hidden'>check</mat-icon>
+			<mat-icon class="visibility-hidden">check</mat-icon>
 		</span>
 	</ng-template>
 </ng-template>
 
-<ng-template #messageContent let-value='value'>
-	<span fxFlex (init)='loaded.emit()'>
+<ng-template #messageContent let-value="value">
+	<span fxFlex (init)="loaded.emit()">
 		<cyph-calendar-invite
-			[isDisabled]='true'
-			[mobile]='mobile'
-			[ngModel]='value.calendarInvite'
-			*ngIf='value.calendarInvite; else fileTransferValue'
+			[isDisabled]="true"
+			[mobile]="mobile"
+			[ngModel]="value.calendarInvite"
+			*ngIf="value.calendarInvite; else fileTransferValue"
 		></cyph-calendar-invite>
 		<ng-template #fileTransferValue>
-			<div *ngIf='value.fileTransfer; else formValue'>
-				<ng-container *ngIf='
-					(
+			<div *ngIf="value.fileTransfer; else formValue">
+				<ng-container
+					*ngIf="
 						value.fileTransfer.media &&
-						value.fileTransfer.size <= fileService.mediaSizeLimit
-					);
-					else saveFile
-				'>
-					<ng-container *ngIf='
-						fileTransferService.getMedia(value.fileTransfer) | async as media;
-						else mediaLoading
-					'>
-						<ng-container *ngIf='media.success; else mediaFailure'>
-							<div class='centered media-container'>
+							value.fileTransfer.size <=
+								fileService.mediaSizeLimit;
+						else saveFile
+					"
+				>
+					<ng-container
+						*ngIf="
+							fileTransferService.getMedia(value.fileTransfer)
+								| async as media;
+							else mediaLoading
+						"
+					>
+						<ng-container *ngIf="media.success; else mediaFailure">
+							<div class="centered media-container">
 								<ng-container
-									*ngTemplateOutlet='mediaDisplay; context: {clickable: true}'
+									*ngTemplateOutlet="
+										mediaDisplay;
+										context: {clickable: true}
+									"
 								></ng-container>
 							</div>
-							<div class='centered-fake media-container visibility-hidden'>
-								<ng-container *ngTemplateOutlet='mediaDisplay'></ng-container>
+							<div
+								class="centered-fake media-container visibility-hidden"
+							>
+								<ng-container
+									*ngTemplateOutlet="mediaDisplay"
+								></ng-container>
 							</div>
 							<br />
 							<br />
 						</ng-container>
-						<ng-template #mediaDisplay let-clickable='clickable'>
+						<ng-template #mediaDisplay let-clickable="clickable">
 							<audio
 								controls
-								[attr.aria-label]='value.fileTransfer.name'
-								*ngIf='fileService.isAudio(value.fileTransfer)'
+								[attr.aria-label]="value.fileTransfer.name"
+								*ngIf="fileService.isAudio(value.fileTransfer)"
 							>
 								<source
-									[type]='value.fileTransfer.mediaType'
-									[src]='media.uri'
+									[type]="value.fileTransfer.mediaType"
+									[src]="media.uri"
 								/>
 							</audio>
 
 							<img
-								class='media-message'
-								[src]='media.uri'
-								[alt]='value.fileTransfer.name'
-								(click)='
+								class="media-message"
+								[src]="media.uri"
+								[alt]="value.fileTransfer.name"
+								(click)="
 									!clickable ?
 										undefined :
-									mobile ?
-										fileTransferService.saveFile(value.fileTransfer) :
 										dialogService.media({
-											mediaType: value.fileTransfer.mediaType,
+											mediaType:
+												value.fileTransfer.mediaType,
 											src: media.uri,
 											title: value.fileTransfer.name
 										})
-								'
-								*ngIf='fileService.isImage(value.fileTransfer)'
+								"
+								*ngIf="fileService.isImage(value.fileTransfer)"
 							/>
 
 							<span
-								class='video-message-wrapper'
-								(click)='!clickable || mobile ?
-									undefined :
-									dialogService.media({
-										mediaType: value.fileTransfer.mediaType,
-										src: media.uri,
-										title: value.fileTransfer.name
-									})
-								'
-								*ngIf='fileService.isVideo(value.fileTransfer)'
+								class="video-message-wrapper"
+								(click)="
+									!clickable || mobile ?
+										undefined :
+										dialogService.media({
+											mediaType:
+												value.fileTransfer.mediaType,
+											src: media.uri,
+											title: value.fileTransfer.name
+										})
+								"
+								*ngIf="fileService.isVideo(value.fileTransfer)"
 							>
 								<video
-									class='media-message'
+									class="media-message"
 									controls
-									[attr.aria-label]='value.fileTransfer.name'
+									[attr.aria-label]="value.fileTransfer.name"
 								>
 									<source
-										[type]='value.fileTransfer.mediaType'
-										[src]='media.uri'
+										[type]="value.fileTransfer.mediaType"
+										[src]="media.uri"
 									/>
 								</video>
 							</span>
 
 							<h4
-								class='media-title download-link'
-								(click)='fileTransferService.saveFile(value.fileTransfer)'
-								[matTooltip]='stringsService.incomingFile'
+								class="media-title download-link"
+								(click)="
+									fileTransferService.saveFile(
+										value.fileTransfer
+									)
+								"
+								[matTooltip]="stringsService.incomingFile"
 							>
-								{{value.fileTransfer.name}}
+								{{ value.fileTransfer.name }}
 							</h4>
 						</ng-template>
 						<ng-template #mediaFailure>
-							<div class='centered'>
-								<span>{{stringsService.incomingFileSaveMediaError}}</span>
-								<h4 class='media-title'>{{value.fileTransfer.name}}</h4>
+							<div class="centered">
+								<span>{{
+									stringsService.incomingFileSaveMediaError
+								}}</span>
+								<h4 class="media-title">
+									{{ value.fileTransfer.name }}
+								</h4>
 							</div>
 							<br />
 							<br />
@@ -284,14 +339,17 @@
 					</ng-container>
 					<ng-template #mediaLoading>
 						<div
-							[class.centered]='active'
-							[class.visibility-hidden]='!active'
-							*ngFor='let active of [true, false]; trackBy: trackBySelf'
+							[class.centered]="active"
+							[class.visibility-hidden]="!active"
+							*ngFor="
+								let active of [true, false];
+								trackBy: trackBySelf
+							"
 						>
 							<mat-progress-spinner
-								mode='indeterminate'
-								diameter='50'
-								strokeWidth='5'
+								mode="indeterminate"
+								diameter="50"
+								strokeWidth="5"
 							></mat-progress-spinner>
 						</div>
 						<br />
@@ -301,16 +359,19 @@
 				<ng-template #saveFile>
 					<button
 						mat-raised-button
-						class='save-file centered'
-						(click)='fileTransferService.saveFile(value.fileTransfer)'
-						[matTooltip]='stringsService.incomingFile'
+						class="save-file centered"
+						(click)="
+							fileTransferService.saveFile(value.fileTransfer)
+						"
+						[matTooltip]="stringsService.incomingFile"
 					>
 						<mat-icon>get_app</mat-icon>
 						&ngsp;
 						<span>
-							{{value.fileTransfer.name}}
-							&ngsp;
-							({{readableByteLength(value.fileTransfer.size)}})
+							{{ value.fileTransfer.name }}
+							&ngsp; ({{
+								readableByteLength(value.fileTransfer.size)
+							}})
 						</span>
 					</button>
 					<br />
@@ -321,39 +382,42 @@
 		</ng-template>
 		<ng-template #formValue>
 			<cyph-dynamic-form
-				[form]='value.form'
-				[isDisabled]='true'
-				[mobile]='mobile'
-				*ngIf='value.form; else quillValue'
+				[form]="value.form"
+				[isDisabled]="true"
+				[mobile]="mobile"
+				*ngIf="value.form; else quillValue"
 			></cyph-dynamic-form>
 		</ng-template>
 		<ng-template #quillValue>
 			<cyph-quill
-				[content]='quill | async'
-				[isDisabled]='true'
-				(ready)='resolveViewReady()'
-				*ngIf='value.quill && value.quill.length > 0; else textValue'
+				[content]="quill | async"
+				[isDisabled]="true"
+				(ready)="resolveViewReady()"
+				*ngIf="value.quill && value.quill.length > 0; else textValue"
 			></cyph-quill>
 		</ng-template>
 		<ng-template #textValue>
 			<cyph-markdown
-				class='message-text'
-				[markdown]='value.text'
-				[targetSelf]='message?.authorType === authorTypes.App'
+				class="message-text"
+				[markdown]="value.text"
+				[targetSelf]="message?.authorType === authorTypes.App"
 			></cyph-markdown>
 		</ng-template>
 	</span>
 </ng-template>
 
 <ng-template #messageLoading>
-	<div class='message-loading'>
-		<div *ngIf='
-			((message?.authorUser?.name | async) || (message?.author | async)) as author;
-			else messageLoadingNoAuthor
-		'>
+	<div class="message-loading">
+		<div
+			*ngIf="
+				(message?.authorUser?.name | async) ||
+					(message?.author | async) as author;
+				else messageLoadingNoAuthor
+			"
+		>
 			<span cyphTranslate>Loading message from</span>
 			&ngsp;
-			<span>{{author}}...</span>
+			<span>{{ author }}...</span>
 		</div>
 		<ng-template #messageLoadingNoAuthor>
 			<div cyphTranslate>Loading message...</div>

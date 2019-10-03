@@ -13,7 +13,6 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {AccountComposeComponent} from '../account-compose';
 
-
 /**
  * Angular component for account compose UI.
  */
@@ -25,7 +24,7 @@ import {AccountComposeComponent} from '../account-compose';
 })
 export class AccountComposeNoProvidersComponent extends AccountComposeComponent {
 	/** @inheritDoc */
-	protected readonly hasOwnProviders: boolean	= false;
+	protected readonly hasOwnProviders: boolean = false;
 
 	constructor (
 		accountAuthService: AccountAuthService,

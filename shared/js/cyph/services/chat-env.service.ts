@@ -7,34 +7,32 @@ import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
 
-
 /**
  * Replaces a subset of the env service for the chat UI in certain cases.
  */
 @Injectable()
 export class ChatEnvService extends EnvService {
 	/** @ignore */
-	private readonly newCyphUrlHelperInternal	= memoize(
+	private readonly newCyphUrlHelperInternal = memoize(
 		(base: boolean, sessionService: ISessionService) : string => {
-			const flags		=
-				this.configService.apiFlags.map(flag =>
-					flag.get(sessionService) ? flag.character : ''
-				).join('')
-			;
+			const flags = this.configService.apiFlags
+				.map(flag => (flag.get(sessionService) ? flag.character : ''))
+				.join('');
 
-			const baseURL	= (
-				this.callType === this.sessionInitService.callType ?
+			const baseURL =
+				(this.callType === this.sessionInitService.callType ?
 					undefined :
 				this.sessionInitService.callType === 'audio' ?
-					(base ? env.cyphAudioBaseUrl : env.cyphAudioUrl) :
+					base ?
+						env.cyphAudioBaseUrl :
+						env.cyphAudioUrl :
 				this.sessionInitService.callType === 'video' ?
-					(base ? env.cyphVideoBaseUrl : env.cyphVideoUrl) :
-					undefined
-			) || (
-				base ? env.newCyphBaseUrl : env.cyphImUrl
-			);
+					base ?
+						env.cyphVideoBaseUrl :
+						env.cyphVideoUrl :
+					undefined) || (base ? env.newCyphBaseUrl : env.cyphImUrl);
 
-			const divider	= baseURL.indexOf('#') < 0 ? '#' : '';
+			const divider = baseURL.indexOf('#') < 0 ? '#' : '';
 
 			return flags.length > 0 ? `${baseURL}${divider}${flags}` : baseURL;
 		}
@@ -44,7 +42,7 @@ export class ChatEnvService extends EnvService {
 	private sessionService?: ISessionService;
 
 	/** @inheritDoc */
-	public readonly pro	= env.pro;
+	public readonly pro = env.pro;
 
 	/** @ignore */
 	private newCyphUrlHelper (base: boolean) : string {
@@ -61,7 +59,7 @@ export class ChatEnvService extends EnvService {
 	}
 
 	/** @ignore */
-	public set cyphImUrl (_: string) {}
+	public set cyphImUrl (_: string)  {}
 
 	/** EnvService.newCyphBaseUrl adjusted for session API flags and initial call type. */
 	public get newCyphBaseUrl () : string {
@@ -69,7 +67,7 @@ export class ChatEnvService extends EnvService {
 	}
 
 	/** @ignore */
-	public set newCyphBaseUrl (_: string) {}
+	public set newCyphBaseUrl (_: string)  {}
 
 	constructor (
 		localStorageService: LocalStorageService,
@@ -83,7 +81,7 @@ export class ChatEnvService extends EnvService {
 		super(localStorageService);
 
 		this.sessionInitService.sessionService.promise.then(sessionService => {
-			this.sessionService	= sessionService;
+			this.sessionService = sessionService;
 		});
 	}
 }

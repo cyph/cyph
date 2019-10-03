@@ -1,10 +1,39 @@
 @import '../../../../css/mixins';
 
-audio, img, video {
+:host ::ng-deep {
+	.mat-dialog-actions {
+		top: -8px !important;
+	}
+
+	.mat-dialog-content {
+		width: 100%;
+		max-width: 100%;
+		height: calc(100vh - 60px);
+		max-height: calc(100vh - 60px);
+		margin: 0;
+		padding: 0;
+		margin-top: -15px;
+
+		> div {
+			width: 100%;
+			max-width: 100%;
+			height: 100%;
+			max-height: 100%;
+		}
+	}
+}
+
+audio,
+img,
+video {
 	display: block;
 	max-height: 100%;
 	max-width: 100%;
 	margin: auto;
+	position: relative;
+	top: 50%;
+
+	@include transform(translateY(-50%));
 }
 
 video {

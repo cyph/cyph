@@ -2,5 +2,4 @@
 
 /** @file fs external. */
 
-
 export default undefined;

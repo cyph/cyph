@@ -4,12 +4,11 @@ import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {MaybePromise} from '../maybe-promise-type';
 import {staticDomSanitizer} from '../util/static-services';
 
-
 /** Base64 data URI encoder/decoder. (Doesn't actually use Protocol Buffers.) */
 export class DataURIProto {
 	/** Converts possible-SafeUrl to string. */
 	public static async safeUrlToString (
-		data: SafeUrl|string,
+		data: SafeUrl | string,
 		mediaType?: string
 	) : Promise<string> {
 		if (typeof data === 'string') {
@@ -20,7 +19,7 @@ export class DataURIProto {
 			throw new Error('Undefined input.');
 		}
 
-		const sanitized	= (await staticDomSanitizer).sanitize(
+		const sanitized = (await staticDomSanitizer).sanitize(
 			SecurityContext.URL,
 			data
 		);
@@ -31,8 +30,7 @@ export class DataURIProto {
 
 		return mediaType ?
 			`data:${mediaType};base64,${sanitized.split(';base64,')[1]}` :
-			sanitized
-		;
+			sanitized;
 	}
 
 	/** @see IProto.create */
@@ -55,9 +53,9 @@ export class DataURIProto {
 	}
 
 	/** @see IProto.encode */
-	public static async encode (data: SafeUrl|string) : Promise<Uint8Array> {
+	public static async encode (data: SafeUrl | string) : Promise<Uint8Array> {
 		try {
-			data	= await DataURIProto.safeUrlToString(data);
+			data = await DataURIProto.safeUrlToString(data);
 		}
 		catch {}
 
@@ -69,22 +67,25 @@ export class DataURIProto {
 	}
 
 	/** @see IProto.verify */
-	public static async verify (data: SafeUrl|string) : Promise<string|undefined> {
+	public static async verify (
+		data: SafeUrl | string
+	) : Promise<string | undefined> {
 		try {
-			data	= await DataURIProto.safeUrlToString(data);
+			data = await DataURIProto.safeUrlToString(data);
 		}
 		catch {}
 
 		if (
 			typeof data === 'string' &&
-			/^data:[^\/]+\/[^\/]+;base64,$/.test(data.slice(0, data.indexOf(',') + 1))
+			/^data:[^\/]+\/[^\/]+;base64,$/.test(
+				data.slice(0, data.indexOf(',') + 1)
+			)
 		) {
 			return;
 		}
 
 		return 'Not a data URI.';
 	}
-
 
 	/** @see DataURIProto.create */
 	public create () : SafeUrl {
@@ -97,12 +98,12 @@ export class DataURIProto {
 	}
 
 	/** @see DataURIProto.encode */
-	public async encode (data: SafeUrl|string) : Promise<Uint8Array> {
+	public async encode (data: SafeUrl | string) : Promise<Uint8Array> {
 		return DataURIProto.encode(data);
 	}
 
 	/** @see DataURIProto.verify */
-	public async verify (data: SafeUrl|string) : Promise<string|undefined> {
+	public async verify (data: SafeUrl | string) : Promise<string | undefined> {
 		return DataURIProto.verify(data);
 	}
 

@@ -1,6 +1,5 @@
 import {IProto} from '../iproto';
 
-
 /** Generic/primitive array value encoder/decoder. */
 export class GenericArrayProto<T> implements IProto<T[]> {
 	/** @inheritDoc */
@@ -15,7 +14,7 @@ export class GenericArrayProto<T> implements IProto<T[]> {
 
 	/** @inheritDoc */
 	public async encode (data: T[]) : Promise<Uint8Array> {
-		const o	= await this.proto.encode({data});
+		const o = await this.proto.encode({data});
 		return o instanceof Uint8Array ? o : o.finish();
 	}
 
@@ -26,6 +25,6 @@ export class GenericArrayProto<T> implements IProto<T[]> {
 
 	constructor (
 		/** @ignore */
-		private readonly proto: IProto<{data: T[]|undefined}>
+		private readonly proto: IProto<{data: T[] | undefined}>
 	) {}
 }

@@ -4,28 +4,25 @@
  * @file Normalizes global namespace across varying runtime environments.
  */
 
-
 if (typeof self === 'undefined' && typeof global !== 'undefined') {
-	(<any> global).self	= global;
+	(<any> global).self = global;
 }
 else {
-	(<any> self).global	= self;
+	(<any> self).global = self;
 }
 
 try {
 	if (!self.crypto && (<any> self).msCrypto) {
-		(<any> self).crypto			= (<any> self).msCrypto;
+		(<any> self).crypto = (<any> self).msCrypto;
 	}
 	if (!self.crypto.subtle && (<any> crypto).webkitSubtle) {
-		(<any> self).crypto.subtle	= (<any> crypto).webkitSubtle;
+		(<any> self).crypto.subtle = (<any> crypto).webkitSubtle;
 	}
 }
 catch {}
 
-(<any> self).IS_WEB	= typeof IS_WEB !== 'undefined' ?
-	IS_WEB :
-	typeof window === 'object'
-;
+(<any> self).IS_WEB =
+	typeof IS_WEB !== 'undefined' ? IS_WEB : typeof window === 'object';
 
 for (const k of [
 	'accountPrimaryTheme',
@@ -36,12 +33,13 @@ for (const k of [
 	'translations'
 ]) {
 	if (!(k in self)) {
-		(<any> self)[k]	= undefined;
+		(<any> self)[k] = undefined;
 	}
 }
 
-(<any> self).locationData	= typeof locationData !== 'undefined' ?
-	locationData :
+(<any> self).locationData =
+	typeof locationData !== 'undefined' ?
+		locationData :
 	typeof location !== 'undefined' ?
 		location :
 		{
@@ -54,11 +52,11 @@ for (const k of [
 			port: '',
 			protocol: '',
 			search: ''
-		}
-;
+		};
 
-(<any> self).navigatorData	= typeof navigatorData !== 'undefined' ?
-	navigatorData :
+(<any> self).navigatorData =
+	typeof navigatorData !== 'undefined' ?
+		navigatorData :
 	typeof navigator !== 'undefined' ?
 		navigator :
 		{
@@ -81,14 +79,12 @@ for (const k of [
 			vendor: '',
 			vendorSub: '',
 			webdriver: false
-		}
-;
-
+		};
 
 if (!IS_WEB) {
-	(<any> self).saveAs	= 'FileSaver is only supported in main thread of web environment.';
+	(<any> self).saveAs =
+		'FileSaver is only supported in main thread of web environment.';
 }
-
 
 /* Make sure compiler adds necessary helpers to global scope in threads */
 

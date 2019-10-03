@@ -1,6 +1,5 @@
 import {Observable} from 'rxjs';
 
-
 /**
  * Represents an asynchronous set value.
  * Currently just a subset of LocalAsyncSet's API, but can easily be expanded when needed.

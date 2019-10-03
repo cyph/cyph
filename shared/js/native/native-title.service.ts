@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from './js/cyph/base-provider';
 
-
 /**
  * Title implementation for NativeScript (currently noops everything).
  */

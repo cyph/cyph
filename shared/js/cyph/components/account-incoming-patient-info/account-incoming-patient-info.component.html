@@ -1,50 +1,62 @@
 <div
 	fxFlexFill
-	fxLayout='row'
-	fxLayoutAlign='center start'
-	class='card-list'
-	[class.initiating]='accountFilesService.showSpinner | async'
-	*ngIf='envService.isTelehealth'
+	fxLayout="row"
+	fxLayoutAlign="center start"
+	class="card-list"
+	[class.initiating]="accountFilesService.showSpinner | async"
+	*ngIf="envService.isTelehealth"
 >
 	<div
-		fxFlex='95'
-		fxLayout='column'
-		fxLayoutAlign='center stretch'
-		fxLayoutGap='16px'
-		fxLayoutGap.lt-md='8px'
+		fxFlex="95"
+		fxLayout="column"
+		fxLayoutAlign="center stretch"
+		fxLayoutGap="16px"
+		fxLayoutGap.lt-md="8px"
 	>
-		<ng-container *ngFor='
-			let redoxPatient of accountFilesService.incomingFilesFiltered.redoxPatients | async;
-			trackBy: trackByID;
-			let i = index;
-		'>
+		<ng-container
+			*ngFor="
+				let redoxPatient of accountFilesService.incomingFilesFiltered
+					.redoxPatients | async;
+				trackBy: trackByID;
+				let i = index
+			"
+		>
 			<mat-card
-				class='redox-patient animated'
-				*ngIf='getRedoxPatient(redoxPatient) | async as redoxPatientData'
-				[attr.data-index]='i'
-				[class.bounceInRight]='(accountFilesService.initiated | async) === false'
-				[ngClass]='"_" + i'
+				class="redox-patient animated"
+				*ngIf="
+					getRedoxPatient(redoxPatient) | async as redoxPatientData
+				"
+				[attr.data-index]="i"
+				[class.bounceInRight]="
+					(accountFilesService.initiated | async) === false
+				"
+				[ngClass]="'_' + i"
 			>
-				<mat-card-header fxLayout='row'>
+				<mat-card-header fxLayout="row">
 					<mat-card-title>
-						<a [routerLink]='"/profile/" + redoxPatient.owner'>
-							@{{redoxPatient.owner}}
+						<a [routerLink]="'/profile/' + redoxPatient.owner">
+							@{{ redoxPatient.owner }}
 						</a>
 					</mat-card-title>
-					<div fxFlex fxLayoutAlign='end center'>
+					<div fxFlex fxLayoutAlign="end center">
 						<button
 							mat-icon-button
 							cyphTranslate
-							matTooltip='Accept'
-							(click)='accept(redoxPatient)'
+							matTooltip="Accept"
+							(click)="accept(redoxPatient)"
 						>
 							<mat-icon>check</mat-icon>
 						</button>
 						<button
 							mat-icon-button
 							cyphTranslate
-							matTooltip='Reject'
-							(click)='accountFilesService.acceptIncomingFile(redoxPatient, false)'
+							matTooltip="Reject"
+							(click)="
+								accountFilesService.acceptIncomingFile(
+									redoxPatient,
+									false
+								)
+							"
 						>
 							<mat-icon>close</mat-icon>
 						</button>
@@ -58,7 +70,7 @@
 									<div cyphTranslate>View Contents</div>
 								</mat-panel-title>
 							</mat-expansion-panel-header>
-							<pre>{{prettyPrint(redoxPatientData)}}</pre>
+							<pre>{{ prettyPrint(redoxPatientData) }}</pre>
 						</mat-expansion-panel>
 					</mat-accordion>
 				</mat-card-content>
@@ -67,7 +79,7 @@
 	</div>
 
 	<mat-progress-spinner
-		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner | async'
+		mode="indeterminate"
+		*ngIf="accountFilesService.showSpinner | async"
 	></mat-progress-spinner>
 </div>

@@ -20,7 +20,6 @@ import {trackByID} from '../../track-by/track-by-id';
 import {mergeObjects} from '../../util/objects';
 import {prettyPrint} from '../../util/serialization';
 
-
 /**
  * Angular component for account incoming patient info UI.
  */
@@ -30,43 +29,51 @@ import {prettyPrint} from '../../util/serialization';
 	styleUrls: ['./account-incoming-patient-info.component.scss'],
 	templateUrl: './account-incoming-patient-info.component.html'
 })
-export class AccountIncomingPatientInfoComponent extends BaseProvider implements OnInit {
+export class AccountIncomingPatientInfoComponent extends BaseProvider
+	implements OnInit {
 	/** Downloads RedoxPatient object. */
-	public readonly getRedoxPatient					= memoize(async redoxPatient =>
-		this.accountFilesService.downloadFile(
-			redoxPatient,
-			AccountFileRecord.RecordTypes.RedoxPatient
-		).result
+	public readonly getRedoxPatient = memoize(
+		async redoxPatient =>
+			this.accountFilesService.downloadFile(
+				redoxPatient,
+				AccountFileRecord.RecordTypes.RedoxPatient
+			).result
 	);
 
 	/** @see prettyPrint */
-	public readonly prettyPrint: typeof prettyPrint	= memoize(prettyPrint);
+	public readonly prettyPrint = memoize(prettyPrint);
 
 	/** @see trackByID */
-	public readonly trackByID: typeof trackByID		= trackByID;
+	public readonly trackByID = trackByID;
 
 	/** Accepts incoming patient data. */
-	public async accept (redoxPatient: IAccountFileRecord&IAccountFileReference) : Promise<void> {
-		if (!(await this.dialogService.confirm({
-			content: this.stringsService.incomingPatientInfo,
-			title: this.stringsService.incomingPatientInfoTitle
-		}))) {
+	public async accept (
+		redoxPatient: IAccountFileRecord & IAccountFileReference
+	) : Promise<void> {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.incomingPatientInfo,
+				title: this.stringsService.incomingPatientInfoTitle
+			}))
+		) {
 			return;
 		}
 
-		const redoxPatientData	= await this.getRedoxPatient(redoxPatient);
+		const redoxPatientData = await this.getRedoxPatient(redoxPatient);
 
-		this.accountDatabaseService.getAsyncValue(
-			'patientInfo',
-			PatientInfo
-		).updateValue(async patientInfo => {
-			patientInfo.redoxPatient	= patientInfo.redoxPatient ?
-				await mergeObjects(RedoxPatient, redoxPatientData, patientInfo.redoxPatient) :
-				redoxPatientData
-			;
+		this.accountDatabaseService
+			.getAsyncValue('patientInfo', PatientInfo)
+			.updateValue(async patientInfo => {
+				patientInfo.redoxPatient = patientInfo.redoxPatient ?
+					await mergeObjects(
+						RedoxPatient,
+						redoxPatientData,
+						patientInfo.redoxPatient
+					) :
+					redoxPatientData;
 
-			return patientInfo;
-		});
+				return patientInfo;
+			});
 
 		await this.accountFilesService.acceptIncomingFile(redoxPatient, false);
 	}

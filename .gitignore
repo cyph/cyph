@@ -1,6 +1,8 @@
 /.bootstrap.original
 /.build
+/docs
 /qr-invite-codes
+/serve.ready
 /threadpack.log
 .build.yaml
 *.mmdb
@@ -9,6 +11,8 @@
 nohup.out
 *.swp
 *.orig
+documentation
+firebase-debug.log
 npm-debug.log
 node_modules
 Dockerfile.tmp

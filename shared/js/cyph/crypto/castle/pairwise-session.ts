@@ -6,7 +6,11 @@ import {IResolvable} from '../../iresolvable';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import {CastleRatchetState, ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
+import {
+	CastleRatchetState,
+	ICastleRatchetState,
+	ICastleRatchetUpdate
+} from '../../proto';
 import {lockFunction} from '../../util/lock';
 import {debugLog, debugLogError} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
@@ -21,18 +25,17 @@ import {IPairwiseSession} from './ipairwise-session';
 import {IRemoteUser} from './iremote-user';
 import {Transport} from './transport';
 
-
 /** @inheritDoc */
 export class PairwiseSession implements IPairwiseSession {
 	/** @ignore */
-	private readonly incomingMessageQueue		= new LocalAsyncList<{
+	private readonly incomingMessageQueue = new LocalAsyncList<{
 		cyphertext: Uint8Array;
 		newMessageID: number;
 		resolve: () => void;
 	}>([]);
 
 	/** @ignore */
-	private readonly instanceID: Uint8Array		= this.potassium.randomBytes(16);
+	private readonly instanceID: Uint8Array = this.potassium.randomBytes(16);
 
 	/** @ignore */
 	private pendingMessageResolvers?: {
@@ -41,7 +44,7 @@ export class PairwiseSession implements IPairwiseSession {
 	};
 
 	/** @inheritDoc */
-	public readonly initialMessagesProcessed	= resolvable();
+	public readonly initialMessagesProcessed = resolvable();
 
 	/** @ignore */
 	private async abort () : Promise<void> {
@@ -54,7 +57,10 @@ export class PairwiseSession implements IPairwiseSession {
 	private async connect () : Promise<void> {
 		debugLog(() => ({castleHandshake: 'connect'}));
 
-		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Complete) {
+		if (
+			(await this.handshakeState.currentStep.getValue()) ===
+			HandshakeSteps.Complete
+		) {
 			return;
 		}
 
@@ -68,31 +74,33 @@ export class PairwiseSession implements IPairwiseSession {
 		newMessageID: number,
 		cyphertext: Uint8Array
 	) : Promise<void> {
-		const incomingMessages		= await this.incomingMessages.getValue();
-		const nextIncomingMessageID	= core.ratchetState.incomingMessageID + 1;
+		const incomingMessages = await this.incomingMessages.getValue();
+		const nextIncomingMessageID = core.ratchetState.incomingMessageID + 1;
 
-		debugLog(() => ({pairwiseSessionIncomingMessage: {
-			cyphertext,
-			incomingMessages,
-			newMessageID,
-			nextIncomingMessageID
-		}}));
+		debugLog(() => ({
+			pairwiseSessionIncomingMessage: {
+				cyphertext,
+				incomingMessages,
+				newMessageID,
+				nextIncomingMessageID
+			}
+		}));
 
-		incomingMessages.max	= Math.max(
+		incomingMessages.max = Math.max(
 			incomingMessages.max,
 			newMessageID,
 			nextIncomingMessageID
 		);
 
 		if (newMessageID >= nextIncomingMessageID) {
-			incomingMessages.queue[newMessageID]	= [
+			incomingMessages.queue[newMessageID] = [
 				...(incomingMessages.queue[newMessageID] || []),
 				cyphertext
 			];
 		}
 
-		for (let id = nextIncomingMessageID ; id <= incomingMessages.max ; ++id) {
-			const message	= incomingMessages.queue[id];
+		for (let id = nextIncomingMessageID; id <= incomingMessages.max; ++id) {
+			const message = incomingMessages.queue[id];
 
 			if (message === undefined) {
 				continue;
@@ -100,7 +108,9 @@ export class PairwiseSession implements IPairwiseSession {
 
 			for (const cyphertextBytes of message) {
 				try {
-					debugLog(() => ({castleDecryptAttempt: {cyphertextBytes, message, id}}));
+					debugLog(() => ({
+						castleDecryptAttempt: {cyphertextBytes, message, id}
+					}));
 					await core.decrypt(cyphertextBytes);
 					debugLog(() => ({castleDecryptSuccess: {id}}));
 					delete incomingMessages.queue[id];
@@ -121,7 +131,7 @@ export class PairwiseSession implements IPairwiseSession {
 			encryptionKeyPair,
 			publicSigningKey,
 			cyphertext
-		]	= await Promise.all([
+		] = await Promise.all([
 			this.localUser.getEncryptionKeyPair(),
 			this.remoteUser.getPublicSigningKey(),
 			this.handshakeState.initialSecretCyphertext.getValue()
@@ -130,7 +140,10 @@ export class PairwiseSession implements IPairwiseSession {
 		let maybeSignedSecret: Uint8Array;
 
 		try {
-			maybeSignedSecret	= await this.potassium.box.open(cyphertext, encryptionKeyPair);
+			maybeSignedSecret = await this.potassium.box.open(
+				cyphertext,
+				encryptionKeyPair
+			);
 		}
 		catch (err) {
 			debugLogError(() => ({
@@ -147,11 +160,16 @@ export class PairwiseSession implements IPairwiseSession {
 
 		await this.handshakeState.initialSecret.setValue(
 			publicSigningKey ?
-				await this.potassium.sign.open(maybeSignedSecret, publicSigningKey) :
+				await this.potassium.sign.open(
+					maybeSignedSecret,
+					publicSigningKey
+				) :
 				maybeSignedSecret
 		);
 
-		await this.handshakeState.currentStep.setValue(HandshakeSteps.PostBootstrap);
+		await this.handshakeState.currentStep.setValue(
+			HandshakeSteps.PostBootstrap
+		);
 	}
 
 	/** @ignore */
@@ -160,14 +178,14 @@ export class PairwiseSession implements IPairwiseSession {
 			signingKeyPair,
 			publicEncryptionKey,
 			initialSecret
-		]	= await Promise.all([
+		] = await Promise.all([
 			this.localUser.getSigningKeyPair(),
 			this.remoteUser.getPublicEncryptionKey(),
 			(async () => {
-				let secret	= await this.handshakeState.initialSecret.getValue();
+				let secret = await this.handshakeState.initialSecret.getValue();
 
 				if (!secret) {
-					secret	= this.potassium.randomBytes(
+					secret = this.potassium.randomBytes(
 						await this.potassium.ephemeralKeyExchange.secretBytes
 					);
 
@@ -181,27 +199,36 @@ export class PairwiseSession implements IPairwiseSession {
 		await this.handshakeState.initialSecretCyphertext.setValue(
 			await this.potassium.box.seal(
 				signingKeyPair ?
-					await this.potassium.sign.sign(initialSecret, signingKeyPair.privateKey) :
-					initialSecret
-				,
+					await this.potassium.sign.sign(
+						initialSecret,
+						signingKeyPair.privateKey
+					) :
+					initialSecret,
 				publicEncryptionKey
 			)
 		);
 
-		await this.handshakeState.currentStep.setValue(HandshakeSteps.PostBootstrap);
+		await this.handshakeState.currentStep.setValue(
+			HandshakeSteps.PostBootstrap
+		);
 	}
 
 	/** @inheritDoc */
 	public async receive (cyphertext: Uint8Array) : Promise<void> {
-		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
+		if (
+			(await this.handshakeState.currentStep.getValue()) ===
+			HandshakeSteps.Aborted
+		) {
 			return this.abort();
 		}
 
-		const {promise, resolve}	= resolvable();
+		const {promise, resolve} = resolvable();
 
 		await this.incomingMessageQueue.pushItem({
 			cyphertext,
-			newMessageID: this.potassium.toDataView(cyphertext).getUint32(0, true),
+			newMessageID: this.potassium
+				.toDataView(cyphertext)
+				.getUint32(0, true),
 			resolve
 		});
 
@@ -209,15 +236,21 @@ export class PairwiseSession implements IPairwiseSession {
 	}
 
 	/** @inheritDoc */
-	public async send (plaintext: string|ArrayBufferView, timestamp: number) : Promise<void> {
-		if ((await this.handshakeState.currentStep.getValue()) === HandshakeSteps.Aborted) {
+	public async send (
+		plaintext: string | ArrayBufferView,
+		timestamp: number
+	) : Promise<void> {
+		if (
+			(await this.handshakeState.currentStep.getValue()) ===
+			HandshakeSteps.Aborted
+		) {
 			return this.abort();
 		}
 
-		const plaintextBytes	= this.potassium.fromString(plaintext);
-		const timestampBytes	= new Float64Array([timestamp]);
+		const plaintextBytes = this.potassium.fromString(plaintext);
+		const timestampBytes = new Float64Array([timestamp]);
 
-		const outgoingMessage	= this.potassium.concatMemory(
+		const outgoingMessage = this.potassium.concatMemory(
 			false,
 			timestampBytes,
 			this.instanceID,
@@ -227,10 +260,10 @@ export class PairwiseSession implements IPairwiseSession {
 		this.potassium.clearMemory(plaintextBytes);
 		this.potassium.clearMemory(timestampBytes);
 
-		let resolver: IResolvable<void>|undefined;
+		let resolver: IResolvable<void> | undefined;
 
 		if (this.pendingMessageResolvers) {
-			resolver	= resolvable();
+			resolver = resolvable();
 			this.pendingMessageResolvers.resolvers.set(timestamp, resolver);
 		}
 
@@ -258,47 +291,48 @@ export class PairwiseSession implements IPairwiseSession {
 		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
-		private readonly incomingMessages: IAsyncValue<ICastleIncomingMessages> =
-			new LocalAsyncValue<ICastleIncomingMessages>({max: 0, queue: {}})
-		,
-
+		private readonly incomingMessages: IAsyncValue<
+			ICastleIncomingMessages
+		> = new LocalAsyncValue<ICastleIncomingMessages>({max: 0, queue: {}}),
 		/** @ignore */
-		private readonly outgoingMessageQueue: IAsyncList<Uint8Array> = new LocalAsyncList([]),
+		private readonly outgoingMessageQueue: IAsyncList<
+			Uint8Array
+		> = new LocalAsyncList([]),
 
 		/** @ignore */
 		private readonly lock: LockFunction = lockFunction(),
 
 		/** @ignore */
-		private readonly ratchetState: IAsyncValue<ICastleRatchetState> =
-			new LocalAsyncValue<ICastleRatchetState>({
-				asymmetric: {
-					privateKey: new Uint8Array(0),
-					publicKey: new Uint8Array(0)
+		private readonly ratchetState: IAsyncValue<
+			ICastleRatchetState
+		> = new LocalAsyncValue<ICastleRatchetState>({
+			asymmetric: {
+				privateKey: new Uint8Array(0),
+				publicKey: new Uint8Array(0)
+			},
+			incomingMessageID: 0,
+			outgoingMessageID: 1,
+			symmetric: {
+				current: {
+					incoming: new Uint8Array(0),
+					outgoing: new Uint8Array(0)
 				},
-				incomingMessageID: 0,
-				outgoingMessageID: 1,
-				symmetric: {
-					current: {
-						incoming: new Uint8Array(0),
-						outgoing: new Uint8Array(0)
-					},
-					next: {
-						incoming: new Uint8Array(0),
-						outgoing: new Uint8Array(0)
-					}
+				next: {
+					incoming: new Uint8Array(0),
+					outgoing: new Uint8Array(0)
 				}
-			})
-		,
-
+			}
+		}),
 		/** @ignore */
-		private readonly ratchetUpdateQueue: IAsyncList<ICastleRatchetUpdate> =
-			new LocalAsyncList([])
+		private readonly ratchetUpdateQueue: IAsyncList<
+			ICastleRatchetUpdate
+		> = new LocalAsyncList([])
 	) {
 		debugLog(() => ({pairwiseSessionStart: true}));
 
 		retryUntilSuccessful(async () => {
 			while (this.transport.isAlive) {
-				const currentStep	= await this.handshakeState.currentStep.getValue();
+				const currentStep = await this.handshakeState.currentStep.getValue();
 
 				if (currentStep === HandshakeSteps.Aborted) {
 					this.abort();
@@ -323,21 +357,28 @@ export class PairwiseSession implements IPairwiseSession {
 				/* Initialize symmetric ratchet */
 				else if (
 					currentStep === HandshakeSteps.PostBootstrap &&
-					this.potassium.isEmpty(await this.ratchetState.getValue().then(o =>
-						o.symmetric &&
-						o.symmetric.current &&
-						o.symmetric.current.incoming
-					))
+					this.potassium.isEmpty(
+						await this.ratchetState
+							.getValue()
+							.then(
+								o =>
+									o.symmetric &&
+									o.symmetric.current &&
+									o.symmetric.current.incoming
+							)
+					)
 				) {
 					debugLog(() => ({castleHandshake: 'post-bootstrap'}));
 
-					const initialSecret	= await this.handshakeState.initialSecret.getValue();
+					const initialSecret = await this.handshakeState.initialSecret.getValue();
 
 					if (!initialSecret) {
-						throw new Error('Invalid HandshakeSteps.PostBootstrap state.');
+						throw new Error(
+							'Invalid HandshakeSteps.PostBootstrap state.'
+						);
 					}
 
-					const symmetricKeys	= await Core.newSymmetricKeys(
+					const symmetricKeys = await Core.newSymmetricKeys(
 						this.potassium,
 						this.handshakeState.isAlice,
 						initialSecret
@@ -353,7 +394,9 @@ export class PairwiseSession implements IPairwiseSession {
 						symmetric: {
 							current: symmetricKeys,
 							next: {
-								incoming: new Uint8Array(symmetricKeys.incoming),
+								incoming: new Uint8Array(
+									symmetricKeys.incoming
+								),
 								outgoing: new Uint8Array(symmetricKeys.outgoing)
 							}
 						}
@@ -366,7 +409,7 @@ export class PairwiseSession implements IPairwiseSession {
 
 					await this.connect();
 
-					const pendingMessageResolvers	= {
+					const pendingMessageResolvers = {
 						resolvers: new Map<number, IResolvable<void>>(),
 						timestamps: new Map<number, number>()
 					};
@@ -378,7 +421,7 @@ export class PairwiseSession implements IPairwiseSession {
 						Longer-term, perhaps have a signal sent from the client with
 						the lock to this one that initialMessagesProcessed is done.
 					*/
-					let lockClaimed	= false;
+					let lockClaimed = false;
 					sleep(2500).then(() => {
 						if (!lockClaimed) {
 							this.initialMessagesProcessed.resolve();
@@ -386,32 +429,40 @@ export class PairwiseSession implements IPairwiseSession {
 					});
 
 					return this.lock(async o => {
-						lockClaimed	= true;
+						lockClaimed = true;
 
 						debugLog(() => ({castleLockClaimed: o}));
 
-						this.pendingMessageResolvers	= pendingMessageResolvers;
+						this.pendingMessageResolvers = pendingMessageResolvers;
 
-						this.handshakeState.initialSecret.getValue().then(symmetricKey => {
-							if (symmetricKey === undefined) {
-								throw new Error('Castle session symmetric key not found.');
-							}
+						this.handshakeState.initialSecret
+							.getValue()
+							.then(symmetricKey => {
+								if (symmetricKey === undefined) {
+									throw new Error(
+										'Castle session symmetric key not found.'
+									);
+								}
 
-							this.transport.setSymmetricKey(symmetricKey);
-						});
+								this.transport.setSymmetricKey(symmetricKey);
+							});
 
-						const initialRatchetUpdates	= await this.ratchetUpdateQueue.getValue();
+						const initialRatchetUpdates = await this.ratchetUpdateQueue.getValue();
 
 						if (!o.stillOwner.value) {
 							return;
 						}
 
-						await this.transport.process(
-							this.remoteUser.username,
-							...initialRatchetUpdates
-						).catch(err => {
-							debugLogError(() => ({castleProcessInitialRatchetUpdates: err}));
-						});
+						await this.transport
+							.process(
+								this.remoteUser.username,
+								...initialRatchetUpdates
+							)
+							.catch(err => {
+								debugLogError(() => ({
+									castleProcessInitialRatchetUpdates: err
+								}));
+							});
 
 						this.initialMessagesProcessed.resolve();
 
@@ -419,26 +470,28 @@ export class PairwiseSession implements IPairwiseSession {
 							return;
 						}
 
-						const lastRatchetUpdate	=
-							(
-								<(ICastleRatchetUpdate|undefined)[]> initialRatchetUpdates
-							).slice(-1)[0]
-						;
+						const lastRatchetUpdate = (<
+							(ICastleRatchetUpdate | undefined)[]
+						> initialRatchetUpdates).slice(-1)[0];
 
-						debugLog(() => ({castleProcessedInitialRatchetUpdates: {
-							initialRatchetUpdates,
-							lastRatchetUpdate
-						}}));
+						debugLog(() => ({
+							castleProcessedInitialRatchetUpdates: {
+								initialRatchetUpdates,
+								lastRatchetUpdate
+							}
+						}));
 
 						if (lastRatchetUpdate) {
-							await this.ratchetState.setValue(lastRatchetUpdate.ratchetState);
+							await this.ratchetState.setValue(
+								lastRatchetUpdate.ratchetState
+							);
 						}
 
 						if (!o.stillOwner.value) {
 							return;
 						}
 
-						const core	= new Core(
+						const core = new Core(
 							this.potassium,
 							this.handshakeState.isAlice,
 							this.ratchetUpdateQueue,
@@ -459,24 +512,33 @@ export class PairwiseSession implements IPairwiseSession {
 
 						debugLog(() => ({castleCoreStarted: true}));
 
-						const receiveLock	= lockFunction();
+						const receiveLock = lockFunction();
 
-						const decryptSub		= this.incomingMessageQueue.subscribeAndPop(
+						const decryptSub = this.incomingMessageQueue.subscribeAndPop(
 							async ({cyphertext, newMessageID, resolve}) => {
-								debugLog(() => ({castleIncomingCyphertext: {
-									author: this.remoteUser.username,
-									cyphertext,
-									newMessageID
-								}}));
+								debugLog(() => ({
+									castleIncomingCyphertext: {
+										author: this.remoteUser.username,
+										cyphertext,
+										newMessageID
+									}
+								}));
 
-								this.transport.logCyphertext(this.remoteUser.username, cyphertext);
+								this.transport.logCyphertext(
+									this.remoteUser.username,
+									cyphertext
+								);
 
-								const decryptSetup	= core.decryptSetup(cyphertext);
+								const decryptSetup = core.decryptSetup(
+									cyphertext
+								);
 
-								debugLog(() => ({castleIncomingCyphertextDecryptSetup: {
-									decryptSetup,
-									newMessageID
-								}}));
+								debugLog(() => ({
+									castleIncomingCyphertextDecryptSetup: {
+										decryptSetup,
+										newMessageID
+									}
+								}));
 
 								await receiveLock(async () => {
 									await this.processIncomingMessages(
@@ -489,36 +551,46 @@ export class PairwiseSession implements IPairwiseSession {
 							}
 						);
 
-						const encryptSub		= this.outgoingMessageQueue.subscribeAndPop(
-							async message => core.encrypt(
-								message,
-								messageID => {
+						const encryptSub = this.outgoingMessageQueue.subscribeAndPop(
+							async message =>
+								core.encrypt(message, messageID => {
 									pendingMessageResolvers.timestamps.set(
 										messageID,
-										this.potassium.toDataView(message).getFloat64(0, true)
+										this.potassium
+											.toDataView(message)
+											.getFloat64(0, true)
 									);
-								}
-							)
+								})
 						);
 
-						const ratchetUpdateSub	= this.ratchetUpdateQueue.subscribeAndPop(
+						const ratchetUpdateSub = this.ratchetUpdateQueue.subscribeAndPop(
 							async update => {
 								if (
 									lastRatchetUpdate &&
-									lastRatchetUpdate.ratchetState.incomingMessageID >=
-										update.ratchetState.incomingMessageID
-									&&
-									lastRatchetUpdate.ratchetState.outgoingMessageID >=
+									lastRatchetUpdate.ratchetState
+										.incomingMessageID >=
+										update.ratchetState.incomingMessageID &&
+									lastRatchetUpdate.ratchetState
+										.outgoingMessageID >=
 										update.ratchetState.outgoingMessageID
 								) {
-									debugLog(() => ({ratchetUpdate: {update, dropped: true}}));
+									debugLog(() => ({
+										ratchetUpdate: {update, dropped: true}
+									}));
 									return;
 								}
 
-								debugLog(() => ({ratchetUpdate: {update, dropped: false}}));
+								debugLog(() => ({
+									ratchetUpdate: {update, dropped: false}
+								}));
 
-								await this.transport.process(this.remoteUser.username, update);
-								await this.ratchetState.setValue(update.ratchetState);
+								await this.transport.process(
+									this.remoteUser.username,
+									update
+								);
+								await this.ratchetState.setValue(
+									update.ratchetState
+								);
 
 								if (
 									!update.cyphertext ||
@@ -527,26 +599,29 @@ export class PairwiseSession implements IPairwiseSession {
 									return;
 								}
 
-								const messageID	=
-									this.potassium.toDataView(update.cyphertext).getUint32(0, true)
-								;
+								const messageID = this.potassium
+									.toDataView(update.cyphertext)
+									.getUint32(0, true);
 
-								const timestamp	=
-									pendingMessageResolvers.timestamps.get(messageID)
-								;
+								const timestamp = pendingMessageResolvers.timestamps.get(
+									messageID
+								);
 
-								const resolver	=
+								const resolver =
 									timestamp !== undefined ?
-										pendingMessageResolvers.resolvers.get(timestamp) :
-										undefined
-								;
+										pendingMessageResolvers.resolvers.get(
+											timestamp
+										) :
+										undefined;
 
-								debugLog(() => ({ratchetUpdateSend: {
-									messageID,
-									resolver: resolver !== undefined,
-									timestamp,
-									update
-								}}));
+								debugLog(() => ({
+									ratchetUpdateSend: {
+										messageID,
+										resolver: resolver !== undefined,
+										timestamp,
+										update
+									}
+								}));
 
 								if (resolver) {
 									resolver.resolve();
@@ -554,12 +629,15 @@ export class PairwiseSession implements IPairwiseSession {
 							}
 						);
 
-						await Promise.race([this.transport.closed, o.stillOwner.toPromise()]);
+						await Promise.race([
+							this.transport.closed,
+							o.stillOwner.toPromise()
+						]);
 						decryptSub.unsubscribe();
 						encryptSub.unsubscribe();
 						ratchetUpdateSub.unsubscribe();
 					}).then(() => {
-						this.pendingMessageResolvers	= undefined;
+						this.pendingMessageResolvers = undefined;
 
 						for (const resolver of Array.from(
 							pendingMessageResolvers.resolvers.values()

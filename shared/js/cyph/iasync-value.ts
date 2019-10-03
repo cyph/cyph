@@ -1,6 +1,5 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 
-
 /**
  * Represents an asynchronous value.
  */
@@ -10,7 +9,10 @@ export interface IAsyncValue<T> {
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	lock<L> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<L>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<L>,
 		reason?: string
 	) : Promise<L>;
 

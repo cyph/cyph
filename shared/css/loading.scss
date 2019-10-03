@@ -13,7 +13,8 @@ body {
 	height: calc(100% + 2px);
 	z-index: 999;
 
-	> .loading, > .transition {
+	> .loading,
+	> .transition {
 		height: 100%;
 		width: 100%;
 		position: absolute;
@@ -25,7 +26,8 @@ body {
 		margin-top: 33vh;
 	}
 
-	.double-bounce1, .double-bounce2 {
+	.double-bounce1,
+	.double-bounce2 {
 		height: 60px;
 		width: 60px;
 		position: absolute;
@@ -62,7 +64,8 @@ body.cordova {
 	}
 
 	#pre-load {
-		.double-bounce1, .double-bounce2 {
+		.double-bounce1,
+		.double-bounce2 {
 			display: none !important;
 		}
 	}
@@ -81,7 +84,8 @@ body:not(.cordova) {
 		padding: 10px;
 	}
 
-	> .image, > .logo-animation {
+	> .image,
+	> .logo-animation {
 		height: 33vh;
 		width: 33vh;
 		min-height: 33vh;
@@ -103,7 +107,8 @@ body:not(.cordova) {
 	> .logo-animation {
 		@include filter(drop-shadow(3px 3px 3px rgba(68, 68, 68, 0.25)));
 
-		&, > * {
+		&,
+		> * {
 			background-image: url(/assets/img/logo.white.icon.png);
 		}
 
@@ -114,7 +119,8 @@ body:not(.cordova) {
 			opacity: 0;
 		}
 
-		&.connected, > * {
+		&.connected,
+		> * {
 			@include animation-iteration-count(infinite !important);
 		}
 
@@ -186,23 +192,30 @@ body:not(.cordova) {
 	> :not(.image):not(.logo-animation) {
 		letter-spacing: 1px;
 		text-align: center;
-		font-family: Ubuntu, 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+		font-family: Ubuntu, 'Century Gothic', CenturyGothic, AppleGothic,
+			sans-serif;
 	}
 }
 
 @include keyframes(logoconnected) {
-	0%, 38.4%, 53.8%, 69.2%, 100% {
+	0%,
+	38.4%,
+	53.8%,
+	69.2%,
+	100% {
 		opacity: 1;
 	}
 
-	30.8%, 46.2%, 61.5% {
+	30.8%,
+	46.2%,
+	61.5% {
 		opacity: 0;
 	}
 }
 
-
 @include keyframes(logo0) {
-	0%, 100% {
+	0%,
+	100% {
 		opacity: 0;
 	}
 
@@ -211,9 +224,10 @@ body:not(.cordova) {
 	}
 }
 
-
 @include keyframes(logo1) {
-	0%, 95.8%, 100% {
+	0%,
+	95.8%,
+	100% {
 		opacity: 0;
 	}
 
@@ -222,9 +236,10 @@ body:not(.cordova) {
 	}
 }
 
-
 @include keyframes(logo2) {
-	0%, 91.5%, 100% {
+	0%,
+	91.5%,
+	100% {
 		opacity: 0;
 	}
 
@@ -233,9 +248,10 @@ body:not(.cordova) {
 	}
 }
 
-
 @include keyframes(logo3) {
-	0%, 87.3%, 100% {
+	0%,
+	87.3%,
+	100% {
 		opacity: 0;
 	}
 
@@ -244,9 +260,10 @@ body:not(.cordova) {
 	}
 }
 
-
 @include keyframes(logo4) {
-	0%, 83.1%, 100% {
+	0%,
+	83.1%,
+	100% {
 		opacity: 0;
 	}
 
@@ -255,9 +272,9 @@ body:not(.cordova) {
 	}
 }
 
-
 @include keyframes(preloadfadeout) {
-	0%, 25% {
+	0%,
+	25% {
 		opacity: 1;
 	}
 
@@ -270,10 +287,10 @@ body:not(.cordova) {
 	}
 }
 
-
 /*** SpinKit animation: http://tobiasahlin.com/spinkit/ ***/
 
-.double-bounce1, .double-bounce2 {
+.double-bounce1,
+.double-bounce2 {
 	border-radius: 50%;
 	background-color: white;
 	opacity: 0.6;
@@ -286,7 +303,8 @@ body:not(.cordova) {
 }
 
 @include keyframes(preloadbounce) {
-	0%, 100% {
+	0%,
+	100% {
 		@include transform(scale(0));
 	}
 

@@ -4,7 +4,6 @@ import {AnonymousLocalUser} from './anonymous-local-user';
 import {IHandshakeState} from './ihandshake-state';
 import {IRemoteUser} from './iremote-user';
 
-
 /**
  * An anonymous user with an ephemeral key pair, authenticated via shared secret.
  */
@@ -15,28 +14,34 @@ export class AnonymousRemoteUser implements IRemoteUser {
 	/** @inheritDoc */
 	public async getPublicEncryptionKey () : Promise<Uint8Array> {
 		if (!this.publicKey) {
-			this.publicKey	= (async () => {
-				const sharedSecretString	= this.sharedSecret;
+			this.publicKey = (async () => {
+				const sharedSecretString = this.sharedSecret;
 
 				if (!sharedSecretString) {
-					throw new Error('Cannot get remote public key without a shared secret.');
+					throw new Error(
+						'Cannot get remote public key without a shared secret.'
+					);
 				}
 
-				const [encryptedPublicBoxKey, sharedSecret]	= await Promise.all([
-					this.handshakeState.remotePublicKey.getValue(),
-					(async () => {
-						const {hash}	= await this.potassium.passwordHash.hash(
-							sharedSecretString,
-							AnonymousLocalUser.handshakeSalt
-						);
+				const [encryptedPublicBoxKey, sharedSecret] = await Promise.all(
+					[
+						this.handshakeState.remotePublicKey.getValue(),
+						(async () => {
+							const {
+								hash
+							} = await this.potassium.passwordHash.hash(
+								sharedSecretString,
+								AnonymousLocalUser.handshakeSalt
+							);
 
-						this.sharedSecret	= undefined;
+							this.sharedSecret = undefined;
 
-						return hash;
-					})()
-				]);
+							return hash;
+						})()
+					]
+				);
 
-				const publicKey	= await this.potassium.secretBox.open(
+				const publicKey = await this.potassium.secretBox.open(
 					encryptedPublicBoxKey,
 					sharedSecret
 				);
@@ -64,7 +69,7 @@ export class AnonymousRemoteUser implements IRemoteUser {
 		private readonly handshakeState: IHandshakeState,
 
 		/** @ignore */
-		private sharedSecret: string|undefined,
+		private sharedSecret: string | undefined,
 
 		/** @inheritDoc */
 		public readonly username: Observable<string>

@@ -1,48 +1,54 @@
 <span
-	[class.curtain]='cyphertextService.isVisible | async'
-	[class.initiating]='
+	[class.curtain]="cyphertextService.isVisible | async"
+	[class.initiating]="
 		(appService.chatRootState | async) === chatRootStates.chat &&
 		chat.state === chatStates.chat &&
 		(chatService.uiReady | async) !== true
-	'
-	[cyphDropZone]='false && (
-		(appService.chatRootState | async) === chatRootStates.chat &&
-		chat.state === chatStates.chat &&
-		(chatService.uiReady | async) === true
-	)'
-	[cyphDropZoneClass]='false'
-	(fileDrop)='fileTransferService.send($event)'
-	*ngIf='chatService.chatSubject | async as chat'
+	"
+	[cyphDropZone]="
+		false &&
+		((appService.chatRootState | async) === chatRootStates.chat &&
+			chat.state === chatStates.chat &&
+			(chatService.uiReady | async) === true)
+	"
+	[cyphDropZoneClass]="false"
+	(fileDrop)="fileTransferService.send($event)"
+	*ngIf="chatService.chatSubject | async as chat"
 >
-	<section fxFlexFill fxLayout='column' id='main' class='cyph-foreground'>
-		<canvas [fxShow]='envService.showGranim' id='main-chat-gradient'></canvas>
+	<section fxFlexFill fxLayout="column" id="main" class="cyph-foreground">
+		<canvas
+			[fxShow]="envService.showGranim"
+			id="main-chat-gradient"
+		></canvas>
 
 		<h3
-			class='cyph-banner emphasis warn'
-			*ngIf='
+			class="cyph-banner emphasis warn"
+			*ngIf="
 				(appService.chatRootState | async) !== chatRootStates.chat &&
 				(envService.webSignError | async)
-			'
+			"
 		>
 			<span cyphTranslate>WARNING: Your</span>
 			&ngsp;
-			<span>{{stringsService.product}}</span>
+			<span>{{ stringsService.product }}</span>
 			&ngsp;
 			<span cyphTranslate>instance has a problem. See</span>
 			&ngsp;
-			<a [href]='envService.homeUrl + "websignerror"' cyphTranslate>here</a>
+			<a [href]="envService.homeUrl + 'websignerror'" cyphTranslate
+				>here</a
+			>
 			&ngsp;
 			<span cyphTranslate>for more details and the solution.</span>
 		</h3>
 
 		<div
-			fxLayout='row'
-			fxLayoutAlign='center center'
-			class='cyph-loading-indicator cyph-banner dark'
-			*ngIf='
+			fxLayout="row"
+			fxLayoutAlign="center center"
+			class="cyph-loading-indicator cyph-banner dark"
+			*ngIf="
 				(appService.chatRootState | async) === chatRootStates.chat &&
 				(chatService.scrollTransition | async) === true
-			'
+			"
 		>
 			<!--
 			<mat-progress-spinner
@@ -59,59 +65,64 @@
 		<cyph-chat-main
 			fxFlex
 			fxFlexFill
-			fxLayout='column'
-			[hideDisconnectMessage]='envService.coBranded'
-			[messageCountInTitle]='true'
-			*ngIf='(appService.chatRootState | async) === chatRootStates.chat'
-			[@fadeIn]='"in"'
+			fxLayout="column"
+			[hideDisconnectMessage]="envService.coBranded"
+			[messageCountInTitle]="true"
+			*ngIf="(appService.chatRootState | async) === chatRootStates.chat"
+			[@fadeIn]="'in'"
 		>
 			<cyph-contact
-				to='feedback'
-				*ngIf='splitTestingService.getValue("chatendmessage"); else signupForm'
+				to="feedback"
+				*ngIf="
+					splitTestingService.getValue('chatendmessage');
+					else signupForm
+				"
 			></cyph-contact>
 			<ng-template #signupForm>
 				<cyph-signup-form>
-					{{stringsService.signupMessage}}
+					{{ stringsService.signupMessage }}
 				</cyph-signup-form>
 			</ng-template>
 		</cyph-chat-main>
 
 		<ng-template #ad>
-			<ng-container *ngIf='envService.isMobileOS'>
-				<ng-container *ngIf='!envService.isIOS'>
+			<ng-container *ngIf="envService.isMobileOS">
+				<ng-container *ngIf="!envService.isIOS">
 					<a
-						class='affiliate'
-						[href]='affiliateService.bannerAdAndroid.href'
-						[matTooltip]='stringsService.affTooltip'
+						class="affiliate"
+						[href]="affiliateService.bannerAdAndroid.href"
+						[matTooltip]="stringsService.affTooltip"
 					>
 						<img
-							[alt]='stringsService.affAlt'
-							[src]='affiliateService.bannerAdAndroid.img'
+							[alt]="stringsService.affAlt"
+							[src]="affiliateService.bannerAdAndroid.img"
 						/>
 					</a>
 				</ng-container>
-				<ng-container *ngIf='envService.isIOS'>
+				<ng-container *ngIf="envService.isIOS">
 					<a
-						class='affiliate'
-						[href]='affiliateService.bannerAdIOS.href'
-						[matTooltip]='stringsService.affTooltip'
+						class="affiliate"
+						[href]="affiliateService.bannerAdIOS.href"
+						[matTooltip]="stringsService.affTooltip"
 					>
 						<img
-							[alt]='stringsService.affAlt'
-							[src]='affiliateService.bannerAdIOS.img'
+							[alt]="stringsService.affAlt"
+							[src]="affiliateService.bannerAdIOS.img"
 						/>
 					</a>
 				</ng-container>
 			</ng-container>
-			<ng-container *ngIf='!envService.isMobileOS'>
+			<ng-container
+				*ngIf="!envService.isMobileOS && !envService.isCordova"
+			>
 				<a
-					class='affiliate'
-					[href]='affiliateService.bannerAd.href'
-					[matTooltip]='stringsService.affTooltip'
+					class="affiliate"
+					[href]="affiliateService.bannerAd.href"
+					[matTooltip]="stringsService.affTooltip"
 				>
 					<img
-						[alt]='stringsService.affAlt'
-						[src]='affiliateService.bannerAd.img'
+						[alt]="stringsService.affAlt"
+						[src]="affiliateService.bannerAd.img"
 					/>
 				</a>
 			</ng-container>
@@ -120,43 +131,53 @@
 		<cyph-link-connection
 			fxFlex
 			fxFlexFill
-			fxLayout='column'
-			*ngIf='(appService.chatRootState | async) === chatRootStates.waitingForFriend'
-			[@fadeIn]='"in"'
+			fxLayout="column"
+			*ngIf="
+				(appService.chatRootState | async) ===
+				chatRootStates.waitingForFriend
+			"
+			[@fadeIn]="'in'"
 		>
-			<ng-container *ngIf='envService.showAds; else ad'></ng-container>
+			<ng-container *ngIf="!envService.showAds; else ad"></ng-container>
 		</cyph-link-connection>
 
 		<cyph-not-found
 			fxFlex
 			fxFlexFill
-			fxLayout='column'
-			*ngIf='(appService.chatRootState | async) === chatRootStates.error'
-			[@fadeIn]='"in"'
+			fxLayout="column"
+			*ngIf="(appService.chatRootState | async) === chatRootStates.error"
+			[@fadeIn]="'in'"
 		></cyph-not-found>
 
 		<div
 			fxFlex
 			fxFlexFill
-			fxLayout='column'
-			id='blank'
-			*ngIf='(appService.chatRootState | async) === chatRootStates.blank'
+			fxLayout="column"
+			id="blank"
+			*ngIf="(appService.chatRootState | async) === chatRootStates.blank"
 		></div>
 
-		<footer *ngIf='
-			(appService.chatRootState | async) !== chatRootStates.chat ||
-			(p2pService.isActiveOrInitialCall | async) === false
-		'>
+		<footer
+			*ngIf="
+				(appService.chatRootState | async) !== chatRootStates.chat ||
+				(p2pService.isActiveOrInitialCall | async) === false
+			"
+		>
 			<div>
 				<cyph-chat-message-box
-					[style.visibility]='(chatService.initiated | async) ? undefined : "hidden"'
-					*ngIf='
-						(appService.chatRootState | async) === chatRootStates.chat &&
+					[style.visibility]="
+						(chatService.initiated | async) ? undefined : 'hidden'
+					"
+					*ngIf="
+						(appService.chatRootState | async) ===
+							chatRootStates.chat &&
 						(chatService.chatSelfDestruct | async) === false
-					'
+					"
 				></cyph-chat-message-box>
 
-				<cyph-footer *ngIf='(envService.isMobile | async) === false'></cyph-footer>
+				<cyph-footer
+					*ngIf="(envService.isMobile | async) === false"
+				></cyph-footer>
 			</div>
 		</footer>
 	</section>
@@ -164,11 +185,11 @@
 	<cyph-chat-cyphertext></cyph-chat-cyphertext>
 
 	<mat-progress-spinner
-		mode='indeterminate'
-		*ngIf='
+		mode="indeterminate"
+		*ngIf="
 			(appService.chatRootState | async) === chatRootStates.chat &&
 			chat.state === chatStates.chat &&
 			(chatService.uiReady | async) !== true
-		'
+		"
 	></mat-progress-spinner>
 </span>

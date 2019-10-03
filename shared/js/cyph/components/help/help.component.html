@@ -1,18 +1,18 @@
-<div [class.mobile]='envService.isMobile | async'>
-	<mat-tab-group cyphNanoScroller [cyphNanoScrollerNoParent]='true'>
-		<mat-tab [label]='stringsService.formattingHelp'>
+<div [class.mobile]="envService.isMobile | async">
+	<mat-tab-group cyphNanoScroller [cyphNanoScrollerNoParent]="true">
+		<mat-tab [label]="stringsService.formattingHelp">
 			<p>
-				<span>{{stringsService.product}}</span>
+				<span>{{ stringsService.product }}</span>
 				&ngsp;
 				<span cyphTranslate>uses a version of Markdown called</span>
 				&ngsp;
-				<a href='https://commonmark.org' cyphTranslate>CommonMark</a>
+				<a href="https://commonmark.org" cyphTranslate>CommonMark</a>
 				&ngsp;
 				<span cyphTranslate>for formatting.</span>
 				<br />
 				<span cyphTranslate>
-					We also support various extensions &ndash;
-					including emojis and code fencing.
+					We also support various extensions &ndash; including emojis
+					and code fencing.
 				</span>
 			</p>
 			<p cyphTranslate>
@@ -34,11 +34,12 @@
 					</tr>
 					<tr>
 						<td>
-							[{{stringsService.session}} <span>me</span>!](https://cyph.com)
+							[{{ stringsService.session }}
+							<span>me</span>!](https://cyph.com)
 						</td>
 						<td>
-							<a href='https://cyph.com'>
-								{{stringsService.session}} <span>me</span>!
+							<a href="https://cyph.com">
+								{{ stringsService.session }} <span>me</span>!
 							</a>
 						</td>
 					</tr>
@@ -77,10 +78,10 @@
 							<br />
 							<br />
 
-							<span class='spaces'>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+							<span class="spaces">&nbsp;&nbsp;&nbsp;&nbsp;</span>
 							if 1 * 2 &lt; 3:
 							<br />
-							<span class='spaces'>
+							<span class="spaces">
 								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							</span>
 							print "hello!"
@@ -100,28 +101,36 @@
 					</tr>
 					<tr>
 						<td>~~<span>strikethrough</span>~~</td>
-						<td><span class='strike'>strikethrough</span></td>
+						<td><span class="strike">strikethrough</span></td>
 					</tr>
 					<tr>
-						<td>
-							<span>super</span>^<span>script</span>^
-						</td>
-						<td>
-							<span>super</span><sup>script</sup>
-						</td>
+						<td><span>super</span>^<span>script</span>^</td>
+						<td><span>super</span><sup>script</sup></td>
 					</tr>
 				</tbody>
 			</table>
 		</mat-tab>
-		<mat-tab [label]='stringsService.contactCyph' *ngIf='!envService.coBranded'>
-			<div fxFlex fxLayout='column' fxLayoutGap='16px'>
+		<mat-tab
+			[label]="stringsService.contactCyph"
+			*ngIf="!envService.coBranded"
+		>
+			<div fxFlex fxLayout="column" fxLayoutGap="16px">
 				<br />
 				<br />
-				<div fxLayoutAlign='center center'>
+				<div fxLayoutAlign="center center">
 					<div cyphTranslate>
 						<span>Please check out the</span>
 						&ngsp;
-						<a [href]='envService.homeUrl + "faq"'>FAQs</a>
+						<a
+							[href]="
+								envService.homeUrl +
+								'faq' +
+								(envService.isCordova ?
+									'?hideHeaderAndFooter=true' :
+									'')
+							"
+							>FAQs</a
+						>
 						&ngsp;
 						<span>first!</span>
 					</div>

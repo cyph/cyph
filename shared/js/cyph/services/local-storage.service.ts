@@ -3,7 +3,11 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {IProto} from '../iproto';
-import {BinaryProto, LocalStorageLockMetadata, LocalStorageValue} from '../proto';
+import {
+	BinaryProto,
+	LocalStorageLockMetadata,
+	LocalStorageValue
+} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {filterUndefined} from '../util/filter';
 import {debugLog} from '../util/log';
@@ -12,17 +16,19 @@ import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
 
-
 /**
  * Provides local storage functionality.
  */
 @Injectable()
 export class LocalStorageService extends DataManagerService {
 	/** In-memory cache for faster access. */
-	private readonly cache: Map<string, Uint8Array>				= new Map<string, Uint8Array>();
+	private readonly cache: Map<string, Uint8Array> = new Map<
+		string,
+		Uint8Array
+	>();
 
 	/** Lock configuration settings. */
-	private readonly lockConfig									= {
+	private readonly lockConfig = {
 		claimDelay: 2500,
 		interval: 1000,
 		root: 'LocalStorageService-locks',
@@ -30,14 +36,19 @@ export class LocalStorageService extends DataManagerService {
 	};
 
 	/** Used to prevent race condition getItem failures. */
-	private readonly pendingSets: Map<string, Promise<void>>	= new Map<string, Promise<void>>();
+	private readonly pendingSets: Map<string, Promise<void>> = new Map<
+		string,
+		Promise<void>
+	>();
 
 	/** If true, localForage failed and we should stop bugging the user for permission. */
-	private setInternalFailed: boolean							= false;
+	private setInternalFailed: boolean = false;
 
 	/** Interface to platform-specific clear functionality. */
 	protected async clearInternal (_WAIT_FOR_READY: boolean) : Promise<void> {
-		throw new Error('Must provide an implementation of LocalStorageService.clearInternal.');
+		throw new Error(
+			'Must provide an implementation of LocalStorageService.clearInternal.'
+		);
 	}
 
 	/** Interface to platform-specific getItem functionality. */
@@ -45,16 +56,25 @@ export class LocalStorageService extends DataManagerService {
 		_URL: string,
 		_WAIT_FOR_READY: boolean
 	) : Promise<Uint8Array> {
-		throw new Error('Must provide an implementation of LocalStorageService.getItemInternal.');
+		throw new Error(
+			'Must provide an implementation of LocalStorageService.getItemInternal.'
+		);
 	}
 
 	/** Interface to platform-specific getKeys functionality. */
-	protected async getKeysInternal (_WAIT_FOR_READY: boolean) : Promise<string[]> {
-		throw new Error('Must provide an implementation of LocalStorageService.getKeysInternal.');
+	protected async getKeysInternal (
+		_WAIT_FOR_READY: boolean
+	) : Promise<string[]> {
+		throw new Error(
+			'Must provide an implementation of LocalStorageService.getKeysInternal.'
+		);
 	}
 
 	/** Interface to platform-specific removeItem functionality. */
-	protected async removeItemInternal (_URL: string, _WAIT_FOR_READY: boolean) : Promise<void> {
+	protected async removeItemInternal (
+		_URL: string,
+		_WAIT_FOR_READY: boolean
+	) : Promise<void> {
 		throw new Error(
 			'Must provide an implementation of LocalStorageService.removeItemInternal.'
 		);
@@ -66,7 +86,9 @@ export class LocalStorageService extends DataManagerService {
 		_VALUE: Uint8Array,
 		_WAIT_FOR_READY: boolean
 	) : Promise<void> {
-		throw new Error('Must provide an implementation of LocalStorageService.setItemInternal.');
+		throw new Error(
+			'Must provide an implementation of LocalStorageService.setItemInternal.'
+		);
 	}
 
 	/** Wipes all local data. */
@@ -85,26 +107,39 @@ export class LocalStorageService extends DataManagerService {
 	}
 
 	/** Gets items. */
-	public async getItems <T> (
-		root: string|undefined,
+	public async getItems<T> (
+		root: string | undefined,
 		proto: IProto<T>,
 		sortByTimestamp: boolean = false,
 		waitForReady: boolean = true
 	) : Promise<T[]> {
-		return (await this.getValues(root, proto, sortByTimestamp, waitForReady)).map(o => o[1]);
+		return (await this.getValues(
+			root,
+			proto,
+			sortByTimestamp,
+			waitForReady
+		)).map(o => o[1]);
 	}
 
 	/** Gets item timestamp. */
-	public async getItemTimestamp (url: string, waitForReady: boolean = true) : Promise<number> {
+	public async getItemTimestamp (
+		url: string,
+		waitForReady: boolean = true
+	) : Promise<number> {
 		return (await this.getValue(url, BinaryProto, waitForReady))[2];
 	}
 
 	/** Gets keys. */
-	public async getKeys (root?: string, waitForReady: boolean = true) : Promise<string[]> {
-		const keys	= Array.from(new Set([
-			...Array.from(this.cache.keys()),
-			...(await this.getKeysInternal(waitForReady).catch(() => []))
-		]));
+	public async getKeys (
+		root?: string,
+		waitForReady: boolean = true
+	) : Promise<string[]> {
+		const keys = Array.from(
+			new Set([
+				...Array.from(this.cache.keys()),
+				...(await this.getKeysInternal(waitForReady).catch(() => []))
+			])
+		);
 
 		return root ? keys.filter(k => k.startsWith(`${root}/`)) : keys;
 	}
@@ -122,82 +157,99 @@ export class LocalStorageService extends DataManagerService {
 		}
 		catch {}
 
-		const data	= this.cache.get(url);
+		const data = this.cache.get(url);
 
 		if (!(data instanceof Uint8Array)) {
 			throw new Error(`Item ${url} not found.`);
 		}
 
-		const {timestamp, value}	= await deserialize(LocalStorageValue, data);
+		const {timestamp, value} = await deserialize(LocalStorageValue, data);
 
 		return [url, await deserialize(proto, value), timestamp];
 	}
 
 	/** Gets values in the form [key, item, timestamp]. */
-	public async getValues <T> (
-		root: string|undefined,
+	public async getValues<T> (
+		root: string | undefined,
 		proto: IProto<T>,
 		sortByTimestamp: boolean = false,
 		waitForReady: boolean = true
 	) : Promise<[string, T, number][]> {
-		const values	= filterUndefined(await Promise.all(
-			(await this.getKeys(root, waitForReady)).map(async url =>
-				this.getValue(url, proto, waitForReady).catch(() => undefined)
+		const values = filterUndefined(
+			await Promise.all(
+				(await this.getKeys(root, waitForReady)).map(async url =>
+					this.getValue(url, proto, waitForReady).catch(
+						() => undefined
+					)
+				)
 			)
-		));
+		);
 
 		return !sortByTimestamp ? values : values.sort((a, b) => a[2] - b[2]);
 	}
 
 	public async lock<T> (
 		url: string,
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
-		const lockURL		= `${this.lockConfig.root}/${url}`;
-		const id			= uuid();
-		const metadata		= {id, reason};
-		const stillOwner	= new BehaviorSubject<boolean>(true);
+		const lockURL = `${this.lockConfig.root}/${url}`;
+		const id = uuid();
+		const metadata = {id, reason};
+		const stillOwner = new BehaviorSubject<boolean>(true);
 
 		debugLog(() => ({localStorageLockWaiting: {id, lockURL, stillOwner}}));
 
-		const getLockValue	= async () =>
-			this.getValue(lockURL, LocalStorageLockMetadata).catch(() => undefined)
-		;
+		const getLockValue = async () =>
+			this.getValue(lockURL, LocalStorageLockMetadata).catch(
+				() => undefined
+			);
 
-		let lastReason: string|undefined;
+		let lastReason: string | undefined;
 
 		while (true) {
-			const [lockValue, timestamp]	= await Promise.all([getLockValue(), getTimestamp()]);
+			const [lockValue, timestamp] = await Promise.all([
+				getLockValue(),
+				getTimestamp()
+			]);
 
 			if (lockValue !== undefined && lockValue[1].id === id) {
 				break;
 			}
 
-			if (!(
-				lockValue === undefined ||
-				!lockValue[1].id ||
-				isNaN(lockValue[2]) ||
-				(timestamp - lockValue[2]) > this.lockConfig.timeout
-			)) {
+			if (
+				!(
+					lockValue === undefined ||
+					!lockValue[1].id ||
+					isNaN(lockValue[2]) ||
+					timestamp - lockValue[2] > this.lockConfig.timeout
+				)
+			) {
 				await sleep(this.lockConfig.interval);
 				continue;
 			}
 
-			lastReason	= lockValue ? lockValue[1].reason : undefined;
+			lastReason = lockValue ? lockValue[1].reason : undefined;
 			await this.setItem(lockURL, LocalStorageLockMetadata, metadata);
 			await sleep(this.lockConfig.claimDelay);
 		}
 
 		debugLog(() => ({localStorageLockClaimed: {id, lockURL, stillOwner}}));
 
-		const promise	= f({reason: lastReason, stillOwner});
+		const promise = f({reason: lastReason, stillOwner});
 
-		let active		= true;
-		promise.catch(() => {}).then(() => { active	= false; });
+		let active = true;
+		promise
+			.catch(() => {})
+			.then(() => {
+				active = false;
+			});
 
 		while (active) {
-			const lockValue	= await getLockValue();
+			const lockValue = await getLockValue();
 
 			if (lockValue === undefined || lockValue[1].id !== id) {
 				stillOwner.next(false);
@@ -219,12 +271,17 @@ export class LocalStorageService extends DataManagerService {
 				await this.removeItem(lockURL);
 			}
 
-			debugLog(() => ({localStorageLockReleased: {id, lockURL, stillOwner}}));
+			debugLog(() => ({
+				localStorageLockReleased: {id, lockURL, stillOwner}
+			}));
 		}
 	}
 
 	/** @inheritDoc */
-	public async removeItem (url: string, waitForReady: boolean = true) : Promise<void> {
+	public async removeItem (
+		url: string,
+		waitForReady: boolean = true
+	) : Promise<void> {
 		this.cache.delete(url);
 		await this.removeItemInternal(url, waitForReady).catch(() => {});
 	}
@@ -236,8 +293,8 @@ export class LocalStorageService extends DataManagerService {
 		value: T,
 		waitForReady: boolean = true
 	) : Promise<{url: string}> {
-		const promise	= (async () => {
-			const data	= await serialize(LocalStorageValue, {
+		const promise = (async () => {
+			const data = await serialize(LocalStorageValue, {
 				timestamp: await getTimestamp(),
 				value: await serialize(proto, value)
 			});
@@ -249,7 +306,7 @@ export class LocalStorageService extends DataManagerService {
 					await this.setItemInternal(url, data, waitForReady);
 				}
 				catch {
-					this.setInternalFailed	= true;
+					this.setInternalFailed = true;
 				}
 			}
 

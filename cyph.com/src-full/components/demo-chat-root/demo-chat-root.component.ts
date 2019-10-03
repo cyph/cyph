@@ -20,7 +20,6 @@ import {DemoService} from '../../demo.service';
 import {HomeSections} from '../../enums';
 import {LocalSessionService} from '../../local-session.service';
 
-
 /**
  * Angular component for chat UI root to share services.
  */
@@ -64,7 +63,7 @@ export class DemoChatRootComponent extends BaseProvider implements OnInit {
 
 		this.data.message.subscribe(s => {
 			if (this.chatService.chat.currentMessage.text === undefined) {
-				this.chatService.chat.currentMessage.text	= '';
+				this.chatService.chat.currentMessage.text = '';
 				this.chatService.updateChat();
 			}
 
@@ -73,7 +72,13 @@ export class DemoChatRootComponent extends BaseProvider implements OnInit {
 				this.chatService.updateChat();
 			}
 			else if (s.length > 1) {
-				this.chatService.send(undefined, {text: s}, undefined, undefined, false);
+				this.chatService.send(
+					undefined,
+					{text: s},
+					undefined,
+					undefined,
+					false
+				);
 			}
 			else {
 				this.chatService.send();

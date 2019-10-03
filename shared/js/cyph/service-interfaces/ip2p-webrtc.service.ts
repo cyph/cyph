@@ -2,7 +2,6 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {ChatService} from '../services/chat.service';
 
-
 /**
  * Manages P2P WebRTC logic.
  */
@@ -38,7 +37,7 @@ export interface IP2PWebRTCService {
 	 * Accepts current call request (or preemptively accepts future call requests,
 	 * disabling the confirmation dialog).
 	 */
-	accept (callType?: 'audio'|'video', isPassive?: boolean) : void;
+	accept (callType?: 'audio' | 'video', isPassive?: boolean) : void;
 
 	/** This kills the P2P session. */
 	close () : Promise<void>;
@@ -58,7 +57,7 @@ export interface IP2PWebRTCService {
 	 * Sends a new call request to the other party.
 	 * @param callType Requested session type.
 	 */
-	request (callType: 'audio'|'video', isPassive?: boolean) : Promise<void>;
+	request (callType: 'audio' | 'video', isPassive?: boolean) : Promise<void>;
 
 	/** Resolves ready. */
 	resolveReady () : void;
@@ -71,5 +70,5 @@ export interface IP2PWebRTCService {
 	 * @param shouldPause If not specified, will switch to the opposite
 	 * of the current state.
 	 */
-	toggle (medium?: 'audio'|'video', shouldPause?: boolean) : void;
+	toggle (medium?: 'audio' | 'video', shouldPause?: boolean) : void;
 }

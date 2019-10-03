@@ -12,7 +12,6 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for notes UI.
  */
@@ -24,14 +23,17 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountNotesComponent extends BaseProvider implements OnInit {
 	/** Indicates whether or not the real-time doc UI is enabled. */
-	public readonly realTime: Observable<boolean>	=
-		this.activatedRoute.data.pipe(map(o => o.realTime))
-	;
+	public readonly realTime: Observable<
+		boolean
+	> = this.activatedRoute.data.pipe(map(o => o.realTime));
 	/** @see AccountFileRecord.RecordTypes */
-	public readonly recordType	= this.realTime.pipe(map(realTime => realTime ?
-		AccountFileRecord.RecordTypes.Doc :
-		AccountFileRecord.RecordTypes.Note
-	));
+	public readonly recordType = this.realTime.pipe(
+		map(realTime =>
+			realTime ?
+				AccountFileRecord.RecordTypes.Doc :
+				AccountFileRecord.RecordTypes.Note
+		)
+	);
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

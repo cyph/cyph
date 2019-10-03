@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 
-
 /**
  * Blank screen / no-op.
  */

@@ -7,14 +7,13 @@ import {debugLogError} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {IPotassium} from './potassium/ipotassium';
 
-
 /**
  * Wraps an async map with per-value encryption.
  */
 export class EncryptedAsyncMap<T> {
 	/** @ignore */
-	private async hash <H> (
-		value: T|undefined,
+	private async hash<H> (
+		value: T | undefined,
 		plaintext?: Uint8Array,
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>},
 		clearPlaintext: boolean = false
@@ -22,7 +21,7 @@ export class EncryptedAsyncMap<T> {
 		if (hasher) {
 			if (plaintext) {
 				if (value === undefined) {
-					value	= await deserialize(this.proto, plaintext);
+					value = await deserialize(this.proto, plaintext);
 				}
 
 				if (clearPlaintext) {
@@ -31,7 +30,10 @@ export class EncryptedAsyncMap<T> {
 			}
 
 			if (value !== undefined) {
-				plaintext	= await serialize(hasher.proto, await hasher.transform(value));
+				plaintext = await serialize(
+					hasher.proto,
+					await hasher.transform(value)
+				);
 			}
 		}
 
@@ -39,7 +41,7 @@ export class EncryptedAsyncMap<T> {
 			throw new Error('No plaintext to hash.');
 		}
 
-		const hash	= await this.potassium.hash.hash(plaintext);
+		const hash = await this.potassium.hash.hash(plaintext);
 
 		if (clearPlaintext) {
 			this.potassium.clearMemory(plaintext);
@@ -62,11 +64,15 @@ export class EncryptedAsyncMap<T> {
 	}
 
 	/** @ignore */
-	private async seal (key: string, value: T, encryptionKey: Uint8Array) : Promise<{
+	private async seal (
+		key: string,
+		value: T,
+		encryptionKey: Uint8Array
+	) : Promise<{
 		cyphertext: Uint8Array;
 		plaintext: Uint8Array;
 	}> {
-		const plaintext	= await serialize(this.proto, value);
+		const plaintext = await serialize(this.proto, value);
 
 		return {
 			cyphertext: await this.potassium.secretBox.seal(
@@ -84,29 +90,42 @@ export class EncryptedAsyncMap<T> {
 	}
 
 	/** @see IAsyncMap.getItem */
-	public async getItem <H = never> (
+	public async getItem<H = never> (
 		key: string,
 		encryptionKey: Uint8Array,
 		hash: Uint8Array,
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<T> {
-		return deserialize(this.proto, await this.getItemBytes(key, encryptionKey, hash, hasher));
+		return deserialize(
+			this.proto,
+			await this.getItemBytes(key, encryptionKey, hash, hasher)
+		);
 	}
 
 	/** Gets item value as bytes. */
-	public async getItemBytes <H = never> (
+	public async getItemBytes<H = never> (
 		key: string,
 		encryptionKey: Uint8Array,
 		hash: Uint8Array,
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<Uint8Array> {
-		const plaintext	= await this.getItemBytesUnsafe(key, encryptionKey);
+		const plaintext = await this.getItemBytesUnsafe(key, encryptionKey);
 
-		if (!this.potassium.compareMemory(hash, await this.hash(undefined, plaintext, hasher))) {
-			debugLogError(async () => ({encryptedAsyncMapInvalidHash: {
-				plaintext,
-				plaintextObject: await deserialize(this.proto, plaintext).catch(err => ({err}))
-			}}));
+		if (
+			!this.potassium.compareMemory(
+				hash,
+				await this.hash(undefined, plaintext, hasher)
+			)
+		) {
+			debugLogError(async () => ({
+				encryptedAsyncMapInvalidHash: {
+					plaintext,
+					plaintextObject: await deserialize(
+						this.proto,
+						plaintext
+					).catch(err => ({err}))
+				}
+			}));
 
 			throw new Error('Invalid hash in EncryptedAsyncMap.getItemBytes.');
 		}
@@ -115,12 +134,15 @@ export class EncryptedAsyncMap<T> {
 	}
 
 	/** Gets item value as bytes with no hash validation. */
-	public async getItemBytesUnsafe (key: string, encryptionKey: Uint8Array) : Promise<Uint8Array> {
+	public async getItemBytesUnsafe (
+		key: string,
+		encryptionKey: Uint8Array
+	) : Promise<Uint8Array> {
 		return this.open(key, await this.map.getItem(key), encryptionKey);
 	}
 
 	/** Gets hash of item value. */
-	public async getItemHash <H = never> (
+	public async getItemHash<H = never> (
 		key: string,
 		encryptionKey: Uint8Array,
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>},
@@ -130,16 +152,21 @@ export class EncryptedAsyncMap<T> {
 			value,
 			hasher && value !== undefined ?
 				undefined :
-				await this.getItemBytesUnsafe(key, encryptionKey)
-			,
+				await this.getItemBytesUnsafe(key, encryptionKey),
 			hasher,
 			true
 		);
 	}
 
 	/** Gets item value with no hash validation. */
-	public async getItemUnsafe (key: string, encryptionKey: Uint8Array) : Promise<T> {
-		return deserialize(this.proto, await this.getItemBytesUnsafe(key, encryptionKey));
+	public async getItemUnsafe (
+		key: string,
+		encryptionKey: Uint8Array
+	) : Promise<T> {
+		return deserialize(
+			this.proto,
+			await this.getItemBytesUnsafe(key, encryptionKey)
+		);
 	}
 
 	/** @see IAsyncMap.getKeys */
@@ -158,7 +185,7 @@ export class EncryptedAsyncMap<T> {
 	}
 
 	/** @see IAsyncMap.setItem */
-	public async setItem <H = never> (
+	public async setItem<H = never> (
 		key: string,
 		value: T,
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
@@ -166,21 +193,34 @@ export class EncryptedAsyncMap<T> {
 		encryptionKey: Uint8Array;
 		getHash: () => Promise<Uint8Array>;
 	}> {
-		const encryptionKey	= this.potassium.randomBytes(await this.potassium.secretBox.keyBytes);
+		const encryptionKey = this.potassium.randomBytes(
+			await this.potassium.secretBox.keyBytes
+		);
 
-		const {cyphertext, plaintext}	= await this.seal(key, value, encryptionKey);
+		const {cyphertext, plaintext} = await this.seal(
+			key,
+			value,
+			encryptionKey
+		);
 
-		this.map.setItem(key, cyphertext);
+		const hash = Promise.all([
+			this.hash(value, plaintext, hasher, true),
+			this.map.setItem(key, cyphertext)
+		]).then(([h]) => h);
 
 		return {
 			encryptionKey,
-			getHash: async () => this.hash(value, plaintext, hasher, true)
+			getHash: async () => hash
 		};
 	}
 
 	/** Sets an item with a custom encryption key. */
-	public async setItemManual (key: string, value: T, encryptionKey: Uint8Array) : Promise<void> {
-		const {cyphertext}	= await this.seal(key, value, encryptionKey);
+	public async setItemManual (
+		key: string,
+		value: T,
+		encryptionKey: Uint8Array
+	) : Promise<void> {
+		const {cyphertext} = await this.seal(key, value, encryptionKey);
 		return this.map.setItem(key, cyphertext);
 	}
 
@@ -190,31 +230,33 @@ export class EncryptedAsyncMap<T> {
 	}
 
 	/** @see IAsyncMap.updateItem */
-	public async updateItem <H = never> (
+	public async updateItem<H = never> (
 		key: string,
 		encryptionKey: Uint8Array,
-		f: (value?: T) => Promise<T|undefined>,
+		f: (value?: T) => Promise<T | undefined>,
 		hasher?: {proto: IProto<H>; transform: (value: T) => MaybePromise<H>}
 	) : Promise<{
-		hash: Uint8Array|undefined;
+		hash: Uint8Array | undefined;
 	}> {
-		let newValue: T|undefined;
-		let plaintext: Uint8Array|undefined;
+		let newValue: T | undefined;
+		let plaintext: Uint8Array | undefined;
 
 		await this.map.updateItem(key, async cyphertext => {
-			newValue	= await f(
-				!cyphertext ? undefined : await deserialize(
-					this.proto,
-					await this.open(key, cyphertext, encryptionKey)
-				)
+			newValue = await f(
+				!cyphertext ?
+					undefined :
+					await deserialize(
+						this.proto,
+						await this.open(key, cyphertext, encryptionKey)
+					)
 			);
 
 			if (newValue === undefined) {
 				return undefined;
 			}
 
-			const newBytes	= await this.seal(key, newValue, encryptionKey);
-			plaintext		= newBytes.plaintext;
+			const newBytes = await this.seal(key, newValue, encryptionKey);
+			plaintext = newBytes.plaintext;
 
 			return newBytes.cyphertext;
 		});
@@ -242,6 +284,9 @@ export class EncryptedAsyncMap<T> {
 		private readonly proto: IProto<T>,
 
 		/** @ignore */
-		private readonly map: IAsyncMap<string, Uint8Array> = new LocalAsyncMap()
+		private readonly map: IAsyncMap<
+			string,
+			Uint8Array
+		> = new LocalAsyncMap()
 	) {}
 }

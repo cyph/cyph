@@ -8,7 +8,6 @@ import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {email} from '../../util/email';
 
-
 /**
  * Angular component for contact form UI.
  */
@@ -20,43 +19,43 @@ import {email} from '../../util/email';
 })
 export class ContactComponent extends BaseProvider implements OnInit {
 	/** @see emailPattern */
-	public readonly emailPattern			= emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** Indicates whether the feedback form UI should be displayed. */
-	public readonly feedbackForm			= new BehaviorSubject<boolean>(false);
+	public readonly feedbackForm = new BehaviorSubject<boolean>(false);
 
 	/** Sender email address. */
-	@Input() public fromEmail: string		= '';
+	@Input() public fromEmail: string = '';
 
 	/** Sender name. */
-	@Input() public fromName: string		= '';
+	@Input() public fromName: string = '';
 
 	/** Indicates whether data collection is consented to under the GDPR. */
-	public readonly gdprConsent				= new BehaviorSubject<boolean>(false);
+	public readonly gdprConsent = new BehaviorSubject<boolean>(false);
 
 	/** Hide to dropdown. */
-	@Input() public hideToDropdown: boolean	= false;
+	@Input() public hideToDropdown: boolean = false;
 
 	/** Email body. */
-	@Input() public message: string			= '';
+	@Input() public message: string = '';
 
 	/** Indicates whether response request is required. */
-	public readonly responseRequired		= new BehaviorSubject<boolean>(false);
+	public readonly responseRequired = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether response is requested. */
-	public readonly responseRequested		= new BehaviorSubject<boolean>(false);
+	public readonly responseRequested = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether email has been sent. */
-	public readonly sent					= new BehaviorSubject<boolean>(false);
+	public readonly sent = new BehaviorSubject<boolean>(false);
 
 	/** Email subject. */
-	@Input() public subject: string			= '';
+	@Input() public subject: string = '';
 
 	/** Recipient @cyph.com email address ("@cyph.com" may be omitted). */
-	@Input() public to: string				= 'hello';
+	@Input() public to: string = 'hello';
 
 	/** @see trackBySelf */
-	public readonly trackBySelf				= trackBySelf;
+	public readonly trackBySelf = trackBySelf;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -70,8 +69,12 @@ export class ContactComponent extends BaseProvider implements OnInit {
 			this.to,
 			this.subject,
 			this.message,
-			this.responseRequested.value ? this.fromEmail : '',
-			this.responseRequested.value ? this.fromName : ''
+			this.responseRequested.value || this.responseRequired.value ?
+				this.fromEmail :
+				'',
+			this.responseRequested.value || this.responseRequired.value ?
+				this.fromName :
+				''
 		);
 
 		this.sent.next(true);

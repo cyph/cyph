@@ -5,6 +5,8 @@ var files	= [
 	'/serviceworker.js',
 	'/unsupportedbrowser',
 	'/favicon.ico',
+	'/img/favicon/favicon-256x256.png',
+	'/img/favicon/favicon-196x196.png',
 	'/img/favicon/favicon-192x192.png',
 	'/img/favicon/favicon-160x160.png',
 	'/img/favicon/favicon-96x96.png',
@@ -19,6 +21,7 @@ var files	= [
 	'/img/favicon/apple-touch-icon-72x72.png',
 	'/img/favicon/apple-touch-icon-60x60.png',
 	'/img/favicon/apple-touch-icon-57x57.png',
+	'/img/favicon/mask.svg',
 	'/img/favicon/mstile-144x144.png',
 	'/img/logo.white.vertical.png'
 ].map(function (file) {
@@ -90,38 +93,85 @@ self.addEventListener('activate', function (e) {
 
 /* Enable running functions provided by the application */
 
-var executedScripts	= {};
+var storedFunctionResults	= {};
+var storedFunctionRoot		= 'websign-stored-functions';
+
+function runStoredFunction (name) {
+	return localforage.getItem(storedFunctionRoot + '/' + name).then(function (data) {
+		var importedFunction;
+
+		if (!(data.name in storedFunctionResults)) {
+			eval(data.scriptText);
+
+			if (typeof importedFunction !== 'function') {
+				return Promise.reject({noFunctionProvided: true});
+			}
+
+			storedFunctionResults[data.name]	= importedFunction(data.input);
+		}
+
+		return storedFunctionResults[data.name];
+	});
+}
+
+function initStoredFunctions () {
+	localforage.getItem(storedFunctionRoot).then(function (storedFunctionList) {
+		if (!storedFunctionList) {
+			return;
+		}
+
+		storedFunctionList.forEach(function (name) {
+			runStoredFunction(name);
+		});
+	});
+}
+
+initStoredFunctions();
+self.addEventListener('install', initStoredFunctions);
 
 self.addEventListener('message', function (e) {
 	if (
 		!e.data ||
 		e.data.cyphFunction !== true ||
-		!e.data.name ||
-		typeof e.data.scriptURL !== 'string' ||
-		!e.data.scriptURL.startsWith('blob:')
+		!e.data.name
 	) {
 		return;
 	}
 
-	new Promise(function (resolve, reject) {
-		var importedFunction;
+	var storedFunctionKey = storedFunctionRoot + '/' + e.data.name;
 
-		var alreadyExecuted				= executedScripts[e.data.name];
-		executedScripts[e.data.name]	= true;
+	if (e.data.unregister === true) {
+		localforage.removeItem(storedFunctionKey);
+		return;
+	}
 
-		if (!alreadyExecuted) {
-			importScripts(e.data.scriptURL);
+	if (
+		typeof e.data.scriptText !== 'string' ||
+		!e.data.scriptText.startsWith('importedFunction = ')
+	) {
+		return;
+	}
 
-			importedFunction		= self.importedFunction;
-			self.importedFunction	= undefined;
+	localforage.setItem(
+		storedFunctionKey,
+		e.data
+	).then(function () {
+		return localforage.getItem(storedFunctionRoot);
+	}).then(function (storedFunctionList) {
+		if (!storedFunctionList) {
+			storedFunctionList	= [];
 		}
 
-		if (typeof importedFunction !== 'function') {
-			reject(alreadyExecuted ? {alreadyExecuted: true} : {noFunctionProvided: true});
+		if (storedFunctionList.indexOf(e.data.name) > -1) {
+			return;
 		}
-		else {
-			resolve(importedFunction(e.data.input));
-		}
+
+		return localforage.setItem(
+			storedFunctionRoot,
+			storedFunctionList.concat(e.data.name)
+		);
+	}).then(function () {
+		return runStoredFunction(e.data.name);
 	}).then(function (output) {
 		return {id: e.data.id, output: output};
 	}).catch(function (err) {

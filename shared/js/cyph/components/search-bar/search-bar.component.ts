@@ -23,7 +23,6 @@ import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 
-
 /**
  * Angular component for search bar UI.
  */
@@ -33,85 +32,84 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 	styleUrls: ['./search-bar.component.scss'],
 	templateUrl: './search-bar.component.html'
 })
-export class SearchBarComponent<T extends any>
-extends BaseProvider
-implements OnChanges, OnDestroy, OnInit {
+export class SearchBarComponent<T extends any> extends BaseProvider
+	implements OnChanges, OnDestroy, OnInit {
 	/** @ignore */
 	private querySubscription?: Subscription;
 
 	/** @see AutofocusDirective */
-	@Input() public autofocus: boolean						= false;
+	@Input() public autofocus: boolean = false;
 
 	/** If true, will use a chip input and return multiple items in filter. */
-	@Input() public chipInput: boolean						= false;
+	@Input() public chipInput: boolean = false;
 
 	/** Transforms filter value to chip value. */
-	@Input() public chipTransform: (value?: T) => {
-		smallText?: Async<string|undefined>;
+	@Input() public chipTransform: (
+		value?: T
+	) => {
+		smallText?: Async<string | undefined>;
 		text: Async<string>;
-	}	=
-		value => ({text: <any> value})
-	/* tslint:disable-next-line:semicolon */
-	;
+	} = value => ({text: <any> value});
 
 	/** Search bar control. */
-	@Input() public control: FormControl					= new FormControl();
+	@Input() public control: FormControl = new FormControl();
 
 	/** Item(s) to display instead of list. */
-	public readonly filter: BehaviorSubject<Set<T>>			=
-		new BehaviorSubject<Set<T>>(new Set())
-	;
+	public readonly filter: BehaviorSubject<Set<T>> = new BehaviorSubject<
+		Set<T>
+	>(new Set());
 
 	/** First filter item. */
-	public readonly filterSingle: BehaviorSubject<T|undefined>						=
-		toBehaviorSubject(
-			this.filter.pipe(map(items => items.values().next().value)),
-			undefined,
-			this.subscriptions
-		)
-	;
+	public readonly filterSingle: BehaviorSubject<
+		T | undefined
+	> = toBehaviorSubject(
+		this.filter.pipe(map(items => items.values().next().value)),
+		undefined,
+		this.subscriptions
+	);
 
 	/** Filter change event. */
-	@Output() public readonly filterChange: EventEmitter<BehaviorSubject<Set<T>>>	=
-		new EventEmitter<BehaviorSubject<Set<T>>>()
-	;
+	@Output() public readonly filterChange: EventEmitter<
+		BehaviorSubject<Set<T>>
+	> = new EventEmitter<BehaviorSubject<Set<T>>>();
 
 	/** Gets chip from filter value. */
-	public readonly getChip	= memoize((value?: T) => this.chipTransform(value));
+	public readonly getChip = memoize((value?: T) => this.chipTransform(value));
 
 	/** Transforms string value to filter value. */
-	@Input() public filterTransform: (value?: string) => T	= value => <any> value;
+	@Input() public filterTransform: (value?: string) => T = value =>
+		<any> value;
 
 	/** Emits on search bar input blur. */
-	@Output() public readonly inputBlur						= new EventEmitter<void>();
+	@Output() public readonly inputBlur = new EventEmitter<void>();
 
 	/** Search bar autocomplete options list length. */
-	@Input() public listLength: number						= 10;
+	@Input() public listLength: number = 10;
 
 	/** Search bar autocomplete options. */
 	@Input() public options?: Observable<ISearchOptions>;
 
 	/** Placeholder string. */
-	@Input() public placeholder: string						= this.stringsService.search;
+	@Input() public placeholder: string = this.stringsService.search;
 
 	/** Search bar input element. */
 	@ViewChild('searchInput', {static: false}) public searchInput?: ElementRef;
 
 	/** Indicates whether spinner should be displayed in search bar. */
-	@Input() public spinner: Observable<boolean>			= of(false);
+	@Input() public spinner: Observable<boolean> = of(false);
 
 	/** Search query. */
 	@Input() public query?: Observable<string>;
 
 	/** @see trackByValue */
-	public readonly trackByValue: typeof trackByValue		= trackByValue;
+	public readonly trackByValue = trackByValue;
 
 	/** @ignore */
 	private clearInput () : void {
 		this.control.setValue('');
 
 		if (this.searchInput && this.searchInput.nativeElement) {
-			this.searchInput.nativeElement.value	= '';
+			this.searchInput.nativeElement.value = '';
 		}
 	}
 
@@ -135,7 +133,7 @@ implements OnChanges, OnDestroy, OnInit {
 			return;
 		}
 
-		this.querySubscription	= this.query.subscribe(value => {
+		this.querySubscription = this.query.subscribe(value => {
 			this.control.setValue(value);
 			this.pushToFilter(value);
 		});
@@ -155,11 +153,11 @@ implements OnChanges, OnDestroy, OnInit {
 
 	/** Pushes to filter based on search query. */
 	public async pushToFilter (value?: string) : Promise<void> {
-		const o	= await this.filterTransform(value);
+		const o = await this.filterTransform(value);
 
 		if (this.chipInput) {
 			if (o !== undefined) {
-				const newFilterValue	= new Set(this.filter.value);
+				const newFilterValue = new Set(this.filter.value);
 				this.filter.next(newFilterValue.add(o));
 				this.clearInput();
 			}
@@ -178,7 +176,7 @@ implements OnChanges, OnDestroy, OnInit {
 	/** Removes item from filter. */
 	public removeFromFilter (value: T) : void {
 		if (this.chipInput) {
-			const newFilterValue	= new Set(this.filter.value);
+			const newFilterValue = new Set(this.filter.value);
 			newFilterValue.delete(value);
 			this.filter.next(newFilterValue);
 			return;

@@ -33,7 +33,7 @@ git fetch --all
 git pull
 chmod -R 700 .
 git add .
-git commit -S -a -m "${comment}"
+git commit --no-verify -S -a -m "${comment}"
 
 if [ "${noCleanup}" ] ; then
 	git push
@@ -53,22 +53,7 @@ find shared/css shared/js \
 	' \
 \;
 
-find shared/css shared/js \
-	-type f \
-	-name '*.scss' \
-	-not -name theme.scss \
-	-not -name mixins.scss \
-	-not -path 'shared/css/themes/*' \
-| xargs -I% bash -c '
-sed -i "s|>>>|::ng-deep|g" %
-sed -i "s|/deep/|::ng-deep|g" %
-sass-convert --from scss --to scss --dasherize --indent t % | awk "{
-if (\$1 != \"/*\")
-	gsub(/\"/, \"'"'"'\", \$0)
-print \$0
-}" > %.new
-mv %.new %
-'
+cyph-prettier --write '**/*.{css,html,js,json,scss,ts,tsx}'
 
 find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash -c '
 	curl -sf "$(node -e "console.log(JSON.parse('"'"'$(
@@ -87,7 +72,7 @@ find shared/assets/img -type f \( -name '*.jpg' -or -name '*.png' \) -exec bash 
 find commands serverconfig types.proto shared/css shared/js -type f -exec sed -i 's/\s*$//g' {} \;
 
 chmod -R 700 .
-git commit -S -a -m "cleanup: ${comment}"
+git commit --no-verify -S -a -m "cleanup: ${comment}"
 
 if [ "${blockFailingBuild}" ] ; then
 	./commands/build.sh || fail

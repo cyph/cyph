@@ -1,4 +1,10 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input,
+	OnChanges
+} from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import * as $ from 'jquery';
@@ -13,7 +19,6 @@ import {HtmlSanitizerService} from '../../services/html-sanitizer.service';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
 
-
 /**
  * Angular component for rendering Markdown.
  */
@@ -25,13 +30,13 @@ import {sleep} from '../../util/wait';
 })
 export class MarkdownComponent extends BaseProvider implements OnChanges {
 	/** @ignore */
-	private initiated: boolean	= false;
+	private initiated: boolean = false;
 
 	/** @ignore */
 	private readonly markdownIt: MarkdownIt;
 
 	/** Rendered HTML. */
-	public readonly html	= new BehaviorSubject<SafeHtml|undefined>(undefined);
+	public readonly html = new BehaviorSubject<SafeHtml | undefined>(undefined);
 
 	/** String of Markdown to render as HTML and add to the DOM. */
 	@Input() public markdown?: string;
@@ -45,7 +50,7 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 			return;
 		}
 
-		const routerLink	= e.target.getAttribute('router-link');
+		const routerLink = e.target.getAttribute('router-link');
 
 		if (routerLink) {
 			this.router.navigate(routerLink.split('/'));
@@ -60,46 +65,46 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 		}
 
 		if (this.markdown) {
-			this.initiated	= true;
+			this.initiated = true;
 		}
 		else if (this.initiated) {
 			await sleep(10000);
 
-			const $element	= $(this.elementRef.nativeElement);
+			const $element = $(this.elementRef.nativeElement);
 
-			$element.
-				height($element.height() || 0).
-				width($element.width() || 0)
-			;
+			$element
+				.height($element.height() || 0)
+				.width($element.width() || 0);
 		}
 
-		let html	= this.markdownIt.render(this.markdown || '').
+		let html = this.markdownIt
+			.render(this.markdown || '')
 			/* Merge blockquotes like reddit */
-			replace(/\<\/blockquote>\n\<blockquote>\n/g, '').
-
+			.replace(/\<\/blockquote>\n\<blockquote>\n/g, '')
 			/* Images */
-			replace(
+			.replace(
 				/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
 				(_, value: string) => {
-					const img	= document.createElement('img');
-					img.src		= value;
+					const img = document.createElement('img');
+					img.src = value;
 					return img.outerHTML;
 				}
-			)
-		;
+			);
 
 		/* Gracefully handle protocol-less links */
 		if (!this.targetSelf) {
-			html	= html.replace(
-				/(href=")(((?!:\/\/).)*?")/g,
-				(_, a, b) => `${a}http://${b}`
-			);
+			html = html
+				.replace(
+					/(href=")(((?!:\/\/).)*?")/g,
+					(_, a, b) => `${a}http://${b}`
+				)
+				.replace(/href="http:\/\/mailto:/g, 'href="mailto:');
 		}
 
-		html	= this.htmlSanitizerService.sanitize(html);
+		html = this.htmlSanitizerService.sanitize(html);
 
 		if (this.targetSelf) {
-			html	= html.replace(/\<a href="#/g, '<a router-link="');
+			html = html.replace(/\<a href="#/g, '<a router-link="');
 		}
 
 		this.html.next(this.domSanitizer.bypassSecurityTrustHtml(html));
@@ -126,12 +131,13 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 	) {
 		super();
 
-		this.markdownIt	= new MarkdownIt({
+		this.markdownIt = new MarkdownIt({
 			breaks: true,
-			highlight: s => microlight.process(
-				s,
-				$(this.elementRef.nativeElement).css('color')
-			),
+			highlight: s =>
+				microlight.process(
+					s,
+					$(this.elementRef.nativeElement).css('color')
+				),
 			html: false,
 			linkify: true,
 			typographer: false
@@ -148,10 +154,9 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 			,
 			typographer: true
 			*/
-		}).
-			disable('image').
-			use(markdownItEmoji).
-			use(markdownItSup)
-		;
+		})
+			.disable('image')
+			.use(markdownItEmoji)
+			.use(markdownItSup);
 	}
 }

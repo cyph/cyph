@@ -25,10 +25,10 @@ cd ~/easyoptions
 git pull
 chmod -R 777 .
 
-emsdk update
-emsdk install latest
-emsdk uninstall $(emsdk list | grep INSTALLED | perl -pe 's/\(?\*\)?//g' | grep node | awk '{print $1}')
-emsdk activate latest
+source ~/emsdk/emsdk_env.sh &> /dev/null
+bash -c 'cd ~/emsdk ; git pull'
+emsdk install latest-upstream
+emsdk activate latest-upstream
 
 ~/google-cloud-sdk/install.sh \
 	--additional-components app-engine-go cloud-datastore-emulator \

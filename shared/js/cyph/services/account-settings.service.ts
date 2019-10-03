@@ -8,30 +8,32 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {FileService} from './file.service';
 
-
 /**
  * Account settings service.
  */
 @Injectable()
 export class AccountSettingsService extends BaseProvider {
 	/** User's plan / premium status. */
-	public readonly plan	= toBehaviorSubject(
-		this.accountDatabaseService.watch(
-			'plan',
-			CyphPlan,
-			SecurityModels.unprotected,
-			undefined,
-			undefined,
-			this.subscriptions
-		).pipe(map(o =>
-			o.value.plan
-		)),
+	public readonly plan = toBehaviorSubject(
+		this.accountDatabaseService
+			.watch(
+				'plan',
+				CyphPlan,
+				SecurityModels.unprotected,
+				undefined,
+				undefined,
+				this.subscriptions
+			)
+			.pipe(map(o => o.value.plan)),
 		CyphPlans.Free,
 		this.subscriptions
 	);
 
 	/** @ignore */
-	private async setImage (file: IFile, prop: 'avatar'|'coverImage') : Promise<void> {
+	private async setImage (
+		file: IFile,
+		prop: 'avatar' | 'coverImage'
+	) : Promise<void> {
 		await this.accountDatabaseService.setItem(
 			prop,
 			BinaryProto,

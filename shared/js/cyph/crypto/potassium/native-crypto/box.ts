@@ -1,7 +1,6 @@
 import {IKeyPair} from '../../../proto';
 import {importHelper} from './import-helper';
 
-
 /** Equivalent to sodium.crypto_box without authentication. */
 export class Box {
 	/** Algorithm details. */
@@ -11,7 +10,7 @@ export class Box {
 		modulusLengthBytes: number;
 		name: string;
 		publicExponent: Uint8Array;
-	}	= {
+	} = {
 		hash: {
 			name: 'SHA-512'
 		},
@@ -22,31 +21,31 @@ export class Box {
 	};
 
 	/** Private key length. */
-	public readonly privateKeyBytes: number	= 3250;
+	public readonly privateKeyBytes: number = 3250;
 
 	/** Public key length. */
-	public readonly publicKeyBytes: number	= 800;
+	public readonly publicKeyBytes: number = 800;
 
 	/** Generates key pair. */
 	public async keyPair () : Promise<IKeyPair> {
-		const keyPair		= await crypto.subtle.generateKey(
-			this.algorithm,
-			true,
-			['encrypt', 'decrypt']
+		const keyPair = await crypto.subtle.generateKey(this.algorithm, true, [
+			'encrypt',
+			'decrypt'
+		]);
+
+		const publicKey = new Uint8Array(this.publicKeyBytes);
+		const privateKey = new Uint8Array(this.privateKeyBytes);
+
+		publicKey.set(
+			await importHelper.exportJWK(keyPair.publicKey, this.algorithm.name)
 		);
 
-		const publicKey		= new Uint8Array(this.publicKeyBytes);
-		const privateKey	= new Uint8Array(this.privateKeyBytes);
-
-		publicKey.set(await importHelper.exportJWK(
-			keyPair.publicKey,
-			this.algorithm.name
-		));
-
-		privateKey.set(await importHelper.exportJWK(
-			keyPair.privateKey,
-			this.algorithm.name
-		));
+		privateKey.set(
+			await importHelper.exportJWK(
+				keyPair.privateKey,
+				this.algorithm.name
+			)
+		);
 
 		return {
 			privateKey,
@@ -55,7 +54,10 @@ export class Box {
 	}
 
 	/** Decrypts cyphertext. */
-	public async open (cyphertext: Uint8Array, keyPair: IKeyPair) : Promise<Uint8Array> {
+	public async open (
+		cyphertext: Uint8Array,
+		keyPair: IKeyPair
+	) : Promise<Uint8Array> {
 		return new Uint8Array(
 			await crypto.subtle.decrypt(
 				this.algorithm.name,
@@ -70,7 +72,10 @@ export class Box {
 	}
 
 	/** Encrypts plaintext. */
-	public async seal (plaintext: Uint8Array, publicKey: Uint8Array) : Promise<Uint8Array> {
+	public async seal (
+		plaintext: Uint8Array,
+		publicKey: Uint8Array
+	) : Promise<Uint8Array> {
 		return new Uint8Array(
 			await crypto.subtle.encrypt(
 				this.algorithm.name,
@@ -88,4 +93,4 @@ export class Box {
 }
 
 /** @see Box */
-export const box	= new Box();
+export const box = new Box();

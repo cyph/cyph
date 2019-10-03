@@ -1,28 +1,27 @@
 import {sodiumUtil} from 'sodiumutil';
 
-
 /**
  * Miscellaneous helper functions for Potassium.
  */
 export class PotassiumUtil {
 	/** Splits byte array into chunks. */
 	public chunkBytes (a: ArrayBufferView, chunkSize?: number) : Uint8Array[] {
-		const bytes	= this.toBytes(a);
+		const bytes = this.toBytes(a);
 
 		if (chunkSize === undefined || isNaN(chunkSize) || chunkSize < 1) {
 			return [bytes];
 		}
 
-		const chunks: Uint8Array[]	= [];
+		const chunks: Uint8Array[] = [];
 
-		for (let i = 0 ; i < bytes.length ; i += chunkSize) {
-			chunks.push(this.toBytes(
-				bytes,
-				i,
-				(bytes.length - i) > chunkSize ?
-					chunkSize :
-					undefined
-			));
+		for (let i = 0; i < bytes.length; i += chunkSize) {
+			chunks.push(
+				this.toBytes(
+					bytes,
+					i,
+					bytes.length - i > chunkSize ? chunkSize : undefined
+				)
+			);
 		}
 
 		return chunks;
@@ -37,12 +36,14 @@ export class PotassiumUtil {
 
 	/** Indicates whether two blocks of memory contain the same data. */
 	public compareMemory (a: ArrayBufferView, b: ArrayBufferView) : boolean {
-		const lengthMismatch	= a.byteLength !== b.byteLength;
+		const lengthMismatch = a.byteLength !== b.byteLength;
 
-		return sodiumUtil.memcmp(
-			this.toBytes(a),
-			this.toBytes(lengthMismatch ? a : b)
-		) && !lengthMismatch;
+		return (
+			sodiumUtil.memcmp(
+				this.toBytes(a),
+				this.toBytes(lengthMismatch ? a : b)
+			) && !lengthMismatch
+		);
 	}
 
 	/** Concatenates multiple blocks of memory into one. */
@@ -50,8 +51,10 @@ export class PotassiumUtil {
 		clearOriginals: boolean,
 		...arrays: ArrayBufferView[]
 	) : Uint8Array {
-		const out	= new Uint8Array(arrays.reduce((a, b) => a + b.byteLength, 0));
-		let index	= 0;
+		const out = new Uint8Array(
+			arrays.reduce((a, b) => a + b.byteLength, 0)
+		);
+		let index = 0;
 
 		for (const a of arrays) {
 			out.set(this.toBytes(a), index);
@@ -66,23 +69,27 @@ export class PotassiumUtil {
 	}
 
 	/** Converts base64 string into binary byte array. */
-	public fromBase64 (s: string|ArrayBufferView) : Uint8Array {
+	public fromBase64 (s: string | ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
 			sodiumUtil.from_base64(s) :
-			this.toBytes(s)
-		;
+			this.toBytes(s);
 	}
 
 	/** Converts Blob into binary byte array. */
-	public async fromBlob (b: Blob|ArrayBufferView) : Promise<Uint8Array> {
+	public async fromBlob (b: Blob | ArrayBufferView) : Promise<Uint8Array> {
 		if (ArrayBuffer.isView(b)) {
 			return this.toBytes(b);
 		}
 
 		return new Promise<Uint8Array>((resolve, reject) => {
-			const reader	= new FileReader();
-			reader.onerror	= reject;
-			reader.onload	= () => {
+			/* Workaround for Electron */
+			let reader = new FileReader();
+			if ((<any> reader)._realReader) {
+				reader = (<any> reader)._realReader;
+			}
+
+			reader.onerror = reject;
+			reader.onload = () => {
 				resolve(
 					reader.result instanceof ArrayBuffer ?
 						new Uint8Array(reader.result) :
@@ -95,19 +102,15 @@ export class PotassiumUtil {
 	}
 
 	/** Converts hex string into binary byte array. */
-	public fromHex (s: string|ArrayBufferView) : Uint8Array {
-		return typeof s === 'string' ?
-			sodiumUtil.from_hex(s) :
-			this.toBytes(s)
-		;
+	public fromHex (s: string | ArrayBufferView) : Uint8Array {
+		return typeof s === 'string' ? sodiumUtil.from_hex(s) : this.toBytes(s);
 	}
 
 	/** Converts ASCII/Unicode string into binary byte array. */
-	public fromString (s: string|ArrayBufferView) : Uint8Array {
+	public fromString (s: string | ArrayBufferView) : Uint8Array {
 		return typeof s === 'string' ?
 			sodiumUtil.from_string(s) :
-			this.toBytes(s)
-		;
+			this.toBytes(s);
 	}
 
 	/** Indicates whether maybe-byte-array is empty. */
@@ -119,9 +122,9 @@ export class PotassiumUtil {
 	public joinBytes (...chunks: Uint8Array[]) : Uint8Array {
 		return this.concatMemory(
 			true,
-			...chunks.
-				map(chunk => [new Uint32Array([chunk.length]), chunk]).
-				reduce((a, b) => a.concat(b), [])
+			...chunks
+				.map(chunk => [new Uint32Array([chunk.length]), chunk])
+				.reduce((a, b) => a.concat(b), [])
 		);
 	}
 
@@ -130,18 +133,17 @@ export class PotassiumUtil {
 		return typeof (<any> crypto).randomBytes === 'function' ?
 			(<any> crypto).randomBytes(n) :
 			/* tslint:disable-next-line:ban */
-			crypto.getRandomValues(new Uint8Array(n))
-		;
+			crypto.getRandomValues(new Uint8Array(n));
 	}
 
 	/** Splits chunks that have been joined with joinBytes. */
 	public splitBytes (bytes: Uint8Array) : Uint8Array[] {
-		const chunks: Uint8Array[]	= [];
-		const cyphertextView		= this.toDataView(bytes);
+		const chunks: Uint8Array[] = [];
+		const cyphertextView = this.toDataView(bytes);
 
-		let i	= 0;
+		let i = 0;
 		while (i < bytes.length) {
-			const chunkSize	= cyphertextView.getUint32(i, true);
+			const chunkSize = cyphertextView.getUint32(i, true);
 			i += 4;
 			chunks.push(this.toBytes(bytes, i, chunkSize));
 			i += chunkSize;
@@ -151,15 +153,18 @@ export class PotassiumUtil {
 	}
 
 	/** Converts binary into base64 string. */
-	public toBase64 (a: ArrayBufferView|string) : string {
+	public toBase64 (a: ArrayBufferView | string) : string {
 		return typeof a === 'string' ?
 			a :
-			sodiumUtil.to_base64(this.toBytes(a)).replace(/\s+/g, '')
-		;
+			sodiumUtil.to_base64(this.toBytes(a)).replace(/\s+/g, '');
 	}
 
 	/** Normalizes any binary data as standard byte array format. */
-	public toBytes (a: ArrayBufferView, offset: number = 0, length?: number) : Uint8Array {
+	public toBytes (
+		a: ArrayBufferView,
+		offset: number = 0,
+		length?: number
+	) : Uint8Array {
 		return new Uint8Array(
 			a.buffer,
 			a.byteOffset + offset,
@@ -168,7 +173,11 @@ export class PotassiumUtil {
 	}
 
 	/** Converts binary data into DataView. */
-	public toDataView (a: ArrayBufferView, offset: number = 0, length?: number) : DataView {
+	public toDataView (
+		a: ArrayBufferView,
+		offset: number = 0,
+		length?: number
+	) : DataView {
 		return new DataView(
 			a.buffer,
 			a.byteOffset + offset,
@@ -177,23 +186,19 @@ export class PotassiumUtil {
 	}
 
 	/** Converts binary into hex string. */
-	public toHex (a: ArrayBufferView|string) : string {
-		return typeof a === 'string' ?
-			a :
-			sodiumUtil.to_hex(this.toBytes(a))
-		;
+	public toHex (a: ArrayBufferView | string) : string {
+		return typeof a === 'string' ? a : sodiumUtil.to_hex(this.toBytes(a));
 	}
 
 	/** Converts binary into ASCII/Unicode string. */
-	public toString (a: ArrayBufferView|string) : string {
+	public toString (a: ArrayBufferView | string) : string {
 		return typeof a === 'string' ?
 			a :
-			sodiumUtil.to_string(this.toBytes(a))
-		;
+			sodiumUtil.to_string(this.toBytes(a));
 	}
 
 	constructor () {}
 }
 
 /** @see PotassiumUtil */
-export const potassiumUtil	= new PotassiumUtil();
+export const potassiumUtil = new PotassiumUtil();

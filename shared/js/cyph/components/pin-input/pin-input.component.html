@@ -1,31 +1,29 @@
 <mat-form-field fxFlex>
-	<div class='input-wrapper-outer' ngClass.xs='small'>
-		<div class='input-wrapper-inner'>
+	<div class="input-wrapper-outer" ngClass.xs="small">
+		<div class="input-wrapper-inner">
 			<input
 				#pinInput
 				matInput
 				cyphTranslate
-				[ngModel]='value | async'
-				(ngModelChange)='value.next(processValue($event))'
-				[ngClass]='"length-" + ((value | async)?.length || 0).toString()'
-				[disabled]='isDisabled | async'
-				(blur)='onTouched && onTouched()'
-				[name]='name'
-				type='tel'
-				placeholder='PIN'
+				[ngModel]="value | async"
+				(ngModelChange)="value.next(processValue($event))"
+				[ngClass]="
+					'length-' + ((value | async)?.length || 0).toString()
+				"
+				[disabled]="isDisabled | async"
+				(blur)="onTouched && onTouched()"
+				[name]="name"
+				type="tel"
+				placeholder="PIN"
 				cyphAutofocus
-				[cyphAutofocusEnabled]='autofocus'
-				[required]='required'
-				[class.text-security]='hide | async'
-				pattern='\d\d\d\d'
+				[cyphAutofocusEnabled]="autofocus"
+				[required]="required"
+				[class.text-security]="hide | async"
+				pattern="\d\d\d\d"
 			/>
 		</div>
 	</div>
-	<mat-icon
-		matSuffix
-		class='suffix-button'
-		(click)='hide.next(!hide.value)'
-	>
-		{{(hide | async) ? 'visibility' : 'visibility_off'}}
+	<mat-icon matSuffix class="suffix-button" (click)="hide.next(!hide.value)">
+		{{ (hide | async) ? 'visibility' : 'visibility_off' }}
 	</mat-icon>
 </mat-form-field>

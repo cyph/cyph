@@ -2,14 +2,16 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
-import {ISessionMessage, ISessionMessageData as ISessionMessageDataInternal} from '../proto';
+import {
+	ISessionMessage,
+	ISessionMessageData as ISessionMessageDataInternal
+} from '../proto';
 import {
 	CastleEvents,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
 	ProFeatures
 } from '../session';
-
 
 /**
  * Encapsulates an end-to-end encrypted communication session.
@@ -60,23 +62,25 @@ export interface ISessionService {
 		cyphID: BehaviorSubject<string>;
 		isAlice: BehaviorSubject<boolean>;
 		isAlive: BehaviorSubject<boolean>;
-		sharedSecret: BehaviorSubject<string|undefined>;
-		startingNewCyph: BehaviorSubject<boolean|undefined>;
+		sharedSecret: BehaviorSubject<string | undefined>;
+		startingNewCyph: BehaviorSubject<boolean | undefined>;
 		wasInitiatedByAPI: BehaviorSubject<boolean>;
 	};
 
 	/** Session key for misc stuff like locking. */
-	readonly symmetricKey: BehaviorSubject<Uint8Array|undefined>;
+	readonly symmetricKey: BehaviorSubject<Uint8Array | undefined>;
 
 	/** Castle event handler called by Castle.Transport. */
 	castleHandler (
 		event: CastleEvents,
-		data?: Uint8Array|{
-			author: Observable<string>;
-			instanceID: string;
-			plaintext: Uint8Array;
-			timestamp: number;
-		}
+		data?:
+			| Uint8Array
+			| {
+					author: Observable<string>;
+					instanceID: string;
+					plaintext: Uint8Array;
+					timestamp: number;
+			  }
 	) : Promise<void>;
 
 	/** This kills the cyph. */
@@ -93,7 +97,10 @@ export interface ISessionService {
 
 	/** @see ChannelService.lock */
 	lock<T> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<T>,
 		reason?: string
 	) : Promise<T>;
 
@@ -115,13 +122,16 @@ export interface ISessionService {
 	send (
 		...messages: [
 			string,
-			ISessionMessageAdditionalData|(
-				(timestamp: number) => MaybePromise<ISessionMessageAdditionalData>
-			)
+
+
+				| ISessionMessageAdditionalData
+				| ((
+						timestamp: number
+				  ) => MaybePromise<ISessionMessageAdditionalData>)
 		][]
 	) : Promise<{
 		confirmPromise: Promise<void>;
-		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+		newMessages: (ISessionMessage & {data: ISessionMessageData})[];
 	}>;
 
 	/** Creates and returns a new instance. */

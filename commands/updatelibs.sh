@@ -52,6 +52,8 @@ read -r -d '' modules <<- EOM
 	@covalent/http
 	@covalent/markdown
 	@ctrl/ngx-rightclick
+	@cyph/prettier
+	@cyph/pretty-quick
 	@firebase/app
 	@firebase/app-types
 	@firebase/auth
@@ -219,21 +221,22 @@ read -r -d '' modules <<- EOM
 	firebase-tools
 	fullcalendar@3.6.1
 	glob
-	google-closure-compiler
 	granim
 	gulp
 	hammerjs
 	highlight.js
 	html-minifier
 	html-to-text
+	html2canvas
 	htmlencode
 	htmllint
+	husky
 	ical-generator@~0.2
 	image-type
 	jasmine-core
 	jasmine-spec-reporter
 	jquery
-	jquery.appear@https://github.com/morr/jquery.appear
+	jquery-appear-original
 	jsdoc@3.5.5
 	jsdom
 	jspdf
@@ -247,10 +250,10 @@ read -r -d '' modules <<- EOM
 	lamejs
 	lazy
 	leaflet
-	libsodium@https://github.com/jedisct1/libsodium.js#9d4455c
-	libsodium-sumo@https://github.com/jedisct1/libsodium.js#9d4455c
-	libsodium-wrappers@https://github.com/jedisct1/libsodium.js#9d4455c
-	libsodium-wrappers-sumo@https://github.com/jedisct1/libsodium.js#9d4455c
+	libsodium
+	libsodium-sumo
+	libsodium-wrappers
+	libsodium-wrappers-sumo
 	libvorbis.js
 	localforage
 	lodash
@@ -290,10 +293,13 @@ read -r -d '' modules <<- EOM
 	notify-cli
 	ntru
 	opentok
+	opn
 	opus-recorder
 	parchment
 	pdfjs-dist
 	pdfkit
+	pinch-zoom-js
+	prettier
 	primeng
 	promise-semaphore
 	protobufjs
@@ -345,7 +351,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@3.4
+	typescript@3.5
 	u2f-api-polyfill
 	uglify-es
 	unsemantic
@@ -384,11 +390,11 @@ EOM
 # script -fc "
 # 	while true ; do
 # 		answer=\"\$(node -e '
-# 			const semver			= require(\"semver\");
+# 			const semver = require(\"semver\");
 #
-# 			const modules			= \`${modules}\`;
+# 			const modules = \`${modules}\`;
 #
-# 			const getPinnedVersion	= package =>
+# 			const getPinnedVersion = package =>
 # 				(modules.match(new RegExp(
 # 					\`(^|\\\\s+)\${package}@((\\\\d|\\\\.)+)(\n|\$)\`
 # 				)) || [])[2]
@@ -404,9 +410,9 @@ EOM
 # 					section.match(/\"[^\\n]+\" which resolved to \"[^\\n]+\"/g) || []
 # 				).
 # 					map((s, i) => {
-# 						const split			= s.split(\"\\\"\");
-# 						const version		= split[3];
-# 						const pinnedVersion	= getPinnedVersion(split[1].split(\"@\")[0]);
+# 						const split = s.split(\"\\\"\");
+# 						const version = split[3];
+# 						const pinnedVersion = getPinnedVersion(split[1].split(\"@\")[0]);
 #
 # 						return {
 # 							index: i + 1,
@@ -481,5 +487,6 @@ rm -rf shared/lib
 mv ~/lib shared/
 rm -rf ~/tmplib
 
-./commands/getlibs.sh
+./commands/getlibs.sh || fail
+cyph-prettier --write shared/lib/js/package.json
 ./commands/commit.sh --gc "${@}" updatelibs

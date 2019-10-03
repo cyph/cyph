@@ -1,19 +1,22 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router} from '@angular/router';
+import {
+	ActivatedRouteSnapshot,
+	CanActivate,
+	CanActivateChild,
+	Router
+} from '@angular/router';
 import {BaseProvider} from '../base-provider';
 import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
 import {StringsService} from './strings.service';
 
-
 /** Auth guard for accounts routing. */
 @Injectable()
-export class AccountAuthGuardService
-extends BaseProvider
-implements CanActivate, CanActivateChild {
+export class AccountAuthGuardService extends BaseProvider
+	implements CanActivate, CanActivateChild {
 	/** @ignore */
-	private readonly anonymouslyAccessibleRoutes: string[]	= [
+	private readonly anonymouslyAccessibleRoutes: string[] = [
 		'404',
 		'compose',
 		'logout',
@@ -25,41 +28,47 @@ implements CanActivate, CanActivateChild {
 	];
 
 	/** @ignore */
-	private readonly pseudoAccountRoutes: string[]			= [
-		'accept'
-	];
+	private readonly pseudoAccountRoutes: string[] = ['accept'];
 
 	/** @ignore */
 	private getFullRoutePath (route: ActivatedRouteSnapshot) : string[] {
-		return route.url.map(o => o.path).concat(
-			route.children.
-				map(child => this.getFullRoutePath(child)).
-				reduce((a, b) => a.concat(b), [])
-		);
+		return route.url
+			.map(o => o.path)
+			.concat(
+				route.children
+					.map(child => this.getFullRoutePath(child))
+					.reduce((a, b) => a.concat(b), [])
+			);
 	}
 
 	/** @inheritDoc */
-	public async canActivate (route: ActivatedRouteSnapshot) : Promise<boolean> {
+	public async canActivate (
+		route: ActivatedRouteSnapshot
+	) : Promise<boolean> {
 		if (
 			beforeUnloadMessage &&
 			this.envService.isWeb &&
-			!confirm(`${beforeUnloadMessage} ${this.stringsService.continuePrompt}`)
+			!confirm(
+				`${beforeUnloadMessage} ${this.stringsService.continuePrompt}`
+			)
 		) {
 			return false;
 		}
 
 		if (
 			this.accountDatabaseService.currentUser.value !== undefined ||
-			(
-				route.url.length > 0 &&
-				this.anonymouslyAccessibleRoutes.indexOf(route.url[0].path) > -1 &&
-				!(await this.accountAuthService.hasSavedCredentials())
-			)
+			(route.url.length > 0 &&
+				this.anonymouslyAccessibleRoutes.indexOf(route.url[0].path) >
+					-1 &&
+				!(await this.accountAuthService.hasSavedCredentials()))
 		) {
 			return true;
 		}
 
-		if (route.url.length > 0 && this.pseudoAccountRoutes.indexOf(route.url[0].path) > -1) {
+		if (
+			route.url.length > 0 &&
+			this.pseudoAccountRoutes.indexOf(route.url[0].path) > -1
+		) {
 			this.accountAuthService.pseudoAccountLogin.next(true);
 		}
 
@@ -72,7 +81,9 @@ implements CanActivate, CanActivateChild {
 	}
 
 	/** @inheritDoc */
-	public async canActivateChild (route: ActivatedRouteSnapshot) : Promise<boolean> {
+	public async canActivateChild (
+		route: ActivatedRouteSnapshot
+	) : Promise<boolean> {
 		return this.canActivate(route);
 	}
 

@@ -1,6 +1,5 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 
-
 /**
  * Represents an asynchronous map.
  */
@@ -22,7 +21,10 @@ export interface IAsyncMap<K, V> {
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	lock<L> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<L>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<L>,
 		reason?: string
 	) : Promise<L>;
 
@@ -39,7 +41,10 @@ export interface IAsyncMap<K, V> {
 	size () : Promise<number>;
 
 	/** Uses a function to transform one value. Throwing aborts modification. */
-	updateItem (key: K, f: (value?: V) => Promise<V|undefined>) : Promise<void>;
+	updateItem (
+		key: K,
+		f: (value?: V) => Promise<V | undefined>
+	) : Promise<void>;
 
 	/** Uses a function to transform entire map value. Throwing aborts modification. */
 	updateValue (f: (map: Map<K, V>) => Promise<Map<K, V>>) : Promise<void>;

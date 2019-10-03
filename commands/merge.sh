@@ -13,5 +13,5 @@ git config push.default upstream
 git checkout $targetCamel 2> /dev/null || git checkout -b $targetCamel --track $target
 git pull
 git merge $source
-git commit -S -a -m merge
+git commit --no-verify -S -a -m merge
 git push

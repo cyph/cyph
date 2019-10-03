@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input
+} from '@angular/core';
 import * as $ from 'jquery';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
@@ -6,7 +11,6 @@ import {EnvService} from '../../services/env.service';
 import {SignupService} from '../../services/signup.service';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
-
 
 /**
  * Angular component for signup form.
@@ -19,10 +23,10 @@ import {sleep} from '../../util/wait';
 })
 export class SignupFormComponent extends BaseProvider {
 	/** @see emailPattern */
-	public readonly emailPattern: typeof emailPattern	= emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** Indicates whether or not to display invite-code-related UI. */
-	@Input() public invite: boolean	= false;
+	@Input() public invite: boolean = false;
 
 	/** @see SignupService.submit */
 	public async submit () : Promise<void> {
@@ -35,9 +39,9 @@ export class SignupFormComponent extends BaseProvider {
 
 		await sleep();
 
-		const $input: JQuery	= $(this.elementRef.nativeElement).
-			find('input:visible:not([disabled])')
-		;
+		const $input: JQuery = $(this.elementRef.nativeElement).find(
+			'input:visible:not([disabled])'
+		);
 
 		if ($input.length === 1) {
 			$input.trigger('focus');

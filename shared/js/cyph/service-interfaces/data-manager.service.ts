@@ -5,7 +5,6 @@ import {IProto} from '../iproto';
 import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto} from '../proto';
 
-
 /**
  * Base class for any service that manages data.
  */
@@ -25,7 +24,7 @@ export class DataManagerService extends BaseProvider {
 			return await this.getItem(url, proto);
 		}
 		catch {
-			const value	= await defaultValue();
+			const value = await defaultValue();
 			this.setItem(url, proto, value).catch(() => {});
 			return value;
 		}

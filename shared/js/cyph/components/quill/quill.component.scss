@@ -9,7 +9,8 @@
 }
 
 :host ::ng-deep {
-	.ql-toolbar, .ql-container {
+	.ql-toolbar,
+	.ql-container {
 		border: none !important;
 	}
 

@@ -10,39 +10,42 @@ import {watchTimestamp} from '../util/time';
 import {AccountFilesService} from './account-files.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
-
 /**
  * Account appointments service.
  */
 @Injectable()
 export class AccountAppointmentsService extends BaseProvider {
 	/** Time in ms when user can check in - also used as cuttoff point for end time. */
-	private readonly appointmentGracePeriod	= 600000;
+	private readonly appointmentGracePeriod = 600000;
 
 	/** Gets appointment. */
-	private readonly getAppointment			= memoize(
-		(record: IAccountFileRecord) : Observable<
-			{appointment: IAppointment; friend?: string}|undefined
-		> => this.accountFilesService.watchAppointment(record).pipe(
-			map(appointment => {
-				const currentUser	= this.accountDatabaseService.currentUser.value;
+	private readonly getAppointment = memoize(
+		(
+			record: IAccountFileRecord
+		) : Observable<
+			{appointment: IAppointment; friend?: string} | undefined
+		> =>
+			this.accountFilesService.watchAppointment(record).pipe(
+				map(appointment => {
+					const currentUser = this.accountDatabaseService.currentUser
+						.value;
 
-				if (!currentUser) {
-					return;
-				}
+					if (!currentUser) {
+						return;
+					}
 
-				const friend		= (appointment.participants || []).
-					filter(participant => participant !== currentUser.user.username)
-				[0];
+					const friend = (appointment.participants || []).filter(
+						participant => participant !== currentUser.user.username
+					)[0];
 
-				return {appointment, friend};
-			})
-		),
+					return {appointment, friend};
+				})
+			),
 		(record: IAccountFileRecord) => record.id
 	);
 
 	/** All (unfiltered) appointments. */
-	public readonly allAppointments			= this.getAppointments(
+	public readonly allAppointments = this.getAppointments(
 		this.accountFilesService.filesListFiltered.appointments
 	);
 
@@ -54,56 +57,73 @@ export class AccountAppointmentsService extends BaseProvider {
 	 * `past`: Appointments that have already occurred or passed the grace period.
 	 * `upcoming`: Next five ongoing or future appointments.
 	 */
-	public readonly appointments			= {
+	public readonly appointments = {
 		current: combineLatest([this.allAppointments, watchTimestamp()]).pipe(
-			map(([appointments, now]) => appointments.filter(({appointment}) =>
-				!appointment.occurred &&
-				(now + this.appointmentGracePeriod) >= appointment.calendarInvite.startTime &&
-				(now - this.appointmentGracePeriod) <= appointment.calendarInvite.endTime
-			))
+			map(([appointments, now]) =>
+				appointments.filter(
+					({appointment}) =>
+						!appointment.occurred &&
+						now + this.appointmentGracePeriod >=
+							appointment.calendarInvite.startTime &&
+						now - this.appointmentGracePeriod <=
+							appointment.calendarInvite.endTime
+				)
+			)
 		),
 		future: combineLatest([this.allAppointments, watchTimestamp()]).pipe(
-			map(([appointments, now]) => appointments.filter(({appointment}) =>
-				!appointment.occurred &&
-				(now + this.appointmentGracePeriod) < appointment.calendarInvite.startTime
-			))
+			map(([appointments, now]) =>
+				appointments.filter(
+					({appointment}) =>
+						!appointment.occurred &&
+						now + this.appointmentGracePeriod <
+							appointment.calendarInvite.startTime
+				)
+			)
 		),
 		incoming: this.getAppointments(
 			this.accountFilesService.incomingFilesFiltered.appointments
 		),
 		past: combineLatest([this.allAppointments, watchTimestamp()]).pipe(
-			map(([appointments, now]) => appointments.filter(({appointment}) =>
-				appointment.occurred || (
-					(now - this.appointmentGracePeriod) > appointment.calendarInvite.endTime
+			map(([appointments, now]) =>
+				appointments.filter(
+					({appointment}) =>
+						appointment.occurred ||
+						now - this.appointmentGracePeriod >
+							appointment.calendarInvite.endTime
 				)
-			))
+			)
 		),
 		upcoming: combineLatest([this.allAppointments, watchTimestamp()]).pipe(
-			map(([appointments, now]) => appointments.
-				filter(({appointment}) =>
-					!appointment.occurred &&
-					now < appointment.calendarInvite.endTime
-				).
-				sort((a, b) =>
-					a.appointment.calendarInvite.startTime -
-					b.appointment.calendarInvite.startTime
-				).
-				slice(0, 5)
+			map(([appointments, now]) =>
+				appointments
+					.filter(
+						({appointment}) =>
+							!appointment.occurred &&
+							now < appointment.calendarInvite.endTime
+					)
+					.sort(
+						(a, b) =>
+							a.appointment.calendarInvite.startTime -
+							b.appointment.calendarInvite.startTime
+					)
+					.slice(0, 5)
 			)
 		)
 	};
 
 	/** List of email contacts from all appointments. */
-	public readonly pastEmailContacts	= this.allAppointments.pipe(
+	public readonly pastEmailContacts = this.allAppointments.pipe(
 		map(appointments =>
 			Object.entries(
-				appointments.
-					map(({appointment}) => ({
-						email: (appointment.fromEmail || '').trim().toLowerCase(),
+				appointments
+					.map(({appointment}) => ({
+						email: (appointment.fromEmail || '')
+							.trim()
+							.toLowerCase(),
 						name: (appointment.fromName || '').trim()
-					})).
-					filter(({email}) => email).
-					reduce<Record<string, string>>(
+					}))
+					.filter(({email}) => email)
+					.reduce<Record<string, string>>(
 						(o, {email, name}) => ({...o, [email]: name}),
 						{}
 					)
@@ -112,22 +132,38 @@ export class AccountAppointmentsService extends BaseProvider {
 	);
 
 	/** @ignore */
-	private getAppointments (recordsList: Observable<IAccountFileRecord[]>) : Observable<{
-		appointment: IAppointment;
-		friend?: string;
-		record: IAccountFileRecord;
-	}[]> {
+	private getAppointments (
+		recordsList: Observable<IAccountFileRecord[]>
+	) : Observable<
+		{
+			appointment: IAppointment;
+			friend?: string;
+			record: IAccountFileRecord;
+		}[]
+	> {
 		return recordsList.pipe(
-			mergeMap(records => observableAll(
-				records.map(record =>
-					this.getAppointment(record).pipe(map(appointment =>
-						appointment ? {id: record.id, record, ...appointment} : undefined
-					))
-				).concat(
-					/* Workaround for it not emitting when recordsList changes */
-					of(undefined)
+			mergeMap(records =>
+				observableAll(
+					records
+						.map(record =>
+							this.getAppointment(record).pipe(
+								map(appointment =>
+									appointment ?
+										{
+											id: record.id,
+											record,
+											...appointment
+										} :
+										undefined
+								)
+							)
+						)
+						.concat(
+							/* Workaround for it not emitting when recordsList changes */
+							of(undefined)
+						)
 				)
-			)),
+			),
 			map(filterUndefined)
 		);
 	}

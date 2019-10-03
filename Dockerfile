@@ -1,9 +1,15 @@
-FROM debian:stretch
+FROM debian:buster
 
 LABEL Name="cyph"
 
 RUN apt-get -y --allow-downgrades update
-RUN apt-get -y --allow-downgrades install apt-transport-https apt-utils curl gnupg lsb-release
+RUN apt-get -y --allow-downgrades install \
+	apt-transport-https \
+	apt-utils \
+	curl \
+	gnupg \
+	lsb-release \
+	software-properties-common
 
 RUN dpkg --add-architecture i386
 RUN echo "deb https://deb.nodesource.com/node_10.x stretch main" >> /etc/apt/sources.list
@@ -20,30 +26,33 @@ RUN apt-get -y --allow-downgrades install \
 	build-essential \
 	cmake \
 	devscripts \
+	dos2unix \
 	expect \
-	gcc-6 \
+	gcc-8 \
 	g++ \
 	git \
 	golang-go \
 	haxe \
 	imagemagick \
 	inotify-tools \
-	lib32ncurses5 \
+	lib32ncurses6 \
 	lib32z1 \
 	libbz2-1.0:i386 \
 	libgconf-2-4 \
 	libsodium-dev \
 	libstdc++6:i386 \
 	libtool \
+	libxss1 \
 	mono-complete \
 	nano \
 	nodejs \
-	openjdk-8-jdk \
+	openjdk-11-jdk \
 	perl \
 	pinentry-curses \
 	procps \
 	python \
 	python-pip \
+	ripgrep \
 	ruby \
 	ruby-dev \
 	shellcheck \
@@ -60,8 +69,6 @@ RUN apt-get -y --allow-downgrades autoremove
 RUN pip install grpcio
 
 RUN echo '\
-	source /home/gibson/emsdk-portable/emsdk_env.sh &> /dev/null; \
-\
 	export GIT_EDITOR="vim"; \
 	export GOPATH="/home/gibson/go"; \
 	export ANDROID_HOME="/home/gibson/androidsdk"; \
@@ -99,11 +106,9 @@ USER gibson
 ENV HOME /home/gibson
 
 
+RUN git clone https://github.com/emscripten-core/emsdk.git ~/emsdk
 RUN wget \
-	https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz \
-	-O ~/emsdk.tar.gz
-RUN wget \
-	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-150.0.0-linux-x86_64.tar.gz \
+	https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-250.0.0-linux-x86_64.tar.gz \
 	-O ~/gcloud-sdk.tar.gz
 RUN ls ~/*.tar.gz | xargs -I% tar xvzf % -C ~
 RUN rm ~/*.tar.gz
@@ -152,13 +157,12 @@ RUN rm -rf ~/.gnupg
 
 VOLUME /cyph
 VOLUME /home/gibson/.cyph
-VOLUME /home/gibson/.gitconfig
 VOLUME /home/gibson/.gnupg.original
 VOLUME /home/gibson/.ssh
 
 WORKDIR /cyph/commands
 
-EXPOSE 9005 9876 31337 42000 42001 42002 44000
+EXPOSE 9005 9876 31337 42000 42001 42002 42003 44000
 
 
 CMD /bin/bash

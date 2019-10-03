@@ -5,23 +5,23 @@ import {ISessionService} from '../service-interfaces/isession.service';
 import {resolvable} from '../util/wait';
 import {SessionInitService} from './session-init.service';
 
-
 /**
  * SessionInitService implementation for accounts.
  */
 @Injectable()
-export class AccountSessionInitService extends BaseProvider implements SessionInitService {
+export class AccountSessionInitService extends BaseProvider
+	implements SessionInitService {
 	/** @inheritDoc */
-	public callType?: 'audio'|'video';
+	public callType?: 'audio' | 'video';
 
 	/** @inheritDoc */
-	public ephemeral: boolean			= false;
+	public ephemeral: boolean = false;
 
 	/** @inheritDoc */
-	public readonly id: string			= '';
+	public readonly id: string = '';
 
 	/** @inheritDoc */
-	public readonly sessionService: IResolvable<ISessionService>	= resolvable();
+	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** @inheritDoc */
 	public spawn () : AccountSessionInitService {

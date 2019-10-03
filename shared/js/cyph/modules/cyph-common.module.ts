@@ -30,11 +30,11 @@ import {AnalyticsService} from '../services/analytics.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
 import {NotificationService} from '../services/notification.service';
+import {ScreenshotService} from '../services/screenshot.service';
 import {SignupService} from '../services/signup.service';
 import {VirtualKeyboardWatcherService} from '../services/virtual-keyboard-watcher.service';
 import {WindowWatcherService} from '../services/window-watcher.service';
 import {CyphWebModule} from './cyph-web.module';
-
 
 /**
  * Common module with shared imports for all projects.
@@ -117,15 +117,13 @@ import {CyphWebModule} from './cyph-web.module';
 		SignupFormComponent,
 		TranslateDirective
 	],
-	imports: [
-		CommonModule,
-		CyphWebModule
-	],
+	imports: [CommonModule, CyphWebModule],
 	providers: [
 		AnalyticsService,
 		ErrorService,
 		FileService,
 		NotificationService,
+		ScreenshotService,
 		SignupService,
 		Title,
 		VirtualKeyboardWatcherService,

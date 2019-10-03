@@ -57,6 +57,10 @@ pass () {
 	exit 0
 }
 
+sha () {
+	shasum -a 512 "${@}" | awk '{print $1}'
+}
+
 unbindmount () {
 	if [ ! "${CIRCLECI}" ] ; then
 		sudo umount "${1}"
@@ -74,6 +78,7 @@ export -f log
 export -f ng
 export -f notify
 export -f pass
+export -f sha
 export -f unbindmount
 
 
@@ -83,6 +88,12 @@ if [ -f ~/.cyph/notify.key ] && [ -f /node_modules/.bin/notify ] ; then
 	rm ~/.notifyreg 2> /dev/null
 	/node_modules/.bin/notify -r "$(cat ~/.cyph/notify.key)" > /dev/null
 fi
+
+
+# Setup for documentation generation
+cp -f /cyph/LICENSE /cyph/README.md /cyph/cyph.app/
+echo -e '\n---\n' >> /cyph/cyph.app/README.md
+cat /cyph/PATENTS >> /cyph/cyph.app/README.md
 
 
 # Workaround for localhost not working in CircleCI

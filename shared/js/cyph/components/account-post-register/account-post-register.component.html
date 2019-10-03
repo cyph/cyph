@@ -1,38 +1,46 @@
-<div fxFlexFill fxLayoutAlign='center center'>
-	<div fxFlex fxFlex.gt-sm='50' fxLayout='column' fxLayoutGap='16px'>
+<div fxFlexFill fxLayoutAlign="center center">
+	<div fxFlex fxFlex.gt-sm="50" fxLayout="column" fxLayoutGap="16px">
 		<p>
 			<span cyphTranslate>
-				We've received your information, and your public key is now queued up to be
-				cryptographically signed by one of the Cyph founders using their personal
+				We've received your information, and your public key is now
+				queued up to be cryptographically signed by one of the Cyph
+				founders using their personal
 			</span>
 			&ngsp;
 			<a
-				[href]='envService.homeUrl + "agse"'
+				[href]="
+					envService.homeUrl +
+					'agse' +
+					(envService.isCordova ? '?hideHeaderAndFooter=true' : '')
+				"
 				cyphTranslate
-			>Air Gapped Signing Environment</a>
+				>Air Gapped Signing Environment</a
+			>
 			&ngsp;
 			<span cyphTranslate>
-				&mdash; a custom-designed hardware device that ensures the security of
+				&mdash; a custom-designed hardware device that ensures the
+				security of
 			</span>
 			&ngsp;
-			<span>{{stringsService.product}}</span>
+			<span>{{ stringsService.product }}</span>
 			&ngsp;
 			<span cyphTranslate>
 				for as long as it remains physically secure.
 			</span>
 		</p>
 		<p cyphTranslate>
-			You will receive an email as soon as your account is activated and ready for
-			use. (If you didn't give us your email address, then just check back in a
-			couple days.)
+			You will receive an email as soon as your account is activated and
+			ready for use. (If you didn't give us your email address, then just
+			check back in a couple days.)
 		</p>
 		<p>
 			<strong cyphTranslate>
-				In the meantime, you can still log in and enjoy somewhat restricted access.
+				In the meantime, you can still log in and enjoy somewhat
+				restricted access.
 			</strong>
 			<span cyphTranslate>Thank you for joining</span>
 			&ngsp;
-			<span>{{stringsService.product}}!</span>
+			<span>{{ stringsService.product }}!</span>
 		</p>
 	</div>
 </div>

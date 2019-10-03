@@ -1,4 +1,4 @@
 /* tslint:disable */
 
 /** Placeholder for main.aot.ts. */
-export const AppModuleNgFactory: any	= undefined;
+export const AppModuleNgFactory: any = undefined;

@@ -3,7 +3,6 @@ import {IAsyncValue} from '../iasync-value';
 import {IProto} from '../iproto';
 import {IChannelHandlers} from '../session';
 
-
 /**
  * Bidirectional network connection that sends and receives data.
  */
@@ -26,14 +25,17 @@ export interface IChannelService {
 	 * @param userID If specified, will treat as long-lived channel. Else, will treat as ephemeral.
 	 */
 	init (
-		channelID: string|undefined,
-		userID: string|undefined,
+		channelID: string | undefined,
+		userID: string | undefined,
 		handlers: IChannelHandlers
 	) : Promise<void>;
 
 	/** @see DatabaseService.lock */
 	lock<T> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<T>,
 		reason?: string
 	) : Promise<T>;
 

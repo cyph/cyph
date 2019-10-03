@@ -12,7 +12,6 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for PIN input UI.
  */
@@ -29,66 +28,69 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./pin-input.component.scss'],
 	templateUrl: './pin-input.component.html'
 })
-export class PinInputComponent extends BaseProvider implements ControlValueAccessor, OnInit {
+export class PinInputComponent extends BaseProvider
+	implements ControlValueAccessor, OnInit {
 	/** Change event callback. */
 	private onChange?: (s: string) => void;
 
 	/** Indicates whether input should autofocus. */
-	@Input() public autofocus: boolean				= false;
+	@Input() public autofocus: boolean = false;
 
 	/** Hide PIN. */
-	@Input() public hide							= new BehaviorSubject<boolean>(true);
+	@Input() public hide = new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether input is disabled. */
-	public readonly isDisabled						= new BehaviorSubject<boolean>(false);
+	public readonly isDisabled = new BehaviorSubject<boolean>(false);
 
 	/** Input. */
 	@ViewChild('pinInput', {static: false}) public pinInput?: ElementRef;
 
 	/** Form name. */
-	@Input() public name: string					= '';
+	@Input() public name: string = '';
 
 	/** Touch event callback. */
 	public onTouched?: () => void;
 
 	/** Removes extraneous characters from value. */
-	public readonly processValue					= memoize((value?: string) =>
+	public readonly processValue = memoize((value?: string) =>
 		value ? value.replace(/[^\d]/g, '').slice(0, 4) : ''
 	);
 
 	/** Indicates whether input is required. */
-	@Input() public required: boolean				= false;
+	@Input() public required: boolean = false;
 
 	/** PIN value. */
-	public readonly value: BehaviorSubject<string>	= new BehaviorSubject('');
+	public readonly value: BehaviorSubject<string> = new BehaviorSubject('');
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.subscriptions.push(this.value.subscribe(s => {
-			s	= (s || '').trim();
+		this.subscriptions.push(
+			this.value.subscribe(s => {
+				s = (s || '').trim();
 
-			if (this.onChange) {
-				this.onChange(s);
-			}
+				if (this.onChange) {
+					this.onChange(s);
+				}
 
-			if (!(this.pinInput && this.pinInput.nativeElement)) {
-				return;
-			}
+				if (!(this.pinInput && this.pinInput.nativeElement)) {
+					return;
+				}
 
-			const input	= <HTMLInputElement> this.pinInput.nativeElement;
-			input.value	= '';
-			input.value	= s;
-		}));
+				const input = <HTMLInputElement> this.pinInput.nativeElement;
+				input.value = '';
+				input.value = s;
+			})
+		);
 	}
 
 	/** @inheritDoc */
 	public registerOnChange (f: (s: string) => void) : void {
-		this.onChange	= f;
+		this.onChange = f;
 	}
 
 	/** @inheritDoc */
 	public registerOnTouched (f: () => void) : void {
-		this.onTouched	= f;
+		this.onTouched = f;
 	}
 
 	/** @inheritDoc */

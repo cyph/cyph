@@ -7,7 +7,6 @@ import {ISecretBox} from './isecret-box';
 import {ISign} from './isign';
 import {PotassiumUtil} from './potassium-util';
 
-
 /**
  * libsodium-inspired wrapper for the post-quantum primitives used by Cyph.
  * Outside of this class, libsodium and other cryptographic implementations

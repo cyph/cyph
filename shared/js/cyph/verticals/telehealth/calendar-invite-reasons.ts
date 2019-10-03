@@ -1,8 +1,7 @@
 import {translate} from '../../util/translate';
 
-
 /** @see CalendarInviteComponent.reasons */
-export const calendarInviteReasons	= [
+export const calendarInviteReasons = [
 	'Annual Physical',
 	'Illness',
 	'Consultation',

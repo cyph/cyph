@@ -17,14 +17,13 @@ import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
-
 /**
  * Angular service for account P2P.
  */
 @Injectable()
 export class AccountP2PService extends P2PService {
 	/** @ignore */
-	protected async request (callType: 'audio'|'video') : Promise<void> {
+	protected async request (callType: 'audio' | 'video') : Promise<void> {
 		if (!this.accountSessionService.remoteUser.value) {
 			return;
 		}
@@ -45,7 +44,10 @@ export class AccountP2PService extends P2PService {
 	}
 
 	/** Initiates call. */
-	public async beginCall (callType: 'audio'|'video', route: string = callType) : Promise<void> {
+	public async beginCall (
+		callType: 'audio' | 'video',
+		route: string = callType
+	) : Promise<void> {
 		if (
 			!this.accountSessionService.remoteUser.value ||
 			this.accountSessionService.remoteUser.value.anonymous
@@ -53,25 +55,36 @@ export class AccountP2PService extends P2PService {
 			return;
 		}
 
-		const id		= uuid();
-		const username	= this.accountSessionService.remoteUser.value.username;
+		const id = uuid();
+		const username = this.accountSessionService.remoteUser.value.username;
 
 		await Promise.all([
 			getTimestamp().then(async timestamp =>
 				this.accountDatabaseService.notify(
 					username,
 					NotificationTypes.Call,
-					{callType, expires: timestamp + this.notificationService.ringTimeout, id}
+					{
+						callType,
+						expires:
+							timestamp + this.notificationService.ringTimeout,
+						id
+					}
 				)
 			),
-			this.accountSessionService.remoteUser.value.contactID.then(async contactID =>
-				this.router.navigate([route, contactID, id], {replaceUrl: true})
+			this.accountSessionService.remoteUser.value.contactID.then(
+				async contactID =>
+					this.router.navigate([route, contactID, id], {
+						replaceUrl: true
+					})
 			)
 		]);
 	}
 
 	/** @inheritDoc */
-	public async init (localVideo: () => JQuery, remoteVideo: () => JQuery) : Promise<void> {
+	public async init (
+		localVideo: () => JQuery,
+		remoteVideo: () => JQuery
+	) : Promise<void> {
 		await super.init(localVideo, remoteVideo);
 
 		if (this.accountSessionService.group) {

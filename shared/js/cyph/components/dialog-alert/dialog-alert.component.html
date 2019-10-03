@@ -1,14 +1,14 @@
-<h1 matDialogTitle>{{title}}</h1>
+<h1 matDialogTitle>{{ title }}</h1>
 <div mat-dialog-content>
 	<cyph-markdown
-		[markdown]='content'
-		[targetSelf]='true'
-		*ngIf='markdown; else text'
+		[markdown]="content"
+		[targetSelf]="true"
+		*ngIf="markdown; else text"
 	></cyph-markdown>
 	<ng-template #text>
-		{{content}}
+		{{ content }}
 	</ng-template>
 </div>
-<div mat-dialog-actions fxLayoutAlign='end center'>
-	<button mat-button matDialogClose>{{ok}}</button>
+<div mat-dialog-actions fxLayoutAlign="end center">
+	<button mat-button matDialogClose>{{ ok }}</button>
 </div>

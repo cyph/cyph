@@ -1,7 +1,6 @@
 import {Observable} from 'rxjs';
 import {IChatMessagePredecessor, IChatMessageValue} from '../proto';
 
-
 /**
  * Data needed to add a new chat message.
  */
@@ -34,5 +33,5 @@ export interface IChatMessageInput {
 	timestamp?: number;
 
 	/** @see IChatMessageValue */
-	value?: IChatMessageValue|string;
+	value?: IChatMessageValue | string;
 }

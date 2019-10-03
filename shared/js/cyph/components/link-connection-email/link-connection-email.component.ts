@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	OnDestroy,
+	OnInit
+} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {BehaviorSubject} from 'rxjs';
@@ -9,7 +14,6 @@ import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for link connection email dialog.
  */
@@ -19,53 +23,58 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./link-connection-email.component.scss'],
 	templateUrl: './link-connection-email.component.html'
 })
-export class LinkConnectionEmailComponent extends BaseProvider implements OnDestroy, OnInit {
+export class LinkConnectionEmailComponent extends BaseProvider
+	implements OnDestroy, OnInit {
 	/** @see emailPattern */
-	public readonly emailPattern		= emailPattern;
+	public readonly emailPattern = emailPattern;
 
 	/** Cyph link. */
-	public link: string					= '';
+	public link: string = '';
 
 	/** Mailto link. */
-	public readonly linkMailto			= new BehaviorSubject<SafeUrl|undefined>(undefined);
+	public readonly linkMailto = new BehaviorSubject<SafeUrl | undefined>(
+		undefined
+	);
 
 	/** Mailto link. */
-	public readonly linkTarget: string	= this.envService.isMobileOS ? '_self' : '_blank';
+	public readonly linkTarget: string = this.envService.isMobileOS ?
+		'_self' :
+		'_blank';
 
 	/** Indicates whether subject and text should be saved to local storage. */
-	public saveToLocalStorage: boolean	= true;
+	public saveToLocalStorage: boolean = true;
 
 	/** Email subject. */
-	public subject: string				=
-		this.envService.isTelehealth ?
-			this.stringsService.linkEmailSubjectTelehealth :
-			this.stringsService.linkEmailSubject
-	;
+	public subject: string = this.envService.isTelehealth ?
+		this.stringsService.linkEmailSubjectTelehealth :
+		this.stringsService.linkEmailSubject;
 
 	/** Email text. */
-	public text: string					=
-		this.envService.isTelehealth ?
-			this.stringsService.linkEmailTextTelehealth :
-			this.stringsService.linkEmailText
-	;
+	public text: string = this.envService.isTelehealth ?
+		this.stringsService.linkEmailTextTelehealth :
+		this.stringsService.linkEmailText;
 
 	/** Email recipient. */
-	public to: string					= '';
+	public to: string = '';
 
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
 		if (this.saveToLocalStorage) {
-			await this.localStorageService.setItem('linkEmail', LinkConnectionEmail, {
-				subject: this.subject,
-				text: this.text
-			});
+			await this.localStorageService.setItem(
+				'linkEmail',
+				LinkConnectionEmail,
+				{
+					subject: this.subject,
+					text: this.text
+				}
+			);
 		}
 
 		this.linkMailto.next(undefined);
 
-		this.subject	= '';
-		this.text		= '';
-		this.to			= '';
+		this.subject = '';
+		this.text = '';
+		this.to = '';
 	}
 
 	/** @inheritDoc */
@@ -73,17 +82,17 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 		this.update();
 
 		try {
-			const o	= await this.localStorageService.getItem(
+			const o = await this.localStorageService.getItem(
 				'linkEmail',
 				LinkConnectionEmail
 			);
 
 			if (o.subject) {
-				this.subject	= o.subject;
+				this.subject = o.subject;
 			}
 
 			if (o.text) {
-				this.text		= o.text;
+				this.text = o.text;
 			}
 
 			this.update();
@@ -93,14 +102,16 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 
 	/** Updates mailto link. */
 	public update () : void {
-		this.linkMailto.next(this.domSanitizer.bypassSecurityTrustUrl(
-			/* tslint:disable-next-line:tab-equals */
-			`mailto:${this.to}?subject=${
-				encodeURIComponent(this.subject)
-			}&body=${
-				encodeURIComponent(this.text.replace(/\${LINK}/g, this.link))
-			}`
-		));
+		this.linkMailto.next(
+			this.domSanitizer.bypassSecurityTrustUrl(
+				/* tslint:disable-next-line:tab-equals */
+				`mailto:${this.to}?subject=${encodeURIComponent(
+					this.subject
+				)}&body=${encodeURIComponent(
+					this.text.replace(/\${LINK}/g, this.link)
+				)}`
+			)
+		);
 	}
 
 	constructor (
@@ -108,7 +119,9 @@ export class LinkConnectionEmailComponent extends BaseProvider implements OnDest
 		private readonly domSanitizer: DomSanitizer,
 
 		/** Dialog instance. */
-		public readonly matDialogRef: MatDialogRef<LinkConnectionEmailComponent>,
+		public readonly matDialogRef: MatDialogRef<
+			LinkConnectionEmailComponent
+		>,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

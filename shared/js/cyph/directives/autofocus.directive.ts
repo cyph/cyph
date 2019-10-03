@@ -1,9 +1,15 @@
-import {Directive, ElementRef, Input, OnChanges, OnInit, Renderer2} from '@angular/core';
+import {
+	Directive,
+	ElementRef,
+	Input,
+	OnChanges,
+	OnInit,
+	Renderer2
+} from '@angular/core';
 import * as $ from 'jquery';
 import {BaseProvider} from '../base-provider';
 import {EnvService} from '../services/env.service';
 import {sleep, waitForIterable} from '../util/wait';
-
 
 /**
  * Automatically focuses elements.
@@ -11,26 +17,29 @@ import {sleep, waitForIterable} from '../util/wait';
 @Directive({
 	selector: '[cyphAutofocus]'
 })
-export class AutofocusDirective extends BaseProvider implements OnChanges, OnInit {
+export class AutofocusDirective extends BaseProvider
+	implements OnChanges, OnInit {
 	/** @ignore */
-	private static readonly loadComplete: Promise<void>	=
-		waitForIterable(() => $('body.load-complete')).catch(() => {}).then(async () => sleep(750))
-	;
+	private static readonly loadComplete: Promise<void> = waitForIterable(() =>
+		$('body.load-complete')
+	)
+		.catch(() => {})
+		.then(async () => sleep(750));
 
 	/** @ignore */
-	private static readonly loading: Promise<void>	= Promise.all([
+	private static readonly loading: Promise<void> = Promise.all([
 		AutofocusDirective.loadComplete,
 		new Promise<void>(resolve => {
-			$(document.body).one('mousedown', () => { resolve(); });
+			$(document.body).one('mousedown', () => {
+				resolve();
+			});
 		})
-	]).then(async () =>
-		sleep(750)
-	).catch(
-		() => {}
-	);
+	])
+		.then(async () => sleep(750))
+		.catch(() => {});
 
 	/** Indicates whether directive should be active. */
-	@Input() public cyphAutofocusEnabled: boolean	= true;
+	@Input() public cyphAutofocusEnabled: boolean = true;
 
 	/** @ignore */
 	private async init () : Promise<void> {
@@ -38,16 +47,20 @@ export class AutofocusDirective extends BaseProvider implements OnChanges, OnIni
 			return;
 		}
 
-		if (this.envService.isCordova) {
+		if (this.envService.isCordovaMobile) {
 			await AutofocusDirective.loadComplete;
 		}
 		else if (this.envService.isMobileOS) {
 			await AutofocusDirective.loading;
 		}
 
-		this.renderer.setAttribute(this.elementRef.nativeElement, 'autofocus', '');
+		this.renderer.setAttribute(
+			this.elementRef.nativeElement,
+			'autofocus',
+			''
+		);
 
-		const $elem	= $(<HTMLElement> this.elementRef.nativeElement);
+		const $elem = $(<HTMLElement> this.elementRef.nativeElement);
 		await waitForIterable(() => $elem.filter(':visible'));
 		$elem.trigger('focus');
 	}

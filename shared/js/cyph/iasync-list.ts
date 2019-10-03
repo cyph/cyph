@@ -1,7 +1,6 @@
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {MaybePromise} from './maybe-promise-type';
 
-
 /**
  * Represents an asynchronous list/array value.
  */
@@ -17,7 +16,10 @@ export interface IAsyncList<T> {
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	lock<L> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<L>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<L>,
 		reason?: string
 	) : Promise<L>;
 
@@ -40,7 +42,9 @@ export interface IAsyncList<T> {
 	watch () : Observable<T[]>;
 
 	/** Subscribes to flattened value. */
-	watchFlat (omitDuplicates?: boolean) : Observable<T extends any[] ? T : T[]>;
+	watchFlat (
+		omitDuplicates?: boolean
+	) : Observable<T extends any[] ? T : T[]>;
 
 	/** Subscribes to pushed values. */
 	watchPushes () : Observable<T>;

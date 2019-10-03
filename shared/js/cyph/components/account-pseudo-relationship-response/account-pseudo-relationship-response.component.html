@@ -1,8 +1,11 @@
-<div fxFlexFill fxLayoutAlign='center center'>
-	<h2 cyphTranslate *ngIf='rejected | async; else spinner'>
+<div fxFlexFill fxLayoutAlign="center center">
+	<h2 cyphTranslate *ngIf="rejected | async; else spinner">
 		Request rejected.
 	</h2>
 	<ng-template #spinner>
-		<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+		<mat-progress-spinner
+			class="global"
+			mode="indeterminate"
+		></mat-progress-spinner>
 	</ng-template>
 </div>

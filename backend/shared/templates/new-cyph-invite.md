@@ -1,8 +1,13 @@
 Hello{{#name}} {{name}}{{/name}},
 
+{{^fromApp}}
 {{#inviterName}}{{inviterName}} has invited you to join Cyph!{{/inviterName}}
 {{^inviterName}}Your Cyph invite has arrived!{{/inviterName}}
 [**Click here to set up your Cyph beta account.**]({{accountsURL}}register/{{inviteCode}})
+{{/fromApp}}
+{{#fromApp}}
+Congratulations on securing your Cyph account invite!
+{{/fromApp}}
 
 ---
 
@@ -77,7 +82,7 @@ as you'd like
 Twitter's
 
 * **Lifetime priority support:** Email us any time at founders@cyph.com — or just add
-[@ryan](https://cyph.me/ryan) and [@josh](https://cyph.me/josh) on Cyph :)
+@ryan and @josh on Cyph :)
 {{/platinumFeatures}}
 
 ---

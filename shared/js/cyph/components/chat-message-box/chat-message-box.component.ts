@@ -24,7 +24,6 @@ import {VirtualKeyboardWatcherService} from '../../services/virtual-keyboard-wat
 import {lockTryOnce} from '../../util/lock';
 import {sleep, waitForIterable} from '../../util/wait';
 
-
 /**
  * Angular component for chat message box.
  */
@@ -35,23 +34,25 @@ import {sleep, waitForIterable} from '../../util/wait';
 	styleUrls: ['./chat-message-box.component.scss'],
 	templateUrl: './chat-message-box.component.html'
 })
-export class ChatMessageBoxComponent extends BaseProvider implements AfterViewInit {
+export class ChatMessageBoxComponent extends BaseProvider
+	implements AfterViewInit {
 	/** @ignore */
-	private readonly $textarea: Promise<JQuery>	= waitForIterable(
-		() => $(this.elementRef.nativeElement).find('.text-message-box textarea:not(.fake)')
+	private readonly $textarea: Promise<JQuery> = waitForIterable(() =>
+		$(this.elementRef.nativeElement).find(
+			'.text-message-box textarea:not(.fake)'
+		)
 	);
 
 	/** @ignore */
-	private readonly mobileButtonLock: {}		= {};
+	private readonly mobileButtonLock: {} = {};
 
 	/** Default sendFunction value. */
-	private readonly defaultSendFunction: () => Promise<void>	= async () => {
+	private readonly defaultSendFunction: () => Promise<void> = async () => {
 		await this.chatService.send(this.messageType);
-	/* tslint:disable-next-line:semicolon */
 	};
 
 	/** If true, autofocuses. */
-	@Input() public autofocus: boolean	= true;
+	@Input() public autofocus: boolean = true;
 
 	/** @see CalendarInviteComponent.followUp */
 	@Input() public calendarInviteFollowUp?: boolean;
@@ -60,9 +61,7 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 	@Input() public calendarInviteReasons?: string[];
 
 	/** @see ChatMessageValue.Types */
-	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
-		ChatMessageValue.Types
-	;
+	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
 	/** Custom send function. */
 	@Input() public customSendFunction?: () => Promise<void>;
@@ -71,16 +70,17 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 	@Input() public fileAccept?: string;
 
 	/** If true, viewProviders is set to use existing NgForm as ControlContainer. */
-	public readonly inheritsNgForm: boolean	= false;
+	public readonly inheritsNgForm: boolean = false;
 
 	/** Indicates whether speed dial is open. */
-	public readonly isSpeedDialOpen			= new BehaviorSubject<boolean>(false);
+	public readonly isSpeedDialOpen = new BehaviorSubject<boolean>(false);
 
 	/** Indicates which version of the UI should be displayed. */
-	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
+	@Input() public messageType: ChatMessageValue.Types =
+		ChatMessageValue.Types.Text;
 
 	/** Wrappers for mobile button handlers. */
-	public readonly mobileButtonHandlers	= {
+	public readonly mobileButtonHandlers = {
 		fileTransfer: (file: IFile) => {
 			this.mobileButtonWrapper(false, () => {
 				this.fileTransferService.send(file);
@@ -105,19 +105,22 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 	};
 
 	/** If false, hides send button. */
-	@Input() public showSendButton: boolean		= true;
+	@Input() public showSendButton: boolean = true;
 
 	/** If false, hides unread message indicator. */
-	@Input() public showUnreadCount: boolean	= true;
+	@Input() public showUnreadCount: boolean = true;
 
 	/** @see States */
-	public readonly states: typeof States	= States;
+	public readonly states = States;
 
 	/** @ignore */
 	private mobileButtonWrapper (leaveFocused: boolean, f: () => void) : void {
 		lockTryOnce(this.mobileButtonLock, async () => {
 			f();
-			if (leaveFocused && this.virtualKeyboardWatcherService.isOpen.value) {
+			if (
+				leaveFocused &&
+				this.virtualKeyboardWatcherService.isOpen.value
+			) {
 				(await this.$textarea).trigger('focus');
 			}
 			await sleep(500);
@@ -133,13 +136,16 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 		/* Allow enter press to submit, except on mobile without external keyboard */
 
-		const $textarea		= await this.$textarea;
-		const $textareaFake	= $textarea.siblings('.fake').eq(0);
+		const $textarea = await this.$textarea;
+		const $textareaFake = $textarea.siblings('.fake').eq(0);
 
-		const resizeTextArea	= () => {
+		const resizeTextArea = () => {
 			$textareaFake.val($textarea.val() || '');
 			$textareaFake.width($textarea.width() || 0);
-			$textarea.css('height', `${$textareaFake[0].scrollHeight.toString()}px`);
+			$textarea.css(
+				'height',
+				`${$textareaFake[0].scrollHeight.toString()}px`
+			);
 			$textareaFake.val('');
 		};
 
@@ -149,7 +155,8 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 		$textarea.on('keypress', e => {
 			if (
-				(this.envService.isMobileOS && this.virtualKeyboardWatcherService.isOpen.value) ||
+				(this.envService.isMobileOS &&
+					this.virtualKeyboardWatcherService.isOpen.value) ||
 				e.key !== 'Enter' ||
 				e.shiftKey
 			) {
@@ -182,7 +189,9 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 	/** Scrolls down and focuses message box. */
 	public async scrollDown () : Promise<void> {
-		const focus	= !this.envService.isMobileOS || this.virtualKeyboardWatcherService.isOpen.value;
+		const focus =
+			!this.envService.isMobileOS ||
+			this.virtualKeyboardWatcherService.isOpen.value;
 
 		await this.scrollService.scrollDown();
 
@@ -193,7 +202,9 @@ export class ChatMessageBoxComponent extends BaseProvider implements AfterViewIn
 
 	/** Sends current message. */
 	public async send () : Promise<void> {
-		await (this.customSendFunction ? this.customSendFunction : this.defaultSendFunction)();
+		await (this.customSendFunction ?
+			this.customSendFunction :
+			this.defaultSendFunction)();
 	}
 
 	constructor (

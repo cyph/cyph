@@ -1,13 +1,12 @@
 import {importHelper} from './import-helper';
 
-
 /** Equivalent to sodium.crypto_onetimeauth. */
 export class OneTimeAuth {
 	/** Algorithm details. */
 	public readonly algorithm: {
 		hash: {name: string};
 		name: string;
-	}	= {
+	} = {
 		hash: {
 			name: 'SHA-512'
 		},
@@ -15,10 +14,10 @@ export class OneTimeAuth {
 	};
 
 	/** MAC length. */
-	public readonly bytes: number		= 64;
+	public readonly bytes: number = 64;
 
 	/** Key length. */
-	public readonly keyBytes: number	= 64;
+	public readonly keyBytes: number = 64;
 
 	/** Signs message. */
 	public async sign (
@@ -28,11 +27,7 @@ export class OneTimeAuth {
 		return new Uint8Array(
 			await crypto.subtle.sign(
 				this.algorithm,
-				await importHelper.importRawKey(
-					key,
-					this.algorithm,
-					'sign'
-				),
+				await importHelper.importRawKey(key, this.algorithm, 'sign'),
 				message
 			)
 		);
@@ -46,11 +41,7 @@ export class OneTimeAuth {
 	) : Promise<boolean> {
 		return crypto.subtle.verify(
 			this.algorithm,
-			await importHelper.importRawKey(
-				key,
-				this.algorithm,
-				'verify'
-			),
+			await importHelper.importRawKey(key, this.algorithm, 'verify'),
 			mac,
 			message
 		);
@@ -60,4 +51,4 @@ export class OneTimeAuth {
 }
 
 /** @see OneTimeAuth */
-export const oneTimeAuth	= new OneTimeAuth();
+export const oneTimeAuth = new OneTimeAuth();

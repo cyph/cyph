@@ -9,7 +9,6 @@ import {PotassiumUtil} from './potassium-util';
 import {SecretBox} from './secret-box';
 import {Sign} from './sign';
 
-
 /**
  * @inheritDoc
  */
@@ -54,13 +53,17 @@ export class Potassium extends PotassiumUtil implements IPotassium {
 	) {
 		super();
 
-		this.hash					= new Hash(this.isNative);
-		this.oneTimeAuth			= new OneTimeAuth(this.isNative);
-		this.sign					= new Sign();
+		this.hash = new Hash(this.isNative);
+		this.oneTimeAuth = new OneTimeAuth(this.isNative);
+		this.sign = new Sign();
 
-		this.secretBox				= new SecretBox(this.isNative, this.hash);
-		this.box					= new Box(this.isNative, this.oneTimeAuth, this.secretBox);
-		this.ephemeralKeyExchange	= new EphemeralKeyExchange(this.hash);
-		this.passwordHash			= new PasswordHash(this.isNative, this.hash, this.secretBox);
+		this.secretBox = new SecretBox(this.isNative, this.hash);
+		this.box = new Box(this.isNative, this.oneTimeAuth, this.secretBox);
+		this.ephemeralKeyExchange = new EphemeralKeyExchange(this.hash);
+		this.passwordHash = new PasswordHash(
+			this.isNative,
+			this.hash,
+			this.secretBox
+		);
 	}
 }

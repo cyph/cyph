@@ -4,6 +4,11 @@
 cd $(cd "$(dirname "$0")" ; pwd)/..
 
 
+parallelProcesses=4
+if [ "${CIRCLECI}" ] ; then
+	parallelProcesses=2
+fi
+
 prodTest=''
 if [ "${1}" == '--prod-test' ] ; then
 	prodTest=true
@@ -22,6 +27,14 @@ if [ "${1}" == '--test' ] ; then
 	shift
 fi
 
+
+getmodulename () {
+	echo "${1}" | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g'
+}
+
+mkparentdir () {
+	mkdir -p "$(echo "${1}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
+}
 
 uglify () {
 	if [ "${test}" ] ; then
@@ -49,7 +62,7 @@ find shared/js -type f -name '*.js' -not -path 'shared/js/proto/*' -exec rm {} \
 
 
 nodeModulesAssets="$(
-	grep -roP "importScripts\('/assets/node_modules/.*?\.js'\)" shared/js |
+	grep -roP "'/assets/node_modules/.*?\.js'" shared/js |
 		perl -pe "s/^.*?'\/assets\/node_modules\/(.*?)\.js'.*/\1/g" |
 		sort |
 		uniq
@@ -78,8 +91,8 @@ typescriptAssets="$(
 scssAssets="$(
 	{
 		echo app;
-		grep -oP "href='/assets/css/.*?\.css'" */src/index.html |
-			perl -pe "s/^.*?'\/assets\/css\/(.*?)\.css'.*/\1/g" \
+		grep -oP 'href="/assets/css/.*?\.css"' */src/index.html |
+			perl -pe 's/^.*?"\/assets\/css\/(.*?)\.css".*/\1/g' \
 		;
 	} |
 		sort |
@@ -99,8 +112,7 @@ hash="${serviceWorker}${test}$(
 		\)) \
 		$(find shared/css -type f -name '*.scss') \
 	|
-		shasum -a 512 |
-		awk '{print $1}'
+		sha
 )"
 
 
@@ -119,12 +131,17 @@ mkdir node_modules js css
 if [ "${serviceWorker}" ] || [ "${test}" ] ; then
 	node -e 'fs.writeFileSync(
 		"serviceworker.js",
+		fs.readFileSync("../../websign/lib/localforage.js").toString() +
+		"\n" +
 		fs.readFileSync("../../websign/serviceworker.js").toString().replace(
 			"/* Redirect non-whitelisted paths in this origin */",
 			"if (url.indexOf(\".\") > -1) { urls[url] = true; }"
 		).replace(
 			/\n\treturn e\.respondWith/,
 			"\n\treturn; e.respondWith"
+		).replace(
+			/\/img\//,
+			"/assets/img/"
 		)
 	)'
 fi
@@ -132,39 +149,43 @@ fi
 
 cd node_modules
 
+export test
+export -f uglify
 for f in ${nodeModulesAssets} ; do
-	mkdir -p "$(echo "${f}" | perl -pe 's/(.*)\/[^\/]+$/\1/')" 2> /dev/null
-
+	mkparentdir "${f}"
+done
+echo ${nodeModulesAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash -c '
+	f="%"
 	path="/node_modules/${f}.js"
 	if [ ! "${test}" ] && [ -f "/node_modules/${f}.min.js" ] ; then
 		path="/node_modules/${f}.min.js"
 	fi
 
 	uglify -cm "${path}" -o "${f}.js"
-done
+'
 
 
 cd ../js
 
 node -e "
-	const tsconfig	= JSON.parse(
+	const tsconfig = JSON.parse(
 		fs.readFileSync('../../js/tsconfig.json').toString().
 			split('\n').
 			filter(s => s.trim()[0] !== '/').
 			join('\n')
 	);
 
-	tsconfig.compilerOptions.baseUrl	= '../../js';
-	tsconfig.compilerOptions.rootDir	= '../../js';
-	tsconfig.compilerOptions.outDir		= '.';
+	tsconfig.compilerOptions.baseUrl = '../../js';
+	tsconfig.compilerOptions.rootDir = '../../js';
+	tsconfig.compilerOptions.outDir = '.';
 
-	tsconfig.files	= [
+	tsconfig.files = [
 		'../../js/standalone/global.ts',
 		'../../js/typings/index.d.ts'
 	];
 
 	for (const k of Object.keys(tsconfig.compilerOptions.paths)) {
-		tsconfig.compilerOptions.paths[k]	=
+		tsconfig.compilerOptions.paths[k] =
 			tsconfig.compilerOptions.paths[k].map(s =>
 				s.replace(/^js\//, '')
 			)
@@ -180,15 +201,15 @@ uglify standalone/global.js -o standalone/global.js
 checkfail
 
 for f in ${typescriptAssets} ; do
-	m="$(echo ${f} | perl -pe 's/.*\/([^\/]+)$/\u$1/' | perl -pe 's/[^A-Za-z0-9](.)?/\u$1/g')"
+	m="$(getmodulename "${f}")"
 
-	cat > webpack.js <<- EOM
-		const {TsConfigPathsPlugin}	= require('awesome-typescript-loader');
-		const path					= require('path');
-		const TerserPlugin			= require('terser-webpack-plugin');
-		const {mangleExceptions}	= require('../../../commands/mangleexceptions');
+	cat > "$(echo "${f}" | sha).webpack.js" <<- EOM
+		const {TsConfigPathsPlugin} = require('awesome-typescript-loader');
+		const path = require('path');
+		const TerserPlugin = require('terser-webpack-plugin');
+		const {mangleExceptions} = require('../../../commands/mangleexceptions');
 
-		module.exports	= {
+		module.exports = {
 			entry: {
 				app: '../../js/${f}'
 			},
@@ -261,21 +282,27 @@ for f in ${typescriptAssets} ; do
 			}
 		};
 	EOM
+done
+echo ${typescriptAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash -c '
+	webpack --config "$(echo "%" | sha).webpack.js"
+'
+checkfail
+echo -e '\n'
+for f in ${typescriptAssets} ; do
+	m="$(getmodulename "${f}")"
 
-	webpack --config webpack.js
-	checkfail
-	rm webpack.js
+	rm "$(echo "${f}" | sha).webpack.js"
 
 	{
 		echo '(function () {';
 		cat "${f}.js";
 		echo "
-			self.${m}	= ${m};
+			self.${m} = ${m};
 
-			var keys	= Object.keys(${m});
+			var keys = Object.keys(${m});
 			for (var i = 0 ; i < keys.length ; ++i) {
-				var key		= keys[i];
-				self[key]	= ${m}[key];
+				var key = keys[i];
+				self[key] = ${m}[key];
 			}
 		" |
 			uglify \
@@ -287,10 +314,7 @@ for f in ${typescriptAssets} ; do
 	checkfail
 
 	mv "${f}.js.tmp" "${f}.js"
-
-	echo
 	ls -lh "${f}.js"
-	echo -e '\n'
 done
 
 
@@ -299,12 +323,12 @@ cd ../css
 cp -rf ../../css/* ./
 grep -rl "@import '~" | xargs -I% sed -i "s|@import '~|@import '/node_modules/|g" %
 
-for f in ${scssAssets} ; do
-	scss "${f}.scss" "${f}.css"
-	checkfail
-	cleancss --inline none "${f}.css" -o "${f}.css"
-	checkfail
-done
+echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
+	sass '%.scss' '%.css'
+checkfail
+echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
+	cleancss --inline none '%.css' -o '%.css'
+checkfail
 
 
 cd ..

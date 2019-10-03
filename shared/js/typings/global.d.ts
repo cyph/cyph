@@ -8,7 +8,7 @@ declare let accountPrimaryTheme: boolean;
  * @global
  * Message to return for beforeunload event.
  */
-declare let beforeUnloadMessage: string|undefined;
+declare let beforeUnloadMessage: string | undefined;
 
 /**
  * @global
@@ -18,9 +18,15 @@ declare let burnerRoot: string;
 
 /**
  * @global
+ * Run-time `require` function specific to Cordova environments.
+ */
+declare let cordovaRequire: NodeRequire | undefined;
+
+/**
+ * @global
  * Base64-encoded custom build object.
  */
-declare let customBuildBase64: string|undefined;
+declare let customBuildBase64: string | undefined;
 
 /**
  * @global
@@ -28,7 +34,7 @@ declare let customBuildBase64: string|undefined;
  * Reduced to accept just one script rather than
  * an array to accommodate WebSign packing.
  */
-declare let importScripts : (script: string) => void;
+declare let importScripts: (script: string) => void;
 
 /**
  * @ignore
@@ -51,9 +57,9 @@ declare let navigatorData: Navigator;
  * @global
  * Used in test environments for some setup.
  */
-declare let testEnvironmentSetup: undefined|(
-	(databaseService: any, localStorageService: any) => Promise<void>
-);
+declare let testEnvironmentSetup:
+	| undefined
+	| ((databaseService: any, localStorageService: any) => Promise<void>);
 
 /**
  * @global

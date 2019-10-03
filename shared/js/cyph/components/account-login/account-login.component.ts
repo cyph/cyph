@@ -15,7 +15,6 @@ import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
 
-
 /**
  * Angular component for account login UI.
  */
@@ -33,45 +32,49 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** @ignore */
-	private readonly savedMasterKey		= new BehaviorSubject<Uint8Array|undefined>(undefined);
+	private readonly savedMasterKey = new BehaviorSubject<
+		Uint8Array | undefined
+	>(undefined);
 
 	/** Indicates whether login attempt is in progress. */
-	public readonly checking			= new BehaviorSubject<boolean>(true);
+	public readonly checking = new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether the last login attempt has failed. */
-	public readonly error				= new BehaviorSubject<boolean>(false);
+	public readonly error = new BehaviorSubject<boolean>(false);
 
 	/** Memoized AccountAuthService.hasSavedCredentials. */
-	public readonly hasSavedCredentials	= memoize(async () =>
+	public readonly hasSavedCredentials = memoize(async () =>
 		this.accountAuthService.hasSavedCredentials()
 	);
 
 	/** Password visibility setting. */
-	public readonly hidePassword		= new BehaviorSubject<boolean>(true);
+	public readonly hidePassword = new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether user has chosen to log in. */
 	public readonly loggingIn: Observable<boolean>;
 
 	/** Master key to be used for login attempt. */
-	public readonly masterKey			= new BehaviorSubject<string>('');
+	public readonly masterKey = new BehaviorSubject<string>('');
 
 	/** PIN to be used for login attempt. */
-	public readonly pin					= new BehaviorSubject<string>('');
+	public readonly pin = new BehaviorSubject<string>('');
 
 	/** Indicates whether PIN is custom. */
-	public readonly pinIsCustom			= new BehaviorSubject<boolean>(true);
+	public readonly pinIsCustom = new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether a PIN unlock using saved credentials will be performed. */
-	public readonly pinUnlock			= new BehaviorSubject<boolean>(false);
+	public readonly pinUnlock = new BehaviorSubject<boolean>(false);
 
 	/** Username saved in local storage from previous login. */
-	public readonly savedUsername		= new BehaviorSubject<string|undefined>(undefined);
+	public readonly savedUsername = new BehaviorSubject<string | undefined>(
+		undefined
+	);
 
 	/** Username to be used for login attempt. */
-	public readonly username			= new BehaviorSubject<string>('');
+	public readonly username = new BehaviorSubject<string>('');
 
 	/** @see usernameMask */
-	public readonly usernameMask: any	= usernameMask;
+	public readonly usernameMask: any = usernameMask;
 
 	/** @ignore */
 	private async postLogin () : Promise<void> {
@@ -91,32 +94,28 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		}
 
 		await this.router.navigate(
-			(
-				this.accountDatabaseService.currentUser.value.confirmed ||
-				this.accountDatabaseService.currentUser.value.pseudoAccount
-			) ?
+			this.accountDatabaseService.currentUser.value.confirmed ||
+				this.accountDatabaseService.currentUser.value.pseudoAccount ?
 				this.activatedRoute.snapshot.url.length > 0 ?
 					[
 						'',
-						...this.activatedRoute.snapshot.url.
+						...this.activatedRoute.snapshot.url
 							/* Avoid redirecting from /login/login to /login */
-							slice(
-								(
-									this.activatedRoute.snapshot.url.length > 0 &&
-									this.activatedRoute.snapshot.url[0].path === 'login'
-								) ?
+							.slice(
+								this.activatedRoute.snapshot.url.length > 0 &&
+									this.activatedRoute.snapshot.url[0].path ===
+										'login' ?
 									1 :
 									0
-							).
-							map(o => o.path)
+							)
+							.map(o => o.path)
 					] :
-					['']
-				:
+					[''] :
 				['welcome']
 		);
 
 		if (this.envService.isCordova && this.envService.isAndroid) {
-			(<any> self).androidBackbuttonReady	= true;
+			(<any> self).androidBackbuttonReady = true;
 		}
 	}
 
@@ -130,10 +129,20 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		}
 
 		try {
-			const [pinIsCustom, savedMasterKey, savedUsername]	= await Promise.all([
-				this.localStorageService.getItem('pinIsCustom', BooleanProto).catch(() => true),
-				this.localStorageService.getItem('masterKey', BinaryProto).catch(() => undefined),
-				this.localStorageService.getItem('username', StringProto).catch(() => undefined)
+			const [
+				pinIsCustom,
+				savedMasterKey,
+				savedUsername
+			] = await Promise.all([
+				this.localStorageService
+					.getItem('pinIsCustom', BooleanProto)
+					.catch(() => true),
+				this.localStorageService
+					.getItem('masterKey', BinaryProto)
+					.catch(() => undefined),
+				this.localStorageService
+					.getItem('username', StringProto)
+					.catch(() => undefined)
 			]);
 
 			this.pinIsCustom.next(pinIsCustom);
@@ -159,11 +168,15 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 			this.pinUnlock.next(true);
 
-			const savedPIN	= await this.accountAuthService.getSavedPIN();
+			const savedPIN = await this.accountAuthService.getSavedPIN();
 
 			if (
 				savedPIN &&
-				(await this.accountAuthService.login(savedUsername, savedMasterKey, savedPIN))
+				(await this.accountAuthService.login(
+					savedUsername,
+					savedMasterKey,
+					savedPIN
+				))
 			) {
 				this.potassiumService.clearMemory(savedPIN);
 				await this.postLogin();
@@ -190,20 +203,27 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	}
 
 	/** Initiates login attempt. */
-	public async submit (newPin?: {isCustom: boolean; value: string}) : Promise<void> {
+	public async submit (newPin?: {
+		isCustom: boolean;
+		value: string;
+	}) : Promise<void> {
 		this.checking.next(true);
 		this.error.next(false);
 
 		if (this.accountAuthService.pseudoAccountLogin.value) {
-			this.error.next(!(await this.accountAuthService.register(
-				{pseudoAccount: true},
-				undefined,
-				newPin
-			)));
+			this.error.next(
+				!(await this.accountAuthService.register(
+					{pseudoAccount: true},
+					undefined,
+					newPin
+				))
+			);
 		}
 		else {
-			this.error.next(!(await (
-				this.pinUnlock.value && this.savedMasterKey.value && this.savedUsername.value ?
+			this.error.next(
+				!(await (this.pinUnlock.value &&
+				this.savedMasterKey.value &&
+				this.savedUsername.value ?
 					this.accountAuthService.login(
 						this.savedUsername.value,
 						this.savedMasterKey.value,
@@ -212,8 +232,8 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 					this.accountAuthService.login(
 						this.username.value,
 						this.masterKey.value
-					)
-			)));
+					)))
+			);
 		}
 
 		this.checking.next(false);
@@ -255,12 +275,12 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		this.loggingIn	= combineLatest([
+		this.loggingIn = combineLatest([
 			this.pinUnlock,
-			this.activatedRoute.url.pipe(map(url => url.length > 0 && url[0].path === 'login'))
-		]).pipe(map(([pinUnlock, loginStep2]) =>
-			pinUnlock || loginStep2
-		));
+			this.activatedRoute.url.pipe(
+				map(url => url.length > 0 && url[0].path === 'login')
+			)
+		]).pipe(map(([pinUnlock, loginStep2]) => pinUnlock || loginStep2));
 
 		if (
 			(<any> self).androidBackbuttonReady &&

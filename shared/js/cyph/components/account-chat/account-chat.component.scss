@@ -20,7 +20,11 @@
 	margin-bottom: 1em;
 }
 
-cyph-chat-main ::ng-deep .chat-main.mobile cyph-chat-message-list .message-list-background {
+cyph-chat-main
+	::ng-deep
+	.chat-main.mobile
+	cyph-chat-message-list
+	.message-list-background {
 	padding-top: 8px;
 }
 

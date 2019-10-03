@@ -5,51 +5,46 @@ import {IThread} from './ithread';
 import {stringify} from './util/serialization';
 import {resolvable} from './util/wait';
 
-
 /** @inheritDoc */
 export class Thread<T> implements IThread<T> {
 	/** @ignore */
 	private static stringifyFunction (f: Function) : string {
-		const s	= f.toString();
+		const s = f.toString();
 		return s.slice(s.indexOf('{')).replace(/use strict/g, '');
 	}
 
 	/** @ignore */
 	private static threadEnvSetup () : void {
-		let threadSetupVars	= (<any> self).threadSetupVars;
+		let threadSetupVars = (<any> self).threadSetupVars;
 
 		/* Inherit these from main thread */
 
-		(<any> self).burnerRoot			= threadSetupVars.burnerRoot;
-		(<any> self).locationData		= threadSetupVars.locationData;
-		(<any> self).navigatorData		= threadSetupVars.navigatorData;
-		(<any> self).translations		= threadSetupVars.translations;
-
+		(<any> self).burnerRoot = threadSetupVars.burnerRoot;
+		(<any> self).locationData = threadSetupVars.locationData;
+		(<any> self).navigatorData = threadSetupVars.navigatorData;
+		(<any> self).translations = threadSetupVars.translations;
 
 		/* Wrapper to make importScripts work in local dev environments
 			and block it in prod (because of WebSign packing) */
 
 		if (threadSetupVars.isLocalEnv) {
-			const oldImportScripts	= importScripts;
-			importScripts			= script => {
-				oldImportScripts(`${
-					(<any> self).locationData.protocol
-				}//${
-					(<any> self).locationData.host
-				}${
-					script
-				}?${
-					/* tslint:disable-next-line:ban */
-					Date.now().toString()
-				}`);
+			const oldImportScripts = importScripts;
+			importScripts = script => {
+				oldImportScripts(
+					`${(<any> self).locationData.protocol}//${
+						(<any> self).locationData.host
+					}${script}?${
+						/* tslint:disable-next-line:ban */
+						Date.now().toString()
+					}`
+				);
 			};
 		}
 		else {
-			importScripts			= script => {
+			importScripts = script => {
 				throw new Error(`Cannot load external script ${script}.`);
 			};
 		}
-
 
 		/* Normalisation to increase compatibility with web libraries */
 
@@ -65,14 +60,13 @@ export class Thread<T> implements IThread<T> {
 
 		/* This is DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
 		/* tslint:disable-next-line:no-unbound-method */
-		self.close	= () => (<any> self).postMessage('cyphThreadClose');
-
+		self.close = () => (<any> self).postMessage('cyphThreadClose');
 
 		/* Polyfills */
 
 		/* tslint:disable-next-line:strict-type-predicates */
 		if (typeof console === 'undefined') {
-			console	= <any> {
+			console = <any> {
 				assert: () => {},
 				clear: () => {},
 				count: () => {},
@@ -101,27 +95,31 @@ export class Thread<T> implements IThread<T> {
 
 		importScripts('/assets/js/cyph/crypto/web-crypto-polyfill.js');
 		(<any> self).webCryptoPolyfill(new Uint8Array(threadSetupVars.seed));
-		for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {
-			threadSetupVars.seed[i]	= 0;
+		for (let i = 0; i < threadSetupVars.seed.length; ++i) {
+			threadSetupVars.seed[i] = 0;
 		}
-		importScripts('/assets/node_modules/libsodium/dist/browsers-sumo/sodium.js');
+		importScripts(
+			'/assets/node_modules/libsodium-sumo/dist/modules-sumo/libsodium-sumo.js'
+		);
+		importScripts(
+			'/assets/node_modules/libsodium-wrappers-sumo/dist/modules-sumo/libsodium-wrappers.js'
+		);
 
-		threadSetupVars					= undefined;
-		(<any> self).threadSetupVars	= undefined;
+		threadSetupVars = undefined;
+		(<any> self).threadSetupVars = undefined;
 	}
 
+	/** @ignore */
+	private alive: boolean = true;
 
 	/** @ignore */
-	private alive: boolean			= true;
-
-	/** @ignore */
-	private readonly apiResolver	= resolvable<T>();
+	private readonly apiResolver = resolvable<T>();
 
 	/** @ignore */
 	private readonly worker: Worker;
 
 	/** @inheritDoc */
-	public readonly api	= this.apiResolver.promise;
+	public readonly api = this.apiResolver.promise;
 
 	/** @inheritDoc */
 	public isAlive () : boolean {
@@ -142,7 +140,7 @@ export class Thread<T> implements IThread<T> {
 			this.worker.terminate();
 		}
 
-		this.alive	= false;
+		this.alive = false;
 	}
 
 	/**
@@ -150,9 +148,9 @@ export class Thread<T> implements IThread<T> {
 	 * @param locals Local data to pass in to the new thread.
 	 */
 	constructor (f: Function, locals: any = {}) {
-		const seedBytes	= potassiumUtil.randomBytes(32);
+		const seedBytes = potassiumUtil.randomBytes(32);
 
-		const threadSetupVars	= {
+		const threadSetupVars = {
 			burnerRoot,
 			isLocalEnv: env.isLocalEnv,
 			locationData: {
@@ -173,7 +171,7 @@ export class Thread<T> implements IThread<T> {
 			translations
 		};
 
-		const threadBody	= `
+		const threadBody = `
 			try {
 				self.threadSetupVars = ${stringify(threadSetupVars)};
 				${
@@ -181,10 +179,10 @@ export class Thread<T> implements IThread<T> {
 					Thread.stringifyFunction(Thread.threadEnvSetup)
 				}
 
-				self.onmessage	= function (e) {
-					self.threadLocals	= e.data;
-					self.onmessage		= undefined;
-					e					= undefined;
+				self.onmessage = function (e) {
+					self.threadLocals = e.data;
+					self.onmessage = undefined;
+					e = undefined;
 
 					${Thread.stringifyFunction(f)}
 
@@ -202,31 +200,30 @@ export class Thread<T> implements IThread<T> {
 			}
 		`;
 
-		for (let i = 0 ; i < threadSetupVars.seed.length ; ++i) {
-			seedBytes[i]			= 0;
-			threadSetupVars.seed[i]	= 0;
+		for (let i = 0; i < threadSetupVars.seed.length; ++i) {
+			seedBytes[i] = 0;
+			threadSetupVars.seed[i] = 0;
 		}
 
-		const blobURL	= URL.createObjectURL(
+		const blobURL = URL.createObjectURL(
 			new Blob([threadBody], {type: 'application/javascript'})
 		);
 
 		try {
-			this.worker	= new Worker(blobURL);
+			this.worker = new Worker(blobURL);
 		}
 		catch (err) {
 			if (!env.isCordova) {
 				throw err;
 			}
 
-			this.worker	= new Worker('/worker.js');
+			this.worker = new Worker(env.webSignPaths.worker);
 
 			/* tslint:disable-next-line:deprecation */
 			this.worker.postMessage(threadBody);
 		}
 
-
-		this.worker.onmessage	= e => {
+		this.worker.onmessage = e => {
 			if (e.data === 'cyphThreadReady') {
 				try {
 					URL.revokeObjectURL(blobURL);
@@ -243,8 +240,13 @@ export class Thread<T> implements IThread<T> {
 			else if (e.data === 'cyphThreadClose') {
 				this.stop();
 			}
-			else if (typeof e.data === 'object' && 'cyphThreadError' in e.data) {
-				throw new Error(`Thread error: ${(e.data.cyphThreadError || '').toString()}`);
+			else if (
+				typeof e.data === 'object' &&
+				'cyphThreadError' in e.data
+			) {
+				throw new Error(
+					`Thread error: ${(e.data.cyphThreadError || '').toString()}`
+				);
 			}
 		};
 	}

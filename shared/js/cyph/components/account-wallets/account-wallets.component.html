@@ -1,126 +1,145 @@
 <div
 	fxFlexFill
-	[class.initiating]='accountFilesService.showSpinner | async'
-	*ngIf='accountService.enableWallets | async'
+	[class.initiating]="accountFilesService.showSpinner | async"
+	*ngIf="accountService.enableWallets | async"
 >
 	<div
-		*ngIf='(accountFilesService.filesListFiltered.wallets | async)?.length < 1; else wallets'
-		class='no-wallets'
-		fxLayout='column'
-		fxLayoutAlign='center center'
+		*ngIf="
+			(accountFilesService.filesListFiltered.wallets | async)?.length < 1;
+			else wallets
+		"
+		class="no-wallets"
+		fxLayout="column"
+		fxLayoutAlign="center center"
 	>
-		<h1>{{stringsService.noWallets}}</h1>
-		<div fxLayout='row' fxLayout.lt-md='column' fxLayoutGap='16px'>
+		<h1>{{ stringsService.noWallets }}</h1>
+		<div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="16px">
 			<button
 				mat-raised-button
-				color='accent'
-				[attr.aria-label]='stringsService.newWalletGenerate'
-				(click)='generate(newWalletOptions.generate)'
+				color="accent"
+				[attr.aria-label]="stringsService.newWalletGenerate"
+				(click)="generate(newWalletOptions.generate)"
 			>
-				<mat-icon svgIcon='key-add-color'></mat-icon>
+				<mat-icon svgIcon="key-add-color"></mat-icon>
 				&nbsp;
-				<span>{{stringsService.newWalletGenerate}}</span>
+				<span>{{ stringsService.newWalletGenerate }}</span>
 			</button>
 			<button
 				mat-raised-button
-				color='accent'
+				color="accent"
 				cyphTranslate
-				[attr.aria-label]='stringsService.newWalletImportKey'
-				(click)='generate(newWalletOptions.importKey)'
+				[attr.aria-label]="stringsService.newWalletImportKey"
+				(click)="generate(newWalletOptions.importKey)"
 			>
-				<mat-icon svgIcon='key-upload-color'></mat-icon>
+				<mat-icon svgIcon="key-upload-color"></mat-icon>
 				&nbsp;
-				<span>{{stringsService.newWalletImportKey}}</span>
+				<span>{{ stringsService.newWalletImportKey }}</span>
 			</button>
 			<button
 				mat-raised-button
-				color='accent'
+				color="accent"
 				cyphTranslate
-				[attr.aria-label]='stringsService.newWalletImportAddress'
-				(click)='generate(newWalletOptions.importAddress)'
+				[attr.aria-label]="stringsService.newWalletImportAddress"
+				(click)="generate(newWalletOptions.importAddress)"
 			>
 				<mat-icon>remove_red_eye</mat-icon>
 				&nbsp;
-				<span>{{stringsService.newWalletImportAddress}}</span>
+				<span>{{ stringsService.newWalletImportAddress }}</span>
 			</button>
 		</div>
 	</div>
 
 	<ng-template #wallets>
-		<mat-tab-group ngClass.lt-md='lt-md'>
+		<mat-tab-group ngClass.lt-md="lt-md">
 			<mat-tab
-				class='wallet'
-				*ngFor='
-					let wallet of accountFilesService.filesListFilteredWithData.wallets() | async;
+				class="wallet"
+				*ngFor="
+					let wallet of accountFilesService.filesListFilteredWithData.wallets()
+						| async;
 					trackBy: trackByID;
-					let i = index;
-				'
-				[attr.data-index]='i'
-				[class.bounceInRight]='(accountFilesService.initiated | async) === false'
-				[label]='wallet.record.name'
-				[ngClass]='"_" + i'
+					let i = index
+				"
+				[attr.data-index]="i"
+				[class.bounceInRight]="
+					(accountFilesService.initiated | async) === false
+				"
+				[label]="wallet.record.name"
+				[ngClass]="'_' + i"
 			>
-				<mat-card fxLayout='column'>
-					<mat-chip-list ngClass.lt-md='lt-md'>
+				<mat-card fxLayout="column">
+					<mat-chip-list ngClass.lt-md="lt-md">
 						<mat-chip
-							class='mat-raised'
-							*ngIf='wallet.data.cryptocurrency === cryptocurrencies.BTC'
+							class="mat-raised"
+							*ngIf="
+								wallet.data.cryptocurrency ===
+								cryptocurrencies.BTC
+							"
 						>
-							<mat-icon svgIcon='bitcoin'></mat-icon>
+							<mat-icon svgIcon="bitcoin"></mat-icon>
 							&nbsp;
 							<span cyphTranslate>Bitcoin</span>
 						</mat-chip>
 						<button
 							mat-icon-button
 							cyphTranslate
-							matTooltip='Edit'
-							(click)='setEditMode(wallet.record)'
-							*ngIf='(editMode | async) === false'
+							matTooltip="Edit"
+							(click)="setEditMode(wallet.record)"
+							*ngIf="(editMode | async) === false"
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
 						<button
 							mat-icon-button
 							cyphTranslate
-							matTooltip='Save'
-							(click)='saveEdits()'
-							*ngIf='editMode | async'
+							matTooltip="Save"
+							(click)="saveEdits()"
+							*ngIf="editMode | async"
 						>
 							<mat-icon>save</mat-icon>
 						</button>
 						<button
 							mat-icon-button
-							[matTooltip]='stringsService.bitcoinSendTitle'
-							(click)='send(wallet.data)'
-							*ngIf='!wallet.data.address'
+							[matTooltip]="stringsService.bitcoinSendTitle"
+							(click)="send(wallet.data)"
+							*ngIf="!wallet.data.address"
 						>
 							<mat-icon>send</mat-icon>
 						</button>
 					</mat-chip-list>
 
-					<div fxLayout='row' fxLayoutAlign='center center'>
-						<mat-form-field fxFlex='66' class='title' [class.edit]='editMode | async'>
+					<div fxLayout="row" fxLayoutAlign="center center">
+						<mat-form-field
+							fxFlex="66"
+							class="title"
+							[class.edit]="editMode | async"
+						>
 							<input
 								matInput
-								[ngModel]='(draft | async)?.name || wallet.record.name'
-								(ngModelChange)='updateDraft({name: $event})'
-								[disabled]='(editMode | async) === false'
+								[ngModel]="
+									(draft | async)?.name || wallet.record.name
+								"
+								(ngModelChange)="updateDraft({name: $event})"
+								[disabled]="(editMode | async) === false"
 							/>
 						</mat-form-field>
 					</div>
 
 					<div
-						fxLayout='row'
-						fxLayout.lt-md='column'
-						fxLayoutAlign='center center'
-						fxLayoutGap='10%'
+						fxLayout="row"
+						fxLayout.lt-md="column"
+						fxLayoutAlign="center center"
+						fxLayoutGap="10%"
 					>
-						<div fxLayout='column'>
+						<div fxLayout="column">
 							<h3>
 								<span cyphTranslate>Wallet Address</span>:
 								&ngsp;
 								<span>
-									{{cryptocurrencyService.getAddress(wallet.data) | async}}
+									{{
+										cryptocurrencyService.getAddress(
+											wallet.data
+										) | async
+									}}
 								</span>
 							</h3>
 
@@ -128,23 +147,30 @@
 								<span cyphTranslate>Current Balance</span>:
 								&ngsp;
 								<span>{{
-									(cryptocurrencyService.watchBalance(wallet.data) | async) ||
-									0
+									(cryptocurrencyService.watchBalance(
+										wallet.data
+									) | async) || 0
 								}}</span>
 								&ngsp;
-								<span>{{cryptocurrencies[wallet.data.cryptocurrency]}}</span>
+								<span>{{
+									cryptocurrencies[wallet.data.cryptocurrency]
+								}}</span>
 								&ngsp; | &ngsp;
 								<span>
-									~${{numberToString(
-										(cryptocurrencyService.watchConversion(
-											(
-												cryptocurrencyService.watchBalance(wallet.data) |
-												async
-											) || 0,
-											{cryptocurrency: cryptocurrencies.BTC},
-											{currency: currencies.USD}
-										) | async) || 0
-									)}}
+									~${{
+										numberToString(
+											(cryptocurrencyService.watchConversion(
+												(cryptocurrencyService.watchBalance(
+													wallet.data
+												) | async) || 0,
+												{
+													cryptocurrency:
+														cryptocurrencies.BTC
+												},
+												{currency: currencies.USD}
+											) | async) || 0
+										)
+									}}
 								</span>
 								&ngsp;
 								<span>USD</span>
@@ -152,92 +178,125 @@
 						</div>
 						<img
 							cyphTranslate
-							alt='QR Code'
-							[src]='qrSrc'
-							*ngIf='
-								((qrService.getQRCode({
+							alt="QR Code"
+							[src]="qrSrc"
+							*ngIf="
+								(qrService.getQRCode({
 									dotScale: 0.75,
 									size: 250,
 									text:
-										"bitcoin:" +
-										(cryptocurrencyService.getAddress(wallet.data) | async)
-								}) | async) || "") as qrSrc
-							'
+										'bitcoin:' +
+										(cryptocurrencyService.getAddress(
+											wallet.data
+										) | async)
+								}) | async) || '' as qrSrc
+							"
 						/>
 					</div>
 
-					<h2 class='centered'>{{stringsService.transactionHistory}}</h2>
+					<h2 class="centered">
+						{{ stringsService.transactionHistory }}
+					</h2>
 
 					<mat-table
-						[dataSource]='cryptocurrencyService.watchTransactionHistory(wallet.data)'
+						[dataSource]="
+							cryptocurrencyService.watchTransactionHistory(
+								wallet.data
+							)
+						"
 					>
-						<ng-container matColumnDef='amount'>
-							<mat-header-cell fxFlex='10' *matHeaderCellDef cyphTranslate>
+						<ng-container matColumnDef="amount">
+							<mat-header-cell
+								fxFlex="10"
+								*matHeaderCellDef
+								cyphTranslate
+							>
 								Amount
 							</mat-header-cell>
-							<mat-cell fxFlex='10' *matCellDef='let transaction'>
-								{{transaction.amount}}
-								{{cryptocurrencies[wallet.data.cryptocurrency]}}
+							<mat-cell fxFlex="10" *matCellDef="let transaction">
+								{{ transaction.amount }}
+								{{
+									cryptocurrencies[wallet.data.cryptocurrency]
+								}}
 							</mat-cell>
 						</ng-container>
 
-						<ng-container matColumnDef='senders'>
+						<ng-container matColumnDef="senders">
 							<mat-header-cell *matHeaderCellDef cyphTranslate>
 								Senders
 							</mat-header-cell>
-							<mat-cell *matCellDef='let transaction'>
-								{{transaction.senders.join('\n')}}
+							<mat-cell *matCellDef="let transaction">
+								{{ transaction.senders.join('\n') }}
 							</mat-cell>
 						</ng-container>
 
-						<ng-container matColumnDef='wasSentByMe'>
-							<mat-header-cell fxFlex='48px' *matHeaderCellDef></mat-header-cell>
-							<mat-cell fxFlex='48px' *matCellDef='let transaction'>
+						<ng-container matColumnDef="wasSentByMe">
+							<mat-header-cell
+								fxFlex="48px"
+								*matHeaderCellDef
+							></mat-header-cell>
+							<mat-cell
+								fxFlex="48px"
+								*matCellDef="let transaction"
+							>
 								<span
-									[class.outgoing]='transaction.wasSentByMe'
-									[class.incoming]='!transaction.wasSentByMe'
-									[matTooltip]='
+									[class.outgoing]="transaction.wasSentByMe"
+									[class.incoming]="!transaction.wasSentByMe"
+									[matTooltip]="
 										transaction.wasSentByMe ?
 											stringsService.outgoing :
 											stringsService.incoming
-									'
+									"
 								>
 									<mat-icon>arrow_forward</mat-icon>
 								</span>
 							</mat-cell>
 						</ng-container>
 
-						<ng-container matColumnDef='recipients'>
+						<ng-container matColumnDef="recipients">
 							<mat-header-cell *matHeaderCellDef cyphTranslate>
 								Recipients
 							</mat-header-cell>
-							<mat-cell *matCellDef='let transaction'>
-								{{transaction.recipients.join('\n')}}
+							<mat-cell *matCellDef="let transaction">
+								{{ transaction.recipients.join('\n') }}
 							</mat-cell>
 						</ng-container>
 
-						<ng-container matColumnDef='timestamp'>
-							<mat-header-cell fxFlex='20' *matHeaderCellDef cyphTranslate>
+						<ng-container matColumnDef="timestamp">
+							<mat-header-cell
+								fxFlex="20"
+								*matHeaderCellDef
+								cyphTranslate
+							>
 								Date
 							</mat-header-cell>
-							<mat-cell fxFlex='20' *matCellDef='let transaction'>
-								{{getDateTimeString(transaction.timestamp)}}
+							<mat-cell fxFlex="20" *matCellDef="let transaction">
+								{{ getDateTimeString(transaction.timestamp) }}
 							</mat-cell>
 						</ng-container>
 
-						<mat-header-row *matHeaderRowDef='transactionListColumns'></mat-header-row>
-						<mat-row *matRowDef='let row; columns: transactionListColumns'></mat-row>
+						<mat-header-row
+							*matHeaderRowDef="transactionListColumns"
+						></mat-header-row>
+						<mat-row
+							*matRowDef="
+								let row;
+								columns: transactionListColumns
+							"
+						></mat-row>
 					</mat-table>
 
 					<h3
-						class='centered'
-						*ngIf='
+						class="centered"
+						*ngIf="
 							(
-								cryptocurrencyService.watchTransactionHistory(wallet.data) | async
+								cryptocurrencyService.watchTransactionHistory(
+									wallet.data
+								) | async
 							)?.length < 1
-						'
+						"
 					>
-						{{stringsService.noTransactions}}
+						{{ stringsService.noTransactions }}
 					</h3>
 				</mat-card>
 			</mat-tab>
@@ -245,44 +304,52 @@
 	</ng-template>
 
 	<mat-progress-spinner
-		mode='indeterminate'
-		*ngIf='accountFilesService.showSpinner | async'
+		mode="indeterminate"
+		*ngIf="accountFilesService.showSpinner | async"
 	></mat-progress-spinner>
 
 	<smd-fab-speed-dial
-		class='fixed-fab'
-		animationMode='scale'
-		[open]='isSpeedDialOpen | async'
-		(mouseleave)='isSpeedDialOpen.next(false)'
+		class="fixed-fab"
+		animationMode="scale"
+		[open]="isSpeedDialOpen | async"
+		(mouseleave)="isSpeedDialOpen.next(false)"
 	>
-		<smd-fab-trigger [spin]='true' (mouseenter)='isSpeedDialOpen.next(true)'>
+		<smd-fab-trigger
+			[spin]="true"
+			(mouseenter)="isSpeedDialOpen.next(true)"
+		>
 			<button
 				mat-fab
-				color='primary'
-				[matTooltip]='stringsService.newWalletGenerate'
-				matTooltipPosition='left'
-				(click)='generate(newWalletOptions.generate)'
+				color="primary"
+				[matTooltip]="stringsService.newWalletGenerate"
+				matTooltipPosition="left"
+				(click)="generate(newWalletOptions.generate)"
 			>
-				<mat-icon *ngIf='(isSpeedDialOpen | async) === false'>add</mat-icon>
-				<mat-icon svgIcon='key-add-light' *ngIf='isSpeedDialOpen | async'></mat-icon>
+				<mat-icon *ngIf="(isSpeedDialOpen | async) === false"
+					>add</mat-icon
+				>
+				<mat-icon
+					svgIcon="key-add-light"
+					*ngIf="isSpeedDialOpen | async"
+				></mat-icon>
 			</button>
 		</smd-fab-trigger>
 		<smd-fab-actions>
 			<button
 				mat-mini-fab
 				cyphTranslate
-				[matTooltip]='stringsService.newWalletImportKey'
-				matTooltipPosition='left'
-				(click)='generate(newWalletOptions.importKey)'
+				[matTooltip]="stringsService.newWalletImportKey"
+				matTooltipPosition="left"
+				(click)="generate(newWalletOptions.importKey)"
 			>
-				<mat-icon svgIcon='key-upload'></mat-icon>
+				<mat-icon svgIcon="key-upload"></mat-icon>
 			</button>
 			<button
 				mat-mini-fab
 				cyphTranslate
-				[matTooltip]='stringsService.newWalletImportAddress'
-				matTooltipPosition='left'
-				(click)='generate(newWalletOptions.importAddress)'
+				[matTooltip]="stringsService.newWalletImportAddress"
+				matTooltipPosition="left"
+				(click)="generate(newWalletOptions.importAddress)"
 			>
 				<mat-icon>remove_red_eye</mat-icon>
 			</button>

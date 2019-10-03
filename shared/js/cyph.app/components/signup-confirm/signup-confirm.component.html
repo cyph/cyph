@@ -1,17 +1,13 @@
-<section fxFlexFill fxLayout='column' id='main'>
-	<div
-		fxFlexFill
-		fxLayoutAlign='center center'
-		class='login-form'
-	>
-		<mat-card fxFlex fxFlex.sm='95' fxFlex.md='75' fxFlex.gt-md='50'>
+<section fxFlexFill fxLayout="column" id="main">
+	<div fxFlexFill fxLayoutAlign="center center" class="login-form">
+		<mat-card fxFlex fxFlex.sm="95" fxFlex.md="75" fxFlex.gt-md="50">
 			<mat-card-title>
-				{{stringsService.signupConfirmTitle}}
+				{{ stringsService.signupConfirmTitle }}
 			</mat-card-title>
 			<mat-card-subtitle>
 				<span cyphTranslate>Welcome to</span>
 				&ngsp;
-				<span>{{stringsService.product}}!</span>
+				<span>{{ stringsService.product }}!</span>
 				&ngsp;
 				<span cyphTranslate>
 					You can sign up here for access.
@@ -19,23 +15,24 @@
 			</mat-card-subtitle>
 			<cyph-logo cardHeader homeLink></cyph-logo>
 			<mat-card-content>
-				<div *ngIf='apiKey | async as key'>
+				<div *ngIf="apiKey | async as key">
 					<br />
-					<h3 class='cyph-banner success'>
+					<h3 class="cyph-banner success">
 						<div cyphTranslate>
-							Your account is now active. You can log in to this environment
-							using the following code:
+							Your account is now active. You can log in to this
+							environment using the following code:
 						</div>
-						<div class='xkcd-passphrase'>{{key}}</div>
+						<div class="xkcd-passphrase">{{ key }}</div>
 						<div>
 							<span cyphTranslate>
 								If you ever need any help, feel free to
 							</span>
 							&ngsp;
 							<a
-								[href]='envService.homeUrl + "contact"'
+								[href]="envService.homeUrl + 'contact'"
 								cyphTranslate
-							>reach out to us</a>
+								>reach out to us</a
+							>
 							&ngsp;
 							<span cyphTranslate>
 								any time.
@@ -43,17 +40,20 @@
 						</div>
 					</h3>
 					<br />
-					<div fxLayoutAlign='center'>
-						<button mat-button (click)='unlock(key)'>
+					<div fxLayoutAlign="center">
+						<button mat-button (click)="unlock(key)">
 							<span cyphTranslate>Enter</span>
 							&ngsp;
-							<span>{{stringsService.product}}</span>
+							<span>{{ stringsService.product }}</span>
 						</button>
 					</div>
 					<br />
 				</div>
 			</mat-card-content>
-			<mat-progress-spinner class='global' mode='indeterminate'></mat-progress-spinner>
+			<mat-progress-spinner
+				class="global"
+				mode="indeterminate"
+			></mat-progress-spinner>
 		</mat-card>
 	</div>
 </section>

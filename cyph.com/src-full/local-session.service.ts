@@ -20,7 +20,6 @@ import {random} from '../cyph/util/random';
 import {sleep} from '../cyph/util/wait';
 import {ChatData} from './chat-data';
 
-
 /**
  * Mocks session service and communicates locally.
  */
@@ -30,7 +29,7 @@ export class LocalSessionService extends SessionService {
 	private chatData?: ChatData;
 
 	/** @ignore */
-	private readonly localLock: LockFunction	= lockFunction();
+	private readonly localLock: LockFunction = lockFunction();
 
 	/** @inheritDoc */
 	public async close () : Promise<void> {
@@ -51,7 +50,7 @@ export class LocalSessionService extends SessionService {
 
 	/** Initializes chat data. */
 	public async initChatData (chatData: ChatData) : Promise<void> {
-		this.chatData	= chatData;
+		this.chatData = chatData;
 
 		this.state.isAlice.next(this.envService.isMobile.value);
 		this.state.isAlive.next(true);
@@ -73,7 +72,9 @@ export class LocalSessionService extends SessionService {
 				}
 			},
 			undefined,
-			() => { this.close(); }
+			() => {
+				this.close();
+			}
 		);
 
 		await this.chatData.start;
@@ -83,7 +84,10 @@ export class LocalSessionService extends SessionService {
 
 	/** @inheritDoc */
 	public async lock<T> (
-		f: (o: {reason?: string; stillOwner: BehaviorSubject<boolean>}) => Promise<T>,
+		f: (o: {
+			reason?: string;
+			stillOwner: BehaviorSubject<boolean>;
+		}) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
 		return this.localLock(f, reason);
@@ -94,16 +98,16 @@ export class LocalSessionService extends SessionService {
 		...messages: [string, ISessionMessageAdditionalData][]
 	) : Promise<{
 		confirmPromise: Promise<void>;
-		newMessages: (ISessionMessage&{data: ISessionMessageData})[];
+		newMessages: (ISessionMessage & {data: ISessionMessageData})[];
 	}> {
 		while (!this.chatData) {
 			await sleep();
 		}
 
-		const newMessages	= await this.newMessages(messages);
+		const newMessages = await this.newMessages(messages);
 
 		for (const message of newMessages) {
-			const cyphertext	= potassiumUtil.randomBytes(random(1024, 100));
+			const cyphertext = potassiumUtil.randomBytes(random(1024, 100));
 
 			this.trigger(events.cyphertext, {
 				author: this.localUsername,
@@ -111,7 +115,9 @@ export class LocalSessionService extends SessionService {
 			});
 
 			this.chatData.channelOutgoing.next(
-				(await this.newMessages([[events.cyphertext, {bytes: cyphertext}]]))[0]
+				(await this.newMessages([
+					[events.cyphertext, {bytes: cyphertext}]
+				]))[0]
 			);
 			this.chatData.channelOutgoing.next(message);
 		}

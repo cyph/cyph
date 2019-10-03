@@ -1,4 +1,9 @@
-import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	Input,
+	ViewChild
+} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessageValue} from '../../proto';
 import {AccountService} from '../../services/account.service';
@@ -6,7 +11,6 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {calendarInviteReasons} from '../../verticals/telehealth/calendar-invite-reasons';
 import {ChatMessageBoxInheritNgFormComponent} from '../chat-message-box-inherit-ng-form';
-
 
 /**
  * Angular component for account chat message box UI.
@@ -22,41 +26,39 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 	@Input() public calendarInviteFollowUp?: boolean;
 
 	/** @see ChatMessageBoxComponent.calendarInviteReasons */
-	@Input() public calendarInviteReasons?: string[]	=
-		this.envService.isTelehealth ?
-			calendarInviteReasons :
-			undefined
-	;
+	@Input() public calendarInviteReasons?: string[] = this.envService
+		.isTelehealth ?
+		calendarInviteReasons :
+		undefined;
 
 	/** @see ChatMessageBoxInheritNgFormComponent */
 	@ViewChild(ChatMessageBoxInheritNgFormComponent, {static: false})
 	public chatMessageBox?: ChatMessageBoxInheritNgFormComponent;
 
 	/** @see ChatMessageValue.Types */
-	public readonly chatMessageValueTypes: typeof ChatMessageValue.Types	=
-		ChatMessageValue.Types
-	;
+	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
 	/** @see ChatMessageBoxComponent.customSendFunction */
 	@Input() public customSendFunction?: () => Promise<void>;
 
 	/** If true, will disable send button. */
-	@Input() public disableSend: boolean		= false;
+	@Input() public disableSend: boolean = false;
 
 	/** @see ChatMessageBoxComponent.fileAccept */
 	@Input() public fileAccept?: string;
 
 	/** @see ChatMessageBoxComponent.messageType */
-	@Input() public messageType: ChatMessageValue.Types	= ChatMessageValue.Types.Text;
+	@Input() public messageType: ChatMessageValue.Types =
+		ChatMessageValue.Types.Text;
 
 	/** Send button text. */
-	@Input() public sendText: string			= this.stringsService.send;
+	@Input() public sendText: string = this.stringsService.send;
 
 	/** Shows header. */
-	@Input() public showHeader: boolean			= false;
+	@Input() public showHeader: boolean = false;
 
 	/** @see ChatMessageBoxComponent.showUnreadCount */
-	@Input() public showUnreadCount: boolean	= true;
+	@Input() public showUnreadCount: boolean = true;
 
 	/** Submits form. */
 	public async submit () : Promise<void> {

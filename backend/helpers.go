@@ -324,7 +324,7 @@ func handleFuncs(pattern string, handlers Handlers) {
 		isRouterActive = true
 	}
 
-	router.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+	handlerWrapper := func(w http.ResponseWriter, r *http.Request) {
 		var method string
 		if m, ok := r.Header["Access-Control-Request-Method"]; ok && len(m) > 0 {
 			method = m[0]
@@ -351,6 +351,11 @@ func handleFuncs(pattern string, handlers Handlers) {
 				}
 			}
 
+			/* Handler can send a negative status code to indicate non-response */
+			if responseCode < 0 {
+				return
+			}
+
 			w.WriteHeader(responseCode)
 
 			if responseBody != nil {
@@ -368,7 +373,13 @@ func handleFuncs(pattern string, handlers Handlers) {
 		} else {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
-	})
+	}
+
+	if strings.HasSuffix(pattern, "/*") {
+		router.PathPrefix(pattern[0 : len(pattern)-1]).Handler(http.HandlerFunc(handlerWrapper))
+	} else {
+		router.HandleFunc(pattern, handlerWrapper)
+	}
 }
 
 func initHandler(w http.ResponseWriter, r *http.Request) {
@@ -435,6 +446,16 @@ func getURL(maybeURL string) (string, error) {
 	}
 
 	return o.Scheme + "://" + o.Host, nil
+}
+
+func parseURL(maybeURL string) (*url.URL, error) {
+	parsedURL, err := url.Parse(maybeURL)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return parsedURL, nil
 }
 
 func getTimestamp() int64 {

@@ -7,23 +7,23 @@ import {ISessionService} from '../service-interfaces/isession.service';
 import {resolvable} from '../util/wait';
 import {SessionInitService} from './session-init.service';
 
-
 /**
  * SessionInitService implementation that gets ID from URL.
  */
 @Injectable()
-export class UrlSessionInitService extends BaseProvider implements SessionInitService {
+export class UrlSessionInitService extends BaseProvider
+	implements SessionInitService {
 	/** @inheritDoc */
-	public readonly callType?: 'audio'|'video';
+	public readonly callType?: 'audio' | 'video';
 
 	/** @inheritDoc */
-	public readonly ephemeral: boolean	= true;
+	public readonly ephemeral: boolean = true;
 
 	/** @inheritDoc */
 	public readonly id: string;
 
 	/** @inheritDoc */
-	public readonly sessionService: IResolvable<ISessionService>	= resolvable();
+	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** @inheritDoc */
 	public spawn () : UrlSessionInitService {
@@ -36,27 +36,25 @@ export class UrlSessionInitService extends BaseProvider implements SessionInitSe
 	) {
 		super();
 
-		const urlSegmentPaths	=
-			this.router.routerState.snapshot.root.firstChild ?
-				(
-					this.router.routerState.snapshot.root.firstChild.firstChild ||
-					this.router.routerState.snapshot.root.firstChild
-				).url.map(o => o.path) :
-				[]
-		;
+		const urlSegmentPaths = this.router.routerState.snapshot.root
+			.firstChild ?
+			(
+				this.router.routerState.snapshot.root.firstChild.firstChild ||
+				this.router.routerState.snapshot.root.firstChild
+			).url.map(o => o.path) :
+			[];
 
-		this.callType	=
+		this.callType =
 			urlSegmentPaths[0] === 'audio' ?
 				'audio' :
-				urlSegmentPaths[0] === 'video' ?
-					'video' :
-					undefined
-		;
+			urlSegmentPaths[0] === 'video' ?
+				'video' :
+				undefined;
 
-		this.id	= urlSegmentPaths.slice(this.callType ? 1 : 0).join('/');
+		this.id = urlSegmentPaths.slice(this.callType ? 1 : 0).join('/');
 
 		if (!this.callType) {
-			this.callType	= env.callType;
+			this.callType = env.callType;
 		}
 	}
 }

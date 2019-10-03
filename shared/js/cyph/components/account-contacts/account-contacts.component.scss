@@ -5,7 +5,8 @@ cyph-account-contact.active ::ng-deep .contact {
 }
 
 .card-list {
-	&, > div {
+	&,
+	> div {
 		padding-bottom: 0 !important;
 		padding-top: 0 !important;
 	}
@@ -19,7 +20,8 @@ cyph-account-contact.active ::ng-deep .contact {
 		}
 
 		::ng-deep {
-			mat-card-subtitle, mat-card-title {
+			mat-card-subtitle,
+			mat-card-title {
 				max-width: calc(100vw - 180px);
 
 				&.incoming {

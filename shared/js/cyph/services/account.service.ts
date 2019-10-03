@@ -39,100 +39,100 @@ import {NotificationService} from './notification.service';
 import {StringsService} from './strings.service';
 import {WindowWatcherService} from './window-watcher.service';
 
-
 /**
  * Account service.
  */
 @Injectable()
 export class AccountService extends BaseProvider {
 	/** @ignore */
-	private readonly _UI_READY				= resolvable();
+	private readonly _UI_READY = resolvable();
 
 	/** @ignore */
-	private readonly headerInternal			=
-		new BehaviorSubject<string|{desktop?: string; mobile?: string}|User|undefined>(undefined)
-	;
+	private readonly headerInternal = new BehaviorSubject<
+		string | {desktop?: string; mobile?: string} | User | undefined
+	>(undefined);
 
 	/** @ignore */
-	private readonly menuExpandedInternal	=
-		new BehaviorSubject<boolean>(!this.envService.isMobile.value)
-	;
+	private readonly menuExpandedInternal = new BehaviorSubject<boolean>(
+		!this.envService.isMobile.value
+	);
 
 	/** @ignore */
-	private readonly mobileMenuOpenInternal	= new BehaviorSubject<boolean>(false);
+	private readonly mobileMenuOpenInternal = new BehaviorSubject<boolean>(
+		false
+	);
 
 	/** @ignore */
-	private readonly transitionInternal		= new BehaviorSubject<boolean>(false);
+	private readonly transitionInternal = new BehaviorSubject<boolean>(false);
 
 	/** Active sidebar contact username. */
-	public readonly activeSidebarContact				=
-		new BehaviorSubject<string|undefined>(undefined)
-	;
+	public readonly activeSidebarContact = new BehaviorSubject<
+		string | undefined
+	>(undefined);
 
 	/** Email address to use for new pseudo-account. */
-	public readonly fromEmail							= new BehaviorSubject<string>('');
+	public readonly fromEmail = new BehaviorSubject<string>('');
 
 	/** `fromEmail` autocomplete options. */
-	public readonly fromEmailOptions					=
-		combineLatest([
-			this.accountAppointmentsService.pastEmailContacts,
-			this.fromEmail
-		]).pipe(map(([options, email]) => {
-			email	= email.trim().toLowerCase();
+	public readonly fromEmailOptions = combineLatest([
+		this.accountAppointmentsService.pastEmailContacts,
+		this.fromEmail
+	]).pipe(
+		map(([options, email]) => {
+			email = email.trim().toLowerCase();
 			return options.filter(option => option.email.startsWith(email));
-		}))
-	;
+		})
+	);
 
 	/** Name to use for new pseudo-account. */
-	public readonly fromName							= new BehaviorSubject<string>('');
+	public readonly fromName = new BehaviorSubject<string>('');
 
 	/** `fromName` autocomplete options. */
-	public readonly fromNameOptions						=
-		combineLatest([
-			this.accountAppointmentsService.pastEmailContacts,
-			this.fromName
-		]).pipe(map(([options, name]) => {
-			name	= name.trim().toLowerCase();
-			return options.filter(option => option.name.toLowerCase().startsWith(name));
-		}))
-	;
+	public readonly fromNameOptions = combineLatest([
+		this.accountAppointmentsService.pastEmailContacts,
+		this.fromName
+	]).pipe(
+		map(([options, name]) => {
+			name = name.trim().toLowerCase();
+			return options.filter(option =>
+				option.name.toLowerCase().startsWith(name)
+			);
+		})
+	);
 
 	/** Header title for current section. */
-	public readonly header: Observable<{desktop?: string; mobile?: string}|User|undefined>;
+	public readonly header: Observable<
+		{desktop?: string; mobile?: string} | User | undefined
+	>;
 
 	/** Indicates whether real-time Docs is enabled. */
-	public readonly enableDocs: boolean					=
-		this.envService.debug || (
-			!!this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.enableDocs === true
-		)
-	;
+	public readonly enableDocs: boolean =
+		this.envService.debug ||
+		(!!this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.enableDocs === true);
 
 	/** Indicates whether Wallets is enabled. */
-	public readonly enableWallets: Observable<boolean>	=
-		(
-			this.envService.debug || (
-				!!this.envService.environment.customBuild &&
-				this.envService.environment.customBuild.config.enableWallets === true
-			)
-		) ?
+	public readonly enableWallets: Observable<boolean> =
+		this.envService.debug ||
+		(!!this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.enableWallets ===
+				true) ?
 			of(true) :
-			this.accountSettingsService.plan.pipe(map(plan =>
-				plan === CyphPlans.FoundersAndFriends
-			))
-	;
+			this.accountSettingsService.plan.pipe(
+				map(plan => plan === CyphPlans.FoundersAndFriends)
+			);
 
 	/** Indicates the status of the interstitial. */
-	public readonly interstitial						= new BehaviorSubject<boolean>(false);
+	public readonly interstitial = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether the UI is ready. */
-	public readonly isUiReady							= new BehaviorSubject<boolean>(false);
+	public readonly isUiReady = new BehaviorSubject<boolean>(false);
 
 	/** Maximum length of profile description. */
-	public readonly maxDescriptionLength: number		= 1000;
+	public readonly maxDescriptionLength: number = 1000;
 
 	/** Maximum length of name. */
-	public readonly maxNameLength: number				= 250;
+	public readonly maxNameLength: number = 250;
 
 	/** Indicates whether menu can be expanded. */
 	public readonly menuExpandable: Observable<boolean>;
@@ -141,43 +141,44 @@ export class AccountService extends BaseProvider {
 	public readonly menuExpanded: Observable<boolean>;
 
 	/** Minimum expanded menu width. */
-	public readonly menuExpandedMinWidth: number		=
-		this.envService.isTelehealthFull ? 325 : 275
-	;
+	public readonly menuExpandedMinWidth: number = this.envService
+		.isTelehealthFull ?
+		325 :
+		275;
 
 	/** Minimum expanded menu width pixels string. */
-	public readonly menuExpandedMinWidthPX: string		=
-		`${this.menuExpandedMinWidth.toString()}px`
-	;
+	public readonly menuExpandedMinWidthPX: string = `${this.menuExpandedMinWidth.toString()}px`;
 
 	/** Menu width. */
 	public readonly menuMaxWidth: Observable<string>;
 
 	/** Menu minimum width. */
-	public readonly menuMinWidth: number				= this.menuExpandedMinWidth * 2.5;
+	public readonly menuMinWidth: number = this.menuExpandedMinWidth * 2.5;
 
 	/** Indicates whether simplified menu should be displayed. */
-	public readonly menuReduced: Observable<boolean>	=
-		this.windowWatcherService.width.pipe(map(width =>
-			width <= this.configService.responsiveMaxWidths.xs
-		))
-	;
+	public readonly menuReduced: Observable<
+		boolean
+	> = this.windowWatcherService.width.pipe(
+		map(width => width <= this.configService.responsiveMaxWidths.xs)
+	);
 
 	/** Indicates whether mobile menu is open. */
-	public readonly mobileMenuOpen: Observable<boolean>	= combineLatest([
+	public readonly mobileMenuOpen: Observable<boolean> = combineLatest([
 		this.envService.isMobile,
 		this.mobileMenuOpenInternal
-	]).pipe(map(([isMobile, mobileMenuOpen]) =>
-		isMobile && mobileMenuOpen
-	));
+	]).pipe(map(([isMobile, mobileMenuOpen]) => isMobile && mobileMenuOpen));
 
 	/** Resolves ready promise. */
-	public readonly resolveUiReady: () => void			= this._UI_READY.resolve;
+	public readonly resolveUiReady: () => void = this._UI_READY.resolve;
 
 	/** Route change listener. */
-	public readonly routeChanges						= toBehaviorSubject<string>(
+	public readonly routeChanges = toBehaviorSubject<string>(
 		this.router.events.pipe(
-			filter(event => event instanceof NavigationEnd && event.url !== this.currentRoute),
+			filter(
+				event =>
+					event instanceof NavigationEnd &&
+					event.url !== this.currentRoute
+			),
 			map(({url}: any) => url)
 		),
 		this.router.url,
@@ -185,15 +186,17 @@ export class AccountService extends BaseProvider {
 	);
 
 	/** Indicates when view is in transition. */
-	public readonly transition: Observable<boolean>		= this.transitionInternal;
+	public readonly transition: Observable<boolean> = this.transitionInternal;
 
 	/** Resolves after UI is ready. */
-	public readonly uiReady: Promise<void>				= this._UI_READY.promise;
+	public readonly uiReady: Promise<void> = this._UI_READY.promise;
 
 	/** Total count of unread messages. */
-	public readonly unreadMessages: Observable<number>	= toBehaviorSubject(
+	public readonly unreadMessages: Observable<number> = toBehaviorSubject(
 		this.accountContactsService.contactList.pipe(
-			mergeMap(users => observableAll(users.map(user => user.unreadMessageCount))),
+			mergeMap(users =>
+				observableAll(users.map(user => user.unreadMessageCount))
+			),
 			map(unreadCounts => unreadCounts.reduce((a, b) => a + b, 0))
 		),
 		0,
@@ -206,20 +209,26 @@ export class AccountService extends BaseProvider {
 	}
 
 	/** Activated route data combined with that of child. */
-	public combinedRouteData (activatedRoute: ActivatedRoute) : Observable<[
-		Data,
-		Params,
-		UrlSegment[]
-	]> {
+	public combinedRouteData (
+		activatedRoute: ActivatedRoute
+	) : Observable<[Data, Params, UrlSegment[]]> {
 		return this.routeChanges.pipe(
-			mergeMap(() => combineLatest([
-				activatedRoute.data,
-				(activatedRoute.firstChild ? activatedRoute.firstChild.data : of({})),
-				activatedRoute.params,
-				(activatedRoute.firstChild ? activatedRoute.firstChild.params : of({})),
-				activatedRoute.url,
-				activatedRoute.firstChild ? activatedRoute.firstChild.url : of([])
-			])),
+			mergeMap(() =>
+				combineLatest([
+					activatedRoute.data,
+					activatedRoute.firstChild ?
+						activatedRoute.firstChild.data :
+						of({}),
+					activatedRoute.params,
+					activatedRoute.firstChild ?
+						activatedRoute.firstChild.params :
+						of({}),
+					activatedRoute.url,
+					activatedRoute.firstChild ?
+						activatedRoute.firstChild.url :
+						of([])
+				])
+			),
 			map(([data, childData, params, childParams, url, childURL]) : [
 				Data,
 				Params,
@@ -236,61 +245,58 @@ export class AccountService extends BaseProvider {
 	public async contactFormDialog (to?: string) : Promise<void> {
 		await this.dialogService.baseDialog(ContactComponent, async o => {
 			if (to) {
-				o.hideToDropdown	= true;
-				o.to				= to;
+				o.hideToDropdown = true;
+				o.to = to;
 			}
 
 			if (!this.accountDatabaseService.currentUser.value) {
 				return;
 			}
 
-			const [email, {name, realUsername}]	= await Promise.all([
-				this.accountDatabaseService.getItem(
-					'email',
-					StringProto,
-					SecurityModels.unprotected
-				).catch(
-					() => ''
-				),
+			const [email, {name, realUsername}] = await Promise.all([
+				this.accountDatabaseService
+					.getItem('email', StringProto, SecurityModels.unprotected)
+					.catch(() => ''),
 				this.accountDatabaseService.currentUser.value.user.accountUserProfile.getValue()
 			]);
 
-			o.fromEmail	= email;
-			o.fromName	= name ? `${name} (@${realUsername})` : realUsername;
+			o.fromEmail = email;
+			o.fromName = name ? `${name} (@${realUsername})` : realUsername;
 		});
 	}
 
 	/** Current route path. */
 	public get routePath () : string[] {
-		const route	= (
+		const route =
 			this.activatedRoute.snapshot.firstChild &&
 			this.activatedRoute.snapshot.firstChild.firstChild &&
-			this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0
-		) ?
-			this.activatedRoute.snapshot.firstChild.firstChild.url :
-			undefined
-		;
+			this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0 ?
+				this.activatedRoute.snapshot.firstChild.firstChild.url :
+				undefined;
 
 		return route ? route.map(o => o.path) : [];
 	}
 
 	/** Sets custom header text. */
-	public setHeader (header: string|{desktop?: string; mobile?: string}|User) : void {
+	public setHeader (
+		header: string | {desktop?: string; mobile?: string} | User
+	) : void {
 		this.headerInternal.next(header);
 	}
 
 	/** Toggles account menu. */
 	public toggleMenu (menuExpanded?: boolean) : void {
-		this.menuExpandedInternal.next(typeof menuExpanded === 'boolean' ?
-			menuExpanded :
-			!this.menuExpandedInternal.value
+		this.menuExpandedInternal.next(
+			typeof menuExpanded === 'boolean' ?
+				menuExpanded :
+				!this.menuExpandedInternal.value
 		);
 	}
 
 	/** Toggles mobile account menu. */
 	public toggleMobileMenu (menuOpen?: boolean) : void {
 		if (typeof menuOpen !== 'boolean') {
-			menuOpen	= !this.mobileMenuOpenInternal.value;
+			menuOpen = !this.mobileMenuOpenInternal.value;
 		}
 
 		if (menuOpen && this.envService.isWeb && !this.envService.isCordova) {
@@ -308,15 +314,17 @@ export class AccountService extends BaseProvider {
 
 	/** Runs on user login. */
 	public async userInit () : Promise<void> {
-		await this.accountDatabaseService.currentUserFiltered.pipe(take(1)).toPromise();
+		await this.accountDatabaseService.currentUserFiltered
+			.pipe(take(1))
+			.toPromise();
 
-		this.subscriptions.push(this.accountSettingsService.plan.pipe(map(plan =>
-			plan > CyphPlans.Free
-		)).subscribe(
-			this.envService.pro
-		));
+		this.subscriptions.push(
+			this.accountSettingsService.plan
+				.pipe(map(plan => plan > CyphPlans.Free))
+				.subscribe(this.envService.pro)
+		);
 
-		const incomingCalls			= this.accountDatabaseService.getAsyncMap(
+		const incomingCalls = this.accountDatabaseService.getAsyncMap(
 			'incomingCalls',
 			NeverProto,
 			SecurityModels.unprotected,
@@ -326,80 +334,93 @@ export class AccountService extends BaseProvider {
 			this.subscriptions
 		);
 
-		const respondedCallRequests	= new Set<string>();
+		const respondedCallRequests = new Set<string>();
 
-		this.subscriptions.push(incomingCalls.watchKeys().subscribe(async keys => {
-			const removing	= [];
+		this.subscriptions.push(
+			incomingCalls.watchKeys().subscribe(async keys => {
+				const removing = [];
 
-			for (const k of keys) {
-				if (respondedCallRequests.has(k)) {
-					continue;
+				for (const k of keys) {
+					if (respondedCallRequests.has(k)) {
+						continue;
+					}
+
+					try {
+						const [callType, username, id, expiresString] = k.split(
+							','
+						);
+						const expires = toInt(expiresString);
+						const timestamp = await getTimestamp();
+
+						if (
+							(callType !== 'audio' && callType !== 'video') ||
+							!username ||
+							!id ||
+							isNaN(expires) ||
+							timestamp >= expires
+						) {
+							continue;
+						}
+
+						const user = await this.accountUserLookupService.getUser(
+							username
+						);
+						if (!user) {
+							continue;
+						}
+
+						const [
+							contactID,
+							{name, realUsername}
+						] = await Promise.all([
+							user.contactID,
+							user.accountUserProfile.getValue()
+						]);
+
+						const answered = await this.notificationService.ring(
+							this.dialogService.confirm({
+								bottomSheet: true,
+								cancel: this.stringsService.decline,
+								cancelFAB: 'close',
+								content: `${name} (@${realUsername})`,
+								fabAvatar: user.avatar,
+								ok: this.stringsService.answer,
+								okFAB: 'phone',
+								timeout: expires - timestamp,
+								title:
+									callType === 'audio' ?
+										this.stringsService.incomingCallAudio :
+										this.stringsService.incomingCallVideo
+							})
+						);
+
+						if (answered) {
+							this.router.navigate([
+								callType,
+								contactID,
+								id,
+								expiresString
+							]);
+						}
+					}
+					catch {
+					}
+					finally {
+						if (!respondedCallRequests.has(k)) {
+							respondedCallRequests.add(k);
+							removing.push(k);
+						}
+					}
 				}
 
 				try {
-					const [callType, username, id, expiresString]	= k.split(',');
-					const expires	= toInt(expiresString);
-					const timestamp	= await getTimestamp();
-
-					if (
-						(callType !== 'audio' && callType !== 'video') ||
-						!username ||
-						!id ||
-						isNaN(expires) ||
-						timestamp >= expires
-					) {
-						continue;
-					}
-
-					const user	= await this.accountUserLookupService.getUser(username);
-					if (!user) {
-						continue;
-					}
-
-					const [contactID, {name, realUsername}]	= await Promise.all([
-						user.contactID,
-						user.accountUserProfile.getValue()
-					]);
-
-					const answered	= await this.notificationService.ring(
-						this.dialogService.confirm({
-							bottomSheet: true,
-							cancel: this.stringsService.decline,
-							cancelFAB: 'close',
-							content: `${name} (@${realUsername})`,
-							fabAvatar: user.avatar,
-							ok: this.stringsService.answer,
-							okFAB: 'phone',
-							timeout: expires - timestamp,
-							title: callType === 'audio' ?
-								this.stringsService.incomingCallAudio :
-								this.stringsService.incomingCallVideo
-						})
+					await Promise.all(
+						removing.map(async k => incomingCalls.removeItem(k))
 					);
-
-					if (answered) {
-						this.router.navigate([
-							callType,
-							contactID,
-							id,
-							expiresString
-						]);
-					}
 				}
 				catch {}
-				finally {
-					if (!respondedCallRequests.has(k)) {
-						respondedCallRequests.add(k);
-						removing.push(k);
-					}
-				}
-			}
-
-			try {
-				await Promise.all(removing.map(async k => incomingCalls.removeItem(k)));
-			}
-			catch {}
-		}));
+			})
+		);
 	}
 
 	constructor (
@@ -450,8 +471,13 @@ export class AccountService extends BaseProvider {
 	) {
 		super();
 
-		(<any> self).shareLogsWithCyph	= async () => {
-			await this.interstitial.pipe(filter(b => !b), take(1)).toPromise();
+		(<any> self).shareLogsWithCyph = async () => {
+			await this.interstitial
+				.pipe(
+					filter(b => !b),
+					take(1)
+				)
+				.toPromise();
 			this.interstitial.next(true);
 
 			await Promise.all([
@@ -461,12 +487,19 @@ export class AccountService extends BaseProvider {
 						data: this.potassiumService.fromString(
 							[
 								(await envService.packageName) + '\n---',
-								...(<Record<string, any>[]> (<any> self).logs).map(o =>
-									`${o.timestamp}${o.error ? ' (error)' : ''}: ${
-										o.argsCopy !== undefined ?
-											prettyPrint(o.argsCopy) :
-											stringify({keys: Object.keys(o.args)})
-									}`
+								...(<Record<string, any>[]> (
+									(<any> self).logs
+								)).map(
+									o =>
+										`${o.timestamp}${
+											o.error ? ' (error)' : ''
+										}: ${
+											o.argsCopy !== undefined ?
+												prettyPrint(o.argsCopy) :
+												stringify({
+													keys: Object.keys(o.args)
+												})
+										}`
 								)
 							].join('\n\n\n\n') + '\n'
 						),
@@ -492,7 +525,8 @@ export class AccountService extends BaseProvider {
 		if (this.envService.isWeb && this.envService.isMobileOS) {
 			new Hammer(document.body).on('panleft', () => {
 				if (
-					this.accountDatabaseService.currentUser.value === undefined ||
+					this.accountDatabaseService.currentUser.value ===
+						undefined ||
 					this.windowWatcherService.width.value >
 						this.configService.responsiveMaxWidths.sm
 				) {
@@ -510,14 +544,17 @@ export class AccountService extends BaseProvider {
 				}
 			});
 
-			new Hammer(document.body, {recognizers: [
-				[
-					Hammer.Pan,
-					{direction: Hammer.DIRECTION_RIGHT, threshold: 4}
+			new Hammer(document.body, {
+				recognizers: [
+					[
+						Hammer.Pan,
+						{direction: Hammer.DIRECTION_RIGHT, threshold: 4}
+					]
 				]
-			]}).on('pan', e => {
+			}).on('pan', e => {
 				if (
-					this.accountDatabaseService.currentUser.value === undefined ||
+					this.accountDatabaseService.currentUser.value ===
+						undefined ||
 					this.windowWatcherService.width.value >
 						this.configService.responsiveMaxWidths.sm
 				) {
@@ -530,7 +567,7 @@ export class AccountService extends BaseProvider {
 			});
 		}
 
-		this.header	= combineLatest([
+		this.header = combineLatest([
 			this.activeSidebarContact,
 			this.headerInternal,
 			this.envService.isMobile,
@@ -538,16 +575,19 @@ export class AccountService extends BaseProvider {
 		]).pipe(
 			/* tslint:disable-next-line:cyclomatic-complexity */
 			map(([activeSidebarContact, header, isMobile, _]) => {
-				const routePath	= this.routePath;
-				const route		= routePath[0];
+				const routePath = this.routePath;
+				const route = routePath[0];
 
-				const specialCases: {[k: string]: string}	= {
+				const specialCases: {[k: string]: string} = {
 					ehr: 'EHR'
 				};
 
 				/* Avoid redundancy between header and sidebar */
-				if (header instanceof User && header.username === activeSidebarContact) {
-					header	= undefined;
+				if (
+					header instanceof User &&
+					header.username === activeSidebarContact
+				) {
+					header = undefined;
 				}
 
 				/* Special case: set root header on mobile */
@@ -556,46 +596,32 @@ export class AccountService extends BaseProvider {
 						this.stringsService.profileHeader :
 					this.envService.isTelehealth ?
 						this.stringsService.productTelehealth :
-						this.stringsService.messagesHeader
-					;
+						this.stringsService.messagesHeader;
 				}
 
 				/* No header */
 				if (
-					[
-						'register'
-					].indexOf(route) > -1 ||
-					(
-						[
-							'account-burner',
-							'appointments',
-							'audio',
-							'call',
-							'video'
-						].indexOf(route) > -1 &&
+					['register'].indexOf(route) > -1 ||
+					([
+						'account-burner',
+						'appointments',
+						'audio',
+						'call',
+						'video'
+					].indexOf(route) > -1 &&
 						routePath.length > 1 &&
-						[
-							'end',
-							'forms'
-						].indexOf(routePath[1]) > -1
-					)
+						['end', 'forms'].indexOf(routePath[1]) > -1)
 				) {
 					return undefined;
 				}
 
 				/* No header until explicitly set via accountService.setHeader */
 				if (
-					[
-						'mail',
-						'messages',
-						'profile'
-					].indexOf(route) > -1 &&
-					(
-						routePath.length > 1
-					)
+					['mail', 'messages', 'profile'].indexOf(route) > -1 &&
+					routePath.length > 1
 				) {
 					/* Always make at least an empty string on mobile to ensure menu bar displays */
-					return isMobile ? (header || '') : header;
+					return isMobile ? header || '' : header;
 				}
 
 				/*
@@ -619,94 +645,117 @@ export class AccountService extends BaseProvider {
 						'staff',
 						'wallets',
 						'welcome'
-					].indexOf(route) < 0 || (
-						[
-							'appointments',
-							'docs',
-							'ehr-access',
-							'files',
-							'forms',
-							'incoming-patient-info',
-							'notes',
-							'settings',
-							'wallets'
-						].indexOf(route) < 0 &&
-						routePath.length > 1
-					)
+					].indexOf(route) < 0 ||
+					([
+						'appointments',
+						'docs',
+						'ehr-access',
+						'files',
+						'forms',
+						'incoming-patient-info',
+						'notes',
+						'settings',
+						'wallets'
+					].indexOf(route) < 0 &&
+						routePath.length > 1)
 				) {
 					/* Always make at least an empty string on mobile to ensure menu bar displays */
-					return isMobile ? (header || '') : undefined;
+					return isMobile ? header || '' : undefined;
 				}
 
-				return header || translate(route.
-					split('-').
-					map(s => specialCases[s] || (s[0].toUpperCase() + s.slice(1))).
-					join(' ')
+				return (
+					header ||
+					translate(
+						route
+							.split('-')
+							.map(
+								s =>
+									specialCases[s] ||
+									s[0].toUpperCase() + s.slice(1)
+							)
+							.join(' ')
+					)
 				);
 			}),
 			map(header =>
-				typeof header === 'string' ? {desktop: header, mobile: header} : header
+				typeof header === 'string' ?
+					{desktop: header, mobile: header} :
+					header
 			)
 		);
 
-		this.menuExpandable	= combineLatest([
+		this.menuExpandable = combineLatest([
 			this.menuReduced,
 			this.windowWatcherService.width
-		]).pipe(map(([menuReduced, width]) =>
-			!menuReduced && width >= this.menuMinWidth
-		));
+		]).pipe(
+			map(
+				([menuReduced, width]) =>
+					!menuReduced && width >= this.menuMinWidth
+			)
+		);
 
-		this.menuExpanded	= combineLatest([
+		this.menuExpanded = combineLatest([
 			this.menuExpandedInternal,
 			this.menuExpandable,
 			this.mobileMenuOpen,
 			this.windowWatcherService.width
-		]).pipe(map(([menuExpandedInternal, menuExpandable, mobileMenuOpen, width]) =>
-			mobileMenuOpen || (
-				menuExpandedInternal &&
-				menuExpandable &&
-				width > this.configService.responsiveMaxWidths.xs
+		]).pipe(
+			map(
+				([
+					menuExpandedInternal,
+					menuExpandable,
+					mobileMenuOpen,
+					width
+				]) =>
+					mobileMenuOpen ||
+					(menuExpandedInternal &&
+						menuExpandable &&
+						width > this.configService.responsiveMaxWidths.xs)
 			)
-		));
+		);
 
-		this.menuMaxWidth	= combineLatest([
+		this.menuMaxWidth = combineLatest([
 			this.menuExpanded,
 			this.windowWatcherService.width
-		]).pipe(map(([menuExpanded, width]) =>
-			width <= this.configService.responsiveMaxWidths.xs ?
-				'100%' :
+		]).pipe(
+			map(([menuExpanded, width]) =>
+				width <= this.configService.responsiveMaxWidths.xs ?
+					'100%' :
 				!menuExpanded ?
 					'6em' :
-					this.menuMinWidth > width ?
-						'100%' :
-						this.menuExpandedMinWidthPX
-		));
+				this.menuMinWidth > width ?
+					'100%' :
+					this.menuExpandedMinWidthPX
+			)
+		);
 
+		let lastSection = '';
+		let lastURL = '';
 
-		let lastSection	= '';
-		let lastURL		= '';
+		this.subscriptions.push(
+			this.router.events.subscribe(e => {
+				if (!(e instanceof NavigationStart)) {
+					return;
+				}
 
-		this.subscriptions.push(this.router.events.subscribe(e => {
-			if (!(e instanceof NavigationStart)) {
-				return;
-			}
+				if (e.url !== lastURL) {
+					lastURL = e.url;
+					this.headerInternal.next(undefined);
+				}
 
-			if (e.url !== lastURL) {
-				lastURL	= e.url;
-				this.headerInternal.next(undefined);
-			}
+				let section =
+					(e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
 
-			let section	= (e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
+				if (section === 'search') {
+					section = '';
+				}
 
-			if (section === 'search') {
-				section	= '';
-			}
-
-			if (section !== lastSection) {
-				lastSection	= section;
-				this.transitionInternal.next(true);
-			}
-		}));
+				if (section !== lastSection) {
+					lastSection = section;
+					this.transitionInternal.next(true);
+				}
+			})
+		);
 
 		this.uiReady.then(() => {
 			this.isUiReady.next(true);

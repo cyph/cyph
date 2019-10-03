@@ -1,0 +1,29 @@
+{
+	"name": "cyph",
+	"version": "0.0.0",
+	"license": "Ms-RSL",
+	"husky": {
+		"hooks": {
+			"pre-commit": "cyph-pretty-quick --staged --pattern '**/*.{css,html,js,json,scss,ts,tsx}'"
+		}
+	},
+	"prettier": {
+		"arrowParens": "avoid",
+		"bracketSpacing": false,
+		"endOfLine": "lf",
+		"htmlWhitespaceSensitivity": "css",
+		"jsxBracketSameLine": false,
+		"jsxSingleQuote": false,
+		"printWidth": 80,
+		"proseWrap": "always",
+		"quoteProps": "consistent",
+		"semi": true,
+		"singleQuote": true,
+		"tabWidth": 4,
+		"trailingComma": "none",
+		"useTabs": true
+	},
+	"scripts": {
+		"serve": "./docker.js serve"
+	}
+}

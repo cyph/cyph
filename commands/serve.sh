@@ -115,6 +115,20 @@ ngserve () {
 	cd "${project}"
 	../commands/ngprojectinit.sh
 	echo -e '\n\n\n'
+
+	if [ ! "${e2e}" ] && [ "${project}" == 'cyph.app' ] ; then
+		compodoc \
+			-s \
+			-t \
+			-r 42003 \
+			-n 'Cyph Docs' \
+			-p src/tsconfig.app.json \
+			--disablePrivate \
+			--disableProtected \
+			--disableInternal \
+		&> /dev/null &
+	fi
+
 	ngserveInternal \
 		--host '0.0.0.0' \
 		--port "${port}" \
@@ -161,6 +175,7 @@ dev_appserver.py \
 
 log 'Starting ng serve'
 
+ports=''
 for arr in 'cyph.app 42002' 'cyph.com 42001' ; do
 	read -ra arr <<< "${arr}"
 
@@ -169,10 +184,20 @@ for arr in 'cyph.app 42002' 'cyph.com 42001' ; do
 			ngserve "${arr[0]}" "${arr[1]}"
 			exit $?
 		else
+			if [ "${arr[0]}" == 'cyph.app' ] ; then
+				ports="${ports} 42003"
+			fi
+			ports="${ports} ${arr[1]}"
+
 			ngserve "${arr[0]}" "${arr[1]}" &
 			sleep 60
 		fi
 	fi
 done
+
+for p in ${ports} ; do
+	while ! curl http://localhost:${p} &> /dev/null ; do sleep 1 ; done
+done
+echo "${ports}" > serve.ready
 
 sleep Infinity

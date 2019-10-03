@@ -1,6 +1,5 @@
 import {Observable} from 'rxjs';
 
-
 /**
  * Represents a remote user in a Castle session.
  */
@@ -16,5 +15,5 @@ export interface IRemoteUser {
 	 * If a signed handshake is expected and a public signing key cannot be found,
 	 * this method should throw an exception.
 	 */
-	getPublicSigningKey () : Promise<Uint8Array|undefined>;
+	getPublicSigningKey () : Promise<Uint8Array | undefined>;
 }

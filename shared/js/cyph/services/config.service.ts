@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Config} from '../config';
 
-
 /**
  * @see Config
  */

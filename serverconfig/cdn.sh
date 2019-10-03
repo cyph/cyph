@@ -28,17 +28,17 @@ cat > server.js <<- EOM
 	#!/usr/bin/env node
 
 
-	const childProcess				= require('child_process');
-	const crypto					= require('crypto');
-	const fs						= require('fs');
-	const http2						= require('http2');
-	const app						= new (require('koa'))();
-	const {isEqual}					= require('lodash');
-	const {ReplaySubject, timer}	= require('rxjs');
-	const {filter, mergeMap, take}	= require('rxjs/operators');
-	const util						= require('util');
+	const childProcess = require('child_process');
+	const crypto = require('crypto');
+	const fs = require('fs');
+	const http2 = require('http2');
+	const app = new (require('koa'))();
+	const {isEqual} = require('lodash');
+	const {ReplaySubject, timer} = require('rxjs');
+	const {filter, mergeMap, take} = require('rxjs/operators');
+	const util = require('util');
 
-	const cache			= {
+	const cache = {
 		br: {
 			current: {},
 			files: {},
@@ -51,20 +51,20 @@ cat > server.js <<- EOM
 		}
 	};
 
-	const cdnPath		= './cdn/';
-	const certPath		= 'cert.pem';
-	const dhparamPath	= 'dhparams.pem';
-	const keyPath		= 'key.pem';
+	const cdnPath = './cdn/';
+	const certPath = 'cert.pem';
+	const dhparamPath = 'dhparams.pem';
+	const keyPath = 'key.pem';
 
-	const spawn			= async (command, args) => {
+	const spawn = async (command, args) => {
 		for await (const data of childProcess.spawn(command, args).stdout) {
 			return data.toString().trim();
 		}
 		return '';
 	};
 
-	const getDomains	= async () => {
-		const ipAddress	= await spawn(
+	const getDomains = async () => {
+		const ipAddress = await spawn(
 			'curl',
 			['-s', 'https://checkip.amazonaws.com']
 		);
@@ -87,7 +87,7 @@ cat > server.js <<- EOM
 		);
 	};
 
-	const getNewCert	= async domains => {
+	const getNewCert = async domains => {
 		try {
 			await util.promisify(fs.unlink)(certPath);
 		}
@@ -136,7 +136,7 @@ cat > server.js <<- EOM
 		}
 	};
 
-	const getFileName	= (ctx, ext) => async () => new Promise((resolve, reject) => {
+	const getFileName = (ctx, ext) => async () => new Promise((resolve, reject) => {
 		if (ctx.request.path.indexOf('..') > -1) {
 			reject('Invalid path.');
 			return;
@@ -148,7 +148,7 @@ cat > server.js <<- EOM
 				return;
 			}
 
-			const fileName	= path.split(process.env['HOME'] + cdnPath.slice(1))[1];
+			const fileName = path.split(process.env['HOME'] + cdnPath.slice(1))[1];
 
 			if (fileName) {
 				resolve(fileName);
@@ -159,9 +159,9 @@ cat > server.js <<- EOM
 		});
 	});
 
-	const git			= (...args) => new Promise((resolve, reject) => {
-		let data		= Buffer.from([]);
-		const stdout	= childProcess.spawn('git', args, {cwd: cdnPath}).stdout;
+	const git = (...args) => new Promise((resolve, reject) => {
+		let data = Buffer.from([]);
+		const stdout = childProcess.spawn('git', args, {cwd: cdnPath}).stdout;
 
 		stdout.on('data', buf => data = Buffer.concat([data, buf]));
 
@@ -178,7 +178,7 @@ cat > server.js <<- EOM
 
 	app.use(async ctx => {
 		try {
-			const cyphCtx	= {};
+			const cyphCtx = {};
 
 			ctx.set('Access-Control-Allow-Methods', 'GET');
 			ctx.set('Access-Control-Allow-Origin', '*');
@@ -192,8 +192,8 @@ cat > server.js <<- EOM
 
 			if (!ctx.path || ctx.path === '/') {
 				ctx.set('Content-Type', 'text/plain');
-				ctx.body	= 'Welcome to Cyph, lad';
-				ctx.status	= 200;
+				ctx.body = 'Welcome to Cyph, lad';
+				ctx.status = 200;
 				return;
 			}
 
@@ -203,14 +203,14 @@ cat > server.js <<- EOM
 					split(',').
 					indexOf('br') > -1
 			) {
-				cyphCtx.cache		= cache.br;
-				cyphCtx.getFileName	= getFileName(ctx, '.br');
+				cyphCtx.cache = cache.br;
+				cyphCtx.getFileName = getFileName(ctx, '.br');
 
 				ctx.set('Content-Encoding', 'br');
 			}
 			else {
-				cyphCtx.cache		= cache.gzip;
-				cyphCtx.getFileName	= getFileName(ctx, '.gz');
+				cyphCtx.cache = cache.gzip;
+				cyphCtx.getFileName = getFileName(ctx, '.gz');
 
 				ctx.set('Content-Encoding', 'gzip');
 			}
@@ -219,12 +219,12 @@ cat > server.js <<- EOM
 			// /.*\/current/ route
 
 			if (ctx.path.endsWith('current')) {
-				const fileName	= await cyphCtx.getFileName();
+				const fileName = await cyphCtx.getFileName();
 
-				ctx.body	= await new Promise((resolve, reject) =>
+				ctx.body = await new Promise((resolve, reject) =>
 					fs.readFile(cdnPath + fileName, (err, data) => {
 						if (!err && data) {
-							cyphCtx.cache.current[fileName]	= data;
+							cyphCtx.cache.current[fileName] = data;
 						}
 
 						if (cyphCtx.cache.current[fileName]) {
@@ -236,7 +236,7 @@ cat > server.js <<- EOM
 					})
 				);
 
-				ctx.status	= 200;
+				ctx.status = 200;
 
 				return;
 			}
@@ -245,11 +245,11 @@ cat > server.js <<- EOM
 			// /\/.*/ route
 
 			if (!cyphCtx.cache.urls[ctx.originalUrl]) {
-				const hash		= ctx.originalUrl.split('?')[1];
-				const fileName	= await cyphCtx.getFileName();
+				const hash = ctx.originalUrl.split('?')[1];
+				const fileName = await cyphCtx.getFileName();
 
 				if (!cyphCtx.cache.files[fileName]) {
-					cyphCtx.cache.files[fileName]	= {};
+					cyphCtx.cache.files[fileName] = {};
 				}
 
 				if (!cyphCtx.cache.files[fileName][hash]) {
@@ -264,7 +264,7 @@ cat > server.js <<- EOM
 						})
 					);
 
-					const revision	= !hash ? '' : (
+					const revision = !hash ? '' : (
 						(await git('log', '--pretty=format:%H %s', fileName)).toString().
 							split('\n').
 							map(s => s.split(' ')).
@@ -272,38 +272,38 @@ cat > server.js <<- EOM
 							concat([['HEAD']])
 					)[0][0];
 
-					cyphCtx.cache.files[fileName][hash]	=
+					cyphCtx.cache.files[fileName][hash] =
 						await git('show', revision + ':' + fileName)
 					;
 				}
 
-				cyphCtx.cache.urls[ctx.originalUrl]	=
+				cyphCtx.cache.urls[ctx.originalUrl] =
 					cyphCtx.cache.files[fileName][hash]
 				;
 			}
 
-			ctx.body	=
+			ctx.body =
 				ctx.request.hostname === 'localhost' ?
 					'' :
 					cyphCtx.cache.urls[ctx.originalUrl]
 			;
 
-			ctx.status	= 200;
+			ctx.status = 200;
 		}
 		catch {
-			ctx.body	= '';
-			ctx.status	= 418;
+			ctx.body = '';
+			ctx.status = 418;
 		}
 	});
 
 
 	let server;
 
-	const domainWatcher	= new ReplaySubject(1);
+	const domainWatcher = new ReplaySubject(1);
 	timer(0, 60000).pipe(mergeMap(getDomains)).subscribe(domainWatcher);
 
 	(async () => { while (true) {
-		const domains	=
+		const domains =
 			await domainWatcher.pipe(
 				filter(newDomains => newDomains.length > 0),
 				take(1)
@@ -325,13 +325,13 @@ cat > server.js <<- EOM
 			await new Promise(resolve => server.close(resolve));
 		}
 
-		const [cert, dhparam, key]	= await Promise.all([
+		const [cert, dhparam, key] = await Promise.all([
 			util.promisify(fs.readFile)(certPath),
 			util.promisify(fs.readFile)(dhparamPath),
 			util.promisify(fs.readFile)(keyPath)
 		]);
 
-		server	= http2.createSecureServer(
+		server = http2.createSecureServer(
 			{
 				allowHTTP1: true,
 				cert,

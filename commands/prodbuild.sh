@@ -16,7 +16,7 @@ fi
 # Temporary workarounds for https://github.com/angular/angular-cli/issues/10525
 
 minifyScripts="$(
-	grep -rlP "this\.options\[['\"]sequences['\"]\]" \
+	grep -rlP "this\.options(\.sequences|\[['\"]sequences['\"]\])" \
 		/node_modules/@angular* \
 		/node_modules/ng-* \
 		/node_modules/*terse* \
@@ -49,13 +49,14 @@ for minifyScript in ${minifyScripts} ; do
 
 	commandsDir="$(cd "$(dirname "$0")" ; pwd)"
 
-	sed -i "s/this\.options\[['\"]sequences['\"]\]/this.options.sequences/g" ${minifyScript}
-	sed -i "s/this\.options\.sequences/this.options.sequences = false/g" ${minifyScript}
-
-	sed -i "s/reserved:\s*\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions/g" ${minifyScript}
-
-	sed -i "s/safari10 = .*;/safari10 = true;/g" ${minifyScript}
-	sed -i "s/safari10\s*:\s*false/safari10: true/g" ${minifyScript}
+	cat ${minifyScript} |
+		perl -pe "s/this\.options\[['\"]sequences['\"]\]/this.options.sequences/g" |
+		perl -pe "s/this\.options\.sequences/this.options.sequences = false/g" |
+		perl -pe "s/reserved:\s*?\[\]/reserved: require('$(echo "${commandsDir}" | sed 's|/|\\/|g')\\/mangleexceptions').mangleExceptions/g" |
+		perl -pe "s/safari10\s*?=.*?;/safari10 = true;/g" |
+		perl -pe "s/safari10\s*?:\s*?false/safari10: true/g" \
+	> ${minifyScript}.new
+	mv ${minifyScript}.new ${minifyScript}
 
 	if [ -f "${minifyScriptMin}" ] ; then
 		mv ${minifyScriptMin} ${minifyScriptMin}.bak
@@ -101,14 +102,14 @@ dependencyModules="$(
 ng eject --prod --output-hashing none "${@}"
 
 cat > webpack.js <<- EOM
-	const HtmlWebpackPlugin		= require('html-webpack-plugin');
-	const path					= require('path');
-	const TerserPlugin			= require('terser-webpack-plugin');
-	const {CommonsChunkPlugin}	= require('webpack').optimize;
-	const {mangleExceptions}	= require('../commands/mangleexceptions');
-	const config				= require('./webpack.config.js');
+	const HtmlWebpackPlugin = require('html-webpack-plugin');
+	const path = require('path');
+	const TerserPlugin = require('terser-webpack-plugin');
+	const {CommonsChunkPlugin} = require('webpack').optimize;
+	const {mangleExceptions} = require('../commands/mangleexceptions');
+	const config = require('./webpack.config.js');
 
-	const chunks	=
+	const chunks =
 		'${dependencyModules}'.
 			trim().
 			split(/\s+/).
@@ -127,12 +128,12 @@ cat > webpack.js <<- EOM
 			}))
 	;
 
-	const entryPoints	= ['inline', 'polyfills', 'sw-register', 'styles'].
+	const entryPoints = ['inline', 'polyfills', 'sw-register', 'styles'].
 		concat(chunks.map(chunk => chunk.name)).
 		concat(['vendor', 'main'])
 	;
 
-	const commonsChunkIndex	= config.plugins.indexOf(
+	const commonsChunkIndex = config.plugins.indexOf(
 		config.plugins.find(o => o instanceof CommonsChunkPlugin)
 	);
 
@@ -150,7 +151,7 @@ cat > webpack.js <<- EOM
 		);
 	}
 
-	const htmlWebpackIndex	= config.plugins.indexOf(
+	const htmlWebpackIndex = config.plugins.indexOf(
 		config.plugins.find(o => o instanceof HtmlWebpackPlugin)
 	);
 
@@ -171,8 +172,8 @@ cat > webpack.js <<- EOM
 				chunks: 'all',
 				xhtml: true,
 				chunksSortMode: (left, right) => {
-					let leftIndex	= entryPoints.indexOf(left.names[0]);
-					let rightindex	= entryPoints.indexOf(right.names[0]);
+					let leftIndex = entryPoints.indexOf(left.names[0]);
+					let rightindex = entryPoints.indexOf(right.names[0]);
 
 					if (leftIndex > rightindex) {
 						return 1;
@@ -188,23 +189,23 @@ cat > webpack.js <<- EOM
 		);
 	}
 
-	const terserIndex	= config.plugins.indexOf(
+	const terserIndex = config.plugins.indexOf(
 		config.plugins.find(o => o instanceof TerserPlugin)
 	);
 
 	if (terserIndex > -1) {
-		const {options}	= config.plugins[terserIndex];
+		const {options} = config.plugins[terserIndex];
 
-		options.terserOptions.compress.sequences	= false;
-		options.terserOptions.mangle				= {reserved: mangleExceptions};
+		options.terserOptions.compress.sequences = false;
+		options.terserOptions.mangle = {reserved: mangleExceptions};
 
 		config.plugins.splice(terserIndex, 1, new TerserPlugin(options));
 	}
 
-	config.output.filename		= '[name].js';
-	config.output.chunkFilename	= config.output.filename;
+	config.output.filename = '[name].js';
+	config.output.chunkFilename = config.output.filename;
 
-	module.exports	= config;
+	module.exports = config;
 EOM
 
 webpack --config webpack.js

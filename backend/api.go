@@ -18,6 +18,7 @@ import (
 )
 
 func init() {
+	handleFuncs("/analytics/*", Handlers{methods.GET: analytics})
 	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", Handlers{methods.GET: getContinent})
@@ -40,6 +41,21 @@ func init() {
 
 func main() {
 	appengine.Main()
+}
+
+func analytics(h HandlerArgs) (interface{}, int) {
+	client := urlfetch.Client(h.Context)
+
+	h.Request.RequestURI = ""
+	h.Request.URL.Host = "www.google-analytics.com"
+	h.Request.URL.Scheme = "https"
+
+	resp, err := client.Do(h.Request)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return resp.Body, resp.StatusCode
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {

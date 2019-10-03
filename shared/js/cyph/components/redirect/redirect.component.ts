@@ -4,7 +4,6 @@ import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
 
-
 /**
  * Angular component for redirecting.
  */
@@ -19,14 +18,13 @@ export class RedirectComponent extends BaseProvider implements OnInit {
 		await sleep(0);
 
 		this.router.navigate(
-			(
-				this.router.routerState.snapshot.root.firstChild &&
+			this.router.routerState.snapshot.root.firstChild &&
 				this.router.routerState.snapshot.root.firstChild.firstChild &&
-				this.router.routerState.snapshot.root.firstChild.firstChild.url.length > 0
-			) ?
-				this.router.routerState.snapshot.root.firstChild.firstChild.url.
-					map(o => o.path)
-				:
+				this.router.routerState.snapshot.root.firstChild.firstChild.url
+					.length > 0 ?
+				this.router.routerState.snapshot.root.firstChild.firstChild.url.map(
+					o => o.path
+				) :
 				['']
 		);
 	}
