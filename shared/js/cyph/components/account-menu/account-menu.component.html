@@ -381,7 +381,7 @@
 						library_books
 					</mat-icon>
 					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
-						Docs
+						Docs (experimental)
 					</h3>
 				</a>
 
@@ -448,14 +448,16 @@
 					</h3>
 				</a>
 
-				<a
+				<button
 					mat-list-item
 					cyphTranslate
 					class="wallets"
 					aria-label="Wallets"
 					routerLink="/wallets"
 					(click)="click()"
-					*ngIf="accountService.enableWallets | async"
+					[disabled]="
+						(accountService.enableWallets | async) === false
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -480,9 +482,9 @@
 						account_balance_wallet
 					</mat-icon>
 					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
-						Wallets
+						Wallets (experimental)
 					</h3>
-				</a>
+				</button>
 			</ng-container>
 		</mat-nav-list>
 	</ng-template>
