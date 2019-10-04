@@ -145,6 +145,7 @@ ngserve () {
 # node /node_modules/.bin/firebase-server -p 44000 &
 
 cp -f backend/app.yaml backend/.build.yaml
+sed -i 's|runtime: go112|runtime: go111|g' backend/.build.yaml # temporary workaround
 
 # Braintree, Prefinery, and Twilio unsupported in CircleCI for now, until needed
 if [ -d ~/.cyph ] && [ -f ~/.cyph/backend.vars ] && [ ! "${CIRCLECI}" ] ; then
@@ -157,7 +158,6 @@ if [ -d ~/.cyph ] && [ -f ~/.cyph/backend.vars ] && [ ! "${CIRCLECI}" ] ; then
 	fi
 fi
 
-mkdir -p /tmp/cyph0/search_indexes
 dev_appserver.py \
 	--skip_sdk_update_check \
 	--port 42000 \
