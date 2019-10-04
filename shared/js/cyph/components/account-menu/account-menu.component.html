@@ -448,14 +448,14 @@
 					</h3>
 				</a>
 
-				<button
+				<a
 					mat-list-item
 					cyphTranslate
 					class="wallets"
-					aria-label="Wallets"
+					aria-label="Wallets (experimental)"
 					routerLink="/wallets"
 					(click)="click()"
-					[disabled]="
+					[class.disabled]="
 						(accountService.enableWallets | async) === false
 					"
 				>
@@ -484,7 +484,7 @@
 					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
 						Wallets (experimental)
 					</h3>
-				</button>
+				</a>
 			</ng-container>
 		</mat-nav-list>
 	</ng-template>
