@@ -213,6 +213,11 @@ func getIP(h HandlerArgs) []byte {
 }
 
 func getIPString(h HandlerArgs) string {
+	xff := h.Request.Header.Get("X-Forwarded-For")
+	if xff != "" {
+		return strings.Split(xff, ",")[0]
+	}
+
 	ip, _, _ := net.SplitHostPort(h.Request.RemoteAddr)
 	return ip
 }
