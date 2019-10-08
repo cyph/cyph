@@ -3,20 +3,22 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/braintree-go/braintree-go"
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/mail"
 	"google.golang.org/appengine/memcache"
 )
 
-func init() {
+func main() {
 	handleFuncs("/analytics/*", Handlers{methods.GET: analytics})
 	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
@@ -37,10 +39,12 @@ func init() {
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
-}
 
-func main() {
-	appengine.Main()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "443"
+	}
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
 
 func analytics(h HandlerArgs) (interface{}, int) {

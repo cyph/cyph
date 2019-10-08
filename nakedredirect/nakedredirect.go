@@ -1,12 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
-
-	"google.golang.org/appengine"
+	"os"
 )
 
-func init() {
+func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=31536000")
 		w.Header().Set("Public-Key-Pins", config.HPKPHeader)
@@ -19,8 +20,10 @@ func init() {
 
 		http.Redirect(w, r, "https://www.cyph.com"+path, http.StatusMovedPermanently)
 	})
-}
 
-func main() {
-	appengine.Main()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "443"
+	}
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
