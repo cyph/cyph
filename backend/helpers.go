@@ -213,7 +213,11 @@ func getIP(h HandlerArgs) []byte {
 }
 
 func getIPString(h HandlerArgs) string {
-	return strings.Split(h.Request.RemoteAddr, ":")[0]
+	if strings.HasPrefix(h.Request.RemoteAddr, "[") {
+		return strings.Split(h.Request.RemoteAddr[1:], "]")[0]
+	} else {
+		return strings.Split(h.Request.RemoteAddr, ":")[0]
+	}
 }
 
 func braintreeDecimalToCents(d *braintree.Decimal) int64 {
