@@ -14,7 +14,6 @@ import (
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/mail"
 	"google.golang.org/appengine/memcache"
-	"google.golang.org/appengine/urlfetch"
 )
 
 func init() {
@@ -45,7 +44,7 @@ func main() {
 }
 
 func analytics(h HandlerArgs) (interface{}, int) {
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 
 	h.Request.RequestURI = ""
 	h.Request.URL.Host = "www.google-analytics.com"
@@ -771,7 +770,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 		req.Header.Add("Content-type", "application/json")
 
-		client := urlfetch.Client(h.Context)
+		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
 			return err.Error(), http.StatusInternalServerError
@@ -833,7 +832,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 	req.Header.Add("Authorization", "Bearer "+redoxAuth.AccessToken)
 	req.Header.Add("Content-type", "application/json")
 
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
@@ -920,7 +919,7 @@ func signup(h HandlerArgs) (interface{}, int) {
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-type", "application/json")
 
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError

@@ -27,7 +27,6 @@ import (
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/mail"
-	"google.golang.org/appengine/urlfetch"
 )
 
 // HandlerArgs : Arguments to Handler
@@ -239,7 +238,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 		braintreePrivateKey,
 	)
 
-	bt.HttpClient = urlfetch.Client(h.Context)
+	bt.HttpClient = &http.Client{}
 
 	return bt
 }
@@ -263,7 +262,7 @@ func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 }
 
 func getTwilioToken(h HandlerArgs) map[string]interface{} {
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 
 	req, _ := http.NewRequest(
 		methods.POST,
@@ -311,7 +310,7 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 		return err
 	}
 
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 	_, err = client.Do(req)
 
 	return err
