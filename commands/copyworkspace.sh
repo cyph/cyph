@@ -21,6 +21,10 @@ for d in cyph.app cyph.com ; do
 	../commands/ngprojectinit.sh
 done
 
+find "${dir}" -maxdepth 2 -type f -name .go.mod -exec bash -c \
+	'mv {} $(echo "{}" | sed "s|.go.mod|go.mod|")' \
+\;
+
 cd "${dir}/shared/js/native/js"
 for d in $(ls | grep -v standalone) ; do rm ${d} ; cp -a ../../${d} ${d} ; done
 cd standalone
