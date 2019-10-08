@@ -2,6 +2,8 @@ package main
 
 import (
 	"net/http"
+
+	"google.golang.org/appengine"
 )
 
 func init() {
@@ -17,4 +19,8 @@ func init() {
 
 		http.Redirect(w, r, "https://www.cyph.com"+path, http.StatusMovedPermanently)
 	})
+}
+
+func main() {
+	appengine.Main()
 }
