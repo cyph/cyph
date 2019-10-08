@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -23,7 +24,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
-	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/mail"
@@ -349,7 +349,7 @@ func handleFuncs(pattern string, handlers Handlers) {
 				responseBody = config.AllowedMethods
 				responseCode = http.StatusOK
 			} else {
-				context, err := appengine.Namespace(appengine.NewContext(r), apiNamespace)
+				context, err := appengine.Namespace(r.Context(), apiNamespace)
 				if err != nil {
 					responseBody = "Failed to create context."
 					responseCode = http.StatusInternalServerError

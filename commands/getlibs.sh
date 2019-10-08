@@ -30,7 +30,6 @@ go get -u \
 	github.com/braintree-go/braintree-go \
 	github.com/microcosm-cc/bluemonday \
 	github.com/oschwald/geoip2-golang \
-	golang.org/x/net/context \
 	google.golang.org/appengine \
 	google.golang.org/appengine/datastore \
 	google.golang.org/appengine/mail \
