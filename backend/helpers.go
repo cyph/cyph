@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math"
 	"net"
 	"net/http"
@@ -25,7 +26,6 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/mail"
 )
 
@@ -484,7 +484,7 @@ func sendMail(h HandlerArgs, to string, subject string, text string, html string
 	body, err := emailTemplate.Render(map[string]interface{}{"html": html, "lines": lines})
 
 	if err != nil {
-		log.Errorf(h.Context, "Failed to render email body: %v", err)
+		log.Println(fmt.Errorf("Failed to render email body: %v", err))
 	}
 
 	email := &mail.Message{
@@ -495,15 +495,15 @@ func sendMail(h HandlerArgs, to string, subject string, text string, html string
 	}
 
 	if b, err := json.Marshal(email); err == nil {
-		log.Infof(h.Context, "Sending email: %v", string(b))
+		log.Println("Sending email: %v", string(b))
 	} else {
-		log.Errorf(h.Context, "Failed to log outgoing email.")
+		log.Println(fmt.Errorf("Failed to log outgoing email."))
 	}
 
 	err = mail.Send(h.Context, email)
 
 	if err != nil {
-		log.Errorf(h.Context, "Failed to send email: %v", err)
+		log.Println(fmt.Errorf("Failed to send email: %v", err))
 	}
 }
 
