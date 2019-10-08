@@ -50,11 +50,20 @@ func main() {
 func analytics(h HandlerArgs) (interface{}, int) {
 	client := &http.Client{}
 
-	h.Request.RequestURI = ""
-	h.Request.URL.Host = "www.google-analytics.com"
-	h.Request.URL.Scheme = "https"
+	req, err := http.NewRequest(
+		h.Request.Method,
+		h.Request.URL.String(),
+		h.Request.Body,
+	)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
 
-	resp, err := client.Do(h.Request)
+	req.Header = h.Request.Header
+	req.URL.Host = "www.google-analytics.com"
+	req.URL.Scheme = "https"
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
