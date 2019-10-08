@@ -210,7 +210,11 @@ func getOrg(h HandlerArgs) string {
 }
 
 func getIP(h HandlerArgs) []byte {
-	return net.ParseIP(strings.Split(h.Request.RemoteAddr, ":")[0])
+	return net.ParseIP(getIPString(h))
+}
+
+func getIPString(h HandlerArgs) string {
+	return strings.Split(h.Request.RemoteAddr, ":")[0]
 }
 
 func braintreeDecimalToCents(d *braintree.Decimal) int64 {

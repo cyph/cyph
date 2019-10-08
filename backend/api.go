@@ -33,6 +33,7 @@ func init() {
 	handleFuncs("/redox/execute", Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestampHandler})
+	handleFuncs("/whatismyip", Handlers{methods.GET: whatismyip})
 
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
@@ -954,4 +955,8 @@ func signup(h HandlerArgs) (interface{}, int) {
 	}
 
 	return "signup failed", http.StatusInternalServerError
+}
+
+func whatismyip(h HandlerArgs) (interface{}, int) {
+	return getIPString(h), http.StatusOK
 }
