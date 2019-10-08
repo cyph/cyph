@@ -8,7 +8,8 @@ import {
 	newForm,
 	newFormComponent,
 	newFormContainer,
-	numberInput
+	numberInput,
+	text
 } from '../../forms';
 import {MaybePromise} from '../../maybe-promise-type';
 import {
@@ -191,9 +192,30 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		amount?: number
 	) : Promise<void> {
 		if (recipient === undefined || amount === undefined || isNaN(amount)) {
+			const balance = await this.cryptocurrencyService.getBalance(wallet);
+
+			const step = 0.00000001;
+
+			const max = Math.min(
+				20999999.9769,
+				Math.max(balance - this.cryptocurrencyService.transactionFee, 0)
+			);
+
+			const min = Math.min(max, step);
+
 			const sendForm = await this.dialogService.prompt({
 				content: '',
 				form: newForm([
+					newFormComponent([
+						newFormContainer([
+							text({
+								label: this.stringsService.bitcoinTransactionFee.replace(
+									'*',
+									this.cryptocurrencyService.transactionFee.toString()
+								)
+							})
+						])
+					]),
 					newFormComponent([
 						newFormContainer([
 							input({
@@ -207,10 +229,10 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 						newFormContainer([
 							numberInput({
 								label: this.stringsService.bitcoinAmountLabel,
-								max: 20999999.9769,
-								min: 0.00000547,
-								step: 0.00000001,
-								value: amount
+								max,
+								min,
+								step,
+								value: typeof amount === 'number' ? amount : min
 							})
 						])
 					])

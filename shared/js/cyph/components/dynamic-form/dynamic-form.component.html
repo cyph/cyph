@@ -214,10 +214,10 @@
 			<input
 				matInput
 				[textMask]="getMask(o)"
-				[ngModel]="o.valueNumber"
+				[ngModel]="o.valueNumber.toFixed(8)"
 				(keyup)="
 					o.valueNumber = toFloat($event.target.value, o.max, o.min);
-					$event.target.value = o.valueNumber.toString();
+					$event.target.value = o.valueNumber.toFixed(8);
 					changeForm.emit()
 				"
 				[max]="o.max"
