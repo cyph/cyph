@@ -48,7 +48,7 @@ export class DialogConfirmComponent extends BaseProvider
 	public fabAvatar?: Observable<SafeUrl | string | undefined>;
 
 	/** Form for prompt. If defined, will render and return response. */
-	public form?: Observable<IForm>;
+	public form?: IForm;
 
 	/** Indicates whether content is Markdown. */
 	public markdown: boolean = false;

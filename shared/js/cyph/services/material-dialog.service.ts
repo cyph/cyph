@@ -4,8 +4,7 @@ import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
-import {isObservable, Observable, of} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
 import {DialogAlertComponent} from '../components/dialog-alert';
@@ -38,7 +37,7 @@ export class MaterialDialogService extends BaseProvider
 			cancelFAB?: string;
 			content: string;
 			fabAvatar?: Async<SafeUrl | string>;
-			form?: IForm | Observable<IForm>;
+			form?: IForm;
 			ok?: string;
 			okFAB?: string;
 			markdown?: boolean;
@@ -93,10 +92,7 @@ export class MaterialDialogService extends BaseProvider
 					o.fabAvatar :
 					asyncToObservable(o.fabAvatar);
 
-			instance.form =
-				o.form === undefined || isObservable(o.form) ?
-					o.form :
-					of(o.form);
+			instance.form = o.form;
 
 			instance.markdown = !!o.markdown;
 
@@ -118,11 +114,7 @@ export class MaterialDialogService extends BaseProvider
 
 			const promptResponse = beforeClosed()
 				.toPromise()
-				.then(async () =>
-					instance.form ?
-						instance.form.pipe(take(1)).toPromise() :
-						instance.prompt
-				);
+				.then(() => instance.form || instance.prompt);
 
 			let hasReturned = false;
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
@@ -309,7 +301,7 @@ export class MaterialDialogService extends BaseProvider
 			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
-			form: IForm | Observable<IForm>;
+			form: IForm;
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;
@@ -337,7 +329,7 @@ export class MaterialDialogService extends BaseProvider
 			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
-			form?: IForm | Observable<IForm>;
+			form?: IForm;
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;

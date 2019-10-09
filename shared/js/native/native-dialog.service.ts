@@ -3,7 +3,6 @@ import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
-import {Observable} from 'rxjs';
 import {alert, confirm, prompt} from 'tns-core-modules/ui/dialogs/dialogs';
 import {DialogMediaComponent} from './components/dialog-media';
 import {Async} from './js/cyph/async-type';
@@ -179,7 +178,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
-			form: IForm | Observable<IForm>;
+			form: IForm;
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;
@@ -207,7 +206,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
-			form?: IForm | Observable<IForm>;
+			form?: IForm;
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;
