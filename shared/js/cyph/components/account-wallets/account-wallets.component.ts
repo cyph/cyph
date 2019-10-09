@@ -265,7 +265,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		if (
 			!(await this.dialogService.confirm({
 				content: this.stringsService.bitcoinConfirmationPrompt
-					.replace('${1}', amount.toFixed(6))
+					.replace('${1}', amount.toFixed(8))
 					.replace('${2}', recipient),
 				title: this.stringsService.bitcoinSendTitle
 			}))
@@ -281,7 +281,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			return this.dialogService.alert({
 				content: `${
 					this.stringsService.bitcoinSuccessText
-				} ${amount.toFixed(6)} ${this.stringsService.bitcoinShort}.`,
+				} ${amount.toFixed(8)} ${this.stringsService.bitcoinShort}.`,
 				title: this.stringsService.bitcoinSuccessTitle
 			});
 		}
@@ -289,7 +289,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			return this.dialogService.alert({
 				content: `${
 					this.stringsService.bitcoinErrorText
-				} ${amount.toFixed(6)} ${this.stringsService.bitcoinShort}${
+				} ${amount.toFixed(8)} ${this.stringsService.bitcoinShort}${
 					err instanceof Error ? `: ${err.message}` : '.'
 				}`,
 				title: this.stringsService.bitcoinErrorTitle
