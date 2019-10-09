@@ -38,7 +38,7 @@
 	</ng-template>
 	<cyph-dynamic-form
 		#dynamicForm
-		[form]="form"
+		[form]="form | async"
 		[hideSubmitButton]="true"
 		(submitForm)="close(true)"
 		*ngIf="form !== undefined; else stringPrompt"

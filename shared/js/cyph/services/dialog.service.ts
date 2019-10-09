@@ -3,6 +3,7 @@
 import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
+import {Observable} from 'rxjs';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
@@ -91,7 +92,7 @@ export class DialogService extends BaseProvider {
 			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
-			form: IForm;
+			form: IForm | Observable<IForm>;
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;
@@ -118,7 +119,7 @@ export class DialogService extends BaseProvider {
 			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
-			form?: IForm;
+			form?: IForm | Observable<IForm>;
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;
