@@ -192,7 +192,15 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		amount?: number
 	) : Promise<void> {
 		if (recipient === undefined || amount === undefined || isNaN(amount)) {
-			const balance = await this.cryptocurrencyService.getBalance(wallet);
+			this.accountFilesService.showSpinner.next(true);
+
+			let balance: number;
+			try {
+				balance = await this.cryptocurrencyService.getBalance(wallet);
+			}
+			finally {
+				this.accountFilesService.showSpinner.next(false);
+			}
 
 			const step = 0.00000001;
 
