@@ -270,7 +270,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			return this.dialogService.alert({
 				content: `${
 					this.stringsService.bitcoinSuccessText
-				} ${amount.toString()} ${this.stringsService.bitcoinShort}.`,
+				} ${amount.toFixed(6)} ${this.stringsService.bitcoinShort}.`,
 				title: this.stringsService.bitcoinSuccessTitle
 			});
 		}
@@ -278,7 +278,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			return this.dialogService.alert({
 				content: `${
 					this.stringsService.bitcoinErrorText
-				} ${amount.toString()} ${this.stringsService.bitcoinShort}${
+				} ${amount.toFixed(6)} ${this.stringsService.bitcoinShort}${
 					err instanceof Error ? `: ${err.message}` : '.'
 				}`,
 				title: this.stringsService.bitcoinErrorTitle
