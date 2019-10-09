@@ -17859,10 +17859,10 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-simplebtc@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/simplebtc/-/simplebtc-2.0.3.tgz#b04cb511e98e69e2f23dee4eb9d6b74f72ea2e35"
-  integrity sha512-7AuFNKw+XVBkqfjorlzUTTvxKBQ0z58ZmrRJkDNWfjkSsUL7ZlIPJmIDNjrQZzVh0M35/xjTlAs5ow6YOnB3JA==
+simplebtc@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/simplebtc/-/simplebtc-2.0.4.tgz#b82ebbc4556d26224cde3c2a7b00998d5b4fa35e"
+  integrity sha512-uDQlvMy7Kawsu9aJZ2g4aOqtpAyibN9IW4mnsxn6qDOLRy+T/hrFjtJgJU1p0gRuTITF2uMX83rtGKfk5Nr8Nw==
   dependencies:
     "@types/bitcore-lib" "0"
     bitcore-lib "^0"
