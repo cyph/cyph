@@ -21,7 +21,7 @@ for d in cyph.app cyph.com ; do
 	../commands/ngprojectinit.sh
 done
 
-rm */go.mod */go.sum
+rm */go.mod */go.sum 2> /dev/null
 find "${dir}" -maxdepth 2 -type f -name .go.mod -exec bash -c \
 	'mv {} $(echo "{}" | sed "s|.go.mod|go.mod|")' \
 \;
