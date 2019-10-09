@@ -16,7 +16,6 @@ import {
 	Cryptocurrencies,
 	Currencies,
 	IAccountFileRecord,
-	IForm,
 	IWallet
 } from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
@@ -195,44 +194,25 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		if (recipient === undefined || amount === undefined || isNaN(amount)) {
 			const balance = await this.cryptocurrencyService.getBalance(wallet);
 
-			let form: IForm | undefined;
+			const step = 0.00000001;
 
-			const createForm = /* async */ () => {
-				const transactionFee = this.cryptocurrencyService
-					.transactionFee;
-				/*
-					amount === undefined ?
-						0 :
-						await this.cryptocurrencyService.calculateTransactionFee(
-							wallet,
-							amount
-						);
-				*/
+			const max = Math.min(
+				20999999.9769,
+				Math.max(balance - this.cryptocurrencyService.transactionFee, 0)
+			);
 
-				const step = 0.00000001;
+			const min = Math.min(max, step);
 
-				const max = Math.min(
-					20999999.9769,
-					Math.max(balance - transactionFee, 0)
-				);
-
-				const min = Math.min(max, step);
-
-				if (typeof amount !== 'number') {
-					amount = min;
-				}
-
-				form = newForm([
+			const sendForm = await this.dialogService.prompt({
+				content: '',
+				form: newForm([
 					newFormComponent([
 						newFormContainer([
 							text({
-								label:
-									transactionFee <= 0 ?
-										'' :
-										this.stringsService.bitcoinTransactionFee.replace(
-											'*',
-											transactionFee.toString()
-										)
+								label: this.stringsService.bitcoinTransactionFee.replace(
+									'*',
+									this.cryptocurrencyService.transactionFee.toString()
+								)
 							})
 						])
 					]),
@@ -252,41 +232,11 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 								max,
 								min,
 								step,
-								value: amount
+								value: typeof amount === 'number' ? amount : min
 							})
 						])
 					])
-				]);
-
-				return form;
-			};
-
-			const sendForm = await this.dialogService.prompt({
-				content: '',
-				form: createForm() /* timer(0, 1000).pipe(
-					mergeMap(async () => {
-						if (form === undefined) {
-							return createForm();
-						}
-
-						const newRecipient = getFormValue(
-							form,
-							'string',
-							1,
-							0,
-							0
-						);
-						const newAmount = getFormValue(form, 'number', 2, 0, 0);
-
-						if (newAmount !== amount) {
-							recipient = newRecipient;
-							amount = newAmount;
-							return createForm();
-						}
-
-						return form;
-					})
-				) */,
+				]),
 				title: this.stringsService.bitcoinSendTitle
 			});
 
