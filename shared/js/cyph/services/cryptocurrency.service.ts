@@ -4,6 +4,7 @@ import {Observable, timer} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {
 	getExchangeRates,
+	minimumTransactionAmount,
 	Transaction,
 	transactionFee,
 	Wallet as SimpleBTCWallet
@@ -30,6 +31,9 @@ export class CryptocurrencyService extends BaseProvider {
 			)
 		)
 	);
+
+	/** @see minimumTransactionAmount */
+	public readonly minimumTransactionAmount = minimumTransactionAmount;
 
 	/** @see transactionFee */
 	public readonly transactionFee = transactionFee;

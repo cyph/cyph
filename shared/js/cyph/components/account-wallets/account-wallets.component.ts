@@ -206,10 +206,16 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 
 			const max = Math.min(
 				20999999.9769,
-				Math.max(balance - this.cryptocurrencyService.transactionFee, 0)
+				Math.max(
+					balance - this.cryptocurrencyService.transactionFee,
+					this.cryptocurrencyService.minimumTransactionAmount
+				)
 			);
 
-			const min = Math.min(max, step);
+			const min = Math.min(
+				max,
+				this.cryptocurrencyService.minimumTransactionAmount
+			);
 
 			const sendForm = await this.dialogService.prompt({
 				content: '',
