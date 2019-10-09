@@ -240,8 +240,8 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 				title: this.stringsService.bitcoinSendTitle
 			});
 
-			recipient = getFormValue(sendForm, 'string', 0, 0, 0);
-			amount = getFormValue(sendForm, 'number', 1, 0, 0);
+			recipient = getFormValue(sendForm, 'string', 1, 0, 0);
+			amount = getFormValue(sendForm, 'number', 2, 0, 0);
 		}
 
 		if (recipient === undefined || amount === undefined || isNaN(amount)) {
