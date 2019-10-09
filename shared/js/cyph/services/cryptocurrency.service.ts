@@ -88,6 +88,19 @@ export class CryptocurrencyService extends BaseProvider {
 		);
 	}
 
+	/** Calculates transaction fee.
+	public async calculateTransactionFee (
+		wallet: IWallet,
+		amount: number
+	) : Promise<number> {
+		if (wallet.cryptocurrency !== Cryptocurrencies.BTC) {
+			throw new Error('Unsupported cryptocurrency.');
+		}
+
+		return this.getSimpleBTCWallet(wallet).calculateTransactionFee(amount);
+	}
+	*/
+
 	/** Converts between currency amounts. */
 	public async convert (
 		amount: number,
