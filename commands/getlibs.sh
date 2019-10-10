@@ -24,6 +24,7 @@ installPackages () {
 
 
 go get -u \
+	cloud.google.com/go/datastore \
 	github.com/cbroglie/mustache \
 	github.com/gorilla/context \
 	github.com/gorilla/mux \

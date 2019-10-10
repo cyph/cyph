@@ -19,19 +19,20 @@ import (
 	"strings"
 	"time"
 
+	"cloud.google.com/go/datastore"
 	"github.com/braintree-go/braintree-go"
 	"github.com/cbroglie/mustache"
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/mail"
 )
 
 // HandlerArgs : Arguments to Handler
 type HandlerArgs struct {
 	Context context.Context
+	Datastore *datastore.Client
 	Request *http.Request
 	Writer  http.ResponseWriter
 	Vars    map[string]string
@@ -99,9 +100,13 @@ func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) 
 	}
 
 	apiKey := hex.EncodeToString(bytes)
-	datastoreKey := datastore.NewKey(h.Context, kind, apiKey, 0, nil)
+	datastoreKey := datastore.NameKey(kind, apiKey, nil)
 
-	iterator := datastore.NewQuery(kind).Filter("__key__ =", datastoreKey).Run(h.Context)
+	iterator := h.Datastore.Run(
+		h.Context,
+		datastore.NewQuery(kind).Filter("__key__ =", datastoreKey),
+	)
+
 	if _, err := iterator.Next(nil); err == nil {
 		return generateAPIKey(h, kind)
 	}
@@ -258,9 +263,9 @@ func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 	}
 
 	customer := &Customer{}
-	customerKey := datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
+	customerKey := datastore.NameKey("Customer", apiKey, nil)
 
-	if err := datastore.Get(h.Context, customerKey, customer); err != nil {
+	if err := h.Datastore.Get(h.Context, customerKey, customer); err != nil {
 		return nil, nil, errors.New("invalid API key")
 	}
 
@@ -351,12 +356,28 @@ func handleFuncs(pattern string, handlers Handlers) {
 				responseBody = config.AllowedMethods
 				responseCode = http.StatusOK
 			} else {
+				projectID := datastore.DetectProjectID
+				if appengine.IsDevAppServer() {
+					projectID = "test"
+				}
+
 				context, err := appengine.Namespace(r.Context(), apiNamespace)
-				if err != nil {
+				datastoreClient, datastoreClientErr := datastore.NewClient(
+					context,
+					projectID,
+				)
+
+				if err != nil || datastoreClientErr != nil {
 					responseBody = "Failed to create context."
 					responseCode = http.StatusInternalServerError
 				} else {
-					responseBody, responseCode = handler(HandlerArgs{context, r, w, mux.Vars(r)})
+					responseBody, responseCode = handler(HandlerArgs{
+						context,
+						datastoreClient,
+						r,
+						w,
+						mux.Vars(r),
+					})
 				}
 			}
 
