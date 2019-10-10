@@ -19,6 +19,13 @@ type BetaSignup struct {
 	UsernameRequest string
 }
 
+// BurnerChannel : Burner channel
+type BurnerChannel struct {
+	ChannelID    string
+	ID           string
+	Timestamp    int64
+}
+
 // Customer : Customer with API key
 type Customer struct {
 	APIKey       string

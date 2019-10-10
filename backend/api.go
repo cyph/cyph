@@ -431,20 +431,32 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	channelID := ""
 	status := http.StatusOK
 
-	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
+	burnerChannel := &BurnerChannel{}
+	burnerChannelKey := datastore.NameKey("BurnerChannel", id, nil)
+
+	h.Datastore.Get(h.Context, burnerChannelKey, burnerChannel)
+
+	if burnerChannel.ID != "" {
 		h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
 
+		if now-burnerChannel.Timestamp < config.NewCyphTimeout {
+			channelID = burnerChannel.ChannelID
+		}
+
+		burnerChannel.ChannelID = ""
+		burnerChannel.Timestamp = 0
+
+		h.Datastore.Put(h.Context, burnerChannelKey, burnerChannel)
+
+		/*
 		oldValue := item.Value
 		item.Value = []byte{}
 
 		if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
-			valueLines := strings.Split(string(oldValue), "\n")
+			valueLines := strings.Split(oldValue, "\n")
 			timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
-
-			if now-timestamp < config.NewCyphTimeout {
-				channelID = valueLines[1]
-			}
 		}
+		*/
 	} else {
 		channelID = sanitize(h.Request.FormValue("channelID"))
 
@@ -453,11 +465,19 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 		}
 
 		if channelID != "" {
+			burnerChannel.ChannelID = channelID
+			burnerChannel.ID = id
+			burnerChannel.Timestamp = now
+
+			h.Datastore.Put(h.Context, burnerChannelKey, burnerChannel)
+
+			/*
 			memcache.Set(h.Context, &memcache.Item{
 				Key:        id,
 				Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelID),
 				Expiration: config.MemcacheExpiration,
 			})
+			*/
 		}
 	}
 
