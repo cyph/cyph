@@ -89,6 +89,16 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var prefineryKey = os.Getenv("PREFINERY_KEY")
 
+func datastoreKey(kind string, name string) *datastore.Key {
+	key := datastore.NameKey(kind, name, nil)
+	key.Namespace = apiNamespace
+	return key
+}
+
+func datastoreQuery(kind string) *datastore.Query {
+	return datastore.NewQuery(kind).Namespace(apiNamespace)
+}
+
 func isValidCyphID(id string) bool {
 	return len(id) == config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
@@ -100,11 +110,11 @@ func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) 
 	}
 
 	apiKey := hex.EncodeToString(bytes)
-	datastoreKey := datastore.NameKey(kind, apiKey, nil)
+	datastoreKey := datastoreKey(kind, apiKey)
 
 	iterator := h.Datastore.Run(
 		h.Context,
-		datastore.NewQuery(kind).Filter("__key__ =", datastoreKey),
+		datastoreQuery(kind).Filter("__key__ =", datastoreKey),
 	)
 
 	if _, err := iterator.Next(nil); err == nil {
@@ -263,7 +273,7 @@ func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 	}
 
 	customer := &Customer{}
-	customerKey := datastore.NameKey("Customer", apiKey, nil)
+	customerKey := datastoreKey("Customer", apiKey)
 
 	if err := h.Datastore.Get(h.Context, customerKey, customer); err != nil {
 		return nil, nil, errors.New("invalid API key")
@@ -361,13 +371,10 @@ func handleFuncs(pattern string, handlers Handlers) {
 					projectID = "test"
 				}
 
-				context, err := appengine.Namespace(r.Context(), apiNamespace)
-				datastoreClient, datastoreClientErr := datastore.NewClient(
-					context,
-					projectID,
-				)
+				context := r.Context()
+				datastoreClient, err := datastore.NewClient(context, projectID)
 
-				if err != nil || datastoreClientErr != nil {
+				if err != nil {
 					responseBody = "Failed to create context."
 					responseCode = http.StatusInternalServerError
 				} else {
