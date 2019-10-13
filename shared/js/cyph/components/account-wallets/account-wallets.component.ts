@@ -8,7 +8,8 @@ import {
 	newForm,
 	newFormComponent,
 	newFormContainer,
-	numberInput
+	numberInput,
+	text
 } from '../../forms';
 import {MaybePromise} from '../../maybe-promise-type';
 import {
@@ -191,9 +192,44 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		amount?: number
 	) : Promise<void> {
 		if (recipient === undefined || amount === undefined || isNaN(amount)) {
+			this.accountFilesService.showSpinner.next(true);
+
+			let balance: number;
+			try {
+				balance = await this.cryptocurrencyService.getBalance(wallet);
+			}
+			finally {
+				this.accountFilesService.showSpinner.next(false);
+			}
+
+			const step = 0.00000001;
+
+			const max = Math.min(
+				20999999.9769,
+				Math.max(
+					balance - this.cryptocurrencyService.transactionFee,
+					this.cryptocurrencyService.minimumTransactionAmount
+				)
+			);
+
+			const min = Math.min(
+				max,
+				this.cryptocurrencyService.minimumTransactionAmount
+			);
+
 			const sendForm = await this.dialogService.prompt({
 				content: '',
 				form: newForm([
+					newFormComponent([
+						newFormContainer([
+							text({
+								label: this.stringsService.bitcoinTransactionFee.replace(
+									'${1}',
+									this.cryptocurrencyService.transactionFee.toString()
+								)
+							})
+						])
+					]),
 					newFormComponent([
 						newFormContainer([
 							input({
@@ -207,10 +243,10 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 						newFormContainer([
 							numberInput({
 								label: this.stringsService.bitcoinAmountLabel,
-								max: 20999999.9769,
-								min: 0.00000547,
-								step: 0.00000001,
-								value: amount
+								max,
+								min,
+								step,
+								value: typeof amount === 'number' ? amount : min
 							})
 						])
 					])
@@ -218,11 +254,22 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 				title: this.stringsService.bitcoinSendTitle
 			});
 
-			recipient = getFormValue(sendForm, 'string', 0, 0, 0);
-			amount = getFormValue(sendForm, 'number', 1, 0, 0);
+			recipient = getFormValue(sendForm, 'string', 1, 0, 0);
+			amount = getFormValue(sendForm, 'number', 2, 0, 0);
 		}
 
 		if (recipient === undefined || amount === undefined || isNaN(amount)) {
+			return;
+		}
+
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.bitcoinConfirmationPrompt
+					.replace('${1}', amount.toFixed(8))
+					.replace('${2}', recipient),
+				title: this.stringsService.bitcoinSendTitle
+			}))
+		) {
 			return;
 		}
 
@@ -234,7 +281,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			return this.dialogService.alert({
 				content: `${
 					this.stringsService.bitcoinSuccessText
-				} ${amount.toString()} ${this.stringsService.bitcoinShort}.`,
+				} ${amount.toFixed(8)} ${this.stringsService.bitcoinShort}.`,
 				title: this.stringsService.bitcoinSuccessTitle
 			});
 		}
@@ -242,7 +289,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			return this.dialogService.alert({
 				content: `${
 					this.stringsService.bitcoinErrorText
-				} ${amount.toString()} ${this.stringsService.bitcoinShort}${
+				} ${amount.toFixed(8)} ${this.stringsService.bitcoinShort}${
 					err instanceof Error ? `: ${err.message}` : '.'
 				}`,
 				title: this.stringsService.bitcoinErrorTitle

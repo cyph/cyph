@@ -11,7 +11,7 @@ compiledProjects='cyph.app'
 webSignedProject='cyph.app'
 prodOnlyProjects='nakedredirect test websign'
 site=''
-noSimple=''
+noSimple=true
 simple=''
 simpleProdBuild=''
 simpleWebSignBuild=''
@@ -79,8 +79,8 @@ elif [ "${1}" == '--simple-websign-prod-build' ] ; then
 	simpleProdBuild=true
 	simpleWebSignBuild=true
 	shift
-elif [ "${1}" == '--no-simple' ] ; then
-	noSimple=true
+elif [ "${1}" == '--and-simple' ] ; then
+	noSimple=''
 	shift
 fi
 

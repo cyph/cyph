@@ -1,8 +1,7 @@
 service: nakedredirect
-runtime: go
-api_version: go1
+runtime: go112
 
 handlers:
 - url: .*
-  script: _go_app
+  script: auto
   secure: always

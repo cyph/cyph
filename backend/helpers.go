@@ -2,12 +2,14 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math"
 	"net"
 	"net/http"
@@ -22,12 +24,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
-	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/log"
 	"google.golang.org/appengine/mail"
-	"google.golang.org/appengine/urlfetch"
 )
 
 // HandlerArgs : Arguments to Handler
@@ -210,7 +209,17 @@ func getOrg(h HandlerArgs) string {
 }
 
 func getIP(h HandlerArgs) []byte {
-	return net.ParseIP(h.Request.RemoteAddr)
+	return net.ParseIP(getIPString(h))
+}
+
+func getIPString(h HandlerArgs) string {
+	xff := h.Request.Header.Get("X-Forwarded-For")
+	if xff != "" {
+		return strings.Split(xff, ",")[0]
+	}
+
+	ip, _, _ := net.SplitHostPort(h.Request.RemoteAddr)
+	return ip
 }
 
 func braintreeDecimalToCents(d *braintree.Decimal) int64 {
@@ -235,7 +244,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 		braintreePrivateKey,
 	)
 
-	bt.HttpClient = urlfetch.Client(h.Context)
+	bt.HttpClient = &http.Client{}
 
 	return bt
 }
@@ -259,7 +268,7 @@ func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 }
 
 func getTwilioToken(h HandlerArgs) map[string]interface{} {
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 
 	req, _ := http.NewRequest(
 		methods.POST,
@@ -307,7 +316,7 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 		return err
 	}
 
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 	_, err = client.Do(req)
 
 	return err
@@ -342,7 +351,7 @@ func handleFuncs(pattern string, handlers Handlers) {
 				responseBody = config.AllowedMethods
 				responseCode = http.StatusOK
 			} else {
-				context, err := appengine.Namespace(appengine.NewContext(r), apiNamespace)
+				context, err := appengine.Namespace(r.Context(), apiNamespace)
 				if err != nil {
 					responseBody = "Failed to create context."
 					responseCode = http.StatusInternalServerError
@@ -481,7 +490,7 @@ func sendMail(h HandlerArgs, to string, subject string, text string, html string
 	body, err := emailTemplate.Render(map[string]interface{}{"html": html, "lines": lines})
 
 	if err != nil {
-		log.Errorf(h.Context, "Failed to render email body: %v", err)
+		log.Println(fmt.Errorf("Failed to render email body: %v", err))
 	}
 
 	email := &mail.Message{
@@ -492,15 +501,15 @@ func sendMail(h HandlerArgs, to string, subject string, text string, html string
 	}
 
 	if b, err := json.Marshal(email); err == nil {
-		log.Infof(h.Context, "Sending email: %v", string(b))
+		log.Println("Sending email: %v", string(b))
 	} else {
-		log.Errorf(h.Context, "Failed to log outgoing email.")
+		log.Println(fmt.Errorf("Failed to log outgoing email."))
 	}
 
 	err = mail.Send(h.Context, email)
 
 	if err != nil {
-		log.Errorf(h.Context, "Failed to send email: %v", err)
+		log.Println(fmt.Errorf("Failed to send email: %v", err))
 	}
 }
 

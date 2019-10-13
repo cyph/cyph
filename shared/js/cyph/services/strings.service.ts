@@ -114,6 +114,9 @@ export class StringsService extends BaseProvider {
 	public readonly bitcoinAmountLabel = `Amount (BTC)`;
 
 	/** @see StringsService */
+	public readonly bitcoinConfirmationPrompt = `Send \${1} BTC to \${2}?`;
+
+	/** @see StringsService */
 	public readonly bitcoinErrorText = `Failed to send`;
 
 	/** @see StringsService */
@@ -133,6 +136,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly bitcoinSuccessTitle = `Send Success`;
+
+	/** @see StringsService */
+	public readonly bitcoinTransactionFee = `Transaction fee: \${1} BTC`;
 
 	/** @see StringsService */
 	public readonly callType = `Call Type`;

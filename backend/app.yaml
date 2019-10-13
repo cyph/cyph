@@ -1,5 +1,4 @@
-runtime: go
-api_version: go1
+runtime: go112
 
 handlers:
 - url: /anal.js
@@ -15,5 +14,5 @@ handlers:
   # default_headers Cache-Control X-Frame-Options Content-Security-Policy
 
 - url: .*
-  script: _go_app
+  script: auto
   secure: always

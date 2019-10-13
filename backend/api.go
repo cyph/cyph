@@ -3,21 +3,22 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/braintree-go/braintree-go"
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/mail"
 	"google.golang.org/appengine/memcache"
-	"google.golang.org/appengine/urlfetch"
 )
 
-func init() {
+func main() {
 	handleFuncs("/analytics/*", Handlers{methods.GET: analytics})
 	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
@@ -33,24 +34,36 @@ func init() {
 	handleFuncs("/redox/execute", Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", Handlers{methods.PUT: signup})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestampHandler})
+	handleFuncs("/whatismyip", Handlers{methods.GET: whatismyip})
 
 	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
-}
 
-func main() {
-	appengine.Main()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "443"
+	}
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
 
 func analytics(h HandlerArgs) (interface{}, int) {
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 
-	h.Request.RequestURI = ""
-	h.Request.URL.Host = "www.google-analytics.com"
-	h.Request.URL.Scheme = "https"
+	req, err := http.NewRequest(
+		h.Request.Method,
+		h.Request.URL.String(),
+		h.Request.Body,
+	)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
 
-	resp, err := client.Do(h.Request)
+	req.Header = h.Request.Header
+	req.URL.Host = "www.google-analytics.com"
+	req.URL.Scheme = "https"
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
@@ -770,7 +783,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 		req.Header.Add("Content-type", "application/json")
 
-		client := urlfetch.Client(h.Context)
+		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
 			return err.Error(), http.StatusInternalServerError
@@ -832,7 +845,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 	req.Header.Add("Authorization", "Bearer "+redoxAuth.AccessToken)
 	req.Header.Add("Content-type", "application/json")
 
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
@@ -919,7 +932,7 @@ func signup(h HandlerArgs) (interface{}, int) {
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-type", "application/json")
 
-	client := urlfetch.Client(h.Context)
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err.Error(), http.StatusInternalServerError
@@ -954,4 +967,8 @@ func signup(h HandlerArgs) (interface{}, int) {
 	}
 
 	return "signup failed", http.StatusInternalServerError
+}
+
+func whatismyip(h HandlerArgs) (interface{}, int) {
+	return getIPString(h), http.StatusOK
 }

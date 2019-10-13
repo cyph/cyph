@@ -4,7 +4,9 @@ import {Observable, timer} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {
 	getExchangeRates,
+	minimumTransactionAmount,
 	Transaction,
+	transactionFee,
 	Wallet as SimpleBTCWallet
 } from 'simplebtc';
 import {BaseProvider} from '../base-provider';
@@ -29,6 +31,12 @@ export class CryptocurrencyService extends BaseProvider {
 			)
 		)
 	);
+
+	/** @see minimumTransactionAmount */
+	public readonly minimumTransactionAmount = minimumTransactionAmount;
+
+	/** @see transactionFee */
+	public readonly transactionFee = transactionFee;
 
 	/** Gets address of a wallet. */
 	public readonly getAddress = memoize(

@@ -10,7 +10,13 @@
 	<ng-container
 		*ngIf="accountAuthService.pseudoAccountLogin | async; else desktopView"
 	>
-		<mat-card fxFlex fxFlex.sm="95" fxFlex.md="75" fxFlex.gt-md="33">
+		<mat-card
+			fxFlex
+			fxFlex.sm="95"
+			fxFlex.md="75"
+			fxFlex.gt-md="40"
+			fxFlex.gt-lg="33"
+		>
 			<ng-container *ngIf="(hasSavedCredentials() | async) === true">
 				<mat-card-title cyphTranslate>
 					External Contact Request
@@ -74,7 +80,13 @@
 		<ng-container
 			*ngIf="(envService.isMobile | async) === false; else mobileView"
 		>
-			<mat-card fxFlex fxFlex.sm="95" fxFlex.md="75" fxFlex.gt-md="33">
+			<mat-card
+				fxFlex
+				fxFlex.sm="95"
+				fxFlex.md="75"
+				fxFlex.gt-md="40"
+				fxFlex.gt-lg="33"
+			>
 				<mat-card-title>
 					{{
 						(pinUnlock | async) ?
