@@ -493,7 +493,7 @@ code {
 @include keyframes(flashIn) {
 	50% {
 		@include filter(
-			brightness(5) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5))
+			brightness(1.25) drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.25))
 		);
 	}
 }
@@ -501,7 +501,7 @@ code {
 .cyph-flash-in {
 	@include animation-name(flashIn);
 
-	@include animation-duration(2s);
+	@include animation-duration(333ms);
 
 	@include animation-timing-function(ease-out);
 
