@@ -12,10 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"cloud.google.com/go/datastore"
 	"github.com/braintree-go/braintree-go"
-	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/mail"
-	"google.golang.org/appengine/memcache"
 )
 
 func main() {
@@ -100,11 +98,11 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	var customerKey *datastore.Key
 
 	customerEmail := &CustomerEmail{}
-	customerEmailKey := datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil)
+	customerEmailKey := datastoreKey("CustomerEmail", email)
 
-	if err = datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
+	if err = h.Datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
 		apiKey = customerEmail.APIKey
-		customerKey = datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
+		customerKey = datastoreKey("Customer", apiKey)
 	} else {
 		apiKey, customerKey, err = generateAPIKey(h, "Customer")
 		if err != nil {
@@ -223,7 +221,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		if success {
 			txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
 
-			_, err := datastore.Put(
+			_, err := h.Datastore.Put(
 				h.Context,
 				customerKey,
 				&Customer{
@@ -245,9 +243,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		if success {
-			_, err = datastore.Put(
+			_, err = h.Datastore.Put(
 				h.Context,
-				datastore.NewKey(h.Context, "CustomerEmail", email, 0, nil),
+				datastoreKey("CustomerEmail", email),
 				&CustomerEmail{
 					APIKey: apiKey,
 					Email:  email,
@@ -279,7 +277,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		if success {
 			txLog += "\nAPI key: " + apiKey
 
-			_, err = datastore.Put(
+			_, err = h.Datastore.Put(
 				h.Context,
 				customerKey,
 				&Customer{
@@ -300,7 +298,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		if success {
-			_, err = datastore.Put(
+			_, err = h.Datastore.Put(
 				h.Context,
 				customerEmailKey,
 				&CustomerEmail{
@@ -324,20 +322,16 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		subject = "FAILED: " + subject
 	}
 
-	mail.SendToAdmins(h.Context, &mail.Message{
-		Sender:  "Cyph Sales <hello@cyph.com>",
-		Subject: subject,
-		Body: ("" +
-			"Nonce: " + nonce +
-			"\nPlan ID: " + planID +
-			"\nAmount: " + amountString +
-			"\nSubscription: " + subscriptionString +
-			"\nCompany: " + company +
-			"\nName: " + name +
-			"\nEmail: " + email +
-			"\n\n" + txLog +
-			""),
-	})
+	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
+		"Nonce: " + nonce +
+		"\nPlan ID: " + planID +
+		"\nAmount: " + amountString +
+		"\nSubscription: " + subscriptionString +
+		"\nCompany: " + company +
+		"\nName: " + name +
+		"\nEmail: " + email +
+		"\n\n" + txLog +
+		""), "")
 
 	if !success {
 		return "", http.StatusInternalServerError
@@ -346,7 +340,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	_, hasPlan := config.Plans[planID]
 
 	if subscription && hasPlan {
-		sendMail(h, email, "Cyph Purchase Confirmation", "", ""+
+		sendMail(email, "Cyph Purchase Confirmation", "", ""+
 			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
 			"<p style='text-align: left'>"+
 			"Your access code is:&nbsp;&nbsp;"+
@@ -362,7 +356,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	if planID == "10000-0" {
-		sendMail(h, email, "Thank You!", "", ""+
+		sendMail(email, "Thank You!", "", ""+
 			"<p>Thanks so much for your donation "+name+"!</p>"+
 			"<p>"+
 			"Your support means a lot to us, and helps ensure "+
@@ -371,7 +365,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			"</p>"+
 			"")
 	} else {
-		sendMail(h, email, "Cyph Purchase Confirmation", "", ""+
+		sendMail(email, "Cyph Purchase Confirmation", "", ""+
 			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
 			"<p>We'll follow up as soon as we have an update on your order.</p>"+
 			"")
@@ -406,13 +400,13 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	proFeatures := getProFeaturesFromRequest(h)
 	now := getTimestamp()
 	preAuthorizedCyph := &PreAuthorizedCyph{}
-	preAuthorizedCyphKey := datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil)
+	preAuthorizedCyphKey := datastoreKey("PreAuthorizedCyph", id)
 
-	err := datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
+	err := h.Datastore.Get(h.Context, preAuthorizedCyphKey, preAuthorizedCyph)
 
 	/* Discard pre-authorization after two days */
 	if err == nil && now-preAuthorizedCyph.Timestamp > 172800000 {
-		datastore.Delete(h.Context, preAuthorizedCyphKey)
+		h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
 		return "pre-authorization expired", http.StatusForbidden
 	}
 
@@ -431,34 +425,52 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	channelID := ""
 	status := http.StatusOK
 
-	if item, err := memcache.Get(h.Context, id); err != memcache.ErrCacheMiss {
-		datastore.Delete(h.Context, preAuthorizedCyphKey)
+	_, transactionErr := h.Datastore.RunInTransaction(h.Context, func(tx *datastore.Transaction) error {
+		burnerChannel := &BurnerChannel{}
+		burnerChannelKey := datastoreKey("BurnerChannel", id)
 
-		oldValue := item.Value
-		item.Value = []byte{}
+		h.Datastore.Get(h.Context, burnerChannelKey, burnerChannel)
 
-		if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
-			valueLines := strings.Split(string(oldValue), "\n")
-			timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
+		if now-burnerChannel.Timestamp > config.BurnerChannelExpiration {
+			burnerChannel = &BurnerChannel{}
+		}
 
-			if now-timestamp < config.NewCyphTimeout {
-				channelID = valueLines[1]
+		if burnerChannel.ID != "" {
+			h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
+
+			if now-burnerChannel.Timestamp < config.NewCyphTimeout {
+				channelID = burnerChannel.ChannelID
+			}
+
+			burnerChannel.ChannelID = ""
+			burnerChannel.Timestamp = 0
+
+			if _, err := h.Datastore.Put(h.Context, burnerChannelKey, burnerChannel); err != nil {
+				return err
+			}
+		} else {
+			channelID = sanitize(h.Request.FormValue("channelID"))
+
+			if len(channelID) > config.MaxChannelDescriptorLength {
+				channelID = ""
+			}
+
+			if channelID != "" {
+				burnerChannel.ChannelID = channelID
+				burnerChannel.ID = id
+				burnerChannel.Timestamp = now
+
+				if _, err := h.Datastore.Put(h.Context, burnerChannelKey, burnerChannel); err != nil {
+					return err
+				}
 			}
 		}
-	} else {
-		channelID = sanitize(h.Request.FormValue("channelID"))
 
-		if len(channelID) > config.MaxChannelDescriptorLength {
-			channelID = ""
-		}
+		return nil
+	})
 
-		if channelID != "" {
-			memcache.Set(h.Context, &memcache.Item{
-				Key:        id,
-				Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelID),
-				Expiration: config.MemcacheExpiration,
-			})
-		}
+	if transactionErr != nil {
+		channelID = ""
 	}
 
 	if channelID == "" {
@@ -530,11 +542,11 @@ func preAuth(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	_, err = datastore.PutMulti(
+	_, err = h.Datastore.PutMulti(
 		h.Context,
 		[]*datastore.Key{
 			customerKey,
-			datastore.NewKey(h.Context, "PreAuthorizedCyph", id, 0, nil),
+			datastoreKey("PreAuthorizedCyph", id),
 		},
 		[]interface{}{
 			customer,
@@ -597,7 +609,7 @@ func redoxAddCredentials(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	_, err = datastore.Put(
+	_, err = h.Datastore.Put(
 		h.Context,
 		redoxCredentialsKey,
 		&RedoxCredentials{
@@ -620,16 +632,16 @@ func redoxDeleteAPIKey(h HandlerArgs) (interface{}, int) {
 	masterAPIKey := sanitize(h.Request.PostFormValue("masterAPIKey"))
 
 	redoxCredentials := &RedoxCredentials{}
-	redoxCredentialsKey := datastore.NewKey(h.Context, "RedoxCredentials", apiKey, 0, nil)
+	redoxCredentialsKey := datastoreKey("RedoxCredentials", apiKey)
 
-	if err := datastore.Get(h.Context, redoxCredentialsKey, redoxCredentials); err != nil {
+	if err := h.Datastore.Get(h.Context, redoxCredentialsKey, redoxCredentials); err != nil {
 		return "invalid API key", http.StatusNotFound
 	}
 	if redoxCredentials.MasterAPIKey != masterAPIKey {
 		return "invalid master API key", http.StatusForbidden
 	}
 
-	if err := datastore.Delete(h.Context, redoxCredentialsKey); err != nil {
+	if err := h.Datastore.Delete(h.Context, redoxCredentialsKey); err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
 
@@ -645,7 +657,7 @@ func redoxGenerateAPIKey(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusInternalServerError
 	}
 
-	_, err = datastore.Put(
+	_, err = h.Datastore.Put(
 		h.Context,
 		redoxCredentialsKey,
 		&RedoxCredentials{
@@ -667,13 +679,11 @@ func redoxVerifyAPIKey(h HandlerArgs) (interface{}, int) {
 
 	redoxCredentials := &RedoxCredentials{}
 
-	err := datastore.Get(
+	err := h.Datastore.Get(
 		h.Context,
-		datastore.NewKey(
-			h.Context,
+		datastore.NameKey(
 			"RedoxCredentials",
 			apiKeyOrMasterAPIKey,
-			0,
 			nil,
 		),
 		redoxCredentials,
@@ -697,13 +707,11 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 	redoxCredentials := &RedoxCredentials{}
 
-	err := datastore.Get(
+	err := h.Datastore.Get(
 		h.Context,
-		datastore.NewKey(
-			h.Context,
+		datastore.NameKey(
 			"RedoxCredentials",
 			apiKeyOrMasterAPIKey,
-			0,
 			nil,
 		),
 		redoxCredentials,
@@ -720,13 +728,11 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 			return "retired API key", http.StatusNotFound
 		}
 
-		err := datastore.Get(
+		err := h.Datastore.Get(
 			h.Context,
-			datastore.NewKey(
-				h.Context,
+			datastore.NameKey(
 				"RedoxCredentials",
 				redoxCredentials.MasterAPIKey,
-				0,
 				nil,
 			),
 			redoxCredentials,
@@ -744,9 +750,9 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 	/* Get Redox API auth token */
 
 	redoxAuth := &RedoxAuth{}
-	redoxAuthKey := datastore.NewKey(h.Context, "RedoxAuth", redoxCredentials.RedoxAPIKey, 0, nil)
+	redoxAuthKey := datastoreKey("RedoxAuth", redoxCredentials.RedoxAPIKey)
 
-	err = datastore.Get(h.Context, redoxAuthKey, redoxAuth)
+	err = h.Datastore.Get(h.Context, redoxAuthKey, redoxAuth)
 
 	if err != nil || redoxAuth.AccessToken == "" || redoxAuth.Expires < (timestamp+3600000) {
 		var req *http.Request
@@ -827,7 +833,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 		redoxAuth.RedoxAPIKey = redoxCredentials.RedoxAPIKey
 
-		datastore.Put(h.Context, redoxAuthKey, redoxAuth)
+		h.Datastore.Put(h.Context, redoxAuthKey, redoxAuth)
 	}
 
 	/* Make and log request */
@@ -858,9 +864,9 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 
 	responseBody := string(responseBodyBytes)
 
-	datastore.Put(
+	h.Datastore.Put(
 		h.Context,
-		datastore.NewKey(h.Context, "RedoxRequestLog", "", 0, nil),
+		datastoreKey("RedoxRequestLog", ""),
 		&RedoxRequestLog{
 			RedoxCommand: sanitize(redoxCommand),
 			Response:     sanitize(responseBody),
@@ -875,14 +881,14 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 func signup(h HandlerArgs) (interface{}, int) {
 	betaSignup, signup := getSignupFromRequest(h)
 
-	email, err := getEmail(signup["email"].(string))
+	_, err := getEmail(signup["email"].(string))
 	if err != nil {
 		return err.Error(), http.StatusBadRequest
 	}
 
-	betaSignupKey := datastore.NewKey(h.Context, "BetaSignup", betaSignup.Email, 0, nil)
+	betaSignupKey := datastoreKey("BetaSignup", betaSignup.Email)
 	existingBetaSignup := new(BetaSignup)
-	if err := datastore.Get(h.Context, betaSignupKey, existingBetaSignup); err == nil {
+	if err := h.Datastore.Get(h.Context, betaSignupKey, existingBetaSignup); err == nil {
 		if existingBetaSignup.Comment != "" {
 			betaSignup.Comment = existingBetaSignup.Comment
 		}
@@ -895,14 +901,20 @@ func signup(h HandlerArgs) (interface{}, int) {
 		if existingBetaSignup.Name != "" {
 			betaSignup.Name = existingBetaSignup.Name
 		}
+		if existingBetaSignup.PrefineryID != 0 {
+			betaSignup.PrefineryID = existingBetaSignup.PrefineryID
+		}
 		if existingBetaSignup.Referer != "" {
 			betaSignup.Referer = existingBetaSignup.Referer
 		}
 		if existingBetaSignup.Time != 0 {
 			betaSignup.Time = existingBetaSignup.Time
 		}
+		if existingBetaSignup.UsernameRequest != "" {
+			betaSignup.UsernameRequest = existingBetaSignup.UsernameRequest
+		}
 	}
-	if _, err := datastore.Put(h.Context, betaSignupKey, &betaSignup); err != nil {
+	if _, err := h.Datastore.Put(h.Context, betaSignupKey, &betaSignup); err != nil {
 		return err.Error(), http.StatusInternalServerError
 	}
 
@@ -912,10 +924,9 @@ func signup(h HandlerArgs) (interface{}, int) {
 
 	resource := ""
 	method := methods.POST
-	useridKey := "signup-userid-" + email
 
-	if item, err := memcache.Get(h.Context, useridKey); err != memcache.ErrCacheMiss {
-		resource = "/" + string(item.Value)
+	if betaSignup.PrefineryID != 0 {
+		resource = "/" + string(betaSignup.PrefineryID)
 		method = methods.PUT
 	}
 
@@ -953,15 +964,13 @@ func signup(h HandlerArgs) (interface{}, int) {
 	switch userid := useridDynamic.(type) {
 	case float64:
 		if resource != "" {
-			memcache.Delete(h.Context, useridKey)
 			return "update", http.StatusOK
 		}
 
-		memcache.Set(h.Context, &memcache.Item{
-			Key:        useridKey,
-			Value:      []byte(strconv.Itoa(int(userid))),
-			Expiration: config.MemcacheExpiration,
-		})
+		betaSignup.PrefineryID = int(userid)
+		if _, err := h.Datastore.Put(h.Context, betaSignupKey, &betaSignup); err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
 
 		return "set", http.StatusOK
 	}

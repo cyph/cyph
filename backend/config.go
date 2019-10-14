@@ -2,7 +2,6 @@ package main
 
 import (
 	"regexp"
-	"time"
 )
 
 type none struct{}
@@ -14,9 +13,17 @@ type BetaSignup struct {
 	Email           string
 	Language        string
 	Name            string
+	PrefineryID     int
 	Referer         string
 	Time            int64
 	UsernameRequest string
+}
+
+// BurnerChannel : Burner channel
+type BurnerChannel struct {
+	ChannelID string
+	ID        string
+	Timestamp int64
 }
 
 // Customer : Customer with API key
@@ -87,6 +94,7 @@ var config = struct {
 	AllowedHosts               map[string]none
 	AnalID                     string
 	APIKeyByteLength           int
+	BurnerChannelExpiration    int64
 	CacheControlHeader         string
 	Continents                 map[string]none
 	DefaultContinent           string
@@ -100,7 +108,6 @@ var config = struct {
 	HSTSHeader                 string
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
-	MemcacheExpiration         time.Duration
 	NewCyphTimeout             int64
 	Plans                      map[string]Plan
 	RootURL                    string
@@ -153,6 +160,8 @@ var config = struct {
 
 	16,
 
+	172800000,
+
 	"no-cache",
 
 	map[string]none{
@@ -188,8 +197,6 @@ var config = struct {
 	/* Max length of a valid email address, but also happened
 	to seem like a sane limit for the other values */
 	256,
-
-	(48 * time.Hour),
 
 	600000,
 

@@ -13,28 +13,29 @@ import (
 	"math"
 	"net"
 	"net/http"
+	"net/smtp"
 	"net/url"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
+	"cloud.google.com/go/datastore"
 	"github.com/braintree-go/braintree-go"
 	"github.com/cbroglie/mustache"
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/datastore"
-	"google.golang.org/appengine/mail"
 )
 
 // HandlerArgs : Arguments to Handler
 type HandlerArgs struct {
-	Context context.Context
-	Request *http.Request
-	Writer  http.ResponseWriter
-	Vars    map[string]string
+	Context   context.Context
+	Datastore *datastore.Client
+	Request   *http.Request
+	Writer    http.ResponseWriter
+	Vars      map[string]string
 }
 
 // Handler : API route handler
@@ -70,6 +71,15 @@ var isRouterActive = false
 
 var sanitizer = bluemonday.StrictPolicy()
 
+var emailFrom = os.Getenv("EMAIL_USER")
+var emailFromFull = "Cyph <" + emailFrom + ">"
+var emailAuth = smtp.PlainAuth(
+	"",
+	emailFrom,
+	os.Getenv("EMAIL_PASSWORD"),
+	"smtp.gmail.com",
+)
+var emailSmtpServer = "smtp.gmail.com:587"
 var emailTemplate, _ = mustache.ParseString(getFileText("shared/email.html"))
 
 var countrydb, _ = geoip2.Open("GeoIP2-Country.mmdb")
@@ -88,6 +98,16 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var prefineryKey = os.Getenv("PREFINERY_KEY")
 
+func datastoreKey(kind string, name string) *datastore.Key {
+	key := datastore.NameKey(kind, name, nil)
+	key.Namespace = apiNamespace
+	return key
+}
+
+func datastoreQuery(kind string) *datastore.Query {
+	return datastore.NewQuery(kind).Namespace(apiNamespace)
+}
+
 func isValidCyphID(id string) bool {
 	return len(id) == config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
@@ -99,9 +119,13 @@ func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) 
 	}
 
 	apiKey := hex.EncodeToString(bytes)
-	datastoreKey := datastore.NewKey(h.Context, kind, apiKey, 0, nil)
+	datastoreKey := datastoreKey(kind, apiKey)
 
-	iterator := datastore.NewQuery(kind).Filter("__key__ =", datastoreKey).Run(h.Context)
+	iterator := h.Datastore.Run(
+		h.Context,
+		datastoreQuery(kind).Filter("__key__ =", datastoreKey),
+	)
+
 	if _, err := iterator.Next(nil); err == nil {
 		return generateAPIKey(h, kind)
 	}
@@ -258,9 +282,9 @@ func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 	}
 
 	customer := &Customer{}
-	customerKey := datastore.NewKey(h.Context, "Customer", apiKey, 0, nil)
+	customerKey := datastoreKey("Customer", apiKey)
 
-	if err := datastore.Get(h.Context, customerKey, customer); err != nil {
+	if err := h.Datastore.Get(h.Context, customerKey, customer); err != nil {
 		return nil, nil, errors.New("invalid API key")
 	}
 
@@ -351,12 +375,25 @@ func handleFuncs(pattern string, handlers Handlers) {
 				responseBody = config.AllowedMethods
 				responseCode = http.StatusOK
 			} else {
-				context, err := appengine.Namespace(r.Context(), apiNamespace)
+				projectID := datastore.DetectProjectID
+				if appengine.IsDevAppServer() {
+					projectID = "test"
+				}
+
+				context := r.Context()
+				datastoreClient, err := datastore.NewClient(context, projectID)
+
 				if err != nil {
 					responseBody = "Failed to create context."
 					responseCode = http.StatusInternalServerError
 				} else {
-					responseBody, responseCode = handler(HandlerArgs{context, r, w, mux.Vars(r)})
+					responseBody, responseCode = handler(HandlerArgs{
+						context,
+						datastoreClient,
+						r,
+						w,
+						mux.Vars(r),
+					})
 				}
 			}
 
@@ -479,7 +516,7 @@ func getFileText(path string) string {
 	return string(b)
 }
 
-func sendMail(h HandlerArgs, to string, subject string, text string, html string) {
+func sendMail(to string, subject string, text string, html string) {
 	lines := []string{}
 
 	if text != "" {
@@ -493,20 +530,32 @@ func sendMail(h HandlerArgs, to string, subject string, text string, html string
 		log.Println(fmt.Errorf("Failed to render email body: %v", err))
 	}
 
-	email := &mail.Message{
-		Sender:   "Cyph <noreply@cyph.com>",
-		Subject:  subject,
-		To:       []string{to},
-		HTMLBody: body,
+	emailLog := map[string]string{
+		"HTMLBody": body,
+		"Sender":   emailFromFull,
+		"Subject":  subject,
+		"To":       to,
 	}
 
-	if b, err := json.Marshal(email); err == nil {
+	if b, err := json.Marshal(emailLog); err == nil {
 		log.Println("Sending email: %v", string(b))
 	} else {
 		log.Println(fmt.Errorf("Failed to log outgoing email."))
 	}
 
-	err = mail.Send(h.Context, email)
+	err = smtp.SendMail(
+		emailSmtpServer,
+		emailAuth,
+		emailFrom,
+		[]string{to},
+		[]byte(
+			"From: "+emailFromFull+"\n"+
+				"To: "+to+"\n"+
+				"Subject: "+subject+"\n"+
+				"MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"+
+				body,
+		),
+	)
 
 	if err != nil {
 		log.Println(fmt.Errorf("Failed to send email: %v", err))
