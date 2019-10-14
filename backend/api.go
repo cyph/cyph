@@ -14,7 +14,6 @@ import (
 
 	"cloud.google.com/go/datastore"
 	"github.com/braintree-go/braintree-go"
-	"google.golang.org/appengine/mail"
 	"google.golang.org/appengine/memcache"
 )
 
@@ -324,20 +323,16 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		subject = "FAILED: " + subject
 	}
 
-	mail.SendToAdmins(h.Context, &mail.Message{
-		Sender:  "Cyph Sales <hello@cyph.com>",
-		Subject: subject,
-		Body: ("" +
-			"Nonce: " + nonce +
-			"\nPlan ID: " + planID +
-			"\nAmount: " + amountString +
-			"\nSubscription: " + subscriptionString +
-			"\nCompany: " + company +
-			"\nName: " + name +
-			"\nEmail: " + email +
-			"\n\n" + txLog +
-			""),
-	})
+	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
+		"Nonce: " + nonce +
+		"\nPlan ID: " + planID +
+		"\nAmount: " + amountString +
+		"\nSubscription: " + subscriptionString +
+		"\nCompany: " + company +
+		"\nName: " + name +
+		"\nEmail: " + email +
+		"\n\n" + txLog +
+		""), "")
 
 	if !success {
 		return "", http.StatusInternalServerError
@@ -346,7 +341,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	_, hasPlan := config.Plans[planID]
 
 	if subscription && hasPlan {
-		sendMail(h, email, "Cyph Purchase Confirmation", "", ""+
+		sendMail(email, "Cyph Purchase Confirmation", "", ""+
 			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
 			"<p style='text-align: left'>"+
 			"Your access code is:&nbsp;&nbsp;"+
@@ -362,7 +357,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	if planID == "10000-0" {
-		sendMail(h, email, "Thank You!", "", ""+
+		sendMail(email, "Thank You!", "", ""+
 			"<p>Thanks so much for your donation "+name+"!</p>"+
 			"<p>"+
 			"Your support means a lot to us, and helps ensure "+
@@ -371,7 +366,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			"</p>"+
 			"")
 	} else {
-		sendMail(h, email, "Cyph Purchase Confirmation", "", ""+
+		sendMail(email, "Cyph Purchase Confirmation", "", ""+
 			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
 			"<p>We'll follow up as soon as we have an update on your order.</p>"+
 			"")
@@ -449,13 +444,13 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 		h.Datastore.Put(h.Context, burnerChannelKey, burnerChannel)
 
 		/*
-		oldValue := item.Value
-		item.Value = []byte{}
+			oldValue := item.Value
+			item.Value = []byte{}
 
-		if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
-			valueLines := strings.Split(oldValue, "\n")
-			timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
-		}
+			if err := memcache.CompareAndSwap(h.Context, item); err != memcache.ErrCASConflict {
+				valueLines := strings.Split(oldValue, "\n")
+				timestamp, _ := strconv.ParseInt(valueLines[0], 10, 64)
+			}
 		*/
 	} else {
 		channelID = sanitize(h.Request.FormValue("channelID"))
@@ -472,11 +467,11 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 			h.Datastore.Put(h.Context, burnerChannelKey, burnerChannel)
 
 			/*
-			memcache.Set(h.Context, &memcache.Item{
-				Key:        id,
-				Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelID),
-				Expiration: config.MemcacheExpiration,
-			})
+				memcache.Set(h.Context, &memcache.Item{
+					Key:        id,
+					Value:      []byte(strconv.FormatInt(now, 10) + "\n" + channelID),
+					Expiration: config.MemcacheExpiration,
+				})
 			*/
 		}
 	}

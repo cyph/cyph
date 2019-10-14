@@ -13,6 +13,7 @@ import (
 	"math"
 	"net"
 	"net/http"
+	"net/smtp"
 	"net/url"
 	"os"
 	"strconv"
@@ -26,16 +27,15 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/oschwald/geoip2-golang"
 	"google.golang.org/appengine"
-	"google.golang.org/appengine/mail"
 )
 
 // HandlerArgs : Arguments to Handler
 type HandlerArgs struct {
-	Context context.Context
+	Context   context.Context
 	Datastore *datastore.Client
-	Request *http.Request
-	Writer  http.ResponseWriter
-	Vars    map[string]string
+	Request   *http.Request
+	Writer    http.ResponseWriter
+	Vars      map[string]string
 }
 
 // Handler : API route handler
@@ -71,6 +71,15 @@ var isRouterActive = false
 
 var sanitizer = bluemonday.StrictPolicy()
 
+var emailFrom = os.Getenv("EMAIL_USER")
+var emailFromFull = "Cyph <" + emailFrom + ">"
+var emailAuth = smtp.PlainAuth(
+	"",
+	emailFrom,
+	os.Getenv("EMAIL_PASSWORD"),
+	"smtp.gmail.com",
+)
+var emailSmtpServer = "smtp.gmail.com:587"
 var emailTemplate, _ = mustache.ParseString(getFileText("shared/email.html"))
 
 var countrydb, _ = geoip2.Open("GeoIP2-Country.mmdb")
@@ -507,7 +516,7 @@ func getFileText(path string) string {
 	return string(b)
 }
 
-func sendMail(h HandlerArgs, to string, subject string, text string, html string) {
+func sendMail(to string, subject string, text string, html string) {
 	lines := []string{}
 
 	if text != "" {
@@ -521,20 +530,32 @@ func sendMail(h HandlerArgs, to string, subject string, text string, html string
 		log.Println(fmt.Errorf("Failed to render email body: %v", err))
 	}
 
-	email := &mail.Message{
-		Sender:   "Cyph <noreply@cyph.com>",
-		Subject:  subject,
-		To:       []string{to},
-		HTMLBody: body,
+	emailLog := map[string]string{
+		"HTMLBody": body,
+		"Sender":   emailFromFull,
+		"Subject":  subject,
+		"To":       to,
 	}
 
-	if b, err := json.Marshal(email); err == nil {
+	if b, err := json.Marshal(emailLog); err == nil {
 		log.Println("Sending email: %v", string(b))
 	} else {
 		log.Println(fmt.Errorf("Failed to log outgoing email."))
 	}
 
-	err = mail.Send(h.Context, email)
+	err = smtp.SendMail(
+		emailSmtpServer,
+		emailAuth,
+		emailFrom,
+		[]string{to},
+		[]byte(
+			"From: "+emailFromFull+"\n"+
+				"To: "+to+"\n"+
+				"Subject: "+subject+"\n"+
+				"MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"+
+				body,
+		),
+	)
 
 	if err != nil {
 		log.Println(fmt.Errorf("Failed to send email: %v", err))
