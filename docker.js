@@ -18,6 +18,13 @@ const cat = f => {
 	}
 };
 
+const catJSON = f => {
+	try {
+		return JSON.parse(cat(f));
+	}
+	catch (_) {}
+};
+
 const exec = command =>
 	childProcess
 		.execSync(command, {cwd: __dirname})
@@ -109,6 +116,9 @@ const cyphConfigDir = path.join(homeDir, '.cyph');
 const backupDir = path.join(homeDir, '.cyphbackup');
 const backupTargets = ['gitconfig', 'gnupg', 'ssh'];
 const dockerHomeDir = '/home/gibson';
+const dockerCredentials = catJSON(
+	path.join(cyphConfigDir, 'docker-credentials.json')
+);
 const agseRemoteAddress = '10.0.0.42';
 const agseLocalAddress = '10.0.0.43';
 const agseRemoteMAC = cat(path.join(cyphConfigDir, 'agse.remote.mac'));
@@ -530,6 +540,17 @@ const updateCircleCI = () => {
 		'Dockerfile.tmp',
 		'.'
 	])
+		.then(() =>
+			dockerCredentials ?
+				spawnAsync('docker', [
+					'login',
+					'-u',
+					dockerCredentials.username,
+					'-p',
+					dockerCredentials.password
+				]) :
+				undefined
+		)
 		.then(() => spawnAsync('docker', ['push', 'cyph/circleci:latest']))
 		.then(() => {
 			fs.unlinkSync('Dockerfile.tmp');
