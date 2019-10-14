@@ -105,14 +105,15 @@ const shellCommandArgs = baseShellCommandArgs
 	.map(s => (s.indexOf("'") ? `"${s.replace(/"/g, '\\"')}"` : `'${s}'`))
 	.join(' ');
 const homeDir = os.homedir();
+const cyphConfigDir = path.join(homeDir, '.cyph');
 const backupDir = path.join(homeDir, '.cyphbackup');
 const backupTargets = ['gitconfig', 'gnupg', 'ssh'];
 const dockerHomeDir = '/home/gibson';
 const agseRemoteAddress = '10.0.0.42';
 const agseLocalAddress = '10.0.0.43';
-const agseRemoteMAC = cat(path.join(homeDir, '.cyph', 'agse.remote.mac'));
+const agseRemoteMAC = cat(path.join(cyphConfigDir, 'agse.remote.mac'));
 const agseLocalInterface = cat(
-	path.join(homeDir, '.cyph', 'agse.local.interface')
+	path.join(cyphConfigDir, 'agse.local.interface')
 );
 const agseTempFile = path.join(os.tmpdir(), 'balls');
 const commandAdditionalArgs = [];
@@ -152,14 +153,14 @@ const imageAlreadyBuilt = spawn('docker', ['images'])
 	.slice(1)
 	.some(s => s.trim().split(/\s+/)[0] === image);
 
-const isCyphInternal = fs.existsSync(path.join(homeDir, '.cyph'));
+const isCyphInternal = fs.existsSync(cyphConfigDir);
 
 const mounts = [
 	`${__dirname}:/cyph`,
 	...(!isCyphInternal ?
 		[] :
 		[
-			`${path.join(homeDir, '.cyph')}:${dockerHomeDir}/.cyph`,
+			`${cyphConfigDir}:${dockerHomeDir}/.cyph`,
 			...(isWindows ?
 				[] :
 				[
@@ -321,12 +322,10 @@ const backup = () => {
 		]);
 	}
 
-	for (const d of fs
-		.readdirSync(path.join(homeDir, '.cyph'))
-		.filter(d => d !== 'cdn')) {
+	for (const d of fs.readdirSync(cyphConfigDir).filter(d => d !== 'cdn')) {
 		spawn('cp', [
 			'-a',
-			path.join(homeDir, '.cyph', d),
+			path.join(cyphConfigDir, d),
 			path.join(backupDir, 'cyph', d)
 		]);
 	}
