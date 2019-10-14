@@ -14,7 +14,6 @@ import (
 
 	"cloud.google.com/go/datastore"
 	"github.com/braintree-go/braintree-go"
-	"google.golang.org/appengine/memcache"
 )
 
 func main() {
@@ -884,7 +883,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 func signup(h HandlerArgs) (interface{}, int) {
 	betaSignup, signup := getSignupFromRequest(h)
 
-	email, err := getEmail(signup["email"].(string))
+	_, err := getEmail(signup["email"].(string))
 	if err != nil {
 		return err.Error(), http.StatusBadRequest
 	}
@@ -904,11 +903,17 @@ func signup(h HandlerArgs) (interface{}, int) {
 		if existingBetaSignup.Name != "" {
 			betaSignup.Name = existingBetaSignup.Name
 		}
+		if existingBetaSignup.PrefineryID != 0 {
+			betaSignup.PrefineryID = existingBetaSignup.PrefineryID
+		}
 		if existingBetaSignup.Referer != "" {
 			betaSignup.Referer = existingBetaSignup.Referer
 		}
 		if existingBetaSignup.Time != 0 {
 			betaSignup.Time = existingBetaSignup.Time
+		}
+		if existingBetaSignup.UsernameRequest != "" {
+			betaSignup.UsernameRequest = existingBetaSignup.UsernameRequest
 		}
 	}
 	if _, err := h.Datastore.Put(h.Context, betaSignupKey, &betaSignup); err != nil {
@@ -921,10 +926,9 @@ func signup(h HandlerArgs) (interface{}, int) {
 
 	resource := ""
 	method := methods.POST
-	useridKey := "signup-userid-" + email
 
-	if item, err := memcache.Get(h.Context, useridKey); err != memcache.ErrCacheMiss {
-		resource = "/" + string(item.Value)
+	if betaSignup.PrefineryID != 0 {
+		resource = "/" + string(betaSignup.PrefineryID)
 		method = methods.PUT
 	}
 
@@ -962,15 +966,13 @@ func signup(h HandlerArgs) (interface{}, int) {
 	switch userid := useridDynamic.(type) {
 	case float64:
 		if resource != "" {
-			memcache.Delete(h.Context, useridKey)
 			return "update", http.StatusOK
 		}
 
-		memcache.Set(h.Context, &memcache.Item{
-			Key:        useridKey,
-			Value:      []byte(strconv.Itoa(int(userid))),
-			Expiration: config.MemcacheExpiration,
-		})
+		betaSignup.PrefineryID = int(userid)
+		if _, err := h.Datastore.Put(h.Context, betaSignupKey, &betaSignup); err != nil {
+			return err.Error(), http.StatusInternalServerError
+		}
 
 		return "set", http.StatusOK
 	}
