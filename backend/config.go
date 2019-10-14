@@ -94,6 +94,7 @@ var config = struct {
 	AllowedHosts               map[string]none
 	AnalID                     string
 	APIKeyByteLength           int
+	BurnerChannelExpiration    int64
 	CacheControlHeader         string
 	Continents                 map[string]none
 	DefaultContinent           string
@@ -158,6 +159,8 @@ var config = struct {
 	"UA-56220601-1",
 
 	16,
+
+	172800000,
 
 	"no-cache",
 

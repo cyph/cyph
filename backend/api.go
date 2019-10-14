@@ -431,6 +431,10 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 
 		h.Datastore.Get(h.Context, burnerChannelKey, burnerChannel)
 
+		if now-burnerChannel.Timestamp > config.BurnerChannelExpiration {
+			burnerChannel = &BurnerChannel{}
+		}
+
 		if burnerChannel.ID != "" {
 			h.Datastore.Delete(h.Context, preAuthorizedCyphKey)
 
