@@ -224,7 +224,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 						newFormContainer([
 							text({
 								label: this.stringsService.bitcoinTransactionFee.replace(
-									'${1}',
+									`\${1}`,
 									this.cryptocurrencyService.transactionFee.toString()
 								)
 							})
@@ -265,8 +265,8 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		if (
 			!(await this.dialogService.confirm({
 				content: this.stringsService.bitcoinConfirmationPrompt
-					.replace('${1}', amount.toFixed(8))
-					.replace('${2}', recipient),
+					.replace(`\${1}`, amount.toFixed(8))
+					.replace(`\${2}`, recipient),
 				title: this.stringsService.bitcoinSendTitle
 			}))
 		) {
