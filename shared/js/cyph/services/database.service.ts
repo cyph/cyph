@@ -104,7 +104,7 @@ export class DatabaseService extends DataManagerService {
 						];
 
 				if (!all) {
-					let lastErr = undefined;
+					let lastErr: any;
 					for (const keyPromise of keys) {
 						const key = await keyPromise;
 						if (key === undefined) {

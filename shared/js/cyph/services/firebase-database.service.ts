@@ -426,7 +426,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				try {
 					const localValue = await this.cache.value
 						.getItem({hash, url}, proto)
-						.catch(err => {
+						.catch(async err => {
 							if (data === undefined) {
 								throw err;
 							}
