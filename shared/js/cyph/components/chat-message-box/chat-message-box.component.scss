@@ -48,7 +48,7 @@
 
 	&:not(.mobile) {
 		.message-box {
-			@include transition(all 0.35s ease-in-out);
+			@include transition(height 0.35s ease-in-out);
 
 			outline: none;
 			padding: 3px;
