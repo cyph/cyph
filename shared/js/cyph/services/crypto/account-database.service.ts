@@ -2,6 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
+import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
@@ -22,10 +23,11 @@ import {
 	StringProto
 } from '../../proto';
 import {flattenArrays} from '../../util/arrays';
-import {filterUndefinedOperator} from '../../util/filter';
+import {filterUndefined, filterUndefinedOperator} from '../../util/filter';
 import {
 	cacheObservable,
-	flattenObservable
+	flattenObservable,
+	toBehaviorSubject
 } from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
 import {
@@ -52,7 +54,65 @@ export class AccountDatabaseService extends BaseProvider {
 	private readonly cache = {
 		getAsyncList: new Map<any, any>(),
 		getAsyncMap: new Map<any, any>(),
-		getAsyncValue: new Map<any, any>()
+		getAsyncValue: new Map<any, any>(),
+		list: {
+			getItem: async <T>(
+				url: MaybePromise<string>,
+				proto: IProto<T>,
+				immutable: boolean
+			) : Promise<ITimedValue<T>[]> => {
+				try {
+					const arr = msgpack.decode(
+						await this.localStorageService.getItem(
+							`AccountDatabaseService/list${
+								immutable ? '-immutable' : ''
+							}/${await this.normalizeURL(url)}`,
+							BinaryProto
+						)
+					);
+					if (!(arr instanceof Array)) {
+						throw new Error();
+					}
+
+					return filterUndefined(
+						await Promise.all(
+							arr.map(async o =>
+								typeof o.timestamp === 'number' &&
+								o.value instanceof Uint8Array ?
+									{
+										timestamp: <number> o.timestamp,
+										value: await deserialize(proto, o.value)
+									} :
+									undefined
+							)
+						)
+					);
+				}
+				catch {
+					return [];
+				}
+			},
+			setItem: async <T>(
+				url: MaybePromise<string>,
+				proto: IProto<T>,
+				immutable: boolean,
+				list: ITimedValue<T>[]
+			) =>
+				this.localStorageService.setItem(
+					`AccountDatabaseService/list${
+						immutable ? '-immutable' : ''
+					}/${await this.normalizeURL(url)}`,
+					BinaryProto,
+					msgpack.encode(
+						await Promise.all(
+							list.map(async o => ({
+								timestamp: o.timestamp,
+								value: await serialize(proto, o.value)
+							}))
+						)
+					)
+				)
+		}
 	};
 
 	/** @ignore */
@@ -273,7 +333,7 @@ export class AccountDatabaseService extends BaseProvider {
 			return [];
 		}
 
-		return Promise.all(
+		const list = await Promise.all(
 			keys.map(
 				async (k, i) =>
 					(await this.getItemInternal(
@@ -286,6 +346,10 @@ export class AccountDatabaseService extends BaseProvider {
 					)).result
 			)
 		);
+
+		await this.cache.list.setItem(url, proto, immutable, list);
+
+		return list;
 	}
 
 	/** @ignore */
@@ -1448,6 +1512,8 @@ export class AccountDatabaseService extends BaseProvider {
 		immutable: boolean = true,
 		subscriptions?: Subscription[]
 	) : Observable<ITimedValue<T>[]> {
+		const lastValue = this.cache.list.getItem(url, proto, immutable);
+
 		const cache: {head?: string; keys: number; value: ITimedValue<T>[]} = {
 			keys: 0,
 			value: []
@@ -1480,7 +1546,7 @@ export class AccountDatabaseService extends BaseProvider {
 				])
 			);
 
-		return cacheObservable(
+		return toBehaviorSubject(
 			watcher.pipe(
 				mergeMap(async ([keys, head]) => {
 					const headValue = !isNaN(head.timestamp) ?
@@ -1514,7 +1580,9 @@ export class AccountDatabaseService extends BaseProvider {
 					return cache.value;
 				})
 			),
-			subscriptions
+			[],
+			subscriptions,
+			lastValue
 		);
 	}
 
