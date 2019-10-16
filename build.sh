@@ -32,7 +32,9 @@ fi
 
 export CSC_KEYCHAIN="${HOME}/.cyph/nativereleasesigning/apple/cyph.keychain"
 
-rm -rf ../cyph-phonegap-build 2> /dev/null || true
+if [ -d ../cyph-phonegap-build ] ; then
+	rm -rf ../cyph-phonegap-build
+fi
 mkdir -p ../cyph-phonegap-build/build
 
 for f in $(ls -a | grep -v '^\.$' | grep -v '^\.\.$') ; do
