@@ -62,8 +62,8 @@ export class DatabaseService extends DataManagerService {
 				)
 		},
 		removeItem: async (url: string) => {
-			await this.cache.value.removeItem(url);
-			await this.cache.metadata.removeItem(url);
+			await this.cache.value.removeItem(url).catch(() => {});
+			await this.cache.metadata.removeItem(url).catch(() => {});
 		},
 		setItem: async (
 			url: string,
@@ -78,47 +78,92 @@ export class DatabaseService extends DataManagerService {
 					}
 					return this.cache.metadata.setItem(url, {hash, timestamp});
 				})(),
-				this.cache.value.setItem({hash}, BinaryProto, data)
+				this.cache.value.setItem({hash, url}, BinaryProto, data)
 			]);
 		},
 		value: {
-			_getKey: async (url: string | {hash: string}) =>
-				`DatabaseService/value/${
-					typeof url === 'object' ?
-						url.hash :
-						(await this.cache.metadata.getItem(url)).hash
-				}`,
+			_getKeys: async <T>(
+				url: string | {hash: string; url: string},
+				all: boolean,
+				callback: (key: string) => Promise<T>
+			) => {
+				const keys =
+					typeof url === 'string' ?
+						[
+							`DatabaseService/value-url/${url}`,
+							this.cache.metadata
+								.getItem(url)
+								.then(
+									o => `DatabaseService/value-hash/${o.hash}`
+								)
+								.catch(() => undefined)
+						] :
+						[
+							`DatabaseService/value-hash/${url.hash}`,
+							`DatabaseService/value-url/${url.url}`
+						];
+
+				if (!all) {
+					let lastErr = undefined;
+					for (const keyPromise of keys) {
+						const key = await keyPromise;
+						if (key === undefined) {
+							continue;
+						}
+
+						try {
+							return await callback(key);
+						}
+						catch (err) {
+							lastErr = err;
+						}
+					}
+					throw lastErr;
+				}
+
+				const promises = [];
+				for (const keyPromise of keys) {
+					const key = await keyPromise;
+					if (key === undefined) {
+						continue;
+					}
+
+					promises.push(callback(key));
+				}
+				return (await promises)[0];
+			},
 			getItem: async <T>(
-				url: string | {hash: string},
+				url: string | {hash: string; url: string},
 				proto: IProto<T>
 			) =>
-				this.localStorageService.getItem(
-					await this.cache.value._getKey(url),
-					proto
+				this.cache.value._getKeys(url, false, async key =>
+					this.localStorageService.getItem(key, proto)
 				),
 			getOrSetDefault: async <T>(
-				url: string | {hash: string},
+				url: string | {hash: string; url: string},
 				proto: IProto<T>,
 				defaultValue: () => MaybePromise<T>
-			) =>
-				this.localStorageService.getOrSetDefault(
-					await this.cache.value._getKey(url),
-					proto,
-					defaultValue
-				),
-			removeItem: async (url: string | {hash: string}) =>
-				this.localStorageService.removeItem(
-					await this.cache.value._getKey(url)
+			) => {
+				try {
+					return await this.cache.value.getItem(url, proto);
+				}
+				catch {
+					const value = await defaultValue();
+					this.cache.value.setItem(url, proto, value).catch(() => {});
+					return value;
+				}
+			},
+			removeItem: async (url: string | {hash: string; url: string}) =>
+				this.cache.value._getKeys(url, true, async key =>
+					this.localStorageService.removeItem(key)
 				),
 			setItem: async <T>(
-				url: string | {hash: string},
+				url: string | {hash: string; url: string},
 				proto: IProto<T>,
 				value: T
 			) =>
-				this.localStorageService.setItem(
-					await this.cache.value._getKey(url),
-					proto,
-					value
+				this.cache.value._getKeys(url, true, async key =>
+					this.localStorageService.setItem(key, proto, value)
 				)
 		}
 	};
@@ -287,7 +332,6 @@ export class DatabaseService extends DataManagerService {
 		const localLock = lockFunction();
 		const itemLocks = new Map<string, LockFunction>();
 		const itemCache = staticValues ? new Map<string, T>() : undefined;
-		const method = 'DatabaseService.getAsyncMap';
 
 		const lockItem = (key: string) =>
 			getOrSetDefault(itemLocks, key, () => lockFactory(`${url}/${key}`));
@@ -300,11 +344,7 @@ export class DatabaseService extends DataManagerService {
 			}
 
 			return getOrSetDefaultAsync(itemCache, key, async () =>
-				this.localStorageService.getOrSetDefault(
-					`${method}/${url}/${key}`,
-					proto,
-					f
-				)
+				this.cache.value.getOrSetDefault(`${url}/${key}`, proto, f)
 			);
 		};
 
@@ -333,9 +373,7 @@ export class DatabaseService extends DataManagerService {
 			await Promise.all([
 				this.removeItem(`${url}/${key}`),
 				staticValues ?
-					this.localStorageService.removeItem(
-						`${method}/${url}/${key}`
-					) :
+					this.cache.removeItem(`${url}/${key}`) :
 					undefined
 			]);
 		};
@@ -346,14 +384,7 @@ export class DatabaseService extends DataManagerService {
 			}
 
 			await Promise.all<any>([
-				this.setItem(`${url}/${key}`, proto, value),
-				staticValues ?
-					this.localStorageService.setItem(
-						`${method}/${url}/${key}`,
-						proto,
-						value
-					) :
-					undefined
+				this.setItem(`${url}/${key}`, proto, value)
 			]);
 		};
 

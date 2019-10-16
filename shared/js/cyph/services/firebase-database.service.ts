@@ -425,7 +425,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				try {
 					const localValue = await this.cache.value
-						.getItem({hash}, proto)
+						.getItem({hash, url}, proto)
 						.catch(err => {
 							if (data === undefined) {
 								throw err;
@@ -480,7 +480,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					progress.next(100);
 					progress.complete();
 				});
-				this.cache.value.setItem({hash}, BinaryProto, value);
+				this.cache.value.setItem({hash, url}, BinaryProto, value);
 				return {timestamp, value: await deserialize(proto, value)};
 			})
 		};
