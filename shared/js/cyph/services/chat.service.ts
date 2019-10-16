@@ -1043,9 +1043,22 @@ export class ChatService extends BaseProvider {
 
 	/** Gets message value if not already set. */
 	public async getMessageValue (
-		message: IChatMessage
+		message: IChatMessage,
+		tryInitFromLocalStorage: boolean = false
 	) : Promise<IChatMessage> {
 		if (message.value !== undefined) {
+			return message;
+		}
+
+		const localStorageKey = `chatService.getMessageValue/${message.id}`;
+
+		message.value = await this.localStorageService
+			.getItem(localStorageKey, ChatMessageValue)
+			.catch(() => undefined);
+
+		const localStorageSuccess = message.value !== undefined;
+
+		if (tryInitFromLocalStorage && !localStorageSuccess) {
 			return message;
 		}
 
@@ -1086,9 +1099,17 @@ export class ChatService extends BaseProvider {
 				retryUntilSuccessful(getMessageValue, 10, 500) :
 				getMessageValue()
 			).catch(() => undefined);
+		}
 
-			if (message.value !== undefined) {
-				await this.fetchedMessageIDs.addItem(message.id);
+		if (message.value !== undefined) {
+			await this.fetchedMessageIDs.addItem(message.id);
+
+			if (!localStorageSuccess) {
+				await this.localStorageService.setItem(
+					localStorageKey,
+					ChatMessageValue,
+					message.value
+				);
 			}
 		}
 

@@ -299,7 +299,7 @@ export class ChatMessageListComponent extends BaseProvider
 						pending?: true;
 					})[] = onlineMessages.concat(pendingMessages);
 
-					return (await (await Promise.all(
+					const messageListItems = (await (await Promise.all(
 						messages
 							.filter(
 								message =>
@@ -452,6 +452,14 @@ export class ChatMessageListComponent extends BaseProvider
 								}>
 							> {last: undefined, messageList: []}
 						)).messageList;
+
+					await Promise.all(
+						messageListItems.map(async o =>
+							this.chatService.getMessageValue(o.message, true)
+						)
+					);
+
+					return messageListItems;
 				})
 			),
 			unconfirmedMessages: chat.unconfirmedMessages
