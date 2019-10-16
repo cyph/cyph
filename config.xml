@@ -6,7 +6,7 @@
 	xmlns="http://www.w3.org/ns/widgets"
 	xmlns:cdv="http://cordova.apache.org/ns/1.0"
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	version="1.0.22"
+	version="1.0.23"
 >
 	<name>Cyph</name>
 	<description>
@@ -263,7 +263,7 @@
 		<splash height="480" platform="ios" src="res/screen/ios/Default~iphone.png" width="320" />
 	</platform>
 
-	<engine name="android" spec="^8.1.0-nightly.2019.9.11.902aa32d" />
+	<engine name="android" spec="^8.1.0" />
 	<engine name="electron" spec="^1.1.1" />
 	<engine name="ios" spec="^5.0.1" />
 </widget>
