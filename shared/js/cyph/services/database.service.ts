@@ -13,6 +13,7 @@ import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
+import {BinaryProto, DatabaseItem, IDatabaseItem} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {flattenArrays} from '../util/arrays';
 import {
@@ -21,6 +22,7 @@ import {
 } from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
+import {getTimestamp} from '../util/time';
 import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -30,6 +32,97 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class DatabaseService extends DataManagerService {
+	/** Cache manager. */
+	protected readonly cache = {
+		metadata: {
+			_getKey: (url: string) => `DatabaseService/metadata/${url}`,
+			getItem: async (url: string) =>
+				this.localStorageService.getItem(
+					this.cache.metadata._getKey(url),
+					DatabaseItem
+				),
+			getOrSetDefault: async (
+				url: string,
+				defaultValue: () => MaybePromise<IDatabaseItem>
+			) =>
+				this.localStorageService.getOrSetDefault(
+					this.cache.metadata._getKey(url),
+					DatabaseItem,
+					defaultValue
+				),
+			removeItem: async (url: string) =>
+				this.localStorageService.removeItem(
+					this.cache.metadata._getKey(url)
+				),
+			setItem: async (url: string, value: IDatabaseItem) =>
+				this.localStorageService.setItem(
+					this.cache.metadata._getKey(url),
+					DatabaseItem,
+					value
+				)
+		},
+		removeItem: async (url: string) => {
+			await this.cache.value.removeItem(url);
+			await this.cache.metadata.removeItem(url);
+		},
+		setItem: async (
+			url: string,
+			data: Uint8Array,
+			hash: string,
+			timestamp?: number
+		) => {
+			await Promise.all([
+				(async () => {
+					if (timestamp === undefined) {
+						timestamp = await getTimestamp();
+					}
+					return this.cache.metadata.setItem(url, {hash, timestamp});
+				})(),
+				this.cache.value.setItem({hash}, BinaryProto, data)
+			]);
+		},
+		value: {
+			_getKey: async (url: string | {hash: string}) =>
+				`DatabaseService/value/${
+					typeof url === 'object' ?
+						url.hash :
+						(await this.cache.metadata.getItem(url)).hash
+				}`,
+			getItem: async <T>(
+				url: string | {hash: string},
+				proto: IProto<T>
+			) =>
+				this.localStorageService.getItem(
+					await this.cache.value._getKey(url),
+					proto
+				),
+			getOrSetDefault: async <T>(
+				url: string | {hash: string},
+				proto: IProto<T>,
+				defaultValue: () => MaybePromise<T>
+			) =>
+				this.localStorageService.getOrSetDefault(
+					await this.cache.value._getKey(url),
+					proto,
+					defaultValue
+				),
+			removeItem: async (url: string | {hash: string}) =>
+				this.localStorageService.removeItem(
+					await this.cache.value._getKey(url)
+				),
+			setItem: async <T>(
+				url: string | {hash: string},
+				proto: IProto<T>,
+				value: T
+			) =>
+				this.localStorageService.setItem(
+					await this.cache.value._getKey(url),
+					proto,
+					value
+				)
+		}
+	};
+
 	/** Configuration of DatabaseService.lock leasing algorithm. */
 	protected readonly lockLeaseConfig = {
 		expirationLimit: 180000,

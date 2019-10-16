@@ -13,7 +13,7 @@ import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
 import {MaybePromise} from '../maybe-promise-type';
-import {BinaryProto, StringProto} from '../proto';
+import {BinaryProto, IDatabaseItem, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
 import {
 	getOrSetDefault,
@@ -76,9 +76,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return app;
 		})
 	);
-
-	/** Mapping of URLs to last known good hashes. */
-	private readonly hashCache: Map<string, string> = new Map<string, string>();
 
 	/** @ignore */
 	private readonly localLocks: Map<string, {}> = new Map<string, {}>();
@@ -233,50 +230,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 			>
 		>()
 	};
-
-	/** @ignore */
-	private async cacheGet (o: {
-		hash?: string;
-		url?: string;
-	}) : Promise<Uint8Array> {
-		const hash = o.hash ?
-			o.hash :
-		o.url ?
-			this.hashCache.get(o.url) :
-			undefined;
-
-		if (!hash) {
-			throw new Error('Item not in cache.');
-		}
-
-		return this.localStorageService.getItem(`cache/${hash}`, BinaryProto);
-	}
-
-	/** @ignore */
-	private cacheRemove (o: {hash?: string; url?: string}) : void {
-		const hash = o.hash ?
-			o.hash :
-		o.url ?
-			this.hashCache.get(o.url) :
-			undefined;
-
-		if (o.url) {
-			this.hashCache.delete(o.url);
-		}
-		if (hash) {
-			this.localStorageService.removeItem(`cache/${hash}`);
-		}
-	}
-
-	/** @ignore */
-	private cacheSet (url: string, value: Uint8Array, hash: string) : void {
-		this.localStorageService
-			.setItem(`cache/${hash}`, BinaryProto, value)
-			.then(() => {
-				this.hashCache.set(url, hash);
-			})
-			.catch(() => {});
-	}
 
 	/** @ignore */
 	private async getDatabaseRef (
@@ -471,14 +424,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const {data, hash, timestamp} = await this.getMetadata(url);
 
 				try {
-					const localData = await this.cacheGet({hash}).catch(err => {
-						if (data === undefined) {
-							throw err;
-						}
-						return this.potassiumService.fromBase64(data);
-					});
-
-					const localValue = await deserialize(proto, localData);
+					const localValue = await this.cache.value
+						.getItem({hash}, proto)
+						.catch(err => {
+							if (data === undefined) {
+								throw err;
+							}
+							return deserialize(
+								proto,
+								this.potassiumService.fromBase64(data)
+							);
+						});
 
 					alreadyCached.resolve(true);
 					this.ngZone.run(() => {
@@ -524,7 +480,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					progress.next(100);
 					progress.complete();
 				});
-				this.cacheSet(url, value, hash);
+				this.cache.value.setItem({hash}, BinaryProto, value);
 				return {timestamp, value: await deserialize(proto, value)};
 			})
 		};
@@ -599,11 +555,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public async getMetadata (
 		urlPromise: MaybePromise<string>
-	) : Promise<{
-		data?: string;
-		hash: string;
-		timestamp: number;
-	}> {
+	) : Promise<IDatabaseItem> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url = await urlPromise;
 
@@ -619,11 +571,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 				throw new Error(`Item at ${url} not found.`);
 			}
 
-			return {
+			const metadata = {
 				hash,
 				timestamp,
 				...(typeof data === 'string' ? {data} : {})
 			};
+
+			await this.cache.metadata.setItem(url, metadata);
+
+			return metadata;
 		});
 	}
 
@@ -1101,7 +1057,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const url = await urlPromise;
 
 			(await this.getDatabaseRef(url)).remove().then();
-			this.cacheRemove({url});
+			this.cache.removeItem(url);
 		});
 	}
 
@@ -1221,7 +1177,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						.then();
 				}
 
-				this.cacheSet(url, data, hash);
+				this.cache.setItem(url, data, hash);
 			}
 
 			return {hash, url};
@@ -1930,7 +1886,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									});
 
 									if (noCache) {
-										this.cacheRemove({url: itemUrl});
+										this.cache.removeItem(url);
 									}
 								};
 

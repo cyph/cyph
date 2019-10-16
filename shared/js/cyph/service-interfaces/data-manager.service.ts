@@ -3,7 +3,7 @@
 import {BaseProvider} from '../base-provider';
 import {IProto} from '../iproto';
 import {MaybePromise} from '../maybe-promise-type';
-import {BinaryProto} from '../proto';
+import {BinaryProto, StringProto} from '../proto';
 
 /**
  * Base class for any service that manages data.
@@ -12,6 +12,11 @@ export class DataManagerService extends BaseProvider {
 	/** Gets an item's value. */
 	public async getItem<T> (_URL: string, _PROTO: IProto<T>) : Promise<T> {
 		throw new Error('Must provide an implementation of getItem.');
+	}
+
+	/** Gets a string item's value. */
+	public async getString (url: string) : Promise<string> {
+		return this.getItem(url, StringProto);
 	}
 
 	/** Gets a value and sets a default value if none had previously been set. */
@@ -56,6 +61,14 @@ export class DataManagerService extends BaseProvider {
 		_VALUE: T
 	) : Promise<{url: string}> {
 		throw new Error('Must provide an implementation of setItem.');
+	}
+
+	/** Sets a string item's value. */
+	public async setString (
+		url: string,
+		value: string
+	) : Promise<{url: string}> {
+		return this.setItem(url, StringProto, value);
 	}
 
 	constructor () {
