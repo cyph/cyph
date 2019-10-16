@@ -466,6 +466,17 @@ export class DatabaseService extends DataManagerService {
 		let currentHash: string | undefined;
 		let currentValue = proto.create();
 
+		localLock(async () => {
+			try {
+				currentHash = (await this.cache.metadata.getItem(url)).hash;
+				currentValue = await this.cache.value.getItem(
+					{hash: currentHash, url},
+					proto
+				);
+			}
+			catch {}
+		});
+
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
 		/* tslint:disable-next-line:no-unnecessary-local-variable */
 		const asyncValue: IAsyncValue<T> = {
