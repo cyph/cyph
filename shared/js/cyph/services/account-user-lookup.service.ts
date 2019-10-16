@@ -154,6 +154,17 @@ export class AccountUserLookupService extends BaseProvider {
 			const username = normalize(user);
 			const url = `users/${username}`;
 
+			if (
+				(lock || !preFetch) &&
+				(this.userCache.has(username) ||
+					(await this.accountDatabaseService.isCached(
+						`${url}/publicProfile`
+					)))
+			) {
+				lock = false;
+				preFetch = true;
+			}
+
 			return getOrSetDefaultAsync(
 				this.userCache,
 				username,

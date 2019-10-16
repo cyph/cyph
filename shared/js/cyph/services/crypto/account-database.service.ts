@@ -1146,6 +1146,11 @@ export class AccountDatabaseService extends BaseProvider {
 		return this.databaseService.hasItem(await this.normalizeURL(url));
 	}
 
+	/** @see DatabaseService.isCached */
+	public async isCached (url: MaybePromise<string>) : Promise<boolean> {
+		return this.databaseService.isCached(await this.normalizeURL(url));
+	}
+
 	/** @see DatabaseService.lock */
 	public async lock<T> (
 		url: MaybePromise<string>,

@@ -50,6 +50,10 @@ export class DatabaseService extends DataManagerService {
 					DatabaseItem,
 					defaultValue
 				),
+			hasItem: async (url: string) =>
+				this.localStorageService.hasItem(
+					this.cache.metadata._getKey(url)
+				),
 			removeItem: async (url: string) =>
 				this.localStorageService.removeItem(
 					this.cache.metadata._getKey(url)
@@ -153,6 +157,10 @@ export class DatabaseService extends DataManagerService {
 					return value;
 				}
 			},
+			hasItem: async (url: string | {hash: string; url: string}) =>
+				this.cache.value._getKeys(url, false, async key =>
+					this.localStorageService.hasItem(key)
+				),
 			removeItem: async (url: string | {hash: string; url: string}) =>
 				this.cache.value._getKeys(url, true, async key =>
 					this.localStorageService.removeItem(key)
@@ -593,6 +601,11 @@ export class DatabaseService extends DataManagerService {
 		throw new Error(
 			'Must provide an implementation of DatabaseService.getMetadata.'
 		);
+	}
+
+	/** Checks whether item value is already locally cached. */
+	public async isCached (url: MaybePromise<string>) : Promise<boolean> {
+		return this.cache.value.hasItem(await url);
 	}
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
