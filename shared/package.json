@@ -1,0 +1,5 @@
+{
+	"scripts": {
+		"prettyQuick": "node ../commands/pretty-quick.js"
+	}
+}
