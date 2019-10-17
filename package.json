@@ -4,7 +4,7 @@
 	"license": "Ms-RSL",
 	"husky": {
 		"hooks": {
-			"pre-commit": "cyph-pretty-quick --staged --pattern '**/*.{css,html,js,json,scss,ts,tsx}'"
+			"pre-commit": "node node_modules/.bin/cyph-pretty-quick --staged --pattern '**/*.{css,html,js,json,scss,ts,tsx}'"
 		}
 	},
 	"prettier": {
