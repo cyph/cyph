@@ -1,6 +1,7 @@
 export * from './arrays';
 export * from './clipboard';
 export * from './compare';
+export * from './cordova';
 export * from './email';
 export * from './filter';
 export * from './flatten-observable';
