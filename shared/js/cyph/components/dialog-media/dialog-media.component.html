@@ -24,7 +24,8 @@
 			<img
 				cyphTranslate
 				alt="Full size image"
-				id="dialog-image"
+				class="dialog-image"
+				[id]="imageID"
 				[src]="stringToSafeUrl(src)"
 				*ngIf="fileService.isImage(mediaType)"
 			/>

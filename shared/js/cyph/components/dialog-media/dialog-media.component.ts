@@ -13,6 +13,7 @@ import {IResolvable} from '../../iresolvable';
 import {DataURIProto} from '../../proto';
 import {FileService} from '../../services/file.service';
 import {StringsService} from '../../services/strings.service';
+import {uuid} from '../../util/uuid';
 
 /**
  * Angular component for image dialog.
@@ -32,6 +33,9 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 
 	/** In-progress cropped image. */
 	public cropped?: string;
+
+	/** ID of image element. */
+	public readonly imageID: string = `id-${uuid()}`;
 
 	/** MIME type. */
 	public mediaType: string = 'image/png';
@@ -115,7 +119,7 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 
 		grandparent.style.cssText = ancestorStyles;
 
-		const image = document.querySelector('#dialog-image');
+		const image = document.getElementById(this.imageID);
 		if (image instanceof HTMLImageElement) {
 			/* tslint:disable-next-line:no-unused-expression */
 			new PinchZoom(image);
