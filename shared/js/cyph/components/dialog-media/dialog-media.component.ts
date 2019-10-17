@@ -116,7 +116,7 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 		grandparent.style.cssText = ancestorStyles;
 
 		let image = document.querySelector('#dialog-image');
-		if(image instanceof HTMLImageElement){
+		if (image instanceof HTMLImageElement) {
 			new PinchZoom(image);
 		}
 	}
