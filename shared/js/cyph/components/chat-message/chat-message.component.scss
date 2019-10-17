@@ -146,7 +146,7 @@
 		.centered,
 		.centered-fake {
 			max-width: 50%;
-			max-height: 75%;
+			//max-height: 75%;
 
 			&.media-container {
 				height: 100%;
@@ -243,8 +243,10 @@
 			}
 
 			.media-message {
-				max-width: 90vw;
+				max-width: 80vw;
 				max-height: 50vh;
+				margin: 0;
+				margin-top: 10%;
 			}
 
 			.centered,

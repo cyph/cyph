@@ -12,6 +12,7 @@ import {IResolvable} from '../../iresolvable';
 import {DataURIProto} from '../../proto';
 import {FileService} from '../../services/file.service';
 import {StringsService} from '../../services/strings.service';
+import PinchZoom from 'pinch-zoom-js';
 
 /**
  * Angular component for image dialog.
@@ -113,6 +114,11 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 		`;
 
 		grandparent.style.cssText = ancestorStyles;
+
+		let image = document.querySelector('#dialog-image');
+		if(image instanceof HTMLImageElement){
+			new PinchZoom(image);
+		}
 	}
 
 	constructor (
