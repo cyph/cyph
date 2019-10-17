@@ -291,6 +291,34 @@ $default-white: map-get($mat-grey, 100);
 						mobileText
 					);
 				}
+
+				@if map-has-key(
+					map-get($cyph-message-colors, app),
+					mobileSpinner
+				)
+				{
+					@include mat-progress-spinner-theme(
+						map-merge(
+							$cyph-theme,
+							(
+								primary:
+									map-merge(
+										$cyph-primary,
+										(
+											default:
+												map-get(
+													map-get(
+														$cyph-message-colors,
+														app
+													),
+													mobileSpinner
+												)
+										)
+									)
+							)
+						)
+					);
+				}
 			}
 
 			.message-item.ui-style-default.author-local {
@@ -303,6 +331,34 @@ $default-white: map-get($mat-grey, 100);
 					color: map-get(
 						map-get($cyph-message-colors, me),
 						mobileText
+					);
+				}
+
+				@if map-has-key(
+					map-get($cyph-message-colors, me),
+					mobileSpinner
+				)
+				{
+					@include mat-progress-spinner-theme(
+						map-merge(
+							$cyph-theme,
+							(
+								primary:
+									map-merge(
+										$cyph-primary,
+										(
+											default:
+												map-get(
+													map-get(
+														$cyph-message-colors,
+														me
+													),
+													mobileSpinner
+												)
+										)
+									)
+							)
+						)
 					);
 				}
 
@@ -327,6 +383,34 @@ $default-white: map-get($mat-grey, 100);
 					color: map-get(
 						map-get($cyph-message-colors, other),
 						mobileText
+					);
+				}
+
+				@if map-has-key(
+					map-get($cyph-message-colors, other),
+					mobileSpinner
+				)
+				{
+					@include mat-progress-spinner-theme(
+						map-merge(
+							$cyph-theme,
+							(
+								primary:
+									map-merge(
+										$cyph-primary,
+										(
+											default:
+												map-get(
+													map-get(
+														$cyph-message-colors,
+														other
+													),
+													mobileSpinner
+												)
+										)
+									)
+							)
+						)
 					);
 				}
 
@@ -368,7 +452,7 @@ $default-white: map-get($mat-grey, 100);
 													$cyph-message-colors,
 													app
 												),
-												text
+												spinner
 											)
 									)
 								)
@@ -398,7 +482,7 @@ $default-white: map-get($mat-grey, 100);
 													$cyph-message-colors,
 													me
 												),
-												text
+												spinner
 											)
 									)
 								)
@@ -428,7 +512,7 @@ $default-white: map-get($mat-grey, 100);
 													$cyph-message-colors,
 													other
 												),
-												text
+												spinner
 											)
 									)
 								)

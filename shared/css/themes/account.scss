@@ -23,19 +23,25 @@ $cyph-message-colors: map-merge(
 		app: (
 			desktop: transparent,
 			mobile: transparent,
+			mobileSpinner: $cyph-foreground,
 			mobileText: $cyph-foreground,
+			spinner: $cyph-foreground,
 			text: $cyph-foreground
 		),
 		me: (
 			desktop: transparent,
 			mobile:
 				rgba(map-get(map-get($cyph-message-colors, me), mobile), 0.9),
+			mobileSpinner: $cyph-foreground,
+			spinner: $cyph-foreground,
 			text: $cyph-foreground
 		),
 		other: (
 			desktop: transparent,
 			mobile:
 				rgba(map-get(map-get($cyph-message-colors, other), mobile), 0.7),
+			mobileSpinner: $cyph-foreground,
+			spinner: $cyph-foreground,
 			text: $cyph-foreground
 		)
 	)
