@@ -39,7 +39,7 @@ export const saveFile = async (
 			);
 		});
 
-		// If balls.png already exists, try balls.0.png, balls.1.png, etc.
+		/* If balls.png already exists, try balls.0.png, balls.1.png, etc. */
 		let fileNameIncrement = -2;
 		const fileEntry = await retryUntilSuccessful(
 			async () =>
