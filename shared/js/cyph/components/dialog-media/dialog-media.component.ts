@@ -7,12 +7,12 @@ import {
 import {MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
+import PinchZoom from 'pinch-zoom-js';
 import {BaseProvider} from '../../base-provider';
 import {IResolvable} from '../../iresolvable';
 import {DataURIProto} from '../../proto';
 import {FileService} from '../../services/file.service';
 import {StringsService} from '../../services/strings.service';
-import PinchZoom from 'pinch-zoom-js';
 
 /**
  * Angular component for image dialog.
@@ -115,8 +115,9 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 
 		grandparent.style.cssText = ancestorStyles;
 
-		let image = document.querySelector('#dialog-image');
+		const image = document.querySelector('#dialog-image');
 		if (image instanceof HTMLImageElement) {
+			/* tslint:disable-next-line:no-unused-expression */
 			new PinchZoom(image);
 		}
 	}
