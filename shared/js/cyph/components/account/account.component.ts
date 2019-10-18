@@ -163,7 +163,6 @@ export class AccountComponent extends BaseProvider
 				[
 					'',
 					'404',
-					'account-burner',
 					'appointments',
 					'audio',
 					'call',
@@ -205,7 +204,6 @@ export class AccountComponent extends BaseProvider
 				!isMobile &&
 				[
 					'',
-					'account-burner',
 					'audio',
 					'call',
 					'chat-transition',

@@ -60,12 +60,12 @@
 			<ng-container
 				*ngIf="!envService.isTelehealth; else telehealthButtons"
 			>
-				<button
+				<a
 					mat-raised-button
 					color="accent"
 					[matTooltip]="stringsService.linkGet"
 					matTooltipPosition="above"
-					routerLink="/account-burner/chat"
+					[href]="envService.appUrl + '#account-burner/chat'"
 					*ngIf="
 						(accountDatabaseService.currentUser | async)?.confirmed
 					"
@@ -73,7 +73,7 @@
 					<mat-icon>whatshot</mat-icon>
 					&nbsp;
 					<span cyphTranslate>New Burner Chat</span>
-				</button>
+				</a>
 				<a
 					mat-raised-button
 					color="accent"
@@ -234,7 +234,7 @@
 				class="alt"
 				matTooltip="New Burner Link"
 				matTooltipPosition="left"
-				routerLink="/account-burner/chat"
+				[href]="envService.appUrl + '#account-burner/chat'"
 				(click)="isSpeedDialOpen.next(false)"
 			>
 				<mat-icon>link</mat-icon>
