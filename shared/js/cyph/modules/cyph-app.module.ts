@@ -52,6 +52,7 @@ import {DatabaseService} from '../services/database.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {EHRIntegrationService} from '../services/ehr-integration.service';
 import {EHRService} from '../services/ehr.service';
+import {FingerprintService} from '../services/fingerprint.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {QRService} from '../services/qr.service';
@@ -196,6 +197,7 @@ import {CyphWebModule} from './cyph-web.module';
 		CryptocurrencyService,
 		EHRIntegrationService,
 		EHRService,
+		FingerprintService,
 		QRService,
 		WorkerService,
 		{
