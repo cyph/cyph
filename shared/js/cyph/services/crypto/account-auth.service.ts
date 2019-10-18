@@ -31,6 +31,7 @@ import {AnalyticsService} from '../analytics.service';
 import {DatabaseService} from '../database.service';
 import {EnvService} from '../env.service';
 import {ErrorService} from '../error.service';
+import {FingerprintService} from '../fingerprint.service';
 import {LocalStorageService} from '../local-storage.service';
 import {StringsService} from '../strings.service';
 import {AccountDatabaseService} from './account-database.service';
@@ -241,7 +242,11 @@ export class AccountAuthService extends BaseProvider {
 				getTimestamp()
 			]);
 
-			if (timestamp > pinDuration + pinTimestamp) {
+			if (
+				(await this.fingerprintService.supported) ?
+					!(await this.fingerprintService.authenticate()) :
+					timestamp > pinDuration + pinTimestamp
+			) {
 				await Promise.all([
 					this.localStorageService.removeItem('pinDuration'),
 					this.localStorageService.removeItem('pinHash'),
@@ -951,6 +956,9 @@ export class AccountAuthService extends BaseProvider {
 
 		/** @ignore */
 		private readonly errorService: ErrorService,
+
+		/** @ignore */
+		private readonly fingerprintService: FingerprintService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
