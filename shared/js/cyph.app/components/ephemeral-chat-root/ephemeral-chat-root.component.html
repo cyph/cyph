@@ -86,7 +86,8 @@
 		</cyph-chat-main>
 
 		<ng-template #ad>
-			<ng-container *ngIf="envService.isMobileOS">
+			<!-- TODO: Fix issues on small screens and reenable -->
+			<ng-container *ngIf="false && envService.isMobileOS">
 				<ng-container *ngIf="!envService.isIOS">
 					<a
 						class="affiliate"
