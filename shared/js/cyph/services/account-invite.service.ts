@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {SafeUrl} from '@angular/platform-browser';
 import {map} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -6,6 +7,8 @@ import {BooleanProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
+import {EnvService} from './env.service';
+import {QRService} from './qr.service';
 
 /**
  * Angular service for managing Accounts invites.
@@ -25,6 +28,31 @@ export class AccountInviteService extends BaseProvider {
 		0
 	);
 
+	/** Gets an invite URL. */
+	public async getInviteURL () : Promise<{
+		qrCode: () => Promise<SafeUrl>;
+		url: string;
+	}> {
+		const inviteCode = (await this.codes.getKeys())[0];
+		if (!inviteCode) {
+			throw new Error('No invite codes available.');
+		}
+
+		await this.codes.removeItem(inviteCode);
+
+		const url = `${this.envService.appUrl}register/${inviteCode}`;
+
+		return {
+			qrCode: async () =>
+				this.qrService.getQRCode({
+					dotScale: 0.75,
+					size: 250,
+					text: url
+				}),
+			url
+		};
+	}
+
 	/** Sends an invite link. */
 	public async send (email: string, name?: string) : Promise<void> {
 		await this.databaseService.callFunction('sendInvite', {email, name});
@@ -35,7 +63,13 @@ export class AccountInviteService extends BaseProvider {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
-		private readonly databaseService: DatabaseService
+		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly qrService: QRService
 	) {
 		super();
 	}
