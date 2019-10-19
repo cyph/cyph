@@ -36,7 +36,6 @@ import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
-import {WindowWatcherService} from './window-watcher.service';
 import {WorkerService} from './worker.service';
 
 /**
@@ -291,13 +290,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 				(await this.app).storage().refFromURL(fullURL) :
 				(await this.app).storage().ref(this.processURL(fullURL))
 		);
-	}
-
-	/** @see https://github.com/firebase/firebase-js-sdk/issues/540#issuecomment-369984622 */
-	private async refreshConnection () : Promise<void> {
-		const app = await this.app;
-		await app.database().goOffline();
-		await app.database().goOnline();
 	}
 
 	/** @ignore */
@@ -1974,21 +1966,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 		private readonly notificationService: NotificationService,
 
 		/** @ignore */
-		private readonly windowWatcherService: WindowWatcherService,
-
-		/** @ignore */
 		private readonly workerService: WorkerService
 	) {
 		super(envService, localStorageService, potassiumService);
 
+		/** @see https://github.com/firebase/firebase-js-sdk/issues/540#issuecomment-369984622 */
 		(async () => {
-			while (!this.destroyed.value) {
-				await Promise.race([
-					sleep(300000),
-					this.windowWatcherService.waitForVisibilityChange(true)
-				]);
+			const app = await this.app;
 
-				await this.refreshConnection();
+			while (!this.destroyed.value) {
+				await sleep(1000);
+				await app.database().goOnline();
 			}
 		})();
 	}
