@@ -646,7 +646,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 							typeof o.timestamp !== 'number' ||
 							isNaN(o.timestamp)
 						) {
-							throw new Error('Invalid server timestamp.');
+							throw new Error(
+								`Invalid server timestamp: {id: '${o.id}', timestamp: ${o.timestamp}}`
+							);
 						}
 
 						return o.timestamp;
