@@ -254,11 +254,17 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.subscriptions.push(
 			this.activatedRoute.params.subscribe(async o => {
 				if (typeof o.step === 'string') {
-					const step = toInt(o.step);
+					const [stepString, username] = o.step.split(':');
+
+					if (username) {
+						this.username.setValue(username);
+					}
+
+					const step = toInt(stepString);
 
 					/* Allow "step" parameter to double up as invite code */
 					if (isNaN(step) && !this.inviteCode.value) {
-						this.inviteCode.setValue(o.step);
+						this.inviteCode.setValue(stepString);
 					}
 					else if (
 						!isNaN(step) &&

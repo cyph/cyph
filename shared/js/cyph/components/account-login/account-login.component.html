@@ -192,15 +192,12 @@
 								cyphTranslate
 								mat-raised-button
 								color="accent"
-								[href]="
-									envService.homeUrl +
-									'register?hideHeaderAndFooter=true' +
+								[routerLink]="
+									'/register' +
 									((username | async) ?
-										'&username=' +
-										((username | async) || '') :
+										'/:' + ((username | async) || '') :
 										'')
 								"
-								target="_self"
 								*ngIf="(loggingIn | async) === false"
 							>
 								Register
@@ -315,15 +312,12 @@
 								cyphTranslate
 								mat-raised-button
 								color="accent"
-								[href]="
-									envService.homeUrl +
-									'register?hideHeaderAndFooter=true' +
+								[routerLink]="
+									'/register' +
 									((username | async) ?
-										'&username=' +
-										((username | async) || '') :
+										'/:' + ((username | async) || '') :
 										'')
 								"
-								target="_self"
 								*ngIf="(loggingIn | async) === false"
 							>
 								Register
