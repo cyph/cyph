@@ -8,21 +8,15 @@ backupKeys='21'
 localAddress='10.0.0.42'
 remoteAddress='10.0.0.43'
 port='31337'
-passwords=()
 
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --allow-downgrades update
 apt-get -y --allow-downgrades upgrade
 export DEBIAN_FRONTEND=text
+
+# Optionally comment this out if using the default keyboard layout
 apt-get install console-data console-setup keyboard-configuration
-
-for i in `seq 1 ${activeKeys}` ; do
-	echo -n "Password for key #${i}: "
-	read passwords[${i}]
-done
-
-reset
 
 oldhostname=$(hostname)
 echo -n 'Hostname: '
@@ -58,22 +52,10 @@ apt-get -y --allow-downgrades upgrade
 apt-get -y --allow-downgrades install ecryptfs-utils less lsof nodejs sudo
 
 npm -g install xkcd-passphrase
-npm install read
 
 mkdir -p ${agseDir}
 cp "$(dirname "$0")"/* ${agseDir}/
 chmod -R 777 ${agseDir}
-
-if [ -f ${agseDir}/keybackup ] ; then
-	eval "$(${agseDir}/getbackuppassword.js)"
-else
-	backupPasswordAes="$(xkcd-passphrase 256)"
-	backupPasswordSodium="$(xkcd-passphrase 256)"
-	echo "Password for backup keys is: ${backupPasswordAes} ${backupPasswordSodium}"
-	echo -e '\nMemorize this and then hit enter to continue.'
-	read
-fi
-reset
 
 
 cat > ${agseDir}/setup.sh << EndOfMessage
@@ -84,16 +66,36 @@ cd /home/${username}
 npm install level libsodium-wrappers-sumo node-fetch read supersphincs@5 validator
 echo
 
+if [ -f ${agseDir}/keybackup ] ; then
+	eval "\$(${agseDir}/getbackuppassword.js)"
+fi
+
+passwords=()
+for i in `seq 1 ${activeKeys}` ; do
+	echo -n "Password for key #\${i}: "
+	read passwords[\${i}]
+done
+
+if [ ! -f ${agseDir}/keybackup ] ; then
+	backupPasswordAes="\$(xkcd-passphrase 256)"
+	backupPasswordSodium="\$(xkcd-passphrase 256)"
+	echo "Password for backup keys is: \${backupPasswordAes} \${backupPasswordSodium}"
+	echo -e '\nMemorize this and then hit enter to continue.'
+	read
+fi
+
+reset
+
 ${agseDir}/generatekeys.js \
 	"${activeKeys}" \
 	"${backupKeys}" \
 	"$(ls ${agseDir}/keybackup 2> /dev/null)" \
-	"${passwords[1]}" \
-	"${passwords[2]}" \
-	"${passwords[3]}" \
-	"${passwords[4]}" \
-	"${backupPasswordAes}" \
-	"${backupPasswordSodium}"
+	"\${passwords[1]}" \
+	"\${passwords[2]}" \
+	"\${passwords[3]}" \
+	"\${passwords[4]}" \
+	"\${backupPasswordAes}" \
+	"\${backupPasswordSodium}"
 
 if [ ! -f ${agseDir}/keybackup ] ; then
 	echo
