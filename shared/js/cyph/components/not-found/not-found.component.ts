@@ -22,6 +22,7 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './not-found.component.html'
 })
 export class NotFoundComponent extends BaseProvider implements OnInit {
+	/** Indicates whether to display the user profile variant of 404 content. */
 	public readonly accountProfile = this.activatedRoute.data.pipe(
 		map(o => o.accountProfile === true)
 	);
