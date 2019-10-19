@@ -12,6 +12,7 @@ import {
 import {BaseProvider} from '../base-provider';
 import {GenericCurrency} from '../generic-currency-type';
 import {Cryptocurrencies, Currencies, IWallet} from '../proto';
+import {AnalyticsService} from './analytics.service';
 
 /**
  * Angular service for cryptocurrency.
@@ -236,6 +237,13 @@ export class CryptocurrencyService extends BaseProvider {
 				this.getSimpleBTCWallet(recipient).address,
 			amount
 		);
+
+		this.analyticsService.sendEvent({
+			eventAction: 'sent',
+			eventCategory: 'cryptocurrency',
+			eventValue: 1,
+			hitType: 'event'
+		});
 	}
 
 	/**
@@ -250,7 +258,10 @@ export class CryptocurrencyService extends BaseProvider {
 		return this.watchBalanceInternal(wallet)(convert)(publicBalanceOnly);
 	}
 
-	constructor () {
+	constructor (
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService
+	) {
 		super();
 	}
 }
