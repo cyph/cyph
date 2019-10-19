@@ -87,6 +87,22 @@
 					cyphTranslate
 					class="logo-icon"
 					aria-label="Menu"
+					[matBadge]="
+						(
+							((accountService.unreadMessages | async) || 0) +
+							((accountFilesService.incomingFiles | async)
+								?.length || 0)
+						).toString()
+					"
+					[matBadgeHidden]="
+						!(
+							((accountService.unreadMessages | async) || 0) +
+								((accountFilesService.incomingFiles | async)
+									?.length || 0) >
+							0
+						)
+					"
+					matBadgePosition="above after"
 					(click)="accountService.toggleMobileMenu()"
 					fxHide.gt-sm
 					*ngIf="

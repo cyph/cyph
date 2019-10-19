@@ -11,6 +11,7 @@ import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
 import {AccountEnvService} from '../../services/account-env.service';
+import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -269,6 +270,9 @@ export class AccountComponent extends BaseProvider
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
