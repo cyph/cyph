@@ -508,7 +508,7 @@ export class AccountChatComponent extends BaseProvider
 									});
 							}
 							catch {
-								this.router.navigate(['404']);
+								this.router.navigate(['profile', '404']);
 							}
 							finally {
 								if (promptFollowup) {

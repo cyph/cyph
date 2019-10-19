@@ -12,71 +12,91 @@
 	</div>
 </ng-container>
 <ng-template #standardView>
-	<div cyphNanoScroller>
+	<ng-container *ngIf="accountProfile | async; else notFound">
 		<div
 			fxFlex
 			fxFlexFill
 			fxLayout="column"
+			fxLayoutAlign="center center"
 			class="not-found"
 			[class.mobile]="envService.isMobile | async"
 		>
 			<div>
 				<h1>
-					<span cyphTranslate>I'm sorry, but your</span>
-					&ngsp;
-					<span>{{ stringsService.session }}</span>
-					&ngsp;
-					<span cyphTranslate>is in another castle...</span>
+					<span cyphTranslate>Profile not activated</span>
 				</h1>
 			</div>
-			<img
-				src="/assets/img/404.png"
-				alt="Funny Mario reference"
-				cyphTranslate
-			/>
-			<div class="explanation">
-				<p *ngIf="!envService.isAccounts">
-					<span cyphTranslate>Please</span>
-					&ngsp;
-					<a cyphTranslate [routerLink]="envService.newCyphUrlRetry"
-						>try again</a
-					>.
-				</p>
-				<p cyphTranslate>Reasons why you may have landed here:</p>
-				<ul>
-					<ng-container *ngIf="!envService.isAccounts">
-						<li>
-							<span cyphTranslate>The</span>
-							&ngsp;
-							<span>{{ stringsService.session }}</span>
-							&ngsp;
-							<span cyphTranslate
-								>you're looking for has expired</span
-							>
+		</div>
+	</ng-container>
+	<ng-template #notFound>
+		<div cyphNanoScroller>
+			<div
+				fxFlex
+				fxFlexFill
+				fxLayout="column"
+				class="not-found"
+				[class.mobile]="envService.isMobile | async"
+			>
+				<div>
+					<h1>
+						<span cyphTranslate>I'm sorry, but your</span>
+						&ngsp;
+						<span>{{ stringsService.session }}</span>
+						&ngsp;
+						<span cyphTranslate>is in another castle...</span>
+					</h1>
+				</div>
+				<img
+					src="/assets/img/404.png"
+					alt="Funny Mario reference"
+					cyphTranslate
+				/>
+				<div class="explanation">
+					<p *ngIf="!envService.isAccounts">
+						<span cyphTranslate>Please</span>
+						&ngsp;
+						<a
+							cyphTranslate
+							[routerLink]="envService.newCyphUrlRetry"
+							>try again</a
+						>.
+					</p>
+					<p cyphTranslate>Reasons why you may have landed here:</p>
+					<ul>
+						<ng-container *ngIf="!envService.isAccounts">
+							<li>
+								<span cyphTranslate>The</span>
+								&ngsp;
+								<span>{{ stringsService.session }}</span>
+								&ngsp;
+								<span cyphTranslate
+									>you're looking for has expired</span
+								>
+							</li>
+							<li cyphTranslate>
+								<span cyphTranslate>The</span>
+								&ngsp;
+								<span>{{ stringsService.session }}</span>
+								&ngsp;
+								<span cyphTranslate>
+									you're looking for has already been
+									connected to (someone else got there first,
+									or you clicked twice)
+								</span>
+							</li>
+						</ng-container>
+						<li cyphTranslate>
+							A glitch in the matrix
 						</li>
 						<li cyphTranslate>
-							<span cyphTranslate>The</span>
-							&ngsp;
-							<span>{{ stringsService.session }}</span>
-							&ngsp;
-							<span cyphTranslate>
-								you're looking for has already been connected to
-								(someone else got there first, or you clicked
-								twice)
-							</span>
+							You're just guessing random URLs
 						</li>
-					</ng-container>
-					<li cyphTranslate>
-						A glitch in the matrix
-					</li>
-					<li cyphTranslate>
-						You're just guessing random URLs
-					</li>
-					<li cyphTranslate>
-						We broke something
-					</li>
-				</ul>
+						<li cyphTranslate>
+							We broke something
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
-	</div>
+	</ng-template>
 </ng-template>

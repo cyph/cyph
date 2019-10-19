@@ -211,7 +211,9 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 					this.accountService.resolveUiReady();
 				}
 				else {
-					this.router.navigate([username ? '404' : 'login']);
+					this.router.navigate(
+						username ? ['profile', '404'] : ['login']
+					);
 				}
 			})
 		);

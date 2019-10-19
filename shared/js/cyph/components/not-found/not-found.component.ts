@@ -5,6 +5,8 @@ import {
 	OnInit,
 	Optional
 } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
@@ -20,6 +22,10 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './not-found.component.html'
 })
 export class NotFoundComponent extends BaseProvider implements OnInit {
+	public readonly accountProfile = this.activatedRoute.data.pipe(
+		map(o => o.accountProfile === true)
+	);
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		if (this.envService.isAccounts && this.accountService) {
@@ -33,6 +39,9 @@ export class NotFoundComponent extends BaseProvider implements OnInit {
 		@Inject(AccountService)
 		@Optional()
 		private readonly accountService: AccountService | undefined,
+
+		/** @see ActivatedRoute */
+		public readonly activatedRoute: ActivatedRoute,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

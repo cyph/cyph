@@ -265,6 +265,11 @@ export const account: Route = {
 			component: AccountProfileComponent,
 			children: [{path: 'edit', component: BlankComponent}]
 		},
+		{
+			path: 'profile/404',
+			component: NotFoundComponent,
+			data: {accountProfile: true}
+		},
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', redirectTo: 'register/1'},
 		{path: 'register/:step', component: AccountRegisterComponent},
