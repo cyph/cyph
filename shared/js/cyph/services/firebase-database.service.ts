@@ -25,6 +25,7 @@ import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {
+	promiseTimeout,
 	resolvable,
 	retryUntilSuccessful,
 	sleep,
@@ -268,6 +269,17 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @ignore */
+	private async getStorageDownloadURL (
+		storageRef: firebase.storage.Reference
+	) : Promise<string> {
+		return this.localStorageService.getOrSetDefault(
+			`FirebaseDatabaseService.getStorageDownloadURL:${storageRef.fullPath}`,
+			StringProto,
+			async () => promiseTimeout(storageRef.getDownloadURL(), 15000)
+		);
+	}
+
+	/** @ignore */
 	private async getStorageRef (
 		url: string,
 		hash: string
@@ -455,9 +467,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const req = requestByteStream({
 					retries: 3,
-					url: await retryUntilSuccessful(async () =>
-						storageRef.getDownloadURL()
-					)
+					url: await this.getStorageDownloadURL(storageRef)
 				});
 
 				/* tslint:disable-next-line:rxjs-no-ignored-subscription */
@@ -595,10 +605,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 					return;
 				}
 
-				await (await this.getStorageRef(
-					url,
-					metadata.hash
-				)).getDownloadURL();
+				this.getStorageDownloadURL(
+					await this.getStorageRef(url, metadata.hash)
+				);
 			})
 			.then(() => true)
 			.catch(() => false);
