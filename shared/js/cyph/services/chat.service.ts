@@ -1052,9 +1052,11 @@ export class ChatService extends BaseProvider {
 
 		const localStorageKey = `chatService.getMessageValue/${message.id}`;
 
-		message.value = await this.localStorageService
-			.getItem(localStorageKey, ChatMessageValue)
-			.catch(() => undefined);
+		if (!this.sessionInitService.ephemeral) {
+			message.value = await this.localStorageService
+				.getItem(localStorageKey, ChatMessageValue)
+				.catch(() => undefined);
+		}
 
 		const localStorageSuccess = message.value !== undefined;
 
@@ -1104,7 +1106,7 @@ export class ChatService extends BaseProvider {
 		if (message.value !== undefined) {
 			await this.fetchedMessageIDs.addItem(message.id);
 
-			if (!localStorageSuccess) {
+			if (!localStorageSuccess && !this.sessionInitService.ephemeral) {
 				await this.localStorageService.setItem(
 					localStorageKey,
 					ChatMessageValue,

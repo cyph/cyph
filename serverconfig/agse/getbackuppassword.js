@@ -7,6 +7,7 @@ const read = require('read');
 		new Promise((resolve, reject) =>
 			read(
 				{
+					output: process.stderr,
 					prompt: `${prompt} `,
 					silent: silent === true
 				},
@@ -20,6 +21,7 @@ const read = require('read');
 				}
 			)
 		);
+
 	while (true) {
 		const password = await askQuestion('Backup password:');
 		const passwordSplit = password.split(' ');
@@ -34,9 +36,9 @@ const read = require('read');
 		const sodiumPassword = passwordSplit.slice(passwordMiddle).join(' ');
 
 		console.log(`
-		backupPasswordAes="${aesPassword}"
-		backupPasswordSodium="${sodiumPassword}"
-	`);
+			backupPasswordAes="${aesPassword}"
+			backupPasswordSodium="${sodiumPassword}"
+		`);
 
 		return;
 	}
