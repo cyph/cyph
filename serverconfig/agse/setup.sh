@@ -57,7 +57,7 @@ apt-get -y --allow-downgrades update
 apt-get -y --allow-downgrades upgrade
 apt-get -y --allow-downgrades install ecryptfs-utils less lsof nodejs sudo
 
-npm -g install xkcd-passphrase
+npm -g install read xkcd-passphrase
 
 mkdir -p ${agseDir}
 cp "$(dirname "$0")"/* ${agseDir}/
