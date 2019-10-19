@@ -10,7 +10,7 @@ export interface IP2PWebRTCService {
 	readonly disconnect: Observable<void>;
 
 	/** Description of incoming data. */
-	readonly incomingStream: BehaviorSubject<{audio: boolean; video: boolean}>;
+	readonly incomingStream: BehaviorSubject<MediaStreamConstraints>;
 
 	/** Indicates whether an initial call is pending. */
 	readonly initialCallPending: BehaviorSubject<boolean>;
@@ -25,7 +25,7 @@ export interface IP2PWebRTCService {
 	readonly localMediaError: BehaviorSubject<boolean>;
 
 	/** Description of outgoing data (passed directly into navigator.getUserMedia). */
-	readonly outgoingStream: BehaviorSubject<{audio: boolean; video: boolean}>;
+	readonly outgoingStream: BehaviorSubject<MediaStreamConstraints>;
 
 	/** Resolves when service is ready. */
 	readonly ready: Promise<boolean>;
@@ -41,6 +41,13 @@ export interface IP2PWebRTCService {
 
 	/** This kills the P2P session. */
 	close () : Promise<void>;
+
+	/** Gets all available I/O devices. */
+	getDevices () : Promise<{
+		cameras: {label: string; switchTo: () => Promise<void>}[];
+		mics: {label: string; switchTo: () => Promise<void>}[];
+		speakers: {label: string; switchTo: () => Promise<void>}[];
+	}>;
 
 	/** Initializes service. */
 	init (
@@ -70,5 +77,9 @@ export interface IP2PWebRTCService {
 	 * @param shouldPause If not specified, will switch to the opposite
 	 * of the current state.
 	 */
-	toggle (medium?: 'audio' | 'video', shouldPause?: boolean) : void;
+	toggle (
+		medium?: 'audio' | 'video',
+		shouldPause?: boolean,
+		newDeviceID?: string
+	) : void;
 }

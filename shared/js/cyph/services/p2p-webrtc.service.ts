@@ -13,7 +13,7 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {filterUndefinedOperator} from '../util/filter';
 import {lockFunction} from '../util/lock';
-import {debugLog} from '../util/log';
+import {debugLog, debugLogError} from '../util/log';
 import {requestPermissions} from '../util/permissions';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
@@ -127,6 +127,17 @@ export class P2PWebRTCService extends BaseProvider
 	private readonly joinLock = lockFunction();
 
 	/** @ignore */
+	private readonly lastDeviceIDs: {
+		camera?: string;
+		mic?: string;
+		speaker?: string;
+	} = {
+		camera: undefined,
+		mic: undefined,
+		speaker: undefined
+	};
+
+	/** @ignore */
 	private readonly loadingEvents = {
 		connectionReady: {
 			name: 'connectionReady',
@@ -206,7 +217,9 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly disconnect: Observable<void> = this.disconnectInternal;
 
 	/** @inheritDoc */
-	public readonly incomingStream = new BehaviorSubject({
+	public readonly incomingStream = new BehaviorSubject<
+		MediaStreamConstraints
+	>({
 		audio: false,
 		video: false
 	});
@@ -224,7 +237,9 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly localMediaError = new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
-	public readonly outgoingStream = new BehaviorSubject({
+	public readonly outgoingStream = new BehaviorSubject<
+		MediaStreamConstraints
+	>({
 		audio: false,
 		video: false
 	});
@@ -398,6 +413,80 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	/** @inheritDoc */
+	public async getDevices () : Promise<{
+		cameras: {label: string; switchTo: () => Promise<void>}[];
+		mics: {label: string; switchTo: () => Promise<void>}[];
+		speakers: {label: string; switchTo: () => Promise<void>}[];
+	}> {
+		const allDevices = await navigator.mediaDevices.enumerateDevices();
+
+		const filterDevices = (
+			kind: string,
+			kindName: string,
+			lastDeviceID: string | undefined,
+			switchToFactory: (o: MediaDeviceInfo) => () => Promise<void>
+		) => {
+			const devices = allDevices.filter(o => o.kind === kind);
+
+			const lastDevice = devices.find(
+				o => o.deviceId === (lastDeviceID || 'default')
+			);
+
+			return (!lastDevice ?
+				devices :
+				[lastDevice, ...devices.filter(o => o !== lastDevice)]
+			).map((o, i) => ({
+				label: o.label || `${kindName} ${i + 1}`,
+				switchTo: switchToFactory(o)
+			}));
+		};
+
+		return {
+			cameras: filterDevices(
+				'videoinput',
+				'Camera',
+				this.lastDeviceIDs.camera,
+				(o: MediaDeviceInfo) => async () =>
+					this.toggle('video', false, o.deviceId)
+			),
+			mics: filterDevices(
+				'audioinput',
+				'Mic',
+				this.lastDeviceIDs.mic,
+				(o: MediaDeviceInfo) => async () =>
+					this.toggle('audio', false, o.deviceId)
+			),
+			speakers: !('sinkId' in HTMLMediaElement.prototype) ?
+				[] :
+				filterDevices(
+					'audiooutput',
+					'Speaker',
+					this.lastDeviceIDs.speaker,
+					(o: MediaDeviceInfo) => async () => {
+						const remoteVideo = (await this.remoteVideo)().find(
+							'video'
+						)[0];
+						if (!remoteVideo) {
+							debugLogError(
+								() =>
+									'Remote video not found (switching speaker).'
+							);
+							return;
+						}
+						if (!('setSinkId' in remoteVideo)) {
+							debugLogError(
+								() => 'Switching speakers unsupported.'
+							);
+							return;
+						}
+						(<any> remoteVideo).setSinkId(o.deviceId);
+						this.lastDeviceIDs.speaker = o.deviceId;
+					}
+				)
+		};
+	}
+
+	/** @inheritDoc */
 	public init (
 		chatService: ChatService,
 		handlers: IP2PHandlers,
@@ -421,7 +510,7 @@ export class P2PWebRTCService extends BaseProvider
 
 			this.loading.next(true);
 			this.incomingStream.next({...this.outgoingStream.value});
-			this.videoEnabled.next(this.outgoingStream.value.video);
+			this.videoEnabled.next(!!this.outgoingStream.value.video);
 			this.isActive.next(true);
 
 			const p2pSessionData = this.p2pSessionData;
@@ -478,7 +567,7 @@ export class P2PWebRTCService extends BaseProvider
 			if (
 				(this.confirmLocalVideoAccess &&
 					!(await handlers.localVideoConfirm(
-						this.outgoingStream.value.video
+						!!this.outgoingStream.value.video
 					))) ||
 				!(await requestPermissions(
 					...[
@@ -644,21 +733,36 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async toggle (
 		medium?: 'audio' | 'video',
-		shouldPause?: boolean
+		shouldPause?: boolean,
+		newDeviceID?: string
 	) : Promise<void> {
 		return this.toggleLock(async () => {
 			const webRTC = await this.getWebRTC();
 
 			if (medium === 'audio' || medium === undefined) {
+				if (newDeviceID) {
+					this.lastDeviceIDs.mic = newDeviceID;
+				}
+
 				const audio =
 					shouldPause === false ||
 					(shouldPause === undefined &&
 						!this.outgoingStream.value.audio);
 
-				if (this.outgoingStream.value.audio !== audio) {
+				if (
+					!!this.outgoingStream.value.audio !== audio ||
+					(typeof this.outgoingStream.value.audio === 'boolean' &&
+						this.lastDeviceIDs.mic) ||
+					(typeof this.outgoingStream.value.audio === 'object' &&
+						this.outgoingStream.value.audio.deviceId !==
+							this.lastDeviceIDs.mic)
+				) {
 					this.outgoingStream.next({
 						...this.outgoingStream.value,
-						audio
+						audio:
+							!audio || !this.lastDeviceIDs.mic ?
+								audio :
+								{deviceId: this.lastDeviceIDs.mic}
 					});
 					for (const track of webRTC.localStream.getAudioTracks()) {
 						track.enabled = audio;
@@ -667,15 +771,29 @@ export class P2PWebRTCService extends BaseProvider
 			}
 
 			if (medium === 'video' || medium === undefined) {
+				if (newDeviceID) {
+					this.lastDeviceIDs.camera = newDeviceID;
+				}
+
 				const video =
 					shouldPause === false ||
 					(shouldPause === undefined &&
 						!this.outgoingStream.value.video);
 
-				if (this.outgoingStream.value.video !== video) {
+				if (
+					!!this.outgoingStream.value.video !== video ||
+					(typeof this.outgoingStream.value.video === 'boolean' &&
+						this.lastDeviceIDs.camera) ||
+					(typeof this.outgoingStream.value.video === 'object' &&
+						this.outgoingStream.value.video.deviceId !==
+							this.lastDeviceIDs.camera)
+				) {
 					this.outgoingStream.next({
 						...this.outgoingStream.value,
-						video
+						video:
+							!video || !this.lastDeviceIDs.camera ?
+								video :
+								{deviceId: this.lastDeviceIDs.camera}
 					});
 					for (const track of webRTC.localStream.getVideoTracks()) {
 						track.enabled = video;
