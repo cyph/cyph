@@ -121,6 +121,53 @@ export class P2PService extends BaseProvider {
 		}
 	};
 
+	/** I/O switcher UI logic. */
+	public readonly ioSwitcher = {
+		close: () => {
+			this.ioSwitcher.isOpen.next(false);
+		},
+		devices: new BehaviorSubject<{
+			cameras: {label: string; switchTo: () => Promise<void>}[];
+			mics: {label: string; switchTo: () => Promise<void>}[];
+			speakers: {label: string; switchTo: () => Promise<void>}[];
+		}>({
+			cameras: [],
+			mics: [],
+			speakers: []
+		}),
+		isOpen: new BehaviorSubject<boolean>(false),
+		open: async () => {
+			this.ioSwitcher.devices.next(
+				await this.p2pWebRTCService.getDevices()
+			);
+			this.ioSwitcher.isOpen.next(true);
+		},
+		switch: async (
+			kind: 'cameras' | 'mics' | 'speakers',
+			title: string
+		) => {
+			try {
+				const devices = this.ioSwitcher.devices.value[kind];
+
+				const device = await this.dialogService.prompt({
+					bottomSheet: true,
+					multipleChoiceOptions: devices.map((o, i) => ({
+						title: (i === 0 ? '* ' : '') + o.label,
+						value: o
+					})),
+					title
+				});
+
+				if (device) {
+					await device.switchTo();
+				}
+			}
+			finally {
+				this.ioSwitcher.close();
+			}
+		}
+	};
+
 	/** @see P2PWebRTCService.isActive */
 	public readonly isActive = this.p2pWebRTCService.isActive;
 

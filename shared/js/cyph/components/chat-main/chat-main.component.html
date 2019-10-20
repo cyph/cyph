@@ -236,6 +236,75 @@
 			<mat-icon>forum</mat-icon>
 		</button>
 
+		<smd-fab-speed-dial
+			class="io-switcher"
+			animationMode="scale"
+			direction="down"
+			[open]="p2pService.ioSwitcher.isOpen | async"
+			(mouseleave)="p2pService.ioSwitcher.close()"
+		>
+			<smd-fab-trigger
+				[spin]="true"
+				(mouseenter)="p2pService.ioSwitcher.open()"
+			>
+				<button mat-fab>
+					<mat-icon>settings</mat-icon>
+				</button>
+			</smd-fab-trigger>
+			<smd-fab-actions>
+				<button
+					mat-mini-fab
+					[matTooltip]="stringsService.cameraSwitchTitle"
+					matTooltipPosition="left"
+					[disabled]="
+						(p2pService.ioSwitcher.devices | async)?.cameras
+							.length < 1
+					"
+					(click)="
+						p2pService.ioSwitcher.switch(
+							'cameras',
+							stringsService.cameraSwitchTitle
+						)
+					"
+				>
+					<mat-icon>videocam</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					[matTooltip]="stringsService.micSwitchTitle"
+					matTooltipPosition="left"
+					[disabled]="
+						(p2pService.ioSwitcher.devices | async)?.mics.length < 1
+					"
+					(click)="
+						p2pService.ioSwitcher.switch(
+							'mics',
+							stringsService.micSwitchTitle
+						)
+					"
+				>
+					<mat-icon>mic</mat-icon>
+				</button>
+				<button
+					mat-mini-fab
+					[matTooltip]="stringsService.speakerSwitchTitle"
+					matTooltipPosition="left"
+					[disabled]="
+						(p2pService.ioSwitcher.devices | async)?.speakers
+							.length < 1
+					"
+					(click)="
+						p2pService.ioSwitcher.switch(
+							'speakers',
+							stringsService.speakerSwitchTitle
+						)
+					"
+				>
+					<mat-icon>headset</mat-icon>
+				</button>
+			</smd-fab-actions>
+		</smd-fab-speed-dial>
+
 		<div class="buttons" fxFlex fxLayout="column">
 			<div
 				fxLayout="row"

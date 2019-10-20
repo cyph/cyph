@@ -168,6 +168,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param o.bottomSheet Currently unsupported (ignored).
 	 * @param o.form Currently unsupported (ignored).
 	 * @param o.markdown Currently unsupported (ignored).
+	 * @param o.multipleChoiceOptions Currently unsupported (ignored).
 	 * @param o.preFill Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
@@ -191,6 +192,20 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
+			multipleChoiceOptions: {
+				text?: string;
+				title: string;
+				value: any;
+			}[];
+			timeout?: number;
+			title: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<any | undefined>;
+	/* tslint:disable-next-line:no-async-without-await */
+	public async prompt (
+		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			ok?: string;
@@ -205,8 +220,13 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		o: {
 			bottomSheet?: boolean;
 			cancel?: string;
-			content: string;
+			content?: string;
 			form?: IForm;
+			multipleChoiceOptions?: {
+				text?: string;
+				title: string;
+				value: any;
+			}[];
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;

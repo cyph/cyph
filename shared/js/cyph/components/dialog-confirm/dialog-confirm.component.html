@@ -9,13 +9,16 @@
 
 <br *ngIf="bottomSheet" />
 
-<div fxLayoutAlign="end center" *ngIf="bottomSheet && !fabMode">
+<div
+	fxLayoutAlign="end center"
+	*ngIf="bottomSheet && !fabMode && !multipleChoiceOptions"
+>
 	<ng-container *ngTemplateOutlet="dialogActionsDefault"></ng-container>
 </div>
 <div
 	mat-dialog-actions
 	fxLayoutAlign="end center"
-	*ngIf="!bottomSheet && !fabMode"
+	*ngIf="!bottomSheet && !fabMode && !multipleChoiceOptions"
 >
 	<ng-container *ngTemplateOutlet="dialogActionsDefault"></ng-container>
 </div>
@@ -28,11 +31,23 @@
 </div>
 
 <ng-template #dialogContent>
-	<cyph-markdown
-		[markdown]="content"
-		[targetSelf]="true"
-		*ngIf="markdown; else text"
-	></cyph-markdown>
+	<mat-nav-list *ngIf="multipleChoiceOptions; else markdownContent">
+		<a
+			mat-list-item
+			(click)="multipleChoiceSelection = option.value; close(true)"
+			*ngFor="let option of multipleChoiceOptions"
+		>
+			<span mat-line>{{ option.title }}</span>
+			<span mat-line *ngIf="option.text">{{ option.text }}</span>
+		</a>
+	</mat-nav-list>
+	<ng-template #markdownContent>
+		<cyph-markdown
+			[markdown]="content"
+			[targetSelf]="true"
+			*ngIf="markdown; else text"
+		></cyph-markdown>
+	</ng-template>
 	<ng-template #text>
 		<div>{{ content }}</div>
 	</ng-template>
@@ -46,7 +61,7 @@
 	<ng-template #stringPrompt>
 		<form
 			ngNativeValidate
-			*ngIf="prompt !== undefined"
+			*ngIf="prompt !== undefined && !multipleChoiceOptions"
 			(submit)="close(true)"
 		>
 			<br />

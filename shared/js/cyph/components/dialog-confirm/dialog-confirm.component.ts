@@ -53,6 +53,16 @@ export class DialogConfirmComponent extends BaseProvider
 	/** Indicates whether content is Markdown. */
 	public markdown: boolean = false;
 
+	/** List of options to present user. */
+	public multipleChoiceOptions?: {
+		text?: string;
+		title: string;
+		value: any;
+	}[];
+
+	/** Multiple choice option selection. */
+	public multipleChoiceSelection?: any;
+
 	/** OK button text. */
 	public ok?: string;
 

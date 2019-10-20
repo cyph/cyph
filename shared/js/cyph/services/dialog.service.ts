@@ -103,6 +103,19 @@ export class DialogService extends BaseProvider {
 	public async prompt (
 		_O: {
 			bottomSheet?: boolean;
+			multipleChoiceOptions: {
+				text?: string;
+				title: string;
+				value: any;
+			}[];
+			timeout?: number;
+			title: string;
+		},
+		_CLOSE_FUNCTION?: IResolvable<() => void>
+	) : Promise<any | undefined>;
+	public async prompt (
+		_O: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			ok?: string;
@@ -117,8 +130,13 @@ export class DialogService extends BaseProvider {
 		_O: {
 			bottomSheet?: boolean;
 			cancel?: string;
-			content: string;
+			content?: string;
 			form?: IForm;
+			multipleChoiceOptions?: {
+				text?: string;
+				title: string;
+				value: any;
+			}[];
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;

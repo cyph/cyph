@@ -259,6 +259,7 @@
 		cyph-logo,
 		.me,
 		.buttons,
+		.io-switcher,
 		.sidebar,
 		~ cyph-chat-message-list,
 		~ .video-call-message-box {
@@ -268,7 +269,7 @@
 		cyph-logo {
 			position: fixed;
 			top: 10px;
-			left: 15px;
+			left: 16px;
 			height: 45px;
 			width: 200px;
 			opacity: 0.5;
@@ -304,14 +305,15 @@
 			position: fixed;
 		}
 
+		.io-switcher,
 		.sidebar {
 			position: fixed;
-			top: 15px;
-			right: 15px;
+			top: 16px;
+			right: 16px;
+		}
 
-			mat-icon {
-				opacity: 0.5;
-			}
+		.sidebar mat-icon {
+			opacity: 0.5;
 		}
 
 		button {
@@ -398,6 +400,7 @@
 			cyph-logo,
 			.me,
 			.buttons,
+			.io-switcher,
 			.sidebar,
 			~ cyph-chat-message-list,
 			~ .video-call-message-box {
@@ -420,6 +423,7 @@
 			&.sidebar-open {
 				cyph-logo,
 				.buttons,
+				.io-switcher,
 				.sidebar,
 				~ cyph-chat-message-list,
 				~ .video-call-message-box {
@@ -482,6 +486,7 @@
 		&.sidebar-open {
 			cyph-logo,
 			.buttons,
+			.io-switcher,
 			.sidebar,
 			~ cyph-chat-message-list,
 			~ .video-call-message-box {

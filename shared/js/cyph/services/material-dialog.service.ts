@@ -35,9 +35,14 @@ export class MaterialDialogService extends BaseProvider
 			bottomSheet?: boolean;
 			cancel?: string;
 			cancelFAB?: string;
-			content: string;
+			content?: string;
 			fabAvatar?: Async<SafeUrl | string>;
 			form?: IForm;
+			multipleChoiceOptions?: {
+				text?: string;
+				title: string;
+				value: any;
+			}[];
 			ok?: string;
 			okFAB?: string;
 			markdown?: boolean;
@@ -48,7 +53,10 @@ export class MaterialDialogService extends BaseProvider
 		},
 		closeFunction?: IResolvable<() => void>,
 		prompt: boolean = false
-	) : Promise<{ok: boolean; promptResponse: string | IForm | undefined}> {
+	) : Promise<{
+		ok: boolean;
+		promptResponse: string | IForm | any | undefined;
+	}> {
 		return this.lock(async () => {
 			const matDialogRef = o.bottomSheet ?
 				this.matBottomSheet.open(DialogConfirmComponent) :
@@ -96,6 +104,8 @@ export class MaterialDialogService extends BaseProvider
 
 			instance.markdown = !!o.markdown;
 
+			instance.multipleChoiceOptions = o.multipleChoiceOptions;
+
 			instance.ok = o.ok !== undefined ? o.ok : this.stringsService.ok;
 
 			instance.okFAB = o.okFAB;
@@ -114,7 +124,12 @@ export class MaterialDialogService extends BaseProvider
 
 			const promptResponse = beforeClosed()
 				.toPromise()
-				.then(() => instance.form || instance.prompt);
+				.then(
+					() =>
+						instance.multipleChoiceSelection ||
+						instance.form ||
+						instance.prompt
+				);
 
 			let hasReturned = false;
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
@@ -314,6 +329,20 @@ export class MaterialDialogService extends BaseProvider
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
+			multipleChoiceOptions: {
+				text?: string;
+				title: string;
+				value: any;
+			}[];
+			timeout?: number;
+			title: string;
+		},
+		closeFunction?: IResolvable<() => void>
+	) : Promise<any | undefined>;
+	/* tslint:disable-next-line:no-async-without-await */
+	public async prompt (
+		o: {
+			bottomSheet?: boolean;
 			cancel?: string;
 			content: string;
 			ok?: string;
@@ -328,8 +357,13 @@ export class MaterialDialogService extends BaseProvider
 		o: {
 			bottomSheet?: boolean;
 			cancel?: string;
-			content: string;
+			content?: string;
 			form?: IForm;
+			multipleChoiceOptions?: {
+				text?: string;
+				title: string;
+				value: any;
+			}[];
 			ok?: string;
 			placeholder?: string;
 			preFill?: string;
@@ -337,7 +371,7 @@ export class MaterialDialogService extends BaseProvider
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
-	) : Promise<string | IForm | undefined> {
+	) : Promise<string | IForm | any | undefined> {
 		const {ok, promptResponse} = await this.confirmHelper(
 			o,
 			closeFunction,

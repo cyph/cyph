@@ -153,6 +153,9 @@ export class StringsService extends BaseProvider {
 	public readonly cameraEnable = `Enable Camera`;
 
 	/** @see StringsService */
+	public readonly cameraSwitchTitle = `Choose Camera`;
+
+	/** @see StringsService */
 	public readonly cameraTitle = `Camera`;
 
 	/** @see StringsService */
@@ -504,6 +507,9 @@ export class StringsService extends BaseProvider {
 	public readonly micEnable = `Enable Mic`;
 
 	/** @see StringsService */
+	public readonly micSwitchTitle = `Choose Mic`;
+
+	/** @see StringsService */
 	public readonly micTitle = `Mic`;
 
 	/** @see StringsService */
@@ -818,6 +824,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly signupMessage = `Enjoying the service? Join our waitlist for ${this.internalProductShort} v2! More details are on the way, but the next version of ${this.internalProductShort} will include group messaging, user accounts, and encrypted chat history.`;
+
+	/** @see StringsService */
+	public readonly speakerSwitchTitle = `Choose Speaker`;
 
 	/** @see StringsService */
 	public readonly speakerTitle = `Speaker`;
