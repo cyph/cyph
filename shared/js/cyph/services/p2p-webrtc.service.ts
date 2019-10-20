@@ -752,6 +752,7 @@ export class P2PWebRTCService extends BaseProvider
 		medium?: 'audio' | 'video',
 		shouldPause?: boolean | {newDeviceID: string}
 	) : Promise<void> {
+		/* tslint:disable-next-line:cyclomatic-complexity */
 		return this.toggleLock(async () => {
 			const webRTC = await this.getWebRTC();
 
