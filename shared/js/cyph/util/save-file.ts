@@ -1,5 +1,6 @@
 import fileSaver from 'file-saver';
 import {env} from '../env';
+import {shareFile} from './cordova/share-file';
 import {staticDialogService} from './static-services';
 import {translate} from './translate';
 import {retryUntilSuccessful, sleep} from './wait';
@@ -30,10 +31,13 @@ export const saveFile = async (
 	};
 
 	if (env.isCordovaMobile) {
+		if (!env.isAndroid) {
+			return shareFile(content, fileName, mediaType);
+		}
+
 		const fs = await new Promise<any>((resolve, reject) => {
-			(<any> self).requestFileSystem(
-				(<any> self).LocalFileSystem.PERSISTENT,
-				0,
+			(<any> self).resolveLocalFileSystemURL(
+				'file:///storage/emulated/0/Download',
 				resolve,
 				reject
 			);
@@ -44,7 +48,7 @@ export const saveFile = async (
 		const fileEntry = await retryUntilSuccessful(
 			async () =>
 				new Promise<any>((resolve, reject) => {
-					fs.root.getFile(
+					fs.getFile(
 						++fileNameIncrement < 0 ?
 							fileName :
 						fileName.indexOf('.') < 0 ?
