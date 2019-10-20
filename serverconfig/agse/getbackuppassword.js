@@ -23,7 +23,10 @@ const read = require('read');
 		);
 
 	while (true) {
-		const password = await askQuestion('Backup password:');
+		const password = await askQuestion(
+			'Backup password (leave blank to exit and try again later):'
+		);
+
 		const passwordSplit = password.split(' ');
 		const passwordMiddle = passwordSplit.length / 2;
 

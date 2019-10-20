@@ -4,6 +4,7 @@ const fs = require('fs');
 const level = require('level');
 const sodium = require('libsodium-wrappers-sumo');
 const fetch = require('node-fetch');
+const os = require('os');
 const superSphincs = require('supersphincs');
 
 (async () => {
@@ -154,4 +155,6 @@ const superSphincs = require('supersphincs');
 	});
 
 	console.log(publicKeyHash);
+
+	fs.writeFileSync(`${os.homedir()}/agse/.generatekeys-success`, '');
 })();

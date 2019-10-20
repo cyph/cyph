@@ -63,11 +63,12 @@ cat > ${agseDir}/setup.sh << EndOfMessage
 
 cd /home/${username}
 
-npm install level libsodium-wrappers-sumo node-fetch read supersphincs@5 validator
-echo
-
 if [ -f ${agseDir}/keybackup ] ; then
 	eval "\$(${agseDir}/getbackuppassword.js)"
+fi
+
+if [ ! "\${backupPasswordAes}" ] || [ ! "\${backupPasswordSodium}" ] ||  ; then
+	exit 1
 fi
 
 passwords=()
@@ -96,6 +97,10 @@ ${agseDir}/generatekeys.js \
 	"\${passwords[4]}" \
 	"\${backupPasswordAes}" \
 	"\${backupPasswordSodium}"
+
+if [ ! -f ${agseDir}/.generatekeys-success ] ; then
+	exit 1
+fi
 
 if [ ! -f ${agseDir}/keybackup ] ; then
 	echo
@@ -135,11 +140,31 @@ cat >> .bashrc <<- EOM
 	fi
 EOM
 EndOfMessage
-chmod 777 ${agseDir}/setup.sh
 
 
-su ${username} -c ${agseDir}/setup.sh
-rm -rf ${agseDir}
+cat >> /home/${username}/.bashrc << EndOfMessage
+	if [ -d ${agseDir} ] ; then
+		${agseDir}/setup.sh
+
+		if (( $? )) ; then
+			echo 'Setup failed; hit enter to shut down now. Turn it back on to try again.'
+		else
+			rm -rf ${agseDir}
+			echo 'Setup complete; hit enter to shut down now.'
+		fi
+
+		read
+		sudo halt
+	fi
+EndOfMessage
+
+
+chmod 777 ${agseDir}/setup.sh /home/${username}/.bashrc
+
+su ${username} -c ' \
+	cd; \
+	npm install level libsodium-wrappers-sumo node-fetch read supersphincs@5 validator; \
+'
 
 modprobe ecryptfs
 ecryptfs-migrate-home -u ${username}
@@ -148,6 +173,6 @@ rm -rf /home/${username}.*
 touch /autostart
 chmod 444 /autostart
 
-echo 'Setup complete; hit enter to shut down now.'
+echo 'First phase of setup complete; hit enter to reboot and continue.'
 read
-halt
+reboot
