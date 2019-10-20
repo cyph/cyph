@@ -50,11 +50,19 @@
 		}
 	}
 
+	.chat-main.mobile .message-item.ui-style-default {
+		max-width: 80vw;
+	}
+	.chat-main.video
+		.video-call
+		~ cyph-chat-message-list
+		.message-item.ui-style-default {
+		max-width: 90%;
+	}
 	.chat-main.mobile,
 	.chat-main.video .video-call ~ cyph-chat-message-list {
 		.message-item.ui-style-default {
 			position: relative;
-			max-width: 90%;
 			min-width: 120px;
 			padding-left: 15px;
 			padding-right: 15px;
@@ -87,6 +95,17 @@
 
 		.message-item.ui-style-default.author-local {
 			margin-right: 5%;
+			border-radius: $mobileMessageBorderRadius $mobileMessageBorderRadius
+				0 $mobileMessageBorderRadius;
+
+			&:after {
+				content: '';
+				position: absolute;
+				right: -12px;
+				border-style: solid;
+				border-width: 18px 0 0 12px;
+				bottom: 0;
+			}
 
 			.message {
 				text-align: left;
@@ -98,19 +117,10 @@
 			}
 		}
 
-		.message-item.ui-style-default.author-local {
-			&:after {
-				content: '';
-				position: absolute;
-				right: -12px;
-				border-style: solid;
-				border-width: 18px 0 0 12px;
-				bottom: 0;
-			}
-		}
-
 		.message-item.ui-style-default.author-remote {
 			margin-left: 5%;
+			border-radius: 0px $mobileMessageBorderRadius
+				$mobileMessageBorderRadius $mobileMessageBorderRadius;
 
 			&:after {
 				content: '';

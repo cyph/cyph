@@ -326,6 +326,7 @@
 					<ng-template #mediaLoading>
 						<div
 							[class.centered]="active"
+							[class.centered-fake]="!active"
 							[class.visibility-hidden]="!active"
 							*ngFor="
 								let active of [true, false];
@@ -338,8 +339,6 @@
 								strokeWidth="5"
 							></mat-progress-spinner>
 						</div>
-						<br />
-						<br />
 					</ng-template>
 				</ng-container>
 				<ng-template #saveFile>

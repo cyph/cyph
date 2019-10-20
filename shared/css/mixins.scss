@@ -4,6 +4,7 @@
 $accountPaddingLarge: 7.5vw;
 $accountPaddingMedium: 5vw;
 $accountPaddingSmall: 2.5vw;
+$mobileMessageBorderRadius: 5%;
 
 $default-white: map-get($mat-grey, 100);
 
@@ -366,7 +367,6 @@ $default-white: map-get($mat-grey, 100);
 					border-color: transparent
 						map-get(map-get($cyph-message-colors, me), mobile);
 				}
-				border-radius: 5% 5% 0 5%;
 			}
 
 			.message-item.ui-style-default.author-remote {
@@ -418,7 +418,6 @@ $default-white: map-get($mat-grey, 100);
 					border-color: transparent
 						map-get(map-get($cyph-message-colors, other), mobile);
 				}
-				border-radius: 0px 5% 5% 5%;
 			}
 		}
 	}

@@ -104,10 +104,9 @@
 
 		.media-message {
 			cursor: pointer;
-			width: auto;
-			height: auto;
-			max-width: 90%;
-			max-height: 75%;
+			width: 256px;
+			height: 160px;
+			object-fit: cover;
 			margin: 10px auto;
 			display: block;
 			box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.4);
@@ -143,14 +142,31 @@
 			@include center;
 		}
 
+		.centered-fake {
+			margin-top: -14px;
+		}
+
 		.centered,
 		.centered-fake {
 			max-width: 50%;
-			//max-height: 75%;
 
 			&.media-container {
 				height: 100%;
+
+				> audio {
+					margin-top: 64px;
+					margin-bottom: 49px;
+				}
 			}
+
+			mat-progress-spinner {
+				margin-top: 60px;
+				margin-bottom: 60px;
+			}
+		}
+
+		&:not(.mobile) .centered.media-container > audio {
+			margin-top: 61px;
 		}
 
 		&.get-value-failure {
@@ -243,15 +259,30 @@
 			}
 
 			.media-message {
-				max-width: 80vw;
-				max-height: 50vh;
+				width: calc(80vw - 1px);
+				height: 128px;
 				margin: 0;
-				margin-top: 10%;
+				border-top-right-radius: $mobileMessageBorderRadius;
+				clip-path: inset(0 0 -100% 0);
+			}
+
+			&.author-local .media-message {
+				border-top-left-radius: $mobileMessageBorderRadius;
+			}
+
+			.media-container > audio {
+				margin-top: 46px;
+				margin-bottom: 24px;
 			}
 
 			.centered,
 			.centered-fake {
 				max-width: 100%;
+
+				mat-progress-spinner {
+					margin-top: 39px;
+					margin-bottom: 39px;
+				}
 			}
 		}
 
