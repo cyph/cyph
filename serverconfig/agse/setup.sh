@@ -10,6 +10,10 @@ remoteAddress='10.0.0.43'
 port='31337'
 
 
+# Force IPv4 to work around IPv6 issues in some networking hardware
+# https://askubuntu.com/a/38468/15643
+echo 'precedence ::ffff:0:0/96 100' >> /etc/gai.conf
+
 export DEBIAN_FRONTEND=noninteractive
 apt-get -y --allow-downgrades update
 apt-get -y --allow-downgrades upgrade
