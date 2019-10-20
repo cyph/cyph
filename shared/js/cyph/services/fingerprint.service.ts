@@ -8,11 +8,16 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class FingerprintService extends BaseProvider {
 	/** Indicates whether fingerprint auth is supported. */
-	public readonly supported = new Promise<any>((resolve, reject) => {
-		(<any> self).Fingerprint.isAvailable(resolve, reject);
-	})
-		.catch(() => false)
-		.then(b => b === true);
+	public readonly supported = new Promise<boolean>(resolve => {
+		(<any> self).Fingerprint.isAvailable(
+			() => {
+				resolve(true);
+			},
+			() => {
+				resolve(false);
+			}
+		);
+	});
 
 	/** Perform fingerprint authentication. */
 	public async authenticate () : Promise<boolean> {
