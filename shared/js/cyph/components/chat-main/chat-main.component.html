@@ -247,7 +247,14 @@
 				[spin]="true"
 				(mouseenter)="p2pService.ioSwitcher.open()"
 			>
-				<button mat-fab>
+				<button
+					mat-fab
+					(click)="
+						envService.isMobileOS ?
+							undefined :
+							$event.stopPropagation()
+					"
+				>
 					<mat-icon>settings</mat-icon>
 				</button>
 			</smd-fab-trigger>

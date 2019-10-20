@@ -581,6 +581,8 @@ export class P2PWebRTCService extends BaseProvider
 				return this.close();
 			}
 
+			let initialLoadComplete = false;
+
 			const localStream = await navigator.mediaDevices.getUserMedia(
 				this.outgoingStream.value
 			);
@@ -621,6 +623,12 @@ export class P2PWebRTCService extends BaseProvider
 			peer.on('data', data => {
 				try {
 					const o = msgpack.decode(data);
+
+					if (o.switchingDevice) {
+						this.loading.next(true);
+						return;
+					}
+
 					this.incomingStream.next({
 						audio: !!o.audio,
 						video: !!o.video
@@ -661,6 +669,14 @@ export class P2PWebRTCService extends BaseProvider
 				await handlers.loaded();
 				this.progressUpdate(this.loadingEvents.finished, 100);
 				this.loading.next(false);
+
+				initialLoadComplete = true;
+			});
+
+			peer.on('track', () => {
+				if (initialLoadComplete) {
+					this.loading.next(false);
+				}
 			});
 
 			handlers.connected(true);
@@ -818,6 +834,12 @@ export class P2PWebRTCService extends BaseProvider
 			}
 
 			if (deviceIdChanged) {
+				webRTC.peer.send(
+					msgpack.encode({
+						switchingDevice: true
+					})
+				);
+
 				const newStream = await navigator.mediaDevices.getUserMedia(
 					this.outgoingStream.value
 				);
@@ -837,13 +859,13 @@ export class P2PWebRTCService extends BaseProvider
 					webRTC.localStream.getTracks()
 				).filter(track => !addTracks.has(track));
 
-				for (const track of Array.from(addTracks)) {
-					webRTC.localStream.addTrack(track);
-					(<any> webRTC.peer).addTrack(track, webRTC.localStream);
-				}
 				for (const track of removeTracks) {
 					webRTC.localStream.removeTrack(track);
 					(<any> webRTC.peer).removeTrack(track, webRTC.localStream);
+				}
+				for (const track of Array.from(addTracks)) {
+					webRTC.localStream.addTrack(track);
+					(<any> webRTC.peer).addTrack(track, webRTC.localStream);
 				}
 			}
 
