@@ -673,8 +673,10 @@ export class P2PWebRTCService extends BaseProvider
 				initialLoadComplete = true;
 			});
 
-			peer.on('track', () => {
+			peer.on('track', async () => {
 				if (initialLoadComplete) {
+					/* Workaround for simple-peer calling this event too early(?) */
+					await sleep(2000);
 					this.loading.next(false);
 				}
 			});
