@@ -447,14 +447,14 @@ export class P2PWebRTCService extends BaseProvider
 				'Camera',
 				this.lastDeviceIDs.camera,
 				(o: MediaDeviceInfo) => async () =>
-					this.toggle('video', false, o.deviceId)
+					this.toggle('video', {newDeviceID: o.deviceId})
 			),
 			mics: filterDevices(
 				'audioinput',
 				'Mic',
 				this.lastDeviceIDs.mic,
 				(o: MediaDeviceInfo) => async () =>
-					this.toggle('audio', false, o.deviceId)
+					this.toggle('audio', {newDeviceID: o.deviceId})
 			),
 			speakers: !('sinkId' in HTMLMediaElement.prototype) ?
 				[] :
@@ -733,18 +733,26 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async toggle (
 		medium?: 'audio' | 'video',
-		shouldPause?: boolean,
-		newDeviceID?: string
+		shouldPause?: boolean | {newDeviceID: string}
 	) : Promise<void> {
 		return this.toggleLock(async () => {
 			const webRTC = await this.getWebRTC();
 
+			let deviceIdChanged = false;
+
 			if (medium === 'audio' || medium === undefined) {
-				if (newDeviceID) {
-					this.lastDeviceIDs.mic = newDeviceID;
+				if (
+					typeof shouldPause === 'object' &&
+					shouldPause.newDeviceID
+				) {
+					deviceIdChanged =
+						deviceIdChanged ||
+						this.lastDeviceIDs.mic !== shouldPause.newDeviceID;
+					this.lastDeviceIDs.mic = shouldPause.newDeviceID;
 				}
 
 				const audio =
+					typeof shouldPause === 'object' ||
 					shouldPause === false ||
 					(shouldPause === undefined &&
 						!this.outgoingStream.value.audio);
@@ -771,11 +779,18 @@ export class P2PWebRTCService extends BaseProvider
 			}
 
 			if (medium === 'video' || medium === undefined) {
-				if (newDeviceID) {
-					this.lastDeviceIDs.camera = newDeviceID;
+				if (
+					typeof shouldPause === 'object' &&
+					shouldPause.newDeviceID
+				) {
+					deviceIdChanged =
+						deviceIdChanged ||
+						this.lastDeviceIDs.camera !== shouldPause.newDeviceID;
+					this.lastDeviceIDs.camera = shouldPause.newDeviceID;
 				}
 
 				const video =
+					typeof shouldPause === 'object' ||
 					shouldPause === false ||
 					(shouldPause === undefined &&
 						!this.outgoingStream.value.video);
@@ -801,7 +816,94 @@ export class P2PWebRTCService extends BaseProvider
 				}
 			}
 
-			webRTC.peer.send(msgpack.encode(this.outgoingStream.value));
+			if (deviceIdChanged) {
+				const newStream = await navigator.mediaDevices.getUserMedia(
+					this.outgoingStream.value
+				);
+
+				const addTracks = new Set(
+					medium === 'audio' ?
+						newStream.getAudioTracks() :
+					medium === 'video' ?
+						newStream.getVideoTracks() :
+						newStream.getTracks()
+				);
+
+				const removeTracks = (medium === 'audio' ?
+					webRTC.localStream.getAudioTracks() :
+				medium === 'video' ?
+					webRTC.localStream.getVideoTracks() :
+					webRTC.localStream.getTracks()
+				).filter(track => !addTracks.has(track));
+
+				for (const track of Array.from(addTracks)) {
+					webRTC.localStream.addTrack(track);
+					(<any> webRTC.peer).addTrack(track, webRTC.localStream);
+				}
+				for (const track of removeTracks) {
+					webRTC.localStream.removeTrack(track);
+					(<any> webRTC.peer).removeTrack(track, webRTC.localStream);
+				}
+
+				/*
+				if (medium === 'audio' || medium === undefined) {
+					for (const track of webRTC.localStream.getAudioTracks()) {
+						webRTC.localStream.removeTrack(track);
+						(<any> webRTC.peer).removeTrack(
+							track,
+							webRTC.localStream
+						);
+					}
+					for (const track of newStream.getAudioTracks()) {
+						webRTC.localStream.addTrack(track);
+						(<any> webRTC.peer).addTrack(track, webRTC.localStream);
+					}
+				}
+
+				if (medium === 'video' || medium === undefined) {
+					for (const track of webRTC.localStream.getVideoTracks()) {
+						webRTC.localStream.removeTrack(track);
+						(<any> webRTC.peer).removeTrack(
+							track,
+							webRTC.localStream
+						);
+					}
+					for (const track of newStream.getVideoTracks()) {
+						webRTC.localStream.addTrack(track);
+						(<any> webRTC.peer).addTrack(track, webRTC.localStream);
+					}
+				}
+				*/
+
+				/*
+				const oldLocalStream = webRTC.localStream;
+
+				const [localStream, localVideo] = await Promise.all([
+					navigator.mediaDevices.getUserMedia(
+						this.outgoingStream.value
+					),
+					this.localVideo
+						.then(async f => waitForIterable(f))
+						.then($elem => <HTMLVideoElement> $elem[0])
+				]);
+
+				(<any> webRTC.peer).removeStream(oldLocalStream);
+				(<any> webRTC.peer).addStream(localStream);
+
+				localVideo.srcObject = localStream;
+				localVideo.play();
+				localVideo.muted = true;
+
+				this.webRTC.next({localStream, peer: webRTC.peer});
+				*/
+			}
+
+			webRTC.peer.send(
+				msgpack.encode({
+					audio: !!this.outgoingStream.value.audio,
+					video: !!this.outgoingStream.value.video
+				})
+			);
 		});
 	}
 

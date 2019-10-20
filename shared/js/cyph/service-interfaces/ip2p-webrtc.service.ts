@@ -75,11 +75,10 @@ export interface IP2PWebRTCService {
 	 * that subset of the stream. If not specified, the entire stream
 	 * will be affected.
 	 * @param shouldPause If not specified, will switch to the opposite
-	 * of the current state.
+	 * of the current state. If set to a new device ID, unpausing is implied.
 	 */
 	toggle (
 		medium?: 'audio' | 'video',
-		shouldPause?: boolean,
-		newDeviceID?: string
+		shouldPause?: boolean | {newDeviceID: string}
 	) : void;
 }
