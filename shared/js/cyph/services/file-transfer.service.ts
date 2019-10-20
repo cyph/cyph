@@ -21,6 +21,7 @@ import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
 import {FileService} from './file.service';
+import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
 import {StringsService} from './strings.service';
 
@@ -107,49 +108,61 @@ export class FileTransferService extends BaseProvider {
 	private async receiveInternal (
 		fileTransfer: IFileTransfer
 	) : Promise<Uint8Array> {
-		if (
-			!(fileTransfer.hash && fileTransfer.hash.length > 0) ||
-			!(fileTransfer.key && fileTransfer.key.length > 0)
-		) {
-			throw new Error('Invalid file transfer.');
-		}
+		const receiveInternalHelper = async () => {
+			if (
+				!(fileTransfer.hash && fileTransfer.hash.length > 0) ||
+				!(fileTransfer.key && fileTransfer.key.length > 0)
+			) {
+				throw new Error('Invalid file transfer.');
+			}
 
-		fileTransfer.isOutgoing = false;
-		const {hash, key} = fileTransfer;
-		const url = `${this.path}/${fileTransfer.id}`;
-		const downloadTask = this.databaseService.downloadItem(
-			url,
-			BinaryProto
-		);
-		const transfer = {
-			metadata: fileTransfer,
-			progress: downloadTask.progress
+			fileTransfer.isOutgoing = false;
+			const {hash, key} = fileTransfer;
+			const url = `${this.path}/${fileTransfer.id}`;
+			const downloadTask = this.databaseService.downloadItem(
+				url,
+				BinaryProto
+			);
+			const transfer = {
+				metadata: fileTransfer,
+				progress: downloadTask.progress
+			};
+
+			if (!(await downloadTask.alreadyCached)) {
+				await this.transfers.addItem(transfer);
+			}
+
+			const plaintext = await (async () =>
+				this.potassiumService.secretBox.open(
+					(await downloadTask.result).value,
+					key,
+					url
+				))().catch(() => undefined);
+
+			await this.transfers.deleteItem(transfer);
+
+			if (
+				!plaintext ||
+				!this.potassiumService.compareMemory(
+					hash,
+					await this.potassiumService.hash.hash(plaintext)
+				)
+			) {
+				throw new Error('Invalid file.');
+			}
+
+			return plaintext;
 		};
 
-		if (!(await downloadTask.alreadyCached)) {
-			await this.transfers.addItem(transfer);
+		if (this.sessionInitService.ephemeral) {
+			return receiveInternalHelper();
 		}
 
-		const plaintext = await (async () =>
-			this.potassiumService.secretBox.open(
-				(await downloadTask.result).value,
-				key,
-				url
-			))().catch(() => undefined);
-
-		await this.transfers.deleteItem(transfer);
-
-		if (
-			!plaintext ||
-			!this.potassiumService.compareMemory(
-				hash,
-				await this.potassiumService.hash.hash(plaintext)
-			)
-		) {
-			throw new Error('Invalid file.');
-		}
-
-		return plaintext;
+		return this.localStorageService.getOrSetDefault(
+			`FileTransferService/${fileTransfer.id}`,
+			BinaryProto,
+			receiveInternalHelper
+		);
 	}
 
 	/** Downloads and saves file. */
@@ -225,6 +238,13 @@ export class FileTransferService extends BaseProvider {
 
 			const url = `${this.path}/${fileTransfer.id}`;
 			const plaintext = await this.fileService.getBytes(file, media);
+
+			const cacheSetPromise = this.localStorageService.setItem(
+				`FileTransferService/${fileTransfer.id}`,
+				BinaryProto,
+				plaintext
+			);
+
 			const {cyphertext, hash, key} = await this.encryptFile(
 				plaintext,
 				url
@@ -257,6 +277,8 @@ export class FileTransferService extends BaseProvider {
 				{fileTransfer: {...fileTransfer, isOutgoing: false}},
 				mediaSelfDestructTimeout
 			);
+
+			await cacheSetPromise.catch(() => {});
 		}
 		catch {
 			await this.chatService.addMessage({
@@ -287,6 +309,9 @@ export class FileTransferService extends BaseProvider {
 
 		/** @ignore */
 		private readonly fileService: FileService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService,
