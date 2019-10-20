@@ -844,58 +844,6 @@ export class P2PWebRTCService extends BaseProvider
 					webRTC.localStream.removeTrack(track);
 					(<any> webRTC.peer).removeTrack(track, webRTC.localStream);
 				}
-
-				/*
-				if (medium === 'audio' || medium === undefined) {
-					for (const track of webRTC.localStream.getAudioTracks()) {
-						webRTC.localStream.removeTrack(track);
-						(<any> webRTC.peer).removeTrack(
-							track,
-							webRTC.localStream
-						);
-					}
-					for (const track of newStream.getAudioTracks()) {
-						webRTC.localStream.addTrack(track);
-						(<any> webRTC.peer).addTrack(track, webRTC.localStream);
-					}
-				}
-
-				if (medium === 'video' || medium === undefined) {
-					for (const track of webRTC.localStream.getVideoTracks()) {
-						webRTC.localStream.removeTrack(track);
-						(<any> webRTC.peer).removeTrack(
-							track,
-							webRTC.localStream
-						);
-					}
-					for (const track of newStream.getVideoTracks()) {
-						webRTC.localStream.addTrack(track);
-						(<any> webRTC.peer).addTrack(track, webRTC.localStream);
-					}
-				}
-				*/
-
-				/*
-				const oldLocalStream = webRTC.localStream;
-
-				const [localStream, localVideo] = await Promise.all([
-					navigator.mediaDevices.getUserMedia(
-						this.outgoingStream.value
-					),
-					this.localVideo
-						.then(async f => waitForIterable(f))
-						.then($elem => <HTMLVideoElement> $elem[0])
-				]);
-
-				(<any> webRTC.peer).removeStream(oldLocalStream);
-				(<any> webRTC.peer).addStream(localStream);
-
-				localVideo.srcObject = localStream;
-				localVideo.play();
-				localVideo.muted = true;
-
-				this.webRTC.next({localStream, peer: webRTC.peer});
-				*/
 			}
 
 			webRTC.peer.send(
