@@ -23,6 +23,7 @@ import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
+import {StringsService} from './strings.service';
 
 /** @inheritDoc */
 @Injectable()
@@ -444,14 +445,14 @@ export class P2PWebRTCService extends BaseProvider
 		return {
 			cameras: filterDevices(
 				'videoinput',
-				'Camera',
+				this.stringsService.cameraTitle,
 				this.lastDeviceIDs.camera,
 				(o: MediaDeviceInfo) => async () =>
 					this.toggle('video', {newDeviceID: o.deviceId})
 			),
 			mics: filterDevices(
 				'audioinput',
-				'Mic',
+				this.stringsService.micTitle,
 				this.lastDeviceIDs.mic,
 				(o: MediaDeviceInfo) => async () =>
 					this.toggle('audio', {newDeviceID: o.deviceId})
@@ -460,7 +461,7 @@ export class P2PWebRTCService extends BaseProvider
 				[] :
 				filterDevices(
 					'audiooutput',
-					'Speaker',
+					this.stringsService.speakerTitle,
 					this.lastDeviceIDs.speaker,
 					(o: MediaDeviceInfo) => async () => {
 						const remoteVideo = (await this.remoteVideo)().find(
@@ -862,7 +863,10 @@ export class P2PWebRTCService extends BaseProvider
 		private readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
-		private readonly sessionService: SessionService
+		private readonly sessionService: SessionService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		super();
 
