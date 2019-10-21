@@ -227,6 +227,13 @@ export class AccountAuthService extends BaseProvider {
 
 	/** Tries to get saved PIN hash. */
 	public async getSavedPIN () : Promise<Uint8Array | undefined> {
+		const removePIN = async () =>
+			Promise.all([
+				this.localStorageService.removeItem('pinDuration'),
+				this.localStorageService.removeItem('pinHash'),
+				this.localStorageService.removeItem('pinTimestamp')
+			]);
+
 		try {
 			const pinHash = await this.localStorageService.getItem(
 				'pinHash',
@@ -236,22 +243,24 @@ export class AccountAuthService extends BaseProvider {
 				return pinHash;
 			}
 
+			if (await this.fingerprintService.supported) {
+				if (await this.fingerprintService.authenticate()) {
+					return this.savePIN(pinHash);
+				}
+				else {
+					await removePIN();
+					return;
+				}
+			}
+
 			const [pinDuration, pinTimestamp, timestamp] = await Promise.all([
 				this.localStorageService.getItem('pinDuration', NumberProto),
 				this.localStorageService.getItem('pinTimestamp', NumberProto),
 				getTimestamp()
 			]);
 
-			if (
-				(await this.fingerprintService.supported) ?
-					!(await this.fingerprintService.authenticate()) :
-					timestamp > pinDuration + pinTimestamp
-			) {
-				await Promise.all([
-					this.localStorageService.removeItem('pinDuration'),
-					this.localStorageService.removeItem('pinHash'),
-					this.localStorageService.removeItem('pinTimestamp')
-				]);
+			if (timestamp > pinDuration + pinTimestamp) {
+				await removePIN();
 			}
 			else {
 				return this.savePIN(pinHash);
