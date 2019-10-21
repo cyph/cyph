@@ -45,6 +45,7 @@ export const saveFile = async (
 
 		/* If balls.png already exists, try balls.0.png, balls.1.png, etc. */
 		let fileNameIncrement = -2;
+		let savedFileName = fileName;
 		const fileEntry = await retryUntilSuccessful(
 			async () =>
 				new Promise<any>((resolve, reject) => {
@@ -60,7 +61,8 @@ export const saveFile = async (
 									0,
 									fileNameIncrement.toString()
 								);
-								return fileNameSplit.join('.');
+								savedFileName = fileNameSplit.join('.');
+								return savedFileName;
 							})(),
 						{create: true, exclusive: true},
 						resolve,
@@ -83,6 +85,13 @@ export const saveFile = async (
 			fileBlobURL = URL.createObjectURL(fileBlob);
 			fileWriter.write(fileBlobURL);
 			await fileWriteResult;
+
+			await (await staticDialogService).toast(
+				`${translate('Saved')} ${savedFileName} ${translate(
+					'to downloads folder.'
+				)}`,
+				3000
+			);
 		}
 		finally {
 			if (fileBlobURL) {
