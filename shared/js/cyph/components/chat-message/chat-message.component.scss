@@ -1,4 +1,5 @@
 @import '../../../../css/mixins';
+@import '../../../../css/theme.scss';
 
 .mail-ui {
 	.mail-divider {
@@ -58,11 +59,17 @@
 	}
 }
 
-.message-item.mobile .confirmation-checks mat-icon {
-	@include icon-size(12px);
+.message-item.mobile {
+	::ng-deep a {
+		color: $cyph-hyperlinks-mobile !important;
+		font-weight: bold;
+	}
+	.confirmation-checks mat-icon {
+		@include icon-size(12px);
 
-	&:first-child {
-		margin-right: -11px;
+		&:first-child {
+			margin-right: -11px;
+		}
 	}
 }
 
