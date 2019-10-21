@@ -130,6 +130,22 @@ export class QuillComponent extends BaseProvider
 		['clean']
 	];
 
+	/** Mobile toolbar configuration. */
+	@Input() public toolbarMobile: any = [
+		[{size: []}],
+		['bold', 'italic', 'underline', 'link'],
+		[
+			{align: ''},
+			{align: 'center'},
+			{align: 'right'},
+			{list: 'ordered'},
+			{list: 'bullet'},
+			{indent: '-1'},
+			{indent: '+1'},
+			'image'
+		]
+	];
+
 	/** @ignore */
 	private addClientID<T> (t: T | undefined) : T & {clientID: string} {
 		if (!t) {
@@ -210,7 +226,11 @@ export class QuillComponent extends BaseProvider
 
 		/* Temporary workaround for https://github.com/DefinitelyTyped/DefinitelyTyped/issues/18946 */
 		this.quill = <Quill.Quill> new (<any> Quill)(`#${this.containerID}`, {
-			modules: {toolbar: this.toolbar},
+			modules: {
+				toolbar: this.envService.isMobileOS ?
+					this.toolbarMobile :
+					this.toolbar
+			},
 			theme: 'snow'
 		});
 
