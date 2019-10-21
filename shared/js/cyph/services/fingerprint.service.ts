@@ -17,11 +17,11 @@ export class FingerprintService extends BaseProvider {
 				resolve(false);
 			}
 		);
-	});
+	}).catch(() => false);
 
 	/** Perform fingerprint authentication. */
 	public async authenticate () : Promise<boolean> {
-		return new Promise<any>((resolve, reject) => {
+		return new Promise<any>(resolve => {
 			(<any> self).Fingerprint.show(
 				{
 					clientId: this.stringsService.product,
@@ -29,12 +29,14 @@ export class FingerprintService extends BaseProvider {
 						this.stringsService.product +
 						'7tR2xeQHcy33DDSRs+wJMYMmKQVa/NEfOrVAD8CqXIo='
 				},
-				resolve,
-				reject
+				() => {
+					resolve(true);
+				},
+				() => {
+					resolve(false);
+				}
 			);
-		})
-			.catch(() => false)
-			.then(b => b === true);
+		}).catch(() => false);
 	}
 
 	constructor (
