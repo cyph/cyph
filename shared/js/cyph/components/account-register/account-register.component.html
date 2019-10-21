@@ -147,7 +147,9 @@
 												class="cyph-light-theme welcome-letter"
 												*ngIf="
 													(inviteCodeData | async)
-														?.welcomeLetter as welcomeLetter;
+														?.isValid &&
+														(inviteCodeData | async)
+															?.welcomeLetter as welcomeLetter;
 													else mainBasicWelcomeMessage
 												"
 											>
@@ -172,18 +174,37 @@
 											</div>
 										</ng-template>
 										<ng-template #mainBasicWelcomeMessage>
-											<span>
+											<span
+												[class.visibility-hidden]="
+													!(
+														(
+															inviteCodeWatcher
+															| async
+														)?.pending === false &&
+														((
+															inviteCodeWatcher
+															| async
+														)?.errors ||
+															!(
+																inviteCodeWatcher
+																| async
+															)?.value)
+													)
+												"
+											>
 												<span cyphTranslate>
-													Congratulations on securing
-													your
+													Don't have an invite code?
 												</span>
 												&ngsp;
-												<span>{{
-													stringsService.product
-												}}</span>
-												&ngsp;
-												<span cyphTranslate
-													>account invite!</span
+												<a
+													cyphTranslate
+													[href]="
+														envService.homeUrl +
+														'register?hideHeaderAndFooter=true'
+													"
+													target="_self"
+													>Join the waitlist to get
+													one!</a
 												>
 											</span>
 										</ng-template>
@@ -194,6 +215,8 @@
 										cyphTranslate
 										*ngIf="
 											!envService.isTelehealth &&
+											(inviteCodeWatcher | async)
+												?.pending === false &&
 											(inviteCodeData | async)
 												?.welcomeLetter === undefined
 										"
