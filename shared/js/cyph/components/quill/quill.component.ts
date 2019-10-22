@@ -133,7 +133,7 @@ export class QuillComponent extends BaseProvider
 	/** Mobile toolbar configuration. */
 	@Input() public toolbarMobile: any = [
 		[{size: []}],
-		['bold', 'italic', 'underline', 'link'],
+		['bold', 'italic', 'underline', 'strike', 'link', 'image'],
 		[
 			{align: ''},
 			{align: 'center'},
@@ -142,7 +142,9 @@ export class QuillComponent extends BaseProvider
 			{list: 'bullet'},
 			{indent: '-1'},
 			{indent: '+1'},
-			'image'
+			'code-block',
+			'blockquote',
+			'clean'
 		]
 	];
 

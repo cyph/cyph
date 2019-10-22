@@ -5,7 +5,11 @@
 		[class.initiating]="showSpinner | async"
 		*ngIf="(realTime | async) === false || accountService.enableDocs"
 	>
-		<mat-card fxFlex class="partial-width">
+		<mat-card
+			fxFlex
+			class="partial-width"
+			[class.mobile]="envService.isMobile"
+		>
 			<div fxLayout="column">
 				<div fxLayoutAlign="center center" fxLayout="row">
 					<mat-card-title
@@ -112,7 +116,10 @@
 				</div>
 				<mat-card-content fxFlex fxLayout="column">
 					<div class="cyph-light-theme">
-						<mat-card [class.editable]="noteEditable | async">
+						<mat-card
+							[class.editable]="noteEditable | async"
+							class="notepad"
+						>
 							<mat-card-content>
 								<cyph-quill
 									[content]="(note | async)?.content | async"

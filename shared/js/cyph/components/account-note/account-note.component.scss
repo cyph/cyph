@@ -1,6 +1,8 @@
 @import '../../../../css/mixins';
 
 mat-card-title {
+	margin-bottom: 8px;
+	margin-top: -20px;
 	> div {
 		padding-top: 29px;
 	}
@@ -20,7 +22,50 @@ mat-card-title {
 
 mat-card-header {
 	position: absolute;
-	top: 14px;
-	right: 25px;
-	width: calc(100% - 34px);
+	top: 6px;
+	right: 6px;
+	width: calc(100% - 12px);
+
+	::ng-deep .mat-card-header-text {
+		margin: 0 !important;
+	}
+}
+
+mat-card.mobile {
+	mat-card-title {
+		margin-bottom: -5px !important;
+		margin-top: 5px !important;
+	}
+
+	&.partial-width {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	mat-card.notepad {
+		padding: 3px;
+	}
+
+	cyph-quill ::ng-deep {
+		.ql-editor p {
+			min-height: calc(100vh - 315px);
+		}
+
+		.ql-toolbar {
+			margin-left: auto;
+			position: relative;
+			width: 297px;
+			margin-right: auto;
+
+			.ql-formats:not(:first-child) {
+				margin-right: 0;
+			}
+		}
+
+		@media (min-width: 622px) {
+			.ql-toolbar {
+				width: unset;
+			}
+		}
+	}
 }
