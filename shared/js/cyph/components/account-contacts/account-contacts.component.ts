@@ -27,6 +27,7 @@ import {AccountFilesService} from '../../services/account-files.service';
 import {AccountInviteService} from '../../services/account-invite.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
+import {DialogService} from '../../services/dialog.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
@@ -272,6 +273,17 @@ export class AccountContactsComponent extends BaseProvider
 		this.accountService.transitionEnd();
 	}
 
+	public async getInviteLink ()  {
+		var invite = await this.accountInviteService.getInviteURL();
+		if (invite && invite.url) {
+			return this.dialogService.alert({
+				content: invite.url,
+				markdown: true,
+				title: 'Invite Link'
+			});
+		}
+	}
+
 	/** If true, tell user when they have no friends. */
 	public get youHaveNoFriends () : boolean {
 		return this.contactList === this.accountContactsService.contactList;
@@ -301,6 +313,9 @@ export class AccountContactsComponent extends BaseProvider
 
 		/** @see AccountInviteService */
 		public readonly accountInviteService: AccountInviteService,
+
+		/** @see AccountDialogService */
+		public readonly dialogService: DialogService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

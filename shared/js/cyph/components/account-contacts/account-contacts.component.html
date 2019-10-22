@@ -167,7 +167,20 @@
 				"
 				*ngIf="((accountInviteService.count | async) || 0) > 0"
 			>
-				<strong>{{ stringsService.addContactButtonInvite }}</strong>
+				<strong>{{
+					stringsService.addContactButtonInviteEmail
+				}}</strong>
+			</button>
+			<button
+				mat-menu-item
+				[matTooltip]="stringsService.addContactTooltipInviteLink"
+				[matTooltipPosition]="
+					(envService.isMobile | async) ? 'right' : 'left'
+				"
+				(click)="getInviteLink()"
+				*ngIf="((accountInviteService.count | async) || 0) > 0"
+			>
+				<strong>{{ stringsService.inviteLinkButton }}</strong>
 			</button>
 		</mat-menu>
 

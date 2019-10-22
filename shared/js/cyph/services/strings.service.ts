@@ -63,7 +63,7 @@ export class StringsService extends BaseProvider {
 	public readonly addContactButtonInternal = `${this.internalProductShort} User`;
 
 	/** @see StringsService */
-	public readonly addContactButtonInvite = `Invite to ${this.internalProductShort}`;
+	public readonly addContactButtonInviteEmail = `Invite to ${this.internalProductShort} via Email`;
 
 	/** @see StringsService */
 	public readonly addContactTitle = `Add Contact`;
@@ -75,7 +75,10 @@ export class StringsService extends BaseProvider {
 	public readonly addContactTooltipInternal = `Add someone using their ${this.internalProductShort} username`;
 
 	/** @see StringsService */
-	public readonly addContactTooltipInvite = `Invite a friend to make their own ${this.internalProductShort} account`;
+	public readonly addContactTooltipInvite = `Invite to ${this.internalProductShort} via Email`;
+
+	/** @see StringsService */
+	public readonly addContactTooltipInviteLink = `Generate a ${this.internalProductShort} invite link`;
 
 	/** @see StringsService */
 	public readonly affAlt = `Non-targeted banner ad`;
@@ -411,6 +414,12 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly inviteContactTitle = `Invite Contact`;
+
+	/** @see StringsService */
+	public readonly inviteLinkTitle = `Invite Link`;
+
+	/** @see StringsService */
+	public readonly inviteLinkButton = `Generate Invite Link`;
 
 	/** @see StringsService */
 	public readonly linkCopied = `${this.capitalize(
