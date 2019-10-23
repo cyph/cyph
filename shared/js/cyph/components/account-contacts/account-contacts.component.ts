@@ -221,6 +221,17 @@ export class AccountContactsComponent extends BaseProvider
 	/** @see UserPresence */
 	public readonly userPresence = UserPresence;
 
+	/** Displays inite link to user. */
+	public async getInviteLink () : Promise<void> {
+		var invite = await this.accountInviteService.getInviteURL();
+
+		return this.dialogService.alert({
+			content: invite.url,
+			markdown: true,
+			title: this.stringsService.inviteLinkTitle
+		});
+	}
+
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
 		if (
@@ -273,17 +284,6 @@ export class AccountContactsComponent extends BaseProvider
 		this.accountService.transitionEnd();
 	}
 
-	public async getInviteLink ()  {
-		var invite = await this.accountInviteService.getInviteURL();
-		if (invite && invite.url) {
-			return this.dialogService.alert({
-				content: invite.url,
-				markdown: true,
-				title: 'Invite Link'
-			});
-		}
-	}
-
 	/** If true, tell user when they have no friends. */
 	public get youHaveNoFriends () : boolean {
 		return this.contactList === this.accountContactsService.contactList;
@@ -314,7 +314,7 @@ export class AccountContactsComponent extends BaseProvider
 		/** @see AccountInviteService */
 		public readonly accountInviteService: AccountInviteService,
 
-		/** @see AccountDialogService */
+		/** @see DialogService */
 		public readonly dialogService: DialogService,
 
 		/** @see EnvService */

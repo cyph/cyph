@@ -8,7 +8,7 @@
 		<mat-card
 			fxFlex
 			class="partial-width"
-			[class.mobile]="envService.isMobile"
+			[class.mobile]="envService.isMobile | async"
 		>
 			<div fxLayout="column">
 				<div fxLayoutAlign="center center" fxLayout="row">
