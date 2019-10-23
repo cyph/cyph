@@ -448,20 +448,20 @@ export abstract class SessionService extends BaseProvider
 			currentStep,
 			initialSecret,
 			initialSecretCyphertext: await this.channelService.getAsyncValue(
-				'handshake/initialSecretCyphertext',
+				'handshakeState/initialSecretCyphertext',
 				BinaryProto,
 				true,
 				this.subscriptions
 			),
 			isAlice,
 			localPublicKey: await this.channelService.getAsyncValue(
-				`handshake/${isAlice ? 'alice' : 'bob'}PublicKey`,
+				`handshakeState/${isAlice ? 'alice' : 'bob'}PublicKey`,
 				BinaryProto,
 				true,
 				this.subscriptions
 			),
 			remotePublicKey: await this.channelService.getAsyncValue(
-				`handshake/${isAlice ? 'bob' : 'alice'}PublicKey`,
+				`handshakeState/${isAlice ? 'bob' : 'alice'}PublicKey`,
 				BinaryProto,
 				true,
 				this.subscriptions

@@ -136,11 +136,11 @@ export class AccountCastleService extends CastleService {
 									this.accountDatabaseService.getAsyncValue<
 										HandshakeSteps
 									>(
-										`${sessionURL}/handshake/currentStep`,
+										`${sessionURL}/handshakeState/currentStep`,
 										Uint32Proto
 									),
 									this.accountDatabaseService.getAsyncValue(
-										`${sessionURL}/handshake/initialSecret`,
+										`${sessionURL}/handshakeState/initialSecret`,
 										MaybeBinaryProto
 									),
 									(await localUser.getSigningKeyPair()) ===

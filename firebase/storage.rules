@@ -23,7 +23,7 @@ service firebase.storage {
 					allow read, write;
 				}
 
-				// match /handshake {
+				// match /handshakeState {
 				// 	match /alicePublicKey/{hash} {}
 				// 	match /bobPublicKey/{hash} {}
 				// 	match /initialSecretCyphertext/{hash} {}
@@ -104,7 +104,7 @@ service firebase.storage {
 				// 	match /messages/{message}/{hash} {}
 				// 	match /session {
 				// 		/channelUserID/{hash} {}
-				// 		/handshake {
+				// 		/handshakeState {
 				// 			/currentStep/{hash} {}
 				// 			/initialSecret/{hash} {}
 				// 		}
