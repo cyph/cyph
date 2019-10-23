@@ -316,18 +316,6 @@ export class AccountAuthService extends BaseProvider {
 			return false;
 		}
 
-		if (
-			(await this.localStorageService
-				.getString('clearLocalStorageFlag')
-				.catch(() => undefined)) !== this.clearLocalStorageFlag
-		) {
-			await this.localStorageService.clear();
-			await this.localStorageService.setString(
-				'clearLocalStorageFlag',
-				this.clearLocalStorageFlag
-			);
-		}
-
 		let errorLogMessage: string | undefined;
 
 		try {
@@ -574,6 +562,25 @@ export class AccountAuthService extends BaseProvider {
 			);
 
 			errorLogMessage = 'saving credentials';
+
+			try {
+				/* Temporary workaround for localforage bug(?) */
+				/* tslint:disable-next-line:ban */
+				const clearLocalStorageFlagValue = localStorage.getItem(
+					'clearLocalStorageFlag'
+				);
+
+				if (clearLocalStorageFlagValue !== this.clearLocalStorageFlag) {
+					await this.localStorageService.clear();
+
+					/* tslint:disable-next-line:ban */
+					localStorage.setItem(
+						'clearLocalStorageFlag',
+						this.clearLocalStorageFlag
+					);
+				}
+			}
+			catch {}
 
 			await Promise.all([
 				this.localStorageService.setItem(
