@@ -8,7 +8,7 @@ import {ChannelMessage, IChannelMessage, StringProto} from '../proto';
 import {IChannelService} from '../service-interfaces/ichannel.service';
 import {IChannelHandlers} from '../session';
 import {lockFunction} from '../util/lock';
-import {debugLog} from '../util/log';
+import {debugLog, debugLogError} from '../util/log';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {DatabaseService} from './database.service';
@@ -139,6 +139,12 @@ export class ChannelService extends BaseProvider implements IChannelService {
 						}
 
 						await handlers.onMessage(message.value.cyphertext);
+					}
+					catch (err) {
+						debugLogError(() => ({
+							channelOnMessageDecryptFailure: err
+						}));
+						return;
 					}
 					finally {
 						if (initialMessageCount > 0) {
