@@ -60,7 +60,7 @@ export class AccountDatabaseService extends BaseProvider {
 				url: MaybePromise<string>,
 				proto: IProto<T>,
 				immutable: boolean
-			) : Promise<ITimedValue<T>[] | undefined> => {
+			) : Promise<ITimedValue<T>[]> => {
 				try {
 					const arr = msgpack.decode(
 						await this.localStorageService.getItem(
@@ -89,7 +89,7 @@ export class AccountDatabaseService extends BaseProvider {
 					);
 				}
 				catch {
-					return undefined;
+					return [];
 				}
 			},
 			setItem: async <T>(
@@ -1585,10 +1585,10 @@ export class AccountDatabaseService extends BaseProvider {
 					return cache.value;
 				})
 			),
-			undefined,
+			[],
 			subscriptions,
 			lastValue
-		).pipe(filterUndefinedOperator());
+		);
 	}
 
 	/** @see DatabaseService.watchListKeyPushes */
