@@ -31,9 +31,9 @@ export class Env extends EnvDeploy {
 
 	/** @inheritDoc */
 	public readonly appUrl: string =
-		environment.local || this.isOnion ?
+		!environment.customBuild || environment.local || this.isOnion ?
 			envDeploy.appUrl :
-		!environment.customBuild || environment.customBuild.config.burnerOnly ?
+		environment.customBuild.config.burnerOnly ?
 			envDeploy.newCyphBaseUrl :
 			`https://${environment.customBuild.id}/`;
 
