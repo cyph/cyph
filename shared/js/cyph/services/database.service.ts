@@ -476,11 +476,12 @@ export class DatabaseService extends DataManagerService {
 
 		localLock(async () => {
 			try {
-				currentHash = (await this.cache.metadata.getItem(url)).hash;
+				const {hash} = await this.cache.metadata.getItem(url);
 				currentValue = await this.cache.value.getItem(
-					{hash: currentHash, url},
+					{hash, url},
 					proto
 				);
+				currentHash = hash;
 			}
 			catch {}
 		});
