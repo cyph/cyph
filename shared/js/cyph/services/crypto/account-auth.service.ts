@@ -247,10 +247,9 @@ export class AccountAuthService extends BaseProvider {
 				if (await this.fingerprintService.authenticate()) {
 					return this.savePIN(pinHash);
 				}
-				else {
-					await removePIN();
-					return;
-				}
+
+				await removePIN();
+				return;
 			}
 
 			const [pinDuration, pinTimestamp, timestamp] = await Promise.all([
