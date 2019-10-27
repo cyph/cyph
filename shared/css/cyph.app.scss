@@ -19,6 +19,10 @@ body.cordova * {
 	-webkit-tap-highlight-color: transparent !important;
 }
 
+body.soft-lock > * {
+	display: none !important;
+}
+
 /* Readability improvement for large screens */
 
 @media (min-width: 1920px) {

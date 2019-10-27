@@ -50,6 +50,10 @@ $cyph-message-colors: map-merge(
 body.primary-account-theme {
 	@include cyph-apply-theme(false, true);
 
+	&.soft-lock {
+		background-color: $cyph-background-main;
+	}
+
 	cyph-account .header h1.logo-text {
 		color: white;
 	}

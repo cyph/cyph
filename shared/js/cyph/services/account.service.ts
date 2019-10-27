@@ -12,7 +12,7 @@ import {
 } from '@angular/router';
 import * as Hammer from 'hammerjs';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {filter, map, mergeMap, take} from 'rxjs/operators';
+import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
@@ -31,10 +31,12 @@ import {AccountFilesService} from './account-files.service';
 import {AccountSettingsService} from './account-settings.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {ConfigService} from './config.service';
+import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
+import {FingerprintService} from './fingerprint.service';
 import {NotificationService} from './notification.service';
 import {StringsService} from './strings.service';
 import {WindowWatcherService} from './window-watcher.service';
@@ -318,6 +320,31 @@ export class AccountService extends BaseProvider {
 			.pipe(take(1))
 			.toPromise();
 
+		(async () => {
+			if (!(await this.fingerprintService.supported)) {
+				return;
+			}
+
+			this.subscriptions.push(
+				this.windowWatcherService.visibility
+					.pipe(skip(1))
+					.subscribe(async visible => {
+						document.body.classList.add('soft-lock');
+
+						if (!visible) {
+							return;
+						}
+
+						if (await this.fingerprintService.authenticate()) {
+							document.body.classList.remove('soft-lock');
+							return;
+						}
+
+						await this.accountAuthService.lock();
+					})
+			);
+		})();
+
 		this.subscriptions.push(
 			this.accountSettingsService.plan
 				.pipe(map(plan => plan > CyphPlans.Free))
@@ -434,6 +461,9 @@ export class AccountService extends BaseProvider {
 		private readonly accountAppointmentsService: AccountAppointmentsService,
 
 		/** @ignore */
+		private readonly accountAuthService: AccountAuthService,
+
+		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
@@ -456,6 +486,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly envService: EnvService,
+
+		/** @ignore */
+		private readonly fingerprintService: FingerprintService,
 
 		/** @ignore */
 		private readonly notificationService: NotificationService,
