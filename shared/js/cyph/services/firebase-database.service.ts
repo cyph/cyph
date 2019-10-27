@@ -916,9 +916,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async logout () : Promise<void> {
-		await this.ngZone.runOutsideAngular(async () =>
-			retryUntilSuccessful(async () => (await this.app).auth().signOut())
-		);
+		try {
+			await this.ngZone.runOutsideAngular(async () =>
+				(await this.app).auth().signOut()
+			);
+		}
+		catch {}
 	}
 
 	/** @inheritDoc */
@@ -1209,27 +1212,36 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async unregisterPushNotifications (
 		urlPromise: MaybePromise<string>
 	) : Promise<void> {
-		const url = await urlPromise;
-		const messaging = await this.messaging;
+		try {
+			const url = await urlPromise;
+			const messaging = await this.messaging;
 
-		await this.ngZone.runOutsideAngular(async () => {
-			if (messaging.cordova) {
-				messaging.cordova.unregister();
-			}
+			await this.ngZone.runOutsideAngular(async () => {
+				try {
+					if (messaging.cordova) {
+						messaging.cordova.unregister();
+					}
+				}
+				catch {}
 
-			const messagingToken = await this.localStorageService
-				.getItem('FirebaseDatabaseService.messagingToken', StringProto)
-				.catch(() => undefined);
+				const messagingToken = await this.localStorageService
+					.getItem(
+						'FirebaseDatabaseService.messagingToken',
+						StringProto
+					)
+					.catch(() => undefined);
 
-			if (!messagingToken) {
-				return;
-			}
+				if (!messagingToken) {
+					return;
+				}
 
-			await (await this.getDatabaseRef(url))
-				.child(messagingToken)
-				.remove()
-				.then();
-		});
+				await (await this.getDatabaseRef(url))
+					.child(messagingToken)
+					.remove()
+					.then();
+			});
+		}
+		catch {}
 	}
 
 	/** @inheritDoc */

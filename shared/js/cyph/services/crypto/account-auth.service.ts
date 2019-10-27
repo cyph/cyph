@@ -25,6 +25,7 @@ import {debugLog} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
 import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
+import {sleep} from '../../util/wait';
 import {reloadWindow} from '../../util/window';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {AnalyticsService} from '../analytics.service';
@@ -651,9 +652,12 @@ export class AccountAuthService extends BaseProvider {
 			this.connectTrackerCleanup = undefined;
 		}
 
-		await this.databaseService.unregisterPushNotifications(
-			`users/${currentUser.user.username}/messagingTokens`
-		);
+		await Promise.race([
+			this.databaseService.unregisterPushNotifications(
+				`users/${currentUser.user.username}/messagingTokens`
+			),
+			sleep(1000)
+		]);
 
 		this.potassiumService.clearMemory(currentUser.keys.symmetricKey);
 		this.potassiumService.clearMemory(
@@ -671,7 +675,7 @@ export class AccountAuthService extends BaseProvider {
 
 		if (clearSavedCredentials) {
 			await Promise.all([
-				this.databaseService.logout(),
+				Promise.race([this.databaseService.logout(), sleep(1000)]),
 				this.removeSavedCredentials()
 			]);
 		}
