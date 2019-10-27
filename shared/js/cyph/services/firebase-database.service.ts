@@ -410,7 +410,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public downloadItem<T> (
 		urlPromise: MaybePromise<string>,
-		proto: IProto<T>
+		proto: IProto<T>,
+		verifyHash?: string
 	) : {
 		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
@@ -427,18 +428,27 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const {data, hash, timestamp} = await this.getMetadata(url);
 
+				/* tslint:disable-next-line:possible-timing-attack */
+				if (verifyHash !== undefined && verifyHash !== hash) {
+					throw new Error(
+						'FirebaseDatabaseService.downloadItem verifyHash mismatch: ' +
+							`'${verifyHash}' !== '${hash}'`
+					);
+				}
+
 				try {
-					const localValue = await this.cache.value
-						.getItem({hash, url}, proto)
-						.catch(async err => {
-							if (data === undefined) {
-								throw err;
-							}
-							return deserialize(
-								proto,
-								this.potassiumService.fromBase64(data)
-							);
-						});
+					const localValue = await (verifyHash === undefined ?
+						this.cache.value.getItem({hash, url}, proto) :
+						Promise.reject()
+					).catch(async err => {
+						if (data === undefined) {
+							throw err;
+						}
+						return deserialize(
+							proto,
+							this.potassiumService.fromBase64(data)
+						);
+					});
 
 					alreadyCached.resolve(true);
 					this.ngZone.run(() => {
@@ -1151,46 +1161,54 @@ export class FirebaseDatabaseService extends DatabaseService {
 		hash: string;
 		url: string;
 	}> {
-		return this.ngZone.runOutsideAngular(async () => {
-			const url = await urlPromise;
+		return this.ngZone.runOutsideAngular(async () =>
+			retryUntilSuccessful(async () => {
+				const url = await urlPromise;
 
-			const data = await serialize(proto, value);
-			const hash = this.potassiumService.toHex(
-				await this.potassiumService.hash.hash(data)
-			);
+				const data = await serialize(proto, value);
+				const hash = this.potassiumService.toHex(
+					await this.potassiumService.hash.hash(data)
+				);
 
-			if (
-				/* tslint:disable-next-line:possible-timing-attack */
-				hash !==
-				(await this.getMetadata(url).catch(() => ({hash: undefined})))
-					.hash
-			) {
-				if (data.length < this.nonBlobStorageLimit) {
-					await (await this.getDatabaseRef(url))
-						.set({
-							data: this.potassiumService.toBase64(data),
-							hash,
-							timestamp: firebase.database.ServerValue.TIMESTAMP
-						})
-						.then();
+				if (
+					/* tslint:disable-next-line:possible-timing-attack */
+					hash !==
+					(await this.getMetadata(url).catch(() => ({
+						hash: undefined
+					}))).hash
+				) {
+					if (data.length < this.nonBlobStorageLimit) {
+						await (await this.getDatabaseRef(url))
+							.set({
+								data: this.potassiumService.toBase64(data),
+								hash,
+								timestamp:
+									firebase.database.ServerValue.TIMESTAMP
+							})
+							.then();
+					}
+					else {
+						await (await this.getStorageRef(url, hash))
+							.put(new Blob([data]))
+							.then();
+						await (await this.getDatabaseRef(url))
+							.set({
+								hash,
+								timestamp:
+									firebase.database.ServerValue.TIMESTAMP
+							})
+							.then();
+					}
+
+					/* Download content to verify that upload was successful */
+					await this.downloadItem<T>(url, proto, hash).result;
+
+					this.cache.setItem(url, data, hash);
 				}
-				else {
-					await (await this.getStorageRef(url, hash))
-						.put(new Blob([data]))
-						.then();
-					await (await this.getDatabaseRef(url))
-						.set({
-							hash,
-							timestamp: firebase.database.ServerValue.TIMESTAMP
-						})
-						.then();
-				}
 
-				this.cache.setItem(url, data, hash);
-			}
-
-			return {hash, url};
-		});
+				return {hash, url};
+			})
+		);
 	}
 
 	/** @inheritDoc */
