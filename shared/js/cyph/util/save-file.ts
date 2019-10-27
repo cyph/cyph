@@ -80,24 +80,15 @@ export const saveFile = async (
 			fileWriter.onerror = reject;
 		});
 
-		let fileBlobURL: string | undefined;
-		try {
-			fileBlobURL = URL.createObjectURL(fileBlob);
-			fileWriter.write(fileBlobURL);
-			await fileWriteResult;
+		fileWriter.write(fileBlob);
+		await fileWriteResult;
 
-			await (await staticDialogService).toast(
-				`${translate('Saved')} ${savedFileName} ${translate(
-					'to downloads folder.'
-				)}`,
-				3000
-			);
-		}
-		finally {
-			if (fileBlobURL) {
-				URL.revokeObjectURL(fileBlobURL);
-			}
-		}
+		await (await staticDialogService).toast(
+			`${translate('Saved')} ${savedFileName} ${translate(
+				'to downloads folder.'
+			)}`,
+			3000
+		);
 	}
 	else if (env.safariVersion === undefined || env.safariVersion >= 10.1) {
 		save();
