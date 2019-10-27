@@ -77,19 +77,27 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 				.width($element.width() || 0);
 		}
 
-		let html = this.markdownIt
-			.render(this.markdown || '')
-			/* Merge blockquotes like reddit */
-			.replace(/\<\/blockquote>\n\<blockquote>\n/g, '')
-			/* Images */
-			.replace(
-				/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
-				(_, value: string) => {
-					const img = document.createElement('img');
-					img.src = value;
-					return img.outerHTML;
-				}
-			);
+		let html = this.markdownIt.render(this.markdown || '');
+		while (true) {
+			const newHTML = html
+				/* Merge blockquotes like reddit */
+				.replace(/\<\/blockquote>\s*\<blockquote>/g, '')
+				/* Images */
+				.replace(
+					/!\<a href="(data:image\/(png|jpeg|gif)\;.*?)"><\/a>/g,
+					(_, value: string) => {
+						const img = document.createElement('img');
+						img.src = value;
+						return img.outerHTML;
+					}
+				);
+
+			if (newHTML === html) {
+				break;
+			}
+
+			html = newHTML;
+		}
 
 		/* Gracefully handle protocol-less links */
 		if (!this.targetSelf) {
