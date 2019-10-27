@@ -55,11 +55,22 @@ export const cacheObservable = <T>(
 export const toBehaviorSubject = <T>(
 	observable: AsyncObservable<T>,
 	initialValue: T,
-	subscriptions?: Subscription[]
+	subscriptions?: Subscription[],
+	asyncInitialValue?: Promise<T>
 ) : BehaviorSubject<T> => {
 	const subscribe = subscribeFactory(observable, subscriptions);
 	const subject = new BehaviorSubject(initialValue);
-	subscribe(subject);
+
+	if (asyncInitialValue) {
+		asyncInitialValue.then(value => {
+			subject.next(value);
+			subscribe(subject);
+		});
+	}
+	else {
+		subscribe(subject);
+	}
+
 	return subject;
 };
 
