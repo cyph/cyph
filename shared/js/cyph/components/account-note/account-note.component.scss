@@ -47,7 +47,7 @@ mat-card.mobile {
 	}
 
 	cyph-quill ::ng-deep {
-		.ql-editor p {
+		.ql-editor {
 			min-height: calc(100vh - 315px);
 		}
 
