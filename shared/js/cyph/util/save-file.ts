@@ -16,6 +16,11 @@ export const saveFile = async (
 		return;
 	}
 
+	const [dialogService, stringsService] = await Promise.all([
+		staticDialogService,
+		staticStringsService
+	]);
+
 	const oldBeforeUnloadMessage = beforeUnloadMessage;
 	beforeUnloadMessage = undefined;
 
@@ -80,12 +85,7 @@ export const saveFile = async (
 			});
 
 			fileWriter.write(fileBlob);
-
-			const [dialogService, stringsService] = await Promise.all([
-				staticDialogService,
-				staticStringsService,
-				fileWriteResult
-			]);
+			await fileWriteResult;
 
 			const maxFileNameLength = env.isMobileOS ? 24 : 48;
 
@@ -128,13 +128,16 @@ export const saveFile = async (
 				save();
 			};
 			document.addEventListener('click', handler);
-			await (await staticDialogService).alert({
+			await dialogService.alert({
 				content: `${translate('Saving file')} "${fileName}" ${translate(
 					'with the name "unknown", due to a Safari bug'
 				)}.`,
 				title: translate('Save File')
 			});
 		}
+	}
+	catch {
+		await dialogService.toast(stringsService.saveFileFailed, 750);
 	}
 	finally {
 		await sleep();

@@ -798,6 +798,9 @@ export class StringsService extends BaseProvider {
 	public readonly save = `save`;
 
 	/** @see StringsService */
+	public readonly saveFileFailed = `Failed to save file.`;
+
+	/** @see StringsService */
 	public readonly saveUpperCase = `Save`;
 
 	/** @see StringsService */
