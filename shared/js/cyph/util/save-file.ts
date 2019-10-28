@@ -108,7 +108,13 @@ export const saveFile = async (
 				const filePartWriteComplete = fileWriteEvent
 					.pipe(take(1))
 					.toPromise();
+
+				if (fileWriter.length > 0) {
+					fileWriter.seek(fileWriter.length);
+				}
+
 				fileWriter.write(fileBlobPart);
+
 				await filePartWriteComplete;
 			}
 
