@@ -1,14 +1,11 @@
-<ng-container *ngIf="getMasterKeyOnly || getPinOnly">
+<ng-container *ngIf="confirmMasterKeyOnly || getMasterKeyOnly || getPinOnly">
 	<form
 		fxFlex
 		fxLayout="column"
-		fxLayoutGap="32px"
+		[fxLayoutAlign]="(phase | async) === 3 ? 'center stretch' : ''"
+		[fxLayoutGap]="confirmMasterKeyOnly ? '0px' : '32px'"
 		ngNativeValidate
 		(submit)="
-			getMasterKeyOnly && masterKeyReady.value ?
-				submitMasterKey.emit(
-					useXkcdPassphrase.value ? xkcd : masterKey.value
-				) :
 			getPinOnly && lockScreenPasswordReady.value ?
 				submitPIN.emit({
 					isCustom: !useLockScreenPIN.value,
@@ -16,6 +13,14 @@
 						lockScreenPIN.value :
 						lockScreenPassword.value
 				}) :
+			!masterKeyReady.value ?
+				undefined :
+			phase.value !== 3 ?
+				phase.next(3) :
+			confirmMasterKeyOnly ?
+				confirmMasterKey() :
+			getMasterKeyOnly ?
+				getMasterKey() :
 				undefined
 		"
 		*ngIf="xkcdPassphrase | async as xkcd"
@@ -23,7 +28,11 @@
 		<div>
 			<ng-container
 				*ngTemplateOutlet="
-					getMasterKeyOnly ? masterKeyUI : lockScreenUI
+					!confirmMasterKeyOnly && !getMasterKeyOnly ?
+						lockScreenUI :
+					(phase | async) === 3 ?
+						masterKeyFinalConfirmationUI :
+						masterKeyUI
 				"
 			></ng-container>
 		</div>
@@ -47,12 +56,16 @@
 				fxFlex.gt-sm="initial"
 				type="submit"
 				[disabled]="
-					((getMasterKeyOnly ?
+					((confirmMasterKeyOnly || getMasterKeyOnly ?
 						masterKeyReady :
 						lockScreenPasswordReady) | async) === false
 				"
 			>
-				{{ getPasswordSubmitText }}
+				{{
+					confirmMasterKeyOnly ?
+						confirmMasterKeySubmitText :
+						getPasswordSubmitText
+				}}
 			</button>
 		</div>
 	</form>
@@ -61,7 +74,7 @@
 <div
 	class="login-form"
 	[class.checking]="checking | async"
-	*ngIf="!getMasterKeyOnly && !getPinOnly"
+	*ngIf="!confirmMasterKeyOnly && !getMasterKeyOnly && !getPinOnly"
 >
 	<mat-card fxFlex class="fullscreen">
 		<mat-card-title>
@@ -82,7 +95,7 @@
 						fxLayout="column"
 						fxLayoutGap="32px"
 						ngNativeValidate
-						(submit)="preSubmit()"
+						(submit)="submit()"
 					>
 						<mat-tab-group
 							[selectedIndex]="tabIndex | async"
@@ -551,6 +564,18 @@
 										Does this all look right?
 									</div>
 
+									<div fxLayout="row" fxLayoutAlign="center">
+										<h3
+											class="cyph-banner warn"
+											*ngIf="
+												(submitError | async) !==
+												undefined
+											"
+										>
+											{{ submitError | async }}
+										</h3>
+									</div>
+
 									<div
 										fxLayout="row"
 										fxLayoutAlign="center center"
@@ -769,75 +794,10 @@
 				class="back-button-container"
 				*ngIf="(phase | async) === 3"
 			>
-				<button
-					mat-icon-button
-					cyphTranslate
-					class="back"
-					matTooltip="Back"
-					(click)="phase.next(2)"
-				>
-					<mat-icon>arrow_back</mat-icon>
-				</button>
-				<div fxLayout="row" fxLayoutAlign="center">
-					<h3
-						class="cyph-banner warn"
-						*ngIf="(submitError | async) !== undefined"
-					>
-						{{ submitError | async }}
-					</h3>
-				</div>
-				<div fxLayout="row" fxLayoutAlign="center">
-					<div
-						fxFlex
-						fxFlex.sm="95"
-						fxFlex.md="75"
-						fxFlex.gt-md="50"
-						fxLayout="column"
-					>
-						<mat-form-field fxFlex>
-							<input
-								matInput
-								cyphTranslate
-								[ngModel]="(usernameWatcher | async)?.value"
-								name="confirmCyphUsername"
-								placeholder="Confirm Username"
-								disabled
-								required
-							/>
-						</mat-form-field>
-						<mat-form-field fxFlex>
-							<input
-								matInput
-								cyphAutofocus
-								[(ngModel)]="finalConfirmation.masterKey"
-								name="confirmMasterKey"
-								[type]="
-									(hidePassword.finalConfirmation | async) ?
-										'password' :
-										'text'
-								"
-								placeholder="Confirm Master Key"
-								required
-								(keyup.enter)="submit()"
-							/>
-							<mat-icon
-								matSuffix
-								class="suffix-button"
-								(click)="
-									hidePassword.finalConfirmation.next(
-										!hidePassword.finalConfirmation.value
-									)
-								"
-							>
-								{{
-									(hidePassword.finalConfirmation | async) ?
-										'visibility' :
-										'visibility_off'
-								}}
-							</mat-icon>
-						</mat-form-field>
-					</div>
-				</div>
+				<ng-container
+					*ngTemplateOutlet="masterKeyFinalConfirmationUI"
+				></ng-container>
+
 				<div fxLayout="row" fxLayoutAlign="center">
 					<button mat-raised-button (click)="submit()">
 						<span cyphTranslate>Confirm Registration</span>
@@ -851,6 +811,78 @@
 		></mat-progress-spinner>
 	</mat-card>
 </div>
+
+<ng-template #masterKeyFinalConfirmationUI>
+	<button
+		mat-icon-button
+		cyphTranslate
+		class="back"
+		matTooltip="Back"
+		(click)="phase.next(2)"
+	>
+		<mat-icon>arrow_back</mat-icon>
+	</button>
+	<div fxLayout="row" fxLayoutAlign="center">
+		<h3
+			class="cyph-banner warn"
+			*ngIf="(submitError | async) !== undefined"
+		>
+			{{ submitError | async }}
+		</h3>
+	</div>
+	<div fxLayout="row" fxLayoutAlign="center">
+		<div
+			fxFlex
+			fxFlex.sm="95"
+			fxFlex.md="75"
+			fxFlex.gt-md="50"
+			fxLayout="column"
+		>
+			<mat-form-field fxFlex>
+				<input
+					matInput
+					cyphTranslate
+					[ngModel]="(usernameWatcher | async)?.value"
+					name="confirmCyphUsername"
+					placeholder="Confirm Username"
+					disabled
+					required
+				/>
+			</mat-form-field>
+			<mat-form-field fxFlex>
+				<input
+					matInput
+					cyphAutofocus
+					[(ngModel)]="finalConfirmation.masterKey"
+					name="confirmMasterKey"
+					[type]="
+						(hidePassword.finalConfirmation | async) ?
+							'password' :
+							'text'
+					"
+					placeholder="Confirm Master Key"
+					required
+					(keyup.enter)="submit()"
+				/>
+				<mat-icon
+					matSuffix
+					class="suffix-button"
+					(click)="
+						hidePassword.finalConfirmation.next(
+							!hidePassword.finalConfirmation.value
+						)
+					"
+				>
+					{{
+						(hidePassword.finalConfirmation | async) ?
+							'visibility' :
+							'visibility_off'
+					}}
+				</mat-icon>
+			</mat-form-field>
+		</div>
+	</div>
+</ng-template>
 
 <ng-template #masterKeyUI>
 	<div fxLayout="column" fxLayoutGap="48px" cyphTranslate>
@@ -935,7 +967,11 @@
 								(copy)="$event.preventDefault()"
 								(cut)="$event.preventDefault()"
 							>
-								{{ xkcdPassphrase | async }}
+								{{
+									(confirmMasterKeyOnly ?
+										unconfirmedMasterKey :
+										xkcdPassphrase) | async
+								}}
 							</span>
 						</div>
 					</div>
@@ -950,6 +986,7 @@
 			fxLayout="row"
 			fxLayoutAlign="center center"
 			[class.visibility-hidden]="(opsecAcknowledgement | async) === false"
+			*ngIf="!confirmMasterKeyOnly"
 		>
 			<mat-accordion>
 				<mat-expansion-panel

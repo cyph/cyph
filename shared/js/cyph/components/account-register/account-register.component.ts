@@ -21,8 +21,10 @@ import {AccountUserLookupService} from '../../services/account-user-lookup.servi
 import {AccountService} from '../../services/account.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
+import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {safeStringCompare} from '../../util/compare';
@@ -51,6 +53,13 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Indicates whether registration attempt is in progress. */
 	public readonly checking = new BehaviorSubject<boolean>(false);
+
+	/** If true, will display only the initial master key confirmation UI. */
+	@Input() public confirmMasterKeyOnly: boolean = false;
+
+	/** Submit button text when confirming master key or lock screen password. */
+	@Input() public confirmMasterKeySubmitText: string = this.stringsService
+		.confirmMasterKey;
 
 	/** Email addres. */
 	public readonly email = new BehaviorSubject<string>('');
@@ -190,6 +199,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
 
+	/** If applicable, master key that user must still confirm. */
+	public readonly unconfirmedMasterKey = toBehaviorSubject<string>(
+		this.localStorageService
+			.getString('unconfirmedMasterKey')
+			.catch(() => ''),
+		''
+	);
+
 	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
 	public readonly useLockScreenPIN = new BehaviorSubject<boolean>(
 		this.envService.isMobileOS
@@ -242,11 +259,95 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		false
 	);
 
+	/** Marks master key as confirmed. */
+	public async confirmMasterKey () : Promise<void> {
+		if (!this.accountDatabaseService.currentUser.value) {
+			return;
+		}
+
+		try {
+			this.checking.next(true);
+			await sleep(random(750, 250));
+
+			if (
+				!safeStringCompare(
+					this.unconfirmedMasterKey.value,
+					this.finalConfirmation.masterKey
+				)
+			) {
+				this.submitError.next(this.stringsService.invalidMasterKey);
+				return;
+			}
+
+			this.submitError.next(undefined);
+
+			this.finalConfirmation.masterKey = '';
+
+			this.masterKey.next('');
+			this.masterKeyConfirm.setValue('');
+			this.unconfirmedMasterKey.next('');
+			this.xkcdPassphrase.next('');
+
+			await this.localStorageService.removeItem('unconfirmedMasterKey');
+
+			this.accountDatabaseService.currentUser.next({
+				...this.accountDatabaseService.currentUser.value,
+				masterKeyConfirmed: true
+			});
+		}
+		finally {
+			this.checking.next(false);
+		}
+	}
+
+	/** Submits master key. */
+	public async getMasterKey () : Promise<void> {
+		try {
+			this.checking.next(true);
+			await sleep(random(750, 250));
+
+			const masterKey = this.useXkcdPassphrase.value ?
+				this.xkcdPassphrase.value :
+				this.masterKey.value;
+
+			if (
+				!safeStringCompare(masterKey, this.finalConfirmation.masterKey)
+			) {
+				this.submitError.next(this.stringsService.invalidMasterKey);
+				return;
+			}
+
+			this.submitError.next(undefined);
+
+			this.finalConfirmation.masterKey = '';
+
+			this.masterKey.next('');
+			this.masterKeyConfirm.setValue('');
+			this.unconfirmedMasterKey.next('');
+			this.xkcdPassphrase.next('');
+
+			this.submitMasterKey.emit(masterKey);
+		}
+		finally {
+			this.checking.next(false);
+		}
+	}
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
 
-		if (this.getMasterKeyOnly || this.getPinOnly) {
+		if (
+			this.confirmMasterKeyOnly ||
+			this.getMasterKeyOnly ||
+			this.getPinOnly
+		) {
+			if (this.accountDatabaseService.currentUser.value) {
+				this.username.setValue(
+					this.accountDatabaseService.currentUser.value.user.username
+				);
+			}
+
 			this.accountService.resolveUiReady();
 			return;
 		}
@@ -299,10 +400,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public async submit () : Promise<void> {
 		this.checking.next(false);
 
-		if (
-			this.submissionReadinessErrors.value.length > 0 ||
-			!this.masterKeyReady.value
-		) {
+		if (this.submissionReadinessErrors.value.length > 0) {
 			this.submitError.next(this.stringsService.signupFailed);
 			return;
 		}
@@ -311,38 +409,64 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			this.xkcdPassphrase.value :
 			this.masterKey.value;
 
+		/*
 		if (!safeStringCompare(masterKey, this.finalConfirmation.masterKey)) {
-			this.submitError.next(this.stringsService.invalidCredentials);
+			this.submitError.next(this.stringsService.invalidMasterKey);
 			return;
 		}
+		*/
 
 		this.checking.next(true);
 		this.submitError.next(undefined);
 
-		this.submitError.next(
-			(await this.accountAuthService.register(
-				this.username.value,
-				masterKey,
-				{
-					isCustom: !this.useLockScreenPIN.value,
-					value: this.useLockScreenPIN.value ?
-						this.lockScreenPIN.value :
-						this.lockScreenPassword.value
-				},
-				this.name.value,
-				this.email.value,
-				this.inviteCode.value
-			)) ?
-				undefined :
-				this.accountAuthService.errorMessage.value ||
-					this.stringsService.signupFailed
-		);
+		try {
+			await this.localStorageService.setString(
+				'unconfirmedMasterKey',
+				masterKey
+			);
+
+			/* Confirm successful set */
+			if (
+				!safeStringCompare(
+					masterKey,
+					await this.localStorageService.getString(
+						'unconfirmedMasterKey'
+					)
+				)
+			) {
+				throw new Error('Setting unconfirmedMasterKey failed.');
+			}
+
+			this.submitError.next(
+				(await this.accountAuthService.register(
+					this.username.value,
+					masterKey,
+					{
+						isCustom: !this.useLockScreenPIN.value,
+						value: this.useLockScreenPIN.value ?
+							this.lockScreenPIN.value :
+							this.lockScreenPassword.value
+					},
+					this.name.value,
+					this.email.value,
+					this.inviteCode.value
+				)) ?
+					undefined :
+					this.accountAuthService.errorMessage.value ||
+						this.stringsService.signupFailed
+			);
+		}
+		catch {
+			this.submitError.next(this.stringsService.signupFailed);
+		}
 
 		this.checking.next(false);
 
 		if (this.submitError.value !== undefined) {
 			return;
 		}
+
+		this.finalConfirmation.masterKey = '';
 
 		this.email.next('');
 		this.inviteCode.setValue('');
@@ -352,6 +476,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.masterKey.next('');
 		this.masterKeyConfirm.setValue('');
 		this.name.next('');
+		this.unconfirmedMasterKey.next('');
 		this.username.setValue('');
 		this.useLockScreenPIN.next(false);
 		this.useXkcdPassphrase.next(false);
@@ -379,6 +504,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		private readonly router: Router,
 
 		/** @ignore */
+		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
@@ -386,6 +514,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

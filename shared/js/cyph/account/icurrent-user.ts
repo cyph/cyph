@@ -4,7 +4,7 @@ import {User} from './user';
 /** Current user data. */
 export interface ICurrentUser {
 	/** Indicates whether the current User's account has been certified via AGSE-PKI. */
-	confirmed: boolean;
+	agseConfirmed: boolean;
 
 	/** User secret keys. */
 	keys: {
@@ -15,6 +15,9 @@ export interface ICurrentUser {
 
 	/** @see IAccountLoginData */
 	loginData: IAccountLoginData;
+
+	/** Indicates whether user has done their one-time master key confirmation. */
+	masterKeyConfirmed: boolean;
 
 	/** Indicates whether this is a pseudo-account. */
 	pseudoAccount: boolean;

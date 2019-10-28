@@ -412,7 +412,12 @@ export class AccountAuthService extends BaseProvider {
 
 			errorLogMessage = 'getting user';
 
-			const [user, confirmed, pseudoAccount] = await Promise.all([
+			const [
+				user,
+				agseConfirmed,
+				pseudoAccount,
+				masterKeyConfirmed
+			] = await Promise.all([
 				this.accountUserLookupService.getUser(
 					username,
 					false,
@@ -420,7 +425,10 @@ export class AccountAuthService extends BaseProvider {
 					true
 				),
 				this.accountUserLookupService.exists(username, false, true),
-				this.databaseService.hasItem(`users/${username}/pseudoAccount`)
+				this.databaseService.hasItem(`users/${username}/pseudoAccount`),
+				this.localStorageService
+					.hasItem('unconfirmedMasterKey')
+					.then(b => !b)
 			]);
 
 			if (!user) {
@@ -465,7 +473,7 @@ export class AccountAuthService extends BaseProvider {
 			);
 
 			if (
-				confirmed &&
+				agseConfirmed &&
 				!this.potassiumService.compareMemory(
 					signingKeyPair.publicKey,
 					(await this.accountDatabaseService.getUserPublicKeys(
@@ -479,7 +487,7 @@ export class AccountAuthService extends BaseProvider {
 			errorLogMessage = 'getting encryptionKeyPair';
 
 			this.accountDatabaseService.currentUser.next({
-				confirmed,
+				agseConfirmed,
 				keys: {
 					encryptionKeyPair: await this.getItem(
 						`users/${username}/encryptionKeyPair`,
@@ -490,6 +498,7 @@ export class AccountAuthService extends BaseProvider {
 					symmetricKey: loginData.symmetricKey
 				},
 				loginData,
+				masterKeyConfirmed,
 				pseudoAccount,
 				user
 			});
@@ -565,20 +574,25 @@ export class AccountAuthService extends BaseProvider {
 			errorLogMessage = 'saving credentials';
 
 			try {
-				/* Temporary workaround for localforage bug(?) */
-				/* tslint:disable-next-line:ban */
-				const clearLocalStorageFlagValue = localStorage.getItem(
-					'clearLocalStorageFlag'
-				);
-
-				if (clearLocalStorageFlagValue !== this.clearLocalStorageFlag) {
-					await this.localStorageService.clear();
-
+				if (masterKeyConfirmed) {
+					/* Temporary workaround for localforage bug(?) */
 					/* tslint:disable-next-line:ban */
-					localStorage.setItem(
-						'clearLocalStorageFlag',
-						this.clearLocalStorageFlag
+					const clearLocalStorageFlagValue = localStorage.getItem(
+						'clearLocalStorageFlag'
 					);
+
+					if (
+						clearLocalStorageFlagValue !==
+						this.clearLocalStorageFlag
+					) {
+						await this.localStorageService.clear();
+
+						/* tslint:disable-next-line:ban */
+						localStorage.setItem(
+							'clearLocalStorageFlag',
+							this.clearLocalStorageFlag
+						);
+					}
 				}
 			}
 			catch {}
@@ -606,7 +620,7 @@ export class AccountAuthService extends BaseProvider {
 				this.localStorageService.setItem(
 					'username',
 					StringProto,
-					confirmed ?
+					agseConfirmed ?
 						(await user.accountUserProfile.getValue())
 							.realUsername :
 						username

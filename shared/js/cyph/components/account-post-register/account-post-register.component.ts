@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -25,6 +26,9 @@ export class AccountPostRegisterComponent extends BaseProvider
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

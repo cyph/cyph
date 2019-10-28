@@ -207,6 +207,9 @@ export class StringsService extends BaseProvider {
 	public readonly composeMessage = `Compose Message`;
 
 	/** @see StringsService */
+	public readonly confirmMasterKey = `Confirm Master Key`;
+
+	/** @see StringsService */
 	public readonly connectedNotification = `Connected!`;
 
 	/** @see StringsService */
@@ -408,6 +411,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly invalidInviteCode = `Invalid invite code.`;
+
+	/** @see StringsService */
+	public readonly invalidMasterKey = `Invalid master key.`;
 
 	/** @see StringsService */
 	public readonly invalidPassword = `Invalid password.`;

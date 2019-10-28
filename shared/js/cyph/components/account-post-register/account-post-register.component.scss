@@ -1,6 +1,10 @@
 @import '../../../../css/mixins';
 
-:host > div {
-	font-size: 1.15em;
-	padding: 0 2em;
+:host {
+	height: 100%;
+
+	> div {
+		font-size: 1.15em;
+		padding: 0 2em;
+	}
 }

@@ -596,7 +596,7 @@
 			</div>
 		</div>
 
-		<mat-nav-list>
+		<mat-nav-list *ngIf="currentUser.masterKeyConfirmed">
 			<mat-divider></mat-divider>
 
 			<a
