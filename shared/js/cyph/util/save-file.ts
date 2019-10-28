@@ -1,7 +1,7 @@
 import fileSaver from 'file-saver';
 import {env} from '../env';
 import {shareFile} from './cordova/share-file';
-import {staticDialogService} from './static-services';
+import {staticDialogService, staticStringsService} from './static-services';
 import {translate} from './translate';
 import {retryUntilSuccessful, sleep} from './wait';
 
@@ -82,14 +82,40 @@ export const saveFile = async (
 			});
 
 			fileWriter.write(fileBlob);
-			await fileWriteResult;
 
-			await (await staticDialogService).toast(
+			const [dialogService, stringsService] = await Promise.all([
+				staticDialogService,
+				staticStringsService,
+				fileWriteResult
+			]);
+
+			const shouldOpenFile = await dialogService.toast(
 				`${translate('Saved')} ${savedFileName} ${translate(
 					'to downloads folder.'
 				)}`,
-				3000
+				3000,
+				stringsService.open
 			);
+
+			if (!shouldOpenFile) {
+				return;
+			}
+
+			try {
+				await new Promise<void>((resolve, reject) => {
+					(<any> self).cordova.plugins.fileOpener2.showOpenWithDialog(
+						fileEntry.fullPath,
+						fileMediaType,
+						{
+							error: reject,
+							success: resolve
+						}
+					);
+				});
+			}
+			catch {
+				await dialogService.toast(stringsService.openFileFailed, 750);
+			}
 		}
 		else if (env.safariVersion === undefined || env.safariVersion >= 10.1) {
 			save();

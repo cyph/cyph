@@ -627,6 +627,9 @@ export class StringsService extends BaseProvider {
 	public readonly open = `Open`;
 
 	/** @see StringsService */
+	public readonly openFileFailed = `Failed to open file.`;
+
+	/** @see StringsService */
 	public readonly openMenu = `Open Menu`;
 
 	/** @see StringsService */
