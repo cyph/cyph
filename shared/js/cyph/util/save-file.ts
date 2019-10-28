@@ -1,4 +1,6 @@
 import fileSaver from 'file-saver';
+import {Subject} from 'rxjs';
+import {take} from 'rxjs/operators';
 import {env} from '../env';
 import {shareFile} from './cordova/share-file';
 import {staticDialogService, staticStringsService} from './static-services';
@@ -79,12 +81,37 @@ export const saveFile = async (
 				fileEntry.createWriter(resolve, reject);
 			});
 
+			const fileWriteEvent = new Subject<void>();
+
 			const fileWriteResult = new Promise<any>((resolve, reject) => {
 				fileWriter.onwriteend = resolve;
 				fileWriter.onerror = reject;
+				fileWriter.onwrite = () => {
+					fileWriteEvent.next();
+				};
 			});
 
-			fileWriter.write(fileBlob);
+			const cordovaWriteBlockSize = 1048576;
+
+			const fileBlobParts = new Array(
+				Math.ceil(fileBlob.size / cordovaWriteBlockSize)
+			)
+				.fill(0)
+				.map((_, i) =>
+					fileBlob.slice(
+						i * cordovaWriteBlockSize,
+						Math.min((i + 1) * cordovaWriteBlockSize, fileBlob.size)
+					)
+				);
+
+			for (const fileBlobPart of fileBlobParts) {
+				const filePartWriteComplete = fileWriteEvent
+					.pipe(take(1))
+					.toPromise();
+				fileWriter.write(fileBlobPart);
+				await filePartWriteComplete;
+			}
+
 			await fileWriteResult;
 
 			const maxFileNameLength = env.isMobileOS ? 24 : 48;
