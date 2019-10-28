@@ -130,6 +130,9 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			return this.postLogin();
 		}
 
+		this.checking.next(true);
+		this.accountService.resolveUiReady();
+
 		try {
 			const [
 				pinIsCustom,
@@ -186,7 +189,6 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		}
 		finally {
 			this.checking.next(false);
-			this.accountService.resolveUiReady();
 		}
 	}
 
