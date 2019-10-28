@@ -425,7 +425,8 @@ export class AccountAuthService extends BaseProvider {
 				user,
 				agseConfirmed,
 				pseudoAccount,
-				masterKeyConfirmed
+				masterKeyConfirmed,
+				hasSavedUsername
 			] = await Promise.all([
 				this.accountUserLookupService.getUser(
 					username,
@@ -437,7 +438,8 @@ export class AccountAuthService extends BaseProvider {
 				this.databaseService.hasItem(`users/${username}/pseudoAccount`),
 				this.localStorageService
 					.hasItem('unconfirmedMasterKey')
-					.then(b => !b)
+					.then(b => !b),
+				this.localStorageService.hasItem('username')
 			]);
 
 			if (!user) {
@@ -583,26 +585,22 @@ export class AccountAuthService extends BaseProvider {
 			errorLogMessage = 'saving credentials';
 
 			try {
-				if (masterKeyConfirmed) {
-					/* Temporary workaround for localforage bug(?) */
+				/* Temporary workaround for localforage bug(?) */
+				if (
+					hasSavedUsername &&
+					masterKeyConfirmed &&
 					/* tslint:disable-next-line:ban */
-					const clearLocalStorageFlagValue = localStorage.getItem(
-						'clearLocalStorageFlag'
-					);
-
-					if (
-						clearLocalStorageFlagValue !==
+					localStorage.getItem('clearLocalStorageFlag') !==
 						this.clearLocalStorageFlag
-					) {
-						await this.localStorageService.clear();
-
-						/* tslint:disable-next-line:ban */
-						localStorage.setItem(
-							'clearLocalStorageFlag',
-							this.clearLocalStorageFlag
-						);
-					}
+				) {
+					await this.localStorageService.clear();
 				}
+
+				/* tslint:disable-next-line:ban */
+				localStorage.setItem(
+					'clearLocalStorageFlag',
+					this.clearLocalStorageFlag
+				);
 			}
 			catch {}
 
