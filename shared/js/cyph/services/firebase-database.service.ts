@@ -1156,7 +1156,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public async setItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T
+		value: T,
+		confirmSuccess: boolean = true
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -1201,7 +1202,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 
 					/* Download content to verify that upload was successful */
-					await this.downloadItem<T>(url, proto, hash).result;
+					if (confirmSuccess) {
+						await this.downloadItem<T>(url, proto, hash).result;
+					}
 
 					this.cache.setItem(url, data, hash);
 				}
@@ -1266,7 +1269,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public uploadItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T
+		value: T,
+		confirmSuccess?: boolean
 	) : {
 		cancel: () => void;
 		progress: Observable<number>;
@@ -1276,7 +1280,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const progress = new BehaviorSubject(0);
 
 		const result = this.ngZone.runOutsideAngular(async () => {
-			const setItemResult = await this.setItem(urlPromise, proto, value);
+			const setItemResult = await this.setItem(
+				urlPromise,
+				proto,
+				value,
+				confirmSuccess
+			);
 
 			/* TODO: Do this for real */
 			this.ngZone.run(() => {

@@ -730,12 +730,13 @@ export class DatabaseService extends DataManagerService {
 	public async setItem<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T
+		value: T,
+		confirmSuccess?: boolean
 	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
-		return this.uploadItem(url, proto, value).result;
+		return this.uploadItem(url, proto, value, confirmSuccess).result;
 	}
 
 	/** Sets a list's value. */
@@ -806,7 +807,8 @@ export class DatabaseService extends DataManagerService {
 	public uploadItem<T> (
 		_URL: MaybePromise<string>,
 		_PROTO: IProto<T>,
-		_VALUE: T
+		_VALUE: T,
+		_CONFIRM_SUCCESS?: boolean
 	) : {
 		cancel: () => void;
 		progress: Observable<number>;

@@ -728,7 +728,8 @@ export class AccountAuthService extends BaseProvider {
 						await this.databaseService.setItem(
 							`pendingSignupInviteCodes/${username}`,
 							StringProto,
-							inviteCode
+							inviteCode,
+							false
 						);
 					}
 
