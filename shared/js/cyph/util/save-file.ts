@@ -87,10 +87,14 @@ export const saveFile = async (
 				fileWriteResult
 			]);
 
+			const maxFileNameLength = env.isMobileOS ? 24 : 48;
+
 			const shouldOpenFile = await dialogService.toast(
-				`${translate('Saved')} ${savedFileName} ${translate(
-					'to downloads folder.'
-				)}`,
+				`${translate('Saved')} ${
+					savedFileName.length > maxFileNameLength ?
+						`${savedFileName.slice(0, maxFileNameLength - 3)}...` :
+						savedFileName
+				} ${translate('to downloads folder.')}`,
 				3000,
 				stringsService.open
 			);
