@@ -24,6 +24,7 @@ import {FileService} from '../cyph/services/file.service';
 import {HtmlSanitizerService} from '../cyph/services/html-sanitizer.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {NotificationService} from '../cyph/services/notification.service';
+import {StringsService} from '../cyph/services/strings.service';
 import {email} from '../cyph/util/email';
 import {resolveStaticServices} from '../cyph/util/static-services';
 import {BetaRegisterComponent} from './components/beta-register';
@@ -111,6 +112,7 @@ export class AppModule implements DoBootstrap {
 		_ANALYTICS_SERVICE: AnalyticsService,
 		dialogService: DialogService,
 		fileService: FileService,
+		stringsService: StringsService,
 
 		/** @ignore */
 		private readonly injector: Injector
@@ -122,7 +124,8 @@ export class AppModule implements DoBootstrap {
 			domSanitizer,
 			fileService,
 			httpClient,
-			ngZone
+			ngZone,
+			stringsService
 		});
 	}
 }

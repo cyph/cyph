@@ -25,6 +25,7 @@ import {DialogService} from '../cyph/services/dialog.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {FileService} from '../cyph/services/file.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
+import {StringsService} from '../cyph/services/strings.service';
 import {resolveStaticServices} from '../cyph/util/static-services';
 import {appRoutes} from './app-routes';
 import {AppService} from './app.service';
@@ -82,7 +83,8 @@ export class AppModule {
 		databaseService: DatabaseService,
 		dialogService: DialogService,
 		fileService: FileService,
-		localStorageService: LocalStorageService
+		localStorageService: LocalStorageService,
+		stringsService: StringsService
 	) {
 		router.resetConfig(appRoutes);
 
@@ -95,7 +97,8 @@ export class AppModule {
 			domSanitizer,
 			fileService,
 			httpClient,
-			ngZone
+			ngZone,
+			stringsService
 		});
 	}
 }

@@ -27,6 +27,7 @@ import {PotassiumService} from './js/cyph/services/crypto/potassium.service';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {FileService} from './js/cyph/services/file.service';
 import {LocalStorageService} from './js/cyph/services/local-storage.service';
+import {StringsService} from './js/cyph/services/strings.service';
 import {resolveStaticServices} from './js/cyph/util/static-services';
 import {NativeDialogService} from './native-dialog.service';
 import {NativeLocalStorageService} from './native-local-storage.service';
@@ -77,7 +78,8 @@ export class AppModule {
 		ngZone: NgZone,
 		router: Router,
 		dialogService: DialogService,
-		fileService: FileService
+		fileService: FileService,
+		stringsService: StringsService
 	) {
 		router.resetConfig(appRoutes);
 
@@ -85,7 +87,8 @@ export class AppModule {
 			dialogService,
 			fileService,
 			httpClient,
-			ngZone
+			ngZone,
+			stringsService
 		});
 	}
 }

@@ -4,6 +4,7 @@ import {DomSanitizer, SafeValue} from '@angular/platform-browser';
 import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
 import {FileService} from '../services/file.service';
+import {StringsService} from '../services/strings.service';
 import {resolvable} from './wait';
 
 /** Resolvable dialogService. */
@@ -63,18 +64,30 @@ const resolvableNgZone = resolvable<NgZone>();
 /** @see NgZone */
 export const staticNgZone = resolvableNgZone.promise;
 
+/** Resolvable stringsService. */
+const resolvableStringsService = !env.isMainThread ?
+	undefined :
+	resolvable<StringsService>();
+
+/** @ignore */
+export const staticStringsService = resolvableStringsService ?
+	resolvableStringsService.promise :
+	Promise.reject('Strings service not found.');
+
 export const resolveStaticServices = ({
 	dialogService,
 	domSanitizer,
 	fileService,
 	httpClient,
-	ngZone
+	ngZone,
+	stringsService
 }: {
 	dialogService?: DialogService;
 	domSanitizer?: DomSanitizer;
 	fileService?: FileService;
 	httpClient?: HttpClient;
 	ngZone: NgZone;
+	stringsService?: StringsService;
 }) => {
 	if (dialogService && resolvableDialogService) {
 		resolvableDialogService.resolve(dialogService);
@@ -93,4 +106,8 @@ export const resolveStaticServices = ({
 	}
 
 	resolvableNgZone.resolve(ngZone);
+
+	if (resolvableStringsService && stringsService) {
+		resolvableStringsService.resolve(stringsService);
+	}
 };

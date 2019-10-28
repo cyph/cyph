@@ -17,6 +17,7 @@ import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {DialogService} from '../cyph/services/dialog.service';
 import {MaterialDialogService} from '../cyph/services/material-dialog.service';
+import {StringsService} from '../cyph/services/strings.service';
 import {email} from '../cyph/util/email';
 import {resolveStaticServices} from '../cyph/util/static-services';
 
@@ -51,6 +52,7 @@ export class AppModule implements DoBootstrap {
 		analyticsService: AnalyticsService,
 		configService: ConfigService,
 		dialogService: DialogService,
+		stringsService: StringsService,
 
 		/** @ignore */
 		private readonly injector: Injector
@@ -63,7 +65,8 @@ export class AppModule implements DoBootstrap {
 			dialogService,
 			domSanitizer,
 			httpClient,
-			ngZone
+			ngZone,
+			stringsService
 		});
 	}
 }
