@@ -329,12 +329,11 @@ export class AccountService extends BaseProvider {
 				this.windowWatcherService.visibility
 					.pipe(skip(1))
 					.subscribe(async visible => {
-						document.body.classList.add('soft-lock');
-
 						if (!visible) {
 							return;
 						}
 
+						document.body.classList.add('soft-lock');
 						if (await this.fingerprintService.authenticate()) {
 							document.body.classList.remove('soft-lock');
 							return;
