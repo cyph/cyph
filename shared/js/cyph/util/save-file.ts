@@ -106,7 +106,7 @@ export const saveFile = async (
 			try {
 				await new Promise<void>((resolve, reject) => {
 					(<any> self).cordova.plugins.fileOpener2.showOpenWithDialog(
-						fsURL.slice(0, -9) + fileEntry.fullPath,
+						fsURL.slice(0, -9) + <string> fileEntry.fullPath,
 						fileMediaType,
 						{
 							error: reject,
