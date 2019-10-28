@@ -30,6 +30,7 @@ import {ScrollService} from '../../services/scroll.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
 import {trackBySelf} from '../../track-by/track-by-self';
+import {copyToClipboard} from '../../util/clipboard';
 import {readableByteLength} from '../../util/formatting';
 import {sleep, waitForIterable} from '../../util/wait';
 
@@ -175,6 +176,21 @@ export class ChatMessageComponent extends BaseProvider
 			this.unconfirmedMessages &&
 			(this.message.authorType !== ChatMessage.AuthorTypes.Local ||
 				!(this.message.id in this.unconfirmedMessages))
+		);
+	}
+
+	/** Copies message content to clipboard. */
+	public async copyToClipboard (quote: boolean = false) : Promise<void> {
+		if (!(this.message && this.message.value && this.message.value.text)) {
+			return;
+		}
+
+		await copyToClipboard(
+			quote ?
+				this.message.value.text.replace(/(^|\n)(.)/g, '$1> $2') :
+				this.message.value.text,
+			this.stringsService.messageCopied,
+			this.stringsService.clipboardCopyFail
 		);
 	}
 

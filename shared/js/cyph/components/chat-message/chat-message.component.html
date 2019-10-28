@@ -43,7 +43,7 @@
 				</div>
 			</div>
 			<div
-				[fxFlex]="mobile ? undefined : '6em'"
+				[fxFlex]="mobile ? undefined : '8em'"
 				fxLayoutAlign="end center"
 				class="message-timestamp"
 			>
@@ -53,6 +53,12 @@
 						{{message?.author | async}} &nbsp;&mdash;&nbsp;
 					</div>
 					-->
+
+					<ng-container *ngIf="mobile">
+						<ng-container
+							*ngTemplateOutlet="messageCopy"
+						></ng-container>
+					</ng-container>
 
 					<div>{{ message?.timeString }}</div>
 
@@ -67,6 +73,12 @@
 							*ngTemplateOutlet="messageConfirmation"
 						></ng-container>
 					</div>
+
+					<ng-container *ngIf="!mobile">
+						<ng-container
+							*ngTemplateOutlet="messageCopy"
+						></ng-container>
+					</ng-container>
 
 					<!--
 					<div *ngIf='mobile && message?.authorType === authorTypes.Remote'>
@@ -389,6 +401,29 @@
 			></cyph-markdown>
 		</ng-template>
 	</span>
+</ng-template>
+
+<ng-template #messageCopy>
+	<button
+		mat-icon-button
+		[matMenuTriggerFor]="clipboardCopyMenu"
+		matTooltip="Copy to Clipboard"
+		cyphTranslate
+		class="clipboard-copy-menu"
+		[class.visibility-hidden]="
+			!((message?.valueWatcher | async)?.text?.length > 0)
+		"
+	>
+		<mat-icon>content_copy</mat-icon>
+	</button>
+	<mat-menu #clipboardCopyMenu="matMenu">
+		<button mat-menu-item (click)="copyToClipboard()" cyphTranslate>
+			Copy Message
+		</button>
+		<button mat-menu-item (click)="copyToClipboard(true)" cyphTranslate>
+			Quote Message
+		</button>
+	</mat-menu>
 </ng-template>
 
 <ng-template #messageLoading>

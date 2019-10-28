@@ -34,6 +34,17 @@
 	}
 }
 
+.clipboard-copy-menu {
+	margin-top: -4px;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+
+	mat-icon {
+		@include icon-size(14px);
+	}
+}
+
 .confirmation-checks {
 	vertical-align: middle;
 
@@ -64,6 +75,15 @@
 		color: $cyph-hyperlinks-mobile !important;
 		font-weight: bold;
 	}
+
+	.clipboard-copy-menu {
+		margin-top: -8px;
+	}
+	&.author-remote .clipboard-copy-menu {
+		margin-top: -6px;
+		margin-left: -8px;
+	}
+
 	.confirmation-checks mat-icon {
 		@include icon-size(12px);
 

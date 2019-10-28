@@ -198,6 +198,9 @@ export class StringsService extends BaseProvider {
 	public readonly clickHere = `Click here`;
 
 	/** @see StringsService */
+	public readonly clipboardCopyFail = `Automated clipboard copy unsupported in this browser.`;
+
+	/** @see StringsService */
 	public readonly company = `${this.internalCompany}`;
 
 	/** @see StringsService */
@@ -427,9 +430,6 @@ export class StringsService extends BaseProvider {
 	)} link copied.`;
 
 	/** @see StringsService */
-	public readonly linkCopyFail = `Automated clipboard copy unsupported in this browser.`;
-
-	/** @see StringsService */
 	public readonly linkEmailSubject = `${this.internalProductShort} Chat Invite`;
 
 	/** @see StringsService */
@@ -493,6 +493,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly messageConfirmed = `Message delivery confirmed`;
+
+	/** @see StringsService */
+	public readonly messageCopied = `Message copied.`;
 
 	/** @see StringsService */
 	public readonly messages = `messages`;

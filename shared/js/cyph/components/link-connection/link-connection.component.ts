@@ -89,14 +89,13 @@ export class LinkConnectionComponent extends BaseProvider
 
 	/** Copies link to clipboard. */
 	public async copyToClipboard () : Promise<void> {
-		await lockTryOnce(this.copyLock, async () => {
-			await this.dialogService.toast(
-				await copyToClipboard(this.linkConstant)
-					.then(() => this.stringsService.linkCopied)
-					.catch(() => this.stringsService.linkCopyFail),
-				2500
-			);
-		});
+		await lockTryOnce(this.copyLock, async () =>
+			copyToClipboard(
+				this.linkConstant,
+				this.stringsService.linkCopied,
+				this.stringsService.clipboardCopyFail
+			)
+		);
 	}
 
 	/** Emails link. */
