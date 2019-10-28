@@ -257,13 +257,22 @@ export class AccountAuthService extends BaseProvider {
 				return;
 			}
 
-			const [pinDuration, pinTimestamp, timestamp] = await Promise.all([
+			const [
+				masterKeyUnconfirmed,
+				pinDuration,
+				pinTimestamp,
+				timestamp
+			] = await Promise.all([
+				this.localStorageService.hasItem('unconfirmedMasterKey'),
 				this.localStorageService.getItem('pinDuration', NumberProto),
 				this.localStorageService.getItem('pinTimestamp', NumberProto),
 				getTimestamp()
 			]);
 
-			if (timestamp > pinDuration + pinTimestamp) {
+			if (
+				masterKeyUnconfirmed ||
+				timestamp > pinDuration + pinTimestamp
+			) {
 				await removePIN();
 			}
 			else {
