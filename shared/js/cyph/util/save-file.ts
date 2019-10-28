@@ -36,12 +36,10 @@ export const saveFile = async (
 				return shareFile(content, fileName, mediaType);
 			}
 
+			const fsURL = 'file:///storage/emulated/0/Download';
+
 			const fs = await new Promise<any>((resolve, reject) => {
-				(<any> self).resolveLocalFileSystemURL(
-					'file:///storage/emulated/0/Download',
-					resolve,
-					reject
-				);
+				(<any> self).resolveLocalFileSystemURL(fsURL, resolve, reject);
 			});
 
 			/* If balls.png already exists, try balls.0.png, balls.1.png, etc. */
@@ -104,7 +102,7 @@ export const saveFile = async (
 			try {
 				await new Promise<void>((resolve, reject) => {
 					(<any> self).cordova.plugins.fileOpener2.showOpenWithDialog(
-						fileEntry.fullPath,
+						fsURL.slice(0, -9) + fileEntry.fullPath,
 						fileMediaType,
 						{
 							error: reject,
