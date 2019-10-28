@@ -91,7 +91,7 @@ export const saveFile = async (
 				};
 			});
 
-			const cordovaWriteBlockSize = 524288;
+			const cordovaWriteBlockSize = 1048576;
 
 			const fileBlobParts = new Array(
 				Math.ceil(fileBlob.size / cordovaWriteBlockSize)
