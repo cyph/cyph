@@ -349,111 +349,130 @@ export class AccountAuthService extends BaseProvider {
 
 			errorLogMessage = 'getting loginData';
 
-			const loginData = await this.getItem(
+			const loginDataPromise = this.getItem(
 				`users/${username}/loginData`,
 				AccountLoginData,
 				masterKey
 			);
 
-			/* Temporary workaround for migrating users to latest Potassium.Box */
-
-			try {
-				await this.databaseService.login(
-					username,
-					loginData.secondaryPassword
-				);
-			}
-			catch (err) {
-				if (loginData.oldSecondaryPassword) {
-					await this.databaseService.login(
-						username,
-						loginData.oldSecondaryPassword
-					);
-				}
-				else {
-					throw err;
-				}
-			}
-
-			const oldEncryptionKeyPair = await this.getItem<IKeyPair>(
-				`users/${username}/encryptionKeyPair`,
-				KeyPair,
-				loginData.symmetricKey
+			const userPromise = this.accountUserLookupService.getUser(
+				username,
+				false,
+				undefined,
+				true
 			);
 
-			if (
-				oldEncryptionKeyPair.publicKey.length !==
-				(await this.potassiumService.box.publicKeyBytes)
-			) {
-				debugLog(
-					() => 'Regenerating encryption key pair',
-					() => ({oldEncryptionKeyPair})
-				);
+			const agseConfirmedPromise = this.accountUserLookupService.exists(
+				username,
+				false,
+				true
+			);
 
-				const newEncryptionKeyPair = await this.potassiumService.box.keyPair();
+			const loginData = await loginDataPromise;
 
-				await Promise.all([
-					this.setItem(
-						`users/${username}/encryptionKeyPair`,
-						KeyPair,
-						newEncryptionKeyPair,
+			errorLogMessage = 'getting user data';
+
+			const getUserData = async () =>
+				Promise.all([
+					agseConfirmedPromise,
+					(async () => {
+						/* Temporary workaround for migrating users to latest Potassium.Box */
+
+						const kp = await this.getItem<IKeyPair>(
+							`users/${username}/encryptionKeyPair`,
+							KeyPair,
+							loginData.symmetricKey
+						);
+
+						if (
+							kp.publicKey.length ===
+							(await this.potassiumService.box.publicKeyBytes)
+						) {
+							return kp;
+						}
+
+						debugLog(
+							() => 'Regenerating encryption key pair',
+							() => ({oldEncryptionKeyPair: kp})
+						);
+
+						const newEncryptionKeyPair = await this.potassiumService.box.keyPair();
+
+						await Promise.all([
+							this.setItem(
+								`users/${username}/encryptionKeyPair`,
+								KeyPair,
+								newEncryptionKeyPair,
+								loginData.symmetricKey
+							),
+							this.setItem(
+								`users/${username}/publicEncryptionKey`,
+								BinaryProto,
+								newEncryptionKeyPair.publicKey,
+								(await this.getItem(
+									`users/${username}/signingKeyPair`,
+									KeyPair,
+									loginData.symmetricKey
+								)).privateKey,
+								true,
+								true
+							)
+						]);
+
+						debugLog(
+							() => 'Regenerated encryption key pair',
+							() => ({newEncryptionKeyPair})
+						);
+
+						return newEncryptionKeyPair;
+					})(),
+					this.localStorageService.hasItem('username'),
+					this.localStorageService
+						.hasItem('unconfirmedMasterKey')
+						.then(b => !b),
+					this.getItem(
+						`users/${username}/pin/hash`,
+						BinaryProto,
 						loginData.symmetricKey
 					),
-					this.setItem(
-						`users/${username}/publicEncryptionKey`,
-						BinaryProto,
-						newEncryptionKeyPair.publicKey,
-						(await this.getItem(
+					this.databaseService.hasItem(
+						`users/${username}/pseudoAccount`
+					),
+					(async () => {
+						const kp = await this.getItem(
 							`users/${username}/signingKeyPair`,
 							KeyPair,
 							loginData.symmetricKey
-						)).privateKey,
-						true,
-						true
-					)
+						);
+
+						if (
+							(await agseConfirmedPromise) &&
+							!this.potassiumService.compareMemory(
+								kp.publicKey,
+								(await this.accountDatabaseService.getUserPublicKeys(
+									username
+								)).signing
+							)
+						) {
+							throw new Error('Invalid certificate.');
+						}
+
+						return kp;
+					})(),
+					userPromise
 				]);
 
-				debugLog(
-					() => 'Regenerated encryption key pair',
-					() => ({newEncryptionKeyPair})
-				);
-			}
-
-			errorLogMessage = 'getting user';
-
+			/* Test to see if we can fetch user data before initiating fresh log-in */
 			const [
-				user,
 				agseConfirmed,
-				pseudoAccount,
+				encryptionKeyPair,
+				hasSavedUsername,
 				masterKeyConfirmed,
-				hasSavedUsername
-			] = await Promise.all([
-				this.accountUserLookupService.getUser(
-					username,
-					false,
-					undefined,
-					true
-				),
-				this.accountUserLookupService.exists(username, false, true),
-				this.databaseService.hasItem(`users/${username}/pseudoAccount`),
-				this.localStorageService
-					.hasItem('unconfirmedMasterKey')
-					.then(b => !b),
-				this.localStorageService.hasItem('username')
-			]);
-
-			if (!user) {
-				throw new Error('User does not exist.');
-			}
-
-			try {
-				/* Test to see if we can fetch user data before initiating fresh log-in */
-				await this.databaseService.getItem(
-					`users/${username}/plan`,
-					BinaryProto
-				);
-			}
-			catch {
+				pinHash,
+				pseudoAccount,
+				signingKeyPair,
+				user
+			] = await getUserData().catch(async () => {
 				errorLogMessage = 'database service login';
 
 				try {
@@ -473,38 +492,18 @@ export class AccountAuthService extends BaseProvider {
 						throw err;
 					}
 				}
+
+				return getUserData();
+			});
+
+			if (!user) {
+				throw new Error('User does not exist.');
 			}
-
-			errorLogMessage = 'getting signingKeyPair';
-
-			const signingKeyPair = await this.getItem(
-				`users/${username}/signingKeyPair`,
-				KeyPair,
-				loginData.symmetricKey
-			);
-
-			if (
-				agseConfirmed &&
-				!this.potassiumService.compareMemory(
-					signingKeyPair.publicKey,
-					(await this.accountDatabaseService.getUserPublicKeys(
-						username
-					)).signing
-				)
-			) {
-				throw new Error('Invalid certificate.');
-			}
-
-			errorLogMessage = 'getting encryptionKeyPair';
 
 			this.accountDatabaseService.currentUser.next({
 				agseConfirmed,
 				keys: {
-					encryptionKeyPair: await this.getItem(
-						`users/${username}/encryptionKeyPair`,
-						KeyPair,
-						loginData.symmetricKey
-					),
+					encryptionKeyPair,
 					signingKeyPair,
 					symmetricKey: loginData.symmetricKey
 				},
@@ -575,13 +574,6 @@ export class AccountAuthService extends BaseProvider {
 				.registerPushNotifications(`users/${username}/messagingTokens`)
 				.catch(() => {});
 
-			errorLogMessage = 'getting pinHash';
-
-			const pinHash = await this.accountDatabaseService.getItem(
-				'pin/hash',
-				BinaryProto
-			);
-
 			errorLogMessage = 'saving credentials';
 
 			try {
@@ -605,33 +597,36 @@ export class AccountAuthService extends BaseProvider {
 			catch {}
 
 			await Promise.all([
-				this.localStorageService.setItem(
-					'masterKey',
-					BinaryProto,
-					/* Locally encrypt master key with PIN */
-					pinHash.length > 0 ?
-						await this.potassiumService.secretBox.seal(
-							masterKey,
-							pinHash
-						) :
-						masterKey
-				),
-				this.localStorageService.setItem(
-					'pinIsCustom',
-					BinaryProto,
-					await this.accountDatabaseService.getItem(
-						'pin/isCustom',
-						BinaryProto
-					)
-				),
-				this.localStorageService.setItem(
-					'username',
-					StringProto,
-					agseConfirmed ?
-						(await user.accountUserProfile.getValue())
-							.realUsername :
-						username
-				),
+				(async () =>
+					this.localStorageService.setItem(
+						'masterKey',
+						BinaryProto,
+						/* Locally encrypt master key with PIN */
+						pinHash.length > 0 ?
+							await this.potassiumService.secretBox.seal(
+								masterKey,
+								pinHash
+							) :
+							masterKey
+					))(),
+				(async () =>
+					this.localStorageService.setItem(
+						'pinIsCustom',
+						BinaryProto,
+						await this.accountDatabaseService.getItem(
+							'pin/isCustom',
+							BinaryProto
+						)
+					))(),
+				(async () =>
+					this.localStorageService.setItem(
+						'username',
+						StringProto,
+						agseConfirmed ?
+							(await user.accountUserProfile.getValue())
+								.realUsername :
+							username
+					))(),
 				this.savePIN(pinHash)
 			]);
 		}
