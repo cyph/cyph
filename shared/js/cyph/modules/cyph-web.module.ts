@@ -152,7 +152,11 @@ import {CyphSharedModule} from './cyph-shared.module';
 	]
 })
 export class CyphWebModule {
-	constructor (sanitizer: DomSanitizer, matIconRegistry: MatIconRegistry) {
+	constructor (
+		sanitizer: DomSanitizer,
+		matIconRegistry: MatIconRegistry,
+		localStorageService: LocalStorageService
+	) {
 		/* Custom Icons */
 
 		matIconRegistry.addSvgIcon(
@@ -217,5 +221,9 @@ export class CyphWebModule {
 				'/assets/img/iconfinder/walkie-talkie.svg'
 			)
 		);
+
+		/* For debugging */
+
+		(<any> self).localStorageService = localStorageService;
 	}
 }
