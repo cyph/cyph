@@ -468,7 +468,7 @@
 			$event.stopPropagation()
 		"
 		*ngIf="
-			currentUser.confirmed &&
+			currentUser.agseConfirmed &&
 			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster)
 		"
 	>

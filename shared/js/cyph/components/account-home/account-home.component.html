@@ -6,7 +6,7 @@
 <ng-template #contactsHome>
 	<ng-container
 		*ngIf="
-			(accountDatabaseService.currentUser | async)?.confirmed &&
+			(accountDatabaseService.currentUser | async)?.agseConfirmed &&
 				envService.isMobile | async;
 			else sidebarHome
 		"
@@ -27,7 +27,9 @@
 			<ng-container *ngTemplateOutlet="logoTemplate"></ng-container>
 		</div>
 
-		<div *ngIf="!(accountDatabaseService.currentUser | async)?.confirmed">
+		<div
+			*ngIf="!(accountDatabaseService.currentUser | async)?.agseConfirmed"
+		>
 			<a
 				mat-fab
 				cyphTranslate
@@ -67,7 +69,8 @@
 					matTooltipPosition="above"
 					[href]="envService.appUrl + '#account-burner/chat'"
 					*ngIf="
-						(accountDatabaseService.currentUser | async)?.confirmed
+						(accountDatabaseService.currentUser | async)
+							?.agseConfirmed
 					"
 				>
 					<mat-icon>whatshot</mat-icon>
@@ -81,7 +84,8 @@
 					matTooltipPosition="above"
 					[href]="envService.cyphImUrl"
 					*ngIf="
-						!(accountDatabaseService.currentUser | async)?.confirmed
+						!(accountDatabaseService.currentUser | async)
+							?.agseConfirmed
 					"
 				>
 					<mat-icon>whatshot</mat-icon>
@@ -140,7 +144,7 @@
 
 <div
 	*ngIf="
-		(accountDatabaseService.currentUser | async)?.confirmed &&
+		(accountDatabaseService.currentUser | async)?.agseConfirmed &&
 		!envService.isTelehealth &&
 		(envService.isMobile | async)
 	"
@@ -245,7 +249,7 @@
 
 <div
 	*ngIf="
-		(accountDatabaseService.currentUser | async)?.confirmed &&
+		(accountDatabaseService.currentUser | async)?.agseConfirmed &&
 		envService.isTelehealth &&
 		!envService.isTelehealthFull &&
 		(envService.isMobile | async)

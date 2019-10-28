@@ -16,7 +16,9 @@
 			*ngIf="stateValue === states.default; else changePassword"
 		>
 			<mat-form-field
-				*ngIf="(accountDatabaseService.currentUser | async)?.confirmed"
+				*ngIf="
+					(accountDatabaseService.currentUser | async)?.agseConfirmed
+				"
 			>
 				<input
 					matInput
@@ -94,7 +96,9 @@
 			<div></div>
 
 			<ng-container
-				*ngIf="(accountDatabaseService.currentUser | async)?.confirmed"
+				*ngIf="
+					(accountDatabaseService.currentUser | async)?.agseConfirmed
+				"
 			>
 				<mat-accordion>
 					<mat-expansion-panel>

@@ -111,7 +111,8 @@
 			[matMenuTriggerFor]="addContactMenu"
 			class="add-contact"
 			*ngIf="
-				(accountDatabaseService.currentUser | async)?.confirmed === true
+				(accountDatabaseService.currentUser | async)?.agseConfirmed ===
+				true
 			"
 		>
 			<span

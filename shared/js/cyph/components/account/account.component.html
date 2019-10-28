@@ -232,7 +232,7 @@
 		[fxFlex]="accountService.menuExpandedMinWidthPX"
 		[fxShow]="
 			!envService.isTelehealth &&
-			(accountDatabaseService.currentUser | async)?.confirmed === true
+			(accountDatabaseService.currentUser | async)?.agseConfirmed === true
 		"
 		fxLayout="column"
 		class="sidebar contacts"

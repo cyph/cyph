@@ -78,7 +78,7 @@
 		<mat-nav-list>
 			<ng-container
 				*ngIf="
-					currentUser.confirmed &&
+					currentUser.agseConfirmed &&
 					envService.isTelehealthFull &&
 					(currentUser.user.userType | async) ===
 						accountUserTypes.Standard &&
@@ -125,7 +125,7 @@
 			</ng-container>
 
 			<ng-container
-				*ngIf="currentUser.confirmed && envService.isTelehealth"
+				*ngIf="currentUser.agseConfirmed && envService.isTelehealth"
 			>
 				<a
 					mat-list-item
@@ -165,7 +165,7 @@
 
 			<ng-container
 				*ngIf="
-					currentUser.confirmed &&
+					currentUser.agseConfirmed &&
 					envService.isTelehealthFull &&
 					(currentUser.user.userType | async) !==
 						accountUserTypes.TelehealthDoctor
@@ -188,7 +188,7 @@
 
 			<ng-container
 				*ngIf="
-					currentUser.confirmed &&
+					currentUser.agseConfirmed &&
 					envService.isTelehealthFull &&
 					(currentUser.user.userType | async) !==
 						accountUserTypes.Standard
@@ -238,7 +238,9 @@
 			</ng-container>
 
 			<ng-container
-				*ngIf="currentUser.confirmed && !envService.isTelehealthFull"
+				*ngIf="
+					currentUser.agseConfirmed && !envService.isTelehealthFull
+				"
 			>
 				<a
 					mat-list-item
