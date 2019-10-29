@@ -27,6 +27,8 @@ export const saveFile = async (
 	beforeUnloadMessage = undefined;
 
 	try {
+		fileName = (fileName.match(/[\w\-. ]/g) || []).join('');
+
 		const fileMediaType =
 			mediaType && mediaType.indexOf('/') > 0 ?
 				mediaType :
