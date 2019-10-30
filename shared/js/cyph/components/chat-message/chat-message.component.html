@@ -415,6 +415,11 @@
 			envService.isMobileOS ||
 			!((message?.valueWatcher | async)?.text?.length > 0)
 		"
+		*ngIf="
+			!mobile ||
+			!envService.isMobileOS ||
+			(message?.valueWatcher | async)?.text?.length > 0
+		"
 	>
 		<mat-icon>content_copy</mat-icon>
 	</button>
