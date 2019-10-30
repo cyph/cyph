@@ -25,6 +25,10 @@ catch (_) {}
 var isHiddenService	= false;
 var packageName		= 'cyph.app';
 
+if (storage.betaTestUser) {
+	packageName		= 'beta.cyph.app';
+}
+
 /* Get user's current location to choose optimal CDN node */
 Promise.resolve().then(function () {
 	if (isHiddenService) {
