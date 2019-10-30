@@ -243,8 +243,8 @@ elif [ "${branch}" == 'beta-staging' ] ; then
 elif \
 	[ "${branch}" == 'staging' ] || \
 	[ "${branch}" == 'beta' ] || \
-	[ "${branch}" == 'master' ] \
-; then
+	[ "${branch}" == 'master' ]
+then
 	mainEnvironment="$(processEnvironmentName "${branch}")"
 else
 	mainEnvironment="$(processEnvironmentName dev)"
@@ -332,8 +332,8 @@ getEnvironment () {
 	elif \
 		[ "${version}" == 'staging' ] || \
 		[ "${version}" == 'beta' ] || \
-		[ "${version}" == 'master' ] \
-	; then
+		[ "${version}" == 'master' ]
+	then
 		processEnvironmentName "${version}"
 	else
 		processEnvironmentName dev
@@ -656,8 +656,8 @@ for d in $compiledProjects ; do
 
 	if \
 		( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) || \
-		( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ) \
-	; then
+		( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] )
+	then
 		ng build --sourceMap false --configuration "${environment}" || fail
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || fail
