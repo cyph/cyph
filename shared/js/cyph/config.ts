@@ -28,6 +28,13 @@ export class Config {
 		}
 	];
 
+	/** Whitelist of users to serve beta package to. */
+	public readonly betaTestUsers: Set<string> = new Set([
+		'cyph',
+		'josh',
+		'ryan'
+	]);
+
 	/** User-facing email addresses to include in places like contact forms. */
 	public readonly contactEmailAddresses: string[] = [
 		'hello',
