@@ -23,6 +23,7 @@ firebaseBackup=''
 customBuild=''
 saveBuildArtifacts=''
 wpPromote=''
+betaProd=''
 debug=''
 debugProdBuild=''
 skipWebsite=''
@@ -173,12 +174,13 @@ log 'Initial setup'
 # Branch config setup
 eval "$(./commands/getgitdata.sh)"
 
-staging=''
 if [ "${branch}" == 'prod' ] ; then
 	branch='staging'
-
-	if [ "${test}" ] && [ ! "${simple}" ] ; then
-		staging=true
+elif [ "${branch}" == 'beta' ] && [ ! "${simple}" ] ; then
+	if [ "${test}" ] ; then
+		branch='beta-staging'
+	else
+		betaProd=true
 	fi
 elif [ ! "${test}" ] ; then
 	fail 'Cannot do prod deploy from test branch'
@@ -203,7 +205,7 @@ fi
 if [ "${simple}" ] ; then
 	mainVersion="simple-${mainVersion}"
 fi
-if [ ! "${test}" ] ; then
+if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${debug}" ] ; then
 	mainVersion=prod
 fi
 if [ "${debug}" ] ; then
@@ -229,16 +231,20 @@ if [ "${firebaseBackup}" ] ; then
 
 	mainEnvironment="$(processEnvironmentName backup)"
 elif [ ! "${test}" ] ; then
-	if [ "${debug}" ] ; then
+	if [ "${betaProd}" ] ; then
+		mainEnvironment="$(processEnvironmentName betaProd)"
+	elif [ "${debug}" ] ; then
 		mainEnvironment="$(processEnvironmentName debugProd)"
 	else
 		mainEnvironment="$(processEnvironmentName prod)"
 	fi
+elif [ "${branch}" == 'beta-staging' ] ; then
+	mainEnvironment="$(processEnvironmentName beta)"
 elif \
 	[ "${branch}" == 'staging' ] || \
 	[ "${branch}" == 'beta' ] || \
-	[ "${branch}" == 'master' ] \
-; then
+	[ "${branch}" == 'master' ]
+then
 	mainEnvironment="$(processEnvironmentName "${branch}")"
 else
 	mainEnvironment="$(processEnvironmentName dev)"
@@ -321,11 +327,13 @@ getEnvironment () {
 
 	if [ "${version}" == "${mainVersion}" ] ; then
 		echo "${mainEnvironment}"
+	elif [ "${version}" == 'beta-staging' ] ; then
+		processEnvironmentName beta
 	elif \
 		[ "${version}" == 'staging' ] || \
 		[ "${version}" == 'beta' ] || \
-		[ "${version}" == 'master' ] \
-	; then
+		[ "${version}" == 'master' ]
+	then
 		processEnvironmentName "${version}"
 	else
 		processEnvironmentName dev
@@ -345,7 +353,7 @@ projectname () {
 
 	if [ "${simple}" ] || [ "${1}" == 'cyph.com' ] ; then
 		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
-	elif [ "${test}" ] || [ "${debug}" ] ; then
+	elif [ "${test}" ] || [ "${betaProd}" ] || [ "${debug}" ] ; then
 		echo "${version}.${1}"
 	else
 		echo "${1}"
@@ -470,11 +478,6 @@ if [ "${test}" ] ; then
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
 
-	# Disable caching in test environments
-	if [ ! "${staging}" ] ; then
-		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
-	fi
-
 	# if [ "${simple}" ] ; then
 	# 	for yaml in `ls */cyph*.yaml` ; do
 	# 		cat $yaml | perl -pe 's/(- url: .*)/\1\n  login: admin/g' > $yaml.new
@@ -483,6 +486,8 @@ if [ "${test}" ] ; then
 	# fi
 else
 	echo > shared/js/standalone/test-environment-setup.ts
+
+	homeURL='https://www.cyph.com'
 
 	if [ "${debug}" ] ; then
 		homeURL='https://debug-dot-cyph-com-dot-cyphme.appspot.com'
@@ -493,9 +498,14 @@ else
 		sed -i "s|CYPH-IO|https://debug.cyph.app/#burner/io|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-ME|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-VIDEO|https://debug.cyph.app/#burner/video|g" shared/js/cyph/env-deploy.ts
+	elif [ "${betaProd}" ] ; then
+		sed -i "s|${defaultHost}42002|https://beta.cyph.app|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-AUDIO|https://beta.cyph.app/#burner/audio|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IM|https://beta.cyph.app/#burner|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-IO|https://beta.cyph.app/#burner/io|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-ME|https://beta.cyph.app|g" shared/js/cyph/env-deploy.ts
+		sed -i "s|CYPH-VIDEO|https://beta.cyph.app/#burner/video|g" shared/js/cyph/env-deploy.ts
 	else
-		homeURL='https://www.cyph.com'
-
 		sed -i "s|${defaultHost}42002|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-IM|https://cyph.im|g" shared/js/cyph/env-deploy.ts
@@ -646,8 +656,8 @@ for d in $compiledProjects ; do
 
 	if \
 		( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) || \
-		( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] ) \
-	; then
+		( [ "${simple}" ] && [ ! "${simpleProdBuild}" ] )
+	then
 		ng build --sourceMap false --configuration "${environment}" || fail
 	else
 		../commands/prodbuild.sh --configuration "${environment}" || fail
@@ -706,7 +716,7 @@ if [ "${websign}" ] ; then
 
 	packages="${package} ${customBuilds}"
 
-	if [ "${test}" ] || [ "${debug}" ] ; then
+	if [ "${test}" ] || [ "${betaProd}" ] || [ "${debug}" ] ; then
 		mv pkg/cyph.app "pkg/${package}"
 
 		for branchDir in ${branchDirs} ; do
@@ -805,7 +815,7 @@ if [ "${websign}" ] ; then
 	cd ..
 
 	# Publish internal prod branch to public repo
-	if [ ! "${test}" ] && [ ! "${debug}" ] ; then
+	if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${debug}" ] ; then
 		cd "${dir}"
 		git remote add public git@github.com:cyph/cyph.git 2> /dev/null
 		git push public HEAD:master
@@ -846,7 +856,12 @@ done
 
 
 # Firebase deployment
-if ( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && [ ! "${simple}" ] && [ ! "${debug}" ] ; then
+if \
+	( [ ! "${site}" ] || [ "${site}" == 'firebase' ] ) && \
+	[ ! "${simple}" ] && \
+	[ ! "${betaProd}" ] && \
+	[ ! "${debug}" ]
+then
 	if [ ! "${test}" ] ; then
 		firebaseProjects='cyphme'
 	else
@@ -955,7 +970,7 @@ environment="$(getEnvironment ${branchDir})"
 cd ${branchDir}
 
 
-if [ "${debug}" ] ; then
+if [ "${betaProd}" ] || [ "${debug}" ] ; then
 	rm -rf ${prodOnlyProjects} backend
 elif [ "${test}" ] ; then
 	rm -rf ${prodOnlyProjects}
@@ -994,7 +1009,7 @@ if [ "${site}" != 'firebase' ] ; then
 		else
 			ls */*.yaml | grep -v '\.src/'
 		fi
-		if [ ! "${test}" ] && [ ! "${debug}" ] ; then
+		if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${debug}" ] ; then
 			echo dispatch.yaml
 		fi
 	)

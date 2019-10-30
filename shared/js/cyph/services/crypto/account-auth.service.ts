@@ -29,6 +29,7 @@ import {sleep} from '../../util/wait';
 import {reloadWindow} from '../../util/window';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {AnalyticsService} from '../analytics.service';
+import {ConfigService} from '../config.service';
 import {DatabaseService} from '../database.service';
 import {EnvService} from '../env.service';
 import {ErrorService} from '../error.service';
@@ -330,6 +331,14 @@ export class AccountAuthService extends BaseProvider {
 
 		try {
 			username = normalize(username);
+
+			if (this.configService.betaTestUsers.has(username)) {
+				try {
+					/* tslint:disable-next-line:ban */
+					localStorage.setItem('betaTestUser', 'true');
+				}
+				catch {}
+			}
 
 			if (typeof masterKey === 'string') {
 				errorLogMessage = 'password-hashing masterKey';
@@ -929,6 +938,12 @@ export class AccountAuthService extends BaseProvider {
 
 	/** Removes locally saved login credentials. */
 	public async removeSavedCredentials () : Promise<void> {
+		try {
+			/* tslint:disable-next-line:ban */
+			localStorage.removeItem('betaTestUser');
+		}
+		catch {}
+
 		/*
 			This was okay initially, but now doesn't take into account
 			ThreadedPotassiumService caching:
@@ -999,6 +1014,9 @@ export class AccountAuthService extends BaseProvider {
 
 		/** @ignore */
 		private readonly analyticsService: AnalyticsService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,

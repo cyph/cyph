@@ -22,8 +22,8 @@ if \
 		[ "${type}" != 'resolver' ] && \
 		[ "${type}" != 'service' ] \
 	) || \
-	[ "${name}" == '' ] \
-; then
+	[ "${name}" == '' ]
+then
 	echo 'Usage: docker.js generate [component|directive|resolver|service] MyNewThing'
 	exit 1
 fi

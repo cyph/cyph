@@ -42,6 +42,23 @@
 								}
 							]
 						},
+						"betaProd": {
+							"optimization": true,
+							"outputHashing": "all",
+							"sourceMap": false,
+							"extractCss": true,
+							"namedChunks": false,
+							"aot": true,
+							"extractLicenses": true,
+							"vendorChunk": false,
+							"buildOptimizer": true,
+							"fileReplacements": [
+								{
+									"replace": "src/js/environments/environment.ts",
+									"with": "src/js/environments/environment.beta-prod.ts"
+								}
+							]
+						},
 						"debugProd": {
 							"aot": true,
 							"outputHashing": "none",
