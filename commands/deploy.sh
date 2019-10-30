@@ -173,13 +173,8 @@ log 'Initial setup'
 # Branch config setup
 eval "$(./commands/getgitdata.sh)"
 
-staging=''
 if [ "${branch}" == 'prod' ] ; then
 	branch='staging'
-
-	if [ "${test}" ] && [ ! "${simple}" ] ; then
-		staging=true
-	fi
 elif [ ! "${test}" ] ; then
 	fail 'Cannot do prod deploy from test branch'
 elif [ "${allBranches}" ] ; then
@@ -469,11 +464,6 @@ if [ "${test}" ] ; then
 	sed -i "s|CYPH-VIDEO|https://${version}-dot-cyph-video-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 
 	homeURL="https://${version}-dot-cyph-com-dot-cyphme.appspot.com"
-
-	# Disable caching in test environments
-	if [ ! "${staging}" ] ; then
-		ls */*.yaml | xargs -I% sed -i 's|max-age=31536000|max-age=0|g' %
-	fi
 
 	# if [ "${simple}" ] ; then
 	# 	for yaml in `ls */cyph*.yaml` ; do
