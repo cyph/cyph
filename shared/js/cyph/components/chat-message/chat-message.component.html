@@ -405,12 +405,14 @@
 
 <ng-template #messageCopy>
 	<button
+		#clipboardCopyMenuTrigger="matMenuTrigger"
 		mat-icon-button
 		[matMenuTriggerFor]="clipboardCopyMenu"
 		matTooltip="Copy to Clipboard"
 		cyphTranslate
 		class="clipboard-copy-menu"
 		[class.visibility-hidden]="
+			envService.isMobileOS ||
 			!((message?.valueWatcher | async)?.text?.length > 0)
 		"
 	>

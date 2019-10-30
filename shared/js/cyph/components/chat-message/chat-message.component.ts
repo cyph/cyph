@@ -1,4 +1,5 @@
 import {
+	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
@@ -10,8 +11,11 @@ import {
 	Optional,
 	Output,
 	Renderer2,
-	SimpleChanges
+	SimpleChanges,
+	ViewChild
 } from '@angular/core';
+import {MatMenuTrigger} from '@angular/material/menu';
+import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject} from 'rxjs';
@@ -44,7 +48,7 @@ import {sleep, waitForIterable} from '../../util/wait';
 	templateUrl: './chat-message.component.html'
 })
 export class ChatMessageComponent extends BaseProvider
-	implements OnChanges, OnDestroy {
+	implements AfterViewInit, OnChanges, OnDestroy {
 	/** @ignore */
 	private static readonly appeared: BehaviorSubject<Set<string>> = (() => {
 		const ids = new Set<string>();
@@ -124,6 +128,10 @@ export class ChatMessageComponent extends BaseProvider
 	/** @see ChatMessage.AuthorTypes */
 	public readonly authorTypes = ChatMessage.AuthorTypes;
 
+	/** Clipboard copy menu trigger. */
+	@ViewChild(MatMenuTrigger, {static: false})
+	public clipboardCopyMenuTrigger?: MatMenuTrigger;
+
 	/** Fires after message is fully loaded. */
 	@Output() public readonly loaded = new EventEmitter<void>();
 
@@ -192,6 +200,25 @@ export class ChatMessageComponent extends BaseProvider
 			this.stringsService.messageCopied,
 			this.stringsService.clipboardCopyFail
 		);
+	}
+
+	/** @inheritDoc */
+	public ngAfterViewInit () : void {
+		const clipboardCopyMenuTrigger = this.clipboardCopyMenuTrigger;
+
+		if (
+			!this.envService.isMobileOS ||
+			!clipboardCopyMenuTrigger ||
+			!this.elementRef.nativeElement
+		) {
+			return;
+		}
+
+		new Hammer(this.elementRef.nativeElement, {
+			recognizers: [[Hammer.Press, {time: 500}]]
+		}).on('press', () => {
+			clipboardCopyMenuTrigger.openMenu();
+		});
 	}
 
 	/** @inheritDoc */
