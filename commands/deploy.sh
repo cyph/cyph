@@ -301,7 +301,7 @@ if [ "${allBranches}" ] ; then
 
 	for gitBranch in $(git branch | sed 's/^\*//' | grep -vP '^\s*prod$') ; do
 		branchDir="${HOME}/.build/branches/$(
-			echo "${gitBranch}" | perl -pe 's/^beta$/beta-internal/'
+			echo "${gitBranch}" | perl -pe 's/^beta$/beta-staging/'
 		)"
 		branchDirs="${branchDir} ${branchDirs}"
 
