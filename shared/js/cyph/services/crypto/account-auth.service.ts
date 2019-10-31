@@ -332,10 +332,15 @@ export class AccountAuthService extends BaseProvider {
 		try {
 			username = normalize(username);
 
-			if (this.configService.betaTestUsers.has(username)) {
+			if (
+				this.envService.isCordova &&
+				this.configService.betaTestUsers.has(username)
+			) {
 				try {
 					/* tslint:disable-next-line:ban */
 					localStorage.setItem('betaTestUser', 'true');
+					/* tslint:disable-next-line:ban */
+					localStorage.removeItem('webSignPackageTimestamp');
 				}
 				catch {}
 			}
