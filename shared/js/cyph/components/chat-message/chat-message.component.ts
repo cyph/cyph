@@ -204,20 +204,16 @@ export class ChatMessageComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
-		const clipboardCopyMenuTrigger = this.clipboardCopyMenuTrigger;
-
-		if (
-			!this.envService.isMobileOS ||
-			!clipboardCopyMenuTrigger ||
-			!this.elementRef.nativeElement
-		) {
+		if (!this.envService.isMobileOS || !this.elementRef.nativeElement) {
 			return;
 		}
 
 		new Hammer(this.elementRef.nativeElement, {
 			recognizers: [[Hammer.Press, {time: 500}]]
 		}).on('press', () => {
-			clipboardCopyMenuTrigger.openMenu();
+			if (this.clipboardCopyMenuTrigger) {
+				this.clipboardCopyMenuTrigger.openMenu();
+			}
 		});
 	}
 
