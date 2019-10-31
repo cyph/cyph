@@ -4,6 +4,7 @@ jobs:
     branches:
       only:
         - prod
+        - beta
     docker:
       - image: cyph/circleci:latest
     working_directory: /cyph
