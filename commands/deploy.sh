@@ -300,7 +300,9 @@ if [ "${allBranches}" ] ; then
 	cd ~/.cyph/repos/internal
 
 	for gitBranch in $(git branch | sed 's/^\*//' | grep -vP '^\s*prod$') ; do
-		branchDir="${HOME}/.build/branches/${gitBranch}"
+		branchDir="${HOME}/.build/branches/$(
+			echo "${gitBranch}" | perl -pe 's/^beta$/beta-internal/'
+		)"
 		branchDirs="${branchDir} ${branchDirs}"
 
 		git checkout ${gitBranch}
