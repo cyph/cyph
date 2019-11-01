@@ -176,7 +176,7 @@ read -r -d '' modules <<- EOM
 	@yaga/leaflet-ng2
 	angular-fittext
 	angular-material-clock-time-picker
-	angular-speed-dial
+	angular-speed-dial@next
 	angular2-draggable
 	angular2-text-mask
 	animate.css@https://github.com/daneden/animate.css
