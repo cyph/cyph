@@ -14,6 +14,7 @@ cd ~/tmplib/js
 read -r -d '' modules <<- EOM
 	@agm/core
 	@angular/animations
+	@angular/bazel
 	@angular/cdk
 	@angular/cdk-experimental
 	@angular/cli
