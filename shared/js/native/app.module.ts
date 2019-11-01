@@ -12,7 +12,7 @@ import {Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {NativeScriptAnimationsModule} from 'nativescript-angular/animations';
 import {NativeScriptFormsModule} from 'nativescript-angular/forms';
-import {NativeScriptHttpModule} from 'nativescript-angular/http';
+import {NativeScriptHttpClientModule} from 'nativescript-angular/http-client';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {NativeScriptModule} from 'nativescript-angular/nativescript.module';
 import {NativeScriptRouterModule} from 'nativescript-angular/router';
@@ -44,7 +44,7 @@ import {NativeTitleService} from './native-title.service';
 		CyphAppModule,
 		CyphCommonModule,
 		NativeScriptAnimationsModule,
-		NativeScriptHttpModule,
+		NativeScriptHttpClientModule,
 		NativeScriptFormsModule,
 		NativeScriptModule,
 		NativeScriptRouterModule
