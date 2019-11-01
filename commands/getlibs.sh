@@ -81,9 +81,6 @@ sed -i \
 	"s/\!typings/\!typings || typeof typings.replace \!== 'function'/g" \
 	node_modules/@angular/compiler-cli/ngcc/src/packages/entry_point.js
 
-# https://next.angular.io/guide/migration-ngcc
-./node_modules/.bin/ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
-
 rm -rf ~/node_modules
 mv node_modules ~/
 mv ~/native_node_modules ./node_modules
@@ -399,3 +396,8 @@ if [ ! -d oldsupersphincs ] ; then
 	cd oldsupersphincs
 	yarn add supersphincs@old
 fi
+
+# https://next.angular.io/guide/migration-ngcc
+cd /
+rm -rf node_modules/@covalent node_modules/ng2-truncate # entry-point compile errors
+ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
