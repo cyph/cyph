@@ -75,6 +75,10 @@ sudo mv node_modules ~/native_node_modules
 mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/yarn.lock ./
 yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
+
+# https://next.angular.io/guide/migration-ngcc
+./node_modules/.bin/ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
+
 rm -rf ~/node_modules
 mv node_modules ~/
 mv ~/native_node_modules ./node_modules

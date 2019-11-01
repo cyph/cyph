@@ -344,6 +344,7 @@ read -r -d '' modules <<- EOM
 	tns-ios
 	tns-platform-declarations
 	ts-node
+	tslib
 	tslint
 	tslint-consistent-codestyle
 	tslint-eslint-rules
