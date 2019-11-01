@@ -129,7 +129,7 @@ export class ChatMessageComponent extends BaseProvider
 	public readonly authorTypes = ChatMessage.AuthorTypes;
 
 	/** Clipboard copy menu trigger. */
-	@ViewChild(MatMenuTrigger, {static: false})
+	@ViewChild(MatMenuTrigger)
 	public clipboardCopyMenuTrigger?: MatMenuTrigger;
 
 	/** Fires after message is fully loaded. */

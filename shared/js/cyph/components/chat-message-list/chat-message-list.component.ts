@@ -196,7 +196,7 @@ export class ChatMessageListComponent extends BaseProvider
 	@Input() public promptFollowup?: string;
 
 	/** Scroll view element. */
-	@ViewChild('scrollView', {static: false}) public scrollView?: ElementRef;
+	@ViewChild('scrollView') public scrollView?: ElementRef;
 
 	/** Indicates whether disconnect message should be displayed. */
 	@Input() public showDisconnectMessage: boolean = false;

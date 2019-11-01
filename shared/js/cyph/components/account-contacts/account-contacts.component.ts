@@ -153,7 +153,7 @@ export class AccountContactsComponent extends BaseProvider
 	);
 
 	/** @see AccountContactsSearchComponent */
-	@ViewChild(AccountContactsSearchComponent, {static: false})
+	@ViewChild(AccountContactsSearchComponent)
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Full contact list with active contact filtered out. */

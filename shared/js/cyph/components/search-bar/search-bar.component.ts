@@ -93,7 +93,7 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 	@Input() public placeholder: string = this.stringsService.search;
 
 	/** Search bar input element. */
-	@ViewChild('searchInput', {static: false}) public searchInput?: ElementRef;
+	@ViewChild('searchInput') public searchInput?: ElementRef;
 
 	/** Indicates whether spinner should be displayed in search bar. */
 	@Input() public spinner: Observable<boolean> = of(false);

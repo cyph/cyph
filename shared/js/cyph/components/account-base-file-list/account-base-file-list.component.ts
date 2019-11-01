@@ -78,7 +78,7 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	);
 
 	/** @see MatPaginator */
-	@ViewChild(MatPaginator, {static: false}) public paginator?: MatPaginator;
+	@ViewChild(MatPaginator) public paginator?: MatPaginator;
 
 	/** @see readableByteLength */
 	public readonly readableByteLength = readableByteLength;
@@ -91,7 +91,7 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	public readonly recordTypes = AccountFileRecord.RecordTypes;
 
 	/** @see MatSort */
-	@ViewChild(MatSort, {static: false}) public sort?: MatSort;
+	@ViewChild(MatSort) public sort?: MatSort;
 
 	/** @see trackByID */
 	public readonly trackByID = trackByID;

@@ -55,7 +55,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	@Input() public placeholder?: string;
 
 	/** @see SearchBarComponent */
-	@ViewChild(SearchBarComponent, {static: false})
+	@ViewChild(SearchBarComponent)
 	public searchBar?: SearchBarComponent<User>;
 
 	/** @see SearchBarComponent.inputBlur */

@@ -28,7 +28,7 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 })
 export class AccountFileSharingComponent extends BaseProvider {
 	/** @see AccountContactsSearchComponent */
-	@ViewChild(AccountContactsSearchComponent, {static: false})
+	@ViewChild(AccountContactsSearchComponent)
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Function to close dialog. */
