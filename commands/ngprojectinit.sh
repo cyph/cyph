@@ -5,8 +5,16 @@ if [ "$(ls -A node_modules 2> /dev/null)" ] ; then
 	exit
 fi
 
+init=true
+if [ "${1}" == '--deinit' ] ; then
+	init=''
+	shift
+fi
+
 rm src/favicon.ico 2> /dev/null
-cp ../shared/favicon.ico src/
+if [ "${init}" ] ; then
+	cp ../shared/favicon.ico src/
+fi
 
 for arr in \
 	'/node_modules node_modules' \
@@ -15,5 +23,9 @@ for arr in \
 	'../shared/js src/js'
 do
 	read -ra arr <<< "${arr}"
-	bindmount "${arr[0]}" "${arr[1]}"
+	if [ "${init}" ] ; then
+		bindmount "${arr[0]}" "${arr[1]}"
+	else
+		unbindmountInternal "${arr[1]}"
+	fi
 done

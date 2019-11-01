@@ -401,3 +401,9 @@ fi
 cd /
 rm -rf node_modules/@covalent node_modules/ng2-truncate # entry-point compile errors
 ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
+
+# Quick workaround for incomplete compilation in ngcc command
+cd ${dir}/cyph.app
+../commands/ngprojectinit.sh
+ng build
+../commands/ngprojectinit.sh --deinit

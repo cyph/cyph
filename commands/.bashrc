@@ -62,11 +62,14 @@ sha () {
 }
 
 unbindmount () {
+	unbindmountInternal "${1}"
+	rm -rf "${1}"
+}
+
+unbindmountInternal () {
 	if [ ! "${CIRCLECI}" ] ; then
 		sudo umount "${1}"
 	fi
-
-	rm -rf "${1}"
 }
 
 export -f bindmount
@@ -80,6 +83,7 @@ export -f notify
 export -f pass
 export -f sha
 export -f unbindmount
+export -f unbindmountInternal
 
 
 export FIREBASE_CONFIG='{}'
