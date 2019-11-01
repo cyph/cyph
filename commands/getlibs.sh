@@ -76,6 +76,11 @@ mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/yarn.lock ./
 yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
 
+# Temporary workaround for "typings.replace is not a function" bug
+sed -i \
+	"s/\!typings/\!typings || typeof typings.replace \!== 'function'/g" \
+	node_modules/@angular/compiler-cli/ngcc/src/packages/entry_point.js
+
 # https://next.angular.io/guide/migration-ngcc
 ./node_modules/.bin/ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
 
