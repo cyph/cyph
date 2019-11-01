@@ -1,3 +1,45 @@
+<mat-autocomplete
+	#autoComplete="matAutocomplete"
+	(optionSelected)="pushToFilter($event.option.value.toString())"
+>
+	<ng-container
+		*ngIf="options === undefined ? undefined : (options | async) as search"
+	>
+		<mat-option
+			value=""
+			[routerLink]="search.topOption.routerLink"
+			*ngIf="!!search.topOption"
+		>
+			<span *ngIf="search.topOption.text !== undefined">
+				{{ search.topOption.text }}
+			</span>
+		</mat-option>
+		<mat-option
+			[value]="item.value"
+			*ngFor="let item of search.items; trackBy: trackByValue"
+		>
+			<img
+				aria-hidden
+				[src]="item.image | async"
+				[alt]="search.imageAltText"
+				*ngIf="
+					!!search.imageAltText && (item.image | async) !== undefined
+				"
+			/>
+			<span *ngIf="(item.text | async) !== undefined">
+				{{ item.text | async }}
+			</span>
+			<small *ngIf="(item.smallText | async) !== undefined">
+				{{ item.smallText | async }}
+
+				<strong *ngIf="item.matchingText !== undefined">
+					(matches: {{ item.matchingText }})
+				</strong>
+			</small>
+		</mat-option>
+	</ng-container>
+</mat-autocomplete>
+
 <mat-form-field
 	fxFlex
 	class="search-bar"
@@ -67,45 +109,3 @@
 		close
 	</mat-icon>
 </mat-form-field>
-
-<mat-autocomplete
-	#autoComplete="matAutocomplete"
-	(optionSelected)="pushToFilter($event.option.value.toString())"
->
-	<ng-container
-		*ngIf="options === undefined ? undefined : (options | async) as search"
-	>
-		<mat-option
-			value=""
-			[routerLink]="search.topOption.routerLink"
-			*ngIf="!!search.topOption"
-		>
-			<span *ngIf="search.topOption.text !== undefined">
-				{{ search.topOption.text }}
-			</span>
-		</mat-option>
-		<mat-option
-			[value]="item.value"
-			*ngFor="let item of search.items; trackBy: trackByValue"
-		>
-			<img
-				aria-hidden
-				[src]="item.image | async"
-				[alt]="search.imageAltText"
-				*ngIf="
-					!!search.imageAltText && (item.image | async) !== undefined
-				"
-			/>
-			<span *ngIf="(item.text | async) !== undefined">
-				{{ item.text | async }}
-			</span>
-			<small *ngIf="(item.smallText | async) !== undefined">
-				{{ item.smallText | async }}
-
-				<strong *ngIf="item.matchingText !== undefined">
-					(matches: {{ item.matchingText }})
-				</strong>
-			</small>
-		</mat-option>
-	</ng-container>
-</mat-autocomplete>

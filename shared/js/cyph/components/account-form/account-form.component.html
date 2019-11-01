@@ -7,27 +7,27 @@
 				fxLayout="row"
 				*ngIf="!!o?.metadata; else nameHeader"
 			>
-				<mat-card-title>{{
-					(o?.metadata | async)?.name
-				}}</mat-card-title>
-				<div fxFlex fxLayoutAlign="end center">
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip="Edit Form"
-						*ngIf="false"
-					>
-						<mat-icon>edit</mat-icon>
-					</button>
-					<button
-						mat-icon-button
-						cyphTranslate
-						matTooltip="Delete Form"
-						(click)="accountFilesService.remove(o?.metadata)"
-					>
-						<mat-icon>delete</mat-icon>
-					</button>
-				</div>
+				<ng-container *ngIf="o.metadata | async as metadata">
+					<mat-card-title>{{ metadata.name }}</mat-card-title>
+					<div fxFlex fxLayoutAlign="end center">
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Edit Form"
+							*ngIf="false"
+						>
+							<mat-icon>edit</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Delete Form"
+							(click)="accountFilesService.remove(o.metadata)"
+						>
+							<mat-icon>delete</mat-icon>
+						</button>
+					</div>
+				</ng-container>
 			</mat-card-header>
 			<ng-template #nameHeader>
 				<mat-card-header fxLayout="row" *ngIf="!!o?.name">
