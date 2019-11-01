@@ -454,6 +454,7 @@
 		"rxjs-no-nested-subscribe": true,
 		"rxjs-no-operator": false,
 		"rxjs-no-patched": false,
+		"rxjs-no-redundant-notify": true,
 		"rxjs-no-sharereplay": true,
 		"rxjs-no-subclass": true,
 		"rxjs-no-subject-unsubscribe": true,
