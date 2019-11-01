@@ -27,7 +27,7 @@
 			],
 			"crypto": ["js/externals/crypto"],
 			"faye-websocket": ["js/externals/faye-websocket"],
-			"fs": ["js/externals/fs"],
+			/* "fs": ["js/externals/fs"], */
 			"lodash/*": ["node_modules/@types/lodash-es/*"],
 			"libsodium": ["js/externals/libsodium"],
 			"request": ["js/externals/request"],

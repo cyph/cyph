@@ -7,5 +7,6 @@
 		"outDir": "./dist/out-tsc",
 		"typeRoots": ["node_modules/@types"]
 	},
-	"files": ["src/js/cyph.com/main.ts"]
+	"files": ["src/js/cyph.com/main.ts"],
+	"include": ["src/js/cyph.com/main.ts", "src/js/cyph.com/polyfills.ts"]
 }
