@@ -157,7 +157,9 @@ export abstract class SessionService extends BaseProvider
 		}
 
 		await this.castleService.send(
-			await serialize(SessionMessageList, {messages}),
+			await serialize<ISessionMessageList>(SessionMessageList, {
+				messages
+			}),
 			messages[0].data.timestamp
 		);
 	}

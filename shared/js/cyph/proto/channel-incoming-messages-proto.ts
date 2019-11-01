@@ -1,4 +1,7 @@
-import {CastleIncomingMessages} from '../../proto';
+import {
+	CastleIncomingMessages,
+	ICastleIncomingMessages as ICastleIncomingMessagesInternal
+} from '../../proto';
 import {ICastleIncomingMessages} from '../crypto/castle/icastle-incoming-messages';
 import {deserialize, serialize} from '../util/serialization';
 
@@ -43,15 +46,18 @@ export class CastleIncomingMessagesProto {
 	public static async encode (
 		incomingMessages: ICastleIncomingMessages
 	) : Promise<Uint8Array> {
-		return serialize(CastleIncomingMessages, {
-			max: incomingMessages.max,
-			queue: Object.keys(incomingMessages.queue).reduce<{
-				[id: string]: CastleIncomingMessages.ICastleIncomingMessageItem;
-			}>((o, id: any) => {
-				o[id] = {cyphertexts: incomingMessages.queue[id]};
-				return o;
-			}, {})
-		});
+		return serialize<ICastleIncomingMessagesInternal>(
+			CastleIncomingMessages,
+			{
+				max: incomingMessages.max,
+				queue: Object.keys(incomingMessages.queue).reduce<{
+					[id: string]: CastleIncomingMessages.ICastleIncomingMessageItem;
+				}>((o, id: any) => {
+					o[id] = {cyphertexts: incomingMessages.queue[id]};
+					return o;
+				}, {})
+			}
+		);
 	}
 
 	/** @see IProto.verify */

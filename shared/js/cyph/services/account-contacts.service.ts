@@ -279,7 +279,7 @@ export class AccountContactsService extends BaseProvider {
 
 	/** Accepts incoming contact request. */
 	public async acceptContactRequest (username: string) : Promise<void> {
-		await this.accountDatabaseService.setItem(
+		await this.accountDatabaseService.setItem<IAccountContactState>(
 			this.contactURL(username),
 			AccountContactState,
 			{state: AccountContactState.States.Confirmed},
@@ -294,7 +294,7 @@ export class AccountContactsService extends BaseProvider {
 
 	/** Adds contact. */
 	public async addContact (username: string) : Promise<void> {
-		await this.accountDatabaseService.setItem(
+		await this.accountDatabaseService.setItem<IAccountContactState>(
 			this.contactURL(username),
 			AccountContactState,
 			{state: AccountContactState.States.OutgoingRequest},

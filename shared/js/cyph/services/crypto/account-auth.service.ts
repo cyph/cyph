@@ -14,7 +14,11 @@ import {
 	AGSEPKICSR,
 	BinaryProto,
 	BooleanProto,
+	IAccountContactState,
 	IAccountLoginData,
+	IAccountUserProfile,
+	IAccountUserProfileExtra,
+	IAGSEPKICSR,
 	IKeyPair,
 	KeyPair,
 	NumberProto,
@@ -793,7 +797,7 @@ export class AccountAuthService extends BaseProvider {
 							loginData.symmetricKey
 						),
 						inviterUsername && inviterUsername !== username ?
-							this.databaseService.setItem(
+							this.databaseService.setItem<IAccountContactState>(
 								`users/${username}/contacts/${inviterUsername}`,
 								AccountContactState,
 								{
@@ -823,7 +827,7 @@ export class AccountAuthService extends BaseProvider {
 						masterKeyHash
 					)
 				),
-				this.setItem(
+				this.setItem<IAccountUserProfile>(
 					`users/${username}/publicProfile`,
 					AccountUserProfile,
 					{
@@ -849,7 +853,7 @@ export class AccountAuthService extends BaseProvider {
 							email
 						)
 				),
-				this.setItem(
+				this.setItem<IAccountUserProfileExtra>(
 					`users/${username}/publicProfileExtra`,
 					AccountUserProfileExtra,
 					{},
@@ -885,7 +889,7 @@ export class AccountAuthService extends BaseProvider {
 						BinaryProto,
 						new Uint8Array(0)
 					) :
-					this.setItem(
+					this.setItem<IAGSEPKICSR>(
 						`users/${username}/certificateRequest`,
 						AGSEPKICSR,
 						{

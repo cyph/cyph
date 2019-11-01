@@ -5,6 +5,8 @@ import {BehaviorSubject} from 'rxjs';
 import {IProto} from '../iproto';
 import {
 	BinaryProto,
+	ILocalStorageLockMetadata,
+	ILocalStorageValue,
 	LocalStorageLockMetadata,
 	LocalStorageValue
 } from '../proto';
@@ -265,7 +267,11 @@ export class LocalStorageService extends DataManagerService {
 		}
 		finally {
 			if (reason) {
-				await this.setItem(lockURL, LocalStorageLockMetadata, {reason});
+				await this.setItem<ILocalStorageLockMetadata>(
+					lockURL,
+					LocalStorageLockMetadata,
+					{reason}
+				);
 			}
 			else {
 				await this.removeItem(lockURL);
@@ -294,10 +300,13 @@ export class LocalStorageService extends DataManagerService {
 		waitForReady: boolean = true
 	) : Promise<{url: string}> {
 		const promise = (async () => {
-			const data = await serialize(LocalStorageValue, {
-				timestamp: await getTimestamp(),
-				value: await serialize(proto, value)
-			});
+			const data = await serialize<ILocalStorageValue>(
+				LocalStorageValue,
+				{
+					timestamp: await getTimestamp(),
+					value: await serialize(proto, value)
+				}
+			);
 
 			this.cache.set(url, data);
 

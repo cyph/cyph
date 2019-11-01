@@ -1692,7 +1692,7 @@ export class AccountFilesService extends BaseProvider {
 	) : Promise<void> {
 		const original = await this.getFile(id);
 
-		await this.accountDatabaseService.setItem(
+		await this.accountDatabaseService.setItem<IAccountFileRecord>(
 			`users/${original.owner}/fileRecords/${id}`,
 			AccountFileRecord,
 			{
@@ -1887,16 +1887,14 @@ export class AccountFilesService extends BaseProvider {
 						key
 					);
 
-					await this.accountDatabaseService.setItem(
-						`fileReferences/${id}`,
-						AccountFileReference,
-						{
-							id,
-							key: await key,
-							metadata,
-							owner: username
-						}
-					);
+					await this.accountDatabaseService.setItem<
+						IAccountFileReference
+					>(`fileReferences/${id}`, AccountFileReference, {
+						id,
+						key: await key,
+						metadata,
+						owner: username
+					});
 
 					if (typeof shareWithUser === 'string') {
 						await this.shareFile(id, shareWithUser);

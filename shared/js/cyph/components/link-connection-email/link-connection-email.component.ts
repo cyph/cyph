@@ -9,7 +9,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
-import {LinkConnectionEmail} from '../../proto';
+import {LinkConnectionEmail, ILinkConnectionEmail} from '../../proto';
 import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
@@ -60,7 +60,7 @@ export class LinkConnectionEmailComponent extends BaseProvider
 	/** @inheritDoc */
 	public async ngOnDestroy () : Promise<void> {
 		if (this.saveToLocalStorage) {
-			await this.localStorageService.setItem(
+			await this.localStorageService.setItem<ILinkConnectionEmail>(
 				'linkEmail',
 				LinkConnectionEmail,
 				{
