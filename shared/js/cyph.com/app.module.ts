@@ -26,7 +26,6 @@ import {resolveStaticServices} from '../cyph/util/static-services';
  */
 @NgModule({
 	declarations: [CheckoutComponent],
-	entryComponents: [CheckoutComponent],
 	imports: [CyphSharedModule],
 	providers: [
 		AnalyticsService,

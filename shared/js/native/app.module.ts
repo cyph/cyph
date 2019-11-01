@@ -39,7 +39,6 @@ import {NativeTitleService} from './native-title.service';
 @NgModule({
 	bootstrap: [AppComponent],
 	declarations: [AppComponent, DialogMediaComponent],
-	entryComponents: [AppComponent, DialogMediaComponent],
 	imports: [
 		NativeScriptRouterModule.forRoot([]),
 		CyphAppModule,
