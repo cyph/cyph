@@ -119,7 +119,7 @@
 
 		.message-item.ui-style-default.author-remote {
 			margin-left: 5%;
-			border-radius: 0px $mobileMessageBorderRadius
+			border-radius: 0 $mobileMessageBorderRadius
 				$mobileMessageBorderRadius $mobileMessageBorderRadius;
 
 			&:after {
