@@ -6,6 +6,10 @@
  */
 
 import * as $ from 'jquery';
+
+/* TODO: Handle this properly instead of relying on side effects */
+import '../environments';
+
 import {env} from '../cyph/env';
 import {triggerClick} from '../cyph/util/input';
 import {sleep} from '../cyph/util/wait';

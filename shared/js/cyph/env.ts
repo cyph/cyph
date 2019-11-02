@@ -2,7 +2,7 @@
 
 import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {environment} from '../environments';
+import {environment} from '../environments/environment';
 import {config} from './config';
 import {EnvDeploy, envDeploy} from './env-deploy';
 import {IEnvironment} from './proto/types';
