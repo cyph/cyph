@@ -123,5 +123,5 @@ if [ "${submit}" == 'y' ] ; then
 	mkdir -p ~/cloudbuild-staging
 	cp Dockerfile ~/cloudbuild-staging/
 	cd ~/cloudbuild-staging
-	gcloud builds submit --async --tag "gcr.io/cyphme/cyph-serverconfig-${1}" .
+	gcloud builds submit --async --timeout 2h --tag "gcr.io/cyphme/cyph-serverconfig-${1}" .
 fi
