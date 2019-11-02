@@ -9,7 +9,7 @@ import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
-import {LinkConnectionEmail, ILinkConnectionEmail} from '../../proto';
+import {ILinkConnectionEmail, LinkConnectionEmail} from '../../proto';
 import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
