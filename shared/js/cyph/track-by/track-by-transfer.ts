@@ -1,5 +1,5 @@
 import {TrackByFunction} from '@angular/core';
-import {IFileTransfer} from '../proto';
+import {IFileTransfer} from '../proto/types';
 
 /** Transfer track by function. */
 export const trackByTransfer: TrackByFunction<{metadata: IFileTransfer}> = (

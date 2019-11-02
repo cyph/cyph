@@ -7,7 +7,7 @@ import {
 	IForm,
 	IRedoxPatient,
 	IWallet
-} from '../proto';
+} from '../proto/types';
 
 /** Any type of account "file". */
 export type AccountFile =

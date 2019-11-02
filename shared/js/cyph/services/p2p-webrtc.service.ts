@@ -8,7 +8,7 @@ import SimplePeer from 'simple-peer';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
-import {ISessionCommand} from '../proto';
+import {ISessionCommand} from '../proto/types';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {filterUndefinedOperator} from '../util/filter';

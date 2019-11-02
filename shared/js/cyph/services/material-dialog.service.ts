@@ -13,7 +13,7 @@ import {DialogMediaComponent} from '../components/dialog-media';
 import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
-import {IForm} from '../proto';
+import {IForm} from '../proto/types';
 import {asyncToObservable} from '../util/flatten-observable';
 import {lockFunction} from '../util/lock';
 import {resolvable, sleep} from '../util/wait';

@@ -8,7 +8,7 @@ import {
 	IChatLastConfirmedMessage,
 	IChatMessage,
 	ISessionMessageDataList
-} from '../proto';
+} from '../proto/types';
 import {States} from './enums';
 import {IChatMessageLiveValue} from './ichat-message-live-value';
 

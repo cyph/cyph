@@ -7,7 +7,7 @@ import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
 import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
-import {IForm} from '../proto';
+import {IForm} from '../proto/types';
 
 /**
  * Provides modal/dialog functionality.

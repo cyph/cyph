@@ -12,7 +12,7 @@ import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
 import {IQuillDelta} from '../../iquill-delta';
 import {IQuillRange} from '../../iquill-range';
-import {IAccountFileRecord} from '../../proto';
+import {IAccountFileRecord} from '../../proto/types';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';

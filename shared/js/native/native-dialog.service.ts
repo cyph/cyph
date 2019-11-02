@@ -10,7 +10,7 @@ import {BaseProvider} from './js/cyph/base-provider';
 import {IResolvable} from './js/cyph/iresolvable';
 import {LockFunction} from './js/cyph/lock-function-type';
 import {MaybePromise} from './js/cyph/maybe-promise-type';
-import {IForm} from './js/cyph/proto';
+import {IForm} from './js/cyph/proto/types';
 import {DialogService} from './js/cyph/services/dialog.service';
 import {StringsService} from './js/cyph/services/strings.service';
 import {lockFunction} from './js/cyph/util/lock';

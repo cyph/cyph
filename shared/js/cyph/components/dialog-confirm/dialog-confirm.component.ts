@@ -12,7 +12,7 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {SafeUrl} from '@angular/platform-browser';
 import {Observable} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
-import {IForm} from '../../proto';
+import {IForm} from '../../proto/types';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
 import {DynamicFormComponent} from '../dynamic-form';

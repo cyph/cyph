@@ -10,5 +10,7 @@ mkdir shared/js/proto
 pbjs -t static-module types.proto -o shared/js/proto/index.js
 sed -i 's|null|undefined|g' shared/js/proto/index.js
 checkfail
-pbts shared/js/proto/index.js -o shared/js/proto/index.d.ts
+pbts shared/js/proto/index.js -o shared/js/proto/types.d.ts
 checkfail
+touch shared/js/proto/types.js
+echo "export * from './types';" > shared/js/proto/index.d.ts

@@ -5,7 +5,7 @@ import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import {ICastleRatchetState, ICastleRatchetUpdate} from '../../proto';
+import {ICastleRatchetState, ICastleRatchetUpdate} from '../../proto/types';
 import {lockFunction} from '../../util/lock';
 import {resolvable} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';

@@ -3,7 +3,7 @@ import memoize from 'lodash-es/memoize';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
-import {IAccountFileRecord, IAppointment} from '../proto';
+import {IAccountFileRecord, IAppointment} from '../proto/types';
 import {filterUndefined} from '../util/filter';
 import {observableAll} from '../util/observable-all';
 import {watchTimestamp} from '../util/time';

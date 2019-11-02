@@ -1,5 +1,5 @@
 import {IQuillDelta} from '../iquill-delta';
-import {ICalendarInvite, IFileTransfer, IForm} from '../proto';
+import {ICalendarInvite, IFileTransfer, IForm} from '../proto/types';
 
 /** Message value for live editing. */
 export interface IChatMessageLiveValue {

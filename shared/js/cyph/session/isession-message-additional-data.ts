@@ -4,7 +4,7 @@ import {
 	ISessionCommand,
 	ISessionText,
 	ISessionTextConfirmation
-} from '../proto';
+} from '../proto/types';
 
 /** Optional properties of ISessionMessageData. */
 export interface ISessionMessageAdditionalData {

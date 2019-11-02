@@ -1,4 +1,4 @@
-import {IKeyPair} from '../../proto';
+import {IKeyPair} from '../../proto/types';
 
 /** Equivalent to sodium.crypto_box. */
 export interface IBox {

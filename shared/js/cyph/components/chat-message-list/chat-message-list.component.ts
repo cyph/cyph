@@ -24,7 +24,7 @@ import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, IChatData, IMessageListItem, UiStyles} from '../../chat';
 import {MaybePromise} from '../../maybe-promise-type';
-import {IChatMessage} from '../../proto';
+import {IChatMessage} from '../../proto/types';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';

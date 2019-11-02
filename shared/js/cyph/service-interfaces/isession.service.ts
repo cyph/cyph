@@ -5,7 +5,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {
 	ISessionMessage,
 	ISessionMessageData as ISessionMessageDataInternal
-} from '../proto';
+} from '../proto/types';
 import {
 	CastleEvents,
 	ISessionMessageAdditionalData,

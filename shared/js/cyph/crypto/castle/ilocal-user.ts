@@ -1,4 +1,4 @@
-import {IKeyPair} from '../../proto';
+import {IKeyPair} from '../../proto/types';
 
 /**
  * Represents the local user in a Castle session.

@@ -1,4 +1,4 @@
-import {IAccountLoginData, IKeyPair} from '../proto';
+import {IAccountLoginData, IKeyPair} from '../proto/types';
 import {User} from './user';
 
 /** Current user data. */

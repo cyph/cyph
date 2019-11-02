@@ -1,4 +1,4 @@
-import {IEnvironment} from '../cyph/proto';
+import {IEnvironment} from '../cyph/proto/types';
 
 /** @inheritDoc */
 export const environment: IEnvironment = {

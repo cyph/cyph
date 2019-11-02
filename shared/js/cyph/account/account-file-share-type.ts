@@ -1,5 +1,5 @@
 import {MaybePromise} from '../maybe-promise-type';
-import {IAccountFileRecord} from '../proto';
+import {IAccountFileRecord} from '../proto/types';
 import {AccountFile} from './account-file-type';
 
 type AccountFileShareInternal =

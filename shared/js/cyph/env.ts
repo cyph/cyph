@@ -5,7 +5,7 @@ import {map} from 'rxjs/operators';
 import {environment} from '../environments';
 import {config} from './config';
 import {EnvDeploy, envDeploy} from './env-deploy';
-import {IEnvironment} from './proto';
+import {IEnvironment} from './proto/types';
 import {WindowWatcherService} from './services/window-watcher.service';
 import {toBehaviorSubject} from './util/flatten-observable';
 import {toInt} from './util/formatting';

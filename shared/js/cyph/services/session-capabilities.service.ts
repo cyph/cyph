@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
-import {ISessionCapabilities} from '../proto';
+import {ISessionCapabilities} from '../proto/types';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {resolvable} from '../util/wait';

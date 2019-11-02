@@ -1,4 +1,4 @@
-import {IKeyPair} from '../../../proto';
+import {IKeyPair} from '../../../proto/types';
 import {importHelper} from './import-helper';
 
 /** Equivalent to sodium.crypto_box without authentication. */

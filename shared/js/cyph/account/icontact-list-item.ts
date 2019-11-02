@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {IAccountMessagingGroup} from '../proto';
+import {IAccountMessagingGroup} from '../proto/types';
 import {User} from './user';
 
 /** A contact list item. */
