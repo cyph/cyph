@@ -75,6 +75,7 @@ typescriptAssets="$(
 		echo cyph/crypto/potassium/index;
 		echo cyph/dompurify-html-sanitizer;
 		echo cyph/forms/index;
+		echo cyph/plan-config;
 		echo cyph/proto/index;
 		echo cyph/util/index;
 		echo standalone/analytics;

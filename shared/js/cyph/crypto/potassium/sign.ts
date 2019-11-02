@@ -1,7 +1,7 @@
 import * as lz4 from 'lz4';
 import {superSphincs} from 'supersphincs';
 import {IKeyPair} from '../../proto';
-import {retryUntilSuccessful} from '../../util/wait';
+import {retryUntilSuccessful} from '../../util/wait/retry-until-successful';
 import {ISign} from './isign';
 import {potassiumUtil} from './potassium-util';
 

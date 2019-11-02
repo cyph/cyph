@@ -3,7 +3,7 @@ import {mceliece} from 'mceliece';
 import {ntru} from 'ntru';
 import {sidh} from 'sidh';
 import {IKeyPair} from '../../proto';
-import {retryUntilSuccessful} from '../../util/wait';
+import {retryUntilSuccessful} from '../../util/wait/retry-until-successful';
 import {IBox} from './ibox';
 import {IOneTimeAuth} from './ione-time-auth';
 import {ISecretBox} from './isecret-box';
