@@ -86,7 +86,12 @@ if (!IS_WEB) {
 		'FileSaver is only supported in main thread of web environment.';
 }
 
-/* Make sure compiler adds necessary helpers to global scope in threads */
+/* Import TypeScript helpers in Node environments */
 
-/* tslint:disable-next-line:no-async-without-await */
-(async (_O: any, ..._) => {})({...{a: true}, ...{b: false}}, ...Array.from([]));
+try {
+	/* tslint:disable-next-line:no-eval */
+	for (const [k, v] of Object.entries(eval('require')('tslib'))) {
+		(<any> self)[k] = v;
+	}
+}
+catch {}

@@ -52,6 +52,10 @@ export class Thread<T> implements IThread<T> {
 		importScripts('/assets/js/standalone/global.js');
 		/* Import when needed: /assets/js/standalone/node-polyfills.js */
 
+		/* TypeScript helpers */
+
+		importScripts('/assets/node_modules/tslib/tslib.js');
+
 		/* RPC */
 
 		importScripts('/assets/node_modules/comlinkjs/umd/comlink.js');

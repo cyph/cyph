@@ -29,6 +29,16 @@ import '@webcomponents/custom-elements/src/native-shim';
 import '@webcomponents/custom-elements/custom-elements.min';
 
 /***************************************************************************************************
+ * TYPESCRIPT HELPERS
+ */
+
+import * as tslib from 'tslib';
+
+for (const [k, v] of Object.entries(tslib)) {
+	(<any> self)[k] = v;
+}
+
+/***************************************************************************************************
  * APPLICATION IMPORTS
  */
 

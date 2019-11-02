@@ -2,10 +2,13 @@
 
 const fs = require('fs');
 const path = require('path');
+const tslib = require('tslib');
 
 const mangleExceptions = Array.from(
-	new Set(
-		fs
+	new Set([
+		'firebase',
+		...Object.keys(tslib),
+		...(fs
 			.readFileSync(
 				path.join(
 					__dirname,
@@ -18,10 +21,10 @@ const mangleExceptions = Array.from(
 				)
 			)
 			.toString()
-			.match(/[A-Za-z_\$][A-Za-z0-9_\$]*/g)
-			.concat(['firebase'])
-	)
+			.match(/[A-Za-z_\$][A-Za-z0-9_\$]*/g) || [])
+	])
 ).sort();
+
 if (require.main === module) {
 	console.log(JSON.stringify(mangleExceptions));
 }
