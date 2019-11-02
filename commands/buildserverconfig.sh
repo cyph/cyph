@@ -24,12 +24,12 @@ apt-get -y --allow-downgrades install \
 	apt \
 	apt-transport-https \
 	build-essential \
+	certbot \
 	cron \
 	curl \
 	dpkg \
 	git \
 	gnupg2 \
-	letsencrypt \
 	lsb-release \
 	nano \
 	nginx \

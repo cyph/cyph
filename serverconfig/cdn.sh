@@ -123,6 +123,8 @@ cat > server.js <<- EOM
 			'--expand',
 			'--standalone',
 			'--register-unsafely-without-email',
+			'--server',
+			'https://acme-v02.api.letsencrypt.org/directory',
 			'--csr',
 			__dirname + '/csr.pem',
 			'--fullchain-path',
