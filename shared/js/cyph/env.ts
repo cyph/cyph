@@ -266,7 +266,7 @@ export class Env extends EnvDeploy {
 	public readonly showGranim: boolean =
 		!this.isExtension &&
 		!this.isOldFirefox &&
-		!this.isMobile &&
+		!this.isMobileOS &&
 		!(
 			environment.customBuild &&
 			environment.customBuild.config.backgroundColor
