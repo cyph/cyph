@@ -26,6 +26,7 @@ do
 	if [ "${init}" ] ; then
 		bindmount "${arr[0]}" "${arr[1]}"
 	else
-		unbindmountInternal "${arr[1]}"
+		unbindmount "${arr[1]}"
+		git checkout "${arr[1]}" &> /dev/null
 	fi
 done
