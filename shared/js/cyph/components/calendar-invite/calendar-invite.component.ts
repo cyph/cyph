@@ -60,10 +60,6 @@ export class CalendarInviteComponent extends BaseProvider
 		Date | undefined
 	> = new BehaviorSubject<Date | undefined>(undefined);
 
-	/** Date filter to prevent forbidden days from being selected. */
-	public readonly dateFilter = (d: Date) : boolean =>
-		this.forbiddenDays.indexOf(d.getDay()) < 0;
-
 	/** @see CalendarInvite.DaysOfWeek */
 	public readonly daysOfWeek = CalendarInvite.DaysOfWeek;
 
@@ -122,12 +118,6 @@ export class CalendarInviteComponent extends BaseProvider
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean = this.envService.isMobile.value;
 
-	/** Change event callback. */
-	public onChange: (value: ICalendarInvite) => void = () => {};
-
-	/** Touch event callback. */
-	public onTouched: () => void = () => {};
-
 	/** List of possible reasons for this invite. */
 	@Input() public reasons?: string[];
 
@@ -173,10 +163,20 @@ export class CalendarInviteComponent extends BaseProvider
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
 
+	/** Date filter to prevent forbidden days from being selected. */
+	public readonly dateFilter = (d: Date) : boolean =>
+		this.forbiddenDays.indexOf(d.getDay()) < 0;
+
 	/** Default appointment reason dropdown selection. */
 	public get defaultReasonForAppointment () : string {
 		return this.followUp ? this.stringsService.followUpNoun : '';
 	}
+
+	/** Change event callback. */
+	public onChange: (value: ICalendarInvite) => void = () => {};
+
+	/** Touch event callback. */
+	public onTouched: () => void = () => {};
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {

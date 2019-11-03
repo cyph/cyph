@@ -202,20 +202,6 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	/** Title. */
 	@Input() public title?: string;
 
-	/** @see SearchBarComponent.chipTransform */
-	public readonly userChipTransform: (
-		user?: User
-	) => {
-		smallText?: Async<string>;
-		text: Async<string>;
-	} = user =>
-		!user ?
-			{text: Promise.resolve('')} :
-			{
-				smallText: user.realUsername.pipe(map(s => `@${s}`)),
-				text: user.name
-			};
-
 	/** @see SearchBarComponent.filterChange */
 	@Output() public readonly userFilterChange: EventEmitter<
 		BehaviorSubject<Set<User>>
@@ -246,6 +232,20 @@ export class AccountContactsSearchComponent extends BaseProvider {
 
 		this.getContacts.resolve(contacts);
 	}
+
+	/** @see SearchBarComponent.chipTransform */
+	public readonly userChipTransform: (
+		user?: User
+	) => {
+		smallText?: Async<string>;
+		text: Async<string>;
+	} = user =>
+		!user ?
+			{text: Promise.resolve('')} :
+			{
+				smallText: user.realUsername.pipe(map(s => `@${s}`)),
+				text: user.name
+			};
 
 	constructor (
 		/** @ignore */

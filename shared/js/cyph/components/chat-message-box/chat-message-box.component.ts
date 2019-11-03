@@ -46,11 +46,6 @@ export class ChatMessageBoxComponent extends BaseProvider
 	/** @ignore */
 	private readonly mobileButtonLock: {} = {};
 
-	/** Default sendFunction value. */
-	private readonly defaultSendFunction: () => Promise<void> = async () => {
-		await this.chatService.send(this.messageType);
-	};
-
 	/** If true, autofocuses. */
 	@Input() public autofocus: boolean = true;
 
@@ -112,6 +107,11 @@ export class ChatMessageBoxComponent extends BaseProvider
 
 	/** @see States */
 	public readonly states = States;
+
+	/** Default sendFunction value. */
+	private readonly defaultSendFunction: () => Promise<void> = async () => {
+		await this.chatService.send(this.messageType);
+	};
 
 	/** @ignore */
 	private mobileButtonWrapper (leaveFocused: boolean, f: () => void) : void {

@@ -56,10 +56,6 @@ export abstract class SessionService extends BaseProvider
 	private readonly _OPENED = resolvable(true);
 
 	/** @ignore */
-	private readonly correctSubSession = (message: ISessionMessage) : boolean =>
-		(message.data.sessionSubID || undefined) === this.sessionSubID;
-
-	/** @ignore */
 	private readonly eventManager = new EventManager();
 
 	/** @ignore */
@@ -147,6 +143,10 @@ export abstract class SessionService extends BaseProvider
 	public readonly symmetricKey = new BehaviorSubject<Uint8Array | undefined>(
 		undefined
 	);
+
+	/** @ignore */
+	private readonly correctSubSession = (message: ISessionMessage) : boolean =>
+		(message.data.sessionSubID || undefined) === this.sessionSubID;
 
 	/** Sends messages through Castle. */
 	protected async castleSendMessages (

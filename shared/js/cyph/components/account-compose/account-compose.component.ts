@@ -133,6 +133,65 @@ export class AccountComposeComponent extends BaseProvider
 	/** @see AccountContactsSearchComponent.searchUsername */
 	public readonly searchUsername = new BehaviorSubject('');
 
+	/** Indicates whether message has been sent, or undefined for in-progress. */
+	public readonly sent = new BehaviorSubject<boolean | undefined>(false);
+
+	/** ID of a file that has been sent, if applicable. */
+	public readonly sentFileID = new BehaviorSubject<string | undefined>(
+		undefined
+	);
+
+	/** Metadata of a message that has been sent, if applicable. */
+	public readonly sentMessage = new BehaviorSubject<
+		{id: string; name?: string} | undefined
+	>(undefined);
+
+	/** @see trackBySelf */
+	public readonly trackBySelf = trackBySelf;
+
+	/** @inheritDoc */
+	public async ngOnDestroy () : Promise<void> {
+		super.ngOnDestroy();
+
+		if (this.hasOwnProviders) {
+			await this.sessionService.destroy();
+		}
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.accountChatService.chat.state = States.chat;
+		this.accountChatService.updateChat();
+		this.sessionService.state.isAlive.next(true);
+
+		if (
+			this.accountService.fromEmail.value &&
+			this.accountService.fromName.value
+		) {
+			this.fromDataPreSet.next(true);
+		}
+
+		this.subscriptions.push(
+			this.activatedRoute.params.subscribe(async o => {
+				const username: string | undefined =
+					o.username ||
+					(await this.accountContactsService
+						.getContactUsername(o.contactID)
+						.catch(() => undefined));
+
+				if (!username) {
+					return;
+				}
+
+				this.searchUsername.next(username);
+			})
+		);
+
+		this.scrollService.init();
+		this.accountService.transitionEnd();
+		this.accountService.resolveUiReady();
+	}
+
 	/** Sends message. */
 	/* eslint-disable-next-line complexity */
 	public readonly send = async () => {
@@ -340,65 +399,6 @@ export class AccountComposeComponent extends BaseProvider
 
 		this.sent.next(true);
 	};
-
-	/** Indicates whether message has been sent, or undefined for in-progress. */
-	public readonly sent = new BehaviorSubject<boolean | undefined>(false);
-
-	/** ID of a file that has been sent, if applicable. */
-	public readonly sentFileID = new BehaviorSubject<string | undefined>(
-		undefined
-	);
-
-	/** Metadata of a message that has been sent, if applicable. */
-	public readonly sentMessage = new BehaviorSubject<
-		{id: string; name?: string} | undefined
-	>(undefined);
-
-	/** @see trackBySelf */
-	public readonly trackBySelf = trackBySelf;
-
-	/** @inheritDoc */
-	public async ngOnDestroy () : Promise<void> {
-		super.ngOnDestroy();
-
-		if (this.hasOwnProviders) {
-			await this.sessionService.destroy();
-		}
-	}
-
-	/** @inheritDoc */
-	public ngOnInit () : void {
-		this.accountChatService.chat.state = States.chat;
-		this.accountChatService.updateChat();
-		this.sessionService.state.isAlive.next(true);
-
-		if (
-			this.accountService.fromEmail.value &&
-			this.accountService.fromName.value
-		) {
-			this.fromDataPreSet.next(true);
-		}
-
-		this.subscriptions.push(
-			this.activatedRoute.params.subscribe(async o => {
-				const username: string | undefined =
-					o.username ||
-					(await this.accountContactsService
-						.getContactUsername(o.contactID)
-						.catch(() => undefined));
-
-				if (!username) {
-					return;
-				}
-
-				this.searchUsername.next(username);
-			})
-		);
-
-		this.scrollService.init();
-		this.accountService.transitionEnd();
-		this.accountService.resolveUiReady();
-	}
 
 	constructor (
 		/** @ignore */

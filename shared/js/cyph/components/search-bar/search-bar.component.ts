@@ -43,14 +43,6 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 	/** If true, will use a chip input and return multiple items in filter. */
 	@Input() public chipInput: boolean = false;
 
-	/** Transforms filter value to chip value. */
-	@Input() public chipTransform: (
-		value?: T
-	) => {
-		smallText?: Async<string | undefined>;
-		text: Async<string>;
-	} = value => ({text: <any> value});
-
 	/** Search bar control. */
 	@Input() public control: FormControl = new FormControl();
 
@@ -75,10 +67,6 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 
 	/** Gets chip from filter value. */
 	public readonly getChip = memoize((value?: T) => this.chipTransform(value));
-
-	/** Transforms string value to filter value. */
-	@Input() public filterTransform: (value?: string) => T = value =>
-		<any> value;
 
 	/** Emits on search bar input blur. */
 	@Output() public readonly inputBlur = new EventEmitter<void>();
@@ -113,11 +101,23 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 		}
 	}
 
+	/** Transforms filter value to chip value. */
+	@Input() public chipTransform: (
+		value?: T
+	) => {
+		smallText?: Async<string | undefined>;
+		text: Async<string>;
+	} = value => ({text: <any> value});
+
 	/** Clears filter. */
 	public clearFilter () : void {
 		this.filter.next(new Set());
 		this.clearInput();
 	}
+
+	/** Transforms string value to filter value. */
+	@Input() public filterTransform: (value?: string) => T = value =>
+		<any> value;
 
 	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {
