@@ -57,7 +57,7 @@ export class EventManager {
 	}
 
 	/** Resolves on first occurrence of event. */
-	/* tslint:disable-next-line:invalid-void */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	public async one<T = void> (event: string) : Promise<T> {
 		return new Promise<T>(resolve => {
 			const f = (data: T) => {

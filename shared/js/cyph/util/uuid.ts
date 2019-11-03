@@ -20,7 +20,7 @@ export const uuid = (long: boolean = false) : string => {
 		potassiumUtil.randomBytes(16) :
 		potassiumUtil.concatMemory(
 			true,
-			/* tslint:disable-next-line:ban */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			new Uint32Array([Date.now()]),
 			potassiumUtil.randomBytes(64)
 		);

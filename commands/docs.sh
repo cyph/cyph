@@ -8,7 +8,7 @@ dir="$PWD"
 ./commands/copyworkspace.sh ~/docs
 cd ~/docs/cyph.app
 
-rm -rf src/js/cyph.com src/js/native src/js/tslint-rules "${dir}/docs"
+rm -rf src/js/cyph.com src/js/native "${dir}/docs"
 
 compodoc \
 	-n 'Cyph Docs' \

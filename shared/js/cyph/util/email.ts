@@ -13,10 +13,12 @@ export const email = async (
 		data: {
 			key: 'HNz4JExN1MtpKz8uP2RD1Q',
 			message: {
+				/* eslint-disable-next-line camelcase */
 				from_email: (fromEmail || 'test@mandrillapp.com').replace(
 					'@cyph.com',
 					'@mandrillapp.com'
 				),
+				/* eslint-disable-next-line camelcase */
 				from_name: fromName,
 				subject,
 				text: (

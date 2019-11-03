@@ -13,14 +13,14 @@ const isFirefoxOS =
 
 const isOldIOS =
 	isIOS &&
-	/* tslint:disable-next-line:ban */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	(parseInt((userAgent.match(/os (\d+)_(\d+)_?(\d+)?/) || [])[1], 10) || 0) <
 		9;
 
 const isOldSafari =
 	!isIOS &&
 	navigator.vendor === 'Apple Computer, Inc.' &&
-	/* tslint:disable-next-line:ban */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	(parseInt((userAgent.match(/version\/(\d+)/) || [])[1], 10) || 0) < 9;
 
 const isStockAndroid =

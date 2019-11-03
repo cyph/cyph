@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
@@ -389,7 +389,7 @@ export class ChatService extends BaseProvider {
 						this.chat.messageList
 							.watchFlat(true)
 							.pipe(map(messageIDs => messageIDs.length === 0))
-							/* tslint:disable-next-line:rxjs-no-ignored-subscription */
+							/* eslint-disable-next-line @typescript-eslint/tslint/config */
 							.subscribe(this.chatSelfDestructed);
 
 						this.chatSelfDestructTimer.next(
@@ -468,7 +468,7 @@ export class ChatService extends BaseProvider {
 
 	/** This kills the chat. */
 	private async close () : Promise<void> {
-		/* tslint:disable-next-line:no-lifecycle-call */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		this.ngOnDestroy();
 
 		if (!this.sessionInitService.ephemeral) {
@@ -738,7 +738,7 @@ export class ChatService extends BaseProvider {
 		const newMessages = filterUndefined(
 			await Promise.all(
 				messageInputs.map(
-					/* tslint:disable-next-line:cyclomatic-complexity */
+					/* eslint-disable-next-line complexity */
 					async ({
 						author,
 						hash,
@@ -1216,7 +1216,7 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** Sends a message. */
-	/* tslint:disable-next-line:cyclomatic-complexity */
+	/* eslint-disable-next-line complexity */
 	public async send (
 		messageType: ChatMessageValue.Types = ChatMessageValue.Types.Text,
 		message?: IChatMessageLiveValue,

@@ -1,14 +1,20 @@
-/* tslint:disable:no-import-side-effect no-reference */
-
+/* eslint-disable-next-line @typescript-eslint/triple-slash-reference */
 /// <reference path="../typings/index.d.ts" />
 
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../standalone/global';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../standalone/node-polyfills';
 
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'hammerjs';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'webrtc-adapter';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../standalone/init';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../standalone/test-environment-setup';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../standalone/translations';
 
 import {HttpClient} from '@angular/common/http';

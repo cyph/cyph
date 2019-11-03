@@ -33,7 +33,7 @@ const baseRequest = <R, T>(
 
 	return {
 		progress,
-		/* tslint:disable-next-line:cyclomatic-complexity */
+		/* eslint-disable-next-line complexity */
 		result: (async () => {
 			const httpClient = await staticHttpClient;
 
@@ -93,7 +93,7 @@ const baseRequest = <R, T>(
 						new Promise<HttpResponse<T>>((resolve, reject) => {
 							let last: HttpResponse<T>;
 
-							/* tslint:disable-next-line:rxjs-no-ignored-subscription */
+							/* eslint-disable-next-line @typescript-eslint/tslint/config */
 							req.subscribe(
 								e => {
 									if (
@@ -221,7 +221,7 @@ export const requestMaybeJSON = async (o: {
 	try {
 		return parse(response);
 	}
-	catch (_) {
+	catch {
 		return response;
 	}
 };

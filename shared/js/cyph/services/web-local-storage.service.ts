@@ -19,7 +19,7 @@ export class WebLocalStorageService extends LocalStorageService {
 				Object.keys(localStorage)
 					.filter(key => !key.startsWith('localforage/'))
 					.map(async key => {
-						/* tslint:disable-next-line:ban */
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						const value = localStorage.getItem(key);
 						if (value) {
 							await this.setItem(key, StringProto, value, false);

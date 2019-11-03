@@ -13,7 +13,7 @@ export const formControlMatch = (
 		control =>
 			!safeStringCompare(control.value, o.value) ?
 				{mismatch: true} :
-				/* tslint:disable-next-line:no-null-keyword */
+				/* eslint-disable-next-line no-null/no-null */
 				null
 	]);
 

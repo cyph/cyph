@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -442,7 +442,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				title: this.stringsService.shareEhrDataTitle
 			});
 		}
-		catch (_) {
+		catch {
 			alertPromise = this.dialogService.alert({
 				content: this.stringsService.shareEhrDataFailure,
 				title: this.stringsService.shareEhrDataTitle

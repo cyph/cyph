@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';

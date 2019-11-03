@@ -1,5 +1,3 @@
-/* tslint:disable:object-literal-sort-keys */
-
 import {account, retry} from './js/cyph/routes';
 
 /** @see Routes */

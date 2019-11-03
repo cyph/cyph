@@ -48,7 +48,7 @@ const debugLogInternal = async (
 	}
 	catch {}
 
-	/* tslint:disable-next-line:ban */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	const timestamp = Date.now();
 
 	const log = {
@@ -63,11 +63,11 @@ const debugLogInternal = async (
 	logs.push(log);
 
 	if (error) {
-		/* tslint:disable-next-line:no-console */
+		/* eslint-disable-next-line no-console */
 		console.error(...(argsString ? [argsString] : args));
 	}
 	else {
-		/* tslint:disable-next-line:no-console */
+		/* eslint-disable-next-line no-console */
 		console.log(...(argsString ? [argsString] : args));
 	}
 
@@ -94,7 +94,7 @@ export const debugLogTime = async (
 ) : Promise<void> => {
 	const o = await debugLogInternal(false, args);
 	if (o) {
-		/* tslint:disable-next-line:no-console */
+		/* eslint-disable-next-line no-console */
 		console.log(o.timeDifference);
 	}
 };

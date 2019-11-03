@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
@@ -182,7 +182,7 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @see IChannelHandlers.onOpen */
-	/* tslint:disable-next-line:no-async-without-await */
+	/* eslint-disable-next-line @typescript-eslint/require-await */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		this.state.isAlice.next(isAlice);
 		this.resolveOpened();
@@ -251,7 +251,7 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @ignore */
-	/* tslint:disable-next-line:no-async-without-await */
+	/* eslint-disable-next-line @typescript-eslint/require-await */
 	protected async getSessionMessageAuthor (
 		_MESSAGE: ISessionMessageDataInternal
 	) : Promise<Observable<string> | undefined> {
@@ -262,7 +262,7 @@ export abstract class SessionService extends BaseProvider
 	protected async getSymmetricKey () : Promise<Uint8Array> {
 		return (
 			this.symmetricKey.value ||
-			/* tslint:disable-next-line:no-promise-as-boolean */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			this.symmetricKey
 				.pipe(
 					filterUndefinedOperator(),
@@ -569,7 +569,7 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	/* tslint:disable-next-line:invalid-void */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	public async one<T = void> (event: string) : Promise<T> {
 		this.openEvents.add(event);
 		return this.eventManager.one<T>(event);
@@ -627,7 +627,7 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	/* tslint:disable-next-line:no-async-without-await */
+	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async yt () : Promise<void> {}
 
 	constructor (

@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {
 	ChangeDetectionStrategy,
@@ -229,12 +229,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						value,
 						this.inviteCodeData.value.reservedUsername
 					)) ||
-					/* tslint:disable-next-line:no-promise-as-boolean */
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					this.accountUserLookupService.exists(value, false, false) :
 					true
 			)) ?
 				{usernameTaken: true} :
-				/* tslint:disable-next-line:no-null-keyword */
+				/* eslint-disable-next-line no-null/no-null */
 				null;
 		}
 	]);
@@ -593,7 +593,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 				return !this.inviteCodeData.value.isValid ?
 					{inviteCodeInvalid: true} :
-					/* tslint:disable-next-line:no-null-keyword */
+					/* eslint-disable-next-line no-null/no-null */
 					null;
 			}
 		]);

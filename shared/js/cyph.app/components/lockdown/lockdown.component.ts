@@ -57,7 +57,7 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 			let success = false;
 
 			if (this.correctPassword) {
-				/* tslint:disable-next-line:possible-timing-attack */
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				success = this.password.value === this.correctPassword;
 
 				if (!passive) {
@@ -176,7 +176,7 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');
 		}

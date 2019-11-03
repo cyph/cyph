@@ -89,16 +89,7 @@ export class AccountAppointmentsComponent extends BaseProvider
 	/** @see trackByID */
 	public readonly trackByID = trackByID;
 
-	/** Calendar clickButton event handler. */
-	public calendarClickButton (_EVENT_DETAIL: any) : void {}
-
-	/** Calendar eventClick event handler. */
-	public calendarEventClick (_EVENT_DETAIL: any) : void {}
-
-	/** Calendar eventDrop/eventResize event handler. */
-	public calendarUpdateEvent (_EVENT_DETAIL: any) : void {}
-
-	/** Current time - used to check if appointment is within range. */
+	/** Current time; used to check if appointment is within range. */
 	public readonly timestampWatcher = watchTimestamp();
 
 	/** Accepts appointment request. */
@@ -140,6 +131,15 @@ export class AccountAppointmentsComponent extends BaseProvider
 				})
 		]);
 	}
+
+	/** Calendar clickButton event handler. */
+	public calendarClickButton (_EVENT_DETAIL: any) : void {}
+
+	/** Calendar eventClick event handler. */
+	public calendarEventClick (_EVENT_DETAIL: any) : void {}
+
+	/** Calendar eventDrop/eventResize event handler. */
+	public calendarUpdateEvent (_EVENT_DETAIL: any) : void {}
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {

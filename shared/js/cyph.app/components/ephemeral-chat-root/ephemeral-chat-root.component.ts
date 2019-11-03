@@ -208,7 +208,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			return;
 		}
 
-		/* tslint:disable-next-line:no-unused-expression */
+		/* eslint-disable-next-line no-unused-expressions */
 		new Konami(async () => {
 			if (this.destroyed.value) {
 				return;
@@ -267,7 +267,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 	) {
 		super();
 
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');
 		}

@@ -294,7 +294,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			(<any> self).plugins.appMinimize.minimize();
 		}
 
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');
 		}

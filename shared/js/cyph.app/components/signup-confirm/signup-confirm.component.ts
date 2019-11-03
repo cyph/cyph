@@ -51,7 +51,7 @@ export class SignupConfirmComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof document === 'object' && typeof document.body === 'object') {
 			document.body.classList.remove('primary-account-theme');
 		}

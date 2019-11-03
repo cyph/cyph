@@ -5,7 +5,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {staticDomSanitizer} from './static-services';
 
 /** Converts a URL into a `url()` SafeStyle. */
-/* tslint:disable-next-line:no-null-keyword */
+/* eslint-disable-next-line no-null/no-null */
 export const urlToSafeStyle = memoize(
 	async (
 		url: MaybePromise<string | SafeUrl | null | undefined>

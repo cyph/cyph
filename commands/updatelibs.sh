@@ -172,6 +172,10 @@ read -r -d '' modules <<- EOM
 	@types/simple-peer
 	@types/stacktrace-js
 	@types/video.js
+	@typescript-eslint/eslint-plugin
+	@typescript-eslint/eslint-plugin-tslint
+	@typescript-eslint/parser
+	@typescript-eslint/typescript-estree
 	@webcomponents/custom-elements
 	@yaga/leaflet-ng2
 	angular-fittext
@@ -188,7 +192,6 @@ read -r -d '' modules <<- EOM
 	bourbon@4.2.7
 	braintree-web
 	braintree-web-drop-in
-	check-tslint-all
 	cheerio
 	clean-css-cli
 	clipboard-polyfill
@@ -209,6 +212,11 @@ read -r -d '' modules <<- EOM
 	dope-qr
 	dropzone
 	dwv
+	eslint
+	eslint-plugin-import
+	eslint-plugin-no-null
+	eslint-plugin-prefer-arrow
+	eslint-plugin-unicorn
 	fast-crc32c
 	fast-text-encoding@https://github.com/buu700/fast-text-encoding
 	faye-websocket

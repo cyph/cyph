@@ -66,7 +66,7 @@ export class AccountUserLookupService extends BaseProvider {
 				reservedUsername &&
 				normalize(username) === normalize(reservedUsername)
 			) &&
-			/* tslint:disable-next-line:no-promise-as-boolean */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			this.databaseService
 				.callFunction('usernameBlacklisted', {username})
 				.then(
@@ -191,7 +191,7 @@ export class AccountUserLookupService extends BaseProvider {
 							)
 							.pipe(
 								map(({value}) =>
-									/* tslint:disable-next-line:strict-type-predicates */
+									/* eslint-disable-next-line @typescript-eslint/tslint/config */
 									typeof value === 'string' ||
 									Object.keys(value).length > 0 ?
 										value :
@@ -208,7 +208,7 @@ export class AccountUserLookupService extends BaseProvider {
 							)
 							.pipe(
 								map(({value}) =>
-									/* tslint:disable-next-line:strict-type-predicates */
+									/* eslint-disable-next-line @typescript-eslint/tslint/config */
 									typeof value === 'string' ||
 									Object.keys(value).length > 0 ?
 										value :

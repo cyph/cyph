@@ -10,7 +10,7 @@ export const promiseTimeout = async <T>(
 	typeof timeout === 'number' ?
 		Promise.race([
 			Promise.resolve(promise),
-			sleep(timeout).then(() =>
+			sleep(timeout).then(async () =>
 				Promise.reject(`Timeout of ${timeout} exceeded.`)
 			)
 		]) :

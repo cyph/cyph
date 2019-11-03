@@ -1,4 +1,4 @@
-/* tslint:disable:no-async-without-await */
+/* eslint-disable @typescript-eslint/require-await */
 
 import {BaseProvider} from '../base-provider';
 import {IProto} from '../iproto';

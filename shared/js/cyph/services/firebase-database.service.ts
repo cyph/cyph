@@ -1,11 +1,16 @@
-/* tslint:disable:max-file-line-count no-import-side-effect */
+/* eslint-disable max-lines */
 
 import {Injectable, NgZone} from '@angular/core';
 import firebase from 'firebase/app';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/auth';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/database';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/functions';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/messaging';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/storage';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {filter, skip, take} from 'rxjs/operators';
@@ -158,7 +163,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			await this.workerService.registerServiceWorkerFunction(
 				'FCM',
 				this.envService.firebaseConfig,
-				/* tslint:disable-next-line:no-shadowed-variable */
+				/* eslint-disable-next-line no-shadow */
 				config => {
 					importScripts(
 						'/assets/node_modules/firebase/firebase-app.js'
@@ -381,7 +386,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							'.info/connected'
 						);
 
-						/* tslint:disable-next-line:no-null-keyword */
+						/* eslint-disable-next-line no-null/no-null */
 						const onValue = async (
 							snapshot: firebase.database.DataSnapshot | null
 						) => {
@@ -428,7 +433,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 				const {data, hash, timestamp} = await this.getMetadata(url);
 
-				/* tslint:disable-next-line:possible-timing-attack */
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				if (verifyHash !== undefined && verifyHash !== hash) {
 					throw new Error(
 						'FirebaseDatabaseService.downloadItem verifyHash mismatch: ' +
@@ -472,7 +477,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					url: await this.getStorageDownloadURL(storageRef)
 				});
 
-				/* tslint:disable-next-line:rxjs-no-ignored-subscription */
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				req.progress.subscribe(
 					n => {
 						this.ngZone.run(() => {
@@ -763,7 +768,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							.toPromise()
 							.then(surrenderLock);
 
-						/* tslint:disable-next-line:promise-must-complete */
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						await new Promise<void>(resolve => {
 							onQueueUpdate = async () =>
 								localLock(async () => {
@@ -1172,7 +1177,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				);
 
 				if (
-					/* tslint:disable-next-line:possible-timing-attack */
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					hash !==
 					(await this.getMetadata(url).catch(() => ({
 						hash: undefined
@@ -1384,7 +1389,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							let cleanup: Function;
 							let lastValue: T | undefined;
 
-							/* tslint:disable-next-line:no-null-keyword */
+							/* eslint-disable-next-line no-null/no-null */
 							const onValue = async (
 								snapshot: firebase.database.DataSnapshot | null
 							) => {
@@ -1462,7 +1467,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						new Observable<boolean>(observer => {
 							let cleanup: Function;
 
-							/* tslint:disable-next-line:no-null-keyword */
+							/* eslint-disable-next-line no-null/no-null */
 							const onValue = (
 								snapshot: firebase.database.DataSnapshot | null
 							) => {
@@ -1522,7 +1527,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								const initialValues =
 									(await listRef.once('value')).val() || {};
 
-								/* tslint:disable-next-line:no-null-keyword */
+								/* eslint-disable-next-line no-null/no-null */
 								const getValue = async (snapshot: {
 									key?: string | null;
 									val: () => any;
@@ -1576,7 +1581,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								};
 
 								const onChildAdded = async (
-									/* tslint:disable-next-line:no-null-keyword */
+									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
 								) : Promise<void> => {
 									if (
@@ -1602,7 +1607,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									publishList();
 								};
 
-								/* tslint:disable-next-line:no-null-keyword */
+								/* eslint-disable-next-line no-null/no-null */
 								const onChildChanged = async (
 									snapshot: firebase.database.DataSnapshot | null
 								) => {
@@ -1616,7 +1621,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									publishList();
 								};
 
-								/* tslint:disable-next-line:no-null-keyword */
+								/* eslint-disable-next-line no-null/no-null */
 								const onChildRemoved = async (
 									snapshot: firebase.database.DataSnapshot | null
 								) => {
@@ -1627,7 +1632,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									publishList();
 								};
 
-								/* tslint:disable-next-line:no-null-keyword */
+								/* eslint-disable-next-line no-null/no-null */
 								const onValue = async (
 									snapshot: firebase.database.DataSnapshot | null
 								) => {
@@ -1713,7 +1718,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 								const listRef = await this.getDatabaseRef(url);
 
-								/* tslint:disable-next-line:no-null-keyword */
+								/* eslint-disable-next-line no-null/no-null */
 								const onChildAdded = async (
 									snapshot: firebase.database.DataSnapshot | null,
 									previousKey?: string | null
@@ -1788,7 +1793,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 								let keys: string[] | undefined;
 
-								/* tslint:disable-next-line:no-null-keyword */
+								/* eslint-disable-next-line no-null/no-null */
 								const onValue = (
 									snapshot: firebase.database.DataSnapshot | null
 								) => {
@@ -1883,7 +1888,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								const listRef = await this.getDatabaseRef(url);
 								let initiated = false;
 
-								/* tslint:disable-next-line:no-null-keyword */
+								/* eslint-disable-next-line no-null/no-null */
 								const onChildAdded = async (
 									snapshot: firebase.database.DataSnapshot | null,
 									previousKey?: string | null
@@ -1935,7 +1940,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									}
 								};
 
-								/* tslint:disable-next-line:no-null-keyword */
+								/* eslint-disable-next-line no-null/no-null */
 								const onValue = async (
 									snapshot: firebase.database.DataSnapshot | null
 								) => {

@@ -142,7 +142,7 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
 		this.clearFilter();
-		/* tslint:disable-next-line:no-lifecycle-call */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		super.ngOnDestroy();
 	}
 

@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
@@ -50,6 +50,12 @@ import {PotassiumService} from './potassium.service';
  */
 @Injectable()
 export class AccountDatabaseService extends BaseProvider {
+	/** @ignore */
+	private readonly agsePublicSigningKeys = this.envService.environment
+		.useProdSigningKeys ?
+		publicSigningKeys.prod :
+		publicSigningKeys.test;
+
 	/** @ignore */
 	private readonly cache = {
 		getAsyncList: new Map<any, any>(),
@@ -114,24 +120,6 @@ export class AccountDatabaseService extends BaseProvider {
 				)
 		}
 	};
-
-	/** @ignore */
-	private async getUsernameFromURL (
-		url: MaybePromise<string>,
-		other: boolean = false
-	) : Promise<string> {
-		url = await url;
-
-		return !other ?
-			(url.match(/\/?users\/(.*?)\//) || [])[1] || '' :
-			(url.match(/\/?users\/.*\/([^\/]+)$/) || [])[1] || '';
-	}
-
-	/** @ignore */
-	private readonly agsePublicSigningKeys = this.envService.environment
-		.useProdSigningKeys ?
-		publicSigningKeys.prod :
-		publicSigningKeys.test;
 
 	/** @ignore */
 	private readonly openHelpers = {
@@ -353,6 +341,18 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** @ignore */
+	private async getUsernameFromURL (
+		url: MaybePromise<string>,
+		other: boolean = false
+	) : Promise<string> {
+		url = await url;
+
+		return !other ?
+			(url.match(/\/?users\/(.*?)\//) || [])[1] || '' :
+			(url.match(/\/?users\/.*\/([^\/]+)$/) || [])[1] || '';
+	}
+
+	/** @ignore */
 	private async open<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
@@ -503,7 +503,7 @@ export class AccountDatabaseService extends BaseProvider {
 				anonymous
 			);
 
-			/* tslint:disable-next-line:rxjs-no-ignored-subscription */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			downloadTask.progress.subscribe(
 				n => {
 					progress.next(n);
@@ -540,7 +540,7 @@ export class AccountDatabaseService extends BaseProvider {
 			const localLock = lockFunction();
 
 			/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
-			/* tslint:disable-next-line:no-unnecessary-local-variable */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			const asyncList: IAsyncList<T> = {
 				clear: async () => localLock(async () => this.removeItem(url)),
 				getFlatValue: async () =>
@@ -754,7 +754,7 @@ export class AccountDatabaseService extends BaseProvider {
 			const usernamePromise = this.getUsernameFromURL(url);
 
 			/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
-			/* tslint:disable-next-line:no-unnecessary-local-variable */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			const asyncMap: IAsyncMap<string, T> = {
 				clear: async () => (await baseAsyncMap).clear(),
 				getItem,
@@ -1407,7 +1407,7 @@ export class AccountDatabaseService extends BaseProvider {
 				uploadTask.cancel();
 			});
 
-			/* tslint:disable-next-line:rxjs-no-ignored-subscription */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			uploadTask.progress.subscribe(
 				n => {
 					progress.next(n);

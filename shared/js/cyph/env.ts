@@ -1,4 +1,4 @@
-/* tslint:disable:cyclomatic-complexity */
+/* eslint-disable complexity */
 
 import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -90,9 +90,9 @@ export class Env extends EnvDeploy {
 			environment.debug :
 			environment.local) ||
 		(typeof (<any> localStorage) === 'object' &&
-			/* tslint:disable-next-line:no-unbound-method */
+			/* eslint-disable-next-line @typescript-eslint/unbound-method */
 			typeof (<any> localStorage).getItem === 'function' &&
-			/* tslint:disable-next-line:ban */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.getItem('debug') === 'true');
 
 	/** Indicates whether debug logging is enabled (true by default when debug is true). */

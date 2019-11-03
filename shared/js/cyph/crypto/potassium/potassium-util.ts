@@ -132,7 +132,7 @@ export class PotassiumUtil {
 	public randomBytes (n: number) : Uint8Array {
 		return typeof (<any> crypto).randomBytes === 'function' ?
 			(<any> crypto).randomBytes(n) :
-			/* tslint:disable-next-line:ban */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			crypto.getRandomValues(new Uint8Array(n));
 	}
 

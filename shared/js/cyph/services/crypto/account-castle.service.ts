@@ -40,7 +40,7 @@ export class AccountCastleService extends CastleService {
 	>();
 
 	/** @inheritDoc */
-	/* tslint:disable-next-line:no-async-without-await */
+	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async init (
 		accountSessionService: AccountSessionService
 	) : Promise<void> {

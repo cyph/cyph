@@ -25,9 +25,9 @@ burnerRoot = 'burner';
 
 if (
 	environment.customBuild &&
-	/* tslint:disable-next-line:strict-type-predicates */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	typeof $ === 'function' &&
-	/* tslint:disable-next-line:strict-type-predicates */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	typeof window === 'object'
 ) {
 	for (const k of Object.keys(

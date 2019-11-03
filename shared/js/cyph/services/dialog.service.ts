@@ -1,4 +1,4 @@
-/* tslint:disable:no-async-without-await */
+/* eslint-disable @typescript-eslint/require-await */
 
 import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';

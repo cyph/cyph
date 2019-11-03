@@ -27,7 +27,7 @@ export class ThreadedPotassiumService extends PotassiumUtil
 	/** Flattened proxy for a Potassium object inside a worker. */
 	private readonly potassium = this.workerService
 		.createThread<any>(
-			/* tslint:disable-next-line:only-arrow-functions */
+			/* eslint-disable-next-line prefer-arrow/prefer-arrow-functions */
 			function () : void {
 				importScripts('/assets/js/cyph/crypto/potassium/index.js');
 

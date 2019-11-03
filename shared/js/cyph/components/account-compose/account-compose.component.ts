@@ -134,7 +134,7 @@ export class AccountComposeComponent extends BaseProvider
 	public readonly searchUsername = new BehaviorSubject('');
 
 	/** Sends message. */
-	/* tslint:disable-next-line:cyclomatic-complexity */
+	/* eslint-disable-next-line complexity */
 	public readonly send = async () => {
 		const routeData = await this.activatedRoute.data
 			.pipe(take(1))

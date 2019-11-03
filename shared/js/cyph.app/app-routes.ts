@@ -1,4 +1,4 @@
-/* tslint:disable:object-literal-sort-keys */
+/* eslint-disable @typescript-eslint/tslint/config */
 
 import {Routes} from '@angular/router';
 import {BlankComponent} from '../cyph/components/blank';

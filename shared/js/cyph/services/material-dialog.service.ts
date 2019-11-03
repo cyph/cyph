@@ -276,7 +276,7 @@ export class MaterialDialogService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	/* tslint:disable-next-line:no-async-without-await */
+	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async dismissToast () : Promise<void> {
 		this.matSnackbar.dismiss();
 	}
@@ -310,7 +310,7 @@ export class MaterialDialogService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	/* tslint:disable-next-line:no-async-without-await */
+	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
@@ -325,7 +325,7 @@ export class MaterialDialogService extends BaseProvider
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<IForm | undefined>;
-	/* tslint:disable-next-line:no-async-without-await */
+	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
@@ -339,7 +339,7 @@ export class MaterialDialogService extends BaseProvider
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<any | undefined>;
-	/* tslint:disable-next-line:no-async-without-await */
+	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;

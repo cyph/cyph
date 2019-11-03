@@ -106,7 +106,7 @@ export class AccountChatService extends ChatService {
 		);
 
 		return {
-			/* tslint:disable-next-line:no-async-without-await */
+			/* eslint-disable-next-line @typescript-eslint/require-await */
 			addItem: async (_VALUE: string) => {},
 			clear: async () => asyncMap.clear(),
 			deleteItem: async (value: string) => asyncMap.removeItem(value),

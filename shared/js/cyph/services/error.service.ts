@@ -56,7 +56,7 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 				debugLogError(() => err);
 			}
 			else {
-				/* tslint:disable-next-line:no-console */
+				/* eslint-disable-next-line no-console */
 				console.error(err);
 			}
 		}

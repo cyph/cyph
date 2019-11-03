@@ -28,13 +28,13 @@ export const filterDuplicatesOperator = <T>() : ((
 };
 
 /** Filters out undefined values. */
-/* tslint:disable-next-line:invalid-void */
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 export const filterUndefined = <T>(arr: (T | undefined | void)[]) : T[] =>
 	<T[]> arr.filter(t => t !== undefined);
 
 /** rxjs operator that filters out undefined values. */
 export const filterUndefinedOperator = <T>() =>
-	/* tslint:disable-next-line:invalid-void */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	<(source: Observable<T | undefined | void>) => Observable<T>> (
 		filter<T>(t => t !== undefined)
 	);

@@ -1,7 +1,7 @@
 import {AccountUserPresence} from '../../proto';
 
 /** @see AccountUserPresence.Statuses */
-/* tslint:disable-next-line:variable-name */
+/* eslint-disable-next-line camelcase */
 export const UserPresence = AccountUserPresence.Statuses;
 
 /** @see AccountUserPresence.Statuses */

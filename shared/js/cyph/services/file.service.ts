@@ -72,7 +72,7 @@ export class FileService extends BaseProvider {
 		outputType: string = 'image/png',
 		outputQuality?: number
 	) : Promise<Uint8Array> {
-		/* tslint:disable-next-line:no-unbound-method */
+		/* eslint-disable-next-line @typescript-eslint/unbound-method */
 		if (
 			canvas.toBlob &&
 			!(this.envService.isCordova && this.envService.isAndroid)

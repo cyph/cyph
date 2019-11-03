@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import memoize from 'lodash-es/memoize';
 import {concat, interval, of, timer} from 'rxjs';
@@ -37,7 +37,7 @@ const timestampData = {
 	last: 0,
 	offset: sleep(0)
 		.then(async () => {
-			/* tslint:disable-next-line:ban */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			const start = Date.now();
 			const server = parseFloat(
 				await request({
@@ -46,7 +46,7 @@ const timestampData = {
 					url: env.baseUrl + 'timestamp?' + start.toString()
 				})
 			);
-			/* tslint:disable-next-line:ban */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			const end = Date.now();
 
 			if (server > start && server < end) {
@@ -322,7 +322,7 @@ const getTimestampLock = lockFunction();
  */
 export const getTimestamp = async () =>
 	getTimestampLock(async () => {
-		/* tslint:disable-next-line:ban */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		let unixMilliseconds = Date.now() + (await timestampData.offset);
 
 		if (unixMilliseconds === timestampData.last) {
@@ -350,7 +350,7 @@ export const getTimeString = (
 
 /** Converts a timestamp into a 24-hour time. */
 export const timestampTo24HourTimeString = memoize(
-	/* tslint:disable-next-line:cyclomatic-complexity */
+	/* eslint-disable-next-line complexity */
 	(
 		timestamp?: number,
 		roundToHalfHour: boolean = false,

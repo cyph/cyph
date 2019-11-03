@@ -34,11 +34,11 @@ export class NotificationService extends BaseProvider
 		'/assets/audio/ring.mp3'
 	);
 
-	/** Max ring time. */
-	public readonly ringTimeout: number = 30000;
-
 	/** @ignore */
 	private readonly tag: string = 'NotificationService';
+
+	/** Max ring time. */
+	public readonly ringTimeout: number = 30000;
 
 	/** @ignore */
 	private async createNotification (message: string) : Promise<any> {
@@ -199,19 +199,19 @@ export class NotificationService extends BaseProvider
 													.catch(() => {});
 											}
 										}
-										catch (_) {
+										catch {
 											try {
 												return clientList.openWindow(
 													client
 												);
 											}
-											catch (_) {}
+											catch {}
 										}
 									}
 								})
 						);
 					}
-					catch (_) {}
+					catch {}
 				});
 			})
 			.catch(() => {});

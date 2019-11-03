@@ -16,7 +16,7 @@ if (!('crypto' in self)) {
 			const max = Math.pow(2, bytes * 8) - 1;
 
 			for (let i = 0; i < array.length; ++i) {
-				/* tslint:disable-next-line:ban insecure-random */
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				array[i] = Math.floor(Math.random() * max);
 			}
 

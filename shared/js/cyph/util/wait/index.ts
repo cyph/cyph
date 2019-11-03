@@ -18,12 +18,12 @@ export const awaitAsync = async <T>(value: Async<T>) : Promise<T> => {
 };
 
 /** Returns a promise and its resolver function. */
-/* tslint:disable-next-line:invalid-void */
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 	let resolve: ((t?: T | PromiseLike<T>) => void) | undefined;
 	let reject: ((err?: any) => void) | undefined;
 
-	/* tslint:disable-next-line:promise-must-complete */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	const promise = new Promise<T>((promiseResolve, promiseReject) => {
 		resolve =
 			value === undefined ?

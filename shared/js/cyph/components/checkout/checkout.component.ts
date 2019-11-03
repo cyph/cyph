@@ -1,5 +1,3 @@
-/* tslint:disable:no-import-side-effect */
-
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
@@ -129,35 +127,35 @@ export class CheckoutComponent extends BaseProvider
 	public ngOnInit () : void {
 		/* Workaround for Angular Elements leaving inputs as strings */
 
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.amount === 'string' && this.amount) {
 			this.amount = parseFloat(this.amount);
 		}
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.category === 'string' && this.category) {
 			this.category = parseFloat(this.category);
 		}
 		if (
-			/* tslint:disable-next-line:strict-type-predicates */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			typeof this.extraUserDiscount === 'string' &&
 			this.extraUserDiscount
 		) {
 			this.extraUserDiscount = parseFloat(this.extraUserDiscount);
 		}
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.item === 'string' && this.item) {
 			this.item = parseFloat(this.item);
 		}
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.noSpinnerEnd === 'string') {
 			this.noSpinnerEnd = <any> this.noSpinnerEnd === 'true';
 		}
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.perUser === 'string') {
 			this.perUser = <any> this.perUser === 'true';
 		}
 		if (
-			/* tslint:disable-next-line:strict-type-predicates */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			typeof this.subscriptionType === 'string' &&
 			this.subscriptionType
 		) {

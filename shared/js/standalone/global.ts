@@ -1,4 +1,4 @@
-/* tslint:disable:strict-type-predicates */
+/* eslint-disable @typescript-eslint/tslint/config */
 
 /**
  * @file Normalizes global namespace across varying runtime environments.
@@ -89,7 +89,7 @@ if (!IS_WEB) {
 /* Import TypeScript helpers in Node environments */
 
 try {
-	/* tslint:disable-next-line:no-eval */
+	/* eslint-disable-next-line no-eval */
 	for (const [k, v] of Object.entries(eval('require')('tslib'))) {
 		(<any> self)[k] = v;
 	}

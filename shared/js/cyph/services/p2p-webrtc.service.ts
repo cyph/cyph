@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
@@ -754,7 +754,7 @@ export class P2PWebRTCService extends BaseProvider
 		medium?: 'audio' | 'video',
 		shouldPause?: boolean | {newDeviceID: string}
 	) : Promise<void> {
-		/* tslint:disable-next-line:cyclomatic-complexity */
+		/* eslint-disable-next-line complexity */
 		return this.toggleLock(async () => {
 			const webRTC = await this.getWebRTC();
 

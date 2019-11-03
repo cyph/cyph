@@ -286,7 +286,7 @@ export class AccountComponent extends BaseProvider
 		super();
 
 		if (
-			/* tslint:disable-next-line:strict-type-predicates */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			!(typeof document === 'object' && typeof document.body === 'object')
 		) {
 			return;

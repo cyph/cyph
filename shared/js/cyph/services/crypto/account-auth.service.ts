@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
@@ -319,7 +319,7 @@ export class AccountAuthService extends BaseProvider {
 	 * Logs in.
 	 * @returns Whether login was successful.
 	 */
-	/* tslint:disable-next-line:cyclomatic-complexity */
+	/* eslint-disable-next-line complexity */
 	public async login (
 		username: string,
 		masterKey: string | Uint8Array,
@@ -341,9 +341,9 @@ export class AccountAuthService extends BaseProvider {
 				this.configService.betaTestUsers.has(username)
 			) {
 				try {
-					/* tslint:disable-next-line:ban */
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					localStorage.setItem('betaTestUser', 'true');
-					/* tslint:disable-next-line:ban */
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					localStorage.removeItem('webSignPackageTimestamp');
 				}
 				catch {}
@@ -599,14 +599,14 @@ export class AccountAuthService extends BaseProvider {
 				if (
 					hasSavedUsername &&
 					masterKeyConfirmed &&
-					/* tslint:disable-next-line:ban */
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					localStorage.getItem('clearLocalStorageFlag') !==
 						this.clearLocalStorageFlag
 				) {
 					await this.localStorageService.clear();
 				}
 
-				/* tslint:disable-next-line:ban */
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				localStorage.setItem(
 					'clearLocalStorageFlag',
 					this.clearLocalStorageFlag
@@ -678,7 +678,7 @@ export class AccountAuthService extends BaseProvider {
 			return false;
 		}
 
-		/* tslint:disable-next-line:no-lifecycle-call */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		this.ngOnDestroy();
 
 		if (this.connectTrackerCleanup) {
@@ -948,7 +948,7 @@ export class AccountAuthService extends BaseProvider {
 	/** Removes locally saved login credentials. */
 	public async removeSavedCredentials () : Promise<void> {
 		try {
-			/* tslint:disable-next-line:ban */
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.removeItem('betaTestUser');
 		}
 		catch {}

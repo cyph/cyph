@@ -1,4 +1,4 @@
-/* tslint:disable:object-literal-sort-keys */
+/* eslint-disable @typescript-eslint/tslint/config */
 
 import {Route} from '@angular/router';
 import {AccountComponent} from '../components/account';

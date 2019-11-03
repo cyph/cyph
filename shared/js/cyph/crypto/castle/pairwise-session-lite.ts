@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {IAsyncList} from '../../iasync-list';
 import {IAsyncValue} from '../../iasync-value';

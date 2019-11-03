@@ -272,7 +272,7 @@ export class AccountContactsComponent extends BaseProvider
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
 		this.activeUser.next(undefined);
-		/* tslint:disable-next-line:no-lifecycle-call */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		super.ngOnDestroy();
 	}
 

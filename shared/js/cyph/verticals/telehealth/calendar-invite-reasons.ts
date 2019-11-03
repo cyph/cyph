@@ -16,6 +16,6 @@ export const calendarInviteReasons = [
 	'Injury'
 ].map(
 	/* Temporary workaround for https://github.com/palantir/tslint/issues/2430 */
-	/* tslint:disable-next-line:no-unnecessary-callback-wrapper */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	s => translate(s)
 );

@@ -72,23 +72,13 @@ if [ ! "${htmlOnly}" ] ; then
 	# 	fail 'Component template/stylesheet count mismatch'
 	# fi
 
-	# tslint
+	# eslint
 
 	cd js
-	bindmount /node_modules node_modules
-	mv tslint.json tslint.json.old
-	cat tslint.json.old | grep -v tslint-microsoft-contrib > tslint.json
-	checkTslintAllOutput="$(check-tslint-all 2>&1)"
-	checkfail "${checkTslintAllOutput}"
-	mv tslint.json.old tslint.json
-	unbindmount node_modules
-	cd ..
-
-	tsc --skipLibCheck js/tslint-rules/*.ts || fail
 
 	node -e "
 		const tsconfig = JSON.parse(
-			fs.readFileSync('js/tsconfig.json').toString().
+			fs.readFileSync('tsconfig.json').toString().
 				split('\n').
 				filter(s => s.trim()[0] !== '/').
 				join('\n')
@@ -97,25 +87,20 @@ if [ ! "${htmlOnly}" ] ; then
 		tsconfig.compilerOptions.paths = undefined;
 
 		tsconfig.files =
-			'$(cd js ; find . -type f -name '*.ts' | tr '\n' ' ')typings/index.d.ts'.split(' ')
+			'$(find . -type f -name '*.ts' | tr '\n' ' ')typings/index.d.ts'.split(' ')
 		;
 
 		fs.writeFileSync(
-			'js/tsconfig.tslint.json',
+			'tsconfig.eslint.json',
 			JSON.stringify(tsconfig)
 		);
 	"
 
 	cp ${dir}/shared/lib/js/package.json ./
 
-	output="$(
-		tslint \
-			-e '/node_modules/**' \
-			--project js/tsconfig.tslint.json \
-		2>&1 |
-			if [ "${fast}" ] ; then grep -v js/native/js ; else cat - ; fi |
-			grep -vP "Warning: Cannot read property '.*?' of undefined"
-	)"
+	output="$(eslint -c eslintrc.json --ignore-path .eslintignore '**/*.ts' 2>&1)"
+
+	cd ..
 fi
 
 # htmllint

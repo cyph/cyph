@@ -1,4 +1,4 @@
-/* tslint:disable:no-async-without-await */
+/* eslint-disable @typescript-eslint/require-await */
 
 import {Observable, ReplaySubject, Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';

@@ -1,7 +1,7 @@
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 
 const stringifyInternal = <T>(value: T, space?: string) : string => {
-	/* tslint:disable-next-line:ban */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	return JSON.stringify(
 		value,
 		(_, v) =>
@@ -22,7 +22,7 @@ const stringifyInternal = <T>(value: T, space?: string) : string => {
 
 /** @see JSON.parse */
 export const parse = <T>(text: string) : T => {
-	/* tslint:disable-next-line:ban */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	return JSON.parse(text, (_, v) =>
 		v && v.isUint8Array === true && typeof v.data === 'string' ?
 			potassiumUtil.fromBase64(v.data) :
@@ -39,5 +39,5 @@ export const prettyPrint = <T>(value: T) : string =>
 	stringifyInternal(value, '\t');
 
 /** @see JSON.stringify */
-/* tslint:disable-next-line:no-unnecessary-callback-wrapper */
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 export const stringify = <T>(value: T) : string => stringifyInternal(value);

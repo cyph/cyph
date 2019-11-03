@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import {
 	ChangeDetectionStrategy,
@@ -202,7 +202,7 @@ export class AccountChatComponent extends BaseProvider
 						},
 						UrlSegment[]
 					]) =>
-						/* tslint:disable-next-line:cyclomatic-complexity */
+						/* eslint-disable-next-line complexity */
 						lock(async () => {
 							if (this.destroyed.value) {
 								return;

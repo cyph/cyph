@@ -8,7 +8,7 @@ import {sleep} from '../util/wait';
  * Attempts to block LastPass autofilling.
  */
 @Directive({
-	/* tslint:disable-next-line:directive-selector */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	selector: 'form:not([cyphEnableLastPass]), input:not([cyphEnableLastPass])'
 })
 export class EnableLastPassDirective extends BaseProvider implements OnInit {

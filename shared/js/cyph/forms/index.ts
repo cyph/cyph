@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
@@ -145,7 +145,7 @@ export const newFormElement = <
 >(
 	elementType: Form.Element.Types
 ) =>
-	/* tslint:disable-next-line:cyclomatic-complexity */
+	/* eslint-disable-next-line complexity */
 	(o?: T) => {
 		const element: Form.IElement = {
 			fileName: o && o.fileName,
@@ -546,7 +546,7 @@ export const height = (id: string = 'height') : Form.IElementContainer =>
 		id,
 		false,
 		/* ${val}/12-((${val}/12)Mod1)) is a workaround pending mexp support for floor(${val}/12) */
-		/* tslint:disable-next-line:no-invalid-template-strings */
+		/* eslint-disable-next-line no-template-curly-in-string */
 		'calc(${0}*12+${1})\n[calc(${val}/12-((${val}/12)Mod1)), calc(${val}Mod12)]'
 	);
 

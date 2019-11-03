@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable @typescript-eslint/quotes, max-lines */
 
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
@@ -992,13 +992,24 @@ export class StringsService extends BaseProvider {
 		return s.length < 1 ? '' : s[0].toUpperCase() + s.slice(1);
 	}
 
+	/** Replaces placeholder values in string. */
+	public setParameters (
+		baseString: string,
+		params: Record<string, string>
+	) : string {
+		return Object.entries(params).reduce(
+			(s, [k, v]) => s.replace(`\${${k.toUpperCase()}}`, v),
+			baseString
+		);
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService
 	) {
 		super();
 
-		/* tslint:disable-next-line:no-this-assignment */
+		/* eslint-disable-next-line @typescript-eslint/no-this-alias */
 		const strings: {[k: string]: any} = this;
 
 		for (const k of Object.keys(strings)) {

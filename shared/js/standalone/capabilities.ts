@@ -4,7 +4,7 @@
 
 let cryptoSupported = false;
 try {
-	/* tslint:disable-next-line:ban */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	crypto.getRandomValues(new Uint8Array(1));
 	cryptoSupported = true;
 }

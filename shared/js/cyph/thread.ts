@@ -34,7 +34,7 @@ export class Thread<T> implements IThread<T> {
 					`${(<any> self).locationData.protocol}//${
 						(<any> self).locationData.host
 					}${script}?${
-						/* tslint:disable-next-line:ban */
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						Date.now().toString()
 					}`
 				);
@@ -63,12 +63,12 @@ export class Thread<T> implements IThread<T> {
 		/* Allow destroying the Thread object from within the thread */
 
 		/* This is DedicatedWorkerGlobalScope.postMessage(), not Window.postMessage() */
-		/* tslint:disable-next-line:no-unbound-method */
+		/* eslint-disable-next-line @typescript-eslint/unbound-method */
 		self.close = () => (<any> self).postMessage('cyphThreadClose');
 
 		/* Polyfills */
 
-		/* tslint:disable-next-line:strict-type-predicates */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof console === 'undefined') {
 			console = <any> {
 				assert: () => {},
@@ -133,7 +133,7 @@ export class Thread<T> implements IThread<T> {
 	/** @inheritDoc */
 	public postMessage (o: any) : void {
 		if (this.alive) {
-			/* tslint:disable-next-line:deprecation */
+			/* eslint-disable-next-line import/no-deprecated */
 			this.worker.postMessage(o);
 		}
 	}
@@ -179,7 +179,7 @@ export class Thread<T> implements IThread<T> {
 			try {
 				self.threadSetupVars = ${stringify(threadSetupVars)};
 				${
-					/* tslint:disable-next-line:no-unbound-method */
+					/* eslint-disable-next-line @typescript-eslint/unbound-method */
 					Thread.stringifyFunction(Thread.threadEnvSetup)
 				}
 
@@ -223,7 +223,7 @@ export class Thread<T> implements IThread<T> {
 
 			this.worker = new Worker(env.webSignPaths.worker);
 
-			/* tslint:disable-next-line:deprecation */
+			/* eslint-disable-next-line import/no-deprecated */
 			this.worker.postMessage(threadBody);
 		}
 
@@ -234,11 +234,11 @@ export class Thread<T> implements IThread<T> {
 				}
 				catch {}
 
-				/* tslint:disable-next-line:deprecation */
+				/* eslint-disable-next-line import/no-deprecated */
 				this.worker.postMessage(locals);
 			}
 			else if (e.data === 'cyphThreadRunning') {
-				/* tslint:disable-next-line:no-unnecessary-type-assertion */
+				/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */
 				this.apiResolver.resolve(<any> Comlink.proxy(this.worker));
 			}
 			else if (e.data === 'cyphThreadClose') {

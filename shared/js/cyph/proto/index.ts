@@ -1,4 +1,4 @@
-/* tslint:disable:variable-name */
+/* eslint-disable camelcase */
 
 import {Internal} from '../../proto';
 import {IProto} from '../iproto';

@@ -14,8 +14,8 @@ export class FaviconService extends BaseProvider {
 		apple: (size: string) =>
 			$(`link[rel='apple-touch-icon'][sizes='${size}x${size}']`),
 		icon: (size: string) => $(`link[rel='icon'][sizes='${size}x${size}']`),
-		mask: () => $(`link[rel='mask-icon']`),
-		mstile: () => $(`meta[name='msapplication-TileImage']`),
+		mask: () => $("link[rel='mask-icon']"),
+		mstile: () => $("meta[name='msapplication-TileImage']"),
 		shortcut: (size: string) =>
 			$(`link[rel='shortcut icon'][sizes='${size}x${size}']`)
 	};
@@ -117,7 +117,7 @@ export class FaviconService extends BaseProvider {
 			.attr('href', this.activeFaviconSet.shortcut196);
 	}
 
-	/* tslint:disable-next-line:cyclomatic-complexity */
+	/* eslint-disable-next-line complexity */
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService

@@ -1,4 +1,4 @@
-/* tslint:disable */
+/* eslint-disable */
 
 /** @file request external. */
 

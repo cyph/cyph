@@ -1,4 +1,4 @@
-/* tslint:disable:no-async-without-await */
+/* eslint-disable @typescript-eslint/require-await */
 
 import {BehaviorSubject, Observable} from 'rxjs';
 import {potassiumUtil} from './crypto/potassium/potassium-util';

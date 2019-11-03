@@ -1,4 +1,4 @@
-/* tslint:disable:no-async-without-await */
+/* eslint-disable @typescript-eslint/require-await */
 
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -53,7 +53,7 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>>
 				typeof key === 'number' ||
 				typeof key === 'string' ?
 					`No item ${key.toString()} in async map.` :
-					`Item not found in async map.`
+					'Item not found in async map.'
 			);
 		}
 

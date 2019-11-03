@@ -7,7 +7,7 @@ import {ISodium} from 'libsodium';
  */
 export const webCryptoPolyfill = (seed: Uint8Array) => {
 	try {
-		/* tslint:disable-next-line:ban */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		crypto.getRandomValues(new Uint8Array(1));
 		return;
 	}
@@ -19,13 +19,14 @@ export const webCryptoPolyfill = (seed: Uint8Array) => {
 	let sodiumReadyPromise: Promise<void> | undefined;
 
 	crypto = {
-		/* tslint:disable-next-line:no-null-keyword */
+		/* eslint-disable-next-line no-null/no-null */
 		getRandomValues: <T extends ArrayBufferView | null>(
 			array?: T | null
 		) : T => {
 			if (!array) {
 				throw new TypeError(
 					`Failed to execute 'getRandomValues' on 'Crypto': ${
+						/* eslint-disable-next-line no-null/no-null */
 						array === null ?
 							"parameter 1 is not of type 'ArrayBufferView'" :
 							'1 argument required, but only 0 present'

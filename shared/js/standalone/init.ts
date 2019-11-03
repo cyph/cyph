@@ -1,5 +1,3 @@
-/* tslint:disable:no-import-side-effect */
-
 /**
  * @file Miscellaneous setup tasks performed before running main
  * routine of all Web projects.
@@ -8,6 +6,7 @@
 import * as $ from 'jquery';
 
 /* TODO: Handle this properly instead of relying on side effects */
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../environments';
 
 import {env} from '../cyph/env';
@@ -23,7 +22,7 @@ if (env.isLocalEnv && location.pathname !== '/') {
 
 /* Mobile CSS class */
 
-/* tslint:disable-next-line:rxjs-no-ignored-subscription */
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 env.isMobile.subscribe(isMobile => {
 	document.body.classList.toggle('mobile', isMobile);
 });
@@ -77,11 +76,11 @@ window.addEventListener('beforeunload', e => {
 
 /* Polyfill */
 
-/* tslint:disable-next-line:no-unbound-method */
+/* eslint-disable-next-line @typescript-eslint/unbound-method */
 if (!HTMLElement.prototype.click) {
-	/* tslint:disable-next-line:only-arrow-functions no-unbound-method */
+	/* eslint-disable-next-line @typescript-eslint/unbound-method, prefer-arrow/prefer-arrow-functions */
 	HTMLElement.prototype.click = function (this: HTMLElement) : void {
-		/* tslint:disable-next-line:no-invalid-this */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		triggerClick(this);
 	};
 }

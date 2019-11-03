@@ -1,4 +1,4 @@
-/* tslint:disable:no-import-side-effect */
+/* eslint-disable @typescript-eslint/tslint/config */
 
 /**
  * @file

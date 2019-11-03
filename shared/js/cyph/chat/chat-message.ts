@@ -14,7 +14,7 @@ import {sleep} from '../util/wait';
 /** @inheritDoc */
 export class ChatMessage implements IChatMessage {
 	/** @see ChatMessageInternal.AuthorTypes */
-	/* tslint:disable-next-line:variable-name */
+	/* eslint-disable-next-line camelcase */
 	public static readonly AuthorTypes = ChatMessageInternal.AuthorTypes;
 
 	/** @inheritDoc */

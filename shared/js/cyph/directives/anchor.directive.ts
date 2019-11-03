@@ -5,7 +5,7 @@ import {BaseProvider} from '../base-provider';
  * Adds rel='noopener noreferrer' to all anchor elements.
  */
 @Directive({
-	/* tslint:disable-next-line:directive-selector */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	selector: 'a'
 })
 export class AnchorDirective extends BaseProvider implements OnInit {

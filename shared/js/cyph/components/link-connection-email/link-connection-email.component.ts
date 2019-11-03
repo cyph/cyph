@@ -104,11 +104,12 @@ export class LinkConnectionEmailComponent extends BaseProvider
 	public update () : void {
 		this.linkMailto.next(
 			this.domSanitizer.bypassSecurityTrustUrl(
-				/* tslint:disable-next-line:tab-equals */
 				`mailto:${this.to}?subject=${encodeURIComponent(
 					this.subject
 				)}&body=${encodeURIComponent(
-					this.text.replace(/\${LINK}/g, this.link)
+					this.stringsService.setParameters(this.text, {
+						link: this.link
+					})
 				)}`
 			)
 		);

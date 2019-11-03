@@ -1,9 +1,11 @@
-/* tslint:disable:no-import-side-effect no-reference */
-
+/* eslint-disable-next-line @typescript-eslint/triple-slash-reference */
 /// <reference path="./js/typings/index.d.ts" />
 
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'nativescript-websockets';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import './js/standalone/test-environment-setup';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import './js/standalone/translations';
 
 import {HttpClient} from '@angular/common/http';

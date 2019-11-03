@@ -1,5 +1,4 @@
-/* tslint:disable:max-file-line-count no-import-side-effect */
-/* tslint:disable:no-async-without-await */
+/* eslint-disable @typescript-eslint/require-await, max-lines */
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
@@ -279,7 +278,7 @@ export class DatabaseService extends DataManagerService {
 		const localLock = lockFunction();
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
-		/* tslint:disable-next-line:no-unnecessary-local-variable */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		const asyncList: IAsyncList<T> = {
 			clear: async () => this.removeItem(url),
 			getFlatValue: async () =>
@@ -399,7 +398,7 @@ export class DatabaseService extends DataManagerService {
 		const watchKeys = memoize(() => this.watchListKeys(url, subscriptions));
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
-		/* tslint:disable-next-line:no-unnecessary-local-variable */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		const asyncMap: IAsyncMap<string, T> = {
 			clear: async () => this.removeItem(url),
 			getItem,
@@ -487,14 +486,14 @@ export class DatabaseService extends DataManagerService {
 		});
 
 		/* See https://github.com/Microsoft/tslint-microsoft-contrib/issues/381 */
-		/* tslint:disable-next-line:no-unnecessary-local-variable */
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		const asyncValue: IAsyncValue<T> = {
 			getValue: async () =>
 				localLock(
 					async () : Promise<T> => {
 						const {hash} = await this.getMetadata(url);
 
-						/* tslint:disable-next-line:possible-timing-attack */
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						if (currentHash === hash) {
 							return currentValue;
 						}
@@ -505,7 +504,7 @@ export class DatabaseService extends DataManagerService {
 
 						const value = await this.getItem(url, proto);
 
-						/* tslint:disable-next-line:possible-timing-attack */
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						if (hash !== (await this.getMetadata(url)).hash) {
 							return asyncValue.getValue();
 						}

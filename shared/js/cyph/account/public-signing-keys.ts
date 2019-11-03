@@ -1,4 +1,4 @@
-/* tslint:disable:max-file-line-count */
+/* eslint-disable max-lines */
 
 /** Public signing keys for AGSE-PKI certificate validation. */
 export const publicSigningKeys = {

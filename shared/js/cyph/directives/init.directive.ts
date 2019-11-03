@@ -10,7 +10,7 @@ import {
  * Event that fires on element load.
  */
 @Directive({
-	/* tslint:disable-next-line:directive-selector */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	selector: '[init]'
 })
 export class InitDirective implements OnInit {
