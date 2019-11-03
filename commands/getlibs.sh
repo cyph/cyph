@@ -405,5 +405,6 @@ ngcc --properties es2015 browser module main --first-only --create-ivy-entry-poi
 # Quick workaround for incomplete compilation in ngcc command
 cd ${dir}/cyph.app
 ../commands/ngprojectinit.sh
+../commands/protobuf.sh
 ng build
 ../commands/ngprojectinit.sh --deinit
