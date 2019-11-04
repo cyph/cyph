@@ -171,6 +171,7 @@ dev_appserver.py \
 
 ./commands/buildunbundledassets.sh \
 	$(if [ ! "${CIRCLECI}" ] && [ ! "${prodBuild}" ] ; then echo -n '--test' ; fi)
+checkfail
 
 ./commands/ngassets.sh
 
