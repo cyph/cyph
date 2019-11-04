@@ -403,8 +403,10 @@ rm -rf node_modules/@covalent node_modules/ng2-truncate # entry-point compile er
 ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points
 
 # Quick workaround for incomplete compilation in ngcc command
-cd ${dir}/cyph.app
-../commands/ngprojectinit.sh
-../commands/protobuf.sh
-ng build
-../commands/ngprojectinit.sh --deinit
+if [ -d ${dir}/cyph.app ] ; then
+	cd ${dir}/cyph.app
+	../commands/ngprojectinit.sh
+	../commands/protobuf.sh
+	ng build
+	../commands/ngprojectinit.sh --deinit
+fi
