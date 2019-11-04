@@ -5,6 +5,7 @@ import {Form, IForm} from '../proto';
 
 /** Convenience method for extracting a value from an IForm object. */
 export const {getFormValue} = class {
+	/** @ignore */
 	public static getFormValue (
 		form: IForm | undefined,
 		value: 'boolean',
@@ -12,6 +13,7 @@ export const {getFormValue} = class {
 		containerIndex: number,
 		elementIndex: number
 	) : boolean | undefined;
+	/** @ignore */
 	public static getFormValue (
 		form: IForm | undefined,
 		value: 'bytes',
@@ -19,6 +21,7 @@ export const {getFormValue} = class {
 		containerIndex: number,
 		elementIndex: number
 	) : boolean | undefined;
+	/** @ignore */
 	public static getFormValue (
 		form: IForm | undefined,
 		value: 'number',
@@ -26,6 +29,7 @@ export const {getFormValue} = class {
 		containerIndex: number,
 		elementIndex: number
 	) : number | undefined;
+	/** @ignore */
 	public static getFormValue (
 		form: IForm | undefined,
 		value: 'string',
@@ -33,6 +37,7 @@ export const {getFormValue} = class {
 		containerIndex: number,
 		elementIndex: number
 	) : string | undefined;
+	/** @ignore */
 	public static getFormValue (
 		form: IForm | undefined,
 		value: 'boolean' | 'bytes' | 'number' | 'string',

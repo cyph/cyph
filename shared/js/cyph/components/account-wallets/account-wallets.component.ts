@@ -81,8 +81,6 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		'timestamp'
 	];
 
-	public newWalletName = new BehaviorSubject<string>('');
-
 	/** Generates and uploads a new wallet. */
 	public async generate (
 		newWalletOptions: NewWalletOptions = NewWalletOptions.generate,

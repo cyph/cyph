@@ -325,6 +325,7 @@ export class MaterialDialogService extends BaseProvider
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<IForm | undefined>;
+	/** @inheritDoc */
 	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async prompt (
 		o: {
@@ -339,6 +340,7 @@ export class MaterialDialogService extends BaseProvider
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<any | undefined>;
+	/** @inheritDoc */
 	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async prompt (
 		o: {
@@ -353,6 +355,7 @@ export class MaterialDialogService extends BaseProvider
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<string | undefined>;
+	/** @inheritDoc */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;

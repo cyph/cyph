@@ -309,57 +309,55 @@
 						{
 							"classes": {
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								},
 								"visibilities": ["exported"]
 							},
 							"enums": {
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								},
 								"visibilities": ["exported"]
 							},
 							"functions": {
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								},
 								"visibilities": ["exported"]
 							},
 							"interfaces": {
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								},
 								"visibilities": ["exported"]
 							},
 							"methods": {
-								"locations": "all",
 								"privacies": ["protected", "public"],
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								}
 							},
 							"namespaces": {
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								},
 								"visibilities": ["exported"]
 							},
 							"properties": {
-								"locations": "all",
 								"privacies": ["protected", "public"],
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								}
 							},
 							"types": {
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								},
 								"visibilities": ["exported"]
 							},
 							"variables": {
 								"tags": {
-									"existence": ["inheritDoc", "see"]
+									"existence": ["ignore", "inheritDoc", "see"]
 								},
 								"visibilities": ["exported"]
 							}

@@ -74,6 +74,14 @@ if [ ! "${htmlOnly}" ] ; then
 
 	# eslint
 
+	# Workarounds for completed-docs bugs
+	sed -i \
+		's|PropertySignature|PropertyDeclaration|g' \
+		/node_modules/tslint/lib/rules/completedDocsRule.js
+	sed -i \
+		's| this.contentTags| this.contentTags \&\& this.contentTags|g'\
+		/node_modules/tslint/lib/rules/completed-docs/tagExclusion.js
+
 	cd js
 	cp ${dir}/shared/lib/js/package.json ./
 	output="$(eslint -c eslintrc.json --ignore-path .eslintignore '**/*.ts' 2>&1)"
@@ -142,7 +150,7 @@ if [ ! "${htmlOnly}" ] && [ ! "${fast}" ] ; then
 fi
 
 echo -e "${output}"
-output="$(echo "${output}" | grep -vP '( rule threw an error|^[A-Za-z]*Error: |^\s+at )')"
+
 if [ ${#output} -gt 0 ] ; then
 	fail
 else

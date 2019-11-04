@@ -74,6 +74,7 @@ export const staticStringsService = resolvableStringsService ?
 	resolvableStringsService.promise :
 	Promise.reject('Strings service not found.');
 
+/** Resolves static services. */
 export const resolveStaticServices = ({
 	dialogService,
 	domSanitizer,

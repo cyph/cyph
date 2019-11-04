@@ -189,6 +189,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		closeFunction?: IResolvable<() => void>
 	) : Promise<IForm | undefined>;
 	/* eslint-disable-next-line @typescript-eslint/require-await */
+	/** @inheritDoc */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
@@ -203,6 +204,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		closeFunction?: IResolvable<() => void>
 	) : Promise<any | undefined>;
 	/* eslint-disable-next-line @typescript-eslint/require-await */
+	/** @inheritDoc */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;
@@ -216,6 +218,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<string | undefined>;
+	/** @inheritDoc */
 	public async prompt (
 		o: {
 			bottomSheet?: boolean;

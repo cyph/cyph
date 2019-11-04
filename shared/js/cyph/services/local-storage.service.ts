@@ -190,6 +190,7 @@ export class LocalStorageService extends DataManagerService {
 		return !sortByTimestamp ? values : values.sort((a, b) => a[2] - b[2]);
 	}
 
+	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
 	public async lock<T> (
 		url: string,
 		f: (o: {
