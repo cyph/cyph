@@ -806,15 +806,17 @@ export class AccountService extends BaseProvider {
 					return;
 				}
 
-				if (e.url !== lastURL) {
-					lastURL = e.url;
-					this.headerInternal.next(undefined);
+				const urlSplit = e.url.split('/');
+				const newURL = urlSplit.slice(0, 2).join('/');
+				const section = (urlSplit[0] !== 'search' && urlSplit[0]) || '';
+
+				if (newURL === 'transition') {
+					return;
 				}
 
-				let section = (e.url.match(/^(.*?)(\/|$).*/) || [])[1] || '';
-
-				if (section === 'search') {
-					section = '';
+				if (newURL !== lastURL) {
+					lastURL = newURL;
+					this.headerInternal.next(undefined);
 				}
 
 				if (section !== lastSection) {
