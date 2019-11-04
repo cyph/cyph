@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 
+import {Location} from '@angular/common';
 import {
 	ChangeDetectionStrategy,
 	Component,
@@ -160,7 +161,7 @@ export class AccountChatComponent extends BaseProvider
 		const lock = lockFunction();
 
 		let messageBottomOffsetData:
-			| {contactID: string; messageBottomOffset: number; path: string}
+			| {contactID: string; path: string}
 			| undefined;
 
 		this.subscriptions.push(
@@ -278,7 +279,6 @@ export class AccountChatComponent extends BaseProvider
 									if (!isNaN(newMessageBottomOffset)) {
 										messageBottomOffsetData = {
 											contactID,
-											messageBottomOffset: newMessageBottomOffset,
 											path
 										};
 
@@ -579,21 +579,10 @@ export class AccountChatComponent extends BaseProvider
 						return;
 					}
 
-					const {
-						contactID,
-						messageBottomOffset,
-						path
-					} = messageBottomOffsetData;
+					const {contactID, path} = messageBottomOffsetData;
 
-					if (messageBottomOffsetChange === messageBottomOffset) {
-						return;
-					}
-
-					messageBottomOffsetData.messageBottomOffset = messageBottomOffsetChange;
-
-					this.router.navigate(
-						[path, contactID, messageBottomOffsetChange],
-						{replaceUrl: true}
+					this.location.replaceState(
+						[path, contactID, messageBottomOffsetChange].join('/')
 					);
 				}
 			)
@@ -603,6 +592,9 @@ export class AccountChatComponent extends BaseProvider
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly location: Location,
 
 		/** @ignore */
 		private readonly router: Router,
