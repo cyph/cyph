@@ -42,7 +42,6 @@ import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
 import {getDateTimeString, getTimestamp} from '../../util/time';
 import {readableID} from '../../util/uuid';
-import {sleep} from '../../util/wait';
 
 /**
  * Angular component for account chat UI.
@@ -139,9 +138,8 @@ export class AccountChatComponent extends BaseProvider
 	/** @ignore */
 	private async navigate (...url: string[]) : Promise<void> {
 		this.destroyed.next(true);
-		this.router.navigate(['transition'], {skipLocationChange: true});
-		await sleep(0);
-		this.router.navigate(['', ...url]);
+		await this.router.navigate(['transition'], {skipLocationChange: true});
+		await this.router.navigate(['', ...url]);
 	}
 
 	/** @inheritDoc */
