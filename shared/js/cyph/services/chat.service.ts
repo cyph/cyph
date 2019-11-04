@@ -177,6 +177,9 @@ export class ChatService extends BaseProvider {
 	/** Indicates whether the chat is ready to be displayed. */
 	public readonly initiated = new BehaviorSubject<boolean>(false);
 
+	/** Number of "pages" into the message list, starting from the bottom. */
+	public readonly messageBottomOffset = new BehaviorSubject<number>(1);
+
 	/** List of messages. */
 	public readonly messages = toBehaviorSubject(
 		this.chatSubject.pipe(

@@ -104,9 +104,6 @@ export class ChatMessageListComponent extends BaseProvider
 		viewportMessageCount: 0
 	};
 
-	/** Number of "pages" into the message list, starting from the bottom. */
-	private readonly messageBottomOffset = new BehaviorSubject<number>(1);
-
 	/** Number of messages to render on the screen at any given time. */
 	private readonly viewportMessageCount = toBehaviorSubject(
 		this.windowWatcherService.height.pipe(
@@ -135,7 +132,7 @@ export class ChatMessageListComponent extends BaseProvider
 	/** Data formatted for message list. */
 	public readonly messageListItems = combineLatest([
 		this.allMessageListItems,
-		this.messageBottomOffset,
+		this.chatService.messageBottomOffset,
 		this.viewportMessageCount
 	]).pipe(
 		map(
@@ -518,7 +515,8 @@ export class ChatMessageListComponent extends BaseProvider
 			)
 			.toPromise()
 			.then(() => {
-				++this.infiniteScrollingData.initStep;
+				this.infiniteScrollingData.initStep +=
+					this.chatService.messageBottomOffset.value === 1 ? 1 : 2;
 			});
 	}
 
@@ -600,7 +598,11 @@ export class ChatMessageListComponent extends BaseProvider
 		}
 
 		const messageBottomOffset = Math.min(
-			Math.max(this.messageBottomOffset.value + (bottom ? -0.5 : 0.5), 1),
+			Math.max(
+				this.chatService.messageBottomOffset.value +
+					(bottom ? -0.5 : 0.5),
+				1
+			),
 			Math.ceil(
 				this.allMessageListItems.value.length /
 					this.viewportMessageCount.value
@@ -621,14 +623,17 @@ export class ChatMessageListComponent extends BaseProvider
 
 		debugLog(() => ({messageBottomOffset}));
 
-		if (messageBottomOffset > 1 || this.messageBottomOffset.value > 1) {
+		if (
+			messageBottomOffset > 1 ||
+			this.chatService.messageBottomOffset.value > 1
+		) {
 			++this.infiniteScrollingData.initStep;
 			this.chatService.scrollTransition.next(true);
 		}
 
 		this.scrollService.enableScrollDown = messageBottomOffset <= 1;
 
-		this.messageBottomOffset.next(messageBottomOffset);
+		this.chatService.messageBottomOffset.next(messageBottomOffset);
 	}
 
 	constructor (

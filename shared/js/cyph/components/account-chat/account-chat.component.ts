@@ -159,6 +159,10 @@ export class AccountChatComponent extends BaseProvider
 
 		const lock = lockFunction();
 
+		let messageBottomOffsetData:
+			| {contactID: string; messageBottomOffset: number; path: string}
+			| undefined;
+
 		this.subscriptions.push(
 			this.accountService
 				.combinedRouteData(this.activatedRoute)
@@ -166,6 +170,7 @@ export class AccountChatComponent extends BaseProvider
 					async ([
 						{
 							callType,
+							defaultMessageBottomOffset,
 							defaultSessionSubID,
 							ephemeralSubSession,
 							externalUser,
@@ -177,6 +182,7 @@ export class AccountChatComponent extends BaseProvider
 							answerExpireTime,
 							appointmentID,
 							contactID,
+							messageBottomOffset,
 							sessionSubID,
 							username
 						},
@@ -184,6 +190,7 @@ export class AccountChatComponent extends BaseProvider
 					]: [
 						{
 							callType?: 'audio' | 'video';
+							defaultMessageBottomOffset?: number;
 							defaultSessionSubID?: string;
 							ephemeralSubSession?: boolean;
 							externalUser?: boolean;
@@ -195,6 +202,7 @@ export class AccountChatComponent extends BaseProvider
 							answerExpireTime?: number;
 							appointmentID?: string;
 							contactID?: string;
+							messageBottomOffset?: string;
 							sessionSubID?: string;
 							username?: string;
 						},
@@ -245,6 +253,48 @@ export class AccountChatComponent extends BaseProvider
 										{replaceUrl: true}
 									);
 									return;
+								}
+
+								if (
+									contactID &&
+									defaultMessageBottomOffset !== undefined
+								) {
+									this.router.navigate(
+										[
+											path,
+											contactID,
+											defaultMessageBottomOffset
+										],
+										{replaceUrl: true}
+									);
+									return;
+								}
+
+								if (contactID && messageBottomOffset) {
+									const newMessageBottomOffset = parseFloat(
+										messageBottomOffset
+									);
+
+									if (!isNaN(newMessageBottomOffset)) {
+										messageBottomOffsetData = {
+											contactID,
+											messageBottomOffset: newMessageBottomOffset,
+											path
+										};
+
+										if (
+											newMessageBottomOffset !==
+											this.accountChatService
+												.messageBottomOffset.value
+										) {
+											this.accountChatService.messageBottomOffset.next(
+												newMessageBottomOffset
+											);
+										}
+									}
+								}
+								else {
+									messageBottomOffsetData = undefined;
 								}
 
 								if (this.initiatedAppointmentID) {
@@ -520,6 +570,33 @@ export class AccountChatComponent extends BaseProvider
 							}
 						})
 				)
+		);
+
+		this.subscriptions.push(
+			this.accountChatService.messageBottomOffset.subscribe(
+				async messageBottomOffsetChange => {
+					if (!messageBottomOffsetData) {
+						return;
+					}
+
+					const {
+						contactID,
+						messageBottomOffset,
+						path
+					} = messageBottomOffsetData;
+
+					if (messageBottomOffsetChange === messageBottomOffset) {
+						return;
+					}
+
+					messageBottomOffsetData.messageBottomOffset = messageBottomOffsetChange;
+
+					this.router.navigate(
+						[path, contactID, messageBottomOffsetChange],
+						{replaceUrl: true}
+					);
+				}
+			)
 		);
 	}
 

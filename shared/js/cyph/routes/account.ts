@@ -206,6 +206,11 @@ export const account: Route = {
 		{
 			path: 'mail/:contactID',
 			component: AccountChatComponent,
+			data: {defaultMessageBottomOffset: 1, defaultSessionSubID: 'mail'}
+		},
+		{
+			path: 'mail/:contactID/:messageBottomOffset',
+			component: AccountChatComponent,
 			data: {defaultSessionSubID: 'mail'}
 		},
 		{path: 'messages', component: AccountContactsComponent},
@@ -220,9 +225,17 @@ export const account: Route = {
 			data: {externalUser: true}
 		},
 		{path: 'messages/user/:username', component: AccountChatComponent},
-		{path: 'messages/:contactID', component: AccountChatComponent},
 		{
-			path: 'messages/:contactID/:sessionSubID',
+			path: 'messages/:contactID',
+			component: AccountChatComponent,
+			data: {defaultMessageBottomOffset: 1}
+		},
+		{
+			path: 'messages/:contactID/:messageBottomOffset',
+			component: AccountChatComponent
+		},
+		{
+			path: 'messages/:contactID/:messageBottomOffset/:sessionSubID',
 			component: AccountChatComponent
 		},
 		{
