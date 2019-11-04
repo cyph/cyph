@@ -80,10 +80,7 @@ export class EventManager {
 		const handlers =
 			eventMapping.value ||
 			(await eventMapping
-				.pipe(
-					filterUndefinedOperator(),
-					take(1)
-				)
+				.pipe(filterUndefinedOperator(), take(1))
 				.toPromise());
 
 		await Promise.all(

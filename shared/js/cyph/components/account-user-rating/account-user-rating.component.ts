@@ -22,11 +22,11 @@ export class AccountUserRatingComponent extends BaseProvider {
 
 	/** Array of star icons based on rating. */
 	public readonly getStars = memoize((rating: number) : [
-		('star' | 'star_border' | 'star_half'),
-		('star' | 'star_border' | 'star_half'),
-		('star' | 'star_border' | 'star_half'),
-		('star' | 'star_border' | 'star_half'),
-		('star' | 'star_border' | 'star_half')
+		'star' | 'star_border' | 'star_half',
+		'star' | 'star_border' | 'star_half',
+		'star' | 'star_border' | 'star_half',
+		'star' | 'star_border' | 'star_half',
+		'star' | 'star_border' | 'star_half'
 	] => {
 		rating *= this.ratingFactor;
 

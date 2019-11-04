@@ -87,20 +87,29 @@ export class EphemeralChatRootComponent extends BaseProvider
 		const granimStates = {
 			'default-state': !this.envService.telehealthTheme ?
 				{
-					gradients: [['#392859', '#624599'], ['#9368e6', '#624599']],
+					gradients: [
+						['#392859', '#624599'],
+						['#9368e6', '#624599']
+					],
 					loop: true,
 					transitionSpeed: 5000
 				} :
 				{
 					direction: 'diagonal',
-					gradients: [['#eeecf1', '#fbf8fe'], ['#fbf8fe', '#eeecf1']],
+					gradients: [
+						['#eeecf1', '#fbf8fe'],
+						['#fbf8fe', '#eeecf1']
+					],
 					loop: true,
 					opacity: [0.75, 0.5],
 					transitionSpeed: 2500
 				},
 			'paused': !this.envService.telehealthTheme ?
 				{
-					gradients: [['#624599', '#8b62d9'], ['#9368e6', '#624599']],
+					gradients: [
+						['#624599', '#8b62d9'],
+						['#9368e6', '#624599']
+					],
 					transitionSpeed: 5000
 				} :
 				undefined

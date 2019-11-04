@@ -48,10 +48,7 @@ export class AccountCastleService extends CastleService {
 
 		this.subscriptions.push(
 			accountSessionService.remoteUser
-				.pipe(
-					filterUndefinedOperator(),
-					take(1)
-				)
+				.pipe(filterUndefinedOperator(), take(1))
 				.subscribe(async user => {
 					debugLog(() => ({startingAccountCastleSession: {user}}));
 

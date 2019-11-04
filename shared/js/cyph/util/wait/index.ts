@@ -63,7 +63,7 @@ export const waitForValue = async <T>(
 
 /** Waits for iterable value to exist and have at least minLength elements. */
 export const waitForIterable = async <T>(
-	f: () => T & {length: number} | undefined,
+	f: () => (T & {length: number}) | undefined,
 	minLength: number = 1
 ) : Promise<T> => {
 	return waitForValue<T & {length: number}>(

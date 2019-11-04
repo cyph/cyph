@@ -249,8 +249,14 @@ export class AccountComponent extends BaseProvider
 			states: {
 				'default-state': {
 					gradients: !this.envService.telehealthTheme ?
-						[['#f5f5f6', '#cccccc'], ['#cccccc', '#f5f5f6']] :
-						[['#eeecf1', '#b7bccb'], ['#b7bccb', '#eeecf1']],
+						[
+							['#f5f5f6', '#cccccc'],
+							['#cccccc', '#f5f5f6']
+						] :
+						[
+							['#eeecf1', '#b7bccb'],
+							['#b7bccb', '#eeecf1']
+						],
 					loop: false,
 					transitionSpeed: 5000
 				}

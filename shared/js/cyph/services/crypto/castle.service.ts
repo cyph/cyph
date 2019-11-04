@@ -29,10 +29,7 @@ export class CastleService extends BaseProvider implements ICastle {
 
 		return this.pairwiseSessionLock(async () =>
 			this.pairwiseSession
-				.pipe(
-					filterUndefinedOperator(),
-					take(1)
-				)
+				.pipe(filterUndefinedOperator(), take(1))
 				.toPromise()
 		);
 	}

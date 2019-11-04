@@ -1357,10 +1357,7 @@ export class ChatService extends BaseProvider {
 			const messages =
 				this.messages.value ||
 				(await this.messages
-					.pipe(
-						filterUndefinedOperator(),
-						take(1)
-					)
+					.pipe(filterUndefinedOperator(), take(1))
 					.toPromise());
 
 			for (let i = messages.length - 1; i >= 0; --i) {

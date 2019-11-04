@@ -18,16 +18,14 @@ if (env.debugLog) {
 const debugLogInternal = async (
 	error: boolean,
 	argFunctions: (() => MaybePromise<any>)[]
-) : Promise<
-	| undefined
-	| {
-			args: any[];
-			argsCopy: string;
-			error?: true;
-			timeDifference: number;
-			timestamp: number;
-	  }
-> => {
+) : Promise<| undefined
+| {
+		args: any[];
+		argsCopy: string;
+		error?: true;
+		timeDifference: number;
+		timestamp: number;
+  }> => {
 	if (!env.debugLog) {
 		return;
 	}

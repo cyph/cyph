@@ -322,7 +322,10 @@ export class LocalStorageService extends DataManagerService {
 			return {url};
 		})();
 
-		this.pendingSets.set(url, promise.then(() => {}).catch(() => {}));
+		this.pendingSets.set(
+			url,
+			promise.then(() => {}).catch(() => {})
+		);
 
 		try {
 			return await promise;

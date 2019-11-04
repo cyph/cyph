@@ -8,15 +8,13 @@ import {waitForIterable} from './util/wait';
  */
 export const initGranim = async (
 	opts: Record<string, any>
-) : Promise<
-	| undefined
-	| {
-			changeState: (state: string) => void;
-			clear: () => void;
-			pause: () => void;
-			play: () => void;
-	  }
-> => {
+) : Promise<| undefined
+| {
+		changeState: (state: string) => void;
+		clear: () => void;
+		pause: () => void;
+		play: () => void;
+  }> => {
 	if (!env.isWeb) {
 		return;
 	}

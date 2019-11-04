@@ -264,10 +264,7 @@ export abstract class SessionService extends BaseProvider
 			this.symmetricKey.value ||
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			this.symmetricKey
-				.pipe(
-					filterUndefinedOperator(),
-					take(1)
-				)
+				.pipe(filterUndefinedOperator(), take(1))
 				.toPromise()
 		);
 	}
@@ -277,11 +274,12 @@ export abstract class SessionService extends BaseProvider
 		messages: [
 			string,
 
-
+			(
 				| ISessionMessageAdditionalData
 				| ((
 						timestamp: number
 				  ) => MaybePromise<ISessionMessageAdditionalData>)
+			)
 		][]
 	) : Promise<(ISessionMessage & {data: ISessionMessageData})[]> {
 		return Promise.all(
@@ -596,11 +594,12 @@ export abstract class SessionService extends BaseProvider
 		...messages: [
 			string,
 
-
+			(
 				| ISessionMessageAdditionalData
 				| ((
 						timestamp: number
 				  ) => MaybePromise<ISessionMessageAdditionalData>)
+			)
 		][]
 	) : Promise<{
 		confirmPromise: Promise<void>;

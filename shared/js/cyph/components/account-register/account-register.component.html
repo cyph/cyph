@@ -58,7 +58,8 @@
 				[disabled]="
 					((confirmMasterKeyOnly || getMasterKeyOnly ?
 						masterKeyReady :
-						lockScreenPasswordReady) | async) === false
+						lockScreenPasswordReady
+					) | async) === false
 				"
 			>
 				{{
@@ -970,7 +971,8 @@
 								{{
 									(confirmMasterKeyOnly ?
 										unconfirmedMasterKey :
-										xkcdPassphrase) | async
+										xkcdPassphrase
+									) | async
 								}}
 							</span>
 						</div>

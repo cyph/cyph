@@ -470,11 +470,11 @@ export class ChatMessageListComponent extends BaseProvider
 				.pipe(
 					map(([messages]) =>
 						(<
-							({
+							{
 								dateChange?: string;
 								message?: ChatMessage;
 								pending: boolean;
-							})[]
+							}[]
 						> (messages.length < 1 ? [{pending: false}] : messages)).map(
 							({dateChange, message, pending}, i, arr) => {
 								const isEnd = i + 1 === arr.length;
@@ -537,10 +537,7 @@ export class ChatMessageListComponent extends BaseProvider
 		this.chatService.scrollTransition.next(true);
 
 		const messageListItems = await this.messageListItems
-			.pipe(
-				skip(1),
-				take(1)
-			)
+			.pipe(skip(1), take(1))
 			.toPromise();
 
 		if (messageListItems.length < 1) {

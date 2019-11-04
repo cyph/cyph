@@ -259,12 +259,7 @@ export class P2PWebRTCService extends BaseProvider
 		localStream: MediaStream;
 		peer: SimplePeer.Instance;
 	}> {
-		return this.webRTC
-			.pipe(
-				filterUndefinedOperator(),
-				take(1)
-			)
-			.toPromise();
+		return this.webRTC.pipe(filterUndefinedOperator(), take(1)).toPromise();
 	}
 
 	/** @ignore */

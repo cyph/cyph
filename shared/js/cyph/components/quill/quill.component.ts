@@ -165,11 +165,15 @@ export class QuillComponent extends BaseProvider
 			return;
 		}
 
-		this.quill.setContents(<any> (
-			(this.content ?
-				new Delta(this.stripExternalSubresources(this.content).ops) :
-				new Delta())
-		));
+		this.quill.setContents(
+			<any> (
+				(this.content ?
+					new Delta(
+						this.stripExternalSubresources(this.content).ops
+					) :
+					new Delta())
+			)
+		);
 	}
 
 	/** @ignore */
@@ -329,9 +333,13 @@ export class QuillComponent extends BaseProvider
 							return;
 						}
 
-						this.quill.updateContents(<any> (
-							new Delta(this.stripExternalSubresources(delta).ops)
-						));
+						this.quill.updateContents(
+							<any> (
+								new Delta(
+									this.stripExternalSubresources(delta).ops
+								)
+							)
+						);
 					});
 
 					break;

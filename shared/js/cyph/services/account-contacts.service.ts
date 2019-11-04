@@ -455,10 +455,7 @@ export class AccountContactsService extends BaseProvider {
 		});
 
 		this.contactList
-			.pipe(
-				skip(1),
-				take(1)
-			)
+			.pipe(skip(1), take(1))
 			.toPromise()
 			.then(() => {
 				this.showSpinner.next(false);
