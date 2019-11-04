@@ -75,31 +75,8 @@ if [ ! "${htmlOnly}" ] ; then
 	# eslint
 
 	cd js
-
-	node -e "
-		const tsconfig = JSON.parse(
-			fs.readFileSync('tsconfig.json').toString().
-				split('\n').
-				filter(s => s.trim()[0] !== '/').
-				join('\n')
-		);
-
-		tsconfig.compilerOptions.paths = undefined;
-
-		tsconfig.files =
-			'$(find . -type f -name '*.ts' | tr '\n' ' ')typings/index.d.ts'.split(' ')
-		;
-
-		fs.writeFileSync(
-			'tsconfig.eslint.json',
-			JSON.stringify(tsconfig)
-		);
-	"
-
 	cp ${dir}/shared/lib/js/package.json ./
-
 	output="$(eslint -c eslintrc.json --ignore-path .eslintignore '**/*.ts' 2>&1)"
-
 	cd ..
 fi
 
