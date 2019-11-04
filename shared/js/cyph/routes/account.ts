@@ -155,7 +155,6 @@ export const account: Route = {
 				ephemeralSubSession: true
 			}
 		},
-		{path: 'chat-transition', component: BlankComponent},
 		{
 			path: 'compose',
 			component: AccountComposeComponent,
@@ -335,6 +334,7 @@ export const account: Route = {
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.TelehealthAdmin}
 		},
+		{path: 'transition', component: BlankComponent},
 		{
 			path:
 				'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',

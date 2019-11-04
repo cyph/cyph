@@ -167,7 +167,6 @@ export class AccountComponent extends BaseProvider
 					'appointments',
 					'audio',
 					'call',
-					'chat-transition',
 					'compose',
 					'contacts',
 					'docs',
@@ -187,6 +186,7 @@ export class AccountComponent extends BaseProvider
 					'request-followup',
 					'settings',
 					'staff',
+					'transition',
 					'video',
 					'wallets',
 					'welcome'
@@ -207,11 +207,11 @@ export class AccountComponent extends BaseProvider
 					'',
 					'audio',
 					'call',
-					'chat-transition',
 					'mail',
 					'messages',
 					'notifications',
 					'profile',
+					'transition',
 					'video',
 					'welcome'
 				].indexOf(route) > -1

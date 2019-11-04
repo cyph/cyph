@@ -139,7 +139,7 @@ export class AccountChatComponent extends BaseProvider
 	/** @ignore */
 	private async navigate (...url: string[]) : Promise<void> {
 		this.destroyed.next(true);
-		this.router.navigate(['chat-transition'], {skipLocationChange: true});
+		this.router.navigate(['transition'], {skipLocationChange: true});
 		await sleep(0);
 		this.router.navigate(['', ...url]);
 	}
