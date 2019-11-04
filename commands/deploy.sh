@@ -165,7 +165,8 @@ if [ "${compiledProjects}" ] && [ ! "${test}" ] && [ ! "${debug}" ] ; then
 	if [ "${fast}" ] ; then
 		log "WARNING: Skipping lint. Make sure you know what you're doing."
 	else
-		./commands/lint.sh || fail
+		./commands/lint.sh
+		checkfail
 	fi
 fi
 

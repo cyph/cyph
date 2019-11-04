@@ -142,6 +142,9 @@ if [ ! "${htmlOnly}" ] && [ ! "${fast}" ] ; then
 fi
 
 echo -e "${output}"
-log 'Lint complete'
-output="$(echo "${output}" | grep -vP '(threw an error|^[A-Za-z]*Error:|^\s+at)')"
-exit ${#output}
+output="$(echo "${output}" | grep -vP '( rule threw an error|^[A-Za-z]*Error: |^\s+at )')"
+if [ ${#output} -gt 0 ] ; then
+	fail
+else
+	pass
+fi
