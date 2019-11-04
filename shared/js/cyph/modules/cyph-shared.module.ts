@@ -1,3 +1,4 @@
+import {CommonModule} from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -24,6 +25,7 @@ import {StringsService} from '../services/strings.service';
 	exports: [
 		BrowserAnimationsModule,
 		BrowserModule,
+		CommonModule,
 		FlexLayoutModule,
 		FormsModule,
 		HttpClientModule,
@@ -37,6 +39,7 @@ import {StringsService} from '../services/strings.service';
 	imports: [
 		BrowserAnimationsModule,
 		BrowserModule,
+		CommonModule,
 		FlexLayoutModule,
 		FormsModule,
 		HttpClientModule,

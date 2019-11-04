@@ -1,4 +1,3 @@
-import {CommonModule} from '@angular/common';
 import {ErrorHandler, NgModule} from '@angular/core';
 import {Title} from '@angular/platform-browser';
 import {BannerComponent} from '../components/banner';
@@ -81,7 +80,6 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageBoxComponent,
 		ChatMessageBoxInheritNgFormComponent,
 		ChatMessageListComponent,
-		CommonModule,
 		ContactComponent,
 		CyphWebModule,
 		EnableLastPassDirective,
@@ -96,7 +94,7 @@ import {CyphWebModule} from './cyph-web.module';
 		SignupFormComponent,
 		TranslateDirective
 	],
-	imports: [CommonModule, CyphWebModule],
+	imports: [CyphWebModule],
 	providers: [
 		AnalyticsService,
 		ErrorService,

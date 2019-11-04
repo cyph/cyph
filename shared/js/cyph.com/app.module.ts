@@ -17,8 +17,6 @@ import {CheckoutComponent} from '../cyph/components/checkout';
 import {CyphSharedModule} from '../cyph/modules/cyph-shared.module';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
-import {DialogService} from '../cyph/services/dialog.service';
-import {MaterialDialogService} from '../cyph/services/material-dialog.service';
 import {StringsService} from '../cyph/services/strings.service';
 import {email} from '../cyph/util/email';
 import {resolveStaticServices} from '../cyph/util/static-services';
@@ -29,13 +27,7 @@ import {resolveStaticServices} from '../cyph/util/static-services';
 @NgModule({
 	declarations: [CheckoutComponent],
 	imports: [CyphSharedModule],
-	providers: [
-		AnalyticsService,
-		{
-			provide: DialogService,
-			useClass: MaterialDialogService
-		}
-	]
+	providers: [AnalyticsService]
 })
 export class AppModule implements DoBootstrap {
 	/** @inheritDoc */
@@ -52,7 +44,6 @@ export class AppModule implements DoBootstrap {
 		ngZone: NgZone,
 		analyticsService: AnalyticsService,
 		configService: ConfigService,
-		dialogService: DialogService,
 		stringsService: StringsService,
 
 		/** @ignore */
@@ -63,7 +54,6 @@ export class AppModule implements DoBootstrap {
 		(<any> self).sendEmail = email;
 
 		resolveStaticServices({
-			dialogService,
 			domSanitizer,
 			httpClient,
 			ngZone,
