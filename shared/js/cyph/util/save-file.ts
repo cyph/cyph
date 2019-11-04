@@ -85,6 +85,7 @@ export const saveFile = async (
 
 			const fileWriteEvent = new Subject<void>();
 
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			const fileWriteResult = new Promise<any>((resolve, reject) => {
 				fileWriter.onwriteend = resolve;
 				fileWriter.onerror = reject;
@@ -139,6 +140,7 @@ export const saveFile = async (
 			}
 
 			try {
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				await new Promise<void>((resolve, reject) => {
 					(<any> self).cordova.plugins.fileOpener2.showOpenWithDialog(
 						fsURL.slice(0, -9) + <string> fileEntry.fullPath,

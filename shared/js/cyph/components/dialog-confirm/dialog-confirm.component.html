@@ -35,7 +35,7 @@
 		<a
 			mat-list-item
 			(click)="multipleChoiceSelection = option.value; close(true)"
-			*ngFor="let option of multipleChoiceOptions"
+			*ngFor="let option of multipleChoiceOptions; trackBy: trackBySelf"
 		>
 			<span mat-line>{{ option.title }}</span>
 			<span mat-line *ngIf="option.text">{{ option.text }}</span>

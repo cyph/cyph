@@ -19,7 +19,9 @@ import {ChatMessageBoxComponent} from '../chat-message-box';
 	animations: [slideInOutBottom],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-chat-message-box-inherit-ng-form',
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	styleUrls: ['../chat-message-box/chat-message-box.component.scss'],
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	templateUrl: '../chat-message-box/chat-message-box.component.html',
 	viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })

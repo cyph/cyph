@@ -9,9 +9,11 @@ import {BaseProvider} from '../../js/cyph/base-provider';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-dialog-media',
 	styleUrls: [
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		'../../js/cyph/components/dialog-media/dialog-media.component.scss'
 	],
 	templateUrl:
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		'../../js/cyph/components/dialog-media/dialog-media.component.html'
 })
 export class DialogMediaComponent extends BaseProvider {

@@ -14,6 +14,7 @@ import {Observable} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {IForm} from '../../proto/types';
 import {StringsService} from '../../services/strings.service';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {sleep} from '../../util/wait';
 import {DynamicFormComponent} from '../dynamic-form';
 
@@ -77,6 +78,9 @@ export class DialogConfirmComponent extends BaseProvider
 
 	/** Title. */
 	public title?: string;
+
+	/** @see trackBySelf */
+	public readonly trackBySelf = trackBySelf;
 
 	/** Closes dialog. */
 	public close (ok?: boolean) : void {

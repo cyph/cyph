@@ -22,7 +22,9 @@ import {CalendarInviteComponent} from '../calendar-invite';
 		}
 	],
 	selector: 'cyph-calendar-invite-inherit-ng-form',
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	styleUrls: ['../calendar-invite/calendar-invite.component.scss'],
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	templateUrl: '../calendar-invite/calendar-invite.component.html',
 	viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })

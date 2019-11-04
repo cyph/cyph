@@ -19,7 +19,9 @@ import {AccountComposeComponent} from '../account-compose';
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	selector: 'cyph-account-compose-no-providers',
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	styleUrls: ['../account-compose/account-compose.component.scss'],
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	templateUrl: '../account-compose/account-compose.component.html'
 })
 export class AccountComposeNoProvidersComponent extends AccountComposeComponent {

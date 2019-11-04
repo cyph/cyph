@@ -20,6 +20,7 @@ import {BaseProvider} from '../../base-provider';
 import {ISearchOptions} from '../../isearch-options';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 
@@ -88,6 +89,9 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 
 	/** Search query. */
 	@Input() public query?: Observable<string>;
+
+	/** @see trackBySelf */
+	public readonly trackBySelf = trackBySelf;
 
 	/** @see trackByValue */
 	public readonly trackByValue = trackByValue;

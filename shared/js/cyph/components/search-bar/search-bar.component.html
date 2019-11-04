@@ -47,7 +47,7 @@
 	*ngIf="filter | async as values"
 >
 	<mat-chip-list #chipList *ngIf="chipInput">
-		<ng-container *ngFor="let value of values">
+		<ng-container *ngFor="let value of values; trackBy: trackBySelf">
 			<mat-chip
 				[selectable]="true"
 				[removable]="true"
