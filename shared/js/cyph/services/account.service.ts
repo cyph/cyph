@@ -811,8 +811,7 @@ export class AccountService extends BaseProvider {
 					this.headerInternal.next(undefined);
 				}
 
-				let section =
-					(e.url.match(/^account\/(.*?)(\/|$).*/) || [])[1] || '';
+				let section = (e.url.match(/^(.*?)(\/|$).*/) || [])[1] || '';
 
 				if (section === 'search') {
 					section = '';
