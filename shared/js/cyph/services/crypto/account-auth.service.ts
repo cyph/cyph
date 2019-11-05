@@ -444,7 +444,6 @@ export class AccountAuthService extends BaseProvider {
 
 						return newEncryptionKeyPair;
 					})(),
-					this.localStorageService.hasItem('username'),
 					this.localStorageService
 						.hasItem('unconfirmedMasterKey')
 						.then(b => !b),
@@ -484,7 +483,6 @@ export class AccountAuthService extends BaseProvider {
 			const [
 				agseConfirmed,
 				encryptionKeyPair,
-				hasSavedUsername,
 				masterKeyConfirmed,
 				pinHash,
 				pseudoAccount,
@@ -595,22 +593,26 @@ export class AccountAuthService extends BaseProvider {
 			errorLogMessage = 'saving credentials';
 
 			try {
-				/* Temporary workaround for localforage bug(?) */
-				if (
-					hasSavedUsername &&
-					masterKeyConfirmed &&
+				if (masterKeyConfirmed) {
+					/* Temporary workaround for localforage bug(?) */
 					/* eslint-disable-next-line @typescript-eslint/tslint/config */
-					localStorage.getItem('clearLocalStorageFlag') !==
-						this.clearLocalStorageFlag
-				) {
-					await this.localStorageService.clear();
-				}
+					const clearLocalStorageFlagValue = localStorage.getItem(
+						'clearLocalStorageFlag'
+					);
 
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				localStorage.setItem(
-					'clearLocalStorageFlag',
-					this.clearLocalStorageFlag
-				);
+					if (
+						clearLocalStorageFlagValue !==
+						this.clearLocalStorageFlag
+					) {
+						await this.localStorageService.clear();
+
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						localStorage.setItem(
+							'clearLocalStorageFlag',
+							this.clearLocalStorageFlag
+						);
+					}
+				}
 			}
 			catch {}
 
