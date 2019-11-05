@@ -223,6 +223,13 @@ export class ChatMessageListComponent extends BaseProvider
 		elem.classList.add('cyph-flash-in');
 	}
 
+	/** Jumps to recent messages. */
+	public jumpToRecentMessages () : void {
+		this.initialScrollDown.next(true);
+		this.changes.next();
+		this.chatService.messageBottomOffset.next(1);
+	}
+
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		/* TODO: HANDLE NATIVE */
@@ -522,7 +529,7 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {
-		this.changes.next(undefined);
+		this.changes.next();
 	}
 
 	/** @inheritDoc */

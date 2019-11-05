@@ -44,6 +44,12 @@
 	}
 }
 
+.recent-messages {
+	position: absolute;
+	left: calc(50% - 20px);
+	bottom: 12px;
+}
+
 .chat-end-message {
 	padding: 10px;
 	padding-top: 0;
