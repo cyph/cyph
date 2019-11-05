@@ -51,10 +51,6 @@ export class AccountAuthService extends BaseProvider {
 	/** @ignore */
 	private connectTrackerCleanup?: () => void;
 
-	/** Used to determine whether local storage should be cleared. */
-	private readonly clearLocalStorageFlag =
-		'DP/H1qOYvbvqgSpgQpn9nmfbE8nA/AqBW3dLKOA6Lig=';
-
 	/** Error message. */
 	public readonly errorMessage = new BehaviorSubject<string | undefined>(
 		undefined
@@ -329,18 +325,6 @@ export class AccountAuthService extends BaseProvider {
 
 		if (!username || masterKey.length === 0) {
 			return false;
-		}
-
-		if (
-			(await this.localStorageService
-				.getString('clearLocalStorageFlag')
-				.catch(() => undefined)) !== this.clearLocalStorageFlag
-		) {
-			await this.localStorageService.clear();
-			await this.localStorageService.setString(
-				'clearLocalStorageFlag',
-				this.clearLocalStorageFlag
-			);
 		}
 
 		let errorLogMessage: string | undefined;
