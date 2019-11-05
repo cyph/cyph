@@ -200,10 +200,11 @@ if [ "${test}" ] && [ "${wpPromote}" ] ; then
 	fail 'Cannot do WordPress promotion during test deploy'
 fi
 mainVersion="${branch}"
-if [ "${test}" ] && [ "${username}" != cyph ] ; then
-	mainVersion="${username}-${mainVersion}"
-fi
 if [ "${simple}" ] ; then
+	if [ "${username}" != 'cyph' ] ; then
+		mainVersion="${username}-${mainVersion}"
+	fi
+
 	mainVersion="simple-${mainVersion}"
 fi
 if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${debug}" ] ; then
