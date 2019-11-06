@@ -67,10 +67,10 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 						desktopLimit: readableByteLength(
 							this.envService.filesConfig.maxSizeDesktop
 						),
+						file: file.name.replace(/\`/g, "'"),
 						mobileLimit: readableByteLength(
 							this.envService.filesConfig.maxSizeMobile
-						),
-						file: file.name.replace(/\`/g, "'")
+						)
 					}
 				),
 				markdown: true,
