@@ -102,10 +102,7 @@ export class DatabaseService extends DataManagerService {
 								)
 								.catch(() => undefined)
 						] :
-						[
-							`DatabaseService/value-hash/${url.hash}`,
-							`DatabaseService/value-url/${url.url}`
-						];
+						[`DatabaseService/value-hash/${url.hash}`];
 
 				if (!all) {
 					let lastErr: any;
