@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IFile} from '../ifile';
-import {ConfigService} from './config.service';
 import {EnvService} from './env.service';
 
 /** Union of possible types that represent files. */
@@ -30,8 +29,8 @@ export class FileService extends BaseProvider {
 			}
 
 			const factor = Math.min(
-				this.configService.filesConfig.maxImageWidth / image.width,
-				this.configService.filesConfig.maxImageWidth / image.height,
+				this.envService.filesConfig.maxImageWidth / image.width,
+				this.envService.filesConfig.maxImageWidth / image.height,
 				1
 			);
 
@@ -228,9 +227,6 @@ export class FileService extends BaseProvider {
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly configService: ConfigService,
-
 		/** @ignore */
 		private readonly envService: EnvService
 	) {

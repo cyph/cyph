@@ -937,6 +937,9 @@ export class StringsService extends BaseProvider {
 	public readonly uploadFile = `Upload File`;
 
 	/** @see StringsService */
+	public readonly uploadTooBigFailure = `File \`\${FILE}\` exceeds our current limit of \${DESKTOPLIMIT} (on desktop) / \${MOBILELIMIT} (on mobile). Sorry for the inconvenience.`;
+
+	/** @see StringsService */
 	public readonly user = `User`;
 
 	/** @see StringsService */

@@ -14,6 +14,7 @@ import {DialogService} from '../services/dialog.service';
 import {EnvService} from '../services/env.service';
 import {FileService} from '../services/file.service';
 import {StringsService} from '../services/strings.service';
+import {readableByteLength} from '../util/formatting';
 import {uuid} from '../util/uuid';
 import {waitUntilTrue} from '../util/wait';
 
@@ -46,7 +47,39 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 	>();
 
 	/** @ignore */
-	private async confirm (file: {name: string}) : Promise<boolean> {
+	private async confirm (file: {
+		data?: Uint8Array;
+		name: string;
+		size?: number;
+	}) : Promise<boolean> {
+		const fileSize =
+			typeof file.size === 'number' ?
+				file.size :
+			file.data instanceof Uint8Array ?
+				file.data.length :
+				0;
+
+		if (fileSize > this.envService.filesConfig.maxSize) {
+			await this.dialogService.alert({
+				content: this.stringsService.setParameters(
+					this.stringsService.uploadTooBigFailure,
+					{
+						desktopLimit: readableByteLength(
+							this.envService.filesConfig.maxSizeDesktop
+						),
+						mobileLimit: readableByteLength(
+							this.envService.filesConfig.maxSizeMobile
+						),
+						file: file.name.replace(/\`/g, "'")
+					}
+				),
+				markdown: true,
+				title: this.stringsService.uploadFile
+			});
+
+			return false;
+		}
+
 		return this.dialogService.confirm({
 			content: `${this.stringsService.upload} \`${file.name.replace(
 				/\`/g,

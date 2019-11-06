@@ -101,6 +101,14 @@ export class Env extends EnvDeploy {
 	/** @see IEnvironment */
 	public readonly environment: IEnvironment = environment;
 
+	/** File-transfer-related config. */
+	public readonly filesConfig: {
+		maxImageWidth: number;
+		maxSize: number;
+		maxSizeDesktop: number;
+		maxSizeMobile: number;
+	};
+
 	/** Firebase-related config. */
 	public readonly firebaseConfig = {
 		apiKey: environment.firebase.apiKey,
@@ -297,6 +305,18 @@ export class Env extends EnvDeploy {
 
 	constructor () {
 		super();
+
+		const filesConfigMaxSizeDesktop = 268435456;
+		const filesConfigMaxSizeMobile = 20971520;
+
+		this.filesConfig = {
+			maxImageWidth: 1920,
+			maxSize: this.isMobileOS ?
+				filesConfigMaxSizeMobile :
+				filesConfigMaxSizeDesktop,
+			maxSizeDesktop: filesConfigMaxSizeDesktop,
+			maxSizeMobile: filesConfigMaxSizeMobile
+		};
 
 		this.isCordovaDesktop = this.isCordova && !this.isMobileOS;
 		this.isCordovaMobile = this.isCordova && this.isMobileOS;

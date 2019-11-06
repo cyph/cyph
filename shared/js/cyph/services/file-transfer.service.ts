@@ -16,10 +16,10 @@ import {saveFile} from '../util/save-file';
 import {uuid} from '../util/uuid';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
-import {ConfigService} from './config.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
+import {EnvService} from './env.service';
 import {FileService} from './file.service';
 import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
@@ -206,7 +206,7 @@ export class FileTransferService extends BaseProvider {
 		media: boolean = this.fileService.isMedia(file),
 		mediaSelfDestructTimeout?: number
 	) : Promise<void> {
-		if (file.data.length > this.configService.filesConfig.maxSize) {
+		if (file.data.length > this.envService.filesConfig.maxSize) {
 			this.analyticsService.sendEvent({
 				eventAction: 'toolarge',
 				eventCategory: 'file',
@@ -299,13 +299,13 @@ export class FileTransferService extends BaseProvider {
 		private readonly chatService: ChatService,
 
 		/** @ignore */
-		private readonly configService: ConfigService,
-
-		/** @ignore */
 		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
 
 		/** @ignore */
 		private readonly fileService: FileService,

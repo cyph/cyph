@@ -54,12 +54,6 @@ export class Config {
 	/** Indicates the original language of any content to be translated. */
 	public readonly defaultLanguage: string = 'en';
 
-	/** File-transfer-related config (used by Files.Files). */
-	public readonly filesConfig = {
-		maxImageWidth: 1920,
-		maxSize: 268435456
-	};
-
 	/** Max signed 32-bit integer. */
 	public readonly maxInt32: number = 2147483647;
 
