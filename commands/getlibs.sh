@@ -322,6 +322,9 @@ sed -i \
 	's|"browser": "./build/lz4.js",|"browser": {"./lib/utils.js": "./lib/utils-js.js"},|g' \
 	lz4/package.json
 
+# Temporary workaround for https://github.com/microsoft/TypeScript/issues/33752
+sed -i 's|: readonly|:|g' typescript/lib/lib.es2015.promise.d.ts
+
 # Temporary workaround for https://github.com/dcodeIO/protobuf.js/issues/863
 while true ; do
 	for host in raw.githubusercontent.com cdn.rawgit.com rawgit.com ; do
