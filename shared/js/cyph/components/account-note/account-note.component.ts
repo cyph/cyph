@@ -194,6 +194,8 @@ export class AccountNoteComponent extends BaseProvider
 				this.realTime
 			]).subscribe(async ([o, realTime]) => {
 				try {
+					this.accountService.interstitial.next(true);
+
 					const id: string | undefined = o.id;
 
 					if (!id) {
@@ -219,6 +221,12 @@ export class AccountNoteComponent extends BaseProvider
 				}
 				catch {
 					this.router.navigate(['404']);
+				}
+				finally {
+					/* TODO: Block on Quill event instead */
+					await sleep(1000);
+
+					this.accountService.interstitial.next(false);
 				}
 			})
 		);
