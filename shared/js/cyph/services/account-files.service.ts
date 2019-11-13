@@ -53,6 +53,7 @@ import {
 	getOrSetDefault,
 	getOrSetDefaultAsync
 } from '../util/get-or-set-default';
+import {debugLog} from '../util/log';
 import {observableAll} from '../util/observable-all';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
@@ -1728,6 +1729,14 @@ export class AccountFilesService extends BaseProvider {
 		if (name) {
 			file.name = name;
 		}
+
+		debugLog(() => ({
+			updateNote: {
+				content,
+				file,
+				id
+			}
+		}));
 
 		await Promise.all([
 			this.accountDatabaseService.setItem(

@@ -21,6 +21,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {lockFunction} from '../../util/lock';
+import {debugLog} from '../../util/log';
 import {sleep} from '../../util/wait';
 
 /**
@@ -287,6 +288,13 @@ export class AccountNoteComponent extends BaseProvider
 
 	/** Saves note. */
 	public saveNote () : void {
+		debugLog(() => ({
+			saveNote: {
+				note: {...this.note.value},
+				noteData: {...this.noteData.value}
+			}
+		}));
+
 		this.saveLock(async () => {
 			const noteData = {...this.noteData.value};
 
@@ -298,6 +306,12 @@ export class AccountNoteComponent extends BaseProvider
 							.toPromise() :
 						<IQuillDelta> (<any> {clientID: '', ops: []});
 			}
+
+			debugLog(() => ({
+				saveNoteLockClaimed: {
+					noteData
+				}
+			}));
 
 			this.accountService.interstitial.next(true);
 
