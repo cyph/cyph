@@ -1,6 +1,5 @@
 {
 	"angularCompilerOptions": {
-		"enableIvy": false,
 		"fullTemplateTypeCheck": true,
 		"preserveWhitespaces": false
 	},
