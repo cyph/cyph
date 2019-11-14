@@ -52,6 +52,12 @@ import {CustomUrlSerializer} from './custom-url-serializer';
 		LockdownComponent,
 		SignupConfirmComponent
 	],
+	entryComponents: [
+		AppComponent,
+		EphemeralChatRootComponent,
+		LockdownComponent,
+		SignupConfirmComponent
+	],
 	imports: [
 		RouterModule.forRoot([], {
 			onSameUrlNavigation: 'reload',
