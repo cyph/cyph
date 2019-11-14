@@ -22,7 +22,6 @@ import {StringsService} from '../services/strings.service';
  */
 @NgModule({
 	declarations: [MarkdownComponent],
-	entryComponents: [MarkdownComponent],
 	exports: [
 		BrowserAnimationsModule,
 		BrowserModule,
