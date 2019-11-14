@@ -876,8 +876,6 @@ then
 
 			if [ "${allBranches}" ] ; then
 				firebaseProjects="cyph-test-staging cyph-test-beta cyph-test-master ${firebaseProjects}"
-			elif [ "${mainEnvironment}" == 'beta-staging' ] ; then
-				firebaseProjects="cyph-test-beta ${firebaseProjects}"
 			elif [ "${mainEnvironment}" != 'dev' ] ; then
 				firebaseProjects="cyph-test-${branch} ${firebaseProjects}"
 			fi
