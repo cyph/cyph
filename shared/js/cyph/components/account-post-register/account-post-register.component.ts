@@ -18,7 +18,14 @@ export class AccountPostRegisterComponent extends BaseProvider
 	implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.accountService.setHeader('IMPORTANT: Confirm Your Master Key');
+		this.accountService.setHeader(
+			this.accountDatabaseService.currentUser.value &&
+				this.accountDatabaseService.currentUser.value
+					.masterKeyConfirmed ?
+				this.stringsService.welcomeToProduct :
+				this.stringsService.welcomeMasterKeySetup
+		);
+
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
 	}

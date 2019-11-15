@@ -982,6 +982,9 @@ export class StringsService extends BaseProvider {
 	public readonly welcomeComma = `Welcome,`;
 
 	/** @see StringsService */
+	public readonly welcomeMasterKeySetup = `IMPORTANT: Confirm Your Master Key`;
+
+	/** @see StringsService */
 	public readonly welcomeToProduct = `Welcome to ${this.internalProduct}`;
 
 	/** @see StringsService */
