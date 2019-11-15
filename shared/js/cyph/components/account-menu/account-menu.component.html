@@ -457,9 +457,7 @@
 					aria-label="Wallets (experimental)"
 					routerLink="/wallets"
 					(click)="click()"
-					[class.disabled]="
-						(accountService.enableWallets | async) === false
-					"
+					*ngIf="accountService.enableWallets | async"
 				>
 					<mat-icon
 						mat-list-icon
