@@ -1853,7 +1853,10 @@ export class AccountFilesService extends BaseProvider {
 				this.accountDatabaseService.uploadItem(
 					url,
 					BinaryProto,
-					msgpack.encode(<IQuillDelta> file),
+					msgpack.encode({
+						clientID: (<IQuillDelta> file).clientID,
+						ops: (<IQuillDelta> file).ops
+					}),
 					undefined,
 					key
 				) :
@@ -2010,7 +2013,10 @@ export class AccountFilesService extends BaseProvider {
 
 							return typeof decoded === 'object' &&
 								decoded.ops instanceof Array ?
-								decoded :
+								{
+									clientID: decoded.clientID,
+									ops: decoded.ops
+								} :
 								{ops: []};
 						})
 					);
