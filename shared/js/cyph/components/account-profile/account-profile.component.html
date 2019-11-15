@@ -212,7 +212,7 @@
 						#descriptionEditor
 						(blur)="isEditorFocused.next(false)"
 						(focus)="isEditorFocused.next(true)"
-						[maxlength]="accountService.maxNameLength"
+						[maxLength]="accountService.maxNameLength"
 						[ngModel]="user.name | async"
 						(ngModelChange)="updateDraft({name: $event})"
 					/>
