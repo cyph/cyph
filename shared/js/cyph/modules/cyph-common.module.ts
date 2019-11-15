@@ -66,27 +66,6 @@ import {CyphWebModule} from './cyph-web.module';
 		SignupFormComponent,
 		TranslateDirective
 	],
-	entryComponents: [
-		BannerComponent,
-		BlankComponent,
-		CalendarInviteComponent,
-		CalendarInviteInheritNgFormComponent,
-		ChatCyphertextComponent,
-		ChatCyphertextListComponent,
-		ChatMainComponent,
-		ChatMessageComponent,
-		ChatMessageBoxComponent,
-		ChatMessageBoxInheritNgFormComponent,
-		ChatMessageListComponent,
-		ContactComponent,
-		HelpComponent,
-		LogoComponent,
-		PinInputComponent,
-		QuillComponent,
-		RedirectComponent,
-		SearchBarComponent,
-		SignupFormComponent
-	],
 	exports: [
 		AnchorDirective,
 		AutofocusDirective,
