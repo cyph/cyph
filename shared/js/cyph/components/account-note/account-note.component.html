@@ -9,6 +9,7 @@
 			fxFlex
 			class="partial-width"
 			[class.mobile]="envService.isMobile | async"
+			[class.visibility-hidden]="accountService.interstitial | async"
 		>
 			<div fxLayout="column">
 				<div fxLayoutAlign="center center" fxLayout="row">

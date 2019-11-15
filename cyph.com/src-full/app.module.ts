@@ -48,6 +48,13 @@ import {SilentNotificationService} from './silent-notification.service';
 		DemoChatRootComponent,
 		DemoComponent
 	],
+	entryComponents: [
+		BetaRegisterComponent,
+		CheckoutComponent,
+		ClaimUsernameComponent,
+		DemoChatRootComponent,
+		DemoComponent
+	],
 	imports: [CyphCommonModule, CyphWebModule],
 	providers: [
 		DemoService,

@@ -1,6 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"angularCompilerOptions": {
+		"enableIvy": false,
 		"fullTemplateTypeCheck": true,
 		"preserveWhitespaces": false
 	},

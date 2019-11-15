@@ -57,6 +57,12 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DynamicFormComponent,
 		InitDirective
 	],
+	entryComponents: [
+		DialogAlertComponent,
+		DialogConfirmComponent,
+		DialogMediaComponent,
+		DynamicFormComponent
+	],
 	exports: [
 		AngularDraggableModule,
 		CyphSharedModule,

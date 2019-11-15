@@ -21,6 +21,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {lockFunction} from '../../util/lock';
+import {debugLog} from '../../util/log';
 import {sleep} from '../../util/wait';
 
 /**
@@ -194,6 +195,8 @@ export class AccountNoteComponent extends BaseProvider
 				this.realTime
 			]).subscribe(async ([o, realTime]) => {
 				try {
+					this.accountService.interstitial.next(true);
+
 					const id: string | undefined = o.id;
 
 					if (!id) {
@@ -219,6 +222,12 @@ export class AccountNoteComponent extends BaseProvider
 				}
 				catch {
 					this.router.navigate(['404']);
+				}
+				finally {
+					/* TODO: Block on Quill event instead */
+					await sleep(1000);
+
+					this.accountService.interstitial.next(false);
 				}
 			})
 		);
@@ -279,9 +288,16 @@ export class AccountNoteComponent extends BaseProvider
 
 	/** Saves note. */
 	public saveNote () : void {
-		this.saveLock(async () => {
-			const noteData = {...this.noteData.value};
+		const noteData = {...this.noteData.value};
 
+		debugLog(() => ({
+			saveNote: {
+				note: {...this.note.value},
+				noteData
+			}
+		}));
+
+		this.saveLock(async () => {
 			if (!noteData.content) {
 				noteData.content =
 					this.note.value && this.note.value.content ?
@@ -290,6 +306,12 @@ export class AccountNoteComponent extends BaseProvider
 							.toPromise() :
 						<IQuillDelta> (<any> {clientID: '', ops: []});
 			}
+
+			debugLog(() => ({
+				saveNoteLockClaimed: {
+					noteData
+				}
+			}));
 
 			this.accountService.interstitial.next(true);
 

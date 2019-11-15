@@ -53,6 +53,7 @@ import {
 	getOrSetDefault,
 	getOrSetDefaultAsync
 } from '../util/get-or-set-default';
+import {debugLog} from '../util/log';
 import {observableAll} from '../util/observable-all';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
@@ -1729,6 +1730,14 @@ export class AccountFilesService extends BaseProvider {
 			file.name = name;
 		}
 
+		debugLog(() => ({
+			updateNote: {
+				content,
+				file,
+				id
+			}
+		}));
+
 		await Promise.all([
 			this.accountDatabaseService.setItem(
 				`users/${file.owner}/files/${id}`,
@@ -1993,11 +2002,17 @@ export class AccountFilesService extends BaseProvider {
 						this.subscriptions
 					)
 					.pipe(
-						map(o =>
-							o.value.length > 0 ?
-								msgpack.decode(o.value) :
-								{ops: []}
-						)
+						map(o => {
+							const decoded =
+								o.value.length > 0 ?
+									msgpack.decode(o.value) :
+									undefined;
+
+							return typeof decoded === 'object' &&
+								decoded.ops instanceof Array ?
+								decoded :
+								{ops: []};
+						})
 					);
 			}
 		);
