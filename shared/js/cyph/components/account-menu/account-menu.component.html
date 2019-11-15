@@ -78,7 +78,6 @@
 		<mat-nav-list>
 			<ng-container
 				*ngIf="
-					currentUser.agseConfirmed &&
 					envService.isTelehealthFull &&
 					(currentUser.user.userType | async) ===
 						accountUserTypes.Standard &&
@@ -92,6 +91,7 @@
 					mat-list-item
 					cyphTranslate
 					class="incoming-patient-info emphasis"
+					[class.disabled]="!currentUser.agseConfirmed"
 					aria-label="Incoming Patient Info"
 					routerLink="/incoming-patient-info"
 					(click)="click()"
@@ -124,13 +124,12 @@
 				</a>
 			</ng-container>
 
-			<ng-container
-				*ngIf="currentUser.agseConfirmed && envService.isTelehealth"
-			>
+			<ng-container *ngIf="envService.isTelehealth">
 				<a
 					mat-list-item
 					cyphTranslate
 					class="appointments"
+					[class.disabled]="!currentUser.agseConfirmed"
 					aria-label="Appointments"
 					routerLink="/appointments"
 					(click)="click()"
@@ -165,7 +164,6 @@
 
 			<ng-container
 				*ngIf="
-					currentUser.agseConfirmed &&
 					envService.isTelehealthFull &&
 					(currentUser.user.userType | async) !==
 						accountUserTypes.TelehealthDoctor
@@ -175,6 +173,7 @@
 					mat-list-item
 					cyphTranslate
 					class="doctors"
+					[class.disabled]="!currentUser.agseConfirmed"
 					aria-label="Doctors"
 					routerLink="/doctors"
 					(click)="click()"
@@ -188,7 +187,6 @@
 
 			<ng-container
 				*ngIf="
-					currentUser.agseConfirmed &&
 					envService.isTelehealthFull &&
 					(currentUser.user.userType | async) !==
 						accountUserTypes.Standard
@@ -198,6 +196,7 @@
 					mat-list-item
 					cyphTranslate
 					class="patients"
+					[class.disabled]="!currentUser.agseConfirmed"
 					aria-label="Patients"
 					routerLink="/patients"
 					(click)="click()"
@@ -237,15 +236,12 @@
 				</a>
 			</ng-container>
 
-			<ng-container
-				*ngIf="
-					currentUser.agseConfirmed && !envService.isTelehealthFull
-				"
-			>
+			<ng-container *ngIf="!envService.isTelehealthFull">
 				<a
 					mat-list-item
 					cyphTranslate
 					class="contacts"
+					[class.disabled]="!currentUser.agseConfirmed"
 					aria-label="Messages"
 					routerLink="/"
 					(click)="click()"
