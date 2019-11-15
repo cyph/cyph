@@ -298,6 +298,13 @@ export class AccountNoteComponent extends BaseProvider
 		}));
 
 		this.saveLock(async () => {
+			debugLog(() => ({
+				saveNoteLockClaimed: {
+					noteData,
+					ops: noteData.content && noteData.content.ops
+				}
+			}));
+
 			if (!noteData.content) {
 				noteData.content =
 					this.note.value && this.note.value.content ?
@@ -308,8 +315,9 @@ export class AccountNoteComponent extends BaseProvider
 			}
 
 			debugLog(() => ({
-				saveNoteLockClaimed: {
-					noteData
+				saveNoteLockContentSet: {
+					noteData,
+					ops: noteData.content && noteData.content.ops
 				}
 			}));
 
