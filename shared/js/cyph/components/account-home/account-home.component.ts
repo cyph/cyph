@@ -41,6 +41,15 @@ export class AccountHomeComponent extends BaseProvider
 			return;
 		}
 
+		if (
+			!this.accountDatabaseService.currentUser.value ||
+			!this.accountDatabaseService.currentUser.value.agseConfirmed ||
+			!this.accountDatabaseService.currentUser.value.masterKeyConfirmed
+		) {
+			this.router.navigate(['welcome']);
+			return;
+		}
+
 		this.accountService.transitionEnd();
 	}
 
