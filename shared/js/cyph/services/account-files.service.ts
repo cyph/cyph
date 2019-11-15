@@ -2002,11 +2002,17 @@ export class AccountFilesService extends BaseProvider {
 						this.subscriptions
 					)
 					.pipe(
-						map(o =>
-							o.value.length > 0 ?
-								msgpack.decode(o.value) :
-								{ops: []}
-						)
+						map(o => {
+							const decoded =
+								o.value.length > 0 ?
+									msgpack.decode(o.value) :
+									undefined;
+
+							return typeof decoded === 'object' &&
+								decoded.ops instanceof Array ?
+								decoded :
+								{ops: []};
+						})
 					);
 			}
 		);
