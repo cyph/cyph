@@ -7,7 +7,6 @@
 
 .password-option {
 	background-color: rgba(255, 255, 255, 0.1);
-	padding: 20px;
 
 	&.deselected {
 		cursor: pointer;
@@ -86,10 +85,23 @@ mat-card-content {
 	font-size: 1.15em;
 }
 
+.confirmMK {
+	margin-bottom: 32px;
+}
+
 .cyph-banner {
 	font-size: 1em;
 	line-height: 1.75em;
 	padding: 1em 2em;
+	color: #424242 !important;
+
+	li {
+		margin-bottom: 0.5em;
+	}
+
+	strong {
+		color: red;
+	}
 }
 
 :host ::ng-deep mat-tab-header {

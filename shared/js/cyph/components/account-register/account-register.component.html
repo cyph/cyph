@@ -55,6 +55,7 @@
 				fxFlex
 				fxFlex.gt-sm="initial"
 				type="submit"
+				class="confirmMK"
 				[disabled]="
 					((confirmMasterKeyOnly || getMasterKeyOnly ?
 						masterKeyReady :
@@ -68,6 +69,7 @@
 						getPasswordSubmitText
 				}}
 			</button>
+			<br />
 		</div>
 	</form>
 </ng-container>
@@ -890,17 +892,42 @@
 		<div></div>
 
 		<div fxLayout="row" fxLayoutAlign="center center">
-			<h3 fxLayout="column" class="cyph-banner default-align warn">
+			<h3 fxLayout="column" class="cyph-banner default-align">
 				<div cyphTranslate>
 					<h4>
-						Master Key OPSEC Rules:
+						Understanding your Master Key:
 					</h4>
 					<ol>
-						<li>You do not talk about your Master Key.</li>
-						<li><em>You do not talk about your Master Key.</em></li>
 						<li>
-							But seriously, don't share it or reuse it as a
-							password anywhere.
+							Your Master Key is what unlocks your encrypted data
+							and will be used when initially logging in on a new
+							device.
+						</li>
+						<li>
+							<strong>KEEP IT SAFE!</strong> -- While we provide
+							state of the art encryption and implement numerous
+							safeguards,
+							<strong
+								>if your key is compromised your private data
+								can be compromised as well.</strong
+							>
+						</li>
+						<li>
+							<strong>DON'T LOSE IT!</strong> -- If this key is
+							lost and you lose access to your authenticated
+							devices,
+							<strong
+								>you will not be able to access your
+								account</strong
+							>
+							or recover your data!
+						</li>
+					</ol>
+					<h4>Security Reccomendations:</h4>
+					<ol>
+						<li>
+							Don't print it out, save it cloud storage, or
+							anywhere else.
 						</li>
 						<li>
 							Don't even store it in an encrypted password
@@ -915,10 +942,6 @@
 								<span>and keep it well hidden.</span>
 							</strong>
 						</li>
-						<li>
-							Don't lose it, because we can't help you recover or
-							reset it.
-						</li>
 					</ol>
 				</div>
 				<div fxLayout="row" fxLayoutAlign="center center">
@@ -928,7 +951,7 @@
 						(ngModelChange)="opsecAcknowledgement.next($event)"
 						required
 					>
-						I accept this responsibility
+						I understand and am ready to view my Master Key
 					</mat-checkbox>
 				</div>
 			</h3>
@@ -947,7 +970,7 @@
 					<div
 						fxFlex
 						fxFlex.sm="80"
-						fxFlex.gt-sm="60"
+						fxFlex.gt-sm="90"
 						class="spoiler"
 						[class.revealed]="(spoiler | async) === false"
 						(click)="

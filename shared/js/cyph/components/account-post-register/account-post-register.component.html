@@ -5,12 +5,6 @@
 		*ngIf="!currentUser.masterKeyConfirmed; else agseConfirmationMessage"
 	>
 		<br />
-		<div fxLayout="row" fxLayoutAlign="center">
-			<strong cyphTranslate>
-				Before using your account, please move somewhere private and
-				confirm your master key as soon as possible:
-			</strong>
-		</div>
 		<cyph-account-register
 			fxFlex
 			[confirmMasterKeyOnly]="true"
