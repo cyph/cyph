@@ -288,16 +288,16 @@ export class AccountNoteComponent extends BaseProvider
 
 	/** Saves note. */
 	public saveNote () : void {
+		const noteData = {...this.noteData.value};
+
 		debugLog(() => ({
 			saveNote: {
 				note: {...this.note.value},
-				noteData: {...this.noteData.value}
+				noteData
 			}
 		}));
 
 		this.saveLock(async () => {
-			const noteData = {...this.noteData.value};
-
 			if (!noteData.content) {
 				noteData.content =
 					this.note.value && this.note.value.content ?
