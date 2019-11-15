@@ -84,7 +84,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Password visibility settings. */
 	public readonly hidePassword = {
 		finalConfirmation: new BehaviorSubject<boolean>(true),
-		lockScreenPIN: new BehaviorSubject<boolean>(false),
+		lockScreenPIN: new BehaviorSubject<boolean>(true),
 		lockScreenPassword: new BehaviorSubject<boolean>(true),
 		lockScreenPasswordConfirm: new BehaviorSubject<boolean>(true),
 		masterKey: new BehaviorSubject<boolean>(true),
