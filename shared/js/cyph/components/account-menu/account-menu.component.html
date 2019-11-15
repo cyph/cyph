@@ -91,7 +91,10 @@
 					mat-list-item
 					cyphTranslate
 					class="incoming-patient-info emphasis"
-					[class.disabled]="!currentUser.agseConfirmed"
+					[class.disabled]="
+						!currentUser.agseConfirmed ||
+						!currentUser.masterKeyConfirmed
+					"
 					aria-label="Incoming Patient Info"
 					routerLink="/incoming-patient-info"
 					(click)="click()"
@@ -129,7 +132,10 @@
 					mat-list-item
 					cyphTranslate
 					class="appointments"
-					[class.disabled]="!currentUser.agseConfirmed"
+					[class.disabled]="
+						!currentUser.agseConfirmed ||
+						!currentUser.masterKeyConfirmed
+					"
 					aria-label="Appointments"
 					routerLink="/appointments"
 					(click)="click()"
@@ -173,7 +179,10 @@
 					mat-list-item
 					cyphTranslate
 					class="doctors"
-					[class.disabled]="!currentUser.agseConfirmed"
+					[class.disabled]="
+						!currentUser.agseConfirmed ||
+						!currentUser.masterKeyConfirmed
+					"
 					aria-label="Doctors"
 					routerLink="/doctors"
 					(click)="click()"
@@ -196,7 +205,10 @@
 					mat-list-item
 					cyphTranslate
 					class="patients"
-					[class.disabled]="!currentUser.agseConfirmed"
+					[class.disabled]="
+						!currentUser.agseConfirmed ||
+						!currentUser.masterKeyConfirmed
+					"
 					aria-label="Patients"
 					routerLink="/patients"
 					(click)="click()"
@@ -211,6 +223,10 @@
 					mat-list-item
 					cyphTranslate
 					class="staff"
+					[class.disabled]="
+						!currentUser.agseConfirmed ||
+						!currentUser.masterKeyConfirmed
+					"
 					aria-label="Staff"
 					routerLink="/staff"
 					(click)="click()"
@@ -225,6 +241,10 @@
 					mat-list-item
 					cyphTranslate
 					class="ehr-access"
+					[class.disabled]="
+						!currentUser.agseConfirmed ||
+						!currentUser.masterKeyConfirmed
+					"
 					aria-label="EHR Access"
 					routerLink="/ehr-access"
 					(click)="click()"
@@ -241,7 +261,10 @@
 					mat-list-item
 					cyphTranslate
 					class="contacts"
-					[class.disabled]="!currentUser.agseConfirmed"
+					[class.disabled]="
+						!currentUser.agseConfirmed ||
+						!currentUser.masterKeyConfirmed
+					"
 					aria-label="Messages"
 					routerLink="/"
 					(click)="click()"
@@ -281,6 +304,7 @@
 					mat-list-item
 					cyphTranslate
 					class="files"
+					[class.disabled]="!currentUser.masterKeyConfirmed"
 					aria-label="Files"
 					routerLink="/files"
 					(click)="click()"
@@ -316,6 +340,7 @@
 					mat-list-item
 					cyphTranslate
 					class="notes"
+					[class.disabled]="!currentUser.masterKeyConfirmed"
 					aria-label="Notes"
 					routerLink="/notes"
 					(click)="click()"
@@ -351,6 +376,7 @@
 					mat-list-item
 					cyphTranslate
 					class="docs"
+					[class.disabled]="!currentUser.masterKeyConfirmed"
 					aria-label="Docs"
 					routerLink="/docs"
 					(click)="click()"
@@ -387,6 +413,7 @@
 					mat-list-item
 					cyphTranslate
 					class="forms"
+					[class.disabled]="!currentUser.masterKeyConfirmed"
 					aria-label="Forms"
 					routerLink="/forms"
 					(click)="click()"
@@ -450,6 +477,7 @@
 					mat-list-item
 					cyphTranslate
 					class="wallets"
+					[class.disabled]="!currentUser.masterKeyConfirmed"
 					aria-label="Wallets (experimental)"
 					routerLink="/wallets"
 					(click)="click()"
@@ -592,13 +620,14 @@
 			</div>
 		</div>
 
-		<mat-nav-list *ngIf="currentUser.masterKeyConfirmed">
+		<mat-nav-list>
 			<mat-divider></mat-divider>
 
 			<a
 				mat-list-item
 				cyphTranslate
 				class="settings"
+				[class.disabled]="!currentUser.masterKeyConfirmed"
 				aria-label="Settings"
 				routerLink="/settings"
 				(click)="click()"
@@ -613,6 +642,7 @@
 				mat-list-item
 				cyphTranslate
 				class="lock"
+				[class.disabled]="!currentUser.masterKeyConfirmed"
 				aria-label="Lock"
 				(click)="accountAuthService.lock()"
 			>
@@ -626,6 +656,7 @@
 				mat-list-item
 				cyphTranslate
 				class="logout"
+				[class.disabled]="!currentUser.masterKeyConfirmed"
 				aria-label="Log Out"
 				routerLink="/logout"
 				(click)="click()"
