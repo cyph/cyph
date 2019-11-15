@@ -695,7 +695,7 @@ export class AccountFilesService extends BaseProvider {
 				const limit = 75;
 				const file = await this.getFile(id);
 				const content = this.deltaToString(
-					msgpack.decode(
+					this.decodeQuill(
 						await this.accountDatabaseService.getItem(
 							`users/${file.owner}/files/${id}`,
 							BinaryProto,
@@ -796,6 +796,30 @@ export class AccountFilesService extends BaseProvider {
 					}))
 			)
 		);
+	}
+
+	/** @ignore */
+	private decodeQuill (bytes: Uint8Array) : any {
+		const o = bytes.length > 0 ? msgpack.decode(bytes) : undefined;
+
+		return typeof o === 'object' ?
+			{
+				...('clientID' in o ? {clientID: o.clientID} : {}),
+				...('index' in o ? {index: o.index} : {}),
+				...('length' in o ? {length: o.length} : {}),
+				...('ops' in o ? {ops: o.ops} : {})
+			} :
+			{};
+	}
+
+	/** @ignore */
+	private encodeQuill (o: IQuillDelta | IQuillRange) : Uint8Array {
+		return msgpack.encode({
+			...('clientID' in o ? {clientID: o.clientID} : {}),
+			...('index' in o ? {index: o.index} : {}),
+			...('length' in o ? {length: o.length} : {}),
+			...('ops' in o ? {ops: o.ops} : {})
+		});
 	}
 
 	/** @ignore */
@@ -1151,26 +1175,29 @@ export class AccountFilesService extends BaseProvider {
 			getFlatValue: async () => docAsyncList.getValue(),
 			getValue: async () =>
 				(await asyncList.getValue()).map(bytes =>
-					msgpack.decode(bytes)
+					this.decodeQuill(bytes)
 				),
 			lock: async (f, reason) => asyncList.lock(f, reason),
-			pushItem: async delta => asyncList.pushItem(msgpack.encode(delta)),
+			pushItem: async delta =>
+				asyncList.pushItem(this.encodeQuill(delta)),
 			setValue: async deltas =>
-				asyncList.setValue(deltas.map(delta => msgpack.encode(delta))),
+				asyncList.setValue(
+					deltas.map(delta => this.encodeQuill(delta))
+				),
 			subscribeAndPop: f =>
-				asyncList.subscribeAndPop(bytes => f(msgpack.decode(bytes))),
+				asyncList.subscribeAndPop(bytes => f(this.decodeQuill(bytes))),
 			updateValue: async f =>
 				asyncList.updateValue(async bytesArray =>
 					(await f(
-						bytesArray.map(bytes => msgpack.decode(bytes))
-					)).map(delta => msgpack.encode(delta))
+						bytesArray.map(bytes => this.decodeQuill(bytes))
+					)).map(delta => this.encodeQuill(delta))
 				),
 			watch: memoize(() =>
 				asyncList
 					.watch()
 					.pipe(
 						map(deltas =>
-							deltas.map(delta => msgpack.decode(delta))
+							deltas.map(delta => this.decodeQuill(delta))
 						)
 					)
 			),
@@ -1178,9 +1205,7 @@ export class AccountFilesService extends BaseProvider {
 			watchPushes: memoize(() =>
 				asyncList.watchPushes().pipe(
 					skip(1),
-					map(delta =>
-						delta.length > 0 ? msgpack.decode(delta) : {}
-					)
+					map(delta => this.decodeQuill(delta))
 				)
 			)
 		};
@@ -1319,7 +1344,7 @@ export class AccountFilesService extends BaseProvider {
 		return fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
 			file instanceof Array ?
 				file
-					.map(o => msgpack.encode(o).length)
+					.map(o => this.encodeQuill(o).length)
 					.reduce((a, b) => a + b, 0) :
 				0 :
 		fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
@@ -1329,7 +1354,7 @@ export class AccountFilesService extends BaseProvider {
 				file.data.length :
 				NaN :
 		fileConfig.recordType === AccountFileRecord.RecordTypes.Note ?
-			msgpack.encode(<IQuillDelta> file).length :
+			this.encodeQuill(<IQuillDelta> file).length :
 		fileConfig.proto ?
 			(await serialize<any>(fileConfig.proto, file)).length :
 			NaN;
@@ -1676,7 +1701,7 @@ export class AccountFilesService extends BaseProvider {
 		await this.accountDatabaseService.pushItem(
 			`users/${file.owner}/docs/${id}`,
 			BinaryProto,
-			msgpack.encode(delta),
+			this.encodeQuill(delta),
 			undefined,
 			file.key
 		);
@@ -1742,7 +1767,7 @@ export class AccountFilesService extends BaseProvider {
 			this.accountDatabaseService.setItem(
 				`users/${file.owner}/files/${id}`,
 				BinaryProto,
-				msgpack.encode(content),
+				this.encodeQuill(content),
 				undefined,
 				file.key
 			),
@@ -1822,7 +1847,7 @@ export class AccountFilesService extends BaseProvider {
 								await this.accountDatabaseService.pushItem(
 									`users/${username}/docs/${id}`,
 									BinaryProto,
-									msgpack.encode(doc[i]),
+									this.encodeQuill(doc[i]),
 									undefined,
 									key
 								);
@@ -1853,10 +1878,7 @@ export class AccountFilesService extends BaseProvider {
 				this.accountDatabaseService.uploadItem(
 					url,
 					BinaryProto,
-					msgpack.encode({
-						clientID: (<IQuillDelta> file).clientID,
-						ops: (<IQuillDelta> file).ops
-					}),
+					this.encodeQuill(<IQuillDelta> file),
 					undefined,
 					key
 				) :
@@ -2006,18 +2028,11 @@ export class AccountFilesService extends BaseProvider {
 					)
 					.pipe(
 						map(o => {
-							const decoded =
-								o.value.length > 0 ?
-									msgpack.decode(o.value) :
-									undefined;
-
-							return typeof decoded === 'object' &&
-								decoded.ops instanceof Array ?
-								{
-									clientID: decoded.clientID,
-									ops: decoded.ops
-								} :
-								{ops: []};
+							const decoded = this.decodeQuill(o.value);
+							if (!decoded.ops) {
+								decoded.ops = [];
+							}
+							return decoded;
 						})
 					);
 			}
