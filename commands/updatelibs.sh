@@ -246,7 +246,6 @@ read -r -d '' modules <<- EOM
 	jasmine-spec-reporter
 	jquery
 	jquery-appear-original
-	jsdoc@3.5.5
 	jsdom
 	jspdf
 	karma
