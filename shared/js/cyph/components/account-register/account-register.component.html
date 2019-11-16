@@ -887,6 +887,7 @@
 			</mat-form-field>
 		</div>
 	</div>
+	<div></div>
 </ng-template>
 
 <ng-template #masterKeyUI>
@@ -1013,7 +1014,7 @@
 			</div>
 		</div>
 
-		<div></div>
+		<div *ngIf="!confirmMasterKeyOnly"></div>
 
 		<div
 			fxLayout="row"
@@ -1167,7 +1168,7 @@
 			</mat-accordion>
 		</div>
 
-		<div></div>
+		<div *ngIf="!confirmMasterKeyOnly"></div>
 	</div>
 </ng-template>
 
