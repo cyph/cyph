@@ -32,6 +32,11 @@ body.disable-drop-shadow {
 	}
 }
 
+/* https://github.com/angular/components/issues/8416 */
+.mat-checkbox-layout {
+	white-space: normal !important;
+}
+
 /* Temporary workaround for Angular Material bug */
 mat-sidenav.disabled {
 	@include transform(none !important);
