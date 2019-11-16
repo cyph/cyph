@@ -207,7 +207,10 @@ export class StringsService extends BaseProvider {
 	public readonly composeMessage = `Compose Message`;
 
 	/** @see StringsService */
-	public readonly confirmMasterKey = `Confirm Master Key`;
+	public readonly confirmMasterKeyFinal = `Confirm Master Key`;
+
+	/** @see StringsService */
+	public readonly confirmMasterKeyStep1 = `Next`;
 
 	/** @see StringsService */
 	public readonly connectedNotification = `Connected!`;

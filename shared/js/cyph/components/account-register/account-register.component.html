@@ -64,9 +64,11 @@
 				"
 			>
 				{{
-					confirmMasterKeyOnly ?
-						confirmMasterKeySubmitText :
-						getPasswordSubmitText
+					!confirmMasterKeyOnly ?
+						getPasswordSubmitText :
+					(phase | async) === 3 ?
+						stringsService.confirmMasterKeyFinal :
+						stringsService.confirmMasterKeyStep1
 				}}
 			</button>
 			<br />

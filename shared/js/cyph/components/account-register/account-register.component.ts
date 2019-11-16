@@ -57,10 +57,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** If true, will display only the initial master key confirmation UI. */
 	@Input() public confirmMasterKeyOnly: boolean = false;
 
-	/** Submit button text when confirming master key or lock screen password. */
-	@Input() public confirmMasterKeySubmitText: string = this.stringsService
-		.confirmMasterKey;
-
 	/** Email addres. */
 	public readonly email = new BehaviorSubject<string>('');
 
