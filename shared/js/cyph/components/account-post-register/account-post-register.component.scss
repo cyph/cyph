@@ -12,15 +12,23 @@
 		cyph-account-register .back {
 			margin-top: 8px;
 			margin-left: 8px;
+		}
+	}
+}
 
-			&.mobile {
-				top: 60px;
-			}
+body.mobile :host {
+	::ng-deep {
+		cyph-account-register .back {
+			top: 60px;
+		}
+	}
+}
 
-			&:not(.mobile) {
-				top: 95px;
-				left: 5px;
-			}
+body:not(.mobile) :host {
+	::ng-deep {
+		cyph-account-register .back {
+			top: 95px;
+			left: 5px;
 		}
 	}
 }
