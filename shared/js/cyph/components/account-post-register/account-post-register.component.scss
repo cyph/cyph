@@ -7,4 +7,20 @@
 		font-size: 1.15em;
 		padding: 0 2em;
 	}
+
+	::ng-deep {
+		cyph-account-register .back {
+			margin-top: 8px;
+			margin-left: 8px;
+
+			&.mobile {
+				top: 60px;
+			}
+
+			&:not(.mobile) {
+				top: 95px;
+				left: 5px;
+			}
+		}
+	}
 }
