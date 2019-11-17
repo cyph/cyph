@@ -417,10 +417,7 @@
 					aria-label="Forms"
 					routerLink="/forms"
 					(click)="click()"
-					*ngIf="
-						!envService.environment.production ||
-						envService.isTelehealthFull
-					"
+					*ngIf="!envService.debug || envService.isTelehealthFull"
 				>
 					<mat-icon
 						mat-list-icon
