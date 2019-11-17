@@ -8,6 +8,7 @@ export const openWindow = (url: string) : void => {
 	}
 
 	if (env.isCordovaDesktop) {
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		window.open(url);
 		return;
 	}
