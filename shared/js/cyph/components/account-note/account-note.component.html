@@ -19,7 +19,7 @@
 					>
 						<div *ngIf="(noteEditable | async) === false">
 							{{
-								((note | async)?.metadata | async)?.name ||
+								((note | async)?.record | async)?.name ||
 									stringsService.untitled
 							}}
 						</div>
@@ -28,7 +28,7 @@
 								matInput
 								cyphTranslate
 								[ngModel]="
-									((note | async)?.metadata | async)?.name ||
+									((note | async)?.record | async)?.name ||
 									stringsService.untitled
 								"
 								(ngModelChange)="
@@ -80,10 +80,10 @@
 							cyphTranslate
 							matTooltip="Share"
 							(click)="
-								accountFilesService.shareFilePrompt(metadata);
+								accountFilesService.shareFilePrompt(record);
 								$event.stopPropagation()
 							"
-							*ngIf="(note | async)?.metadata | async as metadata"
+							*ngIf="(note | async)?.record | async as record"
 						>
 							<mat-icon>share</mat-icon>
 						</button>
@@ -108,7 +108,7 @@
 							matTooltip="Delete"
 							*ngIf="(newNote | async) === false"
 							(click)="
-								accountFilesService.remove(note.value?.metadata)
+								accountFilesService.remove(note.value?.record)
 							"
 						>
 							<mat-icon>delete</mat-icon>

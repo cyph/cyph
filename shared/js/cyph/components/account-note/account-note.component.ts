@@ -56,7 +56,7 @@ export class AccountNoteComponent extends BaseProvider
 					selections: Observable<IQuillRange>;
 					selectionSendQueue?: IQuillRange;
 				};
-				metadata: Observable<IAccountFileRecord>;
+				record: Observable<IAccountFileRecord>;
 		  }
 	>(undefined);
 
@@ -101,34 +101,34 @@ export class AccountNoteComponent extends BaseProvider
 
 	/** @ignore */
 	private async setNote (id: string) : Promise<void> {
-		const metadata = this.accountFilesService.watchMetadata(id);
-		const metadataValue = await metadata
+		const record = this.accountFilesService.watchMetadata(id);
+		const recordValue = await record
 			.pipe(
 				filter(o => !!o.id),
 				take(1)
 			)
 			.toPromise();
 
-		this.note.next({metadata});
+		this.note.next({record});
 		this.updateNoteData({
-			id: metadataValue.id,
-			owner: metadataValue.owner
+			id: recordValue.id,
+			owner: recordValue.owner
 		});
 
 		if (this.realTime.value) {
 			this.note.next({
 				doc: {
 					deltaSendQueue: <IQuillDelta[]> [],
-					...this.accountFilesService.getDoc(metadataValue.id)
+					...this.accountFilesService.getDoc(recordValue.id)
 				},
-				metadata
+				record
 			});
 
 			(async () => {
 				while (
 					this.note.value &&
 					this.note.value.doc &&
-					this.noteData.value.id === metadataValue.id
+					this.noteData.value.id === recordValue.id
 				) {
 					const doc = this.note.value.doc;
 
@@ -158,8 +158,8 @@ export class AccountNoteComponent extends BaseProvider
 		}
 		else {
 			this.note.next({
-				content: this.accountFilesService.watchNote(metadataValue.id),
-				metadata
+				content: this.accountFilesService.watchNote(recordValue.id),
+				record
 			});
 		}
 	}
@@ -333,8 +333,8 @@ export class AccountNoteComponent extends BaseProvider
 			}
 			else if (
 				this.note.value &&
-				(await this.note.value.metadata.pipe(take(1)).toPromise())
-					.id === noteData.id
+				(await this.note.value.record.pipe(take(1)).toPromise()).id ===
+					noteData.id
 			) {
 				await this.accountFilesService.updateNote(
 					noteData.id,
