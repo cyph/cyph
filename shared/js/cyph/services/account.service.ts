@@ -115,6 +115,14 @@ export class AccountService extends BaseProvider {
 		(!!this.envService.environment.customBuild &&
 			this.envService.environment.customBuild.config.enableDocs === true);
 
+	/** Indicates whether Passwords is enabled. */
+	public readonly enablePasswords: Observable<boolean> = this.envService
+		.debug ?
+		of(true) :
+		this.accountSettingsService.plan.pipe(
+			map(plan => plan === CyphPlans.FoundersAndFriends)
+		);
+
 	/** Indicates whether Wallets is enabled. */
 	public readonly enableWallets: Observable<boolean> =
 		this.envService.debug ||
@@ -708,6 +716,7 @@ export class AccountService extends BaseProvider {
 						'forms',
 						'incoming-patient-info',
 						'notes',
+						'passwords',
 						'patients',
 						'settings',
 						'staff',
@@ -722,6 +731,7 @@ export class AccountService extends BaseProvider {
 						'forms',
 						'incoming-patient-info',
 						'notes',
+						'passwords',
 						'settings',
 						'wallets'
 					].indexOf(route) < 0 &&

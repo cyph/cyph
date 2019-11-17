@@ -16,6 +16,7 @@ import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
+import {AccountPasswordsComponent} from '../components/account-passwords';
 import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
@@ -270,6 +271,7 @@ export const account: Route = {
 			component: AccountNotificationsSubscribeComponent,
 			data: {unsubscribe: true}
 		},
+		{path: 'passwords', component: AccountPasswordsComponent},
 		{
 			path: 'patients',
 			component: AccountContactsComponent,

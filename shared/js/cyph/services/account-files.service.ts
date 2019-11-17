@@ -40,10 +40,12 @@ import {
 	IAppointment,
 	IEhrApiKey,
 	IForm,
+	IPassword,
 	IRedoxPatient,
 	IWallet,
 	NotificationTypes,
 	NumberProto,
+	Password,
 	RedoxPatient,
 	Wallet
 } from '../proto';
@@ -272,6 +274,19 @@ export class AccountFilesService extends BaseProvider {
 			securityModel: undefined,
 			subroutable: true
 		},
+		[AccountFileRecord.RecordTypes.Password]: {
+			blockAnonymous: true,
+			description: 'Password',
+			incoming: () => this.incomingFilesFiltered.passwords,
+			isOfType: (file: any) => typeof file.password === 'string',
+			list: () => this.filesListFiltered.passwords,
+			mediaType: 'cyph/password',
+			proto: Password,
+			recordType: AccountFileRecord.RecordTypes.Password,
+			route: 'passwords',
+			securityModel: undefined,
+			subroutable: false
+		},
 		[AccountFileRecord.RecordTypes.RedoxPatient]: {
 			blockAnonymous: true,
 			description: 'Patient Info',
@@ -362,6 +377,10 @@ export class AccountFilesService extends BaseProvider {
 			this.filesList,
 			AccountFileRecord.RecordTypes.Note
 		),
+		passwords: this.filterFiles(
+			this.filesList,
+			AccountFileRecord.RecordTypes.Password
+		),
 		redoxPatients: this.filterFiles(
 			this.filesList,
 			AccountFileRecord.RecordTypes.RedoxPatient
@@ -401,6 +420,11 @@ export class AccountFilesService extends BaseProvider {
 			this.filesListFiltered.messagingGroups,
 			AccountFileRecord.RecordTypes.MessagingGroup,
 			this.config[AccountFileRecord.RecordTypes.MessagingGroup]
+		),
+		passwords: this.getFiles(
+			this.filesListFiltered.passwords,
+			AccountFileRecord.RecordTypes.Password,
+			this.config[AccountFileRecord.RecordTypes.Password]
 		),
 		redoxPatients: this.getFiles(
 			this.filesListFiltered.redoxPatients,
@@ -462,6 +486,7 @@ export class AccountFilesService extends BaseProvider {
 		AccountFileRecord.RecordTypes.Form,
 		AccountFileRecord.RecordTypes.MessagingGroup,
 		AccountFileRecord.RecordTypes.Note,
+		AccountFileRecord.RecordTypes.Password,
 		AccountFileRecord.RecordTypes.RedoxPatient,
 		AccountFileRecord.RecordTypes.Wallet
 	];
@@ -641,6 +666,10 @@ export class AccountFilesService extends BaseProvider {
 			this.incomingFiles,
 			AccountFileRecord.RecordTypes.Note
 		),
+		passwords: this.filterFiles(
+			this.incomingFiles,
+			AccountFileRecord.RecordTypes.Password
+		),
 		redoxPatients: this.filterFiles(
 			this.incomingFiles,
 			AccountFileRecord.RecordTypes.RedoxPatient
@@ -680,6 +709,11 @@ export class AccountFilesService extends BaseProvider {
 			this.incomingFilesFiltered.messagingGroups,
 			AccountFileRecord.RecordTypes.MessagingGroup,
 			this.config[AccountFileRecord.RecordTypes.MessagingGroup]
+		),
+		passwords: this.getFiles(
+			this.incomingFilesFiltered.passwords,
+			AccountFileRecord.RecordTypes.Password,
+			this.config[AccountFileRecord.RecordTypes.Password]
 		),
 		redoxPatients: this.getFiles(
 			this.incomingFilesFiltered.redoxPatients,
@@ -1160,6 +1194,16 @@ export class AccountFilesService extends BaseProvider {
 		);
 	}
 
+	/** Downloads file and returns password. */
+	public downloadPassword (
+		id: string | IAccountFileRecord
+	) : {
+		progress: Observable<number>;
+		result: Promise<IPassword>;
+	} {
+		return this.downloadItem(id, Password);
+	}
+
 	/** Downloads file and returns as data URI. */
 	public downloadURI (
 		id: string | IAccountFileRecord
@@ -1433,6 +1477,9 @@ export class AccountFilesService extends BaseProvider {
 
 			case 'cyph/note':
 				return 'short_text';
+
+			case 'cyph/password':
+				return 'vpn_key';
 
 			case 'cyph/redox-patient':
 				return 'person';

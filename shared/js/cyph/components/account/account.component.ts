@@ -180,6 +180,7 @@ export class AccountComponent extends BaseProvider
 					'new-patient',
 					'notes',
 					'notifications',
+					'passwords',
 					'patients',
 					'profile',
 					'request-appointment',

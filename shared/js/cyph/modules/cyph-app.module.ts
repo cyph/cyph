@@ -23,6 +23,7 @@ import {AccountMenuComponent} from '../components/account-menu';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
+import {AccountPasswordsComponent} from '../components/account-passwords';
 import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
@@ -89,6 +90,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNoteComponent,
 		AccountNotesComponent,
 		AccountNotificationsSubscribeComponent,
+		AccountPasswordsComponent,
 		AccountPostRegisterComponent,
 		AccountProfileComponent,
 		AccountPseudoRelationshipResponseComponent,
@@ -128,6 +130,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNoteComponent,
 		AccountNotesComponent,
 		AccountNotificationsSubscribeComponent,
+		AccountPasswordsComponent,
 		AccountPostRegisterComponent,
 		AccountProfileComponent,
 		AccountPseudoRelationshipResponseComponent,

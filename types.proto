@@ -32,6 +32,7 @@ message AccountFileRecord {
 		Form = 3;
 		MessagingGroup = 8;
 		Note = 4;
+		Password = 9;
 		RedoxPatient = 6;
 		Wallet = 7;
 	}
@@ -1040,6 +1041,21 @@ enum NotificationTypes {
 	ContactRequest = 5;
 	File = 1;
 	Message = 2;
+}
+
+/** A stored password. */
+message Password {
+	/** Human-readable name. */
+	required string label = 1;
+
+	/** Password. */
+	required string password = 2;
+
+	/** URL. */
+	string url = 3;
+
+	/** Username. */
+	string username = 4;
 }
 
 /** Patient information for Telehealth. */

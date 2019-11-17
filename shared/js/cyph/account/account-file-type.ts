@@ -5,6 +5,7 @@ import {
 	IAppointment,
 	IEhrApiKey,
 	IForm,
+	IPassword,
 	IRedoxPatient,
 	IWallet
 } from '../proto/types';
@@ -18,6 +19,7 @@ export type AccountFile =
 	| IForm
 	| IQuillDelta
 	| IQuillDelta[]
+	| IPassword
 	| IRedoxPatient
 	| IWallet
 	| File;

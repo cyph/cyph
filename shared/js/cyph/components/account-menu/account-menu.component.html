@@ -476,6 +476,43 @@
 				<a
 					mat-list-item
 					cyphTranslate
+					class="passwords"
+					[class.disabled]="!currentUser.masterKeyConfirmed"
+					aria-label="Passwords"
+					routerLink="/passwords"
+					(click)="click()"
+					*ngIf="accountService.enablePasswords | async"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(
+									accountFilesService.incomingFilesFiltered
+										.passwords | async
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.passwords | async
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						vpn_key
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Passwords
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
 					class="wallets"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
 					aria-label="Wallets (experimental)"
