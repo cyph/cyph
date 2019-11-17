@@ -625,11 +625,11 @@
 		<button
 			mat-icon-button
 			cyphTranslate
-			[matMenuTriggerFor]="passwordEditMenu"
-			matTooltip="Edit"
+			[matMenuTriggerFor]="passwordMenu"
+			matTooltip="Password Menu"
 			(click)="$event.stopPropagation()"
 		>
-			<mat-icon>edit</mat-icon>
+			<mat-icon>more_vert</mat-icon>
 		</button>
 
 		<mat-menu #passwordClipboardCopyMenu="matMenu">
@@ -678,6 +678,30 @@
 				Password
 			</button>
 		</mat-menu>
+		<mat-menu #passwordMenu="matMenu">
+			<button
+				mat-menu-item
+				cyphTranslate
+				[matMenuTriggerFor]="passwordEditMenu"
+			>
+				Edit
+			</button>
+			<button
+				mat-menu-item
+				cyphTranslate
+				(click)="accountFilesService.shareFilePrompt(o.record)"
+				*ngIf="currentUser.agseConfirmed"
+			>
+				Share
+			</button>
+			<button
+				mat-menu-item
+				cyphTranslate
+				(click)="accountFilesService.remove(o.record)"
+			>
+				Delete
+			</button>
+		</mat-menu>
 	</ng-container>
 
 	<button
@@ -692,6 +716,7 @@
 		"
 		*ngIf="
 			currentUser.agseConfirmed &&
+			recordType !== recordTypes.Password &&
 			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster)
 		"
 	>
@@ -707,7 +732,10 @@
 				accountFilesService.remove(o.record);
 			$event.stopPropagation()
 		"
-		*ngIf="recordType !== recordTypes.EhrApiKey || !o.data?.isMaster"
+		*ngIf="
+			recordType !== recordTypes.Password &&
+			(recordType !== recordTypes.EhrApiKey || !o.data?.isMaster)
+		"
 	>
 		<mat-icon>delete</mat-icon>
 	</button>
