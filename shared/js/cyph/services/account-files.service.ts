@@ -48,7 +48,7 @@ import {
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {flattenObservable, toBehaviorSubject} from '../util/flatten-observable';
-import {convertStorageUnitsToBytes} from '../util/formatting';
+import {convertStorageUnitsToBytes, normalizeArray} from '../util/formatting';
 import {
 	getOrSetDefault,
 	getOrSetDefaultAsync
@@ -1798,17 +1798,27 @@ export class AccountFilesService extends BaseProvider {
 		let anonymous = false;
 		let username: string;
 
+		const shareWithUsers = !shareWithUser ?
+			[] :
+			normalizeArray(
+				typeof shareWithUser === 'string' ?
+					[shareWithUser] :
+					shareWithUser
+			).filter(
+				u =>
+					!this.accountDatabaseService.currentUser.value ||
+					u !==
+						this.accountDatabaseService.currentUser.value.user
+							.username
+			);
+
 		if (this.accountDatabaseService.currentUser.value) {
 			username = this.accountDatabaseService.currentUser.value.user
 				.username;
 		}
-		else if (typeof shareWithUser === 'string') {
+		else if (shareWithUsers.length > 0) {
 			anonymous = true;
-			username = shareWithUser;
-		}
-		else if (shareWithUser instanceof Array && shareWithUser.length > 0) {
-			anonymous = true;
-			username = shareWithUser[0];
+			username = shareWithUsers[0];
 		}
 		else {
 			throw new Error('Invalid AccountFilesService.upload input.');
@@ -1930,14 +1940,9 @@ export class AccountFilesService extends BaseProvider {
 						owner: username
 					});
 
-					if (typeof shareWithUser === 'string') {
-						await this.shareFile(id, shareWithUser);
-					}
-					else if (shareWithUser instanceof Array) {
-						await Promise.all(
-							shareWithUser.map(async u => this.shareFile(id, u))
-						);
-					}
+					await Promise.all(
+						shareWithUsers.map(async u => this.shareFile(id, u))
+					);
 				}
 
 				this.showSpinner.next(false);

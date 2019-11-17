@@ -4,6 +4,7 @@ import {
 	Input,
 	OnChanges
 } from '@angular/core';
+import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {IContactListItem, User, UserPresence} from '../../account';
@@ -22,6 +23,7 @@ import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
 import {normalizeArray} from '../../util/formatting';
+import {openWindow} from '../../util/open-window';
 
 /**
  * Angular component for account contact UI.
@@ -53,11 +55,17 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	/** If true, will hide itself if `this.contact` is the same as the currently logged in user. */
 	@Input() public hideCurrentUser: boolean = false;
 
+	/** @see openWindow */
+	public readonly openWindow = openWindow;
+
 	/** @see P2PWebRTCService.isSupported */
 	public readonly p2pSupported = P2PWebRTCService.isSupported;
 
 	/** Indicates whether unread message count should be displayed. */
 	@Input() public showUnreadMessageCount: boolean = false;
+
+	/** If true, will act as a button to start a new Burner chat. */
+	@Input() public startBurner: boolean = false;
 
 	/** This user. */
 	public readonly user: BehaviorSubject<
@@ -117,6 +125,9 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	}
 
 	constructor (
+		/** @see Router */
+		public readonly router: Router,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

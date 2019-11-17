@@ -454,7 +454,7 @@ export class StringsService extends BaseProvider {
 	public readonly linkExpiresAt = `Link expires at`;
 
 	/** @see StringsService */
-	public readonly linkGet = `Get new ${this.internalProduct} link`;
+	public readonly linkGet = `Start an ephemeral chat with someone who hasn't yet signed up for ${this.internalProductShort}`;
 
 	/** @see StringsService */
 	public readonly linkTooltip = `${this.capitalize(
@@ -842,6 +842,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly shareEhrDataTitle = `Share Medical Data from EHR`;
+
+	/** @see StringsService */
+	public readonly shareFile = `Share File`;
 
 	/** @see StringsService */
 	public readonly signupConfirmTitle = `${this.internalProduct} Signup`;

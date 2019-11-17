@@ -18,59 +18,92 @@
 				fxLayoutGap="16px"
 			>
 				<ng-container
-					*ngIf="
-						(isCurrentUser | async) === false &&
-							(accountDatabaseService.currentUser | async) !==
-								undefined;
-						else buttonsAnonymous
-					"
+					*ngIf="isCurrentUser | async; else buttonsOtherUser"
 				>
 					<button
 						mat-mini-fab
 						cyphTranslate
 						class="animated flipInX _4"
-						matTooltip="Remove Contact"
-						(click)="
-							accountContactsService.removeContact(user.username)
-						"
-						*ngIf="isContact | async; else buttonsAddContact"
+						matTooltip="New Note"
+						routerLink="/notes/new"
+						*ngIf="!envService.isTelehealth"
 					>
-						<mat-icon>delete</mat-icon>
+						<mat-icon>note_add</mat-icon>
 					</button>
-					<ng-template #buttonsAddContact>
+
+					<button
+						mat-raised-button
+						cyphTranslate
+						color="accent"
+						matTooltipPosition="above"
+						routerLink="/request-appointment"
+						*ngIf="envService.isTelehealth"
+					>
+						New Appointment Request
+					</button>
+				</ng-container>
+
+				<ng-template #buttonsOtherUser>
+					<ng-container
+						*ngIf="
+							(accountDatabaseService.currentUser | async) !==
+								undefined;
+							else buttonsAnonymous
+						"
+					>
 						<button
 							mat-mini-fab
 							cyphTranslate
 							class="animated flipInX _4"
-							matTooltip="Add Contact"
+							matTooltip="Remove Contact"
 							(click)="
-								accountContactsService.addContact(user.username)
+								accountContactsService.removeContact(
+									user.username
+								)
+							"
+							*ngIf="isContact | async; else buttonsAddContact"
+						>
+							<mat-icon>delete</mat-icon>
+						</button>
+						<ng-template #buttonsAddContact>
+							<button
+								mat-mini-fab
+								cyphTranslate
+								class="animated flipInX _4"
+								matTooltip="Add Contact"
+								(click)="
+									accountContactsService.addContact(
+										user.username
+									)
+								"
+							>
+								<mat-icon>person_add</mat-icon>
+							</button>
+						</ng-template>
+
+						<button
+							mat-mini-fab
+							cyphTranslate
+							class="animated flipInX _4"
+							matTooltip="Open Mail"
+							[routerLink]="'/mail/' + (user.contactID | async)"
+						>
+							<mat-icon>email</mat-icon>
+						</button>
+
+						<button
+							mat-mini-fab
+							cyphTranslate
+							class="animated flipInX _4"
+							matTooltip="Open Messages"
+							[routerLink]="
+								'/messages/' + (user.contactID | async)
 							"
 						>
-							<mat-icon>person_add</mat-icon>
+							<mat-icon>message</mat-icon>
 						</button>
-					</ng-template>
-
-					<button
-						mat-mini-fab
-						cyphTranslate
-						class="animated flipInX _4"
-						matTooltip="Open Mail"
-						[routerLink]="'/mail/' + (user.contactID | async)"
-					>
-						<mat-icon>email</mat-icon>
-					</button>
-
-					<button
-						mat-mini-fab
-						cyphTranslate
-						class="animated flipInX _4"
-						matTooltip="Open Messages"
-						[routerLink]="'/messages/' + (user.contactID | async)"
-					>
-						<mat-icon>message</mat-icon>
-					</button>
-				</ng-container>
+					</ng-container>
+				</ng-template>
 
 				<ng-template #buttonsAnonymous>
 					<button
@@ -367,11 +400,7 @@
 		</ng-template>
 
 		<ng-template #fileUpload>
-			<div
-				fxLayout="row"
-				fxLayoutAlign="center center"
-				*ngIf="(isCurrentUser | async) === false"
-			>
+			<div fxLayout="row" fxLayoutAlign="center center">
 				<div
 					class="file-upload"
 					fxFlex="95"
@@ -380,7 +409,11 @@
 					fxFlex.lg="50"
 					fxFlex.gt-lg="40"
 					fxLayoutAlign="center"
-					matTooltip="Share File"
+					[matTooltip]="
+						(isCurrentUser | async) ?
+							stringsService.uploadFile :
+							stringsService.shareFile
+					"
 					matTooltipPosition="above"
 					cyphDropZone
 					cyphTranslate

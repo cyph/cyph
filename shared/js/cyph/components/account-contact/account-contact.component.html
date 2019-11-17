@@ -1,14 +1,109 @@
-<ng-container
-	*ngIf="
-		!hideCurrentUser ||
-		(accountDatabaseService.currentUser | async)?.user?.username !==
-			username
-	"
->
+<ng-container *ngIf="startBurner; else groupContact">
+	<mat-card
+		fxFlex
+		class="contact animated burner"
+		[class.mobile]="envService.isMobileOS"
+		[class.telehealth]="envService.isTelehealthFull"
+		[matTooltip]="stringsService.linkGet"
+		(click)="
+			!accountDatabaseService.currentUser.value?.agseConfirmed ?
+				openWindow(envService.cyphImUrl) :
+			envService.isCordovaMobile ?
+				router.navigate(['account-burner', 'chat']) :
+			envService.isCordovaDesktop ?
+				openWindow('#account-burner/chat') :
+				openWindow(envService.appUrl + '#account-burner/chat')
+		"
+	>
+		<mat-card-header fxLayout="row" fxLayoutAlign="stretch center">
+			<mat-icon mat-card-avatar>whatshot</mat-icon>
+			<mat-card-title>
+				<strong cyphTranslate>New Burner Chat</strong>
+			</mat-card-title>
+		</mat-card-header>
+	</mat-card>
+</ng-container>
+
+<ng-template #groupContact>
+	<mat-card
+		fxFlex
+		class="contact animated"
+		[class.non-clickable]="!clickable || groupData?.incoming"
+		[class.telehealth]="envService.isTelehealthFull"
+		[routerLink]="
+			!clickable || groupData?.incoming ?
+				undefined :
+				(groupData?.group.mailUIDefault ? '/mail/' : '/messages/') +
+				groupData?.id
+		"
+		*ngIf="groupData !== undefined; else standardContact"
+	>
+		<mat-card-header
+			fxLayout="row"
+			fxLayoutAlign="stretch center"
+			[matBadge]="((contact?.unreadMessageCount | async) || 0).toString()"
+			[matBadgeHidden]="
+				!(
+					showUnreadMessageCount &&
+					((contact?.unreadMessageCount | async) || 0) > 0
+				)
+			"
+			matBadgePosition="above before"
+		>
+			<mat-icon mat-card-avatar>group</mat-icon>
+			<mat-card-title class="truncate">
+				<span>{{ stringsService.group }}</span>
+			</mat-card-title>
+			<mat-card-subtitle class="truncate">
+				{{ groupUsernames }}
+			</mat-card-subtitle>
+
+			<div
+				fxFlex
+				fxLayoutAlign="end center"
+				*ngIf="clickable && groupData?.incoming"
+			>
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip="Accept Contact Request"
+					(click)="
+						accountFilesService.acceptIncomingFile(groupData?.id);
+						$event.stopPropagation()
+					"
+				>
+					<mat-icon>check</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip="Decline Contact Request"
+					(click)="
+						accountFilesService.acceptIncomingFile(
+							groupData?.id,
+							false
+						);
+						$event.stopPropagation()
+					"
+				>
+					<mat-icon>close</mat-icon>
+				</button>
+			</div>
+		</mat-card-header>
+	</mat-card>
+</ng-template>
+
+<ng-template #standardContact>
 	<ng-container
-		*ngIf="groupData === undefined && !!username; else groupContact"
+		*ngIf="
+			!!username &&
+			(!hideCurrentUser ||
+				(accountDatabaseService.currentUser | async)?.user?.username !==
+					username)
+		"
 	>
 		<mat-card
+			fxFlex
 			class="contact animated"
 			[class.non-clickable]="!clickable"
 			[class.telehealth]="envService.isTelehealthFull"
@@ -25,7 +120,6 @@
 					'/messages/' + (((user | async)?.contactID | async) || '') :
 					'/messages/user/' + username
 			"
-			fxFlex
 			*ngIf="
 				accountContactsService.contactState(username).watch()
 					| async as contactState
@@ -212,7 +306,7 @@
 			</ng-template>
 		</mat-card>
 	</ng-container>
-</ng-container>
+</ng-template>
 
 <ng-template #contactStateUI let-contactState="contactState">
 	<div fxFlex fxLayoutAlign="end center" *ngIf="clickable">
@@ -302,73 +396,4 @@
 			</mat-icon>
 		</ng-container>
 	</div>
-</ng-template>
-
-<ng-template #groupContact>
-	<mat-card
-		class="contact animated"
-		[class.non-clickable]="!clickable || groupData?.incoming"
-		[class.telehealth]="envService.isTelehealthFull"
-		[routerLink]="
-			!clickable || groupData?.incoming ?
-				undefined :
-				(groupData?.group.mailUIDefault ? '/mail/' : '/messages/') +
-				groupData?.id
-		"
-		fxFlex
-		*ngIf="groupData !== undefined"
-	>
-		<mat-card-header
-			fxLayout="row"
-			fxLayoutAlign="stretch center"
-			[matBadge]="((contact?.unreadMessageCount | async) || 0).toString()"
-			[matBadgeHidden]="
-				!(
-					showUnreadMessageCount &&
-					((contact?.unreadMessageCount | async) || 0) > 0
-				)
-			"
-			matBadgePosition="above before"
-		>
-			<mat-icon mat-card-avatar>group</mat-icon>
-			<mat-card-title class="truncate">
-				<span>{{ stringsService.group }}</span>
-			</mat-card-title>
-			<mat-card-subtitle class="truncate">
-				{{ groupUsernames }}
-			</mat-card-subtitle>
-
-			<div
-				fxFlex
-				fxLayoutAlign="end center"
-				*ngIf="clickable && groupData?.incoming"
-			>
-				<button
-					mat-icon-button
-					cyphTranslate
-					matTooltip="Accept Contact Request"
-					(click)="
-						accountFilesService.acceptIncomingFile(groupData?.id);
-						$event.stopPropagation()
-					"
-				>
-					<mat-icon>check</mat-icon>
-				</button>
-				<button
-					mat-icon-button
-					cyphTranslate
-					matTooltip="Decline Contact Request"
-					(click)="
-						accountFilesService.acceptIncomingFile(
-							groupData?.id,
-							false
-						);
-						$event.stopPropagation()
-					"
-				>
-					<mat-icon>close</mat-icon>
-				</button>
-			</div>
-		</mat-card-header>
-	</mat-card>
 </ng-template>

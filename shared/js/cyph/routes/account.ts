@@ -272,11 +272,24 @@ export const account: Route = {
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.Standard}
 		},
-		{
-			path: 'profile',
-			component: AccountProfileComponent,
-			children: [{path: 'edit', component: BlankComponent}]
-		},
+		...(env.isMobileOS ?
+			[
+				{
+					path: 'profile',
+					component: AccountProfileComponent,
+					children: [{path: 'edit', component: BlankComponent}]
+				}
+			] :
+			[
+				{
+					path: 'profile',
+					redirectTo: ''
+				},
+				{
+					path: 'profile/edit',
+					component: AccountProfileComponent
+				}
+			]),
 		{
 			path: 'profile/404',
 			component: NotFoundComponent,

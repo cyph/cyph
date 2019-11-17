@@ -22,6 +22,39 @@
 		}
 	}
 
+	&.burner {
+		cursor: pointer;
+
+		.mat-card-avatar {
+			height: 24px;
+			width: 24px;
+		}
+
+		&:not(.mobile) {
+			.mat-card-avatar {
+				margin: 13px;
+			}
+
+			.mat-card-title {
+				margin-left: 15px;
+				margin-top: 12px;
+				font-size: 1.1em !important;
+			}
+		}
+
+		&.mobile {
+			.mat-card-avatar {
+				margin: 14px;
+			}
+
+			.mat-card-title {
+				margin-left: 14px;
+				margin-top: 16px;
+				font-size: 1.2em !important;
+			}
+		}
+	}
+
 	&.telehealth {
 		.avatar {
 			width: 4.5em;

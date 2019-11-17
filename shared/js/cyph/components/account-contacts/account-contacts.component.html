@@ -84,6 +84,12 @@
 			<div fxFlex>
 				<div cyphNanoScroller>
 					<div class="contact-list">
+						<cyph-account-contact
+							[startBurner]="true"
+							[class.cyph-inverted-theme]="invertedTheme"
+							*ngIf="!envService.isTelehealth"
+						></cyph-account-contact>
+
 						<ng-container
 							*ngFor="
 								let item of filteredContactList | async;

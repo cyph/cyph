@@ -7,6 +7,11 @@ export const openWindow = (url: string) : void => {
 		return;
 	}
 
+	if (env.isCordovaDesktop) {
+		window.open(url);
+		return;
+	}
+
 	const a = document.createElement('a');
 	a.href = url;
 	a.target = '_blank';
