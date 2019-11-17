@@ -15,6 +15,7 @@ import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {AccountFile, AccountFileShare, SecurityModels} from '../account';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
+import {isValidEmail} from '../email-pattern';
 import {StorageUnits} from '../enums/storage-units';
 import {IAsyncList} from '../iasync-list';
 import {IProto} from '../iproto';
@@ -513,7 +514,25 @@ export class AccountFilesService extends BaseProvider {
 												referenceContainer
 													.anonymousShare
 													.accountFileRecord;
+
 											record.wasAnonymousShare = true;
+
+											if (record.replyToEmail) {
+												record.replyToEmail = record.replyToEmail.trim();
+												if (
+													!isValidEmail(
+														record.replyToEmail
+													)
+												) {
+													record.replyToEmail = undefined;
+												}
+											}
+
+											if (record.replyToName) {
+												record.replyToName = record.replyToName
+													.replace(/\s+/g, ' ')
+													.trim();
+											}
 
 											reference = {
 												id: record.id,
@@ -557,6 +576,8 @@ export class AccountFilesService extends BaseProvider {
 											name: record.name,
 											owner: reference.owner,
 											recordType: record.recordType,
+											replyToEmail: record.replyToEmail,
+											replyToName: record.replyToName,
 											size: record.size,
 											timestamp: record.timestamp,
 											wasAnonymousShare:
@@ -983,7 +1004,7 @@ export class AccountFilesService extends BaseProvider {
 			}
 		}
 		else if (!options.reject && options.copy) {
-			const file =
+			let file =
 				data ||
 				(incomingFile.recordType === AccountFileRecord.RecordTypes.Doc ?
 					await this.getDoc(incomingFile).asyncList.getValue() :
@@ -999,8 +1020,23 @@ export class AccountFilesService extends BaseProvider {
 				throw new Error('Cannot get file for copying.');
 			}
 
+			/* TODO: Replace with a QuillProto class that calls msgpack */
+			if (fileConfig.recordType === AccountFileRecord.RecordTypes.Note) {
+				file = this.decodeQuill(file);
+			}
+
 			promises.push(
-				this.upload(incomingFile.name, file, undefined, metadata).result
+				this.upload(
+					incomingFile.name,
+					file,
+					undefined,
+					metadata,
+					{
+						email: incomingFile.replyToEmail,
+						name: incomingFile.replyToName
+					},
+					incomingFile.wasAnonymousShare
+				).result
 			);
 		}
 
@@ -1616,7 +1652,8 @@ export class AccountFilesService extends BaseProvider {
 					(await this.accountDatabaseService.getUserPublicKeys(
 						username
 					)).encryption
-				)
+				),
+				false
 			);
 		}
 		catch {
@@ -1790,7 +1827,9 @@ export class AccountFilesService extends BaseProvider {
 		name: string,
 		data: AccountFile | string,
 		shareWithUser?: string | string[],
-		metadata?: string
+		metadata?: string,
+		replyTo?: {email?: string; name?: string},
+		wasAnonymousShare: boolean = false
 	) : {
 		progress: Observable<number>;
 		result: Promise<string>;
@@ -1912,8 +1951,11 @@ export class AccountFilesService extends BaseProvider {
 						'application/octet-stream',
 					name,
 					recordType: fileConfig.recordType,
+					replyToEmail: replyTo && replyTo.email,
+					replyToName: replyTo && replyTo.name,
 					size: await this.getFileSize(file, fileConfig),
-					timestamp: await getTimestamp()
+					timestamp: await getTimestamp(),
+					wasAnonymousShare
 				};
 
 				if (anonymous) {

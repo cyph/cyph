@@ -40,6 +40,28 @@
 							/>
 						</mat-form-field>
 					</mat-card-title>
+					<ng-container
+						*ngIf="(note | async)?.record | async as record"
+					>
+						<mat-card-subtitle
+							*ngIf="
+								!!record.replyToEmail || !!record.replyToName
+							"
+						>
+							<span cyphTranslate>Reply-to:</span>
+							&ngsp;
+							<span *ngIf="!!record.replyToName">
+								{{ record.replyToName }}
+							</span>
+							&ngsp;
+							<span *ngIf="!!record.replyToEmail">
+								&lt;<a
+									[href]="'mailto:' + record.replyToEmail"
+									>{{ record.replyToEmail }}</a
+								>&gt;
+							</span>
+						</mat-card-subtitle>
+					</ng-container>
 					<mat-card-header fxLayout="row">
 						<button
 							mat-icon-button
@@ -70,7 +92,10 @@
 							*ngIf="
 								(noteEditable | async) === false &&
 								currentUser.user.username ===
-									(noteData | async)?.owner
+									(noteData | async)?.owner &&
+								!((note | async)?.record | async)
+									?.replyToEmail &&
+								!((note | async)?.record | async)?.replyToName
 							"
 						>
 							<mat-icon>edit</mat-icon>

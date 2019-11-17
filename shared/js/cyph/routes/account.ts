@@ -168,7 +168,10 @@ export const account: Route = {
 		{
 			path: 'compose/user/:username',
 			component: AccountComposeComponent,
-			data: {messageType: ChatMessageValue.Types.Quill}
+			data: {
+				messageType: ChatMessageValue.Types.Quill,
+				sendQuillAsNote: true
+			}
 		},
 		{path: 'contacts', component: AccountContactsComponent},
 		{path: 'contacts/:username', component: AccountContactsComponent},

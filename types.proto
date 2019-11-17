@@ -48,6 +48,12 @@ message AccountFileRecord {
 	/** Type of file record. */
 	required RecordTypes recordType = 4;
 
+	/** Reply-to email address (typically for anonymous shares). */
+	string replyToEmail = 8;
+
+	/** Reply-to name (typically for anonymous shares). */
+	string replyToName = 9;
+
 	/** Size in bytes. */
 	required double size = 5;
 

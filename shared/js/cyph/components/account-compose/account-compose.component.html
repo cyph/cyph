@@ -124,6 +124,29 @@
 								<small>&lt;{{ option.email }}&gt;</small>
 							</mat-option>
 						</ng-template>
+
+						<mat-form-field
+							fxFlex
+							[fxShow]="
+								(messageType | async) ===
+									chatMessageValueTypes.Quill &&
+								(sendQuillAsNote | async)
+							"
+						>
+							<input
+								matInput
+								cyphTranslate
+								[ngModel]="messageSubject | async"
+								(ngModelChange)="messageSubject.next($event)"
+								name="messageSubject"
+								placeholder="Subject"
+								[required]="
+									(messageType | async) ===
+										chatMessageValueTypes.Quill &&
+									(sendQuillAsNote | async)
+								"
+							/>
+						</mat-form-field>
 					</ng-container>
 
 					<cyph-account-contacts-search
@@ -184,7 +207,10 @@
 							"
 						>
 							<ng-container
-								*ngIf="sentMessage | async as sentMessageData"
+								*ngIf="
+									sentMessage | async as sentMessageData;
+									else genericSendConfirmation
+								"
 							>
 								<span cyphTranslate>Message sent to</span>
 								&ngsp;
@@ -207,6 +233,11 @@
 									</span>
 								</a>
 							</ng-container>
+
+							<ng-template #genericSendConfirmation>
+								<br />
+								<div cyphTranslate>Message sent!</div>
+							</ng-template>
 						</div>
 					</ng-template>
 					<ng-template #appointmentRequested>

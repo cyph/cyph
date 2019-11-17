@@ -69,6 +69,9 @@ export class AccountComposeComponent extends BaseProvider
 	/** Indicates whether accountService.fromName and accountService.fromEmail were pre-set. */
 	public readonly fromDataPreSet = new BehaviorSubject<boolean>(false);
 
+	/** Message subject. */
+	public readonly messageSubject = new BehaviorSubject('');
+
 	/** @see AccountChatMessageBoxComponent.messageType */
 	public readonly messageType = toBehaviorSubject(
 		this.accountService.combinedRouteData(this.activatedRoute).pipe(
@@ -84,6 +87,7 @@ export class AccountComposeComponent extends BaseProvider
 						o.value;
 
 				this.appointmentFollowUp.next(o.appointmentFollowUp === true);
+				this.sendQuillAsNote.next(o.sendQuillAsNote === true);
 
 				if (value !== undefined) {
 					switch (messageType) {
@@ -132,6 +136,9 @@ export class AccountComposeComponent extends BaseProvider
 
 	/** @see AccountContactsSearchComponent.searchUsername */
 	public readonly searchUsername = new BehaviorSubject('');
+
+	/** If true, will send Quill messages as Notes instead of chat messages. */
+	public readonly sendQuillAsNote = new BehaviorSubject(false);
 
 	/** Indicates whether message has been sent, or undefined for in-progress. */
 	public readonly sent = new BehaviorSubject<boolean | undefined>(false);
@@ -323,6 +330,31 @@ export class AccountComposeComponent extends BaseProvider
 
 				this.sentFileID.next(sentFileID);
 			}
+			else if (
+				this.messageType.value === ChatMessageValue.Types.Quill &&
+				this.sendQuillAsNote.value
+			) {
+				if (
+					!this.accountService.fromEmail.value ||
+					!this.accountService.fromName.value ||
+					!this.messageSubject.value ||
+					!this.accountChatService.chat.currentMessage.quill ||
+					recipients.length < 1
+				) {
+					return;
+				}
+
+				await this.accountFilesService.upload(
+					this.messageSubject.value,
+					this.accountChatService.chat.currentMessage.quill,
+					recipients,
+					undefined,
+					{
+						email: this.accountService.fromEmail.value,
+						name: this.accountService.fromName.value
+					}
+				);
+			}
 			else {
 				if (
 					!this.accountDatabaseService.currentUser.value &&
@@ -394,6 +426,7 @@ export class AccountComposeComponent extends BaseProvider
 		this.accountChatService.chat.currentMessage.text = '';
 		this.accountService.fromEmail.next('');
 		this.accountService.fromName.next('');
+		this.messageSubject.next('');
 
 		this.accountChatService.updateChat();
 

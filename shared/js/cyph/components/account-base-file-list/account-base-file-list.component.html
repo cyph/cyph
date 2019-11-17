@@ -94,6 +94,24 @@
 					<div cyphTranslate *ngIf="o.record.wasAnonymousShare">
 						Shared anonymously
 					</div>
+					<div
+						*ngIf="
+							!!o.record.replyToEmail || !!o.record.replyToName
+						"
+					>
+						<span cyphTranslate>Reply-to:</span>
+						&ngsp;
+						<span *ngIf="!!o.record.replyToName">
+							{{ o.record.replyToName }}
+						</span>
+						&ngsp;
+						<span *ngIf="!!o.record.replyToEmail">
+							&lt;<a [href]="'mailto:' + o.record.replyToEmail">{{
+								o.record.replyToEmail
+							}}</a
+							>&gt;
+						</span>
+					</div>
 				</mat-card-subtitle>
 				<div fxFlex fxLayoutAlign="end center">
 					<button
@@ -347,6 +365,25 @@
 						<div cyphTranslate *ngIf="o.record.wasAnonymousShare">
 							Received from anonymous
 						</div>
+						<div
+							*ngIf="
+								!!o.record.replyToEmail ||
+								!!o.record.replyToName
+							"
+						>
+							<span cyphTranslate>Reply-to:</span>
+							&ngsp;
+							<span *ngIf="!!o.record.replyToName">
+								{{ o.record.replyToName }}
+							</span>
+							&ngsp;
+							<span *ngIf="!!o.record.replyToEmail">
+								&lt;<a
+									[href]="'mailto:' + o.record.replyToEmail"
+									>{{ o.record.replyToEmail }}</a
+								>&gt;
+							</span>
+						</div>
 					</mat-card-subtitle>
 
 					<div fxFlex fxLayoutAlign="end center">
@@ -451,7 +488,11 @@
 				o.record.id +
 				'/edit'
 			"
-			*ngIf="currentUser.user.username === o.owner"
+			*ngIf="
+				currentUser.user.username === o.owner &&
+				!o.record.replyToEmail &&
+				!o.record.replyToName
+			"
 		>
 			<mat-icon>edit</mat-icon>
 		</button>

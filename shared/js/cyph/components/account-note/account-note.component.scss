@@ -3,6 +3,7 @@
 mat-card-title {
 	margin-bottom: 8px;
 	margin-top: -20px;
+
 	> div {
 		padding-top: 29px;
 	}
@@ -18,6 +19,12 @@ mat-card-title {
 	&:not(.editable) {
 		padding-bottom: 1.5em;
 	}
+}
+
+mat-card-subtitle {
+	position: absolute;
+	margin-top: 12px !important;
+	font-size: 0.9em;
 }
 
 mat-card-header {
