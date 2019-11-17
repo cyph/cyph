@@ -718,8 +718,11 @@
 		"
 		*ngIf="
 			currentUser.agseConfirmed &&
-			recordType !== recordTypes.Password &&
-			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster)
+			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster) &&
+			!(
+				recordType === recordTypes.Password &&
+				(envService.isMobile | async)
+			)
 		"
 	>
 		<mat-icon>share</mat-icon>
@@ -735,8 +738,11 @@
 			$event.stopPropagation()
 		"
 		*ngIf="
-			recordType !== recordTypes.Password &&
-			(recordType !== recordTypes.EhrApiKey || !o.data?.isMaster)
+			(recordType !== recordTypes.EhrApiKey || !o.data?.isMaster) &&
+			!(
+				recordType === recordTypes.Password &&
+				(envService.isMobile | async)
+			)
 		"
 	>
 		<mat-icon>delete</mat-icon>
