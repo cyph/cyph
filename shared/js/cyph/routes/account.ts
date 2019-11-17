@@ -272,6 +272,11 @@ export const account: Route = {
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.Standard}
 		},
+		{
+			path: 'profile/404',
+			component: NotFoundComponent,
+			data: {accountProfile: true}
+		},
 		...(env.isMobileOS ?
 			[
 				{
@@ -290,11 +295,6 @@ export const account: Route = {
 					component: AccountProfileComponent
 				}
 			]),
-		{
-			path: 'profile/404',
-			component: NotFoundComponent,
-			data: {accountProfile: true}
-		},
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', redirectTo: 'register/1'},
 		{path: 'register/:step', component: AccountRegisterComponent},

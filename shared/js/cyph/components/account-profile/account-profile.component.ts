@@ -198,7 +198,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 							)
 							.catch(() => false))
 					) {
-						this.router.navigate(['404']);
+						this.router.navigate(['profile', '404']);
 						return;
 					}
 
