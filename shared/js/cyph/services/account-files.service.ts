@@ -1485,7 +1485,7 @@ export class AccountFilesService extends BaseProvider {
 				return 'short_text';
 
 			case 'cyph/password':
-				return 'vpn_key';
+				return 'lock';
 
 			case 'cyph/redox-patient':
 				return 'person';
