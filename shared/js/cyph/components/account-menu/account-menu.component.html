@@ -290,6 +290,50 @@
 						Messages
 					</h3>
 				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
+					class="inbox"
+					[class.disabled]="!currentUser.masterKeyConfirmed"
+					aria-label="Inbox"
+					routerLink="/inbox"
+					(click)="click()"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(
+									accountFilesService.incomingFilesFiltered
+										.notes
+									| async
+									| cyphFilter
+										: accountFilesService.filterFunctions
+												.anonymousMessages
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.notes
+									| async
+									| cyphFilter
+										: accountFilesService.filterFunctions
+												.anonymousMessages
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						email
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+						Anonymous Inbox
+					</h3>
+				</a>
 			</ng-container>
 
 			<ng-container
@@ -351,7 +395,11 @@
 							(
 								(
 									accountFilesService.incomingFilesFiltered
-										.notes | async
+										.notes
+									| async
+									| cyphFilter
+										: accountFilesService.filterFunctions
+												.excludeAnonymousMessages
 								)?.length || 0
 							).toString()
 						"
@@ -359,7 +407,11 @@
 							!(
 								((
 									accountFilesService.incomingFilesFiltered
-										.notes | async
+										.notes
+									| async
+									| cyphFilter
+										: accountFilesService.filterFunctions
+												.excludeAnonymousMessages
 								)?.length || 0) > 0
 							)
 						"

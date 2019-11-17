@@ -39,6 +39,7 @@ import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {InitDirective} from '../directives/init.directive';
+import {FilterPipe} from '../pipes/filter.pipe';
 import {DialogService} from '../services/dialog.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
@@ -55,6 +56,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DialogMediaComponent,
 		DropZoneDirective,
 		DynamicFormComponent,
+		FilterPipe,
 		InitDirective
 	],
 	exports: [
@@ -65,6 +67,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		DialogMediaComponent,
 		DropZoneDirective,
 		DynamicFormComponent,
+		FilterPipe,
 		FullCalendarModule,
 		ImageCropperModule,
 		InitDirective,

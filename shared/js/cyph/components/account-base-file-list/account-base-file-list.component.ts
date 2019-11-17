@@ -42,6 +42,12 @@ import {waitForValue} from '../../util/wait';
 	templateUrl: './account-base-file-list.component.html'
 })
 export class AccountBaseFileListComponent extends BaseProvider {
+	/** @see AccountNotesComponent.anonymousMessages */
+	@Input() public anonymousMessages: boolean = false;
+
+	/** Record filter function. */
+	@Input() public filterFunction?: (o: IAccountFileRecord) => boolean;
+
 	/** @see getDateTimeString */
 	public readonly getDateTimeString = getDateTimeString;
 
@@ -55,7 +61,8 @@ export class AccountBaseFileListComponent extends BaseProvider {
 			...(recordType === AccountFileRecord.RecordTypes.File ?
 				['size'] :
 				[]),
-			...(recordType === AccountFileRecord.RecordTypes.Password ?
+			...(recordType === AccountFileRecord.RecordTypes.Password ||
+			this.anonymousMessages ?
 				[] :
 				['owner']),
 			'actions'

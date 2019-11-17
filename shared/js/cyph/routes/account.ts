@@ -206,6 +206,17 @@ export const account: Route = {
 			path: 'incoming-patient-info',
 			component: AccountIncomingPatientInfoComponent
 		},
+		{
+			path: 'inbox',
+			component: AccountNotesComponent,
+			data: {anonymousMessages: true, realTime: false}
+		},
+		{
+			path: 'inbox/:id',
+			component: AccountNoteComponent,
+			data: {anonymousMessages: true, realTime: false},
+			children: [{path: 'edit', component: BlankComponent}]
+		},
 		{path: 'logout', component: AccountLogoutComponent},
 		{
 			path: 'mail/:contactID',

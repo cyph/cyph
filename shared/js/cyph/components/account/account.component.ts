@@ -128,7 +128,9 @@ export class AccountComponent extends BaseProvider
 					'wallets'
 				].indexOf(route) > -1 ||
 				(activatedRouteURL.length > 1 &&
-					['appointments', 'messages', 'notes'].indexOf(route) > -1 &&
+					['appointments', 'inbox', , 'messages', 'notes'].indexOf(
+						route
+					) > -1 &&
 					!(
 						activatedRouteURL.length > 2 &&
 						activatedRouteURL[2].path === 'forms'
@@ -174,6 +176,7 @@ export class AccountComponent extends BaseProvider
 					'ehr-access',
 					'files',
 					'forms',
+					'inbox',
 					'incoming-patient-info',
 					'mail',
 					'messages',

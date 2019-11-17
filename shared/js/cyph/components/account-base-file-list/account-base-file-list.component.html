@@ -35,7 +35,8 @@
 			class="animated incoming"
 			*ngFor="
 				let o of accountFilesService.config[recordType].incoming()
-					| async;
+					| async
+					| cyphFilter: filterFunction;
 				trackBy: trackByID;
 				let i = index
 			"
@@ -47,7 +48,12 @@
 		>
 			<mat-card-header fxLayout="row">
 				<mat-icon mat-card-avatar>
-					{{ accountFilesService.getThumbnail(o.record.mediaType) }}
+					{{
+						accountFilesService.getThumbnail(
+							o.record.mediaType,
+							anonymousMessages
+						)
+					}}
 				</mat-icon>
 				<mat-card-title>
 					<ng-container
@@ -151,7 +157,8 @@
 				[dataSource]="
 					getTableDataSource(
 						(accountFilesService.config[recordType].list()
-							| async) || []
+							| async
+							| cyphFilter: filterFunction) || []
 					)
 				"
 			>
@@ -356,7 +363,8 @@
 						>
 							{{
 								accountFilesService.getThumbnail(
-									o.record.mediaType
+									o.record.mediaType,
+									anonymousMessages
 								)
 							}}
 						</mat-icon>
@@ -376,7 +384,9 @@
 						!accountFilesService.config[recordType].subroutable ?
 							undefined :
 							'/' +
-							accountFilesService.config[recordType].route +
+							(anonymousMessages ?
+								'inbox' :
+								accountFilesService.config[recordType].route) +
 							'/' +
 							row.record.id
 					"
@@ -397,7 +407,8 @@
 			<mat-card
 				*ngFor="
 					let o of accountFilesService.config[recordType].list()
-						| async;
+						| async
+						| cyphFilter: filterFunction;
 					trackBy: trackByID;
 					let i = index
 				"
@@ -405,7 +416,9 @@
 					!accountFilesService.config[recordType].subroutable ?
 						undefined :
 						'/' +
-						accountFilesService.config[recordType].route +
+						(anonymousMessages ?
+							'inbox' :
+							accountFilesService.config[recordType].route) +
 						'/' +
 						o.record.id
 				"
@@ -418,7 +431,10 @@
 				<mat-card-header fxLayout="row">
 					<mat-icon mat-card-avatar>
 						{{
-							accountFilesService.getThumbnail(o.record.mediaType)
+							accountFilesService.getThumbnail(
+								o.record.mediaType,
+								anonymousMessages
+							)
 						}}
 					</mat-icon>
 					<mat-card-title
@@ -598,7 +614,9 @@
 			matTooltip="Edit"
 			[routerLink]="
 				'/' +
-				accountFilesService.config[recordType].route +
+				(anonymousMessages ?
+					'inbox' :
+					accountFilesService.config[recordType].route) +
 				'/' +
 				o.record.id +
 				'/edit'

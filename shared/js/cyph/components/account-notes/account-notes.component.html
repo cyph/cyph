@@ -1,4 +1,6 @@
 <cyph-account-base-file-list
+	[anonymousMessages]="anonymousMessages | async"
+	[filterFunction]="filterFunction | async"
 	[recordType]="recordType | async"
 	*ngIf="(realTime | async) === false || (accountService.enableDocs | async)"
 >
@@ -11,6 +13,7 @@
 		matTooltipPosition="above"
 		routerLink="new"
 		class="fixed-fab"
+		*ngIf="(anonymousMessages | async) !== true"
 	>
 		<mat-icon>note_add</mat-icon>
 	</button>

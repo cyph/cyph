@@ -93,6 +93,9 @@ export class StringsService extends BaseProvider {
 	public readonly anonymous = `Anonymous`;
 
 	/** @see StringsService */
+	public readonly anonymousInbox = `Anonymous Inbox`;
+
+	/** @see StringsService */
 	public readonly answer = `Answer`;
 
 	/** @see StringsService */

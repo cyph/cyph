@@ -497,6 +497,14 @@ export class AccountFilesService extends BaseProvider {
 		AccountFileRecord.RecordTypes.Wallet
 	];
 
+	/** File filter functions. */
+	public readonly filterFunctions = {
+		anonymousMessages: (o: IAccountFileRecord) =>
+			!!o.replyToEmail || !!o.replyToName,
+		excludeAnonymousMessages: (o: IAccountFileRecord) =>
+			!o.replyToEmail && !o.replyToName
+	};
+
 	/** Incoming files. */
 	public readonly incomingFiles = toBehaviorSubject<
 		(IAccountFileRecord & IAccountFileReference)[]
@@ -1464,7 +1472,14 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Gets the Material icon name for the file default thumbnail. */
-	public getThumbnail (mediaType: string) : string {
+	public getThumbnail (
+		mediaType: string,
+		anonymousMessages: boolean = false
+	) : string {
+		if (anonymousMessages) {
+			return 'mail_outline';
+		}
+
 		switch (mediaType) {
 			case 'cyph/appointment':
 				return 'event';

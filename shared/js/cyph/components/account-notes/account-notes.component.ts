@@ -22,10 +22,25 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-notes.component.html'
 })
 export class AccountNotesComponent extends BaseProvider implements OnInit {
+	/** Indicates whether or the anonymous inbox UI should be displayed. */
+	public readonly anonymousMessages: Observable<
+		boolean
+	> = this.activatedRoute.data.pipe(map(o => !!o.anonymousMessages));
+
+	/** @see AccountBaseFileListComponent.filterFunction */
+	public readonly filterFunction = this.anonymousMessages.pipe(
+		map(anonymousMessages =>
+			anonymousMessages ?
+				this.accountFilesService.filterFunctions.anonymousMessages :
+				this.accountFilesService.filterFunctions
+					.excludeAnonymousMessages
+		)
+	);
+
 	/** Indicates whether or not the real-time doc UI is enabled. */
 	public readonly realTime: Observable<
 		boolean
-	> = this.activatedRoute.data.pipe(map(o => o.realTime));
+	> = this.activatedRoute.data.pipe(map(o => !!o.realTime));
 
 	/** @see AccountFileRecord.RecordTypes */
 	public readonly recordType = this.realTime.pipe(
@@ -39,6 +54,16 @@ export class AccountNotesComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
+
+		this.subscriptions.push(
+			this.anonymousMessages.subscribe(anonymousMessages => {
+				if (anonymousMessages) {
+					this.accountService.setHeader(
+						this.stringsService.anonymousInbox
+					);
+				}
+			})
+		);
 	}
 
 	constructor (
