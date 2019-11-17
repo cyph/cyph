@@ -57,11 +57,16 @@ export class AccountBaseFileListComponent extends BaseProvider {
 			'type',
 			...(recordType === AccountFileRecord.RecordTypes.Password ?
 				['passwordURL', 'passwordUsername', 'password'] :
-				['name', 'timestamp']),
+				[
+					'name',
+					...(this.anonymousMessages ? ['replyTo'] : []),
+					'timestamp'
+				]),
 			...(recordType === AccountFileRecord.RecordTypes.File ?
 				['size'] :
 				[]),
-			...(recordType === AccountFileRecord.RecordTypes.Password ?
+			...(recordType === AccountFileRecord.RecordTypes.Password ||
+			this.anonymousMessages ?
 				[] :
 				['owner']),
 			'actions'

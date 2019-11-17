@@ -194,54 +194,23 @@
 
 				<ng-container matColumnDef="owner">
 					<mat-header-cell
-						[fxFlex]="anonymousMessages ? '' : '96px'"
+						fxFlex="96px"
 						*matHeaderCellDef
 						mat-sort-header
 					>
-						<span cyphTranslate *ngIf="!anonymousMessages"
-							>Shared By</span
-						>
-						<span cyphTranslate *ngIf="anonymousMessages"
-							>Reply-To</span
-						>
+						<span cyphTranslate>Shared By</span>
 					</mat-header-cell>
-					<mat-cell
-						[fxFlex]="anonymousMessages ? '' : '96px'"
-						*matCellDef="let o"
-					>
-						<div
-							class="truncate"
+					<mat-cell fxFlex="96px" *matCellDef="let o">
+						<a
+							[routerLink]="'/profile/' + o.owner"
 							*ngIf="
-								!!o.record.replyToEmail ||
-									!!o.record.replyToName;
-								else standardShare
+								!o.record.wasAnonymousShare &&
+									currentUser.user.username !== o.owner;
+								else anonymousShare
 							"
 						>
-							<span *ngIf="!!o.record.replyToName">
-								{{ o.record.replyToName }}
-							</span>
-							&ngsp;
-							<span *ngIf="!!o.record.replyToEmail">
-								&lt;<a
-									[href]="'mailto:' + o.record.replyToEmail"
-									>{{ o.record.replyToEmail }}</a
-								>&gt;
-							</span>
-						</div>
-						<ng-template #standardShare>
-							<a
-								[routerLink]="'/profile/' + o.owner"
-								*ngIf="
-									!o.record.wasAnonymousShare &&
-										currentUser.user.username !== o.owner;
-									else anonymousShare
-								"
-							>
-								<span [style.width]="'100%'">{{
-									o.owner
-								}}</span>
-							</a>
-						</ng-template>
+							<span [style.width]="'100%'">{{ o.owner }}</span>
+						</a>
 						<ng-template #anonymousShare>
 							<span
 								cyphTranslate
@@ -348,6 +317,36 @@
 						>
 							<mat-icon>content_copy</mat-icon>
 						</button>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="replyTo">
+					<mat-header-cell fxFlex *matHeaderCellDef mat-sort-header>
+						<span cyphTranslate>Reply-To</span>
+					</mat-header-cell>
+					<mat-cell fxFlex *matCellDef="let o">
+						<div
+							class="truncate"
+							*ngIf="
+								!!o.record.replyToEmail ||
+									!!o.record.replyToName;
+								else noReplyTo
+							"
+						>
+							<span *ngIf="!!o.record.replyToName">
+								{{ o.record.replyToName }}
+							</span>
+							&ngsp;
+							<span *ngIf="!!o.record.replyToEmail">
+								&lt;<a
+									[href]="'mailto:' + o.record.replyToEmail"
+									>{{ o.record.replyToEmail }}</a
+								>&gt;
+							</span>
+						</div>
+						<ng-template #noReplyTo>
+							<div fxLayoutAlign="center">&mdash;</div>
+						</ng-template>
 					</mat-cell>
 				</ng-container>
 
