@@ -11,7 +11,7 @@ import {BaseProvider} from '../base-provider';
 })
 export class RouterLinkDirective extends BaseProvider implements OnChanges {
 	/** @see RouterLink.prototype.routerLink */
-	private routerLink?: typeof RouterLink.prototype.routerLink;
+	private readonly routerLink?: typeof RouterLink.prototype.routerLink;
 
 	/** @inheritDoc */
 	public ngOnChanges () : void {
