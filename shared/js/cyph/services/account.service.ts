@@ -5,7 +5,6 @@ import {
 	ActivatedRoute,
 	Data,
 	NavigationEnd,
-	NavigationStart,
 	Params,
 	Router,
 	UrlSegment
@@ -803,11 +802,11 @@ export class AccountService extends BaseProvider {
 
 		this.subscriptions.push(
 			this.router.events.subscribe(e => {
-				if (!(e instanceof NavigationStart)) {
+				if (!(e instanceof NavigationEnd)) {
 					return;
 				}
 
-				const urlSplit = e.url.split('/');
+				const urlSplit = e.urlAfterRedirects.split('/');
 				const newURL = urlSplit.slice(0, 2).join('/');
 				const section = (urlSplit[0] !== 'search' && urlSplit[0]) || '';
 
