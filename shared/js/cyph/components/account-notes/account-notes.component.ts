@@ -54,16 +54,6 @@ export class AccountNotesComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
-
-		this.subscriptions.push(
-			this.anonymousMessages.subscribe(anonymousMessages => {
-				if (anonymousMessages) {
-					this.accountService.setHeader(
-						this.stringsService.anonymousInbox
-					);
-				}
-			})
-		);
 	}
 
 	constructor (

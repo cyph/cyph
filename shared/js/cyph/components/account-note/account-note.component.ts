@@ -41,11 +41,6 @@ export class AccountNoteComponent extends BaseProvider
 	/** @ignore */
 	private readonly saveLock = lockFunction();
 
-	/** Indicates whether or the anonymous inbox UI should be displayed. */
-	public readonly anonymousMessages: Observable<
-		boolean
-	> = this.activatedRoute.data.pipe(map(o => !!o.anonymousMessages));
-
 	/** Indicates whether or not this is a new note. */
 	public readonly newNote = new BehaviorSubject<boolean>(false);
 
@@ -187,16 +182,6 @@ export class AccountNoteComponent extends BaseProvider
 		this.accountService.transitionEnd();
 
 		this.setURL(this.router.url);
-
-		this.subscriptions.push(
-			this.anonymousMessages.subscribe(anonymousMessages => {
-				if (anonymousMessages) {
-					this.accountService.setHeader(
-						this.stringsService.anonymousInbox
-					);
-				}
-			})
-		);
 
 		this.subscriptions.push(
 			this.accountService.routeChanges.subscribe(url => {
