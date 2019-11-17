@@ -9,6 +9,17 @@
 			fxFlex
 			*ngIf="(sent | async) !== undefined"
 		>
+			<button
+				mat-icon-button
+				cyphTranslate
+				class="back-button"
+				matTooltip="Back"
+				[routerLink]="'/profile/' + ((searchUsername | async) || '')"
+				*ngIf="(searchUsername | async)?.length > 0"
+			>
+				<mat-icon>arrow_back</mat-icon>
+			</button>
+
 			<mat-card-title>
 				<span
 					*ngIf="
