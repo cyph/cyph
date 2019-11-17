@@ -232,6 +232,7 @@
 							cyphTranslate
 							matTooltip="Edit Password"
 							(click)="editPassword(o, 'password')"
+							*ngIf="currentUser.user.username === o.owner"
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
@@ -264,6 +265,7 @@
 							cyphTranslate
 							matTooltip="Edit Website"
 							(click)="editPassword(o, 'url')"
+							*ngIf="currentUser.user.username === o.owner"
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
@@ -296,6 +298,7 @@
 							cyphTranslate
 							matTooltip="Edit Username"
 							(click)="editPassword(o, 'username')"
+							*ngIf="currentUser.user.username === o.owner"
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
@@ -685,6 +688,7 @@
 				mat-menu-item
 				cyphTranslate
 				[matMenuTriggerFor]="passwordEditMenu"
+				*ngIf="currentUser.user.username === o.owner"
 			>
 				Edit
 			</button>
