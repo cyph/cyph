@@ -686,7 +686,8 @@ export class AccountService extends BaseProvider {
 				/* No header until explicitly set via accountService.setHeader */
 				if (
 					['mail', 'messages', 'profile'].indexOf(route) > -1 &&
-					routePath.length > 1
+					routePath.length > 1 &&
+					!(routePath[0] === 'profile' && routePath[1] === 'edit')
 				) {
 					/* Always make at least an empty string on mobile to ensure menu bar displays */
 					return isMobile ? header || '' : header;
