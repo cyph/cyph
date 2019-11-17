@@ -112,6 +112,12 @@ input.text-security {
 	z-index: 2;
 }
 
+.truncate {
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .card-list,
 mat-card.file {
 	position: relative;
@@ -133,10 +139,6 @@ mat-card.file {
 
 	mat-card-title.truncate,
 	mat-card-subtitle.truncate {
-		overflow-x: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-
 		/* Temporary "reasonable cap" until better solution is implemented */
 		max-width: 400px;
 	}

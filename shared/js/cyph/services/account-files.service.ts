@@ -1083,7 +1083,8 @@ export class AccountFilesService extends BaseProvider {
 						email: incomingFile.replyToEmail,
 						name: incomingFile.replyToName
 					},
-					incomingFile.wasAnonymousShare
+					incomingFile.wasAnonymousShare,
+					incomingFile.timestamp
 				).result
 			);
 		}
@@ -1931,7 +1932,8 @@ export class AccountFilesService extends BaseProvider {
 		shareWithUser?: string | string[],
 		metadata?: string,
 		replyTo?: {email?: string; name?: string},
-		wasAnonymousShare: boolean = false
+		wasAnonymousShare: boolean = false,
+		timestamp?: number
 	) : {
 		progress: Observable<number>;
 		result: Promise<string>;
@@ -2056,7 +2058,10 @@ export class AccountFilesService extends BaseProvider {
 					replyToEmail: replyTo && replyTo.email,
 					replyToName: replyTo && replyTo.name,
 					size: await this.getFileSize(file, fileConfig),
-					timestamp: await getTimestamp(),
+					timestamp:
+						timestamp !== undefined ?
+							timestamp :
+							await getTimestamp(),
 					wasAnonymousShare
 				};
 

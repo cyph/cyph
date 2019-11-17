@@ -194,23 +194,54 @@
 
 				<ng-container matColumnDef="owner">
 					<mat-header-cell
-						fxFlex="96px"
+						[fxFlex]="anonymousMessages ? '' : '96px'"
 						*matHeaderCellDef
 						mat-sort-header
 					>
-						<span cyphTranslate>Shared By</span>
+						<span cyphTranslate *ngIf="!anonymousMessages"
+							>Shared By</span
+						>
+						<span cyphTranslate *ngIf="anonymousMessages"
+							>Reply-To</span
+						>
 					</mat-header-cell>
-					<mat-cell fxFlex="96px" *matCellDef="let o">
-						<a
-							[routerLink]="'/profile/' + o.owner"
+					<mat-cell
+						[fxFlex]="anonymousMessages ? '' : '96px'"
+						*matCellDef="let o"
+					>
+						<div
+							class="truncate"
 							*ngIf="
-								!o.record.wasAnonymousShare &&
-									currentUser.user.username !== o.owner;
-								else anonymousShare
+								!!o.record.replyToEmail ||
+									!!o.record.replyToName;
+								else standardShare
 							"
 						>
-							<span [style.width]="'100%'">{{ o.owner }}</span>
-						</a>
+							<span *ngIf="!!o.record.replyToName">
+								{{ o.record.replyToName }}
+							</span>
+							&ngsp;
+							<span *ngIf="!!o.record.replyToEmail">
+								&lt;<a
+									[href]="'mailto:' + o.record.replyToEmail"
+									>{{ o.record.replyToEmail }}</a
+								>&gt;
+							</span>
+						</div>
+						<ng-template #standardShare>
+							<a
+								[routerLink]="'/profile/' + o.owner"
+								*ngIf="
+									!o.record.wasAnonymousShare &&
+										currentUser.user.username !== o.owner;
+									else anonymousShare
+								"
+							>
+								<span [style.width]="'100%'">{{
+									o.owner
+								}}</span>
+							</a>
+						</ng-template>
 						<ng-template #anonymousShare>
 							<span
 								cyphTranslate
@@ -339,7 +370,12 @@
 						*matHeaderCellDef
 						mat-sort-header
 					>
-						<span cyphTranslate>Created</span>
+						<span cyphTranslate *ngIf="!anonymousMessages"
+							>Created</span
+						>
+						<span cyphTranslate *ngIf="anonymousMessages"
+							>Sent</span
+						>
 					</mat-header-cell>
 					<mat-cell fxFlex="128px" *matCellDef="let o">
 						{{
@@ -465,7 +501,12 @@
 							</div>
 						</ng-container>
 
-						<div *ngIf="recordType === recordTypes.Note">
+						<div
+							*ngIf="
+								recordType === recordTypes.Note &&
+								!anonymousMessages
+							"
+						>
 							{{
 								accountFilesService.noteSnippet(o.record.id)
 									| async
@@ -493,7 +534,12 @@
 								{{ o.owner }}
 							</a>
 						</div>
-						<div cyphTranslate *ngIf="o.record.wasAnonymousShare">
+						<div
+							cyphTranslate
+							*ngIf="
+								o.record.wasAnonymousShare && !anonymousMessages
+							"
+						>
 							Received from anonymous
 						</div>
 						<div
