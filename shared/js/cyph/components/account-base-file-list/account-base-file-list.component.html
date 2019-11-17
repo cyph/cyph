@@ -267,6 +267,14 @@
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Copy to Clipboard"
+							(click)="copyPassword(o, 'url')"
+						>
+							<mat-icon>content_copy</mat-icon>
+						</button>
 					</mat-cell>
 				</ng-container>
 
@@ -625,6 +633,13 @@
 		</button>
 
 		<mat-menu #passwordClipboardCopyMenu="matMenu">
+			<button
+				mat-menu-item
+				cyphTranslate
+				(click)="copyPassword(o, 'url')"
+			>
+				Website
+			</button>
 			<button
 				mat-menu-item
 				cyphTranslate
