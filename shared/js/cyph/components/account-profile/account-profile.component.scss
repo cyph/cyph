@@ -5,6 +5,9 @@ $header-size: 135px;
 :host > div {
 	position: relative;
 	min-height: 100%;
+
+	/* Override .initiating rule */
+	overflow-y: visible !important;
 }
 
 .profile {
