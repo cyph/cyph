@@ -2,6 +2,7 @@ import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
+	Input,
 	ElementRef
 } from '@angular/core';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
@@ -73,10 +74,17 @@ export class LinkConnectionComponent extends BaseProvider
 	public readonly queuedMessageDraft = new BehaviorSubject<string>('');
 
 	/** Counts down until link expires. */
-	public readonly timer = new Timer(this.configService.cyphCountdown, false);
+	@Input() public timer: Timer | undefined = new Timer(
+		this.configService.cyphCountdown,
+		false
+	);
 
 	/** Extends the countdown duration. */
 	public async addTime (milliseconds: number) : Promise<void> {
+		if (!this.timer) {
+			return;
+		}
+
 		this.timer.addTime(milliseconds);
 
 		await lockTryOnce(this.addTimeLock, async () => {
@@ -184,8 +192,14 @@ export class LinkConnectionComponent extends BaseProvider
 			this.linkHref.next(undefined);
 			this.linkSMS.next(undefined);
 
-			this.timer.stop();
+			if (this.timer) {
+				this.timer.stop();
+			}
 		});
+
+		if (!this.timer) {
+			return;
+		}
 
 		await sleep(1000);
 		await this.timer.start();

@@ -124,7 +124,10 @@
 		</div>
 
 		<br />
-		<div class="timer" *ngIf="(isPassive | async) === false">
+		<div
+			class="timer"
+			*ngIf="timer !== undefined && (isPassive | async) === false"
+		>
 			<span cyphTranslate>
 				Link expires in
 			</span>

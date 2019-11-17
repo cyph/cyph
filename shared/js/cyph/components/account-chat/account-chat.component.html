@@ -12,6 +12,7 @@
 		<cyph-link-connection
 			fxFlex
 			fxFlexFill
+			[timer]="undefined"
 			*ngIf="
 				chat.state === states.none && (anonymousChatInitiating | async)
 			"
