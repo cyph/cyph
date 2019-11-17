@@ -17,6 +17,11 @@ mat-card-title {
 		width: 100%;
 	}
 
+	&.inbox {
+		padding-bottom: 2.5em !important;
+		margin-top: -30px;
+	}
+
 	&:not(.editable) {
 		padding-bottom: 1.5em;
 	}
@@ -24,7 +29,7 @@ mat-card-title {
 
 mat-card-subtitle {
 	position: absolute;
-	margin-top: 12px !important;
+	margin-top: 8px !important;
 	font-size: 0.9em;
 }
 
@@ -44,11 +49,6 @@ mat-card-header {
 }
 
 mat-card.mobile {
-	mat-card-title {
-		margin-bottom: -5px !important;
-		margin-top: 5px !important;
-	}
-
 	&.partial-width {
 		padding-left: 10px;
 		padding-right: 10px;

@@ -17,6 +17,7 @@
 				<div fxLayoutAlign="center center" fxLayout="row">
 					<mat-card-title
 						[class.editable]="noteEditable | async"
+						[class.inbox]="anonymousMessages | async"
 						fxFlex
 					>
 						<div *ngIf="(noteEditable | async) === false">
@@ -45,23 +46,29 @@
 					<ng-container
 						*ngIf="(note | async)?.record | async as record"
 					>
-						<mat-card-subtitle
-							*ngIf="
-								!!record.replyToEmail || !!record.replyToName
-							"
-						>
-							<span cyphTranslate>Reply-to:</span>
-							&ngsp;
-							<span *ngIf="!!record.replyToName">
-								{{ record.replyToName }}
-							</span>
-							&ngsp;
-							<span *ngIf="!!record.replyToEmail">
-								&lt;<a
-									[href]="'mailto:' + record.replyToEmail"
-									>{{ record.replyToEmail }}</a
-								>&gt;
-							</span>
+						<mat-card-subtitle *ngIf="anonymousMessages | async">
+							<div>
+								{{ getDateTimeString(record.timestamp) }}
+							</div>
+							<div
+								*ngIf="
+									!!record.replyToEmail ||
+									!!record.replyToName
+								"
+							>
+								<span cyphTranslate>Reply-to:</span>
+								&ngsp;
+								<span *ngIf="!!record.replyToName">
+									{{ record.replyToName }}
+								</span>
+								&ngsp;
+								<span *ngIf="!!record.replyToEmail">
+									&lt;<a
+										[href]="'mailto:' + record.replyToEmail"
+										>{{ record.replyToEmail }}</a
+									>&gt;
+								</span>
+							</div>
 						</mat-card-subtitle>
 					</ng-container>
 					<mat-card-header fxLayout="row">

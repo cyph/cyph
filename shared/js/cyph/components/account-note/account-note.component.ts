@@ -22,6 +22,7 @@ import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {lockFunction} from '../../util/lock';
 import {debugLog} from '../../util/log';
+import {getDateTimeString} from '../../util/time';
 import {sleep} from '../../util/wait';
 
 /**
@@ -45,6 +46,9 @@ export class AccountNoteComponent extends BaseProvider
 	public readonly anonymousMessages: Observable<
 		boolean
 	> = this.activatedRoute.data.pipe(map(o => !!o.anonymousMessages));
+
+	/** @see getDateTimeString */
+	public readonly getDateTimeString = getDateTimeString;
 
 	/** Indicates whether or not this is a new note. */
 	public readonly newNote = new BehaviorSubject<boolean>(false);
