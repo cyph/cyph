@@ -128,7 +128,7 @@ export class AccountComponent extends BaseProvider
 					'wallets'
 				].indexOf(route) > -1 ||
 				(activatedRouteURL.length > 1 &&
-					['appointments', 'inbox', , 'messages', 'notes'].indexOf(
+					['appointments', 'inbox', 'messages', 'notes'].indexOf(
 						route
 					) > -1 &&
 					!(
