@@ -9,6 +9,7 @@ const getSubdirectories = dir =>
 	fs
 		.readdirSync(dir)
 		.filter(d => d !== '.git' && fs.lstatSync(`${dir}/${d}`).isDirectory());
+
 const updateRepos = () => {
 	childProcess.spawnSync('bash', ['./keycache.sh'], {
 		cwd: __dirname,
@@ -61,6 +62,7 @@ const updateRepos = () => {
 			.filter(
 				d =>
 					d.endsWith('.cyph.app') &&
+					d !== 'beta-staging.cyph.app' &&
 					d !== 'debug.cyph.app' &&
 					d !== 'websign' &&
 					d !== 'cyph' &&
