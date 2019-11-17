@@ -428,7 +428,7 @@ export class StringsService extends BaseProvider {
 	public readonly invalidPIN = `Invalid lock screen password.`;
 
 	/** @see StringsService */
-	public readonly inviteContactTitle = `Invite Contact`;
+	public readonly inviteContactTitle = `Invite Friend`;
 
 	/** @see StringsService */
 	public readonly inviteLinkTitle = `Invite Link`;
