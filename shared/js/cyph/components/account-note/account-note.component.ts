@@ -41,6 +41,11 @@ export class AccountNoteComponent extends BaseProvider
 	/** @ignore */
 	private readonly saveLock = lockFunction();
 
+	/** @see AccountNoteComponents.anonymousMessages */
+	public readonly anonymousMessages: Observable<
+		boolean
+	> = this.activatedRoute.data.pipe(map(o => !!o.anonymousMessages));
+
 	/** Indicates whether or not this is a new note. */
 	public readonly newNote = new BehaviorSubject<boolean>(false);
 

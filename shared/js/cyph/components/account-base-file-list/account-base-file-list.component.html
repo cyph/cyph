@@ -759,7 +759,7 @@
 				mat-menu-item
 				cyphTranslate
 				(click)="accountFilesService.shareFilePrompt(o.record)"
-				*ngIf="currentUser.agseConfirmed"
+				*ngIf="currentUser.agseConfirmed && !anonymousMessages"
 			>
 				Share
 			</button>
@@ -785,6 +785,7 @@
 		"
 		*ngIf="
 			currentUser.agseConfirmed &&
+			!anonymousMessages &&
 			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster) &&
 			!(
 				recordType === recordTypes.Password &&

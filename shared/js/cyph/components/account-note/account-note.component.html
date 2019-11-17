@@ -110,7 +110,10 @@
 								accountFilesService.shareFilePrompt(record);
 								$event.stopPropagation()
 							"
-							*ngIf="(note | async)?.record | async as record"
+							*ngIf="
+								(anonymousMessages | async) === false &&
+									(note | async)?.record | async as record
+							"
 						>
 							<mat-icon>share</mat-icon>
 						</button>
