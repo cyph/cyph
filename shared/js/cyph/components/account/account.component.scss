@@ -211,6 +211,10 @@ $mobileAppBarHeight: 56px;
 		z-index: 3;
 	}
 
+	cyph-account-menu.sidebar {
+		padding-right: 2px;
+	}
+
 	.sidebar.contacts {
 		mat-card {
 			padding: 18px 24px;
