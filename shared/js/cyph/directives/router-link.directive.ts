@@ -1,4 +1,5 @@
-import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
+import {Directive, ElementRef, OnChanges, Renderer2} from '@angular/core';
+import {RouterLink} from '@angular/router';
 import {BaseProvider} from '../base-provider';
 
 /**
@@ -8,14 +9,28 @@ import {BaseProvider} from '../base-provider';
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	selector: '[routerLink]'
 })
-export class RouterLinkDirective extends BaseProvider implements OnInit {
+export class RouterLinkDirective extends BaseProvider implements OnChanges {
+	/** @see RouterLink.prototype.routerLink */
+	private routerLink?: typeof RouterLink.prototype.routerLink;
+
 	/** @inheritDoc */
-	public ngOnInit () : void {
+	public ngOnChanges () : void {
 		if (!this.elementRef.nativeElement) {
 			return;
 		}
 
-		this.renderer.addClass(this.elementRef.nativeElement, 'router-link');
+		if (this.routerLink !== undefined) {
+			this.renderer.addClass(
+				this.elementRef.nativeElement,
+				'router-link'
+			);
+		}
+		else {
+			this.renderer.removeClass(
+				this.elementRef.nativeElement,
+				'router-link'
+			);
+		}
 	}
 
 	constructor (
