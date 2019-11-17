@@ -26,6 +26,7 @@ export class AccountNotesComponent extends BaseProvider implements OnInit {
 	public readonly realTime: Observable<
 		boolean
 	> = this.activatedRoute.data.pipe(map(o => o.realTime));
+
 	/** @see AccountFileRecord.RecordTypes */
 	public readonly recordType = this.realTime.pipe(
 		map(realTime =>

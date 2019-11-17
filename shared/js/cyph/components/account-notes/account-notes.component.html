@@ -1,6 +1,6 @@
 <cyph-account-base-file-list
 	[recordType]="recordType | async"
-	*ngIf="(realTime | async) === false || accountService.enableDocs"
+	*ngIf="(realTime | async) === false || (accountService.enableDocs | async)"
 >
 	<button
 		mat-fab

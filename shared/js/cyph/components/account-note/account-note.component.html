@@ -3,7 +3,9 @@
 		fxFlexFill
 		fxLayoutAlign="center start"
 		[class.initiating]="showSpinner | async"
-		*ngIf="(realTime | async) === false || accountService.enableDocs"
+		*ngIf="
+			(realTime | async) === false || (accountService.enableDocs | async)
+		"
 	>
 		<mat-card
 			fxFlex

@@ -380,7 +380,7 @@
 					aria-label="Docs"
 					routerLink="/docs"
 					(click)="click()"
-					*ngIf="accountService.enableDocs"
+					*ngIf="accountService.enableDocs | async"
 				>
 					<mat-icon
 						mat-list-icon

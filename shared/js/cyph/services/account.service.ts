@@ -110,10 +110,12 @@ export class AccountService extends BaseProvider {
 	>;
 
 	/** Indicates whether real-time Docs is enabled. */
-	public readonly enableDocs: boolean =
+	public readonly enableDocs: Observable<boolean> = of(
 		this.envService.debug ||
-		(!!this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.enableDocs === true);
+			(!!this.envService.environment.customBuild &&
+				this.envService.environment.customBuild.config.enableDocs ===
+					true)
+	);
 
 	/** Indicates whether Passwords is enabled. */
 	public readonly enablePasswords: Observable<boolean> = this.envService
