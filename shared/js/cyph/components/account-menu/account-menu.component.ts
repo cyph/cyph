@@ -1,10 +1,16 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {map} from 'rxjs/operators';
-import {UserPresence, userPresenceSelectOptions} from '../../account/enums';
+import {
+	NewContactTypes,
+	UserPresence,
+	userPresenceSelectOptions
+} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
+import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountInviteService} from '../../services/account-invite.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -34,6 +40,9 @@ export class AccountMenuComponent extends BaseProvider {
 	public readonly menuExpanded = this.accountService.menuExpanded.pipe(
 		map(menuExpanded => this.sidenav || menuExpanded)
 	);
+
+	/** @see NewContactTypes */
+	public readonly newContactTypes = NewContactTypes;
 
 	/** If true, is inside a sidenav. */
 	@Input() public sidenav: boolean = false;
@@ -71,11 +80,17 @@ export class AccountMenuComponent extends BaseProvider {
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
 
-		/** @see AccountFilesService */
-		public readonly accountFilesService: AccountFilesService,
+		/** @see AccountContactsService */
+		public readonly accountContactsService: AccountContactsService,
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @see AccountFilesService */
+		public readonly accountFilesService: AccountFilesService,
+
+		/** @see AccountInviteService */
+		public readonly accountInviteService: AccountInviteService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

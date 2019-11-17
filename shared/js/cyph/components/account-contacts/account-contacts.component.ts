@@ -24,7 +24,6 @@ import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
-import {AccountInviteService} from '../../services/account-invite.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -221,17 +220,6 @@ export class AccountContactsComponent extends BaseProvider
 	/** @see UserPresence */
 	public readonly userPresence = UserPresence;
 
-	/** Displays inite link to user. */
-	public async getInviteLink () : Promise<void> {
-		const invite = await this.accountInviteService.getInviteURL();
-
-		return this.dialogService.alert({
-			content: invite.url,
-			markdown: true,
-			title: this.stringsService.inviteLinkTitle
-		});
-	}
-
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
 		if (
@@ -310,9 +298,6 @@ export class AccountContactsComponent extends BaseProvider
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
-
-		/** @see AccountInviteService */
-		public readonly accountInviteService: AccountInviteService,
 
 		/** @see DialogService */
 		public readonly dialogService: DialogService,

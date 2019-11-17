@@ -660,6 +660,53 @@
 			<a
 				mat-list-item
 				cyphTranslate
+				class="invite"
+				[matMenuTriggerFor]="inviteMenu"
+				aria-label="Invite Friend"
+				(click)="click()"
+				*ngIf="((accountInviteService.count | async) || 0) > 0"
+			>
+				<mat-icon
+					mat-list-icon
+					[matBadge]="
+						((accountInviteService.count | async) || 0).toString()
+					"
+					matBadgePosition="above after"
+				>
+					person_add
+				</mat-icon>
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					Invite Friend
+				</h3>
+			</a>
+			<mat-menu #inviteMenu="matMenu">
+				<button
+					mat-menu-item
+					[matTooltip]="stringsService.addContactTooltipInvite"
+					matTooltipPosition="right"
+					(click)="
+						accountContactsService.addContactPrompt(
+							newContactTypes.invite
+						)
+					"
+					*ngIf="((accountInviteService.count | async) || 0) > 0"
+				>
+					{{ stringsService.addContactButtonInviteEmail }}
+				</button>
+				<button
+					mat-menu-item
+					[matTooltip]="stringsService.addContactTooltipInviteLink"
+					matTooltipPosition="right"
+					(click)="accountInviteService.showInviteURL()"
+					*ngIf="((accountInviteService.count | async) || 0) > 0"
+				>
+					{{ stringsService.inviteLinkButton }}
+				</button>
+			</mat-menu>
+
+			<a
+				mat-list-item
+				cyphTranslate
 				class="settings"
 				[class.disabled]="!currentUser.masterKeyConfirmed"
 				aria-label="Settings"

@@ -121,15 +121,7 @@
 				true
 			"
 		>
-			<span
-				[matBadge]="
-					((accountInviteService.count | async) || 0).toString()
-				"
-				[matBadgeHidden]="
-					!(((accountInviteService.count | async) || 0) > 0)
-				"
-				matBadgePosition="above before"
-			>
+			<span>
 				&nbsp;&nbsp;&nbsp;&nbsp;
 				{{ stringsService.addContactTitle }}
 				&nbsp;&nbsp;&nbsp;&nbsp;
@@ -160,34 +152,6 @@
 				"
 			>
 				{{ stringsService.addContactButtonExternal }}
-			</button>
-			<button
-				mat-menu-item
-				[matTooltip]="stringsService.addContactTooltipInvite"
-				[matTooltipPosition]="
-					(envService.isMobile | async) ? 'right' : 'left'
-				"
-				(click)="
-					accountContactsService.addContactPrompt(
-						newContactTypes.invite
-					)
-				"
-				*ngIf="((accountInviteService.count | async) || 0) > 0"
-			>
-				<strong>{{
-					stringsService.addContactButtonInviteEmail
-				}}</strong>
-			</button>
-			<button
-				mat-menu-item
-				[matTooltip]="stringsService.addContactTooltipInviteLink"
-				[matTooltipPosition]="
-					(envService.isMobile | async) ? 'right' : 'left'
-				"
-				(click)="getInviteLink()"
-				*ngIf="((accountInviteService.count | async) || 0) > 0"
-			>
-				<strong>{{ stringsService.inviteLinkButton }}</strong>
 			</button>
 		</mat-menu>
 

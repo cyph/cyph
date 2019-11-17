@@ -7,8 +7,10 @@ import {BooleanProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
+import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {QRService} from './qr.service';
+import {StringsService} from './strings.service';
 
 /**
  * Angular service for managing Accounts invites.
@@ -58,6 +60,17 @@ export class AccountInviteService extends BaseProvider {
 		await this.databaseService.callFunction('sendInvite', {email, name});
 	}
 
+	/** Displays invite link to user. */
+	public async showInviteURL () : Promise<void> {
+		const invite = await this.getInviteURL();
+
+		return this.dialogService.alert({
+			content: invite.url,
+			markdown: true,
+			title: this.stringsService.inviteLinkTitle
+		});
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
@@ -66,10 +79,16 @@ export class AccountInviteService extends BaseProvider {
 		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
 		private readonly envService: EnvService,
 
 		/** @ignore */
-		private readonly qrService: QRService
+		private readonly qrService: QRService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		super();
 	}
