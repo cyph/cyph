@@ -18,10 +18,10 @@ import {AffiliateService} from '../../services/affiliate.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
-import {openWindow} from '../../util/open-window';
 import {request} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
+import {openWindow} from '../../util/window';
 
 /**
  * Angular component for Braintree payment checkout UI.

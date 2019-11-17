@@ -23,7 +23,7 @@ import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {StringsService} from '../../services/strings.service';
 import {normalizeArray} from '../../util/formatting';
-import {openWindow} from '../../util/open-window';
+import {openWindow} from '../../util/window';
 
 /**
  * Angular component for account contact UI.
