@@ -114,8 +114,8 @@
 
 		<button
 			mat-button
-			[matMenuTriggerFor]="addContactMenu"
 			class="add-contact"
+			(click)="accountContactsService.addContactPrompt()"
 			*ngIf="
 				(accountDatabaseService.currentUser | async)?.agseConfirmed ===
 				true
