@@ -411,7 +411,14 @@
 						}}
 					</mat-icon>
 					<mat-card-title>
-						{{ o.record.name || stringsService.untitled }}
+						{{
+							(recordType !== recordTypes.Password ?
+								o.record.name :
+								(
+									accountFilesService.watchPassword(o.record)
+									| async
+								)?.url) || stringsService.untitled
+						}}
 					</mat-card-title>
 					<mat-card-subtitle>
 						<ng-container *ngIf="recordType === recordTypes.File">
@@ -433,6 +440,15 @@
 							{{
 								accountFilesService.noteSnippet(o.record.id)
 									| async
+							}}
+						</div>
+
+						<div *ngIf="recordType === recordTypes.Password">
+							{{
+								(
+									accountFilesService.watchPassword(o.record)
+									| async
+								)?.username || ''
 							}}
 						</div>
 
@@ -582,6 +598,71 @@
 		>
 			<mat-icon>edit</mat-icon>
 		</button>
+	</ng-container>
+
+	<ng-container
+		*ngIf="
+			recordType === recordTypes.Password && (envService.isMobile | async)
+		"
+	>
+		<button
+			mat-icon-button
+			cyphTranslate
+			[matMenuTriggerFor]="passwordClipboardCopyMenu"
+			matTooltip="Copy to Clipboard"
+			(click)="$event.stopPropagation()"
+		>
+			<mat-icon>content_copy</mat-icon>
+		</button>
+		<button
+			mat-icon-button
+			cyphTranslate
+			[matMenuTriggerFor]="passwordEditMenu"
+			matTooltip="Edit"
+			(click)="$event.stopPropagation()"
+		>
+			<mat-icon>edit</mat-icon>
+		</button>
+
+		<mat-menu #passwordClipboardCopyMenu="matMenu">
+			<button
+				mat-menu-item
+				cyphTranslate
+				(click)="copyPassword(o, 'username')"
+			>
+				Username
+			</button>
+			<button
+				mat-menu-item
+				cyphTranslate
+				(click)="copyPassword(o, 'password')"
+			>
+				Password
+			</button>
+		</mat-menu>
+		<mat-menu #passwordEditMenu="matMenu">
+			<button
+				mat-menu-item
+				cyphTranslate
+				(click)="editPassword(o, 'url')"
+			>
+				Website
+			</button>
+			<button
+				mat-menu-item
+				cyphTranslate
+				(click)="editPassword(o, 'username')"
+			>
+				Username
+			</button>
+			<button
+				mat-menu-item
+				cyphTranslate
+				(click)="editPassword(o, 'password')"
+			>
+				Password
+			</button>
+		</mat-menu>
 	</ng-container>
 
 	<button
