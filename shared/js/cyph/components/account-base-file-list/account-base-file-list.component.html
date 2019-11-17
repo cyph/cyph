@@ -418,7 +418,9 @@
 							accountFilesService.getThumbnail(o.record.mediaType)
 						}}
 					</mat-icon>
-					<mat-card-title>
+					<mat-card-title
+						[class.truncate]="recordType === recordTypes.Password"
+					>
 						{{
 							(recordType !== recordTypes.Password ?
 								o.record.name :

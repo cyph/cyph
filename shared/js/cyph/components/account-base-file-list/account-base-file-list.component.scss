@@ -35,3 +35,7 @@ mat-card-subtitle,
 mat-card-title {
 	@include word-wrap;
 }
+
+mat-card-title.truncate {
+	max-width: calc(100vw - 225px);
+}
