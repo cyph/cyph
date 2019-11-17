@@ -23,7 +23,7 @@ const addInviteCode = async (
 	}
 
 	if (plan && !(plan in CyphPlans)) {
-		throw new Error('Invalid plan.');
+		throw new Error(`Plan "${plan}" not found.`);
 	}
 
 	/* TODO: Add flag to explicitly override the blacklist and reserve a non-standard username */

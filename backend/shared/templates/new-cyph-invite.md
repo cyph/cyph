@@ -1,20 +1,35 @@
 Hello{{#name}} {{name}}{{/name}},
 
+{{#planChange}}
+{{#planChangeUpgrade}}
+Your status has been upgraded from {{oldPlan}}!
+{{/planChangeUpgrade}}
+
+{{^planChangeUpgrade}}
+Your status has changed (previously {{oldPlan}}).
+{{/planChangeUpgrade}}
+{{/planChange}}
+
+
+{{^planChange}}
 {{^fromApp}}
 {{#inviterName}}{{inviterName}} has invited you to join Cyph!{{/inviterName}}
 {{^inviterName}}Your Cyph invite has arrived!{{/inviterName}}
 [**Click here to set up your Cyph beta account.**]({{accountsURL}}register/{{inviteCode}})
 {{/fromApp}}
+
 {{#fromApp}}
 Congratulations on securing your Cyph account invite!
 {{/fromApp}}
+{{/planChange}}
+
 
 ---
 
 {{#planFoundersAndFriends}}
 |||
 | ------------ | :--------------------: |
-| Your Status: | **Founders & Friends** |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Founders & Friends** |
 |              | Lifetime Platinum      |
 |              | Gold                   |
 |              | Silver                 |
@@ -24,7 +39,7 @@ Congratulations on securing your Cyph account invite!
 {{#planLifetimePlatinum}}
 |||
 | ------------ | :--------------------: |
-| Your Status: | **Lifetime Platinum**  |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Lifetime Platinum**  |
 |              | Gold                   |
 |              | Silver                 |
 
@@ -34,7 +49,7 @@ Congratulations on securing your Cyph account invite!
 |||
 | ------------ | :--------------------: |
 |              | Lifetime Platinum      |
-| Your Status: | **Gold**               |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Gold**               |
 |              | Silver                 |
 
 ---
@@ -44,11 +59,12 @@ Congratulations on securing your Cyph account invite!
 | ------------ | :--------------------: |
 |              | Lifetime Platinum      |
 |              | Gold                   |
-| Your Status: | **Silver**             |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Silver**             |
 
 ---
 {{/planSilver}}
 
+{{^planChange}}
 We highly recommend that you sign up from your desktop or laptop in a location where you have
 some privacy. Afterwards, you'll have three options to securely message your friends:
 
@@ -59,6 +75,7 @@ some privacy. Afterwards, you'll have three options to securely message your fri
 3. **Add Contact > Invite to Cyph:** Spends an invite to let them create their own account
 
 ---
+{{/planChange}}
 
 Your {{#planFree}}account{{/planFree}}{{^planFree}}plan{{/planFree}} also includes:
 
@@ -87,4 +104,5 @@ Twitter's
 
 ---
 
-If you have any questions about the signup process, just email help@cyph.com.
+If you have any questions{{^planChange}} about the signup process{{/planChange}},
+just email help@cyph.com.
