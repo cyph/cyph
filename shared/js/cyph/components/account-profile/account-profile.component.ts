@@ -152,6 +152,12 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 		this.accountService.transitionEnd();
 
 		this.subscriptions.push(
+			this.accountService.routeChanges.subscribe(() => {
+				this.accountService.transitionEnd();
+			})
+		);
+
+		this.subscriptions.push(
 			this.userInternal.subscribe(async ({user, username}) => {
 				const normalizedUsername = username ?
 					normalize(username) :
