@@ -144,6 +144,9 @@ export class StringsService extends BaseProvider {
 	public readonly bitcoinTransactionFee = `Transaction fee: \${1} BTC`;
 
 	/** @see StringsService */
+	public readonly burner = `Burner`;
+
+	/** @see StringsService */
 	public readonly callType = `Call Type`;
 
 	/** @see StringsService */

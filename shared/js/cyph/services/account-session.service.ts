@@ -185,7 +185,7 @@ export class AccountSessionService extends SessionService {
 			}
 
 			this.accountService.setHeader({
-				mobile: this.stringsService.anonymous
+				mobile: this.stringsService.burner
 			});
 
 			this.accountSessionInitService.ephemeral = true;
