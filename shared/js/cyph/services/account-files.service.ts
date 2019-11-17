@@ -156,6 +156,12 @@ export class AccountFilesService extends BaseProvider {
 		Observable<IQuillDelta>
 	>();
 
+	/** @ignore */
+	private readonly watchPasswordCache = new Map<
+		string,
+		Observable<IPassword>
+	>();
+
 	/** File type configurations. */
 	public readonly config: Record<
 		AccountFileRecord.RecordTypes,
@@ -1829,10 +1835,10 @@ export class AccountFilesService extends BaseProvider {
 		content: IQuillDelta,
 		name?: string
 	) : Promise<void> {
+		const bytes = this.encodeQuill(content);
+
 		const file = await this.getFile(id, AccountFileRecord.RecordTypes.Note);
-		file.size = this.potassiumService.fromString(
-			this.deltaToString(content)
-		).length;
+		file.size = bytes.length;
 		file.timestamp = await getTimestamp();
 
 		if (name) {
@@ -1851,7 +1857,41 @@ export class AccountFilesService extends BaseProvider {
 			this.accountDatabaseService.setItem(
 				`users/${file.owner}/files/${id}`,
 				BinaryProto,
-				this.encodeQuill(content),
+				bytes,
+				undefined,
+				file.key
+			),
+			this.accountDatabaseService.setItem<IAccountFileRecord>(
+				`users/${file.owner}/fileRecords/${id}`,
+				AccountFileRecord,
+				file,
+				undefined,
+				file.key
+			)
+		]);
+	}
+
+	/** Overwrites an existing password. */
+	public async updatePassword (
+		id: string,
+		password: IPassword,
+		name?: string
+	) : Promise<void> {
+		const bytes = await serialize(Password, password);
+
+		const file = await this.getFile(
+			id,
+			AccountFileRecord.RecordTypes.Password
+		);
+		file.name = name || password.url || file.name || '';
+		file.size = bytes.length;
+		file.timestamp = await getTimestamp();
+
+		await Promise.all([
+			this.accountDatabaseService.setItem(
+				`users/${file.owner}/files/${id}`,
+				BinaryProto,
+				bytes,
 				undefined,
 				file.key
 			),
@@ -2129,6 +2169,32 @@ export class AccountFilesService extends BaseProvider {
 							return decoded;
 						})
 					);
+			}
+		);
+	}
+
+	/** Watches password. */
+	public watchPassword (
+		id: string | IAccountFileRecord
+	) : Observable<IPassword> {
+		return getOrSetDefault(
+			this.watchPasswordCache,
+			typeof id === 'string' ? id : id.id,
+			() => {
+				const filePromise = this.getFile(id);
+
+				return this.accountDatabaseService
+					.watch(
+						filePromise.then(
+							file => `users/${file.owner}/files/${file.id}`
+						),
+						Password,
+						undefined,
+						filePromise.then(file => file.key),
+						undefined,
+						this.subscriptions
+					)
+					.pipe(map(o => o.value));
 			}
 		);
 	}

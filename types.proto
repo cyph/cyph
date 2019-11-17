@@ -1045,17 +1045,14 @@ enum NotificationTypes {
 
 /** A stored password. */
 message Password {
-	/** Human-readable name. */
-	required string label = 1;
-
 	/** Password. */
-	required string password = 2;
+	required string password = 1;
 
 	/** URL. */
-	string url = 3;
+	string url = 2;
 
 	/** Username. */
-	string username = 4;
+	string username = 3;
 }
 
 /** Patient information for Telehealth. */

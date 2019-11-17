@@ -156,7 +156,7 @@ export class DialogService extends BaseProvider {
 	 */
 	public async toast (
 		_CONTENT: string,
-		_DURATION: number,
+		_DURATION?: number,
 		_ACTION?: string
 	) : Promise<boolean> {
 		throw new Error(

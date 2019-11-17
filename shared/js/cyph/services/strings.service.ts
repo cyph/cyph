@@ -705,6 +705,33 @@ export class StringsService extends BaseProvider {
 	public readonly p2pWarningVideoPassive = `Starting video call (P2P).`;
 
 	/** @see StringsService */
+	public readonly passwordDefaultURL = `Unspecified`;
+
+	/** @see StringsService */
+	public readonly passwordEditAborted = `Password edit aborted.`;
+
+	/** @see StringsService */
+	public readonly passwordEditContent = `Enter a new \${KEY}:`;
+
+	/** @see StringsService */
+	public readonly passwordEditFailed = `Password edit failed.`;
+
+	/** @see StringsService */
+	public readonly passwordEditSaved = `Password edit saved.`;
+
+	/** @see StringsService */
+	public readonly passwordEditTitle = `Password Manager`;
+
+	/** @see StringsService */
+	public readonly passwordKeyPassword = `password`;
+
+	/** @see StringsService */
+	public readonly passwordKeyURL = `website name or URL`;
+
+	/** @see StringsService */
+	public readonly passwordKeyUsername = `username`;
+
+	/** @see StringsService */
 	public readonly pastAppointments = `Appointment History`;
 
 	/** @see StringsService */
@@ -999,8 +1026,8 @@ export class StringsService extends BaseProvider {
 	/** @see StringsService */
 	public readonly your = `Your`;
 
-	/** @ignore */
-	private capitalize (s: string) : string {
+	/** Capitalizes a string. */
+	public capitalize (s: string) : string {
 		return s.length < 1 ? '' : s[0].toUpperCase() + s.slice(1);
 	}
 

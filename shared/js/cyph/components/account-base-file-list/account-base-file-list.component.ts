@@ -13,7 +13,8 @@ import {
 	AccountFileRecord,
 	IAccountFileRecord,
 	IAccountFileReference,
-	IEhrApiKey
+	IEhrApiKey,
+	IPassword
 } from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -25,7 +26,9 @@ import {EHRIntegrationService} from '../../services/ehr-integration.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
+import {copyToClipboard} from '../../util/clipboard';
 import {readableByteLength} from '../../util/formatting';
+import {debugLogError} from '../../util/log';
 import {getDateTimeString, watchRelativeDateString} from '../../util/time';
 import {waitForValue} from '../../util/wait';
 
@@ -46,12 +49,15 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	public readonly getTableColumns = memoize(
 		(recordType: AccountFileRecord.RecordTypes) => [
 			'type',
-			'name',
-			'timestamp',
+			...(recordType === AccountFileRecord.RecordTypes.Password ?
+				['passwordURL', 'passwordUsername', 'password'] :
+				['name', 'timestamp']),
 			...(recordType === AccountFileRecord.RecordTypes.File ?
 				['size'] :
 				[]),
-			'owner',
+			...(recordType === AccountFileRecord.RecordTypes.Password ?
+				[] :
+				['owner']),
 			'actions'
 		]
 	);
@@ -111,6 +117,76 @@ export class AccountBaseFileListComponent extends BaseProvider {
 				record.owner :
 				getDateTimeString(record.timestamp)
 		});
+	}
+
+	/** Copies a password value to the clipboard. */
+	public async copyPassword (
+		{record}: {record: IAccountFileRecord},
+		key: keyof IPassword
+	) : Promise<void> {
+		const password = await this.accountFilesService.downloadPassword(record)
+			.result;
+		const value = password[key];
+
+		if (typeof value !== 'string' || value.length < 1) {
+			return;
+		}
+
+		await copyToClipboard(value);
+	}
+
+	/** Edits a password. */
+	public async editPassword (
+		{record}: {record: IAccountFileRecord},
+		key: keyof IPassword
+	) : Promise<void> {
+		const password = await this.accountFilesService.downloadPassword(record)
+			.result;
+
+		let oldValue = password[key];
+		if (typeof oldValue !== 'string' || oldValue.length < 1) {
+			oldValue = '';
+		}
+
+		const keyString =
+			key === 'password' ?
+				this.stringsService.passwordKeyPassword :
+			key === 'url' ?
+				this.stringsService.passwordKeyURL :
+				this.stringsService.passwordKeyUsername;
+
+		const value = await this.dialogService.prompt({
+			content: this.stringsService.setParameters(
+				this.stringsService.passwordEditContent,
+				{key: keyString}
+			),
+			placeholder: this.stringsService.capitalize(keyString),
+			preFill: oldValue,
+			title: this.stringsService.passwordEditTitle
+		});
+
+		if (value === undefined) {
+			await this.dialogService.toast(
+				this.stringsService.passwordEditAborted
+			);
+			return;
+		}
+
+		try {
+			await this.accountFilesService.updatePassword(record.id, {
+				...password,
+				[key]: value
+			});
+			await this.dialogService.toast(
+				this.stringsService.passwordEditSaved
+			);
+		}
+		catch (err) {
+			debugLogError(() => ({passwordEditFail: err}));
+			await this.dialogService.toast(
+				this.stringsService.passwordEditFailed
+			);
+		}
 	}
 
 	/** Removes an EHR API key. */

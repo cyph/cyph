@@ -265,7 +265,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	/** @inheritDoc */
 	public async toast (
 		content: string,
-		duration: number,
+		duration: number = 2500,
 		action?: string
 	) : Promise<boolean> {
 		if (action !== undefined) {

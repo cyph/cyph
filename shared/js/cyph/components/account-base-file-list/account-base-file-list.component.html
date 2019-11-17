@@ -218,6 +218,90 @@
 					</mat-cell>
 				</ng-container>
 
+				<ng-container matColumnDef="password">
+					<mat-header-cell
+						fxFlex="96px"
+						*matHeaderCellDef
+						mat-sort-header
+					>
+						<span cyphTranslate>Password</span>
+					</mat-header-cell>
+					<mat-cell fxFlex="96px" *matCellDef="let o">
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Edit Password"
+							(click)="editPassword(o, 'password')"
+						>
+							<mat-icon>edit</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Copy to Clipboard"
+							(click)="copyPassword(o, 'password')"
+						>
+							<mat-icon>content_copy</mat-icon>
+						</button>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="passwordURL">
+					<mat-header-cell fxFlex *matHeaderCellDef mat-sort-header>
+						<span cyphTranslate>Website</span>
+					</mat-header-cell>
+					<mat-cell *matCellDef="let o">
+						<span>
+							{{
+								(
+									accountFilesService.watchPassword(o.record)
+									| async
+								)?.url || stringsService.passwordDefaultURL
+							}}
+						</span>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Edit Website"
+							(click)="editPassword(o, 'url')"
+						>
+							<mat-icon>edit</mat-icon>
+						</button>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="passwordUsername">
+					<mat-header-cell fxFlex *matHeaderCellDef mat-sort-header>
+						<span cyphTranslate>Username</span>
+					</mat-header-cell>
+					<mat-cell *matCellDef="let o">
+						<span>
+							{{
+								(
+									accountFilesService.watchPassword(o.record)
+									| async
+								)?.username || ''
+							}}
+						</span>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Edit Username"
+							(click)="editPassword(o, 'username')"
+						>
+							<mat-icon>edit</mat-icon>
+						</button>
+						<button
+							mat-icon-button
+							cyphTranslate
+							matTooltip="Copy to Clipboard"
+							(click)="copyPassword(o, 'username')"
+						>
+							<mat-icon>content_copy</mat-icon>
+						</button>
+					</mat-cell>
+				</ng-container>
+
 				<ng-container matColumnDef="size">
 					<mat-header-cell
 						fxFlex="96px"
@@ -278,11 +362,12 @@
 						accountFilesService.config[recordType].subroutable
 					"
 					[routerLink]="
-						'/' +
-						accountFilesService.config[recordType].route +
-						(accountFilesService.config[recordType].subroutable ?
-							'/' + row.record.id :
-							'')
+						!accountFilesService.config[recordType].subroutable ?
+							undefined :
+							'/' +
+							accountFilesService.config[recordType].route +
+							'/' +
+							row.record.id
 					"
 					(click)="
 						recordType === recordTypes.File ?
@@ -306,11 +391,12 @@
 					let i = index
 				"
 				[routerLink]="
-					'/' +
-					accountFilesService.config[recordType].route +
-					(accountFilesService.config[recordType].subroutable ?
-						'/' + o.record.id :
-						'')
+					!accountFilesService.config[recordType].subroutable ?
+						undefined :
+						'/' +
+						accountFilesService.config[recordType].route +
+						'/' +
+						o.record.id
 				"
 				(click)="
 					recordType === recordTypes.File ?

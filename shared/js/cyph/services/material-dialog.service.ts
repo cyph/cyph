@@ -386,7 +386,7 @@ export class MaterialDialogService extends BaseProvider
 	/** @inheritDoc */
 	public async toast (
 		content: string,
-		duration: number,
+		duration: number = 2500,
 		action?: string
 	) : Promise<boolean> {
 		const snackbar = this.matSnackbar.open(
