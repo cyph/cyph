@@ -73,8 +73,10 @@
 					[placeholder]="promptPlaceholder || stringsService.response"
 					name="prompt"
 					required
-					type="text"
-					*ngIf="!bottomSheet"
+					[type]="
+						password && (hidePassword | async) ? 'password' : 'text'
+					"
+					*ngIf="!bottomSheet || password"
 				/>
 				<textarea
 					matInput
@@ -83,8 +85,19 @@
 					[placeholder]="promptPlaceholder || stringsService.response"
 					name="prompt"
 					required
-					*ngIf="bottomSheet"
+					*ngIf="bottomSheet && !password"
 				></textarea>
+
+				<mat-icon
+					matSuffix
+					class="suffix-button"
+					(click)="hidePassword.next(!hidePassword.value)"
+					*ngIf="password"
+				>
+					{{
+						(hidePassword | async) ? 'visibility' : 'visibility_off'
+					}}
+				</mat-icon>
 			</mat-form-field>
 		</form>
 	</ng-template>

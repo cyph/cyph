@@ -93,6 +93,7 @@ export class DialogService extends BaseProvider {
 			content: string;
 			form: IForm;
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
@@ -119,6 +120,7 @@ export class DialogService extends BaseProvider {
 			cancel?: string;
 			content: string;
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
@@ -138,6 +140,7 @@ export class DialogService extends BaseProvider {
 				value: any;
 			}[];
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;

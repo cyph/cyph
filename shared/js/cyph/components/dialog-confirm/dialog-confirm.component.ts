@@ -10,7 +10,7 @@ import {
 import {MatBottomSheetRef} from '@angular/material/bottom-sheet';
 import {MatDialogRef} from '@angular/material/dialog';
 import {SafeUrl} from '@angular/platform-browser';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {IForm} from '../../proto/types';
 import {StringsService} from '../../services/strings.service';
@@ -51,6 +51,9 @@ export class DialogConfirmComponent extends BaseProvider
 	/** Form for prompt. If defined, will render and return response. */
 	public form?: IForm;
 
+	/** Indicates whether password field should be hidden (if applicable). */
+	public readonly hidePassword = new BehaviorSubject(true);
+
 	/** Indicates whether content is Markdown. */
 	public markdown: boolean = false;
 
@@ -69,6 +72,9 @@ export class DialogConfirmComponent extends BaseProvider
 
 	/** OK button FAB icon. */
 	public okFAB?: string;
+
+	/** Indicates whether password UI should be used. */
+	public password: boolean = false;
 
 	/** If not undefined, will prompt for input. */
 	public prompt?: string;

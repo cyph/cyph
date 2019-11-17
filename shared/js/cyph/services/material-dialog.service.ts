@@ -46,6 +46,7 @@ export class MaterialDialogService extends BaseProvider
 			ok?: string;
 			okFAB?: string;
 			markdown?: boolean;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
@@ -109,6 +110,8 @@ export class MaterialDialogService extends BaseProvider
 			instance.ok = o.ok !== undefined ? o.ok : this.stringsService.ok;
 
 			instance.okFAB = o.okFAB;
+
+			instance.password = !!o.password;
 
 			instance.prompt = prompt ? o.preFill || '' : undefined;
 
@@ -318,6 +321,7 @@ export class MaterialDialogService extends BaseProvider
 			content: string;
 			form: IForm;
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
@@ -348,6 +352,7 @@ export class MaterialDialogService extends BaseProvider
 			cancel?: string;
 			content: string;
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
@@ -368,6 +373,7 @@ export class MaterialDialogService extends BaseProvider
 				value: any;
 			}[];
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;

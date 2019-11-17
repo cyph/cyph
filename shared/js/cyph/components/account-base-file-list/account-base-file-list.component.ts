@@ -160,6 +160,7 @@ export class AccountBaseFileListComponent extends BaseProvider {
 				this.stringsService.passwordEditContent,
 				{key: keyString}
 			),
+			password: key === 'password',
 			placeholder: this.stringsService.capitalize(keyString),
 			preFill: oldValue,
 			title: this.stringsService.passwordEditTitle

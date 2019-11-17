@@ -169,6 +169,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param o.form Currently unsupported (ignored).
 	 * @param o.markdown Currently unsupported (ignored).
 	 * @param o.multipleChoiceOptions Currently unsupported (ignored).
+	 * @param o.password Currently unsupported (ignored).
 	 * @param o.preFill Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
@@ -181,6 +182,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			content: string;
 			form: IForm;
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
@@ -211,6 +213,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			cancel?: string;
 			content: string;
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
@@ -231,6 +234,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 				value: any;
 			}[];
 			ok?: string;
+			password?: boolean;
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
