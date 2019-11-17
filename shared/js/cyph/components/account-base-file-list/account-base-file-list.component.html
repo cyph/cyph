@@ -97,7 +97,10 @@
 							{{ o.owner }}
 						</a>
 					</div>
-					<div cyphTranslate *ngIf="o.record.wasAnonymousShare">
+					<div
+						cyphTranslate
+						*ngIf="o.record.wasAnonymousShare && !anonymousMessages"
+					>
 						Shared anonymously
 					</div>
 					<div
@@ -660,18 +663,12 @@
 			matTooltip="Edit"
 			[routerLink]="
 				'/' +
-				(anonymousMessages ?
-					'inbox' :
-					accountFilesService.config[recordType].route) +
+				accountFilesService.config[recordType].route +
 				'/' +
 				o.record.id +
 				'/edit'
 			"
-			*ngIf="
-				currentUser.user.username === o.owner &&
-				!o.record.replyToEmail &&
-				!o.record.replyToName
-			"
+			*ngIf="currentUser.user.username === o.owner && !anonymousMessages"
 		>
 			<mat-icon>edit</mat-icon>
 		</button>
