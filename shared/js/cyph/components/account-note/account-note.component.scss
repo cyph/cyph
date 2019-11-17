@@ -3,6 +3,7 @@
 mat-card-title {
 	margin-bottom: 8px;
 	margin-top: -20px;
+	z-index: 1;
 
 	> div {
 		padding-top: 29px;
@@ -32,6 +33,10 @@ mat-card-header {
 	top: 6px;
 	right: 6px;
 	width: calc(100% - 12px);
+
+	button {
+		z-index: 2;
+	}
 
 	::ng-deep .mat-card-header-text {
 		margin: 0 !important;
