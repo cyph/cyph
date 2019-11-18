@@ -44,6 +44,7 @@
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
+	<plugin name="ionic-plugin-deeplinks" spec="*" />
 	<plugin name="phonegap-plugin-push" spec="*">
 		<variable name="FCM_VERSION" value="17.3.0" />
 	</plugin>
@@ -229,6 +230,12 @@
 		<preference name="UseSwiftLanguageVersion" value="5.0" />
 
 		<resource-file src="GoogleService-Info.plist" />
+
+		<config-file target="*-Release.plist" parent="com.apple.developer.associated-domains">
+			<array>
+				<string>applinks:cyph.app</string>
+			</array>
+		</config-file>
 
 		<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
 			<string>For end-to-end encrypted video calling between users</string>

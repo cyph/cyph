@@ -5,5 +5,15 @@
 		"cordova": "*",
 		"cordova-support-google-services": "https://github.com/LuisEGR/cordova-support-google-services.git",
 		"electron-push-receiver": "*"
+	},
+	"cordova": {
+		"plugins": {
+			"ionic-plugin-deeplinks": {
+				"ANDROID_PATH_PREFIX": "/",
+				"DEEPLINK_HOST": "cyph.app",
+				"DEEPLINK_SCHEME": "https",
+				"URL_SCHEME": "cyph"
+			}
+		}
 	}
 }
