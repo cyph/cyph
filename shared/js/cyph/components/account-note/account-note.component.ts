@@ -204,7 +204,9 @@ export class AccountNoteComponent extends BaseProvider
 				this.realTime
 			]).subscribe(async ([o, realTime]) => {
 				try {
-					this.accountService.interstitial.next(true);
+					if (this.editView.value) {
+						this.accountService.interstitial.next(true);
+					}
 
 					const id: string | undefined = o.id;
 
