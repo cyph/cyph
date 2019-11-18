@@ -542,7 +542,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 						} :
 					currentUser ?
 						{
-							isCurrentUser: currentUser.agseConfirmed,
+							isCurrentUser: true,
 							user: currentUser.user
 						} :
 						{

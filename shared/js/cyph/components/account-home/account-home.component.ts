@@ -43,7 +43,6 @@ export class AccountHomeComponent extends BaseProvider
 
 		if (
 			!this.accountDatabaseService.currentUser.value ||
-			!this.accountDatabaseService.currentUser.value.agseConfirmed ||
 			!this.accountDatabaseService.currentUser.value.masterKeyConfirmed
 		) {
 			this.router.navigate(['welcome']);

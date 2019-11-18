@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -18,6 +19,14 @@ export class AccountPostRegisterComponent extends BaseProvider
 	implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		if (
+			this.accountDatabaseService.currentUser.value &&
+			this.accountDatabaseService.currentUser.value.masterKeyConfirmed
+		) {
+			this.router.navigate(['']);
+			return;
+		}
+
 		this.accountService.setHeader(
 			this.accountDatabaseService.currentUser.value &&
 				this.accountDatabaseService.currentUser.value
@@ -31,6 +40,9 @@ export class AccountPostRegisterComponent extends BaseProvider
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly router: Router,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

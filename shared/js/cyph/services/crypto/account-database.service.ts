@@ -142,8 +142,13 @@ export class AccountDatabaseService extends BaseProvider {
 		) => {
 			const username = await this.getUsernameFromURL(url, usernameOther);
 
-			/* Temporary workaround for migrating users to latest Potassium.Box */
-			await this.getUserPublicKeys(username);
+			if (
+				!this.currentUser.value ||
+				username !== this.currentUser.value.user.username
+			) {
+				/* Temporary workaround for migrating users to latest Potassium.Box */
+				await this.getUserPublicKeys(username);
+			}
 
 			return this.localStorageService.getOrSetDefault(
 				`AccountDatabaseService.open/${username}/${this.potassiumService.toBase64(
@@ -159,7 +164,6 @@ export class AccountDatabaseService extends BaseProvider {
 								.publicKey :
 							(await this.getUserPublicKeys(username)).signing,
 						url,
-
 						decompress
 					)
 			);
