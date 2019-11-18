@@ -1609,7 +1609,9 @@ export class AccountFilesService extends BaseProvider {
 		if (confirmAndRedirect) {
 			if (
 				await this.dialogService.confirm({
-					content: `${this.stringsService.deleteMessage} ${file.name}?`,
+					content: `${
+						this.stringsService.deleteMessage
+					} ${file.name || this.stringsService.untitled}?`,
 					title: this.stringsService.deleteConfirm
 				})
 			) {
