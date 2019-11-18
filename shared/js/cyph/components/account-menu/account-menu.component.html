@@ -295,7 +295,10 @@
 					mat-list-item
 					cyphTranslate
 					class="inbox"
-					[class.disabled]="!currentUser.masterKeyConfirmed"
+					[class.disabled]="
+						!currentUser.agseConfirmed ||
+						!currentUser.masterKeyConfirmed
+					"
 					aria-label="Inbox"
 					routerLink="/inbox"
 					(click)="click()"
