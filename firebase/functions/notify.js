@@ -13,6 +13,7 @@ module.exports = (database, messaging) => ({
 		subject,
 		text,
 		eventDetails,
+		pushNotificationTag,
 		preferPush
 	) => {
 		subject = dompurifyHtmlSanitizer.sanitize(subject);
@@ -31,7 +32,14 @@ module.exports = (database, messaging) => ({
 				eventDetails
 			);
 		const notifyMessage = async () =>
-			sendMessage(database, messaging, namespace, username, subject);
+			sendMessage(
+				database,
+				messaging,
+				namespace,
+				username,
+				subject,
+				pushNotificationTag
+			);
 		if (!preferPush || eventDetails) {
 			await Promise.all([notifyMail(), notifyMessage()]);
 			return;

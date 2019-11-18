@@ -1,6 +1,13 @@
 const {normalize} = require('./util');
 
-const sendMessage = async (database, messaging, namespace, username, body) => {
+const sendMessage = async (
+	database,
+	messaging,
+	namespace,
+	username,
+	body,
+	tag
+) => {
 	const ref = database.ref(
 		`${namespace}/users/${normalize(username)}/messagingTokens`
 	);
@@ -12,7 +19,7 @@ const sendMessage = async (database, messaging, namespace, username, body) => {
 		return false;
 	}
 
-	const notification = {body, title: 'Cyph'};
+	const notification = {body, tag, title: 'Cyph'};
 
 	return (await Promise.all(
 		[

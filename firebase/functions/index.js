@@ -851,90 +851,23 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		typeof notification.metadata === 'object' ? notification.metadata : {};
 	const now = Date.now();
 
+	const notificationID =
+		metadata.id &&
+		typeof metadata.id === 'string' &&
+		metadata.id.indexOf(',') < 0 ?
+			metadata.id :
+			undefined;
+
 	if (!notification || !notification.target || isNaN(notification.type)) {
 		return;
 	}
 
-	await Promise.all([
+	const [senderName, senderUsername, targetName, count] = await Promise.all([
+		getName(namespace, username),
+		getRealUsername(namespace, username),
+		getName(namespace, notification.target),
 		(async () => {
-			const [senderName, senderUsername, targetName] = await Promise.all([
-				getName(namespace, username),
-				getRealUsername(namespace, username),
-				getName(namespace, notification.target)
-			]);
-
-			const {eventDetails, subject, text} =
-				notification.type === NotificationTypes.CalendarEvent ?
-					{
-						eventDetails: {
-							description: metadata.description,
-							endTime: isNaN(metadata.endTime) ?
-								now + 3600000 :
-								metadata.endTime,
-							inviterUsername: senderUsername,
-							location: metadata.location,
-							startTime: isNaN(metadata.startTime) ?
-								now + 1800000 :
-								metadata.startTime,
-							summary: metadata.summary || 'Cyph Appointment'
-						},
-						subject: `Calendar Invite from ${senderUsername}`,
-						text: `${targetName}, ${senderName} has sent an appointment request.`
-					} :
-				notification.type === NotificationTypes.Call ?
-					{
-						subject: `Incoming Call from ${senderUsername}`,
-						text: `${targetName}, ${senderUsername} is calling you.`
-					} :
-				notification.type === NotificationTypes.ContactAccept ?
-					{
-						subject: `Contact Confirmation from ${senderUsername}`,
-						text: `${targetName}, ${senderName} has accepted your contact request.`
-					} :
-				notification.type === NotificationTypes.ContactRequest ?
-					{
-						subject: `Contact Request from ${senderUsername}`,
-						text:
-							`${targetName}, ${senderName} wants to be your contact. ` +
-							`Log in to accept or decline.`
-					} :
-				notification.type === NotificationTypes.File ?
-					{
-						subject: `Incoming Data from ${senderUsername}`,
-						text: `${targetName}, ${senderName} has shared something with you.`
-					} :
-				notification.type === NotificationTypes.Message ?
-					{
-						subject: `New Message from ${senderUsername}`,
-						text: `${targetName}, ${senderName} has sent you a message.`
-					} :
-				notification.type === NotificationTypes.Yo ?
-					{
-						subject: `Sup Dog, it's ${senderUsername}`,
-						text: `${targetName}, ${senderName} says yo.`
-					} :
-					{};
-			if (!subject || !text) {
-				throw new Error(
-					`Invalid notification type: ${notification.type}`
-				);
-			}
-
-			await notify(
-				namespace,
-				notification.target,
-				subject,
-				text,
-				eventDetails,
-				true
-			);
-		})(),
-		(async () => {
-			if (
-				!metadata.id ||
-				typeof metadata.id !== 'string' ||
-				metadata.id.indexOf(',') > -1
-			) {
+			if (!notificationID) {
 				return;
 			}
 
@@ -942,8 +875,9 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 
 			const hasFile = async () =>
 				(await database
-					.ref(`${userPath}/fileReferences/${metadata.id}`)
+					.ref(`${userPath}/fileReferences/${notificationID}`)
 					.once('value')).exists();
+
 			const [child, path] =
 				notification.type === NotificationTypes.Call &&
 				(metadata.callType === 'audio' ||
@@ -952,9 +886,9 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 					metadata.expires > Date.now()) ?
 					[
 						false,
-						`incomingCalls/${metadata.callType},${username},${
-							metadata.id
-						},${metadata.expires.toString()}`
+						`incomingCalls/${
+							metadata.callType
+						},${username},${notificationID},${metadata.expires.toString()}`
 					] :
 				notification.type === NotificationTypes.File ?
 					[
@@ -972,19 +906,101 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 					metadata.castleSessionID ?
 					[true, `unreadMessages/${metadata.castleSessionID}`] :
 					[];
+
 			if (!path) {
 				return;
 			}
 
-			await database
-				.ref(`${userPath}/${path}${child ? `/${metadata.id}` : ''}`)
-				.set({
-					data: '',
-					hash: '',
-					timestamp: admin.database.ServerValue.TIMESTAMP
-				});
+			const notificationRef = database.ref(
+				`${userPath}/${path}${child ? `/${notificationID}` : ''}`
+			);
+
+			await notificationRef.set({
+				data: '',
+				hash: '',
+				timestamp: admin.database.ServerValue.TIMESTAMP
+			});
+
+			if (!notificationRef.parent) {
+				return;
+			}
+
+			return Object.keys(
+				(await notificationRef.parent.once('value')).val()
+			).length;
 		})()
+			.catch(err => {
+				console.error(err);
+			})
+			.then(n => (typeof n !== 'number' || isNaN(n) ? 1 : n))
 	]);
+
+	const {eventDetails, subject, text} =
+		notification.type === NotificationTypes.CalendarEvent ?
+			{
+				eventDetails: {
+					description: metadata.description,
+					endTime: isNaN(metadata.endTime) ?
+						now + 3600000 :
+						metadata.endTime,
+					inviterUsername: senderUsername,
+					location: metadata.location,
+					startTime: isNaN(metadata.startTime) ?
+						now + 1800000 :
+						metadata.startTime,
+					summary: metadata.summary || 'Cyph Appointment'
+				},
+				subject: `Calendar Invite from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has sent an appointment request.`
+			} :
+		notification.type === NotificationTypes.Call ?
+			{
+				subject: `Incoming Call from ${senderUsername}`,
+				text: `${targetName}, ${senderUsername} is calling you.`
+			} :
+		notification.type === NotificationTypes.ContactAccept ?
+			{
+				subject: `Contact Confirmation from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has accepted your contact request.`
+			} :
+		notification.type === NotificationTypes.ContactRequest ?
+			{
+				subject: `Contact Request from ${senderUsername}`,
+				text:
+					`${targetName}, ${senderName} wants to be your contact. ` +
+					`Log in to accept or decline.`
+			} :
+		notification.type === NotificationTypes.File ?
+			{
+				subject: `Incoming Data from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared something with you.`
+			} :
+		notification.type === NotificationTypes.Message ?
+			{
+				subject: `${
+					count > 1 ? `${count} new messages` : 'New Message'
+				} from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has sent you a message.`
+			} :
+		notification.type === NotificationTypes.Yo ?
+			{
+				subject: `Sup Dog, it's ${senderUsername}`,
+				text: `${targetName}, ${senderName} says yo.`
+			} :
+			{};
+	if (!subject || !text) {
+		throw new Error(`Invalid notification type: ${notification.type}`);
+	}
+
+	await notify(
+		namespace,
+		notification.target,
+		subject,
+		text,
+		eventDetails,
+		notificationID,
+		true
+	);
 });
 
 exports.userPublicProfileSet = functions.database
