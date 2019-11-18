@@ -1,0 +1,11 @@
+{
+	"applinks": {
+		"apps": [],
+		"details": [
+			{
+				"appID": "SXZZ8WLPV2.com.cyph.app",
+				"paths": ["*"]
+			}
+		]
+	}
+}

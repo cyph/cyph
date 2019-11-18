@@ -23,6 +23,22 @@ var packageName		=
 		hostSplit[0].replace(/_/g, '.')
 ;
 
+/* Prefer native app on mobile where available */
+
+if (packageName === 'cyph.app' && !isHiddenService) {
+	var userAgent = navigator.userAgent.toLowerCase();
+
+	if (/android/.test(userAgent)) {
+		location = 'https://play.google.com/store/apps/details?id=com.cyph.app';
+		return;
+	}
+
+	if (/ipad|iphone|ipod/.test(userAgent)) {
+		location = 'itms-apps://itunes.apple.com/us/app/app/cyph/id1422086509';
+		return;
+	}
+}
+
 /* Set pin on www subdomain on first use, then force naked domain */
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');

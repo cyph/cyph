@@ -123,6 +123,17 @@ export class AppService extends BaseProvider implements CanActivate {
 		}
 		catch {}
 
+		if (
+			(<any> self).IonicDeeplink &&
+			typeof (<any> self).IonicDeeplink.route === 'function'
+		) {
+			(<any> self).IonicDeeplink.route({}, undefined, ({$link}: any) => {
+				this.router.navigate(
+					$link.url.replace(/^(.*?:\/\/)?.*?\/#?/, '').split('/')
+				);
+			});
+		}
+
 		titleService.setTitle(translate(titleService.getTitle()));
 
 		if (this.envService.telehealthTheme) {

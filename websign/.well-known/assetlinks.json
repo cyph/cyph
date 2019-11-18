@@ -1,0 +1,12 @@
+[
+	{
+		"relation": ["delegate_permission/common.handle_all_urls"],
+		"target": {
+			"namespace": "android_app",
+			"package_name": "com.cyph.app",
+			"sha256_cert_fingerprints": [
+				"88:57:5D:AE:97:91:38:3E:62:8C:19:41:C6:7C:B6:D8:BE:A1:32:AC:56:0B:66:B6:37:BF:CA:AC:1E:D9:E2:5C"
+			]
+		}
+	}
+]
