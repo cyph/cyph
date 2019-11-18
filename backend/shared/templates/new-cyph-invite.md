@@ -66,13 +66,7 @@ Congratulations on securing your Cyph account invite!
 
 {{^planChange}}
 We highly recommend that you sign up from your desktop or laptop in a location where you have
-some privacy. Afterwards, you'll have three options to securely message your friends:
-
-1. **New Burner Chat:** Initiates a temporary short-lived chat with no history
-
-2. **Add Contact > External Contact:** Long-lived chat with history saved in your account
-
-3. **Add Contact > Invite to Cyph:** Spends an invite to let them create their own account
+some privacy.
 
 ---
 {{/planChange}}
