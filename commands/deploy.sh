@@ -561,6 +561,8 @@ if [ "${cacheBustedProjects}" ] ; then
 			mv cyph.com cyph.com.src
 			mv wpstatic cyph.com
 			cp cyph.com.src/robots.txt cyph.com/
+			while [ ! -f .build.done ] ; do sleep 1 ; done
+			cp -a shared/assets cyph.com/
 		fi
 
 		while [ ! -f .build.done ] ; do sleep 1 ; done
@@ -616,23 +618,23 @@ if [ "${skipWebsite}" ] ; then
 fi
 
 # Compile + translate + minify
-if [ "${compiledProjects}" ] ; then
-	./commands/buildunbundledassets.sh $(
-		if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
-			if [ "${simpleProdBuild}" ] ; then
-				echo '--prod-test --service-worker'
-			else
-				echo '--test'
-			fi
+
+./commands/buildunbundledassets.sh $(
+	if [ "${simple}" ] || ( [ "${debug}" ] && [ ! "${debugProdBuild}" ] ) ; then
+		if [ "${simpleProdBuild}" ] ; then
+			echo '--prod-test --service-worker'
+		else
+			echo '--test'
 		fi
-	) || fail
+	fi
+) || fail
 
-	./commands/ngassets.sh
+./commands/ngassets.sh
 
-	rm -rf "${dir}/shared/assets"
-	cp -a shared/assets "${dir}/shared/"
-	touch shared/assets/frozen
-fi
+rm -rf "${dir}/shared/assets"
+cp -a shared/assets "${dir}/shared/"
+touch shared/assets/frozen
+
 for d in $compiledProjects ; do
 	if [ ! -d "${d}" ] ; then
 		log "Skip $(projectname "${d}" ${branchDir})"
@@ -677,6 +679,7 @@ for d in $compiledProjects ; do
 	mv "${d}" "${d}.src"
 	mv "${d}.src/dist" "${d}"
 done
+
 touch .build.done
 
 
