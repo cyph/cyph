@@ -988,6 +988,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				text: `${targetName}, ${senderName} says yo.`
 			} :
 			{};
+
 	if (!subject || !text) {
 		throw new Error(`Invalid notification type: ${notification.type}`);
 	}
@@ -998,7 +999,10 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		subject,
 		text,
 		eventDetails,
-		notificationID,
+		{
+			inboxStyle: notification.type !== NotificationTypes.Call,
+			tag: notificationID
+		},
 		true
 	);
 });

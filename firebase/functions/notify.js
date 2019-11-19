@@ -13,7 +13,7 @@ module.exports = (database, messaging) => ({
 		subject,
 		text,
 		eventDetails,
-		pushNotificationTag,
+		pushNotificationOptions,
 		preferPush
 	) => {
 		subject = dompurifyHtmlSanitizer.sanitize(subject);
@@ -38,7 +38,7 @@ module.exports = (database, messaging) => ({
 				namespace,
 				username,
 				subject,
-				pushNotificationTag
+				pushNotificationOptions
 			);
 		if (!preferPush || eventDetails) {
 			await Promise.all([notifyMail(), notifyMessage()]);

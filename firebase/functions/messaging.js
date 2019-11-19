@@ -6,7 +6,7 @@ const sendMessage = async (
 	namespace,
 	username,
 	body,
-	tag
+	{inboxStyle = true, tag} = {}
 ) => {
 	const ref = database.ref(
 		`${namespace}/users/${normalize(username)}/messagingTokens`
@@ -19,7 +19,12 @@ const sendMessage = async (
 		return false;
 	}
 
-	const notification = {body, tag, title: 'Cyph'};
+	const notification = {
+		body,
+		tag,
+		title: 'Cyph',
+		...(inboxStyle ? {style: 'inbox'} : {})
+	};
 
 	return (await Promise.all(
 		[
