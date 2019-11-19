@@ -59,24 +59,24 @@ export class DOMPurifyHtmlSanitizer {
 				}
 			}
 
-			if (!(node instanceof HTMLAnchorElement)) {
+			if (node.tagName !== 'A') {
 				return node;
 			}
 
 			/* Block window.opener in new window */
-			node.rel = 'noopener noreferrer';
+			(<HTMLAnchorElement> node).rel = 'noopener noreferrer';
 
 			if (!env.isCordovaMobile) {
 				return node;
 			}
 
 			node.addEventListener('click', e => {
-				if (!node.href) {
+				if (!(<HTMLAnchorElement> node).href) {
 					return;
 				}
 
 				e.preventDefault();
-				openWindow(node.href);
+				openWindow((<HTMLAnchorElement> node).href);
 			});
 
 			return node;
