@@ -213,6 +213,19 @@
 				<div></div>
 			</div>
 
+			<h3
+				class="cyph-banner alert"
+				cyphTranslate
+				fxFlex
+				*ngIf="
+					(accountDatabaseService.currentUser | async)
+						?.agseConfirmed === false
+				"
+			>
+				Your account is in queue to be verified and will be fully
+				activated soon.
+			</h3>
+
 			<div
 				fxFlex
 				class="content-wrapper animated"

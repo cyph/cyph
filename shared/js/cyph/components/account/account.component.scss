@@ -269,7 +269,11 @@ $mobileAppBarHeight: 56px;
 			content: no-close-quote;
 		}
 
-		+ .content-wrapper.full-height {
+		~ .cyph-banner {
+			margin-top: -10px;
+		}
+
+		~ .content-wrapper.full-height {
 			height: calc(100% - 102px);
 		}
 	}
@@ -303,12 +307,12 @@ $mobileAppBarHeight: 56px;
 		font-size: 12px;
 		box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.75);
 
-		+ .content-wrapper {
+		+ * {
 			margin-top: $mobileAppBarHeight;
+		}
 
-			&.full-height {
-				height: calc(100% - #{$mobileAppBarHeight});
-			}
+		~ .content-wrapper.full-height {
+			height: calc(100% - #{$mobileAppBarHeight});
 		}
 
 		h1 {

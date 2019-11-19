@@ -579,20 +579,7 @@
 			[class.editing]="(isEditorFocused | async) && (editMode | async)"
 			[class.initiating]="accountFilesService.uploadSpinner | async"
 			*ngIf="!envService.isTelehealthFull"
-			fxLayout="column"
 		>
-			<ng-container
-				*ngIf="
-					!(accountDatabaseService.currentUser | async)?.agseConfirmed
-				"
-			>
-				<div fxFlex fxLayoutAlign="center center" class="agseBanner">
-					<b
-						>Your account is in queue to be verified and will be
-						fully activated soon.</b
-					>
-				</div>
-			</ng-container>
 			<ng-container *ngTemplateOutlet="standardProfile"></ng-container>
 
 			<mat-progress-spinner

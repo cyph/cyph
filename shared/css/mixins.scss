@@ -142,8 +142,14 @@ $default-white: map-get($mat-grey, 100);
 		color: $cyph-background;
 		background-color: $cyph-foreground;
 
+		&.alert,
 		&.inverted {
 			color: $cyph-foreground;
+		}
+
+		&.alert {
+			background-color: $cyph-alert;
+			font-weight: bold;
 		}
 
 		&.dark {
