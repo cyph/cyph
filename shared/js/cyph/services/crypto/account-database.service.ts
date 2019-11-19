@@ -1297,6 +1297,17 @@ export class AccountDatabaseService extends BaseProvider {
 		);
 	}
 
+	/** @see DatabaseService.pushNotificationsSubscribe */
+	public async pushNotificationsSubscribe (
+		callback: string | ((data: any) => void),
+		callbackFunction?: (data: any) => void
+	) : Promise<void> {
+		return this.databaseService.pushNotificationsSubscribe(
+			callback,
+			callbackFunction
+		);
+	}
+
 	/** @see DatabaseService.removeItem */
 	public async removeItem (url: MaybePromise<string>) : Promise<void> {
 		url = await this.normalizeURL(url);

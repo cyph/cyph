@@ -680,6 +680,19 @@ export class DatabaseService extends DataManagerService {
 		);
 	}
 
+	/**
+	 * Subscribes to push notification events.
+	 * @param callback If string, listens for a mobile action button event.
+	 */
+	public async pushNotificationsSubscribe (
+		_CALLBACK: string | ((data: any) => void),
+		_CALLBACK_FUNCTION?: (data: any) => void
+	) : Promise<void> {
+		throw new Error(
+			'Must provide an implementation of DatabaseService.pushNotificationsSubscribe.'
+		);
+	}
+
 	/** Registers. */
 	public async register (
 		_USERNAME: string,

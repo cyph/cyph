@@ -25,6 +25,7 @@ import {
 	getOrSetDefaultObservable
 } from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
+import {debugLog} from '../util/log';
 import {requestByteStream} from '../util/request';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -1010,6 +1011,38 @@ export class FirebaseDatabaseService extends DatabaseService {
 			}
 
 			return result;
+		});
+	}
+
+	/** @inheritDoc */
+	public async pushNotificationsSubscribe (
+		callback: string | ((data: any) => void),
+		callbackFunction?: (data: any) => void
+	) : Promise<void> {
+		const event = typeof callback === 'string' ? callback : 'notification';
+		const handler =
+			typeof callbackFunction === 'function' ?
+				callbackFunction :
+			typeof callback === 'function' ?
+				callback :
+				undefined;
+
+		if (!handler) {
+			throw new Error('Invalid push notification subscription handler.');
+		}
+
+		const {cordova} = await this.messaging;
+
+		if (cordova) {
+			cordova.on(event, handler);
+			return;
+		}
+
+		const messaging = (await this.app).messaging();
+
+		messaging.onMessage(data => {
+			debugLog(() => ({pushNotification: data}));
+			handler(data);
 		});
 	}
 

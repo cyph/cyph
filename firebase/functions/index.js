@@ -1019,6 +1019,8 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		{
 			badge,
 			inboxStyle: notification.type !== NotificationTypes.Call,
+			notificationID: notificationID,
+			notificationType: notification.type,
 			tag: notificationID
 		},
 		true

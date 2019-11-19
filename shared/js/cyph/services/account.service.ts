@@ -15,7 +15,7 @@ import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
-import {CyphPlans, NeverProto, StringProto} from '../proto';
+import {CyphPlans, NeverProto, NotificationTypes, StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
 import {observableAll} from '../util/observable-all';
@@ -643,6 +643,37 @@ export class AccountService extends BaseProvider {
 				}
 			});
 		}
+
+		this.accountDatabaseService.pushNotificationsSubscribe(async data => {
+			if (
+				!data ||
+				!data.additionalData ||
+				data.additionalData.dismissed ||
+				!(data.additionalData.notificationType in NotificationTypes) ||
+				typeof data.additionalData.notificationID !== 'string'
+			) {
+				return;
+			}
+
+			switch (data.additionalData.notificationType) {
+				case NotificationTypes.File:
+					const {recordType} = await this.accountFilesService.getFile(
+						data.additionalData.notificationID
+					);
+
+					this.router.navigate([
+						this.accountFilesService.config[recordType].route
+					]);
+					break;
+
+				case NotificationTypes.Message:
+					this.router.navigate([
+						'messages',
+						data.additionalData.notificationID
+					]);
+					break;
+			}
+		});
 
 		this.header = combineLatest([
 			this.activeSidebarContact,
