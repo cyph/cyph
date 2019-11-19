@@ -44,7 +44,8 @@ const sendMessage = async (
 				{
 					notification: {
 						...notification,
-						icon: 'https://cyph.app/img/favicon/favicon-256x256.png'
+						icon:
+							'https://www.cyph.com/assets/img/favicon/favicon-256x256.png'
 					}
 				}
 			]
