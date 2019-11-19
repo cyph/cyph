@@ -24,7 +24,7 @@ handlers:
   secure: always
   # default_headers Cache-Control
 
-- url: /(css|fonts|img|js|wp-content|wp-includes)/(.*)
+- url: /(assets|css|fonts|img|js|wp-content|wp-includes)/(.*)
   static_files: \1/\2
   upload: .*
   secure: always
