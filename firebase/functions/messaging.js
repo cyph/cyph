@@ -6,7 +6,7 @@ const sendMessage = async (
 	namespace,
 	username,
 	body,
-	{inboxStyle = true, tag} = {}
+	{badge, inboxStyle = true, tag} = {}
 ) => {
 	const ref = database.ref(
 		`${namespace}/users/${normalize(username)}/messagingTokens`
@@ -20,6 +20,7 @@ const sendMessage = async (
 	}
 
 	const notification = {
+		badge,
 		body,
 		tag,
 		title: 'Cyph',

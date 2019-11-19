@@ -862,16 +862,33 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		return;
 	}
 
-	const [senderName, senderUsername, targetName, count] = await Promise.all([
+	const userPath = `${namespace}/users/${notification.target}`;
+
+	const [senderName, senderUsername, badge, count] = await Promise.all([
 		getName(namespace, username),
 		getRealUsername(namespace, username),
 		getName(namespace, notification.target),
+		Promise.all([
+			database
+				.ref(`${userPath}/incomingFiles`)
+				.once('value')
+				.then(o => [o.val()])
+				.catch(() => []),
+			database
+				.ref(`${userPath}/unreadMessages`)
+				.once('value')
+				.then(o => Object.values(o.val()))
+				.catch(() => [])
+		]).then(values =>
+			values
+				.reduce((a, b) => a.concat(b), [])
+				.map(o => Object.keys(o).length)
+				.reduce((a, b) => a + b, 0)
+		),
 		(async () => {
 			if (!notificationID) {
 				return;
 			}
-
-			const userPath = `${namespace}/users/${notification.target}`;
 
 			const hasFile = async () =>
 				(await database
@@ -1000,6 +1017,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		text,
 		eventDetails,
 		{
+			badge,
 			inboxStyle: notification.type !== NotificationTypes.Call,
 			tag: notificationID
 		},
