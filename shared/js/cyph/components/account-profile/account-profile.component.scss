@@ -218,6 +218,15 @@ mat-card {
 	}
 }
 
+.agseBanner {
+	background-color: #e7c447;
+	left: -7.5vw;
+	width: calc(100% + 1px + 15vw);
+	position: relative;
+	min-height: 50px;
+	max-height: 50px;
+}
+
 /* Telehealth version */
 
 :host > .telehealth {
