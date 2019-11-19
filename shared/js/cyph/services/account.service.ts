@@ -74,6 +74,33 @@ export class AccountService extends BaseProvider {
 		string | undefined
 	>(undefined);
 
+	/** Indicates whether real-time Docs is enabled. */
+	public readonly enableDocs: Observable<boolean> = of(
+		this.envService.debug ||
+			(!!this.envService.environment.customBuild &&
+				this.envService.environment.customBuild.config.enableDocs ===
+					true)
+	);
+
+	/** Indicates whether Passwords is enabled. */
+	public readonly enablePasswords: Observable<boolean> = this.envService
+		.debug ?
+		of(true) :
+		this.accountSettingsService.plan.pipe(
+			map(plan => plan === CyphPlans.FoundersAndFriends)
+		);
+
+	/** Indicates whether Wallets is enabled. */
+	public readonly enableWallets: Observable<boolean> =
+		this.envService.debug ||
+		(!!this.envService.environment.customBuild &&
+			this.envService.environment.customBuild.config.enableWallets ===
+				true) ?
+			of(true) :
+			this.accountSettingsService.plan.pipe(
+				map(plan => plan === CyphPlans.FoundersAndFriends)
+			);
+
 	/** Email address to use for new pseudo-account. */
 	public readonly fromEmail = new BehaviorSubject<string>('');
 
@@ -108,33 +135,6 @@ export class AccountService extends BaseProvider {
 	public readonly header: Observable<
 		{desktop?: string; mobile?: string} | User | undefined
 	>;
-
-	/** Indicates whether real-time Docs is enabled. */
-	public readonly enableDocs: Observable<boolean> = of(
-		this.envService.debug ||
-			(!!this.envService.environment.customBuild &&
-				this.envService.environment.customBuild.config.enableDocs ===
-					true)
-	);
-
-	/** Indicates whether Passwords is enabled. */
-	public readonly enablePasswords: Observable<boolean> = this.envService
-		.debug ?
-		of(true) :
-		this.accountSettingsService.plan.pipe(
-			map(plan => plan === CyphPlans.FoundersAndFriends)
-		);
-
-	/** Indicates whether Wallets is enabled. */
-	public readonly enableWallets: Observable<boolean> =
-		this.envService.debug ||
-		(!!this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.enableWallets ===
-				true) ?
-			of(true) :
-			this.accountSettingsService.plan.pipe(
-				map(plan => plan === CyphPlans.FoundersAndFriends)
-			);
 
 	/** Indicates the status of the interstitial. */
 	public readonly interstitial = new BehaviorSubject<boolean>(false);
