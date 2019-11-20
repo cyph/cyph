@@ -484,15 +484,16 @@ export class AccountChatComponent extends BaseProvider
 
 								this.notificationService
 									.ring(
-										Promise.race([
-											this.p2pWebRTCService.loading
-												.pipe(
-													filter(b => b),
-													take(1)
-												)
-												.toPromise(),
-											destroyed.then(() => false)
-										]),
+										async () =>
+											Promise.race([
+												this.p2pWebRTCService.loading
+													.pipe(
+														filter(b => b),
+														take(1)
+													)
+													.toPromise(),
+												destroyed.then(() => false)
+											]),
 										this.answering.value
 									)
 									.then(() => {

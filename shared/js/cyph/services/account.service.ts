@@ -476,7 +476,6 @@ export class AccountService extends BaseProvider {
 							name,
 							realUsername,
 							route,
-							timestamp,
 							user
 						} = await this.getIncomingCallRoute(k);
 
@@ -492,7 +491,7 @@ export class AccountService extends BaseProvider {
 						const answered =
 							typeof incomingCallAnswer.value === 'boolean' ?
 								incomingCallAnswer.value :
-								await this.notificationService.ring(
+								await this.notificationService.ring(async () =>
 									Promise.race([
 										incomingCallAnswer.promise,
 										this.dialogService.confirm(
@@ -505,7 +504,9 @@ export class AccountService extends BaseProvider {
 												fabAvatar: user.avatar,
 												ok: this.stringsService.answer,
 												okFAB: 'phone',
-												timeout: expires - timestamp,
+												timeout:
+													expires -
+													(await getTimestamp()),
 												title:
 													callType === 'audio' ?
 														this.stringsService

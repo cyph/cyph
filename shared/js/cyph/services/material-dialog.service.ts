@@ -59,6 +59,13 @@ export class MaterialDialogService extends BaseProvider
 		ok: boolean;
 		promptResponse: string | IForm | any | undefined;
 	}> {
+		if (typeof o.timeout === 'number' && o.timeout <= 0) {
+			return {
+				ok: false,
+				promptResponse: undefined
+			};
+		}
+
 		return this.lock(async () => {
 			const matDialogRef = o.bottomSheet ?
 				this.matBottomSheet.open(DialogConfirmComponent) :

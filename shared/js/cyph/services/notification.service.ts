@@ -117,7 +117,7 @@ export class NotificationService extends BaseProvider
 	 * @returns True if accepted or false if timeout.
 	 */
 	public async ring (
-		accept: Promise<boolean>,
+		accept: () => Promise<boolean>,
 		silent: boolean = false
 	) : Promise<boolean> {
 		return this.ringLock(async () => {
@@ -129,7 +129,7 @@ export class NotificationService extends BaseProvider
 				}
 
 				return await Promise.race([
-					accept,
+					accept(),
 					sleep(this.ringTimeout).then(() => false)
 				]);
 			}
