@@ -5,7 +5,7 @@
 		"@google-cloud/storage": "*",
 		"cors": "*",
 		"dompurify": "*",
-		"fcm-node": "https://github.com/buu700/fcm-node#patch-1",
+		"fcm-node": "*",
 		"firebase": "*",
 		"firebase-admin": "*",
 		"firebase-functions": "*",
