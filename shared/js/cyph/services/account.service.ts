@@ -460,30 +460,38 @@ export class AccountService extends BaseProvider {
 							() => resolvable<boolean>()
 						);
 
+						const dialogClose = resolvable<() => void>();
+
 						const answered =
 							typeof incomingCallAnswer.value === 'boolean' ?
 								incomingCallAnswer.value :
 								await this.notificationService.ring(
 									Promise.race([
 										incomingCallAnswer.promise,
-										this.dialogService.confirm({
-											bottomSheet: true,
-											cancel: this.stringsService.decline,
-											cancelFAB: 'close',
-											content: `${name} (@${realUsername})`,
-											fabAvatar: user.avatar,
-											ok: this.stringsService.answer,
-											okFAB: 'phone',
-											timeout: expires - timestamp,
-											title:
-												callType === 'audio' ?
-													this.stringsService
-														.incomingCallAudio :
-													this.stringsService
-														.incomingCallVideo
-										})
+										this.dialogService.confirm(
+											{
+												bottomSheet: true,
+												cancel: this.stringsService
+													.decline,
+												cancelFAB: 'close',
+												content: `${name} (@${realUsername})`,
+												fabAvatar: user.avatar,
+												ok: this.stringsService.answer,
+												okFAB: 'phone',
+												timeout: expires - timestamp,
+												title:
+													callType === 'audio' ?
+														this.stringsService
+															.incomingCallAudio :
+														this.stringsService
+															.incomingCallVideo
+											},
+											dialogClose
+										)
 									])
 								);
+
+						(await dialogClose.promise)();
 
 						if (answered) {
 							this.router.navigate([
