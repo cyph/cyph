@@ -492,7 +492,8 @@ export class AccountChatComponent extends BaseProvider
 												)
 												.toPromise(),
 											destroyed.then(() => false)
-										])
+										]),
+										this.answering.value
 									)
 									.then(() => {
 										if (
