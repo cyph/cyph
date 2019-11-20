@@ -1,14 +1,14 @@
 #!/bin/bash
 
 
-if [ "$(ls -A node_modules 2> /dev/null)" ] ; then
-	exit
-fi
-
 init=true
 if [ "${1}" == '--deinit' ] ; then
 	init=''
 	shift
+fi
+
+if [ "${init}" ] && [ "$(ls -A node_modules 2> /dev/null)" ] ; then
+	exit
 fi
 
 rm src/favicon.ico 2> /dev/null
