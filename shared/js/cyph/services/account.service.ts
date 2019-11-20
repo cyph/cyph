@@ -15,9 +15,11 @@ import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
+import {IResolvable} from '../iresolvable';
 import {CyphPlans, NeverProto, NotificationTypes, StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
 import {prettyPrint, stringify} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -55,6 +57,12 @@ export class AccountService extends BaseProvider {
 	private readonly headerInternal = new BehaviorSubject<
 		string | {desktop?: string; mobile?: string} | User | undefined
 	>(undefined);
+
+	/** @ignore */
+	private readonly incomingCallAnswers = new Map<
+		string,
+		IResolvable<boolean>
+	>();
 
 	/** @ignore */
 	private readonly menuExpandedInternal = new BehaviorSubject<boolean>(
@@ -481,24 +489,45 @@ export class AccountService extends BaseProvider {
 							await sleep(1000);
 						}
 
-						const answered = await this.notificationService.ring(
-							this.dialogService.confirm({
-								bottomSheet: true,
-								cancel: this.stringsService.decline,
-								cancelFAB: 'close',
-								content: `${name} (@${realUsername})`,
-								fabAvatar: user.avatar,
-								ok: this.stringsService.answer,
-								okFAB: 'phone',
-								timeout: expires - timestamp,
-								timeoutMessage: this.stringsService
-									.p2pTimeoutIncoming,
-								title:
-									callType === 'audio' ?
-										this.stringsService.incomingCallAudio :
-										this.stringsService.incomingCallVideo
-							})
+						const incomingCallAnswer = getOrSetDefault(
+							this.incomingCallAnswers,
+							k,
+							/* eslint-disable-next-line @typescript-eslint/tslint/config */
+							() => resolvable<boolean>()
 						);
+
+						const dialogClose = resolvable<() => void>();
+
+						const answered =
+							typeof incomingCallAnswer.value === 'boolean' ?
+								incomingCallAnswer.value :
+								await this.notificationService.ring(
+									Promise.race([
+										incomingCallAnswer.promise,
+										this.dialogService.confirm(
+											{
+												bottomSheet: true,
+												cancel: this.stringsService
+													.decline,
+												cancelFAB: 'close',
+												content: `${name} (@${realUsername})`,
+												fabAvatar: user.avatar,
+												ok: this.stringsService.answer,
+												okFAB: 'phone',
+												timeout: expires - timestamp,
+												title:
+													callType === 'audio' ?
+														this.stringsService
+															.incomingCallAudio :
+														this.stringsService
+															.incomingCallVideo
+											},
+											dialogClose
+										)
+									])
+								);
+
+						(await dialogClose.promise)();
 
 						if (answered) {
 							this.router.navigate(route);
@@ -731,6 +760,13 @@ export class AccountService extends BaseProvider {
 					this.respondedCallRequests.add(
 						data.additionalData.callMetadata
 					);
+
+					getOrSetDefault(
+						this.incomingCallAnswers,
+						data.additionalData.callMetadata,
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						() => resolvable<boolean>()
+					).resolve(callAnswer);
 
 					if (!callAnswer) {
 						return;
