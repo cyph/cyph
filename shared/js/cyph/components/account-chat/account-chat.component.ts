@@ -35,7 +35,6 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {FileTransferService} from '../../services/file-transfer.service';
-import {NotificationService} from '../../services/notification.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {SessionInitService} from '../../services/session-init.service';
 import {StringsService} from '../../services/strings.service';
@@ -482,57 +481,51 @@ export class AccountChatComponent extends BaseProvider
 									return;
 								}
 
-								this.notificationService
-									.ring(
-										Promise.race([
-											this.p2pWebRTCService.loading
-												.pipe(
-													filter(b => b),
-													take(1)
-												)
-												.toPromise(),
-											destroyed.then(() => false)
-										])
-									)
-									.then(() => {
-										if (
-											this.destroyed.value ||
-											this.p2pWebRTCService.loading
-												.value ||
-											!this.p2pWebRTCService
-												.initialCallPending.value
-										) {
-											return;
+								Promise.race([
+									this.p2pWebRTCService.loading
+										.pipe(
+											filter(b => b),
+											take(1)
+										)
+										.toPromise(),
+									destroyed.then(() => false)
+								]).then(() => {
+									if (
+										this.destroyed.value ||
+										this.p2pWebRTCService.loading.value ||
+										!this.p2pWebRTCService
+											.initialCallPending.value
+									) {
+										return;
+									}
+
+									this.dialogService.toast(
+										this.stringsService.p2pTimeoutOutgoing,
+										3000
+									);
+									this.p2pWebRTCService.close();
+
+									if (
+										!sessionSubID ||
+										!this.accountSessionService.remoteUser
+											.value ||
+										this.accountSessionService.remoteUser
+											.value.anonymous
+									) {
+										return;
+									}
+
+									this.accountDatabaseService.notify(
+										this.accountSessionService.remoteUser
+											.value.username,
+										NotificationTypes.Call,
+										{
+											callType,
+											id: sessionSubID,
+											missed: true
 										}
-
-										this.dialogService.toast(
-											this.stringsService
-												.p2pTimeoutOutgoing,
-											3000
-										);
-										this.p2pWebRTCService.close();
-
-										if (
-											!sessionSubID ||
-											!this.accountSessionService
-												.remoteUser.value ||
-											this.accountSessionService
-												.remoteUser.value.anonymous
-										) {
-											return;
-										}
-
-										this.accountDatabaseService.notify(
-											this.accountSessionService
-												.remoteUser.value.username,
-											NotificationTypes.Call,
-											{
-												callType,
-												id: sessionSubID,
-												missed: true
-											}
-										);
-									});
+									);
+								});
 
 								this.p2pWebRTCService.disconnect
 									.pipe(take(1))
@@ -629,9 +622,6 @@ export class AccountChatComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
-
-		/** @ignore */
-		private readonly notificationService: NotificationService,
 
 		/** @ignore */
 		private readonly sessionInitService: SessionInitService,
