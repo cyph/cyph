@@ -50,8 +50,10 @@ const sendMessage = async (
 				};
 
 				const data = {
+					'content-available': true,
+					'priority': highPriority ? 2 : 1,
+					'visibility': 1,
 					...(actions ? {actions} : {}),
-					...(highPriority ? {priority: 2} : {}),
 					...(inboxStyle ? {style: 'inbox'} : {}),
 					...(tag && platform === 'ios' ? {'thread-id': tag} : {}),
 					...additionalData
