@@ -1,6 +1,4 @@
 import * as DOMPurify from 'dompurify';
-import {env} from './env';
-import {openWindow} from './util/window';
 
 /**
  * HtmlSanitizerService implementation built on DOMPurify.
@@ -59,25 +57,10 @@ export class DOMPurifyHtmlSanitizer {
 				}
 			}
 
-			if (!(node instanceof HTMLAnchorElement)) {
-				return node;
-			}
-
 			/* Block window.opener in new window */
-			node.rel = 'noopener noreferrer';
-
-			if (!env.isCordovaMobile) {
-				return node;
+			if (node.tagName === 'A') {
+				(<HTMLAnchorElement> node).rel = 'noopener noreferrer';
 			}
-
-			node.addEventListener('click', e => {
-				if (!node.href) {
-					return;
-				}
-
-				e.preventDefault();
-				openWindow(node.href);
-			});
 
 			return node;
 		});

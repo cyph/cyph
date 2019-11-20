@@ -13,18 +13,6 @@ export const openWindow = (url: string) : void => {
 		return;
 	}
 
-	if (
-		(<any> self).cordova &&
-		(<any> self).cordova.plugins &&
-		(<any> self).cordova.plugins.InAppBrowser
-	) {
-		(<any> self).cordova.plugins.InAppBrowser.open(
-			url,
-			'_blank',
-			'location=no'
-		);
-	}
-
 	const a = document.createElement('a');
 	a.href = url;
 	a.target = '_blank';
