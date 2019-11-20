@@ -456,6 +456,7 @@ export class AccountService extends BaseProvider {
 						const incomingCallAnswer = getOrSetDefault(
 							this.incomingCallAnswers,
 							id,
+							/* eslint-disable-next-line @typescript-eslint/tslint/config */
 							() => resolvable<boolean>()
 						);
 
@@ -693,7 +694,6 @@ export class AccountService extends BaseProvider {
 						'messages',
 						data.additionalData.notificationID
 					]);
-					break;
 			}
 		});
 
@@ -715,6 +715,7 @@ export class AccountService extends BaseProvider {
 					getOrSetDefault(
 						this.incomingCallAnswers,
 						data.additionalData.notificationID,
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						() => resolvable<boolean>()
 					).resolve(callAnswer);
 				}

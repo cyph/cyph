@@ -528,8 +528,8 @@ export class AccountChatComponent extends BaseProvider
 											NotificationTypes.Call,
 											{
 												callType,
-												missed: true,
-												id: sessionSubID
+												id: sessionSubID,
+												missed: true
 											}
 										);
 									});

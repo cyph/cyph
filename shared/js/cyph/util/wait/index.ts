@@ -41,8 +41,8 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 	const o: IResolvable<T> = {promise, reject, resolve};
 
 	promise
-		.then(value => {
-			o.value = value;
+		.then(finalValue => {
+			o.value = finalValue;
 		})
 		.catch(() => {});
 
