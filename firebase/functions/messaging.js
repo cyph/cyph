@@ -66,26 +66,17 @@ const sendMessage = async (
 					to: token
 				};
 
-				const response = await new Promise((resolve, reject) => {
-					messaging.send(payload, (err, response) => {
+				return new Promise(resolve => {
+					messaging.send(payload, async (err, _RESPONSE) => {
 						if (err) {
-							reject(err);
+							await ref.child(token).remove();
+							resolve(false);
 						}
 						else {
-							resolve(response);
+							resolve(true);
 						}
 					});
 				});
-
-				await Promise.all(
-					response.results
-						.filter(o => !!o.error)
-						.map(async (_, i) =>
-							ref.child(platformTokens[i]).remove()
-						)
-				).catch(() => {});
-
-				return response.successCount > 0;
 			})
 	)).reduce((a, b) => a || b, false);
 };
