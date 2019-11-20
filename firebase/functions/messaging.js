@@ -30,15 +30,19 @@ const sendMessage = async (
 	}
 
 	const notification = {
-		actions,
 		badge,
 		body,
-		notificationID,
-		notificationType,
 		tag,
 		title: 'Cyph',
+		...(ring ? {sound: 'ringtone'} : {})
+	};
+
+	const data = {
+		...notification,
+		notificationID,
+		notificationType,
+		...(actions ? {actions} : {}),
 		...(highPriority ? {priority: 2} : {}),
-		...(ring ? {sound: 'ringtone'} : {}),
 		...(inboxStyle ? {style: 'inbox'} : {})
 	};
 
@@ -51,7 +55,7 @@ const sendMessage = async (
 		[
 			[
 				tokens.filter(token => tokenPlatforms[token] === 'android'),
-				{data: notification}
+				{data, notification}
 			],
 			[
 				tokens.filter(
@@ -59,7 +63,7 @@ const sendMessage = async (
 						// tokenPlatforms[token] === 'electron' ||
 						tokenPlatforms[token] === 'ios'
 				),
-				{notification}
+				{data, notification}
 			],
 			[
 				tokens.filter(
@@ -68,6 +72,7 @@ const sendMessage = async (
 						tokenPlatforms[token] === 'web'
 				),
 				{
+					data,
 					notification: {
 						...notification,
 						icon:
