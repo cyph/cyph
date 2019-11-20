@@ -8,7 +8,7 @@ const sendMessage = async (
 	body,
 	{
 		actions,
-		badge,
+		badge = 0,
 		highPriority,
 		inboxStyle = true,
 		notificationID,
@@ -30,7 +30,7 @@ const sendMessage = async (
 	}
 
 	const notification = {
-		badge,
+		badge: badge.toString(),
 		body,
 		tag,
 		title: 'Cyph',
@@ -39,6 +39,7 @@ const sendMessage = async (
 
 	const data = {
 		...notification,
+		badge,
 		notificationID,
 		notificationType,
 		...(actions ? {actions} : {}),
