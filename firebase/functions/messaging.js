@@ -8,13 +8,11 @@ const sendMessage = async (
 	body,
 	{
 		actions,
+		additionalData,
 		badge,
 		highPriority,
 		inboxStyle = true,
-		notificationID,
-		notificationType,
 		ring,
-		senderUsername,
 		tag
 	} = {}
 ) => {
@@ -52,13 +50,11 @@ const sendMessage = async (
 				};
 
 				const data = {
-					notificationID,
-					notificationType,
-					senderUsername,
 					...(actions ? {actions} : {}),
 					...(highPriority ? {priority: 2} : {}),
 					...(inboxStyle ? {style: 'inbox'} : {}),
-					...(tag && platform === 'ios' ? {'thread-id': tag} : {})
+					...(tag && platform === 'ios' ? {'thread-id': tag} : {}),
+					...additionalData
 				};
 
 				const payload = {

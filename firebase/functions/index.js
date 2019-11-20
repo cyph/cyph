@@ -880,6 +880,12 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		!metadata.missed &&
 		(typeof metadata.expires === 'number' && metadata.expires > Date.now());
 
+	const callMetadata = activeCall ?
+		`${
+			metadata.callType
+		},${username},${notificationID},${metadata.expires.toString()}` :
+		undefined;
+
 	const [
 		senderName,
 		senderUsername,
@@ -918,12 +924,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 					.once('value')).exists();
 
 			const [child, path] = activeCall ?
-				[
-					false,
-					`incomingCalls/${
-						metadata.callType
-					},${username},${notificationID},${metadata.expires.toString()}`
-				] :
+				[false, `incomingCalls/${callMetadata}`] :
 			notification.type === NotificationTypes.File ?
 				[
 					true,
@@ -1063,12 +1064,15 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		eventDetails,
 		{
 			actions,
+			additionalData: {
+				callMetadata,
+				notificationID,
+				notificationType: notification.type,
+				senderUsername
+			},
 			badge,
 			highPriority: activeCall,
 			inboxStyle: !activeCall,
-			notificationID,
-			notificationType: notification.type,
-			senderUsername,
 			tag: `${notification.type}_${tag}`
 		},
 		true

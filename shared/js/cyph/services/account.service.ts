@@ -15,11 +15,9 @@ import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
-import {IResolvable} from '../iresolvable';
 import {CyphPlans, NeverProto, NotificationTypes, StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
-import {getOrSetDefault} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
 import {prettyPrint, stringify} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -67,6 +65,9 @@ export class AccountService extends BaseProvider {
 	private readonly mobileMenuOpenInternal = new BehaviorSubject<boolean>(
 		false
 	);
+
+	/** @ignore */
+	private readonly respondedCallRequests = new Set<string>();
 
 	/** @ignore */
 	private readonly transitionInternal = new BehaviorSubject<boolean>(false);
@@ -137,12 +138,6 @@ export class AccountService extends BaseProvider {
 	public readonly header: Observable<
 		{desktop?: string; mobile?: string} | User | undefined
 	>;
-
-	/** Indicates the status of the interstitial. */
-	public readonly incomingCallAnswers = new Map<
-		string,
-		IResolvable<boolean>
-	>();
 
 	/** Indicates the status of the interstitial. */
 	public readonly interstitial = new BehaviorSubject<boolean>(false);
@@ -224,6 +219,55 @@ export class AccountService extends BaseProvider {
 		0,
 		this.subscriptions
 	);
+
+	/** @ignore */
+	private async getIncomingCallRoute (
+		callMetadata: string
+	) : Promise<{
+		callType: string;
+		expires: number;
+		id: string;
+		name: string;
+		realUsername: string;
+		route: string[];
+		timestamp: number;
+		user: User;
+	}> {
+		const [callType, username, id, expiresString] = callMetadata.split(',');
+		const expires = toInt(expiresString);
+		const timestamp = await getTimestamp();
+
+		if (
+			(callType !== 'audio' && callType !== 'video') ||
+			!username ||
+			!id ||
+			isNaN(expires) ||
+			timestamp >= expires
+		) {
+			throw new Error('Expired call.');
+		}
+
+		const user = await this.accountUserLookupService.getUser(username);
+		if (!user) {
+			throw new Error('User not found.');
+		}
+
+		const [contactID, {name, realUsername}] = await Promise.all([
+			user.contactID,
+			user.accountUserProfile.getValue()
+		]);
+
+		return {
+			callType,
+			expires,
+			id,
+			name,
+			realUsername,
+			route: [callType, contactID, id, expiresString],
+			timestamp,
+			user
+		};
+	}
 
 	/** @ignore */
 	private get currentRoute () : string {
@@ -410,111 +454,55 @@ export class AccountService extends BaseProvider {
 			this.subscriptions
 		);
 
-		const respondedCallRequests = new Set<string>();
-
 		this.subscriptions.push(
 			incomingCalls.watchKeys().subscribe(async keys => {
-				const removing = [];
-
 				for (const k of keys) {
-					if (respondedCallRequests.has(k)) {
+					if (this.respondedCallRequests.has(k)) {
 						continue;
 					}
 
 					try {
-						const [callType, username, id, expiresString] = k.split(
-							','
+						const {
+							callType,
+							expires,
+							name,
+							realUsername,
+							route,
+							timestamp,
+							user
+						} = await this.getIncomingCallRoute(k);
+
+						const answered = await this.notificationService.ring(
+							this.dialogService.confirm({
+								bottomSheet: true,
+								cancel: this.stringsService.decline,
+								cancelFAB: 'close',
+								content: `${name} (@${realUsername})`,
+								fabAvatar: user.avatar,
+								ok: this.stringsService.answer,
+								okFAB: 'phone',
+								timeout: expires - timestamp,
+								title:
+									callType === 'audio' ?
+										this.stringsService.incomingCallAudio :
+										this.stringsService.incomingCallVideo
+							})
 						);
-						const expires = toInt(expiresString);
-						const timestamp = await getTimestamp();
-
-						if (
-							(callType !== 'audio' && callType !== 'video') ||
-							!username ||
-							!id ||
-							isNaN(expires) ||
-							timestamp >= expires
-						) {
-							continue;
-						}
-
-						const user = await this.accountUserLookupService.getUser(
-							username
-						);
-						if (!user) {
-							continue;
-						}
-
-						const [
-							contactID,
-							{name, realUsername}
-						] = await Promise.all([
-							user.contactID,
-							user.accountUserProfile.getValue()
-						]);
-
-						const incomingCallAnswer = getOrSetDefault(
-							this.incomingCallAnswers,
-							id,
-							/* eslint-disable-next-line @typescript-eslint/tslint/config */
-							() => resolvable<boolean>()
-						);
-
-						const dialogClose = resolvable<() => void>();
-
-						const answered =
-							typeof incomingCallAnswer.value === 'boolean' ?
-								incomingCallAnswer.value :
-								await this.notificationService.ring(
-									Promise.race([
-										incomingCallAnswer.promise,
-										this.dialogService.confirm(
-											{
-												bottomSheet: true,
-												cancel: this.stringsService
-													.decline,
-												cancelFAB: 'close',
-												content: `${name} (@${realUsername})`,
-												fabAvatar: user.avatar,
-												ok: this.stringsService.answer,
-												okFAB: 'phone',
-												timeout: expires - timestamp,
-												title:
-													callType === 'audio' ?
-														this.stringsService
-															.incomingCallAudio :
-														this.stringsService
-															.incomingCallVideo
-											},
-											dialogClose
-										)
-									])
-								);
-
-						(await dialogClose.promise)();
 
 						if (answered) {
-							this.router.navigate([
-								callType,
-								contactID,
-								id,
-								expiresString
-							]);
+							this.router.navigate(route);
 						}
 					}
 					catch {
 					}
 					finally {
-						if (!respondedCallRequests.has(k)) {
-							respondedCallRequests.add(k);
-							removing.push(k);
-						}
+						this.respondedCallRequests.add(k);
 					}
 				}
 
 				try {
 					await Promise.all(
-						removing.map(async k => incomingCalls.removeItem(k))
+						keys.map(async k => incomingCalls.removeItem(k))
 					);
 				}
 				catch {}
@@ -715,17 +703,32 @@ export class AccountService extends BaseProvider {
 					if (
 						!data ||
 						!data.additionalData ||
-						typeof data.additionalData.notificationID !== 'string'
+						typeof data.additionalData.callMetadata !== 'string'
 					) {
 						return;
 					}
 
-					getOrSetDefault(
-						this.incomingCallAnswers,
-						data.additionalData.notificationID,
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						() => resolvable<boolean>()
-					).resolve(callAnswer);
+					this.respondedCallRequests.add(
+						data.additionalData.callMetadata
+					);
+
+					if (!callAnswer) {
+						return;
+					}
+
+					try {
+						const {route} = await this.getIncomingCallRoute(
+							data.additionalData.callMetadata
+						);
+
+						await this.router.navigate(route);
+					}
+					catch {
+						await this.dialogService.toast(
+							this.stringsService.p2pTimeoutIncoming,
+							3000
+						);
+					}
 				}
 			);
 		}
