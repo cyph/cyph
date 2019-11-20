@@ -465,11 +465,6 @@ export class AccountService extends BaseProvider {
 			this.subscriptions
 		);
 
-		/* Prevent brief ring after acceptance via notification action */
-		if (this.envService.isCordovaMobile) {
-			await this.pushNotificationsActive.promise;
-		}
-
 		this.subscriptions.push(
 			incomingCalls.watchKeys().subscribe(async keys => {
 				for (const k of keys) {
@@ -487,6 +482,12 @@ export class AccountService extends BaseProvider {
 							timestamp,
 							user
 						} = await this.getIncomingCallRoute(k);
+
+						/* Prevent brief ring after acceptance via notification action */
+						if (this.envService.isCordovaMobile) {
+							await this.pushNotificationsActive.promise;
+							await sleep(1000);
+						}
 
 						const incomingCallAnswer = getOrSetDefault(
 							this.incomingCallAnswers,
@@ -737,8 +738,7 @@ export class AccountService extends BaseProvider {
 						]);
 				}
 			})
-			.then(async () => {
-				await sleep(1000);
+			.then(() => {
 				this.pushNotificationsActive.resolve();
 			});
 
