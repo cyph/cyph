@@ -730,6 +730,25 @@ export class AccountService extends BaseProvider {
 			);
 		}
 
+		this.accountDatabaseService.pushNotificationsSubscribe(
+			'callBack',
+			data => {
+				if (
+					!data ||
+					!data.additionalData ||
+					typeof data.additionalData.senderUsername !== 'string'
+				) {
+					return;
+				}
+
+				this.router.navigate([
+					'call',
+					'user',
+					data.additionalData.senderUsername
+				]);
+			}
+		);
+
 		this.header = combineLatest([
 			this.activeSidebarContact,
 			this.headerInternal,

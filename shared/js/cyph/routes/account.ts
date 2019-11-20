@@ -133,6 +133,7 @@ export const account: Route = {
 				ephemeralSubSession: true
 			}
 		},
+		{path: 'call/user/:username', component: AccountChatComponent},
 		{
 			path: 'call/:contactID',
 			component: AccountChatComponent,

@@ -969,7 +969,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			.then(n => (typeof n !== 'number' || isNaN(n) ? 1 : n))
 	]);
 
-	const {eventDetails, subject, tag = notificationID, text} =
+	const {actions, eventDetails, subject, tag = notificationID, text} =
 		notification.type === NotificationTypes.CalendarEvent ?
 			{
 				eventDetails: {
@@ -989,11 +989,33 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			} :
 		activeCall ?
 			{
+				actions: [
+					{
+						icon: 'call_end',
+						title: 'DECLINE',
+						callback: 'callReject',
+						foreground: false
+					},
+					{
+						icon: 'call',
+						title: 'ANSWER',
+						callback: 'callAccept',
+						foreground: true
+					}
+				],
 				subject: `Incoming Call from ${senderUsername}`,
 				text: `${targetName}, ${senderUsername} is calling you.`
 			} :
 		notification.type === NotificationTypes.Call ?
 			{
+				actions: [
+					{
+						icon: 'call',
+						title: 'CALL BACK',
+						callback: 'callBack',
+						foreground: true
+					}
+				],
 				subject: `Missed Call from ${senderUsername}`,
 				text: `${targetName}, ${senderUsername} tried to call you.`
 			} :
@@ -1040,27 +1062,13 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		text,
 		eventDetails,
 		{
-			actions: !activeCall ?
-				undefined :
-				[
-					{
-						icon: 'call_end',
-						title: 'DECLINE',
-						callback: 'callReject',
-						foreground: false
-					},
-					{
-						icon: 'call',
-						title: 'ANSWER',
-						callback: 'callAccept',
-						foreground: true
-					}
-				],
+			actions,
 			badge,
 			highPriority: activeCall,
 			inboxStyle: !activeCall,
 			notificationID,
 			notificationType: notification.type,
+			senderUsername,
 			tag: `${notification.type}_${tag}`
 		},
 		true

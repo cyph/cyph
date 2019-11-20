@@ -14,6 +14,7 @@ const sendMessage = async (
 		notificationID,
 		notificationType,
 		ring,
+		senderUsername,
 		tag
 	} = {}
 ) => {
@@ -53,6 +54,7 @@ const sendMessage = async (
 				const data = {
 					notificationID,
 					notificationType,
+					senderUsername,
 					...(actions ? {actions} : {}),
 					...(highPriority ? {priority: 2} : {}),
 					...(inboxStyle ? {style: 'inbox'} : {}),
