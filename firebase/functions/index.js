@@ -23,7 +23,10 @@ const {
 } = require('./database-service')(
 	{
 		...functions.config(),
-		fcmServerKey: fs.readFileSync(__dirname + '/fcm-server-key').toString()
+		fcmServerKey: fs
+			.readFileSync(__dirname + '/fcm-server-key')
+			.toString()
+			.trim()
 	},
 	true
 );
