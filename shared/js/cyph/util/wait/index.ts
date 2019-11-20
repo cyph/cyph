@@ -38,7 +38,15 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 		throw new Error('Promise constructor did not run.');
 	}
 
-	return {promise, reject, resolve};
+	const o: IResolvable<T> = {promise, reject, resolve};
+
+	promise
+		.then(value => {
+			o.value = value;
+		})
+		.catch(() => {});
+
+	return o;
 };
 
 /** Sleeps forever. */

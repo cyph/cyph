@@ -864,6 +864,12 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 
 	const userPath = `${namespace}/users/${notification.target}`;
 
+	const activeCall =
+		notification.type === NotificationTypes.Call &&
+		(metadata.callType === 'audio' || metadata.callType === 'video') &&
+		!metadata.missed &&
+		(typeof metadata.expires === 'number' && metadata.expires > Date.now());
+
 	const [senderName, senderUsername, badge, count] = await Promise.all([
 		getName(namespace, username),
 		getRealUsername(namespace, username),
@@ -895,34 +901,29 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 					.ref(`${userPath}/fileReferences/${notificationID}`)
 					.once('value')).exists();
 
-			const [child, path] =
-				notification.type === NotificationTypes.Call &&
-				(metadata.callType === 'audio' ||
-					metadata.callType === 'video') &&
-				(typeof metadata.expires === 'number' &&
-					metadata.expires > Date.now()) ?
-					[
-						false,
-						`incomingCalls/${
-							metadata.callType
-						},${username},${notificationID},${metadata.expires.toString()}`
-					] :
-				notification.type === NotificationTypes.File ?
-					[
-						true,
-						!(await hasFile()) ?
-							'unreadFiles/' +
-							(!isNaN(metadata.fileType) &&
-							metadata.fileType in AccountFileRecord.RecordTypes ?
-								metadata.fileType :
-								AccountFileRecord.RecordTypes.File
-							).toString() :
-							undefined
-					] :
-				notification.type === NotificationTypes.Message &&
-					metadata.castleSessionID ?
-					[true, `unreadMessages/${metadata.castleSessionID}`] :
-					[];
+			const [child, path] = activeCall ?
+				[
+					false,
+					`incomingCalls/${
+						metadata.callType
+					},${username},${notificationID},${metadata.expires.toString()}`
+				] :
+			notification.type === NotificationTypes.File ?
+				[
+					true,
+					!(await hasFile()) ?
+						'unreadFiles/' +
+						(!isNaN(metadata.fileType) &&
+						metadata.fileType in AccountFileRecord.RecordTypes ?
+							metadata.fileType :
+							AccountFileRecord.RecordTypes.File
+						).toString() :
+						undefined
+				] :
+			notification.type === NotificationTypes.Message &&
+				metadata.castleSessionID ?
+				[true, `unreadMessages/${metadata.castleSessionID}`] :
+				[];
 
 			if (!path) {
 				return;
@@ -970,10 +971,15 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				subject: `Calendar Invite from ${senderUsername}`,
 				text: `${targetName}, ${senderName} has sent an appointment request.`
 			} :
-		notification.type === NotificationTypes.Call ?
+		activeCall ?
 			{
 				subject: `Incoming Call from ${senderUsername}`,
 				text: `${targetName}, ${senderUsername} is calling you.`
+			} :
+		notification.type === NotificationTypes.Call ?
+			{
+				subject: `Missed Call from ${senderUsername}`,
+				text: `${targetName}, ${senderUsername} tried to call you.`
 			} :
 		notification.type === NotificationTypes.ContactAccept ?
 			{
@@ -1017,11 +1023,29 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		text,
 		eventDetails,
 		{
+			actions: !activeCall ?
+				undefined :
+				[
+					{
+						icon: 'call_end',
+						title: 'DECLINE',
+						callback: 'callReject',
+						foreground: false
+					},
+					{
+						icon: 'call',
+						title: 'ANSWER',
+						callback: 'callAccept',
+						foreground: true
+					}
+				],
 			badge,
-			inboxStyle: notification.type !== NotificationTypes.Call,
+			highPriority: activeCall,
+			inboxStyle: !activeCall,
 			notificationID: notificationID,
 			notificationType: notification.type,
-			tag: notificationID
+			tag: notificationID,
+			timeToLive: !activeCall ? undefined : metadata.expires - Date.now()
 		},
 		true
 	);

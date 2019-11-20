@@ -10,4 +10,7 @@ export interface IResolvable<T> {
 
 	/** Resolves promise. */
 	resolve: (t?: T | PromiseLike<T>) => void;
+
+	/** Current value. */
+	value?: T;
 }

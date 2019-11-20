@@ -18,7 +18,8 @@ import {
 	AccountUserTypes,
 	CallTypes,
 	ChatMessageValue,
-	IAppointment
+	IAppointment,
+	NotificationTypes
 } from '../../proto';
 import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
@@ -510,6 +511,27 @@ export class AccountChatComponent extends BaseProvider
 											3000
 										);
 										this.p2pWebRTCService.close();
+
+										if (
+											!sessionSubID ||
+											!this.accountSessionService
+												.remoteUser.value ||
+											this.accountSessionService
+												.remoteUser.value.anonymous
+										) {
+											return;
+										}
+
+										this.accountDatabaseService.notify(
+											this.accountSessionService
+												.remoteUser.value.username,
+											NotificationTypes.Call,
+											{
+												callType,
+												missed: true,
+												id: sessionSubID
+											}
+										);
 									});
 
 								this.p2pWebRTCService.disconnect

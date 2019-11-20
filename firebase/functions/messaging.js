@@ -6,7 +6,17 @@ const sendMessage = async (
 	namespace,
 	username,
 	body,
-	{badge, inboxStyle = true, notificationID, notificationType, tag} = {}
+	{
+		actions,
+		badge,
+		highPriority,
+		inboxStyle = true,
+		notificationID,
+		notificationType,
+		ring,
+		tag,
+		timeToLive
+	} = {}
 ) => {
 	const ref = database.ref(
 		`${namespace}/users/${normalize(username)}/messagingTokens`
@@ -20,14 +30,22 @@ const sendMessage = async (
 	}
 
 	const notification = {
+		actions,
 		badge,
 		body,
 		notificationID,
 		notificationType,
 		tag,
 		title: 'Cyph',
+		...(highPriority ? {priority: 2} : {}),
+		...(ring ? {sound: 'ringtone'} : {}),
 		...(inboxStyle ? {style: 'inbox'} : {})
 	};
+
+	const messagingOptions =
+		typeof timeToLive === 'number' ?
+			{timeToLive: timeToLive / 1000} :
+			undefined;
 
 	return (await Promise.all(
 		[
@@ -64,7 +82,8 @@ const sendMessage = async (
 
 			const response = await messaging.sendToDevice(
 				platformTokens,
-				payload
+				payload,
+				messagingOptions
 			);
 
 			await Promise.all(

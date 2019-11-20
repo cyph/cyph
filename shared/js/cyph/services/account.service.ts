@@ -15,9 +15,11 @@ import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
+import {IResolvable} from '../iresolvable';
 import {CyphPlans, NeverProto, NotificationTypes, StringProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {observableAll} from '../util/observable-all';
 import {prettyPrint, stringify} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -135,6 +137,12 @@ export class AccountService extends BaseProvider {
 	public readonly header: Observable<
 		{desktop?: string; mobile?: string} | User | undefined
 	>;
+
+	/** Indicates the status of the interstitial. */
+	public readonly incomingCallAnswers = new Map<
+		string,
+		IResolvable<boolean>
+	>();
 
 	/** Indicates the status of the interstitial. */
 	public readonly interstitial = new BehaviorSubject<boolean>(false);
@@ -445,22 +453,36 @@ export class AccountService extends BaseProvider {
 							user.accountUserProfile.getValue()
 						]);
 
-						const answered = await this.notificationService.ring(
-							this.dialogService.confirm({
-								bottomSheet: true,
-								cancel: this.stringsService.decline,
-								cancelFAB: 'close',
-								content: `${name} (@${realUsername})`,
-								fabAvatar: user.avatar,
-								ok: this.stringsService.answer,
-								okFAB: 'phone',
-								timeout: expires - timestamp,
-								title:
-									callType === 'audio' ?
-										this.stringsService.incomingCallAudio :
-										this.stringsService.incomingCallVideo
-							})
+						const incomingCallAnswer = getOrSetDefault(
+							this.incomingCallAnswers,
+							id,
+							() => resolvable<boolean>()
 						);
+
+						const answered =
+							typeof incomingCallAnswer.value === 'boolean' ?
+								incomingCallAnswer.value :
+								await this.notificationService.ring(
+									Promise.race([
+										incomingCallAnswer.promise,
+										this.dialogService.confirm({
+											bottomSheet: true,
+											cancel: this.stringsService.decline,
+											cancelFAB: 'close',
+											content: `${name} (@${realUsername})`,
+											fabAvatar: user.avatar,
+											ok: this.stringsService.answer,
+											okFAB: 'phone',
+											timeout: expires - timestamp,
+											title:
+												callType === 'audio' ?
+													this.stringsService
+														.incomingCallAudio :
+													this.stringsService
+														.incomingCallVideo
+										})
+									])
+								);
 
 						if (answered) {
 							this.router.navigate([
@@ -674,6 +696,30 @@ export class AccountService extends BaseProvider {
 					break;
 			}
 		});
+
+		for (const [callEvent, callAnswer] of <[string, boolean][]> [
+			['callAccept', true],
+			['callReject', false]
+		]) {
+			this.accountDatabaseService.pushNotificationsSubscribe(
+				callEvent,
+				async data => {
+					if (
+						!data ||
+						!data.additionalData ||
+						typeof data.additionalData.notificationID !== 'string'
+					) {
+						return;
+					}
+
+					getOrSetDefault(
+						this.incomingCallAnswers,
+						data.additionalData.notificationID,
+						() => resolvable<boolean>()
+					).resolve(callAnswer);
+				}
+			);
+		}
 
 		this.header = combineLatest([
 			this.activeSidebarContact,
