@@ -13,9 +13,16 @@ export const openWindow = (url: string) : void => {
 		return;
 	}
 
-	if ((<any> self).cordova && (<any> self).cordova.InAppBrowser) {
-		(<any> self).cordova.InAppBrowser.open(url, '_blank', 'location=no');
-		return;
+	if (
+		(<any> self).cordova &&
+		(<any> self).cordova.plugins &&
+		(<any> self).cordova.plugins.InAppBrowser
+	) {
+		(<any> self).cordova.plugins.InAppBrowser.open(
+			url,
+			'_blank',
+			'location=no'
+		);
 	}
 
 	const a = document.createElement('a');
