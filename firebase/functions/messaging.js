@@ -29,76 +29,66 @@ const sendMessage = async (
 		return false;
 	}
 
-	const notification = {
-		badge,
-		body,
-		tag,
-		title: 'Cyph',
-		...(ring ? {sound: 'ringtone'} : {})
-	};
-
-	const data = {
-		...notification,
-		notificationID,
-		notificationType,
-		...(actions ? {actions} : {}),
-		...(highPriority ? {priority: 2} : {}),
-		...(inboxStyle ? {style: 'inbox'} : {})
-	};
-
-	const messagingOptions =
-		typeof timeToLive === 'number' ?
-			{timeToLive: timeToLive / 1000} :
-			undefined;
-
 	return (await Promise.all(
-		[
-			[
-				tokens.filter(token => tokenPlatforms[token] === 'android'),
-				{data, notification}
-			],
-			[
-				tokens.filter(
-					token =>
-						// tokenPlatforms[token] === 'electron' ||
-						tokenPlatforms[token] === 'ios'
-				),
-				{data, notification}
-			],
-			[
-				tokens.filter(
-					token =>
-						tokenPlatforms[token] === 'unknown' ||
-						tokenPlatforms[token] === 'web'
-				),
-				{
+		tokens
+			.filter(token => tokenPlatforms[token] !== 'electron')
+			.map(async token => {
+				const platform = tokenPlatforms[token];
+
+				const notification = {
+					badge,
+					body,
+					tag,
+					title: 'Cyph',
+					...(ring && platform === 'android' ?
+						{sound: 'ringtone'} :
+						{}),
+					...(platform === 'unknown' || platform === 'web' ?
+						{
+							icon:
+								'https://www.cyph.com/assets/img/favicon/favicon-256x256.png'
+						} :
+						{})
+				};
+
+				const data = {
+					...notification,
+					notificationID,
+					notificationType,
+					...(actions ? {actions} : {}),
+					...(highPriority ? {priority: 2} : {}),
+					...(inboxStyle ? {style: 'inbox'} : {}),
+					...(tag && platform === 'ios' ? {'thread-id': tag} : {})
+				};
+
+				const payload = {
 					data,
-					notification: {
-						...notification,
-						icon:
-							'https://www.cyph.com/assets/img/favicon/favicon-256x256.png'
-					}
-				}
-			]
-		].map(async ([platformTokens, payload]) => {
-			if (platformTokens.length < 1) {
-				return false;
-			}
+					notification,
+					time_to_live: Math.floor(timeToLive / 1000),
+					to: token
+				};
 
-			const response = await messaging.sendToDevice(
-				platformTokens,
-				payload,
-				messagingOptions
-			);
+				const response = await new Promise((resolve, reject) => {
+					messaging.send(payload, (err, response) => {
+						if (err) {
+							reject(err);
+						}
+						else {
+							resolve(response);
+						}
+					});
+				});
 
-			await Promise.all(
-				response.results
-					.filter(o => !!o.error)
-					.map(async (_, i) => ref.child(platformTokens[i]).remove())
-			).catch(() => {});
+				await Promise.all(
+					response.results
+						.filter(o => !!o.error)
+						.map(async (_, i) =>
+							ref.child(platformTokens[i]).remove()
+						)
+				).catch(() => {});
 
-			return response.successCount > 0;
-		})
+				return response.successCount > 0;
+			})
 	)).reduce((a, b) => a || b, false);
 };
 

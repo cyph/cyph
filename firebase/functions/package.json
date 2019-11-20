@@ -5,6 +5,7 @@
 		"@google-cloud/storage": "*",
 		"cors": "*",
 		"dompurify": "*",
+		"fcm-node": "*",
 		"firebase": "*",
 		"firebase-admin": "*",
 		"firebase-functions": "*",

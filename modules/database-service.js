@@ -4,6 +4,7 @@
 
 const {Storage} = require('@google-cloud/storage');
 const crypto = require('crypto');
+const FCM = require('fcm-node');
 const admin = require('firebase-admin');
 const fs = require('fs');
 const lz4 = require('lz4');
@@ -42,7 +43,7 @@ module.exports = (config, isCloudFunction) => {
 	const app = admin.initializeApp(config.firebase, uuid());
 	const auth = app.auth();
 	const database = app.database();
-	const messaging = app.messaging();
+	const messaging = new FCM(config);
 	const storage = new Storage(config.storage).bucket(
 		`${config.project.id}.appspot.com`
 	);
