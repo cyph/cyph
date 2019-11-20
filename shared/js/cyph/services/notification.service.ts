@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {INotificationService} from '../service-interfaces/inotification.service';
+import {lockFunction} from '../util/lock';
 import {sleep} from '../util/wait';
 import {EnvService} from './env.service';
 import {FaviconService} from './favicon.service';
@@ -28,6 +29,9 @@ export class NotificationService extends BaseProvider
 
 	/** Currently open notification objects. */
 	private readonly openNotifications: any[] = [];
+
+	/** @ignore */
+	private readonly ringLock = lockFunction();
 
 	/** @ignore */
 	private readonly ringtone: HTMLAudioElement = new Audio(
@@ -113,18 +117,20 @@ export class NotificationService extends BaseProvider
 	 * @returns True if accepted or false if timeout.
 	 */
 	public async ring (accept: Promise<boolean>) : Promise<boolean> {
-		try {
-			this.ringtone.currentTime = 0;
-			await this.ringtone.play();
+		return this.ringLock(async () => {
+			try {
+				this.ringtone.currentTime = 0;
+				await this.ringtone.play();
 
-			return await Promise.race([
-				accept,
-				sleep(this.ringTimeout).then(() => false)
-			]);
-		}
-		finally {
-			this.ringtone.pause();
-		}
+				return await Promise.race([
+					accept,
+					sleep(this.ringTimeout).then(() => false)
+				]);
+			}
+			finally {
+				this.ringtone.pause();
+			}
+		});
 	}
 
 	constructor (
