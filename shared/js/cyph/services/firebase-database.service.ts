@@ -84,32 +84,37 @@ export class FirebaseDatabaseService extends DatabaseService {
 	);
 
 	/** @ignore */
+	private readonly cordova = !this.envService.isCordovaMobile ?
+		undefined :
+		{
+			messaging: (<any> self).PushNotification.init({
+				android: {
+					color: 'white',
+					icon: 'notification_icon',
+					iconColor: '#8b62d9'
+				},
+				ios: {
+					alert: true,
+					badge: true,
+					sound: true
+				}
+			})
+		};
+
+	/** @ignore */
 	private readonly localLocks: Map<string, {}> = new Map<string, {}>();
 
 	/** Firebase Cloud Messaging token. */
 	private readonly messaging: Promise<{
-		cordova?: any;
 		token?: string;
 	}> = this.ngZone
 		.runOutsideAngular(async () => {
-			if (this.envService.isCordovaMobile) {
-				const cordova = (<any> self).PushNotification.init({
-					android: {
-						color: 'white',
-						icon: 'notification_icon',
-						iconColor: '#8b62d9'
-					},
-					ios: {
-						alert: true,
-						badge: true,
-						sound: true
-					}
-				});
+			const cordova = this.cordova;
 
+			if (cordova) {
 				return {
-					cordova,
 					token: await new Promise<string>(resolve => {
-						cordova.on('registration', (o: any) => {
+						cordova.messaging.on('registration', (o: any) => {
 							resolve(o.registrationId);
 						});
 					})
@@ -1031,10 +1036,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 			throw new Error('Invalid push notification subscription handler.');
 		}
 
-		const {cordova} = await this.messaging;
-
-		if (cordova) {
-			cordova.on(event, handler);
+		if (this.cordova) {
+			this.cordova.messaging.on(event, handler);
 			return;
 		}
 
@@ -1273,12 +1276,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 	) : Promise<void> {
 		try {
 			const url = await urlPromise;
-			const messaging = await this.messaging;
 
 			await this.ngZone.runOutsideAngular(async () => {
 				try {
-					if (messaging.cordova) {
-						messaging.cordova.unregister();
+					if (this.cordova) {
+						this.cordova.messaging.unregister();
 					}
 				}
 				catch {}
