@@ -870,7 +870,13 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		!metadata.missed &&
 		(typeof metadata.expires === 'number' && metadata.expires > Date.now());
 
-	const [senderName, senderUsername, badge, count] = await Promise.all([
+	const [
+		senderName,
+		senderUsername,
+		targetName,
+		badge,
+		count
+	] = await Promise.all([
 		getName(namespace, username),
 		getRealUsername(namespace, username),
 		getName(namespace, notification.target),
@@ -888,7 +894,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		]).then(values =>
 			values
 				.reduce((a, b) => a.concat(b), [])
-				.map(o => Object.keys(o).length)
+				.map(o => Object.keys(o || {}).length)
 				.reduce((a, b) => a + b, 0)
 		),
 		(async () => {
@@ -944,7 +950,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			}
 
 			return Object.keys(
-				(await notificationRef.parent.once('value')).val()
+				(await notificationRef.parent.once('value')).val() || {}
 			).length;
 		})()
 			.catch(err => {
