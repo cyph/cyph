@@ -1049,7 +1049,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			highPriority: activeCall,
 			inboxStyle: !activeCall,
 			notificationID: notificationID,
-			notificationType: NotificationTypes[notification.type],
+			notificationType: notification.type,
 			tag: notificationID,
 			timeToLive: !activeCall ? undefined : metadata.expires - Date.now()
 		},
