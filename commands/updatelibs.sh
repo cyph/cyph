@@ -220,7 +220,7 @@ read -r -d '' modules <<- EOM
 	fast-crc32c
 	fast-text-encoding@https://github.com/buu700/fast-text-encoding
 	faye-websocket
-	fcm-node
+	fcm-node@https://github.com/buu700/fcm-node#patch-1
 	fg-loadcss
 	file-saver
 	firebase
