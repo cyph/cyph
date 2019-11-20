@@ -26,9 +26,11 @@ module.exports = (config, isCloudFunction) => {
 	if (typeof config === 'string') {
 		const projectId = config;
 		const configDir = `${os.homedir()}/.cyph`;
+		const fcmKeyFilename = `${configDir}/firebase-credentials/${projectId}.fcm`;
 		const keyFilename = `${configDir}/firebase-credentials/${projectId}.json`;
 
 		config = {
+			fcmServerKey: fs.readFileSync(fcmKeyFilename).toString(),
 			firebase: {
 				credential: admin.credential.cert(
 					JSON.parse(fs.readFileSync(keyFilename).toString())
@@ -43,7 +45,7 @@ module.exports = (config, isCloudFunction) => {
 	const app = admin.initializeApp(config.firebase, uuid());
 	const auth = app.auth();
 	const database = app.database();
-	const messaging = new FCM(config);
+	const messaging = new FCM(config.fcmServerKey);
 	const storage = new Storage(config.storage).bucket(
 		`${config.project.id}.appspot.com`
 	);

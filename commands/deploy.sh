@@ -954,6 +954,7 @@ then
 	cd ..
 
 	for firebaseProject in ${firebaseProjects} ; do
+		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/fcm-server-key
 		firebase use --add "${firebaseProject}"
 		firebase functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"

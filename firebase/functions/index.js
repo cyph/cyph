@@ -1,5 +1,6 @@
 const cors = require('cors')({origin: true});
 const functions = require('firebase-functions');
+const fs = require('fs');
 const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
 const {sendMail, sendMailInternal} = require('./email');
@@ -19,7 +20,13 @@ const {
 	setItem,
 	setItemInternal,
 	storage
-} = require('./database-service')(functions.config(), true);
+} = require('./database-service')(
+	{
+		...functions.config(),
+		fcmServerKey: fs.readFileSync(__dirname + '/fcm-server-key').toString()
+	},
+	true
+);
 
 const {
 	AccountContactState,
