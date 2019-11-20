@@ -75,9 +75,6 @@ export class AccountService extends BaseProvider {
 	);
 
 	/** @ignore */
-	private readonly pushNotificationsActive = resolvable();
-
-	/** @ignore */
 	private readonly respondedCallRequests = new Set<string>();
 
 	/** @ignore */
@@ -483,12 +480,6 @@ export class AccountService extends BaseProvider {
 							user
 						} = await this.getIncomingCallRoute(k);
 
-						/* Prevent brief ring after acceptance via notification action */
-						if (this.envService.isCordovaMobile) {
-							await this.pushNotificationsActive.promise;
-							await sleep(1000);
-						}
-
 						const incomingCallAnswer = getOrSetDefault(
 							this.incomingCallAnswers,
 							k,
@@ -703,44 +694,35 @@ export class AccountService extends BaseProvider {
 			});
 		}
 
-		this.accountDatabaseService
-			.pushNotificationsSubscribe(async data => {
-				if (
-					!data ||
-					!data.additionalData ||
-					data.additionalData.dismissed ||
-					!(
-						data.additionalData.notificationType in
-						NotificationTypes
-					) ||
-					typeof data.additionalData.notificationID !== 'string'
-				) {
-					return;
-				}
+		this.accountDatabaseService.pushNotificationsSubscribe(async data => {
+			if (
+				!data ||
+				!data.additionalData ||
+				data.additionalData.dismissed ||
+				!(data.additionalData.notificationType in NotificationTypes) ||
+				typeof data.additionalData.notificationID !== 'string'
+			) {
+				return;
+			}
 
-				switch (data.additionalData.notificationType) {
-					case NotificationTypes.File:
-						const {
-							recordType
-						} = await this.accountFilesService.getFile(
-							data.additionalData.notificationID
-						);
+			switch (data.additionalData.notificationType) {
+				case NotificationTypes.File:
+					const {recordType} = await this.accountFilesService.getFile(
+						data.additionalData.notificationID
+					);
 
-						this.router.navigate([
-							this.accountFilesService.config[recordType].route
-						]);
-						break;
+					this.router.navigate([
+						this.accountFilesService.config[recordType].route
+					]);
+					break;
 
-					case NotificationTypes.Message:
-						this.router.navigate([
-							'messages',
-							data.additionalData.notificationID
-						]);
-				}
-			})
-			.then(() => {
-				this.pushNotificationsActive.resolve();
-			});
+				case NotificationTypes.Message:
+					this.router.navigate([
+						'messages',
+						data.additionalData.notificationID
+					]);
+			}
+		});
 
 		for (const [callEvent, callAnswer] of <[string, boolean][]> [
 			['callAccept', true],
