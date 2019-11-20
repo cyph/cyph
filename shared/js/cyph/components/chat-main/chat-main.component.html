@@ -242,7 +242,6 @@
 			direction="down"
 			[open]="p2pService.ioSwitcher.isOpen | async"
 			(mouseleave)="p2pService.ioSwitcher.close()"
-			*ngIf="envService.environment.local"
 		>
 			<smd-fab-trigger
 				[spin]="true"
