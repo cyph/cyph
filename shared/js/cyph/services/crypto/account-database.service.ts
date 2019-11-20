@@ -35,7 +35,7 @@ import {
 	getOrSetDefaultAsync
 } from '../../util/get-or-set-default';
 import {lockFunction} from '../../util/lock';
-import {debugLog} from '../../util/log';
+import {debugLog, debugLogError} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {DatabaseService} from '../database.service';
@@ -1252,11 +1252,15 @@ export class AccountDatabaseService extends BaseProvider {
 		notificationType: NotificationTypes,
 		metadata?: {id: string} & {[k: string]: any}
 	) : Promise<void> {
-		await this.databaseService.callFunction('userNotify', {
-			target: username,
-			type: notificationType,
-			...(metadata ? {metadata} : {})
-		});
+		await this.databaseService
+			.callFunction('userNotify', {
+				target: username,
+				type: notificationType,
+				...(metadata ? {metadata} : {})
+			})
+			.catch(err => {
+				debugLogError(() => err);
+			});
 	}
 
 	/** @see DatabaseService.pushItem */
