@@ -145,13 +145,15 @@ export class MaterialDialogService extends BaseProvider
 
 					close(false);
 
-					if (o.timeoutMessage) {
-						await this.toast(
-							o.timeoutMessage,
-							0,
-							this.stringsService.ok
-						);
+					if (!o.timeoutMessage) {
+						return;
 					}
+
+					await this.toast(
+						o.timeoutMessage,
+						0,
+						this.stringsService.ok
+					);
 				})();
 			}
 
