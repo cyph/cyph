@@ -38,7 +38,7 @@ export class NotificationService extends BaseProvider
 	private readonly tag: string = 'NotificationService';
 
 	/** Max ring time. */
-	public readonly ringTimeout: number = 30000;
+	public readonly ringTimeout: number = 45000;
 
 	/** @ignore */
 	private async createNotification (message: string) : Promise<any> {
