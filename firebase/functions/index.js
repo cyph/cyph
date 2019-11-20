@@ -970,6 +970,8 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			.then(n => (typeof n !== 'number' || isNaN(n) ? 1 : n))
 	]);
 
+	const callString = metadata.callType === 'video' ? 'Video Call' : 'Call';
+
 	const {actions, eventDetails, subject, tag = notificationID, text} =
 		notification.type === NotificationTypes.CalendarEvent ?
 			{
@@ -1004,7 +1006,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 						foreground: true
 					}
 				],
-				subject: `Incoming Call from ${senderUsername}`,
+				subject: `Incoming ${callString} from ${senderUsername}`,
 				text: `${targetName}, ${senderUsername} is calling you.`
 			} :
 		notification.type === NotificationTypes.Call ?
@@ -1017,7 +1019,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 						foreground: true
 					}
 				],
-				subject: `Missed Call from ${senderUsername}`,
+				subject: `Missed ${callString} from ${senderUsername}`,
 				text: `${targetName}, ${senderUsername} tried to call you.`
 			} :
 		notification.type === NotificationTypes.ContactAccept ?
