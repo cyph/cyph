@@ -1058,7 +1058,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			badge,
 			highPriority: activeCall,
 			inboxStyle: !activeCall,
-			notificationID: notificationID,
+			notificationID,
 			notificationType: notification.type,
 			tag: notificationID
 		},
