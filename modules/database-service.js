@@ -43,7 +43,7 @@ module.exports = (config, isCloudFunction) => {
 	const app = admin.initializeApp(config.firebase, uuid());
 	const auth = app.auth();
 	const database = app.database();
-	const messaging = new FCM(app.options);
+	const messaging = new FCM(config.firebase.credential);
 	const storage = new Storage(config.storage).bucket(
 		`${config.project.id}.appspot.com`
 	);
