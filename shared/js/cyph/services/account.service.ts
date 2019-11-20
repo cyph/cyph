@@ -672,13 +672,20 @@ export class AccountService extends BaseProvider {
 				!data ||
 				!data.additionalData ||
 				data.additionalData.dismissed ||
+				typeof data.additionalData.notificationType !== 'string' ||
 				!(data.additionalData.notificationType in NotificationTypes) ||
 				typeof data.additionalData.notificationID !== 'string'
 			) {
 				return;
 			}
 
-			switch (data.additionalData.notificationType) {
+			switch (
+				<NotificationTypes> (
+					(<any> (
+						NotificationTypes[data.additionalData.notificationType]
+					))
+				)
+			) {
 				case NotificationTypes.File:
 					const {recordType} = await this.accountFilesService.getFile(
 						data.additionalData.notificationID

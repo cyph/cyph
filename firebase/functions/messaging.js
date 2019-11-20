@@ -39,11 +39,10 @@ const sendMessage = async (
 
 	const data = {
 		...notification,
-		badge,
 		notificationID,
 		notificationType,
-		...(actions ? {actions} : {}),
-		...(highPriority ? {priority: 2} : {}),
+		...(actions ? {actions: JSON.stringify(actions)} : {}),
+		...(highPriority ? {priority: '2'} : {}),
 		...(inboxStyle ? {style: 'inbox'} : {})
 	};
 
