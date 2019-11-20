@@ -51,7 +51,6 @@ const sendMessage = async (
 				};
 
 				const data = {
-					...notification,
 					notificationID,
 					notificationType,
 					...(actions ? {actions} : {}),
@@ -61,8 +60,9 @@ const sendMessage = async (
 				};
 
 				const payload = {
-					data,
-					notification,
+					...(platform === 'android' ?
+						{data: {...notification, ...data}} :
+						{data, notification}),
 					to: token
 				};
 
