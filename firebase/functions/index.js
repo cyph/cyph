@@ -969,7 +969,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			.then(n => (typeof n !== 'number' || isNaN(n) ? 1 : n))
 	]);
 
-	const {eventDetails, subject, text} =
+	const {eventDetails, subject, tag = notificationID, text} =
 		notification.type === NotificationTypes.CalendarEvent ?
 			{
 				eventDetails: {
@@ -1019,6 +1019,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				subject: `${
 					count > 1 ? `${count} new messages` : 'New Message'
 				} from ${senderUsername}`,
+				tag: metadata.castleSessionID,
 				text: `${targetName}, ${senderName} has sent you a message.`
 			} :
 		notification.type === NotificationTypes.Yo ?
@@ -1060,7 +1061,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			inboxStyle: !activeCall,
 			notificationID,
 			notificationType: notification.type,
-			tag: notificationID
+			tag: `${notification.type}_${tag}`
 		},
 		true
 	);
