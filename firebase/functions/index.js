@@ -880,6 +880,12 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		!metadata.missed &&
 		(typeof metadata.expires === 'number' && metadata.expires > Date.now());
 
+	const callMetadata = activeCall ?
+		`${
+			metadata.callType
+		},${username},${notificationID},${metadata.expires.toString()}` :
+		undefined;
+
 	const [
 		senderName,
 		senderUsername,
@@ -918,12 +924,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 					.once('value')).exists();
 
 			const [child, path] = activeCall ?
-				[
-					false,
-					`incomingCalls/${
-						metadata.callType
-					},${username},${notificationID},${metadata.expires.toString()}`
-				] :
+				[false, `incomingCalls/${callMetadata}`] :
 			notification.type === NotificationTypes.File ?
 				[
 					true,
@@ -969,7 +970,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			.then(n => (typeof n !== 'number' || isNaN(n) ? 1 : n))
 	]);
 
-	const {eventDetails, subject, text} =
+	const {actions, eventDetails, subject, tag = notificationID, text} =
 		notification.type === NotificationTypes.CalendarEvent ?
 			{
 				eventDetails: {
@@ -989,11 +990,33 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			} :
 		activeCall ?
 			{
+				actions: [
+					{
+						icon: 'call_end',
+						title: 'DECLINE',
+						callback: 'callReject',
+						foreground: false
+					},
+					{
+						icon: 'call',
+						title: 'ANSWER',
+						callback: 'callAccept',
+						foreground: true
+					}
+				],
 				subject: `Incoming Call from ${senderUsername}`,
 				text: `${targetName}, ${senderUsername} is calling you.`
 			} :
 		notification.type === NotificationTypes.Call ?
 			{
+				actions: [
+					{
+						icon: 'call',
+						title: 'CALL BACK',
+						callback: 'callBack',
+						foreground: true
+					}
+				],
 				subject: `Missed Call from ${senderUsername}`,
 				text: `${targetName}, ${senderUsername} tried to call you.`
 			} :
@@ -1019,6 +1042,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				subject: `${
 					count > 1 ? `${count} new messages` : 'New Message'
 				} from ${senderUsername}`,
+				tag: metadata.castleSessionID,
 				text: `${targetName}, ${senderName} has sent you a message.`
 			} :
 		notification.type === NotificationTypes.Yo ?
@@ -1039,28 +1063,17 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		text,
 		eventDetails,
 		{
-			actions: !activeCall ?
-				undefined :
-				[
-					{
-						icon: 'call_end',
-						title: 'DECLINE',
-						callback: 'callReject',
-						foreground: false
-					},
-					{
-						icon: 'call',
-						title: 'ANSWER',
-						callback: 'callAccept',
-						foreground: true
-					}
-				],
+			actions,
+			additionalData: {
+				callMetadata,
+				notificationID,
+				notificationType: notification.type,
+				senderUsername
+			},
 			badge,
 			highPriority: activeCall,
 			inboxStyle: !activeCall,
-			notificationID: notificationID,
-			notificationType: notification.type,
-			tag: notificationID
+			tag: `${notification.type}_${tag}`
 		},
 		true
 	);

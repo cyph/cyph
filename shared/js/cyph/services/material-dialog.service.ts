@@ -50,6 +50,7 @@ export class MaterialDialogService extends BaseProvider
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title?: string;
 		},
 		closeFunction?: IResolvable<() => void>,
@@ -58,6 +59,13 @@ export class MaterialDialogService extends BaseProvider
 		ok: boolean;
 		promptResponse: string | IForm | any | undefined;
 	}> {
+		if (typeof o.timeout === 'number' && o.timeout <= 0) {
+			return {
+				ok: false,
+				promptResponse: undefined
+			};
+		}
+
 		return this.lock(async () => {
 			const matDialogRef = o.bottomSheet ?
 				this.matBottomSheet.open(DialogConfirmComponent) :
@@ -138,9 +146,21 @@ export class MaterialDialogService extends BaseProvider
 			if (o.timeout !== undefined && !isNaN(o.timeout)) {
 				(async () => {
 					await sleep(o.timeout);
-					if (!hasReturned) {
-						close(false);
+					if (hasReturned) {
+						return;
 					}
+
+					close(false);
+
+					if (!o.timeoutMessage) {
+						return;
+					}
+
+					await this.toast(
+						o.timeoutMessage,
+						0,
+						this.stringsService.ok
+					);
 				})();
 			}
 
@@ -246,6 +266,7 @@ export class MaterialDialogService extends BaseProvider
 			ok?: string;
 			okFAB?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -325,6 +346,7 @@ export class MaterialDialogService extends BaseProvider
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -340,6 +362,7 @@ export class MaterialDialogService extends BaseProvider
 				value: any;
 			}[];
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -356,6 +379,7 @@ export class MaterialDialogService extends BaseProvider
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -377,6 +401,7 @@ export class MaterialDialogService extends BaseProvider
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -398,7 +423,7 @@ export class MaterialDialogService extends BaseProvider
 		const snackbar = this.matSnackbar.open(
 			content,
 			action === undefined ? undefined : action.toUpperCase(),
-			{duration}
+			{duration: duration > 0 ? duration : undefined}
 		);
 
 		const wasManuallyDismissed =

@@ -8,11 +8,10 @@ const sendMessage = async (
 	body,
 	{
 		actions,
+		additionalData,
 		badge,
 		highPriority,
 		inboxStyle = true,
-		notificationID,
-		notificationType,
 		ring,
 		tag
 	} = {}
@@ -51,41 +50,31 @@ const sendMessage = async (
 				};
 
 				const data = {
-					...notification,
-					notificationID,
-					notificationType,
 					...(actions ? {actions} : {}),
 					...(highPriority ? {priority: 2} : {}),
 					...(inboxStyle ? {style: 'inbox'} : {}),
-					...(tag && platform === 'ios' ? {'thread-id': tag} : {})
+					...(tag && platform === 'ios' ? {'thread-id': tag} : {}),
+					...additionalData
 				};
 
 				const payload = {
-					data,
-					notification,
+					...(platform === 'android' ?
+						{data: {...notification, ...data}} :
+						{data, notification}),
 					to: token
 				};
 
-				const response = await new Promise((resolve, reject) => {
-					messaging.send(payload, (err, response) => {
+				return new Promise(resolve => {
+					messaging.send(payload, async (err, _RESPONSE) => {
 						if (err) {
-							reject(err);
+							await ref.child(token).remove();
+							resolve(false);
 						}
 						else {
-							resolve(response);
+							resolve(true);
 						}
 					});
 				});
-
-				await Promise.all(
-					response.results
-						.filter(o => !!o.error)
-						.map(async (_, i) =>
-							ref.child(platformTokens[i]).remove()
-						)
-				).catch(() => {});
-
-				return response.successCount > 0;
 			})
 	)).reduce((a, b) => a || b, false);
 };

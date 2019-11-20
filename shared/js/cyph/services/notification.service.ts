@@ -116,14 +116,20 @@ export class NotificationService extends BaseProvider
 	 * Rings.
 	 * @returns True if accepted or false if timeout.
 	 */
-	public async ring (accept: Promise<boolean>) : Promise<boolean> {
+	public async ring (
+		accept: () => Promise<boolean>,
+		silent: boolean = false
+	) : Promise<boolean> {
 		return this.ringLock(async () => {
 			try {
 				this.ringtone.currentTime = 0;
-				await this.ringtone.play();
+
+				if (!silent) {
+					await this.ringtone.play().catch(() => {});
+				}
 
 				return await Promise.race([
-					accept,
+					accept(),
 					sleep(this.ringTimeout).then(() => false)
 				]);
 			}
