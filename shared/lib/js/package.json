@@ -234,6 +234,7 @@
 		"jasmine-spec-reporter": "^4.2.1",
 		"jquery": "^3.4.1",
 		"jquery-appear-original": "^0.6.2",
+		"jsdoc": "3.5.5",
 		"jsdom": "^15.2.1",
 		"jspdf": "^1.5.3",
 		"karma": "^4.4.1",
