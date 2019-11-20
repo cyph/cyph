@@ -1057,8 +1057,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 			inboxStyle: !activeCall,
 			notificationID: notificationID,
 			notificationType: notification.type,
-			tag: notificationID,
-			timeToLive: !activeCall ? undefined : metadata.expires - Date.now()
+			tag: notificationID
 		},
 		true
 	);

@@ -14,8 +14,7 @@ const sendMessage = async (
 		notificationID,
 		notificationType,
 		ring,
-		tag,
-		timeToLive
+		tag
 	} = {}
 ) => {
 	const ref = database.ref(
@@ -64,7 +63,6 @@ const sendMessage = async (
 				const payload = {
 					data,
 					notification,
-					time_to_live: Math.floor(timeToLive / 1000),
 					to: token
 				};
 
