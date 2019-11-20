@@ -86,6 +86,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param o.markdown Currently unsupported (ignored).
 	 * @param o.okFAB Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
+	 * @param o.timeoutMessage Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async confirm (
@@ -99,6 +100,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			ok?: string;
 			okFAB?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -172,6 +174,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param o.password Currently unsupported (ignored).
 	 * @param o.preFill Currently unsupported (ignored).
 	 * @param o.timeout Currently unsupported (ignored).
+	 * @param o.timeoutMessage Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	/* eslint-disable-next-line @typescript-eslint/require-await */
@@ -186,6 +189,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -201,6 +205,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 				value: any;
 			}[];
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -217,6 +222,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>
@@ -238,6 +244,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		closeFunction?: IResolvable<() => void>

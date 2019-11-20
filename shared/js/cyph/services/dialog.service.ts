@@ -48,6 +48,7 @@ export class DialogService extends BaseProvider {
 			ok?: string;
 			okFAB?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
@@ -97,6 +98,7 @@ export class DialogService extends BaseProvider {
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
@@ -110,6 +112,7 @@ export class DialogService extends BaseProvider {
 				value: any;
 			}[];
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
@@ -124,6 +127,7 @@ export class DialogService extends BaseProvider {
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
@@ -144,6 +148,7 @@ export class DialogService extends BaseProvider {
 			placeholder?: string;
 			preFill?: string;
 			timeout?: number;
+			timeoutMessage?: string;
 			title: string;
 		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>

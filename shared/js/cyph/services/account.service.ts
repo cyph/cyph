@@ -482,6 +482,8 @@ export class AccountService extends BaseProvider {
 								ok: this.stringsService.answer,
 								okFAB: 'phone',
 								timeout: expires - timestamp,
+								timeoutMessage: this.stringsService
+									.p2pTimeoutIncoming,
 								title:
 									callType === 'audio' ?
 										this.stringsService.incomingCallAudio :
