@@ -1066,7 +1066,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		}
 
 		navigator.serviceWorker.addEventListener('message', (e: any) => {
-			const data = e?.notification;
+			const data = e?.data?.notification?.FCM_MSG;
 			if (!data) {
 				return;
 			}
