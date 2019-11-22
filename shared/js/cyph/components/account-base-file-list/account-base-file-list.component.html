@@ -154,7 +154,47 @@
 
 		<br />
 
-		<div *ngIf="(envService.isMobile | async) === false">
+		<!-- No records - TODO: move into strings service with singular & plurals -->
+		<div
+			*ngIf="
+				(
+					accountFilesService.config[recordType].list()
+					| async
+					| cyphFilter: filterFunction
+				).length < 1
+			"
+			fxLayoutAlign="center"
+		>
+			<h2>
+				You have no
+				{{
+					recordType == recordTypes.Password ?
+						'passwords' :
+					recordType == recordTypes.Note ?
+						filterFunction == null ?
+							'notes' :
+							'messages' :
+					recordType == recordTypes.File ?
+						'files' :
+					recordType == recordTypes.Doc ?
+						'docs' :
+					recordType == recordTypes.Wallet ?
+						'wallets' :
+						'content'
+				}}
+			</h2>
+		</div>
+
+		<div
+			*ngIf="
+				(envService.isMobile | async) === false &&
+				(
+					accountFilesService.config[recordType].list()
+					| async
+					| cyphFilter: filterFunction
+				).length > 0
+			"
+		>
 			<mat-table
 				matSort
 				[dataSource]="
