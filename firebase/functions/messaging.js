@@ -63,6 +63,7 @@ const sendMessage = async (
 					...(platform === 'android' ?
 						{data: {...notification, ...data}} :
 						{data, notification}),
+					priority: 'high',
 					to: token
 				};
 
