@@ -32,6 +32,13 @@ const sendMessage = async (
 						ring && platform === 'android' ? 'ringtone' : 'default',
 					tag,
 					title: 'Cyph',
+					...(platform === 'android' ?
+						{
+							android_channel_id: ring ?
+								'cyph-rings' :
+								'cyph-notifications'
+						} :
+						{}),
 					...(platform === 'unknown' || platform === 'web' ?
 						{
 							icon:
