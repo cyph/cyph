@@ -38,9 +38,6 @@ export class NotificationService extends BaseProvider
 		'/assets/audio/ring.mp3'
 	);
 
-	/** @ignore */
-	private readonly tag: string = 'NotificationService';
-
 	/** Max ring time. */
 	public readonly ringTimeout: number = 45000;
 
@@ -190,42 +187,53 @@ export class NotificationService extends BaseProvider
 		catch {}
 
 		this.workerService
-			.registerServiceWorkerFunction(this.tag, this.tag, tag => {
-				self.addEventListener('notificationclick', (e: any) => {
-					try {
-						if (e.notification.tag !== tag) {
-							return;
+			.registerServiceWorkerFunction(
+				'NotificationService',
+				undefined,
+				() => {
+					(<any> self).addEventListener(
+						'notificationclick',
+						(e: any) => {
+							const clients = (<any> self).clients;
+
+							e.notification.close();
+
+							e.waitUntil(
+								clients
+									.matchAll({
+										type: 'window'
+									})
+									.then((clientList: any[]) => {
+										const client = clientList.find(
+											c => 'focus' in c
+										);
+
+										if (client) {
+											client.focus();
+											return client;
+										}
+										if (clients.openWindow) {
+											return clients.openWindow('/');
+										}
+									})
+									.then((client: any) => {
+										if (
+											!client ||
+											!e.notification ||
+											!e.notification.data
+										) {
+											return;
+										}
+
+										client.postMessage({
+											notification: e.notification.data
+										});
+									})
+							);
 						}
-
-						e.notification.close();
-
-						e.waitUntil(
-							(<any> self).clients
-								.matchAll({type: 'window'})
-								.then((clientList: any) => {
-									for (const client of clientList) {
-										try {
-											if (!client.focused) {
-												return client
-													.focus()
-													.catch(() => {});
-											}
-										}
-										catch {
-											try {
-												return clientList.openWindow(
-													client
-												);
-											}
-											catch {}
-										}
-									}
-								})
-						);
-					}
-					catch {}
-				});
-			})
+					);
+				}
+			)
 			.catch(() => {});
 	}
 }

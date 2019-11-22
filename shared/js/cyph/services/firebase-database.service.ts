@@ -199,48 +199,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 							});
 						}
 					);
-
-					(<any> self).addEventListener(
-						'notificationclick',
-						(e: any) => {
-							const clients = (<any> self).clients;
-
-							e.notification.close();
-
-							e.waitUntil(
-								clients
-									.matchAll({
-										type: 'window'
-									})
-									.then((clientList: any[]) => {
-										const client = clientList.find(
-											c => 'focus' in c
-										);
-
-										if (client) {
-											client.focus();
-											return client;
-										}
-										if (clients.openWindow) {
-											return clients.openWindow('/');
-										}
-									})
-									.then((client: any) => {
-										if (
-											!client ||
-											!e.notification ||
-											!e.notification.data
-										) {
-											return;
-										}
-
-										client.postMessage({
-											notification: e.notification.data
-										});
-									})
-							);
-						}
-					);
 				}
 			);
 
