@@ -1055,7 +1055,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				].map(
 					o =>
 						new Promise<void>((resolve, reject) => {
-							this.cordova?.messaging.createChannel(
+							(<any> self).PushNotification.createChannel(
 								resolve,
 								reject,
 								{
