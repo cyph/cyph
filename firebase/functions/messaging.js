@@ -28,11 +28,10 @@ const sendMessage = async (
 				const notification = {
 					badge,
 					body,
+					sound:
+						ring && platform === 'android' ? 'ringtone' : 'default',
 					tag,
 					title: 'Cyph',
-					...(ring && platform === 'android' ?
-						{sound: 'ringtone'} :
-						{}),
 					...(platform === 'unknown' || platform === 'web' ?
 						{
 							icon:
