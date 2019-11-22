@@ -191,7 +191,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 								return;
 							}
 
-							(<ServiceWorkerRegistration> (
+							return (<ServiceWorkerRegistration> (
 								(<any> self).registration
 							)).showNotification(payload.notification.title, {
 								...payload.notification,
@@ -1105,6 +1105,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		navigator.serviceWorker.addEventListener('message', (e: any) => {
 			const data = e?.notification;
+			if (!data) {
+				return;
+			}
 
 			if (
 				typeof data === 'object' &&
