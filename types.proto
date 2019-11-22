@@ -809,11 +809,14 @@ message Environment {
 		/** API key. */
 		required string apiKey = 1;
 
+		/** App ID. */
+		required string appId = 2;
+
 		/** Firebase Cloud Messaging ID. */
-		required string messagingSenderId = 2;
+		required string messagingSenderId = 3;
 
 		/** Project ID. */
-		required string project = 3;
+		required string project = 4;
 	}
 
 	/**

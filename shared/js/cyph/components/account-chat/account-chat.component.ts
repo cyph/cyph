@@ -498,6 +498,25 @@ export class AccountChatComponent extends BaseProvider
 									)
 									.then(() => {
 										if (
+											sessionSubID &&
+											this.accountSessionService
+												.remoteUser.value &&
+											!this.accountSessionService
+												.remoteUser.value.anonymous
+										) {
+											this.accountDatabaseService.notify(
+												this.accountSessionService
+													.remoteUser.value.username,
+												NotificationTypes.Call,
+												{
+													callType,
+													id: sessionSubID,
+													missed: true
+												}
+											);
+										}
+
+										if (
 											this.destroyed.value ||
 											this.p2pWebRTCService.loading
 												.value ||
@@ -513,27 +532,6 @@ export class AccountChatComponent extends BaseProvider
 											3000
 										);
 										this.p2pWebRTCService.close();
-
-										if (
-											!sessionSubID ||
-											!this.accountSessionService
-												.remoteUser.value ||
-											this.accountSessionService
-												.remoteUser.value.anonymous
-										) {
-											return;
-										}
-
-										this.accountDatabaseService.notify(
-											this.accountSessionService
-												.remoteUser.value.username,
-											NotificationTypes.Call,
-											{
-												callType,
-												id: sessionSubID,
-												missed: true
-											}
-										);
 									});
 
 								this.p2pWebRTCService.disconnect

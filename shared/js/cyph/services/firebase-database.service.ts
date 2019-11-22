@@ -1038,6 +1038,35 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		if (this.cordova) {
 			this.cordova.messaging.on(event, handler);
+
+			await Promise.all(
+				[
+					{
+						description: 'Push notifications',
+						id: 'cyph-notifications',
+						importance: 4
+					},
+					{
+						description: 'Ringing push notifications',
+						id: 'cyph-rings',
+						importance: 5,
+						sound: 'ringtone'
+					}
+				].map(
+					o =>
+						new Promise<void>((resolve, reject) => {
+							this.cordova?.messaging.createChannel(
+								resolve,
+								reject,
+								{
+									...o,
+									visibility: 1
+								}
+							);
+						})
+				)
+			).catch(() => {});
+
 			return;
 		}
 

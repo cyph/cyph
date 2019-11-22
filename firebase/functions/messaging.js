@@ -6,15 +6,7 @@ const sendMessage = async (
 	namespace,
 	username,
 	body,
-	{
-		actions,
-		additionalData,
-		badge,
-		highPriority,
-		inboxStyle = true,
-		ring,
-		tag
-	} = {}
+	{actions, additionalData, badge, inboxStyle = true, ring, tag} = {}
 ) => {
 	const ref = database.ref(
 		`${namespace}/users/${normalize(username)}/messagingTokens`
@@ -36,10 +28,16 @@ const sendMessage = async (
 				const notification = {
 					badge,
 					body,
+					sound:
+						ring && platform === 'android' ? 'ringtone' : 'default',
 					tag,
 					title: 'Cyph',
-					...(ring && platform === 'android' ?
-						{sound: 'ringtone'} :
+					...(platform === 'android' ?
+						{
+							android_channel_id: ring ?
+								'cyph-rings' :
+								'cyph-notifications'
+						} :
 						{}),
 					...(platform === 'unknown' || platform === 'web' ?
 						{
@@ -51,7 +49,7 @@ const sendMessage = async (
 
 				const data = {
 					'content-available': true,
-					'priority': highPriority ? 2 : 1,
+					'priority': 2,
 					'visibility': 1,
 					...(actions ? {actions} : {}),
 					...(inboxStyle ? {style: 'inbox'} : {}),
@@ -63,6 +61,7 @@ const sendMessage = async (
 					...(platform === 'android' ?
 						{data: {...notification, ...data}} :
 						{data, notification}),
+					priority: 'high',
 					to: token
 				};
 
