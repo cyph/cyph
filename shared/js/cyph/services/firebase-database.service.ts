@@ -183,20 +183,24 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 					(<any> self).messaging.setBackgroundMessageHandler(
 						(payload: any) => {
-							if (
-								!payload ||
-								!payload.notification ||
-								!payload.notification.title
-							) {
+							const notification = !payload ?
+								undefined :
+							payload.notification && payload.notification.title ?
+								payload.notification :
+								payload.data;
+
+							if (!notification || !notification.title) {
 								return;
 							}
 
+							notification.data = payload;
+
 							return (<ServiceWorkerRegistration> (
 								(<any> self).registration
-							)).showNotification(payload.notification.title, {
-								...payload.notification,
-								data: payload
-							});
+							)).showNotification(
+								notification.title,
+								notification
+							);
 						}
 					);
 				}
