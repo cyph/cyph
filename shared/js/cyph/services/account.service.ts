@@ -235,8 +235,6 @@ export class AccountService extends BaseProvider {
 		callType: string;
 		expires: number;
 		id: string;
-		name: string;
-		realUsername: string;
 		route: string[];
 		timestamp: number;
 		user: User;
@@ -255,22 +253,22 @@ export class AccountService extends BaseProvider {
 			throw new Error('Expired call.');
 		}
 
-		const user = await this.accountUserLookupService.getUser(username);
+		const user = await this.accountUserLookupService.getUser(
+			username,
+			false,
+			false,
+			true
+		);
 		if (!user) {
 			throw new Error('User not found.');
 		}
 
-		const [contactID, {name, realUsername}] = await Promise.all([
-			user.contactID,
-			user.accountUserProfile.getValue()
-		]);
+		const contactID = await user.contactID;
 
 		return {
 			callType,
 			expires,
 			id,
-			name,
-			realUsername,
 			route: [callType, contactID, id, expiresString],
 			timestamp,
 			user
@@ -473,11 +471,14 @@ export class AccountService extends BaseProvider {
 						const {
 							callType,
 							expires,
-							name,
-							realUsername,
 							route,
 							user
 						} = await this.getIncomingCallRoute(k);
+
+						const {
+							name,
+							realUsername
+						} = await user.accountUserProfile.getValue();
 
 						const incomingCallAnswer = getOrSetDefault(
 							this.incomingCallAnswers,
