@@ -181,6 +181,25 @@ export class FirebaseDatabaseService extends DatabaseService {
 					(<any> self).firebase.initializeApp(config);
 					(<any> self).messaging = (<any> self).firebase.messaging();
 
+					(<any> self).messaging.setBackgroundMessageHandler(
+						(payload: any) => {
+							if (
+								!payload ||
+								!payload.notification ||
+								!payload.notification.title
+							) {
+								return;
+							}
+
+							(<ServiceWorkerRegistration> (
+								(<any> self).registration
+							)).showNotification(payload.notification.title, {
+								...payload.notification,
+								data: payload
+							});
+						}
+					);
+
 					(<any> self).addEventListener(
 						'notificationclick',
 						(e: any) => {
@@ -199,11 +218,25 @@ export class FirebaseDatabaseService extends DatabaseService {
 										);
 
 										if (client) {
-											return client.focus();
+											client.focus();
+											return client;
 										}
 										if (clients.openWindow) {
 											return clients.openWindow('/');
 										}
+									})
+									.then((client: any) => {
+										if (
+											!client ||
+											!e.notification ||
+											!e.notification.data
+										) {
+											return;
+										}
+
+										client.postMessage({
+											notification: e.notification.data
+										});
 									})
 							);
 						}
@@ -1070,15 +1103,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return;
 		}
 
-		const messaging = (await this.app).messaging();
+		navigator.serviceWorker.addEventListener('message', (e: any) => {
+			const data = e?.notification;
 
-		messaging.onMessage(data => {
 			if (
 				typeof data === 'object' &&
 				typeof data.additionalData !== 'object'
 			) {
 				data.additionalData = data.data;
 			}
+
 			debugLog(() => ({pushNotification: data}));
 			handler(data);
 		});
