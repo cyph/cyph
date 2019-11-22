@@ -995,13 +995,13 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				actions: [
 					{
 						icon: 'call_end',
-						title: 'DECLINE',
+						title: 'Decline',
 						callback: 'callReject',
 						foreground: false
 					},
 					{
 						icon: 'call',
-						title: 'ANSWER',
+						title: 'Answer',
 						callback: 'callAccept',
 						foreground: true
 					}
@@ -1014,7 +1014,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				actions: [
 					{
 						icon: 'call',
-						title: 'CALL BACK',
+						title: 'Call Back',
 						callback: 'callBack',
 						foreground: true
 					}
