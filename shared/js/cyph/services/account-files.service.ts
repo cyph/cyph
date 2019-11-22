@@ -180,6 +180,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes;
 			route: string;
 			securityModel?: SecurityModels;
+			stringPlural: string;
 			subroutable: boolean;
 		}
 	> = {
@@ -194,6 +195,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.Appointment,
 			route: 'appointments',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('appointments'),
 			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.Doc]: {
@@ -207,6 +209,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.Doc,
 			route: 'docs',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('docs'),
 			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.EhrApiKey]: {
@@ -222,6 +225,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.EhrApiKey,
 			route: 'ehr-access',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('EHR access keys'),
 			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.File]: {
@@ -238,6 +242,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.File,
 			route: 'files',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('files'),
 			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.Form]: {
@@ -251,6 +256,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.Form,
 			route: 'forms',
 			securityModel: SecurityModels.privateSigned,
+			stringPlural: this.stringsService.translate('forms'),
 			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.MessagingGroup]: {
@@ -264,6 +270,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.MessagingGroup,
 			route: '',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('groups'),
 			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.Note]: {
@@ -278,6 +285,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.Note,
 			route: 'notes',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('notes'),
 			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.Password]: {
@@ -291,6 +299,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.Password,
 			route: 'passwords',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('passwords'),
 			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.RedoxPatient]: {
@@ -304,6 +313,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.RedoxPatient,
 			route: 'incoming-patient-info',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('patient info'),
 			subroutable: false
 		},
 		[AccountFileRecord.RecordTypes.Wallet]: {
@@ -317,6 +327,7 @@ export class AccountFilesService extends BaseProvider {
 			recordType: AccountFileRecord.RecordTypes.Wallet,
 			route: 'wallets',
 			securityModel: undefined,
+			stringPlural: this.stringsService.translate('wallets'),
 			subroutable: true
 		}
 	};

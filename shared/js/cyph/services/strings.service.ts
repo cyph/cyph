@@ -1024,6 +1024,9 @@ export class StringsService extends BaseProvider {
 	public readonly welcomeToProduct = `Welcome to ${this.internalProduct}`;
 
 	/** @see StringsService */
+	public readonly youHaveNo = `You have no`;
+
+	/** @see StringsService */
 	public readonly youInvited = `You invited`;
 
 	/** @see StringsService */
@@ -1043,6 +1046,11 @@ export class StringsService extends BaseProvider {
 			(s, [k, v]) => s.replace(`\${${k.toUpperCase()}}`, v),
 			baseString
 		);
+	}
+
+	/** @see translate */
+	public translate (s: string) : string {
+		return translate(s);
 	}
 
 	constructor (

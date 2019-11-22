@@ -154,33 +154,23 @@
 
 		<br />
 
-		<!-- No records - TODO: move into strings service with singular & plurals -->
 		<div
+			fxLayoutAlign="center"
 			*ngIf="
 				(
 					accountFilesService.config[recordType].list()
 					| async
 					| cyphFilter: filterFunction
-				).length < 1
+				)?.length < 1
 			"
-			fxLayoutAlign="center"
 		>
 			<h2>
-				You have no
 				{{
-					recordType == recordTypes.Password ?
-						'passwords' :
-					recordType == recordTypes.Note ?
-						filterFunction == null ?
-							'notes' :
-							'messages' :
-					recordType == recordTypes.File ?
-						'files' :
-					recordType == recordTypes.Doc ?
-						'docs' :
-					recordType == recordTypes.Wallet ?
-						'wallets' :
-						'content'
+					stringsService.youHaveNo +
+						' ' +
+						(anonymousMessages ?
+							stringsService.messages :
+							accountFilesService.config[recordType].stringPlural)
 				}}
 			</h2>
 		</div>
@@ -192,7 +182,7 @@
 					accountFilesService.config[recordType].list()
 					| async
 					| cyphFilter: filterFunction
-				).length > 0
+				)?.length > 0
 			"
 		>
 			<mat-table
