@@ -696,17 +696,19 @@ export class AccountService extends BaseProvider {
 		}
 
 		this.accountDatabaseService.pushNotificationsSubscribe(async data => {
+			const notificationType = toInt(
+				data?.additionalData?.notificationType
+			);
+
 			if (
-				!data ||
-				!data.additionalData ||
-				data.additionalData.dismissed ||
-				!(data.additionalData.notificationType in NotificationTypes) ||
-				typeof data.additionalData.notificationID !== 'string'
+				data?.additionalData?.dismissed ||
+				!(notificationType in NotificationTypes) ||
+				typeof data?.additionalData?.notificationID !== 'string'
 			) {
 				return;
 			}
 
-			switch (data.additionalData.notificationType) {
+			switch (notificationType) {
 				case NotificationTypes.File:
 					const {recordType} = await this.accountFilesService.getFile(
 						data.additionalData.notificationID
@@ -733,9 +735,7 @@ export class AccountService extends BaseProvider {
 				callEvent,
 				async data => {
 					if (
-						!data ||
-						!data.additionalData ||
-						typeof data.additionalData.callMetadata !== 'string'
+						typeof data?.additionalData?.callMetadata !== 'string'
 					) {
 						return;
 					}
@@ -775,11 +775,7 @@ export class AccountService extends BaseProvider {
 		this.accountDatabaseService.pushNotificationsSubscribe(
 			'callBack',
 			data => {
-				if (
-					!data ||
-					!data.additionalData ||
-					typeof data.additionalData.senderUsername !== 'string'
-				) {
+				if (typeof data?.additionalData?.senderUsername !== 'string') {
 					return;
 				}
 

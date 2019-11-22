@@ -1073,6 +1073,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const messaging = (await this.app).messaging();
 
 		messaging.onMessage(data => {
+			if (
+				typeof data === 'object' &&
+				typeof data.additionalData !== 'object'
+			) {
+				data.additionalData = data.data;
+			}
 			debugLog(() => ({pushNotification: data}));
 			handler(data);
 		});

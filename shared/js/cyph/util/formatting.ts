@@ -111,6 +111,10 @@ export const toFloat = (
 };
 
 /** Stricter parseInt. */
-export const toInt = (s: string) : number =>
-	/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	/^\d+$/.test(s) ? parseInt(s, 10) : NaN;
+export const toInt = (s: string | number | any) : number =>
+	typeof s === 'number' ?
+		Math.floor(s) :
+	typeof s === 'string' && /^\d+$/.test(s) ?
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		parseInt(s, 10) :
+		NaN;
