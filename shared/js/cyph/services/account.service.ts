@@ -720,9 +720,16 @@ export class AccountService extends BaseProvider {
 					break;
 
 				case NotificationTypes.Message:
+					if (
+						typeof data?.additionalData?.senderUsername !== 'string'
+					) {
+						return;
+					}
+
 					this.router.navigate([
 						'messages',
-						data.additionalData.notificationID
+						'user',
+						data.additionalData.senderUsername
 					]);
 			}
 		});
