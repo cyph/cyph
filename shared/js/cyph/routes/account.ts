@@ -112,6 +112,7 @@ export const account: Route = {
 			path: 'appointments/:appointmentID/forms/:id',
 			component: AccountFormComponent
 		},
+		{path: 'audio/user/:username', component: AccountChatComponent},
 		{
 			path: 'audio/:contactID',
 			component: AccountChatComponent,
@@ -383,6 +384,7 @@ export const account: Route = {
 				'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',
 			component: UploadEhrCredentialsComponent
 		},
+		{path: 'video/user/:username', component: AccountChatComponent},
 		{
 			path: 'video/:contactID',
 			component: AccountChatComponent,

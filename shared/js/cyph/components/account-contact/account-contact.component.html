@@ -116,9 +116,8 @@
 					'/messages/external-user/' + username :
 				envService.isTelehealthFull ?
 					'/profile/' + username :
-				((user | async)?.contactID | async) ?
-					'/messages/' + (((user | async)?.contactID | async) || '') :
-					'/messages/user/' + username
+					'/messages/' +
+					(((user | async)?.contactID | async) || 'user/' + username)
 			"
 			*ngIf="
 				accountContactsService.contactState(username).watch()
@@ -327,10 +326,9 @@
 				<button
 					mat-menu-item
 					[routerLink]="
-						((user | async)?.contactID | async) ?
-							'/messages/' +
-							(((user | async)?.contactID | async) || '') :
-							undefined
+						'/messages/' +
+						(((user | async)?.contactID | async) ||
+							'user/' + username)
 					"
 				>
 					<mat-icon>chat</mat-icon>
@@ -339,10 +337,9 @@
 				<button
 					mat-menu-item
 					[routerLink]="
-						((user | async)?.contactID | async) ?
-							'/call/' +
-							(((user | async)?.contactID | async) || '') :
-							undefined
+						'/call/' +
+						(((user | async)?.contactID | async) ||
+							'user/' + username)
 					"
 				>
 					<mat-icon>call</mat-icon>
@@ -351,10 +348,9 @@
 				<button
 					mat-menu-item
 					[routerLink]="
-						((user | async)?.contactID | async) ?
-							'/video/' +
-							(((user | async)?.contactID | async) || '') :
-							undefined
+						'/video/' +
+						(((user | async)?.contactID | async) ||
+							'user/' + username)
 					"
 				>
 					<mat-icon>video_call</mat-icon>
