@@ -5,6 +5,7 @@ import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
 import {AccountSessionService} from './account-session.service';
+import {AccountService} from './account.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DialogService} from './dialog.service';
@@ -90,6 +91,12 @@ export class AccountP2PService extends P2PService {
 		if (this.accountSessionService.group) {
 			this.isEnabled.next(false);
 		}
+
+		this.subscriptions.push(
+			this.isActive.subscribe(isActive => {
+				this.accountService.isCallActive.next(isActive);
+			})
+		);
 	}
 
 	constructor (
@@ -104,6 +111,9 @@ export class AccountP2PService extends P2PService {
 
 		/** @ignore */
 		private readonly router: Router,
+
+		/** @ignore */
+		private readonly accountService: AccountService,
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,

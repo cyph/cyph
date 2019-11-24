@@ -66,6 +66,7 @@
 				fxLayoutGap="8px"
 				*ngIf="
 					(accountService.header | async) !== undefined &&
+					(accountService.isCallActive | async) === false &&
 					!(
 						(envService.isMobile | async) &&
 						(accountService.header | async)?.desktop !==

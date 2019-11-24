@@ -150,6 +150,9 @@ export class AccountService extends BaseProvider {
 	/** Indicates the status of the interstitial. */
 	public readonly interstitial = new BehaviorSubject<boolean>(false);
 
+	/** Indicates whether a call is currently in progress. */
+	public readonly isCallActive = new BehaviorSubject<boolean>(false);
+
 	/** Indicates whether the UI is ready. */
 	public readonly isUiReady = new BehaviorSubject<boolean>(false);
 
