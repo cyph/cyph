@@ -6,6 +6,9 @@ import {ChatService} from '../services/chat.service';
  * Manages P2P WebRTC logic.
  */
 export interface IP2PWebRTCService {
+	/** If true, camera access has been requested for the current call. */
+	readonly cameraActivated: BehaviorSubject<boolean>;
+
 	/** Emits on session disconnect. */
 	readonly disconnect: Observable<void>;
 

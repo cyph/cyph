@@ -217,6 +217,9 @@ export class P2PWebRTCService extends BaseProvider
 	>(undefined);
 
 	/** @inheritDoc */
+	public readonly cameraActivated = new BehaviorSubject<boolean>(false);
+
+	/** @inheritDoc */
 	public readonly disconnect: Observable<void> = this.disconnectInternal;
 
 	/** @inheritDoc */
@@ -508,7 +511,7 @@ export class P2PWebRTCService extends BaseProvider
 
 			this.loading.next(true);
 			this.incomingStream.next({...this.outgoingStream.value});
-			// this.videoEnabled.next(!!this.outgoingStream.value.video);
+			this.cameraActivated.next(!!this.outgoingStream.value.video);
 			this.isActive.next(true);
 
 			const p2pSessionData = this.p2pSessionData;

@@ -298,6 +298,18 @@ export class P2PService extends BaseProvider {
 			return this.disabledAlert();
 		}
 
+		if (!this.p2pWebRTCService.cameraActivated.value) {
+			const camera = (await this.p2pWebRTCService.getDevices())
+				.cameras[0];
+			if (!camera) {
+				this.p2pWebRTCService.videoEnabled.next(false);
+				return;
+			}
+			this.p2pWebRTCService.cameraActivated.next(true);
+			await camera.switchTo();
+			return;
+		}
+
 		if (!this.isActive.value) {
 			await this.request('video');
 		}
