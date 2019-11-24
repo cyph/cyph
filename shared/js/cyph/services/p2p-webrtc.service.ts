@@ -254,7 +254,7 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly resolveReady: () => void = this._READY.resolve;
 
 	/** @inheritDoc */
-	public readonly videoEnabled = new BehaviorSubject<boolean>(false);
+	public readonly videoEnabled = new BehaviorSubject<boolean>(true);
 
 	/** @ignore */
 	private async getWebRTC () : Promise<{
@@ -508,7 +508,7 @@ export class P2PWebRTCService extends BaseProvider
 
 			this.loading.next(true);
 			this.incomingStream.next({...this.outgoingStream.value});
-			this.videoEnabled.next(!!this.outgoingStream.value.video);
+			// this.videoEnabled.next(!!this.outgoingStream.value.video);
 			this.isActive.next(true);
 
 			const p2pSessionData = this.p2pSessionData;
