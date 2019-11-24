@@ -78,6 +78,7 @@ export class P2PWebRTCService extends BaseProvider
 			const wasInitialCallPending = this.initialCallPending.value;
 			this.isAccepted = false;
 			this.isActive.next(false);
+			this.loading.next(false);
 			this.initialCallPending.next(false);
 			this.p2pSessionData = undefined;
 
@@ -237,7 +238,7 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly isActive = new BehaviorSubject<boolean>(false);
 
 	/** @inheritDoc */
-	public readonly loading = new BehaviorSubject<boolean>(false);
+	public readonly loading = new BehaviorSubject<boolean>(true);
 
 	/** @inheritDoc */
 	public readonly localMediaError = new BehaviorSubject<boolean>(false);
@@ -419,7 +420,8 @@ export class P2PWebRTCService extends BaseProvider
 		mics: {label: string; switchTo: () => Promise<void>}[];
 		speakers: {label: string; switchTo: () => Promise<void>}[];
 	}> {
-		const allDevices = await navigator.mediaDevices.enumerateDevices();
+		const allDevices = await (async () =>
+			navigator.mediaDevices.enumerateDevices())().catch(() => []);
 
 		const filterDevices = (
 			kind: string,
@@ -583,9 +585,16 @@ export class P2PWebRTCService extends BaseProvider
 
 			let initialLoadComplete = false;
 
-			const localStream = await navigator.mediaDevices.getUserMedia(
-				this.outgoingStream.value
-			);
+			const localStream = await (async () =>
+				navigator.mediaDevices.getUserMedia(
+					this.outgoingStream.value
+				))().catch(() => undefined);
+
+			if (localStream === undefined) {
+				await this.close();
+				await handlers.failed();
+				return;
+			}
 
 			const localVideo = <HTMLVideoElement> $localVideo[0];
 			localVideo.srcObject = localStream;

@@ -678,6 +678,9 @@ export class StringsService extends BaseProvider {
 	public readonly p2pDisconnect = `Call has been disconnected.`;
 
 	/** @see StringsService */
+	public readonly p2pFailed = `Call failed. Please try again later.`;
+
+	/** @see StringsService */
 	public readonly p2pInit = `You are about to initiate an encrypted`;
 
 	/** @see StringsService */

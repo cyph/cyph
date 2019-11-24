@@ -20,6 +20,9 @@ export interface IP2PHandlers {
 	/** Connected handler. */
 	connected: (isConnected: boolean) => MaybePromise<void>;
 
+	/** Failed handler. */
+	failed: () => MaybePromise<void>;
+
 	/** Loaded handler. */
 	loaded: () => MaybePromise<void>;
 

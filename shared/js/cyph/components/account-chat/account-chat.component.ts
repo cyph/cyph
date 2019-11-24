@@ -465,6 +465,8 @@ export class AccountChatComponent extends BaseProvider
 									return;
 								}
 
+								this.accountService.isCallActive.next(true);
+
 								if (
 									!(await (this.answering.value ?
 										this.accountP2PService.handlers.acceptConfirm(

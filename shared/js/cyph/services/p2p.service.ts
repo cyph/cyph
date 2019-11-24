@@ -74,6 +74,9 @@ export class P2PService extends BaseProvider {
 				}
 			}
 		},
+		failed: async () => {
+			await this.dialogService.toast(this.stringsService.p2pFailed, 3000);
+		},
 		loaded: async () => {
 			this.timer.next(new Timer(undefined, true, undefined, true));
 
