@@ -703,7 +703,6 @@ $default-white: map-get($mat-grey, 100);
 	@include mat-autocomplete-theme($theme);
 	@include mat-card-theme($theme);
 	@include mat-dialog-theme($theme);
-	@include mat-list-theme($theme);
 	@include mat-option-theme($theme);
 	@include mat-select-theme($theme);
 	@include mat-sidenav-theme($theme);
@@ -714,6 +713,7 @@ $default-white: map-get($mat-grey, 100);
 		background-color: mat-color(map-get($theme, background), card);
 	}
 
+	cyph-account-menu,
 	mat-card,
 	mat-dialog-container {
 		@include mat-button-theme($theme);
@@ -722,6 +722,7 @@ $default-white: map-get($mat-grey, 100);
 		@include mat-expansion-panel-theme($theme);
 		@include mat-form-field-theme($theme);
 		@include mat-input-theme($theme);
+		@include mat-list-theme($theme);
 		@include cyph-progress-theme($theme-partial-inverted);
 		@include mat-tabs-theme($theme-partial-inverted);
 
