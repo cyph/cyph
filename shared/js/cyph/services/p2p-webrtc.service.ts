@@ -613,7 +613,8 @@ export class P2PWebRTCService extends BaseProvider
 							.filter(s => s.indexOf('ssrc-audio-level') < 0)
 							.join('\n') :
 						sdp,
-				stream: localStream
+				stream: localStream,
+				trickle: false
 			});
 
 			peer.on('close', () => {
