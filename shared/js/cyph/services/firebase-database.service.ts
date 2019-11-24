@@ -1236,13 +1236,20 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T,
-		confirmSuccess: boolean = true
+		confirmSuccess: boolean = true,
+		progress?: BehaviorSubject<number>
 	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
 		return this.ngZone.runOutsideAngular(async () =>
 			retryUntilSuccessful(async () => {
+				if (progress) {
+					this.ngZone.run(() => {
+						progress.next(0);
+					});
+				}
+
 				const url = await urlPromise;
 
 				const data = await serialize(proto, value);
@@ -1268,9 +1275,26 @@ export class FirebaseDatabaseService extends DatabaseService {
 							.then();
 					}
 					else {
-						await (await this.getStorageRef(url, hash))
-							.put(new Blob([data]))
-							.then();
+						const uploadTask = (await this.getStorageRef(
+							url,
+							hash
+						)).put(new Blob([data]));
+
+						if (progress) {
+							uploadTask.on(
+								firebase.storage.TaskEvent.STATE_CHANGED,
+								snapshot => {
+									progress.next(
+										Math.floor(
+											(snapshot.bytesTransferred /
+												snapshot.totalBytes) *
+												100
+										)
+									);
+								}
+							);
+						}
+
 						await (await this.getDatabaseRef(url))
 							.set({
 								hash,
@@ -1286,6 +1310,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 					}
 
 					this.cache.setItem(url, data, hash);
+				}
+
+				if (progress) {
+					this.ngZone.run(() => {
+						progress.next(100);
+						progress.complete();
+					});
 				}
 
 				return {hash, url};
@@ -1357,22 +1388,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const cancel = resolvable();
 		const progress = new BehaviorSubject(0);
 
-		const result = this.ngZone.runOutsideAngular(async () => {
-			const setItemResult = await this.setItem(
-				urlPromise,
-				proto,
-				value,
-				confirmSuccess
-			);
-
-			/* TODO: Do this for real */
-			this.ngZone.run(() => {
-				progress.next(100);
-				progress.complete();
-			});
-
-			return setItemResult;
-		});
+		const result = this.setItem(
+			urlPromise,
+			proto,
+			value,
+			confirmSuccess,
+			progress
+		);
 
 		return {cancel: cancel.resolve, progress, result};
 	}
