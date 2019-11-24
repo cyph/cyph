@@ -198,6 +198,8 @@ service firebase.storage {
 					allow read;
 				}
 
+				// match /p2pWarning/{hash} {}
+
 				// match /patientInfo/{hash} {}
 
 				// match /pin {

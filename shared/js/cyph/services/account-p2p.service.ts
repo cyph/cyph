@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {NotificationTypes} from '../proto';
+import {BooleanProto, NotificationTypes} from '../proto';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
@@ -23,7 +23,35 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountP2PService extends P2PService {
-	/** @ignore */
+	/** @inheritDoc */
+	protected async p2pWarningPersist (
+		f: () => Promise<boolean>
+	) : Promise<boolean> {
+		if (!this.accountDatabaseService.currentUser.value) {
+			return f();
+		}
+
+		if (
+			await this.accountDatabaseService
+				.getItem('p2pWarning', BooleanProto)
+				.catch(() => false)
+		) {
+			return true;
+		}
+
+		if (await f()) {
+			this.accountDatabaseService.setItem(
+				'p2pWarning',
+				BooleanProto,
+				true
+			);
+			return true;
+		}
+
+		return false;
+	}
+
+	/** @inheritDoc */
 	protected async request (callType: 'audio' | 'video') : Promise<void> {
 		if (!this.accountSessionService.remoteUser.value) {
 			return;

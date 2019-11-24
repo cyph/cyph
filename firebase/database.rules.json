@@ -827,6 +827,18 @@
 						}
 					},
 
+					"p2pWarning": {
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
 					"patientInfo": {
 						"data": {
 							".validate": "newData.isString()"

@@ -3,7 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
-import {BooleanProto, IAppointment} from '../proto';
+import {IAppointment} from '../proto';
 import {Timer} from '../timer';
 import {prettyPrint} from '../util/serialization';
 import {sleep} from '../util/wait';
@@ -198,25 +198,11 @@ export class P2PService extends BaseProvider {
 			this.stringsService.p2pWarning;
 	}
 
-	/** @ignore */
-	private async p2pWarningPersist (
+	/** Handles remembering user's answer to P2P warning, if applicable. */
+	protected async p2pWarningPersist (
 		f: () => Promise<boolean>
 	) : Promise<boolean> {
-		if (this.sessionInitService.ephemeral) {
-			return f();
-		}
-
-		let answer = await this.localStorageService
-			.getItem('p2pWarning', BooleanProto)
-			.catch(() => false);
-
-		if (answer) {
-			return true;
-		}
-
-		answer = await f();
-		this.localStorageService.setItem('p2pWarning', BooleanProto, answer);
-		return answer;
+		return f();
 	}
 
 	/** @see P2PWebRTCService.request */
