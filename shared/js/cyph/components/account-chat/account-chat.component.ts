@@ -97,14 +97,10 @@ export class AccountChatComponent extends BaseProvider
 	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
 	/** Indicates whether call is pending or not yet loaded. */
-	public readonly initialCallPending = combineLatest([
-		this.p2pWebRTCService.initialCallPending,
-		this.p2pWebRTCService.loading
-	]).pipe(
+	public readonly initialCallPending = this.p2pWebRTCService.initialCallPending.pipe(
 		map(
-			([initialCallPending, loading]) =>
-				(initialCallPending || loading) &&
-				!this.sessionInitService.ephemeral
+			initialCallPending =>
+				initialCallPending && !this.sessionInitService.ephemeral
 		)
 	);
 
