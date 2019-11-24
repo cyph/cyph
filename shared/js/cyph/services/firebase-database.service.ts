@@ -1048,7 +1048,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						sound: 'ringtone'
 					}
 				].map(
-					o =>
+					async o =>
 						new Promise<void>((resolve, reject) => {
 							(<any> self).PushNotification.createChannel(
 								resolve,
