@@ -675,7 +675,15 @@ export class P2PWebRTCService extends BaseProvider
 			});
 
 			peer.on('stream', async (remoteStream: MediaStream) => {
-				debugLog(() => ({webRTC: {remoteStream}}));
+				debugLog(() => ({
+					webRTC: {
+						remoteStream: {
+							audio: remoteStream.getAudioTracks().length > 0,
+							stream: remoteStream,
+							video: remoteStream.getVideoTracks().length > 0
+						}
+					}
+				}));
 
 				const remoteVideo = document.createElement('video');
 				remoteVideo.srcObject = remoteStream;
@@ -692,7 +700,19 @@ export class P2PWebRTCService extends BaseProvider
 
 			peer.on('track', async (remoteTrack, remoteStream) => {
 				debugLog(() => ({
-					webRTC: {track: {remoteStream, remoteTrack}}
+					webRTC: {
+						track: {
+							remoteStream: {
+								audio: remoteStream.getAudioTracks().length > 0,
+								stream: remoteStream,
+								video: remoteStream.getVideoTracks().length > 0
+							},
+							remoteTrack: {
+								kind: remoteTrack.kind,
+								track: remoteTrack
+							}
+						}
+					}
 				}));
 
 				if (initialLoadComplete) {
