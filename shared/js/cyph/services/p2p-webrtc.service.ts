@@ -677,11 +677,6 @@ export class P2PWebRTCService extends BaseProvider
 			peer.on('stream', async (remoteStream: MediaStream) => {
 				debugLog(() => ({webRTC: {remoteStream}}));
 
-				this.incomingStream.next({
-					audio: remoteStream.getAudioTracks().length > 0,
-					video: remoteStream.getVideoTracks().length > 0
-				});
-
 				const remoteVideo = document.createElement('video');
 				remoteVideo.srcObject = remoteStream;
 				$remoteVideo.empty();
