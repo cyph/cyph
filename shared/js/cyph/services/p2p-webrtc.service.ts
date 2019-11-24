@@ -698,29 +698,38 @@ export class P2PWebRTCService extends BaseProvider
 				initialLoadComplete = true;
 			});
 
-			peer.on('track', async (remoteTrack, remoteStream) => {
-				debugLog(() => ({
-					webRTC: {
-						track: {
-							remoteStream: {
-								audio: remoteStream.getAudioTracks().length > 0,
-								stream: remoteStream,
-								video: remoteStream.getVideoTracks().length > 0
-							},
-							remoteTrack: {
-								kind: remoteTrack.kind,
-								track: remoteTrack
+			peer.on(
+				'track',
+				async (
+					remoteTrack: MediaStreamTrack,
+					remoteStream: MediaStream
+				) => {
+					debugLog(() => ({
+						webRTC: {
+							track: {
+								remoteStream: {
+									audio:
+										remoteStream.getAudioTracks().length >
+										0,
+									stream: remoteStream,
+									video:
+										remoteStream.getVideoTracks().length > 0
+								},
+								remoteTrack: {
+									kind: remoteTrack.kind,
+									track: remoteTrack
+								}
 							}
 						}
-					}
-				}));
+					}));
 
-				if (initialLoadComplete) {
-					/* Workaround for simple-peer calling this event too early(?) */
-					await sleep(2000);
-					this.loading.next(false);
+					if (initialLoadComplete) {
+						/* Workaround for simple-peer calling this event too early(?) */
+						await sleep(2000);
+						this.loading.next(false);
+					}
 				}
-			});
+			);
 
 			handlers.connected(true);
 			this.webRTC.next({localStream, peer});
