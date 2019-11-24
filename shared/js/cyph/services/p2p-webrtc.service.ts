@@ -108,6 +108,8 @@ export class P2PWebRTCService extends BaseProvider
 		},
 
 		webRTC: async (data: SimplePeer.SignalData) : Promise<void> => {
+			debugLog(() => ({webRTC: {incomingSignal: data}}));
+
 			(await this.getWebRTC()).peer.signal(data);
 		}
 	};
@@ -605,19 +607,26 @@ export class P2PWebRTCService extends BaseProvider
 			});
 
 			peer.on('close', () => {
+				debugLog(() => ({webRTC: {close: true}}));
+
 				for (const subscription of webRTCSubscriptions) {
 					subscription.unsubscribe();
 				}
+
 				this.close();
 			});
 
 			peer.on('connect', () => {
+				debugLog(() => ({webRTC: {connect: true}}));
+
 				this.progressUpdate(this.loadingEvents.connectionReady, 40);
 			});
 
 			peer.on('data', data => {
 				try {
 					const o = msgpack.decode(data);
+
+					debugLog(() => ({webRTC: {data: o}}));
 
 					if (o.switchingDevice) {
 						this.loading.next(true);
@@ -629,14 +638,20 @@ export class P2PWebRTCService extends BaseProvider
 						video: !!o.video
 					});
 				}
-				catch {}
+				catch (err) {
+					debugLogError(() => ({webRTC: {dataFail: {data, err}}}));
+				}
 			});
 
-			peer.on('error', () => {
+			peer.on('error', err => {
+				debugLogError(() => ({webRTC: {error: err}}));
+
 				this.localMediaError.next(true);
 			});
 
 			peer.on('signal', (data: SimplePeer.SignalData) => {
+				debugLog(() => ({webRTC: {outgoingSignal: data}}));
+
 				this.sessionService.send([
 					rpcEvents.p2p,
 					{
@@ -650,6 +665,8 @@ export class P2PWebRTCService extends BaseProvider
 			});
 
 			peer.on('stream', async (remoteStream: MediaStream) => {
+				debugLog(() => ({webRTC: {remoteStream}}));
+
 				this.incomingStream.next({
 					audio: remoteStream.getAudioTracks().length > 0,
 					video: remoteStream.getVideoTracks().length > 0
@@ -668,7 +685,11 @@ export class P2PWebRTCService extends BaseProvider
 				initialLoadComplete = true;
 			});
 
-			peer.on('track', async () => {
+			peer.on('track', async (remoteTrack, remoteStream) => {
+				debugLog(() => ({
+					webRTC: {track: {remoteStream, remoteTrack}}
+				}));
+
 				if (initialLoadComplete) {
 					/* Workaround for simple-peer calling this event too early(?) */
 					await sleep(2000);
