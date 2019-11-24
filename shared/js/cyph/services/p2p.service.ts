@@ -258,6 +258,13 @@ export class P2PService extends BaseProvider {
 		this.isEnabled.next(
 			await this.sessionCapabilitiesService.capabilities.p2p
 		);
+
+		this.ioSwitcher.devices.next(await this.p2pWebRTCService.getDevices());
+		this.subscriptions.push(
+			this.ioSwitcher.devices.subscribe(({cameras}) => {
+				this.p2pWebRTCService.videoEnabled.next(cameras.length > 0);
+			})
+		);
 	}
 
 	/** Opens notes. */
