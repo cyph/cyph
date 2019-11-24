@@ -452,7 +452,6 @@
 		class="transfer-list"
 		*ngIf="
 			chat.state === states.chat &&
-			sessionInitService.ephemeral &&
 			!(forceDisplayVideo || (p2pService.isActive | async) === true)
 		"
 		[@fadeIn]="'in'"
