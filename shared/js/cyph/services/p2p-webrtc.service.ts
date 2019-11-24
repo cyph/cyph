@@ -630,7 +630,6 @@ export class P2PWebRTCService extends BaseProvider
 
 					if (o.switchingDevice) {
 						this.loading.next(true);
-						return;
 					}
 
 					this.incomingStream.next({
@@ -853,12 +852,6 @@ export class P2PWebRTCService extends BaseProvider
 			}
 
 			if (deviceIdChanged) {
-				webRTC.peer.send(
-					msgpack.encode({
-						switchingDevice: true
-					})
-				);
-
 				const newStream = await navigator.mediaDevices.getUserMedia(
 					this.outgoingStream.value
 				);
@@ -891,7 +884,10 @@ export class P2PWebRTCService extends BaseProvider
 			webRTC.peer.send(
 				msgpack.encode({
 					audio: !!this.outgoingStream.value.audio,
-					video: !!this.outgoingStream.value.video
+					video: !!this.outgoingStream.value.video,
+					...(deviceIdChanged ?
+						{switchingDevice: deviceIdChanged} :
+						{})
 				})
 			);
 		});
