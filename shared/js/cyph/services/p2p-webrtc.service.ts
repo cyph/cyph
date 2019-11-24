@@ -86,12 +86,10 @@ export class P2PWebRTCService extends BaseProvider
 			this.outgoingStream.next({audio: false, video: false});
 
 			if (this.webRTC.value) {
-				for (const track of [
-					...this.webRTC.value.localStream.getAudioTracks(),
-					...this.webRTC.value.localStream.getVideoTracks()
-				]) {
+				for (const track of this.webRTC.value.localStream.getTracks()) {
 					track.enabled = false;
 					track.stop();
+					this.webRTC.value.localStream.removeTrack(track);
 				}
 
 				this.webRTC.value.peer.destroy();
@@ -864,33 +862,28 @@ export class P2PWebRTCService extends BaseProvider
 			}
 
 			if (deviceIdChanged) {
-				const newStream = await navigator.mediaDevices.getUserMedia(
-					this.outgoingStream.value
-				);
+				const [localVideo, newStream] = await Promise.all([
+					this.localVideo.then(async f => waitForIterable<JQuery>(f)),
+					navigator.mediaDevices.getUserMedia(
+						this.outgoingStream.value
+					)
+				]);
 
-				const addTracks = new Set(
-					medium === 'audio' ?
-						newStream.getAudioTracks() :
-					medium === 'video' ?
-						newStream.getVideoTracks() :
-						newStream.getTracks()
-				);
+				webRTC.peer.addStream(newStream);
+				webRTC.peer.removeStream(webRTC.localStream);
 
-				const removeTracks = (medium === 'audio' ?
-					webRTC.localStream.getAudioTracks() :
-				medium === 'video' ?
-					webRTC.localStream.getVideoTracks() :
-					webRTC.localStream.getTracks()
-				).filter(track => !addTracks.has(track));
+				(<HTMLVideoElement> localVideo[0]).srcObject = newStream;
 
-				for (const track of removeTracks) {
+				for (const track of webRTC.localStream.getTracks()) {
+					track.enabled = false;
+					track.stop();
 					webRTC.localStream.removeTrack(track);
-					(<any> webRTC.peer).removeTrack(track, webRTC.localStream);
 				}
-				for (const track of Array.from(addTracks)) {
-					webRTC.localStream.addTrack(track);
-					(<any> webRTC.peer).addTrack(track, webRTC.localStream);
-				}
+
+				this.webRTC.next({
+					...webRTC,
+					localStream: newStream
+				});
 			}
 
 			webRTC.peer.send(
