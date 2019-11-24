@@ -336,6 +336,11 @@ mat-card {
 		}
 	}
 
+	&.fullscreen,
+	&.full {
+		border-radius: 0 !important;
+	}
+
 	.card-header-logo {
 		position: absolute;
 		height: 2em;
