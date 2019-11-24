@@ -296,7 +296,7 @@
 					mat-mini-fab
 					[matTooltip]="stringsService.speakerSwitchTitle"
 					matTooltipPosition="left"
-					[disabled]="
+					[class.visibility-hidden]="
 						(p2pService.ioSwitcher.devices | async)?.speakers
 							.length < 1
 					"
