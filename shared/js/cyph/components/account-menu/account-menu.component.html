@@ -718,7 +718,6 @@
 				class="invite"
 				[matMenuTriggerFor]="inviteMenu"
 				aria-label="Invite Friend"
-				(click)="click()"
 				*ngIf="((accountInviteService.count | async) || 0) > 0"
 			>
 				<mat-icon
@@ -740,6 +739,7 @@
 					[matTooltip]="stringsService.addContactTooltipInvite"
 					matTooltipPosition="right"
 					(click)="
+						click();
 						accountContactsService.addContactPrompt(
 							newContactTypes.invite
 						)
@@ -752,7 +752,7 @@
 					mat-menu-item
 					[matTooltip]="stringsService.addContactTooltipInviteLink"
 					matTooltipPosition="right"
-					(click)="accountInviteService.showInviteURL()"
+					(click)="click(); accountInviteService.showInviteURL()"
 					*ngIf="((accountInviteService.count | async) || 0) > 0"
 				>
 					{{ stringsService.inviteLinkButton }}
