@@ -73,6 +73,8 @@ export class P2PWebRTCService extends BaseProvider
 		},
 
 		kill: async () : Promise<void> => {
+			const webRTC = this.webRTC.value;
+
 			this.disconnectInternal.next();
 
 			const wasAccepted = this.isAccepted;
@@ -86,15 +88,15 @@ export class P2PWebRTCService extends BaseProvider
 			this.incomingStream.next({audio: false, video: false});
 			this.outgoingStream.next({audio: false, video: false});
 
-			if (this.webRTC.value) {
-				for (const track of this.webRTC.value.localStream.getTracks()) {
+			if (webRTC) {
+				for (const track of webRTC.localStream.getTracks()) {
 					track.enabled = false;
 					track.stop();
-					this.webRTC.value.localStream.removeTrack(track);
+					webRTC.localStream.removeTrack(track);
 				}
 
-				this.webRTC.value.peer.destroy();
-				this.webRTC.value.timer.stop();
+				webRTC.peer.destroy();
+				webRTC.timer.stop();
 				this.webRTC.next(undefined);
 			}
 
