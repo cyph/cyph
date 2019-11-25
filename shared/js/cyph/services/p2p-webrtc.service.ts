@@ -502,6 +502,12 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** @inheritDoc */
 	public async join () : Promise<void> {
+		if (!P2PWebRTCService.isSupported) {
+			await this.close();
+			await (await this.handlers).failed();
+			return;
+		}
+
 		return this.joinLock(async () => {
 			if (this.webRTC.value || !this.p2pSessionData) {
 				return;

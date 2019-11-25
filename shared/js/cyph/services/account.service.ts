@@ -39,6 +39,7 @@ import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {FingerprintService} from './fingerprint.service';
 import {NotificationService} from './notification.service';
+import {P2PWebRTCService} from './p2p-webrtc.service';
 import {StringsService} from './strings.service';
 import {WindowWatcherService} from './window-watcher.service';
 
@@ -452,6 +453,10 @@ export class AccountService extends BaseProvider {
 				.pipe(map(plan => plan > CyphPlans.Free))
 				.subscribe(this.envService.pro)
 		);
+
+		if (!P2PWebRTCService.isSupported) {
+			return;
+		}
 
 		const incomingCalls = this.accountDatabaseService.getAsyncMap(
 			'incomingCalls',
