@@ -1295,6 +1295,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 							);
 						}
 
+						await uploadTask.then();
+
 						await (await this.getDatabaseRef(url))
 							.set({
 								hash,
