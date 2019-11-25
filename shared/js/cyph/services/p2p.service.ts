@@ -240,7 +240,8 @@ export class P2PService extends BaseProvider {
 			remoteVideo
 		);
 		this.isEnabled.next(
-			await this.sessionCapabilitiesService.capabilities.p2p
+			P2PWebRTCService.isSupported &&
+				(await this.sessionCapabilitiesService.capabilities.p2p)
 		);
 
 		this.ioSwitcher.devices.next(await this.p2pWebRTCService.getDevices());
