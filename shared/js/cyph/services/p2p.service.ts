@@ -51,22 +51,16 @@ export class P2PService extends BaseProvider {
 			);
 		},
 		connected: async isConnected => {
-			if (isConnected) {
-				if (this.sessionInitService.ephemeral) {
-					await this.chatService.addMessage({
-						shouldNotify: false,
-						value: this.stringsService.p2pConnect
-					});
-				}
+			if (!this.sessionInitService.ephemeral) {
+				return;
 			}
-			else {
-				if (this.sessionInitService.ephemeral) {
-					await this.chatService.addMessage({
-						shouldNotify: false,
-						value: this.stringsService.p2pDisconnect
-					});
-				}
-			}
+
+			await this.chatService.addMessage({
+				shouldNotify: false,
+				value: isConnected ?
+					this.stringsService.p2pConnect :
+					this.stringsService.p2pDisconnect
+			});
 		},
 		failed: async () => {
 			await this.dialogService.toast(this.stringsService.p2pFailed, 3000);

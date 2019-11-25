@@ -614,7 +614,7 @@ export class P2PWebRTCService extends BaseProvider
 				))()
 				.catch(async err => {
 					debugLogError(() => ({
-						webRTC: {navigator_mediaDevices_getUserMedia: err}
+						webRTC: {navigatorMediaDevicesGetUserMedia: err}
 					}));
 					return new Promise<MediaStream>((resolve, reject) => {
 						navigator.getUserMedia(
@@ -626,7 +626,7 @@ export class P2PWebRTCService extends BaseProvider
 				})
 				.catch(err => {
 					debugLogError(() => ({
-						webRTC: {navigator_getUserMedia: err}
+						webRTC: {navigatorGetUserMedia: err}
 					}));
 					return undefined;
 				});
