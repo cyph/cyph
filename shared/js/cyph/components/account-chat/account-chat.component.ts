@@ -144,7 +144,7 @@ export class AccountChatComponent extends BaseProvider
 	public async ngOnDestroy () : Promise<void> {
 		super.ngOnDestroy();
 
-		if (this.p2pWebRTCService.isActive) {
+		if (this.p2pWebRTCService.isActive.value) {
 			await this.p2pWebRTCService.close();
 		}
 
@@ -484,7 +484,7 @@ export class AccountChatComponent extends BaseProvider
 									.ring(
 										async () =>
 											Promise.race([
-												this.p2pWebRTCService.loading
+												this.p2pWebRTCService.isActive
 													.pipe(
 														filter(b => b),
 														take(1)
@@ -516,7 +516,7 @@ export class AccountChatComponent extends BaseProvider
 
 										if (
 											this.destroyed.value ||
-											this.p2pWebRTCService.loading
+											this.p2pWebRTCService.isActive
 												.value ||
 											!this.p2pWebRTCService
 												.initialCallPending.value
