@@ -660,17 +660,15 @@ export class AccountService extends BaseProvider {
 		}
 
 		if (this.envService.isWeb && this.envService.isMobileOS) {
-			new Hammer(document.body).on('panleft', () => {
+			new Hammer(document.body).on('panleft', e => {
 				if (
+					Math.abs(e.deltaY) >= 4 ||
+					!this.mobileMenuOpenInternal.value ||
 					this.accountDatabaseService.currentUser.value ===
 						undefined ||
 					this.windowWatcherService.width.value >
 						this.configService.responsiveMaxWidths.sm
 				) {
-					return;
-				}
-
-				if (!this.mobileMenuOpenInternal.value) {
 					return;
 				}
 
