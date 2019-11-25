@@ -384,12 +384,17 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 			fs.readFileSync('websign.yaml').toString().
 				replace(/\n/g, '☁').
 				replace(/([^☁]+SUBRESOURCE.*?☁☁)/, yaml =>
-					fs.readFileSync('appcache.appcache').toString().
-						split('CACHE:')[1].
-						split('NETWORK:')[0].
-						replace(/\n\//g, '\n').
-						split('\n').
-						filter(s => s.trim() && s !== 'unsupportedbrowser').
+					[
+						'.well-known/apple-app-site-association',
+						'.well-known/assetlinks.json',
+						'apple-app-site-association',
+						...fs.readFileSync('appcache.appcache').toString().
+							split('CACHE:')[1].
+							split('NETWORK:')[0].
+							replace(/\n\//g, '\n').
+							split('\n').
+							filter(s => s.trim() && s !== 'unsupportedbrowser')
+					].
 						map(subresource => yaml.replace(/SUBRESOURCE/g, subresource)).
 						join('')
 				).
