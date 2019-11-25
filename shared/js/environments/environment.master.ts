@@ -2,6 +2,7 @@ import {IEnvironment} from '../cyph/proto/types';
 
 /** @inheritDoc */
 export const environment: IEnvironment = {
+	debug: true,
 	envName: 'master',
 	firebase: {
 		apiKey: 'AIzaSyBbgAnjdANkPxeNwq7BqCU2Go-T9Fumhfs',
