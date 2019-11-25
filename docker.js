@@ -440,13 +440,17 @@ const pullUpdates = () => {
 	)
 		.then(didUpdate =>
 			didUpdate ?
-				undefined :
+				true :
 				editImage(
 					shellScripts.aptUpdate.command,
 					shellScripts.aptUpdate.condition
 				)
 		)
-		.then(() => {
+		.then(didUpdate => {
+			if (didUpdate) {
+				backup();
+			}
+
 			spawn('node', [
 				path.join(
 					__dirname,
@@ -477,7 +481,7 @@ const pullUpdates = () => {
 
 			fs.writeFileSync(ready, '');
 		});
-		*/
+	*/
 };
 
 const removeImage = (name, opts) => {
@@ -718,7 +722,6 @@ initPromise.then(() => {
 		return;
 	}
 
-	backup();
 	killContainer(containerName(args.command));
 
 	pullUpdates()
