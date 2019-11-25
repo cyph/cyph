@@ -612,17 +612,24 @@ export class P2PWebRTCService extends BaseProvider
 				navigator.mediaDevices.getUserMedia(
 					this.outgoingStream.value
 				))()
-				.catch(
-					async () =>
-						new Promise<MediaStream>((resolve, reject) => {
-							navigator.getUserMedia(
-								this.outgoingStream.value,
-								resolve,
-								reject
-							);
-						})
-				)
-				.catch(() => undefined);
+				.catch(async err => {
+					debugLogError(() => ({
+						webRTC: {navigator_mediaDevices_getUserMedia: err}
+					}));
+					return new Promise<MediaStream>((resolve, reject) => {
+						navigator.getUserMedia(
+							this.outgoingStream.value,
+							resolve,
+							reject
+						);
+					});
+				})
+				.catch(err => {
+					debugLogError(() => ({
+						webRTC: {navigator_getUserMedia: err}
+					}));
+					return undefined;
+				});
 
 			if (localStream === undefined) {
 				await this.close();
