@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, Observable, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import SimplePeer from 'simple-peer';
 import {BaseProvider} from '../base-provider';
@@ -525,7 +525,6 @@ export class P2PWebRTCService extends BaseProvider
 			this.isActive.next(true);
 
 			const p2pSessionData = this.p2pSessionData;
-			const webRTCSubscriptions: Subscription[] = [];
 
 			const $localVideo = await waitForIterable<JQuery>(
 				await this.localVideo
@@ -629,10 +628,6 @@ export class P2PWebRTCService extends BaseProvider
 
 			peer.on('close', () => {
 				debugLog(() => ({webRTC: {close: true}}));
-
-				for (const subscription of webRTCSubscriptions) {
-					subscription.unsubscribe();
-				}
 
 				this.close();
 			});
