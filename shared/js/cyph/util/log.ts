@@ -48,6 +48,7 @@ const debugLogInternal = async (
 
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	const timestamp = Date.now();
+	const date = new Date(timestamp);
 
 	const log = {
 		args,
@@ -62,11 +63,11 @@ const debugLogInternal = async (
 
 	if (error) {
 		/* eslint-disable-next-line no-console */
-		console.error(...(argsString ? [argsString] : args));
+		console.error(date, ...(argsString ? [argsString] : args));
 	}
 	else {
 		/* eslint-disable-next-line no-console */
-		console.log(...(argsString ? [argsString] : args));
+		console.log(date, ...(argsString ? [argsString] : args));
 	}
 
 	return log;
