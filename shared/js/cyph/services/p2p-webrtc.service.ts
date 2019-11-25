@@ -730,6 +730,7 @@ export class P2PWebRTCService extends BaseProvider
 				}));
 
 				const remoteVideo = document.createElement('video');
+				remoteVideo.setAttribute('playsinline', '');
 				if ('srcObject' in HTMLVideoElement.prototype) {
 					remoteVideo.srcObject = remoteStream;
 				}
