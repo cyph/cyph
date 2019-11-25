@@ -378,6 +378,7 @@ fi
 
 if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 	cd websign
+	mv .well-known well-known
 	node -e "
 		fs.writeFileSync(
 			'websign.yaml',
@@ -385,8 +386,8 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 				replace(/\n/g, '☁').
 				replace(/([^☁]+SUBRESOURCE.*?☁☁)/, yaml =>
 					[
-						'.well-known/apple-app-site-association',
-						'.well-known/assetlinks.json',
+						'well-known/apple-app-site-association',
+						'well-known/assetlinks.json',
 						'apple-app-site-association',
 						...fs.readFileSync('appcache.appcache').toString().
 							split('CACHE:')[1].
@@ -398,7 +399,8 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 						map(subresource => yaml.replace(/SUBRESOURCE/g, subresource)).
 						join('')
 				).
-				replace(/☁/g, '\n')
+				replace(/☁/g, '\n').
+				replace(/\/well-known/g, '/.well-known')
 		)
 	"
 	cd ..
