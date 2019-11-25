@@ -106,6 +106,22 @@ export class P2PWebRTCService extends BaseProvider
 			else if (wasAccepted) {
 				await handlers.connected(false);
 			}
+
+			if ('srcObject' in HTMLVideoElement.prototype) {
+				return;
+			}
+
+			const [localVideo, remoteVideo] = await Promise.all([
+				this.localVideo
+					.then(async f => waitForIterable<JQuery>(f))
+					.then(arr => <HTMLVideoElement> arr[0]),
+				this.remoteVideo
+					.then(async f => waitForIterable<JQuery>(f))
+					.then(arr => <HTMLVideoElement> arr[0])
+			]);
+
+			URL.revokeObjectURL(localVideo.src);
+			URL.revokeObjectURL(remoteVideo.src);
 		},
 
 		webRTC: async (data: SimplePeer.SignalData) : Promise<void> => {
@@ -595,7 +611,18 @@ export class P2PWebRTCService extends BaseProvider
 			const localStream = await (async () =>
 				navigator.mediaDevices.getUserMedia(
 					this.outgoingStream.value
-				))().catch(() => undefined);
+				))()
+				.catch(
+					async () =>
+						new Promise<MediaStream>((resolve, reject) => {
+							navigator.getUserMedia(
+								this.outgoingStream.value,
+								resolve,
+								reject
+							);
+						})
+				)
+				.catch(() => undefined);
 
 			if (localStream === undefined) {
 				await this.close();
@@ -604,7 +631,12 @@ export class P2PWebRTCService extends BaseProvider
 			}
 
 			const localVideo = <HTMLVideoElement> $localVideo[0];
-			localVideo.srcObject = localStream;
+			if ('srcObject' in HTMLVideoElement.prototype) {
+				localVideo.srcObject = localStream;
+			}
+			else {
+				localVideo.src = URL.createObjectURL(localStream);
+			}
 			localVideo.play();
 			localVideo.muted = true;
 
@@ -691,7 +723,12 @@ export class P2PWebRTCService extends BaseProvider
 				}));
 
 				const remoteVideo = document.createElement('video');
-				remoteVideo.srcObject = remoteStream;
+				if ('srcObject' in HTMLVideoElement.prototype) {
+					remoteVideo.srcObject = remoteStream;
+				}
+				else {
+					remoteVideo.src = URL.createObjectURL(remoteStream);
+				}
 				$remoteVideo.empty();
 				$remoteVideo[0].appendChild(remoteVideo);
 				remoteVideo.play();
@@ -897,7 +934,9 @@ export class P2PWebRTCService extends BaseProvider
 
 			if (deviceIdChanged) {
 				const [localVideo, newStream] = await Promise.all([
-					this.localVideo.then(async f => waitForIterable<JQuery>(f)),
+					this.localVideo
+						.then(async f => waitForIterable<JQuery>(f))
+						.then(arr => <HTMLVideoElement> arr[0]),
 					navigator.mediaDevices.getUserMedia(
 						this.outgoingStream.value
 					)
@@ -906,7 +945,13 @@ export class P2PWebRTCService extends BaseProvider
 				webRTC.peer.addStream(newStream);
 				webRTC.peer.removeStream(webRTC.localStream);
 
-				(<HTMLVideoElement> localVideo[0]).srcObject = newStream;
+				if ('srcObject' in HTMLVideoElement.prototype) {
+					localVideo.srcObject = newStream;
+				}
+				else {
+					URL.revokeObjectURL(localVideo.src);
+					localVideo.src = URL.createObjectURL(newStream);
+				}
 
 				for (const track of webRTC.localStream.getTracks()) {
 					track.enabled = false;
