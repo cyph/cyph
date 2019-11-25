@@ -1,6 +1,8 @@
 import {BehaviorSubject, Observable} from 'rxjs';
+import SimplePeer from 'simple-peer';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {ChatService} from '../services/chat.service';
+import {Timer} from '../timer';
 
 /**
  * Manages P2P WebRTC logic.
@@ -35,6 +37,16 @@ export interface IP2PWebRTCService {
 
 	/** If true, toggling video is allowed during the current call. */
 	readonly videoEnabled: BehaviorSubject<boolean>;
+
+	/** WebRTC instance. */
+	readonly webRTC: BehaviorSubject<
+		| undefined
+		| {
+				localStream: MediaStream;
+				peer: SimplePeer.Instance;
+				timer: Timer;
+		  }
+	>;
 
 	/**
 	 * Accepts current call request (or preemptively accepts future call requests,

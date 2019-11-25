@@ -11,6 +11,7 @@ import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {ISessionCommand} from '../proto/types';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
+import {Timer} from '../timer';
 import {filterUndefinedOperator} from '../util/filter';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
@@ -93,6 +94,7 @@ export class P2PWebRTCService extends BaseProvider
 				}
 
 				this.webRTC.value.peer.destroy();
+				this.webRTC.value.timer.stop();
 				this.webRTC.next(undefined);
 			}
 
@@ -206,15 +208,6 @@ export class P2PWebRTCService extends BaseProvider
 	/** @ignore */
 	private readonly toggleLock = lockFunction();
 
-	/** @ignore */
-	private readonly webRTC = new BehaviorSubject<
-		| undefined
-		| {
-				localStream: MediaStream;
-				peer: SimplePeer.Instance;
-		  }
-	>(undefined);
-
 	/** @inheritDoc */
 	public readonly cameraActivated = new BehaviorSubject<boolean>(false);
 
@@ -258,10 +251,21 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public readonly videoEnabled = new BehaviorSubject<boolean>(true);
 
+	/** @inheritDoc */
+	public readonly webRTC = new BehaviorSubject<
+		| undefined
+		| {
+				localStream: MediaStream;
+				peer: SimplePeer.Instance;
+				timer: Timer;
+		  }
+	>(undefined);
+
 	/** @ignore */
 	private async getWebRTC () : Promise<{
 		localStream: MediaStream;
 		peer: SimplePeer.Instance;
+		timer: Timer;
 	}> {
 		return this.webRTC.pipe(filterUndefinedOperator(), take(1)).toPromise();
 	}
@@ -738,7 +742,11 @@ export class P2PWebRTCService extends BaseProvider
 			);
 
 			handlers.connected(true);
-			this.webRTC.next({localStream, peer});
+			this.webRTC.next({
+				localStream,
+				peer,
+				timer: new Timer(undefined, true, undefined, true)
+			});
 
 			this.initialCallPending.next(false);
 		});

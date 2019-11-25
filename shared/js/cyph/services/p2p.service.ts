@@ -4,7 +4,7 @@ import {map} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IAppointment} from '../proto';
-import {Timer} from '../timer';
+import {filterUndefinedOperator} from '../util/filter';
 import {prettyPrint} from '../util/serialization';
 import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
@@ -60,12 +60,6 @@ export class P2PService extends BaseProvider {
 				}
 			}
 			else {
-				if (this.timer.value) {
-					this.timer.value.stop();
-				}
-
-				this.timer.next(undefined);
-
 				if (this.sessionInitService.ephemeral) {
 					await this.chatService.addMessage({
 						shouldNotify: false,
@@ -78,8 +72,6 @@ export class P2PService extends BaseProvider {
 			await this.dialogService.toast(this.stringsService.p2pFailed, 3000);
 		},
 		loaded: async () => {
-			this.timer.next(new Timer(undefined, true, undefined, true));
-
 			if (!this.sessionInitService.ephemeral) {
 				this.chatService.initProgressFinish();
 				await sleep(1000);
@@ -189,7 +181,10 @@ export class P2PService extends BaseProvider {
 	public readonly isSidebarOpen = new BehaviorSubject<boolean>(false);
 
 	/** Countup timer for call duration. */
-	public readonly timer = new BehaviorSubject<Timer | undefined>(undefined);
+	public readonly timer = this.p2pWebRTCService.webRTC.pipe(
+		filterUndefinedOperator(),
+		map(o => o.timer)
+	);
 
 	/** @ignore */
 	private get p2pWarning () : string {
