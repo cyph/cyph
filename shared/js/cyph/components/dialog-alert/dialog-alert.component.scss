@@ -16,6 +16,8 @@ img {
 	> h6 {
 		&:only-child {
 			text-align: center;
+			word-break: break-all;
+			word-wrap: break-word;
 		}
 	}
 }
