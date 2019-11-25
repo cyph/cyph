@@ -1,1 +1,21 @@
 @import '../../../../css/mixins';
+
+img {
+	display: block;
+	max-height: 128px;
+	margin: auto;
+	margin-bottom: 32px;
+}
+
+:host ::ng-deep cyph-markdown > span {
+	> h1,
+	> h2,
+	> h3,
+	> h4,
+	> h5,
+	> h6 {
+		&:only-child {
+			text-align: center;
+		}
+	}
+}

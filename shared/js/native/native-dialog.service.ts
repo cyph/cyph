@@ -29,11 +29,18 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 
 	/**
 	 * @inheritDoc
+	 * @param o.image Currently unsupported (ignored).
 	 * @param o.markdown Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
 	 */
 	public async alert (
-		o: {content: string; markdown?: boolean; ok?: string; title?: string},
+		o: {
+			content: string;
+			image?: SafeUrl;
+			markdown?: boolean;
+			ok?: string;
+			title?: string;
+		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		if (closeFunction) {

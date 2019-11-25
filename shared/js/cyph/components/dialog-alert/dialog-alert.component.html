@@ -1,5 +1,6 @@
 <h1 matDialogTitle>{{ title }}</h1>
 <div mat-dialog-content>
+	<img cyphTranslate alt="Alert image" [src]="image" *ngIf="!!image" />
 	<cyph-markdown
 		[markdown]="content"
 		[targetSelf]="true"

@@ -16,7 +16,13 @@ import {IForm} from '../proto/types';
 export class DialogService extends BaseProvider {
 	/** Displays alert. */
 	public async alert (
-		_O: {content: string; markdown?: boolean; ok?: string; title?: string},
+		_O: {
+			content: string;
+			image?: SafeUrl;
+			markdown?: boolean;
+			ok?: string;
+			title?: string;
+		},
 		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<void> {
 		throw new Error(

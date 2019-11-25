@@ -62,10 +62,23 @@ export class AccountInviteService extends BaseProvider {
 
 	/** Displays invite link to user. */
 	public async showInviteURL () : Promise<void> {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.inviteLinkConfirm,
+				title: this.stringsService.inviteLinkTitle
+			}))
+		) {
+			return;
+		}
+
 		const invite = await this.getInviteURL();
 
 		return this.dialogService.alert({
-			content: invite.url,
+			content: this.stringsService.setParameters(
+				this.stringsService.inviteLinkText,
+				{link: invite.url}
+			),
+			image: await invite.qrCode(),
 			markdown: true,
 			title: this.stringsService.inviteLinkTitle
 		});

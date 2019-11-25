@@ -431,10 +431,16 @@ export class StringsService extends BaseProvider {
 	public readonly inviteContactTitle = `Invite Friend`;
 
 	/** @see StringsService */
-	public readonly inviteLinkTitle = `Invite Link`;
+	public readonly inviteLinkButton = `Generate Invite Link`;
 
 	/** @see StringsService */
-	public readonly inviteLinkButton = `Generate Invite Link`;
+	public readonly inviteLinkConfirm = `This will consume one of your available invites. Continue?`;
+
+	/** @see StringsService */
+	public readonly inviteLinkText = `## \${LINK}`;
+
+	/** @see StringsService */
+	public readonly inviteLinkTitle = `Invite Link`;
 
 	/** @see StringsService */
 	public readonly linkCopied = `${this.capitalize(

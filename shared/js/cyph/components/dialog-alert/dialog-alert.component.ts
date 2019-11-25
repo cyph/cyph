@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {SafeUrl} from '@angular/platform-browser';
 import {BaseProvider} from '../../base-provider';
 import {StringsService} from '../../services/strings.service';
 
@@ -14,6 +15,9 @@ import {StringsService} from '../../services/strings.service';
 export class DialogAlertComponent extends BaseProvider {
 	/** Content. */
 	public content?: string;
+
+	/** An image to display. */
+	public image?: SafeUrl;
 
 	/** Indicates whether content is Markdown. */
 	public markdown: boolean = false;

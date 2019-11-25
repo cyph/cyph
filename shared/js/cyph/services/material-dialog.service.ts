@@ -178,13 +178,21 @@ export class MaterialDialogService extends BaseProvider
 
 	/** @inheritDoc */
 	public async alert (
-		o: {content: string; markdown?: boolean; ok?: string; title?: string},
+		o: {
+			content: string;
+			image?: SafeUrl;
+			markdown?: boolean;
+			ok?: string;
+			title?: string;
+		},
 		closeFunction?: IResolvable<() => void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef = this.matDialog.open(DialogAlertComponent);
 
 			matDialogRef.componentInstance.content = o.content;
+
+			matDialogRef.componentInstance.image = o.image;
 
 			matDialogRef.componentInstance.markdown = !!o.markdown;
 
