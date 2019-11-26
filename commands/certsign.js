@@ -34,7 +34,6 @@ const certSign = async (projectId, standalone, namespace) => {
 		const testSign = projectId !== 'cyphme';
 		const configDir = `${os.homedir()}/.cyph`;
 		const lastIssuanceTimestampPath = `${configDir}/certsign-timestamps/${projectId}.${namespace}`;
-		const keyFilename = `${configDir}/firebase-credentials/${projectId}.json`;
 
 		/* Will remain hardcoded as true for the duration of the private beta */
 		const requireInvite = true;
@@ -50,16 +49,7 @@ const certSign = async (projectId, standalone, namespace) => {
 			removeItem,
 			setItem,
 			storage
-		} = databaseService({
-			firebase: {
-				credential: firebase.credential.cert(
-					JSON.parse(fs.readFileSync(keyFilename).toString())
-				),
-				databaseURL: `https://${projectId}.firebaseio.com`
-			},
-			project: {id: projectId},
-			storage: {keyFilename, projectId}
-		});
+		} = databaseService(projectId);
 
 		const pendingSignupsURL = `${namespace.replace(
 			/\./g,

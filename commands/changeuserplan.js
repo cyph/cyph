@@ -26,8 +26,6 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 			'https://cyph.app/' :
 			'https://staging.cyph.app/';
 
-	const configDir = `${os.homedir()}/.cyph`;
-	const keyFilename = `${configDir}/firebase-credentials/${projectId}.json`;
 	const namespacePath = namespace.replace(/\./g, '_');
 
 	const {
@@ -37,16 +35,7 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 		removeItem,
 		setItem,
 		storage
-	} = databaseService({
-		firebase: {
-			credential: firebase.credential.cert(
-				JSON.parse(fs.readFileSync(keyFilename).toString())
-			),
-			databaseURL: `https://${projectId}.firebaseio.com`
-		},
-		project: {id: projectId},
-		storage: {keyFilename, projectId}
-	});
+	} = databaseService(projectId);
 
 	const cyphPlan = CyphPlans[plan];
 

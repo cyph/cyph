@@ -22,19 +22,7 @@ const addProCode = async (projectId, name, password, namespace, email) => {
 		namespace = 'cyph.ws';
 	}
 
-	const configDir = `${os.homedir()}/.cyph`;
-	const keyFilename = `${configDir}/firebase-credentials/${projectId}.json`;
-
-	const {database, processURL} = databaseService({
-		firebase: {
-			credential: firebase.credential.cert(
-				JSON.parse(fs.readFileSync(keyFilename).toString())
-			),
-			databaseURL: `https://${projectId}.firebaseio.com`
-		},
-		project: {id: projectId},
-		storage: {keyFilename, projectId}
-	});
+	const {database, processURL} = databaseService(projectId);
 
 	const salt = namespace + 'Eaf60vuVWm67dNISjm6qdTGqgEhIW4Oes+BTsiuNjvs=';
 	const passwordHash = potassium.toHex(
