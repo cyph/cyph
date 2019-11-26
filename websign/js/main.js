@@ -25,7 +25,9 @@ var packageName		=
 
 /* Prefer native app on mobile where available */
 
-if (packageName === 'cyph.app' && !isHiddenService) {
+if (packageName === 'cyph.app' && !isHiddenService && !storage.webSignAppRedirected) {
+	storage.webSignAppRedirected	= true;
+
 	var userAgent = navigator.userAgent.toLowerCase();
 
 	if (/android/.test(userAgent)) {
