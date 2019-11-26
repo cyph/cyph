@@ -44,7 +44,7 @@
 	<plugin name="cordova-plugin-vibration" spec="*" />
 	<plugin name="cordova-plugin-whitelist" spec="*" />
 	<plugin name="cordova-plugin-x-socialsharing" spec="*" />
-	<plugin name="ionic-plugin-deeplinks" spec="*" />
+	<plugin name="ionic-plugin-deeplinks" spec="https://github.com/buu700/ionic-plugin-deeplinks#patch-1" />
 	<plugin name="phonegap-plugin-push" spec="*">
 		<variable name="FCM_VERSION" value="17.3.0" />
 	</plugin>
