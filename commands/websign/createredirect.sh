@@ -4,11 +4,16 @@ path="${1}"
 domain="${2}"
 package="${3}"
 test="${4}"
+webSignDir="$(cd "$(dirname "$0")" ; pwd)/../../websign"
 
 project="${domain//./-}"
 
 mkdir "${domain}"
-cp $(cd "$(dirname "$0")" ; pwd)/../../websign/redirect.py "${domain}/"
+cp -a \
+	${webSignDir}/apple-app-site-association \
+	${webSignDir}/redirect.py \
+	${webSignDir}/well-known \
+"${domain}/"
 
 cat > "${domain}/${project}.yaml" << EOM
 service: ${project}
@@ -21,6 +26,24 @@ handlers:
 - url: /
   static_files: index.html
   upload: index.html
+  secure: always
+  # default_headers Strict-Transport-Security
+
+- url: /.well-known/apple-app-site-association
+  static_files: well-known/apple-app-site-association
+  upload: well-known/apple-app-site-association
+  secure: always
+  # default_headers Strict-Transport-Security
+
+- url: /.well-known/assetlinks.json
+  static_files: well-known/assetlinks.json
+  upload: well-known/assetlinks.json
+  secure: always
+  # default_headers Strict-Transport-Security
+
+- url: /apple-app-site-association
+  static_files: apple-app-site-association
+  upload: apple-app-site-association
   secure: always
   # default_headers Strict-Transport-Security
 

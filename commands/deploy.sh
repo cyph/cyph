@@ -378,7 +378,6 @@ fi
 
 if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 	cd websign
-	mv .well-known well-known
 	node -e "
 		fs.writeFileSync(
 			'websign.yaml',

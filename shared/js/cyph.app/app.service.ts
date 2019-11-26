@@ -12,6 +12,7 @@ import {filter, first, take} from 'rxjs/operators';
 import {BaseProvider} from '../cyph/base-provider';
 import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
+import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
@@ -114,6 +115,9 @@ export class AppService extends BaseProvider implements CanActivate {
 		private readonly accountService: AccountService,
 
 		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
 		private readonly envService: EnvService
 	) {
 		super();
@@ -128,9 +132,18 @@ export class AppService extends BaseProvider implements CanActivate {
 			typeof (<any> self).IonicDeeplink.route === 'function'
 		) {
 			(<any> self).IonicDeeplink.route({}, undefined, ({$link}: any) => {
-				this.router.navigate(
-					$link.url.replace(/^(.*?:\/\/)?.*?\/#?/, '').split('/')
-				);
+				const url = $link?.url;
+				if (typeof url !== 'string') {
+					return;
+				}
+
+				const host = url.replace(/^(.*?:\/\/)?(.*?)\/.*/, '$2');
+				const route = url.replace(/^(.*?:\/\/)?.*?\/#?/, '').split('/');
+
+				this.router.navigate([
+					...(this.configService.webSignRedirects[host] || []),
+					...route
+				]);
 			});
 		}
 

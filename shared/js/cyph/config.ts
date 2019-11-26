@@ -286,6 +286,17 @@ export class Config {
 	/** Length of random IDs in cyph links. */
 	public readonly secretLength: number = 25;
 
+	/** Mapping of WebSign redirect hostnames to routes. */
+	public readonly webSignRedirects: Record<string, string[]> = {
+		'burner.cyph.app': ['burner'],
+		'cyph.audio': ['burner', 'audio'],
+		'cyph.im': ['burner'],
+		'cyph.io': ['burner', 'io'],
+		'cyph.me': ['profile'],
+		'cyph.video': ['burner', 'video'],
+		'cyph.ws': ['burner']
+	};
+
 	constructor () {}
 }
 
