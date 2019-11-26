@@ -234,6 +234,13 @@
 		<config-file target="*-Release.plist" parent="com.apple.developer.associated-domains">
 			<array>
 				<string>applinks:cyph.app</string>
+				<string>applinks:burner.cyph.app</string>
+				<string>applinks:cyph.audio</string>
+				<string>applinks:cyph.im</string>
+				<string>applinks:cyph.io</string>
+				<string>applinks:cyph.me</string>
+				<string>applinks:cyph.video</string>
+				<string>applinks:cyph.ws</string>
 			</array>
 		</config-file>
 

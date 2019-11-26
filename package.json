@@ -9,10 +9,31 @@
 	"cordova": {
 		"plugins": {
 			"ionic-plugin-deeplinks": {
-				"ANDROID_PATH_PREFIX": "/",
-				"DEEPLINK_HOST": "cyph.app",
+				"URL_SCHEME": "cyph",
 				"DEEPLINK_SCHEME": "https",
-				"URL_SCHEME": "cyph"
+				"DEEPLINK_HOST": "cyph.app",
+				"ANDROID_PATH_PREFIX": "/",
+				"DEEPLINK_2_SCHEME": "https",
+				"DEEPLINK_2_HOST": "burner.cyph.app",
+				"ANDROID_2_PATH_PREFIX": "/",
+				"DEEPLINK_3_SCHEME": "https",
+				"DEEPLINK_3_HOST": "cyph.audio",
+				"ANDROID_3_PATH_PREFIX": "/",
+				"DEEPLINK_4_SCHEME": "https",
+				"DEEPLINK_4_HOST": "cyph.im",
+				"ANDROID_4_PATH_PREFIX": "/",
+				"DEEPLINK_5_SCHEME": "https",
+				"DEEPLINK_5_HOST": "cyph.io",
+				"ANDROID_5_PATH_PREFIX": "/",
+				"DEEPLINK_6_SCHEME": "https",
+				"DEEPLINK_6_HOST": "cyph.me",
+				"ANDROID_6_PATH_PREFIX": "/",
+				"DEEPLINK_7_SCHEME": "https",
+				"DEEPLINK_7_HOST": "cyph.video",
+				"ANDROID_7_PATH_PREFIX": "/",
+				"DEEPLINK_8_SCHEME": "https",
+				"DEEPLINK_8_HOST": "cyph.ws",
+				"ANDROID_8_PATH_PREFIX": "/"
 			}
 		}
 	}
