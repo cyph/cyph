@@ -1044,7 +1044,7 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				subject: `${
 					count > 1 ? `${count} new messages` : 'New Message'
 				} from ${senderUsername}`,
-				tag: metadata.castleSessionID,
+				tag: senderUsername,
 				text: `${targetName}, ${senderName} has sent you a message.`
 			} :
 		notification.type === NotificationTypes.Yo ?
