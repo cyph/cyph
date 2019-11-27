@@ -14,6 +14,7 @@ catch (_) {}
 
 var hostSplit		= location.host.split('.');
 var isHiddenService	= hostSplit.slice(-1)[0] === 'onion';
+var locationString	= location.toString();
 
 var packageName		=
 	!isHiddenService ?
@@ -25,18 +26,21 @@ var packageName		=
 
 /* Prefer native app on mobile where available */
 
-if (packageName === 'cyph.app' && !isHiddenService && !storage.webSignAppRedirected) {
+if (
+	packageName === 'cyph.app' &&
+	!isHiddenService &&
+	!locationString.replace(/^(.*?:\/\/)?.*?\/#?/, '').startsWith('burner/') &&
+	!storage.webSignAppRedirected
+) {
 	storage.webSignAppRedirected	= true;
 
 	var userAgent = navigator.userAgent.toLowerCase();
 
-	if (/android/.test(userAgent)) {
-		location = 'https://play.google.com/store/apps/details?id=com.cyph.app';
-		return;
-	}
-
-	if (/ipad|iphone|ipod/.test(userAgent)) {
-		location = 'itms-apps://itunes.apple.com/us/app/app/cyph/id1422086509';
+	if (/android/.test(userAgent) || /ipad|iphone|ipod/.test(userAgent)) {
+		location	=
+			'https://cyph.page.link/?apn=com.cyph.app&ibi=com.cyph.app&isi=1422086509&link=' +
+			locationString
+		;
 		return;
 	}
 }
@@ -302,7 +306,7 @@ catch(function (err) {
 					text:
 						navigator.language + '\n\n' +
 						navigator.userAgent + '\n\n' +
-						location.toString().replace(/\/#.*/g, '') + '\n\n' +
+						locationString.replace(/\/#.*/g, '') + '\n\n' +
 						'\n\ncdn url: ' + storage.webSignCdnUrl +
 						'\n\ncurrent bootstrap hash: ' + storage.webSignHash +
 						'\n\nprevious bootstrap hash: ' + storage.webSignHashOld +
