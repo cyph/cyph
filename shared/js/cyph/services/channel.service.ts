@@ -138,7 +138,10 @@ export class ChannelService extends BaseProvider implements IChannelService {
 							return;
 						}
 
-						await handlers.onMessage(message.value.cyphertext);
+						await handlers.onMessage(
+							message.value.cyphertext,
+							initialMessageCount > 0
+						);
 					}
 					catch (err) {
 						debugLogError(() => ({

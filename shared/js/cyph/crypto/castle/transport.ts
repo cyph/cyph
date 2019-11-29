@@ -48,6 +48,7 @@ export class Transport {
 	/** Send and/or receive incoming and outgoing messages. */
 	public async process (
 		author: Observable<string>,
+		initial: boolean,
 		...messages: {
 			cyphertext?: Uint8Array;
 			plaintext?: Uint8Array;
@@ -60,6 +61,7 @@ export class Transport {
 		await Promise.all([
 			this.receive(
 				author,
+				initial,
 				...filterUndefined(
 					messages.map(o =>
 						o.plaintext && !potassiumUtil.isEmpty(o.plaintext) ?
@@ -83,6 +85,7 @@ export class Transport {
 	/** Handle decrypted incoming message. */
 	public async receive (
 		author: Observable<string>,
+		initial: boolean,
 		...plaintexts: Uint8Array[]
 	) : Promise<void> {
 		await Promise.all(
@@ -101,6 +104,7 @@ export class Transport {
 
 				await this.sessionService.castleHandler(CastleEvents.receive, {
 					author,
+					initial,
 					instanceID: potassiumUtil.toHex(instanceID),
 					plaintext: data,
 					timestamp

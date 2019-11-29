@@ -214,7 +214,10 @@ export class PairwiseSession implements IPairwiseSession {
 	}
 
 	/** @inheritDoc */
-	public async receive (cyphertext: Uint8Array) : Promise<void> {
+	public async receive (
+		cyphertext: Uint8Array,
+		_INITIAL: boolean
+	) : Promise<void> {
 		if (
 			(await this.handshakeState.currentStep.getValue()) ===
 			HandshakeSteps.Aborted
@@ -456,6 +459,7 @@ export class PairwiseSession implements IPairwiseSession {
 						await this.transport
 							.process(
 								this.remoteUser.username,
+								false,
 								...initialRatchetUpdates
 							)
 							.catch(err => {
@@ -586,6 +590,7 @@ export class PairwiseSession implements IPairwiseSession {
 
 								await this.transport.process(
 									this.remoteUser.username,
+									false,
 									update
 								);
 								await this.ratchetState.setValue(

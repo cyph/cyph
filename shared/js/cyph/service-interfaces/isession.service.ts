@@ -77,6 +77,7 @@ export interface ISessionService {
 			| Uint8Array
 			| {
 					author: Observable<string>;
+					initial: boolean;
 					instanceID: string;
 					plaintext: Uint8Array;
 					timestamp: number;
@@ -115,7 +116,8 @@ export interface ISessionService {
 
 	/** Converts an ISessionMessageDataInternal into an ISessionMessageData. */
 	processMessageData (
-		data: ISessionMessageDataInternal
+		data: ISessionMessageDataInternal,
+		initial?: boolean
 	) : Promise<ISessionMessageData>;
 
 	/** Send at least one message through the session. */

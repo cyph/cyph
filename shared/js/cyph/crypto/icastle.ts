@@ -5,8 +5,9 @@ export interface ICastle {
 	/**
 	 * Receive incoming cyphertext.
 	 * @param cyphertext Data to be decrypted.
+	 * @param initial Indicates whether part of initial batch of messages.
 	 */
-	receive (cyphertext: Uint8Array) : Promise<void>;
+	receive (cyphertext: Uint8Array, initial: boolean) : Promise<void>;
 
 	/**
 	 * Send outgoing text.

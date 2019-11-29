@@ -18,6 +18,7 @@ import {HelpComponent} from '../components/help';
 import {EncryptedAsyncMap} from '../crypto/encrypted-async-map';
 import {IAsyncSet} from '../iasync-set';
 import {IProto} from '../iproto';
+import {IResolvable} from '../iresolvable';
 import {LocalAsyncList} from '../local-async-list';
 import {LocalAsyncMap} from '../local-async-map';
 import {LocalAsyncSet} from '../local-async-set';
@@ -80,6 +81,9 @@ export class ChatService extends BaseProvider {
 
 	/** @ignore */
 	private static readonly p2pPassiveConnectTime: number = 5000;
+
+	/** @ignore */
+	private readonly fullyLoadedMessages = new Map<string, IResolvable<void>>();
 
 	/** @ignore */
 	private readonly getMessageLocks = new Map<string, {}>();
@@ -1201,6 +1205,11 @@ export class ChatService extends BaseProvider {
 		);
 	}
 
+	/** Marks a message as fully loaded / displayed in the UI. */
+	public markMessageLoadComplete (id: string) : void {
+		getOrSetDefault(this.fullyLoadedMessages, id, resolvable).resolve();
+	}
+
 	/**
 	 * Handler for message change.
 	 *
@@ -1912,8 +1921,20 @@ export class ChatService extends BaseProvider {
 			(async () => {
 				while (this.sessionService.state.isAlive.value) {
 					await this.chat.receiveTextLock(async lockData => {
-						const f = async (newEvents: ISessionMessageData[]) =>
-							this.addTextMessage(...newEvents);
+						const f = async (newEvents: ISessionMessageData[]) => {
+							await this.addTextMessage(...newEvents);
+
+							const lastEvent = newEvents.slice(-1)[0];
+							if (!lastEvent?.initial) {
+								return;
+							}
+
+							await getOrSetDefault(
+								this.fullyLoadedMessages,
+								lastEvent.id,
+								resolvable
+							).promise;
+						};
 
 						this.sessionService.on(rpcEvents.text, f);
 						await Promise.race([

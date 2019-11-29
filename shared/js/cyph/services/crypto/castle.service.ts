@@ -49,8 +49,11 @@ export class CastleService extends BaseProvider implements ICastle {
 	}
 
 	/** @inheritDoc */
-	public async receive (cyphertext: Uint8Array) : Promise<void> {
-		return (await this.getPairwiseSession()).receive(cyphertext);
+	public async receive (
+		cyphertext: Uint8Array,
+		initial: boolean
+	) : Promise<void> {
+		return (await this.getPairwiseSession()).receive(cyphertext, initial);
 	}
 
 	/** @inheritDoc */

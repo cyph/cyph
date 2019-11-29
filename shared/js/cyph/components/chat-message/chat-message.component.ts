@@ -267,6 +267,8 @@ export class ChatMessageComponent extends BaseProvider
 			this.scrolledIntoView.emit();
 		}
 
+		this.chatService.markMessageLoadComplete(id);
+
 		if (
 			this.unconfirmedMessages === undefined ||
 			this.message !== changes.message.currentValue ||

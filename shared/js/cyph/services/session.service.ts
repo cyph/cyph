@@ -175,9 +175,12 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @see IChannelHandlers.onMessage */
-	protected async channelOnMessage (message: Uint8Array) : Promise<void> {
+	protected async channelOnMessage (
+		message: Uint8Array,
+		initial: boolean
+	) : Promise<void> {
 		if (this.state.isAlive.value) {
-			await this.castleService.receive(message);
+			await this.castleService.receive(message, initial);
 		}
 	}
 
@@ -190,7 +193,8 @@ export abstract class SessionService extends BaseProvider
 
 	/** @ignore */
 	protected async cyphertextReceiveHandler (
-		messages: ISessionMessage[]
+		messages: ISessionMessage[],
+		initial?: boolean
 	) : Promise<void> {
 		debugLog(() => ({cyphertextReceiveHandler: {messages}}));
 
@@ -215,7 +219,10 @@ export abstract class SessionService extends BaseProvider
 					return;
 				}
 
-				message.data = await this.processMessageData(message.data);
+				message.data = await this.processMessageData(
+					message.data,
+					initial
+				);
 
 				this.receivedMessages.add(message.data.id);
 
@@ -273,7 +280,6 @@ export abstract class SessionService extends BaseProvider
 	protected async newMessages (
 		messages: [
 			string,
-
 			(
 				| ISessionMessageAdditionalData
 				| ((
@@ -300,6 +306,7 @@ export abstract class SessionService extends BaseProvider
 						chatState: additionalData.chatState,
 						command: additionalData.command,
 						id: additionalData.id || uuid(),
+						initial: false,
 						sessionSubID: this.sessionSubID,
 						text: additionalData.text,
 						textConfirmation: additionalData.textConfirmation,
@@ -325,6 +332,7 @@ export abstract class SessionService extends BaseProvider
 			| Uint8Array
 			| {
 					author: Observable<string>;
+					initial: boolean;
 					instanceID: string;
 					plaintext: Uint8Array;
 					timestamp: number;
@@ -389,7 +397,8 @@ export abstract class SessionService extends BaseProvider
 
 							return message;
 						})
-					)
+					),
+					data.initial
 				);
 
 				break;
@@ -489,7 +498,8 @@ export abstract class SessionService extends BaseProvider
 				(await this.incomingMessageQueue.getValue())
 					.map(({messages}) => messages || [])
 					.reduce((a, b) => a.concat(b), [])
-					.filter(this.correctSubSession)
+					.filter(this.correctSubSession),
+				true
 			);
 
 			this.initialMessagesProcessed.resolve();
@@ -517,7 +527,8 @@ export abstract class SessionService extends BaseProvider
 			this.channelService.init(channelID, userID, {
 				onClose: async () => this.channelOnClose(),
 				onConnect: async () => this.channelOnConnect(),
-				onMessage: async message => this.channelOnMessage(message),
+				onMessage: async (message, initial) =>
+					this.channelOnMessage(message, initial),
 				onOpen: async isAlice => this.channelOnOpen(isAlice)
 			})
 		]);
@@ -575,12 +586,14 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public async processMessageData (
-		data: ISessionMessageDataInternal
+		data: ISessionMessageDataInternal,
+		initial: boolean = false
 	) : Promise<ISessionMessageData> {
 		const author = await this.getSessionMessageAuthor(data);
 		if (author) {
 			(<any> data).author = author;
 		}
+		(<any> data).initial = initial;
 		return <any> data;
 	}
 

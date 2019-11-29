@@ -99,8 +99,11 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	public readonly initialMessagesProcessed = resolvable();
 
 	/** @inheritDoc */
-	public async receive (cyphertext: Uint8Array) : Promise<void> {
-		await this.transport.process(this.remoteUser.username, {
+	public async receive (
+		cyphertext: Uint8Array,
+		initial: boolean
+	) : Promise<void> {
+		await this.transport.process(this.remoteUser.username, initial, {
 			plaintext: await this.potassium.secretBox.open(
 				cyphertext,
 				await this.key
@@ -126,7 +129,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		this.potassium.clearMemory(plaintextBytes);
 		this.potassium.clearMemory(timestampBytes);
 
-		await this.transport.process(this.remoteUser.username, {
+		await this.transport.process(this.remoteUser.username, false, {
 			cyphertext: await this.potassium.secretBox.seal(
 				outgoingMessage,
 				await this.key

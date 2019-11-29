@@ -8,7 +8,7 @@ export interface IPairwiseSession {
 	readonly initialMessagesProcessed: IResolvable<void>;
 
 	/** Receive/decrypt incoming message. */
-	receive (cyphertext: Uint8Array) : Promise<void>;
+	receive (cyphertext: Uint8Array, initial: boolean) : Promise<void>;
 
 	/** Send/encrypt outgoing message. */
 	send (
