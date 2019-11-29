@@ -135,6 +135,21 @@
 			/>
 		</config-file>
 
+		<config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
+			<intent-filter android:autoVerify="true">
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="https" android:host="cyph.app" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="burner.cyph.app" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.audio" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.im" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.io" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.video" android:pathPrefix="/" />
+				<data android:scheme="https" android:host="cyph.ws" android:pathPrefix="/" />
+			</intent-filter>
+		</config-file>
+
 		<edit-config
 			file="app/src/main/AndroidManifest.xml"
 			mode="merge"
