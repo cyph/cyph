@@ -533,8 +533,8 @@ code {
 }
 
 body:not(.mobile) .cyph-loading-indicator {
-	left: 2px;
-	width: calc(100% - 3px);
+	left: 1px;
+	width: calc(100% - 2px);
 }
 
 mat-icon.gdpr {
