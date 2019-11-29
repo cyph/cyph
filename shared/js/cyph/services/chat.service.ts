@@ -48,7 +48,8 @@ import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
-import {lockFunction} from '../util/lock';
+import {getOrSetDefault} from '../util/get-or-set-default';
+import {lock, lockFunction} from '../util/lock';
 import {debugLog, debugLogTime} from '../util/log';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -79,6 +80,9 @@ export class ChatService extends BaseProvider {
 
 	/** @ignore */
 	private static readonly p2pPassiveConnectTime: number = 5000;
+
+	/** @ignore */
+	private readonly getMessageLocks = new Map<string, {}>();
 
 	/** @ignore */
 	private readonly getMessageValues = memoize(
@@ -877,10 +881,11 @@ export class ChatService extends BaseProvider {
 
 						return {
 							chatMessage,
-							setPromise: this.chat.messages.setItem(
-								id,
-								chatMessage
-							)
+							setPromise: this.chat.messages
+								.setItem(id, chatMessage)
+								.then(async () =>
+									this.getMessageValue(chatMessage)
+								)
 						};
 					}
 				)
@@ -1053,83 +1058,113 @@ export class ChatService extends BaseProvider {
 			return message;
 		}
 
-		const localStorageKey = `chatService.getMessageValue/${message.id}`;
+		return lock(
+			getOrSetDefault(this.getMessageLocks, message.id, () => ({})),
+			async () =>
+				retryUntilSuccessful(
+					async () => {
+						const localStorageKey = `chatService.getMessageValue/${message.id}`;
 
-		if (!this.sessionInitService.ephemeral) {
-			message.value = await this.localStorageService
-				.getItem(localStorageKey, ChatMessageValue)
-				.catch(() => undefined);
-		}
+						if (
+							message instanceof ChatMessage &&
+							message.value?.failure
+						) {
+							message.value = undefined;
+						}
 
-		const localStorageSuccess = message.value !== undefined;
+						if (!this.sessionInitService.ephemeral) {
+							message.value = await this.localStorageService
+								.getItem(localStorageKey, ChatMessageValue)
+								.catch(() => undefined);
+						}
 
-		if (tryInitFromLocalStorage && !localStorageSuccess) {
-			return message;
-		}
+						const localStorageSuccess = message.value !== undefined;
 
-		const referencesValue =
-			message.hash &&
-			message.hash.length > 0 &&
-			(message.key && message.key.length > 0);
+						if (tryInitFromLocalStorage && !localStorageSuccess) {
+							return message;
+						}
 
-		for (const messageValues of [
-			this.messageValuesLocal,
-			this.messageValues
-		]) {
-			if (
-				!(
-					referencesValue &&
-					message.value === undefined &&
-					message.hash !== undefined &&
-					message.key !== undefined
+						const referencesValue =
+							message.hash &&
+							message.hash.length > 0 &&
+							(message.key && message.key.length > 0);
+
+						for (const messageValues of [
+							this.messageValuesLocal,
+							this.messageValues
+						]) {
+							if (
+								!(
+									referencesValue &&
+									message.value === undefined &&
+									message.hash !== undefined &&
+									message.key !== undefined
+								)
+							) {
+								continue;
+							}
+
+							const getMessageValue = async () => {
+								if (
+									message.hash === undefined ||
+									message.key === undefined
+								) {
+									throw new Error(
+										'Message hash or key missing.'
+									);
+								}
+
+								return messageValues.getItem(
+									message.id,
+									message.key,
+									message.hash,
+									this.messageValueHasher(message)
+								);
+							};
+
+							message.value = await (messageValues ===
+							this.messageValues ?
+								retryUntilSuccessful(getMessageValue, 10, 500) :
+								getMessageValue()
+							).catch(() => undefined);
+						}
+
+						if (message.value !== undefined) {
+							await this.fetchedMessageIDs.addItem(message.id);
+
+							if (
+								!localStorageSuccess &&
+								!this.sessionInitService.ephemeral
+							) {
+								await this.localStorageService.setItem(
+									localStorageKey,
+									ChatMessageValue,
+									message.value
+								);
+							}
+						}
+
+						if (message instanceof ChatMessage) {
+							if (
+								referencesValue &&
+								message.value === undefined
+							) {
+								message.value = {
+									failure: true,
+									text: this.stringsService
+										.getMessageValueFailure
+								};
+							}
+
+							message.valueWatcher.next(message.value);
+						}
+
+						return message;
+					},
+					3,
+					1000
 				)
-			) {
-				continue;
-			}
-
-			const getMessageValue = async () => {
-				if (message.hash === undefined || message.key === undefined) {
-					throw new Error('Message hash or key missing.');
-				}
-
-				return messageValues.getItem(
-					message.id,
-					message.key,
-					message.hash,
-					this.messageValueHasher(message)
-				);
-			};
-
-			message.value = await (messageValues === this.messageValues ?
-				retryUntilSuccessful(getMessageValue, 10, 500) :
-				getMessageValue()
-			).catch(() => undefined);
-		}
-
-		if (message.value !== undefined) {
-			await this.fetchedMessageIDs.addItem(message.id);
-
-			if (!localStorageSuccess && !this.sessionInitService.ephemeral) {
-				await this.localStorageService.setItem(
-					localStorageKey,
-					ChatMessageValue,
-					message.value
-				);
-			}
-		}
-
-		if (message instanceof ChatMessage) {
-			if (referencesValue && message.value === undefined) {
-				message.value = {
-					failure: true,
-					text: this.stringsService.getMessageValueFailure
-				};
-			}
-
-			message.valueWatcher.next(message.value);
-		}
-
-		return message;
+		);
 	}
 
 	/** Displays help information. */
