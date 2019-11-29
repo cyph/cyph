@@ -129,10 +129,10 @@ export class AppService extends BaseProvider implements CanActivate {
 
 		if (
 			(<any> self).IonicDeeplink &&
-			typeof (<any> self).IonicDeeplink.route === 'function'
+			typeof (<any> self).IonicDeeplink.onDeepLink === 'function'
 		) {
-			(<any> self).IonicDeeplink.route({}, undefined, ({$link}: any) => {
-				const url = $link?.url;
+			(<any> self).IonicDeeplink.onDeepLink((data: any) => {
+				const url = data?.url;
 				if (typeof url !== 'string') {
 					return;
 				}
