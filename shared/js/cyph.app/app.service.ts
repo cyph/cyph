@@ -131,13 +131,17 @@ export class AppService extends BaseProvider implements CanActivate {
 			(<any> self).IonicDeeplink &&
 			typeof (<any> self).IonicDeeplink.onDeepLink === 'function'
 		) {
-			(<any> self).IonicDeeplink.onDeepLink((data: any) => {
+			(<any> self).IonicDeeplink.onDeepLink((data?: Record<any, any>) => {
 				const url = data?.url;
 				if (typeof url !== 'string') {
 					return;
 				}
 
-				const host = url.replace(/^(.*?:\/\/)?(.*?)\/.*/, '$2');
+				const host =
+					typeof data?.host === 'string' && data.host.length > 0 ?
+						data.host :
+						url.replace(/^(.*?:\/\/)?(.*?)\/.*/, '$2');
+
 				const route = url.replace(/^(.*?:\/\/)?.*?\/#?/, '').split('/');
 
 				this.router.navigate([
