@@ -124,7 +124,7 @@ export class ChatMessageListComponent extends BaseProvider
 			).catch(() => undefined);
 
 	/** Used for initial scroll down on load. */
-	public readonly initialScrollDown = new BehaviorSubject<boolean>(true);
+	public readonly initialScrollDown = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean = false;
@@ -260,6 +260,11 @@ export class ChatMessageListComponent extends BaseProvider
 
 		if (this.uiStyle === UiStyles.mail) {
 			this.initialScrollDown.next(false);
+		}
+		else {
+			this.chatService.uiReady.then(() =>
+				this.scrollService.scrollDown()
+			);
 		}
 
 		const chat = this.chat;

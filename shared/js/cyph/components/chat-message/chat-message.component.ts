@@ -250,6 +250,8 @@ export class ChatMessageComponent extends BaseProvider
 			this.resolveViewReady();
 		}
 
+		const initiatedPromise = this.waitUntilInitiated();
+
 		if (this.scrollIntoView) {
 			if (
 				this.elementRef.nativeElement &&
@@ -258,7 +260,7 @@ export class ChatMessageComponent extends BaseProvider
 				/* Leave email-style UI at the top for now */
 				this.uiStyle !== UiStyles.mail
 			) {
-				await this.waitUntilInitiated();
+				await initiatedPromise;
 				this.elementRef.nativeElement.scrollIntoView(undefined, {
 					behavior: 'instant'
 				});
@@ -277,6 +279,7 @@ export class ChatMessageComponent extends BaseProvider
 			);
 		}
 
+		await initiatedPromise;
 		this.chatService.markMessageLoadComplete(id);
 
 		if (
