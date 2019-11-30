@@ -282,6 +282,7 @@ export class ChatService extends BaseProvider {
 	public readonly uiReady: Promise<true> = Promise.all([
 		this.resolvers.chatConnected.promise,
 		this.resolvers.currentMessageSynced.promise,
+		this.resolvers.outgoingMessagesSynced.promise,
 		this.sessionService.initialMessagesProcessed.promise,
 		this.castleService ?
 			this.castleService.initialMessagesProcessed() :
@@ -1565,6 +1566,12 @@ export class ChatService extends BaseProvider {
 			this.resolvers.currentMessageSynced.promise.then(() => {
 				debugLog(
 					() => 'ChatService.resolvers.currentMessageSynced resolved'
+				);
+			});
+			this.resolvers.outgoingMessagesSynced.promise.then(() => {
+				debugLog(
+					() =>
+						'ChatService.resolvers.outgoingMessagesSynced resolved'
 				);
 			});
 			this.sessionService.initialMessagesProcessed.promise.then(() => {
