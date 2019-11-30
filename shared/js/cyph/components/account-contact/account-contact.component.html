@@ -5,6 +5,7 @@
 		[class.mobile]="envService.isMobileOS"
 		[class.telehealth]="envService.isTelehealthFull"
 		[matTooltip]="stringsService.linkGet"
+		[matTooltipPosition]="envService.isMobileOS ? 'below' : 'left'"
 		(click)="
 			!accountDatabaseService.currentUser.value?.agseConfirmed ?
 				openWindow(envService.cyphImUrl) :
