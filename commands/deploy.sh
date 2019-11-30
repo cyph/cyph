@@ -508,13 +508,13 @@ else
 		sed -i "s|CYPH-IO|https://debug.cyph.app/#burner/io|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-ME|https://debug.cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-VIDEO|https://debug.cyph.app/#burner/video|g" shared/js/cyph/env-deploy.ts
-	elif [ "${betaProd}" ] ; then
-		sed -i "s|${defaultHost}42002|https://beta.cyph.app|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-AUDIO|https://beta.cyph.app/#burner/audio|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-IM|https://beta.cyph.app/#burner|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-IO|https://beta.cyph.app/#burner/io|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-ME|https://beta.cyph.app|g" shared/js/cyph/env-deploy.ts
-		sed -i "s|CYPH-VIDEO|https://beta.cyph.app/#burner/video|g" shared/js/cyph/env-deploy.ts
+	# elif [ "${betaProd}" ] ; then
+	# 	sed -i "s|${defaultHost}42002|https://beta.cyph.app|g" shared/js/cyph/env-deploy.ts
+	# 	sed -i "s|CYPH-AUDIO|https://beta.cyph.app/#burner/audio|g" shared/js/cyph/env-deploy.ts
+	# 	sed -i "s|CYPH-IM|https://beta.cyph.app/#burner|g" shared/js/cyph/env-deploy.ts
+	# 	sed -i "s|CYPH-IO|https://beta.cyph.app/#burner/io|g" shared/js/cyph/env-deploy.ts
+	# 	sed -i "s|CYPH-ME|https://beta.cyph.app|g" shared/js/cyph/env-deploy.ts
+	# 	sed -i "s|CYPH-VIDEO|https://beta.cyph.app/#burner/video|g" shared/js/cyph/env-deploy.ts
 	else
 		sed -i "s|${defaultHost}42002|https://cyph.app|g" shared/js/cyph/env-deploy.ts
 		sed -i "s|CYPH-AUDIO|https://cyph.audio|g" shared/js/cyph/env-deploy.ts
