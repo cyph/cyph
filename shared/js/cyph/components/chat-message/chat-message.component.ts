@@ -267,6 +267,16 @@ export class ChatMessageComponent extends BaseProvider
 			this.scrolledIntoView.emit();
 		}
 
+		if (
+			this.message.value?.fileTransfer?.media &&
+			this.message.value?.fileTransfer?.size <=
+				this.fileService.mediaSizeLimit
+		) {
+			await this.fileTransferService.getMedia(
+				this.message.value.fileTransfer
+			);
+		}
+
 		this.chatService.markMessageLoadComplete(id);
 
 		if (
