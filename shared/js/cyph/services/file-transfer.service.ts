@@ -55,7 +55,7 @@ export class FileTransferService extends BaseProvider {
 				return {
 					success: true,
 					uri: await DataURIProto.decode(
-						await this.receiveInternal(fileTransfer),
+						await this.receiveInternal(fileTransfer, true),
 						fileTransfer.mediaType
 					)
 				};
@@ -106,7 +106,8 @@ export class FileTransferService extends BaseProvider {
 
 	/** @ignore */
 	private async receiveInternal (
-		fileTransfer: IFileTransfer
+		fileTransfer: IFileTransfer,
+		noProgressBar: boolean = false
 	) : Promise<Uint8Array> {
 		const receiveInternalHelper = async () => {
 			if (
@@ -128,7 +129,7 @@ export class FileTransferService extends BaseProvider {
 				progress: downloadTask.progress
 			};
 
-			if (!(await downloadTask.alreadyCached)) {
+			if (!noProgressBar && !(await downloadTask.alreadyCached)) {
 				await this.transfers.addItem(transfer);
 			}
 
