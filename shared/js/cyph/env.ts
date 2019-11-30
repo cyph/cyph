@@ -307,7 +307,7 @@ export class Env extends EnvDeploy {
 	constructor () {
 		super();
 
-		const filesConfigMaxSizeDesktop = 268435456;
+		const filesConfigMaxSizeDesktop = 536870912;
 		const filesConfigMaxSizeMobile = 20971520;
 
 		this.filesConfig = {
