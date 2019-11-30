@@ -218,11 +218,18 @@ export class ThreadedPotassiumService extends PotassiumUtil
 				const cyphertext: Uint8Array = (await this
 					.potassium).secretBoxSeal(plaintext, key, additionalData);
 
-				this.localStorageService.setItem(
-					this.secretBoxCacheKey(cyphertext, additionalData),
-					BinaryProto,
-					cyphertext
+				const cacheKey = this.secretBoxCacheKey(
+					cyphertext,
+					additionalData
 				);
+
+				if (cacheKey !== undefined) {
+					this.localStorageService.setItem(
+						cacheKey,
+						BinaryProto,
+						cyphertext
+					);
+				}
 
 				return cyphertext;
 			})
@@ -285,7 +292,11 @@ export class ThreadedPotassiumService extends PotassiumUtil
 	private secretBoxCacheKey (
 		cyphertext: Uint8Array,
 		additionalData: string | Uint8Array | undefined
-	) : string {
+	) : string | undefined {
+		if (cyphertext.length > 1048576) {
+			return undefined;
+		}
+
 		return `ThreadedPotassiumService.secretBox\n${this.toHex(cyphertext)}${
 			additionalData !== undefined ?
 				`\n${this.toHex(additionalData)}` :
