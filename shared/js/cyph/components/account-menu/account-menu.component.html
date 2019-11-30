@@ -95,7 +95,9 @@
 						!currentUser.agseConfirmed ||
 						!currentUser.masterKeyConfirmed
 					"
-					aria-label="Incoming Patient Info"
+					matTooltip="Incoming Patient Info"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/incoming-patient-info"
 					(click)="click()"
 				>
@@ -136,7 +138,9 @@
 						!currentUser.agseConfirmed ||
 						!currentUser.masterKeyConfirmed
 					"
-					aria-label="Appointments"
+					matTooltip="Appointments"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/appointments"
 					(click)="click()"
 				>
@@ -183,7 +187,9 @@
 						!currentUser.agseConfirmed ||
 						!currentUser.masterKeyConfirmed
 					"
-					aria-label="Doctors"
+					matTooltip="Doctors"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/doctors"
 					(click)="click()"
 				>
@@ -209,7 +215,9 @@
 						!currentUser.agseConfirmed ||
 						!currentUser.masterKeyConfirmed
 					"
-					aria-label="Patients"
+					matTooltip="Patients"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/patients"
 					(click)="click()"
 				>
@@ -227,7 +235,9 @@
 						!currentUser.agseConfirmed ||
 						!currentUser.masterKeyConfirmed
 					"
-					aria-label="Staff"
+					matTooltip="Staff"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/staff"
 					(click)="click()"
 				>
@@ -245,7 +255,9 @@
 						!currentUser.agseConfirmed ||
 						!currentUser.masterKeyConfirmed
 					"
-					aria-label="EHR Access"
+					matTooltip="EHR Access"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/ehr-access"
 					(click)="click()"
 				>
@@ -265,7 +277,9 @@
 						!currentUser.agseConfirmed ||
 						!currentUser.masterKeyConfirmed
 					"
-					aria-label="Messages"
+					matTooltip="Messages"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/"
 					(click)="click()"
 				>
@@ -299,7 +313,9 @@
 						!currentUser.agseConfirmed ||
 						!currentUser.masterKeyConfirmed
 					"
-					aria-label="Anonymous Inbox"
+					matTooltip="Anonymous Inbox"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/inbox"
 					(click)="click()"
 				>
@@ -352,7 +368,9 @@
 					cyphTranslate
 					class="files"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
-					aria-label="Files"
+					matTooltip="Files"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/files"
 					(click)="click()"
 				>
@@ -388,7 +406,9 @@
 					cyphTranslate
 					class="notes"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
-					aria-label="Notes"
+					matTooltip="Notes"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/notes"
 					(click)="click()"
 				>
@@ -432,7 +452,9 @@
 					cyphTranslate
 					class="docs"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
-					aria-label="Docs (experimental)"
+					matTooltip="Docs (experimental)"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/docs"
 					(click)="click()"
 					*ngIf="accountService.enableDocs | async"
@@ -469,7 +491,9 @@
 					cyphTranslate
 					class="forms"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
-					aria-label="Forms"
+					matTooltip="Forms"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/forms"
 					(click)="click()"
 					*ngIf="envService.debug || envService.isTelehealthFull"
@@ -530,7 +554,9 @@
 					cyphTranslate
 					class="passwords"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
-					aria-label="Passwords"
+					matTooltip="Passwords"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/passwords"
 					(click)="click()"
 					*ngIf="accountService.enablePasswords | async"
@@ -567,7 +593,9 @@
 					cyphTranslate
 					class="wallets"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
-					aria-label="Wallets (experimental)"
+					matTooltip="Wallets (experimental)"
+					[matTooltipDisabled]="menuExpanded | async"
+					matTooltipPosition="right"
 					routerLink="/wallets"
 					(click)="click()"
 					*ngIf="accountService.enableWallets | async"
@@ -717,7 +745,9 @@
 				cyphTranslate
 				class="invite"
 				[matMenuTriggerFor]="inviteMenu"
-				aria-label="Invite Friend"
+				matTooltip="Invite Friend"
+				[matTooltipDisabled]="menuExpanded | async"
+				matTooltipPosition="right"
 				*ngIf="((accountInviteService.count | async) || 0) > 0"
 			>
 				<mat-icon
@@ -764,7 +794,9 @@
 				cyphTranslate
 				class="settings"
 				[class.disabled]="!currentUser.masterKeyConfirmed"
-				aria-label="Settings"
+				matTooltip="Settings"
+				[matTooltipDisabled]="menuExpanded | async"
+				matTooltipPosition="right"
 				routerLink="/settings"
 				(click)="click()"
 			>
@@ -779,7 +811,9 @@
 				cyphTranslate
 				class="lock"
 				[class.disabled]="!currentUser.masterKeyConfirmed"
-				aria-label="Lock"
+				matTooltip="Lock"
+				[matTooltipDisabled]="menuExpanded | async"
+				matTooltipPosition="right"
 				(click)="accountAuthService.lock()"
 			>
 				<mat-icon mat-list-icon>lock</mat-icon>
@@ -793,7 +827,9 @@
 				cyphTranslate
 				class="logout"
 				[class.disabled]="!currentUser.masterKeyConfirmed"
-				aria-label="Log Out"
+				matTooltip="Log Out"
+				[matTooltipDisabled]="menuExpanded | async"
+				matTooltipPosition="right"
 				routerLink="/logout"
 				(click)="click()"
 			>
