@@ -272,6 +272,7 @@ export class ChatService extends BaseProvider {
 	public readonly resolvers = {
 		chatConnected: resolvable(),
 		currentMessageSynced: resolvable(),
+		messageListLoaded: resolvable(),
 		outgoingMessagesSynced: resolvable()
 	};
 
@@ -282,6 +283,7 @@ export class ChatService extends BaseProvider {
 	public readonly uiReady: Promise<true> = Promise.all([
 		this.resolvers.chatConnected.promise,
 		this.resolvers.currentMessageSynced.promise,
+		this.resolvers.messageListLoaded.promise,
 		this.resolvers.outgoingMessagesSynced.promise,
 		this.sessionService.initialMessagesProcessed.promise,
 		this.castleService ?
@@ -1568,6 +1570,11 @@ export class ChatService extends BaseProvider {
 					() => 'ChatService.resolvers.currentMessageSynced resolved'
 				);
 			});
+			this.resolvers.messageListLoaded.promise.then(() => {
+				debugLog(
+					() => 'ChatService.resolvers.messageListLoaded resolved'
+				);
+			});
 			this.resolvers.outgoingMessagesSynced.promise.then(() => {
 				debugLog(
 					() =>
@@ -1779,6 +1786,18 @@ export class ChatService extends BaseProvider {
 						unconfirmedMessages: this.chat.unconfirmedMessages.value
 					}
 				}));
+
+				this.chat.messageList.getFlatValue().then(async messageIDs => {
+					const lastMessageID = messageIDs.slice(-1)[0];
+					if (lastMessageID) {
+						await getOrSetDefault(
+							this.fullyLoadedMessages,
+							lastMessageID,
+							resolvable
+						).promise;
+					}
+					this.resolvers.messageListLoaded.resolve();
+				});
 
 				if (callType !== undefined) {
 					this.sessionService.yt().then(async () => {

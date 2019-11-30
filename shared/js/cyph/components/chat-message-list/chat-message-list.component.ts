@@ -468,6 +468,10 @@ export class ChatMessageListComponent extends BaseProvider
 						)
 					);
 
+					if (this.chatService.messageBottomOffset.value > 1) {
+						this.chatService.resolvers.messageListLoaded.resolve();
+					}
+
 					return messageListItems;
 				})
 			),
