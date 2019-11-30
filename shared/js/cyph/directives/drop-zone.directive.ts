@@ -129,6 +129,9 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 								await this.fileService.getIFile(file)
 							);
 						},
+						maxFilesize:
+							this.envService.filesConfig.maxSize / (1024 * 1024),
+						filesizeBase: 1024,
 						url: 'data:text/plain;ascii,',
 						...(this.accept ? {acceptedFiles: this.accept} : {})
 					});
