@@ -16,7 +16,13 @@ import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
 import {IResolvable} from '../iresolvable';
-import {CyphPlans, NeverProto, NotificationTypes, StringProto} from '../proto';
+import {
+	BooleanProto,
+	CyphPlans,
+	NeverProto,
+	NotificationTypes,
+	StringProto
+} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -37,6 +43,7 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
+import {LocalStorageService} from './local-storage.service';
 import {FingerprintService} from './fingerprint.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
@@ -362,10 +369,16 @@ export class AccountService extends BaseProvider {
 
 	/** Toggles account menu. */
 	public toggleMenu (menuExpanded?: boolean) : void {
-		this.menuExpandedInternal.next(
+		menuExpanded =
 			typeof menuExpanded === 'boolean' ?
 				menuExpanded :
-				!this.menuExpandedInternal.value
+				!this.menuExpandedInternal.value;
+
+		this.menuExpandedInternal.next(menuExpanded);
+		this.localStorageService.setItem(
+			'AccountService.menuExpanded',
+			BooleanProto,
+			menuExpanded
 		);
 	}
 
@@ -595,6 +608,9 @@ export class AccountService extends BaseProvider {
 		private readonly fingerprintService: FingerprintService,
 
 		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
 		private readonly notificationService: NotificationService,
 
 		/** @ignore */
@@ -650,6 +666,13 @@ export class AccountService extends BaseProvider {
 
 			this.interstitial.next(false);
 		};
+
+		this.localStorageService
+			.getItem('AccountService.menuExpanded', BooleanProto)
+			.then(menuExpanded => {
+				this.menuExpandedInternal.next(menuExpanded);
+			})
+			.catch(() => {});
 
 		this.userInit();
 
