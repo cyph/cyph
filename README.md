@@ -1,1 +1,1 @@
-Basic Cyph PhoneGap app (placeholder pending availability of our NativeScript app).
+[Cyph](https://github.com/cyph/cyph) native app
