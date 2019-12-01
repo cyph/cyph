@@ -48,7 +48,13 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		return localforage.getItem<Uint8Array>(url);
+		const value = await localforage.getItem<Uint8Array>(url);
+
+		if (!(value instanceof Uint8Array)) {
+			throw new Error(`Item ${url} not found.`);
+		}
+
+		return value;
 	}
 
 	/** @inheritDoc */
