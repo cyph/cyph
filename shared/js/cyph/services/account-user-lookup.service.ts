@@ -18,6 +18,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {debugLog} from '../util/log';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -155,14 +156,17 @@ export class AccountUserLookupService extends BaseProvider {
 			const url = `users/${username}`;
 
 			if (
-				(lock || !preFetch) &&
+				(lock || !preFetch || !skipExistsCheck) &&
 				(this.userCache.has(username) ||
 					(await this.accountDatabaseService.isCached(
 						`${url}/publicProfile`
 					)))
 			) {
+				debugLog(() => ({getUserCached: username}));
+
 				lock = false;
 				preFetch = true;
+				skipExistsCheck = true;
 			}
 
 			return getOrSetDefaultAsync(
