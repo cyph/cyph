@@ -93,13 +93,13 @@ export class DatabaseService extends DataManagerService {
 				const keys =
 					typeof url === 'string' ?
 						[
-							`DatabaseService/value-url/${url}`,
 							this.cache.metadata
 								.getItem(url)
 								.then(
 									o => `DatabaseService/value-hash/${o.hash}`
 								)
-								.catch(() => undefined)
+								.catch(() => undefined),
+							`DatabaseService/value-url/${url}`
 						] :
 						[`DatabaseService/value-hash/${url.hash}`];
 
@@ -130,7 +130,7 @@ export class DatabaseService extends DataManagerService {
 
 					promises.push(callback(key));
 				}
-				return (await promises)[0];
+				return promises[0];
 			},
 			getItem: async <T>(
 				url: string | {hash: string; url: string},
