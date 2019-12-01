@@ -430,6 +430,29 @@
 			</div>
 		</ng-template>
 
+		<ng-template #fileUploadSpinner>
+			<ng-container
+				*ngIf="(accountFilesService.uploadSpinner | async) !== false"
+			>
+				<mat-progress-spinner
+					mode="indeterminate"
+					*ngIf="
+						(accountFilesService.uploadSpinner | async) === true ||
+							(accountFilesService.uploadSpinner | async) < 1;
+						else determinateFileSpinner
+					"
+				></mat-progress-spinner>
+				<ng-template #determinateFileSpinner>
+					<mat-progress-spinner
+						mode="determinate"
+						[value]="
+							(accountFilesService.uploadSpinner | async) || 1
+						"
+					></mat-progress-spinner>
+				</ng-template>
+			</ng-container>
+		</ng-template>
+
 		<ng-template #standardProfile>
 			<div fxLayout="row">
 				<div
@@ -577,15 +600,13 @@
 
 		<div
 			[class.editing]="(isEditorFocused | async) && (editMode | async)"
-			[class.initiating]="accountFilesService.uploadSpinner | async"
+			[class.initiating]="
+				(accountFilesService.uploadSpinner | async) !== false
+			"
 			*ngIf="!envService.isTelehealthFull"
 		>
 			<ng-container *ngTemplateOutlet="standardProfile"></ng-container>
-
-			<mat-progress-spinner
-				mode="indeterminate"
-				*ngIf="accountFilesService.uploadSpinner | async"
-			></mat-progress-spinner>
+			<ng-container *ngTemplateOutlet="fileUploadSpinner"></ng-container>
 		</div>
 
 		<!-- Telehealth view -->
@@ -593,7 +614,9 @@
 		<div
 			class="telehealth"
 			[class.editing]="(isEditorFocused | async) && (editMode | async)"
-			[class.initiating]="accountFilesService.uploadSpinner | async"
+			[class.initiating]="
+				(accountFilesService.uploadSpinner | async) !== false
+			"
 			*ngIf="envService.isTelehealthFull"
 		>
 			<div fxLayout="row">
@@ -884,10 +907,7 @@
 
 			<ng-container *ngTemplateOutlet="editButton"></ng-container>
 
-			<mat-progress-spinner
-				mode="indeterminate"
-				*ngIf="accountFilesService.uploadSpinner | async"
-			></mat-progress-spinner>
+			<ng-container *ngTemplateOutlet="fileUploadSpinner"></ng-container>
 		</div>
 	</ng-container>
 </ng-template>

@@ -795,10 +795,13 @@ export class AccountFilesService extends BaseProvider {
 	);
 
 	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner = new BehaviorSubject<boolean>(true);
+	public readonly showSpinner = new BehaviorSubject<boolean | number>(true);
 
 	/** Indicates whether spinner for uploads should be displayed. */
-	public readonly uploadSpinner = this.showSpinner.pipe(skip(1));
+	public readonly uploadSpinner = concat(
+		of(false),
+		this.showSpinner.pipe(skip(1))
+	);
 
 	/** @ignore */
 	private deltaToString (delta: IQuillDelta) : string {
@@ -819,7 +822,7 @@ export class AccountFilesService extends BaseProvider {
 		progress: Observable<number>;
 		result: Promise<T>;
 	} {
-		this.showSpinner.next(true);
+		this.showSpinner.next(0);
 
 		const filePromise = this.getFile(id);
 
@@ -834,9 +837,18 @@ export class AccountFilesService extends BaseProvider {
 			filePromise.then(file => file.key)
 		);
 
+		const sub = progress.subscribe(n => {
+			if (typeof this.showSpinner.value !== 'number') {
+				sub.unsubscribe();
+				return;
+			}
+			this.showSpinner.next(n);
+		});
+
 		return {
 			progress,
 			result: result.then(async o => {
+				sub.unsubscribe();
 				this.showSpinner.next(false);
 
 				return o.value instanceof Blob ? <any> new Blob([o.value], {
@@ -1109,17 +1121,26 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Downloads and saves file. */
 	public downloadAndSave (
-		id: string
+		id:
+			| string
+			| {
+					id: string;
+					progress: Observable<number>;
+					result: Promise<Uint8Array>;
+			  }
 	) : {
 		progress: Observable<number>;
 		result: Promise<void>;
 	} {
-		const {progress, result} = this.downloadItem(id, BinaryProto);
+		const {progress, result} =
+			typeof id === 'string' ? this.downloadItem(id, BinaryProto) : id;
 
 		return {
 			progress,
 			result: (async () => {
-				const file = await this.getFile(id);
+				const file = await this.getFile(
+					typeof id === 'string' ? id : id.id
+				);
 
 				await saveFile(await result, file.name, file.mediaType);
 			})()
@@ -1574,10 +1595,10 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Opens a file. */
 	public async openFile (id: string) : Promise<void> {
-		this.showSpinner.next(true);
+		const data = {id, ...this.downloadItem(id, BinaryProto)};
 
-		if (!(await this.openMedia(id))) {
-			await this.downloadAndSave(id).result;
+		if (!(await this.openMedia(data))) {
+			await this.downloadAndSave(data).result;
 		}
 	}
 
@@ -1585,16 +1606,27 @@ export class AccountFilesService extends BaseProvider {
 	 * Opens a multimedia file.
 	 * @returns Whether or not file is multimedia.
 	 */
-	public async openMedia (id: string) : Promise<boolean> {
-		this.showSpinner.next(true);
+	public async openMedia (
+		id:
+			| string
+			| {
+					id: string;
+					progress: Observable<number>;
+					result: Promise<Uint8Array>;
+			  }
+	) : Promise<boolean> {
+		const data =
+			typeof id === 'string' ?
+				{id, ...this.downloadItem(id, BinaryProto)} :
+				id;
 
-		const file = await this.getFile(id);
+		const file = await this.getFile(data.id);
 		const isMedia = await this.isMedia(file);
 
 		if (isMedia) {
 			this.dialogService.media({
 				mediaType: file.mediaType,
-				src: await this.downloadURI(id).result,
+				src: await deserialize(DataURIProto, await data.result),
 				title: file.name
 			});
 		}
@@ -1980,7 +2012,7 @@ export class AccountFilesService extends BaseProvider {
 			throw new Error('Invalid AccountFilesService.upload input.');
 		}
 
-		this.showSpinner.next(true);
+		this.showSpinner.next(0);
 
 		const id = uuid();
 		const key = (async () =>
@@ -2056,6 +2088,14 @@ export class AccountFilesService extends BaseProvider {
 					key
 				);
 
+		const sub = progress.subscribe(n => {
+			if (typeof this.showSpinner.value !== 'number') {
+				sub.unsubscribe();
+				return;
+			}
+			this.showSpinner.next(n);
+		});
+
 		return {
 			progress,
 			result: result.then(async () => {
@@ -2107,6 +2147,7 @@ export class AccountFilesService extends BaseProvider {
 					);
 				}
 
+				sub.unsubscribe();
 				this.showSpinner.next(false);
 
 				return id;

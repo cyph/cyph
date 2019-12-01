@@ -3,7 +3,7 @@
 	fxLayout="row"
 	fxLayoutAlign="center start"
 	class="card-list"
-	[class.initiating]="accountFilesService.showSpinner | async"
+	[class.initiating]="(accountFilesService.showSpinner | async) !== false"
 	[class.mobile]="envService.isMobile | async"
 	*ngIf="accountDatabaseService.currentUser | async as currentUser"
 >
@@ -628,10 +628,22 @@
 
 	<ng-content></ng-content>
 
-	<mat-progress-spinner
-		mode="indeterminate"
-		*ngIf="accountFilesService.showSpinner | async"
-	></mat-progress-spinner>
+	<ng-container *ngIf="(accountFilesService.showSpinner | async) !== false">
+		<mat-progress-spinner
+			mode="indeterminate"
+			*ngIf="
+				(accountFilesService.showSpinner | async) === true ||
+					(accountFilesService.showSpinner | async) < 1;
+				else determinateFileSpinner
+			"
+		></mat-progress-spinner>
+		<ng-template #determinateFileSpinner>
+			<mat-progress-spinner
+				mode="determinate"
+				[value]="(accountFilesService.showSpinner | async) || 1"
+			></mat-progress-spinner>
+		</ng-template>
+	</ng-container>
 </div>
 
 <ng-template #fileUploadDropZone>

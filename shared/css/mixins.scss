@@ -44,8 +44,10 @@ $default-white: map-get($mat-grey, 100);
 @mixin spinner-center {
 	@include center;
 
-	top: calc(50% - 50px);
-	left: calc(50% - 50px);
+	&[mode='indeterminate'] {
+		top: calc(50% - 50px);
+		left: calc(50% - 50px);
+	}
 }
 
 @mixin vertical-align {
