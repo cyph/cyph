@@ -1069,7 +1069,7 @@ export class ChatService extends BaseProvider {
 			getOrSetDefault(this.getMessageLocks, message.id, () => ({})),
 			async () =>
 				retryUntilSuccessful(
-					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					/* eslint-disable-next-line complexity */
 					async () => {
 						const localStorageKey = `chatService.getMessageValue/${message.id}`;
 
