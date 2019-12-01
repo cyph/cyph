@@ -175,5 +175,13 @@ import {CyphWebModule} from './cyph-web.module';
 	]
 })
 export class CyphAppModule {
-	constructor () {}
+	constructor (
+		accountDatabaseService: AccountDatabaseService,
+		databaseService: DatabaseService
+	) {
+		/* For debugging */
+
+		(<any> self).accountDatabaseService = accountDatabaseService;
+		(<any> self).databaseService = databaseService;
+	}
 }
