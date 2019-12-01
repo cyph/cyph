@@ -45,7 +45,7 @@ service firebase.storage {
 				allow write: if
 					resource == null &&
 					request.resource.size > 0 &&
-					request.resource.size < 300000000
+					request.resource.size < 600000000
 				;
 			}
 
@@ -54,7 +54,7 @@ service firebase.storage {
 				allow write: if
 					resource == null &&
 					request.resource.size > 0 &&
-					request.resource.size < 300000000
+					request.resource.size < 600000000
 				;
 			}
 
