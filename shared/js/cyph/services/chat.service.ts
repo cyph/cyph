@@ -1765,6 +1765,18 @@ export class ChatService extends BaseProvider {
 				this.resolvers.outgoingMessagesSynced.resolve();
 			}
 
+			this.chat.messageList.getFlatValue().then(async messageIDs => {
+				const lastMessageID = messageIDs.slice(-1)[0];
+				if (lastMessageID) {
+					await getOrSetDefault(
+						this.fullyLoadedMessages,
+						lastMessageID,
+						resolvable
+					).promise;
+				}
+				this.resolvers.messageListLoaded.resolve();
+			});
+
 			beginChat.then(() => {
 				this.begin();
 			});
@@ -1786,18 +1798,6 @@ export class ChatService extends BaseProvider {
 						unconfirmedMessages: this.chat.unconfirmedMessages.value
 					}
 				}));
-
-				this.chat.messageList.getFlatValue().then(async messageIDs => {
-					const lastMessageID = messageIDs.slice(-1)[0];
-					if (lastMessageID) {
-						await getOrSetDefault(
-							this.fullyLoadedMessages,
-							lastMessageID,
-							resolvable
-						).promise;
-					}
-					this.resolvers.messageListLoaded.resolve();
-				});
 
 				if (callType !== undefined) {
 					this.sessionService.yt().then(async () => {
