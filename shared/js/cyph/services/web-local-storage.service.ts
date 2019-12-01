@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as localforage from 'localforage';
 import {StringProto} from '../proto';
+import {lockFunction} from '../util/lock';
 import {LocalStorageService} from './local-storage.service';
 
 /**
@@ -8,6 +9,9 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class WebLocalStorageService extends LocalStorageService {
+	/** @ignore */
+	private readonly localforageLock = lockFunction();
+
 	/** @ignore */
 	private readonly ready: Promise<void> = (async () => {
 		try {
@@ -36,7 +40,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		return localforage.clear();
+		return this.localforageLock(async () => localforage.clear());
 	}
 
 	/** @inheritDoc */
@@ -48,7 +52,9 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		const value = await localforage.getItem<Uint8Array>(url);
+		const value = await this.localforageLock(async () =>
+			localforage.getItem<Uint8Array>(url)
+		);
 
 		if (!(value instanceof Uint8Array)) {
 			throw new Error(`Item ${url} not found.`);
@@ -65,7 +71,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		return localforage.keys();
+		return this.localforageLock(async () => localforage.keys());
 	}
 
 	/** @inheritDoc */
@@ -77,7 +83,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		return localforage.removeItem(url);
+		return this.localforageLock(async () => localforage.removeItem(url));
 	}
 
 	/** @inheritDoc */
@@ -90,7 +96,9 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		await localforage.setItem<Uint8Array>(url, value);
+		await this.localforageLock(async () =>
+			localforage.setItem<Uint8Array>(url, value)
+		);
 	}
 
 	constructor () {
