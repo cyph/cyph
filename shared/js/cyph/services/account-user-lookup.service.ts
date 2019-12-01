@@ -30,7 +30,7 @@ import {EnvService} from './env.service';
 @Injectable()
 export class AccountUserLookupService extends BaseProvider {
 	/** @ignore */
-	private readonly downloadLock: LockFunction = lockFunction();
+	private readonly downloadLock: LockFunction = lockFunction(2500);
 
 	/** @ignore */
 	private readonly existsCache: Set<string> = new Set<string>();

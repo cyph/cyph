@@ -1,9 +1,17 @@
 import {BehaviorSubject} from 'rxjs';
 import {LockFunction} from '../lock-function-type';
+import {sleep} from './wait/sleep';
 
-/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
+/**
+ * Executes a Promise within a mutual-exclusion lock in FIFO order.
+ * @param mutex.delay Waits the specified number of ms before releasing the lock.
+ */
 export const lock = async <T>(
-	mutex: {isOwned?: boolean; promise?: Promise<string | undefined>},
+	mutex: {
+		delay?: number;
+		isOwned?: boolean;
+		promise?: Promise<string | undefined>;
+	},
 	f: (o: {
 		reason?: string;
 		stillOwner: BehaviorSubject<boolean>;
@@ -24,7 +32,11 @@ export const lock = async <T>(
 
 	mutex.promise = promise
 		.catch(() => {})
-		.then(() => {
+		.then(async () => {
+			if (typeof mutex.delay === 'number') {
+				await sleep(mutex.delay);
+			}
+
 			mutex.isOwned = false;
 			return reason;
 		});
@@ -33,8 +45,8 @@ export const lock = async <T>(
 };
 
 /** Creates and returns a lock function that uses util/lock. */
-export const lockFunction = () : LockFunction => {
-	const mutex = {};
+export const lockFunction = (delay?: number) : LockFunction => {
+	const mutex = {delay};
 	return async <T>(
 		f: (o: {
 			reason?: string;
