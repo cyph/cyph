@@ -603,6 +603,15 @@ export class AccountAuthService extends BaseProvider {
 					))(),
 				(async () =>
 					this.localStorageService.setItem(
+						'username',
+						StringProto,
+						username
+					))()
+			]);
+
+			Promise.all([
+				(async () =>
+					this.localStorageService.setItem(
 						'pinIsCustom',
 						BinaryProto,
 						await this.accountDatabaseService.getItem(
@@ -614,13 +623,14 @@ export class AccountAuthService extends BaseProvider {
 					this.localStorageService.setItem(
 						'username',
 						StringProto,
-						agseConfirmed ?
-							(await user.accountUserProfile.getValue())
-								.realUsername :
-							username
+						(await user.accountUserProfile.getValue()).realUsername
 					))(),
 				this.savePIN(pinHash)
-			]);
+			])
+				.then(() => {
+					debugLog(() => 'credentials fully saved');
+				})
+				.catch(() => {});
 		}
 		catch (err) {
 			this.errorService.log(
