@@ -48,6 +48,7 @@ type CustomerEmail struct {
 
 // Plan : Braintree plan
 type Plan struct {
+	AccountsPlan      string
 	ProFeatures       map[string]bool
 	SessionCountLimit int64
 }
@@ -302,6 +303,71 @@ var config = struct {
 				"api":            true,
 				"disableP2P":     false,
 				"modestBranding": true,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"8-0": Plan{
+			AccountsPlan: "Silver",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"8-1": Plan{
+			AccountsPlan: "Gold",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"9-0": Plan{
+			AccountsPlan: "Silver",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"9-1": Plan{
+			AccountsPlan: "Gold",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"9-2": Plan{
+			AccountsPlan: "LifetimePlatinum",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
 				"nativeCrypto":   false,
 				"telehealth":     false,
 				"video":          true,

@@ -86,23 +86,20 @@ export class Config {
 		};
 	} = {
 		categories: {
-			cyberMonday: {
-				id: 7,
+			accounts: {
+				id: 8,
 				items: {
-					gold: {
-						amount: 60,
+					annualPremium: {
+						amount: 144,
 						id: 1,
-						name: 'Gold Plan'
+						name: 'Annual Premium',
+						subscriptionType: SubscriptionTypes.annual
 					},
-					platinum: {
-						amount: 500,
-						id: 2,
-						name: 'Lifetime Platinum'
-					},
-					silver: {
-						amount: 12,
+					monthlyPremium: {
+						amount: 15,
 						id: 0,
-						name: 'Silver Plan'
+						name: 'Monthly Premium',
+						subscriptionType: SubscriptionTypes.monthly
 					}
 				}
 			},
@@ -154,6 +151,28 @@ export class Config {
 					}
 				},
 				namespace: 'video.cyph.healthcare'
+			},
+			holidaySale: {
+				id: 9,
+				items: {
+					annualPremium: {
+						amount: 90,
+						id: 1,
+						name: 'Annual Premium',
+						subscriptionType: SubscriptionTypes.annual
+					},
+					lifetimePlatinum: {
+						amount: 450,
+						id: 2,
+						name: 'Lifetime Platinum'
+					},
+					monthlyPremium: {
+						amount: 10,
+						id: 0,
+						name: 'Monthly Premium',
+						subscriptionType: SubscriptionTypes.monthly
+					}
+				}
 			},
 			subscription: {
 				id: 1,
