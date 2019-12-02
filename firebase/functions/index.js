@@ -185,10 +185,7 @@ const onRequest = (adminOnly, f) =>
 	functions.https.onRequest((req, res) =>
 		cors(req, res, async () => {
 			try {
-				if (
-					adminOnly &&
-					req.getHeader('Authorization') !== cyphAdminKey
-				) {
+				if (adminOnly && req.get('Authorization') !== cyphAdminKey) {
 					throw new Error('Invalid authorization.');
 				}
 
