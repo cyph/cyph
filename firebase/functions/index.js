@@ -181,10 +181,17 @@ const onCall = f =>
 		)
 	);
 
-const onRequest = f =>
+const onRequest = (adminOnly, f) =>
 	functions.https.onRequest((req, res) =>
 		cors(req, res, async () => {
 			try {
+				if (
+					adminOnly &&
+					req.getHeader('Authorization') !== cyphAdminKey
+				) {
+					throw new Error('Invalid authorization.');
+				}
+
 				await f(
 					req,
 					res,
@@ -372,11 +379,7 @@ exports.checkInviteCode = onCall(
 	}
 );
 
-exports.generateInvite = onRequest(async (req, res, namespace) => {
-	if (req.getHeader('Authorization') !== cyphAdminKey) {
-		throw new Error('Invalid authorization.');
-	}
-
+exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
 	const email = validateInput(req.body.email, emailRegex);
 	const name = validateInput(req.body.name);
