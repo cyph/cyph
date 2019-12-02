@@ -36,7 +36,7 @@ command="$(node -e "(async () => {
 	const browser = await require('puppeteer').launch();
 	const page = await browser.newPage();
 
-	setTimeout(() => process.exit(1), 600000);
+	setTimeout(() => process.exit(1), 1800000);
 
 	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_export', {timeout: 0});
 
@@ -85,7 +85,7 @@ node -e "(async () => {
 	const browser = await require('puppeteer').launch();
 	const page = await browser.newPage();
 
-	setTimeout(() => process.exit(1), 600000);
+	setTimeout(() => process.exit(1), 1800000);
 
 	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_import', {timeout: 0});
 
