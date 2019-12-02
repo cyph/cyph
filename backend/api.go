@@ -72,6 +72,7 @@ func analytics(h HandlerArgs) (interface{}, int) {
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	company := sanitize(h.Request.PostFormValue("company"))
 	name := sanitize(h.Request.PostFormValue("name"))
+	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
 	timestamp := getTimestamp()
 
 	email, err := getEmail(h.Request.PostFormValue("email"))
@@ -141,14 +142,21 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	txLog := ""
 	success := false
 
-	if subscription {
-		names := strings.SplitN(name, " ", 2)
-		firstName := names[0]
-		lastName := ""
-		if len(names) > 1 {
-			lastName = names[1]
-		}
+	names := strings.SplitN(name, " ", 2)
+	firstName := names[0]
+	lastName := ""
+	if len(names) > 1 {
+		lastName = names[1]
+	}
 
+	billingAddress := &braintree.Address{
+		Company:       company,
+		FirstName:     firstName,
+		LastName:      lastName,
+		StreetAddress: streetAddress,
+	}
+
+	if subscription {
 		braintreeCustomer, err := bt.Customer().Create(h.Context, &braintree.CustomerRequest{
 			Company:   company,
 			Email:     email,
@@ -164,6 +172,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		if creditCard {
 			paymentMethod, err = bt.CreditCard().Create(h.Context, &braintree.CreditCard{
+				BillingAddress:     billingAddress,
 				CardholderName:     name,
 				CustomerId:         braintreeCustomer.Id,
 				PaymentMethodNonce: nonce,
@@ -262,9 +271,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 	} else {
 		tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
-			Type:               "sale",
 			Amount:             braintree.NewDecimal(amount, 2),
+			BillingAddress:     billingAddress,
 			PaymentMethodNonce: nonce,
+			Type:               "sale",
 		})
 
 		if err != nil {

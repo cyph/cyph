@@ -109,6 +109,9 @@ export class CheckoutComponent extends BaseProvider
 	/** Indicates whether pricing is per-user. */
 	@Input() public perUser: boolean = false;
 
+	/** Street address. */
+	@Input() public streetAddress?: string;
+
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
 
@@ -247,6 +250,7 @@ export class CheckoutComponent extends BaseProvider
 					),
 					creditCard: paymentMethod.type === 'CreditCard',
 					nonce: paymentMethod.nonce,
+					streetAddress: this.streetAddress,
 					subscription: this.subscriptionType !== undefined,
 					url: location.toString(),
 					...(this.category !== undefined ?
