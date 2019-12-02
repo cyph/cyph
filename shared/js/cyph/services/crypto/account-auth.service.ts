@@ -867,6 +867,11 @@ export class AccountAuthService extends BaseProvider {
 					signingKeyPair,
 					loginData.symmetricKey
 				),
+				this.databaseService.setItem(
+					`users/${username}/profileVisible`,
+					BooleanProto,
+					true
+				),
 				pseudoAccount ?
 					this.databaseService.setItem(
 						`users/${username}/pseudoAccount`,
