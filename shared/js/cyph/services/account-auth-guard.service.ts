@@ -21,11 +21,13 @@ export class AccountAuthGuardService extends BaseProvider
 		'compose',
 		'logout',
 		'profile',
-		'register',
 		'reject',
 		'request-appointment',
 		'upload-ehr-credentials'
 	];
+
+	/** @ignore */
+	private readonly forcedAnonymouslyAccessibleRoutes: string[] = ['register'];
 
 	/** @ignore */
 	private readonly pseudoAccountRoutes: string[] = ['accept'];
@@ -58,9 +60,13 @@ export class AccountAuthGuardService extends BaseProvider
 		if (
 			this.accountDatabaseService.currentUser.value !== undefined ||
 			(route.url.length > 0 &&
-				this.anonymouslyAccessibleRoutes.indexOf(route.url[0].path) >
-					-1 &&
-				!(await this.accountAuthService.hasSavedCredentials()))
+				(this.forcedAnonymouslyAccessibleRoutes.indexOf(
+					route.url[0].path
+				) > -1 ||
+					(this.anonymouslyAccessibleRoutes.indexOf(
+						route.url[0].path
+					) > -1 &&
+						!(await this.accountAuthService.hasSavedCredentials()))))
 		) {
 			return true;
 		}
