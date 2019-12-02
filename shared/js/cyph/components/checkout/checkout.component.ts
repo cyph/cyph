@@ -43,6 +43,9 @@ export class CheckoutComponent extends BaseProvider
 	/* Braintree instance. */
 	private braintreeInstance: any;
 
+	/** Indicates whether affiliate offer is accepted. */
+	public affiliate: boolean = false;
+
 	/** Amount in dollars. */
 	@Input() public amount: number = 0;
 
@@ -51,9 +54,6 @@ export class CheckoutComponent extends BaseProvider
 
 	/** Company. */
 	@Input() public company?: string;
-
-	/** Indicates whether affiliate offer is accepted. */
-	public affiliate: boolean = false;
 
 	/** Indicates whether checkout is complete. */
 	public readonly complete = new BehaviorSubject<boolean>(false);
@@ -78,15 +78,15 @@ export class CheckoutComponent extends BaseProvider
 		undefined
 	);
 
+	/** Discount for each user after the first one. */
+	@Input() public extraUserDiscount: number = 0;
+
 	/** Formats item name. */
 	public readonly formatItemName = memoize((itemName?: string) =>
 		typeof itemName === 'string' ?
 			itemName.replace(/([A-Z])/g, ' $1').toUpperCase() :
 			undefined
 	);
-
-	/** Discount for each user after the first one. */
-	@Input() public extraUserDiscount: number = 0;
 
 	/** Item ID number. */
 	@Input() public item?: number;
