@@ -137,6 +137,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	bt := braintreeInit(h)
 
+	braintreeID := ""
 	txLog := ""
 	success := false
 
@@ -220,6 +221,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		if success {
 			txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
+
+			braintreeID = braintreeCustomer.Id
 
 			_, err := h.Datastore.Put(
 				h.Context,
@@ -340,7 +343,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if hasPlan && plan.AccountsPlan != "" {
-		err = generateInvite(email, name, plan.AccountsPlan)
+		err = generateInvite(email, name, plan.AccountsPlan, braintreeID)
 
 		if err != nil {
 			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +

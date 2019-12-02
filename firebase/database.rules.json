@@ -166,6 +166,9 @@
 
 			"inviteCodes": {
 				"$code": {
+					"braintreeID": {
+						".validate": "newData.isString()"
+					},
 					"inviterUsername": {
 						".validate": "newData.isString()"
 					},
@@ -691,6 +694,9 @@
 						".read": false,
 						".write": false,
 
+						"braintreeID": {
+							".validate": "newData.isString()"
+						},
 						"email": {
 							".validate": "newData.isString()"
 						},

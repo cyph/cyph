@@ -376,6 +376,8 @@ exports.checkInviteCode = onCall(
 
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
+	const braintreeID =
+		req.body.braintreeID && validateInput(req.body.braintreeID);
 	const email = validateInput(req.body.email, emailRegex);
 	const name = validateInput(req.body.name);
 	const plan =
@@ -383,7 +385,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 
 	const inviteCode = readableID(15);
 
-	await database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({plan});
+	await database
+		.ref(`${namespace}/inviteCodes/${inviteCode}`)
+		.set({plan, ...(braintreeID ? {braintreeID} : {})});
 
 	await sendMailInternal(email, 'Your Cyph Invite', {
 		data: getInviteTemplateData({inviteCode, name, plan}),
@@ -590,7 +594,7 @@ exports.userConsumeInvite = functions.database
 		);
 
 		const inviteData = (await inviteDataRef.once('value')).val() || {};
-		const {inviterUsername, reservedUsername} = inviteData;
+		const {braintreeID, inviterUsername, reservedUsername} = inviteData;
 		const plan =
 			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
@@ -620,6 +624,13 @@ exports.userConsumeInvite = functions.database
 				{plan},
 				true
 			),
+			!braintreeID ?
+				undefined :
+				database
+					.ref(
+						`${params.namespace}/users/${username}/internal/braintreeID`
+					)
+					.set(braintreeID),
 			!inviterUsername ?
 				undefined :
 				removeItem(
