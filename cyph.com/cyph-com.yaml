@@ -11,6 +11,12 @@ handlers:
   secure: always
   # default_headers Cache-Control
 
+- url: /.well-known/apple-developer-merchantid-domain-association
+  static_files: apple-pay
+  upload: apple-pay
+  secure: always
+  # default_headers
+
 - url: /blog/feed[/]?
   static_files: blog/feed/index.xml
   upload: blog/feed/index.xml

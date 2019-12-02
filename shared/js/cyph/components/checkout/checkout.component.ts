@@ -190,9 +190,33 @@ export class CheckoutComponent extends BaseProvider
 
 		this.complete.next(false);
 
+		const amountString = this.amount.toFixed(2);
+
 		braintreeDropIn.create(
 			{
+				applePay: {
+					displayName: 'Cyph',
+					paymentRequest: {
+						amount: amountString,
+						label: 'Cyph'
+					},
+					requiredBillingContactFields: ['postalAddress']
+				},
 				authorization: await this.authorization,
+				/*
+				googlePay: {
+					cardRequirements: {
+						billingAddressRequired: true
+					},
+					googlePayVersion: 2,
+					merchantId: 'TODO: Get this',
+					transactionInfo: {
+						currencyCode: 'USD',
+						totalPrice: amountString,
+						totalPriceStatus: 'FINAL'
+					}
+				},
+				*/
 				paypal: {
 					buttonStyle: {
 						color: 'blue',
@@ -204,7 +228,10 @@ export class CheckoutComponent extends BaseProvider
 				paypalCredit: {
 					flow: 'vault'
 				},
-				selector: `#${this.containerID}`
+				selector: `#${this.containerID}`,
+				venmo: {
+					allowNewBrowserTab: false
+				}
 			},
 			(err: any, instance: any) => {
 				if (err) {

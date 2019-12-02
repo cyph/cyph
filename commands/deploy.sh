@@ -576,6 +576,7 @@ if [ "${cacheBustedProjects}" ] ; then
 			cd ..
 			mv cyph.com cyph.com.src
 			mv wpstatic cyph.com
+			cp cyph.com.src/apple-pay cyph.com/
 			cp cyph.com.src/robots.txt cyph.com/
 			while [ ! -f .build.done ] ; do sleep 1 ; done
 			cp -a shared/assets cyph.com/
