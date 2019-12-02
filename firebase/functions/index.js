@@ -48,6 +48,7 @@ const {
 	readableByteLength,
 	readableID,
 	sleep,
+	titleize,
 	uuid
 } = require('./util');
 
@@ -394,12 +395,19 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		...(braintreeID ? {braintreeID} : {})
 	});
 
-	await sendMailInternal(email, 'Your Cyph Invite', {
-		data: getInviteTemplateData({inviteCode, name, plan, purchased}),
-		namespace,
-		noUnsubscribe: true,
-		templateName: 'new-cyph-invite'
-	});
+	await sendMailInternal(
+		email,
+		(purchased ?
+			'Cyph Purchase Confirmation' :
+			"You've Been Invited to Cyph!") +
+			(plan === CyphPlans.Free ? '' : ` (${titleize(CyphPlans[plan])})`),
+		{
+			data: getInviteTemplateData({inviteCode, name, plan, purchased}),
+			namespace,
+			noUnsubscribe: true,
+			templateName: 'new-cyph-invite'
+		}
+	);
 });
 
 exports.itemHashChange = functions.database
@@ -559,7 +567,7 @@ exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
 		inviteCodesRef.child(inviteCode).remove(),
 		sendMailInternal(
 			email,
-			`Cyph Invite from ${inviterName} (@${inviterRealUsername})`,
+			`${inviterName} (@${inviterRealUsername}) Has Invited You to Cyph!`,
 			{
 				data: getInviteTemplateData({
 					inviteCode,
