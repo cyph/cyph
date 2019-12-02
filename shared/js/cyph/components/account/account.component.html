@@ -45,7 +45,6 @@
 	<div class="content" fxFlex fxFlexFill fxLayout="column" fxLayout.xs="row">
 		<mat-sidenav-container
 			fxFlexFill
-			fxLayout="column"
 			(backdropClick)="accountService.toggleMobileMenu(false)"
 		>
 			<mat-sidenav
@@ -57,187 +56,196 @@
 				<cyph-account-menu [sidenav]="true"></cyph-account-menu>
 			</mat-sidenav>
 
-			<div
-				fxLayout="row"
-				class="header slideInDown"
-				[class.animated]="(envService.isMobile | async) === false"
-				[class.fadeOutUp]="accountService.transition | async"
-				fxLayoutAlign="stretch center"
-				fxLayoutGap="8px"
-				*ngIf="
-					(accountService.header | async) !== undefined &&
-					(accountService.isCallActive | async) === false &&
-					!(
-						(envService.isMobile | async) &&
-						(accountService.header | async)?.desktop !==
-							undefined &&
-						(accountService.header | async)?.mobile === undefined
-					) &&
-					!(
-						(envService.isMobile | async) === false &&
-						(accountService.header | async)?.desktop ===
-							undefined &&
-						(accountService.header | async)?.mobile !== undefined
-					)
-				"
-			>
-				<div></div>
-
-				<button
-					mat-icon-button
-					cyphTranslate
-					class="logo-icon"
-					aria-label="Menu"
-					(click)="accountService.toggleMobileMenu()"
-					fxHide.gt-sm
+			<div fxFlexFill fxLayout="column">
+				<div
+					fxLayout="row"
+					class="header slideInDown"
+					[class.animated]="(envService.isMobile | async) === false"
+					[class.fadeOutUp]="accountService.transition | async"
+					fxLayoutAlign="stretch center"
+					fxLayoutGap="8px"
 					*ngIf="
-						(accountDatabaseService.currentUser | async) !==
-							undefined &&
-						(accountDatabaseService.currentUser | async)
-							?.pseudoAccount === false
+						(accountService.header | async) !== undefined &&
+						(accountService.isCallActive | async) === false &&
+						!(
+							(envService.isMobile | async) &&
+							(accountService.header | async)?.desktop !==
+								undefined &&
+							(accountService.header | async)?.mobile ===
+								undefined
+						) &&
+						!(
+							(envService.isMobile | async) === false &&
+							(accountService.header | async)?.desktop ===
+								undefined &&
+							(accountService.header | async)?.mobile !==
+								undefined
+						)
 					"
 				>
-					<mat-icon
-						[matBadge]="
-							(
-								((accountService.unreadMessages | async) || 0) +
-								((accountFilesService.incomingFiles | async)
-									?.length || 0)
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
-								((accountService.unreadMessages | async) || 0) +
-									((accountFilesService.incomingFiles | async)
-										?.length || 0) >
-								0
-							)
-						"
-						matBadgePosition="above after"
-					>
-						menu
-					</mat-icon>
-				</button>
+					<div></div>
 
-				<div></div>
-				<div></div>
-				<div></div>
-
-				<div class="header-content" fxFlex fxLayout="row">
-					<ng-container
+					<button
+						mat-icon-button
+						cyphTranslate
+						class="logo-icon"
+						aria-label="Menu"
+						(click)="accountService.toggleMobileMenu()"
+						fxHide.gt-sm
 						*ngIf="
-							accountService.header | async as header;
-							else emptyHeader
+							(accountDatabaseService.currentUser | async) !==
+								undefined &&
+							(accountDatabaseService.currentUser | async)
+								?.pseudoAccount === false
 						"
 					>
-						<a
-							fxFlex
-							class="profile-link"
-							[routerLink]="'/profile/' + header.username"
-							*ngIf="!!header.avatar; else stringHeader"
+						<mat-icon
+							[matBadge]="
+								(
+									((accountService.unreadMessages | async) ||
+										0) +
+									((accountFilesService.incomingFiles | async)
+										?.length || 0)
+								).toString()
+							"
+							[matBadgeHidden]="
+								!(
+									((accountService.unreadMessages | async) ||
+										0) +
+										((
+											accountFilesService.incomingFiles
+											| async
+										)?.length || 0) >
+									0
+								)
+							"
+							matBadgePosition="above after"
 						>
-							<div
+							menu
+						</mat-icon>
+					</button>
+
+					<div></div>
+					<div></div>
+					<div></div>
+
+					<div class="header-content" fxFlex fxLayout="row">
+						<ng-container
+							*ngIf="
+								accountService.header | async as header;
+								else emptyHeader
+							"
+						>
+							<a
 								fxFlex
-								fxLayout="row"
-								fxLayoutAlign="start center"
-								fxLayoutGap="16px"
+								class="profile-link"
+								[routerLink]="'/profile/' + header.username"
+								*ngIf="!!header.avatar; else stringHeader"
 							>
-								<img
-									cyphTranslate
-									class="avatar"
-									[ngClass]="
-										userPresence[
-											(header.status | async) || 0
-										]
-									"
-									alt="Profile Picture"
-									[src]="header.avatar | async"
-								/>
-
-								<h1
-									*ngIf="
-										header.name | async as name;
-										else usernameHeader
-									"
+								<div
+									fxFlex
+									fxLayout="row"
+									fxLayoutAlign="start center"
+									fxLayoutGap="16px"
 								>
-									{{ name }}
+									<img
+										cyphTranslate
+										class="avatar"
+										[ngClass]="
+											userPresence[
+												(header.status | async) || 0
+											]
+										"
+										alt="Profile Picture"
+										[src]="header.avatar | async"
+									/>
+
+									<h1
+										*ngIf="
+											header.name | async as name;
+											else usernameHeader
+										"
+									>
+										{{ name }}
+									</h1>
+
+									<ng-template #usernameHeader>
+										<h1>
+											@{{ header.realUsername | async }}
+										</h1>
+									</ng-template>
+								</div>
+							</a>
+
+							<ng-template #stringHeader>
+								<h1 fxFlex>
+									{{
+										((envService.isMobile | async) ?
+											header.mobile :
+											header.desktop) || ''
+									}}
 								</h1>
-
-								<ng-template #usernameHeader>
-									<h1>@{{ header.realUsername | async }}</h1>
-								</ng-template>
-							</div>
-						</a>
-
-						<ng-template #stringHeader>
-							<h1 fxFlex>
-								{{
-									((envService.isMobile | async) ?
-										header.mobile :
-										header.desktop) || ''
-								}}
-							</h1>
+							</ng-template>
+						</ng-container>
+						<ng-template #emptyHeader>
+							<h1 fxFlex></h1>
 						</ng-template>
-					</ng-container>
-					<ng-template #emptyHeader>
-						<h1 fxFlex></h1>
-					</ng-template>
+					</div>
+
+					<div></div>
+					<div></div>
+					<div></div>
+
+					<!--
+					<button
+						mat-icon-button
+						cyphTranslate
+						aria-label='Search'
+						routerLink='/search'
+						fxHide.gt-sm
+						*ngIf='!envService.isTelehealth'
+					>
+						<mat-icon>search</mat-icon>
+					</button>
+					-->
+
+					<button
+						mat-icon-button
+						fxHide.gt-sm
+						cyphTranslate
+						aria-label="Context Menu"
+						[matMenuTriggerFor]="contextMenu"
+					>
+						<mat-icon>more_vert</mat-icon>
+					</button>
+
+					<div></div>
 				</div>
 
-				<div></div>
-				<div></div>
-				<div></div>
-
-				<!--
-				<button
-					mat-icon-button
+				<h3
+					class="cyph-banner alert"
 					cyphTranslate
-					aria-label='Search'
-					routerLink='/search'
-					fxHide.gt-sm
-					*ngIf='!envService.isTelehealth'
+					*ngIf="
+						(accountDatabaseService.currentUser | async)
+							?.agseConfirmed === false
+					"
 				>
-					<mat-icon>search</mat-icon>
-				</button>
-				-->
+					Your account is in queue to be verified and will be fully
+					activated soon.
+				</h3>
 
-				<button
-					mat-icon-button
-					fxHide.gt-sm
-					cyphTranslate
-					aria-label="Context Menu"
-					[matMenuTriggerFor]="contextMenu"
+				<div
+					fxFlex
+					class="content-wrapper animated"
+					[class.fadeOutUp]="accountService.transition | async"
+					[class.full-height]="fullHeight | async"
+					[class.padding]="(fullWidth | async) === false"
+					ngClass.lt-md="small"
+					ngClass.md="medium"
+					ngClass.gt-md="large"
 				>
-					<mat-icon>more_vert</mat-icon>
-				</button>
-
-				<div></div>
-			</div>
-
-			<h3
-				class="cyph-banner alert"
-				cyphTranslate
-				fxFlex
-				*ngIf="
-					(accountDatabaseService.currentUser | async)
-						?.agseConfirmed === false
-				"
-			>
-				Your account is in queue to be verified and will be fully
-				activated soon.
-			</h3>
-
-			<div
-				fxFlex
-				class="content-wrapper animated"
-				[class.fadeOutUp]="accountService.transition | async"
-				[class.full-height]="fullHeight | async"
-				[class.padding]="(fullWidth | async) === false"
-				ngClass.lt-md="small"
-				ngClass.md="medium"
-				ngClass.gt-md="large"
-			>
-				<router-outlet></router-outlet>
+					<router-outlet></router-outlet>
+				</div>
 			</div>
 		</mat-sidenav-container>
 	</div>
