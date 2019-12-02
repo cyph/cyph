@@ -34,6 +34,12 @@ import {openWindow} from '../../util/window';
 })
 export class CheckoutComponent extends BaseProvider
 	implements AfterViewInit, OnInit {
+	/** @ignore */
+	private readonly authorization = request({
+		retries: 5,
+		url: this.envService.baseUrl + 'braintree'
+	});
+
 	/* Braintree instance. */
 	private braintreeInstance: any;
 
@@ -181,14 +187,9 @@ export class CheckoutComponent extends BaseProvider
 
 		this.complete.next(false);
 
-		const authorization = await request({
-			retries: 5,
-			url: this.envService.baseUrl + 'braintree'
-		});
-
 		braintreeDropIn.create(
 			{
-				authorization,
+				authorization: await this.authorization,
 				paypal: {
 					buttonStyle: {
 						color: 'blue',
