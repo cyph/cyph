@@ -113,13 +113,13 @@ const getName = async (namespace, username) => {
 	return getRealUsername(namespace, username);
 };
 
-const getInviteTemplateData = (
+const getInviteTemplateData = ({
 	inviteCode,
 	inviterName,
 	name,
 	plan,
 	fromApp
-) => {
+}) => {
 	const planConfig =
 		config.planConfig[plan] || config.planConfig[CyphPlans.Free];
 
@@ -354,13 +354,11 @@ exports.checkInviteCode = onCall(
 		const plan =
 			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
-		const templateData = getInviteTemplateData(
+		const templateData = getInviteTemplateData({
+			fromApp: true,
 			inviteCode,
-			undefined,
-			undefined,
-			plan,
-			true
-		);
+			plan
+		});
 
 		return {
 			inviterUsername,
@@ -388,7 +386,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	await database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({plan});
 
 	await sendMailInternal(email, 'Your Cyph Invite', {
-		data: getInviteTemplateData(inviteCode, name, plan),
+		data: getInviteTemplateData({inviteCode, name, plan}),
 		namespace,
 		templateName: 'new-cyph-invite'
 	});
@@ -553,12 +551,12 @@ exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
 			email,
 			`Cyph Invite from ${inviterName} (@${inviterRealUsername})`,
 			{
-				data: getInviteTemplateData(
+				data: getInviteTemplateData({
 					inviteCode,
 					inviterName,
 					name,
 					plan
-				),
+				}),
 				namespace,
 				templateName: 'new-cyph-invite'
 			}
