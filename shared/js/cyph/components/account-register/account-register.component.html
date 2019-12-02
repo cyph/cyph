@@ -976,13 +976,20 @@
 				<div></div>
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<div
+						#masterKeySpoilerTooltip="matTooltip"
 						fxFlex
 						fxFlex.sm="80"
 						fxFlex.gt-sm="90"
 						class="spoiler"
 						[class.revealed]="(spoiler | async) === false"
 						[matTooltip]="stringsService.masterKeyInfo"
+						matTooltipPosition="above"
 						(click)="
+							!envService.isMobileOS ?
+								undefined :
+							!spoiler.value ?
+								masterKeySpoilerTooltip.hide() :
+								masterKeySpoilerTooltip.show();
 							spoiler.next(!spoiler.value);
 							xkcdPassphraseHasBeenViewed.next(true)
 						"
