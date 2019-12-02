@@ -501,6 +501,9 @@ export class StringsService extends BaseProvider {
 	public readonly masterKey = `Master Key`;
 
 	/** @see StringsService */
+	public readonly masterKeyInfo = `Master Key is space- and case-sensitive`;
+
+	/** @see StringsService */
 	public readonly masterKeyMismatch = `Master Keys don't match`;
 
 	/** @see StringsService */

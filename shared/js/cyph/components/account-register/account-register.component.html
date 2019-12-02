@@ -981,6 +981,7 @@
 						fxFlex.gt-sm="90"
 						class="spoiler"
 						[class.revealed]="(spoiler | async) === false"
+						[matTooltip]="stringsService.masterKeyInfo"
 						(click)="
 							spoiler.next(!spoiler.value);
 							xkcdPassphraseHasBeenViewed.next(true)
