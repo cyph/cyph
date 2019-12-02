@@ -339,36 +339,38 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	plan, hasPlan := config.Plans[planID]
 
-	if subscription && hasPlan {
-		if plan.AccountsPlan != "" {
-			err = generateInvite(email, name, plan.AccountsPlan)
+	if hasPlan && plan.AccountsPlan != "" {
+		err = generateInvite(email, name, plan.AccountsPlan)
 
-			if err != nil {
-				sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
-					"Nonce: " + nonce +
-					"\nPlan ID: " + planID +
-					"\nAmount: " + amountString +
-					"\nSubscription: " + subscriptionString +
-					"\nCompany: " + company +
-					"\nName: " + name +
-					"\nEmail: " + email +
-					"\nAccounts Plan: " + plan.AccountsPlan +
-					"\n\n" + txLog +
-					""), "")
-			}
-		} else {
-			sendMail(email, "Cyph Purchase Confirmation", "", ""+
-				"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
-				"<p style='text-align: left'>"+
-				"Your access code is:&nbsp;&nbsp;"+
-				"<a style='font-family: monospace; font-size: 16px' href='"+
-				signupURL+"/unlock/"+apiKey+
-				"'>"+
-				apiKey+
-				"</a>"+
-				"</p>"+
-				"")
+		if err != nil {
+			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
+				"Nonce: " + nonce +
+				"\nPlan ID: " + planID +
+				"\nAmount: " + amountString +
+				"\nSubscription: " + subscriptionString +
+				"\nCompany: " + company +
+				"\nName: " + name +
+				"\nEmail: " + email +
+				"\nAccounts Plan: " + plan.AccountsPlan +
+				"\n\n" + txLog +
+				""), "")
 		}
+
+		return "", http.StatusOK
+	}
+
+	if subscription && hasPlan {
+		sendMail(email, "Cyph Purchase Confirmation", "", ""+
+			"<p>Welcome to Cyph "+name+", and thanks for signing up!</p>"+
+			"<p style='text-align: left'>"+
+			"Your access code is:&nbsp;&nbsp;"+
+			"<a style='font-family: monospace; font-size: 16px' href='"+
+			signupURL+"/unlock/"+apiKey+
+			"'>"+
+			apiKey+
+			"</a>"+
+			"</p>"+
+			"")
 
 		return apiKey, http.StatusOK
 	}
