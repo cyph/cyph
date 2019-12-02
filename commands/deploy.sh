@@ -972,7 +972,7 @@ then
 			if [ "${firebaseProject}" == 'cyphme' ] ; then echo prod ; else echo sandbox ; fi
 		) |
 			sed 's|CYPH_FIREBASE_ADMIN_KEY:|module.exports.cyphAdminKey =|' \
-		> cyph-admin-key.js
+		> functions/cyph-admin-key.js
 
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/fcm-server-key
 		firebase use --add "${firebaseProject}"
