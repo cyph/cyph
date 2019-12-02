@@ -3,6 +3,7 @@ const functions = require('firebase-functions');
 const fs = require('fs');
 const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
+const {cyphAdminKey} = require('./cyph-admin-key');
 const {sendMail, sendMailInternal} = require('./email');
 const {emailRegex} = require('./email-regex');
 const {renderTemplate} = require('./markdown-templating');
@@ -158,6 +159,7 @@ const usernameBlacklisted = async (namespace, username, reservedUsername) =>
 		(await database
 			.ref(`${namespace}/reservedUsernames/${username}`)
 			.once('value')).exists());
+
 const validateInput = (input, regex) => {
 	if (!input || input.indexOf('/') > -1 || (regex && !regex.test(input))) {
 		throw new Error('Invalid data.');
@@ -369,6 +371,28 @@ exports.checkInviteCode = onCall(
 		};
 	}
 );
+
+exports.generateInvite = onRequest(async (req, res, namespace) => {
+	if (req.getHeader('Authorization') !== cyphAdminKey) {
+		throw new Error('Invalid authorization.');
+	}
+
+	const {accountsURL} = namespaces[namespace];
+	const email = validateInput(req.body.email, emailRegex);
+	const name = validateInput(req.body.name);
+	const plan =
+		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
+
+	const inviteCode = readableID(15);
+
+	await database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({plan});
+
+	await sendMailInternal(email, 'Your Cyph Invite', {
+		data: getInviteTemplateData(inviteCode, name, plan),
+		namespace,
+		templateName: 'new-cyph-invite'
+	});
+});
 
 exports.itemHashChange = functions.database
 	.ref('hash')

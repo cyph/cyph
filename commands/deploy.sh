@@ -313,6 +313,14 @@ if [ "${allBranches}" ] ; then
 		rm -rf ${branchDir}/backend ${branchDir}/firebase
 		cp -a ~/.build/backend ${branchDir}/
 		cat ~/.cyph/backend.vars.sandbox >> ${branchDir}/backend/app.yaml
+
+		backendFirebaseProject='cyph-test'
+		if [ "${gitBranch}" == 'beta' ] || [ "${gitBranch}" == 'master' ] ; then
+			backendFirebaseProject="cyph-test-${branch}"
+		elif [ "${gitBranch}" == 'prod' ] ; then
+			backendFirebaseProject='cyph-test-staging'
+		fi
+		echo "  FIREBASE_PROJECT: '${backendFirebaseProject}'" >> ${branchDir}/backend/app.yaml
 	done
 
 	cd ~/.build
@@ -960,6 +968,12 @@ then
 	cd ..
 
 	for firebaseProject in ${firebaseProjects} ; do
+		grep CYPH_FIREBASE_ADMIN_KEY ~/.cyph/backend.vars.$(
+			if [ "${firebaseProject}" == 'cyphme' ] ; then echo prod ; else echo sandbox ; fi
+		) |
+			sed 's|CYPH_FIREBASE_ADMIN_KEY:|module.exports.cyphAdminKey =|' \
+		> cyph-admin-key.js
+
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/fcm-server-key
 		firebase use --add "${firebaseProject}"
 		firebase functions:config:set project.id="${firebaseProject}"
@@ -980,6 +994,16 @@ then
 	cd ..
 fi
 
+backendFirebaseProject='cyphme'
+if [ "${test}" ] ; then
+	backendFirebaseProject='cyph-test'
+	if [ "${branch}" == 'staging' ] || [ "${branch}" == 'master' ] ; then
+		backendFirebaseProject="cyph-test-${branch}"
+	elif [ "${branch}" == 'beta-staging' ] ; then
+		backendFirebaseProject='cyph-test-beta'
+	fi
+fi
+echo "  FIREBASE_PROJECT: '${backendFirebaseProject}'" >> backend/app.yaml
 
 
 for branchDir in ${branchDirs} ~/.build ; do

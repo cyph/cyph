@@ -88,6 +88,9 @@ var orgdb, _ = geoip2.Open("GeoIP2-ISP.mmdb")
 var isProd = len(os.Getenv("PROD")) > 0
 
 var cyphAdminKey = os.Getenv("CYPH_ADMIN_KEY")
+var cyphFirebaseAdminKey = os.Getenv("CYPH_FIREBASE_ADMIN_KEY")
+
+var firebaseProject = os.Getenv("FIREBASE_PROJECT")
 
 var twilioSID = os.Getenv("TWILIO_SID")
 var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
@@ -271,6 +274,30 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	bt.HttpClient = &http.Client{}
 
 	return bt
+}
+
+func generateInvite(email string, name string, plan string) error {
+	body, _ := json.Marshal(map[string]string{
+		"email":     email,
+		"name":      name,
+		"namespace": "cyph.ws",
+		"plan":      plan,
+	})
+
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		methods.POST,
+		"https://us-central1-"+firebaseProject+".cloudfunctions.net/generateInvite",
+		bytes.NewBuffer(body),
+	)
+
+	req.Header.Add("Authorization", cyphFirebaseAdminKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	_, err := client.Do(req)
+
+	return err
 }
 
 func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
