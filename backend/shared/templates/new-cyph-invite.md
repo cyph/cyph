@@ -76,8 +76,7 @@ Congratulations on securing your Cyph account invite!
 {{/planSilver}}
 
 {{^planChange}}
-We highly recommend that you sign up from your desktop or laptop in a location where you have
-some privacy.
+We highly recommend that you sign up from your desktop or laptop in a location where you have some privacy.
 
 ---
 {{/planChange}}
@@ -97,17 +96,13 @@ Your {{#planFree}}account{{/planFree}}{{^planFree}}plan{{/planFree}} also includ
 {{/walletEarlyAccess}}
 
 {{#platinumFeatures}}
-* **Short username:** You can bypass our minimum of 5 characters and register a username as short
-as you'd like
+* **Short username:** You can bypass our minimum of 5 characters and register a username as short as you'd like
 
-* **Verification:** You'll be first in line when we set up a "verified accounts" system like
-Twitter's
+* **Verification:** You'll be first in line when we set up a "verified accounts" system like Twitter's
 
-* **Lifetime priority support:** Email us any time at founders@cyph.com — or just add
-@ryan and @josh on Cyph :)
+* **Lifetime priority support:** Email us any time at founders@cyph.com — or just add @ryan and @josh on Cyph :)
 {{/platinumFeatures}}
 
 ---
 
-If you have any questions{{^planChange}} about the signup process{{/planChange}},
-just email help@cyph.com.
+If you have any questions{{^planChange}} about the signup process{{/planChange}}, just email help@cyph.com.
