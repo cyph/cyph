@@ -53,9 +53,12 @@ const sendMailInternal = async (
 	text,
 	eventDetails,
 	eventInviter,
-	accountsURL
+	accountsURL,
+	noUnsubscribe
 ) => {
 	if (typeof text === 'object') {
+		noUnsubscribe = noUnsubscribe || text.noUnsubscribe;
+
 		if (!accountsURL && text.namespace) {
 			accountsURL = namespaces[text.namespace].accountsURL;
 		}
@@ -79,6 +82,7 @@ const sendMailInternal = async (
 			dompurifyHtmlSanitizer.sanitize(
 				mustache.render(await template, {
 					accountsURL,
+					noUnsubscribe,
 					...(typeof text === 'object' ?
 						{html: text.html} :
 						{lines: text.split('\n')})

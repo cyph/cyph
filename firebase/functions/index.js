@@ -287,7 +287,7 @@ exports.appointmentInvite = onCall(
 				namespace,
 				data.to,
 				`Cyph Appointment with @${inviterUsername}`,
-				undefined,
+				{noUnsubscribe: true},
 				{
 					endTime: data.eventDetails.endTime,
 					inviterUsername: data.to,
@@ -388,6 +388,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	await sendMailInternal(email, 'Your Cyph Invite', {
 		data: getInviteTemplateData({inviteCode, name, plan}),
 		namespace,
+		noUnsubscribe: true,
 		templateName: 'new-cyph-invite'
 	});
 });
@@ -558,6 +559,7 @@ exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
 					plan
 				}),
 				namespace,
+				noUnsubscribe: true,
 				templateName: 'new-cyph-invite'
 			}
 		)
