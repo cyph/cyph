@@ -388,9 +388,11 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 
 	const inviteCode = readableID(15);
 
-	await database
-		.ref(`${namespace}/inviteCodes/${inviteCode}`)
-		.set({plan, ...(braintreeID ? {braintreeID} : {})});
+	await database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
+		inviterUsername: '',
+		plan,
+		...(braintreeID ? {braintreeID} : {})
+	});
 
 	await sendMailInternal(email, 'Your Cyph Invite', {
 		data: getInviteTemplateData({inviteCode, name, plan, purchased}),
