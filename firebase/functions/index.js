@@ -118,6 +118,7 @@ const getInviteTemplateData = ({
 	inviterName,
 	name,
 	plan,
+	purchased,
 	fromApp
 }) => {
 	const planConfig =
@@ -135,6 +136,7 @@ const getInviteTemplateData = ({
 		planLifetimePlatinum: plan === CyphPlans.LifetimePlatinum,
 		planSilver: plan === CyphPlans.Silver,
 		platinumFeatures: planConfig.usernameMinLength === 1,
+		purchased,
 		storageCap: readableByteLength(planConfig.storageCapGB, 'gb')
 	};
 };
@@ -382,6 +384,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const name = validateInput(req.body.name);
 	const plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
+	const purchased = !!req.body.purchased;
 
 	const inviteCode = readableID(15);
 
@@ -390,7 +393,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		.set({plan, ...(braintreeID ? {braintreeID} : {})});
 
 	await sendMailInternal(email, 'Your Cyph Invite', {
-		data: getInviteTemplateData({inviteCode, name, plan}),
+		data: getInviteTemplateData({inviteCode, name, plan, purchased}),
 		namespace,
 		noUnsubscribe: true,
 		templateName: 'new-cyph-invite'

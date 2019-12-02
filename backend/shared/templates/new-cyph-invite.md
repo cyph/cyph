@@ -1,5 +1,14 @@
 Hello{{#name}} {{name}}{{/name}},
 
+{{#purchased}}
+Welcome to Cyph, and thanks for signing up! Your support means a lot to us, and helps ensure that we're able to continue our work to protect user privacy.
+
+[**Click here to set up your account.**]({{accountsURL}}register/{{inviteCode}})
+{{/purchased}}
+
+
+{{^purchased}}
+
 {{#planChange}}
 {{#planChangeUpgrade}}
 Your status has been upgraded from {{oldPlan}}!
@@ -22,6 +31,8 @@ Your status has changed (previously {{oldPlan}}).
 Congratulations on securing your Cyph account invite!
 {{/fromApp}}
 {{/planChange}}
+
+{{/purchased}}
 
 
 ---

@@ -343,7 +343,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if hasPlan && plan.AccountsPlan != "" {
-		err = generateInvite(email, name, plan.AccountsPlan, braintreeID)
+		err = generateInvite(email, name, plan.AccountsPlan, braintreeID, true)
 
 		if err != nil {
 			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
