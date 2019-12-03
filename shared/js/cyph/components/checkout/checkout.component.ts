@@ -379,11 +379,11 @@ export class CheckoutComponent extends BaseProvider
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 
-		/** @ignore */
-		private readonly envService: EnvService,
-
 		/** @see AffiliateService */
 		public readonly affiliateService: AffiliateService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
