@@ -16,102 +16,6 @@
 					<span cyphTranslate>SUBSCRIPTION</span>
 				</ng-container>
 			</h2>
-			<div>
-				<div
-					fxFlex
-					fxLayout="column"
-					fxLayout.gt-md="row"
-					fxLayoutGap="16px"
-				>
-					<mat-form-field fxFlex>
-						<input
-							matInput
-							cyphTranslate
-							[(ngModel)]="name"
-							name="name"
-							placeholder="Full Name"
-							required
-						/>
-					</mat-form-field>
-					<mat-form-field fxFlex>
-						<input
-							matInput
-							cyphTranslate
-							[(ngModel)]="email"
-							name="email"
-							type="email"
-							placeholder="Email"
-							required
-						/>
-					</mat-form-field>
-				</div>
-			</div>
-			<div>
-				<mat-form-field fxFlex>
-					<input
-						matInput
-						cyphTranslate
-						[(ngModel)]="company"
-						name="company"
-						[placeholder]="
-							formatItemName(itemName)?.includes('BUSINESS') ?
-								'Company' :
-								'Company (optional)'
-						"
-						[required]="
-							formatItemName(itemName)?.includes('BUSINESS')
-						"
-					/>
-				</mat-form-field>
-			</div>
-			<div>
-				<mat-form-field fxFlex>
-					<input
-						matInput
-						cyphTranslate
-						[(ngModel)]="address.streetAddress"
-						name="streetAddress"
-						placeholder="Street Address"
-						required
-					/>
-				</mat-form-field>
-			</div>
-			<div
-				fxFlex
-				fxLayout="column"
-				fxLayout.gt-md="row"
-				fxLayoutGap="16px"
-			>
-				<mat-form-field fxFlex fxFlex.gt-md="150px">
-					<input
-						matInput
-						cyphTranslate
-						[(ngModel)]="address.postalCode"
-						name="postalCode"
-						placeholder="Postal Code"
-						required
-					/>
-				</mat-form-field>
-				<mat-form-field fxFlex>
-					<mat-select
-						cyphTranslate
-						[(ngModel)]="address.countryCode"
-						name="countryCode"
-						placeholder="Country"
-						required
-					>
-						<mat-option
-							*ngFor="
-								let o of envService.countries | async;
-								trackBy: trackByValue
-							"
-							[value]="o.value"
-						>
-							{{ o.label }}
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
-			</div>
 			<div *ngIf="perUser">
 				<mat-form-field fxFlex>
 					<mat-select
@@ -134,6 +38,106 @@
 					</mat-select>
 				</mat-form-field>
 			</div>
+			<ng-container *ngIf="(paymentOption | async) !== undefined">
+				<div>
+					<div
+						fxFlex
+						fxLayout="column"
+						fxLayout.gt-md="row"
+						fxLayoutGap="16px"
+					>
+						<mat-form-field fxFlex>
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]="name"
+								name="name"
+								placeholder="Full Name"
+								required
+							/>
+						</mat-form-field>
+						<mat-form-field fxFlex>
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]="email"
+								name="email"
+								type="email"
+								placeholder="Email"
+								required
+							/>
+						</mat-form-field>
+					</div>
+				</div>
+				<div>
+					<mat-form-field fxFlex>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]="company"
+							name="company"
+							[placeholder]="
+								formatItemName(itemName)?.includes('BUSINESS') ?
+									'Company' :
+									'Company (optional)'
+							"
+							[required]="
+								formatItemName(itemName)?.includes('BUSINESS')
+							"
+						/>
+					</mat-form-field>
+				</div>
+				<ng-container *ngIf="(paymentOption | async) === 'card'">
+					<div>
+						<mat-form-field fxFlex>
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]="address.streetAddress"
+								name="streetAddress"
+								placeholder="Street Address"
+								required
+							/>
+						</mat-form-field>
+					</div>
+					<div
+						fxFlex
+						fxLayout="column"
+						fxLayout.gt-md="row"
+						fxLayoutGap="16px"
+					>
+						<mat-form-field fxFlex fxFlex.gt-md="150px">
+							<input
+								matInput
+								cyphTranslate
+								[(ngModel)]="address.postalCode"
+								name="postalCode"
+								placeholder="Postal Code"
+								required
+							/>
+						</mat-form-field>
+						<mat-form-field fxFlex>
+							<mat-select
+								cyphTranslate
+								[(ngModel)]="address.countryCode"
+								name="countryCode"
+								placeholder="Country"
+								required
+							>
+								<mat-option
+									*ngFor="
+										let o of envService.countries | async;
+										trackBy: trackByValue
+									"
+									[value]="o.value"
+								>
+									{{ o.label }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+				</ng-container>
+			</ng-container>
 			<div [id]="containerID" class="braintree"></div>
 		</div>
 
@@ -142,7 +146,11 @@
 		</mat-checkbox>
 
 		<div fxLayoutAlign="center center">
-			<button mat-raised-button type="submit">
+			<button
+				mat-raised-button
+				[disabled]="(paymentOption | async) === undefined"
+				type="submit"
+			>
 				<span cyphTranslate>Confirm</span>
 				&ngsp;
 				<span

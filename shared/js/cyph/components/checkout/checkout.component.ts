@@ -111,6 +111,11 @@ export class CheckoutComponent extends BaseProvider
 	/** If true, will never stop spinning. */
 	@Input() public noSpinnerEnd: boolean = false;
 
+	/** Selected payment option. */
+	public readonly paymentOption = new BehaviorSubject<string | undefined>(
+		undefined
+	);
+
 	/** Indicates whether payment is pending. */
 	public readonly pending = new BehaviorSubject<boolean>(false);
 
@@ -250,6 +255,23 @@ export class CheckoutComponent extends BaseProvider
 				}
 
 				this.braintreeInstance = instance;
+
+				this.braintreeInstance.on('paymentOptionSelected', (o: any) => {
+					const paymentOption = o?.paymentOption;
+					if (typeof paymentOption === 'string') {
+						this.paymentOption.next(paymentOption);
+					}
+				});
+
+				if (!(this.elementRef.nativeElement instanceof HTMLElement)) {
+					return;
+				}
+
+				this.elementRef.nativeElement
+					.querySelector('.braintree-toggle')
+					?.addEventListener('click', () => {
+						this.paymentOption.next(undefined);
+					});
 			}
 		);
 	}
