@@ -58,7 +58,7 @@ export class Thread<T> implements IThread<T> {
 
 		/* RPC */
 
-		importScripts('/assets/node_modules/comlink/umd/comlink.js');
+		importScripts('/assets/node_modules/comlink/dist/umd/comlink.js');
 
 		/* Allow destroying the Thread object from within the thread */
 
@@ -239,7 +239,7 @@ export class Thread<T> implements IThread<T> {
 			}
 			else if (e.data === 'cyphThreadRunning') {
 				/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */
-				this.apiResolver.resolve(<any> Comlink.proxy(this.worker));
+				this.apiResolver.resolve(<any> Comlink.wrap(this.worker));
 			}
 			else if (e.data === 'cyphThreadClose') {
 				this.stop();
