@@ -187,8 +187,10 @@ export class EnvService extends Env {
 				value: o.code
 			}));
 
-			return countries.sort(a =>
-				a.value.toLowerCase() === countryCode ? -1 : 1
+			return countries.sort((a, b) =>
+				a.value.toLowerCase() === countryCode ?
+					-1 :
+					a.label.localeCompare(b.label)
 			);
 		});
 	}
