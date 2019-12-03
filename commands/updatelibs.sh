@@ -152,6 +152,7 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-treegrid
 	@syncfusion/ej2-treemap
 	@types/braintree-web
+	@types/country-list
 	@types/dompurify
 	@types/dropzone
 	@types/file-saver
@@ -202,6 +203,7 @@ read -r -d '' modules <<- EOM
 	core-js-pure
 	cornerstone-core
 	cors
+	country-list
 	crypto-browserify
 	csv
 	csv-parse
