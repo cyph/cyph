@@ -6,5 +6,29 @@
 		<title>Cyph &ndash; Encrypted Messenger</title>
 		<link id="braintree-dropin-stylesheet" rel="stylesheet" />
 	</head>
-	<body></body>
+	<body>
+		<script>
+			self.createCheckout = ({
+				amount = 10,
+				category = 9,
+				item = 0,
+				itemName = 'Monthly Premium',
+				noSpinnerEnd = false,
+				perUser = false,
+				subscriptionType = 1
+			} = {}) => {
+				const checkout = document.createElement('cyph-checkout');
+
+				checkout.setAttribute('amount', amount);
+				checkout.setAttribute('category', category);
+				checkout.setAttribute('item', item);
+				checkout.setAttribute('item-name', itemName);
+				checkout.setAttribute('no-spinner-end', noSpinnerEnd);
+				checkout.setAttribute('per-user', perUser);
+				checkout.setAttribute('subscription-type', subscriptionType);
+
+				document.body.appendChild(checkout);
+			};
+		</script>
+	</body>
 </html>
