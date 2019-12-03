@@ -17,7 +17,12 @@
 				</ng-container>
 			</h2>
 			<div>
-				<div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="16px">
+				<div
+					fxFlex
+					fxLayout="column"
+					fxLayout.gt-md="row"
+					fxLayoutGap="16px"
+				>
 					<mat-form-field fxFlex>
 						<input
 							matInput
@@ -64,33 +69,70 @@
 					<input
 						matInput
 						cyphTranslate
-						[(ngModel)]="streetAddress"
+						[(ngModel)]="address.streetAddress"
 						name="streetAddress"
 						placeholder="Street Address"
 						required
 					/>
 				</mat-form-field>
 			</div>
+			<div
+				fxFlex
+				fxLayout="column"
+				fxLayout.gt-md="row"
+				fxLayoutGap="16px"
+			>
+				<mat-form-field fxFlex fxFlex.gt-md="150px">
+					<input
+						matInput
+						cyphTranslate
+						[(ngModel)]="address.postalCode"
+						name="postalCode"
+						placeholder="Postal Code"
+						required
+					/>
+				</mat-form-field>
+				<mat-form-field fxFlex>
+					<mat-select
+						cyphTranslate
+						[(ngModel)]="address.countryCode"
+						name="countryCode"
+						placeholder="Country"
+						required
+					>
+						<mat-option
+							*ngFor="
+								let o of envService.countries | async;
+								trackBy: trackByValue
+							"
+							[value]="o.value"
+						>
+							{{ o.label }}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+			</div>
 			<div *ngIf="perUser">
-				<mat-select
-					cyphTranslate
-					fxFlex
-					[ngModel]="users | async"
-					(ngModelChange)="users.next($event)"
-					name="users"
-					placeholder="Number of Users"
-					required
-				>
-					<mat-option [value]="1"
-						>1 {{ stringsService.user }}</mat-option
+				<mat-form-field fxFlex>
+					<mat-select
+						cyphTranslate
+						[ngModel]="users | async"
+						(ngModelChange)="users.next($event)"
+						name="users"
+						placeholder="Number of Users"
+						required
 					>
-					<mat-option
-						*ngFor="let n of userOptions; trackBy: trackBySelf"
-						[value]="n"
-					>
-						{{ n.toString() }} {{ stringsService.users }}
-					</mat-option>
-				</mat-select>
+						<mat-option [value]="1"
+							>1 {{ stringsService.user }}</mat-option
+						>
+						<mat-option
+							*ngFor="let n of userOptions; trackBy: trackBySelf"
+							[value]="n"
+						>
+							{{ n.toString() }} {{ stringsService.users }}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
 			</div>
 			<div [id]="containerID" class="braintree"></div>
 		</div>

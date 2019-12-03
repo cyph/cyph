@@ -72,6 +72,8 @@ func analytics(h HandlerArgs) (interface{}, int) {
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	company := sanitize(h.Request.PostFormValue("company"))
 	name := sanitize(h.Request.PostFormValue("name"))
+	countryCode := sanitize(h.Request.PostFormValue("countryCode"))
+	postalCode := sanitize(h.Request.PostFormValue("postalCode"))
 	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
 	timestamp := getTimestamp()
 
@@ -150,10 +152,12 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	billingAddress := &braintree.Address{
-		Company:       company,
-		FirstName:     firstName,
-		LastName:      lastName,
-		StreetAddress: streetAddress,
+		Company:           company,
+		CountryCodeAlpha2: countryCode,
+		FirstName:         firstName,
+		LastName:          lastName,
+		PostalCode:        postalCode,
+		StreetAddress:     streetAddress,
 	}
 
 	if subscription {

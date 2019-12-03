@@ -18,6 +18,7 @@ import {AffiliateService} from '../../services/affiliate.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
+import {trackByValue} from '../../track-by/track-by-value';
 import {request} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
@@ -42,6 +43,13 @@ export class CheckoutComponent extends BaseProvider
 
 	/* Braintree instance. */
 	private braintreeInstance: any;
+
+	/** Address. */
+	@Input() public address: {
+		countryCode?: string;
+		postalCode?: string;
+		streetAddress?: string;
+	} = {};
 
 	/** Indicates whether affiliate offer is accepted. */
 	public affiliate: boolean = false;
@@ -109,9 +117,6 @@ export class CheckoutComponent extends BaseProvider
 	/** Indicates whether pricing is per-user. */
 	@Input() public perUser: boolean = false;
 
-	/** Street address. */
-	@Input() public streetAddress?: string;
-
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
 
@@ -123,6 +128,9 @@ export class CheckoutComponent extends BaseProvider
 
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
+
+	/** @see trackByValue */
+	public readonly trackByValue = trackByValue;
 
 	/** User count options. */
 	public readonly userOptions: number[] = new Array(99)
@@ -172,6 +180,11 @@ export class CheckoutComponent extends BaseProvider
 		}
 
 		(async () => {
+			if (!this.address.countryCode) {
+				this.address.countryCode = (await this.envService
+					.countries)[0]?.value;
+			}
+
 			while (!this.destroyed.value) {
 				this.changeDetectorRef.detectChanges();
 				await sleep();
@@ -199,15 +212,11 @@ export class CheckoutComponent extends BaseProvider
 					paymentRequest: {
 						amount: amountString,
 						label: 'Cyph'
-					},
-					requiredBillingContactFields: ['postalAddress']
+					}
 				},
 				authorization: await this.authorization,
 				/*
 				googlePay: {
-					cardRequirements: {
-						billingAddressRequired: true
-					},
 					googlePayVersion: 2,
 					merchantId: 'TODO: Get this',
 					transactionInfo: {
@@ -277,9 +286,11 @@ export class CheckoutComponent extends BaseProvider
 								100 *
 								(this.perUser ? this.users.value - 1 : 0)
 					),
+					countryCode: this.address.countryCode,
 					creditCard: paymentMethod.type === 'CreditCard',
 					nonce: paymentMethod.nonce,
-					streetAddress: this.streetAddress,
+					postalCode: this.address.postalCode,
+					streetAddress: this.address.streetAddress,
 					subscription: this.subscriptionType !== undefined,
 					url: location.toString(),
 					...(this.category !== undefined ?

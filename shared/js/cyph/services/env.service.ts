@@ -1,4 +1,5 @@
 import {Inject, Injectable, Optional} from '@angular/core';
+import countryList from 'country-list';
 import {Env, env} from '../env';
 import {DataURIProto, StringProto} from '../proto';
 import {toInt} from '../util/formatting';
@@ -31,6 +32,9 @@ export class EnvService extends Env {
 			return {};
 		}
 	})();
+
+	/** List of country options. */
+	public readonly countries: Promise<{label: string; value: string}[]>;
 
 	/** Custom build images. */
 	public readonly customBuildImages = {
@@ -172,5 +176,20 @@ export class EnvService extends Env {
 		private readonly localStorageService: LocalStorageService | undefined
 	) {
 		super();
+
+		this.countries = this.geolocation.countryCode.then(countryCode => {
+			if (!countryCode) {
+				countryCode = 'us';
+			}
+
+			const countries = countryList.getData().map(o => ({
+				label: o.name,
+				value: o.code
+			}));
+
+			return countries.sort(a =>
+				a.value.toLowerCase() === countryCode ? -1 : 1
+			);
+		});
 	}
 }
