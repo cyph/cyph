@@ -228,10 +228,12 @@ export class CheckoutComponent extends BaseProvider
 				paypalCredit: {
 					flow: 'vault'
 				},
-				selector: `#${this.containerID}`,
+				selector: `#${this.containerID}`
+				/*
 				venmo: {
 					allowNewBrowserTab: false
 				}
+				*/
 			},
 			(err: any, instance: any) => {
 				if (err) {
