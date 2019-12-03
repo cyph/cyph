@@ -1,4 +1,4 @@
-import * as Comlink from 'comlinkjs';
+import * as Comlink from 'comlink';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
 import {IThread} from './ithread';
@@ -58,7 +58,7 @@ export class Thread<T> implements IThread<T> {
 
 		/* RPC */
 
-		importScripts('/assets/node_modules/comlinkjs/umd/comlink.js');
+		importScripts('/assets/node_modules/comlink/umd/comlink.js');
 
 		/* Allow destroying the Thread object from within the thread */
 
