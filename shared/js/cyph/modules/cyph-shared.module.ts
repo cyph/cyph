@@ -11,6 +11,12 @@ import {MatSelectModule} from '@angular/material/select';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MarkdownComponent} from '../components/markdown';
+import {AnchorDirective} from '../directives/anchor.directive';
+import {AutofocusDirective} from '../directives/autofocus.directive';
+import {EnableLastPassDirective} from '../directives/enable-last-pass.directive';
+import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
+import {RouterLinkDirective} from '../directives/router-link.directive';
+import {TranslateDirective} from '../directives/translate.directive';
 import {AffiliateService} from '../services/affiliate.service';
 import {ConfigService} from '../services/config.service';
 import {EnvService} from '../services/env.service';
@@ -21,11 +27,22 @@ import {StringsService} from '../services/strings.service';
  * Common module shared by cyph.com and CyphWebModule.
  */
 @NgModule({
-	declarations: [MarkdownComponent],
+	declarations: [
+		AnchorDirective,
+		AutofocusDirective,
+		EnableLastPassDirective,
+		MarkdownComponent,
+		NanoScrollerDirective,
+		RouterLinkDirective,
+		TranslateDirective
+	],
 	exports: [
+		AnchorDirective,
+		AutofocusDirective,
 		BrowserAnimationsModule,
 		BrowserModule,
 		CommonModule,
+		EnableLastPassDirective,
 		FlexLayoutModule,
 		FormsModule,
 		HttpClientModule,
@@ -34,7 +51,10 @@ import {StringsService} from '../services/strings.service';
 		MatCheckboxModule,
 		MatInputModule,
 		MatProgressSpinnerModule,
-		MatSelectModule
+		MatSelectModule,
+		NanoScrollerDirective,
+		RouterLinkDirective,
+		TranslateDirective
 	],
 	imports: [
 		BrowserAnimationsModule,

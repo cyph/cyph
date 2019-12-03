@@ -19,12 +19,6 @@ import {QuillComponent} from '../components/quill';
 import {RedirectComponent} from '../components/redirect';
 import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
-import {AnchorDirective} from '../directives/anchor.directive';
-import {AutofocusDirective} from '../directives/autofocus.directive';
-import {EnableLastPassDirective} from '../directives/enable-last-pass.directive';
-import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
-import {RouterLinkDirective} from '../directives/router-link.directive';
-import {TranslateDirective} from '../directives/translate.directive';
 import {AnalyticsService} from '../services/analytics.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
@@ -40,8 +34,6 @@ import {CyphWebModule} from './cyph-web.module';
  */
 @NgModule({
 	declarations: [
-		AnchorDirective,
-		AutofocusDirective,
 		BannerComponent,
 		BlankComponent,
 		CalendarInviteComponent,
@@ -54,21 +46,15 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageBoxInheritNgFormComponent,
 		ChatMessageListComponent,
 		ContactComponent,
-		EnableLastPassDirective,
 		HelpComponent,
 		LogoComponent,
-		NanoScrollerDirective,
 		PinInputComponent,
 		QuillComponent,
 		RedirectComponent,
-		RouterLinkDirective,
 		SearchBarComponent,
-		SignupFormComponent,
-		TranslateDirective
+		SignupFormComponent
 	],
 	exports: [
-		AnchorDirective,
-		AutofocusDirective,
 		BannerComponent,
 		BlankComponent,
 		CalendarInviteComponent,
@@ -82,17 +68,13 @@ import {CyphWebModule} from './cyph-web.module';
 		ChatMessageListComponent,
 		ContactComponent,
 		CyphWebModule,
-		EnableLastPassDirective,
 		HelpComponent,
 		LogoComponent,
-		NanoScrollerDirective,
 		PinInputComponent,
 		QuillComponent,
 		RedirectComponent,
-		RouterLinkDirective,
 		SearchBarComponent,
-		SignupFormComponent,
-		TranslateDirective
+		SignupFormComponent
 	],
 	imports: [CyphWebModule],
 	providers: [
