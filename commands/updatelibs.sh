@@ -196,7 +196,7 @@ read -r -d '' modules <<- EOM
 	clean-css-cli
 	clipboard-polyfill
 	codelyzer
-	comlinkjs
+	comlink
 	core-js
 	core-js-bundle
 	core-js-pure
