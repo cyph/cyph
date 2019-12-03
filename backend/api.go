@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"cloud.google.com/go/datastore"
@@ -71,8 +70,9 @@ func analytics(h HandlerArgs) (interface{}, int) {
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	company := sanitize(h.Request.PostFormValue("company"))
-	name := sanitize(h.Request.PostFormValue("name"))
 	countryCode := sanitize(h.Request.PostFormValue("countryCode"))
+	firstName := sanitize(h.Request.PostFormValue("firstName"))
+	lastName := sanitize(h.Request.PostFormValue("lastName"))
 	postalCode := sanitize(h.Request.PostFormValue("postalCode"))
 	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
 	timestamp := getTimestamp()
@@ -144,11 +144,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	txLog := ""
 	success := false
 
-	names := strings.SplitN(name, " ", 2)
-	firstName := names[0]
-	lastName := ""
-	if len(names) > 1 {
-		lastName = names[1]
+	name := firstName
+	if lastName != "" {
+		name = name + " " + lastName
 	}
 
 	billingAddress := &braintree.Address{

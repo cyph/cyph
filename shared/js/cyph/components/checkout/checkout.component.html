@@ -50,9 +50,9 @@
 							<input
 								matInput
 								cyphTranslate
-								[(ngModel)]="name"
-								name="name"
-								placeholder="Full Name"
+								[(ngModel)]="name.firstName"
+								name="firstName"
+								placeholder="First Name"
 								required
 							/>
 						</mat-form-field>
@@ -60,16 +60,31 @@
 							<input
 								matInput
 								cyphTranslate
-								[(ngModel)]="email"
-								name="email"
-								type="email"
-								placeholder="Email"
+								[(ngModel)]="name.lastName"
+								name="lastName"
+								placeholder="Last Name"
 								required
 							/>
 						</mat-form-field>
 					</div>
 				</div>
-				<div>
+				<div
+					fxFlex
+					fxLayout="column"
+					fxLayout.gt-md="row"
+					fxLayoutGap="16px"
+				>
+					<mat-form-field fxFlex>
+						<input
+							matInput
+							cyphTranslate
+							[(ngModel)]="email"
+							name="email"
+							type="email"
+							placeholder="Email"
+							required
+						/>
+					</mat-form-field>
 					<mat-form-field fxFlex>
 						<input
 							matInput

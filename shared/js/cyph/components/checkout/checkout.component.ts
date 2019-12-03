@@ -103,7 +103,10 @@ export class CheckoutComponent extends BaseProvider
 	@Input() public itemName?: string;
 
 	/** Name. */
-	@Input() public name?: string;
+	@Input() public name: {
+		firstName?: string;
+		lastName?: string;
+	} = {};
 
 	/** Namespace to use for generating API key. */
 	@Input() public namespace?: string;
@@ -316,6 +319,7 @@ export class CheckoutComponent extends BaseProvider
 					streetAddress: this.address.streetAddress,
 					subscription: this.subscriptionType !== undefined,
 					url: location.toString(),
+					...this.name,
 					...(this.category !== undefined ?
 						{category: this.category} :
 						{}),
@@ -324,7 +328,6 @@ export class CheckoutComponent extends BaseProvider
 						{}),
 					...(this.email !== undefined ? {email: this.email} : {}),
 					...(this.item !== undefined ? {item: this.item} : {}),
-					...(this.name !== undefined ? {name: this.name} : {}),
 					...(this.namespace !== undefined ?
 						{namespace: this.namespace} :
 						{})
