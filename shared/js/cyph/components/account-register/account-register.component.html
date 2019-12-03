@@ -358,7 +358,7 @@
 													<input
 														matInput
 														cyphTranslate
-														[maxLength]="
+														[maxlength]="
 															accountService.maxNameLength
 														"
 														[ngModel]="name | async"
@@ -1090,7 +1090,7 @@
 												(useXkcdPassphrase | async) ===
 												false
 											"
-											[minLength]="masterKeyLength"
+											[minlength]="masterKeyLength"
 										/>
 										<mat-icon
 											matSuffix
@@ -1295,7 +1295,7 @@
 						"
 						placeholder="Lock Screen Password"
 						[required]="(useLockScreenPIN | async) === false"
-						[minLength]="lockScreenPasswordLength"
+						[minlength]="lockScreenPasswordLength"
 					/>
 					<mat-icon
 						matSuffix

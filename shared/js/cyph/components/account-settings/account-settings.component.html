@@ -23,7 +23,7 @@
 				<input
 					matInput
 					cyphTranslate
-					[maxLength]="accountService.maxNameLength"
+					[maxlength]="accountService.maxNameLength"
 					[ngModel]="(data | async)?.modified.name"
 					(ngModelChange)="updateData({modified: {name: $event}})"
 					name="name"
