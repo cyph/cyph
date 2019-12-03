@@ -302,6 +302,8 @@ export class CheckoutComponent extends BaseProvider
 					new Error(this.stringsService.checkoutBraintreeError);
 			});
 
+			const creditCard = paymentMethod.type === 'CreditCard';
+
 			const apiKey = await request({
 				data: {
 					amount: Math.floor(
@@ -312,14 +314,12 @@ export class CheckoutComponent extends BaseProvider
 								100 *
 								(this.perUser ? this.users.value - 1 : 0)
 					),
-					countryCode: this.address.countryCode,
-					creditCard: paymentMethod.type === 'CreditCard',
+					creditCard,
 					nonce: paymentMethod.nonce,
-					postalCode: this.address.postalCode,
-					streetAddress: this.address.streetAddress,
 					subscription: this.subscriptionType !== undefined,
 					url: location.toString(),
 					...this.name,
+					...(creditCard ? this.address : {}),
 					...(this.category !== undefined ?
 						{category: this.category} :
 						{}),
