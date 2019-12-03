@@ -73,15 +73,15 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 					...planConfig,
 					name,
 					oldPlan: titleize(CyphPlans[oldPlan]),
+					planAnnualPremium: cyphPlan === CyphPlans.AnnualPremium,
 					planChange: true,
 					planChangeUpgrade: isUpgrade,
 					planFoundersAndFriends:
 						cyphPlan === CyphPlans.FoundersAndFriends,
 					planFree: cyphPlan === CyphPlans.Free,
-					planGold: cyphPlan === CyphPlans.Gold,
 					planLifetimePlatinum:
 						cyphPlan === CyphPlans.LifetimePlatinum,
-					planSilver: cyphPlan === CyphPlans.Silver,
+					planMonthlyPremium: cyphPlan === CyphPlans.MonthlyPremium,
 					platinumFeatures: planConfig.usernameMinLength === 1,
 					storageCap: readableByteLength(
 						planConfig.storageCapGB,

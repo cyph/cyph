@@ -42,8 +42,8 @@ Congratulations on securing your Cyph account invite!
 | ------------ | :--------------------: |
 | {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Founders & Friends** |
 |              | Lifetime Platinum      |
-|              | Gold                   |
-|              | Silver                 |
+|              | Annual Premium         |
+|              | Monthly Premium        |
 
 ---
 {{/planFoundersAndFriends}}
@@ -51,29 +51,29 @@ Congratulations on securing your Cyph account invite!
 |||
 | ------------ | :--------------------: |
 | {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Lifetime Platinum**  |
-|              | Gold                   |
-|              | Silver                 |
+|              | Annual Premium         |
+|              | Monthly Premium        |
 
 ---
 {{/planLifetimePlatinum}}
-{{#planGold}}
+{{#planAnnualPremium}}
 |||
 | ------------ | :--------------------: |
 |              | Lifetime Platinum      |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Gold**               |
-|              | Silver                 |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Annual Premium**     |
+|              | Monthly Premium        |
 
 ---
-{{/planGold}}
-{{#planSilver}}
+{{/planAnnualPremium}}
+{{#planMonthlyPremium}}
 |||
 | ------------ | :--------------------: |
 |              | Lifetime Platinum      |
-|              | Gold                   |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Silver**             |
+|              | Annual Premium         |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Monthly Premium**    |
 
 ---
-{{/planSilver}}
+{{/planMonthlyPremium}}
 
 {{^planChange}}
 We highly recommend that you sign up from your desktop or laptop in a location where you have some privacy.

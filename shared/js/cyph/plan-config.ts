@@ -10,6 +10,12 @@ export const planConfig: Record<
 		walletEarlyAccess?: string;
 	}
 > = {
+	[CyphPlans.AnnualPremium]: {
+		initialInvites: 10,
+		storageCapGB: 25,
+		usernameMinLength: 5,
+		walletEarlyAccess: 'beta'
+	},
 	[CyphPlans.FoundersAndFriends]: {
 		initialInvites: 15,
 		storageCapGB: 100,
@@ -21,19 +27,13 @@ export const planConfig: Record<
 		storageCapGB: 1,
 		usernameMinLength: 5
 	},
-	[CyphPlans.Gold]: {
-		initialInvites: 10,
-		storageCapGB: 25,
-		usernameMinLength: 5,
-		walletEarlyAccess: 'beta'
-	},
 	[CyphPlans.LifetimePlatinum]: {
 		initialInvites: 15,
 		storageCapGB: 100,
 		usernameMinLength: 1,
 		walletEarlyAccess: 'alpha'
 	},
-	[CyphPlans.Silver]: {
+	[CyphPlans.MonthlyPremium]: {
 		initialInvites: 5,
 		storageCapGB: 5,
 		usernameMinLength: 5

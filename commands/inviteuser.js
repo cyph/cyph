@@ -32,12 +32,12 @@ const inviteUser = async (projectId, email, name, plan, reservedUsername) => {
 				...planConfig,
 				inviteCode,
 				name,
+				planAnnualPremium: cyphPlan === CyphPlans.AnnualPremium,
 				planFoundersAndFriends:
 					cyphPlan === CyphPlans.FoundersAndFriends,
 				planFree: cyphPlan === CyphPlans.Free,
-				planGold: cyphPlan === CyphPlans.Gold,
 				planLifetimePlatinum: cyphPlan === CyphPlans.LifetimePlatinum,
-				planSilver: cyphPlan === CyphPlans.Silver,
+				planMonthlyPremium: cyphPlan === CyphPlans.MonthlyPremium,
 				platinumFeatures: planConfig.usernameMinLength === 1,
 				storageCap: readableByteLength(planConfig.storageCapGB, 'gb')
 			},

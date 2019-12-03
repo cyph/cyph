@@ -311,7 +311,7 @@ var config = struct {
 			SessionCountLimit: -1,
 		},
 		"8-0": Plan{
-			AccountsPlan: "Silver",
+			AccountsPlan: "MonthlyPremium",
 			ProFeatures: map[string]bool{
 				"api":            false,
 				"disableP2P":     false,
@@ -324,7 +324,7 @@ var config = struct {
 			SessionCountLimit: -1,
 		},
 		"8-1": Plan{
-			AccountsPlan: "Gold",
+			AccountsPlan: "AnnualPremium",
 			ProFeatures: map[string]bool{
 				"api":            false,
 				"disableP2P":     false,
@@ -337,7 +337,7 @@ var config = struct {
 			SessionCountLimit: -1,
 		},
 		"9-0": Plan{
-			AccountsPlan: "Silver",
+			AccountsPlan: "MonthlyPremium",
 			ProFeatures: map[string]bool{
 				"api":            false,
 				"disableP2P":     false,
@@ -350,7 +350,7 @@ var config = struct {
 			SessionCountLimit: -1,
 		},
 		"9-1": Plan{
-			AccountsPlan: "Gold",
+			AccountsPlan: "AnnualPremium",
 			ProFeatures: map[string]bool{
 				"api":            false,
 				"disableP2P":     false,

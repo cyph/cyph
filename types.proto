@@ -675,11 +675,11 @@ message CyphPlan {
 
 /** Cyph plans. */
 enum CyphPlans {
+	AnnualPremium = 2;
 	Free = 0;
 	FoundersAndFriends = 4;
-	Gold = 2;
 	LifetimePlatinum = 3;
-	Silver = 1;
+	MonthlyPremium = 1;
 }
 
 /** Database item metadata. */
