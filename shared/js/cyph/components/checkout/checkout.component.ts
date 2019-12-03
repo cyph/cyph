@@ -267,6 +267,7 @@ export class CheckoutComponent extends BaseProvider
 					return;
 				}
 
+				/* eslint-disable-next-line no-unused-expressions */
 				this.elementRef.nativeElement
 					.querySelector('.braintree-toggle')
 					?.addEventListener('click', () => {
