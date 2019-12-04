@@ -24,6 +24,8 @@ customBuild=''
 saveBuildArtifacts=''
 wpPromote=''
 betaProd=''
+noBeta=''
+prodAndBeta=''
 debug=''
 debugProdBuild=''
 skipWebsite=''
@@ -114,6 +116,11 @@ fi
 if [ "${1}" == '--skip-website' ] ; then
 	skipWebsite=true
 	site="${webSignedProject}"
+	shift
+fi
+
+if [ "${1}" == '--no-beta' ] ; then
+	noBeta=true
 	shift
 fi
 
@@ -216,6 +223,10 @@ if [ "${debug}" ] ; then
 	else
 		mainVersion=debug
 	fi
+fi
+
+if [ ! "${test}" ] && [ ! "${noBeta}" ] ; then
+	prodAndBeta=true
 fi
 
 processEnvironmentName () {
@@ -322,9 +333,19 @@ if [ "${allBranches}" ] ; then
 		fi
 		echo "  FIREBASE_PROJECT: '${backendFirebaseProject}'" >> ${branchDir}/backend/app.yaml
 	done
-
-	cd ~/.build
+elif [ "${prodAndBeta}" ] ; then
+	branchDir="${HOME}/.build/branches/beta"
+	branchDirs="${branchDir}"
+	./commands/updaterepos.js
+	mkdir ~/.build/branches
+	cd ~/.cyph/repos/internal
+	git checkout beta
+	./commands/copyworkspace.sh ${branchDir}
+	git clean -dfx
+	rm -rf ${branchDir}/backend ${branchDir}/firebase
 fi
+
+cd ~/.build
 
 if [ ! "${test}" ] ; then
 	echo '  PROD: true' >> backend/app.yaml
@@ -337,7 +358,9 @@ fi
 getEnvironment () {
 	version="$(getVersion ${1})"
 
-	if [ "${version}" == "${mainVersion}" ] ; then
+	if [ "${prodAndBeta}" ] && [ "${version}" == 'beta' ] ; then
+		echo betaProd
+	elif [ "${version}" == "${mainVersion}" ] ; then
 		echo "${mainEnvironment}"
 	elif [ "${version}" == 'beta-staging' ] ; then
 		processEnvironmentName beta
@@ -363,7 +386,9 @@ getVersion () {
 projectname () {
 	version="$(getVersion ${2})"
 
-	if [ "${simple}" ] || [ "${1}" == 'cyph.com' ] ; then
+	if [ "${prodAndBeta}" ] && [ "${version}" == 'beta' ] ; then
+		echo "beta.${1}"
+	elif [ "${simple}" ] || [ "${1}" == 'cyph.com' ] ; then
 		echo "${version}-dot-$(echo "${1}" | tr '.' '-')-dot-cyphme.appspot.com"
 	elif [ "${test}" ] || [ "${betaProd}" ] || [ "${debug}" ] ; then
 		echo "${version}.${1}"
@@ -374,7 +399,9 @@ projectname () {
 
 
 
-for branchDir in ${branchDirs} ~/.build ; do
+for branchDir in ~/.build ${branchDirs} ; do
+
+
 version="$(getVersion ${branchDir})"
 environment="$(getEnvironment ${branchDir})"
 cd ${branchDir}
@@ -716,6 +743,7 @@ fi
 
 
 done
+cd ~/.build
 
 
 
@@ -738,7 +766,7 @@ if [ "${websign}" ] ; then
 
 	packages="${package} ${customBuilds}"
 
-	if [ "${test}" ] || [ "${betaProd}" ] || [ "${debug}" ] ; then
+	if [ "${test}" ] || [ "${betaProd}" ] || [ "${debug}" ] || [ "${prodAndBeta}" ] ; then
 		mv pkg/cyph.app "pkg/${package}"
 
 		for branchDir in ${branchDirs} ; do
@@ -847,8 +875,12 @@ if [ "${websign}" ] ; then
 fi
 
 
+if [ "${prodAndBeta}" ] ; then
+	branchDirs=''
+fi
 
-for branchDir in ${branchDirs} ~/.build ; do
+
+for branchDir in ~/.build ${branchDirs} ; do
 version="$(getVersion ${branchDir})"
 environment="$(getEnvironment ${branchDir})"
 cd ${branchDir}
@@ -874,6 +906,7 @@ fi
 
 
 done
+cd ~/.build
 
 
 
@@ -1007,7 +1040,7 @@ fi
 echo "  FIREBASE_PROJECT: '${backendFirebaseProject}'" >> backend/app.yaml
 
 
-for branchDir in ${branchDirs} ~/.build ; do
+for branchDir in ~/.build ${branchDirs} ; do
 version="$(getVersion ${branchDir})"
 environment="$(getEnvironment ${branchDir})"
 cd ${branchDir}
@@ -1066,6 +1099,7 @@ fi
 
 
 done
+cd ~/.build
 
 
 
