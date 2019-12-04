@@ -183,11 +183,11 @@ export class FileService extends BaseProvider {
 	/**
 	 * Converts File/Blob to IFile.
 	 */
-	public async getIFile (file: Blob) : Promise<IFile> {
+	public async getIFile (file: Blob | File) : Promise<IFile> {
 		return {
 			data: await this.getBytes(file, false),
 			mediaType: file.type,
-			name: file instanceof File ? file.name : 'File'
+			name: 'name' in file ? file.name : 'File'
 		};
 	}
 
