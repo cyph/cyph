@@ -308,7 +308,7 @@
 			mode="indeterminate"
 			*ngIf="
 				(accountFilesService.showSpinner | async) === true ||
-					(accountFilesService.showSpinner | async) < 1;
+					((accountFilesService.showSpinner | async) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></mat-progress-spinner>

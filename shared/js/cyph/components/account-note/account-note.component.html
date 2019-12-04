@@ -22,8 +22,11 @@
 					>
 						<div *ngIf="(noteEditable | async) === false">
 							{{
-								((note | async)?.record | async)?.name ||
-									stringsService.untitled
+								(
+									((note | async)?.record | async) || {
+										name: undefined
+									}
+								).name || stringsService.untitled
 							}}
 						</div>
 						<mat-form-field fxFlex *ngIf="noteEditable | async">
@@ -31,8 +34,11 @@
 								matInput
 								cyphTranslate
 								[ngModel]="
-									((note | async)?.record | async)?.name ||
-									stringsService.untitled
+									(
+										((note | async)?.record | async) || {
+											name: undefined
+										}
+									).name || stringsService.untitled
 								"
 								(ngModelChange)="
 									updateNoteData({nameChange: $event})
@@ -102,9 +108,16 @@
 								(noteEditable | async) === false &&
 								currentUser.user.username ===
 									(noteData | async)?.owner &&
-								!((note | async)?.record | async)
-									?.replyToEmail &&
-								!((note | async)?.record | async)?.replyToName
+								!(
+									((note | async)?.record | async) || {
+										replyToEmail: undefined
+									}
+								).replyToEmail &&
+								!(
+									((note | async)?.record | async) || {
+										replyToName: undefined
+									}
+								).replyToName
 							"
 						>
 							<mat-icon>edit</mat-icon>

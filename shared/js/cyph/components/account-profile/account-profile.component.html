@@ -438,7 +438,8 @@
 					mode="indeterminate"
 					*ngIf="
 						(accountFilesService.uploadSpinner | async) === true ||
-							(accountFilesService.uploadSpinner | async) < 1;
+							((accountFilesService.uploadSpinner | async) || 0) <
+								1;
 						else determinateFileSpinner
 					"
 				></mat-progress-spinner>

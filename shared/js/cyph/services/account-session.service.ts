@@ -202,6 +202,7 @@ export class AccountSessionService extends SessionService {
 				anonymous: true,
 				avatar: undefined,
 				contactID: undefined,
+				coverImage: undefined,
 				name: undefined,
 				pseudoAccount: false,
 				username: undefined
@@ -406,6 +407,7 @@ export class AccountSessionService extends SessionService {
 				contactID: this.accountContactsService.getContactID(
 					chat.username
 				),
+				coverImage: undefined,
 				name: of(name),
 				pseudoAccount: true,
 				username: chat.username

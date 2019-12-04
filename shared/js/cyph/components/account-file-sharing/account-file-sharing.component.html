@@ -41,7 +41,8 @@
 			fxFlex
 			fxFlex.gt-sm="initial"
 			[disabled]="
-				(accountContactsSearch.searchBar?.filter | async)?.size < 1
+				((accountContactsSearch.searchBar?.filter | async) || {size: 0})
+					.size < 1
 			"
 			(click)="share()"
 		>

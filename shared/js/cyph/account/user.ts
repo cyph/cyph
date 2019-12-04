@@ -79,6 +79,9 @@ export class User {
 		''
 	);
 
+	/** Header fix. */
+	public readonly desktop = undefined;
+
 	/** @see IAccountUserProfile.externalUsernames */
 	public readonly externalUsernames: Observable<
 		{[k: string]: string} | undefined
@@ -95,6 +98,9 @@ export class User {
 	> = memoize(() =>
 		toBehaviorSubject(this.accountUserProfileExtra.watch(), undefined)
 	);
+
+	/** Header fix. */
+	public readonly mobile = undefined;
 
 	/** @see IAccountUserProfile.name */
 	public readonly name: Observable<string> = toBehaviorSubject(

@@ -422,8 +422,8 @@
 					cyphTranslate
 					matTooltip="Notes"
 					matTooltipPosition="above"
-					(click)="p2pService.openNotes(appointment)"
-					*ngIf="appointment"
+					(click)="appointment && p2pService.openNotes(appointment)"
+					*ngIf="!!appointment"
 				>
 					<mat-icon>notes</mat-icon>
 				</button>
