@@ -830,13 +830,12 @@ export class AccountService extends BaseProvider {
 		);
 
 		this.header = combineLatest([
-			this.activeSidebarContact,
 			this.headerInternal,
 			this.envService.isMobile,
 			this.transitionInternal
 		]).pipe(
 			/* eslint-disable-next-line complexity */
-			map(([activeSidebarContact, header, isMobile, _]) => {
+			map(([header, isMobile, _]) => {
 				const routePath = this.routePath;
 				const route = routePath[0];
 
@@ -845,11 +844,8 @@ export class AccountService extends BaseProvider {
 					inbox: 'Anonymous Inbox'
 				};
 
-				/* Avoid redundancy between header and sidebar */
-				if (
-					header instanceof User &&
-					header.username === activeSidebarContact
-				) {
+				/* User headers on desktop are redundant with sidebar */
+				if (header instanceof User && !isMobile) {
 					header = undefined;
 				}
 
