@@ -88,11 +88,6 @@ export class AccountService extends BaseProvider {
 	/** @ignore */
 	private readonly transitionInternal = new BehaviorSubject<boolean>(false);
 
-	/** Active sidebar contact username. */
-	public readonly activeSidebarContact = new BehaviorSubject<
-		string | undefined
-	>(undefined);
-
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: Observable<boolean> = of(
 		this.envService.debug ||

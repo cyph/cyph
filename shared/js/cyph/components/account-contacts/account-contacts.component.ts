@@ -1,5 +1,4 @@
 import {
-	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
 	EventEmitter,
@@ -47,7 +46,7 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 	templateUrl: './account-contacts.component.html'
 })
 export class AccountContactsComponent extends BaseProvider
-	implements AfterViewInit, OnChanges, OnDestroy, OnInit {
+	implements OnChanges, OnDestroy, OnInit {
 	/** @ignore */
 	private readonly contactListInternal: BehaviorSubject<
 		(IContactListItem | User)[]
@@ -130,8 +129,6 @@ export class AccountContactsComponent extends BaseProvider
 				if (!username) {
 					return {filteredContactList: contactList};
 				}
-
-				this.accountService.activeSidebarContact.next(username);
 
 				return {
 					activeUser: await this.accountUserLookupService.getUser(
@@ -219,28 +216,6 @@ export class AccountContactsComponent extends BaseProvider
 
 	/** @see UserPresence */
 	public readonly userPresence = UserPresence;
-
-	/** @inheritDoc */
-	public ngAfterViewInit () : void {
-		if (
-			!this.sidebar ||
-			!this.accountContactsSearch ||
-			!this.accountContactsSearch.searchBar
-		) {
-			return;
-		}
-
-		this.subscriptions.push(
-			combineLatest([
-				this.activeUser,
-				this.accountContactsSearch.searchBar.filterSingle
-			]).subscribe(([a, b]) => {
-				this.accountService.activeSidebarContact.next(
-					a ? a.username : b ? b.username : undefined
-				);
-			})
-		);
-	}
 
 	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {
