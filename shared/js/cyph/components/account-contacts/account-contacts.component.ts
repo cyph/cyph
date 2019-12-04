@@ -11,7 +11,13 @@ import {
 	ViewChild
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
+import {
+	BehaviorSubject,
+	combineLatest,
+	Observable,
+	of,
+	Subscription
+} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {
 	IContactListItem,
@@ -168,25 +174,26 @@ export class AccountContactsComponent extends BaseProvider
 		(IContactListItem | User)[]
 	> = this.routeReactiveContactList.pipe(
 		mergeMap(o =>
-			observableAll(
-				o.filteredContactList.map(
-					({unreadMessageCount}) => unreadMessageCount
+			combineLatest([
+				of(o),
+				observableAll(
+					o.filteredContactList.map(
+						({unreadMessageCount}) => unreadMessageCount
+					)
 				)
-			).pipe(
-				map(counts =>
-					this.contactList !==
-					this.accountContactsService.contactList ?
-						o.filteredContactList :
-						[
-							...o.filteredContactList.filter(
-								(_: any, i: number) => counts[i] > 0
-							),
-							...o.filteredContactList.filter(
-								(_: any, i: number) => counts[i] < 1
-							)
-						]
-				)
-			)
+			])
+		),
+		map(([o, counts]) =>
+			this.contactList !== this.accountContactsService.contactList ?
+				o.filteredContactList :
+				[
+					...o.filteredContactList.filter(
+						(_: any, i: number) => counts[i] > 0
+					),
+					...o.filteredContactList.filter(
+						(_: any, i: number) => counts[i] < 1
+					)
+				]
 		)
 	);
 
