@@ -21,8 +21,10 @@ export class AccountLogoutComponent extends BaseProvider implements OnInit {
 	public async ngOnInit () : Promise<void> {
 		this.accountService.transitionEnd();
 
-		const loggedOut = await this.accountAuthService.logout();
-		await sleep(500);
+		const [loggedOut] = await Promise.all([
+			this.accountAuthService.logout(),
+			sleep(1000)
+		]);
 
 		/* Full reload to get rid of any data still sitting in memory */
 

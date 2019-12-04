@@ -675,7 +675,7 @@ export class AccountAuthService extends BaseProvider {
 				`users/${currentUser.user.username}/messagingTokens`
 			),
 			sleep(1000)
-		]);
+		]).catch(() => {});
 
 		this.potassiumService.clearMemory(currentUser.keys.symmetricKey);
 		this.potassiumService.clearMemory(
@@ -695,7 +695,7 @@ export class AccountAuthService extends BaseProvider {
 			await Promise.all([
 				Promise.race([this.databaseService.logout(), sleep(1000)]),
 				this.removeSavedCredentials()
-			]);
+			]).catch(() => {});
 		}
 
 		this.accountDatabaseService.currentUser.next(undefined);
