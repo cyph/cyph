@@ -22,8 +22,9 @@ export const openWindow = (url: string) : void => {
 
 /** Reloads window, or performs equivalent behavior depending on platform. */
 export const reloadWindow = () : void => {
-	if (env.isCordovaDesktop) {
-		window.close();
+	if (env.isCordovaDesktop && typeof cordovaRequire === 'function') {
+		const {app} = cordovaRequire('electron');
+		app.quit();
 	}
 	else if (env.isWeb) {
 		location.reload();
