@@ -1019,7 +1019,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		callback: string | ((data: any) => void),
 		callbackFunction?: (data: any) => void
 	) : Promise<void> {
-		const event = typeof callback === 'string' ? callback : 'notification';
+		const event = typeof callback === 'string' ? callback : undefined;
 		const handler =
 			typeof callbackFunction === 'function' ?
 				callbackFunction :
@@ -1032,7 +1032,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		}
 
 		if (this.cordova) {
-			this.cordova.messaging.on(event, handler);
+			this.cordova.messaging.on(event || 'notification', handler);
 
 			await Promise.all(
 				[
@@ -1065,7 +1065,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return;
 		}
 
-		if (!navigator.serviceWorker) {
+		if (event || !navigator.serviceWorker) {
 			return;
 		}
 
