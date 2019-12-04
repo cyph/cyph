@@ -68,11 +68,24 @@ if (env.isCordova) {
 
 /* Handle beforeunload */
 
-window.addEventListener('beforeunload', e => {
-	if (beforeUnloadMessage !== undefined) {
-		e.returnValue = beforeUnloadMessage;
-	}
-});
+if (env.isCordovaDesktop && typeof cordovaRequire === 'function') {
+	const {remote} = cordovaRequire('electron');
+
+	remote.getcurrentwindow().addEventListener('beforeunload', (e: any) => {
+		if (beforeUnloadMessage === undefined || confirm(beforeUnloadMessage)) {
+			return;
+		}
+
+		e.preventDefault();
+	});
+}
+else {
+	window.addEventListener('beforeunload', e => {
+		if (beforeUnloadMessage !== undefined) {
+			e.returnValue = beforeUnloadMessage;
+		}
+	});
+}
 
 /* Polyfill */
 
