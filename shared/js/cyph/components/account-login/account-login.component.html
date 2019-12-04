@@ -95,7 +95,9 @@
 					}}
 				</mat-card-title>
 
-				<mat-card-subtitle *ngIf="pinUnlock | async">
+				<mat-card-subtitle
+					*ngIf="(pinUnlock | async) && (masterKeyConfirmed | async)"
+				>
 					<p>
 						<span cyphTranslate>Welcome back</span>
 						&ngsp;
@@ -342,7 +344,7 @@
 					class="logout"
 					fxFlex="32px"
 					fxFlexAlign="center center"
-					*ngIf="pinUnlock | async"
+					*ngIf="(pinUnlock | async) && (masterKeyConfirmed | async)"
 				>
 					<span cyphTranslate>Not</span>
 					&ngsp;

@@ -56,6 +56,11 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** Master key to be used for login attempt. */
 	public readonly masterKey = new BehaviorSubject<string>('');
 
+	/** @see ICurrentUser.masterKeyConfirmed */
+	public readonly masterKeyConfirmed = this.localStorageService
+		.hasItem('unconfirmedMasterKey')
+		.then(b => !b);
+
 	/** PIN to be used for login attempt. */
 	public readonly pin = new BehaviorSubject<string>('');
 
