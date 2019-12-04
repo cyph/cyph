@@ -413,12 +413,16 @@
 		class="clipboard-copy-menu"
 		[class.visibility-hidden]="
 			envService.isMobileOS ||
-			!(((message?.valueWatcher | async) || {text: ''}).text.length > 0)
+			!(
+				(((message?.valueWatcher | async) || {text: ''}).text?.length ||
+					0) > 0
+			)
 		"
 		*ngIf="
 			!mobile ||
 			!envService.isMobileOS ||
-			((message?.valueWatcher | async) || {text: ''}).text.length > 0
+			(((message?.valueWatcher | async) || {text: ''}).text?.length ||
+				0) > 0
 		"
 	>
 		<mat-icon>content_copy</mat-icon>
