@@ -751,7 +751,12 @@ export class AccountService extends BaseProvider {
 
 				case NotificationTypes.Message:
 					if (
-						typeof data?.additionalData?.senderUsername !== 'string'
+						typeof data?.additionalData?.senderUsername !==
+							'string' ||
+						(this.headerInternal.value instanceof User &&
+							this.headerInternal.value.username ===
+								data.additionalData.senderUsername &&
+							this.router.url.startsWith('/messages/'))
 					) {
 						return;
 					}
