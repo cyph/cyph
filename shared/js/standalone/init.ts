@@ -71,7 +71,7 @@ if (env.isCordova) {
 if (env.isCordovaDesktop && typeof cordovaRequire === 'function') {
 	const {remote} = cordovaRequire('electron');
 
-	remote.getCurrentWindow().addEventListener('beforeunload', (e: any) => {
+	remote.getCurrentWindow().on('close', (e: any) => {
 		if (beforeUnloadMessage === undefined || confirm(beforeUnloadMessage)) {
 			return;
 		}
