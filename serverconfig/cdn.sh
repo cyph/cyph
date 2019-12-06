@@ -339,7 +339,10 @@ cat > server.js <<- EOM
 				cert,
 				dhparam,
 				key,
-				secureOptions: crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_TLSv1
+				secureOptions:
+					crypto.constants.SSL_OP_NO_SSLv3 |
+					crypto.constants.SSL_OP_NO_TLSv1 |
+					crypto.constants.SSL_OP_NO_TLSv1_1
 			},
 			app.callback()
 		);
