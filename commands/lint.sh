@@ -5,12 +5,18 @@ cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
 fast=''
+fix=''
 htmlOnly=''
 if [ "${1}" == '--fast' ] ; then
 	fast=true
 	shift
 elif [ "${1}" == '--html-only' ] ; then
 	htmlOnly=true
+	shift
+fi
+
+if [ "${1}" == '--fix' ] ; then
+	fix=true
 	shift
 fi
 
@@ -84,7 +90,23 @@ if [ ! "${htmlOnly}" ] ; then
 
 	cd js
 	cp ${dir}/shared/lib/js/package.json ./
-	output="$(eslint -c eslintrc.json --ignore-path .eslintignore '**/*.ts' 2>&1)"
+
+	output="$(
+		eslint \
+			-c eslintrc.json \
+			--ignore-path .eslintignore \
+			$(if [ "${fix}" ] ; then echo '--fix' ; fi) \
+			'**/*.ts' \
+		2>&1
+	)"
+
+	if [ "${fix}" ] ; then
+		find . \
+			-name '*.ts' \
+			-exec bash -c "cp -f '{}' \"\$(echo '{}' | sed 's|^\\.|${dir}/shared/js|g')\"" \
+		\;
+	fi
+
 	cd ..
 fi
 
