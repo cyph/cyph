@@ -27,6 +27,16 @@ var packageName		= 'cyph.app';
 
 if (storage.betaTestUser) {
 	packageName		= 'beta.cyph.app';
+
+	if (!storage.betaTestInitialized) {
+		storage.betaTestInitialized	= true;
+
+		delete storage.webSignCdnUrl;
+		delete storage.webSignExpires;
+		delete storage.webSignHash;
+		delete storage.webSignHashWhitelist;
+		delete storage.webSignPackageTimestamp;
+	}
 }
 
 /* Get user's current location to choose optimal CDN node */
