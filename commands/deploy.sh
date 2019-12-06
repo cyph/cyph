@@ -769,7 +769,7 @@ if [ "${websign}" ] ; then
 	packages="${package} ${customBuilds}"
 
 	if [ "${test}" ] || [ "${betaProd}" ] || [ "${debug}" ] || [ "${prodAndBeta}" ] ; then
-		mv pkg/cyph.app "pkg/${package}"
+		if [ "${package}" != 'cyph.app' ] ; then mv pkg/cyph.app "pkg/${package}" ; fi
 
 		for branchDir in ${branchDirs} ; do
 			branchPackage=$(projectname cyph.app ${branchDir})
