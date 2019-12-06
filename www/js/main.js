@@ -33,7 +33,6 @@ if (storage.betaTestUser) {
 
 		delete storage.webSignCdnUrl;
 		delete storage.webSignExpires;
-		delete storage.webSignHash;
 		delete storage.webSignHashWhitelist;
 		delete storage.webSignPackageTimestamp;
 	}
