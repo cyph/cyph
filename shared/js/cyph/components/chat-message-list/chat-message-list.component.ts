@@ -363,8 +363,7 @@ export class ChatMessageListComponent extends BaseProvider
 														.currentUser.value :
 													undefined;
 
-											authorUser =
-												currentUser && currentUser.user;
+											authorUser = currentUser?.user;
 										}
 										else if (
 											message.authorID === undefined
@@ -398,14 +397,12 @@ export class ChatMessageListComponent extends BaseProvider
 											}
 											catch {}
 
-											author =
-												authorUser &&
-												authorUser.pseudoAccount ?
-													authorUser.name :
-												authorUser instanceof User ?
-													authorUser.realUsername :
-													this.sessionService
-														.remoteUsername;
+											author = authorUser?.pseudoAccount ?
+												authorUser.name :
+											authorUser instanceof User ?
+												authorUser.realUsername :
+												this.sessionService
+													.remoteUsername;
 										}
 
 										return {
@@ -508,8 +505,7 @@ export class ChatMessageListComponent extends BaseProvider
 									scrollIntoView:
 										this.initialScrollDown.value &&
 										(lastUnreadMessage ?
-											(message && message.id) ===
-											lastUnreadMessage :
+											message?.id === lastUnreadMessage :
 											isEnd),
 									showDisconnectMessage: this
 										.showDisconnectMessage,

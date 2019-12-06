@@ -83,8 +83,8 @@ export class EHRIntegrationService extends BaseProvider {
 		});
 
 		return {
-			isMaster: (response && response.isMaster) === true,
-			isValid: (response && response.isValid) === true
+			isMaster: response?.isMaster === true,
+			isValid: response?.isValid === true
 		};
 	}
 

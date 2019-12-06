@@ -186,8 +186,7 @@ export class CryptocurrencyService extends BaseProvider {
 
 		if (
 			wallet.cryptocurrency !== Cryptocurrencies.BTC ||
-			(convert &&
-				convert.cryptocurrency !== undefined &&
+			(convert?.cryptocurrency !== undefined &&
 				convert.cryptocurrency !== Cryptocurrencies.BTC)
 		) {
 			throw new Error('Unsupported cryptocurrency.');

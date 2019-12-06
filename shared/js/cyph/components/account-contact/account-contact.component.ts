@@ -92,7 +92,7 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	public get groupUsernames () : string | undefined {
 		const groupData = this.groupData;
 
-		return groupData && groupData.group.usernames ?
+		return groupData?.group.usernames ?
 			'@' +
 				normalizeArray(
 					groupData.group.usernames.filter(

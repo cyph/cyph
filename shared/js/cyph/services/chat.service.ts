@@ -347,11 +347,9 @@ export class ChatService extends BaseProvider {
 							return this.chat.futureMessages.updateItem(
 								unobservedPredecessors[0].id,
 								async futureMessages => ({
-									messages:
-										futureMessages &&
-										futureMessages.messages ?
-											futureMessages.messages.concat(o) :
-											[o]
+									messages: futureMessages?.messages ?
+										futureMessages.messages.concat(o) :
+										[o]
 								})
 							);
 						}
@@ -435,7 +433,7 @@ export class ChatService extends BaseProvider {
 					await this.chat.futureMessages.updateItem(
 						o.id,
 						async futureMessages => {
-							if (futureMessages && futureMessages.messages) {
+							if (futureMessages?.messages) {
 								await Promise.all(
 									futureMessages.messages.map(
 										async futureMessage =>
@@ -522,7 +520,7 @@ export class ChatService extends BaseProvider {
 				.catch(() => undefined);
 		}
 
-		if (message && message.id && message.hash && message.hash.length > 0) {
+		if (message?.id && message.hash && message.hash.length > 0) {
 			await this.getMessageValue(message);
 
 			return (
@@ -815,7 +813,7 @@ export class ChatService extends BaseProvider {
 									);
 								}
 							}
-							else if (value && value.text) {
+							else if (value?.text) {
 								this.notificationService.notify(value.text);
 							}
 						}
@@ -1290,7 +1288,7 @@ export class ChatService extends BaseProvider {
 		switch (messageType) {
 			case ChatMessageValue.Types.CalendarInvite:
 				value.calendarInvite =
-					(message && message.calendarInvite) ||
+					message?.calendarInvite ||
 					this.chat.currentMessage.calendarInvite;
 				currentMessage.calendarInvite = undefined;
 
@@ -1302,7 +1300,7 @@ export class ChatService extends BaseProvider {
 
 			case ChatMessageValue.Types.FileTransfer:
 				value.fileTransfer =
-					(message && message.fileTransfer) ||
+					message?.fileTransfer ||
 					this.chat.currentMessage.fileTransfer;
 				currentMessage.fileTransfer = undefined;
 
@@ -1313,8 +1311,7 @@ export class ChatService extends BaseProvider {
 				break;
 
 			case ChatMessageValue.Types.Form:
-				value.form =
-					(message && message.form) || this.chat.currentMessage.form;
+				value.form = message?.form || this.chat.currentMessage.form;
 				currentMessage.form = undefined;
 
 				if (!value.form) {
@@ -1324,14 +1321,13 @@ export class ChatService extends BaseProvider {
 				break;
 
 			case ChatMessageValue.Types.Quill:
-				value.quill =
-					message && message.quill ?
-						msgpack.encode({ops: message.quill.ops}) :
-					this.chat.currentMessage.quill ?
-						msgpack.encode({
-							ops: this.chat.currentMessage.quill.ops
-						}) :
-						undefined;
+				value.quill = message?.quill ?
+					msgpack.encode({ops: message.quill.ops}) :
+				this.chat.currentMessage.quill ?
+					msgpack.encode({
+						ops: this.chat.currentMessage.quill.ops
+					}) :
+					undefined;
 				currentMessage.quill = undefined;
 
 				if (!value.quill) {
@@ -1341,8 +1337,7 @@ export class ChatService extends BaseProvider {
 				break;
 
 			case ChatMessageValue.Types.Text:
-				value.text =
-					(message && message.text) || this.chat.currentMessage.text;
+				value.text = message?.text || this.chat.currentMessage.text;
 				currentMessage.text = '';
 				this.messageChange();
 

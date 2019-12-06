@@ -2108,8 +2108,8 @@ export class AccountFilesService extends BaseProvider {
 						'application/octet-stream',
 					name,
 					recordType: fileConfig.recordType,
-					replyToEmail: replyTo && replyTo.email,
-					replyToName: replyTo && replyTo.name,
+					replyToEmail: replyTo?.email,
+					replyToName: replyTo?.name,
 					size: await this.getFileSize(file, fileConfig),
 					timestamp:
 						timestamp !== undefined ?

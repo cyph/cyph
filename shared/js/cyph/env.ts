@@ -54,8 +54,7 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this is a co-branded (or white label) instance of Cyph. */
 	public readonly coBranded: boolean =
-		environment.customBuild !== undefined &&
-		environment.customBuild.favicon !== undefined;
+		environment.customBuild?.favicon !== undefined;
 
 	/** Base URL for a new audio cyph link ("https://cyph.app/#burner/audio/" or equivalent). */
 	public readonly cyphAudioBaseUrl: string;

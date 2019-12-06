@@ -45,10 +45,9 @@ export const {getFormValue} = class {
 		containerIndex: number,
 		elementIndex: number
 	) : boolean | number | string | Uint8Array | undefined {
-		const component =
-			form && form.components ?
-				form.components[componentIndex] :
-				undefined;
+		const component = form?.components ?
+			form.components[componentIndex] :
+			undefined;
 
 		if (!component) {
 			return;
@@ -153,19 +152,19 @@ export const newFormElement = <
 	/* eslint-disable-next-line complexity */
 	(o?: T) => {
 		const element: Form.IElement = {
-			fileName: o && o.fileName,
-			id: o && o.id,
-			label: o && o.label,
-			mask: o && o.mask && msgpack.encode(o.mask),
-			max: o && o.max,
-			mediaType: o && o.mediaType,
-			min: o && o.min,
+			fileName: o?.fileName,
+			id: o?.id,
+			label: o?.label,
+			mask: o?.mask && msgpack.encode(o.mask),
+			max: o?.max,
+			mediaType: o?.mediaType,
+			min: o?.min,
 			noGrow: o && o.noGrow === true,
-			options: o && o.options,
-			required: o && o.required,
-			step: o && o.step,
+			options: o?.options,
+			required: o?.required,
+			step: o?.step,
 			type: elementType,
-			width: o && o.width
+			width: o?.width
 		};
 
 		if (o && typeof o.value === 'boolean') {
@@ -390,14 +389,14 @@ export const email = (
 	id: string = 'EmailAddresses[0]',
 	data?: Record<string, string>
 ) : Form.IElement =>
-	emailInput({id, label: 'Email', required: true, value: data && data.email});
+	emailInput({id, label: 'Email', required: true, value: data?.email});
 
 /** Name element row. */
 export const name = (
 	id?: string,
 	data?: Record<string, string>
 ) : Form.IElementContainer => {
-	const nameSplit = data && data.name ? data.name.split(' ') : [];
+	const nameSplit = data?.name ? data.name.split(' ') : [];
 
 	return newFormContainer(
 		[
@@ -702,7 +701,7 @@ export const doctorProfile = (data?: Record<string, string>) : IForm[] => [
 				newFormContainer([
 					input({
 						label: "Bachelor's",
-						value: data && data.bachelors
+						value: data?.bachelors
 					})
 				])
 			]),
@@ -710,7 +709,7 @@ export const doctorProfile = (data?: Record<string, string>) : IForm[] => [
 				newFormContainer([
 					input({
 						label: 'Medical School',
-						value: data && data.medSchool
+						value: data?.medSchool
 					})
 				])
 			]),
@@ -718,7 +717,7 @@ export const doctorProfile = (data?: Record<string, string>) : IForm[] => [
 				newFormContainer([
 					input({
 						label: 'Residency',
-						value: data && data.residency
+						value: data?.residency
 					})
 				])
 			])
@@ -733,7 +732,7 @@ export const doctorProfile = (data?: Record<string, string>) : IForm[] => [
 				newFormContainer([
 					input({
 						label: 'NPI',
-						value: data && data.npi
+						value: data?.npi
 					})
 				])
 			])

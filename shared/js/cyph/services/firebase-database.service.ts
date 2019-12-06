@@ -310,8 +310,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return new Promise<firebase.database.DataSnapshot>(async resolve => {
 			(await this.getDatabaseRef(url)).on('value', snapshot => {
 				if (
-					snapshot &&
-					snapshot.exists() &&
+					snapshot?.exists() &&
 					typeof snapshot.val().hash === 'string'
 				) {
 					resolve(snapshot);
@@ -1429,7 +1428,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									reason?: string;
 									timestamp?: number;
 								};
-							} = (snapshot && snapshot.val()) || {};
+							} = snapshot?.val() || {};
 
 							const timestamp = await getTimestamp();
 
@@ -1682,8 +1681,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									snapshot: firebase.database.DataSnapshot | null
 								) : Promise<void> => {
 									if (
-										snapshot &&
-										snapshot.key &&
+										snapshot?.key &&
 										typeof (snapshot.val() || {}).hash !==
 											'string'
 									) {
@@ -1823,8 +1821,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									this.ngZone.run(
 										async () : Promise<void> => {
 											if (
-												snapshot &&
-												snapshot.key &&
+												snapshot?.key &&
 												typeof (snapshot.val() || {})
 													.hash !== 'string'
 											) {
@@ -1991,8 +1988,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									previousKey?: string | null
 								) : Promise<void> => {
 									if (
-										snapshot &&
-										snapshot.key &&
+										snapshot?.key &&
 										typeof (snapshot.val() || {}).hash !==
 											'string'
 									) {
