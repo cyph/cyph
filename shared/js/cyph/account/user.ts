@@ -80,7 +80,7 @@ export class User {
 	);
 
 	/** Header fix. */
-	public readonly desktop = undefined;
+	public readonly desktop: undefined;
 
 	/** @see IAccountUserProfile.externalUsernames */
 	public readonly externalUsernames: Observable<
@@ -100,7 +100,7 @@ export class User {
 	);
 
 	/** Header fix. */
-	public readonly mobile = undefined;
+	public readonly mobile: undefined;
 
 	/** @see IAccountUserProfile.name */
 	public readonly name: Observable<string> = toBehaviorSubject(
