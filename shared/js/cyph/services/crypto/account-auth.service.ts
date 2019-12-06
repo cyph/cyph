@@ -334,7 +334,9 @@ export class AccountAuthService extends BaseProvider {
 
 			if (
 				this.envService.isCordova &&
-				this.configService.betaTestUsers.has(username)
+				this.configService.betaTestUsers.has(username) &&
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				localStorage.getItem('betaTestUser') !== 'true'
 			) {
 				try {
 					/* eslint-disable-next-line @typescript-eslint/tslint/config */
@@ -939,6 +941,8 @@ export class AccountAuthService extends BaseProvider {
 		try {
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			localStorage.removeItem('betaTestUser');
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			localStorage.removeItem('webSignPackageTimestamp');
 		}
 		catch {}
 
