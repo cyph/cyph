@@ -225,7 +225,9 @@ if [ "${debug}" ] ; then
 	fi
 fi
 
-if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${noBeta}" ] ; then
+if [ "${betaProd}" ] ; then
+	site="${webSignedProject}"
+elif [ ! "${test}" ] && [ ! "${noBeta}" ] ; then
 	prodAndBeta=true
 fi
 
