@@ -49,7 +49,7 @@ const addInviteCode = async (
 		codes: new Array(countByUser[inviterUsername])
 			.fill('')
 			.map(() => readableID(15)),
-		inviterUsername
+		inviterUsername: normalize(inviterUsername)
 	}));
 
 	await Promise.all(

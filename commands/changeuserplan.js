@@ -6,7 +6,7 @@ const os = require('os');
 const {config} = require('../modules/config');
 const databaseService = require('../modules/database-service');
 const {CyphPlan, CyphPlans} = require('../modules/proto');
-const {readableByteLength, titleize} = require('../modules/util');
+const {readableByteLength, normalize, titleize} = require('../modules/util');
 const {sendMail} = require('./email');
 
 const changeUserPlan = async (projectId, username, plan, namespace) => {
@@ -27,6 +27,8 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 			'https://staging.cyph.app/';
 
 	const namespacePath = namespace.replace(/\./g, '_');
+
+	username = normalize(username);
 
 	const {
 		auth,
