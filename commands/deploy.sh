@@ -225,7 +225,7 @@ if [ "${debug}" ] ; then
 	fi
 fi
 
-if [ ! "${test}" ] && [ ! "${noBeta}" ] ; then
+if [ ! "${test}" ] && [ ! "${betaProd}" ] && [ ! "${noBeta}" ] ; then
 	prodAndBeta=true
 fi
 
