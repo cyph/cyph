@@ -442,24 +442,32 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 
 				try {
-					const localValue = await (verifyHash === undefined ?
-						this.cache.value.getItem({hash, url}, proto) :
+					const localValueBytes = await (verifyHash === undefined ?
+						this.cache.value.getItem({hash, url}, BinaryProto) :
 						Promise.reject()
 					).catch(async err => {
 						if (data === undefined) {
 							throw err;
 						}
-						return deserialize(
-							proto,
-							this.potassiumService.fromBase64(data)
-						);
+						return this.potassiumService.fromBase64(data);
 					});
+
+					const localValue = await deserialize(
+						proto,
+						localValueBytes
+					);
 
 					alreadyCached.resolve(true);
 					this.ngZone.run(() => {
 						progress.next(100);
 						progress.complete();
 					});
+
+					this.cache.value.setItem(
+						{hash, url},
+						BinaryProto,
+						localValueBytes
+					);
 
 					return {timestamp, value: localValue};
 				}
