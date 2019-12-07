@@ -524,14 +524,20 @@
 									}
 								"
 							></ng-container>
-							<a
-								class="username animated flipInX _2"
-								[href]="envService.cyphMeUrl + user.username"
-								target="_self"
-							>
-								<span>@</span
-								><span>{{ user.realUsername | async }}</span>
-							</a>
+							<div fxLayoutAlign="center">
+								<a
+									class="username animated flipInX _2"
+									[href]="
+										envService.cyphMeUrl + user.username
+									"
+									target="_self"
+								>
+									<span>@</span
+									><span>{{
+										user.realUsername | async
+									}}</span>
+								</a>
+							</div>
 							<ng-container
 								*ngTemplateOutlet="
 									description;
