@@ -101,7 +101,12 @@ export class DatabaseService extends DataManagerService {
 								.catch(() => undefined),
 							`DatabaseService/value-url/${url}`
 						] :
-						[`DatabaseService/value-hash/${url.hash}`];
+						[
+							`DatabaseService/value-hash/${url.hash}`,
+							...(!all ?
+								[] :
+								[`DatabaseService/value-url/${url.url}`])
+						];
 
 				if (!all) {
 					let lastErr: any;
@@ -130,7 +135,7 @@ export class DatabaseService extends DataManagerService {
 
 					promises.push(callback(key));
 				}
-				return promises[0];
+				return (await Promise.all(promises))[0];
 			},
 			getItem: async <T>(
 				url: string | {hash: string; url: string},
