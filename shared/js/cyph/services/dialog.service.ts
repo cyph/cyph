@@ -23,7 +23,8 @@ export class DialogService extends BaseProvider {
 			ok?: string;
 			title?: string;
 		},
-		_CLOSE_FUNCTION?: IResolvable<() => void>
+		_CLOSE_FUNCTION?: IResolvable<() => void>,
+		_AFTER_OPENED?: IResolvable<void>
 	) : Promise<void> {
 		throw new Error(
 			'Must provide an implementation of DialogService.alert.'

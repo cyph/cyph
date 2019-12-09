@@ -185,7 +185,8 @@ export class MaterialDialogService extends BaseProvider
 			ok?: string;
 			title?: string;
 		},
-		closeFunction?: IResolvable<() => void>
+		closeFunction?: IResolvable<() => void>,
+		afterOpened?: IResolvable<void>
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef = this.matDialog.open(DialogAlertComponent);
@@ -206,6 +207,16 @@ export class MaterialDialogService extends BaseProvider
 				closeFunction.resolve(() => {
 					matDialogRef.close();
 				});
+			}
+
+			const afterOpenedResolvable = afterOpened;
+			if (afterOpenedResolvable) {
+				matDialogRef
+					.afterOpened()
+					.toPromise()
+					.then(() => {
+						afterOpenedResolvable.resolve();
+					});
 			}
 
 			await matDialogRef.afterClosed().toPromise();

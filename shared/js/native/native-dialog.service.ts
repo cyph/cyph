@@ -32,6 +32,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param o.image Currently unsupported (ignored).
 	 * @param o.markdown Currently unsupported (ignored).
 	 * @param closeFunction Currently unsupported (not implemented exception).
+	 * @param afterOpened Currently unsupported (not implemented exception).
 	 */
 	public async alert (
 		o: {
@@ -41,11 +42,18 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 			ok?: string;
 			title?: string;
 		},
-		closeFunction?: IResolvable<() => void>
+		closeFunction?: IResolvable<() => void>,
+		afterOpened?: IResolvable<void>
 	) : Promise<void> {
 		if (closeFunction) {
 			throw new Error(
-				'NativeDialogService.baseDialog closeFunction is unsupported.'
+				'NativeDialogService.alert closeFunction is unsupported.'
+			);
+		}
+
+		if (afterOpened) {
+			throw new Error(
+				'NativeDialogService.alert afterOpened is unsupported.'
 			);
 		}
 
@@ -258,7 +266,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	) : Promise<string | IForm | undefined> {
 		if (closeFunction) {
 			throw new Error(
-				'NativeDialogService.baseDialog closeFunction is unsupported.'
+				'NativeDialogService.prompt closeFunction is unsupported.'
 			);
 		}
 

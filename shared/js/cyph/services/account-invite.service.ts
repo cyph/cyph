@@ -5,6 +5,7 @@ import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {BooleanProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {resolvable} from '../util/wait';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
@@ -30,8 +31,18 @@ export class AccountInviteService extends BaseProvider {
 		0
 	);
 
+	/** Deletes an invite URL. */
+	public async deleteInvite (
+		inviteCode: string | {inviteCode: string}
+	) : Promise<void> {
+		await this.codes.removeItem(
+			typeof inviteCode === 'string' ? inviteCode : inviteCode.inviteCode
+		);
+	}
+
 	/** Gets an invite URL. */
 	public async getInviteURL () : Promise<{
+		inviteCode: string;
 		qrCode: () => Promise<SafeUrl>;
 		url: string;
 	}> {
@@ -40,11 +51,10 @@ export class AccountInviteService extends BaseProvider {
 			throw new Error('No invite codes available.');
 		}
 
-		await this.codes.removeItem(inviteCode);
-
 		const url = `${this.envService.appUrl}register/${inviteCode}`;
 
 		return {
+			inviteCode,
 			qrCode: async () =>
 				this.qrService.getQRCode({
 					dotScale: 0.75,
@@ -72,16 +82,25 @@ export class AccountInviteService extends BaseProvider {
 		}
 
 		const invite = await this.getInviteURL();
+		const afterOpened = resolvable();
 
-		return this.dialogService.alert({
-			content: this.stringsService.setParameters(
-				this.stringsService.inviteLinkText,
-				{link: invite.url}
-			),
-			image: await invite.qrCode(),
-			markdown: true,
-			title: this.stringsService.inviteLinkTitle
-		});
+		const afterClosed = this.dialogService.alert(
+			{
+				content: this.stringsService.setParameters(
+					this.stringsService.inviteLinkText,
+					{link: invite.url}
+				),
+				image: await invite.qrCode(),
+				markdown: true,
+				title: this.stringsService.inviteLinkTitle
+			},
+			undefined,
+			afterOpened
+		);
+
+		await afterOpened.promise;
+		await this.deleteInvite(invite);
+		await afterClosed;
 	}
 
 	constructor (
