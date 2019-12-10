@@ -109,10 +109,40 @@ if [ "${electron}" ] ; then
 	cp build.json build.json.bak
 	node -e "
 		const buildConfig = JSON.parse(fs.readFileSync('build.json').toString());
-		const {windows} = buildConfig.electron;
+		const {linux, mac, windows} = buildConfig.electron;
 
-		const build = () => {
-			fs.writeFileSync('build.json', JSON.stringify(buildConfig));
+		const build = (config, docker = false) => {
+			fs.writeFileSync('build.json', JSON.stringify({electron: config}));
+
+			if (docker) {
+				child_process.spawnSync(
+					'docker',
+					[
+						'run',
+						'-it',
+						'--privileged=true',
+						...['.cyph', '.ssh', ['.gnupg', '.gnupg.original']].map(dir => [
+							'-v',
+							\`\${
+								path.join(
+									os.homedir(),
+									typeof dir === 'string' ? dir : dir[0]
+								)
+							}:/home/gibson/\${
+								typeof dir === 'string' ? dir : dir[1]
+							}\`
+						]).flat(),
+						'-v',
+						\`\${process.cwd()}:/cyph\`,
+						'cyph/dev',
+						'bash',
+						'-c',
+						'cd /cyph ; npx cordova build electron --release'
+					],
+					{stdio: 'inherit'}
+				);
+				return;
+			}
 
 			child_process.spawnSync(
 				'npx',
@@ -136,10 +166,9 @@ if [ "${electron}" ] ; then
 			)
 		);
 
-		delete buildConfig.electron.windows;
-		build();
-		buildConfig.electron = {windows};
-		build();
+		build({linux}, true);
+		build({mac});
+		build({windows});
 	"
 	cp -f build.json.bak build.json
 
