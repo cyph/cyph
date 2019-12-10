@@ -53,6 +53,7 @@ RUN apt-get -y --allow-downgrades install \
 	python \
 	python-pip \
 	ripgrep \
+	rpm \
 	ruby \
 	ruby-dev \
 	shellcheck \
