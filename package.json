@@ -5,7 +5,9 @@
 		"@cyph/prettier": "*",
 		"cordova": "*",
 		"cordova-support-google-services": "https://github.com/LuisEGR/cordova-support-google-services.git",
-		"electron-push-receiver": "*",
+		"electron-push-receiver": "*"
+	},
+	"devDependencies": {
 		"puppeteer": "*"
 	},
 	"cordova": {
