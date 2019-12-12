@@ -94,8 +94,7 @@ export class AccountSessionService extends SessionService {
 		}
 
 		const user = await this.accountUserLookupService.getUser(
-			message.authorID,
-			false
+			message.authorID
 		);
 
 		if (user) {
@@ -423,10 +422,7 @@ export class AccountSessionService extends SessionService {
 			return;
 		}
 
-		const user = await this.accountUserLookupService.getUser(
-			chat.username,
-			false
-		);
+		const user = await this.accountUserLookupService.getUser(chat.username);
 
 		if (user) {
 			this.subscriptions.push(

@@ -259,12 +259,7 @@ export class AccountService extends BaseProvider {
 			throw new Error('Expired call.');
 		}
 
-		const user = await this.accountUserLookupService.getUser(
-			username,
-			false,
-			false,
-			true
-		);
+		const user = await this.accountUserLookupService.getUser(username);
 		if (!user) {
 			throw new Error('User not found.');
 		}

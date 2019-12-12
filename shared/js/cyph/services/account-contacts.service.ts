@@ -94,7 +94,7 @@ export class AccountContactsService extends BaseProvider {
 			const accountUserLookupService = await this.accountUserLookupService
 				.promise;
 
-			const user = accountUserLookupService.getUser(username);
+			const user = accountUserLookupService.getUser(username, true);
 
 			return {
 				unreadMessageCount: accountUserLookupService.getUnreadMessageCount(

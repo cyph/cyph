@@ -76,8 +76,7 @@ export class AccountCallWaitingComponent extends BaseProvider
 			const users = await Promise.all(
 				this.appointment.participants.map(async username => {
 					const user = await this.accountUserLookupService.getUser(
-						username,
-						false
+						username
 					);
 					if (!user) {
 						return user;

@@ -141,10 +141,7 @@ export class AccountContactsComponent extends BaseProvider
 						unreadMessageCount: this.accountUserLookupService.getUnreadMessageCount(
 							username
 						),
-						user: this.accountUserLookupService.getUser(
-							username,
-							false
-						),
+						user: this.accountUserLookupService.getUser(username),
 						username
 					},
 					filteredContactList: contactList

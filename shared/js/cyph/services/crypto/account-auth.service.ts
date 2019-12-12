@@ -371,12 +371,7 @@ export class AccountAuthService extends BaseProvider {
 				masterKey
 			);
 
-			const userPromise = this.accountUserLookupService.getUser(
-				username,
-				false,
-				undefined,
-				true
-			);
+			const userPromise = this.accountUserLookupService.getUser(username);
 
 			const agseConfirmedPromise = this.accountUserLookupService.exists(
 				username,

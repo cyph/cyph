@@ -390,8 +390,7 @@ export class ChatMessageListComponent extends BaseProvider
 																.remoteUser
 																.value :
 															await this.accountUserLookupService.getUser(
-																message.authorID,
-																false
+																message.authorID
 															) :
 														undefined;
 											}

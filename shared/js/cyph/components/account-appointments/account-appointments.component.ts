@@ -83,7 +83,7 @@ export class AccountAppointmentsComponent extends BaseProvider
 
 	/** Gets user. */
 	public readonly getUser = memoize(async (username: string) =>
-		this.accountUserLookupService.getUser(username, false)
+		this.accountUserLookupService.getUser(username)
 	);
 
 	/** @see trackByID */

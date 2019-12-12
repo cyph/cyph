@@ -237,8 +237,7 @@ export class AccountChatComponent extends BaseProvider
 									}
 									else {
 										const user = await this.accountUserLookupService.getUser(
-											username,
-											false
+											username
 										);
 										if (!user) {
 											throw new Error('User not found.');

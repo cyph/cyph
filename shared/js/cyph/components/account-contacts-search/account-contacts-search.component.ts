@@ -153,10 +153,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 
 			if (this.chipInput && externalUser) {
 				externalUser = undefined;
-				const user = await this.accountUserLookupService.getUser(
-					query,
-					false
-				);
+				const user = await this.accountUserLookupService.getUser(query);
 
 				if (user) {
 					results.unshift({matchingText: undefined, user});
@@ -211,7 +208,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	public readonly userFilterTransform: (
 		username: string
 	) => Async<User | undefined> = async username =>
-		this.accountUserLookupService.getUser(username, false);
+		this.accountUserLookupService.getUser(username);
 
 	/** Default placeholder. */
 	public get defaultPlaceHolder () : string {
