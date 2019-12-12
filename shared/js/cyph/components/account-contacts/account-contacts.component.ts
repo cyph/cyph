@@ -137,10 +137,16 @@ export class AccountContactsComponent extends BaseProvider
 				}
 
 				return {
-					activeUser: await this.accountUserLookupService.getUser(
-						username,
-						false
-					),
+					activeUser: {
+						unreadMessageCount: this.accountUserLookupService.getUnreadMessageCount(
+							username
+						),
+						user: this.accountUserLookupService.getUser(
+							username,
+							false
+						),
+						username
+					},
 					filteredContactList: contactList
 				};
 			}
