@@ -3,6 +3,7 @@ import {memoize} from 'lodash-es';
 import {map} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
+import {IResolvable} from '../iresolvable';
 import {LockFunction} from '../lock-function-type';
 import {
 	AccountUserPresence,
@@ -16,8 +17,12 @@ import {
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
-import {getOrSetDefaultAsync} from '../util/get-or-set-default';
+import {
+	getOrSetDefault,
+	getOrSetDefaultAsync
+} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -29,7 +34,13 @@ import {EnvService} from './env.service';
 @Injectable()
 export class AccountUserLookupService extends BaseProvider {
 	/** @ignore */
+	private readonly cachedLock: LockFunction = lockFunction(1000);
+
+	/** @ignore */
 	private readonly downloadLock: LockFunction = lockFunction(2500);
+
+	/** @ignore */
+	private readonly downloadLockCancel = new Map<string, IResolvable<void>>();
 
 	/** @ignore */
 	private readonly existsCache: Set<string> = new Set<string>();
@@ -118,7 +129,17 @@ export class AccountUserLookupService extends BaseProvider {
 			) ||
 				this.userCache.has(username) ||
 				(await (confirmedOnly ?
-					(lock ? this.downloadLock(getProfile) : getProfile())
+					(!lock ?
+						getProfile() :
+						Promise.race([
+							this.downloadLock(getProfile),
+							getOrSetDefault(
+								this.downloadLockCancel,
+								username,
+								resolvable
+							).promise.then(getProfile)
+						])
+					)
 						.then(() => true)
 						.catch(() => false) :
 					this.accountDatabaseService.hasItem(
@@ -154,15 +175,29 @@ export class AccountUserLookupService extends BaseProvider {
 			const username = normalize(user);
 			const url = `users/${username}`;
 
+			const isCached = async () =>
+				this.accountDatabaseService.isCached(`${url}/publicProfile`);
+
+			const downloadLockCancel = getOrSetDefault(
+				this.downloadLockCancel,
+				username,
+				resolvable
+			);
+
 			if (
 				(lock || !preFetch) &&
 				(this.userCache.has(username) ||
-					(await this.accountDatabaseService.isCached(
-						`${url}/publicProfile`
-					)))
+					(await Promise.race([
+						!lock ? isCached() : this.cachedLock(isCached),
+						downloadLockCancel.promise.then(() => true)
+					])))
 			) {
 				lock = false;
 				preFetch = true;
+			}
+
+			if (!lock) {
+				downloadLockCancel.resolve();
 			}
 
 			return getOrSetDefaultAsync(
