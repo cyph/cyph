@@ -16,7 +16,7 @@ import {debugLog} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {sleep} from '../util/wait';
+import {resolvable, sleep} from '../util/wait';
 
 /**
  * Provides local storage functionality.
@@ -31,8 +31,8 @@ export class LocalStorageService extends DataManagerService {
 
 	/** Lock configuration settings. */
 	private readonly lockConfig = {
-		claimDelay: 2500,
-		interval: 1000,
+		claimDelay: 100,
+		interval: 50,
 		root: 'LocalStorageService-locks',
 		timeout: 60000
 	};
@@ -150,16 +150,24 @@ export class LocalStorageService extends DataManagerService {
 	public async getValue<T> (
 		url: string,
 		proto: IProto<T>,
-		waitForReady: boolean = true
+		waitForReady: boolean = true,
+		skipCache: boolean = false
 	) : Promise<[string, T, number]> {
 		await this.pendingSets.get(url);
 
-		try {
-			this.cache.set(url, await this.getItemInternal(url, waitForReady));
-		}
-		catch {}
+		const data = await (skipCache ?
+			this.getItemInternal(url, waitForReady) :
+			(async () => {
+				try {
+					this.cache.set(
+						url,
+						await this.getItemInternal(url, waitForReady)
+					);
+				}
+				catch {}
 
-		const data = this.cache.get(url);
+				return this.cache.get(url);
+			})());
 
 		if (!(data instanceof Uint8Array)) {
 			throw new Error(`Item ${url} not found.`);
@@ -199,17 +207,25 @@ export class LocalStorageService extends DataManagerService {
 		}) => Promise<T>,
 		reason?: string
 	) : Promise<T> {
+		const stillOwner = new BehaviorSubject<boolean>(true);
+
 		const lockURL = `${this.lockConfig.root}/${url}`;
 		const id = uuid();
 		const metadata = {id, reason};
-		const stillOwner = new BehaviorSubject<boolean>(true);
+		const channel =
+			typeof BroadcastChannel !== 'undefined' ?
+				new BroadcastChannel(lockURL) :
+				undefined;
 
 		debugLog(() => ({localStorageLockWaiting: {id, lockURL, stillOwner}}));
 
 		const getLockValue = async () =>
-			this.getValue(lockURL, LocalStorageLockMetadata).catch(
-				() => undefined
-			);
+			this.getValue(
+				lockURL,
+				LocalStorageLockMetadata,
+				undefined,
+				true
+			).catch(() => undefined);
 
 		let lastReason: string | undefined;
 
@@ -231,12 +247,29 @@ export class LocalStorageService extends DataManagerService {
 					timestamp - lockValue[2] > this.lockConfig.timeout
 				)
 			) {
-				await sleep(this.lockConfig.interval);
+				const unlocked = resolvable();
+
+				if (channel) {
+					channel.onmessage = () => {
+						unlocked.resolve();
+					};
+				}
+
+				await Promise.race([
+					unlocked.promise,
+					sleep(this.lockConfig.interval)
+				]);
 				continue;
 			}
 
 			lastReason = lockValue ? lockValue[1].reason : undefined;
-			await this.setItem(lockURL, LocalStorageLockMetadata, metadata);
+			await this.setItem(
+				lockURL,
+				LocalStorageLockMetadata,
+				metadata,
+				undefined,
+				true
+			);
 			await sleep(this.lockConfig.claimDelay);
 		}
 
@@ -245,7 +278,7 @@ export class LocalStorageService extends DataManagerService {
 		const promise = f({reason: lastReason, stillOwner});
 
 		let active = true;
-		promise
+		const finished = promise
 			.catch(() => {})
 			.then(() => {
 				active = false;
@@ -259,8 +292,14 @@ export class LocalStorageService extends DataManagerService {
 				return promise;
 			}
 
-			await this.setItem(lockURL, LocalStorageLockMetadata, metadata);
-			await sleep(this.lockConfig.interval);
+			await this.setItem(
+				lockURL,
+				LocalStorageLockMetadata,
+				metadata,
+				undefined,
+				true
+			);
+			await Promise.race([finished, sleep(this.lockConfig.interval)]);
 		}
 
 		try {
@@ -271,11 +310,18 @@ export class LocalStorageService extends DataManagerService {
 				await this.setItem<ILocalStorageLockMetadata>(
 					lockURL,
 					LocalStorageLockMetadata,
-					{reason}
+					{reason},
+					undefined,
+					true
 				);
 			}
 			else {
-				await this.removeItem(lockURL);
+				await this.removeItem(lockURL, undefined, true);
+			}
+
+			if (channel) {
+				channel.postMessage(undefined);
+				channel.close();
 			}
 
 			debugLog(() => ({
@@ -287,9 +333,13 @@ export class LocalStorageService extends DataManagerService {
 	/** @inheritDoc */
 	public async removeItem (
 		url: string,
-		waitForReady: boolean = true
+		waitForReady: boolean = true,
+		skipCache: boolean = false
 	) : Promise<void> {
-		this.cache.delete(url);
+		if (!skipCache) {
+			this.cache.delete(url);
+		}
+
 		await this.removeItemInternal(url, waitForReady).catch(() => {});
 	}
 
@@ -298,7 +348,8 @@ export class LocalStorageService extends DataManagerService {
 		url: string,
 		proto: IProto<T>,
 		value: T,
-		waitForReady: boolean = true
+		waitForReady: boolean = true,
+		skipCache: boolean = false
 	) : Promise<{url: string}> {
 		const promise = (async () => {
 			const data = await serialize<ILocalStorageValue>(
@@ -309,7 +360,9 @@ export class LocalStorageService extends DataManagerService {
 				}
 			);
 
-			this.cache.set(url, data);
+			if (!skipCache) {
+				this.cache.set(url, data);
+			}
 
 			if (!this.setInternalFailed) {
 				try {
