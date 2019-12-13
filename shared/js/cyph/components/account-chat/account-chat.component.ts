@@ -572,7 +572,7 @@ export class AccountChatComponent extends BaseProvider
 													.startTime
 											)})`,
 											appointment.notes
-										);
+										).result;
 									});
 							}
 							catch {

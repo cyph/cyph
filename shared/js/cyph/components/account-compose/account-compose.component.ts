@@ -353,7 +353,7 @@ export class AccountComposeComponent extends BaseProvider
 						email: this.accountService.fromEmail.value,
 						name: this.accountService.fromName.value
 					}
-				);
+				).result;
 			}
 			else {
 				if (

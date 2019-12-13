@@ -159,7 +159,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 				cryptocurrency,
 				key
 			})
-		);
+		).result;
 	}
 
 	/** @inheritDoc */

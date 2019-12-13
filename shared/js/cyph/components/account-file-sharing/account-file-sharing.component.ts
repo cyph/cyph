@@ -107,7 +107,7 @@ export class AccountFileSharingComponent extends BaseProvider {
 						file.data,
 						username,
 						file.metadata
-					);
+					).result;
 				}
 				else {
 					await this.accountFilesService.shareFile(file.id, username);

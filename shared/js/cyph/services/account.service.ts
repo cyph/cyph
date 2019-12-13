@@ -650,7 +650,7 @@ export class AccountService extends BaseProvider {
 						name: ''
 					},
 					'cyph'
-				),
+				).result,
 				sleep(1000)
 			]);
 
