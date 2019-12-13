@@ -493,17 +493,18 @@ export class AccountChatComponent extends BaseProvider
 											]),
 										this.answering.value
 									)
-									.then(() => {
+									.then(async () => {
+										const remoteUser = await this
+											.accountSessionService.remoteUser
+											.value;
+
 										if (
 											sessionSubID &&
-											this.accountSessionService
-												.remoteUser.value &&
-											!this.accountSessionService
-												.remoteUser.value.anonymous
+											remoteUser &&
+											!remoteUser.anonymous
 										) {
 											this.accountDatabaseService.notify(
-												this.accountSessionService
-													.remoteUser.value.username,
+												remoteUser.username,
 												NotificationTypes.Call,
 												{
 													callType,

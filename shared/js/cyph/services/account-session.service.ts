@@ -4,6 +4,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
+import {MaybePromise} from '../maybe-promise-type';
 import {
 	IAccountMessagingGroup,
 	ISessionMessage,
@@ -57,9 +58,9 @@ export class AccountSessionService extends SessionService {
 	public readonly ready = this._READY.promise;
 
 	/** Remote user. */
-	public readonly remoteUser = new BehaviorSubject<UserLike | undefined>(
-		undefined
-	);
+	public readonly remoteUser = new BehaviorSubject<
+		MaybePromise<UserLike | undefined>
+	>(undefined);
 
 	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
@@ -422,21 +423,27 @@ export class AccountSessionService extends SessionService {
 			return;
 		}
 
-		const user = await this.accountUserLookupService.getUser(chat.username);
+		this.remoteUsername.next(chat.username);
 
-		if (user) {
-			this.subscriptions.push(
-				user.realUsername.subscribe(this.remoteUsername)
-			);
+		const userPromise = this.accountUserLookupService.getUser(
+			chat.username
+		);
 
-			if (setHeader) {
-				this.accountService.setHeader(user);
+		userPromise.then(user => {
+			if (user) {
+				this.subscriptions.push(
+					user.realUsername.subscribe(this.remoteUsername)
+				);
+
+				if (setHeader) {
+					this.accountService.setHeader(user);
+				}
 			}
-		}
 
-		debugLog(() => ({accountSessionInitComplete: {user}}));
+			debugLog(() => ({accountSessionInitComplete: {user}}));
+		});
 
-		this.remoteUser.next(user);
+		this.remoteUser.next(userPromise);
 		this.resolveReady();
 	}
 

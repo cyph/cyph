@@ -373,22 +373,18 @@ export class ChatMessageListComponent extends BaseProvider
 										}
 										else {
 											try {
+												const remoteUser = await this
+													.chatService.remoteUser
+													.value;
+
 												authorUser =
 													this.envService
 														.isAccounts &&
 													this
 														.accountUserLookupService ?
-														this.chatService
-																.remoteUser
-																.value &&
-														  this.chatService
-																.remoteUser
-																.value
-																.username ===
-																message.authorID ?
-															this.chatService
-																.remoteUser
-																.value :
+														remoteUser?.username ===
+														  message.authorID ?
+															remoteUser :
 															await this.accountUserLookupService.getUser(
 																message.authorID
 															) :

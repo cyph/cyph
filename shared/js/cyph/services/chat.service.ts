@@ -264,8 +264,13 @@ export class ChatService extends BaseProvider {
 	}>();
 
 	/** Remote User object where applicable. */
-	public readonly remoteUser = new BehaviorSubject<UserLike | undefined>(
-		undefined
+	public readonly remoteUser = new BehaviorSubject<
+		MaybePromise<UserLike | undefined>
+	>(undefined);
+
+	/** @see remoteUser */
+	public readonly remoteUserObservable = this.remoteUser.pipe(
+		mergeMap(async user => user)
 	);
 
 	/** Sub-resolvables of uiReady. */
@@ -541,25 +546,29 @@ export class ChatService extends BaseProvider {
 		message: IChatMessage
 	) : {
 		proto: IProto<IChatMessage>;
-		transform: (value: IChatMessageValue) => IChatMessage;
+		transform: (value: IChatMessageValue) => Promise<IChatMessage>;
 	} {
 		return {
 			proto: ChatMessageProto,
-			transform: value => ({
-				...message,
-				authorID:
-					message.authorID &&
-					this.remoteUser.value &&
-					!this.remoteUser.value.anonymous ?
-						message.authorID :
-						'',
-				authorType: ChatMessage.AuthorTypes.App,
-				hash: undefined,
-				key: undefined,
-				selfDestructTimeout: message.selfDestructTimeout || 0,
-				sessionSubID: message.sessionSubID || '',
-				value
-			})
+			transform: async value => {
+				const remoteUser = await this.remoteUser.value;
+
+				return {
+					...message,
+					authorID:
+						message.authorID &&
+						remoteUser &&
+						!remoteUser.anonymous ?
+							message.authorID :
+							'',
+					authorType: ChatMessage.AuthorTypes.App,
+					hash: undefined,
+					key: undefined,
+					selfDestructTimeout: message.selfDestructTimeout || 0,
+					sessionSubID: message.sessionSubID || '',
+					value
+				};
+			}
 		};
 	}
 

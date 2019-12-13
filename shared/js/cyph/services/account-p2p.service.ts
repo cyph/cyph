@@ -53,10 +53,12 @@ export class AccountP2PService extends P2PService {
 
 	/** @inheritDoc */
 	protected async request (callType: 'audio' | 'video') : Promise<void> {
-		if (!this.accountSessionService.remoteUser.value) {
+		const remoteUser = await this.accountSessionService.remoteUser.value;
+
+		if (!remoteUser) {
 			return;
 		}
-		if (this.accountSessionService.remoteUser.value.anonymous) {
+		if (remoteUser.anonymous) {
 			return super.request(callType);
 		}
 		if (!(await this.handlers.requestConfirm(callType, false))) {
@@ -66,10 +68,7 @@ export class AccountP2PService extends P2PService {
 		/* Workaround for "Form submission canceled because the form is not connected" warning */
 		await sleep(0);
 
-		await this.router.navigate([
-			callType,
-			await this.accountSessionService.remoteUser.value.contactID
-		]);
+		await this.router.navigate([callType, await remoteUser.contactID]);
 	}
 
 	/** Initiates call. */
@@ -77,15 +76,14 @@ export class AccountP2PService extends P2PService {
 		callType: 'audio' | 'video',
 		route: string = callType
 	) : Promise<void> {
-		if (
-			!this.accountSessionService.remoteUser.value ||
-			this.accountSessionService.remoteUser.value.anonymous
-		) {
+		const remoteUser = await this.accountSessionService.remoteUser.value;
+
+		if (!remoteUser || remoteUser.anonymous) {
 			return;
 		}
 
 		const id = uuid();
-		const username = this.accountSessionService.remoteUser.value.username;
+		const username = remoteUser.username;
 
 		await Promise.all([
 			getTimestamp().then(async timestamp =>
@@ -100,11 +98,10 @@ export class AccountP2PService extends P2PService {
 					}
 				)
 			),
-			this.accountSessionService.remoteUser.value.contactID.then(
-				async contactID =>
-					this.router.navigate([route, contactID, id], {
-						replaceUrl: true
-					})
+			remoteUser.contactID.then(async contactID =>
+				this.router.navigate([route, contactID, id], {
+					replaceUrl: true
+				})
 			)
 		]);
 	}

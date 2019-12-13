@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, take} from 'rxjs/operators';
+import {map, mergeMap, take} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
@@ -61,6 +61,11 @@ export class AccountChatService extends ChatService {
 
 	/** @inheritDoc */
 	public readonly remoteUser = this.accountSessionService.remoteUser;
+
+	/** @inheritDoc */
+	public readonly remoteUserObservable = this.remoteUser.pipe(
+		mergeMap(async user => user)
+	);
 
 	/** @inheritDoc */
 	protected async getAuthorID (
@@ -126,20 +131,19 @@ export class AccountChatService extends ChatService {
 		keepCurrentMessage?: boolean,
 		oldLocalStorageKey?: string
 	) : Promise<string | undefined> {
-		const id = await super.send(
-			messageType,
-			message,
-			selfDestructTimeout,
-			selfDestructChat,
-			keepCurrentMessage,
-			oldLocalStorageKey
-		);
+		const [id, remoteUser] = await Promise.all([
+			super.send(
+				messageType,
+				message,
+				selfDestructTimeout,
+				selfDestructChat,
+				keepCurrentMessage,
+				oldLocalStorageKey
+			),
+			this.remoteUser.value
+		]);
 
-		if (
-			!id ||
-			(this.accountSessionService.remoteUser.value &&
-				this.accountSessionService.remoteUser.value.anonymous)
-		) {
+		if (!id || remoteUser?.anonymous) {
 			return;
 		}
 
@@ -338,14 +342,16 @@ export class AccountChatService extends ChatService {
 		}
 
 		(<any> self).resetSessionState = async () => {
-			if (!this.remoteUser.value || !this.remoteUser.value.username) {
+			const remoteUser = await this.remoteUser.value;
+
+			if (!remoteUser || !remoteUser.username) {
 				return;
 			}
 
 			const {
 				castleSessionURL
 			} = await this.accountContactsService.getCastleSessionData(
-				this.remoteUser.value.username
+				remoteUser.username
 			);
 
 			await this.databaseService.setItem(

@@ -32,8 +32,8 @@
 						>
 							<h1
 								*ngIf="
-									(chatService.remoteUser | async)?.name
-										| async as name
+									(chatService.remoteUserObservable | async)
+										?.name | async as name
 								"
 							>
 								<span cyphTranslate *ngIf="answering"
@@ -60,8 +60,8 @@
 								[src]="avatar"
 								alt="User Avatar"
 								*ngIf="
-									(chatService.remoteUser | async)?.avatar
-										| async as avatar
+									(chatService.remoteUserObservable | async)
+										?.avatar | async as avatar
 								"
 							/>
 						</div>
