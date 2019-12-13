@@ -270,6 +270,14 @@ export class AccountSessionService extends SessionService {
 				this.resolveOpened();
 			});
 
+			Promise.all(
+				group.map(
+					async session => session.initialMessagesProcessed.promise
+				)
+			).then(() => {
+				this.initialMessagesProcessed.resolve();
+			});
+
 			for (const {event, all} of [
 				{all: true, event: events.beginChat},
 				{all: false, event: events.closeChat},

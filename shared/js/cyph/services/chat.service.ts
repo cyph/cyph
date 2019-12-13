@@ -291,8 +291,16 @@ export class ChatService extends BaseProvider {
 		this.resolvers.messageListLoaded.promise,
 		this.resolvers.outgoingMessagesSynced.promise,
 		this.sessionService.initialMessagesProcessed.promise,
-		this.castleService?.initialMessagesProcessed(),
-		this.channelService?.initialMessagesProcessed.promise
+		this.sessionService.ready.then(async () =>
+			Promise.all([
+				!this.sessionService.group ?
+					this.castleService?.initialMessagesProcessed() :
+					undefined,
+				!this.sessionService.group ?
+					this.channelService?.initialMessagesProcessed.promise :
+					undefined
+			])
+		)
 	]).then<true>(() => true);
 
 	/** Indicates whether "walkie talkie" mode is enabled for calls. */
@@ -1587,7 +1595,7 @@ export class ChatService extends BaseProvider {
 						'ChatService.sessionService.initialMessagesProcessed resolved'
 				);
 			});
-			(this.castleService ?
+			(this.castleService && !this.sessionService.group ?
 				this.castleService.initialMessagesProcessed() :
 				Promise.resolve()
 			).then(() => {
@@ -1596,7 +1604,7 @@ export class ChatService extends BaseProvider {
 						'ChatService.castleService.initialMessagesProcessed resolved'
 				);
 			});
-			(this.channelService ?
+			(this.channelService && !this.sessionService.group ?
 				this.channelService.initialMessagesProcessed.promise :
 				Promise.resolve()
 			).then(() => {
