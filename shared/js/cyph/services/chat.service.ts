@@ -288,9 +288,9 @@ export class ChatService extends BaseProvider {
 	public readonly uiReady: Promise<true> = Promise.all([
 		this.resolvers.chatConnected.promise,
 		this.resolvers.currentMessageSynced.promise,
-		this.resolvers.messageListLoaded.promise
+		this.resolvers.messageListLoaded.promise,
+		this.resolvers.outgoingMessagesSynced.promise
 		/*
-		this.resolvers.outgoingMessagesSynced.promise,
 		this.sessionService.initialMessagesProcessed.promise,
 		this.castleService?.initialMessagesProcessed(),
 		this.channelService?.initialMessagesProcessed.promise
