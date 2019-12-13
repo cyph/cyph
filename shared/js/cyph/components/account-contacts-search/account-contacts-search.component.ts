@@ -51,6 +51,9 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	/** If set, display button to submit selected contacts to this resolvable. */
 	@Input() public getContacts?: IResolvable<User[]>;
 
+	/** Includes groups in results. */
+	@Input() public includeGroups: boolean = true;
+
 	/** Minimum number of contacts to require. */
 	@Input() public minimum: number = 1;
 
@@ -78,9 +81,13 @@ export class AccountContactsSearchComponent extends BaseProvider {
 		mergeMap(async query => {
 			this.searchSpinner.next(true);
 
-			const users = this.contactList ?
+			let users = this.contactList ?
 				await this.contactList.pipe(take(1)).toPromise() :
 				[];
+
+			if (!this.includeGroups) {
+				users = users.filter(user => !('groupData' in user));
+			}
 
 			const results = filterUndefined(
 				(await Promise.all(

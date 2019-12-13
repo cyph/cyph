@@ -58,6 +58,7 @@ export class AccountContactsService extends BaseProvider {
 			contactList: Observable<(IContactListItem | User)[]> | undefined;
 			externalUsers: boolean;
 			getContacts?: IResolvable<User[]>;
+			includeGroups?: boolean;
 			minimum?: number;
 			title?: string;
 		}>
@@ -418,6 +419,7 @@ export class AccountContactsService extends BaseProvider {
 			o => {
 				o.chipInput = true;
 				o.getContacts = getContacts;
+				o.includeGroups = false;
 				o.minimum = 2;
 				o.title = this.stringsService.createGroupTitle;
 			},
