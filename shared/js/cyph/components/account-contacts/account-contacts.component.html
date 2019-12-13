@@ -90,6 +90,12 @@
 							*ngIf="!envService.isTelehealth"
 						></cyph-account-contact>
 
+						<cyph-account-contact
+							[startGroup]="true"
+							[class.cyph-inverted-theme]="invertedTheme"
+							*ngIf="!envService.isTelehealth"
+						></cyph-account-contact>
+
 						<ng-container
 							*ngFor="
 								let item of filteredContactList | async;

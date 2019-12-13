@@ -1,7 +1,7 @@
-<ng-container *ngIf="startBurner; else groupContact">
+<ng-container *ngIf="startBurner; else startGroupButton">
 	<mat-card
 		fxFlex
-		class="contact animated burner"
+		class="contact animated button-card"
 		[class.mobile]="envService.isMobileOS"
 		[class.telehealth]="envService.isTelehealthFull"
 		[matTooltip]="stringsService.linkGet"
@@ -24,6 +24,27 @@
 		</mat-card-header>
 	</mat-card>
 </ng-container>
+
+<ng-template #startGroupButton>
+	<ng-container *ngIf="startGroup; else groupContact">
+		<mat-card
+			fxFlex
+			class="contact animated button-card"
+			[class.mobile]="envService.isMobileOS"
+			[class.telehealth]="envService.isTelehealthFull"
+			[matTooltip]="stringsService.createGroupTooltip"
+			[matTooltipPosition]="envService.isMobileOS ? 'below' : 'left'"
+			(click)="accountContactsService.createGroupPrompt()"
+		>
+			<mat-card-header fxLayout="row" fxLayoutAlign="stretch center">
+				<mat-icon mat-card-avatar>group</mat-icon>
+				<mat-card-title>
+					<strong>{{ stringsService.createGroupTitle }}</strong>
+				</mat-card-title>
+			</mat-card-header>
+		</mat-card>
+	</ng-container>
+</ng-template>
 
 <ng-template #groupContact>
 	<mat-card

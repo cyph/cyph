@@ -253,6 +253,10 @@ export class AccountSessionService extends SessionService {
 				)
 			);
 
+			if (group.length < 1) {
+				throw new Error('Cannot create empty group.');
+			}
+
 			this.group = group;
 
 			/*

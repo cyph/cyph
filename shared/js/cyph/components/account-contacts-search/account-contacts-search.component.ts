@@ -51,6 +51,9 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	/** If set, display button to submit selected contacts to this resolvable. */
 	@Input() public getContacts?: IResolvable<User[]>;
 
+	/** Minimum number of contacts to require. */
+	@Input() public minimum: number = 1;
+
 	/** @see SearchBarComponent.placeholder */
 	@Input() public placeholder?: string;
 

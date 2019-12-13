@@ -1,5 +1,6 @@
 import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {mergeMap, skip, take} from 'rxjs/operators';
@@ -57,6 +58,7 @@ export class AccountContactsService extends BaseProvider {
 			contactList: Observable<(IContactListItem | User)[]> | undefined;
 			externalUsers: boolean;
 			getContacts?: IResolvable<User[]>;
+			minimum?: number;
 			title?: string;
 		}>
 	>();
@@ -333,9 +335,19 @@ export class AccountContactsService extends BaseProvider {
 			);
 
 			try {
-				const contacts = await getContacts.promise;
+				const [contacts, close] = await Promise.all([
+					getContacts.promise,
+					closeFunction.promise
+				]);
+
+				if (contacts.length < 1) {
+					close();
+					return;
+				}
+
 				this.interstitial?.next(true);
-				(await closeFunction.promise)();
+				close();
+
 				await Promise.all(
 					contacts.map(async user => this.addContact(user.username))
 				);
@@ -396,6 +408,48 @@ export class AccountContactsService extends BaseProvider {
 		return `contacts/${normalize(username)}`;
 	}
 
+	/** Displays prompt to start a new group chat. */
+	public async createGroupPrompt () : Promise<void> {
+		const closeFunction = resolvable<() => void>();
+		const getContacts = resolvable<User[]>();
+
+		this.dialogService.baseDialog(
+			await AccountContactsService.accountContactsSearchComponent.promise,
+			o => {
+				o.chipInput = true;
+				o.getContacts = getContacts;
+				o.minimum = 2;
+				o.title = this.stringsService.createGroupTitle;
+			},
+			closeFunction,
+			true
+		);
+
+		try {
+			const [contacts, close] = await Promise.all([
+				getContacts.promise,
+				closeFunction.promise
+			]);
+
+			if (contacts.length < 1) {
+				close();
+				return;
+			}
+
+			this.interstitial?.next(true);
+			close();
+
+			const chat = await this.accountFilesService.initMessagingGroup(
+				contacts.map(user => user.username)
+			);
+
+			await this.router.navigate(['messages', chat.id]);
+		}
+		finally {
+			this.interstitial?.next(false);
+		}
+	}
+
 	/** Initializes service. */
 	public init (accountUserLookupService: AccountUserLookupService) : void {
 		this.accountUserLookupService.resolve(accountUserLookupService);
@@ -433,6 +487,9 @@ export class AccountContactsService extends BaseProvider {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly router: Router,
+
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 

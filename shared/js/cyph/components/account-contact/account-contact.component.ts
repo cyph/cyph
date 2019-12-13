@@ -67,6 +67,9 @@ export class AccountContactComponent extends BaseProvider implements OnChanges {
 	/** If true, will act as a button to start a new Burner chat. */
 	@Input() public startBurner: boolean = false;
 
+	/** If true, will act as a button to start a new group chat. */
+	@Input() public startGroup: boolean = false;
+
 	/** This user. */
 	public readonly user: BehaviorSubject<
 		User | undefined
