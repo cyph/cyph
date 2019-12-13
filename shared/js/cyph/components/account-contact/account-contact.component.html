@@ -52,6 +52,8 @@
 		class="contact animated group"
 		[class.non-clickable]="!clickable || groupData?.incoming"
 		[class.telehealth]="envService.isTelehealthFull"
+		[matTooltip]="groupUsernames"
+		[matTooltipPosition]="envService.isMobileOS ? 'below' : 'left'"
 		[routerLink]="
 			!clickable || groupData?.incoming ?
 				undefined :
