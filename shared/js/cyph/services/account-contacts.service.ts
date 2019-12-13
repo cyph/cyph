@@ -335,13 +335,13 @@ export class AccountContactsService extends BaseProvider {
 			try {
 				const contacts = await getContacts.promise;
 				this.interstitial?.next(true);
+				(await closeFunction.promise)();
 				await Promise.all(
 					contacts.map(async user => this.addContact(user.username))
 				);
 			}
 			finally {
 				this.interstitial?.next(false);
-				(await closeFunction.promise)();
 			}
 
 			return;
