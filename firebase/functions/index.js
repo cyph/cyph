@@ -1082,11 +1082,6 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 					`${targetName}, ${senderName} wants to be your contact. ` +
 					`Log in to accept or decline.`
 			} :
-		notification.type === NotificationTypes.File ?
-			{
-				subject: `Incoming Data from ${senderUsername}`,
-				text: `${targetName}, ${senderName} has shared something with you.`
-			} :
 		notification.type === NotificationTypes.Message ?
 			{
 				subject: `${
@@ -1100,7 +1095,62 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 				subject: `Sup Dog, it's ${senderUsername}`,
 				text: `${targetName}, ${senderName} says yo.`
 			} :
-			{};
+		notification.type !== NotificationTypes.File ?
+			{} :
+		metadata.fileType === AccountFileRecord.RecordTypes.Appointment ?
+			{
+				subject: `Appointment Request from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has requested an appointment with you.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.Doc ?
+			{
+				subject: `Incoming Document from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared a document with you.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.EhrApiKey ?
+			{
+				subject: `Incoming EHR Access from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has granted you access to an EHR system.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.File ?
+			{
+				subject: `Incoming File from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared a file with you.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.Form ?
+			{
+				subject: `Incoming Form from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared a form with you.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.MessagingGroup ?
+			{
+				subject: `Group Invite from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has invited you to join a group chat.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.Note ?
+			{
+				subject: `Incoming Note from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared a note with you.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.Password ?
+			{
+				subject: `Incoming Password from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared a password with you.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.RedoxPatient ?
+			{
+				subject: `Incoming Patient Data from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared a patient with you.`
+			} :
+		metadata.fileType === AccountFileRecord.RecordTypes.Wallet ?
+			{
+				subject: `Incoming Wallet from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared a cryptocurrency wallet with you.`
+			} :
+			{
+				subject: `Incoming Data from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has shared something with you.`
+			};
 
 	if (!subject || !text) {
 		throw new Error(`Invalid notification type: ${notification.type}`);
