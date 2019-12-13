@@ -94,7 +94,7 @@ export interface ISessionService {
 	handshakeState () : Promise<IHandshakeState>;
 
 	/** Initializes service. */
-	init (channelID: string, userID?: string) : void;
+	init (channelID: string, channelSubID?: string, userID?: string) : void;
 
 	/** @see ChannelService.lock */
 	lock<T> (

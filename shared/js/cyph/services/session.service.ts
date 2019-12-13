@@ -479,7 +479,11 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async init (channelID?: string, userID?: string) : Promise<void> {
+	public async init (
+		channelID?: string,
+		channelSubID?: string,
+		userID?: string
+	) : Promise<void> {
 		/*
 			Honeybadger workaround: see comment on the equivalent logic in the
 			PairwiseSession constructor
@@ -524,7 +528,7 @@ export abstract class SessionService extends BaseProvider
 
 		await Promise.all([
 			this.castleService.init(this),
-			this.channelService.init(channelID, userID, {
+			this.channelService.init(channelID, channelSubID, userID, {
 				onClose: async () => this.channelOnClose(),
 				onConnect: async () => this.channelOnConnect(),
 				onMessage: async (message, initial) =>

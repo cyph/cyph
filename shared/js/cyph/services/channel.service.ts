@@ -17,7 +17,11 @@ import {DatabaseService} from './database.service';
 @Injectable()
 export class ChannelService extends BaseProvider implements IChannelService {
 	/** @ignore */
-	private readonly _STATE = resolvable<{lock: LockFunction; url: string}>();
+	private readonly _STATE = resolvable<{
+		lock: LockFunction;
+		messagesURL: string;
+		url: string;
+	}>();
 
 	/** @ignore */
 	private ephemeral: boolean = false;
@@ -31,12 +35,16 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	/** @ignore */
 	private readonly resolveState: (state: {
 		lock: LockFunction;
+		messagesURL: string;
 		url: string;
 	}) => void = this._STATE.resolve;
 
 	/** @ignore */
-	private readonly state: Promise<{lock: LockFunction; url: string}> = this
-		._STATE.promise;
+	private readonly state: Promise<{
+		lock: LockFunction;
+		messagesURL: string;
+		url: string;
+	}> = this._STATE.promise;
 
 	/** @ignore */
 	private readonly userID = resolvable<string>();
@@ -80,6 +88,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	/** @inheritDoc */
 	public async init (
 		channelID: string | undefined,
+		channelSubID: string | undefined,
 		userID: string | undefined,
 		handlers: IChannelHandlers
 	) : Promise<void> {
@@ -88,9 +97,11 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		}
 
 		const url = `channels/${channelID}`;
+		const messagesURL = `channels/${channelSubID || channelID}/messages`;
 
 		this.resolveState({
 			lock: this.databaseService.lockFunction(`${url}/lock`),
+			messagesURL,
 			url
 		});
 
@@ -105,7 +116,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		this.userID.resolve(userID);
 
 		let initialMessageCount = !this.ephemeral ?
-			(await this.databaseService.getListKeys(`${url}/messages`)).length :
+			(await this.databaseService.getListKeys(messagesURL)).length :
 			0;
 
 		if (initialMessageCount === 0) {
@@ -115,7 +126,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		this.subscriptions.push(
 			this.databaseService
 				.watchListPushes(
-					`${url}/messages`,
+					messagesURL,
 					ChannelMessage,
 					undefined,
 					true,
@@ -232,7 +243,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	public async send (cyphertext: Uint8Array) : Promise<void> {
 		await this.localLock(async () =>
 			this.databaseService.pushItem<IChannelMessage>(
-				`${(await this.state).url}/messages`,
+				(await this.state).messagesURL,
 				ChannelMessage,
 				{author: await this.userID.promise, cyphertext}
 			)

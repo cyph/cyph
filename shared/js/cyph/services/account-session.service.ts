@@ -344,6 +344,14 @@ export class AccountSessionService extends SessionService {
 				chat.username
 			);
 
+			const sessionID = !this.sessionSubID ?
+				castleSessionID :
+				this.potassiumService.toHex(
+					await this.potassiumService.hash.hash(
+						`${castleSessionID}-${this.sessionSubID}`
+					)
+				);
+
 			if (ephemeralSubSession) {
 				if (!this.sessionSubID) {
 					throw new Error(
@@ -353,18 +361,13 @@ export class AccountSessionService extends SessionService {
 
 				this.ephemeralSubSession = true;
 
-				this.init(
-					this.potassiumService.toHex(
-						await this.potassiumService.hash.hash(
-							`${castleSessionID}-${this.sessionSubID}`
-						)
-					)
-				);
+				this.init(sessionID);
 
 				return;
 			}
 
-			const sessionURL = `castleSessions/${castleSessionID}/session`;
+			const castleSessionURL = `castleSessions/${castleSessionID}/session`;
+			const sessionURL = `castleSessions/${sessionID}/session`;
 
 			this.incomingMessageQueue = this.accountDatabaseService.getAsyncList(
 				`${sessionURL}/incomingMessageQueue`,
@@ -383,8 +386,9 @@ export class AccountSessionService extends SessionService {
 
 			this.init(
 				castleSessionID,
+				sessionID,
 				await this.accountDatabaseService.getOrSetDefault(
-					`${sessionURL}/channelUserID`,
+					`${castleSessionURL}/channelUserID`,
 					StringProto,
 					() => uuid(true)
 				)

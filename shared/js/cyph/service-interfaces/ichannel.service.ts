@@ -26,6 +26,7 @@ export interface IChannelService {
 	 */
 	init (
 		channelID: string | undefined,
+		channelSubID: string | undefined,
 		userID: string | undefined,
 		handlers: IChannelHandlers
 	) : Promise<void>;
