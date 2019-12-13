@@ -75,10 +75,16 @@
 			matBadgePosition="above before"
 		>
 			<mat-icon mat-card-avatar>group</mat-icon>
-			<mat-card-title class="truncate">
+			<mat-card-title
+				class="truncate"
+				[class.incoming]="clickable && groupData?.incoming"
+			>
 				<span>{{ stringsService.group }}</span>
 			</mat-card-title>
-			<mat-card-subtitle class="truncate">
+			<mat-card-subtitle
+				class="truncate"
+				[class.incoming]="clickable && groupData?.incoming"
+			>
 				{{ groupUsernames }}
 			</mat-card-subtitle>
 
@@ -90,7 +96,7 @@
 				<button
 					mat-icon-button
 					cyphTranslate
-					matTooltip="Accept Contact Request"
+					matTooltip="Join Group"
 					(click)="
 						accountFilesService.acceptIncomingFile(groupData?.id);
 						$event.stopPropagation()
@@ -101,7 +107,7 @@
 				<button
 					mat-icon-button
 					cyphTranslate
-					matTooltip="Decline Contact Request"
+					matTooltip="Decline Group Invite"
 					(click)="
 						accountFilesService.acceptIncomingFile(
 							groupData?.id,

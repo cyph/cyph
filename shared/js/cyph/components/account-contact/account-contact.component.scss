@@ -22,9 +22,8 @@
 		}
 	}
 
-	&.button-card {
-		cursor: pointer;
-
+	&.button-card,
+	&.group {
 		.mat-card-avatar {
 			height: 24px;
 			width: 24px;
@@ -34,7 +33,19 @@
 			.mat-card-avatar {
 				margin: 13px;
 			}
+		}
 
+		&.mobile {
+			.mat-card-avatar {
+				margin: 14px;
+			}
+		}
+	}
+
+	&.button-card {
+		cursor: pointer;
+
+		&:not(.mobile) {
 			.mat-card-title {
 				margin-left: 15px;
 				margin-top: 12px;
@@ -43,10 +54,6 @@
 		}
 
 		&.mobile {
-			.mat-card-avatar {
-				margin: 14px;
-			}
-
 			.mat-card-title {
 				margin-left: 14px;
 				margin-top: 16px;
@@ -56,9 +63,13 @@
 	}
 
 	&.group {
-		mat-icon {
-			margin: 13px;
-			margin-right: 28px;
+		.mat-card-avatar {
+			margin-right: 28px !important;
+		}
+
+		mat-card-subtitle,
+		mat-card-title {
+			margin-right: -17px;
 		}
 	}
 
