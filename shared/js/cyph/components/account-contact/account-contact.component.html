@@ -131,8 +131,7 @@
 			[class.telehealth]="envService.isTelehealthFull"
 			[routerLink]="
 				!clickable ||
-				(contactState.email &&
-					contactState.state !== accountContactStates.Confirmed) ?
+				contactState.state !== accountContactStates.Confirmed ?
 					undefined :
 				contactState.email ?
 					'/messages/external-user/' + username :
