@@ -111,11 +111,12 @@ export class AccountP2PService extends P2PService {
 		localVideo: () => JQuery,
 		remoteVideo: () => JQuery
 	) : Promise<void> {
-		await super.init(localVideo, remoteVideo);
-
-		if (this.accountSessionService.group) {
-			this.isEnabled.next(false);
-		}
+		await this.accountSessionService.ready;
+		await super.init(
+			localVideo,
+			remoteVideo,
+			!!this.accountSessionService.group
+		);
 
 		this.subscriptions.push(
 			this.isActive.subscribe(isActive => {

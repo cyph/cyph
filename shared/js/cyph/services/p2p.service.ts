@@ -225,7 +225,8 @@ export class P2PService extends BaseProvider {
 	/** Initializes service. */
 	public async init (
 		localVideo: () => JQuery,
-		remoteVideo: () => JQuery
+		remoteVideo: () => JQuery,
+		disabled: boolean = false
 	) : Promise<void> {
 		this.p2pWebRTCService.init(
 			this.chatService,
@@ -233,6 +234,11 @@ export class P2PService extends BaseProvider {
 			localVideo,
 			remoteVideo
 		);
+
+		if (disabled) {
+			return;
+		}
+
 		this.isEnabled.next(
 			P2PWebRTCService.isSupported &&
 				(await this.sessionCapabilitiesService.capabilities.p2p)
