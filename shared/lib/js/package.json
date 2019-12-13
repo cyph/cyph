@@ -347,7 +347,7 @@
 		"sass": "^1.23.7",
 		"sidh": "^5.1.2",
 		"simple-peer": "^9.6.2",
-		"simplebtc": "^2.0.5",
+		"simplebtc": "^2.1.0",
 		"simplewebrtc": "^3.0.2",
 		"sodiumutil": "^2.0.1",
 		"sphincs": "^2.3.2",
