@@ -8,7 +8,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
 import {IContactListItem, User} from '../../account';
 import {Async} from '../../async-type';
@@ -79,19 +79,21 @@ export class AccountContactsSearchComponent extends BaseProvider {
 			this.searchSpinner.next(true);
 
 			const users = this.contactList ?
-				await this.accountContactsService
-					.fullyLoadContactList(this.contactList)
-					.pipe(take(1))
-					.toPromise() :
+				await this.contactList.pipe(take(1)).toPromise() :
 				[];
 
 			const results = filterUndefined(
 				(await Promise.all(
 					users.map(async user => ({
-						extra: this.searchProfileExtra ?
-							await user.accountUserProfileExtra.getValue() :
-							undefined,
-						name: (await user.accountUserProfile.getValue()).name,
+						extra:
+							this.searchProfileExtra && user instanceof User ?
+								await user.accountUserProfileExtra.getValue() :
+								undefined,
+						name:
+							user instanceof User ?
+								(await user.accountUserProfile.getValue())
+									.name :
+								'',
 						user,
 						username: user.username
 					}))
@@ -166,12 +168,18 @@ export class AccountContactsSearchComponent extends BaseProvider {
 			return {
 				imageAltText: this.stringsService.userAvatar,
 				items: results.map(({matchingText, user}) => ({
-					image: user.avatar,
+					image: user instanceof User ? user.avatar : of(undefined),
 					matchingText,
-					smallText: user.realUsername.pipe(
-						map(realUsername => `@${realUsername}`)
-					),
-					text: user.name,
+					smallText:
+						user instanceof User ?
+							user.realUsername.pipe(
+								map(realUsername => `@${realUsername}`)
+							) :
+							of(undefined),
+					text:
+						user instanceof User ?
+							user.name :
+							of(`@${user.username}`),
 					value: user.username
 				})),
 				topOption:
