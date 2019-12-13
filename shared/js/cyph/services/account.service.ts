@@ -96,10 +96,21 @@ export class AccountService extends BaseProvider {
 					true)
 	);
 
+	/** Indicates whether group messaging is enabled. */
+	public readonly enableGroup: Observable<boolean> = this.envService.debug ?
+		of(true) :
+	this.envService.isTelehealth ?
+		of(false) :
+		this.accountSettingsService.plan.pipe(
+			map(plan => plan === CyphPlans.FoundersAndFriends)
+		);
+
 	/** Indicates whether Passwords is enabled. */
 	public readonly enablePasswords: Observable<boolean> = this.envService
 		.debug ?
 		of(true) :
+	this.envService.isTelehealth ?
+		of(false) :
 		this.accountSettingsService.plan.pipe(
 			map(plan => plan === CyphPlans.FoundersAndFriends)
 		);

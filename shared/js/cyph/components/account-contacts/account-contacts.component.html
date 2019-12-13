@@ -93,7 +93,7 @@
 						<cyph-account-contact
 							[startGroup]="true"
 							[class.cyph-inverted-theme]="invertedTheme"
-							*ngIf="!envService.isTelehealth"
+							*ngIf="accountService.enableGroup | async"
 						></cyph-account-contact>
 
 						<ng-container
