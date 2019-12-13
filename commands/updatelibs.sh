@@ -58,6 +58,7 @@ read -r -d '' modules <<- EOM
 	@firebase/app-types
 	@firebase/auth
 	@firebase/auth-types
+	@firebase/component
 	@firebase/database
 	@firebase/database-types
 	@firebase/firestore
