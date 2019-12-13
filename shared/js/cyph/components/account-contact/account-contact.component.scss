@@ -55,6 +55,13 @@
 		}
 	}
 
+	&.group {
+		mat-icon {
+			margin: 13px;
+			margin-right: 28px;
+		}
+	}
+
 	&.telehealth {
 		.avatar {
 			width: 4.5em;
@@ -116,5 +123,6 @@
 	mat-card-title {
 		font-size: 1.2em !important;
 		margin-top: calc(1em - 2px);
+		margin-left: 15px;
 	}
 }
