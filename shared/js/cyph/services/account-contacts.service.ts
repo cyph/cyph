@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
-import {mergeMap, skip, take} from 'rxjs/operators';
+import {map, mergeMap, skip, take} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -32,7 +32,7 @@ import {
 	NotificationTypes,
 	StringProto
 } from '../proto';
-import {filterUndefined} from '../util/filter';
+import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {uuid} from '../util/uuid';
@@ -67,9 +67,9 @@ export class AccountContactsService extends BaseProvider {
 	>();
 
 	/** @ignore */
-	private readonly accountUserLookupService: IResolvable<
-		AccountUserLookupService
-	> = resolvable();
+	private readonly accountUserLookupService = new BehaviorSubject<
+		AccountUserLookupService | undefined
+	>(undefined);
 
 	private readonly contactListHelpers = {
 		groupData: memoize(
@@ -95,20 +95,19 @@ export class AccountContactsService extends BaseProvider {
 			(groupData: {id: string; incoming: boolean}) =>
 				`${groupData.id} ${groupData.incoming.toString()}`
 		),
-		user: memoize(async (username: string) => {
-			const accountUserLookupService = await this.accountUserLookupService
-				.promise;
+		user: memoize((accountUserLookupService: AccountUserLookupService) =>
+			memoize((username: string) => {
+				const user = accountUserLookupService.getUser(username, true);
 
-			const user = accountUserLookupService.getUser(username, true);
-
-			return {
-				unreadMessageCount: accountUserLookupService.getUnreadMessageCount(
+				return {
+					unreadMessageCount: accountUserLookupService.getUnreadMessageCount(
+						username
+					),
+					user,
 					username
-				),
-				user,
-				username
-			};
-		})
+				};
+			})
+		)
 	};
 
 	/** List of contacts for current user, sorted alphabetically by username. */
@@ -121,25 +120,33 @@ export class AccountContactsService extends BaseProvider {
 			this.accountDatabaseService.watchListKeys(
 				'contacts',
 				this.subscriptions
-			)
+			),
+			this.accountUserLookupService.pipe(filterUndefinedOperator())
 		]).pipe(
-			mergeMap(async ([groups, incomingGroups, usernames]) => [
-				...[
-					...incomingGroups.map(o => ({
-						group: o.data,
-						id: o.record.id,
-						incoming: true
-					})),
-					...groups.map(o => ({
-						group: o.data,
-						id: o.record.id,
-						incoming: false
-					}))
-				].map(this.contactListHelpers.groupData),
-				...(await Promise.all(
-					normalizeArray(usernames).map(this.contactListHelpers.user)
-				))
-			])
+			map(
+				([
+					groups,
+					incomingGroups,
+					usernames,
+					accountUserLookupService
+				]) => [
+					...[
+						...incomingGroups.map(o => ({
+							group: o.data,
+							id: o.record.id,
+							incoming: true
+						})),
+						...groups.map(o => ({
+							group: o.data,
+							id: o.record.id,
+							incoming: false
+						}))
+					].map(this.contactListHelpers.groupData),
+					...normalizeArray(usernames).map(
+						this.contactListHelpers.user(accountUserLookupService)
+					)
+				]
+			)
 		),
 		[],
 		this.subscriptions
@@ -460,7 +467,7 @@ export class AccountContactsService extends BaseProvider {
 
 	/** Initializes service. */
 	public init (accountUserLookupService: AccountUserLookupService) : void {
-		this.accountUserLookupService.resolve(accountUserLookupService);
+		this.accountUserLookupService.next(accountUserLookupService);
 	}
 
 	/** Indicates whether the user is already a contact. */
