@@ -614,6 +614,8 @@ export class AccountService extends BaseProvider {
 	) {
 		super();
 
+		this.accountContactsService.interstitial = this.interstitial;
+
 		(<any> self).shareLogsWithCyph = async () => {
 			await this.interstitial
 				.pipe(

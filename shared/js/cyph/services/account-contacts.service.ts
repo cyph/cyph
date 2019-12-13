@@ -272,6 +272,9 @@ export class AccountContactsService extends BaseProvider {
 		}
 	);
 
+	/** @see AccountsService.interstitial */
+	public interstitial?: BehaviorSubject<boolean>;
+
 	/** Indicates whether spinner should be displayed. */
 	public readonly showSpinner: BehaviorSubject<boolean> = new BehaviorSubject<
 		boolean
@@ -331,11 +334,13 @@ export class AccountContactsService extends BaseProvider {
 
 			try {
 				const contacts = await getContacts.promise;
+				this.interstitial?.next(true);
 				await Promise.all(
 					contacts.map(async user => this.addContact(user.username))
 				);
 			}
 			finally {
+				this.interstitial?.next(false);
 				(await closeFunction.promise)();
 			}
 
