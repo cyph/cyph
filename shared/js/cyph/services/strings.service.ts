@@ -684,6 +684,9 @@ export class StringsService extends BaseProvider {
 	public readonly p2pDisabled = `Your or your ${this.internalFriend}'s browser may lack support for video calling. Try again with the latest Chrome or Firefox.`;
 
 	/** @see StringsService */
+	public readonly p2pDisabledGroup = `Calling in group chats is currently unsupported. Coming soon!`;
+
+	/** @see StringsService */
 	public readonly p2pDisabledLocal = `Your browser does not support voice or video calling. Try again with the latest Chrome or Firefox.`;
 
 	/** @see StringsService */
