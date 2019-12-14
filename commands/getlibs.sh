@@ -228,6 +228,8 @@ declare module 'lz4' {
 EOM
 
 for anyType in \
+	bitauth \
+	bitpay-rest \
 	braintree-web-drop-in \
 	cornerstone-core \
 	dwv \
