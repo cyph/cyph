@@ -91,6 +91,11 @@
 			margin-right: -11px;
 		}
 	}
+
+	.spoiler {
+		margin-top: -13px;
+		width: 100%;
+	}
 }
 
 .spoiler {
@@ -102,8 +107,13 @@
 		color: white;
 		font-family: 'Ubuntu Mono';
 		font-size: 2em;
+		text-align: center;
+		position: absolute;
+		top: 50%;
+		left: 0;
+		width: 100%;
 
-		@include center;
+		@include transform(translateY(-50%));
 	}
 
 	:not(.spoiler-message) {
@@ -312,8 +322,16 @@
 				clip-path: inset(0 0 -100% 0);
 			}
 
-			&.author-local .media-message {
-				border-top-left-radius: $mobileMessageBorderRadius;
+			.media-message,
+			.spoiler {
+				border-top-right-radius: $mobileMessageBorderRadius;
+			}
+
+			&.author-local {
+				.media-message,
+				.spoiler {
+					border-top-left-radius: $mobileMessageBorderRadius;
+				}
 			}
 
 			.media-container > audio {
