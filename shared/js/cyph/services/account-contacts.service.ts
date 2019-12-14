@@ -265,7 +265,9 @@ export class AccountContactsService extends BaseProvider {
 
 						return id;
 					},
-					SecurityModels.unprotected
+					SecurityModels.unprotected,
+					undefined,
+					true
 				)
 	);
 

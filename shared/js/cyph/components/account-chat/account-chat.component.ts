@@ -27,7 +27,6 @@ import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountP2PService} from '../../services/account-p2p.service';
 import {AccountSessionService} from '../../services/account-session.service';
-import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -171,7 +170,6 @@ export class AccountChatComponent extends BaseProvider
 							defaultMessageBottomOffset,
 							defaultSessionSubID,
 							ephemeralSubSession,
-							externalUser,
 							generateAnonymousChannelID,
 							promptFollowup
 						},
@@ -228,25 +226,13 @@ export class AccountChatComponent extends BaseProvider
 
 							try {
 								if (username) {
-									let contactIDPromise: Promise<string>;
-
-									if (externalUser) {
-										contactIDPromise = this.accountContactsService.getContactID(
-											username
-										);
-									}
-									else {
-										const user = await this.accountUserLookupService.getUser(
-											username
-										);
-										if (!user) {
-											throw new Error('User not found.');
-										}
-										contactIDPromise = user.contactID;
-									}
-
 									this.router.navigate(
-										[path, await contactIDPromise],
+										[
+											path,
+											await this.accountContactsService.getContactID(
+												username
+											)
+										],
 										{replaceUrl: true}
 									);
 									return;
@@ -618,9 +604,6 @@ export class AccountChatComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly router: Router,
-
-		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,

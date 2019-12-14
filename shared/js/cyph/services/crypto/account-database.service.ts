@@ -1029,22 +1029,35 @@ export class AccountDatabaseService extends BaseProvider {
 		proto: IProto<T>,
 		defaultValue: () => MaybePromise<T>,
 		securityModel: SecurityModels = SecurityModels.private,
-		customKey?: MaybePromise<Uint8Array>
+		customKey?: MaybePromise<Uint8Array>,
+		staticValue: boolean = false
 	) : Promise<T> {
-		try {
-			return await this.getItem(url, proto, securityModel, customKey);
+		const f = async () => {
+			try {
+				return await this.getItem(url, proto, securityModel, customKey);
+			}
+			catch {
+				const value = await defaultValue();
+				this.setItem(
+					url,
+					proto,
+					value,
+					securityModel,
+					customKey
+				).catch(() => {});
+				return value;
+			}
+		};
+
+		if (!staticValue) {
+			return f();
 		}
-		catch {
-			const value = await defaultValue();
-			this.setItem(
-				url,
-				proto,
-				value,
-				securityModel,
-				customKey
-			).catch(() => {});
-			return value;
-		}
+
+		return this.localStorageService.getOrSetDefault(
+			`AccountDatabaseService.getOrSetDefault: ${url}`,
+			proto,
+			f
+		);
 	}
 
 	/** Gets public keys belonging to the specified user. */
