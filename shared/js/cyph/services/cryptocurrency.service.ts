@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {Observable, timer} from 'rxjs';
-import {mergeMap} from 'rxjs/operators';
+import * as msgpack from 'msgpack-lite';
+import {BehaviorSubject, Observable, Subject, timer} from 'rxjs';
+import {catchError, mergeMap} from 'rxjs/operators';
 import {
 	getExchangeRates,
 	minimumTransactionAmount,
@@ -11,8 +12,16 @@ import {
 } from 'simplebtc';
 import {BaseProvider} from '../base-provider';
 import {GenericCurrency} from '../generic-currency-type';
-import {Cryptocurrencies, Currencies, IWallet} from '../proto';
+import {
+	BinaryProto,
+	Cryptocurrencies,
+	Currencies,
+	IWallet,
+	NumberProto
+} from '../proto';
+import {asyncToObservable} from '../util/flatten-observable';
 import {AnalyticsService} from './analytics.service';
+import {LocalStorageService} from './local-storage.service';
 
 /**
  * Angular service for cryptocurrency.
@@ -20,6 +29,92 @@ import {AnalyticsService} from './analytics.service';
  */
 @Injectable()
 export class CryptocurrencyService extends BaseProvider {
+	/** @ignore */
+	private readonly cache = {
+		balance: {
+			_getKey: (simpleBTCWallet: SimpleBTCWallet) =>
+				`CryptocurrencyService/balance/${simpleBTCWallet.address}`,
+			getItem: async (simpleBTCWallet: SimpleBTCWallet) => {
+				try {
+					return await this.localStorageService.getItem(
+						this.cache.balance._getKey(simpleBTCWallet),
+						NumberProto
+					);
+				}
+				catch {
+					return 0;
+				}
+			},
+			setItem: (simpleBTCWallet: SimpleBTCWallet, balance: number) => {
+				this.localStorageService.setItem(
+					this.cache.balance._getKey(simpleBTCWallet),
+					NumberProto,
+					balance
+				);
+
+				return balance;
+			}
+		},
+		exchangeRates: {
+			_key: `CryptocurrencyService/exchangeRates/BTC`,
+			getItem: async () : Promise<Record<string, number>> => {
+				try {
+					return msgpack.decode(
+						await this.localStorageService.getItem(
+							this.cache.exchangeRates._key,
+							BinaryProto
+						)
+					);
+				}
+				catch {
+					return {};
+				}
+			},
+			setItem: (exchangeRates: Record<string, number>) => {
+				this.localStorageService.setItem(
+					this.cache.exchangeRates._key,
+					BinaryProto,
+					msgpack.encode(exchangeRates)
+				);
+
+				return exchangeRates;
+			}
+		},
+		transactionHistory: {
+			_getKey: (simpleBTCWallet: SimpleBTCWallet) =>
+				`CryptocurrencyService/transactions/${simpleBTCWallet.address}`,
+			getItem: async (
+				simpleBTCWallet: SimpleBTCWallet
+			) : Promise<Transaction[]> => {
+				try {
+					return msgpack.decode(
+						await this.localStorageService.getItem(
+							this.cache.transactionHistory._getKey(
+								simpleBTCWallet
+							),
+							BinaryProto
+						)
+					);
+				}
+				catch {
+					return [];
+				}
+			},
+			setItem: (
+				simpleBTCWallet: SimpleBTCWallet,
+				transactions: Transaction[]
+			) => {
+				this.localStorageService.setItem(
+					this.cache.transactionHistory._getKey(simpleBTCWallet),
+					BinaryProto,
+					msgpack.encode(transactions)
+				);
+
+				return transactions;
+			}
+		}
+	};
+
 	/** @ignore */
 	private readonly watchBalanceInternal = memoize((wallet: IWallet) =>
 		memoize((convert?: GenericCurrency) =>
@@ -32,6 +127,9 @@ export class CryptocurrencyService extends BaseProvider {
 			)
 		)
 	);
+
+	/** Indicates whether this client is having trouble fetching data from the Blockchain API. */
+	public readonly blockchainFetchError = new BehaviorSubject(false);
 
 	/** @see minimumTransactionAmount */
 	public readonly minimumTransactionAmount = minimumTransactionAmount;
@@ -69,7 +167,14 @@ export class CryptocurrencyService extends BaseProvider {
 				throw new Error('Unsupported cryptocurrency.');
 			}
 
-			return this.getSimpleBTCWallet(wallet).watchNewTransactions();
+			return this.getSimpleBTCWallet(wallet)
+				.watchNewTransactions()
+				.pipe(
+					catchError(() => {
+						this.blockchainFetchError.next(true);
+						return new Subject<Transaction>();
+					})
+				);
 		}
 	);
 
@@ -80,7 +185,31 @@ export class CryptocurrencyService extends BaseProvider {
 				throw new Error('Unsupported cryptocurrency.');
 			}
 
-			return this.getSimpleBTCWallet(wallet).watchTransactionHistory();
+			const simpleBTCWallet = this.getSimpleBTCWallet(wallet);
+
+			const transactionsObservable: Observable<Transaction[]> = simpleBTCWallet
+				.watchTransactionHistory()
+				.pipe(
+					catchError(() => {
+						this.blockchainFetchError.next(true);
+						return asyncToObservable(
+							this.cache.transactionHistory.getItem(
+								simpleBTCWallet
+							)
+						);
+					})
+				);
+
+			this.subscriptions.push(
+				transactionsObservable.subscribe(transactions => {
+					this.cache.transactionHistory.setItem(
+						simpleBTCWallet,
+						transactions
+					);
+				})
+			);
+
+			return transactionsObservable;
 		}
 	);
 
@@ -108,22 +237,44 @@ export class CryptocurrencyService extends BaseProvider {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
+		const cacheExchangeRates = async () => {
+			try {
+				return this.cache.exchangeRates.setItem(
+					await getExchangeRates()
+				);
+			}
+			catch {
+				this.blockchainFetchError.next(true);
+				return this.cache.exchangeRates.getItem();
+			}
+		};
+
 		if (
 			input.cryptocurrency !== undefined &&
 			output.cryptocurrency === undefined
 		) {
-			const exchangeRate = (await getExchangeRates())[
+			const exchangeRate = (await cacheExchangeRates())[
 				Currencies[output.currency]
 			];
+
+			if (isNaN(exchangeRate)) {
+				return 0;
+			}
+
 			return amount * exchangeRate;
 		}
 		if (
 			input.cryptocurrency === undefined &&
 			output.cryptocurrency !== undefined
 		) {
-			const exchangeRate = (await getExchangeRates())[
+			const exchangeRate = (await cacheExchangeRates())[
 				Currencies[input.currency]
 			];
+
+			if (isNaN(exchangeRate)) {
+				return 0;
+			}
+
 			return amount / exchangeRate;
 		}
 		if (
@@ -192,8 +343,19 @@ export class CryptocurrencyService extends BaseProvider {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
-		const balance = (await this.getSimpleBTCWallet(wallet).getBalance())
-			.btc;
+		const simpleBTCWallet = this.getSimpleBTCWallet(wallet);
+
+		let balance = 0;
+		try {
+			balance = this.cache.balance.setItem(
+				simpleBTCWallet,
+				(await simpleBTCWallet.getBalance()).btc
+			);
+		}
+		catch {
+			this.blockchainFetchError.next(true);
+			balance = await this.cache.balance.getItem(simpleBTCWallet);
+		}
 
 		return convert ? this.convert(balance, wallet, convert) : balance;
 	}
@@ -206,7 +368,18 @@ export class CryptocurrencyService extends BaseProvider {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
-		return this.getSimpleBTCWallet(wallet).getTransactionHistory();
+		const simpleBTCWallet = this.getSimpleBTCWallet(wallet);
+
+		try {
+			return this.cache.transactionHistory.setItem(
+				simpleBTCWallet,
+				await simpleBTCWallet.getTransactionHistory()
+			);
+		}
+		catch {
+			this.blockchainFetchError.next(true);
+			return this.cache.transactionHistory.getItem(simpleBTCWallet);
+		}
 	}
 
 	/** Sends money. */
@@ -259,7 +432,10 @@ export class CryptocurrencyService extends BaseProvider {
 
 	constructor (
 		/** @ignore */
-		private readonly analyticsService: AnalyticsService
+		private readonly analyticsService: AnalyticsService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService
 	) {
 		super();
 	}

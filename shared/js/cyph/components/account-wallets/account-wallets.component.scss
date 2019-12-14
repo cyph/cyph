@@ -65,6 +65,13 @@ mat-tab-group {
 	}
 }
 
+.cyph-banner.alert {
+	margin-bottom: 10px;
+}
+body:not(.mobile) :host .cyph-banner.alert {
+	margin-top: -10px;
+}
+
 .fixed-fab,
 button ::ng-deep .mat-button-wrapper {
 	mat-icon svg * {

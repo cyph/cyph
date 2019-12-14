@@ -152,14 +152,24 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			}
 		}
 
-		await this.accountFilesService.upload(
-			name,
-			await this.cryptocurrencyService.generateWallet({
+		let wallet: IWallet;
+
+		try {
+			wallet = await this.cryptocurrencyService.generateWallet({
 				address,
 				cryptocurrency,
 				key
-			})
-		).result;
+			});
+		}
+		catch {
+			await this.dialogService.alert({
+				content: this.stringsService.newWalletErrorText,
+				title: this.stringsService.newWalletErrorTitle
+			});
+			return;
+		}
+
+		await this.accountFilesService.upload(name, wallet).result;
 	}
 
 	/** @inheritDoc */

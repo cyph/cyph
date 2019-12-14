@@ -573,6 +573,12 @@ export class StringsService extends BaseProvider {
 	public readonly newString = `new`;
 
 	/** @see StringsService */
+	public readonly newWalletErrorText = `Adding wallet failed. Please double check the input and try again.`;
+
+	/** @see StringsService */
+	public readonly newWalletErrorTitle = `New Wallet Error`;
+
+	/** @see StringsService */
 	public readonly newWalletGenerate = `Generate New Wallet`;
 
 	/** @see StringsService */
