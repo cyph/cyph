@@ -902,8 +902,7 @@ exports.usernameBlacklisted = onCall(
 );
 
 /* TODO: Translations and user block lists. */
-exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
-	const username = await getUsername();
+const userNotify = async (data, context, namespace, username) => {
 	const notification = data;
 	const metadata =
 		typeof notification.metadata === 'object' ? notification.metadata : {};
@@ -1176,6 +1175,25 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 		},
 		true
 	);
+};
+
+exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
+	if (!data || !data.target) {
+		return;
+	}
+
+	const username = await getUsername();
+
+	if (typeof data.target === 'string') {
+		await userNotify(data, context, namespace, username);
+	}
+	else if (data.target instanceof Array) {
+		await Promise.all(
+			data.target.map(async target =>
+				userNotify({...data, target}, context, namespace, username)
+			)
+		);
+	}
 });
 
 exports.userPublicProfileSet = functions.database

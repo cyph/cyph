@@ -149,14 +149,10 @@ export class AccountChatService extends ChatService {
 
 		const notificationData = await this.notificationData.promise;
 
-		await Promise.all(
-			notificationData.usernames.map(async username =>
-				this.accountDatabaseService.notify(
-					username,
-					NotificationTypes.Message,
-					{castleSessionID: notificationData.castleSessionID, id}
-				)
-			)
+		await this.accountDatabaseService.notify(
+			notificationData.usernames,
+			NotificationTypes.Message,
+			{castleSessionID: notificationData.castleSessionID, id}
 		);
 
 		return id;

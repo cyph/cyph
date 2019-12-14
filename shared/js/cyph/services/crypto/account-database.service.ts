@@ -1261,13 +1261,13 @@ export class AccountDatabaseService extends BaseProvider {
 
 	/** Triggers a push notification. */
 	public async notify (
-		username: MaybePromise<string>,
+		username: MaybePromise<string | string[]>,
 		notificationType: NotificationTypes,
 		metadata?: {id: string} & {[k: string]: any}
 	) : Promise<void> {
 		await this.databaseService
 			.callFunction('userNotify', {
-				target: username,
+				target: await username,
 				type: notificationType,
 				...(metadata ? {metadata} : {})
 			})
