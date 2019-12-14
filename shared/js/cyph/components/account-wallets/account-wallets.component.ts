@@ -128,7 +128,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 					title: this.stringsService.newWalletImportKey
 				});
 
-				if (!key) {
+				if (!(typeof key === 'string' && key.length > 0)) {
 					return;
 				}
 
