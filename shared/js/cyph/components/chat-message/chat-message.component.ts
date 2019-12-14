@@ -117,7 +117,7 @@ export class ChatMessageComponent extends BaseProvider
 	})();
 
 	/** @ignore */
-	private static mediaSpoilerReveals = new Set<string>();
+	private static readonly mediaSpoilerReveals = new Set<string>();
 
 	/** @ignore */
 	private static services?: {
@@ -226,6 +226,7 @@ export class ChatMessageComponent extends BaseProvider
 	}
 
 	/** @inheritDoc */
+	/* eslint-disable-next-line complexity */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
 		if (!ChatMessageComponent.services) {
 			ChatMessageComponent.services = {
