@@ -245,10 +245,12 @@
 				>
 					<ng-container
 						*ngIf="
-							(mediaSpoiler | async) === false &&
+							((mediaSpoiler | async) === false ?
 								fileTransferService.getMedia(
 									value.fileTransfer
-								) | async as media;
+								) :
+								undefined
+							) | async as media;
 							else mediaLoading
 						"
 					>
