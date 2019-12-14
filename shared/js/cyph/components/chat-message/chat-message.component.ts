@@ -117,6 +117,9 @@ export class ChatMessageComponent extends BaseProvider
 	})();
 
 	/** @ignore */
+	private static mediaSpoilerReveals = new Set<string>();
+
+	/** @ignore */
 	private static services?: {
 		p2pService: {
 			isActive: BehaviorSubject<boolean>;
@@ -134,6 +137,11 @@ export class ChatMessageComponent extends BaseProvider
 
 	/** Fires after message is fully loaded. */
 	@Output() public readonly loaded = new EventEmitter<void>();
+
+	/** Indicates whether media "spoiler" mode should be active. */
+	public readonly mediaSpoiler: BehaviorSubject<
+		boolean
+	> = new BehaviorSubject<boolean>(true);
 
 	/** @see ChatMessage */
 	@Input() public message?: ChatMessage;
@@ -231,6 +239,26 @@ export class ChatMessageComponent extends BaseProvider
 		}
 
 		const id = this.message.id;
+
+		this.mediaSpoiler.next(
+			!ChatMessageComponent.mediaSpoilerReveals.has(id)
+		);
+		if (this.mediaSpoiler.value) {
+			this.mediaSpoiler
+				.pipe(
+					filter(b => !b),
+					take(1)
+				)
+				.toPromise()
+				.then(() => {
+					if (!this.message) {
+						return;
+					}
+					ChatMessageComponent.mediaSpoilerReveals.add(
+						this.message.id
+					);
+				});
+		}
 
 		await this.chatService.getMessageValue(this.message);
 

@@ -93,6 +93,25 @@
 	}
 }
 
+.spoiler {
+	background-color: rgba(0, 0, 0, 1);
+	cursor: pointer;
+	width: 50%;
+
+	> .spoiler-message {
+		color: white;
+		font-family: 'Ubuntu Mono';
+		font-size: 2em;
+
+		@include center;
+	}
+
+	:not(.spoiler-message) {
+		pointer-events: none;
+		visibility: hidden;
+	}
+}
+
 :host ::ng-deep {
 	.message-item {
 		word-wrap: break-word;

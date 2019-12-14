@@ -996,8 +996,9 @@
 					>
 						<div class="xkcd-passphrase animated fadeIn">
 							<span
-								*ngIf="spoiler | async"
+								cyphTranslate
 								class="animated fadeIn"
+								*ngIf="spoiler | async"
 							>
 								Click to Reveal Master Key
 							</span>

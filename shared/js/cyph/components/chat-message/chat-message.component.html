@@ -245,8 +245,10 @@
 				>
 					<ng-container
 						*ngIf="
-							fileTransferService.getMedia(value.fileTransfer)
-								| async as media;
+							(mediaSpoiler | async) === false &&
+								fileTransferService.getMedia(
+									value.fileTransfer
+								) | async as media;
 							else mediaLoading
 						"
 					>
@@ -339,7 +341,9 @@
 						<div
 							[class.centered]="active"
 							[class.centered-fake]="!active"
+							[class.spoiler]="mediaSpoiler | async"
 							[class.visibility-hidden]="!active"
+							(click)="mediaSpoiler.next(false)"
 							*ngFor="
 								let active of [true, false];
 								trackBy: trackBySelf
@@ -350,6 +354,13 @@
 								diameter="50"
 								strokeWidth="5"
 							></mat-progress-spinner>
+							<div
+								cyphTranslate
+								class="spoiler-message"
+								*ngIf="mediaSpoiler | async"
+							>
+								Click to Reveal
+							</div>
 						</div>
 					</ng-template>
 				</ng-container>
