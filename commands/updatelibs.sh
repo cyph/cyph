@@ -191,6 +191,7 @@ read -r -d '' modules <<- EOM
 	babel-core
 	babel-preset-env
 	babel-preset-es2015
+	bitpay.js
 	bourbon@4.2.7
 	braintree-web
 	braintree-web-drop-in
