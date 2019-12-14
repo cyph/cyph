@@ -56,7 +56,7 @@ export class CryptocurrencyService extends BaseProvider {
 			}
 		},
 		exchangeRates: {
-			_key: `CryptocurrencyService/exchangeRates/BTC`,
+			_key: 'CryptocurrencyService/exchangeRates/BTC',
 			getItem: async () : Promise<Record<string, number>> => {
 				try {
 					return msgpack.decode(
