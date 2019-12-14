@@ -3,7 +3,14 @@
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, combineLatest, interval, Observable} from 'rxjs';
+import {
+	BehaviorSubject,
+	combineLatest,
+	concat,
+	interval,
+	Observable,
+	of
+} from 'rxjs';
 import {filter, map, mergeMap, take, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
@@ -28,11 +35,13 @@ import {MaybePromise} from '../maybe-promise-type';
 import {
 	BinaryProto,
 	ChatMessage as ChatMessageProto,
+	ChatMessageList,
 	ChatMessageLiveValueSerialized,
 	ChatMessageValue,
 	ChatPendingMessage,
 	IChatLastConfirmedMessage,
 	IChatMessage,
+	IChatMessageList,
 	IChatMessageLiveValueSerialized,
 	IChatMessagePredecessor,
 	IChatMessageValue,
@@ -47,7 +56,7 @@ import {
 } from '../session';
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
-import {toBehaviorSubject} from '../util/flatten-observable';
+import {asyncToObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
@@ -192,10 +201,21 @@ export class ChatService extends BaseProvider {
 	public readonly messages = toBehaviorSubject(
 		this.chatSubject.pipe(
 			mergeMap(chat =>
-				chat.messageList.watchFlat(true).pipe(
-					mergeMap(async messageIDs => {
-						const [messages, now] = await Promise.all([
-							Promise.all(
+				concat(
+					!chat.pendingMessageRoot ?
+						of([]) :
+						asyncToObservable(
+							this.localStorageService
+								.getItem(
+									`${chat.pendingMessageRoot}/messageList`,
+									ChatMessageList
+								)
+								.then(o => o.messages)
+								.catch(() => [])
+						).pipe(take(1)),
+					chat.messageList.watchFlat(true).pipe(
+						mergeMap(async messageIDs => {
+							const messages = await Promise.all(
 								messageIDs.map(async id =>
 									chat.messages.getItem(id).catch(() => ({
 										authorType: ChatMessage.AuthorTypes.App,
@@ -206,9 +226,24 @@ export class ChatService extends BaseProvider {
 										timestamp: NaN
 									}))
 								)
-							),
-							getTimestamp()
-						]);
+							);
+
+							if (chat.pendingMessageRoot) {
+								this.localStorageService.setItem<
+									IChatMessageList
+								>(
+									`${chat.pendingMessageRoot}/messageList`,
+									ChatMessageList,
+									{messages}
+								);
+							}
+
+							return messages;
+						})
+					)
+				).pipe(
+					mergeMap(async messages => {
+						const now = await getTimestamp();
 
 						for (let i = 0; i < messages.length; ++i) {
 							const message = messages[i];

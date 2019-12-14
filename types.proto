@@ -557,6 +557,12 @@ message ChatMessage {
 	ChatMessageValue value = 8;
 }
 
+/** Array of chat messages. */
+message ChatMessageList {
+	/** Messages. */
+	repeated ChatMessage messages = 1;
+}
+
 /** @see IChatMessageLiveValue */
 message ChatMessageLiveValueSerialized {
 	/** @see ChatMessageValue.calendarInvite */

@@ -460,7 +460,10 @@ export class ChatMessageListComponent extends BaseProvider
 						)
 					);
 
-					if (this.chatService.messageBottomOffset.value > 1) {
+					if (
+						this.chatService.messageBottomOffset.value > 1 ||
+						messageListItems.length > 0
+					) {
 						this.chatService.resolvers.messageListLoaded.resolve();
 					}
 
