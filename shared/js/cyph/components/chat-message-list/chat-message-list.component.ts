@@ -106,8 +106,13 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** Number of messages to render on the screen at any given time. */
 	private readonly viewportMessageCount = toBehaviorSubject(
-		this.windowWatcherService.height.pipe(
-			map(height => Math.ceil((height + 400) / 47))
+		combineLatest(
+			this.windowWatcherService.height,
+			this.envService.isMobile.pipe(map(isMobile => (isMobile ? 69 : 46)))
+		).pipe(
+			map(([height, minMessageHeight]) =>
+				Math.ceil((height + 400) / minMessageHeight)
+			)
 		),
 		0
 	);
