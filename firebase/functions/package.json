@@ -11,6 +11,8 @@
 		"@firebase/messaging": "*",
 		"@firebase/storage": "*",
 		"@google-cloud/storage": "*",
+		"bitauth": "*",
+		"bitpay-rest": "*",
 		"cors": "*",
 		"dompurify": "*",
 		"fcm-node": "*",
