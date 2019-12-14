@@ -1424,20 +1424,25 @@ export class ChatService extends BaseProvider {
 
 		const localStoragePromise = !this.chat.pendingMessageRoot ?
 			Promise.resolve() :
-			Promise.all([this.localStorageService
-					.setItem<
-						IChatPendingMessage
-					>(`${this.chat.pendingMessageRoot}/${id}`, ChatPendingMessage, {
-						message: value,
-						messageType,
-						selfDestructChat,
-						selfDestructTimeout
-					})
-					.then(
-						removeOldStorageItem
-					), this.localStorageService.setItem(`chatService.getMessageValue/${id}`, ChatMessageValue, value)]).then(
-				() => {}
-			);
+			Promise.all([
+				this.localStorageService.setItem(
+					`chatService.getMessageValue/${id}`,
+					ChatMessageValue,
+					value
+				),
+				this.localStorageService
+					.setItem<IChatPendingMessage>(
+						`${this.chat.pendingMessageRoot}/${id}`,
+						ChatPendingMessage,
+						{
+							message: value,
+							messageType,
+							selfDestructChat,
+							selfDestructTimeout
+						}
+					)
+					.then(removeOldStorageItem)
+			]).then(() => {});
 
 		const predecessorsPromise = (async () : Promise<
 			IChatMessagePredecessor[] | undefined
