@@ -224,8 +224,6 @@ export abstract class SessionService extends BaseProvider
 					initial
 				);
 
-				this.receivedMessages.add(message.data.id);
-
 				if (!(message.event && message.event in rpcEvents)) {
 					return;
 				}
@@ -237,9 +235,13 @@ export abstract class SessionService extends BaseProvider
 		);
 
 		await Promise.all(
-			Array.from(messageGroups.entries()).map(async ([event, data]) =>
-				this.trigger(event, data)
-			)
+			Array.from(messageGroups.entries()).map(async ([event, data]) => {
+				await this.trigger(event, data);
+
+				for (const {id} of data) {
+					this.receivedMessages.add(id);
+				}
+			})
 		);
 	}
 
