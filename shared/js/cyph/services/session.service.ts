@@ -32,7 +32,7 @@ import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
-import {debugLog} from '../util/log';
+import {debugLog, debugLogError} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -379,21 +379,23 @@ export abstract class SessionService extends BaseProvider
 				await this.cyphertextReceiveHandler(
 					filterUndefined(
 						messages.map(message => {
-							/* Discard messages without valid timestamps */
+							/* Log messages without valid timestamps */
 							if (
 								isNaN(message.data.timestamp) ||
 								message.data.timestamp < castleTimestamp
 							) {
-								debugLog(() => ({
-									cyphertextReceiveDiscardInvalidTimestamp: {
-										message
+								debugLogError(() => ({
+									cyphertextReceiveInvalidTimestamp: {
+										message,
+										timestamp: message.data.timestamp
 									}
 								}));
-								return;
+							}
+							else {
+								this.lastIncomingMessageTimestamp =
+									message.data.timestamp;
 							}
 
-							this.lastIncomingMessageTimestamp =
-								message.data.timestamp;
 							(<any> message.data).author = data.author;
 							message.data.authorID = authorID;
 
