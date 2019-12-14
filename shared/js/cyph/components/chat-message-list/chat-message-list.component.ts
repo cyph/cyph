@@ -262,8 +262,8 @@ export class ChatMessageListComponent extends BaseProvider
 			this.initialScrollDown.next(false);
 		}
 		else {
-			this.chatService.uiReady.then(async () =>
-				this.scrollService.scrollDown()
+			this.chatService.resolvers.messageListLoaded.promise.then(
+				async () => this.scrollService.scrollDown()
 			);
 		}
 
