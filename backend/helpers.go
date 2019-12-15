@@ -320,6 +320,44 @@ func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 	return customer, customerKey, nil
 }
 
+func getBitPayInvoice(id string) (map[string]interface{}, error) {
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		methods.GET,
+		"https://bitpay.com/invoices/"+id+"?token="+config.BitPayToken,
+		nil,
+	)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	jsonBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var body map[string]interface{}
+	err := json.Unmarshal(jsonBody, &body)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := body["data"]
+	if err != nil {
+		return nil, err
+	}
+
+	switch v := data.(type) {
+	case map[string]interface{}:
+		return v, nil
+	}
+
+	return nil, errors.New("invalid invoice ID: " + id)
+}
+
 func getTwilioToken(h HandlerArgs) map[string]interface{} {
 	client := &http.Client{}
 

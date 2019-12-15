@@ -15,11 +15,12 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {AffiliateService} from '../../services/affiliate.service';
+import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
-import {request} from '../../util/request';
+import {request, requestJSON} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 import {openWindow} from '../../util/window';
@@ -147,6 +148,29 @@ export class CheckoutComponent extends BaseProvider
 
 	/** Number of users for per-user pricing. */
 	public readonly users = new BehaviorSubject<number>(1);
+
+	/** Creates BitPay invoice. */
+	public async createBitPayInvoice () : Promise<string> {
+		const o = await requestJSON({
+			contentType: 'application/json',
+			data: {
+				currency: 'USD',
+				price: this.amount,
+				token: this.configService.bitPayToken
+			},
+			headers: {'x-accept-version': '2.0.0'},
+			method: 'POST',
+			url: 'https://bitpay.com/invoices'
+		}).catch(() => undefined);
+
+		const id = o?.data?.id;
+
+		if (typeof id !== 'string' || id.length < 1) {
+			throw new Error('Creating BitPay invoice failed.');
+		}
+
+		return id;
+	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -378,6 +402,9 @@ export class CheckoutComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @see AffiliateService */
 		public readonly affiliateService: AffiliateService,

@@ -34,6 +34,10 @@ export class Config {
 		'ryan'
 	]);
 
+	/** BitPay POS auth token. */
+	public readonly bitPayToken: string =
+		'CsLk78BjUj81tBENkNpZxoPFGJWWss5qsga86xDKFWBR';
+
 	/** User-facing email addresses to include in places like contact forms. */
 	public readonly contactEmailAddresses: string[] = [
 		'hello',

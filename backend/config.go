@@ -95,6 +95,7 @@ var config = struct {
 	AllowedHosts               map[string]none
 	AnalID                     string
 	APIKeyByteLength           int
+	BitPayToken                string
 	BurnerChannelExpiration    int64
 	CacheControlHeader         string
 	Continents                 map[string]none
@@ -160,6 +161,8 @@ var config = struct {
 	"UA-56220601-1",
 
 	16,
+
+	"CsLk78BjUj81tBENkNpZxoPFGJWWss5qsga86xDKFWBR",
 
 	172800000,
 
