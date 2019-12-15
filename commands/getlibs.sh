@@ -253,6 +253,7 @@ for anyType in \
 	videojs-record \
 	videojs-theater-mode \
 	videojs-wavesurfer \
+	watermarkjs \
 	wavesurfer.js \
 	wowjs
 do
