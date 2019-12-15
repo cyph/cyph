@@ -340,19 +340,16 @@ func getBitPayInvoice(id string) (map[string]interface{}, error) {
 	}
 
 	var body map[string]interface{}
-	err := json.Unmarshal(jsonBody, &body)
+	err = json.Unmarshal(jsonBody, &body)
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := body["data"]
-	if err != nil {
-		return nil, err
-	}
-
-	switch v := data.(type) {
-	case map[string]interface{}:
-		return v, nil
+	if data, ok := body["data"]; ok {
+		switch v := data.(type) {
+		case map[string]interface{}:
+			return v, nil
+		}
 	}
 
 	return nil, errors.New("invalid invoice ID: " + id)
