@@ -170,9 +170,9 @@ export const request = async (o: {
 	timeout?: number;
 	url: string;
 }) : Promise<string> => {
-	return (await baseRequest<string, string>(o, 'text', res =>
+	return baseRequest<string, string>(o, 'text', res =>
 		(res.body || '').trim()
-	)).result;
+	).result;
 };
 
 /** Performs HTTP request. */
@@ -236,5 +236,5 @@ export const requestJSON = async (o: {
 	timeout?: number;
 	url: string;
 }) : Promise<any> => {
-	return (await baseRequest<any, any>(o, 'json', res => res.body)).result;
+	return baseRequest<any, any>(o, 'json', res => res.body).result;
 };
