@@ -381,7 +381,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
 	const braintreeID =
 		req.body.braintreeID && validateInput(req.body.braintreeID);
-	const email = validateInput(req.body.email, emailRegex);
+	const email = req.body.email && validateInput(req.body.email, emailRegex);
 	const name = validateInput(req.body.name);
 	const plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
@@ -395,7 +395,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		...(braintreeID ? {braintreeID} : {})
 	});
 
-	await sendMailInternal(
+	return sendMailInternal(
 		email,
 		(purchased ?
 			'Cyph Purchase Confirmation' :

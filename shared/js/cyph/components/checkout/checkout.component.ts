@@ -9,6 +9,7 @@ import {
 	OnInit,
 	Output
 } from '@angular/core';
+import * as bitPay from 'bitpay.js';
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
@@ -24,6 +25,7 @@ import {request, requestJSON} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 import {openWindow} from '../../util/window';
+import {bitPayLogo} from './bit-pay-logo';
 
 /**
  * Angular component for Braintree payment checkout UI.
@@ -41,6 +43,9 @@ export class CheckoutComponent extends BaseProvider
 		retries: 5,
 		url: this.envService.baseUrl + 'braintree'
 	});
+
+	/** BitPay invoice ID. */
+	private bitPayInvoiceID?: Promise<string>;
 
 	/* Braintree instance. */
 	private braintreeInstance: any;
@@ -68,7 +73,9 @@ export class CheckoutComponent extends BaseProvider
 	public readonly complete = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether confirmation message should be shown. */
-	public readonly confirmationMessage = new BehaviorSubject<boolean>(false);
+	public readonly confirmationMessage = new BehaviorSubject<
+		{welcomeLetter?: string} | undefined
+	>(undefined);
 
 	/** Checkout confirmation event; emits API key if applicable. */
 	@Output() public readonly confirmed = new EventEmitter<{
@@ -150,12 +157,18 @@ export class CheckoutComponent extends BaseProvider
 	public readonly users = new BehaviorSubject<number>(1);
 
 	/** Creates BitPay invoice. */
-	public async createBitPayInvoice () : Promise<string> {
+	private async createBitPayInvoice (
+		amount: number = this.amount
+	) : Promise<string> {
 		const o = await requestJSON({
 			contentType: 'application/json',
 			data: {
+				buyer: {
+					email: 'bitpay-checkout@cyph.com',
+					notify: true
+				},
 				currency: 'USD',
-				price: this.amount,
+				price: amount,
 				token: this.configService.bitPayToken
 			},
 			headers: {'x-accept-version': '2.0.0'},
@@ -170,6 +183,15 @@ export class CheckoutComponent extends BaseProvider
 		}
 
 		return id;
+	}
+
+	/** Gets BitPay invoice. */
+	private async getBitPayInvoice (id: string) : Promise<any> {
+		return (
+			(await requestJSON({
+				url: `https://bitpay.com/invoices/${id}?token=${this.configService.bitPayToken}`
+			}))?.data || {}
+		);
 	}
 
 	/** @inheritDoc */
@@ -209,6 +231,9 @@ export class CheckoutComponent extends BaseProvider
 			this.subscriptionType
 		) {
 			this.subscriptionType = parseFloat(this.subscriptionType);
+			if (isNaN(this.subscriptionType)) {
+				this.subscriptionType = undefined;
+			}
 		}
 
 		(async () => {
@@ -236,6 +261,10 @@ export class CheckoutComponent extends BaseProvider
 		this.complete.next(false);
 
 		const amountString = this.amount.toFixed(2);
+
+		if (this.subscriptionType === undefined) {
+			this.bitPayInvoiceID = this.createBitPayInvoice();
+		}
 
 		braintreeDropIn.create(
 			{
@@ -300,35 +329,143 @@ export class CheckoutComponent extends BaseProvider
 					?.addEventListener('click', () => {
 						this.paymentOption.next(undefined);
 					});
+
+				if (!this.bitPayInvoiceID) {
+					return;
+				}
+
+				const lastOption = this.elementRef.nativeElement.querySelector(
+					'.braintree-option:last-of-type'
+				);
+
+				if (!(lastOption instanceof HTMLElement)) {
+					return;
+				}
+
+				const bitPayOption = lastOption.cloneNode(true);
+				const optionsParent = lastOption.parentElement;
+
+				if (
+					!(bitPayOption instanceof HTMLElement) ||
+					!(optionsParent instanceof HTMLElement)
+				) {
+					return;
+				}
+
+				const otherOptionClass = Array.from(
+					bitPayOption.classList
+				).find(s => s.startsWith('braintree-option_'));
+				if (otherOptionClass) {
+					bitPayOption.classList.remove(otherOptionClass);
+				}
+
+				const originalLogo = lastOption.querySelector(
+					'.braintree-option__logo'
+				);
+				const logo = bitPayOption.querySelector(
+					'.braintree-option__logo'
+				);
+				if (
+					logo instanceof HTMLElement &&
+					originalLogo instanceof HTMLElement
+				) {
+					const logoHeight = originalLogo.clientHeight;
+					const logoWidth = originalLogo.clientWidth;
+
+					while (logo.firstElementChild) {
+						logo.removeChild(logo.firstElementChild);
+					}
+
+					const img = document.createElement('img');
+					img.src = bitPayLogo;
+					img.height = logoHeight;
+					img.width = logoHeight;
+					img.style.margin = `0 ${(logoWidth - logoHeight) / 2}px`;
+					img.style.transform = 'scale(1.5)';
+					logo.appendChild(img);
+				}
+
+				const label = bitPayOption.querySelector(
+					'.braintree-option__label'
+				);
+				if (label instanceof HTMLElement) {
+					label.textContent = 'BitPay';
+					label.setAttribute(
+						'aria-label',
+						this.stringsService.bitPayAriaLabel
+					);
+				}
+
+				bitPayOption.addEventListener('click', async () => {
+					if (!this.bitPayInvoiceID) {
+						this.bitPayInvoiceID = this.createBitPayInvoice();
+					}
+
+					bitPay.showInvoice(await this.bitPayInvoiceID);
+				});
+
+				bitPay.onModalWillLeave(async () => {
+					const invoice = this.bitPayInvoiceID ?
+						await this.getBitPayInvoice(
+							await this.bitPayInvoiceID
+						) :
+						undefined;
+
+					if (
+						!(
+							invoice?.status === 'complete' ||
+							invoice?.status === 'confirmed' ||
+							invoice?.status === 'paid'
+						)
+					) {
+						this.bitPayInvoiceID = this.createBitPayInvoice();
+						return;
+					}
+
+					this.submit(true);
+				});
+
+				optionsParent.appendChild(bitPayOption);
+
+				/* eslint-disable-next-line no-unused-expressions */
+				this.bitPayInvoiceID?.catch(err => {
+					console.error({bitPayError: err});
+					optionsParent.removeChild(bitPayOption);
+				});
 			}
 		);
 	}
 
 	/** Submits payment. */
-	public async submit () : Promise<void> {
+	public async submit (useBitPay: boolean = false) : Promise<void> {
 		try {
 			this.errorMessage.next(undefined);
 			this.pending.next(true);
 
-			const paymentMethod = await new Promise<any>((resolve, reject) => {
-				this.braintreeInstance.requestPaymentMethod(
-					(err: any, data: any) => {
-						if (data && !err) {
-							resolve(data);
+			const paymentMethod = useBitPay ?
+				undefined :
+				await new Promise<any>((resolve, reject) => {
+					this.braintreeInstance.requestPaymentMethod(
+						(err: any, data: any) => {
+							if (data && !err) {
+								resolve(data);
+							}  else {
+								reject(err);
+							}
 						}
-						else {
-							reject(err);
-						}
-					}
-				);
-			}).catch(err => {
-				throw err ||
-					new Error(this.stringsService.checkoutBraintreeError);
-			});
+					);
+				}).catch(err => {
+					throw err ||
+						new Error(this.stringsService.checkoutBraintreeError);
+				});
 
-			const creditCard = paymentMethod.type === 'CreditCard';
+			const bitPayInvoiceID = !useBitPay ?
+				undefined :
+				await this.bitPayInvoiceID;
 
-			const apiKey = await request({
+			const creditCard = paymentMethod?.type === 'CreditCard';
+
+			let welcomeLetter: string | undefined = await request({
 				data: {
 					amount: Math.floor(
 						this.amount *
@@ -338,8 +475,9 @@ export class CheckoutComponent extends BaseProvider
 								100 *
 								(this.perUser ? this.users.value - 1 : 0)
 					),
+					bitPayInvoiceID,
 					creditCard,
-					nonce: paymentMethod.nonce,
+					nonce: paymentMethod?.nonce,
 					subscription: this.subscriptionType !== undefined,
 					url: location.toString(),
 					...this.name,
@@ -360,6 +498,17 @@ export class CheckoutComponent extends BaseProvider
 				url: this.envService.baseUrl + 'braintree'
 			});
 
+			const apiKey = welcomeLetter.startsWith('$APIKEY: ') ?
+				welcomeLetter.split('$APIKEY: ')[1] :
+				undefined;
+
+			if (typeof apiKey === 'string') {
+				welcomeLetter = undefined;
+			}
+			else {
+				welcomeLetter = welcomeLetter.replace(/^Hello.*?,/, '').trim();
+			}
+
 			if (this.affiliate) {
 				openWindow(this.affiliateService.checkout.href);
 			}
@@ -368,7 +517,7 @@ export class CheckoutComponent extends BaseProvider
 				apiKey: apiKey || undefined,
 				namespace: this.namespace
 			});
-			this.confirmationMessage.next(!apiKey);
+			this.confirmationMessage.next(apiKey ? undefined : {welcomeLetter});
 
 			if (!this.noSpinnerEnd) {
 				this.complete.next(true);

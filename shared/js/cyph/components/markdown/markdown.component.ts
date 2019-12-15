@@ -2,8 +2,10 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
+	Inject,
 	Input,
-	OnChanges
+	OnChanges,
+	Optional
 } from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {Router} from '@angular/router';
@@ -46,7 +48,7 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 
 	/** Handle router link clicks. */
 	public click (e: MouseEvent) : void {
-		if (!(e.target instanceof HTMLAnchorElement)) {
+		if (!(e.target instanceof HTMLAnchorElement) || !this.router) {
 			return;
 		}
 
@@ -126,7 +128,7 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly router: Router,
+		@Inject(Router) @Optional() private readonly router: Router | undefined,
 
 		/** @ignore */
 		private readonly htmlSanitizerService: HtmlSanitizerService,

@@ -194,13 +194,25 @@
 		</div>
 	</div>
 	<div class="confirmation" *ngIf="complete | async">
-		<div
-			cyphTranslate
-			*ngIf="(success | async) && (confirmationMessage | async)"
-		>
-			Thanks a lot for your support! You will receive an email
-			confirmation momentarily.
-		</div>
+		<ng-container *ngIf="success | async">
+			<ng-container
+				*ngIf="confirmationMessage | async as confirmationMessageData"
+			>
+				<cyph-markdown
+					[markdown]="confirmationMessageData.welcomeLetter"
+					*ngIf="
+						!!confirmationMessageData.welcomeLetter;
+						else defaultConfirmationMessage
+					"
+				></cyph-markdown>
+				<ng-template #defaultConfirmationMessage>
+					<div cyphTranslate>
+						Thanks a lot for your support! You will receive an email
+						confirmation momentarily.
+					</div>
+				</ng-template>
+			</ng-container>
+		</ng-container>
 		<div *ngIf="(success | async) === false">
 			<div
 				fxLayout="column"

@@ -75,42 +75,42 @@ const sendMailInternal = async (
 			undefined;
 	}
 
-	return transporter.sendMail({
-		from: `Cyph <${auth.user}>`,
-		html: !text ?
-			'' :
-			dompurifyHtmlSanitizer.sanitize(
-				mustache.render(await template, {
-					accountsURL,
-					noUnsubscribe,
-					...(typeof text === 'object' ?
-						{html: text.html} :
-						{lines: text.split('\n')})
-				})
-			),
-		icalEvent: !eventDetails ?
-			undefined :
-			{
-				content: ical({
-					domain: 'cyph.com',
-					events: [{
-							attendees: [to, eventInviter],
-							description: eventDetails.description,
-							end: new Date(eventDetails.endTime),
-							location: eventDetails.location,
-							organizer: eventInviter,
-							start: new Date(eventDetails.startTime),
-							summary: eventDetails.summary || subject
-						}],
-					prodId: '//cyph.com//cyph-appointment-scheduler//EN'
-				}).toString(),
-				filename: 'invite.ics',
-				method: 'request'
-			},
-		subject,
-		text: (typeof text === 'object' ? text.markdown : text) || '',
-		to: typeof to === 'string' ? to : to.formatted
-	});
+	await (!to ?
+		undefined :
+		transporter.sendMail({
+			from: `Cyph <${auth.user}>`,
+			html: !text ? '' : dompurifyHtmlSanitizer.sanitize(
+					mustache.render(await template, {
+						accountsURL,
+						noUnsubscribe,
+						...(typeof text === 'object' ?
+							{html: text.html} :
+							{lines: text.split('\n')})
+					})
+				),
+			icalEvent: !eventDetails ? undefined : {
+					content: ical({
+						domain: 'cyph.com',
+						events: [{
+								attendees: [to, eventInviter],
+								description: eventDetails.description,
+								end: new Date(eventDetails.endTime),
+								location: eventDetails.location,
+								organizer: eventInviter,
+								start: new Date(eventDetails.startTime),
+								summary: eventDetails.summary || subject
+							}],
+						prodId: '//cyph.com//cyph-appointment-scheduler//EN'
+					}).toString(),
+					filename: 'invite.ics',
+					method: 'request'
+				},
+			subject,
+			text: (typeof text === 'object' ? text.markdown : text) || '',
+			to: typeof to === 'string' ? to : to.formatted
+		}));
+
+	return text.markdown;
 };
 
 /**
@@ -150,6 +150,7 @@ const sendMail = async (
 				eventDetails.inviterUsername
 			) :
 			undefined;
+
 	await sendMailInternal(
 		to,
 		subject,

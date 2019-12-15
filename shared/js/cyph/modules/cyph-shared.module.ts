@@ -19,7 +19,9 @@ import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
 import {AffiliateService} from '../services/affiliate.service';
 import {ConfigService} from '../services/config.service';
+import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {EnvService} from '../services/env.service';
+import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {SplitTestingService} from '../services/split-testing.service';
 import {StringsService} from '../services/strings.service';
 
@@ -78,6 +80,10 @@ import {StringsService} from '../services/strings.service';
 		{
 			provide: 'EnvService',
 			useExisting: EnvService
+		},
+		{
+			provide: HtmlSanitizerService,
+			useClass: DOMPurifyHtmlSanitizerService
 		}
 	]
 })

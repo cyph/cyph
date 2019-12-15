@@ -17,6 +17,10 @@
 				perUser = false,
 				subscriptionType = 1
 			} = {}) => {
+				if (subscriptionType < 0) {
+					subscriptionType = undefined;
+				}
+
 				const checkout = document.createElement('cyph-checkout');
 
 				checkout.setAttribute('amount', amount);
@@ -28,6 +32,16 @@
 				checkout.setAttribute('subscription-type', subscriptionType);
 
 				document.body.appendChild(checkout);
+			};
+
+			self.createCheckoutOneTime = (o = {}) => {
+				self.createCheckout({
+					amount: 450,
+					id: 2,
+					itemName: 'Lifetime Platinum',
+					subscriptionType: -1,
+					...o
+				});
 			};
 		</script>
 	</body>

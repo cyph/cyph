@@ -50,12 +50,10 @@ import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
 import {CryptocurrencyService} from '../services/cryptocurrency.service';
 import {DatabaseService} from '../services/database.service';
-import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {EHRIntegrationService} from '../services/ehr-integration.service';
 import {EHRService} from '../services/ehr.service';
 import {FingerprintService} from '../services/fingerprint.service';
 import {FirebaseDatabaseService} from '../services/firebase-database.service';
-import {HtmlSanitizerService} from '../services/html-sanitizer.service';
 import {QRService} from '../services/qr.service';
 import {WorkerService} from '../services/worker.service';
 import {CyphCommonModule} from './cyph-common.module';
@@ -167,10 +165,6 @@ import {CyphWebModule} from './cyph-web.module';
 		{
 			provide: DatabaseService,
 			useClass: FirebaseDatabaseService
-		},
-		{
-			provide: HtmlSanitizerService,
-			useClass: DOMPurifyHtmlSanitizerService
 		}
 	]
 })

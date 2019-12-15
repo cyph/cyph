@@ -276,7 +276,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func generateInvite(email, name, plan, braintreeID string, purchased bool) error {
+func generateInvite(email, name, plan, braintreeID string, purchased bool) (string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"braintreeID": braintreeID,
 		"email":       email,
@@ -297,9 +297,19 @@ func generateInvite(email, name, plan, braintreeID string, purchased bool) error
 	req.Header.Add("Authorization", cyphFirebaseAdminKey)
 	req.Header.Add("Content-Type", "application/json")
 
-	_, err := client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
 
-	return err
+	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	responseBody := string(responseBodyBytes)
+
+	return responseBody, nil
 }
 
 func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {

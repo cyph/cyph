@@ -69,6 +69,7 @@ func analytics(h HandlerArgs) (interface{}, int) {
 }
 
 func braintreeCheckout(h HandlerArgs) (interface{}, int) {
+	bitPayInvoiceID := sanitize(h.Request.PostFormValue("bitPayInvoiceID"))
 	company := sanitize(h.Request.PostFormValue("company"))
 	countryCode := sanitize(h.Request.PostFormValue("countryCode"))
 	firstName := sanitize(h.Request.PostFormValue("firstName"))
@@ -272,22 +273,53 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 	} else {
-		tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
-			Amount:             braintree.NewDecimal(amount, 2),
-			BillingAddress:     billingAddress,
-			PaymentMethodNonce: nonce,
-			Type:               "sale",
-		})
+		if bitPayInvoiceID == "" {
+			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
+				Amount:             braintree.NewDecimal(amount, 2),
+				BillingAddress:     billingAddress,
+				PaymentMethodNonce: nonce,
+				Type:               "sale",
+			})
 
-		if err != nil {
-			return err.Error(), http.StatusTeapot
+			if err != nil {
+				return err.Error(), http.StatusTeapot
+			}
+
+			bt.Transaction().SubmitForSettlement(h.Context, tx.Id)
+
+			success = tx.Status == "authorized"
+			txJSON, _ := json.Marshal(tx)
+			txLog += string(txJSON)
+		} else {
+			invoice, err := getBitPayInvoice(bitPayInvoiceID)
+
+			if err != nil {
+				return err.Error(), http.StatusTeapot
+			}
+
+			price := int64(0)
+			invoicePriceDynamic, _ := invoice["price"]
+			switch invoicePrice := invoicePriceDynamic.(type) {
+			case int64:
+				price = invoicePrice
+			default:
+				return "bad response from BitPay", http.StatusTeapot
+			}
+
+			/*
+				Note: For now we'll deliver on "paid" status and handle it
+				after the fact if a payment fails to confirm. This will be
+				reconsidered if we ever sell something physical or otherwise
+				unrecoverable.
+			*/
+
+			success =
+				invoice["currency"] == "USD" &&
+					(price*100) == amount &&
+					(invoice["status"] == "complete" ||
+						invoice["status"] == "confirmed" ||
+						invoice["status"] == "paid")
 		}
-
-		bt.Transaction().SubmitForSettlement(h.Context, tx.Id)
-
-		success = tx.Status == "authorized"
-		txJSON, _ := json.Marshal(tx)
-		txLog += string(txJSON)
 
 		if success {
 			txLog += "\nAPI key: " + apiKey
@@ -355,7 +387,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if hasPlan && plan.AccountsPlan != "" {
-		err = generateInvite(email, name, plan.AccountsPlan, braintreeID, true)
+		welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, true)
 
 		if err != nil {
 			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
@@ -371,7 +403,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				""), "")
 		}
 
-		return "", http.StatusOK
+		return welcomeLetter, http.StatusOK
 	}
 
 	if subscription && hasPlan {
@@ -387,7 +419,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			"</p>"+
 			"")
 
-		return apiKey, http.StatusOK
+		return "$APIKEY: " + apiKey, http.StatusOK
 	}
 
 	if planID == "10000-0" {
