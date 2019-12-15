@@ -143,6 +143,7 @@ export const newFormElement = <
 		options?: string[];
 		required?: boolean;
 		step?: number;
+		tooltip?: string;
 		value?: boolean | number | string | Uint8Array;
 		width?: number;
 	}
@@ -163,6 +164,7 @@ export const newFormElement = <
 			options: o?.options,
 			required: o?.required,
 			step: o?.step,
+			tooltip: o?.tooltip,
 			type: elementType,
 			width: o?.width
 		};
@@ -302,6 +304,7 @@ export const slideToggle = newFormElement<{
 	label?: string;
 	noGrow?: boolean;
 	required?: boolean;
+	tooltip?: string;
 	value?: boolean;
 	width?: number;
 }>(Form.Element.Types.SlideToggle);

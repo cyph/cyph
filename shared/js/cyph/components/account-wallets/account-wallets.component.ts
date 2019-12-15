@@ -9,9 +9,9 @@ import {
 	newFormComponent,
 	newFormContainer,
 	numberInput,
+	slideToggle,
 	text
 } from '../../forms';
-import {MaybePromise} from '../../maybe-promise-type';
 import {
 	Cryptocurrencies,
 	Currencies,
@@ -84,72 +84,108 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 	/** Generates and uploads a new wallet. */
 	public async generate (
 		newWalletOptions: NewWalletOptions = NewWalletOptions.generate,
-		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC,
-		customName?: MaybePromise<string | undefined>
+		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC
 	) : Promise<void> {
-		let address: string | undefined;
-		let key: string | undefined;
-		let name: string | undefined;
+		const subtitle =
+			newWalletOptions === NewWalletOptions.generate ?
+				this.stringsService.newWalletGenerateText :
+			newWalletOptions === NewWalletOptions.importAddress ?
+				this.stringsService.newWalletImportAddressText :
+			newWalletOptions === NewWalletOptions.importKey ?
+				this.stringsService.newWalletImportKeyText :
+				undefined;
+
+		const title =
+			newWalletOptions === NewWalletOptions.generate ?
+				this.stringsService.newWalletGenerate :
+			newWalletOptions === NewWalletOptions.importAddress ?
+				this.stringsService.newWalletImportAddress :
+			newWalletOptions === NewWalletOptions.importKey ?
+				this.stringsService.newWalletImportKey :
+				undefined;
+
+		if (!subtitle || !title) {
+			return;
+		}
+
+		const generateForm = await this.dialogService.prompt({
+			content: '',
+			form: newForm([
+				newFormComponent([
+					newFormContainer([
+						text({
+							label: subtitle
+						})
+					])
+				]),
+				newFormComponent([
+					newFormContainer([
+						input({
+							label: this.stringsService.newWalletNameInput,
+							required: true,
+							value: this.stringsService.newWalletNameDefaultValue
+						})
+					]),
+					...(newWalletOptions === NewWalletOptions.importAddress ?
+						[
+							newFormContainer([input({
+									label: this.stringsService
+										.newWalletImportAddressInput,
+									required: true
+								})])
+						] :
+					newWalletOptions === NewWalletOptions.importKey ?
+						[
+							newFormContainer([input({
+									label: this.stringsService
+										.newWalletImportKeyInput,
+									required: true
+								}), slideToggle({
+									label: this.stringsService
+										.newWalletUncompressed,
+									noGrow: true,
+									tooltip: this.stringsService
+										.newWalletUncompressedTooltip
+								})])
+						] :
+						[])
+				])
+			]),
+			title
+		});
+
+		const name = getFormValue(generateForm, 'string', 1, 0, 0);
+
+		const address =
+			newWalletOptions === NewWalletOptions.importAddress ?
+				getFormValue(generateForm, 'string', 1, 1, 0) :
+				undefined;
+
+		const key =
+			newWalletOptions === NewWalletOptions.importKey ?
+				getFormValue(generateForm, 'string', 1, 1, 0) :
+				undefined;
+
+		const uncompressedPublicKey =
+			newWalletOptions === NewWalletOptions.importKey ?
+				getFormValue(generateForm, 'boolean', 1, 1, 1) :
+				undefined;
+
+		if (!name) {
+			return;
+		}
 
 		switch (newWalletOptions) {
-			case NewWalletOptions.generate:
-				name =
-					(await customName) ||
-					(await this.dialogService.prompt({
-						content: this.stringsService.newWalletGenerateText,
-						placeholder: this.stringsService.newWalletNameInput,
-						title: this.stringsService.newWalletGenerate
-					}));
-
-				if (!name) {
-					return;
-				}
-
-				break;
-
 			case NewWalletOptions.importAddress:
-				address = await this.dialogService.prompt({
-					content: this.stringsService.newWalletImportAddressText,
-					placeholder: this.stringsService
-						.newWalletImportAddressInput,
-					title: this.stringsService.newWalletImportAddress
-				});
-
 				if (!address) {
 					return;
 				}
-
 				break;
 
 			case NewWalletOptions.importKey:
-				key = await this.dialogService.prompt({
-					content: this.stringsService.newWalletImportKeyText,
-					placeholder: this.stringsService.newWalletImportKeyInput,
-					title: this.stringsService.newWalletImportKey
-				});
-
 				if (!(typeof key === 'string' && key.length > 0)) {
 					return;
 				}
-
-				break;
-
-			default:
-				return;
-		}
-
-		if (!name) {
-			name =
-				(await customName) ||
-				(await this.dialogService.prompt({
-					content: this.stringsService.newWalletNameText,
-					placeholder: this.stringsService.newWalletNameInput,
-					title: this.stringsService.newWalletName
-				}));
-
-			if (!name) {
-				return;
-			}
 		}
 
 		let wallet: IWallet;
@@ -158,7 +194,8 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			wallet = await this.cryptocurrencyService.generateWallet({
 				address,
 				cryptocurrency,
-				key
+				key,
+				uncompressedPublicKey
 			});
 		}
 		catch {

@@ -46,7 +46,7 @@
 	>
 		<div
 			[fxLayout]="component.isColumn ? 'column' : 'row'"
-			fxLayoutAlign="center"
+			fxLayoutAlign="center center"
 			[class]="component.isColumn ? 'column' : 'row'"
 			*ngFor="
 				let container of component.containers;
@@ -56,7 +56,7 @@
 			<div
 				fxFlex
 				[fxLayout]="container.isColumn ? 'column' : 'row'"
-				fxLayoutAlign="center"
+				fxLayoutAlign="center center"
 				fxLayoutGap="16px"
 				[class]="container.isColumn ? 'column' : 'row'"
 			>
@@ -113,6 +113,8 @@
 			[(ngModel)]="o.valueBoolean"
 			(ngModelChange)="changeForm.emit()"
 			[class.no-pointer-events]="isDisabled"
+			[matTooltip]="o.tooltip"
+			[matTooltipDisabled]="!o.tooltip"
 			[name]="getName(o)"
 			[required]="o.required"
 			*ngIf="o.type === types.Checkbox"
@@ -125,6 +127,8 @@
 				<input
 					matInput
 					[matDatepicker]="datepicker"
+					[matTooltip]="o.tooltip"
+					[matTooltipDisabled]="!o.tooltip"
 					[ngModel]="timestampToDate(o.valueNumber, true)"
 					(ngModelChange)="
 						o.valueNumber = $event ? $event.getTime() : 0;
@@ -154,15 +158,17 @@
 		<mat-form-field *ngIf="o.type === types.Email">
 			<input
 				matInput
-				[textMask]="getMask(o)"
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
-				type="email"
 				[pattern]="emailPattern"
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
+				[textMask]="getMask(o)"
+				type="email"
 			/>
 		</mat-form-field>
 
@@ -171,6 +177,8 @@
 
 			<button
 				mat-button
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
 				(click)="saveFile(o.valueBytes, o.fileName, o.mediaType)"
 				*ngIf="o.valueBytes?.length > 0"
 			>
@@ -180,7 +188,7 @@
 			<button
 				mat-fab
 				color="primary"
-				[matTooltip]="stringsService.uploadFile"
+				[matTooltip]="o.tooltip || stringsService.uploadFile"
 				cyphDropZone
 				(fileDrop)="
 					o.mediaType = $event.mediaType;
@@ -201,11 +209,13 @@
 					[textMask]="getMask(o)"
 					[(ngModel)]="o.valueString"
 					(ngModelChange)="changeForm.emit()"
+					[matTooltip]="o.tooltip"
+					[matTooltipDisabled]="!o.tooltip"
 					[name]="getName(o)"
-					type="text"
 					[placeholder]="o.label"
 					[readonly]="isDisabled"
 					[required]="o.required"
+					type="text"
 				/>
 			</mat-form-field>
 		</ng-container>
@@ -213,35 +223,39 @@
 		<mat-form-field *ngIf="o.type === types.Number">
 			<input
 				matInput
-				[textMask]="getMask(o)"
 				[ngModel]="o.valueNumber.toFixed(8)"
 				(keyup)="
 					o.valueNumber = toFloat($event.target.value, o.max, o.min);
 					$event.target.value = o.valueNumber.toFixed(8);
 					changeForm.emit()
 				"
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
 				[max]="o.max"
 				[min]="o.min"
 				[name]="getName(o)"
-				[step]="o.step"
-				type="number"
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
+				[step]="o.step"
+				[textMask]="getMask(o)"
+				type="number"
 			/>
 		</mat-form-field>
 
 		<mat-form-field *ngIf="o.type === types.Password">
 			<input
 				matInput
-				[textMask]="getMask(o)"
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
-				[type]="isDisabled ? 'text' : 'password'"
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
+				[textMask]="getMask(o)"
+				[type]="isDisabled ? 'text' : 'password'"
 			/>
 		</mat-form-field>
 
@@ -251,6 +265,8 @@
 			[(ngModel)]="o.valueString"
 			(ngModelChange)="changeForm.emit()"
 			[class.no-pointer-events]="isDisabled"
+			[matTooltip]="o.tooltip"
+			[matTooltipDisabled]="!o.tooltip"
 			[name]="getName(o)"
 			[required]="o.required"
 			*ngIf="o.type === types.Radio"
@@ -272,6 +288,8 @@
 				fxFlex
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
 				[placeholder]="o.label"
 				[required]="o.required"
@@ -289,6 +307,8 @@
 		<mat-slider
 			[(ngModel)]="o.valueNumber"
 			(ngModelChange)="changeForm.emit()"
+			[matTooltip]="o.tooltip"
+			[matTooltipDisabled]="!o.tooltip"
 			[max]="o.max"
 			[min]="o.min"
 			[name]="getName(o)"
@@ -299,6 +319,8 @@
 		<mat-slide-toggle
 			[(ngModel)]="o.valueBoolean"
 			[class.no-pointer-events]="isDisabled"
+			[matTooltip]="o.tooltip"
+			[matTooltipDisabled]="!o.tooltip"
 			[name]="getName(o)"
 			[required]="o.required"
 			*ngIf="o.type === types.SlideToggle"
@@ -311,41 +333,47 @@
 				matInput
 				matTextareaAutosize
 				matAutosizeMinRows="4"
-				[textMask]="getMask(o)"
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
+				[textMask]="getMask(o)"
 			></textarea>
 		</mat-form-field>
 
 		<mat-form-field *ngIf="o.type === types.Time">
 			<input
 				matInput
-				[textMask]="getMask(o)"
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
-				type="time"
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
+				[textMask]="getMask(o)"
+				type="time"
 			/>
 		</mat-form-field>
 
 		<mat-form-field *ngIf="o.type === types.URL">
 			<input
 				matInput
-				[textMask]="getMask(o)"
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
+				[matTooltip]="o.tooltip"
+				[matTooltipDisabled]="!o.tooltip"
 				[name]="getName(o)"
-				type="url"
 				[placeholder]="o.label"
 				[readonly]="isDisabled"
 				[required]="o.required"
+				type="url"
+				[textMask]="getMask(o)"
 			/>
 		</mat-form-field>
 	</div>

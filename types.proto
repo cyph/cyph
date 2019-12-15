@@ -945,6 +945,9 @@ message Form {
 		/** Numerical value minimum increment. */
 		double step = 14;
 
+		/** Tooltip. */
+		string tooltip = 18;
+
 		/** @see Type */
 		required Types type = 9;
 
@@ -1945,6 +1948,12 @@ message SessionTextConfirmation {
 message Wallet {
 	/** @see Cryptocurrencies */
 	required Cryptocurrencies cryptocurrency = 1;
+
+	/**
+	 * If true, will use an old-style uncompressed public key.
+	 * This uses the same private key but corresponds to a different address.
+	 */
+	bool uncompressedPublicKey = 4;
 
 	/** Value. */
 	oneof value {

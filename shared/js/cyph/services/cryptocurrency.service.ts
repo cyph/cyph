@@ -217,7 +217,10 @@ export class CryptocurrencyService extends BaseProvider {
 	private getSimpleBTCWallet (wallet: IWallet) : SimpleBTCWallet {
 		return new SimpleBTCWallet(
 			wallet.key && wallet.key.length > 0 ?
-				{key: wallet.key} :
+				{
+					key: wallet.key,
+					uncompressedPublicKey: wallet.uncompressedPublicKey
+				} :
 				{address: wallet.address}
 		);
 	}
@@ -293,22 +296,28 @@ export class CryptocurrencyService extends BaseProvider {
 	public async generateWallet ({
 		address,
 		cryptocurrency = Cryptocurrencies.BTC,
-		key
+		key,
+		uncompressedPublicKey = false
 	}: {
 		address?: string;
 		cryptocurrency?: Cryptocurrencies;
 		key?: Uint8Array | string;
+		uncompressedPublicKey?: boolean;
 	} = {}) : Promise<IWallet> {
 		if (cryptocurrency !== Cryptocurrencies.BTC) {
 			throw new Error('Unsupported cryptocurrency.');
 		}
 
-		const wallet = new SimpleBTCWallet({address, key});
+		const wallet = new SimpleBTCWallet({
+			address,
+			key,
+			uncompressedPublicKey
+		});
 
 		return {
 			cryptocurrency,
 			...(wallet.key ?
-				{key: wallet.key.toBuffer()} :
+				{key: wallet.key.toBuffer(), uncompressedPublicKey} :
 				{address: wallet.address})
 		};
 	}

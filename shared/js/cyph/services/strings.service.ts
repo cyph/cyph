@@ -582,7 +582,7 @@ export class StringsService extends BaseProvider {
 	public readonly newWalletGenerate = `Generate New Wallet`;
 
 	/** @see StringsService */
-	public readonly newWalletGenerateText = `This will generate a brand new wallet. Proceed?`;
+	public readonly newWalletGenerateText = `Generate a brand new wallet.`;
 
 	/** @see StringsService */
 	public readonly newWalletImportAddress = `Watch Wallet Address`;
@@ -591,7 +591,7 @@ export class StringsService extends BaseProvider {
 	public readonly newWalletImportAddressInput = `Address`;
 
 	/** @see StringsService */
-	public readonly newWalletImportAddressText = `Add a read-only wallet to track the following public address:`;
+	public readonly newWalletImportAddressText = `Add a read-only wallet to track a public address.`;
 
 	/** @see StringsService */
 	public readonly newWalletImportKey = `Import Wallet Key`;
@@ -600,16 +600,25 @@ export class StringsService extends BaseProvider {
 	public readonly newWalletImportKeyInput = `WIF Key`;
 
 	/** @see StringsService */
-	public readonly newWalletImportKeyText = `Import existing wallet private key in WIF format:`;
+	public readonly newWalletImportKeyText = `Import existing wallet private key in WIF format.`;
 
 	/** @see StringsService */
 	public readonly newWalletName = `Wallet Name`;
+
+	/** @see StringsService */
+	public readonly newWalletNameDefaultValue = `My Wallet`;
 
 	/** @see StringsService */
 	public readonly newWalletNameInput = `Wallet Name`;
 
 	/** @see StringsService */
 	public readonly newWalletNameText = `Name of this wallet:`;
+
+	/** @see StringsService */
+	public readonly newWalletUncompressed = `Uncompressed`;
+
+	/** @see StringsService */
+	public readonly newWalletUncompressedTooltip = `Use an old-style uncompressed public key. If you don't know what this means, you probably don't need it. However, if your first import attempt shows an address you don't expect, try this option.`;
 
 	/** @see StringsService */
 	public readonly next = `Next`;
