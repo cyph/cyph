@@ -35,13 +35,12 @@ import {MaybePromise} from '../maybe-promise-type';
 import {
 	BinaryProto,
 	ChatMessage as ChatMessageProto,
-	ChatMessageList,
+	StringArrayProto,
 	ChatMessageLiveValueSerialized,
 	ChatMessageValue,
 	ChatPendingMessage,
 	IChatLastConfirmedMessage,
 	IChatMessage,
-	IChatMessageList,
 	IChatMessageLiveValueSerialized,
 	IChatMessagePredecessor,
 	IChatMessageValue,
@@ -66,6 +65,7 @@ import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
+import {ChatMessageService} from './chat-message.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
@@ -108,7 +108,7 @@ export class ChatService extends BaseProvider {
 					messageValuesURL,
 					BinaryProto,
 					undefined,
-					undefined,
+					true,
 					this.subscriptions
 				)
 			)
@@ -203,88 +203,28 @@ export class ChatService extends BaseProvider {
 			mergeMap(chat =>
 				concat(
 					!chat.pendingMessageRoot ?
-						of([]) :
+						of<string[]>([]) :
 						asyncToObservable(
 							this.localStorageService
 								.getItem(
-									`${chat.pendingMessageRoot}/messageList`,
-									ChatMessageList
+									`${chat.pendingMessageRoot}/messageIDList`,
+									StringArrayProto
 								)
-								.then(o => o.messages)
 								.catch(() => [])
 						).pipe(take(1)),
 					chat.messageList.watchFlat(true).pipe(
-						mergeMap(async messageIDs => {
-							const messages = await Promise.all(
-								messageIDs.map(async id =>
-									chat.messages.getItem(id).catch(() => ({
-										authorType: ChatMessage.AuthorTypes.App,
-										hash: new Uint8Array(1),
-										id,
-										key: new Uint8Array(1),
-										predecessors: [],
-										timestamp: NaN
-									}))
-								)
-							);
-
+						map(messages => {
 							if (chat.pendingMessageRoot) {
-								this.localStorageService.setItem<
-									IChatMessageList
-								>(
-									`${chat.pendingMessageRoot}/messageList`,
-									ChatMessageList,
-									{messages}
+								this.localStorageService.setItem(
+									`${chat.pendingMessageRoot}/messageIDList`,
+									StringArrayProto,
+									messages
 								);
 							}
 
 							return messages;
 						})
 					)
-				).pipe(
-					mergeMap(async messages => {
-						const now = await getTimestamp();
-
-						for (let i = 0; i < messages.length; ++i) {
-							const message = messages[i];
-
-							if (!isNaN(message.timestamp)) {
-								continue;
-							}
-
-							for (let j = i - 1; j >= 0; --j) {
-								if (isNaN(messages[j].timestamp)) {
-									continue;
-								}
-
-								message.timestamp =
-									messages[j].timestamp + 0.001;
-								break;
-							}
-
-							if (isNaN(message.timestamp)) {
-								for (let j = i + 1; j < messages.length; ++j) {
-									if (isNaN(messages[j].timestamp)) {
-										continue;
-									}
-
-									message.timestamp =
-										messages[j].timestamp - 0.001;
-								}
-							}
-
-							if (isNaN(message.timestamp)) {
-								message.timestamp = now;
-							}
-
-							messages[i] = new ChatMessage(
-								message,
-								this.sessionService.appUsername
-							);
-						}
-
-						return messages;
-					})
 				)
 			)
 		),
@@ -1102,6 +1042,21 @@ export class ChatService extends BaseProvider {
 		await this.close();
 	}
 
+	/** @see ChatMessageService.getDateChange */
+	public getDateChange (
+		message: IChatMessage | string | undefined,
+		last: IChatMessage | string | undefined
+	) : Observable<string | undefined> {
+		return this.chatMessageService.getDateChange(message, last);
+	}
+
+	/** @see ChatMessageService.getMetadata */
+	public async getMessageMetadata (
+		id: string | IChatMessage | (IChatMessage & {pending: true})
+	) : Promise<{message: ChatMessage; pending: boolean}> {
+		return this.chatMessageService.getMetadata(id, this.chat);
+	}
+
 	/** Gets message value if not already set. */
 	public async getMessageValue (
 		message: IChatMessage,
@@ -1462,11 +1417,18 @@ export class ChatService extends BaseProvider {
 					.toPromise());
 
 			for (let i = messages.length - 1; i >= 0; --i) {
-				const o = messages[i];
+				const o = await this.getMessageMetadata(messages[i]).then(
+					metadata => metadata.message
+				);
+
+				if (o.hidden) {
+					continue;
+				}
 
 				const isLocal =
 					!lastLocal &&
 					o.authorType === ChatMessage.AuthorTypes.Local;
+
 				const isRemote =
 					!lastRemote &&
 					o.authorType === ChatMessage.AuthorTypes.Remote;
@@ -1572,6 +1534,9 @@ export class ChatService extends BaseProvider {
 		@Inject(ChannelService)
 		@Optional()
 		protected readonly channelService: ChannelService | undefined,
+
+		/** @ignore */
+		protected readonly chatMessageService: ChatMessageService,
 
 		/** @ignore */
 		protected readonly databaseService: DatabaseService,

@@ -1,5 +1,5 @@
 import {Observable} from 'rxjs';
-import {ChatMessage} from './chat-message';
+import {IChatMessage} from '../proto';
 import {UiStyles} from './enums';
 
 /** One item in the message list UI. */
@@ -8,7 +8,7 @@ export interface IMessageListItem {
 	accounts: boolean;
 
 	/** Human-readable change in date. */
-	dateChange?: string;
+	dateChange: Observable<string | undefined>;
 
 	/** Indicates whether this is the last message. */
 	isEnd: boolean;
@@ -19,14 +19,11 @@ export interface IMessageListItem {
 	/** Indicates whether this is the first message. */
 	isStart: boolean;
 
-	/** @see ChatMessage */
-	message?: ChatMessage;
+	/** @see IChatMessage */
+	message?: IChatMessage | string;
 
 	/** @see ChatMessageListComponent.mobile */
 	mobile: boolean;
-
-	/** @see ChatMessageComponent.pending */
-	pending: boolean;
 
 	/** @see ChatMessageListComponent.persistentEndMessage */
 	persistentEndMessage: boolean;

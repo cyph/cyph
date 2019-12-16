@@ -29,6 +29,7 @@ import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
+import {ChatMessageService} from './chat-message.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
@@ -285,6 +286,7 @@ export class AccountChatService extends ChatService {
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
 		channelService: ChannelService,
+		chatMessageService: ChatMessageService,
 		databaseService: DatabaseService,
 		dialogService: DialogService,
 		envService: EnvService,
@@ -317,6 +319,7 @@ export class AccountChatService extends ChatService {
 			analyticsService,
 			castleService,
 			channelService,
+			chatMessageService,
 			databaseService,
 			dialogService,
 			envService,

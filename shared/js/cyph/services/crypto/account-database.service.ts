@@ -701,7 +701,12 @@ export class AccountDatabaseService extends BaseProvider {
 			};
 
 			const getItem = staticValues ?
-				getItemInternal :
+				async (key: string) =>
+					this.localStorageService.getOrSetDefault(
+						`${method}/${await url}/${key}`,
+						proto,
+						async () => getItemInternal(key)
+					) :
 				async (key: string) =>
 					lockItem(key)(async () => getItemInternal(key));
 

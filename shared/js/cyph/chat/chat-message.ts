@@ -87,7 +87,10 @@ export class ChatMessage implements IChatMessage {
 		public readonly author: Observable<string>,
 
 		/** Author UserLike object, if available. */
-		public readonly authorUser?: UserLike
+		public readonly authorUser?: UserLike,
+
+		/** If true, hide this message. */
+		public readonly hidden: boolean = false
 	) {
 		if (
 			this.message.selfDestructTimeout === undefined ||

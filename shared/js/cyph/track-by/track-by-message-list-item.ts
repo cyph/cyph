@@ -5,4 +5,9 @@ import {IMessageListItem} from '../chat/imessage-list-item';
 export const trackByMessageListItem: TrackByFunction<IMessageListItem> = (
 	_,
 	item
-) => (item.message ? item.message.id : 'id');
+) =>
+	typeof item.message === 'string' ?
+		item.message :
+	item.message ?
+		item.message.id :
+		'id';

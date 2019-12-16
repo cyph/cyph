@@ -45,24 +45,22 @@
 				</div>
 			</div>
 
-			<div
-				class="date-change"
-				fxLayout="row"
-				*ngIf="
-					item.uiStyle !== uiStyles.mail &&
-					item.dateChange !== undefined
-				"
-			>
-				<div class="line" fxFlex><hr /></div>
-				<h3 class="text">{{ item.dateChange }}</h3>
-				<div class="line" fxFlex><hr /></div>
-			</div>
+			<ng-container *ngIf="item.uiStyle !== uiStyles.mail">
+				<div
+					class="date-change"
+					fxLayout="row"
+					*ngIf="item.dateChange | async as dateChange"
+				>
+					<div class="line" fxFlex><hr /></div>
+					<h3 class="text">{{ dateChange }}</h3>
+					<div class="line" fxFlex><hr /></div>
+				</div>
+			</ng-container>
 
 			<cyph-chat-message
 				fxLayout="row"
 				[message]="item.message"
 				[mobile]="item.mobile"
-				[pending]="item.pending"
 				[scrollIntoView]="item.scrollIntoView"
 				[uiStyle]="item.uiStyle"
 				[unconfirmedMessages]="item.unconfirmedMessages | async"

@@ -1,6 +1,7 @@
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	EventEmitter,
@@ -10,7 +11,6 @@ import {
 	OnDestroy,
 	Optional,
 	Output,
-	Renderer2,
 	SimpleChanges,
 	ViewChild
 } from '@angular/core';
@@ -23,6 +23,7 @@ import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {ChatMessage, UiStyles} from '../../chat';
 import {IQuillDelta} from '../../iquill-delta';
+import {IChatMessage} from '../../proto';
 import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';
 import {DialogService} from '../../services/dialog.service';
@@ -36,7 +37,7 @@ import {WindowWatcherService} from '../../services/window-watcher.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {copyToClipboard} from '../../util/clipboard';
 import {readableByteLength} from '../../util/formatting';
-import {sleep, waitForIterable} from '../../util/wait';
+import {sleep} from '../../util/wait';
 
 /**
  * Angular component for chat message.
@@ -144,13 +145,13 @@ export class ChatMessageComponent extends BaseProvider
 	> = new BehaviorSubject<boolean>(true);
 
 	/** @see ChatMessage */
-	@Input() public message?: ChatMessage;
+	@Input() public message?: IChatMessage | string;
 
 	/** Indicates whether mobile version should be displayed. */
 	@Input() public mobile: boolean = false;
 
 	/** Indicates whether message is pending locally. */
-	@Input() public pending: boolean = false;
+	public pending: boolean = false;
 
 	/** @see ChatMessageValue.quill */
 	public readonly quill: BehaviorSubject<
@@ -188,7 +189,7 @@ export class ChatMessageComponent extends BaseProvider
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
 		return !!(
-			this.message &&
+			this.message instanceof ChatMessage &&
 			this.unconfirmedMessages &&
 			(this.message.authorType !== ChatMessage.AuthorTypes.Local ||
 				!(this.message.id in this.unconfirmedMessages))
@@ -197,7 +198,13 @@ export class ChatMessageComponent extends BaseProvider
 
 	/** Copies message content to clipboard. */
 	public async copyToClipboard (quote: boolean = false) : Promise<void> {
-		if (!(this.message && this.message.value && this.message.value.text)) {
+		if (
+			!(
+				this.message instanceof ChatMessage &&
+				this.message.value &&
+				this.message.value.text
+			)
+		) {
 			return;
 		}
 
@@ -208,6 +215,11 @@ export class ChatMessageComponent extends BaseProvider
 			this.stringsService.messageCopied,
 			this.stringsService.clipboardCopyFail
 		);
+	}
+
+	/** @see ChatMessage.hidden */
+	public get hidden () : boolean {
+		return this.message instanceof ChatMessage && this.message.hidden;
 	}
 
 	/** @inheritDoc */
@@ -239,6 +251,24 @@ export class ChatMessageComponent extends BaseProvider
 			return;
 		}
 
+		const baseMessage = this.message;
+		this.message = undefined;
+
+		this.changeDetectorRef.detectChanges();
+
+		const metadata = await this.chatService.getMessageMetadata(baseMessage);
+
+		const initiatedPromise = this.waitUntilInitiated();
+
+		this.message = metadata.message;
+		this.pending = metadata.pending;
+
+		this.changeDetectorRef.detectChanges();
+
+		if (!(this.message instanceof ChatMessage) || this.message.hidden) {
+			return;
+		}
+
 		const id = this.message.id;
 
 		this.mediaSpoiler.next(
@@ -252,12 +282,11 @@ export class ChatMessageComponent extends BaseProvider
 				)
 				.toPromise()
 				.then(() => {
-					if (!this.message) {
+					if (!(this.message instanceof ChatMessage)) {
 						return;
 					}
-					ChatMessageComponent.mediaSpoilerReveals.add(
-						this.message.id
-					);
+
+					ChatMessageComponent.mediaSpoilerReveals.add(id);
 				});
 		}
 
@@ -278,8 +307,6 @@ export class ChatMessageComponent extends BaseProvider
 		) {
 			this.resolveViewReady();
 		}
-
-		const initiatedPromise = this.waitUntilInitiated();
 
 		if (this.scrollIntoView) {
 			if (
@@ -313,8 +340,11 @@ export class ChatMessageComponent extends BaseProvider
 
 		if (
 			this.unconfirmedMessages === undefined ||
-			this.message !== changes.message.currentValue ||
-			(await this.scrollService.isRead(this.message.id))
+			id !==
+				(typeof this.message === 'string' ?
+					this.message :
+					this.message?.id) ||
+			(await this.scrollService.isRead(id))
 		) {
 			return;
 		}
@@ -328,8 +358,11 @@ export class ChatMessageComponent extends BaseProvider
 			)
 			.toPromise();
 
-		if (this.message === changes.message.currentValue) {
-			await this.scrollService.setRead(this.message.id);
+		if (
+			id ===
+			(typeof this.message === 'string' ? this.message : this.message?.id)
+		) {
+			await this.scrollService.setRead(id);
 		}
 	}
 
@@ -347,40 +380,23 @@ export class ChatMessageComponent extends BaseProvider
 
 	/** Resolves after view init. */
 	public async waitUntilInitiated () : Promise<void> {
-		await this.viewReady
-			.pipe(
-				filter(b => b),
-				take(1)
-			)
-			.toPromise();
-
-		const $elem = $(this.elementRef.nativeElement);
-		const $message = await waitForIterable(() => $elem.find('.message'));
-
-		await Promise.all(
-			$message
-				.children()
-				.toArray()
-				.map(async element => {
-					const promise = new Promise<void>(resolve => {
-						$(element).one('transitionend', () => {
-							resolve();
-						});
-					});
-
-					this.renderer.addClass(element, 'transitionend');
-					await Promise.race([promise, sleep(3000)]);
-					this.renderer.removeClass(element, 'transitionend');
-				})
-		);
+		await Promise.all([
+			this.loaded.pipe(take(1)).toPromise(),
+			this.viewReady
+				.pipe(
+					filter(b => b),
+					take(1)
+				)
+				.toPromise()
+		]);
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly elementRef: ElementRef,
+		private readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** @ignore */
-		private readonly renderer: Renderer2,
+		private readonly elementRef: ElementRef,
 
 		/** @ignore */
 		private readonly scrollService: ScrollService,

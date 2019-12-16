@@ -19,38 +19,25 @@ import * as $ from 'jquery';
 import debounce from 'lodash-es/debounce';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
-import {User, UserLike} from '../../account';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
-import {ChatMessage, IChatData, IMessageListItem, UiStyles} from '../../chat';
-import {MaybePromise} from '../../maybe-promise-type';
+import {IChatData, IMessageListItem, UiStyles} from '../../chat';
 import {IChatMessage} from '../../proto/types';
-import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {ChatService} from '../../services/chat.service';
-import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionInitService} from '../../services/session-init.service';
-import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
 import {trackByMessageListItem} from '../../track-by/track-by-message-list-item';
 import {filterUndefinedOperator} from '../../util/filter';
 import {toBehaviorSubject} from '../../util/flatten-observable';
-import {
-	getOrSetDefault,
-	getOrSetDefaultAsync
-} from '../../util/get-or-set-default';
+import {getOrSetDefault} from '../../util/get-or-set-default';
 import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
 import {urlToSafeStyle} from '../../util/safe-values';
-import {
-	compareDates,
-	relativeDateString,
-	watchDateChange
-} from '../../util/time';
 import {sleep} from '../../util/wait';
 
 /**
@@ -66,22 +53,10 @@ import {sleep} from '../../util/wait';
 export class ChatMessageListComponent extends BaseProvider
 	implements AfterViewInit, OnChanges, OnDestroy, OnInit {
 	/** @ignore */
-	private static readonly messageCache = new Map<
-		string,
-		{
-			dateChange?: string;
-			message: ChatMessage;
-			pending: boolean;
-		}
-	>();
-
-	/** @ignore */
 	private static readonly observableCache = new Map<
 		IChatData,
 		{
-			messages: Observable<
-				{dateChange?: string; message: ChatMessage; pending: boolean}[]
-			>;
+			messages: Observable<(string | (IChatMessage & {pending: true}))[]>;
 			unconfirmedMessages: Observable<
 				{[id: string]: boolean | undefined} | undefined
 			>;
@@ -274,16 +249,14 @@ export class ChatMessageListComponent extends BaseProvider
 
 		const chat = this.chat;
 		const lastUnreadMessage = await chat.lastUnreadMessage;
-		const messageCache = ChatMessageListComponent.messageCache;
 		const observableCache = ChatMessageListComponent.observableCache;
 
 		const observables = getOrSetDefault(observableCache, chat, () => ({
 			messages: combineLatest([
 				this.chatService.messages.pipe(
-					filterUndefinedOperator<IChatMessage[]>()
+					filterUndefinedOperator<string[]>()
 				),
-				chat.pendingMessages.watch(),
-				watchDateChange(true)
+				chat.pendingMessages.watch()
 			]).pipe(
 				mergeMap(async ([onlineMessages, pendingMessages]) => {
 					debugLog(() => ({
@@ -302,177 +275,25 @@ export class ChatMessageListComponent extends BaseProvider
 						const pendingMessage = pendingMessages[i];
 
 						for (let j = onlineMessages.length - 1; j >= 0; --j) {
-							if (onlineMessages[j].id === pendingMessage.id) {
+							if (onlineMessages[j] === pendingMessage.id) {
 								pendingMessages.splice(i, 1);
 								break;
 							}
 						}
 					}
 
-					const messages: (IChatMessage & {
-						pending?: true;
-					})[] = onlineMessages.concat(pendingMessages);
+					const messages: (
+						| string
+						| (IChatMessage & {
+								pending: true;
+						  })
+					)[] = [...onlineMessages, ...pendingMessages];
 
-					const messageListItems = (await (await Promise.all(
-						messages
-							.filter(
-								message =>
-									(message.sessionSubID || undefined) ===
-									this.sessionService.sessionSubID
-							)
-							.map(async message =>
-								getOrSetDefaultAsync(
-									messageCache,
-									message.id +
-										(message.pending ?
-											'pending' :
-											'online'),
-									async () => {
-										if (!message.pending) {
-											const cached = messageCache.get(
-												message.id + 'pending'
-											);
-											if (cached) {
-												cached.message.updateTimestamp(
-													message.timestamp
-												);
-												return {
-													dateChange: undefined,
-													message: cached.message,
-													pending: false
-												};
-											}
-										}
-
-										let author: Observable<string>;
-										let authorUser: UserLike | undefined;
-
-										if (
-											message.authorType ===
-											ChatMessage.AuthorTypes.App
-										) {
-											author = this.sessionService
-												.appUsername;
-										}
-										else if (
-											message.authorType ===
-											ChatMessage.AuthorTypes.Local
-										) {
-											author = this.sessionService
-												.localUsername;
-
-											const currentUser =
-												this.envService.isAccounts &&
-												this.accountDatabaseService ?
-													this.accountDatabaseService
-														.currentUser.value :
-													undefined;
-
-											authorUser = currentUser?.user;
-										}
-										else if (
-											message.authorID === undefined
-										) {
-											author = this.sessionService
-												.remoteUsername;
-										}
-										else {
-											try {
-												const remoteUser = await this
-													.chatService.remoteUser
-													.value;
-
-												authorUser =
-													this.envService
-														.isAccounts &&
-													this
-														.accountUserLookupService ?
-														remoteUser?.username ===
-														  message.authorID ?
-															remoteUser :
-															await this.accountUserLookupService.getUser(
-																message.authorID
-															) :
-														undefined;
-											}
-											catch {}
-
-											author = authorUser?.pseudoAccount ?
-												authorUser.name :
-											authorUser instanceof User ?
-												authorUser.realUsername :
-												this.sessionService
-													.remoteUsername;
-										}
-
-										return {
-											dateChange: undefined,
-											message: new ChatMessage(
-												message,
-												author,
-												authorUser
-											),
-											pending: message.pending === true
-										};
-									}
-								)
-							)
-					))
-						.sort((a, b) =>
-							a.pending && !b.pending ?
-								1 :
-							!a.pending && b.pending ?
-								-1 :
-								a.message.timestamp - b.message.timestamp
-						)
-						.reduce(
-							async (acc, o) =>
-								Promise.resolve(acc).then(
-									async ({last, messageList}) => ({
-										last: o.message.timestamp,
-										messageList: messageList.concat({
-											...o,
-											dateChange:
-												last === undefined ||
-												!compareDates(
-													last,
-													o.message.timestamp,
-													true
-												) ?
-													await relativeDateString(
-														o.message.timestamp,
-														last === undefined
-													) :
-													undefined
-										})
-									})
-								),
-							<
-								MaybePromise<{
-									last?: number;
-									messageList: {
-										dateChange?: string;
-										message: ChatMessage;
-										pending: boolean;
-									}[];
-								}>
-							> {last: undefined, messageList: []}
-						)).messageList;
-
-					await Promise.all(
-						messageListItems.map(async o =>
-							this.chatService.getMessageValue(o.message, true)
-						)
-					);
-
-					if (
-						this.chatService.messageBottomOffset.value > 1 ||
-						messageListItems.length > 0
-					) {
+					if (this.chatService.messageBottomOffset.value > 1) {
 						this.chatService.resolvers.messageListLoaded.resolve();
 					}
 
-					return messageListItems;
+					return messages;
 				})
 			),
 			unconfirmedMessages: chat.unconfirmedMessages
@@ -483,32 +304,41 @@ export class ChatMessageListComponent extends BaseProvider
 				.pipe(
 					map(([messages]) =>
 						(<
-							{
-								dateChange?: string;
-								message?: ChatMessage;
-								pending: boolean;
-							}[]
-						> (messages.length < 1 ? [{pending: false}] : messages)).map(
-							({dateChange, message, pending}, i, arr) => {
+							(
+								| string
+								| (
+										| (IChatMessage & {
+												pending: true;
+										  })
+										| undefined
+								  )
+							)[]
+						> (messages.length < 1 ? [undefined] : messages)).map(
+							(message, i, arr) : IMessageListItem => {
 								const isEnd = i + 1 === arr.length;
 
 								return {
 									accounts:
 										this.envService.isAccounts &&
 										!this.sessionInitService.ephemeral,
-									dateChange,
+									dateChange: this.chatService.getDateChange(
+										message,
+										arr[i - 1]
+									),
 									isEnd,
 									isFriendTyping: chat.isFriendTyping,
 									isStart: i === 0,
 									message,
 									mobile: this.mobile,
-									pending,
 									persistentEndMessage: this
 										.persistentEndMessage,
 									scrollIntoView:
 										this.initialScrollDown.value &&
 										(lastUnreadMessage ?
-											message?.id === lastUnreadMessage :
+											(typeof message === 'string' ?
+												message :
+												message?.id) ===
+											lastUnreadMessage :
 											isEnd),
 									showDisconnectMessage: this
 										.showDisconnectMessage,
@@ -602,12 +432,17 @@ export class ChatMessageListComponent extends BaseProvider
 		if (
 			!(bottom || target.scrollTop === 0) ||
 			(!bottom &&
-				this.infiniteScrollingData.items[0] &&
-				this.infiniteScrollingData.items[0].message &&
-				this.infiniteScrollingData.items[0].message.id ===
-					(this.allMessageListItems.value[0] &&
-						this.allMessageListItems.value[0].message &&
-						this.allMessageListItems.value[0].message.id))
+				this.infiniteScrollingData.items[0]?.message !== undefined &&
+				(typeof this.infiniteScrollingData.items[0].message ===
+				'string' ?
+					this.infiniteScrollingData.items[0].message :
+					this.infiniteScrollingData.items[0].message?.id) ===
+					(!this.allMessageListItems.value[0] ?
+						undefined :
+					typeof this.allMessageListItems.value[0].message ===
+						'string' ?
+						this.allMessageListItems.value[0].message :
+						this.allMessageListItems.value[0]?.message?.id))
 		) {
 			return;
 		}
@@ -656,24 +491,7 @@ export class ChatMessageListComponent extends BaseProvider
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		@Inject(AccountDatabaseService)
-		@Optional()
-		private readonly accountDatabaseService:
-			| AccountDatabaseService
-			| undefined,
-
-		/** @ignore */
-		@Inject(AccountUserLookupService)
-		@Optional()
-		private readonly accountUserLookupService:
-			| AccountUserLookupService
-			| undefined,
-
-		/** @ignore */
 		private readonly scrollService: ScrollService,
-
-		/** @ignore */
-		private readonly sessionService: SessionService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService,

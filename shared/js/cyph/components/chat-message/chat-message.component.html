@@ -451,20 +451,7 @@
 </ng-template>
 
 <ng-template #messageLoading>
-	<div class="message-loading">
-		<div
-			*ngIf="
-				(message?.authorUser?.name | async) ||
-					(message?.author | async) as author;
-				else messageLoadingNoAuthor
-			"
-		>
-			<span cyphTranslate>Loading message from</span>
-			&ngsp;
-			<span>{{ author }}...</span>
-		</div>
-		<ng-template #messageLoadingNoAuthor>
-			<div cyphTranslate>Loading message...</div>
-		</ng-template>
+	<div cyphTranslate class="message-loading" *ngIf="!hidden">
+		<div cyphTranslate>Loading message...</div>
 	</div>
 </ng-template>
