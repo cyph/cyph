@@ -460,7 +460,7 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 		perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' |
 		tr '\n' ' '
 	)"
-	cyphComCheckoutCSPSources="'' $(cat cyph.com/checkoutcspsources |
+	cyphComCheckoutCSPSources="$(cat cyph.com/checkoutcspsources |
 		perl -pe 's/^(.*)$/https:\/\/\1 https:\/\/*.\1/g' |
 		tr '\n' ' '
 	)"
