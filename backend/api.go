@@ -200,7 +200,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		priceDelta := amount - braintreeDecimalToCents(plan.Price)
 
 		if priceDelta < 0 {
-			return err.Error(), http.StatusTeapot
+			return errors.New("insufficient payment"), http.StatusTeapot
 		}
 
 		subscriptionRequest := &braintree.SubscriptionRequest{
@@ -273,6 +273,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 	} else {
+		if plan, hasPlan := config.Plans[planID]; hasPlan && plan.Price > amount {
+			return errors.New("insufficient payment"), http.StatusTeapot
+		}
+
 		if bitPayInvoiceID == "" {
 			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
 				Amount:             braintree.NewDecimal(amount, 2),

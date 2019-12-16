@@ -49,6 +49,7 @@ type CustomerEmail struct {
 // Plan : Braintree plan
 type Plan struct {
 	AccountsPlan      string
+	Price             int64
 	ProFeatures       map[string]bool
 	SessionCountLimit int64
 }
@@ -367,6 +368,7 @@ var config = struct {
 		},
 		"9-2": Plan{
 			AccountsPlan: "LifetimePlatinum",
+			Price:        45000,
 			ProFeatures: map[string]bool{
 				"api":            false,
 				"disableP2P":     false,
