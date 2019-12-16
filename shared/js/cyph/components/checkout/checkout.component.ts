@@ -378,11 +378,19 @@ export class CheckoutComponent extends BaseProvider
 						logo.removeChild(logo.firstElementChild);
 					}
 
+					logo.style.height = `${logoHeight}px`;
+					logo.style.maxHeight = `${logoHeight}px`;
+					logo.style.minHeight = `${logoHeight}px`;
+
+					logo.style.width = `${logoWidth}px`;
+					logo.style.maxWidth = `${logoWidth}px`;
+					logo.style.minWidth = `${logoWidth}px`;
+
 					const img = document.createElement('img');
 					img.src = bitPayLogo;
 					img.height = logoHeight;
 					img.width = logoHeight;
-					img.style.margin = `0 ${(logoWidth - logoHeight) / 2}px`;
+					img.style.margin = 'auto';
 					img.style.transform = 'scale(1.5)';
 					logo.appendChild(img);
 				}
