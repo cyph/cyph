@@ -30,6 +30,7 @@ import {QRService} from '../../services/qr.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {numberToString} from '../../util/formatting';
+import {debugLogError} from '../../util/log';
 import {getDateTimeString} from '../../util/time';
 
 /**
@@ -82,6 +83,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 	];
 
 	/** Generates and uploads a new wallet. */
+	/* eslint-disable-next-line complexity */
 	public async generate (
 		newWalletOptions: NewWalletOptions = NewWalletOptions.generate,
 		cryptocurrency: Cryptocurrencies = Cryptocurrencies.BTC
@@ -188,25 +190,25 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 				}
 		}
 
-		let wallet: IWallet;
-
 		try {
-			wallet = await this.cryptocurrencyService.generateWallet({
-				address,
-				cryptocurrency,
-				key,
-				uncompressedPublicKey
-			});
+			await this.accountFilesService.upload(
+				name,
+				await this.cryptocurrencyService.generateWallet({
+					address,
+					cryptocurrency,
+					key,
+					uncompressedPublicKey
+				})
+			).result;
 		}
-		catch {
+		catch (err) {
+			debugLogError(() => ({walletUploadFailure: {err}}));
+
 			await this.dialogService.alert({
 				content: this.stringsService.newWalletErrorText,
 				title: this.stringsService.newWalletErrorTitle
 			});
-			return;
 		}
-
-		await this.accountFilesService.upload(name, wallet).result;
 	}
 
 	/** @inheritDoc */

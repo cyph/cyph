@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
@@ -428,9 +430,9 @@ export class CheckoutComponent extends BaseProvider
 				optionsParent.appendChild(bitPayOption);
 
 				/* eslint-disable-next-line no-unused-expressions */
-				this.bitPayInvoiceID?.catch(err => {
-					console.error({bitPayError: err});
+				this.bitPayInvoiceID?.catch(bitPayError => {
 					optionsParent.removeChild(bitPayOption);
+					throw bitPayError;
 				});
 			}
 		);
