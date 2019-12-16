@@ -8,16 +8,16 @@
 		!value.fileTransfer.media
 	"
 	[class.mobile]="mobile"
-	[class.author-app]="message?.authorType === authorTypes.App"
-	[class.author-local]="message?.authorType === authorTypes.Local"
-	[class.author-remote]="message?.authorType === authorTypes.Remote"
-	[class.file-transfer]="message?.value?.fileTransfer !== undefined"
-	[class.get-value-failure]="message?.value?.failure"
+	[class.author-app]="chatMessage?.authorType === authorTypes.App"
+	[class.author-local]="chatMessage?.authorType === authorTypes.Local"
+	[class.author-remote]="chatMessage?.authorType === authorTypes.Remote"
+	[class.file-transfer]="chatMessage?.value?.fileTransfer !== undefined"
+	[class.get-value-failure]="chatMessage?.value?.failure"
 	[class.self-destruct]="chatService.chatSelfDestruct | async"
-	[class.self-destructed]="message?.selfDestructTimer?.isComplete | async"
+	[class.self-destructed]="chatMessage?.selfDestructTimer?.isComplete | async"
 	[class.visibility-hidden]="(viewReady | async) === false"
-	[attr.data-message-id]="message?.id"
-	*ngIf="message?.valueWatcher | async as value; else messageLoading"
+	[attr.data-message-id]="chatMessage?.id"
+	*ngIf="chatMessage?.valueWatcher | async as value; else messageLoading"
 >
 	<div>
 		<div fxLayout="row" *ngIf="uiStyle === uiStyles.default; else mailUI">
@@ -26,10 +26,11 @@
 					<strong
 						class="message-author"
 						*ngIf="
-							!mobile && message?.authorType !== authorTypes.App
+							!mobile &&
+							chatMessage?.authorType !== authorTypes.App
 						"
 					>
-						{{ message?.author | async }}:
+						{{ chatMessage?.author | async }}:
 					</strong>
 					&nbsp;
 					<ng-container
@@ -49,8 +50,8 @@
 			>
 				<div fxLayout="row">
 					<!--
-					<div *ngIf='mobile && message?.authorType === authorTypes.Local'>
-						{{message?.author | async}} &nbsp;&mdash;&nbsp;
+					<div *ngIf='mobile && chatMessage?.authorType === authorTypes.Local'>
+						{{chatMessage?.author | async}} &nbsp;&mdash;&nbsp;
 					</div>
 					-->
 
@@ -60,11 +61,12 @@
 						></ng-container>
 					</ng-container>
 
-					<div>{{ message?.timeString }}</div>
+					<div>{{ chatMessage?.timeString }}</div>
 
 					<div
 						*ngIf="
-							!mobile || message?.authorType === authorTypes.Local
+							!mobile ||
+							chatMessage?.authorType === authorTypes.Local
 						"
 					>
 						<span>&nbsp;</span>
@@ -81,8 +83,8 @@
 					</ng-container>
 
 					<!--
-					<div *ngIf='mobile && message?.authorType === authorTypes.Remote'>
-						&nbsp;&mdash;&nbsp;&ngsp;{{message?.author | async}}
+					<div *ngIf='mobile && chatMessage?.authorType === authorTypes.Remote'>
+						&nbsp;&mdash;&nbsp;&ngsp;{{chatMessage?.author | async}}
 					</div>
 					-->
 				</div>
@@ -93,7 +95,9 @@
 			<div
 				fxLayout="row"
 				class="cyph-light-theme mail-ui"
-				[class.mail-local]="message?.authorType === authorTypes.Local"
+				[class.mail-local]="
+					chatMessage?.authorType === authorTypes.Local
+				"
 			>
 				<mat-card fxFlex>
 					<mat-card-header>
@@ -101,46 +105,49 @@
 							mat-card-avatar
 							cyphTranslate
 							class="avatar-image"
-							[src]="message?.authorUser?.avatar | async"
+							[src]="chatMessage?.authorUser?.avatar | async"
 							[routerLink]="
-								'/profile/' + message?.authorUser?.username
+								'/profile/' + chatMessage?.authorUser?.username
 							"
 							alt="User Avatar"
 							*ngIf="
 								accountService &&
-								!!message?.authorUser &&
-								!!message?.authorUser?.avatar
+								!!chatMessage?.authorUser &&
+								!!chatMessage?.authorUser?.avatar
 							"
 						/>
 						<mat-card-title fxFlex>
 							<div fxFlex [fxLayout]="mobile ? 'column' : 'row'">
-								<span *ngIf="!!message?.authorUser">
+								<span *ngIf="!!chatMessage?.authorUser">
 									<strong
 										>{{
-											message?.authorUser?.name | async
+											chatMessage?.authorUser?.name
+												| async
 										}}&nbsp;</strong
 									>
 									&ngsp;
 									<small>
 										{{
-											message?.authorType ===
+											chatMessage?.authorType ===
 											authorTypes.Remote ?
 												'@' :
 												''
-										}}{{ message?.author | async }}
+										}}{{ chatMessage?.author | async }}
 									</small>
 								</span>
-								<strong *ngIf="!message?.authorUser">
+								<strong *ngIf="!chatMessage?.authorUser">
 									{{
-										message?.authorType ===
+										chatMessage?.authorType ===
 										authorTypes.Remote ?
 											'@' :
 											''
-									}}{{ message?.author | async }}
+									}}{{ chatMessage?.author | async }}
 								</strong>
 								<div fxFlex *ngIf="!mobile"></div>
 								<div>
-									<span>{{ message?.dateTimeString }}</span>
+									<span>{{
+										chatMessage?.dateTimeString
+									}}</span>
 									&ngsp;
 									<ng-container
 										*ngTemplateOutlet="messageConfirmation"
@@ -169,11 +176,11 @@
 			fxLayoutAlign="center center"
 			fxLayoutGap="10px"
 			class="self-destruct-timer"
-			*ngIf="message?.selfDestructTimer"
+			*ngIf="chatMessage?.selfDestructTimer"
 		>
 			<div cyphTranslate>Message will self-destruct in</div>
 			<div class="countdown">
-				{{ message?.selfDestructTimer?.timestamp | async }}
+				{{ chatMessage?.selfDestructTimer?.timestamp | async }}
 			</div>
 		</div>
 	</div>
@@ -183,7 +190,7 @@
 <ng-template #messageConfirmation>
 	<ng-container
 		*ngIf="
-			pending || message?.authorType !== authorTypes.Local;
+			pending || chatMessage?.authorType !== authorTypes.Local;
 			else messagePartialConfirmed
 		"
 	>
@@ -410,7 +417,7 @@
 			<cyph-markdown
 				class="message-text"
 				[markdown]="value.text"
-				[targetSelf]="message?.authorType === authorTypes.App"
+				[targetSelf]="chatMessage?.authorType === authorTypes.App"
 			></cyph-markdown>
 		</ng-template>
 	</span>
@@ -427,14 +434,14 @@
 		[class.visibility-hidden]="
 			envService.isMobileOS ||
 			!(
-				(((message?.valueWatcher | async) || {text: ''}).text?.length ||
-					0) > 0
+				(((chatMessage?.valueWatcher | async) || {text: ''}).text
+					?.length || 0) > 0
 			)
 		"
 		*ngIf="
 			!mobile ||
 			!envService.isMobileOS ||
-			(((message?.valueWatcher | async) || {text: ''}).text?.length ||
+			(((chatMessage?.valueWatcher | async) || {text: ''}).text?.length ||
 				0) > 0
 		"
 	>

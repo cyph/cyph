@@ -186,6 +186,11 @@ export class ChatMessageComponent extends BaseProvider
 		boolean
 	>(false);
 
+	/** @see ChatMessageComponent.message */
+	public get chatMessage () : ChatMessage | undefined {
+		return this.message instanceof ChatMessage ? this.message : undefined;
+	}
+
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
 		return !!(
