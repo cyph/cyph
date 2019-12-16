@@ -11,7 +11,7 @@ import {
 	Observable,
 	of
 } from 'rxjs';
-import {filter, map, mergeMap, take, takeWhile} from 'rxjs/operators';
+import {filter, map, mergeMap, take, tap, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
 import {
@@ -213,7 +213,8 @@ export class ChatService extends BaseProvider {
 								.catch(() => [])
 						).pipe(take(1)),
 					chat.messageList.watchFlat(true).pipe(
-						map(messages => {
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						tap(messages => {
 							if (chat.pendingMessageRoot) {
 								this.localStorageService.setItem(
 									`${chat.pendingMessageRoot}/messageIDList`,
@@ -221,8 +222,6 @@ export class ChatService extends BaseProvider {
 									messages
 								);
 							}
-
-							return messages;
 						})
 					)
 				)
