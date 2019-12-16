@@ -1641,38 +1641,16 @@ export class ChatService extends BaseProvider {
 			this.subscriptions.push(
 				combineLatest([
 					this.chat.lastConfirmedMessage.watch(),
-					this.chat.messageList
-						.watchFlat(true)
-						.pipe(
-							mergeMap(async messageIDs =>
-								filterUndefined(
-									await Promise.all(
-										messageIDs.map(async id =>
-											this.chat.messages
-												.getItem(id)
-												.catch(() => undefined)
-										)
-									)
-								).filter(
-									o =>
-										o.authorType ===
-										ChatMessage.AuthorTypes.Local
-								)
-							)
-						)
+					this.chat.messageList.watchFlat(true)
 				])
 					.pipe(
-						map(([lastConfirmedMessage, outgoingMessages]) => {
+						map(([lastConfirmedMessage, messageIDs]) => {
 							const unconfirmedMessages: {
 								[id: string]: boolean;
 							} = {};
 
-							for (
-								let i = outgoingMessages.length - 1;
-								i >= 0;
-								--i
-							) {
-								const {id} = outgoingMessages[i];
+							for (let i = messageIDs.length - 1; i >= 0; --i) {
+								const id = messageIDs[i];
 
 								if (id === lastConfirmedMessage.id) {
 									break;
