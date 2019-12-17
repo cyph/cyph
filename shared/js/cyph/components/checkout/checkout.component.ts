@@ -440,6 +440,20 @@ export class CheckoutComponent extends BaseProvider
 
 				optionsParent.appendChild(bitPayOption);
 
+				self.addEventListener(
+					'message',
+					e => {
+						if (
+							e?.data?.status === 'complete' ||
+							e?.data?.status === 'confirmed' ||
+							e?.data?.status === 'paid'
+						) {
+							bitPay.hideFrame();
+						}
+					},
+					false
+				);
+
 				/* eslint-disable-next-line no-unused-expressions */
 				this.bitPayInvoiceID?.catch(bitPayError => {
 					optionsParent.removeChild(bitPayOption);
