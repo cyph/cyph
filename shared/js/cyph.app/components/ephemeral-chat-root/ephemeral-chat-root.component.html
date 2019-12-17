@@ -41,27 +41,6 @@
 			<span cyphTranslate>for more details and the solution.</span>
 		</h3>
 
-		<div
-			fxLayout="row"
-			fxLayoutAlign="center center"
-			class="cyph-loading-indicator cyph-banner dark"
-			*ngIf="
-				(appService.chatRootState | async) === chatRootStates.chat &&
-				(chatService.scrollTransition | async) === true
-			"
-		>
-			<!--
-			<mat-progress-spinner
-				diameter='16'
-				strokeWidth='2'
-				mode='indeterminate'
-			></mat-progress-spinner>
-			&nbsp;
-			&nbsp;
-			-->
-			<span cyphTranslate>Loading...</span>
-		</div>
-
 		<cyph-chat-main
 			fxFlex
 			fxFlexFill

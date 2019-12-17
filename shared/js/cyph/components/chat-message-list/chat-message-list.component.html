@@ -1,8 +1,9 @@
 <div
 	#scrollView
 	cyphNanoScroller
-	[style.overflow]="(chatService.scrollTransition | async) ? 'hidden' : ''"
-	(scroll)="onScroll($event)"
+	(touchmove)="onScroll($event)"
+	(touchstart)="onTouchStart($event)"
+	(wheel)="onScroll($event)"
 >
 	<div fxLayout="column" fxLayoutGap="4px" class="message-list-background">
 		<ng-container
@@ -61,11 +62,9 @@
 				fxLayout="row"
 				[message]="item.message"
 				[mobile]="item.mobile"
-				[scrollIntoView]="item.scrollIntoView"
 				[uiStyle]="item.uiStyle"
 				[unconfirmedMessages]="item.unconfirmedMessages | async"
 				(loaded)="item.isEnd ? onMessageListInit() : onNewMessageLoad()"
-				(scrolledIntoView)="initialScrollDown.next(false)"
 				*ngIf="item.message !== undefined"
 			></cyph-chat-message>
 

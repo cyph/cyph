@@ -30,8 +30,7 @@
 				class="cyph-loading-indicator cyph-banner dark"
 				*ngIf="
 					chat.state === states.chat &&
-					((accountChatService.scrollTransition | async) === true ||
-						(accountChatService.uiReady | async) !== true) &&
+					(accountChatService.uiReady | async) !== true &&
 					(initialCallPending | async) === false
 				"
 			>

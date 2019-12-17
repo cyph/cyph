@@ -38,7 +38,6 @@ import {getOrSetDefault} from '../../util/get-or-set-default';
 import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
 import {urlToSafeStyle} from '../../util/safe-values';
-import {sleep} from '../../util/wait';
 
 /**
  * Angular component for chat message list.
@@ -73,11 +72,16 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** @ignore */
 	private readonly infiniteScrollingData = {
-		initStep: 0,
 		items: <IMessageListItem[]> [],
 		messageBottomOffset: 1,
 		viewportMessageCount: 0
 	};
+
+	/** Used for initial scroll down on load. */
+	private initialScrollDown: boolean = true;
+
+	/** @ignore */
+	private lastTouchY: number = 0;
 
 	/** Number of messages to render on the screen at any given time. */
 	private readonly viewportMessageCount = toBehaviorSubject(
@@ -102,9 +106,6 @@ export class ChatMessageListComponent extends BaseProvider
 			urlToSafeStyle(
 				this.envService.customBuildImages.logoVertical
 			).catch(() => undefined);
-
-	/** Used for initial scroll down on load. */
-	public readonly initialScrollDown = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether message count should be displayed in title. */
 	@Input() public messageCountInTitle: boolean = false;
@@ -146,23 +147,6 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** Handles new message load. */
 	public readonly onNewMessageLoad = debounce(async () => {
-		if (this.infiniteScrollingData.initStep !== 4) {
-			return;
-		}
-
-		const scrollView = this.scrollView && this.scrollView.nativeElement;
-
-		if (!(scrollView instanceof HTMLElement)) {
-			return;
-		}
-
-		this.infiniteScrollingData.initStep -= 2;
-
-		await sleep();
-		scrollView.scroll(
-			0,
-			(scrollView.scrollHeight - scrollView.clientHeight) / 2
-		);
 		this.chatService.scrollTransition.next(false);
 	}, 250);
 
@@ -189,10 +173,6 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** Triggers message flash animation. */
 	public async flashMessage (elem: HTMLElement) : Promise<void> {
-		if (this.infiniteScrollingData.initStep < 3) {
-			return;
-		}
-
 		await this.chatService.scrollTransition
 			.pipe(
 				filter(b => !b),
@@ -205,8 +185,7 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** Jumps to recent messages. */
 	public jumpToRecentMessages () : void {
-		this.initialScrollDown.next(true);
-		this.changes.next();
+		this.initialScrollDown = true;
 		this.chatService.messageBottomOffset.next(1);
 	}
 
@@ -239,16 +218,10 @@ export class ChatMessageListComponent extends BaseProvider
 		}
 
 		if (this.uiStyle === UiStyles.mail) {
-			this.initialScrollDown.next(false);
-		}
-		else {
-			this.chatService.resolvers.messageListLoaded.promise.then(
-				async () => this.scrollService.scrollDown()
-			);
+			this.initialScrollDown = false;
 		}
 
 		const chat = this.chat;
-		const lastUnreadMessage = await chat.lastUnreadMessage;
 		const observableCache = ChatMessageListComponent.observableCache;
 
 		const observables = getOrSetDefault(observableCache, chat, () => ({
@@ -262,14 +235,6 @@ export class ChatMessageListComponent extends BaseProvider
 					debugLog(() => ({
 						chatMessageList: {onlineMessages, pendingMessages}
 					}));
-
-					if (
-						this.initialScrollDown.value &&
-						onlineMessages.length < 1 &&
-						!lastUnreadMessage
-					) {
-						this.initialScrollDown.next(false);
-					}
 
 					for (let i = pendingMessages.length - 1; i >= 0; --i) {
 						const pendingMessage = pendingMessages[i];
@@ -290,6 +255,7 @@ export class ChatMessageListComponent extends BaseProvider
 					)[] = [...onlineMessages, ...pendingMessages];
 
 					if (this.chatService.messageBottomOffset.value > 1) {
+						this.initialScrollDown = false;
 						this.chatService.resolvers.messageListLoaded.resolve();
 					}
 
@@ -332,14 +298,7 @@ export class ChatMessageListComponent extends BaseProvider
 									mobile: this.mobile,
 									persistentEndMessage: this
 										.persistentEndMessage,
-									scrollIntoView:
-										this.initialScrollDown.value &&
-										(lastUnreadMessage ?
-											(typeof message === 'string' ?
-												message :
-												message?.id) ===
-											lastUnreadMessage :
-											isEnd),
+									scrollIntoView: false,
 									showDisconnectMessage: this
 										.showDisconnectMessage,
 									uiStyle: this.uiStyle,
@@ -352,17 +311,6 @@ export class ChatMessageListComponent extends BaseProvider
 				)
 				.subscribe(this.allMessageListItems)
 		);
-
-		this.messageListItems
-			.pipe(
-				filter(messageListItems => messageListItems.length > 0),
-				take(1)
-			)
-			.toPromise()
-			.then(() => {
-				this.infiniteScrollingData.initStep +=
-					this.chatService.messageBottomOffset.value === 1 ? 1 : 2;
-			});
 	}
 
 	/** @inheritDoc */
@@ -390,14 +338,13 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** Handles first message load. */
 	public async onMessageListInit () : Promise<void> {
-		if (this.infiniteScrollingData.initStep !== 1) {
+		if (!this.initialScrollDown) {
 			return;
 		}
 
-		++this.infiniteScrollingData.initStep;
+		this.initialScrollDown = false;
 
-		const scrollView = this.scrollView && this.scrollView.nativeElement;
-
+		const scrollView = this.scrollView?.nativeElement;
 		if (!(scrollView instanceof HTMLElement)) {
 			return;
 		}
@@ -406,57 +353,62 @@ export class ChatMessageListComponent extends BaseProvider
 		this.chatService.scrollTransition.next(false);
 	}
 
-	/** Scroll event handler. */
-	public onScroll (e: UIEvent) : void {
-		if (this.infiniteScrollingData.initStep === 2) {
-			++this.infiniteScrollingData.initStep;
+	/** Manual scroll event handler. */
+	public onScroll (e: TouchEvent | WheelEvent) : void {
+		if (this.chatService.scrollTransition.value) {
 			return;
 		}
 
-		if (
-			this.infiniteScrollingData.initStep !== 3 ||
-			this.allMessageListItems.value.length <=
-				this.viewportMessageCount.value
-		) {
+		const scrollView = this.scrollView?.nativeElement;
+		if (!(scrollView instanceof HTMLElement)) {
 			return;
 		}
 
-		const target = e.target;
-		if (!(target instanceof HTMLElement)) {
-			return;
-		}
+		const paginationDelta = 0.25;
+		const maxScroll = scrollView.scrollHeight - scrollView.clientHeight - 1;
+
+		const deltaY =
+			e instanceof WheelEvent ?
+				e.deltaY :
+			e instanceof TouchEvent && e.touches[0] ?
+				this.lastTouchY - e.touches[0].pageY :
+				0;
 
 		const bottom =
-			target.scrollTop >= target.scrollHeight - target.clientHeight - 1;
+			deltaY > 0 &&
+			scrollView.scrollTop >= maxScroll * (0.5 + paginationDelta);
 
-		if (
-			!(bottom || target.scrollTop === 0) ||
-			(!bottom &&
-				this.infiniteScrollingData.items[0]?.message !== undefined &&
-				(typeof this.infiniteScrollingData.items[0].message ===
-				'string' ?
-					this.infiniteScrollingData.items[0].message :
-					this.infiniteScrollingData.items[0].message?.id) ===
-					(!this.allMessageListItems.value[0] ?
-						undefined :
-					typeof this.allMessageListItems.value[0].message ===
-						'string' ?
-						this.allMessageListItems.value[0].message :
-						this.allMessageListItems.value[0]?.message?.id))
-		) {
+		const top =
+			deltaY < 0 &&
+			scrollView.scrollTop <= maxScroll * (0.5 - paginationDelta);
+
+		const atStartOfMessageHistory = () =>
+			this.infiniteScrollingData.items[0]?.message !== undefined &&
+			(typeof this.infiniteScrollingData.items[0].message === 'string' ?
+				this.infiniteScrollingData.items[0].message :
+				this.infiniteScrollingData.items[0].message?.id) ===
+				(!this.allMessageListItems.value[0] ?
+					undefined :
+				typeof this.allMessageListItems.value[0].message === 'string' ?
+					this.allMessageListItems.value[0].message :
+					this.allMessageListItems.value[0]?.message?.id);
+
+		if (!(bottom || top) || (top && atStartOfMessageHistory())) {
 			return;
 		}
 
-		const messageBottomOffset = Math.min(
-			Math.max(
-				this.chatService.messageBottomOffset.value +
-					(bottom ? -0.5 : 0.5),
-				1
-			),
-			Math.ceil(
-				this.allMessageListItems.value.length /
-					this.viewportMessageCount.value
-			)
+		const messageBottomOffset = parseFloat(
+			Math.min(
+				Math.max(
+					this.chatService.messageBottomOffset.value +
+						(bottom ? -paginationDelta : paginationDelta),
+					1
+				),
+				Math.ceil(
+					this.allMessageListItems.value.length /
+						this.viewportMessageCount.value
+				)
+			).toFixed(2)
 		);
 
 		if (
@@ -477,13 +429,26 @@ export class ChatMessageListComponent extends BaseProvider
 			messageBottomOffset > 1 ||
 			this.chatService.messageBottomOffset.value > 1
 		) {
-			++this.infiniteScrollingData.initStep;
 			this.chatService.scrollTransition.next(true);
 		}
 
 		this.scrollService.enableScrollDown = messageBottomOffset <= 1;
 
+		if (scrollView.scrollTop <= 1) {
+			scrollView.scroll(0, 2);
+		}
+
 		this.chatService.messageBottomOffset.next(messageBottomOffset);
+	}
+
+	/** Workaround for `touchmove` events having no deltaX/deltaY equivalent. */
+	public onTouchStart (e: TouchEvent) : void {
+		const touch = e.touches[0];
+		if (!touch) {
+			return;
+		}
+
+		this.lastTouchY = touch.pageY;
 	}
 
 	constructor (
