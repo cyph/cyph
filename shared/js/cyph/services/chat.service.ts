@@ -215,13 +215,15 @@ export class ChatService extends BaseProvider {
 					chat.messageList.watchFlat(true).pipe(
 						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						tap(messages => {
-							if (chat.pendingMessageRoot) {
-								this.localStorageService.setItem(
-									`${chat.pendingMessageRoot}/messageIDList`,
-									StringArrayProto,
-									messages
-								);
+							if (!chat.pendingMessageRoot) {
+								return;
 							}
+
+							this.localStorageService.setItem(
+								`${chat.pendingMessageRoot}/messageIDList`,
+								StringArrayProto,
+								messages
+							);
 						})
 					)
 				)
