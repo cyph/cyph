@@ -227,7 +227,7 @@ fi
 
 if [ "${betaProd}" ] ; then
 	site="${webSignedProject}"
-elif [ ! "${test}" ] && [ ! "${noBeta}" ] ; then
+elif [ ! "${test}" ] && [ ! "${noBeta}" ] && [ "${websign}" ] ; then
 	prodAndBeta=true
 fi
 
