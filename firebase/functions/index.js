@@ -196,16 +196,19 @@ const onRequest = (adminOnly, f) =>
 					throw new Error('Invalid authorization.');
 				}
 
-				await f(
+				const returnValue = await f(
 					req,
 					res,
 					validateInput(req.body.namespace.replace(/\./g, '_'))
 				);
+
+				res.status(200).send(
+					returnValue !== undefined ? returnValue : ''
+				);
 			}
 			catch (err) {
 				console.error(err);
-				res.status(500);
-				res.send({error: true});
+				res.status(500).send({error: true});
 			}
 		})
 	);
