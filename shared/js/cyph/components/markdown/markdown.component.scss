@@ -6,11 +6,6 @@
 			display: inline;
 		}
 
-		> :not(p),
-		> p:not(:only-child) {
-			margin: 10px;
-		}
-
 		hr {
 			vertical-align: middle;
 			border-top: 0;
