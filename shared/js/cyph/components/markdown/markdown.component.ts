@@ -104,6 +104,7 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 		/* Gracefully handle protocol-less links */
 		if (!this.targetSelf) {
 			html = html
+				.replace(/\<a href="/g, '<a target="_blank" href="')
 				.replace(
 					/(href=")(((?!:\/\/).)*?")/g,
 					(_, a, b) => `${a}http://${b}`
