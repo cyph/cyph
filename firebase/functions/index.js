@@ -163,7 +163,11 @@ const usernameBlacklisted = async (namespace, username, reservedUsername) =>
 			.ref(`${namespace}/reservedUsernames/${username}`)
 			.once('value')).exists());
 
-const validateInput = (input, regex) => {
+const validateInput = (input, regex, optional) => {
+	if (!input && optional) {
+		return;
+	}
+
 	if (!input || input.indexOf('/') > -1 || (regex && !regex.test(input))) {
 		throw new Error('Invalid data.');
 	}
@@ -379,10 +383,9 @@ exports.checkInviteCode = onCall(
 
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
-	const braintreeID =
-		req.body.braintreeID && validateInput(req.body.braintreeID);
-	const email = req.body.email && validateInput(req.body.email, emailRegex);
-	const name = validateInput(req.body.name);
+	const braintreeID = validateInput(req.body.braintreeID, undefined, true);
+	const email = validateInput(req.body.email, emailRegex, true);
+	const name = validateInput(req.body.name, undefined, true);
 	const plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
 	const purchased = !!req.body.purchased;
