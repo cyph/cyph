@@ -26,7 +26,7 @@ import {trackByValue} from '../../track-by/track-by-value';
 import {request, requestJSON} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
-import {openWindow} from '../../util/window';
+import {openWindow, reloadWindow} from '../../util/window';
 import {bitPayLogo} from './bit-pay-logo';
 
 /**
@@ -134,6 +134,9 @@ export class CheckoutComponent extends BaseProvider
 
 	/** Indicates whether pricing is per-user. */
 	@Input() public perUser: boolean = false;
+
+	/** @see reloadWindow */
+	public readonly reloadWindow = reloadWindow;
 
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
