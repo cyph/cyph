@@ -314,8 +314,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			price := int64(0)
 			invoicePriceDynamic, _ := invoice["price"]
 			switch invoicePrice := invoicePriceDynamic.(type) {
-			case int64:
-				price = invoicePrice
+			case float64:
+				price = int64(invoicePrice)
 			default:
 				return "bad response from BitPay", http.StatusTeapot
 			}
