@@ -52,9 +52,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		const value = await this.localforageLock(async () =>
-			localforage.getItem<Uint8Array>(url)
-		);
+		const value = await localforage.getItem<Uint8Array>(url);
 
 		if (!(value instanceof Uint8Array)) {
 			throw new Error(`Item ${url} not found.`);
@@ -71,7 +69,7 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		return this.localforageLock(async () => localforage.keys());
+		return localforage.keys();
 	}
 
 	/** @inheritDoc */
