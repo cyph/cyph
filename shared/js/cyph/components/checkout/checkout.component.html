@@ -193,7 +193,7 @@
 			</button>
 		</div>
 	</div>
-	<div class="confirmation" *ngIf="complete | async">
+	<ng-container *ngIf="complete | async">
 		<ng-container *ngIf="success | async">
 			<ng-container
 				*ngIf="confirmationMessage | async as confirmationMessageData"
@@ -206,35 +206,42 @@
 					"
 				></cyph-markdown>
 				<ng-template #defaultConfirmationMessage>
-					<div cyphTranslate>
-						Thanks a lot for your support! You will receive an email
-						confirmation momentarily.
+					<div class="confirmation">
+						<div cyphTranslate>
+							Thanks a lot for your support! You will receive an
+							email confirmation momentarily.
+						</div>
 					</div>
 				</ng-template>
 			</ng-container>
 		</ng-container>
-		<div *ngIf="(success | async) === false">
-			<div
-				fxLayout="column"
-				fxLayoutGap="16px"
-				class="checkout-ui failure"
-			>
-				<h2>{{ stringsService.checkoutErrorTitle }}</h2>
-				<div *ngIf="errorMessage | async as err">{{ err }}</div>
-				<div>
-					<span cyphTranslate>
-						Please check your payment credentials and
-					</span>
-					&ngsp;
-					<span class="retry" (click)="reloadWindow()" cyphTranslate
-						>click here</span
-					>
-					&ngsp;
-					<span cyphTranslate>
-						to try again.
-					</span>
+		<div class="confirmation" *ngIf="(success | async) === false">
+			<div>
+				<div
+					fxLayout="column"
+					fxLayoutGap="16px"
+					class="checkout-ui failure"
+				>
+					<h2>{{ stringsService.checkoutErrorTitle }}</h2>
+					<div *ngIf="errorMessage | async as err">{{ err }}</div>
+					<div>
+						<span cyphTranslate>
+							Please check your payment credentials and
+						</span>
+						&ngsp;
+						<span
+							class="retry"
+							(click)="reloadWindow()"
+							cyphTranslate
+							>click here</span
+						>
+						&ngsp;
+						<span cyphTranslate>
+							to try again.
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</ng-container>
 </form>
