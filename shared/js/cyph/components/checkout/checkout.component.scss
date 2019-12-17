@@ -68,7 +68,7 @@
 			right: 0;
 			top: -2em;
 			color: rgba(255, 255, 255, 0.54) !important;
-			font-family: roboto;
+			font-family: Roboto;
 			font-weight: 500;
 		}
 
@@ -88,13 +88,25 @@
 
 				.braintree-option__label {
 					color: #462fa0;
-					font-family: roboto;
+					font-family: Roboto;
 					font-weight: 500;
 
 					&:hover {
 						font-weight: 700;
 					}
 				}
+			}
+		}
+
+		cyph-markdown {
+			a[href*='/register/'] {
+				margin-top: 40px;
+				margin-bottom: 48px;
+				display: block;
+				text-align: center;
+				font-size: 1.35em;
+				text-decoration: underline;
+				font-family: Ubuntu;
 			}
 		}
 	}
