@@ -11,8 +11,6 @@
 		"@firebase/messaging": "*",
 		"@firebase/storage": "*",
 		"@google-cloud/storage": "*",
-		"bitauth": "https://github.com/unusualbob/bitauth#feature/node-12-support",
-		"bitpay-rest": "https://github.com/buu700/node-bitpay-client",
 		"cors": "*",
 		"dompurify": "*",
 		"fcm-node": "*",

@@ -191,9 +191,7 @@ read -r -d '' modules <<- EOM
 	babel-core
 	babel-preset-env
 	babel-preset-es2015
-	bitauth@https://github.com/unusualbob/bitauth#feature/node-12-support
 	bitpay.js
-	bitpay-rest@https://github.com/buu700/node-bitpay-client
 	bourbon@4.2.7
 	braintree-web
 	braintree-web-drop-in
