@@ -1,7 +1,6 @@
 import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
-	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	EventEmitter,
@@ -132,6 +131,11 @@ export class ChatMessageComponent extends BaseProvider
 	/** @see ChatMessage.AuthorTypes */
 	public readonly authorTypes = ChatMessage.AuthorTypes;
 
+	/** @see ChatMessageComponent.message */
+	public readonly chatMessage = new BehaviorSubject<ChatMessage | undefined>(
+		undefined
+	);
+
 	/** Clipboard copy menu trigger. */
 	@ViewChild(MatMenuTrigger)
 	public clipboardCopyMenuTrigger?: MatMenuTrigger;
@@ -185,11 +189,6 @@ export class ChatMessageComponent extends BaseProvider
 	public readonly viewReady: BehaviorSubject<boolean> = new BehaviorSubject<
 		boolean
 	>(false);
-
-	/** @see ChatMessageComponent.message */
-	public get chatMessage () : ChatMessage | undefined {
-		return this.message instanceof ChatMessage ? this.message : undefined;
-	}
 
 	/** Indicates whether message is confirmed. */
 	public get confirmed () : boolean {
@@ -253,22 +252,23 @@ export class ChatMessageComponent extends BaseProvider
 		}
 
 		if (!changes.message || this.message === undefined) {
+			if (this.message === undefined) {
+				this.chatMessage.next(undefined);
+			}
+
 			return;
 		}
 
 		const baseMessage = this.message;
 		this.message = undefined;
 
-		this.changeDetectorRef.detectChanges();
-
 		const metadata = await this.chatService.getMessageMetadata(baseMessage);
+		this.chatMessage.next(metadata.message);
 
 		const initiatedPromise = this.waitUntilInitiated();
 
 		this.message = metadata.message;
 		this.pending = metadata.pending;
-
-		this.changeDetectorRef.detectChanges();
 
 		if (!(this.message instanceof ChatMessage) || this.message.hidden) {
 			return;
@@ -397,9 +397,6 @@ export class ChatMessageComponent extends BaseProvider
 	}
 
 	constructor (
-		/** @ignore */
-		private readonly changeDetectorRef: ChangeDetectorRef,
-
 		/** @ignore */
 		private readonly elementRef: ElementRef,
 
