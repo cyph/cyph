@@ -5391,10 +5391,10 @@ bitcore-lib@^0:
     read "^1.0.5"
     request "~2.87.0"
 
-bitpay.js@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/bitpay.js/-/bitpay.js-1.0.0.tgz#83ef1fd51de56c5afa9fe77d2e18e3686dec6b12"
-  integrity sha512-u+JabVToki0gvk4eH2YuiGR5bgm/Ebky341nPHcaPQHQaRo/KmkG78S3RCRQRwW/aYDIGrXvamDzT68jHHX4KQ==
+bitpay.js@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/bitpay.js/-/bitpay.js-1.0.1.tgz#b3d5e8a2d887cdb3cb22f34923e83463e728dcfa"
+  integrity sha512-NS9DFy9iQwXR5J1ZAMtrSkwXLvxB10ba34sRyDVRNIJ69gfkypL6fpKqYjg6sqRhSb1s8t53qsHBlRvuiNeZrg==
 
 bl@^1.0.0:
   version "1.2.2"

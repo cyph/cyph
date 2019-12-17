@@ -181,7 +181,7 @@
 		"babel-preset-es2015": "^6.24.1",
 		"bitauth": "https://github.com/unusualbob/bitauth#feature/node-12-support",
 		"bitpay-rest": "https://github.com/buu700/node-bitpay-client",
-		"bitpay.js": "^1.0.0",
+		"bitpay.js": "^1.0.1",
 		"bourbon": "4.2.7",
 		"braintree-web": "^3.56.0",
 		"braintree-web-drop-in": "^1.21.0",
