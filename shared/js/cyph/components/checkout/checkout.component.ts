@@ -487,7 +487,7 @@ export class CheckoutComponent extends BaseProvider
 				});
 
 			const bitPayInvoiceID = !useBitPay ?
-				undefined :
+				'' :
 				await this.bitPayInvoiceID;
 
 			const creditCard = paymentMethod?.type === 'CreditCard';
