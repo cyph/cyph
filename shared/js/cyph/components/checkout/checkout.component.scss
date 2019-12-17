@@ -97,17 +97,19 @@
 				}
 			}
 		}
+	}
+}
 
-		cyph-markdown {
-			a[href*='/register/'] {
-				margin-top: 40px;
-				margin-bottom: 48px;
-				display: block;
-				text-align: center;
-				font-size: 1.35em;
-				text-decoration: underline;
-				font-family: Ubuntu;
-			}
+:host ::ng-deep {
+	cyph-markdown {
+		a[href*='/register/'] {
+			margin-top: 40px;
+			margin-bottom: 48px;
+			display: block;
+			text-align: center;
+			font-size: 1.35em;
+			text-decoration: underline;
+			font-family: Ubuntu;
 		}
 	}
 }
