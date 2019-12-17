@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -78,9 +79,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
 	timestamp := getTimestamp()
 
-	email, err := getEmail(h.Request.PostFormValue("email"))
-	if err != nil {
-		return err.Error(), http.StatusBadRequest
+	email := ""
+	if bitPayInvoiceID == "" {
+		_email, err := getEmail(h.Request.PostFormValue("email"))
+		if err != nil {
+			return err.Error(), http.StatusBadRequest
+		}
+		email = _email
 	}
 
 	signupURL, err := getURL(h.Request.PostFormValue("url"))
@@ -100,14 +105,19 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	var apiKey string
 	var customerKey *datastore.Key
+	var customerEmailKey *datastore.Key
 
-	customerEmail := &CustomerEmail{}
-	customerEmailKey := datastoreKey("CustomerEmail", email)
+	if email != "" {
+		customerEmail := &CustomerEmail{}
+		customerEmailKey = datastoreKey("CustomerEmail", email)
 
-	if err = h.Datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
-		apiKey = customerEmail.APIKey
-		customerKey = datastoreKey("Customer", apiKey)
-	} else {
+		if err = h.Datastore.Get(h.Context, customerEmailKey, customerEmail); err == nil {
+			apiKey = customerEmail.APIKey
+			customerKey = datastoreKey("Customer", apiKey)
+		}
+	}
+
+	if apiKey == "" {
 		apiKey, customerKey, err = generateAPIKey(h, "Customer")
 		if err != nil {
 			return err.Error(), http.StatusInternalServerError
@@ -348,7 +358,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 
-		if success {
+		if success && customerEmailKey != nil {
 			_, err = h.Datastore.Put(
 				h.Context,
 				customerEmailKey,
