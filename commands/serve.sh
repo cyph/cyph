@@ -154,6 +154,7 @@ if [ -d ~/.cyph ] && [ -f ~/.cyph/backend.vars ] && [ ! "${CIRCLECI}" ] ; then
 		echo '  PROD: true' >> backend/.build.yaml
 		cat ~/.cyph/backend.vars.prod >> backend/.build.yaml
 	else
+		echo "  FIREBASE_PROJECT: 'cyph-test-local'" >> backend/.build.yaml
 		cat ~/.cyph/backend.vars.sandbox >> backend/.build.yaml
 	fi
 fi
