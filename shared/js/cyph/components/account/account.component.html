@@ -65,20 +65,20 @@
 					fxLayoutAlign="stretch center"
 					fxLayoutGap="8px"
 					*ngIf="
-						(accountService.header | async) !== undefined &&
+						(accountService.header | async)?.header !== undefined &&
 						(accountService.isCallActive | async) === false &&
 						!(
 							(envService.isMobile | async) &&
-							(accountService.header | async)?.desktop !==
+							(accountService.header | async)?.header?.desktop !==
 								undefined &&
-							(accountService.header | async)?.mobile ===
+							(accountService.header | async)?.header?.mobile ===
 								undefined
 						) &&
 						!(
 							(envService.isMobile | async) === false &&
-							(accountService.header | async)?.desktop ===
+							(accountService.header | async)?.header?.desktop ===
 								undefined &&
-							(accountService.header | async)?.mobile !==
+							(accountService.header | async)?.header?.mobile !==
 								undefined
 						)
 					"
@@ -132,7 +132,8 @@
 					<div class="header-content" fxFlex fxLayout="row">
 						<ng-container
 							*ngIf="
-								accountService.header | async as header;
+								(accountService.header | async)
+									?.header as header;
 								else emptyHeader
 							"
 						>
@@ -270,6 +271,19 @@
 </div>
 
 <mat-menu #contextMenu="matMenu">
+	<button
+		mat-menu-item
+		(click)="contextMenuActions.handler($event)"
+		*ngFor="
+			let contextMenuActions of (accountService.header | async)
+				?.contextMenuActions || [];
+			trackBy: trackBySelf
+		"
+	>
+		<mat-icon>{{ contextMenuActions.icon }}</mat-icon>
+		<span>{{ contextMenuActions.label }}</span>
+	</button>
+
 	<button mat-menu-item (click)="accountService.contactFormDialog('help')">
 		<mat-icon>help</mat-icon>
 		<span>{{ stringsService.contactSupport }}</span>

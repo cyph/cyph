@@ -62,9 +62,10 @@ export class AccountService extends BaseProvider {
 	private readonly chatBlurReloadTimeout = 60000;
 
 	/** @ignore */
-	private readonly headerInternal = new BehaviorSubject<
-		string | {desktop?: string; mobile?: string} | User | undefined
-	>(undefined);
+	private readonly headerInternal = new BehaviorSubject<{
+		contextMenuActions?: {handler: Function; icon: string; label: string}[];
+		header?: string | {desktop?: string; mobile?: string} | User;
+	}>({});
 
 	/** @ignore */
 	private readonly incomingCallAnswers = new Map<
@@ -157,9 +158,10 @@ export class AccountService extends BaseProvider {
 	);
 
 	/** Header title for current section. */
-	public readonly header: Observable<
-		{desktop?: string; mobile?: string} | User | undefined
-	>;
+	public readonly header: Observable<{
+		contextMenuActions?: {handler: Function; icon: string; label: string}[];
+		header?: {desktop?: string; mobile?: string} | User;
+	}>;
 
 	/** Indicates the status of the interstitial. */
 	public readonly interstitial = new BehaviorSubject<boolean>(false);
@@ -363,9 +365,10 @@ export class AccountService extends BaseProvider {
 
 	/** Sets custom header text. */
 	public setHeader (
-		header: string | {desktop?: string; mobile?: string} | User
+		header: string | {desktop?: string; mobile?: string} | User,
+		contextMenuActions?: {handler: Function; icon: string; label: string}[]
 	) : void {
-		this.headerInternal.next(header);
+		this.headerInternal.next({contextMenuActions, header});
 	}
 
 	/** Toggles account menu. */
@@ -756,8 +759,8 @@ export class AccountService extends BaseProvider {
 					if (
 						typeof data?.additionalData?.senderUsername !==
 							'string' ||
-						(this.headerInternal.value instanceof User &&
-							this.headerInternal.value.username ===
+						(this.headerInternal.value.header instanceof User &&
+							this.headerInternal.value.header.username ===
 								data.additionalData.senderUsername &&
 							this.router.url.startsWith('/messages/'))
 					) {
@@ -838,7 +841,7 @@ export class AccountService extends BaseProvider {
 			this.transitionInternal
 		]).pipe(
 			/* eslint-disable-next-line complexity */
-			map(([header, isMobile, _]) => {
+			map(([{contextMenuActions, header}, isMobile, _]) => {
 				const routePath = this.routePath;
 				const route = routePath[0];
 
@@ -854,11 +857,14 @@ export class AccountService extends BaseProvider {
 
 				/* Special case: set root header on mobile */
 				if (!route && isMobile) {
-					return this.envService.isTelehealthFull ?
-						this.stringsService.profileHeader :
-					this.envService.isTelehealth ?
-						this.stringsService.productTelehealth :
-						this.stringsService.messagesHeader;
+					return {
+						contextMenuActions,
+						header: this.envService.isTelehealthFull ?
+							this.stringsService.profileHeader :
+						this.envService.isTelehealth ?
+							this.stringsService.productTelehealth :
+							this.stringsService.messagesHeader
+					};
 				}
 
 				/* No header */
@@ -874,7 +880,7 @@ export class AccountService extends BaseProvider {
 						routePath.length > 1 &&
 						['end', 'forms'].indexOf(routePath[1]) > -1)
 				) {
-					return undefined;
+					return {contextMenuActions};
 				}
 
 				/* No header until explicitly set via accountService.setHeader */
@@ -884,7 +890,10 @@ export class AccountService extends BaseProvider {
 					!(routePath[0] === 'profile' && routePath[1] === 'edit')
 				) {
 					/* Always make at least an empty string on mobile to ensure menu bar displays */
-					return isMobile ? header || '' : header;
+					return {
+						contextMenuActions,
+						header: isMobile ? header || '' : header
+					};
 				}
 
 				/*
@@ -927,28 +936,35 @@ export class AccountService extends BaseProvider {
 						routePath.length > 1)
 				) {
 					/* Always make at least an empty string on mobile to ensure menu bar displays */
-					return isMobile ? header || '' : undefined;
+					return {
+						contextMenuActions,
+						header: isMobile ? header || '' : undefined
+					};
 				}
 
-				return (
-					header ||
-					translate(
-						route
-							.split('-')
-							.map(
-								s =>
-									specialCases[s] ||
-									s[0].toUpperCase() + s.slice(1)
-							)
-							.join(' ')
-					)
-				);
+				return {
+					contextMenuActions,
+					header:
+						header ||
+						translate(
+							route
+								.split('-')
+								.map(
+									s =>
+										specialCases[s] ||
+										s[0].toUpperCase() + s.slice(1)
+								)
+								.join(' ')
+						)
+				};
 			}),
-			map(header =>
-				typeof header === 'string' ?
-					{desktop: header, mobile: header} :
-					header
-			)
+			map(({contextMenuActions, header}) => ({
+				contextMenuActions,
+				header:
+					typeof header === 'string' ?
+						{desktop: header, mobile: header} :
+						header
+			}))
 		);
 
 		this.menuExpandable = combineLatest([
@@ -1015,7 +1031,7 @@ export class AccountService extends BaseProvider {
 
 				if (newURL !== lastURL) {
 					lastURL = newURL;
-					this.headerInternal.next(undefined);
+					this.headerInternal.next({});
 				}
 
 				if (section !== lastSection) {

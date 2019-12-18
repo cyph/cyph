@@ -4,7 +4,7 @@ import {MatBottomSheet} from '@angular/material/bottom-sheet';
 import {MatDialog} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
 import {DialogAlertComponent} from '../components/dialog-alert';
@@ -262,7 +262,15 @@ export class MaterialDialogService extends BaseProvider
 
 			if (setInputs) {
 				await setInputs(instance);
-				await matDialogRef.afterOpened();
+
+				if (instance.changeDetectorRef) {
+					instance.changeDetectorRef.markForCheck();
+				}
+
+				await matDialogRef
+					.afterOpened()
+					.pipe(take(1))
+					.toPromise();
 
 				if (instance.changeDetectorRef) {
 					instance.changeDetectorRef.markForCheck();

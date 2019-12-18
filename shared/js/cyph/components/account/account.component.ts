@@ -18,6 +18,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {EnvService} from '../../services/env.service';
 import {ScreenshotService} from '../../services/screenshot.service';
 import {StringsService} from '../../services/strings.service';
+import {trackBySelf} from '../../track-by';
 import {resolvable} from '../../util/wait';
 
 /**
@@ -221,6 +222,9 @@ export class AccountComponent extends BaseProvider
 				].indexOf(route) > -1
 		)
 	);
+
+	/** @see trackBySelf */
+	public readonly trackBySelf = trackBySelf;
 
 	/** @see UserPresence */
 	public readonly userPresence = UserPresence;

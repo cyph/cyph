@@ -3,7 +3,8 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
-import {UserLike} from '../account/user-like-type';
+import {IContactListItem, UserLike} from '../account';
+import {AccountContactsComponent} from '../components/account-contacts';
 import {MaybePromise} from '../maybe-promise-type';
 import {
 	IAccountMessagingGroup,
@@ -28,6 +29,7 @@ import {ChannelService} from './channel.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
@@ -226,10 +228,66 @@ export class AccountSessionService extends SessionService {
 		/* Group session init */
 
 		if ('group' in chat) {
+			const usernames = this.normalizeUsername(
+				chat.group.usernames || []
+			);
+
 			if (setHeader) {
-				this.accountService.setHeader({
-					mobile: this.stringsService.group
-				});
+				const contactList = of(
+					usernames.map(
+						(username) : IContactListItem => ({
+							unreadMessageCount: of(0),
+							user: this.accountUserLookupService
+								.getUser(username)
+								.catch(() => undefined),
+							username
+						})
+					)
+				);
+
+				this.accountService.setHeader(
+					{
+						mobile: this.stringsService.group
+					},
+					[
+						{
+							handler: async () =>
+								this.dialogService.baseDialog(
+									AccountContactsComponent,
+									o => {
+										const previousValues = {
+											contactList: o.contactList,
+											readOnly: o.readOnly
+										};
+
+										o.contactList = contactList;
+										o.readOnly = true;
+
+										o.ngOnChanges({
+											contactList: {
+												currentValue: o.contactList,
+												firstChange: false,
+												isFirstChange: () => false,
+												previousValue:
+													previousValues.contactList
+											},
+											readOnly: {
+												currentValue: o.readOnly,
+												firstChange: false,
+												isFirstChange: () => false,
+												previousValue:
+													previousValues.readOnly
+											}
+										});
+									},
+									undefined,
+									true
+								),
+							icon: 'group',
+							label: this.stringsService.viewGroupMembers
+						}
+					]
+				);
 			}
 
 			/* Create N pairwise sessions, one for each other group member */
@@ -239,18 +297,16 @@ export class AccountSessionService extends SessionService {
 			}`;
 
 			const group = await Promise.all(
-				this.normalizeUsername(chat.group.usernames || []).map(
-					async username => {
-						const session = this.spawn();
-						await session.setUser(
-							{username},
-							this.sessionSubID,
-							ephemeralSubSession,
-							false
-						);
-						return session;
-					}
-				)
+				usernames.map(async username => {
+					const session = this.spawn();
+					await session.setUser(
+						{username},
+						this.sessionSubID,
+						ephemeralSubSession,
+						false
+					);
+					return session;
+				})
 			);
 
 			if (group.length < 1) {
@@ -482,7 +538,8 @@ export class AccountSessionService extends SessionService {
 			this.accountContactsService,
 			this.accountDatabaseService,
 			this.accountSessionInitService,
-			this.accountUserLookupService
+			this.accountUserLookupService,
+			this.dialogService
 		);
 	}
 
@@ -540,7 +597,10 @@ export class AccountSessionService extends SessionService {
 		private readonly accountSessionInitService: AccountSessionInitService,
 
 		/** @ignore */
-		private readonly accountUserLookupService: AccountUserLookupService
+		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService
 	) {
 		super(
 			analyticsService,

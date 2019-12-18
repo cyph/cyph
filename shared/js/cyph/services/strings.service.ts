@@ -1033,6 +1033,9 @@ export class StringsService extends BaseProvider {
 	public readonly videoCall = `video call`;
 
 	/** @see StringsService */
+	public readonly viewGroupMembers = `View Group Members`;
+
+	/** @see StringsService */
 	public readonly voice = `Voice`;
 
 	/** @see StringsService */

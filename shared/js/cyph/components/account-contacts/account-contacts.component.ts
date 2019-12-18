@@ -1,5 +1,6 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
@@ -209,6 +210,9 @@ export class AccountContactsComponent extends BaseProvider
 	/** @see NewContactTypes */
 	public readonly newContactTypes = NewContactTypes;
 
+	/** If true, read-only mode. */
+	@Input() public readOnly: boolean = false;
+
 	/** @see AccountContactsSearchComponent.searchBarBlur */
 	@Output() public readonly searchBarBlur = new EventEmitter<void>();
 
@@ -268,6 +272,9 @@ export class AccountContactsComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

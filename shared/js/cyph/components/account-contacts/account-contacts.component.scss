@@ -4,6 +4,26 @@ cyph-account-contact.active ::ng-deep .contact {
 	@include filter(brightness(1.2));
 }
 
+:host-context(mat-bottom-sheet-container) .card-list {
+	&.mobile {
+		margin-bottom: 8px;
+		margin-top: -8px;
+
+		::ng-deep .nano {
+			min-height: 300px;
+		}
+	}
+
+	&:not(.mobile) {
+		margin-bottom: -8px;
+		margin-top: 8px;
+
+		::ng-deep .nano {
+			min-height: 324px;
+		}
+	}
+}
+
 .card-list {
 	&,
 	> div {

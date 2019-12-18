@@ -36,6 +36,7 @@
 			[externalUsers]="true"
 			[searchProfileExtra]="searchProfileExtra"
 			(searchBarBlur)="searchBarBlur.emit()"
+			*ngIf="!readOnly"
 		></cyph-account-contacts-search>
 
 		<div
@@ -87,13 +88,16 @@
 						<cyph-account-contact
 							[startBurner]="true"
 							[class.cyph-inverted-theme]="invertedTheme"
-							*ngIf="!envService.isTelehealth"
+							*ngIf="!readOnly && !envService.isTelehealth"
 						></cyph-account-contact>
 
 						<cyph-account-contact
 							[startGroup]="true"
 							[class.cyph-inverted-theme]="invertedTheme"
-							*ngIf="accountService.enableGroup | async"
+							*ngIf="
+								!readOnly &&
+								(accountService.enableGroup | async)
+							"
 						></cyph-account-contact>
 
 						<ng-container
@@ -116,7 +120,7 @@
 			</div>
 		</ng-template>
 
-		<br />
+		<br *ngIf="!readOnly" />
 
 		<button
 			mat-button
@@ -124,7 +128,7 @@
 			(click)="accountContactsService.addContactPrompt()"
 			*ngIf="
 				(accountDatabaseService.currentUser | async)?.agseConfirmed ===
-				true
+					true && !readOnly
 			"
 		>
 			<span>
@@ -161,7 +165,7 @@
 			</button>
 		</mat-menu>
 
-		<br />
+		<br *ngIf="!readOnly" />
 	</div>
 
 	<mat-progress-spinner
@@ -175,9 +179,10 @@
 
 <ng-template #listItem let-item="item">
 	<cyph-account-contact
+		[clickable]="!readOnly"
 		[contact]="item"
 		[hideCurrentUser]="true"
-		[showUnreadMessageCount]="true"
+		[showUnreadMessageCount]="!readOnly"
 		[class.cyph-inverted-theme]="invertedTheme"
 	></cyph-account-contact>
 </ng-template>
