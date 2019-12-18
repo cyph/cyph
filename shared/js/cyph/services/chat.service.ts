@@ -251,10 +251,10 @@ export class ChatService extends BaseProvider {
 
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers = {
-		chatConnected: resolvable(),
-		currentMessageSynced: resolvable(),
-		messageListLoaded: resolvable(),
-		outgoingMessagesSynced: resolvable()
+		chatConnected: resolvable(true),
+		currentMessageSynced: resolvable(true),
+		messageListLoaded: resolvable(true),
+		outgoingMessagesSynced: resolvable(true)
 	};
 
 	/** Indicates whether an infinite scroll transition is in progress. */
