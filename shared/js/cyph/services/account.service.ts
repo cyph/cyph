@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 
+import {Location} from '@angular/common';
 import {Injectable, NgZone} from '@angular/core';
 import {
 	ActivatedRoute,
@@ -431,7 +432,7 @@ export class AccountService extends BaseProvider {
 								document.body.classList.add('soft-lock');
 							}
 
-							const {url} = this.router;
+							const url = this.location.path(true);
 
 							const chatReloadPromise =
 								(url.startsWith('mail/') ||
@@ -571,6 +572,9 @@ export class AccountService extends BaseProvider {
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly location: Location,
 
 		/** @ignore */
 		private readonly ngZone: NgZone,
