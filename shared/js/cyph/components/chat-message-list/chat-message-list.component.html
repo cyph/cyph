@@ -30,7 +30,7 @@
 	color="none"
 	class="recent-messages"
 	matTooltip="Jump to Recent Messages"
-	(click)="jumpToRecentMessages()"
+	(click)="chatService.jumpToRecentMessages()"
 	*ngIf="((chatService.messageBottomOffset | async) || 0) >= 2"
 >
 	<mat-icon>arrow_downward</mat-icon>

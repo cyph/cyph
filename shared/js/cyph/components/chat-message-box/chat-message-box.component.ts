@@ -193,7 +193,7 @@ export class ChatMessageBoxComponent extends BaseProvider
 			!this.envService.isMobileOS ||
 			this.virtualKeyboardWatcherService.isOpen.value;
 
-		await this.scrollService.scrollDown();
+		this.chatService.jumpToRecentMessages();
 
 		if (focus) {
 			(await this.$textarea).trigger('focus');

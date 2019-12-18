@@ -77,9 +77,6 @@ export class ChatMessageListComponent extends BaseProvider
 		viewportMessageCount: 0
 	};
 
-	/** Used for initial scroll down on load. */
-	private initialScrollDown: boolean = true;
-
 	/** @ignore */
 	private lastTouchY: number = 0;
 
@@ -171,12 +168,6 @@ export class ChatMessageListComponent extends BaseProvider
 	/** @see UiStyles */
 	public readonly uiStyles = UiStyles;
 
-	/** Jumps to recent messages. */
-	public jumpToRecentMessages () : void {
-		this.initialScrollDown = true;
-		this.chatService.messageBottomOffset.next(1);
-	}
-
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		/* TODO: HANDLE NATIVE */
@@ -206,7 +197,7 @@ export class ChatMessageListComponent extends BaseProvider
 		}
 
 		if (this.uiStyle === UiStyles.mail) {
-			this.initialScrollDown = false;
+			this.chatService.initialScrollDown = false;
 		}
 
 		const chat = this.chat;
@@ -243,7 +234,7 @@ export class ChatMessageListComponent extends BaseProvider
 					)[] = [...onlineMessages, ...pendingMessages];
 
 					if (this.chatService.messageBottomOffset.value > 1) {
-						this.initialScrollDown = false;
+						this.chatService.initialScrollDown = false;
 						this.chatService.resolvers.messageListLoaded.resolve();
 					}
 
@@ -326,11 +317,11 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** Handles first message load. */
 	public async onMessageListInit () : Promise<void> {
-		if (!this.initialScrollDown) {
+		if (!this.chatService.initialScrollDown) {
 			return;
 		}
 
-		this.initialScrollDown = false;
+		this.chatService.initialScrollDown = false;
 
 		const scrollView = this.scrollView?.nativeElement;
 		if (!(scrollView instanceof HTMLElement)) {

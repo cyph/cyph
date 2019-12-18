@@ -191,6 +191,9 @@ export class ChatService extends BaseProvider {
 	/** Indicates whether delivery receipts are enabled. */
 	public readonly deliveryReceipts = this.sessionInitService.ephemeral;
 
+	/** Used for initial scroll down on load. */
+	public initialScrollDown: boolean = true;
+
 	/** Indicates whether the chat is ready to be displayed. */
 	public readonly initiated = new BehaviorSubject<boolean>(false);
 
@@ -1209,6 +1212,12 @@ export class ChatService extends BaseProvider {
 				)
 				.subscribe(this.chat.initProgress)
 		);
+	}
+
+	/** Jumps to recent messages. */
+	public jumpToRecentMessages () : void {
+		this.initialScrollDown = true;
+		this.messageBottomOffset.next(1);
 	}
 
 	/** Marks a message as fully loaded / displayed in the UI. */
