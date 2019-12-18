@@ -441,6 +441,10 @@ export class AccountSessionService extends SessionService {
 
 		this.remoteUsername.next(chat.username);
 
+		if (setHeader) {
+			this.accountService.setHeader({mobile: `@${chat.username}`});
+		}
+
 		const userPromise = this.accountUserLookupService.getUser(
 			chat.username
 		);
