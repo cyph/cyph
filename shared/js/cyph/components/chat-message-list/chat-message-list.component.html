@@ -37,7 +37,7 @@
 </button>
 
 <ng-template #listItem let-item="item">
-	<div fxLayout="row" (init)="flashMessage($event)">
+	<div fxLayout="row">
 		<div fxFlex fxLayout="column">
 			<div fxLayout="row" *ngIf="!item.mobile && item.isStart">
 				<div fxLayout="column" fxLayoutGap="15px">

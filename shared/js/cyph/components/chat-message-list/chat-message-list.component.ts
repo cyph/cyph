@@ -18,7 +18,7 @@ import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import debounce from 'lodash-es/debounce';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
+import {map, mergeMap, skip, take} from 'rxjs/operators';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {IChatData, IMessageListItem, UiStyles} from '../../chat';
@@ -170,18 +170,6 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** @see UiStyles */
 	public readonly uiStyles = UiStyles;
-
-	/** Triggers message flash animation. */
-	public async flashMessage (elem: HTMLElement) : Promise<void> {
-		await this.chatService.scrollTransition
-			.pipe(
-				filter(b => !b),
-				take(1)
-			)
-			.toPromise();
-
-		elem.classList.add('cyph-flash-in');
-	}
 
 	/** Jumps to recent messages. */
 	public jumpToRecentMessages () : void {
