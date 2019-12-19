@@ -52,6 +52,11 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 		Set<T>
 	>(new Set());
 
+	/** Filter change event. */
+	@Output() public readonly filterChange: EventEmitter<
+		BehaviorSubject<Set<T>>
+	> = new EventEmitter<BehaviorSubject<Set<T>>>();
+
 	/** First filter item. */
 	public readonly filterSingle: BehaviorSubject<
 		T | undefined
@@ -60,11 +65,6 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 		undefined,
 		this.subscriptions
 	);
-
-	/** Filter change event. */
-	@Output() public readonly filterChange: EventEmitter<
-		BehaviorSubject<Set<T>>
-	> = new EventEmitter<BehaviorSubject<Set<T>>>();
 
 	/** Gets chip from filter value. */
 	public readonly getChip = memoize((value?: T) => this.chipTransform(value));
