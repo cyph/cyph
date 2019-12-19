@@ -44,6 +44,7 @@ Congratulations on securing your Cyph account invite!
 |              | Lifetime Platinum      |
 |              | Annual Premium         |
 |              | Monthly Premium        |
+|              | Free                   |
 
 ---
 {{/planFoundersAndFriends}}
@@ -53,6 +54,7 @@ Congratulations on securing your Cyph account invite!
 | {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Lifetime Platinum**  |
 |              | Annual Premium         |
 |              | Monthly Premium        |
+|              | Free                   |
 
 ---
 {{/planLifetimePlatinum}}
@@ -62,6 +64,7 @@ Congratulations on securing your Cyph account invite!
 |              | Lifetime Platinum      |
 | {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Annual Premium**     |
 |              | Monthly Premium        |
+|              | Free                   |
 
 ---
 {{/planAnnualPremium}}
@@ -71,6 +74,7 @@ Congratulations on securing your Cyph account invite!
 |              | Lifetime Platinum      |
 |              | Annual Premium         |
 | {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Monthly Premium**    |
+|              | Free                   |
 
 ---
 {{/planMonthlyPremium}}
