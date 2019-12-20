@@ -3,7 +3,7 @@
 	fxLayout="row"
 	fxLayoutAlign="center start"
 	class="card-list"
-	[class.initiating]="(accountFilesService.showSpinner | await) !== false"
+	[class.initiating]="(accountFilesService.showSpinner | await) !== undefined"
 	*ngIf="envService.isTelehealth"
 >
 	<div
@@ -78,12 +78,13 @@
 		</ng-container>
 	</div>
 
-	<ng-container *ngIf="(accountFilesService.showSpinner | await) !== false">
+	<ng-container
+		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
+	>
 		<mat-progress-spinner
 			mode="indeterminate"
 			*ngIf="
-				(accountFilesService.showSpinner | await) === true ||
-					((accountFilesService.showSpinner | await) || 0) < 1;
+				((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></mat-progress-spinner>

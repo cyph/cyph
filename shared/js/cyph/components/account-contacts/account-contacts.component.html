@@ -5,7 +5,7 @@
 	[class.mobile]="envService.isMobile | await"
 	[class.initiating]="
 		(accountContactsService.showSpinner | await) ||
-		(home && (accountFilesService.uploadSpinner | await) !== false)
+		(home && (accountFilesService.uploadSpinner | await) !== undefined)
 	"
 >
 	<div fxFlex fxLayout="column" fxLayoutAlign="start stretch">
@@ -21,7 +21,7 @@
 				<cyph-logo
 					alt
 					homeLink
-					[white]="envService.environment.customBuild?.config.dark"
+					[white]="!!envService.environment.customBuild?.config?.dark"
 				></cyph-logo>
 			</div>
 		</ng-container>
@@ -45,7 +45,7 @@
 			*ngIf="
 				youHaveNoFriends &&
 					(accountContactsService.showSpinner | await) === false &&
-					(contactList | await)?.length < 1;
+					((contactList | await)?.length || 0) < 1;
 				else mainContactListView
 			"
 		>
@@ -172,7 +172,7 @@
 		mode="indeterminate"
 		*ngIf="
 			(accountContactsService.showSpinner | await) ||
-			(home && (accountFilesService.uploadSpinner | await) !== false)
+			(home && (accountFilesService.uploadSpinner | await) !== undefined)
 		"
 	></mat-progress-spinner>
 </div>

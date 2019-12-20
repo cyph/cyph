@@ -43,13 +43,7 @@ export class AccountNotesComponent extends BaseProvider implements OnInit {
 	> = this.activatedRoute.data.pipe(map(o => !!o.realTime));
 
 	/** @see AccountFileRecord.RecordTypes */
-	public readonly recordType = this.realTime.pipe(
-		map(realTime =>
-			realTime ?
-				AccountFileRecord.RecordTypes.Doc :
-				AccountFileRecord.RecordTypes.Note
-		)
-	);
+	public readonly recordTypes = AccountFileRecord.RecordTypes;
 
 	/** @inheritDoc */
 	public ngOnInit () : void {

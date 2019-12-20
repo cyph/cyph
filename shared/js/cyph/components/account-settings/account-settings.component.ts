@@ -155,10 +155,18 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	}
 
 	/** Saves lock screen password update. */
-	public async changePIN (pin: {
-		isCustom: boolean;
-		value: string;
-	}) : Promise<void> {
+	public async changePIN (
+		pin:
+			| {
+					isCustom: boolean;
+					value: string;
+			  }
+			| undefined
+	) : Promise<void> {
+		if (pin === undefined) {
+			return;
+		}
+
 		return this.changePasswordInternal(
 			pin,
 			this.states.pin,

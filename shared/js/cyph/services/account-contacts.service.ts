@@ -295,7 +295,11 @@ export class AccountContactsService extends BaseProvider {
 	>(true);
 
 	/** Accepts incoming contact request. */
-	public async acceptContactRequest (username: string) : Promise<void> {
+	public async acceptContactRequest (username?: string) : Promise<void> {
+		if (!username) {
+			return;
+		}
+
 		await this.accountDatabaseService.setItem<IAccountContactState>(
 			this.contactURL(username),
 			AccountContactState,
@@ -310,7 +314,11 @@ export class AccountContactsService extends BaseProvider {
 	}
 
 	/** Adds contact. */
-	public async addContact (username: string) : Promise<void> {
+	public async addContact (username?: string) : Promise<void> {
+		if (!username) {
+			return;
+		}
+
 		await this.accountDatabaseService.setItem<IAccountContactState>(
 			this.contactURL(username),
 			AccountContactState,
@@ -473,17 +481,29 @@ export class AccountContactsService extends BaseProvider {
 	}
 
 	/** Indicates whether the user is already a contact. */
-	public async isContact (username: string) : Promise<boolean> {
+	public async isContact (username?: string) : Promise<boolean> {
+		if (!username) {
+			return false;
+		}
+
 		return this.accountDatabaseService.hasItem(this.contactURL(username));
 	}
 
 	/** Removes contact. */
-	public async removeContact (username: string) : Promise<void> {
+	public async removeContact (username?: string) : Promise<void> {
+		if (!username) {
+			return;
+		}
+
 		await this.accountDatabaseService.removeItem(this.contactURL(username));
 	}
 
 	/** Adds or removes contact. */
-	public async toggleContact (username: string) : Promise<void> {
+	public async toggleContact (username?: string) : Promise<void> {
+		if (!username) {
+			return;
+		}
+
 		if (await this.isContact(username)) {
 			await this.removeContact(username);
 		}

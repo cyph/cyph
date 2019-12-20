@@ -28,7 +28,11 @@ export class SignupConfirmComponent extends BaseProvider implements OnInit {
 	}
 
 	/** Tries unlocking with the given API key. */
-	public unlock (apiKey: string) : void {
+	public unlock (apiKey?: string) : void {
+		if (!apiKey) {
+			return;
+		}
+
 		this.appService.isLockedDown.next(true);
 		this.router.navigate(['unlock', apiKey]);
 	}

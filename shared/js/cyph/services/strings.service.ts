@@ -150,6 +150,12 @@ export class StringsService extends BaseProvider {
 	public readonly burner = `Burner`;
 
 	/** @see StringsService */
+	public readonly businessName = `Company`;
+
+	/** @see StringsService */
+	public readonly businessNameOptional = `Company (optional)`;
+
+	/** @see StringsService */
 	public readonly callType = `Call Type`;
 
 	/** @see StringsService */

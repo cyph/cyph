@@ -13,7 +13,7 @@
 
 <div
 	fxFlexFill
-	[class.initiating]="(accountFilesService.showSpinner | await) !== false"
+	[class.initiating]="(accountFilesService.showSpinner | await) !== undefined"
 	*ngIf="accountService.enableWallets | await"
 >
 	<div
@@ -21,7 +21,8 @@
 		fxLayout="column"
 		fxLayoutAlign="center center"
 		*ngIf="
-			(accountFilesService.filesListFiltered.wallets | await)?.length < 1;
+			((accountFilesService.filesListFiltered.wallets | await)?.length ||
+				0) < 1;
 			else wallets
 		"
 	>
@@ -67,8 +68,9 @@
 			<mat-tab
 				*ngFor="
 					let wallet of accountFilesService.filesListFilteredWithData.wallets()
-						| await;
-					trackBy: trackByID;
+						| await
+						| cyphArray;
+					trackBy: trackBySelf;
 					let i = index
 				"
 				[attr.data-index]="i"
@@ -336,11 +338,11 @@
 						<h3
 							class="centered"
 							*ngIf="
-								(
+								((
 									cryptocurrencyService.watchTransactionHistory(
 										wallet.data
 									) | await
-								)?.length < 1
+								)?.length || 0) < 1
 							"
 						>
 							{{ stringsService.noTransactions }}
@@ -362,12 +364,13 @@
 		</mat-tab-group>
 	</ng-template>
 
-	<ng-container *ngIf="(accountFilesService.showSpinner | await) !== false">
+	<ng-container
+		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
+	>
 		<mat-progress-spinner
 			mode="indeterminate"
 			*ngIf="
-				(accountFilesService.showSpinner | await) === true ||
-					((accountFilesService.showSpinner | await) || 0) < 1;
+				((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></mat-progress-spinner>
@@ -382,7 +385,7 @@
 	<smd-fab-speed-dial
 		class="fixed-fab"
 		animationMode="scale"
-		[open]="isSpeedDialOpen | await"
+		[open]="(isSpeedDialOpen | await) === true"
 		(mouseleave)="isSpeedDialOpen.next(false)"
 	>
 		<smd-fab-trigger

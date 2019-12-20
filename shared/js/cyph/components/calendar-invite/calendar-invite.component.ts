@@ -164,8 +164,9 @@ export class CalendarInviteComponent extends BaseProvider
 	public readonly trackBySelf = trackBySelf;
 
 	/** Date filter to prevent forbidden days from being selected. */
-	public readonly dateFilter = (d: Date) : boolean =>
-		this.forbiddenDays.indexOf(d.getDay()) < 0;
+	/* eslint-disable-next-line no-null/no-null */
+	public readonly dateFilter = (d?: Date | null) : boolean =>
+		d instanceof Date && this.forbiddenDays.indexOf(d.getDay()) < 0;
 
 	/** Default appointment reason dropdown selection. */
 	public get defaultReasonForAppointment () : string {

@@ -2,7 +2,7 @@
 	fxLayout="column"
 	[class.visibility-hidden]="
 		(user?.rating() | await) === undefined ||
-		(user?.reviews.watch() | await) === undefined
+		(user?.reviews?.watch() | await) === undefined
 	"
 >
 	<div fxLayout="row">
@@ -15,16 +15,16 @@
 			{{ star }}
 		</mat-icon>
 	</div>
-	<div *ngIf="user?.reviews.watch() | await as reviews">
+	<div *ngIf="user?.reviews?.watch() | await as reviews">
 		<span>
 			{{
 				numberToString(((user?.rating() | await) || 0) * ratingFactor)
 			}}/5&nbsp;
 		</span>
 		<span>
-			({{ reviews.size }}
+			({{ (reviews || {size: 0}).size }}
 			{{
-				reviews.size === 1 ?
+				(reviews || {size: 0}).size === 1 ?
 					stringsService.review :
 					stringsService.reviews
 			}})

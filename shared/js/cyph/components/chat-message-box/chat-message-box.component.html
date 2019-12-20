@@ -2,7 +2,7 @@
 	<div
 		fxFlexFill
 		*ngIf="
-			chat.state === states.chat &&
+			chat?.state === states.chat &&
 			(sessionService.state.isAlive | await) &&
 			(chatService.resolvers.currentMessageSynced.promise | await)
 		"
@@ -25,8 +25,11 @@
 			<cyph-calendar-invite
 				fxFlexFill
 				name="calendar-invite-message"
-				[(ngModel)]="chat.currentMessage.calendarInvite"
-				(ngModelChange)="chatService.messageChange()"
+				[ngModel]="chat?.currentMessage?.calendarInvite"
+				(ngModelChange)="
+					(chat?.currentMessage || {}).calendarInvite = $event;
+					chatService.messageChange()
+				"
 				[followUp]="calendarInviteFollowUp"
 				[reasons]="calendarInviteReasons"
 				*ngIf="!inheritsNgForm"
@@ -34,8 +37,11 @@
 			<cyph-calendar-invite-inherit-ng-form
 				fxFlexFill
 				name="calendar-invite-message"
-				[(ngModel)]="chat.currentMessage.calendarInvite"
-				(ngModelChange)="chatService.messageChange()"
+				[ngModel]="chat?.currentMessage?.calendarInvite"
+				(ngModelChange)="
+					(chat?.currentMessage || {}).calendarInvite = $event;
+					chatService.messageChange()
+				"
 				[followUp]="calendarInviteFollowUp"
 				[reasons]="calendarInviteReasons"
 				*ngIf="inheritsNgForm"
@@ -49,9 +55,9 @@
 			*ngIf="messageType === chatMessageValueTypes.Form"
 		>
 			<cyph-dynamic-form
-				[form]="chat.currentMessage.form"
+				[form]="chat?.currentMessage?.form"
 				(submitForm)="
-					chat.currentMessage.form = $event;
+					(chat?.currentMessage || {}).form = $event;
 					chatService.updateChat();
 					send()
 				"
@@ -76,8 +82,11 @@
 			<cyph-quill
 				fxFlexFill
 				name="quill-message"
-				[(ngModel)]="chat.currentMessage.quill"
-				(ngModelChange)="chatService.messageChange()"
+				[ngModel]="chat?.currentMessage?.quill"
+				(ngModelChange)="
+					(chat?.currentMessage || {}).quill = $event;
+					chatService.messageChange()
+				"
 			></cyph-quill>
 		</div>
 
@@ -92,8 +101,11 @@
 					fxFlex
 					class="message-box tabIndent"
 					name="text-message"
-					[(ngModel)]="chat.currentMessage.text"
-					(ngModelChange)="chatService.messageChange(true)"
+					[ngModel]="chat?.currentMessage?.text || ''"
+					(ngModelChange)="
+						(chat?.currentMessage || {}).text = $event;
+						chatService.messageChange(true)
+					"
 					placeholder="Send a secure message..."
 					cyphTranslate
 				></textarea>
@@ -107,7 +119,7 @@
 			<div *ngIf="envService.isMobile | await">
 				<div
 					class="message-box-button-group"
-					*ngIf="showSendButton && !!chat.currentMessage.text"
+					*ngIf="showSendButton && !!chat?.currentMessage?.text"
 					[@slideInOutBottom]="'in'"
 				>
 					<button
@@ -121,7 +133,7 @@
 				</div>
 				<div
 					class="message-box-button-group"
-					*ngIf="!chat.currentMessage.text"
+					*ngIf="!chat?.currentMessage?.text"
 					[@slideInOutBottom]="'in'"
 				>
 					<button
@@ -181,7 +193,7 @@
 
 			<smd-fab-speed-dial
 				animationMode="scale"
-				[open]="isSpeedDialOpen | await"
+				[open]="(isSpeedDialOpen | await) === true"
 				(mouseleave)="isSpeedDialOpen.next(false)"
 				*ngIf="(envService.isMobile | await) === false"
 			>
@@ -262,15 +274,17 @@
 						class="new-messages cyph-banner emphasis"
 						(click)="scrollDown()"
 						*ngIf="
+							unreadItemCount !== undefined &&
 							unreadItemCount > 0 &&
 							((scrollService.scrollPosition | await) || 0) >
 								scrollService.minScroll
 						"
 					>
 						↓&nbsp;
-						{{ unreadItemCount }}
+						{{ unreadItemCount?.toString() || '' }}
 						{{ stringsService.newString }}
 						{{
+							unreadItemCount !== undefined &&
 							unreadItemCount === 1 ?
 								stringsService.message :
 								stringsService.messages

@@ -131,39 +131,39 @@ export class LogoComponent extends BaseProvider {
 
 	/** Indicates whether to use alt version where available. */
 	@Input()
-	public get alt () : boolean {
+	public get alt () : any {
 		return this.altInternal;
 	}
-	public set alt (value: boolean)  {
-		this.altInternal = <any> value === '' ? true : value;
+	public set alt (value: any)  {
+		this.altInternal = value === '' ? true : !!value;
 	}
 
 	/** Indicates whether image is a logo in a card. */
 	@HostBinding('class.card-header-logo')
 	@Input()
-	public get cardHeader () : boolean {
+	public get cardHeader () : any {
 		return this.cardHeaderInternal;
 	}
-	public set cardHeader (value: boolean)  {
-		this.cardHeaderInternal = <any> value === '' ? true : value;
+	public set cardHeader (value: any)  {
+		this.cardHeaderInternal = value === '' ? true : !!value;
 	}
 
 	/** Indicates whether to link to home URL. */
 	@Input()
-	public get homeLink () : boolean {
+	public get homeLink () : any {
 		return this.homeLinkInternal;
 	}
-	public set homeLink (value: boolean)  {
-		this.homeLinkInternal = <any> value === '' ? true : value;
+	public set homeLink (value: any)  {
+		this.homeLinkInternal = value === '' ? true : !!value;
 	}
 
 	/** Indicates whether to use icon image. */
 	@Input()
-	public get icon () : boolean {
+	public get icon () : any {
 		return this.iconInternal;
 	}
-	public set icon (value: boolean)  {
-		this.iconInternal = <any> value === '' ? true : value;
+	public set icon (value: any)  {
+		this.iconInternal = value === '' ? true : !!value;
 	}
 
 	/** Active logo. */
@@ -185,29 +185,29 @@ export class LogoComponent extends BaseProvider {
 
 	/** Indicates whether to use vertical image. */
 	@Input()
-	public get vertical () : boolean {
+	public get vertical () : any {
 		return this.verticalInternal;
 	}
-	public set vertical (value: boolean)  {
-		this.verticalInternal = <any> value === '' ? true : value;
+	public set vertical (value: any)  {
+		this.verticalInternal = value === '' ? true : !!value;
 	}
 
 	/** Indicates whether to use video image. */
 	@Input()
-	public get video () : boolean {
+	public get video () : any {
 		return this.videoInternal;
 	}
-	public set video (value: boolean)  {
-		this.videoInternal = <any> value === '' ? true : value;
+	public set video (value: any)  {
+		this.videoInternal = value === '' ? true : !!value;
 	}
 
 	/** Indicates whether to apply filter to make image white. */
 	@Input()
-	public get white () : boolean {
+	public get white () : any {
 		return this.whiteInternal;
 	}
-	public set white (value: boolean)  {
-		this.whiteInternal = <any> value === '' ? true : value;
+	public set white (value: any)  {
+		this.whiteInternal = value === '' ? true : !!value;
 	}
 
 	constructor (

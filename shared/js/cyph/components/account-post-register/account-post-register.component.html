@@ -2,7 +2,7 @@
 	<div
 		fxFlex
 		fxLayout="column"
-		*ngIf="!currentUser.masterKeyConfirmed; else agseConfirmationMessage"
+		*ngIf="!currentUser?.masterKeyConfirmed; else agseConfirmationMessage"
 	>
 		<br />
 		<cyph-account-register
@@ -18,7 +18,7 @@
 				fxFlex
 				fxLayout="column"
 				fxLayoutGap="16px"
-				*ngIf="!currentUser.agseConfirmed"
+				*ngIf="!currentUser?.agseConfirmed"
 			>
 				<p>
 					<span cyphTranslate>
@@ -67,7 +67,7 @@
 				</p>
 			</div>
 
-			<div *ngIf="currentUser.agseConfirmed">
+			<div *ngIf="!!currentUser?.agseConfirmed">
 				<strong cyphTranslate>
 					Your account is fully activated.
 				</strong>

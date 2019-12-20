@@ -91,14 +91,14 @@
 
 							<ng-container
 								*ngIf="
-									(currentUser?.user.userType | await) ===
+									(currentUser?.user?.userType | await) ===
 										accountUserTypes.TelehealthDoctor;
 									else standardView
 								"
 							>
 								<div
 									*ngIf="
-										(participants.get(
+										(participants?.get(
 											accountUserTypes.Standard
 										) || [])[0] as patient
 									"
@@ -109,16 +109,19 @@
 								>
 									<h1>
 										{{ stringsService.your }}
-										{{ appointment?.calendarInvite.title }}
 										{{
 											appointment?.calendarInvite
-												.callType === callTypes.Video ?
+												?.title || ''
+										}}
+										{{
+											appointment?.calendarInvite
+												?.callType === callTypes.Video ?
 												stringsService.video :
 												''
 										}}
 										{{
 											appointment?.calendarInvite
-												.callType === callTypes.Audio ?
+												?.callType === callTypes.Audio ?
 												stringsService.voice :
 												''
 										}}
@@ -135,13 +138,13 @@
 											[contact]="patient"
 											class="cyph-inverted-theme animated fadeIn"
 											[class.fadeOut]="
-												((chat.initProgress | await) ||
+												((chat?.initProgress | await) ||
 													0) > 0
 											"
 											fxFlex
 											fxFlex.gt-sm="40"
 											*ngIf="
-												((chat.initProgress | await) ||
+												((chat?.initProgress | await) ||
 													0) === 0
 											"
 										></cyph-account-contact>
@@ -160,7 +163,7 @@
 											<mat-progress-bar
 												fxFlex="50"
 												[mode]="
-													((chat.initProgress
+													((chat?.initProgress
 														| await) || 0) <= 110 &&
 													(p2pWebRTCService.localMediaError
 														| await) === false ?
@@ -174,11 +177,11 @@
 														'primary'
 												"
 												*ngIf="
-													((chat.initProgress
+													((chat?.initProgress
 														| await) || 0) > 0
 												"
 												[value]="
-													(chat.initProgress
+													(chat?.initProgress
 														| await) || 0
 												"
 											></mat-progress-bar>
@@ -193,7 +196,7 @@
 							<ng-template #standardView>
 								<div
 									*ngIf="
-										(participants.get(
+										(participants?.get(
 											accountUserTypes.TelehealthDoctor
 										) || [])[0] as doctor
 									"
@@ -204,16 +207,19 @@
 								>
 									<h1>
 										{{ stringsService.your }}
-										{{ appointment?.calendarInvite.title }}
 										{{
 											appointment?.calendarInvite
-												.callType === callTypes.Video ?
+												?.title || ''
+										}}
+										{{
+											appointment?.calendarInvite
+												?.callType === callTypes.Video ?
 												stringsService.video :
 												''
 										}}
 										{{
 											appointment?.calendarInvite
-												.callType === callTypes.Audio ?
+												?.callType === callTypes.Audio ?
 												stringsService.voice :
 												''
 										}}
@@ -231,13 +237,13 @@
 											[contact]="doctor"
 											class="cyph-inverted-theme animated fadeIn"
 											[class.fadeOut]="
-												((chat.initProgress | await) ||
+												((chat?.initProgress | await) ||
 													0) > 0
 											"
 											fxFlex
 											fxFlex.gt-sm="40"
 											*ngIf="
-												((chat.initProgress | await) ||
+												((chat?.initProgress | await) ||
 													0) === 0
 											"
 										></cyph-account-contact>
@@ -256,7 +262,7 @@
 											<mat-progress-bar
 												fxFlex="50"
 												[mode]="
-													((chat.initProgress
+													((chat?.initProgress
 														| await) || 0) <= 110 &&
 													(p2pWebRTCService.localMediaError
 														| await) === false ?
@@ -270,11 +276,11 @@
 														'primary'
 												"
 												*ngIf="
-													((chat.initProgress
+													((chat?.initProgress
 														| await) || 0) > 0
 												"
 												[value]="
-													(chat.initProgress
+													(chat?.initProgress
 														| await) || 0
 												"
 											></mat-progress-bar>
@@ -290,13 +296,14 @@
 						<ng-template #loadingMessage>
 							<ng-container
 								*ngIf="
-									(chat.initProgress | await) === 0;
+									(chat?.initProgress | await) === 0;
 									else loading
 								"
 							>
 								<h2
 									*ngIf="
-										(currentUser?.user.userType | await) ===
+										(currentUser?.user?.userType
+											| await) ===
 											accountUserTypes.Standard;
 										else doctorMessage
 									"
@@ -308,7 +315,7 @@
 								<ng-template #doctorMessage>
 									<h2
 										*ngIf="
-											(currentUser?.user.userType
+											(currentUser?.user?.userType
 												| await) ===
 												accountUserTypes.TelehealthDoctor;
 											else genericMessage

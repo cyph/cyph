@@ -18,6 +18,7 @@ import {map} from 'rxjs/operators';
 import {Async} from '../../async-type';
 import {BaseProvider} from '../../base-provider';
 import {ISearchOptions} from '../../isearch-options';
+import {MaybePromise} from '../../maybe-promise-type';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -120,8 +121,9 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 	}
 
 	/** Transforms string value to filter value. */
-	@Input() public filterTransform: (value?: string) => T = value =>
-		<any> value;
+	@Input() public filterTransform: (
+		value?: string
+	) => MaybePromise<T | undefined> = value => <any> value;
 
 	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {

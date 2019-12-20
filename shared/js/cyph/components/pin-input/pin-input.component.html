@@ -10,7 +10,7 @@
 				[ngClass]="
 					'length-' + ((value | await)?.length || 0).toString()
 				"
-				[disabled]="isDisabled | await"
+				[disabled]="(isDisabled | await) === true"
 				(blur)="onTouched && onTouched()"
 				[name]="name"
 				type="tel"

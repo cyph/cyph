@@ -25,7 +25,7 @@ import {DialogService} from '../../services/dialog.service';
 import {EHRIntegrationService} from '../../services/ehr-integration.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {trackByID} from '../../track-by/track-by-id';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {copyToClipboard} from '../../util/clipboard';
 import {readableByteLength} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
@@ -112,8 +112,8 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	/** @see MatSort */
 	@ViewChild(MatSort) public sort?: MatSort;
 
-	/** @see trackByID */
-	public readonly trackByID = trackByID;
+	/** @see trackBySelf */
+	public readonly trackBySelf = trackBySelf;
 
 	/** @see watchRelativeDateString */
 	public readonly watchRelativeDateString = watchRelativeDateString;

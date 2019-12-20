@@ -2,13 +2,13 @@
 	[class.curtain]="cyphertextService.isVisible | await"
 	[class.initiating]="
 		(appService.chatRootState | await) === chatRootStates.chat &&
-		chat.state === chatStates.chat &&
+		chat?.state === chatStates.chat &&
 		(chatService.uiReady | await) !== true
 	"
 	[cyphDropZone]="
 		false &&
 		((appService.chatRootState | await) === chatRootStates.chat &&
-			chat.state === chatStates.chat &&
+			chat?.state === chatStates.chat &&
 			(chatService.uiReady | await) === true)
 	"
 	[cyphDropZoneClass]="false"
@@ -168,7 +168,7 @@
 		mode="indeterminate"
 		*ngIf="
 			(appService.chatRootState | await) === chatRootStates.chat &&
-			chat.state === chatStates.chat &&
+			chat?.state === chatStates.chat &&
 			(chatService.uiReady | await) !== true
 		"
 	></mat-progress-spinner>

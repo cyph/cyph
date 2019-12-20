@@ -23,7 +23,7 @@ import {ChatMessageBoxInheritNgFormComponent} from '../chat-message-box-inherit-
 })
 export class AccountChatMessageBoxComponent extends BaseProvider {
 	/** @see ChatMessageBoxComponent.calendarInviteFollowUp */
-	@Input() public calendarInviteFollowUp?: boolean;
+	@Input() public calendarInviteFollowUp: boolean = false;
 
 	/** @see ChatMessageBoxComponent.calendarInviteReasons */
 	@Input() public calendarInviteReasons?: string[] = this.envService
@@ -48,7 +48,7 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 	@Input() public fileAccept?: string;
 
 	/** @see ChatMessageBoxComponent.messageType */
-	@Input() public messageType: ChatMessageValue.Types =
+	@Input() public messageType?: ChatMessageValue.Types =
 		ChatMessageValue.Types.Text;
 
 	/** Send button text. */

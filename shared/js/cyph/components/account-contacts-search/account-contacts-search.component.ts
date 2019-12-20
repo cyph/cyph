@@ -223,9 +223,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 	> = new EventEmitter<BehaviorSubject<Set<User>>>();
 
 	/** @see SearchBarComponent.filterTransform */
-	public readonly userFilterTransform: (
-		username: string
-	) => Async<User | undefined> = async username =>
+	public readonly userFilterTransform = async (username?: string) =>
 		this.accountUserLookupService.getUser(username);
 
 	/** Default placeholder. */

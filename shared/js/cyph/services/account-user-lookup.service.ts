@@ -159,7 +159,7 @@ export class AccountUserLookupService extends BaseProvider {
 
 	/** Tries to to get User object for the specified user. */
 	public async getUser (
-		user: string | User,
+		user: string | User | undefined,
 		lock: boolean = false,
 		preFetch: boolean = false,
 		skipExistsCheck: boolean = true

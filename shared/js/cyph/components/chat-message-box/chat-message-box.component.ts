@@ -50,7 +50,7 @@ export class ChatMessageBoxComponent extends BaseProvider
 	@Input() public autofocus: boolean = true;
 
 	/** @see CalendarInviteComponent.followUp */
-	@Input() public calendarInviteFollowUp?: boolean;
+	@Input() public calendarInviteFollowUp: boolean = false;
 
 	/** @see CalendarInviteComponent.reasons */
 	@Input() public calendarInviteReasons?: string[];

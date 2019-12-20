@@ -1,8 +1,8 @@
 <div fxLayout="column" fxLayoutGap="32px">
 	<div fxLayout="row" *ngFor="let message of messages; trackBy: trackByID">
 		<div class="message">
-			<strong>{{ message.author | await }}:</strong>
-			<span>{{ message.value.text }}</span>
+			<strong>{{ (message.author | await) || '' }}:</strong>
+			<span>{{ message.value?.text || '' }}</span>
 		</div>
 	</div>
 </div>

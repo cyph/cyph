@@ -165,9 +165,10 @@
 												class="cyph-light-theme welcome-letter"
 												*ngIf="
 													(inviteCodeData | await)
-														?.isValid &&
+														?.isValid ?
 														(inviteCodeData | await)
-															?.welcomeLetter as welcomeLetter;
+															?.welcomeLetter :
+														undefined as welcomeLetter;
 													else mainBasicWelcomeMessage
 												"
 											>
@@ -296,7 +297,7 @@
 															class="form-field-pending"
 															matTooltip="Checking availability..."
 															*ngIf="
-																currentUsername.pending
+																!!currentUsername?.pending
 															"
 														>
 															<mat-progress-spinner
@@ -311,9 +312,9 @@
 																stringsService.registerErrorUsername
 															"
 															*ngIf="
-																!currentUsername.pending &&
-																!!currentUsername.value &&
-																!!currentUsername.errors
+																!currentUsername?.pending &&
+																!!currentUsername?.value &&
+																!!currentUsername?.errors
 															"
 														>
 															error_outline
@@ -322,9 +323,9 @@
 															cyphTranslate
 															matTooltip="Username available!"
 															*ngIf="
-																!currentUsername.pending &&
-																!!currentUsername.value &&
-																!currentUsername.errors
+																!currentUsername?.pending &&
+																!!currentUsername?.value &&
+																!currentUsername?.errors
 															"
 														>
 															check
@@ -359,7 +360,7 @@
 														matInput
 														cyphTranslate
 														[maxlength]="
-															accountService.maxNameLength
+															accountService.maxNameLength.toString()
 														"
 														[ngModel]="name | await"
 														(ngModelChange)="
@@ -438,7 +439,7 @@
 															class="form-field-pending"
 															matTooltip="Checking invite code..."
 															*ngIf="
-																currentInviteCode.pending
+																!!currentInviteCode?.pending
 															"
 														>
 															<mat-progress-spinner
@@ -453,9 +454,9 @@
 																stringsService.registerErrorInviteCode
 															"
 															*ngIf="
-																!currentInviteCode.pending &&
-																!!currentInviteCode.value &&
-																!!currentInviteCode.errors
+																!currentInviteCode?.pending &&
+																!!currentInviteCode?.value &&
+																!!currentInviteCode?.errors
 															"
 														>
 															error_outline
@@ -464,9 +465,9 @@
 															cyphTranslate
 															matTooltip="Invite code confirmed"
 															*ngIf="
-																!currentInviteCode.pending &&
-																!!currentInviteCode.value &&
-																!currentInviteCode.errors
+																!currentInviteCode?.pending &&
+																!!currentInviteCode?.value &&
+																!currentInviteCode?.errors
 															"
 														>
 															check
@@ -666,7 +667,7 @@
 									fxLayout="row"
 									fxLayoutAlign="center center"
 									class="cyph-banner default-align warn"
-									*ngIf="errors.length > 0"
+									*ngIf="(errors?.length || 0) > 0"
 								>
 									<div>
 										<p>
@@ -678,7 +679,8 @@
 										<ul>
 											<li
 												*ngFor="
-													let error of errors;
+													let error of errors
+														| cyphArray;
 													trackBy: trackBySelf
 												"
 											>
@@ -702,7 +704,7 @@
 									<button
 										mat-raised-button
 										type="submit"
-										[disabled]="errors.length > 0"
+										[disabled]="(errors?.length || 0) > 0"
 									>
 										<span cyphTranslate>Register</span>
 									</button>
@@ -847,10 +849,10 @@
 				<input
 					matInput
 					cyphTranslate
-					[ngModel]="(usernameWatcher | await)?.value"
+					[ngModel]="(usernameWatcher | await)?.value || ''"
 					name="confirmCyphUsername"
 					placeholder="Confirm Username"
-					disabled
+					[disabled]="true"
 					required
 				/>
 			</mat-form-field>
@@ -1091,7 +1093,9 @@
 												(useXkcdPassphrase | await) ===
 												false
 											"
-											[minlength]="masterKeyLength"
+											[minlength]="
+												masterKeyLength.toString()
+											"
 										/>
 										<mat-icon
 											matSuffix
@@ -1253,7 +1257,7 @@
 					name="lockScreenPIN"
 					[autofocus]="order === '1'"
 					[hide]="hidePassword.lockScreenPIN"
-					[required]="useLockScreenPIN | await"
+					[required]="(useLockScreenPIN | await) === true"
 				></cyph-pin-input>
 			</div>
 		</div>
@@ -1296,7 +1300,7 @@
 						"
 						placeholder="Lock Screen Password"
 						[required]="(useLockScreenPIN | await) === false"
-						[minlength]="lockScreenPasswordLength"
+						[minlength]="lockScreenPasswordLength.toString()"
 					/>
 					<mat-icon
 						matSuffix

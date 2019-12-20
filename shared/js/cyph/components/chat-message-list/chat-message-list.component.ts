@@ -13,6 +13,7 @@ import {
 	Optional,
 	ViewChild
 } from '@angular/core';
+import {ThemePalette} from '@angular/material/core/common-behaviors/color';
 import {SafeStyle} from '@angular/platform-browser';
 import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
@@ -95,6 +96,9 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** @see IChatData */
 	@Input() public chat?: IChatData;
+
+	/** Temporary workaround for button color. */
+	public readonly colorNone: ThemePalette = <any> 'none';
 
 	/** @see customBuildLogoVertical */
 	public readonly customBackgroundImage: Promise<SafeStyle | undefined> =

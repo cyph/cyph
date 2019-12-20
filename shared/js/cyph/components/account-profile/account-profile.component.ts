@@ -136,7 +136,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	public readonly urlToSafeStyle = urlToSafeStyle;
 
 	/** List of members, if user is an organization. */
-	public readonly userMembers: Observable<User[] | undefined>;
+	public readonly userMembers: Observable<User[]>;
 
 	/** User parent organization profile. */
 	public readonly userOrganiztion: Observable<User | undefined>;
@@ -563,10 +563,10 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				mergeMap(user =>
 					user ?
 						this.accountOrganizationsService.getMembers(user) :
-						of(undefined)
+						of([])
 				)
 			),
-			undefined,
+			[],
 			this.subscriptions
 		);
 

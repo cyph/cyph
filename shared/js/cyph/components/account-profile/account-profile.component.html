@@ -58,7 +58,7 @@
 							matTooltip="Remove Contact"
 							(click)="
 								accountContactsService.removeContact(
-									user.username
+									user?.username
 								)
 							"
 							*ngIf="isContact | await; else buttonsAddContact"
@@ -73,7 +73,7 @@
 								matTooltip="Add Contact"
 								(click)="
 									accountContactsService.addContact(
-										user.username
+										user?.username
 									)
 								"
 							>
@@ -86,7 +86,11 @@
 							cyphTranslate
 							class="animated flipInX _4"
 							matTooltip="Open Mail"
-							[routerLink]="'/mail/' + (user.contactID | await)"
+							[routerLink]="
+								'/mail/' +
+								((user?.contactID | await) ||
+									'user/' + (user?.username || ''))
+							"
 						>
 							<mat-icon>email</mat-icon>
 						</button>
@@ -97,7 +101,9 @@
 							class="animated flipInX _4"
 							matTooltip="Open Messages"
 							[routerLink]="
-								'/messages/' + (user.contactID | await)
+								'/messages/' +
+								((user?.contactID | await) ||
+									'user/' + (user?.username || ''))
 							"
 						>
 							<mat-icon>message</mat-icon>
@@ -113,8 +119,8 @@
 						matTooltip="New Message"
 						[routerLink]="
 							'/compose/' +
-							((user.contactID | await) ||
-								'user/' + user.username)
+							((user?.contactID | await) ||
+								'user/' + (user?.username || ''))
 						"
 					>
 						<mat-icon>email</mat-icon>
@@ -136,8 +142,7 @@
 			>
 				<div>
 					{{
-						user.description
-							| await
+						(user?.description | await) || ''
 							| slice: 0:accountService.maxDescriptionLength
 					}}
 				</div>
@@ -156,7 +161,7 @@
 						#descriptionEditor
 						(blur)="isEditorFocused.next(false)"
 						(focus)="isEditorFocused.next(true)"
-						[ngModel]="user.description | await"
+						[ngModel]="(user?.description | await) || ''"
 						(ngModelChange)="updateDraft({description: $event})"
 					></textarea>
 					<mat-hint
@@ -185,13 +190,16 @@
 		</ng-template>
 
 		<ng-template #forms let-extra="extra">
-			<div class="cyph-inverted-theme" *ngIf="extra.forms.length > 0">
+			<div
+				class="cyph-inverted-theme"
+				*ngIf="(extra?.forms?.length || 0) > 0"
+			>
 				<!-- TODO: factor this out to a "dynamic form accordion" component -->
 				<mat-accordion>
 					<mat-expansion-panel
 						[expanded]="i === 0"
 						*ngFor="
-							let form of extra.forms;
+							let form of extra?.forms || [];
 							let i = index;
 							trackBy: trackBySelf
 						"
@@ -202,7 +210,7 @@
 									{{
 										(((form?.components || [])[0]
 											?.containers || [])[0]?.elements ||
-											[])[0]?.element.label
+											[])[0]?.element.label || ''
 									}}
 								</h2>
 							</mat-panel-title>
@@ -211,7 +219,9 @@
 							[form]="form"
 							[hideSubmitButton]="true"
 							[isDisabled]="(editMode | await) === false"
-							(changeForm)="updateDraft({forms: extra.forms})"
+							(changeForm)="
+								updateDraft({forms: extra?.forms || []})
+							"
 						></cyph-dynamic-form>
 					</mat-expansion-panel>
 				</mat-accordion>
@@ -229,7 +239,10 @@
 				*ngIf="(editMode | await) === false"
 			>
 				{{ prefix || '' }}
-				{{ user.name | await | slice: 0:accountService.maxNameLength }}
+				{{
+					(user?.name | await) || ''
+						| slice: 0:accountService.maxNameLength
+				}}
 			</div>
 			<div fxLayoutAlign="center" *ngIf="editMode | await">
 				<mat-form-field
@@ -245,8 +258,8 @@
 						#descriptionEditor
 						(blur)="isEditorFocused.next(false)"
 						(focus)="isEditorFocused.next(true)"
-						[maxlength]="accountService.maxNameLength"
-						[ngModel]="user.name | await"
+						[maxlength]="accountService.maxNameLength.toString()"
+						[ngModel]="(user?.name | await) || ''"
 						(ngModelChange)="updateDraft({name: $event})"
 					/>
 				</mat-form-field>
@@ -266,7 +279,11 @@
 						mat-mini-fab
 						cyphTranslate
 						matTooltip="Open Mail"
-						[routerLink]="'/mail/' + (user.contactID | await)"
+						[routerLink]="
+							'/mail/' +
+							((user?.contactID | await) ||
+								'user/' + (user?.username || ''))
+						"
 					>
 						<mat-icon>email</mat-icon>
 					</button>
@@ -275,7 +292,11 @@
 						mat-mini-fab
 						cyphTranslate
 						matTooltip="Open Messages"
-						[routerLink]="'/messages/' + (user.contactID | await)"
+						[routerLink]="
+							'/messages/' +
+							((user?.contactID | await) ||
+								'user/' + (user?.username || ''))
+						"
 					>
 						<mat-icon>message</mat-icon>
 					</button>
@@ -287,7 +308,7 @@
 						*ngIf="
 							patientData &&
 							((accountDatabaseService.currentUser | await)?.user
-								.userType | await) ===
+								?.userType | await) ===
 								accountUserTypes.TelehealthDoctor
 						"
 					>
@@ -302,8 +323,8 @@
 						matTooltip="New Message"
 						[routerLink]="
 							'/compose/' +
-							((user.contactID | await) ||
-								'user/' + user.username)
+							((user?.contactID | await) ||
+								'user/' + (user?.username || ''))
 						"
 					>
 						<mat-icon>email</mat-icon>
@@ -421,7 +442,7 @@
 						accountFilesService.upload(
 							$event.name,
 							$event,
-							user.username
+							user?.username
 						)
 					"
 				>
@@ -432,14 +453,14 @@
 
 		<ng-template #fileUploadSpinner>
 			<ng-container
-				*ngIf="(accountFilesService.uploadSpinner | await) !== false"
+				*ngIf="
+					(accountFilesService.uploadSpinner | await) !== undefined
+				"
 			>
 				<mat-progress-spinner
 					mode="indeterminate"
 					*ngIf="
-						(accountFilesService.uploadSpinner | await) === true ||
-							((accountFilesService.uploadSpinner | await) || 0) <
-								1;
+						((accountFilesService.uploadSpinner | await) || 0) < 1;
 						else determinateFileSpinner
 					"
 				></mat-progress-spinner>
@@ -473,7 +494,7 @@
 						[style.background-image]="
 							urlToSafeStyle(
 								(getDataURI((draft | await)?.coverImage)
-									| await) || (user.coverImage | await)
+									| await) || (user?.coverImage | await)
 							) | await
 						"
 						[cyphDropZone]="editMode | await"
@@ -503,13 +524,15 @@
 										(editMode | await) === false
 									"
 									[ngClass]="
-										userPresence[(user.status | await) || 0]
+										userPresence[
+											(user?.status | await) || 0
+										]
 									"
 									accept="image/*"
 									alt="Profile Picture"
 									[src]="
 										(getDataURI((draft | await)?.avatar)
-											| await) || (user.avatar | await)
+											| await) || (user?.avatar | await)
 									"
 									[cyphDropZone]="editMode | await"
 									(fileDrop)="setAvatar($event)"
@@ -528,13 +551,16 @@
 								<a
 									class="username animated flipInX _2"
 									[href]="
-										envService.cyphMeUrl + user.username
+										envService.cyphMeUrl +
+										(user?.username || '')
 									"
 									target="_self"
 								>
 									<span>@</span
 									><span>{{
-										user.realUsername | await
+										(user?.realUsername | await) ||
+											user?.username ||
+											''
 									}}</span>
 								</a>
 							</div>
@@ -608,7 +634,7 @@
 		<div
 			[class.editing]="(isEditorFocused | await) && (editMode | await)"
 			[class.initiating]="
-				(accountFilesService.uploadSpinner | await) !== false
+				(accountFilesService.uploadSpinner | await) !== undefined
 			"
 			*ngIf="!envService.isTelehealthFull"
 		>
@@ -622,7 +648,7 @@
 			class="telehealth"
 			[class.editing]="(isEditorFocused | await) && (editMode | await)"
 			[class.initiating]="
-				(accountFilesService.uploadSpinner | await) !== false
+				(accountFilesService.uploadSpinner | await) !== undefined
 			"
 			*ngIf="envService.isTelehealthFull"
 		>
@@ -652,14 +678,14 @@
 								class="avatar _1"
 								[class.animated]="(editMode | await) === false"
 								[ngClass]="
-									userPresence[(user.status | await) || 0]
+									userPresence[(user?.status | await) || 0]
 								"
 								ngClass.xs="xs"
 								accept="image/*"
 								alt="Profile Picture"
 								[src]="
 									(getDataURI((draft | await)?.avatar)
-										| await) || (user.avatar | await)
+										| await) || (user?.avatar | await)
 								"
 								[cyphDropZone]="editMode | await"
 								(fileDrop)="setAvatar($event)"
@@ -682,7 +708,7 @@
 												name;
 												context: {
 													prefix:
-														(user.userType
+														(user?.userType
 															| await) ===
 														accountUserTypes.TelehealthDoctor ?
 															stringsService.dr :
@@ -704,17 +730,20 @@
 									<a
 										class="username animated flipInX _2"
 										[href]="
-											envService.cyphMeUrl + user.username
+											envService.cyphMeUrl +
+											(user?.username || '')
 										"
 										target="_self"
 										*ngIf="
-											(user.userType | await) ===
+											(user?.userType | await) ===
 											accountUserTypes.Standard
 										"
 									>
 										<span>@</span
 										><span>{{
-											user.realUsername | await
+											(user?.realUsername | await) ||
+												user?.username ||
+												''
 										}}</span>
 									</a>
 									<div
@@ -750,7 +779,7 @@
 									<cyph-account-user-rating
 										[user]="user"
 										*ngIf="
-											(user.userType | await) ===
+											(user?.userType | await) ===
 											accountUserTypes.TelehealthDoctor
 										"
 										fxHide.lt-md
@@ -770,7 +799,7 @@
 							[class.doctor-list-only]="doctorListOnly | await"
 							ngClass.lt-md="lt-md"
 							ngClass.md="md"
-							*ngIf="user.extra() | await as extra"
+							*ngIf="user?.extra() | await as extra"
 							[class.fadeOutUp]="
 								(accountService.transition | await) === true
 							"
@@ -781,7 +810,7 @@
 									cyphTranslate
 									class="subheader"
 									*ngIf="
-										(user.userType | await) ===
+										(user?.userType | await) ===
 										accountUserTypes.TelehealthAdmin
 									"
 								>
@@ -791,7 +820,7 @@
 									cyphTranslate
 									class="subheader"
 									*ngIf="
-										(user.userType | await) ===
+										(user?.userType | await) ===
 										accountUserTypes.Org
 									"
 								>
@@ -801,7 +830,7 @@
 									cyphTranslate
 									class="subheader"
 									*ngIf="
-										(user.userType | await) ===
+										(user?.userType | await) ===
 										accountUserTypes.Standard
 									"
 								>
@@ -810,7 +839,7 @@
 
 								<ng-container
 									*ngIf="
-										(user.userType | await) !==
+										(user?.userType | await) !==
 										accountUserTypes.Org
 									"
 								>
@@ -827,7 +856,7 @@
 										<ng-container
 											*ngIf="
 												envService.isTelehealthFull &&
-													(user.userType | await) ===
+													(user?.userType | await) ===
 														accountUserTypes.TelehealthDoctor;
 												else mailButtons
 											"
@@ -838,8 +867,11 @@
 												color="primary"
 												[routerLink]="
 													'/request-appointment/' +
-													((user.contactID | await) ||
-														'user/' + user.username)
+													((user?.contactID
+														| await) ||
+														'user/' +
+															(user?.username ||
+																''))
 												"
 											>
 												Request Appointment
@@ -851,7 +883,7 @@
 
 								<ng-container
 									*ngIf="
-										(user.userType | await) !==
+										(user?.userType | await) !==
 											accountUserTypes.Org ||
 										(doctorListOnly | await) !== true
 									"
@@ -872,9 +904,9 @@
 								<ng-container
 									*ngIf="
 										!envService.isTelehealthFull &&
-										(user.userType | await) ===
+										(user?.userType | await) ===
 											accountUserTypes.Org &&
-										(userMembers | await)?.length > 0
+										((userMembers | await)?.length || 0) > 0
 									"
 								>
 									<h2 cyphTranslate class="user-list-header">
@@ -896,7 +928,7 @@
 
 						<ng-container
 							*ngIf="
-								(user.userType | await) ===
+								(user?.userType | await) ===
 									accountUserTypes.Standard &&
 								!envService.isTelehealth
 							"

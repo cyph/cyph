@@ -794,12 +794,12 @@ export class AccountFilesService extends BaseProvider {
 		)
 	);
 
-	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner = new BehaviorSubject<boolean | number>(true);
+	/** Indicates spinner value. If -1, indefinite. If undefined, hide. */
+	public readonly showSpinner = new BehaviorSubject<number | undefined>(-1);
 
 	/** Indicates whether spinner for uploads should be displayed. */
 	public readonly uploadSpinner = concat(
-		of(false),
+		of(undefined),
 		this.showSpinner.pipe(skip(1))
 	);
 
@@ -838,7 +838,10 @@ export class AccountFilesService extends BaseProvider {
 		);
 
 		const sub = progress.subscribe(n => {
-			if (typeof this.showSpinner.value !== 'number') {
+			if (
+				this.showSpinner.value === undefined ||
+				this.showSpinner.value < 0
+			) {
 				sub.unsubscribe();
 				return;
 			}
@@ -849,7 +852,7 @@ export class AccountFilesService extends BaseProvider {
 			progress,
 			result: result.then(async o => {
 				sub.unsubscribe();
-				this.showSpinner.next(false);
+				this.showSpinner.next(undefined);
 
 				return o.value instanceof Blob ? <any> new Blob([o.value], {
 						type: (await filePromise).mediaType
@@ -989,13 +992,18 @@ export class AccountFilesService extends BaseProvider {
 		id:
 			| string
 			| IAccountFileRecord
-			| (IAccountFileRecord & IAccountFileReference),
+			| (IAccountFileRecord & IAccountFileReference)
+			| undefined,
 		options:
 			| boolean
 			| {copy?: boolean; name?: string; reject?: boolean} = true,
 		metadata?: string,
 		data?: AccountFile | string
 	) : Promise<void> {
+		if (id === undefined) {
+			return;
+		}
+
 		if (typeof options === 'boolean') {
 			options = {reject: !options};
 		}
@@ -1506,7 +1514,7 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Gets the Material icon name for the file default thumbnail. */
 	public getThumbnail (
-		mediaType: string,
+		mediaType: string = '',
 		anonymousMessages: boolean = false
 	) : string {
 		if (anonymousMessages) {
@@ -1636,9 +1644,13 @@ export class AccountFilesService extends BaseProvider {
 
 	/** Removes a file. */
 	public async remove (
-		id: string | Async<IAccountFileRecord>,
+		id: string | Async<IAccountFileRecord> | undefined,
 		confirmAndRedirect: boolean = true
 	) : Promise<void> {
+		if (id === undefined) {
+			return;
+		}
+
 		if (typeof id !== 'string') {
 			id = await awaitAsync(id);
 		}
@@ -1784,7 +1796,11 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Creates a dialog to share a file with another user. */
-	public async shareFilePrompt (file: AccountFileShare) : Promise<void> {
+	public async shareFilePrompt (file?: AccountFileShare) : Promise<void> {
+		if (!file) {
+			return;
+		}
+
 		const closeFunction = resolvable<() => void>();
 
 		await this.dialogService.baseDialog(
@@ -2089,7 +2105,10 @@ export class AccountFilesService extends BaseProvider {
 				);
 
 		const sub = progress.subscribe(n => {
-			if (typeof this.showSpinner.value !== 'number') {
+			if (
+				this.showSpinner.value === undefined ||
+				this.showSpinner.value < 0
+			) {
 				sub.unsubscribe();
 				return;
 			}
@@ -2148,7 +2167,7 @@ export class AccountFilesService extends BaseProvider {
 				}
 
 				sub.unsubscribe();
-				this.showSpinner.next(false);
+				this.showSpinner.next(undefined);
 
 				return id;
 			})
@@ -2310,7 +2329,7 @@ export class AccountFilesService extends BaseProvider {
 				)).length === 0
 			) {
 				this.initiated.next(true);
-				this.showSpinner.next(false);
+				this.showSpinner.next(undefined);
 			}
 			else {
 				this.filesList
@@ -2321,7 +2340,7 @@ export class AccountFilesService extends BaseProvider {
 					.toPromise()
 					.then(() => {
 						this.initiated.next(true);
-						this.showSpinner.next(false);
+						this.showSpinner.next(undefined);
 					});
 			}
 		})();

@@ -22,7 +22,10 @@
 	</button>
 	<button
 		mat-button
-		[disabled]="!searchBar || (searchBar.filter | await)?.size < minimum"
+		[disabled]="
+			!searchBar ||
+			((searchBar.filter | await) || {size: 0}).size < minimum
+		"
 		(click)="submitContacts()"
 	>
 		{{ stringsService.ok }}

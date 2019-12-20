@@ -23,8 +23,8 @@
 				<input
 					matInput
 					cyphTranslate
-					[maxlength]="accountService.maxNameLength"
-					[ngModel]="(data | await)?.modified.name"
+					[maxlength]="accountService.maxNameLength.toString()"
+					[ngModel]="(data | await)?.modified?.name || ''"
 					(ngModelChange)="updateData({modified: {name: $event}})"
 					name="name"
 					placeholder="Name"
@@ -35,7 +35,7 @@
 				<input
 					matInput
 					cyphTranslate
-					[ngModel]="(data | await)?.modified.email"
+					[ngModel]="(data | await)?.modified?.email || ''"
 					(ngModelChange)="updateData({modified: {email: $event}})"
 					name="email"
 					type="email"
@@ -108,7 +108,8 @@
 						<div fxFlex fxLayout="column" fxLayoutGap="32px">
 							<mat-slide-toggle
 								[ngModel]="
-									(data | await)?.modified.profileVisible
+									(data | await)?.modified?.profileVisible ===
+									true
 								"
 								(ngModelChange)="
 									updateData({
@@ -127,14 +128,17 @@
 									matInput
 									cyphTranslate
 									[ngModel]="
-										(data | await)?.modified.realUsername
+										(data | await)?.modified
+											?.realUsername || ''
 									"
 									(ngModelChange)="
 										updateData({
 											modified: {realUsername: $event}
 										})
 									"
-									[pattern]="(data | await)?.usernamePattern"
+									[pattern]="
+										(data | await)?.usernamePattern || ''
+									"
 									[textMask]="usernameMask"
 									name="realUsername"
 									placeholder="Username Capitalization"

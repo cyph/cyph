@@ -25,7 +25,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {trackByID} from '../../track-by/track-by-id';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {getDateTimeString, watchTimestamp} from '../../util/time';
 
 /**
@@ -86,8 +86,8 @@ export class AccountAppointmentsComponent extends BaseProvider
 		this.accountUserLookupService.getUser(username)
 	);
 
-	/** @see trackByID */
-	public readonly trackByID = trackByID;
+	/** @see trackBySelf */
+	public readonly trackBySelf = trackBySelf;
 
 	/** Current time; used to check if appointment is within range. */
 	public readonly timestampWatcher = watchTimestamp();

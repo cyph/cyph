@@ -7,8 +7,8 @@
 				fxLayout="row"
 				*ngIf="!!o?.metadata; else nameHeader"
 			>
-				<ng-container *ngIf="o.metadata | await as metadata">
-					<mat-card-title>{{ metadata.name }}</mat-card-title>
+				<ng-container *ngIf="o?.metadata | await as metadata">
+					<mat-card-title>{{ metadata?.name || '' }}</mat-card-title>
 					<div fxFlex fxLayoutAlign="end center">
 						<button
 							mat-icon-button
@@ -22,7 +22,7 @@
 							mat-icon-button
 							cyphTranslate
 							matTooltip="Delete Form"
-							(click)="accountFilesService.remove(o.metadata)"
+							(click)="accountFilesService.remove(metadata)"
 						>
 							<mat-icon>delete</mat-icon>
 						</button>
@@ -31,7 +31,7 @@
 			</mat-card-header>
 			<ng-template #nameHeader>
 				<mat-card-header fxLayout="row" *ngIf="!!o?.name">
-					<mat-card-title>{{ o?.name | await }}</mat-card-title>
+					<mat-card-title>{{ o?.name || '' }}</mat-card-title>
 				</mat-card-header>
 			</ng-template>
 			<mat-card-content>

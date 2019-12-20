@@ -15,7 +15,7 @@
 				class="back-button"
 				matTooltip="Back"
 				[routerLink]="'/profile/' + ((searchUsername | await) || '')"
-				*ngIf="(searchUsername | await)?.length > 0"
+				*ngIf="((searchUsername | await) || '').length > 0"
 			>
 				<mat-icon>arrow_back</mat-icon>
 			</button>
@@ -141,7 +141,7 @@
 							[fxShow]="
 								(messageType | await) ===
 									chatMessageValueTypes.Quill &&
-								(sendQuillAsNote | await)
+								(sendQuillAsNote | await) === true
 							"
 						>
 							<input
@@ -154,7 +154,7 @@
 								[required]="
 									(messageType | await) ===
 										chatMessageValueTypes.Quill &&
-									(sendQuillAsNote | await)
+									(sendQuillAsNote | await) === true
 								"
 							/>
 						</mat-form-field>
@@ -176,11 +176,15 @@
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
 						[customSendFunction]="send"
-						[calendarInviteFollowUp]="appointmentFollowUp | await"
+						[calendarInviteFollowUp]="
+							(appointmentFollowUp | await) === true
+						"
 						[disableSend]="
 							((recipients | await)?.size || 0) < 1 &&
-							((accountService.fromEmail | await)?.length < 1 ||
-								(accountService.fromName | await)?.length < 1)
+							(((accountService.fromEmail | await) || '').length <
+								1 ||
+								((accountService.fromName | await) || '')
+									.length < 1)
 						"
 						[messageType]="messageType | await"
 						[sendText]="
@@ -230,15 +234,16 @@
 										((messageType | await) ===
 										chatMessageValueTypes.Quill ?
 											'/mail/' :
-											'/messages/') + sentMessageData.id
+											'/messages/') +
+										(sentMessageData?.id || '')
 									"
 								>
-									<span *ngIf="sentMessageData.name">
-										{{ sentMessageData.name }}
+									<span *ngIf="!!sentMessageData?.name">
+										{{ sentMessageData?.name || '' }}
 									</span>
 									<span
 										cyphTranslate
-										*ngIf="!sentMessageData.name"
+										*ngIf="!sentMessageData?.name"
 									>
 										group conversation
 									</span>
@@ -291,8 +296,8 @@
 											*ngIf="
 												(sentFileID | await) !==
 													undefined &&
-													(currentUser.user.userType
-														| await) ===
+													(currentUser?.user
+														?.userType | await) ===
 														accountUserTypes.Standard;
 												else doctorView
 											"

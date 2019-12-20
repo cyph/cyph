@@ -19,11 +19,6 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
 
 	/** @inheritDoc */
 	/* eslint-disable-next-line no-null/no-null */
-	public transform<T> (obj: undefined | null) : undefined;
-	public transform<T> (obj: T) : T;
-	public transform<T> (obj: Promise<T>) : T | undefined;
-	public transform<T> (obj: Observable<T>) : T | undefined;
-	/* eslint-disable-next-line no-null/no-null */
 	public transform<T> (obj: Async<T | undefined | null>) : T | undefined {
 		const retVal =
 			obj instanceof Promise ?

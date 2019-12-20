@@ -16,17 +16,17 @@
 		fxLayoutAlign="center stretch"
 		class="loading"
 		*ngIf="
-			chat.state === states.keyExchange ||
-			chat.state === states.chatBeginMessage
+			chat?.state === states.keyExchange ||
+			chat?.state === states.chatBeginMessage
 		"
 		[@fadeIn]="'in'"
 	>
 		<div
 			class="logo-animation"
-			[class.connected]="chat.state === states.chatBeginMessage"
+			[class.connected]="chat?.state === states.chatBeginMessage"
 			*ngIf="
-				chat.state === states.keyExchange ||
-				chat.state === states.chatBeginMessage
+				chat?.state === states.keyExchange ||
+				chat?.state === states.chatBeginMessage
 			"
 		>
 			<div></div>
@@ -36,16 +36,16 @@
 			<div></div>
 		</div>
 
-		<div cyphTranslate *ngIf="chat.state === states.keyExchange">
+		<div cyphTranslate *ngIf="chat?.state === states.keyExchange">
 			Initiating Key Exchange...
 		</div>
-		<div cyphTranslate *ngIf="chat.state === states.chatBeginMessage">
+		<div cyphTranslate *ngIf="chat?.state === states.chatBeginMessage">
 			Securely Connected!
 		</div>
 
 		<mat-progress-bar
 			class="key-exchange-progress"
-			[value]="(chat.initProgress | await) || 0"
+			[value]="(chat?.initProgress | await) || 0"
 		></mat-progress-bar>
 	</div>
 
@@ -54,7 +54,7 @@
 		fxLayout="column"
 		fxLayoutAlign="center stretch"
 		class="abort-screen loading"
-		*ngIf="chat.state === states.aborted"
+		*ngIf="chat?.state === states.aborted"
 		[@fadeIn]="'in'"
 	>
 		<div class="image">
@@ -124,7 +124,7 @@
 		[fxShow]="forceDisplayVideo || (p2pService.isActive | await)"
 		class="video-call"
 		[class.sidebar-open]="p2pService.isSidebarOpen | await"
-		*ngIf="chat.state === states.chat"
+		*ngIf="chat?.state === states.chat"
 	>
 		<cyph-logo alignment="left" homeLink video></cyph-logo>
 		<div
@@ -242,7 +242,7 @@
 			class="io-switcher"
 			animationMode="scale"
 			direction="down"
-			[open]="p2pService.ioSwitcher.isOpen | await"
+			[open]="(p2pService.ioSwitcher.isOpen | await) === true"
 			(mouseleave)="p2pService.ioSwitcher.close()"
 		>
 			<smd-fab-trigger
@@ -266,8 +266,8 @@
 					[matTooltip]="stringsService.cameraSwitchTitle"
 					matTooltipPosition="left"
 					[disabled]="
-						(p2pService.ioSwitcher.devices | await)?.cameras
-							.length < 1
+						((p2pService.ioSwitcher.devices | await)?.cameras
+							?.length || 0) < 1
 					"
 					(click)="
 						p2pService.ioSwitcher.switch(
@@ -283,7 +283,8 @@
 					[matTooltip]="stringsService.micSwitchTitle"
 					matTooltipPosition="left"
 					[disabled]="
-						(p2pService.ioSwitcher.devices | await)?.mics.length < 1
+						((p2pService.ioSwitcher.devices | await)?.mics
+							?.length || 0) < 1
 					"
 					(click)="
 						p2pService.ioSwitcher.switch(
@@ -299,8 +300,8 @@
 					[matTooltip]="stringsService.speakerSwitchTitle"
 					matTooltipPosition="left"
 					[class.visibility-hidden]="
-						(p2pService.ioSwitcher.devices | await)?.speakers
-							.length < 1
+						((p2pService.ioSwitcher.devices | await)?.speakers
+							?.length || 0) < 1
 					"
 					(click)="
 						p2pService.ioSwitcher.switch(
@@ -446,14 +447,16 @@
 	<cyph-chat-message-box
 		class="video-call-message-box"
 		[autofocus]="false"
-		[messageType]="messageType"
+		[messageType]="
+			messageType !== undefined ? messageType : chatMessageValueTypes.Text
+		"
 		*ngIf="forceDisplayVideo || (p2pService.isActive | await)"
 	></cyph-chat-message-box>
 
 	<div
 		class="transfer-list"
 		*ngIf="
-			chat.state === states.chat &&
+			chat?.state === states.chat &&
 			!(forceDisplayVideo || (p2pService.isActive | await) === true)
 		"
 		[@fadeIn]="'in'"
@@ -543,15 +546,17 @@
 		[chat]="chat"
 		[messageCountInTitle]="messageCountInTitle"
 		[mobile]="
-			(envService.isMobile | await) ||
 			forceDisplayVideo ||
-			(p2pService.isActive | await)
+			(envService.isMobile | await) === true ||
+			(p2pService.isActive | await) === true
 		"
 		[persistentEndMessage]="persistentEndMessage"
 		[promptFollowup]="promptFollowup"
-		[showDisconnectMessage]="chat.isDisconnected && !hideDisconnectMessage"
+		[showDisconnectMessage]="
+			!!chat?.isDisconnected && !hideDisconnectMessage
+		"
 		[uiStyle]="uiStyle"
-		*ngIf="chat.state === states.chat"
+		*ngIf="chat?.state === states.chat"
 		[@fadeIn]="'in'"
 	>
 		<ng-content></ng-content>

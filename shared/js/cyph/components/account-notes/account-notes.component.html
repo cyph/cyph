@@ -1,7 +1,7 @@
 <cyph-account-base-file-list
-	[anonymousMessages]="anonymousMessages | await"
+	[anonymousMessages]="(anonymousMessages | await) === true"
 	[filterFunction]="filterFunction | await"
-	[recordType]="recordType | await"
+	[recordType]="(realTime | await) ? recordTypes.Doc : recordTypes.Note"
 	*ngIf="(realTime | await) === false || (accountService.enableDocs | await)"
 >
 	<button

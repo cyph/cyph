@@ -13,21 +13,21 @@
 	<mat-card class="file">
 		<mat-card-header fxLayout="row">
 			<mat-icon mat-card-avatar>
-				{{ accountFilesService.getThumbnail(o.mediaType) }}
+				{{ accountFilesService.getThumbnail(o?.mediaType) }}
 			</mat-icon>
 			<mat-card-title>
-				{{ o.file?.name }}
+				{{ o?.file?.name }}
 			</mat-card-title>
 			<mat-card-subtitle>
 				<div>
 					<span cyphTranslate>Type:</span>
 					&ngsp;
-					<span>{{ o.fileConfig?.mediaType }}</span>
+					<span>{{ o?.fileConfig?.mediaType || '' }}</span>
 				</div>
-				<div *ngIf="!isNaN(o?.size)">
+				<div *ngIf="isNumber(o?.size)">
 					<span cyphTranslate>Size:</span>
 					&ngsp;
-					<span>{{ readableByteLength(o?.size) }}</span>
+					<span>{{ readableByteLength(o?.size || 0) }}</span>
 				</div>
 			</mat-card-subtitle>
 		</mat-card-header>
@@ -46,7 +46,7 @@
 			"
 			(click)="share()"
 		>
-			{{ stringsService.share }} {{ o.fileConfig?.description }}
+			{{ stringsService.share }} {{ o?.fileConfig?.description || '' }}
 		</button>
 	</div>
 </div>

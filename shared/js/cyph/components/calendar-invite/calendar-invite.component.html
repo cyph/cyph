@@ -5,13 +5,13 @@
 			fxLayout="column"
 			(blur)="onTouched()"
 			*ngIf="
-				value.alternateDays !== undefined &&
-				value.alternateTimeFrames !== undefined &&
-				value.callType !== undefined &&
-				value.description !== undefined &&
-				value.endTime !== undefined &&
-				value.startTime !== undefined &&
-				value.title !== undefined
+				value?.alternateDays !== undefined &&
+				value?.alternateTimeFrames !== undefined &&
+				value?.callType !== undefined &&
+				value?.description !== undefined &&
+				value?.endTime !== undefined &&
+				value?.startTime !== undefined &&
+				value?.title !== undefined
 			"
 		>
 			<mat-form-field
@@ -21,8 +21,11 @@
 				<mat-select
 					fxFlex
 					name="reason-for-appointment"
-					[ngModel]="value.title"
-					(ngModelChange)="value.title = $event; valueChange(value)"
+					[ngModel]="value?.title || ''"
+					(ngModelChange)="
+						(value || {title: ''}).title = $event;
+						value && valueChange(value)
+					"
 					[placeholder]="stringsService.reasonForAppointment"
 					required
 				>
@@ -42,10 +45,13 @@
 				<input
 					matInput
 					name="reason-for-appointment"
-					[ngModel]="value.title"
-					(ngModelChange)="value.title = $event; valueChange(value)"
+					[ngModel]="value?.title || ''"
+					(ngModelChange)="
+						(value || {title: ''}).title = $event;
+						value && valueChange(value)
+					"
 					[placeholder]="stringsService.reasonForAppointment"
-					[disabled]="isDisabledWrapper | await"
+					[disabled]="(isDisabledWrapper | await) === true"
 					required
 					type="text"
 				/>
@@ -62,11 +68,11 @@
 						[ngModel]="duration"
 						(ngModelChange)="
 							duration = $event;
-							value.endTime =
-								value.startTime !== undefined ?
-									value.startTime + duration :
-									value.endTime;
-							valueChange(value)
+							(value || {endTime: 0}).endTime =
+								value?.startTime !== undefined ?
+									(value?.startTime || 0) + duration :
+									value?.endTime || 0;
+							value && valueChange(value)
 						"
 						[placeholder]="stringsService.appointmentDuration"
 						required
@@ -93,9 +99,10 @@
 				<mat-select
 					fxFlex
 					name="call-type"
-					[ngModel]="value.callType"
+					[ngModel]="value?.callType || callTypes.None"
 					(ngModelChange)="
-						value.callType = $event; valueChange(value)
+						(value || {callType: callTypes.None}).callType = $event;
+						value && valueChange(value)
 					"
 					[placeholder]="stringsService.callType"
 					required
@@ -117,14 +124,14 @@
 					matInput
 					name="call-type"
 					[ngModel]="
-						value.callType === callTypes.Audio ?
+						value?.callType === callTypes.Audio ?
 							stringsService.voice :
-						value.callType === callTypes.Video ?
+						value?.callType === callTypes.Video ?
 							stringsService.video :
 							stringsService.noCall
 					"
 					[placeholder]="stringsService.callType"
-					disabled
+					[disabled]="true"
 					required
 					type="text"
 				/>
@@ -137,7 +144,7 @@
 					<input
 						matInput
 						name="start-date"
-						[disabled]="isDisabledWrapper | await"
+						[disabled]="(isDisabledWrapper | await) === true"
 						[matDatepicker]="datepickerStart"
 						[matDatepickerFilter]="dateFilter"
 						[min]="
@@ -150,14 +157,17 @@
 								now :
 								(tomorrow | await)
 						"
-						[ngModel]="timestampToDate(value.startTime)"
+						[ngModel]="timestampToDate(value?.startTime || 0)"
 						(ngModelChange)="
-							value.startTime = timestampUpdate(
-								value.startTime,
+							(
+								value || {startTime: 0}
+							).startTime = timestampUpdate(
+								value?.startTime || 0,
 								$event
 							);
-							value.endTime = value.startTime + duration;
-							valueChange(value)
+							(value || {endTime: 0}).endTime =
+								(value?.startTime || 0) + duration;
+							value && valueChange(value)
 						"
 						[placeholder]="stringsService.startDate"
 						required
@@ -179,16 +189,21 @@
 						matInput
 						mat-timepicker
 						name="start-time"
-						[disabled]="isDisabledWrapper | await"
-						[ngModel]="timestampTo24HourTimeString(value.startTime)"
+						[disabled]="(isDisabledWrapper | await) === true"
+						[ngModel]="
+							timestampTo24HourTimeString(value?.startTime || 0)
+						"
 						(ngModelChange)="
-							value.startTime = timestampUpdate(
-								value.startTime,
+							(
+								value || {startTime: 0}
+							).startTime = timestampUpdate(
+								value?.startTime || 0,
 								undefined,
 								$event
 							);
-							value.endTime = value.startTime + duration;
-							valueChange(value)
+							(value || {endTime: 0}).endTime =
+								(value?.startTime || 0) + duration;
+							value && valueChange(value)
 						"
 						type="time"
 						[placeholder]="stringsService.startTime"
@@ -199,15 +214,18 @@
 					<mat-select
 						fxFlex="180px"
 						name="start-time"
-						[ngModel]="timestampToTime(value.startTime)"
+						[ngModel]="timestampToTime(value?.startTime || 0)"
 						(ngModelChange)="
-							value.startTime = timestampUpdate(
-								value.startTime,
+							(
+								value || {startTime: 0}
+							).startTime = timestampUpdate(
+								value?.startTime || 0,
 								undefined,
 								$event
 							);
-							value.endTime = value.startTime + duration;
-							valueChange(value)
+							(value || {endTime: 0}).endTime =
+								(value?.startTime || 0) + duration;
+							value && valueChange(value)
 						"
 						[placeholder]="stringsService.startTime"
 						required
@@ -221,7 +239,7 @@
 									getStartPadding(
 										timeRange,
 										now,
-										value.startTime
+										value?.startTime || 0
 									),
 									duration / 60000
 								);
@@ -262,18 +280,19 @@
 					<input
 						matInput
 						name="end-date"
-						[disabled]="isDisabledWrapper | await"
+						[disabled]="(isDisabledWrapper | await) === true"
 						[matDatepicker]="datepickerEnd"
 						[matDatepickerFilter]="dateFilter"
-						[min]="timestampToDate(value.startTime)"
-						[ngModel]="timestampToDate(value.endTime)"
+						[min]="timestampToDate(value?.startTime || 0)"
+						[ngModel]="timestampToDate(value?.endTime || 0)"
 						(ngModelChange)="
-							value.endTime = timestampUpdate(
-								value.endTime,
+							(value || {endTime: 0}).endTime = timestampUpdate(
+								value?.endTime || 0,
 								$event
 							);
-							value.startTime = value.endTime - duration;
-							valueChange(value)
+							(value || {startTime: 0}).startTime =
+								(value?.endTime || 0) - duration;
+							value && valueChange(value)
 						"
 						[placeholder]="stringsService.endDate"
 					/>
@@ -294,16 +313,19 @@
 						matInput
 						mat-timepicker
 						name="end-time"
-						[disabled]="isDisabledWrapper | await"
-						[ngModel]="timestampTo24HourTimeString(value.endTime)"
+						[disabled]="(isDisabledWrapper | await) === true"
+						[ngModel]="
+							timestampTo24HourTimeString(value?.endTime || 0)
+						"
 						(ngModelChange)="
-							value.endTime = timestampUpdate(
-								value.endTime,
+							(value || {endTime: 0}).endTime = timestampUpdate(
+								value?.endTime || 0,
 								undefined,
 								$event
 							);
-							value.startTime = value.endTime - duration;
-							valueChange(value)
+							(value || {startTime: 0}).startTime =
+								(value?.endTime || 0) - duration;
+							value && valueChange(value)
 						"
 						type="time"
 						[placeholder]="stringsService.endTime"
@@ -314,15 +336,16 @@
 					<mat-select
 						fxFlex="180px"
 						name="end-time"
-						[ngModel]="timestampToTime(value.endTime)"
+						[ngModel]="timestampToTime(value?.endTime || 0)"
 						(ngModelChange)="
-							value.endTime = timestampUpdate(
-								value.endTime,
+							(value || {endTime: 0}).endTime = timestampUpdate(
+								value?.endTime || 0,
 								undefined,
 								$event
 							);
-							value.startTime = value.endTime - duration;
-							valueChange(value)
+							(value || {startTime: 0}).startTime =
+								(value?.endTime || 0) - duration;
+							value && valueChange(value)
 						"
 						[placeholder]="stringsService.endTime"
 						required
@@ -369,10 +392,10 @@
 					<mat-checkbox
 						[class.no-pointer-events]="isDisabledWrapper | await"
 						[name]="'alternate-day-' + day.toString()"
-						[ngModel]="value.alternateDays[day]"
+						[ngModel]="(value?.alternateDays || {})[day] === true"
 						(ngModelChange)="
-							value.alternateDays[day] = $event;
-							valueChange(value)
+							(value?.alternateDays || {})[day] = $event;
+							value && valueChange(value)
 						"
 						[value]="day"
 						*ngFor="
@@ -391,10 +414,15 @@
 					<mat-checkbox
 						[class.no-pointer-events]="isDisabledWrapper | await"
 						[name]="'alternate-time-frame-' + timeFrame.toString()"
-						[ngModel]="value.alternateTimeFrames[timeFrame]"
+						[ngModel]="
+							(value?.alternateTimeFrames || {})[timeFrame] ===
+							true
+						"
 						(ngModelChange)="
-							value.alternateTimeFrames[timeFrame] = $event;
-							valueChange(value)
+							(value?.alternateTimeFrames || {})[
+								timeFrame
+							] = $event;
+							value && valueChange(value)
 						"
 						[value]="timeFrame"
 						*ngFor="
@@ -417,12 +445,13 @@
 			>
 				<textarea
 					matInput
-					matTextareaAutosize
-					matAutosizeMinRows="4"
+					[matTextareaAutosize]="true"
+					[matAutosizeMinRows]="4"
 					name="notes"
-					[ngModel]="value.description"
+					[ngModel]="value?.description || ''"
 					(ngModelChange)="
-						value.description = $event; valueChange(value)
+						(value || {description: ''}).description = $event;
+						value && valueChange(value)
 					"
 					[placeholder]="stringsService.messageTitle"
 				></textarea>
@@ -432,7 +461,7 @@
 				{{ stringsService.messageTitle }}
 			</h4>
 			<div fxFlex class="notes" *ngIf="isDisabledWrapper | await">
-				{{ value.description }}
+				{{ value?.description || '' }}
 			</div>
 		</div>
 	</ng-container>

@@ -11,7 +11,9 @@
 		[calendarInviteReasons]="calendarInviteReasons"
 		[customSendFunction]="customSendFunction"
 		[fileAccept]="fileAccept"
-		[messageType]="messageType"
+		[messageType]="
+			messageType !== undefined ? messageType : chatMessageValueTypes.Text
+		"
 		[showSendButton]="!showHeader"
 		[showUnreadCount]="showUnreadCount"
 	></cyph-chat-message-box-inherit-ng-form>

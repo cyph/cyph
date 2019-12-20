@@ -222,11 +222,16 @@
 
 		<mat-form-field *ngIf="o.type === types.Number">
 			<input
+				#numberInputElement
 				matInput
 				[ngModel]="o.valueNumber.toFixed(8)"
 				(keyup)="
-					o.valueNumber = toFloat($event.target.value, o.max, o.min);
-					$event.target.value = o.valueNumber.toFixed(8);
+					o.valueNumber = toFloat(
+						numberInputElement.value || '0',
+						o.max,
+						o.min
+					);
+					numberInputElement.value = o.valueNumber?.toFixed(8) || '';
 					changeForm.emit()
 				"
 				[matTooltip]="o.tooltip"
@@ -331,8 +336,8 @@
 		<mat-form-field *ngIf="o.type === types.Textarea">
 			<textarea
 				matInput
-				matTextareaAutosize
-				matAutosizeMinRows="4"
+				[matTextareaAutosize]="true"
+				[matAutosizeMinRows]="4"
 				[(ngModel)]="o.valueString"
 				(ngModelChange)="changeForm.emit()"
 				[matTooltip]="o.tooltip"

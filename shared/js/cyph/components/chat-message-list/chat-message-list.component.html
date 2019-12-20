@@ -27,7 +27,7 @@
 <button
 	mat-mini-fab
 	cyphTranslate
-	color="none"
+	[color]="colorNone"
 	class="recent-messages"
 	matTooltip="Jump to Recent Messages"
 	(click)="chatService.jumpToRecentMessages()"

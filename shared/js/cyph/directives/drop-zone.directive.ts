@@ -36,7 +36,7 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 	@Input() public accept?: string;
 
 	/** Indicates whether directive should be active. */
-	@Input() public cyphDropZone?: boolean;
+	@Input() public cyphDropZone?: boolean | string;
 
 	/** Indicates whether cyph-drop-zone class should be added. */
 	@Input() public cyphDropZoneClass: boolean = true;

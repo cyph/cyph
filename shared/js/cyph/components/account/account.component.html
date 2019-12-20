@@ -140,8 +140,10 @@
 							<a
 								fxFlex
 								class="profile-link"
-								[routerLink]="'/profile/' + header.username"
-								*ngIf="!!header.avatar; else stringHeader"
+								[routerLink]="
+									'/profile/' + (header?.user?.username || '')
+								"
+								*ngIf="!!header?.user; else stringHeader"
 							>
 								<div
 									fxFlex
@@ -154,16 +156,19 @@
 										class="avatar"
 										[ngClass]="
 											userPresence[
-												(header.status | await) || 0
+												(header?.user?.status
+													| await) || 0
 											]
 										"
 										alt="Profile Picture"
-										[src]="header.avatar | await"
+										[src]="
+											(header?.user?.avatar | await) || ''
+										"
 									/>
 
 									<h1
 										*ngIf="
-											header.name | await as name;
+											header?.user?.name | await as name;
 											else usernameHeader
 										"
 									>
@@ -172,7 +177,12 @@
 
 									<ng-template #usernameHeader>
 										<h1>
-											@{{ header.realUsername | await }}
+											@{{
+												(header?.user?.realUsername
+													| await) ||
+													header?.user?.username ||
+													''
+											}}
 										</h1>
 									</ng-template>
 								</div>
@@ -182,8 +192,8 @@
 								<h1 fxFlex>
 									{{
 										((envService.isMobile | await) ?
-											header.mobile :
-											header.desktop) || ''
+											header?.mobile :
+											header?.desktop) || ''
 									}}
 								</h1>
 							</ng-template>
@@ -276,7 +286,7 @@
 		(click)="contextMenuActions.handler($event)"
 		*ngFor="
 			let contextMenuActions of (accountService.header | await)
-				?.contextMenuActions || [];
+				?.contextMenuActions | cyphArray;
 			trackBy: trackBySelf
 		"
 	>

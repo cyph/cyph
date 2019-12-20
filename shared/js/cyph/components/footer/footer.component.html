@@ -40,7 +40,8 @@
 				<div>
 					<strong
 						*ngIf="
-							sessionService?.state.wasInitiatedByAPI | await;
+							(sessionService?.state?.wasInitiatedByAPI
+								| await) === true;
 							else proMessage
 						"
 					>

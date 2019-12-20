@@ -413,7 +413,7 @@
 					(loggingIn | await) === true &&
 					(pinUnlock | await) === false
 				"
-				[disabled]="pinUnlock | await"
+				[disabled]="(pinUnlock | await) === true"
 				[required]="
 					(loggingIn | await) === true &&
 					(pinUnlock | await) === false

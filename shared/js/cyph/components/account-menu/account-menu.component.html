@@ -79,12 +79,12 @@
 			<ng-container
 				*ngIf="
 					envService.isTelehealthFull &&
-					(currentUser.user.userType | await) ===
+					(currentUser?.user?.userType | await) ===
 						accountUserTypes.Standard &&
-					(
+					((
 						accountFilesService.incomingFilesFiltered.redoxPatients
 						| await
-					)?.length > 0
+					)?.length || 0) > 0
 				"
 			>
 				<a
@@ -92,8 +92,8 @@
 					cyphTranslate
 					class="incoming-patient-info emphasis"
 					[class.disabled]="
-						!currentUser.agseConfirmed ||
-						!currentUser.masterKeyConfirmed
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
 					"
 					matTooltip="Incoming Patient Info"
 					[matTooltipDisabled]="menuExpanded | await"
@@ -135,8 +135,8 @@
 					cyphTranslate
 					class="appointments"
 					[class.disabled]="
-						!currentUser.agseConfirmed ||
-						!currentUser.masterKeyConfirmed
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
 					"
 					matTooltip="Appointments"
 					[matTooltipDisabled]="menuExpanded | await"
@@ -175,7 +175,7 @@
 			<ng-container
 				*ngIf="
 					envService.isTelehealthFull &&
-					(currentUser.user.userType | await) !==
+					(currentUser?.user?.userType | await) !==
 						accountUserTypes.TelehealthDoctor
 				"
 			>
@@ -184,8 +184,8 @@
 					cyphTranslate
 					class="doctors"
 					[class.disabled]="
-						!currentUser.agseConfirmed ||
-						!currentUser.masterKeyConfirmed
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
 					"
 					matTooltip="Doctors"
 					[matTooltipDisabled]="menuExpanded | await"
@@ -203,7 +203,7 @@
 			<ng-container
 				*ngIf="
 					envService.isTelehealthFull &&
-					(currentUser.user.userType | await) !==
+					(currentUser?.user?.userType | await) !==
 						accountUserTypes.Standard
 				"
 			>
@@ -212,8 +212,8 @@
 					cyphTranslate
 					class="patients"
 					[class.disabled]="
-						!currentUser.agseConfirmed ||
-						!currentUser.masterKeyConfirmed
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
 					"
 					matTooltip="Patients"
 					[matTooltipDisabled]="menuExpanded | await"
@@ -232,8 +232,8 @@
 					cyphTranslate
 					class="staff"
 					[class.disabled]="
-						!currentUser.agseConfirmed ||
-						!currentUser.masterKeyConfirmed
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
 					"
 					matTooltip="Staff"
 					[matTooltipDisabled]="menuExpanded | await"
@@ -252,8 +252,8 @@
 					cyphTranslate
 					class="ehr-access"
 					[class.disabled]="
-						!currentUser.agseConfirmed ||
-						!currentUser.masterKeyConfirmed
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
 					"
 					matTooltip="EHR Access"
 					[matTooltipDisabled]="menuExpanded | await"
@@ -274,8 +274,8 @@
 					cyphTranslate
 					class="contacts"
 					[class.disabled]="
-						!currentUser.agseConfirmed ||
-						!currentUser.masterKeyConfirmed
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
 					"
 					matTooltip="Messages"
 					[matTooltipDisabled]="menuExpanded | await"
@@ -310,8 +310,8 @@
 					cyphTranslate
 					class="inbox"
 					[class.disabled]="
-						!currentUser.agseConfirmed ||
-						!currentUser.masterKeyConfirmed
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
 					"
 					matTooltip="Anonymous Inbox"
 					[matTooltipDisabled]="menuExpanded | await"
@@ -359,7 +359,7 @@
 				*ngIf="
 					!envService.isTelehealth ||
 					(envService.isTelehealth &&
-						(currentUser.user.userType | await) !==
+						(currentUser?.user?.userType | await) !==
 							accountUserTypes.Standard)
 				"
 			>
@@ -367,7 +367,7 @@
 					mat-list-item
 					cyphTranslate
 					class="files"
-					[class.disabled]="!currentUser.masterKeyConfirmed"
+					[class.disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Files"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -405,7 +405,7 @@
 					mat-list-item
 					cyphTranslate
 					class="notes"
-					[class.disabled]="!currentUser.masterKeyConfirmed"
+					[class.disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Notes"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -451,7 +451,7 @@
 					mat-list-item
 					cyphTranslate
 					class="docs"
-					[class.disabled]="!currentUser.masterKeyConfirmed"
+					[class.disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Docs (experimental)"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -490,7 +490,7 @@
 					mat-list-item
 					cyphTranslate
 					class="forms"
-					[class.disabled]="!currentUser.masterKeyConfirmed"
+					[class.disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Forms"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -553,7 +553,7 @@
 					mat-list-item
 					cyphTranslate
 					class="passwords"
-					[class.disabled]="!currentUser.masterKeyConfirmed"
+					[class.disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Passwords"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -592,7 +592,7 @@
 					mat-list-item
 					cyphTranslate
 					class="wallets"
-					[class.disabled]="!currentUser.masterKeyConfirmed"
+					[class.disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Wallets (experimental)"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -638,8 +638,9 @@
 						class="cover-image"
 						[class.hidden]="envService.isTelehealth"
 						[style.background-image]="
-							urlToSafeStyle(currentUser.user.coverImage | await)
-								| await
+							urlToSafeStyle(
+								currentUser?.user?.coverImage | await
+							) | await
 						"
 						*ngIf="menuExpanded | await"
 					></div>
@@ -679,16 +680,18 @@
 								class="avatar"
 								[ngClass]="
 									userPresence[
-										(currentUser.user.status | await) || 0
+										(currentUser?.user?.status | await) || 0
 									]
 								"
 								alt="Profile Picture"
-								[src]="currentUser.user.avatar | await"
+								[src]="
+									(currentUser?.user?.avatar | await) || ''
+								"
 								routerLink="/profile"
 								(click)="click()"
 							/>
 							<h3 matLine [fxShow]="menuExpanded | await">
-								{{ currentUser.user.name | await }}
+								{{ (currentUser?.user?.name | await) || '' }}
 							</h3>
 							<div
 								matLine
@@ -696,13 +699,20 @@
 								fxLayoutAlign="row"
 							>
 								<div class="username">
-									@{{ currentUser.user.realUsername | await }}
+									@{{
+										(currentUser?.user?.realUsername
+											| await) ||
+											currentUser?.user?.username ||
+											''
+									}}
 								</div>
 								<mat-select
 									cyphTranslate
-									[ngModel]="currentUser.user.status | await"
+									[ngModel]="
+										(currentUser?.user?.status | await) || 0
+									"
 									(ngModelChange)="
-										currentUser.user.accountUserPresence.setValue(
+										currentUser?.user?.accountUserPresence?.setValue(
 											{status: $event}
 										)
 									"
@@ -793,7 +803,7 @@
 				mat-list-item
 				cyphTranslate
 				class="settings"
-				[class.disabled]="!currentUser.masterKeyConfirmed"
+				[class.disabled]="!currentUser?.masterKeyConfirmed"
 				matTooltip="Settings"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
@@ -810,7 +820,7 @@
 				mat-list-item
 				cyphTranslate
 				class="lock"
-				[class.disabled]="!currentUser.masterKeyConfirmed"
+				[class.disabled]="!currentUser?.masterKeyConfirmed"
 				matTooltip="Lock"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
@@ -826,7 +836,7 @@
 				mat-list-item
 				cyphTranslate
 				class="logout"
-				[class.disabled]="!currentUser.masterKeyConfirmed"
+				[class.disabled]="!currentUser?.masterKeyConfirmed"
 				matTooltip="Log Out"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"

@@ -36,6 +36,9 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 	/** Appointment associated with this call. */
 	@Input() public appointment?: IAppointment;
 
+	/** @see ChatMessageValue.Types */
+	public readonly chatMessageValueTypes = ChatMessageValue.Types;
+
 	/** Force display video UI. */
 	@Input() public forceDisplayVideo: boolean = false;
 
@@ -46,7 +49,7 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 	@Input() public messageCountInTitle: boolean = false;
 
 	/** @see ChatMessageBoxComponent.messageType */
-	@Input() public messageType: ChatMessageValue.Types =
+	@Input() public messageType?: ChatMessageValue.Types =
 		ChatMessageValue.Types.Text;
 
 	/** @see ChatMessageListComponent.persistentEndMessage */

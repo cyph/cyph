@@ -94,11 +94,13 @@
 							name="company"
 							[placeholder]="
 								formatItemName(itemName)?.includes('BUSINESS') ?
-									'Company' :
-									'Company (optional)'
+									stringsService.businessName :
+									stringsService.businessNameOptional
 							"
 							[required]="
-								formatItemName(itemName)?.includes('BUSINESS')
+								formatItemName(itemName)?.includes(
+									'BUSINESS'
+								) === true
 							"
 						/>
 					</mat-form-field>
@@ -199,9 +201,9 @@
 				*ngIf="confirmationMessage | await as confirmationMessageData"
 			>
 				<cyph-markdown
-					[markdown]="confirmationMessageData.welcomeLetter"
+					[markdown]="confirmationMessageData?.welcomeLetter"
 					*ngIf="
-						!!confirmationMessageData.welcomeLetter;
+						!!confirmationMessageData?.welcomeLetter;
 						else defaultConfirmationMessage
 					"
 				></cyph-markdown>

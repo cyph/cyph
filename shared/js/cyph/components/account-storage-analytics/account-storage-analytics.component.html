@@ -22,7 +22,7 @@
 		[color]="
 			((accountFilesService.filesTotalSize | await) || 0) <=
 			((accountFilesService.fileStorageLimit | await) || 0) ?
-				'' :
+				undefined :
 				'warn'
 		"
 	></mat-progress-bar>

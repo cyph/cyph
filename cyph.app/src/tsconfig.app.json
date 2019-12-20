@@ -3,7 +3,8 @@
 	"angularCompilerOptions": {
 		"disableTypeScriptVersionCheck": true,
 		"fullTemplateTypeCheck": true,
-		"preserveWhitespaces": false
+		"preserveWhitespaces": false,
+		"strictTemplates": true
 	},
 	"compilerOptions": {
 		"outDir": "../out-tsc/app",

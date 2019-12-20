@@ -11,7 +11,7 @@
 <ng-template #mobileHome>
 	<cyph-account-contacts
 		[home]="true"
-		[searchMode]="searchMode | await"
+		[searchMode]="(searchMode | await) === true"
 		(searchBarBlur)="router.navigate([])"
 	></cyph-account-contacts>
 </ng-template>

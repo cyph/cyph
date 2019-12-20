@@ -3,7 +3,7 @@
 	fxLayout="row"
 	fxLayoutAlign="center start"
 	class="card-list"
-	[class.initiating]="(accountFilesService.showSpinner | await) !== false"
+	[class.initiating]="(accountFilesService.showSpinner | await) !== undefined"
 	[class.mobile]="envService.isMobile | await"
 	*ngIf="accountDatabaseService.currentUser | await as currentUser"
 >
@@ -37,7 +37,7 @@
 				let o of accountFilesService.config[recordType].incoming()
 					| await
 					| cyphFilter: filterFunction;
-				trackBy: trackByID;
+				trackBy: trackBySelf;
 				let i = index
 			"
 			[attr.data-index]="i"
@@ -238,7 +238,7 @@
 							[routerLink]="'/profile/' + o.owner"
 							*ngIf="
 								!o.record.wasAnonymousShare &&
-									currentUser.user.username !== o.owner;
+									currentUser?.user?.username !== o.owner;
 								else anonymousShare
 							"
 						>
@@ -272,7 +272,7 @@
 							cyphTranslate
 							matTooltip="Edit Password"
 							(click)="editPassword(o, 'password')"
-							*ngIf="currentUser.user.username === o.owner"
+							*ngIf="currentUser?.user?.username === o.owner"
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
@@ -305,7 +305,7 @@
 							cyphTranslate
 							matTooltip="Edit Website"
 							(click)="editPassword(o, 'url')"
-							*ngIf="currentUser.user.username === o.owner"
+							*ngIf="currentUser?.user?.username === o.owner"
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
@@ -338,7 +338,7 @@
 							cyphTranslate
 							matTooltip="Edit Username"
 							(click)="editPassword(o, 'username')"
-							*ngIf="currentUser.user.username === o.owner"
+							*ngIf="currentUser?.user?.username === o.owner"
 						>
 							<mat-icon>edit</mat-icon>
 						</button>
@@ -451,7 +451,7 @@
 					"
 					[routerLink]="
 						!accountFilesService.config[recordType].subroutable ?
-							undefined :
+							[] :
 							'/' +
 							(anonymousMessages ?
 								'inbox' :
@@ -478,12 +478,12 @@
 					let o of accountFilesService.config[recordType].list()
 						| await
 						| cyphFilter: filterFunction;
-					trackBy: trackByID;
+					trackBy: trackBySelf;
 					let i = index
 				"
 				[routerLink]="
 					!accountFilesService.config[recordType].subroutable ?
-						undefined :
+						[] :
 						'/' +
 						(anonymousMessages ?
 							'inbox' :
@@ -558,7 +558,7 @@
 						<div
 							*ngIf="
 								!o.record.wasAnonymousShare &&
-								currentUser.user.username !== o.owner
+								currentUser?.user?.username !== o.owner
 							"
 						>
 							<span cyphTranslate>Owner:</span>
@@ -628,12 +628,13 @@
 
 	<ng-content></ng-content>
 
-	<ng-container *ngIf="(accountFilesService.showSpinner | await) !== false">
+	<ng-container
+		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
+	>
 		<mat-progress-spinner
 			mode="indeterminate"
 			*ngIf="
-				(accountFilesService.showSpinner | await) === true ||
-					((accountFilesService.showSpinner | await) || 0) < 1;
+				((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></mat-progress-spinner>
@@ -710,7 +711,9 @@
 				o.record.id +
 				'/edit'
 			"
-			*ngIf="currentUser.user.username === o.owner && !anonymousMessages"
+			*ngIf="
+				currentUser?.user?.username === o.owner && !anonymousMessages
+			"
 		>
 			<mat-icon>edit</mat-icon>
 		</button>
@@ -791,7 +794,7 @@
 				mat-menu-item
 				cyphTranslate
 				[matMenuTriggerFor]="passwordEditMenu"
-				*ngIf="currentUser.user.username === o.owner"
+				*ngIf="currentUser?.user?.username === o.owner"
 			>
 				Edit
 			</button>
@@ -799,7 +802,7 @@
 				mat-menu-item
 				cyphTranslate
 				(click)="accountFilesService.shareFilePrompt(o.record)"
-				*ngIf="currentUser.agseConfirmed && !anonymousMessages"
+				*ngIf="!!currentUser?.agseConfirmed && !anonymousMessages"
 			>
 				Share
 			</button>
@@ -824,7 +827,7 @@
 			$event.stopPropagation()
 		"
 		*ngIf="
-			currentUser.agseConfirmed &&
+			!!currentUser?.agseConfirmed &&
 			!anonymousMessages &&
 			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster) &&
 			!(

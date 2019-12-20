@@ -28,7 +28,7 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {QRService} from '../../services/qr.service';
 import {StringsService} from '../../services/strings.service';
-import {trackByID} from '../../track-by/track-by-id';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {numberToString} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
 import {getDateTimeString} from '../../util/time';
@@ -70,8 +70,8 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 	/** @see numberToString */
 	public readonly numberToString = numberToString;
 
-	/** @see trackByID */
-	public readonly trackByID = trackByID;
+	/** @see trackBySelf */
+	public readonly trackBySelf = trackBySelf;
 
 	/** Transaction list columns. */
 	public readonly transactionListColumns: string[] = [
@@ -239,14 +239,14 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 		amount?: number
 	) : Promise<void> {
 		if (recipient === undefined || amount === undefined || isNaN(amount)) {
-			this.accountFilesService.showSpinner.next(true);
+			this.accountFilesService.showSpinner.next(-1);
 
 			let balance: number;
 			try {
 				balance = await this.cryptocurrencyService.getBalance(wallet);
 			}
 			finally {
-				this.accountFilesService.showSpinner.next(false);
+				this.accountFilesService.showSpinner.next(undefined);
 			}
 
 			const step = 0.00000001;
@@ -326,7 +326,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		this.accountFilesService.showSpinner.next(true);
+		this.accountFilesService.showSpinner.next(-1);
 
 		try {
 			await this.cryptocurrencyService.send(wallet, recipient, amount);
@@ -349,7 +349,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			});
 		}
 		finally {
-			this.accountFilesService.showSpinner.next(false);
+			this.accountFilesService.showSpinner.next(undefined);
 		}
 	}
 

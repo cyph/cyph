@@ -14,7 +14,7 @@ import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
-import {readableByteLength} from '../../util/formatting';
+import {isNumber, readableByteLength} from '../../util/formatting';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
 
 /**
@@ -76,8 +76,8 @@ export class AccountFileSharingComponent extends BaseProvider {
 		};
 	});
 
-	/** @see isNaN */
-	public readonly isNaN = isNaN;
+	/** @see isNumber */
+	public readonly isNumber = isNumber;
 
 	/** @see readableByteLength */
 	public readonly readableByteLength = readableByteLength;

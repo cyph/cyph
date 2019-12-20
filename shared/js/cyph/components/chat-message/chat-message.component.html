@@ -4,8 +4,8 @@
 	[ngClass]="'ui-style-' + uiStyles[uiStyle]"
 	[class.full-width]="
 		uiStyle === uiStyles.default &&
-		value.fileTransfer &&
-		!value.fileTransfer.media
+		!!value?.fileTransfer &&
+		!value?.fileTransfer?.media
 	"
 	[class.mobile]="mobile"
 	[class.author-app]="(chatMessage | await)?.authorType === authorTypes.App"
@@ -290,7 +290,9 @@
 							else mediaLoading
 						"
 					>
-						<ng-container *ngIf="media.success; else mediaFailure">
+						<ng-container
+							*ngIf="!!media?.success; else mediaFailure"
+						>
 							<div class="centered media-container">
 								<ng-container
 									*ngTemplateOutlet="
@@ -315,13 +317,13 @@
 							>
 								<source
 									[type]="value.fileTransfer.mediaType"
-									[src]="media.uri"
+									[src]="media?.uri || ''"
 								/>
 							</audio>
 
 							<img
 								class="media-message"
-								[src]="media.uri"
+								[src]="media?.uri || ''"
 								[alt]="value.fileTransfer.name"
 								(click)="
 									!clickable ?
@@ -329,7 +331,7 @@
 										dialogService.media({
 											mediaType:
 												value.fileTransfer.mediaType,
-											src: media.uri,
+											src: media?.uri || '',
 											title: value.fileTransfer.name
 										})
 								"
@@ -344,7 +346,7 @@
 										dialogService.media({
 											mediaType:
 												value.fileTransfer.mediaType,
-											src: media.uri,
+											src: media?.uri || '',
 											title: value.fileTransfer.name
 										})
 								"
@@ -357,7 +359,7 @@
 								>
 									<source
 										[type]="value.fileTransfer.mediaType"
-										[src]="media.uri"
+										[src]="media?.uri || ''"
 									/>
 								</video>
 							</span>

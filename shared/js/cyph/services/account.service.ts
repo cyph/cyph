@@ -65,7 +65,7 @@ export class AccountService extends BaseProvider {
 	/** @ignore */
 	private readonly headerInternal = new BehaviorSubject<{
 		contextMenuActions?: {handler: Function; icon: string; label: string}[];
-		header?: string | {desktop?: string; mobile?: string} | User;
+		header?: string | {desktop?: string; mobile?: string; user?: User};
 	}>({});
 
 	/** @ignore */
@@ -161,7 +161,7 @@ export class AccountService extends BaseProvider {
 	/** Header title for current section. */
 	public readonly header: Observable<{
 		contextMenuActions?: {handler: Function; icon: string; label: string}[];
-		header?: {desktop?: string; mobile?: string} | User;
+		header?: {desktop?: string; mobile?: string; user?: User};
 	}>;
 
 	/** Indicates the status of the interstitial. */
@@ -369,7 +369,10 @@ export class AccountService extends BaseProvider {
 		header: string | {desktop?: string; mobile?: string} | User,
 		contextMenuActions?: {handler: Function; icon: string; label: string}[]
 	) : void {
-		this.headerInternal.next({contextMenuActions, header});
+		this.headerInternal.next({
+			contextMenuActions,
+			header: header instanceof User ? {user: header} : header
+		});
 	}
 
 	/** Toggles account menu. */
@@ -763,8 +766,8 @@ export class AccountService extends BaseProvider {
 					if (
 						typeof data?.additionalData?.senderUsername !==
 							'string' ||
-						(this.headerInternal.value.header instanceof User &&
-							this.headerInternal.value.header.username ===
+						(typeof this.headerInternal.value.header === 'object' &&
+							this.headerInternal.value.header.user?.username ===
 								data.additionalData.senderUsername &&
 							this.router.url.startsWith('/messages/'))
 					) {

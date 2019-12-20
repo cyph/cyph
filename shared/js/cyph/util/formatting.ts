@@ -25,6 +25,10 @@ export const convertStorageUnitsToBytes = (
 		byteConversions.tb :
 		byteConversions.b);
 
+/** Determines whether value is a number. */
+export const isNumber = (n: any) : boolean =>
+	typeof n === 'number' && !isNaN(n);
+
 /** Strips non-alphanumeric-or-underscore characters and converts to lowercase. */
 export const normalize = memoize((s: string) : string =>
 	s.toLowerCase().replace(/[^0-9a-z_]/g, '')

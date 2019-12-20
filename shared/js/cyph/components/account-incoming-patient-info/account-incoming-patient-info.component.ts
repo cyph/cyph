@@ -4,7 +4,6 @@ import {BaseProvider} from '../../base-provider';
 import {
 	AccountFileRecord,
 	IAccountFileRecord,
-	IAccountFileReference,
 	PatientInfo,
 	RedoxPatient
 } from '../../proto';
@@ -47,9 +46,7 @@ export class AccountIncomingPatientInfoComponent extends BaseProvider
 	public readonly trackByID = trackByID;
 
 	/** Accepts incoming patient data. */
-	public async accept (
-		redoxPatient: IAccountFileRecord & IAccountFileReference
-	) : Promise<void> {
+	public async accept (redoxPatient: IAccountFileRecord) : Promise<void> {
 		if (
 			!(await this.dialogService.confirm({
 				content: this.stringsService.incomingPatientInfo,

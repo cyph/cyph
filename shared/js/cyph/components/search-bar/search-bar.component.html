@@ -7,23 +7,26 @@
 	>
 		<mat-option
 			value=""
-			[routerLink]="search.topOption.routerLink"
-			*ngIf="!!search.topOption"
+			[routerLink]="search?.topOption?.routerLink || []"
+			*ngIf="!!search?.topOption"
 		>
-			<span *ngIf="search.topOption.text !== undefined">
-				{{ search.topOption.text }}
+			<span *ngIf="search?.topOption?.text !== undefined">
+				{{ search?.topOption?.text || '' }}
 			</span>
 		</mat-option>
 		<mat-option
 			[value]="item.value"
-			*ngFor="let item of search.items; trackBy: trackByValue"
+			*ngFor="
+				let item of search?.items | cyphArray;
+				trackBy: trackByValue
+			"
 		>
 			<img
 				aria-hidden
 				[src]="item.image | await"
-				[alt]="search.imageAltText"
+				[alt]="search?.imageAltText || ''"
 				*ngIf="
-					!!search.imageAltText && (item.image | await) !== undefined
+					!!search?.imageAltText && (item.image | await) !== undefined
 				"
 			/>
 			<span *ngIf="(item.text | await) !== undefined">
@@ -47,7 +50,9 @@
 	*ngIf="filter | await as values"
 >
 	<mat-chip-list #chipList *ngIf="chipInput">
-		<ng-container *ngFor="let value of values; trackBy: trackBySelf">
+		<ng-container
+			*ngFor="let value of values | cyphArray; trackBy: trackBySelf"
+		>
 			<mat-chip
 				[selectable]="true"
 				[removable]="true"
@@ -103,7 +108,8 @@
 		class="suffix-button"
 		(click)="clearFilter()"
 		*ngIf="
-			(spinner | await) === false && (control.value || values.size > 0)
+			(spinner | await) === false &&
+			(control.value || (values?.size || {size: 0}) > 0)
 		"
 	>
 		close

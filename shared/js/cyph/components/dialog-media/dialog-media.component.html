@@ -44,10 +44,12 @@
 		<ng-template #imageCropUI>
 			<image-cropper
 				format="png"
-				[aspectRatio]="cropAspectRatio"
-				[imageBase64]="imageBase64"
+				[aspectRatio]="
+					cropAspectRatio === undefined ? 1 : cropAspectRatio
+				"
+				[imageBase64]="imageBase64 || ''"
 				[maintainAspectRatio]="!!cropAspectRatio"
-				(imageCroppedBase64)="cropped = $event"
+				(imageCropped)="cropped = $event.base64 || undefined"
 				(loadImageFailed)="crop(false)"
 				*ngIf="safeUrlToString(src, mediaType) | await as imageBase64"
 			></image-cropper>
