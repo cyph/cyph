@@ -12,14 +12,14 @@
 	</div>
 </ng-container>
 <ng-template #standardView>
-	<ng-container *ngIf="accountProfile | async; else notFound">
+	<ng-container *ngIf="accountProfile | await; else notFound">
 		<div
 			fxFlex
 			fxFlexFill
 			fxLayout="column"
 			fxLayoutAlign="center center"
 			class="not-found"
-			[class.mobile]="envService.isMobile | async"
+			[class.mobile]="envService.isMobile | await"
 		>
 			<div>
 				<h1>
@@ -35,7 +35,7 @@
 				fxFlexFill
 				fxLayout="column"
 				class="not-found"
-				[class.mobile]="envService.isMobile | async"
+				[class.mobile]="envService.isMobile | await"
 			>
 				<div>
 					<h1>

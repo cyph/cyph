@@ -2,7 +2,7 @@
 	[href]="envService.homeUrl"
 	[ngClass]="'alignment-' + alignment"
 	[class.white]="white"
-	[style.background-image]="logo | async"
+	[style.background-image]="logo | await"
 	[title]="stringsService.logo"
 	*ngIf="
 		homeLink && !envService.coBranded && !envService.isCordova;
@@ -14,7 +14,7 @@
 	<div
 		[ngClass]="'alignment-' + alignment"
 		[class.white]="white"
-		[style.background-image]="logo | async"
+		[style.background-image]="logo | await"
 		[title]="stringsService.logo"
 	></div>
 </ng-template>

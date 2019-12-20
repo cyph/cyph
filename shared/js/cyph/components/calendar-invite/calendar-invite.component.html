@@ -1,5 +1,5 @@
-<ng-container *ngIf="currentDate | async as now">
-	<ng-container *ngIf="calendarInvite | async as value">
+<ng-container *ngIf="currentDate | await as now">
+	<ng-container *ngIf="calendarInvite | await as value">
 		<div
 			fxFlexFill
 			fxLayout="column"
@@ -16,7 +16,7 @@
 		>
 			<mat-form-field
 				fxFlex
-				*ngIf="!!reasons && (isDisabledWrapper | async) === false"
+				*ngIf="!!reasons && (isDisabledWrapper | await) === false"
 			>
 				<mat-select
 					fxFlex
@@ -37,7 +37,7 @@
 
 			<mat-form-field
 				fxFlex
-				*ngIf="!reasons || (isDisabledWrapper | async)"
+				*ngIf="!reasons || (isDisabledWrapper | await)"
 			>
 				<input
 					matInput
@@ -45,13 +45,13 @@
 					[ngModel]="value.title"
 					(ngModelChange)="value.title = $event; valueChange(value)"
 					[placeholder]="stringsService.reasonForAppointment"
-					[disabled]="isDisabledWrapper | async"
+					[disabled]="isDisabledWrapper | await"
 					required
 					type="text"
 				/>
 			</mat-form-field>
 
-			<ng-container *ngIf="(isDisabledWrapper | async) === false">
+			<ng-container *ngIf="(isDisabledWrapper | await) === false">
 				<br />
 				<br />
 
@@ -88,7 +88,7 @@
 
 			<mat-form-field
 				fxFlex
-				*ngIf="false && (isDisabledWrapper | async) === false"
+				*ngIf="false && (isDisabledWrapper | await) === false"
 			>
 				<mat-select
 					fxFlex
@@ -112,7 +112,7 @@
 				</mat-select>
 			</mat-form-field>
 
-			<mat-form-field fxFlex *ngIf="isDisabledWrapper | async">
+			<mat-form-field fxFlex *ngIf="isDisabledWrapper | await">
 				<input
 					matInput
 					name="call-type"
@@ -137,7 +137,7 @@
 					<input
 						matInput
 						name="start-date"
-						[disabled]="isDisabledWrapper | async"
+						[disabled]="isDisabledWrapper | await"
 						[matDatepicker]="datepickerStart"
 						[matDatepickerFilter]="dateFilter"
 						[min]="
@@ -148,7 +148,7 @@
 								duration / 60000
 							).length > 0 ?
 								now :
-								(tomorrow | async)
+								(tomorrow | await)
 						"
 						[ngModel]="timestampToDate(value.startTime)"
 						(ngModelChange)="
@@ -174,12 +174,12 @@
 
 				&nbsp;&nbsp;&nbsp;
 
-				<mat-form-field *ngIf="isDisabledWrapper | async">
+				<mat-form-field *ngIf="isDisabledWrapper | await">
 					<input
 						matInput
 						mat-timepicker
 						name="start-time"
-						[disabled]="isDisabledWrapper | async"
+						[disabled]="isDisabledWrapper | await"
 						[ngModel]="timestampTo24HourTimeString(value.startTime)"
 						(ngModelChange)="
 							value.startTime = timestampUpdate(
@@ -195,7 +195,7 @@
 					/>
 				</mat-form-field>
 
-				<mat-form-field *ngIf="(isDisabledWrapper | async) === false">
+				<mat-form-field *ngIf="(isDisabledWrapper | await) === false">
 					<mat-select
 						fxFlex="180px"
 						name="start-time"
@@ -248,7 +248,7 @@
 				<ng-container
 					*ngIf="
 						envService.isLocalEnv &&
-						(isDisabledWrapper | async) === false
+						(isDisabledWrapper | await) === false
 					"
 				>
 					&nbsp;&nbsp;&nbsp;
@@ -257,12 +257,12 @@
 			</div>
 
 			<!-- End time selection hidden in favor of appointment duration selection, for now. -->
-			<div fxFlex *ngIf="isDisabledWrapper | async">
+			<div fxFlex *ngIf="isDisabledWrapper | await">
 				<mat-form-field>
 					<input
 						matInput
 						name="end-date"
-						[disabled]="isDisabledWrapper | async"
+						[disabled]="isDisabledWrapper | await"
 						[matDatepicker]="datepickerEnd"
 						[matDatepickerFilter]="dateFilter"
 						[min]="timestampToDate(value.startTime)"
@@ -289,12 +289,12 @@
 
 				&nbsp;&nbsp;&nbsp;
 
-				<mat-form-field *ngIf="isDisabledWrapper | async">
+				<mat-form-field *ngIf="isDisabledWrapper | await">
 					<input
 						matInput
 						mat-timepicker
 						name="end-time"
-						[disabled]="isDisabledWrapper | async"
+						[disabled]="isDisabledWrapper | await"
 						[ngModel]="timestampTo24HourTimeString(value.endTime)"
 						(ngModelChange)="
 							value.endTime = timestampUpdate(
@@ -310,7 +310,7 @@
 					/>
 				</mat-form-field>
 
-				<mat-form-field *ngIf="(isDisabledWrapper | async) === false">
+				<mat-form-field *ngIf="(isDisabledWrapper | await) === false">
 					<mat-select
 						fxFlex="180px"
 						name="end-time"
@@ -367,7 +367,7 @@
 
 				<div fxFlex>
 					<mat-checkbox
-						[class.no-pointer-events]="isDisabledWrapper | async"
+						[class.no-pointer-events]="isDisabledWrapper | await"
 						[name]="'alternate-day-' + day.toString()"
 						[ngModel]="value.alternateDays[day]"
 						(ngModelChange)="
@@ -389,7 +389,7 @@
 
 				<div fxFlex>
 					<mat-checkbox
-						[class.no-pointer-events]="isDisabledWrapper | async"
+						[class.no-pointer-events]="isDisabledWrapper | await"
 						[name]="'alternate-time-frame-' + timeFrame.toString()"
 						[ngModel]="value.alternateTimeFrames[timeFrame]"
 						(ngModelChange)="
@@ -413,7 +413,7 @@
 
 			<mat-form-field
 				fxFlex
-				*ngIf="(isDisabledWrapper | async) === false"
+				*ngIf="(isDisabledWrapper | await) === false"
 			>
 				<textarea
 					matInput
@@ -428,10 +428,10 @@
 				></textarea>
 			</mat-form-field>
 
-			<h4 fxFlex *ngIf="isDisabledWrapper | async">
+			<h4 fxFlex *ngIf="isDisabledWrapper | await">
 				{{ stringsService.messageTitle }}
 			</h4>
-			<div fxFlex class="notes" *ngIf="isDisabledWrapper | async">
+			<div fxFlex class="notes" *ngIf="isDisabledWrapper | await">
 				{{ value.description }}
 			</div>
 		</div>

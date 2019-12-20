@@ -8,7 +8,7 @@
 	<div fxLayout="column" fxLayoutGap="4px" class="message-list-background">
 		<ng-container
 			*ngFor="
-				let item of messageListItems | async;
+				let item of messageListItems | await;
 				trackBy: trackByMessageListItem
 			"
 		>
@@ -21,7 +21,7 @@
 
 <div
 	class="background-image"
-	[style.background-image]="customBackgroundImage | async"
+	[style.background-image]="customBackgroundImage | await"
 ></div>
 
 <button
@@ -31,7 +31,7 @@
 	class="recent-messages"
 	matTooltip="Jump to Recent Messages"
 	(click)="chatService.jumpToRecentMessages()"
-	*ngIf="((chatService.messageBottomOffset | async) || 0) >= 2"
+	*ngIf="((chatService.messageBottomOffset | await) || 0) >= 2"
 >
 	<mat-icon>arrow_downward</mat-icon>
 </button>
@@ -50,7 +50,7 @@
 				<div
 					class="date-change"
 					fxLayout="row"
-					*ngIf="item.dateChange | async as dateChange"
+					*ngIf="item.dateChange | await as dateChange"
 				>
 					<div class="line" fxFlex><hr /></div>
 					<h3 class="text">{{ dateChange }}</h3>
@@ -63,7 +63,7 @@
 				[message]="item.message"
 				[mobile]="item.mobile"
 				[uiStyle]="item.uiStyle"
-				[unconfirmedMessages]="item.unconfirmedMessages | async"
+				[unconfirmedMessages]="item.unconfirmedMessages | await"
 				(loaded)="item.isEnd ? onMessageListInit() : onNewMessageLoad()"
 				*ngIf="item.message !== undefined"
 			></cyph-chat-message>
@@ -78,7 +78,7 @@
 							cyphTranslate
 							class="ellipsis-spinner"
 							*ngIf="
-								!item.accounts && (item.isFriendTyping | async)
+								!item.accounts && (item.isFriendTyping | await)
 							"
 							[@fadeInOut]="'in'"
 						>
@@ -131,7 +131,7 @@
 									!sessionInitService.ephemeral ||
 									envService.isCordova ||
 									envService.isTelehealth ||
-									(envService.pro | async)
+									(envService.pro | await)
 								"
 							>
 								<h2>{{ stringsService.bannerText }}</h2>

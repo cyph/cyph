@@ -3,7 +3,7 @@
 	(optionSelected)="pushToFilter($event.option.value.toString())"
 >
 	<ng-container
-		*ngIf="options === undefined ? undefined : (options | async) as search"
+		*ngIf="options === undefined ? undefined : (options | await) as search"
 	>
 		<mat-option
 			value=""
@@ -20,17 +20,17 @@
 		>
 			<img
 				aria-hidden
-				[src]="item.image | async"
+				[src]="item.image | await"
 				[alt]="search.imageAltText"
 				*ngIf="
-					!!search.imageAltText && (item.image | async) !== undefined
+					!!search.imageAltText && (item.image | await) !== undefined
 				"
 			/>
-			<span *ngIf="(item.text | async) !== undefined">
-				{{ item.text | async }}
+			<span *ngIf="(item.text | await) !== undefined">
+				{{ item.text | await }}
 			</span>
-			<small *ngIf="(item.smallText | async) !== undefined">
-				{{ item.smallText | async }}
+			<small *ngIf="(item.smallText | await) !== undefined">
+				{{ item.smallText | await }}
 
 				<strong *ngIf="item.matchingText !== undefined">
 					(matches: {{ item.matchingText }})
@@ -43,8 +43,8 @@
 <mat-form-field
 	fxFlex
 	class="search-bar"
-	[class.mobile]="envService.isMobile | async"
-	*ngIf="filter | async as values"
+	[class.mobile]="envService.isMobile | await"
+	*ngIf="filter | await as values"
 >
 	<mat-chip-list #chipList *ngIf="chipInput">
 		<ng-container *ngFor="let value of values; trackBy: trackBySelf">
@@ -54,10 +54,10 @@
 				(removed)="removeFromFilter(value)"
 				*ngIf="getChip(value) as chip"
 			>
-				<span *ngIf="chip.text | async as chipText">
+				<span *ngIf="chip.text | await as chipText">
 					{{ chipText }}
 				</span>
-				<ng-container *ngIf="chip.smallText | async as chipSmallText">
+				<ng-container *ngIf="chip.smallText | await as chipSmallText">
 					&nbsp;
 					<small>&lt;{{ chipSmallText }}&gt;</small>
 				</ng-container>
@@ -96,14 +96,14 @@
 		diameter="20"
 		strokeWidth="2"
 		mode="indeterminate"
-		*ngIf="spinner | async"
+		*ngIf="spinner | await"
 	></mat-progress-spinner>
 	<mat-icon
 		matSuffix
 		class="suffix-button"
 		(click)="clearFilter()"
 		*ngIf="
-			(spinner | async) === false && (control.value || values.size > 0)
+			(spinner | await) === false && (control.value || values.size > 0)
 		"
 	>
 		close

@@ -3,7 +3,7 @@
 	fxLayout="column"
 	fxLayoutAlign="center center"
 	fxLayoutGap="8px"
-	*ngIf="status | async as o"
+	*ngIf="status | await as o"
 >
 	<ng-container
 		*ngIf="!((o.subscribed || o.unsubscribed) && o.email); else subscribed"

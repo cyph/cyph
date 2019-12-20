@@ -1,12 +1,12 @@
 <mat-progress-spinner
 	mode="indeterminate"
-	*ngIf="pending | async"
+	*ngIf="pending | await"
 ></mat-progress-spinner>
 <form ngNativeValidate (submit)="submit()">
 	<div
 		fxLayout="column"
 		fxLayoutGap="16px"
-		*ngIf="(complete | async) === false"
+		*ngIf="(complete | await) === false"
 	>
 		<div fxLayout="column" fxLayoutGap="16px" class="checkout-ui">
 			<h2 *ngIf="itemName">
@@ -20,7 +20,7 @@
 				<mat-form-field fxFlex>
 					<mat-select
 						cyphTranslate
-						[ngModel]="users | async"
+						[ngModel]="users | await"
 						(ngModelChange)="users.next($event)"
 						name="users"
 						placeholder="Number of Users"
@@ -38,7 +38,7 @@
 					</mat-select>
 				</mat-form-field>
 			</div>
-			<ng-container *ngIf="(paymentOption | async) !== undefined">
+			<ng-container *ngIf="(paymentOption | await) !== undefined">
 				<div>
 					<div
 						fxFlex
@@ -103,7 +103,7 @@
 						/>
 					</mat-form-field>
 				</div>
-				<ng-container *ngIf="(paymentOption | async) === 'card'">
+				<ng-container *ngIf="(paymentOption | await) === 'card'">
 					<div>
 						<mat-form-field fxFlex>
 							<input
@@ -142,7 +142,7 @@
 							>
 								<mat-option
 									*ngFor="
-										let o of envService.countries | async;
+										let o of envService.countries | await;
 										trackBy: trackByValue
 									"
 									[value]="o.value"
@@ -164,13 +164,13 @@
 		<div fxLayoutAlign="center center">
 			<button
 				mat-raised-button
-				[disabled]="(paymentOption | async) === undefined"
+				[disabled]="(paymentOption | await) === undefined"
 				type="submit"
 			>
 				<span cyphTranslate>Confirm</span>
 				&ngsp;
 				<span
-					>${{ amount * (perUser ? (users | async) || 1 : 1) }}</span
+					>${{ amount * (perUser ? (users | await) || 1 : 1) }}</span
 				>
 				&ngsp;
 				<span>
@@ -193,10 +193,10 @@
 			</button>
 		</div>
 	</div>
-	<ng-container *ngIf="complete | async">
-		<ng-container *ngIf="success | async">
+	<ng-container *ngIf="complete | await">
+		<ng-container *ngIf="success | await">
 			<ng-container
-				*ngIf="confirmationMessage | async as confirmationMessageData"
+				*ngIf="confirmationMessage | await as confirmationMessageData"
 			>
 				<cyph-markdown
 					[markdown]="confirmationMessageData.welcomeLetter"
@@ -215,7 +215,7 @@
 				</ng-template>
 			</ng-container>
 		</ng-container>
-		<div class="confirmation" *ngIf="(success | async) === false">
+		<div class="confirmation" *ngIf="(success | await) === false">
 			<div>
 				<div
 					fxLayout="column"
@@ -223,7 +223,7 @@
 					class="checkout-ui failure"
 				>
 					<h2>{{ stringsService.checkoutErrorTitle }}</h2>
-					<div *ngIf="errorMessage | async as err">{{ err }}</div>
+					<div *ngIf="errorMessage | await as err">{{ err }}</div>
 					<div>
 						<span cyphTranslate>
 							Please check your payment credentials and

@@ -1,4 +1,4 @@
-<ng-container *ngIf="accountDatabaseService.currentUser | async as currentUser">
+<ng-container *ngIf="accountDatabaseService.currentUser | await as currentUser">
 	<div
 		fxFlex
 		fxLayout="column"

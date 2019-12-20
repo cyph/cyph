@@ -15,19 +15,19 @@
 	<br />
 	<div>
 		<span
-			*ngIf="(isPassive | async) && !envService.isTelehealth"
+			*ngIf="(isPassive | await) && !envService.isTelehealth"
 			cyphTranslate
 		>
 			Waiting for user to join...
 		</span>
 		<span
-			*ngIf="(isPassive | async) && envService.isTelehealth"
+			*ngIf="(isPassive | await) && envService.isTelehealth"
 			cyphTranslate
 		>
 			You have successfully checked in. Your telehealth session will begin
 			when the other party connects.
 		</span>
-		<div *ngIf="(isPassive | async) === false">
+		<div *ngIf="(isPassive | await) === false">
 			<span *ngIf="envService.isTelehealth" cyphTranslate>
 				Send the link below to the patient. When they open it, your
 				telehealth session will begin.
@@ -49,7 +49,7 @@
 					<input
 						matInput
 						class="connect-link-input"
-						[ngModel]="link | async"
+						[ngModel]="link | await"
 						(ngModelChange)="resetLinkValue($event)"
 						(blur)="onBlur()"
 						(click)="onBlur()"
@@ -78,9 +78,9 @@
 			<div class="connect-link-mobile" *ngIf="envService.isMobileOS">
 				<a
 					class="connect-link-link"
-					[href]="linkHref | async"
+					[href]="linkHref | await"
 					[matTooltip]="stringsService.linkTooltip"
-					>{{ link | async }}</a
+					>{{ link | await }}</a
 				>
 
 				<br />
@@ -89,7 +89,7 @@
 				<a
 					mat-mini-fab
 					matTooltip="SMS"
-					[href]="linkSMS | async"
+					[href]="linkSMS | await"
 					cyphTranslate
 				>
 					<mat-icon>textsms</mat-icon>
@@ -126,14 +126,14 @@
 		<br />
 		<div
 			class="timer"
-			*ngIf="timer !== undefined && (isPassive | async) === false"
+			*ngIf="timer !== undefined && (isPassive | await) === false"
 		>
 			<span cyphTranslate>
 				Link expires in
 			</span>
 			&ngsp;
 			<span class="countdown">
-				{{ timer.timestamp | async }}
+				{{ timer.timestamp | await }}
 			</span>
 			&ngsp;
 			<button
@@ -145,7 +145,7 @@
 				<mat-icon>alarm_add</mat-icon>
 			</button>
 
-			<ng-container *ngIf="envService.pro | async">
+			<ng-container *ngIf="envService.pro | await">
 				&ngsp;
 				<mat-select
 					cyphTranslate
@@ -182,8 +182,8 @@
 					(qrService.getQRCode({
 						dotScale: 0.75,
 						size: 128,
-						text: (link | async) || ''
-					}) | async) || '' as qrSrc
+						text: (link | await) || ''
+					}) | await) || '' as qrSrc
 				"
 			/>
 		</div>
@@ -195,7 +195,7 @@
 		fxLayout="row"
 		fxLayoutAlign="center center"
 		[class.ad]="envService.showAds"
-		[class.mobile]="envService.isMobile | async"
+		[class.mobile]="envService.isMobile | await"
 	>
 		<ng-container *ngIf="envService.showAds; else proContent">
 			<ng-content></ng-content>
@@ -205,11 +205,11 @@
 				fxFlex
 				fxFlex.gt-md="50"
 				fxLayout="column"
-				*ngIf="envService.pro | async"
+				*ngIf="envService.pro | await"
 			>
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<mat-slide-toggle
-						[ngModel]="advancedFeatures | async"
+						[ngModel]="advancedFeatures | await"
 						(ngModelChange)="advancedFeatures.next($event)"
 						cyphTranslate
 					>
@@ -220,13 +220,13 @@
 				<div
 					fxLayout="row"
 					fxLayoutGap="16px"
-					*ngIf="advancedFeatures | async"
+					*ngIf="advancedFeatures | await"
 				>
 					<mat-form-field fxFlex fxLayout="column">
 						<textarea
 							matInput
 							cyphTranslate
-							[ngModel]="queuedMessageDraft | async"
+							[ngModel]="queuedMessageDraft | await"
 							(ngModelChange)="queuedMessageDraft.next($event)"
 							placeholder="Queue up first message"
 							rows="3"
@@ -253,7 +253,7 @@
 							<mat-button-toggle
 								matTooltip="Self-Destruct"
 								cyphTranslate
-								[checked]="chatService.chatSelfDestruct | async"
+								[checked]="chatService.chatSelfDestruct | await"
 								(change)="
 									chatService.chatSelfDestruct.next(
 										!chatService.chatSelfDestruct.value
@@ -264,7 +264,7 @@
 							</mat-button-toggle>
 						</div>
 						<div
-							*ngIf="chatService.chatSelfDestruct | async"
+							*ngIf="chatService.chatSelfDestruct | await"
 							class="self-destruct-timer"
 						>
 							<mat-form-field>
@@ -272,7 +272,7 @@
 									matInput
 									[ngModel]="
 										chatService.chatSelfDestructTimeout
-											| async
+											| await
 									"
 									(ngModelChange)="
 										chatService.chatSelfDestructTimeout.next(
@@ -296,7 +296,7 @@
 						<mat-button-toggle
 							matTooltip="Walkie Talkie Mode"
 							cyphTranslate
-							[checked]="chatService.walkieTalkieMode | async"
+							[checked]="chatService.walkieTalkieMode | await"
 							(change)="
 								chatService.walkieTalkieMode.next(
 									!chatService.walkieTalkieMode.value

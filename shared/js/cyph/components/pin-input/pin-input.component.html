@@ -5,12 +5,12 @@
 				#pinInput
 				matInput
 				cyphTranslate
-				[ngModel]="value | async"
+				[ngModel]="value | await"
 				(ngModelChange)="value.next(processValue($event))"
 				[ngClass]="
-					'length-' + ((value | async)?.length || 0).toString()
+					'length-' + ((value | await)?.length || 0).toString()
 				"
-				[disabled]="isDisabled | async"
+				[disabled]="isDisabled | await"
 				(blur)="onTouched && onTouched()"
 				[name]="name"
 				type="tel"
@@ -18,12 +18,12 @@
 				cyphAutofocus
 				[cyphAutofocusEnabled]="autofocus"
 				[required]="required"
-				[class.text-security]="hide | async"
+				[class.text-security]="hide | await"
 				pattern="\d\d\d\d"
 			/>
 		</div>
 	</div>
 	<mat-icon matSuffix class="suffix-button" (click)="hide.next(!hide.value)">
-		{{ (hide | async) ? 'visibility' : 'visibility_off' }}
+		{{ (hide | await) ? 'visibility' : 'visibility_off' }}
 	</mat-icon>
 </mat-form-field>

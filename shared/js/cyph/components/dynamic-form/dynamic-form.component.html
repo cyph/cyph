@@ -150,7 +150,7 @@
 				[touchUi]="
 					mobile !== undefined ?
 						mobile :
-						(envService.isMobile | async) || false
+						(envService.isMobile | await) || false
 				"
 			></mat-datepicker>
 		</ng-container>

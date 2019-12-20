@@ -1,11 +1,11 @@
-<ng-container *ngIf="accountDatabaseService.currentUser | async as currentUser">
+<ng-container *ngIf="accountDatabaseService.currentUser | await as currentUser">
 	<div
 		fxFlexFill
 		fxLayout="row"
-		[class.collapsed]="(menuExpanded | async) === false"
+		[class.collapsed]="(menuExpanded | await) === false"
 		[class.menu]="!sidenav"
 		[class.menu-root]="!sidenav"
-		[class.mobile]="envService.isMobile | async"
+		[class.mobile]="envService.isMobile | await"
 		[class.sidenav]="sidenav"
 	>
 		<div fxFlex fxLayout="column" fxLayoutAlign="center stretch">
@@ -21,9 +21,9 @@
 			matTooltip="Toggle Menu"
 			matTooltipPosition="right"
 			(click)="accountService.toggleMenu()"
-			*ngIf="accountService.menuExpandable | async"
+			*ngIf="accountService.menuExpandable | await"
 		>
-			<mat-icon [class.flipped]="(menuExpanded | async) === false">
+			<mat-icon [class.flipped]="(menuExpanded | await) === false">
 				keyboard_arrow_left
 			</mat-icon>
 		</button>
@@ -32,8 +32,8 @@
 			fxFlex="10px"
 			*ngIf="
 				!sidenav &&
-				(accountService.menuExpandable | async) === false &&
-				(accountService.menuReduced | async) === false
+				(accountService.menuExpandable | await) === false &&
+				(accountService.menuReduced | await) === false
 			"
 		></div>
 	</div>
@@ -42,7 +42,7 @@
 		<mat-nav-list
 			*ngIf="
 				accountAppointmentsService.appointments.upcoming
-					| async as upcomingAppointments
+					| await as upcomingAppointments
 			"
 		>
 			<h3 matLine cyphTranslate class="upcoming-appointments">
@@ -79,11 +79,11 @@
 			<ng-container
 				*ngIf="
 					envService.isTelehealthFull &&
-					(currentUser.user.userType | async) ===
+					(currentUser.user.userType | await) ===
 						accountUserTypes.Standard &&
 					(
 						accountFilesService.incomingFilesFiltered.redoxPatients
-						| async
+						| await
 					)?.length > 0
 				"
 			>
@@ -96,7 +96,7 @@
 						!currentUser.masterKeyConfirmed
 					"
 					matTooltip="Incoming Patient Info"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/incoming-patient-info"
 					(click)="click()"
@@ -107,7 +107,7 @@
 							(
 								(
 									accountFilesService.incomingFilesFiltered
-										.redoxPatients | async
+										.redoxPatients | await
 								)?.length || 0
 							).toString()
 						"
@@ -115,7 +115,7 @@
 							!(
 								((
 									accountFilesService.incomingFilesFiltered
-										.redoxPatients | async
+										.redoxPatients | await
 								)?.length || 0) > 0
 							)
 						"
@@ -123,7 +123,7 @@
 					>
 						local_hospital
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Incoming
 					</h3>
 				</a>
@@ -139,7 +139,7 @@
 						!currentUser.masterKeyConfirmed
 					"
 					matTooltip="Appointments"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/appointments"
 					(click)="click()"
@@ -150,7 +150,7 @@
 							(
 								(
 									accountFilesService.incomingFilesFiltered
-										.appointments | async
+										.appointments | await
 								)?.length || 0
 							).toString()
 						"
@@ -158,7 +158,7 @@
 							!(
 								((
 									accountFilesService.incomingFilesFiltered
-										.appointments | async
+										.appointments | await
 								)?.length || 0) > 0
 							)
 						"
@@ -166,7 +166,7 @@
 					>
 						date_range
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Appointments
 					</h3>
 				</a>
@@ -175,7 +175,7 @@
 			<ng-container
 				*ngIf="
 					envService.isTelehealthFull &&
-					(currentUser.user.userType | async) !==
+					(currentUser.user.userType | await) !==
 						accountUserTypes.TelehealthDoctor
 				"
 			>
@@ -188,13 +188,13 @@
 						!currentUser.masterKeyConfirmed
 					"
 					matTooltip="Doctors"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/doctors"
 					(click)="click()"
 				>
 					<mat-icon mat-list-icon svgIcon="doctor"></mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Doctors
 					</h3>
 				</a>
@@ -203,7 +203,7 @@
 			<ng-container
 				*ngIf="
 					envService.isTelehealthFull &&
-					(currentUser.user.userType | async) !==
+					(currentUser.user.userType | await) !==
 						accountUserTypes.Standard
 				"
 			>
@@ -216,13 +216,13 @@
 						!currentUser.masterKeyConfirmed
 					"
 					matTooltip="Patients"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/patients"
 					(click)="click()"
 				>
 					<mat-icon mat-list-icon>local_hospital</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Patients
 					</h3>
 				</a>
@@ -236,13 +236,13 @@
 						!currentUser.masterKeyConfirmed
 					"
 					matTooltip="Staff"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/staff"
 					(click)="click()"
 				>
 					<mat-icon mat-list-icon>people</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Staff
 					</h3>
 				</a>
@@ -256,13 +256,13 @@
 						!currentUser.masterKeyConfirmed
 					"
 					matTooltip="EHR Access"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/ehr-access"
 					(click)="click()"
 				>
 					<mat-icon mat-list-icon>vpn_key</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						EHR Access
 					</h3>
 				</a>
@@ -278,7 +278,7 @@
 						!currentUser.masterKeyConfirmed
 					"
 					matTooltip="Messages"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/"
 					(click)="click()"
@@ -287,12 +287,12 @@
 						mat-list-icon
 						[matBadge]="
 							(
-								(accountService.unreadMessages | async) || 0
+								(accountService.unreadMessages | await) || 0
 							).toString()
 						"
 						[matBadgeHidden]="
 							!(
-								((accountService.unreadMessages | async) || 0) >
+								((accountService.unreadMessages | await) || 0) >
 								0
 							)
 						"
@@ -300,7 +300,7 @@
 					>
 						message
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Messages
 					</h3>
 				</a>
@@ -314,7 +314,7 @@
 						!currentUser.masterKeyConfirmed
 					"
 					matTooltip="Anonymous Inbox"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/inbox"
 					(click)="click()"
@@ -326,7 +326,7 @@
 								(
 									accountFilesService.incomingFilesFiltered
 										.notes
-									| async
+									| await
 									| cyphFilter
 										: accountFilesService.filterFunctions
 												.anonymousMessages
@@ -338,7 +338,7 @@
 								((
 									accountFilesService.incomingFilesFiltered
 										.notes
-									| async
+									| await
 									| cyphFilter
 										: accountFilesService.filterFunctions
 												.anonymousMessages
@@ -349,7 +349,7 @@
 					>
 						email
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Anonymous Inbox
 					</h3>
 				</a>
@@ -359,7 +359,7 @@
 				*ngIf="
 					!envService.isTelehealth ||
 					(envService.isTelehealth &&
-						(currentUser.user.userType | async) !==
+						(currentUser.user.userType | await) !==
 							accountUserTypes.Standard)
 				"
 			>
@@ -369,7 +369,7 @@
 					class="files"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
 					matTooltip="Files"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/files"
 					(click)="click()"
@@ -380,7 +380,7 @@
 							(
 								(
 									accountFilesService.incomingFilesFiltered
-										.files | async
+										.files | await
 								)?.length || 0
 							).toString()
 						"
@@ -388,7 +388,7 @@
 							!(
 								((
 									accountFilesService.incomingFilesFiltered
-										.files | async
+										.files | await
 								)?.length || 0) > 0
 							)
 						"
@@ -396,7 +396,7 @@
 					>
 						folder
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Files
 					</h3>
 				</a>
@@ -407,7 +407,7 @@
 					class="notes"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
 					matTooltip="Notes"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/notes"
 					(click)="click()"
@@ -419,7 +419,7 @@
 								(
 									accountFilesService.incomingFilesFiltered
 										.notes
-									| async
+									| await
 									| cyphFilter
 										: accountFilesService.filterFunctions
 												.excludeAnonymousMessages
@@ -431,7 +431,7 @@
 								((
 									accountFilesService.incomingFilesFiltered
 										.notes
-									| async
+									| await
 									| cyphFilter
 										: accountFilesService.filterFunctions
 												.excludeAnonymousMessages
@@ -442,7 +442,7 @@
 					>
 						create
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Notes
 					</h3>
 				</a>
@@ -453,11 +453,11 @@
 					class="docs"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
 					matTooltip="Docs (experimental)"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/docs"
 					(click)="click()"
-					*ngIf="accountService.enableDocs | async"
+					*ngIf="accountService.enableDocs | await"
 				>
 					<mat-icon
 						mat-list-icon
@@ -465,7 +465,7 @@
 							(
 								(
 									accountFilesService.incomingFilesFiltered
-										.docs | async
+										.docs | await
 								)?.length || 0
 							).toString()
 						"
@@ -473,7 +473,7 @@
 							!(
 								((
 									accountFilesService.incomingFilesFiltered
-										.docs | async
+										.docs | await
 								)?.length || 0) > 0
 							)
 						"
@@ -481,7 +481,7 @@
 					>
 						library_books
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Docs (experimental)
 					</h3>
 				</a>
@@ -492,7 +492,7 @@
 					class="forms"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
 					matTooltip="Forms"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/forms"
 					(click)="click()"
@@ -504,7 +504,7 @@
 							(
 								(
 									accountFilesService.incomingFilesFiltered
-										.forms | async
+										.forms | await
 								)?.length || 0
 							).toString()
 						"
@@ -512,7 +512,7 @@
 							!(
 								((
 									accountFilesService.incomingFilesFiltered
-										.forms | async
+										.forms | await
 								)?.length || 0) > 0
 							)
 						"
@@ -528,7 +528,7 @@
 								(
 									(
 										accountFilesService
-											.incomingFilesFiltered.forms | async
+											.incomingFilesFiltered.forms | await
 									)?.length || 0
 								).toString()
 							"
@@ -536,7 +536,7 @@
 								!(
 									((
 										accountFilesService
-											.incomingFilesFiltered.forms | async
+											.incomingFilesFiltered.forms | await
 									)?.length || 0) > 0
 								)
 							"
@@ -544,7 +544,7 @@
 							svgIcon="medical-forms"
 						></mat-icon>
 					</ng-template>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Forms
 					</h3>
 				</a>
@@ -555,11 +555,11 @@
 					class="passwords"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
 					matTooltip="Passwords"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/passwords"
 					(click)="click()"
-					*ngIf="accountService.enablePasswords | async"
+					*ngIf="accountService.enablePasswords | await"
 				>
 					<mat-icon
 						mat-list-icon
@@ -567,7 +567,7 @@
 							(
 								(
 									accountFilesService.incomingFilesFiltered
-										.passwords | async
+										.passwords | await
 								)?.length || 0
 							).toString()
 						"
@@ -575,7 +575,7 @@
 							!(
 								((
 									accountFilesService.incomingFilesFiltered
-										.passwords | async
+										.passwords | await
 								)?.length || 0) > 0
 							)
 						"
@@ -583,7 +583,7 @@
 					>
 						lock
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Passwords
 					</h3>
 				</a>
@@ -594,11 +594,11 @@
 					class="wallets"
 					[class.disabled]="!currentUser.masterKeyConfirmed"
 					matTooltip="Wallets (experimental)"
-					[matTooltipDisabled]="menuExpanded | async"
+					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/wallets"
 					(click)="click()"
-					*ngIf="accountService.enableWallets | async"
+					*ngIf="accountService.enableWallets | await"
 				>
 					<mat-icon
 						mat-list-icon
@@ -606,7 +606,7 @@
 							(
 								(
 									accountFilesService.incomingFilesFiltered
-										.wallets | async
+										.wallets | await
 								)?.length || 0
 							).toString()
 						"
@@ -614,7 +614,7 @@
 							!(
 								((
 									accountFilesService.incomingFilesFiltered
-										.wallets | async
+										.wallets | await
 								)?.length || 0) > 0
 							)
 						"
@@ -622,7 +622,7 @@
 					>
 						account_balance_wallet
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 						Wallets (experimental)
 					</h3>
 				</a>
@@ -638,13 +638,13 @@
 						class="cover-image"
 						[class.hidden]="envService.isTelehealth"
 						[style.background-image]="
-							urlToSafeStyle(currentUser.user.coverImage | async)
-								| async
+							urlToSafeStyle(currentUser.user.coverImage | await)
+								| await
 						"
-						*ngIf="menuExpanded | async"
+						*ngIf="menuExpanded | await"
 					></div>
 
-					<div class="context-menu" *ngIf="menuExpanded | async">
+					<div class="context-menu" *ngIf="menuExpanded | await">
 						<ng-content></ng-content>
 					</div>
 
@@ -661,12 +661,12 @@
 								mat-list-icon
 								icon
 								white
-								*ngIf="(menuExpanded | async) === false"
+								*ngIf="(menuExpanded | await) === false"
 							></cyph-logo>
 							<cyph-logo
 								matLine
 								white
-								*ngIf="menuExpanded | async"
+								*ngIf="menuExpanded | await"
 							></cyph-logo>
 						</a>
 					</mat-nav-list>
@@ -679,28 +679,28 @@
 								class="avatar"
 								[ngClass]="
 									userPresence[
-										(currentUser.user.status | async) || 0
+										(currentUser.user.status | await) || 0
 									]
 								"
 								alt="Profile Picture"
-								[src]="currentUser.user.avatar | async"
+								[src]="currentUser.user.avatar | await"
 								routerLink="/profile"
 								(click)="click()"
 							/>
-							<h3 matLine [fxShow]="menuExpanded | async">
-								{{ currentUser.user.name | async }}
+							<h3 matLine [fxShow]="menuExpanded | await">
+								{{ currentUser.user.name | await }}
 							</h3>
 							<div
 								matLine
-								[fxShow]="menuExpanded | async"
+								[fxShow]="menuExpanded | await"
 								fxLayoutAlign="row"
 							>
 								<div class="username">
-									@{{ currentUser.user.realUsername | async }}
+									@{{ currentUser.user.realUsername | await }}
 								</div>
 								<mat-select
 									cyphTranslate
-									[ngModel]="currentUser.user.status | async"
+									[ngModel]="currentUser.user.status | await"
 									(ngModelChange)="
 										currentUser.user.accountUserPresence.setValue(
 											{status: $event}
@@ -746,20 +746,20 @@
 				class="invite"
 				[matMenuTriggerFor]="inviteMenu"
 				matTooltip="Invite Friend"
-				[matTooltipDisabled]="menuExpanded | async"
+				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
-				*ngIf="((accountInviteService.count | async) || 0) > 0"
+				*ngIf="((accountInviteService.count | await) || 0) > 0"
 			>
 				<mat-icon
 					mat-list-icon
 					[matBadge]="
-						((accountInviteService.count | async) || 0).toString()
+						((accountInviteService.count | await) || 0).toString()
 					"
 					matBadgePosition="above after"
 				>
 					person_add
 				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 					Invite Friend
 				</h3>
 			</a>
@@ -774,7 +774,7 @@
 							newContactTypes.invite
 						)
 					"
-					*ngIf="((accountInviteService.count | async) || 0) > 0"
+					*ngIf="((accountInviteService.count | await) || 0) > 0"
 				>
 					{{ stringsService.addContactButtonInviteEmail }}
 				</button>
@@ -783,7 +783,7 @@
 					[matTooltip]="stringsService.addContactTooltipInviteLink"
 					matTooltipPosition="right"
 					(click)="click(); accountInviteService.showInviteURL()"
-					*ngIf="((accountInviteService.count | async) || 0) > 0"
+					*ngIf="((accountInviteService.count | await) || 0) > 0"
 				>
 					{{ stringsService.inviteLinkButton }}
 				</button>
@@ -795,13 +795,13 @@
 				class="settings"
 				[class.disabled]="!currentUser.masterKeyConfirmed"
 				matTooltip="Settings"
-				[matTooltipDisabled]="menuExpanded | async"
+				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
 				routerLink="/settings"
 				(click)="click()"
 			>
 				<mat-icon mat-list-icon>settings</mat-icon>
-				<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 					Settings
 				</h3>
 			</a>
@@ -812,12 +812,12 @@
 				class="lock"
 				[class.disabled]="!currentUser.masterKeyConfirmed"
 				matTooltip="Lock"
-				[matTooltipDisabled]="menuExpanded | async"
+				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
 				(click)="accountAuthService.lock()"
 			>
 				<mat-icon mat-list-icon>lock</mat-icon>
-				<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 					Lock
 				</h3>
 			</a>
@@ -828,13 +828,13 @@
 				class="logout"
 				[class.disabled]="!currentUser.masterKeyConfirmed"
 				matTooltip="Log Out"
-				[matTooltipDisabled]="menuExpanded | async"
+				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
 				routerLink="/logout"
 				(click)="click()"
 			>
 				<mat-icon mat-list-icon>exit_to_app</mat-icon>
-				<h3 matLine cyphTranslate *ngIf="menuExpanded | async">
+				<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
 					Log Out
 				</h3>
 			</a>

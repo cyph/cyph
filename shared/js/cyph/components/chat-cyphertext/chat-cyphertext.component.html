@@ -3,7 +3,7 @@
 	*ngIf="cyphertextService.isEnabled"
 >
 	<cyph-chat-cyphertext-list
-		[messages]="cyphertextService.messages.watch() | async"
+		[messages]="cyphertextService.messages.watch() | await"
 	></cyph-chat-cyphertext-list>
 	<button
 		mat-fab

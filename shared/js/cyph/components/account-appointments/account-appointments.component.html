@@ -3,8 +3,8 @@
 	fxLayout="row"
 	fxLayoutAlign="center start"
 	class="card-list"
-	[class.initiating]="(accountFilesService.showSpinner | async) !== false"
-	*ngIf="accountDatabaseService.currentUser | async as currentUser"
+	[class.initiating]="(accountFilesService.showSpinner | await) !== false"
+	*ngIf="accountDatabaseService.currentUser | await as currentUser"
 >
 	<div
 		fxFlex="95"
@@ -16,7 +16,7 @@
 		<ng-container
 			*ngIf="
 				accountAppointmentsService.appointments.incoming
-					| async as incomingAppointments
+					| await as incomingAppointments
 			"
 		>
 			<ng-container *ngIf="incomingAppointments.length > 0">
@@ -38,7 +38,7 @@
 		<ng-container
 			*ngIf="
 				accountAppointmentsService.appointments.current
-					| async as currentAppointments
+					| await as currentAppointments
 			"
 		>
 			<ng-container *ngIf="currentAppointments.length > 0">
@@ -66,7 +66,7 @@
 					canDelete: true,
 					canJoin: false,
 					list:
-						accountAppointmentsService.appointments.future | async,
+						accountAppointmentsService.appointments.future | await,
 					title: stringsService.futureAppointments
 				}
 			"
@@ -85,7 +85,7 @@
 							canJoin: false,
 							list:
 								accountAppointmentsService.appointments.past
-								| async
+								| await
 						}
 					"
 				></ng-container>
@@ -113,19 +113,19 @@
 		</ng-container>
 	</div>
 
-	<ng-container *ngIf="(accountFilesService.showSpinner | async) !== false">
+	<ng-container *ngIf="(accountFilesService.showSpinner | await) !== false">
 		<mat-progress-spinner
 			mode="indeterminate"
 			*ngIf="
-				(accountFilesService.showSpinner | async) === true ||
-					((accountFilesService.showSpinner | async) || 0) < 1;
+				(accountFilesService.showSpinner | await) === true ||
+					((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></mat-progress-spinner>
 		<ng-template #determinateFileSpinner>
 			<mat-progress-spinner
 				mode="determinate"
-				[value]="(accountFilesService.showSpinner | async) || 1"
+				[value]="(accountFilesService.showSpinner | await) || 1"
 			></mat-progress-spinner>
 		</ng-template>
 	</ng-container>
@@ -176,19 +176,19 @@
 	let-list="list"
 >
 	<ng-container
-		*ngIf="accountDatabaseService.currentUser | async as currentUser"
+		*ngIf="accountDatabaseService.currentUser | await as currentUser"
 	>
 		<h3 *ngIf="list?.length <= 0">
 			{{ stringsService.noAppointments }}
 		</h3>
 		<div
 			class="cyph-inverted-theme"
-			*ngIf="timestampWatcher | async as now"
+			*ngIf="timestampWatcher | await as now"
 		>
 			<mat-accordion
 				class="appointment animated fadeInDown"
 				[class.bounceInRight]="
-					(accountFilesService.initiated | async) === false
+					(accountFilesService.initiated | await) === false
 				"
 			>
 				<ng-container
@@ -361,7 +361,7 @@
 								}}</span>
 								<button
 									*ngIf="
-										(currentUser.user.userType | async) ===
+										(currentUser.user.userType | await) ===
 										accountUserTypes.Standard
 									"
 									mat-raised-button

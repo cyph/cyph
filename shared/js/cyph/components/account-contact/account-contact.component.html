@@ -65,11 +65,11 @@
 		<mat-card-header
 			fxLayout="row"
 			fxLayoutAlign="stretch center"
-			[matBadge]="((contact?.unreadMessageCount | async) || 0).toString()"
+			[matBadge]="((contact?.unreadMessageCount | await) || 0).toString()"
 			[matBadgeHidden]="
 				!(
 					showUnreadMessageCount &&
-					((contact?.unreadMessageCount | async) || 0) > 0
+					((contact?.unreadMessageCount | await) || 0) > 0
 				)
 			"
 			matBadgePosition="above before"
@@ -128,7 +128,7 @@
 		*ngIf="
 			!!username &&
 			(!hideCurrentUser ||
-				(accountDatabaseService.currentUser | async)?.user?.username !==
+				(accountDatabaseService.currentUser | await)?.user?.username !==
 					username)
 		"
 	>
@@ -146,28 +146,28 @@
 				envService.isTelehealthFull ?
 					'/profile/' + username :
 					'/messages/' +
-					(((user | async)?.contactID | async) || 'user/' + username)
+					(((user | await)?.contactID | await) || 'user/' + username)
 			"
 			*ngIf="
 				accountContactsService.contactState(username).watch()
-					| async as contactState
+					| await as contactState
 			"
 		>
 			<ng-container
-				*ngIf="(user | async)?.ready | async; else externalContact"
+				*ngIf="(user | await)?.ready | await; else externalContact"
 			>
 				<mat-card-header
 					fxLayout="row"
 					fxLayoutAlign="stretch center"
 					[matBadge]="
 						(
-							((user | async)?.unreadMessageCount | async) || 0
+							((user | await)?.unreadMessageCount | await) || 0
 						).toString()
 					"
 					[matBadgeHidden]="
 						!(
 							showUnreadMessageCount &&
-							(((user | async)?.unreadMessageCount | async) ||
+							(((user | await)?.unreadMessageCount | await) ||
 								0) > 0
 						)
 					"
@@ -178,9 +178,9 @@
 						cyphTranslate
 						class="avatar"
 						[ngClass]="
-							userPresence[((user | async)?.status | async) || 0]
+							userPresence[((user | await)?.status | await) || 0]
 						"
-						[src]="(user | async)?.avatar | async"
+						[src]="(user | await)?.avatar | await"
 						alt="User Avatar"
 						aria-label="clickable ? stringsService.openProfile : ''"
 						[routerLink]="
@@ -198,12 +198,12 @@
 							"
 						>
 							{{
-								((user | async)?.userType | async) ===
+								((user | await)?.userType | await) ===
 								accountUserTypes.TelehealthDoctor ?
 									stringsService.dr :
 									''
 							}}
-							{{ (user | async)?.name | async }}
+							{{ (user | await)?.name | await }}
 						</mat-card-title>
 						<mat-card-subtitle
 							class="truncate"
@@ -215,31 +215,31 @@
 							<ng-container
 								*ngIf="
 									envService.isTelehealthFull &&
-										((user | async)?.userType | async) ===
+										((user | await)?.userType | await) ===
 											accountUserTypes.TelehealthDoctor;
 									else standardView
 								"
 							>
 								<ng-container
-									*ngIf="getUserOrg(username) | async as org"
+									*ngIf="getUserOrg(username) | await as org"
 								>
 									<mat-icon>business</mat-icon>
 									&ngsp;
-									<span>{{ org?.name | async }}</span>
+									<span>{{ org?.name | await }}</span>
 								</ng-container>
 							</ng-container>
 
 							<ng-template #standardView>
-								@{{ (user | async)?.realUsername | async }}
+								@{{ (user | await)?.realUsername | await }}
 							</ng-template>
 						</mat-card-subtitle>
 					</div>
 
 					<cyph-account-user-rating
-						[user]="user | async"
+						[user]="user | await"
 						*ngIf="
 							envService.isTelehealthFull &&
-							((user | async)?.userType | async) ===
+							((user | await)?.userType | await) ===
 								accountUserTypes.TelehealthDoctor
 						"
 						fxHide.lt-md
@@ -296,12 +296,12 @@
 					class="pending"
 					fxLayout="row"
 					[matBadge]="
-						((contact?.unreadMessageCount | async) || 0).toString()
+						((contact?.unreadMessageCount | await) || 0).toString()
 					"
 					[matBadgeHidden]="
 						!(
 							showUnreadMessageCount &&
-							((contact?.unreadMessageCount | async) || 0) > 0
+							((contact?.unreadMessageCount | await) || 0) > 0
 						)
 					"
 					matBadgePosition="above before"
@@ -356,7 +356,7 @@
 					mat-menu-item
 					[routerLink]="
 						'/messages/' +
-						(((user | async)?.contactID | async) ||
+						(((user | await)?.contactID | await) ||
 							'user/' + username)
 					"
 				>
@@ -367,7 +367,7 @@
 					mat-menu-item
 					[routerLink]="
 						'/call/' +
-						(((user | async)?.contactID | async) ||
+						(((user | await)?.contactID | await) ||
 							'user/' + username)
 					"
 				>
@@ -378,7 +378,7 @@
 					mat-menu-item
 					[routerLink]="
 						'/video/' +
-						(((user | async)?.contactID | async) ||
+						(((user | await)?.contactID | await) ||
 							'user/' + username)
 					"
 				>

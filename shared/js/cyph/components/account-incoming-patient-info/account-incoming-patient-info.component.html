@@ -3,7 +3,7 @@
 	fxLayout="row"
 	fxLayoutAlign="center start"
 	class="card-list"
-	[class.initiating]="(accountFilesService.showSpinner | async) !== false"
+	[class.initiating]="(accountFilesService.showSpinner | await) !== false"
 	*ngIf="envService.isTelehealth"
 >
 	<div
@@ -16,7 +16,7 @@
 		<ng-container
 			*ngFor="
 				let redoxPatient of accountFilesService.incomingFilesFiltered
-					.redoxPatients | async;
+					.redoxPatients | await;
 				trackBy: trackByID;
 				let i = index
 			"
@@ -24,11 +24,11 @@
 			<mat-card
 				class="redox-patient animated"
 				*ngIf="
-					getRedoxPatient(redoxPatient) | async as redoxPatientData
+					getRedoxPatient(redoxPatient) | await as redoxPatientData
 				"
 				[attr.data-index]="i"
 				[class.bounceInRight]="
-					(accountFilesService.initiated | async) === false
+					(accountFilesService.initiated | await) === false
 				"
 				[ngClass]="'_' + i"
 			>
@@ -78,19 +78,19 @@
 		</ng-container>
 	</div>
 
-	<ng-container *ngIf="(accountFilesService.showSpinner | async) !== false">
+	<ng-container *ngIf="(accountFilesService.showSpinner | await) !== false">
 		<mat-progress-spinner
 			mode="indeterminate"
 			*ngIf="
-				(accountFilesService.showSpinner | async) === true ||
-					((accountFilesService.showSpinner | async) || 0) < 1;
+				(accountFilesService.showSpinner | await) === true ||
+					((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></mat-progress-spinner>
 		<ng-template #determinateFileSpinner>
 			<mat-progress-spinner
 				mode="determinate"
-				[value]="(accountFilesService.showSpinner | async) || 1"
+				[value]="(accountFilesService.showSpinner | await) || 1"
 			></mat-progress-spinner>
 		</ng-template>
 	</ng-container>

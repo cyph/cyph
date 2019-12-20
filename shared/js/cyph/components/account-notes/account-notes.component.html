@@ -1,19 +1,19 @@
 <cyph-account-base-file-list
-	[anonymousMessages]="anonymousMessages | async"
-	[filterFunction]="filterFunction | async"
-	[recordType]="recordType | async"
-	*ngIf="(realTime | async) === false || (accountService.enableDocs | async)"
+	[anonymousMessages]="anonymousMessages | await"
+	[filterFunction]="filterFunction | await"
+	[recordType]="recordType | await"
+	*ngIf="(realTime | await) === false || (accountService.enableDocs | await)"
 >
 	<button
 		mat-fab
 		color="primary"
 		[matTooltip]="
-			(realTime | async) ? stringsService.newDoc : stringsService.newNote
+			(realTime | await) ? stringsService.newDoc : stringsService.newNote
 		"
 		matTooltipPosition="above"
 		routerLink="new"
 		class="fixed-fab"
-		*ngIf="(anonymousMessages | async) !== true"
+		*ngIf="(anonymousMessages | await) !== true"
 	>
 		<mat-icon>note_add</mat-icon>
 	</button>

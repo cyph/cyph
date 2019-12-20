@@ -1,9 +1,9 @@
-<section fxFlexFill fxLayout="column" id="main" *ngIf="ready | async">
+<section fxFlexFill fxLayout="column" id="main" *ngIf="ready | await">
 	<div
 		fxFlexFill
 		fxLayoutAlign="center center"
 		class="login-form"
-		[class.checking]="checking | async"
+		[class.checking]="checking | await"
 	>
 		<mat-card fxFlex fxFlex.sm="95" fxFlex.md="75" fxFlex.gt-md="50">
 			<mat-card-title>
@@ -25,7 +25,7 @@
 						<h3
 							class="cyph-banner warn"
 							[style.visibility]="
-								(error | async) ? 'visible' : 'hidden'
+								(error | await) ? 'visible' : 'hidden'
 							"
 						>
 							{{ stringsService.invalidPassword }}
@@ -38,11 +38,11 @@
 								cyphAutofocus
 								cyphEnableLastPass
 								cyphTranslate
-								[ngModel]="password | async"
+								[ngModel]="password | await"
 								(ngModelChange)="password.next($event)"
 								name="password"
 								[type]="
-									(hidePassword | async) ? 'password' : 'text'
+									(hidePassword | await) ? 'password' : 'text'
 								"
 								placeholder="Password"
 								required
@@ -53,7 +53,7 @@
 								(click)="hidePassword.next(!hidePassword.value)"
 							>
 								{{
-									(hidePassword | async) ?
+									(hidePassword | await) ?
 										'visibility' :
 										'visibility_off'
 								}}

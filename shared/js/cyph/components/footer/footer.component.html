@@ -40,7 +40,7 @@
 				<div>
 					<strong
 						*ngIf="
-							sessionService?.state.wasInitiatedByAPI | async;
+							sessionService?.state.wasInitiatedByAPI | await;
 							else proMessage
 						"
 					>
@@ -48,7 +48,7 @@
 					</strong>
 					<ng-template #proMessage>
 						<strong
-							*ngIf="envService.pro | async; else defaultMessage"
+							*ngIf="envService.pro | await; else defaultMessage"
 						>
 							{{ stringsService.footerMessagePro }}
 						</strong>

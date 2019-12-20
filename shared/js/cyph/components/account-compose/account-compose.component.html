@@ -1,21 +1,21 @@
 <div
 	fxFlexFill
 	fxLayoutAlign="center start"
-	[class.initiating]="(sent | async) === undefined"
+	[class.initiating]="(sent | await) === undefined"
 >
 	<div fxFlex class="cyph-light-theme">
 		<mat-card
 			class="animated slideInDown"
 			fxFlex
-			*ngIf="(sent | async) !== undefined"
+			*ngIf="(sent | await) !== undefined"
 		>
 			<button
 				mat-icon-button
 				cyphTranslate
 				class="back-button"
 				matTooltip="Back"
-				[routerLink]="'/profile/' + ((searchUsername | async) || '')"
-				*ngIf="(searchUsername | async)?.length > 0"
+				[routerLink]="'/profile/' + ((searchUsername | await) || '')"
+				*ngIf="(searchUsername | await)?.length > 0"
 			>
 				<mat-icon>arrow_back</mat-icon>
 			</button>
@@ -23,27 +23,27 @@
 			<mat-card-title>
 				<span
 					*ngIf="
-						(messageType | async) ===
+						(messageType | await) ===
 						chatMessageValueTypes.CalendarInvite
 					"
 				>
 					{{
-						(appointmentFollowUp | async) ?
+						(appointmentFollowUp | await) ?
 							stringsService.requestFollowUpAppointment :
 							stringsService.requestAppointment
 					}}
 				</span>
 				<span
 					cyphTranslate
-					*ngIf="(messageType | async) === chatMessageValueTypes.Form"
+					*ngIf="(messageType | await) === chatMessageValueTypes.Form"
 				>
 					Send Form
 				</span>
 				<span
 					cyphTranslate
 					*ngIf="
-						(messageType | async) === chatMessageValueTypes.Quill ||
-						(messageType | async) === chatMessageValueTypes.Text
+						(messageType | await) === chatMessageValueTypes.Quill ||
+						(messageType | await) === chatMessageValueTypes.Text
 					"
 				>
 					New Message
@@ -54,13 +54,13 @@
 					fxFlexFill
 					fxLayout="column"
 					fxLayoutGap="8px"
-					[fxShow]="(sent | async) === false"
+					[fxShow]="(sent | await) === false"
 				>
 					<ng-container
 						*ngIf="
-							(messageType | async) !==
+							(messageType | await) !==
 								chatMessageValueTypes.Form &&
-							(fromDataPreSet | async) === false
+							(fromDataPreSet | await) === false
 						"
 					>
 						<mat-form-field fxFlex>
@@ -68,7 +68,7 @@
 								matInput
 								cyphTranslate
 								[matAutocomplete]="fromNameAutocomplete"
-								[ngModel]="accountService.fromName | async"
+								[ngModel]="accountService.fromName | await"
 								(ngModelChange)="
 									accountService.fromName.next($event)
 								"
@@ -95,7 +95,7 @@
 								matInput
 								cyphTranslate
 								[matAutocomplete]="fromEmailAutocomplete"
-								[ngModel]="accountService.fromEmail | async"
+								[ngModel]="accountService.fromEmail | await"
 								(ngModelChange)="
 									accountService.fromEmail.next($event)
 								"
@@ -126,7 +126,7 @@
 									accountService.fromName.next(option.name)
 								"
 								*ngFor="
-									let option of options | async;
+									let option of options | await;
 									trackBy: trackBySelf
 								"
 							>
@@ -139,22 +139,22 @@
 						<mat-form-field
 							fxFlex
 							[fxShow]="
-								(messageType | async) ===
+								(messageType | await) ===
 									chatMessageValueTypes.Quill &&
-								(sendQuillAsNote | async)
+								(sendQuillAsNote | await)
 							"
 						>
 							<input
 								matInput
 								cyphTranslate
-								[ngModel]="messageSubject | async"
+								[ngModel]="messageSubject | await"
 								(ngModelChange)="messageSubject.next($event)"
 								name="messageSubject"
 								placeholder="Subject"
 								[required]="
-									(messageType | async) ===
+									(messageType | await) ===
 										chatMessageValueTypes.Quill &&
-									(sendQuillAsNote | async)
+									(sendQuillAsNote | await)
 								"
 							/>
 						</mat-form-field>
@@ -163,8 +163,8 @@
 					<cyph-account-contacts-search
 						#accountContactsSearch
 						fxHide="!!searchUsername.value && (
-							(messageType | async) === chatMessageValueTypes.CalendarInvite ||
-							(messageType | async) === chatMessageValueTypes.Form
+							(messageType | await) === chatMessageValueTypes.CalendarInvite ||
+							(messageType | await) === chatMessageValueTypes.Form
 						)"
 						[chipInput]="true"
 						[placeholder]="stringsService.to"
@@ -172,22 +172,22 @@
 						(userFilterChange)="
 							subscriptions.push($event.subscribe(recipients))
 						"
-						*ngIf="(appointmentFormData | async) === undefined"
+						*ngIf="(appointmentFormData | await) === undefined"
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
 						[customSendFunction]="send"
-						[calendarInviteFollowUp]="appointmentFollowUp | async"
+						[calendarInviteFollowUp]="appointmentFollowUp | await"
 						[disableSend]="
-							((recipients | async)?.size || 0) < 1 &&
-							((accountService.fromEmail | async)?.length < 1 ||
-								(accountService.fromName | async)?.length < 1)
+							((recipients | await)?.size || 0) < 1 &&
+							((accountService.fromEmail | await)?.length < 1 ||
+								(accountService.fromName | await)?.length < 1)
 						"
-						[messageType]="messageType | async"
+						[messageType]="messageType | await"
 						[sendText]="
 							envService.isTelehealthFull &&
-							(messageType | async) ===
+							(messageType | await) ===
 								chatMessageValueTypes.CalendarInvite &&
-							(activatedRoute.data | async)?.form !== undefined ?
+							(activatedRoute.data | await)?.form !== undefined ?
 								stringsService.next :
 								stringsService.send
 						"
@@ -198,12 +198,12 @@
 				<div
 					fxFlexFill
 					fxLayoutAlign="center center"
-					*ngIf="sent | async"
+					*ngIf="sent | await"
 				>
 					<div
 						cyphTranslate
 						*ngIf="
-							(appointmentFormData | async) !== undefined;
+							(appointmentFormData | await) !== undefined;
 							else messageSent
 						"
 					>
@@ -212,14 +212,14 @@
 					<ng-template #messageSent>
 						<div
 							*ngIf="
-								(messageType | async) !==
+								(messageType | await) !==
 									chatMessageValueTypes.CalendarInvite;
 								else appointmentRequested
 							"
 						>
 							<ng-container
 								*ngIf="
-									sentMessage | async as sentMessageData;
+									sentMessage | await as sentMessageData;
 									else genericSendConfirmation
 								"
 							>
@@ -227,7 +227,7 @@
 								&ngsp;
 								<a
 									[routerLink]="
-										((messageType | async) ===
+										((messageType | await) ===
 										chatMessageValueTypes.Quill ?
 											'/mail/' :
 											'/messages/') + sentMessageData.id
@@ -265,7 +265,7 @@
 								<ng-container
 									*ngIf="
 										accountDatabaseService.currentUser
-											| async as currentUser;
+											| await as currentUser;
 										else unregisteredPostRequest
 									"
 								>
@@ -289,10 +289,10 @@
 									<ng-template #promptForm>
 										<ng-container
 											*ngIf="
-												(sentFileID | async) !==
+												(sentFileID | await) !==
 													undefined &&
 													(currentUser.user.userType
-														| async) ===
+														| await) ===
 														accountUserTypes.Standard;
 												else doctorView
 											"
@@ -313,7 +313,7 @@
 													color="accent"
 													[routerLink]="
 														'/new-patient/' +
-														(sentFileID | async)
+														(sentFileID | await)
 													"
 												>
 													Patient Forms
@@ -363,7 +363,7 @@
 											cyphTranslate
 											[routerLink]="
 												'/profile/' +
-												((searchUsername | async) || '')
+												((searchUsername | await) || '')
 											"
 											>go back</a
 										>.
@@ -380,6 +380,6 @@
 
 	<mat-progress-spinner
 		mode="indeterminate"
-		*ngIf="(sent | async) === undefined"
+		*ngIf="(sent | await) === undefined"
 	></mat-progress-spinner>
 </div>

@@ -17,6 +17,8 @@ import {EnableLastPassDirective} from '../directives/enable-last-pass.directive'
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
+import {AwaitPipe} from '../pipes/await.pipe';
+import {FilterPipe} from '../pipes/filter.pipe';
 import {AffiliateService} from '../services/affiliate.service';
 import {ConfigService} from '../services/config.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
@@ -33,6 +35,8 @@ import {StringsService} from '../services/strings.service';
 		AnchorDirective,
 		AutofocusDirective,
 		EnableLastPassDirective,
+		AwaitPipe,
+		FilterPipe,
 		MarkdownComponent,
 		NanoScrollerDirective,
 		RouterLinkDirective,
@@ -45,6 +49,8 @@ import {StringsService} from '../services/strings.service';
 		BrowserModule,
 		CommonModule,
 		EnableLastPassDirective,
+		AwaitPipe,
+		FilterPipe,
 		FlexLayoutModule,
 		FormsModule,
 		HttpClientModule,

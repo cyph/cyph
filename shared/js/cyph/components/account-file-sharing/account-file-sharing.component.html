@@ -2,7 +2,7 @@
 	fxLayout="column"
 	fxLayoutAlign="center"
 	fxLayoutGap="16px"
-	*ngIf="getFile() | async as o"
+	*ngIf="getFile() | await as o"
 >
 	<cyph-account-contacts-search
 		#accountContactsSearch
@@ -41,7 +41,7 @@
 			fxFlex
 			fxFlex.gt-sm="initial"
 			[disabled]="
-				((accountContactsSearch.searchBar?.filter | async) || {size: 0})
+				((accountContactsSearch.searchBar?.filter | await) || {size: 0})
 					.size < 1
 			"
 			(click)="share()"

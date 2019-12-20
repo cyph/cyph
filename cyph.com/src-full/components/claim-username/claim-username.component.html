@@ -8,7 +8,7 @@
 			fxLayout="column"
 			fxLayoutGap="8px"
 			(submit)="submit()"
-			*ngIf="(submitted | async) === false"
+			*ngIf="(submitted | await) === false"
 		>
 			<div>
 				<span cyphTranslate>
@@ -90,7 +90,7 @@
 			fxFlex.gt-lg="50"
 			fxLayout="column"
 			fxLayoutGap="16px"
-			*ngIf="submitted | async"
+			*ngIf="submitted | await"
 		>
 			<div>
 				<span cyphTranslate>

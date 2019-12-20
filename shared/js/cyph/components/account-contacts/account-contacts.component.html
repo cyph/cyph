@@ -2,16 +2,16 @@
 	fxFlexFill
 	fxLayout="row"
 	class="card-list animated slideInDown"
-	[class.mobile]="envService.isMobile | async"
+	[class.mobile]="envService.isMobile | await"
 	[class.initiating]="
-		(accountContactsService.showSpinner | async) ||
-		(home && (accountFilesService.uploadSpinner | async) !== false)
+		(accountContactsService.showSpinner | await) ||
+		(home && (accountFilesService.uploadSpinner | await) !== false)
 	"
 >
 	<div fxFlex fxLayout="column" fxLayoutAlign="start stretch">
 		<ng-container
 			*ngIf="
-				(accountDatabaseService.currentUser | async)?.pseudoAccount ===
+				(accountDatabaseService.currentUser | await)?.pseudoAccount ===
 				true
 			"
 		>
@@ -26,7 +26,7 @@
 			</div>
 		</ng-container>
 
-		<br *ngIf="envService.isMobile | async" />
+		<br *ngIf="envService.isMobile | await" />
 
 		<cyph-account-contacts-search
 			#accountContactsSearch
@@ -44,8 +44,8 @@
 			fxLayoutAlign="center center"
 			*ngIf="
 				youHaveNoFriends &&
-					(accountContactsService.showSpinner | async) === false &&
-					(contactList | async)?.length < 1;
+					(accountContactsService.showSpinner | await) === false &&
+					(contactList | await)?.length < 1;
 				else mainContactListView
 			"
 		>
@@ -58,26 +58,26 @@
 					class="active animated slideInDown"
 					[class.cyph-inverted-theme]="invertedTheme"
 					[contact]="
-						accountContactsSearch?.searchBar?.filterSingle | async
+						accountContactsSearch?.searchBar?.filterSingle | await
 					"
 					[hideCurrentUser]="true"
 					[showUnreadMessageCount]="true"
 					(click)="accountContactsSearch?.searchBar?.clearFilter()"
 					*ngIf="
 						(accountContactsSearch?.searchBar?.filterSingle
-							| async) !== undefined
+							| await) !== undefined
 					"
 				></cyph-account-contact>
 
 				<cyph-account-contact
 					class="active animated slideInDown"
 					[class.cyph-inverted-theme]="invertedTheme"
-					[contact]="activeUser | async"
+					[contact]="activeUser | await"
 					[hideCurrentUser]="true"
 					[showUnreadMessageCount]="true"
 					*ngIf="
 						(accountContactsSearch?.searchBar?.filterSingle
-							| async) === undefined
+							| await) === undefined
 					"
 				></cyph-account-contact>
 			</div>
@@ -96,13 +96,13 @@
 							[class.cyph-inverted-theme]="invertedTheme"
 							*ngIf="
 								!readOnly &&
-								(accountService.enableGroup | async)
+								(accountService.enableGroup | await)
 							"
 						></cyph-account-contact>
 
 						<ng-container
 							*ngFor="
-								let item of filteredContactList | async;
+								let item of filteredContactList | await;
 								trackBy: trackByUser
 							"
 						>
@@ -127,7 +127,7 @@
 			class="add-contact"
 			(click)="accountContactsService.addContactPrompt()"
 			*ngIf="
-				(accountDatabaseService.currentUser | async)?.agseConfirmed ===
+				(accountDatabaseService.currentUser | await)?.agseConfirmed ===
 					true && !readOnly
 			"
 		>
@@ -142,7 +142,7 @@
 				mat-menu-item
 				[matTooltip]="stringsService.addContactTooltipInternal"
 				[matTooltipPosition]="
-					(envService.isMobile | async) ? 'right' : 'left'
+					(envService.isMobile | await) ? 'right' : 'left'
 				"
 				(click)="accountContactsService.addContactPrompt()"
 			>
@@ -153,7 +153,7 @@
 				mat-menu-item
 				[matTooltip]="stringsService.addContactTooltipExternal"
 				[matTooltipPosition]="
-					(envService.isMobile | async) ? 'right' : 'left'
+					(envService.isMobile | await) ? 'right' : 'left'
 				"
 				(click)="
 					accountContactsService.addContactPrompt(
@@ -171,8 +171,8 @@
 	<mat-progress-spinner
 		mode="indeterminate"
 		*ngIf="
-			(accountContactsService.showSpinner | async) ||
-			(home && (accountFilesService.uploadSpinner | async) !== false)
+			(accountContactsService.showSpinner | await) ||
+			(home && (accountFilesService.uploadSpinner | await) !== false)
 		"
 	></mat-progress-spinner>
 </div>

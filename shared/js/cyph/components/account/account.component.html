@@ -2,11 +2,11 @@
 	fxFlexFill
 	fxLayout="row"
 	fxLayout.xs="column"
-	[class.mobile]="envService.isMobile | async"
-	[class.transition]="accountService.transition | async"
+	[class.mobile]="envService.isMobile | await"
+	[class.transition]="accountService.transition | await"
 >
 	<div
-		*ngIf="accountService.interstitial | async"
+		*ngIf="accountService.interstitial | await"
 		class="interstitial animated fadeIn"
 	>
 		<div class="loading">
@@ -26,11 +26,11 @@
 	></canvas>
 
 	<cyph-account-menu
-		[fxFlex]="accountService.menuMaxWidth | async"
+		[fxFlex]="accountService.menuMaxWidth | await"
 		fxHide.lt-md
 		fxLayout="column"
 		class="sidebar animated slideInLeft _0"
-		*ngIf="menuVisible | async"
+		*ngIf="menuVisible | await"
 	>
 		<button
 			mat-icon-button
@@ -51,7 +51,7 @@
 				#sidenav
 				ngClass.gt-sm="disabled"
 				position="start"
-				[opened]="accountService.mobileMenuOpen | async"
+				[opened]="accountService.mobileMenuOpen | await"
 			>
 				<cyph-account-menu [sidenav]="true"></cyph-account-menu>
 			</mat-sidenav>
@@ -60,25 +60,25 @@
 				<div
 					fxLayout="row"
 					class="header slideInDown"
-					[class.animated]="(envService.isMobile | async) === false"
-					[class.fadeOutUp]="accountService.transition | async"
+					[class.animated]="(envService.isMobile | await) === false"
+					[class.fadeOutUp]="accountService.transition | await"
 					fxLayoutAlign="stretch center"
 					fxLayoutGap="8px"
 					*ngIf="
-						(accountService.header | async)?.header !== undefined &&
-						(accountService.isCallActive | async) === false &&
+						(accountService.header | await)?.header !== undefined &&
+						(accountService.isCallActive | await) === false &&
 						!(
-							(envService.isMobile | async) &&
-							(accountService.header | async)?.header?.desktop !==
+							(envService.isMobile | await) &&
+							(accountService.header | await)?.header?.desktop !==
 								undefined &&
-							(accountService.header | async)?.header?.mobile ===
+							(accountService.header | await)?.header?.mobile ===
 								undefined
 						) &&
 						!(
-							(envService.isMobile | async) === false &&
-							(accountService.header | async)?.header?.desktop ===
+							(envService.isMobile | await) === false &&
+							(accountService.header | await)?.header?.desktop ===
 								undefined &&
-							(accountService.header | async)?.header?.mobile !==
+							(accountService.header | await)?.header?.mobile !==
 								undefined
 						)
 					"
@@ -93,28 +93,28 @@
 						(click)="accountService.toggleMobileMenu()"
 						fxHide.gt-sm
 						*ngIf="
-							(accountDatabaseService.currentUser | async) !==
+							(accountDatabaseService.currentUser | await) !==
 								undefined &&
-							(accountDatabaseService.currentUser | async)
+							(accountDatabaseService.currentUser | await)
 								?.pseudoAccount === false
 						"
 					>
 						<mat-icon
 							[matBadge]="
 								(
-									((accountService.unreadMessages | async) ||
+									((accountService.unreadMessages | await) ||
 										0) +
-									((accountFilesService.incomingFiles | async)
+									((accountFilesService.incomingFiles | await)
 										?.length || 0)
 								).toString()
 							"
 							[matBadgeHidden]="
 								!(
-									((accountService.unreadMessages | async) ||
+									((accountService.unreadMessages | await) ||
 										0) +
 										((
 											accountFilesService.incomingFiles
-											| async
+											| await
 										)?.length || 0) >
 									0
 								)
@@ -132,7 +132,7 @@
 					<div class="header-content" fxFlex fxLayout="row">
 						<ng-container
 							*ngIf="
-								(accountService.header | async)
+								(accountService.header | await)
 									?.header as header;
 								else emptyHeader
 							"
@@ -154,16 +154,16 @@
 										class="avatar"
 										[ngClass]="
 											userPresence[
-												(header.status | async) || 0
+												(header.status | await) || 0
 											]
 										"
 										alt="Profile Picture"
-										[src]="header.avatar | async"
+										[src]="header.avatar | await"
 									/>
 
 									<h1
 										*ngIf="
-											header.name | async as name;
+											header.name | await as name;
 											else usernameHeader
 										"
 									>
@@ -172,7 +172,7 @@
 
 									<ng-template #usernameHeader>
 										<h1>
-											@{{ header.realUsername | async }}
+											@{{ header.realUsername | await }}
 										</h1>
 									</ng-template>
 								</div>
@@ -181,7 +181,7 @@
 							<ng-template #stringHeader>
 								<h1 fxFlex>
 									{{
-										((envService.isMobile | async) ?
+										((envService.isMobile | await) ?
 											header.mobile :
 											header.desktop) || ''
 									}}
@@ -227,7 +227,7 @@
 					class="cyph-banner alert"
 					cyphTranslate
 					*ngIf="
-						(accountDatabaseService.currentUser | async)
+						(accountDatabaseService.currentUser | await)
 							?.agseConfirmed === false
 					"
 				>
@@ -238,9 +238,9 @@
 				<div
 					fxFlex
 					class="content-wrapper animated"
-					[class.fadeOutUp]="accountService.transition | async"
-					[class.full-height]="fullHeight | async"
-					[class.padding]="(fullWidth | async) === false"
+					[class.fadeOutUp]="accountService.transition | await"
+					[class.full-height]="fullHeight | await"
+					[class.padding]="(fullWidth | await) === false"
 					ngClass.lt-md="small"
 					ngClass.md="medium"
 					ngClass.gt-md="large"
@@ -255,11 +255,11 @@
 		[fxFlex]="accountService.menuExpandedMinWidthPX"
 		[fxShow]="
 			!envService.isTelehealth &&
-			(accountDatabaseService.currentUser | async)?.agseConfirmed === true
+			(accountDatabaseService.currentUser | await)?.agseConfirmed === true
 		"
 		fxLayout="column"
 		class="sidebar contacts"
-		*ngIf="sidebarVisible | async"
+		*ngIf="sidebarVisible | await"
 	>
 		<div fxFlexFill fxLayout="row">
 			<cyph-account-contacts
@@ -275,7 +275,7 @@
 		mat-menu-item
 		(click)="contextMenuActions.handler($event)"
 		*ngFor="
-			let contextMenuActions of (accountService.header | async)
+			let contextMenuActions of (accountService.header | await)
 				?.contextMenuActions || [];
 			trackBy: trackBySelf
 		"

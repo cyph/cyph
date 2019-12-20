@@ -1,15 +1,15 @@
-<ng-container *ngIf="chatService.chatSubject | async as chat">
+<ng-container *ngIf="chatService.chatSubject | await as chat">
 	<div
 		fxFlexFill
 		*ngIf="
 			chat.state === states.chat &&
-			(sessionService.state.isAlive | async) &&
-			(chatService.resolvers.currentMessageSynced.promise | async)
+			(sessionService.state.isAlive | await) &&
+			(chatService.resolvers.currentMessageSynced.promise | await)
 		"
 	>
 		<div
 			class="calendar-invite-message-box"
-			[class.mobile]="envService.isMobile | async"
+			[class.mobile]="envService.isMobile | await"
 			fxFlexFill
 			*ngIf="messageType === chatMessageValueTypes.CalendarInvite"
 		>
@@ -44,7 +44,7 @@
 
 		<div
 			class="form-message-box"
-			[class.mobile]="envService.isMobile | async"
+			[class.mobile]="envService.isMobile | await"
 			fxFlexFill
 			*ngIf="messageType === chatMessageValueTypes.Form"
 		>
@@ -60,7 +60,7 @@
 
 		<div
 			class="quill-message-box"
-			[class.mobile]="envService.isMobile | async"
+			[class.mobile]="envService.isMobile | await"
 			fxFlexFill
 			*ngIf="messageType === chatMessageValueTypes.Quill"
 		>
@@ -83,7 +83,7 @@
 
 		<div
 			class="text-message-box"
-			[class.mobile]="envService.isMobile | async"
+			[class.mobile]="envService.isMobile | await"
 			fxFlexFill
 			*ngIf="messageType === chatMessageValueTypes.Text"
 		>
@@ -104,7 +104,7 @@
 				></textarea>
 			</div>
 
-			<div *ngIf="envService.isMobile | async">
+			<div *ngIf="envService.isMobile | await">
 				<div
 					class="message-box-button-group"
 					*ngIf="showSendButton && !!chat.currentMessage.text"
@@ -128,7 +128,7 @@
 						mat-icon-button
 						matTooltip="Video Call"
 						(click)="mobileButtonHandlers.videoCall()"
-						*ngIf="(p2pService.isActive | async) === false"
+						*ngIf="(p2pService.isActive | await) === false"
 						cyphTranslate
 					>
 						<mat-icon>video_call</mat-icon>
@@ -137,7 +137,7 @@
 						mat-icon-button
 						matTooltip="Voice Call"
 						(click)="mobileButtonHandlers.voiceCall()"
-						*ngIf="(p2pService.isActive | async) === false"
+						*ngIf="(p2pService.isActive | await) === false"
 						cyphTranslate
 					>
 						<mat-icon>call</mat-icon>
@@ -181,9 +181,9 @@
 
 			<smd-fab-speed-dial
 				animationMode="scale"
-				[open]="isSpeedDialOpen | async"
+				[open]="isSpeedDialOpen | await"
 				(mouseleave)="isSpeedDialOpen.next(false)"
-				*ngIf="(envService.isMobile | async) === false"
+				*ngIf="(envService.isMobile | await) === false"
 			>
 				<smd-fab-trigger
 					[spin]="true"
@@ -212,7 +212,7 @@
 						matTooltip="Voice Call"
 						matTooltipPosition="left"
 						(click)="p2pService.voiceCallButton()"
-						*ngIf="(p2pService.isActive | async) === false"
+						*ngIf="(p2pService.isActive | await) === false"
 					>
 						<mat-icon>call</mat-icon>
 					</button>
@@ -222,7 +222,7 @@
 						matTooltip="Video Call"
 						matTooltipPosition="left"
 						(click)="p2pService.videoCallButton()"
-						*ngIf="(p2pService.isActive | async) === false"
+						*ngIf="(p2pService.isActive | await) === false"
 					>
 						<mat-icon>video_call</mat-icon>
 					</button>
@@ -254,7 +254,7 @@
 				<ng-container
 					*ngIf="
 						scrollService.watchUnreadCount()
-							| async as unreadItemCount
+							| await as unreadItemCount
 					"
 				>
 					<h3
@@ -263,7 +263,7 @@
 						(click)="scrollDown()"
 						*ngIf="
 							unreadItemCount > 0 &&
-							((scrollService.scrollPosition | async) || 0) >
+							((scrollService.scrollPosition | await) || 0) >
 								scrollService.minScroll
 						"
 					>

@@ -3,7 +3,7 @@
 	*ngIf="
 		!envService.isMobileOS ||
 			envService.isTelehealth ||
-			!(accountDatabaseService.currentUser | async)?.agseConfirmed;
+			!(accountDatabaseService.currentUser | await)?.agseConfirmed;
 		else mobileHome
 	"
 ></cyph-account-profile>
@@ -11,7 +11,7 @@
 <ng-template #mobileHome>
 	<cyph-account-contacts
 		[home]="true"
-		[searchMode]="searchMode | async"
+		[searchMode]="searchMode | await"
 		(searchBarBlur)="router.navigate([])"
 	></cyph-account-contacts>
 </ng-template>
@@ -19,14 +19,14 @@
 <div
 	*ngIf="
 		envService.isMobileOS &&
-		!(accountDatabaseService.currentUser | async)?.agseConfirmed
+		!(accountDatabaseService.currentUser | await)?.agseConfirmed
 	"
 >
 	<a
 		mat-fab
 		cyphTranslate
-		[class.absolute-fab]="(envService.isMobile | async) === false"
-		[class.fixed-fab]="envService.isMobile | async"
+		[class.absolute-fab]="(envService.isMobile | await) === false"
+		[class.fixed-fab]="envService.isMobile | await"
 		matTooltip="New Burner Chat"
 		[href]="envService.cyphImUrl"
 	>

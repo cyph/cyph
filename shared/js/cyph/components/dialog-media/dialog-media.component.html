@@ -49,7 +49,7 @@
 				[maintainAspectRatio]="!!cropAspectRatio"
 				(imageCroppedBase64)="cropped = $event"
 				(loadImageFailed)="crop(false)"
-				*ngIf="safeUrlToString(src, mediaType) | async as imageBase64"
+				*ngIf="safeUrlToString(src, mediaType) | await as imageBase64"
 			></image-cropper>
 		</ng-template>
 	</div>

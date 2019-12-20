@@ -8,25 +8,25 @@
 		!value.fileTransfer.media
 	"
 	[class.mobile]="mobile"
-	[class.author-app]="(chatMessage | async)?.authorType === authorTypes.App"
+	[class.author-app]="(chatMessage | await)?.authorType === authorTypes.App"
 	[class.author-local]="
-		(chatMessage | async)?.authorType === authorTypes.Local
+		(chatMessage | await)?.authorType === authorTypes.Local
 	"
 	[class.author-remote]="
-		(chatMessage | async)?.authorType === authorTypes.Remote
+		(chatMessage | await)?.authorType === authorTypes.Remote
 	"
 	[class.file-transfer]="
-		(chatMessage | async)?.value?.fileTransfer !== undefined
+		(chatMessage | await)?.value?.fileTransfer !== undefined
 	"
-	[class.get-value-failure]="(chatMessage | async)?.value?.failure"
-	[class.self-destruct]="chatService.chatSelfDestruct | async"
+	[class.get-value-failure]="(chatMessage | await)?.value?.failure"
+	[class.self-destruct]="chatService.chatSelfDestruct | await"
 	[class.self-destructed]="
-		(chatMessage | async)?.selfDestructTimer?.isComplete | async
+		(chatMessage | await)?.selfDestructTimer?.isComplete | await
 	"
-	[class.visibility-hidden]="(viewReady | async) === false"
-	[attr.data-message-id]="(chatMessage | async)?.id"
+	[class.visibility-hidden]="(viewReady | await) === false"
+	[attr.data-message-id]="(chatMessage | await)?.id"
 	*ngIf="
-		(chatMessage | async)?.valueWatcher | async as value;
+		(chatMessage | await)?.valueWatcher | await as value;
 		else messageLoading
 	"
 >
@@ -38,11 +38,11 @@
 						class="message-author"
 						*ngIf="
 							!mobile &&
-							(chatMessage | async)?.authorType !==
+							(chatMessage | await)?.authorType !==
 								authorTypes.App
 						"
 					>
-						{{ (chatMessage | async)?.author | async }}:
+						{{ (chatMessage | await)?.author | await }}:
 					</strong>
 					&nbsp;
 					<ng-container
@@ -62,8 +62,8 @@
 			>
 				<div fxLayout="row">
 					<!--
-					<div *ngIf='mobile && (chatMessage | async)?.authorType === authorTypes.Local'>
-						{{(chatMessage | async)?.author | async}} &nbsp;&mdash;&nbsp;
+					<div *ngIf='mobile && (chatMessage | await)?.authorType === authorTypes.Local'>
+						{{(chatMessage | await)?.author | await}} &nbsp;&mdash;&nbsp;
 					</div>
 					-->
 
@@ -73,12 +73,12 @@
 						></ng-container>
 					</ng-container>
 
-					<div>{{ (chatMessage | async)?.timeString }}</div>
+					<div>{{ (chatMessage | await)?.timeString }}</div>
 
 					<div
 						*ngIf="
 							!mobile ||
-							(chatMessage | async)?.authorType ===
+							(chatMessage | await)?.authorType ===
 								authorTypes.Local
 						"
 					>
@@ -96,8 +96,8 @@
 					</ng-container>
 
 					<!--
-					<div *ngIf='mobile && (chatMessage | async)?.authorType === authorTypes.Remote'>
-						&nbsp;&mdash;&nbsp;&ngsp;{{(chatMessage | async)?.author | async}}
+					<div *ngIf='mobile && (chatMessage | await)?.authorType === authorTypes.Remote'>
+						&nbsp;&mdash;&nbsp;&ngsp;{{(chatMessage | await)?.author | await}}
 					</div>
 					-->
 				</div>
@@ -109,7 +109,7 @@
 				fxLayout="row"
 				class="cyph-light-theme mail-ui"
 				[class.mail-local]="
-					(chatMessage | async)?.authorType === authorTypes.Local
+					(chatMessage | await)?.authorType === authorTypes.Local
 				"
 			>
 				<mat-card fxFlex>
@@ -119,61 +119,61 @@
 							cyphTranslate
 							class="avatar-image"
 							[src]="
-								(chatMessage | async)?.authorUser?.avatar
-									| async
+								(chatMessage | await)?.authorUser?.avatar
+									| await
 							"
 							[routerLink]="
 								'/profile/' +
-								(chatMessage | async)?.authorUser?.username
+								(chatMessage | await)?.authorUser?.username
 							"
 							alt="User Avatar"
 							*ngIf="
 								accountService &&
-								!!(chatMessage | async)?.authorUser &&
-								!!(chatMessage | async)?.authorUser?.avatar
+								!!(chatMessage | await)?.authorUser &&
+								!!(chatMessage | await)?.authorUser?.avatar
 							"
 						/>
 						<mat-card-title fxFlex>
 							<div fxFlex [fxLayout]="mobile ? 'column' : 'row'">
 								<span
-									*ngIf="!!(chatMessage | async)?.authorUser"
+									*ngIf="!!(chatMessage | await)?.authorUser"
 								>
 									<strong
 										>{{
-											(chatMessage | async)?.authorUser
-												?.name | async
+											(chatMessage | await)?.authorUser
+												?.name | await
 										}}&nbsp;</strong
 									>
 									&ngsp;
 									<small>
 										{{
-											(chatMessage | async)
+											(chatMessage | await)
 												?.authorType ===
 											authorTypes.Remote ?
 												'@' :
 												''
 										}}{{
-											(chatMessage | async)?.author
-												| async
+											(chatMessage | await)?.author
+												| await
 										}}
 									</small>
 								</span>
 								<strong
-									*ngIf="!(chatMessage | async)?.authorUser"
+									*ngIf="!(chatMessage | await)?.authorUser"
 								>
 									{{
-										(chatMessage | async)?.authorType ===
+										(chatMessage | await)?.authorType ===
 										authorTypes.Remote ?
 											'@' :
 											''
 									}}{{
-										(chatMessage | async)?.author | async
+										(chatMessage | await)?.author | await
 									}}
 								</strong>
 								<div fxFlex *ngIf="!mobile"></div>
 								<div>
 									<span>{{
-										(chatMessage | async)?.dateTimeString
+										(chatMessage | await)?.dateTimeString
 									}}</span>
 									&ngsp;
 									<ng-container
@@ -203,12 +203,12 @@
 			fxLayoutAlign="center center"
 			fxLayoutGap="10px"
 			class="self-destruct-timer"
-			*ngIf="(chatMessage | async)?.selfDestructTimer"
+			*ngIf="(chatMessage | await)?.selfDestructTimer"
 		>
 			<div cyphTranslate>Message will self-destruct in</div>
 			<div class="countdown">
 				{{
-					(chatMessage | async)?.selfDestructTimer?.timestamp | async
+					(chatMessage | await)?.selfDestructTimer?.timestamp | await
 				}}
 			</div>
 		</div>
@@ -219,7 +219,7 @@
 <ng-template #messageConfirmation>
 	<ng-container
 		*ngIf="
-			pending || (chatMessage | async)?.authorType !== authorTypes.Local;
+			pending || (chatMessage | await)?.authorType !== authorTypes.Local;
 			else messagePartialConfirmed
 		"
 	>
@@ -281,12 +281,12 @@
 				>
 					<ng-container
 						*ngIf="
-							((mediaSpoiler | async) === false ?
+							((mediaSpoiler | await) === false ?
 								fileTransferService.getMedia(
 									value.fileTransfer
 								) :
 								undefined
-							) | async as media;
+							) | await as media;
 							else mediaLoading
 						"
 					>
@@ -379,7 +379,7 @@
 						<div
 							[class.centered]="active"
 							[class.centered-fake]="!active"
-							[class.spoiler]="mediaSpoiler | async"
+							[class.spoiler]="mediaSpoiler | await"
 							[class.visibility-hidden]="!active"
 							(click)="mediaSpoiler.next(false)"
 							*ngFor="
@@ -391,12 +391,12 @@
 								mode="indeterminate"
 								diameter="50"
 								strokeWidth="5"
-								*ngIf="(mediaSpoiler | async) === false"
+								*ngIf="(mediaSpoiler | await) === false"
 							></mat-progress-spinner>
 							<div
 								cyphTranslate
 								class="spoiler-message"
-								*ngIf="mediaSpoiler | async"
+								*ngIf="mediaSpoiler | await"
 							>
 								Click to Reveal
 							</div>
@@ -437,7 +437,7 @@
 		</ng-template>
 		<ng-template #quillValue>
 			<cyph-quill
-				[content]="quill | async"
+				[content]="quill | await"
 				[isDisabled]="true"
 				(ready)="resolveViewReady()"
 				*ngIf="value.quill && value.quill.length > 0; else textValue"
@@ -448,7 +448,7 @@
 				class="message-text"
 				[markdown]="value.text"
 				[targetSelf]="
-					(chatMessage | async)?.authorType === authorTypes.App
+					(chatMessage | await)?.authorType === authorTypes.App
 				"
 			></cyph-markdown>
 		</ng-template>
@@ -466,14 +466,14 @@
 		[class.visibility-hidden]="
 			envService.isMobileOS ||
 			!(
-				((((chatMessage | async)?.valueWatcher | async) || {text: ''})
+				((((chatMessage | await)?.valueWatcher | await) || {text: ''})
 					.text?.length || 0) > 0
 			)
 		"
 		*ngIf="
 			!mobile ||
 			!envService.isMobileOS ||
-			((((chatMessage | async)?.valueWatcher | async) || {text: ''}).text
+			((((chatMessage | await)?.valueWatcher | await) || {text: ''}).text
 				?.length || 0) > 0
 		"
 	>

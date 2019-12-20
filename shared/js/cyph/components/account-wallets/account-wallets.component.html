@@ -2,8 +2,8 @@
 	class="cyph-banner alert"
 	cyphTranslate
 	*ngIf="
-		(accountService.enableWallets | async) &&
-		(cryptocurrencyService.blockchainFetchError | async)
+		(accountService.enableWallets | await) &&
+		(cryptocurrencyService.blockchainFetchError | await)
 	"
 >
 	We're having trouble connecting to the blockchain right now. Locally cached
@@ -13,15 +13,15 @@
 
 <div
 	fxFlexFill
-	[class.initiating]="(accountFilesService.showSpinner | async) !== false"
-	*ngIf="accountService.enableWallets | async"
+	[class.initiating]="(accountFilesService.showSpinner | await) !== false"
+	*ngIf="accountService.enableWallets | await"
 >
 	<div
 		class="no-wallets"
 		fxLayout="column"
 		fxLayoutAlign="center center"
 		*ngIf="
-			(accountFilesService.filesListFiltered.wallets | async)?.length < 1;
+			(accountFilesService.filesListFiltered.wallets | await)?.length < 1;
 			else wallets
 		"
 	>
@@ -67,7 +67,7 @@
 			<mat-tab
 				*ngFor="
 					let wallet of accountFilesService.filesListFilteredWithData.wallets()
-						| async;
+						| await;
 					trackBy: trackByID;
 					let i = index
 				"
@@ -80,7 +80,7 @@
 						!(
 							cryptocurrencyService.watchTransactionHistory(
 								wallet.data
-							) | async
+							) | await
 						)
 					"
 				>
@@ -102,7 +102,7 @@
 								cyphTranslate
 								matTooltip="Edit"
 								(click)="setEditMode(wallet.record)"
-								*ngIf="(editMode | async) === false"
+								*ngIf="(editMode | await) === false"
 							>
 								<mat-icon>edit</mat-icon>
 							</button>
@@ -111,7 +111,7 @@
 								cyphTranslate
 								matTooltip="Save"
 								(click)="saveEdits()"
-								*ngIf="editMode | async"
+								*ngIf="editMode | await"
 							>
 								<mat-icon>save</mat-icon>
 							</button>
@@ -119,7 +119,7 @@
 								mat-icon-button
 								[disabled]="
 									cryptocurrencyService.blockchainFetchError
-										| async
+										| await
 								"
 								[matTooltip]="stringsService.bitcoinSendTitle"
 								(click)="send(wallet.data)"
@@ -133,18 +133,18 @@
 							<mat-form-field
 								fxFlex="66"
 								class="title"
-								[class.edit]="editMode | async"
+								[class.edit]="editMode | await"
 							>
 								<input
 									matInput
 									[ngModel]="
-										(draft | async)?.name ||
+										(draft | await)?.name ||
 										wallet.record.name
 									"
 									(ngModelChange)="
 										updateDraft({name: $event})
 									"
-									[disabled]="(editMode | async) === false"
+									[disabled]="(editMode | await) === false"
 								/>
 							</mat-form-field>
 						</div>
@@ -163,7 +163,7 @@
 										{{
 											cryptocurrencyService.getAddress(
 												wallet.data
-											) | async
+											) | await
 										}}
 									</span>
 								</h3>
@@ -174,7 +174,7 @@
 									<span>{{
 										(cryptocurrencyService.watchBalance(
 											wallet.data
-										) | async) || 0
+										) | await) || 0
 									}}</span>
 									&ngsp;
 									<span>{{
@@ -189,13 +189,13 @@
 												(cryptocurrencyService.watchConversion(
 													(cryptocurrencyService.watchBalance(
 														wallet.data
-													) | async) || 0,
+													) | await) || 0,
 													{
 														cryptocurrency:
 															cryptocurrencies.BTC
 													},
 													{currency: currencies.USD}
-												) | async) || 0
+												) | await) || 0
 											)
 										}}
 									</span>
@@ -215,8 +215,8 @@
 											'bitcoin:' +
 											(cryptocurrencyService.getAddress(
 												wallet.data
-											) | async)
-									}) | async) || '' as qrSrc
+											) | await)
+									}) | await) || '' as qrSrc
 								"
 							/>
 						</div>
@@ -339,7 +339,7 @@
 								(
 									cryptocurrencyService.watchTransactionHistory(
 										wallet.data
-									) | async
+									) | await
 								)?.length < 1
 							"
 						>
@@ -353,7 +353,7 @@
 							!(
 								cryptocurrencyService.watchTransactionHistory(
 									wallet.data
-								) | async
+								) | await
 							)
 						"
 					></mat-progress-spinner>
@@ -362,19 +362,19 @@
 		</mat-tab-group>
 	</ng-template>
 
-	<ng-container *ngIf="(accountFilesService.showSpinner | async) !== false">
+	<ng-container *ngIf="(accountFilesService.showSpinner | await) !== false">
 		<mat-progress-spinner
 			mode="indeterminate"
 			*ngIf="
-				(accountFilesService.showSpinner | async) === true ||
-					((accountFilesService.showSpinner | async) || 0) < 1;
+				(accountFilesService.showSpinner | await) === true ||
+					((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></mat-progress-spinner>
 		<ng-template #determinateFileSpinner>
 			<mat-progress-spinner
 				mode="determinate"
-				[value]="(accountFilesService.showSpinner | async) || 1"
+				[value]="(accountFilesService.showSpinner | await) || 1"
 			></mat-progress-spinner>
 		</ng-template>
 	</ng-container>
@@ -382,7 +382,7 @@
 	<smd-fab-speed-dial
 		class="fixed-fab"
 		animationMode="scale"
-		[open]="isSpeedDialOpen | async"
+		[open]="isSpeedDialOpen | await"
 		(mouseleave)="isSpeedDialOpen.next(false)"
 	>
 		<smd-fab-trigger
@@ -396,12 +396,12 @@
 				matTooltipPosition="left"
 				(click)="generate(newWalletOptions.generate)"
 			>
-				<mat-icon *ngIf="(isSpeedDialOpen | async) === false"
+				<mat-icon *ngIf="(isSpeedDialOpen | await) === false"
 					>add</mat-icon
 				>
 				<mat-icon
 					svgIcon="key-add-light"
-					*ngIf="isSpeedDialOpen | async"
+					*ngIf="isSpeedDialOpen | await"
 				></mat-icon>
 			</button>
 		</smd-fab-trigger>

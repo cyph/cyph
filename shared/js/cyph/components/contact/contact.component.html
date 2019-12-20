@@ -8,12 +8,12 @@
 			fxLayout="column"
 			fxLayoutGap="16px"
 			(submit)="send()"
-			*ngIf="(sent | async) === false"
+			*ngIf="(sent | await) === false"
 		>
 			<div
 				fxLayout="row"
 				fxLayoutAlign="center center"
-				*ngIf="feedbackForm | async"
+				*ngIf="feedbackForm | await"
 			>
 				<h3>
 					<span cyphTranslate>Submit Feedback to</span>
@@ -21,7 +21,7 @@
 					<span>{{ stringsService.company }}</span>
 				</h3>
 			</div>
-			<ng-container *ngIf="(feedbackForm | async) === false">
+			<ng-container *ngIf="(feedbackForm | await) === false">
 				<div
 					fxLayout="row"
 					fxLayoutAlign="center center"
@@ -51,7 +51,7 @@
 					</mat-form-field>
 				</div>
 			</ng-container>
-			<div fxLayout="row" *ngIf="(feedbackForm | async) === false">
+			<div fxLayout="row" *ngIf="(feedbackForm | await) === false">
 				<mat-form-field fxFlex>
 					<input
 						matInput
@@ -65,7 +65,7 @@
 			<div
 				fxLayout="row"
 				*ngIf="
-					(responseRequired | async) || (responseRequested | async)
+					(responseRequired | await) || (responseRequested | await)
 				"
 			>
 				<div fxFlex fxLayout.lt-md="column" fxLayoutGap="16px">
@@ -106,18 +106,18 @@
 			</div>
 			<div fxLayout="row">
 				<mat-checkbox
-					[ngModel]="responseRequested | async"
+					[ngModel]="responseRequested | await"
 					(ngModelChange)="responseRequested.next($event)"
 					name="response"
 					cyphTranslate
-					*ngIf="(responseRequired | async) === false"
+					*ngIf="(responseRequired | await) === false"
 				>
 					Response Requested
 				</mat-checkbox>
 			</div>
 			<div fxLayout="row">
 				<mat-checkbox
-					[ngModel]="gdprConsent | async"
+					[ngModel]="gdprConsent | await"
 					(ngModelChange)="gdprConsent.next($event)"
 					name="gdpr"
 					[matTooltip]="stringsService.gdprContactForm"
@@ -137,7 +137,7 @@
 					cyphTranslate
 					type="submit"
 					*ngIf="
-						(envService.isMobile | async) === false;
+						(envService.isMobile | await) === false;
 						else mobileButton
 					"
 				>
@@ -155,7 +155,7 @@
 				</ng-template>
 			</div>
 		</form>
-		<div *ngIf="sent | async" cyphTranslate>
+		<div *ngIf="sent | await" cyphTranslate>
 			Your email has been sent! If you requested a response, someone on
 			the team will get back to you shortly.
 		</div>

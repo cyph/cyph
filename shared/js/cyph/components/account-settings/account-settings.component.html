@@ -1,8 +1,8 @@
 <div fxFlexFill fxLayout="column" fxLayoutGap="32px">
 	<div
 		fxLayoutAlign="center"
-		[class.initiating]="loading | async"
-		*ngIf="state | async as stateValue"
+		[class.initiating]="loading | await"
+		*ngIf="state | await as stateValue"
 	>
 		<form
 			ngNativeValidate
@@ -11,20 +11,20 @@
 			fxFlex.gt-lg="50"
 			fxLayout="column"
 			fxLayoutGap="16px"
-			[class.mobile]="envService.isMobile | async"
+			[class.mobile]="envService.isMobile | await"
 			(submit)="save()"
 			*ngIf="stateValue === states.default; else changePassword"
 		>
 			<mat-form-field
 				*ngIf="
-					(accountDatabaseService.currentUser | async)?.agseConfirmed
+					(accountDatabaseService.currentUser | await)?.agseConfirmed
 				"
 			>
 				<input
 					matInput
 					cyphTranslate
 					[maxlength]="accountService.maxNameLength"
-					[ngModel]="(data | async)?.modified.name"
+					[ngModel]="(data | await)?.modified.name"
 					(ngModelChange)="updateData({modified: {name: $event}})"
 					name="name"
 					placeholder="Name"
@@ -35,7 +35,7 @@
 				<input
 					matInput
 					cyphTranslate
-					[ngModel]="(data | async)?.modified.email"
+					[ngModel]="(data | await)?.modified.email"
 					(ngModelChange)="updateData({modified: {email: $event}})"
 					name="email"
 					type="email"
@@ -68,7 +68,7 @@
 					{{
 						titleize(
 							cyphPlans[
-								(accountSettingsService.plan | async) ||
+								(accountSettingsService.plan | await) ||
 									cyphPlans.Free
 							]
 						)
@@ -78,7 +78,7 @@
 					*ngIf="
 						false &&
 						!envService.isCordova &&
-						(accountSettingsService.plan | async) === cyphPlans.Free
+						(accountSettingsService.plan | await) === cyphPlans.Free
 					"
 				>
 					&ngsp; (<a
@@ -97,7 +97,7 @@
 
 			<ng-container
 				*ngIf="
-					(accountDatabaseService.currentUser | async)?.agseConfirmed
+					(accountDatabaseService.currentUser | await)?.agseConfirmed
 				"
 			>
 				<mat-accordion>
@@ -108,7 +108,7 @@
 						<div fxFlex fxLayout="column" fxLayoutGap="32px">
 							<mat-slide-toggle
 								[ngModel]="
-									(data | async)?.modified.profileVisible
+									(data | await)?.modified.profileVisible
 								"
 								(ngModelChange)="
 									updateData({
@@ -127,14 +127,14 @@
 									matInput
 									cyphTranslate
 									[ngModel]="
-										(data | async)?.modified.realUsername
+										(data | await)?.modified.realUsername
 									"
 									(ngModelChange)="
 										updateData({
 											modified: {realUsername: $event}
 										})
 									"
-									[pattern]="(data | async)?.usernamePattern"
+									[pattern]="(data | await)?.usernamePattern"
 									[textMask]="usernameMask"
 									name="realUsername"
 									placeholder="Username Capitalization"
@@ -166,7 +166,7 @@
 					fxFlex
 					fxFlex.gt-sm="initial"
 					type="submit"
-					[disabled]="(ready | async) === false"
+					[disabled]="(ready | await) === false"
 				>
 					Save
 				</button>
@@ -211,7 +211,7 @@
 
 		<mat-progress-spinner
 			mode="indeterminate"
-			*ngIf="loading | async"
+			*ngIf="loading | await"
 		></mat-progress-spinner>
 	</div>
 

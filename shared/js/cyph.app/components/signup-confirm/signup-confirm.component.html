@@ -15,7 +15,7 @@
 			</mat-card-subtitle>
 			<cyph-logo cardHeader homeLink></cyph-logo>
 			<mat-card-content>
-				<div *ngIf="apiKey | async as key">
+				<div *ngIf="apiKey | await as key">
 					<br />
 					<h3 class="cyph-banner success">
 						<div cyphTranslate>

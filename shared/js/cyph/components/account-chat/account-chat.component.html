@@ -1,20 +1,20 @@
-<ng-container *ngIf="accountDatabaseService.currentUser | async as user">
+<ng-container *ngIf="accountDatabaseService.currentUser | await as user">
 	<div
 		fxFlexFill
 		fxLayoutAlign="center center"
 		class="cyph-foreground"
-		[class.mobile]="envService.isMobile | async"
+		[class.mobile]="envService.isMobile | await"
 		[cyphDropZone]="false && chat.state === states.chat"
 		[cyphDropZoneClass]="false"
 		(fileDrop)="fileTransferService.send($event)"
-		*ngIf="accountChatService.chatSubject | async as chat"
+		*ngIf="accountChatService.chatSubject | await as chat"
 	>
 		<cyph-link-connection
 			fxFlex
 			fxFlexFill
 			[timer]="undefined"
 			*ngIf="
-				chat.state === states.none && (anonymousChatInitiating | async)
+				chat.state === states.none && (anonymousChatInitiating | await)
 			"
 		></cyph-link-connection>
 
@@ -30,8 +30,8 @@
 				class="cyph-loading-indicator cyph-banner dark"
 				*ngIf="
 					chat.state === states.chat &&
-					(accountChatService.uiReady | async) !== true &&
-					(initialCallPending | async) === false
+					(accountChatService.uiReady | await) !== true &&
+					(initialCallPending | await) === false
 				"
 			>
 				<!--
@@ -47,33 +47,33 @@
 
 			<cyph-account-call-waiting
 				fxFlexFill
-				[appointment]="appointment | async"
+				[appointment]="appointment | await"
 				*ngIf="
-					(initialCallPending | async) === true &&
-					(answering | async) === false &&
-					(sessionSubID | async) !== undefined
+					(initialCallPending | await) === true &&
+					(answering | await) === false &&
+					(sessionSubID | await) !== undefined
 				"
 			></cyph-account-call-waiting>
 
 			<ng-container
 				*ngIf="
-					(messageType | async) === chatMessageValueTypes.Text;
+					(messageType | await) === chatMessageValueTypes.Text;
 					else fullMessageBox
 				"
 			>
 				<cyph-chat-main
 					fxFlex
 					[appointment]="
-						(user.user.userType | async) ===
+						(user.user.userType | await) ===
 						accountUserTypes.TelehealthDoctor ?
-							(appointment | async) :
+							(appointment | await) :
 							undefined
 					"
-					[forceDisplayVideo]="answering | async"
-					[messageType]="messageType | async"
+					[forceDisplayVideo]="answering | await"
+					[messageType]="messageType | await"
 					[class.visibility-hidden]="
-						(initialCallPending | async) === true &&
-						(answering | async) === false
+						(initialCallPending | await) === true &&
+						(answering | await) === false
 					"
 				>
 					<ng-container
@@ -84,10 +84,10 @@
 				<cyph-account-chat-message-box
 					[messageType]="chatMessageValueTypes.Text"
 					*ngIf="
-						(accountP2PService.isActiveOrInitialCall | async) ===
+						(accountP2PService.isActiveOrInitialCall | await) ===
 						false
 					"
-					[fxHide]="initialCallPending | async"
+					[fxHide]="initialCallPending | await"
 				></cyph-account-chat-message-box>
 			</ng-container>
 
@@ -96,23 +96,23 @@
 					fxFlex
 					class="chat-end-margin"
 					[appointment]="
-						(user.user.userType | async) ===
+						(user.user.userType | await) ===
 						accountUserTypes.TelehealthDoctor ?
-							(appointment | async) :
+							(appointment | await) :
 							undefined
 					"
-					[messageType]="messageType | async"
+					[messageType]="messageType | await"
 					[persistentEndMessage]="true"
-					[promptFollowup]="promptFollowup | async"
+					[promptFollowup]="promptFollowup | await"
 					[uiStyle]="uiStyles.mail"
-					[class.visibility-hidden]="initialCallPending | async"
+					[class.visibility-hidden]="initialCallPending | await"
 				>
 					<cyph-account-chat-message-box
-						[messageType]="messageType | async"
+						[messageType]="messageType | await"
 						[showHeader]="true"
 						*ngIf="
 							(accountP2PService.isActiveOrInitialCall
-								| async) === false;
+								| await) === false;
 							else sessionCompleteMessage
 						"
 					></cyph-account-chat-message-box>

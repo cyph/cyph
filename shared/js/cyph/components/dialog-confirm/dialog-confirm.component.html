@@ -74,7 +74,7 @@
 					name="prompt"
 					required
 					[type]="
-						password && (hidePassword | async) ? 'password' : 'text'
+						password && (hidePassword | await) ? 'password' : 'text'
 					"
 					*ngIf="!bottomSheet || password"
 				/>
@@ -95,7 +95,7 @@
 					*ngIf="password"
 				>
 					{{
-						(hidePassword | async) ? 'visibility' : 'visibility_off'
+						(hidePassword | await) ? 'visibility' : 'visibility_off'
 					}}
 				</mat-icon>
 			</mat-form-field>
@@ -143,7 +143,7 @@
 	<div fxFlex fxLayoutAlign="center center" *ngIf="fabAvatar">
 		<img
 			class="fab-avatar"
-			[src]="fabAvatar | async"
+			[src]="fabAvatar | await"
 			alt="Avatar"
 			cyphTranslate
 		/>

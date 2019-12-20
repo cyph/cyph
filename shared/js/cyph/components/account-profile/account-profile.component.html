@@ -2,14 +2,14 @@
 	class="global"
 	mode="indeterminate"
 	*ngIf="
-		((userProfile | async)?.ready | async) !== true ||
-			((userProfile | async)?.userType | async) === undefined;
+		((userProfile | await)?.ready | await) !== true ||
+			((userProfile | await)?.userType | await) === undefined;
 		else profile
 	"
 ></mat-progress-spinner>
 
 <ng-template #profile>
-	<ng-container *ngIf="userProfile | async as user">
+	<ng-container *ngIf="userProfile | await as user">
 		<ng-template #buttons>
 			<div
 				class="buttons"
@@ -18,7 +18,7 @@
 				fxLayoutGap="16px"
 			>
 				<ng-container
-					*ngIf="isCurrentUser | async; else buttonsOtherUser"
+					*ngIf="isCurrentUser | await; else buttonsOtherUser"
 				>
 					<button
 						mat-mini-fab
@@ -46,7 +46,7 @@
 				<ng-template #buttonsOtherUser>
 					<ng-container
 						*ngIf="
-							(accountDatabaseService.currentUser | async) !==
+							(accountDatabaseService.currentUser | await) !==
 								undefined;
 							else buttonsAnonymous
 						"
@@ -61,7 +61,7 @@
 									user.username
 								)
 							"
-							*ngIf="isContact | async; else buttonsAddContact"
+							*ngIf="isContact | await; else buttonsAddContact"
 						>
 							<mat-icon>delete</mat-icon>
 						</button>
@@ -86,7 +86,7 @@
 							cyphTranslate
 							class="animated flipInX _4"
 							matTooltip="Open Mail"
-							[routerLink]="'/mail/' + (user.contactID | async)"
+							[routerLink]="'/mail/' + (user.contactID | await)"
 						>
 							<mat-icon>email</mat-icon>
 						</button>
@@ -97,7 +97,7 @@
 							class="animated flipInX _4"
 							matTooltip="Open Messages"
 							[routerLink]="
-								'/messages/' + (user.contactID | async)
+								'/messages/' + (user.contactID | await)
 							"
 						>
 							<mat-icon>message</mat-icon>
@@ -113,7 +113,7 @@
 						matTooltip="New Message"
 						[routerLink]="
 							'/compose/' +
-							((user.contactID | async) ||
+							((user.contactID | await) ||
 								'user/' + user.username)
 						"
 					>
@@ -132,18 +132,18 @@
 				fxLayoutAlign="center center"
 				class="description"
 				[ngClass]="readViewClasses"
-				*ngIf="(editMode | async) === false"
+				*ngIf="(editMode | await) === false"
 			>
 				<div>
 					{{
 						user.description
-							| async
+							| await
 							| slice: 0:accountService.maxDescriptionLength
 					}}
 				</div>
 			</div>
 			<div *ngIf="divider"></div>
-			<div fxLayoutAlign="center" *ngIf="editMode | async">
+			<div fxLayoutAlign="center" *ngIf="editMode | await">
 				<mat-form-field
 					class="description"
 					fxFlex="95"
@@ -156,7 +156,7 @@
 						#descriptionEditor
 						(blur)="isEditorFocused.next(false)"
 						(focus)="isEditorFocused.next(true)"
-						[ngModel]="user.description | async"
+						[ngModel]="user.description | await"
 						(ngModelChange)="updateDraft({description: $event})"
 					></textarea>
 					<mat-hint
@@ -210,7 +210,7 @@
 						<cyph-dynamic-form
 							[form]="form"
 							[hideSubmitButton]="true"
-							[isDisabled]="(editMode | async) === false"
+							[isDisabled]="(editMode | await) === false"
 							(changeForm)="updateDraft({forms: extra.forms})"
 						></cyph-dynamic-form>
 					</mat-expansion-panel>
@@ -226,12 +226,12 @@
 			<div
 				class="name"
 				[ngClass]="readViewClasses"
-				*ngIf="(editMode | async) === false"
+				*ngIf="(editMode | await) === false"
 			>
 				{{ prefix || '' }}
-				{{ user.name | async | slice: 0:accountService.maxNameLength }}
+				{{ user.name | await | slice: 0:accountService.maxNameLength }}
 			</div>
-			<div fxLayoutAlign="center" *ngIf="editMode | async">
+			<div fxLayoutAlign="center" *ngIf="editMode | await">
 				<mat-form-field
 					class="name"
 					fxFlex="95"
@@ -246,7 +246,7 @@
 						(blur)="isEditorFocused.next(false)"
 						(focus)="isEditorFocused.next(true)"
 						[maxlength]="accountService.maxNameLength"
-						[ngModel]="user.name | async"
+						[ngModel]="user.name | await"
 						(ngModelChange)="updateDraft({name: $event})"
 					/>
 				</mat-form-field>
@@ -257,7 +257,7 @@
 			<div fxLayout="row" fxLayoutGap="16px">
 				<ng-container
 					*ngIf="
-						(accountDatabaseService.currentUser | async) !==
+						(accountDatabaseService.currentUser | await) !==
 							undefined;
 						else mailButtonsAnonymous
 					"
@@ -266,7 +266,7 @@
 						mat-mini-fab
 						cyphTranslate
 						matTooltip="Open Mail"
-						[routerLink]="'/mail/' + (user.contactID | async)"
+						[routerLink]="'/mail/' + (user.contactID | await)"
 					>
 						<mat-icon>email</mat-icon>
 					</button>
@@ -275,7 +275,7 @@
 						mat-mini-fab
 						cyphTranslate
 						matTooltip="Open Messages"
-						[routerLink]="'/messages/' + (user.contactID | async)"
+						[routerLink]="'/messages/' + (user.contactID | await)"
 					>
 						<mat-icon>message</mat-icon>
 					</button>
@@ -286,8 +286,8 @@
 						(click)="shareEhrData()"
 						*ngIf="
 							patientData &&
-							((accountDatabaseService.currentUser | async)?.user
-								.userType | async) ===
+							((accountDatabaseService.currentUser | await)?.user
+								.userType | await) ===
 								accountUserTypes.TelehealthDoctor
 						"
 					>
@@ -302,7 +302,7 @@
 						matTooltip="New Message"
 						[routerLink]="
 							'/compose/' +
-							((user.contactID | async) ||
+							((user.contactID | await) ||
 								'user/' + user.username)
 						"
 					>
@@ -319,7 +319,7 @@
 					cyphTranslate
 					(click)="setEditMode(false)"
 					aria-label="Cancel Changes"
-					*ngIf="(isCurrentUser | async) && (editMode | async)"
+					*ngIf="(isCurrentUser | await) && (editMode | await)"
 				>
 					<mat-icon>cancel</mat-icon>
 					&ngsp;
@@ -330,17 +330,17 @@
 					cyphTranslate
 					(click)="editMode.value ? saveProfile() : setEditMode(true)"
 					[attr.aria-label]="
-						(editMode | async) ?
+						(editMode | await) ?
 							stringsService.profileSave :
 							stringsService.profileEdit
 					"
 					[disabled]="
-						(editMode | async) && (readyToSave | async) === false
+						(editMode | await) && (readyToSave | await) === false
 					"
-					*ngIf="isCurrentUser | async"
+					*ngIf="isCurrentUser | await"
 				>
 					<ng-container
-						*ngIf="editMode | async; else coverEditButtonEditText"
+						*ngIf="editMode | await; else coverEditButtonEditText"
 					>
 						<mat-icon>save</mat-icon>
 						&ngsp;
@@ -360,7 +360,7 @@
 				fxLayout="row"
 				fxLayoutGap="16px"
 				class="edit-buttons edit-hide"
-				*ngIf="isCurrentUser | async"
+				*ngIf="isCurrentUser | await"
 			>
 				<button
 					mat-fab
@@ -370,7 +370,7 @@
 					matTooltip="Close"
 					matTooltipPosition="above"
 					(click)="setEditMode(false)"
-					*ngIf="editMode | async"
+					*ngIf="editMode | await"
 				>
 					<mat-icon>close</mat-icon>
 				</button>
@@ -378,21 +378,21 @@
 					mat-fab
 					class="fixed-fab"
 					[matTooltip]="
-						(editMode | async) ?
+						(editMode | await) ?
 							stringsService.profileSave :
 							stringsService.profileEdit
 					"
 					matTooltipPosition="above"
 					(click)="editMode.value ? saveProfile() : setEditMode(true)"
 					[disabled]="
-						(editMode | async) && (readyToSave | async) === false
+						(editMode | await) && (readyToSave | await) === false
 					"
 					*ngIf="
-						envService.isTelehealth || (editMode | async) === false
+						envService.isTelehealth || (editMode | await) === false
 					"
 				>
-					<mat-icon *ngIf="editMode | async">save</mat-icon>
-					<mat-icon *ngIf="(editMode | async) === false"
+					<mat-icon *ngIf="editMode | await">save</mat-icon>
+					<mat-icon *ngIf="(editMode | await) === false"
 						>edit</mat-icon
 					>
 				</button>
@@ -410,7 +410,7 @@
 					fxFlex.gt-lg="40"
 					fxLayoutAlign="center"
 					[matTooltip]="
-						(isCurrentUser | async) ?
+						(isCurrentUser | await) ?
 							stringsService.uploadFile :
 							stringsService.shareFile
 					"
@@ -432,13 +432,13 @@
 
 		<ng-template #fileUploadSpinner>
 			<ng-container
-				*ngIf="(accountFilesService.uploadSpinner | async) !== false"
+				*ngIf="(accountFilesService.uploadSpinner | await) !== false"
 			>
 				<mat-progress-spinner
 					mode="indeterminate"
 					*ngIf="
-						(accountFilesService.uploadSpinner | async) === true ||
-							((accountFilesService.uploadSpinner | async) || 0) <
+						(accountFilesService.uploadSpinner | await) === true ||
+							((accountFilesService.uploadSpinner | await) || 0) <
 								1;
 						else determinateFileSpinner
 					"
@@ -447,7 +447,7 @@
 					<mat-progress-spinner
 						mode="determinate"
 						[value]="
-							(accountFilesService.uploadSpinner | async) || 1
+							(accountFilesService.uploadSpinner | await) || 1
 						"
 					></mat-progress-spinner>
 				</ng-template>
@@ -462,8 +462,8 @@
 					fxLayoutAlign="center"
 					fxLayoutGap="32px"
 					class="profile standard"
-					[class.edit-mode]="editMode | async"
-					[class.mobile]="envService.isMobile | async"
+					[class.edit-mode]="editMode | await"
+					[class.mobile]="envService.isMobile | await"
 				>
 					<div
 						class="cover-image"
@@ -472,16 +472,16 @@
 						aria-label="Cover Image"
 						[style.background-image]="
 							urlToSafeStyle(
-								(getDataURI((draft | async)?.coverImage)
-									| async) || (user.coverImage | async)
-							) | async
+								(getDataURI((draft | await)?.coverImage)
+									| await) || (user.coverImage | await)
+							) | await
 						"
-						[cyphDropZone]="editMode | async"
+						[cyphDropZone]="editMode | await"
 						(fileDrop)="updateDraft({coverImage: $event})"
 					></div>
 
 					<ng-container
-						*ngIf="(envService.isMobile | async) === false"
+						*ngIf="(envService.isMobile | await) === false"
 					>
 						<ng-container
 							*ngTemplateOutlet="coverEditButton"
@@ -493,29 +493,29 @@
 							fxFlex
 							fxLayout="column"
 							fxLayoutAlign="center stretch"
-							[fxLayoutGap]="(editMode | async) ? '0px' : '16px'"
+							[fxLayoutGap]="(editMode | await) ? '0px' : '16px'"
 						>
 							<div fxLayoutAlign="center center">
 								<img
 									cyphTranslate
 									class="avatar jackInTheBox _1"
 									[class.animated]="
-										(editMode | async) === false
+										(editMode | await) === false
 									"
 									[ngClass]="
-										userPresence[(user.status | async) || 0]
+										userPresence[(user.status | await) || 0]
 									"
 									accept="image/*"
 									alt="Profile Picture"
 									[src]="
-										(getDataURI((draft | async)?.avatar)
-											| async) || (user.avatar | async)
+										(getDataURI((draft | await)?.avatar)
+											| await) || (user.avatar | await)
 									"
-									[cyphDropZone]="editMode | async"
+									[cyphDropZone]="editMode | await"
 									(fileDrop)="setAvatar($event)"
 								/>
 							</div>
-							<div *ngIf="(editMode | async) === false"></div>
+							<div *ngIf="(editMode | await) === false"></div>
 							<ng-container
 								*ngTemplateOutlet="
 									name;
@@ -534,7 +534,7 @@
 								>
 									<span>@</span
 									><span>{{
-										user.realUsername | async
+										user.realUsername | await
 									}}</span>
 								</a>
 							</div>
@@ -542,7 +542,7 @@
 								*ngTemplateOutlet="
 									description;
 									context: {
-										divider: (editMode | async) === false,
+										divider: (editMode | await) === false,
 										readViewClasses: 'animated flipInX _3'
 									}
 								"
@@ -555,7 +555,7 @@
 						fxFlex
 						fxLayout="row"
 						*ngIf="
-							(envService.isMobile | async) && (editMode | async)
+							(envService.isMobile | await) && (editMode | await)
 						"
 					>
 						<button
@@ -569,7 +569,7 @@
 							fxFlex="50"
 							mat-button
 							(click)="saveProfile()"
-							[disabled]="(readyToSave | async) === false"
+							[disabled]="(readyToSave | await) === false"
 						>
 							<mat-icon>save</mat-icon>
 						</button>
@@ -577,16 +577,16 @@
 
 					<ng-container
 						*ngIf="
-							(isCurrentUser | async) === true &&
-							(envService.isMobile | async) === true &&
-							(editMode | async) === false &&
+							(isCurrentUser | await) === true &&
+							(envService.isMobile | await) === true &&
+							(editMode | await) === false &&
 							!envService.isTelehealth
 						"
 					>
 						<button
 							mat-fab
 							[matTooltip]="
-								(editMode | async) ?
+								(editMode | await) ?
 									stringsService.profileSave :
 									stringsService.profileEdit
 							"
@@ -606,9 +606,9 @@
 		<!-- Standard view -->
 
 		<div
-			[class.editing]="(isEditorFocused | async) && (editMode | async)"
+			[class.editing]="(isEditorFocused | await) && (editMode | await)"
 			[class.initiating]="
-				(accountFilesService.uploadSpinner | async) !== false
+				(accountFilesService.uploadSpinner | await) !== false
 			"
 			*ngIf="!envService.isTelehealthFull"
 		>
@@ -620,9 +620,9 @@
 
 		<div
 			class="telehealth"
-			[class.editing]="(isEditorFocused | async) && (editMode | async)"
+			[class.editing]="(isEditorFocused | await) && (editMode | await)"
 			[class.initiating]="
-				(accountFilesService.uploadSpinner | async) !== false
+				(accountFilesService.uploadSpinner | await) !== false
 			"
 			*ngIf="envService.isTelehealthFull"
 		>
@@ -631,13 +631,13 @@
 					fxFlex
 					fxLayout="column"
 					class="profile telehealth"
-					[class.mobile]="envService.isMobile | async"
+					[class.mobile]="envService.isMobile | await"
 				>
 					<div
 						fxLayout="column"
 						class="header animated slideInDown"
 						ngClass.xs="xs"
-						[class.fadeOutUp]="accountService.transition | async"
+						[class.fadeOutUp]="accountService.transition | await"
 						fxLayoutAlign="center center"
 					>
 						<div
@@ -650,20 +650,20 @@
 							<img
 								cyphTranslate
 								class="avatar _1"
-								[class.animated]="(editMode | async) === false"
+								[class.animated]="(editMode | await) === false"
 								[ngClass]="
-									userPresence[(user.status | async) || 0]
+									userPresence[(user.status | await) || 0]
 								"
 								ngClass.xs="xs"
 								accept="image/*"
 								alt="Profile Picture"
 								[src]="
-									(getDataURI((draft | async)?.avatar)
-										| async) || (user.avatar | async)
+									(getDataURI((draft | await)?.avatar)
+										| await) || (user.avatar | await)
 								"
-								[cyphDropZone]="editMode | async"
+								[cyphDropZone]="editMode | await"
 								(fileDrop)="setAvatar($event)"
-								*ngIf="(doctorListOnly | async) !== true"
+								*ngIf="(doctorListOnly | await) !== true"
 								fxHide.xs
 							/>
 
@@ -674,7 +674,7 @@
 								>
 									<ng-container
 										*ngIf="
-											(doctorListOnly | async) !== true
+											(doctorListOnly | await) !== true
 										"
 									>
 										<ng-container
@@ -683,7 +683,7 @@
 												context: {
 													prefix:
 														(user.userType
-															| async) ===
+															| await) ===
 														accountUserTypes.TelehealthDoctor ?
 															stringsService.dr :
 															'',
@@ -696,7 +696,7 @@
 									<div
 										class="name animated _2"
 										*ngIf="
-											(doctorListOnly | async) === true
+											(doctorListOnly | await) === true
 										"
 									>
 										Doctors
@@ -708,20 +708,20 @@
 										"
 										target="_self"
 										*ngIf="
-											(user.userType | async) ===
+											(user.userType | await) ===
 											accountUserTypes.Standard
 										"
 									>
 										<span>@</span
 										><span>{{
-											user.realUsername | async
+											user.realUsername | await
 										}}</span>
 									</a>
 									<div
 										class="practice"
 										fxLayout="row"
 										*ngIf="
-											(userOrganiztion | async) !==
+											(userOrganiztion | await) !==
 											undefined
 										"
 									>
@@ -729,15 +729,15 @@
 											fxLayout="row"
 											[routerLink]="
 												'/profile/' +
-												(userOrganiztion | async)
+												(userOrganiztion | await)
 													?.username
 											"
 										>
 											<mat-icon>business</mat-icon>
 											<h3>
 												{{
-													(userOrganiztion | async)
-														?.name | async
+													(userOrganiztion | await)
+														?.name | await
 												}}
 											</h3>
 										</div>
@@ -750,7 +750,7 @@
 									<cyph-account-user-rating
 										[user]="user"
 										*ngIf="
-											(user.userType | async) ===
+											(user.userType | await) ===
 											accountUserTypes.TelehealthDoctor
 										"
 										fxHide.lt-md
@@ -767,12 +767,12 @@
 					>
 						<mat-card
 							class="animated slideInDown"
-							[class.doctor-list-only]="doctorListOnly | async"
+							[class.doctor-list-only]="doctorListOnly | await"
 							ngClass.lt-md="lt-md"
 							ngClass.md="md"
-							*ngIf="user.extra() | async as extra"
+							*ngIf="user.extra() | await as extra"
 							[class.fadeOutUp]="
-								(accountService.transition | async) === true
+								(accountService.transition | await) === true
 							"
 						>
 							<mat-card-content fxLayout="column">
@@ -781,7 +781,7 @@
 									cyphTranslate
 									class="subheader"
 									*ngIf="
-										(user.userType | async) ===
+										(user.userType | await) ===
 										accountUserTypes.TelehealthAdmin
 									"
 								>
@@ -791,7 +791,7 @@
 									cyphTranslate
 									class="subheader"
 									*ngIf="
-										(user.userType | async) ===
+										(user.userType | await) ===
 										accountUserTypes.Org
 									"
 								>
@@ -801,7 +801,7 @@
 									cyphTranslate
 									class="subheader"
 									*ngIf="
-										(user.userType | async) ===
+										(user.userType | await) ===
 										accountUserTypes.Standard
 									"
 								>
@@ -810,7 +810,7 @@
 
 								<ng-container
 									*ngIf="
-										(user.userType | async) !==
+										(user.userType | await) !==
 										accountUserTypes.Org
 									"
 								>
@@ -821,13 +821,13 @@
 										fxLayoutGap="12px"
 										[style.margin]="'20px'"
 										*ngIf="
-											(isCurrentUser | async) === false
+											(isCurrentUser | await) === false
 										"
 									>
 										<ng-container
 											*ngIf="
 												envService.isTelehealthFull &&
-													(user.userType | async) ===
+													(user.userType | await) ===
 														accountUserTypes.TelehealthDoctor;
 												else mailButtons
 											"
@@ -838,7 +838,7 @@
 												color="primary"
 												[routerLink]="
 													'/request-appointment/' +
-													((user.contactID | async) ||
+													((user.contactID | await) ||
 														'user/' + user.username)
 												"
 											>
@@ -851,9 +851,9 @@
 
 								<ng-container
 									*ngIf="
-										(user.userType | async) !==
+										(user.userType | await) !==
 											accountUserTypes.Org ||
-										(doctorListOnly | async) !== true
+										(doctorListOnly | await) !== true
 									"
 								>
 									<ng-container
@@ -872,9 +872,9 @@
 								<ng-container
 									*ngIf="
 										!envService.isTelehealthFull &&
-										(user.userType | async) ===
+										(user.userType | await) ===
 											accountUserTypes.Org &&
-										(userMembers | async)?.length > 0
+										(userMembers | await)?.length > 0
 									"
 								>
 									<h2 cyphTranslate class="user-list-header">
@@ -884,7 +884,7 @@
 										fxFlex
 										class="member-list"
 										[class.doctor-list-only]="
-											doctorListOnly | async
+											doctorListOnly | await
 										"
 										[contactList]="userMembers"
 										[invertedTheme]="true"
@@ -896,7 +896,7 @@
 
 						<ng-container
 							*ngIf="
-								(user.userType | async) ===
+								(user.userType | await) ===
 									accountUserTypes.Standard &&
 								!envService.isTelehealth
 							"

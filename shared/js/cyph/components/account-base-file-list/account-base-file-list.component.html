@@ -3,9 +3,9 @@
 	fxLayout="row"
 	fxLayoutAlign="center start"
 	class="card-list"
-	[class.initiating]="(accountFilesService.showSpinner | async) !== false"
-	[class.mobile]="envService.isMobile | async"
-	*ngIf="accountDatabaseService.currentUser | async as currentUser"
+	[class.initiating]="(accountFilesService.showSpinner | await) !== false"
+	[class.mobile]="envService.isMobile | await"
+	*ngIf="accountDatabaseService.currentUser | await as currentUser"
 >
 	<div
 		fxFlex="95"
@@ -16,7 +16,7 @@
 	>
 		<ng-container
 			*ngIf="
-				recordType === recordTypes.File && (envService.isMobile | async)
+				recordType === recordTypes.File && (envService.isMobile | await)
 			"
 		>
 			<div></div>
@@ -35,14 +35,14 @@
 			class="animated incoming"
 			*ngFor="
 				let o of accountFilesService.config[recordType].incoming()
-					| async
+					| await
 					| cyphFilter: filterFunction;
 				trackBy: trackByID;
 				let i = index
 			"
 			[attr.data-index]="i"
 			[class.bounceInRight]="
-				(accountFilesService.initiated | async) === false
+				(accountFilesService.initiated | await) === false
 			"
 			[ngClass]="'_' + i"
 		>
@@ -159,7 +159,7 @@
 			*ngIf="
 				(
 					accountFilesService.config[recordType].list()
-					| async
+					| await
 					| cyphFilter: filterFunction
 				)?.length < 1
 			"
@@ -177,10 +177,10 @@
 
 		<div
 			*ngIf="
-				(envService.isMobile | async) === false &&
+				(envService.isMobile | await) === false &&
 				(
 					accountFilesService.config[recordType].list()
-					| async
+					| await
 					| cyphFilter: filterFunction
 				)?.length > 0
 			"
@@ -190,7 +190,7 @@
 				[dataSource]="
 					getTableDataSource(
 						(accountFilesService.config[recordType].list()
-							| async
+							| await
 							| cyphFilter: filterFunction) || []
 					)
 				"
@@ -296,7 +296,7 @@
 							{{
 								(
 									accountFilesService.watchPassword(o.record)
-									| async
+									| await
 								)?.url || ''
 							}}
 						</span>
@@ -329,7 +329,7 @@
 							{{
 								(
 									accountFilesService.watchPassword(o.record)
-									| async
+									| await
 								)?.username || ''
 							}}
 						</span>
@@ -412,7 +412,7 @@
 					</mat-header-cell>
 					<mat-cell fxFlex="128px" *matCellDef="let o">
 						{{
-							watchRelativeDateString(o.record.timestamp) | async
+							watchRelativeDateString(o.record.timestamp) | await
 						}}
 					</mat-cell>
 				</ng-container>
@@ -472,11 +472,11 @@
 			></mat-paginator>
 		</div>
 
-		<ng-container *ngIf="envService.isMobile | async">
+		<ng-container *ngIf="envService.isMobile | await">
 			<mat-card
 				*ngFor="
 					let o of accountFilesService.config[recordType].list()
-						| async
+						| await
 						| cyphFilter: filterFunction;
 					trackBy: trackByID;
 					let i = index
@@ -514,7 +514,7 @@
 								o.record.name :
 								(
 									accountFilesService.watchPassword(o.record)
-									| async
+									| await
 								)?.url) || stringsService.untitled
 						}}
 					</mat-card-title>
@@ -542,7 +542,7 @@
 						>
 							{{
 								accountFilesService.noteSnippet(o.record.id)
-									| async
+									| await
 							}}
 						</div>
 
@@ -550,7 +550,7 @@
 							{{
 								(
 									accountFilesService.watchPassword(o.record)
-									| async
+									| await
 								)?.username || ''
 							}}
 						</div>
@@ -611,7 +611,7 @@
 		<ng-container
 			*ngIf="
 				recordType === recordTypes.File &&
-				(envService.isMobile | async) === false
+				(envService.isMobile | await) === false
 			"
 		>
 			<ng-container *ngTemplateOutlet="fileUploadDropZone"></ng-container>
@@ -628,19 +628,19 @@
 
 	<ng-content></ng-content>
 
-	<ng-container *ngIf="(accountFilesService.showSpinner | async) !== false">
+	<ng-container *ngIf="(accountFilesService.showSpinner | await) !== false">
 		<mat-progress-spinner
 			mode="indeterminate"
 			*ngIf="
-				(accountFilesService.showSpinner | async) === true ||
-					((accountFilesService.showSpinner | async) || 0) < 1;
+				(accountFilesService.showSpinner | await) === true ||
+					((accountFilesService.showSpinner | await) || 0) < 1;
 				else determinateFileSpinner
 			"
 		></mat-progress-spinner>
 		<ng-template #determinateFileSpinner>
 			<mat-progress-spinner
 				mode="determinate"
-				[value]="(accountFilesService.showSpinner | async) || 1"
+				[value]="(accountFilesService.showSpinner | await) || 1"
 			></mat-progress-spinner>
 		</ng-template>
 	</ng-container>
@@ -657,8 +657,8 @@
 		cyphTranslate
 		(fileDrop)="accountFilesService.upload($event.name, $event)"
 		*ngIf="
-			((accountFilesService.filesTotalSize | async) || 0) <=
-			((accountFilesService.fileStorageLimit | async) || 0)
+			((accountFilesService.filesTotalSize | await) || 0) <=
+			((accountFilesService.fileStorageLimit | await) || 0)
 		"
 	>
 		<mat-icon>file_upload</mat-icon>
@@ -718,7 +718,7 @@
 
 	<ng-container
 		*ngIf="
-			recordType === recordTypes.Password && (envService.isMobile | async)
+			recordType === recordTypes.Password && (envService.isMobile | await)
 		"
 	>
 		<button
@@ -829,7 +829,7 @@
 			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster) &&
 			!(
 				recordType === recordTypes.Password &&
-				(envService.isMobile | async)
+				(envService.isMobile | await)
 			)
 		"
 	>
@@ -849,7 +849,7 @@
 			(recordType !== recordTypes.EhrApiKey || !o.data?.isMaster) &&
 			!(
 				recordType === recordTypes.Password &&
-				(envService.isMobile | async)
+				(envService.isMobile | await)
 			)
 		"
 	>

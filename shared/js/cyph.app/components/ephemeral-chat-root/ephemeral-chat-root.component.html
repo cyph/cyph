@@ -1,19 +1,19 @@
 <span
-	[class.curtain]="cyphertextService.isVisible | async"
+	[class.curtain]="cyphertextService.isVisible | await"
 	[class.initiating]="
-		(appService.chatRootState | async) === chatRootStates.chat &&
+		(appService.chatRootState | await) === chatRootStates.chat &&
 		chat.state === chatStates.chat &&
-		(chatService.uiReady | async) !== true
+		(chatService.uiReady | await) !== true
 	"
 	[cyphDropZone]="
 		false &&
-		((appService.chatRootState | async) === chatRootStates.chat &&
+		((appService.chatRootState | await) === chatRootStates.chat &&
 			chat.state === chatStates.chat &&
-			(chatService.uiReady | async) === true)
+			(chatService.uiReady | await) === true)
 	"
 	[cyphDropZoneClass]="false"
 	(fileDrop)="fileTransferService.send($event)"
-	*ngIf="chatService.chatSubject | async as chat"
+	*ngIf="chatService.chatSubject | await as chat"
 >
 	<section fxFlexFill fxLayout="column" id="main" class="cyph-foreground">
 		<canvas
@@ -24,8 +24,8 @@
 		<h3
 			class="cyph-banner emphasis warn"
 			*ngIf="
-				(appService.chatRootState | async) !== chatRootStates.chat &&
-				(envService.webSignError | async)
+				(appService.chatRootState | await) !== chatRootStates.chat &&
+				(envService.webSignError | await)
 			"
 		>
 			<span cyphTranslate>WARNING: Your</span>
@@ -47,7 +47,7 @@
 			fxLayout="column"
 			[hideDisconnectMessage]="envService.coBranded"
 			[messageCountInTitle]="true"
-			*ngIf="(appService.chatRootState | async) === chatRootStates.chat"
+			*ngIf="(appService.chatRootState | await) === chatRootStates.chat"
 			[@fadeIn]="'in'"
 		>
 			<cyph-contact
@@ -113,7 +113,7 @@
 			fxFlexFill
 			fxLayout="column"
 			*ngIf="
-				(appService.chatRootState | async) ===
+				(appService.chatRootState | await) ===
 				chatRootStates.waitingForFriend
 			"
 			[@fadeIn]="'in'"
@@ -125,7 +125,7 @@
 			fxFlex
 			fxFlexFill
 			fxLayout="column"
-			*ngIf="(appService.chatRootState | async) === chatRootStates.error"
+			*ngIf="(appService.chatRootState | await) === chatRootStates.error"
 			[@fadeIn]="'in'"
 		></cyph-not-found>
 
@@ -134,29 +134,29 @@
 			fxFlexFill
 			fxLayout="column"
 			id="blank"
-			*ngIf="(appService.chatRootState | async) === chatRootStates.blank"
+			*ngIf="(appService.chatRootState | await) === chatRootStates.blank"
 		></div>
 
 		<footer
 			*ngIf="
-				(appService.chatRootState | async) !== chatRootStates.chat ||
-				(p2pService.isActiveOrInitialCall | async) === false
+				(appService.chatRootState | await) !== chatRootStates.chat ||
+				(p2pService.isActiveOrInitialCall | await) === false
 			"
 		>
 			<div>
 				<cyph-chat-message-box
 					[style.visibility]="
-						(chatService.initiated | async) ? undefined : 'hidden'
+						(chatService.initiated | await) ? undefined : 'hidden'
 					"
 					*ngIf="
-						(appService.chatRootState | async) ===
+						(appService.chatRootState | await) ===
 							chatRootStates.chat &&
-						(chatService.chatSelfDestruct | async) === false
+						(chatService.chatSelfDestruct | await) === false
 					"
 				></cyph-chat-message-box>
 
 				<cyph-footer
-					*ngIf="(envService.isMobile | async) === false"
+					*ngIf="(envService.isMobile | await) === false"
 				></cyph-footer>
 			</div>
 		</footer>
@@ -167,9 +167,9 @@
 	<mat-progress-spinner
 		mode="indeterminate"
 		*ngIf="
-			(appService.chatRootState | async) === chatRootStates.chat &&
+			(appService.chatRootState | await) === chatRootStates.chat &&
 			chat.state === chatStates.chat &&
-			(chatService.uiReady | async) !== true
+			(chatService.uiReady | await) !== true
 		"
 	></mat-progress-spinner>
 </span>

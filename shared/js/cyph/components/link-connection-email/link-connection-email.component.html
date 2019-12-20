@@ -48,7 +48,7 @@
 		cyphTranslate
 		class="ok"
 		[target]="linkTarget"
-		[href]="linkMailto | async"
+		[href]="linkMailto | await"
 		(click)="matDialogRef.close(true)"
 	>
 		Compose Email

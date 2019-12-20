@@ -1,41 +1,41 @@
-<ng-container *ngIf="accountDatabaseService.currentUser | async as currentUser">
+<ng-container *ngIf="accountDatabaseService.currentUser | await as currentUser">
 	<div
 		fxFlexFill
 		fxLayoutAlign="center start"
-		[class.initiating]="showSpinner | async"
+		[class.initiating]="showSpinner | await"
 		*ngIf="
-			(realTime | async) === false || (accountService.enableDocs | async)
+			(realTime | await) === false || (accountService.enableDocs | await)
 		"
 	>
 		<mat-card
 			fxFlex
 			class="partial-width"
-			[class.mobile]="envService.isMobile | async"
-			[class.visibility-hidden]="accountService.interstitial | async"
+			[class.mobile]="envService.isMobile | await"
+			[class.visibility-hidden]="accountService.interstitial | await"
 		>
 			<div fxLayout="column">
 				<div fxLayoutAlign="center center" fxLayout="row">
 					<mat-card-title
-						[class.editable]="noteEditable | async"
-						[class.inbox]="anonymousMessages | async"
+						[class.editable]="noteEditable | await"
+						[class.inbox]="anonymousMessages | await"
 						fxFlex
 					>
-						<div *ngIf="(noteEditable | async) === false">
+						<div *ngIf="(noteEditable | await) === false">
 							{{
 								(
-									((note | async)?.record | async) || {
+									((note | await)?.record | await) || {
 										name: undefined
 									}
 								).name || stringsService.untitled
 							}}
 						</div>
-						<mat-form-field fxFlex *ngIf="noteEditable | async">
+						<mat-form-field fxFlex *ngIf="noteEditable | await">
 							<input
 								matInput
 								cyphTranslate
 								[ngModel]="
 									(
-										((note | async)?.record | async) || {
+										((note | await)?.record | await) || {
 											name: undefined
 										}
 									).name || stringsService.untitled
@@ -50,9 +50,9 @@
 						</mat-form-field>
 					</mat-card-title>
 					<ng-container
-						*ngIf="(note | async)?.record | async as record"
+						*ngIf="(note | await)?.record | await as record"
 					>
-						<mat-card-subtitle *ngIf="anonymousMessages | async">
+						<mat-card-subtitle *ngIf="anonymousMessages | await">
 							<div>
 								{{ getDateTimeString(record.timestamp) }}
 							</div>
@@ -82,8 +82,8 @@
 							mat-icon-button
 							cyphTranslate
 							matTooltip="Close Editor"
-							[routerLink]="(newNote | async) ? '..' : '.'"
-							*ngIf="noteEditable | async"
+							[routerLink]="(newNote | await) ? '..' : '.'"
+							*ngIf="noteEditable | await"
 						>
 							<mat-icon>close</mat-icon>
 						</button>
@@ -92,7 +92,7 @@
 							cyphTranslate
 							matTooltip="Back"
 							routerLink=".."
-							*ngIf="(noteEditable | async) === false"
+							*ngIf="(noteEditable | await) === false"
 						>
 							<mat-icon>arrow_back</mat-icon>
 						</button>
@@ -105,16 +105,16 @@
 							matTooltip="Edit"
 							routerLink="edit"
 							*ngIf="
-								(noteEditable | async) === false &&
+								(noteEditable | await) === false &&
 								currentUser.user.username ===
-									(noteData | async)?.owner &&
+									(noteData | await)?.owner &&
 								!(
-									((note | async)?.record | async) || {
+									((note | await)?.record | await) || {
 										replyToEmail: undefined
 									}
 								).replyToEmail &&
 								!(
-									((note | async)?.record | async) || {
+									((note | await)?.record | await) || {
 										replyToName: undefined
 									}
 								).replyToName
@@ -131,8 +131,8 @@
 								$event.stopPropagation()
 							"
 							*ngIf="
-								(anonymousMessages | async) === false &&
-									(note | async)?.record | async as record
+								(anonymousMessages | await) === false &&
+									(note | await)?.record | await as record
 							"
 						>
 							<mat-icon>share</mat-icon>
@@ -143,11 +143,11 @@
 							matTooltip="Save"
 							(click)="saveNote()"
 							*ngIf="
-								(noteEditable | async) &&
-								(realTime | async) === false &&
-								((newNote | async) ||
+								(noteEditable | await) &&
+								(realTime | await) === false &&
+								((newNote | await) ||
 									currentUser.user.username ===
-										(noteData | async)?.owner)
+										(noteData | await)?.owner)
 							"
 						>
 							<mat-icon>save</mat-icon>
@@ -156,7 +156,7 @@
 							mat-icon-button
 							cyphTranslate
 							matTooltip="Delete"
-							*ngIf="(newNote | async) === false"
+							*ngIf="(newNote | await) === false"
 							(click)="
 								accountFilesService.remove(note.value?.record)
 							"
@@ -168,20 +168,20 @@
 				<mat-card-content fxFlex fxLayout="column">
 					<div class="cyph-light-theme">
 						<mat-card
-							[class.editable]="noteEditable | async"
+							[class.editable]="noteEditable | await"
 							class="notepad"
 						>
 							<mat-card-content>
 								<cyph-quill
-									[content]="(note | async)?.content | async"
-									[deltas]="(note | async)?.doc?.deltas"
+									[content]="(note | await)?.content | await"
+									[deltas]="(note | await)?.doc?.deltas"
 									[isDisabled]="
-										(noteEditable | async) === false
+										(noteEditable | await) === false
 									"
 									(contentChange)="onChange($event)"
 								></cyph-quill>
 								<!--
-								[selections]='(note | async)?.doc?.selections'
+								[selections]='(note | await)?.doc?.selections'
 								(selectionChange)='onSelectionChange($event)'
 							-->
 							</mat-card-content>
@@ -193,7 +193,7 @@
 
 		<mat-progress-spinner
 			mode="indeterminate"
-			*ngIf="showSpinner | async"
+			*ngIf="showSpinner | await"
 		></mat-progress-spinner>
 	</div>
 

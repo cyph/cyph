@@ -1,5 +1,5 @@
 <div fxFlexFill fxLayoutAlign="center center">
-	<h2 cyphTranslate *ngIf="rejected | async; else spinner">
+	<h2 cyphTranslate *ngIf="rejected | await; else spinner">
 		Request rejected.
 	</h2>
 	<ng-template #spinner>

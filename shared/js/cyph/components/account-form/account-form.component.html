@@ -1,13 +1,13 @@
 <ng-container
 	*ngIf="!envService.environment.production || envService.isTelehealth"
 >
-	<div fxFlexFill fxLayoutAlign="center start" *ngIf="form | async as o">
+	<div fxFlexFill fxLayoutAlign="center start" *ngIf="form | await as o">
 		<mat-card fxFlex class="partial-width">
 			<mat-card-header
 				fxLayout="row"
 				*ngIf="!!o?.metadata; else nameHeader"
 			>
-				<ng-container *ngIf="o.metadata | async as metadata">
+				<ng-container *ngIf="o.metadata | await as metadata">
 					<mat-card-title>{{ metadata.name }}</mat-card-title>
 					<div fxFlex fxLayoutAlign="end center">
 						<button
@@ -31,12 +31,12 @@
 			</mat-card-header>
 			<ng-template #nameHeader>
 				<mat-card-header fxLayout="row" *ngIf="!!o?.name">
-					<mat-card-title>{{ o?.name | async }}</mat-card-title>
+					<mat-card-title>{{ o?.name | await }}</mat-card-title>
 				</mat-card-header>
 			</ng-template>
 			<mat-card-content>
 				<cyph-dynamic-form
-					[form]="o?.data | async"
+					[form]="o?.data | await"
 					[isDisabled]="!o?.editable"
 				></cyph-dynamic-form>
 			</mat-card-content>

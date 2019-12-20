@@ -5,7 +5,7 @@
 	fxLayoutGap="16px"
 	(submit)="submit()"
 >
-	<div fxFlexFill *ngIf="(signupService.state | async) === 0">
+	<div fxFlexFill *ngIf="(signupService.state | await) === 0">
 		<div fxLayout="row">
 			<ng-content></ng-content>
 		</div>
@@ -14,14 +14,14 @@
 				fxFlex="50"
 				fxLayout="column"
 				fxLayoutAlign="center stretch"
-				*ngIf="(envService.isMobile | async) === false"
+				*ngIf="(envService.isMobile | await) === false"
 			>
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<mat-form-field fxFlex="80">
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]="signupService.data.email | async"
+							[ngModel]="signupService.data.email | await"
 							(ngModelChange)="
 								signupService.data.email.next($event)
 							"
@@ -65,7 +65,7 @@
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]="signupService.data.inviteCode | async"
+							[ngModel]="signupService.data.inviteCode | await"
 							(ngModelChange)="
 								signupService.data.inviteCode.next($event)
 							"
@@ -128,7 +128,7 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf="(signupService.state | async) === 1">
+	<div fxFlexFill *ngIf="(signupService.state | await) === 1">
 		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
 			<div fxFlex fxLayout="column">
 				<div fxLayout="row" fxLayoutAlign="center center">
@@ -136,7 +136,7 @@
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]="signupService.data.email | async"
+							[ngModel]="signupService.data.email | await"
 							(ngModelChange)="
 								signupService.data.email.next($event)
 							"
@@ -157,7 +157,7 @@
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]="signupService.data.inviteCode | async"
+							[ngModel]="signupService.data.inviteCode | await"
 							(ngModelChange)="
 								signupService.data.inviteCode.next($event)
 							"
@@ -184,7 +184,7 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf="(signupService.state | async) === 2">
+	<div fxFlexFill *ngIf="(signupService.state | await) === 2">
 		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
 			<div fxFlex fxLayout="column">
 				<div fxLayout="row" fxLayoutAlign="center center">
@@ -192,7 +192,7 @@
 						<input
 							matInput
 							cyphTranslate
-							[ngModel]="signupService.data.name | async"
+							[ngModel]="signupService.data.name | await"
 							(ngModelChange)="
 								signupService.data.name.next($event)
 							"
@@ -210,14 +210,14 @@
 		</div>
 	</div>
 
-	<div fxFlexFill *ngIf="(signupService.state | async) === 3">
+	<div fxFlexFill *ngIf="(signupService.state | await) === 3">
 		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
 			<div fxFlex="50" fxLayout="column">
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<p fxFlex="80">
 						<span cyphTranslate>Thanks for subscribing,</span>
 						&ngsp;
-						<span>{{ signupService.data.name | async }}!</span>
+						<span>{{ signupService.data.name | await }}!</span>
 						&ngsp;
 						<span cyphTranslate
 							>We'll email you when your invite is ready.</span
