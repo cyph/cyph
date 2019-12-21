@@ -5,10 +5,11 @@ import {
 	OnInit,
 	Optional
 } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
@@ -29,17 +30,42 @@ export class NotFoundComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		if (this.envService.isAccounts && this.accountService) {
-			this.accountService.transitionEnd();
-			this.accountService.resolveUiReady();
+		if (
+			!this.envService.isAccounts ||
+			!this.accountService ||
+			!this.accountDatabaseService
+		) {
+			return;
 		}
+
+		/* Workaround for edge case where app starts up preloading an unexpected route */
+		if (
+			this.envService.isCordova &&
+			!this.accountDatabaseService.currentUser.value
+		) {
+			this.router.navigate(['']);
+			return;
+		}
+
+		this.accountService.transitionEnd();
+		this.accountService.resolveUiReady();
 	}
 
 	constructor (
 		/** @ignore */
+		private readonly router: Router,
+
+		/** @ignore */
 		@Inject(AccountService)
 		@Optional()
 		private readonly accountService: AccountService | undefined,
+
+		/** @ignore */
+		@Inject(AccountDatabaseService)
+		@Optional()
+		private readonly accountDatabaseService:
+			| AccountDatabaseService
+			| undefined,
 
 		/** @see ActivatedRoute */
 		public readonly activatedRoute: ActivatedRoute,
