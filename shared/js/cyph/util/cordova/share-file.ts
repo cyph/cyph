@@ -1,9 +1,10 @@
 import {env} from '../../env';
+import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {staticFileService} from '../static-services';
 
 /** Shares file. */
 export const shareFile = async (
-	content: Uint8Array,
+	content: Uint8Array | string,
 	fileName: string,
 	mediaType?: string
 ) : Promise<void> => {
@@ -21,7 +22,12 @@ export const shareFile = async (
 	await new Promise<void>((resolve, reject) => {
 		(<any> self).plugins.socialsharing.shareWithOptions(
 			{
-				files: [fileService.toDataURI(content, fileMediaType)],
+				files: [
+					fileService.toDataURI(
+						potassiumUtil.fromString(content),
+						fileMediaType
+					)
+				],
 				subject: fileName
 			},
 			resolve,

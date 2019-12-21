@@ -9,7 +9,7 @@ import {retryUntilSuccessful, sleep} from './wait';
 
 /** Saves to a local file. */
 export const saveFile = async (
-	content: Uint8Array,
+	content: Uint8Array | string,
 	fileName: string,
 	mediaType?: string
 ) : Promise<void> => {

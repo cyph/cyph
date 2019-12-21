@@ -119,6 +119,19 @@
 							</button>
 							<button
 								mat-icon-button
+								cyphTranslate
+								matTooltip="Export"
+								(click)="
+									cryptocurrencyService.exportWallet(
+										wallet.data
+									)
+								"
+								*ngIf="!wallet.data.address"
+							>
+								<mat-icon>cloud_download</mat-icon>
+							</button>
+							<button
+								mat-icon-button
 								[disabled]="
 									cryptocurrencyService.blockchainFetchError
 										| await

@@ -20,6 +20,7 @@ import {
 	NumberProto
 } from '../proto';
 import {asyncToObservable} from '../util/flatten-observable';
+import {saveFile} from '../util/save-file';
 import {AnalyticsService} from './analytics.service';
 import {LocalStorageService} from './local-storage.service';
 
@@ -289,6 +290,16 @@ export class CryptocurrencyService extends BaseProvider {
 
 		throw new Error(
 			'Converting between non-Bitcoin currencies is currently unsupported.'
+		);
+	}
+
+	/** Exports wallet data for external backup. */
+	public async exportWallet (wallet: IWallet) : Promise<void> {
+		await saveFile(
+			this.getSimpleBTCWallet(wallet).key.toWIF(),
+			`wallet.${Cryptocurrencies[
+				wallet.cryptocurrency
+			].toLowerCase()}.wif`
 		);
 	}
 
