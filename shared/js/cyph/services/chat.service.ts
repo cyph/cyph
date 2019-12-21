@@ -1076,7 +1076,9 @@ export class ChatService extends BaseProvider {
 				retryUntilSuccessful(
 					/* eslint-disable-next-line complexity */
 					async () => {
-						const localStorageKey = `chatService.getMessageValue/${message.id}`;
+						const localStorageKey = this.chat.pendingMessageRoot ?
+							`chatService.getMessageValue/${message.id}` :
+							undefined;
 
 						if (
 							message instanceof ChatMessage &&
@@ -1085,7 +1087,7 @@ export class ChatService extends BaseProvider {
 							message.value = undefined;
 						}
 
-						if (!this.sessionInitService.ephemeral) {
+						if (localStorageKey) {
 							message.value = await this.localStorageService
 								.getItem(localStorageKey, ChatMessageValue)
 								.catch(() => undefined);
@@ -1145,10 +1147,7 @@ export class ChatService extends BaseProvider {
 						if (message.value !== undefined) {
 							await this.fetchedMessageIDs.addItem(message.id);
 
-							if (
-								!localStorageSuccess &&
-								!this.sessionInitService.ephemeral
-							) {
+							if (!localStorageSuccess && localStorageKey) {
 								await this.localStorageService.setItem(
 									localStorageKey,
 									ChatMessageValue,
