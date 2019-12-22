@@ -1145,14 +1145,18 @@ export class ChatService extends BaseProvider {
 						}
 
 						if (message.value !== undefined) {
-							await this.fetchedMessageIDs.addItem(message.id);
+							this.fetchedMessageIDs
+								.addItem(message.id)
+								.catch(() => {});
 
 							if (!localStorageSuccess && localStorageKey) {
-								await this.localStorageService.setItem(
-									localStorageKey,
-									ChatMessageValue,
-									message.value
-								);
+								this.localStorageService
+									.setItem(
+										localStorageKey,
+										ChatMessageValue,
+										message.value
+									)
+									.catch(() => {});
 							}
 						}
 
