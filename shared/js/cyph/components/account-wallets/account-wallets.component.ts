@@ -9,6 +9,7 @@ import {
 	newFormComponent,
 	newFormContainer,
 	numberInput,
+	passwordInput,
 	slideToggle,
 	text
 } from '../../forms';
@@ -138,7 +139,7 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 						] :
 					newWalletOptions === NewWalletOptions.importKey ?
 						[
-							newFormContainer([input({
+							newFormContainer([passwordInput({
 									label: this.stringsService
 										.newWalletImportKeyInput,
 									required: true

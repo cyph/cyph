@@ -260,8 +260,21 @@
 				[readonly]="isDisabled"
 				[required]="o.required"
 				[textMask]="getMask(o)"
-				[type]="isDisabled ? 'text' : 'password'"
+				[type]="
+					isDisabled || (hidePassword(o) | await) === false ?
+						'text' :
+						'password'
+				"
 			/>
+			<mat-icon
+				matSuffix
+				class="suffix-button"
+				(click)="hidePassword(o).next(!hidePassword(o).value)"
+			>
+				{{
+					(hidePassword(o) | await) ? 'visibility' : 'visibility_off'
+				}}
+			</mat-icon>
 		</mat-form-field>
 
 		<h3 class="label" *ngIf="o.type === types.Radio">{{ o.label }}</h3>

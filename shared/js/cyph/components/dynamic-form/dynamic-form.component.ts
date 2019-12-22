@@ -11,6 +11,7 @@ import {
 import memoize from 'lodash-es/memoize';
 import * as mexp from 'math-expression-evaluator';
 import * as msgpack from 'msgpack-lite';
+import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
 import {IAsyncValue} from '../../iasync-value';
@@ -111,6 +112,11 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 	/** Hides all elements with empty values when isDisabled is true. */
 	@Input() public hideEmptyElements: boolean = false;
+
+	/** Returns a password visibility toggle for the given field. */
+	public readonly hidePassword = memoize(
+		(_O: Form.IElement) => new BehaviorSubject<boolean>(true)
+	);
 
 	/** Hides submit button. */
 	@Input() public hideSubmitButton: boolean = false;
