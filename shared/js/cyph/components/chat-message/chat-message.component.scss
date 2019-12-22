@@ -34,6 +34,13 @@
 	}
 }
 
+.mobile-time {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	max-width: 90px;
+	white-space: nowrap;
+}
+
 .clipboard-copy-menu {
 	margin-top: -4px;
 	width: 24px;

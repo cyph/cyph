@@ -31,6 +31,7 @@ import {FileTransferService} from '../../services/file-transfer.service';
 import {FileService} from '../../services/file.service';
 import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
+import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -428,6 +429,9 @@ export class ChatMessageComponent extends BaseProvider
 
 		/** @see FileTransferService */
 		public readonly fileTransferService: FileTransferService,
+
+		/** @see SessionService */
+		public readonly sessionService: SessionService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

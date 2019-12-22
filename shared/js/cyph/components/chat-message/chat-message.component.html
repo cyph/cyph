@@ -42,7 +42,7 @@
 								authorTypes.App
 						"
 					>
-						{{ (chatMessage | await)?.author | await }}:
+						{{ ((chatMessage | await)?.author | await) || '' }}:
 					</strong>
 					&nbsp;
 					<ng-container
@@ -61,19 +61,42 @@
 				class="message-timestamp"
 			>
 				<div fxLayout="row">
-					<!--
-					<div *ngIf='mobile && (chatMessage | await)?.authorType === authorTypes.Local'>
-						{{(chatMessage | await)?.author | await}} &nbsp;&mdash;&nbsp;
-					</div>
-					-->
-
 					<ng-container *ngIf="mobile">
 						<ng-container
 							*ngTemplateOutlet="messageCopy"
 						></ng-container>
 					</ng-container>
 
-					<div>{{ (chatMessage | await)?.timeString }}</div>
+					<div [class.mobile-time]="mobile">
+						<!--
+						<ng-container
+							*ngIf="
+								mobile &&
+								!!sessionService.group &&
+								(chatMessage | await)?.authorType ===
+									authorTypes.Local
+							"
+						>
+							{{ ((chatMessage | await)?.author | await) || '' }}
+							&nbsp;&mdash;&nbsp;
+						</ng-container>
+						-->
+
+						{{ (chatMessage | await)?.timeString || '' }}
+
+						<ng-container
+							*ngIf="
+								mobile &&
+								!!sessionService.group &&
+								(chatMessage | await)?.authorType ===
+									authorTypes.Remote
+							"
+						>
+							&nbsp;&mdash;&nbsp;&ngsp;{{
+								((chatMessage | await)?.author | await) || ''
+							}}
+						</ng-container>
+					</div>
 
 					<div
 						*ngIf="
@@ -94,12 +117,6 @@
 							*ngTemplateOutlet="messageCopy"
 						></ng-container>
 					</ng-container>
-
-					<!--
-					<div *ngIf='mobile && (chatMessage | await)?.authorType === authorTypes.Remote'>
-						&nbsp;&mdash;&nbsp;&ngsp;{{(chatMessage | await)?.author | await}}
-					</div>
-					-->
 				</div>
 			</div>
 		</div>
