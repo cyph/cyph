@@ -7,6 +7,7 @@ import {mergeMap} from 'rxjs/operators';
 import {User, UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ChatMessage, IChatData} from '../chat';
+import {MaybePromise} from '../maybe-promise-type';
 import {IChatMessage} from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {compareDates, relativeDateString, watchDateChange} from '../util/time';
@@ -119,7 +120,7 @@ const getMetadataInternal = async (
 	}
 
 	let author: Observable<string>;
-	let authorUser: UserLike | undefined;
+	let authorUser: MaybePromise<UserLike | undefined>;
 
 	if (message.authorType === ChatMessage.AuthorTypes.App) {
 		author = sessionService.appUsername;
@@ -138,25 +139,37 @@ const getMetadataInternal = async (
 		author = sessionService.remoteUsername;
 	}
 	else {
-		try {
-			const remoteUser = await accountSessionService?.remoteUser.value;
+		const authorSubject = new BehaviorSubject<string>(message.authorID);
 
-			authorUser =
-				envService.isAccounts && accountUserLookupService ?
-					remoteUser?.username === message.authorID ?
-						remoteUser :
-						await accountUserLookupService.getUser(
-							message.authorID
-						) :
-					undefined;
-		}
-		catch {}
+		author = authorSubject;
 
-		author = authorUser?.pseudoAccount ?
-			authorUser.name :
-		authorUser instanceof User ?
-			authorUser.realUsername :
-			sessionService.remoteUsername;
+		authorUser = (async () => {
+			let user: UserLike | undefined;
+
+			try {
+				const remoteUser = await accountSessionService?.remoteUser
+					.value;
+
+				user =
+					envService.isAccounts && accountUserLookupService ?
+						remoteUser?.username === message.authorID ?
+							remoteUser :
+							await accountUserLookupService.getUser(
+								message.authorID
+							) :
+						undefined;
+			}
+			catch {}
+
+			(user?.pseudoAccount ?
+				user.name :
+			user instanceof User ?
+				user.realUsername :
+				sessionService.remoteUsername
+			).subscribe(authorSubject);
+
+			return user;
+		})();
 	}
 
 	getMessageTimestampSubject(message).next(message.timestamp);

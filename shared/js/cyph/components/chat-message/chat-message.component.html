@@ -136,29 +136,35 @@
 							cyphTranslate
 							class="avatar-image"
 							[src]="
-								(chatMessage | await)?.authorUser?.avatar
-									| await
+								((chatMessage | await)?.authorUser | await)
+									?.avatar | await
 							"
 							[routerLink]="
 								'/profile/' +
-								(chatMessage | await)?.authorUser?.username
+								((chatMessage | await)?.authorUser | await)
+									?.username
 							"
 							alt="User Avatar"
 							*ngIf="
 								accountService &&
-								!!(chatMessage | await)?.authorUser &&
-								!!(chatMessage | await)?.authorUser?.avatar
+								((chatMessage | await)?.authorUser | await)
+									?.avatar !== undefined
 							"
 						/>
 						<mat-card-title fxFlex>
 							<div fxFlex [fxLayout]="mobile ? 'column' : 'row'">
 								<span
-									*ngIf="!!(chatMessage | await)?.authorUser"
+									*ngIf="
+										((chatMessage | await)?.authorUser
+											| await) !== undefined
+									"
 								>
 									<strong
 										>{{
-											(chatMessage | await)?.authorUser
-												?.name | await
+											(
+												(chatMessage | await)
+													?.authorUser | await
+											)?.name | await
 										}}&nbsp;</strong
 									>
 									&ngsp;
@@ -176,7 +182,10 @@
 									</small>
 								</span>
 								<strong
-									*ngIf="!(chatMessage | await)?.authorUser"
+									*ngIf="
+										((chatMessage | await)?.authorUser
+											| await) === undefined
+									"
 								>
 									{{
 										(chatMessage | await)?.authorType ===

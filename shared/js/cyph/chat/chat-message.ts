@@ -1,6 +1,7 @@
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {UserLike} from '../account/user-like-type';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {MaybePromise} from '../maybe-promise-type';
 import {
 	ChatMessage as ChatMessageInternal,
 	IChatMessage,
@@ -87,7 +88,7 @@ export class ChatMessage implements IChatMessage {
 		public readonly author: Observable<string>,
 
 		/** Author UserLike object, if available. */
-		public readonly authorUser?: UserLike,
+		public readonly authorUser?: MaybePromise<UserLike | undefined>,
 
 		/** If true, hide this message. */
 		public readonly hidden: boolean = false
