@@ -6,6 +6,5 @@
     Strict-Transport-Security: max-age=31536000; includeSubdomains; preload
     Referrer-Policy: "no-referrer"
     X-Content-Type-Options: nosniff
-    X-DNS-Prefetch-Control: off
     X-Frame-Options: deny
     X-XSS-Protection: 1; mode=block

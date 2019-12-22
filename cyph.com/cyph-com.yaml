@@ -40,7 +40,7 @@ handlers:
   static_files: \1/amp/index.html
   upload: .*
   secure: always
-  # default_headers Cache-Control X-DNS-Prefetch-Control
+  # default_headers Cache-Control
 
 - url: /(.*\..*)
   static_files: \1
