@@ -1025,7 +1025,14 @@ const userNotify = async (data, context, namespace, username) => {
 
 	const callString = metadata.callType === 'video' ? 'Video Call' : 'Call';
 
-	const {actions, eventDetails, subject, tag = notificationID, text} =
+	const {
+		actions,
+		additionalData = {},
+		eventDetails,
+		subject,
+		tag = notificationID,
+		text
+	} =
 		notification.type === NotificationTypes.CalendarEvent ?
 			{
 				eventDetails: {
@@ -1089,11 +1096,18 @@ const userNotify = async (data, context, namespace, username) => {
 			} :
 		notification.type === NotificationTypes.Message ?
 			{
+				additionalData: {groupID: metadata.groupID},
 				subject: `${
-					count > 1 ? `${count} new messages` : 'New Message'
+					count > 1 ?
+						`${count} new ${
+							metadata.groupID ? 'group ' : ''
+						}messages` :
+						`New ${metadata.groupID ? 'Group ' : ''}Message`
 				} from ${senderUsername}`,
 				tag: metadata.castleSessionID,
-				text: `${targetName}, ${senderName} has sent you a message.`
+				text: `${targetName}, ${senderName} has sent you a ${
+					metadata.groupID ? 'group ' : ''
+				}message.`
 			} :
 		notification.type === NotificationTypes.Yo ?
 			{
@@ -1170,6 +1184,7 @@ const userNotify = async (data, context, namespace, username) => {
 		{
 			actions,
 			additionalData: {
+				...additionalData,
 				callMetadata,
 				notificationID,
 				notificationType: notification.type,

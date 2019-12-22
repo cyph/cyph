@@ -162,7 +162,7 @@ export class AccountSessionService extends SessionService {
 	public async setUser (
 		chat:
 			| {anonymousChannelID: string; passive?: boolean}
-			| {group: IAccountMessagingGroup}
+			| {group: IAccountMessagingGroup; id: string}
 			| {username: string},
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false,

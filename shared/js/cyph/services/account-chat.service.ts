@@ -57,6 +57,7 @@ export class AccountChatService extends ChatService {
 	/** @ignore */
 	private readonly notificationData = resolvable<{
 		castleSessionID: string;
+		groupID?: string;
 		usernames: string[];
 	}>();
 
@@ -153,7 +154,11 @@ export class AccountChatService extends ChatService {
 		await this.accountDatabaseService.notify(
 			notificationData.usernames,
 			NotificationTypes.Message,
-			{castleSessionID: notificationData.castleSessionID, id}
+			{
+				castleSessionID: notificationData.castleSessionID,
+				groupID: notificationData.groupID,
+				id
+			}
 		);
 
 		return id;
@@ -163,7 +168,7 @@ export class AccountChatService extends ChatService {
 	public async setUser (
 		chat:
 			| {anonymousChannelID: string; passive?: boolean}
-			| {group: IAccountMessagingGroup}
+			| {group: IAccountMessagingGroup; id: string}
 			| {username: string},
 		keepCurrentMessage: boolean = false,
 		callType?: 'audio' | 'video',
@@ -196,6 +201,7 @@ export class AccountChatService extends ChatService {
 				} :
 				{
 					castleSessionID: chat.group.castleSessionID,
+					groupID: chat.id,
 					usernames: chat.group.usernames ?
 						this.accountSessionService.normalizeUsername(
 							chat.group.usernames

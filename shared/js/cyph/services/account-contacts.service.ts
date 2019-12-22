@@ -226,7 +226,9 @@ export class AccountContactsService extends BaseProvider {
 	public readonly getChatData = memoize(
 		async (
 			id?: string
-		) : Promise<{group: IAccountMessagingGroup} | {username: string}> => {
+		) : Promise<
+			{group: IAccountMessagingGroup; id: string} | {username: string}
+		> => {
 			if (!id) {
 				throw new Error('Invalid contact ID.');
 			}
@@ -239,7 +241,8 @@ export class AccountContactsService extends BaseProvider {
 					group: await this.accountFilesService.downloadFile(
 						id,
 						AccountFileRecord.RecordTypes.MessagingGroup
-					).result
+					).result,
+					id
 				};
 			}
 		}
