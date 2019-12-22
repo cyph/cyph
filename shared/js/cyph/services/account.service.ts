@@ -858,7 +858,11 @@ export class AccountService extends BaseProvider {
 				};
 
 				/* User headers on desktop are redundant with sidebar */
-				if (header instanceof User && !isMobile) {
+				if (
+					typeof header === 'object' &&
+					header.user instanceof User &&
+					!isMobile
+				) {
 					header = undefined;
 				}
 
