@@ -11,7 +11,8 @@ export class ArrayPipe implements PipeTransform {
 	public transform<T> (value: Iterable<T> | undefined | null) : T[] {
 		return value instanceof Array ?
 			value :
-		value === undefined || value === null ?
+		/* eslint-disable-next-line no-null/no-null */
+			value === undefined || value === null ?
 			[] :
 			Array.from(value);
 	}
