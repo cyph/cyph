@@ -13,6 +13,7 @@ import {IResolvable} from '../../iresolvable';
 import {DataURIProto} from '../../proto';
 import {FileService} from '../../services/file.service';
 import {StringsService} from '../../services/strings.service';
+import {saveFile} from '../../util/save-file';
 import {uuid} from '../../util/uuid';
 
 /**
@@ -80,6 +81,17 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 		);
 
 		this.matDialogRef.close();
+	}
+
+	/** Downloads media. */
+	public async download () : Promise<void> {
+		const src = await this.safeUrlToString(this.src);
+
+		if (!src) {
+			return;
+		}
+
+		saveFile(this.fileService.fromDataURI(src), this.title || '');
 	}
 
 	/** @inheritDoc */

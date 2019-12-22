@@ -4,7 +4,7 @@ import {staticFileService} from '../static-services';
 
 /** Shares file. */
 export const shareFile = async (
-	content: Uint8Array | string,
+	content: Uint8Array | Blob | string,
 	fileName: string,
 	mediaType?: string
 ) : Promise<void> => {
@@ -14,6 +14,15 @@ export const shareFile = async (
 
 	const fileService = await staticFileService;
 
+	const bytes =
+		content instanceof Blob ?
+			await potassiumUtil.fromBlob(content) :
+			potassiumUtil.fromString(content);
+
+	if (!mediaType && content instanceof Blob) {
+		mediaType = content.type;
+	}
+
 	const fileMediaType =
 		mediaType && mediaType.indexOf('/') > 0 ?
 			mediaType :
@@ -22,12 +31,7 @@ export const shareFile = async (
 	await new Promise<void>((resolve, reject) => {
 		(<any> self).plugins.socialsharing.shareWithOptions(
 			{
-				files: [
-					fileService.toDataURI(
-						potassiumUtil.fromString(content),
-						fileMediaType
-					)
-				],
+				files: [fileService.toDataURI(bytes, fileMediaType)],
 				subject: fileName
 			},
 			resolve,

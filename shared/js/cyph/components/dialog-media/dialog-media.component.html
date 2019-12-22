@@ -2,6 +2,14 @@
 	<h1 matDialogTitle *ngIf="title">{{ title }}</h1>
 	<div fxFlex></div>
 	<div mat-dialog-actions fxLayoutAlign="end center" *ngIf="!cropResult">
+		<button
+			mat-icon-button
+			cyphTranslate
+			matTooltip="Download"
+			(click)="download()"
+		>
+			<mat-icon>cloud_download</mat-icon>
+		</button>
 		<button matDialogClose mat-icon-button cyphTranslate matTooltip="Close">
 			<mat-icon>close</mat-icon>
 		</button>

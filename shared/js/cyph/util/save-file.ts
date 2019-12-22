@@ -9,7 +9,7 @@ import {retryUntilSuccessful, sleep} from './wait';
 
 /** Saves to a local file. */
 export const saveFile = async (
-	content: Uint8Array | string,
+	content: Uint8Array | Blob | string,
 	fileName: string,
 	mediaType?: string
 ) : Promise<void> => {
@@ -34,7 +34,10 @@ export const saveFile = async (
 				mediaType :
 				'application/octet-stream';
 
-		const fileBlob = new Blob([content], {type: fileMediaType});
+		const fileBlob =
+			content instanceof Blob ?
+				content :
+				new Blob([content], {type: fileMediaType});
 
 		const save = () => {
 			fileSaver.saveAs(fileBlob, fileName, {autoBom: false});
