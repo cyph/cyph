@@ -774,11 +774,7 @@ export class AccountService extends BaseProvider {
 						return;
 					}
 
-					this.router.navigate([
-						'messages',
-						'user',
-						data.additionalData.senderUsername
-					]);
+					this.router.navigate(['messages', data.additionalData.tag]);
 			}
 		});
 

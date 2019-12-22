@@ -1173,7 +1173,8 @@ const userNotify = async (data, context, namespace, username) => {
 				callMetadata,
 				notificationID,
 				notificationType: notification.type,
-				senderUsername
+				senderUsername,
+				tag
 			},
 			badge,
 			ring: activeCall,
