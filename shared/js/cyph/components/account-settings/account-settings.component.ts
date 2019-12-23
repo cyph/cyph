@@ -8,6 +8,7 @@ import {emailPattern} from '../../email-pattern';
 import {BooleanProto, CyphPlans, StringProto} from '../../proto';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
+import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
@@ -194,7 +195,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		] = await Promise.all([
 			this.email.getValue(),
 			this.profileVisible.getValue(),
-			user.accountUserProfile.getValue()
+			user.accountUserProfile.getValue(),
+			this.accountService.userID
 		]);
 
 		const current = {
@@ -307,6 +309,9 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 		/** @see AccountSettingsService */
 		public readonly accountSettingsService: AccountSettingsService,
+
+		/** @see ConfigService */
+		public readonly configService: ConfigService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

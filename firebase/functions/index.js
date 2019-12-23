@@ -119,6 +119,7 @@ const getInviteTemplateData = ({
 	inviterName,
 	name,
 	plan,
+	planChange = false,
 	purchased,
 	fromApp
 }) => {
@@ -132,6 +133,7 @@ const getInviteTemplateData = ({
 		inviterName,
 		name,
 		planAnnualPremium: plan === CyphPlans.AnnualPremium,
+		planChange,
 		planFoundersAndFriends: plan === CyphPlans.FoundersAndFriends,
 		planFree: plan === CyphPlans.Free,
 		planLifetimePlatinum: plan === CyphPlans.LifetimePlatinum,
@@ -391,7 +393,64 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const name = validateInput(req.body.name, undefined, true);
 	const plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
+	const planConfig = config.planConfig[plan];
 	const purchased = !!req.body.purchased;
+	const userID = validateInput(req.body.userID, undefined, true);
+
+	if (userID) {
+		const usernameRef = database.ref(`${namespace}/userIDs/${userID}`);
+		const username = (await usernameRef.once('value')).val();
+
+		if (!username) {
+			throw new Error(`Invalid user ID: ${userID}.`);
+		}
+
+		const braintreeIDRef = database.ref(
+			`${namespace}/users/${username}/internal/braintreeID`
+		);
+
+		await Promise.all([
+			setItem(
+				namespace,
+				`users/${username}/plan`,
+				CyphPlan,
+				{plan},
+				true
+			),
+			braintreeID ?
+				braintreeIDRef.set(braintreeID) :
+				braintreeIDRef.remove(),
+			config.planConfig[plan],
+			...new Array(planConfig.initialInvites)
+				.fill('')
+				.map(() => readableID(15))
+				.map(async code =>
+					Promise.all([
+						database.ref(`${namespace}/inviteCodes/${code}`).set({
+							inviterUsername: username
+						}),
+						setItem(
+							namespace,
+							`users/${username}/inviteCodes/${code}`,
+							BooleanProto,
+							true
+						)
+					])
+				)
+		]);
+
+		return sendMailInternal(email, 'Cyph Status Upgrade!', {
+			data: getInviteTemplateData({
+				name,
+				plan,
+				planChange: true,
+				purchased
+			}),
+			namespace,
+			noUnsubscribe: true,
+			templateName: 'new-cyph-invite'
+		});
+	}
 
 	const inviteCode = readableID(15);
 
@@ -414,6 +473,27 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			templateName: 'new-cyph-invite'
 		}
 	);
+});
+
+exports.getUserID = onCall(async (data, context, namespace, getUsername) => {
+	const username = await getUsername();
+
+	const userIDRef = database.ref(
+		`${namespace}/users/${username}/internal/userID`
+	);
+
+	let userID = (await userIDRef.once('value')).val();
+
+	if (!userID) {
+		userID = uuid();
+
+		await Promise.all([
+			userIDRef.set(userID),
+			database.ref(`${namespace}/userIDs/${userID}`).set(username)
+		]);
+	}
+
+	return userID;
 });
 
 exports.itemHashChange = functions.database

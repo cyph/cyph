@@ -76,15 +76,25 @@
 				</span>
 				<ng-container
 					*ngIf="
-						false &&
-						!envService.isCordova &&
-						(accountSettingsService.plan | await) === cyphPlans.Free
+						!configService.planConfig[
+							(accountSettingsService.plan | await) ||
+								cyphPlans.Free
+						].lifetime
 					"
 				>
 					&ngsp; (<a
-						[href]="envService.homeUrl + 'pricing'"
+						[href]="
+							envService.homeUrl +
+							'pricing?current=' +
+							cyphPlans[
+								(accountSettingsService.plan | await) ||
+									cyphPlans.Free
+							] +
+							'&userID=' +
+							((accountService.userID | await) || '')
+						"
 						cyphTranslate
-						>upgrade now</a
+						>upgrade</a
 					>)
 				</ng-container>
 			</div>

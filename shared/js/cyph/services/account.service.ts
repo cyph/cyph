@@ -248,6 +248,19 @@ export class AccountService extends BaseProvider {
 		this.subscriptions
 	);
 
+	/** User ID (semi-private value known only to the service). */
+	public readonly userID = this.accountDatabaseService.currentUserFiltered
+		.pipe(take(1))
+		.toPromise()
+		.then(async () =>
+			this.localStorageService.getOrSetDefault(
+				'userID',
+				StringProto,
+				async () =>
+					this.accountDatabaseService.callFunction('getUserID')
+			)
+		);
+
 	/** @ignore */
 	private async getIncomingCallRoute (
 		callMetadata: string

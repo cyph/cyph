@@ -276,7 +276,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func generateInvite(email, name, plan, braintreeID string, purchased bool) (string, error) {
+func generateInvite(email, name, plan, braintreeID, userID string, purchased bool) (string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"braintreeID": braintreeID,
 		"email":       email,
@@ -284,6 +284,7 @@ func generateInvite(email, name, plan, braintreeID string, purchased bool) (stri
 		"namespace":   "cyph.ws",
 		"plan":        plan,
 		"purchased":   purchased,
+		"userID":      userID,
 	})
 
 	client := &http.Client{}

@@ -484,6 +484,14 @@ export class AccountDatabaseService extends BaseProvider {
 		);
 	}
 
+	/** @see DatabaseService.callFunction */
+	public async callFunction (
+		name: string,
+		data?: Record<string, any>
+	) : Promise<any> {
+		return this.databaseService.callFunction(name, data);
+	}
+
 	/** @see DatabaseService.downloadItem */
 	public downloadItem<T> (
 		url: MaybePromise<string>,
@@ -1270,15 +1278,13 @@ export class AccountDatabaseService extends BaseProvider {
 		notificationType: NotificationTypes,
 		metadata?: {id: string} & {[k: string]: any}
 	) : Promise<void> {
-		await this.databaseService
-			.callFunction('userNotify', {
-				target: await username,
-				type: notificationType,
-				...(metadata ? {metadata} : {})
-			})
-			.catch(err => {
-				debugLogError(() => err);
-			});
+		await this.callFunction('userNotify', {
+			target: await username,
+			type: notificationType,
+			...(metadata ? {metadata} : {})
+		}).catch(err => {
+			debugLogError(() => err);
+		});
 	}
 
 	/** @see DatabaseService.pushItem */
