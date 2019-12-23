@@ -471,7 +471,13 @@ export class AccountService extends BaseProvider {
 
 		this.subscriptions.push(
 			this.accountSettingsService.plan
-				.pipe(map(plan => plan > CyphPlans.Free))
+				.pipe(
+					map(
+						plan =>
+							this.configService.planConfig[plan].rank >
+							this.configService.planConfig[CyphPlans.Free].rank
+					)
+				)
 				.subscribe(this.envService.pro)
 		);
 

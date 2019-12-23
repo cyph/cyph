@@ -60,7 +60,8 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 	}
 
 	const planConfig = config.planConfig[cyphPlan];
-	const isUpgrade = cyphPlan > oldPlan;
+	const oldPlanConfig = config.planConfig[oldPlan];
+	const isUpgrade = planConfig.rank > oldPlanConfig.rank;
 
 	await setItem(namespace, `users/${username}/plan`, CyphPlan, {
 		plan: cyphPlan
