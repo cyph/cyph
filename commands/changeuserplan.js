@@ -6,7 +6,12 @@ const os = require('os');
 const {config} = require('../modules/config');
 const databaseService = require('../modules/database-service');
 const {CyphPlan, CyphPlans} = require('../modules/proto');
-const {readableByteLength, normalize, titleize} = require('../modules/util');
+const {
+	readableByteLength,
+	normalize,
+	readableID,
+	titleize
+} = require('../modules/util');
 const {sendMail} = require('./email');
 
 const changeUserPlan = async (projectId, username, plan, namespace) => {
@@ -63,9 +68,43 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 	const oldPlanConfig = config.planConfig[oldPlan];
 	const isUpgrade = planConfig.rank > oldPlanConfig.rank;
 
-	await setItem(namespace, `users/${username}/plan`, CyphPlan, {
-		plan: cyphPlan
-	});
+	await Promise.all([
+		setItem(namespace, `users/${username}/plan`, CyphPlan, {
+			plan: cyphPlan
+		}),
+		(async () => {
+			const numInvites = Object.keys(
+				(await database
+					.ref(`${namespacePath}/users/${username}/inviteCodes`)
+					.once('value')).val()
+			).length;
+
+			if (numInvites >= planConfig.initialInvites) {
+				return;
+			}
+
+			return Promise.all(
+				new Array(planConfig.initialInvites - numInvites)
+					.fill('')
+					.map(() => readableID(15))
+					.map(async code =>
+						Promise.all([
+							database
+								.ref(`${namespacePath}/inviteCodes/${code}`)
+								.set({
+									inviterUsername: username
+								}),
+							setItem(
+								namespace,
+								`users/${username}/inviteCodes/${code}`,
+								BooleanProto,
+								true
+							)
+						])
+					)
+			);
+		})()
+	]);
 
 	if (email) {
 		await sendMail(

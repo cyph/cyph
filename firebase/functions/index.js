@@ -437,22 +437,38 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 				braintreeSubscriptionIDRef.set(braintreeSubscriptionID) :
 				braintreeSubscriptionIDRef.remove(),
 			config.planConfig[plan],
-			...new Array(planConfig.initialInvites)
-				.fill('')
-				.map(() => readableID(15))
-				.map(async code =>
-					Promise.all([
-						database.ref(`${namespace}/inviteCodes/${code}`).set({
-							inviterUsername: username
-						}),
-						setItem(
-							namespace,
-							`users/${username}/inviteCodes/${code}`,
-							BooleanProto,
-							true
+			(async () => {
+				const numInvites = Object.keys(
+					(await database
+						.ref(`${namespace}/users/${username}/inviteCodes`)
+						.once('value')).val()
+				).length;
+
+				if (numInvites >= planConfig.initialInvites) {
+					return;
+				}
+
+				return Promise.all(
+					new Array(planConfig.initialInvites - numInvites)
+						.fill('')
+						.map(() => readableID(15))
+						.map(async code =>
+							Promise.all([
+								database
+									.ref(`${namespace}/inviteCodes/${code}`)
+									.set({
+										inviterUsername: username
+									}),
+								setItem(
+									namespace,
+									`users/${username}/inviteCodes/${code}`,
+									BooleanProto,
+									true
+								)
+							])
 						)
-					])
-				)
+				);
+			})()
 		]);
 
 		return {
