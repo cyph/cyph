@@ -276,15 +276,16 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func generateInvite(email, name, plan, braintreeID, userID string, purchased bool) (string, error) {
+func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, userID string, purchased bool) (string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
-		"braintreeID": braintreeID,
-		"email":       email,
-		"name":        name,
-		"namespace":   "cyph.ws",
-		"plan":        plan,
-		"purchased":   purchased,
-		"userID":      userID,
+		"braintreeID":             braintreeID,
+		"braintreeSubscriptionID": braintreeSubscriptionID,
+		"email":                   email,
+		"name":                    name,
+		"namespace":               "cyph.ws",
+		"plan":                    plan,
+		"purchased":               purchased,
+		"userID":                  userID,
 	})
 
 	client := &http.Client{}
@@ -300,17 +301,37 @@ func generateInvite(email, name, plan, braintreeID, userID string, purchased boo
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	responseBody := string(responseBodyBytes)
+	var responseBody map[string]interface{}
+	err = json.Unmarshal(responseBodyBytes, &responseBody)
+	if err != nil {
+		return "", "", err
+	}
 
-	return responseBody, nil
+	welcomeLetter := ""
+	if data, ok := responseBody["welcomeLetter"]; ok {
+		switch v := data.(type) {
+		case string:
+			welcomeLetter = v
+		}
+	}
+
+	oldBraintreeSubscriptionID := ""
+	if data, ok := responseBody["oldBraintreeSubscriptionID"]; ok {
+		switch v := data.(type) {
+		case string:
+			oldBraintreeSubscriptionID = v
+		}
+	}
+
+	return welcomeLetter, oldBraintreeSubscriptionID, nil
 }
 
 func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {

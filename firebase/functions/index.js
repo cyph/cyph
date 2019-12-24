@@ -389,6 +389,11 @@ exports.checkInviteCode = onCall(
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
 	const braintreeID = validateInput(req.body.braintreeID, undefined, true);
+	const braintreeSubscriptionID = validateInput(
+		req.body.braintreeSubscriptionID,
+		undefined,
+		true
+	);
 	const email = validateInput(req.body.email, emailRegex, true);
 	const name = validateInput(req.body.name, undefined, true);
 	const plan =
@@ -409,6 +414,14 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			`${namespace}/users/${username}/internal/braintreeID`
 		);
 
+		const braintreeSubscriptionIDRef = database.ref(
+			`${namespace}/users/${username}/internal/braintreeSubscriptionID`
+		);
+
+		const oldBraintreeSubscriptionID = (await braintreeSubscriptionIDRef.once(
+			'value'
+		)).val();
+
 		await Promise.all([
 			setItem(
 				namespace,
@@ -420,6 +433,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			braintreeID ?
 				braintreeIDRef.set(braintreeID) :
 				braintreeIDRef.remove(),
+			braintreeSubscriptionID ?
+				braintreeSubscriptionIDRef.set(braintreeSubscriptionID) :
+				braintreeSubscriptionIDRef.remove(),
 			config.planConfig[plan],
 			...new Array(planConfig.initialInvites)
 				.fill('')
@@ -439,17 +455,24 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 				)
 		]);
 
-		return sendMailInternal(email, 'Cyph Status Upgrade!', {
-			data: getInviteTemplateData({
-				name,
-				plan,
-				planChange: true,
-				purchased
-			}),
-			namespace,
-			noUnsubscribe: true,
-			templateName: 'new-cyph-invite'
-		});
+		return {
+			oldBraintreeSubscriptionID,
+			welcomeLetter: await sendMailInternal(
+				email,
+				'Cyph Status Upgrade!',
+				{
+					data: getInviteTemplateData({
+						name,
+						plan,
+						planChange: true,
+						purchased
+					}),
+					namespace,
+					noUnsubscribe: true,
+					templateName: 'new-cyph-invite'
+				}
+			)
+		};
 	}
 
 	const inviteCode = readableID(15);
@@ -457,22 +480,32 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	await database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
 		inviterUsername: '',
 		plan,
-		...(braintreeID ? {braintreeID} : {})
+		...(braintreeID ? {braintreeID} : {}),
+		...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {})
 	});
 
-	return sendMailInternal(
-		email,
-		(purchased ?
-			'Cyph Purchase Confirmation' :
-			"You've Been Invited to Cyph!") +
-			(plan === CyphPlans.Free ? '' : ` (${titleize(CyphPlans[plan])})`),
-		{
-			data: getInviteTemplateData({inviteCode, name, plan, purchased}),
-			namespace,
-			noUnsubscribe: true,
-			templateName: 'new-cyph-invite'
-		}
-	);
+	return {
+		welcomeLetter: await sendMailInternal(
+			email,
+			(purchased ?
+				'Cyph Purchase Confirmation' :
+				"You've Been Invited to Cyph!") +
+				(plan === CyphPlans.Free ?
+					'' :
+					` (${titleize(CyphPlans[plan])})`),
+			{
+				data: getInviteTemplateData({
+					inviteCode,
+					name,
+					plan,
+					purchased
+				}),
+				namespace,
+				noUnsubscribe: true,
+				templateName: 'new-cyph-invite'
+			}
+		)
+	};
 });
 
 exports.getUserID = onCall(async (data, context, namespace, getUsername) => {
@@ -693,7 +726,12 @@ exports.userConsumeInvite = functions.database
 		);
 
 		const inviteData = (await inviteDataRef.once('value')).val() || {};
-		const {braintreeID, inviterUsername, reservedUsername} = inviteData;
+		const {
+			braintreeID,
+			braintreeSubscriptionID,
+			inviterUsername,
+			reservedUsername
+		} = inviteData;
 		const plan =
 			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
@@ -730,6 +768,13 @@ exports.userConsumeInvite = functions.database
 						`${params.namespace}/users/${username}/internal/braintreeID`
 					)
 					.set(braintreeID),
+			!braintreeSubscriptionID ?
+				undefined :
+				database
+					.ref(
+						`${params.namespace}/users/${username}/internal/braintreeSubscriptionID`
+					)
+					.set(braintreeSubscriptionID),
 			!inviterUsername ?
 				undefined :
 				removeItem(

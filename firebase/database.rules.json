@@ -169,6 +169,9 @@
 					"braintreeID": {
 						".validate": "newData.isString()"
 					},
+					"braintreeSubscriptionID": {
+						".validate": "newData.isString()"
+					},
 					"inviterUsername": {
 						".validate": "newData.isString()"
 					},
@@ -695,6 +698,9 @@
 						".write": false,
 
 						"braintreeID": {
+							".validate": "newData.isString()"
+						},
+						"braintreeSubscriptionID": {
 							".validate": "newData.isString()"
 						},
 						"email": {
