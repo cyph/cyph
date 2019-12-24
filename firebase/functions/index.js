@@ -402,17 +402,17 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			throw new Error(`Invalid user ID: ${userID}.`);
 		}
 
-		const braintreeIDRef = database.ref(
-			`${namespace}/users/${username}/internal/braintreeID`
-		);
-
+		const internalURL = `${namespace}/users/${username}/internal`;
+		const braintreeIDRef = database.ref(`${internalURL}/braintreeID`);
 		const braintreeSubscriptionIDRef = database.ref(
-			`${namespace}/users/${username}/internal/braintreeSubscriptionID`
+			`${internalURL}/braintreeSubscriptionID`
 		);
+		const emailRef = database.ref(`${internalURL}/email`);
 
-		const oldBraintreeSubscriptionID = (await braintreeSubscriptionIDRef.once(
-			'value'
-		)).val();
+		const [oldBraintreeSubscriptionID, userEmail] = await Promise.all([
+			braintreeSubscriptionIDRef.once('value').then(o => o.val()),
+			emailRef.once('value').then(o => o.val())
+		]);
 
 		await Promise.all([
 			setItem(namespace, `users/${username}/plan`, CyphPlan, {plan}),
@@ -457,24 +457,21 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			})()
 		]);
 
-		return {
-			oldBraintreeSubscriptionID,
-			welcomeLetter: await sendMailInternal(
-				email,
-				'Cyph Status Upgrade!',
-				{
-					data: getInviteTemplateData({
-						name,
-						plan,
-						planChange: true,
-						purchased
-					}),
-					namespace,
-					noUnsubscribe: true,
-					templateName: 'new-cyph-invite'
-				}
-			)
-		};
+		if (userEmail) {
+			await sendMailInternal(userEmail, 'Cyph Status Upgrade!', {
+				data: getInviteTemplateData({
+					name,
+					plan,
+					planChange: true,
+					purchased
+				}),
+				namespace,
+				noUnsubscribe: true,
+				templateName: 'new-cyph-invite'
+			});
+		}
+
+		return {oldBraintreeSubscriptionID};
 	}
 
 	const inviteCode = readableID(15);
