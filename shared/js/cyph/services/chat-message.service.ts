@@ -161,13 +161,14 @@ const getMetadataInternal = async (
 			}
 			catch {}
 
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			(user?.pseudoAccount ?
 				user.name :
 			user instanceof User ?
 				user.realUsername :
 				sessionService.remoteUsername
-			).subscribe(authorSubject);
+			)
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				.subscribe(authorSubject);
 
 			return user;
 		})();

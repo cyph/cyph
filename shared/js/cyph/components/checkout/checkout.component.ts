@@ -467,6 +467,7 @@ export class CheckoutComponent extends BaseProvider
 	}
 
 	/** Submits payment. */
+	/* eslint-disable-next-line complexity */
 	public async submit (useBitPay: boolean = false) : Promise<void> {
 		try {
 			this.errorMessage.next(undefined);
