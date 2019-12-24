@@ -137,6 +137,15 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is Cordova on a desktop OS. */
 	public readonly isCordovaDesktop: boolean;
 
+	/** Indicates whether this is Cordova on a desktop OS (GNU/Linux). */
+	public readonly isCordovaDesktopLinux: boolean;
+
+	/** Indicates whether this is Cordova on a desktop OS (macOS). */
+	public readonly isCordovaDesktopMacOS: boolean;
+
+	/** Indicates whether this is Cordova on a desktop OS (Windows). */
+	public readonly isCordovaDesktopWindows: boolean;
+
 	/** Indicates whether this is Cordova on a mobile OS. */
 	public readonly isCordovaMobile: boolean;
 
@@ -320,6 +329,19 @@ export class Env extends EnvDeploy {
 
 		this.isCordovaDesktop = this.isCordova && !this.isMobileOS;
 		this.isCordovaMobile = this.isCordova && this.isMobileOS;
+
+		if (this.isCordovaDesktop && typeof cordovaRequire === 'function') {
+			const platform: string = cordovaRequire('os').platform();
+
+			this.isCordovaDesktopLinux = platform === 'linux';
+			this.isCordovaDesktopMacOS = platform === 'darwin';
+			this.isCordovaDesktopWindows = platform === 'win32';
+		}
+		else {
+			this.isCordovaDesktopLinux = false;
+			this.isCordovaDesktopMacOS = false;
+			this.isCordovaDesktopWindows = false;
+		}
 
 		const newCyphBaseUrl =
 			this.newCyphBaseUrl +

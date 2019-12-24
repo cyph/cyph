@@ -83,6 +83,7 @@
 					"
 				>
 					&ngsp; (<a
+						cyphTranslate
 						[href]="
 							envService.homeUrl +
 							'pricing?current=' +
@@ -93,7 +94,7 @@
 							'&userID=' +
 							((accountService.userID | await) || '')
 						"
-						cyphTranslate
+						(click)="windowsAppUpgradeWorkaround($event)"
 						>upgrade</a
 					>)
 				</ng-container>
