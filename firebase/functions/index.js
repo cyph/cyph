@@ -246,26 +246,18 @@ exports.acceptPseudoRelationship = onCall(
 				namespace,
 				`users/${alice}/contacts/${bob}`,
 				AccountContactState,
-				{email, name, state: AccountContactState.States.Confirmed},
-				true
+				{email, name, state: AccountContactState.States.Confirmed}
 			),
 			setItem(
 				namespace,
 				`users/${bob}/contacts/${alice}`,
 				AccountContactState,
-				{state: AccountContactState.States.Confirmed},
-				true
+				{state: AccountContactState.States.Confirmed}
 			),
 			hasItem(namespace, `users/${bob}/email`).then(async hasEmail =>
 				hasEmail ?
 					undefined :
-					setItem(
-						namespace,
-						`users/${bob}/email`,
-						StringProto,
-						email,
-						true
-					)
+					setItem(namespace, `users/${bob}/email`, StringProto, email)
 			),
 			bobNameRef
 				.once('value')
@@ -423,13 +415,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		)).val();
 
 		await Promise.all([
-			setItem(
-				namespace,
-				`users/${username}/plan`,
-				CyphPlan,
-				{plan},
-				true
-			),
+			setItem(namespace, `users/${username}/plan`, CyphPlan, {plan}),
 			braintreeID ?
 				braintreeIDRef.set(braintreeID) :
 				braintreeIDRef.remove(),
@@ -653,8 +639,7 @@ exports.requestPseudoRelationship = onCall(
 					email,
 					name,
 					state: AccountContactState.States.OutgoingRequest
-				},
-				true
+				}
 			),
 			sendMailInternal(
 				email,
@@ -767,16 +752,11 @@ exports.userConsumeInvite = functions.database
 				params.namespace,
 				`users/${username}/inviterUsernamePlaintext`,
 				StringProto,
-				typeof inviterUsername === 'string' ? inviterUsername : ' ',
-				true
+				typeof inviterUsername === 'string' ? inviterUsername : ' '
 			),
-			setItem(
-				params.namespace,
-				`users/${username}/plan`,
-				CyphPlan,
-				{plan},
-				true
-			),
+			setItem(params.namespace, `users/${username}/plan`, CyphPlan, {
+				plan
+			}),
 			!braintreeID ?
 				undefined :
 				database
@@ -866,8 +846,7 @@ exports.userContactSet = functions.database
 							params.namespace,
 							contactURL,
 							AccountContactState,
-							{state: AccountContactState.States.OutgoingRequest},
-							true
+							{state: AccountContactState.States.OutgoingRequest}
 						);
 
 					case AccountContactState.States.OutgoingRequest:
@@ -878,8 +857,7 @@ exports.userContactSet = functions.database
 							{
 								...otherContactStateNewData,
 								state: AccountContactState.States.Confirmed
-							},
-							true
+							}
 						);
 
 					default:
@@ -892,8 +870,7 @@ exports.userContactSet = functions.database
 									state:
 										AccountContactState.States
 											.OutgoingRequest
-								},
-								true
+								}
 							),
 							setItem(
 								params.namespace,
@@ -904,8 +881,7 @@ exports.userContactSet = functions.database
 									state:
 										AccountContactState.States
 											.IncomingRequest
-								},
-								true
+								}
 							)
 						]);
 				}
@@ -921,8 +897,7 @@ exports.userContactSet = functions.database
 								...otherContactStateNewData,
 								state:
 									AccountContactState.States.OutgoingRequest
-							},
-							true
+							}
 						);
 
 					case AccountContactState.States.OutgoingRequest:
@@ -936,8 +911,7 @@ exports.userContactSet = functions.database
 							params.namespace,
 							contactURL,
 							AccountContactState,
-							{state: AccountContactState.States.Confirmed},
-							true
+							{state: AccountContactState.States.Confirmed}
 						);
 
 					case AccountContactState.States.IncomingRequest:
@@ -949,8 +923,7 @@ exports.userContactSet = functions.database
 								params.namespace,
 								contactURL,
 								AccountContactState,
-								{state: AccountContactState.States.Confirmed},
-								true
+								{state: AccountContactState.States.Confirmed}
 							),
 							setItem(
 								params.namespace,
@@ -959,8 +932,7 @@ exports.userContactSet = functions.database
 								{
 									...otherContactStateNewData,
 									state: AccountContactState.States.Confirmed
-								},
-								true
+								}
 							)
 						]);
 
@@ -973,8 +945,7 @@ exports.userContactSet = functions.database
 								...otherContactStateNewData,
 								state:
 									AccountContactState.States.IncomingRequest
-							},
-							true
+							}
 						);
 				}
 		}
@@ -1460,8 +1431,7 @@ exports.userRegister = functions.auth
 				namespace,
 				`users/${username}/inviteCode`,
 				StringProto,
-				inviteCode,
-				true
+				inviteCode
 			)
 		]);
 	});
