@@ -76,7 +76,7 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 			const numInvites = Object.keys(
 				(await database
 					.ref(`${namespacePath}/users/${username}/inviteCodes`)
-					.once('value')).val()
+					.once('value')).val() || {}
 			).length;
 
 			if (numInvites >= planConfig.initialInvites) {

@@ -441,7 +441,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 				const numInvites = Object.keys(
 					(await database
 						.ref(`${namespace}/users/${username}/inviteCodes`)
-						.once('value')).val()
+						.once('value')).val() || {}
 				).length;
 
 				if (numInvites >= planConfig.initialInvites) {
