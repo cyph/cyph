@@ -36,9 +36,12 @@ command="$(node -e "(async () => {
 	const browser = await require('puppeteer').launch();
 	const page = await browser.newPage();
 
+	page.setDefaultTimeout(0);
+	page.setDefaultNavigationTimeout(0);
+
 	setTimeout(() => process.exit(1), 1800000);
 
-	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_export', {timeout: 0});
+	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_export');
 
 	await page.waitForSelector('#user_login');
 	await page.type('#user_login', 'admin');
@@ -46,10 +49,10 @@ command="$(node -e "(async () => {
 	await page.keyboard.press('Enter');
 	await page.waitForNavigation();
 
-	await page.waitForSelector('.ai1wm-button-main', {timeout: 0});
+	await page.waitForSelector('.ai1wm-button-main');
 	await page.click('.ai1wm-button-main');
 	await page.click('#ai1wm-export-file');
-	await page.waitForSelector('a[href\$=\".wpress\"]', {timeout: 0});
+	await page.waitForSelector('a[href\$=\".wpress\"]');
 
 	const url = await page.evaluate(() =>
 		(document.querySelectorAll('a[href\$=\".wpress\"]')[0] || {}).href
@@ -85,9 +88,12 @@ node -e "(async () => {
 	const browser = await require('puppeteer').launch();
 	const page = await browser.newPage();
 
+	page.setDefaultTimeout(0);
+	page.setDefaultNavigationTimeout(0);
+
 	setTimeout(() => process.exit(1), 1800000);
 
-	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_import', {timeout: 0});
+	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_import');
 
 	await page.waitForSelector('#user_login');
 	await page.type('#user_login', 'admin');
@@ -95,7 +101,7 @@ node -e "(async () => {
 	await page.keyboard.press('Enter');
 	await page.waitForNavigation();
 
-	await page.waitForSelector('.ai1wm-button-main', {timeout: 0});
+	await page.waitForSelector('.ai1wm-button-main');
 	await page.click('.ai1wm-button-main');
 	await page.waitForSelector('#ai1wm-select-file');
 
@@ -103,9 +109,9 @@ node -e "(async () => {
 
 	await selectFile.uploadFile('${PWD}/staging.wpress');
 
-	await page.waitForSelector('.ai1wm-import-modal-actions .ai1wm-button-green', {timeout: 0});
+	await page.waitForSelector('.ai1wm-import-modal-actions .ai1wm-button-green');
 	await page.click('.ai1wm-import-modal-actions .ai1wm-button-green');
-	await page.waitForSelector('.ai1wm-modal-container .ai1wm-button-red'), {timeout: 0};
+	await page.waitForSelector('.ai1wm-modal-container .ai1wm-button-red');
 	await page.click('.ai1wm-modal-container .ai1wm-button-red');
 
 	await browser.close();

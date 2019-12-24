@@ -72,6 +72,9 @@ while [ ! -f index.html ] ; do
 		const browser = await require('puppeteer').launch();
 		const page = await browser.newPage();
 
+		page.setDefaultTimeout(0);
+		page.setDefaultNavigationTimeout(0);
+
 		setTimeout(() => process.exit(1), 1800000);
 
 		await page.goto('${sourceURL}/wp-admin/admin.php?page=simply-static_settings');
@@ -101,7 +104,7 @@ while [ ! -f index.html ] ; do
 			await page.waitForSelector('#generate');
 			await page.click('#generate');
 			await page.waitForSelector('#cancel:not(.hide)');
-			await page.waitForSelector('#generate:not(.hide)', {timeout: 0});
+			await page.waitForSelector('#generate:not(.hide)');
 
 			const url = await page.evaluate(() =>
 				(document.querySelectorAll('a[href*=\".zip\"]')[0] || {}).href
