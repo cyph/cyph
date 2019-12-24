@@ -118,22 +118,33 @@ const getInviteTemplateData = ({
 	inviteCode,
 	inviterName,
 	name,
+	oldPlan,
 	plan,
-	planChange = false,
 	purchased,
 	fromApp
 }) => {
 	const planConfig =
 		config.planConfig[plan] || config.planConfig[CyphPlans.Free];
 
+	const oldPlanConfig =
+		oldPlan !== undefined ? config.planConfig[oldPlan] : undefined;
+	const isUpgrade =
+		oldPlanConfig !== undefined && planConfig.rank > oldPlanConfig.rank;
+
 	return {
 		...planConfig,
+		...(oldPlan === undefined ?
+			{} :
+			{
+				oldPlan: titleize(CyphPlans[oldPlan]),
+				planChange: true,
+				planChangeUpgrade: isUpgrade
+			}),
 		fromApp,
 		inviteCode,
 		inviterName,
 		name,
 		planAnnualPremium: plan === CyphPlans.AnnualPremium,
-		planChange,
 		planFoundersAndFriends: plan === CyphPlans.FoundersAndFriends,
 		planFree: plan === CyphPlans.Free,
 		planLifetimePlatinum: plan === CyphPlans.LifetimePlatinum,
@@ -409,10 +420,20 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		);
 		const emailRef = database.ref(`${internalURL}/email`);
 
-		const [oldBraintreeSubscriptionID, userEmail] = await Promise.all([
+		const [
+			oldBraintreeSubscriptionID,
+			userEmail,
+			oldPlan
+		] = await Promise.all([
 			braintreeSubscriptionIDRef.once('value').then(o => o.val()),
-			emailRef.once('value').then(o => o.val())
+			emailRef.once('value').then(o => o.val()),
+			getItem(namespace, `users/${username}/plan`, CyphPlan)
+				.catch(() => undefined)
+				.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free))
 		]);
+
+		const oldPlanConfig = config.planConfig[oldPlan];
+		const isUpgrade = planConfig.rank > oldPlanConfig.rank;
 
 		await Promise.all([
 			setItem(namespace, `users/${username}/plan`, CyphPlan, {plan}),
@@ -458,17 +479,20 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		]);
 
 		if (userEmail) {
-			await sendMailInternal(userEmail, 'Cyph Status Upgrade!', {
-				data: getInviteTemplateData({
-					name,
-					plan,
-					planChange: true,
-					purchased
-				}),
-				namespace,
-				noUnsubscribe: true,
-				templateName: 'new-cyph-invite'
-			});
+			await sendMailInternal(
+				userEmail,
+				isUpgrade ? 'Cyph Status Upgrade!' : 'Your Cyph Status',
+				{
+					data: getInviteTemplateData({
+						name,
+						oldPlan,
+						plan
+					}),
+					namespace,
+					noUnsubscribe: true,
+					templateName: 'new-cyph-invite'
+				}
+			);
 		}
 
 		return {oldBraintreeSubscriptionID};
