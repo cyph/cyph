@@ -282,7 +282,7 @@ smd-fab-speed-dial {
 	}
 }
 
-[mat-list-item].disabled {
+.ui-disabled {
 	opacity: 0.5;
 	pointer-events: none;
 }

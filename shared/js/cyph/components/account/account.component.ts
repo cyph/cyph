@@ -10,9 +10,12 @@ import {map, mergeMap} from 'rxjs/operators';
 import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
+import {CyphPlans} from '../../proto';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
+import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
@@ -69,6 +72,9 @@ export class AccountComponent extends BaseProvider
 	/** @ignore */
 	private readonly resolveViewInitiated: () => void = this._VIEW_INITIATED
 		.resolve;
+
+	/** @see CyphPlans */
+	public readonly cyphPlans = CyphPlans;
 
 	/** Indicates whether section should take up 100% height. */
 	public readonly fullHeight: Observable<boolean> = combineLatest([
@@ -287,6 +293,12 @@ export class AccountComponent extends BaseProvider
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
+
+		/** @see ConfigService */
+		public readonly configService: ConfigService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

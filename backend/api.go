@@ -17,6 +17,7 @@ import (
 )
 
 func main() {
+	handleFuncs("/accountstanding/{userID}", Handlers{methods.GET: isAccountInGoodStanding})
 	handleFuncs("/analytics/*", Handlers{methods.GET: analytics})
 	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
@@ -593,6 +594,36 @@ func getIceServers(h HandlerArgs) (interface{}, int) {
 
 func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 	return strconv.FormatInt(getTimestamp(), 10), http.StatusOK
+}
+
+func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
+	userID := sanitize(h.Vars["userID"])
+
+	braintreeSubscriptionID, _ := getBraintreeSubscriptionID(userID)
+
+	/*
+		If no subscription ID, assume free or lifetime plan.
+
+		In error cases, err on the side of false negatives
+		rather than false positives.
+	*/
+
+	if braintreeSubscriptionID == "" {
+		return true, http.StatusOK
+	}
+
+	bt := braintreeInit(h)
+
+	sub, err := bt.Subscription().Find(h.Context, braintreeSubscriptionID)
+	if err != nil {
+		return true, http.StatusOK
+	}
+
+	if sub.Status == braintree.SubscriptionStatusActive || sub.Status == braintree.SubscriptionStatusPending {
+		return true, http.StatusOK
+	}
+
+	return false, http.StatusOK
 }
 
 func preAuth(h HandlerArgs) (interface{}, int) {

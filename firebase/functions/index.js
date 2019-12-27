@@ -561,6 +561,32 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	};
 });
 
+exports.getBraintreeSubscriptionID = onRequest(
+	true,
+	async (req, res, namespace) => {
+		const {accountsURL} = namespaces[namespace];
+		const userID = validateInput(req.body.userID);
+
+		const usernameRef = database.ref(`${namespace}/userIDs/${userID}`);
+		const username = (await usernameRef.once('value')).val();
+
+		if (!username) {
+			throw new Error(`Invalid user ID: ${userID}.`);
+		}
+
+		const internalURL = `${namespace}/users/${username}/internal`;
+
+		const braintreeSubscriptionIDRef = database.ref(
+			`${internalURL}/braintreeSubscriptionID`
+		);
+
+		const braintreeSubscriptionID =
+			(await braintreeSubscriptionIDRef.once('value')).val() || '';
+
+		return {braintreeSubscriptionID};
+	}
+);
+
 exports.getUserID = onCall(async (data, context, namespace, getUsername) => {
 	const username = await getUsername();
 

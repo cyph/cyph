@@ -335,6 +335,49 @@ func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inv
 	return welcomeLetter, oldBraintreeSubscriptionID, nil
 }
 
+func getBraintreeSubscriptionID(userID string) (string, error) {
+	body, _ := json.Marshal(map[string]interface{}{
+		"userID": userID,
+	})
+
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		methods.POST,
+		"https://us-central1-"+firebaseProject+".cloudfunctions.net/getBraintreeSubscriptionID",
+		bytes.NewBuffer(body),
+	)
+
+	req.Header.Add("Authorization", cyphFirebaseAdminKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var responseBody map[string]interface{}
+	err = json.Unmarshal(responseBodyBytes, &responseBody)
+	if err != nil {
+		return "", err
+	}
+
+	braintreeSubscriptionID := ""
+	if data, ok := responseBody["braintreeSubscriptionID"]; ok {
+		switch v := data.(type) {
+		case string:
+			braintreeSubscriptionID = v
+		}
+	}
+
+	return braintreeSubscriptionID, nil
+}
+
 func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 	var apiKey string
 	if authHeader, ok := h.Request.Header["Authorization"]; ok && len(authHeader) > 0 {

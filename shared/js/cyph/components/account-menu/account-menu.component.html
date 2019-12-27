@@ -91,7 +91,7 @@
 					mat-list-item
 					cyphTranslate
 					class="incoming-patient-info emphasis"
-					[class.disabled]="
+					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
@@ -134,7 +134,7 @@
 					mat-list-item
 					cyphTranslate
 					class="appointments"
-					[class.disabled]="
+					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
@@ -183,7 +183,7 @@
 					mat-list-item
 					cyphTranslate
 					class="doctors"
-					[class.disabled]="
+					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
@@ -211,7 +211,7 @@
 					mat-list-item
 					cyphTranslate
 					class="patients"
-					[class.disabled]="
+					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
@@ -231,7 +231,7 @@
 					mat-list-item
 					cyphTranslate
 					class="staff"
-					[class.disabled]="
+					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
@@ -251,7 +251,7 @@
 					mat-list-item
 					cyphTranslate
 					class="ehr-access"
-					[class.disabled]="
+					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
@@ -273,7 +273,7 @@
 					mat-list-item
 					cyphTranslate
 					class="contacts"
-					[class.disabled]="
+					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
@@ -309,7 +309,7 @@
 					mat-list-item
 					cyphTranslate
 					class="inbox"
-					[class.disabled]="
+					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
@@ -367,7 +367,7 @@
 					mat-list-item
 					cyphTranslate
 					class="files"
-					[class.disabled]="!currentUser?.masterKeyConfirmed"
+					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Files"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -405,7 +405,7 @@
 					mat-list-item
 					cyphTranslate
 					class="notes"
-					[class.disabled]="!currentUser?.masterKeyConfirmed"
+					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Notes"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -451,7 +451,7 @@
 					mat-list-item
 					cyphTranslate
 					class="docs"
-					[class.disabled]="!currentUser?.masterKeyConfirmed"
+					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Docs (experimental)"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -490,7 +490,7 @@
 					mat-list-item
 					cyphTranslate
 					class="forms"
-					[class.disabled]="!currentUser?.masterKeyConfirmed"
+					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Forms"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -553,7 +553,7 @@
 					mat-list-item
 					cyphTranslate
 					class="passwords"
-					[class.disabled]="!currentUser?.masterKeyConfirmed"
+					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Passwords"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -592,7 +592,7 @@
 					mat-list-item
 					cyphTranslate
 					class="wallets"
-					[class.disabled]="!currentUser?.masterKeyConfirmed"
+					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Wallets (experimental)"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
@@ -803,7 +803,7 @@
 				mat-list-item
 				cyphTranslate
 				class="settings"
-				[class.disabled]="!currentUser?.masterKeyConfirmed"
+				[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 				matTooltip="Settings"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
@@ -820,7 +820,7 @@
 				mat-list-item
 				cyphTranslate
 				class="lock"
-				[class.disabled]="!currentUser?.masterKeyConfirmed"
+				[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 				matTooltip="Lock"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
@@ -836,7 +836,7 @@
 				mat-list-item
 				cyphTranslate
 				class="logout"
-				[class.disabled]="!currentUser?.masterKeyConfirmed"
+				[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 				matTooltip="Log Out"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"

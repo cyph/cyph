@@ -27,9 +27,11 @@ import {
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {lockFunction} from '../util/lock';
 import {observableAll} from '../util/observable-all';
+import {request} from '../util/request';
 import {prettyPrint, stringify} from '../util/serialization';
-import {getTimestamp} from '../util/time';
+import {getTimestamp, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {uuid} from '../util/uuid';
 import {resolvable, sleep} from '../util/wait';
@@ -58,6 +60,9 @@ import {WindowWatcherService} from './window-watcher.service';
 export class AccountService extends BaseProvider {
 	/** @ignore */
 	private readonly _UI_READY = resolvable();
+
+	/** @ignore */
+	private readonly accountGoodStandingLock = lockFunction();
 
 	/** @ignore */
 	private readonly chatBlurReloadTimeout = 60000;
@@ -89,6 +94,9 @@ export class AccountService extends BaseProvider {
 
 	/** @ignore */
 	private readonly transitionInternal = new BehaviorSubject<boolean>(false);
+
+	/** Indicates whether account is in good standing. */
+	public readonly accountGoodStanding = new BehaviorSubject<boolean>(true);
 
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: Observable<boolean> = of(
@@ -256,8 +264,19 @@ export class AccountService extends BaseProvider {
 			this.localStorageService.getOrSetDefault(
 				'userID',
 				StringProto,
-				async () =>
-					this.accountDatabaseService.callFunction('getUserID')
+				async () => {
+					try {
+						const s = await this.accountDatabaseService.callFunction(
+							'getUserID'
+						);
+						if (typeof s === 'string') {
+							return s;
+						}
+					}
+					catch {}
+
+					return '';
+				}
 			)
 		);
 
@@ -306,6 +325,26 @@ export class AccountService extends BaseProvider {
 	/** @ignore */
 	private get currentRoute () : string {
 		return this.routeChanges.value;
+	}
+
+	/** @ignore */
+	private async updateAccountGoodStanding (
+		onlyIfFalse: boolean = false
+	) : Promise<void> {
+		await this.accountGoodStandingLock(async () => {
+			if (onlyIfFalse && this.accountGoodStanding.value) {
+				return;
+			}
+
+			this.accountGoodStanding.next(
+				(await request({
+					retries: 5,
+					url:
+						this.envService.baseUrl +
+						`accountstanding/${await this.userID}`
+				}).catch(() => 'true')) === 'true'
+			);
+		});
 	}
 
 	/** Activated route data combined with that of child. */
@@ -481,6 +520,18 @@ export class AccountService extends BaseProvider {
 					)
 			);
 		})();
+
+		this.subscriptions.push(
+			watchDateChange(true).subscribe(async () =>
+				this.updateAccountGoodStanding()
+			)
+		);
+
+		this.subscriptions.push(
+			this.windowWatcherService.visibility
+				.pipe(filter(b => b))
+				.subscribe(async () => this.updateAccountGoodStanding(true))
+		);
 
 		this.subscriptions.push(
 			this.accountSettingsService.plan

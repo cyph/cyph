@@ -4,6 +4,7 @@ import {CyphPlans} from '../proto';
 export const planConfig: Record<
 	CyphPlans,
 	{
+		checkoutPath?: string;
 		initialInvites: number;
 		lifetime: boolean;
 		rank: number;
@@ -13,6 +14,7 @@ export const planConfig: Record<
 	}
 > = {
 	[CyphPlans.AnnualPremium]: {
+		checkoutPath: 'holiday-sale/annual-premium',
 		initialInvites: 10,
 		lifetime: false,
 		rank: 2,
@@ -36,6 +38,7 @@ export const planConfig: Record<
 		usernameMinLength: 5
 	},
 	[CyphPlans.LifetimePlatinum]: {
+		checkoutPath: 'holiday-sale/lifetime-platinum',
 		initialInvites: 15,
 		lifetime: true,
 		rank: 3,
@@ -44,6 +47,7 @@ export const planConfig: Record<
 		walletEarlyAccess: 'alpha'
 	},
 	[CyphPlans.MonthlyPremium]: {
+		checkoutPath: 'holiday-sale/monthly-premium',
 		initialInvites: 5,
 		lifetime: false,
 		rank: 1,

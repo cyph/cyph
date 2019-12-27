@@ -237,13 +237,44 @@
 					class="cyph-banner alert"
 					cyphTranslate
 					*ngIf="
-						(accountDatabaseService.currentUser | await)
-							?.agseConfirmed === false
+						(accountService.accountGoodStanding | await) === false;
+						else unverifiedAccountBanner
 					"
 				>
-					Your account is in queue to be verified and will be fully
-					activated soon.
+					We were unable to process your payment. Click
+					<a
+						cyphTranslate
+						[href]="
+							envService.homeUrl +
+							'checkout/#' +
+							(configService.planConfig[
+								(accountSettingsService.plan | await) ||
+									cyphPlans.Free
+							].checkoutPath || '') +
+							'/userID=' +
+							((accountService.userID | await) || '')
+						"
+						(click)="
+							accountService.windowsAppUpgradeWorkaround($event)
+						"
+						>here</a
+					>
+					to update your payment details.
 				</h3>
+
+				<ng-template #unverifiedAccountBanner>
+					<h3
+						class="cyph-banner alert"
+						cyphTranslate
+						*ngIf="
+							(accountDatabaseService.currentUser | await)
+								?.agseConfirmed === false
+						"
+					>
+						Your account is in queue to be verified and will be
+						fully activated soon.
+					</h3>
+				</ng-template>
 
 				<div
 					fxFlex
@@ -251,6 +282,9 @@
 					[class.fadeOutUp]="accountService.transition | await"
 					[class.full-height]="fullHeight | await"
 					[class.padding]="(fullWidth | await) === false"
+					[class.ui-disabled]="
+						(accountService.accountGoodStanding | await) === false
+					"
 					ngClass.lt-md="small"
 					ngClass.md="medium"
 					ngClass.gt-md="large"
