@@ -94,7 +94,9 @@
 							'&userID=' +
 							((accountService.userID | await) || '')
 						"
-						(click)="windowsAppUpgradeWorkaround($event)"
+						(click)="
+							accountService.windowsAppUpgradeWorkaround($event)
+						"
 						>change</a
 					>)
 				</ng-container>

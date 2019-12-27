@@ -649,6 +649,67 @@
 													}}
 												</span>
 											</div>
+
+											<div
+												fxLayout="row"
+												fxLayoutAlign="center center"
+											>
+												<strong cyphTranslate
+													>Plan:</strong
+												>
+												&nbsp;
+												<span>
+													{{
+														titleize(
+															cyphPlans[
+																(
+																	inviteCodeData
+																	| await
+																)?.plan ||
+																	cyphPlans.Free
+															]
+														)
+													}}
+												</span>
+												<ng-container
+													*ngIf="
+														!configService
+															.planConfig[
+															(
+																inviteCodeData
+																| await
+															)?.plan ||
+																cyphPlans.Free
+														].lifetime
+													"
+												>
+													&ngsp; (<a
+														cyphTranslate
+														[href]="
+															envService.homeUrl +
+															'pricing?current=' +
+															cyphPlans[
+																(
+																	inviteCodeData
+																	| await
+																)?.plan ||
+																	cyphPlans.Free
+															] +
+															'&inviteCode=' +
+															((
+																inviteCodeWatcher
+																| await
+															)?.value || '')
+														"
+														(click)="
+															accountService.windowsAppUpgradeWorkaround(
+																$event
+															)
+														"
+														>change</a
+													>)
+												</ng-container>
+											</div>
 										</div>
 									</div>
 								</div>

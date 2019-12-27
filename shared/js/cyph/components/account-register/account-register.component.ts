@@ -11,7 +11,7 @@ import {
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -27,11 +27,13 @@ import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
+import {WindowWatcherService} from '../../services/window-watcher.service';
 import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {formControlMatch, watchFormControl} from '../../util/form-controls';
 import {toInt} from '../../util/formatting';
 import {random} from '../../util/random';
+import {titleize} from '../../util/titleize';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 
@@ -56,6 +58,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** If true, will display only the initial master key confirmation UI. */
 	@Input() public confirmMasterKeyOnly: boolean = false;
+
+	/** @see CyphPlans */
+	public readonly cyphPlans = CyphPlans;
 
 	/** Email addres. */
 	public readonly email = new BehaviorSubject<string>('');
@@ -188,6 +193,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Form tab index. */
 	public readonly tabIndex = new BehaviorSubject<number>(3);
+
+	/** @see titleize */
+	public readonly titleize = titleize;
 
 	/** Total number of steps/tabs (minus one). */
 	public readonly totalSteps: number = 2;
@@ -506,19 +514,22 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly configService: ConfigService,
-
-		/** @ignore */
 		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
+		private readonly windowWatcherService: WindowWatcherService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
+
+		/** @see ConfigService */
+		public readonly configService: ConfigService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
@@ -530,7 +541,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		this.inviteCode = new FormControl('', undefined, [
 			async control => {
-				const value = control.value;
+				const value =
+					typeof control.value === 'string' ?
+						control.value :
+						undefined;
 				const id = uuid();
 				this.inviteCodeDebounceLast = id;
 
@@ -691,6 +705,24 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			),
 			[this.stringsService.registerErrorInitializing],
 			this.subscriptions
+		);
+
+		this.subscriptions.push(
+			this.windowWatcherService.visibility
+				.pipe(filter(b => b))
+				.subscribe(() => {
+					const value =
+						typeof this.inviteCode.value === 'string' ?
+							this.inviteCode.value :
+							undefined;
+
+					if (!value) {
+						return;
+					}
+
+					this.inviteCode.setValue('');
+					this.inviteCode.setValue(value);
+				})
 		);
 	}
 }

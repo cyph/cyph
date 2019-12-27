@@ -106,6 +106,9 @@ export class CheckoutComponent extends BaseProvider
 			undefined
 	);
 
+	/** Preexisting invite code to apply purchase to, if applicable. */
+	@Input() public inviteCode?: string;
+
 	/** Item ID number. */
 	@Input() public item?: number;
 
@@ -520,6 +523,9 @@ export class CheckoutComponent extends BaseProvider
 						{company: this.company} :
 						{}),
 					...(this.email !== undefined ? {email: this.email} : {}),
+					...(this.inviteCode !== undefined ?
+						{inviteCode: this.inviteCode} :
+						{}),
 					...(this.item !== undefined ? {item: this.item} : {}),
 					...(this.namespace !== undefined ?
 						{namespace: this.namespace} :

@@ -74,6 +74,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	company := sanitize(h.Request.PostFormValue("company"))
 	countryCode := sanitize(h.Request.PostFormValue("countryCode"))
 	firstName := sanitize(h.Request.PostFormValue("firstName"))
+	inviteCode := sanitize(h.Request.PostFormValue("inviteCode"))
 	lastName := sanitize(h.Request.PostFormValue("lastName"))
 	postalCode := sanitize(h.Request.PostFormValue("postalCode"))
 	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
@@ -404,7 +405,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if hasPlan && plan.AccountsPlan != "" {
-		welcomeLetter, oldBraintreeSubscriptionID, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, userID, true)
+		welcomeLetter, oldBraintreeSubscriptionID, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, userID, true)
 
 		if err != nil {
 			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +

@@ -288,21 +288,6 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		});
 	}
 
-	/** Workaround for upgrade link on Windows app. */
-	public async windowsAppUpgradeWorkaround (e: Event) : Promise<void> {
-		if (!this.envService.isCordovaDesktopWindows) {
-			return;
-		}
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		await this.dialogService.alert({
-			content: this.stringsService.windowsAppUpgradeWorkaroundContent,
-			title: this.stringsService.windowsAppUpgradeWorkaroundTitle
-		});
-	}
-
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,

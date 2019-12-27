@@ -402,6 +402,11 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
 	const planConfig = config.planConfig[plan];
+	const preexistingInviteCode = validateInput(
+		req.body.inviteCode,
+		undefined,
+		true
+	);
 	const purchased = !!req.body.purchased;
 	const userID = validateInput(req.body.userID, undefined, true);
 
@@ -496,6 +501,31 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		}
 
 		return {oldBraintreeSubscriptionID};
+	}
+
+	if (preexistingInviteCode) {
+		const preexistingInviteCodeRef = database.ref(
+			`${namespace}/inviteCodes/${preexistingInviteCode}`
+		);
+		const preexistingInviteCodeData = (await preexistingInviteCodeRef.once(
+			'value'
+		)).val();
+
+		if (!preexistingInviteCodeData) {
+			throw new Error(`Invalid invite code: ${preexistingInviteCode}.`);
+		}
+
+		await preexistingInviteCodeRef.set({
+			inviterUsername: preexistingInviteCodeData.inviterUsername,
+			plan,
+			...(braintreeID ? {braintreeID} : {}),
+			...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {})
+		});
+
+		return {
+			oldBraintreeSubscriptionID:
+				preexistingInviteCodeData.braintreeSubscriptionID
+		};
 	}
 
 	const inviteCode = readableID(15);
