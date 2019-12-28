@@ -337,7 +337,8 @@ func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inv
 
 func getBraintreeSubscriptionID(userID string) (string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
-		"userID": userID,
+		"namespace": "cyph.ws",
+		"userID":    userID,
 	})
 
 	client := &http.Client{}
