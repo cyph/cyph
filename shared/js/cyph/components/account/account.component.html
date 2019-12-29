@@ -244,18 +244,17 @@
 					We were unable to process your payment. Click
 					<a
 						cyphTranslate
-						[href]="
-							envService.homeUrl +
-							'checkout/#' +
-							(configService.planConfig[
-								(accountSettingsService.plan | await) ||
-									cyphPlans.Free
-							].checkoutPath || '') +
-							'/userToken=' +
-							((accountService.userToken | await) || '')
-						"
 						(click)="
-							accountService.windowsAppUpgradeWorkaround($event)
+							accountService.windowsAppUpgradeWorkaround($event, [
+								envService.homeUrl,
+								'checkout/#',
+								configService.planConfig[
+									accountSettingsService.plan.value ||
+										cyphPlans.Free
+								].checkoutPath || '',
+								'/userToken=',
+								accountService.getUserToken()
+							])
 						"
 						>here</a
 					>

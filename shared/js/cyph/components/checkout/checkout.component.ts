@@ -550,7 +550,7 @@ export class CheckoutComponent extends BaseProvider
 			}
 
 			if (this.affiliate) {
-				openWindow(this.affiliateService.checkout.href);
+				await openWindow(this.affiliateService.checkout.href);
 			}
 
 			this.confirmed.emit({

@@ -196,7 +196,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			this.email.getValue(),
 			this.profileVisible.getValue(),
 			user.accountUserProfile.getValue(),
-			this.accountService.userToken.pipe(take(1)).toPromise()
+			this.accountService.getUserToken()
 		]);
 
 		const current = {

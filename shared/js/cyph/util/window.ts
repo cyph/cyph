@@ -1,10 +1,17 @@
 import {env} from '../env';
+import {MaybePromise} from '../maybe-promise-type';
 
 /** Opens the specified URL in a new window. */
-export const openWindow = (url: string) : void => {
+export const openWindow = async (
+	url: string | MaybePromise<string>[]
+) : Promise<void> => {
 	/* TODO: HANDLE NATIVE */
 	if (!env.isWeb) {
 		return;
+	}
+
+	if (url instanceof Array) {
+		url = (await Promise.all(url)).join('');
 	}
 
 	if (env.isCordovaDesktop) {

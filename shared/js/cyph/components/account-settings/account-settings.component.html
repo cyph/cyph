@@ -84,18 +84,17 @@
 				>
 					&ngsp; (<a
 						cyphTranslate
-						[href]="
-							envService.homeUrl +
-							'pricing?current=' +
-							cyphPlans[
-								(accountSettingsService.plan | await) ||
-									cyphPlans.Free
-							] +
-							'&userToken=' +
-							((accountService.userToken | await) || '')
-						"
 						(click)="
-							accountService.windowsAppUpgradeWorkaround($event)
+							accountService.windowsAppUpgradeWorkaround($event, [
+								envService.homeUrl,
+								'pricing?current=',
+								cyphPlans[
+									accountSettingsService.plan.value ||
+										cyphPlans.Free
+								],
+								'&userToken=',
+								accountService.getUserToken()
+							])
 						"
 						>change</a
 					>)

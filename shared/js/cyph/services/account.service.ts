@@ -17,6 +17,7 @@ import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
 import {IResolvable} from '../iresolvable';
+import {MaybePromise} from '../maybe-promise-type';
 import {
 	BooleanProto,
 	CyphPlans,
@@ -24,7 +25,6 @@ import {
 	NotificationTypes,
 	StringProto
 } from '../proto';
-import {filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -36,6 +36,7 @@ import {getTimestamp, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
+import {openWindow} from '../util/window';
 import {AccountAppointmentsService} from './account-appointments.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
@@ -79,6 +80,9 @@ export class AccountService extends BaseProvider {
 		string,
 		IResolvable<boolean>
 	>();
+
+	/** @ignore */
+	private lastUserToken?: {expires: number; token: string};
 
 	/** @ignore */
 	private readonly menuExpandedInternal = new BehaviorSubject<boolean>(
@@ -257,25 +261,6 @@ export class AccountService extends BaseProvider {
 		this.subscriptions
 	);
 
-	/** Auth token for current user. */
-	public readonly userToken = combineLatest([
-		this.accountDatabaseService.currentUserFiltered,
-		watchDateChange(true)
-	]).pipe(
-		mergeMap(async () =>
-			retryUntilSuccessful(async () => {
-				const s = await this.accountDatabaseService.callFunction(
-					'getUserToken'
-				);
-				if (typeof s !== 'string') {
-					throw new Error('Invalid user token.');
-				}
-				return s;
-			}).catch(() => undefined)
-		),
-		filterUndefinedOperator()
-	);
-
 	/** @ignore */
 	private async getIncomingCallRoute (
 		callMetadata: string
@@ -332,15 +317,17 @@ export class AccountService extends BaseProvider {
 				return;
 			}
 
+			const userToken = await this.getUserToken();
+
 			this.accountGoodStanding.next(
-				(await request({
-					retries: 5,
-					url:
-						this.envService.baseUrl +
-						`accountstanding/${await this.userToken
-							.pipe(take(1))
-							.toPromise()}`
-				}).catch(() => 'true')) === 'true'
+				!userToken ?
+					true :
+					(await request({
+						retries: 5,
+						url:
+							this.envService.baseUrl +
+							`accountstanding/${userToken}`
+					}).catch(() => 'true')) === 'true'
 			);
 		});
 	}
@@ -400,6 +387,42 @@ export class AccountService extends BaseProvider {
 			o.fromEmail = email;
 			o.fromName = name ? `${name} (@${realUsername})` : realUsername;
 		});
+	}
+
+	/** Auth token for current user. */
+	public async getUserToken () : Promise<string | undefined> {
+		if (
+			this.lastUserToken &&
+			this.lastUserToken.expires > (await getTimestamp())
+		) {
+			return this.lastUserToken.token;
+		}
+
+		this.lastUserToken = await retryUntilSuccessful(
+			async () => {
+				const {
+					expires,
+					token
+				} = await this.accountDatabaseService.callFunction(
+					'getUserToken'
+				);
+
+				if (
+					typeof token !== 'string' ||
+					typeof expires !== 'number' ||
+					isNaN(expires) ||
+					(await getTimestamp()) >= expires
+				) {
+					throw new Error('Invalid user token.');
+				}
+
+				return {expires, token};
+			},
+			10,
+			30000
+		).catch(() => undefined);
+
+		return this.lastUserToken?.token;
 	}
 
 	/** Current route path. */
@@ -641,8 +664,15 @@ export class AccountService extends BaseProvider {
 	}
 
 	/** Workaround for upgrade link on Windows app. */
-	public async windowsAppUpgradeWorkaround (e: Event) : Promise<void> {
+	public async windowsAppUpgradeWorkaround (
+		e: Event,
+		url?: string | MaybePromise<string>[]
+	) : Promise<void> {
 		if (!this.envService.isCordovaDesktopWindows) {
+			if (url) {
+				await openWindow(url);
+			}
+
 			return;
 		}
 

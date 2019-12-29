@@ -596,7 +596,7 @@ exports.getUserToken = onCall(async (data, context, namespace, getUsername) => {
 		throw new Error('User not authenticated.');
 	}
 
-	return tokens.create({username}, 172800000, tokenKey);
+	return tokens.create({username}, tokenKey);
 });
 
 exports.itemHashChange = functions.database
