@@ -718,7 +718,7 @@
 						"registrationEmailSent": {
 							".validate": "newData.isBoolean()"
 						},
-						"userID": {
+						"userToken": {
 							".validate": "newData.isString()"
 						}
 					},
@@ -1083,11 +1083,11 @@
 				}
 			},
 
-			"userIDs": {
+			"userTokens": {
 				".read": false,
 				".write": false,
 
-				"$userID": {
+				"$userToken": {
 					".validate": "newData.isString()"
 				}
 			}

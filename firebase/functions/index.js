@@ -408,14 +408,16 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		true
 	);
 	const purchased = !!req.body.purchased;
-	const userID = validateInput(req.body.userID, undefined, true);
+	const userToken = validateInput(req.body.userToken, undefined, true);
 
-	if (userID) {
-		const usernameRef = database.ref(`${namespace}/userIDs/${userID}`);
+	if (userToken) {
+		const usernameRef = database.ref(
+			`${namespace}/userTokens/${userToken}`
+		);
 		const username = (await usernameRef.once('value')).val();
 
 		if (!username) {
-			throw new Error(`Invalid user ID: ${userID}.`);
+			throw new Error(`Invalid user token: ${userToken}.`);
 		}
 
 		const internalURL = `${namespace}/users/${username}/internal`;
@@ -565,13 +567,15 @@ exports.getBraintreeSubscriptionID = onRequest(
 	true,
 	async (req, res, namespace) => {
 		const {accountsURL} = namespaces[namespace];
-		const userID = validateInput(req.body.userID);
+		const userToken = validateInput(req.body.userToken);
 
-		const usernameRef = database.ref(`${namespace}/userIDs/${userID}`);
+		const usernameRef = database.ref(
+			`${namespace}/userTokens/${userToken}`
+		);
 		const username = (await usernameRef.once('value')).val();
 
 		if (!username) {
-			throw new Error(`Invalid user ID: ${userID}.`);
+			throw new Error(`Invalid user token: ${userToken}.`);
 		}
 
 		const internalURL = `${namespace}/users/${username}/internal`;
@@ -587,25 +591,25 @@ exports.getBraintreeSubscriptionID = onRequest(
 	}
 );
 
-exports.getUserID = onCall(async (data, context, namespace, getUsername) => {
+exports.getUserToken = onCall(async (data, context, namespace, getUsername) => {
 	const username = await getUsername();
 
-	const userIDRef = database.ref(
-		`${namespace}/users/${username}/internal/userID`
+	const userTokenRef = database.ref(
+		`${namespace}/users/${username}/internal/userToken`
 	);
 
-	let userID = (await userIDRef.once('value')).val();
+	let userToken = (await userTokenRef.once('value')).val();
 
-	if (!userID) {
-		userID = uuid();
+	if (!userToken) {
+		userToken = uuid();
 
 		await Promise.all([
-			userIDRef.set(userID),
-			database.ref(`${namespace}/userIDs/${userID}`).set(username)
+			userTokenRef.set(userToken),
+			database.ref(`${namespace}/userTokens/${userToken}`).set(username)
 		]);
 	}
 
-	return userID;
+	return userToken;
 });
 
 exports.itemHashChange = functions.database

@@ -156,8 +156,8 @@ export class CheckoutComponent extends BaseProvider
 	/** @see trackByValue */
 	public readonly trackByValue = trackByValue;
 
-	/** User ID of preexisting user to apply purchase to, if applicable. */
-	@Input() public userID?: string;
+	/** Token of preexisting user to apply purchase to, if applicable. */
+	@Input() public userToken?: string;
 
 	/** User count options. */
 	public readonly userOptions: number[] = new Array(99)
@@ -530,7 +530,9 @@ export class CheckoutComponent extends BaseProvider
 					...(this.namespace !== undefined ?
 						{namespace: this.namespace} :
 						{}),
-					...(this.userID !== undefined ? {userID: this.userID} : {})
+					...(this.userToken !== undefined ?
+						{userToken: this.userToken} :
+						{})
 				},
 				method: 'POST',
 				url: this.envService.baseUrl + 'braintree'

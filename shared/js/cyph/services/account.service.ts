@@ -256,18 +256,18 @@ export class AccountService extends BaseProvider {
 		this.subscriptions
 	);
 
-	/** User ID (semi-private value known only to the service). */
-	public readonly userID = this.accountDatabaseService.currentUserFiltered
+	/** User token (semi-private value known only to the service). */
+	public readonly userToken = this.accountDatabaseService.currentUserFiltered
 		.pipe(take(1))
 		.toPromise()
 		.then(async () =>
 			this.localStorageService.getOrSetDefault(
-				'userID',
+				'userToken',
 				StringProto,
 				async () => {
 					try {
 						const s = await this.accountDatabaseService.callFunction(
-							'getUserID'
+							'getUserToken'
 						);
 						if (typeof s === 'string') {
 							return s;
@@ -341,7 +341,7 @@ export class AccountService extends BaseProvider {
 					retries: 5,
 					url:
 						this.envService.baseUrl +
-						`accountstanding/${await this.userID}`
+						`accountstanding/${await this.userToken}`
 				}).catch(() => 'true')) === 'true'
 			);
 		});

@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	handleFuncs("/accountstanding/{userID}", Handlers{methods.GET: isAccountInGoodStanding})
+	handleFuncs("/accountstanding/{userToken}", Handlers{methods.GET: isAccountInGoodStanding})
 	handleFuncs("/analytics/*", Handlers{methods.GET: analytics})
 	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
@@ -79,7 +79,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	lastName := sanitize(h.Request.PostFormValue("lastName"))
 	postalCode := sanitize(h.Request.PostFormValue("postalCode"))
 	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
-	userID := sanitize(h.Request.PostFormValue("userID"))
+	userToken := sanitize(h.Request.PostFormValue("userToken"))
 	timestamp := getTimestamp()
 
 	email := ""
@@ -406,7 +406,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if hasPlan && plan.AccountsPlan != "" {
-		welcomeLetter, oldBraintreeSubscriptionID, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, userID, true)
+		welcomeLetter, oldBraintreeSubscriptionID, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, userToken, true)
 
 		if err != nil {
 			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
@@ -597,9 +597,9 @@ func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 }
 
 func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
-	userID := sanitize(h.Vars["userID"])
+	userToken := sanitize(h.Vars["userToken"])
 
-	braintreeSubscriptionID, _ := getBraintreeSubscriptionID(userID)
+	braintreeSubscriptionID, _ := getBraintreeSubscriptionID(userToken)
 
 	/*
 		If no subscription ID, assume free or lifetime plan.

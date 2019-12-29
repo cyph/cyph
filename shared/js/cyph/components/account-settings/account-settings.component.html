@@ -91,8 +91,8 @@
 								(accountSettingsService.plan | await) ||
 									cyphPlans.Free
 							] +
-							'&userID=' +
-							((accountService.userID | await) || '')
+							'&userToken=' +
+							((accountService.userToken | await) || '')
 						"
 						(click)="
 							accountService.windowsAppUpgradeWorkaround($event)
