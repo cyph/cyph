@@ -24,6 +24,7 @@ import {
 	NotificationTypes,
 	StringProto
 } from '../proto';
+import {filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -34,7 +35,7 @@ import {prettyPrint, stringify} from '../util/serialization';
 import {getTimestamp, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {uuid} from '../util/uuid';
-import {resolvable, sleep} from '../util/wait';
+import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
 import {AccountAppointmentsService} from './account-appointments.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
@@ -256,29 +257,24 @@ export class AccountService extends BaseProvider {
 		this.subscriptions
 	);
 
-	/** User token (semi-private value known only to the service). */
-	public readonly userToken = this.accountDatabaseService.currentUserFiltered
-		.pipe(take(1))
-		.toPromise()
-		.then(async () =>
-			this.localStorageService.getOrSetDefault(
-				'userToken',
-				StringProto,
-				async () => {
-					try {
-						const s = await this.accountDatabaseService.callFunction(
-							'getUserToken'
-						);
-						if (typeof s === 'string') {
-							return s;
-						}
-					}
-					catch {}
-
-					return '';
+	/** JWT auth token for current user. */
+	public readonly userToken = combineLatest([
+		this.accountDatabaseService.currentUserFiltered,
+		watchDateChange(true)
+	]).pipe(
+		mergeMap(async () =>
+			retryUntilSuccessful(async () => {
+				const s = await this.accountDatabaseService.callFunction(
+					'getUserToken'
+				);
+				if (typeof s !== 'string') {
+					throw new Error('Invalid user token.');
 				}
-			)
-		);
+				return s;
+			}).catch(() => undefined)
+		),
+		filterUndefinedOperator()
+	);
 
 	/** @ignore */
 	private async getIncomingCallRoute (
@@ -341,7 +337,9 @@ export class AccountService extends BaseProvider {
 					retries: 5,
 					url:
 						this.envService.baseUrl +
-						`accountstanding/${await this.userToken}`
+						`accountstanding/${await this.userToken
+							.pipe(take(1))
+							.toPromise()}`
 				}).catch(() => 'true')) === 'true'
 			);
 		});

@@ -6,6 +6,7 @@ const {config} = require('./config');
 const {cyphAdminKey} = require('./cyph-admin-key');
 const {sendMail, sendMailInternal} = require('./email');
 const {emailRegex} = require('./email-regex');
+const jwt = require('./jwt');
 const {renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
 
@@ -31,6 +32,8 @@ const {
 	},
 	true
 );
+
+const {getJwtKey} = require('./jwt-key')(database);
 
 const {
 	AccountContactState,
@@ -411,14 +414,10 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const userToken = validateInput(req.body.userToken, undefined, true);
 
 	if (userToken) {
-		const usernameRef = database.ref(
-			`${namespace}/userTokens/${userToken}`
+		const {username} = await jwt.verify(
+			userToken,
+			await getJwtKey(namespace)
 		);
-		const username = (await usernameRef.once('value')).val();
-
-		if (!username) {
-			throw new Error(`Invalid user token: ${userToken}.`);
-		}
 
 		const internalURL = `${namespace}/users/${username}/internal`;
 		const braintreeIDRef = database.ref(`${internalURL}/braintreeID`);
@@ -569,14 +568,10 @@ exports.getBraintreeSubscriptionID = onRequest(
 		const {accountsURL} = namespaces[namespace];
 		const userToken = validateInput(req.body.userToken);
 
-		const usernameRef = database.ref(
-			`${namespace}/userTokens/${userToken}`
+		const {username} = await jwt.verify(
+			userToken,
+			await getJwtKey(namespace)
 		);
-		const username = (await usernameRef.once('value')).val();
-
-		if (!username) {
-			throw new Error(`Invalid user token: ${userToken}.`);
-		}
 
 		const internalURL = `${namespace}/users/${username}/internal`;
 
@@ -592,24 +587,16 @@ exports.getBraintreeSubscriptionID = onRequest(
 );
 
 exports.getUserToken = onCall(async (data, context, namespace, getUsername) => {
-	const username = await getUsername();
+	const [jwtKey, username] = await Promise.all([
+		getJwtKey(namespace),
+		getUsername()
+	]);
 
-	const userTokenRef = database.ref(
-		`${namespace}/users/${username}/internal/userToken`
-	);
-
-	let userToken = (await userTokenRef.once('value')).val();
-
-	if (!userToken) {
-		userToken = uuid();
-
-		await Promise.all([
-			userTokenRef.set(userToken),
-			database.ref(`${namespace}/userTokens/${userToken}`).set(username)
-		]);
+	if (!username) {
+		throw new Error('User not authenticated.');
 	}
 
-	return userToken;
+	return jwt.sign({username}, jwtKey, {expiresIn: 172800});
 });
 
 exports.itemHashChange = functions.database

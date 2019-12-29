@@ -184,6 +184,12 @@
 				}
 			},
 
+			"jwtKey": {
+				".read": false,
+				".write": false,
+				".validate": "newData.isString()"
+			},
+
 			"locks": {
 				".read": true,
 				".write": true,
@@ -717,9 +723,6 @@
 						},
 						"registrationEmailSent": {
 							".validate": "newData.isBoolean()"
-						},
-						"userToken": {
-							".validate": "newData.isString()"
 						}
 					},
 
@@ -1080,15 +1083,6 @@
 					"$other": {
 						".validate": false
 					}
-				}
-			},
-
-			"userTokens": {
-				".read": false,
-				".write": false,
-
-				"$userToken": {
-					".validate": "newData.isString()"
 				}
 			}
 		}
