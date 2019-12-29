@@ -257,7 +257,7 @@ export class AccountService extends BaseProvider {
 		this.subscriptions
 	);
 
-	/** JWT auth token for current user. */
+	/** Auth token for current user. */
 	public readonly userToken = combineLatest([
 		this.accountDatabaseService.currentUserFiltered,
 		watchDateChange(true)

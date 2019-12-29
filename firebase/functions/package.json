@@ -19,12 +19,12 @@
 		"firebase-functions": "*",
 		"ical-generator": "~0.2",
 		"jsdom": "*",
-		"jsonwebtoken": "^8",
 		"libsodium-wrappers-sumo": "https://github.com/jedisct1/libsodium.js",
 		"lodash": "*",
 		"lz4": "*",
 		"markdown-escapes": "*",
 		"markdown-it": "*",
+		"msgpack-lite": "*",
 		"mustache": "*",
 		"nodemailer": "^4",
 		"username-blacklist": "https://github.com/cyph/The-Big-Username-Blacklist"

@@ -252,7 +252,6 @@ read -r -d '' modules <<- EOM
 	jquery-appear-original
 	jsdoc@3.5.5
 	jsdom
-	jsonwebtoken
 	jspdf
 	karma
 	karma-chrome-launcher

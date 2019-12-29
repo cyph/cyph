@@ -184,12 +184,6 @@
 				}
 			},
 
-			"jwtKey": {
-				".read": false,
-				".write": false,
-				".validate": "newData.isString()"
-			},
-
 			"locks": {
 				".read": true,
 				".write": true,
@@ -292,6 +286,12 @@
 				"$reservedUsername": {
 					".validate": "newData.val() === ''"
 				}
+			},
+
+			"tokenKey": {
+				".read": false,
+				".write": false,
+				".validate": "newData.isString()"
 			},
 
 			"users": {

@@ -6,9 +6,9 @@ const {config} = require('./config');
 const {cyphAdminKey} = require('./cyph-admin-key');
 const {sendMail, sendMailInternal} = require('./email');
 const {emailRegex} = require('./email-regex');
-const jwt = require('./jwt');
 const {renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
+const tokens = require('./tokens');
 
 const {
 	admin,
@@ -33,7 +33,7 @@ const {
 	true
 );
 
-const {getJwtKey} = require('./jwt-key')(database);
+const {getTokenKey} = require('./token-key')(database);
 
 const {
 	AccountContactState,
@@ -414,9 +414,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const userToken = validateInput(req.body.userToken, undefined, true);
 
 	if (userToken) {
-		const {username} = await jwt.verify(
+		const {username} = await tokens.open(
 			userToken,
-			await getJwtKey(namespace)
+			await getTokenKey(namespace)
 		);
 
 		const internalURL = `${namespace}/users/${username}/internal`;
@@ -568,9 +568,9 @@ exports.getBraintreeSubscriptionID = onRequest(
 		const {accountsURL} = namespaces[namespace];
 		const userToken = validateInput(req.body.userToken);
 
-		const {username} = await jwt.verify(
+		const {username} = await tokens.open(
 			userToken,
-			await getJwtKey(namespace)
+			await getTokenKey(namespace)
 		);
 
 		const internalURL = `${namespace}/users/${username}/internal`;
@@ -587,8 +587,8 @@ exports.getBraintreeSubscriptionID = onRequest(
 );
 
 exports.getUserToken = onCall(async (data, context, namespace, getUsername) => {
-	const [jwtKey, username] = await Promise.all([
-		getJwtKey(namespace),
+	const [tokenKey, username] = await Promise.all([
+		getTokenKey(namespace),
 		getUsername()
 	]);
 
@@ -596,7 +596,7 @@ exports.getUserToken = onCall(async (data, context, namespace, getUsername) => {
 		throw new Error('User not authenticated.');
 	}
 
-	return jwt.sign({username}, jwtKey, {expiresIn: 172800});
+	return tokens.create({username}, 172800000, tokenKey);
 });
 
 exports.itemHashChange = functions.database
