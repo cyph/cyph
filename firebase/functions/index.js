@@ -411,13 +411,16 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		true
 	);
 	const purchased = !!req.body.purchased;
+	let username = validateInput(req.body.username, undefined, true);
 	const userToken = validateInput(req.body.userToken, undefined, true);
 
-	if (userToken) {
-		const {username} = await tokens.open(
-			userToken,
-			await getTokenKey(namespace)
-		);
+	if (username || userToken) {
+		if (!username) {
+			username = (await tokens.open(
+				userToken,
+				await getTokenKey(namespace)
+			)).username;
+		}
 
 		const internalURL = `${namespace}/users/${username}/internal`;
 		const braintreeIDRef = database.ref(`${internalURL}/braintreeID`);
@@ -654,6 +657,12 @@ exports.itemRemoved = functions.database
 			getURL(data.adminRef, params.namespace)
 		);
 	});
+
+exports.openUserToken = onRequest(true, async (req, res, namespace) => {
+	const userToken = validateInput(req.body.userToken);
+
+	return tokens.open(userToken, await getTokenKey(namespace));
+});
 
 exports.rejectPseudoRelationship = onCall(
 	async (data, context, namespace, getUsername) => {

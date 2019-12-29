@@ -276,7 +276,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inviteCode, userToken string, purchased bool) (string, string, error) {
+func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inviteCode, username string, purchased bool) (string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"braintreeID":             braintreeID,
 		"braintreeSubscriptionID": braintreeSubscriptionID,
@@ -286,7 +286,7 @@ func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inv
 		"namespace":               "cyph.ws",
 		"plan":                    plan,
 		"purchased":               purchased,
-		"userToken":               userToken,
+		"username":                username,
 	})
 
 	client := &http.Client{}
@@ -377,6 +377,50 @@ func getBraintreeSubscriptionID(userToken string) (string, error) {
 	}
 
 	return braintreeSubscriptionID, nil
+}
+
+func getUsername(userToken string) (string, error) {
+	body, _ := json.Marshal(map[string]interface{}{
+		"namespace": "cyph.ws",
+		"userToken": userToken,
+	})
+
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		methods.POST,
+		"https://us-central1-"+firebaseProject+".cloudfunctions.net/openUserToken",
+		bytes.NewBuffer(body),
+	)
+
+	req.Header.Add("Authorization", cyphFirebaseAdminKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var responseBody map[string]interface{}
+	err = json.Unmarshal(responseBodyBytes, &responseBody)
+	if err != nil {
+		return "", err
+	}
+
+	username := ""
+	if data, ok := responseBody["username"]; ok {
+		switch v := data.(type) {
+		case string:
+			username = v
+		}
+	}
+
+	return username, nil
 }
 
 func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {

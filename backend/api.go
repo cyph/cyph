@@ -106,6 +106,14 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusBadRequest
 	}
 
+	username := ""
+	if userToken != "" {
+		username, _ = getUsername(userToken)
+		if username == "" {
+			return "invalid or expired token", http.StatusBadRequest
+		}
+	}
+
 	var apiKey string
 	var customerKey *datastore.Key
 	var customerEmailKey *datastore.Key
@@ -406,7 +414,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if hasPlan && plan.AccountsPlan != "" {
-		welcomeLetter, oldBraintreeSubscriptionID, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, userToken, true)
+		welcomeLetter, oldBraintreeSubscriptionID, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, username, true)
 
 		if err != nil {
 			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
