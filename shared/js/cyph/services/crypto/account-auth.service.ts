@@ -941,20 +941,6 @@ export class AccountAuthService extends BaseProvider {
 		}
 		catch {}
 
-		/*
-			This was okay initially, but now doesn't take into account
-			ThreadedPotassiumService caching:
-
-			await Promise.all([
-				this.localStorageService.removeItem('masterKey'),
-				this.localStorageService.removeItem('pinDuration'),
-				this.localStorageService.removeItem('pinHash'),
-				this.localStorageService.removeItem('pinIsCustom'),
-				this.localStorageService.removeItem('pinTimestamp'),
-				this.localStorageService.removeItem('username')
-			]);
-		*/
-
 		await this.localStorageService.clear();
 	}
 
