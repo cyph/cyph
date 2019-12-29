@@ -1,9 +1,10 @@
 import {env} from '../env';
 import {MaybePromise} from '../maybe-promise-type';
+import {filterUndefined} from './filter';
 
 /** Opens the specified URL in a new window. */
 export const openWindow = async (
-	url: string | MaybePromise<string>[]
+	url: string | MaybePromise<string | undefined>[]
 ) : Promise<void> => {
 	/* TODO: HANDLE NATIVE */
 	if (!env.isWeb) {
@@ -11,7 +12,7 @@ export const openWindow = async (
 	}
 
 	if (url instanceof Array) {
-		url = (await Promise.all(url)).join('');
+		url = filterUndefined(await Promise.all(url)).join('');
 	}
 
 	if (env.isCordovaDesktop) {

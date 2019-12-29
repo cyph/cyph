@@ -666,7 +666,7 @@ export class AccountService extends BaseProvider {
 	/** Workaround for upgrade link on Windows app. */
 	public async windowsAppUpgradeWorkaround (
 		e: Event,
-		url?: string | MaybePromise<string>[]
+		url?: string | MaybePromise<string | undefined>[]
 	) : Promise<void> {
 		if (!this.envService.isCordovaDesktopWindows) {
 			if (url) {
