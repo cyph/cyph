@@ -227,6 +227,15 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			);
 		}
 		else {
+			if (
+				!this.pinUnlock.value &&
+				this.savedUsername.value &&
+				this.username.value &&
+				this.masterKey.value?.length > 0
+			) {
+				await this.removeSavedCredentials();
+			}
+
 			this.error.next(
 				!(await (this.pinUnlock.value &&
 				this.savedMasterKey.value &&
