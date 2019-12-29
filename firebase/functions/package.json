@@ -24,9 +24,15 @@
 		"lz4": "*",
 		"markdown-escapes": "*",
 		"markdown-it": "*",
+		"mceliece": "*",
 		"msgpack-lite": "*",
 		"mustache": "*",
 		"nodemailer": "^4",
+		"ntru": "*",
+		"rlwe": "*",
+		"sidh": "*",
+		"sodiumutil": "*",
+		"supersphincs": "*",
 		"username-blacklist": "https://github.com/cyph/The-Big-Username-Blacklist"
 	},
 	"engines": {
