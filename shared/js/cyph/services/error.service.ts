@@ -72,7 +72,10 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 			email(
 				'errors',
 				`[${await this.envService.packageName}] ${subject}`,
-				exception
+				exception,
+				undefined,
+				undefined,
+				true
 			);
 		}
 
