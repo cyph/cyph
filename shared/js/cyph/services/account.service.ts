@@ -390,13 +390,22 @@ export class AccountService extends BaseProvider {
 	}
 
 	/** Auth token for current user. */
-	public async getUserToken () : Promise<string | undefined> {
+	public async getUserToken (
+		spinner?: BehaviorSubject<boolean>
+	) : Promise<string | undefined> {
 		if (
 			this.lastUserToken &&
 			this.lastUserToken.expires > (await getTimestamp())
 		) {
 			return this.lastUserToken.token;
 		}
+
+		/* Don't interfere if spinner is already running */
+		if (spinner?.value) {
+			spinner = undefined;
+		}
+
+		spinner?.next(true);
 
 		this.lastUserToken = await retryUntilSuccessful(
 			async () => {
@@ -421,6 +430,8 @@ export class AccountService extends BaseProvider {
 			10,
 			30000
 		).catch(() => undefined);
+
+		spinner?.next(false);
 
 		return this.lastUserToken?.token;
 	}

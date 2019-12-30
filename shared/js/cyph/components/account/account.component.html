@@ -253,7 +253,9 @@
 										cyphPlans.Free
 								].checkoutPath || '',
 								'/userToken=',
-								accountService.getUserToken()
+								accountService.getUserToken(
+									accountService.interstitial
+								)
 							])
 						"
 						>here</a
