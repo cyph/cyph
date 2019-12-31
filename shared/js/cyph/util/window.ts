@@ -17,7 +17,12 @@ export const openWindow = async (
 
 	if (env.isCordovaDesktop) {
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		window.open(url);
+		window.open(
+			url.replace(
+				/^#/,
+				`file://${(<any> self).__dirname || ''}/index.html#`
+			)
+		);
 		return;
 	}
 
