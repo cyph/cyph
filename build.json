@@ -9,7 +9,8 @@
 			"package": ["dmg", "mas"],
 			"signing": {
 				"store": {
-					"entitlements": "macos.plist",
+					"entitlements": "macos.parent.plist",
+					"entitlementsInherit": "macos.child.plist",
 					"provisioningProfile": "~/.cyph/nativereleasesigning/apple/macOS_Distribution.provisionprofile"
 				}
 			}
