@@ -105,6 +105,9 @@ if [ "${electron}" ] ; then
 
 	# npx cordova build electron --release
 
+	# https://github.com/electron-userland/electron-builder/issues/4151#issuecomment-520663362
+	find . -type f -name 'electronMac.js' -exec sed -i 's|\${helperBundleIdentifier}\.\${postfix}|${helperBundleIdentifier}.${postfix.replace(/[^a-z0-9]/gim,"")}|g' {} \;
+
 	# Workaround for Cordova and/or Electron and/or Parallels bug
 	cp build.json build.json.bak
 	node -e "
