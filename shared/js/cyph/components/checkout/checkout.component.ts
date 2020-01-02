@@ -287,17 +287,15 @@ export class CheckoutComponent extends BaseProvider
 					}
 				},
 				authorization: await this.authorization,
-				/*
 				googlePay: {
 					googlePayVersion: 2,
-					merchantId: 'TODO: Get this',
+					merchantId: '09900375611168245515',
 					transactionInfo: {
 						currencyCode: 'USD',
 						totalPrice: amountString,
 						totalPriceStatus: 'FINAL'
 					}
 				},
-				*/
 				paypal: {
 					buttonStyle: {
 						color: 'blue',
