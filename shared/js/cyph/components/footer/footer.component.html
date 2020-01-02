@@ -11,7 +11,7 @@
 		<ng-container *ngIf="!envService.isCordova; else cordovaFooter">
 			<div fxFlex="nogrow" fxLayoutAlign="center center">
 				<a [href]="envService.homeUrl"
-					>&copy; {{ stringsService.company }} 2019</a
+					>&copy; {{ stringsService.company }} 2020</a
 				>
 
 				<span *ngIf="!envService.isAccounts" class="pre-spaced">
@@ -96,7 +96,7 @@
 		</ng-container>
 		<ng-template #cordovaFooter>
 			<div fxFlex="nogrow" fxLayoutAlign="center center">
-				&copy; {{ stringsService.company }} 2019 &nbsp;&nbsp;&nbsp;({{
+				&copy; {{ stringsService.company }} 2020 &nbsp;&nbsp;&nbsp;({{
 					stringsService.patents
 				}})
 			</div>
