@@ -1095,23 +1095,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}
 
 	/** @inheritDoc */
-	public async register (username: string, password: string) : Promise<void> {
-		await this.ngZone.runOutsideAngular(async () => {
-			try {
-				await (await this.app)
-					.auth()
-					.createUserWithEmailAndPassword(
-						this.usernameToEmail(username),
-						password
-					);
-			}
-			catch {}
-
-			await this.login(username, password);
-		});
-	}
-
-	/** @inheritDoc */
 	public async registerPushNotifications (
 		urlPromise: MaybePromise<string>
 	) : Promise<void> {

@@ -39,6 +39,7 @@ const {
 	AccountContactState,
 	AccountFileRecord,
 	AccountUserProfile,
+	BinaryProto,
 	CyphPlan,
 	CyphPlans,
 	NotificationTypes,
@@ -664,6 +665,139 @@ exports.openUserToken = onRequest(true, async (req, res, namespace) => {
 	return tokens.open(userToken, await getTokenKey(namespace));
 });
 
+exports.register = onCall(async (data, context, namespace, getUsername) => {
+	const {
+		certificateRequest,
+		email,
+		encryptionKeyPair,
+		inviteCode,
+		loginData,
+		password,
+		pinHash,
+		pinIsCustom,
+		pseudoAccount,
+		publicEncryptionKey,
+		publicProfile,
+		publicProfileExtra,
+		signingKeyPair,
+		username
+	} = data || {};
+
+	if (
+		typeof inviteCode !== 'string' ||
+		inviteCode.length < 1 ||
+		typeof password !== 'string' ||
+		password.length < 1 ||
+		typeof username !== 'string' ||
+		username.length < 1
+	) {
+		throw new Error('Invalid credentials for new account.');
+	}
+
+	const inviteDataRef = database.ref(
+		`${namespace}/inviteCodes/${inviteCode}`
+	);
+
+	const inviteData = (await inviteDataRef.once('value')).val() || {};
+	const {
+		braintreeID,
+		braintreeSubscriptionID,
+		inviterUsername,
+		reservedUsername
+	} = inviteData;
+	const plan =
+		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
+
+	if (typeof inviterUsername !== 'string') {
+		throw new Error('Invalid invite code.');
+	}
+
+	if (
+		username.length < config.planConfig[plan].usernameMinLength ||
+		(await usernameBlacklisted(namespace, username, reservedUsername))
+	) {
+		throw new Error('Blacklisted username.');
+	}
+
+	const userRecord = await auth.createUser({
+		disabled: false,
+		email: `${username}@${namespace.replace(/_/g, '.')}`,
+		emailVerified: true,
+		password
+	});
+
+	await Promise.all([
+		...[
+			['encryptionKeyPair', encryptionKeyPair],
+			['inviteCode', inviteCode, StringProto][('loginData', loginData)],
+			['pin/hash', pinHash],
+			['pin/isCustom', pinIsCustom],
+			['profileVisible', true, BooleanProto],
+			['publicEncryptionKey', publicEncryptionKey],
+			['publicProfile', publicProfile],
+			['publicProfileExtra', publicProfileExtra],
+			['signingKeyPair', signingKeyPair],
+			pseudoAccount ?
+				['pseudoAccount', new Uint8Array(0)] :
+				['certificateRequest', certificateRequest]
+		].map(async ([k, v, proto = BinaryProto]) =>
+			setItem(namespace, `users/${username}/${k}`, proto, v)
+		),
+		inviteDataRef.remove(),
+		setItem(
+			namespace,
+			`users/${username}/inviterUsernamePlaintext`,
+			StringProto,
+			inviterUsername
+		),
+		setItem(namespace, `users/${username}/plan`, CyphPlan, {
+			plan
+		}),
+		!braintreeID ?
+			undefined :
+			database
+				.ref(`${namespace}/users/${username}/internal/braintreeID`)
+				.set(braintreeID),
+		!braintreeSubscriptionID ?
+			undefined :
+			database
+				.ref(
+					`${namespace}/users/${username}/internal/braintreeSubscriptionID`
+				)
+				.set(braintreeSubscriptionID),
+		!inviterUsername ?
+			undefined :
+			removeItem(
+				namespace,
+				`users/${inviterUsername}/inviteCodes/${inviteCode}`
+			).catch(() => {}),
+		!reservedUsername ?
+			undefined :
+			database
+				.ref(
+					`${namespace}/reservedUsernames/${normalize(
+						reservedUsername
+					)}`
+				)
+				.remove()
+	]);
+
+	if (email) {
+		await setItem(namespace, `users/${username}/email`, StringProto, email);
+	}
+
+	await Promise.all([
+		database.ref(`${namespace}/pendingSignups/${username}`).set({
+			timestamp: admin.database.ServerValue.TIMESTAMP,
+			uid: userRecord.uid
+		}),
+		sendMailInternal(
+			'user-registrations@cyph.com',
+			`Cyph User Registration: ${userRecord.email}`
+		)
+	]);
+});
+
 exports.rejectPseudoRelationship = onCall(
 	async (data, context, namespace, getUsername) => {
 		const id = validateInput(data.id);
@@ -779,92 +913,6 @@ exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
 		)
 	]);
 });
-
-exports.userConsumeInvite = functions.database
-	.ref('/{namespace}/users/{user}/inviteCode')
-	.onWrite(async (data, {params}) => {
-		if (!data.after.val()) {
-			return;
-		}
-
-		const username = params.user;
-
-		const inviteCode = await getItem(
-			params.namespace,
-			`users/${username}/inviteCode`,
-			StringProto
-		);
-
-		if (!inviteCode) {
-			return;
-		}
-
-		const inviteDataRef = database.ref(
-			`${params.namespace}/inviteCodes/${inviteCode}`
-		);
-
-		const inviteData = (await inviteDataRef.once('value')).val() || {};
-		const {
-			braintreeID,
-			braintreeSubscriptionID,
-			inviterUsername,
-			reservedUsername
-		} = inviteData;
-		const plan =
-			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
-
-		if (
-			await usernameBlacklisted(
-				params.namespace,
-				username,
-				reservedUsername
-			)
-		) {
-			return;
-		}
-
-		return Promise.all([
-			inviteDataRef.remove(),
-			setItem(
-				params.namespace,
-				`users/${username}/inviterUsernamePlaintext`,
-				StringProto,
-				typeof inviterUsername === 'string' ? inviterUsername : ' '
-			),
-			setItem(params.namespace, `users/${username}/plan`, CyphPlan, {
-				plan
-			}),
-			!braintreeID ?
-				undefined :
-				database
-					.ref(
-						`${params.namespace}/users/${username}/internal/braintreeID`
-					)
-					.set(braintreeID),
-			!braintreeSubscriptionID ?
-				undefined :
-				database
-					.ref(
-						`${params.namespace}/users/${username}/internal/braintreeSubscriptionID`
-					)
-					.set(braintreeSubscriptionID),
-			!inviterUsername ?
-				undefined :
-				removeItem(
-					params.namespace,
-					`users/${inviterUsername}/inviteCodes/${inviteCode}`
-				).catch(() => {}),
-			!reservedUsername ?
-				undefined :
-				database
-					.ref(
-						`${params.namespace}/reservedUsernames/${normalize(
-							reservedUsername
-						)}`
-					)
-					.remove()
-		]);
-	});
 
 exports.userContactSet = functions.database
 	.ref('/{namespace}/users/{user}/contacts/{contact}')
@@ -1439,76 +1487,6 @@ exports.userPublicProfileSet = functions.database
 					normalize(publicProfile.realUsername) === username ?
 					publicProfile.realUsername :
 					username
-			)
-		]);
-	});
-
-exports.userRegister = functions.auth
-	.user()
-	.onCreate(async (userRecord, {params}) => {
-		const emailSplit = (userRecord.email || '').split('@');
-		const username = normalize(emailSplit[0]);
-		const namespace = emailSplit[1].replace(/\./g, '_');
-
-		const inviteCode = validateInput(
-			await getItem(
-				namespace,
-				`pendingSignupInviteCodes/${username}`,
-				StringProto
-			)
-		);
-		const inviteDataRef = database.ref(
-			`${namespace}/inviteCodes/${inviteCode}`
-		);
-
-		const inviteData = (await inviteDataRef.once('value')).val() || {};
-		const plan =
-			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
-
-		if (
-			emailSplit.length !== 2 ||
-			(userRecord.providerData &&
-				userRecord.providerData.find(
-					o => o.providerId !== 'password'
-					// firebase.auth.EmailAuthProvider.PROVIDER_ID
-				)) ||
-			typeof inviteData.inviterUsername !== 'string' ||
-			username.length < config.planConfig[plan].usernameMinLength ||
-			(await usernameBlacklisted(
-				namespace,
-				username,
-				inviteData.reservedUsername
-			))
-		) {
-			console.error(
-				`Deleting user: ${JSON.stringify({
-					emailSplit,
-					inviteCode,
-					inviteData,
-					planConfig: config.planConfig[plan],
-					username,
-					userRecord
-				})}`
-			);
-
-			return auth.deleteUser(userRecord.uid);
-		}
-
-		return Promise.all([
-			database.ref(`${namespace}/pendingSignups/${username}`).set({
-				timestamp: admin.database.ServerValue.TIMESTAMP,
-				uid: userRecord.uid
-			}),
-			sendMailInternal(
-				'user-registrations@cyph.com',
-				`Cyph User Registration: ${userRecord.email}`
-			),
-			removeItem(namespace, `pendingSignupInviteCodes/${username}`),
-			setItem(
-				namespace,
-				`users/${username}/inviteCode`,
-				StringProto,
-				inviteCode
 			)
 		]);
 	});

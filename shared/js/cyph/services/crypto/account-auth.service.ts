@@ -2,7 +2,6 @@
 
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {RegistrationErrorCodes} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {IProto} from '../../iproto';
 import {
@@ -39,7 +38,6 @@ import {EnvService} from '../env.service';
 import {ErrorService} from '../error.service';
 import {FingerprintService} from '../fingerprint.service';
 import {LocalStorageService} from '../local-storage.service';
-import {StringsService} from '../strings.service';
 import {AccountDatabaseService} from './account-database.service';
 import {PotassiumService} from './potassium.service';
 
@@ -50,11 +48,6 @@ import {PotassiumService} from './potassium.service';
 export class AccountAuthService extends BaseProvider {
 	/** @ignore */
 	private connectTrackerCleanup?: () => void;
-
-	/** Error message. */
-	public readonly errorMessage = new BehaviorSubject<string | undefined>(
-		undefined
-	);
 
 	/** If true, the login prompt will be used to create a pseudo-account. */
 	public readonly pseudoAccountLogin = new BehaviorSubject<boolean>(false);
@@ -101,8 +94,9 @@ export class AccountAuthService extends BaseProvider {
 		data: T,
 		key: Uint8Array,
 		isPublic: boolean = false,
-		compressed: boolean = false
-	) : Promise<void> {
+		compressed: boolean = false,
+		skipSetItem: boolean = false
+	) : Promise<Uint8Array> {
 		url = await this.accountDatabaseService.normalizeURL(url);
 
 		const accountFormattedData = {
@@ -110,22 +104,24 @@ export class AccountAuthService extends BaseProvider {
 			value: await serialize(proto, data)
 		};
 
-		await this.databaseService.setItem(
-			url,
-			BinaryProto,
-			isPublic ?
-				await this.potassiumService.sign.sign(
-					accountFormattedData.value,
-					key,
-					accountFormattedData.url,
-					compressed
-				) :
-				await this.potassiumService.secretBox.seal(
-					accountFormattedData.value,
-					key,
-					accountFormattedData.url
-				)
-		);
+		const bytes = isPublic ?
+			await this.potassiumService.sign.sign(
+				accountFormattedData.value,
+				key,
+				accountFormattedData.url,
+				compressed
+			) :
+			await this.potassiumService.secretBox.seal(
+				accountFormattedData.value,
+				key,
+				accountFormattedData.url
+			);
+
+		if (!skipSetItem) {
+			await this.databaseService.setItem(url, BinaryProto, bytes);
+		}
+
+		return bytes;
 	}
 
 	/** Changes master key. */
@@ -735,78 +731,39 @@ export class AccountAuthService extends BaseProvider {
 		};
 
 		try {
-			const [encryptionKeyPair, signingKeyPair] = await Promise.all([
+			const [
+				encryptionKeyPair,
+				signingKeyPair,
+				masterKeyHash
+			] = await Promise.all([
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
-				(async () => {
-					if (inviteCode) {
-						await this.databaseService.setItem(
-							`pendingSignupInviteCodes/${username}`,
-							StringProto,
-							inviteCode,
-							false
-						);
-					}
-
-					await this.databaseService.register(
-						username,
-						loginData.secondaryPassword
-					);
-
-					if (!inviteCode) {
-						return;
-					}
-
-					const inviterUsername = await this.databaseService
-						.getAsyncValue(
-							`users/${username}/inviterUsernamePlaintext`,
-							StringProto,
-							undefined,
-							true
-						)
-						.getValue();
-
-					if (inviterUsername === ' ') {
-						throw RegistrationErrorCodes.InvalidInviteCode;
-					}
-
-					await Promise.all<{}>([
-						this.setItem(
-							`users/${username}/inviterUsername`,
-							StringProto,
-							inviterUsername,
-							loginData.symmetricKey
-						),
-						inviterUsername && inviterUsername !== username ?
-							this.databaseService.setItem<IAccountContactState>(
-								`users/${username}/contacts/${inviterUsername}`,
-								AccountContactState,
-								{
-									state:
-										AccountContactState.States
-											.OutgoingRequest
-								}
-							) :
-							Promise.resolve()
-					]);
-				})()
-			]);
-
-			const masterKeyHashPromise =
 				typeof masterKey === 'string' ?
 					this.passwordHash(username, masterKey) :
 					this.potassiumService.secretBox.keyBytes.then(keyBytes =>
 						this.potassiumService.randomBytes(keyBytes)
-					);
-
-			await Promise.all<{}>([
-				masterKeyHashPromise.then(async masterKeyHash =>
-					this.setItem(
-						`users/${username}/loginData`,
-						AccountLoginData,
-						loginData,
-						masterKeyHash
 					)
+			]);
+
+			const [
+				registerLoginData,
+				registerPublicProfile,
+				registerPublicProfileExtra,
+				registerEncryptionKeyPair,
+				registerSigningKeyPair,
+				registerCertificateRequest,
+				registerPinHash,
+				registerPinIsCustom,
+				registerPublicEncryptionKey
+			] = await Promise.all([
+				this.setItem(
+					`users/${username}/loginData`,
+					AccountLoginData,
+					loginData,
+					masterKeyHash,
+					undefined,
+					undefined,
+					true
 				),
 				this.setItem<IAccountUserProfile>(
 					`users/${username}/publicProfile`,
@@ -824,21 +781,15 @@ export class AccountAuthService extends BaseProvider {
 					},
 					signingKeyPair.privateKey,
 					true,
+					true,
 					true
-				).then(async () =>
-					!email ?
-						Promise.resolve() :
-						this.databaseService.setItem(
-							`users/${username}/email`,
-							StringProto,
-							email
-						)
 				),
 				this.setItem<IAccountUserProfileExtra>(
 					`users/${username}/publicProfileExtra`,
 					AccountUserProfileExtra,
 					{},
 					signingKeyPair.privateKey,
+					true,
 					true,
 					true
 				),
@@ -849,32 +800,32 @@ export class AccountAuthService extends BaseProvider {
 					`users/${username}/lastPresence`,
 					AccountUserPresence,
 					{status: AccountUserPresence.Statuses.Online},
-					loginData.symmetricKey
+					loginData.symmetricKey,
+					undefined,
+					undefined,
+					true
 				),
 				*/
 				this.setItem(
 					`users/${username}/encryptionKeyPair`,
 					KeyPair,
 					encryptionKeyPair,
-					loginData.symmetricKey
+					loginData.symmetricKey,
+					undefined,
+					undefined,
+					true
 				),
 				this.setItem(
 					`users/${username}/signingKeyPair`,
 					KeyPair,
 					signingKeyPair,
-					loginData.symmetricKey
-				),
-				this.databaseService.setItem(
-					`users/${username}/profileVisible`,
-					BooleanProto,
+					loginData.symmetricKey,
+					undefined,
+					undefined,
 					true
 				),
 				pseudoAccount ?
-					this.databaseService.setItem(
-						`users/${username}/pseudoAccount`,
-						BinaryProto,
-						new Uint8Array(0)
-					) :
+					new Uint8Array(0) :
 					this.setItem<IAGSEPKICSR>(
 						`users/${username}/certificateRequest`,
 						AGSEPKICSR,
@@ -883,6 +834,8 @@ export class AccountAuthService extends BaseProvider {
 							username
 						},
 						signingKeyPair.privateKey,
+						true,
+						undefined,
 						true
 					),
 				this.passwordHash(username, pin.value).then(async pinHash =>
@@ -890,14 +843,20 @@ export class AccountAuthService extends BaseProvider {
 						`users/${username}/pin/hash`,
 						BinaryProto,
 						pinHash,
-						loginData.symmetricKey
+						loginData.symmetricKey,
+						undefined,
+						undefined,
+						true
 					)
 				),
 				this.setItem(
 					`users/${username}/pin/isCustom`,
 					BooleanProto,
 					pin.isCustom,
-					loginData.symmetricKey
+					loginData.symmetricKey,
+					undefined,
+					undefined,
+					true
 				),
 				this.setItem(
 					`users/${username}/publicEncryptionKey`,
@@ -905,28 +864,61 @@ export class AccountAuthService extends BaseProvider {
 					encryptionKeyPair.publicKey,
 					signingKeyPair.privateKey,
 					true,
+					true,
 					true
 				)
 			]);
 
-			return this.login(username, await masterKeyHashPromise);
-		}
-		catch (errorCode) {
-			switch (errorCode) {
-				case RegistrationErrorCodes.InvalidInviteCode:
-					this.errorMessage.next(
-						this.stringsService.invalidInviteCode
-					);
-					break;
+			await this.databaseService.register(
+				username,
+				loginData.secondaryPassword,
+				{
+					certificateRequest: registerCertificateRequest,
+					email,
+					encryptionKeyPair: registerEncryptionKeyPair,
+					inviteCode,
+					loginData: registerLoginData,
+					pinHash: registerPinHash,
+					pinIsCustom: registerPinIsCustom,
+					pseudoAccount,
+					publicEncryptionKey: registerPublicEncryptionKey,
+					publicProfile: registerPublicProfile,
+					publicProfileExtra: registerPublicProfileExtra,
+					signingKeyPair: registerSigningKeyPair
+				}
+			);
 
-				default:
-					this.errorMessage.next(undefined);
+			if (inviteCode) {
+				const inviterUsername = await this.databaseService
+					.getItem(
+						`users/${username}/inviterUsernamePlaintext`,
+						StringProto
+					)
+					.catch(() => '');
+
+				await Promise.all<{}>([
+					this.setItem(
+						`users/${username}/inviterUsername`,
+						StringProto,
+						inviterUsername,
+						loginData.symmetricKey
+					),
+					inviterUsername && inviterUsername !== username ?
+						this.databaseService.setItem<IAccountContactState>(
+							`users/${username}/contacts/${inviterUsername}`,
+							AccountContactState,
+							{
+								state:
+									AccountContactState.States.OutgoingRequest
+							}
+						) :
+						Promise.resolve()
+				]);
 			}
 
-			await this.databaseService
-				.unregister(username, loginData.secondaryPassword)
-				.catch(() => {});
-
+			return this.login(username, masterKeyHash);
+		}
+		catch {
 			return false;
 		}
 	}
@@ -1017,10 +1009,7 @@ export class AccountAuthService extends BaseProvider {
 		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService,
-
-		/** @ignore */
-		private readonly stringsService: StringsService
+		private readonly potassiumService: PotassiumService
 	) {
 		super();
 	}

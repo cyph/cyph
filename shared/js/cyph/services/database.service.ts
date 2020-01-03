@@ -700,12 +700,20 @@ export class DatabaseService extends DataManagerService {
 
 	/** Registers. */
 	public async register (
-		_USERNAME: string,
-		_PASSWORD: string
+		username: string,
+		password: string,
+		data: Record<string, any> = {}
 	) : Promise<void> {
-		throw new Error(
-			'Must provide an implementation of DatabaseService.register.'
-		);
+		try {
+			await this.callFunction('register', {
+				...data,
+				password,
+				username
+			});
+		}
+		catch {}
+
+		await this.login(username, password);
 	}
 
 	/** Registers a token with the database server for push notifications. */

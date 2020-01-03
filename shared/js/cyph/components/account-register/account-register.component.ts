@@ -456,8 +456,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					this.inviteCode.value
 				)) ?
 					undefined :
-					this.accountAuthService.errorMessage.value ||
-						this.stringsService.signupFailed
+					this.stringsService.signupFailed
 			);
 		}
 		catch {

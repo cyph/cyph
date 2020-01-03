@@ -78,8 +78,6 @@ service firebase.storage {
 
 			// match /pendingSignups/{hash} {}
 
-			// match /pendingSignupInviteCodes/{hash} {}
-
 			// match /pseudoRelationships/{hash} {}
 
 			// match /reservedUsernames/{hash} {}
