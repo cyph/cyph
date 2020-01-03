@@ -27,7 +27,7 @@ import {
 import {lock, lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
 import {requestByteStream} from '../util/request';
-import {deserialize, serialize} from '../util/serialization';
+import {deserialize, dynamicSerialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {
@@ -329,10 +329,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 		name: string,
 		data: Record<string, any> = {}
 	) : Promise<any> {
-		return (await (await this.app).functions().httpsCallable(name)({
-			...data,
-			namespace: this.namespace
-		})).data;
+		return (await (await this.app).functions().httpsCallable(name)(
+			dynamicSerialize({
+				...data,
+				namespace: this.namespace
+			})
+		)).data;
 	}
 
 	/** @inheritDoc */

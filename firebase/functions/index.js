@@ -48,6 +48,7 @@ const {
 } = require('./proto');
 
 const {
+	dynamicDeserialize,
 	normalize,
 	readableByteLength,
 	readableID,
@@ -193,8 +194,10 @@ const validateInput = (input, regex, optional) => {
 };
 
 const onCall = f =>
-	functions.https.onCall(async (data, context) =>
-		f(
+	functions.https.onCall(async (data, context) => {
+		data = dynamicDeserialize(data);
+
+		return f(
 			data,
 			context,
 			validateInput(data.namespace.replace(/\./g, '_')),
@@ -202,8 +205,8 @@ const onCall = f =>
 				context.auth ?
 					(await auth.getUser(context.auth.uid)).email.split('@')[0] :
 					undefined
-		)
-	);
+		);
+	});
 
 const onRequest = (adminOnly, f) =>
 	functions.https.onRequest((req, res) =>
