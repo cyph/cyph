@@ -331,7 +331,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 	) : Promise<any> {
 		const o = {
 			...data,
-			namespace: this.namespace
+			namespace: this.namespace,
+			testEnvName: this.envService.environment.production ?
+				undefined :
+				this.envService.environment.envName
 		};
 
 		debugLog(() => ({databaseCallFunction: [name, o]}));

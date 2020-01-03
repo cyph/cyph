@@ -204,7 +204,8 @@ const onCall = f =>
 			async () =>
 				context.auth ?
 					(await auth.getUser(context.auth.uid)).email.split('@')[0] :
-					undefined
+					undefined,
+			data.testEnvName
 		);
 	});
 
@@ -668,138 +669,149 @@ exports.openUserToken = onRequest(true, async (req, res, namespace) => {
 	return tokens.open(userToken, await getTokenKey(namespace));
 });
 
-exports.register = onCall(async (data, context, namespace, getUsername) => {
-	const {
-		certificateRequest,
-		email,
-		encryptionKeyPair,
-		inviteCode,
-		loginData,
-		password,
-		pinHash,
-		pinIsCustom,
-		pseudoAccount,
-		publicEncryptionKey,
-		publicProfile,
-		publicProfileExtra,
-		signingKeyPair,
-		username
-	} = data || {};
+exports.register = onCall(
+	async (data, context, namespace, getUsername, testEnvName) => {
+		const {
+			certificateRequest,
+			email,
+			encryptionKeyPair,
+			inviteCode,
+			loginData,
+			password,
+			pinHash,
+			pinIsCustom,
+			pseudoAccount,
+			publicEncryptionKey,
+			publicProfile,
+			publicProfileExtra,
+			signingKeyPair,
+			username
+		} = data || {};
 
-	if (
-		typeof inviteCode !== 'string' ||
-		inviteCode.length < 1 ||
-		typeof password !== 'string' ||
-		password.length < 1 ||
-		typeof username !== 'string' ||
-		username.length < 1
-	) {
-		throw new Error('Invalid credentials for new account.');
-	}
+		if (
+			typeof inviteCode !== 'string' ||
+			inviteCode.length < 1 ||
+			typeof password !== 'string' ||
+			password.length < 1 ||
+			typeof username !== 'string' ||
+			username.length < 1
+		) {
+			throw new Error('Invalid credentials for new account.');
+		}
 
-	const inviteDataRef = database.ref(
-		`${namespace}/inviteCodes/${inviteCode}`
-	);
+		const inviteDataRef = database.ref(
+			`${namespace}/inviteCodes/${inviteCode}`
+		);
 
-	const inviteData = (await inviteDataRef.once('value')).val() || {};
-	const {
-		braintreeID,
-		braintreeSubscriptionID,
-		inviterUsername,
-		reservedUsername
-	} = inviteData;
-	const plan =
-		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
+		const inviteData = (await inviteDataRef.once('value')).val() || {};
+		const {
+			braintreeID,
+			braintreeSubscriptionID,
+			inviterUsername,
+			reservedUsername
+		} = inviteData;
+		const plan =
+			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
-	if (typeof inviterUsername !== 'string') {
-		throw new Error('Invalid invite code.');
-	}
+		if (typeof inviterUsername !== 'string') {
+			throw new Error('Invalid invite code.');
+		}
 
-	if (
-		username.length < config.planConfig[plan].usernameMinLength ||
-		(await usernameBlacklisted(namespace, username, reservedUsername))
-	) {
-		throw new Error('Blacklisted username.');
-	}
+		if (
+			username.length < config.planConfig[plan].usernameMinLength ||
+			(await usernameBlacklisted(namespace, username, reservedUsername))
+		) {
+			throw new Error('Blacklisted username.');
+		}
 
-	const userRecord = await auth.createUser({
-		disabled: false,
-		email: `${username}@${namespace.replace(/_/g, '.')}`,
-		emailVerified: true,
-		password
-	});
+		const userRecord = await auth.createUser({
+			disabled: false,
+			email: `${username}@${namespace.replace(/_/g, '.')}`,
+			emailVerified: true,
+			password
+		});
 
-	await Promise.all([
-		...[
-			['encryptionKeyPair', encryptionKeyPair],
-			['inviteCode', inviteCode, StringProto][('loginData', loginData)],
-			['pin/hash', pinHash],
-			['pin/isCustom', pinIsCustom],
-			['profileVisible', true, BooleanProto],
-			['publicEncryptionKey', publicEncryptionKey],
-			['publicProfile', publicProfile],
-			['publicProfileExtra', publicProfileExtra],
-			['signingKeyPair', signingKeyPair],
-			pseudoAccount ?
-				['pseudoAccount', new Uint8Array(0)] :
-				['certificateRequest', certificateRequest]
-		].map(async ([k, v, proto = BinaryProto]) =>
-			setItem(namespace, `users/${username}/${k}`, proto, v)
-		),
-		inviteDataRef.remove(),
-		setItem(
-			namespace,
-			`users/${username}/inviterUsernamePlaintext`,
-			StringProto,
-			inviterUsername
-		),
-		setItem(namespace, `users/${username}/plan`, CyphPlan, {
-			plan
-		}),
-		!braintreeID ?
-			undefined :
-			database
-				.ref(`${namespace}/users/${username}/internal/braintreeID`)
-				.set(braintreeID),
-		!braintreeSubscriptionID ?
-			undefined :
-			database
-				.ref(
-					`${namespace}/users/${username}/internal/braintreeSubscriptionID`
-				)
-				.set(braintreeSubscriptionID),
-		!inviterUsername ?
-			undefined :
-			removeItem(
+		await Promise.all([
+			...[
+				['encryptionKeyPair', encryptionKeyPair],
+				['inviteCode', inviteCode, StringProto][
+					('loginData', loginData)
+				],
+				['pin/hash', pinHash],
+				['pin/isCustom', pinIsCustom],
+				['profileVisible', true, BooleanProto],
+				['publicEncryptionKey', publicEncryptionKey],
+				['publicProfile', publicProfile],
+				['publicProfileExtra', publicProfileExtra],
+				['signingKeyPair', signingKeyPair],
+				pseudoAccount ?
+					['pseudoAccount', new Uint8Array(0)] :
+					['certificateRequest', certificateRequest]
+			].map(async ([k, v, proto = BinaryProto]) =>
+				setItem(namespace, `users/${username}/${k}`, proto, v)
+			),
+			inviteDataRef.remove(),
+			setItem(
 				namespace,
-				`users/${inviterUsername}/inviteCodes/${inviteCode}`
-			).catch(() => {}),
-		!reservedUsername ?
-			undefined :
-			database
-				.ref(
-					`${namespace}/reservedUsernames/${normalize(
-						reservedUsername
-					)}`
-				)
-				.remove()
-	]);
+				`users/${username}/inviterUsernamePlaintext`,
+				StringProto,
+				inviterUsername
+			),
+			setItem(namespace, `users/${username}/plan`, CyphPlan, {
+				plan
+			}),
+			!braintreeID ?
+				undefined :
+				database
+					.ref(`${namespace}/users/${username}/internal/braintreeID`)
+					.set(braintreeID),
+			!braintreeSubscriptionID ?
+				undefined :
+				database
+					.ref(
+						`${namespace}/users/${username}/internal/braintreeSubscriptionID`
+					)
+					.set(braintreeSubscriptionID),
+			!inviterUsername ?
+				undefined :
+				removeItem(
+					namespace,
+					`users/${inviterUsername}/inviteCodes/${inviteCode}`
+				).catch(() => {}),
+			!reservedUsername ?
+				undefined :
+				database
+					.ref(
+						`${namespace}/reservedUsernames/${normalize(
+							reservedUsername
+						)}`
+					)
+					.remove()
+		]);
 
-	if (email) {
-		await setItem(namespace, `users/${username}/email`, StringProto, email);
+		if (email) {
+			await setItem(
+				namespace,
+				`users/${username}/email`,
+				StringProto,
+				email
+			);
+		}
+
+		await Promise.all([
+			database.ref(`${namespace}/pendingSignups/${username}`).set({
+				timestamp: admin.database.ServerValue.TIMESTAMP,
+				uid: userRecord.uid
+			}),
+			sendMailInternal(
+				'user-registrations@cyph.com',
+				`${
+					testEnvName ? `[${testEnvName}] ` : ''
+				}Cyph User Registration: ${userRecord.email}`
+			)
+		]);
 	}
-
-	await Promise.all([
-		database.ref(`${namespace}/pendingSignups/${username}`).set({
-			timestamp: admin.database.ServerValue.TIMESTAMP,
-			uid: userRecord.uid
-		}),
-		sendMailInternal(
-			'user-registrations@cyph.com',
-			`Cyph User Registration: ${userRecord.email}`
-		)
-	]);
-});
+);
 
 exports.rejectPseudoRelationship = onCall(
 	async (data, context, namespace, getUsername) => {
