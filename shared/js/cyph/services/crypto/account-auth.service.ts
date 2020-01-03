@@ -869,6 +869,19 @@ export class AccountAuthService extends BaseProvider {
 				)
 			]);
 
+			await Promise.all([
+				this.localStorageService.setItem(
+					'masterKey',
+					BinaryProto,
+					masterKeyHash
+				),
+				this.localStorageService.setItem(
+					'username',
+					StringProto,
+					username
+				)
+			]);
+
 			await this.databaseService.register(
 				username,
 				loginData.secondaryPassword,
