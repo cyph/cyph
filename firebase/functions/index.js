@@ -197,16 +197,27 @@ const onCall = f =>
 	functions.https.onCall(async (data, context) => {
 		data = dynamicDeserialize(data);
 
-		return f(
-			data,
-			context,
-			validateInput(data.namespace.replace(/\./g, '_')),
-			async () =>
-				context.auth ?
-					(await auth.getUser(context.auth.uid)).email.split('@')[0] :
-					undefined,
-			data.testEnvName
-		);
+		try {
+			return {
+				result: await f(
+					data,
+					context,
+					validateInput(data.namespace.replace(/\./g, '_')),
+					async () =>
+						context.auth ?
+							(await auth.getUser(context.auth.uid)).email.split(
+								'@'
+							)[0] :
+							undefined,
+					data.testEnvName
+				)
+			};
+		}
+		catch (err) {
+			return {
+				err: !err ? true : err.message ? err.message : err.toString()
+			};
+		}
 	});
 
 const onRequest = (adminOnly, f) =>

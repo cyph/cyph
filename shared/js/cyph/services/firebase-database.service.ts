@@ -339,9 +339,19 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		debugLog(() => ({databaseCallFunction: [name, o]}));
 
-		return (await (await this.app).functions().httpsCallable(name)(
-			dynamicSerialize(o)
-		)).data;
+		const {err, result} = (await (await this.app)
+			.functions()
+			.httpsCallable(name)(dynamicSerialize(o))).data;
+
+		if (err !== undefined) {
+			throw new Error(
+				`Function ${name} failed${
+					typeof err === 'string' ? `: ${err}` : '.'
+				}`
+			);
+		}
+
+		return result;
 	}
 
 	/** @inheritDoc */
