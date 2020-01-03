@@ -41,6 +41,14 @@
 			<span cyphTranslate>for more details and the solution.</span>
 		</h3>
 
+		<h3 class="cyph-banner emphasis warn" *ngIf="envService.isOnion">
+			<span cyphTranslate>
+				We're currently experiencing issues with Burner chats over Tor.
+				We will investigate this as soon as possible, and in the
+				meantime apologies for the inconvenience!
+			</span>
+		</h3>
+
 		<cyph-chat-main
 			fxFlex
 			fxFlexFill
