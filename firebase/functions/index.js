@@ -734,9 +734,8 @@ exports.register = onCall(
 		await Promise.all([
 			...[
 				['encryptionKeyPair', encryptionKeyPair],
-				['inviteCode', inviteCode, StringProto][
-					('loginData', loginData)
-				],
+				['inviteCode', inviteCode, StringProto],
+				['loginData', loginData],
 				['pin/hash', pinHash],
 				['pin/isCustom', pinIsCustom],
 				['profileVisible', true, BooleanProto],
