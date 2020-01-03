@@ -329,11 +329,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 		name: string,
 		data: Record<string, any> = {}
 	) : Promise<any> {
+		const o = {
+			...data,
+			namespace: this.namespace
+		};
+
+		debugLog(() => ({databaseCallFunction: [name, o]}));
+
 		return (await (await this.app).functions().httpsCallable(name)(
-			dynamicSerialize({
-				...data,
-				namespace: this.namespace
-			})
+			dynamicSerialize(o)
 		)).data;
 	}
 
