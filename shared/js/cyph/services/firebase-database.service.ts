@@ -332,7 +332,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const o = {
 			...data,
 			namespace: this.namespace,
-			testEnvName: this.envService.environment.production ?
+			testEnvName: this.envService.environment.useProdSigningKeys ?
 				undefined :
 				this.envService.environment.envName
 		};
