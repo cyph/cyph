@@ -56,6 +56,8 @@ const sendMailInternal = async (
 	accountsURL,
 	noUnsubscribe
 ) => {
+	const markdown = (typeof text === 'object' ? text.markdown : text) || '';
+
 	if (typeof text === 'object') {
 		noUnsubscribe = noUnsubscribe || text.noUnsubscribe;
 
@@ -106,11 +108,11 @@ const sendMailInternal = async (
 					method: 'request'
 				},
 			subject,
-			text: (typeof text === 'object' ? text.markdown : text) || '',
+			text: markdown,
 			to: typeof to === 'string' ? to : to.formatted
 		}));
 
-	return text.markdown;
+	return markdown;
 };
 
 /**
