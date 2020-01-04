@@ -5,6 +5,7 @@ import {
 	Inject,
 	Input,
 	OnChanges,
+	OnInit,
 	Optional
 } from '@angular/core';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
@@ -30,7 +31,8 @@ import {sleep} from '../../util/wait';
 	styleUrls: ['./markdown.component.scss'],
 	templateUrl: './markdown.component.html'
 })
-export class MarkdownComponent extends BaseProvider implements OnChanges {
+export class MarkdownComponent extends BaseProvider
+	implements OnChanges, OnInit {
 	/** @ignore */
 	private initiated: boolean = false;
 
@@ -46,21 +48,8 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 	/** If true, <a> tags with # links will be rendered with the attribute target='_self'. */
 	@Input() public targetSelf?: boolean;
 
-	/** Handle router link clicks. */
-	public click (e: MouseEvent) : void {
-		if (!(e.target instanceof HTMLAnchorElement) || !this.router) {
-			return;
-		}
-
-		const routerLink = e.target.getAttribute('router-link');
-
-		if (routerLink) {
-			this.router.navigate(routerLink.split('/'));
-		}
-	}
-
-	/** @inheritDoc */
-	public async ngOnChanges () : Promise<void> {
+	/** @ignore */
+	private async onChanges () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
@@ -119,6 +108,29 @@ export class MarkdownComponent extends BaseProvider implements OnChanges {
 		}
 
 		this.html.next(this.domSanitizer.bypassSecurityTrustHtml(html));
+	}
+
+	/** Handle router link clicks. */
+	public click (e: MouseEvent) : void {
+		if (!(e.target instanceof HTMLAnchorElement) || !this.router) {
+			return;
+		}
+
+		const routerLink = e.target.getAttribute('router-link');
+
+		if (routerLink) {
+			this.router.navigate(routerLink.split('/'));
+		}
+	}
+
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		this.onChanges();
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.onChanges();
 	}
 
 	constructor (
