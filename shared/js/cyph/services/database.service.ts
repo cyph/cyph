@@ -704,14 +704,11 @@ export class DatabaseService extends DataManagerService {
 		password: string,
 		data: Record<string, any> = {}
 	) : Promise<void> {
-		try {
-			await this.callFunction('register', {
-				...data,
-				password,
-				username
-			});
-		}
-		catch {}
+		await this.callFunction('register', {
+			...data,
+			password,
+			username
+		});
 
 		await this.login(username, password);
 	}
