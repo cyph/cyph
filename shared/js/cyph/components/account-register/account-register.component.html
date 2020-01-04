@@ -1069,11 +1069,13 @@
 								[tickInterval]="1"
 							></mat-slider>
 							<mat-icon
+								#masterKeyStrengthHelpTooltip="matTooltip"
 								matSuffix
 								[matTooltip]="
 									stringsService.masterKeyStrengthHelp
 								"
 								matTooltipPosition="above"
+								(click)="masterKeyStrengthHelpTooltip.show()"
 							>
 								help
 							</mat-icon>

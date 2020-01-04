@@ -157,11 +157,15 @@
 									required
 								/>
 								<mat-icon
+									#usernameCapitalizationHelpTooltip="matTooltip"
 									matSuffix
 									[matTooltip]="
 										stringsService.usernameCapitalizationHelp
 									"
 									matTooltipPosition="above"
+									(click)="
+										usernameCapitalizationHelpTooltip.show()
+									"
 								>
 									help
 								</mat-icon>
