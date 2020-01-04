@@ -142,7 +142,7 @@ module.exports = (config, isCloudFunction) => {
 			const [bytes, bytesBase64] =
 				typeof value === 'string' ?
 					[Buffer.from(value, 'base64'), value] :
-					[value, value.toString('base64')];
+					[value, Buffer.from(value).toString('base64')];
 			const noBlobStorage = bytes.length <= nonBlobStorageLimit;
 
 			if (hash === undefined) {
