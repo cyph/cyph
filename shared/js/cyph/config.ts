@@ -58,6 +58,20 @@ export class Config {
 	/** Indicates the original language of any content to be translated. */
 	public readonly defaultLanguage: string = 'en';
 
+	/**
+	 * Master key configuration.
+	 *
+	 * `defaultSize` refers to an index in `sizes`.
+	 * `sizes` is a list of bits of entropy for generated keys.
+	 */
+	public readonly masterKey = {
+		customMinLength: 20,
+		defaultSize: 3,
+		sizes: [0, 64, 80, 128, 256],
+		sizeStrength: (n: number) : 'very-high' | 'high' | 'medium' | 'low' =>
+			n > 3 ? 'very-high' : n === 3 ? 'high' : n === 2 ? 'medium' : 'low'
+	};
+
 	/** Max signed 32-bit integer. */
 	public readonly maxInt32: number = 2147483647;
 

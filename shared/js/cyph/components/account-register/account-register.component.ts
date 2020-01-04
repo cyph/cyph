@@ -10,7 +10,15 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
+import memoize from 'lodash-es/memoize';
+import {
+	BehaviorSubject,
+	combineLatest,
+	concat,
+	from,
+	Observable,
+	of
+} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
@@ -148,9 +156,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.masterKeyConfirm
 	);
 
-	/** Minimum length of custom master key. */
-	public readonly masterKeyLength: number = 20;
-
 	/** Indicates whether the master key is viable. */
 	public readonly masterKeyReady: BehaviorSubject<boolean>;
 
@@ -203,14 +208,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
 
-	/** If applicable, master key that user must still confirm. */
-	public readonly unconfirmedMasterKey = toBehaviorSubject<string>(
-		this.localStorageService
-			.getString('unconfirmedMasterKey')
-			.catch(() => ''),
-		''
-	);
-
 	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
 	public readonly useLockScreenPIN = new BehaviorSubject<boolean>(
 		this.envService.isMobileOS
@@ -252,10 +249,16 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Indicates whether or not xkcdPassphrase should be used. */
 	public readonly useXkcdPassphrase = new BehaviorSubject<boolean>(true);
 
-	/** Auto-generated password option. */
-	public readonly xkcdPassphrase = toBehaviorSubject<string>(
-		xkcdPassphrase.generate(),
-		''
+	/** Auto-generated password option selection. */
+	public readonly xkcdPassphrase = new BehaviorSubject<number>(
+		this.configService.masterKey.defaultSize
+	);
+
+	/** Auto-generated password options. */
+	public xkcdPassphrases:
+		| (() => Promise<string>)[]
+		| undefined = this.configService.masterKey.sizes.map(n =>
+		memoize(async () => (n === 0 ? '' : xkcdPassphrase.generate(n)))
 	);
 
 	/** Indicates whether xkcdPassphrase has been viewed. */
@@ -271,17 +274,31 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		try {
 			this.checking.next(true);
-			await sleep(random(750, 250));
+
+			const masterKey = !this.useXkcdPassphrase.value ?
+				this.masterKey.value :
+			this.xkcdPassphrases ?
+				await this.xkcdPassphrases[this.xkcdPassphrase.value]() :
+				'';
 
 			if (
-				!safeStringCompare(
-					this.unconfirmedMasterKey.value,
-					this.finalConfirmation.masterKey
-				)
+				!safeStringCompare(masterKey, this.finalConfirmation.masterKey)
 			) {
+				await sleep(random(750, 250));
 				this.submitError.next(this.stringsService.invalidMasterKey);
 				return;
 			}
+
+			await Promise.all([
+				this.accountAuthService
+					.changeMasterKey(masterKey, true)
+					.then(async () =>
+						this.localStorageService.removeItem(
+							'unconfirmedMasterKey'
+						)
+					),
+				sleep(random(750, 250))
+			]);
 
 			this.submitError.next(undefined);
 
@@ -289,10 +306,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 			this.masterKey.next('');
 			this.masterKeyConfirm.setValue('');
-			this.unconfirmedMasterKey.next('');
-			this.xkcdPassphrase.next('');
-
-			await this.localStorageService.removeItem('unconfirmedMasterKey');
+			this.xkcdPassphrase.next(0);
+			this.xkcdPassphrases = undefined;
 
 			this.accountDatabaseService.currentUser.next({
 				...this.accountDatabaseService.currentUser.value,
@@ -310,9 +325,11 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			this.checking.next(true);
 			await sleep(random(750, 250));
 
-			const masterKey = this.useXkcdPassphrase.value ?
-				this.xkcdPassphrase.value :
-				this.masterKey.value;
+			const masterKey = !this.useXkcdPassphrase.value ?
+				this.masterKey.value :
+			this.xkcdPassphrases ?
+				await this.xkcdPassphrases[this.xkcdPassphrase.value]() :
+				'';
 
 			if (
 				!safeStringCompare(masterKey, this.finalConfirmation.masterKey)
@@ -327,8 +344,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 			this.masterKey.next('');
 			this.masterKeyConfirm.setValue('');
-			this.unconfirmedMasterKey.next('');
-			this.xkcdPassphrase.next('');
+			this.xkcdPassphrase.next(0);
+			this.xkcdPassphrases = undefined;
 
 			this.submitMasterKey.emit(masterKey);
 		}
@@ -409,9 +426,11 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		const masterKey = this.useXkcdPassphrase.value ?
-			this.xkcdPassphrase.value :
-			this.masterKey.value;
+		const masterKey = !this.useXkcdPassphrase.value ?
+			this.masterKey.value :
+		this.xkcdPassphrases ?
+			await this.xkcdPassphrases[this.xkcdPassphrase.value]() :
+			'';
 
 		/*
 		if (!safeStringCompare(masterKey, this.finalConfirmation.masterKey)) {
@@ -479,11 +498,11 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.masterKey.next('');
 		this.masterKeyConfirm.setValue('');
 		this.name.next('');
-		this.unconfirmedMasterKey.next('');
 		this.username.setValue('');
 		this.useLockScreenPIN.next(false);
 		this.useXkcdPassphrase.next(false);
-		this.xkcdPassphrase.next('');
+		this.xkcdPassphrase.next(0);
+		this.xkcdPassphrases = undefined;
 
 		this.router.navigate(['welcome']);
 	}
@@ -498,6 +517,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			(tabIndex + increment + 1).toString()
 		]);
 	}
+
+	/** xkcdPassphrase slider label function. */
+	public readonly xkcdSliderDisplayWith = (n: number) =>
+		(this.configService.masterKey.sizes[n] || 0).toString();
 
 	constructor (
 		/** @ignore */
@@ -660,7 +683,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						opsecAcknowledgement &&
 						(useXkcdPassphrase ?
 							xkcdPassphraseHasBeenViewed :
-							masterKey.length >= this.masterKeyLength &&
+							masterKey.length >=
+								this.configService.masterKey.customMinLength &&
 							masterKeyConfirm.valid)
 				)
 			),
@@ -674,7 +698,13 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				this.lockScreenPasswordReady,
 				this.name,
 				this.usernameWatcher,
-				this.xkcdPassphrase
+				from(
+					this.xkcdPassphrases ?
+						this.xkcdPassphrases[
+							this.configService.masterKey.defaultSize
+						]() :
+						Promise.resolve('')
+				)
 			]).pipe(
 				map(
 					([

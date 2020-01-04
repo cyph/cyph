@@ -23,7 +23,6 @@
 				getMasterKey() :
 				undefined
 		"
-		*ngIf="xkcdPassphrase | await as xkcd"
 	>
 		<div>
 			<ng-container
@@ -1035,18 +1034,61 @@
 			[class.deselected]="(useXkcdPassphrase | await) === false"
 			[class.visibility-hidden]="(opsecAcknowledgement | await) === false"
 		>
-			<div fxFlex fxLayout="column" fxLayoutGap="16px">
+			<div
+				#masterKeySpoilerTooltip="matTooltip"
+				fxFlex
+				fxLayout="column"
+				fxLayoutGap="16px"
+				[matTooltip]="stringsService.masterKeyInfo"
+				matTooltipPosition="above"
+			>
+				<div></div>
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					*ngIf="(spoiler | await) === false"
+				>
+					<div fxFlex fxFlex.sm="80" fxFlex.gt-sm="90">
+						<div fxLayoutAlign="center center" fxLayoutGap="16px">
+							<div></div>
+							<div cyphTranslate class="slider-label">
+								Master Key Strength
+							</div>
+							<mat-slider
+								fxFlex
+								[displayWith]="xkcdSliderDisplayWith"
+								[max]="configService.masterKey.sizes.length - 1"
+								[min]="1"
+								[ngModel]="
+									(xkcdPassphrase | await) ||
+									configService.masterKey.defaultSize
+								"
+								(ngModelChange)="xkcdPassphrase.next($event)"
+								[step]="1"
+								[thumbLabel]="true"
+								[tickInterval]="1"
+							></mat-slider>
+							<mat-icon
+								matSuffix
+								[matTooltip]="
+									stringsService.masterKeyStrengthHelp
+								"
+								matTooltipPosition="above"
+							>
+								help
+							</mat-icon>
+							<div></div>
+						</div>
+					</div>
+				</div>
 				<div></div>
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<div
-						#masterKeySpoilerTooltip="matTooltip"
 						fxFlex
 						fxFlex.sm="80"
 						fxFlex.gt-sm="90"
 						class="spoiler"
 						[class.revealed]="(spoiler | await) === false"
-						[matTooltip]="stringsService.masterKeyInfo"
-						matTooltipPosition="above"
 						(click)="
 							!envService.isMobileOS ?
 								undefined :
@@ -1066,18 +1108,74 @@
 								Click to Reveal Master Key
 							</span>
 							<span
-								*ngIf="(spoiler | await) === false"
 								class="animated fadeIn no-select"
 								(copy)="$event.preventDefault()"
 								(cut)="$event.preventDefault()"
+								*ngIf="(spoiler | await) === false"
 							>
 								{{
-									(confirmMasterKeyOnly ?
-										unconfirmedMasterKey :
-										xkcdPassphrase
-									) | await
+									xkcdPassphrases ?
+										(xkcdPassphrases[
+											(xkcdPassphrase | await) || 0
+										]() | await) :
+										''
 								}}
 							</span>
+						</div>
+					</div>
+				</div>
+				<div></div>
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					*ngIf="(spoiler | await) === false"
+				>
+					<div fxFlex fxFlex.sm="80" fxFlex.gt-sm="90">
+						<div fxLayoutAlign="center center" fxLayoutGap="16px">
+							<div></div>
+							<h3
+								fxFlex
+								class="cyph-banner warn password"
+								[ngClass]="
+									configService.masterKey.sizeStrength(
+										(xkcdPassphrase | await) || 0
+									)
+								"
+							>
+								<ng-container
+									[ngSwitch]="
+										configService.masterKey.sizeStrength(
+											(xkcdPassphrase | await) || 0
+										)
+									"
+								>
+									<cyph-markdown
+										[markdown]="
+											stringsService.masterKeyStrengthDetailVeryHigh
+										"
+										*ngSwitchCase="'very-high'"
+									></cyph-markdown>
+									<cyph-markdown
+										[markdown]="
+											stringsService.masterKeyStrengthDetailHigh
+										"
+										*ngSwitchCase="'high'"
+									></cyph-markdown>
+									<cyph-markdown
+										[markdown]="
+											stringsService.masterKeyStrengthDetailMedium
+										"
+										*ngSwitchCase="'medium'"
+									></cyph-markdown>
+									<cyph-markdown
+										[markdown]="
+											stringsService.masterKeyStrengthDetailLow
+										"
+										*ngSwitchCase="'low'"
+									></cyph-markdown>
+								</ng-container>
+							</h3>
+							<div></div>
 						</div>
 					</div>
 				</div>
@@ -1155,7 +1253,7 @@
 												false
 											"
 											[minlength]="
-												masterKeyLength.toString()
+												configService.masterKey.customMinLength.toString()
 											"
 										/>
 										<mat-icon

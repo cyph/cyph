@@ -97,8 +97,7 @@ export class AccountComponent extends BaseProvider
 					'profile',
 					'reject',
 					'staff',
-					'video',
-					'welcome'
+					'video'
 				].indexOf(route) > -1 ||
 				(activatedRouteURL.length > 1 &&
 					['appointments'].indexOf(route) > -1)

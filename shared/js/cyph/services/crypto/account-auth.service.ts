@@ -125,7 +125,10 @@ export class AccountAuthService extends BaseProvider {
 	}
 
 	/** Changes master key. */
-	public async changeMasterKey (masterKey: string) : Promise<void> {
+	public async changeMasterKey (
+		masterKey: string,
+		saveCredentials: boolean = false
+	) : Promise<void> {
 		const currentUser = await this.accountDatabaseService.getCurrentUser();
 
 		if (!currentUser.user.username || masterKey.length === 0) {
@@ -146,9 +149,27 @@ export class AccountAuthService extends BaseProvider {
 			)
 		};
 
-		await Promise.all([
+		await Promise.all<{}>([
 			this.setItem(url, AccountLoginData, newLoginData, symmetricKey),
-			this.removeSavedCredentials()
+			!saveCredentials ?
+				this.removeSavedCredentials() :
+				(async () => {
+					const pinHash = await this.localStorageService
+						.getItem('pinHash', BinaryProto)
+						.catch(() => undefined);
+
+					return this.localStorageService.setItem(
+						'masterKey',
+						BinaryProto,
+						/* Locally encrypt master key with PIN */
+						pinHash !== undefined ?
+							await this.potassiumService.secretBox.seal(
+								symmetricKey,
+								pinHash
+							) :
+							symmetricKey
+					);
+				})()
 		]);
 
 		try {
