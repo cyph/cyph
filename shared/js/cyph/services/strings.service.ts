@@ -534,7 +534,7 @@ export class StringsService extends BaseProvider {
 	public readonly masterKeyStrengthDetailVeryHigh = `**Excessively Strong:** You crazy.`;
 
 	/** @see StringsService */
-	public readonly masterKeyStrengthHelp = `This controls the bits of entropy in your Master Key. The higher it is, the more securely your data is encrypted.`;
+	public readonly masterKeyStrengthHelp = `This controls the number of bits of entropy in your Master Key. The higher it is, the more securely your data is encrypted.`;
 
 	/** @see StringsService */
 	public readonly me = `me`;
