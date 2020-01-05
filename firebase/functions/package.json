@@ -22,6 +22,7 @@
 		"libsodium-wrappers-sumo": "https://github.com/jedisct1/libsodium.js",
 		"lodash": "*",
 		"lz4": "*",
+		"mailchimp-api-v3": "*",
 		"markdown-escapes": "*",
 		"markdown-it": "*",
 		"mceliece": "*",

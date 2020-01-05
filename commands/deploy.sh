@@ -1004,11 +1004,26 @@ then
 	cd ..
 
 	for firebaseProject in ${firebaseProjects} ; do
-		grep CYPH_FIREBASE_ADMIN_KEY ~/.cyph/backend.vars.$(
-			if [ "${firebaseProject}" == 'cyphme' ] ; then echo prod ; else echo sandbox ; fi
-		) |
-			sed 's|CYPH_FIREBASE_ADMIN_KEY:|module.exports.cyphAdminKey =|' \
-		> functions/cyph-admin-key.js
+		getBackendVar () {
+			grep "${1}" ~/.cyph/backend.vars.$(
+				if [ "${firebaseProject}" == 'cyphme' ] ; then
+					echo prod
+				else
+					echo sandbox
+				fi
+			) |
+				sed "s|${1}: ||"
+		}
+
+		cat > functions/cyph-admin-vars.js <<- EOM
+			module.exports = {
+				cyphAdminKey: $(getBackendVar CYPH_FIREBASE_ADMIN_KEY),
+				mailchimpCredentials: {
+					apiKey: $(getBackendVar MAILCHIMP_API_KEY),
+					listID: $(getBackendVar MAILCHIMP_USERS_LIST_ID)
+				}
+			};
+EOM
 
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/fcm-server-key
 		firebase use --add "${firebaseProject}"

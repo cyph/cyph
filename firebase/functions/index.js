@@ -3,12 +3,17 @@ const functions = require('firebase-functions');
 const fs = require('fs');
 const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
-const {cyphAdminKey} = require('./cyph-admin-key');
+const {cyphAdminKey, mailchimpCredentials} = require('./cyph-admin-vars');
 const {sendMail, sendMailInternal} = require('./email');
 const {emailRegex} = require('./email-regex');
 const {renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
 const tokens = require('./tokens');
+
+const mailchimp =
+	mailchimpCredentials && mailchimpCredentials.apiKey ?
+		new (require('mailchimp-api-v3'))(mailchimpCredentials.apiKey) :
+		undefined;
 
 const {
 	admin,
@@ -1122,6 +1127,7 @@ exports.userEmailSet = functions.database
 		const userURL = `${params.namespace}/users/${username}`;
 		const internalURL = `${userURL}/internal`;
 		const emailRef = database.ref(`${internalURL}/email`);
+		const nameRef = database.ref(`${internalURL}/name`);
 		const pseudoAccountRef = database.ref(`${userURL}/pseudoAccount`);
 		const registrationEmailSentRef = database.ref(
 			`${internalURL}/registrationEmailSent`
@@ -1134,7 +1140,39 @@ exports.userEmailSet = functions.database
 		).catch(() => undefined);
 
 		if (email && emailRegex.test(email)) {
-			await emailRef.set(email);
+			await Promise.all([
+				emailRef.set(email),
+				(async () => {
+					if (
+						!mailchimp ||
+						!mailchimpCredentials ||
+						!mailchimpCredentials.listID
+					) {
+						return;
+					}
+
+					const nameSplit = (
+						(await nameRef.once('value')).val() || ''
+					).split(' ');
+
+					const firstName =
+						nameSplit.length > 1 ?
+							nameSplit.slice(0, -1).join(' ') :
+							nameSplit[0];
+
+					const lastName =
+						nameSplit.length > 1 ? nameSplit.slice(-1)[0] : '';
+
+					await mailchimp.post(
+						`/lists/${mailchimpCredentials.listID}/members`,
+						{
+							email_address: email,
+							status: 'subscribed',
+							merge_fields: {FNAME: firstName, LNAME: lastName}
+						}
+					);
+				})().catch(() => {})
+			]);
 		}
 		else {
 			await emailRef.remove();

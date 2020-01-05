@@ -274,6 +274,7 @@ read -r -d '' modules <<- EOM
 	long
 	lunr
 	lz4
+	mailchimp-api-v3
 	markdown-escapes
 	markdown-it
 	markdown-it-emoji
