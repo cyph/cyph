@@ -84,6 +84,7 @@ export class AppModule {
 		dialogService: DialogService,
 		fileService: FileService,
 		localStorageService: LocalStorageService,
+		potassiumService: PotassiumService,
 		stringsService: StringsService
 	) {
 		router.resetConfig(appRoutes);
@@ -100,5 +101,9 @@ export class AppModule {
 			ngZone,
 			stringsService
 		});
+
+		/* For debugging */
+
+		(<any> self).potassiumService = potassiumService;
 	}
 }
