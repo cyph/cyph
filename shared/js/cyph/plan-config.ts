@@ -56,6 +56,7 @@ export const planConfig: Record<
 	},
 	[CyphPlans.LifetimePlatinum]: {
 		checkoutPath: 'holiday-sale/lifetime-platinum',
+		enableGroup: true,
 		initialInvites: 15,
 		lifetime: true,
 		rank: 3,
