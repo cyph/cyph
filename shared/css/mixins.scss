@@ -154,6 +154,10 @@ $default-white: map-get($mat-grey, 100);
 			font-weight: bold;
 		}
 
+		&.inverted {
+			background-color: $cyph-background;
+		}
+
 		&.dark {
 			$dark-foreground: if(
 				$cyph-is-dark,
@@ -215,10 +219,6 @@ $default-white: map-get($mat-grey, 100);
 		cyph-account-register {
 			@include mat-checkbox-theme($cyph-theme);
 			@include mat-expansion-panel-theme($cyph-theme);
-
-			.cyph-banner mat-checkbox {
-				color: $cyph-background;
-			}
 
 			mat-expansion-panel {
 				@include mat-form-field-theme($cyph-theme);
