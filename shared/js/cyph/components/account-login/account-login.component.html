@@ -1,3 +1,16 @@
+<h3
+	class="cyph-banner emphasis warn"
+	[style.position]="(envService.isMobile | await) ? 'absolute' : 'relative'"
+	[style.zIndex]="'1'"
+	*ngIf="envService.isOnion"
+>
+	<span cyphTranslate>
+		We're currently experiencing issues with logging in over Tor. We will
+		investigate this as soon as possible, and in the meantime apologies for
+		the inconvenience!
+	</span>
+</h3>
+
 <div
 	fxFlexFill
 	fxLayoutAlign="center center"
