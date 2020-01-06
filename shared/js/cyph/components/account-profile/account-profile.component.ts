@@ -535,7 +535,10 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 						{
 							isCurrentUser: false,
 							user: await this.accountUserLookupService.getUser(
-								username
+								username,
+								undefined,
+								undefined,
+								false
 							),
 							username
 						} :
