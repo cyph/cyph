@@ -186,11 +186,7 @@
 								((accountService.fromName | await) || '')
 									.length < 1)
 						"
-						[forceShow]="
-							(messageType | await) ===
-								chatMessageValueTypes.Quill &&
-							(sendQuillAsNote | await) === true
-						"
+						[forceShow]="true"
 						[messageType]="messageType | await"
 						[sendText]="
 							envService.isTelehealthFull &&
