@@ -344,7 +344,7 @@ elif [ "${prodAndBeta}" ] ; then
 	git checkout beta
 	./commands/copyworkspace.sh ${branchDir}
 	git clean -dfx
-	rm -rf ${branchDir}/backend ${branchDir}/firebase
+	rm -rf ${branchDir}/backend ${branchDir}/firebase ${branchDir}/nakedredirect
 fi
 
 cd ~/.build
@@ -510,8 +510,11 @@ if [ "${test}" ] ; then
 		sed -i 's|useBaseUrl: boolean\s*= .*;|useBaseUrl: boolean = true;|g' shared/js/cyph/env-deploy.ts
 	fi
 
-	sed -i "s|staging|${version}|g" backend/config.go
-	sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" backend/config.go
+	if [ -d backend ] ; then
+		sed -i "s|staging|${version}|g" backend/config.go
+		sed -i "s|http://localhost:42000|https://${version}-dot-cyphme.appspot.com|g" backend/config.go
+	fi
+
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
 	sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
@@ -561,7 +564,10 @@ else
 		sed -i "s|CYPH-VIDEO|https://cyph.video|g" shared/js/cyph/env-deploy.ts
 	fi
 
-	sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
+	if [ -d backend ] ; then
+		sed -i "s|http://localhost:42000|https://api.cyph.com|g" backend/config.go
+	fi
+
 	sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}43000|${homeURL}|g" shared/js/cyph/env-deploy.ts
 fi
