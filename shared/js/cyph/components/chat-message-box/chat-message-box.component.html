@@ -2,9 +2,10 @@
 	<div
 		fxFlexFill
 		*ngIf="
-			chat?.state === states.chat &&
-			(sessionService.state.isAlive | await) &&
-			(chatService.resolvers.currentMessageSynced.promise | await)
+			forceShow ||
+			(chat?.state === states.chat &&
+				(sessionService.state.isAlive | await) &&
+				(chatService.resolvers.currentMessageSynced.promise | await))
 		"
 	>
 		<div

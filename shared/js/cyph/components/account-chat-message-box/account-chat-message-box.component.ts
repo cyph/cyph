@@ -47,6 +47,9 @@ export class AccountChatMessageBoxComponent extends BaseProvider {
 	/** @see ChatMessageBoxComponent.fileAccept */
 	@Input() public fileAccept?: string;
 
+	/** @see ChatMessageBoxComponent.forceShow */
+	@Input() public forceShow: boolean = false;
+
 	/** @see ChatMessageBoxComponent.messageType */
 	@Input() public messageType?: ChatMessageValue.Types =
 		ChatMessageValue.Types.Text;

@@ -64,6 +64,9 @@ export class ChatMessageBoxComponent extends BaseProvider
 	/** @see FileInput.accept */
 	@Input() public fileAccept?: string;
 
+	/** If true, will show even when chat session is inactive. */
+	@Input() public forceShow: boolean = false;
+
 	/** If true, viewProviders is set to use existing NgForm as ControlContainer. */
 	public readonly inheritsNgForm: boolean = false;
 
