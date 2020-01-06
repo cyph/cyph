@@ -39,6 +39,35 @@
 			*ngIf="!readOnly"
 		></cyph-account-contacts-search>
 
+		<div>
+			<cyph-account-contact
+				class="active animated slideInDown"
+				[class.cyph-inverted-theme]="invertedTheme"
+				[contact]="
+					accountContactsSearch?.searchBar?.filterSingle | await
+				"
+				[hideCurrentUser]="true"
+				[showUnreadMessageCount]="true"
+				(click)="accountContactsSearch?.searchBar?.clearFilter()"
+				*ngIf="
+					(accountContactsSearch?.searchBar?.filterSingle | await) !==
+					undefined
+				"
+			></cyph-account-contact>
+
+			<cyph-account-contact
+				class="active animated slideInDown"
+				[class.cyph-inverted-theme]="invertedTheme"
+				[contact]="activeUser | await"
+				[hideCurrentUser]="true"
+				[showUnreadMessageCount]="true"
+				*ngIf="
+					(accountContactsSearch?.searchBar?.filterSingle | await) ===
+					undefined
+				"
+			></cyph-account-contact>
+		</div>
+
 		<div
 			fxFlex
 			fxLayoutAlign="center center"
@@ -53,35 +82,6 @@
 		</div>
 
 		<ng-template #mainContactListView>
-			<div>
-				<cyph-account-contact
-					class="active animated slideInDown"
-					[class.cyph-inverted-theme]="invertedTheme"
-					[contact]="
-						accountContactsSearch?.searchBar?.filterSingle | await
-					"
-					[hideCurrentUser]="true"
-					[showUnreadMessageCount]="true"
-					(click)="accountContactsSearch?.searchBar?.clearFilter()"
-					*ngIf="
-						(accountContactsSearch?.searchBar?.filterSingle
-							| await) !== undefined
-					"
-				></cyph-account-contact>
-
-				<cyph-account-contact
-					class="active animated slideInDown"
-					[class.cyph-inverted-theme]="invertedTheme"
-					[contact]="activeUser | await"
-					[hideCurrentUser]="true"
-					[showUnreadMessageCount]="true"
-					*ngIf="
-						(accountContactsSearch?.searchBar?.filterSingle
-							| await) === undefined
-					"
-				></cyph-account-contact>
-			</div>
-
 			<div fxFlex>
 				<div cyphNanoScroller>
 					<div class="contact-list">
