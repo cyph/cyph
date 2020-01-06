@@ -11,6 +11,7 @@ import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
 import {CyphPlans} from '../../proto';
+import {AccountDebugService} from '../../services/account-debug.service';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
@@ -31,6 +32,7 @@ import {resolvable} from '../../util/wait';
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
+		AccountDebugService,
 		{
 			provide: EnvService,
 			useClass: AccountEnvService
@@ -279,6 +281,8 @@ export class AccountComponent extends BaseProvider
 	}
 
 	constructor (
+		accountDebugService: AccountDebugService,
+
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
 
@@ -313,6 +317,10 @@ export class AccountComponent extends BaseProvider
 		public readonly stringsService: StringsService
 	) {
 		super();
+
+		if (this.envService.debug) {
+			(<any> self).accountDebugService = accountDebugService;
+		}
 
 		if (
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */

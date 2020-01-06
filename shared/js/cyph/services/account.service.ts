@@ -31,10 +31,8 @@ import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {observableAll} from '../util/observable-all';
 import {request} from '../util/request';
-import {prettyPrint, stringify} from '../util/serialization';
 import {getTimestamp, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
-import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
 import {openWindow} from '../util/window';
 import {AccountAppointmentsService} from './account-appointments.service';
@@ -45,7 +43,6 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 import {ConfigService} from './config.service';
 import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
-import {PotassiumService} from './crypto/potassium.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -772,9 +769,6 @@ export class AccountService extends BaseProvider {
 		private readonly notificationService: NotificationService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService,
-
-		/** @ignore */
 		private readonly stringsService: StringsService,
 
 		/** @ignore */
@@ -783,49 +777,6 @@ export class AccountService extends BaseProvider {
 		super();
 
 		this.accountContactsService.interstitial = this.interstitial;
-
-		(<any> self).shareLogsWithCyph = async () => {
-			await this.interstitial
-				.pipe(
-					filter(b => !b),
-					take(1)
-				)
-				.toPromise();
-			this.interstitial.next(true);
-
-			await Promise.all([
-				this.accountFilesService.upload(
-					`${uuid()}.log`,
-					{
-						data: this.potassiumService.fromString(
-							[
-								(await envService.packageName) + '\n---',
-								...(<Record<string, any>[]> (
-									(<any> self).logs
-								)).map(
-									o =>
-										`${o.timestamp}${
-											o.error ? ' (error)' : ''
-										}: ${
-											o.argsCopy !== undefined ?
-												prettyPrint(o.argsCopy) :
-												stringify({
-													keys: Object.keys(o.args)
-												})
-										}`
-								)
-							].join('\n\n\n\n') + '\n'
-						),
-						mediaType: 'text/plain',
-						name: ''
-					},
-					'cyph'
-				).result,
-				sleep(1000)
-			]);
-
-			this.interstitial.next(false);
-		};
 
 		this.localStorageService
 			.getItem('AccountService.menuExpanded', BooleanProto)
