@@ -458,6 +458,9 @@ export class StringsService extends BaseProvider {
 	public readonly inviteLinkTitle = `Invite Link`;
 
 	/** @see StringsService */
+	public readonly invitePatientTitle = `Invite Patient`;
+
+	/** @see StringsService */
 	public readonly linkCopied = `${this.capitalize(
 		this.internalSession
 	)} link copied.`;

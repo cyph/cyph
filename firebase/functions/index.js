@@ -155,10 +155,12 @@ const getInviteTemplateData = ({
 		inviterName,
 		name,
 		planAnnualPremium: plan === CyphPlans.AnnualPremium,
+		planAnnualTelehealth: plan === CyphPlans.AnnualTelehealth,
 		planFoundersAndFriends: plan === CyphPlans.FoundersAndFriends,
 		planFree: plan === CyphPlans.Free,
 		planLifetimePlatinum: plan === CyphPlans.LifetimePlatinum,
 		planMonthlyPremium: plan === CyphPlans.MonthlyPremium,
+		planMonthlyTelehealth: plan === CyphPlans.MonthlyTelehealth,
 		platinumFeatures: planConfig.usernameMinLength === 1,
 		purchased,
 		storageCap: readableByteLength(planConfig.storageCapGB, 'gb')

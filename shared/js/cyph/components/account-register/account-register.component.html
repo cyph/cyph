@@ -148,7 +148,8 @@
 										<ng-template #telehealthWelcomeMessage>
 											<ng-container
 												*ngIf="
-													envService.telehealthTheme;
+													envService.telehealthTheme
+														| await;
 													else mainInviteCodeWelcomeMessage
 												"
 											>

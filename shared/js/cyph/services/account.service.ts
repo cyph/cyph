@@ -117,7 +117,9 @@ export class AccountService extends BaseProvider {
 	this.envService.isTelehealth ?
 		of(false) :
 		this.accountSettingsService.plan.pipe(
-			map(plan => plan === CyphPlans.FoundersAndFriends)
+			map(
+				plan => this.configService.planConfig[plan].enableGroup === true
+			)
 		);
 
 	/** Indicates whether Passwords is enabled. */
@@ -127,7 +129,10 @@ export class AccountService extends BaseProvider {
 	this.envService.isTelehealth ?
 		of(false) :
 		this.accountSettingsService.plan.pipe(
-			map(plan => plan === CyphPlans.FoundersAndFriends)
+			map(
+				plan =>
+					this.configService.planConfig[plan].enablePasswords === true
+			)
 		);
 
 	/** Indicates whether Wallets is enabled. */
@@ -138,7 +143,11 @@ export class AccountService extends BaseProvider {
 				true) ?
 			of(true) :
 			this.accountSettingsService.plan.pipe(
-				map(plan => plan === CyphPlans.FoundersAndFriends)
+				map(
+					plan =>
+						this.configService.planConfig[plan].enableWallets ===
+						true
+				)
 			);
 
 	/** Email address to use for new pseudo-account. */
@@ -577,6 +586,18 @@ export class AccountService extends BaseProvider {
 					)
 				)
 				.subscribe(this.envService.pro)
+		);
+
+		this.subscriptions.push(
+			this.accountSettingsService.plan
+				.pipe(
+					map(
+						plan =>
+							this.configService.planConfig[plan].telehealth ===
+							true
+					)
+				)
+				.subscribe(this.envService.telehealthTheme)
 		);
 
 		if (!P2PWebRTCService.isSupported) {

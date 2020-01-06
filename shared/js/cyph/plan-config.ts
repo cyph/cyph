@@ -5,10 +5,14 @@ export const planConfig: Record<
 	CyphPlans,
 	{
 		checkoutPath?: string;
+		enableGroup?: boolean;
+		enablePasswords?: boolean;
+		enableWallets?: boolean;
 		initialInvites: number;
 		lifetime: boolean;
 		rank: number;
 		storageCapGB: number;
+		telehealth?: boolean;
 		usernameMinLength: number;
 		walletEarlyAccess?: string;
 	}
@@ -22,7 +26,20 @@ export const planConfig: Record<
 		usernameMinLength: 5,
 		walletEarlyAccess: 'beta'
 	},
+	[CyphPlans.AnnualTelehealth]: {
+		checkoutPath: 'accounts/annual-telehealth',
+		enableGroup: true,
+		initialInvites: 10,
+		lifetime: false,
+		rank: 2,
+		storageCapGB: 5,
+		telehealth: true,
+		usernameMinLength: 5
+	},
 	[CyphPlans.FoundersAndFriends]: {
+		enableGroup: true,
+		enablePasswords: true,
+		enableWallets: true,
 		initialInvites: 15,
 		lifetime: true,
 		rank: 4,
@@ -52,6 +69,16 @@ export const planConfig: Record<
 		lifetime: false,
 		rank: 1,
 		storageCapGB: 5,
+		usernameMinLength: 5
+	},
+	[CyphPlans.MonthlyTelehealth]: {
+		checkoutPath: 'accounts/monthly-telehealth',
+		enableGroup: true,
+		initialInvites: 5,
+		lifetime: false,
+		rank: 1,
+		storageCapGB: 5,
+		telehealth: true,
 		usernameMinLength: 5
 	}
 };

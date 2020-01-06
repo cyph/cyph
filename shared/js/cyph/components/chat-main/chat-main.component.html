@@ -61,7 +61,7 @@
 			<img
 				*ngIf="
 					!(
-						envService.telehealthTheme ||
+						(envService.telehealthTheme | await) ||
 						envService.customBuildImages.errorImage
 					)
 				"

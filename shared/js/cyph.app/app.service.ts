@@ -153,7 +153,7 @@ export class AppService extends BaseProvider implements CanActivate {
 
 		titleService.setTitle(translate(titleService.getTitle()));
 
-		if (this.envService.telehealthTheme) {
+		if (this.envService.telehealthTheme.value) {
 			faviconService.setFavicon('telehealth');
 		}
 

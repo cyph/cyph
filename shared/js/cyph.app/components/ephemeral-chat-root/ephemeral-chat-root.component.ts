@@ -87,7 +87,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 		this.appService.chatRootState.next(ChatRootStates.blank);
 
 		const granimStates = {
-			'default-state': !this.envService.telehealthTheme ?
+			'default-state': !this.envService.telehealthTheme.value ?
 				{
 					gradients: [
 						['#392859', '#624599'],
@@ -106,7 +106,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 					opacity: [0.75, 0.5],
 					transitionSpeed: 2500
 				},
-			'paused': !this.envService.telehealthTheme ?
+			'paused': !this.envService.telehealthTheme.value ?
 				{
 					gradients: [
 						['#624599', '#8b62d9'],

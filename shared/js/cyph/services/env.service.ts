@@ -118,6 +118,9 @@ export class EnvService extends Env {
 	/** @inheritDoc */
 	public readonly pro = env.pro;
 
+	/** @inheritDoc */
+	public readonly telehealthTheme = env.telehealthTheme;
+
 	/**
 	 * Indicates whether the currently pinned version of WebSign has a known issue
 	 * and the user should be advised to replace it.

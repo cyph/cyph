@@ -44,6 +44,9 @@ export class ChatEnvService extends EnvService {
 	/** @inheritDoc */
 	public readonly pro = env.pro;
 
+	/** @inheritDoc */
+	public readonly telehealthTheme = env.telehealthTheme;
+
 	/** @ignore */
 	private newCyphUrlHelper (base: boolean) : string {
 		if (!this.configService || !this.sessionService) {

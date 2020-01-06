@@ -113,10 +113,22 @@ export class Config {
 						name: 'Annual Premium',
 						subscriptionType: SubscriptionTypes.annual
 					},
+					annualTelehealth: {
+						amount: 420,
+						id: 3,
+						name: 'Telehealth (Annual)',
+						subscriptionType: SubscriptionTypes.annual
+					},
 					monthlyPremium: {
 						amount: 15,
 						id: 0,
 						name: 'Monthly Premium',
+						subscriptionType: SubscriptionTypes.monthly
+					},
+					monthlyTelehealth: {
+						amount: 50,
+						id: 2,
+						name: 'Telehealth (Monthly)',
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				}

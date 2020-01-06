@@ -5,7 +5,7 @@
 	fxLayoutGap="32px"
 	class="footer"
 >
-	<div fxFlex *ngIf="envService.telehealthTheme"></div>
+	<div fxFlex *ngIf="envService.telehealthTheme | await"></div>
 
 	<ng-container *ngIf="!envService.coBranded && !envService.isTelehealth">
 		<ng-container *ngIf="!envService.isCordova; else cordovaFooter">
@@ -122,7 +122,7 @@
 		</div>
 	</ng-container>
 
-	<ng-container *ngIf="envService.telehealthTheme">
+	<ng-container *ngIf="envService.telehealthTheme | await">
 		<div fxFlex fxLayoutAlign="end center">
 			<div cyphTranslate fxLayout="row">
 				<img

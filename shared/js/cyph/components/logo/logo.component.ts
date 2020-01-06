@@ -176,7 +176,7 @@ export class LogoComponent extends BaseProvider {
 			this.logos.video :
 			this.logos.horizontal;
 
-		return this.envService.telehealthTheme ?
+		return this.envService.telehealthTheme.value ?
 			logoSet.telehealth :
 		this.alt ?
 			logoSet.alt :

@@ -19,6 +19,7 @@ import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {FaviconService} from '../../services/favicon.service';
 import {ScreenshotService} from '../../services/screenshot.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by';
@@ -261,7 +262,7 @@ export class AccountComponent extends BaseProvider
 			opacity: [1, 0.5, 0],
 			states: {
 				'default-state': {
-					gradients: !this.envService.telehealthTheme ?
+					gradients: !this.envService.telehealthTheme.value ?
 						[
 							['#f5f5f6', '#cccccc'],
 							['#cccccc', '#f5f5f6']
@@ -280,6 +281,9 @@ export class AccountComponent extends BaseProvider
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
+
+		/** @ignore */
+		private readonly faviconService: FaviconService,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
@@ -320,6 +324,21 @@ export class AccountComponent extends BaseProvider
 		document.body.classList.toggle(
 			'primary-account-theme',
 			accountPrimaryTheme
+		);
+
+		this.subscriptions.push(
+			this.envService.telehealthTheme.subscribe(telehealthTheme => {
+				this.faviconService.setFavicon(
+					telehealthTheme ? 'telehealth' : 'default'
+				);
+
+				document.body.classList.toggle('telehealth', telehealthTheme);
+
+				document.body.classList.toggle(
+					'primary-account-theme',
+					accountPrimaryTheme && !telehealthTheme
+				);
+			})
 		);
 	}
 }

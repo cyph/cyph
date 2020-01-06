@@ -682,10 +682,12 @@ message CyphPlan {
 /** Cyph plans. */
 enum CyphPlans {
 	AnnualPremium = 2;
+	AnnualTelehealth = 5;
 	Free = 0;
 	FoundersAndFriends = 4;
 	LifetimePlatinum = 3;
 	MonthlyPremium = 1;
+	MonthlyTelehealth = 6;
 }
 
 /** Database item metadata. */

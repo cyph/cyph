@@ -14,6 +14,9 @@ export class AccountEnvService extends EnvService {
 	/** @inheritDoc */
 	public readonly pro = env.pro;
 
+	/** @inheritDoc */
+	public readonly telehealthTheme = env.telehealthTheme;
+
 	constructor (localStorageService: LocalStorageService) {
 		super(localStorageService);
 	}

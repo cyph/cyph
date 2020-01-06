@@ -755,10 +755,17 @@
 				cyphTranslate
 				class="invite"
 				[matMenuTriggerFor]="inviteMenu"
-				matTooltip="Invite Friend"
+				[matTooltip]="
+					(envService.telehealthTheme | await) ?
+						stringsService.invitePatientTitle :
+						stringsService.inviteContactTitle
+				"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
-				*ngIf="((accountInviteService.count | await) || 0) > 0"
+				*ngIf="
+					!envService.isTelehealth &&
+					((accountInviteService.count | await) || 0) > 0
+				"
 			>
 				<mat-icon
 					mat-list-icon
@@ -769,8 +776,12 @@
 				>
 					person_add
 				</mat-icon>
-				<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-					Invite Friend
+				<h3 matLine *ngIf="menuExpanded | await">
+					{{
+						(envService.telehealthTheme | await) ?
+							stringsService.invitePatientTitle :
+							stringsService.inviteContactTitle
+					}}
 				</h3>
 			</a>
 			<mat-menu #inviteMenu="matMenu">

@@ -340,6 +340,32 @@ var config = struct {
 			},
 			SessionCountLimit: -1,
 		},
+		"8-2": Plan{
+			AccountsPlan: "MonthlyTelehealth",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"8-3": Plan{
+			AccountsPlan: "AnnualTelehealth",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     true,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
 		"9-0": Plan{
 			AccountsPlan: "MonthlyPremium",
 			ProFeatures: map[string]bool{

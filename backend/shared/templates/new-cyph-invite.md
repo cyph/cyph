@@ -78,6 +78,24 @@ Congratulations on securing your Cyph account invite!
 
 ---
 {{/planMonthlyPremium}}
+{{#planAnnualTelehealth}}
+|||
+| ------------ | :--------------------: |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Telehealth (Annual)**     |
+|              | Telehealth (Monthly)   |
+|              | Free                   |
+
+---
+{{/planAnnualTelehealth}}
+{{#planMonthlyTelehealth}}
+|||
+| ------------ | :--------------------: |
+|              | Telehealth (Annual)    |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Telehealth (Monthly)**    |
+|              | Free                   |
+
+---
+{{/planMonthlyTelehealth}}
 
 {{^planChange}}
 We highly recommend that you sign up from your desktop or laptop in a location where you have some privacy.

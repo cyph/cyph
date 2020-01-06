@@ -293,10 +293,11 @@ export class Env extends EnvDeploy {
 	public readonly smsUriBase: string = `sms:${this.isIOS ? '&' : '?'}body=`;
 
 	/** If true, telehealth theme is enabled. */
-	public readonly telehealthTheme: boolean =
+	public readonly telehealthTheme = new BehaviorSubject<boolean>(
 		this.isTelehealth ||
-		(environment.customBuild !== undefined &&
-			environment.customBuild.config.telehealthTheme === true);
+			(environment.customBuild !== undefined &&
+				environment.customBuild.config.telehealthTheme === true)
+	);
 
 	/** Current user agent (lowercase). */
 	public readonly userAgent: string = Env.UA;

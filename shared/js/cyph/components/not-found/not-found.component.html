@@ -1,4 +1,4 @@
-<ng-container *ngIf="envService.telehealthTheme; else standardView">
+<ng-container *ngIf="envService.telehealthTheme | await; else standardView">
 	<div
 		fxFlex
 		fxFlexFill
