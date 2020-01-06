@@ -346,6 +346,11 @@ export class AccountAuthService extends BaseProvider {
 
 		let errorLogMessage: string | undefined;
 
+		const setErrorMessageLog = (s: string) => {
+			errorLogMessage = s;
+			debugLog(() => ({accountAuthLoginMessage: s}));
+		};
+
 		try {
 			username = normalize(username);
 
@@ -365,12 +370,12 @@ export class AccountAuthService extends BaseProvider {
 			}
 
 			if (typeof masterKey === 'string') {
-				errorLogMessage = 'password-hashing masterKey';
+				setErrorMessageLog('password-hashing masterKey');
 
 				masterKey = await this.passwordHash(username, masterKey);
 			}
 			else if (pin !== undefined && pin.length > 0) {
-				errorLogMessage = 'decrypting masterKey with PIN';
+				setErrorMessageLog('decrypting masterKey with PIN');
 
 				masterKey = await this.potassiumService.secretBox.open(
 					masterKey,
@@ -380,7 +385,7 @@ export class AccountAuthService extends BaseProvider {
 				);
 			}
 
-			errorLogMessage = 'getting loginData';
+			setErrorMessageLog('getting loginData');
 
 			const loginDataPromise = this.getItem(
 				`users/${username}/loginData`,
@@ -398,7 +403,7 @@ export class AccountAuthService extends BaseProvider {
 
 			const loginData = await loginDataPromise;
 
-			errorLogMessage = 'getting user data';
+			setErrorMessageLog('getting user data');
 
 			const getUserData = async () =>
 				Promise.all([
@@ -499,7 +504,7 @@ export class AccountAuthService extends BaseProvider {
 				signingKeyPair,
 				user
 			] = await getUserData().catch(async () => {
-				errorLogMessage = 'database service login';
+				setErrorMessageLog('database service login');
 
 				try {
 					await this.databaseService.login(
@@ -542,7 +547,7 @@ export class AccountAuthService extends BaseProvider {
 			/*
 			Disable statuses for now:
 
-			errorLogMessage = 'tracking presence';
+			setErrorMessageLog('tracking presence');
 
 			this.connectTrackerCleanup = await this.databaseService.setConnectTracker(
 				`users/${username}/clientConnections/${uuid()}`,
@@ -600,7 +605,7 @@ export class AccountAuthService extends BaseProvider {
 				.registerPushNotifications(`users/${username}/messagingTokens`)
 				.catch(() => {});
 
-			errorLogMessage = 'saving credentials';
+			setErrorMessageLog('saving credentials');
 
 			await Promise.all([
 				(async () =>
