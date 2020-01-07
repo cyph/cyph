@@ -1,7 +1,6 @@
 /* eslint-disable max-lines */
 
-import {Location} from '@angular/common';
-import {Injectable, NgZone} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
 	ActivatedRoute,
 	Data,
@@ -62,9 +61,6 @@ export class AccountService extends BaseProvider {
 
 	/** @ignore */
 	private readonly accountGoodStandingLock = lockFunction();
-
-	/** @ignore */
-	private readonly chatBlurReloadTimeout = 60000;
 
 	/** @ignore */
 	private readonly headerInternal = new BehaviorSubject<{
@@ -508,56 +504,26 @@ export class AccountService extends BaseProvider {
 			.toPromise();
 
 		(async () => {
-			const fingerprintAuthSupported = await this.fingerprintService
-				.supported;
-
-			let windowBlurred: number | undefined;
+			if (!(await this.fingerprintService.supported)) {
+				return;
+			}
 
 			this.subscriptions.push(
 				this.windowWatcherService.visibility
 					.pipe(skip(1))
-					.subscribe(async visible =>
-						this.ngZone.run(async () => {
-							if (!visible) {
-								windowBlurred = await getTimestamp();
-								return;
-							}
+					.subscribe(async visible => {
+						if (!visible) {
+							return;
+						}
 
-							if (fingerprintAuthSupported) {
-								document.body.classList.add('soft-lock');
-							}
+						document.body.classList.add('soft-lock');
+						if (await this.fingerprintService.authenticate()) {
+							document.body.classList.remove('soft-lock');
+							return;
+						}
 
-							const url = this.location.path(true);
-
-							const chatReloadPromise =
-								(url.startsWith('mail/') ||
-									url.startsWith('messages/')) &&
-								windowBlurred !== undefined &&
-								(await getTimestamp()) - windowBlurred >
-									this.chatBlurReloadTimeout ?
-									this.router
-										.navigate(['transition'], {
-											skipLocationChange: true
-										})
-										.then(async () =>
-											this.router.navigate(url.split('/'))
-										) :
-									Promise.resolve();
-
-							if (!fingerprintAuthSupported) {
-								await chatReloadPromise;
-								return;
-							}
-
-							if (await this.fingerprintService.authenticate()) {
-								await chatReloadPromise;
-								document.body.classList.remove('soft-lock');
-								return;
-							}
-
-							await this.accountAuthService.lock();
-						})
-					)
+						await this.accountAuthService.lock();
+					})
 			);
 		})();
 
@@ -719,12 +685,6 @@ export class AccountService extends BaseProvider {
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
-
-		/** @ignore */
-		private readonly location: Location,
-
-		/** @ignore */
-		private readonly ngZone: NgZone,
 
 		/** @ignore */
 		private readonly router: Router,
