@@ -525,7 +525,7 @@ export class StringsService extends BaseProvider {
 	public readonly masterKeyMismatch = `Master Keys don't match`;
 
 	/** @see StringsService */
-	public readonly masterKeyStrengthDetailHigh = `**Very Strong:** This is a strong-ass key! It will never be cracked within the lifetime of the universe.`;
+	public readonly masterKeyStrengthDetailHigh = `**Very Strong:** This is a strong key! It will likely never be cracked within the lifetime of the universe.`;
 
 	/** @see StringsService */
 	public readonly masterKeyStrengthDetailLow = `**Acceptable:** This is _okay_ for a casual user, but be aware that a large well-funded organization (such as the NSA) could conceivably crack it, albeit only in a targeted attack and at great expense.`;
