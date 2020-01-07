@@ -2,7 +2,7 @@
 
 const {config} = require('../modules/config');
 const {CyphPlans} = require('../modules/proto');
-const {readableByteLength} = require('../modules/util');
+const {readableByteLength, titleize} = require('../modules/util');
 const {addInviteCode} = require('./addinvitecode');
 const {sendMail} = require('./email');
 
@@ -26,7 +26,10 @@ const inviteUser = async (projectId, email, name, plan, reservedUsername) => {
 
 	await sendMail(
 		!email ? undefined : !name ? email : `${name} <${email}>`,
-		'Your Cyph Invite',
+		"You've Been Invited to Cyph!" +
+			(cyphPlan === CyphPlans.Free ?
+				'' :
+				` (${titleize(CyphPlans[cyphPlan])})`),
 		{
 			data: {
 				...planConfig,
