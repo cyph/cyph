@@ -21,8 +21,8 @@ const inviteUser = async (
 			'https://staging.cyph.app/';
 
 	/* Gift free users one-month premium trials */
-	if ((!plan || plan === CyphPlans.Free) && !trialMonths) {
-		plan = CyphPlans.MonthlyPremium;
+	if ((!plan || plan === 'Free') && !trialMonths) {
+		plan = 'MonthlyPremium';
 		trialMonths = 1;
 	}
 
