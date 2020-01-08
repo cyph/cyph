@@ -20,6 +20,12 @@ const inviteUser = async (
 			'https://cyph.app/' :
 			'https://staging.cyph.app/';
 
+	/* Gift free users one-month premium trials */
+	if ((!plan || plan === CyphPlans.Free) && !trialMonths) {
+		plan = CyphPlans.MonthlyPremium;
+		trialMonths = 1;
+	}
+
 	const inviteCode = (await addInviteCode(
 		projectId,
 		{'': 1},

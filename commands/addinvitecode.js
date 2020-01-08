@@ -27,6 +27,12 @@ const addInviteCode = async (
 		throw new Error(`Plan "${plan}" not found.`);
 	}
 
+	/* Gift free users one-month premium trials */
+	if ((!plan || plan === CyphPlans.Free) && !trialMonths) {
+		plan = CyphPlans.MonthlyPremium;
+		trialMonths = 1;
+	}
+
 	/* TODO: Add flag to explicitly override the blacklist and reserve a non-standard username */
 	if (
 		reservedUsername &&

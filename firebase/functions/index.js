@@ -558,11 +558,19 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 
 	const inviteCode = readableID(15);
 
+	/* Gift free users one-month premium trials */
+	let planTrialEnd = undefined;
+	if (plan === CyphPlans.Free) {
+		plan = CyphPlans.MonthlyPremium;
+		planTrialEnd = new Date().setMonth(new Date().getMonth() + 1);
+	}
+
 	await database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
 		inviterUsername: '',
 		plan,
 		...(braintreeID ? {braintreeID} : {}),
-		...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {})
+		...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {}),
+		...(isNaN(planTrialEnd) ? {planTrialEnd} : {})
 	});
 
 	return {
