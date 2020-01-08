@@ -618,8 +618,7 @@ func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	/* Check trial against current timestamp if applicable */
 
 	if planTrialEnd != 0 {
-		// return planTrialEnd > time.Now().UnixNano(), http.StatusOK
-		return true, http.StatusOK
+		return planTrialEnd > time.Now().UnixNano(), http.StatusOK
 	}
 
 	/*
