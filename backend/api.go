@@ -117,6 +117,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	var apiKey string
 	var customerKey *datastore.Key
 	var customerEmailKey *datastore.Key
+	customerRequestEmail := email
 
 	if email != "" {
 		customerEmail := &CustomerEmail{}
@@ -126,6 +127,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			apiKey = customerEmail.APIKey
 			customerKey = datastoreKey("Customer", apiKey)
 		}
+	} else {
+		customerRequestEmail = "emailless-checkout@cyph.com"
 	}
 
 	if apiKey == "" {
@@ -181,13 +184,15 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		StreetAddress:     streetAddress,
 	}
 
+	customerRequest := &braintree.CustomerRequest{
+		Company:   company,
+		Email:     customerRequestEmail,
+		FirstName: firstName,
+		LastName:  lastName,
+	}
+
 	if subscription {
-		braintreeCustomer, err := bt.Customer().Create(h.Context, &braintree.CustomerRequest{
-			Company:   company,
-			Email:     email,
-			FirstName: firstName,
-			LastName:  lastName,
-		})
+		braintreeCustomer, err := bt.Customer().Create(h.Context, customerRequest)
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot
@@ -304,6 +309,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
 				Amount:             braintree.NewDecimal(amount, 2),
 				BillingAddress:     billingAddress,
+				Customer:           customerRequest,
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})
