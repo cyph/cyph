@@ -406,7 +406,7 @@ var config = struct {
 			},
 			SessionCountLimit: -1,
 		},
-		"10-2": Plan{
+		"10-1": Plan{
 			AccountsPlan: "LifetimePlatinum",
 			Price:        10000,
 			ProFeatures: map[string]bool{
