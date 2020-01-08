@@ -71,15 +71,24 @@ var isRouterActive = false
 
 var sanitizer = bluemonday.StrictPolicy()
 
-var emailFrom = os.Getenv("EMAIL_USER")
+var emailFrom = os.Getenv("EMAIL_FROM")
 var emailFromFull = "Cyph <" + emailFrom + ">"
+
 var emailAuth = smtp.PlainAuth(
 	"",
-	emailFrom,
+	os.Getenv("EMAIL_USER"),
 	os.Getenv("EMAIL_PASSWORD"),
-	"smtp.gmail.com",
+	os.Getenv("EMAIL_SERVER"),
 )
-var emailSmtpServer = "smtp.gmail.com:587"
+var emailSmtpServer = os.Getenv("EMAIL_SERVER") + ":" + os.Getenv("EMAIL_PORT")
+var emailBackupAuth = smtp.PlainAuth(
+	"",
+	os.Getenv("EMAIL_BACKUP_USER"),
+	os.Getenv("EMAIL_BACKUP_PASSWORD"),
+	os.Getenv("EMAIL_BACKUP_SERVER"),
+)
+var emailBackupSmtpServer = os.Getenv("EMAIL_BACKUP_SERVER") + ":" + os.Getenv("EMAIL_BACKUP_PORT")
+
 var emailTemplate, _ = mustache.ParseString(getFileText("shared/email.html"))
 
 var countrydb, _ = geoip2.Open("GeoIP2-Country.mmdb")
@@ -736,19 +745,32 @@ func sendMail(to string, subject string, text string, html string) {
 		log.Println(fmt.Errorf("Failed to log outgoing email."))
 	}
 
+	mailTo := []string{to}
+	mailBody := []byte(
+		"From: " + emailFromFull + "\n" +
+			"To: " + to + "\n" +
+			"Subject: " + subject + "\n" +
+			"MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n" +
+			body,
+	)
+
 	err = smtp.SendMail(
 		emailSmtpServer,
 		emailAuth,
 		emailFrom,
-		[]string{to},
-		[]byte(
-			"From: "+emailFromFull+"\n"+
-				"To: "+to+"\n"+
-				"Subject: "+subject+"\n"+
-				"MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"+
-				body,
-		),
+		mailTo,
+		mailBody,
 	)
+
+	if err != nil {
+		err = smtp.SendMail(
+			emailBackupSmtpServer,
+			emailBackupAuth,
+			emailFrom,
+			mailTo,
+			mailBody,
+		)
+	}
 
 	if err != nil {
 		log.Println(fmt.Errorf("Failed to send email: %v", err))

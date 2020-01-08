@@ -3,12 +3,22 @@ const ical = require('ical-generator');
 const mustache = require('mustache');
 const nodemailer = require('nodemailer');
 const {dompurifyHtmlSanitizer} = require('./dompurify-html-sanitizer');
-const auth = require('./email-credentials');
+const {from, transport, transportBackup} = require('./email-credentials');
 const {render, renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
 const {normalize} = require('./util');
 
-const transporter = nodemailer.createTransport({auth, service: 'gmail'});
+const transporter = nodemailer.createTransport({
+	...transport,
+	pool: true,
+	secure: true
+});
+
+const transporterBackup = nodemailer.createTransport({
+	...transportBackup,
+	pool: true,
+	secure: true
+});
 
 const template = new Promise((resolve, reject) => {
 	fs.readFile(__dirname + '/email.html', (err, data) => {
@@ -77,11 +87,13 @@ const sendMailInternal = async (
 			undefined;
 	}
 
-	await (!to ?
+	const mailObject = !to ?
 		undefined :
-		transporter.sendMail({
-			from: `Cyph <${auth.user}>`,
-			html: !text ? '' : dompurifyHtmlSanitizer.sanitize(
+		{
+			from: `Cyph <${from}>`,
+			html: !text ?
+				'' :
+				dompurifyHtmlSanitizer.sanitize(
 					mustache.render(await template, {
 						accountsURL,
 						noUnsubscribe,
@@ -90,7 +102,9 @@ const sendMailInternal = async (
 							{lines: text.split('\n')})
 					})
 				),
-			icalEvent: !eventDetails ? undefined : {
+			icalEvent: !eventDetails ?
+				undefined :
+				{
 					content: ical({
 						domain: 'cyph.com',
 						events: [{
@@ -110,7 +124,16 @@ const sendMailInternal = async (
 			subject,
 			text: markdown,
 			to: typeof to === 'string' ? to : to.formatted
-		}));
+		};
+
+	if (mailObject) {
+		try {
+			await transporter.sendMail(mailObject);
+		}
+		catch {
+			await transporterBackup.sendMail(mailObject);
+		}
+	}
 
 	return markdown;
 };
