@@ -39,60 +39,60 @@ Congratulations on securing your Cyph account invite!
 
 {{#planFoundersAndFriends}}
 |||
-| ------------ | :---------------------------: |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Founders & Friends (Priceless)** |
-|              | Lifetime Platinum ($450/life) |
-|              | Annual Premium ($144/yr)      |
-|              | Monthly Premium ($15/mo)      |
-|              | Free                          |
+| ------------ | :--------------------: |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Founders & Friends** |
+|              | Lifetime Platinum      |
+|              | Annual Premium         |
+|              | Monthly Premium        |
+|              | Free                   |
 
 ---
 {{/planFoundersAndFriends}}
 {{#planLifetimePlatinum}}
 |||
-| ------------ | :---------------------------: |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Lifetime Platinum ($450/life)** |
-|              | Annual Premium ($144/yr)      |
-|              | Monthly Premium ($15/mo)      |
-|              | Free                          |
+| ------------ | :--------------------: |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Lifetime Platinum**  |
+|              | Annual Premium         |
+|              | Monthly Premium        |
+|              | Free                   |
 
 ---
 {{/planLifetimePlatinum}}
 {{#planAnnualPremium}}
 |||
-| ------------ | :---------------------------: |
-|              | Lifetime Platinum ($450/life) |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Annual Premium ($144/yr)** |
-|              | Monthly Premium ($15/mo)      |
-|              | Free                          |
+| ------------ | :--------------------: |
+|              | Lifetime Platinum      |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Annual Premium**     |
+|              | Monthly Premium        |
+|              | Free                   |
 
 ---
 {{/planAnnualPremium}}
 {{#planMonthlyPremium}}
 |||
-| ------------ | :---------------------------: |
-|              | Lifetime Platinum ($450/life) |
-|              | Annual Premium ($144/yr)      |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Monthly Premium ($15/mo)** |
-|              | Free                          |
+| ------------ | :--------------------: |
+|              | Lifetime Platinum      |
+|              | Annual Premium         |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Monthly Premium**    |
+|              | Free                   |
 
 ---
 {{/planMonthlyPremium}}
 {{#planAnnualTelehealth}}
 |||
-| ------------ | :---------------------------: |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Telehealth (Annual, $420/yr)** |
-|              | Telehealth (Monthly, $50/mo)  |
-|              | Free                          |
+| ------------ | :--------------------: |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Telehealth (Annual)**     |
+|              | Telehealth (Monthly)   |
+|              | Free                   |
 
 ---
 {{/planAnnualTelehealth}}
 {{#planMonthlyTelehealth}}
 |||
-| ------------ | :---------------------------: |
-|              | Telehealth (Annual, $420/yr)  |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Telehealth (Monthly, $50/mo)** |
-|              | Free                          |
+| ------------ | :--------------------: |
+|              | Telehealth (Annual)    |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Telehealth (Monthly)**    |
+|              | Free                   |
 
 ---
 {{/planMonthlyTelehealth}}
