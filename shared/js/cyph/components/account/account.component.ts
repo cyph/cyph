@@ -5,12 +5,12 @@ import {
 	OnInit
 } from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
-import {combineLatest, Observable, of} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {map, mergeMap, skip} from 'rxjs/operators';
 import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
-import {CyphPlans} from '../../proto';
+import {BooleanProto, CyphPlans} from '../../proto';
 import {AccountDebugService} from '../../services/account-debug.service';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -21,6 +21,7 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {FaviconService} from '../../services/favicon.service';
+import {LocalStorageService} from '../../services/local-storage.service';
 import {ScreenshotService} from '../../services/screenshot.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by';
@@ -78,6 +79,9 @@ export class AccountComponent extends BaseProvider
 
 	/** @see CyphPlans */
 	public readonly cyphPlans = CyphPlans;
+
+	/** Controls whether flash sale banner is enabled. */
+	public readonly flashSaleBanner = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether section should take up 100% height. */
 	public readonly fullHeight: Observable<boolean> = combineLatest([
@@ -289,6 +293,9 @@ export class AccountComponent extends BaseProvider
 		/** @ignore */
 		private readonly faviconService: FaviconService,
 
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
@@ -347,6 +354,27 @@ export class AccountComponent extends BaseProvider
 					accountPrimaryTheme && !telehealthTheme
 				);
 			})
+		);
+
+		this.localStorageService
+			.getItem('2020-01-flashSaleBanner', BooleanProto)
+			.then(flashSaleBanner => {
+				this.flashSaleBanner.next(flashSaleBanner);
+			})
+			.catch(() => {
+				this.flashSaleBanner.next(true);
+			});
+
+		this.subscriptions.push(
+			this.flashSaleBanner
+				.pipe(skip(1))
+				.subscribe(async flashSaleBanner =>
+					this.localStorageService.setItem(
+						'2020-01-flashSaleBanner',
+						BooleanProto,
+						flashSaleBanner
+					)
+				)
 		);
 	}
 }

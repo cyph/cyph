@@ -236,6 +236,76 @@
 				<h3
 					class="cyph-banner alert"
 					*ngIf="
+						!configService.planConfig[
+							accountSettingsService.plan.value || cyphPlans.Free
+						].lifetime && (flashSaleBanner | await)
+					"
+				>
+					<div fxFlex fxLayout="row">
+						<div
+							fxLayoutAlign="center center"
+							class="visibility-hidden"
+						>
+							<button
+								mat-icon-button
+								cyphTranslate
+								matTooltip="Close"
+								class="close"
+							>
+								<mat-icon>close</mat-icon>
+							</button>
+						</div>
+						<div fxFlex fxLayoutAlign="center center">
+							<div>
+								<span cyphTranslate>
+									You've been invited to
+								</span>
+								&ngsp;
+								<a
+									cyphTranslate
+									(click)="
+										accountService.windowsAppUpgradeWorkaround(
+											$event,
+											[
+												envService.homeUrl,
+												'pricing?current=',
+												cyphPlans[
+													accountSettingsService.plan
+														.value || cyphPlans.Free
+												],
+												'&userToken=',
+												accountService.getUserToken(
+													accountService.interstitial
+												)
+											]
+										)
+									"
+									>upgrade to Lifetime Platinum</a
+								>
+								&ngsp;
+								<span cyphTranslate>
+									for $100 (a $350 discount). Expires
+									Thursday.
+								</span>
+							</div>
+						</div>
+						<div fxLayoutAlign="center center">
+							<button
+								mat-icon-button
+								cyphTranslate
+								matTooltip="Close"
+								class="close"
+								(click)="flashSaleBanner.next(false)"
+							>
+								<mat-icon>close</mat-icon>
+							</button>
+						</div>
+					</div>
+				</h3>
+
+				<h3
+					class="cyph-banner alert"
+					*ngIf="
 						(accountService.accountGoodStanding | await) === false;
 						else unverifiedAccountBanner
 					"
