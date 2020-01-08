@@ -235,13 +235,15 @@
 
 				<h3
 					class="cyph-banner alert"
-					cyphTranslate
 					*ngIf="
 						(accountService.accountGoodStanding | await) === false;
 						else unverifiedAccountBanner
 					"
 				>
-					We were unable to process your payment. Click
+					<span cyphTranslate>
+						We were unable to process your payment. Click
+					</span>
+					&ngsp;
 					<a
 						cyphTranslate
 						(click)="
@@ -260,7 +262,10 @@
 						"
 						>here</a
 					>
-					to update your payment details.
+					&ngsp;
+					<span cyphTranslate>
+						to update your payment details.
+					</span>
 				</h3>
 
 				<ng-template #unverifiedAccountBanner>
