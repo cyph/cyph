@@ -33,11 +33,12 @@ const addInviteCode = async (
 		trialMonths = 1;
 	}
 
+	reservedUsername = reservedUsername ?
+		normalize(reservedUsername) :
+		undefined;
+
 	/* TODO: Add flag to explicitly override the blacklist and reserve a non-standard username */
-	if (
-		reservedUsername &&
-		usernameBlacklist.has(normalize(reservedUsername))
-	) {
+	if (reservedUsername && usernameBlacklist.has(reservedUsername)) {
 		throw new Error('Cannot reserve blacklisted username.');
 	}
 
@@ -58,6 +59,15 @@ const addInviteCode = async (
 			.map(() => readableID(15)),
 		inviterUsername: normalize(inviterUsername)
 	}));
+
+	if (
+		reservedUsername &&
+		(await database
+			.ref(`${namespacePath}/users/${reservedUsername}/publicProfile`)
+			.once('value')).val()
+	) {
+		reservedUsername = undefined;
+	}
 
 	await Promise.all(
 		inviteCodes.map(async ({codes, inviterUsername}) =>
@@ -90,9 +100,7 @@ const addInviteCode = async (
 						reservedUsername ?
 							database
 								.ref(
-									`${namespacePath}/reservedUsernames/${normalize(
-										reservedUsername
-									)}`
+									`${namespacePath}/reservedUsernames/${reservedUsername}`
 								)
 								.set('') :
 							undefined
