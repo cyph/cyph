@@ -164,6 +164,16 @@ export class Config {
 					}
 				}
 			},
+			flashSale: {
+				id: 10,
+				items: {
+					lifetimePlatinum: {
+						amount: 100,
+						id: 1,
+						name: 'Lifetime Platinum (Flash Sale)'
+					}
+				}
+			},
 			hint: {
 				id: 5,
 				items: {
