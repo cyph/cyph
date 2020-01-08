@@ -137,15 +137,26 @@ const generateScreenshots = async () => {
 	for (const isMobile of [false, true]) {
 		const {browser, page} = await logIn(credentials.username, isMobile);
 
-		await page.waitForSelector(
-			'cyph-account-contact:nth-of-type(4) img[alt="User Avatar"]'
-		);
+		if (isMobile) {
+			await toggleMobileMenu(page, isMobile);
+			await click(page, '[routerlink="/profile"]');
+		}
+		else {
+			await page.waitForSelector(
+				'cyph-account-contact:nth-of-type(4) img[alt="User Avatar"]'
+			);
+		}
+
 		await takeScreenshot(page, isMobile, 'profile');
 
 		if (isMobile) {
 			await toggleMobileMenu(page, isMobile);
 			await takeScreenshot(page, isMobile, 'menu');
-			await toggleMobileMenu(page, isMobile);
+			await click(page, '[routerlink="/messages"]');
+			await page.waitForSelector(
+				'cyph-account-contact:nth-of-type(4) img[alt="User Avatar"]'
+			);
+			await takeScreenshot(page, isMobile, 'messages');
 		}
 
 		await openChat(page);
