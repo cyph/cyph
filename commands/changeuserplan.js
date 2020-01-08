@@ -72,6 +72,17 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
 			plan: cyphPlan
 		}),
+		database
+			.ref(`${namespacePath}/users/${username}/internal/braintreeID`)
+			.remove(),
+		database
+			.ref(
+				`${namespacePath}/users/${username}/internal/braintreeSubscriptionID`
+			)
+			.remove(),
+		database
+			.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`)
+			.remove(),
 		(async () => {
 			const numInvites = Object.keys(
 				(await database
