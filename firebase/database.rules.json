@@ -178,6 +178,9 @@
 					"plan": {
 						".validate": "newData.isNumber()"
 					},
+					"planTrialEnd": {
+						".validate": "newData.isNumber()"
+					},
 					"reservedUsername": {
 						".validate": "newData.isString()"
 					}
@@ -700,6 +703,9 @@
 						},
 						"name": {
 							".validate": "newData.isString()"
+						},
+						"planTrialEnd": {
+							".validate": "newData.isNumber()"
 						},
 						"realUsername": {
 							".validate": "newData.isString()"

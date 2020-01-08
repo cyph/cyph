@@ -335,7 +335,7 @@ func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inv
 	return welcomeLetter, oldBraintreeSubscriptionID, nil
 }
 
-func getBraintreeSubscriptionID(userToken string) (string, error) {
+func getBraintreeSubscriptionID(userToken string) (string, int64, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace": "cyph.ws",
 		"userToken": userToken,
@@ -354,18 +354,18 @@ func getBraintreeSubscriptionID(userToken string) (string, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	braintreeSubscriptionID := ""
@@ -376,7 +376,15 @@ func getBraintreeSubscriptionID(userToken string) (string, error) {
 		}
 	}
 
-	return braintreeSubscriptionID, nil
+	planTrialEnd := int64(0)
+	if data, ok := responseBody["planTrialEnd"]; ok {
+		switch v := data.(type) {
+		case float64:
+			planTrialEnd = int64(v)
+		}
+	}
+
+	return braintreeSubscriptionID, planTrialEnd, nil
 }
 
 func getUsername(userToken string) (string, error) {

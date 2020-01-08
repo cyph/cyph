@@ -450,6 +450,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		const braintreeSubscriptionIDRef = database.ref(
 			`${internalURL}/braintreeSubscriptionID`
 		);
+		const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
 		const emailRef = database.ref(`${internalURL}/email`);
 
 		const [
@@ -475,7 +476,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			braintreeSubscriptionID ?
 				braintreeSubscriptionIDRef.set(braintreeSubscriptionID) :
 				braintreeSubscriptionIDRef.remove(),
-			config.planConfig[plan],
+			planTrialEndRef.remove(),
 			(async () => {
 				const numInvites = Object.keys(
 					(await database
@@ -604,11 +605,13 @@ exports.getBraintreeSubscriptionID = onRequest(
 		const braintreeSubscriptionIDRef = database.ref(
 			`${internalURL}/braintreeSubscriptionID`
 		);
-
 		const braintreeSubscriptionID =
 			(await braintreeSubscriptionIDRef.once('value')).val() || '';
 
-		return {braintreeSubscriptionID};
+		const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
+		const planTrialEnd = (await planTrialEndRef.once('value')).val() || 0;
+
+		return {braintreeSubscriptionID, planTrialEnd};
 	}
 );
 
@@ -726,6 +729,7 @@ exports.register = onCall(
 			braintreeID,
 			braintreeSubscriptionID,
 			inviterUsername,
+			planTrialEnd,
 			reservedUsername
 		} = inviteData;
 		const plan =
@@ -795,6 +799,11 @@ exports.register = onCall(
 					namespace,
 					`users/${inviterUsername}/inviteCodes/${inviteCode}`
 				).catch(() => {}),
+			isNaN(planTrialEnd) ?
+				undefined :
+				database
+					.ref(`${namespace}/users/${username}/internal/planTrialEnd`)
+					.set(planTrialEnd),
 			!reservedUsername ?
 				undefined :
 				database

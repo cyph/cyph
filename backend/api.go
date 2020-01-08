@@ -607,7 +607,13 @@ func getTimestampHandler(h HandlerArgs) (interface{}, int) {
 func isAccountInGoodStanding(h HandlerArgs) (interface{}, int) {
 	userToken := sanitize(h.Vars["userToken"])
 
-	braintreeSubscriptionID, _ := getBraintreeSubscriptionID(userToken)
+	braintreeSubscriptionID, planTrialEnd, _ := getBraintreeSubscriptionID(userToken)
+
+	/* Check trial against current timestamp if applicable */
+
+	if planTrialEnd != 0 {
+		return planTrialEnd > time.Now().UnixNano(), http.StatusOK
+	}
 
 	/*
 		If no subscription ID, assume free or lifetime plan.

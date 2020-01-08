@@ -6,7 +6,14 @@ const {readableByteLength, titleize} = require('../modules/util');
 const {addInviteCode} = require('./addinvitecode');
 const {sendMail} = require('./email');
 
-const inviteUser = async (projectId, email, name, plan, reservedUsername) => {
+const inviteUser = async (
+	projectId,
+	email,
+	name,
+	plan,
+	reservedUsername,
+	trialMonths
+) => {
 	/* TODO: Handle other cases */
 	const accountsURL =
 		projectId === 'cyphme' ?
@@ -18,7 +25,8 @@ const inviteUser = async (projectId, email, name, plan, reservedUsername) => {
 		{'': 1},
 		undefined,
 		plan,
-		reservedUsername
+		reservedUsername,
+		trialMonths
 	))[''][0];
 
 	const cyphPlan = CyphPlans[plan] || CyphPlans.Free;
@@ -60,20 +68,22 @@ if (require.main === module) {
 	(async () => {
 		const projectId = process.argv[2];
 
-		for (const {email, name, plan, reservedUsername} of process.argv[3] ===
-		'--users' ?
+		for (const {email, name, plan, reservedUsername, trialMonths} of process
+			.argv[3] === '--users' ?
 			JSON.parse(process.argv[4]).map(arr => ({
 				email: arr[0],
 				name: arr[1],
 				plan: process.argv[5],
-				reservedUsername: arr[2]
+				reservedUsername: arr[2],
+				trialMonths: arr[3]
 			})) :
 			[
 				{
 					email: process.argv[3],
 					name: process.argv[4],
 					plan: process.argv[5],
-					reservedUsername: process.argv[6]
+					reservedUsername: process.argv[6],
+					trialMonths: process.argv[7]
 				}
 			]) {
 			console.log(
@@ -82,7 +92,8 @@ if (require.main === module) {
 					email,
 					name,
 					plan,
-					reservedUsername
+					reservedUsername,
+					trialMonths
 				)}`
 			);
 		}

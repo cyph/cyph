@@ -13,7 +13,8 @@ const addInviteCode = async (
 	countByUser,
 	namespace,
 	plan,
-	reservedUsername
+	reservedUsername,
+	trialMonths
 ) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
 		throw new Error('Invalid Firebase project ID.');
@@ -62,7 +63,15 @@ const addInviteCode = async (
 							.set({
 								inviterUsername,
 								...(plan ? {plan: CyphPlans[plan]} : {}),
-								...(reservedUsername ? {reservedUsername} : {})
+								...(reservedUsername ? {reservedUsername} : {}),
+								...(trialMonths ?
+									{
+										planTrialEnd: new Date().setMonth(
+											new Date().getMonth() +
+												parseInt(trialMonths, 10)
+										)
+									} :
+									{})
 							}),
 						inviterUsername ?
 							setItem(
@@ -101,6 +110,7 @@ if (require.main === module) {
 		const inviterUsername = process.argv[5] || '';
 		const plan = process.argv[6];
 		const reservedUsername = process.argv[7];
+		const trialMonths = process.argv[8];
 
 		console.log(
 			JSON.stringify(
@@ -109,7 +119,8 @@ if (require.main === module) {
 					{[inviterUsername]: isNaN(count) ? 1 : count},
 					namespace,
 					plan,
-					reservedUsername
+					reservedUsername,
+					trialMonths
 				)
 			)
 		);
