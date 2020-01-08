@@ -27,6 +27,7 @@ import {emailPattern} from '../../email-pattern';
 import {CyphPlans} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
+import {AnalyticsService} from '../../services/analytics.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -387,6 +388,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					/* Allow "step" parameter to double up as invite code */
 					if (isNaN(step) && !this.inviteCode.value) {
 						this.inviteCode.setValue(stepString);
+
+						this.analyticsService.sendEvent({
+							eventAction: 'new',
+							eventCategory: 'invite-open',
+							eventLabel: stepString,
+							eventValue: 1,
+							hitType: 'event'
+						});
 					}
 					else if (
 						!isNaN(step) &&
@@ -490,6 +499,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		this.finalConfirmation.masterKey = '';
 
+		this.analyticsService.sendEvent({
+			eventAction: 'new',
+			eventCategory: 'registration',
+			eventLabel: this.inviteCode.value,
+			eventValue: 1,
+			hitType: 'event'
+		});
+
 		this.email.next('');
 		this.inviteCode.setValue('');
 		this.lockScreenPassword.next('');
@@ -534,6 +551,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
