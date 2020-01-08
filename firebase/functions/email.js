@@ -130,7 +130,7 @@ const sendMailInternal = async (
 		try {
 			await transporter.sendMail(mailObject);
 		}
-		catch {
+		catch (_) {
 			await transporterBackup.sendMail(mailObject);
 		}
 	}
