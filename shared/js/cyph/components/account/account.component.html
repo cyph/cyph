@@ -238,7 +238,10 @@
 					*ngIf="
 						!configService.planConfig[
 							accountSettingsService.plan.value || cyphPlans.Free
-						].lifetime && (flashSaleBanner | await)
+						].lifetime &&
+						(accountDatabaseService.currentUser | await)
+							?.masterKeyConfirmed === true &&
+						(flashSaleBanner | await)
 					"
 				>
 					<div fxFlex fxLayout="row">
