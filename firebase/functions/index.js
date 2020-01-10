@@ -1244,6 +1244,8 @@ const userNotify = async (data, context, namespace, username) => {
 		return;
 	}
 
+	notification.target = normalize(notification.target);
+
 	const userPath = `${namespace}/users/${notification.target}`;
 
 	const activeCall =
