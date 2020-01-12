@@ -238,7 +238,7 @@
 					*ngIf="
 						(accountDatabaseService.currentUser | await)
 							?.masterKeyConfirmed === true &&
-						(flashSaleBanner | await)
+						(upsellBanner | await)
 					"
 				>
 					<div fxFlex fxLayout="row">
@@ -295,7 +295,7 @@
 								cyphTranslate
 								matTooltip="Close"
 								class="close"
-								(click)="flashSaleBanner.next(false)"
+								(click)="upsellBanner.next(false)"
 							>
 								<mat-icon>close</mat-icon>
 							</button>

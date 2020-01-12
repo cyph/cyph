@@ -81,7 +81,7 @@ export class AccountComponent extends BaseProvider
 	public readonly cyphPlans = CyphPlans;
 
 	/** Controls whether flash sale banner is enabled. */
-	public readonly flashSaleBanner = new BehaviorSubject<boolean>(false);
+	public readonly upsellBanner = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether section should take up 100% height. */
 	public readonly fullHeight: Observable<boolean> = combineLatest([
@@ -358,26 +358,26 @@ export class AccountComponent extends BaseProvider
 
 		Promise.all([
 			this.localStorageService
-				.getItem('2020-01-flashSaleBanner', BooleanProto)
+				.getItem('upsellBanner', BooleanProto)
 				.catch(() => true),
 			this.accountSettingsService.plan
 				.pipe(skip(1), take(1))
 				.toPromise()
 				.catch(() => CyphPlans.Free)
-		]).then(([flashSaleBanner, plan]) => {
-			this.flashSaleBanner.next(
-				flashSaleBanner && !this.configService.planConfig[plan].lifetime
+		]).then(([upsellBanner, plan]) => {
+			this.upsellBanner.next(
+				upsellBanner && !this.configService.planConfig[plan].lifetime
 			);
 		});
 
 		this.subscriptions.push(
-			this.flashSaleBanner
+			this.upsellBanner
 				.pipe(skip(1))
-				.subscribe(async flashSaleBanner =>
+				.subscribe(async upsellBanner =>
 					this.localStorageService.setItem(
-						'2020-01-flashSaleBanner',
+						'upsellBanner',
 						BooleanProto,
-						flashSaleBanner
+						upsellBanner
 					)
 				)
 		);
