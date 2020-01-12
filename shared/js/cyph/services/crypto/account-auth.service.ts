@@ -127,7 +127,8 @@ export class AccountAuthService extends BaseProvider {
 	/** Changes master key. */
 	public async changeMasterKey (
 		masterKey: string,
-		saveCredentials: boolean = false
+		saveCredentials: boolean = false,
+		changeDatabasePassword: boolean = true
 	) : Promise<void> {
 		const currentUser = await this.accountDatabaseService.getCurrentUser();
 
@@ -141,13 +142,15 @@ export class AccountAuthService extends BaseProvider {
 			masterKey
 		);
 
-		const newLoginData = {
-			...currentUser.loginData,
-			oldSecondaryPassword: currentUser.loginData.secondaryPassword,
-			secondaryPassword: this.potassiumService.toBase64(
-				this.potassiumService.randomBytes(64)
-			)
-		};
+		const newLoginData = !changeDatabasePassword ?
+			currentUser.loginData :
+			{
+				...currentUser.loginData,
+				oldSecondaryPassword: currentUser.loginData.secondaryPassword,
+				secondaryPassword: this.potassiumService.toBase64(
+					this.potassiumService.randomBytes(64)
+				)
+			};
 
 		await Promise.all<{}>([
 			this.setItem(url, AccountLoginData, newLoginData, symmetricKey),
@@ -171,6 +174,10 @@ export class AccountAuthService extends BaseProvider {
 					);
 				})()
 		]);
+
+		if (!changeDatabasePassword) {
+			return;
+		}
 
 		try {
 			try {

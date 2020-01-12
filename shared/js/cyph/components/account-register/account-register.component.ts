@@ -292,7 +292,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 			await Promise.all([
 				this.accountAuthService
-					.changeMasterKey(masterKey, true)
+					.changeMasterKey(masterKey, true, false)
 					.then(async () =>
 						this.localStorageService.removeItem(
 							'unconfirmedMasterKey'
