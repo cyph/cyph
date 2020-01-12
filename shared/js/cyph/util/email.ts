@@ -8,16 +8,12 @@ export const email = async (
 	to: string = 'hello',
 	subject: string = 'New Cyph Email',
 	message: string = '',
-	fromEmail?: string,
+	fromEmail: string = '',
 	fromName: string = 'Mandrill',
 	automated: boolean = false
 ) : Promise<void> => {
-	fromEmail = (fromEmail || 'test@mandrillapp.com').replace(
-		'@cyph.com',
-		'@mandrillapp.com'
-	);
-
 	message = (
+		`From: ${fromEmail}\n\n` +
 		`${message}\n\n\n---\n\n${env.userAgent}\n\n` +
 		`${env.language}\n\n${locationData.href}`
 	).replace(/\/#.*/g, '');
@@ -30,9 +26,10 @@ export const email = async (
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
 					/* eslint-disable-next-line camelcase */
-					from_email: fromEmail,
+					from_email: 'incoming@cyph.com',
 					/* eslint-disable-next-line camelcase */
 					from_name: fromName,
+					headers: {...(fromEmail ? {'Reply-To': fromEmail} : {})},
 					subject,
 					text: message,
 					to: [
