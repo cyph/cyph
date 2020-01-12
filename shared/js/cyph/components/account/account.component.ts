@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {map, mergeMap, skip} from 'rxjs/operators';
+import {map, mergeMap, skip, take} from 'rxjs/operators';
 import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
@@ -356,14 +356,19 @@ export class AccountComponent extends BaseProvider
 			})
 		);
 
-		this.localStorageService
-			.getItem('2020-01-flashSaleBanner', BooleanProto)
-			.then(flashSaleBanner => {
-				this.flashSaleBanner.next(flashSaleBanner);
-			})
-			.catch(() => {
-				this.flashSaleBanner.next(true);
-			});
+		Promise.all([
+			this.localStorageService
+				.getItem('2020-01-flashSaleBanner', BooleanProto)
+				.catch(() => true),
+			this.accountSettingsService.plan
+				.pipe(skip(1), take(1))
+				.toPromise()
+				.catch(() => CyphPlans.Free)
+		]).then(([flashSaleBanner, plan]) => {
+			this.flashSaleBanner.next(
+				flashSaleBanner && !this.configService.planConfig[plan].lifetime
+			);
+		});
 
 		this.subscriptions.push(
 			this.flashSaleBanner

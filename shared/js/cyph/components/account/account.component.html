@@ -236,9 +236,6 @@
 				<h3
 					class="cyph-banner alert"
 					*ngIf="
-						!configService.planConfig[
-							accountSettingsService.plan.value || cyphPlans.Free
-						].lifetime &&
 						(accountDatabaseService.currentUser | await)
 							?.masterKeyConfirmed === true &&
 						(flashSaleBanner | await)
