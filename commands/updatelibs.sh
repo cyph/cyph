@@ -503,6 +503,6 @@ rm -rf shared/lib
 mv ~/lib shared/
 rm -rf ~/tmplib
 
-./commands/getlibs.sh || fail
+./commands/getlibs.sh
 cyph-prettier --write shared/lib/js/package.json
 ./commands/commit.sh --gc "${@}" updatelibs
