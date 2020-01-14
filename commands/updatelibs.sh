@@ -333,6 +333,7 @@ read -r -d '' modules <<- EOM
 	retire@^2
 	rlwe
 	rsvp
+	run-node
 	rxjs
 	rxjs-tslint@0.1.5
 	rxjs-tslint-rules
