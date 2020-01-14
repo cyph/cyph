@@ -277,7 +277,7 @@ export class Env extends EnvDeploy {
 		undefined;
 
 	/** Indicates whether minimal affiliate advertising should be displayed. */
-	public readonly showAds: boolean = !environment.customBuild;
+	public readonly showAds: boolean = false;
 
 	/** Indicates whether Granim gradient canvases should be displayed. */
 	public readonly showGranim: boolean =
