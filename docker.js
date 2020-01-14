@@ -34,20 +34,22 @@ const exec = command =>
 const open = url =>
 	require(path.join(__dirname, 'shared', 'node_modules', 'opn'))(url);
 
-const spawn = (command, args, cwd) =>
+const spawn = (command, args, cwd, env) =>
 	(
 		childProcess.spawnSync(command, args, {
-			cwd: path.join(__dirname, cwd || '')
+			cwd: path.join(__dirname, cwd || ''),
+			...(env ? {env: {...process.env, ...env}} : {})
 		}).stdout || ''
 	)
 		.toString()
 		.trim();
 
-const spawnAsync = (command, args, cwd) =>
+const spawnAsync = (command, args, cwd, env) =>
 	new Promise(resolve =>
 		childProcess
 			.spawn(command, args, {
 				cwd: path.join(__dirname, cwd || ''),
+				...(env ? {env: {...process.env, ...env}} : {}),
 				stdio: 'inherit'
 			})
 			.on('exit', () => {
@@ -451,18 +453,52 @@ const pullUpdates = () => {
 				backup();
 			}
 
-			spawn('node', [
-				path.join(
-					__dirname,
-					'shared',
-					'node_modules',
-					'husky',
-					'lib',
-					'installer',
-					'bin.js'
-				),
-				'install'
-			]);
+			const huskyRunPath = path.join(
+				__dirname,
+				'shared',
+				'node_modules',
+				'.bin',
+				'husky-run'
+			);
+
+			fs.unlinkSync(huskyRunPath);
+			fs.writeFileSync(
+				huskyRunPath,
+				'#!/usr/bin/env node\nrequire("../husky/run")'
+			);
+			fs.chmodSync(
+				huskyRunPath,
+				fs.constants.S_IRUSR |
+					fs.constants.S_IWUSR |
+					fs.constants.S_IXUSR |
+					fs.constants.S_IRGRP |
+					fs.constants.S_IWGRP |
+					fs.constants.S_IXGRP |
+					fs.constants.S_IROTH |
+					fs.constants.S_IWOTH |
+					fs.constants.S_IXOTH
+			);
+
+			return spawnAsync(
+				'node',
+				[
+					path.join(
+						__dirname,
+						'shared',
+						'node_modules',
+						'husky',
+						'lib',
+						'installer',
+						'bin.js'
+					),
+					'install'
+				],
+				undefined,
+				{
+					INIT_CWD: __dirname,
+					npm_config_user_agent: 'npm/6.0.0'
+				}
+			);
 		});
 	/*
 		.then(() => {
