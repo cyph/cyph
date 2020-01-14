@@ -211,20 +211,32 @@
 													)
 												"
 											>
-												<span cyphTranslate>
-													Don't have an invite code?
-												</span>
-												&ngsp;
-												<a
+												<span
 													cyphTranslate
-													[href]="
-														envService.homeUrl +
-														'register?hideHeaderAndFooter=true'
+													*ngIf="
+														!!(
+															inviteCodeWatcher
+															| await
+														)?.value
 													"
-													target="_self"
-													>Join the waitlist to get
-													one!</a
 												>
+													{{
+														stringsService.invalidInviteCode
+													}}
+												</span>
+												<span
+													cyphTranslate
+													*ngIf="
+														!(
+															inviteCodeWatcher
+															| await
+														)?.value
+													"
+												>
+													Since you don't have an
+													invite code, you'll be added
+													to the waitlist instead.
+												</span>
 											</span>
 										</ng-template>
 									</div>
@@ -398,12 +410,20 @@
 														type="email"
 														[pattern]="emailPattern"
 														[placeholder]="
-															envService.isTelehealth ?
+															envService.isTelehealth ||
+															!(
+																inviteCodeWatcher
+																| await
+															)?.value ?
 																stringsService.email :
 																stringsService.emailOptional
 														"
 														[required]="
-															envService.isTelehealth
+															envService.isTelehealth ||
+															!(
+																inviteCodeWatcher
+																| await
+															)?.value
 														"
 													/>
 												</mat-form-field>
@@ -425,7 +445,6 @@
 														"
 														name="inviteCode"
 														placeholder="Invite Code"
-														required
 													/>
 													<div
 														matSuffix
@@ -520,7 +539,9 @@
 									variable sections
 								</div>
 							</mat-tab>
-							<mat-tab>
+							<mat-tab
+								[disabled]="!(inviteCodeWatcher | await)?.value"
+							>
 								<ng-template mat-tab-label>
 									<mat-icon
 										*ngIf="((tabIndex | await) || 0) > 0"
@@ -540,7 +561,9 @@
 									*ngTemplateOutlet="lockScreenUI"
 								></ng-container>
 							</mat-tab>
-							<mat-tab>
+							<mat-tab
+								[disabled]="!(inviteCodeWatcher | await)?.value"
+							>
 								<ng-template mat-tab-label>
 									<mat-icon
 										*ngIf="((tabIndex | await) || 0) > 1"
@@ -780,16 +803,28 @@
 					fxLayoutGap="32px"
 					*ngIf="((tabIndex | await) || 0) !== totalSteps"
 				>
-					<button
-						mat-button
-						(click)="updateRoute(-1)"
-						*ngIf="((tabIndex | await) || 0) > 0"
+					<ng-container
+						*ngIf="
+							!!(inviteCodeWatcher | await)?.value;
+							else waitlistButton
+						"
 					>
-						<span cyphTranslate>Previous</span>
-					</button>
-					<button mat-button (click)="updateRoute(1)">
-						<span cyphTranslate>Next</span>
-					</button>
+						<button
+							mat-button
+							(click)="updateRoute(-1)"
+							*ngIf="((tabIndex | await) || 0) > 0"
+						>
+							<span cyphTranslate>Previous</span>
+						</button>
+						<button mat-button (click)="updateRoute(1)">
+							<span cyphTranslate>Next</span>
+						</button>
+					</ng-container>
+					<ng-template #waitlistButton>
+						<button mat-button (click)="waitlistSignup()">
+							<span cyphTranslate>Sign Up</span>
+						</button>
+					</ng-template>
 				</div>
 			</div>
 

@@ -1078,6 +1078,15 @@ export class StringsService extends BaseProvider {
 	public readonly waitingRoomNotReadyTime = `It's not time to check in for your appointment yet. You can check in up to 20 minutes before your scheduled appointment.`;
 
 	/** @see StringsService */
+	public readonly waitlistSignupConfirm = `Thanks for signing up. Keep an eye out for your invite!`;
+
+	/** @see StringsService */
+	public readonly waitlistSignupFailure = `Signup failed. Please try again later.`;
+
+	/** @see StringsService */
+	public readonly waitlistSignupTitle = `${this.internalProductShort} Waitlist Signup`;
+
+	/** @see StringsService */
 	public readonly warningTitle = `Warning`;
 
 	/** @see StringsService */

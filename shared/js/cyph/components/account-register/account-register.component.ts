@@ -32,9 +32,11 @@ import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DatabaseService} from '../../services/database.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {SalesService} from '../../services/sales.service';
+import {SignupService} from '../../services/signup.service';
 import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -536,6 +538,38 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		]);
 	}
 
+	/** Submits to waitlist. */
+	public async waitlistSignup () : Promise<void> {
+		if (!this.email.value || !this.name.value || !this.username.value) {
+			return;
+		}
+
+		this.accountService.interstitial.next(true);
+
+		let success = false;
+
+		try {
+			success = await this.signupService
+				.submit({
+					email: this.email.value,
+					name: this.name.value,
+					usernameRequest: this.username.value
+				})
+				.then(() => true)
+				.catch(() => false);
+		}
+		finally {
+			this.accountService.interstitial.next(false);
+		}
+
+		await this.dialogService.alert({
+			content: success ?
+				this.stringsService.waitlistSignupConfirm :
+				this.stringsService.waitlistSignupFailure,
+			title: this.stringsService.waitlistSignupTitle
+		});
+	}
+
 	/** xkcdPassphrase slider label function. */
 	public readonly xkcdSliderDisplayWith = (n: number) =>
 		(this.configService.masterKey.sizes[n] || 0).toString();
@@ -560,7 +594,13 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
+
+		/** @ignore */
+		private readonly signupService: SignupService,
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService,

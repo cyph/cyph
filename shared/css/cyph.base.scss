@@ -73,6 +73,10 @@ mat-tab-header {
 	max-width: 100%;
 }
 
+.mat-tab-label.mat-tab-disabled {
+	opacity: 0.3;
+}
+
 * {
 	-webkit-font-smoothing: antialiased !important;
 	-moz-osx-font-smoothing: grayscale !important;

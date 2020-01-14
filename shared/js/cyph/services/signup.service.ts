@@ -13,8 +13,10 @@ export class SignupService extends BaseProvider {
 	/** Signup data entered by user. */
 	public readonly data = {
 		email: new BehaviorSubject<string>(''),
+		featureInterest: new BehaviorSubject<string>(''),
 		inviteCode: new BehaviorSubject<string>(''),
-		name: new BehaviorSubject<string>('')
+		name: new BehaviorSubject<string>(''),
+		usernameRequest: new BehaviorSubject<string>('')
 	};
 
 	/** Used to track which users signed up through a promo page. */
@@ -24,10 +26,22 @@ export class SignupService extends BaseProvider {
 	public readonly state = new BehaviorSubject<number>(0);
 
 	/** Submits signup data to server. */
-	public async submit () : Promise<void> {
+	public async submit ({
+		email = this.data.email.value,
+		featureInterest = this.data.featureInterest.value,
+		inviteCode = this.data.inviteCode.value,
+		name = this.data.name.value,
+		usernameRequest = this.data.usernameRequest.value
+	}: {
+		email?: string;
+		featureInterest?: string;
+		inviteCode?: string;
+		name?: string;
+		usernameRequest?: string;
+	} = {}) : Promise<void> {
 		this.state.next(this.state.value + 1);
 
-		if (!this.data.email.value) {
+		if (!email) {
 			return;
 		}
 
@@ -37,10 +51,12 @@ export class SignupService extends BaseProvider {
 
 		const signupResult = await request({
 			data: {
-				email: this.data.email.value,
-				inviteCode: this.data.inviteCode.value,
+				email,
+				featureInterest,
+				inviteCode,
 				language: this.envService.fullLanguage,
-				name: this.data.name.value
+				name,
+				usernameRequest
 			},
 			method: 'PUT',
 			retries: 5,
@@ -66,7 +82,7 @@ export class SignupService extends BaseProvider {
 			hitType: 'social',
 			socialAction: 'signup',
 			socialNetwork: 'promo-' + this.promo.value,
-			socialTarget: this.data.email.value
+			socialTarget: email
 		});
 	}
 
