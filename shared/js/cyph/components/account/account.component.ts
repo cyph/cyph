@@ -366,7 +366,9 @@ export class AccountComponent extends BaseProvider
 				.catch(() => CyphPlans.Free)
 		]).then(([upsellBanner, plan]) => {
 			this.upsellBanner.next(
-				upsellBanner && !this.configService.planConfig[plan].lifetime
+				upsellBanner &&
+					!this.configService.planConfig[plan].lifetime &&
+					!this.configService.planConfig[plan].telehealth
 			);
 		});
 
