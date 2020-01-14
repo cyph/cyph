@@ -850,17 +850,6 @@ export class DatabaseService extends DataManagerService {
 		);
 	}
 
-	/** Subscribes to a value. */
-	public watch<T> (
-		_URL: MaybePromise<string>,
-		_PROTO: IProto<T>,
-		_SUBSCRIPTIONS?: Subscription[]
-	) : Observable<ITimedValue<T>> {
-		throw new Error(
-			'Must provide an implementation of DatabaseService.watch.'
-		);
-	}
-
 	/** Subscribes to whether or not a value exists. */
 	public watchExists (
 		_URL: MaybePromise<string>,

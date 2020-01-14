@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/require-await */
 
-import {Injectable} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {Injectable, NgZone} from '@angular/core';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {IProto} from '../iproto';
+import {ITimedValue} from '../itimed-value';
 import {
 	BinaryProto,
 	ILocalStorageLockMetadata,
@@ -12,6 +13,7 @@ import {
 } from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {filterUndefined} from '../util/filter';
+import {getOrSetDefaultObservable} from '../util/get-or-set-default';
 import {debugLog} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -23,6 +25,13 @@ import {resolvable, sleep} from '../util/wait';
  */
 @Injectable()
 export class LocalStorageService extends DataManagerService {
+	/** @ignore */
+	private readonly broadcastChannelKeys = {
+		clear: 'LocalStorageService-clear',
+		item: 'LocalStorageService-item',
+		lock: 'LocalStorageService-lock'
+	};
+
 	/** In-memory cache for faster access. */
 	private readonly cache: Map<string, Uint8Array> = new Map<
 		string,
@@ -37,6 +46,11 @@ export class LocalStorageService extends DataManagerService {
 		timeout: 60000
 	};
 
+	/** @ignore */
+	private readonly observableCaches = {
+		watch: new Map<string, Observable<ITimedValue<any>>>()
+	};
+
 	/** Used to prevent race condition getItem failures. */
 	private readonly pendingSets: Map<string, Promise<void>> = new Map<
 		string,
@@ -45,6 +59,9 @@ export class LocalStorageService extends DataManagerService {
 
 	/** If true, localForage failed and we should stop bugging the user for permission. */
 	private setInternalFailed: boolean = false;
+
+	/** @ignore */
+	private readonly watchFallbackInterval = 10000;
 
 	/** Interface to platform-specific clear functionality. */
 	protected async clearInternal (_WAIT_FOR_READY: boolean) : Promise<void> {
@@ -97,6 +114,14 @@ export class LocalStorageService extends DataManagerService {
 	public async clear (waitForReady: boolean = true) : Promise<void> {
 		this.cache.clear();
 		await this.clearInternal(waitForReady).catch(() => {});
+
+		if (typeof BroadcastChannel !== 'undefined') {
+			const channel = new BroadcastChannel(
+				this.broadcastChannelKeys.clear
+			);
+			channel.postMessage(undefined);
+			channel.close();
+		}
 	}
 
 	/** @inheritDoc */
@@ -214,7 +239,9 @@ export class LocalStorageService extends DataManagerService {
 		const metadata = {id, reason};
 		const channel =
 			typeof BroadcastChannel !== 'undefined' ?
-				new BroadcastChannel(lockURL) :
+				new BroadcastChannel(
+					`${this.broadcastChannelKeys.lock}:${lockURL}`
+				) :
 				undefined;
 
 		debugLog(() => ({localStorageLockWaiting: {id, lockURL, stillOwner}}));
@@ -341,6 +368,14 @@ export class LocalStorageService extends DataManagerService {
 		}
 
 		await this.removeItemInternal(url, waitForReady).catch(() => {});
+
+		if (typeof BroadcastChannel !== 'undefined') {
+			const channel = new BroadcastChannel(
+				`${this.broadcastChannelKeys.item}:${url}`
+			);
+			channel.postMessage(undefined);
+			channel.close();
+		}
 	}
 
 	/** @inheritDoc */
@@ -386,10 +421,108 @@ export class LocalStorageService extends DataManagerService {
 		}
 		finally {
 			this.pendingSets.delete(url);
+
+			if (typeof BroadcastChannel !== 'undefined') {
+				const channel = new BroadcastChannel(
+					`${this.broadcastChannelKeys.item}:${url}`
+				);
+				channel.postMessage(undefined);
+				channel.close();
+			}
 		}
 	}
 
-	constructor () {
+	/** @inheritDoc */
+	public watch<T> (
+		url: string,
+		proto: IProto<T>,
+		subscriptions?: Subscription[]
+	) : Observable<ITimedValue<T>> {
+		return getOrSetDefaultObservable(
+			this.observableCaches.watch,
+			url,
+			() =>
+				this.ngZone.runOutsideAngular(
+					() =>
+						new Observable<ITimedValue<T>>(observer => {
+							const channel =
+								typeof BroadcastChannel !== 'undefined' ?
+									new BroadcastChannel(
+										`${this.broadcastChannelKeys.item}:${url}`
+									) :
+									undefined;
+
+							const clearChannel =
+								typeof BroadcastChannel !== 'undefined' ?
+									new BroadcastChannel(
+										this.broadcastChannelKeys.clear
+									) :
+									undefined;
+
+							let active = true;
+							let unlocked = resolvable();
+
+							if (channel) {
+								channel.onmessage = () => {
+									unlocked.resolve();
+								};
+							}
+							if (clearChannel) {
+								clearChannel.onmessage = () => {
+									this.cache.clear();
+									unlocked.resolve();
+								};
+							}
+
+							(async () => {
+								while (active) {
+									observer.next({
+										timestamp: await getTimestamp(),
+										value: await this.getItem(
+											url,
+											proto
+										).catch(() => proto.create())
+									});
+
+									if (!channel) {
+										await sleep(this.watchFallbackInterval);
+										continue;
+									}
+
+									unlocked = resolvable();
+
+									await unlocked.promise;
+								}
+							})();
+
+							return () => {
+								active = false;
+								unlocked.resolve();
+								if (channel) {
+									channel.close();
+								}
+								if (clearChannel) {
+									clearChannel.close();
+								}
+							};
+						})
+				),
+			subscriptions
+		);
+	}
+
+	constructor (
+		/** @ignore */
+		private readonly ngZone: NgZone
+	) {
 		super();
+
+		if (typeof BroadcastChannel !== 'undefined') {
+			new BroadcastChannel(
+				this.broadcastChannelKeys.clear
+			).onmessage = () => {
+				this.cache.clear();
+			};
+		}
 	}
 }

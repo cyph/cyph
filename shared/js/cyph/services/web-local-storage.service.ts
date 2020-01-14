@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import * as localforage from 'localforage';
 import {StringProto} from '../proto';
 import {lockFunction} from '../util/lock';
@@ -99,7 +99,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		);
 	}
 
-	constructor () {
-		super();
+	constructor (ngZone: NgZone) {
+		super(ngZone);
 	}
 }

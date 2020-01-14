@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/require-await */
 
+import {Observable, Subscription} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {IProto} from '../iproto';
+import {ITimedValue} from '../itimed-value';
 import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, StringProto} from '../proto';
 
@@ -73,6 +75,15 @@ export class DataManagerService extends BaseProvider {
 		value: string
 	) : Promise<{url: string}> {
 		return this.setItem(url, StringProto, value);
+	}
+
+	/** Subscribes to a value. */
+	public watch<T> (
+		_URL: MaybePromise<string>,
+		_PROTO: IProto<T>,
+		_SUBSCRIPTIONS?: Subscription[]
+	) : Observable<ITimedValue<T>> {
+		throw new Error('Must provide an implementation of watch.');
 	}
 
 	constructor () {
