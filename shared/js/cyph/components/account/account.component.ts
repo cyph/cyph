@@ -5,12 +5,12 @@ import {
 	OnInit
 } from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
-import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {map, mergeMap, skip, take} from 'rxjs/operators';
+import {combineLatest, Observable, of} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
-import {BooleanProto, CyphPlans} from '../../proto';
+import {CyphPlans} from '../../proto';
 import {AccountDebugService} from '../../services/account-debug.service';
 import {AccountEnvService} from '../../services/account-env.service';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -21,7 +21,7 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {FaviconService} from '../../services/favicon.service';
-import {LocalStorageService} from '../../services/local-storage.service';
+import {SalesService} from '../../services/sales.service';
 import {ScreenshotService} from '../../services/screenshot.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by';
@@ -79,9 +79,6 @@ export class AccountComponent extends BaseProvider
 
 	/** @see CyphPlans */
 	public readonly cyphPlans = CyphPlans;
-
-	/** Controls whether flash sale banner is enabled. */
-	public readonly upsellBanner = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether section should take up 100% height. */
 	public readonly fullHeight: Observable<boolean> = combineLatest([
@@ -293,9 +290,6 @@ export class AccountComponent extends BaseProvider
 		/** @ignore */
 		private readonly faviconService: FaviconService,
 
-		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
-
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
@@ -316,6 +310,9 @@ export class AccountComponent extends BaseProvider
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see SalesService */
+		public readonly salesService: SalesService,
 
 		/** @see ScreenshotService */
 		public readonly screenshotService: ScreenshotService,
@@ -354,34 +351,6 @@ export class AccountComponent extends BaseProvider
 					accountPrimaryTheme && !telehealthTheme
 				);
 			})
-		);
-
-		Promise.all([
-			this.localStorageService
-				.getItem('upsellBanner', BooleanProto)
-				.catch(() => true),
-			this.accountSettingsService.plan
-				.pipe(skip(1), take(1))
-				.toPromise()
-				.catch(() => CyphPlans.Free)
-		]).then(([upsellBanner, plan]) => {
-			this.upsellBanner.next(
-				upsellBanner &&
-					!this.configService.planConfig[plan].lifetime &&
-					!this.configService.planConfig[plan].telehealth
-			);
-		});
-
-		this.subscriptions.push(
-			this.upsellBanner
-				.pipe(skip(1))
-				.subscribe(async upsellBanner =>
-					this.localStorageService.setItem(
-						'upsellBanner',
-						BooleanProto,
-						upsellBanner
-					)
-				)
 		);
 	}
 }

@@ -25,6 +25,7 @@ import {ConfigService} from '../services/config.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {EnvService} from '../services/env.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
+import {SalesService} from '../services/sales.service';
 import {SplitTestingService} from '../services/split-testing.service';
 import {StringsService} from '../services/strings.service';
 
@@ -84,6 +85,7 @@ import {StringsService} from '../services/strings.service';
 		AffiliateService,
 		ConfigService,
 		EnvService,
+		SalesService,
 		SplitTestingService,
 		StringsService,
 		{

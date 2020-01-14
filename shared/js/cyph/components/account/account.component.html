@@ -235,11 +235,7 @@
 
 				<h3
 					class="cyph-banner alert"
-					*ngIf="
-						(accountDatabaseService.currentUser | await)
-							?.masterKeyConfirmed === true &&
-						(upsellBanner | await)
-					"
+					*ngIf="accountService.upsellBanner | await"
 				>
 					<div fxFlex fxLayout="row">
 						<div
@@ -264,7 +260,7 @@
 								<a
 									cyphTranslate
 									(click)="
-										accountService.windowsAppUpgradeWorkaround(
+										salesService.windowsAppUpgradeWorkaround(
 											$event,
 											[
 												envService.homeUrl,
@@ -293,7 +289,7 @@
 								cyphTranslate
 								matTooltip="Close"
 								class="close"
-								(click)="upsellBanner.next(false)"
+								(click)="salesService.dismissUpsellBanner()"
 							>
 								<mat-icon>close</mat-icon>
 							</button>
@@ -315,7 +311,7 @@
 					<a
 						cyphTranslate
 						(click)="
-							accountService.windowsAppUpgradeWorkaround($event, [
+							salesService.windowsAppUpgradeWorkaround($event, [
 								envService.homeUrl,
 								'checkout/#',
 								configService.planConfig[

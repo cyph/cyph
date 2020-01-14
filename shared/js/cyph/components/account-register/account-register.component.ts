@@ -34,9 +34,10 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
+import {SalesService} from '../../services/sales.service';
 import {StringsService} from '../../services/strings.service';
-import {trackBySelf} from '../../track-by/track-by-self';
 import {WindowWatcherService} from '../../services/window-watcher.service';
+import {trackBySelf} from '../../track-by/track-by-self';
 import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {formControlMatch, watchFormControl} from '../../util/form-controls';
@@ -575,6 +576,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see SalesService */
+		public readonly salesService: SalesService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

@@ -51,6 +51,11 @@ body.soft-lock > * {
 body:not(.mobile) {
 	#main.cyph-foreground {
 		padding: 0 30px 15px;
+
+		> .cyph-banner {
+			margin-left: -30px;
+			margin-right: -30px;
+		}
 	}
 }
 

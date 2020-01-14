@@ -13,6 +13,7 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
+import {SalesService} from '../../services/sales.service';
 import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {titleize} from '../../util/titleize';
@@ -315,6 +316,9 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see SalesService */
+		public readonly salesService: SalesService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

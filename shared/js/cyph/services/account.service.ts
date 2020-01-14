@@ -16,7 +16,6 @@ import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
 import {IResolvable} from '../iresolvable';
-import {MaybePromise} from '../maybe-promise-type';
 import {
 	BooleanProto,
 	CyphPlans,
@@ -33,7 +32,6 @@ import {request} from '../util/request';
 import {getTimestamp, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
-import {openWindow} from '../util/window';
 import {AccountAppointmentsService} from './account-appointments.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
@@ -48,6 +46,7 @@ import {LocalStorageService} from './local-storage.service';
 import {FingerprintService} from './fingerprint.service';
 import {NotificationService} from './notification.service';
 import {P2PWebRTCService} from './p2p-webrtc.service';
+import {SalesService} from './sales.service';
 import {StringsService} from './strings.service';
 import {WindowWatcherService} from './window-watcher.service';
 
@@ -261,6 +260,17 @@ export class AccountService extends BaseProvider {
 		),
 		0,
 		this.subscriptions
+	);
+
+	/** @see SalesService.upsellBanner */
+	public readonly upsellBanner = combineLatest([
+		this.salesService.upsellBanner.pipe(skip(1)),
+		this.accountDatabaseService.currentUser
+	]).pipe(
+		map(
+			([upsellBanner, currentUser]) =>
+				upsellBanner && currentUser?.masterKeyConfirmed === true
+		)
 	);
 
 	/** @ignore */
@@ -660,28 +670,6 @@ export class AccountService extends BaseProvider {
 		);
 	}
 
-	/** Workaround for upgrade link on Windows app. */
-	public async windowsAppUpgradeWorkaround (
-		e: Event,
-		url?: string | MaybePromise<string | undefined>[]
-	) : Promise<void> {
-		if (!this.envService.isCordovaDesktopWindows) {
-			if (url) {
-				await openWindow(url);
-			}
-
-			return;
-		}
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		await this.dialogService.alert({
-			content: this.stringsService.windowsAppUpgradeWorkaroundContent,
-			title: this.stringsService.windowsAppUpgradeWorkaroundTitle
-		});
-	}
-
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
@@ -727,6 +715,9 @@ export class AccountService extends BaseProvider {
 
 		/** @ignore */
 		private readonly notificationService: NotificationService,
+
+		/** @ignore */
+		private readonly salesService: SalesService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService,
