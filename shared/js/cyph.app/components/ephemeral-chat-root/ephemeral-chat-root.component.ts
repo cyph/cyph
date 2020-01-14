@@ -20,6 +20,7 @@ import {EphemeralSessionService} from '../../../cyph/services/ephemeral-session.
 import {FileTransferService} from '../../../cyph/services/file-transfer.service';
 import {P2PWebRTCService} from '../../../cyph/services/p2p-webrtc.service';
 import {P2PService} from '../../../cyph/services/p2p.service';
+import {SalesService} from '../../../cyph/services/sales.service';
 import {ScrollService} from '../../../cyph/services/scroll.service';
 import {SessionCapabilitiesService} from '../../../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../../../cyph/services/session-init.service';
@@ -266,6 +267,9 @@ export class EphemeralChatRootComponent extends BaseProvider
 
 		/** @see P2PService */
 		public readonly p2pService: P2PService,
+
+		/** @see SalesService */
+		public readonly salesService: SalesService,
 
 		/** @see SessionService */
 		public readonly sessionService: SessionService,

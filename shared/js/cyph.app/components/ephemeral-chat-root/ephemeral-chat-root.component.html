@@ -41,6 +41,53 @@
 			<span cyphTranslate>for more details and the solution.</span>
 		</h3>
 
+		<h3 class="cyph-banner alert" *ngIf="salesService.upsellBanner | await">
+			<div fxFlex fxLayout="row">
+				<div fxLayoutAlign="center center" class="visibility-hidden">
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip="Close"
+						class="close"
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</div>
+				<div fxFlex fxLayoutAlign="center center">
+					<div>
+						<span cyphTranslate>
+							For the New Year Sale,
+						</span>
+						&ngsp;
+						<a
+							cyphTranslate
+							(click)="
+								salesService.windowsAppUpgradeWorkaround(
+									$event,
+									envService.homeUrl + 'pricing'
+								)
+							"
+							>get a Lifetime Platinum account</a
+						>! &ngsp;
+						<span cyphTranslate>
+							Limited time only.
+						</span>
+					</div>
+				</div>
+				<div fxLayoutAlign="center center">
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip="Close"
+						class="close"
+						(click)="salesService.dismissUpsellBanner()"
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</div>
+			</div>
+		</h3>
+
 		<h3 class="cyph-banner emphasis warn" *ngIf="envService.isOnion">
 			<span cyphTranslate>
 				We're currently experiencing issues with Burner chats over Tor.
