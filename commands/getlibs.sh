@@ -25,7 +25,7 @@ installPackages () {
 
 go get -u \
 	cloud.google.com/go/datastore \
-	github.com/cbroglie/mustache \
+	github.com/buu700/mustache-tmp \
 	github.com/gorilla/context \
 	github.com/gorilla/mux \
 	github.com/braintree-go/braintree-go \
