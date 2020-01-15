@@ -37,7 +37,7 @@
 		"username-blacklist": "https://github.com/cyph/The-Big-Username-Blacklist"
 	},
 	"engines": {
-		"node": "8"
+		"node": "10"
 	},
 	"private": true
 }
