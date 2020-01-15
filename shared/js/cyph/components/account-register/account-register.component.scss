@@ -1,5 +1,28 @@
 @import '../../../../css/mixins';
 
+.login-form {
+	> .cyph-banner {
+		position: fixed;
+		z-index: 1;
+		top: 0;
+		left: 0;
+		margin: 0;
+		width: 100%;
+	}
+
+	&.show-upsell-banner {
+		> mat-card {
+			padding-top: 92px;
+		}
+	}
+
+	&:not(.show-upsell-banner) {
+		> .cyph-banner {
+			display: none !important;
+		}
+	}
+}
+
 .description {
 	padding-top: 32px;
 	font-size: 1.25em;

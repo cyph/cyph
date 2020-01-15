@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {combineLatest, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, combineLatest, ReplaySubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {MaybePromise} from '../maybe-promise-type';
 import {BooleanProto} from '../proto';
@@ -14,8 +14,16 @@ import {StringsService} from './strings.service';
 /** Service for handling anything sales-related. */
 @Injectable()
 export class SalesService extends BaseProvider {
-	/** Controls whether flash sale banner is enabled. */
+	/** Controls whether /register upsell banner is enabled. */
+	public readonly registerUpsellBanner = new BehaviorSubject<boolean>(true);
+
+	/** Controls whether upsell banner is enabled. */
 	public readonly upsellBanner = new ReplaySubject<boolean>();
+
+	/** Closes /register upsell banner. */
+	public dismissRegisterUpsellBanner () : void {
+		this.registerUpsellBanner.next(false);
+	}
 
 	/** Closes upsell banner. */
 	public async dismissUpsellBanner () : Promise<void> {

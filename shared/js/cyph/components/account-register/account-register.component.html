@@ -78,8 +78,92 @@
 <div
 	class="login-form"
 	[class.checking]="checking | await"
+	[class.show-upsell-banner]="salesService.registerUpsellBanner | await"
 	*ngIf="!confirmMasterKeyOnly && !getMasterKeyOnly && !getPinOnly"
 >
+	<h3 class="cyph-banner alert">
+		<div fxFlex fxLayout="row">
+			<div fxLayoutAlign="center center" class="visibility-hidden">
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip="Close"
+					class="close"
+				>
+					<mat-icon>close</mat-icon>
+				</button>
+			</div>
+			<div
+				fxFlex
+				fxLayoutAlign="center center"
+				[class.visibility-hidden]="(inviteCodeWatcher | await)?.pending"
+			>
+				<div
+					*ngIf="
+						!!(inviteCodeWatcher | await)?.value &&
+							!(inviteCodeWatcher | await)?.hasError(
+								'inviteCodeInvalid'
+							);
+						else noInviteCodeUpsell
+					"
+				>
+					<span cyphTranslate>
+						NOTE: Usernames cannot be changed post-registration.
+					</span>
+					&ngsp;
+					<a
+						cyphTranslate
+						[href]="
+							envService.homeUrl +
+							'pricing?current=' +
+							cyphPlans[
+								(inviteCodeData | await)?.plan || cyphPlans.Free
+							] +
+							'&inviteCode=' +
+							((inviteCodeWatcher | await)?.value || '')
+						"
+						(click)="
+							salesService.windowsAppUpgradeWorkaround($event)
+						"
+						>Upgrade to Lifetime Platinum now</a
+					>
+					&ngsp;
+					<span cyphTranslate>
+						and lock in a short username for life!
+					</span>
+				</div>
+				<ng-template #noInviteCodeUpsell>
+					<div>
+						<a
+							cyphTranslate
+							[href]="envService.homeUrl + 'pricing'"
+							(click)="
+								salesService.windowsAppUpgradeWorkaround($event)
+							"
+							target="_self"
+							>Upgrade to premium</a
+						>
+						&ngsp;
+						<span cyphTranslate>
+							and skip the waitlist!
+						</span>
+					</div>
+				</ng-template>
+			</div>
+			<div fxLayoutAlign="center center">
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip="Close"
+					class="close"
+					(click)="salesService.dismissRegisterUpsellBanner()"
+				>
+					<mat-icon>close</mat-icon>
+				</button>
+			</div>
+		</div>
+	</h3>
+
 	<mat-card fxFlex class="fullscreen">
 		<mat-card-title>
 			{{ stringsService.registerTitle }}
