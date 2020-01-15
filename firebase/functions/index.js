@@ -1190,7 +1190,8 @@ exports.userEmailSet = functions.database
 							merge_fields: {
 								FNAME: firstName,
 								LNAME: lastName,
-								PLAN: CyphPlans[plan]
+								PLAN: CyphPlans[plan],
+								USERNAME: username
 							}
 						}
 					);
