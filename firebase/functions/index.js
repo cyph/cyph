@@ -1179,13 +1179,8 @@ exports.userEmailSet = functions.database
 						(await nameRef.once('value')).val() || ''
 					).split(' ');
 
-					const firstName =
-						nameSplit.length > 1 ?
-							nameSplit.slice(0, -1).join(' ') :
-							nameSplit[0];
-
-					const lastName =
-						nameSplit.length > 1 ? nameSplit.slice(-1)[0] : '';
+					const firstName = nameSplit[0];
+					const lastName = nameSplit.slice(1).join(' ');
 
 					await mailchimp.post(
 						`/lists/${mailchimpCredentials.listID}/members`,
