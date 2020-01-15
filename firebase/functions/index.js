@@ -1152,11 +1152,16 @@ exports.userEmailSet = functions.database
 			`${internalURL}/registrationEmailSent`
 		);
 
-		const email = await getItem(
-			params.namespace,
-			`users/${username}/email`,
-			StringProto
-		).catch(() => undefined);
+		const [email, plan] = await Promise.all([
+			getItem(
+				params.namespace,
+				`users/${username}/email`,
+				StringProto
+			).catch(() => undefined),
+			getItem(params.namespace, `users/${username}/plan`, CyphPlan)
+				.catch(() => undefined)
+				.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free))
+		]);
 
 		if (email && emailRegex.test(email)) {
 			await Promise.all([
@@ -1187,7 +1192,11 @@ exports.userEmailSet = functions.database
 						{
 							email_address: email,
 							status: 'subscribed',
-							merge_fields: {FNAME: firstName, LNAME: lastName}
+							merge_fields: {
+								FNAME: firstName,
+								LNAME: lastName,
+								PLAN: CyphPlans[plan]
+							}
 						}
 					);
 				})().catch(() => {})
