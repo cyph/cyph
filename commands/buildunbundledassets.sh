@@ -287,7 +287,7 @@ done
 echo ${typescriptAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} bash -c '
 	webpack --config "$(echo "%" | sha).webpack.js"
 '
-checkfail
+checkfailretry
 echo -e '\n'
 for f in ${typescriptAssets} ; do
 	m="$(getmodulename "${f}")"
@@ -326,10 +326,10 @@ grep -rl "@import '~" | xargs -I% sed -i "s|@import '~|@import '/node_modules/|g
 
 echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
 	sass '%.scss' '%.css'
-checkfail
+checkfailretry
 echo ${scssAssets} | tr ' ' '\n' | xargs -I% -P ${parallelProcesses} \
 	cleancss --inline none '%.css' -o '%.css'
-checkfail
+checkfailretry
 
 
 cd ..

@@ -16,6 +16,13 @@ checkfail () {
 	fi
 }
 
+checkfailretry () {
+	if (( $? )) ; then
+		bash ${0}
+		exit $?
+	fi
+}
+
 download () {
 	log "Downloading: ${*}"
 	curl -s --compressed --retry 50 ${1} > ${2}
