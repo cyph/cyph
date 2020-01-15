@@ -81,6 +81,7 @@ unbindmountInternal () {
 
 export -f bindmount
 export -f checkfail
+export -f checkfailretry
 export -f download
 export -f easyoptions
 export -f fail
