@@ -449,9 +449,11 @@ const pullUpdates = () => {
 				)
 		)
 		.then(didUpdate => {
-			if (didUpdate) {
-				backup();
+			if (!didUpdate) {
+				return;
 			}
+
+			backup();
 
 			const huskyRunPath = path.join(
 				__dirname,
