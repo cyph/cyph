@@ -30,19 +30,22 @@ export class SalesService extends BaseProvider {
 
 	/** Workaround for upgrade link on Windows app. */
 	public async windowsAppUpgradeWorkaround (
-		e: Event,
-		url?: string | MaybePromise<string | undefined>[]
+		e?: Event,
+		url?: string | MaybePromise<string | undefined>[],
+		sameWindow?: boolean
 	) : Promise<void> {
 		if (!this.envService.isCordovaDesktopWindows) {
 			if (url) {
-				await openWindow(url);
+				await openWindow(url, sameWindow);
 			}
 
 			return;
 		}
 
-		e.preventDefault();
-		e.stopPropagation();
+		if (e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
 
 		await this.dialogService.alert({
 			content: this.stringsService.windowsAppUpgradeWorkaroundContent,

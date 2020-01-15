@@ -22,6 +22,7 @@ import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
+import {AccountUpgradeComponent} from '../components/account-upgrade';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {BlankComponent} from '../components/blank';
 import {NotFoundComponent} from '../components/not-found';
@@ -379,6 +380,7 @@ export const account: Route = {
 			data: {userTypeFilter: AccountUserTypes.TelehealthAdmin}
 		},
 		{path: 'transition', component: BlankComponent},
+		{path: 'upgrade', component: AccountUpgradeComponent},
 		{
 			path:
 				'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',

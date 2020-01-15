@@ -4,7 +4,8 @@ import {filterUndefined} from './filter';
 
 /** Opens the specified URL in a new window. */
 export const openWindow = async (
-	url: string | MaybePromise<string | undefined>[]
+	url: string | MaybePromise<string | undefined>[],
+	sameWindow: boolean = false
 ) : Promise<void> => {
 	/* TODO: HANDLE NATIVE */
 	if (!env.isWeb) {
@@ -23,6 +24,11 @@ export const openWindow = async (
 				`file://${(<any> self).__dirname || ''}/index.html#`
 			)
 		);
+		return;
+	}
+
+	if (sameWindow && !env.isCordova) {
+		location.href = url;
 		return;
 	}
 

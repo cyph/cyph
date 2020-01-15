@@ -30,6 +30,7 @@ import {AccountPseudoRelationshipResponseComponent} from '../components/account-
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {AccountStorageAnalyticsComponent} from '../components/account-storage-analytics';
+import {AccountUpgradeComponent} from '../components/account-upgrade';
 import {AccountUserRatingComponent} from '../components/account-user-rating';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {FooterComponent} from '../components/footer';
@@ -95,6 +96,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountRegisterComponent,
 		AccountSettingsComponent,
 		AccountStorageAnalyticsComponent,
+		AccountUpgradeComponent,
 		AccountUserRatingComponent,
 		AccountWalletsComponent,
 		FooterComponent,
@@ -135,6 +137,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountRegisterComponent,
 		AccountSettingsComponent,
 		AccountStorageAnalyticsComponent,
+		AccountUpgradeComponent,
 		AccountUserRatingComponent,
 		AccountWalletsComponent,
 		FooterComponent,
