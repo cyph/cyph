@@ -26,6 +26,7 @@ if [ ! "${comment}" ] ; then
 fi
 
 rm .git/index.lock 2> /dev/null
+mv .git/hooks .git/hooks.tmp
 
 ./commands/keycache.sh
 
@@ -82,3 +83,4 @@ if [ "${gc}" ] ; then
 fi
 
 git push
+mv .git/hooks.tmp .git/hooks
