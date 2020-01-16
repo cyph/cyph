@@ -111,26 +111,42 @@
 						NOTE: Usernames cannot be changed post-registration.
 					</span>
 					&ngsp;
-					<a
-						cyphTranslate
-						[href]="
-							envService.homeUrl +
-							'pricing?current=' +
-							cyphPlans[
+					<ng-container
+						*ngIf="
+							!configService.planConfig[
 								(inviteCodeData | await)?.plan || cyphPlans.Free
-							] +
-							'&inviteCode=' +
-							((inviteCodeWatcher | await)?.value || '')
+							].lifetime;
+							else lifetimeBannerMessage
 						"
-						(click)="
-							salesService.windowsAppUpgradeWorkaround($event)
-						"
-						>Upgrade to Lifetime Platinum now</a
 					>
-					&ngsp;
-					<span cyphTranslate>
-						and lock in a short username for life!
-					</span>
+						<a
+							cyphTranslate
+							[href]="
+								envService.homeUrl +
+								'pricing?current=' +
+								cyphPlans[
+									(inviteCodeData | await)?.plan ||
+										cyphPlans.Free
+								] +
+								'&inviteCode=' +
+								((inviteCodeWatcher | await)?.value || '')
+							"
+							(click)="
+								salesService.windowsAppUpgradeWorkaround($event)
+							"
+							>Upgrade to Lifetime Platinum now</a
+						>
+						&ngsp;
+						<span cyphTranslate>
+							and lock in a short username for life!
+						</span>
+					</ng-container>
+					<ng-template #lifetimeBannerMessage>
+						<span cyphTranslate>
+							Since you have a lifetime plan, you can lock in a
+							short username for life!
+						</span>
+					</ng-template>
 				</div>
 				<ng-template #noInviteCodeUpsell>
 					<div>
