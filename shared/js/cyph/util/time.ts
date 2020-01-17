@@ -9,7 +9,6 @@ import {Time} from '../time-type';
 import {flattenObservable} from './flatten-observable';
 import {toInt} from './formatting';
 import {lockFunction} from './lock';
-import {random} from './random';
 import {request} from './request';
 import {translate} from './translate';
 import {sleep} from './wait';
@@ -55,8 +54,7 @@ const timestampData = {
 
 			return server - end;
 		})
-		.catch(() => 0),
-	subtime: 0
+		.catch(() => 0)
 };
 
 /**
@@ -320,19 +318,16 @@ const getTimestampLock = lockFunction();
  * Returns current timestamp, with logic to correct for incorrect
  * local clocks and ensure each output is unique.
  */
-export const getTimestamp = async () =>
+export const getTimestamp = async (forceUnique: boolean = false) =>
 	getTimestampLock(async () => {
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		let unixMilliseconds = Date.now() + (await timestampData.offset);
 
-		if (unixMilliseconds === timestampData.last) {
-			timestampData.subtime += random() / 100;
-			unixMilliseconds += timestampData.subtime;
+		if (unixMilliseconds === timestampData.last && forceUnique) {
+			++unixMilliseconds;
 		}
-		else {
-			timestampData.last = unixMilliseconds;
-			timestampData.subtime = 0;
-		}
+
+		timestampData.last = unixMilliseconds;
 
 		return unixMilliseconds;
 	});
@@ -518,7 +513,7 @@ export const timeToString = memoize((time: Time) => {
 
 /** Watches timestamp with the specified interval. */
 export const watchTimestamp = memoize((msInterval: number = 1000) =>
-	interval(msInterval).pipe(mergeMap(getTimestamp))
+	interval(msInterval).pipe(mergeMap(async () => getTimestamp()))
 );
 
 /** @see getTimestamp */
