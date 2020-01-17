@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/require-await, max-lines */
 
 import {Injectable, NgZone} from '@angular/core';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
@@ -115,13 +115,13 @@ export class LocalStorageService extends DataManagerService {
 		this.cache.clear();
 		await this.clearInternal(waitForReady).catch(() => {});
 
-		if (typeof BroadcastChannel !== 'undefined') {
-			const channel = new BroadcastChannel(
-				this.broadcastChannelKeys.clear
-			);
-			channel.postMessage(undefined);
-			channel.close();
+		if (typeof BroadcastChannel === 'undefined') {
+			return;
 		}
+
+		const channel = new BroadcastChannel(this.broadcastChannelKeys.clear);
+		channel.postMessage(undefined);
+		channel.close();
 	}
 
 	/** @inheritDoc */
@@ -369,13 +369,15 @@ export class LocalStorageService extends DataManagerService {
 
 		await this.removeItemInternal(url, waitForReady).catch(() => {});
 
-		if (typeof BroadcastChannel !== 'undefined') {
-			const channel = new BroadcastChannel(
-				`${this.broadcastChannelKeys.item}:${url}`
-			);
-			channel.postMessage(undefined);
-			channel.close();
+		if (typeof BroadcastChannel === 'undefined') {
+			return;
 		}
+
+		const channel = new BroadcastChannel(
+			`${this.broadcastChannelKeys.item}:${url}`
+		);
+		channel.postMessage(undefined);
+		channel.close();
 	}
 
 	/** @inheritDoc */
@@ -517,12 +519,14 @@ export class LocalStorageService extends DataManagerService {
 	) {
 		super();
 
-		if (typeof BroadcastChannel !== 'undefined') {
-			new BroadcastChannel(
-				this.broadcastChannelKeys.clear
-			).onmessage = () => {
-				this.cache.clear();
-			};
+		if (typeof BroadcastChannel === 'undefined') {
+			return;
 		}
+
+		new BroadcastChannel(
+			this.broadcastChannelKeys.clear
+		).onmessage = () => {
+			this.cache.clear();
+		};
 	}
 }
