@@ -18,7 +18,8 @@ checkfail () {
 
 checkfailretry () {
 	if (( $? )) ; then
-		bash ${0}
+		cd $(readlink -e /proc/${PPID}/cwd)
+		$(ps -o args= ${$} | head -n2 | tail -n1)
 		exit $?
 	fi
 }
