@@ -574,6 +574,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	});
 
 	return {
+		inviteCode,
 		welcomeLetter: await sendMailInternal(
 			email,
 			(purchased ?

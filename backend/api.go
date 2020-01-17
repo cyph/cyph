@@ -402,31 +402,21 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		subject = "FAILED: " + subject
 	}
 
-	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
-		"Nonce: " + nonce +
-		"\nPlan ID: " + planID +
-		"\nAmount: " + amountString +
-		"\nSubscription: " + subscriptionString +
-		"\nCompany: " + company +
-		"\nName: " + name +
-		"\nEmail: " + email +
-		"\n\n" + txLog +
-		""), "")
-
-	if !success {
-		return "", http.StatusInternalServerError
-	}
+	inviteCode := ""
 
 	plan, hasPlan := config.Plans[planID]
 
-	if hasPlan && plan.AccountsPlan != "" {
-		welcomeLetter, oldBraintreeSubscriptionID, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, username, true)
+	if success && hasPlan && plan.AccountsPlan != "" {
+		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, username, true)
+
+		inviteCode = _inviteCode
 
 		if err != nil {
 			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
 				"Nonce: " + nonce +
 				"\nPlan ID: " + planID +
 				"\nAmount: " + amountString +
+				"\nInvite Code: " + inviteCode +
 				"\nSubscription: " + subscriptionString +
 				"\nCompany: " + company +
 				"\nName: " + name +
@@ -441,6 +431,22 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		return welcomeLetter, http.StatusOK
+	}
+
+	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
+		"Nonce: " + nonce +
+		"\nPlan ID: " + planID +
+		"\nAmount: " + amountString +
+		"\nInvite Code: " + inviteCode +
+		"\nSubscription: " + subscriptionString +
+		"\nCompany: " + company +
+		"\nName: " + name +
+		"\nEmail: " + email +
+		"\n\n" + txLog +
+		""), "")
+
+	if !success {
+		return "", http.StatusInternalServerError
 	}
 
 	if subscription && hasPlan {

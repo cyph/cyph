@@ -285,7 +285,7 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inviteCode, username string, purchased bool) (string, string, error) {
+func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inviteCode, username string, purchased bool) (string, string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"braintreeID":             braintreeID,
 		"braintreeSubscriptionID": braintreeSubscriptionID,
@@ -325,11 +325,11 @@ func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inv
 		return "", "", err
 	}
 
-	welcomeLetter := ""
-	if data, ok := responseBody["welcomeLetter"]; ok {
+	inviteCode := ""
+	if data, ok := responseBody["inviteCode"]; ok {
 		switch v := data.(type) {
 		case string:
-			welcomeLetter = v
+			inviteCode = v
 		}
 	}
 
@@ -341,7 +341,15 @@ func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inv
 		}
 	}
 
-	return welcomeLetter, oldBraintreeSubscriptionID, nil
+	welcomeLetter := ""
+	if data, ok := responseBody["welcomeLetter"]; ok {
+		switch v := data.(type) {
+		case string:
+			welcomeLetter = v
+		}
+	}
+
+	return inviteCode, oldBraintreeSubscriptionID, welcomeLetter, nil
 }
 
 func getBraintreeSubscriptionID(userToken string) (string, int64, error) {
