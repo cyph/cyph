@@ -23,7 +23,7 @@ import {filter, map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
-import {emailPattern} from '../../email-pattern';
+import {emailPattern, emailRegex} from '../../email-pattern';
 import {CyphPlans} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -758,6 +758,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		this.submissionReadinessErrors = toBehaviorSubject(
 			combineLatest([
+				this.email,
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
 				this.name,
@@ -772,12 +773,16 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			]).pipe(
 				map(
 					([
+						email,
 						inviteCode,
 						lockScreenPasswordReady,
 						name,
 						username,
 						xkcd
 					]) => [
+						...(email && !emailRegex.test(email) ?
+							[this.stringsService.registerErrorEmail] :
+							[]),
 						...(!inviteCode.value || inviteCode.errors ?
 							[this.stringsService.registerErrorInviteCode] :
 							[]),
