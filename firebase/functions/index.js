@@ -570,7 +570,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		plan,
 		...(braintreeID ? {braintreeID} : {}),
 		...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {}),
-		...(isNaN(planTrialEnd) ? {planTrialEnd} : {})
+		...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
 	});
 
 	return {
