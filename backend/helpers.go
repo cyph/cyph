@@ -311,21 +311,20 @@ func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inv
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
-	inviteCode := ""
 	if data, ok := responseBody["inviteCode"]; ok {
 		switch v := data.(type) {
 		case string:

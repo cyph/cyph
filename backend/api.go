@@ -402,8 +402,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		subject = "FAILED: " + subject
 	}
 
-	inviteCode := ""
-
 	plan, hasPlan := config.Plans[planID]
 
 	if success && hasPlan && plan.AccountsPlan != "" {
