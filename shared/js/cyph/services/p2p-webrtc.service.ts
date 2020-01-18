@@ -279,6 +279,39 @@ export class P2PWebRTCService extends BaseProvider
 	>(undefined);
 
 	/** @ignore */
+	private async getUserMedia () : Promise<MediaStream | undefined> {
+		const {cameras, mics} = await this.getDevices();
+
+		const constraints: MediaStreamConstraints = {
+			...this.outgoingStream.value,
+			...(mics.length < 1 ? {audio: undefined} : {}),
+			...(cameras.length < 1 ? {video: undefined} : {})
+		};
+
+		try {
+			return await navigator.mediaDevices.getUserMedia(constraints);
+		}
+		catch (err) {
+			debugLogError(() => ({
+				webRTC: {navigatorMediaDevicesGetUserMedia: err}
+			}));
+		}
+
+		try {
+			return await new Promise<MediaStream>((resolve, reject) => {
+				navigator.getUserMedia(constraints, resolve, reject);
+			});
+		}
+		catch (err) {
+			debugLogError(() => ({
+				webRTC: {navigatorGetUserMedia: err}
+			}));
+		}
+
+		return undefined;
+	}
+
+	/** @ignore */
 	private async getWebRTC () : Promise<{
 		localStream: MediaStream;
 		peer: SimplePeer.Instance;
@@ -609,28 +642,7 @@ export class P2PWebRTCService extends BaseProvider
 
 			let initialLoadComplete = false;
 
-			const localStream = await (async () =>
-				navigator.mediaDevices.getUserMedia(
-					this.outgoingStream.value
-				))()
-				.catch(async err => {
-					debugLogError(() => ({
-						webRTC: {navigatorMediaDevicesGetUserMedia: err}
-					}));
-					return new Promise<MediaStream>((resolve, reject) => {
-						navigator.getUserMedia(
-							this.outgoingStream.value,
-							resolve,
-							reject
-						);
-					});
-				})
-				.catch(err => {
-					debugLogError(() => ({
-						webRTC: {navigatorGetUserMedia: err}
-					}));
-					return undefined;
-				});
+			const localStream = await this.getUserMedia();
 
 			if (localStream === undefined) {
 				await this.close();
@@ -946,10 +958,12 @@ export class P2PWebRTCService extends BaseProvider
 					this.localVideo
 						.then(async f => waitForIterable<JQuery>(f))
 						.then(arr => <HTMLVideoElement> arr[0]),
-					navigator.mediaDevices.getUserMedia(
-						this.outgoingStream.value
-					)
+					this.getUserMedia()
 				]);
+
+				if (newStream === undefined) {
+					throw new Error('getUserMedia failed.');
+				}
 
 				webRTC.peer.addStream(newStream);
 				webRTC.peer.removeStream(webRTC.localStream);
