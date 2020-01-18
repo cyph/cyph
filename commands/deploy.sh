@@ -891,6 +891,11 @@ fi
 for branchDir in ~/.build ${branchDirs} ; do
 version="$(getVersion ${branchDir})"
 environment="$(getEnvironment ${branchDir})"
+branchPackage="${package}"
+if [ "${branchDir}" != '~/.build' ] ; then
+	branchPackage="$(projectname cyph.app ${branchDir})"
+fi
+
 cd ${branchDir}
 
 
@@ -900,7 +905,7 @@ if [ ! "${simple}" ] ; then
 		domain="${1}"
 		path="${2}"
 
-		./commands/websign/createredirect.sh "${path}" "${domain}" "${package}" "${test}"
+		./commands/websign/createredirect.sh "${path}" "${domain}" "${branchPackage}" "${test}"
 	}
 
 	createRedirect 'burner.cyph.app' 'burner'
