@@ -778,7 +778,7 @@ if [ "${websign}" ] ; then
 		if [ "${package}" != 'cyph.app' ] ; then mv pkg/cyph.app "pkg/${package}" ; fi
 
 		for branchDir in ${branchDirs} ; do
-			branchPackage=$(projectname cyph.app ${branchDir})
+			branchPackage="$(projectname cyph.app ${branchDir})"
 			packages="${branchPackage} ${packages}"
 
 			mv ${branchDir}/pkg/cyph.app pkg/${branchPackage}
@@ -824,7 +824,7 @@ if [ "${websign}" ] ; then
 	fi
 
 	for branchDir in ${branchDirs} ; do
-		branchPackage=$(projectname cyph.app ${branchDir})
+		branchPackage="$(projectname cyph.app ${branchDir})"
 		branchSubresources=${branchDir}/pkg/cyph.app-subresources
 
 		if [ -d ${branchSubresources} ] ; then
