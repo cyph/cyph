@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const dgram = require('dgram');
 const fs = require('fs');
 const os = require('os');
+const read = require('read');
 const sodiumUtil = require('sodiumutil');
 const superSphincs = require('supersphincs');
 
@@ -304,7 +305,18 @@ const sign = async (inputs, testSign, demoSign) =>
 		};
 
 		sendData(0);
-	});
+
+		read(
+			{
+				prompt: 'Press enter to retry signing.'
+			},
+			() => {
+				incoming = {chunksReceived: {}, data: new Uint8Array(0)};
+				server.close();
+				reject();
+			}
+		);
+	}).catch(async () => sign(inputs, testSign, demoSign));
 
 if (require.main === module) {
 	(async () => {
