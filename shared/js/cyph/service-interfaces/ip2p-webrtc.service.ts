@@ -52,7 +52,7 @@ export interface IP2PWebRTCService {
 	 * Accepts current call request (or preemptively accepts future call requests,
 	 * disabling the confirmation dialog).
 	 */
-	accept (callType?: 'audio' | 'video', isPassive?: boolean) : void;
+	accept (callType?: 'audio' | 'video', isPassive?: boolean) : Promise<void>;
 
 	/** This kills the P2P session. */
 	close () : Promise<void>;

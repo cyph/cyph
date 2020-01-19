@@ -1828,7 +1828,7 @@ export class ChatService extends BaseProvider {
 						);
 
 						if (!canceled) {
-							this.p2pWebRTCService.accept(callType, true);
+							await this.p2pWebRTCService.accept(callType, true);
 						}
 						else if (this.sessionInitService.ephemeral) {
 							await this.close();

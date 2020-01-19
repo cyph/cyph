@@ -280,13 +280,7 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** @ignore */
 	private async getUserMedia () : Promise<MediaStream | undefined> {
-		const {cameras, mics} = await this.getDevices();
-
-		const constraints: MediaStreamConstraints = {
-			...this.outgoingStream.value,
-			...(mics.length < 1 ? {audio: undefined} : {}),
-			...(cameras.length < 1 ? {video: undefined} : {})
-		};
+		const constraints = this.outgoingStream.value;
 
 		try {
 			return await navigator.mediaDevices.getUserMedia(constraints);
@@ -413,7 +407,7 @@ export class P2PWebRTCService extends BaseProvider
 				this.p2pSessionData = p2pSessionData;
 			}
 
-			this.accept(
+			await this.accept(
 				command.method === 'audio' ?
 					'audio' :
 				command.method === 'video' ?
@@ -433,14 +427,30 @@ export class P2PWebRTCService extends BaseProvider
 		}
 	}
 
+	/** @ignore */
+	private async setOutgoingStream (
+		constraints: MediaStreamConstraints
+	) : Promise<void> {
+		const {cameras, mics} = await this.getDevices();
+
+		this.outgoingStream.next({
+			...constraints,
+			...(mics.length < 1 ? {audio: undefined} : {}),
+			...(cameras.length < 1 ? {video: undefined} : {})
+		});
+	}
+
 	/** @inheritDoc */
-	public accept (
+	public async accept (
 		callType?: 'audio' | 'video',
 		isPassive: boolean = false
-	) : void {
+	) : Promise<void> {
 		this.isAccepted = true;
 		this.loading.next(true);
-		this.outgoingStream.next({audio: true, video: callType === 'video'});
+		await this.setOutgoingStream({
+			audio: true,
+			video: callType === 'video'
+		});
 
 		if (isPassive) {
 			this.isActive.next(true);
@@ -822,7 +832,7 @@ export class P2PWebRTCService extends BaseProvider
 			return;
 		}
 
-		this.accept(callType);
+		await this.accept(callType);
 
 		this.p2pSessionData =
 			isPassive && !this.sessionService.state.isAlice.value ?
@@ -902,16 +912,17 @@ export class P2PWebRTCService extends BaseProvider
 						this.outgoingStream.value.audio.deviceId !==
 							this.lastDeviceIDs.mic)
 				) {
-					this.outgoingStream.next({
+					for (const track of webRTC.localStream.getAudioTracks()) {
+						track.enabled = audio;
+					}
+
+					await this.setOutgoingStream({
 						...this.outgoingStream.value,
 						audio:
 							!audio || !this.lastDeviceIDs.mic ?
 								audio :
 								{deviceId: this.lastDeviceIDs.mic}
 					});
-					for (const track of webRTC.localStream.getAudioTracks()) {
-						track.enabled = audio;
-					}
 				}
 			}
 
@@ -940,16 +951,17 @@ export class P2PWebRTCService extends BaseProvider
 						this.outgoingStream.value.video.deviceId !==
 							this.lastDeviceIDs.camera)
 				) {
-					this.outgoingStream.next({
+					for (const track of webRTC.localStream.getVideoTracks()) {
+						track.enabled = video;
+					}
+
+					await this.setOutgoingStream({
 						...this.outgoingStream.value,
 						video:
 							!video || !this.lastDeviceIDs.camera ?
 								video :
 								{deviceId: this.lastDeviceIDs.camera}
 					});
-					for (const track of webRTC.localStream.getVideoTracks()) {
-						track.enabled = video;
-					}
 				}
 			}
 
