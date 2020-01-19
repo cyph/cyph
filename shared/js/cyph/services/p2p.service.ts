@@ -290,7 +290,10 @@ export class P2PService extends BaseProvider {
 			return this.disabledAlert();
 		}
 
-		if (!this.p2pWebRTCService.cameraActivated.value) {
+		if (
+			this.isActive.value &&
+			!this.p2pWebRTCService.cameraActivated.value
+		) {
 			const camera = (await this.p2pWebRTCService.getDevices())
 				.cameras[0];
 			if (!camera) {

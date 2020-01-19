@@ -150,7 +150,7 @@ export class P2PWebRTCService extends BaseProvider
 	private isAccepted: boolean = false;
 
 	/** @ignore */
-	private readonly joinLock = lockFunction();
+	private readonly joinAndToggleLock = lockFunction();
 
 	/** @ignore */
 	private readonly lastDeviceIDs: {
@@ -226,9 +226,6 @@ export class P2PWebRTCService extends BaseProvider
 	private readonly resolveRemoteVideo: (
 		remoteVideo: () => JQuery
 	) => void = this._REMOTE_VIDEO.resolve;
-
-	/** @ignore */
-	private readonly toggleLock = lockFunction();
 
 	/** @inheritDoc */
 	public readonly cameraActivated = new BehaviorSubject<boolean>(false);
@@ -577,7 +574,7 @@ export class P2PWebRTCService extends BaseProvider
 			return;
 		}
 
-		return this.joinLock(async () => {
+		return this.joinAndToggleLock(async () => {
 			if (this.webRTC.value || !this.p2pSessionData) {
 				return;
 			}
@@ -887,7 +884,7 @@ export class P2PWebRTCService extends BaseProvider
 		shouldPause?: boolean | {newDeviceID: string}
 	) : Promise<void> {
 		/* eslint-disable-next-line complexity */
-		return this.toggleLock(async () => {
+		return this.joinAndToggleLock(async () => {
 			const webRTC = await this.getWebRTC();
 
 			let deviceIdChanged = false;
