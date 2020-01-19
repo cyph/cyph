@@ -9,8 +9,6 @@ import '../standalone/node-polyfills';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'hammerjs';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
-import 'webrtc-adapter';
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../standalone/init';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import '../standalone/test-environment-setup';
