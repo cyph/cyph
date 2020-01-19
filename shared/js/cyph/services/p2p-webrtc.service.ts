@@ -19,7 +19,12 @@ import {requestPermissions} from '../util/permissions';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
-import {resolvable, sleep, waitForIterable} from '../util/wait';
+import {
+	resolvable,
+	retryUntilSuccessful,
+	sleep,
+	waitForIterable
+} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChatService} from './chat.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
@@ -1000,14 +1005,16 @@ export class P2PWebRTCService extends BaseProvider
 				});
 			}
 
-			webRTC.peer.send(
-				msgpack.encode({
-					audio: !!this.outgoingStream.value.audio,
-					video: !!this.outgoingStream.value.video,
-					...(deviceIdChanged ?
-						{switchingDevice: deviceIdChanged} :
-						{})
-				})
+			await retryUntilSuccessful(() =>
+				webRTC.peer.send(
+					msgpack.encode({
+						audio: !!this.outgoingStream.value.audio,
+						video: !!this.outgoingStream.value.video,
+						...(deviceIdChanged ?
+							{switchingDevice: deviceIdChanged} :
+							{})
+					})
+				)
 			);
 		});
 	}
