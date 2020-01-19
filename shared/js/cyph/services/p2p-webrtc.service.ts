@@ -674,6 +674,10 @@ export class P2PWebRTCService extends BaseProvider
 			localVideo.muted = true;
 
 			const peer = new SimplePeer({
+				channelConfig: {
+					id: 0,
+					negotiated: true
+				},
 				channelName: p2pSessionData.id,
 				config: !this.sessionService.apiFlags.disableP2P ?
 					{iceServers} :
