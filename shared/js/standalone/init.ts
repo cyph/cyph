@@ -80,7 +80,7 @@ if (env.isCordovaDesktop && typeof cordovaRequire === 'function') {
 	});
 }
 else {
-	window.addEventListener('beforeunload', e => {
+	window.addEventListener(env.isSafari ? 'pagehide' : 'beforeunload', e => {
 		if (beforeUnloadMessage !== undefined) {
 			e.returnValue = beforeUnloadMessage;
 		}
