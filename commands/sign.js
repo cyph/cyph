@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const childProcess = require('child_process');
 const crypto = require('crypto');
 const dgram = require('dgram');
 const fs = require('fs');
@@ -124,7 +125,7 @@ const getPublicKeys = demoSign => {
 	);
 };
 
-const sign = async (inputs, testSign, demoSign) =>
+const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 	new Promise(async (resolve, reject) => {
 		if (testSign) {
 			return resolve({
@@ -142,6 +143,14 @@ const sign = async (inputs, testSign, demoSign) =>
 				),
 				sphincsIndex: 0
 			});
+		}
+
+		if (!skipNotify) {
+			childProcess.spawnSync(
+				'bash',
+				['-c', 'notify "Starting signing process"'],
+				{stdio: 'inherit'}
+			);
 		}
 
 		const publicKeys = getPublicKeys(demoSign);
@@ -316,7 +325,7 @@ const sign = async (inputs, testSign, demoSign) =>
 				reject();
 			}
 		);
-	}).catch(async () => sign(inputs, testSign, demoSign));
+	}).catch(async () => sign(inputs, testSign, demoSign, true));
 
 if (require.main === module) {
 	(async () => {

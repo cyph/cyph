@@ -789,8 +789,6 @@ if [ "${websign}" ] ; then
 		rm -rf cdn/${p}
 	done
 
-	notify 'Starting signing process'
-
 	./commands/websign/codesign.js \
 		$(if [ "${simple}" ] ; then echo '--test' ; fi) \
 		"${websignHashWhitelist}" \
