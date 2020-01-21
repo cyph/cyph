@@ -30,7 +30,12 @@ const resolutions = [
 	{
 		name: 'mobile-alt',
 		viewport: {height: 788 * 2, isMobile: true, width: 380 * 2}
-	}
+	},
+	{name: 'ss1920x1080', viewport: {height: 1080, isMobile: false, width: 1920}},
+	{name: 'ss1920x908', viewport: {height: 908, isMobile: false, width: 1920}},
+	{name: 'ss1536x2331', viewport: {height: 2331, isMobile: true, width: 1536}},
+	{name: 'ss949x1440', viewport: {height: 1440, isMobile: true, width: 949}},
+	{name: 'ss666x1105', viewport: {height: 1105, isMobile: true, width: 666}}
 ];
 
 const screenshotDir = '/cyph/screenshots';
