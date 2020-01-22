@@ -1029,7 +1029,9 @@ then
 				cyphAdminKey: $(getBackendVar CYPH_FIREBASE_ADMIN_KEY),
 				mailchimpCredentials: {
 					apiKey: $(getBackendVar MAILCHIMP_API_KEY),
-					listID: $(getBackendVar MAILCHIMP_USERS_LIST_ID)
+					listIDs: {
+						users: $(getBackendVar MAILCHIMP_USERS_LIST_ID)
+					}
 				}
 			};
 EOM

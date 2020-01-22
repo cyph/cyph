@@ -181,6 +181,13 @@ const getURL = (adminRef, namespace) => {
 	return url;
 };
 
+const addToMailingList = async (listID, email, mergeFields) =>
+	mailchimp.post(`/lists/${listID}/members`, {
+		email_address: email,
+		status: 'subscribed',
+		merge_fields: mergeFields
+	});
+
 const usernameBlacklisted = async (namespace, username, reservedUsername) =>
 	!(reservedUsername && username === normalize(reservedUsername)) &&
 	(usernameBlacklist.has(username) ||
@@ -1171,7 +1178,8 @@ exports.userEmailSet = functions.database
 					if (
 						!mailchimp ||
 						!mailchimpCredentials ||
-						!mailchimpCredentials.listID
+						!mailchimpCredentials.listIDs ||
+						!mailchimpCredentials.listIDs.users
 					) {
 						return;
 					}
@@ -1183,17 +1191,14 @@ exports.userEmailSet = functions.database
 					const firstName = nameSplit[0];
 					const lastName = nameSplit.slice(1).join(' ');
 
-					await mailchimp.post(
-						`/lists/${mailchimpCredentials.listID}/members`,
+					await addToMailingList(
+						mailchimpCredentials.listIDs.users,
+						email,
 						{
-							email_address: email,
-							status: 'subscribed',
-							merge_fields: {
-								FNAME: firstName,
-								LNAME: lastName,
-								PLAN: CyphPlans[plan],
-								USERNAME: username
-							}
+							FNAME: firstName,
+							LNAME: lastName,
+							PLAN: CyphPlans[plan],
+							USERNAME: username
 						}
 					);
 				})().catch(() => {})
