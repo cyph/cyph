@@ -199,6 +199,8 @@ export class DatabaseService extends DataManagerService {
 		urlPromise: MaybePromise<string>,
 		global: boolean
 	) : Promise<string> {
+		debugLog(async () => ({lockURL: await urlPromise}));
+
 		return !global ?
 			urlPromise :
 			`locks/${this.potassiumService.toHex(
