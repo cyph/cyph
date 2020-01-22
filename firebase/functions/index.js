@@ -38,6 +38,12 @@ const {
 	true
 );
 
+const {
+	addToMailingList,
+	removeFromMailingList,
+	splitName
+} = require('./mailchimp')(mailchimp, mailchimpCredentials);
+
 const {getTokenKey} = require('./token-key')(database);
 
 const {
@@ -180,13 +186,6 @@ const getURL = (adminRef, namespace) => {
 
 	return url;
 };
-
-const addToMailingList = async (listID, email, mergeFields) =>
-	mailchimp.post(`/lists/${listID}/members`, {
-		email_address: email,
-		status: 'subscribed',
-		merge_fields: mergeFields
-	});
 
 const usernameBlacklisted = async (namespace, username, reservedUsername) =>
 	!(reservedUsername && username === normalize(reservedUsername)) &&
@@ -572,13 +571,32 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		planTrialEnd = new Date().setMonth(new Date().getMonth() + 1);
 	}
 
-	await database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
-		inviterUsername: '',
-		plan,
-		...(braintreeID ? {braintreeID} : {}),
-		...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {}),
-		...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
-	});
+	const {firstName, lastName} = splitName(name);
+
+	await Promise.all([
+		database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
+			inviterUsername: '',
+			plan,
+			...(braintreeID ? {braintreeID} : {}),
+			...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {}),
+			...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
+		}),
+		mailchimp &&
+		mailchimpCredentials &&
+		mailchimpCredentials.listIDs &&
+		mailchimpCredentials.listIDs.pendingInvites ?
+			addToMailingList(
+				mailchimpCredentials.listIDs.pendingInvites,
+				email,
+				{
+					FNAME: firstName,
+					ICODE: inviteCode,
+					LNAME: lastName,
+					PLAN: CyphPlans[plan]
+				}
+			) :
+			undefined
+	]);
 
 	return {
 		inviteCode,
@@ -828,7 +846,18 @@ exports.register = onCall(
 							reservedUsername
 						)}`
 					)
-					.remove()
+					.remove(),
+			mailchimp &&
+			mailchimpCredentials &&
+			mailchimpCredentials.listIDs &&
+			mailchimpCredentials.listIDs.pendingInvites ?
+				removeFromMailingList(
+					mailchimpCredentials.listIDs.pendingInvites,
+					{
+						ICODE: inviteCode
+					}
+				) :
+				undefined
 		]);
 
 		if (email) {
@@ -1184,12 +1213,9 @@ exports.userEmailSet = functions.database
 						return;
 					}
 
-					const nameSplit = (
-						(await nameRef.once('value')).val() || ''
-					).split(' ');
-
-					const firstName = nameSplit[0];
-					const lastName = nameSplit.slice(1).join(' ');
+					const {firstName, lastName} = splitName(
+						(await nameRef.once('value')).val()
+					);
 
 					await addToMailingList(
 						mailchimpCredentials.listIDs.users,

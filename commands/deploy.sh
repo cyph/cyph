@@ -1030,7 +1030,8 @@ then
 				mailchimpCredentials: {
 					apiKey: $(getBackendVar MAILCHIMP_API_KEY),
 					listIDs: {
-						users: $(getBackendVar MAILCHIMP_USERS_LIST_ID)
+						pendingInvites: $(getBackendVar MAILCHIMP_LIST_ID_PENDING_INVITES),
+						users: $(getBackendVar MAILCHIMP_LIST_ID_USERS)
 					}
 				}
 			};

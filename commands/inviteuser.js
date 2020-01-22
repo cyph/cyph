@@ -5,6 +5,7 @@ const {CyphPlans} = require('../modules/proto');
 const {readableByteLength, titleize} = require('../modules/util');
 const {addInviteCode} = require('./addinvitecode');
 const {sendMail} = require('./email');
+const {addToMailingList, mailingListIDs, splitName} = require('./mailchimp');
 
 const inviteUser = async (
 	projectId,
@@ -37,6 +38,17 @@ const inviteUser = async (
 
 	const cyphPlan = CyphPlans[plan] || CyphPlans.Free;
 	const planConfig = config.planConfig[cyphPlan];
+
+	if (projectId === 'cyphme' && email) {
+		const {firstName, lastName} = splitName(name);
+
+		await addToMailingList(mailingListIDs.pendingInvites, email, {
+			FNAME: firstName,
+			ICODE: inviteCode,
+			LNAME: lastName,
+			PLAN: CyphPlans[cyphPlan]
+		});
+	}
 
 	await sendMail(
 		!email ? undefined : !name ? email : `${name} <${email}>`,
