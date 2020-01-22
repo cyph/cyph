@@ -1,47 +1,40 @@
 module.exports = (mailchimp, mailchimpCredentials) => {
 	const addToMailingList = async (listID, email, mergeFields) =>
-		mailchimp.post(`/lists/${listID}/members`, {
+		(await mailchimp.post(`/lists/${listID}/members`, {
 			email_address: email,
 			status: 'subscribed',
 			merge_fields: mergeFields
-		});
+		})).id;
 
-	const removeFromMailingList = async (listID, emailOrMergeFields) => {
-		const email =
-			typeof emailOrMergeFields === 'string' ?
-				emailOrMergeFields.toLowerCase().trim() :
-				undefined;
+	const removeFromMailingList = async (listID, idOrEmail) => {
+		let id = typeof idOrEmail === 'string' ? idOrEmail : undefined;
 
-		const mergeFields =
-			typeof emailOrMergeFields === 'object' ?
-				Object.entries(emailOrMergeFields) :
-				undefined;
+		if (!id) {
+			const email =
+				typeof idOrEmail === 'object' ?
+					(idOrEmail.email || '').toLowerCase().trim() :
+					undefined;
 
-		if (!email && !(mergeFields && mergeFields.length > 0)) {
-			return;
-		}
+			if (!email) {
+				return;
+			}
 
-		const res =
-			(await mailchimp.get('/search-members', {
-				list_id: listID,
-				query: email ? email : mergeFields[0][1]
-			})) || {};
+			const res =
+				(await mailchimp.get('/search-members', {
+					list_id: listID,
+					query: email
+				})) || {};
 
-		const matches = [res.exact_matches, res.full_search]
-			.map(o => (o || {}).members || [])
-			.reduce((a, b) => a.concat(b));
+			const matches = [res.exact_matches, res.full_search]
+				.map(o => (o || {}).members || [])
+				.reduce((a, b) => a.concat(b));
 
-		const {id} =
-			(email ?
+			id = (
 				matches.find(
 					o => email === o.email_address.toLowerCase().trim()
-				) :
-				matches.find(o =>
-					mergeFields.reduce(
-						(matched, [k, v]) => matched && o.merge_fields[k] === v,
-						true
-					)
-				)) || {};
+				) || {}
+			).id;
+		}
 
 		if (!id) {
 			return;

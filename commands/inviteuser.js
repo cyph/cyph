@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const {config} = require('../modules/config');
+const databaseService = require('../modules/database-service');
 const {CyphPlans} = require('../modules/proto');
 const {readableByteLength, titleize} = require('../modules/util');
 const {addInviteCode} = require('./addinvitecode');
@@ -27,6 +28,9 @@ const inviteUser = async (
 		trialMonths = 1;
 	}
 
+	const {database} = databaseService(projectId);
+	const namespacePath = 'cyph_ws';
+
 	const inviteCode = (await addInviteCode(
 		projectId,
 		{'': 1},
@@ -42,12 +46,20 @@ const inviteUser = async (
 	if (projectId === 'cyphme' && email) {
 		const {firstName, lastName} = splitName(name);
 
-		await addToMailingList(mailingListIDs.pendingInvites, email, {
-			FNAME: firstName,
-			ICODE: inviteCode,
-			LNAME: lastName,
-			PLAN: CyphPlans[cyphPlan]
-		});
+		const mailingListID = await addToMailingList(
+			mailingListIDs.pendingInvites,
+			email,
+			{
+				FNAME: firstName,
+				ICODE: inviteCode,
+				LNAME: lastName,
+				PLAN: CyphPlans[cyphPlan]
+			}
+		);
+
+		await database
+			.ref(`${namespacePath}/pendingInvites/${inviteCode}`)
+			.set(mailingListID);
 	}
 
 	await sendMail(

@@ -243,6 +243,12 @@
 				}
 			},
 
+			"pendingInvites": {
+				"$inviteCode": {
+					".validate": "newData.isString()"
+				}
+			},
+
 			"pendingSignups": {
 				"$username": {
 					"timestamp": {

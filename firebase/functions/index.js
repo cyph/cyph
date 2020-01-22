@@ -594,6 +594,10 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 					LNAME: lastName,
 					PLAN: CyphPlans[plan]
 				}
+			).then(async mailingListID =>
+				database
+					.ref(`${namespace}/pendingInvites/${inviteCode}`)
+					.set(mailingListID)
 			) :
 			undefined
 	]);
@@ -787,6 +791,10 @@ exports.register = onCall(
 			password
 		});
 
+		const pendingInviteRef = database.ref(
+			`${namespace}/pendingInvites/${inviteCode}`
+		);
+
 		await Promise.all([
 			...[
 				['encryptionKeyPair', encryptionKeyPair],
@@ -847,17 +855,21 @@ exports.register = onCall(
 						)}`
 					)
 					.remove(),
-			mailchimp &&
-			mailchimpCredentials &&
-			mailchimpCredentials.listIDs &&
-			mailchimpCredentials.listIDs.pendingInvites ?
-				removeFromMailingList(
-					mailchimpCredentials.listIDs.pendingInvites,
-					{
-						ICODE: inviteCode
-					}
-				) :
-				undefined
+			pendingInviteRef
+				.once('value')
+				.then(
+					async o =>
+						mailchimp &&
+						mailchimpCredentials &&
+						mailchimpCredentials.listIDs &&
+						mailchimpCredentials.listIDs.pendingInvites &&
+						removeFromMailingList(
+							mailchimpCredentials.listIDs.pendingInvites,
+							o.val()
+						)
+				)
+				.catch(() => {})
+				.then(async () => pendingInviteRef.remove())
 		]);
 
 		if (email) {
