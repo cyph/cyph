@@ -463,7 +463,10 @@ const pullUpdates = () => {
 				'husky-run'
 			);
 
-			fs.unlinkSync(huskyRunPath);
+			if (fs.existsSync(huskyRunPath)) {
+				fs.unlinkSync(huskyRunPath);
+			}
+
 			fs.writeFileSync(
 				huskyRunPath,
 				'#!/usr/bin/env node\nrequire("../husky/run")'
