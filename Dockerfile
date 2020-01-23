@@ -55,8 +55,6 @@ RUN apt-get -y --allow-downgrades install \
 	ripgrep \
 	rpm \
 	rsync \
-	ruby \
-	ruby-dev \
 	shellcheck \
 	sudo \
 	tightvncserver \
