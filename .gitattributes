@@ -1,4 +1,4 @@
-* text=auto
+* text eol=lf
 
 *.appcache text eol=lf
 *.css text eol=lf
