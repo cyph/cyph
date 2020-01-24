@@ -800,8 +800,21 @@ export class AccountService extends BaseProvider {
 				return;
 			}
 
+			const dismissed = async () =>
+				!!data.additionalData?.foreground &&
+				(!data.message ||
+					!(await this.dialogService.toast(
+						data.message,
+						undefined,
+						this.stringsService.open
+					)));
+
 			switch (notificationType) {
 				case NotificationTypes.File:
+					if (await dismissed()) {
+						return;
+					}
+
 					const {recordType} = await this.accountFilesService.getFile(
 						data.additionalData.notificationID
 					);
@@ -818,7 +831,8 @@ export class AccountService extends BaseProvider {
 						(typeof this.headerInternal.value.header === 'object' &&
 							this.headerInternal.value.header.user?.username ===
 								data.additionalData.senderUsername &&
-							this.router.url.startsWith('messages/'))
+							this.router.url.startsWith('messages/')) ||
+						(await dismissed())
 					) {
 						return;
 					}
