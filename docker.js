@@ -428,7 +428,7 @@ const killContainer = name => {
 
 const killEverything = () => killContainer('cyph');
 
-const pullUpdates = () => {
+const pullUpdates = (initialSetup = false) => {
 	if (args.noUpdates) {
 		return Promise.resolve();
 	}
@@ -447,7 +447,7 @@ const pullUpdates = () => {
 				)
 		)
 		.then(didUpdate => {
-			if (!didUpdate) {
+			if (!initialSetup && !didUpdate) {
 				return;
 			}
 
@@ -467,7 +467,7 @@ const pullUpdates = () => {
 
 			fs.writeFileSync(
 				huskyRunPath,
-				'#!/usr/bin/env node\nrequire("../husky/run")'
+				'#!/usr/bin/env node\nrequire("../husky/bin/run")'
 			);
 			fs.chmodSync(
 				huskyRunPath,
@@ -630,7 +630,7 @@ const make = () => {
 				`${image}_original:latest`
 			])
 		)
-		.then(() => pullUpdates())
+		.then(() => pullUpdates(true))
 		.then(() => editImage(shellScripts.setup))
 		.then(() =>
 			spawnAsync('docker', [
