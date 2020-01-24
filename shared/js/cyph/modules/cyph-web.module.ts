@@ -27,7 +27,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {DomSanitizer} from '@angular/platform-browser';
-import {RouterModule} from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
@@ -149,7 +149,8 @@ export class CyphWebModule {
 	constructor (
 		sanitizer: DomSanitizer,
 		matIconRegistry: MatIconRegistry,
-		localStorageService: LocalStorageService
+		localStorageService: LocalStorageService,
+		router: Router
 	) {
 		/* Custom Icons */
 
@@ -219,5 +220,6 @@ export class CyphWebModule {
 		/* For debugging */
 
 		(<any> self).localStorageService = localStorageService;
+		(<any> self).router = router;
 	}
 }
