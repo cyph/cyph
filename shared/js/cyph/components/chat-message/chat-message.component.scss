@@ -380,5 +380,10 @@
 		> p:not(:only-child) {
 			margin: 10px;
 		}
+
+		> * {
+			margin-left: 5px !important;
+			margin-right: 5px !important;
+		}
 	}
 }
