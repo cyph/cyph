@@ -1095,21 +1095,36 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return;
 		}
 
-		navigator.serviceWorker.addEventListener('message', (e: any) => {
-			const data = e?.data?.notification?.FCM_MSG;
-			if (!data) {
+		const handleDesktopNotification = (
+			data: any,
+			foreground: boolean = false
+		) => {
+			if (typeof data !== 'object') {
 				return;
 			}
 
-			if (
-				typeof data === 'object' &&
-				typeof data.additionalData !== 'object'
-			) {
+			if (typeof data.additionalData !== 'object') {
 				data.additionalData = data.data;
+			}
+
+			if (typeof data.additionalData === 'object') {
+				data.additionalData.foreground = foreground;
+			}
+
+			if (typeof data.message !== 'string') {
+				data.message = data.notification?.body;
 			}
 
 			debugLog(() => ({pushNotification: data}));
 			handler(data);
+		};
+
+		navigator.serviceWorker.addEventListener('message', (e: any) => {
+			handleDesktopNotification(e?.data?.notification?.FCM_MSG);
+		});
+
+		(await this.app).messaging().onMessage(payload => {
+			handleDesktopNotification(payload, true);
 		});
 	}
 
