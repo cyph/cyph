@@ -417,6 +417,8 @@ export class AccountDatabaseService extends BaseProvider {
 	private async processLockURL (url: MaybePromise<string>) : Promise<string> {
 		const currentUser = await this.getCurrentUser();
 
+		debugLog(async () => ({accountLockURL: await this.normalizeURL(url)}));
+
 		return (
 			`users/${currentUser.user.username}/locks/` +
 			this.potassiumService.toHex(
