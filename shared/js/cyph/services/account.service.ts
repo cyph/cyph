@@ -843,6 +843,16 @@ export class AccountService extends BaseProvider {
 							[data.additionalData.groupID] :
 							['user', data.additionalData.senderUsername])
 					]);
+					break;
+
+				default:
+					if (data.additionalData?.foreground && data.message) {
+						await this.dialogService.toast(
+							data.message,
+							undefined,
+							this.stringsService.ok
+						);
+					}
 			}
 		});
 
