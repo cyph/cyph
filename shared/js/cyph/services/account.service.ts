@@ -818,7 +818,7 @@ export class AccountService extends BaseProvider {
 						(typeof this.headerInternal.value.header === 'object' &&
 							this.headerInternal.value.header.user?.username ===
 								data.additionalData.senderUsername &&
-							this.router.url.startsWith('/messages/'))
+							this.router.url.startsWith('messages/'))
 					) {
 						return;
 					}
