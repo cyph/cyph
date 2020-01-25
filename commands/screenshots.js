@@ -55,7 +55,12 @@ const click = async (page, selector) => {
 };
 
 const setViewport = async (page, viewport) => {
-	const deviceScaleFactor = viewport.width > 1000 ? 2 : 1;
+	const scaleDimension = viewport.isMobile ? 850 : 1280;
+
+	const deviceScaleFactor = Math.max(
+		viewport.width / scaleDimension,
+		viewport.height / scaleDimension
+	);
 
 	if (viewport.isMobile) {
 		await page.setUserAgent(
