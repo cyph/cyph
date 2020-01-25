@@ -277,6 +277,10 @@
 							"parse",
 							"Prefer util.deserialize (typed/validated), msgpack.decode (dynamic), or util.parse (for JSON interop)"
 						],
+						{
+							"name": "fetch",
+							"message": "Use util.request"
+						},
 						[
 							"JSON",
 							"stringify",
@@ -301,7 +305,11 @@
 							"message": "Use util.openWindow"
 						},
 						"setInterval",
-						"setTimeout"
+						"setTimeout",
+						{
+							"name": "XMLHttpRequest",
+							"message": "Use util.request"
+						}
 					],
 					"comment-format": [true, "check-space", "check-uppercase"],
 					"comment-type": [true, "directive", "doc", "multiline"],
