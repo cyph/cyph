@@ -133,6 +133,7 @@ const takeScreenshot = async (page, isMobile, screenshotName) => {
 	for (const {name, viewport} of resolutions.filter(
 		o => o.viewport.isMobile === isMobile
 	)) {
+		console.log({isMobile, name, screenshotName, viewport});
 		await setViewport(page, viewport);
 		await page.screenshot({
 			path: `${screenshotDir}/${name}/${screenshotName}.png`
