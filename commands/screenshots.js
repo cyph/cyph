@@ -130,6 +130,8 @@ const toggleMobileMenu = async (page, isMobile) => {
 };
 
 const takeScreenshot = async (page, isMobile, screenshotName) => {
+	await new Promise(resolve => setTimeout(resolve, 5000));
+
 	for (const {name, viewport} of resolutions.filter(
 		o => o.viewport.isMobile === isMobile
 	)) {
