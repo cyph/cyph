@@ -20,7 +20,7 @@ const resolutions = [
 		name: 'desktop-alt',
 		viewport: {height: 1600, isMobile: false, width: 2560}
 	},
-	{name: 'ios129', viewport: {height: 2732, isMobile: false, width: 2048}},
+	{name: 'ios129', viewport: {height: 2732, isMobile: true, width: 2048}},
 	{name: 'ios65', viewport: {height: 2688, isMobile: true, width: 1242}},
 	{name: 'ios55', viewport: {height: 2208, isMobile: true, width: 1242}},
 	{
