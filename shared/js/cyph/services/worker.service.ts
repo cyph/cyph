@@ -3,6 +3,7 @@ import {BaseProvider} from '../base-provider';
 import {IThread} from '../ithread';
 import {MaybePromise} from '../maybe-promise-type';
 import {Thread} from '../thread';
+import {request} from '../util/request';
 import {uuid} from '../util/uuid';
 import {resolvable, waitForValue} from '../util/wait';
 import {EnvService} from './env.service';
@@ -53,7 +54,24 @@ export class WorkerService extends BaseProvider {
 		const serviceWorker = await this.serviceWorker;
 		const id = uuid();
 		const output = resolvable<O>();
-		const scriptText = `importedFunction = ${f.toString()};`;
+		let scriptText = `importedFunction = ${f.toString()};`;
+
+		/* Workaround for local environments not having WebSign packing */
+		if (this.envService.isLocalEnv) {
+			/* Temporarily casting until TypeScript adds matchAll definition */
+			for (const [toReplace, url] of <[string, string][]> (
+				Array.from(
+					(<any> scriptText).matchAll(
+						/importScripts\(\s*["'](.*?)["']\s*\)/g
+					)
+				)
+			)) {
+				scriptText = scriptText.replace(
+					toReplace,
+					`\n\n${await request({url})}\n\n`
+				);
+			}
+		}
 
 		this.serviceWorkerResolvers.set(id, output);
 
