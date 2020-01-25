@@ -171,7 +171,7 @@ const generateScreenshots = async () => {
 		if (isMobile) {
 			await toggleMobileMenu(page, isMobile);
 			await takeScreenshot(page, isMobile, 'menu');
-			await click(page, '[routerlink="/messages"]');
+			await click(page, '[routerlink="/"]');
 			await page.waitForSelector(
 				'cyph-account-contact:nth-of-type(4) img[alt="User Avatar"]'
 			);
