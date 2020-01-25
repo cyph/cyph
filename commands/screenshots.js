@@ -104,6 +104,11 @@ const logIn = async (username, isMobile) => {
 		'cyph-account-contact:nth-of-type(2) img[alt="User Avatar"]'
 	);
 
+	await click(
+		page,
+		'.cyph-banner.alert div:not(.visibility-hidden) > button.close'
+	);
+
 	return {browser, page};
 };
 
