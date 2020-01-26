@@ -816,11 +816,10 @@ export class ChatService extends BaseProvider {
 
 						return {
 							chatMessage,
-							setPromise: this.chat.messages
-								.setItem(id, chatMessage)
-								.then(async () =>
-									this.getMessageValue(chatMessage)
-								)
+							setPromise: this.chat.messages.setItem(
+								id,
+								chatMessage
+							)
 						};
 					}
 				)
