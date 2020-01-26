@@ -230,8 +230,7 @@ export class ChatService extends BaseProvider {
 	public readonly resolvers = {
 		chatConnected: resolvable(true),
 		currentMessageSynced: resolvable(true),
-		messageListLoaded: resolvable(true),
-		outgoingMessagesSynced: resolvable(true)
+		messageListLoaded: resolvable(true)
 	};
 
 	/** Indicates whether an infinite scroll transition is in progress. */
@@ -242,7 +241,6 @@ export class ChatService extends BaseProvider {
 		this.resolvers.chatConnected.promise,
 		this.resolvers.currentMessageSynced.promise,
 		this.resolvers.messageListLoaded.promise,
-		this.resolvers.outgoingMessagesSynced.promise,
 		this.sessionService.initialMessagesProcessed.promise,
 		this.sessionService.ready.then(async () =>
 			Promise.all([
@@ -1323,10 +1321,6 @@ export class ChatService extends BaseProvider {
 			return removeOldStorageItem();
 		}
 
-		if (!oldLocalStorageKey) {
-			await this.resolvers.outgoingMessagesSynced.promise;
-		}
-
 		const localStoragePromise = !this.chat.pendingMessageRoot ?
 			Promise.resolve() :
 			Promise.all([
@@ -1534,12 +1528,6 @@ export class ChatService extends BaseProvider {
 					() => 'ChatService.resolvers.messageListLoaded resolved'
 				);
 			});
-			this.resolvers.outgoingMessagesSynced.promise.then(() => {
-				debugLog(
-					() =>
-						'ChatService.resolvers.outgoingMessagesSynced resolved'
-				);
-			});
 			this.sessionService.initialMessagesProcessed.promise.then(() => {
 				debugLog(
 					() =>
@@ -1692,14 +1680,10 @@ export class ChatService extends BaseProvider {
 							);
 						})
 						.catch(() => {})
-						.then(() => {
-							this.resolvers.outgoingMessagesSynced.resolve();
-						})
 				]);
 			}
 			else {
 				this.resolvers.currentMessageSynced.resolve();
-				this.resolvers.outgoingMessagesSynced.resolve();
 			}
 
 			this.chat.messageList.getFlatValue().then(async messageIDs => {
