@@ -1277,9 +1277,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const url = await urlPromise;
 
 				const data = await serialize(proto, value);
-				const hash = this.potassiumService.toHex(
-					await this.potassiumService.hash.hash(data)
-				);
+				const hash = uuid();
 
 				if (
 					/* eslint-disable-next-line @typescript-eslint/tslint/config */
