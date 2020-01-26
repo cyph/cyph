@@ -1030,7 +1030,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 			}
 
 			const result = await this.setItem(`${url}/${key}`, proto, value);
-			await itemRefOnDisconnect.cancel();
+			itemRefOnDisconnect.cancel();
 
 			if (o.callback) {
 				await o.callback();
