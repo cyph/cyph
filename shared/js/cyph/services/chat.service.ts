@@ -118,22 +118,13 @@ export class ChatService extends BaseProvider {
 	private lastConfirmedMessageID?: string;
 
 	/** @ignore */
+	private readonly messageChangeDelay: number = 1250;
+
+	/** @ignore */
 	private readonly messageChangeLock: LockFunction = lockFunction();
 
 	/** @ignore */
 	private readonly messageConfirmLock: LockFunction = lockFunction();
-
-	/** @ignore */
-	private readonly messageInputQueues = {
-		addMessage: <IChatMessageInput[]> [],
-		addTextMessage: <ISessionMessageData[]> []
-	};
-
-	/** @ignore */
-	private readonly messageSendInnerLock: LockFunction = lockFunction();
-
-	/** @ignore */
-	private readonly messageSendLock: LockFunction = lockFunction();
 
 	/** IDs of fetched messages. */
 	protected readonly fetchedMessageIDs = new LocalAsyncSet<string>();
@@ -146,23 +137,6 @@ export class ChatService extends BaseProvider {
 		this.messageValuesURL,
 		ChatMessageValue
 	);
-
-	/** Batch messages together that were sent within this interval. */
-	protected readonly outgoingMessageBatchDelay: number = 1250;
-
-	/** Queue of messages to be sent. */
-	protected readonly outgoingMessageQueue: {
-		messageData: [
-			Promise<IChatMessage>,
-			string,
-			Promise<IChatMessagePredecessor[] | undefined>,
-			Promise<Uint8Array>,
-			boolean | undefined,
-			number | undefined,
-			IChatMessageValue
-		];
-		resolve: () => void;
-	}[] = [];
 
 	/** @see IChatData */
 	public readonly chatSubject = new BehaviorSubject(
@@ -289,13 +263,6 @@ export class ChatService extends BaseProvider {
 	private async addTextMessage (
 		...textMessageInputs: ISessionMessageData[]
 	) : Promise<void> {
-		this.messageInputQueues.addTextMessage.push(...textMessageInputs);
-		await sleep(this.outgoingMessageBatchDelay);
-		textMessageInputs = this.messageInputQueues.addTextMessage.splice(
-			0,
-			this.messageInputQueues.addTextMessage.length
-		);
-
 		if (textMessageInputs.length < 1) {
 			return;
 		}
@@ -358,8 +325,6 @@ export class ChatService extends BaseProvider {
 									rpcEvents.confirm,
 									{textConfirmation: {id: o.id}}
 								]);
-
-								await sleep(this.outgoingMessageBatchDelay);
 							});
 						}
 					}
@@ -567,97 +532,77 @@ export class ChatService extends BaseProvider {
 	}
 
 	/** @ignore */
-	private async processOutgoingMessages () : Promise<void> {
-		await this.messageSendLock(async () => {
-			if (this.outgoingMessageQueue.length < 1) {
-				return;
-			}
+	private async processOutgoingMessages (
+		...outgoingMessages: {
+			messageData: [
+				Promise<IChatMessage>,
+				string,
+				Promise<IChatMessagePredecessor[] | undefined>,
+				Promise<Uint8Array>,
+				boolean | undefined,
+				number | undefined,
+				IChatMessageValue
+			];
+		}[]
+	) : Promise<void> {
+		debugLogTime(() => 'Chat Message Send: session send');
 
-			const outgoingMessages = this.outgoingMessageQueue.splice(
-				0,
-				this.outgoingMessageQueue.length
-			);
+		const {confirmPromise, newMessages} = await this.sessionService.send(
+			...outgoingMessages.map(({messageData}) : [
+				string,
+				(timestamp: number) => Promise<ISessionMessageAdditionalData>
+			] => [
+				rpcEvents.text,
+				async timestamp => {
+					const [
+						chatMessage,
+						id,
+						predecessors,
+						key,
+						selfDestructChat,
+						selfDestructTimeout,
+						value
+					] = await Promise.all(messageData);
 
-			debugLogTime(() => 'Chat Message Send: session send');
+					debugLogTime(() => 'Chat Message Send: hashing message');
 
-			const {
-				confirmPromise,
-				newMessages
-			} = await this.sessionService.send(
-				...outgoingMessages.map(({messageData}) : [
-					string,
-					(
-						timestamp: number
-					) => Promise<ISessionMessageAdditionalData>
-				] => [
-					rpcEvents.text,
-					async timestamp => {
-						const [
-							chatMessage,
-							id,
+					const hash = await this.messageValues.getItemHash(
+						id,
+						key,
+						this.messageValueHasher({
+							...chatMessage,
+							authorType: ChatMessage.AuthorTypes.App,
 							predecessors,
+							timestamp
+						}),
+						value
+					);
+
+					debugLogTime(() => 'Chat Message Send: hashed message');
+
+					return {
+						id,
+						text: {
+							hash,
 							key,
+							predecessors,
 							selfDestructChat,
-							selfDestructTimeout,
-							value
-						] = await Promise.all(messageData);
+							selfDestructTimeout
+						}
+					};
+				}
+			])
+		);
 
-						debugLogTime(
-							() => 'Chat Message Send: hashing message'
-						);
+		debugLogTime(() => 'Chat Message Send: awaiting confirmation');
 
-						const hash = await this.messageValues.getItemHash(
-							id,
-							key,
-							this.messageValueHasher({
-								...chatMessage,
-								authorType: ChatMessage.AuthorTypes.App,
-								predecessors,
-								timestamp
-							}),
-							value
-						);
+		await confirmPromise;
 
-						debugLogTime(() => 'Chat Message Send: hashed message');
+		debugLogTime(() => 'Chat Message Send: confirmPromise resolved');
 
-						return {
-							id,
-							text: {
-								hash,
-								key,
-								predecessors,
-								selfDestructChat,
-								selfDestructTimeout
-							}
-						};
-					}
-				])
-			);
+		await this.addTextMessage(...newMessages.map(({data}) => data));
 
-			debugLogTime(() => 'Chat Message Send: acquiring lock');
-
-			this.messageSendInnerLock(async () => {
-				debugLogTime(() => 'Chat Message Send: lock acquired');
-
-				return confirmPromise.then(async () => {
-					debugLogTime(
-						() => 'Chat Message Send: confirmPromise resolved'
-					);
-
-					await this.addTextMessage(
-						...newMessages.map(({data}) => data)
-					);
-
-					debugLogTime(() => 'Chat Message Send: done');
-
-					for (const outgoingMessage of outgoingMessages) {
-						outgoingMessage.resolve();
-					}
-				});
-			});
-
-			await sleep(this.outgoingMessageBatchDelay);
-		});
+		debugLogTime(() => 'Chat Message Send: done');
 	}
 
 	/** Gets author ID for including in message list item. */
@@ -726,13 +671,6 @@ export class ChatService extends BaseProvider {
 	public async addMessage (
 		...messageInputs: IChatMessageInput[]
 	) : Promise<void> {
-		this.messageInputQueues.addMessage.push(...messageInputs);
-		await sleep(this.outgoingMessageBatchDelay);
-		messageInputs = this.messageInputQueues.addMessage.splice(
-			0,
-			this.messageInputQueues.addMessage.length
-		);
-
 		if (messageInputs.length < 1) {
 			return;
 		}
@@ -1261,7 +1199,7 @@ export class ChatService extends BaseProvider {
 
 			this.chat.previousMessage = this.chat.currentMessage.text;
 
-			await sleep(this.outgoingMessageBatchDelay);
+			await sleep(this.messageChangeDelay);
 
 			const isMessageChanged =
 				this.chat.currentMessage.text !== '' &&
@@ -1501,9 +1439,7 @@ export class ChatService extends BaseProvider {
 			await this.scrollService.scrollDown(false, 250);
 		});
 
-		const resolver = resolvable();
-
-		this.outgoingMessageQueue.push({
+		await this.processOutgoingMessages({
 			messageData: [
 				chatMessagePromise,
 				id,
@@ -1512,13 +1448,9 @@ export class ChatService extends BaseProvider {
 				selfDestructChat,
 				selfDestructTimeout,
 				value
-			],
-			resolve: resolver.resolve
+			]
 		});
 
-		this.processOutgoingMessages();
-
-		await resolver.promise;
 		return id;
 	}
 
