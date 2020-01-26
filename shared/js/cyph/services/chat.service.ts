@@ -245,9 +245,6 @@ export class ChatService extends BaseProvider {
 		this.sessionService.ready.then(async () =>
 			Promise.all([
 				!this.sessionService.group ?
-					this.castleService?.initialMessagesProcessed() :
-					undefined,
-				!this.sessionService.group ?
 					this.channelService?.initialMessagesProcessed.promise :
 					undefined
 			])
@@ -1532,15 +1529,6 @@ export class ChatService extends BaseProvider {
 				debugLog(
 					() =>
 						'ChatService.sessionService.initialMessagesProcessed resolved'
-				);
-			});
-			(this.castleService && !this.sessionService.group ?
-				this.castleService.initialMessagesProcessed() :
-				Promise.resolve()
-			).then(() => {
-				debugLog(
-					() =>
-						'ChatService.castleService.initialMessagesProcessed resolved'
 				);
 			});
 			(this.channelService && !this.sessionService.group ?
