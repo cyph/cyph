@@ -1,6 +1,7 @@
 import * as msgpack from 'msgpack-lite';
 import {env} from '../env';
 import {MaybePromise} from '../maybe-promise-type';
+import {lockFunction} from './lock';
 import {prettyPrint} from './serialization/json';
 
 const logs: {
@@ -14,6 +15,8 @@ const logs: {
 if (env.debugLog) {
 	(<any> self).logs = logs;
 }
+
+const debugLogTimeLock = lockFunction();
 
 const debugLogInternal = async (
 	error: boolean,
@@ -90,10 +93,11 @@ export const debugLogError = async (
 /** Logs time difference to console in local env. */
 export const debugLogTime = async (
 	...args: (() => MaybePromise<any>)[]
-) : Promise<void> => {
-	const o = await debugLogInternal(false, args);
-	if (o) {
-		/* eslint-disable-next-line no-console */
-		console.log(o.timeDifference);
-	}
-};
+) : Promise<void> =>
+	debugLogTimeLock(async () => {
+		const o = await debugLogInternal(false, args);
+		if (o) {
+			/* eslint-disable-next-line no-console */
+			console.log(o.timeDifference);
+		}
+	});
