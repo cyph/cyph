@@ -7,9 +7,6 @@
 			"castleSessions": {
 				"$userA": {
 					"$userB": {
-						".read": "($userA + '@' + $DOMAIN) === auth.token.email || ($userB + '@' + $DOMAIN) === auth.token.email",
-						".write": "($userA + '@' + $DOMAIN) === auth.token.email || ($userB + '@' + $DOMAIN) === auth.token.email",
-
 						"id": {
 							"data": {
 								".validate": "newData.isString()"

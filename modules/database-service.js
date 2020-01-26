@@ -108,6 +108,33 @@ module.exports = (config, isCloudFunction) => {
 
 			return deserialize(proto, bytes);
 		},
+		async getOrSetDefault (
+			namespace,
+			url,
+			proto,
+			defaultValue,
+			skipSignature,
+			decompress
+		)  {
+			if (!url) {
+				return defaultValue();
+			}
+
+			try {
+				return await databaseService.getItem(
+					namespace,
+					url,
+					proto,
+					skipSignature,
+					decompress
+				);
+			}
+			catch {
+				const value = await defaultValue();
+				await databaseService.setItem(namespace, url, proto, value);
+				return value;
+			}
+		},
 		async hasItem (namespace, url)  {
 			try {
 				await databaseService.getItem(namespace, url, BinaryProto);

@@ -43,6 +43,7 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
+import {LocalStorageService} from './local-storage.service';
 import {StringsService} from './strings.service';
 
 /**
@@ -192,32 +193,28 @@ export class AccountContactsService extends BaseProvider {
 			username: string
 		) : Promise<{
 			castleSessionID: string;
-			castleSessionURL: string;
 		}> => {
-			const currentUserUsername = (await this.accountDatabaseService.getCurrentUser())
-				.user.username;
+			username = normalize(username);
 
-			const [userA, userB] = normalizeArray([
-				currentUserUsername,
-				username
-			]);
-
-			if (!(userA && userB)) {
+			if (!username) {
 				return {
-					castleSessionID: '',
-					castleSessionURL: ''
+					castleSessionID: ''
 				};
 			}
 
-			const castleSessionURL = `castleSessions/${userA}/${userB}`;
+			const currentUserUsername = (await this.accountDatabaseService.getCurrentUser())
+				.user.username;
 
 			return {
-				castleSessionID: await this.databaseService.getOrSetDefault(
-					`${castleSessionURL}/id`,
+				castleSessionID: await this.localStorageService.getOrSetDefault(
+					`CastleSessionID:${currentUserUsername}-${username}`,
 					StringProto,
-					() => uuid(true)
-				),
-				castleSessionURL
+					async () =>
+						this.accountDatabaseService.callFunction(
+							'getCastleSessionID',
+							{username}
+						)
+				)
 			};
 		}
 	);
@@ -544,6 +541,9 @@ export class AccountContactsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService

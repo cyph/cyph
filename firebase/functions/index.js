@@ -15,6 +15,17 @@ const mailchimp =
 		new (require('mailchimp-api-v3'))(mailchimpCredentials.apiKey) :
 		undefined;
 
+const databaseService = require('./database-service')(
+	{
+		...functions.config(),
+		fcmServerKey: fs
+			.readFileSync(__dirname + '/fcm-server-key')
+			.toString()
+			.trim()
+	},
+	true
+);
+
 const {
 	admin,
 	auth,
@@ -27,16 +38,7 @@ const {
 	setItem,
 	setItemInternal,
 	storage
-} = require('./database-service')(
-	{
-		...functions.config(),
-		fcmServerKey: fs
-			.readFileSync(__dirname + '/fcm-server-key')
-			.toString()
-			.trim()
-	},
-	true
-);
+} = databaseService;
 
 const {
 	addToMailingList,
@@ -61,6 +63,7 @@ const {
 const {
 	dynamicDeserialize,
 	normalize,
+	normalizeArray,
 	readableByteLength,
 	readableID,
 	sleep,
@@ -218,9 +221,11 @@ const onCall = f =>
 					validateInput(data.namespace.replace(/\./g, '_')),
 					async () =>
 						context.auth ?
-							(await auth.getUser(context.auth.uid)).email.split(
-								'@'
-							)[0] :
+							normalize(
+								(await auth.getUser(
+									context.auth.uid
+								)).email.split('@')[0]
+							) :
 							undefined,
 					data.testEnvName
 				)
@@ -650,6 +655,26 @@ exports.getBraintreeSubscriptionID = onRequest(
 		const planTrialEnd = (await planTrialEndRef.once('value')).val() || 0;
 
 		return {braintreeSubscriptionID, planTrialEnd};
+	}
+);
+
+exports.getCastleSessionID = onCall(
+	async (data, context, namespace, getUsername) => {
+		const [userA, userB] = normalizeArray([
+			data.username || '',
+			await getUsername()
+		]);
+
+		if (!userA || !userB) {
+			return '';
+		}
+
+		return this.databaseService.getOrSetDefault(
+			namespace,
+			`castleSessions/${userA}/${userB}/id`,
+			StringProto,
+			() => uuid(true)
+		);
 	}
 );
 

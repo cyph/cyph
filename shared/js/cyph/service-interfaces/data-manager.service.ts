@@ -36,7 +36,7 @@ export class DataManagerService extends BaseProvider {
 		}
 		catch {
 			const value = await defaultValue();
-			this.setItem(url, proto, value).catch(() => {});
+			await this.setItem(url, proto, value);
 			return value;
 		}
 	}
