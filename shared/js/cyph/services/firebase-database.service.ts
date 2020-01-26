@@ -1443,7 +1443,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					let reason: string | undefined;
 					let wasLocked = false;
 
-					(await await this.getDatabaseRef(url)).on(
+					(await this.getDatabaseRef(url)).on(
 						'value',
 						async snapshot => {
 							const value: {
@@ -1455,9 +1455,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 								};
 							} = snapshot?.val() || {};
 
+							const keys = Object.keys(value);
+
+							if (keys.length < 1) {
+								resolve({reason, wasLocked});
+								return;
+							}
+
 							const timestamp = await getTimestamp();
 
-							const contenders = Object.keys(value)
+							const contenders = keys
 								.map(k => value[k])
 								.filter(
 									contender =>

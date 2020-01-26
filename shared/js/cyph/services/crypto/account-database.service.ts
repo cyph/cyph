@@ -266,8 +266,7 @@ export class AccountDatabaseService extends BaseProvider {
 		securityModel: SecurityModels,
 		customKey: MaybePromise<Uint8Array> | undefined,
 		anonymous: boolean = false,
-		moreAdditionalData?: string,
-		noWaitForUnlock: boolean = false
+		moreAdditionalData?: string
 	) : Promise<{
 		alreadyCached: boolean;
 		progress: Observable<number>;
@@ -277,10 +276,6 @@ export class AccountDatabaseService extends BaseProvider {
 
 		if (!anonymous && this.currentUser.value) {
 			url = await this.normalizeURL(url);
-
-			if (!noWaitForUnlock) {
-				await this.waitForUnlock(url);
-			}
 		}
 
 		const downloadTask = this.databaseService.downloadItem(
@@ -614,9 +609,7 @@ export class AccountDatabaseService extends BaseProvider {
 					);
 				},
 				updateValue: async f =>
-					asyncList.lock(async () =>
-						asyncList.setValue(await f(await asyncList.getValue()))
-					),
+					asyncList.setValue(await f(await asyncList.getValue())),
 				watch: memoize(() =>
 					this.watchList(
 						url,
@@ -670,14 +663,8 @@ export class AccountDatabaseService extends BaseProvider {
 	) : IAsyncMap<string, T> {
 		const getAsyncMap = () : IAsyncMap<string, T> => {
 			const localLock = lockFunction();
-			const itemLocks = new Map<string, LockFunction>();
 			const itemCache = staticValues ? new Map<string, T>() : undefined;
 			const method = 'AccountDatabaseService.getAsyncMap';
-
-			const lockItem = (key: string) =>
-				getOrSetDefault(itemLocks, key, () =>
-					this.lockFunction((async () => `${await url}/${key}`)())
-				);
 
 			const baseAsyncMap = (async () => {
 				url = await this.normalizeURL(url);
@@ -698,9 +685,7 @@ export class AccountDatabaseService extends BaseProvider {
 						proto,
 						securityModel,
 						customKey,
-						anonymous,
-						undefined,
-						true
+						anonymous
 					)).result).value;
 
 				if (!staticValues) {
@@ -717,8 +702,7 @@ export class AccountDatabaseService extends BaseProvider {
 						proto,
 						async () => getItemInternal(key)
 					) :
-				async (key: string) =>
-					lockItem(key)(async () => getItemInternal(key));
+				async (key: string) => getItemInternal(key);
 
 			const getValueHelper = async (keys: string[]) =>
 				new Map<string, T>(
@@ -793,10 +777,8 @@ export class AccountDatabaseService extends BaseProvider {
 					),
 				hasItem: async key => (await baseAsyncMap).hasItem(key),
 				lock: async (f, reason) => (await baseAsyncMap).lock(f, reason),
-				removeItem: async key =>
-					lockItem(key)(async () => removeItemInternal(key)),
-				setItem: async (key, value) =>
-					lockItem(key)(async () => setItemInternal(key, value)),
+				removeItem: async key => removeItemInternal(key),
+				setItem: async (key, value) => setItemInternal(key, value),
 				setValue: async mapValue =>
 					localLock(async () => {
 						await asyncMap.clear();
@@ -809,29 +791,26 @@ export class AccountDatabaseService extends BaseProvider {
 						);
 					}),
 				size: async () => (await baseAsyncMap).size(),
-				updateItem: async (key, f) =>
-					lockItem(key)(async () => {
-						const value = await getItemInternal(key).catch(
-							() => undefined
-						);
-						let newValue: T | undefined;
-						try {
-							newValue = await f(value);
-						}
-						catch {
-							return;
-						}
-						if (newValue === undefined) {
-							await removeItemInternal(key);
-						}
-						else {
-							await setItemInternal(key, newValue);
-						}
-					}),
+				updateItem: async (key, f) => {
+					const value = await getItemInternal(key).catch(
+						() => undefined
+					);
+					let newValue: T | undefined;
+					try {
+						newValue = await f(value);
+					}
+					catch {
+						return;
+					}
+					if (newValue === undefined) {
+						await removeItemInternal(key);
+					}
+					else {
+						await setItemInternal(key, newValue);
+					}
+				},
 				updateValue: async f =>
-					asyncMap.lock(async () =>
-						asyncMap.setValue(await f(await asyncMap.getValue()))
-					),
+					asyncMap.setValue(await f(await asyncMap.getValue())),
 				watch: memoize(() =>
 					this.watchListKeys(url, subscriptions).pipe(
 						mergeMap(getValueHelper)
@@ -1353,8 +1332,12 @@ export class AccountDatabaseService extends BaseProvider {
 		securityModel: SecurityModels = SecurityModels.private,
 		customKey?: MaybePromise<Uint8Array>
 	) : Promise<{hash: string; url: string}> {
-		return this.lock(url, async () =>
-			this.setItemInternal(url, proto, value, securityModel, customKey)
+		return this.setItemInternal(
+			url,
+			proto,
+			value,
+			securityModel,
+			customKey
 		);
 	}
 

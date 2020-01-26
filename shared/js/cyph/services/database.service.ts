@@ -15,10 +15,7 @@ import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, DatabaseItem, IDatabaseItem} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {flattenArrays} from '../util/arrays';
-import {
-	getOrSetDefault,
-	getOrSetDefaultAsync
-} from '../util/get-or-set-default';
+import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
 import {getTimestamp} from '../util/time';
@@ -301,9 +298,7 @@ export class DatabaseService extends DataManagerService {
 				localLock(async () => this.setList(url, proto, value)),
 			subscribeAndPop: f => this.subscribeAndPop(url, proto, f),
 			updateValue: async f =>
-				asyncList.lock(async () =>
-					asyncList.setValue(await f(await asyncList.getValue()))
-				),
+				asyncList.setValue(await f(await asyncList.getValue())),
 			watch: memoize(() =>
 				this.watchList(url, proto, undefined, subscriptions).pipe(
 					map<ITimedValue<T>[], T[]>(arr => arr.map(o => o.value))
@@ -341,13 +336,9 @@ export class DatabaseService extends DataManagerService {
 	) : IAsyncMap<string, T> {
 		const lock = lockFactory(url);
 		const localLock = lockFunction();
-		const itemLocks = new Map<string, LockFunction>();
 		const itemCache = staticValues ? new Map<string, T>() : undefined;
 
-		const lockItem = (key: string) =>
-			getOrSetDefault(itemLocks, key, () => lockFactory(`${url}/${key}`));
-
-		const getItemInternal = async (key: string) => {
+		const getItem = async (key: string) => {
 			const f = async () => this.getItem(`${url}/${key}`, proto);
 
 			if (!staticValues) {
@@ -358,11 +349,6 @@ export class DatabaseService extends DataManagerService {
 				this.cache.value.getOrSetDefault(`${url}/${key}`, proto, f)
 			);
 		};
-
-		const getItem = staticValues ?
-			getItemInternal :
-			async (key: string) =>
-				lockItem(key)(async () => getItemInternal(key));
 
 		const getValueHelper = async (keys: string[]) =>
 			new Map<string, T>(
@@ -409,13 +395,10 @@ export class DatabaseService extends DataManagerService {
 			getKeys: async () => this.getListKeys(url),
 			getValue: async () =>
 				localLock(async () => getValueHelper(await asyncMap.getKeys())),
-			hasItem: async key =>
-				lockItem(key)(async () => this.hasItem(`${url}/${key}`)),
+			hasItem: async key => this.hasItem(`${url}/${key}`),
 			lock,
-			removeItem: async key =>
-				lockItem(key)(async () => removeItemInternal(key)),
-			setItem: async (key, value) =>
-				lockItem(key)(async () => setItemInternal(key, value)),
+			removeItem: async key => removeItemInternal(key),
+			setItem: async (key, value) => setItemInternal(key, value),
 			setValue: async mapValue =>
 				localLock(async () => {
 					await asyncMap.clear();
@@ -428,29 +411,24 @@ export class DatabaseService extends DataManagerService {
 					);
 				}),
 			size: async () => (await asyncMap.getKeys()).length,
-			updateItem: async (key, f) =>
-				lockItem(key)(async () => {
-					const value = await getItemInternal(key).catch(
-						() => undefined
-					);
-					let newValue: T | undefined;
-					try {
-						newValue = await f(value);
-					}
-					catch {
-						return;
-					}
-					if (newValue === undefined) {
-						await removeItemInternal(key);
-					}
-					else {
-						await setItemInternal(key, newValue);
-					}
-				}),
+			updateItem: async (key, f) => {
+				const value = await getItem(key).catch(() => undefined);
+				let newValue: T | undefined;
+				try {
+					newValue = await f(value);
+				}
+				catch {
+					return;
+				}
+				if (newValue === undefined) {
+					await removeItemInternal(key);
+				}
+				else {
+					await setItemInternal(key, newValue);
+				}
+			},
 			updateValue: async f =>
-				asyncMap.lock(async () =>
-					asyncMap.setValue(await f(await asyncMap.getValue()))
-				),
+				asyncMap.setValue(await f(await asyncMap.getValue())),
 			watch: memoize(() => watchKeys().pipe(mergeMap(getValueHelper))),
 			watchKeys,
 			watchSize: memoize(() => watchKeys().pipe(map(keys => keys.length)))
@@ -538,18 +516,17 @@ export class DatabaseService extends DataManagerService {
 						potassiumUtil.clearMemory(oldValue);
 					}
 				}),
-			updateValue: async f =>
-				asyncValue.lock(async () => {
-					const value = await asyncValue.getValue();
-					let newValue: T;
-					try {
-						newValue = await f(value);
-					}
-					catch {
-						return;
-					}
-					await asyncValue.setValue(newValue);
-				}),
+			updateValue: async f => {
+				const value = await asyncValue.getValue();
+				let newValue: T;
+				try {
+					newValue = await f(value);
+				}
+				catch {
+					return;
+				}
+				await asyncValue.setValue(newValue);
+			},
 			watch: memoize(() =>
 				this.watch(url, proto, subscriptions).pipe(
 					map<ITimedValue<T>, T>(o => o.value)
