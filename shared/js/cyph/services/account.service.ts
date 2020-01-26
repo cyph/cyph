@@ -24,7 +24,7 @@ import {
 	StringProto
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
-import {toInt} from '../util/formatting';
+import {normalize, toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {observableAll} from '../util/observable-all';
@@ -800,6 +800,11 @@ export class AccountService extends BaseProvider {
 				return;
 			}
 
+			const senderUsername =
+				typeof data?.additionalData?.senderUsername === 'string' ?
+					normalize(data.additionalData.senderUsername) :
+					undefined;
+
 			const dismissed = async () =>
 				!!data.additionalData?.foreground &&
 				(!data.message ||
@@ -826,11 +831,10 @@ export class AccountService extends BaseProvider {
 
 				case NotificationTypes.Message:
 					if (
-						typeof data?.additionalData?.senderUsername !==
-							'string' ||
+						typeof senderUsername !== 'string' ||
 						(typeof this.headerInternal.value.header === 'object' &&
 							this.headerInternal.value.header.user?.username ===
-								data.additionalData.senderUsername &&
+								senderUsername &&
 							this.router.url.startsWith('messages/')) ||
 						(await dismissed())
 					) {
@@ -841,7 +845,7 @@ export class AccountService extends BaseProvider {
 						'messages',
 						...(data.additionalData.groupID ?
 							[data.additionalData.groupID] :
-							['user', data.additionalData.senderUsername])
+							['user', senderUsername])
 					]);
 					break;
 
@@ -904,15 +908,16 @@ export class AccountService extends BaseProvider {
 		this.accountDatabaseService.pushNotificationsSubscribe(
 			'callBack',
 			data => {
-				if (typeof data?.additionalData?.senderUsername !== 'string') {
+				const senderUsername =
+					typeof data?.additionalData?.senderUsername === 'string' ?
+						normalize(data.additionalData.senderUsername) :
+						undefined;
+
+				if (typeof senderUsername !== 'string') {
 					return;
 				}
 
-				this.router.navigate([
-					'call',
-					'user',
-					data.additionalData.senderUsername
-				]);
+				this.router.navigate(['call', 'user', senderUsername]);
 			}
 		);
 
