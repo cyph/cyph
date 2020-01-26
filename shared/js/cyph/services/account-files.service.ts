@@ -1778,8 +1778,7 @@ export class AccountFilesService extends BaseProvider {
 					(await this.accountDatabaseService.getUserPublicKeys(
 						username
 					)).encryption
-				),
-				false
+				)
 			);
 		}
 		catch {

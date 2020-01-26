@@ -1260,7 +1260,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T,
-		confirmSuccess: boolean = true,
 		progress?: BehaviorSubject<number>
 	) : Promise<{
 		hash: string;
@@ -1326,11 +1325,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 									firebase.database.ServerValue.TIMESTAMP
 							})
 							.then();
-					}
-
-					/* Download content to verify that upload was successful */
-					if (confirmSuccess) {
-						await this.downloadItem<T>(url, proto, hash).result;
 					}
 
 					this.cache.setItem(url, data, hash);
@@ -1402,8 +1396,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public uploadItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
-		value: T,
-		confirmSuccess?: boolean
+		value: T
 	) : {
 		cancel: () => void;
 		progress: Observable<number>;
@@ -1412,13 +1405,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const cancel = resolvable();
 		const progress = new BehaviorSubject(0);
 
-		const result = this.setItem(
-			urlPromise,
-			proto,
-			value,
-			confirmSuccess,
-			progress
-		);
+		const result = this.setItem(urlPromise, proto, value, progress);
 
 		return {cancel: cancel.resolve, progress, result};
 	}
