@@ -850,13 +850,15 @@ export class AccountService extends BaseProvider {
 					break;
 
 				default:
-					if (data.additionalData?.foreground && data.message) {
-						await this.dialogService.toast(
-							data.message,
-							undefined,
-							this.stringsService.ok
-						);
+					if (!data.additionalData?.foreground || !data.message) {
+						return;
 					}
+
+					await this.dialogService.toast(
+						data.message,
+						undefined,
+						this.stringsService.ok
+					);
 			}
 		});
 

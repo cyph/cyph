@@ -59,6 +59,7 @@ export class WorkerService extends BaseProvider {
 		/* Workaround for local environments not having WebSign packing */
 		if (this.envService.isLocalEnv) {
 			/* Temporarily casting until TypeScript adds matchAll definition */
+			/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */
 			for (const [toReplace, url] of <[string, string][]> (
 				Array.from(
 					(<any> scriptText).matchAll(

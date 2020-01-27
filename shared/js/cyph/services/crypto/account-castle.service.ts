@@ -47,7 +47,7 @@ export class AccountCastleService extends CastleService {
 
 		const user = await accountSessionService.remoteUser
 			.pipe(
-				mergeMap(async user => user),
+				mergeMap(async o => o),
 				filterUndefinedOperator(),
 				take(1)
 			)

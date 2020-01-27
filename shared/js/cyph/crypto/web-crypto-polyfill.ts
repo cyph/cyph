@@ -36,6 +36,7 @@ export const webCryptoPolyfill = (seed: Uint8Array) => {
 
 			/* Handle circular dependency between this polyfill and libsodium */
 			const sodiumExists =
+				/* eslint-disable-next-line camelcase */
 				typeof (<any> sodium())?.crypto_stream_chacha20 === 'function';
 
 			if (!isActive) {
