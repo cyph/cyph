@@ -669,7 +669,7 @@ exports.getCastleSessionID = onCall(
 			return '';
 		}
 
-		return this.databaseService.getOrSetDefault(
+		return databaseService.getOrSetDefault(
 			namespace,
 			`castleSessions/${userA}/${userB}/id`,
 			StringProto,
