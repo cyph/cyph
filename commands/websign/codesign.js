@@ -41,7 +41,7 @@ const {sign} = require('../sign');
 		for (let i = 0; i < inputs.length; ++i) {
 			const outputDir = inputs[i].outputDir;
 
-			await new Promise(resolve => mkdirp(outputDir, resolve));
+			await mkdirp(outputDir);
 
 			fs.writeFileSync(`${outputDir}/current`, timestamp);
 

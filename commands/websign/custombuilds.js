@@ -19,7 +19,7 @@ const {customBuild, customBuildIds} = require('../custombuild');
 	const subresourceDir = 'custom-builds';
 	const subresourceDirParent = `${args.outputPath}/cyph.app-subresources`;
 
-	mkdirp.sync(`${subresourceDirParent}/${subresourceDir}`);
+	await mkdirp(`${subresourceDirParent}/${subresourceDir}`);
 
 	const addSubresource = async ($, name, content) => {
 		content = content.trim();

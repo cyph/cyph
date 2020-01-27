@@ -16,7 +16,7 @@ const pack = async (dir, inputPath, enableMinify, enableSRI, outputPath) => {
 		undefined;
 
 	if (subresourcePath) {
-		await new Promise(resolve => mkdirp(subresourcePath, resolve));
+		await mkdirp(subresourcePath);
 	}
 
 	if (!dir) {
@@ -68,7 +68,7 @@ const pack = async (dir, inputPath, enableMinify, enableSRI, outputPath) => {
 				.slice(0, -1)
 				.join('/');
 
-			await new Promise(resolve => mkdirp(pathParent, resolve));
+			await mkdirp(pathParent);
 			fs.writeFileSync(`${dir}/${path}`, subresource.content);
 			fs.writeFileSync(`${dir}/${path}.srihash`, subresource.hash);
 		}

@@ -10,7 +10,7 @@ const getSubdirectories = dir =>
 		.readdirSync(dir)
 		.filter(d => d !== '.git' && fs.lstatSync(`${dir}/${d}`).isDirectory());
 
-const updateRepos = () => {
+const updateRepos = async () => {
 	childProcess.spawnSync('bash', ['./keycache.sh'], {
 		cwd: __dirname,
 		stdio: 'inherit'
@@ -36,7 +36,7 @@ const updateRepos = () => {
 			}
 		}
 		else {
-			mkdirp.sync(path);
+			await mkdirp(path);
 
 			childProcess.spawnSync(
 				'git',
@@ -81,6 +81,7 @@ const updateRepos = () => {
 		.split('\n')
 		.map(s => s.replace(/^\*/, '').trim())
 		.filter(s => !cyphBranches.has(s));
+
 	for (const branch of cyphBranches) {
 		for (const args of [
 			['checkout', '-b', branch, '--track', `origin/${branch}`],

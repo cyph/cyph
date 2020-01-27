@@ -16,9 +16,9 @@ const qrInviteCodeURLDir = `${__dirname}/../qr-invite-codes/urls`;
 
 const qrInviteCode = async (countByUser, plan) => {
 	childProcess.spawnSync('rm', ['-rf', qrInviteCodeDir]);
-	mkdirp.sync(qrInviteCodeBusinessCardDir);
-	mkdirp.sync(qrInviteCodeQRDir);
-	mkdirp.sync(qrInviteCodeURLDir);
+	await mkdirp(qrInviteCodeBusinessCardDir);
+	await mkdirp(qrInviteCodeQRDir);
+	await mkdirp(qrInviteCodeURLDir);
 
 	const inviteCodes = Object.values(
 		await addInviteCode('cyphme', countByUser, undefined, plan)

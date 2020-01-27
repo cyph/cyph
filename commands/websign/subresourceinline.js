@@ -32,7 +32,7 @@ const superSphincs = require('supersphincs');
 		)
 		.reduce((a, b) => a.concat(b), ['index.html']);
 
-	await new Promise(resolve => mkdirp(args.subresourcePath, resolve));
+	await mkdirp(args.subresourcePath);
 
 	for (let file of filesToModify) {
 		const originalContent = fs.readFileSync(file).toString();
@@ -71,7 +71,7 @@ const superSphincs = require('supersphincs');
 					.slice(0, -1)
 					.join('/');
 
-				await new Promise(resolve => mkdirp(pathParent, resolve));
+				await mkdirp(pathParent);
 				fs.writeFileSync(path, dataURI);
 				fs.writeFileSync(path + '.srihash', hash);
 			}
