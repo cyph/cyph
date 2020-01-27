@@ -1,9 +1,9 @@
 import {Injectable, NgZone} from '@angular/core';
 import cordovaSQLiteDriver from 'localforage-cordovasqlitedriver';
 import * as localforage from 'localforage';
+import {env} from '../env';
 import {StringProto} from '../proto';
 import {lockFunction} from '../util/lock';
-import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 
 /**
@@ -17,7 +17,7 @@ export class WebLocalStorageService extends LocalStorageService {
 	/** @ignore */
 	private readonly ready: Promise<void> = (async () => {
 		try {
-			if (this.envService.isCordovaMobile) {
+			if (env.isCordovaMobile) {
 				await localforage.defineDriver(cordovaSQLiteDriver);
 
 				await localforage.setDriver([
@@ -115,11 +115,7 @@ export class WebLocalStorageService extends LocalStorageService {
 		);
 	}
 
-	constructor (
-		ngZone: NgZone,
-		/** @ignore */
-		private readonly envService: EnvService
-	) {
+	constructor (ngZone: NgZone) {
 		super(ngZone);
 	}
 }
