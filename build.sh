@@ -4,32 +4,51 @@
 set -e
 cd $(cd "$(dirname "$0")" ; pwd)
 
+allPlatforms=''
 android=''
+debug=''
 electron=''
 iOS=''
 iOSEmulator=''
-if [ ! "${1}" ] || [ "${1}" == 'android' ] ; then
+if [ ! "${1}" ] ; then
+	allPlatforms=true
+elif [ "${1}" == 'android' ] ; then
 	android=true
-fi
-if [ ! "${1}" ] || [ "${1}" == 'electron' ] ; then
+elif [ "${1}" == 'androidDebug' ] ; then
+	android=true
+	debug=true
+elif [ "${1}" == 'electron' ] ; then
 	electron=true
-fi
-if [ ! "${1}" ] || [ "${1}" == 'ios' ] ; then
+elif [ "${1}" == 'ios' ] ; then
 	iOS=true
-fi
-if [ "${1}" == 'emulator' ] ; then
+elif [ "${1}" == 'emulator' ] ; then
 	iOS=true
 	iOSEmulator=true
+else
+	echo 'Invalid platform.'
+	exit 1
 fi
+shift
 
-password='balls'
-if [ "${android}" ] || [ "${electron}" ] ; then
-	echo -n 'Password (leave blank for Android-only debug mode): '
+password=''
+if [ "${1}" ] ; then
+	password="${1}"
+	shift
+elif [ ! "${debug}" ] && ( [ "${android}" ] || [ "${electron}" ] ) ; then
+	echo -n 'Password: '
 	read -s password
-	export CSC_KEY_PASSWORD="${password}"
 	echo
 fi
 
+if [ "${allPlatforms}" ] ; then
+	./build.sh android "${password}" || exit 1
+	./build.sh electron "${password}" || exit 1
+	./build.sh ios "${password}" || exit 1
+	exit
+fi
+
+
+export CSC_KEY_PASSWORD="${password}"
 export CSC_KEYCHAIN="${HOME}/.cyph/nativereleasesigning/apple/cyph.keychain"
 
 if [ -d ../cyph-phonegap-build ] ; then
@@ -50,12 +69,34 @@ sed -i "s|~|${HOME}|g" build.json
 npm install
 
 
+initPlatform () {
+	platform="${1}"
+
+	npx cordova platform add ${platform}
+
+	node -e "console.log(
+		Array.from(
+			Array.from(
+				new (require('xmldom').DOMParser)()
+					.parseFromString(fs.readFileSync('config.xml').toString())
+					.documentElement.getElementsByTagName('platform')
+			).find(elem => elem.getAttribute('name') === '${platform}').childNodes
+		)
+			.filter(elem => elem.tagName === 'plugin')
+			.map(
+				elem => \`\${elem.getAttribute('name')}@\${elem.getAttribute('spec')}\`
+			)
+			.join('\n')
+	)" | xargs npx cordova plugin add
+}
+
+
 if [ "${android}" ] ; then
-	npx cordova platform add android
+	initPlatform android
 fi
 
 if [ "${electron}" ] ; then
-	npx cordova platform add electron
+	initPlatform electron
 fi
 
 if [ "${iOS}" ] ; then
@@ -68,7 +109,7 @@ if [ "${iOS}" ] ; then
 	fi
 
 	npm install xcode
-	npx cordova platform add ios
+	initPlatform ios
 	pod install --project-directory=platforms/ios
 fi
 
@@ -80,7 +121,7 @@ if [ "${iOSEmulator}" ] ; then
 	exit
 fi
 
-if [ "${password}" == "" ] ; then
+if [ "${debug}" ] ; then
 	npx cordova build --debug --device || exit 1
 	cp platforms/android/app/build/outputs/apk/debug/app-debug.apk build/cyph.debug.apk
 	exit
