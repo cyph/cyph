@@ -4,7 +4,9 @@ import * as localforage from 'localforage';
 import {env} from '../env';
 import {StringProto} from '../proto';
 import {lockFunction} from '../util/lock';
+import {DialogService} from './dialog.service';
 import {LocalStorageService} from './local-storage.service';
+import {StringsService} from './strings.service';
 
 /**
  * Provides local storage functionality for the web.
@@ -33,7 +35,16 @@ export class WebLocalStorageService extends LocalStorageService {
 						]
 					)
 				);
-				await localforage.clear();
+				if (oldData.length > 0) {
+					await Promise.all([
+						localforage.clear(),
+						this.dialogService.toast(
+							this.stringsService.sqliteDataMigration,
+							10000,
+							this.stringsService.ok
+						)
+					]);
+				}
 
 				await localforage.defineDriver(cordovaSQLiteDriver);
 				await localforage.setDriver([
@@ -43,10 +54,12 @@ export class WebLocalStorageService extends LocalStorageService {
 					localforage.LOCALSTORAGE
 				]);
 
-				await localforage.ready();
-				await Promise.all(
-					oldData.map(async ([k, v]) => localforage.setItem(k, v))
-				);
+				if (oldData.length > 0) {
+					await localforage.ready();
+					await Promise.all(
+						oldData.map(async ([k, v]) => localforage.setItem(k, v))
+					);
+				}
 			}
 		}
 		catch {}
@@ -136,7 +149,15 @@ export class WebLocalStorageService extends LocalStorageService {
 		);
 	}
 
-	constructor (ngZone: NgZone) {
+	constructor (
+		ngZone: NgZone,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
+	) {
 		super(ngZone);
 	}
 }

@@ -955,6 +955,9 @@ export class StringsService extends BaseProvider {
 	public readonly speakerTitle = `Speaker`;
 
 	/** @see StringsService */
+	public readonly sqliteDataMigration = `Please wait; applying a one-time update that may take up to a minute.`;
+
+	/** @see StringsService */
 	public readonly startDate = `Start Date`;
 
 	/** @see StringsService */
