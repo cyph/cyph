@@ -320,9 +320,6 @@ rm -rf simplebtc/node_modules &> /dev/null
 # Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
 rm -rf ng-fullcalendar/node_modules &> /dev/null
 
-# Temporary workaround for https://github.com/thgreasi/localForage-cordovaSQLiteDriver/issues/37
-sed -i 's|version: String(dbInfo.version)|// version: String(dbInfo.version)|g' localforage-cordovasqlitedriver/dist/localforage-cordovasqlitedriver.*
-
 # Temporary workaround for https://github.com/pierrec/node-lz4/pull/64#issuecomment-416119077
 sed -i \
 	's|"browser": "./build/lz4.js",|"browser": {"./lib/utils.js": "./lib/utils-js.js"},|g' \
