@@ -269,7 +269,6 @@ read -r -d '' modules <<- EOM
 	libsodium-wrappers-sumo
 	libvorbis.js
 	localforage
-	localforage-cordovasqlitedriver
 	lodash
 	lodash-es
 	long
