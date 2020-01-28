@@ -14,21 +14,25 @@ if [ ! "${1}" ] ; then
 	allPlatforms=true
 elif [ "${1}" == 'android' ] ; then
 	android=true
+	shift
 elif [ "${1}" == 'androidDebug' ] ; then
 	android=true
 	debug=true
+	shift
 elif [ "${1}" == 'electron' ] ; then
 	electron=true
+	shift
 elif [ "${1}" == 'ios' ] ; then
 	iOS=true
+	shift
 elif [ "${1}" == 'emulator' ] ; then
 	iOS=true
 	iOSEmulator=true
+	shift
 else
 	echo 'Invalid platform.'
 	exit 1
 fi
-shift
 
 password=''
 if [ "${1}" ] ; then
