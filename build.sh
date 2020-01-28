@@ -38,7 +38,7 @@ password=''
 if [ "${1}" ] ; then
 	password="${1}"
 	shift
-elif [ ! "${debug}" ] && ( [ "${android}" ] || [ "${electron}" ] ) ; then
+elif [ ! "${debug}" ] && ( [ "${allPlatforms}" ] || [ "${android}" ] || [ "${electron}" ] ) ; then
 	echo -n 'Password: '
 	read -s password
 	echo
