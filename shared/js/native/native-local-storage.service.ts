@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {SecureStorage} from 'nativescript-secure-storage';
 import {potassiumUtil} from './js/cyph/crypto/potassium/potassium-util';
 import {LockFunction} from './js/cyph/lock-function-type';
@@ -109,7 +109,7 @@ export class NativeLocalStorageService extends LocalStorageService {
 		});
 	}
 
-	constructor () {
-		super();
+	constructor (ngZone: NgZone) {
+		super(ngZone);
 	}
 }
