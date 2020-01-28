@@ -17,36 +17,15 @@ export class WebLocalStorageService extends LocalStorageService {
 	/** @ignore */
 	private readonly ready: Promise<void> = (async () => {
 		try {
-			if (
-				env.isCordovaMobile &&
-				(cordovaSQLiteDriver._support === true ||
-					(typeof cordovaSQLiteDriver._support === 'function' &&
-						(await cordovaSQLiteDriver._support())))
-			) {
-				/* TODO: Remove this in April 2020 */
-				await localforage.ready();
-				const oldData = await Promise.all(
-					(await localforage.keys()).map(
-						async (k) : Promise<[string, unknown]> => [
-							k,
-							await localforage.getItem(k)
-						]
-					)
-				);
-				await localforage.clear();
-
+			if (env.isCordovaMobile) {
 				await localforage.defineDriver(cordovaSQLiteDriver);
+
 				await localforage.setDriver([
 					cordovaSQLiteDriver._driver,
 					localforage.INDEXEDDB,
 					localforage.WEBSQL,
 					localforage.LOCALSTORAGE
 				]);
-
-				await localforage.ready();
-				await Promise.all(
-					oldData.map(async ([k, v]) => localforage.setItem(k, v))
-				);
 			}
 		}
 		catch {}
