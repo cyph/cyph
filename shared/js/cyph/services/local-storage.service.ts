@@ -73,7 +73,8 @@ export class LocalStorageService extends DataManagerService {
 	/** Interface to platform-specific getItem functionality. */
 	protected async getItemInternal (
 		_URL: string,
-		_WAIT_FOR_READY: boolean
+		_WAIT_FOR_READY: boolean,
+		_GET_FROM_KEYSTORE: boolean = false
 	) : Promise<Uint8Array> {
 		throw new Error(
 			'Must provide an implementation of LocalStorageService.getItemInternal.'
@@ -103,7 +104,8 @@ export class LocalStorageService extends DataManagerService {
 	protected async setItemInternal (
 		_URL: string,
 		_VALUE: Uint8Array,
-		_WAIT_FOR_READY: boolean
+		_WAIT_FOR_READY: boolean,
+		_SAVE_TO_KEYSTORE: boolean
 	) : Promise<void> {
 		throw new Error(
 			'Must provide an implementation of LocalStorageService.setItemInternal.'
@@ -128,9 +130,15 @@ export class LocalStorageService extends DataManagerService {
 	public async getItem<T> (
 		url: string,
 		proto: IProto<T>,
-		waitForReady: boolean = true
+		waitForReady: boolean = true,
+		getFromKeystore: boolean = false
 	) : Promise<T> {
-		return (await this.getValue(url, proto, waitForReady))[1];
+		return (await this.getValue(
+			url,
+			proto,
+			waitForReady,
+			getFromKeystore
+		))[1];
 	}
 
 	/** Gets items. */
@@ -138,22 +146,30 @@ export class LocalStorageService extends DataManagerService {
 		root: string | undefined,
 		proto: IProto<T>,
 		sortByTimestamp: boolean = false,
-		waitForReady: boolean = true
+		waitForReady: boolean = true,
+		getFromKeystore: boolean = false
 	) : Promise<T[]> {
 		return (await this.getValues(
 			root,
 			proto,
 			sortByTimestamp,
-			waitForReady
+			waitForReady,
+			getFromKeystore
 		)).map(o => o[1]);
 	}
 
 	/** Gets item timestamp. */
 	public async getItemTimestamp (
 		url: string,
-		waitForReady: boolean = true
+		waitForReady: boolean = true,
+		getFromKeystore: boolean = false
 	) : Promise<number> {
-		return (await this.getValue(url, BinaryProto, waitForReady))[2];
+		return (await this.getValue(
+			url,
+			BinaryProto,
+			waitForReady,
+			getFromKeystore
+		))[2];
 	}
 
 	/** Gets keys. */
@@ -176,17 +192,22 @@ export class LocalStorageService extends DataManagerService {
 		url: string,
 		proto: IProto<T>,
 		waitForReady: boolean = true,
-		skipCache: boolean = false
+		skipCache: boolean = false,
+		getFromKeystore: boolean = false
 	) : Promise<[string, T, number]> {
 		await this.pendingSets.get(url);
 
 		const data = await (skipCache ?
-			this.getItemInternal(url, waitForReady) :
+			this.getItemInternal(url, waitForReady, getFromKeystore) :
 			(async () => {
 				try {
 					this.cache.set(
 						url,
-						await this.getItemInternal(url, waitForReady)
+						await this.getItemInternal(
+							url,
+							waitForReady,
+							getFromKeystore
+						)
 					);
 				}
 				catch {}
@@ -208,19 +229,37 @@ export class LocalStorageService extends DataManagerService {
 		root: string | undefined,
 		proto: IProto<T>,
 		sortByTimestamp: boolean = false,
-		waitForReady: boolean = true
+		waitForReady: boolean = true,
+		getFromKeystore: boolean = false
 	) : Promise<[string, T, number][]> {
 		const values = filterUndefined(
 			await Promise.all(
 				(await this.getKeys(root, waitForReady)).map(async url =>
-					this.getValue(url, proto, waitForReady).catch(
-						() => undefined
-					)
+					this.getValue(
+						url,
+						proto,
+						waitForReady,
+						getFromKeystore
+					).catch(() => undefined)
 				)
 			)
 		);
 
 		return !sortByTimestamp ? values : values.sort((a, b) => a[2] - b[2]);
+	}
+
+	/** @inheritDoc */
+	public async hasItem (
+		url: string,
+		getFromKeystore: boolean = false
+	) : Promise<boolean> {
+		try {
+			await this.getItem(url, BinaryProto, undefined, getFromKeystore);
+			return true;
+		}
+		catch {
+			return false;
+		}
 	}
 
 	/** Executes a Promise within a mutual-exclusion lock in FIFO order. */
@@ -386,7 +425,8 @@ export class LocalStorageService extends DataManagerService {
 		proto: IProto<T>,
 		value: T,
 		waitForReady: boolean = true,
-		skipCache: boolean = false
+		skipCache: boolean = false,
+		saveToKeystore: boolean = false
 	) : Promise<{url: string}> {
 		const promise = (async () => {
 			const data = await serialize<ILocalStorageValue>(
@@ -403,7 +443,12 @@ export class LocalStorageService extends DataManagerService {
 
 			if (!this.setInternalFailed) {
 				try {
-					await this.setItemInternal(url, data, waitForReady);
+					await this.setItemInternal(
+						url,
+						data,
+						waitForReady,
+						saveToKeystore
+					);
 				}
 				catch {
 					this.setInternalFailed = true;

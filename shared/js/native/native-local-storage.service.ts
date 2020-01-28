@@ -47,7 +47,8 @@ export class NativeLocalStorageService extends LocalStorageService {
 	/** @inheritDoc */
 	protected async getItemInternal (
 		url: string,
-		_WAIT_FOR_READY: boolean
+		_WAIT_FOR_READY: boolean,
+		_GET_FROM_KEYSTORE: boolean
 	) : Promise<Uint8Array> {
 		return this.setLock(async () => {
 			const value = await this.storage.get({key: url});
@@ -91,7 +92,8 @@ export class NativeLocalStorageService extends LocalStorageService {
 	protected async setItemInternal (
 		url: string,
 		value: Uint8Array,
-		_WAIT_FOR_READY: boolean
+		_WAIT_FOR_READY: boolean,
+		_SAVE_TO_KEYSTORE: boolean
 	) : Promise<void> {
 		await this.setLock(async () => {
 			await this.storage.set({

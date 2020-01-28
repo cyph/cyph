@@ -29,6 +29,10 @@ export class Env extends EnvDeploy {
 	private readonly useBaseUrl: boolean =
 		!!environment.customBuild || environment.local;
 
+	/** Unique string representing the current package. */
+	public readonly appName: string = `com.cyph.app-${environment.customBuild
+		?.namespace || 'cyph.ws'}-${environment.envName}`;
+
 	/** @inheritDoc */
 	public readonly appUrl: string =
 		!environment.customBuild || environment.local || this.isOnion ?
