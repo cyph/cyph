@@ -156,14 +156,34 @@ export class WebLocalStorageService extends LocalStorageService {
 			await this.ready;
 		}
 
-		let value = await localforage.getItem<Uint8Array | undefined>(url);
+		const [localforageValue, keystoreValue] = await Promise.all([
+			localforage.getItem<Uint8Array | undefined>(url),
+			getFromKeystore ?
+				this.nativeKeystore
+					.then(async keystore =>
+						/* eslint-disable-next-line no-unused-expressions */
+						keystore?.getItem(url)
+					)
+					.catch(() => undefined) :
+				undefined
+		]);
 
-		if (getFromKeystore && !(value instanceof Uint8Array)) {
-			try {
-				/* eslint-disable-next-line no-unused-expressions */
-				value = await (await this.nativeKeystore)?.getItem(url);
-			}
-			catch {}
+		const value =
+			localforageValue instanceof Uint8Array ?
+				localforageValue :
+				keystoreValue;
+
+		/*
+			Android keystore can get wiped in certain conditions,
+			so having redundancy increases reliability.
+		*/
+		if (
+			getFromKeystore &&
+			value instanceof Uint8Array &&
+			(!(localforageValue instanceof Uint8Array) ||
+				!(keystoreValue instanceof Uint8Array))
+		) {
+			await this.setItemInternal(url, value, waitForReady, true);
 		}
 
 		if (!(value instanceof Uint8Array)) {
