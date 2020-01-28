@@ -58,7 +58,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 	/** @see ICurrentUser.masterKeyConfirmed */
 	public readonly masterKeyConfirmed = this.localStorageService
-		.hasItem('unconfirmedMasterKey')
+		.hasItem('unconfirmedMasterKey', true)
 		.then(b => !b);
 
 	/** PIN to be used for login attempt. */
@@ -143,13 +143,13 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 				savedUsername
 			] = await Promise.all([
 				this.localStorageService
-					.getItem('pinIsCustom', BooleanProto)
+					.getItem('pinIsCustom', BooleanProto, undefined, true)
 					.catch(() => true),
 				this.localStorageService
-					.getItem('masterKey', BinaryProto)
+					.getItem('masterKey', BinaryProto, undefined, true)
 					.catch(() => undefined),
 				this.localStorageService
-					.getItem('username', StringProto)
+					.getItem('username', StringProto, undefined, true)
 					.catch(() => undefined)
 			]);
 

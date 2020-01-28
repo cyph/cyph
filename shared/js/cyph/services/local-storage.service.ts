@@ -137,6 +137,7 @@ export class LocalStorageService extends DataManagerService {
 			url,
 			proto,
 			waitForReady,
+			undefined,
 			getFromKeystore
 		))[1];
 	}
@@ -168,6 +169,7 @@ export class LocalStorageService extends DataManagerService {
 			url,
 			BinaryProto,
 			waitForReady,
+			undefined,
 			getFromKeystore
 		))[2];
 	}
@@ -239,6 +241,7 @@ export class LocalStorageService extends DataManagerService {
 						url,
 						proto,
 						waitForReady,
+						undefined,
 						getFromKeystore
 					).catch(() => undefined)
 				)

@@ -158,7 +158,7 @@ export class AccountAuthService extends BaseProvider {
 				this.removeSavedCredentials() :
 				(async () => {
 					const pinHash = await this.localStorageService
-						.getItem('pinHash', BinaryProto)
+						.getItem('pinHash', BinaryProto, undefined, true)
 						.catch(() => undefined);
 
 					return this.localStorageService.setItem(
@@ -170,7 +170,10 @@ export class AccountAuthService extends BaseProvider {
 								symmetricKey,
 								pinHash
 							) :
-							symmetricKey
+							symmetricKey,
+						undefined,
+						undefined,
+						true
 					);
 				})()
 		]);
@@ -267,7 +270,9 @@ export class AccountAuthService extends BaseProvider {
 		try {
 			const pinHash = await this.localStorageService.getItem(
 				'pinHash',
-				BinaryProto
+				BinaryProto,
+				undefined,
+				true
 			);
 			if (pinHash.length === 0) {
 				return pinHash;
@@ -288,9 +293,19 @@ export class AccountAuthService extends BaseProvider {
 				pinTimestamp,
 				timestamp
 			] = await Promise.all([
-				this.localStorageService.hasItem('unconfirmedMasterKey'),
-				this.localStorageService.getItem('pinDuration', NumberProto),
-				this.localStorageService.getItem('pinTimestamp', NumberProto),
+				this.localStorageService.hasItem('unconfirmedMasterKey', true),
+				this.localStorageService.getItem(
+					'pinDuration',
+					NumberProto,
+					undefined,
+					true
+				),
+				this.localStorageService.getItem(
+					'pinTimestamp',
+					NumberProto,
+					undefined,
+					true
+				),
 				getTimestamp()
 			]);
 
@@ -314,7 +329,7 @@ export class AccountAuthService extends BaseProvider {
 		return (
 			(await Promise.all(
 				['masterKey', 'pinIsCustom', 'username'].map(async k =>
-					this.localStorageService.hasItem(k)
+					this.localStorageService.hasItem(k, true)
 				)
 			)).filter(b => !b).length < 1
 		);
@@ -467,7 +482,7 @@ export class AccountAuthService extends BaseProvider {
 						return newEncryptionKeyPair;
 					})(),
 					this.localStorageService
-						.hasItem('unconfirmedMasterKey')
+						.hasItem('unconfirmedMasterKey', true)
 						.then(b => !b),
 					this.getItem(
 						`users/${username}/pin/hash`,
@@ -625,13 +640,19 @@ export class AccountAuthService extends BaseProvider {
 								masterKey,
 								pinHash
 							) :
-							masterKey
+							masterKey,
+						undefined,
+						undefined,
+						true
 					))(),
 				(async () =>
 					this.localStorageService.setItem(
 						'username',
 						StringProto,
-						username
+						username,
+						undefined,
+						undefined,
+						true
 					))()
 			]);
 
@@ -643,13 +664,19 @@ export class AccountAuthService extends BaseProvider {
 						await this.accountDatabaseService.getItem(
 							'pin/isCustom',
 							BinaryProto
-						)
+						),
+						undefined,
+						undefined,
+						true
 					))(),
 				(async () =>
 					this.localStorageService.setItem(
 						'username',
 						StringProto,
-						(await user.accountUserProfile.getValue()).realUsername
+						(await user.accountUserProfile.getValue()).realUsername,
+						undefined,
+						undefined,
+						true
 					))(),
 				this.savePIN(pinHash)
 			])
@@ -906,12 +933,18 @@ export class AccountAuthService extends BaseProvider {
 				this.localStorageService.setItem(
 					'masterKey',
 					BinaryProto,
-					masterKeyHash
+					masterKeyHash,
+					undefined,
+					undefined,
+					true
 				),
 				this.localStorageService.setItem(
 					'username',
 					StringProto,
-					username
+					username,
+					undefined,
+					undefined,
+					true
 				)
 			]);
 
@@ -996,7 +1029,9 @@ export class AccountAuthService extends BaseProvider {
 				await this.passwordHash(
 					await this.localStorageService.getItem(
 						'username',
-						StringProto
+						StringProto,
+						undefined,
+						true
 					),
 					pin
 				);
@@ -1010,16 +1045,34 @@ export class AccountAuthService extends BaseProvider {
 					duration !== undefined ?
 						duration * 60000 :
 						await this.localStorageService
-							.getItem('pinDuration', NumberProto)
-							.catch(() => 3600000)
+							.getItem(
+								'pinDuration',
+								NumberProto,
+								undefined,
+								true
+							)
+							.catch(() => 3600000),
+					undefined,
+					undefined,
+					true
 				),
-			this.localStorageService.setItem('pinHash', BinaryProto, pinHash),
+			this.localStorageService.setItem(
+				'pinHash',
+				BinaryProto,
+				pinHash,
+				undefined,
+				undefined,
+				true
+			),
 			pin.length === 0 ?
 				Promise.resolve() :
 				this.localStorageService.setItem(
 					'pinTimestamp',
 					NumberProto,
-					await getTimestamp()
+					await getTimestamp(),
+					undefined,
+					undefined,
+					true
 				)
 		]);
 
