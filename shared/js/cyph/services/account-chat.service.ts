@@ -219,9 +219,7 @@ export class AccountChatService extends ChatService {
 				} :
 				getOrSetDefault(
 					this.chats,
-					'username' in chat ?
-						chat.username :
-						`group: ${chat.group.castleSessionID}`,
+					notificationData.castleSessionID,
 					() => ({
 						currentMessage: keepCurrentMessage ?
 							this.chat.currentMessage :
