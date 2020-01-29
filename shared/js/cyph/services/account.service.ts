@@ -850,7 +850,11 @@ export class AccountService extends BaseProvider {
 					break;
 
 				default:
-					if (!data.additionalData?.foreground || !data.message) {
+					if (
+						!data.additionalData?.foreground ||
+						!data.message ||
+						data?.additionalData?.activeCall === true
+					) {
 						return;
 					}
 

@@ -1600,6 +1600,7 @@ const userNotify = async (data, context, namespace, username) => {
 			actions,
 			additionalData: {
 				...additionalData,
+				activeCall,
 				callMetadata,
 				notificationID,
 				notificationType: notification.type,
