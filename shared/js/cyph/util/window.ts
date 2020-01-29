@@ -43,7 +43,8 @@ export const openWindow = async (
 export const reloadWindow = () : void => {
 	if (env.isCordovaDesktop && typeof cordovaRequire === 'function') {
 		const {remote} = cordovaRequire('electron');
-		remote.app.quit();
+		remote.app.relaunch();
+		remote.app.exit();
 	}
 	else if (env.isWeb) {
 		location.reload();
