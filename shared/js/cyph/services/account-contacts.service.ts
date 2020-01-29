@@ -186,26 +186,6 @@ export class AccountContactsService extends BaseProvider {
 			)
 	);
 
-	/** Gets Castle session data based on username. */
-	public readonly getCastleSessionData = async (
-		username: string
-	) : Promise<{castleSessionID: string}> => {
-		username = normalize(username);
-
-		if (!username) {
-			return {
-				castleSessionID: ''
-			};
-		}
-
-		return {
-			castleSessionID: await this.accountDatabaseService.callFunction(
-				'getCastleSessionID',
-				{username}
-			)
-		};
-	};
-
 	/** Gets contact username or group metadata based on ID. */
 	public readonly getChatData = memoize(
 		async (
@@ -275,21 +255,6 @@ export class AccountContactsService extends BaseProvider {
 
 	/** @see AccountsService.interstitial */
 	public interstitial?: BehaviorSubject<boolean>;
-
-	/** Gets Castle session data based on username. */
-	public readonly resetCastleSession = async (
-		username: string
-	) : Promise<void> => {
-		username = normalize(username);
-
-		if (!username) {
-			return;
-		}
-
-		await this.accountDatabaseService.callFunction('resetCastleSessionID', {
-			username
-		});
-	};
 
 	/** Indicates whether spinner should be displayed. */
 	public readonly showSpinner: BehaviorSubject<boolean> = new BehaviorSubject<
@@ -477,6 +442,26 @@ export class AccountContactsService extends BaseProvider {
 		}
 	}
 
+	/** Gets Castle session data based on username. */
+	public async getCastleSessionData (
+		username: string
+	) : Promise<{castleSessionID: string}> {
+		username = normalize(username);
+
+		if (!username) {
+			return {
+				castleSessionID: ''
+			};
+		}
+
+		return {
+			castleSessionID: await this.accountDatabaseService.callFunction(
+				'getCastleSessionID',
+				{username}
+			)
+		};
+	}
+
 	/** Initializes service. */
 	public init (accountUserLookupService: AccountUserLookupService) : void {
 		this.accountUserLookupService.next(accountUserLookupService);
@@ -498,6 +483,19 @@ export class AccountContactsService extends BaseProvider {
 		}
 
 		await this.accountDatabaseService.removeItem(this.contactURL(username));
+	}
+
+	/** Gets Castle session data based on username. */
+	public async resetCastleSession (username: string) : Promise<void> {
+		username = normalize(username);
+
+		if (!username) {
+			return;
+		}
+
+		await this.accountDatabaseService.callFunction('resetCastleSessionID', {
+			username
+		});
 	}
 
 	/** Adds or removes contact. */
