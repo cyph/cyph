@@ -35,7 +35,6 @@ import {
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
-import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
@@ -44,7 +43,6 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
-import {LocalStorageService} from './local-storage.service';
 import {StringsService} from './strings.service';
 
 /**
@@ -52,12 +50,6 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountContactsService extends BaseProvider {
-	/** @ignore */
-	private readonly castleSessionDataCache = new Map<
-		string,
-		{castleSessionID: string}
-	>();
-
 	/**
 	 * Resolves circular dependency needed for addContactPrompt to work.
 	 * @see AccountContactsSearchComponent
@@ -206,26 +198,12 @@ export class AccountContactsService extends BaseProvider {
 			};
 		}
 
-		return getOrSetDefaultAsync(
-			this.castleSessionDataCache,
-			username,
-			async () => {
-				const currentUserUsername = (await this.accountDatabaseService.getCurrentUser())
-					.user.username;
-
-				return {
-					castleSessionID: await this.localStorageService.getOrSetDefault(
-						`CastleSessionID:${currentUserUsername}-${username}`,
-						StringProto,
-						async () =>
-							this.accountDatabaseService.callFunction(
-								'getCastleSessionID',
-								{username}
-							)
-					)
-				};
-			}
-		);
+		return {
+			castleSessionID: await this.accountDatabaseService.callFunction(
+				'getCastleSessionID',
+				{username}
+			)
+		};
 	};
 
 	/** Gets contact username or group metadata based on ID. */
@@ -305,30 +283,6 @@ export class AccountContactsService extends BaseProvider {
 		username = normalize(username);
 
 		if (!username) {
-			return;
-		}
-
-		this.castleSessionDataCache.delete(username);
-
-		const currentUserUsername = (await this.accountDatabaseService.getCurrentUser())
-			.user.username;
-
-		const castleSessionIDLocalStorageKey = `CastleSessionID:${currentUserUsername}-${username}`;
-
-		const currentCastleSessionID = await this.accountDatabaseService.callFunction(
-			'getCastleSessionID',
-			{username}
-		);
-
-		if (
-			currentCastleSessionID !==
-			(await this.localStorageService.getString(
-				castleSessionIDLocalStorageKey
-			))
-		) {
-			await this.localStorageService.removeItem(
-				castleSessionIDLocalStorageKey
-			);
 			return;
 		}
 
@@ -589,9 +543,6 @@ export class AccountContactsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
-
-		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService
