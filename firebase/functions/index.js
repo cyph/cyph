@@ -988,6 +988,26 @@ exports.requestPseudoRelationship = onCall(
 	}
 );
 
+exports.resetCastleSessionID = onCall(
+	async (data, context, namespace, getUsername) => {
+		const [userA, userB] = normalizeArray([
+			data.username || '',
+			await getUsername()
+		]);
+
+		if (!userA || !userB) {
+			return;
+		}
+
+		await setItem(
+			namespace,
+			`castleSessions/${userA}/${userB}/id`,
+			StringProto,
+			uuid(true)
+		);
+	}
+);
+
 exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
 	const email = validateInput(data.email, emailRegex);

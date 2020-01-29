@@ -35,6 +35,7 @@ import {
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
+import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
@@ -51,6 +52,12 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountContactsService extends BaseProvider {
+	/** @ignore */
+	private readonly castleSessionDataCache = new Map<
+		string,
+		{castleSessionID: string}
+	>();
+
 	/**
 	 * Resolves circular dependency needed for addContactPrompt to work.
 	 * @see AccountContactsSearchComponent
@@ -188,36 +195,38 @@ export class AccountContactsService extends BaseProvider {
 	);
 
 	/** Gets Castle session data based on username. */
-	public readonly getCastleSessionData = memoize(
-		async (
-			username: string
-		) : Promise<{
-			castleSessionID: string;
-		}> => {
-			username = normalize(username);
+	public readonly getCastleSessionData = async (
+		username: string
+	) : Promise<{castleSessionID: string}> => {
+		username = normalize(username);
 
-			if (!username) {
-				return {
-					castleSessionID: ''
-				};
-			}
-
-			const currentUserUsername = (await this.accountDatabaseService.getCurrentUser())
-				.user.username;
-
+		if (!username) {
 			return {
-				castleSessionID: await this.localStorageService.getOrSetDefault(
-					`CastleSessionID:${currentUserUsername}-${username}`,
-					StringProto,
-					async () =>
-						this.accountDatabaseService.callFunction(
-							'getCastleSessionID',
-							{username}
-						)
-				)
+				castleSessionID: ''
 			};
 		}
-	);
+
+		return getOrSetDefaultAsync(
+			this.castleSessionDataCache,
+			username,
+			async () => {
+				const currentUserUsername = (await this.accountDatabaseService.getCurrentUser())
+					.user.username;
+
+				return {
+					castleSessionID: await this.localStorageService.getOrSetDefault(
+						`CastleSessionID:${currentUserUsername}-${username}`,
+						StringProto,
+						async () =>
+							this.accountDatabaseService.callFunction(
+								'getCastleSessionID',
+								{username}
+							)
+					)
+				};
+			}
+		);
+	};
 
 	/** Gets contact username or group metadata based on ID. */
 	public readonly getChatData = memoize(
@@ -288,6 +297,45 @@ export class AccountContactsService extends BaseProvider {
 
 	/** @see AccountsService.interstitial */
 	public interstitial?: BehaviorSubject<boolean>;
+
+	/** Gets Castle session data based on username. */
+	public readonly resetCastleSession = async (
+		username: string
+	) : Promise<void> => {
+		username = normalize(username);
+
+		if (!username) {
+			return;
+		}
+
+		this.castleSessionDataCache.delete(username);
+
+		const currentUserUsername = (await this.accountDatabaseService.getCurrentUser())
+			.user.username;
+
+		const castleSessionIDLocalStorageKey = `CastleSessionID:${currentUserUsername}-${username}`;
+
+		const currentCastleSessionID = await this.accountDatabaseService.callFunction(
+			'getCastleSessionID',
+			{username}
+		);
+
+		if (
+			currentCastleSessionID !==
+			(await this.localStorageService.getString(
+				castleSessionIDLocalStorageKey
+			))
+		) {
+			await this.localStorageService.removeItem(
+				castleSessionIDLocalStorageKey
+			);
+			return;
+		}
+
+		await this.accountDatabaseService.callFunction('resetCastleSessionID', {
+			username
+		});
+	};
 
 	/** Indicates whether spinner should be displayed. */
 	public readonly showSpinner: BehaviorSubject<boolean> = new BehaviorSubject<
