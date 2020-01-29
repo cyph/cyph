@@ -173,11 +173,15 @@ import {CyphWebModule} from './cyph-web.module';
 })
 export class CyphAppModule {
 	constructor (
+		accountService: AccountService,
+		accountContactsService: AccountContactsService,
 		accountDatabaseService: AccountDatabaseService,
 		databaseService: DatabaseService
 	) {
 		/* For debugging */
 
+		(<any> self).accountService = accountService;
+		(<any> self).accountContactsService = accountContactsService;
 		(<any> self).accountDatabaseService = accountDatabaseService;
 		(<any> self).databaseService = databaseService;
 	}
