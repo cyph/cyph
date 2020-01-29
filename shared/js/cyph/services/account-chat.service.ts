@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, mergeMap, take} from 'rxjs/operators';
@@ -119,6 +120,28 @@ export class AccountChatService extends ChatService {
 			watch,
 			watchSize: memoize(() => watch().pipe(map(keys => keys.size)))
 		};
+	}
+
+	/** @inheritDoc */
+	public async abortSetup () : Promise<void> {
+		const [groupID, username] = await Promise.all([
+			this.notificationData.promise.then(o => o.groupID),
+			this.remoteUser
+				.pipe(take(1))
+				.toPromise()
+				.then(o => (o && 'username' in o ? o.username : undefined))
+		]);
+
+		this.sessionService.close();
+		await this.router.navigate(['transition'], {skipLocationChange: true});
+		await this.router.navigate([
+			'',
+			...(groupID ?
+				['messages', groupID] :
+			username ?
+				['messages', 'user', username] :
+				[])
+		]);
 	}
 
 	/** @inheritDoc */
@@ -300,6 +323,9 @@ export class AccountChatService extends ChatService {
 		sessionCapabilitiesService: SessionCapabilitiesService,
 		sessionInitService: SessionInitService,
 		stringsService: StringsService,
+
+		/** @ignore */
+		private readonly router: Router,
 
 		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,

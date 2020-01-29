@@ -65,6 +65,19 @@ export class AccountSessionService extends SessionService {
 	>(undefined);
 
 	/** @inheritDoc */
+	protected async abortSetup () : Promise<void> {
+		const remoteUser = await this.remoteUser.pipe(take(1)).toPromise();
+
+		if (remoteUser?.username) {
+			await this.accountContactsService.resetCastleSession(
+				remoteUser.username
+			);
+		}
+
+		await super.abortSetup();
+	}
+
+	/** @inheritDoc */
 	protected async channelOnClose () : Promise<void> {
 		if (this.group) {
 			throw new Error(

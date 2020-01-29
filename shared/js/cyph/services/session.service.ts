@@ -148,6 +148,13 @@ export abstract class SessionService extends BaseProvider
 	private readonly correctSubSession = (message: ISessionMessage) : boolean =>
 		(message.data.sessionSubID || undefined) === this.sessionSubID;
 
+	/** Aborts session handshake. */
+	protected async abortSetup () : Promise<void> {
+		this.state.sharedSecret.next(undefined);
+		this.errorService.log('CYPH AUTHENTICATION FAILURE');
+		await this.trigger(events.connectFailure);
+	}
+
 	/** Sends messages through Castle. */
 	protected async castleSendMessages (
 		messages: ISessionMessage[]
@@ -342,9 +349,7 @@ export abstract class SessionService extends BaseProvider
 	) : Promise<void> {
 		switch (event) {
 			case CastleEvents.abort:
-				this.state.sharedSecret.next(undefined);
-				this.errorService.log('CYPH AUTHENTICATION FAILURE');
-				await this.trigger(events.connectFailure);
+				await this.abortSetup();
 				break;
 
 			case CastleEvents.connect:
