@@ -96,6 +96,9 @@ export class StringsService extends BaseProvider {
 	public readonly answer = `Answer`;
 
 	/** @see StringsService */
+	public readonly applyUpdateRestart = `Restarting and applying update.`;
+
+	/** @see StringsService */
 	public readonly appointmentCalendar = `Appointment Calendar`;
 
 	/** @see StringsService */

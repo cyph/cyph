@@ -32,6 +32,7 @@ import {request} from '../util/request';
 import {getTimestamp, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
+import {reloadWindow} from '../util/window';
 import {AccountAppointmentsService} from './account-appointments.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
@@ -513,29 +514,63 @@ export class AccountService extends BaseProvider {
 			.pipe(take(1))
 			.toPromise();
 
-		(async () => {
-			if (!(await this.fingerprintService.supported)) {
-				return;
-			}
+		this.subscriptions.push(
+			this.windowWatcherService.visibility
+				.pipe(skip(1))
+				.subscribe(async visible => {
+					if (!visible) {
+						return;
+					}
 
-			this.subscriptions.push(
-				this.windowWatcherService.visibility
-					.pipe(skip(1))
-					.subscribe(async visible => {
-						if (!visible) {
-							return;
+					/* Check for updates to keep long-running background instances in sync */
+					try {
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						const packageTimestamp = !this.envService.isLocalEnv ?
+							localStorage.getItem('webSignPackageTimestamp') :
+							undefined;
+						if (!packageTimestamp) {
+							throw new Error();
 						}
 
-						document.body.classList.add('soft-lock');
-						if (await this.fingerprintService.authenticate()) {
-							document.body.classList.remove('soft-lock');
-							return;
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						const webSignCdnURL = localStorage.getItem(
+							'webSignCdnUrl'
+						);
+						if (!webSignCdnURL) {
+							throw new Error();
 						}
 
-						await this.accountAuthService.lock();
-					})
-			);
-		})();
+						const currentPackageTimestamp = await request({
+							url: `${webSignCdnURL}current`
+						});
+
+						if (
+							packageTimestamp !== currentPackageTimestamp &&
+							!(await this.dialogService.toast(
+								this.stringsService.applyUpdateRestart,
+								undefined,
+								this.stringsService.cancel
+							))
+						) {
+							reloadWindow();
+							return;
+						}
+					}
+					catch {}
+
+					if (!(await this.fingerprintService.supported)) {
+						return;
+					}
+
+					document.body.classList.add('soft-lock');
+					if (await this.fingerprintService.authenticate()) {
+						document.body.classList.remove('soft-lock');
+						return;
+					}
+
+					await this.accountAuthService.lock();
+				})
+		);
 
 		this.subscriptions.push(
 			watchDateChange(true).subscribe(async () =>
