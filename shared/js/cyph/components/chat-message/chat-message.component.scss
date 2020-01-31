@@ -163,7 +163,7 @@
 		.media-message {
 			cursor: pointer;
 			width: 256px;
-			height: 160px;
+			height: autoS;
 			object-fit: cover;
 			margin: 10px auto;
 			display: block;
@@ -318,7 +318,7 @@
 
 			.media-message {
 				width: calc(80vw - 1px);
-				height: 128px;
+				height: auto;
 				margin: 0;
 				border-top-right-radius: $mobileMessageBorderRadius;
 				clip-path: inset(0 0 -100% 0);
