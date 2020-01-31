@@ -82,7 +82,7 @@ export class AccountContactsService extends BaseProvider {
 				unreadMessageCount: toBehaviorSubject<number>(
 					this.accountDatabaseService
 						.getAsyncMap(
-							`unreadMessages/${groupData.group.castleSessionID}`,
+							`unreadMessages/${groupData.id}`,
 							NeverProto,
 							SecurityModels.unprotected
 						)

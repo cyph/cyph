@@ -319,7 +319,12 @@ const sign = async (inputs, testSign, demoSign, skipNotify = false) =>
 			{
 				prompt: 'Press enter to retry signing.'
 			},
-			() => {
+			err => {
+				if (err instanceof Error) {
+					console.error(err);
+					process.exit(1);
+				}
+
 				incoming = {chunksReceived: {}, data: new Uint8Array(0)};
 				server.close();
 				reject();

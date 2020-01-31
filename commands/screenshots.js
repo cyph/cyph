@@ -119,8 +119,8 @@ const openChat = async page => {
 	await page.waitForSelector(
 		'[data-message-id="987ed37d79b66977b32af77459677bc2b43e8ff7cda055af7a46a2638a6212b8c646446b70d38c96972c4f0218d87fdcce2a8460a306340ae40028f45d9fe2bc8af2fe0c"] cyph-markdown'
 	);
-	await click(page, '.spoiler-message');
-	await page.waitForSelector('img.media-message');
+	// await click(page, '.spoiler-message');
+	// await page.waitForSelector('img.media-message');
 };
 
 const toggleMobileMenu = async (page, isMobile) => {

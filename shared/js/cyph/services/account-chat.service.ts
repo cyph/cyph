@@ -56,6 +56,7 @@ export class AccountChatService extends ChatService {
 	private readonly notificationData = resolvable<{
 		castleSessionID: string;
 		groupID?: string;
+		unreadMessagesID: string;
 		usernames: string[];
 	}>();
 
@@ -93,7 +94,7 @@ export class AccountChatService extends ChatService {
 		const notificationData = await this.notificationData.promise;
 
 		const asyncMap = this.accountDatabaseService.getAsyncMap(
-			`unreadMessages/${notificationData.castleSessionID}`,
+			`unreadMessages/${notificationData.unreadMessagesID}`,
 			NeverProto,
 			SecurityModels.unprotected
 		);
@@ -175,7 +176,6 @@ export class AccountChatService extends ChatService {
 			notificationData.usernames,
 			NotificationTypes.Message,
 			{
-				castleSessionID: notificationData.castleSessionID,
 				groupID: notificationData.groupID,
 				id
 			}
@@ -217,11 +217,13 @@ export class AccountChatService extends ChatService {
 					castleSessionID: (await this.accountContactsService.getCastleSessionData(
 						chat.username
 					)).castleSessionID,
+					unreadMessagesID: chat.username,
 					usernames: [chat.username]
 				} :
 				{
 					castleSessionID: chat.group.castleSessionID,
 					groupID: chat.id,
+					unreadMessagesID: chat.id,
 					usernames: chat.group.usernames ?
 						this.accountSessionService.normalizeUsername(
 							chat.group.usernames
@@ -265,7 +267,7 @@ export class AccountChatService extends ChatService {
 							ChatLastConfirmedMessage
 						),
 						lastUnreadMessage: this.accountDatabaseService.getLatestKey(
-							`unreadMessages/${notificationData.castleSessionID}`
+							`unreadMessages/${notificationData.unreadMessagesID}`
 						),
 						messageList: this.accountDatabaseService.getAsyncList(
 							`${url}/messageList`,
