@@ -31,7 +31,7 @@ export const isNumber = (n: any) : boolean =>
 
 /** Strips non-alphanumeric-or-underscore characters and converts to lowercase. */
 export const normalize = memoize((s: string) : string =>
-	s.toLowerCase().replace(/[^0-9a-z_]/g, '')
+	(s || '').toLowerCase().replace(/[^0-9a-z_]/g, '')
 );
 
 const normalizeArrayInternal = memoize((arr: string[]) =>
