@@ -15,7 +15,6 @@ import {
 	NeverProto,
 	Review
 } from '../proto';
-import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {
 	getOrSetDefault,
@@ -53,21 +52,13 @@ export class AccountUserLookupService extends BaseProvider {
 
 	/** Gets count of unread messages from a user. */
 	public readonly getUnreadMessageCount = memoize(username =>
-		toBehaviorSubject<number>(
-			async () =>
-				this.accountDatabaseService
-					.getAsyncMap(
-						`unreadMessages/${
-							(await this.accountContactsService.getCastleSessionData(
-								username
-							)).castleSessionID
-						}`,
-						NeverProto,
-						SecurityModels.unprotected
-					)
-					.watchSize(),
-			0
-		)
+		this.accountDatabaseService
+			.getAsyncMap(
+				`unreadMessages/${normalize(username)}`,
+				NeverProto,
+				SecurityModels.unprotected
+			)
+			.watchSize()
 	);
 
 	/** Checks to see if a username is blacklisted. */

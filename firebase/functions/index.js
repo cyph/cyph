@@ -1342,6 +1342,10 @@ const userNotify = async (data, context, namespace, username) => {
 
 	const userPath = `${namespace}/users/${notification.target}`;
 
+	const unreadMessagesID =
+		notification.type === NotificationTypes.Message ?
+			metadata.groupID || username :
+			'';
 	const activeCall =
 		notification.type === NotificationTypes.Call &&
 		(metadata.callType === 'audio' || metadata.callType === 'video') &&
@@ -1406,8 +1410,8 @@ const userNotify = async (data, context, namespace, username) => {
 						undefined
 				] :
 			notification.type === NotificationTypes.Message &&
-				metadata.castleSessionID ?
-				[true, `unreadMessages/${metadata.castleSessionID}`] :
+				unreadMessagesID ?
+				[true, `unreadMessages/${unreadMessagesID}`] :
 				[];
 
 			if (!path) {
@@ -1519,7 +1523,7 @@ const userNotify = async (data, context, namespace, username) => {
 						}messages` :
 						`New ${metadata.groupID ? 'Group ' : ''}Message`
 				} from ${senderUsername}`,
-				tag: metadata.castleSessionID,
+				tag: unreadMessagesID,
 				text: `${targetName}, ${senderName} has sent you a ${
 					metadata.groupID ? 'group ' : ''
 				}message.`
