@@ -888,7 +888,8 @@ export class AccountService extends BaseProvider {
 					if (
 						!data.additionalData?.foreground ||
 						!data.message ||
-						data?.additionalData?.activeCall === true
+						data?.additionalData?.activeCall === true ||
+						data?.additionalData?.activeCall === 'true'
 					) {
 						return;
 					}
