@@ -541,7 +541,7 @@ export class AccountService extends BaseProvider {
 						}
 
 						const currentPackageTimestamp = await request({
-							url: `${webSignCdnURL}current`
+							url: `${webSignCdnURL}current?${(await getTimestamp()).toString()}`
 						});
 
 						if (
