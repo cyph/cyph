@@ -73,6 +73,11 @@
 			margin-top: 5px;
 			font-size: 1.2em;
 
+			&.mobile {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
 			.message {
 				width: 100%;
 				max-width: 100%;

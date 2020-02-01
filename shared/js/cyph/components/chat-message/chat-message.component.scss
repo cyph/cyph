@@ -101,7 +101,7 @@
 
 	.spoiler {
 		margin-top: -13px;
-		width: 100%;
+		width: 18em;
 		height: 128px;
 	}
 }
@@ -163,11 +163,11 @@
 		.media-message {
 			cursor: pointer;
 			width: 256px;
-			height: autoS;
+			height: auto;
 			object-fit: cover;
 			margin: 10px auto;
 			display: block;
-			box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.4);
+			//box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.4);
 			position: relative;
 
 			> video {
@@ -317,8 +317,10 @@
 			}
 
 			.media-message {
-				width: calc(80vw - 1px);
+				width: auto;
 				height: auto;
+				max-height: 50vh;
+				max-width: calc(80vw - 1px);
 				margin: 0;
 				border-top-right-radius: $mobileMessageBorderRadius;
 				clip-path: inset(0 0 -100% 0);
@@ -369,10 +371,6 @@
 		touch-action: inherit !important;
 
 		@include user-select(inherit !important);
-	}
-
-	.file-transfer .message {
-		min-width: 275px;
 	}
 
 	cyph-markdown > span {
