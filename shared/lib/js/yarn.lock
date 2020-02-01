@@ -20423,10 +20423,10 @@ speed-measure-webpack-plugin@1.3.1:
   dependencies:
     chalk "^2.0.1"
 
-sphincs@*, sphincs@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/sphincs/-/sphincs-2.3.2.tgz#29ceab11853d8dcf49ca58142b7b5c5bb9600c60"
-  integrity sha512-HIiOvKPceYjWGbqBv/r5RXWM3Xqi5bS7S+6fb2tztU9LOQ8/a5PwzKh6bs/MTnJbdRVT96sQ/Gwz3e8OmTbsdA==
+sphincs@*, sphincs@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/sphincs/-/sphincs-2.4.0.tgz#c25544379ddea0245fa3417df23dfe2c26bdb13e"
+  integrity sha512-0uYehLq4xQaBVHZ9wyfrqklcAh6S7rD7b6JDej0+/G7Zx0Na6je7KqTE3qZPhnA5Sy9hyBW+wwp2WNx3kfI2ew==
 
 split-array-stream@^2.0.0:
   version "2.0.0"
@@ -21043,10 +21043,10 @@ superagent@^3.8.1:
     qs "^6.5.1"
     readable-stream "^2.3.5"
 
-supersphincs@^6.2.2:
-  version "6.2.2"
-  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.2.2.tgz#0981abfa97aa58fff4376380815e3133c37a0b26"
-  integrity sha512-PTu31OoQzz4U+aqlgzWPdLV+H/8QPSgNVtFlrEwrZovSkID8OfEaoRtWe/NBW0XTVbqNbdzlODCbt8iRg49mow==
+supersphincs@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/supersphincs/-/supersphincs-6.3.0.tgz#78404e042ea99521d0faea006751f0636c9d9dc7"
+  integrity sha512-P79kahCT1GX+fH2M0QF00LYce1qG9pYngxe7CpAWGqTu3/HLtARljGZQRGU1349o+kv/h8pHsqLkU/RDaHrg+w==
   dependencies:
     rsasign "*"
     sodiumutil "*"

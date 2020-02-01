@@ -541,7 +541,7 @@ export class AccountService extends BaseProvider {
 						}
 
 						const currentPackageTimestamp = await request({
-							url: `${webSignCdnURL}current`
+							url: `${webSignCdnURL}current?${(await getTimestamp()).toString()}`
 						});
 
 						if (
@@ -888,7 +888,8 @@ export class AccountService extends BaseProvider {
 					if (
 						!data.additionalData?.foreground ||
 						!data.message ||
-						data?.additionalData?.activeCall === true
+						data?.additionalData?.activeCall === true ||
+						data?.additionalData?.activeCall === 'true'
 					) {
 						return;
 					}
