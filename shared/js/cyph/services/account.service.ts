@@ -548,7 +548,7 @@ export class AccountService extends BaseProvider {
 							packageTimestamp !== currentPackageTimestamp &&
 							!(await this.dialogService.toast(
 								this.stringsService.applyUpdateRestart,
-								undefined,
+								5000,
 								this.stringsService.cancel
 							))
 						) {
