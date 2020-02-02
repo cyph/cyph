@@ -257,6 +257,26 @@
 				}
 			},
 
+			"privatePostLists": {
+				"$privatePostList": {
+					".read": true,
+
+					"$postID": {
+						".write": "!data.exists() && newData.exists()",
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				}
+			},
+
 			"pseudoRelationships": {
 				"$relationship": {
 					"aliceUsername": {
@@ -900,6 +920,39 @@
 						}
 					},
 
+					"posts": {
+						"private": {
+							"$post": {
+								".read": true,
+
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						},
+						"public": {
+							".read": true,
+
+							"$post": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
 					"presence": {
 						".read": true,
 
@@ -911,6 +964,48 @@
 						},
 						"timestamp": {
 							".validate": "newData.val() === now"
+						}
+					},
+
+					"privatePostKey": {
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
+					"privatePostKeys": {
+						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"privatePostKeysIncoming": {
+						"$username": {
+							".write": "($username + '@' + $DOMAIN) === auth.token.email",
+
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
 						}
 					},
 

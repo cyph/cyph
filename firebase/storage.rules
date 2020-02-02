@@ -80,6 +80,11 @@ service firebase.storage {
 
 			// match /pseudoRelationships/{hash} {}
 
+			match /privatePostLists/{privatePostList}/{postID}/{hash} {
+				allow read;
+				allow write: if resource == null;
+			}
+
 			// match /reservedUsernames/{hash} {}
 
 			match /users/{user} {
@@ -207,8 +212,29 @@ service firebase.storage {
 
 				// match /plan/{hash} {}
 
+				match /posts {
+					match /private/{post}/{hash} {
+						allow read;
+					}
+
+					match /public {
+						allow read;
+					}
+				}
+
 				match /presence/{hash} {
 					allow read;
+				}
+
+				// match /privatePostKey/{hash} {}
+
+				// match /privatePostKeys/{username}/{hash} {}
+
+				match /privatePostKeysIncoming/{username}/{hash} {
+					allow write: if
+						request.auth != null &&
+						(username + '@' + DOMAIN) == request.auth.token.email
+					;
 				}
 
 				// match /profileVisible/{hash} {}
