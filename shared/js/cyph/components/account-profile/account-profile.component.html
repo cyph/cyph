@@ -26,7 +26,7 @@
 						class="animated flipInX _4"
 						matTooltip="New Note"
 						routerLink="/notes/new"
-						*ngIf="!envService.isTelehealth"
+						*ngIf="false && !envService.isTelehealth"
 					>
 						<mat-icon>note_add</mat-icon>
 					</button>
@@ -422,7 +422,11 @@
 		</ng-template>
 
 		<ng-template #fileUpload>
-			<div fxLayout="row" fxLayoutAlign="center center">
+			<div
+				fxLayout="row"
+				fxLayoutAlign="center center"
+				*ngIf="(isCurrentUser | await) === false"
+			>
 				<div
 					class="file-upload"
 					fxFlex="95"
