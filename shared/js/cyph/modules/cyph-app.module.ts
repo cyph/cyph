@@ -44,6 +44,7 @@ import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountInviteService} from '../services/account-invite.service';
 import {AccountOrganizationsService} from '../services/account-organizations.service';
+import {AccountPostsService} from '../services/account-posts.service';
 import {AccountSettingsService} from '../services/account-settings.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
@@ -156,6 +157,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountFilesService,
 		AccountInviteService,
 		AccountOrganizationsService,
+		AccountPostsService,
 		AccountService,
 		AccountSettingsService,
 		AccountUserLookupService,
@@ -176,6 +178,7 @@ export class CyphAppModule {
 		accountService: AccountService,
 		accountContactsService: AccountContactsService,
 		accountDatabaseService: AccountDatabaseService,
+		accountPostsService: AccountPostsService,
 		databaseService: DatabaseService
 	) {
 		/* For debugging */
@@ -183,6 +186,7 @@ export class CyphAppModule {
 		(<any> self).accountService = accountService;
 		(<any> self).accountContactsService = accountContactsService;
 		(<any> self).accountDatabaseService = accountDatabaseService;
+		(<any> self).accountPostsService = accountPostsService;
 		(<any> self).databaseService = databaseService;
 	}
 }

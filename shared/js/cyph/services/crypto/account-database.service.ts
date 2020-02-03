@@ -816,6 +816,16 @@ export class AccountDatabaseService extends BaseProvider {
 						mergeMap(getValueHelper)
 					)
 				),
+				watchItem: memoize(key =>
+					this.watch(
+						Promise.resolve(url).then(s => `${s}/${key}`),
+						proto,
+						securityModel,
+						customKey,
+						anonymous,
+						subscriptions
+					).pipe(map(o => o.value))
+				),
 				watchKeys: () =>
 					flattenObservable<string[]>(async () =>
 						(await baseAsyncMap).watchKeys()

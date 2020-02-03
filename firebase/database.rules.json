@@ -995,6 +995,7 @@
 
 					"privatePostKeysIncoming": {
 						"$username": {
+							".read": "($username + '@' + $DOMAIN) === auth.token.email",
 							".write": "($username + '@' + $DOMAIN) === auth.token.email",
 
 							"data": {
@@ -1048,6 +1049,22 @@
 						},
 						"timestamp": {
 							".validate": "newData.val() === now"
+						}
+					},
+
+					"publicPostList": {
+						".read": true,
+
+						"$postID": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
 						}
 					},
 

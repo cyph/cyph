@@ -137,6 +137,27 @@ message AccountMessagingGroup {
 	repeated string usernames = 5;
 }
 
+/** Social networking post. */
+message AccountPost {
+	/** Markdown post content. */
+	required string content = 1;
+
+	/** Indicates whether post is public or private. */
+	bool public = 2;
+
+	/** Timestamp. */
+	required double timestamp = 3;
+}
+
+/** Symmetric key and related metadata for accessing private posts. */
+message AccountPrivatePostKey {
+	/** ID of list to fetch posts. */
+	required string id = 1;
+
+	/** Symmetric key for encrypting posts. */
+	required bytes key = 2;
+}
+
 /** User presence. */
 message AccountUserPresence {
 	/** Possible presence statuses. */

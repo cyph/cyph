@@ -1,5 +1,6 @@
 export * from './account-file-share-type';
 export * from './account-file-type';
+export * from './iaccount-post-data';
 export * from './enums';
 export * from './icontact-list-item';
 export * from './icurrent-user';
