@@ -156,7 +156,9 @@ export class AccountPostsService extends BaseProvider {
 					posts: this.accountDatabaseService.getAsyncMap(
 						`${urlPrefix}posts/public`,
 						AccountPost,
-						SecurityModels.public
+						SecurityModels.public,
+						undefined,
+						true
 					),
 					watchPost: memoize(
 						(id: string) : Observable<IAccountPost> =>
@@ -210,11 +212,13 @@ export class AccountPostsService extends BaseProvider {
 				let postDataPart = this.getUserPostData(username).public();
 
 				try {
-					if (username) {
-						await this.getPrivatePostKey(username);
-					}
+					if (this.accountDatabaseService.currentUser.value) {
+						if (username) {
+							await this.getPrivatePostKey(username);
+						}
 
-					postDataPart = this.getUserPostData(username).private();
+						postDataPart = this.getUserPostData(username).private();
+					}
 				}
 				catch {}
 
@@ -267,11 +271,13 @@ export class AccountPostsService extends BaseProvider {
 		let postDataPart = this.getUserPostData(username).public();
 
 		try {
-			if (username) {
-				await this.getPrivatePostKey(username);
-			}
+			if (this.accountDatabaseService.currentUser.value) {
+				if (username) {
+					await this.getPrivatePostKey(username);
+				}
 
-			postDataPart = this.getUserPostData(username).private();
+				postDataPart = this.getUserPostData(username).private();
+			}
 		}
 		catch {}
 
