@@ -262,7 +262,7 @@
 					".read": true,
 
 					"$postID": {
-						".write": "!data.exists() && newData.exists()",
+						".write": "!data.child('hash').isString()",
 
 						"data": {
 							".validate": "newData.isString()"

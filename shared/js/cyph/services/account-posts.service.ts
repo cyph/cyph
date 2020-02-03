@@ -77,7 +77,7 @@ export class AccountPostsService extends BaseProvider {
 	/** Gets post data for specified user. */
 	public readonly getUserPostData = memoize(
 		(username?: string) : IAccountPostData => {
-			const urlPrefix = !username ? '' : `root/users/${username}/`;
+			const urlPrefix = !username ? '' : `users/${username}/`;
 
 			const postData: IAccountPostData = {
 				private: memoize(() => {
@@ -102,7 +102,10 @@ export class AccountPostsService extends BaseProvider {
 								o => `root/privatePostLists/${o.id}`
 							),
 							StringProto,
-							SecurityModels.unprotected
+							SecurityModels.unprotected,
+							undefined,
+							undefined,
+							false
 						),
 						posts: this.accountDatabaseService.getAsyncMap(
 							`${urlPrefix}posts/private`,
@@ -145,7 +148,10 @@ export class AccountPostsService extends BaseProvider {
 					ids: this.accountDatabaseService.getAsyncList(
 						`${urlPrefix}publicPostList`,
 						StringProto,
-						SecurityModels.unprotected
+						SecurityModels.unprotected,
+						undefined,
+						true,
+						false
 					),
 					posts: this.accountDatabaseService.getAsyncMap(
 						`${urlPrefix}posts/public`,

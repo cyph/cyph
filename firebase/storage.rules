@@ -217,7 +217,7 @@ service firebase.storage {
 						allow read;
 					}
 
-					match /public {
+					match /public/{all=**} {
 						allow read;
 					}
 				}
