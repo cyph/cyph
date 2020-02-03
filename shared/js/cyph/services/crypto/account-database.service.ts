@@ -72,7 +72,7 @@ export class AccountDatabaseService extends BaseProvider {
 						await this.localStorageService.getItem(
 							`AccountDatabaseService/list${
 								immutable ? '-immutable' : ''
-							}/${await this.normalizeURL(url)}`,
+							}/${await this.normalizeURL(url, true)}`,
 							BinaryProto
 						)
 					);
@@ -107,7 +107,7 @@ export class AccountDatabaseService extends BaseProvider {
 				this.localStorageService.setItem(
 					`AccountDatabaseService/list${
 						immutable ? '-immutable' : ''
-					}/${await this.normalizeURL(url)}`,
+					}/${await this.normalizeURL(url, true)}`,
 					BinaryProto,
 					msgpack.encode(
 						await Promise.all(
@@ -412,13 +412,15 @@ export class AccountDatabaseService extends BaseProvider {
 	private async processLockURL (url: MaybePromise<string>) : Promise<string> {
 		const currentUser = await this.getCurrentUser();
 
-		debugLog(async () => ({accountLockURL: await this.normalizeURL(url)}));
+		debugLog(async () => ({
+			accountLockURL: await this.normalizeURL(url, true)
+		}));
 
 		return (
 			`users/${currentUser.user.username}/locks/` +
 			this.potassiumService.toHex(
 				await this.potassiumService.hash.hash(
-					(await this.normalizeURL(url)).replace(
+					(await this.normalizeURL(url, true)).replace(
 						`users/${currentUser.user.username}/`,
 						''
 					)
@@ -436,7 +438,7 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey: MaybePromise<Uint8Array> | undefined,
 		moreAdditionalData?: string
 	) : Promise<Uint8Array> {
-		url = await this.normalizeURL(url);
+		url = await this.normalizeURL(url, true);
 		url =
 			moreAdditionalData !== undefined ?
 				`${url}?${moreAdditionalData}` :
@@ -1119,7 +1121,8 @@ export class AccountDatabaseService extends BaseProvider {
 				}
 
 				const encryptionURL = await this.normalizeURL(
-					`users/${username}/publicEncryptionKey`
+					`users/${username}/publicEncryptionKey`,
+					true
 				);
 
 				/* Temporary workaround for migrating users to latest Potassium.Box */
@@ -1249,11 +1252,14 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** Normalizes URL. */
-	public async normalizeURL (url: MaybePromise<string>) : Promise<string> {
+	public async normalizeURL (
+		url: MaybePromise<string>,
+		stripRoot: boolean = false
+	) : Promise<string> {
 		url = (await url).replace(/^\//, '');
 
 		if (url.match(/^root\//)) {
-			return url.slice(5);
+			return stripRoot ? url.slice(5) : url;
 		}
 		if (url.match(/^users\//)) {
 			return url;
