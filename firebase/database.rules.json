@@ -995,8 +995,8 @@
 
 					"privatePostKeysIncoming": {
 						"$username": {
-							".read": "($username + '@' + $DOMAIN) === auth.token.email",
-							".write": "($username + '@' + $DOMAIN) === auth.token.email",
+							".read": "($user + '@' + $DOMAIN) === auth.token.email || ($username + '@' + $DOMAIN) === auth.token.email",
+							".write": "($user + '@' + $DOMAIN) === auth.token.email || ($username + '@' + $DOMAIN) === auth.token.email",
 
 							"data": {
 								".validate": "newData.isString()"

@@ -316,7 +316,7 @@ export class AccountPostsService extends BaseProvider {
 		const url = `users/${username}/privatePostKeysIncoming/${currentUser.user.username}`;
 
 		await this.accountDatabaseService.getOrSetDefault(
-			`root/${url}`,
+			url,
 			BinaryProto,
 			async () =>
 				this.potassiumService.box.seal(

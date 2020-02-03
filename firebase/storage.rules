@@ -231,9 +231,12 @@ service firebase.storage {
 				// match /privatePostKeys/{username}/{hash} {}
 
 				match /privatePostKeysIncoming/{username}/{hash} {
-					allow write: if
+					allow read, write: if
 						request.auth != null &&
-						(username + '@' + DOMAIN) == request.auth.token.email
+						(
+							(user + '@' + DOMAIN) == request.auth.token.email ||
+							(username + '@' + DOMAIN) == request.auth.token.email
+						)
 					;
 				}
 
