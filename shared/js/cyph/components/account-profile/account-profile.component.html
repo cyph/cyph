@@ -578,10 +578,16 @@
 							[src]="user?.avatar | await"
 							alt="User Avatar"
 						/>
-						<mat-card-title>{{
-							(user?.name | await) || ''
-								| slice: 0:accountService.maxNameLength
-						}}</mat-card-title>
+						<mat-card-title>
+							<span>{{
+								(user?.name | await) || ''
+									| slice: 0:accountService.maxNameLength
+							}}</span>
+							&ngsp;
+							<mat-icon>{{
+								post.public ? 'public' : 'lock'
+							}}</mat-icon>
+						</mat-card-title>
 						<mat-card-subtitle>{{
 							(user?.description | await) || ''
 								| slice: 0:accountService.maxDescriptionLength
