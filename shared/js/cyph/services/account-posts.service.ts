@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
-import {combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
 import {map, mergeMap} from 'rxjs/operators';
 import {IAccountPostData, SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -8,6 +8,7 @@ import {
 	AccountPost,
 	AccountPrivatePostKey,
 	BinaryProto,
+	DataURIProto,
 	IAccountPost,
 	IAccountPrivatePostKey,
 	StringProto
@@ -16,6 +17,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
+import {AccountService} from './account.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {LocalStorageService} from './local-storage.service';
@@ -25,6 +27,20 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class AccountPostsService extends BaseProvider {
+	/** Current draft post. */
+	public readonly draft = {
+		content: new BehaviorSubject<string>(''),
+		image: new BehaviorSubject<Uint8Array | undefined>(undefined),
+		isPublic: new BehaviorSubject<boolean>(false)
+	};
+
+	/** Decodes post image to SafeUrl. */
+	public readonly getPostImage = memoize(
+		async (post: IAccountPost) =>
+			post.image ? deserialize(DataURIProto, post.image) : undefined,
+		(post: IAccountPost) => post.image
+	);
+
 	/** Accepts private post key shared by another user. */
 	public readonly getPrivatePostKey = memoize(
 		async (username: string) : Promise<IAccountPrivatePostKey> => {
@@ -77,6 +93,7 @@ export class AccountPostsService extends BaseProvider {
 
 							return {
 								...(await postData.private().posts.getItem(id)),
+								id,
 								public: false
 							};
 						},
@@ -111,6 +128,7 @@ export class AccountPostsService extends BaseProvider {
 											map(post => ({
 												...(post ||
 													AccountPost.create()),
+												id,
 												public: false
 											}))
 										);
@@ -121,6 +139,7 @@ export class AccountPostsService extends BaseProvider {
 				public: memoize(() => ({
 					getPost: async (id: string) : Promise<IAccountPost> => ({
 						...(await postData.public().posts.getItem(id)),
+						id,
 						public: true
 					}),
 					ids: this.accountDatabaseService.getAsyncList(
@@ -141,6 +160,7 @@ export class AccountPostsService extends BaseProvider {
 								.pipe(
 									map(post => ({
 										...(post || AccountPost.create()),
+										id,
 										public: true
 									}))
 								)
@@ -214,7 +234,8 @@ export class AccountPostsService extends BaseProvider {
 	/** Creates a post. */
 	public async createPost (
 		content: string,
-		isPublic: boolean
+		isPublic: boolean,
+		image?: Uint8Array
 	) : Promise<void> {
 		const id = uuid();
 
@@ -222,6 +243,7 @@ export class AccountPostsService extends BaseProvider {
 			this.postData.public :
 			this.postData.private)().posts.setItem(id, {
 			content,
+			image,
 			timestamp: await getTimestamp()
 		});
 
@@ -255,6 +277,26 @@ export class AccountPostsService extends BaseProvider {
 		);
 	}
 
+	/** Posts current draft. */
+	public async postCurrentDraft () : Promise<void> {
+		this.accountService.interstitial.next(true);
+
+		try {
+			await this.createPost(
+				this.draft.content.value,
+				this.draft.isPublic.value,
+				this.draft.image.value
+			);
+
+			this.draft.content.next('');
+			this.draft.image.next(undefined);
+			this.draft.isPublic.next(false);
+		}
+		finally {
+			this.accountService.interstitial.next(false);
+		}
+	}
+
 	/** Shares private post key. */
 	public async sharePrivatePostKey (username: string) : Promise<void> {
 		const currentUser = await this.accountDatabaseService.getCurrentUser();
@@ -285,6 +327,9 @@ export class AccountPostsService extends BaseProvider {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly accountService: AccountService,
+
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 

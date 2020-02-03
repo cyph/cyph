@@ -142,11 +142,17 @@ message AccountPost {
 	/** Markdown post content. */
 	required string content = 1;
 
+	/** Post ID. */
+	string id = 2;
+
+	/** Image. */
+	bytes image = 3;
+
 	/** Indicates whether post is public or private. */
-	bool public = 2;
+	bool public = 4;
 
 	/** Timestamp. */
-	required double timestamp = 3;
+	required double timestamp = 5;
 }
 
 /** Symmetric key and related metadata for accessing private posts. */
