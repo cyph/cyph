@@ -26,8 +26,11 @@ export const serialize = async <T>(
 };
 
 /** Deserializes arbitrary data from a base64 string. */
-export const dynamicDeserialize = (bytes: Uint8Array | string) =>
-	msgpack.decode(potassiumUtil.fromBase64(bytes));
+export const dynamicDeserialize = (bytes: Uint8Array | string) : any => {
+	const o = msgpack.decode(potassiumUtil.fromBase64(bytes));
+	/* eslint-disable-next-line no-null/no-null */
+	return o === null ? undefined : o;
+};
 
 /** Serializes arbitrary data to a base64 string. */
 export const dynamicSerialize = (data: any) : string =>
