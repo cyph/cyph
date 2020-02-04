@@ -152,10 +152,6 @@
 			<div fxLayoutAlign="center" *ngIf="editMode | await">
 				<mat-form-field
 					class="description"
-					fxFlex="95"
-					fxFlex.md="87.5"
-					fxFlex.lg="80"
-					fxFlex.gt-lg="50"
 				>
 					<textarea
 						matInput
@@ -248,11 +244,7 @@
 			<div fxLayoutAlign="center" *ngIf="editMode | await">
 				<mat-form-field
 					class="name"
-					fxFlex="95"
-					fxFlex.sm="75"
-					fxFlex.md="66"
-					fxFlex.lg="50"
-					fxFlex.gt-lg="40"
+					fxFlex
 				>
 					<input
 						matInput
@@ -480,14 +472,19 @@
 		</ng-template>
 
 		<ng-template #socialNetworkingPostUI>
-			<div fxLayout="column" fxLayoutAlign="center center">
-				<div fxLayout="row" *ngIf="isCurrentUser | await">
-					<div>
+			<div *ngIf="(editMode | await) === false"
+				fxLayout="column"
+				fxLayoutAlign="center center"
+				class="social-ui"
+			>
+				<div class="social-post" fxFlex fxLayout="row" *ngIf="isCurrentUser | await">
+					<div fxFlex fxLayout="column">
 						<div>
 							<textarea
 								matInput
 								cyphTranslate
 								matTooltip="Post Content"
+								placeholder="Write your post here..."
 								[ngModel]="
 									(accountPostsService.draft.content
 										| await) || ''
@@ -500,66 +497,68 @@
 							></textarea>
 						</div>
 
-						<div>
-							<div
-								class="file-upload"
-								accept="image/*"
-								fxLayoutAlign="center"
-								matTooltip="Set Image"
-								matTooltipPosition="above"
-								cyphDropZone
-								cyphTranslate
-								(fileDrop)="
-									accountPostsService.draft.image.next(
-										$event.data
-									)
-								"
-							>
-								<mat-icon>image</mat-icon>
+						<div fxFlex fxLayoutAlign="end center" fxLayoutGap="8px" fxLayout="row">
+							<div fxLayout="row" fxLayoutAlign="end center">
+								<div
+									class="image-upload"
+									accept="image/*"
+									fxLayoutAlign="center"
+									matTooltip="Set Image"
+									matTooltipPosition="above"
+									cyphDropZone
+									cyphTranslate
+									(fileDrop)="
+										accountPostsService.draft.image.next(
+											$event.data
+										)
+									"
+								>
+									<mat-icon>image</mat-icon>
+								</div>
+								<button
+									mat-icon-button
+									cyphTranslate
+									matTooltip="Remove Image"
+									(click)="
+										accountPostsService.draft.image.next(
+											undefined
+										)
+									"
+									*ngIf="
+										(accountPostsService.draft.image
+											| await) !== undefined
+									"
+								>
+									<mat-icon>close</mat-icon>
+								</button>
 							</div>
-							<button
-								mat-icon-button
-								cyphTranslate
-								matTooltip="Remove Image"
-								(click)="
-									accountPostsService.draft.image.next(
-										undefined
-									)
-								"
-								*ngIf="
-									(accountPostsService.draft.image
-										| await) !== undefined
-								"
-							>
-								<mat-icon>close</mat-icon>
-							</button>
-						</div>
+						
+							<div>
+								<mat-slide-toggle
+									[ngModel]="
+										(accountPostsService.draft.isPublic
+											| await) === true
+									"
+									(ngModelChange)="
+										accountPostsService.draft.isPublic.next(
+											$event
+										)
+									"
+								>
+									<mat-icon>public</mat-icon>
+									&ngsp;
+									<span cyphTranslate>Public</span>
+								</mat-slide-toggle>
 
-						<div>
-							<mat-slide-toggle
-								[ngModel]="
-									(accountPostsService.draft.isPublic
-										| await) === true
-								"
-								(ngModelChange)="
-									accountPostsService.draft.isPublic.next(
-										$event
-									)
-								"
-							>
-								<mat-icon>public</mat-icon>
-								&ngsp;
-								<span cyphTranslate>Public</span>
-							</mat-slide-toggle>
-
-							<button
-								mat-raised-button
-								cyphTranslate
-								(click)="accountPostsService.postCurrentDraft()"
-							>
-								Post
-							</button>
-						</div>
+								<button
+									mat-raised-button
+									cyphTranslate
+									(click)="accountPostsService.postCurrentDraft()"
+								>
+									Post
+								</button>
+							</div>
+					</div>
 					</div>
 				</div>
 
@@ -588,9 +587,8 @@
 								post.public ? 'public' : 'lock'
 							}}</mat-icon>
 						</mat-card-title>
-						<mat-card-subtitle>{{
-							(user?.description | await) || ''
-								| slice: 0:accountService.maxDescriptionLength
+						<mat-card-subtitle>@{{
+							(user?.username | await) || ''
 						}}</mat-card-subtitle>
 					</mat-card-header>
 					<img
@@ -663,12 +661,12 @@
 						></ng-container>
 					</ng-container>
 
-					<div fxLayoutAlign="center center">
+					<div style="width:100%" fxLayout="column" fxLayoutAlign="center center">
 						<div
 							fxFlex
-							fxLayout="column"
+							fxLayout="row"
 							fxLayoutAlign="center stretch"
-							[fxLayoutGap]="(editMode | await) ? '0px' : '16px'"
+							class="profile-info"
 						>
 							<div fxLayoutAlign="center center">
 								<img
@@ -692,16 +690,16 @@
 									(fileDrop)="setAvatar($event)"
 								/>
 							</div>
-							<div *ngIf="(editMode | await) === false"></div>
-							<ng-container
-								*ngTemplateOutlet="
-									name;
-									context: {
-										readViewClasses: 'animated flipInX _2'
-									}
-								"
-							></ng-container>
-							<div fxLayoutAlign="center">
+							<div style="width:100%" fxLayout="column">
+								<div *ngIf="(editMode | await) === false"></div>
+								<ng-container
+									*ngTemplateOutlet="
+										name;
+										context: {
+											readViewClasses: 'animated flipInX _2'
+										}
+									"
+								></ng-container>
 								<a
 									class="username animated flipInX _2"
 									[href]="
@@ -717,20 +715,20 @@
 											''
 									}}</span>
 								</a>
+								<ng-container
+									*ngTemplateOutlet="
+										description;
+										context: {
+											divider: (editMode | await) === false,
+											readViewClasses: 'animated flipInX _3'
+										}
+									"
+								></ng-container>
 							</div>
-							<ng-container
-								*ngTemplateOutlet="
-									description;
-									context: {
-										divider: (editMode | await) === false,
-										readViewClasses: 'animated flipInX _3'
-									}
-								"
-							></ng-container>
-							<ng-container
-								*ngTemplateOutlet="socialNetworkingPostUI"
-							></ng-container>
 						</div>
+						<ng-container
+							*ngTemplateOutlet="socialNetworkingPostUI"
+						></ng-container>
 					</div>
 
 					<div

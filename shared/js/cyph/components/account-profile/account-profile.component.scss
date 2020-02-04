@@ -12,26 +12,34 @@ $header-size: 135px;
 
 .profile {
 	position: relative;
-	text-align: center;
+	//text-align: center;
 	font-family: Ubuntu;
-	padding: 0 8% 0 8%;
 
 	&.mobile {
 		.avatar {
-			width: 10em;
-			height: 10em;
+			width: 5em;
+			height: 5em;
 			margin-top: 0;
-			margin-bottom: 1em;
+			margin-bottom: 0;
 		}
 
 		.cover-image {
 			height: calc(10em + 84px);
 		}
+		.name {
+			font-size: 20px;
+		}
+		.username {
+			font-size: 16px;
+		}
+		.description {
+			font-size: 12px;
+		}
 	}
 
 	.avatar {
-		width: 18em;
-		height: 18em;
+		width: 13em;
+		height: 13em;
 		margin-top: 1em;
 		box-shadow: 0 20px 42px 0 rgba(0, 0, 0, 0.3);
 		border-width: 10px !important;
@@ -73,10 +81,11 @@ $header-size: 135px;
 	}
 
 	.name {
-		font-size: 42px;
+		font-size: 37px;
 		margin-top: 25px;
 		margin-bottom: 10px;
 		font-weight: 500;
+		color: #fff;
 	}
 
 	mat-form-field.name ::ng-deep {
@@ -88,7 +97,7 @@ $header-size: 135px;
 			font-family: Ubuntu;
 			font-weight: 500;
 			border-bottom: 1px solid #777;
-			font-size: 42px;
+			font-size: 22px;
 			margin-top: 15px;
 			padding-bottom: 10px;
 		}
@@ -108,10 +117,10 @@ $header-size: 135px;
 	}
 
 	mat-form-field.description textarea {
-		text-align: center;
+		text-align: left;
 		font-family: Ubuntu;
 		font-weight: 300;
-		font-size: 20px;
+		font-size: 16px;
 		min-height: 4em;
 	}
 
@@ -125,11 +134,14 @@ $header-size: 135px;
 	}
 
 	.username {
-		font-size: 24px;
+		font-size: 22px;
 		opacity: 0.6;
 		text-decoration: none;
 		word-break: break-all;
 		word-wrap: break-word;
+		color: #fff;
+		margin-top: -0.5em;
+		margin-bottom: 0.33em;
 
 		&:hover > span:nth-child(2) {
 			border-bottom: 1px solid;
@@ -137,12 +149,77 @@ $header-size: 135px;
 	}
 
 	.description {
-		font-size: 20px;
+		font-size: 16px;
 		width: 100%;
+		color: #fff;
+		margin-top: 0.5em;
+	}
+	
+	.profile-info {
+		width:100%;
+		margin-top: 3em;
+		margin-bottom: 4em;
+	}
+
+	&.edit-mode .profile-info {
+		width: 75%;
 	}
 
 	input {
-		text-align: center;
+		text-align: left;
+	}
+
+	.social-ui {
+		.social-post {
+			width: calc(100% + 32px);
+			margin: 2em;
+			border: 2px solid #673ab7ba;
+			border-radius: 5px;
+			padding: 1em;
+			background-color:#673ab7;
+			color:#fff;
+
+			textarea {
+				background-color:#ada0d159;
+				margin-bottom: 1em;
+				padding: 12px;
+				max-width: calc(100% - 8px) !important;
+				right: 8px;
+				position: relative;
+
+				&::placeholder {
+					color: #fff;
+				}
+			}
+			
+			.mat-slide-toggle {
+				margin-right: 1em;
+				
+				&::ng-deep .mat-slide-toggle-content {
+					place-items: center;
+					display: flex;
+
+					.mat-icon {
+						margin-right: 4px;
+					}
+				}
+
+				&.mat-checked ::ng-deep {
+					.mat-slide-toggle-bar {
+						background-color: #e7c44780;
+					}
+					 .mat-slide-toggle-thumb {
+						background-color: #e7c447;
+					}
+				}
+			}
+			
+		}
+		
+		.mat-card {
+			margin-bottom: 1em;
+			width: 100%;
+		}
 	}
 }
 
