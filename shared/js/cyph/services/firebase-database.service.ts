@@ -7,8 +7,6 @@ import 'firebase/auth';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/database';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
-import 'firebase/functions';
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/messaging';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/storage';
@@ -26,8 +24,13 @@ import {
 } from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
-import {requestByteStream} from '../util/request';
-import {deserialize, dynamicSerialize, serialize} from '../util/serialization';
+import {request, requestByteStream} from '../util/request';
+import {
+	deserialize,
+	dynamicDeserialize,
+	dynamicSerialize,
+	serialize
+} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {
@@ -54,7 +57,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 		firebase.app.App & {
 			auth: () => firebase.auth.Auth;
 			database: (databaseURL?: string) => firebase.database.Database;
-			functions: () => firebase.functions.Functions;
 			messaging: () => firebase.messaging.Messaging;
 			storage: (storageBucket?: string) => firebase.storage.Storage;
 		}
@@ -68,9 +70,6 @@ export class FirebaseDatabaseService extends DatabaseService {
 			}
 			if (app.database === undefined) {
 				throw new Error('No Firebase Database module.');
-			}
-			if (app.functions === undefined) {
-				throw new Error('No Firebase Functions module.');
 			}
 			if (app.messaging === undefined) {
 				throw new Error('No Firebase Messaging module.');
@@ -339,19 +338,36 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		debugLog(() => ({databaseCallFunction: [name, o]}));
 
-		const {err, result} = (await (await this.app)
-			.functions()
-			.httpsCallable(name)(dynamicSerialize(o))).data;
+		const {currentUser} = (await this.app).auth();
 
-		if (err !== undefined) {
+		try {
+			const {err, result} = dynamicDeserialize(
+				await request({
+					contentType: 'text/plain',
+					data: dynamicSerialize(o),
+					headers: currentUser ?
+						{
+							Authorization: await currentUser.getIdToken()
+						} :
+						undefined,
+					method: 'POST',
+					url: `https://us-central1-${this.envService.environment.firebase.project}.cloudfunctions.net/${name}`
+				})
+			);
+
+			if (err !== undefined) {
+				throw err;
+			}
+
+			return result;
+		}
+		catch (err) {
 			throw new Error(
 				`Function ${name} failed${
 					typeof err === 'string' ? `: ${err}` : '.'
 				}`
 			);
 		}
-
-		return result;
 	}
 
 	/** @inheritDoc */
