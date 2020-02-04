@@ -62,6 +62,7 @@ const {
 
 const {
 	dynamicDeserialize,
+	dynamicSerialize,
 	normalize,
 	normalizeArray,
 	readableByteLength,
@@ -210,33 +211,42 @@ const validateInput = (input, regex, optional) => {
 };
 
 const onCall = f =>
-	functions.https.onCall(async (data, context) => {
-		data = dynamicDeserialize(data);
+	functions.https.onRequest((req, res) =>
+		cors(req, res, async () => {
+			try {
+				const idToken = req.get('Authorization');
+				const data = dynamicDeserialize(req.body);
 
-		try {
-			return {
-				result: await f(
+				const result = await f(
 					data,
-					context,
 					validateInput(data.namespace.replace(/\./g, '_')),
 					async () =>
-						context.auth ?
+						idToken ?
 							normalize(
-								(await auth.getUser(
-									context.auth.uid
-								)).email.split('@')[0]
+								(await auth.verifyIdToken(idToken)).email.split(
+									'@'
+								)[0]
 							) :
 							undefined,
 					data.testEnvName
-				)
-			};
-		}
-		catch (err) {
-			return {
-				err: !err ? true : err.message ? err.message : err.toString()
-			};
-		}
-	});
+				);
+
+				res.status(200).send(dynamicSerialize({result}));
+			}
+			catch (err) {
+				console.error(err);
+				res.status(200).send(
+					dynamicSerialize({
+						err: !err ?
+							true :
+						err.message ?
+							err.message :
+							err.toString()
+					})
+				);
+			}
+		})
+	);
 
 const onRequest = (adminOnly, f) =>
 	functions.https.onRequest((req, res) =>
@@ -264,7 +274,7 @@ const onRequest = (adminOnly, f) =>
 	);
 
 exports.acceptPseudoRelationship = onCall(
-	async (data, context, namespace, getUsername) => {
+	async (data, namespace, getUsername) => {
 		const id = validateInput(data.id);
 		const relationshipRef = database.ref(
 			`${namespace}/pseudoRelationships/${id}`
@@ -327,46 +337,44 @@ exports.acceptPseudoRelationship = onCall(
 	}
 );
 
-exports.appointmentInvite = onCall(
-	async (data, context, namespace, getUsername) => {
-		const id = readableID(config.cyphIDLength);
-		const inviterUsername = await getUsername();
-		const {accountsURL} = namespaces[namespace];
+exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
+	const id = readableID(config.cyphIDLength);
+	const inviterUsername = await getUsername();
+	const {accountsURL} = namespaces[namespace];
 
-		await Promise.all([
-			sendMail(
-				database,
-				namespace,
-				data.to,
-				`Cyph Appointment with @${inviterUsername}`,
-				{noUnsubscribe: true},
-				{
-					endTime: data.eventDetails.endTime,
-					inviterUsername: data.to,
-					location: `${getFullBurnerURL(
-						namespace,
-						data.callType
-					)}${inviterUsername}/${id}`,
-					startTime: data.eventDetails.startTime
-				}
-			),
-			sendMail(
-				database,
-				namespace,
-				inviterUsername,
-				`Cyph Appointment with ${data.to.name} <${data.to.email}>`,
-				undefined,
-				{
-					endTime: data.eventDetails.endTime,
-					inviterUsername: data.to,
-					location: `${accountsURL}account-burner/${data.callType ||
-						'chat'}/${id}`,
-					startTime: data.eventDetails.startTime
-				}
-			)
-		]);
-	}
-);
+	await Promise.all([
+		sendMail(
+			database,
+			namespace,
+			data.to,
+			`Cyph Appointment with @${inviterUsername}`,
+			{noUnsubscribe: true},
+			{
+				endTime: data.eventDetails.endTime,
+				inviterUsername: data.to,
+				location: `${getFullBurnerURL(
+					namespace,
+					data.callType
+				)}${inviterUsername}/${id}`,
+				startTime: data.eventDetails.startTime
+			}
+		),
+		sendMail(
+			database,
+			namespace,
+			inviterUsername,
+			`Cyph Appointment with ${data.to.name} <${data.to.email}>`,
+			undefined,
+			{
+				endTime: data.eventDetails.endTime,
+				inviterUsername: data.to,
+				location: `${accountsURL}account-burner/${data.callType ||
+					'chat'}/${id}`,
+				startTime: data.eventDetails.startTime
+			}
+		)
+	]);
+});
 
 exports.channelDisconnect = functions.database
 	.ref('/{namespace}/channels/{channel}/disconnects/{user}')
@@ -394,37 +402,35 @@ exports.channelDisconnect = functions.database
 		return removeItem(params.namespace, `channels/${doomedRef.key}`);
 	});
 
-exports.checkInviteCode = onCall(
-	async (data, context, namespace, getUsername) => {
-		const inviteCode = validateInput(data.inviteCode);
-		const inviteDataRef = database.ref(
-			`${namespace}/inviteCodes/${inviteCode}`
-		);
+exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
+	const inviteCode = validateInput(data.inviteCode);
+	const inviteDataRef = database.ref(
+		`${namespace}/inviteCodes/${inviteCode}`
+	);
 
-		const inviteData = (await inviteDataRef.once('value')).val() || {};
-		const {inviterUsername, reservedUsername} = inviteData;
-		const plan =
-			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
+	const inviteData = (await inviteDataRef.once('value')).val() || {};
+	const {inviterUsername, reservedUsername} = inviteData;
+	const plan =
+		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
-		const templateData = getInviteTemplateData({
-			fromApp: true,
-			inviteCode,
-			plan
-		});
+	const templateData = getInviteTemplateData({
+		fromApp: true,
+		inviteCode,
+		plan
+	});
 
-		return {
-			inviterUsername,
-			isValid: typeof inviterUsername === 'string',
-			plan,
-			reservedUsername,
-			welcomeLetter: (await renderTemplate(
-				'new-cyph-invite',
-				templateData,
-				true
-			)).markdown
-		};
-	}
-);
+	return {
+		inviterUsername,
+		isValid: typeof inviterUsername === 'string',
+		plan,
+		reservedUsername,
+		welcomeLetter: (await renderTemplate(
+			'new-cyph-invite',
+			templateData,
+			true
+		)).markdown
+	};
+});
 
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
@@ -658,27 +664,25 @@ exports.getBraintreeSubscriptionID = onRequest(
 	}
 );
 
-exports.getCastleSessionID = onCall(
-	async (data, context, namespace, getUsername) => {
-		const [userA, userB] = normalizeArray([
-			data.username || '',
-			await getUsername()
-		]);
+exports.getCastleSessionID = onCall(async (data, namespace, getUsername) => {
+	const [userA, userB] = normalizeArray([
+		data.username || '',
+		await getUsername()
+	]);
 
-		if (!userA || !userB) {
-			return '';
-		}
-
-		return databaseService.getOrSetDefault(
-			namespace,
-			`castleSessions/${userA}/${userB}/id`,
-			StringProto,
-			() => uuid(true)
-		);
+	if (!userA || !userB) {
+		return '';
 	}
-);
 
-exports.getUserToken = onCall(async (data, context, namespace, getUsername) => {
+	return databaseService.getOrSetDefault(
+		namespace,
+		`castleSessions/${userA}/${userB}/id`,
+		StringProto,
+		() => uuid(true)
+	);
+});
+
+exports.getUserToken = onCall(async (data, namespace, getUsername) => {
 	const [tokenKey, username] = await Promise.all([
 		getTokenKey(namespace),
 		getUsername()
@@ -753,176 +757,169 @@ exports.openUserToken = onRequest(true, async (req, res, namespace) => {
 	return tokens.open(userToken, await getTokenKey(namespace));
 });
 
-exports.register = onCall(
-	async (data, context, namespace, getUsername, testEnvName) => {
-		const {
-			certificateRequest,
-			email,
-			encryptionKeyPair,
-			inviteCode,
-			loginData,
-			password,
-			pinHash,
-			pinIsCustom,
-			pseudoAccount,
-			publicEncryptionKey,
-			publicProfile,
-			publicProfileExtra,
-			signingKeyPair,
-			username
-		} = data || {};
+exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
+	const {
+		certificateRequest,
+		email,
+		encryptionKeyPair,
+		inviteCode,
+		loginData,
+		password,
+		pinHash,
+		pinIsCustom,
+		pseudoAccount,
+		publicEncryptionKey,
+		publicProfile,
+		publicProfileExtra,
+		signingKeyPair,
+		username
+	} = data || {};
 
-		if (
-			typeof inviteCode !== 'string' ||
-			inviteCode.length < 1 ||
-			typeof password !== 'string' ||
-			password.length < 1 ||
-			typeof username !== 'string' ||
-			username.length < 1
-		) {
-			throw new Error('Invalid credentials for new account.');
-		}
-
-		const inviteDataRef = database.ref(
-			`${namespace}/inviteCodes/${inviteCode}`
-		);
-
-		const inviteData = (await inviteDataRef.once('value')).val() || {};
-		const {
-			braintreeID,
-			braintreeSubscriptionID,
-			inviterUsername,
-			planTrialEnd,
-			reservedUsername
-		} = inviteData;
-		const plan =
-			inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
-
-		if (typeof inviterUsername !== 'string') {
-			throw new Error('Invalid invite code.');
-		}
-
-		if (
-			username.length < config.planConfig[plan].usernameMinLength ||
-			(await usernameBlacklisted(namespace, username, reservedUsername))
-		) {
-			throw new Error('Blacklisted username.');
-		}
-
-		const userRecord = await auth.createUser({
-			disabled: false,
-			email: `${username}@${namespace.replace(/_/g, '.')}`,
-			emailVerified: true,
-			password
-		});
-
-		const pendingInviteRef = database.ref(
-			`${namespace}/pendingInvites/${inviteCode}`
-		);
-
-		await Promise.all([
-			...[
-				['encryptionKeyPair', encryptionKeyPair],
-				['inviteCode', inviteCode, StringProto],
-				['loginData', loginData],
-				['pin/hash', pinHash],
-				['pin/isCustom', pinIsCustom],
-				['profileVisible', true, BooleanProto],
-				['publicEncryptionKey', publicEncryptionKey],
-				['publicProfile', publicProfile],
-				['publicProfileExtra', publicProfileExtra],
-				['signingKeyPair', signingKeyPair],
-				pseudoAccount ?
-					['pseudoAccount', new Uint8Array(0)] :
-					['certificateRequest', certificateRequest]
-			].map(async ([k, v, proto = BinaryProto]) =>
-				setItem(namespace, `users/${username}/${k}`, proto, v)
-			),
-			inviteDataRef.remove(),
-			setItem(
-				namespace,
-				`users/${username}/inviterUsernamePlaintext`,
-				StringProto,
-				inviterUsername
-			),
-			setItem(namespace, `users/${username}/plan`, CyphPlan, {
-				plan
-			}),
-			!braintreeID ?
-				undefined :
-				database
-					.ref(`${namespace}/users/${username}/internal/braintreeID`)
-					.set(braintreeID),
-			!braintreeSubscriptionID ?
-				undefined :
-				database
-					.ref(
-						`${namespace}/users/${username}/internal/braintreeSubscriptionID`
-					)
-					.set(braintreeSubscriptionID),
-			!inviterUsername ?
-				undefined :
-				removeItem(
-					namespace,
-					`users/${inviterUsername}/inviteCodes/${inviteCode}`
-				).catch(() => {}),
-			isNaN(planTrialEnd) ?
-				undefined :
-				database
-					.ref(`${namespace}/users/${username}/internal/planTrialEnd`)
-					.set(planTrialEnd),
-			!reservedUsername ?
-				undefined :
-				database
-					.ref(
-						`${namespace}/reservedUsernames/${normalize(
-							reservedUsername
-						)}`
-					)
-					.remove(),
-			pendingInviteRef
-				.once('value')
-				.then(
-					async o =>
-						mailchimp &&
-						mailchimpCredentials &&
-						mailchimpCredentials.listIDs &&
-						mailchimpCredentials.listIDs.pendingInvites &&
-						removeFromMailingList(
-							mailchimpCredentials.listIDs.pendingInvites,
-							o.val()
-						)
-				)
-				.catch(() => {})
-				.then(async () => pendingInviteRef.remove())
-		]);
-
-		if (email) {
-			await setItem(
-				namespace,
-				`users/${username}/email`,
-				StringProto,
-				email
-			);
-		}
-
-		await Promise.all([
-			database.ref(`${namespace}/pendingSignups/${username}`).set({
-				timestamp: admin.database.ServerValue.TIMESTAMP,
-				uid: userRecord.uid
-			}),
-			sendMailInternal(
-				'user-registrations@cyph.com',
-				`${
-					testEnvName ? `[${testEnvName}] ` : ''
-				}Cyph User Registration: ${userRecord.email}`
-			)
-		]);
+	if (
+		typeof inviteCode !== 'string' ||
+		inviteCode.length < 1 ||
+		typeof password !== 'string' ||
+		password.length < 1 ||
+		typeof username !== 'string' ||
+		username.length < 1
+	) {
+		throw new Error('Invalid credentials for new account.');
 	}
-);
+
+	const inviteDataRef = database.ref(
+		`${namespace}/inviteCodes/${inviteCode}`
+	);
+
+	const inviteData = (await inviteDataRef.once('value')).val() || {};
+	const {
+		braintreeID,
+		braintreeSubscriptionID,
+		inviterUsername,
+		planTrialEnd,
+		reservedUsername
+	} = inviteData;
+	const plan =
+		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
+
+	if (typeof inviterUsername !== 'string') {
+		throw new Error('Invalid invite code.');
+	}
+
+	if (
+		username.length < config.planConfig[plan].usernameMinLength ||
+		(await usernameBlacklisted(namespace, username, reservedUsername))
+	) {
+		throw new Error('Blacklisted username.');
+	}
+
+	const userRecord = await auth.createUser({
+		disabled: false,
+		email: `${username}@${namespace.replace(/_/g, '.')}`,
+		emailVerified: true,
+		password
+	});
+
+	const pendingInviteRef = database.ref(
+		`${namespace}/pendingInvites/${inviteCode}`
+	);
+
+	await Promise.all([
+		...[
+			['encryptionKeyPair', encryptionKeyPair],
+			['inviteCode', inviteCode, StringProto],
+			['loginData', loginData],
+			['pin/hash', pinHash],
+			['pin/isCustom', pinIsCustom],
+			['profileVisible', true, BooleanProto],
+			['publicEncryptionKey', publicEncryptionKey],
+			['publicProfile', publicProfile],
+			['publicProfileExtra', publicProfileExtra],
+			['signingKeyPair', signingKeyPair],
+			pseudoAccount ?
+				['pseudoAccount', new Uint8Array(0)] :
+				['certificateRequest', certificateRequest]
+		].map(async ([k, v, proto = BinaryProto]) =>
+			setItem(namespace, `users/${username}/${k}`, proto, v)
+		),
+		inviteDataRef.remove(),
+		setItem(
+			namespace,
+			`users/${username}/inviterUsernamePlaintext`,
+			StringProto,
+			inviterUsername
+		),
+		setItem(namespace, `users/${username}/plan`, CyphPlan, {
+			plan
+		}),
+		!braintreeID ?
+			undefined :
+			database
+				.ref(`${namespace}/users/${username}/internal/braintreeID`)
+				.set(braintreeID),
+		!braintreeSubscriptionID ?
+			undefined :
+			database
+				.ref(
+					`${namespace}/users/${username}/internal/braintreeSubscriptionID`
+				)
+				.set(braintreeSubscriptionID),
+		!inviterUsername ?
+			undefined :
+			removeItem(
+				namespace,
+				`users/${inviterUsername}/inviteCodes/${inviteCode}`
+			).catch(() => {}),
+		isNaN(planTrialEnd) ?
+			undefined :
+			database
+				.ref(`${namespace}/users/${username}/internal/planTrialEnd`)
+				.set(planTrialEnd),
+		!reservedUsername ?
+			undefined :
+			database
+				.ref(
+					`${namespace}/reservedUsernames/${normalize(
+						reservedUsername
+					)}`
+				)
+				.remove(),
+		pendingInviteRef
+			.once('value')
+			.then(
+				async o =>
+					mailchimp &&
+					mailchimpCredentials &&
+					mailchimpCredentials.listIDs &&
+					mailchimpCredentials.listIDs.pendingInvites &&
+					removeFromMailingList(
+						mailchimpCredentials.listIDs.pendingInvites,
+						o.val()
+					)
+			)
+			.catch(() => {})
+			.then(async () => pendingInviteRef.remove())
+	]);
+
+	if (email) {
+		await setItem(namespace, `users/${username}/email`, StringProto, email);
+	}
+
+	await Promise.all([
+		database.ref(`${namespace}/pendingSignups/${username}`).set({
+			timestamp: admin.database.ServerValue.TIMESTAMP,
+			uid: userRecord.uid
+		}),
+		sendMailInternal(
+			'user-registrations@cyph.com',
+			`${testEnvName ? `[${testEnvName}] ` : ''}Cyph User Registration: ${
+				userRecord.email
+			}`
+		)
+	]);
+});
 
 exports.rejectPseudoRelationship = onCall(
-	async (data, context, namespace, getUsername) => {
+	async (data, namespace, getUsername) => {
 		const id = validateInput(data.id);
 		const relationshipRef = database.ref(
 			`${namespace}/pseudoRelationships/${id}`
@@ -944,7 +941,7 @@ exports.rejectPseudoRelationship = onCall(
 );
 
 exports.requestPseudoRelationship = onCall(
-	async (data, context, namespace, getUsername) => {
+	async (data, namespace, getUsername) => {
 		const {accountsURL} = namespaces[namespace];
 		const email = validateInput(data.email, emailRegex);
 		const name = validateInput(data.name) || 'User';
@@ -988,27 +985,25 @@ exports.requestPseudoRelationship = onCall(
 	}
 );
 
-exports.resetCastleSessionID = onCall(
-	async (data, context, namespace, getUsername) => {
-		const [userA, userB] = normalizeArray([
-			data.username || '',
-			await getUsername()
-		]);
+exports.resetCastleSessionID = onCall(async (data, namespace, getUsername) => {
+	const [userA, userB] = normalizeArray([
+		data.username || '',
+		await getUsername()
+	]);
 
-		if (!userA || !userB) {
-			return;
-		}
-
-		await setItem(
-			namespace,
-			`castleSessions/${userA}/${userB}/id`,
-			StringProto,
-			uuid(true)
-		);
+	if (!userA || !userB) {
+		return;
 	}
-);
 
-exports.sendInvite = onCall(async (data, context, namespace, getUsername) => {
+	await setItem(
+		namespace,
+		`castleSessions/${userA}/${userB}/id`,
+		StringProto,
+		uuid(true)
+	);
+});
+
+exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
 	const email = validateInput(data.email, emailRegex);
 	const name = validateInput(data.name);
@@ -1312,16 +1307,14 @@ exports.userEmailSet = functions.database
 		);
 	});
 
-exports.usernameBlacklisted = onCall(
-	async (data, context, namespace, getUsername) => {
-		const username = normalize(validateInput(data.username));
+exports.usernameBlacklisted = onCall(async (data, namespace, getUsername) => {
+	const username = normalize(validateInput(data.username));
 
-		return {isBlacklisted: await usernameBlacklisted(namespace, username)};
-	}
-);
+	return {isBlacklisted: await usernameBlacklisted(namespace, username)};
+});
 
 /* TODO: Translations and user block lists. */
-const userNotify = async (data, context, namespace, username) => {
+const userNotify = async (data, namespace, username) => {
 	const notification = data;
 	const metadata =
 		typeof notification.metadata === 'object' ? notification.metadata : {};
@@ -1619,7 +1612,7 @@ const userNotify = async (data, context, namespace, username) => {
 	);
 };
 
-exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
+exports.userNotify = onCall(async (data, namespace, getUsername) => {
 	if (!data || !data.target) {
 		return;
 	}
@@ -1627,12 +1620,12 @@ exports.userNotify = onCall(async (data, context, namespace, getUsername) => {
 	const username = await getUsername();
 
 	if (typeof data.target === 'string') {
-		await userNotify(data, context, namespace, username);
+		await userNotify(data, namespace, username);
 	}
 	else if (data.target instanceof Array) {
 		await Promise.all(
 			data.target.map(async target =>
-				userNotify({...data, target}, context, namespace, username)
+				userNotify({...data, target}, namespace, username)
 			)
 		);
 	}
