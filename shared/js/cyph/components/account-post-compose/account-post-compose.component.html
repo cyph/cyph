@@ -1,1 +1,67 @@
-<div>AccountPostCompose</div>
+<div class="post-compose" fxFlex fxLayout="row">
+	<div fxFlex fxLayout="column">
+		<div>
+			<textarea
+				matInput
+				cyphTranslate
+				matTooltip="Post Content"
+				placeholder="Write your post here..."
+				[ngModel]="(accountPostsService.draft.content | await) || ''"
+				(ngModelChange)="accountPostsService.draft.content.next($event)"
+			></textarea>
+		</div>
+
+		<div fxFlex fxLayoutAlign="end center" fxLayoutGap="8px" fxLayout="row">
+			<div fxLayout="row" fxLayoutAlign="end center">
+				<div
+					class="image-upload"
+					accept="image/*"
+					fxLayoutAlign="center"
+					matTooltip="Set Image"
+					matTooltipPosition="above"
+					cyphDropZone
+					cyphTranslate
+					(fileDrop)="
+						accountPostsService.draft.image.next($event.data)
+					"
+				>
+					<mat-icon>image</mat-icon>
+				</div>
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip="Remove Image"
+					(click)="accountPostsService.draft.image.next(undefined)"
+					*ngIf="
+						(accountPostsService.draft.image | await) !== undefined
+					"
+				>
+					<mat-icon>close</mat-icon>
+				</button>
+			</div>
+
+			<div>
+				<mat-slide-toggle
+					[ngModel]="
+						(accountPostsService.draft.isPublic | await) === true
+					"
+					(ngModelChange)="
+						accountPostsService.draft.isPublic.next($event)
+					"
+				>
+					<mat-icon>public</mat-icon>
+					&ngsp;
+					<span cyphTranslate>Public</span>
+				</mat-slide-toggle>
+
+				<button
+					mat-raised-button
+					cyphTranslate
+					(click)="accountPostsService.postCurrentDraft()"
+				>
+					Post
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

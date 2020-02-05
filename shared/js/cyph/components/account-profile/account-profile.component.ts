@@ -23,7 +23,6 @@ import {AccountUserTypes, BooleanProto, DataURIProto, IForm} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountOrganizationsService} from '../../services/account-organizations.service';
-import {AccountPostsService} from '../../services/account-posts.service';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
@@ -33,7 +32,6 @@ import {DialogService} from '../../services/dialog.service';
 import {EHRService} from '../../services/ehr.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {trackByID} from '../../track-by/track-by-id';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
 import {
@@ -127,9 +125,6 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 	/** @see UserPresence */
 	public readonly statuses = userPresenceSelectOptions;
-
-	/** @see trackByID */
-	public readonly trackByID = trackByID;
 
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
@@ -500,9 +495,6 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 		/** @see AccountOrganizationsService */
 		public readonly accountOrganizationsService: AccountOrganizationsService,
-
-		/** @see AccountPostsService */
-		public readonly accountPostsService: AccountPostsService,
 
 		/** @see AccountSettingsService */
 		public readonly accountSettingsService: AccountSettingsService,

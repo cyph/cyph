@@ -150,9 +150,7 @@
 			</div>
 			<div *ngIf="divider"></div>
 			<div fxLayoutAlign="center" *ngIf="editMode | await">
-				<mat-form-field
-					class="description"
-				>
+				<mat-form-field class="description">
 					<textarea
 						matInput
 						#descriptionEditor
@@ -242,10 +240,7 @@
 				}}
 			</div>
 			<div fxLayoutAlign="center" *ngIf="editMode | await">
-				<mat-form-field
-					class="name"
-					fxFlex
-				>
+				<mat-form-field class="name" fxFlex>
 					<input
 						matInput
 						#descriptionEditor
@@ -472,158 +467,20 @@
 		</ng-template>
 
 		<ng-template #socialNetworkingPostUI>
-			<div *ngIf="(editMode | await) === false"
+			<div
 				fxLayout="column"
 				fxLayoutAlign="center center"
-				class="social-ui"
+				*ngIf="(editMode | await) === false"
 			>
-				<div class="social-post" fxFlex fxLayout="row" *ngIf="isCurrentUser | await">
-					<div fxFlex fxLayout="column">
-						<div>
-							<textarea
-								matInput
-								cyphTranslate
-								matTooltip="Post Content"
-								placeholder="Write your post here..."
-								[ngModel]="
-									(accountPostsService.draft.content
-										| await) || ''
-								"
-								(ngModelChange)="
-									accountPostsService.draft.content.next(
-										$event
-									)
-								"
-							></textarea>
-						</div>
+				<cyph-account-post-compose fxFlex *ngIf="isCurrentUser | await">
+				</cyph-account-post-compose>
 
-						<div fxFlex fxLayoutAlign="end center" fxLayoutGap="8px" fxLayout="row">
-							<div fxLayout="row" fxLayoutAlign="end center">
-								<div
-									class="image-upload"
-									accept="image/*"
-									fxLayoutAlign="center"
-									matTooltip="Set Image"
-									matTooltipPosition="above"
-									cyphDropZone
-									cyphTranslate
-									(fileDrop)="
-										accountPostsService.draft.image.next(
-											$event.data
-										)
-									"
-								>
-									<mat-icon>image</mat-icon>
-								</div>
-								<button
-									mat-icon-button
-									cyphTranslate
-									matTooltip="Remove Image"
-									(click)="
-										accountPostsService.draft.image.next(
-											undefined
-										)
-									"
-									*ngIf="
-										(accountPostsService.draft.image
-											| await) !== undefined
-									"
-								>
-									<mat-icon>close</mat-icon>
-								</button>
-							</div>
-						
-							<div>
-								<mat-slide-toggle
-									[ngModel]="
-										(accountPostsService.draft.isPublic
-											| await) === true
-									"
-									(ngModelChange)="
-										accountPostsService.draft.isPublic.next(
-											$event
-										)
-									"
-								>
-									<mat-icon>public</mat-icon>
-									&ngsp;
-									<span cyphTranslate>Public</span>
-								</mat-slide-toggle>
-
-								<button
-									mat-raised-button
-									cyphTranslate
-									(click)="accountPostsService.postCurrentDraft()"
-								>
-									Post
-								</button>
-							</div>
-					</div>
-					</div>
+				<div>
+					<cyph-account-post-list
+						fxFlex
+						[user]="(isCurrentUser | await) ? undefined : user"
+					></cyph-account-post-list>
 				</div>
-
-				<mat-card
-					*ngFor="
-						let post of accountPostsService.watchUserPosts(
-							(isCurrentUser | await) ? undefined : user?.username
-						) | await;
-						trackBy: trackByID
-					"
-				>
-					<mat-card-header>
-						<img
-							mat-card-avatar
-							cyphTranslate
-							[src]="user?.avatar | await"
-							alt="User Avatar"
-						/>
-						<mat-card-title>
-							<span>{{
-								(user?.name | await) || ''
-									| slice: 0:accountService.maxNameLength
-							}}</span>
-							&ngsp;
-							<mat-icon>{{
-								post.public ? 'public' : 'lock'
-							}}</mat-icon>
-						</mat-card-title>
-						<mat-card-subtitle>@{{
-							(user?.username | await) || ''
-						}}</mat-card-subtitle>
-					</mat-card-header>
-					<img
-						mat-card-image
-						cyphTranslate
-						[src]="accountPostsService.getPostImage(post) | await"
-						alt="Post Image"
-						*ngIf="(post.image?.length || 0) > 0"
-					/>
-					<mat-card-content>
-						<p>
-							<cyph-markdown
-								[markdown]="post?.content || ''"
-							></cyph-markdown>
-						</p>
-					</mat-card-content>
-					<mat-card-actions>
-						<button
-							mat-button
-							cyphTranslate
-							disabled
-							matTooltip="Coming Soon"
-						>
-							LIKE
-						</button>
-						<button
-							mat-button
-							cyphTranslate
-							disabled
-							matTooltip="Coming Soon"
-						>
-							SHARE
-						</button>
-					</mat-card-actions>
-				</mat-card>
 			</div>
 		</ng-template>
 
@@ -661,7 +518,11 @@
 						></ng-container>
 					</ng-container>
 
-					<div style="width:100%" fxLayout="column" fxLayoutAlign="center center">
+					<div
+						style="width:100%"
+						fxLayout="column"
+						fxLayoutAlign="center center"
+					>
 						<div
 							fxFlex
 							fxLayout="row"
@@ -696,7 +557,8 @@
 									*ngTemplateOutlet="
 										name;
 										context: {
-											readViewClasses: 'animated flipInX _2'
+											readViewClasses:
+												'animated flipInX _2'
 										}
 									"
 								></ng-container>
@@ -719,8 +581,10 @@
 									*ngTemplateOutlet="
 										description;
 										context: {
-											divider: (editMode | await) === false,
-											readViewClasses: 'animated flipInX _3'
+											divider:
+												(editMode | await) === false,
+											readViewClasses:
+												'animated flipInX _3'
 										}
 									"
 								></ng-container>

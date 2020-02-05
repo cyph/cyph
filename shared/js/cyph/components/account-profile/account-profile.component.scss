@@ -154,9 +154,9 @@ $header-size: 135px;
 		color: #fff;
 		margin-top: 0.5em;
 	}
-	
+
 	.profile-info {
-		width:100%;
+		width: 100%;
 		margin-top: 3em;
 		margin-bottom: 4em;
 	}
@@ -167,59 +167,6 @@ $header-size: 135px;
 
 	input {
 		text-align: left;
-	}
-
-	.social-ui {
-		.social-post {
-			width: calc(100% + 32px);
-			margin: 2em;
-			border: 2px solid #673ab7ba;
-			border-radius: 5px;
-			padding: 1em;
-			background-color:#673ab7;
-			color:#fff;
-
-			textarea {
-				background-color:#ada0d159;
-				margin-bottom: 1em;
-				padding: 12px;
-				max-width: calc(100% - 8px) !important;
-				right: 8px;
-				position: relative;
-
-				&::placeholder {
-					color: #fff;
-				}
-			}
-			
-			.mat-slide-toggle {
-				margin-right: 1em;
-				
-				&::ng-deep .mat-slide-toggle-content {
-					place-items: center;
-					display: flex;
-
-					.mat-icon {
-						margin-right: 4px;
-					}
-				}
-
-				&.mat-checked ::ng-deep {
-					.mat-slide-toggle-bar {
-						background-color: #e7c44780;
-					}
-					 .mat-slide-toggle-thumb {
-						background-color: #e7c447;
-					}
-				}
-			}
-			
-		}
-		
-		.mat-card {
-			margin-bottom: 1em;
-			width: 100%;
-		}
 	}
 }
 

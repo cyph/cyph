@@ -1,1 +1,41 @@
-<div>AccountPost</div>
+<mat-card fxFlex>
+	<mat-card-header>
+		<img
+			mat-card-avatar
+			cyphTranslate
+			[src]="user?.avatar | await"
+			alt="User Avatar"
+		/>
+		<mat-card-title>
+			<span>{{
+				(user?.name | await) || ''
+					| slice: 0:accountService.maxNameLength
+			}}</span>
+			&ngsp;
+			<mat-icon>{{ post?.public ? 'public' : 'lock' }}</mat-icon>
+		</mat-card-title>
+		<mat-card-subtitle
+			>@{{ (user?.username | await) || '' }}</mat-card-subtitle
+		>
+	</mat-card-header>
+	<img
+		mat-card-image
+		cyphTranslate
+		[src]="accountPostsService.getPostImage(post) | await"
+		alt="Post Image"
+		*ngIf="(post?.image?.length || 0) > 0"
+	/>
+	<mat-card-content>
+		<p>
+			<cyph-markdown [markdown]="post?.content || ''"></cyph-markdown>
+		</p>
+	</mat-card-content>
+	<mat-card-actions>
+		<button mat-button cyphTranslate disabled matTooltip="Coming Soon">
+			LIKE
+		</button>
+		<button mat-button cyphTranslate disabled matTooltip="Coming Soon">
+			SHARE
+		</button>
+	</mat-card-actions>
+</mat-card>

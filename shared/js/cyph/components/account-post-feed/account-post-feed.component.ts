@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
+import {AccountPostsService} from '../../services/account-posts.service';
 import {StringsService} from '../../services/strings.service';
 
 /**
@@ -13,6 +14,9 @@ import {StringsService} from '../../services/strings.service';
 })
 export class AccountPostFeedComponent extends BaseProvider {
 	constructor (
+		/** @see AccountPostsService */
+		public readonly accountPostsService: AccountPostsService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
