@@ -119,16 +119,14 @@ export class AccountComponent extends BaseProvider
 				isMobile ||
 				(this.envService.isTelehealth &&
 					[
-						'',
-						'profile',
-						...(this.envService.isTelehealth &&
-						this.envService.environment.customBuild &&
+						...(this.envService.environment.customBuild &&
 						this.envService.environment.customBuild.config
 							.organization ?
 							['doctors'] :
 							[])
 					].indexOf(route) > -1) ||
 				[
+					'',
 					'account-burner',
 					'audio',
 					'call',
