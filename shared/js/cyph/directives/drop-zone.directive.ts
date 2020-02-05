@@ -35,6 +35,9 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 	/** Optional file type restriction. */
 	@Input() public accept?: string;
 
+	/** Indicates whether images should be compressed and resized. */
+	@Input() public compressImages: boolean = false;
+
 	/** Indicates whether directive should be active. */
 	@Input() public cyphDropZone?: boolean | string;
 
@@ -126,7 +129,10 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 							}
 
 							this.fileDrop.emit(
-								await this.fileService.getIFile(file)
+								await this.fileService.getIFile(
+									file,
+									this.compressImages
+								)
 							);
 						},
 						maxFilesize: Infinity,

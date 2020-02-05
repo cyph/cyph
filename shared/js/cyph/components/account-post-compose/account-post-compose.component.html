@@ -14,13 +14,14 @@
 		<div fxFlex fxLayoutAlign="end center" fxLayoutGap="8px" fxLayout="row">
 			<div fxLayout="row" fxLayoutAlign="end center">
 				<div
+					cyphDropZone
+					cyphTranslate
 					class="image-upload"
 					accept="image/*"
+					[compressImages]="true"
 					fxLayoutAlign="center"
 					matTooltip="Set Image"
 					matTooltipPosition="above"
-					cyphDropZone
-					cyphTranslate
 					(fileDrop)="
 						accountPostsService.draft.image.next($event.data)
 					"
