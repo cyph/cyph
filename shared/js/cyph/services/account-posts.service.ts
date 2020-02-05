@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {IAccountPostData, SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {
@@ -213,8 +213,18 @@ export class AccountPostsService extends BaseProvider {
 		(
 			username?: string,
 			nMostRecent?: number
-		) : Observable<IAccountPost[]> =>
-			toBehaviorSubject<IAccountPost[]>(async () => {
+		) : Observable<
+			{
+				id: string;
+				watch: () => Observable<IAccountPost>;
+			}[]
+		> =>
+			toBehaviorSubject<
+				{
+					id: string;
+					watch: () => Observable<IAccountPost>;
+				}[]
+			>(async () => {
 				let postDataPart = this.getUserPostData(username).public();
 
 				try {
@@ -229,15 +239,18 @@ export class AccountPostsService extends BaseProvider {
 				catch {}
 
 				return postDataPart.ids.watch().pipe(
-					mergeMap(ids =>
-						combineLatest(
-							ids
-								.slice(
-									nMostRecent === undefined ? 0 : -nMostRecent
-								)
-								.reverse()
-								.map(id => postDataPart.watchPost(id))
+					map(ids =>
+						(nMostRecent === undefined ?
+							ids :
+						nMostRecent < 1 ?
+							[] :
+							ids.slice(-nMostRecent)
 						)
+							.reverse()
+							.map(id => ({
+								id,
+								watch: memoize(() => postDataPart.watchPost(id))
+							}))
 					)
 				);
 			}, []),

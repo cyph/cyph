@@ -1,7 +1,7 @@
 <div fxLayout="column">
 	<cyph-account-post
 		[author]="author"
-		[post]="post"
+		[post]="post.watch() | await"
 		*ngFor="
 			let post of accountPostsService.watchUserPosts(author?.username)
 				| await;
