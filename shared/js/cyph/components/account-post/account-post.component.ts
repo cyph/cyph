@@ -4,6 +4,7 @@ import {BaseProvider} from '../../base-provider';
 import {IAccountPost} from '../../proto';
 import {AccountPostsService} from '../../services/account-posts.service';
 import {AccountService} from '../../services/account.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {StringsService} from '../../services/strings.service';
 
 /**
@@ -16,15 +17,25 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-post.component.html'
 })
 export class AccountPostComponent extends BaseProvider {
+	/** Post author. */
+	@Input() public author?: User;
+
 	/** @see IAccountPost */
 	@Input() public post?: IAccountPost;
 
-	/** Post author. */
-	@Input() public user?: User;
+	/** @see author */
+	public get user () : User | undefined {
+		return (
+			this.author || this.accountDatabaseService.currentUser.value?.user
+		);
+	}
 
 	constructor (
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see AccountPostsService */
 		public readonly accountPostsService: AccountPostsService,

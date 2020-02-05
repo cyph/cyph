@@ -15,11 +15,11 @@ import {trackByID} from '../../track-by/track-by-id';
 	templateUrl: './account-post-list.component.html'
 })
 export class AccountPostListComponent extends BaseProvider {
+	/** List of posts from this user. */
+	@Input() public author?: User;
+
 	/** @see trackByID */
 	public readonly trackByID = trackByID;
-
-	/** List of posts from this user. */
-	@Input() public user?: User;
 
 	constructor (
 		/** @see AccountPostsService */

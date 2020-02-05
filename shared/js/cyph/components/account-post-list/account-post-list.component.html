@@ -1,9 +1,9 @@
 <div fxLayout="column">
 	<cyph-account-post
+		[author]="author"
 		[post]="post"
-		[user]="user"
 		*ngFor="
-			let post of accountPostsService.watchUserPosts(user?.username)
+			let post of accountPostsService.watchUserPosts(author?.username)
 				| await;
 			trackBy: trackByID
 		"
