@@ -2,6 +2,7 @@
 
 import {Route} from '@angular/router';
 import {AccountComponent} from '../components/account';
+import {AccountAfterRegisterComponent} from '../components/account-after-register';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
@@ -17,7 +18,6 @@ import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPasswordsComponent} from '../components/account-passwords';
-import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
@@ -409,7 +409,7 @@ export const account: Route = {
 			}
 		},
 		{path: 'wallets', component: AccountWalletsComponent},
-		{path: 'welcome', component: AccountPostRegisterComponent},
+		{path: 'welcome', component: AccountAfterRegisterComponent},
 		{path: '**', redirectTo: '404'}
 	]
 };

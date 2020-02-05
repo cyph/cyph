@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
 import {AccountComponent} from '../components/account';
+import {AccountAfterRegisterComponent} from '../components/account-after-register';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountBaseFileListComponent} from '../components/account-base-file-list';
 import {AccountCallWaitingComponent} from '../components/account-call-waiting';
@@ -24,7 +25,6 @@ import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPasswordsComponent} from '../components/account-passwords';
-import {AccountPostRegisterComponent} from '../components/account-post-register';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
@@ -66,6 +66,7 @@ import {CyphWebModule} from './cyph-web.module';
  */
 @NgModule({
 	declarations: [
+		AccountAfterRegisterComponent,
 		AccountAppointmentsComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
@@ -91,7 +92,6 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotesComponent,
 		AccountNotificationsSubscribeComponent,
 		AccountPasswordsComponent,
-		AccountPostRegisterComponent,
 		AccountProfileComponent,
 		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
@@ -107,6 +107,7 @@ import {CyphWebModule} from './cyph-web.module';
 		UploadEhrCredentialsComponent
 	],
 	exports: [
+		AccountAfterRegisterComponent,
 		AccountAppointmentsComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
@@ -132,7 +133,6 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotesComponent,
 		AccountNotificationsSubscribeComponent,
 		AccountPasswordsComponent,
-		AccountPostRegisterComponent,
 		AccountProfileComponent,
 		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
