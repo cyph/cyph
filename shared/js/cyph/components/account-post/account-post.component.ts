@@ -6,6 +6,7 @@ import {AccountPostsService} from '../../services/account-posts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {StringsService} from '../../services/strings.service';
+import {getDateTimeString} from '../../util/time';
 
 /**
  * Angular component for account post UI.
@@ -19,6 +20,9 @@ import {StringsService} from '../../services/strings.service';
 export class AccountPostComponent extends BaseProvider {
 	/** Post author. */
 	@Input() public author?: User;
+
+	/** @see getDateTimeString */
+	public readonly getDateTimeString = getDateTimeString;
 
 	/** @see IAccountPost */
 	@Input() public post?: IAccountPost;

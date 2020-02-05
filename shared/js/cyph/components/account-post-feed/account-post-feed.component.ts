@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
+import {IAccountPost} from '../../proto';
 import {AccountPostsService} from '../../services/account-posts.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
@@ -18,8 +20,22 @@ export class AccountPostFeedComponent extends BaseProvider {
 	/** Feed of posts from this user. */
 	@Input() public author?: User;
 
+	/** Post feed. */
+	public readonly feed = new BehaviorSubject<
+		{
+			author: Promise<User | undefined>;
+			id: string;
+			post: Observable<IAccountPost>;
+		}[]
+	>([]);
+
 	/** @see trackByID */
 	public readonly trackByID = trackByID;
+
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		this.feed.next(await this.accountPostsService.getFeed());
+	}
 
 	constructor (
 		/** @see AccountPostsService */

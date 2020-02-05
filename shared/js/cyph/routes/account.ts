@@ -18,6 +18,8 @@ import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPasswordsComponent} from '../components/account-passwords';
+import {AccountPostFeedPageComponent} from '../components/account-post-feed-page';
+import {AccountPostPageComponent} from '../components/account-post-page';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
@@ -201,6 +203,7 @@ export const account: Route = {
 			data: {doctorListOnly: true}
 		},
 		{path: 'ehr-access', component: AccountEhrAccessComponent},
+		{path: 'feed', component: AccountPostFeedPageComponent},
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'forms', component: AccountFormsComponent},
 		{path: 'forms/:id', component: AccountFormComponent},
@@ -291,6 +294,7 @@ export const account: Route = {
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.Standard}
 		},
+		{path: 'post/:username/:postID', component: AccountPostPageComponent},
 		{
 			path: 'profile/404',
 			component: NotFoundComponent,

@@ -28,7 +28,9 @@ import {AccountPasswordsComponent} from '../components/account-passwords';
 import {AccountPostComponent} from '../components/account-post';
 import {AccountPostComposeComponent} from '../components/account-post-compose';
 import {AccountPostFeedComponent} from '../components/account-post-feed';
+import {AccountPostFeedPageComponent} from '../components/account-post-feed-page';
 import {AccountPostListComponent} from '../components/account-post-list';
+import {AccountPostPageComponent} from '../components/account-post-page';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
@@ -99,7 +101,9 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountPostComponent,
 		AccountPostComposeComponent,
 		AccountPostFeedComponent,
+		AccountPostFeedPageComponent,
 		AccountPostListComponent,
+		AccountPostPageComponent,
 		AccountProfileComponent,
 		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
@@ -144,7 +148,9 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountPostComponent,
 		AccountPostComposeComponent,
 		AccountPostFeedComponent,
+		AccountPostFeedPageComponent,
 		AccountPostListComponent,
+		AccountPostPageComponent,
 		AccountProfileComponent,
 		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,

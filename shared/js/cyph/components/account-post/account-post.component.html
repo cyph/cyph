@@ -3,19 +3,29 @@
 		<img
 			mat-card-avatar
 			cyphTranslate
+			[routerLink]="'/profile/' + (user?.username || '')"
 			[src]="user?.avatar | await"
 			alt="User Avatar"
 		/>
 		<mat-card-title>
-			<span>{{
+			<a [routerLink]="'/profile/' + (user?.username || '')">{{
 				(user?.name | await) || ''
 					| slice: 0:accountService.maxNameLength
-			}}</span>
+			}}</a>
 			&ngsp;
 			<mat-icon>{{ post?.public ? 'public' : 'lock' }}</mat-icon>
 		</mat-card-title>
 		<mat-card-subtitle>
-			@{{ (user?.realUsername | await) || '' }}
+			<a [routerLink]="'/profile/' + (user?.username || '')"
+				>@{{ (user?.realUsername | await) || '' }}</a
+			>
+			&ngsp; · &ngsp;
+			<a
+				[routerLink]="
+					'/post/' + (user?.username || '') + '/' + (post?.id || '')
+				"
+				>{{ post ? getDateTimeString(post?.timestamp || 0) : '' }}</a
+			>
 		</mat-card-subtitle>
 	</mat-card-header>
 	<img

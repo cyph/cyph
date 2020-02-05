@@ -2,9 +2,6 @@
 	<cyph-account-post
 		[author]="o.author | await"
 		[post]="o.post | await"
-		*ngFor="
-			let o of accountPostsService.getFeed() | await;
-			trackBy: trackByID
-		"
+		*ngFor="let o of feed | await; trackBy: trackByID"
 	></cyph-account-post>
 </div>

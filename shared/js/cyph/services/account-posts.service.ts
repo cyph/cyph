@@ -86,8 +86,8 @@ export class AccountPostsService extends BaseProvider {
 		}
 	);
 
-	/** Gets post data for specified user. */
-	public readonly getUserPostData = memoize(
+	/** Gets all post data for specified user. */
+	public readonly getUserPostDataFull = memoize(
 		(username?: string) : IAccountPostData => {
 			const urlPrefix = !username ? '' : `users/${username}/`;
 
@@ -193,7 +193,7 @@ export class AccountPostsService extends BaseProvider {
 	);
 
 	/** Post data for current user. */
-	public readonly postData: IAccountPostData = this.getUserPostData();
+	public readonly postData: IAccountPostData = this.getUserPostDataFull();
 
 	/** @see AccountPrivatePostKey */
 	public readonly privatePostKey: Promise<
@@ -231,7 +231,14 @@ export class AccountPostsService extends BaseProvider {
 					watch: () => Observable<IAccountPost>;
 				}[]
 			>(async () => {
-				let postDataPart = this.getUserPostData(username).public();
+				if (
+					username ===
+					this.accountDatabaseService.currentUser.value?.user.username
+				) {
+					username = undefined;
+				}
+
+				let postDataPart = this.getUserPostDataFull(username).public();
 
 				try {
 					if (this.accountDatabaseService.currentUser.value) {
@@ -239,7 +246,9 @@ export class AccountPostsService extends BaseProvider {
 							await this.getPrivatePostKey(username);
 						}
 
-						postDataPart = this.getUserPostData(username).private();
+						postDataPart = this.getUserPostDataFull(
+							username
+						).private();
 					}
 				}
 				catch {}
@@ -265,26 +274,6 @@ export class AccountPostsService extends BaseProvider {
 				nMostRecent !== undefined ? nMostRecent.toString() : ''
 			}`
 	);
-
-	/** @ignore */
-	private async getUserPostList (
-		username?: string
-	) : Promise<IAccountPostDataPart> {
-		let postDataPart = this.getUserPostData(username).public();
-
-		try {
-			if (this.accountDatabaseService.currentUser.value) {
-				if (username) {
-					await this.getPrivatePostKey(username);
-				}
-
-				postDataPart = this.getUserPostData(username).private();
-			}
-		}
-		catch {}
-
-		return postDataPart;
-	}
 
 	/** Creates a post. */
 	public async createPost (
@@ -331,17 +320,21 @@ export class AccountPostsService extends BaseProvider {
 
 		const sorted = (await Promise.all(
 			usernames.map(async username => {
-				const postDataPart = await this.getUserPostList(username);
+				const postDataPart = await this.getUserPostData(username);
 				const ids = await postDataPart.ids.getTimedValue();
+
+				const getAuthor = memoize(async () =>
+					this.accountUserLookupService.getUser(username, false)
+				);
 
 				return (nMostRecent === undefined ?
 					ids :
 					ids.slice(-nMostRecent)
 				).map(o => ({
+					getAuthor,
 					id: o.value,
 					postDataPart,
-					timestamp: o.timestamp,
-					username
+					timestamp: o.timestamp
 				}));
 			})
 		))
@@ -352,10 +345,37 @@ export class AccountPostsService extends BaseProvider {
 			sorted :
 			sorted.slice(-nMostRecent)
 		).map(o => ({
-			author: this.accountUserLookupService.getUser(o.username, false),
+			author: o.getAuthor(),
 			id: o.id,
 			post: o.postDataPart.watchPost(o.id)
 		}));
+	}
+
+	/** Gets post data for specified user (includes all posts visible to current user). */
+	public async getUserPostData (
+		username?: string
+	) : Promise<IAccountPostDataPart> {
+		if (
+			username ===
+			this.accountDatabaseService.currentUser.value?.user.username
+		) {
+			username = undefined;
+		}
+
+		let postDataPart = this.getUserPostDataFull(username).public();
+
+		try {
+			if (this.accountDatabaseService.currentUser.value) {
+				if (username) {
+					await this.getPrivatePostKey(username);
+				}
+
+				postDataPart = this.getUserPostDataFull(username).private();
+			}
+		}
+		catch {}
+
+		return postDataPart;
 	}
 
 	/** Gets a user's posts (reverse order). */
@@ -363,7 +383,7 @@ export class AccountPostsService extends BaseProvider {
 		username?: string,
 		nMostRecent?: number
 	) : Promise<IAccountPost[]> {
-		const postDataPart = await this.getUserPostList(username);
+		const postDataPart = await this.getUserPostData(username);
 		const ids = await postDataPart.ids.getValue();
 
 		return Promise.all(

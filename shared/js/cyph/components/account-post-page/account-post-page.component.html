@@ -1,1 +1,12 @@
-<div>AccountPostPage</div>
+<div fxFlexFill fxLayout="column" fxLayoutGap="32px">
+	<div fxFlex fxLayoutAlign="center center">
+		<cyph-account-post
+			[author]="o?.author | await"
+			[post]="o?.post | await | await"
+			*ngIf="data | await as o"
+		></cyph-account-post>
+	</div>
+	<cyph-footer
+		*ngIf="(accountDatabaseService.currentUser | await) === undefined"
+	></cyph-footer>
+</div>

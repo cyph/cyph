@@ -130,7 +130,9 @@ export class AccountComponent extends BaseProvider
 					'account-burner',
 					'audio',
 					'call',
+					'feed',
 					'mail',
+					'post',
 					'profile',
 					'video',
 					'wallets'
@@ -154,19 +156,19 @@ export class AccountComponent extends BaseProvider
 	]).pipe(
 		map(([currentUser, route]) => {
 			/*
-		if (
-			[
-				'appointments',
-				'audio',
-				'call',
-				'video'
-			].indexOf(route) > -1 &&
-			routePath.length > 1 &&
-			routePath[1] !== 'end'
-		) {
-			return false;
-		}
-		*/
+			if (
+				[
+					'appointments',
+					'audio',
+					'call',
+					'video'
+				].indexOf(route) > -1 &&
+				routePath.length > 1 &&
+				routePath[1] !== 'end'
+			) {
+				return false;
+			}
+			*/
 
 			return (
 				currentUser !== undefined &&
@@ -182,6 +184,7 @@ export class AccountComponent extends BaseProvider
 					'docs',
 					'doctors',
 					'ehr-access',
+					'feed',
 					'files',
 					'forms',
 					'inbox',
@@ -193,6 +196,7 @@ export class AccountComponent extends BaseProvider
 					'notifications',
 					'passwords',
 					'patients',
+					'post',
 					'profile',
 					'request-appointment',
 					'request-followup',
@@ -219,9 +223,11 @@ export class AccountComponent extends BaseProvider
 					'',
 					'audio',
 					'call',
+					'feed',
 					'mail',
 					'messages',
 					'notifications',
+					'post',
 					'profile',
 					'transition',
 					'video',

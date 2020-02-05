@@ -1,5 +1,6 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
+import {AccountService} from '../../services/account.service';
 import {StringsService} from '../../services/strings.service';
 
 /**
@@ -11,8 +12,17 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-post-feed-page.component.scss'],
 	templateUrl: './account-post-feed-page.component.html'
 })
-export class AccountPostFeedPageComponent extends BaseProvider {
+export class AccountPostFeedPageComponent extends BaseProvider
+	implements OnInit {
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.accountService.transitionEnd();
+	}
+
 	constructor (
+		/** @see AccountService */
+		public readonly accountService: AccountService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
