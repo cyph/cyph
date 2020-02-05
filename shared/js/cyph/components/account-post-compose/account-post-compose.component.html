@@ -38,6 +38,20 @@
 				>
 					<mat-icon>close</mat-icon>
 				</button>
+
+				<img
+					mat-card-image
+					cyphTranslate
+					[src]="
+						accountPostsService.getPostImage(
+							accountPostsService.draft.image
+						) | await
+					"
+					alt="Post Image"
+					*ngIf="
+						(accountPostsService.draft.image | await) !== undefined
+					"
+				/>
 			</div>
 
 			<div>

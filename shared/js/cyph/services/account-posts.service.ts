@@ -36,9 +36,15 @@ export class AccountPostsService extends BaseProvider {
 
 	/** Decodes post image to SafeUrl. */
 	public readonly getPostImage = memoize(
-		async (post: IAccountPost) =>
-			post.image ? deserialize(DataURIProto, post.image) : undefined,
-		(post: IAccountPost) => post.image
+		async (
+			post: IAccountPost | BehaviorSubject<Uint8Array | undefined>
+		) => {
+			const image =
+				post instanceof BehaviorSubject ? post.value : post.image;
+			return image ? deserialize(DataURIProto, image) : undefined;
+		},
+		(post: IAccountPost | BehaviorSubject<Uint8Array | undefined>) =>
+			post instanceof BehaviorSubject ? post.value : post.image
 	);
 
 	/** Accepts private post key shared by another user. */
