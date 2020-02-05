@@ -1308,10 +1308,13 @@ export class AccountFilesService extends BaseProvider {
 		const docAsyncList: IAsyncList<IQuillDelta | IQuillRange> = {
 			clear: async () => asyncList.clear(),
 			getFlatValue: async () => docAsyncList.getValue(),
+			getTimedValue: async () =>
+				(await asyncList.getTimedValue()).map(o => ({
+					timestamp: o.timestamp,
+					value: this.decodeQuill(o.value)
+				})),
 			getValue: async () =>
-				(await asyncList.getValue()).map(bytes =>
-					this.decodeQuill(bytes)
-				),
+				(await docAsyncList.getTimedValue()).map(o => o.value),
 			lock: async (f, reason) => asyncList.lock(f, reason),
 			pushItem: async delta =>
 				asyncList.pushItem(this.encodeQuill(delta)),

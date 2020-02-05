@@ -287,6 +287,11 @@ export class DatabaseService extends DataManagerService {
 					(a, b) => a.concat(b),
 					[]
 				),
+			getTimedValue: async () => {
+				throw new Error(
+					'DatabaseService.getAsyncList().getTimedValue() not implemented.'
+				);
+			},
 			getValue: async () =>
 				localLock(async () => this.getList(url, proto)),
 			lock,

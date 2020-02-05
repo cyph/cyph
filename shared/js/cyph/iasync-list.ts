@@ -1,4 +1,5 @@
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {ITimedValue} from './itimed-value';
 import {MaybePromise} from './maybe-promise-type';
 
 /**
@@ -10,6 +11,9 @@ export interface IAsyncList<T> {
 
 	/** Gets flattened value. */
 	getFlatValue () : Promise<T extends any[] ? T : T[]>;
+
+	/** Gets value with timestamps. */
+	getTimedValue () : Promise<ITimedValue<T>[]>;
 
 	/** Gets value. */
 	getValue () : Promise<T[]>;

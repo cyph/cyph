@@ -2,7 +2,12 @@ import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {IAccountPostData, SecurityModels} from '../account';
+import {
+	IAccountPostData,
+	IAccountPostDataPart,
+	SecurityModels,
+	User
+} from '../account';
 import {BaseProvider} from '../base-provider';
 import {
 	AccountPost,
@@ -17,6 +22,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
+import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
@@ -260,6 +266,26 @@ export class AccountPostsService extends BaseProvider {
 			}`
 	);
 
+	/** @ignore */
+	private async getUserPostList (
+		username?: string
+	) : Promise<IAccountPostDataPart> {
+		let postDataPart = this.getUserPostData(username).public();
+
+		try {
+			if (this.accountDatabaseService.currentUser.value) {
+				if (username) {
+					await this.getPrivatePostKey(username);
+				}
+
+				postDataPart = this.getUserPostData(username).private();
+			}
+		}
+		catch {}
+
+		return postDataPart;
+	}
+
 	/** Creates a post. */
 	public async createPost (
 		content: string,
@@ -282,27 +308,71 @@ export class AccountPostsService extends BaseProvider {
 		]);
 	}
 
+	/** Gets a feed of recent users' posts. */
+	public async getFeed (
+		nMostRecent: number | undefined = 20,
+		usernames?: string[]
+	) : Promise<
+		{
+			author: Promise<User | undefined>;
+			id: string;
+			post: Observable<IAccountPost>;
+		}[]
+	> {
+		if (nMostRecent !== undefined && nMostRecent < 1) {
+			return [];
+		}
+
+		if (usernames === undefined) {
+			usernames = await this.accountDatabaseService.getListKeys(
+				'contacts'
+			);
+		}
+
+		const sorted = (await Promise.all(
+			usernames.map(async username => {
+				const postDataPart = await this.getUserPostList(username);
+				const ids = await postDataPart.ids.getTimedValue();
+
+				return (nMostRecent === undefined ?
+					ids :
+					ids.slice(-nMostRecent)
+				).map(o => ({
+					id: o.value,
+					postDataPart,
+					timestamp: o.timestamp,
+					username
+				}));
+			})
+		))
+			.reduce((a, b) => a.concat(b), [])
+			.sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1));
+
+		return (nMostRecent === undefined ?
+			sorted :
+			sorted.slice(-nMostRecent)
+		).map(o => ({
+			author: this.accountUserLookupService.getUser(o.username, false),
+			id: o.id,
+			post: o.postDataPart.watchPost(o.id)
+		}));
+	}
+
 	/** Gets a user's posts (reverse order). */
 	public async getUserPosts (
 		username?: string,
 		nMostRecent?: number
 	) : Promise<IAccountPost[]> {
-		let postDataPart = this.getUserPostData(username).public();
-
-		try {
-			if (this.accountDatabaseService.currentUser.value) {
-				if (username) {
-					await this.getPrivatePostKey(username);
-				}
-
-				postDataPart = this.getUserPostData(username).private();
-			}
-		}
-		catch {}
+		const postDataPart = await this.getUserPostList(username);
+		const ids = await postDataPart.ids.getValue();
 
 		return Promise.all(
-			(await postDataPart.ids.getValue())
-				.slice(nMostRecent === undefined ? 0 : -nMostRecent)
+			(nMostRecent === undefined ?
+				ids :
+			nMostRecent < 1 ?
+				[] :
+				ids.slice(-nMostRecent)
+			)
 				.reverse()
 				.map(async id => postDataPart.getPost(id))
 		);
@@ -363,6 +433,9 @@ export class AccountPostsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,

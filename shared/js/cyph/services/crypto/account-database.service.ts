@@ -559,6 +559,17 @@ export class AccountDatabaseService extends BaseProvider {
 						(a, b) => a.concat(b),
 						[]
 					),
+				getTimedValue: async () =>
+					localLock(async () =>
+						this.getListWithTimestamps(
+							url,
+							proto,
+							securityModel,
+							customKey,
+							anonymous,
+							immutable
+						)
+					),
 				getValue: async () =>
 					localLock(async () =>
 						this.getList(
@@ -984,31 +995,12 @@ export class AccountDatabaseService extends BaseProvider {
 	public async getList<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
-		securityModel: SecurityModels = SecurityModels.private,
+		securityModel?: SecurityModels,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false,
-		immutable: boolean = true
+		anonymous?: boolean,
+		immutable?: boolean
 	) : Promise<T[]> {
-		url = await this.normalizeURL(url);
-
-		const [keys, head] = await Promise.all([
-			this.getListKeys(url),
-			!immutable ?
-				Promise.resolve(undefined) :
-				this.getItemInternal(
-					`${await url}-head`,
-					StringProto,
-					securityModel,
-					customKey,
-					anonymous
-				)
-					.then(({result}) => result.value)
-					.catch(() => undefined)
-		]);
-
-		return (await this.getListInternal(
-			head,
-			keys,
+		return (await this.getListWithTimestamps(
 			url,
 			proto,
 			securityModel,
@@ -1026,6 +1018,44 @@ export class AccountDatabaseService extends BaseProvider {
 		return this.databaseService.getListKeys(
 			await this.normalizeURL(url),
 			noFilter
+		);
+	}
+
+	/** Gets list of ITimedValues. */
+	public async getListWithTimestamps<T> (
+		url: MaybePromise<string>,
+		proto: IProto<T>,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: MaybePromise<Uint8Array>,
+		anonymous: boolean = false,
+		immutable: boolean = true
+	) : Promise<ITimedValue<T>[]> {
+		url = await this.normalizeURL(url);
+
+		const [keys, head] = await Promise.all([
+			this.getListKeys(url),
+			!immutable ?
+				Promise.resolve(undefined) :
+				this.getItemInternal(
+					`${url}-head`,
+					StringProto,
+					securityModel,
+					customKey,
+					anonymous
+				)
+					.then(({result}) => result.value)
+					.catch(() => undefined)
+		]);
+
+		return this.getListInternal(
+			head,
+			keys,
+			url,
+			proto,
+			securityModel,
+			customKey,
+			anonymous,
+			immutable
 		);
 	}
 
