@@ -297,6 +297,39 @@ export class AccountPostsService extends BaseProvider {
 		]);
 	}
 
+	/** Deletes a post. */
+	public async deletePost (id: string) : Promise<void> {
+		const isPublic = await this.postData.public().posts.hasItem(id);
+
+		await (isPublic ?
+			this.postData.public :
+			this.postData.private)().posts.removeItem(id);
+	}
+
+	/** Edits a post. */
+	public async editPost (
+		id: string,
+		content: string,
+		image?: Uint8Array
+	) : Promise<void> {
+		const isPublic = await this.postData.public().posts.hasItem(id);
+
+		const postDataPart = (isPublic ?
+			this.postData.public :
+			this.postData.private)();
+
+		await postDataPart.posts.updateItem(id, async o => {
+			const timestamp = await getTimestamp();
+
+			return {
+				...(o || {timestamp}),
+				content,
+				image,
+				lastEditTimestamp: timestamp
+			};
+		});
+	}
+
 	/** Gets a feed of recent users' posts. */
 	public async getFeed (
 		nMostRecent: number | undefined = 20,

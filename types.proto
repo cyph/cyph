@@ -148,11 +148,14 @@ message AccountPost {
 	/** Image. */
 	bytes image = 3;
 
+	/** Timestamp of last edit (if applicable). */
+	double lastEditTimestamp = 4;
+
 	/** Indicates whether post is public or private. */
-	bool public = 4;
+	bool public = 5;
 
 	/** Timestamp. */
-	required double timestamp = 5;
+	required double timestamp = 6;
 }
 
 /** Symmetric key and related metadata for accessing private posts. */
