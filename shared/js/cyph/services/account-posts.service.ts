@@ -11,11 +11,11 @@ import {
 import {BaseProvider} from '../base-provider';
 import {
 	AccountPost,
-	AccountPrivatePostKey,
+	AccountPostCircle,
 	BinaryProto,
 	DataURIProto,
 	IAccountPost,
-	IAccountPrivatePostKey,
+	IAccountPostCircle,
 	StringProto
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
@@ -26,13 +26,18 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
-import {LocalStorageService} from './local-storage.service';
+import {StringsService} from './strings.service';
 
 /**
  * Angular service for social networking posts.
  */
 @Injectable()
 export class AccountPostsService extends BaseProvider {
+	/** Mapping of circle IDs to names. */
+	public readonly circles = this.accountDatabaseService.getAsyncMap<
+		IAccountPostCircle
+	>('circles', AccountPostCircle);
+
 	/** Current draft post. */
 	public readonly draft = {
 		content: new BehaviorSubject<string>(''),
@@ -70,21 +75,32 @@ export class AccountPostsService extends BaseProvider {
 				post.image
 	);
 
-	/** Accepts private post key shared by another user. */
-	public readonly getPrivatePostKey = memoize(
-		async (username: string) : Promise<IAccountPrivatePostKey> => {
+	/** Accepts circle shared by another user. */
+	public readonly getCircle = memoize(
+		async (username: string) : Promise<IAccountPostCircle> => {
 			const currentUser = await this.accountDatabaseService.getCurrentUser();
 
+			/** TODO: Handle case of multiple circles per user. */
+			const circleID = (await this.accountDatabaseService.getListKeys(
+				`externalCirclesIncoming/${username}`
+			))[0];
+
+			if (!circleID) {
+				throw new Error(
+					`External circle for user ${username} not found.`
+				);
+			}
+
 			return this.accountDatabaseService.getOrSetDefault(
-				`privatePostKeys/${username}`,
-				AccountPrivatePostKey,
+				`externalCircles/${username}/${circleID}`,
+				AccountPostCircle,
 				async () =>
 					deserialize(
-						AccountPrivatePostKey,
+						AccountPostCircle,
 						await this.potassiumService.sign.open(
 							await this.potassiumService.box.open(
 								await this.accountDatabaseService.getItem(
-									`privatePostKeysIncoming/${username}`,
+									`externalCirclesIncoming/${username}/${circleID}`,
 									BinaryProto,
 									SecurityModels.unprotected
 								),
@@ -93,7 +109,7 @@ export class AccountPostsService extends BaseProvider {
 							(await this.accountDatabaseService.getUserPublicKeys(
 								username
 							)).signing,
-							`users/${currentUser.user.username}/privatePostKeysIncoming/${username}`
+							`users/${currentUser.user.username}/externalCirclesIncoming/${username}/${circleID}`
 						)
 					),
 				undefined,
@@ -110,9 +126,12 @@ export class AccountPostsService extends BaseProvider {
 
 			const postData: IAccountPostData = {
 				private: memoize(() => {
-					const privatePostKey = !username ?
-						this.privatePostKey :
-						this.getPrivatePostKey(username);
+					const circle = !username ?
+						/** TODO: Handle case of multiple circles per user. */
+						this.circles
+							.getValue()
+							.then(o => Array.from(o.values())[0]) :
+						this.getCircle(username);
 
 					return {
 						getPost: async (id: string) : Promise<IAccountPost> => {
@@ -122,14 +141,12 @@ export class AccountPostsService extends BaseProvider {
 
 							return {
 								...(await postData.private().posts.getItem(id)),
-								id,
-								public: false
+								circle: (await circle).id,
+								id
 							};
 						},
 						ids: this.accountDatabaseService.getAsyncList(
-							privatePostKey.then(
-								o => `root/privatePostLists/${o.id}`
-							),
+							circle.then(o => `root/privatePostLists/${o.id}`),
 							StringProto,
 							SecurityModels.unprotected,
 							undefined,
@@ -140,7 +157,7 @@ export class AccountPostsService extends BaseProvider {
 							`${urlPrefix}posts/private`,
 							AccountPost,
 							SecurityModels.privateSigned,
-							privatePostKey.then(o => o.key)
+							circle.then(o => o.key)
 						),
 						watchPost: memoize(
 							(id: string) : Observable<IAccountPost> =>
@@ -171,8 +188,7 @@ export class AccountPostsService extends BaseProvider {
 				public: memoize(() => ({
 					getPost: async (id: string) : Promise<IAccountPost> => ({
 						...(await postData.public().posts.getItem(id)),
-						id,
-						public: true
+						id
 					}),
 					ids: this.accountDatabaseService.getAsyncList(
 						`${urlPrefix}publicPostList`,
@@ -212,25 +228,6 @@ export class AccountPostsService extends BaseProvider {
 	/** Post data for current user. */
 	public readonly postData: IAccountPostData = this.getUserPostDataFull();
 
-	/** @see AccountPrivatePostKey */
-	public readonly privatePostKey: Promise<
-		IAccountPrivatePostKey
-	> = this.localStorageService.getOrSetDefault(
-		'privatePostKey',
-		AccountPrivatePostKey,
-		async () =>
-			this.accountDatabaseService.getOrSetDefault(
-				'privatePostKey',
-				AccountPrivatePostKey,
-				async () => ({
-					id: uuid(true),
-					key: this.potassiumService.randomBytes(
-						await this.potassiumService.secretBox.keyBytes
-					)
-				})
-			)
-	);
-
 	/** Watches a user's posts (reverse order). */
 	public readonly watchUserPosts = memoize(
 		(
@@ -260,7 +257,7 @@ export class AccountPostsService extends BaseProvider {
 				try {
 					if (this.accountDatabaseService.currentUser.value) {
 						if (username) {
-							await this.getPrivatePostKey(username);
+							await this.getCircle(username);
 						}
 
 						postDataPart = this.getUserPostDataFull(
@@ -292,12 +289,31 @@ export class AccountPostsService extends BaseProvider {
 			}`
 	);
 
+	/** Creates a circle. */
+	public async createCircle (
+		name: string,
+		predecessorID?: string
+	) : Promise<string> {
+		const id = uuid(true);
+
+		await this.circles.setItem(id, {
+			id,
+			key: this.potassiumService.randomBytes(
+				await this.potassiumService.secretBox.keyBytes
+			),
+			name,
+			predecessorID
+		});
+
+		return id;
+	}
+
 	/** Creates a post. */
 	public async createPost (
 		content: string,
 		isPublic: boolean,
 		image?: Uint8Array
-	) : Promise<void> {
+	) : Promise<string> {
 		const id = uuid();
 
 		await (isPublic ?
@@ -312,6 +328,8 @@ export class AccountPostsService extends BaseProvider {
 			this.postData.private().ids.pushItem(id),
 			...(isPublic ? [this.postData.public().ids.pushItem(id)] : [])
 		]);
+
+		return id;
 	}
 
 	/** Deletes a post. */
@@ -417,7 +435,7 @@ export class AccountPostsService extends BaseProvider {
 		try {
 			if (this.accountDatabaseService.currentUser.value) {
 				if (username) {
-					await this.getPrivatePostKey(username);
+					await this.getCircle(username);
 				}
 
 				postDataPart = this.getUserPostDataFull(username).private();
@@ -468,11 +486,16 @@ export class AccountPostsService extends BaseProvider {
 		}
 	}
 
-	/** Shares private post key. */
-	public async sharePrivatePostKey (username: string) : Promise<void> {
+	/** Shares circle. */
+	public async shareCircle (username: string) : Promise<void> {
 		const currentUser = await this.accountDatabaseService.getCurrentUser();
 
-		const url = `users/${username}/privatePostKeysIncoming/${currentUser.user.username}`;
+		/** TODO: Handle case of multiple circles per user. */
+		const circle = await this.circles
+			.getValue()
+			.then(o => Array.from(o.values())[0]);
+
+		const url = `users/${username}/externalCirclesIncoming/${currentUser.user.username}/${circle.id}`;
 
 		await this.accountDatabaseService.getOrSetDefault(
 			url,
@@ -480,10 +503,10 @@ export class AccountPostsService extends BaseProvider {
 			async () =>
 				this.potassiumService.box.seal(
 					await this.potassiumService.sign.sign(
-						await serialize(
-							AccountPrivatePostKey,
-							await this.privatePostKey
-						),
+						await serialize(AccountPostCircle, {
+							...circle,
+							name: ''
+						}),
 						currentUser.keys.signingKeyPair.privateKey,
 						url
 					),
@@ -508,11 +531,19 @@ export class AccountPostsService extends BaseProvider {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
+		private readonly potassiumService: PotassiumService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService
+		private readonly stringsService: StringsService
 	) {
 		super();
+
+		this.circles.getKeys().then(async keys => {
+			if (keys.length > 0) {
+				return;
+			}
+
+			await this.createCircle(this.stringsService.innerCircle);
+		});
 	}
 }

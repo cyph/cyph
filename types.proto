@@ -139,32 +139,38 @@ message AccountMessagingGroup {
 
 /** Social networking post. */
 message AccountPost {
+	/** Indicates post circle (public if unspecified). */
+	string circle = 1;
+
 	/** Markdown post content. */
-	required string content = 1;
+	required string content = 2;
 
 	/** Post ID. */
-	string id = 2;
+	string id = 3;
 
 	/** Image. */
-	bytes image = 3;
+	bytes image = 4;
 
 	/** Timestamp of last edit (if applicable). */
-	double lastEditTimestamp = 4;
-
-	/** Indicates whether post is public or private. */
-	bool public = 5;
+	double lastEditTimestamp = 5;
 
 	/** Timestamp. */
 	required double timestamp = 6;
 }
 
-/** Symmetric key and related metadata for accessing private posts. */
-message AccountPrivatePostKey {
+/** Symmetric key and related metadata for accessing a group of private posts. */
+message AccountPostCircle {
 	/** ID of list to fetch posts. */
 	required string id = 1;
 
+	/** Human-readable name of circle. */
+	required string name = 2;
+
 	/** Symmetric key for encrypting posts. */
-	required bytes key = 2;
+	required bytes key = 3;
+
+	/** If applicable, ID of previous circle (changes when someone's access is revoked). */
+	string predecessorID = 4;
 }
 
 /** User presence. */

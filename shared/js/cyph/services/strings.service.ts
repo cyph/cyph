@@ -428,6 +428,9 @@ export class StringsService extends BaseProvider {
 	public readonly incomingPatientInfoTitle = `Saving Incoming Patient Info`;
 
 	/** @see StringsService */
+	public readonly innerCircle = `Inner Circle`;
+
+	/** @see StringsService */
 	public readonly introductoryMessage = `You may now speak.`;
 
 	/** @see StringsService */
