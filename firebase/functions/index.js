@@ -622,6 +622,8 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 				"You've Been Invited to Cyph!") +
 				(plan === CyphPlans.Free ?
 					'' :
+				planTrialEnd ?
+					` (with ${titleize(CyphPlans[plan])} trial)` :
 					` (${titleize(CyphPlans[plan])})`),
 			{
 				data: getInviteTemplateData({
