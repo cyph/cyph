@@ -503,7 +503,7 @@ export class AccountPostsService extends BaseProvider {
 			async () =>
 				this.potassiumService.box.seal(
 					await this.potassiumService.sign.sign(
-						await serialize(AccountPostCircle, {
+						await serialize<IAccountPostCircle>(AccountPostCircle, {
 							...circle,
 							name: ''
 						}),
