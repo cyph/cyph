@@ -38,9 +38,12 @@ import {PotassiumService} from './crypto/potassium.service';
 @Injectable()
 export class AccountPostsService extends BaseProvider {
 	/** Mapping of circle IDs to names. */
-	public readonly circles = this.accountDatabaseService.getAsyncMap<
-		IAccountPostCircle
-	>('circles', AccountPostCircle);
+	public readonly circles = memoize((username?: string) =>
+		this.accountDatabaseService.getAsyncMap<IAccountPostCircle>(
+			username ? `externalCircles/${username}` : 'circles',
+			AccountPostCircle
+		)
+	);
 
 	/** Mapping of circle IDs to member lists. */
 	public readonly circleMembers = memoize((circleID: string) =>
@@ -89,50 +92,6 @@ export class AccountPostsService extends BaseProvider {
 			post instanceof BehaviorSubject ?
 				post.value :
 				post.image
-	);
-
-	/** Accepts circle shared by another user. */
-	public readonly getCircle = memoize(
-		async (username: string) : Promise<IAccountPostCircle> => {
-			const currentUser = await this.accountDatabaseService.getCurrentUser();
-
-			/* TODO: Handle case of multiple circles per user */
-			const circleID = (await this.accountDatabaseService.getListKeys(
-				`externalCirclesIncoming/${username}`
-			))[0];
-
-			if (!circleID) {
-				throw new Error(
-					`External circle for user ${username} not found.`
-				);
-			}
-
-			return this.accountDatabaseService.getOrSetDefault(
-				`externalCircles/${username}/${circleID}`,
-				AccountPostCircle,
-				async () =>
-					deserialize(
-						AccountPostCircle,
-						await this.potassiumService.sign.open(
-							await this.potassiumService.box.open(
-								await this.accountDatabaseService.getItem(
-									`externalCirclesIncoming/${username}/${circleID}`,
-									BinaryProto,
-									SecurityModels.unprotected
-								),
-								currentUser.keys.encryptionKeyPair
-							),
-							(await this.accountDatabaseService.getUserPublicKeys(
-								username
-							)).signing,
-							`users/${currentUser.user.username}/externalCirclesIncoming/${username}/${circleID}`
-						)
-					),
-				undefined,
-				undefined,
-				true
-			);
-		}
 	);
 
 	/** Gets all post data for specified user. */
@@ -204,7 +163,9 @@ export class AccountPostsService extends BaseProvider {
 				async (circleOrCircleID: IAccountPostCircle | string) => {
 					const currentCircle =
 						typeof circleOrCircleID === 'string' ?
-							await this.circles.getItem(circleOrCircleID) :
+							await this.circles(username).getItem(
+								circleOrCircleID
+							) :
 							circleOrCircleID;
 
 					const oldCircles: IAccountPostCircle[] = [];
@@ -214,7 +175,9 @@ export class AccountPostsService extends BaseProvider {
 						lastCircle = oldCircles[0]
 					) {
 						oldCircles.unshift(
-							await this.circles.getItem(lastCircle.predecessorID)
+							await this.circles(username).getItem(
+								lastCircle.predecessorID
+							)
 						);
 					}
 
@@ -287,14 +250,17 @@ export class AccountPostsService extends BaseProvider {
 			);
 
 			const postData: IAccountPostData = {
-				private: async () => {
-					const circle = await (!username ?
-						/* TODO: Handle case of multiple circles per user */
-						this.getInnerCircle() :
-						this.getCircle(username));
-
-					return getPrivatePostDataPart(circle);
-				},
+				private: async () =>
+					getPrivatePostDataPart(
+						await (!username ?
+							/* TODO: Handle case of multiple circles per user */
+							this.getInnerCircle() :
+							this.acceptIncomingCircles(
+								username
+							).then(async () =>
+								this.getLatestSharedCircleID(username)
+							))
+					),
 				public: memoize(() => {
 					const ids = this.accountDatabaseService.getAsyncList(
 						`${urlPrefix}publicPostList`,
@@ -381,7 +347,7 @@ export class AccountPostsService extends BaseProvider {
 				try {
 					if (this.accountDatabaseService.currentUser.value) {
 						if (username) {
-							await this.getCircle(username);
+							await this.getLatestSharedCircleID(username);
 						}
 
 						postDataPart = await this.getUserPostDataFull(
@@ -413,10 +379,47 @@ export class AccountPostsService extends BaseProvider {
 			}`
 	);
 
+	/** Accepts circles shared by another user. */
+	private async acceptIncomingCircles (username: string) : Promise<void> {
+		const currentUser = await this.accountDatabaseService.getCurrentUser();
+
+		const circleIDs = await this.accountDatabaseService.getListKeys(
+			`externalCirclesIncoming/${username}`
+		);
+
+		for (const circleID of circleIDs) {
+			await this.accountDatabaseService.getOrSetDefault(
+				`externalCircles/${username}/${circleID}`,
+				AccountPostCircle,
+				async () =>
+					deserialize(
+						AccountPostCircle,
+						await this.potassiumService.sign.open(
+							await this.potassiumService.box.open(
+								await this.accountDatabaseService.getItem(
+									`externalCirclesIncoming/${username}/${circleID}`,
+									BinaryProto,
+									SecurityModels.unprotected
+								),
+								currentUser.keys.encryptionKeyPair
+							),
+							(await this.accountDatabaseService.getUserPublicKeys(
+								username
+							)).signing,
+							`users/${currentUser.user.username}/externalCirclesIncoming/${username}/${circleID}`
+						)
+					),
+				undefined,
+				undefined,
+				true
+			);
+		}
+	}
+
 	/** Gets current active Inner Circle circle. */
 	private async getInnerCircle () : Promise<IAccountPostCircle> {
 		const innerCircle = Array.from(
-			(await this.circles.getValue()).values()
+			(await this.circles().getValue()).values()
 		).find(
 			o =>
 				o.active &&
@@ -436,6 +439,20 @@ export class AccountPostsService extends BaseProvider {
 		return innerCircle;
 	}
 
+	/** Gets ID of most recently shared circle. */
+	private async getLatestSharedCircleID (username: string) : Promise<string> {
+		/* TODO: Handle case of multiple circles per user */
+		const circleID = (await this.accountDatabaseService.getListKeys(
+			`externalCirclesIncoming/${username}`
+		)).slice(-1)[0];
+
+		if (!circleID) {
+			throw new Error(`External circle for user ${username} not found.`);
+		}
+
+		return circleID;
+	}
+
 	/** Creates a circle. */
 	public async createCircle (
 		name: string,
@@ -445,7 +462,7 @@ export class AccountPostsService extends BaseProvider {
 	) : Promise<string> {
 		const id = uuid(true);
 
-		await this.circles.setItem(id, {
+		await this.circles().setItem(id, {
 			active: true,
 			circleType,
 			id,
@@ -590,7 +607,7 @@ export class AccountPostsService extends BaseProvider {
 		try {
 			if (this.accountDatabaseService.currentUser.value) {
 				if (username) {
-					await this.getCircle(username);
+					await this.getLatestSharedCircleID(username);
 				}
 
 				postDataPart = await this.getUserPostDataFull(
@@ -663,7 +680,7 @@ export class AccountPostsService extends BaseProvider {
 			return;
 		}
 
-		await this.circles.updateItem(circle.id, async o => ({
+		await this.circles().updateItem(circle.id, async o => ({
 			...(o || circle),
 			active: false
 		}));
