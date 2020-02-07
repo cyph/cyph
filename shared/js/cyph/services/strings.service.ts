@@ -210,6 +210,12 @@ export class StringsService extends BaseProvider {
 	public readonly checkoutErrorTitle = `Payment Failed`;
 
 	/** @see StringsService */
+	public readonly circle = `Circle`;
+
+	/** @see StringsService */
+	public readonly circlePlaceholder = `Circle to Share With`;
+
+	/** @see StringsService */
 	public readonly clickHere = `Click here`;
 
 	/** @see StringsService */
