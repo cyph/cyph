@@ -170,6 +170,8 @@ export class AccountPostsService extends BaseProvider {
 										return postData.public().watchPost(id);
 									}
 
+									const circleID = (await circle).id;
+
 									return postData
 										.private()
 										.posts.watchItem(id)
@@ -177,8 +179,8 @@ export class AccountPostsService extends BaseProvider {
 											map(post => ({
 												...(post ||
 													AccountPost.create()),
-												id,
-												public: false
+												circle: circleID,
+												id
 											}))
 										);
 								}, AccountPost.create())
@@ -213,8 +215,8 @@ export class AccountPostsService extends BaseProvider {
 								.pipe(
 									map(post => ({
 										...(post || AccountPost.create()),
-										id,
-										public: true
+										circle: '',
+										id
 									}))
 								)
 					)
