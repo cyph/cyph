@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -9,6 +11,7 @@ import {
 	User
 } from '../account';
 import {BaseProvider} from '../base-provider';
+import {ITimedValue} from '../itimed-value';
 import {
 	AccountPost,
 	AccountPostCircle,
@@ -132,28 +135,22 @@ export class AccountPostsService extends BaseProvider {
 		}
 	);
 
-	/**
-	 * Gets all post data for specified user.
-	 * TODO: Traverse circle predecessor IDs and include past posts.
-	 */
+	/** Gets all post data for specified user. */
 	public readonly getUserPostDataFull = memoize(
 		(username?: string) : IAccountPostData => {
 			const urlPrefix = !username ? '' : `users/${username}/`;
 
-			const getPrivatePostDataPart = memoize(
+			const getCircleWrapper = memoize(
 				(circle: IAccountPostCircle) => {
-					const privatePostDataPart = {
+					const circleWrapper = {
+						circle,
 						getPost: async (id: string) : Promise<IAccountPost> => {
-							if (
-								!(await privatePostDataPart.posts.hasItem(id))
-							) {
+							if (!(await circleWrapper.posts.hasItem(id))) {
 								return postData.public().getPost(id);
 							}
 
 							return {
-								...(await privatePostDataPart.posts.getItem(
-									id
-								)),
+								...(await circleWrapper.posts.getItem(id)),
 								circleID: circle.id,
 								id
 							};
@@ -166,7 +163,9 @@ export class AccountPostsService extends BaseProvider {
 							undefined,
 							false
 						),
-						posts: this.accountDatabaseService.getAsyncMap(
+						posts: this.accountDatabaseService.getAsyncMap<
+							IAccountPost
+						>(
 							`${urlPrefix}posts/private`,
 							AccountPost,
 							SecurityModels.privateSigned,
@@ -176,23 +175,19 @@ export class AccountPostsService extends BaseProvider {
 							(id: string) : Observable<IAccountPost> =>
 								toBehaviorSubject<IAccountPost>(async () => {
 									if (
-										!(await privatePostDataPart.posts.hasItem(
-											id
-										))
+										!(await circleWrapper.posts.hasItem(id))
 									) {
 										return postData.public().watchPost(id);
 									}
 
-									const circleID = (await circle).id;
-
-									return privatePostDataPart.posts
+									return circleWrapper.posts
 										.watchItem(id)
 										.pipe(
 											map(
 												(post) : IAccountPost => ({
 													...(post ||
 														AccountPost.create()),
-													circleID,
+													circleID: circle.id,
 													id
 												})
 											)
@@ -200,9 +195,95 @@ export class AccountPostsService extends BaseProvider {
 								}, AccountPost.create())
 						)
 					};
-					return privatePostDataPart;
+					return circleWrapper;
 				},
 				(circle: IAccountPostCircle) => circle.id
+			);
+
+			const getPrivatePostDataPart = memoize(
+				async (circleOrCircleID: IAccountPostCircle | string) => {
+					const currentCircle =
+						typeof circleOrCircleID === 'string' ?
+							await this.circles.getItem(circleOrCircleID) :
+							circleOrCircleID;
+
+					const oldCircles: IAccountPostCircle[] = [];
+					for (
+						let lastCircle = currentCircle;
+						lastCircle.predecessorID;
+						lastCircle = oldCircles[0]
+					) {
+						oldCircles.unshift(
+							await this.circles.getItem(lastCircle.predecessorID)
+						);
+					}
+
+					const [
+						currentCircleWrapper,
+						oldCircleWrappers
+					] = await Promise.all([
+						getCircleWrapper(currentCircle),
+						Promise.all(oldCircles.map(getCircleWrapper))
+					]);
+
+					const oldIDData = (await Promise.all(
+						oldCircleWrappers.map(async o =>
+							(await o.ids.getTimedValue()).map((id) : [
+								string,
+								{
+									circleWrapper: typeof o;
+									timedValue: ITimedValue<string>;
+								}
+							] => [id.value, {circleWrapper: o, timedValue: id}])
+						)
+					)).reduce((a, b) => a.concat(b), []);
+
+					const oldIDs = oldIDData.map(([id]) => id);
+					const oldIDMap = new Map(oldIDData);
+					const oldTimedIDs = oldIDs.map(
+						id => oldIDMap.get(id)!.timedValue
+					);
+
+					const getCircleWrapperForID = (id: string) =>
+						oldIDMap.get(id)?.circleWrapper || currentCircleWrapper;
+
+					const privatePostDataPart: IAccountPostDataPart = {
+						getIDs: async () =>
+							oldIDs.concat(
+								await currentCircleWrapper.ids.getValue()
+							),
+						getPost: async id =>
+							getCircleWrapperForID(id).getPost(id),
+						getTimedIDs: async () =>
+							oldTimedIDs.concat(
+								await currentCircleWrapper.ids.getTimedValue()
+							),
+						hasPost: async id =>
+							getCircleWrapperForID(id).posts.hasItem(id),
+						pushID: async id =>
+							currentCircleWrapper.ids.pushItem(id),
+						removePost: async id =>
+							getCircleWrapperForID(id).posts.removeItem(id),
+						setPost: async (id, post) =>
+							currentCircleWrapper.posts.setItem(id, post),
+						updatePost: async (id, f) =>
+							getCircleWrapperForID(id).posts.updateItem(id, f),
+						watchIDs: memoize(() =>
+							currentCircleWrapper.ids
+								.watch()
+								.pipe(map(ids => oldIDs.concat(ids)))
+						),
+						watchPost: memoize(id =>
+							getCircleWrapperForID(id).watchPost(id)
+						)
+					};
+
+					return privatePostDataPart;
+				},
+				(circleOrCircleID: IAccountPostCircle | string) =>
+					typeof circleOrCircleID === 'string' ?
+						circleOrCircleID :
+						circleOrCircleID.id
 			);
 
 			const postData: IAccountPostData = {
@@ -214,42 +295,54 @@ export class AccountPostsService extends BaseProvider {
 
 					return getPrivatePostDataPart(circle);
 				},
-				public: memoize(() => ({
-					getPost: async (id: string) : Promise<IAccountPost> => ({
-						...(await postData.public().posts.getItem(id)),
-						id
-					}),
-					ids: this.accountDatabaseService.getAsyncList(
+				public: memoize(() => {
+					const ids = this.accountDatabaseService.getAsyncList(
 						`${urlPrefix}publicPostList`,
 						StringProto,
 						SecurityModels.unprotected,
 						undefined,
 						true,
 						false
-					),
-					posts: this.accountDatabaseService.getAsyncMap(
+					);
+
+					const posts = this.accountDatabaseService.getAsyncMap<
+						IAccountPost
+					>(
 						`${urlPrefix}posts/public`,
 						AccountPost,
 						SecurityModels.public,
 						undefined,
 						true
-					),
-					watchPost: memoize(
-						(id: string) : Observable<IAccountPost> =>
-							postData
-								.public()
-								.posts.watchItem(id)
-								.pipe(
-									map(
-										(post) : IAccountPost => ({
-											...(post || AccountPost.create()),
-											circleID: '',
-											id
-										})
-									)
+					);
+
+					return {
+						getIDs: async () => ids.getValue(),
+						getPost: async id => ({
+							...(await posts.getItem(id)),
+							id
+						}),
+						getTimedIDs: async () => ids.getTimedValue(),
+						hasPost: async id => posts.hasItem(id),
+						pushID: async id => ids.pushItem(id),
+						removePost: async id => posts.removeItem(id),
+						setPost: async (id, post) => posts.setItem(id, post),
+						updatePost: async (id, f) => posts.updateItem(id, f),
+						watchIDs: memoize(
+							() : Observable<string[]> => ids.watch()
+						),
+						watchPost: memoize(id =>
+							posts.watchItem(id).pipe(
+								map(
+									(post) : IAccountPost => ({
+										...(post || AccountPost.create()),
+										circleID: '',
+										id
+									})
 								)
-					)
-				}))
+							)
+						)
+					};
+				})
 			};
 
 			return postData;
@@ -298,7 +391,7 @@ export class AccountPostsService extends BaseProvider {
 				}
 				catch {}
 
-				return postDataPart.ids.watch().pipe(
+				return postDataPart.watchIDs().pipe(
 					map(ids =>
 						(nMostRecent === undefined ?
 							ids :
@@ -377,18 +470,18 @@ export class AccountPostsService extends BaseProvider {
 		const publicPostDataPart = this.postData.public();
 		const privatePostDataPart = await this.postData.private();
 
-		await (isPublic ?
-			publicPostDataPart :
-			privatePostDataPart
-		).posts.setItem(id, {
-			content,
-			image,
-			timestamp: await getTimestamp()
-		});
+		await (isPublic ? publicPostDataPart : privatePostDataPart).setPost(
+			id,
+			{
+				content,
+				image,
+				timestamp: await getTimestamp()
+			}
+		);
 
 		await Promise.all([
-			privatePostDataPart.ids.pushItem(id),
-			...(isPublic ? [publicPostDataPart.ids.pushItem(id)] : [])
+			privatePostDataPart.pushID(id),
+			...(isPublic ? [publicPostDataPart.pushID(id)] : [])
 		]);
 
 		return id;
@@ -396,11 +489,11 @@ export class AccountPostsService extends BaseProvider {
 
 	/** Deletes a post. */
 	public async deletePost (id: string) : Promise<void> {
-		const isPublic = await this.postData.public().posts.hasItem(id);
+		const isPublic = await this.postData.public().hasPost(id);
 
 		await (await (isPublic ?
 			this.postData.public :
-			this.postData.private)()).posts.removeItem(id);
+			this.postData.private)()).removePost(id);
 	}
 
 	/** Edits a post. */
@@ -409,13 +502,13 @@ export class AccountPostsService extends BaseProvider {
 		content: string,
 		image?: Uint8Array
 	) : Promise<void> {
-		const isPublic = await this.postData.public().posts.hasItem(id);
+		const isPublic = await this.postData.public().hasPost(id);
 
 		const postDataPart = await (isPublic ?
 			this.postData.public :
 			this.postData.private)();
 
-		await postDataPart.posts.updateItem(id, async o => {
+		await postDataPart.updatePost(id, async o => {
 			const timestamp = await getTimestamp();
 
 			return {
@@ -451,7 +544,7 @@ export class AccountPostsService extends BaseProvider {
 		const sorted = (await Promise.all(
 			usernames.map(async username => {
 				const postDataPart = await this.getUserPostData(username);
-				const ids = await postDataPart.ids.getTimedValue();
+				const ids = await postDataPart.getTimedIDs();
 
 				const getAuthor = memoize(async () =>
 					this.accountUserLookupService.getUser(username, false)
@@ -516,7 +609,7 @@ export class AccountPostsService extends BaseProvider {
 		nMostRecent?: number
 	) : Promise<IAccountPost[]> {
 		const postDataPart = await this.getUserPostData(username);
-		const ids = await postDataPart.ids.getValue();
+		const ids = await postDataPart.getIDs();
 
 		return Promise.all(
 			(nMostRecent === undefined ?
