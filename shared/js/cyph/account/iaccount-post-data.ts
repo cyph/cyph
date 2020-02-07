@@ -21,7 +21,7 @@ export interface IAccountPostDataPart {
 /** User social networking post data. */
 export interface IAccountPostData {
 	/** All posts (public and private). */
-	private: () => IAccountPostDataPart;
+	private: () => Promise<IAccountPostDataPart>;
 
 	/** Public posts. */
 	public: () => IAccountPostDataPart;

@@ -137,27 +137,26 @@ export class AccountPostsService extends BaseProvider {
 		(username?: string) : IAccountPostData => {
 			const urlPrefix = !username ? '' : `users/${username}/`;
 
-			const postData: IAccountPostData = {
-				private: memoize(() => {
-					const circle = !username ?
-						/* TODO: Handle case of multiple circles per user */
-						this.getInnerCircle() :
-						this.getCircle(username);
-
-					return {
+			const getPrivatePostDataPart = memoize(
+				(circle: IAccountPostCircle) => {
+					const privatePostDataPart = {
 						getPost: async (id: string) : Promise<IAccountPost> => {
-							if (!(await postData.private().posts.hasItem(id))) {
+							if (
+								!(await privatePostDataPart.posts.hasItem(id))
+							) {
 								return postData.public().getPost(id);
 							}
 
 							return {
-								...(await postData.private().posts.getItem(id)),
-								circleID: (await circle).id,
+								...(await privatePostDataPart.posts.getItem(
+									id
+								)),
+								circleID: circle.id,
 								id
 							};
 						},
 						ids: this.accountDatabaseService.getAsyncList(
-							circle.then(o => `root/privatePostLists/${o.id}`),
+							`root/privatePostLists/${circle.id}`,
 							StringProto,
 							SecurityModels.unprotected,
 							undefined,
@@ -168,24 +167,23 @@ export class AccountPostsService extends BaseProvider {
 							`${urlPrefix}posts/private`,
 							AccountPost,
 							SecurityModels.privateSigned,
-							circle.then(o => o.key)
+							circle.key
 						),
 						watchPost: memoize(
 							(id: string) : Observable<IAccountPost> =>
 								toBehaviorSubject<IAccountPost>(async () => {
 									if (
-										!(await postData
-											.private()
-											.posts.hasItem(id))
+										!(await privatePostDataPart.posts.hasItem(
+											id
+										))
 									) {
 										return postData.public().watchPost(id);
 									}
 
 									const circleID = (await circle).id;
 
-									return postData
-										.private()
-										.posts.watchItem(id)
+									return privatePostDataPart.posts
+										.watchItem(id)
 										.pipe(
 											map(
 												(post) : IAccountPost => ({
@@ -199,7 +197,20 @@ export class AccountPostsService extends BaseProvider {
 								}, AccountPost.create())
 						)
 					};
-				}),
+					return privatePostDataPart;
+				},
+				(circle: IAccountPostCircle) => circle.id
+			);
+
+			const postData: IAccountPostData = {
+				private: async () => {
+					const circle = await (!username ?
+						/* TODO: Handle case of multiple circles per user */
+						this.getInnerCircle() :
+						this.getCircle(username));
+
+					return getPrivatePostDataPart(circle);
+				},
 				public: memoize(() => ({
 					getPost: async (id: string) : Promise<IAccountPost> => ({
 						...(await postData.public().posts.getItem(id)),
@@ -277,7 +288,7 @@ export class AccountPostsService extends BaseProvider {
 							await this.getCircle(username);
 						}
 
-						postDataPart = this.getUserPostDataFull(
+						postDataPart = await this.getUserPostDataFull(
 							username
 						).private();
 					}
@@ -360,17 +371,21 @@ export class AccountPostsService extends BaseProvider {
 	) : Promise<string> {
 		const id = uuid();
 
+		const publicPostDataPart = this.postData.public();
+		const privatePostDataPart = await this.postData.private();
+
 		await (isPublic ?
-			this.postData.public :
-			this.postData.private)().posts.setItem(id, {
+			publicPostDataPart :
+			privatePostDataPart
+		).posts.setItem(id, {
 			content,
 			image,
 			timestamp: await getTimestamp()
 		});
 
 		await Promise.all([
-			this.postData.private().ids.pushItem(id),
-			...(isPublic ? [this.postData.public().ids.pushItem(id)] : [])
+			privatePostDataPart.ids.pushItem(id),
+			...(isPublic ? [publicPostDataPart.ids.pushItem(id)] : [])
 		]);
 
 		return id;
@@ -380,9 +395,9 @@ export class AccountPostsService extends BaseProvider {
 	public async deletePost (id: string) : Promise<void> {
 		const isPublic = await this.postData.public().posts.hasItem(id);
 
-		await (isPublic ?
+		await (await (isPublic ?
 			this.postData.public :
-			this.postData.private)().posts.removeItem(id);
+			this.postData.private)()).posts.removeItem(id);
 	}
 
 	/** Edits a post. */
@@ -393,7 +408,7 @@ export class AccountPostsService extends BaseProvider {
 	) : Promise<void> {
 		const isPublic = await this.postData.public().posts.hasItem(id);
 
-		const postDataPart = (isPublic ?
+		const postDataPart = await (isPublic ?
 			this.postData.public :
 			this.postData.private)();
 
@@ -482,7 +497,9 @@ export class AccountPostsService extends BaseProvider {
 					await this.getCircle(username);
 				}
 
-				postDataPart = this.getUserPostDataFull(username).private();
+				postDataPart = await this.getUserPostDataFull(
+					username
+				).private();
 			}
 		}
 		catch {}
