@@ -511,6 +511,22 @@
 						}
 					},
 
+					"circleMembers": {
+						"$circleID": {
+							"$circleMember": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
 					"circles": {
 						"$circleID": {
 							"data": {

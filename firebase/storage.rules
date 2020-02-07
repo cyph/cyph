@@ -126,6 +126,8 @@ service firebase.storage {
 
 				// match /certificateRequest/{hash} {}
 
+				// match /circleMembers/{circleID}/{circleMember}/{hash} {}
+
 				// match /circles/{circleID}/{hash} {}
 
 				// match /contactIDs/{username}/{hash} {}

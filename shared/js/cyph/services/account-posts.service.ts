@@ -16,9 +16,11 @@ import {
 	DataURIProto,
 	IAccountPost,
 	IAccountPostCircle,
+	StringArrayProto,
 	StringProto
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {normalizeArray} from '../util/formatting';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -26,7 +28,6 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
-import {StringsService} from './strings.service';
 
 /**
  * Angular service for social networking posts.
@@ -37,6 +38,18 @@ export class AccountPostsService extends BaseProvider {
 	public readonly circles = this.accountDatabaseService.getAsyncMap<
 		IAccountPostCircle
 	>('circles', AccountPostCircle);
+
+	/** Mapping of circle IDs to member lists. */
+	public readonly circleMembers = memoize((circleID: string) =>
+		this.accountDatabaseService.getAsyncList(
+			`circleMembers/${circleID}`,
+			StringArrayProto,
+			undefined,
+			undefined,
+			undefined,
+			false
+		)
+	);
 
 	/** Current draft post. */
 	public readonly draft = {
@@ -80,7 +93,7 @@ export class AccountPostsService extends BaseProvider {
 		async (username: string) : Promise<IAccountPostCircle> => {
 			const currentUser = await this.accountDatabaseService.getCurrentUser();
 
-			/** TODO: Handle case of multiple circles per user. */
+			/* TODO: Handle case of multiple circles per user */
 			const circleID = (await this.accountDatabaseService.getListKeys(
 				`externalCirclesIncoming/${username}`
 			))[0];
@@ -127,10 +140,8 @@ export class AccountPostsService extends BaseProvider {
 			const postData: IAccountPostData = {
 				private: memoize(() => {
 					const circle = !username ?
-						/** TODO: Handle case of multiple circles per user. */
-						this.circles
-							.getValue()
-							.then(o => Array.from(o.values())[0]) :
+						/* TODO: Handle case of multiple circles per user */
+						this.getInnerCircle() :
 						this.getCircle(username);
 
 					return {
@@ -295,14 +306,41 @@ export class AccountPostsService extends BaseProvider {
 			}`
 	);
 
+	/** Gets current active Inner Circle circle. */
+	private async getInnerCircle () : Promise<IAccountPostCircle> {
+		const innerCircle = Array.from(
+			(await this.circles.getValue()).values()
+		).find(
+			o =>
+				o.active &&
+				o.circleType ===
+					AccountPostCircle.AccountPostCircleTypes.InnerCircle
+		);
+
+		if (!innerCircle) {
+			await this.createCircle(
+				'',
+				undefined,
+				AccountPostCircle.AccountPostCircleTypes.InnerCircle
+			);
+			return this.getInnerCircle();
+		}
+
+		return innerCircle;
+	}
+
 	/** Creates a circle. */
 	public async createCircle (
 		name: string,
-		predecessorID?: string
+		predecessorID?: string,
+		circleType: AccountPostCircle.AccountPostCircleTypes = AccountPostCircle
+			.AccountPostCircleTypes.Standard
 	) : Promise<string> {
 		const id = uuid(true);
 
 		await this.circles.setItem(id, {
+			active: true,
+			circleType,
 			id,
 			key: this.potassiumService.randomBytes(
 				await this.potassiumService.secretBox.keyBytes
@@ -492,38 +530,79 @@ export class AccountPostsService extends BaseProvider {
 		}
 	}
 
+	/** Revokes access to a circle (non-retroactive). */
+	public async revokeCircle (...usernames: string[]) : Promise<void> {
+		usernames = normalizeArray(usernames);
+
+		/* TODO: Handle case of multiple circles per user */
+		const circle = await this.getInnerCircle();
+
+		const circleMembers = await this.circleMembers(
+			circle.id
+		).getFlatValue();
+		const circleMembersSet = new Set(circleMembers);
+
+		const usersToRevoke = new Set(
+			usernames.filter(username => circleMembersSet.has(username))
+		);
+
+		if (usersToRevoke.size < 1) {
+			return;
+		}
+
+		await this.circles.updateItem(circle.id, async o => ({
+			...(o || circle),
+			active: false
+		}));
+
+		await this.shareCircle(
+			...circleMembers.filter(
+				circleMember => !usersToRevoke.has(circleMember)
+			)
+		);
+	}
+
 	/** Shares circle. */
-	public async shareCircle (username: string) : Promise<void> {
+	public async shareCircle (...usernames: string[]) : Promise<void> {
+		usernames = normalizeArray(usernames);
+
 		const currentUser = await this.accountDatabaseService.getCurrentUser();
 
-		/** TODO: Handle case of multiple circles per user. */
-		const circle = await this.circles
-			.getValue()
-			.then(o => Array.from(o.values())[0]);
+		/* TODO: Handle case of multiple circles per user */
+		const circle = await this.getInnerCircle();
 
-		const url = `users/${username}/externalCirclesIncoming/${currentUser.user.username}/${circle.id}`;
+		await Promise.all(
+			usernames.map(async username => {
+				const url = `users/${username}/externalCirclesIncoming/${currentUser.user.username}/${circle.id}`;
 
-		await this.accountDatabaseService.getOrSetDefault(
-			url,
-			BinaryProto,
-			async () =>
-				this.potassiumService.box.seal(
-					await this.potassiumService.sign.sign(
-						await serialize<IAccountPostCircle>(AccountPostCircle, {
-							...circle,
-							name: ''
-						}),
-						currentUser.keys.signingKeyPair.privateKey,
-						url
-					),
-					(await this.accountDatabaseService.getUserPublicKeys(
-						username
-					)).encryption
-				),
-			SecurityModels.unprotected,
-			undefined,
-			true
+				await this.accountDatabaseService.getOrSetDefault(
+					url,
+					BinaryProto,
+					async () =>
+						this.potassiumService.box.seal(
+							await this.potassiumService.sign.sign(
+								await serialize<IAccountPostCircle>(
+									AccountPostCircle,
+									{
+										...circle,
+										name: ''
+									}
+								),
+								currentUser.keys.signingKeyPair.privateKey,
+								url
+							),
+							(await this.accountDatabaseService.getUserPublicKeys(
+								username
+							)).encryption
+						),
+					SecurityModels.unprotected,
+					undefined,
+					true
+				);
+			})
 		);
+
+		await this.circleMembers(circle.id).pushItem(usernames);
 	}
 
 	constructor (
@@ -537,19 +616,8 @@ export class AccountPostsService extends BaseProvider {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService,
-
-		/** @ignore */
-		private readonly stringsService: StringsService
+		private readonly potassiumService: PotassiumService
 	) {
 		super();
-
-		this.circles.getKeys().then(async keys => {
-			if (keys.length > 0) {
-				return;
-			}
-
-			await this.createCircle(this.stringsService.innerCircle);
-		});
 	}
 }
