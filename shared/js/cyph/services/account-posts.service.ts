@@ -141,7 +141,7 @@ export class AccountPostsService extends BaseProvider {
 
 							return {
 								...(await postData.private().posts.getItem(id)),
-								circle: (await circle).id,
+								circleID: (await circle).id,
 								id
 							};
 						},
@@ -176,12 +176,14 @@ export class AccountPostsService extends BaseProvider {
 										.private()
 										.posts.watchItem(id)
 										.pipe(
-											map(post => ({
-												...(post ||
-													AccountPost.create()),
-												circle: circleID,
-												id
-											}))
+											map(
+												(post) : IAccountPost => ({
+													...(post ||
+														AccountPost.create()),
+													circleID,
+													id
+												})
+											)
 										);
 								}, AccountPost.create())
 						)
@@ -213,11 +215,13 @@ export class AccountPostsService extends BaseProvider {
 								.public()
 								.posts.watchItem(id)
 								.pipe(
-									map(post => ({
-										...(post || AccountPost.create()),
-										circle: '',
-										id
-									}))
+									map(
+										(post) : IAccountPost => ({
+											...(post || AccountPost.create()),
+											circleID: '',
+											id
+										})
+									)
 								)
 					)
 				}))

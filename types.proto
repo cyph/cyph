@@ -140,7 +140,7 @@ message AccountMessagingGroup {
 /** Social networking post. */
 message AccountPost {
 	/** Indicates post circle (public if unspecified). */
-	string circle = 1;
+	string circleID = 1;
 
 	/** Markdown post content. */
 	required string content = 2;

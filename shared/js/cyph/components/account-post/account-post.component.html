@@ -13,7 +13,7 @@
 					| slice: 0:accountService.maxNameLength
 			}}</a>
 			&ngsp;
-			<mat-icon>{{ post?.circle ? 'lock' : 'public' }}</mat-icon>
+			<mat-icon>{{ post?.circleID ? 'lock' : 'public' }}</mat-icon>
 		</mat-card-title>
 		<mat-card-subtitle>
 			<a [routerLink]="'/profile/' + (user?.username || '')"
