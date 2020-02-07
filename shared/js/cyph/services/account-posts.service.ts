@@ -132,7 +132,10 @@ export class AccountPostsService extends BaseProvider {
 		}
 	);
 
-	/** Gets all post data for specified user. */
+	/**
+	 * Gets all post data for specified user.
+	 * TODO: Traverse circle predecessor IDs and include past posts.
+	 */
 	public readonly getUserPostDataFull = memoize(
 		(username?: string) : IAccountPostData => {
 			const urlPrefix = !username ? '' : `users/${username}/`;
@@ -571,6 +574,12 @@ export class AccountPostsService extends BaseProvider {
 			...(o || circle),
 			active: false
 		}));
+
+		await this.createCircle(
+			'',
+			circle.id,
+			AccountPostCircle.AccountPostCircleTypes.InnerCircle
+		);
 
 		await this.shareCircle(
 			...circleMembers.filter(
