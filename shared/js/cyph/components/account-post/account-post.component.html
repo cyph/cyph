@@ -27,6 +27,25 @@
 				>{{ post ? getDateTimeString(post?.timestamp || 0) : '' }}</a
 			>
 		</mat-card-subtitle>
+
+		<button
+			mat-icon-button
+			cyphTranslate
+			aria-label="Context Menu"
+			[matMenuTriggerFor]="postMenu"
+		>
+			<mat-icon>more_horiz</mat-icon>
+		</button>
+		<mat-menu #postMenu="matMenu">
+			<button mat-menu-item (click)="editPost()">
+				<mat-icon>edit</mat-icon>
+				<span>{{ stringsService.postEditTitle }}</span>
+			</button>
+			<button mat-menu-item (click)="deletePost()">
+				<mat-icon>delete</mat-icon>
+				<span>{{ stringsService.postDeleteTitle }}</span>
+			</button>
+		</mat-menu>
 	</mat-card-header>
 	<img
 		mat-card-image

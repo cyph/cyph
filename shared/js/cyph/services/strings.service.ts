@@ -828,6 +828,21 @@ export class StringsService extends BaseProvider {
 	public readonly pin = `PIN`;
 
 	/** @see StringsService */
+	public readonly postDeletePrompt = `Delete this post?`;
+
+	/** @see StringsService */
+	public readonly postDeleteTitle = `Delete Post`;
+
+	/** @see StringsService */
+	public readonly postEditPrompt = `Edit the contents of this post:`;
+
+	/** @see StringsService */
+	public readonly postEditTitle = `Edit Post`;
+
+	/** @see StringsService */
+	public readonly postTitle = `Social Post`;
+
+	/** @see StringsService */
 	public readonly product = `${this.internalProduct}`;
 
 	/** @see StringsService */
