@@ -659,7 +659,7 @@ export class AccountDatabaseService extends BaseProvider {
 			return asyncList;
 		};
 
-		return typeof url === 'string' ?
+		return typeof url === 'string' && customKey === undefined ?
 			getOrSetDefault(this.cache.getAsyncList, url, getAsyncList) :
 			getAsyncList();
 	}
@@ -852,7 +852,7 @@ export class AccountDatabaseService extends BaseProvider {
 			return asyncMap;
 		};
 
-		return typeof url === 'string' ?
+		return typeof url === 'string' && customKey === undefined ?
 			getOrSetDefault(this.cache.getAsyncMap, url, getAsyncMap) :
 			getAsyncMap();
 	}
@@ -949,7 +949,7 @@ export class AccountDatabaseService extends BaseProvider {
 			};
 		};
 
-		return typeof url === 'string' ?
+		return typeof url === 'string' && customKey === undefined ?
 			getOrSetDefault(this.cache.getAsyncValue, url, getAsyncValue) :
 			getAsyncValue();
 	}
