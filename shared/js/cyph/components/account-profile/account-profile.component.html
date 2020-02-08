@@ -55,6 +55,22 @@
 							mat-mini-fab
 							cyphTranslate
 							class="animated flipInX _4"
+							matTooltip="Share File"
+							cyphDropZone
+							(fileDrop)="
+								accountFilesService.upload(
+									$event.name,
+									$event,
+									user?.username
+								)
+							"
+						>
+							<mat-icon>attachment</mat-icon>
+						</button>
+						<button
+							mat-mini-fab
+							cyphTranslate
+							class="animated flipInX _4"
 							matTooltip="Remove Contact"
 							(click)="
 								accountContactsService.removeContact(
@@ -518,6 +534,9 @@
 						></ng-container>
 					</ng-container>
 
+
+					  
+
 					<div
 						style="width:100%"
 						fxLayout="column"
@@ -553,30 +572,30 @@
 							</div>
 							<div style="width:100%" fxLayout="column">
 								<div *ngIf="(editMode | await) === false"></div>
-								<ng-container
-									*ngTemplateOutlet="
-										name;
-										context: {
-											readViewClasses:
-												'animated flipInX _2'
-										}
-									"
-								></ng-container>
-								<a
-									class="username animated flipInX _2"
-									[href]="
-										envService.cyphMeUrl +
-										(user?.username || '')
-									"
-									target="_self"
-								>
-									<span>@</span
-									><span>{{
-										(user?.realUsername | await) ||
-											user?.username ||
-											''
-									}}</span>
-								</a>
+									<ng-container
+										*ngTemplateOutlet="
+											name;
+											context: {
+												readViewClasses:
+													'animated flipInX _2'
+											}
+										"
+									></ng-container>
+									<a
+										class="username animated flipInX _2"
+										[href]="
+											envService.cyphMeUrl +
+											(user?.username || '')
+										"
+										target="_self"
+									>
+										<span>@</span
+										><span>{{
+											(user?.realUsername | await) ||
+												user?.username ||
+												''
+										}}</span>
+									</a>
 								<ng-container
 									*ngTemplateOutlet="
 										description;
@@ -588,6 +607,7 @@
 										}
 									"
 								></ng-container>
+								<ng-container *ngTemplateOutlet="buttons"></ng-container>
 							</div>
 						</div>
 						<ng-container
@@ -642,8 +662,6 @@
 							<mat-icon>edit</mat-icon>
 						</button>
 					</ng-container>
-					<ng-container *ngTemplateOutlet="buttons"></ng-container>
-					<ng-container *ngTemplateOutlet="fileUpload"></ng-container>
 				</div>
 			</div>
 		</ng-template>
