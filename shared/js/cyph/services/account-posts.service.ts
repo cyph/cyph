@@ -105,7 +105,7 @@ export class AccountPostsService extends BaseProvider {
 						circle,
 						getPost: async (id: string) : Promise<IAccountPost> => {
 							if (!(await circleWrapper.posts.hasItem(id))) {
-								return postData.public().getPost(id);
+								return postData.public.getPost(id);
 							}
 
 							return {
@@ -136,7 +136,7 @@ export class AccountPostsService extends BaseProvider {
 									if (
 										!(await circleWrapper.posts.hasItem(id))
 									) {
-										return postData.public().watchPost(id);
+										return postData.public.watchPost(id);
 									}
 
 									return circleWrapper.posts
@@ -261,7 +261,7 @@ export class AccountPostsService extends BaseProvider {
 								this.getLatestSharedCircleID(username)
 							))
 					),
-				public: memoize(() => {
+				public: (() : IAccountPostDataPart => {
 					const ids = this.accountDatabaseService.getAsyncList(
 						`${urlPrefix}publicPostList`,
 						StringProto,
@@ -308,7 +308,7 @@ export class AccountPostsService extends BaseProvider {
 							)
 						)
 					};
-				})
+				})()
 			};
 
 			return postData;
@@ -342,7 +342,7 @@ export class AccountPostsService extends BaseProvider {
 					username = undefined;
 				}
 
-				let postDataPart = this.getUserPostDataFull(username).public();
+				let postDataPart = this.getUserPostDataFull(username).public;
 
 				try {
 					if (this.accountDatabaseService.currentUser.value) {
@@ -484,7 +484,7 @@ export class AccountPostsService extends BaseProvider {
 	) : Promise<string> {
 		const id = uuid();
 
-		const publicPostDataPart = this.postData.public();
+		const publicPostDataPart = this.postData.public;
 		const privatePostDataPart = await this.postData.private();
 
 		await (isPublic ? publicPostDataPart : privatePostDataPart).setPost(
@@ -506,11 +506,13 @@ export class AccountPostsService extends BaseProvider {
 
 	/** Deletes a post. */
 	public async deletePost (id: string) : Promise<void> {
-		const isPublic = await this.postData.public().hasPost(id);
+		const isPublic = await this.postData.public.hasPost(id);
 
-		await (await (isPublic ?
+		const postDataPart = isPublic ?
 			this.postData.public :
-			this.postData.private)()).removePost(id);
+			await this.postData.private();
+
+		await postDataPart.removePost(id);
 	}
 
 	/** Edits a post. */
@@ -519,11 +521,11 @@ export class AccountPostsService extends BaseProvider {
 		content: string,
 		image?: Uint8Array
 	) : Promise<void> {
-		const isPublic = await this.postData.public().hasPost(id);
+		const isPublic = await this.postData.public.hasPost(id);
 
-		const postDataPart = await (isPublic ?
+		const postDataPart = isPublic ?
 			this.postData.public :
-			this.postData.private)();
+			await this.postData.private();
 
 		await postDataPart.updatePost(id, async o => {
 			const timestamp = await getTimestamp();
@@ -602,7 +604,7 @@ export class AccountPostsService extends BaseProvider {
 			username = undefined;
 		}
 
-		let postDataPart = this.getUserPostDataFull(username).public();
+		let postDataPart = this.getUserPostDataFull(username).public;
 
 		try {
 			if (this.accountDatabaseService.currentUser.value) {

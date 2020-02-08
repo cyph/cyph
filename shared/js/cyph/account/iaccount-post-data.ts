@@ -44,5 +44,5 @@ export interface IAccountPostData {
 	private: () => Promise<IAccountPostDataPart>;
 
 	/** Public posts. */
-	public: () => IAccountPostDataPart;
+	public: IAccountPostDataPart;
 }
