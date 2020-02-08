@@ -766,40 +766,58 @@ export class AccountPostsService extends BaseProvider {
 		const currentUser = await this.accountDatabaseService.getCurrentUser();
 
 		/* TODO: Handle case of multiple circles per user */
-		const circle = await this.getInnerCircle();
+		const currentCircle = await this.getInnerCircle();
+
+		const oldCircles: IAccountPostCircle[] = [];
+		for (
+			let lastCircle = currentCircle;
+			lastCircle.predecessorID;
+			lastCircle = oldCircles[0]
+		) {
+			oldCircles.unshift(
+				await this.circles().getItem(lastCircle.predecessorID)
+			);
+		}
 
 		await Promise.all(
 			usernames.map(async username => {
-				const url = `users/${username}/externalCirclesIncoming/${currentUser.user.username}/${circle.id}`;
+				const shareCircleWithUser = async (
+					circle: IAccountPostCircle
+				) => {
+					const url = `users/${username}/externalCirclesIncoming/${currentUser.user.username}/${circle.id}`;
 
-				await this.accountDatabaseService.getOrSetDefault(
-					url,
-					BinaryProto,
-					async () =>
-						this.potassiumService.box.seal(
-							await this.potassiumService.sign.sign(
-								await serialize<IAccountPostCircle>(
-									AccountPostCircle,
-									{
-										...circle,
-										name: ''
-									}
+					await this.accountDatabaseService.getOrSetDefault(
+						url,
+						BinaryProto,
+						async () =>
+							this.potassiumService.box.seal(
+								await this.potassiumService.sign.sign(
+									await serialize<IAccountPostCircle>(
+										AccountPostCircle,
+										{
+											...circle,
+											name: ''
+										}
+									),
+									currentUser.keys.signingKeyPair.privateKey,
+									url
 								),
-								currentUser.keys.signingKeyPair.privateKey,
-								url
+								(await this.accountDatabaseService.getUserPublicKeys(
+									username
+								)).encryption
 							),
-							(await this.accountDatabaseService.getUserPublicKeys(
-								username
-							)).encryption
-						),
-					SecurityModels.unprotected,
-					undefined,
-					true
-				);
+						SecurityModels.unprotected,
+						undefined,
+						true
+					);
+				};
+
+				await Promise.all(oldCircles.map(shareCircleWithUser));
+				await shareCircleWithUser(currentCircle);
 			})
 		);
 
-		await this.circleMembers(circle.id).pushItem(usernames);
+		await this.circleMembers(currentCircle.id).pushItem(usernames);
 	}
 
 	constructor (
