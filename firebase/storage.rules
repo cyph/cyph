@@ -250,6 +250,10 @@ service firebase.storage {
 					allow read;
 				}
 
+				match /publicPostList/{postID}/{hash} {
+					allow read;
+				}
+
 				match /publicProfile/{hash} {
 					allow read;
 				}
