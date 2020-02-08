@@ -1074,7 +1074,7 @@ export class AccountDatabaseService extends BaseProvider {
 			}
 			catch {
 				const value = await defaultValue();
-				this.setItem(
+				await this.setItem(
 					url,
 					proto,
 					value,
