@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
@@ -16,7 +16,7 @@ import {trackByID} from '../../track-by/track-by-id';
 	styleUrls: ['./account-post-feed.component.scss'],
 	templateUrl: './account-post-feed.component.html'
 })
-export class AccountPostFeedComponent extends BaseProvider {
+export class AccountPostFeedComponent extends BaseProvider implements OnInit {
 	/** Feed of posts from this user. */
 	@Input() public author?: User;
 

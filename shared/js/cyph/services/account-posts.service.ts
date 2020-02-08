@@ -255,11 +255,8 @@ export class AccountPostsService extends BaseProvider {
 						)
 					)).reduce((a, b) => a.concat(b), []);
 
-					const oldIDs = oldIDData.map(([id]) => id);
 					const oldIDMap = new Map(oldIDData);
-					const oldTimedIDs = oldIDs.map(
-						id => oldIDMap.get(id)!.timedValue
-					);
+					const oldTimedIDs = oldIDData.map(([_, v]) => v.timedValue);
 
 					const getCircleWrapperForID = (id: string) =>
 						oldIDMap.get(id)?.circleWrapper || currentCircleWrapper;
@@ -324,10 +321,11 @@ export class AccountPostsService extends BaseProvider {
 					);
 
 					for (const circle of oldCircles) {
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						initPrivatePostDataPartUpdates(circle);
 					}
 
-					const privatePostDataPart: IAccountPostDataPart = {
+					return <IAccountPostDataPart> {
 						getIDs: async () =>
 							privatePostDataPartWatcher.value.getIDs(),
 						getPost: async id =>
@@ -355,8 +353,6 @@ export class AccountPostsService extends BaseProvider {
 							privatePostDataPartWatcher.value.watchPost(id)
 						)
 					};
-
-					return privatePostDataPart;
 				},
 				(circleOrCircleID: IAccountPostCircle | string) =>
 					typeof circleOrCircleID === 'string' ?
@@ -364,7 +360,7 @@ export class AccountPostsService extends BaseProvider {
 						circleOrCircleID.id
 			);
 
-			const postData: IAccountPostData = {
+			return {
 				private: async () =>
 					getPrivatePostDataPart(
 						await (!username ?
@@ -378,8 +374,6 @@ export class AccountPostsService extends BaseProvider {
 					),
 				public: publicPostDataPart
 			};
-
-			return postData;
 		}
 	);
 
