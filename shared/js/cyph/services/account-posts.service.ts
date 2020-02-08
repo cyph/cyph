@@ -1,7 +1,9 @@
+/* eslint-disable max-lines */
+
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 import {
 	IAccountPostData,
 	IAccountPostDataPart,
@@ -9,16 +11,20 @@ import {
 	User
 } from '../account';
 import {BaseProvider} from '../base-provider';
+import {ITimedValue} from '../itimed-value';
 import {
 	AccountPost,
-	AccountPrivatePostKey,
+	AccountPostCircle,
 	BinaryProto,
 	DataURIProto,
 	IAccountPost,
-	IAccountPrivatePostKey,
+	IAccountPostCircle,
+	StringArrayProto,
 	StringProto
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {normalizeArray} from '../util/formatting';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -26,13 +32,38 @@ import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
-import {LocalStorageService} from './local-storage.service';
 
 /**
  * Angular service for social networking posts.
  */
 @Injectable()
 export class AccountPostsService extends BaseProvider {
+	/** @ignore */
+	private readonly privatePostDataPartUpdates = new Map<
+		string,
+		BehaviorSubject<IAccountPostDataPart>
+	>();
+
+	/** Mapping of circle IDs to names. */
+	public readonly circles = memoize((username?: string) =>
+		this.accountDatabaseService.getAsyncMap<IAccountPostCircle>(
+			username ? `externalCircles/${username}` : 'circles',
+			AccountPostCircle
+		)
+	);
+
+	/** Mapping of circle IDs to member lists. */
+	public readonly circleMembers = memoize((circleID: string) =>
+		this.accountDatabaseService.getAsyncList(
+			`circleMembers/${circleID}`,
+			StringArrayProto,
+			undefined,
+			undefined,
+			undefined,
+			false
+		)
+	);
+
 	/** Current draft post. */
 	public readonly draft = {
 		content: new BehaviorSubject<string>(''),
@@ -70,166 +101,284 @@ export class AccountPostsService extends BaseProvider {
 				post.image
 	);
 
-	/** Accepts private post key shared by another user. */
-	public readonly getPrivatePostKey = memoize(
-		async (username: string) : Promise<IAccountPrivatePostKey> => {
-			const currentUser = await this.accountDatabaseService.getCurrentUser();
-
-			return this.accountDatabaseService.getOrSetDefault(
-				`privatePostKeys/${username}`,
-				AccountPrivatePostKey,
-				async () =>
-					deserialize(
-						AccountPrivatePostKey,
-						await this.potassiumService.sign.open(
-							await this.potassiumService.box.open(
-								await this.accountDatabaseService.getItem(
-									`privatePostKeysIncoming/${username}`,
-									BinaryProto,
-									SecurityModels.unprotected
-								),
-								currentUser.keys.encryptionKeyPair
-							),
-							(await this.accountDatabaseService.getUserPublicKeys(
-								username
-							)).signing,
-							`users/${currentUser.user.username}/privatePostKeysIncoming/${username}`
-						)
-					),
-				undefined,
-				undefined,
-				true
-			);
-		}
-	);
-
 	/** Gets all post data for specified user. */
 	public readonly getUserPostDataFull = memoize(
 		(username?: string) : IAccountPostData => {
 			const urlPrefix = !username ? '' : `users/${username}/`;
 
-			const postData: IAccountPostData = {
-				private: memoize(() => {
-					const privatePostKey = !username ?
-						this.privatePostKey :
-						this.getPrivatePostKey(username);
+			const publicPostDataPart = (() : IAccountPostDataPart => {
+				const ids = this.accountDatabaseService.getAsyncList(
+					`${urlPrefix}publicPostList`,
+					StringProto,
+					SecurityModels.unprotected,
+					undefined,
+					true,
+					false
+				);
 
-					return {
+				const posts = this.accountDatabaseService.getAsyncMap<
+					IAccountPost
+				>(
+					`${urlPrefix}posts/public`,
+					AccountPost,
+					SecurityModels.public,
+					undefined,
+					true
+				);
+
+				return {
+					getIDs: async () => ids.getValue(),
+					getPost: async id => ({
+						...(await posts.getItem(id)),
+						id
+					}),
+					getTimedIDs: async () => ids.getTimedValue(),
+					hasPost: async id => posts.hasItem(id),
+					pushID: async id => ids.pushItem(id),
+					removePost: async id => posts.removeItem(id),
+					setPost: async (id, post) => posts.setItem(id, post),
+					updatePost: async (id, f) => posts.updateItem(id, f),
+					watchIDs: memoize(() : Observable<string[]> => ids.watch()),
+					watchPost: memoize(id =>
+						posts.watchItem(id).pipe(
+							map(
+								(post) : IAccountPost => ({
+									...(post || AccountPost.create()),
+									circleID: '',
+									id
+								})
+							)
+						)
+					)
+				};
+			})();
+
+			const getCircleWrapper = memoize(
+				(circle: IAccountPostCircle) => {
+					const circleWrapper = {
+						circle,
 						getPost: async (id: string) : Promise<IAccountPost> => {
-							if (!(await postData.private().posts.hasItem(id))) {
-								return postData.public().getPost(id);
+							if (!(await circleWrapper.posts.hasItem(id))) {
+								return publicPostDataPart.getPost(id);
 							}
 
 							return {
-								...(await postData.private().posts.getItem(id)),
-								id,
-								public: false
+								...(await circleWrapper.posts.getItem(id)),
+								circleID: circle.id,
+								id
 							};
 						},
 						ids: this.accountDatabaseService.getAsyncList(
-							privatePostKey.then(
-								o => `root/privatePostLists/${o.id}`
-							),
+							`root/privatePostLists/${circle.id}`,
 							StringProto,
 							SecurityModels.unprotected,
 							undefined,
 							undefined,
 							false
 						),
-						posts: this.accountDatabaseService.getAsyncMap(
+						posts: this.accountDatabaseService.getAsyncMap<
+							IAccountPost
+						>(
 							`${urlPrefix}posts/private`,
 							AccountPost,
 							SecurityModels.privateSigned,
-							privatePostKey.then(o => o.key)
+							circle.key
 						),
 						watchPost: memoize(
 							(id: string) : Observable<IAccountPost> =>
 								toBehaviorSubject<IAccountPost>(async () => {
 									if (
-										!(await postData
-											.private()
-											.posts.hasItem(id))
+										!(await circleWrapper.posts.hasItem(id))
 									) {
-										return postData.public().watchPost(id);
+										return publicPostDataPart.watchPost(id);
 									}
 
-									return postData
-										.private()
-										.posts.watchItem(id)
+									return circleWrapper.posts
+										.watchItem(id)
 										.pipe(
-											map(post => ({
-												...(post ||
-													AccountPost.create()),
-												id,
-												public: false
-											}))
+											map(
+												(post) : IAccountPost => ({
+													...(post ||
+														AccountPost.create()),
+													circleID: circle.id,
+													id
+												})
+											)
 										);
 								}, AccountPost.create())
 						)
 					};
-				}),
-				public: memoize(() => ({
-					getPost: async (id: string) : Promise<IAccountPost> => ({
-						...(await postData.public().posts.getItem(id)),
-						id,
-						public: true
-					}),
-					ids: this.accountDatabaseService.getAsyncList(
-						`${urlPrefix}publicPostList`,
-						StringProto,
-						SecurityModels.unprotected,
-						undefined,
-						true,
-						false
-					),
-					posts: this.accountDatabaseService.getAsyncMap(
-						`${urlPrefix}posts/public`,
-						AccountPost,
-						SecurityModels.public,
-						undefined,
-						true
-					),
-					watchPost: memoize(
-						(id: string) : Observable<IAccountPost> =>
-							postData
-								.public()
-								.posts.watchItem(id)
-								.pipe(
-									map(post => ({
-										...(post || AccountPost.create()),
-										id,
-										public: true
-									}))
-								)
-					)
-				}))
-			};
+					return circleWrapper;
+				},
+				(circle: IAccountPostCircle) => circle.id
+			);
 
-			return postData;
+			const getPrivatePostDataPart = memoize(
+				async (circleOrCircleID: IAccountPostCircle | string) => {
+					const currentCircle =
+						typeof circleOrCircleID === 'string' ?
+							await this.circles(username).getItem(
+								circleOrCircleID
+							) :
+							circleOrCircleID;
+
+					const oldCircles: IAccountPostCircle[] = [];
+					for (
+						let lastCircle = currentCircle;
+						lastCircle.predecessorID;
+						lastCircle = oldCircles[0]
+					) {
+						oldCircles.unshift(
+							await this.circles(username).getItem(
+								lastCircle.predecessorID
+							)
+						);
+					}
+
+					const [
+						currentCircleWrapper,
+						oldCircleWrappers
+					] = await Promise.all([
+						getCircleWrapper(currentCircle),
+						Promise.all(oldCircles.map(getCircleWrapper))
+					]);
+
+					const oldIDData = (await Promise.all(
+						oldCircleWrappers.map(async o =>
+							(await o.ids.getTimedValue()).map((id) : [
+								string,
+								{
+									circleWrapper: typeof o;
+									timedValue: ITimedValue<string>;
+								}
+							] => [id.value, {circleWrapper: o, timedValue: id}])
+						)
+					)).reduce((a, b) => a.concat(b), []);
+
+					const oldIDMap = new Map(oldIDData);
+					const oldTimedIDs = oldIDData.map(([_, v]) => v.timedValue);
+
+					const getCircleWrapperForID = (id: string) =>
+						oldIDMap.get(id)?.circleWrapper || currentCircleWrapper;
+
+					const privatePostDataPartInternal: IAccountPostDataPart = {
+						getIDs: async () =>
+							(await privatePostDataPartInternal.getTimedIDs()).map(
+								o => o.value
+							),
+						getPost: async id =>
+							getCircleWrapperForID(id).getPost(id),
+						getTimedIDs: async () =>
+							(await Promise.all([
+								oldTimedIDs,
+								currentCircleWrapper.ids.getTimedValue(),
+								publicPostDataPart.getTimedIDs()
+							]))
+								.reduce((a, b) => a.concat(b), [])
+								.sort((a, b) =>
+									a.timestamp > b.timestamp ? 1 : -1
+								),
+						hasPost: async id =>
+							getCircleWrapperForID(id).posts.hasItem(id),
+						pushID: async id =>
+							currentCircleWrapper.ids.pushItem(id),
+						removePost: async id =>
+							getCircleWrapperForID(id).posts.removeItem(id),
+						setPost: async (id, post) =>
+							currentCircleWrapper.posts.setItem(id, post),
+						updatePost: async (id, f) =>
+							getCircleWrapperForID(id).posts.updateItem(id, f),
+						watchIDs: memoize(() =>
+							combineLatest([
+								currentCircleWrapper.ids.watch(),
+								publicPostDataPart.watchIDs()
+							]).pipe(
+								mergeMap(async () =>
+									privatePostDataPartInternal.getIDs()
+								)
+							)
+						),
+						watchPost: memoize(id =>
+							getCircleWrapperForID(id).watchPost(id)
+						)
+					};
+
+					const initPrivatePostDataPartUpdates = (
+						circle: IAccountPostCircle
+					) => {
+						const subject = getOrSetDefault(
+							this.privatePostDataPartUpdates,
+							circle.id,
+							() =>
+								new BehaviorSubject(privatePostDataPartInternal)
+						);
+						subject.next(privatePostDataPartInternal);
+						return subject;
+					};
+
+					const privatePostDataPartWatcher = initPrivatePostDataPartUpdates(
+						currentCircle
+					);
+
+					for (const circle of oldCircles) {
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						initPrivatePostDataPartUpdates(circle);
+					}
+
+					return <IAccountPostDataPart> {
+						getIDs: async () =>
+							privatePostDataPartWatcher.value.getIDs(),
+						getPost: async id =>
+							privatePostDataPartWatcher.value.getPost(id),
+						getTimedIDs: async () =>
+							privatePostDataPartWatcher.value.getTimedIDs(),
+						hasPost: async id =>
+							privatePostDataPartWatcher.value.hasPost(id),
+						pushID: async id =>
+							privatePostDataPartWatcher.value.pushID(id),
+						removePost: async id =>
+							privatePostDataPartWatcher.value.removePost(id),
+						setPost: async (id, post) =>
+							privatePostDataPartWatcher.value.setPost(id, post),
+						updatePost: async (id, f) =>
+							privatePostDataPartWatcher.value.updatePost(id, f),
+						watchIDs: memoize(() =>
+							privatePostDataPartWatcher.pipe(
+								mergeMap(latestPrivatePostDataPart =>
+									latestPrivatePostDataPart.watchIDs()
+								)
+							)
+						),
+						watchPost: memoize(id =>
+							privatePostDataPartWatcher.value.watchPost(id)
+						)
+					};
+				},
+				(circleOrCircleID: IAccountPostCircle | string) =>
+					typeof circleOrCircleID === 'string' ?
+						circleOrCircleID :
+						circleOrCircleID.id
+			);
+
+			return {
+				private: async () =>
+					getPrivatePostDataPart(
+						await (!username ?
+							/* TODO: Handle case of multiple circles per user */
+							this.getInnerCircle() :
+							this.acceptIncomingCircles(
+								username
+							).then(async () =>
+								this.getLatestSharedCircleID(username)
+							))
+					),
+				public: publicPostDataPart
+			};
 		}
 	);
 
 	/** Post data for current user. */
 	public readonly postData: IAccountPostData = this.getUserPostDataFull();
-
-	/** @see AccountPrivatePostKey */
-	public readonly privatePostKey: Promise<
-		IAccountPrivatePostKey
-	> = this.localStorageService.getOrSetDefault(
-		'privatePostKey',
-		AccountPrivatePostKey,
-		async () =>
-			this.accountDatabaseService.getOrSetDefault(
-				'privatePostKey',
-				AccountPrivatePostKey,
-				async () => ({
-					id: uuid(true),
-					key: this.potassiumService.randomBytes(
-						await this.potassiumService.secretBox.keyBytes
-					)
-				})
-			)
-	);
 
 	/** Watches a user's posts (reverse order). */
 	public readonly watchUserPosts = memoize(
@@ -255,22 +404,22 @@ export class AccountPostsService extends BaseProvider {
 					username = undefined;
 				}
 
-				let postDataPart = this.getUserPostDataFull(username).public();
+				let postDataPart = this.getUserPostDataFull(username).public;
 
 				try {
 					if (this.accountDatabaseService.currentUser.value) {
 						if (username) {
-							await this.getPrivatePostKey(username);
+							await this.getLatestSharedCircleID(username);
 						}
 
-						postDataPart = this.getUserPostDataFull(
+						postDataPart = await this.getUserPostDataFull(
 							username
 						).private();
 					}
 				}
 				catch {}
 
-				return postDataPart.ids.watch().pipe(
+				return postDataPart.watchIDs().pipe(
 					map(ids =>
 						(nMostRecent === undefined ?
 							ids :
@@ -292,35 +441,137 @@ export class AccountPostsService extends BaseProvider {
 			}`
 	);
 
+	/** Accepts circles shared by another user. */
+	private async acceptIncomingCircles (username: string) : Promise<void> {
+		const currentUser = await this.accountDatabaseService.getCurrentUser();
+
+		const circleIDs = await this.accountDatabaseService.getListKeys(
+			`externalCirclesIncoming/${username}`
+		);
+
+		await Promise.all(
+			circleIDs.map(async circleID =>
+				this.accountDatabaseService.getOrSetDefault(
+					`externalCircles/${username}/${circleID}`,
+					AccountPostCircle,
+					async () =>
+						deserialize(
+							AccountPostCircle,
+							await this.potassiumService.sign.open(
+								await this.potassiumService.box.open(
+									await this.accountDatabaseService.getItem(
+										`externalCirclesIncoming/${username}/${circleID}`,
+										BinaryProto,
+										SecurityModels.unprotected
+									),
+									currentUser.keys.encryptionKeyPair
+								),
+								(await this.accountDatabaseService.getUserPublicKeys(
+									username
+								)).signing,
+								`users/${currentUser.user.username}/externalCirclesIncoming/${username}/${circleID}`
+							)
+						),
+					undefined,
+					undefined,
+					true
+				)
+			)
+		);
+	}
+
+	/** Gets current active Inner Circle circle. */
+	private async getInnerCircle () : Promise<IAccountPostCircle> {
+		const innerCircle = Array.from(
+			(await this.circles().getValue()).values()
+		).find(
+			o =>
+				o.active &&
+				o.circleType ===
+					AccountPostCircle.AccountPostCircleTypes.InnerCircle
+		);
+
+		if (!innerCircle) {
+			await this.createCircle(
+				'',
+				undefined,
+				AccountPostCircle.AccountPostCircleTypes.InnerCircle
+			);
+			return this.getInnerCircle();
+		}
+
+		return innerCircle;
+	}
+
+	/** Gets ID of most recently shared circle. */
+	private async getLatestSharedCircleID (username: string) : Promise<string> {
+		/* TODO: Handle case of multiple circles per user */
+		const circleID = (await this.accountDatabaseService.getListKeys(
+			`externalCirclesIncoming/${username}`
+		)).slice(-1)[0];
+
+		if (!circleID) {
+			throw new Error(`External circle for user ${username} not found.`);
+		}
+
+		return circleID;
+	}
+
+	/** Creates a circle. */
+	public async createCircle (
+		name: string,
+		predecessorID?: string,
+		circleType: AccountPostCircle.AccountPostCircleTypes = AccountPostCircle
+			.AccountPostCircleTypes.Standard
+	) : Promise<string> {
+		const id = uuid(true);
+
+		await this.circles().setItem(id, {
+			active: true,
+			circleType,
+			id,
+			key: this.potassiumService.randomBytes(
+				await this.potassiumService.secretBox.keyBytes
+			),
+			name,
+			predecessorID
+		});
+
+		return id;
+	}
+
 	/** Creates a post. */
 	public async createPost (
 		content: string,
 		isPublic: boolean,
 		image?: Uint8Array
-	) : Promise<void> {
+	) : Promise<string> {
 		const id = uuid();
 
-		await (isPublic ?
+		const postDataPart = isPublic ?
 			this.postData.public :
-			this.postData.private)().posts.setItem(id, {
+			await this.postData.private();
+
+		await postDataPart.setPost(id, {
 			content,
 			image,
 			timestamp: await getTimestamp()
 		});
 
-		await Promise.all([
-			this.postData.private().ids.pushItem(id),
-			...(isPublic ? [this.postData.public().ids.pushItem(id)] : [])
-		]);
+		await postDataPart.pushID(id);
+
+		return id;
 	}
 
 	/** Deletes a post. */
 	public async deletePost (id: string) : Promise<void> {
-		const isPublic = await this.postData.public().posts.hasItem(id);
+		const isPublic = await this.postData.public.hasPost(id);
 
-		await (isPublic ?
+		const postDataPart = isPublic ?
 			this.postData.public :
-			this.postData.private)().posts.removeItem(id);
+			await this.postData.private();
+
+		await postDataPart.removePost(id);
 	}
 
 	/** Edits a post. */
@@ -329,13 +580,13 @@ export class AccountPostsService extends BaseProvider {
 		content: string,
 		image?: Uint8Array
 	) : Promise<void> {
-		const isPublic = await this.postData.public().posts.hasItem(id);
+		const isPublic = await this.postData.public.hasPost(id);
 
-		const postDataPart = (isPublic ?
+		const postDataPart = isPublic ?
 			this.postData.public :
-			this.postData.private)();
+			await this.postData.private();
 
-		await postDataPart.posts.updateItem(id, async o => {
+		await postDataPart.updatePost(id, async o => {
 			const timestamp = await getTimestamp();
 
 			return {
@@ -345,6 +596,14 @@ export class AccountPostsService extends BaseProvider {
 				lastEditTimestamp: timestamp
 			};
 		});
+	}
+
+	/** Gets circle members. */
+	public async getCircleMembers () : Promise<string[]> {
+		/* TODO: Handle case of multiple circles per user */
+		return this.circleMembers(
+			(await this.getInnerCircle()).id
+		).getFlatValue();
 	}
 
 	/** Gets a feed of recent users' posts. */
@@ -371,7 +630,7 @@ export class AccountPostsService extends BaseProvider {
 		const sorted = (await Promise.all(
 			usernames.map(async username => {
 				const postDataPart = await this.getUserPostData(username);
-				const ids = await postDataPart.ids.getTimedValue();
+				const ids = await postDataPart.getTimedIDs();
 
 				const getAuthor = memoize(async () =>
 					this.accountUserLookupService.getUser(username, false)
@@ -412,15 +671,17 @@ export class AccountPostsService extends BaseProvider {
 			username = undefined;
 		}
 
-		let postDataPart = this.getUserPostDataFull(username).public();
+		let postDataPart = this.getUserPostDataFull(username).public;
 
 		try {
 			if (this.accountDatabaseService.currentUser.value) {
 				if (username) {
-					await this.getPrivatePostKey(username);
+					await this.getLatestSharedCircleID(username);
 				}
 
-				postDataPart = this.getUserPostDataFull(username).private();
+				postDataPart = await this.getUserPostDataFull(
+					username
+				).private();
 			}
 		}
 		catch {}
@@ -434,7 +695,7 @@ export class AccountPostsService extends BaseProvider {
 		nMostRecent?: number
 	) : Promise<IAccountPost[]> {
 		const postDataPart = await this.getUserPostData(username);
-		const ids = await postDataPart.ids.getValue();
+		const ids = await postDataPart.getIDs();
 
 		return Promise.all(
 			(nMostRecent === undefined ?
@@ -468,33 +729,103 @@ export class AccountPostsService extends BaseProvider {
 		}
 	}
 
-	/** Shares private post key. */
-	public async sharePrivatePostKey (username: string) : Promise<void> {
+	/** Revokes access to a circle (non-retroactive). */
+	public async revokeCircle (...usernames: string[]) : Promise<void> {
+		usernames = normalizeArray(usernames);
+
+		/* TODO: Handle case of multiple circles per user */
+		const circle = await this.getInnerCircle();
+
+		const circleMembers = await this.circleMembers(
+			circle.id
+		).getFlatValue();
+		const circleMembersSet = new Set(circleMembers);
+
+		const usersToRevoke = new Set(
+			usernames.filter(username => circleMembersSet.has(username))
+		);
+
+		if (usersToRevoke.size < 1) {
+			return;
+		}
+
+		await this.circles().updateItem(circle.id, async o => ({
+			...(o || circle),
+			active: false
+		}));
+
+		await this.createCircle(
+			'',
+			circle.id,
+			AccountPostCircle.AccountPostCircleTypes.InnerCircle
+		);
+
+		await this.shareCircle(
+			...circleMembers.filter(
+				circleMember => !usersToRevoke.has(circleMember)
+			)
+		);
+	}
+
+	/** Shares circle. */
+	public async shareCircle (...usernames: string[]) : Promise<void> {
+		usernames = normalizeArray(usernames);
+
 		const currentUser = await this.accountDatabaseService.getCurrentUser();
 
-		const url = `users/${username}/privatePostKeysIncoming/${currentUser.user.username}`;
+		/* TODO: Handle case of multiple circles per user */
+		const currentCircle = await this.getInnerCircle();
 
-		await this.accountDatabaseService.getOrSetDefault(
-			url,
-			BinaryProto,
-			async () =>
-				this.potassiumService.box.seal(
-					await this.potassiumService.sign.sign(
-						await serialize(
-							AccountPrivatePostKey,
-							await this.privatePostKey
-						),
-						currentUser.keys.signingKeyPair.privateKey,
-						url
-					),
-					(await this.accountDatabaseService.getUserPublicKeys(
-						username
-					)).encryption
-				),
-			SecurityModels.unprotected,
-			undefined,
-			true
+		const oldCircles: IAccountPostCircle[] = [];
+		for (
+			let lastCircle = currentCircle;
+			lastCircle.predecessorID;
+			lastCircle = oldCircles[0]
+		) {
+			oldCircles.unshift(
+				await this.circles().getItem(lastCircle.predecessorID)
+			);
+		}
+
+		await Promise.all(
+			usernames.map(async username => {
+				const shareCircleWithUser = async (
+					circle: IAccountPostCircle
+				) => {
+					const url = `users/${username}/externalCirclesIncoming/${currentUser.user.username}/${circle.id}`;
+
+					await this.accountDatabaseService.getOrSetDefault(
+						url,
+						BinaryProto,
+						async () =>
+							this.potassiumService.box.seal(
+								await this.potassiumService.sign.sign(
+									await serialize<IAccountPostCircle>(
+										AccountPostCircle,
+										{
+											...circle,
+											name: ''
+										}
+									),
+									currentUser.keys.signingKeyPair.privateKey,
+									url
+								),
+								(await this.accountDatabaseService.getUserPublicKeys(
+									username
+								)).encryption
+							),
+						SecurityModels.unprotected,
+						undefined,
+						true
+					);
+				};
+
+				await Promise.all(oldCircles.map(shareCircleWithUser));
+				await shareCircleWithUser(currentCircle);
+			})
 		);
+
+		await this.circleMembers(currentCircle.id).pushItem(usernames);
 	}
 
 	constructor (
@@ -506,9 +837,6 @@ export class AccountPostsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
-
-		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService

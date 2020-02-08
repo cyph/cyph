@@ -5,6 +5,7 @@ import {IAccountPost} from '../../proto';
 import {AccountPostsService} from '../../services/account-posts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {DialogService} from '../../services/dialog.service';
 import {StringsService} from '../../services/strings.service';
 import {getDateTimeString} from '../../util/time';
 
@@ -27,6 +28,49 @@ export class AccountPostComponent extends BaseProvider {
 	/** @see IAccountPost */
 	@Input() public post?: IAccountPost;
 
+	/** Deletes post. */
+	public async deletePost () : Promise<void> {
+		if (
+			!this.post?.id ||
+			!(await this.dialogService.confirm({
+				content: this.stringsService.postDeletePrompt,
+				title: this.stringsService.postDeleteTitle
+			}))
+		) {
+			return;
+		}
+
+		await this.accountPostsService.deletePost(this.post.id);
+	}
+
+	/**
+	 * Edits post.
+	 * TODO: Better UI for this.
+	 */
+	public async editPost () : Promise<void> {
+		if (!this.post?.id) {
+			return;
+		}
+
+		const content = await this.dialogService.prompt({
+			bottomSheet: true,
+			content: this.stringsService.postEditPrompt,
+			placeholder: this.stringsService.postContent,
+			preFill: this.post.content,
+			title: this.stringsService.postEditTitle
+		});
+
+		if (content === undefined) {
+			return;
+		}
+
+		await this.accountPostsService.editPost(
+			this.post.id,
+			content,
+			this.post.image
+		);
+	}
+
 	/** @see author */
 	public get user () : User | undefined {
 		return (
@@ -35,6 +79,9 @@ export class AccountPostComponent extends BaseProvider {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

@@ -80,7 +80,7 @@ service firebase.storage {
 
 			// match /pseudoRelationships/{hash} {}
 
-			match /privatePostLists/{privatePostList}/{postID}/{hash} {
+			match /privatePostLists/{circleID}/{postID}/{hash} {
 				allow read;
 				allow write: if resource == null;
 			}
@@ -126,6 +126,10 @@ service firebase.storage {
 
 				// match /certificateRequest/{hash} {}
 
+				// match /circleMembers/{circleID}/{circleMember}/{hash} {}
+
+				// match /circles/{circleID}/{hash} {}
+
 				// match /contactIDs/{username}/{hash} {}
 
 				// match /contacts/{username}/{hash} {}
@@ -145,6 +149,18 @@ service firebase.storage {
 				// match /email/{hash} {}
 
 				// match /encryptionKeyPair/{hash} {}
+
+				// match /externalCircles/{username}/{circleID}/{hash} {}
+
+				match /externalCirclesIncoming/{username}/{circleID}/{hash} {
+					allow read, write: if
+						request.auth != null &&
+						(
+							(user + '@' + DOMAIN) == request.auth.token.email ||
+							(username + '@' + DOMAIN) == request.auth.token.email
+						)
+					;
+				}
 
 				match /fileRecords/{fileRecord}/{hash} {
 					allow read;
@@ -224,20 +240,6 @@ service firebase.storage {
 
 				match /presence/{hash} {
 					allow read;
-				}
-
-				// match /privatePostKey/{hash} {}
-
-				// match /privatePostKeys/{username}/{hash} {}
-
-				match /privatePostKeysIncoming/{username}/{hash} {
-					allow read, write: if
-						request.auth != null &&
-						(
-							(user + '@' + DOMAIN) == request.auth.token.email ||
-							(username + '@' + DOMAIN) == request.auth.token.email
-						)
-					;
 				}
 
 				// match /profileVisible/{hash} {}

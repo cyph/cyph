@@ -256,10 +256,24 @@ export class FirebaseDatabaseService extends DatabaseService {
 			return [];
 		}
 
-		const keys = (value instanceof Map ?
-			Array.from(value.keys()) :
-			Object.keys(value)
-		).sort();
+		const getKeyTimestamp =
+			value instanceof Map ?
+				(k: string) => value.get(k).timestamp :
+				(k: string) => value[k].timestamp;
+
+		let keys =
+			value instanceof Map ?
+				Array.from(value.keys()) :
+				Object.keys(value);
+
+		if (keys.length > 0 && typeof getKeyTimestamp(keys[0]) === 'number') {
+			keys = keys.sort((a, b) =>
+				getKeyTimestamp(a) > getKeyTimestamp(b) ? 1 : -1
+			);
+		}
+		else {
+			keys = keys.sort();
+		}
 
 		const endIndex = noFilter ?
 			-1 :

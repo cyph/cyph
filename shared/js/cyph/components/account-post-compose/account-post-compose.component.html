@@ -56,18 +56,58 @@
 			</div>
 
 			<div>
-				<mat-slide-toggle
-					[ngModel]="
-						(accountPostsService.draft.isPublic | await) === true
-					"
-					(ngModelChange)="
-						accountPostsService.draft.isPublic.next($event)
-					"
-				>
-					<mat-icon>public</mat-icon>
-					&ngsp;
-					<span cyphTranslate>Public</span>
-				</mat-slide-toggle>
+				<mat-form-field>
+					<!-- TODO: Handle case of multiple circles per user -->
+					<mat-select
+						[placeholder]="stringsService.circlePlaceholder"
+						[ngModel]="
+							(accountPostsService.draft.isPublic | await) ===
+							true ?
+								0 :
+								accountPostCircleTypes.InnerCircle
+						"
+						(ngModelChange)="
+							accountPostsService.draft.isPublic.next(
+								$event === 0
+							)
+						"
+					>
+						<mat-select-trigger>
+							<ng-container
+								[ngSwitch]="
+									accountPostsService.draft.isPublic | await
+								"
+							>
+								<ng-container *ngSwitchCase="false">
+									<mat-icon>lock</mat-icon>
+									&ngsp;
+									<span>{{
+										stringsService.innerCircle
+									}}</span>
+								</ng-container>
+
+								<ng-container *ngSwitchCase="true">
+									<mat-icon>public</mat-icon>
+									&ngsp;
+									<span cyphTranslate>Public</span>
+								</ng-container>
+							</ng-container>
+						</mat-select-trigger>
+
+						<mat-option
+							[value]="accountPostCircleTypes.InnerCircle"
+						>
+							<mat-icon>lock</mat-icon>
+							&ngsp;
+							<span>{{ stringsService.innerCircle }}</span>
+						</mat-option>
+						<mat-option [value]="0">
+							<mat-icon>public</mat-icon>
+							&ngsp;
+							<span cyphTranslate>Public</span>
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
 
 				<button
 					mat-raised-button

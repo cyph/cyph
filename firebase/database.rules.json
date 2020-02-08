@@ -258,7 +258,7 @@
 			},
 
 			"privatePostLists": {
-				"$privatePostList": {
+				"$circleID": {
 					".read": true,
 
 					"$postID": {
@@ -511,6 +511,36 @@
 						}
 					},
 
+					"circleMembers": {
+						"$circleID": {
+							"$circleMember": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
+					"circles": {
+						"$circleID": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
 					"clientConnections": {
 						"$clientConnection": {
 							".validate": "newData.val() === now"
@@ -612,6 +642,41 @@
 						},
 						"timestamp": {
 							".validate": "newData.val() === now"
+						}
+					},
+
+					"externalCircles": {
+						"$username": {
+							"$circleID": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
+					"externalCirclesIncoming": {
+						"$username": {
+							".read": "($user + '@' + $DOMAIN) === auth.token.email || ($username + '@' + $DOMAIN) === auth.token.email",
+							".write": "($user + '@' + $DOMAIN) === auth.token.email || ($username + '@' + $DOMAIN) === auth.token.email",
+
+							"$circleID": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
 						}
 					},
 
@@ -964,49 +1029,6 @@
 						},
 						"timestamp": {
 							".validate": "newData.val() === now"
-						}
-					},
-
-					"privatePostKey": {
-						"data": {
-							".validate": "newData.isString()"
-						},
-						"hash": {
-							".validate": "newData.isString()"
-						},
-						"timestamp": {
-							".validate": "newData.val() === now"
-						}
-					},
-
-					"privatePostKeys": {
-						"$username": {
-							"data": {
-								".validate": "newData.isString()"
-							},
-							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
-						}
-					},
-
-					"privatePostKeysIncoming": {
-						"$username": {
-							".read": "($user + '@' + $DOMAIN) === auth.token.email || ($username + '@' + $DOMAIN) === auth.token.email",
-							".write": "($user + '@' + $DOMAIN) === auth.token.email || ($username + '@' + $DOMAIN) === auth.token.email",
-
-							"data": {
-								".validate": "newData.isString()"
-							},
-							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
 						}
 					},
 

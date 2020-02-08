@@ -210,6 +210,12 @@ export class StringsService extends BaseProvider {
 	public readonly checkoutErrorTitle = `Payment Failed`;
 
 	/** @see StringsService */
+	public readonly circle = `Circle`;
+
+	/** @see StringsService */
+	public readonly circlePlaceholder = `Circle to Share With`;
+
+	/** @see StringsService */
 	public readonly clickHere = `Click here`;
 
 	/** @see StringsService */
@@ -426,6 +432,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly incomingPatientInfoTitle = `Saving Incoming Patient Info`;
+
+	/** @see StringsService */
+	public readonly innerCircle = `Inner Circle`;
 
 	/** @see StringsService */
 	public readonly introductoryMessage = `You may now speak.`;
@@ -817,6 +826,24 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly pin = `PIN`;
+
+	/** @see StringsService */
+	public readonly postContent = `Post Content`;
+
+	/** @see StringsService */
+	public readonly postDeletePrompt = `Delete this post?`;
+
+	/** @see StringsService */
+	public readonly postDeleteTitle = `Delete Post`;
+
+	/** @see StringsService */
+	public readonly postEditPrompt = `Edit the contents of this post:`;
+
+	/** @see StringsService */
+	public readonly postEditTitle = `Edit Post`;
+
+	/** @see StringsService */
+	public readonly postTitle = `Social Post`;
 
 	/** @see StringsService */
 	public readonly product = `${this.internalProduct}`;
