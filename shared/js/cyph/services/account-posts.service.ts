@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import {
 	IAccountPostData,
 	IAccountPostDataPart,
@@ -24,6 +24,7 @@ import {
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalizeArray} from '../util/formatting';
+import {getOrSetDefault} from '../util/get-or-set-default';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -37,6 +38,12 @@ import {PotassiumService} from './crypto/potassium.service';
  */
 @Injectable()
 export class AccountPostsService extends BaseProvider {
+	/** @ignore */
+	private readonly privatePostDataPartUpdates = new Map<
+		string,
+		BehaviorSubject<IAccountPostDataPart>
+	>();
+
 	/** Mapping of circle IDs to names. */
 	public readonly circles = memoize((username?: string) =>
 		this.accountDatabaseService.getAsyncMap<IAccountPostCircle>(
@@ -210,7 +217,7 @@ export class AccountPostsService extends BaseProvider {
 					const getCircleWrapperForID = (id: string) =>
 						oldIDMap.get(id)?.circleWrapper || currentCircleWrapper;
 
-					const privatePostDataPart: IAccountPostDataPart = {
+					const privatePostDataPartInternal: IAccountPostDataPart = {
 						getIDs: async () =>
 							oldIDs.concat(
 								await currentCircleWrapper.ids.getValue()
@@ -238,6 +245,56 @@ export class AccountPostsService extends BaseProvider {
 						),
 						watchPost: memoize(id =>
 							getCircleWrapperForID(id).watchPost(id)
+						)
+					};
+
+					const initPrivatePostDataPartUpdates = (
+						circle: IAccountPostCircle
+					) => {
+						const subject = getOrSetDefault(
+							this.privatePostDataPartUpdates,
+							circle.id,
+							() =>
+								new BehaviorSubject(privatePostDataPartInternal)
+						);
+						subject.next(privatePostDataPartInternal);
+						return subject;
+					};
+
+					const privatePostDataPartWatcher = initPrivatePostDataPartUpdates(
+						currentCircle
+					);
+
+					for (const circle of oldCircles) {
+						initPrivatePostDataPartUpdates(circle);
+					}
+
+					const privatePostDataPart: IAccountPostDataPart = {
+						getIDs: async () =>
+							privatePostDataPartWatcher.value.getIDs(),
+						getPost: async id =>
+							privatePostDataPartWatcher.value.getPost(id),
+						getTimedIDs: async () =>
+							privatePostDataPartWatcher.value.getTimedIDs(),
+						hasPost: async id =>
+							privatePostDataPartWatcher.value.hasPost(id),
+						pushID: async id =>
+							privatePostDataPartWatcher.value.pushID(id),
+						removePost: async id =>
+							privatePostDataPartWatcher.value.removePost(id),
+						setPost: async (id, post) =>
+							privatePostDataPartWatcher.value.setPost(id, post),
+						updatePost: async (id, f) =>
+							privatePostDataPartWatcher.value.updatePost(id, f),
+						watchIDs: memoize(() =>
+							privatePostDataPartWatcher.pipe(
+								mergeMap(latestPrivatePostDataPart =>
+									latestPrivatePostDataPart.watchIDs()
+								)
+							)
+						),
+						watchPost: memoize(id =>
+							privatePostDataPartWatcher.value.watchPost(id)
 						)
 					};
 
