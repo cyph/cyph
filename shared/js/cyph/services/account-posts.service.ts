@@ -444,33 +444,35 @@ export class AccountPostsService extends BaseProvider {
 			`externalCirclesIncoming/${username}`
 		);
 
-		for (const circleID of circleIDs) {
-			await this.accountDatabaseService.getOrSetDefault(
-				`externalCircles/${username}/${circleID}`,
-				AccountPostCircle,
-				async () =>
-					deserialize(
-						AccountPostCircle,
-						await this.potassiumService.sign.open(
-							await this.potassiumService.box.open(
-								await this.accountDatabaseService.getItem(
-									`externalCirclesIncoming/${username}/${circleID}`,
-									BinaryProto,
-									SecurityModels.unprotected
+		await Promise.all(
+			circleIDs.map(async circleID =>
+				this.accountDatabaseService.getOrSetDefault(
+					`externalCircles/${username}/${circleID}`,
+					AccountPostCircle,
+					async () =>
+						deserialize(
+							AccountPostCircle,
+							await this.potassiumService.sign.open(
+								await this.potassiumService.box.open(
+									await this.accountDatabaseService.getItem(
+										`externalCirclesIncoming/${username}/${circleID}`,
+										BinaryProto,
+										SecurityModels.unprotected
+									),
+									currentUser.keys.encryptionKeyPair
 								),
-								currentUser.keys.encryptionKeyPair
-							),
-							(await this.accountDatabaseService.getUserPublicKeys(
-								username
-							)).signing,
-							`users/${currentUser.user.username}/externalCirclesIncoming/${username}/${circleID}`
-						)
-					),
-				undefined,
-				undefined,
-				true
-			);
-		}
+								(await this.accountDatabaseService.getUserPublicKeys(
+									username
+								)).signing,
+								`users/${currentUser.user.username}/externalCirclesIncoming/${username}/${circleID}`
+							)
+						),
+					undefined,
+					undefined,
+					true
+				)
+			)
+		);
 	}
 
 	/** Gets current active Inner Circle circle. */
