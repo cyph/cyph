@@ -55,6 +55,7 @@ export class AccountPostComponent extends BaseProvider {
 		const content = await this.dialogService.prompt({
 			bottomSheet: true,
 			content: this.stringsService.postEditPrompt,
+			placeholder: this.stringsService.postContent,
 			preFill: this.post.content,
 			title: this.stringsService.postEditTitle
 		});
