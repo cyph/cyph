@@ -598,6 +598,14 @@ export class AccountPostsService extends BaseProvider {
 		});
 	}
 
+	/** Gets circle members. */
+	public async getCircleMembers () : Promise<string[]> {
+		/* TODO: Handle case of multiple circles per user */
+		return this.circleMembers(
+			(await this.getInnerCircle()).id
+		).getFlatValue();
+	}
+
 	/** Gets a feed of recent users' posts. */
 	public async getFeed (
 		nMostRecent: number | undefined = 20,
