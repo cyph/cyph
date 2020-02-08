@@ -35,14 +35,18 @@ $header-size: 135px;
 		.description {
 			font-size: 12px;
 		}
+		.profile-info {
+			min-height: calc(10em + 84px);
+		}
 	}
 
 	.avatar {
-		width: 13em;
-		height: 13em;
+		width: 10em;
+		height: 10em;
 		margin-top: 1em;
 		box-shadow: 0 20px 42px 0 rgba(0, 0, 0, 0.3);
 		border-width: 10px !important;
+		margin-right: 1em;
 
 		&:not(.cyph-drop-zone) {
 			cursor: auto;
@@ -82,7 +86,7 @@ $header-size: 135px;
 
 	.name {
 		font-size: 37px;
-		margin-top: 25px;
+		//margin-top: 25px;
 		margin-bottom: 10px;
 		font-weight: 500;
 		color: #fff;
@@ -156,9 +160,11 @@ $header-size: 135px;
 	}
 
 	.profile-info {
-		width: 100%;
-		margin-top: 3em;
-		margin-bottom: 4em;
+		width: 90%;
+		margin-bottom: 2em;
+		margin-left: auto;
+		margin-right: auto;
+		min-height: calc(20em + 20px);
 	}
 
 	&.edit-mode .profile-info {
