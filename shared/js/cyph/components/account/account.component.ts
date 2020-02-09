@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {combineLatest, Observable, of} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
@@ -52,7 +52,7 @@ export class AccountComponent extends BaseProvider
 	private readonly activatedRouteURL: Observable<
 		UrlSegment[]
 	> = this.accountService.routeChanges.pipe(
-		mergeMap(() =>
+		switchMap(() =>
 			this.activatedRoute.firstChild ?
 				this.activatedRoute.firstChild.url :
 				of([])

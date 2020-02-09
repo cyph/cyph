@@ -1,7 +1,7 @@
 import {SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
@@ -54,7 +54,7 @@ export class User {
 		this.avatarInternal,
 		User.defaultAvatar
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	).pipe(mergeMap(async avatar => avatar || User.defaultAvatar));
+	).pipe(switchMap(async avatar => avatar || User.defaultAvatar));
 
 	/** @see IAccountContactState.state */
 	public readonly contactState: Observable<
@@ -69,7 +69,7 @@ export class User {
 		this.coverImageInternal,
 		User.defaultCoverImage
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	).pipe(mergeMap(async coverImage => coverImage || User.defaultCoverImage));
+	).pipe(switchMap(async coverImage => coverImage || User.defaultCoverImage));
 
 	/** @see IAccountUserProfile.description */
 	public readonly description: Observable<string> = toBehaviorSubject(

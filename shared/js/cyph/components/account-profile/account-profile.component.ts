@@ -4,7 +4,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {
 	SecurityModels,
 	User,
@@ -530,7 +530,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				this.username,
 				this.accountDatabaseService.currentUser
 			]).pipe(
-				mergeMap(async ([username, currentUser]) =>
+				switchMap(async ([username, currentUser]) =>
 					username ?
 						{
 							isCurrentUser: false,
@@ -563,7 +563,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 		this.userMembers = toBehaviorSubject(
 			this.userProfile.pipe(
-				mergeMap(user =>
+				switchMap(user =>
 					user ?
 						this.accountOrganizationsService.getMembers(user) :
 						of([])
@@ -575,7 +575,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 		this.userOrganiztion = toBehaviorSubject(
 			this.userProfile.pipe(
-				mergeMap(async user =>
+				switchMap(async user =>
 					user ?
 						this.accountOrganizationsService.getOrganization(user) :
 						undefined
@@ -587,7 +587,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 		this.isContact = toBehaviorSubject(
 			this.username.pipe(
-				mergeMap(username =>
+				switchMap(username =>
 					username ?
 						this.accountContactsService.watchIfContact(
 							username,

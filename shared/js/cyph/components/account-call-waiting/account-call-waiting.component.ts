@@ -8,7 +8,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {BehaviorSubject, combineLatest, of} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes, CallTypes, IAppointment} from '../../proto';
@@ -131,7 +131,7 @@ export class AccountCallWaitingComponent extends BaseProvider
 			this.subscriptions.push(
 				combineLatest([
 					this.accountDatabaseService.currentUser.pipe(
-						mergeMap(o => (o ? o.user.userType : of(undefined)))
+						switchMap(o => (o ? o.user.userType : of(undefined)))
 					),
 					this.formCompose.sent
 				])

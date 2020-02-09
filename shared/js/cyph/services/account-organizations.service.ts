@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {mergeMap} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 import {User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {AccountUserTypes} from '../proto';
@@ -46,7 +46,7 @@ export class AccountOrganizationsService extends BaseProvider {
 						return org.organizationMembers
 							.watch()
 							.pipe(
-								mergeMap(async o =>
+								switchMap(async o =>
 									filterUndefined(
 										await Promise.all(
 											Object.keys(o).map(async username =>

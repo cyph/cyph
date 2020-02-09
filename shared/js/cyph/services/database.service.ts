@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
@@ -434,7 +434,7 @@ export class DatabaseService extends DataManagerService {
 			},
 			updateValue: async f =>
 				asyncMap.setValue(await f(await asyncMap.getValue())),
-			watch: memoize(() => watchKeys().pipe(mergeMap(getValueHelper))),
+			watch: memoize(() => watchKeys().pipe(switchMap(getValueHelper))),
 			watchItem: memoize(key =>
 				this.watch(`${url}/${key}`, proto, subscriptions).pipe(
 					map(o => o.value)

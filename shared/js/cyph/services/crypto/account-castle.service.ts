@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {of} from 'rxjs';
-import {mergeMap, take} from 'rxjs/operators';
+import {switchMap, take} from 'rxjs/operators';
 import {
 	AnonymousRemoteUser,
 	HandshakeSteps,
@@ -47,7 +47,7 @@ export class AccountCastleService extends CastleService {
 
 		const user = await accountSessionService.remoteUser
 			.pipe(
-				mergeMap(async o => o),
+				switchMap(async o => o),
 				filterUndefinedOperator(),
 				take(1)
 			)

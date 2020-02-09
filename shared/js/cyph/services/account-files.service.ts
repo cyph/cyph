@@ -11,7 +11,7 @@ import {DeltaOperation} from 'quill';
 import Delta from 'quill-delta';
 import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
 import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
-import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
+import {filter, map, skip, switchMap, take} from 'rxjs/operators';
 import {AccountFile, AccountFileShare, SecurityModels} from '../account';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
@@ -346,7 +346,7 @@ export class AccountFilesService extends BaseProvider {
 			this.subscriptions
 		)
 		.pipe(
-			mergeMap(references =>
+			switchMap(references =>
 				observableAll(
 					filterUndefined(
 						references.map(({value}) => this.watchFile(value))
@@ -531,7 +531,7 @@ export class AccountFilesService extends BaseProvider {
 				this.subscriptions
 			)
 			.pipe(
-				mergeMap(async arr =>
+				switchMap(async arr =>
 					(await Promise.all(
 						arr.map(async ({value}) =>
 							getOrSetDefaultAsync(
@@ -938,7 +938,7 @@ export class AccountFilesService extends BaseProvider {
 				}[]
 			>(
 				filesList.pipe(
-					mergeMap(records =>
+					switchMap(records =>
 						observableAll(
 							records.map(record =>
 								this.watchFileData(record, recordType).pipe(
@@ -2224,7 +2224,7 @@ export class AccountFilesService extends BaseProvider {
 						this.subscriptions
 					)
 					.pipe(
-						mergeMap(async o => ({
+						switchMap(async o => ({
 							...o.value,
 							...(await filePromise),
 							name: o.value.name.slice(0, this.maxNameLength)

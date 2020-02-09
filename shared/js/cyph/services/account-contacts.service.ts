@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
-import {map, mergeMap, skip, take} from 'rxjs/operators';
+import {map, skip, switchMap, take} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -168,7 +168,7 @@ export class AccountContactsService extends BaseProvider {
 			),
 			this.accountUserLookupService.pipe(filterUndefinedOperator())
 		]).pipe(
-			mergeMap(async ([usernames, accountUserLookupService]) =>
+			switchMap(async ([usernames, accountUserLookupService]) =>
 				filterUndefined(
 					await Promise.all(
 						normalizeArray(usernames).map(async username =>
@@ -199,7 +199,7 @@ export class AccountContactsService extends BaseProvider {
 		) : Observable<User[]> =>
 			toBehaviorSubject(
 				contactList.pipe(
-					mergeMap(async contacts =>
+					switchMap(async contacts =>
 						filterUndefined(
 							await Promise.all(
 								contacts.map(async contact =>
@@ -615,7 +615,7 @@ export class AccountContactsService extends BaseProvider {
 				this.accountPostsService.pipe(filterUndefinedOperator()),
 				this.contactListInnerCircle.pipe(
 					skip(1),
-					mergeMap(contactListInnerCircle =>
+					switchMap(contactListInnerCircle =>
 						combineLatest(
 							contactListInnerCircle.map(user =>
 								user.accountContactState

@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
@@ -826,7 +826,7 @@ export class AccountDatabaseService extends BaseProvider {
 					asyncMap.setValue(await f(await asyncMap.getValue())),
 				watch: memoize(() =>
 					this.watchListKeys(url, subscriptions).pipe(
-						mergeMap(getValueHelper)
+						switchMap(getValueHelper)
 					)
 				),
 				watchItem: memoize(key =>
@@ -1538,13 +1538,13 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
-				mergeMap(async () => {
+				switchMap(async () => {
 					const processedURL = await this.normalizeURL(url);
 
 					return this.databaseService
 						.watch(processedURL, BinaryProto, subscriptions)
 						.pipe(
-							mergeMap(async data => ({
+							switchMap(async data => ({
 								timestamp: data.timestamp,
 								value: await this.open(
 									processedURL,
@@ -1557,7 +1557,7 @@ export class AccountDatabaseService extends BaseProvider {
 							}))
 						);
 				}),
-				mergeMap(o => o)
+				switchMap(o => o)
 			),
 			subscriptions
 		);
@@ -1611,7 +1611,7 @@ export class AccountDatabaseService extends BaseProvider {
 
 		const watcher = immutable ?
 			headWatcher().pipe(
-				mergeMap(
+				switchMap(
 					async (head) : Promise<[string[], ITimedValue<string>]> => [
 						await this.getListKeys(url),
 						head
@@ -1627,7 +1627,7 @@ export class AccountDatabaseService extends BaseProvider {
 
 		return toBehaviorSubject(
 			watcher.pipe(
-				mergeMap(async ([keys, head]) => {
+				switchMap(async ([keys, head]) => {
 					const headValue = !isNaN(head.timestamp) ?
 						head.value :
 						undefined;
@@ -1674,13 +1674,13 @@ export class AccountDatabaseService extends BaseProvider {
 		previousKey?: string;
 	}> {
 		return this.currentUser.pipe(
-			mergeMap(async () =>
+			switchMap(async () =>
 				this.databaseService.watchListKeyPushes(
 					await this.normalizeURL(url),
 					subscriptions
 				)
 			),
-			mergeMap(o => o)
+			switchMap(o => o)
 		);
 	}
 
@@ -1692,14 +1692,14 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Observable<string[]> {
 		return cacheObservable(
 			this.currentUser.pipe(
-				mergeMap(async () =>
+				switchMap(async () =>
 					this.databaseService.watchListKeys(
 						await this.normalizeURL(url),
 						subscriptions,
 						noFilter
 					)
 				),
-				mergeMap(o => o)
+				switchMap(o => o)
 			),
 			subscriptions
 		);
@@ -1717,7 +1717,7 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
-				mergeMap(async () => {
+				switchMap(async () => {
 					const processedURL = await this.normalizeURL(url);
 
 					return this.databaseService
@@ -1729,7 +1729,7 @@ export class AccountDatabaseService extends BaseProvider {
 							subscriptions
 						)
 						.pipe(
-							mergeMap(async data => ({
+							switchMap(async data => ({
 								timestamp: data.timestamp,
 								value: await this.open(
 									`${processedURL}/${data.key}`,
@@ -1745,7 +1745,7 @@ export class AccountDatabaseService extends BaseProvider {
 							}))
 						);
 				}),
-				mergeMap(o => o)
+				switchMap(o => o)
 			),
 			subscriptions
 		);

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
@@ -65,7 +65,7 @@ export class AccountChatService extends ChatService {
 
 	/** @inheritDoc */
 	public readonly remoteUserObservable = this.remoteUser.pipe(
-		mergeMap(async user => user)
+		switchMap(async user => user)
 	);
 
 	/** @inheritDoc */

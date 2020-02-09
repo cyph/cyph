@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {
 	IAccountPostData,
 	IAccountPostDataPart,
@@ -313,7 +313,7 @@ export class AccountPostsService extends BaseProvider {
 								currentCircleWrapper.ids.watch(),
 								publicPostDataPart.watchIDs()
 							]).pipe(
-								mergeMap(async () =>
+								switchMap(async () =>
 									privatePostDataPartInternal.getIDs()
 								)
 							)
@@ -364,7 +364,7 @@ export class AccountPostsService extends BaseProvider {
 							privatePostDataPartWatcher.value.updatePost(id, f),
 						watchIDs: memoize(() =>
 							privatePostDataPartWatcher.pipe(
-								mergeMap(latestPrivatePostDataPart =>
+								switchMap(latestPrivatePostDataPart =>
 									latestPrivatePostDataPart.watchIDs()
 								)
 							)

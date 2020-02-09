@@ -3,7 +3,7 @@
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {mergeMap} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 import {User, UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ChatMessage, IChatData} from '../chat';
@@ -40,7 +40,7 @@ const getDateChangeInternal = (
 			getMessageTimestampSubject(message),
 			watchDateChange(true)
 		]).pipe(
-			mergeMap(async ([messageTimestamp]) =>
+			switchMap(async ([messageTimestamp]) =>
 				messageTimestamp !== undefined ?
 					relativeDateString(messageTimestamp, true) :
 					undefined
@@ -51,7 +51,7 @@ const getDateChangeInternal = (
 			getMessageTimestampSubject(last),
 			watchDateChange(true)
 		]).pipe(
-			mergeMap(async ([messageTimestamp, lastMessageTimestamp]) =>
+			switchMap(async ([messageTimestamp, lastMessageTimestamp]) =>
 				messageTimestamp !== undefined &&
 				lastMessageTimestamp !== undefined &&
 				!compareDates(lastMessageTimestamp, messageTimestamp, true) ?

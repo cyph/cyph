@@ -19,7 +19,7 @@ import {
 	of,
 	Subscription
 } from 'rxjs';
-import {map, mergeMap, switchMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -73,7 +73,7 @@ export class AccountContactsComponent extends BaseProvider
 		this.activatedRoute.data,
 		this.accountService.routeChanges
 	]).pipe(
-		mergeMap(async ([contactList, data]) => {
+		switchMap(async ([contactList, data]) => {
 			const snapshot = this.activatedRoute.snapshot.firstChild ?
 				this.activatedRoute.snapshot.firstChild :
 				this.activatedRoute.snapshot;
@@ -182,7 +182,7 @@ export class AccountContactsComponent extends BaseProvider
 	public readonly filteredContactList: Observable<
 		(IContactListItem | User)[]
 	> = this.routeReactiveContactList.pipe(
-		mergeMap(o =>
+		switchMap(o =>
 			combineLatest([
 				of(o),
 				observableAll(
