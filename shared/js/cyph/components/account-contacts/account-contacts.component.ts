@@ -23,11 +23,12 @@ import {map, mergeMap, switchMap} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
+	SecurityModels,
 	User,
 	UserPresence
 } from '../../account';
 import {BaseProvider} from '../../base-provider';
-import {AccountUserTypes, BooleanProto} from '../../proto';
+import {AccountContactState, AccountUserTypes, BooleanProto} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -188,18 +189,48 @@ export class AccountContactsComponent extends BaseProvider
 					o.filteredContactList.map(
 						({unreadMessageCount}) => unreadMessageCount
 					)
+				),
+				observableAll(
+					o.filteredContactList.map(({username}) =>
+						this.accountDatabaseService.watch(
+							`contacts/${username}`,
+							AccountContactState,
+							SecurityModels.unprotected,
+							undefined,
+							undefined,
+							this.subscriptions
+						)
+					)
 				)
 			])
 		),
-		map(([o, counts]) =>
+		map(([o, counts, contactStates]) =>
 			this.contactList !== this.accountContactsService.contactList ?
 				o.filteredContactList :
 				[
 					...o.filteredContactList.filter(
-						(_: any, i: number) => counts[i] > 0
+						(_, i) =>
+							counts[i] > 0 &&
+							contactStates[i].value.state ===
+								AccountContactState.States.IncomingRequest
 					),
 					...o.filteredContactList.filter(
-						(_: any, i: number) => counts[i] < 1
+						(_, i) =>
+							counts[i] > 0 &&
+							contactStates[i].value.state !==
+								AccountContactState.States.IncomingRequest
+					),
+					...o.filteredContactList.filter(
+						(_, i) =>
+							counts[i] < 1 &&
+							contactStates[i].value.state ===
+								AccountContactState.States.IncomingRequest
+					),
+					...o.filteredContactList.filter(
+						(_, i) =>
+							counts[i] < 1 &&
+							contactStates[i].value.state !==
+								AccountContactState.States.IncomingRequest
 					)
 				]
 		)
