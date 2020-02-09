@@ -153,11 +153,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 			let externalUser =
 				this.externalUsers &&
 				(results.length < 1 || results[0].user.username !== query) &&
-				(await this.accountUserLookupService.exists(
-					query,
-					false,
-					false
-				)) ?
+				(await this.accountUserLookupService.exists(query, false)) ?
 					query :
 					undefined;
 

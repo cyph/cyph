@@ -659,7 +659,7 @@ export class AccountPostsService extends BaseProvider {
 				const ids = await postDataPart.getTimedIDs();
 
 				const getAuthor = memoize(async () =>
-					this.accountUserLookupService.getUser(username, false)
+					this.accountUserLookupService.getUser(username)
 				);
 
 				return (nMostRecent === undefined ?

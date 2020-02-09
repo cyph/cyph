@@ -24,10 +24,7 @@ export class AccountPostPageComponent extends BaseProvider implements OnInit {
 			!postID || !username ?
 				undefined :
 				{
-					author: this.accountUserLookupService.getUser(
-						username,
-						false
-					),
+					author: this.accountUserLookupService.getUser(username),
 					id: postID,
 					post: this.accountPostsService
 						.getUserPostData(username)

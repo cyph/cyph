@@ -46,7 +46,8 @@ export const getOrSetDefaultAsync = async <K, V>(
 	map: MaybePromise<Map<K, V> | undefined>,
 	key: MaybePromise<K | undefined>,
 	defaultValue: () => MaybePromise<V>,
-	lock: boolean = true
+	lock: boolean = true,
+	waitUntilAlreadySet: boolean = false
 ) : Promise<V> => {
 	const k = await key;
 	const m = await map;
@@ -81,7 +82,10 @@ export const getOrSetDefaultAsync = async <K, V>(
 			setResolver.resolve();
 		};
 
-		if (lock) {
+		if (waitUntilAlreadySet) {
+			await setResolver.promise;
+		}
+		else if (lock) {
 			await setLock(async () => {
 				if (m.has(k)) {
 					return;
