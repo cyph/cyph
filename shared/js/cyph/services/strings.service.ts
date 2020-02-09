@@ -446,6 +446,12 @@ export class StringsService extends BaseProvider {
 	public readonly innerCircle = `Inner Circle`;
 
 	/** @see StringsService */
+	public readonly innerCircleFinalConfirmationPrompt = `Grant @\${USERNAME} access to read your private Inner Circle posts?`;
+
+	/** @see StringsService */
+	public readonly innerCircleFinalConfirmationTitle = `Inner Circle Confirmation`;
+
+	/** @see StringsService */
 	public readonly introductoryMessage = `You may now speak.`;
 
 	/** @see StringsService */

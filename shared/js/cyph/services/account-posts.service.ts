@@ -22,6 +22,7 @@ import {
 	StringArrayProto,
 	StringProto
 } from '../proto';
+import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -797,7 +798,10 @@ export class AccountPostsService extends BaseProvider {
 	}
 
 	/** Shares and/or revokes circle access to exactly match the given list. */
-	public async setCircleMembers (usernames: string[]) : Promise<void> {
+	public async setCircleMembers (
+		usernames: string[],
+		finalConfirmation?: (username: string) => Promise<boolean>
+	) : Promise<void> {
 		return this.setCircleMembersLock(async () => {
 			usernames = normalizeArray(usernames);
 			const usernamesSet = new Set(usernames);
@@ -822,13 +826,28 @@ export class AccountPostsService extends BaseProvider {
 			}
 
 			await this.revokeCircle(usersToRevoke);
-			await this.shareCircle(usersToAdd);
+			await this.shareCircle(usersToAdd, finalConfirmation);
 		});
 	}
 
 	/** Shares circle. */
-	public async shareCircle (usernames: string[]) : Promise<void> {
+	public async shareCircle (
+		usernames: string[],
+		finalConfirmation?: (username: string) => Promise<boolean>
+	) : Promise<void> {
 		usernames = normalizeArray(usernames);
+
+		if (finalConfirmation) {
+			usernames = filterUndefined(
+				await Promise.all(
+					usernames.map(async username =>
+						(await finalConfirmation(username)) ?
+							username :
+							undefined
+					)
+				)
+			);
+		}
 
 		if (usernames.length < 1) {
 			return;

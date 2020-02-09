@@ -642,7 +642,28 @@ export class AccountContactsService extends BaseProvider {
 					)
 				)
 			]).subscribe(async ([accountPostsService, innerCircle]) =>
-				accountPostsService.setCircleMembers(innerCircle)
+				accountPostsService.setCircleMembers(
+					innerCircle,
+					async username => {
+						if (
+							await this.dialogService.confirm({
+								content: this.stringsService.setParameters(
+									this.stringsService
+										.innerCircleFinalConfirmationPrompt,
+									{username}
+								),
+								title: this.stringsService
+									.innerCircleFinalConfirmationTitle
+							})
+						) {
+							return true;
+						}
+
+						await this.removeContact(username);
+
+						return false;
+					}
+				)
 			)
 		);
 	}
