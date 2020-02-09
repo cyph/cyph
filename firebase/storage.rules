@@ -132,7 +132,13 @@ service firebase.storage {
 
 				// match /contactIDs/{username}/{hash} {}
 
-				// match /contacts/{username}/{hash} {}
+				match /contacts/{username}/{hash} {
+					allow write: if false;
+				}
+
+				match /contactsInnerCircle/{username}/{hash} {
+					allow write: if false;
+				}
 
 				// match /contactUsernames/{id}/{hash} {}
 

@@ -19,7 +19,7 @@ import {
 	of,
 	Subscription
 } from 'rxjs';
-import {map, mergeMap, skip} from 'rxjs/operators';
+import {map, mergeMap, switchMap} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -229,6 +229,15 @@ export class AccountContactsComponent extends BaseProvider
 	/** @see AccountContactsSearchComponent.searchProfileExtra */
 	@Input() public searchProfileExtra: boolean = false;
 
+	/** Indicates whether spinner should be displayed. */
+	public readonly showSpinner = this.innerCircleTab.pipe(
+		switchMap(innerCircleTab =>
+			innerCircleTab ?
+				this.accountContactsService.spinners.contactsInnerCircle :
+				this.accountContactsService.spinners.contacts
+		)
+	);
+
 	/** Indicates whether being used in the sidebar. */
 	@Input() public sidebar: boolean = false;
 
@@ -242,8 +251,7 @@ export class AccountContactsComponent extends BaseProvider
 	private initContactListInternal () : void {
 		this.contactListSubscription = this.innerCircleTab
 			.pipe(
-				skip(1),
-				mergeMap(innerCircleTab =>
+				switchMap(innerCircleTab =>
 					innerCircleTab ?
 						this.accountContactsService.contactListInnerCircle :
 						this.contactList

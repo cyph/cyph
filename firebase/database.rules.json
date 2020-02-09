@@ -562,6 +562,24 @@
 					},
 
 					"contacts": {
+						".write": false,
+
+						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"contactsInnerCircle": {
+						".write": false,
+
 						"$username": {
 							"data": {
 								".validate": "newData.isString()"

@@ -4,7 +4,7 @@
 	class="card-list animated slideInDown"
 	[class.mobile]="envService.isMobile | await"
 	[class.initiating]="
-		(accountContactsService.showSpinner | await) ||
+		(showSpinner | await) ||
 		(home && (accountFilesService.uploadSpinner | await) !== undefined)
 	"
 >
@@ -97,8 +97,7 @@
 						fxLayoutAlign="center center"
 						*ngIf="
 							youHaveNoFriends &&
-								(accountContactsService.showSpinner | await) ===
-									false &&
+								(showSpinner | await) === false &&
 								((contactList | await)?.length || 0) < 1;
 							else mainContactListView
 						"
@@ -187,7 +186,7 @@
 	<mat-progress-spinner
 		mode="indeterminate"
 		*ngIf="
-			(accountContactsService.showSpinner | await) ||
+			(showSpinner | await) ||
 			(home && (accountFilesService.uploadSpinner | await) !== undefined)
 		"
 	></mat-progress-spinner>

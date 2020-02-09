@@ -29,7 +29,6 @@ import {
 	IAccountContactState,
 	IAccountMessagingGroup,
 	NeverProto,
-	NotificationTypes,
 	StringProto
 } from '../proto';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
@@ -164,7 +163,7 @@ export class AccountContactsService extends BaseProvider {
 	> = toBehaviorSubject(
 		combineLatest([
 			this.accountDatabaseService.watchListKeys(
-				'contacts',
+				'contactsInnerCircle',
 				this.subscriptions
 			),
 			this.accountUserLookupService.pipe(filterUndefinedOperator())
@@ -294,28 +293,18 @@ export class AccountContactsService extends BaseProvider {
 	/** @see AccountsService.interstitial */
 	public interstitial?: BehaviorSubject<boolean>;
 
-	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner: BehaviorSubject<boolean> = new BehaviorSubject<
-		boolean
-	>(true);
+	/** Contact list spinners. */
+	public readonly spinners = {
+		contacts: new BehaviorSubject<boolean>(true),
+		contactsInnerCircle: new BehaviorSubject<boolean>(true)
+	};
 
 	/** Accepts incoming contact request. */
-	public async acceptContactRequest (username?: string) : Promise<void> {
-		if (!username) {
-			return;
-		}
-
-		await this.accountDatabaseService.setItem<IAccountContactState>(
-			this.contactURL(username),
-			AccountContactState,
-			{state: AccountContactState.States.Confirmed},
-			SecurityModels.unprotected
-		);
-
-		await this.accountDatabaseService.notify(
-			username,
-			NotificationTypes.ContactAccept
-		);
+	public async acceptContactRequest (
+		username?: string,
+		innerCircle: boolean = false
+	) : Promise<void> {
+		return this.addContact(username, innerCircle);
 	}
 
 	/** Adds contact. */
@@ -337,23 +326,11 @@ export class AccountContactsService extends BaseProvider {
 			return;
 		}
 
-		await this.accountDatabaseService.setItem<IAccountContactState>(
-			this.contactURL(username),
-			AccountContactState,
-			{innerCircle, state: AccountContactState.States.OutgoingRequest},
-			SecurityModels.unprotected
-		);
-
-		await this.accountDatabaseService.notify(
-			username,
-			NotificationTypes.ContactRequest,
-			{
-				id:
-					this.accountDatabaseService.currentUser.value?.user
-						.username || '',
-				innerCircle
-			}
-		);
+		await this.accountDatabaseService.callFunction('setContact', {
+			add: true,
+			innerCircle,
+			username
+		});
 	}
 
 	/** Displays prompt to add a new contact. */
@@ -545,7 +522,10 @@ export class AccountContactsService extends BaseProvider {
 			return;
 		}
 
-		await this.accountDatabaseService.removeItem(this.contactURL(username));
+		await this.accountDatabaseService.callFunction('setContact', {
+			add: false,
+			username
+		});
 	}
 
 	/** Gets Castle session data based on username. */
@@ -610,18 +590,32 @@ export class AccountContactsService extends BaseProvider {
 	) {
 		super();
 
-		this.accountDatabaseService.getListKeys('contacts').then(usernames => {
-			if (usernames.length < 1) {
-				this.showSpinner.next(false);
-			}
-		});
-
-		this.contactList
-			.pipe(skip(1), take(1))
-			.toPromise()
-			.then(() => {
-				this.showSpinner.next(false);
+		for (const [list, spinner, url] of <
+			[
+				typeof AccountContactsService.prototype.contactList,
+				typeof AccountContactsService.prototype.spinners.contacts,
+				string
+			][]
+		> [
+			[this.contactList, this.spinners.contacts, 'contacts'],
+			[
+				this.contactListInnerCircle,
+				this.spinners.contactsInnerCircle,
+				'contactsInnerCircle'
+			]
+		]) {
+			this.accountDatabaseService.getListKeys(url).then(usernames => {
+				if (usernames.length < 1) {
+					spinner.next(false);
+				}
 			});
+
+			list.pipe(skip(1), take(1))
+				.toPromise()
+				.then(() => {
+					spinner.next(false);
+				});
+		}
 
 		this.subscriptions.push(
 			combineLatest([

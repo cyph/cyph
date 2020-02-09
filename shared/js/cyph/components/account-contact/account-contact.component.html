@@ -394,7 +394,10 @@
 				cyphTranslate
 				matTooltip="Accept Contact Request"
 				(click)="
-					accountContactsService.acceptContactRequest(username);
+					accountContactsService.acceptContactRequest(
+						username,
+						contactState?.innerCircle
+					);
 					$event.stopPropagation()
 				"
 			>

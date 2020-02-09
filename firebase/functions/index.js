@@ -1059,173 +1059,92 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	]);
 });
 
-exports.userContactSet = functions.database
-	.ref('/{namespace}/users/{user}/contacts/{contact}')
-	.onWrite(async ({after: data}, {params}) => {
-		const contact = params.contact;
-		const username = params.user;
-		const contactURL = `users/${username}/contacts/${contact}`;
-		const otherContactURL = `users/${contact}/contacts/${username}`;
+exports.setContact = onCall(async (data, namespace, getUsername) => {
+	const add = data.add === true;
+	const innerCircle = data.innerCircle === true;
+	const contact = normalize(validateInput(data.username));
+	const username = await getUsername();
 
-		const contactState = (await getItem(
+	const contactURL = `users/${username}/contacts/${contact}`;
+	const otherContactURL = `users/${contact}/contacts/${username}`;
+	const innerCircleURL = `users/${username}/contactsInnerCircle/${contact}`;
+	const otherInnerCircleURL = `users/${contact}/contactsInnerCircle/${username}`;
+
+	const pseudoAccountRef = database.ref(
+		`${params.namespace}/users/${username}/pseudoAccount`
+	);
+
+	const [otherContactState, otherContactStateNewData] = await Promise.all([
+		getItem(
 			params.namespace,
-			contactURL,
+			innerCircle ? otherInnerCircleURL : otherContactURL,
 			AccountContactState
-		).catch(() => ({state: undefined}))).state;
+		)
+			.then(o => o.state)
+			.catch(() => undefined),
+		pseudoAccountRef.once('value').then(async o =>
+			!o.val() ?
+				{} :
+				{
+					email: ' ',
+					name: (await getItem(
+						params.namespace,
+						`users/${username}/publicProfile`,
+						AccountUserProfile,
+						true,
+						true
+					).catch(() => ({}))).name
+				}
+		)
+	]);
 
-		/* If removing contact, delete on other end */
-		if (contactState === undefined) {
-			return removeItem(params.namespace, otherContactURL);
-		}
-
-		const pseudoAccountRef = database.ref(
-			`${params.namespace}/users/${username}/pseudoAccount`
+	const notifyContact = async type =>
+		userNotify(
+			{metadata: {innerCircle}, target: contact, type},
+			namespace,
+			username,
+			true
 		);
 
-		const [otherContactState, otherContactStateNewData] = await Promise.all(
-			[
-				getItem(params.namespace, otherContactURL, AccountContactState)
-					.then(o => o.state)
-					.catch(() => undefined),
-				pseudoAccountRef.once('value').then(async o =>
-					!o.val() ?
-						{} :
-						{
-							email: ' ',
-							name: (await getItem(
-								params.namespace,
-								`users/${username}/publicProfile`,
-								AccountUserProfile,
-								true,
-								true
-							).catch(() => ({}))).name
-						}
-				)
-			]
+	const setContactState = async (currentUser, state) =>
+		Promise.all([
+			currentUser ? contactURL : otherContactURL,
+			...(!innerCircle ?
+				[] :
+				[currentUser ? innerCircleURL : otherInnerCircleURL])
+		]).map(async url =>
+			state === undefined ?
+				removeItem(params.namespace, url) :
+				setItem(params.namespace, url, AccountContactState, {
+					...(currentUser ? {} : otherContactStateNewData),
+					innerCircle,
+					state
+				})
 		);
+	/* Remove */
+	if (!add) {
+		return Promise.all([setContactState(true), setContactState(false)]);
+	}
 
-		/* Handle all possible valid contact state pairings */
-		switch (contactState) {
-			case AccountContactState.States.Confirmed:
-				switch (otherContactState) {
-					case AccountContactState.States.Confirmed:
-						return;
-
-					case AccountContactState.States.IncomingRequest:
-						return setItem(
-							params.namespace,
-							contactURL,
-							AccountContactState,
-							{state: AccountContactState.States.OutgoingRequest}
-						);
-
-					case AccountContactState.States.OutgoingRequest:
-						return setItem(
-							params.namespace,
-							otherContactURL,
-							AccountContactState,
-							{
-								...otherContactStateNewData,
-								state: AccountContactState.States.Confirmed
-							}
-						);
-
-					default:
-						Promise.all([
-							setItem(
-								params.namespace,
-								contactURL,
-								AccountContactState,
-								{
-									state:
-										AccountContactState.States
-											.OutgoingRequest
-								}
-							),
-							setItem(
-								params.namespace,
-								otherContactURL,
-								AccountContactState,
-								{
-									...otherContactStateNewData,
-									state:
-										AccountContactState.States
-											.IncomingRequest
-								}
-							)
-						]);
-				}
-
-			case AccountContactState.States.IncomingRequest:
-				switch (otherContactState) {
-					case AccountContactState.States.Confirmed:
-						return setItem(
-							params.namespace,
-							otherContactURL,
-							AccountContactState,
-							{
-								...otherContactStateNewData,
-								state:
-									AccountContactState.States.OutgoingRequest
-							}
-						);
-
-					case AccountContactState.States.OutgoingRequest:
-						return;
-				}
-
-			case AccountContactState.States.OutgoingRequest:
-				switch (otherContactState) {
-					case AccountContactState.States.Confirmed:
-						return setItem(
-							params.namespace,
-							contactURL,
-							AccountContactState,
-							{state: AccountContactState.States.Confirmed}
-						);
-
-					case AccountContactState.States.IncomingRequest:
-						return;
-
-					case AccountContactState.States.OutgoingRequest:
-						return Promise.all([
-							setItem(
-								params.namespace,
-								contactURL,
-								AccountContactState,
-								{state: AccountContactState.States.Confirmed}
-							),
-							setItem(
-								params.namespace,
-								otherContactURL,
-								AccountContactState,
-								{
-									...otherContactStateNewData,
-									state: AccountContactState.States.Confirmed
-								}
-							)
-						]);
-
-					default:
-						return setItem(
-							params.namespace,
-							otherContactURL,
-							AccountContactState,
-							{
-								...otherContactStateNewData,
-								state:
-									AccountContactState.States.IncomingRequest
-							}
-						);
-				}
-		}
-
-		/* Clear out invalid states */
+	/* Mutual acceptance */
+	if (
+		otherContactState === AccountContactState.States.Confirmed ||
+		otherContactState === AccountContactState.States.OutgoingRequest
+	) {
 		return Promise.all([
-			removeItem(params.namespace, contactURL),
-			removeItem(params.namespace, otherContactURL)
+			setContactState(true, AccountContactState.States.Confirmed),
+			setContactState(false, AccountContactState.States.Confirmed),
+			notifyContact(NotificationTypes.ContactAccept)
 		]);
-	});
+	}
+
+	/* Outgoing request */
+	return Promise.all([
+		setContactState(true, AccountContactState.States.OutgoingRequest),
+		setContactState(false, AccountContactState.States.IncomingRequest),
+		notifyContact(NotificationTypes.ContactRequest)
+	]);
+});
 
 exports.userDisconnect = functions.database
 	.ref('/{namespace}/users/{user}/clientConnections')
@@ -1321,7 +1240,7 @@ exports.usernameBlacklisted = onCall(async (data, namespace, getUsername) => {
 });
 
 /* TODO: Translations and user block lists. */
-const userNotify = async (data, namespace, username) => {
+const userNotify = async (data, namespace, username, serverInitiated) => {
 	const notification = data;
 	const metadata =
 		typeof notification.metadata === 'object' ? notification.metadata : {};
@@ -1502,20 +1421,22 @@ const userNotify = async (data, namespace, username) => {
 				subject: `Missed ${callString} from ${senderUsername}`,
 				text: `${targetName}, ${senderUsername} tried to call you.`
 			} :
-		notification.type === NotificationTypes.ContactAccept ?
+		notification.type === NotificationTypes.ContactAccept &&
+		serverInitiated ?
 			{
 				subject: `${titleize(
 					contactString
 				)} Confirmation from ${senderUsername}`,
 				text: `${targetName}, ${senderName} has accepted your ${contactString} request.`
 			} :
-		notification.type === NotificationTypes.ContactRequest ?
+		notification.type === NotificationTypes.ContactRequest &&
+		serverInitiated ?
 			{
 				subject: `${titleize(
 					contactString
 				)} Request from ${senderUsername}`,
 				text:
-					`${targetName}, ${senderName} wants to be your contact. ` +
+					`${targetName}, ${senderName} wants to join your ${contactString} list. ` +
 					`Log in to accept or decline.`
 			} :
 		notification.type === NotificationTypes.Message ?
