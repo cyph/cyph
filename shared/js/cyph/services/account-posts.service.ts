@@ -386,16 +386,18 @@ export class AccountPostsService extends BaseProvider {
 			username?: string,
 			nMostRecent?: number
 		) : Observable<
-			{
-				id: string;
-				watch: () => Observable<IAccountPost>;
-			}[]
-		> =>
-			toBehaviorSubject<
-				{
+			| {
 					id: string;
 					watch: () => Observable<IAccountPost>;
-				}[]
+			  }[]
+			| undefined
+		> =>
+			toBehaviorSubject<
+				| {
+						id: string;
+						watch: () => Observable<IAccountPost>;
+				  }[]
+				| undefined
 			>(async () => {
 				if (
 					username ===
@@ -434,7 +436,7 @@ export class AccountPostsService extends BaseProvider {
 							}))
 					)
 				);
-			}, []),
+			}, undefined),
 		(username?: string, nMostRecent?: number) =>
 			`${username ? username : ''}\n${
 				nMostRecent !== undefined ? nMostRecent.toString() : ''
