@@ -26,7 +26,13 @@
 			</div>
 		</ng-container>
 
-		<br *ngIf="envService.isMobile | await" />
+		<mat-tab-group
+			[selectedIndex]="(innerCircleTab | await) ? 1 : 0"
+			(selectedIndexChange)="setInnerCircleTab($event === 1)"
+		>
+			<mat-tab [label]="stringsService.contacts"></mat-tab>
+			<mat-tab [label]="stringsService.innerCircle"></mat-tab>
+		</mat-tab-group>
 
 		<cyph-account-contacts-search
 			#accountContactsSearch
@@ -125,7 +131,13 @@
 		<button
 			mat-button
 			class="add-contact"
-			(click)="accountContactsService.addContactPrompt()"
+			(click)="
+				accountContactsService.addContactPrompt(
+					innerCircleTab.value ?
+						newContactTypes.innerCircle :
+						undefined
+				)
+			"
 			*ngIf="
 				(accountDatabaseService.currentUser | await)?.agseConfirmed ===
 					true && !readOnly
@@ -133,7 +145,11 @@
 		>
 			<span>
 				&nbsp;&nbsp;&nbsp;&nbsp;
-				{{ stringsService.addContactTitle }}
+				{{
+					(innerCircleTab | await) ?
+						stringsService.addContactInnerCircleTitle :
+						stringsService.addContactTitle
+				}}
 				&nbsp;&nbsp;&nbsp;&nbsp;
 			</span>
 		</button>

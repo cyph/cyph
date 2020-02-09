@@ -246,6 +246,9 @@ export class StringsService extends BaseProvider {
 	public readonly contactCyph = `Contact ${this.internalCompany}`;
 
 	/** @see StringsService */
+	public readonly contacts = `Contacts`;
+
+	/** @see StringsService */
 	public readonly contactSupport = `Contact Support`;
 
 	/** @see StringsService */

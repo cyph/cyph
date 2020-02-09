@@ -27,7 +27,7 @@ import {
 	UserPresence
 } from '../../account';
 import {BaseProvider} from '../../base-provider';
-import {AccountUserTypes} from '../../proto';
+import {AccountUserTypes, BooleanProto} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -36,6 +36,7 @@ import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
+import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByUser} from '../../track-by/track-by-user';
 import {filterUndefined} from '../../util/filter';
@@ -173,7 +174,10 @@ export class AccountContactsComponent extends BaseProvider
 	@Input() public contactList: Observable<(IContactListItem | User)[]> = this
 		.accountContactsService.contactList;
 
-	/** Full contact list with active contact removed and users with unread messages on top. */
+	/**
+	 * Full contact list with active contact removed and users with unread messages on top.
+	 * TODO: Watch innerCircleTab and switch between lists.
+	 */
 	public readonly filteredContactList: Observable<
 		(IContactListItem | User)[]
 	> = this.routeReactiveContactList.pipe(
@@ -203,6 +207,9 @@ export class AccountContactsComponent extends BaseProvider
 
 	/** Indicates whether this is home component. */
 	@Input() public home: boolean = false;
+
+	/** Controls whether Inner Circle tab is selected. */
+	public readonly innerCircleTab = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether to use inverted theme. */
 	@Input() public invertedTheme: boolean = false;
@@ -259,6 +266,29 @@ export class AccountContactsComponent extends BaseProvider
 			this.contactListInternal
 		);
 		this.accountService.transitionEnd();
+
+		this.subscriptions.push(
+			this.localStorageService
+				.watch(
+					'contactsInnerCircleTab',
+					BooleanProto,
+					this.subscriptions
+				)
+				.subscribe(innerCircleTab => {
+					this.innerCircleTab.next(innerCircleTab.value);
+				})
+		);
+	}
+
+	/** Sets Inner Circle tab selection state. */
+	public async setInnerCircleTab (selected: boolean) : Promise<void> {
+		this.innerCircleTab.next(selected);
+
+		await this.localStorageService.setItem(
+			'contactsInnerCircleTab',
+			BooleanProto,
+			selected
+		);
 	}
 
 	/** If true, tell user when they have no friends. */
@@ -272,6 +302,9 @@ export class AccountContactsComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @see ChangeDetectorRef */
 		public readonly changeDetectorRef: ChangeDetectorRef,
