@@ -75,38 +75,37 @@
 			></cyph-account-contact>
 		</div>
 
-		<div
-			fxFlex
-			fxLayoutAlign="center center"
-			*ngIf="
-				youHaveNoFriends &&
-					(accountContactsService.showSpinner | await) === false &&
-					((contactList | await)?.length || 0) < 1;
-				else mainContactListView
-			"
-		>
-			<div>{{ stringsService.emptyContactList }}</div>
-		</div>
+		<div fxFlex>
+			<div cyphNanoScroller>
+				<div class="contact-list">
+					<cyph-account-contact
+						[startBurner]="true"
+						[class.cyph-inverted-theme]="invertedTheme"
+						*ngIf="!readOnly && !envService.isTelehealth"
+					></cyph-account-contact>
 
-		<ng-template #mainContactListView>
-			<div fxFlex>
-				<div cyphNanoScroller>
-					<div class="contact-list">
-						<cyph-account-contact
-							[startBurner]="true"
-							[class.cyph-inverted-theme]="invertedTheme"
-							*ngIf="!readOnly && !envService.isTelehealth"
-						></cyph-account-contact>
+					<cyph-account-contact
+						[startGroup]="true"
+						[class.cyph-inverted-theme]="invertedTheme"
+						*ngIf="
+							!readOnly && (accountService.enableGroup | await)
+						"
+					></cyph-account-contact>
 
-						<cyph-account-contact
-							[startGroup]="true"
-							[class.cyph-inverted-theme]="invertedTheme"
-							*ngIf="
-								!readOnly &&
-								(accountService.enableGroup | await)
-							"
-						></cyph-account-contact>
-
+					<div
+						fxFlex
+						fxLayoutAlign="center center"
+						*ngIf="
+							youHaveNoFriends &&
+								(accountContactsService.showSpinner | await) ===
+									false &&
+								((contactList | await)?.length || 0) < 1;
+							else mainContactListView
+						"
+					>
+						<div>{{ stringsService.emptyContactList }}</div>
+					</div>
+					<ng-template #mainContactListView>
 						<ng-container
 							*ngFor="
 								let item of filteredContactList | await;
@@ -122,10 +121,10 @@
 								"
 							></ng-container>
 						</ng-container>
-					</div>
+					</ng-template>
 				</div>
 			</div>
-		</ng-template>
+		</div>
 
 		<br *ngIf="!readOnly" />
 
