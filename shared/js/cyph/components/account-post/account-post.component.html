@@ -1,70 +1,91 @@
 <mat-card fxFlex>
-	<mat-card-header>
-		<img
-			mat-card-avatar
-			cyphTranslate
-			[routerLink]="'/profile/' + (user?.username || '')"
-			[src]="user?.avatar | await"
-			alt="User Avatar"
-		/>
-		<mat-card-title>
-			<a [routerLink]="'/profile/' + (user?.username || '')">{{
-				(user?.name | await) || ''
-					| slice: 0:accountService.maxNameLength
-			}}</a>
-			&ngsp;
-			<mat-icon>{{ post?.circleID ? 'lock' : 'public' }}</mat-icon>
-		</mat-card-title>
-		<mat-card-subtitle>
-			<a [routerLink]="'/profile/' + (user?.username || '')"
-				>@{{ (user?.realUsername | await) || '' }}</a
-			>
-			&ngsp; · &ngsp;
-			<a
-				[routerLink]="
-					'/post/' + (user?.username || '') + '/' + (post?.id || '')
-				"
-				>{{ post ? getDateTimeString(post?.timestamp || 0) : '' }}</a
-			>
-		</mat-card-subtitle>
+	<ng-container *ngIf="!post; else deletedPost">
+		<mat-card-content fxLayoutAlign="center center">
+			<mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+		</mat-card-content>
+	</ng-container>
 
-		<button
-			mat-icon-button
+	<ng-template #deletedPost>
+		<ng-container *ngIf="post?.deleted === true; else postUI">
+			<mat-card-content fxLayoutAlign="center center">
+				<span cyphTranslate>[deleted]</span>
+			</mat-card-content>
+		</ng-container>
+	</ng-template>
+
+	<ng-template #postUI>
+		<mat-card-header>
+			<img
+				mat-card-avatar
+				cyphTranslate
+				[routerLink]="'/profile/' + (user?.username || '')"
+				[src]="user?.avatar | await"
+				alt="User Avatar"
+			/>
+			<mat-card-title>
+				<a [routerLink]="'/profile/' + (user?.username || '')">{{
+					(user?.name | await) || ''
+						| slice: 0:accountService.maxNameLength
+				}}</a>
+				&ngsp;
+				<mat-icon>{{ post?.circleID ? 'lock' : 'public' }}</mat-icon>
+			</mat-card-title>
+			<mat-card-subtitle>
+				<a [routerLink]="'/profile/' + (user?.username || '')"
+					>@{{ (user?.realUsername | await) || '' }}</a
+				>
+				&ngsp; · &ngsp;
+				<a
+					[routerLink]="
+						'/post/' +
+						(user?.username || '') +
+						'/' +
+						(post?.id || '')
+					"
+					>{{
+						post ? getDateTimeString(post?.timestamp || 0) : ''
+					}}</a
+				>
+			</mat-card-subtitle>
+
+			<button
+				mat-icon-button
+				cyphTranslate
+				aria-label="Context Menu"
+				[matMenuTriggerFor]="postMenu"
+			>
+				<mat-icon>more_horiz</mat-icon>
+			</button>
+			<mat-menu #postMenu="matMenu">
+				<button mat-menu-item (click)="editPost()">
+					<mat-icon>edit</mat-icon>
+					<span>{{ stringsService.postEditTitle }}</span>
+				</button>
+				<button mat-menu-item (click)="deletePost()">
+					<mat-icon>delete</mat-icon>
+					<span>{{ stringsService.postDeleteTitle }}</span>
+				</button>
+			</mat-menu>
+		</mat-card-header>
+		<img
+			mat-card-image
 			cyphTranslate
-			aria-label="Context Menu"
-			[matMenuTriggerFor]="postMenu"
-		>
-			<mat-icon>more_horiz</mat-icon>
-		</button>
-		<mat-menu #postMenu="matMenu">
-			<button mat-menu-item (click)="editPost()">
-				<mat-icon>edit</mat-icon>
-				<span>{{ stringsService.postEditTitle }}</span>
+			[src]="accountPostsService.getPostImage(post) | await"
+			alt="Post Image"
+			*ngIf="(post?.image?.length || 0) > 0"
+		/>
+		<mat-card-content>
+			<p>
+				<cyph-markdown [markdown]="post?.content || ''"></cyph-markdown>
+			</p>
+		</mat-card-content>
+		<mat-card-actions>
+			<button mat-button cyphTranslate disabled matTooltip="Coming Soon">
+				LIKE
 			</button>
-			<button mat-menu-item (click)="deletePost()">
-				<mat-icon>delete</mat-icon>
-				<span>{{ stringsService.postDeleteTitle }}</span>
+			<button mat-button cyphTranslate disabled matTooltip="Coming Soon">
+				SHARE
 			</button>
-		</mat-menu>
-	</mat-card-header>
-	<img
-		mat-card-image
-		cyphTranslate
-		[src]="accountPostsService.getPostImage(post) | await"
-		alt="Post Image"
-		*ngIf="(post?.image?.length || 0) > 0"
-	/>
-	<mat-card-content>
-		<p>
-			<cyph-markdown [markdown]="post?.content || ''"></cyph-markdown>
-		</p>
-	</mat-card-content>
-	<mat-card-actions>
-		<button mat-button cyphTranslate disabled matTooltip="Coming Soon">
-			LIKE
-		</button>
-		<button mat-button cyphTranslate disabled matTooltip="Coming Soon">
-			SHARE
-		</button>
-	</mat-card-actions>
+		</mat-card-actions>
+	</ng-template>
 </mat-card>

@@ -25,7 +25,7 @@ export class AccountPostFeedComponent extends BaseProvider implements OnInit {
 		{
 			author: Promise<User | undefined>;
 			id: string;
-			post: Observable<IAccountPost>;
+			post: Observable<IAccountPost | undefined>;
 		}[]
 	>([]);
 

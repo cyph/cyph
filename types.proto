@@ -145,17 +145,20 @@ message AccountPost {
 	/** Markdown post content. */
 	required string content = 2;
 
+	/** Indicates whether post is deleted. */
+	bool deleted = 3;
+
 	/** Post ID. */
-	string id = 3;
+	string id = 4;
 
 	/** Image. */
-	bytes image = 4;
+	bytes image = 5;
 
 	/** Timestamp of last edit (if applicable). */
-	double lastEditTimestamp = 5;
+	double lastEditTimestamp = 6;
 
 	/** Timestamp. */
-	required double timestamp = 6;
+	required double timestamp = 7;
 }
 
 /** Symmetric key and related metadata for accessing a group of private posts. */

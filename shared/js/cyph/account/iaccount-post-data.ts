@@ -35,7 +35,7 @@ export interface IAccountPostDataPart {
 	watchIDs: () => Observable<string[]>;
 
 	/** Watches post value. */
-	watchPost: (id: string) => Observable<IAccountPost>;
+	watchPost: (id: string) => Observable<IAccountPost | undefined>;
 }
 
 /** User social networking post data. */

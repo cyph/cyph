@@ -142,11 +142,12 @@ export class AccountPostsService extends BaseProvider {
 					watchPost: memoize(id =>
 						posts.watchItem(id).pipe(
 							map(
-								(post) : IAccountPost => ({
-									...(post || AccountPost.create()),
-									circleID: '',
-									id
-								})
+								(post) : IAccountPost | undefined =>
+									post && {
+										...post,
+										circleID: '',
+										id
+									}
 							)
 						)
 					)
@@ -185,27 +186,40 @@ export class AccountPostsService extends BaseProvider {
 							circle.key
 						),
 						watchPost: memoize(
-							(id: string) : Observable<IAccountPost> =>
-								toBehaviorSubject<IAccountPost>(async () => {
-									if (
-										!(await circleWrapper.posts.hasItem(id))
-									) {
-										return publicPostDataPart.watchPost(id);
-									}
+							(
+								id: string
+							) : Observable<IAccountPost | undefined> =>
+								toBehaviorSubject<IAccountPost | undefined>(
+									async () => {
+										if (
+											!(await circleWrapper.posts.hasItem(
+												id
+											))
+										) {
+											return publicPostDataPart.watchPost(
+												id
+											);
+										}
 
-									return circleWrapper.posts
-										.watchItem(id)
-										.pipe(
-											map(
-												(post) : IAccountPost => ({
-													...(post ||
-														AccountPost.create()),
-													circleID: circle.id,
-													id
-												})
-											)
-										);
-								}, AccountPost.create())
+										return circleWrapper.posts
+											.watchItem(id)
+											.pipe(
+												map(
+													(
+														post
+													) :
+														| IAccountPost
+														| undefined =>
+														post && {
+															...post,
+															circleID: circle.id,
+															id
+														}
+												)
+											);
+									},
+									undefined
+								)
 						)
 					};
 					return circleWrapper;
@@ -388,14 +402,14 @@ export class AccountPostsService extends BaseProvider {
 		) : Observable<
 			| {
 					id: string;
-					watch: () => Observable<IAccountPost>;
+					watch: () => Observable<IAccountPost | undefined>;
 			  }[]
 			| undefined
 		> =>
 			toBehaviorSubject<
 				| {
 						id: string;
-						watch: () => Observable<IAccountPost>;
+						watch: () => Observable<IAccountPost | undefined>;
 				  }[]
 				| undefined
 			>(async () => {
@@ -573,7 +587,11 @@ export class AccountPostsService extends BaseProvider {
 			this.postData.public :
 			await this.postData.private();
 
-		await postDataPart.removePost(id);
+		await postDataPart.updatePost(id, async () => ({
+			content: '',
+			deleted: true,
+			timestamp: 0
+		}));
 	}
 
 	/** Edits a post. */
@@ -616,7 +634,7 @@ export class AccountPostsService extends BaseProvider {
 		{
 			author: Promise<User | undefined>;
 			id: string;
-			post: Observable<IAccountPost>;
+			post: Observable<IAccountPost | undefined>;
 		}[]
 	> {
 		if (nMostRecent !== undefined && nMostRecent < 1) {
