@@ -66,6 +66,9 @@ export class StringsService extends BaseProvider {
 	public readonly addContactButtonInviteEmail = `Invite to ${this.internalProductShort} via Email`;
 
 	/** @see StringsService */
+	public readonly addContactInnerCircleTitle = `Add to Inner Circle`;
+
+	/** @see StringsService */
 	public readonly addContactTitle = `Add Contact`;
 
 	/** @see StringsService */

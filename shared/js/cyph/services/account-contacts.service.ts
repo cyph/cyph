@@ -281,7 +281,10 @@ export class AccountContactsService extends BaseProvider {
 	}
 
 	/** Adds contact. */
-	public async addContact (username?: string) : Promise<void> {
+	public async addContact (
+		username?: string,
+		_INNER_CIRCLE: boolean = false
+	) : Promise<void> {
 		if (!username) {
 			return;
 		}
@@ -303,7 +306,10 @@ export class AccountContactsService extends BaseProvider {
 	public async addContactPrompt (
 		newContactType: NewContactTypes = NewContactTypes.default
 	) : Promise<void> {
-		if (newContactType === NewContactTypes.default) {
+		if (
+			newContactType === NewContactTypes.default ||
+			newContactType === NewContactTypes.innerCircle
+		) {
 			const closeFunction = resolvable<() => void>();
 			const getContacts = resolvable<User[]>();
 
@@ -315,7 +321,10 @@ export class AccountContactsService extends BaseProvider {
 					o.contactList = undefined;
 					o.externalUsers = true;
 					o.getContacts = getContacts;
-					o.title = this.stringsService.addContactTitle;
+					o.title =
+						newContactType === NewContactTypes.innerCircle ?
+							this.stringsService.addContactInnerCircleTitle :
+							this.stringsService.addContactTitle;
 				},
 				closeFunction,
 				true
@@ -337,7 +346,12 @@ export class AccountContactsService extends BaseProvider {
 				close();
 
 				await Promise.all(
-					contacts.map(async user => this.addContact(user.username))
+					contacts.map(async user =>
+						this.addContact(
+							user.username,
+							newContactType === NewContactTypes.innerCircle
+						)
+					)
 				);
 			}
 			finally {
