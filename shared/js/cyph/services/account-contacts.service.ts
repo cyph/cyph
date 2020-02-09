@@ -171,16 +171,9 @@ export class AccountContactsService extends BaseProvider {
 			mergeMap(async ([usernames, accountUserLookupService]) =>
 				filterUndefined(
 					await Promise.all(
-						normalizeArray(usernames).map(async username => {
-							const user = await accountUserLookupService.getUser(
-								username,
-								false
-							);
-							return (await user?.accountContactState.getValue())
-								?.innerCircle ?
-								user :
-								undefined;
-						})
+						normalizeArray(usernames).map(async username =>
+							accountUserLookupService.getUser(username)
+						)
 					)
 				)
 			)
