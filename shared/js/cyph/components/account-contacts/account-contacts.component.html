@@ -29,6 +29,7 @@
 		<mat-tab-group
 			[selectedIndex]="(innerCircleTab | await) ? 1 : 0"
 			(selectedIndexChange)="setInnerCircleTab($event === 1)"
+			*ngIf="!readOnly"
 		>
 			<mat-tab [label]="stringsService.contacts"></mat-tab>
 			<mat-tab [label]="stringsService.innerCircle"></mat-tab>
