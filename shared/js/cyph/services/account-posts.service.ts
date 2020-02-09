@@ -587,11 +587,11 @@ export class AccountPostsService extends BaseProvider {
 			this.postData.public :
 			await this.postData.private();
 
-		await postDataPart.updatePost(id, async () => ({
+		await postDataPart.setPost(id, {
 			content: '',
 			deleted: true,
 			timestamp: 0
-		}));
+		});
 	}
 
 	/** Edits a post. */
