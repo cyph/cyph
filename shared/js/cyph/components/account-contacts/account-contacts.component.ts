@@ -19,7 +19,7 @@ import {
 	of,
 	Subscription
 } from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, mergeMap, skip} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -238,6 +238,20 @@ export class AccountContactsComponent extends BaseProvider
 	/** @see UserPresence */
 	public readonly userPresence = UserPresence;
 
+	/** @ignore */
+	private initContactListInternal () : void {
+		this.contactListSubscription = this.innerCircleTab
+			.pipe(
+				skip(1),
+				mergeMap(innerCircleTab =>
+					innerCircleTab ?
+						this.accountContactsService.contactListInnerCircle :
+						this.contactList
+				)
+			)
+			.subscribe(this.contactListInternal);
+	}
+
 	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {
 		if (!('contactList' in changes)) {
@@ -248,9 +262,7 @@ export class AccountContactsComponent extends BaseProvider
 			this.contactListSubscription.unsubscribe();
 		}
 
-		this.contactListSubscription = this.contactList.subscribe(
-			this.contactListInternal
-		);
+		this.initContactListInternal();
 	}
 
 	/** @inheritDoc */
@@ -262,9 +274,7 @@ export class AccountContactsComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		this.contactListSubscription = this.contactList.subscribe(
-			this.contactListInternal
-		);
+		this.initContactListInternal();
 		this.accountService.transitionEnd();
 
 		this.subscriptions.push(

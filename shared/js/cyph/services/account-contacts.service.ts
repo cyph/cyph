@@ -39,6 +39,7 @@ import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
 import {AccountInviteService} from './account-invite.service';
+import {AccountPostsService} from './account-posts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -65,11 +66,6 @@ export class AccountContactsService extends BaseProvider {
 			title?: string;
 		}>
 	>();
-
-	/** @ignore */
-	private readonly accountUserLookupService = new BehaviorSubject<
-		AccountUserLookupService | undefined
-	>(undefined);
 
 	private readonly contactListHelpers = {
 		groupData: memoize(
@@ -110,6 +106,16 @@ export class AccountContactsService extends BaseProvider {
 		)
 	};
 
+	/** @see AccountPostsService */
+	public readonly accountPostsService = new BehaviorSubject<
+		AccountPostsService | undefined
+	>(undefined);
+
+	/** @see AccountUserLookupService */
+	public readonly accountUserLookupService = new BehaviorSubject<
+		AccountUserLookupService | undefined
+	>(undefined);
+
 	/** List of contacts for current user, sorted alphabetically by username. */
 	public readonly contactList: Observable<
 		(IContactListItem | User)[]
@@ -146,6 +152,38 @@ export class AccountContactsService extends BaseProvider {
 						this.contactListHelpers.user(accountUserLookupService)
 					)
 				]
+			)
+		),
+		[],
+		this.subscriptions
+	);
+
+	/** List of Inner Circle contacts for current user, sorted alphabetically by username. */
+	public readonly contactListInnerCircle: Observable<
+		User[]
+	> = toBehaviorSubject(
+		combineLatest([
+			this.accountDatabaseService.watchListKeys(
+				'contacts',
+				this.subscriptions
+			),
+			this.accountUserLookupService.pipe(filterUndefinedOperator())
+		]).pipe(
+			mergeMap(async ([usernames, accountUserLookupService]) =>
+				filterUndefined(
+					await Promise.all(
+						normalizeArray(usernames).map(async username => {
+							const user = await accountUserLookupService.getUser(
+								username,
+								false
+							);
+							return (await user?.accountContactState.getValue())
+								?.innerCircle ?
+								user :
+								undefined;
+						})
+					)
+				)
 			)
 		),
 		[],
@@ -283,22 +321,38 @@ export class AccountContactsService extends BaseProvider {
 	/** Adds contact. */
 	public async addContact (
 		username?: string,
-		_INNER_CIRCLE: boolean = false
+		innerCircle: boolean = false
 	) : Promise<void> {
 		if (!username) {
+			return;
+		}
+
+		if (
+			innerCircle &&
+			!(await this.dialogService.confirm({
+				content: this.stringsService.addContactInnerCirclePrompt,
+				title: this.stringsService.addContactInnerCircleTitle
+			}))
+		) {
 			return;
 		}
 
 		await this.accountDatabaseService.setItem<IAccountContactState>(
 			this.contactURL(username),
 			AccountContactState,
-			{state: AccountContactState.States.OutgoingRequest},
+			{innerCircle, state: AccountContactState.States.OutgoingRequest},
 			SecurityModels.unprotected
 		);
 
 		await this.accountDatabaseService.notify(
 			username,
-			NotificationTypes.ContactRequest
+			NotificationTypes.ContactRequest,
+			{
+				id:
+					this.accountDatabaseService.currentUser.value?.user
+						.username || '',
+				innerCircle
+			}
 		);
 	}
 
@@ -476,11 +530,6 @@ export class AccountContactsService extends BaseProvider {
 		};
 	}
 
-	/** Initializes service. */
-	public init (accountUserLookupService: AccountUserLookupService) : void {
-		this.accountUserLookupService.next(accountUserLookupService);
-	}
-
 	/** Indicates whether the user is already a contact. */
 	public async isContact (username?: string) : Promise<boolean> {
 		if (!username) {
@@ -573,5 +622,34 @@ export class AccountContactsService extends BaseProvider {
 			.then(() => {
 				this.showSpinner.next(false);
 			});
+
+		this.subscriptions.push(
+			combineLatest([
+				this.accountPostsService.pipe(filterUndefinedOperator()),
+				this.contactListInnerCircle.pipe(
+					skip(1),
+					mergeMap(contactListInnerCircle =>
+						combineLatest(
+							contactListInnerCircle.map(user =>
+								user.accountContactState
+									.watch()
+									.pipe(map(({state}) => ({state, user})))
+							)
+						)
+					),
+					map(contactListInnerCircle =>
+						contactListInnerCircle
+							.filter(
+								o =>
+									o.state ===
+									AccountContactState.States.Confirmed
+							)
+							.map(o => o.user.username)
+					)
+				)
+			]).subscribe(async ([accountPostsService, innerCircle]) =>
+				accountPostsService.setCircleMembers(innerCircle)
+			)
+		);
 	}
 }

@@ -82,19 +82,44 @@
 							<mat-icon>delete</mat-icon>
 						</button>
 						<ng-template #buttonsAddContact>
-							<button
-								mat-mini-fab
-								cyphTranslate
-								class="animated flipInX _4"
-								matTooltip="Add Contact"
-								(click)="
-									accountContactsService.addContact(
-										user?.username
-									)
-								"
-							>
-								<mat-icon>person_add</mat-icon>
-							</button>
+							<span>
+								<button
+									mat-mini-fab
+									cyphTranslate
+									class="animated flipInX _4"
+									matTooltip="Add Contact"
+									[matMenuTriggerFor]="addContactMenu"
+								>
+									<mat-icon>person_add</mat-icon>
+								</button>
+								<mat-menu #addContactMenu="matMenu">
+									<button
+										mat-menu-item
+										(click)="
+											accountContactsService.addContact(
+												user?.username
+											)
+										"
+									>
+										<mat-icon>person_add</mat-icon>
+										<span cyphTranslate>Add Contact</span>
+									</button>
+									<button
+										mat-menu-item
+										(click)="
+											accountContactsService.addContact(
+												user?.username,
+												true
+											)
+										"
+									>
+										<mat-icon>star</mat-icon>
+										<span cyphTranslate
+											>Add to Inner Circle</span
+										>
+									</button>
+								</mat-menu>
+							</span>
 						</ng-template>
 
 						<button
@@ -534,9 +559,6 @@
 						></ng-container>
 					</ng-container>
 
-
-					  
-
 					<div
 						style="width:100%"
 						fxLayout="column"
@@ -572,30 +594,30 @@
 							</div>
 							<div style="width:100%" fxLayout="column">
 								<div *ngIf="(editMode | await) === false"></div>
-									<ng-container
-										*ngTemplateOutlet="
-											name;
-											context: {
-												readViewClasses:
-													'animated flipInX _2'
-											}
-										"
-									></ng-container>
-									<a
-										class="username animated flipInX _2"
-										[href]="
-											envService.cyphMeUrl +
-											(user?.username || '')
-										"
-										target="_self"
-									>
-										<span>@</span
-										><span>{{
-											(user?.realUsername | await) ||
-												user?.username ||
-												''
-										}}</span>
-									</a>
+								<ng-container
+									*ngTemplateOutlet="
+										name;
+										context: {
+											readViewClasses:
+												'animated flipInX _2'
+										}
+									"
+								></ng-container>
+								<a
+									class="username animated flipInX _2"
+									[href]="
+										envService.cyphMeUrl +
+										(user?.username || '')
+									"
+									target="_self"
+								>
+									<span>@</span
+									><span>{{
+										(user?.realUsername | await) ||
+											user?.username ||
+											''
+									}}</span>
+								</a>
 								<ng-container
 									*ngTemplateOutlet="
 										description;
@@ -607,7 +629,9 @@
 										}
 									"
 								></ng-container>
-								<ng-container *ngTemplateOutlet="buttons"></ng-container>
+								<ng-container
+									*ngTemplateOutlet="buttons"
+								></ng-container>
 							</div>
 						</div>
 						<ng-container

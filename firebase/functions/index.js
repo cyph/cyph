@@ -326,10 +326,15 @@ exports.acceptPseudoRelationship = onCall(
 						undefined
 				),
 			getName(namespace, alice).then(async aliceName =>
-				notify(namespace, alice, `Contact Confirmation from ${email}`, {
-					data: {aliceName, name},
-					templateName: 'external-contact-accept'
-				})
+				notify(
+					namespace,
+					alice,
+					`${titleize(contactString)} Confirmation from ${email}`,
+					{
+						data: {aliceName, name},
+						templateName: 'external-contact-accept'
+					}
+				)
 			)
 		]);
 
@@ -974,7 +979,9 @@ exports.requestPseudoRelationship = onCall(
 			),
 			sendMailInternal(
 				email,
-				`Contact Request from ${aliceName} (@${aliceRealUsername})`,
+				`${titleize(
+					contactString
+				)} Request from ${aliceName} (@${aliceRealUsername})`,
 				{
 					data: {aliceName, id, name},
 					namespace,
@@ -1436,6 +1443,7 @@ const userNotify = async (data, namespace, username) => {
 	]);
 
 	const callString = metadata.callType === 'video' ? 'Video Call' : 'Call';
+	const contactString = metadata.innerCircle ? 'Inner Circle' : 'contact';
 
 	const {
 		actions,
@@ -1496,12 +1504,16 @@ const userNotify = async (data, namespace, username) => {
 			} :
 		notification.type === NotificationTypes.ContactAccept ?
 			{
-				subject: `Contact Confirmation from ${senderUsername}`,
-				text: `${targetName}, ${senderName} has accepted your contact request.`
+				subject: `${titleize(
+					contactString
+				)} Confirmation from ${senderUsername}`,
+				text: `${targetName}, ${senderName} has accepted your ${contactString} request.`
 			} :
 		notification.type === NotificationTypes.ContactRequest ?
 			{
-				subject: `Contact Request from ${senderUsername}`,
+				subject: `${titleize(
+					contactString
+				)} Request from ${senderUsername}`,
 				text:
 					`${targetName}, ${senderName} wants to be your contact. ` +
 					`Log in to accept or decline.`

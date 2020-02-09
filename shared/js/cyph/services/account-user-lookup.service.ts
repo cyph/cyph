@@ -342,6 +342,6 @@ export class AccountUserLookupService extends BaseProvider {
 	) {
 		super();
 
-		this.accountContactsService.init(this);
+		this.accountContactsService.accountUserLookupService.next(this);
 	}
 }
