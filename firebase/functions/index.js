@@ -1110,9 +1110,9 @@ exports.setContact = onCall(async (data, namespace, getUsername) => {
 		Promise.all(
 			[
 				currentUser ? contactURL : otherContactURL,
-				...(!innerCircle ?
-					[] :
-					[currentUser ? innerCircleURL : otherInnerCircleURL])
+				...(innerCircle || state === undefined ?
+					[currentUser ? innerCircleURL : otherInnerCircleURL] :
+					[])
 			].map(async url =>
 				state === undefined ?
 					removeItem(namespace, url) :
