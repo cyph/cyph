@@ -1305,6 +1305,7 @@ export class ChatService extends BaseProvider {
 
 		if (!keepCurrentMessage) {
 			this.messageChange();
+			this.updateChat();
 		}
 
 		const removeOldStorageItem = async () =>
