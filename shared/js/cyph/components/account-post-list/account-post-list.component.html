@@ -1,0 +1,26 @@
+<ng-container
+	*ngIf="
+		accountPostsService.watchUserPosts(author?.username) | await as posts;
+		else loading
+	"
+>
+	<div fxLayout="column" fxLayoutGap="16px" *ngIf="(posts?.length || 0) > 0">
+		<cyph-account-post
+			[author]="author"
+			[post]="post.watch() | await"
+			*ngFor="let post of posts; trackBy: trackByID"
+		></cyph-account-post>
+	</div>
+
+	<div fxLayoutAlign="center center" *ngIf="(posts?.length || 0) < 1">
+		<span cyphTranslate>
+			No posts
+		</span>
+	</div>
+</ng-container>
+
+<ng-template #loading>
+	<div fxLayoutAlign="center center">
+		<mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+	</div>
+</ng-template>

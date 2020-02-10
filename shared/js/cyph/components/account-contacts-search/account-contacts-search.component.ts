@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {IContactListItem, User} from '../../account';
 import {Async} from '../../async-type';
 import {BaseProvider} from '../../base-provider';
@@ -78,7 +78,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 		ISearchOptions
 	> = this.searchControl.valueChanges.pipe(
 		map<string, string>(query => query.toLowerCase().trim()),
-		mergeMap(async query => {
+		switchMap(async query => {
 			this.searchSpinner.next(true);
 
 			let users = this.contactList ?
@@ -153,11 +153,7 @@ export class AccountContactsSearchComponent extends BaseProvider {
 			let externalUser =
 				this.externalUsers &&
 				(results.length < 1 || results[0].user.username !== query) &&
-				(await this.accountUserLookupService.exists(
-					query,
-					false,
-					false
-				)) ?
+				(await this.accountUserLookupService.exists(query, false)) ?
 					query :
 					undefined;
 

@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
-import {map, mergeMap, skip, take} from 'rxjs/operators';
+import {map, skip, switchMap, take} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -26,10 +26,10 @@ import {IResolvable} from '../iresolvable';
 import {
 	AccountContactState,
 	AccountFileRecord,
+	CyphPlans,
 	IAccountContactState,
 	IAccountMessagingGroup,
 	NeverProto,
-	NotificationTypes,
 	StringProto
 } from '../proto';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
@@ -39,7 +39,9 @@ import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
 import {AccountInviteService} from './account-invite.service';
+import {AccountPostsService} from './account-posts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
@@ -65,11 +67,6 @@ export class AccountContactsService extends BaseProvider {
 			title?: string;
 		}>
 	>();
-
-	/** @ignore */
-	private readonly accountUserLookupService = new BehaviorSubject<
-		AccountUserLookupService | undefined
-	>(undefined);
 
 	private readonly contactListHelpers = {
 		groupData: memoize(
@@ -109,6 +106,16 @@ export class AccountContactsService extends BaseProvider {
 			})
 		)
 	};
+
+	/** @see AccountPostsService */
+	public readonly accountPostsService = new BehaviorSubject<
+		AccountPostsService | undefined
+	>(undefined);
+
+	/** @see AccountUserLookupService */
+	public readonly accountUserLookupService = new BehaviorSubject<
+		AccountUserLookupService | undefined
+	>(undefined);
 
 	/** List of contacts for current user, sorted alphabetically by username. */
 	public readonly contactList: Observable<
@@ -152,6 +159,31 @@ export class AccountContactsService extends BaseProvider {
 		this.subscriptions
 	);
 
+	/** List of Inner Circle contacts for current user, sorted alphabetically by username. */
+	public readonly contactListInnerCircle: Observable<
+		User[]
+	> = toBehaviorSubject(
+		combineLatest([
+			this.accountDatabaseService.watchListKeys(
+				'contactsInnerCircle',
+				this.subscriptions
+			),
+			this.accountUserLookupService.pipe(filterUndefinedOperator())
+		]).pipe(
+			switchMap(async ([usernames, accountUserLookupService]) =>
+				filterUndefined(
+					await Promise.all(
+						normalizeArray(usernames).map(async username =>
+							accountUserLookupService.getUser(username)
+						)
+					)
+				)
+			)
+		),
+		[],
+		this.subscriptions
+	);
+
 	/** Contact state. */
 	public readonly contactState = memoize(
 		(username: string) : IAsyncValue<IAccountContactState> =>
@@ -169,7 +201,7 @@ export class AccountContactsService extends BaseProvider {
 		) : Observable<User[]> =>
 			toBehaviorSubject(
 				contactList.pipe(
-					mergeMap(async contacts =>
+					switchMap(async contacts =>
 						filterUndefined(
 							await Promise.all(
 								contacts.map(async contact =>
@@ -256,54 +288,94 @@ export class AccountContactsService extends BaseProvider {
 	/** @see AccountsService.interstitial */
 	public interstitial?: BehaviorSubject<boolean>;
 
-	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner: BehaviorSubject<boolean> = new BehaviorSubject<
-		boolean
-	>(true);
+	/** Contact list spinners. */
+	public readonly spinners = {
+		contacts: new BehaviorSubject<boolean>(true),
+		contactsInnerCircle: new BehaviorSubject<boolean>(true)
+	};
 
-	/** Accepts incoming contact request. */
-	public async acceptContactRequest (username?: string) : Promise<void> {
-		if (!username) {
-			return;
+	/** @ignore */
+	private async addToInnerCircleConfirm () : Promise<boolean> {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.addContactInnerCirclePrompt,
+				title: this.stringsService.addContactInnerCircleTitle
+			}))
+		) {
+			return false;
 		}
 
-		await this.accountDatabaseService.setItem<IAccountContactState>(
-			this.contactURL(username),
-			AccountContactState,
-			{state: AccountContactState.States.Confirmed},
-			SecurityModels.unprotected
-		);
+		const planConfig = this.configService.planConfig[
+			(await this.accountDatabaseService.currentUser.value?.user.cyphPlan.getValue())
+				?.plan || CyphPlans.Free
+		];
 
-		await this.accountDatabaseService.notify(
-			username,
-			NotificationTypes.ContactAccept
-		);
+		if (typeof planConfig.innerCircleLimit === 'number') {
+			const innerCircleCount = (await this.accountDatabaseService.getList(
+				'contactsInnerCircle',
+				AccountContactState,
+				SecurityModels.unprotected,
+				undefined,
+				undefined,
+				false
+			)).filter(o => o.state === AccountContactState.States.Confirmed)
+				.length;
+
+			if (innerCircleCount >= planConfig.innerCircleLimit) {
+				await this.dialogService.alert({
+					content: this.stringsService.setParameters(
+						this.stringsService.addContactInnerCircleUpgrade,
+						{limit: planConfig.innerCircleLimit.toString()}
+					),
+					title: this.stringsService.addContactInnerCircleTitle
+				});
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/** Accepts incoming contact request. */
+	public async acceptContactRequest (
+		username?: string,
+		innerCircle: boolean = false
+	) : Promise<void> {
+		return this.addContact(username, innerCircle);
 	}
 
 	/** Adds contact. */
-	public async addContact (username?: string) : Promise<void> {
+	public async addContact (
+		username?: string,
+		innerCircle: boolean = false,
+		skipConfirmation: boolean = false
+	) : Promise<void> {
 		if (!username) {
 			return;
 		}
 
-		await this.accountDatabaseService.setItem<IAccountContactState>(
-			this.contactURL(username),
-			AccountContactState,
-			{state: AccountContactState.States.OutgoingRequest},
-			SecurityModels.unprotected
-		);
+		if (
+			innerCircle &&
+			!(skipConfirmation || (await this.addToInnerCircleConfirm()))
+		) {
+			return;
+		}
 
-		await this.accountDatabaseService.notify(
-			username,
-			NotificationTypes.ContactRequest
-		);
+		await this.accountDatabaseService.callFunction('setContact', {
+			add: true,
+			innerCircle,
+			username
+		});
 	}
 
 	/** Displays prompt to add a new contact. */
 	public async addContactPrompt (
 		newContactType: NewContactTypes = NewContactTypes.default
 	) : Promise<void> {
-		if (newContactType === NewContactTypes.default) {
+		if (
+			newContactType === NewContactTypes.default ||
+			newContactType === NewContactTypes.innerCircle
+		) {
 			const closeFunction = resolvable<() => void>();
 			const getContacts = resolvable<User[]>();
 
@@ -315,7 +387,10 @@ export class AccountContactsService extends BaseProvider {
 					o.contactList = undefined;
 					o.externalUsers = true;
 					o.getContacts = getContacts;
-					o.title = this.stringsService.addContactTitle;
+					o.title =
+						newContactType === NewContactTypes.innerCircle ?
+							this.stringsService.addContactInnerCircleTitle :
+							this.stringsService.addContactTitle;
 				},
 				closeFunction,
 				true
@@ -327,17 +402,27 @@ export class AccountContactsService extends BaseProvider {
 					closeFunction.promise
 				]);
 
-				if (contacts.length < 1) {
-					close();
+				close();
+
+				if (
+					contacts.length < 1 ||
+					(newContactType === NewContactTypes.innerCircle &&
+						!(await this.addToInnerCircleConfirm()))
+				) {
 					return;
 				}
 
 				/* eslint-disable-next-line no-unused-expressions */
 				this.interstitial?.next(true);
-				close();
 
 				await Promise.all(
-					contacts.map(async user => this.addContact(user.username))
+					contacts.map(async user =>
+						this.addContact(
+							user.username,
+							newContactType === NewContactTypes.innerCircle,
+							true
+						)
+					)
 				);
 			}
 			finally {
@@ -393,8 +478,13 @@ export class AccountContactsService extends BaseProvider {
 	}
 
 	/** Contact URL. */
-	public contactURL (username: string) : string {
-		return `contacts/${normalize(username)}`;
+	public contactURL (
+		username: string,
+		innerCircle: boolean = false
+	) : string {
+		return `${innerCircle ? 'contactsInnerCircle' : 'contacts'}/${normalize(
+			username
+		)}`;
 	}
 
 	/** Displays prompt to start a new group chat. */
@@ -462,18 +552,29 @@ export class AccountContactsService extends BaseProvider {
 		};
 	}
 
-	/** Initializes service. */
-	public init (accountUserLookupService: AccountUserLookupService) : void {
-		this.accountUserLookupService.next(accountUserLookupService);
-	}
-
 	/** Indicates whether the user is already a contact. */
-	public async isContact (username?: string) : Promise<boolean> {
+	public async isContact (
+		username?: string,
+		confirmed: boolean = false,
+		innerCircle: boolean = false
+	) : Promise<boolean> {
 		if (!username) {
 			return false;
 		}
 
-		return this.accountDatabaseService.hasItem(this.contactURL(username));
+		const contactURL = this.contactURL(username, innerCircle);
+
+		return !confirmed ?
+			this.accountDatabaseService.hasItem(contactURL) :
+			(await this.accountDatabaseService
+				.getItem(
+					contactURL,
+					AccountContactState,
+					SecurityModels.unprotected
+				)
+				.then(o => o.state)
+				.catch(() => AccountContactState.States.None)) ===
+				AccountContactState.States.Confirmed;
 	}
 
 	/** Removes contact. */
@@ -482,7 +583,10 @@ export class AccountContactsService extends BaseProvider {
 			return;
 		}
 
-		await this.accountDatabaseService.removeItem(this.contactURL(username));
+		await this.accountDatabaseService.callFunction('setContact', {
+			add: false,
+			username
+		});
 	}
 
 	/** Gets Castle session data based on username. */
@@ -537,6 +641,9 @@ export class AccountContactsService extends BaseProvider {
 		private readonly accountInviteService: AccountInviteService,
 
 		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
 		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
@@ -547,17 +654,81 @@ export class AccountContactsService extends BaseProvider {
 	) {
 		super();
 
-		this.accountDatabaseService.getListKeys('contacts').then(usernames => {
-			if (usernames.length < 1) {
-				this.showSpinner.next(false);
-			}
-		});
-
-		this.contactList
-			.pipe(skip(1), take(1))
-			.toPromise()
-			.then(() => {
-				this.showSpinner.next(false);
+		for (const [list, spinner, url] of <
+			[
+				typeof AccountContactsService.prototype.contactList,
+				typeof AccountContactsService.prototype.spinners.contacts,
+				string
+			][]
+		> [
+			[this.contactList, this.spinners.contacts, 'contacts'],
+			[
+				this.contactListInnerCircle,
+				this.spinners.contactsInnerCircle,
+				'contactsInnerCircle'
+			]
+		]) {
+			this.accountDatabaseService.getListKeys(url).then(usernames => {
+				if (usernames.length < 1) {
+					spinner.next(false);
+				}
 			});
+
+			list.pipe(skip(1), take(1))
+				.toPromise()
+				.then(() => {
+					spinner.next(false);
+				});
+		}
+
+		this.subscriptions.push(
+			combineLatest([
+				this.accountPostsService.pipe(filterUndefinedOperator()),
+				this.contactListInnerCircle.pipe(
+					skip(1),
+					switchMap(contactListInnerCircle =>
+						combineLatest(
+							contactListInnerCircle.map(user =>
+								user.accountContactState
+									.watch()
+									.pipe(map(({state}) => ({state, user})))
+							)
+						)
+					),
+					map(contactListInnerCircle =>
+						contactListInnerCircle
+							.filter(
+								o =>
+									o.state ===
+									AccountContactState.States.Confirmed
+							)
+							.map(o => o.user.username)
+					)
+				)
+			]).subscribe(async ([accountPostsService, innerCircle]) =>
+				accountPostsService.setCircleMembers(
+					innerCircle,
+					async username => {
+						if (
+							await this.dialogService.confirm({
+								content: this.stringsService.setParameters(
+									this.stringsService
+										.innerCircleFinalConfirmationPrompt,
+									{username}
+								),
+								title: this.stringsService
+									.innerCircleFinalConfirmationTitle
+							})
+						) {
+							return true;
+						}
+
+						await this.removeContact(username);
+
+						return false;
+					}
+				)
+			)
+		);
 	}
 }

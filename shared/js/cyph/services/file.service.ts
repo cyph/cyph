@@ -182,10 +182,14 @@ export class FileService extends BaseProvider {
 
 	/**
 	 * Converts File/Blob to IFile.
+	 * @param image If true, file is processed as an image (compressed).
 	 */
-	public async getIFile (file: Blob | File) : Promise<IFile> {
+	public async getIFile (
+		file: Blob | File,
+		image?: boolean
+	) : Promise<IFile> {
 		return {
-			data: await this.getBytes(file, false),
+			data: await this.getBytes(file, image),
 			mediaType: file.type,
 			name: 'name' in file ? file.name : 'File'
 		};

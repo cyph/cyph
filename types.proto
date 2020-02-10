@@ -137,6 +137,58 @@ message AccountMessagingGroup {
 	repeated string usernames = 5;
 }
 
+/** Social networking post. */
+message AccountPost {
+	/** Indicates post circle (public if unspecified). */
+	string circleID = 1;
+
+	/** Markdown post content. */
+	required string content = 2;
+
+	/** Indicates whether post is deleted. */
+	bool deleted = 3;
+
+	/** Post ID. */
+	string id = 4;
+
+	/** Image. */
+	bytes image = 5;
+
+	/** Timestamp of last edit (if applicable). */
+	double lastEditTimestamp = 6;
+
+	/** Timestamp. */
+	required double timestamp = 7;
+}
+
+/** Symmetric key and related metadata for accessing a group of private posts. */
+message AccountPostCircle {
+	/** Special types of circles with particular significance. */
+	enum AccountPostCircleTypes {
+		Standard = 0;
+		InnerCircle = 1;
+		OnlyMe = 2;
+	}
+
+	/** Indicates whether this circle is still in use. */
+	required bool active = 1;
+
+	/** @see AccountPostCircleTypes */
+	required AccountPostCircleTypes circleType = 2;
+
+	/** ID of list to fetch posts. */
+	required string id = 3;
+
+	/** Human-readable name of circle. */
+	required string name = 4;
+
+	/** Symmetric key for encrypting posts. */
+	required bytes key = 5;
+
+	/** If applicable, ID of previous circle (changes when someone's access is revoked). */
+	string predecessorID = 6;
+}
+
 /** User presence. */
 message AccountUserPresence {
 	/** Possible presence statuses. */
@@ -688,6 +740,7 @@ enum CyphPlans {
 	LifetimePlatinum = 3;
 	MonthlyPremium = 1;
 	MonthlyTelehealth = 6;
+	Platinum = 7;
 }
 
 /** Database item metadata. */

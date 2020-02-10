@@ -20,6 +20,7 @@ export class AccountAuthGuardService extends BaseProvider
 		'404',
 		'compose',
 		'logout',
+		'post',
 		'profile',
 		'reject',
 		'request-appointment',

@@ -66,6 +66,15 @@ export class StringsService extends BaseProvider {
 	public readonly addContactButtonInviteEmail = `Invite to ${this.internalProductShort} via Email`;
 
 	/** @see StringsService */
+	public readonly addContactInnerCirclePrompt = `The Inner Circle is intended for people you know personally, and includes access to private posts. Continue?`;
+
+	/** @see StringsService */
+	public readonly addContactInnerCircleTitle = `Add to Inner Circle`;
+
+	/** @see StringsService */
+	public readonly addContactInnerCircleUpgrade = `Unfortunately, you've reached your Inner Circle limit of \${LIMIT} members. Please go to Settings to upgrade and try again!`;
+
+	/** @see StringsService */
 	public readonly addContactTitle = `Add Contact`;
 
 	/** @see StringsService */
@@ -210,6 +219,12 @@ export class StringsService extends BaseProvider {
 	public readonly checkoutErrorTitle = `Payment Failed`;
 
 	/** @see StringsService */
+	public readonly circle = `Circle`;
+
+	/** @see StringsService */
+	public readonly circlePlaceholder = `Circle to Share With`;
+
+	/** @see StringsService */
 	public readonly clickHere = `Click here`;
 
 	/** @see StringsService */
@@ -235,6 +250,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly contactCyph = `Contact ${this.internalCompany}`;
+
+	/** @see StringsService */
+	public readonly contacts = `Contacts`;
 
 	/** @see StringsService */
 	public readonly contactSupport = `Contact Support`;
@@ -426,6 +444,15 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly incomingPatientInfoTitle = `Saving Incoming Patient Info`;
+
+	/** @see StringsService */
+	public readonly innerCircle = `Inner Circle`;
+
+	/** @see StringsService */
+	public readonly innerCircleFinalConfirmationPrompt = `Grant @\${USERNAME} access to read your private Inner Circle posts?`;
+
+	/** @see StringsService */
+	public readonly innerCircleFinalConfirmationTitle = `Inner Circle Confirmation`;
 
 	/** @see StringsService */
 	public readonly introductoryMessage = `You may now speak.`;
@@ -759,6 +786,9 @@ export class StringsService extends BaseProvider {
 	public readonly p2pTimeoutOutgoing = `Your call was missed.`;
 
 	/** @see StringsService */
+	public readonly p2pUpgradeToCall = `To make this call, you must add @\${USER} to your Inner Circle.`;
+
+	/** @see StringsService */
 	public readonly p2pWarning = `This may involve sharing your IP address with your ${this.internalFriend}. Proceed if you trust your ${this.internalFriend}.`;
 
 	/** @see StringsService */
@@ -817,6 +847,24 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly pin = `PIN`;
+
+	/** @see StringsService */
+	public readonly postContent = `Post Content`;
+
+	/** @see StringsService */
+	public readonly postDeletePrompt = `Delete this post?`;
+
+	/** @see StringsService */
+	public readonly postDeleteTitle = `Delete Post`;
+
+	/** @see StringsService */
+	public readonly postEditPrompt = `Edit the contents of this post:`;
+
+	/** @see StringsService */
+	public readonly postEditTitle = `Edit Post`;
+
+	/** @see StringsService */
+	public readonly postTitle = `Social Post`;
 
 	/** @see StringsService */
 	public readonly product = `${this.internalProduct}`;

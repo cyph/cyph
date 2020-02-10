@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
 import {AccountComponent} from '../components/account';
+import {AccountAfterRegisterComponent} from '../components/account-after-register';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountBaseFileListComponent} from '../components/account-base-file-list';
 import {AccountCallWaitingComponent} from '../components/account-call-waiting';
@@ -24,7 +25,12 @@ import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPasswordsComponent} from '../components/account-passwords';
-import {AccountPostRegisterComponent} from '../components/account-post-register';
+import {AccountPostComponent} from '../components/account-post';
+import {AccountPostComposeComponent} from '../components/account-post-compose';
+import {AccountPostFeedComponent} from '../components/account-post-feed';
+import {AccountPostFeedPageComponent} from '../components/account-post-feed-page';
+import {AccountPostListComponent} from '../components/account-post-list';
+import {AccountPostPageComponent} from '../components/account-post-page';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
@@ -44,6 +50,7 @@ import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountInviteService} from '../services/account-invite.service';
 import {AccountOrganizationsService} from '../services/account-organizations.service';
+import {AccountPostsService} from '../services/account-posts.service';
 import {AccountSettingsService} from '../services/account-settings.service';
 import {AccountUserLookupService} from '../services/account-user-lookup.service';
 import {AccountService} from '../services/account.service';
@@ -65,6 +72,7 @@ import {CyphWebModule} from './cyph-web.module';
  */
 @NgModule({
 	declarations: [
+		AccountAfterRegisterComponent,
 		AccountAppointmentsComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
@@ -90,7 +98,12 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotesComponent,
 		AccountNotificationsSubscribeComponent,
 		AccountPasswordsComponent,
-		AccountPostRegisterComponent,
+		AccountPostComponent,
+		AccountPostComposeComponent,
+		AccountPostFeedComponent,
+		AccountPostFeedPageComponent,
+		AccountPostListComponent,
+		AccountPostPageComponent,
 		AccountProfileComponent,
 		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
@@ -106,6 +119,7 @@ import {CyphWebModule} from './cyph-web.module';
 		UploadEhrCredentialsComponent
 	],
 	exports: [
+		AccountAfterRegisterComponent,
 		AccountAppointmentsComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
@@ -131,7 +145,12 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotesComponent,
 		AccountNotificationsSubscribeComponent,
 		AccountPasswordsComponent,
-		AccountPostRegisterComponent,
+		AccountPostComponent,
+		AccountPostComposeComponent,
+		AccountPostFeedComponent,
+		AccountPostFeedPageComponent,
+		AccountPostListComponent,
+		AccountPostPageComponent,
 		AccountProfileComponent,
 		AccountPseudoRelationshipResponseComponent,
 		AccountRegisterComponent,
@@ -156,6 +175,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountFilesService,
 		AccountInviteService,
 		AccountOrganizationsService,
+		AccountPostsService,
 		AccountService,
 		AccountSettingsService,
 		AccountUserLookupService,
@@ -176,6 +196,7 @@ export class CyphAppModule {
 		accountService: AccountService,
 		accountContactsService: AccountContactsService,
 		accountDatabaseService: AccountDatabaseService,
+		accountPostsService: AccountPostsService,
 		databaseService: DatabaseService
 	) {
 		/* For debugging */
@@ -183,6 +204,7 @@ export class CyphAppModule {
 		(<any> self).accountService = accountService;
 		(<any> self).accountContactsService = accountContactsService;
 		(<any> self).accountDatabaseService = accountDatabaseService;
+		(<any> self).accountPostsService = accountPostsService;
 		(<any> self).databaseService = databaseService;
 	}
 }

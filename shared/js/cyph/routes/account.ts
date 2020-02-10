@@ -2,6 +2,7 @@
 
 import {Route} from '@angular/router';
 import {AccountComponent} from '../components/account';
+import {AccountAfterRegisterComponent} from '../components/account-after-register';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
@@ -17,7 +18,8 @@ import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPasswordsComponent} from '../components/account-passwords';
-import {AccountPostRegisterComponent} from '../components/account-post-register';
+import {AccountPostFeedPageComponent} from '../components/account-post-feed-page';
+import {AccountPostPageComponent} from '../components/account-post-page';
 import {AccountProfileComponent} from '../components/account-profile';
 import {AccountPseudoRelationshipResponseComponent} from '../components/account-pseudo-relationship-response';
 import {AccountRegisterComponent} from '../components/account-register';
@@ -201,6 +203,7 @@ export const account: Route = {
 			data: {doctorListOnly: true}
 		},
 		{path: 'ehr-access', component: AccountEhrAccessComponent},
+		{path: 'feed', component: AccountPostFeedPageComponent},
 		{path: 'files', component: AccountFilesComponent},
 		{path: 'forms', component: AccountFormsComponent},
 		{path: 'forms/:id', component: AccountFormComponent},
@@ -291,6 +294,7 @@ export const account: Route = {
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.Standard}
 		},
+		{path: 'post/:username/:postID', component: AccountPostPageComponent},
 		{
 			path: 'profile/404',
 			component: NotFoundComponent,
@@ -409,7 +413,7 @@ export const account: Route = {
 			}
 		},
 		{path: 'wallets', component: AccountWalletsComponent},
-		{path: 'welcome', component: AccountPostRegisterComponent},
+		{path: 'welcome', component: AccountAfterRegisterComponent},
 		{path: '**', redirectTo: '404'}
 	]
 };

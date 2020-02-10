@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncMap} from '../iasync-map';
@@ -208,7 +208,7 @@ export class DatabaseService extends DataManagerService {
 	/** Adds namespace to URL. */
 	protected processURL (url: string) : string {
 		return `${this.namespace.replace(/\./g, '_')}/${url.replace(
-			/^\//,
+			/^\/?(root\/)?/,
 			''
 		)}`;
 	}
@@ -287,6 +287,11 @@ export class DatabaseService extends DataManagerService {
 					(a, b) => a.concat(b),
 					[]
 				),
+			getTimedValue: async () => {
+				throw new Error(
+					'DatabaseService.getAsyncList().getTimedValue() not implemented.'
+				);
+			},
 			getValue: async () =>
 				localLock(async () => this.getList(url, proto)),
 			lock,
@@ -429,7 +434,12 @@ export class DatabaseService extends DataManagerService {
 			},
 			updateValue: async f =>
 				asyncMap.setValue(await f(await asyncMap.getValue())),
-			watch: memoize(() => watchKeys().pipe(mergeMap(getValueHelper))),
+			watch: memoize(() => watchKeys().pipe(switchMap(getValueHelper))),
+			watchItem: memoize(key =>
+				this.watch(`${url}/${key}`, proto, subscriptions).pipe(
+					map(o => o.value)
+				)
+			),
 			watchKeys,
 			watchSize: memoize(() => watchKeys().pipe(map(keys => keys.length)))
 		};

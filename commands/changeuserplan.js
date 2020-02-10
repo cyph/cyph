@@ -134,11 +134,12 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 					planFoundersAndFriends:
 						cyphPlan === CyphPlans.FoundersAndFriends,
 					planFree: cyphPlan === CyphPlans.Free,
-					planLifetimePlatinum:
-						cyphPlan === CyphPlans.LifetimePlatinum,
 					planMonthlyPremium: cyphPlan === CyphPlans.MonthlyPremium,
 					planMonthlyTelehealth:
 						cyphPlan === CyphPlans.MonthlyTelehealth,
+					planPlatinum:
+						cyphPlan === CyphPlans.LifetimePlatinum ||
+						cyphPlan === CyphPlans.Platinum,
 					platinumFeatures: planConfig.usernameMinLength === 1,
 					storageCap: readableByteLength(
 						planConfig.storageCapGB,

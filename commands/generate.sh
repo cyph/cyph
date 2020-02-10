@@ -242,7 +242,6 @@ fail 'fak u gooby'
 fi
 
 
-cyph-prettier --write ${files}
 git add ${files}
 chmod -R 777 ${files}
-git commit --no-verify -S -m "generate ${class}" ${files}
+git commit -S -m "generate ${class}" ${files}

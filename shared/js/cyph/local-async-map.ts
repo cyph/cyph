@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 
 import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {IAsyncMap} from './iasync-map';
 import {LocalAsyncValue} from './local-async-value';
 import {LockFunction} from './lock-function-type';
@@ -144,6 +144,13 @@ export class LocalAsyncMap<K, V> extends LocalAsyncValue<Map<K, V>>
 			}
 			catch {}
 		});
+	}
+
+	/** @inheritDoc */
+	public watchItem (key: K) : Observable<V | undefined> {
+		return this.watch().pipe(
+			switchMap(async () => this.getItem(key).catch(() => undefined))
+		);
 	}
 
 	/** @inheritDoc */

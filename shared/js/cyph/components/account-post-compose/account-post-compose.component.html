@@ -1,0 +1,122 @@
+<div class="post-compose" fxFlex fxLayout="row">
+	<div fxFlex fxLayout="column">
+		<div>
+			<textarea
+				matInput
+				cyphTranslate
+				matTooltip="Post Content"
+				placeholder="Write your post here..."
+				[ngModel]="(accountPostsService.draft.content | await) || ''"
+				(ngModelChange)="accountPostsService.draft.content.next($event)"
+			></textarea>
+		</div>
+
+		<div fxFlex fxLayoutAlign="end center" fxLayoutGap="8px" fxLayout="row">
+			<div fxLayout="row" fxLayoutAlign="end center">
+				<div
+					cyphDropZone
+					cyphTranslate
+					class="image-upload"
+					accept="image/*"
+					[compressImages]="true"
+					fxLayoutAlign="center"
+					matTooltip="Set Image"
+					matTooltipPosition="above"
+					(fileDrop)="
+						accountPostsService.draft.image.next($event.data)
+					"
+				>
+					<mat-icon>image</mat-icon>
+				</div>
+				<button
+					mat-icon-button
+					cyphTranslate
+					matTooltip="Remove Image"
+					(click)="accountPostsService.draft.image.next(undefined)"
+					*ngIf="
+						(accountPostsService.draft.image | await) !== undefined
+					"
+				>
+					<mat-icon>close</mat-icon>
+				</button>
+
+				<img
+					mat-card-image
+					cyphTranslate
+					[src]="
+						accountPostsService.getPostImage(
+							accountPostsService.draft.image
+						) | await
+					"
+					alt="Post Image"
+					*ngIf="
+						(accountPostsService.draft.image | await) !== undefined
+					"
+				/>
+			</div>
+
+			<div>
+				<mat-form-field>
+					<!-- TODO: Handle case of multiple circles per user -->
+					<mat-select
+						[placeholder]="stringsService.circlePlaceholder"
+						[ngModel]="
+							(accountPostsService.draft.isPublic | await) ===
+							true ?
+								0 :
+								accountPostCircleTypes.InnerCircle
+						"
+						(ngModelChange)="
+							accountPostsService.draft.isPublic.next(
+								$event === 0
+							)
+						"
+					>
+						<mat-select-trigger>
+							<ng-container
+								[ngSwitch]="
+									accountPostsService.draft.isPublic | await
+								"
+							>
+								<ng-container *ngSwitchCase="false">
+									<mat-icon>lock</mat-icon>
+									&ngsp;
+									<span>{{
+										stringsService.innerCircle
+									}}</span>
+								</ng-container>
+
+								<ng-container *ngSwitchCase="true">
+									<mat-icon>public</mat-icon>
+									&ngsp;
+									<span cyphTranslate>Public</span>
+								</ng-container>
+							</ng-container>
+						</mat-select-trigger>
+
+						<mat-option
+							[value]="accountPostCircleTypes.InnerCircle"
+						>
+							<mat-icon>lock</mat-icon>
+							&ngsp;
+							<span>{{ stringsService.innerCircle }}</span>
+						</mat-option>
+						<mat-option [value]="0">
+							<mat-icon>public</mat-icon>
+							&ngsp;
+							<span cyphTranslate>Public</span>
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+
+				<button
+					mat-raised-button
+					cyphTranslate
+					(click)="accountPostsService.postCurrentDraft()"
+				>
+					Post
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

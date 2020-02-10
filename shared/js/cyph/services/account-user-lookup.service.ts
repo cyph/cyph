@@ -3,25 +3,19 @@ import {memoize} from 'lodash-es';
 import {map} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
-import {IResolvable} from '../iresolvable';
-import {LockFunction} from '../lock-function-type';
 import {
 	AccountUserPresence,
 	AccountUserProfile,
 	AccountUserProfileExtra,
 	AccountUserTypes,
 	BooleanMapProto,
+	CyphPlan,
 	DataURIProto,
 	NeverProto,
 	Review
 } from '../proto';
 import {normalize} from '../util/formatting';
-import {
-	getOrSetDefault,
-	getOrSetDefaultAsync
-} from '../util/get-or-set-default';
-import {lockFunction} from '../util/lock';
-import {resolvable} from '../util/wait';
+import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
@@ -32,15 +26,6 @@ import {EnvService} from './env.service';
  */
 @Injectable()
 export class AccountUserLookupService extends BaseProvider {
-	/** @ignore */
-	private readonly cachedLock: LockFunction = lockFunction(1000);
-
-	/** @ignore */
-	private readonly downloadLock: LockFunction = lockFunction(2500);
-
-	/** @ignore */
-	private readonly downloadLockCancel = new Map<string, IResolvable<void>>();
-
 	/** @ignore */
 	private readonly existsCache: Set<string> = new Set<string>();
 
@@ -90,7 +75,6 @@ export class AccountUserLookupService extends BaseProvider {
 	 */
 	public async exists (
 		username: string,
-		lock: boolean = true,
 		confirmedOnly: boolean = true
 	) : Promise<boolean> {
 		if (!username) {
@@ -120,17 +104,7 @@ export class AccountUserLookupService extends BaseProvider {
 			) ||
 				this.userCache.has(username) ||
 				(await (confirmedOnly ?
-					(!lock ?
-						getProfile() :
-						Promise.race([
-							this.downloadLock(getProfile),
-							getOrSetDefault(
-								this.downloadLockCancel,
-								username,
-								resolvable
-							).promise.then(getProfile)
-						])
-					)
+					getProfile()
 						.then(() => true)
 						.catch(() => false) :
 					this.accountDatabaseService.hasItem(
@@ -151,7 +125,7 @@ export class AccountUserLookupService extends BaseProvider {
 	/** Tries to to get User object for the specified user. */
 	public async getUser (
 		user: string | User | undefined,
-		lock: boolean = false,
+		blockUntilAlreadyCached: boolean = false,
 		preFetch: boolean = false,
 		skipExistsCheck: boolean = true
 	) : Promise<User | undefined> {
@@ -166,29 +140,13 @@ export class AccountUserLookupService extends BaseProvider {
 			const username = normalize(user);
 			const url = `users/${username}`;
 
-			const isCached = async () =>
-				this.accountDatabaseService.isCached(`${url}/publicProfile`);
-
-			const downloadLockCancel = getOrSetDefault(
-				this.downloadLockCancel,
-				username,
-				resolvable
-			);
-
 			if (
-				(lock || !preFetch) &&
-				(this.userCache.has(username) ||
-					(await Promise.race([
-						!lock ? isCached() : this.cachedLock(isCached),
-						downloadLockCancel.promise.then(() => true)
-					])))
+				blockUntilAlreadyCached &&
+				(await this.accountDatabaseService.isCached(
+					`${url}/publicProfile`
+				))
 			) {
-				lock = false;
-				preFetch = true;
-			}
-
-			if (!lock) {
-				downloadLockCancel.resolve();
+				blockUntilAlreadyCached = false;
 			}
 
 			return getOrSetDefaultAsync(
@@ -199,7 +157,7 @@ export class AccountUserLookupService extends BaseProvider {
 
 					if (
 						!skipExistsCheck &&
-						!(await this.exists(username, lock, true))
+						!(await this.exists(username, true))
 					) {
 						throw new Error('User does not exist.');
 					}
@@ -260,6 +218,10 @@ export class AccountUserLookupService extends BaseProvider {
 							undefined,
 							true
 						),
+						this.databaseService.getAsyncValue(
+							`${url}/plan`,
+							CyphPlan
+						),
 						this.accountDatabaseService.getAsyncValue(
 							`${url}/organizationMembers`,
 							BooleanMapProto,
@@ -278,7 +240,8 @@ export class AccountUserLookupService extends BaseProvider {
 						preFetch
 					);
 				},
-				lock
+				undefined,
+				blockUntilAlreadyCached
 			).catch(() => undefined);
 		})();
 
@@ -342,6 +305,6 @@ export class AccountUserLookupService extends BaseProvider {
 	) {
 		super();
 
-		this.accountContactsService.init(this);
+		this.accountContactsService.accountUserLookupService.next(this);
 	}
 }

@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {combineLatest, Observable, of} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {initGranim} from '../../granim';
@@ -52,7 +52,7 @@ export class AccountComponent extends BaseProvider
 	private readonly activatedRouteURL: Observable<
 		UrlSegment[]
 	> = this.accountService.routeChanges.pipe(
-		mergeMap(() =>
+		switchMap(() =>
 			this.activatedRoute.firstChild ?
 				this.activatedRoute.firstChild.url :
 				of([])
@@ -119,20 +119,20 @@ export class AccountComponent extends BaseProvider
 				isMobile ||
 				(this.envService.isTelehealth &&
 					[
-						'',
-						'profile',
-						...(this.envService.isTelehealth &&
-						this.envService.environment.customBuild &&
+						...(this.envService.environment.customBuild &&
 						this.envService.environment.customBuild.config
 							.organization ?
 							['doctors'] :
 							[])
 					].indexOf(route) > -1) ||
 				[
+					'',
 					'account-burner',
 					'audio',
 					'call',
+					'feed',
 					'mail',
+					'post',
 					'profile',
 					'video',
 					'wallets'
@@ -156,19 +156,19 @@ export class AccountComponent extends BaseProvider
 	]).pipe(
 		map(([currentUser, route]) => {
 			/*
-		if (
-			[
-				'appointments',
-				'audio',
-				'call',
-				'video'
-			].indexOf(route) > -1 &&
-			routePath.length > 1 &&
-			routePath[1] !== 'end'
-		) {
-			return false;
-		}
-		*/
+			if (
+				[
+					'appointments',
+					'audio',
+					'call',
+					'video'
+				].indexOf(route) > -1 &&
+				routePath.length > 1 &&
+				routePath[1] !== 'end'
+			) {
+				return false;
+			}
+			*/
 
 			return (
 				currentUser !== undefined &&
@@ -184,6 +184,7 @@ export class AccountComponent extends BaseProvider
 					'docs',
 					'doctors',
 					'ehr-access',
+					'feed',
 					'files',
 					'forms',
 					'inbox',
@@ -195,6 +196,7 @@ export class AccountComponent extends BaseProvider
 					'notifications',
 					'passwords',
 					'patients',
+					'post',
 					'profile',
 					'request-appointment',
 					'request-followup',
@@ -221,9 +223,11 @@ export class AccountComponent extends BaseProvider
 					'',
 					'audio',
 					'call',
+					'feed',
 					'mail',
 					'messages',
 					'notifications',
+					'post',
 					'profile',
 					'transition',
 					'video',

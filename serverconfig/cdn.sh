@@ -35,7 +35,7 @@ cat > server.js <<- EOM
 	const app = new (require('koa'))();
 	const {isEqual} = require('lodash');
 	const {ReplaySubject, timer} = require('rxjs');
-	const {filter, mergeMap, take} = require('rxjs/operators');
+	const {filter, switchMap, take} = require('rxjs/operators');
 	const util = require('util');
 
 	const cache = {
@@ -302,7 +302,7 @@ cat > server.js <<- EOM
 	let server;
 
 	const domainWatcher = new ReplaySubject(1);
-	timer(0, 60000).pipe(mergeMap(getDomains)).subscribe(domainWatcher);
+	timer(0, 60000).pipe(switchMap(getDomains)).subscribe(domainWatcher);
 
 	(async () => { while (true) {
 		const domains =

@@ -1,17 +1,19 @@
 import {SafeUrl} from '@angular/platform-browser';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {IAsyncMap} from '../iasync-map';
 import {IAsyncValue} from '../iasync-value';
 import {LockFunction} from '../lock-function-type';
 import {
 	AccountContactState,
 	AccountUserTypes,
+	CyphPlans,
 	IAccountContactState,
 	IAccountUserPresence,
 	IAccountUserProfile,
 	IAccountUserProfileExtra,
+	ICyphPlan,
 	IReview
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
@@ -54,7 +56,7 @@ export class User {
 		this.avatarInternal,
 		User.defaultAvatar
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	).pipe(mergeMap(async avatar => avatar || User.defaultAvatar));
+	).pipe(switchMap(async avatar => avatar || User.defaultAvatar));
 
 	/** @see IAccountContactState.state */
 	public readonly contactState: Observable<
@@ -69,7 +71,7 @@ export class User {
 		this.coverImageInternal,
 		User.defaultCoverImage
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	).pipe(mergeMap(async coverImage => coverImage || User.defaultCoverImage));
+	).pipe(switchMap(async coverImage => coverImage || User.defaultCoverImage));
 
 	/** @see IAccountUserProfile.description */
 	public readonly description: Observable<string> = toBehaviorSubject(
@@ -106,6 +108,12 @@ export class User {
 	public readonly name: Observable<string> = toBehaviorSubject(
 		this.accountUserProfile.watch().pipe(map(({name}) => name)),
 		''
+	);
+
+	/** @see CyphPlans */
+	public readonly plan: Observable<CyphPlans> = toBehaviorSubject(
+		this.cyphPlan.watch().pipe(map(({plan}) => plan)),
+		CyphPlans.Free
 	);
 
 	/** Indicates that user is not a pseudo-account. */
@@ -202,6 +210,9 @@ export class User {
 		public readonly accountUserProfileExtra: IAsyncValue<
 			IAccountUserProfileExtra
 		>,
+
+		/** @see ICyphPlan */
+		public readonly cyphPlan: IAsyncValue<ICyphPlan>,
 
 		/** If applicable, usernames of members of this organization. */
 		public readonly organizationMembers: IAsyncValue<{

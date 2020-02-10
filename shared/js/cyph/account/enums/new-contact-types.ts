@@ -2,5 +2,6 @@
 export enum NewContactTypes {
 	default,
 	external,
+	innerCircle,
 	invite
 }

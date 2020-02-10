@@ -9,10 +9,12 @@ export const planConfig: Record<
 		enablePasswords?: boolean;
 		enableWallets?: boolean;
 		initialInvites: number;
+		innerCircleLimit?: number;
 		lifetime: boolean;
 		rank: number;
 		storageCapGB: number;
 		telehealth?: boolean;
+		unlimitedCalling: boolean;
 		usernameMinLength: number;
 		walletEarlyAccess?: string;
 	}
@@ -20,9 +22,11 @@ export const planConfig: Record<
 	[CyphPlans.AnnualPremium]: {
 		checkoutPath: 'holiday-sale/annual-premium',
 		initialInvites: 10,
+		innerCircleLimit: 10,
 		lifetime: false,
 		rank: 2,
 		storageCapGB: 25,
+		unlimitedCalling: false,
 		usernameMinLength: 5,
 		walletEarlyAccess: 'beta'
 	},
@@ -30,10 +34,12 @@ export const planConfig: Record<
 		checkoutPath: 'accounts/annual-telehealth',
 		enableGroup: true,
 		initialInvites: 10,
+		innerCircleLimit: 10,
 		lifetime: false,
 		rank: 2,
 		storageCapGB: 5,
 		telehealth: true,
+		unlimitedCalling: true,
 		usernameMinLength: 5
 	},
 	[CyphPlans.FoundersAndFriends]: {
@@ -44,14 +50,17 @@ export const planConfig: Record<
 		lifetime: true,
 		rank: 4,
 		storageCapGB: 100,
+		unlimitedCalling: true,
 		usernameMinLength: 1,
 		walletEarlyAccess: 'alpha'
 	},
 	[CyphPlans.Free]: {
 		initialInvites: 2,
+		innerCircleLimit: 2,
 		lifetime: false,
 		rank: 0,
 		storageCapGB: 1,
+		unlimitedCalling: false,
 		usernameMinLength: 5
 	},
 	[CyphPlans.LifetimePlatinum]: {
@@ -61,25 +70,41 @@ export const planConfig: Record<
 		lifetime: true,
 		rank: 3,
 		storageCapGB: 100,
+		unlimitedCalling: true,
 		usernameMinLength: 1,
 		walletEarlyAccess: 'alpha'
 	},
 	[CyphPlans.MonthlyPremium]: {
 		checkoutPath: 'holiday-sale/monthly-premium',
 		initialInvites: 5,
+		innerCircleLimit: 5,
 		lifetime: false,
 		rank: 1,
 		storageCapGB: 5,
+		unlimitedCalling: false,
 		usernameMinLength: 5
 	},
 	[CyphPlans.MonthlyTelehealth]: {
 		checkoutPath: 'accounts/monthly-telehealth',
 		enableGroup: true,
 		initialInvites: 5,
+		innerCircleLimit: 5,
 		lifetime: false,
 		rank: 1,
 		storageCapGB: 5,
+		unlimitedCalling: true,
 		telehealth: true,
 		usernameMinLength: 5
+	},
+	[CyphPlans.Platinum]: {
+		checkoutPath: 'accounts/platinum',
+		enableGroup: true,
+		initialInvites: 15,
+		lifetime: false,
+		rank: 3,
+		storageCapGB: 100,
+		unlimitedCalling: true,
+		usernameMinLength: 1,
+		walletEarlyAccess: 'alpha'
 	}
 };

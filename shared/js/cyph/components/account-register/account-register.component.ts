@@ -235,7 +235,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						this.inviteCodeData.value.reservedUsername
 					)) ||
 					/* eslint-disable-next-line @typescript-eslint/tslint/config */
-					this.accountUserLookupService.exists(value, false, false) :
+					this.accountUserLookupService.exists(value, false) :
 					true
 			)) ?
 				{usernameTaken: true} :

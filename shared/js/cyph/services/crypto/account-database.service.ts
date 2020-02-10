@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {map, mergeMap, take} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
@@ -72,7 +72,7 @@ export class AccountDatabaseService extends BaseProvider {
 						await this.localStorageService.getItem(
 							`AccountDatabaseService/list${
 								immutable ? '-immutable' : ''
-							}/${await this.normalizeURL(url)}`,
+							}/${await this.normalizeURL(url, true)}`,
 							BinaryProto
 						)
 					);
@@ -107,7 +107,7 @@ export class AccountDatabaseService extends BaseProvider {
 				this.localStorageService.setItem(
 					`AccountDatabaseService/list${
 						immutable ? '-immutable' : ''
-					}/${await this.normalizeURL(url)}`,
+					}/${await this.normalizeURL(url, true)}`,
 					BinaryProto,
 					msgpack.encode(
 						await Promise.all(
@@ -412,13 +412,15 @@ export class AccountDatabaseService extends BaseProvider {
 	private async processLockURL (url: MaybePromise<string>) : Promise<string> {
 		const currentUser = await this.getCurrentUser();
 
-		debugLog(async () => ({accountLockURL: await this.normalizeURL(url)}));
+		debugLog(async () => ({
+			accountLockURL: await this.normalizeURL(url, true)
+		}));
 
 		return (
 			`users/${currentUser.user.username}/locks/` +
 			this.potassiumService.toHex(
 				await this.potassiumService.hash.hash(
-					(await this.normalizeURL(url)).replace(
+					(await this.normalizeURL(url, true)).replace(
 						`users/${currentUser.user.username}/`,
 						''
 					)
@@ -436,7 +438,7 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey: MaybePromise<Uint8Array> | undefined,
 		moreAdditionalData?: string
 	) : Promise<Uint8Array> {
-		url = await this.normalizeURL(url);
+		url = await this.normalizeURL(url, true);
 		url =
 			moreAdditionalData !== undefined ?
 				`${url}?${moreAdditionalData}` :
@@ -557,6 +559,17 @@ export class AccountDatabaseService extends BaseProvider {
 						(a, b) => a.concat(b),
 						[]
 					),
+				getTimedValue: async () =>
+					localLock(async () =>
+						this.getListWithTimestamps(
+							url,
+							proto,
+							securityModel,
+							customKey,
+							anonymous,
+							immutable
+						)
+					),
 				getValue: async () =>
 					localLock(async () =>
 						this.getList(
@@ -646,7 +659,7 @@ export class AccountDatabaseService extends BaseProvider {
 			return asyncList;
 		};
 
-		return typeof url === 'string' ?
+		return typeof url === 'string' && customKey === undefined ?
 			getOrSetDefault(this.cache.getAsyncList, url, getAsyncList) :
 			getAsyncList();
 	}
@@ -813,8 +826,18 @@ export class AccountDatabaseService extends BaseProvider {
 					asyncMap.setValue(await f(await asyncMap.getValue())),
 				watch: memoize(() =>
 					this.watchListKeys(url, subscriptions).pipe(
-						mergeMap(getValueHelper)
+						switchMap(getValueHelper)
 					)
+				),
+				watchItem: memoize(key =>
+					this.watch(
+						Promise.resolve(url).then(s => `${s}/${key}`),
+						proto,
+						securityModel,
+						customKey,
+						anonymous,
+						subscriptions
+					).pipe(map(o => o.value))
 				),
 				watchKeys: () =>
 					flattenObservable<string[]>(async () =>
@@ -829,7 +852,7 @@ export class AccountDatabaseService extends BaseProvider {
 			return asyncMap;
 		};
 
-		return typeof url === 'string' ?
+		return typeof url === 'string' && customKey === undefined ?
 			getOrSetDefault(this.cache.getAsyncMap, url, getAsyncMap) :
 			getAsyncMap();
 	}
@@ -926,7 +949,7 @@ export class AccountDatabaseService extends BaseProvider {
 			};
 		};
 
-		return typeof url === 'string' ?
+		return typeof url === 'string' && customKey === undefined ?
 			getOrSetDefault(this.cache.getAsyncValue, url, getAsyncValue) :
 			getAsyncValue();
 	}
@@ -972,31 +995,12 @@ export class AccountDatabaseService extends BaseProvider {
 	public async getList<T> (
 		url: MaybePromise<string>,
 		proto: IProto<T>,
-		securityModel: SecurityModels = SecurityModels.private,
+		securityModel?: SecurityModels,
 		customKey?: MaybePromise<Uint8Array>,
-		anonymous: boolean = false,
-		immutable: boolean = true
+		anonymous?: boolean,
+		immutable?: boolean
 	) : Promise<T[]> {
-		url = await this.normalizeURL(url);
-
-		const [keys, head] = await Promise.all([
-			this.getListKeys(url),
-			!immutable ?
-				Promise.resolve(undefined) :
-				this.getItemInternal(
-					`${await url}-head`,
-					StringProto,
-					securityModel,
-					customKey,
-					anonymous
-				)
-					.then(({result}) => result.value)
-					.catch(() => undefined)
-		]);
-
-		return (await this.getListInternal(
-			head,
-			keys,
+		return (await this.getListWithTimestamps(
 			url,
 			proto,
 			securityModel,
@@ -1017,6 +1021,44 @@ export class AccountDatabaseService extends BaseProvider {
 		);
 	}
 
+	/** Gets list of ITimedValues. */
+	public async getListWithTimestamps<T> (
+		url: MaybePromise<string>,
+		proto: IProto<T>,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: MaybePromise<Uint8Array>,
+		anonymous: boolean = false,
+		immutable: boolean = true
+	) : Promise<ITimedValue<T>[]> {
+		url = await this.normalizeURL(url);
+
+		const [keys, head] = await Promise.all([
+			this.getListKeys(url),
+			!immutable ?
+				Promise.resolve(undefined) :
+				this.getItemInternal(
+					`${url}-head`,
+					StringProto,
+					securityModel,
+					customKey,
+					anonymous
+				)
+					.then(({result}) => result.value)
+					.catch(() => undefined)
+		]);
+
+		return this.getListInternal(
+			head,
+			keys,
+			url,
+			proto,
+			securityModel,
+			customKey,
+			anonymous,
+			immutable
+		);
+	}
+
 	/** Gets a value and sets a default value if none had previously been set. */
 	public async getOrSetDefault<T> (
 		url: MaybePromise<string>,
@@ -1032,7 +1074,7 @@ export class AccountDatabaseService extends BaseProvider {
 			}
 			catch {
 				const value = await defaultValue();
-				this.setItem(
+				await this.setItem(
 					url,
 					proto,
 					value,
@@ -1109,7 +1151,8 @@ export class AccountDatabaseService extends BaseProvider {
 				}
 
 				const encryptionURL = await this.normalizeURL(
-					`users/${username}/publicEncryptionKey`
+					`users/${username}/publicEncryptionKey`,
+					true
 				);
 
 				/* Temporary workaround for migrating users to latest Potassium.Box */
@@ -1239,11 +1282,14 @@ export class AccountDatabaseService extends BaseProvider {
 	}
 
 	/** Normalizes URL. */
-	public async normalizeURL (url: MaybePromise<string>) : Promise<string> {
+	public async normalizeURL (
+		url: MaybePromise<string>,
+		stripRoot: boolean = false
+	) : Promise<string> {
 		url = (await url).replace(/^\//, '');
 
 		if (url.match(/^root\//)) {
-			return url.slice(5);
+			return stripRoot ? url.slice(5) : url;
 		}
 		if (url.match(/^users\//)) {
 			return url;
@@ -1492,13 +1538,13 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
-				mergeMap(async () => {
+				switchMap(async () => {
 					const processedURL = await this.normalizeURL(url);
 
 					return this.databaseService
 						.watch(processedURL, BinaryProto, subscriptions)
 						.pipe(
-							mergeMap(async data => ({
+							switchMap(async data => ({
 								timestamp: data.timestamp,
 								value: await this.open(
 									processedURL,
@@ -1511,7 +1557,7 @@ export class AccountDatabaseService extends BaseProvider {
 							}))
 						);
 				}),
-				mergeMap(o => o)
+				switchMap(o => o)
 			),
 			subscriptions
 		);
@@ -1565,7 +1611,7 @@ export class AccountDatabaseService extends BaseProvider {
 
 		const watcher = immutable ?
 			headWatcher().pipe(
-				mergeMap(
+				switchMap(
 					async (head) : Promise<[string[], ITimedValue<string>]> => [
 						await this.getListKeys(url),
 						head
@@ -1581,7 +1627,7 @@ export class AccountDatabaseService extends BaseProvider {
 
 		return toBehaviorSubject(
 			watcher.pipe(
-				mergeMap(async ([keys, head]) => {
+				switchMap(async ([keys, head]) => {
 					const headValue = !isNaN(head.timestamp) ?
 						head.value :
 						undefined;
@@ -1628,13 +1674,13 @@ export class AccountDatabaseService extends BaseProvider {
 		previousKey?: string;
 	}> {
 		return this.currentUser.pipe(
-			mergeMap(async () =>
+			switchMap(async () =>
 				this.databaseService.watchListKeyPushes(
 					await this.normalizeURL(url),
 					subscriptions
 				)
 			),
-			mergeMap(o => o)
+			switchMap(o => o)
 		);
 	}
 
@@ -1646,14 +1692,14 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Observable<string[]> {
 		return cacheObservable(
 			this.currentUser.pipe(
-				mergeMap(async () =>
+				switchMap(async () =>
 					this.databaseService.watchListKeys(
 						await this.normalizeURL(url),
 						subscriptions,
 						noFilter
 					)
 				),
-				mergeMap(o => o)
+				switchMap(o => o)
 			),
 			subscriptions
 		);
@@ -1671,7 +1717,7 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Observable<ITimedValue<T>> {
 		return cacheObservable(
 			this.watchCurrentUser(anonymous).pipe(
-				mergeMap(async () => {
+				switchMap(async () => {
 					const processedURL = await this.normalizeURL(url);
 
 					return this.databaseService
@@ -1683,7 +1729,7 @@ export class AccountDatabaseService extends BaseProvider {
 							subscriptions
 						)
 						.pipe(
-							mergeMap(async data => ({
+							switchMap(async data => ({
 								timestamp: data.timestamp,
 								value: await this.open(
 									`${processedURL}/${data.key}`,
@@ -1699,7 +1745,7 @@ export class AccountDatabaseService extends BaseProvider {
 							}))
 						);
 				}),
-				mergeMap(o => o)
+				switchMap(o => o)
 			),
 			subscriptions
 		);

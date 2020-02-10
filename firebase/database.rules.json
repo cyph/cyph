@@ -257,6 +257,26 @@
 				}
 			},
 
+			"privatePostLists": {
+				"$circleID": {
+					".read": true,
+
+					"$postID": {
+						".write": "!data.child('hash').isString()",
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					}
+				}
+			},
+
 			"pseudoRelationships": {
 				"$relationship": {
 					"aliceUsername": {
@@ -491,6 +511,36 @@
 						}
 					},
 
+					"circleMembers": {
+						"$circleID": {
+							"$circleMember": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
+					"circles": {
+						"$circleID": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
 					"clientConnections": {
 						"$clientConnection": {
 							".validate": "newData.val() === now"
@@ -512,6 +562,24 @@
 					},
 
 					"contacts": {
+						".write": false,
+
+						"$username": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
+					"contactsInnerCircle": {
+						".write": false,
+
 						"$username": {
 							"data": {
 								".validate": "newData.isString()"
@@ -592,6 +660,41 @@
 						},
 						"timestamp": {
 							".validate": "newData.val() === now"
+						}
+					},
+
+					"externalCircles": {
+						"$username": {
+							"$circleID": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						}
+					},
+
+					"externalCirclesIncoming": {
+						"$username": {
+							".read": "($user + '@' + $DOMAIN) === auth.token.email || ($username + '@' + $DOMAIN) === auth.token.email",
+							".write": "($user + '@' + $DOMAIN) === auth.token.email || ($username + '@' + $DOMAIN) === auth.token.email",
+
+							"$circleID": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
 						}
 					},
 
@@ -887,6 +990,7 @@
 					},
 
 					"plan": {
+						".read": true,
 						".write": false,
 
 						"data": {
@@ -897,6 +1001,39 @@
 						},
 						"timestamp": {
 							".validate": "newData.val() === now"
+						}
+					},
+
+					"posts": {
+						"private": {
+							"$post": {
+								".read": true,
+
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
+						},
+						"public": {
+							".read": true,
+
+							"$post": {
+								"data": {
+									".validate": "newData.isString()"
+								},
+								"hash": {
+									".validate": "newData.isString()"
+								},
+								"timestamp": {
+									".validate": "newData.val() === now"
+								}
+							}
 						}
 					},
 
@@ -953,6 +1090,22 @@
 						},
 						"timestamp": {
 							".validate": "newData.val() === now"
+						}
+					},
+
+					"publicPostList": {
+						".read": true,
+
+						"$postID": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
 						}
 					},
 

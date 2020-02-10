@@ -3,6 +3,7 @@
 import {Observable, ReplaySubject, Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {IAsyncList} from './iasync-list';
+import {ITimedValue} from './itimed-value';
 import {LocalAsyncMap} from './local-async-map';
 import {LockFunction} from './lock-function-type';
 import {MaybePromise} from './maybe-promise-type';
@@ -63,6 +64,11 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 	/** @inheritDoc */
 	public async getFlatValue () : Promise<T extends any[] ? T : T[]> {
 		return this.getValueInternal().reduce<any>((a, b) => a.concat(b), []);
+	}
+
+	/** @inheritDoc */
+	public async getTimedValue () : Promise<ITimedValue<T>[]> {
+		throw new Error('LocalAsyncList.getTimedValue() not implemented.');
 	}
 
 	/** @inheritDoc */

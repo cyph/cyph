@@ -2,7 +2,7 @@
 
 import memoize from 'lodash-es/memoize';
 import {concat, interval, of, timer} from 'rxjs';
-import {map, mergeMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {env} from '../env';
 import {ITimeRange} from '../itime-range';
 import {Time} from '../time-type';
@@ -513,7 +513,7 @@ export const timeToString = memoize((time: Time) => {
 
 /** Watches timestamp with the specified interval. */
 export const watchTimestamp = memoize((msInterval: number = 1000) =>
-	interval(msInterval).pipe(mergeMap(async () => getTimestamp()))
+	interval(msInterval).pipe(switchMap(async () => getTimestamp()))
 );
 
 /** @see getTimestamp */
@@ -587,6 +587,6 @@ export const relativeDateString = async (
 export const watchRelativeDateString = memoize(
 	(date: number | Date, noToday?: boolean) =>
 		watchDateChange(true).pipe(
-			mergeMap(async () => relativeDateString(date, noToday))
+			switchMap(async () => relativeDateString(date, noToday))
 		)
 );

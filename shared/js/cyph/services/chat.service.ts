@@ -11,7 +11,7 @@ import {
 	Observable,
 	of
 } from 'rxjs';
-import {filter, map, mergeMap, take, tap, takeWhile} from 'rxjs/operators';
+import {filter, map, switchMap, take, tap, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
 import {
@@ -177,7 +177,7 @@ export class ChatService extends BaseProvider {
 	/** List of messages. */
 	public readonly messages = toBehaviorSubject(
 		this.chatSubject.pipe(
-			mergeMap(chat =>
+			switchMap(chat =>
 				concat(
 					!chat.pendingMessageRoot ?
 						of<string[]>([]) :
@@ -223,7 +223,7 @@ export class ChatService extends BaseProvider {
 
 	/** @see remoteUser */
 	public readonly remoteUserObservable = this.remoteUser.pipe(
-		mergeMap(async user => user)
+		switchMap(async user => user)
 	);
 
 	/** Sub-resolvables of uiReady. */

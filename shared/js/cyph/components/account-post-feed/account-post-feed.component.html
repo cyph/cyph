@@ -1,0 +1,7 @@
+<div fxLayout="column">
+	<cyph-account-post
+		[author]="o.author | await"
+		[post]="o.post | await"
+		*ngFor="let o of feed | await; trackBy: trackByID"
+	></cyph-account-post>
+</div>

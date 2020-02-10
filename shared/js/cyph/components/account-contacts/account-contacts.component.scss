@@ -51,11 +51,30 @@ cyph-account-contact.active ::ng-deep .contact {
 		}
 	}
 
-	&.mobile cyph-account-contact {
-		margin-bottom: 8px;
+	&.mobile {
+		cyph-account-contact {
+			margin-bottom: 8px;
 
-		&.active {
-			margin-bottom: 16px;
+			&.active {
+				margin-bottom: 16px;
+			}
+		}
+
+		mat-tab-group {
+			margin: 0 -8px;
+		}
+	}
+
+	mat-tab-group ::ng-deep {
+		.mat-ink-bar,
+		.mat-tab-label {
+			width: 50% !important;
+			min-width: 50% !important;
+			max-width: 50% !important;
+		}
+
+		.mat-tab-body-wrapper {
+			display: none !important;
 		}
 	}
 }

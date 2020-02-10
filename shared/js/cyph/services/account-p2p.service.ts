@@ -1,13 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {BooleanProto, NotificationTypes} from '../proto';
+import {User} from '../account';
+import {BooleanProto, CyphPlans, NotificationTypes} from '../proto';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
+import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
 import {AccountService} from './account.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {ConfigService} from './config.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
@@ -82,6 +85,34 @@ export class AccountP2PService extends P2PService {
 			return;
 		}
 
+		if (
+			!(
+				(await this.accountContactsService.isContact(
+					remoteUser.username,
+					true,
+					true
+				)) ||
+				this.configService.planConfig[
+					(await this.accountDatabaseService.currentUser.value?.user.cyphPlan.getValue())
+						?.plan || CyphPlans.Free
+				].unlimitedCalling ||
+				(remoteUser instanceof User &&
+					this.configService.planConfig[
+						(await remoteUser.cyphPlan.getValue())?.plan ||
+							CyphPlans.Free
+					].unlimitedCalling)
+			)
+		) {
+			await this.dialogService.alert({
+				content: this.stringsService.setParameters(
+					this.stringsService.p2pUpgradeToCall,
+					{user: remoteUser.username}
+				),
+				title: this.stringsService.p2pTitle
+			});
+			return;
+		}
+
 		const id = uuid();
 		const username = remoteUser.username;
 
@@ -143,10 +174,16 @@ export class AccountP2PService extends P2PService {
 		private readonly accountService: AccountService,
 
 		/** @ignore */
+		private readonly accountContactsService: AccountContactsService,
+
+		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly notificationService: NotificationService

@@ -19,7 +19,7 @@ import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import debounce from 'lodash-es/debounce';
 import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
-import {map, mergeMap, skip, take} from 'rxjs/operators';
+import {map, skip, take} from 'rxjs/operators';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {IChatData, IMessageListItem, UiStyles} from '../../chat';
@@ -214,7 +214,7 @@ export class ChatMessageListComponent extends BaseProvider
 				),
 				chat.pendingMessages.watch()
 			]).pipe(
-				mergeMap(async ([onlineMessages, pendingMessages]) => {
+				map(([onlineMessages, pendingMessages]) => {
 					debugLog(() => ({
 						chatMessageList: {onlineMessages, pendingMessages}
 					}));

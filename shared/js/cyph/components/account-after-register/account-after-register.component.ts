@@ -7,15 +7,15 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 
 /**
- * Angular component for account post register UI.
+ * Angular component for account post-registration UI.
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	selector: 'cyph-account-post-register',
-	styleUrls: ['./account-post-register.component.scss'],
-	templateUrl: './account-post-register.component.html'
+	selector: 'cyph-account-after-register',
+	styleUrls: ['./account-after-register.component.scss'],
+	templateUrl: './account-after-register.component.html'
 })
-export class AccountPostRegisterComponent extends BaseProvider
+export class AccountAfterRegisterComponent extends BaseProvider
 	implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {

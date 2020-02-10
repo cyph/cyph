@@ -419,7 +419,6 @@ export class AccountAuthService extends BaseProvider {
 
 			const agseConfirmedPromise = this.accountUserLookupService.exists(
 				username,
-				false,
 				true
 			);
 

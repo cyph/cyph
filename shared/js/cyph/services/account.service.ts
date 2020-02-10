@@ -11,7 +11,7 @@ import {
 } from '@angular/router';
 import * as Hammer from 'hammerjs';
 import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
-import {filter, map, mergeMap, skip, take} from 'rxjs/operators';
+import {filter, map, skip, switchMap, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
@@ -254,7 +254,7 @@ export class AccountService extends BaseProvider {
 	/** Total count of unread messages. */
 	public readonly unreadMessages: Observable<number> = toBehaviorSubject(
 		this.accountContactsService.contactList.pipe(
-			mergeMap(users =>
+			switchMap(users =>
 				observableAll(users.map(user => user.unreadMessageCount))
 			),
 			map(unreadCounts => unreadCounts.reduce((a, b) => a + b, 0))
@@ -350,7 +350,7 @@ export class AccountService extends BaseProvider {
 		activatedRoute: ActivatedRoute
 	) : Observable<[Data, Params, UrlSegment[]]> {
 		return this.routeChanges.pipe(
-			mergeMap(() =>
+			switchMap(() =>
 				combineLatest([
 					activatedRoute.data,
 					activatedRoute.firstChild ?

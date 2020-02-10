@@ -26,7 +26,7 @@
 						class="animated flipInX _4"
 						matTooltip="New Note"
 						routerLink="/notes/new"
-						*ngIf="!envService.isTelehealth"
+						*ngIf="false && !envService.isTelehealth"
 					>
 						<mat-icon>note_add</mat-icon>
 					</button>
@@ -55,6 +55,22 @@
 							mat-mini-fab
 							cyphTranslate
 							class="animated flipInX _4"
+							matTooltip="Share File"
+							cyphDropZone
+							(fileDrop)="
+								accountFilesService.upload(
+									$event.name,
+									$event,
+									user?.username
+								)
+							"
+						>
+							<mat-icon>attachment</mat-icon>
+						</button>
+						<button
+							mat-mini-fab
+							cyphTranslate
+							class="animated flipInX _4"
 							matTooltip="Remove Contact"
 							(click)="
 								accountContactsService.removeContact(
@@ -66,19 +82,44 @@
 							<mat-icon>delete</mat-icon>
 						</button>
 						<ng-template #buttonsAddContact>
-							<button
-								mat-mini-fab
-								cyphTranslate
-								class="animated flipInX _4"
-								matTooltip="Add Contact"
-								(click)="
-									accountContactsService.addContact(
-										user?.username
-									)
-								"
-							>
-								<mat-icon>person_add</mat-icon>
-							</button>
+							<span>
+								<button
+									mat-mini-fab
+									cyphTranslate
+									class="animated flipInX _4"
+									matTooltip="Add Contact"
+									[matMenuTriggerFor]="addContactMenu"
+								>
+									<mat-icon>person_add</mat-icon>
+								</button>
+								<mat-menu #addContactMenu="matMenu">
+									<button
+										mat-menu-item
+										(click)="
+											accountContactsService.addContact(
+												user?.username
+											)
+										"
+									>
+										<mat-icon>person_add</mat-icon>
+										<span cyphTranslate>Add Contact</span>
+									</button>
+									<button
+										mat-menu-item
+										(click)="
+											accountContactsService.addContact(
+												user?.username,
+												true
+											)
+										"
+									>
+										<mat-icon>star</mat-icon>
+										<span cyphTranslate
+											>Add to Inner Circle</span
+										>
+									</button>
+								</mat-menu>
+							</span>
 						</ng-template>
 
 						<button
@@ -150,13 +191,7 @@
 			</div>
 			<div *ngIf="divider"></div>
 			<div fxLayoutAlign="center" *ngIf="editMode | await">
-				<mat-form-field
-					class="description"
-					fxFlex="95"
-					fxFlex.md="87.5"
-					fxFlex.lg="80"
-					fxFlex.gt-lg="50"
-				>
+				<mat-form-field class="description">
 					<textarea
 						matInput
 						#descriptionEditor
@@ -246,14 +281,7 @@
 				}}
 			</div>
 			<div fxLayoutAlign="center" *ngIf="editMode | await">
-				<mat-form-field
-					class="name"
-					fxFlex="95"
-					fxFlex.sm="75"
-					fxFlex.md="66"
-					fxFlex.lg="50"
-					fxFlex.gt-lg="40"
-				>
+				<mat-form-field class="name" fxFlex>
 					<input
 						matInput
 						#descriptionEditor
@@ -422,7 +450,11 @@
 		</ng-template>
 
 		<ng-template #fileUpload>
-			<div fxLayout="row" fxLayoutAlign="center center">
+			<div
+				fxLayout="row"
+				fxLayoutAlign="center center"
+				*ngIf="(isCurrentUser | await) === false"
+			>
 				<div
 					class="file-upload"
 					fxFlex="95"
@@ -438,7 +470,6 @@
 					"
 					matTooltipPosition="above"
 					cyphDropZone
-					cyphTranslate
 					(fileDrop)="
 						accountFilesService.upload(
 							$event.name,
@@ -476,6 +507,24 @@
 			</ng-container>
 		</ng-template>
 
+		<ng-template #socialNetworkingPostUI>
+			<div
+				fxLayout="column"
+				fxLayoutAlign="center center"
+				*ngIf="(editMode | await) === false"
+			>
+				<cyph-account-post-compose fxFlex *ngIf="isCurrentUser | await">
+				</cyph-account-post-compose>
+
+				<div>
+					<cyph-account-post-list
+						fxFlex
+						[author]="(isCurrentUser | await) ? undefined : user"
+					></cyph-account-post-list>
+				</div>
+			</div>
+		</ng-template>
+
 		<ng-template #standardProfile>
 			<div fxLayout="row">
 				<div
@@ -510,12 +559,16 @@
 						></ng-container>
 					</ng-container>
 
-					<div fxLayoutAlign="center center">
+					<div
+						style="width:100%"
+						fxLayout="column"
+						fxLayoutAlign="center center"
+					>
 						<div
 							fxFlex
-							fxLayout="column"
-							fxLayoutAlign="center stretch"
-							[fxLayoutGap]="(editMode | await) ? '0px' : '16px'"
+							fxLayout="row"
+							fxLayoutAlign="center center"
+							class="profile-info"
 						>
 							<div fxLayoutAlign="center center">
 								<img
@@ -539,16 +592,17 @@
 									(fileDrop)="setAvatar($event)"
 								/>
 							</div>
-							<div *ngIf="(editMode | await) === false"></div>
-							<ng-container
-								*ngTemplateOutlet="
-									name;
-									context: {
-										readViewClasses: 'animated flipInX _2'
-									}
-								"
-							></ng-container>
-							<div fxLayoutAlign="center">
+							<div style="width:100%" fxLayout="column">
+								<div *ngIf="(editMode | await) === false"></div>
+								<ng-container
+									*ngTemplateOutlet="
+										name;
+										context: {
+											readViewClasses:
+												'animated flipInX _2'
+										}
+									"
+								></ng-container>
 								<a
 									class="username animated flipInX _2"
 									[href]="
@@ -564,17 +618,25 @@
 											''
 									}}</span>
 								</a>
+								<ng-container
+									*ngTemplateOutlet="
+										description;
+										context: {
+											divider:
+												(editMode | await) === false,
+											readViewClasses:
+												'animated flipInX _3'
+										}
+									"
+								></ng-container>
+								<ng-container
+									*ngTemplateOutlet="buttons"
+								></ng-container>
 							</div>
-							<ng-container
-								*ngTemplateOutlet="
-									description;
-									context: {
-										divider: (editMode | await) === false,
-										readViewClasses: 'animated flipInX _3'
-									}
-								"
-							></ng-container>
 						</div>
+						<ng-container
+							*ngTemplateOutlet="socialNetworkingPostUI"
+						></ng-container>
 					</div>
 
 					<div
@@ -624,8 +686,6 @@
 							<mat-icon>edit</mat-icon>
 						</button>
 					</ng-container>
-					<ng-container *ngTemplateOutlet="buttons"></ng-container>
-					<ng-container *ngTemplateOutlet="fileUpload"></ng-container>
 				</div>
 			</div>
 		</ng-template>

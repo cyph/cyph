@@ -4,7 +4,7 @@
 	class="card-list animated slideInDown"
 	[class.mobile]="envService.isMobile | await"
 	[class.initiating]="
-		(accountContactsService.showSpinner | await) ||
+		(showSpinner | await) ||
 		(home && (accountFilesService.uploadSpinner | await) !== undefined)
 	"
 >
@@ -26,7 +26,14 @@
 			</div>
 		</ng-container>
 
-		<br *ngIf="envService.isMobile | await" />
+		<mat-tab-group
+			[selectedIndex]="(innerCircleTab | await) ? 1 : 0"
+			(selectedIndexChange)="setInnerCircleTab($event === 1)"
+			*ngIf="!readOnly"
+		>
+			<mat-tab [label]="stringsService.contacts"></mat-tab>
+			<mat-tab [label]="stringsService.innerCircle"></mat-tab>
+		</mat-tab-group>
 
 		<cyph-account-contacts-search
 			#accountContactsSearch
@@ -68,38 +75,36 @@
 			></cyph-account-contact>
 		</div>
 
-		<div
-			fxFlex
-			fxLayoutAlign="center center"
-			*ngIf="
-				youHaveNoFriends &&
-					(accountContactsService.showSpinner | await) === false &&
-					((contactList | await)?.length || 0) < 1;
-				else mainContactListView
-			"
-		>
-			<div>{{ stringsService.emptyContactList }}</div>
-		</div>
+		<div fxFlex>
+			<div cyphNanoScroller>
+				<div class="contact-list">
+					<cyph-account-contact
+						[startBurner]="true"
+						[class.cyph-inverted-theme]="invertedTheme"
+						*ngIf="!readOnly && !envService.isTelehealth"
+					></cyph-account-contact>
 
-		<ng-template #mainContactListView>
-			<div fxFlex>
-				<div cyphNanoScroller>
-					<div class="contact-list">
-						<cyph-account-contact
-							[startBurner]="true"
-							[class.cyph-inverted-theme]="invertedTheme"
-							*ngIf="!readOnly && !envService.isTelehealth"
-						></cyph-account-contact>
+					<cyph-account-contact
+						[startGroup]="true"
+						[class.cyph-inverted-theme]="invertedTheme"
+						*ngIf="
+							!readOnly && (accountService.enableGroup | await)
+						"
+					></cyph-account-contact>
 
-						<cyph-account-contact
-							[startGroup]="true"
-							[class.cyph-inverted-theme]="invertedTheme"
-							*ngIf="
-								!readOnly &&
-								(accountService.enableGroup | await)
-							"
-						></cyph-account-contact>
-
+					<div
+						fxFlex
+						fxLayoutAlign="center center"
+						*ngIf="
+							youHaveNoFriends &&
+								(showSpinner | await) === false &&
+								((contactList | await)?.length || 0) < 1;
+							else mainContactListView
+						"
+					>
+						<div>{{ stringsService.emptyContactList }}</div>
+					</div>
+					<ng-template #mainContactListView>
 						<ng-container
 							*ngFor="
 								let item of filteredContactList | await;
@@ -115,17 +120,23 @@
 								"
 							></ng-container>
 						</ng-container>
-					</div>
+					</ng-template>
 				</div>
 			</div>
-		</ng-template>
+		</div>
 
 		<br *ngIf="!readOnly" />
 
 		<button
 			mat-button
 			class="add-contact"
-			(click)="accountContactsService.addContactPrompt()"
+			(click)="
+				accountContactsService.addContactPrompt(
+					innerCircleTab.value ?
+						newContactTypes.innerCircle :
+						undefined
+				)
+			"
 			*ngIf="
 				(accountDatabaseService.currentUser | await)?.agseConfirmed ===
 					true && !readOnly
@@ -133,7 +144,11 @@
 		>
 			<span>
 				&nbsp;&nbsp;&nbsp;&nbsp;
-				{{ stringsService.addContactTitle }}
+				{{
+					(innerCircleTab | await) ?
+						stringsService.addContactInnerCircleTitle :
+						stringsService.addContactTitle
+				}}
 				&nbsp;&nbsp;&nbsp;&nbsp;
 			</span>
 		</button>
@@ -171,7 +186,7 @@
 	<mat-progress-spinner
 		mode="indeterminate"
 		*ngIf="
-			(accountContactsService.showSpinner | await) ||
+			(showSpinner | await) ||
 			(home && (accountFilesService.uploadSpinner | await) !== undefined)
 		"
 	></mat-progress-spinner>

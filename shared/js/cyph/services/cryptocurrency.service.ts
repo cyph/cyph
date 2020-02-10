@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subject, timer} from 'rxjs';
-import {catchError, mergeMap} from 'rxjs/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 import {
 	getExchangeRates,
 	minimumTransactionAmount,
@@ -121,7 +121,7 @@ export class CryptocurrencyService extends BaseProvider {
 		memoize((convert?: GenericCurrency) =>
 			memoize((publicBalanceOnly?: boolean) =>
 				this.watchTransactionHistory(wallet).pipe(
-					mergeMap(async () =>
+					switchMap(async () =>
 						this.getBalance(wallet, convert, publicBalanceOnly)
 					)
 				)
@@ -157,7 +157,7 @@ export class CryptocurrencyService extends BaseProvider {
 			output: GenericCurrency
 		) : Observable<number> =>
 			timer(0, 900000).pipe(
-				mergeMap(async () => this.convert(amount, input, output))
+				switchMap(async () => this.convert(amount, input, output))
 			)
 	);
 
