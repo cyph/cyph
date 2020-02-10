@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {map} from 'rxjs/operators';
+import {switchMap} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IFile} from '../ifile';
-import {BinaryProto, CyphPlan, CyphPlans} from '../proto';
+import {BinaryProto, CyphPlans} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {FileService} from './file.service';
@@ -15,16 +15,9 @@ import {FileService} from './file.service';
 export class AccountSettingsService extends BaseProvider {
 	/** User's plan / premium status. */
 	public readonly plan = toBehaviorSubject(
-		this.accountDatabaseService
-			.watch(
-				'plan',
-				CyphPlan,
-				SecurityModels.unprotected,
-				undefined,
-				undefined,
-				this.subscriptions
-			)
-			.pipe(map(o => o.value.plan)),
+		this.accountDatabaseService.currentUserFiltered.pipe(
+			switchMap(o => o.user.plan)
+		),
 		CyphPlans.Free,
 		this.subscriptions
 	);
