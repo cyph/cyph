@@ -438,6 +438,26 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	};
 });
 
+exports.downgradeAccount = onCall(async (data, namespace, getUsername) => {
+	const username = await getUsername();
+
+	const internalURL = `${namespace}/users/${username}/internal`;
+	const braintreeIDRef = database.ref(`${internalURL}/braintreeID`);
+	const braintreeSubscriptionIDRef = database.ref(
+		`${internalURL}/braintreeSubscriptionID`
+	);
+	const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
+
+	await Promise.all([
+		braintreeIDRef.remove(),
+		braintreeSubscriptionIDRef.remove(),
+		planTrialEndRef.remove(),
+		setItem(namespace, `users/${username}/plan`, CyphPlan, {
+			plan: CyphPlans.Free
+		})
+	]);
+});
+
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
 	const braintreeID = validateInput(req.body.braintreeID, undefined, true);
