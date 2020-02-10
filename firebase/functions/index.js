@@ -1291,9 +1291,12 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 		notification.type === NotificationTypes.Message ?
 			metadata.groupID || username :
 			'';
+
 	const activeCall =
 		notification.type === NotificationTypes.Call &&
-		(metadata.callType === 'audio' || metadata.callType === 'video') &&
+		(metadata.callType === 'audio' ||
+			metadata.callType === 'video' ||
+			metadata.callType === 'chat') &&
 		!metadata.missed &&
 		(typeof metadata.expires === 'number' && metadata.expires > Date.now());
 
@@ -1387,7 +1390,12 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 			.then(n => (typeof n !== 'number' || isNaN(n) ? 1 : n))
 	]);
 
-	const callString = metadata.callType === 'video' ? 'Video Call' : 'Call';
+	const callString =
+		metadata.callType === 'chat' ?
+			'Burner Chat' :
+		metadata.callType === 'video' ?
+			'Video Call' :
+			'Call';
 	const contactString = metadata.innerCircle ? 'Inner Circle' : 'contact';
 
 	const {
