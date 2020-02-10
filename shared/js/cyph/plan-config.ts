@@ -9,6 +9,7 @@ export const planConfig: Record<
 		enablePasswords?: boolean;
 		enableWallets?: boolean;
 		initialInvites: number;
+		innerCircleLimit?: number;
 		lifetime: boolean;
 		rank: number;
 		storageCapGB: number;
@@ -21,6 +22,7 @@ export const planConfig: Record<
 	[CyphPlans.AnnualPremium]: {
 		checkoutPath: 'holiday-sale/annual-premium',
 		initialInvites: 10,
+		innerCircleLimit: 10,
 		lifetime: false,
 		rank: 2,
 		storageCapGB: 25,
@@ -32,6 +34,7 @@ export const planConfig: Record<
 		checkoutPath: 'accounts/annual-telehealth',
 		enableGroup: true,
 		initialInvites: 10,
+		innerCircleLimit: 10,
 		lifetime: false,
 		rank: 2,
 		storageCapGB: 5,
@@ -53,6 +56,7 @@ export const planConfig: Record<
 	},
 	[CyphPlans.Free]: {
 		initialInvites: 2,
+		innerCircleLimit: 2,
 		lifetime: false,
 		rank: 0,
 		storageCapGB: 1,
@@ -73,6 +77,7 @@ export const planConfig: Record<
 	[CyphPlans.MonthlyPremium]: {
 		checkoutPath: 'holiday-sale/monthly-premium',
 		initialInvites: 5,
+		innerCircleLimit: 5,
 		lifetime: false,
 		rank: 1,
 		storageCapGB: 5,
@@ -83,6 +88,7 @@ export const planConfig: Record<
 		checkoutPath: 'accounts/monthly-telehealth',
 		enableGroup: true,
 		initialInvites: 5,
+		innerCircleLimit: 5,
 		lifetime: false,
 		rank: 1,
 		storageCapGB: 5,

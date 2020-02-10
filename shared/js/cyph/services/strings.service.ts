@@ -72,6 +72,9 @@ export class StringsService extends BaseProvider {
 	public readonly addContactInnerCircleTitle = `Add to Inner Circle`;
 
 	/** @see StringsService */
+	public readonly addContactInnerCircleUpgrade = `Unfortunately, you've reached your Inner Circle limit of \${LIMIT} members. Please go to Settings to upgrade and try again!`;
+
+	/** @see StringsService */
 	public readonly addContactTitle = `Add Contact`;
 
 	/** @see StringsService */

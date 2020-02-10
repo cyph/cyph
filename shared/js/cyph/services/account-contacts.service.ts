@@ -26,6 +26,7 @@ import {IResolvable} from '../iresolvable';
 import {
 	AccountContactState,
 	AccountFileRecord,
+	CyphPlans,
 	IAccountContactState,
 	IAccountMessagingGroup,
 	NeverProto,
@@ -40,6 +41,7 @@ import {AccountFilesService} from './account-files.service';
 import {AccountInviteService} from './account-invite.service';
 import {AccountPostsService} from './account-posts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
@@ -292,6 +294,48 @@ export class AccountContactsService extends BaseProvider {
 		contactsInnerCircle: new BehaviorSubject<boolean>(true)
 	};
 
+	/** @ignore */
+	private async addToInnerCircleConfirm () : Promise<boolean> {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.addContactInnerCirclePrompt,
+				title: this.stringsService.addContactInnerCircleTitle
+			}))
+		) {
+			return false;
+		}
+
+		const planConfig = this.configService.planConfig[
+			(await this.accountDatabaseService.currentUser.value?.user.cyphPlan.getValue())
+				?.plan || CyphPlans.Free
+		];
+
+		if (typeof planConfig.innerCircleLimit === 'number') {
+			const innerCircleCount = (await this.accountDatabaseService.getList(
+				'contactsInnerCircle',
+				AccountContactState,
+				SecurityModels.unprotected,
+				undefined,
+				undefined,
+				false
+			)).filter(o => o.state === AccountContactState.States.Confirmed)
+				.length;
+
+			if (innerCircleCount >= planConfig.innerCircleLimit) {
+				await this.dialogService.alert({
+					content: this.stringsService.setParameters(
+						this.stringsService.addContactInnerCircleUpgrade,
+						{limit: planConfig.innerCircleLimit.toString()}
+					),
+					title: this.stringsService.addContactInnerCircleTitle
+				});
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	/** Accepts incoming contact request. */
 	public async acceptContactRequest (
 		username?: string,
@@ -312,13 +356,7 @@ export class AccountContactsService extends BaseProvider {
 
 		if (
 			innerCircle &&
-			!(
-				skipConfirmation ||
-				(await this.dialogService.confirm({
-					content: this.stringsService.addContactInnerCirclePrompt,
-					title: this.stringsService.addContactInnerCircleTitle
-				}))
-			)
+			!(skipConfirmation || (await this.addToInnerCircleConfirm()))
 		) {
 			return;
 		}
@@ -369,12 +407,7 @@ export class AccountContactsService extends BaseProvider {
 				if (
 					contacts.length < 1 ||
 					(newContactType === NewContactTypes.innerCircle &&
-						!(await this.dialogService.confirm({
-							content: this.stringsService
-								.addContactInnerCirclePrompt,
-							title: this.stringsService
-								.addContactInnerCircleTitle
-						})))
+						!(await this.addToInnerCircleConfirm()))
 				) {
 					return;
 				}
@@ -606,6 +639,9 @@ export class AccountContactsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountInviteService: AccountInviteService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
