@@ -1121,6 +1121,7 @@ exports.setContact = onCall(async (data, namespace, getUsername) => {
 					removeItem(namespace, url) :
 					setItem(namespace, url, AccountContactState, {
 						...(currentUser ? {} : otherContactStateNewData),
+						innerCircle,
 						state
 					})
 			)
