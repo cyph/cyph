@@ -303,7 +303,8 @@ export class AccountContactsService extends BaseProvider {
 	/** Adds contact. */
 	public async addContact (
 		username?: string,
-		innerCircle: boolean = false
+		innerCircle: boolean = false,
+		skipConfirmation: boolean = false
 	) : Promise<void> {
 		if (!username) {
 			return;
@@ -311,10 +312,13 @@ export class AccountContactsService extends BaseProvider {
 
 		if (
 			innerCircle &&
-			!(await this.dialogService.confirm({
-				content: this.stringsService.addContactInnerCirclePrompt,
-				title: this.stringsService.addContactInnerCircleTitle
-			}))
+			!(
+				skipConfirmation ||
+				(await this.dialogService.confirm({
+					content: this.stringsService.addContactInnerCirclePrompt,
+					title: this.stringsService.addContactInnerCircleTitle
+				}))
+			)
 		) {
 			return;
 		}
@@ -360,20 +364,30 @@ export class AccountContactsService extends BaseProvider {
 					closeFunction.promise
 				]);
 
-				if (contacts.length < 1) {
-					close();
+				close();
+
+				if (
+					contacts.length < 1 ||
+					(newContactType === NewContactTypes.innerCircle &&
+						!(await this.dialogService.confirm({
+							content: this.stringsService
+								.addContactInnerCirclePrompt,
+							title: this.stringsService
+								.addContactInnerCircleTitle
+						})))
+				) {
 					return;
 				}
 
 				/* eslint-disable-next-line no-unused-expressions */
 				this.interstitial?.next(true);
-				close();
 
 				await Promise.all(
 					contacts.map(async user =>
 						this.addContact(
 							user.username,
-							newContactType === NewContactTypes.innerCircle
+							newContactType === NewContactTypes.innerCircle,
+							true
 						)
 					)
 				);
