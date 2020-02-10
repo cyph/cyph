@@ -736,9 +736,9 @@ message CyphPlan {
 
 /** Cyph plans. */
 enum CyphPlans {
+	Free = 0;
 	AnnualPremium = 2;
 	AnnualTelehealth = 5;
-	Free = 0;
 	FoundersAndFriends = 4;
 	LifetimePlatinum = 3;
 	MonthlyPremium = 1;
