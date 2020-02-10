@@ -14,9 +14,6 @@ message AccountContactState {
 	/** Optional email. */
 	string email = 2;
 
-	/** Indicates whether this contact is (or requesting to be) in the Inner Circle. */
-	bool innerCircle = 4;
-
 	/** Optional name. */
 	string name = 3;
 
