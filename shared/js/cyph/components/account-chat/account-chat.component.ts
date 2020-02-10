@@ -381,9 +381,24 @@ export class AccountChatComponent extends BaseProvider
 									sessionSubID = defaultSessionSubID;
 								}
 
+								const chat = anonymousChannelID ?
+									{
+										anonymousChannelID,
+										passive: !generateAnonymousChannelID
+									} :
+									await this.accountContactsService.getChatData(
+										contactID
+									);
+
 								this.messageType.next(
 									sessionSubID === 'mail' ||
-										this.envService.isTelehealth ?
+										this.envService.isTelehealth ||
+										('username' in chat &&
+											!(await this.accountContactsService.isContact(
+												chat.username,
+												true,
+												true
+											))) ?
 										ChatMessageValue.Types.Quill :
 										ChatMessageValue.Types.Text
 								);
@@ -393,15 +408,6 @@ export class AccountChatComponent extends BaseProvider
 								this.p2pWebRTCService.initialCallPending.next(
 									callType !== undefined
 								);
-
-								const chat = anonymousChannelID ?
-									{
-										anonymousChannelID,
-										passive: !generateAnonymousChannelID
-									} :
-									await this.accountContactsService.getChatData(
-										contactID
-									);
 
 								const destroyed = this.destroyed
 									.pipe(
