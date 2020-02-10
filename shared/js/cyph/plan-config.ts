@@ -95,5 +95,16 @@ export const planConfig: Record<
 		unlimitedCalling: true,
 		telehealth: true,
 		usernameMinLength: 5
+	},
+	[CyphPlans.Platinum]: {
+		checkoutPath: 'accounts/platinum',
+		enableGroup: true,
+		initialInvites: 15,
+		lifetime: false,
+		rank: 3,
+		storageCapGB: 100,
+		unlimitedCalling: true,
+		usernameMinLength: 1,
+		walletEarlyAccess: 'alpha'
 	}
 };

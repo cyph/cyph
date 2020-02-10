@@ -130,6 +130,12 @@ export class Config {
 						id: 2,
 						name: 'Telehealth (Monthly)',
 						subscriptionType: SubscriptionTypes.monthly
+					},
+					platinum: {
+						amount: 200,
+						id: 4,
+						name: 'Platinum (3 years)',
+						subscriptionType: SubscriptionTypes.triAnnual
 					}
 				}
 			},

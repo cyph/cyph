@@ -366,6 +366,20 @@ var config = struct {
 			},
 			SessionCountLimit: -1,
 		},
+		"8-4": Plan{
+			AccountsPlan: "Platinum",
+			Price:        20000,
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
 		"9-0": Plan{
 			AccountsPlan: "MonthlyPremium",
 			ProFeatures: map[string]bool{

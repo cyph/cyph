@@ -740,6 +740,7 @@ enum CyphPlans {
 	LifetimePlatinum = 3;
 	MonthlyPremium = 1;
 	MonthlyTelehealth = 6;
+	Platinum = 7;
 }
 
 /** Database item metadata. */
