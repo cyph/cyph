@@ -8,6 +8,7 @@ export const titleize = memoize((s: string) =>
 			.replace(/^([a-z])/g, c => c.toUpperCase())
 			.replace(/([A-Z])/g, ' $1')
 			.replace(/ And /g, ' & ')
+			.replace(/\s+/g, ' ')
 			.trim()
 	)
 );
