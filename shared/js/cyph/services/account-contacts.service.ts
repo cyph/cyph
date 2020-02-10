@@ -445,8 +445,13 @@ export class AccountContactsService extends BaseProvider {
 	}
 
 	/** Contact URL. */
-	public contactURL (username: string) : string {
-		return `contacts/${normalize(username)}`;
+	public contactURL (
+		username: string,
+		innerCircle: boolean = false
+	) : string {
+		return `${innerCircle ? 'contactsInnerCircle' : 'contacts'}/${normalize(
+			username
+		)}`;
 	}
 
 	/** Displays prompt to start a new group chat. */
@@ -515,12 +520,28 @@ export class AccountContactsService extends BaseProvider {
 	}
 
 	/** Indicates whether the user is already a contact. */
-	public async isContact (username?: string) : Promise<boolean> {
+	public async isContact (
+		username?: string,
+		confirmed: boolean = false,
+		innerCircle: boolean = false
+	) : Promise<boolean> {
 		if (!username) {
 			return false;
 		}
 
-		return this.accountDatabaseService.hasItem(this.contactURL(username));
+		const contactURL = this.contactURL(username, innerCircle);
+
+		return !confirmed ?
+			this.accountDatabaseService.hasItem(contactURL) :
+			(await this.accountDatabaseService
+				.getItem(
+					contactURL,
+					AccountContactState,
+					SecurityModels.unprotected
+				)
+				.then(o => o.state)
+				.catch(() => AccountContactState.States.None)) ===
+				AccountContactState.States.Confirmed;
 	}
 
 	/** Removes contact. */

@@ -13,6 +13,7 @@ export const planConfig: Record<
 		rank: number;
 		storageCapGB: number;
 		telehealth?: boolean;
+		unlimitedCalling: boolean;
 		usernameMinLength: number;
 		walletEarlyAccess?: string;
 	}
@@ -23,6 +24,7 @@ export const planConfig: Record<
 		lifetime: false,
 		rank: 2,
 		storageCapGB: 25,
+		unlimitedCalling: false,
 		usernameMinLength: 5,
 		walletEarlyAccess: 'beta'
 	},
@@ -34,6 +36,7 @@ export const planConfig: Record<
 		rank: 2,
 		storageCapGB: 5,
 		telehealth: true,
+		unlimitedCalling: true,
 		usernameMinLength: 5
 	},
 	[CyphPlans.FoundersAndFriends]: {
@@ -44,6 +47,7 @@ export const planConfig: Record<
 		lifetime: true,
 		rank: 4,
 		storageCapGB: 100,
+		unlimitedCalling: true,
 		usernameMinLength: 1,
 		walletEarlyAccess: 'alpha'
 	},
@@ -52,6 +56,7 @@ export const planConfig: Record<
 		lifetime: false,
 		rank: 0,
 		storageCapGB: 1,
+		unlimitedCalling: false,
 		usernameMinLength: 5
 	},
 	[CyphPlans.LifetimePlatinum]: {
@@ -61,6 +66,7 @@ export const planConfig: Record<
 		lifetime: true,
 		rank: 3,
 		storageCapGB: 100,
+		unlimitedCalling: true,
 		usernameMinLength: 1,
 		walletEarlyAccess: 'alpha'
 	},
@@ -70,6 +76,7 @@ export const planConfig: Record<
 		lifetime: false,
 		rank: 1,
 		storageCapGB: 5,
+		unlimitedCalling: false,
 		usernameMinLength: 5
 	},
 	[CyphPlans.MonthlyTelehealth]: {
@@ -79,6 +86,7 @@ export const planConfig: Record<
 		lifetime: false,
 		rank: 1,
 		storageCapGB: 5,
+		unlimitedCalling: true,
 		telehealth: true,
 		usernameMinLength: 5
 	}
