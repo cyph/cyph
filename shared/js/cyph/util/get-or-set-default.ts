@@ -13,7 +13,7 @@ const getOrSetDefaultAsyncData = new Map<
 		any,
 		{
 			setLock: LockFunction;
-			setResolver: IResolvable<void>;
+			setResolver: IResolvable<any>;
 		}
 	>
 >();
@@ -57,7 +57,13 @@ export const getOrSetDefaultAsync = async <K, V>(
 	}
 
 	if (!m.has(k)) {
-		const {setLock, setResolver} = getOrSetDefault(
+		const {
+			setLock,
+			setResolver
+		}: {
+			setLock: LockFunction;
+			setResolver: IResolvable<V>;
+		} = getOrSetDefault(
 			getOrSetDefault(
 				getOrSetDefaultAsyncData,
 				m,
@@ -66,24 +72,24 @@ export const getOrSetDefaultAsync = async <K, V>(
 						any,
 						{
 							setLock: LockFunction;
-							setResolver: IResolvable<void>;
+							setResolver: IResolvable<V>;
 						}
 					>()
 			),
 			k,
 			() => ({
 				setLock: lockFunction(),
-				setResolver: resolvable()
+				setResolver: resolvable<V>()
 			})
 		);
 
 		const setValue = (v: V) => {
 			m.set(k, v);
-			setResolver.resolve();
+			setResolver.resolve(v);
 		};
 
 		if (waitUntilAlreadySet) {
-			await setResolver.promise;
+			return setResolver.promise;
 		}
 		else if (lock) {
 			await setLock(async () => {
