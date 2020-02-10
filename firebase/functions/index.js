@@ -1107,20 +1107,23 @@ exports.setContact = onCall(async (data, namespace, getUsername) => {
 		);
 
 	const setContactState = async (currentUser, state) =>
-		Promise.all([
-			currentUser ? contactURL : otherContactURL,
-			...(!innerCircle ?
-				[] :
-				[currentUser ? innerCircleURL : otherInnerCircleURL])
-		]).map(async url =>
-			state === undefined ?
-				removeItem(namespace, url) :
-				setItem(namespace, url, AccountContactState, {
-					...(currentUser ? {} : otherContactStateNewData),
-					innerCircle,
-					state
-				})
+		Promise.all(
+			[
+				currentUser ? contactURL : otherContactURL,
+				...(!innerCircle ?
+					[] :
+					[currentUser ? innerCircleURL : otherInnerCircleURL])
+			].map(async url =>
+				state === undefined ?
+					removeItem(namespace, url) :
+					setItem(namespace, url, AccountContactState, {
+						...(currentUser ? {} : otherContactStateNewData),
+						innerCircle,
+						state
+					})
+			)
 		);
+
 	/* Remove */
 	if (!add) {
 		return Promise.all([setContactState(true), setContactState(false)]);
