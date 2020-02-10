@@ -67,6 +67,8 @@ const inviteUser = async (
 		"You've Been Invited to Cyph!" +
 			(cyphPlan === CyphPlans.Free ?
 				'' :
+			trialMonths ?
+				` (with ${titleize(CyphPlans[cyphPlan])} trial)` :
 				` (${titleize(CyphPlans[cyphPlan])})`),
 		{
 			data: {
