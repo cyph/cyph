@@ -1567,6 +1567,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 									lastValue = result.value;
 								}
 								catch {
+									lastValue = undefined;
 									const timestamp = await getTimestamp();
 									this.ngZone.run(() => {
 										observer.next({
