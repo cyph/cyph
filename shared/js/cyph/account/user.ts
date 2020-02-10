@@ -8,10 +8,12 @@ import {LockFunction} from '../lock-function-type';
 import {
 	AccountContactState,
 	AccountUserTypes,
+	CyphPlans,
 	IAccountContactState,
 	IAccountUserPresence,
 	IAccountUserProfile,
 	IAccountUserProfileExtra,
+	ICyphPlan,
 	IReview
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
@@ -108,6 +110,12 @@ export class User {
 		''
 	);
 
+	/** @see CyphPlans */
+	public readonly plan: Observable<CyphPlans> = toBehaviorSubject(
+		this.cyphPlan.watch().pipe(map(({plan}) => plan)),
+		CyphPlans.Free
+	);
+
 	/** Indicates that user is not a pseudo-account. */
 	public readonly pseudoAccount: false = false;
 
@@ -202,6 +210,9 @@ export class User {
 		public readonly accountUserProfileExtra: IAsyncValue<
 			IAccountUserProfileExtra
 		>,
+
+		/** @see ICyphPlan */
+		public readonly cyphPlan: IAsyncValue<ICyphPlan>,
 
 		/** If applicable, usernames of members of this organization. */
 		public readonly organizationMembers: IAsyncValue<{

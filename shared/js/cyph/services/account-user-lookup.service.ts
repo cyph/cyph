@@ -9,6 +9,7 @@ import {
 	AccountUserProfileExtra,
 	AccountUserTypes,
 	BooleanMapProto,
+	CyphPlan,
 	DataURIProto,
 	NeverProto,
 	Review
@@ -216,6 +217,10 @@ export class AccountUserLookupService extends BaseProvider {
 							SecurityModels.public,
 							undefined,
 							true
+						),
+						this.databaseService.getAsyncValue(
+							`${url}/plan`,
+							CyphPlan
 						),
 						this.accountDatabaseService.getAsyncValue(
 							`${url}/organizationMembers`,

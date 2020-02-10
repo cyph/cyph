@@ -990,6 +990,7 @@
 					},
 
 					"plan": {
+						".read": true,
 						".write": false,
 
 						"data": {
