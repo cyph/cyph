@@ -1071,12 +1071,12 @@ exports.setContact = onCall(async (data, namespace, getUsername) => {
 	const otherInnerCircleURL = `users/${contact}/contactsInnerCircle/${username}`;
 
 	const pseudoAccountRef = database.ref(
-		`${params.namespace}/users/${username}/pseudoAccount`
+		`${namespace}/users/${username}/pseudoAccount`
 	);
 
 	const [otherContactState, otherContactStateNewData] = await Promise.all([
 		getItem(
-			params.namespace,
+			namespace,
 			innerCircle ? otherInnerCircleURL : otherContactURL,
 			AccountContactState
 		)
@@ -1088,7 +1088,7 @@ exports.setContact = onCall(async (data, namespace, getUsername) => {
 				{
 					email: ' ',
 					name: (await getItem(
-						params.namespace,
+						namespace,
 						`users/${username}/publicProfile`,
 						AccountUserProfile,
 						true,
@@ -1114,8 +1114,8 @@ exports.setContact = onCall(async (data, namespace, getUsername) => {
 				[currentUser ? innerCircleURL : otherInnerCircleURL])
 		]).map(async url =>
 			state === undefined ?
-				removeItem(params.namespace, url) :
-				setItem(params.namespace, url, AccountContactState, {
+				removeItem(namespace, url) :
+				setItem(namespace, url, AccountContactState, {
 					...(currentUser ? {} : otherContactStateNewData),
 					innerCircle,
 					state
