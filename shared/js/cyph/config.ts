@@ -40,13 +40,14 @@ export class Config {
 
 	/** User-facing email addresses to include in places like contact forms. */
 	public readonly contactEmailAddresses: string[] = [
-		'hello',
-		'help',
-		'feedback',
-		'bugs',
+		'support',
+		'investment',
+		'press',
 		'b2b',
+		'bugs',
+		'sales',
 		'telehealth',
-		'privacy'
+		'other'
 	];
 
 	/** Number of milliseconds before new cyph wait screen will abort. */
