@@ -575,11 +575,7 @@
 						></ng-container>
 					</ng-container>
 
-					<div
-						style="width:100%"
-						fxLayout="column"
-						fxLayoutAlign="center center"
-					>
+					<div fxFlex fxLayout="column" fxLayoutAlign="center center">
 						<div
 							fxFlex
 							fxLayout="row"
@@ -608,7 +604,7 @@
 									(fileDrop)="setAvatar($event)"
 								/>
 							</div>
-							<div style="width:100%" fxLayout="column">
+							<div fxFlex fxLayout="column">
 								<div *ngIf="(editMode | await) === false"></div>
 								<ng-container
 									*ngTemplateOutlet="
