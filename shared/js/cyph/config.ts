@@ -198,28 +198,6 @@ export class Config {
 				},
 				namespace: 'video.cyph.healthcare'
 			},
-			holidaySale: {
-				id: 9,
-				items: {
-					annualPremium: {
-						amount: 90,
-						id: 1,
-						name: 'Annual Premium',
-						subscriptionType: SubscriptionTypes.annual
-					},
-					lifetimePlatinum: {
-						amount: 450,
-						id: 2,
-						name: 'Lifetime Platinum'
-					},
-					monthlyPremium: {
-						amount: 10,
-						id: 0,
-						name: 'Monthly Premium',
-						subscriptionType: SubscriptionTypes.monthly
-					}
-				}
-			},
 			subscription: {
 				id: 1,
 				items: {

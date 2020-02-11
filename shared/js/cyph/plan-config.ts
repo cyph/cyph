@@ -20,7 +20,7 @@ export const planConfig: Record<
 	}
 > = {
 	[CyphPlans.AnnualPremium]: {
-		checkoutPath: 'holiday-sale/annual-premium',
+		checkoutPath: 'accounts/annual-premium',
 		initialInvites: 10,
 		innerCircleLimit: 10,
 		lifetime: false,
@@ -64,7 +64,7 @@ export const planConfig: Record<
 		usernameMinLength: 5
 	},
 	[CyphPlans.LifetimePlatinum]: {
-		checkoutPath: 'holiday-sale/lifetime-platinum',
+		checkoutPath: 'accounts/lifetime-platinum',
 		enableGroup: true,
 		initialInvites: 15,
 		lifetime: true,
@@ -75,7 +75,7 @@ export const planConfig: Record<
 		walletEarlyAccess: 'alpha'
 	},
 	[CyphPlans.MonthlyPremium]: {
-		checkoutPath: 'holiday-sale/monthly-premium',
+		checkoutPath: 'accounts/monthly-premium',
 		initialInvites: 5,
 		innerCircleLimit: 5,
 		lifetime: false,
