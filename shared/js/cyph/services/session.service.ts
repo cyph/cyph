@@ -115,6 +115,11 @@ export abstract class SessionService extends BaseProvider
 		string
 	>(this.stringsService.me);
 
+	/** @inheritDoc */
+	public readonly missedBurnerChat: BehaviorSubject<
+		boolean
+	> = new BehaviorSubject<boolean>(false);
+
 	/** @ignore */
 	public readonly opened: Promise<boolean> = this._OPENED.promise;
 

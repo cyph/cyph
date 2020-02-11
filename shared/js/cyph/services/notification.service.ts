@@ -115,7 +115,8 @@ export class NotificationService extends BaseProvider
 	 */
 	public async ring (
 		accept: () => Promise<boolean>,
-		silent: boolean = false
+		silent: boolean = false,
+		answering: boolean = false
 	) : Promise<boolean> {
 		return this.ringLock(async () => {
 			try {
@@ -127,7 +128,9 @@ export class NotificationService extends BaseProvider
 
 				return await Promise.race([
 					accept(),
-					sleep(this.ringTimeout).then(() => false)
+					sleep(this.ringTimeout * (answering ? 1 : 2)).then(
+						() => false
+					)
 				]);
 			}
 			finally {

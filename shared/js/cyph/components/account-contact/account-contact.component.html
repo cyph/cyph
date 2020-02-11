@@ -11,9 +11,7 @@
 				openWindow(envService.cyphImUrl) :
 			envService.isCordovaMobile ?
 				router.navigate(['account-burner', 'chat']) :
-			envService.isCordovaDesktop ?
-				openWindow('#account-burner/chat') :
-				openWindow(envService.appUrl + '#account-burner/chat')
+				openWindow('#account-burner/chat')
 		"
 	>
 		<mat-card-header fxLayout="row" fxLayoutAlign="stretch center">

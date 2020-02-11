@@ -167,6 +167,19 @@
 					>
 						<mat-icon>email</mat-icon>
 					</button>
+					<button
+						mat-mini-fab
+						cyphTranslate
+						class="animated flipInX _4"
+						matTooltip="Live Burner Chat Request"
+						[routerLink]="
+							'/burner/' +
+							(user?.username || '') +
+							'/chat-request'
+						"
+					>
+						<mat-icon>whatshot</mat-icon>
+					</button>
 				</ng-template>
 			</div>
 		</ng-template>

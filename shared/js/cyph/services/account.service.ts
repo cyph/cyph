@@ -32,7 +32,7 @@ import {request} from '../util/request';
 import {getTimestamp, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
-import {reloadWindow} from '../util/window';
+import {openWindow, reloadWindow} from '../util/window';
 import {AccountAppointmentsService} from './account-appointments.service';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountFilesService} from './account-files.service';
@@ -283,14 +283,16 @@ export class AccountService extends BaseProvider {
 		id: string;
 		route: string[];
 		timestamp: number;
-		user: User;
+		user: User | undefined;
 	}> {
 		const [callType, username, id, expiresString] = callMetadata.split(',');
 		const expires = toInt(expiresString);
 		const timestamp = await getTimestamp();
 
 		if (
-			(callType !== 'audio' && callType !== 'video') ||
+			(callType !== 'audio' &&
+				callType !== 'chat' &&
+				callType !== 'video') ||
 			!username ||
 			!id ||
 			isNaN(expires) ||
@@ -300,17 +302,22 @@ export class AccountService extends BaseProvider {
 		}
 
 		const user = await this.accountUserLookupService.getUser(username);
-		if (!user) {
+
+		/* Anonymous "calls" allowed only for chats */
+		if (!user && callType !== 'chat') {
 			throw new Error('User not found.');
 		}
 
-		const contactID = await user.contactID;
+		const contactID = (await user?.contactID) || '';
 
 		return {
 			callType,
 			expires,
 			id,
-			route: [callType, contactID, id, expiresString],
+			route:
+				callType === 'chat' ?
+					['account-burner', 'chat', id] :
+					[callType, contactID, id, expiresString],
 			timestamp,
 			user
 		};
@@ -657,10 +664,8 @@ export class AccountService extends BaseProvider {
 							user
 						} = await this.getIncomingCallRoute(k);
 
-						const {
-							name,
-							realUsername
-						} = await user.accountUserProfile.getValue();
+						const {name, realUsername} =
+							(await user?.accountUserProfile.getValue()) || {};
 
 						const incomingCallAnswer = getOrSetDefault(
 							this.incomingCallAnswers,
@@ -674,38 +679,58 @@ export class AccountService extends BaseProvider {
 						const answered =
 							typeof incomingCallAnswer.value === 'boolean' ?
 								incomingCallAnswer.value :
-								await this.notificationService.ring(async () =>
-									Promise.race([
-										incomingCallAnswer.promise,
-										this.dialogService.confirm(
-											{
-												bottomSheet: true,
-												cancel: this.stringsService
-													.decline,
-												cancelFAB: 'close',
-												content: `${name} (@${realUsername})`,
-												fabAvatar: user.avatar,
-												ok: this.stringsService.answer,
-												okFAB: 'phone',
-												timeout:
-													expires -
-													(await getTimestamp()),
-												title:
-													callType === 'audio' ?
+								await this.notificationService.ring(
+									async () =>
+										Promise.race([
+											incomingCallAnswer.promise,
+											this.dialogService.confirm(
+												{
+													bottomSheet: true,
+													cancel: this.stringsService
+														.decline,
+													cancelFAB: 'close',
+													content: !realUsername ?
 														this.stringsService
-															.incomingCallAudio :
-														this.stringsService
-															.incomingCallVideo
-											},
-											dialogClose
-										)
-									])
+															.anonymous :
+													!name ?
+														`@${realUsername}` :
+														`${name} (@${realUsername})`,
+													fabAvatar: user?.avatar,
+													ok: this.stringsService
+														.answer,
+													okFAB:
+														callType === 'chat' ?
+															'whatshot' :
+															'phone',
+													timeout:
+														expires -
+														(await getTimestamp()),
+													title:
+														callType === 'audio' ?
+															this.stringsService
+																.incomingCallAudio :
+														callType === 'chat' ?
+															this.stringsService
+																.incomingCallChat :
+															this.stringsService
+																.incomingCallVideo
+												},
+												dialogClose
+											)
+										]),
+									false,
+									true
 								);
 
 						(await dialogClose.promise)();
 
 						if (answered) {
-							this.router.navigate(route);
+							if (callType === 'chat') {
+								openWindow('/#' + route.join('/'));
+							}
+							else {
+								this.router.navigate(route);
+							}
 						}
 					}
 					catch {

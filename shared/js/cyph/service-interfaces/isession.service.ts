@@ -48,6 +48,9 @@ export interface ISessionService {
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
 
+	/** Indicates whether Burner chat request was missed. */
+	readonly missedBurnerChat: BehaviorSubject<boolean>;
+
 	/** @see ProFeatures */
 	readonly proFeatures: ProFeatures;
 

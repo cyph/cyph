@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
+import {NotificationTypes} from '../../proto';
 import {events, ProFeatures} from '../session';
 import {random} from '../util/random';
 import {request} from '../util/request';
@@ -9,10 +10,12 @@ import {sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
+import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
+import {NotificationService} from './notification.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
@@ -139,7 +142,9 @@ export class EphemeralSessionService extends SessionService {
 			this.potassiumService,
 			this.sessionInitService.spawn(),
 			this.stringsService,
-			this.configService
+			this.accountDatabaseService,
+			this.configService,
+			this.notificationService
 		);
 	}
 
@@ -154,7 +159,13 @@ export class EphemeralSessionService extends SessionService {
 		stringsService: StringsService,
 
 		/** @ignore */
-		private readonly configService: ConfigService
+		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly notificationService: NotificationService
 	) {
 		super(
 			analyticsService,
@@ -179,6 +190,37 @@ export class EphemeralSessionService extends SessionService {
 
 		if (id.indexOf('/') > -1) {
 			[username, id] = id.split('/');
+
+			if (username && id === 'chat-request') {
+				const chatRequestUsername = username;
+				id = readableID(this.configService.cyphIDLength);
+
+				(async () => {
+					await this.accountDatabaseService.notify(
+						chatRequestUsername,
+						NotificationTypes.Call,
+						{
+							callType: 'chat',
+							expires:
+								(await getTimestamp()) +
+								this.notificationService.ringTimeout,
+							id
+						}
+					);
+
+					const answered = await this.notificationService.ring(
+						async () => this.connected.then(() => true),
+						true
+					);
+
+					if (answered) {
+						return;
+					}
+
+					this.missedBurnerChat.next(true);
+					this.trigger(events.connectFailure);
+				})();
+			}
 		}
 
 		/* API flags */
