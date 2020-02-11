@@ -125,6 +125,13 @@
 	}
 }
 
+.inner-circle-indicator {
+	position: absolute;
+	top: -12px;
+	left: -20px;
+	color: map-get($mat-yellow, 600);
+}
+
 .pending {
 	button {
 		width: 50px;

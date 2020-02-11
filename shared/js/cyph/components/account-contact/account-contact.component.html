@@ -334,6 +334,14 @@
 </ng-template>
 
 <ng-template #contactStateUI let-contactState="contactState">
+	<mat-icon
+		class="inner-circle-indicator"
+		[matTooltip]="stringsService.innerCircle"
+		*ngIf="contactState?.innerCircle === true"
+	>
+		star
+	</mat-icon>
+
 	<div fxFlex fxLayoutAlign="end center" *ngIf="clickable">
 		<ng-container
 			*ngIf="contactState?.state === accountContactStates.Confirmed"
