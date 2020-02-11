@@ -128,15 +128,6 @@ $header-size: 135px;
 		min-height: 4em;
 	}
 
-	&.edit-mode.mobile {
-		mat-form-field.description {
-			textarea {
-				min-height: 0 !important;
-				margin: -20px 0;
-			}
-		}
-	}
-
 	.username {
 		font-size: 22px;
 		opacity: 0.6;
