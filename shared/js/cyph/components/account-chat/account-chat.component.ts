@@ -396,7 +396,6 @@ export class AccountChatComponent extends BaseProvider
 										('username' in chat &&
 											!(await this.accountContactsService.isContact(
 												chat.username,
-												true,
 												true
 											))) ?
 										ChatMessageValue.Types.Quill :
