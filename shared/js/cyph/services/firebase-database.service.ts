@@ -393,7 +393,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(async () => {
 			await this.login(username, oldPassword);
 
-			const auth = await (await this.app).auth();
+			const auth = (await this.app).auth();
 
 			if (
 				!auth.currentUser ||
@@ -571,7 +571,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				const value = (await (await this.getDatabaseRef(url)).once(
 					'value'
 				)).val();
-				const keys = await this.getListKeysInternal(value);
+				const keys = this.getListKeysInternal(value);
 
 				return keys
 					.filter(k => !isNaN(value[k].timestamp))
@@ -973,7 +973,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** @inheritDoc */
 	public async login (username: string, password: string) : Promise<void> {
 		return this.ngZone.runOutsideAngular(async () => {
-			const auth = await (await this.app).auth();
+			const auth = (await this.app).auth();
 
 			if (firebase.auth) {
 				await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
@@ -1380,7 +1380,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		await this.ngZone.runOutsideAngular(async () => {
 			await this.login(username, password);
 
-			const {currentUser} = await (await this.app).auth();
+			const {currentUser} = (await this.app).auth();
 			if (currentUser) {
 				await currentUser.delete().then();
 			}
@@ -1543,10 +1543,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 										throw new Error('Data not found.');
 									}
 
-									const result = await (await this.downloadItem(
+									const result = await this.downloadItem(
 										url,
 										proto
-									)).result;
+									).result;
 
 									if (
 										result.value !== lastValue &&
@@ -2060,10 +2060,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 									const {
 										timestamp,
 										value
-									} = await (await this.downloadItem(
-										itemUrl,
-										proto
-									)).result;
+									} = await this.downloadItem(itemUrl, proto)
+										.result;
 
 									this.ngZone.run(() => {
 										observer.next({

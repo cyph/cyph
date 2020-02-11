@@ -693,13 +693,13 @@ export class AccountDatabaseService extends BaseProvider {
 
 			const getItemInternal = async (key: string) => {
 				const f = async () =>
-					(await (await this.getItemInternal(
+					(await this.getItemInternal(
 						`${await url}/${key}`,
 						proto,
 						securityModel,
 						customKey,
 						anonymous
-					)).result).value;
+					)).result.value;
 
 				if (!staticValues) {
 					return f();
@@ -975,13 +975,13 @@ export class AccountDatabaseService extends BaseProvider {
 		customKey?: MaybePromise<Uint8Array>,
 		anonymous: boolean = false
 	) : Promise<T> {
-		return (await (await this.getItemInternal(
+		return (await this.getItemInternal(
 			url,
 			proto,
 			securityModel,
 			customKey,
 			anonymous
-		)).result).value;
+		)).result.value;
 	}
 
 	/** @see DatabaseService.getLatestKey */

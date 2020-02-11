@@ -549,7 +549,7 @@ export class DatabaseService extends DataManagerService {
 
 	/** @inheritDoc */
 	public async getItem<T> (url: string, proto: IProto<T>) : Promise<T> {
-		return (await (await this.downloadItem(url, proto)).result).value;
+		return (await this.downloadItem(url, proto).result).value;
 	}
 
 	/** Gets most recently added key of a list/map. */

@@ -29,7 +29,7 @@ export class EventManager {
 		event: string,
 		handler?: (data: T) => void
 	) : Promise<void> {
-		const eventMapping = await this.getEventMapping(event);
+		const eventMapping = this.getEventMapping(event);
 
 		if (eventMapping.value === undefined) {
 			return;
