@@ -402,6 +402,26 @@ export class AccountService extends BaseProvider {
 		});
 	}
 
+	/** Downgrades account to free plan. */
+	public async downgradeAccount () : Promise<void> {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.downgradeAccountPrompt,
+				title: this.stringsService.downgradeAccountTitle
+			}))
+		) {
+			return;
+		}
+
+		this.interstitial.next(true);
+		try {
+			await this.accountDatabaseService.callFunction('downgradeAccount');
+		}
+		finally {
+			this.interstitial.next(false);
+		}
+	}
+
 	/** Auth token for current user. */
 	public async getUserToken (
 		spinner?: BehaviorSubject<boolean>

@@ -441,6 +441,25 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 exports.downgradeAccount = onCall(async (data, namespace, getUsername) => {
 	const username = await getUsername();
 
+	if (!username) {
+		return;
+	}
+
+	const currentPlan = await getItem(
+		namespace,
+		`users/${username}/plan`,
+		CyphPlan
+	)
+		.catch(() => undefined)
+		.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free));
+
+	if (
+		currentPlan === CyphPlans.Free ||
+		config.planConfig[currentPlan].lifetime
+	) {
+		return;
+	}
+
 	const internalURL = `${namespace}/users/${username}/internal`;
 	const braintreeIDRef = database.ref(`${internalURL}/braintreeID`);
 	const braintreeSubscriptionIDRef = database.ref(

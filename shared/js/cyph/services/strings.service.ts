@@ -321,6 +321,12 @@ export class StringsService extends BaseProvider {
 	public readonly doctor = `doctor`;
 
 	/** @see StringsService */
+	public readonly downgradeAccountPrompt = `This will downgrade your account to a free plan. Continue?`;
+
+	/** @see StringsService */
+	public readonly downgradeAccountTitle = `Downgrade Account`;
+
+	/** @see StringsService */
 	public readonly dr = `Dr.`;
 
 	/** @see StringsService */

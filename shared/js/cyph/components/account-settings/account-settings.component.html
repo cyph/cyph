@@ -96,7 +96,17 @@
 								accountService.getUserToken(loading)
 							])
 						"
-						>change</a
+						>change plan</a
+					><ng-container
+						*ngIf="
+							(accountSettingsService.plan | await) !==
+							cyphPlans.Free
+						"
+						>&ngsp;<span cyphTranslate>or</span>&ngsp;<a
+							cyphTranslate
+							(click)="accountService.downgradeAccount()"
+							>downgrade</a
+						></ng-container
 					>)
 				</ng-container>
 			</div>

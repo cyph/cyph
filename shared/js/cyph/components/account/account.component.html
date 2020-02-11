@@ -305,7 +305,7 @@
 					"
 				>
 					<span cyphTranslate>
-						We were unable to process your payment. Click
+						We were unable to process your payment.
 					</span>
 					&ngsp;
 					<a
@@ -324,12 +324,16 @@
 								)
 							])
 						"
-						>here</a
+						>Update your payment details</a
 					>
 					&ngsp;
 					<span cyphTranslate>
-						to update your payment details.
+						or downgrade to a free plan
 					</span>
+					&ngsp;
+					<a cyphTranslate (click)="accountService.downgradeAccount()"
+						>here</a
+					>.
 				</h3>
 
 				<ng-template #unverifiedAccountBanner>
