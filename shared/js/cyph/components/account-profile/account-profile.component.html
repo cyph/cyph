@@ -521,19 +521,22 @@
 		</ng-template>
 
 		<ng-template #socialNetworkingPostUI>
-			<div
-				fxLayout="column"
-				fxLayoutAlign="center center"
-				*ngIf="(editMode | await) === false"
-			>
-				<cyph-account-post-compose fxFlex *ngIf="isCurrentUser | await">
-				</cyph-account-post-compose>
-
-				<div>
-					<cyph-account-post-list
+			<div fxFlexFill fxLayout="row" *ngIf="(editMode | await) === false">
+				<div fxFlex fxLayout="column">
+					<cyph-account-post-compose
 						fxFlex
-						[author]="(isCurrentUser | await) ? undefined : user"
-					></cyph-account-post-list>
+						*ngIf="isCurrentUser | await"
+					>
+					</cyph-account-post-compose>
+
+					<div fxFlex>
+						<cyph-account-post-list
+							fxFlex
+							[author]="
+								(isCurrentUser | await) ? undefined : user
+							"
+						></cyph-account-post-list>
+					</div>
 				</div>
 			</div>
 		</ng-template>

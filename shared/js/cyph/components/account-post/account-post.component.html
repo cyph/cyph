@@ -51,6 +51,7 @@
 			<button
 				mat-icon-button
 				cyphTranslate
+				class="menu-button"
 				aria-label="Context Menu"
 				[matMenuTriggerFor]="postMenu"
 			>
@@ -80,11 +81,14 @@
 			</p>
 		</mat-card-content>
 		<mat-card-actions>
-			<button mat-button cyphTranslate disabled matTooltip="Coming Soon">
-				LIKE
+			<button mat-button cyphTranslate matTooltip="Coming Soon">
+				Like
 			</button>
-			<button mat-button cyphTranslate disabled matTooltip="Coming Soon">
-				SHARE
+			<button mat-button cyphTranslate matTooltip="Coming Soon">
+				Comment
+			</button>
+			<button mat-button cyphTranslate matTooltip="Coming Soon">
+				Share
 			</button>
 		</mat-card-actions>
 	</ng-template>

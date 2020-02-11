@@ -1,5 +1,6 @@
-<div fxLayout="column">
+<div fxFlex fxLayout="column" fxLayoutGap="16px">
 	<cyph-account-post
+		fxFlex
 		[author]="o.author | await"
 		[post]="o.post | await"
 		*ngFor="let o of feed | await; trackBy: trackByID"

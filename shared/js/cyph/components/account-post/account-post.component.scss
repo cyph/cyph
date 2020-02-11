@@ -1,1 +1,21 @@
 @import '../../../../css/mixins';
+
+mat-card {
+	margin: 0 2em;
+}
+
+mat-card-content {
+	font-size: 1.25em;
+	font-weight: normal;
+}
+
+/* Temporary */
+mat-card-actions {
+	opacity: 0.5;
+}
+
+.menu-button {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+}
