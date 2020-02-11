@@ -91,7 +91,7 @@ export const getOrSetDefaultAsync = async <K, V>(
 		if (waitUntilAlreadySet) {
 			return setResolver.promise;
 		}
-		else if (lock) {
+		if (lock) {
 			await setLock(async () => {
 				if (m.has(k)) {
 					return;

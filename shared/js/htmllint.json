@@ -32,7 +32,7 @@
 	"link-req-noopener": false,
 	"spec-char-escape": false,
 	"tag-bans": ["script", "style"],
-	"tag-close": true,
+	"tag-close": false,
 	"tag-name-lowercase": true,
 	"tag-name-match": true,
 	"tag-self-close": "always"
