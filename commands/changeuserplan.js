@@ -5,7 +5,7 @@ const fs = require('fs');
 const os = require('os');
 const {config} = require('../modules/config');
 const databaseService = require('../modules/database-service');
-const {CyphPlan, CyphPlans} = require('../modules/proto');
+const {CyphPlan, CyphPlans, CyphPlanTypes} = require('../modules/proto');
 const {
 	readableByteLength,
 	normalize,
@@ -126,20 +126,21 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 					...planConfig,
 					name,
 					oldPlan: titleize(CyphPlans[oldPlan]),
-					planAnnualPremium: cyphPlan === CyphPlans.AnnualPremium,
 					planAnnualTelehealth:
 						cyphPlan === CyphPlans.AnnualTelehealth,
 					planChange: true,
 					planChangeUpgrade: isUpgrade,
 					planFoundersAndFriends:
-						cyphPlan === CyphPlans.FoundersAndFriends,
-					planFree: cyphPlan === CyphPlans.Free,
-					planMonthlyPremium: cyphPlan === CyphPlans.MonthlyPremium,
+						planConfig.planType ===
+						CyphPlanTypes.FoundersAndFriends,
+					planFree: planConfig.planType === CyphPlanTypes.Free,
 					planMonthlyTelehealth:
 						cyphPlan === CyphPlans.MonthlyTelehealth,
 					planPlatinum:
-						cyphPlan === CyphPlans.LifetimePlatinum ||
-						cyphPlan === CyphPlans.Platinum,
+						planConfig.planType === CyphPlanTypes.Platinum,
+					planPremium: planConfig.planType === CyphPlanTypes.Premium,
+					planSupporter:
+						planConfig.planType === CyphPlanTypes.Supporter,
 					platinumFeatures: planConfig.usernameMinLength === 1,
 					storageCap: readableByteLength(
 						planConfig.storageCapGB,

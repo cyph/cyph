@@ -737,13 +737,26 @@ message CyphPlan {
 /** Cyph plans. */
 enum CyphPlans {
 	Free = 0;
+	AnnualPlatinum = 8;
 	AnnualPremium = 2;
+	AnnualSupporter = 10;
 	AnnualTelehealth = 5;
 	FoundersAndFriends = 4;
 	LifetimePlatinum = 3;
+	MonthlyPlatinum = 7;
 	MonthlyPremium = 1;
+	MonthlySupporter = 9;
 	MonthlyTelehealth = 6;
-	Platinum = 7;
+}
+
+/** Cyph plan types. */
+enum CyphPlanTypes {
+	Free = 0;
+	FoundersAndFriends = 1;
+	Platinum = 2;
+	Premium = 3;
+	Supporter = 4;
+	Telehealth = 5;
 }
 
 /** Database item metadata. */

@@ -3,6 +3,5 @@
  */
 export enum SubscriptionTypes {
 	annual,
-	monthly,
-	triAnnual
+	monthly
 }

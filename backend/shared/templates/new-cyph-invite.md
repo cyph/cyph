@@ -42,8 +42,8 @@ Congratulations on securing your Cyph account invite!
 | ------------ | :--------------------: |
 | {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Founders & Friends** |
 |              | Platinum               |
-|              | Annual Premium         |
-|              | Monthly Premium        |
+|              | Premium                |
+|              | Supporter              |
 |              | Free                   |
 
 ---
@@ -52,32 +52,32 @@ Congratulations on securing your Cyph account invite!
 |||
 | ------------ | :--------------------: |
 | {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Platinum**  |
-|              | Annual Premium         |
-|              | Monthly Premium        |
+|              | Premium                |
+|              | Supporter              |
 |              | Free                   |
 
 ---
 {{/planPlatinum}}
-{{#planAnnualPremium}}
+{{#planPremium}}
 |||
 | ------------ | :--------------------: |
 |              | Platinum               |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Annual Premium**     |
-|              | Monthly Premium        |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Premium**     |
+|              | Supporter              |
 |              | Free                   |
 
 ---
-{{/planAnnualPremium}}
-{{#planMonthlyPremium}}
+{{/planPremium}}
+{{#planSupporter}}
 |||
 | ------------ | :--------------------: |
 |              | Platinum               |
-|              | Annual Premium         |
-| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Monthly Premium**    |
+|              | Premium                |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Supporter**    |
 |              | Free                   |
 
 ---
-{{/planMonthlyPremium}}
+{{/planSupporter}}
 {{#planAnnualTelehealth}}
 |||
 | ------------ | :--------------------: |
@@ -113,9 +113,9 @@ Your {{#planFree}}account{{/planFree}}{{^planFree}}plan{{/planFree}} also includ
 * **{{initialInvites}} more invites** to share with your friends
 {{/initialInvites}}
 
-{{#walletEarlyAccess}}
-* Early access to **Cyph Wallet** (when available; {{walletEarlyAccess}} release date TBD)
-{{/walletEarlyAccess}}
+{{#enableWallets}}
+* **Cyph Wallet** cryptocurrency wallet feature
+{{/enableWallets}}
 
 {{#platinumFeatures}}
 * **Short username:** You can bypass our minimum of 5 characters and register a username as short as you'd like

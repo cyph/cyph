@@ -2,7 +2,7 @@
 
 const {config} = require('../modules/config');
 const databaseService = require('../modules/database-service');
-const {CyphPlans} = require('../modules/proto');
+const {CyphPlans, CyphPlanTypes} = require('../modules/proto');
 const {readableByteLength, titleize} = require('../modules/util');
 const {addInviteCode} = require('./addinvitecode');
 const {sendMail} = require('./email');
@@ -75,16 +75,14 @@ const inviteUser = async (
 				...planConfig,
 				inviteCode,
 				name,
-				planAnnualPremium: cyphPlan === CyphPlans.AnnualPremium,
 				planAnnualTelehealth: cyphPlan === CyphPlans.AnnualTelehealth,
 				planFoundersAndFriends:
-					cyphPlan === CyphPlans.FoundersAndFriends,
-				planFree: cyphPlan === CyphPlans.Free,
-				planMonthlyPremium: cyphPlan === CyphPlans.MonthlyPremium,
+					planConfig.planType === CyphPlanTypes.FoundersAndFriends,
+				planFree: planConfig.planType === CyphPlanTypes.Free,
 				planMonthlyTelehealth: cyphPlan === CyphPlans.MonthlyTelehealth,
-				planPlatinum:
-					cyphPlan === CyphPlans.LifetimePlatinum ||
-					cyphPlan === CyphPlans.Platinum,
+				planPlatinum: planConfig.planType === CyphPlanTypes.Platinum,
+				planPremium: planConfig.planType === CyphPlanTypes.Premium,
+				planSupporter: planConfig.planType === CyphPlanTypes.Supporter,
 				platinumFeatures: planConfig.usernameMinLength === 1,
 				storageCap: readableByteLength(planConfig.storageCapGB, 'gb')
 			},

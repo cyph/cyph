@@ -1,110 +1,149 @@
-import {CyphPlans} from '../proto';
+import {CyphPlans, CyphPlanTypes} from '../proto';
+
+interface IPlanTypeConfig {
+	enableGroup: boolean;
+	enablePasswords: boolean;
+	enableWallets: boolean;
+	initialInvites?: number;
+	innerCircleLimit?: number;
+	planType: CyphPlanTypes;
+	rank: number;
+	storageCapGB: number;
+	telehealth: boolean;
+	unlimitedCalling: boolean;
+	usernameMinLength: number;
+}
+
+const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
+	[CyphPlanTypes.FoundersAndFriends]: {
+		enableGroup: true,
+		enablePasswords: true,
+		enableWallets: true,
+		planType: CyphPlanTypes.FoundersAndFriends,
+		rank: 4,
+		storageCapGB: 1024,
+		telehealth: false,
+		unlimitedCalling: true,
+		usernameMinLength: 1
+	},
+	[CyphPlanTypes.Free]: {
+		enableGroup: false,
+		enablePasswords: false,
+		enableWallets: false,
+		initialInvites: 2,
+		innerCircleLimit: 5,
+		planType: CyphPlanTypes.Free,
+		rank: 0,
+		storageCapGB: 0.5,
+		telehealth: false,
+		unlimitedCalling: false,
+		usernameMinLength: 5
+	},
+	[CyphPlanTypes.Platinum]: {
+		enableGroup: true,
+		enablePasswords: true,
+		enableWallets: true,
+		planType: CyphPlanTypes.Platinum,
+		rank: 3,
+		storageCapGB: 1024,
+		telehealth: false,
+		unlimitedCalling: true,
+		usernameMinLength: 1
+	},
+	[CyphPlanTypes.Premium]: {
+		enableGroup: true,
+		enablePasswords: false,
+		enableWallets: false,
+		planType: CyphPlanTypes.Premium,
+		rank: 2,
+		storageCapGB: 100,
+		telehealth: false,
+		unlimitedCalling: true,
+		usernameMinLength: 5
+	},
+	[CyphPlanTypes.Supporter]: {
+		enableGroup: true,
+		enablePasswords: false,
+		enableWallets: false,
+		innerCircleLimit: 15,
+		planType: CyphPlanTypes.Supporter,
+		rank: 1,
+		storageCapGB: 5,
+		telehealth: false,
+		unlimitedCalling: false,
+		usernameMinLength: 5
+	},
+	[CyphPlanTypes.Telehealth]: {
+		enableGroup: true,
+		enablePasswords: false,
+		enableWallets: false,
+		planType: CyphPlanTypes.Premium,
+		rank: 2,
+		storageCapGB: 100,
+		telehealth: true,
+		unlimitedCalling: true,
+		usernameMinLength: 5
+	}
+};
 
 /** Configuration options for Cyph plans. */
 export const planConfig: Record<
 	CyphPlans,
-	{
+	IPlanTypeConfig & {
 		checkoutPath?: string;
-		enableGroup?: boolean;
-		enablePasswords?: boolean;
-		enableWallets?: boolean;
-		initialInvites: number;
-		innerCircleLimit?: number;
 		lifetime: boolean;
-		rank: number;
-		storageCapGB: number;
-		telehealth?: boolean;
-		unlimitedCalling: boolean;
-		usernameMinLength: number;
-		walletEarlyAccess?: string;
 	}
 > = {
+	[CyphPlans.AnnualPlatinum]: {
+		...planTypeConfig[CyphPlanTypes.Platinum],
+		checkoutPath: 'accounts/annual-platinum',
+		lifetime: false
+	},
 	[CyphPlans.AnnualPremium]: {
+		...planTypeConfig[CyphPlanTypes.Premium],
 		checkoutPath: 'accounts/annual-premium',
-		initialInvites: 10,
-		innerCircleLimit: 10,
-		lifetime: false,
-		rank: 2,
-		storageCapGB: 25,
-		unlimitedCalling: false,
-		usernameMinLength: 5,
-		walletEarlyAccess: 'beta'
+		lifetime: false
+	},
+	[CyphPlans.AnnualSupporter]: {
+		...planTypeConfig[CyphPlanTypes.Supporter],
+		checkoutPath: 'accounts/annual-supporter',
+		lifetime: false
 	},
 	[CyphPlans.AnnualTelehealth]: {
+		...planTypeConfig[CyphPlanTypes.Telehealth],
 		checkoutPath: 'accounts/annual-telehealth',
-		enableGroup: true,
-		initialInvites: 10,
-		innerCircleLimit: 10,
-		lifetime: false,
-		rank: 2,
-		storageCapGB: 5,
-		telehealth: true,
-		unlimitedCalling: true,
-		usernameMinLength: 5
+		lifetime: false
 	},
 	[CyphPlans.FoundersAndFriends]: {
-		enableGroup: true,
-		enablePasswords: true,
-		enableWallets: true,
-		initialInvites: 15,
-		lifetime: true,
-		rank: 4,
-		storageCapGB: 100,
-		unlimitedCalling: true,
-		usernameMinLength: 1,
-		walletEarlyAccess: 'alpha'
+		...planTypeConfig[CyphPlanTypes.FoundersAndFriends],
+		lifetime: true
 	},
 	[CyphPlans.Free]: {
-		initialInvites: 2,
-		innerCircleLimit: 2,
-		lifetime: false,
-		rank: 0,
-		storageCapGB: 1,
-		unlimitedCalling: false,
-		usernameMinLength: 5
+		...planTypeConfig[CyphPlanTypes.Free],
+		lifetime: false
 	},
 	[CyphPlans.LifetimePlatinum]: {
-		checkoutPath: 'accounts/lifetime-platinum',
-		enableGroup: true,
-		initialInvites: 15,
-		lifetime: true,
-		rank: 3,
-		storageCapGB: 100,
-		unlimitedCalling: true,
-		usernameMinLength: 1,
-		walletEarlyAccess: 'alpha'
+		...planTypeConfig[CyphPlanTypes.Platinum],
+		lifetime: true
+	},
+	[CyphPlans.MonthlyPlatinum]: {
+		...planTypeConfig[CyphPlanTypes.Platinum],
+		checkoutPath: 'accounts/monthly-platinum',
+		lifetime: false
 	},
 	[CyphPlans.MonthlyPremium]: {
+		...planTypeConfig[CyphPlanTypes.Premium],
 		checkoutPath: 'accounts/monthly-premium',
-		initialInvites: 5,
-		innerCircleLimit: 5,
-		lifetime: false,
-		rank: 1,
-		storageCapGB: 5,
-		unlimitedCalling: false,
-		usernameMinLength: 5
+		lifetime: false
+	},
+	[CyphPlans.MonthlySupporter]: {
+		...planTypeConfig[CyphPlanTypes.Supporter],
+		checkoutPath: 'accounts/monthly-supporter',
+		lifetime: false
 	},
 	[CyphPlans.MonthlyTelehealth]: {
+		...planTypeConfig[CyphPlanTypes.Telehealth],
 		checkoutPath: 'accounts/monthly-telehealth',
-		enableGroup: true,
-		initialInvites: 5,
-		innerCircleLimit: 5,
-		lifetime: false,
-		rank: 1,
-		storageCapGB: 5,
-		unlimitedCalling: true,
-		telehealth: true,
-		usernameMinLength: 5
-	},
-	[CyphPlans.Platinum]: {
-		checkoutPath: 'accounts/platinum',
-		enableGroup: true,
-		initialInvites: 15,
-		lifetime: false,
-		rank: 3,
-		storageCapGB: 100,
-		unlimitedCalling: true,
-		usernameMinLength: 1,
-		walletEarlyAccess: 'alpha'
+		lifetime: false
 	}
 };

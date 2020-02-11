@@ -108,10 +108,22 @@ export class Config {
 			accounts: {
 				id: 8,
 				items: {
+					annualPlatinum: {
+						amount: 324,
+						id: 5,
+						name: 'Platinum (Annual)',
+						subscriptionType: SubscriptionTypes.annual
+					},
 					annualPremium: {
-						amount: 144,
+						amount: 108,
 						id: 1,
-						name: 'Annual Premium',
+						name: 'Premium (Annual)',
+						subscriptionType: SubscriptionTypes.annual
+					},
+					annualSupporter: {
+						amount: 36,
+						id: 7,
+						name: 'Supporter (Annual)',
 						subscriptionType: SubscriptionTypes.annual
 					},
 					annualTelehealth: {
@@ -120,23 +132,29 @@ export class Config {
 						name: 'Telehealth (Annual)',
 						subscriptionType: SubscriptionTypes.annual
 					},
-					monthlyPremium: {
-						amount: 15,
-						id: 0,
-						name: 'Monthly Premium',
+					monthlyPlatinum: {
+						amount: 48,
+						id: 4,
+						name: 'Platinum (Monthly)',
 						subscriptionType: SubscriptionTypes.monthly
+					},
+					monthlyPremium: {
+						amount: 12,
+						id: 0,
+						name: 'Premium (Monthly)',
+						subscriptionType: SubscriptionTypes.monthly
+					},
+					monthlySupporter: {
+						amount: 6,
+						id: 6,
+						name: 'Supporter (Monthly)',
+						subscriptionType: SubscriptionTypes.annual
 					},
 					monthlyTelehealth: {
 						amount: 50,
 						id: 2,
 						name: 'Telehealth (Monthly)',
 						subscriptionType: SubscriptionTypes.monthly
-					},
-					platinum: {
-						amount: 200,
-						id: 4,
-						name: 'Platinum (3 years)',
-						subscriptionType: SubscriptionTypes.triAnnual
 					}
 				}
 			},

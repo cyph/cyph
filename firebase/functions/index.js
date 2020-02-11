@@ -55,6 +55,7 @@ const {
 	BinaryProto,
 	CyphPlan,
 	CyphPlans,
+	CyphPlanTypes,
 	NotificationTypes,
 	NumberProto,
 	StringProto
@@ -164,14 +165,14 @@ const getInviteTemplateData = ({
 		inviteCode,
 		inviterName,
 		name,
-		planAnnualPremium: plan === CyphPlans.AnnualPremium,
 		planAnnualTelehealth: plan === CyphPlans.AnnualTelehealth,
-		planFoundersAndFriends: plan === CyphPlans.FoundersAndFriends,
-		planFree: plan === CyphPlans.Free,
-		planMonthlyPremium: plan === CyphPlans.MonthlyPremium,
+		planFoundersAndFriends:
+			planConfig.planType === CyphPlanTypes.FoundersAndFriends,
+		planFree: planConfig.planType === CyphPlanTypes.Free,
 		planMonthlyTelehealth: plan === CyphPlans.MonthlyTelehealth,
-		planPlatinum:
-			plan === CyphPlans.LifetimePlatinum || plan === CyphPlans.Platinum,
+		planPlatinum: planConfig.planType === CyphPlanTypes.Platinum,
+		planPremium: planConfig.planType === CyphPlanTypes.Premium,
+		planSupporter: planConfig.planType === CyphPlanTypes.Supporter,
 		platinumFeatures: planConfig.usernameMinLength === 1,
 		purchased,
 		storageCap: readableByteLength(planConfig.storageCapGB, 'gb')
