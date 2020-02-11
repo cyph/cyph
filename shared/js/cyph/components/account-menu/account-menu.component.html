@@ -308,6 +308,28 @@
 				<a
 					mat-list-item
 					cyphTranslate
+					class="social-feed"
+					[class.ui-disabled]="
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
+					"
+					matTooltip="Social Feed"
+					[matTooltipDisabled]="menuExpanded | await"
+					matTooltipPosition="right"
+					routerLink="/feed"
+					(click)="click()"
+				>
+					<mat-icon mat-list-icon>
+						rss_feed
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
+						Social Feed
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
 					class="inbox"
 					[class.ui-disabled]="
 						!currentUser?.agseConfirmed ||
