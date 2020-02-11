@@ -171,7 +171,7 @@ if [ ! "${htmlOnly}" ] && [ ! "${fast}" ] ; then
 	fi
 fi
 
-echo -e "${output}"
+echo -e "${output}" | perl -pe 's/js\/\*\*\*\*\//js\/cyph\//g'
 
 if [ ${#output} -gt 0 ] ; then
 	fail
