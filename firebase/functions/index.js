@@ -1055,20 +1055,53 @@ exports.resetCastleSessionID = onCall(async (data, namespace, getUsername) => {
 
 exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
-	const email = validateInput(data.email, emailRegex);
-	const name = validateInput(data.name);
+	const email = data.email && validateInput(data.email, emailRegex);
+	const name = data.name && validateInput(data.name);
 	const inviterUsername = await getUsername();
 	const inviteCodesRef = database.ref(
 		`${namespace}/users/${inviterUsername}/inviteCodes`
 	);
 
-	const [inviterName, inviterRealUsername, inviteCode] = await Promise.all([
+	const [inviterName, inviterRealUsername, inviterPlan] = await Promise.all([
 		getName(namespace, inviterUsername),
 		getRealUsername(namespace, inviterUsername),
-		inviteCodesRef
-			.once('value')
-			.then(snapshot => Object.keys(snapshot.val() || {})[0])
+		getItem(namespace, `users/${inviterUsername}/plan`, CyphPlan)
+			.catch(() => undefined)
+			.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free))
 	]);
+
+	const inviterPlanConfig = config.planConfig[inviterPlan];
+
+	const inviteCode =
+		inviterPlanConfig.initialInvites !== undefined ?
+			await inviteCodesRef
+				.once('value')
+				.then(snapshot => Object.keys(snapshot.val() || {})[0]) :
+			await (async () => {
+				const code = readableID(15);
+
+				/* Gift free users one-month premium trials */
+				const plan = CyphPlans.MonthlyPremium;
+				const planTrialEnd = new Date().setMonth(
+					new Date().getMonth() + 1
+				);
+
+				await Promise.all([
+					database.ref(`${namespace}/inviteCodes/${code}`).set({
+						inviterUsername,
+						plan,
+						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
+					}),
+					setItem(
+						namespace,
+						`users/${inviterUsername}/inviteCodes/${code}`,
+						BooleanProto,
+						true
+					)
+				]);
+
+				return code;
+			})();
 
 	if (!inviteCode) {
 		throw new Error('No available invites.');
@@ -1082,24 +1115,53 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	const plan =
 		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
+	const {firstName, lastName} = splitName(name || '');
+
 	await Promise.all([
-		inviteCodesRef.child(inviteCode).remove(),
-		sendMailInternal(
-			email,
-			`${inviterName} (@${inviterRealUsername}) Has Invited You to Cyph!`,
-			{
-				data: getInviteTemplateData({
-					inviteCode,
-					inviterName,
-					name,
-					plan
-				}),
-				namespace,
-				noUnsubscribe: true,
-				templateName: 'new-cyph-invite'
-			}
-		)
+		inviterPlanConfig.initialInvites !== undefined &&
+			inviteCodesRef.child(inviteCode).remove(),
+		email &&
+			sendMailInternal(
+				email,
+				`${inviterName} (@${inviterRealUsername}) Has Invited You to Cyph!` +
+					(inviteData.planTrialEnd ?
+						` (with ${titleize(CyphPlans[plan])} trial)` :
+						''),
+				{
+					data: getInviteTemplateData({
+						inviteCode,
+						inviterName,
+						name,
+						plan
+					}),
+					namespace,
+					noUnsubscribe: true,
+					templateName: 'new-cyph-invite'
+				}
+			),
+		email &&
+		mailchimp &&
+		mailchimpCredentials &&
+		mailchimpCredentials.listIDs &&
+		mailchimpCredentials.listIDs.pendingInvites ?
+			addToMailingList(
+				mailchimpCredentials.listIDs.pendingInvites,
+				email,
+				{
+					FNAME: firstName,
+					ICODE: inviteCode,
+					LNAME: lastName,
+					PLAN: CyphPlans[plan]
+				}
+			).then(async mailingListID =>
+				database
+					.ref(`${namespace}/pendingInvites/${inviteCode}`)
+					.set(mailingListID)
+			) :
+			undefined
 	]);
+
+	return inviteCode;
 });
 
 exports.setContact = onCall(async (data, namespace, getUsername) => {

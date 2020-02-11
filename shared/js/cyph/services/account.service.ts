@@ -173,6 +173,16 @@ export class AccountService extends BaseProvider {
 		})
 	);
 
+	/** Indicates whether current user has unlimited invites. */
+	public readonly hasUnlimitedInvites: Observable<
+		boolean
+	> = this.accountSettingsService.plan.pipe(
+		map(
+			plan =>
+				this.configService.planConfig[plan].initialInvites === undefined
+		)
+	);
+
 	/** Header title for current section. */
 	public readonly header: Observable<{
 		contextMenuActions?: {handler: Function; icon: string; label: string}[];

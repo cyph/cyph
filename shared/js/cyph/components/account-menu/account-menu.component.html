@@ -786,13 +786,17 @@
 				matTooltipPosition="right"
 				*ngIf="
 					!envService.isTelehealth &&
-					((accountInviteService.count | await) || 0) > 0
+					((accountService.hasUnlimitedInvites | await) ||
+						((accountInviteService.count | await) || 0) > 0)
 				"
 			>
 				<mat-icon
 					mat-list-icon
 					[matBadge]="
 						((accountInviteService.count | await) || 0).toString()
+					"
+					[matBadgeHidden]="
+						accountService.hasUnlimitedInvites | await
 					"
 					matBadgePosition="above after"
 				>
@@ -817,7 +821,10 @@
 							newContactTypes.invite
 						)
 					"
-					*ngIf="((accountInviteService.count | await) || 0) > 0"
+					*ngIf="
+						(accountService.hasUnlimitedInvites | await) ||
+						((accountInviteService.count | await) || 0) > 0
+					"
 				>
 					{{ stringsService.addContactButtonInviteEmail }}
 				</button>
@@ -826,7 +833,10 @@
 					[matTooltip]="stringsService.addContactTooltipInviteLink"
 					matTooltipPosition="right"
 					(click)="click(); accountInviteService.showInviteURL()"
-					*ngIf="((accountInviteService.count | await) || 0) > 0"
+					*ngIf="
+						(accountService.hasUnlimitedInvites | await) ||
+						((accountInviteService.count | await) || 0) > 0
+					"
 				>
 					{{ stringsService.inviteLinkButton }}
 				</button>
