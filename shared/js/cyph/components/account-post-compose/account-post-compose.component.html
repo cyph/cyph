@@ -26,7 +26,7 @@
 		<mat-card-content>
 			<textarea
 				cyphTranslate
-				matTooltip="Post Content"
+				aria-label="Post Content"
 				placeholder="Write your post here..."
 				[ngModel]="(accountPostsService.draft.content | await) || ''"
 				(ngModelChange)="accountPostsService.draft.content.next($event)"

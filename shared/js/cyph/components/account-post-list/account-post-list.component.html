@@ -19,15 +19,19 @@
 		<div></div>
 	</div>
 
-	<div fxLayoutAlign="center center" *ngIf="(posts?.length || 0) < 1">
-		<span cyphTranslate>
-			No posts
-		</span>
+	<div
+		class="margin-top"
+		fxLayoutAlign="center center"
+		*ngIf="(posts?.length || 0) < 1"
+	>
+		<h1 cyphTranslate>
+			This user hasn't made any posts yet.
+		</h1>
 	</div>
 </ng-container>
 
 <ng-template #loading>
-	<div fxLayoutAlign="center center">
+	<div class="margin-top" fxLayoutAlign="center center">
 		<mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
 	</div>
 </ng-template>
