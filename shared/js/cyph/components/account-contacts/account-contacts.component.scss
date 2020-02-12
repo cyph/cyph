@@ -68,9 +68,9 @@ cyph-account-contact.active ::ng-deep .contact {
 	mat-tab-group ::ng-deep {
 		.mat-ink-bar,
 		.mat-tab-label {
-			width: 50% !important;
-			min-width: 50% !important;
-			max-width: 50% !important;
+			width: calc(50% - 1px) !important;
+			min-width: calc(50% - 1px) !important;
+			max-width: calc(50% - 1px) !important;
 		}
 
 		.mat-tab-body-wrapper {
