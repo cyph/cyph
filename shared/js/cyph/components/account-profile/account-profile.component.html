@@ -521,17 +521,18 @@
 		</ng-template>
 
 		<ng-template #socialNetworkingPostUI>
-			<div fxFlexFill fxLayout="row" *ngIf="(editMode | await) === false">
+			<div
+				class="full-width"
+				fxLayout="row"
+				*ngIf="(editMode | await) === false"
+			>
 				<div fxFlex fxLayout="column">
 					<cyph-account-post-compose
-						fxFlex
 						*ngIf="isCurrentUser | await"
-					>
-					</cyph-account-post-compose>
+					></cyph-account-post-compose>
 
-					<div fxFlex>
+					<div>
 						<cyph-account-post-list
-							fxFlex
 							[author]="
 								(isCurrentUser | await) ? undefined : user
 							"

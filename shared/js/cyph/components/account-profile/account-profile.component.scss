@@ -236,6 +236,10 @@ mat-card {
 	@include transition(opacity 0.35s ease-in-out);
 }
 
+.full-width {
+	width: 100%;
+}
+
 @media (max-height: 600px) {
 	:host > .editing .edit-hide {
 		opacity: 0;
