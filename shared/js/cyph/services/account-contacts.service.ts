@@ -691,18 +691,26 @@ export class AccountContactsService extends BaseProvider {
 							contactListInnerCircle.map(user =>
 								user.accountContactState
 									.watch()
-									.pipe(map(({state}) => ({state, user})))
+									.pipe(map(() => user))
 							)
 						)
 					),
-					map(contactListInnerCircle =>
-						contactListInnerCircle
-							.filter(
-								o =>
-									o.state ===
-									AccountContactState.States.Confirmed
+					switchMap(async contactListInnerCircle =>
+						(await Promise.all(
+							contactListInnerCircle.map(async user =>
+								Promise.all([
+									user,
+									user.accountContactState.getValue()
+								])
 							)
-							.map(o => o.user.username)
+						))
+							.filter(
+								([_, contactState]) =>
+									contactState.innerCircle &&
+									contactState.state ===
+										AccountContactState.States.Confirmed
+							)
+							.map(([user]) => user.username)
 					)
 				)
 			]).subscribe(async ([accountPostsService, innerCircle]) =>
