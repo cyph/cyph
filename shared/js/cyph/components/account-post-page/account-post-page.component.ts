@@ -35,7 +35,6 @@ export class AccountPostPageComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		(<any> self).balls = this.data;
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
 	}
