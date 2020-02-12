@@ -54,6 +54,12 @@
 				class="menu-button"
 				aria-label="Context Menu"
 				[matMenuTriggerFor]="postMenu"
+				*ngIf="
+					user !== undefined &&
+					user?.username ===
+						(this.accountDatabaseService.currentUser | await)?.user
+							.username
+				"
 			>
 				<mat-icon>more_horiz</mat-icon>
 			</button>
