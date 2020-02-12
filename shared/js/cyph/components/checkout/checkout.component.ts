@@ -102,7 +102,7 @@ export class CheckoutComponent extends BaseProvider
 	/** Formats item name. */
 	public readonly formatItemName = memoize((itemName?: string) =>
 		typeof itemName === 'string' ?
-			itemName.replace(/([A-Z])/g, ' $1').toUpperCase() :
+			itemName.replace(/\s+([A-Z])/g, ' $1').toUpperCase() :
 			undefined
 	);
 
