@@ -19,12 +19,8 @@
 		<div></div>
 	</div>
 
-	<div
-		class="margin-top"
-		fxLayoutAlign="center center"
-		*ngIf="(posts?.length || 0) < 1"
-	>
-		<h1 cyphTranslate>
+	<div fxFlex class="margin-top" *ngIf="(posts?.length || 0) < 1">
+		<h1 cyphTranslate fxFlex class="empty-list">
 			This user hasn't made any posts yet.
 		</h1>
 	</div>
