@@ -4,9 +4,9 @@
 cd "$(mktemp -d)"
 
 
-sourcePort='43000'
-sourceOrigin="localhost:${sourcePort}"
-sourceURL="http://${sourceOrigin}"
+localPort='43000'
+localOrigin="localhost:${localPort}"
+localURL="http://${localOrigin}"
 sshBase='wordpress.internal.cyph.com'
 sshSource="staging.${sshBase}"
 sshTarget="${sshBase}"
@@ -27,7 +27,7 @@ sshkill () {
 
 sshkill
 ssh -i ~/.ssh/id_rsa_docker "${sshSource}" rm /var/www/html/wp-content/ai1wm-backups/*.wpress
-ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${sourcePort}:${sourceOrigin}" "${sshSource}"
+ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${localPort}:${localOrigin}" "${sshSource}"
 
 commandComment="# wppromote-download $(node -e '
 	console.log(crypto.randomBytes(32).toString("hex"))
@@ -42,7 +42,7 @@ command="$(node -e "(async () => {
 
 	setTimeout(() => process.exit(1), 1800000);
 
-	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_export');
+	await page.goto('${localURL}/wp-admin/admin.php?page=ai1wm_export');
 
 	await page.waitForSelector('#user_login');
 	await page.type('#user_login', 'admin');
@@ -81,7 +81,7 @@ eval "${command}"
 
 
 sshkill
-ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${sourcePort}:${sourceOrigin}" "${sshTarget}"
+ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${localPort}:${localOrigin}" "${sshTarget}"
 
 failure=''
 
@@ -94,7 +94,7 @@ node -e "(async () => {
 
 	setTimeout(() => process.exit(1), 1800000);
 
-	await page.goto('${sourceURL}/wp-admin/admin.php?page=ai1wm_import');
+	await page.goto('${localURL}/wp-admin/admin.php?page=ai1wm_import');
 
 	await page.waitForSelector('#user_login');
 	await page.type('#user_login', 'admin');

@@ -20,9 +20,9 @@ fullDestinationURL="${rootURL}/static_wordpress"
 destinationProtocol="$(echo "${fullDestinationURL}" | perl -pe 's/(.*?:\/\/).*/\1/')"
 destinationURL="$(echo "${fullDestinationURL}" | perl -pe 's/.*?:\/\/(.*)/\1/')"
 
-sourcePort='43000'
-sourceOrigin="localhost:${sourcePort}"
-sourceURL="http://${sourceOrigin}"
+localPort='43000'
+localOrigin="localhost:${localPort}"
+localURL="http://${localOrigin}"
 
 log 'Generating static WordPress site'
 
@@ -66,7 +66,7 @@ while [ ! -f index.html ] ; do
 	done
 
 	sshkill
-	ssh -i ~/.ssh/id_rsa_docker -f -N -L "${sourcePort}:${sourceOrigin}" "${sshServer}" &> /dev/null
+	ssh -i ~/.ssh/id_rsa_docker -f -N -L "${localPort}:${localOrigin}" "${sshServer}" &> /dev/null
 
 	command="$(node -e "(async () => {
 		const browser = await require('puppeteer').launch();
@@ -77,7 +77,7 @@ while [ ! -f index.html ] ; do
 
 		setTimeout(() => process.exit(1), 1800000);
 
-		await page.goto('${sourceURL}/wp-admin/admin.php?page=simply-static_settings');
+		await page.goto('${localURL}/wp-admin/admin.php?page=simply-static_settings');
 
 		await page.waitForSelector('#user_login');
 		await page.type('#user_login', 'admin');
@@ -96,7 +96,7 @@ while [ ! -f index.html ] ; do
 		await page.keyboard.press('Enter');
 		await page.waitForNavigation();
 
-		await page.goto('${sourceURL}/wp-admin/admin.php?page=simply-static');
+		await page.goto('${localURL}/wp-admin/admin.php?page=simply-static');
 
 		while (true) {
 			await page.waitForSelector('#cancel');
@@ -333,7 +333,7 @@ for f in $(find . -type f -name '*.css') ; do
 	# Special case fix for Better Font Awesome
 	sed -i "s|\.\./fonts/fontawesome|https://cdn.jsdelivr.net/fontawesome/latest/fonts/fontawesome|g" "${f}"
 
-	sed -i "s|\.\./fonts|${sourceURL}/$(echo "${f}" | perl -pe 's/\/[^\/]+\/[^\/]+$//')/fonts|g" "${f}"
+	sed -i "s|\.\./fonts|${localURL}/$(echo "${f}" | perl -pe 's/\/[^\/]+\/[^\/]+$//')/fonts|g" "${f}"
 
 	for type in eot svg ttf woff2 woff ; do
 		grep "\.${type}" "${f}" |
@@ -341,7 +341,7 @@ for f in $(find . -type f -name '*.css') ; do
 			sort |
 			uniq |
 			xargs -I% bash -c "
-				url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${sourceURL}|g')\";
+				url=\"\$(echo '%' | sed 's|${fullDestinationURL}|${localURL}|g')\";
 				path=\"fonts/\$(node -e \"(async () => { \
 					console.log((await require('supersphincs').hash('%')).hex); \
 				})().catch(err => {
@@ -362,7 +362,7 @@ for path in $(
 ) ; do
 	parent="$(echo "${path}" | perl -pe 's/\/[^\/]+$//')"
 	mkdir -p "${parent}"
-	wget --tries=50 "${sourceURL}/${path}" -O "${path}.new"
+	wget --tries=50 "${localURL}/${path}" -O "${path}.new"
 	mv "${path}.new" "${path}" 2> /dev/null
 done
 
