@@ -858,6 +858,9 @@ export class StringsService extends BaseProvider {
 	public readonly pin = `PIN`;
 
 	/** @see StringsService */
+	public readonly post = `Post`;
+
+	/** @see StringsService */
 	public readonly postContent = `Post Content`;
 
 	/** @see StringsService */

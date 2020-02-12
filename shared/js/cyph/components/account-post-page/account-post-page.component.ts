@@ -59,5 +59,13 @@ export class AccountPostPageComponent extends BaseProvider implements OnInit {
 		public readonly stringsService: StringsService
 	) {
 		super();
+
+		this.subscriptions.push(
+			this.data.subscribe(async o => {
+				this.accountService.setHeader(
+					(await o?.author) || this.stringsService.post
+				);
+			})
+		);
 	}
 }

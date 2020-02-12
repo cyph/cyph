@@ -1029,6 +1029,7 @@ export class AccountService extends BaseProvider {
 
 				const specialCases: {[k: string]: string} = {
 					ehr: 'EHR',
+					feed: 'Social Feed',
 					inbox: 'Anonymous Inbox'
 				};
 
@@ -1094,6 +1095,7 @@ export class AccountService extends BaseProvider {
 						'docs',
 						'doctors',
 						'ehr-access',
+						'feed',
 						'files',
 						'forms',
 						'inbox',
