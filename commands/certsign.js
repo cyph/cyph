@@ -300,10 +300,14 @@ const certSign = async (projectId, standalone, namespace) => {
 			addInviteCode(
 				projectId,
 				plans.reduce(
-					(o, [username, plan]) => ({
-						...o,
-						[username]: config.planConfig[plan].initialInvites
-					}),
+					(o, [username, plan]) =>
+						config.planConfig[plan].initialInvites === undefined ?
+							o :
+							{
+								...o,
+								[username]:
+									config.planConfig[plan].initialInvites
+							},
 					{}
 				),
 				namespace

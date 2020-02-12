@@ -84,6 +84,10 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 			.ref(`${namespacePath}/users/${username}/internal/planTrialEnd`)
 			.remove(),
 		(async () => {
+			if (planConfig.initialInvites === undefined) {
+				return;
+			}
+
 			const numInvites = Object.keys(
 				(await database
 					.ref(`${namespacePath}/users/${username}/inviteCodes`)

@@ -541,6 +541,10 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 				braintreeSubscriptionIDRef.remove(),
 			planTrialEndRef.remove(),
 			(async () => {
+				if (planConfig.initialInvites === undefined) {
+					return;
+				}
+
 				const numInvites = Object.keys(
 					(await database
 						.ref(`${namespace}/users/${username}/inviteCodes`)
