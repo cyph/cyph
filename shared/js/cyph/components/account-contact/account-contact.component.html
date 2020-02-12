@@ -48,6 +48,7 @@
 	<mat-card
 		fxFlex
 		class="contact animated group"
+		[class.mobile]="envService.isMobileOS"
 		[class.non-clickable]="!clickable || groupData?.incoming"
 		[class.telehealth]="envService.isTelehealthFull"
 		[matTooltip]="groupUsernames"
@@ -133,6 +134,7 @@
 		<mat-card
 			fxFlex
 			class="contact animated"
+			[class.mobile]="envService.isMobileOS"
 			[class.non-clickable]="!clickable"
 			[class.telehealth]="envService.isTelehealthFull"
 			[routerLink]="

@@ -127,9 +127,14 @@
 
 .inner-circle-indicator {
 	position: absolute;
-	top: -12px;
-	right: -20px;
+	top: -8px;
+	right: -16px;
 	color: map-get($mat-yellow, 600);
+}
+
+.contact.mobile .inner-circle-indicator {
+	top: -12px;
+	right: -12px;
 }
 
 .pending {
