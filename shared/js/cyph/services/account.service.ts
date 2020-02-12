@@ -303,7 +303,6 @@ export class AccountService extends BaseProvider {
 			(callType !== 'audio' &&
 				callType !== 'chat' &&
 				callType !== 'video') ||
-			!username ||
 			!id ||
 			isNaN(expires) ||
 			timestamp >= expires
