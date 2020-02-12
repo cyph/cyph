@@ -190,17 +190,14 @@
 			let-readViewClasses="readViewClasses"
 		>
 			<div
-				fxLayoutAlign="center center"
 				class="description"
 				[ngClass]="readViewClasses"
 				*ngIf="(editMode | await) === false"
 			>
-				<div>
-					{{
-						(user?.description | await) || ''
-							| slice: 0:accountService.maxDescriptionLength
-					}}
-				</div>
+				{{
+					(user?.description | await) || ''
+						| slice: 0:accountService.maxDescriptionLength
+				}}
 			</div>
 			<div *ngIf="divider"></div>
 			<div fxLayoutAlign="center" *ngIf="editMode | await">
