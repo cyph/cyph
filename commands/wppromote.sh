@@ -26,6 +26,7 @@ sshkill () {
 
 
 sshkill
+ssh -i ~/.ssh/id_rsa_docker "${sshSource}" rm /var/www/html/wp-content/ai1wm-backups/*.wpress
 ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${sourcePort}:${sourceOrigin}" "${sshSource}"
 
 commandComment="# wppromote-download $(node -e '
