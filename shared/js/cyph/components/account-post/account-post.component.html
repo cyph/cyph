@@ -56,9 +56,9 @@
 				[matMenuTriggerFor]="postMenu"
 				*ngIf="
 					user !== undefined &&
-					user?.username ===
-						(this.accountDatabaseService.currentUser | await)?.user
-							.username
+					(user?.username || '') ===
+						((accountDatabaseService.currentUser | await)?.user
+							?.username || '')
 				"
 			>
 				<mat-icon>more_horiz</mat-icon>
