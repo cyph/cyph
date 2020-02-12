@@ -298,6 +298,6 @@
 	</platform>
 
 	<engine name="android" spec="^8.1.0" />
-	<engine name="electron" spec="2.0.0-nightly.2019.12.30.116825fa" />
+	<engine name="electron" spec="git+https://github.com/buu700/cordova-electron-tmp" />
 	<engine name="ios" spec="^5.1.0" />
 </widget>
