@@ -17,25 +17,25 @@ import (
 )
 
 func main() {
-	handleFuncs("/accountstanding/{userToken}", Handlers{methods.GET: isAccountInGoodStanding})
-	handleFuncs("/analytics/*", Handlers{methods.GET: analytics})
-	handleFuncs("/braintree", Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
-	handleFuncs("/channels/{id}", Handlers{methods.POST: channelSetup})
-	handleFuncs("/continent", Handlers{methods.GET: getContinent})
-	handleFuncs("/geolocation/{language}", Handlers{methods.GET: getGeolocation})
-	handleFuncs("/iceservers", Handlers{methods.GET: getIceServers})
-	handleFuncs("/preauth/{id}", Handlers{methods.POST: preAuth})
-	handleFuncs("/pro/unlock", Handlers{methods.POST: proUnlock})
-	handleFuncs("/redox/apikey/delete", Handlers{methods.POST: redoxDeleteAPIKey})
-	handleFuncs("/redox/apikey/generate", Handlers{methods.POST: redoxGenerateAPIKey})
-	handleFuncs("/redox/apikey/verify", Handlers{methods.POST: redoxVerifyAPIKey})
-	handleFuncs("/redox/credentials", Handlers{methods.PUT: redoxAddCredentials})
-	handleFuncs("/redox/execute", Handlers{methods.POST: redoxRunCommand})
-	handleFuncs("/signups", Handlers{methods.PUT: signUp})
-	handleFuncs("/timestamp", Handlers{methods.GET: getTimestampHandler})
-	handleFuncs("/whatismyip", Handlers{methods.GET: whatismyip})
+	handleFuncs("/accountstanding/{userToken}", false, Handlers{methods.GET: isAccountInGoodStanding})
+	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics})
+	handleFuncs("/braintree", false, Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
+	handleFuncs("/channels/{id}", false, Handlers{methods.POST: channelSetup})
+	handleFuncs("/continent", false, Handlers{methods.GET: getContinent})
+	handleFuncs("/geolocation/{language}", false, Handlers{methods.GET: getGeolocation})
+	handleFuncs("/iceservers", false, Handlers{methods.GET: getIceServers})
+	handleFuncs("/preauth/{id}", false, Handlers{methods.POST: preAuth})
+	handleFuncs("/pro/unlock", false, Handlers{methods.POST: proUnlock})
+	handleFuncs("/redox/apikey/delete", false, Handlers{methods.POST: redoxDeleteAPIKey})
+	handleFuncs("/redox/apikey/generate", false, Handlers{methods.POST: redoxGenerateAPIKey})
+	handleFuncs("/redox/apikey/verify", false, Handlers{methods.POST: redoxVerifyAPIKey})
+	handleFuncs("/redox/credentials", false, Handlers{methods.PUT: redoxAddCredentials})
+	handleFuncs("/redox/execute", false, Handlers{methods.POST: redoxRunCommand})
+	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
+	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
+	handleFuncs("/whatismyip", false, Handlers{methods.GET: whatismyip})
 
-	handleFunc("/", func(h HandlerArgs) (interface{}, int) {
+	handleFunc("/", false, func(h HandlerArgs) (interface{}, int) {
 		return "Welcome to Cyph, lad", http.StatusOK
 	})
 

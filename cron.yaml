@@ -1,0 +1,4 @@
+cron:
+- description: ""
+  url: /
+  schedule: every 24 hours

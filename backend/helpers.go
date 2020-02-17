@@ -555,11 +555,11 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 	return err
 }
 
-func handleFunc(pattern string, handler Handler) {
-	handleFuncs(pattern, Handlers{methods.GET: handler})
+func handleFunc(pattern string, cron bool, handler Handler) {
+	handleFuncs(pattern, cron, Handlers{methods.GET: handler})
 }
 
-func handleFuncs(pattern string, handlers Handlers) {
+func handleFuncs(pattern string, cron bool, handlers Handlers) {
 	if !isRouterActive {
 		http.Handle("/", router)
 
@@ -580,7 +580,16 @@ func handleFuncs(pattern string, handlers Handlers) {
 			var responseBody interface{}
 			var responseCode int
 
-			if r.Method == "OPTIONS" {
+			cronAuthFail := false
+			if cron {
+				_, hasCronHeader := r.Header["X-Appengine-Cron"]
+				cronAuthFail = !hasCronHeader
+			}
+
+			if cronAuthFail {
+				responseBody = "Cron auth failure."
+				responseCode = http.StatusInternalServerError
+			} else if r.Method == "OPTIONS" {
 				responseBody = config.AllowedMethods
 				responseCode = http.StatusOK
 			} else {
