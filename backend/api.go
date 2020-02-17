@@ -1030,9 +1030,13 @@ func signUp(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusBadRequest
 	}
 
+	response := "set"
+
 	betaSignupKey := datastoreKey("BetaSignup", betaSignup.Email)
 	existingBetaSignup := new(BetaSignup)
 	if err := h.Datastore.Get(h.Context, betaSignupKey, existingBetaSignup); err == nil {
+		response = "update"
+
 		if existingBetaSignup.Comment != "" {
 			betaSignup.Comment = existingBetaSignup.Comment
 		}
@@ -1044,9 +1048,6 @@ func signUp(h HandlerArgs) (interface{}, int) {
 		}
 		if existingBetaSignup.Name != "" {
 			betaSignup.Name = existingBetaSignup.Name
-		}
-		if existingBetaSignup.PrefineryID != 0 {
-			betaSignup.PrefineryID = existingBetaSignup.PrefineryID
 		}
 		if existingBetaSignup.Referer != "" {
 			betaSignup.Referer = existingBetaSignup.Referer
@@ -1067,64 +1068,7 @@ func signUp(h HandlerArgs) (interface{}, int) {
 		"<p>There's no need to respond to this email, but you certainly can if you have any questions, comments or concerns.</p>"+
 		"")
 
-	jsonData := map[string]interface{}{}
-	jsonData["tester"] = signup
-	jsonSignup, _ := json.Marshal(jsonData)
-
-	resource := ""
-	method := methods.POST
-
-	if betaSignup.PrefineryID != 0 {
-		resource = "/" + string(betaSignup.PrefineryID)
-		method = methods.PUT
-	}
-
-	req, err := http.NewRequest(
-		method,
-		"https://cyph.prefinery.com/api/v2/betas/9034/testers"+resource+".json?api_key="+prefineryKey,
-		bytes.NewBuffer(jsonSignup),
-	)
-
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	jsonBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	var body map[string]interface{}
-	err = json.Unmarshal(jsonBody, &body)
-	if err != nil {
-		return err.Error(), http.StatusInternalServerError
-	}
-
-	useridDynamic, _ := body["id"]
-	switch userid := useridDynamic.(type) {
-	case float64:
-		if resource != "" {
-			return "update", http.StatusOK
-		}
-
-		betaSignup.PrefineryID = int(userid)
-		if _, err := h.Datastore.Put(h.Context, betaSignupKey, &betaSignup); err != nil {
-			return err.Error(), http.StatusInternalServerError
-		}
-
-		return "set", http.StatusOK
-	}
-
-	return "signup failed", http.StatusInternalServerError
+	return response, http.StatusOK
 }
 
 func whatismyip(h HandlerArgs) (interface{}, int) {

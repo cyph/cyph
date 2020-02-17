@@ -108,8 +108,6 @@ var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
 var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
-var prefineryKey = os.Getenv("PREFINERY_KEY")
-
 func datastoreKey(kind string, name string) *datastore.Key {
 	key := datastore.NameKey(kind, name, nil)
 	key.Namespace = apiNamespace

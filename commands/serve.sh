@@ -147,7 +147,7 @@ ngserve () {
 cp -f backend/app.yaml backend/.build.yaml
 sed -i 's|runtime: go112|runtime: go111|g' backend/.build.yaml # temporary workaround
 
-# Braintree, Prefinery, and Twilio unsupported in CircleCI for now, until needed
+# Braintree and Twilio unsupported in CircleCI for now, until needed
 if [ -d ~/.cyph ] && [ -f ~/.cyph/backend.vars ] && [ ! "${CIRCLECI}" ] ; then
 	cat ~/.cyph/backend.vars >> backend/.build.yaml
 	if [ "${prod}" ] ; then
