@@ -96,6 +96,9 @@ export class AccountService extends BaseProvider {
 	/** Indicates whether account is in good standing. */
 	public readonly accountGoodStanding = new BehaviorSubject<boolean>(true);
 
+	/** Indicates whether automatic updates should be applied. */
+	public readonly autoUpdate = new BehaviorSubject<boolean>(true);
+
 	/** Indicates whether real-time Docs is enabled. */
 	public readonly enableDocs: Observable<boolean> = of(
 		this.envService.debug ||
@@ -561,9 +564,14 @@ export class AccountService extends BaseProvider {
 					/* Check for updates to keep long-running background instances in sync */
 					try {
 						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						const packageTimestamp = !this.envService.isLocalEnv ?
-							localStorage.getItem('webSignPackageTimestamp') :
-							undefined;
+						const packageTimestamp =
+							!this.envService.isLocalEnv &&
+							this.autoUpdate.value ?
+								localStorage.getItem(
+									'webSignPackageTimestamp'
+								) :
+								undefined;
+
 						if (!packageTimestamp) {
 							throw new Error();
 						}

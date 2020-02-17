@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
+import {take} from 'rxjs/operators';
 import {User} from '../account';
 import {BooleanProto, CyphPlans, NotificationTypes} from '../proto';
 import {getTimestamp} from '../util/time';
@@ -112,6 +113,14 @@ export class AccountP2PService extends P2PService {
 			});
 			return;
 		}
+
+		this.accountService.autoUpdate.next(false);
+		this.p2pWebRTCService.disconnect
+			.pipe(take(1))
+			.toPromise()
+			.then(() => {
+				this.accountService.autoUpdate.next(true);
+			});
 
 		const id = uuid();
 		const username = remoteUser.username;

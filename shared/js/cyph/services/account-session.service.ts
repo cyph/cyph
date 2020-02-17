@@ -199,6 +199,8 @@ export class AccountSessionService extends SessionService {
 				throw new Error('No user signed in.');
 			}
 
+			this.accountService.autoUpdate.next(false);
+
 			this.accountService.setHeader({
 				mobile: this.stringsService.burner
 			});

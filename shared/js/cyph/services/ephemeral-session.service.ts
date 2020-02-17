@@ -7,6 +7,7 @@ import {request} from '../util/request';
 import {getTimestamp} from '../util/time';
 import {readableID, uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
+import {AccountService} from './account.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {ConfigService} from './config.service';
@@ -142,6 +143,7 @@ export class EphemeralSessionService extends SessionService {
 			this.potassiumService,
 			this.sessionInitService.spawn(),
 			this.stringsService,
+			this.accountService,
 			this.accountDatabaseService,
 			this.configService,
 			this.notificationService
@@ -157,6 +159,9 @@ export class EphemeralSessionService extends SessionService {
 		potassiumService: PotassiumService,
 		sessionInitService: SessionInitService,
 		stringsService: StringsService,
+
+		/** @ignore */
+		private readonly accountService: AccountService,
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
@@ -177,6 +182,8 @@ export class EphemeralSessionService extends SessionService {
 			sessionInitService,
 			stringsService
 		);
+
+		this.accountService.autoUpdate.next(false);
 
 		let username: string | undefined;
 

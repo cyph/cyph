@@ -33,6 +33,8 @@ export class AccountHomeComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
+		this.accountService.autoUpdate.next(true);
+
 		if (
 			this.accountDatabaseService.currentUser.value &&
 			this.accountDatabaseService.currentUser.value.pseudoAccount
