@@ -31,7 +31,7 @@ func main() {
 	handleFuncs("/redox/apikey/verify", Handlers{methods.POST: redoxVerifyAPIKey})
 	handleFuncs("/redox/credentials", Handlers{methods.PUT: redoxAddCredentials})
 	handleFuncs("/redox/execute", Handlers{methods.POST: redoxRunCommand})
-	handleFuncs("/signups", Handlers{methods.PUT: signup})
+	handleFuncs("/signups", Handlers{methods.PUT: signUp})
 	handleFuncs("/timestamp", Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/whatismyip", Handlers{methods.GET: whatismyip})
 
@@ -1022,7 +1022,7 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 	return responseBody, http.StatusOK
 }
 
-func signup(h HandlerArgs) (interface{}, int) {
+func signUp(h HandlerArgs) (interface{}, int) {
 	betaSignup, signup := getSignupFromRequest(h)
 
 	_, err := getEmail(signup["email"].(string))
