@@ -42,7 +42,12 @@ export class SalesService extends BaseProvider {
 		url?: string | MaybePromise<string | undefined>[],
 		sameWindow?: boolean
 	) : Promise<void> {
-		if (!this.envService.isCordovaDesktopWindows) {
+		if (
+			!(
+				this.envService.isCordovaDesktopMacOS ||
+				this.envService.isCordovaDesktopWindows
+			)
+		) {
 			if (url) {
 				await openWindow(url, sameWindow);
 			}
