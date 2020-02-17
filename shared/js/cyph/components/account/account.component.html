@@ -260,21 +260,18 @@
 								<a
 									cyphTranslate
 									(click)="
-										salesService.windowsAppUpgradeWorkaround(
-											$event,
-											[
-												envService.homeUrl,
-												'pricing?current=',
-												cyphPlans[
-													accountSettingsService.plan
-														.value || cyphPlans.Free
-												],
-												'&userToken=',
-												accountService.getUserToken(
-													accountService.interstitial
-												)
-											]
-										)
+										salesService.openPricing($event, [
+											envService.homeUrl,
+											'pricing?current=',
+											cyphPlans[
+												accountSettingsService.plan
+													.value || cyphPlans.Free
+											],
+											'&userToken=',
+											accountService.getUserToken(
+												accountService.interstitial
+											)
+										])
 									"
 									>upgrade to premium now</a
 								>!
@@ -308,7 +305,7 @@
 					<a
 						cyphTranslate
 						(click)="
-							salesService.windowsAppUpgradeWorkaround($event, [
+							salesService.openPricing($event, [
 								envService.homeUrl,
 								'checkout/#',
 								configService.planConfig[

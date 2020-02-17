@@ -131,9 +131,7 @@
 								'&inviteCode=' +
 								((inviteCodeWatcher | await)?.value || '')
 							"
-							(click)="
-								salesService.windowsAppUpgradeWorkaround($event)
-							"
+							(click)="salesService.openPricing($event)"
 							>Upgrade to Lifetime Platinum now</a
 						>
 						&ngsp;
@@ -153,9 +151,7 @@
 						<a
 							cyphTranslate
 							[href]="envService.homeUrl + 'pricing'"
-							(click)="
-								salesService.windowsAppUpgradeWorkaround($event)
-							"
+							(click)="salesService.openPricing($event)"
 							target="_self"
 							>Upgrade to premium</a
 						>
@@ -825,7 +821,7 @@
 															)?.value || '')
 														"
 														(click)="
-															salesService.windowsAppUpgradeWorkaround(
+															salesService.openPricing(
 																$event
 															)
 														"

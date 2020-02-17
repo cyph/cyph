@@ -36,8 +36,8 @@ export class SalesService extends BaseProvider {
 		);
 	}
 
-	/** Workaround for upgrade link on Windows app. */
-	public async windowsAppUpgradeWorkaround (
+	/** Opens pricing/upgrade page, with workarounds for platform-specific restrictions. */
+	public async openPricing (
 		e?: Event,
 		url?: string | MaybePromise<string | undefined>[],
 		sameWindow?: boolean
@@ -56,8 +56,8 @@ export class SalesService extends BaseProvider {
 		}
 
 		await this.dialogService.alert({
-			content: this.stringsService.windowsAppUpgradeWorkaroundContent,
-			title: this.stringsService.windowsAppUpgradeWorkaroundTitle
+			content: this.stringsService.openPricingContent,
+			title: this.stringsService.openPricingTitle
 		});
 	}
 

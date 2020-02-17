@@ -735,6 +735,12 @@ export class StringsService extends BaseProvider {
 	public readonly openMenu = `Open Menu`;
 
 	/** @see StringsService */
+	public readonly openPricingContent = `Unfortunately, due to Microsoft Store restrictions, we cannot accept payments through this app. To upgrade your account, you'll need to log in through your browser or the ${this.internalProductShort} app on another platform.`;
+
+	/** @see StringsService */
+	public readonly openPricingTitle = `${this.internalProduct} Upgrade`;
+
+	/** @see StringsService */
 	public readonly openProfile = `Open Profile`;
 
 	/** @see StringsService */
@@ -1160,12 +1166,6 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly welcomeToProduct = `Welcome to ${this.internalProduct}`;
-
-	/** @see StringsService */
-	public readonly windowsAppUpgradeWorkaroundContent = `Unfortunately, due to Microsoft Store restrictions, we cannot accept payments through this app. To upgrade your account, you'll need to log in through your browser or the ${this.internalProductShort} app on another platform.`;
-
-	/** @see StringsService */
-	public readonly windowsAppUpgradeWorkaroundTitle = `${this.internalProduct} Upgrade`;
 
 	/** @see StringsService */
 	public readonly youHaveNo = `You have no`;
