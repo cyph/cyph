@@ -131,12 +131,12 @@ func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) 
 	apiKey := hex.EncodeToString(bytes)
 	datastoreKey := datastoreKey(kind, apiKey)
 
-	iterator := h.Datastore.Run(
+	it := h.Datastore.Run(
 		h.Context,
 		datastoreQuery(kind).Filter("__key__ =", datastoreKey),
 	)
 
-	if _, err := iterator.Next(nil); err == nil {
+	if _, err := it.Next(nil); err == nil {
 		return generateAPIKey(h, kind)
 	}
 
@@ -209,6 +209,7 @@ func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
 		Comment:         sanitize(h.Request.PostFormValue("comment"), config.MaxSignupValueLength),
 		Country:         country,
 		Email:           sanitize(strings.ToLower(h.Request.PostFormValue("email")), config.MaxSignupValueLength),
+		Invited:         false,
 		Language:        sanitize(h.Request.PostFormValue("language"), config.MaxSignupValueLength),
 		Name:            sanitize(h.Request.PostFormValue("name"), config.MaxSignupValueLength),
 		Referer:         sanitize(h.Request.Referer(), config.MaxSignupValueLength),

@@ -31,6 +31,7 @@ go get -u \
 	github.com/braintree-go/braintree-go \
 	github.com/microcosm-cc/bluemonday \
 	github.com/oschwald/geoip2-golang \
+	google.golang.org/api/iterator \
 	google.golang.org/appengine \
 	google.golang.org/appengine/datastore \
 	google.golang.org/appengine/mail \

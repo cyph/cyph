@@ -11,6 +11,7 @@ type BetaSignup struct {
 	Comment         string
 	Country         string
 	Email           string
+	Invited         bool
 	Language        string
 	Name            string
 	Referer         string

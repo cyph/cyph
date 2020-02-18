@@ -14,6 +14,7 @@ import (
 
 	"cloud.google.com/go/datastore"
 	"github.com/braintree-go/braintree-go"
+	"google.golang.org/api/iterator"
 )
 
 func main() {
@@ -33,6 +34,7 @@ func main() {
 	handleFuncs("/redox/execute", false, Handlers{methods.POST: redoxRunCommand})
 	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
+	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
 	handleFuncs("/whatismyip", false, Handlers{methods.GET: whatismyip})
 
 	handleFunc("/", false, func(h HandlerArgs) (interface{}, int) {
@@ -1020,6 +1022,43 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 	)
 
 	return responseBody, http.StatusOK
+}
+
+func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
+	it := h.Datastore.Run(
+		h.Context,
+		datastoreQuery("BetaSignup").Filter("Invited =", false),
+	)
+
+	for {
+		var betaSignup BetaSignup
+		_, err := it.Next(&betaSignup)
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			log.Fatalf("Error fetching next item in rollOutWaitlistInvites: %v", err)
+			break
+		}
+
+		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", "", "", "", false)
+
+		if err != nil {
+			log.Fatalf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
+			break
+		}
+
+		betaSignup.Invited = true
+
+		_, err = h.Datastore.Put(h.Context, datastoreKey("BetaSignup", betaSignup.Email), &betaSignup)
+
+		if err != nil {
+			log.Fatalf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
+			break
+		}
+	}
+
+	return "", http.StatusOK
 }
 
 func signUp(h HandlerArgs) (interface{}, int) {
