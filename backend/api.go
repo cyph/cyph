@@ -1040,14 +1040,14 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 			break
 		}
 		if err != nil {
-			log.Fatalf("Error fetching next item in rollOutWaitlistInvites: %v", err)
+			log.Printf("Error fetching next item in rollOutWaitlistInvites: %v", err)
 			break
 		}
 
 		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", "", "", "", false)
 
 		if err != nil {
-			log.Fatalf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
+			log.Printf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
 			break
 		}
 
@@ -1060,7 +1060,7 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 	_, err := h.Datastore.PutMulti(h.Context, invitedKeys, invitedItems)
 
 	if err != nil {
-		log.Fatalf("Failed to invites in rollOutWaitlistInvites: %v", err)
+		log.Printf("Failed to invites in rollOutWaitlistInvites: %v", err)
 	}
 
 	return "", http.StatusOK
