@@ -488,7 +488,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	);
 	const email = validateInput(req.body.email, emailRegex, true);
 	const name = validateInput(req.body.name, undefined, true);
-	const plan =
+	let plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
 	const planConfig = config.planConfig[plan];
 	const preexistingInviteCode = validateInput(
