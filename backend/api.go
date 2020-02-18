@@ -1030,6 +1030,9 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 		datastoreQuery("BetaSignup").Filter("Invited =", false),
 	)
 
+	invitedKeys := []*datastore.Key{}
+	invitedItems := []*BetaSignup{}
+
 	for {
 		var betaSignup BetaSignup
 		_, err := it.Next(&betaSignup)
@@ -1050,12 +1053,14 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 
 		betaSignup.Invited = true
 
-		_, err = h.Datastore.Put(h.Context, datastoreKey("BetaSignup", betaSignup.Email), &betaSignup)
+		invitedKeys = append(invitedKeys, datastoreKey("BetaSignup", betaSignup.Email))
+		invitedItems = append(invitedItems, &betaSignup)
+	}
 
-		if err != nil {
-			log.Fatalf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
-			break
-		}
+	_, err := h.Datastore.PutMulti(h.Context, invitedKeys, invitedItems)
+
+	if err != nil {
+		log.Fatalf("Failed to invites in rollOutWaitlistInvites: %v", err)
 	}
 
 	return "", http.StatusOK
