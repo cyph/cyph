@@ -1025,9 +1025,10 @@ func redoxRunCommand(h HandlerArgs) (interface{}, int) {
 }
 
 func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
+	/* Temporary workaround for previously added records */
 	it := h.Datastore.Run(
 		h.Context,
-		datastoreQuery("BetaSignup").Filter("Invited =", false),
+		datastoreQuery("BetaSignup"),
 	)
 
 	invitedKeys := []*datastore.Key{}
