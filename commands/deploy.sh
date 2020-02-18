@@ -308,6 +308,10 @@ cat ~/.cyph/backend.vars >> backend/app.yaml
 cat ~/.cyph/test.vars >> test/test.yaml
 cp ~/.cyph/GeoIP2-Country.mmdb backend/
 
+# Remove serve artifacts
+rm backend/.build.yaml 2> /dev/null
+rm backend/index.yaml 2> /dev/null
+
 branchDirs=''
 if [ "${allBranches}" ] ; then
 	./commands/updaterepos.js
