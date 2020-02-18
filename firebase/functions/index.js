@@ -410,6 +410,10 @@ exports.channelDisconnect = functions.database
 	});
 
 exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
+	if (!data.inviteCode) {
+		return {isValid: false};
+	}
+
 	const inviteCode = validateInput(data.inviteCode);
 	const inviteDataRef = database.ref(
 		`${namespace}/inviteCodes/${inviteCode}`
