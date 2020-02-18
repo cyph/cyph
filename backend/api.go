@@ -1044,14 +1044,11 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 			break
 		}
 
-		/* Temporary workaround for previously sent invites */
-		if betaSignup.Time > 1578411535 {
-			_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", "", "", "", false)
+		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", "", "", "", false)
 
-			if err != nil {
-				log.Fatalf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
-				break
-			}
+		if err != nil {
+			log.Fatalf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
+			break
 		}
 
 		betaSignup.Invited = true
