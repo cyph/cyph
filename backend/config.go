@@ -14,6 +14,7 @@ type BetaSignup struct {
 	Invited         bool
 	Language        string
 	Name            string
+	PrefineryID     int
 	Referer         string
 	Time            int64
 	UsernameRequest string
