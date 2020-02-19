@@ -46,7 +46,7 @@ const deleteUser = async (projectId, namespace, username) => {
 		(await auth.getUserByEmail(`${username}@${namespace}`)).uid
 	);
 
-	await removeItem(namespace, `users/${username}`);
+	await removeItem(namespace, `users/${username}`, true);
 
 	console.log(`Deleted @${username}.`);
 };

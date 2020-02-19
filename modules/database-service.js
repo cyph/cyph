@@ -144,10 +144,10 @@ module.exports = (config, isCloudFunction) => {
 				return false;
 			}
 		},
-		async removeItem (namespace, url)  {
+		async removeItem (namespace, url, deleteStorage = isCloudFunction)  {
 			url = processURL(namespace, url);
 
-			if (isCloudFunction) {
+			if (deleteStorage) {
 				await Promise.all([
 					database.ref(url).remove(),
 					storage
