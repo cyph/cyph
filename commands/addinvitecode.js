@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-const firebase = require('firebase-admin');
-const fs = require('fs');
-const os = require('os');
 const usernameBlacklist = new Set(require('username-blacklist'));
 const databaseService = require('../modules/database-service');
 const {BooleanProto, CyphPlans} = require('../modules/proto');
