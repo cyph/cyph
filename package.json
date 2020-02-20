@@ -2,12 +2,12 @@
 	"name": "cyph-phonegap-app",
 	"author": "Cyph, Inc. <phonegap-app@cyph.com> (https://github.com/cyph)",
 	"dependencies": {
-		"@cyph/prettier": "*",
-		"cordova": "*",
-		"cordova-support-google-services": "https://github.com/LuisEGR/cordova-support-google-services.git",
 		"electron-push-receiver": "*"
 	},
 	"devDependencies": {
+		"@cyph/prettier": "*",
+		"cordova": "*",
+		"cordova-support-google-services": "https://github.com/LuisEGR/cordova-support-google-services.git",
 		"puppeteer": "*",
 		"xmldom": "*"
 	},

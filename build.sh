@@ -76,6 +76,8 @@ npm install
 initPlatform () {
 	platform="${1}"
 
+	cp package.json package.json.old
+
 	npx cordova platform add ${platform}
 
 	node -e "console.log(
@@ -92,6 +94,28 @@ initPlatform () {
 			)
 			.join('\n')
 	)" | xargs npx cordova plugin add
+
+	node -e "
+		const oldPackageJSON = JSON.parse(fs.readFileSync('package.json.old').toString());
+		const packageJSON = JSON.parse(fs.readFileSync('package.json').toString());
+
+		const dependencies = {...packageJSON.dependencies, ...packageJSON.devDependencies};
+
+		const getDependencies = filter => Object.entries(dependencies)
+			.filter(filter)
+			.reduce((o, [k, v]) => ({...o, [k]: v}), {});
+
+		packageJSON.dependencies =
+			getDependencies(([k]) => k in oldPackageJSON.dependencies)
+		;
+		packageJSON.devDependencies =
+			getDependencies(([k]) => !(k in oldPackageJSON.dependencies))
+		;
+
+		fs.writeFileSync('package.json', JSON.stringify(packageJSON));
+	"
+
+	rm package.json.old
 }
 
 
