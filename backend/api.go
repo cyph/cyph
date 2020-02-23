@@ -404,6 +404,18 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		subject = "FAILED: " + subject
 	}
 
+	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
+		"Nonce: " + nonce +
+		"\nPlan ID: " + planID +
+		"\nAmount: " + amountString +
+		"\nInvite Code: " + inviteCode +
+		"\nSubscription: " + subscriptionString +
+		"\nCompany: " + company +
+		"\nName: " + name +
+		"\nEmail: " + email +
+		"\n\n" + txLog +
+		""), "")
+
 	plan, hasPlan := config.Plans[planID]
 
 	if success && hasPlan && plan.AccountsPlan != "" {
@@ -432,18 +444,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		return welcomeLetter, http.StatusOK
 	}
-
-	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
-		"Nonce: " + nonce +
-		"\nPlan ID: " + planID +
-		"\nAmount: " + amountString +
-		"\nInvite Code: " + inviteCode +
-		"\nSubscription: " + subscriptionString +
-		"\nCompany: " + company +
-		"\nName: " + name +
-		"\nEmail: " + email +
-		"\n\n" + txLog +
-		""), "")
 
 	if !success {
 		return "", http.StatusInternalServerError
