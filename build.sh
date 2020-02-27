@@ -45,9 +45,15 @@ elif [ ! "${debug}" ] && ( [ "${allPlatforms}" ] || [ "${android}" ] || [ "${ele
 fi
 
 if [ "${allPlatforms}" ] ; then
+	rm -rf ../cyph-phonegap-build* 2> /dev/null
 	./build.sh android "${password}" || exit 1
+	mv ../cyph-phonegap-build ../cyph-phonegap-build.android
 	./build.sh electron "${password}" || exit 1
+	mv ../cyph-phonegap-build ../cyph-phonegap-build.electron
 	./build.sh ios "${password}" || exit 1
+	mv ../cyph-phonegap-build ../cyph-phonegap-build.ios
+	mkdir -p ../cyph-phonegap-build/build
+	cp -a ../cyph-phonegap-build.*/build/* ../cyph-phonegap-build/build/
 	exit
 fi
 
