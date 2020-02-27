@@ -80,6 +80,8 @@ initPlatform () {
 
 	npx cordova platform add ${platform}
 
+	sed -i 's/.*<engine.*//g' config.xml
+
 	node -e "console.log(
 		Array.from(
 			Array.from(
