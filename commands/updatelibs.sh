@@ -114,7 +114,7 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-angular-treegrid
 	@syncfusion/ej2-angular-treemap
 	@syncfusion/ej2-barcode-generator
-	@syncfusion/ej2-base@https://github.com/buu700/ej2-javascript-ui-controls#build-base
+	@syncfusion/ej2-base
 	@syncfusion/ej2-buttons
 	@syncfusion/ej2-calendars
 	@syncfusion/ej2-charts
@@ -127,13 +127,13 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-dropdowns
 	@syncfusion/ej2-excel-export
 	@syncfusion/ej2-file-utils
-	@syncfusion/ej2-filemanager@https://github.com/buu700/ej2-javascript-ui-controls#build-filemanager
+	@syncfusion/ej2-filemanager
 	@syncfusion/ej2-gantt
 	@syncfusion/ej2-grids
 	@syncfusion/ej2-heatmap
 	@syncfusion/ej2-icons
 	@syncfusion/ej2-inplace-editor
-	@syncfusion/ej2-inputs@https://github.com/buu700/ej2-javascript-ui-controls#build-inputs
+	@syncfusion/ej2-inputs
 	@syncfusion/ej2-layouts
 	@syncfusion/ej2-lineargauge
 	@syncfusion/ej2-lists
