@@ -177,7 +177,6 @@ export class AccountContactsComponent extends BaseProvider
 
 	/**
 	 * Full contact list with active contact removed and users with unread messages on top.
-	 * TODO: Watch innerCircleTab and switch between lists.
 	 */
 	public readonly filteredContactList: Observable<
 		(IContactListItem | User)[]
