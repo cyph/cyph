@@ -735,7 +735,7 @@ export class StringsService extends BaseProvider {
 	public readonly openMenu = `Open Menu`;
 
 	/** @see StringsService */
-	public readonly openPricingContent = `Unfortunately, due to Microsoft Store restrictions, we cannot accept payments through this app. To upgrade your account, you'll need to log in through your browser or the ${this.internalProductShort} app on another platform.`;
+	public readonly openPricingContent = `Unfortunately, due to this platform's restrictions, we cannot accept payments through this app. To upgrade your account, you'll need to log in through your browser or the ${this.internalProductShort} app on another platform.`;
 
 	/** @see StringsService */
 	public readonly openPricingTitle = `${this.internalProduct} Upgrade`;
