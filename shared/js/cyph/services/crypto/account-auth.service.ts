@@ -29,7 +29,7 @@ import {deserialize, serialize} from '../../util/serialization';
 import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
-import {reloadWindow} from '../../util/window';
+import {closeWindow} from '../../util/window';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {AnalyticsService} from '../analytics.service';
 import {ConfigService} from '../config.service';
@@ -347,7 +347,7 @@ export class AccountAuthService extends BaseProvider {
 			(<any> self).plugins.appMinimize.minimize();
 		}
 
-		reloadWindow();
+		closeWindow();
 	}
 
 	/**

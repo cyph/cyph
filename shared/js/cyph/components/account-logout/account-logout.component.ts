@@ -5,7 +5,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
-import {reloadWindow} from '../../util/window';
+import {closeWindow} from '../../util/window';
 
 /**
  * Angular component for account logout UI.
@@ -33,11 +33,7 @@ export class AccountLogoutComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		if ((<any> self).androidBackbuttonReady) {
-			(<any> self).plugins.appMinimize.minimize();
-		}
-
-		reloadWindow();
+		closeWindow();
 	}
 
 	constructor (

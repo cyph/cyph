@@ -53,3 +53,21 @@ export const reloadWindow = () : void => {
 		/* TODO: HANDLE NATIVE */
 	}
 };
+
+/** Closes window, or performs equivalent behavior depending on platform. */
+export const closeWindow = () : void => {
+	if (env.isCordovaDesktop && typeof cordovaRequire === 'function') {
+		const {remote} = cordovaRequire('electron');
+		remote.app.exit();
+	}
+	else if (env.isWeb) {
+		reloadWindow();
+
+		if ((<any> self).androidBackbuttonReady) {
+			(<any> self).plugins.appMinimize.minimize();
+		}
+	}
+	else {
+		/* TODO: HANDLE NATIVE */
+	}
+};
