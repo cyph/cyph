@@ -315,17 +315,12 @@ export class AccountContactsComponent extends BaseProvider
 		this.initContactListInternal();
 		this.accountService.transitionEnd();
 
-		this.subscriptions.push(
-			this.localStorageService
-				.watch(
-					'contactsInnerCircleTab',
-					BooleanProto,
-					this.subscriptions
-				)
-				.subscribe(innerCircleTab => {
-					this.innerCircleTab.next(innerCircleTab.value);
-				})
-		);
+		this.localStorageService
+			.getItem('contactsInnerCircleTab', BooleanProto)
+			.then(innerCircleTab => {
+				this.innerCircleTab.next(innerCircleTab);
+			})
+			.catch(() => {});
 	}
 
 	/** Sets Inner Circle tab selection state. */
