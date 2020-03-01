@@ -17,9 +17,10 @@ import {
 	combineLatest,
 	Observable,
 	of,
+	ReplaySubject,
 	Subscription
 } from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, tap} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -72,6 +73,7 @@ export class AccountContactsComponent extends BaseProvider
 	private readonly routeReactiveContactList: Observable<{
 		activeUser?: IContactListItem | User | undefined;
 		filteredContactList: (IContactListItem | User)[];
+		innerCircleTab: boolean;
 	}>;
 
 	/** @see AccountContactsSearchComponent */
@@ -98,7 +100,7 @@ export class AccountContactsComponent extends BaseProvider
 	@Input() public home: boolean = false;
 
 	/** Controls whether Inner Circle tab is selected. */
-	public readonly innerCircleTab = new BehaviorSubject<boolean>(false);
+	public readonly innerCircleTab = new ReplaySubject<boolean>(1);
 
 	/** Indicates whether to use inverted theme. */
 	@Input() public invertedTheme: boolean = false;
@@ -177,10 +179,10 @@ export class AccountContactsComponent extends BaseProvider
 
 		this.localStorageService
 			.getItem('contactsInnerCircleTab', BooleanProto)
+			.catch(() => false)
 			.then(innerCircleTab => {
 				this.innerCircleTab.next(innerCircleTab);
-			})
-			.catch(() => {});
+			});
 	}
 
 	/** Sets Inner Circle tab selection state. */
@@ -246,7 +248,7 @@ export class AccountContactsComponent extends BaseProvider
 			this.activatedRoute.data,
 			this.accountService.routeChanges
 		]).pipe(
-			switchMap(async ([{contactList}, data]) => {
+			switchMap(async ([{contactList, innerCircleTab}, data]) => {
 				const snapshot = this.activatedRoute.snapshot.firstChild ?
 					this.activatedRoute.snapshot.firstChild :
 					this.activatedRoute.snapshot;
@@ -312,7 +314,10 @@ export class AccountContactsComponent extends BaseProvider
 
 				if (index < 0) {
 					if (!username) {
-						return {filteredContactList: contactList};
+						return {
+							filteredContactList: contactList,
+							innerCircleTab
+						};
 					}
 
 					return {
@@ -325,7 +330,8 @@ export class AccountContactsComponent extends BaseProvider
 							),
 							username
 						},
-						filteredContactList: contactList
+						filteredContactList: contactList,
+						innerCircleTab
 					};
 				}
 
@@ -333,7 +339,8 @@ export class AccountContactsComponent extends BaseProvider
 					activeUser: contactList[index],
 					filteredContactList: contactList
 						.slice(0, index)
-						.concat(contactList.slice(index + 1))
+						.concat(contactList.slice(index + 1)),
+					innerCircleTab
 				};
 			})
 		);
@@ -367,6 +374,13 @@ export class AccountContactsComponent extends BaseProvider
 					)
 				])
 			),
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			tap(([{innerCircleTab}]) => {
+				(innerCircleTab ?
+					this.accountContactsService.spinners.contactsInnerCircle :
+					this.accountContactsService.spinners.contacts
+				).next(false);
+			}),
 			map(([o, counts, contactStates]) =>
 				this.contactList !== this.accountContactsService.contactList ?
 					o.filteredContactList :

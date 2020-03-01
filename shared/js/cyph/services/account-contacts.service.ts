@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
-import {map, skip, switchMap, take} from 'rxjs/operators';
+import {map, skip, switchMap} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -182,7 +182,7 @@ export class AccountContactsService extends BaseProvider {
 		),
 		[],
 		this.subscriptions
-	);
+	).pipe(skip(1));
 
 	/** Contact state. */
 	public readonly contactState = memoize(
@@ -654,38 +654,10 @@ export class AccountContactsService extends BaseProvider {
 	) {
 		super();
 
-		for (const [list, spinner, url] of <
-			[
-				typeof AccountContactsService.prototype.contactList,
-				typeof AccountContactsService.prototype.spinners.contacts,
-				string
-			][]
-		> [
-			[this.contactList, this.spinners.contacts, 'contacts'],
-			[
-				this.contactListInnerCircle,
-				this.spinners.contactsInnerCircle,
-				'contactsInnerCircle'
-			]
-		]) {
-			this.accountDatabaseService.getListKeys(url).then(usernames => {
-				if (usernames.length < 1) {
-					spinner.next(false);
-				}
-			});
-
-			list.pipe(skip(1), take(1))
-				.toPromise()
-				.then(() => {
-					spinner.next(false);
-				});
-		}
-
 		this.subscriptions.push(
 			combineLatest([
 				this.accountPostsService.pipe(filterUndefinedOperator()),
 				this.contactListInnerCircle.pipe(
-					skip(1),
 					switchMap(contactListInnerCircle =>
 						combineLatest(
 							contactListInnerCircle.map(user =>
