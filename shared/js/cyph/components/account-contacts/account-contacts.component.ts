@@ -40,7 +40,7 @@ import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByUser} from '../../track-by/track-by-user';
-import {filterUndefined} from '../../util/filter';
+import {filterUndefined, filterUndefinedOperator} from '../../util/filter';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {observableAll} from '../../util/observable-all';
 import {AccountContactsSearchComponent} from '../account-contacts-search';
@@ -57,9 +57,13 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 export class AccountContactsComponent extends BaseProvider
 	implements OnChanges, OnDestroy, OnInit {
 	/** @ignore */
-	private readonly contactListInternal: BehaviorSubject<
-		(IContactListItem | User)[]
-	> = new BehaviorSubject<(IContactListItem | User)[]>([]);
+	private readonly contactListInternal = new BehaviorSubject<
+		| Observable<{
+				contactList: (IContactListItem | User)[];
+				innerCircleTab: boolean;
+		  }>
+		| undefined
+	>(undefined);
 
 	/** @ignore */
 	private contactListSubscription?: Subscription;
@@ -68,108 +72,16 @@ export class AccountContactsComponent extends BaseProvider
 	private readonly routeReactiveContactList: Observable<{
 		activeUser?: IContactListItem | User | undefined;
 		filteredContactList: (IContactListItem | User)[];
-	}> = combineLatest([
-		this.contactListInternal,
-		this.activatedRoute.data,
-		this.accountService.routeChanges
-	]).pipe(
-		switchMap(async ([contactList, data]) => {
-			const snapshot = this.activatedRoute.snapshot.firstChild ?
-				this.activatedRoute.snapshot.firstChild :
-				this.activatedRoute.snapshot;
-
-			const username =
-				typeof snapshot.params.username === 'string' ?
-					snapshot.params.username :
-					await this.accountContactsService
-						.getContactUsername(snapshot.params.contactID)
-						.catch(() => undefined);
-
-			let userTypeFilter: AccountUserTypes | undefined =
-				data.userTypeFilter;
-			let userTypeFilterOut = data.userTypeFilterOut === true;
-
-			/* Filter out patients for healthcare workers in general case */
-			if (this.envService.isTelehealth && userTypeFilter === undefined) {
-				userTypeFilter = AccountUserTypes.Standard;
-				userTypeFilterOut = true;
-			}
-
-			if (userTypeFilter !== undefined) {
-				contactList = filterUndefined(
-					await Promise.all(
-						contactList.map(async contact => {
-							const user =
-								contact instanceof User ?
-									contact :
-									await contact.user;
-							return !user ?
-								undefined :
-								{
-									user,
-									userType: (await user.accountUserProfile.getValue())
-										.userType
-								};
-						})
-					)
-				)
-					.filter(contact =>
-						userTypeFilterOut ?
-							contact.userType !== userTypeFilter :
-							contact.userType === userTypeFilter
-					)
-					.map(contact => contact.user);
-			}
-
-			const index = username ?
-				contactList.findIndex(
-					contact => contact.username === username
-				) :
-			snapshot.params.contactID ?
-				contactList.findIndex(
-					contact =>
-						'groupData' in contact &&
-						contact.groupData !== undefined &&
-						contact.groupData.id === snapshot.params.contactID
-				) :
-				-1;
-
-			if (index < 0) {
-				if (!username) {
-					return {filteredContactList: contactList};
-				}
-
-				return {
-					activeUser: {
-						unreadMessageCount: this.accountUserLookupService.getUnreadMessageCount(
-							username
-						),
-						user: this.accountUserLookupService.getUser(username),
-						username
-					},
-					filteredContactList: contactList
-				};
-			}
-
-			return {
-				activeUser: contactList[index],
-				filteredContactList: contactList
-					.slice(0, index)
-					.concat(contactList.slice(index + 1))
-			};
-		})
-	);
+	}>;
 
 	/** @see AccountContactsSearchComponent */
 	@ViewChild(AccountContactsSearchComponent)
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Full contact list with active contact filtered out. */
-	public readonly activeUser = toBehaviorSubject(
-		this.routeReactiveContactList.pipe(map(o => o.activeUser)),
-		undefined,
-		this.subscriptions
-	);
+	public readonly activeUser: BehaviorSubject<
+		IContactListItem | User | undefined
+	>;
 
 	/** List of users to search. */
 	@Input() public contactList: Observable<(IContactListItem | User)[]> = this
@@ -180,60 +92,7 @@ export class AccountContactsComponent extends BaseProvider
 	 */
 	public readonly filteredContactList: Observable<
 		(IContactListItem | User)[]
-	> = this.routeReactiveContactList.pipe(
-		switchMap(o =>
-			combineLatest([
-				of(o),
-				observableAll(
-					o.filteredContactList.map(
-						({unreadMessageCount}) => unreadMessageCount
-					)
-				),
-				observableAll(
-					o.filteredContactList.map(({username}) =>
-						this.accountDatabaseService.watch(
-							`contacts/${username}`,
-							AccountContactState,
-							SecurityModels.unprotected,
-							undefined,
-							undefined,
-							this.subscriptions
-						)
-					)
-				)
-			])
-		),
-		map(([o, counts, contactStates]) =>
-			this.contactList !== this.accountContactsService.contactList ?
-				o.filteredContactList :
-				[
-					...o.filteredContactList.filter(
-						(_, i) =>
-							counts[i] > 0 &&
-							contactStates[i].value.state ===
-								AccountContactState.States.IncomingRequest
-					),
-					...o.filteredContactList.filter(
-						(_, i) =>
-							counts[i] > 0 &&
-							contactStates[i].value.state !==
-								AccountContactState.States.IncomingRequest
-					),
-					...o.filteredContactList.filter(
-						(_, i) =>
-							counts[i] < 1 &&
-							contactStates[i].value.state ===
-								AccountContactState.States.IncomingRequest
-					),
-					...o.filteredContactList.filter(
-						(_, i) =>
-							counts[i] < 1 &&
-							contactStates[i].value.state !==
-								AccountContactState.States.IncomingRequest
-					)
-				]
-		)
-	);
+	>;
 
 	/** Indicates whether this is home component. */
 	@Input() public home: boolean = false;
@@ -279,15 +138,16 @@ export class AccountContactsComponent extends BaseProvider
 
 	/** @ignore */
 	private initContactListInternal () : void {
-		this.contactListSubscription = this.innerCircleTab
-			.pipe(
+		this.contactListInternal.next(
+			this.innerCircleTab.pipe(
 				switchMap(innerCircleTab =>
-					innerCircleTab ?
+					(innerCircleTab ?
 						this.accountContactsService.contactListInnerCircle :
 						this.contactList
+					).pipe(map(contactList => ({contactList, innerCircleTab})))
 				)
 			)
-			.subscribe(this.contactListInternal);
+		);
 	}
 
 	/** @inheritDoc */
@@ -377,5 +237,166 @@ export class AccountContactsComponent extends BaseProvider
 		public readonly stringsService: StringsService
 	) {
 		super();
+
+		this.routeReactiveContactList = combineLatest([
+			this.contactListInternal.pipe(
+				filterUndefinedOperator(),
+				switchMap(o => o)
+			),
+			this.activatedRoute.data,
+			this.accountService.routeChanges
+		]).pipe(
+			switchMap(async ([{contactList}, data]) => {
+				const snapshot = this.activatedRoute.snapshot.firstChild ?
+					this.activatedRoute.snapshot.firstChild :
+					this.activatedRoute.snapshot;
+
+				const username =
+					typeof snapshot.params.username === 'string' ?
+						snapshot.params.username :
+						await this.accountContactsService
+							.getContactUsername(snapshot.params.contactID)
+							.catch(() => undefined);
+
+				let userTypeFilter: AccountUserTypes | undefined =
+					data.userTypeFilter;
+				let userTypeFilterOut = data.userTypeFilterOut === true;
+
+				/* Filter out patients for healthcare workers in general case */
+				if (
+					this.envService.isTelehealth &&
+					userTypeFilter === undefined
+				) {
+					userTypeFilter = AccountUserTypes.Standard;
+					userTypeFilterOut = true;
+				}
+
+				if (userTypeFilter !== undefined) {
+					contactList = filterUndefined(
+						await Promise.all(
+							contactList.map(async contact => {
+								const user =
+									contact instanceof User ?
+										contact :
+										await contact.user;
+								return !user ?
+									undefined :
+									{
+										user,
+										userType: (await user.accountUserProfile.getValue())
+											.userType
+									};
+							})
+						)
+					)
+						.filter(contact =>
+							userTypeFilterOut ?
+								contact.userType !== userTypeFilter :
+								contact.userType === userTypeFilter
+						)
+						.map(contact => contact.user);
+				}
+
+				const index = username ?
+					contactList.findIndex(
+						contact => contact.username === username
+					) :
+				snapshot.params.contactID ?
+					contactList.findIndex(
+						contact =>
+							'groupData' in contact &&
+							contact.groupData !== undefined &&
+							contact.groupData.id === snapshot.params.contactID
+					) :
+					-1;
+
+				if (index < 0) {
+					if (!username) {
+						return {filteredContactList: contactList};
+					}
+
+					return {
+						activeUser: {
+							unreadMessageCount: this.accountUserLookupService.getUnreadMessageCount(
+								username
+							),
+							user: this.accountUserLookupService.getUser(
+								username
+							),
+							username
+						},
+						filteredContactList: contactList
+					};
+				}
+
+				return {
+					activeUser: contactList[index],
+					filteredContactList: contactList
+						.slice(0, index)
+						.concat(contactList.slice(index + 1))
+				};
+			})
+		);
+
+		this.activeUser = toBehaviorSubject(
+			this.routeReactiveContactList.pipe(map(o => o.activeUser)),
+			undefined,
+			this.subscriptions
+		);
+
+		this.filteredContactList = this.routeReactiveContactList.pipe(
+			switchMap(o =>
+				combineLatest([
+					of(o),
+					observableAll(
+						o.filteredContactList.map(
+							({unreadMessageCount}) => unreadMessageCount
+						)
+					),
+					observableAll(
+						o.filteredContactList.map(({username}) =>
+							this.accountDatabaseService.watch(
+								`contacts/${username}`,
+								AccountContactState,
+								SecurityModels.unprotected,
+								undefined,
+								undefined,
+								this.subscriptions
+							)
+						)
+					)
+				])
+			),
+			map(([o, counts, contactStates]) =>
+				this.contactList !== this.accountContactsService.contactList ?
+					o.filteredContactList :
+					[
+						...o.filteredContactList.filter(
+							(_, i) =>
+								counts[i] > 0 &&
+								contactStates[i].value.state ===
+									AccountContactState.States.IncomingRequest
+						),
+						...o.filteredContactList.filter(
+							(_, i) =>
+								counts[i] > 0 &&
+								contactStates[i].value.state !==
+									AccountContactState.States.IncomingRequest
+						),
+						...o.filteredContactList.filter(
+							(_, i) =>
+								counts[i] < 1 &&
+								contactStates[i].value.state ===
+									AccountContactState.States.IncomingRequest
+						),
+						...o.filteredContactList.filter(
+							(_, i) =>
+								counts[i] < 1 &&
+								contactStates[i].value.state !==
+									AccountContactState.States.IncomingRequest
+						)
+					]
+			)
+		);
 	}
 }
