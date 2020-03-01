@@ -644,15 +644,14 @@ export class AccountAuthService extends BaseProvider {
 						undefined,
 						true
 					))(),
-				(async () =>
-					this.localStorageService.setItem(
-						'username',
-						StringProto,
-						username,
-						undefined,
-						undefined,
-						true
-					))()
+				this.localStorageService.setItem(
+					'username',
+					StringProto,
+					username,
+					undefined,
+					undefined,
+					true
+				)
 			]);
 
 			Promise.all([
@@ -793,7 +792,8 @@ export class AccountAuthService extends BaseProvider {
 			const [
 				encryptionKeyPair,
 				signingKeyPair,
-				masterKeyHash
+				masterKeyHash,
+				pinHash
 			] = await Promise.all([
 				this.potassiumService.box.keyPair(),
 				this.potassiumService.sign.keyPair(),
@@ -801,7 +801,8 @@ export class AccountAuthService extends BaseProvider {
 					this.passwordHash(username, masterKey) :
 					this.potassiumService.secretBox.keyBytes.then(keyBytes =>
 						this.potassiumService.randomBytes(keyBytes)
-					)
+					),
+				this.passwordHash(username, pin.value)
 			]);
 
 			const [
@@ -897,16 +898,14 @@ export class AccountAuthService extends BaseProvider {
 						undefined,
 						true
 					),
-				this.passwordHash(username, pin.value).then(async pinHash =>
-					this.setItem(
-						`users/${username}/pin/hash`,
-						BinaryProto,
-						pinHash,
-						loginData.symmetricKey,
-						undefined,
-						undefined,
-						true
-					)
+				this.setItem(
+					`users/${username}/pin/hash`,
+					BinaryProto,
+					pinHash,
+					loginData.symmetricKey,
+					undefined,
+					undefined,
+					true
 				),
 				this.setItem(
 					`users/${username}/pin/isCustom`,
@@ -929,14 +928,21 @@ export class AccountAuthService extends BaseProvider {
 			]);
 
 			await Promise.all([
-				this.localStorageService.setItem(
-					'masterKey',
-					BinaryProto,
-					masterKeyHash,
-					undefined,
-					undefined,
-					true
-				),
+				(async () =>
+					this.localStorageService.setItem(
+						'masterKey',
+						BinaryProto,
+						/* Locally encrypt master key with PIN */
+						pinHash.length > 0 ?
+							await this.potassiumService.secretBox.seal(
+								masterKeyHash,
+								pinHash
+							) :
+							masterKeyHash,
+						undefined,
+						undefined,
+						true
+					))(),
 				this.localStorageService.setItem(
 					'username',
 					StringProto,
@@ -944,7 +950,16 @@ export class AccountAuthService extends BaseProvider {
 					undefined,
 					undefined,
 					true
-				)
+				),
+				this.localStorageService.setItem(
+					'pinIsCustom',
+					BooleanProto,
+					pin.isCustom,
+					undefined,
+					undefined,
+					true
+				),
+				this.savePIN(pinHash)
 			]);
 
 			await this.databaseService.register(
