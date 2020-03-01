@@ -438,18 +438,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		const masterKey = !this.useXkcdPassphrase.value ?
-			this.masterKey.value :
-		this.xkcdPassphrases ?
-			await this.xkcdPassphrases[this.xkcdPassphrase.value]() :
-			'';
-
-		/*
-		if (!safeStringCompare(masterKey, this.finalConfirmation.masterKey)) {
-			this.submitError.next(this.stringsService.invalidMasterKey);
-			return;
-		}
-		*/
+		const unconfirmedMasterKey = await xkcdPassphrase.generate(512);
 
 		this.checking.next(true);
 		this.submitError.next(undefined);
@@ -457,13 +446,13 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		try {
 			await this.localStorageService.setString(
 				'unconfirmedMasterKey',
-				masterKey
+				unconfirmedMasterKey
 			);
 
 			/* Confirm successful set */
 			if (
 				!safeStringCompare(
-					masterKey,
+					unconfirmedMasterKey,
 					await this.localStorageService.getString(
 						'unconfirmedMasterKey'
 					)
@@ -475,7 +464,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			this.submitError.next(
 				(await this.accountAuthService.register(
 					this.username.value,
-					masterKey,
+					unconfirmedMasterKey,
 					{
 						isCustom: !this.useLockScreenPIN.value,
 						value: this.useLockScreenPIN.value ?
