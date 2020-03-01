@@ -743,7 +743,7 @@ export class AccountService extends BaseProvider {
 
 						if (answered) {
 							if (callType === 'chat') {
-								openWindow('/#' + route.join('/'));
+								openWindow('#' + route.join('/'));
 							}
 							else {
 								this.router.navigate(route);
