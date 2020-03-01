@@ -17,8 +17,7 @@ import {
 	combineLatest,
 	Observable,
 	of,
-	ReplaySubject,
-	Subscription
+	ReplaySubject
 } from 'rxjs';
 import {map, switchMap, tap} from 'rxjs/operators';
 import {
@@ -65,9 +64,6 @@ export class AccountContactsComponent extends BaseProvider
 		  }>
 		| undefined
 	>(undefined);
-
-	/** @ignore */
-	private contactListSubscription?: Subscription;
 
 	/** @ignore */
 	private readonly routeReactiveContactList: Observable<{
@@ -156,10 +152,6 @@ export class AccountContactsComponent extends BaseProvider
 	public ngOnChanges (changes: SimpleChanges) : void {
 		if (!('contactList' in changes)) {
 			return;
-		}
-
-		if (this.contactListSubscription) {
-			this.contactListSubscription.unsubscribe();
 		}
 
 		this.initContactListInternal();
