@@ -127,31 +127,42 @@
 
 		<br *ngIf="!readOnly" />
 
-		<button
-			mat-button
-			class="add-contact"
-			(click)="
-				accountContactsService.addContactPrompt(
-					innerCircleTab.value ?
-						newContactTypes.innerCircle :
-						undefined
-				)
+		<ng-container
+			*ngTemplateOutlet="
+				addContactButton;
+				context: {
+					isInnerCircleTab: innerCircleTab | await
+				}
 			"
-			*ngIf="
-				(accountDatabaseService.currentUser | await)?.agseConfirmed ===
-					true && !readOnly
-			"
-		>
-			<span>
-				&nbsp;&nbsp;&nbsp;&nbsp;
-				{{
-					(innerCircleTab | await) ?
-						stringsService.addContactInnerCircleTitle :
-						stringsService.addContactTitle
-				}}
-				&nbsp;&nbsp;&nbsp;&nbsp;
-			</span>
-		</button>
+		></ng-container>
+		<ng-template #addContactButton let-isInnerCircleTab="isInnerCircleTab">
+			<button
+				mat-button
+				class="add-contact"
+				(click)="
+					accountContactsService.addContactPrompt(
+						isInnerCircleTab ?
+							newContactTypes.innerCircle :
+							undefined
+					)
+				"
+				*ngIf="
+					(accountDatabaseService.currentUser | await)
+						?.agseConfirmed === true && !readOnly
+				"
+			>
+				<span>
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					{{
+						isInnerCircleTab ?
+							stringsService.addContactInnerCircleTitle :
+							stringsService.addContactTitle
+					}}
+					&nbsp;&nbsp;&nbsp;&nbsp;
+				</span>
+			</button>
+		</ng-template>
+
 		<mat-menu #addContactMenu="matMenu">
 			<button
 				mat-menu-item

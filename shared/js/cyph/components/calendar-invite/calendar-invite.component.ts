@@ -283,7 +283,11 @@ export class CalendarInviteComponent extends BaseProvider
 	}
 
 	/** Handle value change. */
-	public valueChange (value: ICalendarInvite) : void {
+	public valueChange (value: ICalendarInvite | undefined) : void {
+		if (value === undefined) {
+			return;
+		}
+
 		this.calendarInvite.next(value);
 		this.onChange(value);
 	}
