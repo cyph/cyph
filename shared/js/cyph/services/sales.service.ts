@@ -99,7 +99,9 @@ export class SalesService extends BaseProvider {
 				const upsellBanner =
 					!disableUpsellBanner.value &&
 					!this.configService.planConfig[plan].lifetime &&
-					!this.configService.planConfig[plan].telehealth;
+					!this.configService.planConfig[plan].telehealth &&
+					/* TODO: Set up In-App Purchase API and re-enable this */
+					!this.envService.isCordovaDesktopMacOS;
 
 				this.upsellBanner.next(upsellBanner);
 			})
