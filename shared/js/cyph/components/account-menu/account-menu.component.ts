@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {Router} from '@angular/router';
 import {map} from 'rxjs/operators';
 import {
 	NewContactTypes,
@@ -14,6 +15,7 @@ import {AccountInviteService} from '../../services/account-invite.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByValue} from '../../track-by/track-by-value';
@@ -61,16 +63,48 @@ export class AccountMenuComponent extends BaseProvider {
 
 	/** Handler for button clicks. */
 	public click () : void {
-		/*
-		if (this.envService.isMobile) {
-			this.accountService.toggleMenu(false);
-		}
-		*/
-
 		this.accountService.toggleMobileMenu(false);
 	}
 
+	/** @see AccountAuthService.lock */
+	public async lock () : Promise<void> {
+		this.click();
+
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.lockPrompt,
+				title: this.stringsService.lockTitle
+			}))
+		) {
+			return;
+		}
+
+		await this.accountAuthService.lock();
+	}
+
+	/** @see AccountAuthService.logout */
+	public async logout () : Promise<void> {
+		this.click();
+
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.logoutPrompt,
+				title: this.stringsService.logoutTitle
+			}))
+		) {
+			return;
+		}
+
+		await this.router.navigate(['logout']);
+	}
+
 	constructor (
+		/** @ignore */
+		private readonly router: Router,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

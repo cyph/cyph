@@ -543,6 +543,12 @@ export class StringsService extends BaseProvider {
 	public readonly localMediaError = `Error loading webcam and/or microphone`;
 
 	/** @see StringsService */
+	public readonly lockPrompt = `Quit and lock ${this.internalProductShort}?`;
+
+	/** @see StringsService */
+	public readonly lockTitle = `Lock`;
+
+	/** @see StringsService */
 	public readonly logIn = `Log In`;
 
 	/** @see StringsService */
@@ -553,6 +559,12 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly logoText = this.internalLogoText;
+
+	/** @see StringsService */
+	public readonly logoutPrompt = `Quit and log out of ${this.internalProductShort}?`;
+
+	/** @see StringsService */
+	public readonly logoutTitle = `Log Out`;
 
 	/** @see StringsService */
 	public readonly masterKey = `Master Key`;

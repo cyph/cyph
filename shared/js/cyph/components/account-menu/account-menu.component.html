@@ -867,7 +867,7 @@
 				matTooltip="Lock"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
-				(click)="accountAuthService.lock()"
+				(click)="lock()"
 			>
 				<mat-icon mat-list-icon>lock</mat-icon>
 				<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
@@ -883,8 +883,7 @@
 				matTooltip="Log Out"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
-				routerLink="/logout"
-				(click)="click()"
+				(click)="logout()"
 			>
 				<mat-icon mat-list-icon>exit_to_app</mat-icon>
 				<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
