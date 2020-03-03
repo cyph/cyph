@@ -384,6 +384,7 @@ read -r -d '' modules <<- EOM
 	watermarkjs@https://github.com/brianium/watermarkjs
 	wavesurfer.js
 	web-animations-js
+	web-social-share
 	webpack
 	webpack-cli
 	webrtc-adapter
