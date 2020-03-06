@@ -1,5 +1,6 @@
 <mat-list>
 	<mat-list-item
+		[class.read]="notification.value.isRead"
 		(click)="accountNotificationsService.markAsRead(notification)"
 		*ngFor="
 			let notification of accountNotificationsService.notifications
