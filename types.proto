@@ -142,11 +142,17 @@ message AccountMessagingGroup {
 
 /** Account notification. */
 message AccountNotification {
+	/** @see AccountFileRecord.RecordTypes */
+	AccountFileRecord.RecordTypes fileType = 1;
+
 	/** Indicates whether or not the notification is read. */
-	required bool isRead = 1;
+	required bool isRead = 2;
 
 	/** Notification text. */
-	required string text = 2;
+	required string text = 3;
+
+	/** @see NotificationTypes */
+	required NotificationTypes type = 4;
 }
 
 /** Social networking post. */

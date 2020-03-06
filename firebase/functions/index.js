@@ -1673,7 +1673,12 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 			namespace,
 			`users/${notification.target}/notifications`,
 			AccountNotification,
-			{isRead: false, text: subject}
+			{
+				fileType: metadata.fileType,
+				isRead: false,
+				text: subject,
+				type: notification.type
+			}
 		)
 	]);
 };
