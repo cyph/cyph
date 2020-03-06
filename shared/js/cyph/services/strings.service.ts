@@ -410,7 +410,7 @@ export class StringsService extends BaseProvider {
 	public readonly here = `here`;
 
 	/** @see StringsService */
-	public readonly homeHeader = `Messages`;
+	public readonly homeHeader = `Notifications`;
 
 	/** @see StringsService */
 	public readonly gdprContactForm = `I understand that this form is email-based (NOT ${this.internalProduct} encryption) and provide consent for ${this.internalCompany} to store any information submitted herein.`;
