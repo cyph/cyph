@@ -76,6 +76,8 @@ service firebase.storage {
 				;
 			}
 
+			// match /notifications/{notification}/{hash} {}
+
 			// match /pendingSignups/{hash} {}
 
 			// match /pseudoRelationships/{hash} {}

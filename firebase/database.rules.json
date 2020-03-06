@@ -926,6 +926,20 @@
 						}
 					},
 
+					"notifications": {
+						"$notification": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						}
+					},
+
 					"organizationMembers": {
 						".read": true,
 
