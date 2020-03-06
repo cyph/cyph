@@ -429,57 +429,11 @@ export class AccountAuthService extends BaseProvider {
 			const getUserData = async () =>
 				Promise.all([
 					agseConfirmedPromise,
-					(async () => {
-						/* Temporary workaround for migrating users to latest Potassium.Box */
-
-						const kp = await this.getItem<IKeyPair>(
-							`users/${username}/encryptionKeyPair`,
-							KeyPair,
-							loginData.symmetricKey
-						);
-
-						if (
-							kp.publicKey.length ===
-							(await this.potassiumService.box.publicKeyBytes)
-						) {
-							return kp;
-						}
-
-						debugLog(
-							() => 'Regenerating encryption key pair',
-							() => ({oldEncryptionKeyPair: kp})
-						);
-
-						const newEncryptionKeyPair = await this.potassiumService.box.keyPair();
-
-						await Promise.all([
-							this.setItem(
-								`users/${username}/encryptionKeyPair`,
-								KeyPair,
-								newEncryptionKeyPair,
-								loginData.symmetricKey
-							),
-							this.setItem(
-								`users/${username}/publicEncryptionKey`,
-								BinaryProto,
-								newEncryptionKeyPair.publicKey,
-								(await this.getItem(
-									`users/${username}/signingKeyPair`,
-									KeyPair,
-									loginData.symmetricKey
-								)).privateKey,
-								true,
-								true
-							)
-						]);
-
-						debugLog(
-							() => 'Regenerated encryption key pair',
-							() => ({newEncryptionKeyPair})
-						);
-
-						return newEncryptionKeyPair;
-					})(),
+					this.getItem<IKeyPair>(
+						`users/${username}/encryptionKeyPair`,
+						KeyPair,
+						loginData.symmetricKey
+					),
 					this.localStorageService
 						.hasItem('unconfirmedMasterKey', true)
 						.then(b => !b),
