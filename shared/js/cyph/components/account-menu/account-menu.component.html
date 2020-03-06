@@ -277,10 +277,12 @@
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
-					matTooltip="Messages"
+					matTooltip="Contacts"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
-					routerLink="/"
+					[routerLink]="
+						(envService.isMobile | await) ? '/contacts' : '/'
+					"
 					(click)="click()"
 				>
 					<mat-icon
@@ -301,7 +303,7 @@
 						message
 					</mat-icon>
 					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Messages
+						Contacts
 					</h3>
 				</a>
 
