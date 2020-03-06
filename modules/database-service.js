@@ -144,6 +144,15 @@ module.exports = (config, isCloudFunction) => {
 				return false;
 			}
 		},
+		async pushItem (namespace, url, proto, value)  {
+			/* TODO: Copy the FirebaseDatabaseService implementation or use nextPushId */
+			return databaseService.setItem(
+				namespace,
+				`${url}/${Date.now().toString()}`,
+				proto,
+				value
+			);
+		},
 		async removeItem (namespace, url, deleteStorage = isCloudFunction)  {
 			url = processURL(namespace, url);
 

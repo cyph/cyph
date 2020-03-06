@@ -1,1 +1,12 @@
-<div>AccountNotificationCenter</div>
+<mat-list>
+	<mat-list-item
+		(click)="accountNotificationsService.markAsRead(notification)"
+		*ngFor="
+			let notification of accountNotificationsService.notifications
+				| await;
+			trackBy: trackByID
+		"
+	>
+		{{ notification.value.text }}
+	</mat-list-item>
+</mat-list>

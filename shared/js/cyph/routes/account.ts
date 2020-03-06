@@ -300,24 +300,11 @@ export const account: Route = {
 			component: NotFoundComponent,
 			data: {accountProfile: true}
 		},
-		...(env.isMobileOS ?
-			[
-				{
-					path: 'profile',
-					component: AccountProfileComponent,
-					children: [{path: 'edit', component: BlankComponent}]
-				}
-			] :
-			[
-				{
-					path: 'profile',
-					redirectTo: ''
-				},
-				{
-					path: 'profile/edit',
-					component: AccountProfileComponent
-				}
-			]),
+		{
+			path: 'profile',
+			component: AccountProfileComponent,
+			children: [{path: 'edit', component: BlankComponent}]
+		},
 		{path: 'profile/:username', component: AccountProfileComponent},
 		{path: 'register', redirectTo: 'register/1'},
 		{path: 'register/:step', component: AccountRegisterComponent},

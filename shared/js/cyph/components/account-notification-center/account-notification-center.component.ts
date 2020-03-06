@@ -1,6 +1,8 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
+import {AccountNotificationsService} from '../../services/account-notifications.service';
 import {StringsService} from '../../services/strings.service';
+import {trackByID} from '../../track-by/track-by-id';
 
 /**
  * Angular component for account notification center UI.
@@ -12,7 +14,13 @@ import {StringsService} from '../../services/strings.service';
 	templateUrl: './account-notification-center.component.html'
 })
 export class AccountNotificationCenterComponent extends BaseProvider {
+	/** @see trackByID */
+	public readonly trackByID = trackByID;
+
 	constructor (
+		/** @see AccountNotificationsService */
+		public readonly accountNotificationsService: AccountNotificationsService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {

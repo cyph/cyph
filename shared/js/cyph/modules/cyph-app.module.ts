@@ -23,6 +23,7 @@ import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMenuComponent} from '../components/account-menu';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
+import {AccountNotificationCenterComponent} from '../components/account-notification-center';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPasswordsComponent} from '../components/account-passwords';
 import {AccountPostComponent} from '../components/account-post';
@@ -49,6 +50,7 @@ import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
 import {AccountFilesService} from '../services/account-files.service';
 import {AccountInviteService} from '../services/account-invite.service';
+import {AccountNotificationsService} from '../services/account-notifications.service';
 import {AccountOrganizationsService} from '../services/account-organizations.service';
 import {AccountPostsService} from '../services/account-posts.service';
 import {AccountSettingsService} from '../services/account-settings.service';
@@ -96,6 +98,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountMenuComponent,
 		AccountNoteComponent,
 		AccountNotesComponent,
+		AccountNotificationCenterComponent,
 		AccountNotificationsSubscribeComponent,
 		AccountPasswordsComponent,
 		AccountPostComponent,
@@ -143,6 +146,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountMenuComponent,
 		AccountNoteComponent,
 		AccountNotesComponent,
+		AccountNotificationCenterComponent,
 		AccountNotificationsSubscribeComponent,
 		AccountPasswordsComponent,
 		AccountPostComponent,
@@ -174,6 +178,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountDatabaseService,
 		AccountFilesService,
 		AccountInviteService,
+		AccountNotificationsService,
 		AccountOrganizationsService,
 		AccountPostsService,
 		AccountService,

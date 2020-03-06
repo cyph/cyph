@@ -1,16 +1,4 @@
-<cyph-account-profile
-	[home]="true"
-	*ngIf="
-		!envService.isMobileOS ||
-			envService.isTelehealth ||
-			!(accountDatabaseService.currentUser | await)?.agseConfirmed;
-		else mobileHome
-	"
-></cyph-account-profile>
-
-<ng-template #mobileHome>
-	<span cyphTranslate>MOBILE HOME PLACEHOLDER</span>
-</ng-template>
+<cyph-account-notification-center></cyph-account-notification-center>
 
 <div
 	*ngIf="

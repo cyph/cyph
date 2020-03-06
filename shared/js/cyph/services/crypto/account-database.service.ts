@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -1714,6 +1714,33 @@ export class AccountDatabaseService extends BaseProvider {
 				switchMap(o => o)
 			),
 			subscriptions
+		);
+	}
+
+	/** Watches list with keys. */
+	public watchListWithKeys<T> (
+		url: MaybePromise<string>,
+		proto: IProto<T>,
+		securityModel: SecurityModels = SecurityModels.private,
+		customKey?: MaybePromise<Uint8Array>,
+		anonymous: boolean = false,
+		subscriptions?: Subscription[]
+	) : Observable<{id: string; value: T}[]> {
+		return this.watchListKeys(url, subscriptions).pipe(
+			switchMap(keys =>
+				combineLatest(
+					keys.map(id =>
+						this.watch(
+							`${url}/${id}`,
+							proto,
+							securityModel,
+							customKey,
+							anonymous,
+							subscriptions
+						).pipe(map(o => ({id, value: o.value})))
+					)
+				)
+			)
 		);
 	}
 

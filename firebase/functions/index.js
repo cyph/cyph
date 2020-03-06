@@ -34,6 +34,7 @@ const {
 	getItem,
 	hasItem,
 	messaging,
+	pushItem,
 	removeItem,
 	setItem,
 	setItemInternal,
@@ -51,6 +52,7 @@ const {getTokenKey} = require('./token-key')(database);
 const {
 	AccountContactState,
 	AccountFileRecord,
+	AccountNotification,
 	AccountUserProfile,
 	BinaryProto,
 	CyphPlan,
@@ -1643,29 +1645,37 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 		throw new Error(`Invalid notification type: ${notification.type}`);
 	}
 
-	await notify(
-		namespace,
-		notification.target,
-		subject,
-		text,
-		eventDetails,
-		{
-			actions,
-			additionalData: {
-				...additionalData,
-				activeCall,
-				callMetadata,
-				notificationID,
-				notificationType: notification.type,
-				senderUsername,
-				tag
+	await Promise.all([
+		notify(
+			namespace,
+			notification.target,
+			subject,
+			text,
+			eventDetails,
+			{
+				actions,
+				additionalData: {
+					...additionalData,
+					activeCall,
+					callMetadata,
+					notificationID,
+					notificationType: notification.type,
+					senderUsername,
+					tag
+				},
+				badge,
+				ring: activeCall,
+				tag: `${notification.type}_${tag}`
 			},
-			badge,
-			ring: activeCall,
-			tag: `${notification.type}_${tag}`
-		},
-		true
-	);
+			true
+		),
+		pushItem(
+			namespace,
+			`users/${notification.target}/notifications`,
+			AccountNotification,
+			{isRead: false, text: subject}
+		)
+	]);
 };
 
 exports.userNotify = onCall(async (data, namespace, getUsername) => {
