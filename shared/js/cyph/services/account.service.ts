@@ -1058,7 +1058,7 @@ export class AccountService extends BaseProvider {
 							this.stringsService.profileHeader :
 						this.envService.isTelehealth ?
 							this.stringsService.productTelehealth :
-							this.stringsService.messagesHeader
+							this.stringsService.homeHeader
 					};
 				}
 
