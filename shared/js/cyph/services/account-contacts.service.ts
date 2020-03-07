@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
-import {map, skip, switchMap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {
 	IContactListItem,
 	NewContactTypes,
@@ -33,7 +33,7 @@ import {
 	StringProto
 } from '../proto';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
-import {toBehaviorSubject} from '../util/flatten-observable';
+import {cacheObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
@@ -120,7 +120,7 @@ export class AccountContactsService extends BaseProvider {
 	/** List of contacts for current user, sorted alphabetically by username. */
 	public readonly contactList: Observable<
 		(IContactListItem | User)[]
-	> = toBehaviorSubject(
+	> = cacheObservable(
 		combineLatest([
 			this.accountFilesService.filesListFilteredWithData.messagingGroups(),
 			this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
@@ -155,14 +155,13 @@ export class AccountContactsService extends BaseProvider {
 				]
 			)
 		),
-		[],
 		this.subscriptions
 	);
 
 	/** List of Inner Circle contacts for current user, sorted alphabetically by username. */
 	public readonly contactListInnerCircle: Observable<
 		User[]
-	> = toBehaviorSubject(
+	> = cacheObservable(
 		combineLatest([
 			this.accountDatabaseService.watchListKeys(
 				'contactsInnerCircle',
@@ -180,9 +179,8 @@ export class AccountContactsService extends BaseProvider {
 				)
 			)
 		),
-		[],
 		this.subscriptions
-	).pipe(skip(1));
+	);
 
 	/** Contact state. */
 	public readonly contactState = memoize(
