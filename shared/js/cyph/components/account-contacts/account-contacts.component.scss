@@ -33,6 +33,8 @@ cyph-account-contact.active ::ng-deep .contact {
 
 	&.initiating > :first-child:not(mat-progress-spinner) {
 		&,
+		> button.add-contact,
+		> button.add-contact ::ng-deep *,
 		> mat-tab-group,
 		> mat-tab-group ::ng-deep * {
 			pointer-events: unset !important;
