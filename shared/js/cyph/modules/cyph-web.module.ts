@@ -28,6 +28,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Router, RouterModule} from '@angular/router';
+import {PickerModule} from '@ctrl/ngx-emoji-mart';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
@@ -94,6 +95,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
+		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,
 		SmdFabSpeedDialModule,
@@ -129,6 +131,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
+		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,
 		SmdFabSpeedDialModule,
