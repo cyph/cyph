@@ -51,6 +51,7 @@ read -r -d '' modules <<- EOM
 	@covalent/highlight
 	@covalent/http
 	@covalent/markdown
+	@ctrl/ngx-emoji-mart
 	@ctrl/ngx-rightclick
 	@cyph/prettier
 	@cyph/pretty-quick
