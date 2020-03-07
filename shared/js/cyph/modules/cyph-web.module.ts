@@ -45,6 +45,7 @@ import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
 import {WebLocalStorageService} from '../services/web-local-storage.service';
 import {CyphSharedModule} from './cyph-shared.module';
+import {CyphWrappersModule} from './cyph-wrappers.module';
 
 /**
  * Common module with shared imports for web projects.
@@ -61,6 +62,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 	exports: [
 		AngularDraggableModule,
 		CyphSharedModule,
+		CyphWrappersModule,
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
@@ -104,6 +106,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 	imports: [
 		AngularDraggableModule,
 		CyphSharedModule,
+		CyphWrappersModule,
 		FullCalendarModule,
 		ImageCropperModule,
 		MatAutocompleteModule,
