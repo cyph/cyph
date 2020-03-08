@@ -75,7 +75,7 @@ mv package.json package.json.tmp
 sudo mv node_modules ~/native_node_modules
 mkdir node_modules
 cp ~/lib/js/package.json ~/lib/js/yarn.lock ./
-yarn install --ignore-engines --ignore-platform --non-interactive || exit 1
+yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive || exit 1
 
 # Temporary workaround for "typings.replace is not a function" bug
 sed -i \
@@ -365,12 +365,12 @@ cd ..
 cd tslint
 cat package.json | grep -v tslint-test-config-non-relative > package.json.new
 mv package.json.new package.json
-yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive || exit 1
 cd ..
 
 # for d in @google-cloud/* firebase-admin firebase-tools nativescript ; do
 # 	cd ${d}
-# 	yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive
+# 	yarn install --ignore-engines --ignore-platform --ignore-scripts --non-interactive || exit 1
 # 	cd ..
 # done
 
@@ -401,7 +401,7 @@ rm -rf lib
 if [ ! -d oldsupersphincs ] ; then
 	mkdir oldsupersphincs
 	cd oldsupersphincs
-	yarn add supersphincs@old
+	yarn add supersphincs@old || exit 1
 fi
 
 # https://next.angular.io/guide/migration-ngcc
