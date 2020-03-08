@@ -1,7 +1,11 @@
+anal.js
 assets
 dist
 docs
 documentation
+serviceworker.js
+/cyph.app/src/js
 /shared/lib/native
 /shared/js/native/js
+/shared/js/proto
 /websign
