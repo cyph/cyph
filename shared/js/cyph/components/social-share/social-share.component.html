@@ -1,5 +1,5 @@
 <web-social-share
-	[share]="options"
+	[share]="shareOptions | await"
 	[show]="visible | await"
 	(closed)="onClose()"
 >
