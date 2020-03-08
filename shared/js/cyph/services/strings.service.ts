@@ -336,6 +336,9 @@ export class StringsService extends BaseProvider {
 	public readonly emailOptional = `Email (optional)`;
 
 	/** @see StringsService */
+	public readonly emojiPick = `Pick your emoji…`;
+
+	/** @see StringsService */
 	public readonly emptyContactList = `You have no friends.`;
 
 	/** @see StringsService */

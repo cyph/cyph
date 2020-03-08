@@ -38,6 +38,7 @@ import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
+import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {InitDirective} from '../directives/init.directive';
 import {DialogService} from '../services/dialog.service';
@@ -57,7 +58,8 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		DialogMediaComponent,
 		DropZoneDirective,
 		DynamicFormComponent,
-		InitDirective
+		InitDirective,
+		SimpleEmojiPickerComponent
 	],
 	exports: [
 		AngularDraggableModule,
@@ -100,6 +102,7 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,
+		SimpleEmojiPickerComponent,
 		SmdFabSpeedDialModule,
 		TextMaskModule
 	],
