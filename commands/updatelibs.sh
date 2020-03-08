@@ -70,6 +70,7 @@ read -r -d '' modules <<- EOM
 	@firebase/messaging-types
 	@firebase/storage
 	@firebase/storage-types
+	@fortawesome/fontawesome-free
 	@google-cloud/storage
 	@ngrx/core
 	@ngrx/effects
