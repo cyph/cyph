@@ -236,6 +236,14 @@ service firebase.storage {
 
 				// match /plan/{hash} {}
 
+				match /postReactions/{postID}/{reaction}/{username}/{hash} {
+					allow read: if false;
+					allow write: if
+						request.auth != null &&
+						(username + '@' + DOMAIN) == request.auth.token.email
+					;
+				}
+
 				match /posts {
 					match /private/{post}/{hash} {
 						allow read;

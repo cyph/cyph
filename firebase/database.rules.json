@@ -1018,6 +1018,28 @@
 						}
 					},
 
+					"postReactions": {
+						".read": false,
+
+						"$postID": {
+							"$reaction": {
+								"$username": {
+									".write": "($username + '@' + $DOMAIN) === auth.token.email",
+
+									"data": {
+										".validate": "newData.isString()"
+									},
+									"hash": {
+										".validate": "newData.isString()"
+									},
+									"timestamp": {
+										".validate": "newData.val() === now"
+									}
+								}
+							}
+						}
+					},
+
 					"posts": {
 						"private": {
 							"$post": {
