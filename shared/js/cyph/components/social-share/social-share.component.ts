@@ -31,7 +31,7 @@ export class SocialShareComponent extends BaseProvider implements OnChanges {
 	@Output() public readonly close = new EventEmitter<void>();
 
 	/** Share prompt options. */
-	@Input() options?: {
+	@Input() public options?: {
 		hashTags?: string[];
 		text: string;
 		url: string;
