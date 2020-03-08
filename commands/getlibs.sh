@@ -5,8 +5,6 @@ source ~/.bashrc
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
-rm -rf ~/.cache/yarn 2> /dev/null
-
 
 installPackages () {
 	rm -rf node_modules 2> /dev/null
