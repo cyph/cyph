@@ -3,10 +3,10 @@ import {
 	Component,
 	EventEmitter,
 	Input,
+	OnChanges,
 	Output
 } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {WebSocialShareInput} from 'web-social-share';
 import {
 	applyPolyfills,
 	defineCustomElements
@@ -26,15 +26,81 @@ applyPolyfills().then(() => {
 	styleUrls: ['./social-share.component.scss'],
 	templateUrl: './social-share.component.html'
 })
-export class SocialShareComponent extends BaseProvider {
+export class SocialShareComponent extends BaseProvider implements OnChanges {
 	/** Share prompt close event. */
 	@Output() public readonly close = new EventEmitter<void>();
 
 	/** Share prompt options. */
-	@Input() options: WebSocialShareInput = {config: []};
+	@Input() options?: {
+		hashTags?: string[];
+		text: string;
+		url: string;
+	};
+
+	/** Processed share prompt options. */
+	public readonly shareOptions = new BehaviorSubject<any>({});
 
 	/** Indicates whether or not share prompt is visible. */
 	public readonly visible = new BehaviorSubject<boolean>(false);
+
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		if (!this.options) {
+			this.shareOptions.next({});
+			return;
+		}
+
+		const options = {
+			socialShareHashtags: this.options.hashTags,
+			socialShareText: this.options.text,
+			socialShareUrl: this.options.url
+		};
+
+		this.shareOptions.next({
+			displayNames: true,
+			config: [
+				{
+					facebook: {
+						...options,
+						socialSharePopupHeight: 400,
+						socialSharePopupWidth: 400
+					}
+				},
+				{
+					twitter: {
+						...options,
+						socialSharePopupHeight: 400,
+						socialSharePopupWidth: 300
+					}
+				},
+				{
+					reddit: {
+						...options,
+						socialSharePopupHeight: 500,
+						socialSharePopupWidth: 300
+					}
+				},
+				{
+					hackernews: options
+				},
+				{
+					linkedin: options
+				},
+				{
+					pinterest: options
+				},
+				{
+					whatsapp: options
+				},
+				{
+					email: options
+				},
+				{
+					copy: options
+				}
+			]
+		});
+	}
 
 	/** Close handler. */
 	public onClose () : void {
