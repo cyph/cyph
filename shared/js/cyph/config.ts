@@ -348,6 +348,22 @@ export class Config {
 	/** Length of random IDs in cyph links. */
 	public readonly secretLength: number = 25;
 
+	/** List of emoji for simple picker. */
+	public readonly simpleEmoji = new Set([
+		'1F44D',
+		'1F44E',
+		'1F44A',
+		'1F604',
+		'1F389',
+		'1F615',
+		'2764-FE0F',
+		'1F680',
+		'1F440',
+		'1F62E',
+		'1F622',
+		'1F621'
+	]);
+
 	/** Mapping of WebSign redirect hostnames to routes. */
 	public readonly webSignRedirects: Record<string, string[]> = {
 		'burner.cyph.app': ['burner'],

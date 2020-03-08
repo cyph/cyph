@@ -1,0 +1,40 @@
+@import '../../../../css/mixins';
+
+:host ::ng-deep emoji-mart {
+	emoji-category:nth-child(1),
+	emoji-category:nth-child(2),
+	emoji-search,
+	.emoji-mart-bar:first-child,
+	.emoji-mart-category-label,
+	.emoji-mart-preview-skins {
+		display: none;
+	}
+
+	.emoji-mart {
+		width: 284px !important;
+	}
+
+	.emoji-mart-scroll {
+		height: auto;
+		padding: 8px 6px;
+	}
+
+	.emoji-mart-category {
+		display: inline-flex;
+		flex-wrap: wrap;
+
+		ngx-emoji {
+			&:nth-of-type(6) {
+				order: -3;
+			}
+
+			&:nth-of-type(7) {
+				order: -2;
+			}
+
+			&:nth-of-type(8) {
+				order: -1;
+			}
+		}
+	}
+}
