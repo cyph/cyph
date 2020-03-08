@@ -352,6 +352,7 @@ export class Config {
 	public readonly simpleEmoji = new Set([
 		'1F44D',
 		'1F44E',
+		'1F44A',
 		'1F604',
 		'1F389',
 		'1F615',
