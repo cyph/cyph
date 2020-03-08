@@ -175,6 +175,9 @@ message AccountPost {
 	/** Timestamp of last edit (if applicable). */
 	double lastEditTimestamp = 6;
 
+	/** Reference to shared post. */
+	AccountPostReference share = 8;
+
 	/** Timestamp. */
 	required double timestamp = 7;
 }
@@ -223,6 +226,15 @@ message AccountPostComment {
 
 	/** @see AccountPost.timestamp */
 	required double timestamp = 5;
+}
+
+/** Reference to a social networking post. */
+message AccountPostReference {
+	/** Post author's username. */
+	required string author = 1;
+
+	/** Post ID. */
+	required string id = 2;
 }
 
 /** User presence. */
