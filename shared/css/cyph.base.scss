@@ -103,6 +103,13 @@ section {
 	display: block;
 }
 
+emoji-mart .emoji-mart-category > ngx-emoji {
+	&,
+	* {
+		cursor: pointer !important;
+	}
+}
+
 input.text-security {
 	-webkit-text-security: disc !important;
 	font-family: text-security-disc !important;
