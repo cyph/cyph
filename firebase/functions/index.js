@@ -740,21 +740,24 @@ exports.getCastleSessionID = onCall(async (data, namespace, getUsername) => {
 	);
 });
 
-exports.getPostReactions = onCall(async (data, namespace, getUsername) => {
+exports.getReactions = onCall(async (data, namespace, getUsername) => {
 	const username = normalize(data.username);
-	const postID = validateInput(data.postID);
+	const id = validateInput(data.id);
+	const isComment = data.isComment === true;
 
-	if (!username || !postID) {
+	if (!username || !id) {
 		return {};
 	}
 
-	const postReactionsRef = database.ref(
-		`${namespace}/users/${username}/postReactions/${postID}`
+	const parent = isComment ? 'postCommentReactions' : 'postReactions';
+
+	const reactionsRef = database.ref(
+		`${namespace}/users/${username}/${parent}/${id}`
 	);
 
-	const postReactions = (await postReactionsRef.once('value')).val() || {};
+	const reactions = (await reactionsRef.once('value')).val() || {};
 
-	return Object.entries(postReactions)
+	return Object.entries(reactions)
 		.map(([k, v]) => [k, Object.keys(v).length])
 		.reduce((o, [k, v]) => ({...o, [k]: v}), {});
 });

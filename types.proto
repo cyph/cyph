@@ -207,6 +207,24 @@ message AccountPostCircle {
 	string predecessorID = 6;
 }
 
+/** Social networking comment. */
+message AccountPostComment {
+	/** @see AccountPost.content */
+	required string content = 1;
+
+	/** @see AccountPost.deleted */
+	bool deleted = 2;
+
+	/** @see AccountPost.id */
+	string id = 3;
+
+	/** @see AccountPost.lastEditTimestamp */
+	double lastEditTimestamp = 4;
+
+	/** @see AccountPost.timestamp */
+	required double timestamp = 5;
+}
+
 /** User presence. */
 message AccountUserPresence {
 	/** Possible presence statuses. */
