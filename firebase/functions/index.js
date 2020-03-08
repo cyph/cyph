@@ -740,6 +740,25 @@ exports.getCastleSessionID = onCall(async (data, namespace, getUsername) => {
 	);
 });
 
+exports.getPostReactions = onCall(async (data, namespace, getUsername) => {
+	const username = normalize(data.username);
+	const postID = validateInput(data.postID);
+
+	if (!username || !postID) {
+		return {};
+	}
+
+	const postReactionsRef = database.ref(
+		`${namespace}/users/${username}/postReactions/${postID}`
+	);
+
+	const postReactions = (await postReactionsRef.once('value')).val() || {};
+
+	return Object.entries(postReactions)
+		.map(([k, v]) => [k, Object.keys(v).length])
+		.reduce((o, [k, v]) => ({...o, [k]: v}), {});
+});
+
 exports.getUserToken = onCall(async (data, namespace, getUsername) => {
 	const [tokenKey, username] = await Promise.all([
 		getTokenKey(namespace),
