@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {ITimedValue} from '../itimed-value';
-import {IAccountPost} from '../proto';
+import {IAccountPost, IAccountPostComment} from '../proto';
 
 /** A subset of a user's post data. */
 export interface IAccountPostDataPart {
@@ -16,14 +16,29 @@ export interface IAccountPostDataPart {
 	/** Checks if post data exists. */
 	hasPost: (id: string) => Promise<boolean>;
 
+	/** Pushes comment ID. */
+	pushCommentID: (postID: string, commentID: string) => Promise<void>;
+
 	/** Pushes ID. */
 	pushID: (id: string) => Promise<void>;
 
 	/** Removes post data. */
 	removePost: (id: string) => Promise<void>;
 
+	/** Sets comment data. */
+	setComment: (
+		commentID: string,
+		comment: IAccountPostComment
+	) => Promise<void>;
+
 	/** Sets post data. */
 	setPost: (id: string, post: IAccountPost) => Promise<void>;
+
+	/** Updates comment data. */
+	updateComment: (
+		commentID: string,
+		f: (comment?: IAccountPostComment) => Promise<IAccountPostComment>
+	) => Promise<void>;
 
 	/** Updates post data. */
 	updatePost: (

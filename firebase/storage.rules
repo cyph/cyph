@@ -256,13 +256,9 @@ service firebase.storage {
 					;
 				}
 
-				match /postReplies/{postID}/{commentID}/{username}/{hash} {
+				match /postReplies/{postID}/{commentID}/{hash} {
 					allow read;
-					allow write: if
-						resource == null &&
-						request.auth != null &&
-						(username + '@' + DOMAIN) == request.auth.token.email
-					;
+					allow write: if resource == null;
 				}
 
 				match /posts {

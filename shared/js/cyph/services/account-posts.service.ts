@@ -15,13 +15,17 @@ import {ITimedValue} from '../itimed-value';
 import {
 	AccountPost,
 	AccountPostCircle,
+	AccountPostComment,
+	AccountPostCommentReference,
 	BinaryProto,
 	DataURIProto,
 	IAccountPost,
 	IAccountPostCircle,
+	IAccountPostCommentReference,
 	IAccountPostReference,
 	StringArrayProto,
-	StringProto
+	StringProto,
+	IAccountPostComment
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
@@ -115,6 +119,21 @@ export class AccountPostsService extends BaseProvider {
 		(username?: string) : IAccountPostData => {
 			const urlPrefix = !username ? '' : `users/${username}/`;
 
+			const pushCommentID = async (postID: string, commentID: string) => {
+				await this.accountDatabaseService.pushItem<
+					IAccountPostCommentReference
+				>(
+					`${urlPrefix}postReplies/${postID}`,
+					AccountPostCommentReference,
+					{
+						author: (await this.accountDatabaseService.getCurrentUser())
+							.user.username,
+						id: commentID
+					},
+					SecurityModels.unprotected
+				);
+			};
+
 			const publicPostDataPart = (() : IAccountPostDataPart => {
 				const ids = this.accountDatabaseService.getAsyncList(
 					`${urlPrefix}publicPostList`,
@@ -135,6 +154,10 @@ export class AccountPostsService extends BaseProvider {
 					true
 				);
 
+				const myComments = this.accountDatabaseService.getAsyncMap<
+					IAccountPostComment
+				>('comments', AccountPostComment, SecurityModels.public);
+
 				return {
 					getIDs: async () => ids.getValue(),
 					getPost: async id => ({
@@ -143,9 +166,14 @@ export class AccountPostsService extends BaseProvider {
 					}),
 					getTimedIDs: async () => ids.getTimedValue(),
 					hasPost: async id => posts.hasItem(id),
+					pushCommentID,
 					pushID: async id => ids.pushItem(id),
 					removePost: async id => posts.removeItem(id),
+					setComment: async (commentID, comment) =>
+						myComments.setItem(commentID, comment),
 					setPost: async (id, post) => posts.setItem(id, post),
+					updateComment: async (commentID, f) =>
+						myComments.updateItem(commentID, f),
 					updatePost: async (id, f) => posts.updateItem(id, f),
 					watchIDs: memoize(() : Observable<string[]> => ids.watch()),
 					watchPost: memoize(id =>
@@ -185,6 +213,14 @@ export class AccountPostsService extends BaseProvider {
 							undefined,
 							undefined,
 							false
+						),
+						myComments: this.accountDatabaseService.getAsyncMap<
+							IAccountPostComment
+						>(
+							'comments',
+							AccountPostComment,
+							SecurityModels.privateSigned,
+							circle.key
 						),
 						posts: this.accountDatabaseService.getAsyncMap<
 							IAccountPost
@@ -303,12 +339,23 @@ export class AccountPostsService extends BaseProvider {
 								),
 						hasPost: async id =>
 							getCircleWrapperForID(id).posts.hasItem(id),
+						pushCommentID,
 						pushID: async id =>
 							currentCircleWrapper.ids.pushItem(id),
 						removePost: async id =>
 							getCircleWrapperForID(id).posts.removeItem(id),
+						setComment: async (commentID, comment) =>
+							currentCircleWrapper.myComments.setItem(
+								commentID,
+								comment
+							),
 						setPost: async (id, post) =>
 							currentCircleWrapper.posts.setItem(id, post),
+						updateComment: async (commentID, f) =>
+							currentCircleWrapper.myComments.updateItem(
+								commentID,
+								f
+							),
 						updatePost: async (id, f) =>
 							getCircleWrapperForID(id).posts.updateItem(id, f),
 						watchIDs: memoize(() =>
@@ -357,12 +404,27 @@ export class AccountPostsService extends BaseProvider {
 							privatePostDataPartWatcher.value.getTimedIDs(),
 						hasPost: async id =>
 							privatePostDataPartWatcher.value.hasPost(id),
+						pushCommentID: async (postID, commentID) =>
+							privatePostDataPartWatcher.value.pushCommentID(
+								postID,
+								commentID
+							),
 						pushID: async id =>
 							privatePostDataPartWatcher.value.pushID(id),
 						removePost: async id =>
 							privatePostDataPartWatcher.value.removePost(id),
+						setComment: async (commentID, comment) =>
+							privatePostDataPartWatcher.value.setComment(
+								commentID,
+								comment
+							),
 						setPost: async (id, post) =>
 							privatePostDataPartWatcher.value.setPost(id, post),
+						updateComment: async (commentID, f) =>
+							privatePostDataPartWatcher.value.updateComment(
+								commentID,
+								f
+							),
 						updatePost: async (id, f) =>
 							privatePostDataPartWatcher.value.updatePost(id, f),
 						watchIDs: memoize(() =>
@@ -542,6 +604,32 @@ export class AccountPostsService extends BaseProvider {
 		return circleID;
 	}
 
+	/** Adds a comment to a post. */
+	public async addComment (
+		username: string,
+		postID: string,
+		content: string
+	) : Promise<string> {
+		const commentID = uuid();
+
+		const postData = this.getUserPostDataFull(username);
+		const isPublic = await postData.public.hasPost(postID);
+
+		const postDataPart = isPublic ?
+			postData.public :
+			await postData.private();
+
+		await postDataPart.setComment(commentID, {
+			content,
+			postID,
+			timestamp: await getTimestamp()
+		});
+
+		await postDataPart.pushCommentID(postID, commentID);
+
+		return commentID;
+	}
+
 	/** Creates a circle. */
 	public async createCircle (
 		name: string,
@@ -590,6 +678,27 @@ export class AccountPostsService extends BaseProvider {
 		return id;
 	}
 
+	/** Deletes a comment. */
+	public async deleteComment (
+		username: string,
+		postID: string,
+		commentID: string
+	) : Promise<void> {
+		const postData = this.getUserPostDataFull(username);
+		const isPublic = await postData.public.hasPost(postID);
+
+		const postDataPart = isPublic ?
+			postData.public :
+			await postData.private();
+
+		await postDataPart.updateComment(commentID, async () => ({
+			content: '',
+			deleted: true,
+			postID,
+			timestamp: 0
+		}));
+	}
+
 	/** Deletes a post. */
 	public async deletePost (id: string) : Promise<void> {
 		const isPublic = await this.postData.public.hasPost(id);
@@ -603,6 +712,31 @@ export class AccountPostsService extends BaseProvider {
 			deleted: true,
 			timestamp: 0
 		}));
+	}
+
+	/** Edits a comment. */
+	public async editComment (
+		username: string,
+		postID: string,
+		commentID: string,
+		content: string
+	) : Promise<void> {
+		const postData = this.getUserPostDataFull(username);
+		const isPublic = await postData.public.hasPost(postID);
+
+		const postDataPart = isPublic ?
+			postData.public :
+			await postData.private();
+
+		await postDataPart.updateComment(commentID, async o => {
+			const timestamp = await getTimestamp();
+
+			return {
+				...(o || {postID, timestamp}),
+				content,
+				lastEditTimestamp: timestamp
+			};
+		});
 	}
 
 	/** Edits a post. */
