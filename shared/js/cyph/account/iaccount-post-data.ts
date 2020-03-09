@@ -1,11 +1,14 @@
 import {Observable} from 'rxjs';
+import {User} from '../account';
 import {ITimedValue} from '../itimed-value';
 import {IAccountPost, IAccountPostComment} from '../proto';
 
 /** A subset of a user's post data. */
 export interface IAccountPostDataPart {
 	/** Gets list of comments on post. */
-	getComments: (id: string) => Promise<IAccountPostComment[]>;
+	getComments: (
+		id: string
+	) => Promise<{author: User | undefined; comment: IAccountPostComment}[]>;
 
 	/** Gets list of IDs. */
 	getIDs: () => Promise<string[]>;
@@ -50,7 +53,9 @@ export interface IAccountPostDataPart {
 	) => Promise<void>;
 
 	/** Watches list of comments on post. */
-	watchComments: (id: string) => Observable<IAccountPostComment[]>;
+	watchComments: (
+		id: string
+	) => Observable<{author: User | undefined; comment: IAccountPostComment}[]>;
 
 	/** Watches list of IDs. */
 	watchIDs: () => Observable<string[]>;

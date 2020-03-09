@@ -192,22 +192,28 @@ export class AccountPostsService extends BaseProvider {
 
 				const getComment = async (
 					commentRef: IAccountPostCommentReference
-				) => ({
-					...(await this.accountDatabaseService.getItem(
-						`users/${commentRef.author}/postComments/${commentRef.id}`,
-						AccountPostComment,
-						SecurityModels.public,
-						undefined,
-						true
-					)),
-					...commentRef
-				});
+				) =>
+					Promise.all([
+						this.accountUserLookupService.getUser(
+							commentRef.author
+						),
+						this.accountDatabaseService.getItem(
+							`users/${commentRef.author}/postComments/${commentRef.id}`,
+							AccountPostComment,
+							SecurityModels.public,
+							undefined,
+							true
+						)
+					]).then(([author, comment]) => ({
+						author,
+						comment: {...comment, ...commentRef}
+					}));
 
 				return {
 					getComments: async id =>
 						(await Promise.all(
 							(await getCommentReferences(id)).map(getComment)
-						)).filter(o => o.postID === id),
+						)).filter(o => o.comment.postID === id),
 					getIDs: async () => ids.getValue(),
 					getPost: async id => ({
 						...(await posts.getItem(id)),
@@ -229,7 +235,7 @@ export class AccountPostsService extends BaseProvider {
 							switchMap(async commentRefs =>
 								(await Promise.all(
 									commentRefs.map(getComment)
-								)).filter(o => o.postID === id)
+								)).filter(o => o.comment.postID === id)
 							)
 						)
 					),
@@ -255,15 +261,21 @@ export class AccountPostsService extends BaseProvider {
 						circle,
 						getComment: async (
 							commentRef: IAccountPostCommentReference
-						) => ({
-							...(await this.accountDatabaseService.getItem(
-								`users/${commentRef.author}/postComments/${commentRef.id}`,
-								AccountPostComment,
-								SecurityModels.privateSigned,
-								circle.key
-							)),
-							...commentRef
-						}),
+						) =>
+							Promise.all([
+								this.accountUserLookupService.getUser(
+									commentRef.author
+								),
+								this.accountDatabaseService.getItem(
+									`users/${commentRef.author}/postComments/${commentRef.id}`,
+									AccountPostComment,
+									SecurityModels.privateSigned,
+									circle.key
+								)
+							]).then(([author, comment]) => ({
+								author,
+								comment: {...comment, ...commentRef}
+							})),
 						getPost: async (id: string) : Promise<IAccountPost> => {
 							if (!(await circleWrapper.posts.hasItem(id))) {
 								return publicPostDataPart.getPost(id);
@@ -395,7 +407,7 @@ export class AccountPostsService extends BaseProvider {
 								(await getCommentReferences(id)).map(
 									currentCircleWrapper.getComment
 								)
-							)).filter(o => o.postID === id),
+							)).filter(o => o.comment.postID === id),
 						getIDs: async () =>
 							(await privatePostDataPartInternal.getTimedIDs()).map(
 								o => o.value
@@ -440,7 +452,7 @@ export class AccountPostsService extends BaseProvider {
 										commentRefs.map(
 											currentCircleWrapper.getComment
 										)
-									)).filter(o => o.postID === id)
+									)).filter(o => o.comment.postID === id)
 								)
 							)
 						),
@@ -561,8 +573,14 @@ export class AccountPostsService extends BaseProvider {
 		(
 			username: string,
 			id: string
-		) : Observable<IAccountPostComment[] | undefined> =>
-			toBehaviorSubject<IAccountPostComment[] | undefined>(async () => {
+		) : Observable<
+			| {author: User | undefined; comment: IAccountPostComment}[]
+			| undefined
+		> =>
+			toBehaviorSubject<
+				| {author: User | undefined; comment: IAccountPostComment}[]
+				| undefined
+			>(async () => {
 				const postData = this.getUserPostDataFull(username);
 				const isPublic = await postData.public.hasPost(id);
 
@@ -885,7 +903,7 @@ export class AccountPostsService extends BaseProvider {
 	public async getComments (
 		username: string,
 		id: string
-	) : Promise<IAccountPostComment[]> {
+	) : Promise<{author: User | undefined; comment: IAccountPostComment}[]> {
 		const postData = this.getUserPostDataFull(username);
 		const isPublic = await postData.public.hasPost(id);
 
