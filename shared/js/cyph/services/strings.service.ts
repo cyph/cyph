@@ -927,6 +927,12 @@ export class StringsService extends BaseProvider {
 	public readonly queuedMessageSaved = `Queued message saved.`;
 
 	/** @see StringsService */
+	public readonly reactionAdd = `Add Reaction`;
+
+	/** @see StringsService */
+	public readonly reactionRemove = `Remove Reaction`;
+
+	/** @see StringsService */
 	public readonly reasonForAppointment = `Reason for Appointment`;
 
 	/** @see StringsService */

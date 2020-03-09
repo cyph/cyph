@@ -87,14 +87,42 @@
 			</p>
 		</mat-card-content>
 		<mat-card-actions>
-			<button mat-button cyphTranslate matTooltip="Coming Soon">
-				Like
-			</button>
-			<button mat-button cyphTranslate matTooltip="Coming Soon">
-				Comment
-			</button>
-			<button mat-button cyphTranslate matTooltip="Coming Soon">
-				Share
+			<div [fxShow]="showEmojiPicker | await">
+				<cyph-simple-emoji-picker
+					(emojiSelect)="react($event.emoji.unified)"
+				></cyph-simple-emoji-picker>
+			</div>
+			<mat-button-toggle-group multiple>
+				<mat-button-toggle
+					[checked]="reaction.selected"
+					[matTooltip]="
+						reaction.selected ?
+							stringsService.reactionRemove :
+							stringsService.reactionAdd
+					"
+					(click)="react(reaction.id, !reaction.selected)"
+					*ngFor="
+						let reaction of reactions | await;
+						trackBy: trackByID
+					"
+				>
+					<ngx-emoji
+						[emoji]="reaction.id"
+						[isNative]="true"
+					></ngx-emoji>
+					<span class="reaction-count">{{ reaction.count }}</span>
+				</mat-button-toggle>
+				<mat-button-toggle
+					cyphTranslate
+					[checked]="(showEmojiPicker | await) && false"
+					matTooltip="Add New Reaction"
+					(click)="showEmojiPicker.next(!showEmojiPicker.value)"
+				>
+					<mat-icon>insert_emoticon</mat-icon>
+				</mat-button-toggle>
+			</mat-button-toggle-group>
+			<button mat-icon-button cyphTranslate matTooltip="Share">
+				<mat-icon>share</mat-icon>
 			</button>
 		</mat-card-actions>
 	</ng-template>

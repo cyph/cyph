@@ -973,7 +973,7 @@ export class AccountPostsService extends BaseProvider {
 		username: string,
 		id: string,
 		isComment: boolean
-	) : Promise<{count: number; emoji: string}[]> {
+	) : Promise<{count: number; id: string; selected: boolean}[]> {
 		const reactions = await this.accountDatabaseService.callFunction(
 			'getReactions',
 			{
@@ -988,12 +988,19 @@ export class AccountPostsService extends BaseProvider {
 		}
 
 		return Array.from(this.configService.simpleEmoji)
-			.map(emoji => ({
+			.map(id => ({
 				count:
-					typeof reactions[emoji] === 'number' ? reactions[emoji] : 0,
-				emoji
+					typeof reactions[id]?.count === 'number' ?
+						reactions[id]?.count :
+						0,
+				id,
+				selected:
+					typeof reactions[id]?.selected === 'boolean' ?
+						reactions[id]?.selected :
+						false
 			}))
-			.filter(o => o.count > 0);
+			.filter(o => o.count > 0)
+			.sort((a, b) => b.count - a.count);
 	}
 
 	/** Gets post data for specified user (includes all posts visible to current user). */

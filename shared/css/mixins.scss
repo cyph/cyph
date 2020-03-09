@@ -259,6 +259,12 @@ $default-white: map-get($mat-grey, 100);
 		}
 	}
 
+	cyph-account-post {
+		.reaction-count {
+			color: map-get($cyph-accent, default);
+		}
+	}
+
 	cyph-account-profile {
 		.profile .buttons button {
 			background-color: map-get($cyph-primary, default);

@@ -741,6 +741,7 @@ exports.getCastleSessionID = onCall(async (data, namespace, getUsername) => {
 });
 
 exports.getReactions = onCall(async (data, namespace, getUsername) => {
+	const currentUser = await getUsername();
 	const username = normalize(data.username);
 	const id = validateInput(data.id);
 	const isComment = data.isComment === true;
@@ -758,7 +759,13 @@ exports.getReactions = onCall(async (data, namespace, getUsername) => {
 	const reactions = (await reactionsRef.once('value')).val() || {};
 
 	return Object.entries(reactions)
-		.map(([k, v]) => [k, Object.keys(v).length])
+		.map(([k, v]) => [
+			k,
+			{
+				count: Object.keys(v).length,
+				selected: currentUser in v
+			}
+		])
 		.reduce((o, [k, v]) => ({...o, [k]: v}), {});
 });
 

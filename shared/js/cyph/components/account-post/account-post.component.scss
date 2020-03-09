@@ -9,9 +9,18 @@ mat-card-content {
 	font-weight: normal;
 }
 
-/* Temporary */
-mat-card-actions {
-	opacity: 0.5;
+mat-button-toggle ngx-emoji {
+	pointer-events: none;
+
+	::ng-deep button {
+		@include transform(translateY(4px));
+	}
+}
+
+.reaction-count {
+	font-size: 18px;
+	margin-left: 6px;
+	font-family: 'Ubuntu Mono';
 }
 
 .menu-button {
