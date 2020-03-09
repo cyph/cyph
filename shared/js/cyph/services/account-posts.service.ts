@@ -844,10 +844,13 @@ export class AccountPostsService extends BaseProvider {
 			return [];
 		}
 
-		return Array.from(this.configService.simpleEmoji).map(emoji => ({
-			count: typeof reactions[emoji] === 'number' ? reactions[emoji] : 0,
-			emoji
-		}));
+		return Array.from(this.configService.simpleEmoji)
+			.map(emoji => ({
+				count:
+					typeof reactions[emoji] === 'number' ? reactions[emoji] : 0,
+				emoji
+			}))
+			.filter(o => o.count > 0);
 	}
 
 	/** Gets post data for specified user (includes all posts visible to current user). */
