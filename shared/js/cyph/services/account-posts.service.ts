@@ -117,6 +117,13 @@ export class AccountPostsService extends BaseProvider {
 	/** Gets all post data for specified user. */
 	public readonly getUserPostDataFull = memoize(
 		(username?: string) : IAccountPostData => {
+			if (
+				username ===
+				this.accountDatabaseService.currentUser.value?.user.username
+			) {
+				username = undefined;
+			}
+
 			const urlPrefix = !username ? '' : `users/${username}/`;
 
 			const pushCommentID = async (postID: string, commentID: string) => {
@@ -130,7 +137,9 @@ export class AccountPostsService extends BaseProvider {
 							.user.username,
 						id: commentID
 					},
-					SecurityModels.unprotected
+					SecurityModels.unprotected,
+					undefined,
+					false
 				);
 			};
 
@@ -156,7 +165,7 @@ export class AccountPostsService extends BaseProvider {
 
 				const myComments = this.accountDatabaseService.getAsyncMap<
 					IAccountPostComment
-				>('comments', AccountPostComment, SecurityModels.public);
+				>('postComments', AccountPostComment, SecurityModels.public);
 
 				return {
 					getIDs: async () => ids.getValue(),
@@ -217,7 +226,7 @@ export class AccountPostsService extends BaseProvider {
 						myComments: this.accountDatabaseService.getAsyncMap<
 							IAccountPostComment
 						>(
-							'comments',
+							'postComments',
 							AccountPostComment,
 							SecurityModels.privateSigned,
 							circle.key
@@ -454,7 +463,7 @@ export class AccountPostsService extends BaseProvider {
 							this.acceptIncomingCircles(
 								username
 							).then(async () =>
-								this.getLatestSharedCircleID(username)
+								this.getLatestSharedCircleID(username || '')
 							))
 					),
 				public: publicPostDataPart
