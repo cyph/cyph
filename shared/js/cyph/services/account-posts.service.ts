@@ -24,7 +24,7 @@ import {
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
-import {normalizeArray} from '../util/formatting';
+import {normalize, normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {deserialize, serialize} from '../util/serialization';
@@ -33,6 +33,7 @@ import {uuid} from '../util/uuid';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {PotassiumService} from './crypto/potassium.service';
 
@@ -686,6 +687,31 @@ export class AccountPostsService extends BaseProvider {
 		}));
 	}
 
+	/** Gets reactions for post or comment. */
+	public async getReactions (
+		username: string,
+		id: string,
+		isComment: boolean
+	) : Promise<{count: number; emoji: string}[]> {
+		const reactions = await this.accountDatabaseService.callFunction(
+			'getReactions',
+			{
+				id,
+				isComment,
+				username
+			}
+		);
+
+		if (typeof reactions !== 'object') {
+			return [];
+		}
+
+		return Array.from(this.configService.simpleEmoji).map(emoji => ({
+			count: typeof reactions[emoji] === 'number' ? reactions[emoji] : 0,
+			emoji
+		}));
+	}
+
 	/** Gets post data for specified user (includes all posts visible to current user). */
 	public async getUserPostData (
 		username?: string
@@ -753,6 +779,32 @@ export class AccountPostsService extends BaseProvider {
 		finally {
 			this.accountService.interstitial.next(false);
 		}
+	}
+
+	/** Reacts to post or comment. */
+	public async react (
+		username: string,
+		id: string,
+		isComment: boolean,
+		reaction: string,
+		add: boolean = true
+	) : Promise<void> {
+		const currentUser = await this.accountDatabaseService.getCurrentUser();
+
+		const url = `users/${normalize(username)}/${
+			isComment ? 'postCommentReactions' : 'postReactions'
+		}/${id}/${reaction}/${currentUser.user.username}`;
+
+		if (!add) {
+			return this.accountDatabaseService.removeItem(url);
+		}
+
+		await this.accountDatabaseService.setItem(
+			url,
+			BinaryProto,
+			new Uint8Array(0),
+			SecurityModels.unprotected
+		);
 	}
 
 	/** Revokes access to a circle (non-retroactive). */
@@ -922,6 +974,9 @@ export class AccountPostsService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
