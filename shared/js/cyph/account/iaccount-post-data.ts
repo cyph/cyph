@@ -4,6 +4,9 @@ import {IAccountPost, IAccountPostComment} from '../proto';
 
 /** A subset of a user's post data. */
 export interface IAccountPostDataPart {
+	/** Gets list of comments on post. */
+	getComments: (id: string) => Promise<IAccountPostComment[]>;
+
 	/** Gets list of IDs. */
 	getIDs: () => Promise<string[]>;
 
@@ -45,6 +48,9 @@ export interface IAccountPostDataPart {
 		id: string,
 		f: (post?: IAccountPost) => Promise<IAccountPost>
 	) => Promise<void>;
+
+	/** Watches list of comments on post. */
+	watchComments: (id: string) => Observable<IAccountPostComment[]>;
 
 	/** Watches list of IDs. */
 	watchIDs: () => Observable<string[]>;

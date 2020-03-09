@@ -126,6 +126,29 @@ export class AccountPostsService extends BaseProvider {
 
 			const urlPrefix = !username ? '' : `users/${username}/`;
 
+			const getCommentReferences = async (id: string) =>
+				this.accountDatabaseService.getList(
+					`${urlPrefix}postReplies/${id}`,
+					AccountPostCommentReference,
+					SecurityModels.unprotected,
+					undefined,
+					true,
+					false
+				);
+
+			const watchCommentReferences = (id: string) =>
+				this.accountDatabaseService
+					.watchList(
+						`${urlPrefix}postReplies/${id}`,
+						AccountPostCommentReference,
+						SecurityModels.unprotected,
+						undefined,
+						true,
+						false,
+						this.subscriptions
+					)
+					.pipe(map(arr => arr.map(o => o.value)));
+
 			const pushCommentID = async (postID: string, commentID: string) => {
 				await this.accountDatabaseService.pushItem<
 					IAccountPostCommentReference
@@ -167,7 +190,24 @@ export class AccountPostsService extends BaseProvider {
 					IAccountPostComment
 				>('postComments', AccountPostComment, SecurityModels.public);
 
+				const getComment = async (
+					commentRef: IAccountPostCommentReference
+				) => ({
+					...(await this.accountDatabaseService.getItem(
+						`users/${commentRef.author}/postComments/${commentRef.id}`,
+						AccountPostComment,
+						SecurityModels.public,
+						undefined,
+						true
+					)),
+					...commentRef
+				});
+
 				return {
+					getComments: async id =>
+						(await Promise.all(
+							(await getCommentReferences(id)).map(getComment)
+						)).filter(o => o.postID === id),
 					getIDs: async () => ids.getValue(),
 					getPost: async id => ({
 						...(await posts.getItem(id)),
@@ -184,6 +224,15 @@ export class AccountPostsService extends BaseProvider {
 					updateComment: async (commentID, f) =>
 						myComments.updateItem(commentID, f),
 					updatePost: async (id, f) => posts.updateItem(id, f),
+					watchComments: memoize(id =>
+						watchCommentReferences(id).pipe(
+							switchMap(async commentRefs =>
+								(await Promise.all(
+									commentRefs.map(getComment)
+								)).filter(o => o.postID === id)
+							)
+						)
+					),
 					watchIDs: memoize(() : Observable<string[]> => ids.watch()),
 					watchPost: memoize(id =>
 						posts.watchItem(id).pipe(
@@ -204,6 +253,17 @@ export class AccountPostsService extends BaseProvider {
 				(circle: IAccountPostCircle) => {
 					const circleWrapper = {
 						circle,
+						getComment: async (
+							commentRef: IAccountPostCommentReference
+						) => ({
+							...(await this.accountDatabaseService.getItem(
+								`users/${commentRef.author}/postComments/${commentRef.id}`,
+								AccountPostComment,
+								SecurityModels.privateSigned,
+								circle.key
+							)),
+							...commentRef
+						}),
 						getPost: async (id: string) : Promise<IAccountPost> => {
 							if (!(await circleWrapper.posts.hasItem(id))) {
 								return publicPostDataPart.getPost(id);
@@ -330,6 +390,12 @@ export class AccountPostsService extends BaseProvider {
 						oldIDMap.get(id)?.circleWrapper || currentCircleWrapper;
 
 					const privatePostDataPartInternal: IAccountPostDataPart = {
+						getComments: async id =>
+							(await Promise.all(
+								(await getCommentReferences(id)).map(
+									currentCircleWrapper.getComment
+								)
+							)).filter(o => o.postID === id),
 						getIDs: async () =>
 							(await privatePostDataPartInternal.getTimedIDs()).map(
 								o => o.value
@@ -367,6 +433,17 @@ export class AccountPostsService extends BaseProvider {
 							),
 						updatePost: async (id, f) =>
 							getCircleWrapperForID(id).posts.updateItem(id, f),
+						watchComments: memoize(id =>
+							watchCommentReferences(id).pipe(
+								switchMap(async commentRefs =>
+									(await Promise.all(
+										commentRefs.map(
+											currentCircleWrapper.getComment
+										)
+									)).filter(o => o.postID === id)
+								)
+							)
+						),
 						watchIDs: memoize(() =>
 							combineLatest([
 								currentCircleWrapper.ids.watch(),
@@ -405,6 +482,8 @@ export class AccountPostsService extends BaseProvider {
 					}
 
 					return <IAccountPostDataPart> {
+						getComments: async id =>
+							privatePostDataPartWatcher.value.getComments(id),
 						getIDs: async () =>
 							privatePostDataPartWatcher.value.getIDs(),
 						getPost: async id =>
@@ -436,6 +515,9 @@ export class AccountPostsService extends BaseProvider {
 							),
 						updatePost: async (id, f) =>
 							privatePostDataPartWatcher.value.updatePost(id, f),
+						watchComments: memoize(id =>
+							privatePostDataPartWatcher.value.watchComments(id)
+						),
 						watchIDs: memoize(() =>
 							privatePostDataPartWatcher.pipe(
 								switchMap(latestPrivatePostDataPart =>
@@ -473,6 +555,25 @@ export class AccountPostsService extends BaseProvider {
 
 	/** Post data for current user. */
 	public readonly postData: IAccountPostData = this.getUserPostDataFull();
+
+	/** Watches comments on a post. */
+	public readonly watchComments = memoize(
+		(
+			username: string,
+			id: string
+		) : Observable<IAccountPostComment[] | undefined> =>
+			toBehaviorSubject<IAccountPostComment[] | undefined>(async () => {
+				const postData = this.getUserPostDataFull(username);
+				const isPublic = await postData.public.hasPost(id);
+
+				const postDataPart = isPublic ?
+					postData.public :
+					await postData.private();
+
+				return postDataPart.watchComments(id);
+			}, undefined),
+		(username: string, id: string) => `${username}\n${id}`
+	);
 
 	/** Watches a user's posts (reverse order). */
 	public readonly watchUserPosts = memoize(
@@ -778,6 +879,21 @@ export class AccountPostsService extends BaseProvider {
 		return this.circleMembers(
 			(await this.getInnerCircle()).id
 		).getFlatValue();
+	}
+
+	/** Gets comments on a post. */
+	public async getComments (
+		username: string,
+		id: string
+	) : Promise<IAccountPostComment[]> {
+		const postData = this.getUserPostDataFull(username);
+		const isPublic = await postData.public.hasPost(id);
+
+		const postDataPart = isPublic ?
+			postData.public :
+			await postData.private();
+
+		return postDataPart.getComments(id);
 	}
 
 	/** Gets a feed of recent users' posts. */

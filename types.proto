@@ -212,31 +212,34 @@ message AccountPostCircle {
 
 /** Social networking comment. */
 message AccountPostComment {
-	/** @see AccountPost.content */
-	required string content = 1;
+	/** Comment author's username. */
+	string author = 1;
 
-	/** @see AccountPost.deleted */
-	bool deleted = 2;
+	/** Markdown comment content. */
+	required string content = 2;
 
-	/** @see AccountPost.id */
-	string id = 3;
+	/** Indicates whether comment is deleted. */
+	bool deleted = 3;
 
-	/** @see AccountPost.lastEditTimestamp */
-	double lastEditTimestamp = 4;
+	/** Comment ID. */
+	string id = 4;
+
+	/** Timestamp of last edit (if applicable). */
+	double lastEditTimestamp = 5;
 
 	/** ID of parent post. */
-	required string postID = 5;
+	required string postID = 6;
 
-	/** @see AccountPost.timestamp */
-	required double timestamp = 6;
+	/** Timestamp. */
+	required double timestamp = 7;
 }
 
 /** Reference to a social networking comment. */
 message AccountPostCommentReference {
-	/** Comment author's username. */
+	/** @see AccountPostComment.author */
 	required string author = 1;
 
-	/** Comment ID. */
+	/** @see AccountPostComment.id */
 	required string id = 2;
 }
 
