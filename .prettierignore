@@ -4,8 +4,6 @@ dist
 docs
 documentation
 serviceworker.js
-.yarn
-.yarnrc
 /cyph.app/src/js
 /shared/lib/native
 /shared/js/native/js
