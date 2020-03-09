@@ -987,7 +987,7 @@ export class AccountPostsService extends BaseProvider {
 			return [];
 		}
 
-		return Array.from(this.configService.simpleEmoji)
+		return this.configService.simpleEmoji
 			.map(id => ({
 				count:
 					typeof reactions[id]?.count === 'number' ?
@@ -999,8 +999,7 @@ export class AccountPostsService extends BaseProvider {
 						reactions[id]?.selected :
 						false
 			}))
-			.filter(o => o.count > 0)
-			.sort((a, b) => b.count - a.count);
+			.filter(o => o.count > 0);
 	}
 
 	/** Gets post data for specified user (includes all posts visible to current user). */

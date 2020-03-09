@@ -24,7 +24,7 @@ export class SimpleEmojiPickerComponent extends BaseProvider {
 
 	/** @see PickerComponent.emojisToShowFilter */
 	public readonly emojisToShowFilter = (emoji: string) =>
-		this.configService.simpleEmoji.has(emoji);
+		this.configService.simpleEmojiSet.has(emoji);
 
 	constructor (
 		/** @see ConfigService */
