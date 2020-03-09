@@ -7,9 +7,6 @@ dir="$PWD"
 
 ./commands/keycache.sh
 
-# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-594889917
-yarn policies set-version 1.21.1
-
 mkdir -p ~/lib/js ~/tmplib/js
 cd ~/tmplib/js
 
