@@ -5,6 +5,9 @@ source ~/.bashrc
 cd $(cd "$(dirname "$0")" ; pwd)/..
 dir="$PWD"
 
+# https://github.com/yarnpkg/yarn/issues/7212#issuecomment-594889917
+yarn policies set-version 1.21.1
+
 
 installPackages () {
 	rm -rf node_modules 2> /dev/null
