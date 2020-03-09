@@ -21,3 +21,5 @@ Dockerfile.tmp
 .gcloudignore
 .nsbuildinfo
 .vscode
+.yarn
+.yarnrc
