@@ -19,6 +19,7 @@ import {
 	DataURIProto,
 	IAccountPost,
 	IAccountPostCircle,
+	IAccountPostReference,
 	StringArrayProto,
 	StringProto
 } from '../proto';
@@ -75,7 +76,8 @@ export class AccountPostsService extends BaseProvider {
 	public readonly draft = {
 		content: new BehaviorSubject<string>(''),
 		image: new BehaviorSubject<Uint8Array | undefined>(undefined),
-		isPublic: new BehaviorSubject<boolean>(false)
+		isPublic: new BehaviorSubject<boolean>(false),
+		share: new BehaviorSubject<IAccountPostReference | undefined>(undefined)
 	};
 
 	/** Decodes post image to SafeUrl. */
@@ -567,7 +569,8 @@ export class AccountPostsService extends BaseProvider {
 	public async createPost (
 		content: string,
 		isPublic: boolean,
-		image?: Uint8Array
+		image?: Uint8Array,
+		share?: IAccountPostReference
 	) : Promise<string> {
 		const id = uuid();
 
@@ -578,6 +581,7 @@ export class AccountPostsService extends BaseProvider {
 		await postDataPart.setPost(id, {
 			content,
 			image,
+			share,
 			timestamp: await getTimestamp()
 		});
 
@@ -769,12 +773,14 @@ export class AccountPostsService extends BaseProvider {
 			await this.createPost(
 				this.draft.content.value,
 				this.draft.isPublic.value,
-				this.draft.image.value
+				this.draft.image.value,
+				this.draft.share.value
 			);
 
 			this.draft.content.next('');
 			this.draft.image.next(undefined);
 			this.draft.isPublic.next(false);
+			this.draft.share.next(undefined);
 		}
 		finally {
 			this.accountService.interstitial.next(false);
