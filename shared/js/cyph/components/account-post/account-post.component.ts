@@ -5,10 +5,10 @@ import {
 	OnChanges,
 	OnInit
 } from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
-import {IAccountPost} from '../../proto';
+import {IAccountPost, IAccountPostComment} from '../../proto';
 import {AccountPostsService} from '../../services/account-posts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -30,6 +30,14 @@ export class AccountPostComponent extends BaseProvider
 	implements OnChanges, OnInit {
 	/** Post author. */
 	@Input() public author?: User;
+
+	/** Post comments. */
+	public readonly commentsObservable = new ReplaySubject<
+		{
+			author: User | undefined;
+			comment: IAccountPostComment;
+		}[]
+	>(1);
 
 	/** @see getDateTimeString */
 	public readonly getDateTimeString = getDateTimeString;
@@ -97,12 +105,12 @@ export class AccountPostComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnChanges () : Promise<void> {
-		await this.updateReactions();
+		await this.updatePost();
 	}
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
-		await this.updateReactions();
+		await this.updatePost();
 	}
 
 	/** Sets reaction. */
@@ -121,14 +129,18 @@ export class AccountPostComponent extends BaseProvider
 			add
 		);
 
-		await this.updateReactions();
+		await this.updatePost();
 	}
 
-	/** Updates reactions list. */
-	public async updateReactions () : Promise<void> {
+	/** Updates post. */
+	public async updatePost () : Promise<void> {
 		if (!this.post?.id || !this.user) {
 			return;
 		}
+
+		this.accountPostsService
+			.watchComments(this.user.username, this.post.id)
+			.subscribe(this.commentsObservable);
 
 		this.reactions.next(
 			await this.accountPostsService.getReactions(
