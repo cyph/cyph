@@ -708,6 +708,7 @@ $default-white: map-get($mat-grey, 100);
 	@include mat-autocomplete-theme($theme);
 	@include mat-card-theme($theme);
 	@include mat-dialog-theme($theme);
+	@include mat-expansion-panel-theme($theme);
 	@include mat-option-theme($theme);
 	@include mat-select-theme($theme);
 	@include mat-sidenav-theme($theme);
@@ -720,7 +721,8 @@ $default-white: map-get($mat-grey, 100);
 
 	cyph-account-menu,
 	mat-card,
-	mat-dialog-container {
+	mat-dialog-container,
+	mat-expansion-panel {
 		@include mat-button-theme($theme);
 		@include mat-checkbox-theme($theme);
 		@include mat-chips-theme($theme);

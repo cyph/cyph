@@ -5,8 +5,8 @@
 			cyphTranslate
 			class="remove-image-button"
 			matTooltip="Remove Image"
-			(click)="accountPostsService.draft.image.next(undefined)"
-			*ngIf="(accountPostsService.draft.image | await) !== undefined"
+			(click)="accountPostsService.draftPost.image.next(undefined)"
+			*ngIf="(accountPostsService.draftPost.image | await) !== undefined"
 		>
 			<mat-icon>close</mat-icon>
 		</button>
@@ -16,11 +16,11 @@
 			cyphTranslate
 			[src]="
 				accountPostsService.getPostImage(
-					accountPostsService.draft.image
+					accountPostsService.draftPost.image
 				) | await
 			"
 			alt="Post Image"
-			*ngIf="(accountPostsService.draft.image | await) !== undefined"
+			*ngIf="(accountPostsService.draftPost.image | await) !== undefined"
 		/>
 
 		<mat-card-content>
@@ -28,8 +28,12 @@
 				cyphTranslate
 				aria-label="Post Content"
 				placeholder="Write your post here..."
-				[ngModel]="(accountPostsService.draft.content | await) || ''"
-				(ngModelChange)="accountPostsService.draft.content.next($event)"
+				[ngModel]="
+					(accountPostsService.draftPost.content | await) || ''
+				"
+				(ngModelChange)="
+					accountPostsService.draftPost.content.next($event)
+				"
 			></textarea>
 		</mat-card-content>
 
@@ -41,12 +45,15 @@
 				<mat-select
 					[placeholder]="stringsService.circlePlaceholder"
 					[ngModel]="
-						(accountPostsService.draft.isPublic | await) === true ?
+						(accountPostsService.draftPost.isPublic | await) ===
+						true ?
 							0 :
 							accountPostCircleTypes.InnerCircle
 					"
 					(ngModelChange)="
-						accountPostsService.draft.isPublic.next($event === 0)
+						accountPostsService.draftPost.isPublic.next(
+							$event === 0
+						)
 					"
 				>
 					<mat-select-trigger
@@ -55,7 +62,7 @@
 					>
 						<ng-container
 							[ngSwitch]="
-								accountPostsService.draft.isPublic | await
+								accountPostsService.draftPost.isPublic | await
 							"
 						>
 							<ng-container *ngSwitchCase="false">
@@ -93,7 +100,9 @@
 				[compressImages]="true"
 				matTooltip="Set Image"
 				matTooltipPosition="above"
-				(fileDrop)="accountPostsService.draft.image.next($event.data)"
+				(fileDrop)="
+					accountPostsService.draftPost.image.next($event.data)
+				"
 			>
 				<mat-icon>image</mat-icon>
 			</div>
@@ -103,7 +112,7 @@
 			<button
 				mat-raised-button
 				cyphTranslate
-				(click)="accountPostsService.postCurrentDraft()"
+				(click)="accountPostsService.submitCurrentDraftPost()"
 			>
 				Post
 			</button>

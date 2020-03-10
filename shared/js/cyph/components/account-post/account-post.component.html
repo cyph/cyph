@@ -128,55 +128,87 @@
 				</button>
 			</div>
 
-			<mat-expansion-panel>
-				<mat-expansion-panel-header>
-					<mat-panel-title>
-						<span cyphTranslate>Comments</span>
-					</mat-panel-title>
-					<mat-panel-description>
-						<span *ngIf="commentsObservable | await as comments">
-							<span>{{ comments?.length || 0 }}</span>
-							&ngsp;
+			<div class="cyph-light-theme">
+				<mat-expansion-panel>
+					<mat-expansion-panel-header>
+						<mat-panel-title>
 							<span cyphTranslate>Comments</span>
-						</span>
-					</mat-panel-description>
-				</mat-expansion-panel-header>
+						</mat-panel-title>
+						<mat-panel-description>
+							<span
+								*ngIf="commentsObservable | await as comments"
+							>
+								<span>{{ comments?.length || 0 }}</span>
+								&ngsp;
+								<span cyphTranslate>Comments</span>
+							</span>
+						</mat-panel-description>
+					</mat-expansion-panel-header>
 
-				<span
-					*ngIf="
-						commentsObservable | await as comments;
-						else commentsSpinner
-					"
-				>
-					<mat-list>
-						<mat-list-item
-							*ngFor="
-								let comment of comments | await;
-								trackBy: trackByID
-							"
-						>
-							<div>
+					<span
+						*ngIf="
+							commentsObservable | await as comments;
+							else commentsSpinner
+						"
+					>
+						<mat-list>
+							<mat-list-item
+								*ngFor="
+									let comment of comments | await;
+									trackBy: trackByID
+								"
+							>
 								<div>
-									Author:
-									{{ comment?.author?.username || '' }}
+									<div>
+										Author:
+										{{ comment?.author?.username || '' }}
+									</div>
+									<div>
+										<cyph-markdown
+											[markdown]="
+												comment?.comment.content || ''
+											"
+										></cyph-markdown>
+									</div>
 								</div>
-								<div>
-									<cyph-markdown
-										[markdown]="
-											comment?.comment.content || ''
-										"
-									></cyph-markdown>
-								</div>
-							</div>
-						</mat-list-item>
-					</mat-list>
-				</span>
-				<ng-template #commentsSpinner>
-					<mat-progress-spinner
-						mode="indeterminate"
-					></mat-progress-spinner>
-				</ng-template>
-			</mat-expansion-panel>
+							</mat-list-item>
+						</mat-list>
+					</span>
+					<ng-template #commentsSpinner>
+						<mat-progress-spinner
+							mode="indeterminate"
+						></mat-progress-spinner>
+					</ng-template>
+
+					<div fxLayout="row">
+						<mat-form-field fxFlex>
+							<textarea
+								matInput
+								matTextareaAutosize
+								cyphTranslate
+								aria-label="New Comment"
+								placeholder="Write your comment here..."
+								[ngModel]="
+									(accountPostsService.draftComment.content
+										| await) || ''
+								"
+								(ngModelChange)="
+									accountPostsService.draftComment.content.next(
+										$event
+									)
+								"
+								(keydown.enter)="
+									$event.preventDefault();
+									accountPostsService.submitCurrentDraftComment(
+										user?.username || '',
+										post?.id || ''
+									)
+								"
+							></textarea
+						></mat-form-field>
+					</div>
+				</mat-expansion-panel>
+			</div>
 		</mat-card-actions>
 	</ng-template>
 </mat-card>

@@ -76,8 +76,13 @@ export class AccountPostsService extends BaseProvider {
 		)
 	);
 
+	/** Current draft comment. */
+	public readonly draftComment = {
+		content: new BehaviorSubject<string>('')
+	};
+
 	/** Current draft post. */
-	public readonly draft = {
+	public readonly draftPost = {
 		content: new BehaviorSubject<string>(''),
 		image: new BehaviorSubject<Uint8Array | undefined>(undefined),
 		isPublic: new BehaviorSubject<boolean>(false),
@@ -1051,28 +1056,6 @@ export class AccountPostsService extends BaseProvider {
 		);
 	}
 
-	/** Posts current draft. */
-	public async postCurrentDraft () : Promise<void> {
-		this.accountService.interstitial.next(true);
-
-		try {
-			await this.createPost(
-				this.draft.content.value,
-				this.draft.isPublic.value,
-				this.draft.image.value,
-				this.draft.share.value
-			);
-
-			this.draft.content.next('');
-			this.draft.image.next(undefined);
-			this.draft.isPublic.next(false);
-			this.draft.share.next(undefined);
-		}
-		finally {
-			this.accountService.interstitial.next(false);
-		}
-	}
-
 	/** Reacts to post or comment. */
 	public async react (
 		username: string,
@@ -1252,6 +1235,60 @@ export class AccountPostsService extends BaseProvider {
 		);
 
 		await this.circleMembers(currentCircle.id).pushItem(usernames);
+	}
+
+	/** Submits current draft comment. */
+	public async submitCurrentDraftComment (
+		username: string,
+		postID: string
+	) : Promise<void> {
+		if (!username || !postID || !this.draftComment.content.value) {
+			return;
+		}
+
+		this.accountService.interstitial.next(true);
+
+		try {
+			await this.addComment(
+				username,
+				postID,
+				this.draftComment.content.value
+			);
+
+			this.draftComment.content.next('');
+		}
+		finally {
+			this.accountService.interstitial.next(false);
+		}
+	}
+
+	/** Submits current draft post. */
+	public async submitCurrentDraftPost () : Promise<void> {
+		if (
+			!this.draftPost.content.value &&
+			this.draftPost.image.value === undefined &&
+			this.draftPost.share.value === undefined
+		) {
+		}
+
+		this.accountService.interstitial.next(true);
+
+		try {
+			await this.createPost(
+				this.draftPost.content.value,
+				this.draftPost.isPublic.value,
+				this.draftPost.image.value,
+				this.draftPost.share.value
+			);
+
+			this.draftPost.content.next('');
+			this.draftPost.image.next(undefined);
+			this.draftPost.isPublic.next(false);
+			this.draftPost.share.next(undefined);
+		}
+		finally {
+			this.accountService.interstitial.next(false);
+		}
 	}
 
 	constructor (
