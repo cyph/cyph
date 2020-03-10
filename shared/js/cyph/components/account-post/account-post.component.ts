@@ -109,7 +109,7 @@ export class AccountPostComponent extends BaseProvider
 	public async react (reaction: string, add: boolean = true) : Promise<void> {
 		this.showEmojiPicker.next(false);
 
-		if (!this.post?.id || !this.user) {
+		if (!this.post?.id || !this.user || !reaction) {
 			return;
 		}
 

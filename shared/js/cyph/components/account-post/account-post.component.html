@@ -89,7 +89,7 @@
 		<mat-card-actions>
 			<div [fxShow]="showEmojiPicker | await">
 				<cyph-simple-emoji-picker
-					(emojiSelect)="react($event.emoji.unified)"
+					(emojiSelect)="react($event.emoji.unified || '')"
 				></cyph-simple-emoji-picker>
 			</div>
 			<mat-button-toggle-group multiple>
