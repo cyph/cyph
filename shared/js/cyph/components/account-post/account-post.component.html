@@ -87,127 +87,153 @@
 			</p>
 		</mat-card-content>
 		<mat-card-actions>
-			<div [fxShow]="showEmojiPicker | await">
-				<cyph-simple-emoji-picker
-					(emojiSelect)="react($event.emoji.unified || '')"
-				></cyph-simple-emoji-picker>
-			</div>
+			<div fxLayout="column" fxLayoutGap="16px">
+				<div [fxShow]="showEmojiPicker | await">
+					<cyph-simple-emoji-picker
+						(emojiSelect)="react($event.emoji.unified || '')"
+					></cyph-simple-emoji-picker>
+				</div>
 
-			<div>
-				<mat-button-toggle-group multiple>
-					<mat-button-toggle
-						[checked]="reaction.selected"
-						[matTooltip]="
-							reaction.selected ?
-								stringsService.reactionRemove :
-								stringsService.reactionAdd
-						"
-						(click)="react(reaction.id, !reaction.selected)"
-						*ngFor="
-							let reaction of reactions | await;
-							trackBy: trackByID
-						"
+				<div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px">
+					<div
+						fxFlex.gt-xs="269px"
+						fxLayoutAlign.lt-sm="center center"
 					>
-						<ngx-emoji
-							[emoji]="reaction.id"
-							[isNative]="true"
-						></ngx-emoji>
-						<span class="reaction-count">{{ reaction.count }}</span>
-					</mat-button-toggle>
-					<mat-button-toggle
-						cyphTranslate
-						[checked]="(showEmojiPicker | await) && false"
-						matTooltip="Add New Reaction"
-						(click)="showEmojiPicker.next(!showEmojiPicker.value)"
-					>
-						<mat-icon>insert_emoticon</mat-icon>
-					</mat-button-toggle>
-				</mat-button-toggle-group>
-				<button mat-icon-button cyphTranslate matTooltip="Share">
-					<mat-icon>share</mat-icon>
-				</button>
-			</div>
-
-			<div class="cyph-light-theme">
-				<mat-expansion-panel>
-					<mat-expansion-panel-header>
-						<mat-panel-title>
-							<span cyphTranslate>Comments</span>
-						</mat-panel-title>
-						<mat-panel-description>
-							<span
-								*ngIf="commentsObservable | await as comments"
-							>
-								<span>{{ comments?.length || 0 }}</span>
-								&ngsp;
-								<span cyphTranslate>Comments</span>
-							</span>
-						</mat-panel-description>
-					</mat-expansion-panel-header>
-
-					<span
-						*ngIf="
-							commentsObservable | await as comments;
-							else commentsSpinner
-						"
-					>
-						<mat-list>
-							<mat-list-item
+						<mat-button-toggle-group multiple>
+							<mat-button-toggle
+								[checked]="reaction.selected"
+								[matTooltip]="
+									reaction.selected ?
+										stringsService.reactionRemove :
+										stringsService.reactionAdd
+								"
+								(click)="react(reaction.id, !reaction.selected)"
 								*ngFor="
-									let comment of comments | await;
+									let reaction of reactions | await;
 									trackBy: trackByID
 								"
 							>
-								<div>
-									<div>
-										Author:
-										{{ comment?.author?.username || '' }}
-									</div>
-									<div>
-										<cyph-markdown
-											[markdown]="
-												comment?.comment.content || ''
-											"
-										></cyph-markdown>
-									</div>
-								</div>
-							</mat-list-item>
-						</mat-list>
-					</span>
-					<ng-template #commentsSpinner>
-						<mat-progress-spinner
-							mode="indeterminate"
-						></mat-progress-spinner>
-					</ng-template>
-
-					<div fxLayout="row">
-						<mat-form-field fxFlex>
-							<textarea
-								matInput
-								matTextareaAutosize
+								<ngx-emoji
+									[emoji]="reaction.id"
+									[isNative]="true"
+								></ngx-emoji>
+								<span class="reaction-count">{{
+									reaction.count
+								}}</span>
+							</mat-button-toggle>
+							<mat-button-toggle
 								cyphTranslate
-								aria-label="New Comment"
-								placeholder="Write your comment here..."
-								[ngModel]="
-									(accountPostsService.draftComment.content
-										| await) || ''
+								[checked]="(showEmojiPicker | await) && false"
+								matTooltip="Add New Reaction"
+								(click)="
+									showEmojiPicker.next(!showEmojiPicker.value)
 								"
-								(ngModelChange)="
-									accountPostsService.draftComment.content.next(
-										$event
-									)
-								"
-								(keydown.enter)="
-									$event.preventDefault();
-									accountPostsService.submitCurrentDraftComment(
-										user?.username || '',
-										post?.id || ''
-									)
-								"
-							></textarea
-						></mat-form-field>
+							>
+								<mat-icon>insert_emoticon</mat-icon>
+							</mat-button-toggle>
+						</mat-button-toggle-group>
 					</div>
-				</mat-expansion-panel>
+
+					<div fxFlex fxLayoutAlign="center center" fxLayoutGap="8px">
+						<button mat-raised-button>
+							<mat-icon>autorenew</mat-icon>
+							&nbsp;
+							<span cyphTranslate>Repost</span>
+						</button>
+						<button mat-raised-button>
+							<mat-icon>share</mat-icon>
+							&nbsp;
+							<span cyphTranslate>Share</span>
+						</button>
+					</div>
+				</div>
+
+				<div class="cyph-light-theme">
+					<mat-expansion-panel>
+						<mat-expansion-panel-header>
+							<mat-panel-title>
+								<span cyphTranslate>Comments</span>
+							</mat-panel-title>
+							<mat-panel-description>
+								<span
+									*ngIf="
+										commentsObservable | await as comments
+									"
+								>
+									<span>{{ comments?.length || 0 }}</span>
+									&ngsp;
+									<span cyphTranslate>Comments</span>
+								</span>
+							</mat-panel-description>
+						</mat-expansion-panel-header>
+
+						<span
+							*ngIf="
+								commentsObservable | await as comments;
+								else commentsSpinner
+							"
+						>
+							<mat-list>
+								<mat-list-item
+									*ngFor="
+										let comment of comments | await;
+										trackBy: trackByID
+									"
+								>
+									<div>
+										<div>
+											Author:
+											{{
+												comment?.author?.username || ''
+											}}
+										</div>
+										<div>
+											<cyph-markdown
+												[markdown]="
+													comment?.comment.content ||
+													''
+												"
+											></cyph-markdown>
+										</div>
+									</div>
+								</mat-list-item>
+							</mat-list>
+						</span>
+						<ng-template #commentsSpinner>
+							<mat-progress-spinner
+								mode="indeterminate"
+							></mat-progress-spinner>
+						</ng-template>
+
+						<div fxLayout="row">
+							<mat-form-field fxFlex>
+								<textarea
+									matInput
+									matTextareaAutosize
+									cyphTranslate
+									aria-label="New Comment"
+									placeholder="Write your comment here..."
+									[ngModel]="
+										(accountPostsService.draftComment
+											.content | await) || ''
+									"
+									(ngModelChange)="
+										accountPostsService.draftComment.content.next(
+											$event
+										)
+									"
+									(keydown.enter)="
+										$event.preventDefault();
+										accountPostsService.submitCurrentDraftComment(
+											user?.username || '',
+											post?.id || ''
+										)
+									"
+								></textarea
+							></mat-form-field>
+						</div>
+					</mat-expansion-panel>
+				</div>
 			</div>
 		</mat-card-actions>
 	</ng-template>
