@@ -142,7 +142,12 @@
 					</mat-panel-description>
 				</mat-expansion-panel-header>
 
-				<span *ngIf="commentsObservable | await as comments">
+				<span
+					*ngIf="
+						commentsObservable | await as comments;
+						else commentsSpinner
+					"
+				>
 					<mat-list>
 						<mat-list-item
 							*ngFor="
@@ -166,6 +171,11 @@
 						</mat-list-item>
 					</mat-list>
 				</span>
+				<ng-template #commentsSpinner>
+					<mat-progress-spinner
+						mode="indeterminate"
+					></mat-progress-spinner>
+				</ng-template>
 			</mat-expansion-panel>
 		</mat-card-actions>
 	</ng-template>
