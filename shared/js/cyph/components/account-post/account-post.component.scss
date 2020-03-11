@@ -22,11 +22,27 @@ mat-button-toggle-group {
 	}
 }
 
-mat-button-toggle ngx-emoji {
+:host mat-button-toggle ngx-emoji {
 	pointer-events: none;
 
 	::ng-deep button {
 		@include transform(translateY(4px));
+	}
+}
+
+:host mat-list-item {
+	height: auto !important;
+	min-height: 72px !important;
+	margin-bottom: 16px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+
+	::ng-deep .mat-list-item-content {
+		align-items: unset !important;
+
+		.mat-line {
+			white-space: unset !important;
+		}
 	}
 }
 

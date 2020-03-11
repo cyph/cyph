@@ -224,43 +224,61 @@
 							</mat-panel-description>
 						</mat-expansion-panel-header>
 
-						<span
+						<mat-list
 							*ngIf="
 								commentsObservable | await as comments;
 								else commentsSpinner
 							"
 						>
-							<mat-list>
-								<mat-list-item
-									*ngFor="
-										let comment of comments | await;
-										trackBy: trackByID
+							<mat-list-item
+								*ngFor="
+									let comment of comments | await;
+									trackBy: trackByID
+								"
+							>
+								<img
+									matListAvatar
+									cyphTranslate
+									[routerLink]="
+										'/profile/' +
+										(comment?.author?.username || '')
 									"
-								>
-									<div>
-										<div>
-											Author:
-											{{
-												comment?.author?.username || ''
-											}}
-										</div>
-										<div>
-											<cyph-markdown
-												[markdown]="
-													comment?.comment.content ||
-													''
-												"
-											></cyph-markdown>
-										</div>
-									</div>
-								</mat-list-item>
-							</mat-list>
-						</span>
+									[src]="comment?.author?.avatar | await"
+									alt="User Avatar"
+								/>
+								<h3 matLine>
+									<a
+										[routerLink]="
+											'/profile/' +
+											(comment?.author?.username || '')
+										"
+										>{{
+											(comment?.author?.name | await) ||
+												''
+												| slice
+													: 0
+													: accountService.maxNameLength
+										}}</a
+									>
+								</h3>
+								<p matLine>
+									<cyph-markdown
+										[markdown]="
+											comment?.comment.content || ''
+										"
+									></cyph-markdown>
+								</p>
+							</mat-list-item>
+						</mat-list>
 						<ng-template #commentsSpinner>
-							<mat-progress-spinner
-								mode="indeterminate"
-							></mat-progress-spinner>
+							<span fxLayoutAlign="center center">
+								<mat-progress-spinner
+									mode="indeterminate"
+								></mat-progress-spinner>
+							</span>
 						</ng-template>
+
+						<br />
 
 						<div fxLayout="row">
 							<mat-form-field fxFlex>
