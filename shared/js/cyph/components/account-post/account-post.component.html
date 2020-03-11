@@ -86,7 +86,7 @@
 				<cyph-markdown [markdown]="post?.content || ''"></cyph-markdown>
 			</p>
 
-			<ng-container *ngIf="!!post?.share?.author && !!post?.share?.id">
+			<ng-container *ngIf="!!post?.repost?.author && !!post?.repost?.id">
 				<p
 					class="text-align-center"
 					*ngIf="reposted; else embeddedPost"
@@ -95,13 +95,13 @@
 						<a
 							[routerLink]="
 								'/post/' +
-								(post?.share?.author || '') +
+								(post?.repost?.author || '') +
 								'/' +
-								(post?.share?.id || '')
+								(post?.repost?.id || '')
 							"
 							><span cyphTranslate>Reposted post by</span
 							>&ngsp;<span
-								>@{{ post?.share?.author || '' }}</span
+								>@{{ post?.repost?.author || '' }}</span
 							></a
 						>
 					</small>

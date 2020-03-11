@@ -870,7 +870,7 @@ export class AccountPostsService extends BaseProvider {
 		await postDataPart.setPost(id, {
 			content,
 			image,
-			share,
+			repost: share,
 			timestamp: await getTimestamp()
 		});
 

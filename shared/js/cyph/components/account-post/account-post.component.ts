@@ -240,16 +240,16 @@ export class AccountPostComponent extends BaseProvider
 			return;
 		}
 
-		if (this.post.share?.author && this.post.share?.id) {
+		if (this.post.repost?.author && this.post.repost?.id) {
 			combineLatest([
 				from(
 					this.accountUserLookupService.getUser(
-						this.post.share.author
+						this.post.repost.author
 					)
 				),
 				this.accountPostsService.watchPost(
-					this.post.share.author,
-					this.post.share.id
+					this.post.repost.author,
+					this.post.repost.id
 				)
 			])
 				.pipe(

@@ -175,8 +175,8 @@ message AccountPost {
 	/** Timestamp of last edit (if applicable). */
 	double lastEditTimestamp = 6;
 
-	/** Reference to shared post. */
-	AccountPostReference share = 8;
+	/** Reference to reposted post. */
+	AccountPostReference repost = 8;
 
 	/** Timestamp. */
 	required double timestamp = 7;
