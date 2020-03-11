@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, from, Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {
 	IAccountPostData,
@@ -214,6 +214,31 @@ export class AccountPostsService extends BaseProvider {
 						comment: {...comment, ...commentRef}
 					}));
 
+				const watchComment = memoize(
+					(commentRef: IAccountPostCommentReference) =>
+						combineLatest([
+							from(
+								this.accountUserLookupService.getUser(
+									commentRef.author
+								)
+							),
+							this.accountDatabaseService.watch(
+								`users/${commentRef.author}/postComments/${commentRef.id}`,
+								AccountPostComment,
+								SecurityModels.public,
+								undefined,
+								true
+							)
+						]).pipe(
+							map(([author, comment]) => ({
+								author,
+								comment: {...comment.value, ...commentRef}
+							}))
+						),
+					(commentRef: IAccountPostCommentReference) =>
+						`${commentRef.author}\n${commentRef.id}`
+				);
+
 				return {
 					getComments: async id =>
 						(await Promise.all(
@@ -237,10 +262,11 @@ export class AccountPostsService extends BaseProvider {
 					updatePost: async (id, f) => posts.updateItem(id, f),
 					watchComments: memoize(id =>
 						watchCommentReferences(id).pipe(
-							switchMap(async commentRefs =>
-								(await Promise.all(
-									commentRefs.map(getComment)
-								)).filter(o => o.comment.postID === id)
+							switchMap(commentRefs =>
+								combineLatest(commentRefs.map(watchComment))
+							),
+							map(comments =>
+								comments.filter(o => o.comment.postID === id)
 							)
 						)
 					),
@@ -315,6 +341,32 @@ export class AccountPostsService extends BaseProvider {
 							AccountPost,
 							SecurityModels.privateSigned,
 							circle.key
+						),
+						watchComment: memoize(
+							(commentRef: IAccountPostCommentReference) =>
+								combineLatest([
+									from(
+										this.accountUserLookupService.getUser(
+											commentRef.author
+										)
+									),
+									this.accountDatabaseService.watch(
+										`users/${commentRef.author}/postComments/${commentRef.id}`,
+										AccountPostComment,
+										SecurityModels.privateSigned,
+										circle.key
+									)
+								]).pipe(
+									map(([author, comment]) => ({
+										author,
+										comment: {
+											...comment.value,
+											...commentRef
+										}
+									}))
+								),
+							(commentRef: IAccountPostCommentReference) =>
+								`${commentRef.author}\n${commentRef.id}`
 						),
 						watchPost: memoize(
 							(
@@ -452,12 +504,17 @@ export class AccountPostsService extends BaseProvider {
 							getCircleWrapperForID(id).posts.updateItem(id, f),
 						watchComments: memoize(id =>
 							watchCommentReferences(id).pipe(
-								switchMap(async commentRefs =>
-									(await Promise.all(
+								switchMap(commentRefs =>
+									combineLatest(
 										commentRefs.map(
-											currentCircleWrapper.getComment
+											currentCircleWrapper.watchComment
 										)
-									)).filter(o => o.comment.postID === id)
+									)
+								),
+								map(comments =>
+									comments.filter(
+										o => o.comment.postID === id
+									)
 								)
 							)
 						),
