@@ -140,13 +140,27 @@
 							&nbsp;
 							<span cyphTranslate>Repost</span>
 						</button>
-						<button mat-raised-button>
+						<button mat-raised-button (click)="sharePost.show()">
 							<mat-icon>share</mat-icon>
 							&nbsp;
 							<span cyphTranslate>Share</span>
 						</button>
 					</div>
 				</div>
+
+				<cyph-social-share
+					#sharePost
+					[options]="{
+						hashTags: ['cyph', 'privacy'],
+						text: stringsService.postShareTitle,
+						url:
+							envService.appUrl +
+							'post/' +
+							(user?.username || '') +
+							'/' +
+							(post?.id || '')
+					}"
+				></cyph-social-share>
 
 				<div class="cyph-light-theme">
 					<mat-expansion-panel>

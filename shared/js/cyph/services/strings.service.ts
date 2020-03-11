@@ -897,6 +897,9 @@ export class StringsService extends BaseProvider {
 	public readonly postEditTitle = `Edit Post`;
 
 	/** @see StringsService */
+	public readonly postShareTitle = `Securely posted on ${this.internalProduct}`;
+
+	/** @see StringsService */
 	public readonly postTitle = `Social Post`;
 
 	/** @see StringsService */

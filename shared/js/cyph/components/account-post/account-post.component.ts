@@ -13,6 +13,7 @@ import {AccountPostsService} from '../../services/account-posts.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
+import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {getDateTimeString} from '../../util/time';
@@ -170,6 +171,9 @@ export class AccountPostComponent extends BaseProvider
 
 		/** @see AccountPostsService */
 		public readonly accountPostsService: AccountPostsService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
