@@ -21,11 +21,11 @@ import {
 	DataURIProto,
 	IAccountPost,
 	IAccountPostCircle,
+	IAccountPostComment,
 	IAccountPostCommentReference,
 	IAccountPostReference,
 	StringArrayProto,
-	StringProto,
-	IAccountPostComment
+	StringProto
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {toBehaviorSubject} from '../util/flatten-observable';
@@ -1061,15 +1061,15 @@ export class AccountPostsService extends BaseProvider {
 		}
 
 		return this.configService.simpleEmoji
-			.map(id => ({
+			.map(emoji => ({
 				count:
-					typeof reactions[id]?.count === 'number' ?
-						reactions[id]?.count :
+					typeof reactions[emoji]?.count === 'number' ?
+						reactions[emoji]?.count :
 						0,
-				id,
+				id: emoji,
 				selected:
-					typeof reactions[id]?.selected === 'boolean' ?
-						reactions[id]?.selected :
+					typeof reactions[emoji]?.selected === 'boolean' ?
+						reactions[emoji]?.selected :
 						false
 			}))
 			.filter(o => o.count > 0);

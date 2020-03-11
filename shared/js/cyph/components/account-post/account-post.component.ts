@@ -241,33 +241,42 @@ export class AccountPostComponent extends BaseProvider
 		}
 
 		if (this.post.repost?.author && this.post.repost?.id) {
-			combineLatest([
-				from(
-					this.accountUserLookupService.getUser(
-						this.post.repost.author
-					)
-				),
-				this.accountPostsService.watchPost(
-					this.post.repost.author,
-					this.post.repost.id
-				)
-			])
-				.pipe(
-					filter(
-						([author, post]) =>
-							author !== undefined && post !== undefined
+			this.subscriptions.push(
+				combineLatest([
+					from(
+						this.accountUserLookupService.getUser(
+							this.post.repost.author
+						)
 					),
-					map(([author, post]) => ({author: author!, post: post!}))
-				)
-				.subscribe(this.repostData);
+					this.accountPostsService.watchPost(
+						this.post.repost.author,
+						this.post.repost.id
+					)
+				])
+					.pipe(
+						filter(
+							([author, post]) =>
+								author !== undefined && post !== undefined
+						),
+						map(([author, post]) => ({
+							/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+							author: author!,
+							/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+							post: post!
+						}))
+					)
+					.subscribe(this.repostData)
+			);
 		}
 		else {
-			of(undefined).subscribe(this.repostData);
+			this.subscriptions.push(of(undefined).subscribe(this.repostData));
 		}
 
-		this.accountPostsService
-			.watchComments(this.user.username, this.post.id)
-			.subscribe(this.commentsObservable);
+		this.subscriptions.push(
+			this.accountPostsService
+				.watchComments(this.user.username, this.post.id)
+				.subscribe(this.commentsObservable)
+		);
 
 		this.reactions.next(
 			await this.accountPostsService.getReactions(
