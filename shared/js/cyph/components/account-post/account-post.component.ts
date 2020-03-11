@@ -75,6 +75,33 @@ export class AccountPostComponent extends BaseProvider
 	/** @see trackByID */
 	public readonly trackByID = trackByID;
 
+	/** Deletes comment. */
+	public async deleteComment ({
+		author,
+		comment
+	}: {
+		author: User | undefined;
+		comment: IAccountPostComment;
+	}) : Promise<void> {
+		if (
+			!this.post?.id ||
+			!author?.username ||
+			!comment.id ||
+			!(await this.dialogService.confirm({
+				content: this.stringsService.postCommentDeletePrompt,
+				title: this.stringsService.postCommentDeleteTitle
+			}))
+		) {
+			return;
+		}
+
+		await this.accountPostsService.deleteComment(
+			author.username,
+			this.post.id,
+			comment.id
+		);
+	}
+
 	/** Deletes post. */
 	public async deletePost () : Promise<void> {
 		if (
@@ -88,6 +115,41 @@ export class AccountPostComponent extends BaseProvider
 		}
 
 		await this.accountPostsService.deletePost(this.post.id);
+	}
+
+	/**
+	 * Edits comment.
+	 * TODO: Better UI for this.
+	 */
+	public async editComment ({
+		author,
+		comment
+	}: {
+		author: User | undefined;
+		comment: IAccountPostComment;
+	}) : Promise<void> {
+		if (!this.post?.id || !author?.username || !comment.id) {
+			return;
+		}
+
+		const content = await this.dialogService.prompt({
+			bottomSheet: true,
+			content: this.stringsService.postCommentEditPrompt,
+			placeholder: this.stringsService.postCommentContent,
+			preFill: comment.content,
+			title: this.stringsService.postCommentEditTitle
+		});
+
+		if (content === undefined) {
+			return;
+		}
+
+		await this.accountPostsService.editComment(
+			author.username,
+			this.post.id,
+			comment.id,
+			content
+		);
 	}
 
 	/**

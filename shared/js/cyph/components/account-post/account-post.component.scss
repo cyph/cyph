@@ -37,6 +37,10 @@ mat-button-toggle-group {
 	padding-bottom: 16px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 
+	.menu-button {
+		top: -12px;
+	}
+
 	::ng-deep .mat-list-item-content {
 		align-items: unset !important;
 

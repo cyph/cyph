@@ -245,8 +245,9 @@
 									"
 									[src]="comment?.author?.avatar | await"
 									alt="User Avatar"
+									*ngIf="!comment?.comment.deleted"
 								/>
-								<h3 matLine>
+								<h3 matLine *ngIf="!comment?.comment.deleted">
 									<a
 										[routerLink]="
 											'/profile/' +
@@ -261,7 +262,55 @@
 										}}</a
 									>
 								</h3>
-								<p matLine>
+
+								<button
+									mat-icon-button
+									cyphTranslate
+									class="menu-button"
+									aria-label="Context Menu"
+									[matMenuTriggerFor]="commentMenu"
+									*ngIf="
+										!comment?.comment.deleted &&
+										user !== undefined &&
+										(comment?.author?.username || '') ===
+											((
+												accountDatabaseService.currentUser
+												| await
+											)?.user?.username || '')
+									"
+								>
+									<mat-icon>more_horiz</mat-icon>
+								</button>
+								<mat-menu #commentMenu="matMenu">
+									<button
+										mat-menu-item
+										(click)="editComment(comment)"
+									>
+										<mat-icon>edit</mat-icon>
+										<span>{{
+											stringsService.postCommentEditTitle
+										}}</span>
+									</button>
+									<button
+										mat-menu-item
+										(click)="deleteComment(comment)"
+									>
+										<mat-icon>delete</mat-icon>
+										<span>{{
+											stringsService.postCommentDeleteTitle
+										}}</span>
+									</button>
+								</mat-menu>
+
+								<p
+									matLine
+									fxLayoutAlign="center center"
+									*ngIf="comment?.comment.deleted === true"
+								>
+									<span cyphTranslate>[deleted]</span>
+								</p>
+
+								<p matLine *ngIf="!comment?.comment.deleted">
 									<cyph-markdown
 										[markdown]="
 											comment?.comment.content || ''

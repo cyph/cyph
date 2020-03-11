@@ -882,6 +882,21 @@ export class StringsService extends BaseProvider {
 	public readonly post = `Post`;
 
 	/** @see StringsService */
+	public readonly postCommentContent = `Comment Content`;
+
+	/** @see StringsService */
+	public readonly postCommentDeletePrompt = `Delete this comment?`;
+
+	/** @see StringsService */
+	public readonly postCommentDeleteTitle = `Delete Comment`;
+
+	/** @see StringsService */
+	public readonly postCommentEditPrompt = `Edit the contents of this comment:`;
+
+	/** @see StringsService */
+	public readonly postCommentEditTitle = `Edit Comment`;
+
+	/** @see StringsService */
 	public readonly postContent = `Post Content`;
 
 	/** @see StringsService */
