@@ -232,8 +232,8 @@
 						>
 							<mat-list-item
 								*ngFor="
-									let comment of comments | await;
-									trackBy: trackByID
+									let comment of comments;
+									trackBy: trackByCommentID
 								"
 							>
 								<img
@@ -245,9 +245,9 @@
 									"
 									[src]="comment?.author?.avatar | await"
 									alt="User Avatar"
-									*ngIf="!comment?.comment.deleted"
+									*ngIf="!comment?.comment?.deleted"
 								/>
-								<h3 matLine *ngIf="!comment?.comment.deleted">
+								<h3 matLine *ngIf="!comment?.comment?.deleted">
 									<a
 										[routerLink]="
 											'/profile/' +
@@ -270,7 +270,7 @@
 									aria-label="Context Menu"
 									[matMenuTriggerFor]="commentMenu"
 									*ngIf="
-										!comment?.comment.deleted &&
+										!comment?.comment?.deleted &&
 										user !== undefined &&
 										(comment?.author?.username || '') ===
 											((
@@ -305,15 +305,15 @@
 								<p
 									matLine
 									fxLayoutAlign="center center"
-									*ngIf="comment?.comment.deleted === true"
+									*ngIf="comment?.comment?.deleted === true"
 								>
 									<span cyphTranslate>[deleted]</span>
 								</p>
 
-								<p matLine *ngIf="!comment?.comment.deleted">
+								<p matLine *ngIf="!comment?.comment?.deleted">
 									<cyph-markdown
 										[markdown]="
-											comment?.comment.content || ''
+											comment?.comment?.content || ''
 										"
 									></cyph-markdown>
 								</p>
@@ -333,7 +333,7 @@
 							<mat-form-field fxFlex>
 								<textarea
 									matInput
-									matTextareaAutosize
+									[matTextareaAutosize]="true"
 									cyphTranslate
 									aria-label="New Comment"
 									placeholder="Write your comment here..."

@@ -17,7 +17,7 @@ import {AccountDatabaseService} from '../../services/crypto/account-database.ser
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
-import {trackByID} from '../../track-by/track-by-id';
+import {trackByCommentID, trackByID} from '../../track-by';
 import {getDateTimeString} from '../../util/time';
 
 /**
@@ -71,6 +71,9 @@ export class AccountPostComponent extends BaseProvider
 
 	/** Indicates whether emoji picker is visible. */
 	public readonly showEmojiPicker = new BehaviorSubject<boolean>(false);
+
+	/** @see trackByCommentID */
+	public readonly trackByCommentID = trackByCommentID;
 
 	/** @see trackByID */
 	public readonly trackByID = trackByID;
