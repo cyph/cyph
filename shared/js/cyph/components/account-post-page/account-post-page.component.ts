@@ -26,9 +26,7 @@ export class AccountPostPageComponent extends BaseProvider implements OnInit {
 				{
 					author: this.accountUserLookupService.getUser(username),
 					id: postID,
-					post: this.accountPostsService
-						.getUserPostData(username)
-						.then(o => o.watchPost(postID))
+					post: this.accountPostsService.watchPost(username, postID)
 				}
 		)
 	);

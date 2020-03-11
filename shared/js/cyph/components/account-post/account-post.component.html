@@ -85,6 +85,49 @@
 			<p>
 				<cyph-markdown [markdown]="post?.content || ''"></cyph-markdown>
 			</p>
+
+			<ng-container *ngIf="!!post?.share?.author && !!post?.share?.id">
+				<p
+					class="text-align-center"
+					*ngIf="reposted; else embeddedPost"
+				>
+					<small>
+						<a
+							[routerLink]="
+								'/post/' +
+								(post?.share?.author || '') +
+								'/' +
+								(post?.share?.id || '')
+							"
+							><span cyphTranslate>Reposted post by</span
+							>&ngsp;<span
+								>@{{ post?.share?.author || '' }}</span
+							></a
+						>
+					</small>
+				</p>
+				<ng-template #embeddedPost>
+					<p
+						*ngIf="
+							repostData | await as o;
+							else embeddedPostSpinner
+						"
+					>
+						<cyph-account-post
+							[author]="o?.author"
+							[post]="o?.post"
+							[reposted]="true"
+						></cyph-account-post>
+					</p>
+				</ng-template>
+				<ng-template #embeddedPostSpinner>
+					<p fxLayoutAlign="center center">
+						<mat-progress-spinner
+							mode="indeterminate"
+						></mat-progress-spinner>
+					</p>
+				</ng-template>
+			</ng-container>
 		</mat-card-content>
 		<mat-card-actions>
 			<div fxLayout="column" fxLayoutGap="16px">
@@ -135,7 +178,7 @@
 					</div>
 
 					<div fxFlex fxLayoutAlign="center center" fxLayoutGap="8px">
-						<button mat-raised-button>
+						<button mat-raised-button (click)="repost()">
 							<mat-icon>autorenew</mat-icon>
 							&nbsp;
 							<span cyphTranslate>Repost</span>

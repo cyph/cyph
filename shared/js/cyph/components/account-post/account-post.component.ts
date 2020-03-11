@@ -5,11 +5,13 @@ import {
 	OnChanges,
 	OnInit
 } from '@angular/core';
-import {BehaviorSubject, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, combineLatest, from, of, ReplaySubject} from 'rxjs';
+import {filter, map} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
 import {IAccountPost, IAccountPostComment} from '../../proto';
 import {AccountPostsService} from '../../services/account-posts.service';
+import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
@@ -54,6 +56,18 @@ export class AccountPostComponent extends BaseProvider
 			selected: boolean;
 		}[]
 	>([]);
+
+	/** Repost data. */
+	public readonly repostData = new ReplaySubject<
+		| {
+				author: User;
+				post: IAccountPost;
+		  }
+		| undefined
+	>(1);
+
+	/** Indicates whether this is a repost embedded within another post. */
+	@Input() public reposted: boolean = false;
 
 	/** Indicates whether emoji picker is visible. */
 	public readonly showEmojiPicker = new BehaviorSubject<boolean>(false);
@@ -133,10 +147,60 @@ export class AccountPostComponent extends BaseProvider
 		await this.updatePost();
 	}
 
+	/** Reposts post. */
+	public async repost () : Promise<void> {
+		if (!this.post?.id || !this.user) {
+			return;
+		}
+
+		const message = await this.dialogService.prompt({
+			content: 'Repost this post onto your profile?',
+			placeholder: 'Add message (optional)',
+			title: 'Repost'
+		});
+
+		if (message === undefined) {
+			return;
+		}
+
+		this.accountPostsService.draftPost.content.next(message);
+		this.accountPostsService.draftPost.share.next({
+			author: this.user.username,
+			id: this.post.id
+		});
+
+		await this.accountPostsService.submitCurrentDraftPost();
+	}
+
 	/** Updates post. */
 	public async updatePost () : Promise<void> {
 		if (!this.post?.id || !this.user) {
 			return;
+		}
+
+		if (this.post.share?.author && this.post.share?.id) {
+			combineLatest([
+				from(
+					this.accountUserLookupService.getUser(
+						this.post.share.author
+					)
+				),
+				this.accountPostsService.watchPost(
+					this.post.share.author,
+					this.post.share.id
+				)
+			])
+				.pipe(
+					filter(
+						([author, post]) =>
+							author !== undefined && post !== undefined
+					),
+					map(([author, post]) => ({author: author!, post: post!}))
+				)
+				.subscribe(this.repostData);
+		}
+		else {
+			of(undefined).subscribe(this.repostData);
 		}
 
 		this.accountPostsService
@@ -160,6 +224,9 @@ export class AccountPostComponent extends BaseProvider
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
+
 		/** @ignore */
 		private readonly dialogService: DialogService,
 

@@ -598,6 +598,17 @@ export class AccountPostsService extends BaseProvider {
 		(username: string, id: string) => `${username}\n${id}`
 	);
 
+	/** Watches a post. */
+	public readonly watchPost = memoize(
+		(username: string, id: string) : Observable<IAccountPost | undefined> =>
+			toBehaviorSubject<IAccountPost | undefined>(
+				async () =>
+					this.getUserPostData(username).then(o => o.watchPost(id)),
+				undefined
+			),
+		(username: string, id: string) => `${username}\n${id}`
+	);
+
 	/** Watches a user's posts (reverse order). */
 	public readonly watchUserPosts = memoize(
 		(
