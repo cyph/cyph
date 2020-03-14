@@ -350,23 +350,45 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterUsername = await getUsername();
 	const {accountsURL} = namespaces[namespace];
 
+	if (!data.to && !data.toSMS) {
+		throw new Error('No recipient specified.');
+	}
+
+	const inviteeLink = `${getFullBurnerURL(
+		namespace,
+		data.callType
+	)}${inviterUsername}/${id}`;
+
 	await Promise.all([
-		sendMail(
-			database,
-			namespace,
-			data.to,
-			`Cyph Appointment with @${inviterUsername}`,
-			{noUnsubscribe: true},
-			{
-				endTime: data.eventDetails.endTime,
-				inviterUsername: data.to,
-				location: `${getFullBurnerURL(
-					namespace,
-					data.callType
-				)}${inviterUsername}/${id}`,
-				startTime: data.eventDetails.startTime
-			}
-		),
+		data.to &&
+			sendMail(
+				database,
+				namespace,
+				data.to,
+				`Cyph Appointment with @${inviterUsername}`,
+				{noUnsubscribe: true},
+				{
+					endTime: data.eventDetails.endTime,
+					inviterUsername: data.to,
+					location: inviteeLink,
+					startTime: data.eventDetails.startTime
+				}
+			),
+		data.toSMS &&
+			sendSMS(
+				data.toSMS,
+				`Cyph appointment with @${inviterUsername} is scheduled for ${new Date(
+					data.eventDetails.startTime
+				).toString()} (${Math.floor(
+					(data.eventDetails.endTime - data.eventDetails.startTime) /
+						60000
+				)} minutes)`
+			).then(async () =>
+				sendSMS(
+					data.toSMS,
+					`At the scheduled time, join here: ${inviteeLink}`
+				)
+			),
 		sendMail(
 			database,
 			namespace,
