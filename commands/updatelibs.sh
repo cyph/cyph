@@ -175,6 +175,7 @@ read -r -d '' modules <<- EOM
 	@types/node
 	@types/pdfjs-dist
 	@types/pdfkit
+	@types/pulltorefreshjs
 	@types/quill
 	@types/simple-peer
 	@types/stacktrace-js
@@ -323,6 +324,7 @@ read -r -d '' modules <<- EOM
 	promise-semaphore
 	protobufjs
 	protractor@^6
+	pulltorefreshjs
 	puppeteer
 	quill@https://github.com/buu700/quill-tmp
 	quill-delta
