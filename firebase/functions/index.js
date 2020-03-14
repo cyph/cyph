@@ -8,6 +8,7 @@ const {sendMail, sendMailInternal} = require('./email');
 const {emailRegex} = require('./email-regex');
 const {renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
+const {sendSMS} = require('./sms');
 const tokens = require('./tokens');
 
 const mailchimp =
