@@ -1037,6 +1037,11 @@ then
 						pendingInvites: $(getBackendVar MAILCHIMP_LIST_ID_PENDING_INVITES),
 						users: $(getBackendVar MAILCHIMP_LIST_ID_USERS)
 					}
+				},
+				twilioCredentials: {
+					authToken: $(getBackendVar TWILIO_AUTH_TOKEN),
+					from: $(getBackendVar TWILIO_FROM),
+					sid: $(getBackendVar TWILIO_SID)
 				}
 			};
 EOM
