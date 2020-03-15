@@ -322,7 +322,7 @@ read -r -d '' modules <<- EOM
 	prettier
 	primeng
 	promise-semaphore
-	protobufjs
+	protobufjs@6.8.8
 	protractor@^6
 	pulltorefreshjs
 	puppeteer

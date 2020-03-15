@@ -329,7 +329,7 @@
 		"prettier": "^1.19.1",
 		"primeng": "^9.0.0",
 		"promise-semaphore": "^0.2.8",
-		"protobufjs": "^6.8.9",
+		"protobufjs": "6.8.8",
 		"protractor": "^6",
 		"pulltorefreshjs": "^0.1.20",
 		"puppeteer": "^2.1.1",
