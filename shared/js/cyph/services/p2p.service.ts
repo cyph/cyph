@@ -222,6 +222,8 @@ export class P2PService extends BaseProvider {
 		await this.dialogService.alert({
 			content: this.isGroup ?
 				this.stringsService.p2pDisabledGroup :
+			this.envService.isCordovaMobile && this.envService.isIOS ?
+				this.stringsService.p2pDisabledLocalIOS :
 				this.stringsService.p2pDisabled,
 			title: this.stringsService.p2pTitle
 		});
