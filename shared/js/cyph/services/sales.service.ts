@@ -15,7 +15,9 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class SalesService extends BaseProvider {
 	/** Controls whether /register upsell banner is enabled. */
-	public readonly registerUpsellBanner = new BehaviorSubject<boolean>(true);
+	public readonly registerUpsellBanner = new BehaviorSubject<boolean>(
+		!this.envService.isTelehealth
+	);
 
 	/** Controls whether upsell banner is enabled. */
 	public readonly upsellBanner = new ReplaySubject<boolean>();
@@ -98,6 +100,7 @@ export class SalesService extends BaseProvider {
 			]).subscribe(([disableUpsellBanner, plan]) => {
 				const upsellBanner =
 					!disableUpsellBanner.value &&
+					!this.envService.isTelehealth &&
 					!this.configService.planConfig[plan].lifetime &&
 					!this.configService.planConfig[plan].telehealth &&
 					/* TODO: Set up In-App Purchase API and re-enable this */
