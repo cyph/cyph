@@ -379,12 +379,12 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		data.toSMS &&
 			sendSMS(
 				data.toSMS,
-				`Cyph appointment with @${inviterUsername} is scheduled for ${new Date(
-					data.eventDetails.startTime
-				).toString()} (${Math.floor(
+				`Cyph appointment with @${inviterUsername} is scheduled for ${Math.floor(
 					(data.eventDetails.endTime - data.eventDetails.startTime) /
 						60000
-				)} minutes)`
+				)} minutes at ${new Date(
+					data.eventDetails.startTime
+				).toString()}`
 			).then(async () =>
 				sendSMS(
 					data.toSMS,
