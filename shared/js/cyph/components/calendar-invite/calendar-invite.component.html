@@ -439,30 +439,32 @@
 			<br />
 			<br />
 
-			<mat-form-field
-				fxFlex
-				*ngIf="(isDisabledWrapper | await) === false"
-			>
-				<textarea
-					matInput
-					[matTextareaAutosize]="true"
-					[matAutosizeMinRows]="4"
-					name="notes"
-					[ngModel]="value?.description || ''"
-					(ngModelChange)="
-						(value || {description: ''}).description = $event;
-						value && valueChange(value)
-					"
-					[placeholder]="stringsService.messageTitle"
-				></textarea>
-			</mat-form-field>
+			<ng-container *ngIf="false">
+				<mat-form-field
+					fxFlex
+					*ngIf="(isDisabledWrapper | await) === false"
+				>
+					<textarea
+						matInput
+						[matTextareaAutosize]="true"
+						[matAutosizeMinRows]="4"
+						name="notes"
+						[ngModel]="value?.description || ''"
+						(ngModelChange)="
+							(value || {description: ''}).description = $event;
+							value && valueChange(value)
+						"
+						[placeholder]="stringsService.messageTitle"
+					></textarea>
+				</mat-form-field>
 
-			<h4 fxFlex *ngIf="isDisabledWrapper | await">
-				{{ stringsService.messageTitle }}
-			</h4>
-			<div fxFlex class="notes" *ngIf="isDisabledWrapper | await">
-				{{ value?.description || '' }}
-			</div>
+				<h4 fxFlex *ngIf="isDisabledWrapper | await">
+					{{ stringsService.messageTitle }}
+				</h4>
+				<div fxFlex class="notes" *ngIf="isDisabledWrapper | await">
+					{{ value?.description || '' }}
+				</div>
+			</ng-container>
 		</div>
 	</ng-container>
 </ng-container>
