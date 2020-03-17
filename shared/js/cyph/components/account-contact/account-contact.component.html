@@ -24,6 +24,7 @@
 					mat-icon-button
 					cyphTranslate
 					aria-label="Burner Menu"
+					[class.burner-menu-positioning-fix]="!envService.isMobileOS"
 					[matMenuTriggerFor]="burnerMenu"
 					(click)="$event.stopPropagation()"
 					*ngIf="p2pSupported && !envService.isTelehealthFull"
