@@ -5,6 +5,7 @@ const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
 const {cyphAdminKey, mailchimpCredentials} = require('./cyph-admin-vars');
 const {sendMail, sendMailInternal} = require('./email');
+const {from: cyphFromEmail} = require('./email-credentials');
 const {emailRegex} = require('./email-regex');
 const {renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
@@ -350,7 +351,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterUsername = await getUsername();
 	const {accountsURL} = namespaces[namespace];
 
-	if (!data.to && !data.toSMS) {
+	if (!data.to || (!data.to.email && !data.toSMS)) {
 		throw new Error('No recipient specified.');
 	}
 
@@ -361,8 +362,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	)}${inviterUsername}/${id}`;
 
 	await Promise.all([
-		data.to &&
-			data.to.email &&
+		data.to.email &&
 			sendMail(
 				database,
 				namespace,
@@ -395,11 +395,15 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			database,
 			namespace,
 			inviterUsername,
-			`Cyph Appointment with ${data.to.name} <${data.to.email}>`,
+			`Cyph Appointment with ${data.to.name} <${data.to.email ||
+				data.toSMS}>`,
 			undefined,
 			{
 				endTime: data.eventDetails.endTime,
-				inviterUsername: data.to,
+				inviterUsername: {
+					...data.to,
+					email: data.to.email || cyphFromEmail
+				},
 				location: `${accountsURL}account-burner/${data.callType ||
 					'chat'}/${id}`,
 				startTime: data.eventDetails.startTime
