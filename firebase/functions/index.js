@@ -362,6 +362,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 
 	await Promise.all([
 		data.to &&
+			data.to.email &&
 			sendMail(
 				database,
 				namespace,
