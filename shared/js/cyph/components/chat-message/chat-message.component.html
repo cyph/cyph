@@ -147,8 +147,8 @@
 							alt="User Avatar"
 							*ngIf="
 								accountService &&
-								((chatMessage | await)?.authorUser | await)
-									?.avatar !== undefined
+								(((chatMessage | await)?.authorUser | await)
+									?.avatar | await) !== undefined
 							"
 						/>
 						<mat-card-title fxFlex>

@@ -80,10 +80,10 @@ const {notify} = require('./notify')(database, messaging);
 
 const channelDisconnectTimeout = 20000;
 
-const getFullBurnerURL = (namespace, callType) => {
+const getFullBurnerURL = (namespace, callType, telehealth) => {
 	const {burnerURL} = namespaces[namespace];
 
-	return namespace === 'cyph_healthcare' ?
+	return namespace === 'cyph_ws' && telehealth ?
 		callType === 'audio' ?
 			'https://audio.cyph.healthcare/' :
 		callType === 'video' ?
@@ -358,11 +358,13 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 
 	const inviteeLink = `${getFullBurnerURL(
 		namespace,
-		data.callType
+		data.callType,
+		!!data.telehealth
 	)}${inviterUsername}/${id}`;
 
 	await Promise.all([
 		data.to &&
+			data.to.email &&
 			sendMail(
 				database,
 				namespace,

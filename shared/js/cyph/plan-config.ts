@@ -77,7 +77,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: true,
 		enablePasswords: false,
 		enableWallets: false,
-		planType: CyphPlanTypes.Premium,
+		planType: CyphPlanTypes.Telehealth,
 		rank: 2,
 		storageCapGB: 100,
 		telehealth: true,

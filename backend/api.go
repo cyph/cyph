@@ -1109,7 +1109,7 @@ func signUp(h HandlerArgs) (interface{}, int) {
 
 	sendMail(betaSignup.Email, "Thanks for your interest in Cyph!", "", ""+
 		"<p>Thank you! You've been added to the Cyph beta waitlist. We'll notify you when your invitation is ready.</p>"+
-		"<p>There's no need to respond to this email, but you certainly can if you have any questions, comments or concerns.</p>"+
+		"<p>If you have any questions, comments, or concerns, please email <a href=\"mailto:support@cyph.com\">support@cyph.com</a>.</p>"+
 		"")
 
 	return response, http.StatusOK

@@ -1018,13 +1018,13 @@ then
 
 	for firebaseProject in ${firebaseProjects} ; do
 		getBackendVar () {
-			grep "${1}" ~/.cyph/backend.vars.$(
+			{ grep "${1}" ~/.cyph/backend.vars || grep "${1}" ~/.cyph/backend.vars.$(
 				if [ "${firebaseProject}" == 'cyphme' ] ; then
 					echo prod
 				else
 					echo sandbox
 				fi
-			) |
+			); } |
 				sed "s|${1}: ||"
 		}
 
