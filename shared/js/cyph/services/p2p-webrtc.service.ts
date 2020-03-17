@@ -45,7 +45,8 @@ export class P2PWebRTCService extends BaseProvider
 	};
 
 	/** Indicates whether WebRTC is supported in the current environment. */
-	public static readonly isSupported: boolean = SimplePeer.WEBRTC_SUPPORT;
+	public static readonly isSupported: boolean =
+		SimplePeer.WEBRTC_SUPPORT && (env.debug || !env.isIOS);
 
 	/** @ignore */
 	private readonly _CHAT_SERVICE = resolvable<ChatService>();
