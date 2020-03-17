@@ -320,6 +320,7 @@ export class AccountComposeComponent extends BaseProvider
 								endTime: calendarInvite.endTime,
 								startTime: calendarInvite.startTime
 							},
+							telehealth: true,
 							to: {
 								email: this.accountService.fromEmail.value,
 								name: this.accountService.fromName.value
