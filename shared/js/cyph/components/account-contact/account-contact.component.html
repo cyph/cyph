@@ -19,6 +19,63 @@
 			<mat-card-title>
 				<strong cyphTranslate>New Burner Chat</strong>
 			</mat-card-title>
+			<div fxFlex fxLayoutAlign="end center">
+				<button
+					mat-icon-button
+					cyphTranslate
+					aria-label="Burner Menu"
+					[class.burner-menu-positioning-fix]="!envService.isMobileOS"
+					[matMenuTriggerFor]="burnerMenu"
+					(click)="$event.stopPropagation()"
+					*ngIf="p2pSupported && !envService.isTelehealthFull"
+				>
+					<mat-icon>more_vert</mat-icon>
+				</button>
+				<mat-menu #burnerMenu="matMenu">
+					<button
+						mat-menu-item
+						(click)="
+							!accountDatabaseService.currentUser.value
+								?.agseConfirmed ?
+								openWindow(envService.cyphImUrl) :
+							envService.isCordovaMobile ?
+								router.navigate(['account-burner', 'chat']) :
+								openWindow('#account-burner/chat')
+						"
+					>
+						<mat-icon>chat</mat-icon>
+						<span cyphTranslate>Chat</span>
+					</button>
+					<button
+						mat-menu-item
+						(click)="
+							!accountDatabaseService.currentUser.value
+								?.agseConfirmed ?
+								openWindow(envService.cyphAudioUrl) :
+							envService.isCordovaMobile ?
+								router.navigate(['account-burner', 'audio']) :
+								openWindow('#account-burner/audio')
+						"
+					>
+						<mat-icon>call</mat-icon>
+						<span cyphTranslate>Call</span>
+					</button>
+					<button
+						mat-menu-item
+						(click)="
+							!accountDatabaseService.currentUser.value
+								?.agseConfirmed ?
+								openWindow(envService.cyphVideoUrl) :
+							envService.isCordovaMobile ?
+								router.navigate(['account-burner', 'video']) :
+								openWindow('#account-burner/video')
+						"
+					>
+						<mat-icon>video_call</mat-icon>
+						<span cyphTranslate>Video Call</span>
+					</button>
+				</mat-menu>
+			</div>
 		</mat-card-header>
 	</mat-card>
 </ng-container>

@@ -90,51 +90,80 @@
 							></ng-container>
 						</mat-autocomplete>
 
-						<mat-form-field fxFlex>
-							<input
-								matInput
-								cyphTranslate
-								[matAutocomplete]="fromEmailAutocomplete"
-								[ngModel]="accountService.fromEmail | await"
-								(ngModelChange)="
-									accountService.fromEmail.next($event)
-								"
-								name="email"
-								type="email"
-								[pattern]="emailPattern"
-								placeholder="Email"
-								required
-							/>
-						</mat-form-field>
-						<mat-autocomplete
-							#fromEmailAutocomplete="matAutocomplete"
-						>
-							<ng-container
-								*ngTemplateOutlet="
-									emailContactOptions;
-									context: {
-										options: accountService.fromEmailOptions
-									}
-								"
-							></ng-container>
-						</mat-autocomplete>
+						<div fxFlex fxLayoutGap="8px">
+							<mat-form-field fxFlex>
+								<input
+									matInput
+									cyphTranslate
+									[matAutocomplete]="fromEmailAutocomplete"
+									[ngModel]="accountService.fromEmail | await"
+									(ngModelChange)="
+										accountService.fromEmail.next($event)
+									"
+									name="email"
+									type="email"
+									[pattern]="emailPattern"
+									placeholder="Email (optional)"
+								/>
+							</mat-form-field>
+							<mat-autocomplete
+								#fromEmailAutocomplete="matAutocomplete"
+							>
+								<ng-container
+									*ngTemplateOutlet="
+										emailContactOptions;
+										context: {
+											options:
+												accountService.fromEmailOptions
+										}
+									"
+								></ng-container>
+							</mat-autocomplete>
 
-						<ng-template #emailContactOptions let-options="options">
-							<mat-option
-								(click)="
-									accountService.fromEmail.next(option.email);
-									accountService.fromName.next(option.name)
-								"
-								*ngFor="
-									let option of options | await;
-									trackBy: trackBySelf
+							<ng-template
+								#emailContactOptions
+								let-options="options"
+							>
+								<mat-option
+									(click)="
+										accountService.fromEmail.next(
+											option.email
+										);
+										accountService.fromName.next(
+											option.name
+										)
+									"
+									*ngFor="
+										let option of options | await;
+										trackBy: trackBySelf
+									"
+								>
+									<span>{{ option.name }}</span>
+									&ngsp;
+									<small>&lt;{{ option.email }}&gt;</small>
+								</mat-option>
+							</ng-template>
+
+							<mat-form-field
+								fxFlex
+								*ngIf="
+									envService.isTelehealth &&
+									!envService.isTelehealthFull
 								"
 							>
-								<span>{{ option.name }}</span>
-								&ngsp;
-								<small>&lt;{{ option.email }}&gt;</small>
-							</mat-option>
-						</ng-template>
+								<input
+									matInput
+									cyphTranslate
+									[ngModel]="appointmentSMS | await"
+									(ngModelChange)="
+										appointmentSMS.next($event)
+									"
+									name="sms"
+									type="tel"
+									placeholder="Phone Number (optional)"
+								/>
+							</mat-form-field>
+						</div>
 
 						<mat-form-field
 							fxFlex
@@ -181,8 +210,9 @@
 						"
 						[disableSend]="
 							((recipients | await)?.size || 0) < 1 &&
-							(((accountService.fromEmail | await) || '').length <
-								1 ||
+							((((accountService.fromEmail | await) || '')
+								.length < 1 &&
+								((appointmentSMS | await) || '').length < 1) ||
 								((accountService.fromName | await) || '')
 									.length < 1)
 						"

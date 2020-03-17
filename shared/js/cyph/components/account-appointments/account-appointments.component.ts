@@ -124,6 +124,7 @@ export class AccountAppointmentsComponent extends BaseProvider
 						endTime: appointment.calendarInvite.endTime,
 						startTime: appointment.calendarInvite.startTime
 					},
+					telehealth: this.envService.isTelehealth,
 					to: friend || {
 						email: appointment.fromEmail,
 						name: appointment.fromName

@@ -60,6 +60,9 @@ export class AccountComposeComponent extends BaseProvider
 		{id: string; form: IForm} | undefined
 	>(undefined);
 
+	/** Phone number for sending appointment detail over SMS. */
+	public readonly appointmentSMS = new BehaviorSubject<string>('');
+
 	/** @see ChatMessageValue.Types */
 	public readonly chatMessageValueTypes = ChatMessageValue.Types;
 
@@ -248,7 +251,8 @@ export class AccountComposeComponent extends BaseProvider
 				recipients.length < 1 &&
 				!(
 					this.accountDatabaseService.currentUser.value &&
-					this.accountService.fromEmail.value &&
+					(this.accountService.fromEmail.value ||
+						this.appointmentSMS.value) &&
 					this.accountService.fromName.value
 				)
 			) {
@@ -320,10 +324,12 @@ export class AccountComposeComponent extends BaseProvider
 								endTime: calendarInvite.endTime,
 								startTime: calendarInvite.startTime
 							},
+							telehealth: true,
 							to: {
 								email: this.accountService.fromEmail.value,
 								name: this.accountService.fromName.value
-							}
+							},
+							toSMS: this.appointmentSMS.value
 						}) :
 						undefined
 				]);
@@ -426,6 +432,7 @@ export class AccountComposeComponent extends BaseProvider
 		this.accountChatService.chat.currentMessage.text = '';
 		this.accountService.fromEmail.next('');
 		this.accountService.fromName.next('');
+		this.appointmentSMS.next('');
 		this.messageSubject.next('');
 
 		this.accountChatService.updateChat();
