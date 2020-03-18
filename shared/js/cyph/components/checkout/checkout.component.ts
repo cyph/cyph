@@ -257,8 +257,7 @@ export class CheckoutComponent extends BaseProvider
 
 		(async () => {
 			if (!this.address.countryCode) {
-				this.address.countryCode = (await this.envService
-					.countries)[0]?.value;
+				this.address.countryCode = this.configService.defaultCountryCode;
 			}
 
 			while (!this.destroyed.value) {

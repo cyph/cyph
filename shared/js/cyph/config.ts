@@ -56,6 +56,9 @@ export class Config {
 	/** Length of server ID for a cyph. */
 	public readonly cyphIDLength: number = 7;
 
+	/** Indicates the default country code. */
+	public readonly defaultCountryCode: string = 'US';
+
 	/** Indicates the original language of any content to be translated. */
 	public readonly defaultLanguage: string = 'en';
 
