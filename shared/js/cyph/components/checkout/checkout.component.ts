@@ -163,7 +163,7 @@ export class CheckoutComponent extends BaseProvider
 	@Input() public userToken?: string;
 
 	/** User count options. */
-	public readonly userOptions: number[] = new Array(99)
+	public readonly userOptions: number[] = new Array(999)
 		.fill(0)
 		.map((_, i) => i + 2);
 
