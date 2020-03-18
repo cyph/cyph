@@ -122,13 +122,17 @@ func isValidCyphID(id string) bool {
 	return len(id) == config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
 
-func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) {
+func generateRandomID() string {
 	bytes := make([]byte, config.APIKeyByteLength)
 	if _, err := rand.Read(bytes); err != nil {
-		return "", nil, err
+		return ""
 	}
 
-	apiKey := hex.EncodeToString(bytes)
+	return hex.EncodeToString(bytes)
+}
+
+func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) {
+	apiKey := generateRandomID()
 	datastoreKey := datastoreKey(kind, apiKey)
 
 	it := h.Datastore.Run(

@@ -106,6 +106,9 @@ export class CheckoutComponent extends BaseProvider
 			undefined
 	);
 
+	/** Indicates whether, if per-user, a separate checkout should be performed per user. */
+	@Input() public individualSubscriptions: boolean = false;
+
 	/** Preexisting invite code to apply purchase to, if applicable. */
 	@Input() public inviteCode?: string;
 
@@ -223,6 +226,11 @@ export class CheckoutComponent extends BaseProvider
 			this.extraUserDiscount
 		) {
 			this.extraUserDiscount = parseFloat(this.extraUserDiscount);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.individualSubscriptions === 'string') {
+			this.individualSubscriptions =
+				<any> this.individualSubscriptions === 'true';
 		}
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.item === 'string' && this.item) {
@@ -502,15 +510,25 @@ export class CheckoutComponent extends BaseProvider
 					amount: Math.floor(
 						this.amount *
 							100 *
-							(this.perUser ? this.users.value : 1) -
+							(!this.individualSubscriptions && this.perUser ?
+								this.users.value :
+								1) -
 							this.extraUserDiscount *
 								100 *
-								(this.perUser ? this.users.value - 1 : 0)
+								(!this.individualSubscriptions && this.perUser ?
+									this.users.value - 1 :
+									0)
 					),
 					bitPayInvoiceID,
 					creditCard,
 					nonce: paymentMethod?.nonce,
 					subscription: this.subscriptionType !== undefined,
+					subscriptionCount:
+						this.subscriptionType === undefined ?
+							0 :
+						this.individualSubscriptions && this.perUser ?
+							this.users.value :
+							1,
 					url: location.toString(),
 					...this.name,
 					...(creditCard ? this.address : {}),

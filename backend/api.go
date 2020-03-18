@@ -165,10 +165,19 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusTeapot
 	}
 
+	subscriptionCountString := sanitize(h.Request.PostFormValue("subscriptionCount"))
+	subscriptionCount, err := strconv.ParseInt(subscriptionCountString, 10, 64)
+	if err != nil {
+		return err.Error(), http.StatusTeapot
+	}
+	if subscriptionCount < 0 || (subscription && subscriptionCount < 1) {
+		return "invalid subscription count", http.StatusTeapot
+	}
+
 	bt := braintreeInit(h)
 
-	braintreeID := ""
-	braintreeSubscriptionID := ""
+	braintreeIDs := []string{}
+	braintreeSubscriptionIDs := []string{}
 	txLog := ""
 	success := false
 
@@ -232,46 +241,51 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return errors.New("insufficient payment"), http.StatusTeapot
 		}
 
-		subscriptionRequest := &braintree.SubscriptionRequest{
-			PaymentMethodToken: paymentMethod.GetToken(),
-			PlanId:             planID,
-		}
+		for i := 0; i < int(subscriptionCount); i++ {
+			subscriptionRequest := &braintree.SubscriptionRequest{
+				Id:                 generateRandomID(),
+				PaymentMethodToken: paymentMethod.GetToken(),
+				PlanId:             planID,
+			}
 
-		if priceDelta > 0 {
-			subscriptionRequest.AddOns = &braintree.ModificationsRequest{
-				Add: []braintree.AddModificationRequest{
-					braintree.AddModificationRequest{
-						InheritedFromID: "default",
-						ModificationRequest: braintree.ModificationRequest{
-							Amount:       braintree.NewDecimal(priceDelta, 2),
-							NeverExpires: true,
+			if priceDelta > 0 {
+				subscriptionRequest.AddOns = &braintree.ModificationsRequest{
+					Add: []braintree.AddModificationRequest{
+						braintree.AddModificationRequest{
+							InheritedFromID: "default",
+							ModificationRequest: braintree.ModificationRequest{
+								Amount:       braintree.NewDecimal(priceDelta, 2),
+								NeverExpires: true,
+							},
 						},
 					},
-				},
+				}
+			}
+
+			tx, err := bt.Subscription().Create(h.Context, subscriptionRequest)
+
+			if err != nil {
+				return err.Error(), http.StatusTeapot
+			}
+
+			success = tx.Status == braintree.SubscriptionStatusActive
+			txLog += "Subscription " + string(tx.Status)
+
+			if success {
+				txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
+
+				braintreeIDs = append(braintreeIDs, braintreeCustomer.Id)
+				braintreeSubscriptionIDs = append(braintreeSubscriptionIDs, tx.Id)
 			}
 		}
 
-		tx, err := bt.Subscription().Create(h.Context, subscriptionRequest)
-
-		if err != nil {
-			return err.Error(), http.StatusTeapot
-		}
-
-		success = tx.Status == braintree.SubscriptionStatusActive
-		txLog += "Subscription " + string(tx.Status)
-
 		if success {
-			txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
-
-			braintreeID = braintreeCustomer.Id
-			braintreeSubscriptionID = tx.Id
-
 			_, err := h.Datastore.Put(
 				h.Context,
 				customerKey,
 				&Customer{
 					APIKey:      apiKey,
-					BraintreeID: braintreeCustomer.Id,
+					BraintreeID: braintreeIDs[0],
 					Company:     company,
 					Email:       email,
 					Name:        name,
@@ -410,6 +424,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		"\nAmount: " + amountString +
 		"\nInvite Code: " + inviteCode +
 		"\nSubscription: " + subscriptionString +
+		"\nSubscription count: " + subscriptionCountString +
 		"\nCompany: " + company +
 		"\nName: " + name +
 		"\nEmail: " + email +
@@ -419,27 +434,37 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if success && hasPlan && plan.AccountsPlan != "" {
-		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, username, true)
+		welcomeLetter := ""
 
-		inviteCode = _inviteCode
+		for i := 0; i < len(braintreeIDs); i++ {
+			braintreeID := braintreeIDs[i]
+			braintreeSubscriptionID := braintreeSubscriptionIDs[i]
 
-		if err != nil {
-			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
-				"Nonce: " + nonce +
-				"\nPlan ID: " + planID +
-				"\nAmount: " + amountString +
-				"\nInvite Code: " + inviteCode +
-				"\nSubscription: " + subscriptionString +
-				"\nCompany: " + company +
-				"\nName: " + name +
-				"\nEmail: " + email +
-				"\nAccounts Plan: " + plan.AccountsPlan +
-				"\n\n" + txLog +
-				""), "")
-		}
+			_inviteCode, oldBraintreeSubscriptionID, _welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, username, true)
 
-		if oldBraintreeSubscriptionID != "" {
-			bt.Subscription().Cancel(h.Context, oldBraintreeSubscriptionID)
+			welcomeLetter = _welcomeLetter
+
+			if err != nil {
+				sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
+					"Nonce: " + nonce +
+					"\nPlan ID: " + planID +
+					"\nAmount: " + amountString +
+					"\nInvite Code: " + _inviteCode +
+					"\nSubscription: " + subscriptionString +
+					"\nSubscription count: " + subscriptionCountString +
+					"\nCompany: " + company +
+					"\nName: " + name +
+					"\nEmail: " + email +
+					"\nAccounts Plan: " + plan.AccountsPlan +
+					"\nCustomer ID: " + braintreeID +
+					"\nSubscription ID: " + braintreeSubscriptionID +
+					"\n\n" + txLog +
+					""), "")
+			}
+
+			if oldBraintreeSubscriptionID != "" {
+				bt.Subscription().Cancel(h.Context, oldBraintreeSubscriptionID)
+			}
 		}
 
 		return welcomeLetter, http.StatusOK
