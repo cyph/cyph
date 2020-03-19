@@ -10,7 +10,6 @@ import {
 	AccountUserTypes,
 	BooleanMapProto,
 	CyphPlan,
-	CyphPlanTypes,
 	DataURIProto,
 	NeverProto,
 	Review
@@ -18,7 +17,6 @@ import {
 import {normalize} from '../util/formatting';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {AccountContactsService} from './account-contacts.service';
-import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {DatabaseService} from './database.service';
 import {EnvService} from './env.service';
@@ -246,21 +244,7 @@ export class AccountUserLookupService extends BaseProvider {
 			return;
 		}
 
-		const [userPlanTypeWhitelist, userTypeWhitelist] = await Promise.all([
-			this.userPlanTypeWhitelist(),
-			this.userTypeWhitelist()
-		]);
-
-		if (
-			userPlanTypeWhitelist !== undefined &&
-			userPlanTypeWhitelist.indexOf(
-				this.configService.planConfig[
-					(await userValue.cyphPlan.getValue()).plan
-				].planType
-			) < 0
-		) {
-			return;
-		}
+		const userTypeWhitelist = await this.userTypeWhitelist();
 
 		if (
 			userTypeWhitelist !== undefined &&
@@ -272,17 +256,6 @@ export class AccountUserLookupService extends BaseProvider {
 		}
 
 		return userValue;
-	}
-
-	/** If applicable, a whitelist of acceptable user plan types for this user to interact with. */
-	public async userPlanTypeWhitelist () : Promise<
-		CyphPlanTypes[] | undefined
-	> {
-		if (!this.envService.isTelehealth) {
-			return;
-		}
-
-		return [CyphPlanTypes.Telehealth];
 	}
 
 	/** If applicable, a whitelist of acceptable user types for this user to interact with. */
@@ -318,9 +291,6 @@ export class AccountUserLookupService extends BaseProvider {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
-
-		/** @ignore */
-		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,
