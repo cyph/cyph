@@ -3,7 +3,17 @@
 {{#purchased}}
 Welcome to Cyph; thanks for signing up! Your support means a lot to us, and helps ensure that we're able to continue our work to protect user privacy.
 
+{{#inviteCode}}
 [**Click here to set up your account.**]({{accountsURL}}register/{{inviteCode}})
+{{/inviteCode}}
+
+{{^inviteCode}}
+Here are your invite codes:
+
+{{#inviteCodes}}
+[{{accountsURLShort}}register/{{.}}]({{accountsURL}}register/{{.}})  
+{{/inviteCodes}}
+{{/inviteCode}}
 {{/purchased}}
 
 

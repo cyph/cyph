@@ -139,6 +139,7 @@ const getName = async (namespace, username) => {
 
 const getInviteTemplateData = ({
 	inviteCode,
+	inviteCodes,
 	inviterName,
 	name,
 	oldPlan,
@@ -148,7 +149,6 @@ const getInviteTemplateData = ({
 }) => {
 	const planConfig =
 		config.planConfig[plan] || config.planConfig[CyphPlans.Free];
-
 	const oldPlanConfig =
 		oldPlan !== undefined ? config.planConfig[oldPlan] : undefined;
 	const isUpgrade =
@@ -165,6 +165,7 @@ const getInviteTemplateData = ({
 			}),
 		fromApp,
 		inviteCode,
+		inviteCodes,
 		inviterName,
 		name,
 		planAnnualTelehealth: plan === CyphPlans.AnnualTelehealth,
@@ -513,9 +514,13 @@ exports.downgradeAccount = onCall(async (data, namespace, getUsername) => {
 
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
-	const braintreeID = validateInput(req.body.braintreeID, undefined, true);
-	const braintreeSubscriptionID = validateInput(
-		req.body.braintreeSubscriptionID,
+	const braintreeIDs = validateInput(
+		(req.body.braintreeIDs || '').split('\n'),
+		undefined,
+		true
+	);
+	const braintreeSubscriptionIDs = validateInput(
+		(req.body.braintreeSubscriptionIDs || '').split('\n'),
 		undefined,
 		true
 	);
@@ -534,6 +539,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const userToken = validateInput(req.body.userToken, undefined, true);
 
 	if (username || userToken) {
+		const braintreeID = braintreeIDs[0];
+		const braintreeSubscriptionID = braintreeSubscriptionIDs[0];
+
 		if (!username) {
 			username = (await tokens.open(
 				userToken,
@@ -632,6 +640,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	}
 
 	if (preexistingInviteCode) {
+		const braintreeID = braintreeIDs[0];
+		const braintreeSubscriptionID = braintreeSubscriptionIDs[0];
+
 		const preexistingInviteCodeRef = database.ref(
 			`${namespace}/inviteCodes/${preexistingInviteCode}`
 		);
@@ -656,8 +667,6 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		};
 	}
 
-	const inviteCode = readableID(15);
-
 	/* Gift free users one-month premium trials */
 	let planTrialEnd = undefined;
 	if (plan === CyphPlans.Free) {
@@ -667,37 +676,55 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 
 	const {firstName, lastName} = splitName(name);
 
-	await Promise.all([
-		database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
-			inviterUsername: '',
-			plan,
-			...(braintreeID ? {braintreeID} : {}),
-			...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {}),
-			...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
-		}),
-		mailchimp &&
-		mailchimpCredentials &&
-		mailchimpCredentials.listIDs &&
-		mailchimpCredentials.listIDs.pendingInvites ?
-			addToMailingList(
-				mailchimpCredentials.listIDs.pendingInvites,
-				email,
-				{
-					FNAME: firstName,
-					ICODE: inviteCode,
-					LNAME: lastName,
-					PLAN: CyphPlans[plan]
-				}
-			).then(async mailingListID =>
-				database
-					.ref(`${namespace}/pendingInvites/${inviteCode}`)
-					.set(mailingListID)
-			) :
-			undefined
-	]);
+	const inviteCodes = await Promise.all(
+		new Array(
+			Math.min(braintreeIDs.length, braintreeSubscriptionIDs.length)
+		)
+			.fill(0)
+			.map((_, i) => [braintreeIDs[i], braintreeSubscriptionIDs[i]])
+			.map(async ([braintreeID, braintreeSubscriptionID], i) => {
+				const inviteCode = readableID(15);
+
+				await Promise.all([
+					database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
+						inviterUsername: '',
+						plan,
+						...(braintreeID ? {braintreeID} : {}),
+						...(braintreeSubscriptionID ?
+							{braintreeSubscriptionID} :
+							{}),
+						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
+					}),
+					i === 0 &&
+					mailchimp &&
+					mailchimpCredentials &&
+					mailchimpCredentials.listIDs &&
+					mailchimpCredentials.listIDs.pendingInvites ?
+						addToMailingList(
+							mailchimpCredentials.listIDs.pendingInvites,
+							email,
+							{
+								FNAME: firstName,
+								ICODE: inviteCode,
+								LNAME: lastName,
+								PLAN: CyphPlans[plan]
+							}
+						).then(async mailingListID =>
+							database
+								.ref(
+									`${namespace}/pendingInvites/${inviteCode}`
+								)
+								.set(mailingListID)
+						) :
+						undefined
+				]);
+
+				return inviteCode;
+			})
+	);
 
 	return {
-		inviteCode,
+		inviteCode: inviteCodes[0],
 		welcomeLetter: await sendMailInternal(
 			email,
 			(purchased ?
@@ -710,7 +737,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 					` (${titleize(CyphPlans[plan])})`),
 			{
 				data: getInviteTemplateData({
-					inviteCode,
+					...(inviteCodes.length > 1 ?
+						{inviteCodes} :
+						{inviteCode: inviteCodes[0]}),
 					name,
 					plan,
 					purchased

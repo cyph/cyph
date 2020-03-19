@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/datastore"
@@ -434,37 +435,30 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if success && hasPlan && plan.AccountsPlan != "" {
-		welcomeLetter := ""
+		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, braintreeIDs, braintreeSubscriptionIDs, inviteCode, username, true)
 
-		for i := 0; i < len(braintreeIDs); i++ {
-			braintreeID := braintreeIDs[i]
-			braintreeSubscriptionID := braintreeSubscriptionIDs[i]
+		inviteCode := _inviteCode
 
-			_inviteCode, oldBraintreeSubscriptionID, _welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, username, true)
+		if err != nil {
+			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
+				"Nonce: " + nonce +
+				"\nPlan ID: " + planID +
+				"\nAmount: " + amountString +
+				"\nInvite Code: " + inviteCode +
+				"\nSubscription: " + subscriptionString +
+				"\nSubscription count: " + subscriptionCountString +
+				"\nCompany: " + company +
+				"\nName: " + name +
+				"\nEmail: " + email +
+				"\nAccounts Plan: " + plan.AccountsPlan +
+				"\nCustomer IDs: " + strings.Join(braintreeIDs, ", ") +
+				"\nSubscription IDs: " + strings.Join(braintreeSubscriptionIDs, ", ") +
+				"\n\n" + txLog +
+				""), "")
+		}
 
-			welcomeLetter = _welcomeLetter
-
-			if err != nil {
-				sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
-					"Nonce: " + nonce +
-					"\nPlan ID: " + planID +
-					"\nAmount: " + amountString +
-					"\nInvite Code: " + _inviteCode +
-					"\nSubscription: " + subscriptionString +
-					"\nSubscription count: " + subscriptionCountString +
-					"\nCompany: " + company +
-					"\nName: " + name +
-					"\nEmail: " + email +
-					"\nAccounts Plan: " + plan.AccountsPlan +
-					"\nCustomer ID: " + braintreeID +
-					"\nSubscription ID: " + braintreeSubscriptionID +
-					"\n\n" + txLog +
-					""), "")
-			}
-
-			if oldBraintreeSubscriptionID != "" {
-				bt.Subscription().Cancel(h.Context, oldBraintreeSubscriptionID)
-			}
+		if oldBraintreeSubscriptionID != "" {
+			bt.Subscription().Cancel(h.Context, oldBraintreeSubscriptionID)
 		}
 
 		return welcomeLetter, http.StatusOK
@@ -1069,7 +1063,7 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 			break
 		}
 
-		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", "", "", "", false)
+		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", []string{""}, []string{""}, "", "", false)
 
 		if err != nil {
 			log.Printf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)
