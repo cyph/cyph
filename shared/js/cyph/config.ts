@@ -56,6 +56,9 @@ export class Config {
 	/** Length of server ID for a cyph. */
 	public readonly cyphIDLength: number = 7;
 
+	/** Indicates the default country code. */
+	public readonly defaultCountryCode: string = 'US';
+
 	/** Indicates the original language of any content to be translated. */
 	public readonly defaultLanguage: string = 'en';
 
@@ -95,6 +98,7 @@ export class Config {
 						amount?: number;
 						extraUserDiscount?: number;
 						id: number;
+						individualSubscriptions?: boolean;
 						name?: string;
 						perUser?: boolean;
 						subscriptionType?: SubscriptionTypes;
@@ -108,52 +112,84 @@ export class Config {
 			accounts: {
 				id: 8,
 				items: {
+					annualBusiness: {
+						amount: 168,
+						id: 9,
+						individualSubscriptions: true,
+						name: 'Business (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
 					annualPlatinum: {
 						amount: 324,
 						id: 5,
+						individualSubscriptions: true,
 						name: 'Platinum (Annual)',
+						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					annualPremium: {
 						amount: 108,
 						id: 1,
+						individualSubscriptions: true,
 						name: 'Premium (Annual)',
+						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					annualSupporter: {
 						amount: 36,
 						id: 7,
+						individualSubscriptions: true,
 						name: 'Supporter (Annual)',
+						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					annualTelehealth: {
 						amount: 420,
 						id: 3,
+						individualSubscriptions: true,
 						name: 'Telehealth (Annual)',
+						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
+					},
+					monthlyBusiness: {
+						amount: 20,
+						id: 8,
+						individualSubscriptions: true,
+						name: 'Business (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
 					},
 					monthlyPlatinum: {
 						amount: 48,
 						id: 4,
+						individualSubscriptions: true,
 						name: 'Platinum (Monthly)',
+						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					},
 					monthlyPremium: {
 						amount: 12,
 						id: 0,
+						individualSubscriptions: true,
 						name: 'Premium (Monthly)',
+						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					},
 					monthlySupporter: {
 						amount: 6,
 						id: 6,
+						individualSubscriptions: true,
 						name: 'Supporter (Monthly)',
+						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					monthlyTelehealth: {
 						amount: 50,
 						id: 2,
+						individualSubscriptions: true,
 						name: 'Telehealth (Monthly)',
+						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}
 				}

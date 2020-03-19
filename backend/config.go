@@ -419,6 +419,32 @@ var config = struct {
 			},
 			SessionCountLimit: -1,
 		},
+		"8-8": Plan{
+			AccountsPlan: "MonthlyBusiness",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"8-9": Plan{
+			AccountsPlan: "AnnualBusiness",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
 		"10-1": Plan{
 			AccountsPlan: "LifetimePlatinum",
 			Price:        10000,

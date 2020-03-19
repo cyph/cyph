@@ -307,6 +307,32 @@
 					</h3>
 				</a>
 
+				<!-- TODO: Replace cyph.healthcare with better solution -->
+				<a
+					mat-list-item
+					cyphTranslate
+					class="appointment-scheduler"
+					matTooltip="Appointment Scheduler"
+					[matTooltipDisabled]="menuExpanded | await"
+					matTooltipPosition="right"
+					href="https://cyph.healthcare"
+					*ngIf="
+						!envService.coBranded &&
+						!envService.isTelehealth &&
+						configService.planConfig[
+							(accountSettingsService.plan | await) ||
+								cyphPlans.Free
+						].telehealth
+					"
+				>
+					<mat-icon mat-list-icon>
+						schedule
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
+						Appointment Scheduler
+					</h3>
+				</a>
+
 				<a
 					mat-list-item
 					cyphTranslate
@@ -779,11 +805,7 @@
 				cyphTranslate
 				class="invite"
 				[matMenuTriggerFor]="inviteMenu"
-				[matTooltip]="
-					(envService.telehealthTheme | await) ?
-						stringsService.invitePatientTitle :
-						stringsService.inviteContactTitle
-				"
+				[matTooltip]="stringsService.inviteContactTitle"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
 				*ngIf="
@@ -805,11 +827,7 @@
 					person_add
 				</mat-icon>
 				<h3 matLine *ngIf="menuExpanded | await">
-					{{
-						(envService.telehealthTheme | await) ?
-							stringsService.invitePatientTitle :
-							stringsService.inviteContactTitle
-					}}
+					{{ stringsService.inviteContactTitle }}
 				</h3>
 			</a>
 			<mat-menu #inviteMenu="matMenu">

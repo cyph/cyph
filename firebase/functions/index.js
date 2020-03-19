@@ -5,6 +5,7 @@ const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
 const {cyphAdminKey, mailchimpCredentials} = require('./cyph-admin-vars');
 const {sendMail, sendMailInternal} = require('./email');
+const {from: cyphFromEmail} = require('./email-credentials');
 const {emailRegex} = require('./email-regex');
 const {renderTemplate} = require('./markdown-templating');
 const namespaces = require('./namespaces');
@@ -140,6 +141,7 @@ const getName = async (namespace, username) => {
 
 const getInviteTemplateData = ({
 	inviteCode,
+	inviteCodes,
 	inviterName,
 	name,
 	oldPlan,
@@ -149,7 +151,6 @@ const getInviteTemplateData = ({
 }) => {
 	const planConfig =
 		config.planConfig[plan] || config.planConfig[CyphPlans.Free];
-
 	const oldPlanConfig =
 		oldPlan !== undefined ? config.planConfig[oldPlan] : undefined;
 	const isUpgrade =
@@ -166,12 +167,15 @@ const getInviteTemplateData = ({
 			}),
 		fromApp,
 		inviteCode,
+		inviteCodes,
 		inviterName,
 		name,
+		planAnnualBusiness: plan === CyphPlans.AnnualBusiness,
 		planAnnualTelehealth: plan === CyphPlans.AnnualTelehealth,
 		planFoundersAndFriends:
 			planConfig.planType === CyphPlanTypes.FoundersAndFriends,
 		planFree: planConfig.planType === CyphPlanTypes.Free,
+		planMonthlyBusiness: plan === CyphPlans.MonthlyBusiness,
 		planMonthlyTelehealth: plan === CyphPlans.MonthlyTelehealth,
 		planPlatinum: planConfig.planType === CyphPlanTypes.Platinum,
 		planPremium: planConfig.planType === CyphPlanTypes.Premium,
@@ -352,7 +356,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterUsername = await getUsername();
 	const {accountsURL} = namespaces[namespace];
 
-	if (!data.to && !data.toSMS) {
+	if (!data.to || (!data.to.email && !data.toSMS)) {
 		throw new Error('No recipient specified.');
 	}
 
@@ -363,8 +367,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	)}${inviterUsername}/${id}`;
 
 	await Promise.all([
-		data.to &&
-			data.to.email &&
+		data.to.email &&
 			sendMail(
 				database,
 				namespace,
@@ -381,12 +384,12 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		data.toSMS &&
 			sendSMS(
 				data.toSMS,
-				`Cyph appointment with @${inviterUsername} is scheduled for ${new Date(
-					data.eventDetails.startTime
-				).toString()} (${Math.floor(
+				`Cyph appointment with @${inviterUsername} is scheduled for ${Math.floor(
 					(data.eventDetails.endTime - data.eventDetails.startTime) /
 						60000
-				)} minutes)`
+				)} minutes at ${new Date(
+					data.eventDetails.startTime
+				).toString()}`
 			).then(async () =>
 				sendSMS(
 					data.toSMS,
@@ -397,11 +400,15 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			database,
 			namespace,
 			inviterUsername,
-			`Cyph Appointment with ${data.to.name} <${data.to.email}>`,
+			`Cyph Appointment with ${data.to.name} <${data.to.email ||
+				data.toSMS}>`,
 			undefined,
 			{
 				endTime: data.eventDetails.endTime,
-				inviterUsername: data.to,
+				inviterUsername: {
+					...data.to,
+					email: data.to.email || cyphFromEmail
+				},
 				location: `${accountsURL}account-burner/${data.callType ||
 					'chat'}/${id}`,
 				startTime: data.eventDetails.startTime
@@ -511,9 +518,13 @@ exports.downgradeAccount = onCall(async (data, namespace, getUsername) => {
 
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
-	const braintreeID = validateInput(req.body.braintreeID, undefined, true);
-	const braintreeSubscriptionID = validateInput(
-		req.body.braintreeSubscriptionID,
+	const braintreeIDs = validateInput(
+		(req.body.braintreeIDs || '').split('\n'),
+		undefined,
+		true
+	);
+	const braintreeSubscriptionIDs = validateInput(
+		(req.body.braintreeSubscriptionIDs || '').split('\n'),
 		undefined,
 		true
 	);
@@ -532,6 +543,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const userToken = validateInput(req.body.userToken, undefined, true);
 
 	if (username || userToken) {
+		const braintreeID = braintreeIDs[0];
+		const braintreeSubscriptionID = braintreeSubscriptionIDs[0];
+
 		if (!username) {
 			username = (await tokens.open(
 				userToken,
@@ -630,6 +644,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	}
 
 	if (preexistingInviteCode) {
+		const braintreeID = braintreeIDs[0];
+		const braintreeSubscriptionID = braintreeSubscriptionIDs[0];
+
 		const preexistingInviteCodeRef = database.ref(
 			`${namespace}/inviteCodes/${preexistingInviteCode}`
 		);
@@ -654,8 +671,6 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		};
 	}
 
-	const inviteCode = readableID(15);
-
 	/* Gift free users one-month premium trials */
 	let planTrialEnd = undefined;
 	if (plan === CyphPlans.Free) {
@@ -665,37 +680,55 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 
 	const {firstName, lastName} = splitName(name);
 
-	await Promise.all([
-		database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
-			inviterUsername: '',
-			plan,
-			...(braintreeID ? {braintreeID} : {}),
-			...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {}),
-			...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
-		}),
-		mailchimp &&
-		mailchimpCredentials &&
-		mailchimpCredentials.listIDs &&
-		mailchimpCredentials.listIDs.pendingInvites ?
-			addToMailingList(
-				mailchimpCredentials.listIDs.pendingInvites,
-				email,
-				{
-					FNAME: firstName,
-					ICODE: inviteCode,
-					LNAME: lastName,
-					PLAN: CyphPlans[plan]
-				}
-			).then(async mailingListID =>
-				database
-					.ref(`${namespace}/pendingInvites/${inviteCode}`)
-					.set(mailingListID)
-			) :
-			undefined
-	]);
+	const inviteCodes = await Promise.all(
+		new Array(
+			Math.min(braintreeIDs.length, braintreeSubscriptionIDs.length)
+		)
+			.fill(0)
+			.map((_, i) => [braintreeIDs[i], braintreeSubscriptionIDs[i]])
+			.map(async ([braintreeID, braintreeSubscriptionID], i) => {
+				const inviteCode = readableID(15);
+
+				await Promise.all([
+					database.ref(`${namespace}/inviteCodes/${inviteCode}`).set({
+						inviterUsername: '',
+						plan,
+						...(braintreeID ? {braintreeID} : {}),
+						...(braintreeSubscriptionID ?
+							{braintreeSubscriptionID} :
+							{}),
+						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
+					}),
+					i === 0 &&
+					mailchimp &&
+					mailchimpCredentials &&
+					mailchimpCredentials.listIDs &&
+					mailchimpCredentials.listIDs.pendingInvites ?
+						addToMailingList(
+							mailchimpCredentials.listIDs.pendingInvites,
+							email,
+							{
+								FNAME: firstName,
+								ICODE: inviteCode,
+								LNAME: lastName,
+								PLAN: CyphPlans[plan]
+							}
+						).then(async mailingListID =>
+							database
+								.ref(
+									`${namespace}/pendingInvites/${inviteCode}`
+								)
+								.set(mailingListID)
+						) :
+						undefined
+				]);
+
+				return inviteCode;
+			})
+	);
 
 	return {
-		inviteCode,
+		inviteCode: inviteCodes[0],
 		welcomeLetter: await sendMailInternal(
 			email,
 			(purchased ?
@@ -708,7 +741,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 					` (${titleize(CyphPlans[plan])})`),
 			{
 				data: getInviteTemplateData({
-					inviteCode,
+					...(inviteCodes.length > 1 ?
+						{inviteCodes} :
+						{inviteCode: inviteCodes[0]}),
 					name,
 					plan,
 					purchased
