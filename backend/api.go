@@ -180,7 +180,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	braintreeIDs := []string{}
 	braintreeSubscriptionIDs := []string{}
 	txLog := ""
-	success := false
+	success := true
 
 	name := firstName
 	if lastName != "" {
@@ -242,41 +242,83 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return errors.New("insufficient payment"), http.StatusTeapot
 		}
 
-		for i := 0; i < int(subscriptionCount); i++ {
-			subscriptionRequest := &braintree.SubscriptionRequest{
-				Id:                 generateRandomID(),
-				PaymentMethodToken: paymentMethod.GetToken(),
-				PlanId:             planID,
-			}
+		txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
 
-			if priceDelta > 0 {
-				subscriptionRequest.AddOns = &braintree.ModificationsRequest{
-					Add: []braintree.AddModificationRequest{
-						braintree.AddModificationRequest{
-							InheritedFromID: "default",
-							ModificationRequest: braintree.ModificationRequest{
-								Amount:       braintree.NewDecimal(priceDelta, 2),
-								NeverExpires: true,
+		type SubscriptionResult struct {
+			BraintreeID             string
+			BraintreeSubscriptionID string
+			Error                   error
+			Log                     string
+			SuccessStatus           bool
+		}
+
+		subscriptionResults := make(chan SubscriptionResult, subscriptionCount)
+
+		for i := 0; i < int(subscriptionCount); i++ {
+			go func() {
+				subscriptionRequest := &braintree.SubscriptionRequest{
+					Id:                 generateRandomID(),
+					PaymentMethodToken: paymentMethod.GetToken(),
+					PlanId:             planID,
+				}
+
+				if priceDelta > 0 {
+					subscriptionRequest.AddOns = &braintree.ModificationsRequest{
+						Add: []braintree.AddModificationRequest{
+							braintree.AddModificationRequest{
+								InheritedFromID: "default",
+								ModificationRequest: braintree.ModificationRequest{
+									Amount:       braintree.NewDecimal(priceDelta, 2),
+									NeverExpires: true,
+								},
 							},
 						},
-					},
+					}
 				}
+
+				tx, err := bt.Subscription().Create(h.Context, subscriptionRequest)
+
+				if err != nil {
+					subscriptionResults <- SubscriptionResult{Error: err}
+					return
+				}
+
+				successStatus := tx.Status == braintree.SubscriptionStatusActive
+				log := "\nSubscription " + string(tx.Status)
+
+				if successStatus {
+					subscriptionResults <- SubscriptionResult{
+						BraintreeID:             braintreeCustomer.Id,
+						BraintreeSubscriptionID: tx.Id,
+						Log:                     log,
+						SuccessStatus:           true,
+					}
+				} else {
+					subscriptionResults <- SubscriptionResult{
+						Log:           log,
+						SuccessStatus: false,
+					}
+				}
+			}()
+		}
+
+		for i := 0; i < int(subscriptionCount); i++ {
+			subscriptionResult := <-subscriptionResults
+
+			if subscriptionResult.Error != nil {
+				return subscriptionResult.Error.Error(), http.StatusTeapot
 			}
 
-			tx, err := bt.Subscription().Create(h.Context, subscriptionRequest)
+			txLog += subscriptionResult.Log
 
-			if err != nil {
-				return err.Error(), http.StatusTeapot
-			}
-
-			success = tx.Status == braintree.SubscriptionStatusActive
-			txLog += "Subscription " + string(tx.Status)
-
-			if success {
-				txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
-
-				braintreeIDs = append(braintreeIDs, braintreeCustomer.Id)
-				braintreeSubscriptionIDs = append(braintreeSubscriptionIDs, tx.Id)
+			if subscriptionResult.SuccessStatus {
+				braintreeIDs = append(braintreeIDs, subscriptionResult.BraintreeID)
+				braintreeSubscriptionIDs = append(
+					braintreeSubscriptionIDs,
+					subscriptionResult.BraintreeSubscriptionID,
+				)
+			} else {
+				success = false
 			}
 		}
 
