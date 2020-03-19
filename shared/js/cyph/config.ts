@@ -112,6 +112,14 @@ export class Config {
 			accounts: {
 				id: 8,
 				items: {
+					annualBusiness: {
+						amount: 168,
+						id: 9,
+						individualSubscriptions: true,
+						name: 'Business (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
 					annualPlatinum: {
 						amount: 324,
 						id: 5,
@@ -143,6 +151,14 @@ export class Config {
 						name: 'Telehealth (Annual)',
 						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
+					},
+					monthlyBusiness: {
+						amount: 20,
+						id: 8,
+						individualSubscriptions: true,
+						name: 'Business (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
 					},
 					monthlyPlatinum: {
 						amount: 48,

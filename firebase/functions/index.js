@@ -168,10 +168,12 @@ const getInviteTemplateData = ({
 		inviteCodes,
 		inviterName,
 		name,
+		planAnnualBusiness: plan === CyphPlans.AnnualBusiness,
 		planAnnualTelehealth: plan === CyphPlans.AnnualTelehealth,
 		planFoundersAndFriends:
 			planConfig.planType === CyphPlanTypes.FoundersAndFriends,
 		planFree: planConfig.planType === CyphPlanTypes.Free,
+		planMonthlyBusiness: plan === CyphPlans.MonthlyBusiness,
 		planMonthlyTelehealth: plan === CyphPlans.MonthlyTelehealth,
 		planPlatinum: planConfig.planType === CyphPlanTypes.Platinum,
 		planPremium: planConfig.planType === CyphPlanTypes.Premium,

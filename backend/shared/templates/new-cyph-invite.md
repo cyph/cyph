@@ -88,6 +88,24 @@ Congratulations on securing your Cyph account invite!
 
 ---
 {{/planSupporter}}
+{{#planAnnualBusiness}}
+|||
+| ------------ | :--------------------: |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Business (Annual)**     |
+|              | Business (Monthly)   |
+|              | Free                   |
+
+---
+{{/planAnnualBusiness}}
+{{#planMonthlyBusiness}}
+|||
+| ------------ | :--------------------: |
+|              | Business (Annual)    |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Business (Monthly)**    |
+|              | Free                   |
+
+---
+{{/planMonthlyBusiness}}
 {{#planAnnualTelehealth}}
 |||
 | ------------ | :--------------------: |
