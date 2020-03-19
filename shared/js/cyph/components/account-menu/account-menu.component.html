@@ -777,11 +777,7 @@
 				cyphTranslate
 				class="invite"
 				[matMenuTriggerFor]="inviteMenu"
-				[matTooltip]="
-					(envService.telehealthTheme | await) ?
-						stringsService.invitePatientTitle :
-						stringsService.inviteContactTitle
-				"
+				[matTooltip]="stringsService.inviteContactTitle"
 				[matTooltipDisabled]="menuExpanded | await"
 				matTooltipPosition="right"
 				*ngIf="
@@ -803,11 +799,7 @@
 					person_add
 				</mat-icon>
 				<h3 matLine *ngIf="menuExpanded | await">
-					{{
-						(envService.telehealthTheme | await) ?
-							stringsService.invitePatientTitle :
-							stringsService.inviteContactTitle
-					}}
+					{{ stringsService.inviteContactTitle }}
 				</h3>
 			</a>
 			<mat-menu #inviteMenu="matMenu">
