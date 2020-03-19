@@ -9,12 +9,13 @@
 	<body>
 		<script>
 			self.createCheckout = ({
-				amount = 10,
-				category = 9,
+				amount = 12,
+				category = 8,
+				individualSubscriptions = true,
 				item = 0,
 				itemName = 'Monthly Premium',
 				noSpinnerEnd = false,
-				perUser = false,
+				perUser = true,
 				subscriptionType = 1
 			} = {}) => {
 				if (subscriptionType < 0) {
@@ -25,6 +26,10 @@
 
 				checkout.setAttribute('amount', amount);
 				checkout.setAttribute('category', category);
+				checkout.setAttribute(
+					'individual-subscriptions',
+					individualSubscriptions
+				);
 				checkout.setAttribute('item', item);
 				checkout.setAttribute('item-name', itemName);
 				checkout.setAttribute('no-spinner-end', noSpinnerEnd);

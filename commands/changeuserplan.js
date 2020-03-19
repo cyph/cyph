@@ -130,6 +130,7 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 					...planConfig,
 					name,
 					oldPlan: titleize(CyphPlans[oldPlan]),
+					planAnnualBusiness: cyphPlan === CyphPlans.AnnualBusiness,
 					planAnnualTelehealth:
 						cyphPlan === CyphPlans.AnnualTelehealth,
 					planChange: true,
@@ -138,6 +139,7 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 						planConfig.planType ===
 						CyphPlanTypes.FoundersAndFriends,
 					planFree: planConfig.planType === CyphPlanTypes.Free,
+					planMonthlyBusiness: cyphPlan === CyphPlans.MonthlyBusiness,
 					planMonthlyTelehealth:
 						cyphPlan === CyphPlans.MonthlyTelehealth,
 					planPlatinum:

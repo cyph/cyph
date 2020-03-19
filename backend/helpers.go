@@ -122,13 +122,17 @@ func isValidCyphID(id string) bool {
 	return len(id) == config.AllowedCyphIDLength && config.AllowedCyphIDs.MatchString(id)
 }
 
-func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) {
+func generateRandomID() string {
 	bytes := make([]byte, config.APIKeyByteLength)
 	if _, err := rand.Read(bytes); err != nil {
-		return "", nil, err
+		return ""
 	}
 
-	apiKey := hex.EncodeToString(bytes)
+	return hex.EncodeToString(bytes)
+}
+
+func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) {
+	apiKey := generateRandomID()
 	datastoreKey := datastoreKey(kind, apiKey)
 
 	it := h.Datastore.Run(
@@ -284,17 +288,17 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func generateInvite(email, name, plan, braintreeID, braintreeSubscriptionID, inviteCode, username string, purchased bool) (string, string, string, error) {
+func generateInvite(email, name, plan string, braintreeIDs, braintreeSubscriptionIDs []string, inviteCode, username string, purchased bool) (string, string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
-		"braintreeID":             braintreeID,
-		"braintreeSubscriptionID": braintreeSubscriptionID,
-		"email":                   email,
-		"inviteCode":              inviteCode,
-		"name":                    name,
-		"namespace":               "cyph.ws",
-		"plan":                    plan,
-		"purchased":               purchased,
-		"username":                username,
+		"braintreeIDs":             strings.Join(braintreeIDs, "\n"),
+		"braintreeSubscriptionIDs": strings.Join(braintreeSubscriptionIDs, "\n"),
+		"email":                    email,
+		"inviteCode":               inviteCode,
+		"name":                     name,
+		"namespace":                "cyph.ws",
+		"plan":                     plan,
+		"purchased":                purchased,
+		"username":                 username,
 	})
 
 	client := &http.Client{}

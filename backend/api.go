@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/datastore"
@@ -165,12 +166,21 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return err.Error(), http.StatusTeapot
 	}
 
+	subscriptionCountString := sanitize(h.Request.PostFormValue("subscriptionCount"))
+	subscriptionCount, err := strconv.ParseInt(subscriptionCountString, 10, 64)
+	if err != nil {
+		return err.Error(), http.StatusTeapot
+	}
+	if subscriptionCount < 0 || (subscription && subscriptionCount < 1) {
+		return "invalid subscription count", http.StatusTeapot
+	}
+
 	bt := braintreeInit(h)
 
-	braintreeID := ""
-	braintreeSubscriptionID := ""
+	braintreeIDs := []string{}
+	braintreeSubscriptionIDs := []string{}
 	txLog := ""
-	success := false
+	success := true
 
 	name := firstName
 	if lastName != "" {
@@ -232,46 +242,93 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return errors.New("insufficient payment"), http.StatusTeapot
 		}
 
-		subscriptionRequest := &braintree.SubscriptionRequest{
-			PaymentMethodToken: paymentMethod.GetToken(),
-			PlanId:             planID,
+		txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
+
+		type SubscriptionResult struct {
+			BraintreeID             string
+			BraintreeSubscriptionID string
+			Error                   error
+			Log                     string
+			SuccessStatus           bool
 		}
 
-		if priceDelta > 0 {
-			subscriptionRequest.AddOns = &braintree.ModificationsRequest{
-				Add: []braintree.AddModificationRequest{
-					braintree.AddModificationRequest{
-						InheritedFromID: "default",
-						ModificationRequest: braintree.ModificationRequest{
-							Amount:       braintree.NewDecimal(priceDelta, 2),
-							NeverExpires: true,
+		subscriptionResults := make(chan SubscriptionResult, subscriptionCount)
+
+		for i := 0; i < int(subscriptionCount); i++ {
+			go func() {
+				subscriptionRequest := &braintree.SubscriptionRequest{
+					Id:                 generateRandomID(),
+					PaymentMethodToken: paymentMethod.GetToken(),
+					PlanId:             planID,
+				}
+
+				if priceDelta > 0 {
+					subscriptionRequest.AddOns = &braintree.ModificationsRequest{
+						Add: []braintree.AddModificationRequest{
+							braintree.AddModificationRequest{
+								InheritedFromID: "default",
+								ModificationRequest: braintree.ModificationRequest{
+									Amount:       braintree.NewDecimal(priceDelta, 2),
+									NeverExpires: true,
+								},
+							},
 						},
-					},
-				},
+					}
+				}
+
+				tx, err := bt.Subscription().Create(h.Context, subscriptionRequest)
+
+				if err != nil {
+					subscriptionResults <- SubscriptionResult{Error: err}
+					return
+				}
+
+				successStatus := tx.Status == braintree.SubscriptionStatusActive
+				log := "\nSubscription " + string(tx.Status)
+
+				if successStatus {
+					subscriptionResults <- SubscriptionResult{
+						BraintreeID:             braintreeCustomer.Id,
+						BraintreeSubscriptionID: tx.Id,
+						Log:                     log,
+						SuccessStatus:           true,
+					}
+				} else {
+					subscriptionResults <- SubscriptionResult{
+						Log:           log,
+						SuccessStatus: false,
+					}
+				}
+			}()
+		}
+
+		for i := 0; i < int(subscriptionCount); i++ {
+			subscriptionResult := <-subscriptionResults
+
+			if subscriptionResult.Error != nil {
+				return subscriptionResult.Error.Error(), http.StatusTeapot
+			}
+
+			txLog += subscriptionResult.Log
+
+			if subscriptionResult.SuccessStatus {
+				braintreeIDs = append(braintreeIDs, subscriptionResult.BraintreeID)
+				braintreeSubscriptionIDs = append(
+					braintreeSubscriptionIDs,
+					subscriptionResult.BraintreeSubscriptionID,
+				)
+			} else {
+				success = false
 			}
 		}
 
-		tx, err := bt.Subscription().Create(h.Context, subscriptionRequest)
-
-		if err != nil {
-			return err.Error(), http.StatusTeapot
-		}
-
-		success = tx.Status == braintree.SubscriptionStatusActive
-		txLog += "Subscription " + string(tx.Status)
-
 		if success {
-			txLog += "\nAPI key: " + apiKey + "\nCustomer ID: " + braintreeCustomer.Id
-
-			braintreeID = braintreeCustomer.Id
-			braintreeSubscriptionID = tx.Id
-
 			_, err := h.Datastore.Put(
 				h.Context,
 				customerKey,
 				&Customer{
 					APIKey:      apiKey,
-					BraintreeID: braintreeCustomer.Id,
+					BraintreeID: braintreeIDs[0],
 					Company:     company,
 					Email:       email,
 					Name:        name,
@@ -410,6 +467,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		"\nAmount: " + amountString +
 		"\nInvite Code: " + inviteCode +
 		"\nSubscription: " + subscriptionString +
+		"\nSubscription count: " + subscriptionCountString +
 		"\nCompany: " + company +
 		"\nName: " + name +
 		"\nEmail: " + email +
@@ -419,9 +477,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	plan, hasPlan := config.Plans[planID]
 
 	if success && hasPlan && plan.AccountsPlan != "" {
-		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, braintreeID, braintreeSubscriptionID, inviteCode, username, true)
+		_inviteCode, oldBraintreeSubscriptionID, welcomeLetter, err := generateInvite(email, name, plan.AccountsPlan, braintreeIDs, braintreeSubscriptionIDs, inviteCode, username, true)
 
-		inviteCode = _inviteCode
+		inviteCode := _inviteCode
 
 		if err != nil {
 			sendMail("hello+sales-invite-failure@cyph.com", "INVITE FAILED: "+subject, ("" +
@@ -430,10 +488,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				"\nAmount: " + amountString +
 				"\nInvite Code: " + inviteCode +
 				"\nSubscription: " + subscriptionString +
+				"\nSubscription count: " + subscriptionCountString +
 				"\nCompany: " + company +
 				"\nName: " + name +
 				"\nEmail: " + email +
 				"\nAccounts Plan: " + plan.AccountsPlan +
+				"\nCustomer IDs: " + strings.Join(braintreeIDs, ", ") +
+				"\nSubscription IDs: " + strings.Join(braintreeSubscriptionIDs, ", ") +
 				"\n\n" + txLog +
 				""), "")
 		}
@@ -1044,7 +1105,7 @@ func rollOutWaitlistInvites(h HandlerArgs) (interface{}, int) {
 			break
 		}
 
-		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", "", "", "", "", false)
+		_, _, _, err = generateInvite(betaSignup.Email, betaSignup.Name, "", []string{""}, []string{""}, "", "", false)
 
 		if err != nil {
 			log.Printf("Failed to invite %s in rollOutWaitlistInvites: %v", betaSignup.Email, err)

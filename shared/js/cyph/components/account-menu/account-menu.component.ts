@@ -7,12 +7,14 @@ import {
 	userPresenceSelectOptions
 } from '../../account';
 import {BaseProvider} from '../../base-provider';
-import {AccountUserTypes} from '../../proto';
+import {AccountUserTypes, CyphPlans} from '../../proto';
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountInviteService} from '../../services/account-invite.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
+import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
@@ -34,6 +36,9 @@ import {getDateTimeString} from '../../util/time';
 export class AccountMenuComponent extends BaseProvider {
 	/** @see AccountUserTypes */
 	public readonly accountUserTypes = AccountUserTypes;
+
+	/** @see CyphPlans */
+	public readonly cyphPlans = CyphPlans;
 
 	/** @see getDateTimeSting */
 	public readonly getDateTimeString = getDateTimeString;
@@ -125,6 +130,12 @@ export class AccountMenuComponent extends BaseProvider {
 
 		/** @see AccountInviteService */
 		public readonly accountInviteService: AccountInviteService,
+
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
+
+		/** @see ConfigService */
+		public readonly configService: ConfigService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

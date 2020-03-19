@@ -752,12 +752,14 @@ message CyphPlan {
 /** Cyph plans. */
 enum CyphPlans {
 	Free = 0;
+	AnnualBusiness = 12;
 	AnnualPlatinum = 8;
 	AnnualPremium = 2;
 	AnnualSupporter = 10;
 	AnnualTelehealth = 5;
 	FoundersAndFriends = 4;
 	LifetimePlatinum = 3;
+	MonthlyBusiness = 11;
 	MonthlyPlatinum = 7;
 	MonthlyPremium = 1;
 	MonthlySupporter = 9;

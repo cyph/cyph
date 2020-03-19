@@ -94,6 +94,12 @@ export const planConfig: Record<
 		lifetime: boolean;
 	}
 > = {
+	[CyphPlans.AnnualBusiness]: {
+		/* TODO: Make a separate Business plan type that supports appointments */
+		...planTypeConfig[CyphPlanTypes.Telehealth],
+		checkoutPath: 'accounts/annual-business',
+		lifetime: false
+	},
 	[CyphPlans.AnnualPlatinum]: {
 		...planTypeConfig[CyphPlanTypes.Platinum],
 		checkoutPath: 'accounts/annual-platinum',
@@ -125,6 +131,12 @@ export const planConfig: Record<
 	[CyphPlans.LifetimePlatinum]: {
 		...planTypeConfig[CyphPlanTypes.Platinum],
 		lifetime: true
+	},
+	[CyphPlans.MonthlyBusiness]: {
+		/* TODO: Make a separate Business plan type that supports appointments */
+		...planTypeConfig[CyphPlanTypes.Telehealth],
+		checkoutPath: 'accounts/monthly-business',
+		lifetime: false
 	},
 	[CyphPlans.MonthlyPlatinum]: {
 		...planTypeConfig[CyphPlanTypes.Platinum],

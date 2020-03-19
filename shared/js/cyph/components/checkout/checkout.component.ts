@@ -106,6 +106,9 @@ export class CheckoutComponent extends BaseProvider
 			undefined
 	);
 
+	/** Indicates whether, if per-user, a separate checkout should be performed per user. */
+	@Input() public individualSubscriptions: boolean = false;
+
 	/** Preexisting invite code to apply purchase to, if applicable. */
 	@Input() public inviteCode?: string;
 
@@ -160,7 +163,7 @@ export class CheckoutComponent extends BaseProvider
 	@Input() public userToken?: string;
 
 	/** User count options. */
-	public readonly userOptions: number[] = new Array(99)
+	public readonly userOptions: number[] = new Array(999)
 		.fill(0)
 		.map((_, i) => i + 2);
 
@@ -225,6 +228,11 @@ export class CheckoutComponent extends BaseProvider
 			this.extraUserDiscount = parseFloat(this.extraUserDiscount);
 		}
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.individualSubscriptions === 'string') {
+			this.individualSubscriptions =
+				<any> this.individualSubscriptions === 'true';
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.item === 'string' && this.item) {
 			this.item = parseFloat(this.item);
 		}
@@ -249,8 +257,7 @@ export class CheckoutComponent extends BaseProvider
 
 		(async () => {
 			if (!this.address.countryCode) {
-				this.address.countryCode = (await this.envService
-					.countries)[0]?.value;
+				this.address.countryCode = this.configService.defaultCountryCode;
 			}
 
 			while (!this.destroyed.value) {
@@ -502,15 +509,25 @@ export class CheckoutComponent extends BaseProvider
 					amount: Math.floor(
 						this.amount *
 							100 *
-							(this.perUser ? this.users.value : 1) -
+							(!this.individualSubscriptions && this.perUser ?
+								this.users.value :
+								1) -
 							this.extraUserDiscount *
 								100 *
-								(this.perUser ? this.users.value - 1 : 0)
+								(!this.individualSubscriptions && this.perUser ?
+									this.users.value - 1 :
+									0)
 					),
 					bitPayInvoiceID,
 					creditCard,
 					nonce: paymentMethod?.nonce,
 					subscription: this.subscriptionType !== undefined,
+					subscriptionCount:
+						this.subscriptionType === undefined ?
+							0 :
+						this.individualSubscriptions && this.perUser ?
+							this.users.value :
+							1,
 					url: location.toString(),
 					...this.name,
 					...(creditCard ? this.address : {}),

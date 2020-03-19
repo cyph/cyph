@@ -77,7 +77,8 @@ const sendMailInternal = async (
 
 		const data = {
 			...(typeof text.data === 'object' ? text.data : {}),
-			accountsURL
+			accountsURL,
+			accountsURLShort: accountsURL.split('://')[1]
 		};
 
 		text = text.template ?
@@ -96,6 +97,7 @@ const sendMailInternal = async (
 				dompurifyHtmlSanitizer.sanitize(
 					mustache.render(await template, {
 						accountsURL,
+						accountsURLShort: accountsURL.split('://')[1],
 						noUnsubscribe,
 						...(typeof text === 'object' ?
 							{html: text.html} :
