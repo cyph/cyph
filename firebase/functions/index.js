@@ -711,13 +711,15 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 								LNAME: lastName,
 								PLAN: CyphPlans[plan]
 							}
-						).then(async mailingListID =>
-							database
-								.ref(
-									`${namespace}/pendingInvites/${inviteCode}`
-								)
-								.set(mailingListID)
-						) :
+						)
+							.then(async mailingListID =>
+								database
+									.ref(
+										`${namespace}/pendingInvites/${inviteCode}`
+									)
+									.set(mailingListID)
+							)
+							.catch(() => {}) :
 						undefined
 				]);
 
