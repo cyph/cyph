@@ -44,22 +44,25 @@ const inviteUser = async (
 	const planConfig = config.planConfig[cyphPlan];
 
 	if (projectId === 'cyphme' && email) {
-		const {firstName, lastName} = splitName(name);
+		try {
+			const {firstName, lastName} = splitName(name);
 
-		const mailingListID = await addToMailingList(
-			mailingListIDs.pendingInvites,
-			email,
-			{
-				FNAME: firstName,
-				ICODE: inviteCode,
-				LNAME: lastName,
-				PLAN: CyphPlans[cyphPlan]
-			}
-		);
+			const mailingListID = await addToMailingList(
+				mailingListIDs.pendingInvites,
+				email,
+				{
+					FNAME: firstName,
+					ICODE: inviteCode,
+					LNAME: lastName,
+					PLAN: CyphPlans[cyphPlan]
+				}
+			);
 
-		await database
-			.ref(`${namespacePath}/pendingInvites/${inviteCode}`)
-			.set(mailingListID);
+			await database
+				.ref(`${namespacePath}/pendingInvites/${inviteCode}`)
+				.set(mailingListID);
+		}
+		catch {}
 	}
 
 	await sendMail(
