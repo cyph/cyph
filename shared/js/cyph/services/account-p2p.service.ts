@@ -153,11 +153,7 @@ export class AccountP2PService extends P2PService {
 	) : Promise<void> {
 		await this.accountSessionService.ready;
 
-		await super.init(
-			localVideo,
-			remoteVideo,
-			!!this.accountSessionService.group
-		);
+		await super.init(localVideo, remoteVideo);
 
 		this.subscriptions.push(
 			this.isActive.subscribe(isActive => {

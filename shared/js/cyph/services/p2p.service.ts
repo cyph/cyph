@@ -21,9 +21,6 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class P2PService extends BaseProvider {
-	/** @ignore */
-	private isGroup: boolean = false;
-
 	/** @see IP2PHandlers */
 	public readonly handlers: IP2PHandlers = {
 		acceptConfirm: async (callType, timeout, isAccepted = false) => {
@@ -220,11 +217,10 @@ export class P2PService extends BaseProvider {
 	/** Creates alert about P2P being unsupported. */
 	public async disabledAlert () : Promise<void> {
 		await this.dialogService.alert({
-			content: this.isGroup ?
-				this.stringsService.p2pDisabledGroup :
-			this.envService.isCordovaMobile && this.envService.isIOS ?
-				this.stringsService.p2pDisabledLocalIOS :
-				this.stringsService.p2pDisabled,
+			content:
+				this.envService.isCordovaMobile && this.envService.isIOS ?
+					this.stringsService.p2pDisabledLocalIOS :
+					this.stringsService.p2pDisabled,
 			title: this.stringsService.p2pTitle
 		});
 	}
@@ -232,21 +228,14 @@ export class P2PService extends BaseProvider {
 	/** Initializes service. */
 	public async init (
 		localVideo: () => JQuery,
-		remoteVideo: () => JQuery,
-		isGroup: boolean = false
+		remoteVideo: () => JQuery
 	) : Promise<void> {
-		this.isGroup = isGroup;
-
 		this.p2pWebRTCService.init(
 			this.chatService,
 			this.handlers,
 			localVideo,
 			remoteVideo
 		);
-
-		if (this.isGroup) {
-			return;
-		}
 
 		this.isEnabled.next(
 			P2PWebRTCService.isSupported &&
