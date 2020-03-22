@@ -16,6 +16,7 @@ export interface IP2PWebRTCService {
 	/** Incoming stream data. */
 	readonly incomingStreams: BehaviorSubject<
 		{
+			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
 			src?: string;
 			stream?: MediaStream;
@@ -25,6 +26,7 @@ export interface IP2PWebRTCService {
 	/** Active incoming video feeds. */
 	readonly incomingVideoStreams: Observable<
 		{
+			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
 			src: string;
 			stream: MediaStream;
