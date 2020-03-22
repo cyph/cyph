@@ -18,7 +18,13 @@ import '../standalone/translations';
 import {HttpClient} from '@angular/common/http';
 import {NgModule, NgZone} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Router, RouterModule, UrlSerializer} from '@angular/router';
+import {
+	PreloadAllModules,
+	Router,
+	RouterModule,
+	UrlSerializer
+} from '@angular/router';
+import {env} from '../cyph/env';
 import {CyphAppModule} from '../cyph/modules/cyph-app.module';
 import {CyphCommonModule} from '../cyph/modules/cyph-common.module';
 import {CyphWebModule} from '../cyph/modules/cyph-web.module';
@@ -51,8 +57,9 @@ import {CustomUrlSerializer} from './custom-url-serializer';
 		SignupConfirmComponent
 	],
 	imports: [
-		RouterModule.forRoot([], {
+		RouterModule.forRoot(appRoutes, {
 			onSameUrlNavigation: 'reload',
+			preloadingStrategy: PreloadAllModules,
 			useHash: true
 		}),
 		CyphAppModule,
@@ -85,7 +92,12 @@ export class AppModule {
 		potassiumService: PotassiumService,
 		stringsService: StringsService
 	) {
-		router.resetConfig(appRoutes);
+		if (
+			env.environment.customBuild?.config.lockedDown ||
+			burnerRoot === ''
+		) {
+			router.resetConfig(appRoutes);
+		}
 
 		if (typeof testEnvironmentSetup === 'function') {
 			testEnvironmentSetup(databaseService, localStorageService);

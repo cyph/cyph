@@ -164,6 +164,7 @@ read -r -d '' modules <<- EOM
 	@types/file-saver
 	@types/fullcalendar@3.5.2
 	@types/hammerjs
+	@types/hark
 	@types/html-to-text
 	@types/jasmine
 	@types/jquery
@@ -243,6 +244,7 @@ read -r -d '' modules <<- EOM
 	granim
 	gulp
 	hammerjs
+	hark
 	highlight.js
 	html-minifier
 	html-to-text
@@ -285,7 +287,7 @@ read -r -d '' modules <<- EOM
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
-	mat-video
+	mat-video@https://github.com/buu700/mat-video-tmp
 	math-expression-evaluator
 	mceliece
 	microlight-string
