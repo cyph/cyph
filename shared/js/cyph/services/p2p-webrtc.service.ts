@@ -409,9 +409,7 @@ export class P2PWebRTCService extends BaseProvider
 			return;
 		}
 
-		this.accept(p2pSessionData.callType);
-
-		await this.ready;
+		await Promise.all([this.accept(p2pSessionData.callType), this.ready]);
 
 		return this.joinAndToggleLock(async () => {
 			if (this.webRTC.value) {
