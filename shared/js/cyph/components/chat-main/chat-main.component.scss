@@ -510,6 +510,10 @@
 	}
 }
 
+mat-video {
+	pointer-events: none;
+}
+
 .poof {
 	&,
 	video {
