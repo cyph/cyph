@@ -950,9 +950,7 @@ export class P2PWebRTCService extends BaseProvider
 
 						debugLog(() => ({webRTC: {incomingSignal: data}}));
 
-						for (const peer of webRTC.peers) {
-							peer.signal(data);
-						}
+						webRTC.peers[i].signal(data);
 					}
 				}
 			);
