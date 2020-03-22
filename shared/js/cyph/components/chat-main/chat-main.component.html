@@ -153,18 +153,22 @@
 					1 || (p2pWebRTCService.loading | await)
 			"
 		>
-			<mat-video
-				[fxHide]="!incomingStream.constraints.video"
-				[autoplay]="true"
-				[muted]="true"
-				[playsinline]="true"
-				[src]="incomingStream.src"
+			<ng-container
 				*ngFor="
-					let incomingStream of p2pWebRTCService.incomingStreamsActive
+					let incomingStream of p2pWebRTCService.incomingStreams
 						| await;
 					trackBy: trackByIndex
 				"
-			></mat-video>
+			>
+				<mat-video
+					[fxHide]="!incomingStream.constraints.video"
+					[autoplay]="true"
+					[muted]="true"
+					[playsinline]="true"
+					[src]="incomingStream.src"
+					*ngIf="!!incomingStream.src"
+				></mat-video>
+			</ng-container>
 		</div>
 		<ng-container *ngIf="!envService.isAccounts; else accountsAudioCall">
 			<img
