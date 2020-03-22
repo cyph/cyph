@@ -164,6 +164,7 @@ read -r -d '' modules <<- EOM
 	@types/file-saver
 	@types/fullcalendar@3.5.2
 	@types/hammerjs
+	@types/hark
 	@types/html-to-text
 	@types/jasmine
 	@types/jquery
@@ -243,6 +244,7 @@ read -r -d '' modules <<- EOM
 	granim
 	gulp
 	hammerjs
+	hark
 	highlight.js
 	html-minifier
 	html-to-text
