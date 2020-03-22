@@ -230,6 +230,7 @@ export class P2PWebRTCService extends BaseProvider
 		const {src, stream} = incomingStream;
 
 		if (stream) {
+			/* eslint-disable-next-line no-unused-expressions */
 			this.harkers.get(stream)?.stop();
 			this.harkers.delete(stream);
 
@@ -290,7 +291,7 @@ export class P2PWebRTCService extends BaseProvider
 			this.webRTC.value.timer.stop();
 		}
 
-		for (const src in [
+		for (const src of [
 			this.outgoingStream.value.src,
 			...this.incomingStreams.value.map(o => o.src)
 		]) {
@@ -849,6 +850,7 @@ export class P2PWebRTCService extends BaseProvider
 					[]) {
 					track.enabled = false;
 					track.stop();
+					/* eslint-disable-next-line no-unused-expressions */
 					this.outgoingStream.value.stream?.removeTrack(track);
 				}
 
@@ -935,9 +937,7 @@ export class P2PWebRTCService extends BaseProvider
 		);
 
 		for (let i = 0; i < this.sessionServices.length; ++i) {
-			const sessionService = this.sessionServices[i];
-
-			sessionService.on(
+			this.sessionServices[i].on(
 				rpcEvents.p2p,
 				async (newEvents: ISessionMessageData[]) => {
 					const webRTC = await this.getWebRTC();
