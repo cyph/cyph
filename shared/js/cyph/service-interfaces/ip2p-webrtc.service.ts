@@ -22,15 +22,6 @@ export interface IP2PWebRTCService {
 		}[]
 	>;
 
-	/** Active incoming video and audio feeds. */
-	readonly incomingStreamsActive: Observable<
-		{
-			constraints: MediaStreamConstraints;
-			src: string;
-			stream: MediaStream;
-		}[]
-	>;
-
 	/** Active incoming video feeds. */
 	readonly incomingVideoStreams: Observable<
 		{
