@@ -285,7 +285,7 @@ read -r -d '' modules <<- EOM
 	markdown-it
 	markdown-it-emoji
 	markdown-it-sup
-	mat-video
+	mat-video@https://github.com/buu700/mat-video-tmp
 	math-expression-evaluator
 	mceliece
 	microlight-string
