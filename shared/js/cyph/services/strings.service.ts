@@ -431,10 +431,19 @@ export class StringsService extends BaseProvider {
 	public readonly incomingCallAudio = `Incoming Call`;
 
 	/** @see StringsService */
+	public readonly incomingCallAudioGroup = `Incoming Group Call`;
+
+	/** @see StringsService */
 	public readonly incomingCallChat = `Incoming Burner Chat`;
 
 	/** @see StringsService */
+	public readonly incomingCallChatGroup = `Incoming Group Burner Chat`;
+
+	/** @see StringsService */
 	public readonly incomingCallVideo = `Incoming Video Call`;
+
+	/** @see StringsService */
+	public readonly incomingCallVideoGroup = `Incoming Group Video Call`;
 
 	/** @see StringsService */
 	public readonly incomingFile = `Download File`;

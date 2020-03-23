@@ -161,6 +161,8 @@ export class AccountP2PService extends P2PService {
 								expires:
 									timestamp +
 									this.notificationService.ringTimeout,
+								groupID: this.accountSessionService
+									.groupMetadata?.id,
 								id
 							}
 						)
