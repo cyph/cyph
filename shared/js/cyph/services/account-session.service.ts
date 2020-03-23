@@ -56,6 +56,12 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	public group?: AccountSessionService[];
 
+	/** Metadata of current group, if applicable. */
+	public groupMetadata?: {
+		id: string;
+		usernames: string[];
+	};
+
 	/** @inheritDoc */
 	public readonly ready = this._READY.promise;
 
@@ -329,6 +335,7 @@ export class AccountSessionService extends SessionService {
 			}
 
 			this.group = group;
+			this.groupMetadata = {id: chat.id, usernames};
 
 			/*
 				Handle events on individual pairwise sessions and perform equivalent behavior.

@@ -59,20 +59,27 @@ export class AccountP2PService extends P2PService {
 	protected async request (callType: 'audio' | 'video') : Promise<void> {
 		const remoteUser = await this.accountSessionService.remoteUser.value;
 
-		if (!remoteUser) {
-			return;
-		}
-		if (remoteUser.anonymous) {
+		if (remoteUser?.anonymous) {
 			return super.request(callType);
 		}
-		if (!(await this.handlers.requestConfirm(callType, false))) {
+
+		const contactID = this.accountSessionService.groupMetadata ?
+			this.accountSessionService.groupMetadata.id :
+		remoteUser ?
+			await remoteUser.contactID :
+			undefined;
+
+		if (
+			!contactID ||
+			!(await this.handlers.requestConfirm(callType, false))
+		) {
 			return;
 		}
 
 		/* Workaround for "Form submission canceled because the form is not connected" warning */
 		await sleep(0);
 
-		await this.router.navigate([callType, await remoteUser.contactID]);
+		await this.router.navigate([callType, contactID]);
 	}
 
 	/** Initiates call. */
@@ -82,11 +89,29 @@ export class AccountP2PService extends P2PService {
 	) : Promise<void> {
 		const remoteUser = await this.accountSessionService.remoteUser.value;
 
-		if (!remoteUser || remoteUser.anonymous) {
+		if (remoteUser?.anonymous) {
+			return;
+		}
+
+		const contactID = this.accountSessionService.groupMetadata ?
+			Promise.resolve(this.accountSessionService.groupMetadata.id) :
+		remoteUser ?
+			remoteUser.contactID :
+			undefined;
+
+		const usernames = this.accountSessionService.groupMetadata ?
+			this.accountSessionService.groupMetadata.usernames :
+		remoteUser ?
+			[remoteUser.username] :
+			undefined;
+
+		if (!contactID || !usernames) {
 			return;
 		}
 
 		if (
+			/* TODO: Apply comparable limitation to group calling */
+			remoteUser &&
 			!(
 				(await this.accountContactsService.isContact(
 					remoteUser.username,
@@ -123,22 +148,26 @@ export class AccountP2PService extends P2PService {
 			});
 
 		const id = uuid();
-		const username = remoteUser.username;
 
 		await Promise.all([
 			getTimestamp().then(async timestamp =>
-				this.accountDatabaseService.notify(
-					username,
-					NotificationTypes.Call,
-					{
-						callType,
-						expires:
-							timestamp + this.notificationService.ringTimeout,
-						id
-					}
+				Promise.all(
+					usernames.map(async username =>
+						this.accountDatabaseService.notify(
+							username,
+							NotificationTypes.Call,
+							{
+								callType,
+								expires:
+									timestamp +
+									this.notificationService.ringTimeout,
+								id
+							}
+						)
+					)
 				)
 			),
-			remoteUser.contactID.then(async contactID =>
+			contactID.then(async contactID =>
 				this.router.navigate([route, contactID, id], {
 					replaceUrl: true
 				})
