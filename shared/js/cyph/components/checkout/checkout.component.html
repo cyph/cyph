@@ -26,9 +26,6 @@
 						placeholder="Number of Users"
 						required
 					>
-						<mat-option [value]="1"
-							>1 {{ stringsService.user }}</mat-option
-						>
 						<mat-option
 							*ngFor="
 								let n of userOptions | await;
@@ -36,7 +33,12 @@
 							"
 							[value]="n"
 						>
-							{{ n.toString() }} {{ stringsService.users }}
+							{{ n.toString() }}
+							{{
+								n === 1 ?
+									stringsService.user :
+									stringsService.users
+							}}
 						</mat-option>
 					</mat-select>
 				</mat-form-field>

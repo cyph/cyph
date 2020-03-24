@@ -220,6 +220,10 @@ export class CheckoutComponent extends BaseProvider
 				.fill(0)
 				.map((_, i) => i + this.minUsers)
 		);
+
+		this.users.next(
+			Math.min(this.maxUsers, Math.max(this.minUsers, this.users.value))
+		);
 	}
 
 	/** @inheritDoc */
