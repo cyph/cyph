@@ -196,6 +196,67 @@ export class Config {
 					}
 				}
 			},
+			business: {
+				id: 11,
+				items: {
+					largeAnnual: {
+						amount: 84,
+						id: 6,
+						individualSubscriptions: true,
+						minUsers: 50,
+						name: 'Business (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					largeMonthly: {
+						amount: 9,
+						id: 5,
+						individualSubscriptions: true,
+						minUsers: 50,
+						name: 'Business (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
+					},
+					mediumAnnual: {
+						amount: 108,
+						id: 4,
+						individualSubscriptions: true,
+						maxUsers: 49,
+						minUsers: 10,
+						name: 'Business (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					mediumMonthly: {
+						amount: 12,
+						id: 3,
+						individualSubscriptions: true,
+						maxUsers: 49,
+						minUsers: 10,
+						name: 'Business (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
+					},
+					smallAnnual: {
+						amount: 120,
+						id: 2,
+						individualSubscriptions: true,
+						maxUsers: 9,
+						name: 'Business (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					smallMonthly: {
+						amount: 14,
+						id: 1,
+						individualSubscriptions: true,
+						maxUsers: 9,
+						name: 'Business (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
+					}
+				}
+			},
 			donation: {
 				id: 10000,
 				items: {
@@ -271,20 +332,79 @@ export class Config {
 			telehealth: {
 				id: 3,
 				items: {
-					annual: {
-						amount: 420,
-						id: 2,
+					covidLargeAnnual: {
+						amount: 120,
+						id: 8,
+						individualSubscriptions: true,
+						minUsers: 50,
+						name: 'Telehealth (Annual)',
 						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
-					monthly: {
-						amount: 50,
-						id: 1,
+					covidLargeMonthly: {
+						amount: 15,
+						id: 7,
+						individualSubscriptions: true,
+						minUsers: 50,
+						name: 'Telehealth (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
+					},
+					covidMediumAnnual: {
+						amount: 192,
+						id: 6,
+						individualSubscriptions: true,
+						maxUsers: 49,
+						minUsers: 10,
+						name: 'Telehealth (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					covidMediumMonthly: {
+						amount: 20,
+						id: 5,
+						individualSubscriptions: true,
+						maxUsers: 49,
+						minUsers: 10,
+						name: 'Telehealth (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
+					},
+					covidSmallAnnual: {
+						amount: 216,
+						id: 4,
+						individualSubscriptions: true,
+						maxUsers: 9,
+						name: 'Telehealth (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					covidSmallMonthly: {
+						amount: 25,
+						id: 3,
+						individualSubscriptions: true,
+						maxUsers: 9,
+						name: 'Telehealth (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
+					},
+					erw8ib3: {
+						amount: 108,
+						id: 10,
+						individualSubscriptions: true,
+						name: 'Telehealth (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					g7xxm0r: {
+						amount: 12,
+						id: 9,
+						individualSubscriptions: true,
+						name: 'Telehealth (Monthly)',
 						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}
-				},
-				namespace: 'cyph.healthcare'
+				}
 			},
 			telehealthPro: {
 				id: 6,
