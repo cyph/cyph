@@ -30,7 +30,10 @@
 							>1 {{ stringsService.user }}</mat-option
 						>
 						<mat-option
-							*ngFor="let n of userOptions; trackBy: trackBySelf"
+							*ngFor="
+								let n of userOptions | await;
+								trackBy: trackBySelf
+							"
 							[value]="n"
 						>
 							{{ n.toString() }} {{ stringsService.users }}

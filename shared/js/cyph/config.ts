@@ -99,6 +99,8 @@ export class Config {
 						extraUserDiscount?: number;
 						id: number;
 						individualSubscriptions?: boolean;
+						maxUsers?: number;
+						minUsers?: number;
 						name?: string;
 						perUser?: boolean;
 						subscriptionType?: SubscriptionTypes;
