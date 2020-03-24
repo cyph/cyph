@@ -164,7 +164,7 @@
 			<div [id]="containerID" class="braintree"></div>
 		</div>
 
-		<mat-checkbox [(ngModel)]="affiliate" name="affiliate">
+		<mat-checkbox [(ngModel)]="affiliate" name="affiliate" *ngIf="false">
 			{{ affiliateService.checkout.text }}
 		</mat-checkbox>
 
