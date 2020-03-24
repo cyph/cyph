@@ -16,7 +16,7 @@
 					<span cyphTranslate>SUBSCRIPTION</span>
 				</ng-container>
 			</h2>
-			<div *ngIf="perUser">
+			<div *ngIf="perUser && !inviteCode && !userToken">
 				<mat-form-field fxFlex>
 					<mat-select
 						cyphTranslate
