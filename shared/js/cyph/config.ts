@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import {SubscriptionTypes} from './checkout';
 import {ISessionService} from './service-interfaces/isession.service';
 
