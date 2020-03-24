@@ -39,7 +39,7 @@ export class Analytics {
 
 	/** Send event. */
 	public sendEvent (...args: any[]) : void {
-		this.baseEventSubmit('send', args);
+		this.baseEventSubmit('event', args);
 	}
 
 	/** Set event. */
