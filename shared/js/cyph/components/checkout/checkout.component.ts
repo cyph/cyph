@@ -209,65 +209,6 @@ export class CheckoutComponent extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
-		/* Workaround for Angular Elements leaving inputs as strings */
-
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.amount === 'string' && this.amount) {
-			this.amount = parseFloat(this.amount);
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.category === 'string' && this.category) {
-			this.category = parseFloat(this.category);
-		}
-		if (
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			typeof this.extraUserDiscount === 'string' &&
-			this.extraUserDiscount
-		) {
-			this.extraUserDiscount = parseFloat(this.extraUserDiscount);
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.individualSubscriptions === 'string') {
-			this.individualSubscriptions =
-				<any> this.individualSubscriptions === 'true';
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.item === 'string' && this.item) {
-			this.item = parseFloat(this.item);
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.noSpinnerEnd === 'string') {
-			this.noSpinnerEnd = <any> this.noSpinnerEnd === 'true';
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.perUser === 'string') {
-			this.perUser = <any> this.perUser === 'true';
-		}
-		if (
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			typeof this.subscriptionType === 'string' &&
-			this.subscriptionType
-		) {
-			this.subscriptionType = parseFloat(this.subscriptionType);
-			if (isNaN(this.subscriptionType)) {
-				this.subscriptionType = undefined;
-			}
-		}
-
-		(async () => {
-			if (!this.address.countryCode) {
-				this.address.countryCode = this.configService.defaultCountryCode;
-			}
-
-			while (!this.destroyed.value) {
-				this.changeDetectorRef.detectChanges();
-				await sleep();
-			}
-		})();
-	}
-
-	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
@@ -472,6 +413,65 @@ export class CheckoutComponent extends BaseProvider
 				});
 			}
 		);
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		/* Workaround for Angular Elements leaving inputs as strings */
+
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.amount === 'string' && this.amount) {
+			this.amount = parseFloat(this.amount);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.category === 'string' && this.category) {
+			this.category = parseFloat(this.category);
+		}
+		if (
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			typeof this.extraUserDiscount === 'string' &&
+			this.extraUserDiscount
+		) {
+			this.extraUserDiscount = parseFloat(this.extraUserDiscount);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.individualSubscriptions === 'string') {
+			this.individualSubscriptions =
+				<any> this.individualSubscriptions === 'true';
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.item === 'string' && this.item) {
+			this.item = parseFloat(this.item);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.noSpinnerEnd === 'string') {
+			this.noSpinnerEnd = <any> this.noSpinnerEnd === 'true';
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.perUser === 'string') {
+			this.perUser = <any> this.perUser === 'true';
+		}
+		if (
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			typeof this.subscriptionType === 'string' &&
+			this.subscriptionType
+		) {
+			this.subscriptionType = parseFloat(this.subscriptionType);
+			if (isNaN(this.subscriptionType)) {
+				this.subscriptionType = undefined;
+			}
+		}
+
+		(async () => {
+			if (!this.address.countryCode) {
+				this.address.countryCode = this.configService.defaultCountryCode;
+			}
+
+			while (!this.destroyed.value) {
+				this.changeDetectorRef.detectChanges();
+				await sleep();
+			}
+		})();
 	}
 
 	/** Submits payment. */
