@@ -1719,6 +1719,7 @@ export class ChatService extends BaseProvider {
 							.toPromise();
 
 						if (!this.sessionInitService.ephemeral) {
+							this.p2pWebRTCService.loading.next(true);
 							this.initProgressStart(42000);
 						}
 

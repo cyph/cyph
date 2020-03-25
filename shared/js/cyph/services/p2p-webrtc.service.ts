@@ -244,6 +244,7 @@ export class P2PWebRTCService extends BaseProvider
 		isPassive: boolean = false
 	) : Promise<void> {
 		this.isAccepted = true;
+		this.loading.next(true);
 		await this.setOutgoingStreamConstraints({
 			audio: true,
 			video: callType === 'video'
@@ -268,7 +269,7 @@ export class P2PWebRTCService extends BaseProvider
 		const wasInitialCallPending = this.initialCallPending.value;
 		this.isAccepted = false;
 		this.isActive.next(false);
-		this.loading.next(true);
+		this.loading.next(false);
 		this.initialCallPending.next(false);
 
 		if (this.outgoingStream.value.stream) {
@@ -406,6 +407,7 @@ export class P2PWebRTCService extends BaseProvider
 
 			this.webRTC.next(undefined);
 
+			this.loading.next(true);
 			this.incomingStreams.next(
 				this.sessionServices.map(() => ({
 					activeVideo: false,
@@ -550,6 +552,10 @@ export class P2PWebRTCService extends BaseProvider
 						const o = msgpack.decode(data);
 
 						debugLog(() => ({webRTC: {data: o}}));
+
+						if (o.switchingDevice) {
+							this.loading.next(true);
+						}
 
 						this.incomingStreams.next([
 							...this.incomingStreams.value.slice(0, i),
