@@ -368,11 +368,14 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		!!data.telehealth
 	)}${inviterUsername}/${id}`;
 
-	const messagePart1 = `Cyph appointment with @${inviterUsername} is scheduled for ${Math.floor(
+	const inviterLink = `${accountsURL}account-burner/${data.callType ||
+		'chat'}/${id}`;
+
+	const messagePart1 = `Cyph appointment with \${PARTY} is scheduled for ${Math.floor(
 		(data.eventDetails.endTime - data.eventDetails.startTime) / 60000
 	)} minutes at ${new Date(data.eventDetails.startTime).toString()}`;
 
-	const messagePart2 = `At the scheduled time, join here: ${inviteeLink}`;
+	const messagePart2 = `At the scheduled time, join here: \${LINK}`;
 
 	const messageAddendumEmail = `You may also add the attached invitation to your calendar.`;
 
@@ -383,7 +386,16 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				namespace,
 				data.to,
 				`Cyph Appointment with @${inviterUsername}`,
-				{noUnsubscribe: true},
+				{
+					markdown: `${messagePart1.replace(
+						'${PARTY}',
+						`@${inviterUsername}`
+					)}.\n\n${messagePart2.replace(
+						'${LINK}',
+						inviteeLink
+					)}\n\n${messageAddendumEmail}`,
+					noUnsubscribe: true
+				},
 				{
 					endTime: data.eventDetails.endTime,
 					inviterUsername: data.to,
@@ -392,8 +404,14 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				}
 			),
 		data.toSMS &&
-			sendSMS(data.toSMS, messagePart1).then(async () =>
-				sendSMS(data.toSMS, messagePart2)
+			sendSMS(
+				data.toSMS,
+				messagePart1.replace('${PARTY}', `@${inviterUsername}`)
+			).then(async () =>
+				sendSMS(
+					data.toSMS,
+					messagePart2.replace('${LINK}', inviteeLink)
+				)
 			),
 		sendMail(
 			database,
@@ -401,15 +419,20 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			inviterUsername,
 			`Cyph Appointment with ${data.to.name} <${data.to.email ||
 				data.toSMS}>`,
-			`${messagePart1}\n\n${messagePart2}\n\n${messageAddendumEmail}`,
+			`${messagePart1.replace(
+				'${PARTY}',
+				data.to.name
+			)}.\n\n${messagePart2.replace(
+				'${LINK}',
+				inviterLink
+			)}\n\n${messageAddendumEmail}`,
 			{
 				endTime: data.eventDetails.endTime,
 				inviterUsername: {
 					...data.to,
 					email: data.to.email || cyphFromEmail
 				},
-				location: `${accountsURL}account-burner/${data.callType ||
-					'chat'}/${id}`,
+				location: inviterLink,
 				startTime: data.eventDetails.startTime
 			}
 		)
