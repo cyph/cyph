@@ -490,6 +490,16 @@ export class AccountChatComponent extends BaseProvider
 											.value;
 
 										if (
+											this.destroyed.value ||
+											this.p2pWebRTCService.isActive
+												.value ||
+											!this.p2pWebRTCService
+												.initialCallPending.value
+										) {
+											return;
+										}
+
+										if (
 											sessionSubID &&
 											remoteUser &&
 											!remoteUser.anonymous
@@ -503,16 +513,6 @@ export class AccountChatComponent extends BaseProvider
 													missed: true
 												}
 											);
-										}
-
-										if (
-											this.destroyed.value ||
-											this.p2pWebRTCService.isActive
-												.value ||
-											!this.p2pWebRTCService
-												.initialCallPending.value
-										) {
-											return;
 										}
 
 										this.dialogService.toast(
