@@ -368,6 +368,14 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		!!data.telehealth
 	)}${inviterUsername}/${id}`;
 
+	const messagePart1 = `Cyph appointment with @${inviterUsername} is scheduled for ${Math.floor(
+		(data.eventDetails.endTime - data.eventDetails.startTime) / 60000
+	)} minutes at ${new Date(data.eventDetails.startTime).toString()}`;
+
+	const messagePart2 = `At the scheduled time, join here: ${inviteeLink}`;
+
+	const messageAddendumEmail = `You may also add the attached invitation to your calendar.`;
+
 	await Promise.all([
 		data.to.email &&
 			sendMail(
@@ -384,19 +392,8 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 				}
 			),
 		data.toSMS &&
-			sendSMS(
-				data.toSMS,
-				`Cyph appointment with @${inviterUsername} is scheduled for ${Math.floor(
-					(data.eventDetails.endTime - data.eventDetails.startTime) /
-						60000
-				)} minutes at ${new Date(
-					data.eventDetails.startTime
-				).toString()}`
-			).then(async () =>
-				sendSMS(
-					data.toSMS,
-					`At the scheduled time, join here: ${inviteeLink}`
-				)
+			sendSMS(data.toSMS, messagePart1).then(async () =>
+				sendSMS(data.toSMS, messagePart2)
 			),
 		sendMail(
 			database,
@@ -404,7 +401,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 			inviterUsername,
 			`Cyph Appointment with ${data.to.name} <${data.to.email ||
 				data.toSMS}>`,
-			undefined,
+			`${messagePart1}\n\n${messagePart2}\n\n${messageAddendumEmail}`,
 			{
 				endTime: data.eventDetails.endTime,
 				inviterUsername: {
