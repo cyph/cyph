@@ -18,7 +18,7 @@ import {P2PService} from '../../services/p2p.service';
 import {ScrollService} from '../../services/scroll.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
-import {trackByIndex, trackByTransfer} from '../../track-by';
+import {trackByTransfer} from '../../track-by/track-by-transfer';
 import {readableByteLength} from '../../util/formatting';
 import {urlToSafeStyle} from '../../util/safe-values';
 
@@ -64,9 +64,6 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 	/** @see States */
 	public readonly states = States;
 
-	/** @see trackByIndex */
-	public readonly trackByIndex = trackByIndex;
-
 	/** @see trackByTransfer */
 	public readonly trackByTransfer = trackByTransfer;
 
@@ -88,7 +85,10 @@ export class ChatMainComponent extends BaseProvider implements AfterViewInit {
 
 		const $element = $(this.elementRef.nativeElement);
 
-		this.p2pService.init(() => $element.find('.video-call .friend.stream'));
+		this.p2pService.init(
+			() => $element.find('.video-call .me'),
+			() => $element.find('.video-call .friend.stream')
+		);
 	}
 
 	constructor (

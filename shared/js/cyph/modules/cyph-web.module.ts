@@ -33,7 +33,6 @@ import {EmojiModule} from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
-import {MatVideoModule} from 'mat-video';
 import {FullCalendarModule} from 'ng-fullcalendar';
 import {ImageCropperModule} from 'ngx-image-cropper';
 import {DialogAlertComponent} from '../components/dialog-alert';
@@ -102,7 +101,6 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
-		MatVideoModule,
 		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,
@@ -142,7 +140,6 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
-		MatVideoModule,
 		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,
