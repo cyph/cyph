@@ -352,7 +352,12 @@ exports.acceptPseudoRelationship = onCall(
 exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const id = (data.id || '').trim();
 	const inviterUsername = await getUsername();
-	const {accountsURL} = namespaces[namespace];
+	const telehealth = !!data.telehealth;
+
+	const accountsURL =
+		namespace === 'cyph_ws' && telehealth ?
+			'https://cyph.healthcare/' :
+			namespaces[namespace].accountsURL;
 
 	if (
 		id.length !== config.cyphIDLength ||
