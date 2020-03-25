@@ -19,7 +19,7 @@ import {requestPermissions} from '../util/permissions';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
-import {resolvable} from '../util/wait';
+import {resolvable, retryUntilSuccessful} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
@@ -123,7 +123,7 @@ export class P2PWebRTCService extends BaseProvider
 						constraints: MediaStreamConstraints;
 						stream: MediaStream;
 					}[]
-				> incomingStreams.filter(o => !!o.constraints.video && !!o.stream)
+				> incomingStreams.filter(o => o.constraints.video && !!o.stream)
 		)
 	);
 
@@ -213,8 +213,8 @@ export class P2PWebRTCService extends BaseProvider
 			...this.outgoingStream.value,
 			constraints: {
 				...constraints,
-				...(mics.length < 1 ? {audio: false} : {}),
-				...(cameras.length < 1 ? {video: false} : {})
+				...(mics.length < 1 ? {audio: undefined} : {}),
+				...(cameras.length < 1 ? {video: undefined} : {})
 			}
 		});
 	}
@@ -609,12 +609,6 @@ export class P2PWebRTCService extends BaseProvider
 						...this.incomingStreams.value.slice(0, i),
 						{
 							...this.incomingStreams.value[i],
-							activeVideo:
-								!!this.incomingStreams.value[i].constraints
-									.video &&
-								!this.incomingStreams.value.find(
-									o => o.activeVideo
-								),
 							stream: remoteStream
 						},
 						...this.incomingStreams.value.slice(i + 1)
@@ -766,7 +760,7 @@ export class P2PWebRTCService extends BaseProvider
 					}
 
 					await this.setOutgoingStreamConstraints({
-						...this.outgoingStream.value.constraints,
+						...this.outgoingStream.value,
 						audio:
 							!audio || !this.lastDeviceIDs.mic ?
 								audio :
@@ -808,7 +802,7 @@ export class P2PWebRTCService extends BaseProvider
 					}
 
 					await this.setOutgoingStreamConstraints({
-						...this.outgoingStream.value.constraints,
+						...this.outgoingStream.value,
 						video:
 							!video || !this.lastDeviceIDs.camera ?
 								video :
@@ -846,28 +840,21 @@ export class P2PWebRTCService extends BaseProvider
 			}
 
 			await Promise.all(
-				webRTC.peers.map(async peer => {
-					try {
-						await Promise.resolve(
-							peer.send(
-								msgpack.encode({
-									audio: !!this.outgoingStream.value
-										.constraints.audio,
-									video: !!this.outgoingStream.value
-										.constraints.video,
-									...(deviceIdChanged ?
-										{switchingDevice: deviceIdChanged} :
-										{})
-								})
-							)
-						);
-					}
-					catch (err) {
-						debugLogError(() => ({
-							webRTC: {peerSendError: err}
-						}));
-					}
-				})
+				webRTC.peers.map(async peer =>
+					retryUntilSuccessful(async () =>
+						peer.send(
+							msgpack.encode({
+								audio: !!this.outgoingStream.value.constraints
+									.audio,
+								video: !!this.outgoingStream.value.constraints
+									.video,
+								...(deviceIdChanged ?
+									{switchingDevice: deviceIdChanged} :
+									{})
+							})
+						)
+					)
+				)
 			);
 		});
 	}
@@ -931,7 +918,7 @@ export class P2PWebRTCService extends BaseProvider
 
 					for (const o of newEvents) {
 						const data = o?.bytes && msgpack.decode(o.bytes);
-						if (!data) {
+						if (data) {
 							return;
 						}
 
