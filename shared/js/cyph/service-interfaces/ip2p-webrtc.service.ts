@@ -71,7 +71,7 @@ export interface IP2PWebRTCService {
 	accept (callType?: 'audio' | 'video', isPassive?: boolean) : Promise<void>;
 
 	/** This kills the P2P session. */
-	close (incomingP2PKill?: boolean) : Promise<void>;
+	close () : Promise<void>;
 
 	/** Gets all available I/O devices. */
 	getDevices () : Promise<{

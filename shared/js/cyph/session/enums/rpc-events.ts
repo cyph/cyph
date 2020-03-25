@@ -12,9 +12,6 @@ export class RpcEvents {
 	public readonly p2p: string = 'p2p';
 
 	/** @see RpcEvents */
-	public readonly p2pKill: string = 'p2pKill';
-
-	/** @see RpcEvents */
 	public readonly p2pRequest: string = 'p2pRequest';
 
 	/** @see RpcEvents */
