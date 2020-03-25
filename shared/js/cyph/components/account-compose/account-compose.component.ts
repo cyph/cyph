@@ -23,6 +23,7 @@ import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
+import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DatabaseService} from '../../services/database.service';
@@ -32,7 +33,7 @@ import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {toBehaviorSubject} from '../../util/flatten-observable';
-import {uuid} from '../../util/uuid';
+import {readableID, uuid} from '../../util/uuid';
 
 /**
  * Angular component for account compose UI.
@@ -277,6 +278,19 @@ export class AccountComposeComponent extends BaseProvider
 					calendarInvite
 				} = this.accountChatService.chat.currentMessage;
 
+				const callType =
+					calendarInvite.callType === CallTypes.Audio ?
+						'audio' :
+					calendarInvite.callType === CallTypes.Video ?
+						'video' :
+						undefined;
+
+				const id = readableID(this.configService.cyphIDLength);
+
+				calendarInvite.url = `${
+					this.envService.appUrl
+				}account-burner/${callType || 'chat'}/${id}`;
+
 				const [sentFileID] = await Promise.all([
 					this.accountFilesService.upload(
 						(this.envService.isTelehealth ?
@@ -314,12 +328,8 @@ export class AccountComposeComponent extends BaseProvider
 					!this.envService.isTelehealthFull &&
 					this.accountDatabaseService.currentUser.value ?
 						this.databaseService.callFunction('appointmentInvite', {
-							callType:
-								calendarInvite.callType === CallTypes.Audio ?
-									'audio' :
-								calendarInvite.callType === CallTypes.Video ?
-									'video' :
-									undefined,
+							id,
+							callType,
 							eventDetails: {
 								endTime: calendarInvite.endTime,
 								startTime: calendarInvite.startTime
@@ -452,6 +462,9 @@ export class AccountComposeComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly accountFilesService: AccountFilesService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly databaseService: DatabaseService,

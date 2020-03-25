@@ -6,7 +6,6 @@ import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IAppointment} from '../proto';
 import {filterUndefinedOperator} from '../util/filter';
 import {prettyPrint} from '../util/serialization';
-import {sleep} from '../util/wait';
 import {ChatService} from './chat.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
@@ -68,7 +67,6 @@ export class P2PService extends BaseProvider {
 		loaded: async () => {
 			if (!this.sessionInitService.ephemeral) {
 				this.chatService.initProgressFinish();
-				await sleep(1000);
 			}
 		},
 		localVideoConfirm: async video => {

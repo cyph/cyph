@@ -512,10 +512,11 @@
 			}
 		}
 	}
-}
 
-mat-video {
-	pointer-events: none;
+	mat-video * {
+		cursor: unset !important;
+		pointer-events: none !important;
+	}
 }
 
 .poof {

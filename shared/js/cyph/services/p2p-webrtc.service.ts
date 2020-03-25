@@ -256,7 +256,11 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async close () : Promise<void> {
+	public async close (incomingP2PKill: boolean = false) : Promise<void> {
+		const p2pKillPromise = incomingP2PKill ?
+			Promise.resolve() :
+			this.sessionService.send([rpcEvents.p2pKill, {}]);
+
 		this.initialCallPending.next(false);
 
 		this.disconnectInternal.next();
@@ -295,6 +299,8 @@ export class P2PWebRTCService extends BaseProvider
 		else if (wasAccepted) {
 			await handlers.connected(false);
 		}
+
+		await p2pKillPromise;
 	}
 
 	/** @inheritDoc */
@@ -672,6 +678,7 @@ export class P2PWebRTCService extends BaseProvider
 			});
 
 			this.loading.next(false);
+			handlers.loaded();
 			handlers.connected(true);
 			this.webRTC.next({
 				peers,
@@ -894,6 +901,8 @@ export class P2PWebRTCService extends BaseProvider
 			this.close();
 		});
 
+		this.sessionService.on(rpcEvents.p2pKill, async () => this.close(true));
+
 		this.sessionService.on(
 			rpcEvents.p2pRequest,
 			async (newEvents: ISessionMessageData[]) => {
@@ -920,6 +929,7 @@ export class P2PWebRTCService extends BaseProvider
 				);
 
 				if (!ok) {
+					await this.sessionService.send([rpcEvents.p2pKill, {}]);
 					return;
 				}
 

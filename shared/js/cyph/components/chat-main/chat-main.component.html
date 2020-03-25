@@ -248,6 +248,7 @@
 			[fxHide]="
 				!(p2pWebRTCService.outgoingStream | await)?.constraints?.video
 			"
+			[ngDraggable]="envService.pro | await"
 			[autoplay]="true"
 			[muted]="true"
 			[overlay]="false"
