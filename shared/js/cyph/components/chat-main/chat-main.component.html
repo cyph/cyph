@@ -165,8 +165,8 @@
 					[autoplay]="true"
 					[muted]="true"
 					[playsinline]="true"
-					[src]="incomingStream.stream"
-					*ngIf="!!incomingStream.stream"
+					[src]="incomingStream.src"
+					*ngIf="!!incomingStream.src"
 				></mat-video>
 			</ng-container>
 		</div>
@@ -251,7 +251,7 @@
 			[autoplay]="true"
 			[muted]="true"
 			[playsinline]="true"
-			[src]="(p2pWebRTCService.outgoingStream | await)?.stream || ''"
+			[src]="(p2pWebRTCService.outgoingStream | await)?.src || ''"
 		></mat-video>
 
 		<mat-progress-spinner

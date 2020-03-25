@@ -110,6 +110,7 @@ export class P2PWebRTCService extends BaseProvider
 		{
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
+			src?: string;
 			stream?: MediaStream;
 		}[]
 	>([]);
@@ -121,9 +122,10 @@ export class P2PWebRTCService extends BaseProvider
 					{
 						activeVideo: boolean;
 						constraints: MediaStreamConstraints;
+						src: string;
 						stream: MediaStream;
 					}[]
-				> incomingStreams.filter(o => o.constraints.video && !!o.stream)
+				> incomingStreams.filter(o => o.constraints.video && !!o.src && !!o.stream)
 		)
 	);
 
@@ -142,6 +144,7 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public readonly outgoingStream = new BehaviorSubject<{
 		constraints: MediaStreamConstraints;
+		src?: string;
 		stream?: MediaStream;
 	}>({
 		constraints: {
@@ -220,21 +223,26 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	/** @ignore */
-	private stopIncomingStream (incomingStream: {stream?: MediaStream}) : void {
-		const {stream} = incomingStream;
+	private stopIncomingStream (incomingStream: {
+		src?: string;
+		stream?: MediaStream;
+	}) : void {
+		const {src, stream} = incomingStream;
 
-		if (!stream) {
-			return;
+		if (stream) {
+			/* eslint-disable-next-line no-unused-expressions */
+			this.harkers.get(stream)?.stop();
+			this.harkers.delete(stream);
+
+			for (const track of stream.getTracks()) {
+				track.enabled = false;
+				track.stop();
+				stream.removeTrack(track);
+			}
 		}
 
-		/* eslint-disable-next-line no-unused-expressions */
-		this.harkers.get(stream)?.stop();
-		this.harkers.delete(stream);
-
-		for (const track of stream.getTracks()) {
-			track.enabled = false;
-			track.stop();
-			stream.removeTrack(track);
+		if (src) {
+			URL.revokeObjectURL(src);
 		}
 	}
 
@@ -281,6 +289,15 @@ export class P2PWebRTCService extends BaseProvider
 				peer.destroy();
 			}
 			this.webRTC.value.timer.stop();
+		}
+
+		for (const src of [
+			this.outgoingStream.value.src,
+			...this.incomingStreams.value.map(o => o.src)
+		]) {
+			if (src) {
+				URL.revokeObjectURL(src);
+			}
 		}
 
 		this.incomingStreams.next([]);
@@ -482,6 +499,7 @@ export class P2PWebRTCService extends BaseProvider
 
 			this.outgoingStream.next({
 				...this.outgoingStream.value,
+				src: URL.createObjectURL(localStream),
 				stream: localStream
 			});
 
@@ -609,6 +627,7 @@ export class P2PWebRTCService extends BaseProvider
 						...this.incomingStreams.value.slice(0, i),
 						{
 							...this.incomingStreams.value[i],
+							src: URL.createObjectURL(remoteStream),
 							stream: remoteStream
 						},
 						...this.incomingStreams.value.slice(i + 1)
@@ -833,8 +852,13 @@ export class P2PWebRTCService extends BaseProvider
 					this.outgoingStream.value.stream?.removeTrack(track);
 				}
 
+				if (this.outgoingStream.value.src) {
+					URL.revokeObjectURL(this.outgoingStream.value.src);
+				}
+
 				this.outgoingStream.next({
 					...this.outgoingStream.value,
+					src: URL.createObjectURL(newStream),
 					stream: newStream
 				});
 			}
