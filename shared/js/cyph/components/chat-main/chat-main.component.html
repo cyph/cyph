@@ -161,7 +161,7 @@
 				"
 			>
 				<mat-video
-					[fxShow]="incomingStream.activeVideo"
+					[fxHide]="!incomingStream.constraints.video"
 					[autoplay]="true"
 					[muted]="true"
 					[playsinline]="true"

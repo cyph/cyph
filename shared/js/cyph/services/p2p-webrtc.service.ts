@@ -1,7 +1,6 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import hark from 'hark';
 import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
@@ -62,9 +61,6 @@ export class P2PWebRTCService extends BaseProvider
 	private readonly handlers: Promise<IP2PHandlers> = this._HANDLERS.promise;
 
 	/** @ignore */
-	private readonly harkers = new Map<MediaStream, hark.Harker>();
-
-	/** @ignore */
 	private isAccepted: boolean = false;
 
 	/** @ignore */
@@ -94,11 +90,6 @@ export class P2PWebRTCService extends BaseProvider
 		remoteVideo: () => JQuery
 	) => void = this._REMOTE_VIDEOS.resolve;
 
-	/** @ignore */
-	private readonly sessionServices = this.sessionService.group || [
-		this.sessionService
-	];
-
 	/** @inheritDoc */
 	public readonly cameraActivated = new BehaviorSubject<boolean>(false);
 
@@ -108,7 +99,6 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public readonly incomingStreams = new BehaviorSubject<
 		{
-			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
 			src?: string;
 			stream?: MediaStream;
@@ -120,7 +110,6 @@ export class P2PWebRTCService extends BaseProvider
 		map(
 			incomingStreams => <
 					{
-						activeVideo: boolean;
 						constraints: MediaStreamConstraints;
 						src: string;
 						stream: MediaStream;
@@ -207,6 +196,11 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	/** @ignore */
+	private readonly sessionServices = this.sessionService.group || [
+		this.sessionService
+	];
+
+	/** @ignore */
 	private async setOutgoingStreamConstraints (
 		constraints: MediaStreamConstraints
 	) : Promise<void> {
@@ -220,29 +214,6 @@ export class P2PWebRTCService extends BaseProvider
 				...(cameras.length < 1 ? {video: undefined} : {})
 			}
 		});
-	}
-
-	/** @ignore */
-	private stopIncomingStream (incomingStream: {
-		src?: string;
-		stream?: MediaStream;
-	}) : void {
-		const {src, stream} = incomingStream;
-
-		if (stream) {
-			this.harkers.get(stream)?.stop();
-			this.harkers.delete(stream);
-
-			for (const track of stream.getTracks()) {
-				track.enabled = false;
-				track.stop();
-				stream.removeTrack(track);
-			}
-		}
-
-		if (src) {
-			URL.revokeObjectURL(src);
-		}
 	}
 
 	/** @inheritDoc */
@@ -421,10 +392,7 @@ export class P2PWebRTCService extends BaseProvider
 
 			this.loading.next(true);
 			this.incomingStreams.next(
-				this.sessionServices.map(() => ({
-					activeVideo: false,
-					constraints: this.outgoingStream.value.constraints
-				}))
+				this.sessionServices.map(() => ({...this.outgoingStream.value}))
 			);
 			this.cameraActivated.next(
 				!!this.outgoingStream.value.constraints.video
@@ -530,30 +498,16 @@ export class P2PWebRTCService extends BaseProvider
 				peer.on('close', () => {
 					debugLog(() => ({webRTC: {close: true}}));
 
-					const newIncomingStreams = [
+					this.incomingStreams.next([
 						...this.incomingStreams.value.slice(0, i),
 						{
-							activeVideo: false,
 							constraints: {
 								audio: false,
 								video: false
 							}
 						},
 						...this.incomingStreams.value.slice(i + 1)
-					];
-
-					if (this.incomingStreams.value[i].activeVideo) {
-						const newActiveVideoStream = newIncomingStreams.find(
-							o => o.constraints.video
-						);
-
-						if (newActiveVideoStream) {
-							newActiveVideoStream.activeVideo = true;
-						}
-					}
-
-					this.stopIncomingStream(this.incomingStreams.value[i]);
-					this.incomingStreams.next(newIncomingStreams);
+					]);
 				});
 
 				peer.on('connect', () => {
@@ -619,10 +573,9 @@ export class P2PWebRTCService extends BaseProvider
 						}
 					}));
 
-					this.stopIncomingStream(this.incomingStreams.value[i]);
-
-					const harker = hark(remoteStream);
-					this.harkers.set(remoteStream, harker);
+					if (this.incomingStreams.value[i]?.src) {
+						URL.revokeObjectURL(this.incomingStreams.value[i]?.src);
+					}
 
 					this.incomingStreams.next([
 						...this.incomingStreams.value.slice(0, i),
@@ -633,21 +586,6 @@ export class P2PWebRTCService extends BaseProvider
 						},
 						...this.incomingStreams.value.slice(i + 1)
 					]);
-
-					harker.on('speaking', () => {
-						if (!this.incomingStreams.value[i].constraints.video) {
-							return;
-						}
-
-						this.incomingStreams.next(
-							this.incomingStreams.value.map(
-								(o, incomingStreamIndex) => ({
-									...o,
-									activeVideo: incomingStreamIndex === i
-								})
-							)
-						);
-					});
 				});
 
 				peer.on(
