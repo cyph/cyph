@@ -164,6 +164,7 @@
 					[fxShow]="incomingStream.activeVideo"
 					[autoplay]="true"
 					[muted]="true"
+					[overlay]="false"
 					[playsinline]="true"
 					[src]="incomingStream.stream"
 					*ngIf="!!incomingStream.stream"
@@ -250,6 +251,7 @@
 			[ngDraggable]="envService.pro | await"
 			[autoplay]="true"
 			[muted]="true"
+			[overlay]="false"
 			[playsinline]="true"
 			[src]="(p2pWebRTCService.outgoingStream | await)?.stream || ''"
 		></mat-video>
