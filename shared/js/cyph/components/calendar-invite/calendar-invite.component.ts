@@ -136,8 +136,8 @@ export class CalendarInviteComponent extends BaseProvider
 
 	/** List of possible reasons for this invite. */
 	@Input() public timeRange: ITimeRange = {
-		end: {hour: 17, minute: 0},
-		start: {hour: 9, minute: 0}
+		end: {hour: 24, minute: 0},
+		start: {hour: 0, minute: 0}
 	};
 
 	/** @see timestampTo24HourTimeString */
