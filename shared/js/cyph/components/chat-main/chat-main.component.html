@@ -245,13 +245,13 @@
 		<mat-video
 			class="me"
 			[fxHide]="
-				!(p2pWebRTCService.outgoingStream | await)?.constraints?.video
+				!(p2pWebRTCService.outgoingStream | await)?.constraints.video
 			"
 			[ngDraggable]="envService.pro | await"
 			[autoplay]="true"
 			[muted]="true"
 			[playsinline]="true"
-			[src]="(p2pWebRTCService.outgoingStream | await)?.src || ''"
+			[src]="(p2pWebRTCService.outgoingStream | await)?.src"
 		></mat-video>
 
 		<mat-progress-spinner
@@ -364,7 +364,7 @@
 					!(
 						envService.isAccounts &&
 						!(p2pWebRTCService.outgoingStream | await)?.constraints
-							?.video
+							.video
 					)
 				"
 			>
@@ -399,7 +399,7 @@
 					(click)="p2pService.videoCallButton()"
 					[matTooltip]="
 						!(p2pWebRTCService.outgoingStream | await)?.constraints
-							?.video ?
+							.video ?
 							stringsService.cameraEnable :
 							stringsService.cameraDisable
 					"
@@ -410,7 +410,7 @@
 						<ng-container
 							*ngIf="
 								!(p2pWebRTCService.outgoingStream | await)
-									?.constraints?.video;
+									?.constraints.video;
 								else videocamOff
 							"
 						>
@@ -441,7 +441,7 @@
 					"
 					[matTooltip]="
 						!(p2pWebRTCService.outgoingStream | await)?.constraints
-							?.audio ?
+							.audio ?
 							stringsService.micEnable :
 							stringsService.micDisable
 					"
@@ -451,7 +451,7 @@
 						<ng-container
 							*ngIf="
 								!(p2pWebRTCService.outgoingStream | await)
-									?.constraints?.audio;
+									?.constraints.audio;
 								else micOff
 							"
 						>
