@@ -533,6 +533,9 @@ message CalendarInvite {
 
 	/** Event title/subject. */
 	required string title = 7;
+
+	/** Meeting URL. */
+	string url = 8;
 }
 
 /** Call types. */

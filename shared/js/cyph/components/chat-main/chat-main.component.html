@@ -149,17 +149,35 @@
 		<div
 			class="friend stream"
 			[fxHide]="
-				!(p2pWebRTCService.incomingStream | await)?.video ||
-				(p2pWebRTCService.loading | await)
+				((p2pWebRTCService.incomingVideoStreams | await) || []).length <
+					1 || (p2pWebRTCService.loading | await)
 			"
-		></div>
+		>
+			<ng-container
+				*ngFor="
+					let incomingStream of p2pWebRTCService.incomingStreams
+						| await;
+					trackBy: trackByIndex
+				"
+			>
+				<mat-video
+					[fxShow]="incomingStream.activeVideo"
+					[autoplay]="true"
+					[muted]="true"
+					[overlay]="false"
+					[playsinline]="true"
+					[src]="incomingStream.stream"
+					*ngIf="!!incomingStream.stream"
+				></mat-video>
+			</ng-container>
+		</div>
 		<ng-container *ngIf="!envService.isAccounts; else accountsAudioCall">
 			<img
 				*ngIf="!envService.customBuildImages.audioImage"
 				class="friend"
 				[fxHide]="
-					(p2pWebRTCService.incomingStream | await)?.video ||
-					(p2pWebRTCService.loading | await)
+					((p2pWebRTCService.incomingVideoStreams | await) || [])
+						.length > 0 || (p2pWebRTCService.loading | await)
 				"
 				src="/assets/img/voicecall.jpg"
 				alt="Voice call"
@@ -169,8 +187,8 @@
 				*ngIf="!!envService.customBuildImages.audioImage"
 				class="friend"
 				[fxHide]="
-					(p2pWebRTCService.incomingStream | await)?.video ||
-					(p2pWebRTCService.loading | await)
+					((p2pWebRTCService.incomingVideoStreams | await) || [])
+						.length > 0 || (p2pWebRTCService.loading | await)
 				"
 				[src]="envService.customBuildImages.audioImage | await"
 				alt="Voice call"
@@ -180,7 +198,8 @@
 		<ng-template #accountsAudioCall>
 			<ng-container
 				*ngIf="
-					(p2pWebRTCService.incomingStream | await)?.video !== true
+					((p2pWebRTCService.incomingVideoStreams | await) || [])
+						.length < 1
 				"
 			>
 				<div
@@ -224,14 +243,18 @@
 				</div>
 			</ng-container>
 		</ng-template>
-		<video
+		<mat-video
 			class="me"
-			[fxHide]="!(p2pWebRTCService.outgoingStream | await)?.video"
-			autoplay
-			muted
-			playsinline
+			[fxHide]="
+				!(p2pWebRTCService.outgoingStream | await)?.constraints?.video
+			"
 			[ngDraggable]="envService.pro | await"
-		></video>
+			[autoplay]="true"
+			[muted]="true"
+			[overlay]="false"
+			[playsinline]="true"
+			[src]="(p2pWebRTCService.outgoingStream | await)?.stream || ''"
+		></mat-video>
 
 		<mat-progress-spinner
 			mode="indeterminate"
@@ -342,7 +365,8 @@
 					envService.isTelehealth &&
 					!(
 						envService.isAccounts &&
-						!(p2pWebRTCService.outgoingStream | await)?.video
+						!(p2pWebRTCService.outgoingStream | await)?.constraints
+							?.video
 					)
 				"
 			>
@@ -376,7 +400,8 @@
 					class="video-call-button"
 					(click)="p2pService.videoCallButton()"
 					[matTooltip]="
-						!(p2pWebRTCService.outgoingStream | await)?.video ?
+						!(p2pWebRTCService.outgoingStream | await)?.constraints
+							?.video ?
 							stringsService.cameraEnable :
 							stringsService.cameraDisable
 					"
@@ -387,7 +412,7 @@
 						<ng-container
 							*ngIf="
 								!(p2pWebRTCService.outgoingStream | await)
-									?.video;
+									?.constraints?.video;
 								else videocamOff
 							"
 						>
@@ -417,7 +442,8 @@
 							undefined
 					"
 					[matTooltip]="
-						!(p2pWebRTCService.outgoingStream | await)?.audio ?
+						!(p2pWebRTCService.outgoingStream | await)?.constraints
+							?.audio ?
 							stringsService.micEnable :
 							stringsService.micDisable
 					"
@@ -427,7 +453,7 @@
 						<ng-container
 							*ngIf="
 								!(p2pWebRTCService.outgoingStream | await)
-									?.audio;
+									?.constraints?.audio;
 								else micOff
 							"
 						>

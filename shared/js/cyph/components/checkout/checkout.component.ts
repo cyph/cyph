@@ -8,6 +8,7 @@ import {
 	ElementRef,
 	EventEmitter,
 	Input,
+	OnChanges,
 	OnInit,
 	Output
 } from '@angular/core';
@@ -39,7 +40,7 @@ import {bitPayLogo} from './bit-pay-logo';
 	templateUrl: './checkout.component.html'
 })
 export class CheckoutComponent extends BaseProvider
-	implements AfterViewInit, OnInit {
+	implements AfterViewInit, OnChanges, OnInit {
 	/** @ignore */
 	private readonly authorization = request({
 		retries: 5,
@@ -118,6 +119,12 @@ export class CheckoutComponent extends BaseProvider
 	/** Item name. */
 	@Input() public itemName?: string;
 
+	/** Maximum number of users. */
+	@Input() public maxUsers: number = 1000;
+
+	/** Minimum nubmer of users. */
+	@Input() public minUsers: number = 1;
+
 	/** Name. */
 	@Input() public name: {
 		firstName?: string;
@@ -163,9 +170,7 @@ export class CheckoutComponent extends BaseProvider
 	@Input() public userToken?: string;
 
 	/** User count options. */
-	public readonly userOptions: number[] = new Array(999)
-		.fill(0)
-		.map((_, i) => i + 2);
+	public readonly userOptions = new BehaviorSubject<number[]>([]);
 
 	/** Number of users for per-user pricing. */
 	public readonly users = new BehaviorSubject<number>(1);
@@ -208,63 +213,17 @@ export class CheckoutComponent extends BaseProvider
 		);
 	}
 
-	/** @inheritDoc */
-	public ngOnInit () : void {
-		/* Workaround for Angular Elements leaving inputs as strings */
+	/** @ignore */
+	private updateUserOptions () : void {
+		this.userOptions.next(
+			new Array(this.maxUsers - this.minUsers + 1)
+				.fill(0)
+				.map((_, i) => i + this.minUsers)
+		);
 
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.amount === 'string' && this.amount) {
-			this.amount = parseFloat(this.amount);
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.category === 'string' && this.category) {
-			this.category = parseFloat(this.category);
-		}
-		if (
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			typeof this.extraUserDiscount === 'string' &&
-			this.extraUserDiscount
-		) {
-			this.extraUserDiscount = parseFloat(this.extraUserDiscount);
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.individualSubscriptions === 'string') {
-			this.individualSubscriptions =
-				<any> this.individualSubscriptions === 'true';
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.item === 'string' && this.item) {
-			this.item = parseFloat(this.item);
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.noSpinnerEnd === 'string') {
-			this.noSpinnerEnd = <any> this.noSpinnerEnd === 'true';
-		}
-		/* eslint-disable-next-line @typescript-eslint/tslint/config */
-		if (typeof this.perUser === 'string') {
-			this.perUser = <any> this.perUser === 'true';
-		}
-		if (
-			/* eslint-disable-next-line @typescript-eslint/tslint/config */
-			typeof this.subscriptionType === 'string' &&
-			this.subscriptionType
-		) {
-			this.subscriptionType = parseFloat(this.subscriptionType);
-			if (isNaN(this.subscriptionType)) {
-				this.subscriptionType = undefined;
-			}
-		}
-
-		(async () => {
-			if (!this.address.countryCode) {
-				this.address.countryCode = this.configService.defaultCountryCode;
-			}
-
-			while (!this.destroyed.value) {
-				this.changeDetectorRef.detectChanges();
-				await sleep();
-			}
-		})();
+		this.users.next(
+			Math.min(this.maxUsers, Math.max(this.minUsers, this.users.value))
+		);
 	}
 
 	/** @inheritDoc */
@@ -472,6 +431,80 @@ export class CheckoutComponent extends BaseProvider
 				});
 			}
 		);
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		/* Workaround for Angular Elements leaving inputs as strings */
+
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.amount === 'string' && this.amount) {
+			this.amount = parseFloat(this.amount);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.category === 'string' && this.category) {
+			this.category = parseFloat(this.category);
+		}
+		if (
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			typeof this.extraUserDiscount === 'string' &&
+			this.extraUserDiscount
+		) {
+			this.extraUserDiscount = parseFloat(this.extraUserDiscount);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.individualSubscriptions === 'string') {
+			this.individualSubscriptions =
+				<any> this.individualSubscriptions === 'true';
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.item === 'string' && this.item) {
+			this.item = parseFloat(this.item);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.maxUsers === 'string' && this.maxUsers) {
+			this.maxUsers = parseFloat(this.maxUsers);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.minUsers === 'string' && this.minUsers) {
+			this.minUsers = parseFloat(this.minUsers);
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.noSpinnerEnd === 'string') {
+			this.noSpinnerEnd = <any> this.noSpinnerEnd === 'true';
+		}
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
+		if (typeof this.perUser === 'string') {
+			this.perUser = <any> this.perUser === 'true';
+		}
+		if (
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			typeof this.subscriptionType === 'string' &&
+			this.subscriptionType
+		) {
+			this.subscriptionType = parseFloat(this.subscriptionType);
+			if (isNaN(this.subscriptionType)) {
+				this.subscriptionType = undefined;
+			}
+		}
+
+		this.updateUserOptions();
+
+		(async () => {
+			if (!this.address.countryCode) {
+				this.address.countryCode = this.configService.defaultCountryCode;
+			}
+
+			while (!this.destroyed.value) {
+				this.changeDetectorRef.detectChanges();
+				await sleep();
+			}
+		})();
+	}
+
+	/** @inheritDoc */
+	public ngOnChanges () : void {
+		this.updateUserOptions();
 	}
 
 	/** Submits payment. */

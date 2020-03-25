@@ -1,7 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import SimplePeer from 'simple-peer';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
-import {ChatService} from '../services/chat.service';
 import {Timer} from '../timer';
 
 /**
@@ -14,8 +13,23 @@ export interface IP2PWebRTCService {
 	/** Emits on session disconnect. */
 	readonly disconnect: Observable<void>;
 
-	/** Description of incoming data. */
-	readonly incomingStream: BehaviorSubject<MediaStreamConstraints>;
+	/** Incoming stream data. */
+	readonly incomingStreams: BehaviorSubject<
+		{
+			activeVideo: boolean;
+			constraints: MediaStreamConstraints;
+			stream?: MediaStream;
+		}[]
+	>;
+
+	/** Active incoming video feeds. */
+	readonly incomingVideoStreams: Observable<
+		{
+			activeVideo: boolean;
+			constraints: MediaStreamConstraints;
+			stream: MediaStream;
+		}[]
+	>;
 
 	/** Indicates whether an initial call is pending. */
 	readonly initialCallPending: BehaviorSubject<boolean>;
@@ -29,8 +43,11 @@ export interface IP2PWebRTCService {
 	/** Indicates whether starting local camera/microphone has failed. */
 	readonly localMediaError: BehaviorSubject<boolean>;
 
-	/** Description of outgoing data (passed directly into navigator.getUserMedia). */
-	readonly outgoingStream: BehaviorSubject<MediaStreamConstraints>;
+	/** Outgoing stream data. */
+	readonly outgoingStream: BehaviorSubject<{
+		constraints: MediaStreamConstraints;
+		stream?: MediaStream;
+	}>;
 
 	/** Resolves when service is ready. */
 	readonly ready: Promise<boolean>;
@@ -42,8 +59,7 @@ export interface IP2PWebRTCService {
 	readonly webRTC: BehaviorSubject<
 		| undefined
 		| {
-				localStream: MediaStream;
-				peer: SimplePeer.Instance;
+				peers: SimplePeer.Instance[];
 				timer: Timer;
 		  }
 	>;
@@ -55,7 +71,7 @@ export interface IP2PWebRTCService {
 	accept (callType?: 'audio' | 'video', isPassive?: boolean) : Promise<void>;
 
 	/** This kills the P2P session. */
-	close () : Promise<void>;
+	close (incomingP2PKill?: boolean) : Promise<void>;
 
 	/** Gets all available I/O devices. */
 	getDevices () : Promise<{
@@ -65,15 +81,14 @@ export interface IP2PWebRTCService {
 	}>;
 
 	/** Initializes service. */
-	init (
-		chatService: ChatService,
-		handlers: IP2PHandlers,
-		localVideo: () => JQuery,
-		remoteVideo: () => JQuery
-	) : void;
+	init (handlers: IP2PHandlers, remoteVideos: () => JQuery) : void;
 
 	/** Sets up a new P2P session. */
-	join () : void;
+	join (p2pSessionData: {
+		callType: 'audio' | 'video';
+		iceServers: string;
+		id: string;
+	}) : Promise<void>;
 
 	/**
 	 * Sends a new call request to the other party.

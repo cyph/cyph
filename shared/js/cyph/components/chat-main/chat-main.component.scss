@@ -167,12 +167,16 @@
 			.friend {
 				height: 100%;
 
-				> video {
+				> mat-video {
 					position: absolute;
 					top: 0;
 					left: 0;
 					width: 100%;
 					height: 100%;
+
+					mat-video-spinner {
+						display: none;
+					}
 				}
 			}
 
@@ -507,6 +511,11 @@
 				@include transform(translateX(calc(65px - 100vw)) !important);
 			}
 		}
+	}
+
+	mat-video * {
+		cursor: unset !important;
+		pointer-events: none !important;
 	}
 }
 
