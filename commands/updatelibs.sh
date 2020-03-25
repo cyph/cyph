@@ -166,6 +166,7 @@ read -r -d '' modules <<- EOM
 	@types/hammerjs
 	@types/hark
 	@types/html-to-text
+	@types/intro.js
 	@types/jasmine
 	@types/jquery
 	@types/jspdf
@@ -254,6 +255,7 @@ read -r -d '' modules <<- EOM
 	husky
 	ical-generator@~0.2
 	image-type
+	intro.js
 	jasmine-core
 	jasmine-spec-reporter
 	jquery
