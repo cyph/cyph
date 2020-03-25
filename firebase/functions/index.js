@@ -352,11 +352,15 @@ exports.acceptPseudoRelationship = onCall(
 );
 
 exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
-	const id = readableID(config.cyphIDLength);
+	const id = (data.id || '').trim();
 	const inviterUsername = await getUsername();
 	const {accountsURL} = namespaces[namespace];
 
-	if (!data.to || (!data.to.email && !data.toSMS)) {
+	if (
+		id.length !== config.cyphIDLength ||
+		!data.to ||
+		(!data.to.email && !data.toSMS)
+	) {
 		throw new Error('No recipient specified.');
 	}
 

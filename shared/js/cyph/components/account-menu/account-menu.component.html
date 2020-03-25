@@ -50,26 +50,29 @@
 			</h3>
 
 			<small>
-				<div
-					class="appointment-list-item"
+				<a
+					[href]="o.calendarInvite.url"
+					target="_blank"
 					*ngFor="let o of upcomingAppointments"
 				>
-					<strong>{{ o.record.name }}</strong>
-					<br />
-					<small>
-						{{
-							getDateTimeString(
-								o.appointment.calendarInvite.startTime
-							)
-						}}
-						&ngsp; &ndash; &ngsp;
-						{{
-							getDateTimeString(
-								o.appointment.calendarInvite.endTime
-							)
-						}}
-					</small>
-				</div>
+					<div class="appointment-list-item">
+						<strong>{{ o.record.name }}</strong>
+						<br />
+						<small>
+							{{
+								getDateTimeString(
+									o.appointment.calendarInvite.startTime
+								)
+							}}
+							&ngsp; &ndash; &ngsp;
+							{{
+								getDateTimeString(
+									o.appointment.calendarInvite.endTime
+								)
+							}}
+						</small>
+					</div>
+				</a>
 			</small>
 		</mat-nav-list>
 	</ng-template>
