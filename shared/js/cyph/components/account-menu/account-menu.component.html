@@ -51,7 +51,7 @@
 
 			<small>
 				<a
-					[href]="o.calendarInvite.url"
+					[href]="o.appointment.calendarInvite.url || ''"
 					target="_blank"
 					*ngFor="let o of upcomingAppointments"
 				>
