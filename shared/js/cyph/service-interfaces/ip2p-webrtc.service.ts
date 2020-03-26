@@ -59,7 +59,7 @@ export interface IP2PWebRTCService {
 	readonly webRTC: BehaviorSubject<
 		| undefined
 		| {
-				peers: SimplePeer.Instance[];
+				peers: {connected: Promise<void>; peer: SimplePeer.Instance}[];
 				timer: Timer;
 		  }
 	>;
