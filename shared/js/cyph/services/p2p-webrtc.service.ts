@@ -521,9 +521,14 @@ export class P2PWebRTCService extends BaseProvider
 					trickle: false
 				});
 
-				peer.on('close', () => {
+				peer.on('close', async () => {
 					debugLog(() => ({webRTC: {close: true}}));
 					connected.reject();
+
+					if (!this.sessionService.group) {
+						await this.close();
+						return;
+					}
 
 					const newIncomingStreams = [
 						...this.incomingStreams.value.slice(0, i),
