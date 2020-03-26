@@ -378,7 +378,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@3.7
+	typescript@3.8
 	u2f-api-polyfill
 	uglify-es
 	unsemantic
