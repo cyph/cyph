@@ -743,6 +743,12 @@ export class P2PWebRTCService extends BaseProvider
 
 			let deviceIdChanged = false;
 
+			const oldAudioTracks =
+				this.outgoingStream.value.stream?.getAudioTracks() || [];
+			const oldVideoTracks =
+				this.outgoingStream.value.stream?.getVideoTracks() || [];
+			const oldTracks = [...oldAudioTracks, ...oldVideoTracks];
+
 			if (medium === 'audio' || medium === undefined) {
 				if (
 					typeof shouldPause === 'object' &&
@@ -770,8 +776,7 @@ export class P2PWebRTCService extends BaseProvider
 						this.outgoingStream.value.constraints.audio.deviceId !==
 							this.lastDeviceIDs.mic)
 				) {
-					for (const track of this.outgoingStream.value.stream?.getAudioTracks() ||
-						[]) {
+					for (const track of oldAudioTracks) {
 						track.enabled = audio;
 					}
 
@@ -812,8 +817,7 @@ export class P2PWebRTCService extends BaseProvider
 						this.outgoingStream.value.constraints.video.deviceId !==
 							this.lastDeviceIDs.camera)
 				) {
-					for (const track of this.outgoingStream.value.stream?.getVideoTracks() ||
-						[]) {
+					for (const track of oldVideoTracks) {
 						track.enabled = video;
 					}
 
@@ -828,31 +832,57 @@ export class P2PWebRTCService extends BaseProvider
 			}
 
 			if (deviceIdChanged) {
+				const stream = this.outgoingStream.value.stream;
 				const newStream = await this.getUserMedia();
 
 				if (newStream === undefined) {
 					throw new Error('getUserMedia failed.');
 				}
 
-				for (const {peer} of webRTC.peers) {
-					peer.addStream(newStream);
-					if (this.outgoingStream.value.stream) {
-						peer.removeStream(this.outgoingStream.value.stream);
+				const newAudioTracks = newStream.getAudioTracks();
+				const newVideoTracks = newStream.getVideoTracks();
+				const newTracks = [...newAudioTracks, ...newVideoTracks];
+
+				if (
+					!stream ||
+					oldAudioTracks.length !== newAudioTracks.length ||
+					oldVideoTracks.length !== newVideoTracks.length ||
+					!('replaceTrack' in RTCRtpSender.prototype)
+				) {
+					for (const {peer} of webRTC.peers) {
+						if (stream) {
+							peer.removeStream(stream);
+						}
+
+						peer.addStream(newStream);
+					}
+
+					this.outgoingStream.next({
+						...this.outgoingStream.value,
+						stream: newStream
+					});
+				}
+				else {
+					for (const {peer} of webRTC.peers) {
+						for (let i = 0; i < oldTracks.length; ++i) {
+							peer.replaceTrack(
+								oldTracks[i],
+								newTracks[i],
+								stream
+							);
+						}
+					}
+
+					for (let i = 0; i < oldTracks.length; ++i) {
+						const oldTrack = oldTracks[i];
+						const newTrack = newTracks[i];
+
+						oldTrack.enabled = false;
+						oldTrack.stop();
+						stream.removeTrack(oldTrack);
+						stream.addTrack(newTrack);
 					}
 				}
-
-				for (const track of this.outgoingStream.value.stream?.getTracks() ||
-					[]) {
-					track.enabled = false;
-					track.stop();
-					/* eslint-disable-next-line no-unused-expressions */
-					this.outgoingStream.value.stream?.removeTrack(track);
-				}
-
-				this.outgoingStream.next({
-					...this.outgoingStream.value,
-					stream: newStream
-				});
 			}
 
 			await Promise.all(
