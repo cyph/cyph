@@ -350,7 +350,7 @@ read -r -d '' modules <<- EOM
 	rxjs-tslint-rules
 	sass
 	sidh
-	simple-peer
+	simple-peer@https://github.com/feross/simple-peer
 	simplebtc
 	simplewebrtc
 	sodiumutil
@@ -378,7 +378,7 @@ read -r -d '' modules <<- EOM
 	tslint-microsoft-contrib
 	tsutils
 	typedoc
-	typescript@3.7
+	typescript@3.8
 	u2f-api-polyfill
 	uglify-es
 	unsemantic
