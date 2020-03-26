@@ -484,6 +484,13 @@ export class P2PWebRTCService extends BaseProvider
 				return;
 			}
 
+			this.lastDeviceIDs.camera = localStream
+				.getVideoTracks()[0]
+				?.getSettings().deviceId;
+			this.lastDeviceIDs.mic = localStream
+				.getAudioTracks()[0]
+				?.getSettings().deviceId;
+
 			this.outgoingStream.next({
 				...this.outgoingStream.value,
 				stream: localStream
