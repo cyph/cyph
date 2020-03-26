@@ -14756,7 +14756,7 @@ marked@~0.3.6:
 
 "mat-video@https://github.com/buu700/mat-video-tmp":
   version "2.7.2"
-  resolved "https://github.com/buu700/mat-video-tmp#f3493fc6588ebfa07c6448a1c203d4120e98a5e9"
+  resolved "https://github.com/buu700/mat-video-tmp#bc2273ebab7fa0e6565163c2c4f00bd907448a10"
   dependencies:
     tslib "^1.9.0"
 
