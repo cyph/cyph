@@ -499,28 +499,27 @@ export class AccountChatComponent extends BaseProvider
 											return;
 										}
 
-										if (
+										await Promise.all([
 											sessionSubID &&
 											remoteUser &&
-											!remoteUser.anonymous
-										) {
-											this.accountDatabaseService.notify(
-												remoteUser.username,
-												NotificationTypes.Call,
-												{
-													callType,
-													id: sessionSubID,
-													missed: true
-												}
-											);
-										}
-
-										this.dialogService.toast(
-											this.stringsService
-												.p2pTimeoutOutgoing,
-											3000
-										);
-										this.p2pWebRTCService.close();
+											!remoteUser.anonymous ?
+												this.accountDatabaseService.notify(
+													remoteUser.username,
+													NotificationTypes.Call,
+													{
+														callType,
+														id: sessionSubID,
+														missed: true
+													}
+												) :
+												undefined,
+											this.dialogService.toast(
+												this.stringsService
+													.p2pTimeoutOutgoing,
+												3000
+											),
+											this.p2pWebRTCService.close()
+										]);
 									});
 
 								this.p2pWebRTCService.disconnect
