@@ -482,7 +482,7 @@ export class AccountChatComponent extends BaseProvider
 													.toPromise(),
 												destroyed.then(() => false)
 											]),
-										this.answering.value
+										true
 									)
 									.then(async () => {
 										const remoteUser = await this
