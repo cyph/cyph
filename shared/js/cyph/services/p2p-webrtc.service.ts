@@ -280,10 +280,10 @@ export class P2PWebRTCService extends BaseProvider
 		}
 
 		if (this.webRTC.value) {
+			this.webRTC.value.timer.stop();
 			for (const {peer} of this.webRTC.value.peers) {
 				peer.destroy();
 			}
-			this.webRTC.value.timer.stop();
 		}
 
 		this.incomingStreams.next([]);
