@@ -52,6 +52,16 @@ export interface IP2PWebRTCService {
 	/** Resolves when service is ready. */
 	readonly ready: Promise<boolean>;
 
+	/** Records calls. */
+	readonly recorder: {
+		addStream: (stream: MediaStream) => void;
+		getBlob: () => Promise<Blob>;
+		pause: () => void;
+		resume: () => void;
+		start: () => void;
+		stop: () => Promise<void>;
+	};
+
 	/** If true, toggling video is allowed during the current call. */
 	readonly videoEnabled: BehaviorSubject<boolean>;
 
