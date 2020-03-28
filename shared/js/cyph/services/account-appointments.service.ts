@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {EventSettingsModel} from '@syncfusion/ej2-angular-schedule';
 import memoize from 'lodash-es/memoize';
 import {combineLatest, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
@@ -23,7 +24,17 @@ export class AccountAppointmentsService extends BaseProvider {
 		(
 			record: IAccountFileRecord
 		) : Observable<
-			{appointment: IAppointment; friend?: string} | undefined
+			| {
+					appointment: IAppointment;
+					friend?: string;
+					schedulerObject: {
+						EndTime: Date;
+						Id: number;
+						StartTime: Date;
+						Subject: string;
+					};
+			  }
+			| undefined
 		> =>
 			this.accountFilesService.watchAppointment(record).pipe(
 				map(appointment => {
@@ -38,11 +49,27 @@ export class AccountAppointmentsService extends BaseProvider {
 						participant => participant !== currentUser.user.username
 					)[0];
 
-					return {appointment, friend};
+					return {
+						appointment,
+						friend,
+						schedulerObject: {
+							EndTime: new Date(
+								appointment.calendarInvite.endTime
+							),
+							Id: ++this.lastAppointmentID,
+							StartTime: new Date(
+								appointment.calendarInvite.startTime
+							),
+							Subject: appointment.calendarInvite.title
+						}
+					};
 				})
 			),
 		(record: IAccountFileRecord) => record.id
 	);
+
+	/** Last appointment ID for `EventSettingsModel`. */
+	private lastAppointmentID: number = 0;
 
 	/** All (unfiltered) appointments. */
 	public readonly allAppointments = this.getAppointments(
@@ -111,6 +138,45 @@ export class AccountAppointmentsService extends BaseProvider {
 		)
 	};
 
+	/** `appointments` converted into `EventSettingsModel` objects. */
+	public readonly appointmentSchedulerModels = {
+		current: this.appointments.current.pipe(
+			map(
+				(appointments) : EventSettingsModel => ({
+					dataSource: appointments.map(o => o.schedulerObject)
+				})
+			)
+		),
+		future: this.appointments.future.pipe(
+			map(
+				(appointments) : EventSettingsModel => ({
+					dataSource: appointments.map(o => o.schedulerObject)
+				})
+			)
+		),
+		incoming: this.appointments.incoming.pipe(
+			map(
+				(appointments) : EventSettingsModel => ({
+					dataSource: appointments.map(o => o.schedulerObject)
+				})
+			)
+		),
+		past: this.appointments.past.pipe(
+			map(
+				(appointments) : EventSettingsModel => ({
+					dataSource: appointments.map(o => o.schedulerObject)
+				})
+			)
+		),
+		upcoming: this.appointments.upcoming.pipe(
+			map(
+				(appointments) : EventSettingsModel => ({
+					dataSource: appointments.map(o => o.schedulerObject)
+				})
+			)
+		)
+	};
+
 	/** List of email contacts from all appointments. */
 	public readonly pastEmailContacts = this.allAppointments.pipe(
 		map(appointments =>
@@ -139,6 +205,12 @@ export class AccountAppointmentsService extends BaseProvider {
 			appointment: IAppointment;
 			friend?: string;
 			record: IAccountFileRecord;
+			schedulerObject: {
+				EndTime: Date;
+				Id: number;
+				StartTime: Date;
+				Subject: string;
+			};
 		}[]
 	> {
 		return recordsList.pipe(
