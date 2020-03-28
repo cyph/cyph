@@ -3,6 +3,7 @@
 import {Injectable} from '@angular/core';
 import hark from 'hark';
 import * as msgpack from 'msgpack-lite';
+import RecordRTC from 'recordrtc';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import SimplePeer from 'simple-peer';
@@ -154,6 +155,44 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly ready: Promise<boolean> = this._READY.promise;
 
 	/** @inheritDoc */
+	public readonly recorder = (() => {
+		const recordRTC = new RecordRTC.MRecordRTC();
+		recordRTC.mediaType = {video: true};
+
+		return {
+			addStream: (stream: MediaStream) => {
+				recordRTC.addStream(stream);
+			},
+			getBlob: async () =>
+				new Promise<Blob>((resolve, reject) => {
+					recordRTC.getBlob((recording: any) => {
+						if (recording?.video instanceof Blob) {
+							resolve(recording.video);
+						}
+						else {
+							reject();
+						}
+					});
+				}),
+			pause: () => {
+				recordRTC.pauseRecording();
+			},
+			resume: () => {
+				recordRTC.resumeRecording();
+			},
+			start: () => {
+				recordRTC.startRecording();
+			},
+			stop: async () =>
+				new Promise<void>(resolve => {
+					recordRTC.stopRecording(() => {
+						resolve();
+					});
+				})
+		};
+	})();
+
+	/** @inheritDoc */
 	public readonly resolveReady: () => void = this._READY.resolve;
 
 	/** @inheritDoc */
@@ -256,9 +295,14 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** @inheritDoc */
 	public async close (incomingP2PKill: boolean = false) : Promise<void> {
-		const p2pKillPromise = incomingP2PKill ?
-			Promise.resolve() :
-			this.sessionService.send([rpcEvents.p2pKill, {}]);
+		const p2pKillPromise = Promise.all([
+			incomingP2PKill ?
+				Promise.resolve() :
+				this.sessionService
+					.send([rpcEvents.p2pKill, {}])
+					.then(() => {}),
+			this.recorder.stop()
+		]);
 
 		this.initialCallPending.next(false);
 
@@ -280,10 +324,10 @@ export class P2PWebRTCService extends BaseProvider
 		}
 
 		if (this.webRTC.value) {
+			this.webRTC.value.timer.stop();
 			for (const {peer} of this.webRTC.value.peers) {
 				peer.destroy();
 			}
-			this.webRTC.value.timer.stop();
 		}
 
 		this.incomingStreams.next([]);
@@ -491,6 +535,8 @@ export class P2PWebRTCService extends BaseProvider
 				.getAudioTracks()[0]
 				?.getSettings().deviceId;
 
+			this.recorder.addStream(localStream);
+
 			this.outgoingStream.next({
 				...this.outgoingStream.value,
 				stream: localStream
@@ -618,6 +664,8 @@ export class P2PWebRTCService extends BaseProvider
 					}));
 
 					this.stopIncomingStream(this.incomingStreams.value[i]);
+
+					this.recorder.addStream(remoteStream);
 
 					this.incomingStreams.next([
 						...this.incomingStreams.value.slice(0, i),
@@ -868,6 +916,8 @@ export class P2PWebRTCService extends BaseProvider
 
 						peer.addStream(newStream);
 					}
+
+					this.recorder.addStream(newStream);
 
 					this.outgoingStream.next({
 						...this.outgoingStream.value,
