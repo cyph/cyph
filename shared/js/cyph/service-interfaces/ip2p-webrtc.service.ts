@@ -18,6 +18,11 @@ export interface IP2PWebRTCService {
 		{
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
+			recorder?: {
+				getBlob: () => Promise<Blob>;
+				startRecording: () => Promise<void>;
+				stopRecording: () => Promise<void>;
+			};
 			stream?: MediaStream;
 		}[]
 	>;
@@ -27,6 +32,11 @@ export interface IP2PWebRTCService {
 		{
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
+			recorder: {
+				getBlob: () => Promise<Blob>;
+				startRecording: () => Promise<void>;
+				stopRecording: () => Promise<void>;
+			};
 			stream: MediaStream;
 		}[]
 	>;
@@ -46,6 +56,11 @@ export interface IP2PWebRTCService {
 	/** Outgoing stream data. */
 	readonly outgoingStream: BehaviorSubject<{
 		constraints: MediaStreamConstraints;
+		recorder?: {
+			getBlob: () => Promise<Blob>;
+			startRecording: () => Promise<void>;
+			stopRecording: () => Promise<void>;
+		};
 		stream?: MediaStream;
 	}>;
 
