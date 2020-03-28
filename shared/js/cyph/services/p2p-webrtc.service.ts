@@ -3,7 +3,6 @@
 import {Injectable} from '@angular/core';
 import hark from 'hark';
 import * as msgpack from 'msgpack-lite';
-import RecordRTC from 'recordrtc';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import SimplePeer from 'simple-peer';
@@ -111,11 +110,6 @@ export class P2PWebRTCService extends BaseProvider
 		{
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
-			recorder?: {
-				getBlob: () => Promise<Blob>;
-				startRecording: () => Promise<void>;
-				stopRecording: () => Promise<void>;
-			};
 			stream?: MediaStream;
 		}[]
 	>([]);
@@ -127,14 +121,9 @@ export class P2PWebRTCService extends BaseProvider
 					{
 						activeVideo: boolean;
 						constraints: MediaStreamConstraints;
-						recorder: {
-							getBlob: () => Promise<Blob>;
-							startRecording: () => Promise<void>;
-							stopRecording: () => Promise<void>;
-						};
 						stream: MediaStream;
 					}[]
-				> incomingStreams.filter(o => !!o.constraints.video && !!o.recorder && !!o.stream)
+				> incomingStreams.filter(o => !!o.constraints.video && !!o.stream)
 		)
 	);
 
@@ -153,11 +142,6 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public readonly outgoingStream = new BehaviorSubject<{
 		constraints: MediaStreamConstraints;
-		recorder?: {
-			getBlob: () => Promise<Blob>;
-			startRecording: () => Promise<void>;
-			stopRecording: () => Promise<void>;
-		};
 		stream?: MediaStream;
 	}>({
 		constraints: {
@@ -183,26 +167,6 @@ export class P2PWebRTCService extends BaseProvider
 				timer: Timer;
 		  }
 	>(undefined);
-
-	/** @ignore */
-	private getRecorder (
-		stream?: MediaStream
-	) :
-		| undefined
-		| {
-				getBlob: () => Promise<Blob>;
-				startRecording: () => Promise<void>;
-				stopRecording: () => Promise<void>;
-		  } {
-		if (!stream) {
-			return undefined;
-		}
-
-		return new RecordRTC.RecordRTCPromisesHandler(stream, {
-			mimeType: 'video/webm',
-			type: 'video'
-		});
-	}
 
 	/** @ignore */
 	private async getUserMedia () : Promise<MediaStream | undefined> {
@@ -529,7 +493,6 @@ export class P2PWebRTCService extends BaseProvider
 
 			this.outgoingStream.next({
 				...this.outgoingStream.value,
-				recorder: this.getRecorder(localStream),
 				stream: localStream
 			});
 
@@ -666,7 +629,6 @@ export class P2PWebRTCService extends BaseProvider
 								!this.incomingStreams.value.find(
 									o => o.activeVideo
 								),
-							recorder: this.getRecorder(remoteStream),
 							stream: remoteStream
 						},
 						...this.incomingStreams.value.slice(i + 1)
@@ -909,7 +871,6 @@ export class P2PWebRTCService extends BaseProvider
 
 					this.outgoingStream.next({
 						...this.outgoingStream.value,
-						recorder: this.getRecorder(newStream),
 						stream: newStream
 					});
 				}
