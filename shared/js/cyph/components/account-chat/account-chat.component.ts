@@ -475,9 +475,9 @@ export class AccountChatComponent extends BaseProvider
 										.ring(
 											async () =>
 												Promise.race([
-													this.p2pWebRTCService.isActive
+													this.p2pWebRTCService.loading
 														.pipe(
-															filter(b => b),
+															filter(b => !b),
 															take(1)
 														)
 														.toPromise(),
@@ -492,7 +492,7 @@ export class AccountChatComponent extends BaseProvider
 
 											if (
 												this.destroyed.value ||
-												this.p2pWebRTCService.isActive
+												this.p2pWebRTCService.loading
 													.value ||
 												!this.p2pWebRTCService
 													.initialCallPending.value
