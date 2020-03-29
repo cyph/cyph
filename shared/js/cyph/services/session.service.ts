@@ -439,7 +439,7 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public async destroy () : Promise<void> {
-		if (!this.state.isAlive.value) {
+		if (!this.state.isAlive.value || this.group) {
 			return;
 		}
 
