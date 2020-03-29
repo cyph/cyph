@@ -208,6 +208,33 @@ export class P2PWebRTCService extends BaseProvider
 	>(undefined);
 
 	/** @ignore */
+	private addHarker (remoteStream: MediaStream, i: number) : void {
+		if (
+			!this.sessionService.group ||
+			this.harkers.has(remoteStream) ||
+			remoteStream.getAudioTracks().length < 1
+		) {
+			return;
+		}
+
+		const harker = hark(remoteStream);
+		this.harkers.set(remoteStream, harker);
+
+		harker.on('speaking', () => {
+			if (!this.incomingStreams.value[i].constraints.video) {
+				return;
+			}
+
+			this.incomingStreams.next(
+				this.incomingStreams.value.map((o, incomingStreamIndex) => ({
+					...o,
+					activeVideo: incomingStreamIndex === i
+				}))
+			);
+		});
+	}
+
+	/** @ignore */
 	private async getUserMedia () : Promise<MediaStream | undefined> {
 		const {constraints} = this.outgoingStream.value;
 
@@ -682,27 +709,7 @@ export class P2PWebRTCService extends BaseProvider
 						...this.incomingStreams.value.slice(i + 1)
 					]);
 
-					if (!this.sessionService.group) {
-						return;
-					}
-
-					const harker = hark(remoteStream);
-					this.harkers.set(remoteStream, harker);
-
-					harker.on('speaking', () => {
-						if (!this.incomingStreams.value[i].constraints.video) {
-							return;
-						}
-
-						this.incomingStreams.next(
-							this.incomingStreams.value.map(
-								(o, incomingStreamIndex) => ({
-									...o,
-									activeVideo: incomingStreamIndex === i
-								})
-							)
-						);
-					});
+					this.addHarker(remoteStream, i);
 				});
 
 				peer.on(
@@ -730,6 +737,8 @@ export class P2PWebRTCService extends BaseProvider
 								}
 							}
 						}));
+
+						this.addHarker(remoteStream, i);
 					}
 				);
 
