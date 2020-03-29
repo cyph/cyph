@@ -123,17 +123,23 @@
 						<span cyphTranslate>Enable/Disable Features</span>
 					</mat-expansion-panel-header>
 					<div fxFlex fxLayout="column" fxLayoutGap="32px">
-						<mat-slide-toggle
-							[ngModel]="(o.featureFlag.watch() | await) === true"
-							(ngModelChange)="o.featureFlag.setValue($event)"
-							[name]="o.id"
+						<ng-container
 							*ngFor="
 								let o of accountSettingsService.featureFlagsList;
 								trackBy: trackByID
 							"
 						>
-							{{ o.label }}
-						</mat-slide-toggle>
+							<mat-slide-toggle
+								[ngModel]="
+									(o.featureFlag.watch() | await) === true
+								"
+								(ngModelChange)="o.featureFlag.setValue($event)"
+								[name]="o.id"
+								*ngIf="o.visible | await"
+							>
+								{{ o.label }}
+							</mat-slide-toggle>
+						</ng-container>
 					</div>
 				</mat-expansion-panel>
 				<mat-expansion-panel

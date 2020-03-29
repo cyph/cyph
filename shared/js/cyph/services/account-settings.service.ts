@@ -1,12 +1,15 @@
 import {Injectable} from '@angular/core';
-import {switchMap} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IAsyncValue} from '../iasync-value';
 import {IFile} from '../ifile';
 import {BinaryProto, CyphPlans, InvertedBooleanProto} from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
+import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {EnvService} from './env.service';
 import {FileService} from './file.service';
 import {StringsService} from './strings.service';
 
@@ -29,53 +32,12 @@ export class AccountSettingsService extends BaseProvider {
 	};
 
 	/** List of feature flags. */
-	public readonly featureFlagsList = [
-		{
-			featureFlag: this.featureFlags.files,
-			id: 'files',
-			label: this.stringsService.featureFlagsFiles
-		},
-		{
-			featureFlag: this.featureFlags.forms,
-			id: 'forms',
-			label: this.stringsService.featureFlagsForms
-		},
-		{
-			featureFlag: this.featureFlags.inbox,
-			id: 'inbox',
-			label: this.stringsService.featureFlagsInbox
-		},
-		{
-			featureFlag: this.featureFlags.invite,
-			id: 'invite',
-			label: this.stringsService.featureFlagsInvite
-		},
-		{
-			featureFlag: this.featureFlags.messaging,
-			id: 'messaging',
-			label: this.stringsService.featureFlagsMessaging
-		},
-		{
-			featureFlag: this.featureFlags.notes,
-			id: 'notes',
-			label: this.stringsService.featureFlagsNotes
-		},
-		{
-			featureFlag: this.featureFlags.passwords,
-			id: 'passwords',
-			label: this.stringsService.featureFlagsPasswords
-		},
-		{
-			featureFlag: this.featureFlags.social,
-			id: 'social',
-			label: this.stringsService.featureFlagsSocial
-		},
-		{
-			featureFlag: this.featureFlags.wallets,
-			id: 'wallets',
-			label: this.stringsService.featureFlagsWallets
-		}
-	];
+	public readonly featureFlagsList: {
+		featureFlag: IAsyncValue<boolean>;
+		id: string;
+		label: string;
+		visible: Observable<boolean>;
+	}[];
 
 	/** User's plan / premium status. */
 	public readonly plan = toBehaviorSubject(
@@ -85,6 +47,42 @@ export class AccountSettingsService extends BaseProvider {
 		CyphPlans.Free,
 		this.subscriptions
 	);
+
+	/** Indicates whether features are enabled by current environment or plan. */
+	public readonly staticFeatureFlags = {
+		docs: of(
+			this.envService.debug ||
+				(!!this.envService.environment.customBuild &&
+					this.envService.environment.customBuild.config
+						.enableDocs === true)
+		),
+		group: this.envService.debug ?
+			of(true) :
+		this.envService.isTelehealth ?
+			of(false) :
+			this.plan.pipe(
+				map(plan => this.configService.planConfig[plan].enableGroup)
+			),
+		passwords: this.envService.debug ?
+			of(true) :
+		this.envService.isTelehealth ?
+			of(false) :
+			this.plan.pipe(
+				map(plan => this.configService.planConfig[plan].enablePasswords)
+			),
+		wallets:
+			this.envService.debug ||
+			(!!this.envService.environment.customBuild &&
+				this.envService.environment.customBuild.config.enableWallets ===
+					true) ?
+				of(true) :
+				this.plan.pipe(
+					map(
+						plan =>
+							this.configService.planConfig[plan].enableWallets
+					)
+				)
+	};
 
 	/** @ignore */
 	private getFeatureFlag (featureFlag: string) : IAsyncValue<boolean> {
@@ -127,11 +125,74 @@ export class AccountSettingsService extends BaseProvider {
 		private readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly envService: EnvService,
+
+		/** @ignore */
 		private readonly fileService: FileService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService
 	) {
 		super();
+
+		this.featureFlagsList = [
+			{
+				featureFlag: this.featureFlags.files,
+				id: 'files',
+				label: this.stringsService.featureFlagsFiles,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.forms,
+				id: 'forms',
+				label: this.stringsService.featureFlagsForms,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.inbox,
+				id: 'inbox',
+				label: this.stringsService.featureFlagsInbox,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.invite,
+				id: 'invite',
+				label: this.stringsService.featureFlagsInvite,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.messaging,
+				id: 'messaging',
+				label: this.stringsService.featureFlagsMessaging,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.notes,
+				id: 'notes',
+				label: this.stringsService.featureFlagsNotes,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.passwords,
+				id: 'passwords',
+				label: this.stringsService.featureFlagsPasswords,
+				visible: this.staticFeatureFlags.passwords
+			},
+			{
+				featureFlag: this.featureFlags.social,
+				id: 'social',
+				label: this.stringsService.featureFlagsSocial,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.wallets,
+				id: 'wallets',
+				label: this.stringsService.featureFlagsWallets,
+				visible: this.staticFeatureFlags.wallets
+			}
+		];
 	}
 }
