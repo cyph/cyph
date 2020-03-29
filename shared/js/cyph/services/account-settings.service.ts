@@ -20,6 +20,7 @@ import {StringsService} from './strings.service';
 export class AccountSettingsService extends BaseProvider {
 	/** User-set flags to enable/disable features. */
 	public readonly featureFlags = {
+		docs: this.getFeatureFlag('docs'),
 		files: this.getFeatureFlag('files'),
 		forms: this.getFeatureFlag('forms'),
 		inbox: this.getFeatureFlag('inbox'),
@@ -139,6 +140,12 @@ export class AccountSettingsService extends BaseProvider {
 		super();
 
 		this.featureFlagsList = [
+			{
+				featureFlag: this.featureFlags.docs,
+				id: 'docs',
+				label: this.stringsService.featureFlagsDocs,
+				visible: this.staticFeatureFlags.docs
+			},
 			{
 				featureFlag: this.featureFlags.files,
 				id: 'files',

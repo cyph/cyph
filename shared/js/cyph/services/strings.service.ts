@@ -354,6 +354,9 @@ export class StringsService extends BaseProvider {
 	public readonly feedback = `Send Feedback`;
 
 	/** @see StringsService */
+	public readonly featureFlagsDocs = `Docs`;
+
+	/** @see StringsService */
 	public readonly featureFlagsFiles = `Files`;
 
 	/** @see StringsService */

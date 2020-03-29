@@ -699,6 +699,17 @@
 					},
 
 					"featureFlags": {
+						"docs": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						},
 						"files": {
 							"data": {
 								".validate": "newData.isString()"

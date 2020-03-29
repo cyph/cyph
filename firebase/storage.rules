@@ -169,6 +169,7 @@ service firebase.storage {
 				}
 
 				// match /featureFlags {
+				// 	match /docs/{hash} {}
 				// 	match /files/{hash} {}
 				// 	match /forms/{hash} {}
 				// 	match /inbox/{hash} {}

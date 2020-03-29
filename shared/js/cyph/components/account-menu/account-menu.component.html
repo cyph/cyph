@@ -531,7 +531,7 @@
 					*ngIf="
 						(accountSettingsService.staticFeatureFlags.docs
 							| await) &&
-						(accountSettingsService.featureFlags.notes.watch()
+						(accountSettingsService.featureFlags.docs.watch()
 							| await)
 					"
 				>
