@@ -41,6 +41,7 @@ import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
+import {debugLogError} from '../../util/log';
 import {getDateTimeString, getTimestamp} from '../../util/time';
 import {readableID} from '../../util/uuid';
 
@@ -567,7 +568,10 @@ export class AccountChatComponent extends BaseProvider
 										).result;
 									});
 							}
-							catch {
+							catch (err) {
+								debugLogError(() => ({
+									accountChatInitError: err
+								}));
 								this.router.navigate(['profile', '404']);
 							}
 							finally {
