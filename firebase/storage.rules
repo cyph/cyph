@@ -168,6 +168,18 @@ service firebase.storage {
 					;
 				}
 
+				// match /featureFlags {
+				// 	match /files/{hash} {}
+				// 	match /forms/{hash} {}
+				// 	match /inbox/{hash} {}
+				// 	match /invite/{hash} {}
+				// 	match /messaging/{hash} {}
+				// 	match /notes/{hash} {}
+				// 	match /passwords/{hash} {}
+				// 	match /social/{hash} {}
+				// 	match /wallets/{hash} {}
+				// }
+
 				match /fileRecords/{fileRecord}/{hash} {
 					allow read;
 				}

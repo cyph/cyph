@@ -3,7 +3,9 @@
 	*ngIf="
 		!envService.isMobileOS ||
 			envService.isTelehealth ||
-			!(accountDatabaseService.currentUser | await)?.agseConfirmed;
+			!(accountDatabaseService.currentUser | await)?.agseConfirmed ||
+			(accountSettingsService.featureFlags.messaging.watch() | await) ===
+				false;
 		else mobileHome
 	"
 ></cyph-account-profile>

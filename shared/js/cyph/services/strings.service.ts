@@ -354,6 +354,33 @@ export class StringsService extends BaseProvider {
 	public readonly feedback = `Send Feedback`;
 
 	/** @see StringsService */
+	public readonly featureFlagsFiles = `Files`;
+
+	/** @see StringsService */
+	public readonly featureFlagsForms = `Forms`;
+
+	/** @see StringsService */
+	public readonly featureFlagsInbox = `Inbox`;
+
+	/** @see StringsService */
+	public readonly featureFlagsInvite = `Invite`;
+
+	/** @see StringsService */
+	public readonly featureFlagsMessaging = `Messaging`;
+
+	/** @see StringsService */
+	public readonly featureFlagsNotes = `Notes`;
+
+	/** @see StringsService */
+	public readonly featureFlagsPasswords = `Passwords`;
+
+	/** @see StringsService */
+	public readonly featureFlagsSocial = `Social`;
+
+	/** @see StringsService */
+	public readonly featureFlagsWallets = `Wallets`;
+
+	/** @see StringsService */
 	public readonly fileCall = `file transfer`;
 
 	/** @see StringsService */

@@ -285,6 +285,10 @@
 					matTooltipPosition="right"
 					routerLink="/"
 					(click)="click()"
+					*ngIf="
+						accountSettingsService.featureFlags.messaging.watch()
+							| await
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -347,6 +351,10 @@
 					matTooltipPosition="right"
 					routerLink="/feed"
 					(click)="click()"
+					*ngIf="
+						accountSettingsService.featureFlags.social.watch()
+							| await
+					"
 				>
 					<mat-icon mat-list-icon>
 						rss_feed
@@ -369,6 +377,10 @@
 					matTooltipPosition="right"
 					routerLink="/inbox"
 					(click)="click()"
+					*ngIf="
+						accountSettingsService.featureFlags.inbox.watch()
+							| await
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -424,6 +436,10 @@
 					matTooltipPosition="right"
 					routerLink="/files"
 					(click)="click()"
+					*ngIf="
+						accountSettingsService.featureFlags.files.watch()
+							| await
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -462,6 +478,10 @@
 					matTooltipPosition="right"
 					routerLink="/notes"
 					(click)="click()"
+					*ngIf="
+						accountSettingsService.featureFlags.notes.watch()
+							| await
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -508,7 +528,11 @@
 					matTooltipPosition="right"
 					routerLink="/docs"
 					(click)="click()"
-					*ngIf="accountService.enableDocs | await"
+					*ngIf="
+						(accountService.enableDocs | await) &&
+						(accountSettingsService.featureFlags.notes.watch()
+							| await)
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -547,7 +571,11 @@
 					matTooltipPosition="right"
 					routerLink="/forms"
 					(click)="click()"
-					*ngIf="envService.debug || envService.isTelehealthFull"
+					*ngIf="
+						(envService.debug || envService.isTelehealthFull) &&
+						(accountSettingsService.featureFlags.forms.watch()
+							| await)
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -610,7 +638,11 @@
 					matTooltipPosition="right"
 					routerLink="/passwords"
 					(click)="click()"
-					*ngIf="accountService.enablePasswords | await"
+					*ngIf="
+						(accountService.enablePasswords | await) &&
+						(accountSettingsService.featureFlags.passwords.watch()
+							| await)
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -649,7 +681,11 @@
 					matTooltipPosition="right"
 					routerLink="/wallets"
 					(click)="click()"
-					*ngIf="accountService.enableWallets | await"
+					*ngIf="
+						(accountService.enableWallets | await) &&
+						(accountSettingsService.featureFlags.wallets.watch()
+							| await)
+					"
 				>
 					<mat-icon
 						mat-list-icon
@@ -811,6 +847,8 @@
 				matTooltipPosition="right"
 				*ngIf="
 					!envService.isTelehealth &&
+					(accountSettingsService.featureFlags.invite.watch()
+						| await) &&
 					((accountService.hasUnlimitedInvites | await) ||
 						((accountInviteService.count | await) || 0) > 0)
 				"

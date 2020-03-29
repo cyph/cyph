@@ -117,77 +117,93 @@
 			<div></div>
 			<div></div>
 
-			<ng-container
-				*ngIf="
-					(accountDatabaseService.currentUser | await)?.agseConfirmed
-				"
-			>
-				<mat-accordion>
-					<mat-expansion-panel>
-						<mat-expansion-panel-header>
-							<span cyphTranslate>Advanced</span>
-						</mat-expansion-panel-header>
-						<div fxFlex fxLayout="column" fxLayoutGap="32px">
-							<mat-slide-toggle
+			<mat-accordion>
+				<mat-expansion-panel>
+					<mat-expansion-panel-header>
+						<span cyphTranslate>Enable/Disable Features</span>
+					</mat-expansion-panel-header>
+					<div fxFlex fxLayout="column" fxLayoutGap="32px">
+						<mat-slide-toggle
+							[ngModel]="(o.featureFlag.watch() | await) === true"
+							(ngModelChange)="o.featureFlag.setValue($event)"
+							[name]="o.id"
+							*ngFor="
+								let o of accountSettingsService.featureFlagsList;
+								trackBy: trackByID
+							"
+						>
+							{{ o.label }}
+						</mat-slide-toggle>
+					</div>
+				</mat-expansion-panel>
+				<mat-expansion-panel
+					*ngIf="
+						(accountDatabaseService.currentUser | await)
+							?.agseConfirmed
+					"
+				>
+					<mat-expansion-panel-header>
+						<span cyphTranslate>Advanced</span>
+					</mat-expansion-panel-header>
+					<div fxFlex fxLayout="column" fxLayoutGap="32px">
+						<mat-slide-toggle
+							[ngModel]="
+								(data | await)?.modified?.profileVisible ===
+								true
+							"
+							(ngModelChange)="
+								updateData({
+									modified: {profileVisible: $event}
+								})
+							"
+							[matTooltip]="stringsService.profileVisibility"
+							name="profileVisible"
+							cyphTranslate
+						>
+							Profile Visible to Anonymous Users
+						</mat-slide-toggle>
+
+						<mat-form-field>
+							<input
+								matInput
+								cyphTranslate
 								[ngModel]="
-									(data | await)?.modified?.profileVisible ===
-									true
+									(data | await)?.modified?.realUsername || ''
 								"
 								(ngModelChange)="
 									updateData({
-										modified: {profileVisible: $event}
+										modified: {realUsername: $event}
 									})
 								"
-								[matTooltip]="stringsService.profileVisibility"
-								name="profileVisible"
-								cyphTranslate
+								[pattern]="
+									(data | await)?.usernamePattern || ''
+								"
+								[textMask]="usernameMask"
+								name="realUsername"
+								placeholder="Username Capitalization"
+								required
+							/>
+							<mat-icon
+								#usernameCapitalizationHelpTooltip="matTooltip"
+								matSuffix
+								[matTooltip]="
+									stringsService.usernameCapitalizationHelp
+								"
+								matTooltipPosition="above"
+								(click)="
+									usernameCapitalizationHelpTooltip.show()
+								"
 							>
-								Profile Visible to Anonymous Users
-							</mat-slide-toggle>
+								help
+							</mat-icon>
+						</mat-form-field>
+					</div>
+				</mat-expansion-panel>
+			</mat-accordion>
 
-							<mat-form-field>
-								<input
-									matInput
-									cyphTranslate
-									[ngModel]="
-										(data | await)?.modified
-											?.realUsername || ''
-									"
-									(ngModelChange)="
-										updateData({
-											modified: {realUsername: $event}
-										})
-									"
-									[pattern]="
-										(data | await)?.usernamePattern || ''
-									"
-									[textMask]="usernameMask"
-									name="realUsername"
-									placeholder="Username Capitalization"
-									required
-								/>
-								<mat-icon
-									#usernameCapitalizationHelpTooltip="matTooltip"
-									matSuffix
-									[matTooltip]="
-										stringsService.usernameCapitalizationHelp
-									"
-									matTooltipPosition="above"
-									(click)="
-										usernameCapitalizationHelpTooltip.show()
-									"
-								>
-									help
-								</mat-icon>
-							</mat-form-field>
-						</div>
-					</mat-expansion-panel>
-				</mat-accordion>
-
-				<div></div>
-				<div></div>
-				<div></div>
-			</ng-container>
+			<div></div>
+			<div></div>
+			<div></div>
 
 			<div fxLayout="row" fxLayoutAlign="center">
 				<button

@@ -5,6 +5,7 @@ import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
@@ -69,6 +70,9 @@ export class AccountHomeComponent extends BaseProvider
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
