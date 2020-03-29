@@ -13,7 +13,7 @@ import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
-import {filterUndefinedOperator} from '../util/filter';
+import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
@@ -113,8 +113,20 @@ export class P2PWebRTCService extends BaseProvider
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
 			stream?: MediaStream;
+			username?: string;
 		}[]
 	>([]);
+
+	/** @inheritDoc */
+	public readonly incomingStreamUsernames = this.incomingStreams.pipe(
+		map(incomingStreams =>
+			filterUndefined(
+				incomingStreams
+					.filter(o => o.stream !== undefined)
+					.map(o => o.username)
+			)
+		)
+	);
 
 	/** @inheritDoc */
 	public readonly incomingVideoStreams = this.incomingStreams.pipe(
@@ -585,9 +597,10 @@ export class P2PWebRTCService extends BaseProvider
 			]);
 
 			this.incomingStreams.next(
-				sessionServices.map(() => ({
+				sessionServices.map(sessionService => ({
 					activeVideo: false,
-					constraints: this.outgoingStream.value.constraints
+					constraints: this.outgoingStream.value.constraints,
+					username: sessionService.pairwiseSessionData?.remoteUsername
 				}))
 			);
 
@@ -654,11 +667,13 @@ export class P2PWebRTCService extends BaseProvider
 					const newIncomingStreams = [
 						...this.incomingStreams.value.slice(0, i),
 						{
+							...this.incomingStreams.value[i],
 							activeVideo: false,
 							constraints: {
 								audio: false,
 								video: false
-							}
+							},
+							stream: undefined
 						},
 						...this.incomingStreams.value.slice(i + 1)
 					];
