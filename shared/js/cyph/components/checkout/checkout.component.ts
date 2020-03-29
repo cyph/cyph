@@ -590,12 +590,10 @@ export class CheckoutComponent extends BaseProvider
 				welcomeLetter.split('$APIKEY: ')[1] :
 				undefined;
 
-			if (typeof apiKey === 'string') {
-				welcomeLetter = undefined;
-			}
-			else {
-				welcomeLetter = welcomeLetter.replace(/^Hello.*?,/, '').trim();
-			}
+			welcomeLetter =
+				typeof apiKey === 'string' ?
+					undefined :
+					welcomeLetter.replace(/^Hello.*?,/, '').trim();
 
 			if (this.affiliate) {
 				await openWindow(this.affiliateService.checkout.href);

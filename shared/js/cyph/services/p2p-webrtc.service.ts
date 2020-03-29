@@ -3,6 +3,7 @@
 import {Injectable} from '@angular/core';
 import hark from 'hark';
 import * as msgpack from 'msgpack-lite';
+import RecordRTC from 'recordrtc';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import SimplePeer from 'simple-peer';
@@ -13,6 +14,7 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {filterUndefinedOperator} from '../util/filter';
+import {normalizeArray} from '../util/formatting';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
 import {requestPermissions} from '../util/permissions';
@@ -95,9 +97,9 @@ export class P2PWebRTCService extends BaseProvider
 	) => void = this._REMOTE_VIDEOS.resolve;
 
 	/** @ignore */
-	private readonly sessionServices = this.sessionService.group || [
-		this.sessionService
-	];
+	private readonly sessionServices = this.sessionService.ready.then(
+		() => this.sessionService.group || [this.sessionService]
+	);
 
 	/** @inheritDoc */
 	public readonly cameraActivated = new BehaviorSubject<boolean>(false);
@@ -154,6 +156,44 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly ready: Promise<boolean> = this._READY.promise;
 
 	/** @inheritDoc */
+	public readonly recorder = (() => {
+		const recordRTC = new RecordRTC.MRecordRTC();
+		recordRTC.mediaType = {video: true};
+
+		return {
+			addStream: (stream: MediaStream) => {
+				recordRTC.addStream(stream);
+			},
+			getBlob: async () =>
+				new Promise<Blob>((resolve, reject) => {
+					recordRTC.getBlob((recording: any) => {
+						if (recording?.video instanceof Blob) {
+							resolve(recording.video);
+						}
+						else {
+							reject();
+						}
+					});
+				}),
+			pause: () => {
+				recordRTC.pauseRecording();
+			},
+			resume: () => {
+				recordRTC.resumeRecording();
+			},
+			start: () => {
+				recordRTC.startRecording();
+			},
+			stop: async () =>
+				new Promise<void>(resolve => {
+					recordRTC.stopRecording(() => {
+						resolve();
+					});
+				})
+		};
+	})();
+
+	/** @inheritDoc */
 	public readonly resolveReady: () => void = this._READY.resolve;
 
 	/** @inheritDoc */
@@ -163,10 +203,46 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly webRTC = new BehaviorSubject<
 		| undefined
 		| {
-				peers: {connected: Promise<void>; peer: SimplePeer.Instance}[];
+				peers: {
+					connected: Promise<void>;
+					peer: SimplePeer.Instance | undefined;
+				}[];
 				timer: Timer;
 		  }
 	>(undefined);
+
+	/** @ignore */
+	private addHarker (
+		remoteStream: MediaStream,
+		incomingStreamIndex: number
+	) : void {
+		if (
+			!this.sessionService.group ||
+			this.harkers.has(remoteStream) ||
+			remoteStream.getAudioTracks().length < 1
+		) {
+			return;
+		}
+
+		const harker = hark(remoteStream);
+		this.harkers.set(remoteStream, harker);
+
+		harker.on('speaking', () => {
+			if (
+				!this.incomingStreams.value[incomingStreamIndex].constraints
+					.video
+			) {
+				return;
+			}
+
+			this.incomingStreams.next(
+				this.incomingStreams.value.map((o, i) => ({
+					...o,
+					activeVideo: incomingStreamIndex === i
+				}))
+			);
+		});
+	}
 
 	/** @ignore */
 	private async getUserMedia () : Promise<MediaStream | undefined> {
@@ -197,7 +273,10 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** @ignore */
 	private async getWebRTC () : Promise<{
-		peers: {connected: Promise<void>; peer: SimplePeer.Instance}[];
+		peers: {
+			connected: Promise<void>;
+			peer: SimplePeer.Instance | undefined;
+		}[];
 		timer: Timer;
 	}> {
 		return this.webRTC.pipe(filterUndefinedOperator(), take(1)).toPromise();
@@ -256,9 +335,14 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** @inheritDoc */
 	public async close (incomingP2PKill: boolean = false) : Promise<void> {
-		const p2pKillPromise = incomingP2PKill ?
-			Promise.resolve() :
-			this.sessionService.send([rpcEvents.p2pKill, {}]);
+		const p2pKillPromise = Promise.all([
+			incomingP2PKill ?
+				Promise.resolve() :
+				this.sessionService
+					.send([rpcEvents.p2pKill, {}])
+					.then(() => {}),
+			this.recorder.stop()
+		]);
 
 		this.initialCallPending.next(false);
 
@@ -282,7 +366,8 @@ export class P2PWebRTCService extends BaseProvider
 		if (this.webRTC.value) {
 			this.webRTC.value.timer.stop();
 			for (const {peer} of this.webRTC.value.peers) {
-				peer.destroy();
+				/* eslint-disable-next-line no-unused-expressions */
+				peer?.destroy();
 			}
 		}
 
@@ -388,6 +473,7 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async join (p2pSessionData: {
 		callType: 'audio' | 'video';
+		channelConfigIDs: {[a: string]: {[b: string]: number}};
 		iceServers: string;
 		id: string;
 	}) : Promise<void> {
@@ -397,7 +483,11 @@ export class P2PWebRTCService extends BaseProvider
 			return;
 		}
 
-		await Promise.all([this.accept(p2pSessionData.callType), this.ready]);
+		const [sessionServices] = await Promise.all([
+			this.sessionServices,
+			this.accept(p2pSessionData.callType),
+			this.ready
+		]);
 
 		return this.joinAndToggleLock(async () => {
 			if (this.webRTC.value) {
@@ -407,7 +497,7 @@ export class P2PWebRTCService extends BaseProvider
 			this.webRTC.next(undefined);
 
 			this.incomingStreams.next(
-				this.sessionServices.map(() => ({
+				sessionServices.map(() => ({
 					activeVideo: false,
 					constraints: this.outgoingStream.value.constraints
 				}))
@@ -491,17 +581,44 @@ export class P2PWebRTCService extends BaseProvider
 				.getAudioTracks()[0]
 				?.getSettings().deviceId;
 
+			this.recorder.addStream(localStream);
+
 			this.outgoingStream.next({
 				...this.outgoingStream.value,
 				stream: localStream
 			});
 
-			const peers = this.sessionServices.map((sessionService, i) => {
+			const peers: {
+				connected: Promise<void>;
+				peer: SimplePeer.Instance | undefined;
+			}[] = sessionServices.map((sessionService, i) => {
 				const connected = resolvable();
+
+				const channelParties =
+					sessionService.pairwiseSessionData &&
+					sessionService.pairwiseSessionData.localUsername &&
+					sessionService.pairwiseSessionData.remoteUsername ?
+						normalizeArray([
+							sessionService.pairwiseSessionData.localUsername,
+							sessionService.pairwiseSessionData.remoteUsername
+						]) :
+						undefined;
+
+				const channelConfigID =
+					channelParties &&
+					p2pSessionData.channelConfigIDs[channelParties[0]] &&
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					typeof p2pSessionData.channelConfigIDs[channelParties[0]][
+						channelParties[1]
+					] === 'number' ?
+						p2pSessionData.channelConfigIDs[channelParties[0]][
+							channelParties[1]
+						] :
+						0;
 
 				const peer = new SimplePeer({
 					channelConfig: {
-						id: 0,
+						id: channelConfigID,
 						negotiated: true
 					},
 					channelName: p2pSessionData.id,
@@ -523,6 +640,7 @@ export class P2PWebRTCService extends BaseProvider
 
 				peer.on('close', async () => {
 					debugLog(() => ({webRTC: {close: true}}));
+					peers[i].peer = undefined;
 					connected.reject();
 
 					if (!this.sessionService.group) {
@@ -619,6 +737,8 @@ export class P2PWebRTCService extends BaseProvider
 
 					this.stopIncomingStream(this.incomingStreams.value[i]);
 
+					this.recorder.addStream(remoteStream);
+
 					this.incomingStreams.next([
 						...this.incomingStreams.value.slice(0, i),
 						{
@@ -634,27 +754,8 @@ export class P2PWebRTCService extends BaseProvider
 						...this.incomingStreams.value.slice(i + 1)
 					]);
 
-					if (!this.sessionService.group) {
-						return;
-					}
-
-					const harker = hark(remoteStream);
-					this.harkers.set(remoteStream, harker);
-
-					harker.on('speaking', () => {
-						if (!this.incomingStreams.value[i].constraints.video) {
-							return;
-						}
-
-						this.incomingStreams.next(
-							this.incomingStreams.value.map(
-								(o, incomingStreamIndex) => ({
-									...o,
-									activeVideo: incomingStreamIndex === i
-								})
-							)
-						);
-					});
+					this.addHarker(remoteStream, i);
+					this.loading.next(false);
 				});
 
 				peer.on(
@@ -682,13 +783,14 @@ export class P2PWebRTCService extends BaseProvider
 								}
 							}
 						}));
+
+						this.addHarker(remoteStream, i);
 					}
 				);
 
 				return {connected: connected.promise, peer};
 			});
 
-			this.loading.next(false);
 			handlers.loaded();
 			handlers.connected(true);
 			this.webRTC.next({
@@ -703,7 +805,8 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async request (
 		callType: 'audio' | 'video',
-		isPassive: boolean = false
+		isPassive: boolean = false,
+		usernames: string[] = []
 	) : Promise<void> {
 		if (!P2PWebRTCService.isSupported || (isPassive && !this.isAccepted)) {
 			return;
@@ -723,7 +826,22 @@ export class P2PWebRTCService extends BaseProvider
 			return;
 		}
 
-		const p2pSessionData = {callType, iceServers, id: uuid()};
+		usernames = normalizeArray(usernames);
+
+		const channelConfigIDs = usernames
+			.map((a, i) => usernames.slice(i + 1).map(b => [a, b]))
+			.reduce((a, b) => [...a, ...b])
+			.reduce<{[a: string]: {[b: string]: number}}>(
+				(o, [a, b], i) => ({...o, [a]: {...o[a], [b]: i}}),
+				{}
+			);
+
+		const p2pSessionData = {
+			callType,
+			channelConfigIDs,
+			iceServers,
+			id: uuid()
+		};
 
 		await Promise.all([
 			this.sessionService.send([
@@ -749,10 +867,10 @@ export class P2PWebRTCService extends BaseProvider
 		medium?: 'audio' | 'video',
 		shouldPause?: boolean | {newDeviceID: string}
 	) : Promise<void> {
-		/* eslint-disable-next-line complexity */
-		return this.joinAndToggleLock(async () => {
-			const webRTC = await this.getWebRTC();
+		const webRTC = await this.getWebRTC();
 
+		/* eslint-disable-next-line complexity */
+		await this.joinAndToggleLock(async () => {
 			let deviceIdChanged = false;
 
 			const oldAudioTracks =
@@ -843,86 +961,87 @@ export class P2PWebRTCService extends BaseProvider
 				}
 			}
 
-			if (deviceIdChanged) {
-				const stream = this.outgoingStream.value.stream;
-				const newStream = await this.getUserMedia();
-
-				if (newStream === undefined) {
-					throw new Error('getUserMedia failed.');
-				}
-
-				const newAudioTracks = newStream.getAudioTracks();
-				const newVideoTracks = newStream.getVideoTracks();
-				const newTracks = [...newAudioTracks, ...newVideoTracks];
-
-				if (
-					!stream ||
-					oldAudioTracks.length !== newAudioTracks.length ||
-					oldVideoTracks.length !== newVideoTracks.length ||
-					!('replaceTrack' in RTCRtpSender.prototype)
-				) {
-					for (const {peer} of webRTC.peers) {
-						if (stream) {
-							peer.removeStream(stream);
-						}
-
-						peer.addStream(newStream);
-					}
-
-					this.outgoingStream.next({
-						...this.outgoingStream.value,
-						stream: newStream
-					});
-				}
-				else {
-					for (const {peer} of webRTC.peers) {
-						for (let i = 0; i < oldTracks.length; ++i) {
-							peer.replaceTrack(
-								oldTracks[i],
-								newTracks[i],
-								stream
-							);
-						}
-					}
-
-					for (let i = 0; i < oldTracks.length; ++i) {
-						const oldTrack = oldTracks[i];
-						const newTrack = newTracks[i];
-
-						oldTrack.enabled = false;
-						oldTrack.stop();
-						stream.removeTrack(oldTrack);
-						stream.addTrack(newTrack);
-					}
-				}
+			if (!deviceIdChanged) {
+				return;
 			}
 
-			await Promise.all(
-				webRTC.peers.map(async ({connected, peer}) => {
-					try {
-						await connected;
-						await Promise.resolve(
-							peer.send(
-								msgpack.encode({
-									audio: !!this.outgoingStream.value
-										.constraints.audio,
-									video: !!this.outgoingStream.value
-										.constraints.video,
-									...(deviceIdChanged ?
-										{switchingDevice: deviceIdChanged} :
-										{})
-								})
-							)
-						);
+			const stream = this.outgoingStream.value.stream;
+			const newStream = await this.getUserMedia();
+
+			if (newStream === undefined) {
+				throw new Error('getUserMedia failed.');
+			}
+
+			const newAudioTracks = newStream.getAudioTracks();
+			const newVideoTracks = newStream.getVideoTracks();
+			const newTracks = [...newAudioTracks, ...newVideoTracks];
+
+			if (
+				!stream ||
+				oldAudioTracks.length !== newAudioTracks.length ||
+				oldVideoTracks.length !== newVideoTracks.length ||
+				!('replaceTrack' in RTCRtpSender.prototype)
+			) {
+				for (const {peer} of webRTC.peers) {
+					if (stream) {
+						/* eslint-disable-next-line no-unused-expressions */
+						peer?.removeStream(stream);
 					}
-					catch (err) {
-						debugLogError(() => ({
-							webRTC: {peerSendError: err}
-						}));
+
+					/* eslint-disable-next-line no-unused-expressions */
+					peer?.addStream(newStream);
+				}
+
+				this.recorder.addStream(newStream);
+
+				this.outgoingStream.next({
+					...this.outgoingStream.value,
+					stream: newStream
+				});
+			}
+			else {
+				for (const {peer} of webRTC.peers) {
+					for (let i = 0; i < oldTracks.length; ++i) {
+						/* eslint-disable-next-line no-unused-expressions */
+						peer?.replaceTrack(oldTracks[i], newTracks[i], stream);
 					}
-				})
-			);
+				}
+
+				for (let i = 0; i < oldTracks.length; ++i) {
+					const oldTrack = oldTracks[i];
+					const newTrack = newTracks[i];
+
+					oldTrack.enabled = false;
+					oldTrack.stop();
+					stream.removeTrack(oldTrack);
+					stream.addTrack(newTrack);
+				}
+			}
 		});
+
+		await Promise.all(
+			webRTC.peers.map(async ({connected, peer}) => {
+				try {
+					await connected;
+					await Promise.resolve(
+						/* eslint-disable-next-line no-unused-expressions */
+						peer?.send(
+							msgpack.encode({
+								audio: !!this.outgoingStream.value.constraints
+									.audio,
+								video: !!this.outgoingStream.value.constraints
+									.video
+							})
+						)
+					);
+				}
+				catch (err) {
+					debugLogError(() => ({
+						webRTC: {peerSendError: err}
+					}));
+				}
+			})
+		);
 	}
 
 	constructor (
@@ -939,68 +1058,84 @@ export class P2PWebRTCService extends BaseProvider
 	) {
 		super();
 
-		this.sessionService.on(events.closeChat, () => {
-			this.close();
-		});
-
-		this.sessionService.on(rpcEvents.p2pKill, async () => this.close(true));
-
-		this.sessionService.on(
-			rpcEvents.p2pRequest,
-			async (newEvents: ISessionMessageData[]) => {
-				const p2pSessionData =
-					newEvents[0]?.bytes && msgpack.decode(newEvents[0]?.bytes);
-
-				if (
-					!(
-						typeof p2pSessionData === 'object' &&
-						p2pSessionData &&
-						(p2pSessionData.callType === 'audio' ||
-							p2pSessionData.callType === 'video') &&
-						typeof p2pSessionData.iceServers === 'string' &&
-						typeof p2pSessionData.id === 'string'
-					)
-				) {
-					return;
-				}
-
-				const ok = await (await this.handlers).acceptConfirm(
-					p2pSessionData.callType,
-					500000,
-					this.isAccepted
-				);
-
-				if (!ok) {
-					await this.sessionService.send([rpcEvents.p2pKill, {}]);
-					return;
-				}
-
-				await this.join(p2pSessionData);
-			}
-		);
-
-		for (let i = 0; i < this.sessionServices.length; ++i) {
-			this.sessionServices[i].on(
-				rpcEvents.p2p,
-				async (newEvents: ISessionMessageData[]) => {
-					const webRTC = await this.getWebRTC();
-
-					for (const o of newEvents) {
-						const data = o?.bytes && msgpack.decode(o.bytes);
-						if (!data) {
-							return;
-						}
-
-						debugLog(() => ({webRTC: {incomingSignal: data}}));
-
-						webRTC.peers[i].peer.signal(data);
-					}
-				}
-			);
-		}
-
 		sessionCapabilitiesService.resolveP2PSupport(
 			P2PWebRTCService.isSupported
 		);
+
+		this.sessionServices.then(sessionServices => {
+			this.sessionService.on(events.closeChat, () => {
+				this.close();
+			});
+
+			if (!this.sessionService.group) {
+				this.sessionService.on(rpcEvents.p2pKill, async () =>
+					this.close(true)
+				);
+			}
+
+			this.sessionService.on(
+				rpcEvents.p2pRequest,
+				async (newEvents: ISessionMessageData[]) => {
+					const p2pSessionData =
+						newEvents[0]?.bytes &&
+						msgpack.decode(newEvents[0]?.bytes);
+
+					if (
+						!(
+							typeof p2pSessionData === 'object' &&
+							p2pSessionData &&
+							(p2pSessionData.callType === 'audio' ||
+								p2pSessionData.callType === 'video') &&
+							typeof p2pSessionData.channelConfigIDs ===
+								'object' &&
+							typeof p2pSessionData.iceServers === 'string' &&
+							typeof p2pSessionData.id === 'string'
+						)
+					) {
+						return;
+					}
+
+					const ok = await (await this.handlers).acceptConfirm(
+						p2pSessionData.callType,
+						500000,
+						this.isAccepted
+					);
+
+					if (!ok) {
+						if (!this.sessionService.group) {
+							await this.sessionService.send([
+								rpcEvents.p2pKill,
+								{}
+							]);
+						}
+
+						return;
+					}
+
+					await this.join(p2pSessionData);
+				}
+			);
+
+			for (let i = 0; i < sessionServices.length; ++i) {
+				sessionServices[i].on(
+					rpcEvents.p2p,
+					async (newEvents: ISessionMessageData[]) => {
+						const webRTC = await this.getWebRTC();
+
+						for (const o of newEvents) {
+							const data = o?.bytes && msgpack.decode(o.bytes);
+							if (!data) {
+								return;
+							}
+
+							debugLog(() => ({webRTC: {incomingSignal: data}}));
+
+							/* eslint-disable-next-line no-unused-expressions */
+							webRTC.peers[i].peer?.signal(data);
+						}
+					}
+				);
+			}
+		});
 	}
 }

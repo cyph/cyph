@@ -27,15 +27,15 @@ applyPolyfills().then(() => {
 	templateUrl: './social-share.component.html'
 })
 export class SocialShareComponent extends BaseProvider implements OnChanges {
-	/** Share prompt close event. */
-	@Output() public readonly close = new EventEmitter<void>();
-
 	/** Share prompt options. */
 	@Input() public options?: {
 		hashTags?: string[];
 		text: string;
 		url: string;
 	};
+
+	/** Share prompt close event. */
+	@Output() public readonly promptClose = new EventEmitter<void>();
 
 	/** Processed share prompt options. */
 	public readonly shareOptions = new BehaviorSubject<any>({});
@@ -57,7 +57,6 @@ export class SocialShareComponent extends BaseProvider implements OnChanges {
 		};
 
 		this.shareOptions.next({
-			displayNames: true,
 			config: [
 				{
 					facebook: {
@@ -98,14 +97,15 @@ export class SocialShareComponent extends BaseProvider implements OnChanges {
 				{
 					copy: options
 				}
-			]
+			],
+			displayNames: true
 		});
 	}
 
 	/** Close handler. */
 	public onClose () : void {
 		this.visible.next(false);
-		this.close.emit();
+		this.promptClose.emit();
 	}
 
 	/** Shows share prompt. */

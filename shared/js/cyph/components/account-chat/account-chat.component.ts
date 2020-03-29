@@ -470,58 +470,59 @@ export class AccountChatComponent extends BaseProvider
 									return;
 								}
 
-								this.notificationService
-									.ring(
-										async () =>
-											Promise.race([
-												this.p2pWebRTCService.isActive
-													.pipe(
-														filter(b => b),
-														take(1)
-													)
-													.toPromise(),
-												destroyed.then(() => false)
-											]),
-										this.answering.value
-									)
-									.then(async () => {
-										const remoteUser = await this
-											.accountSessionService.remoteUser
-											.value;
+								if (!this.accountSessionService.group) {
+									this.notificationService
+										.ring(
+											async () =>
+												Promise.race([
+													this.p2pWebRTCService.loading
+														.pipe(
+															filter(b => !b),
+															take(1)
+														)
+														.toPromise(),
+													destroyed.then(() => false)
+												]),
+											true
+										)
+										.then(async () => {
+											const remoteUser = await this
+												.accountSessionService
+												.remoteUser.value;
 
-										if (
-											this.destroyed.value ||
-											this.p2pWebRTCService.isActive
-												.value ||
-											!this.p2pWebRTCService
-												.initialCallPending.value
-										) {
-											return;
-										}
+											if (
+												this.destroyed.value ||
+												this.p2pWebRTCService.loading
+													.value ||
+												!this.p2pWebRTCService
+													.initialCallPending.value
+											) {
+												return;
+											}
 
-										if (
-											sessionSubID &&
-											remoteUser &&
-											!remoteUser.anonymous
-										) {
-											this.accountDatabaseService.notify(
-												remoteUser.username,
-												NotificationTypes.Call,
-												{
-													callType,
-													id: sessionSubID,
-													missed: true
-												}
-											);
-										}
-
-										this.dialogService.toast(
-											this.stringsService
-												.p2pTimeoutOutgoing,
-											3000
-										);
-										this.p2pWebRTCService.close();
-									});
+											await Promise.all([
+												sessionSubID &&
+												remoteUser &&
+												!remoteUser.anonymous ?
+													this.accountDatabaseService.notify(
+														remoteUser.username,
+														NotificationTypes.Call,
+														{
+															callType,
+															id: sessionSubID,
+															missed: true
+														}
+													) :
+													undefined,
+												this.dialogService.toast(
+													this.stringsService
+														.p2pTimeoutOutgoing,
+													3000
+												),
+												this.p2pWebRTCService.close()
+											]);
+										});
+								}
 
 								this.p2pWebRTCService.disconnect
 									.pipe(take(1))

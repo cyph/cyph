@@ -19,6 +19,7 @@ import {
 	of,
 	ReplaySubject
 } from 'rxjs';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import {map, switchMap, tap} from 'rxjs/operators';
 import {
 	IContactListItem,

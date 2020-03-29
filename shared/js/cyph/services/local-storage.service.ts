@@ -117,6 +117,7 @@ export class LocalStorageService extends DataManagerService {
 		this.cache.clear();
 		await this.clearInternal(waitForReady).catch(() => {});
 
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof BroadcastChannel === 'undefined') {
 			return;
 		}
@@ -280,6 +281,7 @@ export class LocalStorageService extends DataManagerService {
 		const id = uuid();
 		const metadata = {id, reason};
 		const channel =
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			typeof BroadcastChannel !== 'undefined' ?
 				new BroadcastChannel(
 					`${this.broadcastChannelKeys.lock}:${lockURL}`
@@ -411,6 +413,7 @@ export class LocalStorageService extends DataManagerService {
 
 		await this.removeItemInternal(url, waitForReady).catch(() => {});
 
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof BroadcastChannel === 'undefined') {
 			return;
 		}
@@ -472,6 +475,7 @@ export class LocalStorageService extends DataManagerService {
 		finally {
 			this.pendingSets.delete(url);
 
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			if (typeof BroadcastChannel !== 'undefined') {
 				const channel = new BroadcastChannel(
 					`${this.broadcastChannelKeys.item}:${url}`
@@ -496,6 +500,7 @@ export class LocalStorageService extends DataManagerService {
 					() =>
 						new Observable<ITimedValue<T>>(observer => {
 							const channel =
+								/* eslint-disable-next-line @typescript-eslint/tslint/config */
 								typeof BroadcastChannel !== 'undefined' ?
 									new BroadcastChannel(
 										`${this.broadcastChannelKeys.item}:${url}`
@@ -503,6 +508,7 @@ export class LocalStorageService extends DataManagerService {
 									undefined;
 
 							const clearChannel =
+								/* eslint-disable-next-line @typescript-eslint/tslint/config */
 								typeof BroadcastChannel !== 'undefined' ?
 									new BroadcastChannel(
 										this.broadcastChannelKeys.clear
@@ -567,6 +573,7 @@ export class LocalStorageService extends DataManagerService {
 	) {
 		super();
 
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof BroadcastChannel === 'undefined') {
 			return;
 		}

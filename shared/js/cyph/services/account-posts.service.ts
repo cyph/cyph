@@ -998,6 +998,7 @@ export class AccountPostsService extends BaseProvider {
 			post: Observable<IAccountPost | undefined>;
 		}[]
 	> {
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (nMostRecent !== undefined && nMostRecent < 1) {
 			return [];
 		}
@@ -1017,6 +1018,7 @@ export class AccountPostsService extends BaseProvider {
 					this.accountUserLookupService.getUser(username)
 				);
 
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				return (nMostRecent === undefined ?
 					ids :
 					ids.slice(-nMostRecent)
@@ -1031,6 +1033,7 @@ export class AccountPostsService extends BaseProvider {
 			.reduce((a, b) => a.concat(b), [])
 			.sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1));
 
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		return (nMostRecent === undefined ?
 			sorted :
 			sorted.slice(-nMostRecent)

@@ -51,6 +51,12 @@ export interface ISessionService {
 	/** Indicates whether Burner chat request was missed. */
 	readonly missedBurnerChat: BehaviorSubject<boolean>;
 
+	/** Identifying data about the two parties in the session, if applicable. */
+	pairwiseSessionData?: {
+		localUsername?: string;
+		remoteUsername?: string;
+	};
+
 	/** @see ProFeatures */
 	readonly proFeatures: ProFeatures;
 

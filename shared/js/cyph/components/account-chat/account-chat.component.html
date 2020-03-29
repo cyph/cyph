@@ -49,6 +49,7 @@
 				fxFlexFill
 				[appointment]="appointment | await"
 				*ngIf="
+					(appointment | await) !== undefined &&
 					(initialCallPending | await) === true &&
 					(answering | await) === false &&
 					(sessionSubID | await) !== undefined
@@ -69,9 +70,10 @@
 							(appointment | await) :
 							undefined
 					"
-					[forceDisplayVideo]="(answering | await) === true"
+					[forceDisplayVideo]="(initialCallPending | await) === true"
 					[messageType]="messageType | await"
 					[class.visibility-hidden]="
+						(appointment | await) !== undefined &&
 						(initialCallPending | await) === true &&
 						(answering | await) === false
 					"
