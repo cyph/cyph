@@ -434,10 +434,19 @@ export class StringsService extends BaseProvider {
 	public readonly incomingCallAudio = `Incoming Call`;
 
 	/** @see StringsService */
+	public readonly incomingCallAudioGroup = `Incoming Group Call`;
+
+	/** @see StringsService */
 	public readonly incomingCallChat = `Incoming Burner Chat`;
 
 	/** @see StringsService */
+	public readonly incomingCallChatGroup = `Incoming Group Burner Chat`;
+
+	/** @see StringsService */
 	public readonly incomingCallVideo = `Incoming Video Call`;
+
+	/** @see StringsService */
+	public readonly incomingCallVideoGroup = `Incoming Group Video Call`;
 
 	/** @see StringsService */
 	public readonly incomingFile = `Download File`;
@@ -784,9 +793,6 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly p2pDisabled = `Your or your ${this.internalFriend}'s browser may lack support for video calling. Try again with the latest Chrome or Firefox.`;
-
-	/** @see StringsService */
-	public readonly p2pDisabledGroup = `Calling in group chats is currently unsupported. Coming soon!`;
 
 	/** @see StringsService */
 	public readonly p2pDisabledLocal = `Your browser does not support voice or video calling. Try again with the latest Chrome or Firefox.`;

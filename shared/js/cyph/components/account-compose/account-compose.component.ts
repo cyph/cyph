@@ -328,12 +328,12 @@ export class AccountComposeComponent extends BaseProvider
 					!this.envService.isTelehealthFull &&
 					this.accountDatabaseService.currentUser.value ?
 						this.databaseService.callFunction('appointmentInvite', {
-							id,
 							callType,
 							eventDetails: {
 								endTime: calendarInvite.endTime,
 								startTime: calendarInvite.startTime
 							},
+							id,
 							telehealth: true,
 							to: {
 								email: this.accountService.fromEmail.value,

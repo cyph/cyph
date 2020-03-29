@@ -73,9 +73,9 @@ export class Config {
 	public readonly masterKey = {
 		customMinLength: 20,
 		defaultSize: 3,
-		sizes: [0, 64, 80, 128, 256],
 		sizeStrength: (n: number) : 'very-high' | 'high' | 'medium' | 'low' =>
-			n > 3 ? 'very-high' : n === 3 ? 'high' : n === 2 ? 'medium' : 'low'
+			n > 3 ? 'very-high' : n === 3 ? 'high' : n === 2 ? 'medium' : 'low',
+		sizes: [0, 64, 80, 128, 256]
 	};
 
 	/** Max signed 32-bit integer. */

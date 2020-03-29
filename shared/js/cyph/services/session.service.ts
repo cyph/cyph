@@ -124,6 +124,12 @@ export abstract class SessionService extends BaseProvider
 	public readonly opened: Promise<boolean> = this._OPENED.promise;
 
 	/** @inheritDoc */
+	public pairwiseSessionData?: {
+		localUsername?: string;
+		remoteUsername?: string;
+	};
+
+	/** @inheritDoc */
 	public readonly ready: Promise<void> = Promise.resolve();
 
 	/** @inheritDoc */
@@ -433,7 +439,7 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public async destroy () : Promise<void> {
-		if (!this.state.isAlive.value) {
+		if (!this.state.isAlive.value || this.group) {
 			return;
 		}
 

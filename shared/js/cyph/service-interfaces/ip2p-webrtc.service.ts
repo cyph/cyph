@@ -52,6 +52,16 @@ export interface IP2PWebRTCService {
 	/** Resolves when service is ready. */
 	readonly ready: Promise<boolean>;
 
+	/** Records calls. */
+	readonly recorder: {
+		addStream: (stream: MediaStream) => void;
+		getBlob: () => Promise<Blob>;
+		pause: () => void;
+		resume: () => void;
+		start: () => void;
+		stop: () => Promise<void>;
+	};
+
 	/** If true, toggling video is allowed during the current call. */
 	readonly videoEnabled: BehaviorSubject<boolean>;
 
@@ -59,7 +69,10 @@ export interface IP2PWebRTCService {
 	readonly webRTC: BehaviorSubject<
 		| undefined
 		| {
-				peers: {connected: Promise<void>; peer: SimplePeer.Instance}[];
+				peers: {
+					connected: Promise<void>;
+					peer: SimplePeer.Instance | undefined;
+				}[];
 				timer: Timer;
 		  }
 	>;
@@ -94,7 +107,11 @@ export interface IP2PWebRTCService {
 	 * Sends a new call request to the other party.
 	 * @param callType Requested session type.
 	 */
-	request (callType: 'audio' | 'video', isPassive?: boolean) : Promise<void>;
+	request (
+		callType: 'audio' | 'video',
+		isPassive?: boolean,
+		usernames?: string[]
+	) : Promise<void>;
 
 	/** Resolves ready. */
 	resolveReady () : void;

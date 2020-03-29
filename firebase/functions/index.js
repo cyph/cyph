@@ -1484,7 +1484,7 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 		(typeof metadata.expires === 'number' && metadata.expires > Date.now());
 
 	const callMetadata = activeCall ?
-		`${metadata.callType},${username ||
+		`${metadata.callType},${username || ''},${metadata.groupID ||
 			''},${notificationID},${metadata.expires.toString()}` :
 		undefined;
 

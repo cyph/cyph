@@ -347,6 +347,7 @@ export class ChatMessageComponent extends BaseProvider
 		if (
 			this.unconfirmedMessages === undefined ||
 			id !==
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
 				(typeof this.message === 'string' ?
 					this.message :
 					this.message?.id) ||
@@ -366,6 +367,7 @@ export class ChatMessageComponent extends BaseProvider
 
 		if (
 			id ===
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			(typeof this.message === 'string' ? this.message : this.message?.id)
 		) {
 			await this.scrollService.setRead(id);

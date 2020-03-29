@@ -56,6 +56,18 @@ export class AccountSessionService extends SessionService {
 	/** @inheritDoc */
 	public group?: AccountSessionService[];
 
+	/** Metadata of current group, if applicable. */
+	public groupMetadata?: {
+		id: string;
+		usernames: string[];
+	};
+
+	/** @inheritDoc */
+	public pairwiseSessionData?: {
+		localUsername?: string;
+		remoteUsername?: string;
+	};
+
 	/** @inheritDoc */
 	public readonly ready = this._READY.promise;
 
@@ -235,6 +247,12 @@ export class AccountSessionService extends SessionService {
 
 		if ('username' in chat) {
 			chat.username = this.normalizeUsername(chat.username);
+
+			this.pairwiseSessionData = {
+				localUsername: (await this.accountDatabaseService.getCurrentUser())
+					.user.username,
+				remoteUsername: chat.username
+			};
 		}
 
 		this.initiated = true;
@@ -278,6 +296,7 @@ export class AccountSessionService extends SessionService {
 										o.contactList = contactList;
 										o.readOnly = true;
 
+										/* eslint-disable-next-line @typescript-eslint/tslint/config */
 										o.ngOnChanges({
 											contactList: {
 												currentValue: o.contactList,
@@ -329,6 +348,7 @@ export class AccountSessionService extends SessionService {
 			}
 
 			this.group = group;
+			this.groupMetadata = {id: chat.id, usernames};
 
 			/*
 				Handle events on individual pairwise sessions and perform equivalent behavior.
@@ -350,9 +370,9 @@ export class AccountSessionService extends SessionService {
 			});
 
 			for (const {event, all} of [
-				{all: true, event: events.beginChat},
+				{all: false, event: events.beginChat},
 				{all: false, event: events.closeChat},
-				{all: true, event: events.connect},
+				{all: false, event: events.connect},
 				{all: false, event: events.connectFailure},
 				{all: false, event: events.cyphNotFound}
 			]) {
