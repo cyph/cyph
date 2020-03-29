@@ -209,7 +209,10 @@ export class P2PWebRTCService extends BaseProvider
 	>(undefined);
 
 	/** @ignore */
-	private addHarker (remoteStream: MediaStream, i: number) : void {
+	private addHarker (
+		remoteStream: MediaStream,
+		incomingStreamIndex: number
+	) : void {
 		if (
 			!this.sessionService.group ||
 			this.harkers.has(remoteStream) ||
@@ -222,12 +225,15 @@ export class P2PWebRTCService extends BaseProvider
 		this.harkers.set(remoteStream, harker);
 
 		harker.on('speaking', () => {
-			if (!this.incomingStreams.value[i].constraints.video) {
+			if (
+				!this.incomingStreams.value[incomingStreamIndex].constraints
+					.video
+			) {
 				return;
 			}
 
 			this.incomingStreams.next(
-				this.incomingStreams.value.map((o, incomingStreamIndex) => ({
+				this.incomingStreams.value.map((o, i) => ({
 					...o,
 					activeVideo: incomingStreamIndex === i
 				}))
