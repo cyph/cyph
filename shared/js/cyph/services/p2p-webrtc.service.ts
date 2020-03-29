@@ -961,62 +961,60 @@ export class P2PWebRTCService extends BaseProvider
 				}
 			}
 
-			if (deviceIdChanged) {
-				const stream = this.outgoingStream.value.stream;
-				const newStream = await this.getUserMedia();
+			if (!deviceIdChanged) {
+				return;
+			}
 
-				if (newStream === undefined) {
-					throw new Error('getUserMedia failed.');
-				}
+			const stream = this.outgoingStream.value.stream;
+			const newStream = await this.getUserMedia();
 
-				const newAudioTracks = newStream.getAudioTracks();
-				const newVideoTracks = newStream.getVideoTracks();
-				const newTracks = [...newAudioTracks, ...newVideoTracks];
+			if (newStream === undefined) {
+				throw new Error('getUserMedia failed.');
+			}
 
-				if (
-					!stream ||
-					oldAudioTracks.length !== newAudioTracks.length ||
-					oldVideoTracks.length !== newVideoTracks.length ||
-					!('replaceTrack' in RTCRtpSender.prototype)
-				) {
-					for (const {peer} of webRTC.peers) {
-						if (stream) {
-							/* eslint-disable-next-line no-unused-expressions */
-							peer?.removeStream(stream);
-						}
+			const newAudioTracks = newStream.getAudioTracks();
+			const newVideoTracks = newStream.getVideoTracks();
+			const newTracks = [...newAudioTracks, ...newVideoTracks];
 
+			if (
+				!stream ||
+				oldAudioTracks.length !== newAudioTracks.length ||
+				oldVideoTracks.length !== newVideoTracks.length ||
+				!('replaceTrack' in RTCRtpSender.prototype)
+			) {
+				for (const {peer} of webRTC.peers) {
+					if (stream) {
 						/* eslint-disable-next-line no-unused-expressions */
-						peer?.addStream(newStream);
+						peer?.removeStream(stream);
 					}
 
-					this.recorder.addStream(newStream);
-
-					this.outgoingStream.next({
-						...this.outgoingStream.value,
-						stream: newStream
-					});
+					/* eslint-disable-next-line no-unused-expressions */
+					peer?.addStream(newStream);
 				}
-				else {
-					for (const {peer} of webRTC.peers) {
-						for (let i = 0; i < oldTracks.length; ++i) {
-							/* eslint-disable-next-line no-unused-expressions */
-							peer?.replaceTrack(
-								oldTracks[i],
-								newTracks[i],
-								stream
-							);
-						}
-					}
 
+				this.recorder.addStream(newStream);
+
+				this.outgoingStream.next({
+					...this.outgoingStream.value,
+					stream: newStream
+				});
+			}
+			else {
+				for (const {peer} of webRTC.peers) {
 					for (let i = 0; i < oldTracks.length; ++i) {
-						const oldTrack = oldTracks[i];
-						const newTrack = newTracks[i];
-
-						oldTrack.enabled = false;
-						oldTrack.stop();
-						stream.removeTrack(oldTrack);
-						stream.addTrack(newTrack);
+						/* eslint-disable-next-line no-unused-expressions */
+						peer?.replaceTrack(oldTracks[i], newTracks[i], stream);
 					}
+				}
+
+				for (let i = 0; i < oldTracks.length; ++i) {
+					const oldTrack = oldTracks[i];
+					const newTrack = newTracks[i];
+
+					oldTrack.enabled = false;
+					oldTrack.stop();
+					stream.removeTrack(oldTrack);
+					stream.addTrack(newTrack);
 				}
 			}
 		});
