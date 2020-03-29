@@ -357,9 +357,9 @@ export class AccountSessionService extends SessionService {
 			});
 
 			for (const {event, all} of [
-				{all: true, event: events.beginChat},
+				{all: false, event: events.beginChat},
 				{all: false, event: events.closeChat},
-				{all: true, event: events.connect},
+				{all: false, event: events.connect},
 				{all: false, event: events.connectFailure},
 				{all: false, event: events.cyphNotFound}
 			]) {
