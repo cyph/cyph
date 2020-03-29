@@ -2,7 +2,10 @@
 	[anonymousMessages]="(anonymousMessages | await) === true"
 	[filterFunction]="filterFunction | await"
 	[recordType]="(realTime | await) ? recordTypes.Doc : recordTypes.Note"
-	*ngIf="(realTime | await) === false || (accountService.enableDocs | await)"
+	*ngIf="
+		(realTime | await) === false ||
+		(accountSettingsService.staticFeatureFlags.docs | await)
+	"
 >
 	<button
 		mat-fab

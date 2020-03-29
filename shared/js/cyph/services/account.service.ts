@@ -99,22 +99,6 @@ export class AccountService extends BaseProvider {
 	/** Indicates whether automatic updates should be applied. */
 	public readonly autoUpdate = new BehaviorSubject<boolean>(true);
 
-	/** Indicates whether real-time Docs is enabled. */
-	public readonly enableDocs = this.accountSettingsService.staticFeatureFlags
-		.docs;
-
-	/** Indicates whether group messaging is enabled. */
-	public readonly enableGroup = this.accountSettingsService.staticFeatureFlags
-		.group;
-
-	/** Indicates whether Passwords is enabled. */
-	public readonly enablePasswords = this.accountSettingsService
-		.staticFeatureFlags.passwords;
-
-	/** Indicates whether Wallets is enabled. */
-	public readonly enableWallets = this.accountSettingsService
-		.staticFeatureFlags.wallets;
-
 	/** Email address to use for new pseudo-account. */
 	public readonly fromEmail = new BehaviorSubject<string>('');
 

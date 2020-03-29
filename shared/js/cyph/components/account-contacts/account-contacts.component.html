@@ -88,7 +88,9 @@
 						[startGroup]="true"
 						[class.cyph-inverted-theme]="invertedTheme"
 						*ngIf="
-							!readOnly && (accountService.enableGroup | await)
+							!readOnly &&
+							(accountSettingsService.staticFeatureFlags.group
+								| await)
 						"
 					></cyph-account-contact>
 

@@ -529,7 +529,8 @@
 					routerLink="/docs"
 					(click)="click()"
 					*ngIf="
-						(accountService.enableDocs | await) &&
+						(accountSettingsService.staticFeatureFlags.docs
+							| await) &&
 						(accountSettingsService.featureFlags.notes.watch()
 							| await)
 					"
@@ -639,7 +640,8 @@
 					routerLink="/passwords"
 					(click)="click()"
 					*ngIf="
-						(accountService.enablePasswords | await) &&
+						(accountSettingsService.staticFeatureFlags.passwords
+							| await) &&
 						(accountSettingsService.featureFlags.passwords.watch()
 							| await)
 					"
@@ -682,7 +684,8 @@
 					routerLink="/wallets"
 					(click)="click()"
 					*ngIf="
-						(accountService.enableWallets | await) &&
+						(accountSettingsService.staticFeatureFlags.wallets
+							| await) &&
 						(accountSettingsService.featureFlags.wallets.watch()
 							| await)
 					"
