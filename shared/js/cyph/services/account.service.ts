@@ -24,7 +24,7 @@ import {
 	StringProto
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
-import {normalize, toInt} from '../util/formatting';
+import {normalize, normalizeArray, toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {observableAll} from '../util/observable-all';
@@ -113,9 +113,7 @@ export class AccountService extends BaseProvider {
 	this.envService.isTelehealth ?
 		of(false) :
 		this.accountSettingsService.plan.pipe(
-			map(
-				plan => this.configService.planConfig[plan].enableGroup === true
-			)
+			map(plan => this.configService.planConfig[plan].enableGroup)
 		);
 
 	/** Indicates whether Passwords is enabled. */
@@ -125,10 +123,7 @@ export class AccountService extends BaseProvider {
 	this.envService.isTelehealth ?
 		of(false) :
 		this.accountSettingsService.plan.pipe(
-			map(
-				plan =>
-					this.configService.planConfig[plan].enablePasswords === true
-			)
+			map(plan => this.configService.planConfig[plan].enablePasswords)
 		);
 
 	/** Indicates whether Wallets is enabled. */
@@ -139,11 +134,7 @@ export class AccountService extends BaseProvider {
 				true) ?
 			of(true) :
 			this.accountSettingsService.plan.pipe(
-				map(
-					plan =>
-						this.configService.planConfig[plan].enableWallets ===
-						true
-				)
+				map(plan => this.configService.planConfig[plan].enableWallets)
 			);
 
 	/** Email address to use for new pseudo-account. */
@@ -291,14 +282,21 @@ export class AccountService extends BaseProvider {
 	private async getIncomingCallRoute (
 		callMetadata: string
 	) : Promise<{
-		callType: string;
+		callType: 'audio' | 'chat' | 'video';
 		expires: number;
 		id: string;
+		groupID: string;
 		route: string[];
 		timestamp: number;
 		user: User | undefined;
 	}> {
-		const [callType, username, id, expiresString] = callMetadata.split(',');
+		const [
+			callType,
+			username,
+			groupID,
+			id,
+			expiresString
+		] = callMetadata.split(',');
 		const expires = toInt(expiresString);
 		const timestamp = await getTimestamp();
 
@@ -320,11 +318,29 @@ export class AccountService extends BaseProvider {
 			throw new Error('User not found.');
 		}
 
-		const contactID = (await user?.contactID) || '';
+		if (groupID) {
+			const chatData = await this.accountContactsService.getChatData(
+				groupID
+			);
+
+			if (
+				!(
+					'group' in chatData &&
+					normalizeArray(chatData.group.usernames || []).indexOf(
+						username
+					) > -1
+				)
+			) {
+				throw new Error('Invalid group ID.');
+			}
+		}
+
+		const contactID = groupID || (await user?.contactID) || '';
 
 		return {
 			callType,
 			expires,
+			groupID,
 			id,
 			route:
 				callType === 'chat' ?
@@ -563,10 +579,10 @@ export class AccountService extends BaseProvider {
 
 					/* Check for updates to keep long-running background instances in sync */
 					try {
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						const packageTimestamp =
 							!this.envService.isLocalEnv &&
 							this.autoUpdate.value ?
+								/* eslint-disable-next-line @typescript-eslint/tslint/config */
 								localStorage.getItem(
 									'webSignPackageTimestamp'
 								) :
@@ -643,11 +659,7 @@ export class AccountService extends BaseProvider {
 		this.subscriptions.push(
 			this.accountSettingsService.plan
 				.pipe(
-					map(
-						plan =>
-							this.configService.planConfig[plan].telehealth ===
-							true
-					)
+					map(plan => this.configService.planConfig[plan].telehealth)
 				)
 				.subscribe(this.envService.telehealthTheme)
 		);
@@ -677,6 +689,7 @@ export class AccountService extends BaseProvider {
 						const {
 							callType,
 							expires,
+							groupID,
 							route,
 							user
 						} = await this.getIncomingCallRoute(k);
@@ -724,11 +737,24 @@ export class AccountService extends BaseProvider {
 														(await getTimestamp()),
 													title:
 														callType === 'audio' ?
-															this.stringsService
-																.incomingCallAudio :
+															groupID ?
+																this
+																	.stringsService
+																	.incomingCallAudioGroup :
+																this
+																	.stringsService
+																	.incomingCallAudio :
 														callType === 'chat' ?
+															groupID ?
+																this
+																	.stringsService
+																	.incomingCallChatGroup :
+																this
+																	.stringsService
+																	.incomingCallChat :
+														groupID ?
 															this.stringsService
-																.incomingCallChat :
+																.incomingCallVideoGroup :
 															this.stringsService
 																.incomingCallVideo
 												},

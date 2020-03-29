@@ -69,7 +69,10 @@ export interface IP2PWebRTCService {
 	readonly webRTC: BehaviorSubject<
 		| undefined
 		| {
-				peers: {connected: Promise<void>; peer: SimplePeer.Instance}[];
+				peers: {
+					connected: Promise<void>;
+					peer: SimplePeer.Instance | undefined;
+				}[];
 				timer: Timer;
 		  }
 	>;
@@ -104,7 +107,11 @@ export interface IP2PWebRTCService {
 	 * Sends a new call request to the other party.
 	 * @param callType Requested session type.
 	 */
-	request (callType: 'audio' | 'video', isPassive?: boolean) : Promise<void>;
+	request (
+		callType: 'audio' | 'video',
+		isPassive?: boolean,
+		usernames?: string[]
+	) : Promise<void>;
 
 	/** Resolves ready. */
 	resolveReady () : void;

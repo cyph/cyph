@@ -144,36 +144,71 @@
 				{{ groupUsernames }}
 			</mat-card-subtitle>
 
-			<div
-				fxFlex
-				fxLayoutAlign="end center"
-				*ngIf="clickable && groupData?.incoming"
-			>
-				<button
-					mat-icon-button
-					cyphTranslate
-					matTooltip="Join Group"
-					(click)="
-						accountFilesService.acceptIncomingFile(groupData?.id);
-						$event.stopPropagation()
-					"
-				>
-					<mat-icon>check</mat-icon>
-				</button>
-				<button
-					mat-icon-button
-					cyphTranslate
-					matTooltip="Decline Group Invite"
-					(click)="
-						accountFilesService.acceptIncomingFile(
-							groupData?.id,
-							false
-						);
-						$event.stopPropagation()
-					"
-				>
-					<mat-icon>close</mat-icon>
-				</button>
+			<div fxFlex fxLayoutAlign="end center" *ngIf="clickable">
+				<ng-container *ngIf="!groupData?.incoming">
+					<button
+						mat-icon-button
+						cyphTranslate
+						aria-label="Group Menu"
+						[matMenuTriggerFor]="groupMenu"
+						(click)="$event.stopPropagation()"
+						*ngIf="p2pSupported && !envService.isTelehealthFull"
+					>
+						<mat-icon>more_vert</mat-icon>
+					</button>
+					<mat-menu #groupMenu="matMenu">
+						<button
+							mat-menu-item
+							[routerLink]="'/messages/' + (groupData?.id || '')"
+						>
+							<mat-icon>chat</mat-icon>
+							<span cyphTranslate>Chat</span>
+						</button>
+						<button
+							mat-menu-item
+							[routerLink]="'/call/' + (groupData?.id || '')"
+						>
+							<mat-icon>call</mat-icon>
+							<span cyphTranslate>Call</span>
+						</button>
+						<button
+							mat-menu-item
+							[routerLink]="'/video/' + (groupData?.id || '')"
+						>
+							<mat-icon>video_call</mat-icon>
+							<span cyphTranslate>Video Call</span>
+						</button>
+					</mat-menu>
+				</ng-container>
+				<ng-container *ngIf="!!groupData?.incoming">
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip="Join Group"
+						(click)="
+							accountFilesService.acceptIncomingFile(
+								groupData?.id
+							);
+							$event.stopPropagation()
+						"
+					>
+						<mat-icon>check</mat-icon>
+					</button>
+					<button
+						mat-icon-button
+						cyphTranslate
+						matTooltip="Decline Group Invite"
+						(click)="
+							accountFilesService.acceptIncomingFile(
+								groupData?.id,
+								false
+							);
+							$event.stopPropagation()
+						"
+					>
+						<mat-icon>close</mat-icon>
+					</button>
+				</ng-container>
 			</div>
 		</mat-card-header>
 	</mat-card>

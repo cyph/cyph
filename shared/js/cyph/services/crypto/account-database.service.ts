@@ -1082,7 +1082,7 @@ export class AccountDatabaseService extends BaseProvider {
 		}
 
 		return this.localStorageService.getOrSetDefault(
-			`AccountDatabaseService.getOrSetDefault: ${url}`,
+			`AccountDatabaseService.getOrSetDefault: ${await url}`,
 			proto,
 			f
 		);

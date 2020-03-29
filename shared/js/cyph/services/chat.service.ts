@@ -11,6 +11,7 @@ import {
 	Observable,
 	of
 } from 'rxjs';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 import {filter, map, switchMap, take, tap, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
@@ -1003,7 +1004,11 @@ export class ChatService extends BaseProvider {
 		}
 
 		return lock(
-			getOrSetDefault(this.getMessageLocks, message.id, () => ({})),
+			getOrSetDefault<string, {}>(
+				this.getMessageLocks,
+				message.id,
+				() => ({})
+			),
 			async () =>
 				retryUntilSuccessful(
 					/* eslint-disable-next-line complexity */
