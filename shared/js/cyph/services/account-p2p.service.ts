@@ -31,9 +31,6 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountP2PService extends P2PService {
 	/** @ignore */
-	private readonly groupRingTimeout: number = 3600000;
-
-	/** @ignore */
 	private readonly incomingStreamUsers = this.p2pWebRTCService.incomingStreamUsernames.pipe(
 		map(usernames =>
 			usernames.map(
@@ -182,7 +179,8 @@ export class AccountP2PService extends P2PService {
 								expires:
 									timestamp +
 									(usernames.length > 1 ?
-										this.groupRingTimeout :
+										this.notificationService
+											.ringTimeoutLong :
 										this.notificationService.ringTimeout),
 								groupID: this.accountSessionService
 									.groupMetadata?.id,

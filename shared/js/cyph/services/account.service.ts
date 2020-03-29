@@ -724,7 +724,8 @@ export class AccountService extends BaseProvider {
 											)
 										]),
 									false,
-									true
+									true,
+									this.notificationService.ringTimeoutLong
 								);
 
 						(await dialogClose.promise)();
