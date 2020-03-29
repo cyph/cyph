@@ -169,8 +169,8 @@ export class AccountP2PService extends P2PService {
 					)
 				)
 			),
-			contactID.then(async contactID =>
-				this.router.navigate([route, contactID, id], {
+			contactID.then(async contactIDString =>
+				this.router.navigate([route, contactIDString, id], {
 					replaceUrl: true
 				})
 			)

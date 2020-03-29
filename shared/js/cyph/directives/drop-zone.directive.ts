@@ -135,8 +135,8 @@ export class DropZoneDirective extends BaseProvider implements OnChanges {
 								)
 							);
 						},
-						maxFilesize: Infinity,
 						filesizeBase: 1024,
+						maxFilesize: Infinity,
 						url: 'data:text/plain;ascii,',
 						...(this.accept ? {acceptedFiles: this.accept} : {})
 					});

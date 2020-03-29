@@ -113,9 +113,7 @@ export class AccountService extends BaseProvider {
 	this.envService.isTelehealth ?
 		of(false) :
 		this.accountSettingsService.plan.pipe(
-			map(
-				plan => this.configService.planConfig[plan].enableGroup === true
-			)
+			map(plan => this.configService.planConfig[plan].enableGroup)
 		);
 
 	/** Indicates whether Passwords is enabled. */
@@ -125,10 +123,7 @@ export class AccountService extends BaseProvider {
 	this.envService.isTelehealth ?
 		of(false) :
 		this.accountSettingsService.plan.pipe(
-			map(
-				plan =>
-					this.configService.planConfig[plan].enablePasswords === true
-			)
+			map(plan => this.configService.planConfig[plan].enablePasswords)
 		);
 
 	/** Indicates whether Wallets is enabled. */
@@ -139,11 +134,7 @@ export class AccountService extends BaseProvider {
 				true) ?
 			of(true) :
 			this.accountSettingsService.plan.pipe(
-				map(
-					plan =>
-						this.configService.planConfig[plan].enableWallets ===
-						true
-				)
+				map(plan => this.configService.planConfig[plan].enableWallets)
 			);
 
 	/** Email address to use for new pseudo-account. */
@@ -588,10 +579,10 @@ export class AccountService extends BaseProvider {
 
 					/* Check for updates to keep long-running background instances in sync */
 					try {
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						const packageTimestamp =
 							!this.envService.isLocalEnv &&
 							this.autoUpdate.value ?
+								/* eslint-disable-next-line @typescript-eslint/tslint/config */
 								localStorage.getItem(
 									'webSignPackageTimestamp'
 								) :
@@ -668,11 +659,7 @@ export class AccountService extends BaseProvider {
 		this.subscriptions.push(
 			this.accountSettingsService.plan
 				.pipe(
-					map(
-						plan =>
-							this.configService.planConfig[plan].telehealth ===
-							true
-					)
+					map(plan => this.configService.planConfig[plan].telehealth)
 				)
 				.subscribe(this.envService.telehealthTheme)
 		);

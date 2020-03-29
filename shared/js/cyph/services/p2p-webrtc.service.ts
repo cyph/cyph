@@ -591,6 +591,7 @@ export class P2PWebRTCService extends BaseProvider
 				const channelConfigID =
 					channelParties &&
 					p2pSessionData.channelConfigIDs[channelParties[0]] &&
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					typeof p2pSessionData.channelConfigIDs[channelParties[0]][
 						channelParties[1]
 					] === 'number' ?

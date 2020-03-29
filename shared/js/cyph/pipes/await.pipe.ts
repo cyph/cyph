@@ -6,6 +6,7 @@ import {Async} from '../async-type';
 /** Replaces the built-in AsyncPipe's "empty" value of null with undefined. */
 @Pipe({
 	name: 'await',
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	pure: false
 })
 export class AwaitPipe implements OnDestroy, PipeTransform {
@@ -14,6 +15,7 @@ export class AwaitPipe implements OnDestroy, PipeTransform {
 
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
+		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		this.asyncPipe.ngOnDestroy();
 	}
 

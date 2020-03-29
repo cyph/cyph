@@ -296,6 +296,7 @@ export class AccountSessionService extends SessionService {
 										o.contactList = contactList;
 										o.readOnly = true;
 
+										/* eslint-disable-next-line @typescript-eslint/tslint/config */
 										o.ngOnChanges({
 											contactList: {
 												currentValue: o.contactList,
