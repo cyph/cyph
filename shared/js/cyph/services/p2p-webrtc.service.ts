@@ -849,10 +849,10 @@ export class P2PWebRTCService extends BaseProvider
 		medium?: 'audio' | 'video',
 		shouldPause?: boolean | {newDeviceID: string}
 	) : Promise<void> {
-		/* eslint-disable-next-line complexity */
-		return this.joinAndToggleLock(async () => {
-			const webRTC = await this.getWebRTC();
+		const webRTC = await this.getWebRTC();
 
+		/* eslint-disable-next-line complexity */
+		await this.joinAndToggleLock(async () => {
 			let deviceIdChanged = false;
 
 			const oldAudioTracks =
@@ -998,33 +998,30 @@ export class P2PWebRTCService extends BaseProvider
 					}
 				}
 			}
-
-			await Promise.all(
-				webRTC.peers.map(async ({connected, peer}) => {
-					try {
-						await connected;
-						await Promise.resolve(
-							peer.send(
-								msgpack.encode({
-									audio: !!this.outgoingStream.value
-										.constraints.audio,
-									video: !!this.outgoingStream.value
-										.constraints.video,
-									...(deviceIdChanged ?
-										{switchingDevice: deviceIdChanged} :
-										{})
-								})
-							)
-						);
-					}
-					catch (err) {
-						debugLogError(() => ({
-							webRTC: {peerSendError: err}
-						}));
-					}
-				})
-			);
 		});
+
+		await Promise.all(
+			webRTC.peers.map(async ({connected, peer}) => {
+				try {
+					await connected;
+					await Promise.resolve(
+						peer.send(
+							msgpack.encode({
+								audio: !!this.outgoingStream.value.constraints
+									.audio,
+								video: !!this.outgoingStream.value.constraints
+									.video
+							})
+						)
+					);
+				}
+				catch (err) {
+					debugLogError(() => ({
+						webRTC: {peerSendError: err}
+					}));
+				}
+			})
+		);
 	}
 
 	constructor (
