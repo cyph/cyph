@@ -294,6 +294,9 @@ export class P2PService extends BaseProvider {
 		}
 	}
 
+	/** If applicable, displays list of current participants in call. */
+	public async viewCallParticipants () : Promise<void> {}
+
 	/**
 	 * Attempt to toggle outgoing audio stream,
 	 * requesting new P2P session if necessary.

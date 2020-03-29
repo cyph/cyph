@@ -13,7 +13,7 @@ import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {events, ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
-import {filterUndefinedOperator} from '../util/filter';
+import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
@@ -113,8 +113,20 @@ export class P2PWebRTCService extends BaseProvider
 			activeVideo: boolean;
 			constraints: MediaStreamConstraints;
 			stream?: MediaStream;
+			username?: string;
 		}[]
 	>([]);
+
+	/** @inheritDoc */
+	public readonly incomingStreamUsernames = this.incomingStreams.pipe(
+		map(incomingStreams =>
+			filterUndefined(
+				incomingStreams
+					.filter(o => o.stream !== undefined)
+					.map(o => o.username)
+			)
+		)
+	);
 
 	/** @inheritDoc */
 	public readonly incomingVideoStreams = this.incomingStreams.pipe(
@@ -483,28 +495,12 @@ export class P2PWebRTCService extends BaseProvider
 			return;
 		}
 
-		const [sessionServices] = await Promise.all([
-			this.sessionServices,
-			this.accept(p2pSessionData.callType),
-			this.ready
-		]);
-
 		return this.joinAndToggleLock(async () => {
 			if (this.webRTC.value) {
 				return;
 			}
 
 			this.webRTC.next(undefined);
-
-			this.incomingStreams.next(
-				sessionServices.map(() => ({
-					activeVideo: false,
-					constraints: this.outgoingStream.value.constraints
-				}))
-			);
-			this.cameraActivated.next(
-				!!this.outgoingStream.value.constraints.video
-			);
 			this.isActive.next(true);
 
 			const iceServers = parse<RTCIceServer[]>(p2pSessionData.iceServers)
@@ -546,7 +542,14 @@ export class P2PWebRTCService extends BaseProvider
 
 			debugLog(() => ({p2pWebRTCJoin: {iceServers, p2pSessionData}}));
 
-			const handlers = await this.handlers;
+			const [handlers] = await Promise.all([
+				this.handlers,
+				this.accept(p2pSessionData.callType)
+			]);
+
+			this.cameraActivated.next(
+				!!this.outgoingStream.value.constraints.video
+			);
 
 			if (
 				(this.confirmLocalVideoAccess &&
@@ -587,6 +590,19 @@ export class P2PWebRTCService extends BaseProvider
 				...this.outgoingStream.value,
 				stream: localStream
 			});
+
+			const [sessionServices] = await Promise.all([
+				this.sessionServices,
+				this.ready
+			]);
+
+			this.incomingStreams.next(
+				sessionServices.map(sessionService => ({
+					activeVideo: false,
+					constraints: this.outgoingStream.value.constraints,
+					username: sessionService.pairwiseSessionData?.remoteUsername
+				}))
+			);
 
 			const peers: {
 				connected: Promise<void>;
@@ -651,11 +667,13 @@ export class P2PWebRTCService extends BaseProvider
 					const newIncomingStreams = [
 						...this.incomingStreams.value.slice(0, i),
 						{
+							...this.incomingStreams.value[i],
 							activeVideo: false,
 							constraints: {
 								audio: false,
 								video: false
-							}
+							},
+							stream: undefined
 						},
 						...this.incomingStreams.value.slice(i + 1)
 					];
@@ -755,7 +773,10 @@ export class P2PWebRTCService extends BaseProvider
 					]);
 
 					this.addHarker(remoteStream, i);
-					this.loading.next(false);
+
+					if (!this.sessionService.group) {
+						this.loading.next(false);
+					}
 				});
 
 				peer.on(
@@ -790,6 +811,10 @@ export class P2PWebRTCService extends BaseProvider
 
 				return {connected: connected.promise, peer};
 			});
+
+			if (this.sessionService.group) {
+				this.loading.next(false);
+			}
 
 			handlers.loaded();
 			handlers.connected(true);
@@ -830,7 +855,7 @@ export class P2PWebRTCService extends BaseProvider
 
 		const channelConfigIDs = usernames
 			.map((a, i) => usernames.slice(i + 1).map(b => [a, b]))
-			.reduce((a, b) => [...a, ...b])
+			.reduce((a, b) => [...a, ...b], [])
 			.reduce<{[a: string]: {[b: string]: number}}>(
 				(o, [a, b], i) => ({...o, [a]: {...o[a], [b]: i}}),
 				{}
