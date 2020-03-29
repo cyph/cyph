@@ -755,7 +755,10 @@ export class P2PWebRTCService extends BaseProvider
 					]);
 
 					this.addHarker(remoteStream, i);
-					this.loading.next(false);
+
+					if (!this.sessionService.group) {
+						this.loading.next(false);
+					}
 				});
 
 				peer.on(
@@ -790,6 +793,10 @@ export class P2PWebRTCService extends BaseProvider
 
 				return {connected: connected.promise, peer};
 			});
+
+			if (this.sessionService.group) {
+				this.loading.next(false);
+			}
 
 			handlers.loaded();
 			handlers.connected(true);
