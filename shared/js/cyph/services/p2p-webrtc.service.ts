@@ -830,7 +830,7 @@ export class P2PWebRTCService extends BaseProvider
 
 		const channelConfigIDs = usernames
 			.map((a, i) => usernames.slice(i + 1).map(b => [a, b]))
-			.reduce((a, b) => [...a, ...b])
+			.reduce((a, b) => [...a, ...b], [])
 			.reduce<{[a: string]: {[b: string]: number}}>(
 				(o, [a, b], i) => ({...o, [a]: {...o[a], [b]: i}}),
 				{}
