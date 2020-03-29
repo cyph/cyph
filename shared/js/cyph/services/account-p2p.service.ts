@@ -27,6 +27,9 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountP2PService extends P2PService {
+	/** @ignore */
+	private readonly groupRingTimeout: number = 3600000;
+
 	/** @inheritDoc */
 	protected async p2pWarningPersist (
 		f: () => Promise<boolean>
@@ -160,7 +163,9 @@ export class AccountP2PService extends P2PService {
 								callType,
 								expires:
 									timestamp +
-									this.notificationService.ringTimeout,
+									(usernames.length > 1 ?
+										this.groupRingTimeout :
+										this.notificationService.ringTimeout),
 								groupID: this.accountSessionService
 									.groupMetadata?.id,
 								id
