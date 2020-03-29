@@ -1,13 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {take} from 'rxjs/operators';
-import {User} from '../account';
+import {of} from 'rxjs';
+import {map, take} from 'rxjs/operators';
+import {IContactListItem, User} from '../account';
+import {AccountContactsComponent} from '../components/account-contacts';
 import {BooleanProto, CyphPlans, NotificationTypes} from '../proto';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
+import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {ChatService} from './chat.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -29,6 +32,21 @@ import {StringsService} from './strings.service';
 export class AccountP2PService extends P2PService {
 	/** @ignore */
 	private readonly groupRingTimeout: number = 3600000;
+
+	/** @ignore */
+	private readonly incomingStreamUsers = this.p2pWebRTCService.incomingStreamUsernames.pipe(
+		map(usernames =>
+			usernames.map(
+				(username) : IContactListItem => ({
+					unreadMessageCount: of(0),
+					user: this.accountUserLookupService
+						.getUser(username)
+						.catch(() => undefined),
+					username
+				})
+			)
+		)
+	);
 
 	/** @inheritDoc */
 	protected async p2pWarningPersist (
@@ -195,6 +213,40 @@ export class AccountP2PService extends P2PService {
 		);
 	}
 
+	/** @inheritDoc */
+	public async viewCallParticipants () : Promise<void> {
+		await this.dialogService.baseDialog(
+			AccountContactsComponent,
+			o => {
+				const previousValues = {
+					contactList: o.contactList,
+					readOnly: o.readOnly
+				};
+
+				o.contactList = this.incomingStreamUsers;
+				o.readOnly = true;
+
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				o.ngOnChanges({
+					contactList: {
+						currentValue: o.contactList,
+						firstChange: false,
+						isFirstChange: () => false,
+						previousValue: previousValues.contactList
+					},
+					readOnly: {
+						currentValue: o.readOnly,
+						firstChange: false,
+						isFirstChange: () => false,
+						previousValue: previousValues.readOnly
+					}
+				});
+			},
+			undefined,
+			true
+		);
+	}
+
 	constructor (
 		chatService: ChatService,
 		dialogService: DialogService,
@@ -219,6 +271,9 @@ export class AccountP2PService extends P2PService {
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService,
+
+		/** @ignore */
+		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,

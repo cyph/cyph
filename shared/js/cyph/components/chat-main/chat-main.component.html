@@ -476,6 +476,28 @@
 				<button
 					mat-icon-button
 					cyphTranslate
+					[matBadge]="
+						(
+							(p2pWebRTCService.incomingStreamUsernames
+								| await) || []
+						).length
+					"
+					matBadgePosition="above after"
+					matTooltip="View Participants"
+					matTooltipPosition="above"
+					(click)="p2pService.viewCallParticipants()"
+					*ngIf="
+						(
+							(p2pWebRTCService.incomingStreamUsernames
+								| await) || []
+						).length > 0
+					"
+				>
+					<mat-icon>group</mat-icon>
+				</button>
+				<button
+					mat-icon-button
+					cyphTranslate
 					matTooltip="End Call"
 					matTooltipPosition="above"
 					color="warn"
