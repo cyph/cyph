@@ -23,7 +23,6 @@ import {getOrSetDefault} from '../util/get-or-set-default';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionCapabilitiesService} from './account-session-capabilities.service';
-import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
@@ -191,17 +190,23 @@ export class AccountChatService extends ChatService {
 			| {group: IAccountMessagingGroup; id: string}
 			| {username: string},
 		keepCurrentMessage: boolean = false,
-		callType?: 'audio' | 'video',
+		callType: 'audio' | 'video' | undefined = this.envService.callType,
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
-		this.accountSessionInitService.callType =
-			callType || this.envService.callType;
+		const callRequestPromise = callType ?
+			this.p2pWebRTCService.request(
+				callType,
+				undefined,
+				'group' in chat ? chat.group.usernames : undefined
+			) :
+			Promise.resolve();
 
 		if ('anonymousChannelID' in chat) {
 			this.accountSessionCapabilitiesService.initEphemeral();
 			await this.accountSessionService.setUser(chat);
 			this.resolvers.chatConnected.resolve();
+			await callRequestPromise;
 			return;
 		}
 
@@ -306,6 +311,7 @@ export class AccountChatService extends ChatService {
 			ephemeralSubSession
 		);
 		this.resolvers.chatConnected.resolve();
+		await callRequestPromise;
 	}
 
 	constructor (
@@ -339,10 +345,7 @@ export class AccountChatService extends ChatService {
 		private readonly accountSessionService: AccountSessionService,
 
 		/** @ignore */
-		private readonly accountSessionCapabilitiesService: AccountSessionCapabilitiesService,
-
-		/** @ignore */
-		private readonly accountSessionInitService: AccountSessionInitService
+		private readonly accountSessionCapabilitiesService: AccountSessionCapabilitiesService
 	) {
 		super(
 			analyticsService,

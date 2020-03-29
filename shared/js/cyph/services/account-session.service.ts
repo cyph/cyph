@@ -63,6 +63,12 @@ export class AccountSessionService extends SessionService {
 	};
 
 	/** @inheritDoc */
+	public pairwiseSessionData?: {
+		localUsername?: string;
+		remoteUsername?: string;
+	};
+
+	/** @inheritDoc */
 	public readonly ready = this._READY.promise;
 
 	/** Remote user. */
@@ -241,6 +247,12 @@ export class AccountSessionService extends SessionService {
 
 		if ('username' in chat) {
 			chat.username = this.normalizeUsername(chat.username);
+
+			this.pairwiseSessionData = {
+				localUsername: (await this.accountDatabaseService.getCurrentUser())
+					.user.username,
+				remoteUsername: chat.username
+			};
 		}
 
 		this.initiated = true;
