@@ -203,7 +203,10 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly webRTC = new BehaviorSubject<
 		| undefined
 		| {
-				peers: {connected: Promise<void>; peer: SimplePeer.Instance}[];
+				peers: {
+					connected: Promise<void>;
+					peer: SimplePeer.Instance | undefined;
+				}[];
 				timer: Timer;
 		  }
 	>(undefined);
@@ -270,7 +273,10 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** @ignore */
 	private async getWebRTC () : Promise<{
-		peers: {connected: Promise<void>; peer: SimplePeer.Instance}[];
+		peers: {
+			connected: Promise<void>;
+			peer: SimplePeer.Instance | undefined;
+		}[];
 		timer: Timer;
 	}> {
 		return this.webRTC.pipe(filterUndefinedOperator(), take(1)).toPromise();
@@ -360,7 +366,8 @@ export class P2PWebRTCService extends BaseProvider
 		if (this.webRTC.value) {
 			this.webRTC.value.timer.stop();
 			for (const {peer} of this.webRTC.value.peers) {
-				peer.destroy();
+				/* eslint-disable-next-line no-unused-expressions */
+				peer?.destroy();
 			}
 		}
 
@@ -581,7 +588,10 @@ export class P2PWebRTCService extends BaseProvider
 				stream: localStream
 			});
 
-			const peers = sessionServices.map((sessionService, i) => {
+			const peers: {
+				connected: Promise<void>;
+				peer: SimplePeer.Instance | undefined;
+			}[] = sessionServices.map((sessionService, i) => {
 				const connected = resolvable();
 
 				const channelParties =
@@ -630,6 +640,7 @@ export class P2PWebRTCService extends BaseProvider
 
 				peer.on('close', async () => {
 					debugLog(() => ({webRTC: {close: true}}));
+					peers[i].peer = undefined;
 					connected.reject();
 
 					if (!this.sessionService.group) {
@@ -970,10 +981,12 @@ export class P2PWebRTCService extends BaseProvider
 				) {
 					for (const {peer} of webRTC.peers) {
 						if (stream) {
-							peer.removeStream(stream);
+							/* eslint-disable-next-line no-unused-expressions */
+							peer?.removeStream(stream);
 						}
 
-						peer.addStream(newStream);
+						/* eslint-disable-next-line no-unused-expressions */
+						peer?.addStream(newStream);
 					}
 
 					this.recorder.addStream(newStream);
@@ -986,7 +999,8 @@ export class P2PWebRTCService extends BaseProvider
 				else {
 					for (const {peer} of webRTC.peers) {
 						for (let i = 0; i < oldTracks.length; ++i) {
-							peer.replaceTrack(
+							/* eslint-disable-next-line no-unused-expressions */
+							peer?.replaceTrack(
 								oldTracks[i],
 								newTracks[i],
 								stream
@@ -1012,7 +1026,8 @@ export class P2PWebRTCService extends BaseProvider
 				try {
 					await connected;
 					await Promise.resolve(
-						peer.send(
+						/* eslint-disable-next-line no-unused-expressions */
+						peer?.send(
 							msgpack.encode({
 								audio: !!this.outgoingStream.value.constraints
 									.audio,
@@ -1117,7 +1132,8 @@ export class P2PWebRTCService extends BaseProvider
 
 							debugLog(() => ({webRTC: {incomingSignal: data}}));
 
-							webRTC.peers[i].peer.signal(data);
+							/* eslint-disable-next-line no-unused-expressions */
+							webRTC.peers[i].peer?.signal(data);
 						}
 					}
 				);
