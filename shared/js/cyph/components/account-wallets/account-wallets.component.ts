@@ -21,6 +21,7 @@ import {
 } from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
@@ -389,6 +390,9 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
 
 		/** @see CryptocurrencyService */
 		public readonly cryptocurrencyService: CryptocurrencyService,

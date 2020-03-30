@@ -1083,11 +1083,11 @@ export class P2PWebRTCService extends BaseProvider
 	) {
 		super();
 
-		sessionCapabilitiesService.resolveP2PSupport(
-			P2PWebRTCService.isSupported
-		);
-
 		this.sessionServices.then(sessionServices => {
+			sessionCapabilitiesService.resolveP2PSupport(
+				P2PWebRTCService.isSupported
+			);
+
 			this.sessionService.on(events.closeChat, () => {
 				this.close();
 			});

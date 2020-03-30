@@ -29,6 +29,13 @@ export const BooleanProto: IProto<boolean> = new GenericProto(
 	Internal.BooleanValue
 );
 
+/** Boolean encoder/decoder that inverts the value. */
+export const InvertedBooleanProto: IProto<boolean> = new GenericProto(
+	Internal.BooleanValue,
+	data => !data,
+	data => !data
+);
+
 /** Number array encoder/decoder. */
 export const NumberArrayProto: IProto<number[]> = new GenericArrayProto(
 	Internal.NumberArray

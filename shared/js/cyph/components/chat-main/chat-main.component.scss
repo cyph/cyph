@@ -174,6 +174,13 @@
 					width: 100%;
 					height: 100%;
 
+					.header {
+						background: rgba(0, 0, 0, 0.33) !important;
+						font-weight: normal !important;
+						opacity: 1 !important;
+						visibility: visible !important;
+					}
+
 					mat-video-spinner {
 						display: none;
 					}
@@ -289,6 +296,11 @@
 			opacity: 0.5;
 
 			@include filter(brightness(0) invert(1));
+		}
+
+		&.mobile cyph-logo {
+			width: 100px;
+			height: 23px;
 		}
 
 		.friend {

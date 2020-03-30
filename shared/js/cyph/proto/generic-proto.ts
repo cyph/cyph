@@ -4,17 +4,17 @@ import {IProto} from '../iproto';
 export class GenericProto<T> implements IProto<T> {
 	/** @inheritDoc */
 	public create () : T {
-		return this.proto.create().data;
+		return this.decodeTransformer(this.proto.create().data);
 	}
 
 	/** @inheritDoc */
 	public async decode (bytes: Uint8Array) : Promise<T> {
-		return (await this.proto.decode(bytes)).data;
+		return this.decodeTransformer((await this.proto.decode(bytes)).data);
 	}
 
 	/** @inheritDoc */
 	public async encode (data: T) : Promise<Uint8Array> {
-		const o = await this.proto.encode({data});
+		const o = await this.proto.encode({data: this.encodeTransformer(data)});
 		return o instanceof Uint8Array ? o : o.finish();
 	}
 
@@ -25,6 +25,12 @@ export class GenericProto<T> implements IProto<T> {
 
 	constructor (
 		/** @ignore */
-		private readonly proto: IProto<{data: T}>
+		private readonly proto: IProto<{data: T}>,
+
+		/** @ignore */
+		private readonly decodeTransformer: (data: T) => T = data => data,
+
+		/** @ignore */
+		private readonly encodeTransformer: (data: T) => T = data => data
 	) {}
 }

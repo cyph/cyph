@@ -32,6 +32,7 @@ import {BaseProvider} from '../../base-provider';
 import {AccountContactState, AccountUserTypes, BooleanProto} from '../../proto';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -221,6 +222,9 @@ export class AccountContactsComponent extends BaseProvider
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
 
 		/** @see DialogService */
 		public readonly dialogService: DialogService,

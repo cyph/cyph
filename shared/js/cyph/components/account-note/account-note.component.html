@@ -4,7 +4,8 @@
 		fxLayoutAlign="center start"
 		[class.initiating]="showSpinner | await"
 		*ngIf="
-			(realTime | await) === false || (accountService.enableDocs | await)
+			(realTime | await) === false ||
+			(accountSettingsService.staticFeatureFlags.docs | await)
 		"
 	>
 		<mat-card

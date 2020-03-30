@@ -2,7 +2,7 @@
 	class="cyph-banner alert"
 	cyphTranslate
 	*ngIf="
-		(accountService.enableWallets | await) &&
+		(accountSettingsService.staticFeatureFlags.wallets | await) &&
 		(cryptocurrencyService.blockchainFetchError | await)
 	"
 >
@@ -14,7 +14,7 @@
 <div
 	fxFlexFill
 	[class.initiating]="(accountFilesService.showSpinner | await) !== undefined"
-	*ngIf="accountService.enableWallets | await"
+	*ngIf="accountSettingsService.staticFeatureFlags.wallets | await"
 >
 	<div
 		class="no-wallets"
