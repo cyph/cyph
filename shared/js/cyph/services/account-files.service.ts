@@ -826,7 +826,13 @@ export class AccountFilesService extends BaseProvider {
 
 		const filePromise = this.getFile(id);
 
-		const {progress, result} = this.accountDatabaseService.downloadItem(
+		filePromise.catch(() => {});
+
+		const {
+			alreadyCached,
+			progress,
+			result
+		} = this.accountDatabaseService.downloadItem(
 			filePromise.then(file => `users/${file.owner}/files/${file.id}`),
 			<any> proto === DataURIProto ?
 				<any> (
@@ -836,6 +842,9 @@ export class AccountFilesService extends BaseProvider {
 			securityModel,
 			filePromise.then(file => file.key)
 		);
+
+		alreadyCached.catch(() => {});
+		result.catch(() => {});
 
 		const sub = progress.subscribe(n => {
 			if (
@@ -850,14 +859,20 @@ export class AccountFilesService extends BaseProvider {
 
 		return {
 			progress,
-			result: result.then(async o => {
-				sub.unsubscribe();
-				this.showSpinner.next(undefined);
+			result: result
+				.catch(err => (err instanceof Error ? err : new Error(err)))
+				.then(async o => {
+					sub.unsubscribe();
+					this.showSpinner.next(undefined);
 
-				return o.value instanceof Blob ? <any> new Blob([o.value], {
-						type: (await filePromise).mediaType
-					}) : o.value;
-			})
+					if (o instanceof Error) {
+						throw o;
+					}
+
+					return o.value instanceof Blob ? <any> new Blob([o.value], {
+							type: (await filePromise).mediaType
+						}) : o.value;
+				})
 		};
 	}
 
