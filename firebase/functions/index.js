@@ -568,10 +568,11 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const purchased = !!req.body.purchased;
 	let username = validateInput(req.body.username, undefined, true);
 	const userToken = validateInput(req.body.userToken, undefined, true);
+	let oldBraintreeSubscriptionID = '';
 
 	if (username || userToken) {
-		const braintreeID = braintreeIDs[0];
-		const braintreeSubscriptionID = braintreeSubscriptionIDs[0];
+		const braintreeID = braintreeIDs.shift();
+		const braintreeSubscriptionID = braintreeSubscriptionIDs.shift();
 
 		if (!username) {
 			username = (await tokens.open(
@@ -589,7 +590,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		const emailRef = database.ref(`${internalURL}/email`);
 
 		const [
-			oldBraintreeSubscriptionID,
+			_oldBraintreeSubscriptionID,
 			userEmail,
 			oldPlan
 		] = await Promise.all([
@@ -599,6 +600,8 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 				.catch(() => undefined)
 				.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free))
 		]);
+
+		oldBraintreeSubscriptionID = _oldBraintreeSubscriptionID;
 
 		const oldPlanConfig = config.planConfig[oldPlan];
 		const isUpgrade = planConfig.rank > oldPlanConfig.rank;
@@ -666,13 +669,11 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 				}
 			);
 		}
-
-		return {oldBraintreeSubscriptionID};
 	}
 
 	if (preexistingInviteCode) {
-		const braintreeID = braintreeIDs[0];
-		const braintreeSubscriptionID = braintreeSubscriptionIDs[0];
+		const braintreeID = braintreeIDs.shift();
+		const braintreeSubscriptionID = braintreeSubscriptionIDs.shift();
 
 		const preexistingInviteCodeRef = database.ref(
 			`${namespace}/inviteCodes/${preexistingInviteCode}`
@@ -692,10 +693,8 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {})
 		});
 
-		return {
-			oldBraintreeSubscriptionID:
-				preexistingInviteCodeData.braintreeSubscriptionID
-		};
+		oldBraintreeSubscriptionID =
+			preexistingInviteCodeData.braintreeSubscriptionID;
 	}
 
 	/* Gift free users one-month premium trials */
@@ -757,31 +756,35 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	);
 
 	return {
-		inviteCode: inviteCodes[0],
-		welcomeLetter: await sendMailInternal(
-			email,
-			(purchased ?
-				'Cyph Purchase Confirmation' :
-				"You've Been Invited to Cyph!") +
-				(plan === CyphPlans.Free ?
-					'' :
-				planTrialEnd ?
-					` (with ${titleize(CyphPlans[plan])} trial)` :
-					` (${titleize(CyphPlans[plan])})`),
-			{
-				data: getInviteTemplateData({
-					...(inviteCodes.length > 1 ?
-						{inviteCodes} :
-						{inviteCode: inviteCodes[0]}),
-					name,
-					plan,
-					purchased
-				}),
-				namespace,
-				noUnsubscribe: true,
-				templateName: 'new-cyph-invite'
-			}
-		)
+		inviteCode: inviteCodes.length < 1 ? '' : inviteCodes[0],
+		oldBraintreeSubscriptionID,
+		welcomeLetter:
+			inviteCodes.length < 1 ?
+				'' :
+				await sendMailInternal(
+					email,
+					(purchased ?
+						'Cyph Purchase Confirmation' :
+						"You've Been Invited to Cyph!") +
+						(plan === CyphPlans.Free ?
+							'' :
+							planTrialEnd ?
+							` (with ${titleize(CyphPlans[plan])} trial)` :
+							` (${titleize(CyphPlans[plan])})`),
+					{
+						data: getInviteTemplateData({
+							...(inviteCodes.length > 1 ?
+								{inviteCodes} :
+								{inviteCode: inviteCodes[0]}),
+							name,
+							plan,
+							purchased
+						}),
+						namespace,
+						noUnsubscribe: true,
+						templateName: 'new-cyph-invite'
+					}
+				)
 	};
 });
 
