@@ -32,6 +32,8 @@ export class AccountAppointmentsService extends BaseProvider {
 						Id: number;
 						StartTime: Date;
 						Subject: string;
+						Location: string;
+						Description: string;
 					};
 			  }
 			| undefined
@@ -60,8 +62,10 @@ export class AccountAppointmentsService extends BaseProvider {
 							StartTime: new Date(
 								appointment.calendarInvite.startTime
 							),
-							Subject: appointment.calendarInvite.title
-						}
+							Subject: ""+appointment.fromName,
+							Location: ""+appointment.calendarInvite.url,
+							Description: appointment.calendarInvite.title
+							}
 					};
 				})
 			),

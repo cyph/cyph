@@ -4,6 +4,7 @@ import {Route} from '@angular/router';
 import {AccountComponent} from '../components/account';
 import {AccountAfterRegisterComponent} from '../components/account-after-register';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
+import {AccountAppointmentAgendaComponent} from '../components/account-appointment-agenda';
 import {AccountChatComponent} from '../components/account-chat';
 import {AccountComposeComponent} from '../components/account-compose';
 import {AccountContactsComponent} from '../components/account-contacts';
@@ -357,6 +358,10 @@ export const account: Route = {
 				messageType: ChatMessageValue.Types.CalendarInvite,
 				appointmentFollowUp: true
 			}
+		},
+		{
+			path: 'schedule',
+			component: AccountAppointmentAgendaComponent
 		},
 		{
 			path: 'settings',

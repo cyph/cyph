@@ -177,6 +177,7 @@ export class AccountComponent extends BaseProvider
 					'',
 					'404',
 					'appointments',
+					'schedule',
 					'audio',
 					'call',
 					'compose',

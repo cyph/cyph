@@ -1,0 +1,47 @@
+@import '../../../../css/mixins';
+
+
+:host > div {
+	position: relative;
+	min-height: 100%;
+
+	/* Override .initiating rule */
+	overflow-y: visible !important;
+}
+
+.quick-actions {
+	margin: 1em;
+}
+
+.template-wrap {
+	font-size: 21px;
+	.subject {
+		font-weight: bold;
+	}
+	.time {
+		font-size: 16px;
+		font-style: italic;
+	}
+	.description {
+		font-size: 16px;
+	}
+	.location {
+		button {
+			height: 100%;
+			margin-left: 1em;
+			display: inline-block !important;
+			mat-icon {
+				font-size: 28px;
+				margin-top: -5px;
+			}
+		}
+	}
+}
+
+::ng-deep .e-schedule .e-agenda-view .e-appointment {
+	border-left: 3px solid #7e57c2 !important;
+}
+
+.e-day-date-header {
+	font-size: 2em;
+}

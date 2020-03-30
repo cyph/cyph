@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {AccountComponent} from '../components/account';
 import {AccountAfterRegisterComponent} from '../components/account-after-register';
 import {AccountAppointmentsComponent} from '../components/account-appointments';
+import {AccountAppointmentAgendaComponent} from '../components/account-appointment-agenda';
 import {AccountBaseFileListComponent} from '../components/account-base-file-list';
 import {AccountCallWaitingComponent} from '../components/account-call-waiting';
 import {AccountChatComponent} from '../components/account-chat';
@@ -74,6 +75,7 @@ import {CyphWebModule} from './cyph-web.module';
 	declarations: [
 		AccountAfterRegisterComponent,
 		AccountAppointmentsComponent,
+		AccountAppointmentAgendaComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
 		AccountChatComponent,
@@ -121,6 +123,7 @@ import {CyphWebModule} from './cyph-web.module';
 	exports: [
 		AccountAfterRegisterComponent,
 		AccountAppointmentsComponent,
+		AccountAppointmentAgendaComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
 		AccountChatComponent,

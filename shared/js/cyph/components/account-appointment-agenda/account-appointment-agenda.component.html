@@ -1,0 +1,100 @@
+<div fxLayout="column">
+	<div class="quick-actions" fxLayoutAlign="center center" fxLayoutGap="9px" fxLayout="row">
+		<button
+			mat-raised-button
+			cyphTranslate
+			color="accent"
+			matTooltipPosition="above"
+			routerLink="/request-appointment"
+			*ngIf="envService.isTelehealth"
+		>
+			New Appointment
+		</button>
+		<button
+			mat-raised-button
+			cyphTranslate
+			color="accent"
+			matTooltipPosition="above"
+			routerLink="/account-burner/video"
+		>
+			New Video Call Link
+		</button>
+	</div>
+	<div fxFlex>
+		<ejs-schedule
+			#schedule
+			height='100%'
+			[(selectedDate)]="selectedDate"
+			[eventSettings]="
+				accountAppointmentsService.appointmentSchedulerModels.upcoming | await"
+			currentView="Agenda"
+			readonly="true"
+			>
+
+			<e-views>
+				<e-view option="Agenda">
+					<ng-template #eventTemplate let-data>
+						<div class='template-wrap'>
+							<div class="appointment-info" fxLayout="row">
+								<div fxLayout="column">
+									<div class="subject">{{data.Subject}}</div>
+									<div class="description">{{data.Description}}</div>
+									<div class="time">
+										{{getTimeString(data.StartTime)}} - 
+										{{getTimeString(data.EndTime)}}
+									</div>
+								</div>
+								<div class="location" fxLayout="column">
+									<button
+										mat-raised-button
+										color="accent"
+										[routerLink]="data.Location">
+										<mat-icon>video_call</mat-icon>
+									</button>
+								</div>
+							</div>
+							<div class="footer"></div>
+						</div>
+					</ng-template>
+				</e-view>
+				<e-view option="Day">
+				</e-view>
+				<e-view option="Month">
+				</e-view>
+				<e-view option="Week">
+				</e-view>
+			</e-views>
+			<!--
+			<ng-template #quickInfoTemplatesContent let-data>
+				<div *ngIf="data.elementType == 'cell'" class="e-cell-content">
+					<form class="e-schedule-form">
+						<div style="padding:10px">
+							<input
+								class="subject e-field e-input"
+								type="text"
+								name="Subject"
+								placeholder="Title"
+								style="width:100%">
+						</div>
+						<div style="padding:10px">
+							<input
+								class="location e-field e-input"
+								type="text"
+								name="Location"
+								placeholder="Location"
+								style="width:100%">
+						</div>
+					</form>
+				</div>
+				<div *ngIf="data.elementType == 'event'" class="e-event-content">
+					<div class="start-time">Start: {{data.StartTime.toLocaleString()}}</div>
+					<div class="end-time">End: {{data.EndTime.toLocaleString()}}</div>
+					<div
+						*ngIf="data.Location != undefined && data.Location != ''"
+						class="location">Location: {{data.Location}}
+					</div>
+				</div>
+			</ng-template> -->
+		</ejs-schedule>
+	</div>
+</div>

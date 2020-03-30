@@ -14,9 +14,10 @@
 				value?.title !== undefined
 			"
 		>
+			<!-- Disabled dropdown reasons for now-->
 			<mat-form-field
 				fxFlex
-				*ngIf="!!reasons && (isDisabledWrapper | await) === false"
+				*ngIf="!!reasons && (isDisabledWrapper | await) === false && false"
 			>
 				<mat-select
 					fxFlex
@@ -38,9 +39,10 @@
 				</mat-select>
 			</mat-form-field>
 
+			<!-- Enabled text reason for now -->
 			<mat-form-field
 				fxFlex
-				*ngIf="!reasons || (isDisabledWrapper | await)"
+				*ngIf="!reasons || (isDisabledWrapper | await) || true"
 			>
 				<input
 					matInput
