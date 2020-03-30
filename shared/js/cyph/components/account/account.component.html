@@ -371,7 +371,10 @@
 		"
 		fxLayout="column"
 		class="sidebar contacts"
-		*ngIf="sidebarVisible | await"
+		*ngIf="
+			(accountSettingsService.featureFlags.messaging.watch() | await) &&
+			(sidebarVisible | await)
+		"
 	>
 		<div fxFlexFill fxLayout="row">
 			<cyph-account-contacts

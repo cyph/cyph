@@ -99,44 +99,6 @@ export class AccountService extends BaseProvider {
 	/** Indicates whether automatic updates should be applied. */
 	public readonly autoUpdate = new BehaviorSubject<boolean>(true);
 
-	/** Indicates whether real-time Docs is enabled. */
-	public readonly enableDocs: Observable<boolean> = of(
-		this.envService.debug ||
-			(!!this.envService.environment.customBuild &&
-				this.envService.environment.customBuild.config.enableDocs ===
-					true)
-	);
-
-	/** Indicates whether group messaging is enabled. */
-	public readonly enableGroup: Observable<boolean> = this.envService.debug ?
-		of(true) :
-	this.envService.isTelehealth ?
-		of(false) :
-		this.accountSettingsService.plan.pipe(
-			map(plan => this.configService.planConfig[plan].enableGroup)
-		);
-
-	/** Indicates whether Passwords is enabled. */
-	public readonly enablePasswords: Observable<boolean> = this.envService
-		.debug ?
-		of(true) :
-	this.envService.isTelehealth ?
-		of(false) :
-		this.accountSettingsService.plan.pipe(
-			map(plan => this.configService.planConfig[plan].enablePasswords)
-		);
-
-	/** Indicates whether Wallets is enabled. */
-	public readonly enableWallets: Observable<boolean> =
-		this.envService.debug ||
-		(!!this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.enableWallets ===
-				true) ?
-			of(true) :
-			this.accountSettingsService.plan.pipe(
-				map(plan => this.configService.planConfig[plan].enableWallets)
-			);
-
 	/** Email address to use for new pseudo-account. */
 	public readonly fromEmail = new BehaviorSubject<string>('');
 
@@ -319,9 +281,9 @@ export class AccountService extends BaseProvider {
 		}
 
 		if (groupID) {
-			const chatData = await this.accountContactsService.getChatData(
-				groupID
-			);
+			const chatData = await this.accountContactsService
+				.getChatData(groupID)
+				.catch(() => ({username: ''}));
 
 			if (
 				!(
@@ -762,7 +724,8 @@ export class AccountService extends BaseProvider {
 											)
 										]),
 									false,
-									true
+									true,
+									this.notificationService.ringTimeoutLong
 								);
 
 						(await dialogClose.promise)();

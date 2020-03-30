@@ -41,6 +41,9 @@ export class NotificationService extends BaseProvider
 	/** Max ring time. */
 	public readonly ringTimeout: number = 60000;
 
+	/** Ring timeout for long-lived call attempts. */
+	public readonly ringTimeoutLong: number = 3600000;
+
 	/** @ignore */
 	private async createNotification (message: string) : Promise<any> {
 		const options = {
@@ -116,7 +119,8 @@ export class NotificationService extends BaseProvider
 	public async ring (
 		accept: () => Promise<boolean>,
 		silent: boolean = false,
-		answering: boolean = false
+		answering: boolean = false,
+		ringTimeout: number = this.ringTimeout
 	) : Promise<boolean> {
 		return this.ringLock(async () => {
 			try {
@@ -128,9 +132,7 @@ export class NotificationService extends BaseProvider
 
 				return await Promise.race([
 					accept(),
-					sleep(this.ringTimeout * (answering ? 1 : 2)).then(
-						() => false
-					)
+					sleep(ringTimeout * (answering ? 1 : 2)).then(() => false)
 				]);
 			}
 			finally {

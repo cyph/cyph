@@ -521,7 +521,10 @@
 			<div
 				class="full-width"
 				fxLayout="row"
-				*ngIf="(editMode | await) === false"
+				*ngIf="
+					(editMode | await) === false &&
+					(accountSettingsService.featureFlags.social.watch() | await)
+				"
 			>
 				<div fxFlex fxLayout="column">
 					<cyph-account-post-compose

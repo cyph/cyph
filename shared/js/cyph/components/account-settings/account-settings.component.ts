@@ -15,6 +15,7 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {SalesService} from '../../services/sales.service';
 import {StringsService} from '../../services/strings.service';
+import {trackByID} from '../../track-by/track-by-id';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {titleize} from '../../util/titleize';
 
@@ -93,6 +94,9 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 	/** @see titleize */
 	public readonly titleize = titleize;
+
+	/** @see trackByID */
+	public readonly trackByID = trackByID;
 
 	/** User. */
 	public readonly user = new BehaviorSubject<User | undefined>(undefined);
