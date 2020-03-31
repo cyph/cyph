@@ -48,7 +48,7 @@ export const account: Route = {
 		},
 		{path: '404', component: NotFoundComponent},
 		{
-			path: 'account-burner/call',
+			path: 'account-burner/audio',
 			component: AccountChatComponent,
 			data: {
 				callType: 'audio',
@@ -56,7 +56,7 @@ export const account: Route = {
 			}
 		},
 		{
-			path: 'account-burner/call/:anonymousChannelID',
+			path: 'account-burner/audio/:anonymousChannelID',
 			component: AccountChatComponent,
 			data: {callType: 'audio'}
 		},
