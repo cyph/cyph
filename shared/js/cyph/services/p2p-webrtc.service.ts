@@ -97,9 +97,7 @@ export class P2PWebRTCService extends BaseProvider
 	) => void = this._REMOTE_VIDEOS.resolve;
 
 	/** @ignore */
-	private readonly sessionServices = this.sessionService.ready.then(
-		() => this.sessionService.group || [this.sessionService]
-	);
+	private readonly sessionServices: Promise<SessionService[]>;
 
 	/** @inheritDoc */
 	public readonly cameraActivated = new BehaviorSubject<boolean>(false);
@@ -591,10 +589,7 @@ export class P2PWebRTCService extends BaseProvider
 				stream: localStream
 			});
 
-			const [sessionServices] = await Promise.all([
-				this.sessionServices,
-				this.ready
-			]);
+			const sessionServices = await this.sessionServices;
 
 			this.incomingStreams.next(
 				sessionServices.map(sessionService => ({
@@ -1082,6 +1077,10 @@ export class P2PWebRTCService extends BaseProvider
 		private readonly stringsService: StringsService
 	) {
 		super();
+
+		this.sessionServices = this.ready.then(
+			() => this.sessionService.group || [this.sessionService]
+		);
 
 		this.sessionServices.then(sessionServices => {
 			sessionCapabilitiesService.resolveP2PSupport(

@@ -1715,7 +1715,7 @@ export class ChatService extends BaseProvider {
 				}));
 
 				if (callType !== undefined) {
-					this.sessionService.yt().then(async () => {
+					(async () => {
 						await this.sessionService.freezePong
 							.pipe(
 								filter(b => !b),
@@ -1755,7 +1755,7 @@ export class ChatService extends BaseProvider {
 						else {
 							await this.p2pWebRTCService.request(callType, true);
 						}
-					});
+					})();
 				}
 				else {
 					this.p2pWebRTCService.resolveReady();
