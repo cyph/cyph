@@ -474,89 +474,95 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const progress = new BehaviorSubject(0);
 		const alreadyCached = resolvable<boolean>();
 
-		return {
-			alreadyCached: alreadyCached.promise,
-			progress,
-			result: this.ngZone.runOutsideAngular(async () => {
-				const url = await urlPromise;
+		const result = this.ngZone.runOutsideAngular(async () => {
+			const url = await urlPromise;
 
-				const {data, hash, timestamp} = await this.getMetadata(url);
+			const {data, hash, timestamp} = await this.getMetadata(url);
 
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				if (verifyHash !== undefined && verifyHash !== hash) {
-					throw new Error(
-						'FirebaseDatabaseService.downloadItem verifyHash mismatch: ' +
-							`'${verifyHash}' !== '${hash}'`
-					);
-				}
-
-				try {
-					const localValueBytes = await (verifyHash === undefined ?
-						this.cache.value.getItem({hash, url}, BinaryProto) :
-						Promise.reject()
-					).catch(async err => {
-						if (data === undefined) {
-							throw err;
-						}
-						return this.potassiumService.fromBase64(data);
-					});
-
-					const localValue = await deserialize(
-						proto,
-						localValueBytes
-					);
-
-					alreadyCached.resolve(true);
-					this.ngZone.run(() => {
-						progress.next(100);
-						progress.complete();
-					});
-
-					this.cache.value.setItem(
-						{hash, url},
-						BinaryProto,
-						localValueBytes
-					);
-
-					return {timestamp, value: localValue};
-				}
-				catch {}
-
-				alreadyCached.resolve(false);
-				this.ngZone.run(() => {
-					progress.next(0);
-				});
-
-				const storageRef = await this.getStorageRef(url, hash);
-
-				const req = requestByteStream({
-					retries: 3,
-					url: await this.getStorageDownloadURL(storageRef)
-				});
-
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				req.progress.subscribe(
-					n => {
-						this.ngZone.run(() => {
-							progress.next(n);
-						});
-					},
-					err => {
-						this.ngZone.run(() => {
-							progress.next(err);
-						});
-					}
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			if (verifyHash !== undefined && verifyHash !== hash) {
+				throw new Error(
+					'FirebaseDatabaseService.downloadItem verifyHash mismatch: ' +
+						`'${verifyHash}' !== '${hash}'`
 				);
+			}
 
-				const value = await req.result;
+			try {
+				const localValueBytes = await (verifyHash === undefined ?
+					this.cache.value.getItem({hash, url}, BinaryProto) :
+					Promise.reject()
+				).catch(async err => {
+					if (data === undefined) {
+						throw err;
+					}
+					return this.potassiumService.fromBase64(data);
+				});
 
+				const localValue = await deserialize(proto, localValueBytes);
+
+				alreadyCached.resolve(true);
 				this.ngZone.run(() => {
 					progress.next(100);
 					progress.complete();
 				});
-				this.cache.value.setItem({hash, url}, BinaryProto, value);
-				return {timestamp, value: await deserialize(proto, value)};
-			})
+
+				this.cache.value.setItem(
+					{hash, url},
+					BinaryProto,
+					localValueBytes
+				);
+
+				return {timestamp, value: localValue};
+			}
+			catch {}
+
+			alreadyCached.resolve(false);
+			this.ngZone.run(() => {
+				progress.next(0);
+			});
+
+			const storageRef = await this.getStorageRef(url, hash);
+
+			const req = requestByteStream({
+				retries: 3,
+				url: await this.getStorageDownloadURL(storageRef)
+			});
+
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			req.progress.subscribe(
+				n => {
+					this.ngZone.run(() => {
+						progress.next(n);
+					});
+				},
+				err => {
+					this.ngZone.run(() => {
+						progress.next(err);
+					});
+				}
+			);
+
+			const value = await req.result;
+
+			this.ngZone.run(() => {
+				progress.next(100);
+				progress.complete();
+			});
+			this.cache.value.setItem({hash, url}, BinaryProto, value);
+			return {timestamp, value: await deserialize(proto, value)};
+		});
+
+		result.catch((err: any) => {
+			alreadyCached.reject(err);
+			progress.error(err);
+		});
+
+		alreadyCached.promise.catch(() => {});
+
+		return {
+			alreadyCached: alreadyCached.promise,
+			progress,
+			result
 		};
 	}
 

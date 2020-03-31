@@ -274,22 +274,29 @@ export class AccountDatabaseService extends BaseProvider {
 			url,
 			BinaryProto
 		);
-		const result = await downloadTask.result;
 
-		return {
-			alreadyCached: await downloadTask.alreadyCached,
-			progress: downloadTask.progress,
-			result: {
-				timestamp: result.timestamp,
-				value: await this.open(
+		const [alreadyCached, timestamp, value] = await Promise.all([
+			downloadTask.alreadyCached,
+			downloadTask.result.then(o => o.timestamp),
+			downloadTask.result.then(async o =>
+				this.open(
 					url,
 					proto,
 					securityModel,
-					result.value,
+					o.value,
 					customKey,
 					anonymous,
 					moreAdditionalData
 				)
+			)
+		]);
+
+		return {
+			alreadyCached,
+			progress: downloadTask.progress,
+			result: {
+				timestamp,
+				value
 			}
 		};
 	}
@@ -496,6 +503,12 @@ export class AccountDatabaseService extends BaseProvider {
 		result: Promise<ITimedValue<T>>;
 	} {
 		const progress = new BehaviorSubject(0);
+
+		for (const maybePromise of <any[]> [url, customKey]) {
+			if (maybePromise instanceof Promise) {
+				maybePromise.catch(() => {});
+			}
+		}
 
 		const downloadTaskResult = (async () => {
 			const downloadTask = await this.getItemInternal(
