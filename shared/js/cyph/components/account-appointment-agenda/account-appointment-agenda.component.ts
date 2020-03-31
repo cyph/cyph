@@ -1,49 +1,54 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {
+	AgendaService,
+	DayService,
+	DragAndDropService,
+	MonthService,
+	ResizeService,
+	WeekService,
+	WorkWeekService
+} from '@syncfusion/ej2-angular-schedule';
+import {Internationalization} from '@syncfusion/ej2-base';
+import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {getDateTimeString} from '../../util/time';
-import { extend, Internationalization } from '@syncfusion/ej2-base';
-import {EventSettingsModel,
-		DayService,
-		WeekService,
-		WorkWeekService,
-		MonthService,
-		AgendaService,
-		ResizeService,
-		DragAndDropService } from '@syncfusion/ej2-angular-schedule';
 
 /**
  * Angular component for account appointment agenda/scheduler.
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	providers: [
+		AgendaService,
+		DayService,
+		DragAndDropService,
+		MonthService,
+		ResizeService,
+		WeekService,
+		WorkWeekService
+	],
 	selector: 'cyph-account-appointment-agenda',
 	styleUrls: ['./account-appointment-agenda.component.scss'],
-	templateUrl: './account-appointment-agenda.component.html',
-	providers: [DayService, WeekService, WorkWeekService,
-		MonthService, AgendaService, ResizeService, DragAndDropService]
+	templateUrl: './account-appointment-agenda.component.html'
 })
-export class AccountAppointmentAgendaComponent extends BaseProvider implements OnInit {
-
+export class AccountAppointmentAgendaComponent extends BaseProvider
+	implements OnInit {
 	/** @ignore */
-	private instance: Internationalization = new Internationalization();
+	private readonly internationalization = new Internationalization();
 
 	/** @see getDateTimeSting */
 	public readonly getDateTimeString = getDateTimeString;
 
-	/** @see selectedDate */
+	/** Formats date as string. */
+	public readonly getTimeString = memoize((date: Date) : string =>
+		this.internationalization.formatDate(date, {skeleton: 'hm'})
+	);
+
+	/** @see ScheduleComponent.selectedDate */
 	public selectedDate: Date = new Date();
-
-	/** @see eventSettings */
-	public eventSettings: EventSettingsModel = { dataSource: <Object[]>extend([],
-		this.accountAppointmentsService.appointments.upcoming, undefined, true) };
-
-	/** @see getTimeString */
-	public getTimeString(value: Date): string {
-		return this.instance.formatDate(value, { skeleton: 'hm' });
-	}
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
@@ -58,8 +63,7 @@ export class AccountAppointmentAgendaComponent extends BaseProvider implements O
 		public readonly accountAppointmentsService: AccountAppointmentsService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService,
-
+		public readonly envService: EnvService
 	) {
 		super();
 	}

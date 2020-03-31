@@ -14,10 +14,12 @@
 				value?.title !== undefined
 			"
 		>
-			<!-- Disabled dropdown reasons for now-->
+			<!-- Disabled dropdown reasons for now -->
 			<mat-form-field
 				fxFlex
-				*ngIf="!!reasons && (isDisabledWrapper | await) === false && false"
+				*ngIf="
+					!!reasons && (isDisabledWrapper | await) === false && false
+				"
 			>
 				<mat-select
 					fxFlex
@@ -276,7 +278,7 @@
 				</ng-container>
 			</div>
 
-			<!-- End time selection hidden in favor of appointment duration selection, for now. -->
+			<!-- End time selection hidden in favor of appointment duration selection, for now -->
 			<div fxFlex *ngIf="isDisabledWrapper | await">
 				<mat-form-field>
 					<input

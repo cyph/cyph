@@ -10,7 +10,6 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { ScheduleAllModule } from '@syncfusion/ej2-angular-schedule';
 import {MarkdownComponent} from '../components/markdown';
 import {AnchorDirective} from '../directives/anchor.directive';
 import {AutofocusDirective} from '../directives/autofocus.directive';
@@ -67,7 +66,7 @@ import {StringsService} from '../services/strings.service';
 		MatSelectModule,
 		NanoScrollerDirective,
 		RouterLinkDirective,
-		ScheduleAllModule
+		TranslateDirective
 	],
 	imports: [
 		BrowserAnimationsModule,
@@ -80,8 +79,7 @@ import {StringsService} from '../services/strings.service';
 		MatCheckboxModule,
 		MatInputModule,
 		MatProgressSpinnerModule,
-		MatSelectModule,
-		ScheduleAllModule
+		MatSelectModule
 	],
 	providers: [
 		AffiliateService,

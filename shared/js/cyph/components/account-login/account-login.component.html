@@ -221,7 +221,10 @@
 
 						<div
 							fxLayout="row"
-							*ngIf="!envService.isTelehealth && !envService.isTelehealthFull"
+							*ngIf="
+								!envService.isTelehealth &&
+								!envService.isTelehealthFull
+							"
 						>
 							<a mat-button fxFlex routerLink="/burner">
 								<span cyphTranslate>Use</span>
