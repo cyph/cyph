@@ -480,12 +480,12 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 
 	cat cyph.com/cyph-com.yaml |
 		tr '\n' '☁' |
+		perl -pe 's/(font-src )/\1https:\/\/fonts.googleapis.com /g' |
+		perl -pe 's/(font-src )/\1https:\/\/fonts.gstatic.com /g' |
+		perl -pe 's/(style-src )/\1https:\/\/fonts.googleapis.com /g' |
 		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?connect-src )/\1https:\/\/google-analytics.com /g' |
 		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?connect-src )/\1https:\/\/*.google-analytics.com /g' |
-		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?font-src )/\1https:\/\/fonts.googleapis.com /g' |
-		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?font-src )/\1https:\/\/fonts.gstatic.com /g' |
 		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?style-src )/\1https:\/\/cdn.ampproject.org /g' |
-		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?style-src )/\1https:\/\/fonts.googleapis.com /g' |
 		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?script-src )/\1https:\/\/cdn.ampproject.org /g' |
 		perl -pe 's/(\/pricing\[\/\]\?.*?script-src )/\1'"'"'unsafe-inline'"'"' /g' |
 		perl -pe 's/(\/checkout\[\/\]\?.*?child-src )(.*?connect-src )(.*?frame-src )(.*?img-src )(.*?script-src )/\1☼\2☼\3☼\4☼\5☼'"'"'unsafe-inline'"'"' /g' |
