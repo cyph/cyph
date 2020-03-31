@@ -281,9 +281,9 @@ export class AccountService extends BaseProvider {
 		}
 
 		if (groupID) {
-			const chatData = await this.accountContactsService
-				.getChatData(groupID)
-				.catch(() => ({username: ''}));
+			const chatData = await this.accountContactsService.getChatData(
+				groupID
+			);
 
 			if (
 				!(

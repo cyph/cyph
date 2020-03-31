@@ -19,6 +19,7 @@ import {QuillComponent} from '../components/quill';
 import {RedirectComponent} from '../components/redirect';
 import {SearchBarComponent} from '../components/search-bar';
 import {SignupFormComponent} from '../components/signup-form';
+import {env} from '../env';
 import {AnalyticsService} from '../services/analytics.service';
 import {ErrorService} from '../services/error.service';
 import {FileService} from '../services/file.service';
@@ -87,10 +88,14 @@ import {CyphWebModule} from './cyph-web.module';
 		Title,
 		VirtualKeyboardWatcherService,
 		WindowWatcherService,
-		{
-			provide: ErrorHandler,
-			useExisting: ErrorService
-		}
+		...(env.isLocalEnv ?
+			[] :
+			[
+				{
+					provide: ErrorHandler,
+					useExisting: ErrorService
+				}
+			])
 	]
 })
 export class CyphCommonModule {
