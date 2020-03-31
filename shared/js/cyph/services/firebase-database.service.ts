@@ -170,38 +170,44 @@ export class FirebaseDatabaseService extends DatabaseService {
 				this.envService.firebaseConfig,
 				/* eslint-disable-next-line no-shadow */
 				config => {
-					importScripts(
-						'/assets/node_modules/firebase/firebase-app.js'
-					);
-					importScripts(
-						'/assets/node_modules/firebase/firebase-messaging.js'
-					);
+					try {
+						importScripts(
+							'/assets/node_modules/firebase/firebase-app.js'
+						);
+						importScripts(
+							'/assets/node_modules/firebase/firebase-messaging.js'
+						);
 
-					(<any> self).firebase.initializeApp(config);
-					(<any> self).messaging = (<any> self).firebase.messaging();
+						(<any> self).firebase.initializeApp(config);
+						(<any> self).messaging = (<any> (
+							self
+						)).firebase.messaging();
 
-					(<any> self).messaging.setBackgroundMessageHandler(
-						(payload: any) => {
-							const notification = !payload ?
-								undefined :
-							payload.notification && payload.notification.title ?
-								payload.notification :
-								payload.data;
+						(<any> self).messaging.setBackgroundMessageHandler(
+							(payload: any) => {
+								const notification = !payload ?
+									undefined :
+								payload.notification &&
+									payload.notification.title ?
+									payload.notification :
+									payload.data;
 
-							if (!notification || !notification.title) {
-								return;
+								if (!notification || !notification.title) {
+									return;
+								}
+
+								notification.data = payload;
+
+								return (<ServiceWorkerRegistration> (
+									(<any> self).registration
+								)).showNotification(
+									notification.title,
+									notification
+								);
 							}
-
-							notification.data = payload;
-
-							return (<ServiceWorkerRegistration> (
-								(<any> self).registration
-							)).showNotification(
-								notification.title,
-								notification
-							);
-						}
-					);
+						);
+					}
+					catch {}
 				}
 			);
 
