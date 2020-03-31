@@ -71,7 +71,7 @@ import {SilentNotificationService} from './silent-notification.service';
 	]
 })
 export class AppModule implements DoBootstrap {
-	/** @inheritdoc */
+	/** @inheritDoc */
 	public ngDoBootstrap () : void {
 		customElements.define(
 			'beta-register',
