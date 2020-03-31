@@ -53,12 +53,16 @@ export class VideoComponent extends BaseProvider
 			this.srcObjectURL = undefined;
 		}
 
-		if (!this.video?.nativeElement) {
+		if (!(this.video?.nativeElement instanceof HTMLVideoElement)) {
 			return;
 		}
 
 		if (!src) {
-			this.video.nativeElement.src = undefined;
+			if (this.video.nativeElement.src) {
+				this.video.nativeElement.src = '';
+				this.video.nativeElement.removeAttribute('src');
+			}
+
 			if ('srcObject' in HTMLVideoElement.prototype) {
 				this.video.nativeElement.srcObject = new MediaStream();
 			}
