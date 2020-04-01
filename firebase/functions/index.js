@@ -1768,10 +1768,15 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 			`users/${notification.target}/notifications`,
 			AccountNotification,
 			{
+				actions,
+				callMetadata,
+				eventID: notificationID,
 				fileType: metadata.fileType,
 				isRead: false,
 				text: subject,
-				type: notification.type
+				textDetail: text,
+				type: notification.type,
+				username
 			}
 		)
 	]);
