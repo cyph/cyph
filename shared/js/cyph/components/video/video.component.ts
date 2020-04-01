@@ -27,19 +27,19 @@ export class VideoComponent extends BaseProvider
 	private srcObjectURL?: string;
 
 	/** @see HTMLVideoElement.autoplay */
-	@Input() autoplay: boolean = false;
+	@Input() public autoplay: boolean = false;
 
 	/** @see HTMLVideoElement.muted */
-	@Input() muted: boolean = false;
+	@Input() public muted: boolean = false;
 
 	/** @see HTMLVideoElement.playsinline */
-	@Input() playsinline: boolean = false;
+	@Input() public playsinline: boolean = false;
 
 	/** Path, URL, or `srcObject`. */
-	@Input() src?: string | MediaStream | MediaSource | Blob;
+	@Input() public src?: string | MediaStream | MediaSource | Blob;
 
 	/** Title to display in video header. */
-	@Input() title?: string;
+	@Input() public title?: string;
 
 	/** Video element. */
 	@ViewChild('video') public video?: ElementRef;
