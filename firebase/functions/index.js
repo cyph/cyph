@@ -1484,7 +1484,7 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 			metadata.callType === 'video' ||
 			metadata.callType === 'chat') &&
 		!metadata.missed &&
-		(typeof metadata.expires === 'number' && metadata.expires > Date.now());
+		(typeof metadata.expires === 'number' && metadata.expires > now);
 
 	const callMetadata = activeCall ?
 		`${metadata.callType},${username || ''},${metadata.groupID ||
@@ -1775,6 +1775,7 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 				isRead: false,
 				text: subject,
 				textDetail: text,
+				timestamp: now,
 				type: notification.type,
 				username
 			}
