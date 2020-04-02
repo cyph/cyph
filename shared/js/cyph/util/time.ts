@@ -27,6 +27,11 @@ const stringFormats = {
 
 /** @ignore */
 const strings = {
+	hourAgo: translate('hour ago'),
+	hoursAgo: translate('hours ago'),
+	minuteAgo: translate('minute ago'),
+	minutesAgo: translate('minutes ago'),
+	justNow: translate('Just now'),
 	today: translate('Today'),
 	yesterday: translate('Yesterday')
 };
@@ -589,4 +594,52 @@ export const watchRelativeDateString = memoize(
 		watchDateChange(true).pipe(
 			switchMap(async () => relativeDateString(date, noToday))
 		)
+);
+
+/** @ignore */
+const relativeDateTimeStringInternal = memoize((now: number) =>
+	memoize((date: number | Date) : string | undefined => {
+		if (date instanceof Date) {
+			date = date.getTime();
+		}
+
+		const delta = now - date;
+
+		if (delta < 60000) {
+			return strings.justNow;
+		}
+
+		if (delta < 3600000) {
+			const minutes = Math.floor((now - date) / 60000);
+			return `${minutes.toString()} ${
+				minutes === 1 ? strings.minuteAgo : strings.minutesAgo
+			}`;
+		}
+
+		if (delta < 86400000) {
+			const hours = Math.floor((now - date) / 3600000);
+			return `${hours.toString()} ${
+				hours === 1 ? strings.hourAgo : strings.hoursAgo
+			}`;
+		}
+
+		return `${relativeDateString(date)}, ${getTimeString(date)}`;
+	})
+);
+
+/**
+ * Returns a human-readable representation of the date and time relative to today.
+ * @example Just now
+ * @example 10 minutes ago
+ * @example 1 hour ago
+ * @example Today, 3:37pm
+ * @example Monday, June 18th, 3:37pm
+ * @example December 31, 2017, 3:37pm
+ */
+export const relativeDateTimeString = async (date: number | Date) =>
+	relativeDateTimeStringInternal(await getTimestamp())(date);
+
+/** @see relativeDateTimeString */
+export const watchRelativeDateTimeString = memoize((date: number | Date) =>
+	timer(0, 60000).pipe(switchMap(async () => relativeDateTimeString(date)))
 );
