@@ -299,13 +299,13 @@ export class EphemeralSessionService extends SessionService {
 		(async () => {
 			try {
 				this.init(
-					await (!username ?
-						getChannelID() :
+					await (this.state.startingNewCyph.value === undefined ?
 						this.localStorageService.getOrSetDefault(
 							`BurnerChannelID:${this.state.cyphID.value}`,
 							StringProto,
 							getChannelID
-						))
+						) :
+						getChannelID())
 				);
 			}
 			catch {

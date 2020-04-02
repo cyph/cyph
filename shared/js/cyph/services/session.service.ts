@@ -548,13 +548,19 @@ export abstract class SessionService extends BaseProvider
 
 		await Promise.all([
 			this.castleService.init(this),
-			this.channelService.init(channelID, channelSubID, userID, {
-				onClose: async () => this.channelOnClose(),
-				onConnect: async () => this.channelOnConnect(),
-				onMessage: async (message, initial) =>
-					this.channelOnMessage(message, initial),
-				onOpen: async isAlice => this.channelOnOpen(isAlice)
-			})
+			this.channelService.init(
+				channelID,
+				channelSubID,
+				userID,
+				this.state.startingNewCyph.value === undefined,
+				{
+					onClose: async () => this.channelOnClose(),
+					onConnect: async () => this.channelOnConnect(),
+					onMessage: async (message, initial) =>
+						this.channelOnMessage(message, initial),
+					onOpen: async isAlice => this.channelOnOpen(isAlice)
+				}
+			)
 		]);
 	}
 
