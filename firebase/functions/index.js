@@ -446,6 +446,9 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	]);
 });
 
+/*
+TODO: Re-enable after edge case false positives are fixed
+
 exports.channelDisconnect = functions.database
 	.ref('/{namespace}/channels/{channel}/disconnects/{user}')
 	.onWrite(async ({after: data}, {params}) => {
@@ -471,6 +474,7 @@ exports.channelDisconnect = functions.database
 
 		return removeItem(params.namespace, `channels/${doomedRef.key}`);
 	});
+*/
 
 exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	if (!data.inviteCode) {
@@ -699,9 +703,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 			preexistingInviteCodeData.braintreeSubscriptionID;
 	}
 
-	/* Gift free users one-month premium trials */
+	/* Previously gifted free users one-month premium trials */
 	let planTrialEnd = undefined;
-	if (plan === CyphPlans.Free) {
+	if (false && plan === CyphPlans.Free) {
 		plan = CyphPlans.MonthlyPremium;
 		planTrialEnd = new Date().setMonth(new Date().getMonth() + 1);
 	}
@@ -1184,11 +1188,15 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 			await (async () => {
 				const code = readableID(15);
 
-				/* Gift free users one-month premium trials */
-				const plan = CyphPlans.MonthlyPremium;
-				const planTrialEnd = new Date().setMonth(
-					new Date().getMonth() + 1
-				);
+				/* Previously gifted free users one-month premium trials */
+				let plan = CyphPlans.Free;
+				let planTrialEnd = undefined;
+				if (false) {
+					plan = CyphPlans.MonthlyPremium;
+					planTrialEnd = new Date().setMonth(
+						new Date().getMonth() + 1
+					);
+				}
 
 				await Promise.all([
 					database.ref(`${namespace}/inviteCodes/${code}`).set({

@@ -23,6 +23,7 @@ import {getOrSetDefault} from '../util/get-or-set-default';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionCapabilitiesService} from './account-session-capabilities.service';
+import {AccountSessionInitService} from './account-session-init.service';
 import {AccountSessionService} from './account-session.service';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
@@ -194,6 +195,8 @@ export class AccountChatService extends ChatService {
 		sessionSubID?: string,
 		ephemeralSubSession: boolean = false
 	) : Promise<void> {
+		this.accountSessionInitService.callType = callType;
+
 		const callRequestPromise = callType ?
 			this.p2pWebRTCService.request(
 				callType,
@@ -343,6 +346,9 @@ export class AccountChatService extends ChatService {
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService,
+
+		/** @ignore */
+		private readonly accountSessionInitService: AccountSessionInitService,
 
 		/** @ignore */
 		private readonly accountSessionCapabilitiesService: AccountSessionCapabilitiesService

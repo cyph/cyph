@@ -1,0 +1,11 @@
+<div class="wrapper">
+	<div class="title" *ngIf="!!title">
+		{{ title }}
+	</div>
+
+	<video
+		#video
+		[attr.autoplay]="autoplay ? '' : undefined"
+		[attr.playsinline]="playsinline ? '' : undefined"
+	></video>
+</div>

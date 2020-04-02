@@ -160,19 +160,18 @@
 					trackBy: trackByIndex
 				"
 			>
-				<mat-video
+				<cyph-video
 					[fxShow]="incomingStream.activeVideo"
 					[autoplay]="true"
-					[overlay]="false"
 					[playsinline]="true"
+					[src]="incomingStream.stream"
 					[title]="
 						incomingStream.username ?
 							'@' + (incomingStream.username || '') :
-							''
+							undefined
 					"
-					[src]="incomingStream.stream"
 					*ngIf="!!incomingStream.stream"
-				></mat-video>
+				></cyph-video>
 			</ng-container>
 		</div>
 		<ng-container *ngIf="!envService.isAccounts; else accountsAudioCall">
@@ -247,7 +246,7 @@
 				</div>
 			</ng-container>
 		</ng-template>
-		<mat-video
+		<cyph-video
 			class="me"
 			[fxHide]="
 				!(p2pWebRTCService.outgoingStream | await)?.constraints?.video
@@ -255,10 +254,9 @@
 			[ngDraggable]="envService.pro | await"
 			[autoplay]="true"
 			[muted]="true"
-			[overlay]="false"
 			[playsinline]="true"
-			[src]="(p2pWebRTCService.outgoingStream | await)?.stream || ''"
-		></mat-video>
+			[src]="(p2pWebRTCService.outgoingStream | await)?.stream"
+		></cyph-video>
 
 		<mat-progress-spinner
 			mode="indeterminate"

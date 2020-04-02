@@ -167,23 +167,12 @@
 			.friend {
 				height: 100%;
 
-				> mat-video {
+				> cyph-video {
 					position: absolute;
 					top: 0;
 					left: 0;
 					width: 100%;
 					height: 100%;
-
-					.header {
-						background: rgba(0, 0, 0, 0.33) !important;
-						font-weight: normal !important;
-						opacity: 1 !important;
-						visibility: visible !important;
-					}
-
-					mat-video-spinner {
-						display: none;
-					}
 				}
 			}
 
@@ -525,8 +514,7 @@
 		}
 	}
 
-	mat-video * {
-		cursor: unset !important;
+	cyph-video * {
 		pointer-events: none !important;
 	}
 }

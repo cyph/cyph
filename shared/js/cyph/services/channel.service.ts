@@ -12,6 +12,7 @@ import {debugLog, debugLogError} from '../util/log';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {DatabaseService} from './database.service';
+import {LocalStorageService} from './local-storage.service';
 
 /** @inheritDoc */
 @Injectable()
@@ -60,7 +61,12 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 		this.isClosed = true;
 
-		await this.databaseService.removeItem((await this.state).url);
+		const {messagesURL, url} = await this.state;
+
+		await Promise.all([
+			this.databaseService.removeItem(url),
+			this.localStorageService.removeItem(`ChannelUserID:${messagesURL}`)
+		]);
 	}
 
 	/** @inheritDoc */
@@ -90,6 +96,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		channelID: string | undefined,
 		channelSubID: string | undefined,
 		userID: string | undefined,
+		possibleChannelRejoin: boolean,
 		handlers: IChannelHandlers
 	) : Promise<void> {
 		if (!channelID) {
@@ -106,8 +113,14 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		});
 
 		if (!userID) {
-			userID = uuid();
 			this.ephemeral = true;
+			userID = possibleChannelRejoin ?
+				await this.localStorageService.getOrSetDefault(
+					`ChannelUserID:${messagesURL}`,
+					StringProto,
+					uuid
+				) :
+				uuid();
 			this.databaseService.setDisconnectTracker(
 				`${url}/disconnects/${userID}`
 			);
@@ -182,7 +195,6 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		);
 
 		if (
-			this.ephemeral ||
 			(await this.databaseService
 				.getList(`${url}/users`, StringProto)
 				.catch(() => <string[]> [])).indexOf(userID) < 0
@@ -252,12 +264,18 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 	/** @inheritDoc */
 	public spawn () : ChannelService {
-		return new ChannelService(this.databaseService);
+		return new ChannelService(
+			this.databaseService,
+			this.localStorageService
+		);
 	}
 
 	constructor (
 		/** @ignore */
-		private readonly databaseService: DatabaseService
+		private readonly databaseService: DatabaseService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService
 	) {
 		super();
 	}
