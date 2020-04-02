@@ -161,7 +161,7 @@ message AccountNotification {
 	string callMetadata = 5;
 
 	/** ID of event associated with notification. */
-	required string eventID = 6;
+	string eventID = 6;
 
 	/** @see AccountFileRecord.RecordTypes */
 	AccountFileRecord.RecordTypes fileType = 1;
