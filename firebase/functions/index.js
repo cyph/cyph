@@ -451,6 +451,10 @@ exports.channelDisconnect = functions.database
 			return;
 		}
 
+		/*
+		TODO: Re-enable after edge case false positives are fixed.
+		For now, only tear down channel after everyone leaves.
+
 		const startingValue = data.val();
 
 		await sleep(
@@ -460,11 +464,36 @@ exports.channelDisconnect = functions.database
 		if (startingValue !== (await data.ref.once('value')).val()) {
 			return;
 		}
+		*/
 
 		const doomedRef = data.ref.parent.parent;
 
 		if (doomedRef.key.length < 1) {
 			throw new Error('INVALID DOOMED REF');
+		}
+
+		const getUsers = async () =>
+			(await doomedRef.child('users').once('value')).val() || {};
+
+		let users = await getUsers();
+
+		const userKey = (Object.entries(users).find(
+			([k, v]) => v === data.key
+		) || [])[0];
+
+		if (!userKey) {
+			return;
+		}
+
+		await removeItem(
+			params.namespace,
+			`channels/${doomedRef.key}/users/${userKey}`
+		);
+
+		users = await getUsers();
+
+		if (Object.keys(users).length > 0) {
+			return;
 		}
 
 		return removeItem(params.namespace, `channels/${doomedRef.key}`);
