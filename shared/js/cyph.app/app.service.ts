@@ -161,7 +161,10 @@ export class AppService extends BaseProvider implements CanActivate {
 			if (
 				e.oldURL
 					.split(location.origin)[1]
-					.match(new RegExp(`^/?#?/?${burnerRoot}(/|$)`))
+					.match(new RegExp(`^/?#?/?${burnerRoot}(/|$)`)) ||
+				e.oldURL
+					.split(location.origin)[1]
+					.match(/^\/?#?\/?account-burner(\/|$)/)
 			) {
 				reloadWindow();
 			}
