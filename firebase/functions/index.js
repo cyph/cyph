@@ -444,6 +444,9 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	]);
 });
 
+/*
+TODO: Re-enable after edge case false positives are fixed
+
 exports.channelDisconnect = functions.database
 	.ref('/{namespace}/channels/{channel}/disconnects/{user}')
 	.onWrite(async ({after: data}, {params}) => {
@@ -469,6 +472,7 @@ exports.channelDisconnect = functions.database
 
 		return removeItem(params.namespace, `channels/${doomedRef.key}`);
 	});
+*/
 
 exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	if (!data.inviteCode) {
