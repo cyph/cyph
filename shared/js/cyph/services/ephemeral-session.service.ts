@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {env} from '../env';
-import {NotificationTypes} from '../../proto';
+import {NotificationTypes, StringProto} from '../proto';
 import {events, ProFeatures} from '../session';
 import {random} from '../util/random';
 import {request} from '../util/request';
@@ -16,6 +16,7 @@ import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
+import {LocalStorageService} from './local-storage.service';
 import {NotificationService} from './notification.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
@@ -87,7 +88,10 @@ export class EphemeralSessionService extends SessionService {
 			request({
 				method: 'POST',
 				url: `${env.baseUrl}channels/${this.state.cyphID.value}`
-			}).catch(() => {})
+			}).catch(() => {}),
+			this.localStorageService
+				.removeItem(`BurnerChannelID:${this.state.cyphID.value}`)
+				.catch(() => {})
 		]);
 	}
 
@@ -146,6 +150,7 @@ export class EphemeralSessionService extends SessionService {
 			this.accountService,
 			this.accountDatabaseService,
 			this.configService,
+			this.localStorageService,
 			this.notificationService
 		);
 	}
@@ -168,6 +173,9 @@ export class EphemeralSessionService extends SessionService {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly notificationService: NotificationService
@@ -280,15 +288,24 @@ export class EphemeralSessionService extends SessionService {
 		const channelID =
 			this.state.startingNewCyph.value === false ? '' : uuid(true);
 
+		const getChannelID = async () =>
+			request({
+				data: {channelID, proFeatures: this.proFeatures},
+				method: 'POST',
+				retries: 5,
+				url: `${env.baseUrl}channels/${this.state.cyphID.value}`
+			});
+
 		(async () => {
 			try {
 				this.init(
-					await request({
-						data: {channelID, proFeatures: this.proFeatures},
-						method: 'POST',
-						retries: 5,
-						url: `${env.baseUrl}channels/${this.state.cyphID.value}`
-					})
+					await (!username ?
+						getChannelID() :
+						this.localStorageService.getOrSetDefault(
+							`BurnerChannelID:${this.state.cyphID.value}`,
+							StringProto,
+							getChannelID
+						))
 				);
 			}
 			catch {

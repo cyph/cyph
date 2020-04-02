@@ -32,6 +32,7 @@ import {PotassiumService} from './crypto/potassium.service';
 import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
+import {LocalStorageService} from './local-storage.service';
 import {SessionInitService} from './session-init.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
@@ -220,12 +221,20 @@ export class AccountSessionService extends SessionService {
 			this.accountSessionInitService.ephemeral = true;
 			this.ephemeralSubSession = true;
 
-			const channelID = await request({
-				data: {channelID: uuid(true), proFeatures: this.proFeatures},
-				method: 'POST',
-				retries: 5,
-				url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
-			});
+			const channelID = await this.localStorageService.getOrSetDefault(
+				`AccountBurnerChannelID:${chat.anonymousChannelID}`,
+				StringProto,
+				async () =>
+					request({
+						data: {
+							channelID: uuid(true),
+							proFeatures: this.proFeatures
+						},
+						method: 'POST',
+						retries: 5,
+						url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
+					})
+			);
 
 			this.remoteUser.next({
 				anonymous: true,
@@ -574,7 +583,8 @@ export class AccountSessionService extends SessionService {
 			this.accountDatabaseService,
 			this.accountSessionInitService,
 			this.accountUserLookupService,
-			this.dialogService
+			this.dialogService,
+			this.localStorageService
 		);
 	}
 
@@ -635,7 +645,10 @@ export class AccountSessionService extends SessionService {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly dialogService: DialogService
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService
 	) {
 		super(
 			analyticsService,
