@@ -77,6 +77,8 @@ export class VideoComponent extends BaseProvider
 			this.srcObjectURL = URL.createObjectURL(src);
 			this.video.nativeElement.src = this.srcObjectURL;
 		}
+
+		this.video.nativeElement.muted = this.muted;
 	}
 
 	/** @inheritDoc */
@@ -88,6 +90,9 @@ export class VideoComponent extends BaseProvider
 	public ngOnChanges (changes: SimpleChanges) : void {
 		if (changes.src) {
 			this.setVideoSrc(this.src);
+		}
+		else if (this.video?.nativeElement instanceof HTMLVideoElement) {
+			this.video.nativeElement.muted = this.muted;
 		}
 	}
 
