@@ -3,6 +3,7 @@ import {BaseProvider} from '../../base-provider';
 import {AccountNotificationsService} from '../../services/account-notifications.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
+import { watchRelativeDateTimeString } from '../../util/time';
 
 /**
  * Angular component for account notification center UI.
@@ -16,6 +17,9 @@ import {trackByID} from '../../track-by/track-by-id';
 export class AccountNotificationCenterComponent extends BaseProvider {
 	/** @see trackByID */
 	public readonly trackByID = trackByID;
+
+	/** @see watchRelativeDateTimeString  */
+	public readonly watchRelativeDateTimeString  = watchRelativeDateTimeString;
 
 	constructor (
 		/** @see AccountNotificationsService */

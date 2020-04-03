@@ -1,1 +1,16 @@
 @import '../../../../css/mixins';
+
+.card-holder {
+    max-width: 90%;
+    margin: 1em auto 1em auto;;
+    position: relative;
+
+    .e-badge {
+        min-width: 18px;
+        background-color: #673ab7;
+    }
+
+    .e-card.read:not(:hover) {
+        opacity: 0.5;
+    }
+}
