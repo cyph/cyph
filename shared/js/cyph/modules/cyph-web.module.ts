@@ -33,7 +33,6 @@ import {EmojiModule} from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
-import {MatVideoModule} from 'mat-video';
 import {FullCalendarModule} from 'ng-fullcalendar';
 import {ImageCropperModule} from 'ngx-image-cropper';
 import {DialogAlertComponent} from '../components/dialog-alert';
@@ -41,6 +40,7 @@ import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
 import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
+import {VideoComponent} from '../components/video';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {InitDirective} from '../directives/init.directive';
 import {DialogService} from '../services/dialog.service';
@@ -61,7 +61,8 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		DropZoneDirective,
 		DynamicFormComponent,
 		InitDirective,
-		SimpleEmojiPickerComponent
+		SimpleEmojiPickerComponent,
+		VideoComponent
 	],
 	exports: [
 		AngularDraggableModule,
@@ -102,13 +103,13 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
-		MatVideoModule,
 		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,
 		SimpleEmojiPickerComponent,
 		SmdFabSpeedDialModule,
-		TextMaskModule
+		TextMaskModule,
+		VideoComponent
 	],
 	imports: [
 		AngularDraggableModule,
@@ -142,7 +143,6 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		MatTabsModule,
 		MatToolbarModule,
 		MatTooltipModule,
-		MatVideoModule,
 		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,

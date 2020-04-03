@@ -1,3 +1,4 @@
+import {AccountChatEnvService} from '../services/account-chat-env.service';
 import {AccountChatService} from '../services/account-chat.service';
 import {AccountP2PService} from '../services/account-p2p.service';
 import {AccountSessionCapabilitiesService} from '../services/account-session-capabilities.service';
@@ -9,6 +10,7 @@ import {ChatService} from '../services/chat.service';
 import {AccountCastleService} from '../services/crypto/account-castle.service';
 import {CastleService} from '../services/crypto/castle.service';
 import {CyphertextService} from '../services/cyphertext.service';
+import {EnvService} from '../services/env.service';
 import {FileTransferService} from '../services/file-transfer.service';
 import {P2PWebRTCService} from '../services/p2p-webrtc.service';
 import {P2PService} from '../services/p2p.service';
@@ -37,6 +39,10 @@ export const accountChatProviders = [
 	{
 		provide: ChatService,
 		useExisting: AccountChatService
+	},
+	{
+		provide: EnvService,
+		useClass: AccountChatEnvService
 	},
 	{
 		provide: P2PService,

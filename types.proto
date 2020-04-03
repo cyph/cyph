@@ -157,20 +157,29 @@ message AccountNotification {
 		string title = 4;
 	}
 
+	/** List of associated actions. */
+	repeated AccountNotificationAction actions = 1;
+
 	/** Call metadata, if applicable. */
-	string callMetadata = 5;
+	string callMetadata = 2;
 
 	/** ID of event associated with notification. */
-	required string eventID = 6;
+	string eventID = 3;
 
 	/** @see AccountFileRecord.RecordTypes */
-	AccountFileRecord.RecordTypes fileType = 1;
+	AccountFileRecord.RecordTypes fileType = 4;
 
 	/** Indicates whether or not the notification is read. */
-	required bool isRead = 2;
+	required bool isRead = 5;
 
 	/** Notification text. */
-	required string text = 3;
+	required string text = 6;
+
+	/** Longer-form notification text. */
+	required string textDetail = 7;
+
+	/** Timestamp. */
+	required double timestamp = 8;
 
 	/** Longer-form notification text. */
 	required string textDetail = 7;
@@ -179,10 +188,10 @@ message AccountNotification {
 	required double timestamp = 9;
 
 	/** @see NotificationTypes */
-	required NotificationTypes type = 4;
+	required NotificationTypes type = 9;
 
 	/** Sender username, if applicable. */
-	string username = 8;
+	string username = 10;
 }
 
 /** Social networking post. */

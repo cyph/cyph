@@ -4,7 +4,7 @@ import {EnvService} from './env.service';
 import {LocalStorageService} from './local-storage.service';
 
 /**
- * Replaces a subset of the env service for the accounts UI in certain cases.
+ * Replaces a subset of the env service for the accounts UI.
  */
 @Injectable()
 export class AccountEnvService extends EnvService {

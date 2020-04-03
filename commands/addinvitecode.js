@@ -24,8 +24,8 @@ const addInviteCode = async (
 		throw new Error(`Plan "${plan}" not found.`);
 	}
 
-	/* Gift free users one-month premium trials */
-	if ((!plan || plan === 'Free') && !trialMonths) {
+	/* Previously gifted free users one-month premium trials */
+	if (false && (!plan || plan === 'Free') && !trialMonths) {
 		plan = 'MonthlyPremium';
 		trialMonths = 1;
 	}
