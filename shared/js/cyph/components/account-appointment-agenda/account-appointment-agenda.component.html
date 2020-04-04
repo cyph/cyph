@@ -19,7 +19,13 @@
 			cyphTranslate
 			color="accent"
 			matTooltipPosition="above"
-			routerLink="/account-burner/video"
+			(click)="
+				!accountDatabaseService.currentUser.value?.agseConfirmed ?
+					openWindow(envService.cyphVideoUrl) :
+				envService.isCordovaMobile ?
+					router.navigate(['account-burner', 'video']) :
+					openWindow('#account-burner/video')
+			"
 		>
 			New Video Call Link
 		</button>

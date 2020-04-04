@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import {
 	AgendaService,
 	DayService,
@@ -13,8 +14,10 @@ import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountService} from '../../services/account.service';
+import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
 import {getDateTimeString} from '../../util/time';
+import {openWindow} from '../../util/window';
 
 /**
  * Angular component for account appointment agenda/scheduler.
@@ -47,6 +50,9 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 		this.internationalization.formatDate(date, {skeleton: 'hm'})
 	);
 
+	/** @see openWindow */
+	public readonly openWindow = openWindow;
+
 	/** @see ScheduleComponent.selectedDate */
 	public selectedDate: Date = new Date();
 
@@ -56,11 +62,17 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 	}
 
 	constructor (
+		/** @see Router */
+		public readonly router: Router,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 
 		/** @see AccountAppointmentsService */
 		public readonly accountAppointmentsService: AccountAppointmentsService,
+
+		/** @see AccountDatabaseService */
+		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService
