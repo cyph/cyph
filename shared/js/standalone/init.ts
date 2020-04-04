@@ -14,7 +14,7 @@ import {triggerClick} from '../cyph/util/input';
 import {sleep} from '../cyph/util/wait';
 import {reloadWindow} from '../cyph/util/window';
 
-/** Handle redirection in local env before ServiceWorker is initialized */
+/* Handle redirection in local env before ServiceWorker is initialized */
 
 if (env.isLocalEnv && location.pathname !== '/') {
 	location.replace('/#' + location.pathname.slice(1));
