@@ -969,6 +969,9 @@ export class StringsService extends BaseProvider {
 	public readonly reasonForAppointment = `Reason for Appointment`;
 
 	/** @see StringsService */
+	public readonly reasonForAppointmentDefault = `Conference`;
+
+	/** @see StringsService */
 	public readonly registerErrorEmail = `Invalid email address`;
 
 	/** @see StringsService */

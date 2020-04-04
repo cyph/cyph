@@ -24,7 +24,10 @@
 				<mat-select
 					fxFlex
 					name="reason-for-appointment"
-					[ngModel]="value?.title || ''"
+					[ngModel]="
+						value?.title ||
+						stringsService.reasonForAppointmentDefault
+					"
 					(ngModelChange)="
 						(value || {title: ''}).title = $event;
 						value && valueChange(value)
@@ -49,7 +52,10 @@
 				<input
 					matInput
 					name="reason-for-appointment"
-					[ngModel]="value?.title || ''"
+					[ngModel]="
+						value?.title ||
+						stringsService.reasonForAppointmentDefault
+					"
 					(ngModelChange)="
 						(value || {title: ''}).title = $event;
 						value && valueChange(value)
