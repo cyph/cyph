@@ -38,6 +38,7 @@
 		></div>
 	</div>
 
+	<!-- TODO: Delete this or move/reuse somewhere else -->
 	<ng-template #appointmentList>
 		<mat-nav-list
 			*ngIf="
@@ -319,17 +320,17 @@
 					mat-list-item
 					cyphTranslate
 					class="appointment-scheduler"
+					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Appointment Scheduler"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
-					href="https://cyph.healthcare"
+					routerLink="/schedule"
+					(click)="click()"
 					*ngIf="
-						!envService.coBranded &&
-						!envService.isTelehealth &&
-						configService.planConfig[
-							(accountSettingsService.plan | await) ||
-								cyphPlans.Free
-						].telehealth
+						(accountSettingsService.staticFeatureFlags.scheduler
+							| await) &&
+						(accountSettingsService.featureFlags.scheduler.watch()
+							| await)
 					"
 				>
 					<mat-icon mat-list-icon>
@@ -827,14 +828,7 @@
 						</mat-list-item>
 					</mat-list>
 
-					<ng-container
-						*ngTemplateOutlet="
-							envService.isTelehealth &&
-							!envService.isTelehealthFull ?
-								appointmentList :
-								buttons
-						"
-					></ng-container>
+					<ng-container *ngTemplateOutlet="buttons"></ng-container>
 				</div>
 			</div>
 		</div>

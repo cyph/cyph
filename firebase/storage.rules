@@ -180,6 +180,7 @@ service firebase.storage {
 				// 	match /notes/{hash} {}
 				// 	match /passwords/{hash} {}
 				// 	match /social/{hash} {}
+				// 	match /scheduler/{hash} {}
 				// 	match /wallets/{hash} {}
 				// }
 

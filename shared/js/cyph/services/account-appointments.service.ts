@@ -28,8 +28,10 @@ export class AccountAppointmentsService extends BaseProvider {
 					appointment: IAppointment;
 					friend?: string;
 					schedulerObject: {
+						Description: string;
 						EndTime: Date;
 						Id: number;
+						Location: string;
 						StartTime: Date;
 						Subject: string;
 					};
@@ -53,14 +55,16 @@ export class AccountAppointmentsService extends BaseProvider {
 						appointment,
 						friend,
 						schedulerObject: {
+							Description: appointment.calendarInvite.title,
 							EndTime: new Date(
 								appointment.calendarInvite.endTime
 							),
 							Id: ++this.lastAppointmentID,
+							Location: appointment.calendarInvite.url || '',
 							StartTime: new Date(
 								appointment.calendarInvite.startTime
 							),
-							Subject: appointment.calendarInvite.title
+							Subject: appointment.fromName || ''
 						}
 					};
 				})
@@ -205,12 +209,6 @@ export class AccountAppointmentsService extends BaseProvider {
 			appointment: IAppointment;
 			friend?: string;
 			record: IAccountFileRecord;
-			schedulerObject: {
-				EndTime: Date;
-				Id: number;
-				StartTime: Date;
-				Subject: string;
-			};
 		}[]
 	> {
 		return recordsList.pipe(

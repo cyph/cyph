@@ -787,6 +787,17 @@
 								".validate": "newData.val() === now"
 							}
 						},
+						"scheduler": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						},
 						"social": {
 							"data": {
 								".validate": "newData.isString()"
