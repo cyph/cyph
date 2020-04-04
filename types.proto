@@ -181,12 +181,6 @@ message AccountNotification {
 	/** Timestamp. */
 	required double timestamp = 8;
 
-	/** Longer-form notification text. */
-	required string textDetail = 7;
-
-	/** Timestamp. */
-	required double timestamp = 9;
-
 	/** @see NotificationTypes */
 	required NotificationTypes type = 9;
 

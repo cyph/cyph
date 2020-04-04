@@ -1744,7 +1744,7 @@ export class AccountDatabaseService extends BaseProvider {
 				combineLatest(
 					keys.map(id =>
 						this.watch(
-							`${url}/${id}`,
+							Promise.resolve(url).then(s => `${s}/${id}`),
 							proto,
 							securityModel,
 							customKey,

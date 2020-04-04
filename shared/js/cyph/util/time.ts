@@ -29,9 +29,9 @@ const stringFormats = {
 const strings = {
 	hourAgo: translate('hour ago'),
 	hoursAgo: translate('hours ago'),
+	justNow: translate('Just now'),
 	minuteAgo: translate('minute ago'),
 	minutesAgo: translate('minutes ago'),
-	justNow: translate('Just now'),
 	today: translate('Today'),
 	yesterday: translate('Yesterday')
 };
@@ -598,33 +598,35 @@ export const watchRelativeDateString = memoize(
 
 /** @ignore */
 const relativeDateTimeStringInternal = memoize((now: number) =>
-	memoize((date: number | Date) : string | undefined => {
-		if (date instanceof Date) {
-			date = date.getTime();
+	memoize(
+		async (date: number | Date) : Promise<string> => {
+			if (date instanceof Date) {
+				date = date.getTime();
+			}
+
+			const delta = now - date;
+
+			if (delta < 60000) {
+				return strings.justNow;
+			}
+
+			if (delta < 3600000) {
+				const minutes = Math.floor((now - date) / 60000);
+				return `${minutes.toString()} ${
+					minutes === 1 ? strings.minuteAgo : strings.minutesAgo
+				}`;
+			}
+
+			if (delta < 86400000) {
+				const hours = Math.floor((now - date) / 3600000);
+				return `${hours.toString()} ${
+					hours === 1 ? strings.hourAgo : strings.hoursAgo
+				}`;
+			}
+
+			return `${await relativeDateString(date)}, ${getTimeString(date)}`;
 		}
-
-		const delta = now - date;
-
-		if (delta < 60000) {
-			return strings.justNow;
-		}
-
-		if (delta < 3600000) {
-			const minutes = Math.floor((now - date) / 60000);
-			return `${minutes.toString()} ${
-				minutes === 1 ? strings.minuteAgo : strings.minutesAgo
-			}`;
-		}
-
-		if (delta < 86400000) {
-			const hours = Math.floor((now - date) / 3600000);
-			return `${hours.toString()} ${
-				hours === 1 ? strings.hourAgo : strings.hoursAgo
-			}`;
-		}
-
-		return `${relativeDateString(date)}, ${getTimeString(date)}`;
-	})
+	)
 );
 
 /**
