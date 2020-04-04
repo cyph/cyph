@@ -1,7 +1,9 @@
 import {Injectable} from '@angular/core';
+import {map} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {AccountNotification, IAccountNotification} from '../proto';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {AccountDatabaseService} from './crypto/account-database.service';
 
 /**
@@ -19,6 +21,20 @@ export class AccountNotificationsService extends BaseProvider {
 		undefined,
 		undefined,
 		this.subscriptions
+	);
+
+	/**
+	 * Unread count.
+	 * TODO: Optimize data model.
+	 */
+	public readonly unreadCount = toBehaviorSubject(
+		this.notifications.pipe(
+			map(
+				notifications =>
+					notifications.filter(o => !o.value.isRead).length
+			)
+		),
+		0
 	);
 
 	/** Mark a notification as read. */
