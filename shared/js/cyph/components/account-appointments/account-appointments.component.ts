@@ -18,10 +18,12 @@ import {
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {ConfigService} from '../../services/config.service';
 import {DatabaseService} from '../../services/database.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -124,7 +126,9 @@ export class AccountAppointmentsComponent extends BaseProvider
 						endTime: appointment.calendarInvite.endTime,
 						startTime: appointment.calendarInvite.startTime
 					},
-					telehealth: this.envService.isTelehealth,
+					telehealth: this.configService.planConfig[
+						this.accountSettingsService.plan.value
+					].telehealth,
 					to: friend || {
 						email: appointment.fromEmail,
 						name: appointment.fromName
@@ -168,6 +172,12 @@ export class AccountAppointmentsComponent extends BaseProvider
 	}
 
 	constructor (
+		/** @ignore */
+		public readonly accountSettingsService: AccountSettingsService,
+
+		/** @ignore */
+		public readonly configService: ConfigService,
+
 		/** @ignore */
 		public readonly databaseService: DatabaseService,
 

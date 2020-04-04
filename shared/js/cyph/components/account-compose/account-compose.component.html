@@ -147,8 +147,8 @@
 							<mat-form-field
 								fxFlex
 								*ngIf="
-									envService.isTelehealth &&
-									!envService.isTelehealthFull
+									accountSettingsService.staticFeatureFlags
+										.scheduler | await
 								"
 							>
 								<input

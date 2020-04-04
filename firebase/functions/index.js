@@ -354,10 +354,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterUsername = await getUsername();
 	const telehealth = !!data.telehealth;
 
-	const accountsURL =
-		namespace === 'cyph_ws' && telehealth ?
-			'https://cyph.healthcare/' :
-			namespaces[namespace].accountsURL;
+	const {accountsURL} = namespaces[namespace];
 
 	if (
 		id.length !== config.cyphIDLength ||
@@ -370,7 +367,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviteeLink = `${getFullBurnerURL(
 		namespace,
 		data.callType,
-		!!data.telehealth
+		telehealth
 	)}${inviterUsername}/${id}`;
 
 	const inviterLink = `${accountsURL}account-burner/${data.callType ||
