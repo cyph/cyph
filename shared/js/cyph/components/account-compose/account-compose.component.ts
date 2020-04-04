@@ -22,6 +22,7 @@ import {accountChatProviders} from '../../providers';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -324,24 +325,36 @@ export class AccountComposeComponent extends BaseProvider
 						},
 						recipients
 					).result,
-					this.envService.isTelehealth &&
-					!this.envService.isTelehealthFull &&
-					this.accountDatabaseService.currentUser.value ?
-						this.databaseService.callFunction('appointmentInvite', {
-							callType,
-							eventDetails: {
-								endTime: calendarInvite.endTime,
-								startTime: calendarInvite.startTime
-							},
-							id,
-							telehealth: true,
-							to: {
-								email: this.accountService.fromEmail.value,
-								name: this.accountService.fromName.value
-							},
-							toSMS: this.appointmentSMS.value
-						}) :
-						undefined
+					this.accountSettingsService.staticFeatureFlags.scheduler
+						.pipe(take(1))
+						.toPromise()
+						.then(async schedulerEnabled =>
+							schedulerEnabled ?
+								this.databaseService.callFunction(
+									'appointmentInvite',
+									{
+										callType,
+										eventDetails: {
+											endTime: calendarInvite.endTime,
+											startTime: calendarInvite.startTime
+										},
+										id,
+										telehealth: this.configService
+											.planConfig[
+											this.accountSettingsService.plan
+												.value
+										].telehealth,
+										to: {
+											email: this.accountService.fromEmail
+												.value,
+											name: this.accountService.fromName
+												.value
+										},
+										toSMS: this.appointmentSMS.value
+									}
+								) :
+								undefined
+						)
 				]);
 
 				this.sentFileID.next(sentFileID);
@@ -483,6 +496,9 @@ export class AccountComposeComponent extends BaseProvider
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

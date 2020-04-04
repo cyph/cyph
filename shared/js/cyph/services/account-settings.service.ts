@@ -28,6 +28,7 @@ export class AccountSettingsService extends BaseProvider {
 		messaging: this.getFeatureFlag('messaging'),
 		notes: this.getFeatureFlag('notes'),
 		passwords: this.getFeatureFlag('passwords'),
+		scheduler: this.getFeatureFlag('scheduler'),
 		social: this.getFeatureFlag('social'),
 		wallets: this.getFeatureFlag('wallets')
 	};
@@ -59,17 +60,18 @@ export class AccountSettingsService extends BaseProvider {
 		),
 		group: this.envService.debug ?
 			of(true) :
-		this.envService.isTelehealth ?
-			of(false) :
 			this.plan.pipe(
 				map(plan => this.configService.planConfig[plan].enableGroup)
 			),
 		passwords: this.envService.debug ?
 			of(true) :
-		this.envService.isTelehealth ?
-			of(false) :
 			this.plan.pipe(
 				map(plan => this.configService.planConfig[plan].enablePasswords)
+			),
+		scheduler: this.envService.debug ?
+			of(true) :
+			this.plan.pipe(
+				map(plan => this.configService.planConfig[plan].enableScheduler)
 			),
 		wallets:
 			this.envService.debug ||

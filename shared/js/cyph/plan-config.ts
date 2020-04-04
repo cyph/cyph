@@ -3,6 +3,7 @@ import {CyphPlans, CyphPlanTypes} from '../proto';
 interface IPlanTypeConfig {
 	enableGroup: boolean;
 	enablePasswords: boolean;
+	enableScheduler: boolean;
 	enableWallets: boolean;
 	initialInvites?: number;
 	innerCircleLimit?: number;
@@ -15,9 +16,22 @@ interface IPlanTypeConfig {
 }
 
 const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
+	[CyphPlanTypes.Business]: {
+		enableGroup: true,
+		enablePasswords: false,
+		enableScheduler: true,
+		enableWallets: false,
+		planType: CyphPlanTypes.Business,
+		rank: 2,
+		storageCapGB: 100,
+		telehealth: false,
+		unlimitedCalling: true,
+		usernameMinLength: 5
+	},
 	[CyphPlanTypes.FoundersAndFriends]: {
 		enableGroup: true,
 		enablePasswords: true,
+		enableScheduler: true,
 		enableWallets: true,
 		planType: CyphPlanTypes.FoundersAndFriends,
 		rank: 4,
@@ -29,6 +43,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 	[CyphPlanTypes.Free]: {
 		enableGroup: false,
 		enablePasswords: false,
+		enableScheduler: false,
 		enableWallets: false,
 		initialInvites: 2,
 		innerCircleLimit: 5,
@@ -42,6 +57,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 	[CyphPlanTypes.Platinum]: {
 		enableGroup: true,
 		enablePasswords: true,
+		enableScheduler: false,
 		enableWallets: true,
 		planType: CyphPlanTypes.Platinum,
 		rank: 3,
@@ -53,6 +69,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 	[CyphPlanTypes.Premium]: {
 		enableGroup: true,
 		enablePasswords: false,
+		enableScheduler: false,
 		enableWallets: false,
 		planType: CyphPlanTypes.Premium,
 		rank: 2,
@@ -64,6 +81,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 	[CyphPlanTypes.Supporter]: {
 		enableGroup: true,
 		enablePasswords: false,
+		enableScheduler: false,
 		enableWallets: false,
 		innerCircleLimit: 15,
 		planType: CyphPlanTypes.Supporter,
@@ -76,6 +94,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 	[CyphPlanTypes.Telehealth]: {
 		enableGroup: true,
 		enablePasswords: false,
+		enableScheduler: true,
 		enableWallets: false,
 		planType: CyphPlanTypes.Telehealth,
 		rank: 2,
@@ -95,8 +114,7 @@ export const planConfig: Record<
 	}
 > = {
 	[CyphPlans.AnnualBusiness]: {
-		/* TODO: Make a separate Business plan type that supports appointments */
-		...planTypeConfig[CyphPlanTypes.Telehealth],
+		...planTypeConfig[CyphPlanTypes.Business],
 		checkoutPath: 'accounts/annual-business',
 		lifetime: false
 	},
@@ -133,8 +151,7 @@ export const planConfig: Record<
 		lifetime: true
 	},
 	[CyphPlans.MonthlyBusiness]: {
-		/* TODO: Make a separate Business plan type that supports appointments */
-		...planTypeConfig[CyphPlanTypes.Telehealth],
+		...planTypeConfig[CyphPlanTypes.Business],
 		checkoutPath: 'accounts/monthly-business',
 		lifetime: false
 	},

@@ -30,6 +30,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {Router, RouterModule} from '@angular/router';
 import {PickerModule} from '@ctrl/ngx-emoji-mart';
 import {EmojiModule} from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import {ScheduleAllModule} from '@syncfusion/ej2-angular-schedule';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
@@ -106,6 +107,7 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,
+		ScheduleAllModule,
 		SimpleEmojiPickerComponent,
 		SmdFabSpeedDialModule,
 		TextMaskModule,
@@ -146,6 +148,7 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		PickerModule,
 		ReactiveFormsModule,
 		RouterModule,
+		ScheduleAllModule,
 		SmdFabSpeedDialModule,
 		TextMaskModule
 	],

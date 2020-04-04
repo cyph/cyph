@@ -14,14 +14,20 @@
 				value?.title !== undefined
 			"
 		>
+			<!-- Disabled dropdown reasons for now -->
 			<mat-form-field
 				fxFlex
-				*ngIf="!!reasons && (isDisabledWrapper | await) === false"
+				*ngIf="
+					!!reasons && (isDisabledWrapper | await) === false && false
+				"
 			>
 				<mat-select
 					fxFlex
 					name="reason-for-appointment"
-					[ngModel]="value?.title || ''"
+					[ngModel]="
+						value?.title ||
+						stringsService.reasonForAppointmentDefault
+					"
 					(ngModelChange)="
 						(value || {title: ''}).title = $event;
 						value && valueChange(value)
@@ -38,14 +44,18 @@
 				</mat-select>
 			</mat-form-field>
 
+			<!-- Enabled text reason for now -->
 			<mat-form-field
 				fxFlex
-				*ngIf="!reasons || (isDisabledWrapper | await)"
+				*ngIf="!reasons || (isDisabledWrapper | await) || true"
 			>
 				<input
 					matInput
 					name="reason-for-appointment"
-					[ngModel]="value?.title || ''"
+					[ngModel]="
+						value?.title ||
+						stringsService.reasonForAppointmentDefault
+					"
 					(ngModelChange)="
 						(value || {title: ''}).title = $event;
 						value && valueChange(value)
@@ -274,7 +284,7 @@
 				</ng-container>
 			</div>
 
-			<!-- End time selection hidden in favor of appointment duration selection, for now. -->
+			<!-- End time selection hidden in favor of appointment duration selection, for now -->
 			<div fxFlex *ngIf="isDisabledWrapper | await">
 				<mat-form-field>
 					<input

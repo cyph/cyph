@@ -223,9 +223,7 @@ export class CalendarInviteComponent extends BaseProvider
 		this.calendarInvite.next({
 			alternateDays: {},
 			alternateTimeFrames: {},
-			callType: this.envService.isTelehealth ?
-				CallTypes.Video :
-				CallTypes.None,
+			callType: CallTypes.Video,
 			description: '',
 			endTime: timestamp + this.duration,
 			startTime: timestamp,

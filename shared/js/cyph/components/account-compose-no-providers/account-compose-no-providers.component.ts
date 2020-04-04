@@ -3,6 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {AccountChatService} from '../../services/account-chat.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
@@ -41,6 +42,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		activatedRoute: ActivatedRoute,
 		accountService: AccountService,
 		accountDatabaseService: AccountDatabaseService,
+		accountSettingsService: AccountSettingsService,
 		envService: EnvService,
 		stringsService: StringsService
 	) {
@@ -49,6 +51,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			accountChatService,
 			accountContactsService,
 			accountFilesService,
+			accountSettingsService,
 			configService,
 			databaseService,
 			scrollService,
