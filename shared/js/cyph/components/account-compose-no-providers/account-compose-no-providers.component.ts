@@ -51,7 +51,6 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			accountChatService,
 			accountContactsService,
 			accountFilesService,
-			accountSettingsService,
 			configService,
 			databaseService,
 			scrollService,
@@ -59,6 +58,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			activatedRoute,
 			accountService,
 			accountDatabaseService,
+			accountSettingsService,
 			envService,
 			stringsService
 		);
