@@ -17,7 +17,12 @@
 					>
 						{{ notification.value.text }}
 					</div>
-					<div class="e-card-sub-title">
+					<div
+						class="e-card-sub-title"
+						[matTooltip]="
+							getDateTimeString(notification.value.timestamp)
+						"
+					>
 						{{
 							watchRelativeDateTimeString(
 								notification.value.timestamp

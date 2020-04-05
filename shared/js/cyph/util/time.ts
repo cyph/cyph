@@ -27,12 +27,18 @@ const stringFormats = {
 
 /** @ignore */
 const strings = {
+	dayAgo: translate('day ago'),
+	daysAgo: translate('days ago'),
 	hourAgo: translate('hour ago'),
 	hoursAgo: translate('hours ago'),
 	justNow: translate('Just now'),
 	minuteAgo: translate('minute ago'),
 	minutesAgo: translate('minutes ago'),
+	monthAgo: translate('month ago'),
+	monthsAgo: translate('months ago'),
 	today: translate('Today'),
+	yearAgo: translate('year ago'),
+	yearsAgo: translate('years ago'),
 	yesterday: translate('Yesterday')
 };
 
@@ -624,7 +630,24 @@ const relativeDateTimeStringInternal = memoize((now: number) =>
 				}`;
 			}
 
-			return `${await relativeDateString(date)}, ${getTimeString(date)}`;
+			if (delta < 2629800000) {
+				const days = Math.floor((now - date) / 86400000);
+				return `${days.toString()} ${
+					days === 1 ? strings.dayAgo : strings.daysAgo
+				}`;
+			}
+
+			if (delta < 31557600000) {
+				const months = Math.floor((now - date) / 2629800000);
+				return `${months.toString()} ${
+					months === 1 ? strings.monthAgo : strings.monthsAgo
+				}`;
+			}
+
+			const years = Math.floor((now - date) / 31557600000);
+			return `${years.toString()} ${
+				years === 1 ? strings.yearAgo : strings.yearsAgo
+			}`;
 		}
 	)
 );
@@ -634,9 +657,8 @@ const relativeDateTimeStringInternal = memoize((now: number) =>
  * @example Just now
  * @example 10 minutes ago
  * @example 1 hour ago
- * @example Today, 3:37pm
- * @example Monday, June 18th, 3:37pm
- * @example December 31, 2017, 3:37pm
+ * @example 2 days ago
+ * @example 10 years ago
  */
 export const relativeDateTimeString = async (date: number | Date) =>
 	relativeDateTimeStringInternal(await getTimestamp())(date);
