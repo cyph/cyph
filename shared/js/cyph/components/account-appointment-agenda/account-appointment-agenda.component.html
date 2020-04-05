@@ -43,40 +43,44 @@
 			[(selectedDate)]="selectedDate"
 		>
 			<e-views>
-				<e-view option="Agenda">
-					<ng-template #eventTemplate let-data>
-						<div class="template-wrap">
-							<div class="appointment-info" fxLayout="row">
-								<div fxLayout="column">
-									<div class="subject">
-										{{ data.Subject }}
-									</div>
-									<div class="description">
-										{{ data.Description }}
-									</div>
-									<div class="time">
-										{{ getTimeString(data.StartTime) }} -
-										{{ getTimeString(data.EndTime) }}
-									</div>
-								</div>
-								<div class="location" fxLayout="column">
-									<button
-										mat-raised-button
-										color="accent"
-										[routerLink]="data.Location"
-									>
-										<mat-icon>video_call</mat-icon>
-									</button>
-								</div>
-							</div>
-							<div class="footer"></div>
-						</div>
-					</ng-template>
-				</e-view>
+				<e-view
+					option="Agenda"
+					[eventTemplate]="agendaEventTemplate"
+				></e-view>
 				<e-view option="Day"> </e-view>
 				<e-view option="Month"> </e-view>
 				<e-view option="Week"> </e-view>
 			</e-views>
 		</ejs-schedule>
+
+		<ng-template #agendaEventTemplate let-data>
+			<div class="appointment-info" fxLayout="row" fxLayoutGap="32px">
+				<div fxLayout="column">
+					<div class="subject">
+						{{ data.Subject }}
+					</div>
+					<div class="description">
+						{{ data.Description }}
+					</div>
+					<div class="time">
+						{{ getTimeString(data.StartTime) }} -
+						{{ getTimeString(data.EndTime) }}
+					</div>
+				</div>
+				<div
+					class="location"
+					fxLayout="column"
+					fxLayoutAlign="center center"
+				>
+					<button
+						mat-raised-button
+						color="accent"
+						[routerLink]="data.Location"
+					>
+						<mat-icon>video_call</mat-icon>
+					</button>
+				</div>
+			</div>
+		</ng-template>
 	</div>
 </div>
