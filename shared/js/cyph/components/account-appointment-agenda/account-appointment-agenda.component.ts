@@ -16,6 +16,7 @@ import {AccountAppointmentsService} from '../../services/account-appointments.se
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {WindowWatcherService} from '../../services/window-watcher.service';
 import {getDateTimeString} from '../../util/time';
 import {openWindow} from '../../util/window';
 
@@ -75,7 +76,10 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 		public readonly accountDatabaseService: AccountDatabaseService,
 
 		/** @see EnvService */
-		public readonly envService: EnvService
+		public readonly envService: EnvService,
+
+		/** @see WindowWatcherService */
+		public readonly windowWatcherService: WindowWatcherService
 	) {
 		super();
 	}

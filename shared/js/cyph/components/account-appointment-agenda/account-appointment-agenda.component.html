@@ -38,7 +38,7 @@
 				(this.accountAppointmentsService.appointmentSchedulerModels.all
 					| await) || {}
 			"
-			height="100%"
+			[height]="((windowWatcherService.height | await) || 77) - 77"
 			[readonly]="true"
 			[(selectedDate)]="selectedDate"
 		>
