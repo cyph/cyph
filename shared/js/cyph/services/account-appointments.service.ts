@@ -144,6 +144,13 @@ export class AccountAppointmentsService extends BaseProvider {
 
 	/** `appointments` converted into `EventSettingsModel` objects. */
 	public readonly appointmentSchedulerModels = {
+		all: this.allAppointments.pipe(
+			map(
+				(appointments) : EventSettingsModel => ({
+					dataSource: appointments.map(o => o.schedulerObject)
+				})
+			)
+		),
 		current: this.appointments.current.pipe(
 			map(
 				(appointments) : EventSettingsModel => ({
@@ -209,6 +216,14 @@ export class AccountAppointmentsService extends BaseProvider {
 			appointment: IAppointment;
 			friend?: string;
 			record: IAccountFileRecord;
+			schedulerObject: {
+				Description: string;
+				EndTime: Date;
+				Id: number;
+				Location: string;
+				StartTime: Date;
+				Subject: string;
+			};
 		}[]
 	> {
 		return recordsList.pipe(

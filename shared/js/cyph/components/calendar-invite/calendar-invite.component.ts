@@ -170,7 +170,9 @@ export class CalendarInviteComponent extends BaseProvider
 
 	/** Default appointment reason dropdown selection. */
 	public get defaultReasonForAppointment () : string {
-		return this.followUp ? this.stringsService.followUpNoun : '';
+		return this.followUp ?
+			this.stringsService.followUpNoun :
+			this.stringsService.reasonForAppointmentDefault;
 	}
 
 	/** Change event callback. */

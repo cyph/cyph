@@ -288,6 +288,50 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
+func downgradeAccountHelper(userToken string) (string, error) {
+	body, _ := json.Marshal(map[string]interface{}{
+		"namespace": "cyph.ws",
+		"userToken": userToken,
+	})
+
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		methods.POST,
+		"https://us-central1-"+firebaseProject+".cloudfunctions.net/downgradeAccount",
+		bytes.NewBuffer(body),
+	)
+
+	req.Header.Add("Authorization", cyphFirebaseAdminKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var responseBody map[string]interface{}
+	err = json.Unmarshal(responseBodyBytes, &responseBody)
+	if err != nil {
+		return "", err
+	}
+
+	braintreeSubscriptionID := ""
+	if data, ok := responseBody["braintreeSubscriptionID"]; ok {
+		switch v := data.(type) {
+		case string:
+			braintreeSubscriptionID = v
+		}
+	}
+
+	return braintreeSubscriptionID, nil
+}
+
 func generateInvite(email, name, plan string, braintreeIDs, braintreeSubscriptionIDs []string, inviteCode, username string, purchased bool) (string, string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"braintreeIDs":             strings.Join(braintreeIDs, "\n"),

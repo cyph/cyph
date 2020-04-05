@@ -507,11 +507,17 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	};
 });
 
-exports.downgradeAccount = onCall(async (data, namespace, getUsername) => {
-	const username = await getUsername();
+exports.downgradeAccount = onRequest(true, async (req, res, namespace) => {
+	const {accountsURL} = namespaces[namespace];
+	const userToken = validateInput(req.body.userToken);
+
+	const {username} = await tokens.open(
+		userToken,
+		await getTokenKey(namespace)
+	);
 
 	if (!username) {
-		return;
+		return {};
 	}
 
 	const currentPlan = await getItem(
@@ -526,7 +532,7 @@ exports.downgradeAccount = onCall(async (data, namespace, getUsername) => {
 		currentPlan === CyphPlans.Free ||
 		config.planConfig[currentPlan].lifetime
 	) {
-		return;
+		return {};
 	}
 
 	const internalURL = `${namespace}/users/${username}/internal`;
@@ -536,6 +542,10 @@ exports.downgradeAccount = onCall(async (data, namespace, getUsername) => {
 	);
 	const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
 
+	const braintreeSubscriptionID = await braintreeSubscriptionIDRef
+		.once('value')
+		.val();
+
 	await Promise.all([
 		braintreeIDRef.remove(),
 		braintreeSubscriptionIDRef.remove(),
@@ -544,6 +554,8 @@ exports.downgradeAccount = onCall(async (data, namespace, getUsername) => {
 			plan: CyphPlans.Free
 		})
 	]);
+
+	return {braintreeSubscriptionID};
 });
 
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {

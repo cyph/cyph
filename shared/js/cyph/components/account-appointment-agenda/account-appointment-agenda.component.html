@@ -35,93 +35,73 @@
 			#schedule
 			currentView="Agenda"
 			[eventSettings]="
-				(this.accountAppointmentsService.appointmentSchedulerModels
-					.upcoming | await) || {}
+				(this.accountAppointmentsService.appointmentSchedulerModels.all
+					| await) || {}
 			"
-			height="100%"
+			[height]="
+				(envService.isMobile | await) ?
+					((windowWatcherService.height | await) || 120) - 120 :
+					((windowWatcherService.height | await) || 179) - 179
+			"
 			[readonly]="true"
 			[(selectedDate)]="selectedDate"
 		>
 			<e-views>
-				<e-view option="Agenda">
-					<ng-template #eventTemplate let-data>
-						<div class="template-wrap">
-							<div class="appointment-info" fxLayout="row">
-								<div fxLayout="column">
-									<div class="subject">
-										{{ data.Subject }}
-									</div>
-									<div class="description">
-										{{ data.Description }}
-									</div>
-									<div class="time">
-										{{ getTimeString(data.StartTime) }} -
-										{{ getTimeString(data.EndTime) }}
-									</div>
-								</div>
-								<div class="location" fxLayout="column">
-									<button
-										mat-raised-button
-										color="accent"
-										[routerLink]="data.Location"
-									>
-										<mat-icon>video_call</mat-icon>
-									</button>
-								</div>
-							</div>
-							<div class="footer"></div>
-						</div>
-					</ng-template>
-				</e-view>
+				<e-view
+					option="Agenda"
+					[eventTemplate]="agendaEventTemplate"
+				></e-view>
 				<e-view option="Day"> </e-view>
 				<e-view option="Month"> </e-view>
 				<e-view option="Week"> </e-view>
 			</e-views>
-			<!--
-			<ng-template #quickInfoTemplatesContent let-data>
-				<div *ngIf="data.elementType == 'cell'" class="e-cell-content">
-					<form class="e-schedule-form">
-						<div style="padding:10px">
-							<input
-								class="subject e-field e-input"
-								type="text"
-								name="Subject"
-								placeholder="Title"
-								style="width:100%"
-							/>
-						</div>
-						<div style="padding:10px">
-							<input
-								class="location e-field e-input"
-								type="text"
-								name="Location"
-								placeholder="Location"
-								style="width:100%"
-							/>
-						</div>
-					</form>
+		</ejs-schedule>
+
+		<ng-template #agendaEventTemplate let-data>
+			<div class="appointment-info" fxLayout="row" fxLayoutGap="32px">
+				<div fxLayout="column">
+					<div class="subject">
+						{{ data.Subject }}
+					</div>
+					<div class="description">
+						{{ data.Description }}
+					</div>
+					<div class="time">
+						{{ getTimeString(data.StartTime) }} -
+						{{ getTimeString(data.EndTime) }}
+					</div>
 				</div>
 				<div
-					*ngIf="data.elementType == 'event'"
-					class="e-event-content"
+					class="location"
+					fxLayout="column"
+					fxLayoutAlign="center center"
 				>
-					<div class="start-time">
-						Start: {{ data.StartTime.toLocaleString() }}
-					</div>
-					<div class="end-time">
-						End: {{ data.EndTime.toLocaleString() }}
-					</div>
-					<div
-						*ngIf="
-							data.Location != undefined && data.Location != ''
+					<button
+						mat-raised-button
+						cyphTranslate
+						color="accent"
+						[disabled]="
+							!accountDatabaseService.currentUser.value
+								?.agseConfirmed
 						"
-						class="location"
+						matTooltip="Join Call"
+						(click)="
+							envService.isCordovaMobile ?
+								router.navigate(
+									data.Location.split('/').slice(3)
+								) :
+								openWindow(
+									'#' +
+										data.Location.split('/')
+											.slice(3)
+											.join('/')
+								)
+						"
 					>
-						Location: {{ data.Location }}
-					</div>
+						<mat-icon>video_call</mat-icon>
+					</button>
 				</div>
-			</ng-template>
-			-->
-		</ejs-schedule>
+			</div>
+		</ng-template>
 	</div>
 </div>

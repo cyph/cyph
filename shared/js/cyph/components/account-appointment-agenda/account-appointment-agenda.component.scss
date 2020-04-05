@@ -12,26 +12,25 @@
 	margin: 1em;
 }
 
-.template-wrap {
-	font-size: 21px;
+.appointment-info {
+	font-size: 16px;
+	line-height: 28px;
+
 	.subject {
+		font-size: 21px;
 		font-weight: bold;
 	}
+
 	.time {
-		font-size: 16px;
 		font-style: italic;
 	}
-	.description {
-		font-size: 16px;
-	}
+
 	.location {
 		button {
-			height: 100%;
-			margin-left: 1em;
-			display: inline-block !important;
+			height: 45px;
+
 			mat-icon {
-				font-size: 28px;
-				margin-top: -5px;
+				@include icon-size(28px);
 			}
 		}
 	}

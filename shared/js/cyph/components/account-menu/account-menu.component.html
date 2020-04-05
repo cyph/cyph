@@ -285,7 +285,7 @@
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					[routerLink]="
-						(envService.isMobile | await) ? '/contacts' : '/'
+						(envService.isMobile | await) ? '/contacts' : '/profile'
 					"
 					(click)="click()"
 					*ngIf="
