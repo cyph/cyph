@@ -1035,7 +1035,8 @@ export class AccountService extends BaseProvider {
 				const specialCases: {[k: string]: string} = {
 					ehr: 'EHR',
 					feed: 'Social Feed',
-					inbox: 'Anonymous Inbox'
+					inbox: 'Anonymous Inbox',
+					schedule: 'Appointment Scheduler'
 				};
 
 				/* User headers on desktop are redundant with sidebar */
@@ -1108,6 +1109,7 @@ export class AccountService extends BaseProvider {
 						'notes',
 						'passwords',
 						'patients',
+						'schedule',
 						'settings',
 						'staff',
 						'wallets',
@@ -1123,6 +1125,7 @@ export class AccountService extends BaseProvider {
 						'incoming-patient-info',
 						'notes',
 						'passwords',
+						'schedule',
 						'settings',
 						'wallets'
 					].indexOf(route) < 0 &&
