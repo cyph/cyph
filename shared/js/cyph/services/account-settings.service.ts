@@ -143,6 +143,18 @@ export class AccountSettingsService extends BaseProvider {
 
 		this.featureFlagsList = [
 			{
+				featureFlag: this.featureFlags.inbox,
+				id: 'inbox',
+				label: this.stringsService.featureFlagsInbox,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.scheduler,
+				id: 'scheduler',
+				label: this.stringsService.featureFlagsScheduler,
+				visible: this.staticFeatureFlags.scheduler
+			},
+			{
 				featureFlag: this.featureFlags.docs,
 				id: 'docs',
 				label: this.stringsService.featureFlagsDocs,
@@ -158,12 +170,6 @@ export class AccountSettingsService extends BaseProvider {
 				featureFlag: this.featureFlags.forms,
 				id: 'forms',
 				label: this.stringsService.featureFlagsForms,
-				visible: of(true)
-			},
-			{
-				featureFlag: this.featureFlags.inbox,
-				id: 'inbox',
-				label: this.stringsService.featureFlagsInbox,
 				visible: of(true)
 			},
 			{
