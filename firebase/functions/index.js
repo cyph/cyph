@@ -542,9 +542,9 @@ exports.downgradeAccount = onRequest(true, async (req, res, namespace) => {
 	);
 	const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
 
-	const braintreeSubscriptionID = await braintreeSubscriptionIDRef
-		.once('value')
-		.val();
+	const braintreeSubscriptionID = (await braintreeSubscriptionIDRef.once(
+		'value'
+	)).val();
 
 	await Promise.all([
 		braintreeIDRef.remove(),
