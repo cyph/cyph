@@ -24,6 +24,7 @@ func main() {
 	handleFuncs("/braintree", false, Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", false, Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", false, Handlers{methods.GET: getContinent})
+	handleFuncs("/downgradeaccount/{userToken}", false, Handlers{methods.GET: downgradeAccount})
 	handleFuncs("/geolocation/{language}", false, Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", false, Handlers{methods.GET: getIceServers})
 	handleFuncs("/preauth/{id}", false, Handlers{methods.POST: preAuth})
@@ -649,6 +650,25 @@ func channelSetup(h HandlerArgs) (interface{}, int) {
 	}
 
 	return channelID, status
+}
+
+func downgradeAccount(h HandlerArgs) (interface{}, int) {
+	userToken := sanitize(h.Vars["userToken"])
+
+	braintreeSubscriptionID, _ := downgradeAccountHelper(userToken)
+
+	if braintreeSubscriptionID == "" {
+		return false, http.StatusOK
+	}
+
+	bt := braintreeInit(h)
+
+	_, err := bt.Subscription().Cancel(h.Context, braintreeSubscriptionID)
+	if err != nil {
+		return err.Error(), http.StatusInternalServerError
+	}
+
+	return true, http.StatusOK
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {

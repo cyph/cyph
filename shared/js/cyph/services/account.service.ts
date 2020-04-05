@@ -412,7 +412,15 @@ export class AccountService extends BaseProvider {
 
 		this.interstitial.next(true);
 		try {
-			await this.accountDatabaseService.callFunction('downgradeAccount');
+			const userToken = await this.getUserToken();
+			if (!userToken) {
+				return;
+			}
+
+			await request({
+				retries: 5,
+				url: this.envService.baseUrl + `downgradeaccount/${userToken}`
+			});
 		}
 		finally {
 			this.interstitial.next(false);
