@@ -325,7 +325,7 @@ rm -rf simplebtc/node_modules &> /dev/null
 rm -rf ng-fullcalendar/node_modules &> /dev/null
 
 # Temporary workaround for unwanted font import
-rg -l '@import url' @syncfusion | grep '\.css$' | xargs sed -i 's|@import url|// @import url|g'
+rg -l '@import url' @syncfusion | grep '\.css$' | xargs sed -i 's|@import url(.*);||g'
 
 # Temporary workaround for https://github.com/pierrec/node-lz4/pull/64#issuecomment-416119077
 sed -i \

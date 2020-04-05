@@ -19,6 +19,9 @@ import {reloadWindow} from '../cyph/util/window';
 if (location.host === 'cyph.healthcare') {
 	location.host = 'cyph.app';
 }
+if (location.host === 'staging.cyph.healthcare') {
+	location.host = 'staging.cyph.app';
+}
 
 /* Handle redirection in local env before ServiceWorker is initialized */
 
