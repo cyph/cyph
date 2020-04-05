@@ -14,6 +14,15 @@ import {triggerClick} from '../cyph/util/input';
 import {sleep} from '../cyph/util/wait';
 import {reloadWindow} from '../cyph/util/window';
 
+/* Temporary workaround to get current users onto new scheduler */
+
+if (location.host === 'cyph.healthcare') {
+	location.host = 'cyph.app';
+}
+if (location.host === 'staging.cyph.healthcare') {
+	location.host = 'staging.cyph.app';
+}
+
 /* Handle redirection in local env before ServiceWorker is initialized */
 
 if (env.isLocalEnv && location.pathname !== '/') {
