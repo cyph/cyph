@@ -209,6 +209,14 @@ export class AccountAppointmentsService extends BaseProvider {
 			appointment: IAppointment;
 			friend?: string;
 			record: IAccountFileRecord;
+			schedulerObject: {
+				Description: string;
+				EndTime: Date;
+				Id: number;
+				Location: string;
+				StartTime: Date;
+				Subject: string;
+			};
 		}[]
 	> {
 		return recordsList.pipe(
