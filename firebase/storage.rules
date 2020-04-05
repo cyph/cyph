@@ -250,6 +250,31 @@ service firebase.storage {
 
 				// match /plan/{hash} {}
 
+				match /postCommentReactions/{commentID}/{reaction}/{username}/{hash} {
+					allow read: if false;
+					allow write: if
+						request.auth != null &&
+						(username + '@' + DOMAIN) == request.auth.token.email
+					;
+				}
+
+				match /postComments/{comment}/{hash} {
+					allow read;
+				}
+
+				match /postReactions/{postID}/{reaction}/{username}/{hash} {
+					allow read: if false;
+					allow write: if
+						request.auth != null &&
+						(username + '@' + DOMAIN) == request.auth.token.email
+					;
+				}
+
+				match /postReplies/{postID}/{commentID}/{hash} {
+					allow read;
+					allow write: if resource == null;
+				}
+
 				match /posts {
 					match /private/{post}/{hash} {
 						allow read;
