@@ -35,8 +35,8 @@
 			#schedule
 			currentView="Agenda"
 			[eventSettings]="
-				(this.accountAppointmentsService.appointmentSchedulerModels
-					.upcoming | await) || {}
+				(this.accountAppointmentsService.appointmentSchedulerModels.all
+					| await) || {}
 			"
 			height="100%"
 			[readonly]="true"
