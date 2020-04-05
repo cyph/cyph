@@ -14,6 +14,15 @@ import {StringsService} from './strings.service';
 /** Service for handling anything sales-related. */
 @Injectable()
 export class SalesService extends BaseProvider {
+	/** @ignore */
+	private readonly canOpenMobileApp =
+		!this.envService.isCordova &&
+		(this.envService.isAndroid || this.envService.isIOS) &&
+		this.envService.appUrl === 'https://cyph.app/';
+
+	/** Controls whether upsell banner is enabled. */
+	public readonly mobileAppBanner = new ReplaySubject<boolean>();
+
 	/** Controls whether /register upsell banner is enabled. */
 	public readonly registerUpsellBanner = new BehaviorSubject<boolean>(
 		!this.envService.isTelehealth
@@ -21,6 +30,17 @@ export class SalesService extends BaseProvider {
 
 	/** Controls whether upsell banner is enabled. */
 	public readonly upsellBanner = new ReplaySubject<boolean>();
+
+	/** Closes mobile app banner. */
+	public async dismissMobileAppBanner () : Promise<void> {
+		this.mobileAppBanner.next(false);
+
+		await this.localStorageService.setItem(
+			'disableMobileAppBanner',
+			BooleanProto,
+			true
+		);
+	}
 
 	/** Closes /register upsell banner. */
 	public dismissRegisterUpsellBanner () : void {
@@ -36,6 +56,15 @@ export class SalesService extends BaseProvider {
 			BooleanProto,
 			true
 		);
+	}
+
+	/** Redirects to mobile app. */
+	public openMobileApp () : void {
+		if (!this.canOpenMobileApp) {
+			return;
+		}
+
+		location.href = `https://cyph.page.link/?apn=com.cyph.app&ibi=com.cyph.app&isi=1422086509&link=${location.toString()}`;
 	}
 
 	/** Opens pricing/upgrade page, with workarounds for platform-specific restrictions. */
@@ -88,6 +117,25 @@ export class SalesService extends BaseProvider {
 		private readonly stringsService: StringsService
 	) {
 		super();
+
+		if (this.canOpenMobileApp) {
+			this.subscriptions.push(
+				this.localStorageService
+					.watch(
+						'disableMobileAppBanner',
+						BooleanProto,
+						this.subscriptions
+					)
+					.subscribe(disableMobileAppBanner => {
+						this.mobileAppBanner.next(
+							!disableMobileAppBanner.value
+						);
+					})
+			);
+		}
+		else {
+			this.mobileAppBanner.next(false);
+		}
 
 		this.subscriptions.push(
 			combineLatest([
