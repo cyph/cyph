@@ -324,6 +324,9 @@ rm -rf simplebtc/node_modules &> /dev/null
 # Temporary workaround for https://github.com/Jamaks/ng-fullcalendar/issues/33
 rm -rf ng-fullcalendar/node_modules &> /dev/null
 
+# Temporary workaround for unwanted font import
+rg -l '@import url' @syncfusion | grep '\.css$' | xargs sed -i 's|@import url|// @import url|g'
+
 # Temporary workaround for https://github.com/pierrec/node-lz4/pull/64#issuecomment-416119077
 sed -i \
 	's|"browser": "./build/lz4.js",|"browser": {"./lib/utils.js": "./lib/utils-js.js"},|g' \
