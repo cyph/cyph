@@ -74,8 +74,25 @@
 				>
 					<button
 						mat-raised-button
+						cyphTranslate
 						color="accent"
-						[routerLink]="data.Location"
+						[disabled]="
+							!accountDatabaseService.currentUser.value
+								?.agseConfirmed
+						"
+						matTooltip="Join Call"
+						(click)="
+							envService.isCordovaMobile ?
+								router.navigate(
+									data.Location.split('/').slice(3)
+								) :
+								openWindow(
+									'#' +
+										data.Location.split('/')
+											.slice(3)
+											.join('/')
+								)
+						"
 					>
 						<mat-icon>video_call</mat-icon>
 					</button>
