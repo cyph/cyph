@@ -1714,7 +1714,10 @@ export class ChatService extends BaseProvider {
 					}
 				}));
 
-				if (callType !== undefined) {
+				if (
+					callType !== undefined &&
+					!this.p2pWebRTCService.isActive.value
+				) {
 					(async () => {
 						await this.sessionService.freezePong
 							.pipe(
