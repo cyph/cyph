@@ -17,14 +17,18 @@
 				<div class="e-card-header-caption">
 					<div
 						class="e-card-header-title"
-						[routerLink]="
-							notification.value.username ?
-								'/profile/' + notification.value.username :
-								undefined
-						"
+						[routerLink]="'/profile/' + notification.value.username"
+						*ngIf="!!notification.value.username"
 					>
 						{{ notification.value.text }}
 					</div>
+					<div
+						class="e-card-header-title"
+						*ngIf="!notification.value.username"
+					>
+						{{ notification.value.text }}
+					</div>
+
 					<div class="e-card-sub-title">
 						{{
 							watchRelativeDateTimeString(
