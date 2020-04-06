@@ -34,7 +34,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: true,
 		enablePasswords: true,
 		enableScheduler: true,
-		enableScreenSharing: true,
+		enableScreenSharing: false,
 		enableWallets: true,
 		planType: CyphPlanTypes.FoundersAndFriends,
 		rank: 4,
