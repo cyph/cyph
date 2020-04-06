@@ -9,7 +9,6 @@
 			mat-raised-button
 			cyphTranslate
 			color="accent"
-			matTooltipPosition="above"
 			routerLink="/request-appointment"
 		>
 			New Appointment
@@ -18,7 +17,6 @@
 			mat-raised-button
 			cyphTranslate
 			color="accent"
-			matTooltipPosition="above"
 			(click)="
 				!accountDatabaseService.currentUser.value?.agseConfirmed ?
 					openWindow(envService.cyphVideoUrl) :
