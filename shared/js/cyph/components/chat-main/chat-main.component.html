@@ -356,6 +356,23 @@
 				>
 					<mat-icon>headset</mat-icon>
 				</button>
+				<button
+					mat-mini-fab
+					[matTooltip]="stringsService.screenSwitchTitle"
+					matTooltipPosition="left"
+					[class.visibility-hidden]="
+						((p2pService.ioSwitcher.devices | await)?.screens
+							?.length || 0) < 1
+					"
+					(click)="
+						p2pService.ioSwitcher.switch(
+							'screens',
+							stringsService.screenSwitchTitle
+						)
+					"
+				>
+					<mat-icon>tv</mat-icon>
+				</button>
 			</smd-fab-actions>
 		</smd-fab-speed-dial>
 

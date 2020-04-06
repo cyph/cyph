@@ -198,10 +198,15 @@ export class AccountChatService extends ChatService {
 		this.accountSessionInitService.callType = callType;
 
 		const callRequestPromise = callType ?
-			this.p2pWebRTCService.request(
-				callType,
-				undefined,
-				'group' in chat ? chat.group.usernames : undefined
+			('passive' in chat && chat.passive ?
+				this.p2pWebRTCService.accept(callType, true) :
+				Promise.resolve()
+			).then(async () =>
+				this.p2pWebRTCService.request(
+					callType,
+					undefined,
+					'group' in chat ? chat.group.usernames : undefined
+				)
 			) :
 			Promise.resolve();
 

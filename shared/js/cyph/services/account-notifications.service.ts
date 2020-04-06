@@ -12,16 +12,17 @@ import {AccountDatabaseService} from './crypto/account-database.service';
 @Injectable()
 export class AccountNotificationsService extends BaseProvider {
 	/** Notification history. */
-	public readonly notifications = this.accountDatabaseService.watchListWithKeys<
-		IAccountNotification
-	>(
-		'notifications',
-		AccountNotification,
-		SecurityModels.unprotected,
-		undefined,
-		undefined,
-		this.subscriptions
-	);
+	public readonly notifications = this.accountDatabaseService
+		.watchListWithKeys<IAccountNotification>(
+			'notifications',
+			AccountNotification,
+			SecurityModels.unprotected,
+			undefined,
+			undefined,
+			this.subscriptions
+		)
+		/* TODO: Better / less arbitrary solution, such as virtual or infinite scrolling */
+		.pipe(map(notifications => notifications.reverse().slice(0, 100)));
 
 	/**
 	 * Unread count.

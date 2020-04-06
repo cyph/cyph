@@ -936,7 +936,10 @@ export class ChatService extends BaseProvider {
 				}
 			}
 
-			if (!this.chatSelfDestruct.value) {
+			if (
+				!this.chatSelfDestruct.value &&
+				!this.sessionInitService.callType
+			) {
 				this.addMessage({
 					shouldNotify: false,
 					timestamp: (await getTimestamp()) - 30000,
@@ -961,17 +964,6 @@ export class ChatService extends BaseProvider {
 	public async disconnectButton (
 		beforeClose?: () => MaybePromise<void>
 	) : Promise<void> {
-		if (
-			!(await this.dialogService.confirm({
-				cancel: this.stringsService.cancel,
-				content: this.stringsService.disconnectConfirm,
-				ok: this.stringsService.continueDialogAction,
-				title: this.stringsService.disconnectTitle
-			}))
-		) {
-			return;
-		}
-
 		if (beforeClose) {
 			await beforeClose();
 		}
@@ -1714,7 +1706,10 @@ export class ChatService extends BaseProvider {
 					}
 				}));
 
-				if (callType !== undefined) {
+				if (
+					callType !== undefined &&
+					!this.p2pWebRTCService.isActive.value
+				) {
 					(async () => {
 						await this.sessionService.freezePong
 							.pipe(

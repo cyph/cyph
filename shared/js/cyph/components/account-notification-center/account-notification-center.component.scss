@@ -13,4 +13,8 @@
 	.e-card.read:not(:hover) {
 		opacity: 0.5;
 	}
+
+	.e-card-header-title {
+		outline: none;
+	}
 }

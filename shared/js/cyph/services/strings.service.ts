@@ -1053,6 +1053,9 @@ export class StringsService extends BaseProvider {
 	public readonly saveUpperCase = `Save`;
 
 	/** @see StringsService */
+	public readonly screenSwitchTitle = `Share Screen`;
+
+	/** @see StringsService */
 	public readonly search = `Search`;
 
 	/** @see StringsService */

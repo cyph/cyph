@@ -24,27 +24,6 @@ var packageName		=
 		hostSplit[0].replace(/_/g, '.')
 ;
 
-/* Prefer native app on mobile where available */
-
-if (
-	packageName === 'cyph.app' &&
-	!isHiddenService &&
-	!locationString.replace(/^(.*?:\/\/)?.*?\/#?/, '').startsWith('burner/') &&
-	!storage.webSignAppRedirected
-) {
-	storage.webSignAppRedirected	= true;
-
-	var userAgent = navigator.userAgent.toLowerCase();
-
-	if (/android/.test(userAgent) || /ipad|iphone|ipod/.test(userAgent)) {
-		location	=
-			'https://cyph.page.link/?apn=com.cyph.app&ibi=com.cyph.app&isi=1422086509&link=' +
-			locationString
-		;
-		return;
-	}
-}
-
 /* Set pin on www subdomain on first use, then force naked domain */
 if (location.host.indexOf('www.') === 0) {
 	location.host	= location.host.replace('www.', '');

@@ -67,6 +67,9 @@ export interface IP2PWebRTCService {
 		stop: () => Promise<void>;
 	};
 
+	/** If true, screen sharing is allowed during the current call. */
+	readonly screenSharingEnabled: BehaviorSubject<boolean>;
+
 	/** If true, toggling video is allowed during the current call. */
 	readonly videoEnabled: BehaviorSubject<boolean>;
 
@@ -92,9 +95,12 @@ export interface IP2PWebRTCService {
 	close (incomingP2PKill?: boolean) : Promise<void>;
 
 	/** Gets all available I/O devices. */
-	getDevices () : Promise<{
+	getDevices (
+		includeScreens?: boolean
+	) : Promise<{
 		cameras: {label: string; switchTo: () => Promise<void>}[];
 		mics: {label: string; switchTo: () => Promise<void>}[];
+		screens: {label: string; switchTo: () => Promise<void>}[];
 		speakers: {label: string; switchTo: () => Promise<void>}[];
 	}>;
 
@@ -131,6 +137,6 @@ export interface IP2PWebRTCService {
 	 */
 	toggle (
 		medium?: 'audio' | 'video',
-		shouldPause?: boolean | {newDeviceID: string}
+		shouldPause?: boolean | {newDeviceID: string; screenShare?: boolean}
 	) : void;
 }
