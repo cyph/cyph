@@ -76,10 +76,12 @@ export class P2PWebRTCService extends BaseProvider
 	private readonly lastDeviceIDs: {
 		camera?: string;
 		mic?: string;
+		screenShare: boolean;
 		speaker?: string;
 	} = {
 		camera: undefined,
 		mic: undefined,
+		screenShare: false,
 		speaker: undefined
 	};
 
@@ -398,13 +400,27 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async getDevices () : Promise<{
+	public async getDevices (
+		includeScreens: boolean = false
+	) : Promise<{
 		cameras: {label: string; switchTo: () => Promise<void>}[];
 		mics: {label: string; switchTo: () => Promise<void>}[];
+		screens: {label: string; switchTo: () => Promise<void>}[];
 		speakers: {label: string; switchTo: () => Promise<void>}[];
 	}> {
-		const allDevices = await (async () =>
-			navigator.mediaDevices.enumerateDevices())().catch(() => []);
+		const [allDevices, screenSources]: [
+			MediaDeviceInfo[],
+			{id: string; name: string}[]
+		] = await Promise.all([
+			(async () =>
+				navigator.mediaDevices.enumerateDevices())().catch(() => []),
+			includeScreens && typeof cordovaRequire === 'function' ?
+				(async () =>
+					cordovaRequire('electron').desktopCapturer.getSources({
+						types: ['screen', 'window']
+					}))().catch(() => []) :
+				[]
+		]);
 
 		const filterDevices = (
 			kind: string,
@@ -442,6 +458,14 @@ export class P2PWebRTCService extends BaseProvider
 				(o: MediaDeviceInfo) => async () =>
 					this.toggle('audio', {newDeviceID: o.deviceId})
 			),
+			screens: screenSources.map(source => ({
+				label: source.name,
+				switchTo: async () =>
+					this.toggle('video', {
+						newDeviceID: source.id,
+						screenShare: true
+					})
+			})),
 			speakers: !('sinkId' in HTMLMediaElement.prototype) ?
 				[] :
 				filterDevices(
@@ -885,7 +909,7 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async toggle (
 		medium?: 'audio' | 'video',
-		shouldPause?: boolean | {newDeviceID: string}
+		shouldPause?: boolean | {newDeviceID: string; screenShare?: boolean}
 	) : Promise<void> {
 		const webRTC = await this.getWebRTC();
 
@@ -949,6 +973,7 @@ export class P2PWebRTCService extends BaseProvider
 						deviceIdChanged ||
 						this.lastDeviceIDs.camera !== shouldPause.newDeviceID;
 					this.lastDeviceIDs.camera = shouldPause.newDeviceID;
+					this.lastDeviceIDs.screenShare = !!shouldPause.screenShare;
 				}
 
 				const video =
@@ -976,6 +1001,14 @@ export class P2PWebRTCService extends BaseProvider
 						video:
 							!video || !this.lastDeviceIDs.camera ?
 								video :
+							this.lastDeviceIDs.screenShare ?
+								<any> {
+									mandatory: {
+										chromeMediaSource: 'desktop',
+										chromeMediaSourceId: this.lastDeviceIDs
+											.camera
+									}
+								} :
 								{deviceId: this.lastDeviceIDs.camera}
 					});
 				}

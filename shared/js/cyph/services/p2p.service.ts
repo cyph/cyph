@@ -116,21 +116,23 @@ export class P2PService extends BaseProvider {
 		devices: new BehaviorSubject<{
 			cameras: {label: string; switchTo: () => Promise<void>}[];
 			mics: {label: string; switchTo: () => Promise<void>}[];
+			screens: {label: string; switchTo: () => Promise<void>}[];
 			speakers: {label: string; switchTo: () => Promise<void>}[];
 		}>({
 			cameras: [],
 			mics: [],
+			screens: [],
 			speakers: []
 		}),
 		isOpen: new BehaviorSubject<boolean>(false),
-		open: async () => {
+		open: async (includeScreens: boolean = false) => {
 			this.ioSwitcher.devices.next(
-				await this.p2pWebRTCService.getDevices()
+				await this.p2pWebRTCService.getDevices(includeScreens)
 			);
 			this.ioSwitcher.isOpen.next(true);
 		},
 		switch: async (
-			kind: 'cameras' | 'mics' | 'speakers',
+			kind: 'cameras' | 'mics' | 'screens' | 'speakers',
 			title: string
 		) => {
 			try {
