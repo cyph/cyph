@@ -1033,7 +1033,7 @@ export class AccountService extends BaseProvider {
 				const route = routePath[0] || '';
 
 				const specialCases: {[k: string]: string} = {
-					'': 'Notifications',
+					'': this.stringsService.homeHeader,
 					'ehr': 'EHR',
 					'feed': 'Social Feed',
 					'inbox': 'Anonymous Inbox',
