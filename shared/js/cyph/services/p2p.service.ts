@@ -50,7 +50,7 @@ export class P2PService extends BaseProvider {
 			);
 		},
 		connected: async isConnected => {
-			if (!this.sessionInitService.ephemeral) {
+			if (this.sessionInitService.callType) {
 				return;
 			}
 
@@ -96,6 +96,10 @@ export class P2PService extends BaseProvider {
 			);
 		},
 		requestConfirmation: async () => {
+			if (this.sessionInitService.callType) {
+				return;
+			}
+
 			await this.chatService.addMessage({
 				shouldNotify: false,
 				value: this.sessionInitService.ephemeral ?

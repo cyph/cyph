@@ -936,7 +936,10 @@ export class ChatService extends BaseProvider {
 				}
 			}
 
-			if (!this.chatSelfDestruct.value) {
+			if (
+				!this.chatSelfDestruct.value &&
+				!this.sessionInitService.callType
+			) {
 				this.addMessage({
 					shouldNotify: false,
 					timestamp: (await getTimestamp()) - 30000,
