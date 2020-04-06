@@ -21,7 +21,8 @@ export class AccountNotificationsService extends BaseProvider {
 			undefined,
 			this.subscriptions
 		)
-		.pipe(map(notifications => notifications.reverse()));
+		/* TODO: Better / less arbitrary solution, such as virtual or infinite scrolling */
+		.pipe(map(notifications => notifications.reverse().slice(0, 100)));
 
 	/**
 	 * Unread count.
