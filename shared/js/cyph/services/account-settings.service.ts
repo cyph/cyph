@@ -73,6 +73,14 @@ export class AccountSettingsService extends BaseProvider {
 			this.plan.pipe(
 				map(plan => this.configService.planConfig[plan].enableScheduler)
 			),
+		screenSharing: this.envService.debug ?
+			of(true) :
+			this.plan.pipe(
+				map(
+					plan =>
+						this.configService.planConfig[plan].enableScreenSharing
+				)
+			),
 		wallets:
 			this.envService.debug ||
 			(!!this.envService.environment.customBuild &&

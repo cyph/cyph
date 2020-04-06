@@ -209,6 +209,9 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly resolveReady: () => void = this._READY.resolve;
 
 	/** @inheritDoc */
+	public readonly screenSharingEnabled = new BehaviorSubject<boolean>(false);
+
+	/** @inheritDoc */
 	public readonly videoEnabled = new BehaviorSubject<boolean>(true);
 
 	/** @inheritDoc */
@@ -414,7 +417,9 @@ export class P2PWebRTCService extends BaseProvider
 		] = await Promise.all([
 			(async () =>
 				navigator.mediaDevices.enumerateDevices())().catch(() => []),
-			includeScreens && typeof cordovaRequire === 'function' ?
+			includeScreens &&
+			typeof cordovaRequire === 'function' &&
+			this.screenSharingEnabled.value ?
 				(async () =>
 					cordovaRequire('electron').desktopCapturer.getSources({
 						types: ['screen', 'window']

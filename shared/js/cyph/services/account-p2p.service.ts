@@ -10,6 +10,7 @@ import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
+import {AccountSettingsService} from './account-settings.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
 import {AccountService} from './account.service';
 import {ChatService} from './chat.service';
@@ -209,6 +210,16 @@ export class AccountP2PService extends P2PService {
 				this.accountService.isCallActive.next(isActive);
 			})
 		);
+
+		this.subscriptions.push(
+			this.accountSettingsService.staticFeatureFlags.screenSharing.subscribe(
+				screenSharingEnabled => {
+					this.p2pWebRTCService.screenSharingEnabled.next(
+						screenSharingEnabled
+					);
+				}
+			)
+		);
 	}
 
 	/** @inheritDoc */
@@ -269,6 +280,9 @@ export class AccountP2PService extends P2PService {
 
 		/** @ignore */
 		private readonly accountSessionService: AccountSessionService,
+
+		/** @ignore */
+		private readonly accountSettingsService: AccountSettingsService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,

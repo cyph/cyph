@@ -67,6 +67,9 @@ export interface IP2PWebRTCService {
 		stop: () => Promise<void>;
 	};
 
+	/** If true, screen sharing is allowed during the current call. */
+	readonly screenSharingEnabled: BehaviorSubject<boolean>;
+
 	/** If true, toggling video is allowed during the current call. */
 	readonly videoEnabled: BehaviorSubject<boolean>;
 

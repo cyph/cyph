@@ -4,6 +4,7 @@ interface IPlanTypeConfig {
 	enableGroup: boolean;
 	enablePasswords: boolean;
 	enableScheduler: boolean;
+	enableScreenSharing: boolean;
 	enableWallets: boolean;
 	initialInvites?: number;
 	innerCircleLimit?: number;
@@ -20,6 +21,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: true,
 		enablePasswords: false,
 		enableScheduler: true,
+		enableScreenSharing: false,
 		enableWallets: false,
 		planType: CyphPlanTypes.Business,
 		rank: 2,
@@ -32,6 +34,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: true,
 		enablePasswords: true,
 		enableScheduler: true,
+		enableScreenSharing: true,
 		enableWallets: true,
 		planType: CyphPlanTypes.FoundersAndFriends,
 		rank: 4,
@@ -44,6 +47,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: false,
 		enablePasswords: false,
 		enableScheduler: false,
+		enableScreenSharing: false,
 		enableWallets: false,
 		initialInvites: 2,
 		innerCircleLimit: 5,
@@ -58,6 +62,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: true,
 		enablePasswords: true,
 		enableScheduler: false,
+		enableScreenSharing: false,
 		enableWallets: true,
 		planType: CyphPlanTypes.Platinum,
 		rank: 3,
@@ -70,6 +75,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: true,
 		enablePasswords: false,
 		enableScheduler: false,
+		enableScreenSharing: false,
 		enableWallets: false,
 		planType: CyphPlanTypes.Premium,
 		rank: 2,
@@ -82,6 +88,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: true,
 		enablePasswords: false,
 		enableScheduler: false,
+		enableScreenSharing: false,
 		enableWallets: false,
 		innerCircleLimit: 15,
 		planType: CyphPlanTypes.Supporter,
@@ -95,6 +102,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableGroup: true,
 		enablePasswords: false,
 		enableScheduler: true,
+		enableScreenSharing: false,
 		enableWallets: false,
 		planType: CyphPlanTypes.Telehealth,
 		rank: 2,
