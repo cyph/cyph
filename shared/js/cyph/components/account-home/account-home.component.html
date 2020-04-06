@@ -1,4 +1,41 @@
-<cyph-account-notification-center></cyph-account-notification-center>
+<div fxLayout="column">
+	<div
+		class="quick-actions"
+		fxLayout="row"
+		fxLayoutAlign="center center"
+		fxLayoutGap="8px"
+	>
+		<ng-container *ngIf="!envService.isMobileOS; else mobileQuickActions">
+			<button
+				mat-raised-button
+				cyphTranslate
+				color="accent"
+				routerLink="/profile"
+			>
+				Go to Contacts/Messages & Profile
+			</button>
+		</ng-container>
+		<ng-template #mobileQuickActions>
+			<button
+				mat-raised-button
+				cyphTranslate
+				color="accent"
+				routerLink="/contacts"
+			>
+				Go to Contacts/Messages
+			</button>
+			<button
+				mat-raised-button
+				cyphTranslate
+				color="accent"
+				routerLink="/profile"
+			>
+				Go to Profile
+			</button>
+		</ng-template>
+	</div>
+	<cyph-account-notification-center fxFlex></cyph-account-notification-center>
+</div>
 
 <div
 	*ngIf="

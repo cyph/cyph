@@ -1030,13 +1030,14 @@ export class AccountService extends BaseProvider {
 			/* eslint-disable-next-line complexity */
 			map(([{contextMenuActions, header}, isMobile, _]) => {
 				const routePath = this.routePath;
-				const route = routePath[0];
+				const route = routePath[0] || '';
 
 				const specialCases: {[k: string]: string} = {
-					ehr: 'EHR',
-					feed: 'Social Feed',
-					inbox: 'Anonymous Inbox',
-					schedule: 'Appointment Scheduler'
+					'': 'Notifications',
+					'ehr': 'EHR',
+					'feed': 'Social Feed',
+					'inbox': 'Anonymous Inbox',
+					'schedule': 'Appointment Scheduler'
 				};
 
 				/* User headers on desktop are redundant with sidebar */
@@ -1095,6 +1096,7 @@ export class AccountService extends BaseProvider {
 				*/
 				if (
 					[
+						'',
 						'404',
 						'appointments',
 						'contacts',

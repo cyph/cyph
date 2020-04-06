@@ -759,6 +759,9 @@ export class StringsService extends BaseProvider {
 	public readonly noIncomingAppointments = `You have no incoming appointment requests`;
 
 	/** @see StringsService */
+	public readonly noNotifications = `This is where your notification history will appear`;
+
+	/** @see StringsService */
 	public readonly notes = `Notes`;
 
 	/** @see StringsService */

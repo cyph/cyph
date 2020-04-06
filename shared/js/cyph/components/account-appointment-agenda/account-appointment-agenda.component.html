@@ -1,15 +1,14 @@
 <div fxLayout="column">
 	<div
 		class="quick-actions"
-		fxLayoutAlign="center center"
-		fxLayoutGap="9px"
 		fxLayout="row"
+		fxLayoutAlign="center center"
+		fxLayoutGap="8px"
 	>
 		<button
 			mat-raised-button
 			cyphTranslate
 			color="accent"
-			matTooltipPosition="above"
 			routerLink="/request-appointment"
 		>
 			New Appointment
@@ -18,7 +17,6 @@
 			mat-raised-button
 			cyphTranslate
 			color="accent"
-			matTooltipPosition="above"
 			(click)="
 				!accountDatabaseService.currentUser.value?.agseConfirmed ?
 					openWindow(envService.cyphVideoUrl) :
