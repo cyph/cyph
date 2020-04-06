@@ -17,35 +17,32 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountNotificationsService extends BaseProvider {
 	/** Notification history. */
-	public readonly notifications = this.accountDatabaseService
-		.watchListWithKeys<IAccountNotification>(
-			'notifications',
-			AccountNotification,
-			SecurityModels.unprotected,
-			undefined,
-			undefined,
-			this.subscriptions
-		)
-		/* TODO: Better / less arbitrary solution, such as virtual or infinite scrolling */
-		.pipe(
-			map(notifications =>
-				notifications.length > 0 ?
-					notifications.reverse().slice(0, 100) :
-					[
-						{
-							id: '',
-							value: {
-								isRead: true,
-								text: this.stringsService.noNotifications,
-								textDetail: '',
-								/* eslint-disable-next-line @typescript-eslint/tslint/config */
-								timestamp: Date.now(),
-								type: NotificationTypes.Yo
-							}
-						}
-					]
+	public readonly notifications = toBehaviorSubject(
+		this.accountDatabaseService
+			.watchListWithKeys<IAccountNotification>(
+				'notifications',
+				AccountNotification,
+				SecurityModels.unprotected,
+				undefined,
+				undefined,
+				this.subscriptions
 			)
-		);
+			/* TODO: Better / less arbitrary solution, such as virtual or infinite scrolling */
+			.pipe(map(notifications => notifications.reverse().slice(0, 100))),
+		[
+			{
+				id: '',
+				value: {
+					isRead: true,
+					text: this.stringsService.noNotifications,
+					textDetail: '',
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					timestamp: Date.now(),
+					type: NotificationTypes.Yo
+				}
+			}
+		]
+	);
 
 	/**
 	 * Unread count.
