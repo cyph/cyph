@@ -964,17 +964,6 @@ export class ChatService extends BaseProvider {
 	public async disconnectButton (
 		beforeClose?: () => MaybePromise<void>
 	) : Promise<void> {
-		if (
-			!(await this.dialogService.confirm({
-				cancel: this.stringsService.cancel,
-				content: this.stringsService.disconnectConfirm,
-				ok: this.stringsService.continueDialogAction,
-				title: this.stringsService.disconnectTitle
-			}))
-		) {
-			return;
-		}
-
 		if (beforeClose) {
 			await beforeClose();
 		}
