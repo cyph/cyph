@@ -8,21 +8,24 @@
 		class="card-holder"
 		(click)="accountNotificationsService.markAsRead(notification)"
 	>
-		<div class="e-card" [class.read]="notification.value.isRead">
+		<div
+			class="e-card"
+			[class.read]="notification.value.isRead"
+			[matTooltip]="getDateTimeString(notification.value.timestamp)"
+		>
 			<div class="e-card-header">
 				<div class="e-card-header-caption">
 					<div
 						class="e-card-header-title"
-						[routerLink]="'/profile/' + notification.value.username"
+						[routerLink]="
+							notification.value.username ?
+								'/profile/' + notification.value.username :
+								undefined
+						"
 					>
 						{{ notification.value.text }}
 					</div>
-					<div
-						class="e-card-sub-title"
-						[matTooltip]="
-							getDateTimeString(notification.value.timestamp)
-						"
-					>
+					<div class="e-card-sub-title">
 						{{
 							watchRelativeDateTimeString(
 								notification.value.timestamp
