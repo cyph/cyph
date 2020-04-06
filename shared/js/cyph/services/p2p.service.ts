@@ -140,6 +140,10 @@ export class P2PService extends BaseProvider {
 			title: string
 		) => {
 			try {
+				if (kind === 'screens') {
+					await this.ioSwitcher.open(true);
+				}
+
 				const devices = this.ioSwitcher.devices.value[kind];
 
 				const device = await this.dialogService.prompt({
