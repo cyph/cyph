@@ -57,6 +57,10 @@
 			</mat-sidenav>
 
 			<div fxFlexFill fxLayout="column">
+				<ng-container *ngIf="(envService.isMobile | await) === false">
+					<ng-container *ngTemplateOutlet="banners"></ng-container>
+				</ng-container>
+
 				<div
 					fxLayout="row"
 					class="header slideInDown"
@@ -233,148 +237,159 @@
 					<div></div>
 				</div>
 
-				<h3
-					class="cyph-banner alert"
-					*ngIf="salesService.mobileAppBanner | await"
-				>
-					<div fxFlex fxLayout="row">
-						<div
-							fxLayoutAlign="center center"
-							class="visibility-hidden"
-						>
-							<button
-								mat-icon-button
-								cyphTranslate
-								matTooltip="Close"
-								class="close"
-							>
-								<mat-icon>close</mat-icon>
-							</button>
-						</div>
-						<div fxFlex fxLayoutAlign="center center">
-							<div>
-								<span cyphTranslate>
-									For a better experience, we recommend that
-									you
-								</span>
-								&ngsp;
-								<a
-									cyphTranslate
-									(click)="salesService.openMobileApp()"
-									>install the mobile app</a
-								>.
-							</div>
-						</div>
-						<div fxLayoutAlign="center center">
-							<button
-								mat-icon-button
-								cyphTranslate
-								matTooltip="Close"
-								class="close"
-								(click)="salesService.dismissMobileAppBanner()"
-							>
-								<mat-icon>close</mat-icon>
-							</button>
-						</div>
-					</div>
-				</h3>
+				<ng-container *ngIf="envService.isMobile | await">
+					<ng-container *ngTemplateOutlet="banners"></ng-container>
+				</ng-container>
 
-				<h3
-					class="cyph-banner alert"
-					*ngIf="accountService.upsellBanner | await"
-				>
-					<div fxFlex fxLayout="row">
-						<div
-							fxLayoutAlign="center center"
-							class="visibility-hidden"
-						>
-							<button
-								mat-icon-button
-								cyphTranslate
-								matTooltip="Close"
-								class="close"
-							>
-								<mat-icon>close</mat-icon>
-							</button>
-						</div>
-						<div fxFlex fxLayoutAlign="center center">
-							<div>
-								<span cyphTranslate>
-									For a ton of extra features,
-								</span>
-								&ngsp;
-								<a
-									cyphTranslate
-									(click)="
-										salesService.openPricing($event, [
-											envService.homeUrl,
-											'pricing?current=',
-											cyphPlans[
-												accountSettingsService.plan
-													.value || cyphPlans.Free
-											],
-											'&userToken=',
-											accountService.getUserToken(
-												accountService.interstitial
-											)
-										])
-									"
-									>upgrade to premium now</a
-								>!
-							</div>
-						</div>
-						<div fxLayoutAlign="center center">
-							<button
-								mat-icon-button
-								cyphTranslate
-								matTooltip="Close"
-								class="close"
-								(click)="salesService.dismissUpsellBanner()"
-							>
-								<mat-icon>close</mat-icon>
-							</button>
-						</div>
-					</div>
-				</h3>
-
-				<h3
-					class="cyph-banner alert"
-					*ngIf="
-						(accountService.accountGoodStanding | await) === false;
-						else unverifiedAccountBanner
-					"
-				>
-					<span cyphTranslate>
-						We were unable to process your payment.
-					</span>
-					&ngsp;
-					<a
-						cyphTranslate
-						(click)="
-							salesService.openPricing($event, [
-								envService.homeUrl,
-								'checkout/#',
-								configService.planConfig[
-									accountSettingsService.plan.value ||
-										cyphPlans.Free
-								].checkoutPath || '',
-								'/userToken=',
-								accountService.getUserToken(
-									accountService.interstitial
-								)
-							])
-						"
-						>Update your payment details</a
+				<ng-template #banners>
+					<h3
+						class="cyph-banner alert"
+						*ngIf="salesService.mobileAppBanner | await"
 					>
-					&ngsp;
-					<span cyphTranslate>
-						or downgrade to a free plan
-					</span>
-					&ngsp;
-					<a cyphTranslate (click)="accountService.downgradeAccount()"
-						>here</a
-					>.
-				</h3>
+						<div fxFlex fxLayout="row">
+							<div
+								fxLayoutAlign="center center"
+								class="visibility-hidden"
+							>
+								<button
+									mat-icon-button
+									cyphTranslate
+									matTooltip="Close"
+									class="close"
+								>
+									<mat-icon>close</mat-icon>
+								</button>
+							</div>
+							<div fxFlex fxLayoutAlign="center center">
+								<div>
+									<span cyphTranslate>
+										For a better experience, we recommend
+										that you
+									</span>
+									&ngsp;
+									<a
+										cyphTranslate
+										(click)="salesService.openMobileApp()"
+										>install the mobile app</a
+									>.
+								</div>
+							</div>
+							<div fxLayoutAlign="center center">
+								<button
+									mat-icon-button
+									cyphTranslate
+									matTooltip="Close"
+									class="close"
+									(click)="
+										salesService.dismissMobileAppBanner()
+									"
+								>
+									<mat-icon>close</mat-icon>
+								</button>
+							</div>
+						</div>
+					</h3>
+
+					<h3
+						class="cyph-banner alert"
+						*ngIf="accountService.upsellBanner | await"
+					>
+						<div fxFlex fxLayout="row">
+							<div
+								fxLayoutAlign="center center"
+								class="visibility-hidden"
+							>
+								<button
+									mat-icon-button
+									cyphTranslate
+									matTooltip="Close"
+									class="close"
+								>
+									<mat-icon>close</mat-icon>
+								</button>
+							</div>
+							<div fxFlex fxLayoutAlign="center center">
+								<div>
+									<span cyphTranslate>
+										For a ton of extra features,
+									</span>
+									&ngsp;
+									<a
+										cyphTranslate
+										(click)="
+											salesService.openPricing($event, [
+												envService.homeUrl,
+												'pricing?current=',
+												cyphPlans[
+													accountSettingsService.plan
+														.value || cyphPlans.Free
+												],
+												'&userToken=',
+												accountService.getUserToken(
+													accountService.interstitial
+												)
+											])
+										"
+										>upgrade to premium now</a
+									>!
+								</div>
+							</div>
+							<div fxLayoutAlign="center center">
+								<button
+									mat-icon-button
+									cyphTranslate
+									matTooltip="Close"
+									class="close"
+									(click)="salesService.dismissUpsellBanner()"
+								>
+									<mat-icon>close</mat-icon>
+								</button>
+							</div>
+						</div>
+					</h3>
+
+					<h3
+						class="cyph-banner alert"
+						*ngIf="
+							(accountService.accountGoodStanding | await) ===
+								false;
+							else unverifiedAccountBanner
+						"
+					>
+						<span cyphTranslate>
+							We were unable to process your payment.
+						</span>
+						&ngsp;
+						<a
+							cyphTranslate
+							(click)="
+								salesService.openPricing($event, [
+									envService.homeUrl,
+									'checkout/#',
+									configService.planConfig[
+										accountSettingsService.plan.value ||
+											cyphPlans.Free
+									].checkoutPath || '',
+									'/userToken=',
+									accountService.getUserToken(
+										accountService.interstitial
+									)
+								])
+							"
+							>Update your payment details</a
+						>
+						&ngsp;
+						<span cyphTranslate>
+							or downgrade to a free plan
+						</span>
+						&ngsp;
+						<a
+							cyphTranslate
+							(click)="accountService.downgradeAccount()"
+							>here</a
+						>.
+					</h3>
+				</ng-template>
 
 				<ng-template #unverifiedAccountBanner>
 					<h3
