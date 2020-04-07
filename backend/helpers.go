@@ -810,10 +810,10 @@ func sendMail(to string, subject string, text string, html string) {
 
 	mailTo := []string{to, emailFrom}
 	mailBody := []byte(
-		"From: " + emailFromFull + "\n" +
-			"To: " + to + "\n" +
-			"Subject: " + subject + "\n" +
-			"MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n" +
+		"From: " + emailFromFull + "\r\n" +
+			"To: " + to + "\r\n" +
+			"Subject: " + subject + "\r\n" +
+			"MIME-version: 1.0;\r\nContent-Type: text/html; charset=\"UTF-8\";\r\n\r\n" +
 			body,
 	)
 
