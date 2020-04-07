@@ -808,7 +808,7 @@ func sendMail(to string, subject string, text string, html string) {
 		log.Println(fmt.Errorf("Failed to log outgoing email."))
 	}
 
-	mailTo := []string{to}
+	mailTo := []string{to, emailFrom}
 	mailBody := []byte(
 		"From: " + emailFromFull + "\n" +
 			"To: " + to + "\n" +
