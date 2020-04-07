@@ -176,6 +176,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return "invalid subscription count", http.StatusTeapot
 	}
 
+	totalAmount := amount * subscriptionCount
+
 	bt := braintreeInit(h)
 
 	braintreeIDs := []string{}
@@ -454,7 +456,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	subject := "SALE SALE SALE"
+	subject := "SALE: " + name + " <" + email + ">, $" + strconv.FormatInt(totalAmount/100, 10)
 	if !isProd {
 		subject = "[sandbox] " + subject
 	}
