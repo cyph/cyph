@@ -813,8 +813,15 @@ func sendMail(to string, subject string, text string, html string) {
 		"From: " + emailFromFull + "\r\n" +
 			"To: " + to + "\r\n" +
 			"Subject: " + subject + "\r\n" +
-			"MIME-version: 1.0;\r\nContent-Type: text/html; charset=\"UTF-8\";\r\n\r\n" +
-			body,
+			"MIME-Version: 1.0\r\n" +
+			"Content-Type: multipart/alternative; boundary=\"- CYPH EMAIL -\"\r\n\r\n" +
+			"--- CYPH EMAIL -\r\n" +
+			"Content-Type: text/plain; charset=\"utf-8\"\r\n\r\n" +
+			text + "\r\n\r\n" +
+			"--- CYPH EMAIL -\r\n" +
+			"Content-Type: text/html; charset=\"utf-8\"\r\n\r\n" +
+			body + "\r\n\r\n" +
+			"--- CYPH EMAIL ---",
 	)
 
 	err = smtp.SendMail(
