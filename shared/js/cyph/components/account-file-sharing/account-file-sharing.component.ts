@@ -139,7 +139,3 @@ export class AccountFileSharingComponent extends BaseProvider {
 		super();
 	}
 }
-
-AccountFilesService.accountFileSharingComponent.resolve(
-	AccountFileSharingComponent
-);

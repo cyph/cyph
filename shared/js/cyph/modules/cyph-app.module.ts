@@ -207,6 +207,10 @@ export class CyphAppModule {
 		accountPostsService: AccountPostsService,
 		databaseService: DatabaseService
 	) {
+		AccountFilesService.accountFileSharingComponent.resolve(
+			AccountFileSharingComponent
+		);
+
 		/* For debugging */
 
 		(<any> self).accountService = accountService;
