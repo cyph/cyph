@@ -615,6 +615,25 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
+	public async prepareForCallType (
+		callType: 'audio' | 'video' | undefined = this.sessionInitService
+			.callType
+	) : Promise<void> {
+		if (!callType || !this.envService.isWeb) {
+			return;
+		}
+
+		const stream = await navigator.mediaDevices.getUserMedia({
+			audio: true,
+			video: callType === 'video'
+		});
+
+		for (const track of stream.getTracks()) {
+			track.stop();
+		}
+	}
+
+	/** @inheritDoc */
 	public async processMessageData (
 		data: ISessionMessageDataInternal,
 		initial: boolean = false

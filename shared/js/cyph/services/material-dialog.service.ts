@@ -30,6 +30,9 @@ export class MaterialDialogService extends BaseProvider
 	private readonly lock: LockFunction = lockFunction();
 
 	/** @ignore */
+	private readonly toastLock: LockFunction = lockFunction();
+
+	/** @ignore */
 	private async confirmHelper (
 		o: {
 			bottomSheet?: boolean;
@@ -447,24 +450,26 @@ export class MaterialDialogService extends BaseProvider
 		duration: number = 2500,
 		action?: string
 	) : Promise<boolean> {
-		const snackbar = this.matSnackbar.open(
-			content,
-			action === undefined ? undefined : action.toUpperCase(),
-			{duration: duration > 0 ? duration : undefined}
-		);
+		return this.toastLock(async () => {
+			const snackbar = this.matSnackbar.open(
+				content,
+				action === undefined ? undefined : action.toUpperCase(),
+				{duration: duration > 0 ? duration : undefined}
+			);
 
-		const wasManuallyDismissed =
-			(await snackbar
-				.onAction()
-				.pipe(map(() => true))
-				.toPromise()) || false;
+			const wasManuallyDismissed =
+				(await snackbar
+					.onAction()
+					.pipe(map(() => true))
+					.toPromise()) || false;
 
-		if (wasManuallyDismissed) {
-			return true;
-		}
+			if (wasManuallyDismissed) {
+				return true;
+			}
 
-		await sleep(500);
-		return false;
+			await sleep(500);
+			return false;
+		});
 	}
 
 	constructor (

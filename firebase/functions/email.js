@@ -91,6 +91,7 @@ const sendMailInternal = async (
 	const mailObject = !to ?
 		undefined :
 		{
+			bcc: from,
 			from: `Cyph <${from}>`,
 			html: !text ?
 				'' :

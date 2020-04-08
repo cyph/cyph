@@ -61,9 +61,6 @@ export class P2PWebRTCService extends BaseProvider
 	private readonly disconnectInternal: Subject<void> = new Subject();
 
 	/** @ignore */
-	private readonly handlers: Promise<IP2PHandlers> = this._HANDLERS.promise;
-
-	/** @ignore */
 	private readonly harkers = new Map<MediaStream, hark.Harker>();
 
 	/** @ignore */
@@ -106,6 +103,9 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly disconnect: Observable<void> = this.disconnectInternal;
+
+	/** @inheritDoc */
+	public readonly handlers: Promise<IP2PHandlers> = this._HANDLERS.promise;
 
 	/** @inheritDoc */
 	public readonly incomingStreams = new BehaviorSubject<
@@ -675,7 +675,7 @@ export class P2PWebRTCService extends BaseProvider
 								.join('\n') :
 							sdp,
 					stream: localStream,
-					trickle: false
+					trickle: true
 				});
 
 				peer.on('close', async () => {

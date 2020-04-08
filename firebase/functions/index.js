@@ -1303,11 +1303,13 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 					LNAME: lastName,
 					PLAN: CyphPlans[plan]
 				}
-			).then(async mailingListID =>
-				database
-					.ref(`${namespace}/pendingInvites/${inviteCode}`)
-					.set(mailingListID)
-			) :
+			)
+				.then(async mailingListID =>
+					database
+						.ref(`${namespace}/pendingInvites/${inviteCode}`)
+						.set(mailingListID)
+				)
+				.catch(() => {}) :
 			undefined
 	]);
 

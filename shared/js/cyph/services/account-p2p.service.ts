@@ -50,10 +50,7 @@ export class AccountP2PService extends P2PService {
 	protected async p2pWarningPersist (
 		f: () => Promise<boolean>
 	) : Promise<boolean> {
-		if (
-			!this.accountDatabaseService.currentUser.value ||
-			this.sessionInitService.ephemeral
-		) {
+		if (!this.accountDatabaseService.currentUser.value) {
 			return f();
 		}
 
@@ -158,6 +155,15 @@ export class AccountP2PService extends P2PService {
 				),
 				title: this.stringsService.p2pTitle
 			});
+			return;
+		}
+
+		const hasPermission = await this.accountSessionService
+			.prepareForCallType(callType)
+			.then(() => true)
+			.catch(() => false);
+
+		if (!hasPermission) {
 			return;
 		}
 

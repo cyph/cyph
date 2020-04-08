@@ -1061,7 +1061,9 @@
 					"
 					placeholder="Confirm Master Key"
 					required
-					(keyup.enter)="submit()"
+					(keydown.enter)="
+						confirmMasterKey(); $event.preventDefault()
+					"
 				/>
 				<mat-icon
 					matSuffix

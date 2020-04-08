@@ -523,7 +523,10 @@
 				fxLayout="row"
 				*ngIf="
 					(editMode | await) === false &&
-					(accountSettingsService.featureFlags.social.watch() | await)
+					((accountDatabaseService.currentUser | await) ===
+						undefined ||
+						(accountSettingsService.featureFlags.social.watch()
+							| await))
 				"
 			>
 				<div fxFlex fxLayout="column">

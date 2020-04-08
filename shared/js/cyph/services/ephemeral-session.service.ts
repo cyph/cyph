@@ -298,6 +298,8 @@ export class EphemeralSessionService extends SessionService {
 
 		(async () => {
 			try {
+				await this.prepareForCallType();
+
 				this.init(
 					await (this.state.startingNewCyph.value === undefined ?
 						this.localStorageService.getOrSetDefault(

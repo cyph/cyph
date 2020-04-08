@@ -13,6 +13,9 @@ export interface IP2PWebRTCService {
 	/** Emits on session disconnect. */
 	readonly disconnect: Observable<void>;
 
+	/** @see IP2PHandlers */
+	readonly handlers: Promise<IP2PHandlers>;
+
 	/** Incoming stream data. */
 	readonly incomingStreams: BehaviorSubject<
 		{

@@ -61,6 +61,9 @@ export class AccountChatService extends ChatService {
 	}>();
 
 	/** @inheritDoc */
+	protected readonly account: boolean = true;
+
+	/** @inheritDoc */
 	public readonly remoteUser = this.accountSessionService.remoteUser;
 
 	/** @inheritDoc */
@@ -198,15 +201,28 @@ export class AccountChatService extends ChatService {
 		this.accountSessionInitService.callType = callType;
 
 		const callRequestPromise = callType ?
-			('passive' in chat && chat.passive ?
-				this.p2pWebRTCService.accept(callType, true) :
-				Promise.resolve()
-			).then(async () =>
-				this.p2pWebRTCService.request(
-					callType,
-					undefined,
-					'group' in chat ? chat.group.usernames : undefined
-				)
+			(async () => {
+				if (!('anonymousChannelID' in chat)) {
+					return true;
+				}
+
+				const isPassiveAccepted = (await this.p2pWebRTCService
+					.handlers).passiveAcceptConfirm(callType);
+
+				if (!isPassiveAccepted) {
+					return false;
+				}
+
+				await this.p2pWebRTCService.accept(callType, true);
+				return true;
+			})().then(async requestCall =>
+				requestCall ?
+					this.p2pWebRTCService.request(
+						callType,
+						undefined,
+						'group' in chat ? chat.group.usernames : undefined
+					) :
+					undefined
 			) :
 			Promise.resolve();
 

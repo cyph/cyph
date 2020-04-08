@@ -123,6 +123,11 @@ export interface ISessionService {
 	/** Returns first occurrence of event. */
 	one<T> (event: string) : Promise<T>;
 
+	/** If applicable, requests necessary I/O permissions. */
+	prepareForCallType (
+		callType?: 'audio' | 'video' | undefined
+	) : Promise<void>;
+
 	/** Converts an ISessionMessageDataInternal into an ISessionMessageData. */
 	processMessageData (
 		data: ISessionMessageDataInternal,

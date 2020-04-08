@@ -77,6 +77,14 @@ export class P2PService extends BaseProvider {
 				title: this.stringsService.p2pTitle
 			});
 		},
+		passiveAcceptConfirm: async callType =>
+			!(await this.dialogService.toast(
+				callType === 'video' ?
+					this.stringsService.p2pWarningVideoPassive :
+					this.stringsService.p2pWarningAudioPassive,
+				5000,
+				this.stringsService.cancel
+			)),
 		requestConfirm: async (callType, isAccepted = false) => {
 			if (isAccepted) {
 				return true;

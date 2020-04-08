@@ -90,9 +90,6 @@ export class ChatService extends BaseProvider {
 	private static readonly approximateKeyExchangeTime: number = 9000;
 
 	/** @ignore */
-	private static readonly p2pPassiveConnectTime: number = 5000;
-
-	/** @ignore */
 	private readonly fullyLoadedMessages = new Map<string, IResolvable<void>>();
 
 	/** @ignore */
@@ -126,6 +123,9 @@ export class ChatService extends BaseProvider {
 
 	/** @ignore */
 	private readonly messageConfirmLock: LockFunction = lockFunction();
+
+	/** Indicates whether or not this is an Accounts instance. */
+	protected readonly account: boolean = false;
 
 	/** IDs of fetched messages. */
 	protected readonly fetchedMessageIDs = new LocalAsyncSet<string>();
@@ -1708,7 +1708,8 @@ export class ChatService extends BaseProvider {
 
 				if (
 					callType !== undefined &&
-					!this.p2pWebRTCService.isActive.value
+					!this.p2pWebRTCService.isActive.value &&
+					!this.account
 				) {
 					(async () => {
 						await this.sessionService.freezePong
@@ -1722,15 +1723,12 @@ export class ChatService extends BaseProvider {
 							this.initProgressStart(42000);
 						}
 
-						const canceled = await this.dialogService.toast(
-							callType === 'video' ?
-								this.stringsService.p2pWarningVideoPassive :
-								this.stringsService.p2pWarningAudioPassive,
-							ChatService.p2pPassiveConnectTime,
-							this.stringsService.cancel
+						const isPassiveAccepted = await (await this
+							.p2pWebRTCService.handlers).passiveAcceptConfirm(
+							callType
 						);
 
-						if (!canceled) {
+						if (isPassiveAccepted) {
 							await this.p2pWebRTCService.accept(callType, true);
 						}
 						else if (this.sessionInitService.ephemeral) {
@@ -1744,7 +1742,7 @@ export class ChatService extends BaseProvider {
 							await beginChat;
 						}
 
-						if (canceled) {
+						if (!isPassiveAccepted) {
 							await this.p2pWebRTCService.close();
 						}
 						else {
