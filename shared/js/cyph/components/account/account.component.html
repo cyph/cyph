@@ -242,6 +242,50 @@
 				</ng-container>
 
 				<ng-template #banners>
+					<h3 class="cyph-banner alert">
+						<div fxFlex fxLayout="row">
+							<div
+								fxLayoutAlign="center center"
+								class="visibility-hidden"
+							>
+								<button
+									mat-icon-button
+									cyphTranslate
+									matTooltip="Close"
+									class="close"
+								>
+									<mat-icon>close</mat-icon>
+								</button>
+							</div>
+							<div fxFlex fxLayoutAlign="center center">
+								<div>
+									<a
+										cyphTranslate
+										href="https://twitter.com/googlecloud/status/1247892524909228033"
+										>A Google Cloud incident</a
+									>
+									&ngsp;
+									<span cyphTranslate>
+										is currently affecting Cyph. Certain
+										features may not work right now.
+									</span>
+								</div>
+							</div>
+							<div
+								fxLayoutAlign="center center"
+								class="visibility-hidden"
+							>
+								<button
+									mat-icon-button
+									cyphTranslate
+									matTooltip="Close"
+									class="close"
+								>
+									<mat-icon>close</mat-icon>
+								</button>
+							</div>
+						</div>
+					</h3>
 					<h3
 						class="cyph-banner alert"
 						*ngIf="salesService.mobileAppBanner | await"
