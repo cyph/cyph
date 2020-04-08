@@ -158,6 +158,15 @@ export class AccountP2PService extends P2PService {
 			return;
 		}
 
+		const hasPermission = await this.accountSessionService
+			.prepareForCallType(callType)
+			.then(() => true)
+			.catch(() => false);
+
+		if (!hasPermission) {
+			return;
+		}
+
 		this.accountService.autoUpdate.next(false);
 		this.p2pWebRTCService.disconnect
 			.pipe(take(1))

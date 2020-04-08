@@ -124,7 +124,9 @@ export interface ISessionService {
 	one<T> (event: string) : Promise<T>;
 
 	/** If applicable, requests necessary I/O permissions. */
-	prepareForCallType () : Promise<void>;
+	prepareForCallType (
+		callType?: 'audio' | 'video' | undefined
+	) : Promise<void>;
 
 	/** Converts an ISessionMessageDataInternal into an ISessionMessageData. */
 	processMessageData (
