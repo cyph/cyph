@@ -201,20 +201,21 @@ export class AccountChatService extends ChatService {
 		this.accountSessionInitService.callType = callType;
 
 		const callRequestPromise = callType ?
-			('anonymousChannelID' in chat ?
-				this.p2pWebRTCService.handlers
-					.then(async handlers =>
-						handlers.passiveAcceptConfirm(callType)
-					)
-					.then(async isPassiveAccepted =>
-						isPassiveAccepted ?
-							this.p2pWebRTCService
-								.accept(callType, true)
-								.then(() => true) :
-							false
-					) :
-				Promise.resolve(true)
-			).then(async requestCall =>
+			(async () => {
+				if (!('anonymousChannelID' in chat)) {
+					return true;
+				}
+
+				const isPassiveAccepted = (await this.p2pWebRTCService
+					.handlers).passiveAcceptConfirm(callType);
+
+				if (!isPassiveAccepted) {
+					return false;
+				}
+
+				await this.p2pWebRTCService.accept(callType, true);
+				return true;
+			})().then(async requestCall =>
 				requestCall ?
 					this.p2pWebRTCService.request(
 						callType,
