@@ -221,23 +221,22 @@ export class AccountSessionService extends SessionService {
 			this.accountSessionInitService.ephemeral = true;
 			this.ephemeralSubSession = true;
 
-			const channelID = (await Promise.all([
-				this.localStorageService.getOrSetDefault(
-					`AccountBurnerChannelID:${chat.anonymousChannelID}`,
-					StringProto,
-					async () =>
-						request({
-							data: {
-								channelID: uuid(true),
-								proFeatures: this.proFeatures
-							},
-							method: 'POST',
-							retries: 5,
-							url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
-						})
-				),
-				this.prepareForCallType()
-			]))[0];
+			await this.prepareForCallType();
+
+			const channelID = await this.localStorageService.getOrSetDefault(
+				`AccountBurnerChannelID:${chat.anonymousChannelID}`,
+				StringProto,
+				async () =>
+					request({
+						data: {
+							channelID: uuid(true),
+							proFeatures: this.proFeatures
+						},
+						method: 'POST',
+						retries: 5,
+						url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
+					})
+			);
 
 			this.remoteUser.next({
 				anonymous: true,
