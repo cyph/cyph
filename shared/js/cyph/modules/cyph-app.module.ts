@@ -207,6 +207,10 @@ export class CyphAppModule {
 		accountPostsService: AccountPostsService,
 		databaseService: DatabaseService
 	) {
+		AccountContactsService.accountContactsSearchComponent.resolve(
+			AccountContactsSearchComponent
+		);
+
 		AccountFilesService.accountFileSharingComponent.resolve(
 			AccountFileSharingComponent
 		);
