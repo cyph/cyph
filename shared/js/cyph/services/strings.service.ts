@@ -759,7 +759,7 @@ export class StringsService extends BaseProvider {
 	public readonly noAppointments = `You have no appointments`;
 
 	/** @see StringsService */
-	public readonly noCall = `No Call`;
+	public readonly noCall = `Text Chat`;
 
 	/** @see StringsService */
 	public readonly noIncomingAppointments = `You have no incoming appointment requests`;
