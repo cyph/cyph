@@ -1,16 +1,5 @@
 @import '../../../../css/mixins';
 
-mat-card {
-	margin: 2%;
-	overflow: -webkit-paged-x;
-
-	.back-button {
-		position: absolute;
-		top: 6px;
-		left: 6px;
-	}
-
-	mat-card-title {
-		text-align: center;
-	}
+:host > div:not(.mobile) mat-card {
+	margin: 32px 0;
 }

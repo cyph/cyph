@@ -431,6 +431,9 @@ export class StringsService extends BaseProvider {
 	)} is typing...`;
 
 	/** @see StringsService */
+	public readonly from = `From`;
+
+	/** @see StringsService */
 	public readonly futureAppointments = `Appointments`;
 
 	/** @see StringsService */
