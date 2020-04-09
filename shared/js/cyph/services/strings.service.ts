@@ -434,6 +434,9 @@ export class StringsService extends BaseProvider {
 	public readonly from = `From`;
 
 	/** @see StringsService */
+	public readonly fromName = `From (Name)`;
+
+	/** @see StringsService */
 	public readonly futureAppointments = `Appointments`;
 
 	/** @see StringsService */
@@ -1145,6 +1148,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly toJoin = `to join`;
+
+	/** @see StringsService */
+	public readonly toName = `To (Name)`;
 
 	/** @see StringsService */
 	public readonly totalSpace = `Total Space Used:`;

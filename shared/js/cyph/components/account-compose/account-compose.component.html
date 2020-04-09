@@ -96,8 +96,8 @@
 								name="name"
 								[placeholder]="
 									((recipients | await)?.size || 0) === 1 ?
-										stringsService.from :
-										stringsService.to
+										stringsService.fromName :
+										stringsService.toName
 								"
 								required
 							/>
