@@ -207,6 +207,9 @@ export class StringsService extends BaseProvider {
 	public readonly changePinTitle = `Change Lock Screen Password`;
 
 	/** @see StringsService */
+	public readonly chatRequestTimeoutOutgoing = `Failed to connect with @\${USERNAME}. Feel free to leave a message, or try again later.`;
+
+	/** @see StringsService */
 	public readonly checkoutBraintreeError = `Braintree failed to initialize.`;
 
 	/** @see StringsService */

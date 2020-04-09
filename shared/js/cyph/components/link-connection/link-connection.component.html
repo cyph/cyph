@@ -15,17 +15,39 @@
 	<br />
 	<div>
 		<span
-			*ngIf="(isPassive | await) && !envService.isTelehealth"
+			*ngIf="
+				(isPassive | await) &&
+				!envService.isTelehealth &&
+				(sessionService.chatRequestUsername | await) === undefined
+			"
 			cyphTranslate
 		>
 			Waiting for other party to join...
 		</span>
 		<span
-			*ngIf="(isPassive | await) && envService.isTelehealth"
+			*ngIf="
+				(isPassive | await) &&
+				envService.isTelehealth &&
+				(sessionService.chatRequestUsername | await) === undefined
+			"
 			cyphTranslate
 		>
 			You have successfully checked in. Your telehealth session will begin
 			when the other party connects.
+		</span>
+		<span
+			*ngIf="
+				(isPassive | await) &&
+				(sessionService.chatRequestUsername | await) !== undefined
+			"
+		>
+			<span cyphTranslate>
+				Attempting to contact
+			</span>
+			&ngsp;
+			<span>
+				@{{ (sessionService.chatRequestUsername | await) || '' }}.
+			</span>
 		</span>
 		<div *ngIf="(isPassive | await) === false">
 			<span *ngIf="envService.isTelehealth" cyphTranslate>

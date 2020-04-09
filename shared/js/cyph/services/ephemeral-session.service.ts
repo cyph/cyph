@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {Router} from '@angular/router';
 import {env} from '../env';
 import {NotificationTypes, StringProto} from '../proto';
 import {events, ProFeatures} from '../session';
@@ -14,6 +15,7 @@ import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
 import {LocalStorageService} from './local-storage.service';
@@ -147,9 +149,11 @@ export class EphemeralSessionService extends SessionService {
 			this.potassiumService,
 			this.sessionInitService.spawn(),
 			this.stringsService,
+			this.router,
 			this.accountService,
 			this.accountDatabaseService,
 			this.configService,
+			this.dialogService,
 			this.localStorageService,
 			this.notificationService
 		);
@@ -166,6 +170,9 @@ export class EphemeralSessionService extends SessionService {
 		stringsService: StringsService,
 
 		/** @ignore */
+		private readonly router: Router,
+
+		/** @ignore */
 		private readonly accountService: AccountService,
 
 		/** @ignore */
@@ -173,6 +180,9 @@ export class EphemeralSessionService extends SessionService {
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
@@ -208,6 +218,8 @@ export class EphemeralSessionService extends SessionService {
 
 			if (username && id === 'chat-request') {
 				const chatRequestUsername = username;
+				this.chatRequestUsername.next(chatRequestUsername);
+
 				id = readableID(this.configService.cyphIDLength);
 
 				(async () => {
@@ -232,8 +244,25 @@ export class EphemeralSessionService extends SessionService {
 						return;
 					}
 
-					this.missedBurnerChat.next(true);
-					this.trigger(events.connectFailure);
+					if (burnerRoot === '') {
+						await this.trigger(events.connectFailure);
+						return;
+					}
+
+					await this.router.navigate([
+						'compose',
+						'user',
+						chatRequestUsername
+					]);
+
+					await this.dialogService.toast(
+						this.stringsService.setParameters(
+							this.stringsService.chatRequestTimeoutOutgoing,
+							{USERNAME: chatRequestUsername}
+						),
+						-1,
+						this.stringsService.ok
+					);
 				})();
 			}
 		}
