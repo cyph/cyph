@@ -18,7 +18,7 @@
 			*ngIf="(isPassive | await) && !envService.isTelehealth"
 			cyphTranslate
 		>
-			Waiting for user to join...
+			Waiting for other party to join...
 		</span>
 		<span
 			*ngIf="(isPassive | await) && envService.isTelehealth"
