@@ -206,7 +206,7 @@ export class AccountChatService extends ChatService {
 					return true;
 				}
 
-				const isPassiveAccepted = (await this.p2pWebRTCService
+				const isPassiveAccepted = await (await this.p2pWebRTCService
 					.handlers).passiveAcceptConfirm(callType);
 
 				if (!isPassiveAccepted) {
