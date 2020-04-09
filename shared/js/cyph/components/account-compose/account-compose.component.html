@@ -157,13 +157,7 @@
 								></ng-container>
 							</mat-autocomplete>
 
-							<mat-form-field
-								fxFlex
-								*ngIf="
-									accountSettingsService.staticFeatureFlags
-										.scheduler | await
-								"
-							>
+							<mat-form-field fxFlex>
 								<input
 									matInput
 									cyphTranslate
