@@ -18,8 +18,11 @@
 				class="close-button"
 				matTooltip="Close"
 				matTooltipPosition="left"
-				[routerLink]="'/profile/' + ((searchUsername | await) || '')"
-				*ngIf="((searchUsername | await) || '').length > 0"
+				[routerLink]="
+					((searchUsername | await) || '').length > 0 ?
+						'/profile/' + ((searchUsername | await) || '') :
+						'/'
+				"
 			>
 				<mat-icon>close</mat-icon>
 			</button>
