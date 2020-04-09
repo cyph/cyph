@@ -64,9 +64,10 @@
 				/>
 			</mat-form-field>
 
-			<ng-container *ngIf="(isDisabledWrapper | await) === false">
-				<br />
-
+			<div
+				fxLayoutGap="16px"
+				*ngIf="(isDisabledWrapper | await) === false"
+			>
 				<mat-form-field fxFlex>
 					<mat-select
 						fxFlex
@@ -95,35 +96,32 @@
 					</mat-select>
 				</mat-form-field>
 
-				<br />
-			</ng-container>
-
-			<mat-form-field
-				fxFlex
-				*ngIf="false && (isDisabledWrapper | await) === false"
-			>
-				<mat-select
-					fxFlex
-					name="call-type"
-					[ngModel]="value?.callType || callTypes.None"
-					(ngModelChange)="
-						(value || {callType: callTypes.None}).callType = $event;
-						value && valueChange(value)
-					"
-					[placeholder]="stringsService.callType"
-					required
-				>
-					<mat-option [value]="callTypes.None">{{
-						stringsService.noCall
-					}}</mat-option>
-					<mat-option [value]="callTypes.Audio">{{
-						stringsService.voice
-					}}</mat-option>
-					<mat-option [value]="callTypes.Video">{{
-						stringsService.video
-					}}</mat-option>
-				</mat-select>
-			</mat-form-field>
+				<mat-form-field fxFlex>
+					<mat-select
+						fxFlex
+						name="call-type"
+						[ngModel]="value?.callType || callTypes.None"
+						(ngModelChange)="
+							(
+								value || {callType: callTypes.None}
+							).callType = $event;
+							value && valueChange(value)
+						"
+						[placeholder]="stringsService.callType"
+						required
+					>
+						<mat-option [value]="callTypes.None">{{
+							stringsService.noCall
+						}}</mat-option>
+						<mat-option [value]="callTypes.Audio">{{
+							stringsService.voice
+						}}</mat-option>
+						<mat-option [value]="callTypes.Video">{{
+							stringsService.video
+						}}</mat-option>
+					</mat-select>
+				</mat-form-field>
+			</div>
 
 			<mat-form-field fxFlex *ngIf="isDisabledWrapper | await">
 				<input
@@ -143,7 +141,7 @@
 				/>
 			</mat-form-field>
 
-			<div fxFlex>
+			<div fxFlex fxLayoutGap="16px">
 				<mat-form-field>
 					<input
 						matInput
@@ -180,13 +178,11 @@
 						matSuffix
 						[for]="datepickerStart"
 					></mat-datepicker-toggle>
+					<mat-datepicker
+						[touchUi]="mobile"
+						#datepickerStart
+					></mat-datepicker>
 				</mat-form-field>
-				<mat-datepicker
-					[touchUi]="mobile"
-					#datepickerStart
-				></mat-datepicker>
-
-				&nbsp;&nbsp;&nbsp;
 
 				<mat-form-field *ngIf="isDisabledWrapper | await">
 					<input
@@ -255,8 +251,6 @@
 					</mat-select>
 				</mat-form-field>
 
-				&nbsp;&nbsp;&nbsp;
-
 				<mat-form-field *ngIf="false">
 					<input
 						matInput
@@ -267,19 +261,20 @@
 					/>
 				</mat-form-field>
 
-				<ng-container
+				<a
+					mat-button
+					cyphTranslate
+					(click)="setNow()"
 					*ngIf="
 						envService.isLocalEnv &&
 						(isDisabledWrapper | await) === false
 					"
+					>Now</a
 				>
-					&nbsp;&nbsp;&nbsp;
-					<a mat-button cyphTranslate (click)="setNow()">Now</a>
-				</ng-container>
 			</div>
 
 			<!-- End time selection hidden in favor of appointment duration selection, for now -->
-			<div fxFlex *ngIf="isDisabledWrapper | await">
+			<div fxFlex fxLayoutGap="16px" *ngIf="isDisabledWrapper | await">
 				<mat-form-field>
 					<input
 						matInput
@@ -304,13 +299,11 @@
 						matSuffix
 						[for]="datepickerEnd"
 					></mat-datepicker-toggle>
+					<mat-datepicker
+						[touchUi]="mobile"
+						#datepickerEnd
+					></mat-datepicker>
 				</mat-form-field>
-				<mat-datepicker
-					[touchUi]="mobile"
-					#datepickerEnd
-				></mat-datepicker>
-
-				&nbsp;&nbsp;&nbsp;
 
 				<mat-form-field *ngIf="isDisabledWrapper | await">
 					<input
@@ -369,8 +362,6 @@
 						</mat-option>
 					</mat-select>
 				</mat-form-field>
-
-				&nbsp;&nbsp;&nbsp;
 
 				<mat-form-field *ngIf="false">
 					<input
