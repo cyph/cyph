@@ -13,6 +13,12 @@ handlers:
   secure: always
   # default_headers Cache-Control X-Frame-Options Content-Security-Policy
 
+- url: /chat-widget.js
+  static_files: chat-widget.js
+  upload: chat-widget.js
+  secure: always
+  # default_headers Cache-Control X-Frame-Options Content-Security-Policy
+
 - url: .*
   script: auto
   secure: always

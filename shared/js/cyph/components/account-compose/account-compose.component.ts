@@ -10,6 +10,7 @@ import {ActivatedRoute} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {User} from '../../account';
+import {slideInOutTop} from '../../animations';
 import {BaseProvider} from '../../base-provider';
 import {States} from '../../chat/enums';
 import {emailPattern} from '../../email-pattern';
@@ -42,6 +43,7 @@ import {readableID, uuid} from '../../util/uuid';
  * Angular component for account compose UI.
  */
 @Component({
+	animations: [slideInOutTop],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: accountChatProviders,
 	selector: 'cyph-account-compose',

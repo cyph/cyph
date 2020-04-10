@@ -1,23 +1,30 @@
 <div
 	fxFlexFill
-	fxLayoutAlign="center start"
+	[fxLayoutAlign]="
+		(envService.isMobile | await) ? 'stretch stretch' : 'center center'
+	"
 	[class.initiating]="(sent | await) === undefined"
+	[class.mobile]="envService.isMobile | await"
 >
 	<div fxFlex class="cyph-light-theme">
 		<mat-card
-			class="animated slideInDown"
+			class="animated slideInDown ui-section"
 			fxFlex
 			*ngIf="(sent | await) !== undefined"
 		>
 			<button
 				mat-icon-button
 				cyphTranslate
-				class="back-button"
-				matTooltip="Back"
-				[routerLink]="'/profile/' + ((searchUsername | await) || '')"
-				*ngIf="((searchUsername | await) || '').length > 0"
+				class="close-button"
+				matTooltip="Close"
+				matTooltipPosition="left"
+				[routerLink]="
+					((searchUsername | await) || '').length > 0 ?
+						'/profile/' + ((searchUsername | await) || '') :
+						'/'
+				"
 			>
-				<mat-icon>arrow_back</mat-icon>
+				<mat-icon>close</mat-icon>
 			</button>
 
 			<mat-card-title>
@@ -53,7 +60,6 @@
 				<div
 					fxFlexFill
 					fxLayout="column"
-					fxLayoutGap="8px"
 					[fxShow]="(sent | await) === false"
 				>
 					<ng-container
@@ -63,17 +69,36 @@
 							(fromDataPreSet | await) === false
 						"
 					>
+						<mat-form-field
+							fxFlex
+							*ngIf="((recipients | await)?.size || 0) === 1"
+						>
+							<input
+								matInput
+								disabled
+								[ngModel]="
+									((recipients | await)?.values()?.next()
+										?.value?.name | await) || ''
+								"
+								name="to"
+								[placeholder]="stringsService.to"
+							/>
+						</mat-form-field>
+
 						<mat-form-field fxFlex>
 							<input
 								matInput
-								cyphTranslate
 								[matAutocomplete]="fromNameAutocomplete"
 								[ngModel]="accountService.fromName | await"
 								(ngModelChange)="
 									accountService.fromName.next($event)
 								"
 								name="name"
-								placeholder="Name"
+								[placeholder]="
+									((recipients | await)?.size || 0) === 1 ?
+										stringsService.fromName :
+										stringsService.toName
+								"
 								required
 							/>
 						</mat-form-field>
@@ -90,7 +115,19 @@
 							></ng-container>
 						</mat-autocomplete>
 
-						<div fxFlex fxLayoutGap="8px">
+						<div
+							class="from-details"
+							fxFlex
+							fxLayoutGap="8px"
+							*ngIf="
+								((accountService.fromName | await) || '')
+									.length > 0
+							"
+							[@slideInOutTop]="'in'"
+						>
+							<div></div>
+							<div></div>
+
 							<mat-form-field fxFlex>
 								<input
 									matInput
@@ -120,37 +157,7 @@
 								></ng-container>
 							</mat-autocomplete>
 
-							<ng-template
-								#emailContactOptions
-								let-options="options"
-							>
-								<mat-option
-									(click)="
-										accountService.fromEmail.next(
-											option.email
-										);
-										accountService.fromName.next(
-											option.name
-										)
-									"
-									*ngFor="
-										let option of options | await;
-										trackBy: trackBySelf
-									"
-								>
-									<span>{{ option.name }}</span>
-									&ngsp;
-									<small>&lt;{{ option.email }}&gt;</small>
-								</mat-option>
-							</ng-template>
-
-							<mat-form-field
-								fxFlex
-								*ngIf="
-									accountSettingsService.staticFeatureFlags
-										.scheduler | await
-								"
-							>
+							<mat-form-field fxFlex>
 								<input
 									matInput
 									cyphTranslate
@@ -164,6 +171,23 @@
 								/>
 							</mat-form-field>
 						</div>
+
+						<ng-template #emailContactOptions let-options="options">
+							<mat-option
+								(click)="
+									accountService.fromEmail.next(option.email);
+									accountService.fromName.next(option.name)
+								"
+								*ngFor="
+									let option of options | await;
+									trackBy: trackBySelf
+								"
+							>
+								<span>{{ option.name }}</span>
+								&ngsp;
+								<small>&lt;{{ option.email }}&gt;</small>
+							</mat-option>
+						</ng-template>
 
 						<mat-form-field
 							fxFlex
@@ -288,11 +312,7 @@
 						</div>
 					</ng-template>
 					<ng-template #appointmentRequested>
-						<div
-							fxLayout="column"
-							fxLayoutAlign="center center"
-							fxLayoutGap="5px"
-						>
+						<div fxLayout="column" fxLayoutAlign="center center">
 							<h1 cyphTranslate>
 								Your appointment has been requested!
 							</h1>

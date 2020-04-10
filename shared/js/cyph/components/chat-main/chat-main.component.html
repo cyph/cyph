@@ -79,13 +79,13 @@
 
 		<div
 			*ngIf="
-				sessionService.missedBurnerChat | await;
+				(sessionService.chatRequestUsername | await) !== undefined;
 				else abortionMessage
 			"
 		>
-			<span cyphTranslate
-				>Your chat request was missed. Please try again later.</span
-			>
+			<span cyphTranslate>
+				Your chat request was missed. Please try again later.
+			</span>
 		</div>
 
 		<ng-template #abortionMessage>

@@ -91,6 +91,11 @@ export abstract class SessionService extends BaseProvider
 	public readonly appUsername: Observable<string> = of('');
 
 	/** @inheritDoc */
+	public readonly chatRequestUsername: BehaviorSubject<
+		string | undefined
+	> = new BehaviorSubject<string | undefined>(undefined);
+
+	/** @inheritDoc */
 	public readonly closed: Promise<void> = this.one(events.closeChat);
 
 	/** @inheritDoc */
@@ -114,11 +119,6 @@ export abstract class SessionService extends BaseProvider
 	public readonly localUsername: Observable<string> = new BehaviorSubject<
 		string
 	>(this.stringsService.me);
-
-	/** @inheritDoc */
-	public readonly missedBurnerChat: BehaviorSubject<
-		boolean
-	> = new BehaviorSubject<boolean>(false);
 
 	/** @ignore */
 	public readonly opened: Promise<boolean> = this._OPENED.promise;

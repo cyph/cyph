@@ -278,7 +278,3 @@ export class AccountContactsSearchComponent extends BaseProvider {
 		super();
 	}
 }
-
-AccountContactsService.accountContactsSearchComponent.resolve(
-	AccountContactsSearchComponent
-);

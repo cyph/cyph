@@ -27,6 +27,9 @@ export interface ISessionService {
 	/** App username. Currently just an empty string. */
 	readonly appUsername: Observable<string>;
 
+	/** Target username of outgoing Burner chat request, if applicable. */
+	readonly chatRequestUsername: BehaviorSubject<string | undefined>;
+
 	/** Resolves when this session is closed. */
 	readonly closed: Promise<void>;
 
@@ -47,9 +50,6 @@ export interface ISessionService {
 
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
-
-	/** Indicates whether Burner chat request was missed. */
-	readonly missedBurnerChat: BehaviorSubject<boolean>;
 
 	/** Identifying data about the two parties in the session, if applicable. */
 	pairwiseSessionData?: {

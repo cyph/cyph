@@ -207,6 +207,9 @@ export class StringsService extends BaseProvider {
 	public readonly changePinTitle = `Change Lock Screen Password`;
 
 	/** @see StringsService */
+	public readonly chatRequestTimeoutOutgoing = `Failed to connect with @\${USERNAME}. Feel free to leave a message, or try again later.`;
+
+	/** @see StringsService */
 	public readonly checkoutBraintreeError = `Braintree failed to initialize.`;
 
 	/** @see StringsService */
@@ -426,6 +429,12 @@ export class StringsService extends BaseProvider {
 	public readonly friendIsTyping = `${this.capitalize(
 		this.internalFriend
 	)} is typing...`;
+
+	/** @see StringsService */
+	public readonly from = `From`;
+
+	/** @see StringsService */
+	public readonly fromName = `From (Name)`;
 
 	/** @see StringsService */
 	public readonly futureAppointments = `Appointments`;
@@ -753,7 +762,7 @@ export class StringsService extends BaseProvider {
 	public readonly noAppointments = `You have no appointments`;
 
 	/** @see StringsService */
-	public readonly noCall = `No Call`;
+	public readonly noCall = `Text Chat`;
 
 	/** @see StringsService */
 	public readonly noIncomingAppointments = `You have no incoming appointment requests`;
@@ -1163,6 +1172,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly toJoin = `to join`;
+
+	/** @see StringsService */
+	public readonly toName = `To (Name)`;
 
 	/** @see StringsService */
 	public readonly totalSpace = `Total Space Used:`;
