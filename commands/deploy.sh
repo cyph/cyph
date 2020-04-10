@@ -164,7 +164,7 @@ then
 	pack=true
 fi
 
-if [ "${websign}" ] || [ "${site}" == 'firebase' ] ; then
+if [ "${websign}" ] || [ "${site}" == 'backend' ] || [ "${site}" == 'firebase' ] ; then
 	./commands/keycache.sh
 fi
 
@@ -283,6 +283,11 @@ fi
 
 ./commands/copyworkspace.sh ~/.build
 cd ~/.build
+
+if [ ! "${site}" ] || [ "${site}" == 'backend' ] ; then
+	./commands/updaterepos.js
+	cp ~/.cyph/repos/chat-widget/dist/index.js backend/chat-widget.js
+fi
 
 cp -a backend/shared/* firebase/functions/
 

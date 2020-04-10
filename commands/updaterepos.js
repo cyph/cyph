@@ -18,7 +18,7 @@ const updateRepos = async () => {
 
 	const repoRoot = `${os.homedir()}/.cyph/repos`;
 
-	for (const repo of ['cdn', 'custom-builds', 'internal']) {
+	for (const repo of ['cdn', 'chat-widget', 'custom-builds', 'internal']) {
 		const path = `${repoRoot}/${repo}`;
 
 		if (fs.existsSync(path)) {
