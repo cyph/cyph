@@ -181,6 +181,7 @@ read -r -d '' modules <<- EOM
 	@types/quill
 	@types/simple-peer
 	@types/stacktrace-js
+	@types/universal-analytics
 	@types/video.js
 	@typescript-eslint/eslint-plugin
 	@typescript-eslint/eslint-plugin-tslint
@@ -381,6 +382,7 @@ read -r -d '' modules <<- EOM
 	typescript@3.8
 	u2f-api-polyfill
 	uglify-es
+	universal-analytics
 	unsemantic
 	username-blacklist@https://github.com/cyph/The-Big-Username-Blacklist
 	video.js
