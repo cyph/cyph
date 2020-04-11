@@ -41,6 +41,7 @@ import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
 import {PotassiumService} from './crypto/potassium.service';
+import {DialogService} from './dialog.service';
 import {EnvService} from './env.service';
 import {ErrorService} from './error.service';
 import {SessionInitService} from './session-init.service';
@@ -623,13 +624,30 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
-		const stream = await navigator.mediaDevices.getUserMedia({
-			audio: true,
-			video: callType === 'video'
-		});
+		try {
+			const stream = await navigator.mediaDevices.getUserMedia({
+				audio: true,
+				video: callType === 'video'
+			});
 
-		for (const track of stream.getTracks()) {
-			track.stop();
+			for (const track of stream.getTracks()) {
+				track.stop();
+			}
+		}
+		catch (err) {
+			await this.dialogService.alert({
+				content: this.stringsService.setParameters(
+					this.stringsService.ioPermissionErrorContent,
+					{
+						device:
+							callType === 'video' ?
+								this.stringsService.ioPermissionDeviceVideo :
+								this.stringsService.ioPermissionDeviceAudio
+					}
+				),
+				title: this.stringsService.ioPermissionErrorTitle
+			});
+			throw err;
 		}
 	}
 
@@ -700,6 +718,9 @@ export abstract class SessionService extends BaseProvider
 
 		/** @ignore */
 		protected readonly channelService: ChannelService,
+
+		/** @ignore */
+		protected readonly dialogService: DialogService,
 
 		/** @ignore */
 		protected readonly envService: EnvService,

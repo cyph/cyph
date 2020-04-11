@@ -368,7 +368,6 @@ export class AccountComposeComponent extends BaseProvider
 				this.sendQuillAsNote.value
 			) {
 				if (
-					!this.accountService.fromEmail.value ||
 					!this.accountService.fromName.value ||
 					!this.messageSubject.value ||
 					!this.accountChatService.chat.currentMessage.quill ||

@@ -28,7 +28,13 @@ export class AccountNotificationsService extends BaseProvider {
 				this.subscriptions
 			)
 			/* TODO: Better / less arbitrary solution, such as virtual or infinite scrolling */
-			.pipe(map(notifications => notifications.reverse().slice(0, 100))),
+			.pipe(
+				map(notifications =>
+					notifications
+						.sort(({id: a}, {id: b}) => (a > b ? -1 : 1))
+						.slice(0, 100)
+				)
+			),
 		[
 			{
 				id: '',
