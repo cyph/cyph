@@ -557,6 +557,18 @@ export class StringsService extends BaseProvider {
 	public readonly invitePatientTitle = `Invite Patient`;
 
 	/** @see StringsService */
+	public readonly ioPermissionDeviceAudio = `microphone`;
+
+	/** @see StringsService */
+	public readonly ioPermissionDeviceVideo = `camera and microphone`;
+
+	/** @see StringsService */
+	public readonly ioPermissionErrorContent = `Failed to get permission to access \${DEVICE}. Please try again from another browser or device.`;
+
+	/** @see StringsService */
+	public readonly ioPermissionErrorTitle = `Error`;
+
+	/** @see StringsService */
 	public readonly linkCopied = `${this.capitalize(
 		this.internalSession
 	)} link copied.`;

@@ -144,6 +144,7 @@ export class EphemeralSessionService extends SessionService {
 			this.analyticsService,
 			this.castleService.spawn(),
 			this.channelService.spawn(),
+			this.dialogService,
 			this.envService,
 			this.errorService,
 			this.potassiumService,
@@ -153,7 +154,6 @@ export class EphemeralSessionService extends SessionService {
 			this.accountService,
 			this.accountDatabaseService,
 			this.configService,
-			this.dialogService,
 			this.localStorageService,
 			this.notificationService
 		);
@@ -163,6 +163,7 @@ export class EphemeralSessionService extends SessionService {
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
 		channelService: ChannelService,
+		dialogService: DialogService,
 		envService: EnvService,
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
@@ -182,9 +183,6 @@ export class EphemeralSessionService extends SessionService {
 		private readonly configService: ConfigService,
 
 		/** @ignore */
-		private readonly dialogService: DialogService,
-
-		/** @ignore */
 		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
@@ -194,6 +192,7 @@ export class EphemeralSessionService extends SessionService {
 			analyticsService,
 			castleService,
 			channelService,
+			dialogService,
 			envService,
 			errorService,
 			potassiumService,

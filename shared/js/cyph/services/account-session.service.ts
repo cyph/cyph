@@ -575,6 +575,7 @@ export class AccountSessionService extends SessionService {
 			this.analyticsService,
 			this.castleService.spawn(),
 			this.channelService.spawn(),
+			this.dialogService,
 			this.envService,
 			this.errorService,
 			this.potassiumService,
@@ -585,7 +586,6 @@ export class AccountSessionService extends SessionService {
 			this.accountDatabaseService,
 			this.accountSessionInitService,
 			this.accountUserLookupService,
-			this.dialogService,
 			this.localStorageService
 		);
 	}
@@ -625,6 +625,7 @@ export class AccountSessionService extends SessionService {
 		analyticsService: AnalyticsService,
 		castleService: CastleService,
 		channelService: ChannelService,
+		dialogService: DialogService,
 		envService: EnvService,
 		errorService: ErrorService,
 		potassiumService: PotassiumService,
@@ -647,15 +648,13 @@ export class AccountSessionService extends SessionService {
 		private readonly accountUserLookupService: AccountUserLookupService,
 
 		/** @ignore */
-		private readonly dialogService: DialogService,
-
-		/** @ignore */
 		private readonly localStorageService: LocalStorageService
 	) {
 		super(
 			analyticsService,
 			castleService,
 			channelService,
+			dialogService,
 			envService,
 			errorService,
 			potassiumService,
