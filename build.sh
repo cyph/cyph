@@ -187,7 +187,7 @@ if [ "${electron}" ] ; then
 
 	# Workaround for Cordova and/or Electron and/or Parallels bug
 	cp build.json build.json.bak
-	node -e "
+	electronScript="
 		const buildConfig = JSON.parse(fs.readFileSync('build.json').toString());
 		const {linux, mac, windows} = buildConfig.electron;
 
@@ -233,6 +233,7 @@ if [ "${electron}" ] ; then
 
 		// Workraound for Cordova oversight
 		const originalOptionsSet = 'this.options = (0, _builderUtil().deepAssign)({}, this.packager.platformSpecificBuildOptions, this.packager.config.appx);';
+
 		fs.writeFileSync(
 			'node_modules/app-builder-lib/out/targets/AppxTarget.js',
 			fs.readFileSync(
@@ -245,6 +246,10 @@ if [ "${electron}" ] ; then
 					'this.options.publisher = \'' + windows.publisher + '\';\n'
 			)
 		);
+	"
+
+	node -e "
+		${electronScript}
 
 		build({linux}, true);
 		build({mac});
@@ -262,15 +267,18 @@ if [ "${electron}" ] ; then
 	cp platforms/electron/build/*.snap build/cyph.snap || exit 1
 
 	node -e "
-		const buildConfig = JSON.parse(fs.readFileSync('build.json').toString());
-		const {mac} = buildConfig.electron;
+		$(echo "${electronScript}" | sed 's|--release|--debug|g')
+
 		mac.package = ['dmg'];
-		buildConfig.electron = {mac};
-		fs.writeFileSync('build.json', JSON.stringify(buildConfig));
+		windows.package = ['nsis'];
+
+		build({mac});
+		build({windows});
 	"
-	npx cordova build electron --debug
 
 	cp platforms/electron/build/*.dmg build/cyph.debug.dmg || exit 1
+	cp platforms/electron/build/*.exe build/cyph.debug.exe || exit 1
+
 	mv build.json.bak build.json
 fi
 
