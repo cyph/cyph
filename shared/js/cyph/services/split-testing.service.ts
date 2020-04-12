@@ -37,12 +37,10 @@ export class SplitTestingService extends BaseProvider {
 			index = Math.floor(values.length * random());
 
 			if (this.analyticsService) {
-				this.analyticsService.sendEvent({
-					eventAction: index.toString(),
-					eventCategory: `abtesting-${analEvent}`,
-					eventValue: 1,
-					hitType: 'event'
-				});
+				this.analyticsService.sendEvent(
+					`abtesting-${analEvent}`,
+					index.toString()
+				);
 			}
 
 			return values === undefined ? index : values[index];

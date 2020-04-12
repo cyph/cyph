@@ -1,10 +1,10 @@
 import {Inject, Injectable, Optional} from '@angular/core';
 import countryList from 'country-list';
 import {Env, env} from '../env';
+import {geolocation} from '../geolocation';
 import {DataURIProto, StringProto} from '../proto';
 import {toInt} from '../util/formatting';
-import {request} from '../util/request';
-import {deserialize, parse} from '../util/serialization';
+import {deserialize} from '../util/serialization';
 import {LocalStorageService} from './local-storage.service';
 
 /**
@@ -12,27 +12,6 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class EnvService extends Env {
-	/** @ignore */
-	private readonly geolocationPromise = (async () => {
-		try {
-			return parse<{
-				continent?: string;
-				continentCode?: string;
-				country?: string;
-				countryCode?: string;
-				org?: string;
-			}>(
-				await request({
-					retries: 5,
-					url: `${this.baseUrl}geolocation/${this.realLanguage}`
-				})
-			);
-		}
-		catch {
-			return {};
-		}
-	})();
-
 	/** List of country options. */
 	public readonly countries: Promise<{label: string; value: string}[]>;
 
@@ -80,16 +59,8 @@ export class EnvService extends Env {
 				undefined
 	};
 
-	/** Geolocation data. */
-	public readonly geolocation = {
-		continent: (async () => (await this.geolocationPromise).continent)(),
-		continentCode: (async () =>
-			(await this.geolocationPromise).continentCode)(),
-		country: (async () => (await this.geolocationPromise).country)(),
-		countryCode: (async () =>
-			(await this.geolocationPromise).countryCode)(),
-		org: (async () => (await this.geolocationPromise).org)()
-	};
+	/** @see geolocation */
+	public readonly geolocation = geolocation;
 
 	/** Indicates whether this is the accounts UI. */
 	public readonly isAccounts: boolean = false;

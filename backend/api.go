@@ -20,7 +20,7 @@ import (
 
 func main() {
 	handleFuncs("/accountstanding/{userToken}", false, Handlers{methods.GET: isAccountInGoodStanding})
-	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics})
+	handleFuncs("/analytics/*", false, Handlers{methods.GET: analytics, methods.POST: analytics})
 	handleFuncs("/braintree", false, Handlers{methods.GET: braintreeToken, methods.POST: braintreeCheckout})
 	handleFuncs("/channels/{id}", false, Handlers{methods.POST: channelSetup})
 	handleFuncs("/continent", false, Handlers{methods.GET: getContinent})
@@ -64,6 +64,7 @@ func analytics(h HandlerArgs) (interface{}, int) {
 
 	req.Header = h.Request.Header
 	req.URL.Host = "www.google-analytics.com"
+	req.URL.Path = req.URL.Path[10:]
 	req.URL.Scheme = "https"
 
 	resp, err := client.Do(req)

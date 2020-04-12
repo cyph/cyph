@@ -46,12 +46,10 @@ export class EphemeralSessionService extends SessionService {
 					180000 &&
 				this.pingPongTimeouts++ < 2
 			) {
-				this.analyticsService.sendEvent({
-					eventAction: 'detected',
-					eventCategory: 'ping-pong-timeout',
-					eventValue: 1,
-					hitType: 'event'
-				});
+				this.analyticsService.sendEvent(
+					'ping-pong-timeout',
+					'detected'
+				);
 			}
 
 			this.send(['', {}]);
@@ -108,23 +106,13 @@ export class EphemeralSessionService extends SessionService {
 
 		this.pingPong();
 
-		this.analyticsService.sendEvent({
-			eventAction: 'started',
-			eventCategory: 'cyph',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('cyph', 'started');
 
 		if (!this.state.wasInitiatedByAPI.value) {
 			return;
 		}
 
-		this.analyticsService.sendEvent({
-			eventAction: 'started',
-			eventCategory: 'api-initiated-cyph',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('api-initiated-cyph', 'started');
 	}
 
 	/** @inheritDoc */
@@ -275,12 +263,7 @@ export class EphemeralSessionService extends SessionService {
 			id = id.substring(1);
 			flag.set(this);
 
-			this.analyticsService.sendEvent({
-				eventAction: 'used',
-				eventCategory: flag.analEvent,
-				eventValue: 1,
-				hitType: 'event'
-			});
+			this.analyticsService.sendEvent(flag.analEvent, 'used');
 		}
 
 		if (this.envService.isTelehealth) {

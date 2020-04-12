@@ -270,12 +270,7 @@ export abstract class SessionService extends BaseProvider
 	) : Promise<void> {
 		await this.channelService.send(message);
 
-		this.analyticsService.sendEvent({
-			eventAction: 'sent',
-			eventCategory: 'message',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('message', 'sent');
 	}
 
 	/** @ignore */

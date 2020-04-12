@@ -1115,13 +1115,7 @@ export class ChatService extends BaseProvider {
 	/** Displays help information. */
 	public helpButton () : void {
 		this.dialogService.baseDialog(HelpComponent);
-
-		this.analyticsService.sendEvent({
-			eventAction: 'show',
-			eventCategory: 'help',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('help', 'show');
 	}
 
 	/** Sets incrementing chat.initProgress to 100. */

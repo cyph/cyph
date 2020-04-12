@@ -647,12 +647,7 @@ export class AccountAuthService extends BaseProvider {
 			return false;
 		}
 
-		this.analyticsService.sendEvent({
-			eventAction: 'success',
-			eventCategory: 'login',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('login', 'success');
 
 		return true;
 	}

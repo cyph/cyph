@@ -902,13 +902,12 @@ export class P2PWebRTCService extends BaseProvider
 			this.join(p2pSessionData)
 		]);
 
-		this.analyticsService.sendEvent({
-			eventAction: 'start',
-			eventCategory: 'call',
-			eventLabel: p2pSessionData.callType,
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent(
+			'call',
+			'start',
+			p2pSessionData.callType,
+			1
+		);
 	}
 
 	/** @inheritDoc */

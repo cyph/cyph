@@ -4,4 +4,6 @@
 
 import {Analytics} from '../cyph/analytics';
 
-(<any> self).cyphAnalytics = new Analytics();
+const analytics = new Analytics();
+analytics.setUID();
+(<any> self).cyphAnalytics = analytics;

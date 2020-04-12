@@ -12,10 +12,12 @@ import {filter, first, take} from 'rxjs/operators';
 import {BaseProvider} from '../cyph/base-provider';
 import {config} from '../cyph/config';
 import {AccountService} from '../cyph/services/account.service';
+import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
+import {LocalStorageService} from '../cyph/services/local-storage.service';
 import {translate} from '../cyph/util/translate';
 import {resolvable, sleep, waitForValue} from '../cyph/util/wait';
 import {reloadWindow} from '../cyph/util/window';
@@ -102,7 +104,11 @@ export class AppService extends BaseProvider implements CanActivate {
 	constructor (
 		ngZone: NgZone,
 
+		analyticsService: AnalyticsService,
+
 		faviconService: FaviconService,
+
+		localStorageService: LocalStorageService,
 
 		potassiumService: PotassiumService,
 
@@ -169,6 +175,18 @@ export class AppService extends BaseProvider implements CanActivate {
 				reloadWindow();
 			}
 		});
+
+		localStorageService
+			.getString('username')
+			.then(async username =>
+				potassiumService.toHex(
+					await potassiumService.hash.hash(username)
+				)
+			)
+			.catch(() => undefined)
+			.then(uid => {
+				analyticsService.setUID(uid);
+			});
 
 		ngZone.runOutsideAngular(async () => {
 			/* Redirect clients that cannot support native crypto when required */

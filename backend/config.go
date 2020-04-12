@@ -186,9 +186,9 @@ var config = struct {
 
 	"en",
 
-	"Principality of Sealand",
+	"United States",
 
-	"psl",
+	"us",
 
 	"Legion of Doom",
 
