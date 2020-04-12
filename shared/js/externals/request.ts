@@ -1,5 +1,6 @@
 /* eslint-disable */
 
+import {envDeploy} from '../cyph/env-deploy';
 import {request} from '../cyph/util/request';
 
 /** @file request external. */
@@ -14,6 +15,8 @@ export const post: any = (path: string, options: any, callback: any) => {
 		url:
 			path.startsWith('http://') || path.startsWith('https://') ?
 				path :
+			envDeploy.baseUrl.startsWith('https://') ?
+				`https://${path}` :
 				`http://${path}`
 	})
 		.then(() => {
