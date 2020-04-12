@@ -104,24 +104,7 @@ export class Analytics {
 	}
 
 	/** Sets UID. */
-	public setUID (uid?: string) : void {
-		if (!uid) {
-			try {
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				uid = localStorage.getItem('analytics-uid') || undefined;
-			}
-			catch {}
-		}
-
-		if (!uid) {
-			uid = uuid();
-			try {
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				localStorage.setItem('analytics-uid', uid);
-			}
-			catch {}
-		}
-
+	public setUID (uid: string = uuid()) : void {
 		this.uid.resolve(uid);
 	}
 
