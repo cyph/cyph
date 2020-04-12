@@ -34,6 +34,7 @@ import {
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {
+	promiseTimeout,
 	resolvable,
 	retryUntilSuccessful,
 	sleep,
@@ -298,7 +299,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.localStorageService.getOrSetDefault(
 			`FirebaseDatabaseService.getStorageDownloadURL:${storageRef.fullPath}`,
 			StringProto,
-			async () => storageRef.getDownloadURL()
+			async () => promiseTimeout(storageRef.getDownloadURL(), 15000)
 		);
 	}
 
