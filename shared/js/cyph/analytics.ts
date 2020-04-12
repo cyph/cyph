@@ -88,6 +88,21 @@ export class Analytics {
 		return this.baseSend((await this.visitor).exception(description));
 	}
 
+	/** Sends transaction. */
+	public async sendTransaction (
+		price: number,
+		quantity: number,
+		sku?: string
+	) : Promise<void> {
+		const visitor = await this.visitor;
+
+		return this.baseSend(
+			sku === undefined ?
+				visitor.item(price, quantity) :
+				visitor.item(price, quantity, sku)
+		);
+	}
+
 	/** Sets UID. */
 	public setUID (uid?: string) : void {
 		if (!uid) {

@@ -19,6 +19,7 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {AffiliateService} from '../../services/affiliate.service';
+import {AnalyticsService} from '../../services/analytics.service';
 import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -586,6 +587,14 @@ export class CheckoutComponent extends BaseProvider
 				url: this.envService.baseUrl + 'braintree'
 			});
 
+			this.analyticsService.sendTransaction(
+				this.amount,
+				this.users.value,
+				this.category !== undefined && this.item !== undefined ?
+					`${this.category.toString()}-${this.item.toString()}` :
+					undefined
+			);
+
 			const apiKey = welcomeLetter.startsWith('$APIKEY: ') ?
 				welcomeLetter.split('$APIKEY: ')[1] :
 				undefined;
@@ -637,6 +646,9 @@ export class CheckoutComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly elementRef: ElementRef,
+
+		/** @ignore */
+		private readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
 		private readonly configService: ConfigService,
