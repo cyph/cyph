@@ -1,5 +1,4 @@
 import {Inject, Injectable} from '@angular/core';
-import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
@@ -79,24 +78,22 @@ export class WindowWatcherService extends BaseProvider {
 			return;
 		}
 
-		const $window = $(window);
-
 		if (this.envService.isMobileOS) {
 			document.addEventListener('visibilitychange', () => {
 				this.visibility.next(!document.hidden);
 			});
 		}
 		else {
-			$window
-				.on('focus', () => {
-					this.visibility.next(true);
-				})
-				.on('blur', () => {
-					this.visibility.next(false);
-				});
+			window.addEventListener('focus', () => {
+				this.visibility.next(true);
+			});
+
+			window.addEventListener('blur', () => {
+				this.visibility.next(false);
+			});
 		}
 
-		$window.on('resize', () => {
+		window.addEventListener('resize', () => {
 			this.height.next(this.windowHeight);
 			this.width.next(this.windowWidth);
 		});
