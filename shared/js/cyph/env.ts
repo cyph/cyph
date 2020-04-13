@@ -154,7 +154,7 @@ export class Env extends EnvDeploy {
 	public readonly isCordovaMobile: boolean;
 
 	/** Indicates whether this is Edge. */
-	public readonly isEdge: boolean = /edge\/\d+/.test(Env.UA);
+	public readonly isEdge: boolean;
 
 	/** @see CustomBuildConfig.browserExtension */
 	public readonly isExtension: boolean =
@@ -201,10 +201,16 @@ export class Env extends EnvDeploy {
 		typeof (<any> self).process === 'object' &&
 		typeof (<any> self).require === 'function';
 
+	/** Indicates whether this is pre-Chromium Edge. */
+	public readonly isOldEdge: boolean = /edge\/\d+/.test(Env.UA);
+
 	/** Indicates whether this is a version of Firefox before 57 ("Quantum"). */
 	public readonly isOldFirefox: boolean =
 		this.isFirefox &&
 		!(toInt((Env.UA.match(/firefox\/(\d+)/) || [])[1]) >= 57);
+
+	/** Indicates whether this is Chromium Edge. */
+	public readonly isNewEdge: boolean = /edg\/\d+/.test(Env.UA);
 
 	/** Indicates whether this is Safari. */
 	public readonly isSafari: boolean =
@@ -319,6 +325,8 @@ export class Env extends EnvDeploy {
 
 	constructor () {
 		super();
+
+		this.isEdge = this.isOldEdge || this.isNewEdge;
 
 		const filesConfigMaxSizeDesktop = 536870912;
 		const filesConfigMaxSizeMobile = 20971520;
