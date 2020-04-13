@@ -135,6 +135,11 @@ export abstract class SessionService extends BaseProvider
 	};
 
 	/** @inheritDoc */
+	public readonly prepareForCallTypeError: BehaviorSubject<
+		string | undefined
+	> = new BehaviorSubject<string | undefined>(undefined);
+
+	/** @inheritDoc */
 	public readonly ready: Promise<void> = Promise.resolve();
 
 	/** @inheritDoc */
@@ -661,16 +666,21 @@ export abstract class SessionService extends BaseProvider
 		(await closeRequestAlert.promise)();
 
 		if (localStream) {
+			this.prepareForCallTypeError.next(undefined);
 			return;
 		}
 
+		const prepareForCallTypeError = this.stringsService.setParameters(
+			this.stringsService.ioPermissionErrorContent,
+			{
+				device
+			}
+		);
+
+		this.prepareForCallTypeError.next(prepareForCallTypeError);
+
 		await this.dialogService.alert({
-			content: this.stringsService.setParameters(
-				this.stringsService.ioPermissionErrorContent,
-				{
-					device
-				}
-			),
+			content: prepareForCallTypeError,
 			title: this.stringsService.ioPermissionErrorTitle
 		});
 

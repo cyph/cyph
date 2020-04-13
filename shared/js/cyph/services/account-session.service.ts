@@ -221,7 +221,12 @@ export class AccountSessionService extends SessionService {
 			this.accountSessionInitService.ephemeral = true;
 			this.ephemeralSubSession = true;
 
-			await this.prepareForCallType();
+			try {
+				await this.prepareForCallType();
+			}
+			catch {
+				return;
+			}
 
 			const channelID = await this.localStorageService.getOrSetDefault(
 				`AccountBurnerChannelID:${chat.anonymousChannelID}`,

@@ -51,7 +51,13 @@
 					alt="Funny Mario reference"
 					cyphTranslate
 				/>
-				<div class="explanation">
+				<div
+					class="explanation"
+					*ngIf="
+						(sessionService?.prepareForCallTypeError | await) ===
+						undefined
+					"
+				>
 					<p *ngIf="!envService.isAccounts">
 						<span cyphTranslate>Please</span>
 						&ngsp;
@@ -95,6 +101,17 @@
 							We broke something
 						</li>
 					</ul>
+				</div>
+				<div
+					class="explanation text-center"
+					*ngIf="
+						(sessionService?.prepareForCallTypeError | await) !==
+						undefined
+					"
+				>
+					{{
+						(sessionService?.prepareForCallTypeError | await) || ''
+					}}
 				</div>
 			</div>
 		</div>
