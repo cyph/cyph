@@ -510,6 +510,44 @@ export class P2PWebRTCService extends BaseProvider
 	}
 
 	/** @inheritDoc */
+	public async initUserMedia (
+		callType?: 'audio' | 'video'
+	) : Promise<MediaStream | undefined> {
+		if (this.outgoingStream.value.stream) {
+			return this.outgoingStream.value.stream;
+		}
+
+		if (callType) {
+			await this.setOutgoingStreamConstraints({
+				audio: true,
+				video: callType === 'video'
+			});
+		}
+
+		const localStream = await this.getUserMedia();
+
+		if (localStream === undefined) {
+			return;
+		}
+
+		this.lastDeviceIDs.camera = localStream
+			.getVideoTracks()[0]
+			?.getSettings().deviceId;
+		this.lastDeviceIDs.mic = localStream
+			.getAudioTracks()[0]
+			?.getSettings().deviceId;
+
+		this.recorder.addStream(localStream);
+
+		this.outgoingStream.next({
+			...this.outgoingStream.value,
+			stream: localStream
+		});
+
+		return localStream;
+	}
+
+	/** @inheritDoc */
 	public async join (p2pSessionData: {
 		callType: 'audio' | 'video';
 		channelConfigIDs: {[a: string]: {[b: string]: number}};
@@ -596,27 +634,13 @@ export class P2PWebRTCService extends BaseProvider
 				return this.close();
 			}
 
-			const localStream = await this.getUserMedia();
+			const localStream = await this.initUserMedia();
 
 			if (localStream === undefined) {
 				await this.close();
 				await handlers.failed();
 				return;
 			}
-
-			this.lastDeviceIDs.camera = localStream
-				.getVideoTracks()[0]
-				?.getSettings().deviceId;
-			this.lastDeviceIDs.mic = localStream
-				.getAudioTracks()[0]
-				?.getSettings().deviceId;
-
-			this.recorder.addStream(localStream);
-
-			this.outgoingStream.next({
-				...this.outgoingStream.value,
-				stream: localStream
-			});
 
 			const sessionServices = await this.sessionServices;
 
@@ -1198,5 +1222,7 @@ export class P2PWebRTCService extends BaseProvider
 				);
 			}
 		});
+
+		this.sessionService.p2pWebRTCService.resolve(this);
 	}
 }
