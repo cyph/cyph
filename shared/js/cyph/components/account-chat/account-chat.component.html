@@ -1,43 +1,47 @@
 <ng-container *ngIf="accountDatabaseService.currentUser | await as user">
-	<div
-		fxFlexFill
-		fxLayoutAlign="center center"
-		class="cyph-foreground"
-		[class.mobile]="envService.isMobile | await"
-		[cyphDropZone]="false && chat?.state === states.chat"
-		[cyphDropZoneClass]="false"
-		(fileDrop)="fileTransferService.send($event)"
+	<ng-container
 		*ngIf="
 			(accountSessionService.prepareForCallTypeError | await) ===
-				undefined && (accountChatService.chatSubject | await) as chat
+			undefined
 		"
 	>
-		<cyph-link-connection
-			fxFlex
-			fxFlexFill
-			[timer]="undefined"
-			*ngIf="
-				chat?.state === states.none && (anonymousChatInitiating | await)
-			"
-		></cyph-link-connection>
-
 		<div
-			fxFlex
 			fxFlexFill
-			fxLayout="column"
-			*ngIf="chat?.state !== states.none"
+			fxLayoutAlign="center center"
+			class="cyph-foreground"
+			[class.mobile]="envService.isMobile | await"
+			[cyphDropZone]="false && chat?.state === states.chat"
+			[cyphDropZoneClass]="false"
+			(fileDrop)="fileTransferService.send($event)"
+			*ngIf="accountChatService.chatSubject | await as chat"
 		>
-			<div
-				fxLayout="row"
-				fxLayoutAlign="center center"
-				class="cyph-loading-indicator cyph-banner dark"
+			<cyph-link-connection
+				fxFlex
+				fxFlexFill
+				[timer]="undefined"
 				*ngIf="
-					chat?.state === states.chat &&
-					(accountChatService.uiReady | await) !== true &&
-					(initialCallPending | await) === false
+					chat?.state === states.none &&
+					(anonymousChatInitiating | await)
 				"
+			></cyph-link-connection>
+
+			<div
+				fxFlex
+				fxFlexFill
+				fxLayout="column"
+				*ngIf="chat?.state !== states.none"
 			>
-				<!--
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					class="cyph-loading-indicator cyph-banner dark"
+					*ngIf="
+						chat?.state === states.chat &&
+						(accountChatService.uiReady | await) !== true &&
+						(initialCallPending | await) === false
+					"
+				>
+					<!--
 				<mat-progress-spinner
 					diameter="16"
 					strokeWidth="2"
@@ -45,87 +49,90 @@
 				></mat-progress-spinner>
 				&nbsp;&nbsp;
 				-->
-				<span cyphTranslate>Loading...</span>
-			</div>
+					<span cyphTranslate>Loading...</span>
+				</div>
 
-			<cyph-account-call-waiting
-				fxFlexFill
-				[appointment]="appointment | await"
-				*ngIf="
-					(initialCallPending | await) === true &&
-					(appointment | await) !== undefined &&
-					(answering | await) === false &&
-					(sessionSubID | await) !== undefined
-				"
-			></cyph-account-call-waiting>
-
-			<ng-container
-				*ngIf="
-					(messageType | await) === chatMessageValueTypes.Text;
-					else fullMessageBox
-				"
-			>
-				<cyph-chat-main
-					fxFlex
-					[appointment]="
-						(user?.user?.userType | await) ===
-						accountUserTypes.TelehealthDoctor ?
-							(appointment | await) :
-							undefined
-					"
-					[forceDisplayVideo]="(initialCallPending | await) === true"
-					[messageType]="messageType | await"
-					[class.visibility-hidden]="
-						(initialCallPending | await) === true &&
-						((sessionSubID | await) === undefined ||
-							((appointment | await) !== undefined &&
-								(answering | await) === false))
-					"
-				>
-					<ng-container
-						*ngTemplateOutlet="sessionCompleteMessage"
-					></ng-container>
-				</cyph-chat-main>
-
-				<cyph-account-chat-message-box
-					[messageType]="chatMessageValueTypes.Text"
+				<cyph-account-call-waiting
+					fxFlexFill
+					[appointment]="appointment | await"
 					*ngIf="
-						(accountP2PService.isActiveOrInitialCall | await) ===
-						false
+						(initialCallPending | await) === true &&
+						(appointment | await) !== undefined &&
+						(answering | await) === false &&
+						(sessionSubID | await) !== undefined
 					"
-					[fxHide]="initialCallPending | await"
-				></cyph-account-chat-message-box>
-			</ng-container>
+				></cyph-account-call-waiting>
 
-			<ng-template #fullMessageBox>
-				<cyph-chat-main
-					fxFlex
-					class="chat-end-margin"
-					[appointment]="
-						(user?.user?.userType | await) ===
-						accountUserTypes.TelehealthDoctor ?
-							(appointment | await) :
-							undefined
+				<ng-container
+					*ngIf="
+						(messageType | await) === chatMessageValueTypes.Text;
+						else fullMessageBox
 					"
-					[messageType]="messageType | await"
-					[persistentEndMessage]="true"
-					[promptFollowup]="promptFollowup | await"
-					[uiStyle]="uiStyles.mail"
-					[class.visibility-hidden]="initialCallPending | await"
 				>
-					<cyph-account-chat-message-box
+					<cyph-chat-main
+						fxFlex
+						[appointment]="
+							(user?.user?.userType | await) ===
+							accountUserTypes.TelehealthDoctor ?
+								(appointment | await) :
+								undefined
+						"
+						[forceDisplayVideo]="
+							(initialCallPending | await) === true
+						"
 						[messageType]="messageType | await"
-						[showHeader]="true"
+						[class.visibility-hidden]="
+							(initialCallPending | await) === true &&
+							((sessionSubID | await) === undefined ||
+								((appointment | await) !== undefined &&
+									(answering | await) === false))
+						"
+					>
+						<ng-container
+							*ngTemplateOutlet="sessionCompleteMessage"
+						></ng-container>
+					</cyph-chat-main>
+
+					<cyph-account-chat-message-box
+						[messageType]="chatMessageValueTypes.Text"
 						*ngIf="
 							(accountP2PService.isActiveOrInitialCall
-								| await) === false;
-							else sessionCompleteMessage
+								| await) === false
 						"
+						[fxHide]="initialCallPending | await"
 					></cyph-account-chat-message-box>
-				</cyph-chat-main>
-			</ng-template>
+				</ng-container>
+
+				<ng-template #fullMessageBox>
+					<cyph-chat-main
+						fxFlex
+						class="chat-end-margin"
+						[appointment]="
+							(user?.user?.userType | await) ===
+							accountUserTypes.TelehealthDoctor ?
+								(appointment | await) :
+								undefined
+						"
+						[messageType]="messageType | await"
+						[persistentEndMessage]="true"
+						[promptFollowup]="promptFollowup | await"
+						[uiStyle]="uiStyles.mail"
+						[class.visibility-hidden]="initialCallPending | await"
+					>
+						<cyph-account-chat-message-box
+							[messageType]="messageType | await"
+							[showHeader]="true"
+							*ngIf="
+								(accountP2PService.isActiveOrInitialCall
+									| await) === false;
+								else sessionCompleteMessage
+							"
+						></cyph-account-chat-message-box>
+					</cyph-chat-main>
+				</ng-template>
+			</div>
 		</div>
-	</div>
+	</ng-container>
 
 	<cyph-not-found
 		class="explanation"
