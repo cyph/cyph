@@ -7,7 +7,10 @@
 		[cyphDropZone]="false && chat?.state === states.chat"
 		[cyphDropZoneClass]="false"
 		(fileDrop)="fileTransferService.send($event)"
-		*ngIf="accountChatService.chatSubject | await as chat"
+		*ngIf="
+			(accountSessionService.prepareForCallTypeError | await) ===
+				undefined && (accountChatService.chatSubject | await) as chat
+		"
 	>
 		<cyph-link-connection
 			fxFlex
@@ -123,6 +126,14 @@
 			</ng-template>
 		</div>
 	</div>
+
+	<cyph-not-found
+		class="explanation"
+		*ngIf="
+			(accountSessionService.prepareForCallTypeError | await) !==
+			undefined
+		"
+	></cyph-not-found>
 
 	<ng-template #sessionCompleteMessage>
 		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
