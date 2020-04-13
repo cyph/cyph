@@ -56,7 +56,9 @@ export class LinkConnectionComponent extends BaseProvider
 	public forceFocus: boolean = true;
 
 	/** Indicates whether this link connection was initiated passively via API integration. */
-	public readonly isPassive = new BehaviorSubject<boolean>(true);
+	public readonly isPassive = new BehaviorSubject<boolean | undefined>(
+		undefined
+	);
 
 	/** The link to join this connection. */
 	public readonly link = new BehaviorSubject<string>('');

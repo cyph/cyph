@@ -29,7 +29,7 @@
 	<div>
 		<span
 			*ngIf="
-				(isPassive | await) &&
+				(isPassive | await) === true &&
 				!envService.isTelehealth &&
 				(sessionService.chatRequestUsername | await) === undefined
 			"
@@ -39,7 +39,7 @@
 		</span>
 		<span
 			*ngIf="
-				(isPassive | await) &&
+				(isPassive | await) === true &&
 				envService.isTelehealth &&
 				(sessionService.chatRequestUsername | await) === undefined
 			"
@@ -50,7 +50,7 @@
 		</span>
 		<span
 			*ngIf="
-				(isPassive | await) &&
+				(isPassive | await) === true &&
 				(sessionService.chatRequestUsername | await) !== undefined
 			"
 		>
