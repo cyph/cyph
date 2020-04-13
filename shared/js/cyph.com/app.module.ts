@@ -49,6 +49,8 @@ export class AppModule implements DoBootstrap {
 		/** @ignore */
 		private readonly injector: Injector
 	) {
+		analyticsService.setUID();
+
 		(<any> self).cyphAnalytics = analyticsService;
 		(<any> self).cyphConfig = configService;
 		(<any> self).sendEmail = email;
