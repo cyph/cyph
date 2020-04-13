@@ -7,6 +7,14 @@ import {config} from './config';
  * the deploy script; exercise EXTREME caution when modifying this file.
  */
 export class EnvDeploy {
+	/** @ignore */
+	public static readonly languageInternal: string =
+		navigatorData.language ||
+		(<any> navigatorData).userLanguage ||
+		(<any> navigatorData).browserLanguage ||
+		(<any> navigatorData).systemLanguage ||
+		config.defaultLanguage;
+
 	/** Current URL host (with www subdomain removed). */
 	public readonly host: string = locationData.host.replace('www.', '');
 

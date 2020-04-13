@@ -15,14 +15,6 @@ import {toInt} from './util/formatting';
  */
 export class Env extends EnvDeploy {
 	/** @ignore */
-	private static readonly language: string =
-		navigatorData.language ||
-		(<any> navigatorData).userLanguage ||
-		(<any> navigatorData).browserLanguage ||
-		(<any> navigatorData).systemLanguage ||
-		config.defaultLanguage;
-
-	/** @ignore */
 	private static readonly UA: string = navigatorData.userAgent.toLowerCase();
 
 	/** @ignore */
@@ -124,7 +116,7 @@ export class Env extends EnvDeploy {
 	};
 
 	/** Complete (lowercase) language code, e.g. "en-us". */
-	public readonly fullLanguage: string = Env.language.toLowerCase();
+	public readonly fullLanguage: string = Env.languageInternal.toLowerCase();
 
 	/** Indicates whether this is Android. */
 	public readonly isAndroid: boolean =
@@ -279,7 +271,7 @@ export class Env extends EnvDeploy {
 	);
 
 	/** Complete (original case) language code, e.g. "en-US". */
-	public readonly realLanguage: string = Env.language;
+	public readonly realLanguage: string = Env.languageInternal;
 
 	/** Indicates whether this is Safari 10.0 or older. */
 	public readonly safariVersion?: number = this.isSafari ?

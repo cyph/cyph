@@ -1,4 +1,4 @@
-import {env} from './env';
+import {EnvDeploy, envDeploy} from './env-deploy';
 import {parse} from './util/serialization';
 
 const geolocationPromise = (async () => {
@@ -13,7 +13,7 @@ const geolocationPromise = (async () => {
 			/* Reduce size / drop Angular dependency on cyph.com home page */
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			await fetch(
-				`${env.baseUrl}geolocation/${env.realLanguage}`
+				`${envDeploy.baseUrl}geolocation/${EnvDeploy.languageInternal}`
 			).then(o => o.text())
 		);
 	}
