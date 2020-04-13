@@ -15,6 +15,7 @@ import {AccountService} from '../cyph/services/account.service';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
 import {PotassiumService} from '../cyph/services/crypto/potassium.service';
+import {DialogService} from '../cyph/services/dialog.service';
 import {EnvService} from '../cyph/services/env.service';
 import {FaviconService} from '../cyph/services/favicon.service';
 import {LocalStorageService} from '../cyph/services/local-storage.service';
@@ -124,9 +125,21 @@ export class AppService extends BaseProvider implements CanActivate {
 		private readonly configService: ConfigService,
 
 		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
 		private readonly envService: EnvService
 	) {
 		super();
+
+		/* Temporary warning pending further investigation */
+		if (this.envService.isEdge) {
+			this.dialogService.alert({
+				content:
+					'We are currently investigating user reports of problems with the latest Microsoft Edge. If you run into any issues, please try again in Chrome or Firefox.',
+				title: 'Warning'
+			});
+		}
 
 		try {
 			(<any> navigator).storage.persist();
