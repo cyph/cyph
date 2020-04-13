@@ -14,6 +14,7 @@ import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
+import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {QRService} from '../../services/qr.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
@@ -254,6 +255,9 @@ export class LinkConnectionComponent extends BaseProvider
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see P2PWebRTCService */
+		public readonly p2pWebRTCService: P2PWebRTCService,
 
 		/** @see QRService */
 		public readonly qrService: QRService,
