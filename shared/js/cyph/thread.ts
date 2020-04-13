@@ -3,7 +3,7 @@ import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {env} from './env';
 import {IThread} from './ithread';
 import {stringify} from './util/serialization';
-import {resolvable} from './util/wait';
+import {resolvable} from './util/wait/resolvable';
 
 /** @inheritDoc */
 export class Thread<T> implements IThread<T> {

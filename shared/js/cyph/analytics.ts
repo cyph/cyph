@@ -4,7 +4,7 @@ import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {EnvDeploy, envDeploy} from './env-deploy';
 import {geolocation} from './geolocation';
 import {uuid} from './util/uuid';
-import {resolvable} from './util/wait';
+import {resolvable} from './util/wait/resolvable';
 
 /**
  * Calls Google Analytics API for page view and event tracking.
@@ -135,7 +135,10 @@ export class Analytics {
 				visitor.set('dr', this.referrer);
 			}
 
-			visitor.set('geoid', await geolocation.countryCode);
+			try {
+				visitor.set('geoid', await geolocation.countryCode);
+			}
+			catch {}
 
 			/* Prepend with /analsandbox for continuity of data */
 			await this.baseSend(
