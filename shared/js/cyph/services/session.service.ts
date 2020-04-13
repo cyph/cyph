@@ -624,7 +624,41 @@ export abstract class SessionService extends BaseProvider
 		}
 
 		const p2pWebRTCService = await this.p2pWebRTCService.promise;
-		const localStream = await p2pWebRTCService.initUserMedia(callType);
+
+		let localStream: MediaStream | undefined;
+
+		const device =
+			callType === 'video' ?
+				this.stringsService.ioPermissionDeviceVideo :
+				this.stringsService.ioPermissionDeviceAudio;
+
+		const closeRequestAlert = resolvable<() => void>();
+
+		(async () => {
+			await sleep(10000);
+
+			if (localStream) {
+				closeRequestAlert.resolve(() => {});
+				return;
+			}
+
+			await this.dialogService.alert(
+				{
+					content: this.stringsService.setParameters(
+						this.stringsService.ioPermissionRequestContent,
+						{
+							device
+						}
+					),
+					title: this.stringsService.ioPermissionRequestTitle
+				},
+				closeRequestAlert
+			);
+		})();
+
+		localStream = await p2pWebRTCService.initUserMedia(callType);
+
+		(await closeRequestAlert.promise)();
 
 		if (localStream) {
 			return;
@@ -634,10 +668,7 @@ export abstract class SessionService extends BaseProvider
 			content: this.stringsService.setParameters(
 				this.stringsService.ioPermissionErrorContent,
 				{
-					device:
-						callType === 'video' ?
-							this.stringsService.ioPermissionDeviceVideo :
-							this.stringsService.ioPermissionDeviceAudio
+					device
 				}
 			),
 			title: this.stringsService.ioPermissionErrorTitle

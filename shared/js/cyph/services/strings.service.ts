@@ -569,6 +569,12 @@ export class StringsService extends BaseProvider {
 	public readonly ioPermissionErrorTitle = `Error`;
 
 	/** @see StringsService */
+	public readonly ioPermissionRequestContent = `Please give your app or browser permission to access the \${DEVICE} to continue.`;
+
+	/** @see StringsService */
+	public readonly ioPermissionRequestTitle = `Request`;
+
+	/** @see StringsService */
 	public readonly linkCopied = `${this.capitalize(
 		this.internalSession
 	)} link copied.`;
