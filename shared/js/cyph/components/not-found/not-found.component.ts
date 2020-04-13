@@ -11,6 +11,7 @@ import {BaseProvider} from '../../base-provider';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 
 /**
@@ -72,6 +73,11 @@ export class NotFoundComponent extends BaseProvider implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see SessionService */
+		@Inject(SessionService)
+		@Optional()
+		public readonly sessionService: SessionService | undefined,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

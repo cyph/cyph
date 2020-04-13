@@ -61,6 +61,9 @@ export interface ISessionService {
 		remoteUsername?: string;
 	};
 
+	/** Error message of last prepareForCallType invocation, if applicable. */
+	readonly prepareForCallTypeError: BehaviorSubject<string | undefined>;
+
 	/** @see ProFeatures */
 	readonly proFeatures: ProFeatures;
 
