@@ -16,6 +16,7 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {QRService} from '../../services/qr.service';
+import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {Timer} from '../../timer';
@@ -266,6 +267,9 @@ export class LinkConnectionComponent extends BaseProvider
 
 		/** @see SessionService */
 		public readonly sessionService: SessionService,
+
+		/** @see SessionInitService */
+		public readonly sessionInitService: SessionInitService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService
