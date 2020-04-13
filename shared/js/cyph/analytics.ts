@@ -135,7 +135,10 @@ export class Analytics {
 				visitor.set('dr', this.referrer);
 			}
 
-			visitor.set('geoid', await geolocation.countryCode);
+			try {
+				visitor.set('geoid', await geolocation.countryCode);
+			}
+			catch {}
 
 			/* Prepend with /analsandbox for continuity of data */
 			await this.baseSend(
