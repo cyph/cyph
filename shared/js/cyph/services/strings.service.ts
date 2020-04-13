@@ -572,7 +572,7 @@ export class StringsService extends BaseProvider {
 	public readonly ioPermissionRequestContent = `Please give your app or browser permission to access the \${DEVICE} to continue.`;
 
 	/** @see StringsService */
-	public readonly ioPermissionRequestTitle = `Request`;
+	public readonly ioPermissionRequestTitle = `Permission Request`;
 
 	/** @see StringsService */
 	public readonly linkCopied = `${this.capitalize(
