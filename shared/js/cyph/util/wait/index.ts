@@ -2,9 +2,9 @@ import {Observable} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {Async} from '../../async-type';
 import {config} from '../../config';
-import {IResolvable} from '../../iresolvable';
 import {sleep} from './sleep';
 
+export * from './resolvable';
 export * from './retry-until-successful';
 export * from './sleep';
 
@@ -15,38 +15,6 @@ export const awaitAsync = async <T>(value: Async<T>) : Promise<T> => {
 	}
 
 	return value;
-};
-
-/** Returns a promise and its resolver function. */
-/* eslint-disable-next-line @typescript-eslint/tslint/config */
-export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
-	let resolve: ((t?: T | PromiseLike<T>) => void) | undefined;
-	let reject: ((err?: any) => void) | undefined;
-
-	/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	const promise = new Promise<T>((promiseResolve, promiseReject) => {
-		resolve =
-			value === undefined ?
-				promiseResolve :
-				() => {
-					promiseResolve(value);
-				};
-		reject = promiseReject;
-	});
-
-	if (!resolve || !reject) {
-		throw new Error('Promise constructor did not run.');
-	}
-
-	const o: IResolvable<T> = {promise, reject, resolve};
-
-	promise
-		.then(finalValue => {
-			o.value = finalValue;
-		})
-		.catch(() => {});
-
-	return o;
 };
 
 /** Sleeps forever. */

@@ -4,7 +4,7 @@ import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {EnvDeploy, envDeploy} from './env-deploy';
 import {geolocation} from './geolocation';
 import {uuid} from './util/uuid';
-import {resolvable} from './util/wait';
+import {resolvable} from './util/wait/resolvable';
 
 /**
  * Calls Google Analytics API for page view and event tracking.
