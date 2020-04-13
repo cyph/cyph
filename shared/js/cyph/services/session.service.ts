@@ -75,6 +75,9 @@ export abstract class SessionService extends BaseProvider
 	protected lastIncomingMessageTimestamp: number = 0;
 
 	/** @ignore */
+	protected readonly opened: Promise<boolean> = this._OPENED.promise;
+
+	/** @ignore */
 	protected readonly receivedMessages: Set<string> = new Set<string>();
 
 	/** @ignore */
@@ -121,9 +124,6 @@ export abstract class SessionService extends BaseProvider
 	public readonly localUsername: Observable<string> = new BehaviorSubject<
 		string
 	>(this.stringsService.me);
-
-	/** @ignore */
-	public readonly opened: Promise<boolean> = this._OPENED.promise;
 
 	/** @inheritDoc */
 	public readonly p2pWebRTCService = resolvable<IP2PWebRTCService>();
