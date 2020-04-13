@@ -21,7 +21,10 @@ export const openWindow = async (
 		window.open(
 			url.replace(
 				/^#/,
-				`file://${(<any> self).__dirname || ''}/index.html#`
+				`file://${((<any> self).__dirname || '').replace(
+					/\\/g,
+					'/'
+				)}/index.html#`
 			)
 		);
 		return;

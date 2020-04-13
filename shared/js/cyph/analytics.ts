@@ -1,146 +1,150 @@
-import * as $ from 'jquery';
+import ua from 'universal-analytics';
+import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {EnvDeploy, envDeploy} from './env-deploy';
-import {stringify} from './util/serialization/json';
-import {sleep} from './util/wait/sleep';
+import {geolocation} from './geolocation';
+import {uuid} from './util/uuid';
+import {resolvable} from './util/wait';
 
 /**
- * Handles analytics events by calling the Google Analytics SDK in a sandboxed iframe.
- * (https://developers.google.com/analytics/devguides/collection/analyticsjs/events)
+ * Calls Google Analytics API for page view and event tracking.
  */
 export class Analytics {
-	/** @ignore */
-	private analFrame?: HTMLIFrameElement;
+	/**
+	 * Set referrer except when it's a Cyph URL or an encoded form
+	 * of a Cyph URL, particularly to avoid leaking shared secret.
+	 */
+	private readonly referrer =
+		document.referrer &&
+		![
+			document.referrer,
+			...(document.referrer.match(/[0-9a-fA-F]+/g) || []).map(s => {
+				try {
+					return potassiumUtil.toString(potassiumUtil.fromHex(s));
+				}  catch {
+					return '';
+				}
+			}),
+			...(
+				'&' +
+				document.referrer.substring(document.referrer.indexOf('?') + 1)
+			)
+				.split(/\&.*?=/g)
+				.map(s => {
+					try {
+						return potassiumUtil.toString(
+							potassiumUtil.fromBase64(s)
+						);
+					}  catch (e) {
+						return '';
+					}
+				})
+		]
+			.map(s => /\/\/.*?\.?cyph\.[a-z]+\/?/.test(s))
+			.reduce((a, b) => a || b) ?
+			document.referrer :
+			undefined;
 
 	/** @ignore */
-	private readonly enabled: Promise<boolean>;
+	private readonly uid = resolvable<string>();
 
 	/** @ignore */
-	private async baseEventSubmit (
-		method: string,
-		args: any[]
+	private readonly visitor: Promise<ua.Visitor>;
+
+	/** @ignore */
+	private async baseSend (visit: ua.Visitor) : Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			visit.send(err => {
+				if (err) {
+					reject(err);
+				}
+				else {
+					resolve();
+				}
+			});
+		});
+	}
+
+	/** Sends event. */
+	public async sendEvent (
+		category: string,
+		action: string,
+		label?: string,
+		value?: string | number
 	) : Promise<void> {
-		if (!(await this.enabled)) {
-			return;
-		}
+		const visitor = await this.visitor;
 
-		args.unshift(method);
-
-		try {
-			if (this.analFrame && this.analFrame.contentWindow) {
-				this.analFrame.contentWindow.postMessage(
-					{args: stringify(args)},
-					this.env.baseUrl.slice(0, -1)
-				);
-			}
-		}
-		catch {}
+		return this.baseSend(
+			label === undefined ?
+				visitor.event(category, action) :
+			value === undefined ?
+				visitor.event(category, action, label) :
+				visitor.event(category, action, label, value)
+		);
 	}
 
-	/** Send event. */
-	public sendEvent (...args: any[]) : void {
-		this.baseEventSubmit('event', args);
+	/** Sends exception. */
+	public async sendException (description: string) : Promise<void> {
+		return this.baseSend((await this.visitor).exception(description));
 	}
 
-	/** Set event. */
-	public setEvent (...args: any[]) : void {
-		this.baseEventSubmit('set', args);
+	/** Sends transaction. */
+	public async sendTransaction (
+		price: number,
+		quantity: number,
+		sku?: string
+	) : Promise<void> {
+		const visitor = await this.visitor;
+
+		return this.baseSend(
+			sku === undefined ?
+				visitor.item(price, quantity) :
+				visitor.item(price, quantity, sku)
+		);
+	}
+
+	/** Sets UID. */
+	public setUID (uid: string = uuid()) : void {
+		this.uid.resolve(uid);
 	}
 
 	constructor (
 		/** @see EnvDeploy */
 		public readonly env: EnvDeploy = envDeploy
 	) {
-		this.enabled = Promise.resolve()
-			.then(async () => {
-				const appName = this.env.host;
-				const appVersion = this.env.isWeb ? 'Web' : 'Native';
+		const appName = this.env.host;
+		const appVersion = this.env.isWeb ? 'Web' : 'Native';
 
-				/* TODO: HANDLE NATIVE */
-				if (
-					this.env.isOnion ||
-					this.env.isLocalEnv ||
-					!this.env.isWeb
-				) {
-					throw new Error('Analytics disabled.');
+		this.visitor = (async () => {
+			const visitor = ua(
+				config.analConfig.accountID,
+				await this.uid.promise,
+				{
+					hostname: this.env.baseUrl.split('/')[2],
+					https: this.env.baseUrl.startsWith('https://'),
+					path: '/analytics/collect',
+					strictCidFormat: false
 				}
+			);
 
-				this.analFrame = document.createElement('iframe');
+			visitor.set('aip', '1');
+			visitor.set('an', appName);
+			visitor.set('av', appVersion);
 
-				(<any> this.analFrame).sandbox =
-					'allow-scripts allow-same-origin';
+			if (this.referrer) {
+				visitor.set('dr', this.referrer);
+			}
 
-				this.analFrame.src =
-					this.env.baseUrl +
-					'analsandbox/' +
-					appName +
-					locationData.pathname +
-					locationData.search +
-					/* Set referrer except when it's a Cyph URL or an encoded form
-						of a Cyph URL, particularly to avoid leaking shared secret */
-					(document.referrer &&
-					![document.referrer]
-						.concat(
-							(
-								document.referrer.match(/[0-9a-fA-F]+/g) || []
-							).map((s: string) => {
-								try {
-									return potassiumUtil.toString(
-										potassiumUtil.fromHex(s)
-									);
-								}  catch (e) {
-									return '';
-								}
-							})
-						)
-						.concat(
-							(
-								'&' +
-								document.referrer.substring(
-									document.referrer.indexOf('?') + 1
-								)
-							)
-								.split(/\&.*?=/g)
-								.map((s: string) => {
-									try {
-										return potassiumUtil.toString(
-											potassiumUtil.fromBase64(s)
-										);
-									}  catch (e) {
-										return '';
-									}
-								})
-						)
-						.map((s: string) => /\/\/.*?\.?cyph\.[a-z]+\/?/.test(s))
-						.reduce((a: boolean, b: boolean) => a || b) ?
-						(locationData.search ? '&' : '?') +
-						'ref=' +
-						encodeURIComponent(document.referrer) :
-						'');
+			visitor.set('geoid', await geolocation.countryCode);
 
-				this.analFrame.style.display = 'none';
+			/* Prepend with /analsandbox for continuity of data */
+			await this.baseSend(
+				visitor.pageview(
+					`/analsandbox/${appName}${locationData.pathname}${locationData.search}`
+				)
+			);
 
-				document.body.appendChild(this.analFrame);
-
-				await new Promise<void>(resolve =>
-					$(() => {
-						resolve();
-					})
-				);
-				await new Promise<void>(resolve => {
-					if (!this.analFrame) {
-						return;
-					}
-					$(this.analFrame).one('load', () => {
-						resolve();
-					});
-				});
-				await sleep();
-
-				this.setEvent({appName, appVersion});
-
-				return true;
-			})
-			.catch(() => false);
+			return visitor;
+		})();
 	}
 }

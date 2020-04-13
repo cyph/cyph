@@ -5,18 +5,32 @@
 	fxLayoutAlign="center stretch"
 	class="link-connection loading"
 >
-	<div class="logo-animation">
-		<div></div>
-		<div></div>
-		<div></div>
-		<div></div>
-		<div></div>
-	</div>
+	<cyph-video
+		[autoplay]="true"
+		[matTooltip]="stringsService.videoPreview"
+		[muted]="true"
+		[playsinline]="true"
+		[src]="(p2pWebRTCService.outgoingStream | await)?.stream"
+		*ngIf="
+			!!(p2pWebRTCService.outgoingStream | await)?.constraints?.video &&
+				(p2pWebRTCService.outgoingStream | await)?.stream !== undefined;
+			else logoAnimation
+		"
+	></cyph-video>
+	<ng-template #logoAnimation>
+		<div class="logo-animation">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+	</ng-template>
 	<br />
 	<div>
 		<span
 			*ngIf="
-				(isPassive | await) &&
+				(isPassive | await) === true &&
 				!envService.isTelehealth &&
 				(sessionService.chatRequestUsername | await) === undefined
 			"
@@ -26,7 +40,7 @@
 		</span>
 		<span
 			*ngIf="
-				(isPassive | await) &&
+				(isPassive | await) === true &&
 				envService.isTelehealth &&
 				(sessionService.chatRequestUsername | await) === undefined
 			"
@@ -37,7 +51,7 @@
 		</span>
 		<span
 			*ngIf="
-				(isPassive | await) &&
+				(isPassive | await) === true &&
 				(sessionService.chatRequestUsername | await) !== undefined
 			"
 		>

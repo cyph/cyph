@@ -110,6 +110,11 @@ export interface IP2PWebRTCService {
 	/** Initializes service. */
 	init (handlers: IP2PHandlers, remoteVideos: () => JQuery) : void;
 
+	/** Initializes local I/O stream. */
+	initUserMedia (
+		callType?: 'audio' | 'video'
+	) : Promise<MediaStream | undefined>;
+
 	/** Sets up a new P2P session. */
 	join (p2pSessionData: {
 		callType: 'audio' | 'video';

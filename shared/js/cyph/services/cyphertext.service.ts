@@ -77,12 +77,7 @@ export class CyphertextService extends BaseProvider {
 
 		this.isVisible.next(true);
 
-		this.analyticsService.sendEvent({
-			eventAction: 'show',
-			eventCategory: 'cyphertext',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('cyphertext', 'show');
 	}
 
 	constructor (

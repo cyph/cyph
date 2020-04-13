@@ -21,20 +21,32 @@
 		"
 		[@fadeIn]="'in'"
 	>
-		<div
-			class="logo-animation"
-			[class.connected]="chat?.state === states.chatBeginMessage"
+		<cyph-video
+			[autoplay]="true"
+			[matTooltip]="stringsService.videoPreview"
+			[muted]="true"
+			[playsinline]="true"
+			[src]="(p2pWebRTCService.outgoingStream | await)?.stream"
 			*ngIf="
-				chat?.state === states.keyExchange ||
-				chat?.state === states.chatBeginMessage
+				!!(p2pWebRTCService.outgoingStream | await)?.constraints
+					?.video &&
+					(p2pWebRTCService.outgoingStream | await)?.stream !==
+						undefined;
+				else logoAnimation
 			"
-		>
-			<div></div>
-			<div></div>
-			<div></div>
-			<div></div>
-			<div></div>
-		</div>
+		></cyph-video>
+		<ng-template #logoAnimation>
+			<div
+				class="logo-animation"
+				[class.connected]="chat?.state === states.chatBeginMessage"
+			>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</ng-template>
 
 		<div cyphTranslate *ngIf="chat?.state === states.keyExchange">
 			Initiating Key Exchange...

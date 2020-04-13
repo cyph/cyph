@@ -79,9 +79,7 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 			);
 		}
 
-		this.analyticsService.sendEvent('exception', {
-			exDescription: exception
-		});
+		this.analyticsService.sendException(exception);
 	}
 
 	constructor (

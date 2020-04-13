@@ -430,12 +430,7 @@ export class CryptocurrencyService extends BaseProvider {
 			amount
 		);
 
-		this.analyticsService.sendEvent({
-			eventAction: 'sent',
-			eventCategory: 'cryptocurrency',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('cryptocurrency', 'sent');
 	}
 
 	/**

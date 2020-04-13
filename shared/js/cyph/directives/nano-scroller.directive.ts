@@ -25,7 +25,7 @@ export class NanoScrollerDirective extends BaseProvider implements OnInit {
 			return;
 		}
 
-		if (this.envService.isEdge) {
+		if (this.envService.isOldEdge) {
 			this.renderer.addClass(element, 'edge');
 		}
 		else if (this.envService.isWebKit) {

@@ -208,12 +208,7 @@ export class FileTransferService extends BaseProvider {
 		mediaSelfDestructTimeout?: number
 	) : Promise<void> {
 		if (file.data.length > this.envService.filesConfig.maxSize) {
-			this.analyticsService.sendEvent({
-				eventAction: 'toolarge',
-				eventCategory: 'file',
-				eventValue: 1,
-				hitType: 'event'
-			});
+			this.analyticsService.sendEvent('file', 'toolarge');
 
 			return this.dialogService.alert({
 				content: this.stringsService.fileTooLarge,
@@ -263,12 +258,7 @@ export class FileTransferService extends BaseProvider {
 			transfer = {metadata: fileTransfer, progress: uploadTask.progress};
 			await this.transfers.replaceItem(transferPlaceholder, transfer);
 
-			this.analyticsService.sendEvent({
-				eventAction: 'send',
-				eventCategory: 'file',
-				eventValue: 1,
-				hitType: 'event'
-			});
+			this.analyticsService.sendEvent('file', 'send');
 
 			await uploadTask.result;
 			await this.transfers.deleteItem(transfer);

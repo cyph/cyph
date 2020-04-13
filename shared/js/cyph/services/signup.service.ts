@@ -67,16 +67,14 @@ export class SignupService extends BaseProvider {
 			return;
 		}
 
-		this.analyticsService.sendEvent({
-			eventAction: 'new',
-			eventCategory: 'signup',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('signup', 'new');
 
+		/*
 		if (!this.promo.value) {
 			return;
 		}
+
+		TODO: Send PR to universal-analytics
 
 		this.analyticsService.sendEvent({
 			hitType: 'social',
@@ -84,6 +82,7 @@ export class SignupService extends BaseProvider {
 			socialNetwork: 'promo-' + this.promo.value,
 			socialTarget: email
 		});
+		*/
 	}
 
 	constructor (

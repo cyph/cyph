@@ -569,6 +569,12 @@ export class StringsService extends BaseProvider {
 	public readonly ioPermissionErrorTitle = `Error`;
 
 	/** @see StringsService */
+	public readonly ioPermissionRequestContent = `Please give your app or browser permission to access the \${DEVICE} to continue.`;
+
+	/** @see StringsService */
+	public readonly ioPermissionRequestTitle = `Request`;
+
+	/** @see StringsService */
 	public readonly linkCopied = `${this.capitalize(
 		this.internalSession
 	)} link copied.`;
@@ -1238,6 +1244,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly videoCall = `video call`;
+
+	/** @see StringsService */
+	public readonly videoPreview = `Video Preview (you can switch cameras once in the call)`;
 
 	/** @see StringsService */
 	public readonly viewGroupMembers = `View Group Members`;

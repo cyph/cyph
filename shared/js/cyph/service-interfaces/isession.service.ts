@@ -12,6 +12,7 @@ import {
 	ISessionMessageData,
 	ProFeatures
 } from '../session';
+import {IP2PWebRTCService} from './ip2p-webrtc.service';
 
 /**
  * Encapsulates an end-to-end encrypted communication session.
@@ -50,6 +51,9 @@ export interface ISessionService {
 
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
+
+	/** @see IP2PWebRTCService */
+	readonly p2pWebRTCService: IResolvable<IP2PWebRTCService>;
 
 	/** Identifying data about the two parties in the session, if applicable. */
 	pairwiseSessionData?: {

@@ -8,5 +8,9 @@
 		"typeRoots": ["node_modules/@types"]
 	},
 	"files": ["src/js/cyph.app/main.ts"],
-	"include": ["src/js/cyph.app/main.ts", "src/js/cyph.app/polyfills.ts"]
+	"include": [
+		"src/js/cyph.app/main.ts",
+		"src/js/cyph.app/polyfills.ts",
+		"src/js/externals/request.ts"
+	]
 }

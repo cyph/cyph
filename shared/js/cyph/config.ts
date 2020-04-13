@@ -7,6 +7,11 @@ import {ISessionService} from './service-interfaces/isession.service';
  * Static/constant configuration values.
  */
 export class Config {
+	/** Analytics configuration. */
+	public readonly analConfig = {
+		accountID: 'UA-56220601-1'
+	};
+
 	/** Configuration of available API flags. */
 	public readonly apiFlags = [
 		{

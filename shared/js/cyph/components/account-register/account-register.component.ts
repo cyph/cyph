@@ -392,13 +392,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					if (isNaN(step) && !this.inviteCode.value) {
 						this.inviteCode.setValue(stepString);
 
-						this.analyticsService.sendEvent({
-							eventAction: 'new',
-							eventCategory: 'invite-open',
-							eventLabel: stepString,
-							eventValue: 1,
-							hitType: 'event'
-						});
+						this.analyticsService.sendEvent(
+							'invite-open',
+							'new',
+							stepString,
+							1
+						);
 					}
 					else if (
 						!isNaN(step) &&
@@ -491,13 +490,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		this.finalConfirmation.masterKey = '';
 
-		this.analyticsService.sendEvent({
-			eventAction: 'new',
-			eventCategory: 'registration',
-			eventLabel: this.inviteCode.value,
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent(
+			'registration',
+			'new',
+			this.inviteCode.value,
+			1
+		);
 
 		this.email.next('');
 		this.inviteCode.setValue('');

@@ -19,6 +19,7 @@ import {
 	ISessionMessageList,
 	SessionMessageList
 } from '../proto';
+import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {
 	CastleEvents,
@@ -74,6 +75,9 @@ export abstract class SessionService extends BaseProvider
 	protected lastIncomingMessageTimestamp: number = 0;
 
 	/** @ignore */
+	protected readonly opened: Promise<boolean> = this._OPENED.promise;
+
+	/** @ignore */
 	protected readonly receivedMessages: Set<string> = new Set<string>();
 
 	/** @ignore */
@@ -121,8 +125,8 @@ export abstract class SessionService extends BaseProvider
 		string
 	>(this.stringsService.me);
 
-	/** @ignore */
-	public readonly opened: Promise<boolean> = this._OPENED.promise;
+	/** @inheritDoc */
+	public readonly p2pWebRTCService = resolvable<IP2PWebRTCService>();
 
 	/** @inheritDoc */
 	public pairwiseSessionData?: {
@@ -270,12 +274,7 @@ export abstract class SessionService extends BaseProvider
 	) : Promise<void> {
 		await this.channelService.send(message);
 
-		this.analyticsService.sendEvent({
-			eventAction: 'sent',
-			eventCategory: 'message',
-			eventValue: 1,
-			hitType: 'event'
-		});
+		this.analyticsService.sendEvent('message', 'sent');
 	}
 
 	/** @ignore */
@@ -624,31 +623,58 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
-		try {
-			const stream = await navigator.mediaDevices.getUserMedia({
-				audio: true,
-				video: callType === 'video'
-			});
+		const p2pWebRTCService = await this.p2pWebRTCService.promise;
 
-			for (const track of stream.getTracks()) {
-				track.stop();
+		let localStream: MediaStream | undefined;
+
+		const device =
+			callType === 'video' ?
+				this.stringsService.ioPermissionDeviceVideo :
+				this.stringsService.ioPermissionDeviceAudio;
+
+		const closeRequestAlert = resolvable<() => void>();
+
+		(async () => {
+			await sleep(10000);
+
+			if (localStream) {
+				closeRequestAlert.resolve(() => {});
+				return;
 			}
+
+			await this.dialogService.alert(
+				{
+					content: this.stringsService.setParameters(
+						this.stringsService.ioPermissionRequestContent,
+						{
+							device
+						}
+					),
+					title: this.stringsService.ioPermissionRequestTitle
+				},
+				closeRequestAlert
+			);
+		})();
+
+		localStream = await p2pWebRTCService.initUserMedia(callType);
+
+		(await closeRequestAlert.promise)();
+
+		if (localStream) {
+			return;
 		}
-		catch (err) {
-			await this.dialogService.alert({
-				content: this.stringsService.setParameters(
-					this.stringsService.ioPermissionErrorContent,
-					{
-						device:
-							callType === 'video' ?
-								this.stringsService.ioPermissionDeviceVideo :
-								this.stringsService.ioPermissionDeviceAudio
-					}
-				),
-				title: this.stringsService.ioPermissionErrorTitle
-			});
-			throw err;
-		}
+
+		await this.dialogService.alert({
+			content: this.stringsService.setParameters(
+				this.stringsService.ioPermissionErrorContent,
+				{
+					device
+				}
+			),
+			title: this.stringsService.ioPermissionErrorTitle
+		});
+
+		throw new Error('Failed to initialize user media.');
 	}
 
 	/** @inheritDoc */
