@@ -63,6 +63,9 @@ export abstract class SessionService extends BaseProvider
 	/** @ignore */
 	private readonly openEvents = new Set<string>();
 
+	/** Indicates whether or not this is an Accounts instance. */
+	protected readonly account: boolean = false;
+
 	/** @ignore */
 	protected incomingMessageQueue: IAsyncList<
 		ISessionMessageList
@@ -558,6 +561,7 @@ export abstract class SessionService extends BaseProvider
 				channelSubID,
 				userID,
 				this.state.startingNewCyph.value === undefined,
+				this.account,
 				{
 					onClose: async () => this.channelOnClose(),
 					onConnect: async () => this.channelOnConnect(),

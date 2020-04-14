@@ -30,6 +30,9 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class EphemeralSessionService extends SessionService {
 	/** @ignore */
+	private readonly localStorageKey = 'BurnerChannelID';
+
+	/** @ignore */
 	private pingPongTimeouts: number = 0;
 
 	/**
@@ -90,7 +93,9 @@ export class EphemeralSessionService extends SessionService {
 				url: `${env.baseUrl}channels/${this.state.cyphID.value}`
 			}).catch(() => {}),
 			this.localStorageService
-				.removeItem(`BurnerChannelID:${this.state.cyphID.value}`)
+				.removeItem(
+					`${this.localStorageKey}:${this.state.cyphID.value}`
+				)
 				.catch(() => {})
 		]);
 	}
@@ -314,7 +319,7 @@ export class EphemeralSessionService extends SessionService {
 				this.init(
 					await (this.state.startingNewCyph.value === undefined ?
 						this.localStorageService.getOrSetDefault(
-							`BurnerChannelID:${this.state.cyphID.value}`,
+							`${this.localStorageKey}:${this.state.cyphID.value}`,
 							StringProto,
 							getChannelID
 						) :
