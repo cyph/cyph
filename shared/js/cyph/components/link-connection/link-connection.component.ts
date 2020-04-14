@@ -137,6 +137,7 @@ export class LinkConnectionComponent extends BaseProvider
 			this.sessionService.state.wasInitiatedByAPI.value ||
 			!this.sessionService.state.startingNewCyph.value
 		) {
+			this.isPassive.next(true);
 			return;
 		}
 
