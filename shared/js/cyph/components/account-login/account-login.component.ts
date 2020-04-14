@@ -111,6 +111,8 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 							this.activatedRoute.snapshot.url
 						).map(o => o.path)
 					] :
+				(<any> self).windowsNewWindowWorkaround ?
+					(<any> self).windowsNewWindowWorkaround.split('/') :
 					[''] :
 				['welcome']
 		);
