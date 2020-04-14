@@ -112,7 +112,7 @@ if (location.hash && location.hash.endsWith('/')) {
 }
 
 if (env.isCordovaDesktopWindows && location.hash) {
-	(<any> self).windowsNewWindowWorkaround = location.hash;
+	(<any> self).windowsNewWindowWorkaround = location.hash.slice(1);
 }
 
 $(async () => {
