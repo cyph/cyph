@@ -51,7 +51,11 @@ const addInviteCode = async (
 	} = databaseService(projectId);
 
 	const inviteCodes = Object.keys(countByUser).map(inviterUsername => ({
-		codes: new Array(countByUser[inviterUsername])
+		codes: new Array(
+			typeof countByUser[inviterUsername] === 'string' ?
+				parseInt(countByUser[inviterUsername] || '0', 10) :
+				countByUser[inviterUsername]
+		)
 			.fill('')
 			.map(() => readableID(15)),
 		inviterUsername: normalize(inviterUsername)

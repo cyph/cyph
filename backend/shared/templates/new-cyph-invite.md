@@ -34,7 +34,18 @@ Your status has changed (previously {{oldPlan}}).
 {{^fromApp}}
 {{#inviterName}}{{inviterName}} has invited you to join Cyph!{{/inviterName}}
 {{^inviterName}}Your Cyph invite has arrived!{{/inviterName}}
-[**Click here to set up your Cyph beta account.**]({{accountsURL}}register/{{inviteCode}})
+
+{{#inviteCode}}
+[**Click here to set up your account.**]({{accountsURL}}register/{{inviteCode}})
+{{/inviteCode}}
+
+{{^inviteCode}}
+Here are your invite codes:
+
+{{#inviteCodes}}
+[{{accountsURLShort}}register/{{.}}]({{accountsURL}}register/{{.}})  
+{{/inviteCodes}}
+{{/inviteCode}}
 {{/fromApp}}
 
 {{#fromApp}}
