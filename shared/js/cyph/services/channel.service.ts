@@ -25,6 +25,9 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	}>();
 
 	/** @ignore */
+	private account: boolean = false;
+
+	/** @ignore */
 	private ephemeral: boolean = false;
 
 	/** @ignore */
@@ -53,6 +56,11 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	/** Resolves when first batch of incoming messages have been processed. */
 	public readonly initialMessagesProcessed = resolvable();
 
+	/** @ignore */
+	private get localStorageKey () : string {
+		return `${this.account ? 'Account' : ''}ChannelUserID`;
+	}
+
 	/** @inheritDoc */
 	public async close () : Promise<void> {
 		if (this.isClosed || !this.ephemeral) {
@@ -65,7 +73,9 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 		await Promise.all([
 			this.databaseService.removeItem(url),
-			this.localStorageService.removeItem(`ChannelUserID:${messagesURL}`)
+			this.localStorageService.removeItem(
+				`${this.localStorageKey}:${messagesURL}`
+			)
 		]);
 	}
 
@@ -97,11 +107,14 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		channelSubID: string | undefined,
 		userID: string | undefined,
 		possibleChannelRejoin: boolean,
+		account: boolean,
 		handlers: IChannelHandlers
 	) : Promise<void> {
 		if (!channelID) {
 			throw new Error('Invalid channel ID.');
 		}
+
+		this.account = account;
 
 		const url = `channels/${channelID}`;
 		const messagesURL = `channels/${channelSubID || channelID}/messages`;
@@ -116,7 +129,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			this.ephemeral = true;
 			userID = possibleChannelRejoin ?
 				await this.localStorageService.getOrSetDefault(
-					`ChannelUserID:${messagesURL}`,
+					`${this.localStorageKey}:${messagesURL}`,
 					StringProto,
 					uuid
 				) :

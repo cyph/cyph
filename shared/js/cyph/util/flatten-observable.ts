@@ -47,8 +47,20 @@ export const cacheObservable = <T>(
 ) : Observable<T> => {
 	const subscribe = subscribeFactory(observable, subscriptions);
 	const subject = new ReplaySubject<T>();
-	subscribe(subject);
-	return subject;
+	let subscribed = false;
+
+	return new Observable<T>(observer => {
+		if (!subscribed) {
+			subscribed = true;
+			subscribe(subject);
+		}
+
+		const sub = subject.subscribe(observer);
+
+		if (subscriptions) {
+			subscriptions.push(sub);
+		}
+	});
 };
 
 /** Wraps a possibly-async Observable with a synchronously created BehaviorSubject. */

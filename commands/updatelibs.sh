@@ -323,6 +323,7 @@ read -r -d '' modules <<- EOM
 	parchment
 	pdfjs-dist
 	pdfkit
+	pdf-lib
 	pinch-zoom-js
 	prettier
 	primeng
@@ -402,6 +403,7 @@ read -r -d '' modules <<- EOM
 	webpack-cli
 	webrtc-adapter
 	webrtcsupport
+	webrtc-troubleshoot
 	whatwg-fetch
 	wowjs
 	xkcd-passphrase

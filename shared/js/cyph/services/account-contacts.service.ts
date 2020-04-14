@@ -652,6 +652,11 @@ export class AccountContactsService extends BaseProvider {
 	) {
 		super();
 
+		/* Workaround for unnecessary drag on performance */
+		if (locationData.hash.startsWith('#account-burner/')) {
+			return;
+		}
+
 		this.subscriptions.push(
 			combineLatest([
 				this.accountPostsService.pipe(filterUndefinedOperator()),

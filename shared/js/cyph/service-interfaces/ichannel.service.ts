@@ -29,6 +29,7 @@ export interface IChannelService {
 		channelSubID: string | undefined,
 		userID: string | undefined,
 		possibleChannelRejoin: boolean,
+		account: boolean,
 		handlers: IChannelHandlers
 	) : Promise<void>;
 

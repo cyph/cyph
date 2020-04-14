@@ -49,7 +49,13 @@ export class AccountSessionService extends SessionService {
 	private initiated: boolean = false;
 
 	/** @ignore */
+	private readonly localStorageKey = 'AccountBurnerChannelID';
+
+	/** @ignore */
 	private readonly resolveReady: () => void = this._READY.resolve;
+
+	/** @inheritDoc */
+	protected readonly account: boolean = true;
 
 	/** If true, this is an ephemeral sub-session. */
 	public ephemeralSubSession: boolean = false;
@@ -229,7 +235,7 @@ export class AccountSessionService extends SessionService {
 			}
 
 			const channelID = await this.localStorageService.getOrSetDefault(
-				`AccountBurnerChannelID:${chat.anonymousChannelID}`,
+				`${this.localStorageKey}:${chat.anonymousChannelID}`,
 				StringProto,
 				async () =>
 					request({
