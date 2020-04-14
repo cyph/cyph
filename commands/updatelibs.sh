@@ -323,6 +323,7 @@ read -r -d '' modules <<- EOM
 	parchment
 	pdfjs-dist
 	pdfkit
+	pdf-lib
 	pinch-zoom-js
 	prettier
 	primeng
