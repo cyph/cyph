@@ -402,6 +402,7 @@ read -r -d '' modules <<- EOM
 	webpack-cli
 	webrtc-adapter
 	webrtcsupport
+	webrtc-troubleshoot
 	whatwg-fetch
 	wowjs
 	xkcd-passphrase
