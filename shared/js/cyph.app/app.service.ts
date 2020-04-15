@@ -231,6 +231,9 @@ export class AppService extends BaseProvider implements CanActivate {
 				router.url :
 				windowsNewWindowWorkaround
 			).split('/');
+			if (windowsNewWindowWorkaround) {
+				this.router.navigate(urlSegmentPaths);
+			}
 
 			if (this.envService.isExtension) {
 				router.navigate(['contacts']);
@@ -248,10 +251,6 @@ export class AppService extends BaseProvider implements CanActivate {
 					.toPromise();
 
 				await sleep();
-			}
-
-			if (windowsNewWindowWorkaround) {
-				location.hash = windowsNewWindowWorkaround;
 			}
 
 			await this.loadComplete();
