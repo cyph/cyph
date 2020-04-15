@@ -250,12 +250,11 @@ export class AppService extends BaseProvider implements CanActivate {
 				await sleep();
 			}
 
-			await this.loadComplete();
-
 			if (windowsNewWindowWorkaround) {
-				alert(windowsNewWindowWorkaround);
 				location.hash = windowsNewWindowWorkaround;
 			}
+
+			await this.loadComplete();
 		});
 	}
 }
