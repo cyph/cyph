@@ -111,12 +111,9 @@ if (location.hash && location.hash.endsWith('/')) {
 	location.hash = location.hash.slice(0, -1);
 }
 
-/*
-	Workaround for odd Windows Electron bug. After opening a new window,
-	it quickly navigates back to the home page.
-*/
 if (env.isCordovaDesktopWindows && location.hash) {
 	(<any> self).windowsNewWindowWorkaround = location.hash.slice(1);
+	location.hash = '';
 }
 
 $(async () => {

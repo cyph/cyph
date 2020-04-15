@@ -221,9 +221,15 @@ export class AppService extends BaseProvider implements CanActivate {
 				.pipe(first())
 				.toPromise();
 
-			const urlSegmentPaths = (!(<any> self).windowsNewWindowWorkaround ?
+			/*
+				Workaround for odd Windows Electron bug. After opening a new window,
+				it quickly navigates back to the home page.
+			*/
+			const windowsNewWindowWorkaround: string | undefined = (<any> self)
+				.windowsNewWindowWorkaround;
+			const urlSegmentPaths = (!windowsNewWindowWorkaround ?
 				router.url :
-				(<any> self).windowsNewWindowWorkaround
+				windowsNewWindowWorkaround
 			).split('/');
 
 			if (this.envService.isExtension) {
@@ -245,6 +251,11 @@ export class AppService extends BaseProvider implements CanActivate {
 			}
 
 			await this.loadComplete();
+
+			if (windowsNewWindowWorkaround) {
+				alert(windowsNewWindowWorkaround);
+				location.hash = windowsNewWindowWorkaround;
+			}
 		});
 	}
 }
