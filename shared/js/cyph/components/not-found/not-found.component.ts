@@ -31,6 +31,14 @@ export class NotFoundComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		alert(
+			this.router.url +
+				' --- ' +
+				location.hash +
+				' --- ' +
+				location.toString()
+		);
+
 		if (
 			!this.envService.isAccounts ||
 			!this.accountService ||

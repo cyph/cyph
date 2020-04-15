@@ -406,6 +406,6 @@ export const account: Route = {
 		},
 		{path: 'wallets', component: AccountWalletsComponent},
 		{path: 'welcome', component: AccountAfterRegisterComponent},
-		{path: '**', redirectTo: '404'}
+		{path: '**', component: NotFoundComponent}
 	]
 };
