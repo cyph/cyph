@@ -107,7 +107,7 @@ if (!HTMLElement.prototype.click) {
 	};
 }
 
-if (location.hash && location.hash.endsWith('/')) {
+if (!env.isCordova && location.hash && location.hash.endsWith('/')) {
 	location.hash = location.hash.slice(0, -1);
 }
 
