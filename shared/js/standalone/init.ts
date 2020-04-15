@@ -111,10 +111,6 @@ if (location.hash && location.hash.endsWith('/')) {
 	location.hash = location.hash.slice(0, -1);
 }
 
-if (env.isCordovaDesktopWindows && location.hash) {
-	(<any> self).windowsNewWindowWorkaround = location.hash;
-}
-
 $(async () => {
 	if (!env.isHomeSite && !env.isLocalEnv && document.head) {
 		/* In WebSigned environments, perform CSP Meta-Hardening */
