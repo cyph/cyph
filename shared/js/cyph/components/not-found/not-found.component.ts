@@ -48,6 +48,20 @@ export class NotFoundComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
+		/* Workaround for bizarre Electron/Chromium behavior on Windows */
+		const windowsURLPrefix = 'C:/%23';
+		if (this.router.url.startsWith(windowsURLPrefix)) {
+			this.router.navigateByUrl(
+				this.router.url.slice(windowsURLPrefix.length)
+			);
+			return;
+		}
+
+		if (this.router.url.split('/').slice(-1)[0] !== '404') {
+			this.router.navigate(['404']);
+			return;
+		}
+
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
 	}
