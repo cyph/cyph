@@ -1,6 +1,7 @@
 const cors = require('cors')({origin: true});
 const functions = require('firebase-functions');
 const fs = require('fs');
+const {phoneNumberTimezone} = require('phone-number-timezone');
 const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
 const {cyphAdminKey, mailchimpCredentials} = require('./cyph-admin-vars');
@@ -375,9 +376,15 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterLink = `${accountsURL}account-burner/${data.callType ||
 		'chat'}/${id}`;
 
+	const startTimeString = new Intl.DateTimeFormat('en-US', {
+		dateStyle: 'full',
+		timeStyle: 'full',
+		timeZone: data.toSMS ? await phoneNumberTimezone(data.toSMS) : undefined
+	}).format(new Date(data.eventDetails.startTime));
+
 	const messagePart1 = `Cyph appointment with \${PARTY} is scheduled for ${Math.floor(
 		(data.eventDetails.endTime - data.eventDetails.startTime) / 60000
-	)} minutes at ${new Date(data.eventDetails.startTime).toString()}`;
+	)} minutes at ${startTimeString}`;
 
 	const messagePart2 = `At the scheduled time, join here: \${LINK}`;
 
