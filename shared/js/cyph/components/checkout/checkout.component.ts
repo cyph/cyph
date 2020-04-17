@@ -25,6 +25,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
+import {debugLogError} from '../../util/log';
 import {request, requestJSON} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
@@ -137,6 +138,9 @@ export class CheckoutComponent extends BaseProvider
 
 	/** If true, will never stop spinning. */
 	@Input() public noSpinnerEnd: boolean = false;
+
+	/** If applicable, partner offer ID. */
+	@Input() public offerID?: number;
 
 	/** Selected payment option. */
 	public readonly paymentOption = new BehaviorSubject<string | undefined>(
@@ -474,6 +478,13 @@ export class CheckoutComponent extends BaseProvider
 		if (typeof this.noSpinnerEnd === 'string') {
 			this.noSpinnerEnd = <any> this.noSpinnerEnd === 'true';
 		}
+		if (
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			typeof this.offerID === 'string' &&
+			this.offerID
+		) {
+			this.offerID = parseFloat(this.offerID);
+		}
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.perUser === 'string') {
 			this.perUser = <any> this.perUser === 'true';
@@ -587,13 +598,34 @@ export class CheckoutComponent extends BaseProvider
 				url: this.envService.baseUrl + 'braintree'
 			});
 
-			this.analyticsService.sendTransaction(
-				this.amount,
-				this.users.value,
-				this.category !== undefined && this.item !== undefined ?
-					`${this.category.toString()}-${this.item.toString()}` :
-					undefined
-			);
+			this.analyticsService
+				.sendTransaction(
+					this.amount,
+					this.users.value,
+					this.category !== undefined && this.item !== undefined ?
+						`${this.category.toString()}-${this.item.toString()}` :
+						undefined
+				)
+				.catch(checkoutAnalError => {
+					debugLogError(() => ({
+						checkoutAnalError
+					}));
+				});
+
+			if (
+				this.offerID !== undefined &&
+				typeof (<any> self).EF?.conversion === 'function'
+			) {
+				Promise.resolve(
+					(<any> self).EF.conversion({
+						offer_id: this.offerID
+					})
+				).catch(checkoutPartnerConversionError => {
+					debugLogError(() => ({
+						checkoutPartnerConversionError
+					}));
+				});
+			}
 
 			const apiKey = welcomeLetter.startsWith('$APIKEY: ') ?
 				welcomeLetter.split('$APIKEY: ')[1] :
