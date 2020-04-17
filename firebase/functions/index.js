@@ -377,9 +377,15 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		'chat'}/${id}`;
 
 	const startTimeString = new Intl.DateTimeFormat('en-US', {
-		dateStyle: 'full',
-		timeStyle: 'full',
-		timeZone: data.toSMS ? await phoneNumberTimezone(data.toSMS) : undefined
+		day: 'numeric',
+		hour: 'numeric',
+		minute: '2-digit',
+		month: 'long',
+		timeZone: data.toSMS ?
+			await phoneNumberTimezone(data.toSMS) :
+			undefined,
+		timeZoneName: 'long',
+		year: 'numeric'
 	}).format(new Date(data.eventDetails.startTime));
 
 	const messagePart1 = `Cyph appointment with \${PARTY} is scheduled for ${Math.floor(
