@@ -307,8 +307,8 @@ export const account: Route = {
 			children: [{path: 'edit', component: BlankComponent}]
 		},
 		{path: 'profile/:username', component: AccountProfileComponent},
-		{path: 'register', redirectTo: 'register/1'},
 		{path: 'register/:step', component: AccountRegisterComponent},
+		{path: 'register', redirectTo: 'register/1'},
 		{
 			path: 'reject/:id',
 			component: AccountPseudoRelationshipResponseComponent,
@@ -406,6 +406,6 @@ export const account: Route = {
 		},
 		{path: 'wallets', component: AccountWalletsComponent},
 		{path: 'welcome', component: AccountAfterRegisterComponent},
-		{path: '**', redirectTo: '404'}
+		{path: '**', component: NotFoundComponent}
 	]
 };

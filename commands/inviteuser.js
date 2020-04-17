@@ -14,7 +14,8 @@ const inviteUser = async (
 	name,
 	plan,
 	reservedUsername,
-	trialMonths
+	trialMonths,
+	count = 1
 ) => {
 	/* TODO: Handle other cases */
 	const accountsURL =
@@ -31,14 +32,16 @@ const inviteUser = async (
 	const {database} = databaseService(projectId);
 	const namespacePath = 'cyph_ws';
 
-	const inviteCode = (await addInviteCode(
+	const inviteCodes = (await addInviteCode(
 		projectId,
-		{'': 1},
+		{'': count},
 		undefined,
 		plan,
 		reservedUsername,
 		trialMonths
-	))[''][0];
+	))[''];
+
+	const inviteCode = inviteCodes[0];
 
 	const cyphPlan = CyphPlans[plan] || CyphPlans.Free;
 	const planConfig = config.planConfig[cyphPlan];
@@ -76,7 +79,7 @@ const inviteUser = async (
 		{
 			data: {
 				...planConfig,
-				inviteCode,
+				...(inviteCodes.length > 1 ? {inviteCodes} : {inviteCode}),
 				name,
 				planAnnualBusiness: cyphPlan === CyphPlans.AnnualBusiness,
 				planAnnualTelehealth: cyphPlan === CyphPlans.AnnualTelehealth,
@@ -98,16 +101,23 @@ const inviteUser = async (
 		accountsURL
 	);
 
-	return inviteCode;
+	return inviteCodes;
 };
 
 if (require.main === module) {
 	(async () => {
 		const projectId = process.argv[2];
 
-		for (const {email, name, plan, reservedUsername, trialMonths} of process
-			.argv[3] === '--users' ?
+		for (const {
+			count,
+			email,
+			name,
+			plan,
+			reservedUsername,
+			trialMonths
+		} of process.argv[3] === '--users' ?
 			JSON.parse(process.argv[4]).map(arr => ({
+				count: process.argv[6],
 				email: arr[0],
 				name: arr[1],
 				plan: process.argv[5],
@@ -116,6 +126,7 @@ if (require.main === module) {
 			})) :
 			[
 				{
+					count: process.argv[8],
 					email: process.argv[3],
 					name: process.argv[4],
 					plan: process.argv[5],
@@ -124,13 +135,16 @@ if (require.main === module) {
 				}
 			]) {
 			console.log(
-				`Invited ${email} with invite code ${await inviteUser(
-					projectId,
-					email,
-					name,
-					plan,
-					reservedUsername,
-					trialMonths
+				`Invited ${email} with invite codes ${JSON.stringify(
+					await inviteUser(
+						projectId,
+						email,
+						name,
+						plan,
+						reservedUsername,
+						trialMonths,
+						count
+					)
 				)}`
 			);
 		}
