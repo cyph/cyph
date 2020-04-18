@@ -104,6 +104,7 @@ var config = struct {
 	DefaultContinent           string
 	DefaultContinentCode       string
 	DefaultLanguageCode        string
+	DummyAnalID                string
 	DummyCity                  string
 	DummyContinent             string
 	DummyContinentCode         string
@@ -190,6 +191,8 @@ var config = struct {
 	"eu",
 
 	"en",
+
+	"1027213",
 
 	"McLean",
 

@@ -136,7 +136,7 @@ export class Analytics {
 			}
 
 			try {
-				visitor.set('geoid', await geolocation.countryCode);
+				visitor.set('geoid', await geolocation.analID);
 			}
 			catch {}
 

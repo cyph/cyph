@@ -4,6 +4,7 @@ import {parse} from './util/serialization';
 const geolocationPromise = (async () => {
 	try {
 		const o = parse<{
+			analID?: string;
 			city?: string;
 			continent?: string;
 			continentCode?: string;
@@ -20,6 +21,7 @@ const geolocationPromise = (async () => {
 		);
 
 		return {
+			analID: typeof o.analID === 'string' ? o.analID : undefined,
 			city: typeof o.city === 'string' ? o.city : undefined,
 			continent:
 				typeof o.continent === 'string' ? o.continent : undefined,
@@ -42,6 +44,7 @@ const geolocationPromise = (async () => {
 
 /** Geolocation data. */
 export const geolocation = {
+	analID: (async () => (await geolocationPromise).analID)(),
 	city: (async () => (await geolocationPromise).city)(),
 	continent: (async () => (await geolocationPromise).continent)(),
 	continentCode: (async () => (await geolocationPromise).continentCode)(),

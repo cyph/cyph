@@ -108,6 +108,24 @@ var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
 var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
+var analIDs = func() map[string]string {
+	o := map[string]string{}
+
+	if appengine.IsDevAppServer() {
+		return o
+	}
+
+	analGeoTargetsString := getFileText("anal-geotargets.txt")
+	analGeoTargets := strings.Split(analGeoTargetsString, "\n")
+
+	for i := range analGeoTargets {
+		analGeoTarget := strings.Split(analGeoTargets[i], ":")
+		o[analGeoTarget[0]] = analGeoTarget[1]
+	}
+
+	return o
+}()
+
 func datastoreKey(kind string, name string) *datastore.Key {
 	key := datastore.NameKey(kind, name, nil)
 	key.Namespace = apiNamespace
@@ -147,19 +165,20 @@ func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) 
 	return apiKey, datastoreKey, nil
 }
 
-func geolocate(h HandlerArgs) (string, string, string, string, string, string) {
+func geolocate(h HandlerArgs) (string, string, string, string, string, string, string) {
 	if appengine.IsDevAppServer() {
 		return config.DummyContinent,
 			config.DummyContinentCode,
 			config.DummyCountry,
 			config.DummyCountryCode,
 			config.DummyCity,
-			config.DummyPostalCode
+			config.DummyPostalCode,
+			config.DummyAnalID
 	}
 
 	record, err := geodb.City(getIP(h))
 	if err != nil {
-		return config.DefaultContinent, config.DefaultContinentCode, "", "", "", ""
+		return config.DefaultContinent, config.DefaultContinentCode, "", "", "", "", ""
 	}
 
 	language := config.DefaultLanguageCode
@@ -173,6 +192,11 @@ func geolocate(h HandlerArgs) (string, string, string, string, string, string) {
 		continent = val
 	} else if val, ok := record.Continent.Names[config.DefaultLanguageCode]; ok {
 		continent = val
+	}
+
+	if _, ok := config.Continents[continentCode]; !ok {
+		continent = config.DefaultContinent
+		continentCode = config.DefaultContinentCode
 	}
 
 	country := ""
@@ -192,12 +216,12 @@ func geolocate(h HandlerArgs) (string, string, string, string, string, string) {
 
 	postalCode := record.Postal.Code
 
-	if _, ok := config.Continents[continentCode]; !ok {
-		continent = config.DefaultContinent
-		continentCode = config.DefaultContinentCode
+	analID := analIDs[city]
+	if analID == "" {
+		analID = countryCode
 	}
 
-	return continent, continentCode, country, countryCode, city, postalCode
+	return continent, continentCode, country, countryCode, city, postalCode, analID
 }
 
 func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
@@ -213,7 +237,7 @@ func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
 }
 
 func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
-	_, _, country, countryCode, _, _ := geolocate(h)
+	_, _, country, countryCode, _, _, _ := geolocate(h)
 
 	signup := map[string]interface{}{}
 	profile := map[string]interface{}{}

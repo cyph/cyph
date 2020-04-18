@@ -684,15 +684,16 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {
-	_, continentCode, _, _, _, _ := geolocate(h)
+	_, continentCode, _, _, _, _, _ := geolocate(h)
 	return continentCode, http.StatusOK
 }
 
 func getGeolocation(h HandlerArgs) (interface{}, int) {
-	continent, continentCode, country, countryCode, city, postalCode := geolocate(h)
+	continent, continentCode, country, countryCode, city, postalCode, analID := geolocate(h)
 	org := getOrg(h)
 
 	return map[string]string{
+		"analID":        analID,
 		"city":          city,
 		"continent":     continent,
 		"continentCode": continentCode,

@@ -295,6 +295,7 @@ cp -a backend/shared/* firebase/functions/
 cat ~/.cyph/backend.vars >> backend/app.yaml
 cat ~/.cyph/test.vars >> test/test.yaml
 cp ~/.cyph/GeoIP2-*.mmdb backend/
+./commands/setanalgeotargets.js
 
 # mkdir geoisp.tmp
 # cd geoisp.tmp
