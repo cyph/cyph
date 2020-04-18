@@ -61,6 +61,9 @@ export class CheckoutComponent extends BaseProvider
 	/* Braintree instance. */
 	private braintreeInstance: any;
 
+	/** Partner program transaction ID. */
+	private partnerTransactionID?: Promise<string | undefined>;
+
 	/** Address. */
 	@Input() public address: {
 		countryCode?: string;
@@ -514,7 +517,7 @@ export class CheckoutComponent extends BaseProvider
 				undefined;
 
 		if (affid) {
-			Promise.resolve<string>(
+			this.partnerTransactionID = Promise.resolve<string>(
 				EF.click({
 					offer_id: this.offerID,
 					affiliate_id: affid,
@@ -525,7 +528,7 @@ export class CheckoutComponent extends BaseProvider
 					sub5: EF.urlParameter('sub5'),
 					uid: EF.urlParameter('uid')
 				})
-			).catch(() => {});
+			).catch(() => undefined);
 		}
 
 		(async () => {
@@ -575,6 +578,8 @@ export class CheckoutComponent extends BaseProvider
 
 			const creditCard = paymentMethod?.type === 'CreditCard';
 
+			const partnerTransactionID = await this.partnerTransactionID;
+
 			let welcomeLetter: string | undefined = await request({
 				data: {
 					amount: Math.floor(
@@ -616,6 +621,7 @@ export class CheckoutComponent extends BaseProvider
 					...(this.namespace !== undefined ?
 						{namespace: this.namespace} :
 						{}),
+					...(partnerTransactionID ? {partnerTransactionID} : {}),
 					...(this.userToken !== undefined ?
 						{userToken: this.userToken} :
 						{})
@@ -637,19 +643,6 @@ export class CheckoutComponent extends BaseProvider
 						checkoutAnalError
 					}));
 				});
-
-			if (EF && this.offerID !== undefined) {
-				Promise.resolve(
-					EF.conversion({
-						amount: this.amount * this.users.value,
-						offer_id: this.offerID
-					})
-				).catch(checkoutPartnerConversionError => {
-					debugLogError(() => ({
-						checkoutPartnerConversionError
-					}));
-				});
-			}
 
 			const apiKey = welcomeLetter.startsWith('$APIKEY: ') ?
 				welcomeLetter.split('$APIKEY: ')[1] :

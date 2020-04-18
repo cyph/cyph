@@ -82,6 +82,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	firstName := sanitize(h.Request.PostFormValue("firstName"))
 	inviteCode := sanitize(h.Request.PostFormValue("inviteCode"))
 	lastName := sanitize(h.Request.PostFormValue("lastName"))
+	partnerTransactionID := sanitize(h.Request.PostFormValue("partnerTransactionID"))
 	postalCode := sanitize(h.Request.PostFormValue("postalCode"))
 	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
 	userToken := sanitize(h.Request.PostFormValue("userToken"))
@@ -465,6 +466,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		subject = "FAILED: " + subject
 	}
 
+	if success && partnerTransactionID != "" {
+		err = trackPartnerConversion(h, partnerTransactionID, totalAmount)
+		if err != nil {
+			subject = "PARTNER CONVERSION FAILURE: " + subject
+		}
+	}
+
 	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
 		"Nonce: " + nonce +
 		"\nPlan ID: " + planID +
@@ -475,6 +483,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		"\nCompany: " + company +
 		"\nName: " + name +
 		"\nEmail: " + email +
+		"\nPartner transaction ID: " + partnerTransactionID +
 		"\n\n" + txLog +
 		""), "")
 

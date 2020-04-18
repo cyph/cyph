@@ -602,6 +602,23 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 	return err
 }
 
+func trackPartnerConversion(h HandlerArgs, transactionID string, totalAmount int64) error {
+	req, err := http.NewRequest(
+		methods.GET,
+		config.PartnerConversionURL+"&amount="+strconv.FormatInt(totalAmount/100, 10)+"&transaction_id="+transactionID,
+		nil,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	_, err = client.Do(req)
+
+	return err
+}
+
 func handleFunc(pattern string, cron bool, handler Handler) {
 	handleFuncs(pattern, cron, Handlers{methods.GET: handler})
 }

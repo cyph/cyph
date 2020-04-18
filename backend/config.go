@@ -113,6 +113,7 @@ var config = struct {
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
 	NewCyphTimeout             int64
+	PartnerConversionURL       string
 	Plans                      map[string]Plan
 	RootURL                    string
 }{
@@ -205,6 +206,8 @@ var config = struct {
 	256,
 
 	600000,
+
+	"https://www.cp50trk.com/?nid=740",
 
 	map[string]Plan{
 		"0-0": Plan{
