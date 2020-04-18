@@ -641,6 +641,7 @@ export class CheckoutComponent extends BaseProvider
 			if (EF && this.offerID !== undefined) {
 				Promise.resolve(
 					EF.conversion({
+						amount: this.amount * this.users.value,
 						offer_id: this.offerID
 					})
 				).catch(checkoutPartnerConversionError => {
