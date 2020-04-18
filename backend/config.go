@@ -104,8 +104,12 @@ var config = struct {
 	DefaultContinent           string
 	DefaultContinentCode       string
 	DefaultLanguageCode        string
+	DummyCity                  string
+	DummyContinent             string
+	DummyContinentCode         string
 	DummyCountry               string
 	DummyCountryCode           string
+	DummyPostalCode            string
 	DummyOrg                   string
 	EmailAddress               string
 	HPKPHeader                 string
@@ -187,9 +191,17 @@ var config = struct {
 
 	"en",
 
+	"McLean",
+
+	"North America",
+
+	"na",
+
 	"United States",
 
 	"us",
+
+	"22103",
 
 	"Legion of Doom",
 
