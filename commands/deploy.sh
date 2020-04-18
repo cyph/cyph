@@ -291,27 +291,27 @@ fi
 
 cp -a backend/shared/* firebase/functions/
 
-mkdir geoisp.tmp
-cd geoisp.tmp
-wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-ISP&suffix=tar.gz&license_key=$(
-	cat ~/.cyph/maxmind.key
-)" -O geoisp.tar.gz
-tar xzf geoisp.tar.gz
-mv */*.mmdb GeoIP2-ISP.mmdb
-if [ -f GeoIP2-ISP.mmdb ] ; then
-	cp -f GeoIP2-ISP.mmdb ~/.cyph/
-else
-	log 'GeoIP2-ISP.mmdb missing'
-	cp ~/.cyph/GeoIP2-ISP.mmdb ./
-fi
-mv GeoIP2-ISP.mmdb ../backend/
-cd ..
-rm -rf geoisp.tmp
-
 # Secret credentials
 cat ~/.cyph/backend.vars >> backend/app.yaml
 cat ~/.cyph/test.vars >> test/test.yaml
-cp ~/.cyph/GeoIP2-Country.mmdb backend/
+cp ~/.cyph/GeoIP2-*.mmdb backend/
+
+# mkdir geoisp.tmp
+# cd geoisp.tmp
+# wget "https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-ISP&suffix=tar.gz&license_key=$(
+# 	cat ~/.cyph/maxmind.key
+# )" -O geoisp.tar.gz
+# tar xzf geoisp.tar.gz
+# mv */*.mmdb GeoIP2-ISP.mmdb
+# if [ -f GeoIP2-ISP.mmdb ] ; then
+# 	cp -f GeoIP2-ISP.mmdb ~/.cyph/
+# else
+# 	log 'GeoIP2-ISP.mmdb missing'
+# 	cp ~/.cyph/GeoIP2-ISP.mmdb ./
+# fi
+# mv GeoIP2-ISP.mmdb ../backend/
+# cd ..
+# rm -rf geoisp.tmp
 
 # Remove serve artifacts
 rm backend/.build.yaml 2> /dev/null
