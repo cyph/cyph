@@ -14,10 +14,10 @@ import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, DatabaseItem, IDatabaseItem} from '../proto';
 import {DataManagerService} from '../service-interfaces/data-manager.service';
-import {flattenArrays} from '../util/arrays';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
+import {flattenArray} from '../util/reducers';
 import {getTimestamp} from '../util/time';
 import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
@@ -283,10 +283,7 @@ export class DatabaseService extends DataManagerService {
 		const asyncList: IAsyncList<T> = {
 			clear: async () => this.removeItem(url),
 			getFlatValue: async () =>
-				(await asyncList.getValue()).reduce<any>(
-					(a, b) => a.concat(b),
-					[]
-				),
+				<any> flattenArray(await asyncList.getValue()),
 			getTimedValue: async () => {
 				throw new Error(
 					'DatabaseService.getAsyncList().getTimedValue() not implemented.'
@@ -312,7 +309,7 @@ export class DatabaseService extends DataManagerService {
 			watchFlat: memoize((omitDuplicates?: boolean) =>
 				asyncList
 					.watch()
-					.pipe<any>(map(arr => flattenArrays(arr, omitDuplicates)))
+					.pipe<any>(map(arr => flattenArray(arr, omitDuplicates)))
 			),
 			watchPushes: memoize(() =>
 				this.watchListPushes(

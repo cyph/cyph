@@ -18,6 +18,7 @@ import {
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {lockFunction, lockTryOnce} from '../util/lock';
+import {arraySum} from '../util/reducers';
 import {staticDomSanitizer} from '../util/static-services';
 import {UserPresence} from './enums';
 import {reviewMax} from './review-max';
@@ -122,15 +123,19 @@ export class User {
 	/** Average rating. */
 	public readonly rating: () => Observable<number | undefined> = memoize(() =>
 		toBehaviorSubject(
-			this.reviews.watch().pipe(
-				map(reviews =>
-					reviews.size < 1 ?
-						undefined :
-						Array.from(reviews.values())
-							.map(review => Math.min(review.rating, reviewMax))
-							.reduce((a, b) => a + b, 0) / reviews.size
-				)
-			),
+			this.reviews
+				.watch()
+				.pipe(
+					map(reviews =>
+						reviews.size < 1 ?
+							undefined :
+							arraySum(
+								Array.from(reviews.values()).map(review =>
+									Math.min(review.rating, reviewMax)
+								)
+							) / reviews.size
+					)
+				),
 			undefined
 		)
 	);

@@ -2,6 +2,7 @@ import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../base-provider';
 import {random} from '../util/random';
+import {flattenArray} from '../util/reducers';
 import {AnalyticsService} from './analytics.service';
 
 /** Used for very basic A/B testing. */
@@ -24,15 +25,15 @@ export class SplitTestingService extends BaseProvider {
 				throw new Error('No values.');
 			}
 
-			values = (<any[]> values)
-				.map(o =>
+			values = flattenArray(
+				(<any[]> values).map(o =>
 					typeof o === 'object' &&
 					'value' in o &&
 					typeof o.weight === 'number' ?
 						new Array(o.weight).fill(o.value) :
 						[o]
 				)
-				.reduce((a, b) => a.concat(b), []);
+			);
 
 			index = Math.floor(values.length * random());
 

@@ -18,6 +18,7 @@ import {normalizeArray} from '../util/formatting';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
 import {requestPermissions} from '../util/permissions';
+import {flattenArray} from '../util/reducers';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
@@ -901,13 +902,12 @@ export class P2PWebRTCService extends BaseProvider
 
 		usernames = normalizeArray(usernames);
 
-		const channelConfigIDs = usernames
-			.map((a, i) => usernames.slice(i + 1).map(b => [a, b]))
-			.reduce((a, b) => [...a, ...b], [])
-			.reduce<{[a: string]: {[b: string]: number}}>(
-				(o, [a, b], i) => ({...o, [a]: {...o[a], [b]: i}}),
-				{}
-			);
+		const channelConfigIDs = flattenArray(
+			usernames.map((a, i) => usernames.slice(i + 1).map(b => [a, b]))
+		).reduce<{[a: string]: {[b: string]: number}}>(
+			(o, [a, b], i) => ({...o, [a]: {...o[a], [b]: i}}),
+			{}
+		);
 
 		const p2pSessionData = {
 			callType,

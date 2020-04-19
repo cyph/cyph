@@ -22,7 +22,6 @@ import {
 	NotificationTypes,
 	StringProto
 } from '../../proto';
-import {flattenArrays} from '../../util/arrays';
 import {filterUndefined, filterUndefinedOperator} from '../../util/filter';
 import {
 	cacheObservable,
@@ -36,6 +35,7 @@ import {
 } from '../../util/get-or-set-default';
 import {lockFunction} from '../../util/lock';
 import {debugLog, debugLogError} from '../../util/log';
+import {flattenArray} from '../../util/reducers';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {DatabaseService} from '../database.service';
@@ -560,10 +560,7 @@ export class AccountDatabaseService extends BaseProvider {
 			const asyncList: IAsyncList<T> = {
 				clear: async () => localLock(async () => this.removeItem(url)),
 				getFlatValue: async () =>
-					(await asyncList.getValue()).reduce<any>(
-						(a, b) => a.concat(b),
-						[]
-					),
+					<any> flattenArray(await asyncList.getValue()),
 				getTimedValue: async () =>
 					localLock(async () =>
 						this.getListWithTimestamps(
@@ -645,7 +642,7 @@ export class AccountDatabaseService extends BaseProvider {
 					asyncList
 						.watch()
 						.pipe<any>(
-							map(arr => flattenArrays(arr, omitDuplicates))
+							map(arr => flattenArray(arr, omitDuplicates))
 						)
 				),
 				watchPushes: memoize(() =>

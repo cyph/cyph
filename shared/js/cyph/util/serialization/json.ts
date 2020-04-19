@@ -1,4 +1,5 @@
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
+import {flattenObject} from '../reducers';
 
 const stringifyInternal = <T>(value: T, space?: string) : string => {
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
@@ -9,10 +10,7 @@ const stringifyInternal = <T>(value: T, space?: string) : string => {
 				{data: potassiumUtil.toBase64(v), isUint8Array: true} :
 			v instanceof Map ?
 				{
-					data: Array.from(v.keys()).reduce(
-						(o, k) => ({...o, [k]: v.get(k)}),
-						{}
-					),
+					data: flattenObject(Array.from(v.entries())),
 					isMap: true
 				} :
 				v,

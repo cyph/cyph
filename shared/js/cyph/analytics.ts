@@ -3,6 +3,7 @@ import {config} from './config';
 import {potassiumUtil} from './crypto/potassium/potassium-util';
 import {EnvDeploy, envDeploy} from './env-deploy';
 import {geolocation} from './geolocation';
+import {arrayAny} from './util/reducers';
 import {uuid} from './util/uuid';
 import {resolvable} from './util/wait/resolvable';
 
@@ -16,32 +17,34 @@ export class Analytics {
 	 */
 	private readonly referrer =
 		document.referrer &&
-		![
-			document.referrer,
-			...(document.referrer.match(/[0-9a-fA-F]+/g) || []).map(s => {
-				try {
-					return potassiumUtil.toString(potassiumUtil.fromHex(s));
-				}  catch {
-					return '';
-				}
-			}),
-			...(
-				'&' +
-				document.referrer.substring(document.referrer.indexOf('?') + 1)
-			)
-				.split(/\&.*?=/g)
-				.map(s => {
+		!arrayAny(
+			[
+				document.referrer,
+				...(document.referrer.match(/[0-9a-fA-F]+/g) || []).map(s => {
 					try {
-						return potassiumUtil.toString(
-							potassiumUtil.fromBase64(s)
-						);
-					}  catch (e) {
+						return potassiumUtil.toString(potassiumUtil.fromHex(s));
+					}  catch {
 						return '';
 					}
-				})
-		]
-			.map(s => /\/\/.*?\.?cyph\.[a-z]+\/?/.test(s))
-			.reduce((a, b) => a || b) ?
+				}),
+				...(
+					'&' +
+					document.referrer.substring(
+						document.referrer.indexOf('?') + 1
+					)
+				)
+					.split(/\&.*?=/g)
+					.map(s => {
+						try {
+							return potassiumUtil.toString(
+								potassiumUtil.fromBase64(s)
+							);
+						}  catch (e) {
+							return '';
+						}
+					})
+			].map(s => /\/\/.*?\.?cyph\.[a-z]+\/?/.test(s))
+		) ?
 			document.referrer :
 			undefined;
 

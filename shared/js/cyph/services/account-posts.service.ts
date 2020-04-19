@@ -27,6 +27,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {flattenArray} from '../util/reducers';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -263,17 +264,22 @@ export class AccountPostsService extends BaseProvider {
 						Promise.all(oldCircles.map(getCircleWrapper))
 					]);
 
-					const oldIDData = (await Promise.all(
-						oldCircleWrappers.map(async o =>
-							(await o.ids.getTimedValue()).map((id) : [
-								string,
-								{
-									circleWrapper: typeof o;
-									timedValue: ITimedValue<string>;
-								}
-							] => [id.value, {circleWrapper: o, timedValue: id}])
+					const oldIDData = flattenArray(
+						await Promise.all(
+							oldCircleWrappers.map(async o =>
+								(await o.ids.getTimedValue()).map((id) : [
+									string,
+									{
+										circleWrapper: typeof o;
+										timedValue: ITimedValue<string>;
+									}
+								] => [
+									id.value,
+									{circleWrapper: o, timedValue: id}
+								])
+							)
 						)
-					)).reduce((a, b) => a.concat(b), []);
+					);
 
 					const oldIDMap = new Map(oldIDData);
 					const oldTimedIDs = oldIDData.map(([_, v]) => v.timedValue);
@@ -289,15 +295,15 @@ export class AccountPostsService extends BaseProvider {
 						getPost: async id =>
 							getCircleWrapperForID(id).getPost(id),
 						getTimedIDs: async () =>
-							(await Promise.all([
-								oldTimedIDs,
-								currentCircleWrapper.ids.getTimedValue(),
-								publicPostDataPart.getTimedIDs()
-							]))
-								.reduce((a, b) => a.concat(b), [])
-								.sort((a, b) =>
-									a.timestamp > b.timestamp ? 1 : -1
-								),
+							flattenArray(
+								await Promise.all([
+									oldTimedIDs,
+									currentCircleWrapper.ids.getTimedValue(),
+									publicPostDataPart.getTimedIDs()
+								])
+							).sort((a, b) =>
+								a.timestamp > b.timestamp ? 1 : -1
+							),
 						hasPost: async id =>
 							getCircleWrapperForID(id).posts.hasItem(id),
 						pushID: async id =>
@@ -654,29 +660,29 @@ export class AccountPostsService extends BaseProvider {
 			);
 		}
 
-		const sorted = (await Promise.all(
-			usernames.map(async username => {
-				const postDataPart = await this.getUserPostData(username);
-				const ids = await postDataPart.getTimedIDs();
+		const sorted = flattenArray(
+			await Promise.all(
+				usernames.map(async username => {
+					const postDataPart = await this.getUserPostData(username);
+					const ids = await postDataPart.getTimedIDs();
 
-				const getAuthor = memoize(async () =>
-					this.accountUserLookupService.getUser(username)
-				);
+					const getAuthor = memoize(async () =>
+						this.accountUserLookupService.getUser(username)
+					);
 
-				/* eslint-disable-next-line @typescript-eslint/tslint/config */
-				return (nMostRecent === undefined ?
-					ids :
-					ids.slice(-nMostRecent)
-				).map(o => ({
-					getAuthor,
-					id: o.value,
-					postDataPart,
-					timestamp: o.timestamp
-				}));
-			})
-		))
-			.reduce((a, b) => a.concat(b), [])
-			.sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1));
+					/* eslint-disable-next-line @typescript-eslint/tslint/config */
+					return (nMostRecent === undefined ?
+						ids :
+						ids.slice(-nMostRecent)
+					).map(o => ({
+						getAuthor,
+						id: o.value,
+						postDataPart,
+						timestamp: o.timestamp
+					}));
+				})
+			)
+		).sort((a, b) => (a.timestamp > b.timestamp ? -1 : 1));
 
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		return (nMostRecent === undefined ?

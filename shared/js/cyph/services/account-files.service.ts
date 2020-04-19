@@ -58,6 +58,7 @@ import {
 } from '../util/get-or-set-default';
 import {debugLog} from '../util/log';
 import {observableAll} from '../util/observable-all';
+import {arraySum} from '../util/reducers';
 import {saveFile} from '../util/save-file';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -461,13 +462,12 @@ export class AccountFilesService extends BaseProvider {
 		this.accountDatabaseService.currentUser
 	]).pipe(
 		map(([files, currentUser]) =>
-			files.reduce(
-				(n, {owner, size}) =>
-					n +
-					(currentUser && currentUser.user.username === owner ?
+			arraySum(
+				files.map(({owner, size}) =>
+					currentUser && currentUser.user.username === owner ?
 						size :
-						0),
-				0
+						0
+				)
 			)
 		)
 	);
@@ -1496,9 +1496,7 @@ export class AccountFilesService extends BaseProvider {
 
 		return fileConfig.recordType === AccountFileRecord.RecordTypes.Doc ?
 			file instanceof Array ?
-				file
-					.map(o => this.encodeQuill(o).length)
-					.reduce((a, b) => a + b, 0) :
+				arraySum(file.map(o => this.encodeQuill(o).length)) :
 				0 :
 		fileConfig.recordType === AccountFileRecord.RecordTypes.File ?
 			file instanceof Blob ?

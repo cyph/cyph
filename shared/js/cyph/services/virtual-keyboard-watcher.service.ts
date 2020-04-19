@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
+import {flattenArray} from '../util/reducers';
 import {EnvService} from './env.service';
 
 /**
@@ -65,14 +66,14 @@ export class VirtualKeyboardWatcherService extends BaseProvider {
 			new MutationObserver(mutations => {
 				focusBlurListen(
 					$(
-						mutations
-							.map(
+						flattenArray(
+							mutations.map(
 								mutationRecord =>
 									<HTMLElement[]> (
 										Array.from(mutationRecord.addedNodes)
 									)
 							)
-							.reduce((a, b) => a.concat(b), [])
+						)
 					)
 						.find(inputSelector)
 						.addBack()
