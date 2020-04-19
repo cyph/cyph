@@ -134,9 +134,12 @@ export class ChannelService extends BaseProvider implements IChannelService {
 					uuid
 				) :
 				uuid();
+
+			/*
 			this.databaseService.setDisconnectTracker(
 				`${url}/disconnects/${userID}`
 			);
+			*/
 		}
 
 		this.userID.resolve(userID);
