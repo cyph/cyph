@@ -1118,9 +1118,8 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 		}),
 		sendMailInternal(
 			'user-registrations@cyph.com',
-			`${testEnvName ? `[${testEnvName}] ` : ''}Cyph User Registration: ${
-				userRecord.email
-			}`
+			`${testEnvName ? `[${testEnvName}] ` : ''}Cyph User Registration`,
+			userRecord.email
 		)
 	]);
 });
