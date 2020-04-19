@@ -2151,10 +2151,13 @@ export class FirebaseDatabaseService extends DatabaseService {
 		(async () => {
 			const app = await this.app;
 
+			await app.database().goOnline();
 			while (!this.destroyed.value) {
-				await sleep(1000);
+				await sleep(30000);
+				await app.database().goOffline();
 				await app.database().goOnline();
 			}
+			await app.database().goOffline();
 		})();
 	}
 }
