@@ -1033,7 +1033,7 @@ export class AccountService extends BaseProvider {
 				const routePath = this.routePath;
 				const route = routePath[0] || '';
 
-				const specialCases: {[k: string]: string} = {
+				const specialCases: Record<string, string> = {
 					'': this.stringsService.homeHeader,
 					'ehr': 'EHR',
 					'feed': 'Social Feed',

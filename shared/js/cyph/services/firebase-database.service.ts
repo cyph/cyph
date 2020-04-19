@@ -255,7 +255,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @ignore */
 	private getListKeysInternal (
-		value: Map<string, any> | {[k: string]: any},
+		value: Map<string, any> | Record<string, any>,
 		noFilter: boolean = false
 	) : string[] {
 		if (!value) {
@@ -1044,7 +1044,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			const previousKey = async () : Promise<string | undefined> =>
 				retryUntilSuccessful(async () => {
-					const listValueMap: {[k: string]: any} = (await listRef
+					const listValueMap: Record<string, any> = (await listRef
 						.orderByKey()
 						.endAt(key)
 						.limitToLast(2)

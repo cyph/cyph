@@ -21,9 +21,9 @@ export class NativeLocalStorageService extends LocalStorageService {
 	private readonly storage: SecureStorage = new SecureStorage();
 
 	/** @ignore */
-	private async getKeysObject () : Promise<{[key: string]: boolean}> {
+	private async getKeysObject () : Promise<Record<string, boolean>> {
 		try {
-			return parse<{[key: string]: boolean}>(
+			return parse<Record<string, boolean>>(
 				await this.storage.get({key: this.keysURL})
 			);
 		}

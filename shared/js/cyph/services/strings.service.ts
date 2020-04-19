@@ -12,7 +12,7 @@ import {EnvService} from './env.service';
 @Injectable()
 export class StringsService extends BaseProvider {
 	/** @ignore */
-	private readonly customBuildStrings: {[k: string]: string} =
+	private readonly customBuildStrings: Record<string, string> =
 		this.envService.environment.customBuild &&
 		this.envService.environment.customBuild.strings ?
 			this.envService.environment.customBuild.strings :
@@ -1303,7 +1303,7 @@ export class StringsService extends BaseProvider {
 		super();
 
 		/* eslint-disable-next-line @typescript-eslint/no-this-alias */
-		const strings: {[k: string]: any} = this;
+		const strings: Record<string, any> = this;
 
 		for (const k of Object.keys(strings)) {
 			const s = strings[k];

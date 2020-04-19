@@ -551,7 +551,7 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async join (p2pSessionData: {
 		callType: 'audio' | 'video';
-		channelConfigIDs: {[a: string]: {[b: string]: number}};
+		channelConfigIDs: Record<string, Record<string, number>>;
 		iceServers: string;
 		id: string;
 	}) : Promise<void> {
@@ -904,7 +904,7 @@ export class P2PWebRTCService extends BaseProvider
 
 		const channelConfigIDs = flattenArray(
 			usernames.map((a, i) => usernames.slice(i + 1).map(b => [a, b]))
-		).reduce<{[a: string]: {[b: string]: number}}>(
+		).reduce<Record<string, Record<string, number>>>(
 			(o, [a, b], i) => ({...o, [a]: {...o[a], [b]: i}}),
 			{}
 		);

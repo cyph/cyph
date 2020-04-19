@@ -1279,7 +1279,7 @@ export class AccountDatabaseService extends BaseProvider {
 	public async notify (
 		username: MaybePromise<string | string[]>,
 		notificationType: NotificationTypes,
-		metadata?: {id: string} & {[k: string]: any}
+		metadata?: {id: string} & Record<string, any>
 	) : Promise<void> {
 		await this.callFunction('userNotify', {
 			target: await username,

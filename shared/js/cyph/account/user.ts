@@ -87,7 +87,7 @@ export class User {
 
 	/** @see IAccountUserProfile.externalUsernames */
 	public readonly externalUsernames: Observable<
-		{[k: string]: string} | undefined
+		Record<string, string> | undefined
 	> = toBehaviorSubject(
 		this.accountUserProfile
 			.watch()
