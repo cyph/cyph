@@ -44,6 +44,7 @@ import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
 import {VideoComponent} from '../components/video';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {InitDirective} from '../directives/init.directive';
+import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
@@ -236,6 +237,10 @@ export class CyphWebModule {
 		);
 
 		/* For debugging */
+
+		if (!env.debug) {
+			return;
+		}
 
 		(<any> self).localStorageService = localStorageService;
 		(<any> self).router = router;

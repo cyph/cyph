@@ -1898,6 +1898,11 @@ export class ChatService extends BaseProvider {
 			return;
 		}
 
+		(<any> self).chatService = this;
+		(<any> self).p2pService = this.p2pService;
+		(<any> self).p2pWebRTCService = this.p2pWebRTCService;
+		(<any> self).sessionService = this.sessionService;
+
 		(<any> self).bypassAbortion = () => {
 			this.chat.state = States.chat;
 			this.updateChat();
