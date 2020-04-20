@@ -23,7 +23,7 @@ import {flattenArray} from '../util/reducers';
 import {request} from '../util/request';
 import {parse} from '../util/serialization';
 import {uuid} from '../util/uuid';
-import {resolvable} from '../util/wait';
+import {resolvable, retryUntilSuccessful} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
@@ -165,7 +165,9 @@ export class P2PWebRTCService extends BaseProvider
 		const recordRTC = new RecordRTC.MRecordRTC();
 		recordRTC.mediaType = {video: true};
 
-		return {
+		let isRecording = false;
+
+		const recorder = {
 			addStream: (stream: MediaStream) => {
 				recordRTC.addStream(stream);
 			},
@@ -187,15 +189,25 @@ export class P2PWebRTCService extends BaseProvider
 				recordRTC.resumeRecording();
 			},
 			start: () => {
+				isRecording = true;
 				recordRTC.startRecording();
 			},
-			stop: async () =>
-				new Promise<void>(resolve => {
-					recordRTC.stopRecording(() => {
-						resolve();
-					});
-				})
+			stop: async () => {
+				/* Workaround for recordRTC.stopRecording callback not firing */
+				if (!isRecording) {
+					return;
+				}
+
+				isRecording = false;
+
+				recordRTC.stopRecording();
+				await retryUntilSuccessful(async () =>
+					recorder.getBlob()
+				).catch(() => {});
+			}
 		};
+
+		return recorder;
 	})();
 
 	/** @inheritDoc */
