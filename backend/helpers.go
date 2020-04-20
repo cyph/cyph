@@ -108,6 +108,9 @@ var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
 var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
+var everflowID = os.Getenv("EVERFLOW_ID")
+var everflowToken = os.Getenv("EVERFLOW_TOKEN")
+
 var analIDs = func() map[string]string {
 	o := map[string]string{}
 
@@ -640,7 +643,7 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 func trackPartnerConversion(h HandlerArgs, transactionID string, totalAmount int64) error {
 	req, err := http.NewRequest(
 		methods.GET,
-		config.PartnerConversionURL+"&amount="+strconv.FormatInt(totalAmount/100, 10)+"&transaction_id="+transactionID,
+		config.PartnerConversionURL+"/?nid="+everflowID+"&verification_token="+everflowToken+"&amount="+strconv.FormatInt(totalAmount/100, 10)+"&transaction_id="+transactionID,
 		nil,
 	)
 

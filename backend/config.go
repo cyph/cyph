@@ -222,7 +222,7 @@ var config = struct {
 
 	600000,
 
-	"https://www.cp50trk.com/?nid=740",
+	"https://www.cp50trk.com",
 
 	map[string]Plan{
 		"0-0": Plan{
