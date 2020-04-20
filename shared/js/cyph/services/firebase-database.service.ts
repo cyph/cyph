@@ -2034,96 +2034,61 @@ export class FirebaseDatabaseService extends DatabaseService {
 								url: string;
 							}
 						>(observer => {
-							let cleanup: Function;
+							const pushedKeys = new Set<string>();
+							const keySubscriptionLock = lockFunction();
 
-							(async () => {
-								const url = await urlPromise;
+							const keySubscription = this.watchListKeys(
+								urlPromise,
+								subscriptions
+							).subscribe(async keys =>
+								keySubscriptionLock(async () => {
+									const url = await urlPromise;
 
-								const listRef = await this.getDatabaseRef(url);
-								let initiated = false;
+									for (let i = 0; i < keys.length; ++i) {
+										const key = keys[i];
 
-								/* eslint-disable-next-line no-null/no-null */
-								const onChildAdded = async (
-									snapshot: firebase.database.DataSnapshot | null,
-									previousKey?: string | null
-								) : Promise<void> => {
-									if (
-										snapshot?.key &&
-										typeof (snapshot.val() || {}).hash !==
-											'string'
-									) {
-										return onChildAdded(
-											await this.waitForValue(
-												`${url}/${snapshot.key}`
-											),
-											previousKey
-										);
-									}
-									if (
-										!snapshot ||
-										!snapshot.exists() ||
-										!snapshot.key
-									) {
-										return;
-									}
+										if (pushedKeys.has(key)) {
+											continue;
+										}
+										pushedKeys.add(key);
 
-									const key = snapshot.key;
-									const itemUrl = `${url}/${key}`;
-									const {
-										timestamp,
-										value
-									} = await this.downloadItem(itemUrl, proto)
-										.result;
+										const previousKey: string | undefined =
+											keys[i - 1];
+										const itemURL = `${url}/${key}`;
 
-									this.ngZone.run(() => {
-										observer.next({
-											key,
-											previousKey:
-												previousKey || undefined,
+										const {
 											timestamp,
-											url: itemUrl,
 											value
+										} = await this.downloadItem(
+											itemURL,
+											proto
+										).result;
+
+										this.ngZone.run(() => {
+											observer.next({
+												key,
+												previousKey,
+												timestamp,
+												url: itemURL,
+												value
+											});
 										});
-									});
 
-									if (noCache) {
-										this.cache.removeItem(url);
-									}
-								};
-
-								/* eslint-disable-next-line no-null/no-null */
-								const onValue = async (
-									snapshot: firebase.database.DataSnapshot | null
-								) => {
-									if (!initiated) {
-										initiated = true;
-										return;
-									}
-									if (!snapshot || snapshot.exists()) {
-										return;
+										if (noCache) {
+											this.cache.removeItem(itemURL);
+										}
 									}
 
-									this.ngZone.run(() => {
-										observer.complete();
-									});
-								};
+									if (completeOnEmpty && keys.length === 0) {
+										this.ngZone.run(() => {
+											observer.complete();
+										});
+									}
+								})
+							);
 
-								listRef.on('child_added', onChildAdded);
-
-								if (completeOnEmpty) {
-									listRef.on('value', onValue);
-								}
-
-								cleanup = () => {
-									listRef.off('child_added', onChildAdded);
-									listRef.off('value', onValue);
-								};
-							})().catch(() => {
-								cleanup = () => {};
-							});
-
-							return async () => {
-								(await waitForValue(() => cleanup))();
+							return () => {
+								keySubscription.unsubscribe();
 							};
 						})
 				),
