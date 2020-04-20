@@ -500,7 +500,7 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	);
 
 	const inviteData = (await inviteDataRef.once('value')).val() || {};
-	const {inviterUsername, reservedUsername} = inviteData;
+	const {email, inviterUsername, reservedUsername} = inviteData;
 	const plan =
 		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
@@ -511,6 +511,7 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	});
 
 	return {
+		email,
 		inviterUsername,
 		isValid: typeof inviterUsername === 'string',
 		plan,
@@ -754,6 +755,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 						...(braintreeSubscriptionID ?
 							{braintreeSubscriptionID} :
 							{}),
+						...(i === 0 ? {email} : {}),
 						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
 					}),
 					i === 0 &&
@@ -1253,6 +1255,7 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 
 				await Promise.all([
 					database.ref(`${namespace}/inviteCodes/${code}`).set({
+						email,
 						inviterUsername,
 						plan,
 						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})

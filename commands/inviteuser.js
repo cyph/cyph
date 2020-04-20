@@ -38,7 +38,8 @@ const inviteUser = async (
 		undefined,
 		plan,
 		reservedUsername,
-		trialMonths
+		trialMonths,
+		email
 	))[''];
 
 	const inviteCode = inviteCodes[0];

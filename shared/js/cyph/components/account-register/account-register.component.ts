@@ -112,6 +112,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Metadata pulled for current invite code. */
 	public readonly inviteCodeData = new BehaviorSubject<{
+		email?: string;
 		inviteCode?: string;
 		inviterUsername?: string;
 		isValid: boolean;
@@ -640,6 +641,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						}
 
 						return {
+							email:
+								typeof o.email === 'string' ?
+									o.email :
+									undefined,
 							inviteCode: value,
 							inviterUsername:
 								typeof o.inviterUsername === 'string' ?
@@ -658,6 +663,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						};
 					})
 				);
+
+				if (this.inviteCodeData.value.email && !this.email.value) {
+					this.email.next(this.inviteCodeData.value.email);
+				}
 
 				if (
 					this.inviteCodeData.value.reservedUsername &&

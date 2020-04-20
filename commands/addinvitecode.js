@@ -11,7 +11,8 @@ const addInviteCode = async (
 	namespace,
 	plan,
 	reservedUsername,
-	trialMonths
+	trialMonths,
+	email
 ) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
 		throw new Error('Invalid Firebase project ID.');
@@ -78,6 +79,7 @@ const addInviteCode = async (
 						database
 							.ref(`${namespacePath}/inviteCodes/${code}`)
 							.set({
+								email,
 								inviterUsername,
 								...(plan ? {plan: CyphPlans[plan]} : {}),
 								...(reservedUsername ? {reservedUsername} : {}),
