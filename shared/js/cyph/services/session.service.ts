@@ -68,6 +68,9 @@ export abstract class SessionService extends BaseProvider
 	protected readonly account: boolean = false;
 
 	/** @ignore */
+	protected cyphertextReceiveHandlerLock: LockFunction = lockFunction();
+
+	/** @ignore */
 	protected incomingMessageQueue: IAsyncList<
 		ISessionMessageList
 	> = new LocalAsyncList<ISessionMessageList>();
@@ -228,53 +231,62 @@ export abstract class SessionService extends BaseProvider
 		messages: ISessionMessage[],
 		initial?: boolean
 	) : Promise<void> {
-		debugLog(() => ({cyphertextReceiveHandler: {messages}}));
+		await this.cyphertextReceiveHandlerLock(async () => {
+			debugLog(() => ({cyphertextReceiveHandler: {messages}}));
 
-		const messageGroups = new Map<string, ISessionMessageDataInternal[]>();
+			const messageGroups = new Map<
+				string,
+				ISessionMessageDataInternal[]
+			>();
 
-		const otherSubSessionMessages = messages.filter(
-			message => !this.correctSubSession(message)
-		);
+			const otherSubSessionMessages = messages.filter(
+				message => !this.correctSubSession(message)
+			);
 
-		if (otherSubSessionMessages.length > 0) {
-			await this.incomingMessageQueue.pushItem({
-				messages: otherSubSessionMessages
-			});
-		}
+			if (otherSubSessionMessages.length > 0) {
+				await this.incomingMessageQueue.pushItem({
+					messages: otherSubSessionMessages
+				});
+			}
 
-		await Promise.all(
-			messages.filter(this.correctSubSession).map(async message => {
-				if (
-					!message.data.id ||
-					this.receivedMessages.has(message.data.id)
-				) {
-					return;
-				}
+			await Promise.all(
+				messages.filter(this.correctSubSession).map(async message => {
+					if (
+						!message.data.id ||
+						this.receivedMessages.has(message.data.id)
+					) {
+						return;
+					}
 
-				message.data = await this.processMessageData(
-					message.data,
-					initial
-				);
+					message.data = await this.processMessageData(
+						message.data,
+						initial
+					);
 
-				if (!(message.event && message.event in rpcEvents)) {
-					return;
-				}
+					if (!(message.event && message.event in rpcEvents)) {
+						return;
+					}
 
-				getOrSetDefault(messageGroups, message.event, () => []).push(
-					message.data
-				);
-			})
-		);
+					getOrSetDefault(
+						messageGroups,
+						message.event,
+						() => []
+					).push(message.data);
+				})
+			);
 
-		await Promise.all(
-			Array.from(messageGroups.entries()).map(async ([event, data]) => {
-				await this.trigger(event, data);
+			await Promise.all(
+				Array.from(messageGroups.entries()).map(
+					async ([event, data]) => {
+						await this.trigger(event, data);
 
-				for (const {id} of data) {
-					this.receivedMessages.add(id);
-				}
-			})
-		);
+						for (const {id} of data) {
+							this.receivedMessages.add(id);
+						}
+					}
+				)
+			);
+		});
 	}
 
 	/** @ignore */
