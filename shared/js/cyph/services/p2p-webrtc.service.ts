@@ -647,6 +647,8 @@ export class P2PWebRTCService extends BaseProvider
 				}))
 			);
 
+			const timer = new Timer(undefined, false, undefined, true);
+
 			const peers: {
 				connected: Promise<void>;
 				peer: SimplePeer.Instance | undefined;
@@ -819,6 +821,7 @@ export class P2PWebRTCService extends BaseProvider
 
 					if (!this.sessionService.group) {
 						this.loading.next(false);
+						timer.start();
 					}
 				});
 
@@ -857,13 +860,14 @@ export class P2PWebRTCService extends BaseProvider
 
 			if (this.sessionService.group) {
 				this.loading.next(false);
+				timer.start();
 			}
 
 			handlers.loaded();
 			handlers.connected(true);
 			this.webRTC.next({
 				peers,
-				timer: new Timer(undefined, true, undefined, true)
+				timer
 			});
 
 			this.initialCallPending.next(false);
