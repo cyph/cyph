@@ -88,15 +88,6 @@ export class P2PWebRTCService extends BaseProvider
 		.promise;
 
 	/** @ignore */
-	private readonly resolveHandlers: (handlers: IP2PHandlers) => void = this
-		._HANDLERS.resolve;
-
-	/** @ignore */
-	private readonly resolveRemoteVideos: (
-		remoteVideo: () => JQuery
-	) => void = this._REMOTE_VIDEOS.resolve;
-
-	/** @ignore */
 	private readonly sessionServices: Promise<SessionService[]>;
 
 	/** @inheritDoc */
@@ -207,7 +198,16 @@ export class P2PWebRTCService extends BaseProvider
 	})();
 
 	/** @inheritDoc */
+	public readonly resolveHandlers: (handlers: IP2PHandlers) => void = this
+		._HANDLERS.resolve;
+
+	/** @inheritDoc */
 	public readonly resolveReady: () => void = this._READY.resolve;
+
+	/** @inheritDoc */
+	public readonly resolveRemoteVideos: (
+		remoteVideo: () => JQuery
+	) => void = this._REMOTE_VIDEOS.resolve;
 
 	/** @inheritDoc */
 	public readonly screenSharingEnabled = new BehaviorSubject<boolean>(false);
@@ -502,12 +502,6 @@ export class P2PWebRTCService extends BaseProvider
 					}
 				)
 		};
-	}
-
-	/** @inheritDoc */
-	public init (handlers: IP2PHandlers, remoteVideos: () => JQuery) : void {
-		this.resolveHandlers(handlers);
-		this.resolveRemoteVideos(remoteVideos);
 	}
 
 	/** @inheritDoc */

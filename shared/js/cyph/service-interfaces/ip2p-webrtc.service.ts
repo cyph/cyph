@@ -107,9 +107,6 @@ export interface IP2PWebRTCService {
 		speakers: {label: string; switchTo: () => Promise<void>}[];
 	}>;
 
-	/** Initializes service. */
-	init (handlers: IP2PHandlers, remoteVideos: () => JQuery) : void;
-
 	/** Initializes local I/O stream. */
 	initUserMedia (
 		callType?: 'audio' | 'video'
@@ -132,8 +129,14 @@ export interface IP2PWebRTCService {
 		usernames?: string[]
 	) : Promise<void>;
 
+	/** Resolves handlers. */
+	resolveHandlers (handlers: IP2PHandlers) : void;
+
 	/** Resolves ready. */
 	resolveReady () : void;
+
+	/** Resolves remote videos. */
+	resolveRemoteVideos (remoteVideos: () => JQuery) : void;
 
 	/**
 	 * Pauses all or a subset of the current outgoing stream.

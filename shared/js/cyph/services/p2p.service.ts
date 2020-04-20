@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {memoize} from 'lodash-es';
 import {BehaviorSubject} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
@@ -77,14 +78,16 @@ export class P2PService extends BaseProvider {
 				title: this.stringsService.p2pTitle
 			});
 		},
-		passiveAcceptConfirm: async callType =>
-			!(await this.dialogService.toast(
-				callType === 'video' ?
-					this.stringsService.p2pWarningVideoPassive :
-					this.stringsService.p2pWarningAudioPassive,
-				5000,
-				this.stringsService.cancel
-			)),
+		passiveAcceptConfirm: memoize(
+			async callType =>
+				!(await this.dialogService.toast(
+					callType === 'video' ?
+						this.stringsService.p2pWarningVideoPassive :
+						this.stringsService.p2pWarningAudioPassive,
+					5000,
+					this.stringsService.cancel
+				))
+		),
 		requestConfirm: async (callType, isAccepted = false) => {
 			if (isAccepted) {
 				return true;
@@ -243,7 +246,7 @@ export class P2PService extends BaseProvider {
 
 	/** Initializes service. */
 	public async init (remoteVideos: () => JQuery) : Promise<void> {
-		this.p2pWebRTCService.init(this.handlers, remoteVideos);
+		this.p2pWebRTCService.resolveRemoteVideos(remoteVideos);
 
 		this.isEnabled.next(
 			P2PWebRTCService.isSupported &&
@@ -360,5 +363,6 @@ export class P2PService extends BaseProvider {
 		super();
 
 		this.chatService.p2pService.resolve(this);
+		this.p2pWebRTCService.resolveHandlers(this.handlers);
 	}
 }
