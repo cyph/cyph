@@ -1,4 +1,4 @@
 cron:
 - description: "waitlist rollout interval"
   url: /waitlist/invite
-  schedule: every saturday 09:00
+  schedule: every fri,sat,sun,mon 09:00
