@@ -182,6 +182,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	bt := braintreeInit(h)
 
+	partnerOrderID := ""
 	braintreeIDs := []string{}
 	braintreeSubscriptionIDs := []string{}
 	txLog := ""
@@ -327,6 +328,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 
+		partnerOrderID = braintreeSubscriptionIDs[0]
+
 		if success {
 			_, err := h.Datastore.Put(
 				h.Context,
@@ -382,12 +385,16 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				return err.Error(), http.StatusTeapot
 			}
 
+			partnerOrderID = tx.Id
+
 			bt.Transaction().SubmitForSettlement(h.Context, tx.Id)
 
 			success = tx.Status == "authorized"
 			txJSON, _ := json.Marshal(tx)
 			txLog += string(txJSON)
 		} else {
+			partnerOrderID = bitPayInvoiceID
+
 			invoice, err := getBitPayInvoice(bitPayInvoiceID)
 
 			if err != nil {
@@ -467,7 +474,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	if success && partnerTransactionID != "" {
-		err = trackPartnerConversion(h, partnerTransactionID, totalAmount)
+		err = trackPartnerConversion(h, partnerOrderID, partnerTransactionID, totalAmount)
 		if err != nil {
 			subject = "PARTNER CONVERSION FAILURE: " + subject
 		}
