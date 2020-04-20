@@ -79,8 +79,8 @@ const addInviteCode = async (
 						database
 							.ref(`${namespacePath}/inviteCodes/${code}`)
 							.set({
-								email,
 								inviterUsername,
+								...(email ? {email} : {}),
 								...(plan ? {plan: CyphPlans[plan]} : {}),
 								...(reservedUsername ? {reservedUsername} : {}),
 								...(trialMonths ?

@@ -755,10 +755,11 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 						...(braintreeSubscriptionID ?
 							{braintreeSubscriptionID} :
 							{}),
-						...(i === 0 ? {email} : {}),
+						...(i === 0 && email ? {email} : {}),
 						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
 					}),
 					i === 0 &&
+					email &&
 					mailchimp &&
 					mailchimpCredentials &&
 					mailchimpCredentials.listIDs &&
@@ -1255,9 +1256,9 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 
 				await Promise.all([
 					database.ref(`${namespace}/inviteCodes/${code}`).set({
-						email,
 						inviterUsername,
 						plan,
+						...(email ? {email} : {}),
 						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
 					}),
 					setItem(
