@@ -1249,33 +1249,37 @@ export class P2PWebRTCService extends BaseProvider
 			);
 
 			for (let i = 0; i < sessionServices.length; ++i) {
+				const incomingSignalLock = lockFunction();
+
 				sessionServices[i].on(
 					rpcEvents.p2p,
-					async (newEvents: ISessionMessageData[]) => {
-						const webRTC = await this.getWebRTC();
+					async (newEvents: ISessionMessageData[]) =>
+						incomingSignalLock(async () => {
+							const webRTC = await this.getWebRTC();
 
-						for (const o of newEvents) {
-							const message = o?.bytes && msgpack.decode(o.bytes);
-							if (!message) {
-								continue;
+							for (const o of newEvents) {
+								const message =
+									o?.bytes && msgpack.decode(o.bytes);
+								if (!message) {
+									continue;
+								}
+
+								debugLog(() => ({
+									webRTC: {incomingSignal: message}
+								}));
+
+								const {peerResolvers} = webRTC.peers[i];
+								const peerResolver =
+									peerResolvers &&
+									typeof message.generation === 'number' ?
+										peerResolvers[message.generation] :
+										undefined;
+								const peer = await peerResolver?.promise;
+
+								/* eslint-disable-next-line no-unused-expressions */
+								peer?.signal(message.data);
 							}
-
-							debugLog(() => ({
-								webRTC: {incomingSignal: message}
-							}));
-
-							const {peerResolvers} = webRTC.peers[i];
-							const peerResolver =
-								peerResolvers &&
-								typeof message.generation === 'number' ?
-									peerResolvers[message.generation] :
-									undefined;
-							const peer = await peerResolver?.promise;
-
-							/* eslint-disable-next-line no-unused-expressions */
-							peer?.signal(message.data);
-						}
-					}
+						})
 				);
 			}
 		});
