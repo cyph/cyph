@@ -1,5 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import SimplePeer from 'simple-peer';
+import {IResolvable} from '../iresolvable';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {Timer} from '../timer';
 
@@ -82,7 +83,9 @@ export interface IP2PWebRTCService {
 		| {
 				peers: {
 					connected: Promise<void>;
-					peer: SimplePeer.Instance | undefined;
+					peerResolvers:
+						| IResolvable<SimplePeer.Instance>[]
+						| undefined;
 				}[];
 				timer: Timer;
 		  }
