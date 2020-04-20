@@ -1108,9 +1108,6 @@ export class StringsService extends BaseProvider {
 	public readonly signupFailed = `Signup failed. Please try again later. --- NOTE: We are currently investigating user reports of problems with the latest Microsoft Edge. If you are on Edge, please try with Chrome or Firefox instead.`;
 
 	/** @see StringsService */
-	public readonly signupMessage = `Enjoying the service? Join our waitlist for ${this.internalProductShort} v2! More details are on the way, but the next version of ${this.internalProductShort} will include group messaging, user accounts, and encrypted chat history.`;
-
-	/** @see StringsService */
 	public readonly speakerSwitchTitle = `Choose Speaker`;
 
 	/** @see StringsService */
