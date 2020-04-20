@@ -718,6 +718,16 @@ export class P2PWebRTCService extends BaseProvider
 					peer.on('close', async () => {
 						if (this.isActive.value) {
 							debugLog(() => ({webRTC: {close: 'retrying'}}));
+
+							this.incomingStreams.next([
+								...this.incomingStreams.value.slice(0, i),
+								{
+									...this.incomingStreams.value[i],
+									activeVideo: false
+								},
+								...this.incomingStreams.value.slice(i + 1)
+							]);
+
 							peerResolvers.push(resolvable());
 							peerResolvers
 								.slice(-2)[0]
