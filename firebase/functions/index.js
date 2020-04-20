@@ -220,6 +220,9 @@ const validateInput = (input, regex, optional) => {
 	return input;
 };
 
+const validateEmail = (email, optional) =>
+	validateInput((email || '').trim().toLowerCase(), emailRegex, optional);
+
 const onCall = f =>
 	functions.https.onRequest((req, res) =>
 		cors(req, res, async () => {
@@ -583,7 +586,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		undefined,
 		true
 	);
-	const email = validateInput(req.body.email, emailRegex, true);
+	const email = validateEmail(req.body.email, true);
 	const name = validateInput(req.body.name, undefined, true);
 	let plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
@@ -1149,7 +1152,7 @@ exports.rejectPseudoRelationship = onCall(
 exports.requestPseudoRelationship = onCall(
 	async (data, namespace, getUsername) => {
 		const {accountsURL} = namespaces[namespace];
-		const email = validateInput(data.email, emailRegex);
+		const email = validateEmail(data.email);
 		const name = validateInput(data.name) || 'User';
 		const id = uuid();
 		const username = await getUsername();
@@ -1213,8 +1216,8 @@ exports.resetCastleSessionID = onCall(async (data, namespace, getUsername) => {
 
 exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
-	const email = data.email && validateInput(data.email, emailRegex);
-	const name = data.name && validateInput(data.name);
+	const email = validateEmail(data.email, true);
+	const name = validateInput(data.name, true);
 	const inviterUsername = await getUsername();
 	const inviteCodesRef = database.ref(
 		`${namespace}/users/${inviterUsername}/inviteCodes`
@@ -1440,11 +1443,9 @@ exports.userEmailSet = functions.database
 		);
 
 		const [email, plan] = await Promise.all([
-			getItem(
-				params.namespace,
-				`users/${username}/email`,
-				StringProto
-			).catch(() => undefined),
+			getItem(params.namespace, `users/${username}/email`, StringProto)
+				.then(s => s.trim().toLowerCase())
+				.catch(() => undefined),
 			getItem(params.namespace, `users/${username}/plan`, CyphPlan)
 				.catch(() => undefined)
 				.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free))

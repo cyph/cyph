@@ -784,7 +784,7 @@ func getEmail(email string) (string, error) {
 	if !emailRegex.MatchString(email) {
 		return "", errors.New("invalid email address: " + email)
 	}
-	return email, nil
+	return strings.ToLower(email), nil
 }
 
 func getNamespace(namespace string) (string, error) {
