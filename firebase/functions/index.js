@@ -1,6 +1,7 @@
 const cors = require('cors')({origin: true});
 const functions = require('firebase-functions');
 const fs = require('fs');
+const {phoneNumberTimezone} = require('phone-number-timezone');
 const usernameBlacklist = new Set(require('username-blacklist'));
 const {config} = require('./config');
 const {cyphAdminKey, mailchimpCredentials} = require('./cyph-admin-vars');
@@ -219,6 +220,9 @@ const validateInput = (input, regex, optional) => {
 	return input;
 };
 
+const validateEmail = (email, optional) =>
+	validateInput((email || '').trim().toLowerCase(), emailRegex, optional);
+
 const onCall = f =>
 	functions.https.onRequest((req, res) =>
 		cors(req, res, async () => {
@@ -375,9 +379,21 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterLink = `${accountsURL}account-burner/${data.callType ||
 		'chat'}/${id}`;
 
+	const startTimeString = new Intl.DateTimeFormat('en-US', {
+		day: 'numeric',
+		hour: 'numeric',
+		minute: '2-digit',
+		month: 'long',
+		timeZone: data.toSMS ?
+			await phoneNumberTimezone(data.toSMS) :
+			undefined,
+		timeZoneName: 'long',
+		year: 'numeric'
+	}).format(new Date(data.eventDetails.startTime));
+
 	const messagePart1 = `Cyph appointment with \${PARTY} is scheduled for ${Math.floor(
 		(data.eventDetails.endTime - data.eventDetails.startTime) / 60000
-	)} minutes at ${new Date(data.eventDetails.startTime).toString()}`;
+	)} minutes at ${startTimeString}`;
 
 	const messagePart2 = `At the scheduled time, join here: \${LINK}`;
 
@@ -484,7 +500,7 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	);
 
 	const inviteData = (await inviteDataRef.once('value')).val() || {};
-	const {inviterUsername, reservedUsername} = inviteData;
+	const {email, inviterUsername, reservedUsername} = inviteData;
 	const plan =
 		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
@@ -495,6 +511,7 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	});
 
 	return {
+		email,
 		inviterUsername,
 		isValid: typeof inviterUsername === 'string',
 		plan,
@@ -570,7 +587,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		undefined,
 		true
 	);
-	const email = validateInput(req.body.email, emailRegex, true);
+	const email = validateEmail(req.body.email, true);
 	const name = validateInput(req.body.name, undefined, true);
 	let plan =
 		req.body.plan in CyphPlans ? CyphPlans[req.body.plan] : CyphPlans.Free;
@@ -738,9 +755,11 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 						...(braintreeSubscriptionID ?
 							{braintreeSubscriptionID} :
 							{}),
+						...(i === 0 && email ? {email} : {}),
 						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
 					}),
 					i === 0 &&
+					email &&
 					mailchimp &&
 					mailchimpCredentials &&
 					mailchimpCredentials.listIDs &&
@@ -1105,9 +1124,8 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 		}),
 		sendMailInternal(
 			'user-registrations@cyph.com',
-			`${testEnvName ? `[${testEnvName}] ` : ''}Cyph User Registration: ${
-				userRecord.email
-			}`
+			`${testEnvName ? `[${testEnvName}] ` : ''}Cyph User Registration`,
+			userRecord.email
 		)
 	]);
 });
@@ -1137,7 +1155,7 @@ exports.rejectPseudoRelationship = onCall(
 exports.requestPseudoRelationship = onCall(
 	async (data, namespace, getUsername) => {
 		const {accountsURL} = namespaces[namespace];
-		const email = validateInput(data.email, emailRegex);
+		const email = validateEmail(data.email);
 		const name = validateInput(data.name) || 'User';
 		const id = uuid();
 		const username = await getUsername();
@@ -1201,8 +1219,8 @@ exports.resetCastleSessionID = onCall(async (data, namespace, getUsername) => {
 
 exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
-	const email = data.email && validateInput(data.email, emailRegex);
-	const name = data.name && validateInput(data.name);
+	const email = validateEmail(data.email, true);
+	const name = validateInput(data.name, true);
 	const inviterUsername = await getUsername();
 	const inviteCodesRef = database.ref(
 		`${namespace}/users/${inviterUsername}/inviteCodes`
@@ -1240,6 +1258,7 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 					database.ref(`${namespace}/inviteCodes/${code}`).set({
 						inviterUsername,
 						plan,
+						...(email ? {email} : {}),
 						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
 					}),
 					setItem(
@@ -1428,11 +1447,9 @@ exports.userEmailSet = functions.database
 		);
 
 		const [email, plan] = await Promise.all([
-			getItem(
-				params.namespace,
-				`users/${username}/email`,
-				StringProto
-			).catch(() => undefined),
+			getItem(params.namespace, `users/${username}/email`, StringProto)
+				.then(s => s.trim().toLowerCase())
+				.catch(() => undefined),
 			getItem(params.namespace, `users/${username}/plan`, CyphPlan)
 				.catch(() => undefined)
 				.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free))

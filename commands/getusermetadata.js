@@ -14,21 +14,42 @@ const getUserMetadata = async (projectId, username, namespace) => {
 
 	username = normalize(username);
 
-	const {getItem} = databaseService(projectId);
+	const {database, getItem} = databaseService(projectId);
 
-	const [email, inviteCode, plan] = await Promise.all([
+	const [
+		email,
+		internal,
+		inviteCode,
+		inviterUsername,
+		plan
+	] = await Promise.all([
 		getItem(namespace, `users/${username}/email`, StringProto).catch(
 			() => ''
 		),
+		database
+			.ref(`${namespace.replace(/\./g, '_')}/users/${username}/internal`)
+			.once('value')
+			.then(o => o.val()),
 		getItem(namespace, `users/${username}/inviteCode`, StringProto).catch(
 			() => ''
 		),
+		getItem(
+			namespace,
+			`users/${username}/inviterUsername`,
+			StringProto
+		).catch(() => ''),
 		getItem(namespace, `users/${username}/plan`, CyphPlan)
 			.then(o => o.plan)
 			.catch(() => CyphPlans.Free)
 	]);
 
-	return {email, inviteCode, plan: CyphPlans[plan]};
+	return {
+		email,
+		internal,
+		inviteCode,
+		inviterUsername,
+		plan: CyphPlans[plan]
+	};
 };
 
 if (require.main === module) {

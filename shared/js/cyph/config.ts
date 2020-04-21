@@ -109,6 +109,7 @@ export class Config {
 						maxUsers?: number;
 						minUsers?: number;
 						name?: string;
+						offerID?: number;
 						perUser?: boolean;
 						subscriptionType?: SubscriptionTypes;
 					};
@@ -400,6 +401,7 @@ export class Config {
 						id: 10,
 						individualSubscriptions: true,
 						name: 'Telehealth (Annual)',
+						offerID: 3,
 						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
@@ -408,6 +410,7 @@ export class Config {
 						id: 9,
 						individualSubscriptions: true,
 						name: 'Telehealth (Monthly)',
+						offerID: 2,
 						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
 					}

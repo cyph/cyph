@@ -5,132 +5,20 @@
 	fxLayoutGap="16px"
 	(submit)="submit()"
 >
-	<div fxFlexFill *ngIf="(signupService.state | await) === 0">
-		<div fxLayout="row">
-			<ng-content></ng-content>
-		</div>
-		<div fxLayout="row">
-			<div
-				fxFlex="50"
-				fxLayout="column"
-				fxLayoutAlign="center stretch"
-				*ngIf="(envService.isMobile | await) === false"
-			>
-				<div fxLayout="row" fxLayoutAlign="center center">
-					<mat-form-field fxFlex="80">
-						<input
-							matInput
-							cyphTranslate
-							[ngModel]="signupService.data.email | await"
-							(ngModelChange)="
-								signupService.data.email.next($event)
-							"
-							name="email"
-							type="email"
-							[pattern]="emailPattern"
-							placeholder="Email"
-						/>
-					</mat-form-field>
-				</div>
-				<div fxLayout="row" fxLayoutAlign="center center">
-					<mat-form-field fxFlex="80">
-						<input
-							matInput
-							cyphTranslate
-							name="password"
-							type="password"
-							placeholder="Password"
-							[disabled]="true"
-						/>
-					</mat-form-field>
-				</div>
-				<div fxLayout="row" fxLayoutAlign="center center">
-					<mat-form-field fxFlex="80">
-						<input
-							matInput
-							cyphTranslate
-							name="confirmPassword"
-							type="password"
-							placeholder="Confirm Password"
-							[disabled]="true"
-						/>
-					</mat-form-field>
-				</div>
-				<div
-					*ngIf="invite"
-					fxLayout="row"
-					fxLayoutAlign="center center"
-				>
-					<mat-form-field fxFlex="80">
-						<input
-							matInput
-							cyphTranslate
-							[ngModel]="signupService.data.inviteCode | await"
-							(ngModelChange)="
-								signupService.data.inviteCode.next($event)
-							"
-							name="inviteCode"
-							type="text"
-							placeholder="Invite Code"
-						/>
-					</mat-form-field>
-				</div>
-				<div
-					fxLayout="row"
-					fxLayoutAlign="center end"
-					class="register-button"
-				>
-					<button
-						mat-button
-						type="submit"
-						[disabled]="true"
-						cyphTranslate
-					>
-						Register
-					</button>
-				</div>
-			</div>
+	<div
+		fxFlexFill
+		*ngIf="
+			(signupService.state | await) === 0 ||
+			(signupService.state | await) === 1
+		"
+	>
+		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
 			<div fxFlex fxLayout="column">
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<p fxFlex="80" cyphTranslate>
-						We are currently at capacity and registration is closed,
-						but you can sign up for the waitlist to reserve your
-						spot in line for an account.
+						Join the waitlist for a free account!
 					</p>
 				</div>
-				<div fxLayout="row" fxLayoutAlign="center center">
-					<p fxFlex="80">
-						<span cyphTranslate>
-							However, you don't need an account to use
-						</span>
-						&ngsp;
-						<span>{{ stringsService.product }};</span>
-						&ngsp;
-						<span cyphTranslate>
-							just click the "start new cyph" button on the
-							homepage. Our beta accounts program only provides
-							early access to more advanced functionality and cool
-							new features.
-						</span>
-					</p>
-					<br />
-				</div>
-				<div
-					fxLayout="row"
-					fxLayoutAlign="center end"
-					class="register-button"
-				>
-					<button mat-button type="submit" cyphTranslate>
-						Waitlist Signup
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div fxFlexFill *ngIf="(signupService.state | await) === 1">
-		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
-			<div fxFlex fxLayout="column">
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<mat-form-field fxFlex="80">
 						<input
@@ -187,6 +75,11 @@
 	<div fxFlexFill *ngIf="(signupService.state | await) === 2">
 		<div fxFlex fxLayout="row" fxLayoutAlign="center center">
 			<div fxFlex fxLayout="column">
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<p fxFlex="80" cyphTranslate>
+						Join the waitlist for a free account!
+					</p>
+				</div>
 				<div fxLayout="row" fxLayoutAlign="center center">
 					<mat-form-field fxFlex="80">
 						<input

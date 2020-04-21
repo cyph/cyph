@@ -25,11 +25,18 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
+import {debugLogError} from '../../util/log';
 import {request, requestJSON} from '../../util/request';
 import {uuid} from '../../util/uuid';
 import {sleep} from '../../util/wait';
 import {openWindow, reloadWindow} from '../../util/window';
 import {bitPayLogo} from './bit-pay-logo';
+
+/** TODO: Replace with npm package */
+const EF: any | undefined =
+	typeof (<any> self).EF?.conversion === 'function' ?
+		(<any> self).EF :
+		undefined;
 
 /**
  * Angular component for Braintree payment checkout UI.
@@ -53,6 +60,9 @@ export class CheckoutComponent extends BaseProvider
 
 	/* Braintree instance. */
 	private braintreeInstance: any;
+
+	/** Partner program transaction ID. */
+	private partnerTransactionID?: Promise<string | undefined>;
 
 	/** Address. */
 	@Input() public address: {
@@ -137,6 +147,9 @@ export class CheckoutComponent extends BaseProvider
 
 	/** If true, will never stop spinning. */
 	@Input() public noSpinnerEnd: boolean = false;
+
+	/** If applicable, partner offer ID. */
+	@Input() public offerID?: number;
 
 	/** Selected payment option. */
 	public readonly paymentOption = new BehaviorSubject<string | undefined>(
@@ -474,6 +487,13 @@ export class CheckoutComponent extends BaseProvider
 		if (typeof this.noSpinnerEnd === 'string') {
 			this.noSpinnerEnd = <any> this.noSpinnerEnd === 'true';
 		}
+		if (
+			/* eslint-disable-next-line @typescript-eslint/tslint/config */
+			typeof this.offerID === 'string' &&
+			this.offerID
+		) {
+			this.offerID = parseFloat(this.offerID);
+		}
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		if (typeof this.perUser === 'string') {
 			this.perUser = <any> this.perUser === 'true';
@@ -490,6 +510,26 @@ export class CheckoutComponent extends BaseProvider
 		}
 
 		this.updateUserOptions();
+
+		const affid =
+			EF && this.offerID !== undefined ?
+				EF.urlParameter('affid') :
+				undefined;
+
+		if (affid) {
+			this.partnerTransactionID = Promise.resolve<string>(
+				EF.click({
+					offer_id: this.offerID,
+					affiliate_id: affid,
+					sub1: EF.urlParameter('sub1'),
+					sub2: EF.urlParameter('sub2'),
+					sub3: EF.urlParameter('sub3'),
+					sub4: EF.urlParameter('sub4'),
+					sub5: EF.urlParameter('sub5'),
+					uid: EF.urlParameter('uid')
+				})
+			).catch(() => undefined);
+		}
 
 		(async () => {
 			if (!this.address.countryCode) {
@@ -538,6 +578,8 @@ export class CheckoutComponent extends BaseProvider
 
 			const creditCard = paymentMethod?.type === 'CreditCard';
 
+			const partnerTransactionID = await this.partnerTransactionID;
+
 			let welcomeLetter: string | undefined = await request({
 				data: {
 					amount: Math.floor(
@@ -579,6 +621,7 @@ export class CheckoutComponent extends BaseProvider
 					...(this.namespace !== undefined ?
 						{namespace: this.namespace} :
 						{}),
+					...(partnerTransactionID ? {partnerTransactionID} : {}),
 					...(this.userToken !== undefined ?
 						{userToken: this.userToken} :
 						{})
@@ -587,13 +630,19 @@ export class CheckoutComponent extends BaseProvider
 				url: this.envService.baseUrl + 'braintree'
 			});
 
-			this.analyticsService.sendTransaction(
-				this.amount,
-				this.users.value,
-				this.category !== undefined && this.item !== undefined ?
-					`${this.category.toString()}-${this.item.toString()}` :
-					undefined
-			);
+			this.analyticsService
+				.sendTransaction(
+					this.amount,
+					this.users.value,
+					this.category !== undefined && this.item !== undefined ?
+						`${this.category.toString()}-${this.item.toString()}` :
+						undefined
+				)
+				.catch(checkoutAnalError => {
+					debugLogError(() => ({
+						checkoutAnalError
+					}));
+				});
 
 			const apiKey = welcomeLetter.startsWith('$APIKEY: ') ?
 				welcomeLetter.split('$APIKEY: ')[1] :

@@ -46,6 +46,7 @@ import {LinkConnectionComponent} from '../components/link-connection';
 import {LinkConnectionEmailComponent} from '../components/link-connection-email';
 import {NotFoundComponent} from '../components/not-found';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
+import {env} from '../env';
 import {AccountAppointmentsService} from '../services/account-appointments.service';
 import {AccountAuthGuardService} from '../services/account-auth-guard.service';
 import {AccountContactsService} from '../services/account-contacts.service';
@@ -216,6 +217,10 @@ export class CyphAppModule {
 		);
 
 		/* For debugging */
+
+		if (!env.debug) {
+			return;
+		}
 
 		(<any> self).accountService = accountService;
 		(<any> self).accountContactsService = accountContactsService;

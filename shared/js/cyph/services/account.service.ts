@@ -28,6 +28,7 @@ import {normalize, normalizeArray, toInt} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {observableAll} from '../util/observable-all';
+import {arraySum} from '../util/reducers';
 import {request} from '../util/request';
 import {getTimestamp, watchDateChange} from '../util/time';
 import {translate} from '../util/translate';
@@ -223,7 +224,7 @@ export class AccountService extends BaseProvider {
 			switchMap(users =>
 				observableAll(users.map(user => user.unreadMessageCount))
 			),
-			map(unreadCounts => unreadCounts.reduce((a, b) => a + b, 0))
+			map(arraySum)
 		),
 		0,
 		this.subscriptions
@@ -1032,7 +1033,7 @@ export class AccountService extends BaseProvider {
 				const routePath = this.routePath;
 				const route = routePath[0] || '';
 
-				const specialCases: {[k: string]: string} = {
+				const specialCases: Record<string, string> = {
 					'': this.stringsService.homeHeader,
 					'ehr': 'EHR',
 					'feed': 'Social Feed',

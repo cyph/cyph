@@ -30,6 +30,7 @@
 		"mustache": "*",
 		"nodemailer": "^4",
 		"ntru": "*",
+		"phone-number-timezone": "*",
 		"rlwe": "*",
 		"sidh": "*",
 		"sodiumutil": "*",

@@ -115,6 +115,10 @@ export class AppModule {
 
 		/* For debugging */
 
+		if (!env.debug) {
+			return;
+		}
+
 		(<any> self).potassiumService = potassiumService;
 		(<any> self).proto = proto;
 	}

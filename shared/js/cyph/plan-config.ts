@@ -49,7 +49,6 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableScheduler: false,
 		enableScreenSharing: false,
 		enableWallets: false,
-		initialInvites: 2,
 		innerCircleLimit: 5,
 		planType: CyphPlanTypes.Free,
 		rank: 0,

@@ -1,4 +1,3 @@
-export * from './arrays';
 export * from './clipboard';
 export * from './compare';
 export * from './cordova';
@@ -15,6 +14,7 @@ export * from './objects';
 export * from './observable-all';
 export * from './permissions';
 export * from './random';
+export * from './reducers';
 export * from './request';
 export * from './safe-values';
 export * from './save-file';

@@ -104,8 +104,13 @@ var config = struct {
 	DefaultContinent           string
 	DefaultContinentCode       string
 	DefaultLanguageCode        string
+	DummyAnalID                string
+	DummyCity                  string
+	DummyContinent             string
+	DummyContinentCode         string
 	DummyCountry               string
 	DummyCountryCode           string
+	DummyPostalCode            string
 	DummyOrg                   string
 	EmailAddress               string
 	HPKPHeader                 string
@@ -113,6 +118,7 @@ var config = struct {
 	MaxChannelDescriptorLength int
 	MaxSignupValueLength       int
 	NewCyphTimeout             int64
+	PartnerConversionURL       string
 	Plans                      map[string]Plan
 	RootURL                    string
 }{
@@ -186,9 +192,19 @@ var config = struct {
 
 	"en",
 
+	"1027213",
+
+	"McLean",
+
+	"North America",
+
+	"na",
+
 	"United States",
 
 	"us",
+
+	"22103",
 
 	"Legion of Doom",
 
@@ -205,6 +221,8 @@ var config = struct {
 	256,
 
 	600000,
+
+	"https://partner-api.cyph.com",
 
 	map[string]Plan{
 		"0-0": Plan{

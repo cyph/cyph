@@ -169,6 +169,9 @@
 					"braintreeSubscriptionID": {
 						".validate": "newData.isString()"
 					},
+					"email": {
+						".validate": "newData.isString()"
+					},
 					"inviterUsername": {
 						".validate": "newData.isString()"
 					},

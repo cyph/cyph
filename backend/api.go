@@ -82,6 +82,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	firstName := sanitize(h.Request.PostFormValue("firstName"))
 	inviteCode := sanitize(h.Request.PostFormValue("inviteCode"))
 	lastName := sanitize(h.Request.PostFormValue("lastName"))
+	partnerTransactionID := sanitize(h.Request.PostFormValue("partnerTransactionID"))
 	postalCode := sanitize(h.Request.PostFormValue("postalCode"))
 	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
 	userToken := sanitize(h.Request.PostFormValue("userToken"))
@@ -181,6 +182,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	bt := braintreeInit(h)
 
+	partnerOrderID := ""
 	braintreeIDs := []string{}
 	braintreeSubscriptionIDs := []string{}
 	txLog := ""
@@ -326,6 +328,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 		}
 
+		partnerOrderID = braintreeSubscriptionIDs[0]
+
 		if success {
 			_, err := h.Datastore.Put(
 				h.Context,
@@ -381,12 +385,16 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				return err.Error(), http.StatusTeapot
 			}
 
+			partnerOrderID = tx.Id
+
 			bt.Transaction().SubmitForSettlement(h.Context, tx.Id)
 
 			success = tx.Status == "authorized"
 			txJSON, _ := json.Marshal(tx)
 			txLog += string(txJSON)
 		} else {
+			partnerOrderID = bitPayInvoiceID
+
 			invoice, err := getBitPayInvoice(bitPayInvoiceID)
 
 			if err != nil {
@@ -465,6 +473,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		subject = "FAILED: " + subject
 	}
 
+	if success && partnerTransactionID != "" {
+		err = trackPartnerConversion(h, partnerOrderID, partnerTransactionID, totalAmount)
+		if err != nil {
+			subject = "PARTNER CONVERSION FAILURE: " + subject
+		}
+	}
+
 	sendMail("hello+sales-notifications@cyph.com", subject, ("" +
 		"Nonce: " + nonce +
 		"\nPlan ID: " + planID +
@@ -475,6 +490,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		"\nCompany: " + company +
 		"\nName: " + name +
 		"\nEmail: " + email +
+		"\nPartner transaction ID: " + partnerTransactionID +
 		"\n\n" + txLog +
 		""), "")
 
@@ -675,20 +691,23 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 }
 
 func getContinent(h HandlerArgs) (interface{}, int) {
-	_, continentCode, _, _ := geolocate(h)
+	_, continentCode, _, _, _, _, _ := geolocate(h)
 	return continentCode, http.StatusOK
 }
 
 func getGeolocation(h HandlerArgs) (interface{}, int) {
-	continent, continentCode, country, countryCode := geolocate(h)
+	continent, continentCode, country, countryCode, city, postalCode, analID := geolocate(h)
 	org := getOrg(h)
 
 	return map[string]string{
+		"analID":        analID,
+		"city":          city,
 		"continent":     continent,
 		"continentCode": continentCode,
 		"country":       country,
 		"countryCode":   countryCode,
 		"org":           org,
+		"postalCode":    postalCode,
 	}, http.StatusOK
 }
 

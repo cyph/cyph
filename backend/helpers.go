@@ -91,7 +91,7 @@ var emailBackupSmtpServer = os.Getenv("EMAIL_BACKUP_SERVER") + ":" + os.Getenv("
 
 var emailTemplate, _ = mustache.ParseString(getFileText("shared/email.html"))
 
-var countrydb, _ = geoip2.Open("GeoIP2-Country.mmdb")
+var geodb, _ = geoip2.Open("GeoIP2-City.mmdb")
 var orgdb, _ = geoip2.Open("GeoIP2-ISP.mmdb")
 
 var isProd = len(os.Getenv("PROD")) > 0
@@ -107,6 +107,27 @@ var twilioAuthToken = os.Getenv("TWILIO_AUTH_TOKEN")
 var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
 var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
+
+var everflowID = os.Getenv("EVERFLOW_ID")
+var everflowToken = os.Getenv("EVERFLOW_TOKEN")
+
+var analIDs = func() map[string]string {
+	o := map[string]string{}
+
+	if appengine.IsDevAppServer() {
+		return o
+	}
+
+	analGeoTargetsString := getFileText("anal-geotargets.txt")
+	analGeoTargets := strings.Split(analGeoTargetsString, "\n")
+
+	for i := range analGeoTargets {
+		analGeoTarget := strings.Split(analGeoTargets[i], ":")
+		o[analGeoTarget[0]] = analGeoTarget[1]
+	}
+
+	return o
+}()
 
 func datastoreKey(kind string, name string) *datastore.Key {
 	key := datastore.NameKey(kind, name, nil)
@@ -147,17 +168,20 @@ func generateAPIKey(h HandlerArgs, kind string) (string, *datastore.Key, error) 
 	return apiKey, datastoreKey, nil
 }
 
-func geolocate(h HandlerArgs) (string, string, string, string) {
+func geolocate(h HandlerArgs) (string, string, string, string, string, string, string) {
 	if appengine.IsDevAppServer() {
-		return config.DefaultContinent,
-			config.DefaultContinentCode,
+		return config.DummyContinent,
+			config.DummyContinentCode,
 			config.DummyCountry,
-			config.DummyCountryCode
+			config.DummyCountryCode,
+			config.DummyCity,
+			config.DummyPostalCode,
+			config.DummyAnalID
 	}
 
-	record, err := countrydb.Country(getIP(h))
+	record, err := geodb.City(getIP(h))
 	if err != nil {
-		return config.DefaultContinent, config.DefaultContinentCode, "", ""
+		return config.DefaultContinent, config.DefaultContinentCode, "", "", "", "", ""
 	}
 
 	language := config.DefaultLanguageCode
@@ -173,6 +197,11 @@ func geolocate(h HandlerArgs) (string, string, string, string) {
 		continent = val
 	}
 
+	if _, ok := config.Continents[continentCode]; !ok {
+		continent = config.DefaultContinent
+		continentCode = config.DefaultContinentCode
+	}
+
 	country := ""
 	countryCode := strings.ToLower(record.Country.IsoCode)
 	if val, ok := record.Country.Names[language]; ok {
@@ -181,12 +210,21 @@ func geolocate(h HandlerArgs) (string, string, string, string) {
 		country = val
 	}
 
-	if _, ok := config.Continents[continentCode]; !ok {
-		continent = config.DefaultContinent
-		continentCode = config.DefaultContinentCode
+	city := ""
+	if val, ok := record.City.Names[language]; ok {
+		city = val
+	} else if val, ok := record.City.Names[config.DefaultLanguageCode]; ok {
+		city = val
 	}
 
-	return continent, continentCode, country, countryCode
+	postalCode := record.Postal.Code
+
+	analID := analIDs[city]
+	if analID == "" {
+		analID = countryCode
+	}
+
+	return continent, continentCode, country, countryCode, city, postalCode, analID
 }
 
 func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
@@ -202,7 +240,7 @@ func getProFeaturesFromRequest(h HandlerArgs) map[string]bool {
 }
 
 func getSignupFromRequest(h HandlerArgs) (BetaSignup, map[string]interface{}) {
-	_, _, country, countryCode := geolocate(h)
+	_, _, country, countryCode, _, _, _ := geolocate(h)
 
 	signup := map[string]interface{}{}
 	profile := map[string]interface{}{}
@@ -602,6 +640,23 @@ func trackEvent(h HandlerArgs, category, action, label string, value int) error 
 	return err
 }
 
+func trackPartnerConversion(h HandlerArgs, transactionID string, orderID string, totalAmount int64) error {
+	req, err := http.NewRequest(
+		methods.GET,
+		config.PartnerConversionURL+"/?nid="+everflowID+"&verification_token="+everflowToken+"&amount="+strconv.FormatInt(totalAmount/100, 10)+"&order_id="+orderID+"&transaction_id="+transactionID,
+		nil,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	_, err = client.Do(req)
+
+	return err
+}
+
 func handleFunc(pattern string, cron bool, handler Handler) {
 	handleFuncs(pattern, cron, Handlers{methods.GET: handler})
 }
@@ -732,7 +787,7 @@ func getEmail(email string) (string, error) {
 	if !emailRegex.MatchString(email) {
 		return "", errors.New("invalid email address: " + email)
 	}
-	return email, nil
+	return strings.ToLower(email), nil
 }
 
 func getNamespace(namespace string) (string, error) {

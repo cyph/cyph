@@ -34,6 +34,7 @@ import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
+import {flattenArray} from '../util/reducers';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -156,6 +157,7 @@ export abstract class SessionService extends BaseProvider
 	/** @inheritDoc */
 	public readonly state = {
 		cyphID: new BehaviorSubject(''),
+		ephemeralStateInitialized: new BehaviorSubject<boolean>(false),
 		isAlice: new BehaviorSubject<boolean>(false),
 		isAlive: new BehaviorSubject<boolean>(true),
 		sharedSecret: new BehaviorSubject<string | undefined>(undefined),
@@ -527,10 +529,11 @@ export abstract class SessionService extends BaseProvider
 			lockClaimed = true;
 
 			await this.cyphertextReceiveHandler(
-				(await this.incomingMessageQueue.getValue())
-					.map(({messages}) => messages || [])
-					.reduce((a, b) => a.concat(b), [])
-					.filter(this.correctSubSession),
+				flattenArray(
+					(await this.incomingMessageQueue.getValue()).map(
+						({messages}) => messages || []
+					)
+				).filter(this.correctSubSession),
 				true
 			);
 
@@ -667,10 +670,16 @@ export abstract class SessionService extends BaseProvider
 
 		localStream = await p2pWebRTCService.initUserMedia(callType);
 
-		(await closeRequestAlert.promise)();
+		closeRequestAlert.promise.then(async f => f()).catch(() => {});
 
 		if (localStream) {
 			this.prepareForCallTypeError.next(undefined);
+
+			(async () =>
+				(await p2pWebRTCService.handlers).passiveAcceptConfirm(
+					callType
+				))().catch(() => {});
+
 			return;
 		}
 

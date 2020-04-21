@@ -11,6 +11,7 @@ import {BehaviorSubject} from 'rxjs';
 import {filter, first, take} from 'rxjs/operators';
 import {BaseProvider} from '../cyph/base-provider';
 import {config} from '../cyph/config';
+import {BooleanProto} from '../cyph/proto';
 import {AccountService} from '../cyph/services/account.service';
 import {AnalyticsService} from '../cyph/services/analytics.service';
 import {ConfigService} from '../cyph/services/config.service';
@@ -134,11 +135,20 @@ export class AppService extends BaseProvider implements CanActivate {
 
 		/* Temporary warning pending further investigation */
 		if (this.envService.isEdge) {
-			this.dialogService.alert({
-				content:
-					'We are currently investigating user reports of problems with the latest Microsoft Edge. If you run into any issues, please try again in Chrome or Firefox.',
-				title: 'Warning'
-			});
+			localStorageService
+				.getOrSetDefault(
+					'EdgeTemporaryInstabilityWarning',
+					BooleanProto,
+					async () =>
+						this.dialogService
+							.alert({
+								content:
+									'We are currently investigating user reports of problems with the latest Microsoft Edge. If you run into any issues, please try again in Chrome or Firefox.',
+								title: 'Warning'
+							})
+							.then(() => true)
+				)
+				.catch(() => {});
 		}
 
 		try {

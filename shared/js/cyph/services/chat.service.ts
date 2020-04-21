@@ -1706,21 +1706,22 @@ export class ChatService extends BaseProvider {
 					!this.account
 				) {
 					(async () => {
-						await this.sessionService.freezePong
-							.pipe(
-								filter(b => !b),
-								take(1)
-							)
-							.toPromise();
+						const [isPassiveAccepted] = await Promise.all([
+							this.p2pWebRTCService.handlers.then(
+								async handlers =>
+									handlers.passiveAcceptConfirm(callType)
+							),
+							this.sessionService.freezePong
+								.pipe(
+									filter(b => !b),
+									take(1)
+								)
+								.toPromise()
+						]);
 
 						if (!this.sessionInitService.ephemeral) {
 							this.initProgressStart(42000);
 						}
-
-						const isPassiveAccepted = await (await this
-							.p2pWebRTCService.handlers).passiveAcceptConfirm(
-							callType
-						);
 
 						if (isPassiveAccepted) {
 							await this.p2pWebRTCService.accept(callType, true);
@@ -1897,6 +1898,11 @@ export class ChatService extends BaseProvider {
 		if (!this.envService.debug) {
 			return;
 		}
+
+		(<any> self).chatService = this;
+		(<any> self).p2pService = this.p2pService;
+		(<any> self).p2pWebRTCService = this.p2pWebRTCService;
+		(<any> self).sessionService = this.sessionService;
 
 		(<any> self).bypassAbortion = () => {
 			this.chat.state = States.chat;
