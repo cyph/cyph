@@ -227,6 +227,21 @@ export class AccountSessionService extends SessionService {
 			this.accountSessionInitService.ephemeral = true;
 			this.ephemeralSubSession = true;
 
+			this.remoteUser.next({
+				anonymous: true,
+				avatar: undefined,
+				contactID: undefined,
+				coverImage: undefined,
+				name: undefined,
+				pseudoAccount: false,
+				username: undefined
+			});
+			this.state.sharedSecret.next(
+				`${this.accountDatabaseService.currentUser.value.user.username}/${chat.anonymousChannelID}`
+			);
+			this.state.startingNewCyph.next(chat.passive ? undefined : true);
+			this.state.ephemeralStateInitialized.next(true);
+
 			try {
 				await this.prepareForCallType();
 			}
@@ -248,21 +263,6 @@ export class AccountSessionService extends SessionService {
 						url: `${this.envService.baseUrl}channels/${chat.anonymousChannelID}`
 					})
 			);
-
-			this.remoteUser.next({
-				anonymous: true,
-				avatar: undefined,
-				contactID: undefined,
-				coverImage: undefined,
-				name: undefined,
-				pseudoAccount: false,
-				username: undefined
-			});
-			this.state.sharedSecret.next(
-				`${this.accountDatabaseService.currentUser.value.user.username}/${chat.anonymousChannelID}`
-			);
-			this.state.startingNewCyph.next(chat.passive ? undefined : true);
-			this.state.initialStateSet.next(true);
 
 			this.resolveReady();
 			return this.init(channelID);
