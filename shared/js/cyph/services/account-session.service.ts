@@ -262,6 +262,7 @@ export class AccountSessionService extends SessionService {
 				`${this.accountDatabaseService.currentUser.value.user.username}/${chat.anonymousChannelID}`
 			);
 			this.state.startingNewCyph.next(chat.passive ? undefined : true);
+			this.state.initialStateSet.next(true);
 
 			this.resolveReady();
 			return this.init(channelID);

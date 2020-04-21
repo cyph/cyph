@@ -123,12 +123,9 @@ export class LinkConnectionComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
-		let isWaiting = true;
-
-		const sharedSecret = await this.sessionService.state.sharedSecret
+		await this.sessionService.state.ephemeralStateInitialized
 			.pipe(
-				filterUndefinedOperator(),
-				filter(s => s.length > 0),
+				filter(b => b),
 				take(1)
 			)
 			.toPromise();
@@ -140,6 +137,16 @@ export class LinkConnectionComponent extends BaseProvider
 			this.isPassive.next(true);
 			return;
 		}
+
+		let isWaiting = true;
+
+		const sharedSecret = await this.sessionService.state.sharedSecret
+			.pipe(
+				filterUndefinedOperator(),
+				filter(s => s.length > 0),
+				take(1)
+			)
+			.toPromise();
 
 		this.linkConstant =
 			this.envService.cyphImUrl +

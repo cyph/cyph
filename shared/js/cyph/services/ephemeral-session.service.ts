@@ -301,6 +301,8 @@ export class EphemeralSessionService extends SessionService {
 			this.setID(id);
 		}
 
+		this.state.ephemeralStateInitialized.next(true);
+
 		const channelID =
 			this.state.startingNewCyph.value === false ? '' : uuid(true);
 

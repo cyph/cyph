@@ -157,6 +157,7 @@ export abstract class SessionService extends BaseProvider
 	/** @inheritDoc */
 	public readonly state = {
 		cyphID: new BehaviorSubject(''),
+		ephemeralStateInitialized: new BehaviorSubject<boolean>(false),
 		isAlice: new BehaviorSubject<boolean>(false),
 		isAlive: new BehaviorSubject<boolean>(true),
 		sharedSecret: new BehaviorSubject<string | undefined>(undefined),

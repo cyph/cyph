@@ -76,6 +76,7 @@ export interface ISessionService {
 	/** State of the cyph (referenced by UI). */
 	readonly state: {
 		cyphID: BehaviorSubject<string>;
+		ephemeralStateInitialized: BehaviorSubject<boolean>;
 		isAlice: BehaviorSubject<boolean>;
 		isAlive: BehaviorSubject<boolean>;
 		sharedSecret: BehaviorSubject<string | undefined>;
