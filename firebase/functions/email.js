@@ -93,18 +93,19 @@ const sendMailInternal = async (
 		{
 			bcc: from,
 			from: `Cyph <${from}>`,
-			html: !text ?
-				'' :
-				dompurifyHtmlSanitizer.sanitize(
-					mustache.render(await template, {
-						accountsURL,
-						accountsURLShort: accountsURL.split('://')[1],
-						noUnsubscribe,
-						...(typeof text === 'object' ?
-							{html: text.html} :
-							{lines: text.split('\n')})
-					})
-				),
+			html:
+				!text || !accountsURL ?
+					undefined :
+					dompurifyHtmlSanitizer.sanitize(
+						mustache.render(await template, {
+							accountsURL,
+							accountsURLShort: accountsURL.split('://')[1],
+							noUnsubscribe,
+							...(typeof text === 'object' ?
+								{html: text.html} :
+								{lines: text.split('\n')})
+						})
+					),
 			icalEvent: !eventDetails ?
 				undefined :
 				{
