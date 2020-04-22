@@ -229,7 +229,7 @@
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
 						[appointmentShareTimezone]="
-							appointmentShareTimezone | await
+							(appointmentShareTimezone | await) === true
 						"
 						(appointmentShareTimezoneChange)="
 							appointmentShareTimezone.next($event)
