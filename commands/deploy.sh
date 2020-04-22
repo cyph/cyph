@@ -1054,13 +1054,13 @@ then
 EOM
 
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/fcm-server-key
-		firebase use --add "${firebaseProject}"
-		firebase functions:config:set project.id="${firebaseProject}"
+		npx firebase use --add "${firebaseProject}"
+		npx firebase functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
 
 		i=0
 		while true ; do
-			firebase deploy && break
+			npx firebase deploy && break
 
 			i=$((i+1))
 			if [ $i -gt 5 ] ; then fail ; fi
