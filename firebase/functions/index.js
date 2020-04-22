@@ -1224,7 +1224,7 @@ exports.resetCastleSessionID = onCall(async (data, namespace, getUsername) => {
 exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
 	const email = validateEmail(data.email, true);
-	const name = validateInput(data.name, true);
+	const name = validateInput(data.name, undefined, true);
 	const inviterUsername = await getUsername();
 	const inviteCodesRef = database.ref(
 		`${namespace}/users/${inviterUsername}/inviteCodes`
