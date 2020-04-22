@@ -28,6 +28,7 @@
 		"mceliece": "*",
 		"msgpack-lite": "*",
 		"mustache": "*",
+		"node": "12",
 		"nodemailer": "^4",
 		"ntru": "*",
 		"phone-number-timezone": "*",
