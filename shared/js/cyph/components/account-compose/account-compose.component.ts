@@ -66,6 +66,11 @@ export class AccountComposeComponent extends BaseProvider
 		{id: string; form: IForm} | undefined
 	>(undefined);
 
+	/** Indicates whether current user's time zone can be shared with recipient. */
+	public readonly appointmentShareTimeZone = new BehaviorSubject<boolean>(
+		true
+	);
+
 	/** Phone number for sending appointment detail over SMS. */
 	public readonly appointmentSMS = new BehaviorSubject<string>('');
 
@@ -343,6 +348,11 @@ export class AccountComposeComponent extends BaseProvider
 											startTime: calendarInvite.startTime
 										},
 										id,
+										inviterTimeZone: this
+											.appointmentShareTimeZone.value ?
+											Intl.DateTimeFormat().resolvedOptions()
+												.timeZone :
+											undefined,
 										telehealth: this.configService
 											.planConfig[
 											this.accountSettingsService.plan

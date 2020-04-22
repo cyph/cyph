@@ -379,14 +379,16 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterLink = `${accountsURL}account-burner/${data.callType ||
 		'chat'}/${id}`;
 
+	const timeZone =
+		(data.toSMS ? await phoneNumberTimezone(data.toSMS) : undefined) ||
+		data.inviterTimeZone;
+
 	const startTimeString = new Intl.DateTimeFormat('en-US', {
 		day: 'numeric',
 		hour: 'numeric',
 		minute: '2-digit',
 		month: 'long',
-		timeZone: data.toSMS ?
-			await phoneNumberTimezone(data.toSMS) :
-			undefined,
+		timeZone,
 		timeZoneName: 'long',
 		year: 'numeric'
 	}).format(new Date(data.eventDetails.startTime));
