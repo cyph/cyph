@@ -271,6 +271,18 @@
 					"
 					>Now</a
 				>
+
+				<mat-slide-toggle
+					cyphTranslate
+					name="appointment-share-timezone"
+					[ngModel]="appointmentShareTimezone"
+					(ngModelChange)="
+						appointmentShareTimezoneChange.emit($event)
+					"
+					matTooltip="If selected, will reveal your local timezone to the recipient in the event details, except if their local timezone can be determined based on their phone number. If deselected, UTC will be used instead."
+				>
+					Share Local Timezone
+				</mat-slide-toggle>
 			</div>
 
 			<!-- End time selection hidden in favor of appointment duration selection, for now -->

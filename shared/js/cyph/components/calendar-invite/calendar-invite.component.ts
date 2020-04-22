@@ -2,9 +2,11 @@ import {
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
 	Component,
+	EventEmitter,
 	Input,
 	OnChanges,
-	OnInit
+	OnInit,
+	Output
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
@@ -47,6 +49,14 @@ import {translate} from '../../util/translate';
 })
 export class CalendarInviteComponent extends BaseProvider
 	implements ControlValueAccessor, OnChanges, OnInit {
+	/** @see AccountComposeComponent.appointmentShareTimezone */
+	@Input() public appointmentShareTimezone: boolean = true;
+
+	/** @see AccountComposeComponent.appointmentShareTimezone */
+	@Output() public readonly appointmentShareTimezoneChange = new EventEmitter<
+		boolean
+	>();
+
 	/** Value. */
 	public readonly calendarInvite = new BehaviorSubject<
 		ICalendarInvite | undefined

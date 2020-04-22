@@ -3,7 +3,9 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
-	Input
+	EventEmitter,
+	Input,
+	Output
 } from '@angular/core';
 import * as $ from 'jquery';
 import {BehaviorSubject} from 'rxjs';
@@ -45,6 +47,14 @@ export class ChatMessageBoxComponent extends BaseProvider
 
 	/** @ignore */
 	private readonly mobileButtonLock: {} = {};
+
+	/** @see AccountComposeComponent.appointmentShareTimezone */
+	@Input() public appointmentShareTimezone: boolean = true;
+
+	/** @see AccountComposeComponent.appointmentShareTimezone */
+	@Output() public readonly appointmentShareTimezoneChange = new EventEmitter<
+		boolean
+	>();
 
 	/** If true, autofocuses. */
 	@Input() public autofocus: boolean = true;

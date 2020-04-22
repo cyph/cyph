@@ -170,16 +170,6 @@
 									placeholder="Phone Number (optional)"
 								/>
 							</mat-form-field>
-
-							<mat-slide-toggle
-								cyphTranslate
-								[ngModel]="appointmentShareTimeZone | await"
-								(ngModelChange)="
-									appointmentShareTimeZone.next($event)
-								"
-							>
-								Share Local Timezone
-							</mat-slide-toggle>
 						</div>
 
 						<ng-template #emailContactOptions let-options="options">
@@ -238,6 +228,12 @@
 						*ngIf="(appointmentFormData | await) === undefined"
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
+						[appointmentShareTimezone]="
+							appointmentShareTimezone | await
+						"
+						(appointmentShareTimezoneChange)="
+							appointmentShareTimezone.next($event)
+						"
 						[customSendFunction]="send"
 						[calendarInviteFollowUp]="
 							(appointmentFollowUp | await) === true

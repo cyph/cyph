@@ -1,7 +1,9 @@
 import {
 	ChangeDetectionStrategy,
 	Component,
+	EventEmitter,
 	Input,
+	Output,
 	ViewChild
 } from '@angular/core';
 import {BaseProvider} from '../../base-provider';
@@ -22,6 +24,14 @@ import {ChatMessageBoxInheritNgFormComponent} from '../chat-message-box-inherit-
 	templateUrl: './account-chat-message-box.component.html'
 })
 export class AccountChatMessageBoxComponent extends BaseProvider {
+	/** @see AccountComposeComponent.appointmentShareTimezone */
+	@Input() public appointmentShareTimezone: boolean = true;
+
+	/** @see AccountComposeComponent.appointmentShareTimezone */
+	@Output() public readonly appointmentShareTimezoneChange = new EventEmitter<
+		boolean
+	>();
+
 	/** @see ChatMessageBoxComponent.calendarInviteFollowUp */
 	@Input() public calendarInviteFollowUp: boolean = false;
 

@@ -31,6 +31,10 @@
 					(chat?.currentMessage || {}).calendarInvite = $event;
 					chatService.messageChange()
 				"
+				[appointmentShareTimezone]="appointmentShareTimezone"
+				(appointmentShareTimezoneChange)="
+					appointmentShareTimezoneChange.emit($event)
+				"
 				[followUp]="calendarInviteFollowUp"
 				[reasons]="calendarInviteReasons"
 				*ngIf="!inheritsNgForm"
@@ -42,6 +46,10 @@
 				(ngModelChange)="
 					(chat?.currentMessage || {}).calendarInvite = $event;
 					chatService.messageChange()
+				"
+				[appointmentShareTimezone]="appointmentShareTimezone"
+				(appointmentShareTimezoneChange)="
+					appointmentShareTimezoneChange.emit($event)
 				"
 				[followUp]="calendarInviteFollowUp"
 				[reasons]="calendarInviteReasons"
