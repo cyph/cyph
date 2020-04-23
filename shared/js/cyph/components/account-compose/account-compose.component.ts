@@ -66,8 +66,8 @@ export class AccountComposeComponent extends BaseProvider
 		{id: string; form: IForm} | undefined
 	>(undefined);
 
-	/** Indicates whether current user's timezone can be shared with recipient. */
-	public readonly appointmentShareTimezone = new BehaviorSubject<boolean>(
+	/** Indicates whether current user's time zone can be shared with recipient. */
+	public readonly appointmentShareTimeZone = new BehaviorSubject<boolean>(
 		true
 	);
 
@@ -349,7 +349,7 @@ export class AccountComposeComponent extends BaseProvider
 										},
 										id,
 										inviterTimeZone: this
-											.appointmentShareTimezone.value ?
+											.appointmentShareTimeZone.value ?
 											Intl.DateTimeFormat().resolvedOptions()
 												.timeZone :
 											undefined,

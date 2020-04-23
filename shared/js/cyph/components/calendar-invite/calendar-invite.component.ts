@@ -49,11 +49,11 @@ import {translate} from '../../util/translate';
 })
 export class CalendarInviteComponent extends BaseProvider
 	implements ControlValueAccessor, OnChanges, OnInit {
-	/** @see AccountComposeComponent.appointmentShareTimezone */
-	@Input() public appointmentShareTimezone: boolean = true;
+	/** @see AccountComposeComponent.appointmentShareTimeZone */
+	@Input() public appointmentShareTimeZone: boolean = true;
 
-	/** @see AccountComposeComponent.appointmentShareTimezone */
-	@Output() public readonly appointmentShareTimezoneChange = new EventEmitter<
+	/** @see AccountComposeComponent.appointmentShareTimeZone */
+	@Output() public readonly appointmentShareTimeZoneChange = new EventEmitter<
 		boolean
 	>();
 

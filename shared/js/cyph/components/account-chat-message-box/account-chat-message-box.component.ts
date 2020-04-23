@@ -24,11 +24,11 @@ import {ChatMessageBoxInheritNgFormComponent} from '../chat-message-box-inherit-
 	templateUrl: './account-chat-message-box.component.html'
 })
 export class AccountChatMessageBoxComponent extends BaseProvider {
-	/** @see AccountComposeComponent.appointmentShareTimezone */
-	@Input() public appointmentShareTimezone: boolean = true;
+	/** @see AccountComposeComponent.appointmentShareTimeZone */
+	@Input() public appointmentShareTimeZone: boolean = true;
 
-	/** @see AccountComposeComponent.appointmentShareTimezone */
-	@Output() public readonly appointmentShareTimezoneChange = new EventEmitter<
+	/** @see AccountComposeComponent.appointmentShareTimeZone */
+	@Output() public readonly appointmentShareTimeZoneChange = new EventEmitter<
 		boolean
 	>();
 
