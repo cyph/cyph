@@ -15,6 +15,9 @@ import {WorkerService} from './worker.service';
 @Injectable()
 export class NotificationService extends BaseProvider
 	implements INotificationService {
+	/** Time to allow for answer responses to make it back from Bob to Alice. */
+	private readonly answeringBufferTime: number = 5000;
+
 	/** @ignore */
 	private readonly audio?: HTMLAudioElement;
 
@@ -132,7 +135,9 @@ export class NotificationService extends BaseProvider
 
 				return await Promise.race([
 					accept(),
-					sleep(ringTimeout * (answering ? 1 : 2)).then(() => false)
+					sleep(
+						ringTimeout + (answering ? 0 : this.answeringBufferTime)
+					).then(() => false)
 				]);
 			}
 			finally {

@@ -79,6 +79,7 @@ export interface ISessionService {
 		ephemeralStateInitialized: BehaviorSubject<boolean>;
 		isAlice: BehaviorSubject<boolean>;
 		isAlive: BehaviorSubject<boolean>;
+		isConnected: BehaviorSubject<boolean>;
 		sharedSecret: BehaviorSubject<string | undefined>;
 		startingNewCyph: BehaviorSubject<boolean | undefined>;
 		wasInitiatedByAPI: BehaviorSubject<boolean>;

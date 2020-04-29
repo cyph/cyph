@@ -71,7 +71,9 @@ export class ErrorService extends BaseProvider implements ErrorHandler {
 		if (numEmails < 50) {
 			email(
 				'errors',
-				`[${await this.envService.packageName}] ${subject}`,
+				`${(await this.envService.packageName).replace(/^(.)/, s =>
+					s.toUpperCase()
+				)}: ${subject}`,
 				exception,
 				undefined,
 				undefined,

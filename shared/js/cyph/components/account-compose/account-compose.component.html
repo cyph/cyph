@@ -85,91 +85,88 @@
 							/>
 						</mat-form-field>
 
-						<mat-form-field fxFlex>
-							<input
-								matInput
-								[matAutocomplete]="fromNameAutocomplete"
-								[ngModel]="accountService.fromName | await"
-								(ngModelChange)="
-									accountService.fromName.next($event)
-								"
-								name="name"
-								[placeholder]="
-									((recipients | await)?.size || 0) === 1 ?
-										stringsService.fromName :
-										stringsService.toName
-								"
-								required
-							/>
-						</mat-form-field>
-						<mat-autocomplete
-							#fromNameAutocomplete="matAutocomplete"
-						>
-							<ng-container
-								*ngTemplateOutlet="
-									emailContactOptions;
-									context: {
-										options: accountService.fromNameOptions
-									}
-								"
-							></ng-container>
-						</mat-autocomplete>
+						<div>
+							{{
+								((recipients | await)?.size || 0) === 1 ?
+									stringsService.from :
+									stringsService.to
+							}}
+						</div>
 
 						<div
 							class="from-details"
 							fxFlex
-							fxLayoutGap="8px"
-							*ngIf="
-								((accountService.fromName | await) || '')
-									.length > 0
-							"
-							[@slideInOutTop]="'in'"
+							fxLayout="row"
+							fxLayoutGap="40px"
 						>
 							<div></div>
-							<div></div>
+							<div fxFlex fxLayout="column">
+								<div fxFlex>
+									<mat-form-field fxFlex>
+										<input
+											matInput
+											[matAutocomplete]="
+												fromNameAutocomplete
+											"
+											[ngModel]="
+												accountService.fromName | await
+											"
+											(ngModelChange)="
+												accountService.fromName.next(
+													$event
+												)
+											"
+											name="name"
+											[placeholder]="
+												stringsService.nameOptional
+											"
+										/>
+									</mat-form-field>
+								</div>
 
-							<mat-form-field fxFlex>
-								<input
-									matInput
-									cyphTranslate
-									[matAutocomplete]="fromEmailAutocomplete"
-									[ngModel]="accountService.fromEmail | await"
-									(ngModelChange)="
-										accountService.fromEmail.next($event)
-									"
-									name="email"
-									type="email"
-									[pattern]="emailPattern"
-									placeholder="Email (optional)"
-								/>
-							</mat-form-field>
-							<mat-autocomplete
-								#fromEmailAutocomplete="matAutocomplete"
-							>
-								<ng-container
-									*ngTemplateOutlet="
-										emailContactOptions;
-										context: {
-											options:
-												accountService.fromEmailOptions
-										}
-									"
-								></ng-container>
-							</mat-autocomplete>
+								<div
+									fxFlex
+									fxLayout="column"
+									fxLayout.gt-xs="row"
+									fxLayoutGap.gt-xs="8px"
+								>
+									<mat-form-field fxFlex>
+										<input
+											matInput
+											cyphTranslate
+											[matAutocomplete]="
+												fromEmailAutocomplete
+											"
+											[ngModel]="
+												accountService.fromEmail | await
+											"
+											(ngModelChange)="
+												accountService.fromEmail.next(
+													$event
+												)
+											"
+											name="email"
+											type="email"
+											[pattern]="emailPattern"
+											placeholder="Email (optional)"
+										/>
+									</mat-form-field>
 
-							<mat-form-field fxFlex>
-								<input
-									matInput
-									cyphTranslate
-									[ngModel]="appointmentSMS | await"
-									(ngModelChange)="
-										appointmentSMS.next($event)
-									"
-									name="sms"
-									type="tel"
-									placeholder="Phone Number (optional)"
-								/>
-							</mat-form-field>
+									<mat-form-field fxFlex>
+										<input
+											matInput
+											cyphTranslate
+											[ngModel]="appointmentSMS | await"
+											(ngModelChange)="
+												appointmentSMS.next($event)
+											"
+											name="sms"
+											type="tel"
+											placeholder="Phone Number (optional)"
+										/>
+									</mat-form-field>
+								</div>
+							</div>
 						</div>
 
 						<ng-template #emailContactOptions let-options="options">
@@ -228,6 +225,12 @@
 						*ngIf="(appointmentFormData | await) === undefined"
 					></cyph-account-contacts-search>
 					<cyph-account-chat-message-box
+						[appointmentShareTimeZone]="
+							(appointmentShareTimeZone | await) === true
+						"
+						(appointmentShareTimeZoneChange)="
+							appointmentShareTimeZone.next($event)
+						"
 						[customSendFunction]="send"
 						[calendarInviteFollowUp]="
 							(appointmentFollowUp | await) === true
@@ -439,3 +442,25 @@
 		*ngIf="(sent | await) === undefined"
 	></mat-progress-spinner>
 </div>
+
+<mat-autocomplete #fromEmailAutocomplete="matAutocomplete">
+	<ng-container
+		*ngTemplateOutlet="
+			emailContactOptions;
+			context: {
+				options: accountService.fromEmailOptions
+			}
+		"
+	></ng-container>
+</mat-autocomplete>
+
+<mat-autocomplete #fromNameAutocomplete="matAutocomplete">
+	<ng-container
+		*ngTemplateOutlet="
+			emailContactOptions;
+			context: {
+				options: accountService.fromNameOptions
+			}
+		"
+	></ng-container>
+</mat-autocomplete>

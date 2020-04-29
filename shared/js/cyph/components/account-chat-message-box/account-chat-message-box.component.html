@@ -7,6 +7,10 @@
 >
 	<cyph-chat-message-box-inherit-ng-form
 		#chatMessageBox
+		[appointmentShareTimeZone]="appointmentShareTimeZone"
+		(appointmentShareTimeZoneChange)="
+			appointmentShareTimeZoneChange.emit($event)
+		"
 		[calendarInviteFollowUp]="calendarInviteFollowUp"
 		[calendarInviteReasons]="calendarInviteReasons"
 		[customSendFunction]="customSendFunction"

@@ -30,6 +30,9 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class EphemeralSessionService extends SessionService {
 	/** @ignore */
+	private chatRequestRingTimeout: number = 15000;
+
+	/** @ignore */
 	private readonly localStorageKey = 'BurnerChannelID';
 
 	/** @ignore */
@@ -222,14 +225,16 @@ export class EphemeralSessionService extends SessionService {
 							callType: 'chat',
 							expires:
 								(await getTimestamp()) +
-								this.notificationService.ringTimeout,
+								this.chatRequestRingTimeout,
 							id
 						}
 					);
 
 					const answered = await this.notificationService.ring(
 						async () => this.connected.then(() => true),
-						true
+						true,
+						undefined,
+						this.chatRequestRingTimeout
 					);
 
 					if (answered) {

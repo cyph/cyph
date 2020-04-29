@@ -379,14 +379,16 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterLink = `${accountsURL}account-burner/${data.callType ||
 		'chat'}/${id}`;
 
+	const timeZone =
+		(data.toSMS ? await phoneNumberTimezone(data.toSMS) : undefined) ||
+		data.inviterTimeZone;
+
 	const startTimeString = new Intl.DateTimeFormat('en-US', {
 		day: 'numeric',
 		hour: 'numeric',
 		minute: '2-digit',
 		month: 'long',
-		timeZone: data.toSMS ?
-			await phoneNumberTimezone(data.toSMS) :
-			undefined,
+		timeZone,
 		timeZoneName: 'long',
 		year: 'numeric'
 	}).format(new Date(data.eventDetails.startTime));
@@ -1124,7 +1126,11 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 		}),
 		sendMailInternal(
 			'user-registrations@cyph.com',
-			`${testEnvName ? `[${testEnvName}] ` : ''}Cyph User Registration`,
+			`${
+				testEnvName ?
+					`${testEnvName.replace(/^(.)/, s => s.toUpperCase())}: ` :
+					''
+			}Cyph User Registration`,
 			userRecord.email
 		)
 	]);
@@ -1220,7 +1226,7 @@ exports.resetCastleSessionID = onCall(async (data, namespace, getUsername) => {
 exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
 	const email = validateEmail(data.email, true);
-	const name = validateInput(data.name, true);
+	const name = validateInput(data.name, undefined, true);
 	const inviterUsername = await getUsername();
 	const inviteCodesRef = database.ref(
 		`${namespace}/users/${inviterUsername}/inviteCodes`

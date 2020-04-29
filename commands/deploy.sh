@@ -1053,14 +1053,18 @@ then
 			};
 EOM
 
+		firebaseCLI () {
+			./functions/node_modules/node/bin/node functions/node_modules/.bin/firebase "${@}"
+		}
+
 		cp -f ~/.cyph/firebase-credentials/${firebaseProject}.fcm functions/fcm-server-key
-		firebase use --add "${firebaseProject}"
-		firebase functions:config:set project.id="${firebaseProject}"
+		firebaseCLI use --add "${firebaseProject}"
+		firebaseCLI functions:config:set project.id="${firebaseProject}"
 		gsutil cors set storage.cors.json "gs://${firebaseProject}.appspot.com"
 
 		i=0
 		while true ; do
-			firebase deploy && break
+			firebaseCLI deploy && break
 
 			i=$((i+1))
 			if [ $i -gt 5 ] ; then fail ; fi
