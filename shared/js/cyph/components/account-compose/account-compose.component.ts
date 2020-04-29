@@ -220,6 +220,9 @@ export class AccountComposeComponent extends BaseProvider
 			.pipe(take(1))
 			.toPromise();
 
+		const fromName =
+			this.accountService.fromName.value || this.stringsService.anonymous;
+
 		if (
 			this.envService.isTelehealthFull &&
 			this.messageType.value === ChatMessageValue.Types.CalendarInvite &&
@@ -230,7 +233,7 @@ export class AccountComposeComponent extends BaseProvider
 		) {
 			this.accountChatService.chat.currentMessage.form = routeData.form({
 				email: this.accountService.fromEmail.value,
-				name: this.accountService.fromName.value
+				name: fromName
 			});
 
 			this.messageType.next(ChatMessageValue.Types.Form);
@@ -263,8 +266,7 @@ export class AccountComposeComponent extends BaseProvider
 				!(
 					this.accountDatabaseService.currentUser.value &&
 					(this.accountService.fromEmail.value ||
-						this.appointmentSMS.value) &&
-					this.accountService.fromName.value
+						this.appointmentSMS.value)
 				)
 			) {
 				this.sent.next(false);
@@ -318,8 +320,7 @@ export class AccountComposeComponent extends BaseProvider
 							fromEmail:
 								this.accountService.fromEmail.value ||
 								undefined,
-							fromName:
-								this.accountService.fromName.value || undefined,
+							fromName,
 							participants: [
 								...recipients,
 								...(this.accountDatabaseService.currentUser
@@ -378,7 +379,6 @@ export class AccountComposeComponent extends BaseProvider
 				this.sendQuillAsNote.value
 			) {
 				if (
-					!this.accountService.fromName.value ||
 					!this.messageSubject.value ||
 					!this.accountChatService.chat.currentMessage.quill ||
 					recipients.length < 1
@@ -393,7 +393,7 @@ export class AccountComposeComponent extends BaseProvider
 					undefined,
 					{
 						email: this.accountService.fromEmail.value,
-						name: this.accountService.fromName.value
+						name: fromName
 					}
 				).result;
 			}
@@ -404,7 +404,7 @@ export class AccountComposeComponent extends BaseProvider
 						{pseudoAccount: true},
 						undefined,
 						undefined,
-						this.accountService.fromName.value,
+						fromName,
 						this.accountService.fromEmail.value
 					))
 				) {
