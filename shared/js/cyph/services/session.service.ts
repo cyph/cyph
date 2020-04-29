@@ -160,6 +160,7 @@ export abstract class SessionService extends BaseProvider
 		ephemeralStateInitialized: new BehaviorSubject<boolean>(false),
 		isAlice: new BehaviorSubject<boolean>(false),
 		isAlive: new BehaviorSubject<boolean>(true),
+		isConnected: new BehaviorSubject<boolean>(false),
 		sharedSecret: new BehaviorSubject<string | undefined>(undefined),
 		startingNewCyph: new BehaviorSubject<boolean | undefined>(false),
 		wasInitiatedByAPI: new BehaviorSubject<boolean>(false)
@@ -204,6 +205,7 @@ export abstract class SessionService extends BaseProvider
 
 	/** @see IChannelHandlers.onConnect */
 	protected async channelOnConnect () : Promise<void> {
+		this.state.isConnected.next(true);
 		await this.trigger(events.connect);
 	}
 
