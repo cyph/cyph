@@ -169,23 +169,6 @@
 							</div>
 						</div>
 
-						<ng-template #emailContactOptions let-options="options">
-							<mat-option
-								(click)="
-									accountService.fromEmail.next(option.email);
-									accountService.fromName.next(option.name)
-								"
-								*ngFor="
-									let option of options | await;
-									trackBy: trackBySelf
-								"
-							>
-								<span>{{ option.name }}</span>
-								&ngsp;
-								<small>&lt;{{ option.email }}&gt;</small>
-							</mat-option>
-						</ng-template>
-
 						<mat-form-field
 							fxFlex
 							[fxShow]="
@@ -464,3 +447,17 @@
 		"
 	></ng-container>
 </mat-autocomplete>
+
+<ng-template #emailContactOptions let-options="options">
+	<mat-option
+		(click)="
+			accountService.fromEmail.next(option.email);
+			accountService.fromName.next(option.name)
+		"
+		*ngFor="let option of options | await; trackBy: trackBySelf"
+	>
+		<span>{{ option.name }}</span>
+		&ngsp;
+		<small>&lt;{{ option.email }}&gt;</small>
+	</mat-option>
+</ng-template>
