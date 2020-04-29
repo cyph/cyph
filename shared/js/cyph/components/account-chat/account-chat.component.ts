@@ -493,10 +493,8 @@ export class AccountChatComponent extends BaseProvider
 
 											if (
 												this.destroyed.value ||
-												this.p2pWebRTCService.loading
-													.value ||
-												!this.p2pWebRTCService
-													.initialCallPending.value
+												!this.p2pWebRTCService.loading
+													.value
 											) {
 												return;
 											}

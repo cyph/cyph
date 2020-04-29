@@ -335,6 +335,7 @@ export class AccountChatService extends ChatService {
 			ephemeralSubSession
 		);
 		this.resolvers.chatConnected.resolve();
+		this.p2pWebRTCService.resolveReady();
 		await callRequestPromise;
 	}
 
