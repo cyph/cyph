@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/datastore"
-	"github.com/braintree-go/braintree-go"
+	"github.com/buu700/braintree-go"
 	"google.golang.org/api/iterator"
 )
 
