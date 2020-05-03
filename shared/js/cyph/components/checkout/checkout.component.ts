@@ -267,6 +267,9 @@ export class CheckoutComponent extends BaseProvider
 					}
 				},
 				authorization: await this.authorization,
+				dataCollector: {
+					kount: true
+				},
 				googlePay: {
 					googlePayVersion: 2,
 					merchantId: '09900375611168245515',
@@ -585,6 +588,7 @@ export class CheckoutComponent extends BaseProvider
 					),
 					bitPayInvoiceID,
 					creditCard,
+					deviceData: paymentMethod?.deviceData,
 					nonce: paymentMethod?.nonce,
 					subscription: this.subscriptionType !== undefined,
 					subscriptionCount:

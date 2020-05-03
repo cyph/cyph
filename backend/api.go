@@ -145,6 +145,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	creditCard := h.Request.PostFormValue("creditCard") == "true"
+	deviceData := sanitize(h.Request.PostFormValue("deviceData"))
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
 	planID := ""
@@ -223,11 +224,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				BillingAddress:     billingAddress,
 				CardholderName:     name,
 				CustomerId:         braintreeCustomer.Id,
+				DeviceData:         deviceData,
 				PaymentMethodNonce: nonce,
 			})
 		} else {
 			paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
 				CustomerId:         braintreeCustomer.Id,
+				DeviceData:         deviceData,
 				PaymentMethodNonce: nonce,
 			})
 		}
@@ -377,6 +380,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				Amount:             braintree.NewDecimal(amount, 2),
 				BillingAddress:     billingAddress,
 				Customer:           customerRequest,
+				DeviceData:         deviceData,
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})
