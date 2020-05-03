@@ -31,7 +31,7 @@ go get -u \
 	github.com/buu700/mustache-tmp \
 	github.com/gorilla/context \
 	github.com/gorilla/mux \
-	github.com/buu700/braintree-go \
+	github.com/braintree-go/braintree-go \
 	github.com/microcosm-cc/bluemonday \
 	github.com/oschwald/geoip2-golang \
 	google.golang.org/api/iterator \
