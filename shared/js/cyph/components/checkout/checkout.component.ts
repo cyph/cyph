@@ -257,8 +257,8 @@ export class CheckoutComponent extends BaseProvider
 			this.bitPayInvoiceID = this.createBitPayInvoice();
 		}
 
-		braintreeDropIn.create(
-			{
+		const instance = await Promise.resolve<any>(
+			braintreeDropIn.create({
 				applePay: {
 					displayName: 'Cyph',
 					paymentRequest: {
@@ -293,158 +293,147 @@ export class CheckoutComponent extends BaseProvider
 					allowNewBrowserTab: false
 				}
 				*/
-			},
-			(err: any, instance: any) => {
-				if (err) {
-					throw err;
-				}
-
-				this.braintreeInstance = instance;
-
-				this.braintreeInstance.on('paymentOptionSelected', (o: any) => {
-					const paymentOption = o?.paymentOption;
-					if (typeof paymentOption === 'string') {
-						this.paymentOption.next(paymentOption);
-					}
-				});
-
-				if (!(this.elementRef.nativeElement instanceof HTMLElement)) {
-					return;
-				}
-
-				/* eslint-disable-next-line no-unused-expressions */
-				this.elementRef.nativeElement
-					.querySelector('.braintree-toggle')
-					?.addEventListener('click', () => {
-						this.paymentOption.next(undefined);
-					});
-
-				if (!this.bitPayInvoiceID) {
-					return;
-				}
-
-				const lastOption = this.elementRef.nativeElement.querySelector(
-					'.braintree-option:last-of-type'
-				);
-
-				if (!(lastOption instanceof HTMLElement)) {
-					return;
-				}
-
-				const bitPayOption = lastOption.cloneNode(true);
-				const optionsParent = lastOption.parentElement;
-
-				if (
-					!(bitPayOption instanceof HTMLElement) ||
-					!(optionsParent instanceof HTMLElement)
-				) {
-					return;
-				}
-
-				const otherOptionClass = Array.from(
-					bitPayOption.classList
-				).find(s => s.startsWith('braintree-option_'));
-				if (otherOptionClass) {
-					bitPayOption.classList.remove(otherOptionClass);
-				}
-
-				const originalLogo = lastOption.querySelector(
-					'.braintree-option__logo'
-				);
-				const logo = bitPayOption.querySelector(
-					'.braintree-option__logo'
-				);
-				if (
-					logo instanceof HTMLElement &&
-					originalLogo instanceof HTMLElement
-				) {
-					const logoHeight = originalLogo.clientHeight;
-					const logoWidth = originalLogo.clientWidth;
-
-					while (logo.firstElementChild) {
-						logo.removeChild(logo.firstElementChild);
-					}
-
-					logo.style.height = `${logoHeight}px`;
-					logo.style.maxHeight = `${logoHeight}px`;
-					logo.style.minHeight = `${logoHeight}px`;
-
-					logo.style.width = `${logoWidth}px`;
-					logo.style.maxWidth = `${logoWidth}px`;
-					logo.style.minWidth = `${logoWidth}px`;
-
-					const img = document.createElement('img');
-					img.src = bitPayLogo;
-					img.height = logoHeight;
-					img.width = logoHeight;
-					img.style.margin = 'auto';
-					img.style.transform = 'scale(1.5)';
-					logo.appendChild(img);
-				}
-
-				const label = bitPayOption.querySelector(
-					'.braintree-option__label'
-				);
-				if (label instanceof HTMLElement) {
-					label.textContent = 'BitPay';
-					label.setAttribute(
-						'aria-label',
-						this.stringsService.bitPayAriaLabel
-					);
-				}
-
-				bitPayOption.addEventListener('click', async () => {
-					if (!this.bitPayInvoiceID) {
-						this.bitPayInvoiceID = this.createBitPayInvoice();
-					}
-
-					bitPay.showInvoice(await this.bitPayInvoiceID);
-				});
-
-				bitPay.onModalWillLeave(async () => {
-					const invoice = this.bitPayInvoiceID ?
-						await this.getBitPayInvoice(
-							await this.bitPayInvoiceID
-						) :
-						undefined;
-
-					if (
-						!(
-							invoice?.status === 'complete' ||
-							invoice?.status === 'confirmed' ||
-							invoice?.status === 'paid'
-						)
-					) {
-						this.bitPayInvoiceID = this.createBitPayInvoice();
-						return;
-					}
-
-					this.submit(true);
-				});
-
-				optionsParent.appendChild(bitPayOption);
-
-				self.addEventListener(
-					'message',
-					e => {
-						if (
-							e?.data?.status === 'complete' ||
-							e?.data?.status === 'confirmed' ||
-							e?.data?.status === 'paid'
-						) {
-							bitPay.hideFrame();
-						}
-					},
-					false
-				);
-
-				/* eslint-disable-next-line no-unused-expressions */
-				this.bitPayInvoiceID?.catch(bitPayError => {
-					optionsParent.removeChild(bitPayOption);
-					throw bitPayError;
-				});
-			}
+			})
 		);
+
+		this.braintreeInstance = instance;
+
+		this.braintreeInstance.on('paymentOptionSelected', (o: any) => {
+			const paymentOption = o?.paymentOption;
+			if (typeof paymentOption === 'string') {
+				this.paymentOption.next(paymentOption);
+			}
+		});
+
+		if (!(this.elementRef.nativeElement instanceof HTMLElement)) {
+			return;
+		}
+
+		/* eslint-disable-next-line no-unused-expressions */
+		this.elementRef.nativeElement
+			.querySelector('.braintree-toggle')
+			?.addEventListener('click', () => {
+				this.paymentOption.next(undefined);
+			});
+
+		if (!this.bitPayInvoiceID) {
+			return;
+		}
+
+		const lastOption = this.elementRef.nativeElement.querySelector(
+			'.braintree-option:last-of-type'
+		);
+
+		if (!(lastOption instanceof HTMLElement)) {
+			return;
+		}
+
+		const bitPayOption = lastOption.cloneNode(true);
+		const optionsParent = lastOption.parentElement;
+
+		if (
+			!(bitPayOption instanceof HTMLElement) ||
+			!(optionsParent instanceof HTMLElement)
+		) {
+			return;
+		}
+
+		const otherOptionClass = Array.from(bitPayOption.classList).find(s =>
+			s.startsWith('braintree-option_')
+		);
+		if (otherOptionClass) {
+			bitPayOption.classList.remove(otherOptionClass);
+		}
+
+		const originalLogo = lastOption.querySelector(
+			'.braintree-option__logo'
+		);
+		const logo = bitPayOption.querySelector('.braintree-option__logo');
+		if (
+			logo instanceof HTMLElement &&
+			originalLogo instanceof HTMLElement
+		) {
+			const logoHeight = originalLogo.clientHeight;
+			const logoWidth = originalLogo.clientWidth;
+
+			while (logo.firstElementChild) {
+				logo.removeChild(logo.firstElementChild);
+			}
+
+			logo.style.height = `${logoHeight}px`;
+			logo.style.maxHeight = `${logoHeight}px`;
+			logo.style.minHeight = `${logoHeight}px`;
+
+			logo.style.width = `${logoWidth}px`;
+			logo.style.maxWidth = `${logoWidth}px`;
+			logo.style.minWidth = `${logoWidth}px`;
+
+			const img = document.createElement('img');
+			img.src = bitPayLogo;
+			img.height = logoHeight;
+			img.width = logoHeight;
+			img.style.margin = 'auto';
+			img.style.transform = 'scale(1.5)';
+			logo.appendChild(img);
+		}
+
+		const label = bitPayOption.querySelector('.braintree-option__label');
+		if (label instanceof HTMLElement) {
+			label.textContent = 'BitPay';
+			label.setAttribute(
+				'aria-label',
+				this.stringsService.bitPayAriaLabel
+			);
+		}
+
+		bitPayOption.addEventListener('click', async () => {
+			if (!this.bitPayInvoiceID) {
+				this.bitPayInvoiceID = this.createBitPayInvoice();
+			}
+
+			bitPay.showInvoice(await this.bitPayInvoiceID);
+		});
+
+		bitPay.onModalWillLeave(async () => {
+			const invoice = this.bitPayInvoiceID ?
+				await this.getBitPayInvoice(await this.bitPayInvoiceID) :
+				undefined;
+
+			if (
+				!(
+					invoice?.status === 'complete' ||
+					invoice?.status === 'confirmed' ||
+					invoice?.status === 'paid'
+				)
+			) {
+				this.bitPayInvoiceID = this.createBitPayInvoice();
+				return;
+			}
+
+			this.submit(true);
+		});
+
+		optionsParent.appendChild(bitPayOption);
+
+		self.addEventListener(
+			'message',
+			e => {
+				if (
+					e?.data?.status === 'complete' ||
+					e?.data?.status === 'confirmed' ||
+					e?.data?.status === 'paid'
+				) {
+					bitPay.hideFrame();
+				}
+			},
+			false
+		);
+
+		/* eslint-disable-next-line no-unused-expressions */
+		this.bitPayInvoiceID?.catch(bitPayError => {
+			optionsParent.removeChild(bitPayOption);
+			throw bitPayError;
+		});
 	}
 
 	/** @inheritDoc */
