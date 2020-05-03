@@ -144,7 +144,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	creditCard := h.Request.PostFormValue("creditCard") == "true"
 	deviceData := sanitize(h.Request.PostFormValue("deviceData"))
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
@@ -204,10 +203,11 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	customerRequest := &braintree.CustomerRequest{
-		Company:   company,
-		Email:     customerRequestEmail,
-		FirstName: firstName,
-		LastName:  lastName,
+		Company:    company,
+		DeviceData: deviceData,
+		Email:      customerRequestEmail,
+		FirstName:  firstName,
+		LastName:   lastName,
 	}
 
 	if subscription {
@@ -219,21 +219,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		var paymentMethod braintree.PaymentMethod
 
-		if creditCard {
-			paymentMethod, err = bt.CreditCard().Create(h.Context, &braintree.CreditCard{
-				BillingAddress:     billingAddress,
-				CardholderName:     name,
-				CustomerId:         braintreeCustomer.Id,
-				DeviceData:         deviceData,
-				PaymentMethodNonce: nonce,
-			})
-		} else {
-			paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
-				CustomerId:         braintreeCustomer.Id,
-				DeviceData:         deviceData,
-				PaymentMethodNonce: nonce,
-			})
-		}
+		paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
+			BillingAddress:     billingAddress,
+			CardholderName:     name,
+			CustomerId:         braintreeCustomer.Id,
+			DeviceData:         deviceData,
+			PaymentMethodNonce: nonce,
+		})
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot
