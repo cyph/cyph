@@ -147,6 +147,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	deviceData := sanitize(h.Request.PostFormValue("deviceData"))
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
+	if bitPayInvoiceID == "" && (deviceData == "" || nonce == "") {
+		return "invalid payment information", http.StatusBadRequest
+	}
+
 	planID := ""
 	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("category")), 10, 64); err == nil {
 		if item, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("item")), 10, 64); err == nil {
