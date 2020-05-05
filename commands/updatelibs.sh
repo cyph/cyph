@@ -202,6 +202,7 @@ read -r -d '' modules <<- EOM
 	babel-preset-es2015
 	bitpay.js
 	bourbon@4.2.7
+	braintree
 	braintree-web
 	braintree-web-drop-in
 	cheerio
