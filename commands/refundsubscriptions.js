@@ -22,7 +22,11 @@ const gateway = braintree.connect({
 	publicKey: vars.BRAINTREE_PUBLIC_KEY
 });
 
-const refundTransaction = async ({id, status}) => {
+const refundTransaction = async ({id, status, type}) => {
+	if (type === 'credit') {
+		return;
+	}
+
 	if (
 		status === 'authorized' ||
 		status === 'settlement_pending' ||
@@ -46,7 +50,8 @@ const refundSubscription = async subscriptionID => {
 		subscription.transactions.map(async o =>
 			refundTransaction({
 				id: o.transaction[0].id[0],
-				status: o.transaction[0].status[0]
+				status: o.transaction[0].status[0],
+				type: o.transaction[0].type[0]
 			})
 		)
 	);
@@ -54,8 +59,11 @@ const refundSubscription = async subscriptionID => {
 	await gateway.subscription.cancel(subscriptionID);
 };
 
-const refundSubscriptions = async subscriptionIDs =>
-	Promise.all(subscriptionIDs.map(refundSubscription));
+const refundSubscriptions = async subscriptionIDs => {
+	for (const subscriptionID of subscriptionIDs) {
+		await refundSubscription(subscriptionID);
+	}
+};
 
 if (require.main === module) {
 	(async () => {
