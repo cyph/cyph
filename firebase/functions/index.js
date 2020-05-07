@@ -379,7 +379,7 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterLink = `${accountsURL}account-burner/${data.callType ||
 		'chat'}/${id}`;
 
-	const [smsCredentials, timeZone] = Promise.all([
+	const [smsCredentials, timeZone] = await Promise.all([
 		(async () =>
 			data.toSMS ?
 				(await database
