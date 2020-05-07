@@ -48,7 +48,11 @@ const sendSMS = async (to, text, credentials) => {
 			return;
 		}
 
-		await plivoClient.messages.create(credentials.plivo.from, to, text);
+		await plivoClient.messages.create(
+			credentials.plivo.from,
+			to.startsWith('+') ? to : `+1${to}`,
+			text
+		);
 	}
 };
 
