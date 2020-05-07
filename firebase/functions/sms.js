@@ -13,7 +13,11 @@ const getTwilioClient = memoize(
 	o => o.id
 );
 
-const sendSMS = async (to, text, credentials = {twilio: twilioCredentials}) => {
+const sendSMS = async (to, text, credentials) => {
+	if (!credentials) {
+		credentials = {twilio: twilioCredentials};
+	}
+
 	if (
 		credentials.twilio &&
 		credentials.twilio.authToken &&
