@@ -945,6 +945,30 @@
 						},
 						"registrationEmailSent": {
 							".validate": "newData.isBoolean()"
+						},
+						"smsCredentials": {
+							"plivo": {
+								"authToken": {
+									".validate": "newData.isString()"
+								},
+								"from": {
+									".validate": "newData.isString()"
+								},
+								"id": {
+									".validate": "newData.isString()"
+								}
+							},
+							"twilio": {
+								"authToken": {
+									".validate": "newData.isString()"
+								},
+								"from": {
+									".validate": "newData.isString()"
+								},
+								"id": {
+									".validate": "newData.isString()"
+								}
+							}
 						}
 					},
 

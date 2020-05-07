@@ -1048,7 +1048,7 @@ then
 				twilioCredentials: {
 					authToken: $(getBackendVar TWILIO_AUTH_TOKEN),
 					from: $(getBackendVar TWILIO_FROM),
-					sid: $(getBackendVar TWILIO_SID)
+					id: $(getBackendVar TWILIO_SID)
 				}
 			};
 EOM
