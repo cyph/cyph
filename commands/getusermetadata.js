@@ -1,8 +1,68 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
 const databaseService = require('../modules/database-service');
-const {CyphPlan, CyphPlans, StringProto} = require('../modules/proto');
+const potassium = require('../modules/potassium');
+const {
+	AGSEPKICert,
+	BinaryProto,
+	CyphPlan,
+	CyphPlans,
+	StringProto
+} = require('../modules/proto');
 const {normalize} = require('../modules/util');
+
+/* TODO: Refactor this */
+const getCertTimestamp = async (username, namespace, getItem) => {
+	const agsePublicSigningKeysJS = fs
+		.readFileSync(`${__dirname}/../websign/js/keys.js`)
+		.toString();
+
+	const agsePublicSigningKeys = JSON.parse(
+		agsePublicSigningKeysJS
+			.substring(agsePublicSigningKeysJS.indexOf('=') + 1)
+			.split(';')[0]
+			.trim()
+			.replace(/\/\*.*?\*\//g, '')
+	);
+
+	const certBytes = await getItem(
+		namespace,
+		`users/${username}/certificate`,
+		BinaryProto
+	);
+
+	const dataView = potassium.toDataView(certBytes);
+	const rsaKeyIndex = dataView.getUint32(0, true);
+	const sphincsKeyIndex = dataView.getUint32(4, true);
+	const signed = potassium.toBytes(certBytes, 8);
+
+	if (
+		rsaKeyIndex >= agsePublicSigningKeys.rsa.length ||
+		sphincsKeyIndex >= agsePublicSigningKeys.sphincs.length
+	) {
+		throw new Error('Invalid AGSE-PKI certificate: bad key index.');
+	}
+
+	const cert = await deserialize(
+		AGSEPKICert,
+		await potassium.sign.open(
+			signed,
+			await potassium.sign.importSuperSphincsPublicKeys(
+				agsePublicSigningKeys.rsa[rsaKeyIndex],
+				agsePublicSigningKeys.sphincs[sphincsKeyIndex]
+			),
+			`${namespace}:${username}`,
+			false
+		)
+	);
+
+	if (cert.agsePKICSR.username !== username) {
+		throw new Error('Invalid AGSE-PKI certificate: bad username.');
+	}
+
+	return new Date(cert.timestamp).toLocaleString();
+};
 
 const getUserMetadata = async (projectId, username, namespace) => {
 	if (typeof projectId !== 'string' || projectId.indexOf('cyph') !== 0) {
@@ -17,15 +77,13 @@ const getUserMetadata = async (projectId, username, namespace) => {
 	const {database, getItem} = databaseService(projectId);
 
 	const [
-		email,
+		certTimestamp,
 		internal,
 		inviteCode,
 		inviterUsername,
 		plan
 	] = await Promise.all([
-		getItem(namespace, `users/${username}/email`, StringProto).catch(
-			() => ''
-		),
+		getCertTimestamp(username, namespace, getItem),
 		database
 			.ref(`${namespace.replace(/\./g, '_')}/users/${username}/internal`)
 			.once('value')
@@ -44,7 +102,7 @@ const getUserMetadata = async (projectId, username, namespace) => {
 	]);
 
 	return {
-		email,
+		certTimestamp,
 		internal,
 		inviteCode,
 		inviterUsername,
