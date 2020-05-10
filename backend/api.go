@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/datastore"
-	"github.com/braintree-go/braintree-go"
+	"github.com/buu700/braintree-go-tmp"
 	"google.golang.org/api/iterator"
 )
 
@@ -144,8 +144,12 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	creditCard := h.Request.PostFormValue("creditCard") == "true"
+	deviceData := sanitize(h.Request.PostFormValue("deviceData"))
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
+
+	if bitPayInvoiceID == "" && (deviceData == "" || nonce == "") {
+		return "invalid payment information", http.StatusBadRequest
+	}
 
 	planID := ""
 	if category, err := strconv.ParseInt(sanitize(h.Request.PostFormValue("category")), 10, 64); err == nil {
@@ -203,10 +207,11 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	}
 
 	customerRequest := &braintree.CustomerRequest{
-		Company:   company,
-		Email:     customerRequestEmail,
-		FirstName: firstName,
-		LastName:  lastName,
+		Company:    company,
+		DeviceData: deviceData,
+		Email:      customerRequestEmail,
+		FirstName:  firstName,
+		LastName:   lastName,
 	}
 
 	if subscription {
@@ -218,19 +223,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		var paymentMethod braintree.PaymentMethod
 
-		if creditCard {
-			paymentMethod, err = bt.CreditCard().Create(h.Context, &braintree.CreditCard{
-				BillingAddress:     billingAddress,
-				CardholderName:     name,
-				CustomerId:         braintreeCustomer.Id,
-				PaymentMethodNonce: nonce,
-			})
-		} else {
-			paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
-				CustomerId:         braintreeCustomer.Id,
-				PaymentMethodNonce: nonce,
-			})
-		}
+		paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
+			BillingAddress:     billingAddress,
+			CardholderName:     name,
+			CustomerId:         braintreeCustomer.Id,
+			DeviceData:         deviceData,
+			PaymentMethodNonce: nonce,
+		})
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot
@@ -377,6 +376,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				Amount:             braintree.NewDecimal(amount, 2),
 				BillingAddress:     billingAddress,
 				Customer:           customerRequest,
+				DeviceData:         deviceData,
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})

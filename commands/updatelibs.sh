@@ -175,6 +175,7 @@ read -r -d '' modules <<- EOM
 	@types/markdown-it
 	@types/msgpack-lite
 	@types/node
+	@types/openpgp
 	@types/pdfjs-dist
 	@types/pdfkit
 	@types/pulltorefreshjs
@@ -202,6 +203,7 @@ read -r -d '' modules <<- EOM
 	babel-preset-es2015
 	bitpay.js
 	bourbon@4.2.7
+	braintree
 	braintree-web
 	braintree-web-drop-in
 	cheerio
@@ -264,6 +266,7 @@ read -r -d '' modules <<- EOM
 	jsdoc@3.5.5
 	jsdom
 	jspdf
+	jsqr
 	karma
 	karma-chrome-launcher
 	karma-cli
@@ -317,6 +320,7 @@ read -r -d '' modules <<- EOM
 	nodemailer@4
 	notify-cli
 	ntru
+	openpgp
 	opentok
 	opn
 	opus-recorder

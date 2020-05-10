@@ -33,6 +33,7 @@
 		"nodemailer": "^4",
 		"ntru": "*",
 		"phone-number-timezone": "*",
+		"plivo": "*",
 		"rlwe": "*",
 		"sidh": "*",
 		"sodiumutil": "*",

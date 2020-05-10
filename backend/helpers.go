@@ -21,7 +21,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/datastore"
-	"github.com/braintree-go/braintree-go"
+	"github.com/buu700/braintree-go-tmp"
 	"github.com/buu700/mustache-tmp"
 	"github.com/gorilla/mux"
 	"github.com/microcosm-cc/bluemonday"

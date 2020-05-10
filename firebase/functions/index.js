@@ -379,9 +379,19 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 	const inviterLink = `${accountsURL}account-burner/${data.callType ||
 		'chat'}/${id}`;
 
-	const timeZone =
-		(data.toSMS ? await phoneNumberTimezone(data.toSMS) : undefined) ||
-		data.inviterTimeZone;
+	const [smsCredentials, timeZone] = await Promise.all([
+		(async () =>
+			data.toSMS ?
+				(await database
+					.ref(
+						`${namespace}/users/${inviterUsername}/internal/smsCredentials`
+					)
+					.once('value')).val() :
+				undefined)().catch(() => undefined),
+		(async () =>
+			(data.toSMS ? await phoneNumberTimezone(data.toSMS) : undefined) ||
+			data.inviterTimeZone)()
+	]);
 
 	const startTimeString = new Intl.DateTimeFormat('en-US', {
 		day: 'numeric',
@@ -428,11 +438,13 @@ exports.appointmentInvite = onCall(async (data, namespace, getUsername) => {
 		data.toSMS &&
 			sendSMS(
 				data.toSMS,
-				messagePart1.replace('${PARTY}', `@${inviterUsername}`)
+				messagePart1.replace('${PARTY}', `@${inviterUsername}`),
+				smsCredentials
 			).then(async () =>
 				sendSMS(
 					data.toSMS,
-					messagePart2.replace('${LINK}', inviteeLink)
+					messagePart2.replace('${LINK}', inviteeLink),
+					smsCredentials
 				)
 			),
 		sendMail(
