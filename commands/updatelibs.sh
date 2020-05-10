@@ -266,6 +266,7 @@ read -r -d '' modules <<- EOM
 	jsdoc@3.5.5
 	jsdom
 	jspdf
+	jsqr
 	karma
 	karma-chrome-launcher
 	karma-cli
