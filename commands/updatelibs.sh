@@ -175,6 +175,7 @@ read -r -d '' modules <<- EOM
 	@types/markdown-it
 	@types/msgpack-lite
 	@types/node
+	@types/openpgp
 	@types/pdfjs-dist
 	@types/pdfkit
 	@types/pulltorefreshjs
@@ -318,6 +319,7 @@ read -r -d '' modules <<- EOM
 	nodemailer@4
 	notify-cli
 	ntru
+	openpgp
 	opentok
 	opn
 	opus-recorder
