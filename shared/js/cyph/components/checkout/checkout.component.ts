@@ -443,6 +443,7 @@ export class CheckoutComponent extends BaseProvider
 	}
 
 	/** @inheritDoc */
+	/* eslint-disable-next-line complexity */
 	public ngOnInit () : void {
 		/* Workaround for Angular Elements leaving inputs as strings */
 
@@ -514,8 +515,10 @@ export class CheckoutComponent extends BaseProvider
 		if (affid) {
 			this.partnerTransactionID = Promise.resolve<string>(
 				EF.click({
-					offer_id: this.offerID,
+					/* eslint-disable-next-line camelcase */
 					affiliate_id: affid,
+					/* eslint-disable-next-line camelcase */
+					offer_id: this.offerID,
 					sub1: EF.urlParameter('sub1'),
 					sub2: EF.urlParameter('sub2'),
 					sub3: EF.urlParameter('sub3'),

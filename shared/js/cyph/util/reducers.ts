@@ -25,10 +25,9 @@ export const flattenArray = <T>(
 				for (const t of arr) {
 					array.push(t);
 				}
+				continue;
 			}
-			else {
-				array.push(arr);
-			}
+			array.push(arr);
 		}
 		return array;
 	}

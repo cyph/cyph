@@ -696,18 +696,20 @@ func getContinent(h HandlerArgs) (interface{}, int) {
 }
 
 func getGeolocation(h HandlerArgs) (interface{}, int) {
-	continent, continentCode, country, countryCode, city, postalCode, analID := geolocate(h)
-	org := getOrg(h)
+	// continent, continentCode, country, countryCode, city, postalCode, analID := geolocate(h)
+	_, _, _, countryCode, _, _, analID := geolocate(h)
+	// org := getOrg(h)
 
+	/* Return fields on an as-needed basis to avoid unnecessarily scaring users */
 	return map[string]string{
-		"analID":        analID,
-		"city":          city,
-		"continent":     continent,
-		"continentCode": continentCode,
-		"country":       country,
-		"countryCode":   countryCode,
-		"org":           org,
-		"postalCode":    postalCode,
+		"analID": analID,
+		// "city":          city,
+		// "continent":     continent,
+		// "continentCode": continentCode,
+		// "country":       country,
+		"countryCode": countryCode,
+		// "org":           org,
+		// "postalCode":    postalCode,
 	}, http.StatusOK
 }
 

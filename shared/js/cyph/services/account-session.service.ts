@@ -191,6 +191,7 @@ export class AccountSessionService extends SessionService {
 	}
 
 	/** Sets the remote user we're chatting with. */
+	/* eslint-disable-next-line complexity */
 	public async setUser (
 		chat:
 			| {anonymousChannelID: string; passive?: boolean}

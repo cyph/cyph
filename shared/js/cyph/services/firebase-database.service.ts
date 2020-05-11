@@ -2079,11 +2079,15 @@ export class FirebaseDatabaseService extends DatabaseService {
 										}
 									}
 
-									if (completeOnEmpty && keys.length === 0) {
-										this.ngZone.run(() => {
-											observer.complete();
-										});
+									if (
+										!(completeOnEmpty && keys.length === 0)
+									) {
+										return;
 									}
+
+									this.ngZone.run(() => {
+										observer.complete();
+									});
 								})
 							);
 
