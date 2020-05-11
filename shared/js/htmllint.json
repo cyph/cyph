@@ -27,7 +27,7 @@
 	"img-req-src": false,
 	"indent-style": "tabs",
 	"label-req-for": true,
-	"line-max-len": 100,
+	"line-max-len": false,
 	"line-no-trailing-whitespace": false,
 	"link-req-noopener": false,
 	"spec-char-escape": false,

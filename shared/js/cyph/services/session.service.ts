@@ -639,6 +639,8 @@ export abstract class SessionService extends BaseProvider
 
 		const p2pWebRTCService = await this.p2pWebRTCService.promise;
 
+		/* Workaround for lint false positive bug */
+		/* eslint-disable-next-line prefer-const */
 		let localStream: MediaStream | undefined;
 
 		const device =

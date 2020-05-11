@@ -3,7 +3,7 @@ import {parse} from './util/serialization';
 
 const geolocationPromise = (async () => {
 	try {
-		const o = parse<{
+		const data = parse<{
 			analID?: string;
 			city?: string;
 			continent?: string;
@@ -17,24 +17,29 @@ const geolocationPromise = (async () => {
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			await fetch(
 				`${envDeploy.baseUrl}geolocation/${EnvDeploy.languageInternal}`
-			).then(o => o.text())
+			).then(async o => o.text())
 		);
 
 		return {
-			analID: typeof o.analID === 'string' ? o.analID : undefined,
-			city: typeof o.city === 'string' ? o.city : undefined,
+			analID: typeof data.analID === 'string' ? data.analID : undefined,
+			city: typeof data.city === 'string' ? data.city : undefined,
 			continent:
-				typeof o.continent === 'string' ? o.continent : undefined,
+				typeof data.continent === 'string' ? data.continent : undefined,
 			continentCode:
-				typeof o.continentCode === 'string' ?
-					o.continentCode :
+				typeof data.continentCode === 'string' ?
+					data.continentCode :
 					undefined,
-			country: typeof o.country === 'string' ? o.country : undefined,
+			country:
+				typeof data.country === 'string' ? data.country : undefined,
 			countryCode:
-				typeof o.countryCode === 'string' ? o.countryCode : undefined,
-			org: typeof o.org === 'string' ? o.org : undefined,
+				typeof data.countryCode === 'string' ?
+					data.countryCode :
+					undefined,
+			org: typeof data.org === 'string' ? data.org : undefined,
 			postalCode:
-				typeof o.postalCode === 'string' ? o.postalCode : undefined
+				typeof data.postalCode === 'string' ?
+					data.postalCode :
+					undefined
 		};
 	}
 	catch {

@@ -30,7 +30,7 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class EphemeralSessionService extends SessionService {
 	/** @ignore */
-	private chatRequestRingTimeout: number = 15000;
+	private readonly chatRequestRingTimeout: number = 15000;
 
 	/** @ignore */
 	private readonly localStorageKey = 'BurnerChannelID';
