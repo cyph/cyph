@@ -1,7 +1,11 @@
 @import '../../../../css/mixins';
 
-mat-card {
+:host > div {
 	margin: 0 2em;
+}
+
+mat-card {
+	max-width: 600px;
 }
 
 mat-card-content {

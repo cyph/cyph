@@ -1,364 +1,402 @@
-<mat-card fxFlex>
-	<ng-container *ngIf="!post; else deletedPost">
-		<mat-card-content fxLayoutAlign="center center">
-			<mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-		</mat-card-content>
-	</ng-container>
-
-	<ng-template #deletedPost>
-		<ng-container *ngIf="post?.deleted === true; else postUI">
+<div fxFlex fxLayout="row" fxLayoutAlign="center center">
+	<mat-card fxFlex>
+		<ng-container *ngIf="!post; else deletedPost">
 			<mat-card-content fxLayoutAlign="center center">
-				<span cyphTranslate>[deleted]</span>
+				<mat-progress-spinner
+					mode="indeterminate"
+				></mat-progress-spinner>
 			</mat-card-content>
 		</ng-container>
-	</ng-template>
 
-	<ng-template #postUI>
-		<mat-card-header>
-			<img
-				mat-card-avatar
-				cyphTranslate
-				[routerLink]="'/profile/' + (user?.username || '')"
-				[src]="user?.avatar | await"
-				alt="User Avatar"
-			/>
-			<mat-card-title>
-				<a [routerLink]="'/profile/' + (user?.username || '')">{{
-					(user?.name | await) || ''
-						| slice: 0:accountService.maxNameLength
-				}}</a>
-				&ngsp;
-				<mat-icon>{{ post?.circleID ? 'lock' : 'public' }}</mat-icon>
-			</mat-card-title>
-			<mat-card-subtitle>
-				<a [routerLink]="'/profile/' + (user?.username || '')"
-					>@{{ (user?.realUsername | await) || '' }}</a
-				>
-				&ngsp; · &ngsp;
-				<a
-					[routerLink]="
-						'/post/' +
-						(user?.username || '') +
-						'/' +
-						(post?.id || '')
-					"
-					>{{
-						post ? getDateTimeString(post?.timestamp || 0) : ''
-					}}</a
-				>
-			</mat-card-subtitle>
-
-			<button
-				mat-icon-button
-				cyphTranslate
-				class="menu-button"
-				aria-label="Context Menu"
-				[matMenuTriggerFor]="postMenu"
-				*ngIf="
-					user !== undefined &&
-					(user?.username || '') ===
-						((accountDatabaseService.currentUser | await)?.user
-							?.username || '')
-				"
-			>
-				<mat-icon>more_horiz</mat-icon>
-			</button>
-			<mat-menu #postMenu="matMenu">
-				<button mat-menu-item (click)="editPost()">
-					<mat-icon>edit</mat-icon>
-					<span>{{ stringsService.postEditTitle }}</span>
-				</button>
-				<button mat-menu-item (click)="deletePost()">
-					<mat-icon>delete</mat-icon>
-					<span>{{ stringsService.postDeleteTitle }}</span>
-				</button>
-			</mat-menu>
-		</mat-card-header>
-		<img
-			mat-card-image
-			cyphTranslate
-			[src]="accountPostsService.getPostImage(post) | await"
-			alt="Post Image"
-			*ngIf="(post?.image?.length || 0) > 0"
-		/>
-		<mat-card-content>
-			<p>
-				<cyph-markdown [markdown]="post?.content || ''"></cyph-markdown>
-			</p>
-
-			<ng-container *ngIf="!!post?.repost?.author && !!post?.repost?.id">
-				<p
-					class="text-align-center"
-					*ngIf="reposted; else embeddedPost"
-				>
-					<small>
-						<a
-							[routerLink]="
-								'/post/' +
-								(post?.repost?.author || '') +
-								'/' +
-								(post?.repost?.id || '')
-							"
-							><span cyphTranslate>Reposted post by</span
-							>&ngsp;<span
-								>@{{ post?.repost?.author || '' }}</span
-							></a
-						>
-					</small>
-				</p>
-				<ng-template #embeddedPost>
-					<p
-						*ngIf="
-							repostData | await as o;
-							else embeddedPostSpinner
-						"
-					>
-						<cyph-account-post
-							[author]="o?.author"
-							[post]="o?.post"
-							[reposted]="true"
-						></cyph-account-post>
-					</p>
-				</ng-template>
-				<ng-template #embeddedPostSpinner>
-					<p fxLayoutAlign="center center">
-						<mat-progress-spinner
-							mode="indeterminate"
-						></mat-progress-spinner>
-					</p>
-				</ng-template>
+		<ng-template #deletedPost>
+			<ng-container *ngIf="post?.deleted === true; else postUI">
+				<mat-card-content fxLayoutAlign="center center">
+					<span cyphTranslate>[deleted]</span>
+				</mat-card-content>
 			</ng-container>
-		</mat-card-content>
-		<mat-card-actions>
-			<div fxLayout="column" fxLayoutGap="16px">
-				<div [fxShow]="showEmojiPicker | await">
-					<cyph-simple-emoji-picker
-						(emojiSelect)="react($event.emoji.unified || '')"
-					></cyph-simple-emoji-picker>
-				</div>
+		</ng-template>
 
-				<div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px">
-					<div
-						fxFlex.gt-xs="269px"
-						fxLayoutAlign.lt-sm="center center"
+		<ng-template #postUI>
+			<mat-card-header>
+				<img
+					mat-card-avatar
+					cyphTranslate
+					[routerLink]="'/profile/' + (user?.username || '')"
+					[src]="user?.avatar | await"
+					alt="User Avatar"
+				/>
+				<mat-card-title>
+					<a [routerLink]="'/profile/' + (user?.username || '')">{{
+						(user?.name | await) || ''
+							| slice: 0:accountService.maxNameLength
+					}}</a>
+					&ngsp;
+					<mat-icon>{{
+						post?.circleID ? 'lock' : 'public'
+					}}</mat-icon>
+				</mat-card-title>
+				<mat-card-subtitle>
+					<a [routerLink]="'/profile/' + (user?.username || '')"
+						>@{{ (user?.realUsername | await) || '' }}</a
 					>
-						<mat-button-toggle-group multiple>
-							<mat-button-toggle
-								[checked]="reaction.selected"
-								[matTooltip]="
-									reaction.selected ?
-										stringsService.reactionRemove :
-										stringsService.reactionAdd
-								"
-								(click)="react(reaction.id, !reaction.selected)"
-								*ngFor="
-									let reaction of reactions | await;
-									trackBy: trackByID
-								"
-							>
-								<ngx-emoji
-									[emoji]="reaction.id"
-									[isNative]="true"
-								></ngx-emoji>
-								<span class="reaction-count">{{
-									reaction.count
-								}}</span>
-							</mat-button-toggle>
-							<mat-button-toggle
-								cyphTranslate
-								[checked]="(showEmojiPicker | await) && false"
-								matTooltip="Add New Reaction"
-								(click)="
-									showEmojiPicker.next(!showEmojiPicker.value)
-								"
-							>
-								<mat-icon>insert_emoticon</mat-icon>
-							</mat-button-toggle>
-						</mat-button-toggle-group>
-					</div>
-
-					<div fxFlex fxLayoutAlign="center center" fxLayoutGap="8px">
-						<button mat-raised-button (click)="repost()">
-							<mat-icon>autorenew</mat-icon>
-							&nbsp;
-							<span cyphTranslate>Repost</span>
-						</button>
-						<button mat-raised-button (click)="sharePost.show()">
-							<mat-icon>share</mat-icon>
-							&nbsp;
-							<span cyphTranslate>Share</span>
-						</button>
-					</div>
-				</div>
-
-				<cyph-social-share
-					#sharePost
-					[options]="{
-						hashTags: ['cyph', 'privacy'],
-						text: stringsService.postShareTitle,
-						url:
-							envService.appUrl +
-							'post/' +
+					&ngsp; · &ngsp;
+					<a
+						[routerLink]="
+							'/post/' +
 							(user?.username || '') +
 							'/' +
 							(post?.id || '')
-					}"
-				></cyph-social-share>
+						"
+						>{{
+							post ? getDateTimeString(post?.timestamp || 0) : ''
+						}}</a
+					>
+				</mat-card-subtitle>
 
-				<div class="cyph-light-theme">
-					<mat-expansion-panel>
-						<mat-expansion-panel-header>
-							<mat-panel-title>
-								<span cyphTranslate>Comments</span>
-							</mat-panel-title>
-							<mat-panel-description>
-								<span
-									*ngIf="
-										commentsObservable | await as comments
-									"
-								>
-									<span>{{ comments?.length || 0 }}</span>
-									&ngsp;
-									<span cyphTranslate>Comments</span>
-								</span>
-							</mat-panel-description>
-						</mat-expansion-panel-header>
+				<button
+					mat-icon-button
+					cyphTranslate
+					class="menu-button"
+					aria-label="Context Menu"
+					[matMenuTriggerFor]="postMenu"
+					*ngIf="
+						user !== undefined &&
+						(user?.username || '') ===
+							((accountDatabaseService.currentUser | await)?.user
+								?.username || '')
+					"
+				>
+					<mat-icon>more_horiz</mat-icon>
+				</button>
+				<mat-menu #postMenu="matMenu">
+					<button mat-menu-item (click)="editPost()">
+						<mat-icon>edit</mat-icon>
+						<span>{{ stringsService.postEditTitle }}</span>
+					</button>
+					<button mat-menu-item (click)="deletePost()">
+						<mat-icon>delete</mat-icon>
+						<span>{{ stringsService.postDeleteTitle }}</span>
+					</button>
+				</mat-menu>
+			</mat-card-header>
+			<img
+				mat-card-image
+				cyphTranslate
+				[src]="accountPostsService.getPostImage(post) | await"
+				alt="Post Image"
+				*ngIf="(post?.image?.length || 0) > 0"
+			/>
+			<mat-card-content>
+				<p>
+					<cyph-markdown
+						[markdown]="post?.content || ''"
+					></cyph-markdown>
+				</p>
 
-						<mat-list
+				<ng-container
+					*ngIf="!!post?.repost?.author && !!post?.repost?.id"
+				>
+					<p
+						class="text-align-center"
+						*ngIf="reposted; else embeddedPost"
+					>
+						<small>
+							<a
+								[routerLink]="
+									'/post/' +
+									(post?.repost?.author || '') +
+									'/' +
+									(post?.repost?.id || '')
+								"
+								><span cyphTranslate>Reposted post by</span
+								>&ngsp;<span
+									>@{{ post?.repost?.author || '' }}</span
+								></a
+							>
+						</small>
+					</p>
+					<ng-template #embeddedPost>
+						<p
 							*ngIf="
-								commentsObservable | await as comments;
-								else commentsSpinner
+								repostData | await as o;
+								else embeddedPostSpinner
 							"
 						>
-							<mat-list-item
-								*ngFor="
-									let comment of comments;
-									trackBy: trackByCommentID
+							<cyph-account-post
+								[author]="o?.author"
+								[post]="o?.post"
+								[reposted]="true"
+							></cyph-account-post>
+						</p>
+					</ng-template>
+					<ng-template #embeddedPostSpinner>
+						<p fxLayoutAlign="center center">
+							<mat-progress-spinner
+								mode="indeterminate"
+							></mat-progress-spinner>
+						</p>
+					</ng-template>
+				</ng-container>
+			</mat-card-content>
+			<mat-card-actions>
+				<div fxLayout="column" fxLayoutGap="16px">
+					<div [fxShow]="showEmojiPicker | await">
+						<cyph-simple-emoji-picker
+							(emojiSelect)="react($event.emoji.unified || '')"
+						></cyph-simple-emoji-picker>
+					</div>
+
+					<div
+						fxLayout="row"
+						fxLayout.lt-sm="column"
+						fxLayoutGap="16px"
+					>
+						<div
+							fxFlex.gt-xs="269px"
+							fxLayoutAlign.lt-sm="center center"
+						>
+							<mat-button-toggle-group multiple>
+								<mat-button-toggle
+									[checked]="reaction.selected"
+									[matTooltip]="
+										reaction.selected ?
+											stringsService.reactionRemove :
+											stringsService.reactionAdd
+									"
+									(click)="
+										react(reaction.id, !reaction.selected)
+									"
+									*ngFor="
+										let reaction of reactions | await;
+										trackBy: trackByID
+									"
+								>
+									<ngx-emoji
+										[emoji]="reaction.id"
+										[isNative]="true"
+									></ngx-emoji>
+									<span class="reaction-count">{{
+										reaction.count
+									}}</span>
+								</mat-button-toggle>
+								<mat-button-toggle
+									cyphTranslate
+									[checked]="
+										(showEmojiPicker | await) && false
+									"
+									matTooltip="Add New Reaction"
+									(click)="
+										showEmojiPicker.next(
+											!showEmojiPicker.value
+										)
+									"
+								>
+									<mat-icon>insert_emoticon</mat-icon>
+								</mat-button-toggle>
+							</mat-button-toggle-group>
+						</div>
+
+						<div
+							fxFlex
+							fxLayoutAlign="center center"
+							fxLayoutGap="8px"
+						>
+							<button mat-raised-button (click)="repost()">
+								<mat-icon>autorenew</mat-icon>
+								&nbsp;
+								<span cyphTranslate>Repost</span>
+							</button>
+							<button
+								mat-raised-button
+								(click)="sharePost.show()"
+							>
+								<mat-icon>share</mat-icon>
+								&nbsp;
+								<span cyphTranslate>Share</span>
+							</button>
+						</div>
+					</div>
+
+					<cyph-social-share
+						#sharePost
+						[options]="{
+							hashTags: ['cyph', 'privacy'],
+							text: stringsService.postShareTitle,
+							url:
+								envService.appUrl +
+								'post/' +
+								(user?.username || '') +
+								'/' +
+								(post?.id || '')
+						}"
+					></cyph-social-share>
+
+					<div class="cyph-light-theme">
+						<mat-expansion-panel>
+							<mat-expansion-panel-header>
+								<mat-panel-title>
+									<span cyphTranslate>Comments</span>
+								</mat-panel-title>
+								<mat-panel-description>
+									<span
+										*ngIf="
+											commentsObservable
+												| await as comments
+										"
+									>
+										<span>{{ comments?.length || 0 }}</span>
+										&ngsp;
+										<span cyphTranslate>Comments</span>
+									</span>
+								</mat-panel-description>
+							</mat-expansion-panel-header>
+
+							<mat-list
+								*ngIf="
+									commentsObservable | await as comments;
+									else commentsSpinner
 								"
 							>
-								<img
-									matListAvatar
-									cyphTranslate
-									[routerLink]="
-										'/profile/' +
-										(comment?.author?.username || '')
+								<mat-list-item
+									*ngFor="
+										let comment of comments;
+										trackBy: trackByCommentID
 									"
-									[src]="comment?.author?.avatar | await"
-									alt="User Avatar"
-									*ngIf="!comment?.comment?.deleted"
-								/>
-								<h3 matLine *ngIf="!comment?.comment?.deleted">
-									<a
+								>
+									<img
+										matListAvatar
+										cyphTranslate
 										[routerLink]="
 											'/profile/' +
 											(comment?.author?.username || '')
 										"
-										>{{
-											(comment?.author?.name | await) ||
-												''
-												| slice
-													: 0
-													: accountService.maxNameLength
-										}}</a
+										[src]="comment?.author?.avatar | await"
+										alt="User Avatar"
+										*ngIf="!comment?.comment?.deleted"
+									/>
+									<h3
+										matLine
+										*ngIf="!comment?.comment?.deleted"
 									>
-								</h3>
+										<a
+											[routerLink]="
+												'/profile/' +
+												(comment?.author?.username ||
+													'')
+											"
+											>{{
+												(comment?.author?.name
+													| await) || ''
+													| slice
+														: 0
+														: accountService.maxNameLength
+											}}</a
+										>
+									</h3>
 
-								<button
-									mat-icon-button
-									cyphTranslate
-									class="menu-button"
-									aria-label="Context Menu"
-									[matMenuTriggerFor]="commentMenu"
-									*ngIf="
-										!comment?.comment?.deleted &&
-										user !== undefined &&
-										(comment?.author?.username || '') ===
-											((
-												accountDatabaseService.currentUser
-												| await
-											)?.user?.username || '')
-									"
-								>
-									<mat-icon>more_horiz</mat-icon>
-								</button>
-								<mat-menu #commentMenu="matMenu">
 									<button
-										mat-menu-item
-										(click)="editComment(comment)"
-									>
-										<mat-icon>edit</mat-icon>
-										<span>{{
-											stringsService.postCommentEditTitle
-										}}</span>
-									</button>
-									<button
-										mat-menu-item
-										(click)="deleteComment(comment)"
-									>
-										<mat-icon>delete</mat-icon>
-										<span>{{
-											stringsService.postCommentDeleteTitle
-										}}</span>
-									</button>
-								</mat-menu>
-
-								<p
-									matLine
-									fxLayoutAlign="center center"
-									*ngIf="comment?.comment?.deleted === true"
-								>
-									<span cyphTranslate>[deleted]</span>
-								</p>
-
-								<p matLine *ngIf="!comment?.comment?.deleted">
-									<cyph-markdown
-										[markdown]="
-											comment?.comment?.content || ''
+										mat-icon-button
+										cyphTranslate
+										class="menu-button"
+										aria-label="Context Menu"
+										[matMenuTriggerFor]="commentMenu"
+										*ngIf="
+											!comment?.comment?.deleted &&
+											user !== undefined &&
+											(comment?.author?.username ||
+												'') ===
+												((
+													accountDatabaseService.currentUser
+													| await
+												)?.user?.username || '')
 										"
-									></cyph-markdown>
-								</p>
-							</mat-list-item>
-						</mat-list>
-						<ng-template #commentsSpinner>
-							<span fxLayoutAlign="center center">
-								<mat-progress-spinner
-									mode="indeterminate"
-								></mat-progress-spinner>
-							</span>
-						</ng-template>
+									>
+										<mat-icon>more_horiz</mat-icon>
+									</button>
+									<mat-menu #commentMenu="matMenu">
+										<button
+											mat-menu-item
+											(click)="editComment(comment)"
+										>
+											<mat-icon>edit</mat-icon>
+											<span>{{
+												stringsService.postCommentEditTitle
+											}}</span>
+										</button>
+										<button
+											mat-menu-item
+											(click)="deleteComment(comment)"
+										>
+											<mat-icon>delete</mat-icon>
+											<span>{{
+												stringsService.postCommentDeleteTitle
+											}}</span>
+										</button>
+									</mat-menu>
 
-						<br />
+									<p
+										matLine
+										fxLayoutAlign="center center"
+										*ngIf="
+											comment?.comment?.deleted === true
+										"
+									>
+										<span cyphTranslate>[deleted]</span>
+									</p>
 
-						<div fxLayout="row">
-							<mat-form-field fxFlex>
-								<textarea
-									matInput
-									[matTextareaAutosize]="true"
-									cyphTranslate
-									aria-label="New Comment"
-									placeholder="Write your comment here..."
-									[ngModel]="
-										(accountPostsService.draftComment
-											.content | await) || ''
-									"
-									(ngModelChange)="
-										accountPostsService.draftComment.content.next(
-											$event
-										)
-									"
-									(keydown.enter)="
-										$event.preventDefault();
-										accountPostsService.submitCurrentDraftComment(
-											user?.username || '',
-											post?.id || ''
-										)
-									"
-								></textarea
-							></mat-form-field>
-						</div>
-					</mat-expansion-panel>
+									<p
+										matLine
+										*ngIf="!comment?.comment?.deleted"
+									>
+										<cyph-markdown
+											[markdown]="
+												comment?.comment?.content || ''
+											"
+										></cyph-markdown>
+									</p>
+								</mat-list-item>
+							</mat-list>
+							<ng-template #commentsSpinner>
+								<span fxLayoutAlign="center center">
+									<mat-progress-spinner
+										mode="indeterminate"
+									></mat-progress-spinner>
+								</span>
+							</ng-template>
+
+							<br />
+
+							<div fxLayout="row">
+								<mat-form-field fxFlex>
+									<textarea
+										matInput
+										[matTextareaAutosize]="true"
+										cyphTranslate
+										aria-label="New Comment"
+										placeholder="Write your comment here..."
+										[ngModel]="
+											(accountPostsService.draftComment
+												.content | await) || ''
+										"
+										(ngModelChange)="
+											accountPostsService.draftComment.content.next(
+												$event
+											)
+										"
+										(keydown.enter)="
+											$event.preventDefault();
+											accountPostsService.submitCurrentDraftComment(
+												user?.username || '',
+												post?.id || ''
+											)
+										"
+									></textarea
+								></mat-form-field>
+							</div>
+						</mat-expansion-panel>
+					</div>
 				</div>
-			</div>
-		</mat-card-actions>
-	</ng-template>
-</mat-card>
+			</mat-card-actions>
+		</ng-template>
+	</mat-card>
+</div>
