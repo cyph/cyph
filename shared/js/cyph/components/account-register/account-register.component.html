@@ -650,11 +650,11 @@
 										radio_button_unchecked
 									</mat-icon>
 									&nbsp;
-									<span cyphTranslate>Lock Screen</span>
+									<span cyphTranslate>Add Devices</span>
 								</ng-template>
 
 								<ng-container
-									*ngTemplateOutlet="lockScreenUI"
+									*ngTemplateOutlet="addDevicesUI"
 								></ng-container>
 							</mat-tab>
 							<mat-tab
@@ -668,6 +668,28 @@
 									</mat-icon>
 									<mat-icon
 										*ngIf="((tabIndex | await) || 0) <= 1"
+									>
+										radio_button_unchecked
+									</mat-icon>
+									&nbsp;
+									<span cyphTranslate>Lock Screen</span>
+								</ng-template>
+
+								<ng-container
+									*ngTemplateOutlet="lockScreenUI"
+								></ng-container>
+							</mat-tab>
+							<mat-tab
+								[disabled]="!(inviteCodeWatcher | await)?.value"
+							>
+								<ng-template mat-tab-label>
+									<mat-icon
+										*ngIf="((tabIndex | await) || 0) > 2"
+									>
+										radio_button_checked
+									</mat-icon>
+									<mat-icon
+										*ngIf="((tabIndex | await) || 0) <= 2"
 									>
 										radio_button_unchecked
 									</mat-icon>
@@ -1473,6 +1495,53 @@
 					</div>
 				</mat-expansion-panel>
 			</mat-accordion>
+		</div>
+
+		<div></div>
+	</div>
+</ng-template>
+
+<ng-template #addDevicesUI>
+	<div fxFlex fxLayout="column" fxLayoutGap="48px" cyphTranslate>
+		<div fxLayout="row" fxLayoutAlign="center center" class="description">
+			Set up as many additional devices as possible to ensure you never
+			lose access to your account.
+		</div>
+
+		<div fxLayout="row" fxLayoutAlign="center center">
+			<button mat-raised-button>
+				<mat-icon>
+					smartphone
+				</mat-icon>
+				&nbsp;
+				<span cyphTranslate>
+					Phone
+				</span>
+			</button>
+		</div>
+
+		<div fxLayout="row" fxLayoutAlign="center center">
+			<button mat-raised-button>
+				<mat-icon>
+					computer
+				</mat-icon>
+				&nbsp; &nbsp;
+				<span cyphTranslate>
+					Computer
+				</span>
+			</button>
+		</div>
+
+		<div fxLayout="row" fxLayoutAlign="center center">
+			<button mat-raised-button>
+				<mat-icon>
+					description
+				</mat-icon>
+				&nbsp;
+				<span cyphTranslate>
+					Paper
+				</span>
+			</button>
 		</div>
 
 		<div></div>
