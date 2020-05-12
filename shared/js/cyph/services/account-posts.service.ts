@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
-import {BehaviorSubject, combineLatest, from, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, from, Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {
 	IAccountPostData,
@@ -264,7 +264,11 @@ export class AccountPostsService extends BaseProvider {
 					watchComments: memoize(id =>
 						watchCommentReferences(id).pipe(
 							switchMap(commentRefs =>
-								combineLatest(commentRefs.map(watchComment))
+								commentRefs.length > 0 ?
+									combineLatest(
+										commentRefs.map(watchComment)
+									) :
+									of([])
 							),
 							map(comments =>
 								comments.filter(o => o.comment.postID === id)
@@ -511,11 +515,13 @@ export class AccountPostsService extends BaseProvider {
 						watchComments: memoize(id =>
 							watchCommentReferences(id).pipe(
 								switchMap(commentRefs =>
-									combineLatest(
-										commentRefs.map(
-											currentCircleWrapper.watchComment
-										)
-									)
+									commentRefs.length > 0 ?
+										combineLatest(
+											commentRefs.map(
+												currentCircleWrapper.watchComment
+											)
+										) :
+										of([])
 								),
 								map(comments =>
 									comments.filter(
