@@ -134,7 +134,9 @@ const customBuild = (id, version) => {
 					)
 					.replace(
 						/background-image:url\([^\)]+\)/g,
-						`background-image:url(${datauri(preLoadLogoPath)})`
+						`background-image:url(${
+							datauri(preLoadLogoPath).content
+						})`
 					);
 			}
 

@@ -43,7 +43,7 @@ const superSphincs = require('supersphincs');
 				continue;
 			}
 
-			const dataURI = datauri(subresource);
+			const dataURI = datauri(subresource).content;
 			const hash = (await superSphincs.hash(dataURI)).hex;
 
 			content = content
