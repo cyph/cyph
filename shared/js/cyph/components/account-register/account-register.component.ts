@@ -92,9 +92,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly hidePassword = {
 		finalConfirmation: new BehaviorSubject<boolean>(true),
 		lockScreenPIN: new BehaviorSubject<boolean>(true),
-		lockScreenPinConfirm: new BehaviorSubject<boolean>(true),
 		lockScreenPassword: new BehaviorSubject<boolean>(true),
 		lockScreenPasswordConfirm: new BehaviorSubject<boolean>(true),
+		lockScreenPinConfirm: new BehaviorSubject<boolean>(true),
 		masterKey: new BehaviorSubject<boolean>(true),
 		masterKeyConfirm: new BehaviorSubject<boolean>(true)
 	};
