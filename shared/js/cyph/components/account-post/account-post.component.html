@@ -385,13 +385,36 @@
 										"
 										(keydown.enter)="
 											$event.preventDefault();
+											envService.isMobileOS ?
+												accountPostsService.draftComment.content.next(
+													accountPostsService
+														.draftComment.content
+														.value + '\n'
+												) :
+												accountPostsService.submitCurrentDraftComment(
+													user?.username || '',
+													post?.id || ''
+												)
+										"
+									></textarea
+								></mat-form-field>
+								<div
+									class="comment-post-button"
+									*ngIf="envService.isMobileOS"
+								>
+									<button
+										mat-raised-button
+										cyphTranslate
+										(click)="
 											accountPostsService.submitCurrentDraftComment(
 												user?.username || '',
 												post?.id || ''
 											)
 										"
-									></textarea
-								></mat-form-field>
+									>
+										Post
+									</button>
+								</div>
 							</div>
 						</mat-expansion-panel>
 					</div>
