@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const childProcess = require('child_process');
-const datauri = require('datauri');
+const datauri = require('datauri/sync');
 const fs = require('fs');
 const htmlencode = require('htmlencode');
 const os = require('os');
@@ -134,7 +134,7 @@ const customBuild = (id, version) => {
 					)
 					.replace(
 						/background-image:url\([^\)]+\)/g,
-						`background-image:url(${datauri.sync(preLoadLogoPath)})`
+						`background-image:url(${datauri(preLoadLogoPath)})`
 					);
 			}
 

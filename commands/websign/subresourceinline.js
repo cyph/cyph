@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const childProcess = require('child_process');
-const datauri = require('datauri');
+const datauri = require('datauri/sync');
 const fs = require('fs');
 const glob = require('glob');
 const mkdirp = require('mkdirp');
@@ -43,7 +43,7 @@ const superSphincs = require('supersphincs');
 				continue;
 			}
 
-			const dataURI = datauri.sync(subresource);
+			const dataURI = datauri(subresource);
 			const hash = (await superSphincs.hash(dataURI)).hex;
 
 			content = content
