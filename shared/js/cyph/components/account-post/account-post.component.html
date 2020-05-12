@@ -152,7 +152,7 @@
 						fxLayoutGap="16px"
 					>
 						<div
-							fxFlex.gt-xs="269px"
+							fxFlex.gt-xs="266px"
 							fxLayoutAlign.lt-sm="center center"
 						>
 							<mat-button-toggle-group multiple>
@@ -163,6 +163,7 @@
 											stringsService.reactionRemove :
 											stringsService.reactionAdd
 									"
+									[style.width]="'65px'"
 									(click)="
 										react(reaction.id, !reaction.selected)
 									"
