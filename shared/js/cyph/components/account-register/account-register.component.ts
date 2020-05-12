@@ -11,14 +11,7 @@ import {
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {
-	BehaviorSubject,
-	combineLatest,
-	concat,
-	from,
-	Observable,
-	of
-} from 'rxjs';
+import {BehaviorSubject, concat, from, Observable, of} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
@@ -44,6 +37,7 @@ import {safeStringCompare} from '../../util/compare';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {formControlMatch, watchFormControl} from '../../util/form-controls';
 import {toInt} from '../../util/formatting';
+import {observableAll} from '../../util/observable-all';
 import {random} from '../../util/random';
 import {titleize} from '../../util/titleize';
 import {uuid} from '../../util/uuid';
@@ -692,14 +686,14 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		this.inviteCodeWatcher = concat(
 			of(this.inviteCode),
-			combineLatest([
+			observableAll([
 				this.inviteCode.statusChanges,
 				this.inviteCode.valueChanges
 			]).pipe(map(() => this.inviteCode))
 		);
 
 		this.lockScreenPasswordReady = toBehaviorSubject(
-			combineLatest([
+			observableAll([
 				this.lockScreenPassword,
 				this.lockScreenPasswordConfirmWatcher,
 				this.lockScreenPIN,
@@ -725,7 +719,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		);
 
 		this.masterKeyReady = toBehaviorSubject(
-			combineLatest([
+			observableAll([
 				this.masterKey,
 				this.masterKeyConfirmWatcher,
 				this.opsecAcknowledgement,
@@ -753,7 +747,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		);
 
 		this.submissionReadinessErrors = toBehaviorSubject(
-			combineLatest([
+			observableAll([
 				this.email,
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,

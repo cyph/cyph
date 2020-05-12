@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, combineLatest, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {MaybePromise} from '../maybe-promise-type';
 import {BooleanProto} from '../proto';
+import {observableAll} from '../util/observable-all';
 import {openWindow} from '../util/window';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
@@ -138,7 +139,7 @@ export class SalesService extends BaseProvider {
 		}
 
 		this.subscriptions.push(
-			combineLatest([
+			observableAll([
 				this.localStorageService.watch(
 					'disableUpsellBanner',
 					BooleanProto,

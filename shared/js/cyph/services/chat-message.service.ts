@@ -2,7 +2,7 @@
 
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {switchMap} from 'rxjs/operators';
 import {User, UserLike} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -10,6 +10,7 @@ import {ChatMessage, IChatData} from '../chat';
 import {MaybePromise} from '../maybe-promise-type';
 import {IChatMessage} from '../proto';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {observableAll} from '../util/observable-all';
 import {compareDates, relativeDateString, watchDateChange} from '../util/time';
 import {AccountSessionService} from './account-session.service';
 import {AccountUserLookupService} from './account-user-lookup.service';
@@ -36,7 +37,7 @@ const getDateChangeInternal = (
 	message === undefined ?
 		of(undefined) :
 	last === undefined ?
-		combineLatest([
+		observableAll([
 			getMessageTimestampSubject(message),
 			watchDateChange(true)
 		]).pipe(
@@ -46,7 +47,7 @@ const getDateChangeInternal = (
 					undefined
 			)
 		) :
-		combineLatest([
+		observableAll([
 			getMessageTimestampSubject(message),
 			getMessageTimestampSubject(last),
 			watchDateChange(true)

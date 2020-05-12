@@ -12,13 +12,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {
-	BehaviorSubject,
-	combineLatest,
-	Observable,
-	of,
-	ReplaySubject
-} from 'rxjs';
+import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import {map, switchMap, tap} from 'rxjs/operators';
 import {
@@ -237,7 +231,7 @@ export class AccountContactsComponent extends BaseProvider
 	) {
 		super();
 
-		this.routeReactiveContactList = combineLatest([
+		this.routeReactiveContactList = observableAll([
 			this.contactListInternal.pipe(
 				filterUndefinedOperator(),
 				switchMap(o => o)
@@ -350,7 +344,7 @@ export class AccountContactsComponent extends BaseProvider
 
 		this.filteredContactList = this.routeReactiveContactList.pipe(
 			switchMap(o =>
-				combineLatest([
+				observableAll([
 					of(o),
 					observableAll(
 						o.filteredContactList.map(

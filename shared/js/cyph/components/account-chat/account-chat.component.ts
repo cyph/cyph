@@ -8,7 +8,7 @@ import {
 	OnInit
 } from '@angular/core';
 import {ActivatedRoute, Router, UrlSegment} from '@angular/router';
-import {BehaviorSubject, combineLatest} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {UserPresence} from '../../account/enums';
 import {BaseProvider} from '../../base-provider';
@@ -42,6 +42,7 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
 import {lockFunction} from '../../util/lock';
 import {debugLogError} from '../../util/log';
+import {observableAll} from '../../util/observable-all';
 import {getDateTimeString, getTimestamp} from '../../util/time';
 import {readableID} from '../../util/uuid';
 
@@ -81,7 +82,7 @@ export class AccountChatComponent extends BaseProvider
 
 	/** @see AccountCallWaiting.cancelRedirectsHome */
 	public readonly cancelRedirectsHome = toBehaviorSubject(
-		combineLatest([
+		observableAll([
 			this.answering,
 			this.accountService.combinedRouteData(this.activatedRoute)
 		]).pipe(

@@ -10,7 +10,7 @@ import {
 	UrlSegment
 } from '@angular/router';
 import * as Hammer from 'hammerjs';
-import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {filter, map, skip, switchMap, take} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -104,7 +104,7 @@ export class AccountService extends BaseProvider {
 	public readonly fromEmail = new BehaviorSubject<string>('');
 
 	/** `fromEmail` autocomplete options. */
-	public readonly fromEmailOptions = combineLatest([
+	public readonly fromEmailOptions = observableAll([
 		this.accountAppointmentsService.pastEmailContacts,
 		this.fromEmail
 	]).pipe(
@@ -118,7 +118,7 @@ export class AccountService extends BaseProvider {
 	public readonly fromName = new BehaviorSubject<string>('');
 
 	/** `fromName` autocomplete options. */
-	public readonly fromNameOptions = combineLatest([
+	public readonly fromNameOptions = observableAll([
 		this.accountAppointmentsService.pastEmailContacts,
 		this.fromName
 	]).pipe(
@@ -190,7 +190,7 @@ export class AccountService extends BaseProvider {
 	);
 
 	/** Indicates whether mobile menu is open. */
-	public readonly mobileMenuOpen: Observable<boolean> = combineLatest([
+	public readonly mobileMenuOpen: Observable<boolean> = observableAll([
 		this.envService.isMobile,
 		this.mobileMenuOpenInternal
 	]).pipe(map(([isMobile, mobileMenuOpen]) => isMobile && mobileMenuOpen));
@@ -231,7 +231,7 @@ export class AccountService extends BaseProvider {
 	);
 
 	/** @see SalesService.upsellBanner */
-	public readonly upsellBanner = combineLatest([
+	public readonly upsellBanner = observableAll([
 		this.salesService.upsellBanner.pipe(skip(1)),
 		this.accountDatabaseService.currentUser
 	]).pipe(
@@ -349,7 +349,7 @@ export class AccountService extends BaseProvider {
 	) : Observable<[Data, Params, UrlSegment[]]> {
 		return this.routeChanges.pipe(
 			switchMap(() =>
-				combineLatest([
+				observableAll([
 					activatedRoute.data,
 					activatedRoute.firstChild ?
 						activatedRoute.firstChild.data :
@@ -1023,7 +1023,7 @@ export class AccountService extends BaseProvider {
 			}
 		);
 
-		this.header = combineLatest([
+		this.header = observableAll([
 			this.headerInternal,
 			this.envService.isMobile,
 			this.transitionInternal
@@ -1166,7 +1166,7 @@ export class AccountService extends BaseProvider {
 			}))
 		);
 
-		this.menuExpandable = combineLatest([
+		this.menuExpandable = observableAll([
 			this.menuReduced,
 			this.windowWatcherService.width
 		]).pipe(
@@ -1176,7 +1176,7 @@ export class AccountService extends BaseProvider {
 			)
 		);
 
-		this.menuExpanded = combineLatest([
+		this.menuExpanded = observableAll([
 			this.menuExpandedInternal,
 			this.menuExpandable,
 			this.mobileMenuOpen,
@@ -1196,7 +1196,7 @@ export class AccountService extends BaseProvider {
 			)
 		);
 
-		this.menuMaxWidth = combineLatest([
+		this.menuMaxWidth = observableAll([
 			this.menuExpanded,
 			this.windowWatcherService.width
 		]).pipe(

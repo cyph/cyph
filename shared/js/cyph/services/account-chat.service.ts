@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
@@ -20,6 +20,7 @@ import {
 } from '../proto';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
+import {observableAll} from '../util/observable-all';
 import {resolvable} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionCapabilitiesService} from './account-session-capabilities.service';
@@ -103,7 +104,7 @@ export class AccountChatService extends ChatService {
 		);
 
 		const watch = memoize(() =>
-			combineLatest([
+			observableAll([
 				asyncMap.watchKeys(),
 				this.fetchedMessageIDs.watch()
 			]).pipe(

@@ -3,7 +3,7 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {
 	SecurityModels,
@@ -39,6 +39,7 @@ import {
 	toBehaviorSubject
 } from '../../util/flatten-observable';
 import {normalize} from '../../util/formatting';
+import {observableAll} from '../../util/observable-all';
 import {urlToSafeStyle} from '../../util/safe-values';
 import {serialize} from '../../util/serialization';
 
@@ -510,7 +511,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		this.username = combineLatest([
+		this.username = observableAll([
 			this.activatedRoute.params,
 			this.doctorListOnly
 		]).pipe(
@@ -526,7 +527,7 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 		);
 
 		this.userInternal = cacheObservable(
-			combineLatest([
+			observableAll([
 				this.username,
 				this.accountDatabaseService.currentUser
 			]).pipe(

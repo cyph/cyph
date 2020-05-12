@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -17,6 +17,7 @@ import {SalesService} from '../../services/sales.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByID} from '../../track-by/track-by-id';
 import {toBehaviorSubject} from '../../util/flatten-observable';
+import {observableAll} from '../../util/observable-all';
 import {titleize} from '../../util/titleize';
 
 /**
@@ -330,7 +331,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		super();
 
 		this.ready = toBehaviorSubject(
-			combineLatest([this.data, this.user]).pipe(
+			observableAll([this.data, this.user]).pipe(
 				map(
 					([data, user]) =>
 						!!user &&

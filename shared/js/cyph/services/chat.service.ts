@@ -3,14 +3,7 @@
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
-import {
-	BehaviorSubject,
-	combineLatest,
-	concat,
-	interval,
-	Observable,
-	of
-} from 'rxjs';
+import {BehaviorSubject, concat, interval, Observable, of} from 'rxjs';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import {filter, map, switchMap, take, tap, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
@@ -61,6 +54,7 @@ import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
 import {debugLog, debugLogTime} from '../util/log';
+import {observableAll} from '../util/observable-all';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
 import {resolvable, retryUntilSuccessful, sleep} from '../util/wait';
@@ -1551,7 +1545,7 @@ export class ChatService extends BaseProvider {
 			);
 
 			this.subscriptions.push(
-				combineLatest([
+				observableAll([
 					this.chat.lastConfirmedMessage.watch(),
 					this.chat.messageList.watchFlat(true)
 				])

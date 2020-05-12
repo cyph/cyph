@@ -10,7 +10,7 @@ import * as msgpack from 'msgpack-lite';
 import {DeltaOperation} from 'quill';
 import Delta from 'quill-delta';
 import {QuillDeltaToHtmlConverter} from 'quill-delta-to-html';
-import {BehaviorSubject, combineLatest, concat, Observable, of} from 'rxjs';
+import {BehaviorSubject, concat, Observable, of} from 'rxjs';
 import {filter, map, skip, switchMap, take} from 'rxjs/operators';
 import {AccountFile, AccountFileShare, SecurityModels} from '../account';
 import {Async} from '../async-type';
@@ -457,7 +457,7 @@ export class AccountFilesService extends BaseProvider {
 	};
 
 	/** Total size of all files in list. */
-	public readonly filesTotalSize = combineLatest([
+	public readonly filesTotalSize = observableAll([
 		this.filesListFiltered.files,
 		this.accountDatabaseService.currentUser
 	]).pipe(
@@ -473,7 +473,7 @@ export class AccountFilesService extends BaseProvider {
 	);
 
 	/** Total storage limit. */
-	public readonly fileStorageLimit = combineLatest([
+	public readonly fileStorageLimit = observableAll([
 		this.accountSettingsService.plan,
 		this.accountDatabaseService
 			.watch(

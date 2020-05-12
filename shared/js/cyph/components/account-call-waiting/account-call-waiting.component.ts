@@ -7,7 +7,7 @@ import {
 	SimpleChanges,
 	ViewChild
 } from '@angular/core';
-import {BehaviorSubject, combineLatest, of} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
@@ -21,6 +21,7 @@ import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
+import {observableAll} from '../../util/observable-all';
 import {sleep} from '../../util/wait';
 import {AccountComposeNoProvidersComponent} from '../account-compose-no-providers';
 
@@ -129,7 +130,7 @@ export class AccountCallWaitingComponent extends BaseProvider
 			}
 
 			this.subscriptions.push(
-				combineLatest([
+				observableAll([
 					this.accountDatabaseService.currentUser.pipe(
 						switchMap(o => (o ? o.user.userType : of(undefined)))
 					),

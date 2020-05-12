@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -14,6 +14,7 @@ import {PotassiumService} from '../../services/crypto/potassium.service';
 import {EnvService} from '../../services/env.service';
 import {LocalStorageService} from '../../services/local-storage.service';
 import {StringsService} from '../../services/strings.service';
+import {observableAll} from '../../util/observable-all';
 
 /**
  * Angular component for account login UI.
@@ -287,7 +288,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
-		this.loggingIn = combineLatest([
+		this.loggingIn = observableAll([
 			this.pinUnlock,
 			this.activatedRoute.url.pipe(
 				map(url => url.length > 0 && url.slice(-1)[0].path === 'login')

@@ -4,7 +4,7 @@ import {ComponentType} from '@angular/cdk/portal';
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {
 	IContactListItem,
@@ -35,6 +35,7 @@ import {
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {cacheObservable, toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
+import {observableAll} from '../util/observable-all';
 import {uuid} from '../util/uuid';
 import {resolvable} from '../util/wait';
 import {AccountFilesService} from './account-files.service';
@@ -121,7 +122,7 @@ export class AccountContactsService extends BaseProvider {
 	public readonly contactList: Observable<
 		(IContactListItem | User)[]
 	> = cacheObservable(
-		combineLatest([
+		observableAll([
 			this.accountFilesService.filesListFilteredWithData.messagingGroups(),
 			this.accountFilesService.incomingFilesFilteredWithData.messagingGroups(),
 			this.accountDatabaseService.watchListKeys(
@@ -162,7 +163,7 @@ export class AccountContactsService extends BaseProvider {
 	public readonly contactListInnerCircle: Observable<
 		User[]
 	> = cacheObservable(
-		combineLatest([
+		observableAll([
 			this.accountDatabaseService.watchListKeys(
 				'contactsInnerCircle',
 				this.subscriptions
@@ -658,11 +659,11 @@ export class AccountContactsService extends BaseProvider {
 		}
 
 		this.subscriptions.push(
-			combineLatest([
+			observableAll([
 				this.accountPostsService.pipe(filterUndefinedOperator()),
 				this.contactListInnerCircle.pipe(
 					switchMap(contactListInnerCircle =>
-						combineLatest(
+						observableAll(
 							contactListInnerCircle.map(user =>
 								user.accountContactState
 									.watch()

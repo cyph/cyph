@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {memoize} from 'lodash-es';
-import {BehaviorSubject, combineLatest, from, Observable, of} from 'rxjs';
+import {BehaviorSubject, from, Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {
 	IAccountPostData,
@@ -32,6 +32,7 @@ import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize, normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
+import {observableAll} from '../util/observable-all';
 import {flattenArray} from '../util/reducers';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
@@ -217,7 +218,7 @@ export class AccountPostsService extends BaseProvider {
 
 				const watchComment = memoize(
 					(commentRef: IAccountPostCommentReference) =>
-						combineLatest([
+						observableAll([
 							from(
 								this.accountUserLookupService.getUser(
 									commentRef.author
@@ -264,11 +265,7 @@ export class AccountPostsService extends BaseProvider {
 					watchComments: memoize(id =>
 						watchCommentReferences(id).pipe(
 							switchMap(commentRefs =>
-								commentRefs.length > 0 ?
-									combineLatest(
-										commentRefs.map(watchComment)
-									) :
-									of([])
+								observableAll(commentRefs.map(watchComment))
 							),
 							map(comments =>
 								comments.filter(o => o.comment.postID === id)
@@ -349,7 +346,7 @@ export class AccountPostsService extends BaseProvider {
 						),
 						watchComment: memoize(
 							(commentRef: IAccountPostCommentReference) =>
-								combineLatest([
+								observableAll([
 									from(
 										this.accountUserLookupService.getUser(
 											commentRef.author
@@ -515,13 +512,11 @@ export class AccountPostsService extends BaseProvider {
 						watchComments: memoize(id =>
 							watchCommentReferences(id).pipe(
 								switchMap(commentRefs =>
-									commentRefs.length > 0 ?
-										combineLatest(
-											commentRefs.map(
-												currentCircleWrapper.watchComment
-											)
-										) :
-										of([])
+									observableAll(
+										commentRefs.map(
+											currentCircleWrapper.watchComment
+										)
+									)
 								),
 								map(comments =>
 									comments.filter(
@@ -531,7 +526,7 @@ export class AccountPostsService extends BaseProvider {
 							)
 						),
 						watchIDs: memoize(() =>
-							combineLatest([
+							observableAll([
 								currentCircleWrapper.ids.watch(),
 								publicPostDataPart.watchIDs()
 							]).pipe(

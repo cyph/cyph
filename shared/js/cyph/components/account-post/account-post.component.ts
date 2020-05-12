@@ -5,7 +5,7 @@ import {
 	OnChanges,
 	OnInit
 } from '@angular/core';
-import {BehaviorSubject, combineLatest, from, of, ReplaySubject} from 'rxjs';
+import {BehaviorSubject, from, of, ReplaySubject} from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import {User} from '../../account/user';
 import {BaseProvider} from '../../base-provider';
@@ -18,6 +18,7 @@ import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByCommentID, trackByID} from '../../track-by';
+import {observableAll} from '../../util/observable-all';
 import {getDateTimeString} from '../../util/time';
 
 /**
@@ -245,7 +246,7 @@ export class AccountPostComponent extends BaseProvider
 
 		if (this.post.repost?.author && this.post.repost?.id) {
 			this.subscriptions.push(
-				combineLatest([
+				observableAll([
 					from(
 						this.accountUserLookupService.getUser(
 							this.post.repost.author

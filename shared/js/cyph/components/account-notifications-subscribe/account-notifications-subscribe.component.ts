@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {combineLatest, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {mergeMap} from 'rxjs/operators';
 import {SecurityModels} from '../../account/enums';
 import {BaseProvider} from '../../base-provider';
@@ -8,6 +8,7 @@ import {IAsyncValue} from '../../iasync-value';
 import {StringProto} from '../../proto';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {StringsService} from '../../services/strings.service';
+import {observableAll} from '../../util/observable-all';
 
 /**
  * Angular component for account notifications subscribe UI.
@@ -33,7 +34,7 @@ export class AccountNotificationsSubscribeComponent extends BaseProvider {
 		email?: string;
 		subscribed?: boolean;
 		unsubscribed?: boolean;
-	}> = combineLatest([
+	}> = observableAll([
 		this.activatedRoute.data,
 		this.activatedRoute.params
 	]).pipe(

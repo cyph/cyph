@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {AccountFileRecord, IAccountFileRecord, IForm} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -8,6 +8,7 @@ import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {toInt} from '../../util/formatting';
+import {observableAll} from '../../util/observable-all';
 
 /**
  * Angular component for an individual form.
@@ -36,7 +37,7 @@ export class AccountFormComponent extends BaseProvider implements OnInit {
 		this.accountService.transitionEnd();
 
 		this.subscriptions.push(
-			combineLatest([
+			observableAll([
 				this.activatedRoute.data,
 				this.activatedRoute.params
 			]).subscribe(([data, params]) => {

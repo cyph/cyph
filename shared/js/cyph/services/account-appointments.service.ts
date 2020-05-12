@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {EventSettingsModel} from '@syncfusion/ej2-angular-schedule';
 import memoize from 'lodash-es/memoize';
-import {combineLatest, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {IAccountFileRecord, IAppointment} from '../proto/types';
@@ -89,7 +89,7 @@ export class AccountAppointmentsService extends BaseProvider {
 	 * `upcoming`: Next five ongoing or future appointments.
 	 */
 	public readonly appointments = {
-		current: combineLatest([this.allAppointments, watchTimestamp()]).pipe(
+		current: observableAll([this.allAppointments, watchTimestamp()]).pipe(
 			map(([appointments, now]) =>
 				appointments.filter(
 					({appointment}) =>
@@ -101,7 +101,7 @@ export class AccountAppointmentsService extends BaseProvider {
 				)
 			)
 		),
-		future: combineLatest([this.allAppointments, watchTimestamp()]).pipe(
+		future: observableAll([this.allAppointments, watchTimestamp()]).pipe(
 			map(([appointments, now]) =>
 				appointments.filter(
 					({appointment}) =>
@@ -114,7 +114,7 @@ export class AccountAppointmentsService extends BaseProvider {
 		incoming: this.getAppointments(
 			this.accountFilesService.incomingFilesFiltered.appointments
 		),
-		past: combineLatest([this.allAppointments, watchTimestamp()]).pipe(
+		past: observableAll([this.allAppointments, watchTimestamp()]).pipe(
 			map(([appointments, now]) =>
 				appointments.filter(
 					({appointment}) =>
@@ -124,7 +124,7 @@ export class AccountAppointmentsService extends BaseProvider {
 				)
 			)
 		),
-		upcoming: combineLatest([this.allAppointments, watchTimestamp()]).pipe(
+		upcoming: observableAll([this.allAppointments, watchTimestamp()]).pipe(
 			map(([appointments, now]) =>
 				appointments
 					.filter(

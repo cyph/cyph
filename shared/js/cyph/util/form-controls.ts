@@ -1,8 +1,9 @@
 import {FormControl} from '@angular/forms';
 import memoize from 'lodash-es/memoize';
-import {combineLatest, concat, of} from 'rxjs';
+import {concat, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {safeStringCompare} from './compare';
+import {observableAll} from './observable-all';
 
 /** Creates a form control that has to match a specified value. */
 export const formControlMatch = (
@@ -21,7 +22,7 @@ export const formControlMatch = (
 export const watchFormControl = memoize((control: FormControl) =>
 	concat(
 		of(control),
-		combineLatest([control.statusChanges, control.valueChanges]).pipe(
+		observableAll([control.statusChanges, control.valueChanges]).pipe(
 			map(() => control)
 		)
 	)

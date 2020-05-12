@@ -261,6 +261,10 @@
 					"arrow-return-shorthand": true,
 					"ban": [
 						true,
+						{
+							"name": "combineLatest",
+							"message": "Use util.observableAll"
+						},
 						[
 							"crypto",
 							"getRandomValues",

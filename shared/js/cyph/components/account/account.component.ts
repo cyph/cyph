@@ -5,7 +5,7 @@ import {
 	OnInit
 } from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
-import {combineLatest, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -25,6 +25,7 @@ import {SalesService} from '../../services/sales.service';
 import {ScreenshotService} from '../../services/screenshot.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by';
+import {observableAll} from '../../util/observable-all';
 import {resolvable} from '../../util/wait';
 
 /**
@@ -81,7 +82,7 @@ export class AccountComponent extends BaseProvider
 	public readonly cyphPlans = CyphPlans;
 
 	/** Indicates whether section should take up 100% height. */
-	public readonly fullHeight: Observable<boolean> = combineLatest([
+	public readonly fullHeight: Observable<boolean> = observableAll([
 		this.activatedRouteURL,
 		this.route
 	]).pipe(
@@ -109,7 +110,7 @@ export class AccountComponent extends BaseProvider
 	);
 
 	/** Indicates whether section should take up 100% width. */
-	public readonly fullWidth: Observable<boolean> = combineLatest([
+	public readonly fullWidth: Observable<boolean> = observableAll([
 		this.activatedRouteURL,
 		this.envService.isMobile,
 		this.route
@@ -149,7 +150,7 @@ export class AccountComponent extends BaseProvider
 	);
 
 	/** Indicates whether menu should be displayed. */
-	public readonly menuVisible: Observable<boolean> = combineLatest([
+	public readonly menuVisible: Observable<boolean> = observableAll([
 		this.accountDatabaseService.currentUser,
 		this.route,
 		this.routePath
@@ -213,7 +214,7 @@ export class AccountComponent extends BaseProvider
 	);
 
 	/** Indicates whether sidebar should be displayed. */
-	public readonly sidebarVisible: Observable<boolean> = combineLatest([
+	public readonly sidebarVisible: Observable<boolean> = observableAll([
 		this.envService.isMobile,
 		this.route
 	]).pipe(

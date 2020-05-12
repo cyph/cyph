@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import Delta from 'quill-delta';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {IAsyncList} from '../../iasync-list';
@@ -23,6 +23,7 @@ import {StringsService} from '../../services/strings.service';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {lockFunction} from '../../util/lock';
 import {debugLog} from '../../util/log';
+import {observableAll} from '../../util/observable-all';
 import {getDateTimeString} from '../../util/time';
 import {sleep} from '../../util/wait';
 
@@ -79,7 +80,7 @@ export class AccountNoteComponent extends BaseProvider
 	}>({});
 
 	/** Indicates whether or not the edit view should be displayed. */
-	public readonly noteEditable: Observable<boolean> = combineLatest([
+	public readonly noteEditable: Observable<boolean> = observableAll([
 		this.editView,
 		this.newNote
 	]).pipe(map(([editView, newNote]) => editView || newNote));
@@ -92,7 +93,7 @@ export class AccountNoteComponent extends BaseProvider
 	);
 
 	/** Indicates whether spinner should be displayed. */
-	public readonly showSpinner: Observable<boolean> = combineLatest([
+	public readonly showSpinner: Observable<boolean> = observableAll([
 		this.newNote,
 		this.realTime
 	]).pipe(map(([newNote, realTime]) => newNote && realTime));
@@ -200,7 +201,7 @@ export class AccountNoteComponent extends BaseProvider
 		);
 
 		this.subscriptions.push(
-			combineLatest([
+			observableAll([
 				this.activatedRoute.params,
 				this.realTime
 			]).subscribe(async ([o, realTime]) => {

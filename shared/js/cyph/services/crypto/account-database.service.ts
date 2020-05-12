@@ -3,7 +3,7 @@
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, combineLatest, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -35,6 +35,7 @@ import {
 } from '../../util/get-or-set-default';
 import {lockFunction} from '../../util/lock';
 import {debugLog, debugLogError} from '../../util/log';
+import {observableAll} from '../../util/observable-all';
 import {flattenArray} from '../../util/reducers';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
@@ -1738,7 +1739,7 @@ export class AccountDatabaseService extends BaseProvider {
 	) : Observable<{id: string; value: T}[]> {
 		return this.watchListKeys(url, subscriptions).pipe(
 			switchMap(keys =>
-				combineLatest(
+				observableAll(
 					keys.map(id =>
 						this.watch(
 							Promise.resolve(url).then(s => `${s}/${id}`),

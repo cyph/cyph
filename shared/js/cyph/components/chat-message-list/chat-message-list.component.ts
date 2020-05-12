@@ -18,7 +18,7 @@ import {SafeStyle} from '@angular/platform-browser';
 import * as Hammer from 'hammerjs';
 import * as $ from 'jquery';
 import debounce from 'lodash-es/debounce';
-import {BehaviorSubject, combineLatest, Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {map, skip, take} from 'rxjs/operators';
 import {fadeInOut} from '../../animations';
 import {BaseProvider} from '../../base-provider';
@@ -38,6 +38,7 @@ import {toBehaviorSubject} from '../../util/flatten-observable';
 import {getOrSetDefault} from '../../util/get-or-set-default';
 import {dismissKeyboard} from '../../util/input';
 import {debugLog} from '../../util/log';
+import {observableAll} from '../../util/observable-all';
 import {urlToSafeStyle} from '../../util/safe-values';
 
 /**
@@ -83,7 +84,7 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** Number of messages to render on the screen at any given time. */
 	private readonly viewportMessageCount = toBehaviorSubject(
-		combineLatest(
+		observableAll(
 			this.windowWatcherService.height,
 			this.envService.isMobile.pipe(map(isMobile => (isMobile ? 69 : 46)))
 		).pipe(
@@ -112,7 +113,7 @@ export class ChatMessageListComponent extends BaseProvider
 	@Input() public messageCountInTitle: boolean = false;
 
 	/** Data formatted for message list. */
-	public readonly messageListItems = combineLatest([
+	public readonly messageListItems = observableAll([
 		this.allMessageListItems,
 		this.chatService.messageBottomOffset,
 		this.viewportMessageCount
@@ -208,7 +209,7 @@ export class ChatMessageListComponent extends BaseProvider
 		const observableCache = ChatMessageListComponent.observableCache;
 
 		const observables = getOrSetDefault(observableCache, chat, () => ({
-			messages: combineLatest([
+			messages: observableAll([
 				this.chatService.messages.pipe(
 					filterUndefinedOperator<string[]>()
 				),
@@ -249,7 +250,7 @@ export class ChatMessageListComponent extends BaseProvider
 		}));
 
 		this.subscriptions.push(
-			combineLatest([observables.messages, this.changes])
+			observableAll([observables.messages, this.changes])
 				.pipe(
 					map(([messages]) =>
 						(<
