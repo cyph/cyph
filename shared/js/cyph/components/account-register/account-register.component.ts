@@ -208,9 +208,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly trackBySelf = trackBySelf;
 
 	/** Indicates whether or not lockScreenPIN should be used in place of lockScreenPassword. */
-	public readonly useLockScreenPIN = new BehaviorSubject<boolean>(
-		this.envService.isMobileOS
-	);
+	public readonly useLockScreenPIN = new BehaviorSubject<boolean>(true);
 
 	/** Username. */
 	public readonly username = new FormControl('', undefined, [

@@ -1505,15 +1505,14 @@
 			</div>
 		</ng-container>
 
-		<ng-container *ngIf="envService.isMobileOS">
-			<ng-container
-				*ngTemplateOutlet="lockScreenPinUI; context: {order: '1'}"
-			></ng-container>
-			<ng-container
-				*ngTemplateOutlet="lockScreenPasswordUI; context: {order: '2'}"
-			></ng-container>
-		</ng-container>
+		<ng-container
+			*ngTemplateOutlet="lockScreenPinUI; context: {order: '1'}"
+		></ng-container>
+		<ng-container
+			*ngTemplateOutlet="lockScreenPasswordUI; context: {order: '2'}"
+		></ng-container>
 
+		<!--
 		<ng-container *ngIf="!envService.isMobileOS">
 			<ng-container
 				*ngTemplateOutlet="lockScreenPasswordUI; context: {order: '1'}"
@@ -1522,6 +1521,7 @@
 				*ngTemplateOutlet="lockScreenPinUI; context: {order: '2'}"
 			></ng-container>
 		</ng-container>
+		-->
 	</div>
 </ng-template>
 
