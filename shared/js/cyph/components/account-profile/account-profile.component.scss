@@ -156,6 +156,7 @@ $header-size: 135px;
 		margin-left: auto;
 		margin-right: auto;
 		min-height: calc(20em + 20px);
+		z-index: 1;
 
 		.buttons {
 			place-content: flex-start !important;
