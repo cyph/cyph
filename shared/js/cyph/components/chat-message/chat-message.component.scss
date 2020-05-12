@@ -285,10 +285,6 @@
 			@include transition(transform 3s cubic-bezier(0.8, 0.4, 1, 0.3));
 		}
 
-		&.full-width {
-			width: 100%;
-		}
-
 		&.author-app .message {
 			text-align: center;
 

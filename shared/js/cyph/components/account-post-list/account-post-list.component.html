@@ -4,14 +4,9 @@
 		else loading
 	"
 >
-	<div
-		fxFlex
-		fxLayout="column"
-		fxLayoutGap="16px"
-		*ngIf="(posts?.length || 0) > 0"
-	>
+	<div fxLayout="column" fxLayoutGap="16px" *ngIf="(posts?.length || 0) > 0">
 		<cyph-account-post
-			fxFlex
+			class="full-width"
 			[author]="author"
 			[post]="post.watch() | await"
 			*ngFor="let post of posts; trackBy: trackByID"
