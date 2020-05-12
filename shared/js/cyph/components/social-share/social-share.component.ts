@@ -7,6 +7,8 @@ import {
 	Output
 } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
+import 'web-social-share/dist/esm-es5/web-social-share.entry';
 import {
 	applyPolyfills,
 	defineCustomElements
