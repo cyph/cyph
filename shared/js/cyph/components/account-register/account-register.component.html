@@ -1555,6 +1555,20 @@
 					[required]="(useLockScreenPIN | await) === true"
 				></cyph-pin-input>
 			</div>
+			<div fxLayout="row" fxLayoutAlign="center center">
+				<cyph-pin-input
+					fxFlex
+					fxFlex.sm="80"
+					fxFlex.gt-sm="60"
+					[ngModel]="lockScreenPinConfirm | await"
+					(ngModelChange)="lockScreenPinConfirm.next($event)"
+					name="lockScreenPinConfirm"
+					[hide]="hidePassword.lockScreenPinConfirm"
+					[pattern]="(lockScreenPIN | await) || ''"
+					[placeholder]="stringsService.pinConfirm"
+					[required]="(useLockScreenPIN | await) === true"
+				></cyph-pin-input>
+			</div>
 		</div>
 	</div>
 </ng-template>

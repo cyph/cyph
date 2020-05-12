@@ -51,6 +51,12 @@ export class PinInputComponent extends BaseProvider
 	/** Touch event callback. */
 	public onTouched?: () => void;
 
+	/** Pattern string. */
+	@Input() public pattern: string = '\\d\\d\\d\\d';
+
+	/** Placeholder text. */
+	@Input() public placeholder: string = this.stringsService.pin;
+
 	/** Removes extraneous characters from value. */
 	public readonly processValue = memoize((value?: string) =>
 		value ? value.replace(/[^\d]/g, '').slice(0, 4) : ''

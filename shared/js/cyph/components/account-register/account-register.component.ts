@@ -92,6 +92,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly hidePassword = {
 		finalConfirmation: new BehaviorSubject<boolean>(true),
 		lockScreenPIN: new BehaviorSubject<boolean>(true),
+		lockScreenPinConfirm: new BehaviorSubject<boolean>(true),
 		lockScreenPassword: new BehaviorSubject<boolean>(true),
 		lockScreenPasswordConfirm: new BehaviorSubject<boolean>(true),
 		masterKey: new BehaviorSubject<boolean>(true),
@@ -143,6 +144,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Lock screen PIN. */
 	public readonly lockScreenPIN = new BehaviorSubject<string>('');
+
+	/** Lock screen PIN confirmation. */
+	public readonly lockScreenPinConfirm = new BehaviorSubject<string>('');
 
 	/** Master key (main account password). */
 	public readonly masterKey = new BehaviorSubject<string>('');
@@ -495,6 +499,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		this.lockScreenPassword.next('');
 		this.lockScreenPasswordConfirm.setValue('');
 		this.lockScreenPIN.next('');
+		this.lockScreenPinConfirm.next('');
 		this.masterKey.next('');
 		this.masterKeyConfirm.setValue('');
 		this.name.next('');
@@ -695,6 +700,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				this.lockScreenPassword,
 				this.lockScreenPasswordConfirmWatcher,
 				this.lockScreenPIN,
+				this.lockScreenPinConfirm,
 				this.useLockScreenPIN
 			]).pipe(
 				map(
@@ -702,11 +708,16 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						lockScreenPassword,
 						lockScreenPasswordConfirm,
 						lockScreenPIN,
+						lockScreenPinConfirm,
 						useLockScreenPIN
 					]) =>
 						useLockScreenPIN ?
 							lockScreenPIN.length ===
-							this.lockScreenPasswordLength :
+								this.lockScreenPasswordLength &&
+							safeStringCompare(
+								lockScreenPIN,
+								lockScreenPinConfirm
+							) :
 							lockScreenPassword.length >=
 								this.lockScreenPasswordLength &&
 							lockScreenPasswordConfirm.valid

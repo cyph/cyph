@@ -4,7 +4,6 @@
 			<input
 				#pinInput
 				matInput
-				cyphTranslate
 				[ngModel]="value | await"
 				(ngModelChange)="value.next(processValue($event))"
 				[ngClass]="
@@ -14,12 +13,12 @@
 				(blur)="onTouched && onTouched()"
 				[name]="name"
 				type="tel"
-				placeholder="PIN"
+				[placeholder]="placeholder"
 				cyphAutofocus
 				[cyphAutofocusEnabled]="autofocus"
 				[required]="required"
 				[class.text-security]="hide | await"
-				pattern="\d\d\d\d"
+				[pattern]="pattern"
 			/>
 		</div>
 	</div>
