@@ -1032,6 +1032,9 @@ export class StringsService extends BaseProvider {
 	public readonly reasonForAppointmentDefault = `Conference`;
 
 	/** @see StringsService */
+	public readonly registerErrorAdditionalDevices = `Additional devices not set up`;
+
+	/** @see StringsService */
 	public readonly registerErrorEmail = `Invalid email address`;
 
 	/** @see StringsService */

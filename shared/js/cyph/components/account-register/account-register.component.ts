@@ -69,6 +69,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		paperMasterKey: new BehaviorSubject<boolean>(false)
 	};
 
+	/** Indicates whether the additional device setup is sufficient. */
+	public readonly additionalDevicesReady: BehaviorSubject<boolean>;
+
 	/** Indicates whether registration attempt is in progress. */
 	public readonly checking = new BehaviorSubject<boolean>(false);
 
@@ -636,6 +639,21 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	) {
 		super();
 
+		this.additionalDevicesReady = toBehaviorSubject(
+			observableAll([
+				this.additionalDevices.desktop,
+				this.additionalDevices.mobile,
+				this.additionalDevices.paperMasterKey
+			]).pipe(
+				map(
+					([desktop, mobile, paperMasterKey]) =>
+						desktop > 0 || mobile > 0 || paperMasterKey
+				)
+			),
+			false,
+			this.subscriptions
+		);
+
 		this.inviteCode = new FormControl('', undefined, [
 			async control => {
 				const value =
@@ -782,7 +800,20 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		);
 
 		this.submissionReadinessErrors = toBehaviorSubject(
-			observableAll([
+			(<
+				Observable<
+					[
+						boolean,
+						string,
+						FormControl,
+						boolean,
+						string,
+						FormControl,
+						string
+					]
+				>
+			> observableAll<any>([
+				this.additionalDevicesReady,
 				this.email,
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
@@ -795,9 +826,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						]() :
 						Promise.resolve('')
 				)
-			]).pipe(
+			])).pipe(
 				map(
 					([
+						additionalDevicesReady,
 						email,
 						inviteCode,
 						lockScreenPasswordReady,
@@ -805,6 +837,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						username,
 						xkcd
 					]) => [
+						...(!additionalDevicesReady ?
+							[
+								this.stringsService
+									.registerErrorAdditionalDevices
+							] :
+							[]),
 						...(email && !emailRegex.test(email) ?
 							[this.stringsService.registerErrorEmail] :
 							[]),
@@ -832,6 +870,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		this.currentStep = toBehaviorSubject<number>(
 			observableAll([
+				this.additionalDevicesReady,
 				this.email,
 				this.name,
 				this.lockScreenPasswordReady,
@@ -840,6 +879,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			]).pipe(
 				map(
 					([
+						additionalDevicesReady,
 						email,
 						name,
 						lockScreenPasswordReady,
@@ -852,7 +892,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						username.errors ||
 						(tabIndex === 0 && username.pending) ?
 							0 :
-						false ?
+						!additionalDevicesReady ?
 							1 :
 						!lockScreenPasswordReady ?
 							2 :
