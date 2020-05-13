@@ -1503,9 +1503,14 @@
 
 <ng-template #addDevicesUI>
 	<div fxFlex fxLayout="column" fxLayoutGap="48px" cyphTranslate>
-		<div fxLayout="row" fxLayoutAlign="center center" class="description">
+		<div
+			cyphTranslate
+			fxLayout="row"
+			fxLayoutAlign="center center"
+			class="description"
+		>
 			Set up as many additional devices as possible to ensure you never
-			lose access to your account.
+			permanently lose access to your account. (Minimum: 1)
 		</div>
 
 		<div fxLayout="row" fxLayoutAlign="center center">
@@ -1539,7 +1544,7 @@
 				</mat-icon>
 				&nbsp;
 				<span cyphTranslate>
-					Paper
+					Paper Master Key
 				</span>
 			</button>
 		</div>
