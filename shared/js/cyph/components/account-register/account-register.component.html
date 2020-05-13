@@ -934,7 +934,11 @@
 						>
 							<span cyphTranslate>Previous</span>
 						</button>
-						<button mat-button (click)="updateRoute(1)">
+						<button
+							mat-button
+							[disabled]="(currentStepComplete | await) !== true"
+							(click)="updateRoute(1)"
+						>
 							<span cyphTranslate>Next</span>
 						</button>
 					</ng-container>
