@@ -430,6 +430,10 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 	/** Initiates registration attempt. */
 	public async submit () : Promise<void> {
+		if (this.tabIndex.value !== this.totalSteps) {
+			return;
+		}
+
 		this.checking.next(false);
 
 		if (this.submissionReadinessErrors.value.length > 0) {
