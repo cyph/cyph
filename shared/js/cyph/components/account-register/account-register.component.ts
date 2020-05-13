@@ -206,7 +206,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	public readonly titleize = titleize;
 
 	/** Total number of steps/tabs (minus one). */
-	public readonly totalSteps: number = 2;
+	public readonly totalSteps: number = 3;
 
 	/** @see trackBySelf */
 	public readonly trackBySelf = trackBySelf;
