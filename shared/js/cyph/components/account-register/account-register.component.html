@@ -636,7 +636,10 @@
 								</div>
 							</mat-tab>
 							<mat-tab
-								[disabled]="!(inviteCodeWatcher | await)?.value"
+								[disabled]="
+									!(inviteCodeWatcher | await)?.value ||
+									((currentStep | await) || 0) < 1
+								"
 							>
 								<ng-template mat-tab-label>
 									<mat-icon
@@ -658,7 +661,10 @@
 								></ng-container>
 							</mat-tab>
 							<mat-tab
-								[disabled]="!(inviteCodeWatcher | await)?.value"
+								[disabled]="
+									!(inviteCodeWatcher | await)?.value ||
+									((currentStep | await) || 0) < 2
+								"
 							>
 								<ng-template mat-tab-label>
 									<mat-icon
@@ -680,7 +686,10 @@
 								></ng-container>
 							</mat-tab>
 							<mat-tab
-								[disabled]="!(inviteCodeWatcher | await)?.value"
+								[disabled]="
+									!(inviteCodeWatcher | await)?.value ||
+									((currentStep | await) || 0) < 3
+								"
 							>
 								<ng-template mat-tab-label>
 									<mat-icon
@@ -936,7 +945,10 @@
 						</button>
 						<button
 							mat-button
-							[disabled]="(currentStepComplete | await) !== true"
+							[disabled]="
+								((tabIndex | await) || 0) >=
+								((currentStep | await) || 0)
+							"
 							(click)="updateRoute(1)"
 						>
 							<span cyphTranslate>Next</span>

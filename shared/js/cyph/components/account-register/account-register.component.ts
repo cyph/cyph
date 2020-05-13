@@ -68,8 +68,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** @see CyphPlans */
 	public readonly cyphPlans = CyphPlans;
 
-	/** Indicates whether user should be able to move on to the next step. */
-	public readonly currentStepComplete: BehaviorSubject<boolean>;
+	/** Indicates the last step that the user is currently able to move on to. */
+	public readonly currentStep: BehaviorSubject<number>;
 
 	/** Email addres. */
 	public readonly email = new BehaviorSubject<string>('');
@@ -807,7 +807,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			this.subscriptions
 		);
 
-		this.currentStepComplete = toBehaviorSubject(
+		this.currentStep = toBehaviorSubject<number>(
 			observableAll([
 				this.email,
 				this.name,
@@ -823,19 +823,20 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 						tabIndex,
 						username
 					]) =>
-						tabIndex === 0 ?
-							(!email || emailRegex.test(email)) &&
-							!!name &&
-							!!username.value &&
-							!username.errors :
-						tabIndex === 1 ?
-							true :
-						tabIndex === 2 ?
-							lockScreenPasswordReady :
-							true
+						(email && !emailRegex.test(email)) ||
+						!name ||
+						!username.value ||
+						username.errors ||
+						(tabIndex === 0 && username.pending) ?
+							0 :
+						false ?
+							1 :
+						!lockScreenPasswordReady ?
+							2 :
+							3
 				)
 			),
-			false,
+			0,
 			this.subscriptions
 		);
 
