@@ -59,6 +59,16 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** @ignore */
 	private usernameDebounceLast?: string;
 
+	/** @ignore */
+	private readonly usingPostRegistrationMasterKeySetupUX: boolean = false;
+
+	/** Indicates which additional devices have been set up. */
+	public readonly additionalDevices = {
+		desktop: new BehaviorSubject<number>(0),
+		mobile: new BehaviorSubject<number>(0),
+		paperMasterKey: new BehaviorSubject<boolean>(false)
+	};
+
 	/** Indicates whether registration attempt is in progress. */
 	public readonly checking = new BehaviorSubject<boolean>(false);
 
@@ -441,33 +451,42 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		const unconfirmedMasterKey = await xkcdPassphrase.generate(512);
+		const masterKey = !this.additionalDevices.paperMasterKey.value ?
+			await xkcdPassphrase.generate(512) :
+		!this.useXkcdPassphrase.value ?
+			this.masterKey.value :
+		this.xkcdPassphrases ?
+			await this.xkcdPassphrases[this.xkcdPassphrase.value]() :
+			'';
 
 		this.checking.next(true);
+
 		this.submitError.next(undefined);
 
 		try {
-			await this.localStorageService.setString(
-				'unconfirmedMasterKey',
-				unconfirmedMasterKey
-			);
+			if (this.usingPostRegistrationMasterKeySetupUX) {
+				await this.localStorageService.setString(
+					'unconfirmedMasterKey',
+					masterKey
+				);
 
-			/* Confirm successful set */
-			if (
-				!safeStringCompare(
-					unconfirmedMasterKey,
-					await this.localStorageService.getString(
-						'unconfirmedMasterKey'
+				/* Confirm successful set */
+				if (
+					!safeStringCompare(
+						masterKey,
+						await this.localStorageService.getString(
+							'unconfirmedMasterKey'
+						)
 					)
-				)
-			) {
-				throw new Error('Setting unconfirmedMasterKey failed.');
+				) {
+					throw new Error('Setting unconfirmedMasterKey failed.');
+				}
 			}
 
 			this.submitError.next(
 				(await this.accountAuthService.register(
 					this.username.value,
-					unconfirmedMasterKey,
+					masterKey,
 					{
 						isCustom: !this.useLockScreenPIN.value,
 						value: this.useLockScreenPIN.value ?
