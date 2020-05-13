@@ -1529,7 +1529,7 @@
 			permanently lose access to your account. (Minimum: 1)
 		</div>
 
-		<div fxLayout="row" fxLayoutAlign="center center">
+		<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
 			<button mat-raised-button>
 				<mat-icon>
 					smartphone
@@ -1539,9 +1539,14 @@
 					Phone
 				</span>
 			</button>
+			<pre
+				class="additional-devices-count"
+				*ngIf="((additionalDevices.mobile | await) || 0) > 0"
+				>{{ (additionalDevices.mobile | await) || 0 }}</pre
+			>
 		</div>
 
-		<div fxLayout="row" fxLayoutAlign="center center">
+		<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
 			<button mat-raised-button>
 				<mat-icon>
 					computer
@@ -1551,10 +1556,18 @@
 					Computer
 				</span>
 			</button>
+			<pre
+				class="additional-devices-count"
+				*ngIf="((additionalDevices.desktop | await) || 0) > 0"
+				>{{ (additionalDevices.desktop | await) || 0 }}</pre
+			>
 		</div>
 
-		<div fxLayout="row" fxLayoutAlign="center center">
-			<button mat-raised-button>
+		<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="24px">
+			<button
+				mat-raised-button
+				[disabled]="additionalDevices.paperMasterKey | await"
+			>
 				<mat-icon>
 					description
 				</mat-icon>
@@ -1563,6 +1576,9 @@
 					Paper Master Key
 				</span>
 			</button>
+			<mat-icon *ngIf="additionalDevices.paperMasterKey | await"
+				>check</mat-icon
+			>
 		</div>
 
 		<div></div>
