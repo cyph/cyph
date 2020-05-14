@@ -1535,7 +1535,11 @@
 		</div>
 
 		<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
-			<button mat-raised-button>
+			<button
+				mat-raised-button
+				cyphTranslate
+				matTooltip="Install and set up the Cyph app on a mobile device."
+			>
 				<mat-icon>
 					smartphone
 				</mat-icon>
@@ -1552,7 +1556,11 @@
 		</div>
 
 		<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
-			<button mat-raised-button>
+			<button
+				mat-raised-button
+				cyphTranslate
+				matTooltip="Install and set up the Cyph app on a desktop or laptop."
+			>
 				<mat-icon>
 					computer
 				</mat-icon>
@@ -1568,10 +1576,12 @@
 			>
 		</div>
 
-		<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="24px">
+		<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
 			<button
 				mat-raised-button
+				cyphTranslate
 				[disabled]="additionalDevices.paperMasterKey | await"
+				matTooltip="Set up a long-term secure passphrase. Most highly recommended option."
 				(click)="paperMasterKeySetup()"
 			>
 				<mat-icon>
