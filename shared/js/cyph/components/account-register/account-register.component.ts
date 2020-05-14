@@ -12,7 +12,7 @@ import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, concat, from, Observable, of} from 'rxjs';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, take} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
@@ -41,7 +41,7 @@ import {observableAll} from '../../util/observable-all';
 import {random} from '../../util/random';
 import {titleize} from '../../util/titleize';
 import {uuid} from '../../util/uuid';
-import {sleep} from '../../util/wait';
+import {resolvable, sleep} from '../../util/wait';
 
 /**
  * Angular component for account register UI.
@@ -428,6 +428,32 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		);
 	}
 
+	/** Sets up a paper master key. */
+	public async paperMasterKeySetup () : Promise<void> {
+		const submitMasterKey = resolvable<string>();
+		const closeFunction = resolvable<() => void>();
+
+		this.dialogService.baseDialog(
+			AccountRegisterComponent,
+			o => {
+				o.getMasterKeyOnly = true;
+				submitMasterKey.resolve(
+					o.submitMasterKey.pipe(take(1)).toPromise()
+				);
+			},
+			closeFunction
+		);
+
+		const masterKey = await submitMasterKey.promise;
+
+		if (masterKey) {
+			this.masterKey.next(masterKey);
+			this.additionalDevices.paperMasterKey.next(true);
+		}
+
+		(await closeFunction.promise)();
+	}
+
 	/** Switches from initial phase of registration process. */
 	public async preSubmit () : Promise<void> {
 		if (this.submissionReadinessErrors.value.length > 0) {
@@ -456,11 +482,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		const masterKey = !this.additionalDevices.paperMasterKey.value ?
 			await xkcdPassphrase.generate(512) :
-		!this.useXkcdPassphrase.value ?
-			this.masterKey.value :
-		this.xkcdPassphrases ?
-			await this.xkcdPassphrases[this.xkcdPassphrase.value]() :
-			'';
+			this.masterKey.value;
 
 		this.checking.next(true);
 

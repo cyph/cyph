@@ -1567,6 +1567,7 @@
 			<button
 				mat-raised-button
 				[disabled]="additionalDevices.paperMasterKey | await"
+				(click)="paperMasterKeySetup()"
 			>
 				<mat-icon>
 					description
