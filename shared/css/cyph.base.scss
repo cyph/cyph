@@ -21,6 +21,22 @@ mat-dialog-container {
 	font-weight: normal;
 }
 
+$cyphLargeDialogHeight: calc(100vh - 64px) !important;
+$cyphLargeDialogWidth: calc(100vw - 64px) !important;
+.cyph-large-dialog {
+	max-height: $cyphLargeDialogHeight;
+	min-height: $cyphLargeDialogHeight;
+	height: $cyphLargeDialogHeight;
+	max-width: $cyphLargeDialogWidth;
+	min-width: $cyphLargeDialogWidth;
+	width: $cyphLargeDialogWidth;
+
+	> mat-dialog-container {
+		height: 100% !important;
+		width: 100% !important;
+	}
+}
+
 /* Workaround for mobile Chrome vh bug */
 .cdk-global-overlay-wrapper,
 .cdk-overlay-container {

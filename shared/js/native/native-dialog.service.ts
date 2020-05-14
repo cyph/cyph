@@ -69,13 +69,20 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 
 	/**
 	 * @inheritDoc
-	 * @param setInputs Currently unsupported (not implemented exception).
+	 * @param bottomSheet Currently unsupported (not implemented exception).
 	 * @param closeFunction Currently unsupported (not implemented exception).
+	 * @param options Currently unsupported (not implemented exception).
+	 * @param setInputs Currently unsupported (not implemented exception).
 	 */
 	public async baseDialog<T> (
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => MaybePromise<void>,
-		closeFunction?: IResolvable<() => void>
+		closeFunction?: IResolvable<() => void>,
+		bottomSheet: boolean = false,
+		options?: {
+			large?: boolean;
+			lightTheme?: boolean;
+		}
 	) : Promise<void> {
 		if (setInputs) {
 			throw new Error(
@@ -85,6 +92,16 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		if (closeFunction) {
 			throw new Error(
 				'NativeDialogService.baseDialog closeFunction is unsupported.'
+			);
+		}
+		if (bottomSheet) {
+			throw new Error(
+				'NativeDialogService.baseDialog bottomSheet is unsupported.'
+			);
+		}
+		if (options) {
+			throw new Error(
+				'NativeDialogService.baseDialog options is unsupported.'
 			);
 		}
 

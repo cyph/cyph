@@ -1,7 +1,7 @@
 import {ComponentType} from '@angular/cdk/portal';
 import {ChangeDetectorRef, Injectable, Optional} from '@angular/core';
 import {MatBottomSheet} from '@angular/material/bottom-sheet';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {SafeUrl} from '@angular/platform-browser';
 import {map, take} from 'rxjs/operators';
@@ -231,12 +231,25 @@ export class MaterialDialogService extends BaseProvider
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => MaybePromise<void>,
 		closeFunction?: IResolvable<() => void>,
-		bottomSheet: boolean = false
+		bottomSheet: boolean = false,
+		options?: {
+			large?: boolean;
+			lightTheme?: boolean;
+		}
 	) : Promise<void> {
 		return this.lock(async () => {
 			const matDialogRef = bottomSheet ?
 				this.matBottomSheet.open(componentType) :
 				this.matDialog.open(componentType);
+
+			if (matDialogRef instanceof MatDialogRef) {
+				if (options?.large) {
+					matDialogRef.addPanelClass('cyph-large-dialog');
+				}
+				if (options?.lightTheme) {
+					matDialogRef.addPanelClass('cyph-light-theme');
+				}
+			}
 
 			const afterClosed =
 				'close' in matDialogRef ?

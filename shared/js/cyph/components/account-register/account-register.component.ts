@@ -441,7 +441,12 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					o.submitMasterKey.pipe(take(1)).toPromise()
 				);
 			},
-			closeFunction
+			closeFunction,
+			false,
+			{
+				large: true,
+				lightTheme: true
+			}
 		);
 
 		const masterKey = await submitMasterKey.promise;
