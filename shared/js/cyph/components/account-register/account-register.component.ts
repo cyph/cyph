@@ -901,28 +901,45 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		);
 
 		this.currentStep = toBehaviorSubject<number>(
-			observableAll([
+			(<
+				Observable<
+					[
+						boolean,
+						string,
+						FormControl,
+						boolean,
+						string,
+						number,
+						FormControl
+					]
+				>
+			> observableAll<any>([
 				this.additionalDevicesReady,
 				this.email,
+				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
 				this.name,
 				this.tabIndex,
 				this.usernameWatcher
-			]).pipe(
+			])).pipe(
 				map(
 					([
 						additionalDevicesReady,
 						email,
+						inviteCode,
 						lockScreenPasswordReady,
 						name,
 						tabIndex,
 						username
 					]) =>
 						(email && !emailRegex.test(email)) ||
+						!inviteCode.value ||
+						inviteCode.errors ||
 						!name ||
 						!username.value ||
 						username.errors ||
-						(tabIndex === 0 && username.pending) ?
+						(tabIndex === 0 &&
+							(username.pending || inviteCode.pending)) ?
 							0 :
 						!additionalDevicesReady ?
 							1 :
