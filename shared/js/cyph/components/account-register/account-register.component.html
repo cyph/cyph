@@ -1128,7 +1128,11 @@
 		<div></div>
 
 		<div fxLayout="row" fxLayoutAlign="center center">
-			<h3 fxLayout="column" class="cyph-banner inverted default-align">
+			<h3
+				fxLayout="column"
+				fxLayoutGap="24px"
+				class="cyph-banner inverted default-align"
+			>
 				<div cyphTranslate>
 					<h4>
 						Understanding your Master Key:
@@ -1187,14 +1191,15 @@
 					</ol>
 				</div>
 				<div fxLayout="row" fxLayoutAlign="center center">
-					<mat-checkbox
+					<button
+						mat-button
 						cyphTranslate
-						[ngModel]="opsecAcknowledgement | await"
-						(ngModelChange)="opsecAcknowledgement.next($event)"
+						[disabled]="(opsecAcknowledgement | await) === true"
+						(click)="opsecAcknowledgement.next(true)"
 						required
 					>
 						I understand and am ready to view my Master Key
-					</mat-checkbox>
+					</button>
 				</div>
 			</h3>
 		</div>
