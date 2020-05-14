@@ -904,8 +904,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			observableAll([
 				this.additionalDevicesReady,
 				this.email,
-				this.name,
 				this.lockScreenPasswordReady,
+				this.name,
 				this.tabIndex,
 				this.usernameWatcher
 			]).pipe(
@@ -913,8 +913,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 					([
 						additionalDevicesReady,
 						email,
-						name,
 						lockScreenPasswordReady,
+						name,
 						tabIndex,
 						username
 					]) =>
