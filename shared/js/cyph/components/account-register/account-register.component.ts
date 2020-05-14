@@ -184,6 +184,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 	/** Indicates whether master key OPSEC rules have been acknowledged. */
 	public readonly opsecAcknowledgement = new BehaviorSubject<boolean>(false);
 
+	/** If true, will modify UI for setting up paper master key. */
+	@Input() public paperMasterKeySetupMode: boolean = false;
+
 	/** Phase of registration process. */
 	public readonly phase = new BehaviorSubject<number>(0);
 
@@ -437,6 +440,8 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			AccountRegisterComponent,
 			o => {
 				o.getMasterKeyOnly = true;
+				o.paperMasterKeySetupMode = true;
+
 				submitMasterKey.resolve(
 					o.submitMasterKey.pipe(take(1)).toPromise()
 				);

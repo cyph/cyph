@@ -63,7 +63,7 @@
 				"
 			>
 				{{
-					!confirmMasterKeyOnly ?
+					!confirmMasterKeyOnly && !paperMasterKeySetupMode ?
 						getPasswordSubmitText :
 					(phase | await) === 3 ?
 						stringsService.confirmMasterKeyFinal :
@@ -1075,7 +1075,7 @@
 			fxFlex.gt-md="50"
 			fxLayout="column"
 		>
-			<mat-form-field fxFlex>
+			<mat-form-field fxFlex *ngIf="!paperMasterKeySetupMode">
 				<input
 					matInput
 					cyphTranslate

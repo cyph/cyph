@@ -32,8 +32,15 @@ $cyphLargeDialogWidth: calc(100vw - 64px) !important;
 	width: $cyphLargeDialogWidth;
 
 	> mat-dialog-container {
-		height: 100% !important;
-		width: 100% !important;
+		&,
+		> * {
+			height: 100% !important;
+			width: 100% !important;
+		}
+
+		> * {
+			position: relative;
+		}
 	}
 }
 
