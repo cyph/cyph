@@ -99,35 +99,22 @@ export class MaterialDialogService extends BaseProvider
 					matDialogRef.instance;
 
 			instance.bottomSheet = o.bottomSheet || false;
-
 			instance.content = o.content;
-
 			instance.cancel =
 				o.cancel !== undefined ? o.cancel : this.stringsService.cancel;
-
 			instance.cancelFAB = o.cancelFAB;
-
 			instance.fabAvatar =
 				o.fabAvatar === undefined ?
 					o.fabAvatar :
 					asyncToObservable(o.fabAvatar);
-
 			instance.form = o.form;
-
 			instance.markdown = !!o.markdown;
-
 			instance.multipleChoiceOptions = o.multipleChoiceOptions;
-
 			instance.ok = o.ok !== undefined ? o.ok : this.stringsService.ok;
-
 			instance.okFAB = o.okFAB;
-
 			instance.password = !!o.password;
-
 			instance.prompt = prompt ? o.preFill || '' : undefined;
-
 			instance.promptPlaceholder = o.placeholder;
-
 			instance.title = o.title !== undefined ? o.title : '';
 
 			if (closeFunction) {
@@ -195,14 +182,10 @@ export class MaterialDialogService extends BaseProvider
 			const matDialogRef = this.matDialog.open(DialogAlertComponent);
 
 			matDialogRef.componentInstance.content = o.content;
-
 			matDialogRef.componentInstance.image = o.image;
-
 			matDialogRef.componentInstance.markdown = !!o.markdown;
-
 			matDialogRef.componentInstance.ok =
 				o.ok !== undefined ? o.ok : this.stringsService.ok;
-
 			matDialogRef.componentInstance.title =
 				o.title !== undefined ? o.title : '';
 
