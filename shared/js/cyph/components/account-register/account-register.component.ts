@@ -436,7 +436,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		const submitMasterKey = resolvable<string>();
 		const closeFunction = resolvable<() => void>();
 
-		this.dialogService.baseDialog(
+		const closed = this.dialogService.baseDialog(
 			AccountRegisterComponent,
 			o => {
 				o.getMasterKeyOnly = true;
@@ -462,6 +462,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		}
 
 		(await closeFunction.promise)();
+		await closed;
 	}
 
 	/** Switches from initial phase of registration process. */
