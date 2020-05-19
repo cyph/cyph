@@ -37,6 +37,9 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		Uint8Array | undefined
 	>(undefined);
 
+	/** Indicates whether saved master key is the alternate master key. */
+	public readonly altMasterKey = new BehaviorSubject<boolean>(false);
+
 	/** Indicates whether login attempt is in progress. */
 	public readonly checking = new BehaviorSubject<boolean>(true);
 
@@ -135,10 +138,14 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 		try {
 			const [
+				altMasterKey,
 				pinIsCustom,
 				savedMasterKey,
 				savedUsername
 			] = await Promise.all([
+				this.localStorageService
+					.getItem('altMasterKey', BooleanProto, undefined, true)
+					.catch(() => false),
 				this.localStorageService
 					.getItem('pinIsCustom', BooleanProto, undefined, true)
 					.catch(() => true),
@@ -150,6 +157,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 					.catch(() => undefined)
 			]);
 
+			this.altMasterKey.next(altMasterKey);
 			this.pinIsCustom.next(pinIsCustom);
 			this.savedMasterKey.next(savedMasterKey);
 			this.savedUsername.next(savedUsername);
@@ -180,7 +188,8 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 				(await this.accountAuthService.login(
 					savedUsername,
 					savedMasterKey,
-					savedPIN
+					savedPIN,
+					altMasterKey
 				))
 			) {
 				this.potassiumService.clearMemory(savedPIN);
@@ -241,7 +250,8 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 					this.accountAuthService.login(
 						this.savedUsername.value,
 						this.savedMasterKey.value,
-						this.pin.value
+						this.pin.value,
+						this.altMasterKey.value
 					) :
 					this.accountAuthService.login(
 						this.username.value,

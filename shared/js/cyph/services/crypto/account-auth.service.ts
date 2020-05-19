@@ -584,6 +584,14 @@ export class AccountAuthService extends BaseProvider {
 			setErrorMessageLog('saving credentials');
 
 			await Promise.all([
+				this.localStorageService.setItem(
+					'altMasterKey',
+					BooleanProto,
+					altMasterKey,
+					undefined,
+					undefined,
+					true
+				),
 				(async () =>
 					this.localStorageService.setItem(
 						'masterKey',
