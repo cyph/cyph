@@ -658,7 +658,7 @@ if (!imageAlreadyBuilt) {
 if (isAgseDeploy) {
 	commandAdditionalArgs.push('-p', '31337:31337/udp');
 
-	exitCleanup = () => fs.appendFileSync(agseTempFile);
+	exitCleanup = () => fs.appendFileSync(agseTempFile, '');
 	initPromise = runScript(shellScripts.agseInit);
 }
 
