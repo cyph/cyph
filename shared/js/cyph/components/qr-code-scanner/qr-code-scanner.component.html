@@ -1,1 +1,8 @@
-<div>QrCodeScanner</div>
+<cyph-video
+	#cyphVideo
+	[autoplay]="true"
+	[muted]="true"
+	[playsinline]="true"
+	[src]="videoStream | await"
+	*ngIf="isActive | await"
+></cyph-video>

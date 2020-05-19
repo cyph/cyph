@@ -42,7 +42,7 @@ export class VideoComponent extends BaseProvider
 	@Input() public title?: string;
 
 	/** Video element. */
-	@ViewChild('video') public video?: ElementRef;
+	@ViewChild('video') public video?: ElementRef<HTMLVideoElement>;
 
 	/** @ignore */
 	private setVideoSrc (

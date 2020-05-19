@@ -12,6 +12,15 @@ type FileLike = Blob | IFile | string | {mediaType: string};
  */
 @Injectable()
 export class FileService extends BaseProvider {
+	/** @ignore */
+	private readonly canvas = this.envService.isWeb ?
+		document.createElement('canvas') :
+		undefined;
+
+	/** @ignore */
+	/* eslint-disable-next-line no-unused-expressions */
+	private readonly canvasContext = this.canvas?.getContext('2d') || undefined;
+
 	/** Upper limit in bytes for a file to get the multimedia treatment. */
 	public readonly mediaSizeLimit = 5242880;
 
@@ -21,11 +30,8 @@ export class FileService extends BaseProvider {
 		file: Blob | IFile
 	) : Promise<Uint8Array> {
 		try {
-			const canvas = document.createElement('canvas');
-			const context = canvas.getContext('2d');
-
-			if (!context) {
-				throw new Error('No canvas context.');
+			if (!this.canvas || !this.canvasContext) {
+				throw new Error('No canvas available.');
 			}
 
 			const factor = Math.min(
@@ -34,22 +40,31 @@ export class FileService extends BaseProvider {
 				1
 			);
 
-			canvas.width = image.width * factor;
-			canvas.height = image.height * factor;
+			this.canvas.width = image.width * factor;
+			this.canvas.height = image.height * factor;
 
-			context.drawImage(image, 0, 0, canvas.width, canvas.height);
+			this.canvasContext.drawImage(
+				image,
+				0,
+				0,
+				this.canvas.width,
+				this.canvas.height
+			);
 
 			const hasTransparency =
 				this.getMediaType(file) !== 'image/jpeg' &&
-				context.getImageData(0, 0, image.width, image.height)
+				this.canvasContext.getImageData(0, 0, image.width, image.height)
 					.data[3] !== 255;
 
 			const outputType = !hasTransparency ? 'image/jpeg' : undefined;
 			const outputQuality = !hasTransparency ?
-				Math.min(960 / Math.max(canvas.width, canvas.height), 1) :
+				Math.min(
+					960 / Math.max(this.canvas.width, this.canvas.height),
+					1
+				) :
 				undefined;
 
-			return this.canvasToBytes(canvas, outputType, outputQuality);
+			return this.canvasToBytes(this.canvas, outputType, outputQuality);
 		}
 		catch {}
 
@@ -140,13 +155,7 @@ export class FileService extends BaseProvider {
 		}
 
 		const compressImage = async (dataURI: string) =>
-			new Promise<Uint8Array>(resolve => {
-				const img = document.createElement('img');
-				img.onload = () => {
-					resolve(this.compressImage(img, file));
-				};
-				img.src = dataURI;
-			});
+			this.compressImage(await this.toImageElement(dataURI), file);
 
 		if (!(file instanceof Blob)) {
 			return compressImage(this.toDataURI(file.data, file.mediaType));
@@ -195,6 +204,37 @@ export class FileService extends BaseProvider {
 		};
 	}
 
+	/** Gets raw image data. */
+	public getImageData (
+		image: HTMLImageElement | HTMLVideoElement
+	) : ImageData {
+		if (!this.canvas || !this.canvasContext) {
+			throw new Error('No canvas available.');
+		}
+
+		const height =
+			image instanceof HTMLImageElement ?
+				image.height :
+				image.videoHeight;
+
+		const width =
+			image instanceof HTMLImageElement ? image.width : image.videoWidth;
+
+		if (height < 1 || width < 1) {
+			return {
+				data: new Uint8ClampedArray(0),
+				height,
+				width
+			};
+		}
+
+		this.canvas.height = height;
+		this.canvas.width = width;
+
+		this.canvasContext.drawImage(image, 0, 0, width, height);
+		return this.canvasContext.getImageData(0, 0, width, height);
+	}
+
 	/** Indicates whether a File/Blob is audio. */
 	public isAudio (file: FileLike) : boolean {
 		return this.getMediaType(file).startsWith('audio/');
@@ -228,6 +268,26 @@ export class FileService extends BaseProvider {
 	/** Converts binary data to base64 data URI. */
 	public toDataURI (data: Uint8Array, mediaType: string) : string {
 		return `data:${mediaType};base64,${potassiumUtil.toBase64(data)}`;
+	}
+
+	/** Converts binary data to base64 data URI. */
+	public async toImageElement (
+		data: Uint8Array | string
+	) : Promise<HTMLImageElement> {
+		const img = document.createElement('img');
+
+		const imgLoaded = new Promise(resolve => {
+			img.onload = () => {
+				resolve();
+			};
+		});
+
+		img.src =
+			typeof data === 'string' ? data : this.toDataURI(data, 'image/png');
+
+		await imgLoaded;
+
+		return img;
 	}
 
 	constructor (

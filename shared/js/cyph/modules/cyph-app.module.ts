@@ -46,6 +46,7 @@ import {FooterComponent} from '../components/footer';
 import {LinkConnectionComponent} from '../components/link-connection';
 import {LinkConnectionEmailComponent} from '../components/link-connection-email';
 import {NotFoundComponent} from '../components/not-found';
+import {QRCodeScannerComponent} from '../components/qr-code-scanner';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
 import {env} from '../env';
 import {AccountAppointmentsService} from '../services/account-appointments.service';
@@ -124,6 +125,7 @@ import {CyphWebModule} from './cyph-web.module';
 		LinkConnectionComponent,
 		LinkConnectionEmailComponent,
 		NotFoundComponent,
+		QRCodeScannerComponent,
 		UploadEhrCredentialsComponent
 	],
 	exports: [
@@ -174,6 +176,7 @@ import {CyphWebModule} from './cyph-web.module';
 		LinkConnectionComponent,
 		LinkConnectionEmailComponent,
 		NotFoundComponent,
+		QRCodeScannerComponent,
 		UploadEhrCredentialsComponent
 	],
 	imports: [CyphCommonModule, CyphWebModule],

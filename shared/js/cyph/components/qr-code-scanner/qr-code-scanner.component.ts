@@ -1,9 +1,21 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	EventEmitter,
+	OnDestroy,
+	Output,
+	ViewChild
+} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
+import {VideoComponent} from '../../components/video';
 import {StringsService} from '../../services/strings.service';
+import {QRService} from '../../services/qr.service';
+import {debugLogError} from '../../util/log';
 
 /**
- * Angular component for qr code scanner UI.
+ * Angular component for QR code scanner UI.
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -11,8 +23,91 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./qr-code-scanner.component.scss'],
 	templateUrl: './qr-code-scanner.component.html'
 })
-export class QrCodeScannerComponent extends BaseProvider {
+export class QRCodeScannerComponent extends BaseProvider
+	implements OnDestroy, AfterViewInit {
+	/** cyph-video element. */
+	@ViewChild(VideoComponent) public cyphVideo?: VideoComponent;
+
+	/** Indicates whether scanning is in progress. */
+	public readonly isActive = new BehaviorSubject<boolean>(true);
+
+	/**
+	 * Emits on QR code scan completion.
+	 * @returns QR code data, if applicable.
+	 */
+	@Output() public readonly scanComplete = new EventEmitter<
+		string | undefined
+	>();
+
+	/** Camera feed. */
+	public readonly videoStream = (async () => {
+		const constraints = {video: {facingMode: 'environment'}};
+
+		try {
+			return await navigator.mediaDevices.getUserMedia(constraints);
+		}
+		catch (err) {
+			debugLogError(() => ({
+				qrCodeScanner: {navigatorMediaDevicesGetUserMedia: err}
+			}));
+		}
+
+		try {
+			return await new Promise<MediaStream>((resolve, reject) => {
+				navigator.getUserMedia(constraints, resolve, reject);
+			});
+		}
+		catch (err) {
+			debugLogError(() => ({
+				qrCodeScanner: {navigatorGetUserMedia: err}
+			}));
+		}
+
+		return undefined;
+	})();
+
+	/** Ends video stream. */
+	public async closeVideo () : Promise<void> {
+		this.isActive.next(false);
+
+		/* eslint-disable-next-line no-unused-expressions */
+		for (const track of (await this.videoStream)?.getTracks() || []) {
+			track.enabled = false;
+			track.stop();
+		}
+	}
+
+	/** @inheritDoc */
+	public async ngOnDestroy () : Promise<void> {
+		await this.closeVideo();
+	}
+
+	/** @inheritDoc */
+	public async ngAfterViewInit () : Promise<void> {
+		try {
+			const videoStream = await this.videoStream;
+
+			if (videoStream === undefined) {
+				return;
+			}
+
+			const video = this.cyphVideo?.video?.nativeElement;
+
+			if (video === undefined) {
+				return;
+			}
+
+			this.scanComplete.emit(await this.qrService.scanQRCode(video));
+		}
+		finally {
+			await this.closeVideo();
+		}
+	}
+
 	constructor (
+		/** @ignore */
+		private readonly qrService: QRService,
+
 		/** @see StringsService */
 		public readonly stringsService: StringsService
 	) {
