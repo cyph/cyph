@@ -358,7 +358,8 @@ export class AccountAuthService extends BaseProvider {
 	public async login (
 		username: string,
 		masterKey: string | Uint8Array,
-		pin?: string | Uint8Array
+		pin?: string | Uint8Array,
+		altMasterKey: boolean = false
 	) : Promise<boolean> {
 		await this.logout(false);
 
@@ -410,7 +411,7 @@ export class AccountAuthService extends BaseProvider {
 			setErrorMessageLog('getting loginData');
 
 			const loginDataPromise = this.getItem(
-				`users/${username}/loginData`,
+				`users/${username}/loginData${altMasterKey ? 'Alt' : ''}`,
 				AccountLoginData,
 				masterKey
 			);
@@ -706,6 +707,7 @@ export class AccountAuthService extends BaseProvider {
 	public async register (
 		realUsername: string | {pseudoAccount: true},
 		masterKey?: string,
+		altMasterKey?: string,
 		pin: {isCustom: boolean; value?: string} = {isCustom: true},
 		name: string = '',
 		email?: string,
@@ -742,6 +744,7 @@ export class AccountAuthService extends BaseProvider {
 				encryptionKeyPair,
 				signingKeyPair,
 				masterKeyHash,
+				altMasterKeyHash,
 				pinHash
 			] = await Promise.all([
 				this.potassiumService.box.keyPair(),
@@ -751,11 +754,15 @@ export class AccountAuthService extends BaseProvider {
 					this.potassiumService.secretBox.keyBytes.then(keyBytes =>
 						this.potassiumService.randomBytes(keyBytes)
 					),
+				typeof altMasterKey === 'string' ?
+					this.passwordHash(username, altMasterKey) :
+					undefined,
 				this.passwordHash(username, pin.value)
 			]);
 
 			const [
 				registerLoginData,
+				registerLoginDataAlt,
 				registerPublicProfile,
 				registerPublicProfileExtra,
 				registerEncryptionKeyPair,
@@ -774,6 +781,17 @@ export class AccountAuthService extends BaseProvider {
 					undefined,
 					true
 				),
+				altMasterKeyHash !== undefined ?
+					this.setItem(
+						`users/${username}/loginDataAlt`,
+						AccountLoginData,
+						loginData,
+						altMasterKeyHash,
+						undefined,
+						undefined,
+						true
+					) :
+					undefined,
 				this.setItem<IAccountUserProfile>(
 					`users/${username}/publicProfile`,
 					AccountUserProfile,
@@ -920,6 +938,7 @@ export class AccountAuthService extends BaseProvider {
 					encryptionKeyPair: registerEncryptionKeyPair,
 					inviteCode,
 					loginData: registerLoginData,
+					loginDataAlt: registerLoginDataAlt,
 					pinHash: registerPinHash,
 					pinIsCustom: registerPinIsCustom,
 					pseudoAccount,

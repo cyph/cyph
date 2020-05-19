@@ -1539,6 +1539,7 @@
 				mat-raised-button
 				cyphTranslate
 				matTooltip="Install and set up the Cyph app on a mobile device."
+				(click)="newDeviceActivation(true)"
 			>
 				<mat-icon>
 					smartphone
@@ -1560,6 +1561,7 @@
 				mat-raised-button
 				cyphTranslate
 				matTooltip="Install and set up the Cyph app on a desktop or laptop."
+				(click)="newDeviceActivation(false)"
 			>
 				<mat-icon>
 					computer

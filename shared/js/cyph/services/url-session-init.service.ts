@@ -20,7 +20,12 @@ export class UrlSessionInitService extends BaseProvider
 	public readonly ephemeral: boolean = true;
 
 	/** @inheritDoc */
-	public readonly id: string;
+	public readonly id: Promise<string>;
+
+	/** @inheritDoc */
+	public readonly salt: Promise<string | undefined> = Promise.resolve(
+		undefined
+	);
 
 	/** @inheritDoc */
 	public readonly sessionService: IResolvable<ISessionService> = resolvable();
@@ -51,7 +56,9 @@ export class UrlSessionInitService extends BaseProvider
 				'video' :
 				undefined;
 
-		this.id = urlSegmentPaths.slice(this.callType ? 1 : 0).join('/');
+		this.id = Promise.resolve(
+			urlSegmentPaths.slice(this.callType ? 1 : 0).join('/')
+		);
 
 		if (!this.callType) {
 			this.callType = env.callType;

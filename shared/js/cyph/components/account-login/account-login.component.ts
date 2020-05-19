@@ -219,6 +219,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 				!(await this.accountAuthService.register(
 					{pseudoAccount: true},
 					undefined,
+					undefined,
 					newPin
 				))
 			);

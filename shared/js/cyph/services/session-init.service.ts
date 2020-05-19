@@ -16,7 +16,12 @@ export class SessionInitService extends BaseProvider {
 	public readonly ephemeral: boolean = true;
 
 	/** ID for initiating new Session. */
-	public readonly id: string = '';
+	public readonly id: Promise<string> = Promise.resolve('');
+
+	/** Appended to ID as part of the shared secret. */
+	public readonly salt: Promise<string | undefined> = Promise.resolve(
+		undefined
+	);
 
 	/** @see ISessionService */
 	public readonly sessionService: IResolvable<ISessionService> = resolvable();

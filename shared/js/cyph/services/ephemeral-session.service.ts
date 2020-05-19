@@ -63,7 +63,7 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
-	private setID (id: string) : void {
+	private setID (id: string, salt?: string) : void {
 		if (
 			/* Too short */
 			id.length < this.configService.secretLength ||
@@ -83,7 +83,10 @@ export class EphemeralSessionService extends SessionService {
 		this.state.cyphID.next(
 			id.substring(0, this.configService.cyphIDLength)
 		);
-		this.state.sharedSecret.next(this.state.sharedSecret.value || id);
+
+		this.state.sharedSecret.next(
+			(this.state.sharedSecret.value || id) + (salt || '')
+		);
 	}
 
 	/** @inheritDoc */
@@ -196,130 +199,131 @@ export class EphemeralSessionService extends SessionService {
 			stringsService
 		);
 
-		this.accountService.autoUpdate.next(false);
-
-		let username: string | undefined;
-
-		let id = this.sessionInitService.id;
-
-		if (id === '404') {
-			this.state.startingNewCyph.next(true);
-			this.trigger(events.cyphNotFound);
-			return;
-		}
-
-		if (id.indexOf('/') > -1) {
-			[username, id] = id.split('/');
-
-			if (username && id === 'chat-request') {
-				const chatRequestUsername = username;
-				this.chatRequestUsername.next(chatRequestUsername);
-
-				id = readableID(this.configService.cyphIDLength);
-
-				(async () => {
-					await this.accountDatabaseService.notify(
-						chatRequestUsername,
-						NotificationTypes.Call,
-						{
-							callType: 'chat',
-							expires:
-								(await getTimestamp()) +
-								this.chatRequestRingTimeout,
-							id
-						}
-					);
-
-					const answered = await this.notificationService.ring(
-						async () => this.connected.then(() => true),
-						true,
-						undefined,
-						this.chatRequestRingTimeout
-					);
-
-					if (answered) {
-						return;
-					}
-
-					if (burnerRoot === '') {
-						await this.trigger(events.connectFailure);
-						return;
-					}
-
-					await this.router.navigate([
-						'compose',
-						'user',
-						chatRequestUsername
-					]);
-
-					await this.dialogService.toast(
-						this.stringsService.setParameters(
-							this.stringsService.chatRequestTimeoutOutgoing,
-							{USERNAME: chatRequestUsername}
-						),
-						-1,
-						this.stringsService.ok
-					);
-				})();
-			}
-		}
-
-		/* API flags */
-		for (const flag of this.configService.apiFlags) {
-			if (id[0] !== flag.character) {
-				continue;
-			}
-
-			id = id.substring(1);
-			flag.set(this);
-
-			this.analyticsService.sendEvent(flag.analEvent, 'used');
-		}
-
-		if (this.envService.isTelehealth) {
-			this.remoteUsername.next(
-				this.state.isAlice.value ?
-					this.stringsService.patient :
-					this.stringsService.doctor
-			);
-		}
-
-		this.state.wasInitiatedByAPI.next(
-			id.length > this.configService.secretLength
-		);
-
-		/* true = yes; false = no; undefined = maybe */
-		this.state.startingNewCyph.next(
-			this.state.wasInitiatedByAPI.value || username ?
-				undefined :
-			id.length < 1 ?
-				true :
-				false
-		);
-
-		if (username) {
-			this.remoteUsername.next(username);
-			this.state.cyphID.next(id);
-			this.state.sharedSecret.next(undefined);
-		}
-		else {
-			this.setID(id);
-		}
-
-		this.state.ephemeralStateInitialized.next(true);
-
-		const channelID =
-			this.state.startingNewCyph.value === false ? '' : uuid(true);
-
-		const getChannelID = async () =>
-			request({
-				data: {channelID, proFeatures: this.proFeatures},
-				method: 'POST',
-				retries: 5,
-				url: `${env.baseUrl}channels/${this.state.cyphID.value}`
-			});
-
 		(async () => {
+			this.accountService.autoUpdate.next(false);
+
+			let username: string | undefined;
+
+			let id = await this.sessionInitService.id;
+			const salt = await this.sessionInitService.salt;
+
+			if (id === '404') {
+				this.state.startingNewCyph.next(true);
+				this.trigger(events.cyphNotFound);
+				return;
+			}
+
+			if (id.indexOf('/') > -1) {
+				[username, id] = id.split('/');
+
+				if (username && id === 'chat-request') {
+					const chatRequestUsername = username;
+					this.chatRequestUsername.next(chatRequestUsername);
+
+					id = readableID(this.configService.cyphIDLength);
+
+					(async () => {
+						await this.accountDatabaseService.notify(
+							chatRequestUsername,
+							NotificationTypes.Call,
+							{
+								callType: 'chat',
+								expires:
+									(await getTimestamp()) +
+									this.chatRequestRingTimeout,
+								id
+							}
+						);
+
+						const answered = await this.notificationService.ring(
+							async () => this.connected.then(() => true),
+							true,
+							undefined,
+							this.chatRequestRingTimeout
+						);
+
+						if (answered) {
+							return;
+						}
+
+						if (burnerRoot === '') {
+							await this.trigger(events.connectFailure);
+							return;
+						}
+
+						await this.router.navigate([
+							'compose',
+							'user',
+							chatRequestUsername
+						]);
+
+						await this.dialogService.toast(
+							this.stringsService.setParameters(
+								this.stringsService.chatRequestTimeoutOutgoing,
+								{USERNAME: chatRequestUsername}
+							),
+							-1,
+							this.stringsService.ok
+						);
+					})();
+				}
+			}
+
+			/* API flags */
+			for (const flag of this.configService.apiFlags) {
+				if (id[0] !== flag.character) {
+					continue;
+				}
+
+				id = id.substring(1);
+				flag.set(this);
+
+				this.analyticsService.sendEvent(flag.analEvent, 'used');
+			}
+
+			if (this.envService.isTelehealth) {
+				this.remoteUsername.next(
+					this.state.isAlice.value ?
+						this.stringsService.patient :
+						this.stringsService.doctor
+				);
+			}
+
+			this.state.wasInitiatedByAPI.next(
+				id.length > this.configService.secretLength
+			);
+
+			/* true = yes; false = no; undefined = maybe */
+			this.state.startingNewCyph.next(
+				this.state.wasInitiatedByAPI.value || username ?
+					undefined :
+				id.length < 1 ?
+					true :
+					false
+			);
+
+			if (username) {
+				this.remoteUsername.next(username);
+				this.state.cyphID.next(id);
+				this.state.sharedSecret.next(undefined);
+			}
+			else {
+				this.setID(id, salt);
+			}
+
+			this.state.ephemeralStateInitialized.next(true);
+
+			const channelID =
+				this.state.startingNewCyph.value === false ? '' : uuid(true);
+
+			const getChannelID = async () =>
+				request({
+					data: {channelID, proFeatures: this.proFeatures},
+					method: 'POST',
+					retries: 5,
+					url: `${env.baseUrl}channels/${this.state.cyphID.value}`
+				});
+
 			try {
 				await this.prepareForCallType();
 

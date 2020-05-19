@@ -235,6 +235,10 @@ service firebase.storage {
 					allow read;
 				}
 
+				match /loginDataAlt/{hash} {
+					allow read;
+				}
+
 				match /organizationMembers/{hash} {
 					allow read;
 				}

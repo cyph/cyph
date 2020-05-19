@@ -4,6 +4,7 @@
 	fxLayout="column"
 	fxLayoutAlign="center stretch"
 	class="link-connection loading"
+	*ngIf="!!(link | await)"
 >
 	<cyph-video
 		[autoplay]="true"

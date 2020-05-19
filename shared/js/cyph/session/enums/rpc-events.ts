@@ -3,6 +3,9 @@
  */
 export class RpcEvents {
 	/** @see RpcEvents */
+	public readonly accountMasterKey: string = 'accountMasterKey';
+
+	/** @see RpcEvents */
 	public readonly capabilities: string = 'capabilities';
 
 	/** @see RpcEvents */

@@ -6,23 +6,16 @@ import {fadeIn} from '../../../cyph/animations';
 import {BaseProvider} from '../../../cyph/base-provider';
 import {States as ChatStates} from '../../../cyph/chat/enums';
 import {initGranim} from '../../../cyph/granim';
+import {burnerChatProviders} from '../../../cyph/providers/burner-chat';
 import {AffiliateService} from '../../../cyph/services/affiliate.service';
-import {ChannelService} from '../../../cyph/services/channel.service';
-import {ChatEnvService} from '../../../cyph/services/chat-env.service';
-import {ChatMessageService} from '../../../cyph/services/chat-message.service';
 import {ChatService} from '../../../cyph/services/chat.service';
-import {AnonymousCastleService} from '../../../cyph/services/crypto/anonymous-castle.service';
-import {CastleService} from '../../../cyph/services/crypto/castle.service';
 import {CyphertextService} from '../../../cyph/services/cyphertext.service';
 import {DialogService} from '../../../cyph/services/dialog.service';
 import {EnvService} from '../../../cyph/services/env.service';
-import {EphemeralSessionService} from '../../../cyph/services/ephemeral-session.service';
 import {FileTransferService} from '../../../cyph/services/file-transfer.service';
 import {P2PWebRTCService} from '../../../cyph/services/p2p-webrtc.service';
 import {P2PService} from '../../../cyph/services/p2p.service';
 import {SalesService} from '../../../cyph/services/sales.service';
-import {ScrollService} from '../../../cyph/services/scroll.service';
-import {SessionCapabilitiesService} from '../../../cyph/services/session-capabilities.service';
 import {SessionInitService} from '../../../cyph/services/session-init.service';
 import {SessionService} from '../../../cyph/services/session.service';
 import {SplitTestingService} from '../../../cyph/services/split-testing.service';
@@ -42,31 +35,11 @@ import {ChatRootStates} from '../../enums';
 	animations: [fadeIn],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	providers: [
+		...burnerChatProviders,
 		AffiliateService,
-		ChannelService,
-		ChatService,
-		ChatMessageService,
-		CyphertextService,
-		FileTransferService,
-		P2PService,
-		P2PWebRTCService,
-		ScrollService,
-		SessionCapabilitiesService,
-		{
-			provide: CastleService,
-			useClass: AnonymousCastleService
-		},
-		{
-			provide: EnvService,
-			useClass: ChatEnvService
-		},
 		{
 			provide: SessionInitService,
 			useClass: UrlSessionInitService
-		},
-		{
-			provide: SessionService,
-			useClass: EphemeralSessionService
 		}
 	],
 	selector: 'cyph-ephemeral-chat-root',

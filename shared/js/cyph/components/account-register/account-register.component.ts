@@ -16,6 +16,7 @@ import {filter, map, take} from 'rxjs/operators';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
+import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
 import {emailPattern, emailRegex} from '../../email-pattern';
 import {CyphPlans} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
@@ -53,6 +54,9 @@ import {resolvable, sleep} from '../../util/wait';
 	templateUrl: './account-register.component.html'
 })
 export class AccountRegisterComponent extends BaseProvider implements OnInit {
+	/** Alternate master key. */
+	private readonly altMasterKey = xkcdPassphrase.generate(512);
+
 	/** @ignore */
 	private inviteCodeDebounceLast?: string;
 
@@ -374,6 +378,51 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 		}
 	}
 
+	/** Activates another device. */
+	public async newDeviceActivation (mobile: boolean) : Promise<void> {
+		if (typeof this.username.value !== 'string') {
+			return;
+		}
+
+		const successResolver = resolvable<boolean>();
+		const closeFunction = resolvable<() => void>();
+
+		const sessionData = {
+			aliceMasterKey: await this.altMasterKey,
+			bobSessionID: undefined,
+			username: this.username.value
+		};
+
+		const closed = this.dialogService.baseDialog(
+			AccountNewDeviceActivationComponent,
+			o => {
+				o.mobile = mobile;
+				o.sessionData = sessionData;
+
+				successResolver.resolve(o.success.pipe(take(1)).toPromise());
+			},
+			closeFunction,
+			false,
+			{
+				large: true,
+				lightTheme: true
+			}
+		);
+
+		const success = await successResolver.promise;
+
+		if (success) {
+			const additionalDevices = mobile ?
+				this.additionalDevices.mobile :
+				this.additionalDevices.desktop;
+
+			additionalDevices.next(additionalDevices.value + 1);
+		}
+
+		(await closeFunction.promise)();
+		await closed;
+	}
+
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
@@ -523,6 +572,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				(await this.accountAuthService.register(
 					this.username.value,
 					masterKey,
+					await this.altMasterKey,
 					{
 						isCustom: !this.useLockScreenPIN.value,
 						value: this.useLockScreenPIN.value ?
