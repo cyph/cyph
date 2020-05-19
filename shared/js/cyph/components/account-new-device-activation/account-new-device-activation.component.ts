@@ -38,6 +38,12 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 	/** @ignore */
 	private wasSuccessful: boolean = false;
 
+	/**
+	 * Emits on activation completion.
+	 * @returns Success status.
+	 */
+	@Output() public readonly activationComplete = new EventEmitter<boolean>();
+
 	/** Indicates whether or not a mobile device is being activated. */
 	@Input() public mobile: boolean = false;
 
@@ -54,18 +60,12 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 				username: string;
 		  };
 
-	/**
-	 * Emits on activation completion.
-	 * @returns Success status.
-	 */
-	@Output() public readonly success = new EventEmitter<boolean>();
-
 	/** @inheritDoc */
 	public ngOnDestroy () : void {
 		super.ngOnDestroy();
 
 		if (!this.wasSuccessful) {
-			this.success.emit(false);
+			this.activationComplete.emit(false);
 		}
 	}
 
@@ -95,6 +95,8 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 			this.sessionService.close();
 
+			this.wasSuccessful = true;
+
 			return;
 		}
 
@@ -114,6 +116,8 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			undefined,
 			true
 		);
+
+		this.wasSuccessful = true;
 	}
 
 	constructor (

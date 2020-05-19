@@ -384,7 +384,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		const successResolver = resolvable<boolean>();
+		const activationComplete = resolvable<boolean>();
 		const closeFunction = resolvable<() => void>();
 
 		const sessionData = {
@@ -399,7 +399,9 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 				o.mobile = mobile;
 				o.sessionData = sessionData;
 
-				successResolver.resolve(o.success.pipe(take(1)).toPromise());
+				activationComplete.resolve(
+					o.activationComplete.pipe(take(1)).toPromise()
+				);
 			},
 			closeFunction,
 			false,
@@ -409,7 +411,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			}
 		);
 
-		const success = await successResolver.promise;
+		const success = await activationComplete.promise;
 
 		if (success) {
 			const additionalDevices = mobile ?
