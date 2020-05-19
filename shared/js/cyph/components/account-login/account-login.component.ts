@@ -216,10 +216,13 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	}
 
 	/** Initiates login attempt. */
-	public async submit (newPin?: {
-		isCustom: boolean;
-		value: string;
-	}) : Promise<void> {
+	public async submit (
+		newPin?: {
+			isCustom: boolean;
+			value: string;
+		},
+		altMasterKey: boolean = false
+	) : Promise<void> {
 		this.checking.next(true);
 		this.error.next(false);
 
@@ -255,7 +258,9 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 					) :
 					this.accountAuthService.login(
 						this.username.value,
-						this.masterKey.value
+						this.masterKey.value,
+						undefined,
+						altMasterKey
 					)))
 			);
 		}

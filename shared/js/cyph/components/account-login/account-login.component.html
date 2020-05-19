@@ -159,6 +159,12 @@
 							</h3>
 						</div>
 
+						<cyph-account-new-device-activation
+							[activateForUsername]="username | await"
+							(altMasterKey)="submit(undefined, $event)"
+							*ngIf="loggingIn | await"
+						></cyph-account-new-device-activation>
+
 						<ng-container
 							*ngTemplateOutlet="usernameField"
 						></ng-container>
@@ -286,6 +292,12 @@
 								}}
 							</h3>
 						</div>
+
+						<cyph-account-new-device-activation
+							[activateForUsername]="username | await"
+							(altMasterKey)="submit(undefined, $event)"
+							*ngIf="loggingIn | await"
+						></cyph-account-new-device-activation>
 
 						<ng-container
 							*ngTemplateOutlet="usernameField"

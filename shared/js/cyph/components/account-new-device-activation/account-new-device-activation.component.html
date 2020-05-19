@@ -1,3 +1,11 @@
 <div fxFlex fxFlexFill fxLayout="column">
-	<cyph-link-connection fxFlex></cyph-link-connection>
+	<cyph-qr-code-scanner
+		fxFlex
+		(scanComplete)="init($event)"
+		*ngIf="activateForUsername !== undefined && sessionData === undefined"
+	></cyph-qr-code-scanner>
+	<cyph-link-connection
+		fxFlex
+		*ngIf="sessionData !== undefined"
+	></cyph-link-connection>
 </div>

@@ -1,5 +1,6 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
@@ -10,7 +11,6 @@ import {
 import {BaseProvider} from '../../base-provider';
 import {burnerChatProviders} from '../../providers/burner-chat';
 import {BasicSessionInitService} from '../../services/basic-session-init.service';
-import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
@@ -38,11 +38,17 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 	/** @ignore */
 	private wasSuccessful: boolean = false;
 
+	/** Username to start activating this device for. */
+	@Input() public activateForUsername?: string;
+
 	/**
 	 * Emits on activation completion.
 	 * @returns Success status.
 	 */
 	@Output() public readonly activationComplete = new EventEmitter<boolean>();
+
+	/** Emits alt master key on succesful activation completion. */
+	@Output() public readonly altMasterKey = new EventEmitter<string>();
 
 	/** Indicates whether or not a mobile device is being activated. */
 	@Input() public mobile: boolean = false;
@@ -60,17 +66,18 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 				username: string;
 		  };
 
-	/** @inheritDoc */
-	public ngOnDestroy () : void {
-		super.ngOnDestroy();
+	/** Initializes new device activation. */
+	public async init (bobSessionID?: string) : Promise<void> {
+		if (typeof bobSessionID === 'string' && this.activateForUsername) {
+			this.sessionData = {
+				aliceMasterKey: undefined,
+				bobSessionID,
+				username: this.activateForUsername
+			};
 
-		if (!this.wasSuccessful) {
-			this.activationComplete.emit(false);
+			this.changeDetectorRef.detectChanges();
 		}
-	}
 
-	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
 		if (!this.sessionData) {
 			return;
 		}
@@ -94,6 +101,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			])).confirmPromise;
 
 			this.sessionService.close();
+			this.activationComplete.emit(true);
 
 			this.wasSuccessful = true;
 
@@ -110,19 +118,29 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			return;
 		}
 
-		await this.accountAuthService.login(
-			this.sessionData.username,
-			masterKey,
-			undefined,
-			true
-		);
+		this.altMasterKey.emit(masterKey);
+		this.activationComplete.emit(true);
 
 		this.wasSuccessful = true;
 	}
 
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+
+		if (!this.wasSuccessful) {
+			this.activationComplete.emit(false);
+		}
+	}
+
+	/** @inheritDoc */
+	public async ngOnInit () : Promise<void> {
+		await this.init();
+	}
+
 	constructor (
 		/** @ignore */
-		private readonly accountAuthService: AccountAuthService,
+		private readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** @ignore */
 		private readonly basicSessionInitService: BasicSessionInitService,
