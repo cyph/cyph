@@ -162,7 +162,10 @@
 						<cyph-account-new-device-activation
 							[activateForUsername]="username | await"
 							(altMasterKey)="submit(undefined, $event)"
-							*ngIf="loggingIn | await"
+							*ngIf="
+								(loggingIn | await) === true &&
+								(pinUnlock | await) === false
+							"
 						></cyph-account-new-device-activation>
 
 						<ng-container
@@ -296,7 +299,10 @@
 						<cyph-account-new-device-activation
 							[activateForUsername]="username | await"
 							(altMasterKey)="submit(undefined, $event)"
-							*ngIf="loggingIn | await"
+							*ngIf="
+								(loggingIn | await) === true &&
+								(pinUnlock | await) === false
+							"
 						></cyph-account-new-device-activation>
 
 						<ng-container
