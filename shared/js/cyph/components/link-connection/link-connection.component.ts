@@ -151,11 +151,10 @@ export class LinkConnectionComponent extends BaseProvider
 			)
 			.toPromise();
 
-		this.linkConstant =
-			(this.newDeviceActivation ?
-				'' :
-				this.envService.cyphImUrl +
-				(this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#')) +
+		this.linkConstant = this.newDeviceActivation ?
+			sharedSecret.slice(0, this.configService.secretLength) :
+			this.envService.cyphImUrl +
+			(this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#') +
 			sharedSecret;
 
 		const linkEncoded = encodeURIComponent(this.linkConstant);

@@ -15,6 +15,7 @@ import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {ISessionMessageData, rpcEvents} from '../../session';
+import {normalize} from '../../util/formatting';
 
 /**
  * Angular component for account new device activation UI.
@@ -84,7 +85,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 		this.basicSessionInitService.setID(
 			this.sessionData.bobSessionID ? this.sessionData.bobSessionID : '',
-			this.sessionData.username
+			normalize(this.sessionData.username)
 		);
 
 		await this.sessionService.connected;
