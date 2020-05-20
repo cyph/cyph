@@ -205,6 +205,7 @@ export abstract class SessionService extends BaseProvider
 
 	/** @see IChannelHandlers.onConnect */
 	protected async channelOnConnect () : Promise<void> {
+		await this.castleService.initialMessagesProcessed;
 		this.state.isConnected.next(true);
 		await this.trigger(events.connect);
 	}

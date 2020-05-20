@@ -13,18 +13,17 @@ export class CastleService extends BaseProvider implements ICastle {
 	/** @ignore */
 	protected readonly pairwiseSession = resolvable<IPairwiseSession>();
 
+	/** @see PairwiseSession.initialMessagesProcessed */
+	public readonly initialMessagesProcessed = this.pairwiseSession.promise.then(
+		async o => o.initialMessagesProcessed.promise
+	);
+
 	/** Initializes service. */
 	/* eslint-disable-next-line @typescript-eslint/require-await */
 	public async init (_SESSION_SERVICE: SessionService) : Promise<void> {
 		throw new Error(
 			'Must provide an implementation of CastleService.init.'
 		);
-	}
-
-	/** @see PairwiseSession.initialMessagesProcessed */
-	public async initialMessagesProcessed () : Promise<void> {
-		return (await this.pairwiseSession.promise).initialMessagesProcessed
-			.promise;
 	}
 
 	/** @inheritDoc */
