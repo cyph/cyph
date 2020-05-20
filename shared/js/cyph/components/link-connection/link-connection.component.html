@@ -4,7 +4,7 @@
 	fxLayout="column"
 	fxLayoutAlign="center stretch"
 	class="link-connection loading"
-	*ngIf="!!(link | await)"
+	*ngIf="!newDeviceActivation; else newDeviceActivationUI"
 >
 	<cyph-video
 		[autoplay]="true"
@@ -216,20 +216,9 @@
 	<ng-container *ngIf="!envService.isMobileOS">
 		<br />
 
-		<div fxLayoutAlign="center center">
-			<img
-				cyphTranslate
-				alt="QR Code"
-				[src]="qrSrc"
-				*ngIf="
-					(qrService.getQRCode({
-						dotScale: 0.75,
-						size: 128,
-						text: (link | await) || ''
-					}) | await) || '' as qrSrc
-				"
-			/>
-		</div>
+		<ng-container
+			*ngTemplateOutlet="qrCodeUI; context: {size: 128}"
+		></ng-container>
 
 		<br />
 	</ng-container>
@@ -357,3 +346,48 @@
 		</ng-template>
 	</div>
 </div>
+
+<ng-template #newDeviceActivationUI>
+	<div
+		fxFlex
+		fxFlexFill
+		fxLayout="column"
+		fxLayoutAlign="center stretch"
+		fxLayoutGap="32px"
+		class="link-connection loading"
+	>
+		<ng-container *ngIf="!!(link | await); else newDeviceActivationSpinner">
+			<div class="text-center">
+				{{ stringsService.newDeviceActivationQR }}
+			</div>
+
+			<ng-container
+				*ngTemplateOutlet="qrCodeUI; context: {size: 256}"
+			></ng-container>
+		</ng-container>
+		<ng-template #newDeviceActivationSpinner>
+			<div fxLayoutAlign="center center">
+				<mat-progress-spinner
+					mode="indeterminate"
+				></mat-progress-spinner>
+			</div>
+		</ng-template>
+	</div>
+</ng-template>
+
+<ng-template #qrCodeUI let-size="size">
+	<div fxLayoutAlign="center center">
+		<img
+			cyphTranslate
+			alt="QR Code"
+			[src]="qrSrc"
+			*ngIf="
+				(qrService.getQRCode({
+					dotScale: 0.75,
+					size: size,
+					text: (link | await) || ''
+				}) | await) || '' as qrSrc
+			"
+		/>
+	</div>
+</ng-template>

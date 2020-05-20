@@ -74,6 +74,9 @@ export class LinkConnectionComponent extends BaseProvider
 		undefined
 	);
 
+	/** Special mode for new device activation. */
+	@Input() public newDeviceActivation: boolean = false;
+
 	/** Draft of queued message. */
 	public readonly queuedMessageDraft = new BehaviorSubject<string>('');
 
@@ -149,8 +152,10 @@ export class LinkConnectionComponent extends BaseProvider
 			.toPromise();
 
 		this.linkConstant =
-			this.envService.cyphImUrl +
-			(this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#') +
+			(this.newDeviceActivation ?
+				'' :
+				this.envService.cyphImUrl +
+				(this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#')) +
 			sharedSecret;
 
 		const linkEncoded = encodeURIComponent(this.linkConstant);

@@ -711,6 +711,9 @@ export class StringsService extends BaseProvider {
 	public readonly nameOrPseudonym = `Name or Pseudonym`;
 
 	/** @see StringsService */
+	public readonly newDeviceActivationQR = `Open the ${this.internalProductShort} app and scan this QR code:`;
+
+	/** @see StringsService */
 	public readonly newDoc = `New Doc`;
 
 	/** @see StringsService */
