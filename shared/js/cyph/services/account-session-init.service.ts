@@ -18,6 +18,9 @@ export class AccountSessionInitService extends BaseProvider
 	public ephemeral: boolean = false;
 
 	/** @inheritDoc */
+	public readonly headless: Promise<boolean> = Promise.resolve(false);
+
+	/** @inheritDoc */
 	public readonly id: Promise<string> = Promise.resolve('');
 
 	/** @inheritDoc */

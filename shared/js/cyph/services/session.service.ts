@@ -379,6 +379,11 @@ export abstract class SessionService extends BaseProvider
 			case CastleEvents.connect:
 				this.connected.then(async () => {
 					this.state.sharedSecret.next(undefined);
+
+					if (await this.sessionInitService.headless) {
+						return;
+					}
+
 					await this.trigger(events.beginChat);
 				});
 				break;

@@ -12,6 +12,9 @@ import {SessionInitService} from './session-init.service';
 export class BasicSessionInitService extends BaseProvider
 	implements SessionInitService {
 	/** @ignore */
+	private readonly _HEADLESS = resolvable<boolean>();
+
+	/** @ignore */
 	private readonly _ID = resolvable<string>();
 
 	/** @ignore */
@@ -24,6 +27,9 @@ export class BasicSessionInitService extends BaseProvider
 	public ephemeral: boolean = true;
 
 	/** @inheritDoc */
+	public readonly headless: Promise<boolean> = this._HEADLESS.promise;
+
+	/** @inheritDoc */
 	public readonly id: Promise<string> = this._ID.promise;
 
 	/** @inheritDoc */
@@ -33,7 +39,8 @@ export class BasicSessionInitService extends BaseProvider
 	public readonly sessionService: IResolvable<ISessionService> = resolvable();
 
 	/** Sets ID. */
-	public setID (id: string, salt?: string) : void {
+	public setID (id: string, salt?: string, headless: boolean = false) : void {
+		this._HEADLESS.resolve(headless);
 		this._ID.resolve(id);
 		this._SALT.resolve(salt);
 	}

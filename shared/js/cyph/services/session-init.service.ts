@@ -15,6 +15,9 @@ export class SessionInitService extends BaseProvider {
 	/** Indicates whether or not this is an ephemeral session. */
 	public readonly ephemeral: boolean = true;
 
+	/** Indicates whether or not this is a headless/automated session. */
+	public readonly headless: Promise<boolean> = Promise.resolve(false);
+
 	/** ID for initiating new Session. */
 	public readonly id: Promise<string> = Promise.resolve('');
 

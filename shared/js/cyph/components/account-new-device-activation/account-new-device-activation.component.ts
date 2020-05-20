@@ -92,7 +92,8 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 		this.basicSessionInitService.setID(
 			this.sessionData.bobSessionID ? this.sessionData.bobSessionID : '',
-			normalize(this.sessionData.username)
+			normalize(this.sessionData.username),
+			true
 		);
 
 		await this.sessionService.connected;
