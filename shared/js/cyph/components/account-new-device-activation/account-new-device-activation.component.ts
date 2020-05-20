@@ -83,6 +83,13 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			return;
 		}
 
+		const masterKeyPromise = this.sessionData.bobSessionID ?
+			(async () =>
+				((await this.sessionService.one<ISessionMessageData[]>(
+					rpcEvents.accountMasterKey
+				)) || [])[0]?.command?.additionalData)() :
+			undefined;
+
 		this.basicSessionInitService.setID(
 			this.sessionData.bobSessionID ? this.sessionData.bobSessionID : '',
 			normalize(this.sessionData.username)
@@ -101,7 +108,6 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 				}
 			])).confirmPromise;
 
-			this.sessionService.close();
 			this.activationComplete.emit(true);
 
 			this.wasSuccessful = true;
@@ -109,9 +115,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			return;
 		}
 
-		const masterKey = (await this.sessionService.one<ISessionMessageData>(
-			rpcEvents.accountMasterKey
-		)).command?.additionalData;
+		const masterKey = await masterKeyPromise;
 
 		this.sessionService.close();
 

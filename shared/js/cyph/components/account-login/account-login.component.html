@@ -164,7 +164,8 @@
 							(altMasterKey)="submit(undefined, $event)"
 							*ngIf="
 								(loggingIn | await) === true &&
-								(pinUnlock | await) === false
+								(pinUnlock | await) === false &&
+								(checking | await) === false
 							"
 						></cyph-account-new-device-activation>
 
@@ -301,7 +302,8 @@
 							(altMasterKey)="submit(undefined, $event)"
 							*ngIf="
 								(loggingIn | await) === true &&
-								(pinUnlock | await) === false
+								(pinUnlock | await) === false &&
+								(checking | await) === false
 							"
 						></cyph-account-new-device-activation>
 
