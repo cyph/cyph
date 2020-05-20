@@ -221,7 +221,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			isCustom: boolean;
 			value: string;
 		},
-		altMasterKey: boolean = false
+		altMasterKey?: string
 	) : Promise<void> {
 		this.checking.next(true);
 		this.error.next(false);
@@ -247,9 +247,16 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			}
 
 			this.error.next(
-				!(await (this.pinUnlock.value &&
-				this.savedMasterKey.value &&
-				this.savedUsername.value ?
+				!(await (typeof altMasterKey === 'string' ?
+					this.accountAuthService.login(
+						this.username.value,
+						altMasterKey,
+						undefined,
+						true
+					) :
+				this.pinUnlock.value &&
+					this.savedMasterKey.value &&
+					this.savedUsername.value ?
 					this.accountAuthService.login(
 						this.savedUsername.value,
 						this.savedMasterKey.value,
@@ -258,9 +265,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 					) :
 					this.accountAuthService.login(
 						this.username.value,
-						this.masterKey.value,
-						undefined,
-						altMasterKey
+						this.masterKey.value
 					)))
 			);
 		}
