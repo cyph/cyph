@@ -71,7 +71,7 @@ export class AccountCastleService extends CastleService {
 				accountSessionService.remoteUsername
 			);
 
-			this.pairwiseSession.next(
+			this.pairwiseSession.resolve(
 				new PairwiseSession(
 					this.potassiumService,
 					transport,
@@ -96,7 +96,7 @@ export class AccountCastleService extends CastleService {
 			return;
 		}
 
-		this.pairwiseSession.next(
+		this.pairwiseSession.resolve(
 			await getOrSetDefaultAsync(
 				this.pairwiseSessions,
 				accountSessionService.ephemeralSubSession ?

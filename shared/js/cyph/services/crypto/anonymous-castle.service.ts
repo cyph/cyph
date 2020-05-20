@@ -45,7 +45,7 @@ export class AnonymousCastleService extends CastleService {
 				sessionService.remoteUsername
 			);
 
-		this.pairwiseSession.next(
+		this.pairwiseSession.resolve(
 			new PairwiseSession(
 				this.potassiumService,
 				transport,
