@@ -257,7 +257,8 @@ export class DatabaseService extends DataManagerService {
 	/** Downloads value and gives progress. */
 	public downloadItem<T> (
 		_URL: MaybePromise<string>,
-		_PROTO: IProto<T>
+		_PROTO: IProto<T>,
+		_WAIT_UNTIL_EXISTS?: boolean
 	) : {
 		alreadyCached: Promise<boolean>;
 		progress: Observable<number>;
@@ -545,8 +546,13 @@ export class DatabaseService extends DataManagerService {
 	}
 
 	/** @inheritDoc */
-	public async getItem<T> (url: string, proto: IProto<T>) : Promise<T> {
-		return (await this.downloadItem(url, proto).result).value;
+	public async getItem<T> (
+		url: string,
+		proto: IProto<T>,
+		waitUntilExists: boolean = false
+	) : Promise<T> {
+		return (await this.downloadItem(url, proto, waitUntilExists).result)
+			.value;
 	}
 
 	/** Gets most recently added key of a list/map. */
@@ -580,7 +586,8 @@ export class DatabaseService extends DataManagerService {
 
 	/** Gets the latest metadata known by the database. */
 	public async getMetadata (
-		_URL: MaybePromise<string>
+		_URL: MaybePromise<string>,
+		_WAIT_UNTIL_EXISTS?: boolean
 	) : Promise<{
 		data?: string;
 		hash: string;

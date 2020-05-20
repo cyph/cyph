@@ -465,6 +465,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 	public downloadItem<T> (
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
+		waitUntilExists: boolean = false,
 		verifyHash?: string
 	) : {
 		alreadyCached: Promise<boolean>;
@@ -477,7 +478,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 		const result = this.ngZone.runOutsideAngular(async () => {
 			const url = await urlPromise;
 
-			const {data, hash, timestamp} = await this.getMetadata(url);
+			const {data, hash, timestamp} = await this.getMetadata(
+				url,
+				waitUntilExists
+			);
 
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			if (verifyHash !== undefined && verifyHash !== hash) {
@@ -634,14 +638,37 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 	/** @inheritDoc */
 	public async getMetadata (
-		urlPromise: MaybePromise<string>
+		urlPromise: MaybePromise<string>,
+		waitUntilExists: boolean = false
 	) : Promise<IDatabaseItem> {
 		return this.ngZone.runOutsideAngular(async () => {
 			const url = await urlPromise;
+			const ref = await this.getDatabaseRef(url);
 
-			const {data, hash, timestamp} = (await (await this.getDatabaseRef(
-				url
-			)).once('value')).val() || {
+			let val: any;
+
+			if (waitUntilExists) {
+				val = await new Promise<any>(resolve => {
+					/* eslint-disable-next-line no-null/no-null */
+					const onValue = async (
+						snapshot: firebase.database.DataSnapshot | null
+					) => {
+						if (!snapshot?.exists()) {
+							return;
+						}
+
+						ref.off('value', onValue);
+						resolve(snapshot.val());
+					};
+
+					ref.on('value', onValue);
+				});
+			}
+			else {
+				val = (await ref.once('value')).val();
+			}
+
+			const {data, hash, timestamp} = val || {
 				data: undefined,
 				hash: undefined,
 				timestamp: undefined

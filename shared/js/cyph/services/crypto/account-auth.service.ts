@@ -56,12 +56,17 @@ export class AccountAuthService extends BaseProvider {
 	private async getItem<T> (
 		url: string,
 		proto: IProto<T>,
-		key: Uint8Array
+		key: Uint8Array,
+		waitUntilExists: boolean = false
 	) : Promise<T> {
 		return deserialize(
 			proto,
 			await this.potassiumService.secretBox.open(
-				await this.databaseService.getItem(url, BinaryProto),
+				await this.databaseService.getItem(
+					url,
+					BinaryProto,
+					waitUntilExists
+				),
 				key,
 				`${
 					this.databaseService.namespace
@@ -413,7 +418,8 @@ export class AccountAuthService extends BaseProvider {
 			const loginDataPromise = this.getItem(
 				`users/${username}/loginData${altMasterKey ? 'Alt' : ''}`,
 				AccountLoginData,
-				masterKey
+				masterKey,
+				altMasterKey
 			);
 
 			const userPromise = this.accountUserLookupService.getUser(username);
