@@ -83,7 +83,7 @@ const getUserMetadata = async (projectId, username, namespace) => {
 		inviterUsername,
 		plan
 	] = await Promise.all([
-		getCertTimestamp(username, namespace, getItem),
+		getCertTimestamp(username, namespace, getItem).catch(() => 'N/A'),
 		database
 			.ref(`${namespace.replace(/\./g, '_')}/users/${username}/internal`)
 			.once('value')
