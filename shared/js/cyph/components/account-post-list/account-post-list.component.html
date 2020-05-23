@@ -4,7 +4,12 @@
 		else loading
 	"
 >
-	<div fxLayout="column" fxLayoutGap="16px" *ngIf="(posts?.length || 0) > 0">
+	<div
+		class="full-width"
+		fxLayout="column"
+		fxLayoutGap="16px"
+		*ngIf="(posts?.length || 0) > 0"
+	>
 		<cyph-account-post
 			class="full-width"
 			[author]="author"
