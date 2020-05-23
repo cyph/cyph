@@ -81,6 +81,12 @@ read -r -d '' modules <<- EOM
 	@ngrx/store
 	@ngrx/store-devtools
 	@ngtools/webpack
+	@ngx-gallery/core
+	@ngx-gallery/gallerize
+	@ngx-gallery/lightbox
+	@ngx-share/button
+	@ngx-share/buttons
+	@ngx-share/core
 	@ngxs/devtools-plugin
 	@ngxs/logger-plugin
 	@ngxs/storage-plugin
@@ -307,14 +313,19 @@ read -r -d '' modules <<- EOM
 	nativescript-dev-typescript
 	nativescript-dev-webpack
 	nativescript-theme-core
+	ng-animate
 	ng-fullcalendar@https://github.com/buu700/ng-fullcalendar-tmp
 	ng-packagr
 	ng2-fittext
 	ng2-pdf-viewer
 	ng2-truncate
+	ngx-bar-rating
 	ngx-build-plus
 	ngx-contextmenu
 	ngx-image-cropper
+	ngx-progressbar
+	ngx-scrollbar
+	ngx-teximate
 	node-fetch
 	node-sass
 	nodemailer@4
