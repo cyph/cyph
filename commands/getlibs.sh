@@ -34,12 +34,15 @@ go get -u \
 	github.com/buu700/braintree-go-tmp \
 	github.com/microcosm-cc/bluemonday \
 	github.com/oschwald/geoip2-golang \
+	google.golang.org/api \
+	google.golang.org/api/internal \
 	google.golang.org/api/iterator \
 	google.golang.org/appengine \
 	google.golang.org/appengine/datastore \
 	google.golang.org/appengine/mail \
 	google.golang.org/appengine/memcache \
-	google.golang.org/appengine/urlfetch
+	google.golang.org/appengine/urlfetch \
+	google.golang.org/grpc
 
 
 nativePlugins="$(cat native/plugins.list)"
