@@ -73,7 +73,11 @@ read -r -d '' modules <<- EOM
 	@firebase/messaging-types
 	@firebase/storage
 	@firebase/storage-types
+	@fortawesome/angular-fontawesome
 	@fortawesome/fontawesome-free
+	@fortawesome/free-brands-svg-icons
+	@fortawesome/free-solid-svg-icons
+	@fortawesome/fontawesome-svg-core
 	@google-cloud/storage
 	@ngrx/core
 	@ngrx/effects
