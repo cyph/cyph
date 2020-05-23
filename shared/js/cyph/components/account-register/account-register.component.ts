@@ -877,19 +877,7 @@ export class AccountRegisterComponent extends BaseProvider
 		);
 
 		this.submissionReadinessErrors = toBehaviorSubject(
-			(<
-				Observable<
-					[
-						boolean,
-						string,
-						FormControl,
-						boolean,
-						string,
-						FormControl,
-						string
-					]
-				>
-			> observableAll<any>([
+			observableAll([
 				this.additionalDevicesReady,
 				this.email,
 				this.inviteCodeWatcher,
@@ -903,7 +891,7 @@ export class AccountRegisterComponent extends BaseProvider
 						]() :
 						Promise.resolve('')
 				)
-			])).pipe(
+			]).pipe(
 				map(
 					([
 						additionalDevicesReady,
@@ -946,19 +934,7 @@ export class AccountRegisterComponent extends BaseProvider
 		);
 
 		this.currentStep = toBehaviorSubject<number>(
-			(<
-				Observable<
-					[
-						boolean,
-						string,
-						FormControl,
-						boolean,
-						string,
-						number,
-						FormControl
-					]
-				>
-			> observableAll<any>([
+			observableAll([
 				this.additionalDevicesReady,
 				this.email,
 				this.inviteCodeWatcher,
@@ -966,7 +942,7 @@ export class AccountRegisterComponent extends BaseProvider
 				this.name,
 				this.tabIndex,
 				this.usernameWatcher
-			])).pipe(
+			]).pipe(
 				map(
 					([
 						additionalDevicesReady,
