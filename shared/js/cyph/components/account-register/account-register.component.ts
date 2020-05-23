@@ -5,6 +5,7 @@ import {
 	Component,
 	EventEmitter,
 	Input,
+	OnDestroy,
 	OnInit,
 	Output
 } from '@angular/core';
@@ -53,7 +54,8 @@ import {resolvable, sleep} from '../../util/wait';
 	styleUrls: ['./account-register.component.scss'],
 	templateUrl: './account-register.component.html'
 })
-export class AccountRegisterComponent extends BaseProvider implements OnInit {
+export class AccountRegisterComponent extends BaseProvider
+	implements OnDestroy, OnInit {
 	/** Alternate master key. */
 	private readonly altMasterKey = xkcdPassphrase.generate(512);
 
@@ -326,13 +328,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 			this.submitError.next(undefined);
 
-			this.finalConfirmation.masterKey = '';
-
-			this.masterKey.next('');
-			this.masterKeyConfirm.setValue('');
-			this.xkcdPassphrase.next(0);
-			this.xkcdPassphrases = undefined;
-
 			this.accountDatabaseService.currentUser.next({
 				...this.accountDatabaseService.currentUser.value,
 				masterKeyConfirmed: true
@@ -363,14 +358,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			}
 
 			this.submitError.next(undefined);
-
-			this.finalConfirmation.masterKey = '';
-
-			this.masterKey.next('');
-			this.masterKeyConfirm.setValue('');
-			this.xkcdPassphrase.next(0);
-			this.xkcdPassphrases = undefined;
-
 			this.submitMasterKey.emit(masterKey);
 		}
 		finally {
@@ -423,6 +410,28 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 
 		(await closeFunction.promise)();
 		await closed;
+	}
+
+	/** @inheritDoc */
+	public ngOnDestroy () : void {
+		super.ngOnDestroy();
+
+		this.finalConfirmation.masterKey = '';
+
+		this.email.next('');
+		this.inviteCode.setValue('');
+		this.lockScreenPassword.next('');
+		this.lockScreenPasswordConfirm.setValue('');
+		this.lockScreenPIN.next('');
+		this.lockScreenPinConfirm.next('');
+		this.masterKey.next('');
+		this.masterKeyConfirm.setValue('');
+		this.name.next('');
+		this.username.setValue('');
+		this.useLockScreenPIN.next(false);
+		this.useXkcdPassphrase.next(false);
+		this.xkcdPassphrase.next(0);
+		this.xkcdPassphrases = undefined;
 	}
 
 	/** @inheritDoc */
@@ -599,8 +608,6 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		this.finalConfirmation.masterKey = '';
-
 		this.analyticsService.sendEvent(
 			'registration',
 			'new',
@@ -608,22 +615,7 @@ export class AccountRegisterComponent extends BaseProvider implements OnInit {
 			1
 		);
 
-		this.email.next('');
-		this.inviteCode.setValue('');
-		this.lockScreenPassword.next('');
-		this.lockScreenPasswordConfirm.setValue('');
-		this.lockScreenPIN.next('');
-		this.lockScreenPinConfirm.next('');
-		this.masterKey.next('');
-		this.masterKeyConfirm.setValue('');
-		this.name.next('');
-		this.username.setValue('');
-		this.useLockScreenPIN.next(false);
-		this.useXkcdPassphrase.next(false);
-		this.xkcdPassphrase.next(0);
-		this.xkcdPassphrases = undefined;
-
-		this.router.navigate(['welcome']);
+		await this.router.navigate(['welcome']);
 	}
 
 	/** Updates route for consistency with tabIndex. */

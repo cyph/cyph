@@ -189,7 +189,7 @@ export class StringsService extends BaseProvider {
 	public readonly cancel = `cancel`;
 
 	/** @see StringsService */
-	public readonly changeMasterKeyContent = `You are about to change your **master key**. This is not reversible. If you lose the new master key, **your account cannot be recovered**.\n\nYou will be required to log in again from scratch next time you open ${this.internalProduct}. Continue?`;
+	public readonly changeMasterKeyContent = `You are about to change your **master key**. This is not reversible. If you lose the new master key, **your account cannot be recovered**.\n\nYou will be logged out and required to log in again from scratch. Continue?`;
 
 	/** @see StringsService */
 	public readonly changeMasterKeyFailure = `Changing the master key failed. Please try again later.`;

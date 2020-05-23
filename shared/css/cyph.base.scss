@@ -20,6 +20,16 @@ mat-dialog-container {
 .mat-slide-toggle-content {
 	font-weight: normal;
 }
+.mat-tooltip.fake-tooltip {
+	color: #fff;
+	border-radius: 4px;
+	margin: 14px;
+	max-width: 250px;
+	padding-left: 8px;
+	padding-right: 8px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 
 $cyphLargeDialogHeight: calc(100vh - 64px) !important;
 $cyphLargeDialogWidth: calc(100vw - 64px) !important;

@@ -61,6 +61,10 @@
 						lockScreenPasswordReady
 					) | await) === false
 				"
+				*ngIf="
+					!(confirmMasterKeyOnly || getMasterKeyOnly) ||
+					(opsecAcknowledgement | await) === true
+				"
 			>
 				{{
 					!confirmMasterKeyOnly && !paperMasterKeySetupMode ?
@@ -1100,7 +1104,12 @@
 					placeholder="Confirm Master Key"
 					required
 					(keydown.enter)="
-						confirmMasterKey(); $event.preventDefault()
+						confirmMasterKeyOnly ?
+							confirmMasterKey() :
+						getMasterKeyOnly ?
+							getMasterKey() :
+							undefined;
+						$event.preventDefault()
 					"
 				/>
 				<mat-icon
@@ -1190,9 +1199,15 @@
 						</li>
 					</ol>
 				</div>
-				<div fxLayout="row" fxLayoutAlign="center center">
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					[class.cyph-inverted-theme]="
+						(opsecAcknowledgement | await) === false
+					"
+				>
 					<button
-						mat-button
+						mat-raised-button
 						cyphTranslate
 						[disabled]="(opsecAcknowledgement | await) === true"
 						(click)="opsecAcknowledgement.next(true)"
@@ -1209,16 +1224,9 @@
 			(click)="useXkcdPassphrase.next(true)"
 			class="password-option"
 			[class.deselected]="(useXkcdPassphrase | await) === false"
-			[class.visibility-hidden]="(opsecAcknowledgement | await) === false"
+			*ngIf="(opsecAcknowledgement | await) === true"
 		>
-			<div
-				#masterKeySpoilerTooltip="matTooltip"
-				fxFlex
-				fxLayout="column"
-				fxLayoutGap="16px"
-				[matTooltip]="stringsService.masterKeyInfo"
-				matTooltipPosition="above"
-			>
+			<div fxFlex fxLayout="column" fxLayoutGap="16px">
 				<div></div>
 				<div
 					fxLayout="row"
@@ -1226,6 +1234,11 @@
 					*ngIf="(spoiler | await) === false"
 				>
 					<div fxFlex fxFlex.sm="80" fxFlex.gt-sm="90">
+						<div fxLayoutAlign="center center">
+							<div class="fake-tooltip mat-tooltip">
+								{{ stringsService.masterKeyInfo }}
+							</div>
+						</div>
 						<div fxLayoutAlign="center center" fxLayoutGap="16px">
 							<div></div>
 							<div cyphTranslate class="slider-label">
@@ -1233,6 +1246,7 @@
 							</div>
 							<mat-slider
 								fxFlex
+								class="cdk-focused"
 								[displayWith]="xkcdSliderDisplayWith"
 								[max]="configService.masterKey.sizes.length - 1"
 								[min]="1"
@@ -1269,11 +1283,6 @@
 						class="spoiler"
 						[class.revealed]="(spoiler | await) === false"
 						(click)="
-							!envService.isMobileOS ?
-								undefined :
-							!spoiler.value ?
-								masterKeySpoilerTooltip.hide() :
-								masterKeySpoilerTooltip.show();
 							spoiler.next(!spoiler.value);
 							xkcdPassphraseHasBeenViewed.next(true)
 						"
@@ -1362,13 +1371,12 @@
 			</div>
 		</div>
 
-		<div></div>
-
 		<div
 			fxLayout="row"
 			fxLayoutAlign="center center"
-			[class.visibility-hidden]="(opsecAcknowledgement | await) === false"
-			*ngIf="!confirmMasterKeyOnly"
+			*ngIf="
+				!confirmMasterKeyOnly && (opsecAcknowledgement | await) === true
+			"
 		>
 			<mat-accordion>
 				<mat-expansion-panel
@@ -1518,7 +1526,7 @@
 			</mat-accordion>
 		</div>
 
-		<div></div>
+		<div *ngIf="(opsecAcknowledgement | await) === true"></div>
 	</div>
 </ng-template>
 

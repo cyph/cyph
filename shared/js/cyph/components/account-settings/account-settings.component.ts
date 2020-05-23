@@ -19,6 +19,7 @@ import {trackByID} from '../../track-by/track-by-id';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {observableAll} from '../../util/observable-all';
 import {titleize} from '../../util/titleize';
+import {reloadWindow} from '../../util/window';
 
 /**
  * Angular component for account settings UI.
@@ -149,7 +150,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 	/** Saves master key update. */
 	public async changeMasterKey (masterKey: string) : Promise<void> {
-		return this.changePasswordInternal(
+		await this.changePasswordInternal(
 			masterKey,
 			this.states.masterKey,
 			{
@@ -159,6 +160,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			},
 			async p => this.accountAuthService.changeMasterKey(p)
 		);
+
+		reloadWindow();
 	}
 
 	/** Saves lock screen password update. */
