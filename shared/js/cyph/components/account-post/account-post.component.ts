@@ -16,6 +16,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
+import {SocialShareService} from '../../services/social-share.service';
 import {StringsService} from '../../services/strings.service';
 import {trackByCommentID, trackByID} from '../../track-by';
 import {observableAll} from '../../util/observable-all';
@@ -316,6 +317,9 @@ export class AccountPostComponent extends BaseProvider
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see SocialShareService */
+		public readonly socialShareService: SocialShareService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

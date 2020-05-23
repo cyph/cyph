@@ -1,23 +1,29 @@
-<web-social-share
-	[share]="shareOptions | await"
-	[show]="visible | await"
-	(closed)="onClose()"
->
-	<i class="fab fa-facebook" slot="facebook" [style.color]="'#3b5998'"></i>
-	<i class="fab fa-twitter" slot="twitter" [style.color]="'#00aced'"></i>
-	<i class="fab fa-pinterest" slot="pinterest" [style.color]="'#bd081c'"></i>
-	<i class="fab fa-linkedin" slot="linkedin" [style.color]="'#0077b5'"></i>
-	<i class="fab fa-reddit" slot="reddit" [style.color]="'#ff4500'"></i>
-	<i class="fas fa-envelope" slot="email" [style.color]="'#ff8ea3'"></i>
-	<i
-		class="fab fa-whatsapp-square"
-		slot="whatsapp"
-		[style.color]="'#25D366'"
-	></i>
-	<i
-		class="fab fa-hacker-news-square"
-		slot="hackernews"
-		[style.color]="'#ff6000'"
-	></i>
-	<i class="far fa-copy" slot="copy" [style.color]="'black'"></i>
-</web-social-share>
+<share-buttons
+	[autoSetMeta]="false"
+	[description]="description"
+	[include]="[
+		'facebook',
+		'twitter',
+		'reddit',
+		'linkedin',
+		'pinterest',
+		'whatsapp',
+		'sms',
+		'email',
+		'copy',
+		'tumblr',
+		'mix',
+		'vk',
+		'telegram',
+		'messenger',
+		'xing',
+		'line'
+	]"
+	[show]="9"
+	[tags]="tags"
+	[theme]="'material-dark'"
+	[title]="title"
+	[url]="url"
+	(opened)="opened.emit()"
+	*ngIf="!!url"
+></share-buttons>

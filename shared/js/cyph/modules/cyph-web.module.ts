@@ -30,6 +30,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {Router, RouterModule} from '@angular/router';
 import {PickerModule} from '@ctrl/ngx-emoji-mart';
 import {EmojiModule} from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import {ShareButtonsModule} from '@ngx-share/buttons';
 import {ScheduleAllModule} from '@syncfusion/ej2-angular-schedule';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
@@ -41,6 +42,7 @@ import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
 import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
+import {SocialShareComponent} from '../components/social-share';
 import {VideoComponent} from '../components/video';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {InitDirective} from '../directives/init.directive';
@@ -48,9 +50,9 @@ import {env} from '../env';
 import {DialogService} from '../services/dialog.service';
 import {LocalStorageService} from '../services/local-storage.service';
 import {MaterialDialogService} from '../services/material-dialog.service';
+import {SocialShareService} from '../services/social-share.service';
 import {WebLocalStorageService} from '../services/web-local-storage.service';
 import {CyphSharedModule} from './cyph-shared.module';
-import {CyphWrappersModule} from './cyph-wrappers.module';
 
 /**
  * Common module with shared imports for web projects.
@@ -64,12 +66,12 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		DynamicFormComponent,
 		InitDirective,
 		SimpleEmojiPickerComponent,
+		SocialShareComponent,
 		VideoComponent
 	],
 	exports: [
 		AngularDraggableModule,
 		CyphSharedModule,
-		CyphWrappersModule,
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
@@ -110,6 +112,8 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		RouterModule,
 		ScheduleAllModule,
 		SimpleEmojiPickerComponent,
+		SocialShareComponent,
+		ShareButtonsModule,
 		SmdFabSpeedDialModule,
 		TextMaskModule,
 		VideoComponent
@@ -117,7 +121,6 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 	imports: [
 		AngularDraggableModule,
 		CyphSharedModule,
-		CyphWrappersModule,
 		EmojiModule,
 		FullCalendarModule,
 		ImageCropperModule,
@@ -150,10 +153,12 @@ import {CyphWrappersModule} from './cyph-wrappers.module';
 		ReactiveFormsModule,
 		RouterModule,
 		ScheduleAllModule,
+		ShareButtonsModule,
 		SmdFabSpeedDialModule,
 		TextMaskModule
 	],
 	providers: [
+		SocialShareService,
 		{
 			provide: DialogService,
 			useClass: MaterialDialogService

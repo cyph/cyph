@@ -209,7 +209,19 @@
 							</button>
 							<button
 								mat-raised-button
-								(click)="sharePost.show()"
+								(click)="
+									socialShareService.share({
+										description:
+											stringsService.postShareTitle,
+										hashTags: ['cyph', 'privacy'],
+										url:
+											envService.appUrl +
+											'post/' +
+											(user?.username || '') +
+											'/' +
+											(post?.id || '')
+									})
+								"
 							>
 								<mat-icon>share</mat-icon>
 								&nbsp;
@@ -217,20 +229,6 @@
 							</button>
 						</div>
 					</div>
-
-					<cyph-social-share
-						#sharePost
-						[options]="{
-							hashTags: ['cyph', 'privacy'],
-							text: stringsService.postShareTitle,
-							url:
-								envService.appUrl +
-								'post/' +
-								(user?.username || '') +
-								'/' +
-								(post?.id || '')
-						}"
-					></cyph-social-share>
 
 					<div class="cyph-light-theme">
 						<mat-expansion-panel>
