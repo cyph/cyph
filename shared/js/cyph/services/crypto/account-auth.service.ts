@@ -424,10 +424,9 @@ export class AccountAuthService extends BaseProvider {
 
 			const userPromise = this.accountUserLookupService.getUser(username);
 
-			const agseConfirmedPromise = this.accountUserLookupService.exists(
-				username,
-				true
-			);
+			const userPublicKeysPromise = this.accountDatabaseService
+				.getUserPublicKeys(username)
+				.catch(() => undefined);
 
 			const loginData = await loginDataPromise;
 
@@ -435,7 +434,7 @@ export class AccountAuthService extends BaseProvider {
 
 			const getUserData = async () =>
 				Promise.all([
-					agseConfirmedPromise,
+					userPublicKeysPromise.then(o => o !== undefined),
 					this.getItem<IKeyPair>(
 						`users/${username}/encryptionKeyPair`,
 						KeyPair,
@@ -453,19 +452,20 @@ export class AccountAuthService extends BaseProvider {
 						`users/${username}/pseudoAccount`
 					),
 					(async () => {
-						const kp = await this.getItem(
-							`users/${username}/signingKeyPair`,
-							KeyPair,
-							loginData.symmetricKey
-						);
+						const [kp, userPublicKeys] = await Promise.all([
+							this.getItem(
+								`users/${username}/signingKeyPair`,
+								KeyPair,
+								loginData.symmetricKey
+							),
+							userPublicKeysPromise
+						]);
 
 						if (
-							(await agseConfirmedPromise) &&
+							userPublicKeys !== undefined &&
 							!this.potassiumService.compareMemory(
 								kp.publicKey,
-								(await this.accountDatabaseService.getUserPublicKeys(
-									username
-								)).signing
+								userPublicKeys.signing
 							)
 						) {
 							throw new Error('Invalid certificate.');
