@@ -1051,12 +1051,17 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 		`${namespace}/pendingInvites/${inviteCode}`
 	);
 
+	const setRegisterItems = async items =>
+		Promise.all(
+			items.map(async ([k, v, proto = BinaryProto]) =>
+				setItem(namespace, `users/${username}/${k}`, proto, v)
+			)
+		);
+
 	await Promise.all([
-		...[
+		setRegisterItems([
 			['encryptionKeyPair', encryptionKeyPair],
 			['inviteCode', inviteCode, StringProto],
-			['loginData', loginData],
-			['loginDataAlt', loginDataAlt],
 			['pin/hash', pinHash],
 			['pin/isCustom', pinIsCustom],
 			['profileVisible', true, BooleanProto],
@@ -1067,9 +1072,7 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 			pseudoAccount ?
 				['pseudoAccount', new Uint8Array(0)] :
 				['certificateRequest', certificateRequest]
-		].map(async ([k, v, proto = BinaryProto]) =>
-			setItem(namespace, `users/${username}/${k}`, proto, v)
-		),
+		]),
 		inviteDataRef.remove(),
 		setItem(
 			namespace,
@@ -1127,6 +1130,11 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 			)
 			.catch(() => {})
 			.then(async () => pendingInviteRef.remove())
+	]);
+
+	await setRegisterItems([
+		['loginData', loginData],
+		['loginDataAlt', loginDataAlt]
 	]);
 
 	if (email) {
