@@ -15,7 +15,7 @@ import {sleep} from '../util/wait';
 /** @inheritDoc */
 export class ChatMessage implements IChatMessage {
 	/** @see ChatMessageInternal.AuthorTypes */
-	/* eslint-disable-next-line camelcase */
+	/* eslint-disable-next-line @typescript-eslint/naming-convention */
 	public static readonly AuthorTypes = ChatMessageInternal.AuthorTypes;
 
 	/** @inheritDoc */

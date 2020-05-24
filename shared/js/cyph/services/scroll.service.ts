@@ -40,7 +40,7 @@ export class ScrollService extends BaseProvider {
 		._ROOT_ELEMENT.promise;
 
 	/** @ignore */
-	private readonly scrollDownLock: {} = {};
+	private readonly scrollDownLock = {};
 
 	/** Quick fix to make scrollDown behave sensibly with infinite scrolling. */
 	public enableScrollDown: boolean = true;

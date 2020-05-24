@@ -35,7 +35,7 @@ export class WorkerService extends BaseProvider {
 
 	/** @see Thread */
 	public async createThread<T> (
-		f: Function,
+		f: () => void,
 		locals: MaybePromise<any> = {}
 	) : Promise<IThread<T>> {
 		if (locals instanceof Promise) {

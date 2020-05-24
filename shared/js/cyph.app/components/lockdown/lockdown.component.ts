@@ -69,6 +69,7 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 
 				try {
 					const o = await requestJSON({
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						headers: {Authorization: password},
 						method: 'POST',
 						url: this.envService.baseUrl + 'pro/unlock'

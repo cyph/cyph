@@ -46,7 +46,7 @@ export class ChatMessageBoxComponent extends BaseProvider
 	);
 
 	/** @ignore */
-	private readonly mobileButtonLock: {} = {};
+	private readonly mobileButtonLock = {};
 
 	/** @see AccountComposeComponent.appointmentShareTimeZone */
 	@Input() public appointmentShareTimeZone: boolean = true;

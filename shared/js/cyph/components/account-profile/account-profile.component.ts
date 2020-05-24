@@ -413,15 +413,19 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 			const lastSpaceIndex = accountUserProfile.name.lastIndexOf(' ');
 
 			const redoxPatient = await this.ehrService.getPatient(apiKey, {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				Demographics: {
+					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					FirstName:
 						firstSpaceIndex > -1 ?
 							accountUserProfile.name.slice(0, firstSpaceIndex) :
 							accountUserProfile.name,
+					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					LastName:
 						firstSpaceIndex > -1 ?
 							accountUserProfile.name.slice(lastSpaceIndex + 1) :
 							'',
+					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					MiddleName:
 						firstSpaceIndex > -1 ?
 							accountUserProfile.name.slice(

@@ -8,7 +8,7 @@ import {resolvable} from './util/wait/resolvable';
 /** @inheritDoc */
 export class Thread<T> implements IThread<T> {
 	/** @ignore */
-	private static stringifyFunction (f: Function) : string {
+	private static stringifyFunction (f: () => void) : string {
 		const s = f.toString();
 		return s.slice(s.indexOf('{')).replace(/use strict/g, '');
 	}
@@ -151,7 +151,7 @@ export class Thread<T> implements IThread<T> {
 	 * @param f Function to run in the new thread.
 	 * @param locals Local data to pass in to the new thread.
 	 */
-	constructor (f: Function, locals: any = {}) {
+	constructor (f: () => void, locals: any = {}) {
 		const seedBytes = potassiumUtil.randomBytes(32);
 
 		const threadSetupVars = {

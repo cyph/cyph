@@ -10,17 +10,20 @@ export class EventManager {
 	/** @ignore */
 	private readonly eventMappings = new Map<
 		string,
-		BehaviorSubject<Set<Function> | undefined>
+		BehaviorSubject<Set<(data: any) => void> | undefined>
 	>();
 
 	/** @ignore */
 	private getEventMapping (
 		event: string
-	) : BehaviorSubject<Set<Function> | undefined> {
+	) : BehaviorSubject<Set<(data: any) => void> | undefined> {
 		return getOrSetDefault(
 			this.eventMappings,
 			event,
-			() => new BehaviorSubject<Set<Function> | undefined>(undefined)
+			() =>
+				new BehaviorSubject<Set<(data: any) => void> | undefined>(
+					undefined
+				)
 		);
 	}
 

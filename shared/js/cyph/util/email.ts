@@ -29,10 +29,11 @@ export const email = async (
 			data: {
 				key: 'HNz4JExN1MtpKz8uP2RD1Q',
 				message: {
-					/* eslint-disable-next-line camelcase */
+					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					from_email: 'incoming@cyph.com',
-					/* eslint-disable-next-line camelcase */
+					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					from_name: fromName,
+					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					headers: {...(fromEmail ? {'Reply-To': fromEmail} : {})},
 					subject,
 					text: message,

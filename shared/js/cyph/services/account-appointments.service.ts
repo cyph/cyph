@@ -28,11 +28,17 @@ export class AccountAppointmentsService extends BaseProvider {
 					appointment: IAppointment;
 					friend?: string;
 					schedulerObject: {
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Description: string;
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						EndTime: Date;
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Id: number;
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Location: string;
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						StartTime: Date;
+						/* eslint-disable-next-line @typescript-eslint/naming-convention */
 						Subject: string;
 					};
 			  }
@@ -55,15 +61,21 @@ export class AccountAppointmentsService extends BaseProvider {
 						appointment,
 						friend,
 						schedulerObject: {
+							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							Description: appointment.calendarInvite.title,
+							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							EndTime: new Date(
 								appointment.calendarInvite.endTime
 							),
+							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							Id: ++this.lastAppointmentID,
+							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							Location: appointment.calendarInvite.url || '',
+							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							StartTime: new Date(
 								appointment.calendarInvite.startTime
 							),
+							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							Subject: appointment.fromName || ''
 						}
 					};
@@ -217,11 +229,17 @@ export class AccountAppointmentsService extends BaseProvider {
 			friend?: string;
 			record: IAccountFileRecord;
 			schedulerObject: {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				Description: string;
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				EndTime: Date;
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				Id: number;
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				Location: string;
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				StartTime: Date;
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				Subject: string;
 			};
 		}[]

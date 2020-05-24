@@ -22,10 +22,14 @@ export class EHRService extends BaseProvider {
 		patient: IRedoxPatient
 	) : Promise<void> {
 		const response = await this.ehrIntegrationService.runCommand(apiKey, {
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			Meta: {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				DataModel: 'PatientAdmin',
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				EventType: 'NewPatient'
 			},
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			Patient: patient
 		});
 
@@ -54,10 +58,14 @@ export class EHRService extends BaseProvider {
 		patient: IRedoxPatient
 	) : Promise<IRedoxPatient> {
 		const response = await this.ehrIntegrationService.runCommand(apiKey, {
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			Meta: {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				DataModel: 'PatientSearch',
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				EventType: 'Query'
 			},
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			Patient: patient
 		});
 
@@ -85,8 +93,11 @@ export class EHRService extends BaseProvider {
 	) : Promise<void> {
 		const response = await this.ehrIntegrationService.runCommand(apiKey, {
 			...appointment,
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			Meta: {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				DataModel: 'Scheduling',
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				EventType: 'New'
 			}
 		});
@@ -100,10 +111,14 @@ export class EHRService extends BaseProvider {
 		patient: IRedoxPatient
 	) : Promise<void> {
 		const response = await this.ehrIntegrationService.runCommand(apiKey, {
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			Meta: {
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				DataModel: 'PatientAdmin',
+				/* eslint-disable-next-line @typescript-eslint/naming-convention */
 				EventType: 'PatientUpdate'
 			},
+			/* eslint-disable-next-line @typescript-eslint/naming-convention */
 			Patient: patient
 		});
 

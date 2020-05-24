@@ -87,7 +87,10 @@ export class ChatService extends BaseProvider {
 	private readonly fullyLoadedMessages = new Map<string, IResolvable<void>>();
 
 	/** @ignore */
-	private readonly getMessageLocks = new Map<string, {}>();
+	private readonly getMessageLocks = new Map<
+		string,
+		Record<string, unknown>
+	>();
 
 	/** @ignore */
 	private readonly getMessageValues = memoize(
@@ -990,7 +993,7 @@ export class ChatService extends BaseProvider {
 		}
 
 		return lock(
-			getOrSetDefault<string, {}>(
+			getOrSetDefault<string, Record<string, unknown>>(
 				this.getMessageLocks,
 				message.id,
 				() => ({})

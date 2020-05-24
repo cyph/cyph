@@ -39,13 +39,13 @@ import {LinkConnectionEmailComponent} from '../link-connection-email';
 export class LinkConnectionComponent extends BaseProvider
 	implements AfterViewInit {
 	/** @ignore */
-	private readonly addTimeLock: {} = {};
+	private readonly addTimeLock = {};
 
 	/** @ignore */
 	private connectLinkInput?: HTMLInputElement;
 
 	/** @ignore */
-	private readonly copyLock: {} = {};
+	private readonly copyLock = {};
 
 	/** @ignore */
 	private linkConstant: string = '';

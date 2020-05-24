@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable @typescript-eslint/naming-convention */
 
 import {Internal} from '../../proto';
 import {IProto} from '../iproto';

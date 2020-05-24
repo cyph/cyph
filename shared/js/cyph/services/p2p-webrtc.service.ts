@@ -29,6 +29,7 @@ import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
+/* eslint-disable-next-line @typescript-eslint/naming-convention */
 const _SimplePeer: typeof SimplePeer = SimplePeer;
 
 /** @inheritDoc */

@@ -23,7 +23,7 @@ export class SocialShareService extends BaseProvider {
 		url?: string;
 	}) : Promise<void> {
 		const closeFunction = resolvable<() => void>();
-		const socialShareOpened = resolvable<void>();
+		const socialShareOpened = resolvable();
 
 		const closed = this.dialogService.baseDialog(
 			SocialShareComponent,

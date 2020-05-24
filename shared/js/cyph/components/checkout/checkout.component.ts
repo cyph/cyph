@@ -515,9 +515,9 @@ export class CheckoutComponent extends BaseProvider
 		if (affid) {
 			this.partnerTransactionID = Promise.resolve<string>(
 				EF.click({
-					/* eslint-disable-next-line camelcase */
+					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					affiliate_id: affid,
-					/* eslint-disable-next-line camelcase */
+					/* eslint-disable-next-line @typescript-eslint/naming-convention */
 					offer_id: this.offerID,
 					sub1: EF.urlParameter('sub1'),
 					sub2: EF.urlParameter('sub2'),

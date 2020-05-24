@@ -47,7 +47,7 @@ export class User {
 	private static readonly fetchLock: LockFunction = lockFunction();
 
 	/** @ignore */
-	private readonly fetchLock: {} = {};
+	private readonly fetchLock = {};
 
 	/** Indicates that user is not anonymous. */
 	public readonly anonymous: false = false;

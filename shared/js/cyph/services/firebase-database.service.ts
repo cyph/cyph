@@ -101,7 +101,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		};
 
 	/** @ignore */
-	private readonly localLocks: Map<string, {}> = new Map<string, {}>();
+	private readonly localLocks = new Map<string, Record<string, unknown>>();
 
 	/** Firebase Cloud Messaging token. */
 	private readonly messaging: Promise<{
@@ -361,6 +361,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					data: dynamicSerialize(o),
 					headers: currentUser ?
 						{
+							/* eslint-disable-next-line @typescript-eslint/naming-convention */
 							Authorization: await currentUser.getIdToken()
 						} :
 						undefined,
@@ -428,7 +429,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		return this.ngZone.runOutsideAngular(
 			() =>
 				new Observable<boolean>(observer => {
-					let cleanup: Function;
+					let cleanup: () => void;
 
 					(async () => {
 						const connectedRef = await this.getDatabaseRef(
@@ -724,7 +725,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 		return this.ngZone.runOutsideAngular(async () =>
 			lock(
-				getOrSetDefault<string, {}>(this.localLocks, url, () => ({})),
+				getOrSetDefault<string, Record<string, unknown>>(
+					this.localLocks,
+					url,
+					() => ({})
+				),
 				async () => {
 					let lastReason: string | undefined;
 					let onQueueUpdate: (() => Promise<void>) | undefined;
@@ -1562,7 +1567,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				this.ngZone.runOutsideAngular(
 					() =>
 						new Observable<ITimedValue<T>>(observer => {
-							let cleanup: Function;
+							let cleanup: () => void;
 							let lastValue: T | undefined;
 
 							/* eslint-disable-next-line no-null/no-null */
@@ -1642,7 +1647,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				this.ngZone.runOutsideAngular(
 					() =>
 						new Observable<boolean>(observer => {
-							let cleanup: Function;
+							let cleanup: () => void;
 
 							/* eslint-disable-next-line no-null/no-null */
 							const onValue = (
@@ -1688,7 +1693,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				this.ngZone.runOutsideAngular(
 					() =>
 						new Observable<ITimedValue<T>[]>(observer => {
-							let cleanup: Function;
+							let cleanup: () => void;
 
 							(async () => {
 								const url = await urlPromise;
@@ -1887,7 +1892,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							key: string;
 							previousKey?: string;
 						}>(observer => {
-							let cleanup: Function;
+							let cleanup: () => void;
 
 							(async () => {
 								const url = await urlPromise;
@@ -1959,7 +1964,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				this.ngZone.runOutsideAngular(
 					() =>
 						new Observable<string[]>(observer => {
-							let cleanup: Function;
+							let cleanup: () => void;
 
 							(async () => {
 								const url = await urlPromise;

@@ -157,7 +157,7 @@ export class AccountAuthService extends BaseProvider {
 				)
 			};
 
-		await Promise.all<{}>([
+		await Promise.all<unknown>([
 			this.setItem(url, AccountLoginData, newLoginData, symmetricKey),
 			!saveCredentials ?
 				this.removeSavedCredentials() :
@@ -971,7 +971,7 @@ export class AccountAuthService extends BaseProvider {
 					)
 					.catch(() => '');
 
-				await Promise.all<{}>([
+				await Promise.all<unknown>([
 					this.setItem(
 						`users/${username}/inviterUsername`,
 						StringProto,
@@ -1032,7 +1032,7 @@ export class AccountAuthService extends BaseProvider {
 					pin
 				);
 
-		await Promise.all<{}>([
+		await Promise.all<unknown>([
 			pin.length === 0 ?
 				Promise.resolve() :
 				this.localStorageService.setItem(

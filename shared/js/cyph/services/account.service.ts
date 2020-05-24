@@ -65,7 +65,11 @@ export class AccountService extends BaseProvider {
 
 	/** @ignore */
 	private readonly headerInternal = new BehaviorSubject<{
-		contextMenuActions?: {handler: Function; icon: string; label: string}[];
+		contextMenuActions?: {
+			handler: (e: MouseEvent) => void;
+			icon: string;
+			label: string;
+		}[];
 		header?: string | {desktop?: string; mobile?: string; user?: User};
 	}>({});
 
@@ -142,7 +146,11 @@ export class AccountService extends BaseProvider {
 
 	/** Header title for current section. */
 	public readonly header: Observable<{
-		contextMenuActions?: {handler: Function; icon: string; label: string}[];
+		contextMenuActions?: {
+			handler: (e: MouseEvent) => void;
+			icon: string;
+			label: string;
+		}[];
 		header?: {desktop?: string; mobile?: string; user?: User};
 	}>;
 
@@ -492,7 +500,11 @@ export class AccountService extends BaseProvider {
 	/** Sets custom header text. */
 	public setHeader (
 		header: string | {desktop?: string; mobile?: string} | User,
-		contextMenuActions?: {handler: Function; icon: string; label: string}[]
+		contextMenuActions?: {
+			handler: (e: MouseEvent) => void;
+			icon: string;
+			label: string;
+		}[]
 	) : void {
 		this.headerInternal.next({
 			contextMenuActions,

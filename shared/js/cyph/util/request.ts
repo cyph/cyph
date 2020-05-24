@@ -81,6 +81,7 @@ const baseRequest = <R, T>(
 						new HttpRequest(method, url, data, {
 							headers: new HttpHeaders({
 								...(contentType ?
+									/* eslint-disable-next-line @typescript-eslint/naming-convention */
 									{'Content-Type': contentType} :
 									{}),
 								...headers

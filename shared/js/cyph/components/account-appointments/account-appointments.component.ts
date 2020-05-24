@@ -63,7 +63,13 @@ export class AccountAppointmentsComponent extends BaseProvider
 					_START: any,
 					_END: any,
 					_TIMEZONE: any,
-					callback: Function
+					callback: (
+						calendarEvents: {
+							end: number;
+							start: number;
+							title: string;
+						}[]
+					) => void
 				) => {
 					callback(this.calendarEvents);
 				}
