@@ -1,29 +1,37 @@
-<share-buttons
-	[autoSetMeta]="false"
-	[description]="description"
-	[include]="[
-		'facebook',
-		'twitter',
-		'reddit',
-		'linkedin',
-		'email',
-		'copy',
-		'sms',
-		'pinterest',
-		'tumblr',
-		'mix',
-		'vk',
-		'whatsapp',
-		'telegram',
-		'messenger',
-		'xing',
-		'line'
-	]"
-	[show]="6"
-	[tags]="tags"
-	[theme]="'material-dark'"
-	[title]="title"
-	[url]="url"
-	(opened)="opened.emit()"
-	*ngIf="!!url"
-></share-buttons>
+<div fxFlex fxLayout="column">
+	<div fxFlex="196px" fxLayout="row">
+		<div fxFlex></div>
+		<div fxFlex="0 1 466px" fxLayoutAlign="center center">
+			<share-buttons
+				[autoSetMeta]="false"
+				[description]="description"
+				[include]="[
+					'facebook',
+					'twitter',
+					'reddit',
+					'linkedin',
+					'email',
+					'copy',
+					'sms',
+					'pinterest',
+					'tumblr',
+					'mix',
+					'vk',
+					'whatsapp',
+					'telegram',
+					'messenger',
+					'xing',
+					'line'
+				]"
+				[show]="6"
+				[tags]="tags"
+				[theme]="'material-dark'"
+				[title]="title"
+				[url]="url"
+				(opened)="opened.emit()"
+				*ngIf="!!url"
+			></share-buttons>
+		</div>
+		<div fxFlex></div>
+	</div>
+</div>
