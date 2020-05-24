@@ -26,6 +26,7 @@ installPackages () {
 }
 
 
+rm -rf "${GOPATH}"
 go get -u \
 	cloud.google.com/go/datastore \
 	github.com/buu700/mustache-tmp \
