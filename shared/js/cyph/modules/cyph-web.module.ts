@@ -30,6 +30,32 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {Router, RouterModule} from '@angular/router';
 import {PickerModule} from '@ctrl/ngx-emoji-mart';
 import {EmojiModule} from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import {
+	FaIconLibrary,
+	FontAwesomeModule
+} from '@fortawesome/angular-fontawesome';
+import {faFacebookF} from '@fortawesome/free-brands-svg-icons/faFacebookF';
+import {faFacebookMessenger} from '@fortawesome/free-brands-svg-icons/faFacebookMessenger';
+import {faGooglePlusG} from '@fortawesome/free-brands-svg-icons/faGooglePlusG';
+import {faLine} from '@fortawesome/free-brands-svg-icons/faLine';
+import {faLinkedinIn} from '@fortawesome/free-brands-svg-icons/faLinkedinIn';
+import {faMix} from '@fortawesome/free-brands-svg-icons/faMix';
+import {faPinterestP} from '@fortawesome/free-brands-svg-icons/faPinterestP';
+import {faRedditAlien} from '@fortawesome/free-brands-svg-icons/faRedditAlien';
+import {faTelegramPlane} from '@fortawesome/free-brands-svg-icons/faTelegramPlane';
+import {faTumblr} from '@fortawesome/free-brands-svg-icons/faTumblr';
+import {faTwitter} from '@fortawesome/free-brands-svg-icons/faTwitter';
+import {faVk} from '@fortawesome/free-brands-svg-icons/faVk';
+import {faWhatsapp} from '@fortawesome/free-brands-svg-icons/faWhatsapp';
+import {faXing} from '@fortawesome/free-brands-svg-icons/faXing';
+import {faCheck} from '@fortawesome/free-solid-svg-icons/faCheck';
+import {faCommentAlt} from '@fortawesome/free-solid-svg-icons/faCommentAlt';
+import {faEllipsisH} from '@fortawesome/free-solid-svg-icons/faEllipsisH';
+import {faEnvelope} from '@fortawesome/free-solid-svg-icons/faEnvelope';
+import {faExclamation} from '@fortawesome/free-solid-svg-icons/faExclamation';
+import {faLink} from '@fortawesome/free-solid-svg-icons/faLink';
+import {faMinus} from '@fortawesome/free-solid-svg-icons/faMinus';
+import {faPrint} from '@fortawesome/free-solid-svg-icons/faPrint';
 import {ShareButtonsModule} from '@ngx-share/buttons';
 import {ScheduleAllModule} from '@syncfusion/ej2-angular-schedule';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
@@ -122,6 +148,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		AngularDraggableModule,
 		CyphSharedModule,
 		EmojiModule,
+		FontAwesomeModule,
 		FullCalendarModule,
 		ImageCropperModule,
 		MatAutocompleteModule,
@@ -172,6 +199,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 export class CyphWebModule {
 	constructor (
 		sanitizer: DomSanitizer,
+		faIconLibrary: FaIconLibrary,
 		matIconRegistry: MatIconRegistry,
 		localStorageService: LocalStorageService,
 		router: Router
@@ -239,6 +267,33 @@ export class CyphWebModule {
 			sanitizer.bypassSecurityTrustResourceUrl(
 				'/assets/img/iconfinder/walkie-talkie.svg'
 			)
+		);
+
+		/* Font Awesome icons */
+
+		faIconLibrary.addIcons(
+			faCheck,
+			faCommentAlt,
+			faEllipsisH,
+			faEnvelope,
+			faExclamation,
+			faFacebookF,
+			faFacebookMessenger,
+			faGooglePlusG,
+			faLine,
+			faLink,
+			faLinkedinIn,
+			faMinus,
+			faMix,
+			faPinterestP,
+			faPrint,
+			faRedditAlien,
+			faTelegramPlane,
+			faTumblr,
+			faTwitter,
+			faVk,
+			faWhatsapp,
+			faXing
 		);
 
 		/* For debugging */

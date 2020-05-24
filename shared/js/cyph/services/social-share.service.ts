@@ -15,12 +15,12 @@ export class SocialShareService extends BaseProvider {
 		description = '',
 		hashTags = [],
 		title = '',
-		url = ''
+		url
 	}: {
 		description?: string;
 		hashTags?: string[];
 		title?: string;
-		url?: string;
+		url: string;
 	}) : Promise<void> {
 		const closeFunction = resolvable<() => void>();
 		const socialShareOpened = resolvable();

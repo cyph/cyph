@@ -1,5 +1,6 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
@@ -37,7 +38,10 @@ export class SocialShareComponent extends BaseProvider {
 		return this.hashTags.join(',');
 	}
 
-	constructor () {
+	constructor (
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef
+	) {
 		super();
 	}
 }

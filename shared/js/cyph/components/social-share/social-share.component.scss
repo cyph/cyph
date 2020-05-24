@@ -1,17 +1,7 @@
 @import '../../../../css/mixins';
 
-web-social-share {
-	--web-social-share-height: 160px;
-	--web-social-share-height-small-device: 240px;
-	--web-social-share-target-width: 100px;
-	--web-social-share-brand-font-size: 12px;
-
-	::ng-deep button {
-		font-family: Roboto;
-	}
-}
-
-i {
-	font-size: 28px;
-	margin-bottom: 4px;
+share-buttons {
+	width: 466px;
+	display: block;
+	margin: auto;
 }
