@@ -288,6 +288,13 @@ do
 	" > "@types/${anyType}/index.d.ts"
 done
 
+for m in \
+	simple-peer
+do
+	rg -l 'module.exports = ' /node_modules/${m} |
+		xargs sed -i 's|module.exports = |export default |g'
+done
+
 mkdir -p @types/fg-loadcss
 echo "
 	declare module 'fg-loadcss' {

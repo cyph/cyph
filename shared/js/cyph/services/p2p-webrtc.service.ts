@@ -1,12 +1,12 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import hark from 'hark';
+import * as hark from 'hark';
 import * as msgpack from 'msgpack-lite';
-import RecordRTC from 'recordrtc';
+import * as RecordRTC from 'recordrtc';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
-import SimplePeer from 'simple-peer';
+import * as SimplePeer from 'simple-peer';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {IResolvable} from '../iresolvable';
@@ -29,6 +29,8 @@ import {SessionCapabilitiesService} from './session-capabilities.service';
 import {SessionService} from './session.service';
 import {StringsService} from './strings.service';
 
+const _SimplePeer: typeof SimplePeer = SimplePeer;
+
 /** @inheritDoc */
 @Injectable()
 export class P2PWebRTCService extends BaseProvider
@@ -44,7 +46,7 @@ export class P2PWebRTCService extends BaseProvider
 
 	/** Indicates whether WebRTC is supported in the current environment. */
 	public static readonly isSupported: boolean =
-		SimplePeer.WEBRTC_SUPPORT &&
+		_SimplePeer.WEBRTC_SUPPORT &&
 		(env.debug || !(env.isCordovaMobile && env.isIOS));
 
 	/** @ignore */

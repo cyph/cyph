@@ -11,7 +11,7 @@ import {
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import * as $ from 'jquery';
-import MarkdownIt from 'markdown-it';
+import * as MarkdownIt from 'markdown-it';
 import * as markdownItEmoji from 'markdown-it-emoji';
 import * as markdownItSup from 'markdown-it-sup';
 import {microlight} from 'microlight-string';

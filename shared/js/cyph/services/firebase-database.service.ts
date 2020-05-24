@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import {Injectable, NgZone} from '@angular/core';
-import firebase from 'firebase/app';
+import * as firebase from 'firebase/app';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/auth';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */

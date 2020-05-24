@@ -1,5 +1,5 @@
 import {BehaviorSubject, Observable} from 'rxjs';
-import SimplePeer from 'simple-peer';
+import * as SimplePeer from 'simple-peer';
 import {IResolvable} from '../iresolvable';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {Timer} from '../timer';

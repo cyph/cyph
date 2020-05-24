@@ -1,4 +1,4 @@
-import fileSaver from 'file-saver';
+import * as fileSaver from 'file-saver';
 import {Subject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {env} from '../env';
