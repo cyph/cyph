@@ -2116,24 +2116,21 @@
   dependencies:
     tslib "^1.9.0"
 
-"@ngx-share/button@^7.1.4":
+"@ngx-share/button@https://github.com/buu700/ngx-share-button-tmp":
   version "7.1.4"
-  resolved "https://registry.yarnpkg.com/@ngx-share/button/-/button-7.1.4.tgz#82ab8dbf43347e5235eae2b69093997ad431a4b4"
-  integrity sha512-XgmrQhpnB8CuRSdLYPWZgSz/zcJC7dNdK40MUjZA/0Z5tzMVkhcvrig6MRD0JBoBDbLd2HPG3XlfoWQqMZicZQ==
+  resolved "https://github.com/buu700/ngx-share-button-tmp#c03bf144d9dfde27b3c5d0347274543a40a1a748"
   dependencies:
     tslib "^1.9.0"
 
-"@ngx-share/buttons@^7.1.4":
+"@ngx-share/buttons@https://github.com/buu700/ngx-share-buttons-tmp":
   version "7.1.4"
-  resolved "https://registry.yarnpkg.com/@ngx-share/buttons/-/buttons-7.1.4.tgz#468f8bc3b63e40f27d465c06ffa2c820551f035e"
-  integrity sha512-dcJm2qY5IvJH7FuzpyRTeBXpg86WkSqXfEaHMGHCKWwptM8twZxyyZwVorDLrtsMEHabUzw1mhqlX6DsiqSobA==
+  resolved "https://github.com/buu700/ngx-share-buttons-tmp#77503e629281512575c482f0a544718de0c6a3d0"
   dependencies:
     tslib "^1.9.0"
 
-"@ngx-share/core@^7.1.4":
+"@ngx-share/core@https://github.com/buu700/ngx-share-core-tmp":
   version "7.1.4"
-  resolved "https://registry.yarnpkg.com/@ngx-share/core/-/core-7.1.4.tgz#00843416fadc8e61aa0e5a53c4820198db28a3bd"
-  integrity sha512-N6j1/7/I27Wfz1Uoy15uQ8fpRkPZXF1g9+dKrkEh6yi9jKmqNjr1hHB59DHfxrTGivxAgEEFgZMgnPzTd+2kcQ==
+  resolved "https://github.com/buu700/ngx-share-core-tmp#6ad3ef81e2a85feca95ff43f0f7b95c48ef1334f"
   dependencies:
     tslib "^1.9.0"
 
@@ -19530,9 +19527,9 @@ regjsgen@^0.2.0:
   integrity sha1-bAFq3qxVT3WCP+N6wFuS1aTtsfc=
 
 regjsgen@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/regjsgen/-/regjsgen-0.5.1.tgz#48f0bf1a5ea205196929c0d9798b42d1ed98443c"
-  integrity sha512-5qxzGZjDs9w4tzT3TPhCJqWdCc3RLYwy9J2NB0nm5Lz+S273lvWcpjaTGHsT1dc6Hhfq41uSEOw8wBmxrKOuyg==
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/regjsgen/-/regjsgen-0.5.2.tgz#92ff295fb1deecbf6ecdab2543d207e91aa33733"
+  integrity sha512-OFFT3MfrH90xIW8OOSyUrk6QHD5E9JOTeGodiJeBS3J6IwlgzJMNE/1bZklWz5oTg+9dCMyEetclvCVXOPoN3A==
 
 regjsparser@^0.1.4:
   version "0.1.5"
