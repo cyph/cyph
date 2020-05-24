@@ -32,8 +32,14 @@ export class ImportHelper {
 	/** Converts JWK byte array into CryptoKey object. */
 	public async importJWK (
 		key: Uint8Array,
-		algorithm: any,
-		purpose: string
+		algorithm:
+			| AlgorithmIdentifier
+			| RsaHashedImportParams
+			| EcKeyImportParams
+			| HmacImportParams
+			| DhImportKeyParams
+			| AesKeyAlgorithm,
+		purpose: KeyUsage
 	) : Promise<CryptoKey> {
 		return crypto.subtle.importKey(
 			'jwk',
@@ -51,8 +57,14 @@ export class ImportHelper {
 	/** Converts raw byte array into CryptoKey object. */
 	public async importRawKey (
 		key: Uint8Array,
-		algorithm: any,
-		purpose: string
+		algorithm:
+			| AlgorithmIdentifier
+			| RsaHashedImportParams
+			| EcKeyImportParams
+			| HmacImportParams
+			| DhImportKeyParams
+			| AesKeyAlgorithm,
+		purpose: KeyUsage
 	) : Promise<CryptoKey> {
 		return crypto.subtle.importKey(
 			'raw',

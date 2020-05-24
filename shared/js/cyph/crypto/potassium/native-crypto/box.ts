@@ -4,18 +4,11 @@ import {importHelper} from './import-helper';
 /** Equivalent to sodium.crypto_box without authentication. */
 export class Box {
 	/** Algorithm details. */
-	public readonly algorithm: {
-		hash: {name: string};
-		modulusLength: number;
-		modulusLengthBytes: number;
-		name: string;
-		publicExponent: Uint8Array;
-	} = {
+	public readonly algorithm: RsaHashedKeyGenParams = {
 		hash: {
 			name: 'SHA-512'
 		},
 		modulusLength: 4096,
-		modulusLengthBytes: 512,
 		name: 'RSA-OAEP',
 		publicExponent: new Uint8Array([0x01, 0x00, 0x01])
 	};
@@ -28,10 +21,12 @@ export class Box {
 
 	/** Generates key pair. */
 	public async keyPair () : Promise<IKeyPair> {
-		const keyPair = await crypto.subtle.generateKey(this.algorithm, true, [
-			'encrypt',
-			'decrypt'
-		]);
+		const keyPair: CryptoKeyPair = <any> (
+			await crypto.subtle.generateKey(this.algorithm, true, [
+				'encrypt',
+				'decrypt'
+			])
+		);
 
 		const publicKey = new Uint8Array(this.publicKeyBytes);
 		const privateKey = new Uint8Array(this.privateKeyBytes);

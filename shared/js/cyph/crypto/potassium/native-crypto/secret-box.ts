@@ -27,7 +27,7 @@ export class SecretBox {
 	private async processKeyAndNonce (
 		key: Uint8Array,
 		nonce: Uint8Array,
-		purpose: string
+		purpose: KeyUsage
 	) : Promise<{
 		cryptoKey: CryptoKey;
 		iv: Uint8Array;
