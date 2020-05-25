@@ -39,6 +39,26 @@
 			"vm": ["js/externals/vm"],
 
 			/* Module not found: Error: Recursion in resolving */
+
+			/*
+				{
+					grep -oP '^"?@?[A-Za-z0-9_\-\./]+' shared/lib/js/yarn.lock |
+						sed 's|"||g';
+					find node_modules/@angular -type d -mindepth 2 -maxdepth 2 |
+						sed 's|node_modules/||g';
+				} |
+					sort |
+					uniq |
+					grep -vP "^($(
+						ls shared/js/externals shared/js/native/externals |
+							sed 's|\.ts||g' |
+							sort |
+							uniq |
+							tr '\n' '|'
+					))$" |
+					xargs -I% echo '"%": ["../node_modules/%"],'
+			*/
+
 			"@agm/core": ["../node_modules/@agm/core"],
 			"@angular-devkit/architect": [
 				"../node_modules/@angular-devkit/architect"
