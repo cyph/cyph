@@ -6,7 +6,7 @@ import * as msgpack from 'msgpack-lite';
 import * as RecordRTC from 'recordrtc';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
-import * as SimplePeer from 'simple-peer';
+import SimplePeer from 'simple-peer';
 import {BaseProvider} from '../base-provider';
 import {env} from '../env';
 import {IResolvable} from '../iresolvable';
