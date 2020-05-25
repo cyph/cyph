@@ -994,6 +994,7 @@ exports.openUserToken = onRequest(true, async (req, res, namespace) => {
 
 exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 	const {
+		altMasterKey,
 		certificateRequest,
 		email,
 		encryptionKeyPair,
@@ -1068,6 +1069,7 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 
 	await Promise.all([
 		setRegisterItems([
+			['altMasterKey', altMasterKey],
 			['encryptionKeyPair', encryptionKeyPair],
 			['inviteCode', inviteCode, StringProto],
 			['pin/hash', pinHash],

@@ -2,6 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+import {xkcdPassphrase} from 'xkcd-passphrase';
 import {BaseProvider} from '../../base-provider';
 import {IProto} from '../../iproto';
 import {
@@ -261,6 +262,70 @@ export class AccountAuthService extends BaseProvider {
 			),
 			this.removeSavedCredentials()
 		]);
+	}
+
+	/** Gets (and/or sets) alt master key for authenticating a new device. */
+	public async getAltMasterKey () : Promise<string> {
+		const currentUser = await this.accountDatabaseService.getCurrentUser();
+
+		if (!currentUser.user.username) {
+			throw new Error('User not signed in.');
+		}
+
+		try {
+			return await this.getItem(
+				`users/${currentUser.user.username}/altMasterKey`,
+				StringProto,
+				currentUser.keys.symmetricKey
+			);
+		}
+		catch {}
+
+		const altMasterKey = await xkcdPassphrase.generate(512);
+
+		await Promise.all([
+			this.setItem(
+				`users/${currentUser.user.username}/altMasterKey`,
+				StringProto,
+				altMasterKey,
+				currentUser.keys.symmetricKey
+			),
+			Promise.all([
+				this.passwordHash(currentUser.user.username, altMasterKey),
+				Promise.all([
+					this.localStorageService.getItem(
+						'masterKey',
+						BinaryProto,
+						undefined,
+						true
+					),
+					this.localStorageService.getItem(
+						'pinHash',
+						BinaryProto,
+						undefined,
+						true
+					)
+				]).then(async ([masterKey, pinHash]) =>
+					this.getItem(
+						`users/${currentUser.user.username}/loginData`,
+						AccountLoginData,
+						await this.potassiumService.secretBox.open(
+							masterKey,
+							pinHash
+						)
+					)
+				)
+			]).then(async ([altMasterKeyHash, loginData]) =>
+				this.setItem(
+					`users/${currentUser.user.username}/loginDataAlt`,
+					AccountLoginData,
+					loginData,
+					altMasterKeyHash
+				)
+			)
+		]);
+
+		return altMasterKey;
 	}
 
 	/** Tries to get saved PIN hash. */
@@ -778,6 +843,7 @@ export class AccountAuthService extends BaseProvider {
 			const [
 				registerLoginData,
 				registerLoginDataAlt,
+				registerAltMasterKey,
 				registerPublicProfile,
 				registerPublicProfileExtra,
 				registerEncryptionKeyPair,
@@ -802,6 +868,17 @@ export class AccountAuthService extends BaseProvider {
 						AccountLoginData,
 						loginData,
 						altMasterKeyHash,
+						undefined,
+						undefined,
+						true
+					) :
+					undefined,
+				altMasterKey !== undefined ?
+					this.setItem(
+						`users/${username}/altMasterKey`,
+						StringProto,
+						altMasterKey,
+						loginData.symmetricKey,
 						undefined,
 						undefined,
 						true
@@ -948,6 +1025,7 @@ export class AccountAuthService extends BaseProvider {
 				username,
 				loginData.secondaryPassword,
 				{
+					altMasterKey: registerAltMasterKey,
 					certificateRequest: registerCertificateRequest,
 					email,
 					encryptionKeyPair: registerEncryptionKeyPair,

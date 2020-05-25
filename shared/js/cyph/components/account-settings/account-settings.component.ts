@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
@@ -65,6 +66,19 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	/** @see emailPattern */
 	public readonly emailPattern = emailPattern;
 
+	/** Gets session data to activate new device. */
+	public readonly getNewDeviceSessionData = memoize(
+		async () =>
+			this.user.value?.username ?
+				{
+					aliceMasterKey: await this.accountAuthService.getAltMasterKey(),
+					bobSessionID: undefined,
+					username: this.user.value.username
+				} :
+				undefined,
+		() => this.user.value?.username
+	);
+
 	/** Indicates whether page is loading. */
 	public readonly loading = new BehaviorSubject<boolean>(true);
 
@@ -91,7 +105,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	public readonly states = {
 		default: 1,
 		masterKey: 2,
-		pin: 3
+		newDeviceActivation: 3,
+		pin: 4
 	};
 
 	/** @see titleize */
@@ -186,6 +201,17 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 				title: this.stringsService.changePinTitle
 			},
 			async p => this.accountAuthService.changePIN(p)
+		);
+	}
+
+	/** New device activation completion handler. */
+	public async newDeviceActivationComplete () : Promise<void> {
+		await this.router.navigate(['settings']);
+
+		await this.dialogService.toast(
+			this.stringsService.newDeviceActivationConfirmation,
+			undefined,
+			this.stringsService.ok
 		);
 	}
 

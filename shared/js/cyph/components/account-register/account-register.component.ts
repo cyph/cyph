@@ -406,7 +406,13 @@ export class AccountRegisterComponent extends BaseProvider
 				o.sessionData = sessionData;
 
 				activationComplete.resolve(
-					o.activationComplete.pipe(take(1)).toPromise()
+					o.activationComplete
+						.pipe(take(1))
+						.toPromise()
+						.then(b => {
+							mobile = o.mobile;
+							return b;
+						})
 				);
 			},
 			closeFunction,

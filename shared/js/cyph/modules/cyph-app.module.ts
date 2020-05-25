@@ -214,6 +214,7 @@ import {CyphWebModule} from './cyph-web.module';
 export class CyphAppModule {
 	constructor (
 		accountService: AccountService,
+		accountAuthService: AccountAuthService,
 		accountContactsService: AccountContactsService,
 		accountDatabaseService: AccountDatabaseService,
 		accountPostsService: AccountPostsService,
@@ -235,6 +236,7 @@ export class CyphAppModule {
 		}
 
 		(<any> self).accountService = accountService;
+		(<any> self).accountAuthService = accountAuthService;
 		(<any> self).accountContactsService = accountContactsService;
 		(<any> self).accountDatabaseService = accountDatabaseService;
 		(<any> self).accountPostsService = accountPostsService;

@@ -97,6 +97,10 @@ service firebase.storage {
 					;
 				}
 
+				match /altMasterKey/{hash} {
+					allow write: if resource == null && request.resource != null;
+				}
+
 				match /avatar/{hash} {
 					allow read;
 				}
@@ -237,6 +241,7 @@ service firebase.storage {
 
 				match /loginDataAlt/{hash} {
 					allow read;
+					allow write: if resource == null && request.resource != null;
 				}
 
 				match /organizationMembers/{hash} {

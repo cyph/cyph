@@ -361,12 +361,17 @@ export const account: Route = {
 				{
 					path: 'lock-screen',
 					component: AccountSettingsComponent,
-					data: {state: 3}
+					data: {state: 4}
 				},
 				{
 					path: 'master-key',
 					component: AccountSettingsComponent,
 					data: {state: 2}
+				},
+				{
+					path: 'new-device-activation',
+					component: AccountSettingsComponent,
+					data: {state: 3}
 				}
 			]
 		},

@@ -13,7 +13,7 @@
 			fxLayoutGap="16px"
 			[class.mobile]="envService.isMobile | await"
 			(submit)="save()"
-			*ngIf="stateValue === states.default; else changePassword"
+			*ngIf="stateValue === states.default; else newDeviceActivation"
 		>
 			<mat-form-field
 				*ngIf="
@@ -109,6 +109,19 @@
 						></ng-container
 					>)
 				</ng-container>
+			</div>
+			<div></div>
+
+			<div fxLayoutAlign="center">
+				<button
+					mat-raised-button
+					color="accent"
+					routerLink="new-device-activation"
+				>
+					<mat-icon>phonelink</mat-icon>
+					&nbsp;&nbsp;
+					<span cyphTranslate>Activate Another Device</span>
+				</button>
 			</div>
 
 			<div></div>
@@ -224,6 +237,48 @@
 				</button>
 			</div>
 		</form>
+
+		<ng-template #newDeviceActivation>
+			<div
+				fxFlex
+				fxLayout="column"
+				fxLayoutGap="16px"
+				*ngIf="
+					stateValue === states.newDeviceActivation;
+					else changePassword
+				"
+			>
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					class="password-title"
+				>
+					<h2>
+						{{ stringsService.newDeviceActivationTitle }}
+					</h2>
+					<button
+						mat-icon-button
+						cyphTranslate
+						class="back"
+						matTooltip="Back"
+						routerLink=".."
+					>
+						<mat-icon>arrow_back</mat-icon>
+					</button>
+				</div>
+
+				<cyph-account-new-device-activation
+					[sessionData]="newDeviceSessionData"
+					(activationComplete)="
+						$event ? newDeviceActivationComplete() : undefined
+					"
+					*ngIf="
+						getNewDeviceSessionData()
+							| await as newDeviceSessionData
+					"
+				></cyph-account-new-device-activation>
+			</div>
+		</ng-template>
 
 		<ng-template #changePassword>
 			<div fxFlex fxLayout="column" fxLayoutGap="16px">

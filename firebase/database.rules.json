@@ -317,6 +317,20 @@
 					".read": "($user + '@' + $DOMAIN) === auth.token.email",
 					".write": "($user + '@' + $DOMAIN) === auth.token.email",
 
+					"altMasterKey": {
+						".write": "!data.exists() && newData.exists()",
+
+						"data": {
+							".validate": "newData.isString()"
+						},
+						"hash": {
+							".validate": "newData.isString()"
+						},
+						"timestamp": {
+							".validate": "newData.val() === now"
+						}
+					},
+
 					"avatar": {
 						".read": true,
 
@@ -1082,6 +1096,7 @@
 
 					"loginDataAlt": {
 						".read": true,
+						".write": "!data.exists() && newData.exists()",
 
 						"data": {
 							".validate": "newData.isString()"
