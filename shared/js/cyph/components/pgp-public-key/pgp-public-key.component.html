@@ -1,0 +1,44 @@
+<ng-container *ngIf="user?.name | await as name">
+	<ng-container *ngIf="user?.extra() | await as extra">
+		<ng-container *ngIf="!!extra?.pgp?.publicKey">
+			<h1 matDialogTitle>
+				{{ getTitle(name | slice: 0:accountService.maxNameLength) }}
+			</h1>
+			<div mat-dialog-content>
+				<div fxFlex fxLayout="column" fxLayoutGap="16px">
+					<div
+						*ngIf="
+							(
+								pgpService.getPublicKeyMetadata(
+									extra?.pgp?.publicKey || ''
+								) | await
+							)?.fingerprint as fingerprint
+						"
+					>
+						<span cyphTranslate>Fingerprint:</span>
+						&ngsp;
+						<code>{{ fingerprint || '' }}</code>
+					</div>
+					<div>
+						<pre fxFlex>{{ extra?.pgp?.publicKey || '' }}</pre>
+						<button
+							mat-icon-button
+							matTooltip="Copy to Clipboard"
+							(click)="
+								copyToClipboard(extra?.pgp?.publicKey || '')
+							"
+							cyphTranslate
+						>
+							<mat-icon>content_copy</mat-icon>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div mat-dialog-actions fxLayoutAlign="end center">
+				<button mat-button matDialogClose>
+					{{ stringsService.ok }}
+				</button>
+			</div>
+		</ng-container>
+	</ng-container>
+</ng-container>

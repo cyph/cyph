@@ -26,6 +26,7 @@ import {AnalyticsService} from '../../services/analytics.service';
 import {ConfigService} from '../../services/config.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {PGPService} from '../../services/crypto/pgp.service';
 import {DatabaseService} from '../../services/database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
@@ -133,6 +134,8 @@ export class AccountRegisterComponent extends BaseProvider
 		inviteCode?: string;
 		inviterUsername?: string;
 		isValid: boolean;
+		keybaseUsername?: string;
+		pgpPublicKey?: string;
 		plan: CyphPlans;
 		reservedUsername?: string;
 		welcomeLetter?: string;
@@ -169,6 +172,17 @@ export class AccountRegisterComponent extends BaseProvider
 
 	/** Lock screen PIN confirmation. */
 	public readonly lockScreenPinConfirm = new BehaviorSubject<string>('');
+
+	/** Email addres. */
+	public readonly pgp = new BehaviorSubject<
+		| {
+				keybaseUsername?: string;
+				fingerprint?: string;
+				keyID?: string;
+				publicKey?: string;
+		  }
+		| undefined
+	>(undefined);
 
 	/** Master key (main account password). */
 	public readonly masterKey = new BehaviorSubject<string>('');
@@ -592,7 +606,15 @@ export class AccountRegisterComponent extends BaseProvider
 					},
 					this.name.value,
 					this.email.value,
-					this.inviteCode.value
+					this.inviteCode.value,
+					this.pgp.value ?
+						{
+							pgp: {
+								keybaseUsername: this.pgp.value.keybaseUsername,
+								publicKey: this.pgp.value.publicKey
+							}
+						} :
+						undefined
 				)) ?
 					undefined :
 					this.stringsService.signupFailed
@@ -708,6 +730,9 @@ export class AccountRegisterComponent extends BaseProvider
 		/** @see EnvService */
 		public readonly envService: EnvService,
 
+		/** @see PGPService */
+		public readonly pgpService: PGPService,
+
 		/** @see SalesService */
 		public readonly salesService: SalesService,
 
@@ -769,6 +794,14 @@ export class AccountRegisterComponent extends BaseProvider
 									o.inviterUsername :
 									undefined,
 							isValid: o.isValid === true,
+							keybaseUsername:
+								typeof o.keybaseUsername === 'string' ?
+									o.keybaseUsername :
+									undefined,
+							pgpPublicKey:
+								typeof o.pgpPublicKey === 'string' ?
+									o.pgpPublicKey :
+									undefined,
 							plan: o.plan in CyphPlans ? o.plan : CyphPlans.Free,
 							reservedUsername:
 								typeof o.reservedUsername === 'string' ?
@@ -797,6 +830,21 @@ export class AccountRegisterComponent extends BaseProvider
 				else {
 					/* Trigger validator function */
 					this.username.setValue(this.username.value);
+				}
+
+				if (
+					this.inviteCodeData.value.keybaseUsername ||
+					this.inviteCodeData.value.pgpPublicKey
+				) {
+					this.pgp.next({
+						keybaseUsername: this.inviteCodeData.value
+							.keybaseUsername,
+						...(this.inviteCodeData.value.pgpPublicKey ?
+							await this.pgpService.getPublicKeyMetadata(
+								this.inviteCodeData.value.pgpPublicKey
+							) :
+							{})
+					});
 				}
 
 				this.accountService.resolveUiReady();

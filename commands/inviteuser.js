@@ -15,7 +15,8 @@ const inviteUser = async (
 	plan,
 	reservedUsername,
 	trialMonths,
-	count = 1
+	count = 1,
+	misc = {}
 ) => {
 	/* TODO: Handle other cases */
 	const accountsURL =
@@ -39,7 +40,8 @@ const inviteUser = async (
 		plan,
 		reservedUsername,
 		trialMonths,
-		email
+		email,
+		misc
 	))[''];
 
 	const inviteCode = inviteCodes[0];
@@ -112,6 +114,7 @@ if (require.main === module) {
 		for (const {
 			count,
 			email,
+			misc,
 			name,
 			plan,
 			reservedUsername,
@@ -120,6 +123,7 @@ if (require.main === module) {
 			JSON.parse(process.argv[4]).map(arr => ({
 				count: process.argv[6],
 				email: arr[0],
+				misc: arr[4],
 				name: arr[1],
 				plan: process.argv[5],
 				reservedUsername: arr[2],
@@ -128,6 +132,7 @@ if (require.main === module) {
 			[
 				{
 					count: process.argv[8],
+					misc: JSON.parse(process.argv[9]),
 					email: process.argv[3],
 					name: process.argv[4],
 					plan: process.argv[5],
@@ -144,7 +149,8 @@ if (require.main === module) {
 						plan,
 						reservedUsername,
 						trialMonths,
-						count
+						count,
+						misc
 					)
 				)}`
 			);

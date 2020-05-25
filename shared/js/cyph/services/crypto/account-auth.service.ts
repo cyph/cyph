@@ -725,7 +725,8 @@ export class AccountAuthService extends BaseProvider {
 		pin: {isCustom: boolean; value?: string} = {isCustom: true},
 		name: string = '',
 		email?: string,
-		inviteCode?: string
+		inviteCode?: string,
+		profileExtra: IAccountUserProfileExtra = {}
 	) : Promise<boolean> {
 		let pseudoAccount = false;
 		if (typeof realUsername !== 'string') {
@@ -828,7 +829,7 @@ export class AccountAuthService extends BaseProvider {
 				this.setItem<IAccountUserProfileExtra>(
 					`users/${username}/publicProfileExtra`,
 					AccountUserProfileExtra,
-					{},
+					profileExtra,
 					signingKeyPair.privateKey,
 					true,
 					true,

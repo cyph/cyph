@@ -12,6 +12,7 @@ import {
 	userPresenceSelectOptions
 } from '../../account';
 import {BaseProvider} from '../../base-provider';
+import {PGPPublicKeyComponent} from '../../components/pgp-public-key';
 import {
 	doctorProfile,
 	patientProfile,
@@ -28,6 +29,7 @@ import {AccountUserLookupService} from '../../services/account-user-lookup.servi
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {PGPService} from '../../services/crypto/pgp.service';
 import {DialogService} from '../../services/dialog.service';
 import {EHRService} from '../../services/ehr.service';
 import {EnvService} from '../../services/env.service';
@@ -470,6 +472,13 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 		this.draft.next({...this.draft.value, ...draft});
 	}
 
+	/** Displays PGP public key dialog. */
+	public async viewPGPPublicKey () : Promise<void> {
+		await this.dialogService.baseDialog(PGPPublicKeyComponent, o => {
+			o.user = this.userProfile.value;
+		});
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly activatedRoute: ActivatedRoute,
@@ -509,6 +518,9 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see PGPService */
+		public readonly pgpService: PGPService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

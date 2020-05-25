@@ -514,7 +514,13 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 	);
 
 	const inviteData = (await inviteDataRef.once('value')).val() || {};
-	const {email, inviterUsername, reservedUsername} = inviteData;
+	const {
+		email,
+		inviterUsername,
+		keybaseUsername,
+		pgpPublicKey,
+		reservedUsername
+	} = inviteData;
 	const plan =
 		inviteData.plan in CyphPlans ? inviteData.plan : CyphPlans.Free;
 
@@ -528,6 +534,8 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 		email,
 		inviterUsername,
 		isValid: typeof inviterUsername === 'string',
+		keybaseUsername,
+		pgpPublicKey,
 		plan,
 		reservedUsername,
 		welcomeLetter: (await renderTemplate(
@@ -1101,6 +1109,11 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 				namespace,
 				`users/${inviterUsername}/inviteCodes/${inviteCode}`
 			).catch(() => {}),
+		!keybaseUsername ?
+			undefined :
+			database
+				.ref(`${namespace}/users/${username}/internal/keybaseUsername`)
+				.set(keybaseUsername),
 		isNaN(planTrialEnd) ?
 			undefined :
 			database

@@ -175,6 +175,12 @@
 					"inviterUsername": {
 						".validate": "newData.isString()"
 					},
+					"keybaseUsername": {
+						".validate": "newData.isString()"
+					},
+					"pgpPublicKey": {
+						".validate": "newData.isString()"
+					},
 					"plan": {
 						".validate": "newData.isNumber()"
 					},
@@ -929,6 +935,9 @@
 							".validate": "newData.isString()"
 						},
 						"email": {
+							".validate": "newData.isString()"
+						},
+						"keybaseUsername": {
 							".validate": "newData.isString()"
 						},
 						"lastPushEmail": {

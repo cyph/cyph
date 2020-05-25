@@ -951,6 +951,12 @@ export class StringsService extends BaseProvider {
 	public readonly patientFormsMissing = `Patient forms not submitted.`;
 
 	/** @see StringsService */
+	public readonly pgpPublicKey = `PGP Public Key`;
+
+	/** @see StringsService */
+	public readonly pgpPublicKeyTitle = `\${NAME}'s ${this.pgpPublicKey}`;
+
+	/** @see StringsService */
 	public readonly pin = `PIN`;
 
 	/** @see StringsService */

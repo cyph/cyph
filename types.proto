@@ -328,6 +328,15 @@ message AccountUserProfileExtra {
 		Proficiency proficiency = 2;
 	}
 
+	/** PGP data. */
+	message PGP {
+		/** Keybase username. */
+		string keybaseUsername = 1;
+
+		/** ASCII armor public key. */
+		string publicKey = 2;
+	}
+
 	/** Any sort of vocational or educational position. */
 	message Position {
 		/** Extra information (e.g. position title or degree subject). */
@@ -377,6 +386,9 @@ message AccountUserProfileExtra {
 
 	/** Username of parent organization. */
 	string organization = 7;
+
+	/** @see PGP */
+	PGP pgp = 11;
 
 	/** Specialties. */
 	repeated string specialties = 8;

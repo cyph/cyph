@@ -46,6 +46,7 @@ import {FooterComponent} from '../components/footer';
 import {LinkConnectionComponent} from '../components/link-connection';
 import {LinkConnectionEmailComponent} from '../components/link-connection-email';
 import {NotFoundComponent} from '../components/not-found';
+import {PGPPublicKeyComponent} from '../components/pgp-public-key';
 import {QRCodeScannerComponent} from '../components/qr-code-scanner';
 import {UploadEhrCredentialsComponent} from '../components/upload-ehr-credentials';
 import {env} from '../env';
@@ -62,6 +63,7 @@ import {AccountUserLookupService} from '../services/account-user-lookup.service'
 import {AccountService} from '../services/account.service';
 import {AccountAuthService} from '../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../services/crypto/account-database.service';
+import {PGPService} from '../services/crypto/pgp.service';
 import {CryptocurrencyService} from '../services/cryptocurrency.service';
 import {DatabaseService} from '../services/database.service';
 import {EHRIntegrationService} from '../services/ehr-integration.service';
@@ -125,6 +127,7 @@ import {CyphWebModule} from './cyph-web.module';
 		LinkConnectionComponent,
 		LinkConnectionEmailComponent,
 		NotFoundComponent,
+		PGPPublicKeyComponent,
 		QRCodeScannerComponent,
 		UploadEhrCredentialsComponent
 	],
@@ -176,6 +179,7 @@ import {CyphWebModule} from './cyph-web.module';
 		LinkConnectionComponent,
 		LinkConnectionEmailComponent,
 		NotFoundComponent,
+		PGPPublicKeyComponent,
 		QRCodeScannerComponent,
 		UploadEhrCredentialsComponent
 	],
@@ -198,6 +202,7 @@ import {CyphWebModule} from './cyph-web.module';
 		EHRIntegrationService,
 		EHRService,
 		FingerprintService,
+		PGPService,
 		QRService,
 		WorkerService,
 		{
@@ -212,7 +217,8 @@ export class CyphAppModule {
 		accountContactsService: AccountContactsService,
 		accountDatabaseService: AccountDatabaseService,
 		accountPostsService: AccountPostsService,
-		databaseService: DatabaseService
+		databaseService: DatabaseService,
+		pgpService: PGPService
 	) {
 		AccountContactsService.accountContactsSearchComponent.resolve(
 			AccountContactsSearchComponent
@@ -233,5 +239,6 @@ export class CyphAppModule {
 		(<any> self).accountDatabaseService = accountDatabaseService;
 		(<any> self).accountPostsService = accountPostsService;
 		(<any> self).databaseService = databaseService;
+		(<any> self).pgpService = pgpService;
 	}
 }

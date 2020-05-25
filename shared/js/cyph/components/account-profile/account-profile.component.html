@@ -305,6 +305,37 @@
 			</div>
 		</ng-template>
 
+		<ng-template
+			#pgp
+			let-prefix="prefix"
+			let-readViewClasses="readViewClasses"
+		>
+			<ng-container *ngIf="user?.extra() | await as extra">
+				<div
+					class="pgp"
+					fxLayoutAlign="center"
+					[ngClass]="readViewClasses"
+					*ngIf="
+						(
+							pgpService.getPublicKeyMetadata(
+								extra?.pgp?.publicKey || ''
+							) | await
+						)?.keyID as keyID
+					"
+				>
+					<button mat-raised-button (click)="viewPGPPublicKey()">
+						<mat-icon>
+							vpn_key
+						</mat-icon>
+						&nbsp;
+						<span>
+							{{ keyID || stringsService.pgpPublicKey }}
+						</span>
+					</button>
+				</div>
+			</ng-container>
+		</ng-template>
+
 		<ng-template #mailButtons let-patientData="patientData">
 			<div fxLayout="row" fxLayoutGap="16px">
 				<ng-container
@@ -634,6 +665,15 @@
 											''
 									}}</span>
 								</a>
+								<ng-container
+									*ngTemplateOutlet="
+										pgp;
+										context: {
+											readViewClasses:
+												'animated flipInX _2'
+										}
+									"
+								></ng-container>
 								<ng-container
 									*ngTemplateOutlet="
 										description;
