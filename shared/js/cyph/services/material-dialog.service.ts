@@ -210,7 +210,7 @@ export class MaterialDialogService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public async baseDialog<T> (
+	public async baseDialog<T extends {changeDetectorRef: ChangeDetectorRef}> (
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => MaybePromise<void>,
 		closeFunction?: IResolvable<() => void>,
@@ -248,7 +248,7 @@ export class MaterialDialogService extends BaseProvider
 						matDialogRef.dismiss(closeOK);
 					};
 
-			const instance: T & {changeDetectorRef?: ChangeDetectorRef} =
+			const instance =
 				'componentInstance' in matDialogRef ?
 					matDialogRef.componentInstance :
 					matDialogRef.instance;
@@ -262,18 +262,14 @@ export class MaterialDialogService extends BaseProvider
 			if (setInputs) {
 				await setInputs(instance);
 
-				if (instance.changeDetectorRef) {
-					instance.changeDetectorRef.markForCheck();
-				}
+				instance.changeDetectorRef.markForCheck();
 
 				await matDialogRef
 					.afterOpened()
 					.pipe(take(1))
 					.toPromise();
 
-				if (instance.changeDetectorRef) {
-					instance.changeDetectorRef.markForCheck();
-				}
+				instance.changeDetectorRef.markForCheck();
 			}
 
 			await afterClosed().toPromise();

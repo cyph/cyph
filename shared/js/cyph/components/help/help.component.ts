@@ -1,4 +1,8 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component
+} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
@@ -14,6 +18,9 @@ import {StringsService} from '../../services/strings.service';
 })
 export class HelpComponent extends BaseProvider {
 	constructor (
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
 

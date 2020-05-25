@@ -146,13 +146,13 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 	constructor (
 		/** @ignore */
-		private readonly changeDetectorRef: ChangeDetectorRef,
-
-		/** @ignore */
 		private readonly basicSessionInitService: BasicSessionInitService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,
+
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import {ComponentType} from '@angular/cdk/portal';
-import {Injectable} from '@angular/core';
+import {ChangeDetectorRef, Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import * as htmlToText from 'html-to-text';
@@ -84,6 +84,7 @@ export class AccountFilesService extends BaseProvider {
 	 */
 	public static readonly accountFileSharingComponent = resolvable<
 		ComponentType<{
+			changeDetectorRef: ChangeDetectorRef;
 			closeFunction?: IResolvable<() => void>;
 			file?: AccountFileShare;
 		}>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 
 import {ComponentType} from '@angular/cdk/portal';
-import {Injectable} from '@angular/core';
+import {ChangeDetectorRef, Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {Async} from '../async-type';
 import {BaseProvider} from '../base-provider';
@@ -32,7 +32,7 @@ export class DialogService extends BaseProvider {
 	}
 
 	/** Generic modal implementation that takes a template / content. */
-	public async baseDialog<T> (
+	public async baseDialog<T extends {changeDetectorRef: ChangeDetectorRef}> (
 		_COMPONENT_TYPE: ComponentType<T>,
 		_SET_INPUTS?: (componentInstance: T) => MaybePromise<void>,
 		_CLOSE_FUNCTION?: IResolvable<() => void>,

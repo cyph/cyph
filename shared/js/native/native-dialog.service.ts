@@ -1,5 +1,5 @@
 import {ComponentType} from '@angular/cdk/portal';
-import {Injectable} from '@angular/core';
+import {ChangeDetectorRef, Injectable} from '@angular/core';
 import {SafeUrl} from '@angular/platform-browser';
 import {ModalDialogService} from 'nativescript-angular/modal-dialog';
 import {SnackBar} from 'nativescript-snackbar';
@@ -74,7 +74,7 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 	 * @param options Currently unsupported (not implemented exception).
 	 * @param setInputs Currently unsupported (not implemented exception).
 	 */
-	public async baseDialog<T> (
+	public async baseDialog<T extends {changeDetectorRef: ChangeDetectorRef}> (
 		componentType: ComponentType<T>,
 		setInputs?: (componentInstance: T) => MaybePromise<void>,
 		closeFunction?: IResolvable<() => void>,

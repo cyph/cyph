@@ -2,6 +2,7 @@
 
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	EventEmitter,
 	Input,
@@ -717,6 +718,9 @@ export class AccountRegisterComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly windowWatcherService: WindowWatcherService,
+
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,

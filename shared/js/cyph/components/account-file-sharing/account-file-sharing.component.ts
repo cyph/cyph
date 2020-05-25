@@ -1,5 +1,6 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	Input,
 	ViewChild
@@ -121,6 +122,9 @@ export class AccountFileSharingComponent extends BaseProvider {
 	);
 
 	constructor (
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
+
 		/** @see AccountService */
 		public readonly accountService: AccountService,
 

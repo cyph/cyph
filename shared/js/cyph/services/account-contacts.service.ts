@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import {ComponentType} from '@angular/cdk/portal';
-import {Injectable} from '@angular/core';
+import {ChangeDetectorRef, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
@@ -59,6 +59,7 @@ export class AccountContactsService extends BaseProvider {
 	 */
 	public static readonly accountContactsSearchComponent = resolvable<
 		ComponentType<{
+			changeDetectorRef: ChangeDetectorRef;
 			chipInput: boolean;
 			contactList: Observable<(IContactListItem | User)[]> | undefined;
 			externalUsers: boolean;

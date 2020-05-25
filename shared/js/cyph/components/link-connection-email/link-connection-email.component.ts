@@ -1,5 +1,6 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
 	OnDestroy,
 	OnInit
@@ -118,6 +119,9 @@ export class LinkConnectionEmailComponent extends BaseProvider
 	constructor (
 		/** @ignore */
 		private readonly domSanitizer: DomSanitizer,
+
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
 
 		/** Dialog instance. */
 		public readonly matDialogRef: MatDialogRef<

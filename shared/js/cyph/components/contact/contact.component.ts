@@ -1,4 +1,10 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	Input,
+	OnInit
+} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {emailPattern} from '../../email-pattern';
@@ -81,6 +87,9 @@ export class ContactComponent extends BaseProvider implements OnInit {
 	}
 
 	constructor (
+		/** @see ChangeDetectorRef */
+		public readonly changeDetectorRef: ChangeDetectorRef,
+
 		/** @see ConfigService */
 		public readonly configService: ConfigService,
 
