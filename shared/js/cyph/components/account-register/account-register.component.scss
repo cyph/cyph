@@ -130,9 +130,18 @@ mat-card-content {
 	}
 }
 
-:host ::ng-deep mat-tab-header {
-	margin-left: auto;
-	margin-right: auto;
+:host ::ng-deep {
+	mat-tab-header {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	mat-tab-body {
+		&,
+		> div {
+			overflow: visible !important;
+		}
+	}
 }
 
 .welcome-letter {

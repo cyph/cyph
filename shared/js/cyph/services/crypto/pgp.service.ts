@@ -29,9 +29,16 @@ export class PGPService extends BaseProvider {
 									publicKey
 								);
 
+								const userID =
+									(o.keys[0].users[0] || {}).userId || {};
+
 								return {
+									comment: userID.comment,
+									email: userID.email,
 									fingerprint: o.keys[0].getFingerprint(),
-									keyID: o.keys[0].getKeyId().toHex()
+									keyID: o.keys[0].getKeyId().toHex(),
+									name: userID.name,
+									userID: userID.userid
 								};
 							}
 						},
@@ -45,23 +52,35 @@ export class PGPService extends BaseProvider {
 	/** Gets relevant metadata from PGP public key. */
 	public readonly getPublicKeyMetadata = memoize(
 		async (publicKey: string) => {
+			let comment: string | undefined;
+			let email: string | undefined;
 			let fingerprint: string | undefined;
 			let keyID: string | undefined;
+			let name: string | undefined;
+			let userID: string | undefined;
 
 			try {
 				const o = await (await this.openpgp()).readArmored(publicKey);
 
+				comment = o.comment;
+				email = o.email;
 				fingerprint = this.formatHex(o.fingerprint);
 				keyID = this.formatHex(o.keyID);
+				name = o.name;
+				userID = o.userID;
 			}
 			catch (err) {
 				debugLogError(() => ({getPublicKeyMetadataError: err}));
 			}
 
 			return {
+				comment,
+				email,
 				fingerprint,
 				keyID,
-				publicKey
+				name,
+				publicKey,
+				userID
 			};
 		}
 	);

@@ -608,6 +608,70 @@
 													</mat-error>
 												</mat-form-field>
 											</div>
+											<ng-container
+												*ngIf="pgp | await as pgpData"
+											>
+												<div
+													fxLayout="row"
+													fxLayoutAlign="center center"
+													*ngIf="
+														!!pgpData.keybaseUsername ||
+														!!pgpData.keyID
+													"
+												>
+													<mat-chip-list
+														fxFlex
+														fxFlex.sm="80"
+														fxFlex.gt-sm="60"
+														fxLayoutAlign="end"
+													>
+														<mat-chip
+															[removable]="true"
+															(removed)="
+																pgp.next({})
+															"
+														>
+															<mat-icon
+																>vpn_key</mat-icon
+															>
+															&nbsp;&nbsp;&nbsp;
+															<span
+																*ngIf="
+																	!pgpData.keyID
+																"
+															>
+																{{
+																	'@' +
+																		pgpData.keybaseUsername
+																}}
+															</span>
+															<span
+																*ngIf="
+																	!!pgpData.keyID
+																"
+															>
+																{{
+																	pgpData.keyID
+																}}
+																<ng-container
+																	*ngIf="
+																		!!pgpData.keybaseUsername
+																	"
+																	>&nbsp;{{
+																		'(@' +
+																			pgpData.keybaseUsername +
+																			')'
+																	}}
+																</ng-container>
+															</span>
+															<mat-icon
+																matChipRemove
+																>cancel</mat-icon
+															>
+														</mat-chip>
+													</mat-chip-list>
+												</div>
+											</ng-container>
 										</div>
 									</div>
 								</div>

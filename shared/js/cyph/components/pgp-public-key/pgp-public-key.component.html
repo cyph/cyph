@@ -4,21 +4,48 @@
 			<h1 matDialogTitle>
 				{{ getTitle(name | slice: 0:accountService.maxNameLength) }}
 			</h1>
-			<div mat-dialog-content>
+			<div
+				mat-dialog-content
+				*ngIf="
+					pgpService.getPublicKeyMetadata(
+						extra?.pgp?.publicKey || ''
+					) | await as publicKeyMetadata
+				"
+			>
 				<div fxFlex fxLayout="column" fxLayoutGap="16px">
-					<div
-						*ngIf="
-							(
-								pgpService.getPublicKeyMetadata(
-									extra?.pgp?.publicKey || ''
-								) | await
-							)?.fingerprint as fingerprint
-						"
-					>
-						<span cyphTranslate>Fingerprint:</span>
-						&ngsp;
-						<code>{{ fingerprint || '' }}</code>
+					<div *ngIf="publicKeyMetadata?.userID as userID">
+						<strong>{{ userID || '' }}</strong>
 					</div>
+
+					<div>
+						<div fxLayout="column" fxLayoutGap="4px">
+							<div
+								*ngIf="
+									publicKeyMetadata?.fingerprint as fingerprint
+								"
+							>
+								<span cyphTranslate>Fingerprint:</span>
+								&ngsp;
+								<code>{{ fingerprint || '' }}</code>
+							</div>
+							<div *ngIf="publicKeyMetadata?.keyID as keyID">
+								<span cyphTranslate>Key ID (64-bit):</span>
+								&ngsp;
+								<code>{{ keyID || '' }}</code>
+							</div>
+							<div
+								*ngIf="
+									extra?.pgp
+										?.keybaseUsername as keybaseUsername
+								"
+							>
+								<span cyphTranslate>Keybase account:</span>
+								&ngsp;
+								<code>@{{ keybaseUsername || '' }}</code>
+							</div>
+						</div>
+					</div>
+
 					<div>
 						<pre fxFlex>{{ extra?.pgp?.publicKey || '' }}</pre>
 						<button

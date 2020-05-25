@@ -177,10 +177,14 @@ export class AccountRegisterComponent extends BaseProvider
 	/** Email addres. */
 	public readonly pgp = new BehaviorSubject<
 		| {
-				keybaseUsername?: string;
+				comment?: string;
+				email?: string;
 				fingerprint?: string;
+				keybaseUsername?: string;
 				keyID?: string;
+				name?: string;
 				publicKey?: string;
+				userID?: string;
 		  }
 		| undefined
 	>(undefined);
@@ -837,8 +841,9 @@ export class AccountRegisterComponent extends BaseProvider
 				}
 
 				if (
-					this.inviteCodeData.value.keybaseUsername ||
-					this.inviteCodeData.value.pgpPublicKey
+					(this.inviteCodeData.value.keybaseUsername ||
+						this.inviteCodeData.value.pgpPublicKey) &&
+					!this.pgp.value
 				) {
 					this.pgp.next({
 						keybaseUsername: this.inviteCodeData.value
