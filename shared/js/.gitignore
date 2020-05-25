@@ -3,4 +3,5 @@
 *.tmp
 /environments/.environment.tmp.ts
 /proto
+/tsconfig.ng.json
 /tsconfig.tslint.json

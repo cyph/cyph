@@ -1,5 +1,5 @@
 {
-	"extends": "./src/js/tsconfig.json",
+	"extends": "./src/js/tsconfig.ng.json",
 	"compileOnSave": false,
 	"compilerOptions": {
 		"baseUrl": "src",
