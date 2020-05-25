@@ -130,6 +130,7 @@ if (require.main === module) {
 		const plan = process.argv[6];
 		const reservedUsername = process.argv[7];
 		const trialMonths = process.argv[8];
+		const misc = JSON.parse(process.argv[9] || '{}');
 
 		console.log(
 			JSON.stringify(
@@ -139,7 +140,9 @@ if (require.main === module) {
 					namespace,
 					plan,
 					reservedUsername,
-					trialMonths
+					trialMonths,
+					undefined,
+					misc
 				)
 			)
 		);

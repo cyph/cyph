@@ -626,14 +626,18 @@
 														fxLayoutAlign="end"
 													>
 														<mat-chip
+															[matTooltip]="
+																stringsService.pgpPublicKey
+															"
+															matTooltipPosition="left"
 															[removable]="true"
 															(removed)="
 																pgp.next({})
 															"
 														>
-															<mat-icon
-																>vpn_key</mat-icon
-															>
+															<mat-icon>
+																vpn_key
+															</mat-icon>
 															&nbsp;&nbsp;&nbsp;
 															<span
 																*ngIf="
@@ -666,8 +670,9 @@
 															</span>
 															<mat-icon
 																matChipRemove
-																>cancel</mat-icon
 															>
+																cancel
+															</mat-icon>
 														</mat-chip>
 													</mat-chip-list>
 												</div>

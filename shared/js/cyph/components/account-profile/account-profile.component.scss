@@ -197,6 +197,7 @@ mat-card {
 .cover-edit-buttons {
 	right: 0;
 	top: 0;
+	z-index: 10;
 	position: absolute;
 	transition: 500ms;
 

@@ -51,7 +51,7 @@ export class PGPService extends BaseProvider {
 
 	/** Gets relevant metadata from PGP public key. */
 	public readonly getPublicKeyMetadata = memoize(
-		async (publicKey: string) => {
+		async (publicKey?: string) => {
 			let comment: string | undefined;
 			let email: string | undefined;
 			let fingerprint: string | undefined;
@@ -60,14 +60,18 @@ export class PGPService extends BaseProvider {
 			let userID: string | undefined;
 
 			try {
-				const o = await (await this.openpgp()).readArmored(publicKey);
+				if (publicKey) {
+					const o = await (await this.openpgp()).readArmored(
+						publicKey
+					);
 
-				comment = o.comment;
-				email = o.email;
-				fingerprint = this.formatHex(o.fingerprint);
-				keyID = this.formatHex(o.keyID);
-				name = o.name;
-				userID = o.userID;
+					comment = o.comment;
+					email = o.email;
+					fingerprint = this.formatHex(o.fingerprint);
+					keyID = this.formatHex(o.keyID);
+					name = o.name;
+					userID = o.userID;
+				}
 			}
 			catch (err) {
 				debugLogError(() => ({getPublicKeyMetadataError: err}));

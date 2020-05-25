@@ -132,7 +132,7 @@ if (require.main === module) {
 			[
 				{
 					count: process.argv[8],
-					misc: JSON.parse(process.argv[9]),
+					misc: JSON.parse(process.argv[9] || '{}'),
 					email: process.argv[3],
 					name: process.argv[4],
 					plan: process.argv[5],
