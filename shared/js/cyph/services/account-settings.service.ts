@@ -28,6 +28,7 @@ export class AccountSettingsService extends BaseProvider {
 		messaging: this.getFeatureFlag('messaging'),
 		notes: this.getFeatureFlag('notes'),
 		passwords: this.getFeatureFlag('passwords'),
+		pgp: this.getFeatureFlag('pgp'),
 		scheduler: this.getFeatureFlag('scheduler'),
 		social: this.getFeatureFlag('social'),
 		wallets: this.getFeatureFlag('wallets')
@@ -203,6 +204,12 @@ export class AccountSettingsService extends BaseProvider {
 				id: 'passwords',
 				label: this.stringsService.featureFlagsPasswords,
 				visible: this.staticFeatureFlags.passwords
+			},
+			{
+				featureFlag: this.featureFlags.pgp,
+				id: 'pgp',
+				label: this.stringsService.featureFlagsPGP,
+				visible: of(true)
 			},
 			{
 				featureFlag: this.featureFlags.social,

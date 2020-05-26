@@ -810,6 +810,17 @@
 								".validate": "newData.val() === now"
 							}
 						},
+						"pgp": {
+							"data": {
+								".validate": "newData.isString()"
+							},
+							"hash": {
+								".validate": "newData.isString()"
+							},
+							"timestamp": {
+								".validate": "newData.val() === now"
+							}
+						},
 						"scheduler": {
 							"data": {
 								".validate": "newData.isString()"

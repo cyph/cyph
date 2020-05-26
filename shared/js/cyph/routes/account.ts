@@ -19,6 +19,7 @@ import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPasswordsComponent} from '../components/account-passwords';
+import {AccountPGPComponent} from '../components/account-pgp';
 import {AccountPostFeedPageComponent} from '../components/account-post-feed-page';
 import {AccountPostPageComponent} from '../components/account-post-page';
 import {AccountProfileComponent} from '../components/account-profile';
@@ -295,6 +296,7 @@ export const account: Route = {
 			component: AccountContactsComponent,
 			data: {userTypeFilter: AccountUserTypes.Standard}
 		},
+		{path: 'pgp', component: AccountPGPComponent},
 		{path: 'post/:username/:postID', component: AccountPostPageComponent},
 		{
 			path: 'profile/404',

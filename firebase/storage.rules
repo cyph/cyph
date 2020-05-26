@@ -183,8 +183,9 @@ service firebase.storage {
 				// 	match /messaging/{hash} {}
 				// 	match /notes/{hash} {}
 				// 	match /passwords/{hash} {}
-				// 	match /social/{hash} {}
+				// 	match /pgp/{hash} {}
 				// 	match /scheduler/{hash} {}
+				// 	match /social/{hash} {}
 				// 	match /wallets/{hash} {}
 				// }
 

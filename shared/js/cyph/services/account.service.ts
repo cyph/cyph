@@ -1124,6 +1124,7 @@ export class AccountService extends BaseProvider {
 						'notes',
 						'passwords',
 						'patients',
+						'pgp',
 						'schedule',
 						'settings',
 						'staff',
@@ -1140,6 +1141,7 @@ export class AccountService extends BaseProvider {
 						'incoming-patient-info',
 						'notes',
 						'passwords',
+						'pgp',
 						'schedule',
 						'settings',
 						'wallets'

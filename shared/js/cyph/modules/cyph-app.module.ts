@@ -28,6 +28,7 @@ import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationCenterComponent} from '../components/account-notification-center';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
 import {AccountPasswordsComponent} from '../components/account-passwords';
+import {AccountPGPComponent} from '../components/account-pgp';
 import {AccountPostComponent} from '../components/account-post';
 import {AccountPostComposeComponent} from '../components/account-post-compose';
 import {AccountPostFeedComponent} from '../components/account-post-feed';
@@ -109,6 +110,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotificationCenterComponent,
 		AccountNotificationsSubscribeComponent,
 		AccountPasswordsComponent,
+		AccountPGPComponent,
 		AccountPostComponent,
 		AccountPostComposeComponent,
 		AccountPostFeedComponent,
@@ -161,6 +163,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountNotificationCenterComponent,
 		AccountNotificationsSubscribeComponent,
 		AccountPasswordsComponent,
+		AccountPGPComponent,
 		AccountPostComponent,
 		AccountPostComposeComponent,
 		AccountPostFeedComponent,

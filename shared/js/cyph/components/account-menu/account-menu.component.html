@@ -679,6 +679,47 @@
 				<a
 					mat-list-item
 					cyphTranslate
+					class="pgp"
+					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
+					matTooltip="PGP"
+					[matTooltipDisabled]="menuExpanded | await"
+					matTooltipPosition="right"
+					routerLink="/pgp"
+					(click)="click()"
+					*ngIf="
+						accountSettingsService.featureFlags.pgp.watch() | await
+					"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								(
+									accountFilesService.incomingFilesFiltered
+										.pgpKeys | await
+								)?.length || 0
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((
+									accountFilesService.incomingFilesFiltered
+										.pgpKeys | await
+								)?.length || 0) > 0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						vpn_key
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
+						PGP
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
 					class="wallets"
 					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
 					matTooltip="Wallets (experimental)"

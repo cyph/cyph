@@ -36,6 +36,7 @@ message AccountFileRecord {
 		MessagingGroup = 8;
 		Note = 4;
 		Password = 9;
+		PGPKey = 10;
 		RedoxPatient = 6;
 		Wallet = 7;
 	}
@@ -1265,6 +1266,18 @@ message PatientInfo {
 
 	/** Patient record as synced to/from EHR systems. */
 	RedoxPatient redoxPatient = 2;
+}
+
+/** A PGP key. */
+message PGPKey {
+	/** Indicates that this is a PGPKey object. */
+	required bool isPGPKey = 1;
+
+	/** Value. */
+	oneof value {
+		bytes publicKey = 2;
+		KeyPair keyPair = 3;
+	}
 }
 
 /** @see https://developer.redoxengine.com/data-models/Scheduling.html#New */
