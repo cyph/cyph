@@ -291,7 +291,7 @@ export class AccountFilesService extends BaseProvider {
 			subroutable: true
 		},
 		[AccountFileRecord.RecordTypes.Password]: {
-			blockAnonymous: true,
+			blockAnonymous: false,
 			description: 'Password',
 			incoming: () => this.incomingFilesFiltered.passwords,
 			isOfType: (file: any) => typeof file.password === 'string',
@@ -330,7 +330,7 @@ export class AccountFilesService extends BaseProvider {
 			route: 'wallets',
 			securityModel: undefined,
 			stringPlural: this.stringsService.translate('wallets'),
-			subroutable: true
+			subroutable: false
 		}
 	};
 
