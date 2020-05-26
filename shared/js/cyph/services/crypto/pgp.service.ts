@@ -40,6 +40,13 @@ export class PGPService extends BaseProvider {
 								)
 							)).reduce((a, b) => a.concat(b), []);
 
+					const transfer = async (data: any) => {
+						data = await data;
+						return data instanceof Uint8Array ?
+							(<any> self).Comlink.transfer(data, [data.buffer]) :
+							data;
+					};
+
 					(<any> self).Comlink.expose(
 						{
 							boxOpen: async (
@@ -69,9 +76,7 @@ export class PGPService extends BaseProvider {
 									publicKeys
 								});
 
-								return {
-									data: o.data
-								};
+								return transfer(o.data);
 							},
 							boxSeal: async (
 								plaintext: Uint8Array | string,
@@ -101,11 +106,9 @@ export class PGPService extends BaseProvider {
 									publicKeys
 								});
 
-								return {
-									data: armor ?
-										o.data :
-										o.message.packets.write()
-								};
+								return transfer(
+									armor ? o.data : o.message.packets.write()
+								);
 							},
 							keyPair: async (
 								name: string | undefined,
@@ -208,13 +211,13 @@ export class PGPService extends BaseProvider {
 										undefined
 								});
 
-								return {
-									data: detached ?
+								return transfer(
+									detached ?
 										(<{valid: boolean}[]> o.signatures)
 											.map(sig => sig.valid)
 											.reduce((a, b) => a && b, true) :
 										o.data
-								};
+								);
 							},
 							signSign: async (
 								message: Uint8Array | string,
@@ -240,8 +243,8 @@ export class PGPService extends BaseProvider {
 									privateKeys
 								});
 
-								return {
-									data: armor ?
+								return transfer(
+									armor ?
 										detached ?
 											o.signature :
 											o.data :
@@ -249,7 +252,7 @@ export class PGPService extends BaseProvider {
 											o.signature :
 											o.message
 										).packets.write()
-								};
+								);
 							}
 						},
 						self
@@ -400,7 +403,7 @@ export class PGPService extends BaseProvider {
 			| undefined,
 		bytes: boolean
 	) : Promise<Uint8Array | string> {
-		const o = await (await this.openpgp()).boxOpen(
+		const data = await (await this.openpgp()).boxOpen(
 			cyphertext,
 			(keyPair instanceof Array ? keyPair : [keyPair]).map(kp =>
 				potassiumUtil.toString(kp.privateKey)
@@ -415,8 +418,8 @@ export class PGPService extends BaseProvider {
 		);
 
 		return bytes ?
-			potassiumUtil.fromString(o.data) :
-			potassiumUtil.toString(o.data).trim();
+			potassiumUtil.fromString(data) :
+			potassiumUtil.toString(data).trim();
 	}
 
 	/** @ignore */
@@ -438,7 +441,7 @@ export class PGPService extends BaseProvider {
 		signingPrivateKey: Uint8Array | Uint8Array[] | undefined,
 		bytes: boolean
 	) : Promise<Uint8Array | string> {
-		const o = await (await this.openpgp()).boxSeal(
+		const data = await (await this.openpgp()).boxSeal(
 			plaintext,
 			(publicKey instanceof Array ? publicKey : [publicKey]).map(pk =>
 				potassiumUtil.toString(pk)
@@ -453,8 +456,8 @@ export class PGPService extends BaseProvider {
 		);
 
 		return bytes ?
-			potassiumUtil.fromString(o.data) :
-			potassiumUtil.toString(o.data).trim();
+			potassiumUtil.fromString(data) :
+			potassiumUtil.toString(data).trim();
 	}
 
 	/** @ignore */
@@ -496,7 +499,7 @@ export class PGPService extends BaseProvider {
 		publicKey: Uint8Array | string | (Uint8Array | string)[],
 		bytes?: boolean
 	) : Promise<Uint8Array | string | boolean> {
-		const o = await (await this.openpgp()).signOpen(
+		const data = await (await this.openpgp()).signOpen(
 			signed,
 			(publicKey instanceof Array ? publicKey : [publicKey]).map(pk =>
 				potassiumUtil.toString(pk)
@@ -504,10 +507,10 @@ export class PGPService extends BaseProvider {
 		);
 
 		return !(typeof signed === 'string' || signed instanceof Uint8Array) ?
-			o.data === true :
+			data === true :
 		bytes ?
-			potassiumUtil.fromString(o.data) :
-			potassiumUtil.toString(o.data).trim();
+			potassiumUtil.fromString(data) :
+			potassiumUtil.toString(data).trim();
 	}
 
 	/** @ignore */
@@ -529,7 +532,7 @@ export class PGPService extends BaseProvider {
 		detached: boolean,
 		bytes: boolean
 	) : Promise<Uint8Array | string> {
-		const o = await (await this.openpgp()).signSign(
+		const data = await (await this.openpgp()).signSign(
 			message,
 			(privateKey instanceof Array ? privateKey : [privateKey]).map(sk =>
 				potassiumUtil.toString(sk)
@@ -539,8 +542,8 @@ export class PGPService extends BaseProvider {
 		);
 
 		return bytes ?
-			potassiumUtil.fromString(o.data) :
-			potassiumUtil.toString(o.data).trim();
+			potassiumUtil.fromString(data) :
+			potassiumUtil.toString(data).trim();
 	}
 
 	/** Generates key pair. */
