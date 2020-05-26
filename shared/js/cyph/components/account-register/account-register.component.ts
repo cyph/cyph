@@ -92,7 +92,7 @@ export class AccountRegisterComponent extends BaseProvider
 	/** Indicates the last step that the user is currently able to move on to. */
 	public readonly currentStep: BehaviorSubject<number>;
 
-	/** Email addres. */
+	/** Email address. */
 	public readonly email = new BehaviorSubject<string>('');
 
 	/** @see emailPattern */
@@ -174,21 +174,6 @@ export class AccountRegisterComponent extends BaseProvider
 	/** Lock screen PIN confirmation. */
 	public readonly lockScreenPinConfirm = new BehaviorSubject<string>('');
 
-	/** Email addres. */
-	public readonly pgp = new BehaviorSubject<
-		| {
-				comment?: string;
-				email?: string;
-				fingerprint?: string;
-				keybaseUsername?: string;
-				keyID?: string;
-				name?: string;
-				publicKey?: string;
-				userID?: string;
-		  }
-		| undefined
-	>(undefined);
-
 	/** Master key (main account password). */
 	public readonly masterKey = new BehaviorSubject<string>('');
 
@@ -211,6 +196,22 @@ export class AccountRegisterComponent extends BaseProvider
 
 	/** If true, will modify UI for setting up paper master key. */
 	@Input() public paperMasterKeySetupMode: boolean = false;
+
+	/** PGP data. */
+	public readonly pgp = new BehaviorSubject<
+		| {
+				comment?: string;
+				email?: string;
+				fingerprint?: string;
+				keybaseUsername?: string;
+				keyID?: string;
+				name?: string;
+				publicKey?: string;
+				publicKeyBytes?: Uint8Array;
+				userID?: string;
+		  }
+		| undefined
+	>(undefined);
 
 	/** Phase of registration process. */
 	public readonly phase = new BehaviorSubject<number>(0);
@@ -622,7 +623,7 @@ export class AccountRegisterComponent extends BaseProvider
 						{
 							pgp: {
 								keybaseUsername: this.pgp.value.keybaseUsername,
-								publicKey: this.pgp.value.publicKey
+								publicKey: this.pgp.value.publicKeyBytes
 							}
 						} :
 						undefined
