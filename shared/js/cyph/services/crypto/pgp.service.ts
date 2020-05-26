@@ -111,16 +111,35 @@ export class PGPService extends BaseProvider {
 								);
 							},
 							keyPair: async (
-								name: string | undefined,
-								email: string | undefined,
-								comment: string | undefined
+								options:
+									| {
+											comment?: string;
+											email?: string;
+											name?: string;
+									  }
+									| {
+											privateKey: string;
+									  }
 							) => {
+								if ('privateKey' in options) {
+									const o = await openpgp.key.readArmored(
+										options.privateKey
+									);
+
+									return {
+										privateKeyArmored: o.keys[0].armor(),
+										publicKeyArmored: o.keys[0]
+											.toPublic()
+											.armor()
+									};
+								}
+
 								const {
 									privateKeyArmored,
 									publicKeyArmored
 								} = await openpgp.generateKey({
 									rsaBits: 4096,
-									userIds: [{comment, email, name}]
+									userIds: [options]
 								});
 
 								return {privateKeyArmored, publicKeyArmored};
@@ -548,11 +567,17 @@ export class PGPService extends BaseProvider {
 
 	/** Generates key pair. */
 	public async keyPair (
-		name?: string,
-		email?: string,
-		comment?: string
+		options:
+			| {
+					comment?: string;
+					email?: string;
+					name?: string;
+			  }
+			| {
+					privateKey: string;
+			  } = {}
 	) : Promise<IKeyPair> {
-		const kp = await (await this.openpgp()).keyPair(name, email, comment);
+		const kp = await (await this.openpgp()).keyPair(options);
 
 		return {
 			privateKey: potassiumUtil.fromString(kp.privateKeyArmored),
