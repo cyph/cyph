@@ -1,1 +1,1 @@
-export * from './generate-options';
+export * from './new-wallet-options';
