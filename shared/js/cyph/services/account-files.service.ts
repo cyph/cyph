@@ -1689,7 +1689,7 @@ export class AccountFilesService extends BaseProvider {
 				return 'subject';
 
 			case 'cyph/ehr-api-key':
-				return 'vpn_key';
+				return 'device_hub';
 
 			case 'cyph/form':
 				return 'web';
