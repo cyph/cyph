@@ -172,7 +172,7 @@ export class AccountFilesService extends BaseProvider {
 	>();
 
 	/** File type configurations. */
-	public readonly config: Record<
+	public readonly config /* : Record<
 		AccountFileRecord.RecordTypes,
 		{
 			blockAnonymous: boolean;
@@ -192,7 +192,7 @@ export class AccountFilesService extends BaseProvider {
 			stringPlural: string;
 			subroutable: boolean;
 		}
-	> = {
+	> */ = {
 		[AccountFileRecord.RecordTypes.Appointment]: {
 			blockAnonymous: false,
 			description: 'Appointment',
