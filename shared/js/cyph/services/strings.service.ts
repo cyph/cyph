@@ -1011,10 +1011,13 @@ export class StringsService extends BaseProvider {
 	public readonly pgpEncryptAndSignMessage = `Encrypt & Sign Message`;
 
 	/** @see StringsService */
-	public readonly pgpPrimaryKeyRemove = `Unset Primary (Public) Key`;
+	public readonly pgpPrimaryKeyRemove = `Unset Primary Public Key`;
 
 	/** @see StringsService */
-	public readonly pgpPrimaryKeySet = `Set As Primary (Public) Key`;
+	public readonly pgpPrimaryKeySetUnverified = `Set as Primary Public Key (Unverified)`;
+
+	/** @see StringsService */
+	public readonly pgpPrimaryKeySetVerified = `Set as Primary Public Key (Verified)`;
 
 	/** @see StringsService */
 	public readonly pgpPublicKey = `PGP Public Key`;

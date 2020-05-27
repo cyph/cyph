@@ -923,7 +923,9 @@
 		[matTooltip]="
 			(pgpKey.isPrimary | await) ?
 				stringsService.pgpPrimaryKeyRemove :
-				stringsService.pgpPrimaryKeySet
+			pgpKey.savePrivateKey ?
+				stringsService.pgpPrimaryKeySetVerified :
+				stringsService.pgpPrimaryKeySetUnverified
 		"
 		matTooltipPosition="left"
 		(click)="
