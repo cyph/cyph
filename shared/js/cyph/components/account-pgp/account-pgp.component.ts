@@ -1,7 +1,9 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {SecurityModels} from '../../account';
 import {BaseProvider} from '../../base-provider';
+import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {
 	emailInput,
 	getFormValue,
@@ -21,12 +23,13 @@ import {PGPService} from '../../services/crypto/pgp.service';
 import {DialogService} from '../../services/dialog.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
-import {normalize, numberToString} from '../../util/formatting';
+import {copyToClipboard} from '../../util/clipboard';
+import {filterUndefined} from '../../util/filter';
+import {normalize} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
-import {getDateTimeString} from '../../util/time';
 
 /**
- * Angular component for pgp UI.
+ * Angular component for PGP UI.
  */
 @Component({
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,17 +38,17 @@ import {getDateTimeString} from '../../util/time';
 	templateUrl: './account-pgp.component.html'
 })
 export class AccountPGPComponent extends BaseProvider implements OnInit {
-	/** Current draft of edited PGP key. */
-	public readonly draft = new BehaviorSubject<{
-		id?: string;
-		name?: string;
-	}>({});
+	/** @see copyToClipboard */
+	public readonly copyToClipboard = copyToClipboard;
 
-	/** Edit mode. */
-	public editMode = new BehaviorSubject<boolean>(false);
-
-	/** @see getDateTimeString */
-	public readonly getDateTimeString = getDateTimeString;
+	/** Incoming message. */
+	public readonly incomingMessage = {
+		cyphertext: new BehaviorSubject<string>(''),
+		decrypt: new BehaviorSubject<IPGPKey[]>([]),
+		plaintext: new BehaviorSubject<string>(''),
+		spinner: new BehaviorSubject<boolean>(false),
+		verify: new BehaviorSubject<IPGPKey[]>([])
+	};
 
 	/** Indicates whether speed dial is open. */
 	public readonly isSpeedDialOpen = new BehaviorSubject<boolean>(false);
@@ -53,8 +56,31 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 	/** @see NewPGPKeyOptions */
 	public readonly newPGPKeyOptions = NewPGPKeyOptions;
 
-	/** @see numberToString */
-	public readonly numberToString = numberToString;
+	/** Outgoing message. */
+	public readonly outgoingMessage = {
+		cyphertext: new BehaviorSubject<string>(''),
+		encrypt: new BehaviorSubject<IPGPKey[]>([]),
+		plaintext: new BehaviorSubject<string>(''),
+		sign: new BehaviorSubject<IPGPKey[]>([]),
+		spinner: new BehaviorSubject<boolean>(false)
+	};
+
+	/** All PGP keys. */
+	public readonly pgpKeys = this.accountFilesService.filesListFilteredWithData
+		.pgpKeys()
+		.pipe(
+			map(arr =>
+				arr.map(({data, record}) => ({
+					label: record.name,
+					value: data
+				}))
+			)
+		);
+
+	/** Private PGP keys. */
+	public readonly pgpPrivateKeys = this.pgpKeys.pipe(
+		map(arr => arr.filter(o => o.value.keyPair !== undefined))
+	);
 
 	/** @see AccountFileRecord.RecordTypes */
 	public readonly recordType = AccountFileRecord.RecordTypes.PGPKey;
@@ -253,6 +279,104 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
 		this.accountService.transitionEnd();
+	}
+
+	/** Processes incoming message. */
+	public async processIncomingMessage () : Promise<void> {
+		this.incomingMessage.plaintext.next('');
+		this.incomingMessage.spinner.next(true);
+
+		try {
+			const verificationPublicKeys = filterUndefined(
+				this.incomingMessage.verify.value.map(o =>
+					!potassiumUtil.isEmpty(o.publicKey) ?
+						o.publicKey :
+						o.keyPair?.publicKey
+				)
+			);
+
+			const decryptionKeyPairs = filterUndefined(
+				this.incomingMessage.decrypt.value.map(o =>
+					!potassiumUtil.isEmpty(o.keyPair?.privateKey) ?
+						o.keyPair :
+						undefined
+				)
+			);
+
+			if (
+				verificationPublicKeys.length < 1 &&
+				decryptionKeyPairs.length < 1
+			) {
+				return;
+			}
+
+			this.incomingMessage.plaintext.next(
+				await (decryptionKeyPairs.length > 0 ?
+					this.pgpService.box.open(
+						this.incomingMessage.cyphertext.value,
+						decryptionKeyPairs,
+						verificationPublicKeys
+					) :
+				verificationPublicKeys.length > 0 ?
+					this.pgpService.sign.open(
+						this.incomingMessage.cyphertext.value,
+						verificationPublicKeys
+					) :
+					'')
+			);
+		}
+		finally {
+			this.incomingMessage.spinner.next(false);
+		}
+	}
+
+	/** Processes outgoing message. */
+	public async processOutgoingMessage () : Promise<void> {
+		this.outgoingMessage.cyphertext.next('');
+		this.outgoingMessage.spinner.next(true);
+
+		try {
+			const encryptionPublicKeys = filterUndefined(
+				this.outgoingMessage.encrypt.value.map(o =>
+					!potassiumUtil.isEmpty(o.publicKey) ?
+						o.publicKey :
+						o.keyPair?.publicKey
+				)
+			);
+
+			const signingPrivateKeys = filterUndefined(
+				this.outgoingMessage.sign.value.map(o =>
+					!potassiumUtil.isEmpty(o.keyPair?.privateKey) ?
+						o.keyPair?.privateKey :
+						undefined
+				)
+			);
+
+			if (
+				encryptionPublicKeys.length < 1 &&
+				signingPrivateKeys.length < 1
+			) {
+				return;
+			}
+
+			this.outgoingMessage.cyphertext.next(
+				await (encryptionPublicKeys.length > 0 ?
+					this.pgpService.box.seal(
+						this.outgoingMessage.plaintext.value,
+						encryptionPublicKeys,
+						signingPrivateKeys
+					) :
+				signingPrivateKeys.length > 0 ?
+					this.pgpService.sign.sign(
+						this.outgoingMessage.plaintext.value,
+						signingPrivateKeys
+					) :
+					'')
+			);
+		}
+		finally {
+			this.outgoingMessage.spinner.next(false);
+		}
 	}
 
 	constructor (

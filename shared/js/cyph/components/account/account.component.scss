@@ -262,6 +262,10 @@ $mobileAppBarHeight: 56px;
 		.card-list {
 			min-height: calc(100vh - 102px - 2em) !important;
 		}
+
+		cyph-account-pgp cyph-account-base-file-list .card-list {
+			min-height: calc(100vh - 128px - 2em) !important;
+		}
 	}
 
 	.header {

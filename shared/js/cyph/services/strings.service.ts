@@ -1002,7 +1002,25 @@ export class StringsService extends BaseProvider {
 	public readonly pgpPublicKey = `PGP Public Key`;
 
 	/** @see StringsService */
+	public readonly pgpDecryptMessage = `Decrypt Message`;
+
+	/** @see StringsService */
+	public readonly pgpDecryptAndVerifyMessage = `Decrypt & Verify Message`;
+
+	/** @see StringsService */
+	public readonly pgpEncryptMessage = `Encrypt Message`;
+
+	/** @see StringsService */
+	public readonly pgpEncryptAndSignMessage = `Encrypt & Sign Message`;
+
+	/** @see StringsService */
 	public readonly pgpPublicKeyTitle = `\${NAME}'s ${this.pgpPublicKey}`;
+
+	/** @see StringsService */
+	public readonly pgpSignMessage = `Sign Message`;
+
+	/** @see StringsService */
+	public readonly pgpVerifyMessage = `Verify Message`;
 
 	/** @see StringsService */
 	public readonly pin = `PIN`;

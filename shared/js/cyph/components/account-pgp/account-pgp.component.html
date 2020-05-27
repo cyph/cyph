@@ -1,49 +1,317 @@
-<cyph-account-base-file-list [recordType]="recordType">
-	<smd-fab-speed-dial
-		class="fixed-fab"
-		animationMode="scale"
-		[open]="(isSpeedDialOpen | await) === true"
-		(mouseleave)="isSpeedDialOpen.next(false)"
-	>
-		<smd-fab-trigger
-			[spin]="true"
-			(mouseenter)="isSpeedDialOpen.next(true)"
+<mat-tab-group fxFlex fxFlexFill>
+	<mat-tab cyphTranslate label="Keys" ngClass.lt-md="lt-md">
+		<cyph-account-base-file-list [recordType]="recordType">
+		</cyph-account-base-file-list>
+	</mat-tab>
+
+	<mat-tab cyphTranslate label="Encrypt/Sign Message">
+		<div
+			fxFlex
+			fxFlexFill
+			[class.initiating]="outgoingMessage.spinner | await"
 		>
-			<button
-				mat-fab
-				color="primary"
-				[matTooltip]="stringsService.newPGPKeyGenerate"
-				matTooltipPosition="left"
-				(click)="generate(newPGPKeyOptions.generate)"
-			>
-				<mat-icon *ngIf="(isSpeedDialOpen | await) === false">
-					add
-				</mat-icon>
-				<mat-icon
-					svgIcon="key-add-light"
-					*ngIf="isSpeedDialOpen | await"
-				></mat-icon>
-			</button>
-		</smd-fab-trigger>
-		<smd-fab-actions>
-			<button
-				mat-mini-fab
-				cyphTranslate
-				[matTooltip]="stringsService.newPGPKeyImportPrivateKey"
-				matTooltipPosition="left"
-				(click)="generate(newPGPKeyOptions.importPrivateKey)"
-			>
-				<mat-icon svgIcon="key-upload"></mat-icon>
-			</button>
-			<button
-				mat-mini-fab
-				cyphTranslate
-				[matTooltip]="stringsService.newPGPKeyImportPublicKey"
-				matTooltipPosition="left"
-				(click)="generate(newPGPKeyOptions.importPublicKey)"
-			>
-				<mat-icon>remove_red_eye</mat-icon>
-			</button>
-		</smd-fab-actions>
-	</smd-fab-speed-dial>
-</cyph-account-base-file-list>
+			<mat-card fxFlex fxFlexFill fxLayout="column" fxLayoutGap="16px">
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<div fxFlex="66" fxLayoutGap="16px">
+						<mat-form-field fxFlex>
+							<mat-select
+								cyphTranslate
+								fxFlex
+								multiple
+								[ngModel]="outgoingMessage.encrypt | await"
+								(selectionChange)="
+									outgoingMessage.encrypt.next($event.value)
+								"
+								name="encrypt-public-key"
+								placeholder="Encrypt for User(s)"
+							>
+								<mat-option
+									[value]="o.value"
+									*ngFor="
+										let o of pgpKeys | await;
+										trackBy: trackBySelf
+									"
+								>
+									{{ o.label }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+						<mat-form-field fxFlex>
+							<mat-select
+								cyphTranslate
+								fxFlex
+								multiple
+								[ngModel]="outgoingMessage.sign | await"
+								(selectionChange)="
+									outgoingMessage.sign.next($event.value)
+								"
+								name="sign-private-key"
+								placeholder="Sign with Key(s)"
+							>
+								<mat-option
+									[value]="o.value"
+									*ngFor="
+										let o of pgpPrivateKeys | await;
+										trackBy: trackBySelf
+									"
+								>
+									{{ o.label }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+						<div fxLayoutAlign="center center">
+							<button
+								mat-raised-button
+								[disabled]="
+									((outgoingMessage.encrypt | await) || [])
+										.length < 1 &&
+									((outgoingMessage.sign | await) || [])
+										.length < 1
+								"
+								(click)="processOutgoingMessage()"
+							>
+								{{
+									((outgoingMessage.encrypt | await) || [])
+										.length > 0 &&
+									((outgoingMessage.sign | await) || [])
+										.length < 1 ?
+										stringsService.pgpEncryptMessage :
+									((outgoingMessage.encrypt | await) || [])
+											.length < 1 &&
+										((outgoingMessage.sign | await) || [])
+											.length > 0 ?
+										stringsService.pgpSignMessage :
+										stringsService.pgpEncryptAndSignMessage
+								}}
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<div fxFlex fxLayout="row" fxLayoutGap="32px">
+					<div fxFlex="50" fxLayout="column">
+						<mat-form-field fxFlex fxFlexFill class="flex-textarea">
+							<textarea
+								fxFlex
+								fxFlexFill
+								cyphTranslate
+								matInput
+								[ngModel]="''"
+								(ngModelChange)="
+									outgoingMessage.plaintext.next($event)
+								"
+								placeholder="Message to Encrypt/Sign"
+							></textarea>
+						</mat-form-field>
+					</div>
+					<div fxFlex="50" fxLayout="column" class="output-section">
+						<mat-form-field fxFlex fxFlexFill class="flex-textarea">
+							<textarea
+								cyphTranslate
+								matInput
+								[ngModel]="outgoingMessage.cyphertext | await"
+								placeholder="ASCII Armor Cyphertext"
+								readonly
+							></textarea>
+						</mat-form-field>
+						<button
+							mat-icon-button
+							matTooltip="Copy to Clipboard"
+							(click)="
+								copyToClipboard(
+									outgoingMessage.cyphertext.value || ''
+								)
+							"
+							cyphTranslate
+						>
+							<mat-icon>content_copy</mat-icon>
+						</button>
+					</div>
+				</div>
+			</mat-card>
+
+			<mat-progress-spinner
+				mode="indeterminate"
+				*ngIf="outgoingMessage.spinner | await"
+			></mat-progress-spinner>
+		</div>
+	</mat-tab>
+
+	<mat-tab cyphTranslate label="Open Message"
+		><div
+			fxFlex
+			fxFlexFill
+			[class.initiating]="incomingMessage.spinner | await"
+		>
+			<mat-card fxFlex fxFlexFill fxLayout="column" fxLayoutGap="16px">
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<div fxFlex="66" fxLayoutGap="16px">
+						<mat-form-field fxFlex>
+							<mat-select
+								cyphTranslate
+								fxFlex
+								multiple
+								[ngModel]="incomingMessage.decrypt | await"
+								(selectionChange)="
+									incomingMessage.decrypt.next($event.value)
+								"
+								name="decrypt-public-key"
+								placeholder="Decrypt with Key(s)"
+							>
+								<mat-option
+									[value]="o.value"
+									*ngFor="
+										let o of pgpPrivateKeys | await;
+										trackBy: trackBySelf
+									"
+								>
+									{{ o.label }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+						<mat-form-field fxFlex>
+							<mat-select
+								cyphTranslate
+								fxFlex
+								multiple
+								[ngModel]="incomingMessage.verify | await"
+								(selectionChange)="
+									incomingMessage.verify.next($event.value)
+								"
+								name="verify-private-key"
+								placeholder="Verify from User(s)"
+							>
+								<mat-option
+									[value]="o.value"
+									*ngFor="
+										let o of pgpKeys | await;
+										trackBy: trackBySelf
+									"
+								>
+									{{ o.label }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+						<div fxLayoutAlign="center center">
+							<button
+								mat-raised-button
+								[disabled]="
+									((incomingMessage.decrypt | await) || [])
+										.length < 1 &&
+									((incomingMessage.verify | await) || [])
+										.length < 1
+								"
+								(click)="processIncomingMessage()"
+							>
+								{{
+									((incomingMessage.decrypt | await) || [])
+										.length > 0 &&
+									((incomingMessage.verify | await) || [])
+										.length < 1 ?
+										stringsService.pgpDecryptMessage :
+									((incomingMessage.decrypt | await) || [])
+											.length < 1 &&
+										((incomingMessage.verify | await) || [])
+											.length > 0 ?
+										stringsService.pgpVerifyMessage :
+										stringsService.pgpDecryptAndVerifyMessage
+								}}
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<div fxFlex fxLayout="row" fxLayoutGap="32px">
+					<div fxFlex="50" fxLayout="column">
+						<mat-form-field fxFlex fxFlexFill class="flex-textarea">
+							<textarea
+								fxFlex
+								fxFlexFill
+								cyphTranslate
+								matInput
+								[ngModel]="''"
+								(ngModelChange)="
+									incomingMessage.cyphertext.next($event)
+								"
+								placeholder="Cyphertext to Decrypt/Verify"
+							></textarea>
+						</mat-form-field>
+					</div>
+					<div fxFlex="50" fxLayout="column" class="output-section">
+						<mat-form-field fxFlex fxFlexFill class="flex-textarea">
+							<textarea
+								cyphTranslate
+								matInput
+								[ngModel]="incomingMessage.plaintext | await"
+								placeholder="Opened Message"
+								readonly
+							></textarea>
+						</mat-form-field>
+						<button
+							mat-icon-button
+							matTooltip="Copy to Clipboard"
+							(click)="
+								copyToClipboard(
+									incomingMessage.plaintext.value || ''
+								)
+							"
+							cyphTranslate
+						>
+							<mat-icon>content_copy</mat-icon>
+						</button>
+					</div>
+				</div>
+			</mat-card>
+
+			<mat-progress-spinner
+				mode="indeterminate"
+				*ngIf="incomingMessage.spinner | await"
+			></mat-progress-spinner>
+		</div>
+	</mat-tab>
+</mat-tab-group>
+
+<smd-fab-speed-dial
+	class="fixed-fab"
+	animationMode="scale"
+	[open]="(isSpeedDialOpen | await) === true"
+	(mouseleave)="isSpeedDialOpen.next(false)"
+>
+	<smd-fab-trigger [spin]="true" (mouseenter)="isSpeedDialOpen.next(true)">
+		<button
+			mat-fab
+			color="primary"
+			[matTooltip]="stringsService.newPGPKeyGenerate"
+			matTooltipPosition="left"
+			(click)="generate(newPGPKeyOptions.generate)"
+		>
+			<mat-icon *ngIf="(isSpeedDialOpen | await) === false">
+				add
+			</mat-icon>
+			<mat-icon
+				svgIcon="key-add-light"
+				*ngIf="isSpeedDialOpen | await"
+			></mat-icon>
+		</button>
+	</smd-fab-trigger>
+	<smd-fab-actions>
+		<button
+			mat-mini-fab
+			cyphTranslate
+			[matTooltip]="stringsService.newPGPKeyImportPrivateKey"
+			matTooltipPosition="left"
+			(click)="generate(newPGPKeyOptions.importPrivateKey)"
+		>
+			<mat-icon svgIcon="key-upload"></mat-icon>
+		</button>
+		<button
+			mat-mini-fab
+			cyphTranslate
+			[matTooltip]="stringsService.newPGPKeyImportPublicKey"
+			matTooltipPosition="left"
+			(click)="generate(newPGPKeyOptions.importPublicKey)"
+		>
+			<mat-icon>remove_red_eye</mat-icon>
+		</button>
+	</smd-fab-actions>
+</smd-fab-speed-dial>

@@ -62,7 +62,7 @@ import {
 	getOrSetDefault,
 	getOrSetDefaultAsync
 } from '../util/get-or-set-default';
-import {debugLog} from '../util/log';
+import {debugLog, debugLogError} from '../util/log';
 import {observableAll} from '../util/observable-all';
 import {arraySum} from '../util/reducers';
 import {saveFile} from '../util/save-file';
@@ -1825,9 +1825,14 @@ export class AccountFilesService extends BaseProvider {
 		}
 
 		if (file.recordType === AccountFileRecord.RecordTypes.PGPKey) {
-			await this.pgp.removePrimaryKey(
-				await this.downloadPGPKey(id).result
-			);
+			try {
+				await this.pgp.removePrimaryKey(
+					await this.downloadPGPKey(id).result
+				);
+			}
+			catch (err) {
+				debugLogError(() => ({pgpRemovePrimaryKeyError: err}));
+			}
 		}
 
 		if (confirmAndRedirect) {
