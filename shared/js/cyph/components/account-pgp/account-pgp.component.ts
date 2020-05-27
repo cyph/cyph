@@ -128,12 +128,16 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 				newFormComponent([
 					...(newPGPKeyOptions === NewPGPKeyOptions.generate ?
 						await Promise.all([
-							this.accountDatabaseService.getItem(
-								'email',
-								StringProto,
-								SecurityModels.unprotected
-							),
-							this.accountDatabaseService.currentUser.value?.user.accountUserProfile.getValue()
+							this.accountDatabaseService
+								.getItem(
+									'email',
+									StringProto,
+									SecurityModels.unprotected
+								)
+								.catch(() => undefined),
+							this.accountDatabaseService.currentUser.value?.user.accountUserProfile
+								.getValue()
+								.catch(() => undefined)
 						]).then(async ([userEmail, profile]) => [
 							newFormContainer([input({
 									label: this.stringsService

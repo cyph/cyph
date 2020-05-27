@@ -33,6 +33,7 @@ mat-tab-group {
 	.mat-form-field.flex-textarea .mat-form-field-flex,
 	.mat-form-field.flex-textarea textarea {
 		height: 100%;
+		resize: none;
 	}
 	.mat-form-field.flex-textarea .mat-form-field-wrapper {
 		height: calc(100% - 1.34375em);
