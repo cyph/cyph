@@ -11,6 +11,7 @@ import memoize from 'lodash-es/memoize';
 import {of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
+import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {
 	AccountFileRecord,
 	IAccountFileRecord,
@@ -23,6 +24,7 @@ import {AccountFilesService} from '../../services/account-files.service';
 import {AccountService} from '../../services/account.service';
 import {AccountAuthService} from '../../services/crypto/account-auth.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
+import {PGPService} from '../../services/crypto/pgp.service';
 import {DialogService} from '../../services/dialog.service';
 import {EHRIntegrationService} from '../../services/ehr-integration.service';
 import {EnvService} from '../../services/env.service';
@@ -32,7 +34,12 @@ import {copyToClipboard} from '../../util/clipboard';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {normalize, readableByteLength} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
-import {getDateTimeString, watchRelativeDateString} from '../../util/time';
+import {saveFile} from '../../util/save-file';
+import {
+	getDateTimeString,
+	geISODateString,
+	watchRelativeDateString
+} from '../../util/time';
 import {waitForValue} from '../../util/wait';
 
 /**
@@ -54,13 +61,8 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	/** @see getDateTimeString */
 	public readonly getDateTimeString = getDateTimeString;
 
-	/** Gets PGP key data, if applicable. */
-	public readonly _getPGPKey = memoize(
-		async ({record}: {record: IAccountFileRecord}) =>
-			record.recordType === AccountFileRecord.RecordTypes.PGPKey ?
-				this.accountFilesService.downloadPGPKey(record).result :
-				undefined
-	);
+	/** @see geISODateString */
+	public readonly geISODateString = geISODateString;
 
 	/** Gets PGP key data, if applicable. */
 	public readonly getPGPKey = memoize(
@@ -89,7 +91,29 @@ export class AccountBaseFileListComponent extends BaseProvider {
 						of(false),
 					false
 				),
-				key: pgpKey
+				key: pgpKey,
+				savePrivateKey: !potassiumUtil.isEmpty(
+					pgpKey.keyPair?.privateKey
+				) ?
+					async () =>
+						saveFile(
+							(await this.pgpService.getPrivateKeyArmor(
+								pgpKey.keyPair?.privateKey
+							)) || '',
+							`${pgpKey.pgpMetadata.fingerprint ||
+								record.name}.priv.asc`
+						) :
+					undefined,
+				savePublicKey: async () =>
+					saveFile(
+						(await this.pgpService.getPublicKeyMetadata(
+							!potassiumUtil.isEmpty(pgpKey.publicKey) ?
+								pgpKey.publicKey :
+								pgpKey.keyPair?.publicKey
+						)).publicKey || '',
+						`${pgpKey.pgpMetadata.fingerprint ||
+							record.name}.pub.asc`
+					)
 			};
 		}
 	);
@@ -103,12 +127,18 @@ export class AccountBaseFileListComponent extends BaseProvider {
 				[
 					'name',
 					...(this.anonymousMessages ? ['replyTo'] : []),
-					'timestamp'
+					...(recordType !== AccountFileRecord.RecordTypes.PGPKey ?
+						['timestamp'] :
+						[])
 				]),
+			...(recordType === AccountFileRecord.RecordTypes.PGPKey ?
+				['pgpExpires', 'pgpPublicKey', 'pgpPrivateKey'] :
+				[]),
 			...(recordType === AccountFileRecord.RecordTypes.File ?
 				['size'] :
 				[]),
 			...(recordType === AccountFileRecord.RecordTypes.Password ||
+			recordType === AccountFileRecord.RecordTypes.PGPKey ||
 			this.anonymousMessages ?
 				[] :
 				['owner']),
@@ -302,6 +332,9 @@ export class AccountBaseFileListComponent extends BaseProvider {
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see PGPService */
+		public readonly pgpService: PGPService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

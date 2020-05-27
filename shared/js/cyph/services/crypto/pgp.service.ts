@@ -135,6 +135,12 @@ export class PGPService extends BaseProvider {
 									armor ? o.data : o.message.packets.write()
 								);
 							},
+							getPrivateKeyArmor: async (
+								privateKeyRaw: Uint8Array | string
+							) =>
+								(await readRawKey(
+									privateKeyRaw
+								)).keys[0].armor(),
 							getPublicKeyMetadata: async (
 								publicKeyRaw: Uint8Array | string
 							) => {
@@ -344,6 +350,26 @@ export class PGPService extends BaseProvider {
 		) : Promise<Uint8Array> =>
 			this.boxSeal(plaintext, publicKey, signingPrivateKey, true)
 	};
+
+	/** Gets relevant metadata from PGP public key. */
+	public readonly getPrivateKeyArmor = memoize(
+		async (
+			privateKey?: Uint8Array | string
+		) : Promise<string | undefined> => {
+			if (privateKey !== undefined) {
+				try {
+					return await (await this.openpgp()).getPrivateKeyArmor(
+						privateKey
+					);
+				}
+				catch (err) {
+					debugLogError(() => ({getPrivateKeyArmorError: err}));
+				}
+			}
+
+			return;
+		}
+	);
 
 	/** Gets relevant metadata from PGP public key. */
 	public readonly getPublicKeyMetadata = memoize(

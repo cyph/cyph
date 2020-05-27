@@ -353,6 +353,107 @@
 					</mat-cell>
 				</ng-container>
 
+				<ng-container matColumnDef="pgpExpires">
+					<mat-header-cell
+						fxFlex="128px"
+						fxLayoutAlign="center center"
+						*matHeaderCellDef
+						mat-sort-header
+					>
+						<span cyphTranslate>Expires</span>
+					</mat-header-cell>
+					<mat-cell
+						fxFlex="128px"
+						fxLayoutAlign="center center"
+						*matCellDef="let o"
+					>
+						<span *ngIf="getPGPKey(o) | await as pgpKey">
+							{{
+								!pgpKey?.key.pgpMetadata.expires ?
+									'-' :
+									(geISODateString(
+										pgpKey?.key.pgpMetadata.expires || 0
+									) | await) || ''
+							}}
+						</span>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="pgpPrivateKey">
+					<mat-header-cell
+						fxFlex="128px"
+						fxLayoutAlign="center center"
+						*matHeaderCellDef
+						mat-sort-header
+					>
+						<span cyphTranslate>Export Private Key</span>
+					</mat-header-cell>
+					<mat-cell
+						fxFlex="128px"
+						fxLayoutAlign="center center"
+						*matCellDef="let o"
+					>
+						<ng-container *ngIf="getPGPKey(o) | await as pgpKey">
+							<button
+								mat-icon-button
+								cyphTranslate
+								matTooltip="Download"
+								matTooltipPosition="left"
+								(click)="
+									pgpKey.savePrivateKey();
+									$event.stopPropagation()
+								"
+								*ngIf="
+									pgpKey.savePrivateKey !== undefined;
+									else noPGPPrivateKey
+								"
+							>
+								<mat-icon>cloud_download</mat-icon>
+							</button>
+						</ng-container>
+						<ng-template #noPGPPrivateKey>
+							<span
+								cyphTranslate
+								matTooltip="No private key"
+								matTooltipPosition="left"
+							>
+								-
+							</span>
+						</ng-template>
+					</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="pgpPublicKey">
+					<mat-header-cell
+						fxFlex="128px"
+						fxLayoutAlign="center center"
+						*matHeaderCellDef
+						mat-sort-header
+					>
+						<span cyphTranslate>Export Public Key</span>
+					</mat-header-cell>
+					<mat-cell
+						fxFlex="128px"
+						fxLayoutAlign="center center"
+						*matCellDef="let o"
+					>
+						<ng-container *ngIf="getPGPKey(o) | await as pgpKey">
+							<button
+								mat-icon-button
+								cyphTranslate
+								matTooltip="Download"
+								matTooltipPosition="left"
+								(click)="
+									pgpKey.savePublicKey();
+									$event.stopPropagation()
+								"
+							>
+								<mat-icon>cloud_download</mat-icon>
+							</button>
+						</ng-container>
+					</mat-cell>
+				</ng-container>
+
 				<ng-container matColumnDef="replyTo">
 					<mat-header-cell fxFlex *matHeaderCellDef mat-sort-header>
 						<span cyphTranslate>Reply-To</span>
