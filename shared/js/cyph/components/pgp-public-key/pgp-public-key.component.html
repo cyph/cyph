@@ -1,69 +1,87 @@
-<ng-container *ngIf="user?.name | await as name">
-	<ng-container *ngIf="user?.extra() | await as extra">
-		<ng-container *ngIf="!!extra?.pgp?.publicKey">
-			<h1 matDialogTitle>
-				{{ getTitle(name | slice: 0:accountService.maxNameLength) }}
-			</h1>
+<h1 matDialogTitle>
+	{{
+		getTitle(
+			(user?.name | await) || '' | slice: 0:accountService.maxNameLength
+		)
+	}}
+</h1>
+<div mat-dialog-content>
+	<ng-container *ngIf="userProfileExtra | await as extra; else spinner">
+		<div
+			fxFlex
+			fxLayout="column"
+			fxLayoutGap="16px"
+			*ngIf="
+				pgpService.getPublicKeyMetadata(extra?.pgp?.publicKey || '')
+					| await as o
+			"
+		>
 			<div
-				mat-dialog-content
-				*ngIf="
-					pgpService.getPublicKeyMetadata(
-						extra?.pgp?.publicKey || ''
-					) | await as o
-				"
+				class="key-status"
+				cyphTranslate
+				matTooltip="To verify your key, add the private key and set it as primary. A cryptographic proof of ownership will be automatically generated."
 			>
-				<div fxFlex fxLayout="column" fxLayoutGap="16px">
-					<div *ngIf="o?.pgpMetadata?.userID as userID">
-						<strong>{{ userID || '' }}</strong>
-					</div>
+				<strong
+					class="verified"
+					cyphTranslate
+					*ngIf="(verified | await) === true"
+				>
+					VERIFIED KEY
+				</strong>
+				<strong
+					class="unverified"
+					cyphTranslate
+					*ngIf="(verified | await) === false"
+				>
+					UNVERIFIED KEY
+				</strong>
+			</div>
 
-					<div>
-						<div fxLayout="column" fxLayoutGap="4px">
-							<div
-								*ngIf="
-									o?.pgpMetadata?.fingerprint as fingerprint
-								"
-							>
-								<span cyphTranslate>Fingerprint:</span>
-								&ngsp;
-								<code>{{ fingerprint || '' }}</code>
-							</div>
-							<div *ngIf="o?.pgpMetadata?.keyID as keyID">
-								<span cyphTranslate>Key ID (64-bit):</span>
-								&ngsp;
-								<code>{{ keyID || '' }}</code>
-							</div>
-							<div
-								*ngIf="
-									extra?.pgp
-										?.keybaseUsername as keybaseUsername
-								"
-							>
-								<span cyphTranslate>Keybase account:</span>
-								&ngsp;
-								<code>@{{ keybaseUsername || '' }}</code>
-							</div>
-						</div>
-					</div>
+			<div *ngIf="o?.pgpMetadata?.userID as userID">
+				<strong>{{ userID || '' }}</strong>
+			</div>
 
-					<div>
-						<pre fxFlex>{{ o?.publicKey || '' }}</pre>
-						<button
-							mat-icon-button
-							matTooltip="Copy to Clipboard"
-							(click)="copyToClipboard(o?.publicKey || '')"
-							cyphTranslate
-						>
-							<mat-icon>content_copy</mat-icon>
-						</button>
+			<div>
+				<div fxLayout="column" fxLayoutGap="4px">
+					<div *ngIf="o?.pgpMetadata?.fingerprint as fingerprint">
+						<span cyphTranslate>Fingerprint:</span>
+						&ngsp;
+						<code>{{ fingerprint || '' }}</code>
+					</div>
+					<div *ngIf="o?.pgpMetadata?.keyID as keyID">
+						<span cyphTranslate>Key ID (64-bit):</span>
+						&ngsp;
+						<code>{{ keyID || '' }}</code>
+					</div>
+					<div *ngIf="extra?.pgp?.keybaseUsername as keybaseUsername">
+						<span cyphTranslate>Keybase account:</span>
+						&ngsp;
+						<code>@{{ keybaseUsername || '' }}</code>
 					</div>
 				</div>
 			</div>
-			<div mat-dialog-actions fxLayoutAlign="end center">
-				<button mat-button matDialogClose>
-					{{ stringsService.ok }}
+
+			<div>
+				<pre fxFlex>{{ o?.publicKey || '' }}</pre>
+				<button
+					mat-icon-button
+					matTooltip="Copy to Clipboard"
+					(click)="copyToClipboard(o?.publicKey || '')"
+					cyphTranslate
+				>
+					<mat-icon>content_copy</mat-icon>
 				</button>
 			</div>
-		</ng-container>
+		</div>
 	</ng-container>
-</ng-container>
+	<ng-template #spinner>
+		<div fxFlex fxLayoutAlign="center center">
+			<mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+		</div>
+	</ng-template>
+</div>
+<div mat-dialog-actions fxLayoutAlign="end center">
+	<button mat-button matDialogClose>
+		{{ stringsService.ok }}
+	</button>
+</div>

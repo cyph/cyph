@@ -252,6 +252,9 @@ export class AccountDatabaseService extends BaseProvider {
 		ICurrentUser
 	> = this.currentUser.pipe(filterUndefinedOperator<ICurrentUser>());
 
+	/** Database namespace + a random 64-byte string, used for verification purposes. */
+	public readonly verificationString = `${this.databaseService.namespace}:DQPcViq0Fmr8NZ1NTqyEFFjvUqqcplaGdE2rqjYOercYO/t1/CxBY0cRohegDPf/gqhUJmZ58YMzogCIT2zScA==`;
+
 	/** @ignore */
 	private async getItemInternal<T> (
 		url: MaybePromise<string>,

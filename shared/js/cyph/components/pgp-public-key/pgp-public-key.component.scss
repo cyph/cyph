@@ -1,1 +1,16 @@
 @import '../../../../css/mixins';
+
+.key-status {
+	margin-bottom: 16px;
+	background: white;
+	padding: 8px;
+	text-align: center;
+
+	> .verified {
+		color: map-get($mat-green, 700) !important;
+	}
+
+	> .unverified {
+		color: map-get($mat-red, 700) !important;
+	}
+}

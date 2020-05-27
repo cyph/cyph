@@ -42,12 +42,14 @@ import {
 	IForm,
 	IPassword,
 	IPGPKey,
+	IPGPVerification,
 	IRedoxPatient,
 	IWallet,
 	NotificationTypes,
 	NumberProto,
 	Password,
 	PGPKey,
+	PGPVerification,
 	RedoxPatient,
 	Wallet
 } from '../proto';
@@ -946,15 +948,30 @@ export class AccountFilesService extends BaseProvider {
 
 			const publicKey = getPublicKey(pgpKey);
 
-			(await this.accountDatabaseService.getCurrentUser()).user.accountUserProfileExtra.updateValue(
-				async o => ({
-					...o,
-					pgp: {
-						...(o.pgp || {}),
-						publicKey
-					}
-				})
-			);
+			const currentUser = (await this.accountDatabaseService.getCurrentUser())
+				.user;
+
+			const publicKeyVerification =
+				pgpKey?.keyPair?.privateKey === undefined ||
+				this.potassiumService.isEmpty(pgpKey?.keyPair?.privateKey) ?
+					undefined :
+					await this.pgpService.sign.signBytes(
+						await serialize<IPGPVerification>(PGPVerification, {
+							username: currentUser.username,
+							verificationString: this.accountDatabaseService
+								.verificationString
+						}),
+						pgpKey?.keyPair?.privateKey
+					);
+
+			currentUser.accountUserProfileExtra.updateValue(async o => ({
+				...o,
+				pgp: {
+					...(o.pgp || {}),
+					publicKey,
+					publicKeyVerification
+				}
+			}));
 		};
 
 		const removePrimaryKey = async (id?: IPGPKey | string) => {
@@ -978,12 +995,45 @@ export class AccountFilesService extends BaseProvider {
 		const setPrimaryKey = async (pgpKey: IPGPKey | string) =>
 			setPrimaryKeyInternal(pgpKey);
 
+		const verifyPublicKey = async (
+			username?: string,
+			publicKey?: Uint8Array,
+			publicKeyVerification?: Uint8Array
+		) => {
+			username = normalize(username || '');
+
+			if (
+				!username ||
+				publicKey === undefined ||
+				publicKeyVerification === undefined ||
+				this.potassiumService.isEmpty(publicKey) ||
+				this.potassiumService.isEmpty(publicKeyVerification)
+			) {
+				return false;
+			}
+
+			const verification = await deserialize(
+				PGPVerification,
+				await this.pgpService.sign.openBytes(
+					publicKeyVerification,
+					publicKey
+				)
+			);
+
+			return (
+				verification.username === username &&
+				verification.verificationString ===
+					this.accountDatabaseService.verificationString
+			);
+		};
+
 		return {
 			getPrimaryKeyFingerprint,
 			primaryKey,
 			primaryKeyFingerprint,
 			removePrimaryKey,
-			setPrimaryKey
+			setPrimaryKey,
+			verifyPublicKey
 		};
 	})();
 

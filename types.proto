@@ -336,6 +336,9 @@ message AccountUserProfileExtra {
 
 		/** Public key. */
 		bytes publicKey = 2;
+
+		/** A signed PGPVerification object. */
+		bytes publicKeyVerification = 3;
 	}
 
 	/** Any sort of vocational or educational position. */
@@ -1326,6 +1329,15 @@ message RedoxAppointment {
 
 	/** @see RedoxTypes.Visit */
 	repeated RedoxTypes.Visit Visit = 3;
+}
+
+/** A message that can be signed by a PGP key to authenticate its ownership by a Cyph user. */
+message PGPVerification {
+	/** Username. */
+	required string username = 1;
+
+	/** A string used to prove the purpose of this signed data. */
+	required string verificationString = 2;
 }
 
 /**
