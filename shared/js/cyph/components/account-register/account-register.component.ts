@@ -21,6 +21,7 @@ import {BaseProvider} from '../../base-provider';
 import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
 import {emailPattern, emailRegex} from '../../email-pattern';
 import {CyphPlans, IPGPMetadata} from '../../proto';
+import {AccountFilesService} from '../../services/account-files.service';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AnalyticsService} from '../../services/analytics.service';
@@ -626,6 +627,18 @@ export class AccountRegisterComponent extends BaseProvider
 					undefined :
 					this.stringsService.signupFailed
 			);
+
+			if (
+				!this.submitError.value &&
+				this.pgp.value?.pgpMetadata?.fingerprint &&
+				this.pgp.value.pgpMetadata.keyID &&
+				this.pgp.value.publicKeyBytes
+			) {
+				await this.accountFilesService.uploadPGPKey({
+					pgpMetadata: this.pgp.value.pgpMetadata,
+					publicKey: this.pgp.value.publicKeyBytes
+				});
+			}
 		}
 		catch {
 			this.submitError.next(this.stringsService.signupFailed);
@@ -703,6 +716,9 @@ export class AccountRegisterComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountFilesService: AccountFilesService,
 
 		/** @ignore */
 		private readonly accountUserLookupService: AccountUserLookupService,

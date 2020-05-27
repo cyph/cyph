@@ -2410,6 +2410,26 @@ export class AccountFilesService extends BaseProvider {
 		};
 	}
 
+	/** Uploads PGP key. */
+	public async uploadPGPKey (pgpKey: IPGPKey) : Promise<string> {
+		if (!pgpKey.pgpMetadata.fingerprint || !pgpKey.pgpMetadata.keyID) {
+			throw new Error('Invalid PGP key.');
+		}
+
+		return this.upload(
+			pgpKey.pgpMetadata.userID ?
+				`${pgpKey.pgpMetadata.userID} : ${pgpKey.pgpMetadata.keyID}` :
+				pgpKey.pgpMetadata.keyID,
+			pgpKey,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			normalize(pgpKey.pgpMetadata.fingerprint)
+		).result;
+	}
+
 	/** Watches appointment. */
 	public watchAppointment (
 		id: string | IAccountFileRecord

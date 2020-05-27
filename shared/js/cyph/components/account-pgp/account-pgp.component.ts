@@ -25,7 +25,6 @@ import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {copyToClipboard} from '../../util/clipboard';
 import {filterUndefined} from '../../util/filter';
-import {normalize} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
 
 /**
@@ -257,18 +256,7 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 		}
 
 		try {
-			await this.accountFilesService.upload(
-				pgpMetadata.userID ?
-					`${pgpMetadata.userID} : ${pgpMetadata.keyID}` :
-					pgpMetadata.keyID,
-				pgpKey,
-				undefined,
-				undefined,
-				undefined,
-				undefined,
-				undefined,
-				normalize(pgpMetadata.fingerprint)
-			).result;
+			await this.accountFilesService.uploadPGPKey(pgpKey);
 		}
 		catch (err) {
 			debugLogError(() => ({pgpKeyUploadFailure: {err}}));
