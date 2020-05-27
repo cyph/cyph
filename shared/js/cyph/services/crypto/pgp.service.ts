@@ -155,11 +155,11 @@ export class PGPService extends BaseProvider {
 											expirationTime.getTime(),
 									fingerprint: publicKey.getFingerprint(),
 									keyID: publicKey.getKeyId().toHex(),
+									name: userID.name,
 									publicKey: publicKey.armor(),
 									publicKeyBytes: await transfer(
 										publicKey.toPacketlist().write()
 									),
-									name: userID.name,
 									userID: userID.userid
 								};
 							},

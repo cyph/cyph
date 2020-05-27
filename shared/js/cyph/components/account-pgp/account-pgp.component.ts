@@ -134,7 +134,7 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 								SecurityModels.unprotected
 							),
 							this.accountDatabaseService.currentUser.value?.user.accountUserProfile.getValue()
-						]).then(async ([email, profile]) => [
+						]).then(async ([userEmail, profile]) => [
 							newFormContainer([input({
 									label: this.stringsService
 										.newPGPKeyNameInput,
@@ -145,7 +145,7 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 									label: this.stringsService
 										.newPGPKeyEmailInput,
 									required: false,
-									value: email
+									value: userEmail
 								})]),
 							newFormContainer([input({
 									label: this.stringsService
@@ -234,8 +234,8 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 		const pgpKey: IPGPKey | undefined =
 			keyPair !== undefined ?
 				{
-					pgpMetadata,
-					keyPair
+					keyPair,
+					pgpMetadata
 				} :
 			publicKeyBytes !== undefined ?
 				{
