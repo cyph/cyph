@@ -1288,17 +1288,20 @@ message PGPMetadata {
 	/** Email address of key owner. */
 	string email = 2;
 
+	/** Expiration timestamp (if applicable). */
+	double expires = 3;
+
 	/** Fingerprint. */
-	string fingerprint = 3;
+	string fingerprint = 4;
 
 	/** Abbreviated (64-bit) fingerprint. */
-	string keyID = 4;
+	string keyID = 5;
 
 	/** Name of key owner. */
-	string name = 5;
+	string name = 6;
 
 	/** Full user ID string (name + email + comment). */
-	string userID = 6;
+	string userID = 7;
 }
 
 /** @see https://developer.redoxengine.com/data-models/Scheduling.html#New */

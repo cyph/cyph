@@ -122,12 +122,18 @@ export class PGPService extends BaseProvider {
 								const o = await readRawKey(publicKeyRaw);
 								const publicKey = o.keys[0].toPublic();
 
+								const expirationTime = await publicKey.getExpirationTime();
+
 								const userID =
 									(publicKey.users[0] || {}).userId || {};
 
 								return {
 									comment: userID.comment,
 									email: userID.email,
+									expires:
+										expirationTime === Infinity ?
+											undefined :
+											expirationTime.getTime(),
 									fingerprint: publicKey.getFingerprint(),
 									keyID: publicKey.getKeyId().toHex(),
 									publicKey: publicKey.armor(),
@@ -328,6 +334,7 @@ export class PGPService extends BaseProvider {
 		}> => {
 			let comment: string | undefined;
 			let email: string | undefined;
+			let expires: number | undefined;
 			let fingerprint: string | undefined;
 			let keyID: string | undefined;
 			let name: string | undefined;
@@ -347,6 +354,7 @@ export class PGPService extends BaseProvider {
 
 					comment = o.comment;
 					email = o.email;
+					expires = o.expires;
 					fingerprint = this.formatHex(o.fingerprint);
 					keyID = this.formatHex(o.keyID);
 					publicKeyArmor = o.publicKey;
@@ -363,6 +371,7 @@ export class PGPService extends BaseProvider {
 				pgpMetadata: {
 					comment,
 					email,
+					expires,
 					fingerprint,
 					keyID,
 					name,
