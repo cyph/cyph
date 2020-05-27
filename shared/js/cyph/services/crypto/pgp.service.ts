@@ -49,6 +49,16 @@ export class PGPService extends BaseProvider {
 							data;
 					};
 
+					const validateSignatures = (
+						signatures: {valid?: boolean}[],
+						publicKeys: any[]
+					) =>
+						publicKeys.length < 1 ||
+						(signatures.length >= publicKeys.length &&
+							signatures
+								.map(sig => !!sig.valid)
+								.reduce((a, b) => a && b, true));
+
 					(<any> self).Comlink.expose(
 						{
 							boxOpen: async (
@@ -79,6 +89,15 @@ export class PGPService extends BaseProvider {
 									privateKeys,
 									publicKeys
 								});
+
+								if (
+									!validateSignatures(
+										o.signatures,
+										publicKeys
+									)
+								) {
+									throw new Error('Invalid signature.');
+								}
 
 								return transfer(o.data);
 							},
@@ -244,13 +263,16 @@ export class PGPService extends BaseProvider {
 										undefined
 								});
 
-								return transfer(
-									detached ?
-										(<{valid: boolean}[]> o.signatures)
-											.map(sig => sig.valid)
-											.reduce((a, b) => a && b, true) :
-										o.data
+								const isValid = validateSignatures(
+									o.signatures,
+									publicKeys
 								);
+
+								if (!isValid && !detached) {
+									throw new Error('Invalid signature.');
+								}
+
+								return transfer(detached ? isValid : o.data);
 							},
 							signSign: async (
 								message: Uint8Array | string,
