@@ -1270,14 +1270,35 @@ message PatientInfo {
 
 /** A PGP key. */
 message PGPKey {
-	/** Indicates that this is a PGPKey object. */
-	required bool isPGPKey = 1;
+	/** @see PGPMetadata */
+	required PGPMetadata pgpMetadata = 1;
 
 	/** Value. */
 	oneof value {
 		bytes publicKey = 2;
 		KeyPair keyPair = 3;
 	}
+}
+
+/** PGP key metadata. */
+message PGPMetadata {
+	/** Comment. */
+	string comment = 1;
+
+	/** Email address of key owner. */
+	string email = 2;
+
+	/** Fingerprint. */
+	string fingerprint = 3;
+
+	/** Abbreviated (64-bit) fingerprint. */
+	string keyID = 4;
+
+	/** Name of key owner. */
+	string name = 5;
+
+	/** Full user ID string (name + email + comment). */
+	string userID = 6;
 }
 
 /** @see https://developer.redoxengine.com/data-models/Scheduling.html#New */

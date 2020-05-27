@@ -220,6 +220,7 @@ export class CyphAppModule {
 		accountAuthService: AccountAuthService,
 		accountContactsService: AccountContactsService,
 		accountDatabaseService: AccountDatabaseService,
+		accountFilesService: AccountFilesService,
 		accountPostsService: AccountPostsService,
 		databaseService: DatabaseService,
 		pgpService: PGPService
@@ -242,6 +243,7 @@ export class CyphAppModule {
 		(<any> self).accountAuthService = accountAuthService;
 		(<any> self).accountContactsService = accountContactsService;
 		(<any> self).accountDatabaseService = accountDatabaseService;
+		(<any> self).accountFilesService = accountFilesService;
 		(<any> self).accountPostsService = accountPostsService;
 		(<any> self).databaseService = databaseService;
 		(<any> self).pgpService = pgpService;

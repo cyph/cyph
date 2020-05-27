@@ -320,7 +320,7 @@
 							pgpService.getPublicKeyMetadata(
 								extra?.pgp?.publicKey || ''
 							) | await
-						)?.keyID as keyID
+						)?.pgpMetadata?.keyID as keyID
 					"
 				>
 					<button mat-raised-button (click)="viewPGPPublicKey()">

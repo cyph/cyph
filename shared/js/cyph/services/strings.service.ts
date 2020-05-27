@@ -732,6 +732,12 @@ export class StringsService extends BaseProvider {
 	public readonly newNote = `New Note`;
 
 	/** @see StringsService */
+	public readonly newPGPKeyCommentInput = `Comment (optional)`;
+
+	/** @see StringsService */
+	public readonly newPGPKeyEmailInput = `Email Address (optional)`;
+
+	/** @see StringsService */
 	public readonly newPGPKeyErrorText = `Adding PGP key failed. Please double check the input and try again.`;
 
 	/** @see StringsService */
@@ -744,40 +750,25 @@ export class StringsService extends BaseProvider {
 	public readonly newPGPKeyGenerateText = `Generate a brand new PGP key.`;
 
 	/** @see StringsService */
-	public readonly newPGPKeyImportAddress = `Watch PGP Key Address`;
+	public readonly newPGPKeyImportPrivateKey = `Import PGP Private Key`;
 
 	/** @see StringsService */
-	public readonly newPGPKeyImportAddressInput = `Address`;
+	public readonly newPGPKeyImportPrivateKeyInput = `Private Key`;
 
 	/** @see StringsService */
-	public readonly newPGPKeyImportAddressText = `Add a read-only PGP key to track a public address.`;
+	public readonly newPGPKeyImportPrivateKeyText = `Import existing PGP private key in ASCII armor format.`;
 
 	/** @see StringsService */
-	public readonly newPGPKeyImportKey = `Import PGP Key Key`;
+	public readonly newPGPKeyImportPublicKey = `Import PGP Public Key`;
 
 	/** @see StringsService */
-	public readonly newPGPKeyImportKeyInput = `WIF Key`;
+	public readonly newPGPKeyImportPublicKeyInput = `Public Key`;
 
 	/** @see StringsService */
-	public readonly newPGPKeyImportKeyText = `Import existing PGP key private key in WIF format.`;
+	public readonly newPGPKeyImportPublicKeyText = `Import a PGP public key in ASCII armor format.`;
 
 	/** @see StringsService */
-	public readonly newPGPKeyName = `PGP Key Name`;
-
-	/** @see StringsService */
-	public readonly newPGPKeyNameDefaultValue = `My PGP Key`;
-
-	/** @see StringsService */
-	public readonly newPGPKeyNameInput = `PGP Key Name`;
-
-	/** @see StringsService */
-	public readonly newPGPKeyNameText = `Name of this PGP key:`;
-
-	/** @see StringsService */
-	public readonly newPGPKeyUncompressed = `Uncompressed`;
-
-	/** @see StringsService */
-	public readonly newPGPKeyUncompressedTooltip = `Use an old-style uncompressed public key. If you don't know what this means, you probably don't need it. However, if your first import attempt shows an address you don't expect, try this option.`;
+	public readonly newPGPKeyNameInput = `Name (optional)`;
 
 	/** @see StringsService */
 	public readonly newString = `new`;

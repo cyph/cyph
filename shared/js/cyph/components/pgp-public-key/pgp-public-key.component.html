@@ -9,11 +9,11 @@
 				*ngIf="
 					pgpService.getPublicKeyMetadata(
 						extra?.pgp?.publicKey || ''
-					) | await as publicKeyMetadata
+					) | await as o
 				"
 			>
 				<div fxFlex fxLayout="column" fxLayoutGap="16px">
-					<div *ngIf="publicKeyMetadata?.userID as userID">
+					<div *ngIf="o?.pgpMetadata?.userID as userID">
 						<strong>{{ userID || '' }}</strong>
 					</div>
 
@@ -21,14 +21,14 @@
 						<div fxLayout="column" fxLayoutGap="4px">
 							<div
 								*ngIf="
-									publicKeyMetadata?.fingerprint as fingerprint
+									o?.pgpMetadata?.fingerprint as fingerprint
 								"
 							>
 								<span cyphTranslate>Fingerprint:</span>
 								&ngsp;
 								<code>{{ fingerprint || '' }}</code>
 							</div>
-							<div *ngIf="publicKeyMetadata?.keyID as keyID">
+							<div *ngIf="o?.pgpMetadata?.keyID as keyID">
 								<span cyphTranslate>Key ID (64-bit):</span>
 								&ngsp;
 								<code>{{ keyID || '' }}</code>
@@ -47,13 +47,11 @@
 					</div>
 
 					<div>
-						<pre fxFlex>{{ extra?.pgp?.publicKey || '' }}</pre>
+						<pre fxFlex>{{ o?.publicKey || '' }}</pre>
 						<button
 							mat-icon-button
 							matTooltip="Copy to Clipboard"
-							(click)="
-								copyToClipboard(extra?.pgp?.publicKey || '')
-							"
+							(click)="copyToClipboard(o?.publicKey || '')"
 							cyphTranslate
 						>
 							<mat-icon>content_copy</mat-icon>

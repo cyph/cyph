@@ -1050,6 +1050,7 @@ export class AccountService extends BaseProvider {
 					'ehr': 'EHR',
 					'feed': 'Social Feed',
 					'inbox': 'Anonymous Inbox',
+					'pgp': 'PGP',
 					'schedule': 'Appointment Scheduler'
 				};
 

@@ -616,7 +616,8 @@
 													fxLayoutAlign="center center"
 													*ngIf="
 														!!pgpData.keybaseUsername ||
-														!!pgpData.keyID
+														!!pgpData.pgpMetadata
+															.keyID
 													"
 												>
 													<mat-chip-list
@@ -641,7 +642,9 @@
 															&nbsp;&nbsp;&nbsp;
 															<span
 																*ngIf="
-																	!pgpData.keyID
+																	!pgpData
+																		.pgpMetadata
+																		.keyID
 																"
 															>
 																{{
@@ -651,11 +654,15 @@
 															</span>
 															<span
 																*ngIf="
-																	!!pgpData.keyID
+																	!!pgpData
+																		.pgpMetadata
+																		.keyID
 																"
 															>
 																{{
-																	pgpData.keyID
+																	pgpData
+																		.pgpMetadata
+																		.keyID
 																}}
 																<ng-container
 																	*ngIf="

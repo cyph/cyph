@@ -20,7 +20,7 @@ import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
 import {emailPattern, emailRegex} from '../../email-pattern';
-import {CyphPlans} from '../../proto';
+import {CyphPlans, IPGPMetadata} from '../../proto';
 import {AccountUserLookupService} from '../../services/account-user-lookup.service';
 import {AccountService} from '../../services/account.service';
 import {AnalyticsService} from '../../services/analytics.service';
@@ -200,15 +200,10 @@ export class AccountRegisterComponent extends BaseProvider
 	/** PGP data. */
 	public readonly pgp = new BehaviorSubject<
 		| {
-				comment?: string;
-				email?: string;
-				fingerprint?: string;
 				keybaseUsername?: string;
-				keyID?: string;
-				name?: string;
+				pgpMetadata?: IPGPMetadata;
 				publicKey?: string;
 				publicKeyBytes?: Uint8Array;
-				userID?: string;
 		  }
 		| undefined
 	>(undefined);

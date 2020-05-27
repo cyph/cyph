@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
-import {IKeyPair} from '../../proto/types';
+import {IKeyPair, IPGPMetadata} from '../../proto/types';
 import {debugLogError} from '../../util/log';
 import {WorkerService} from '../worker.service';
 
@@ -131,7 +131,7 @@ export class PGPService extends BaseProvider {
 									fingerprint: publicKey.getFingerprint(),
 									keyID: publicKey.getKeyId().toHex(),
 									publicKey: publicKey.armor(),
-									publicKeyBytes: transfer(
+									publicKeyBytes: await transfer(
 										publicKey.toPacketlist().write()
 									),
 									name: userID.name,
@@ -154,16 +154,19 @@ export class PGPService extends BaseProvider {
 										rsaBits: 4096,
 										userIds: [options]
 									})).key :
-									await readRawKey(options.privateKey);
+									(await readRawKey(options.privateKey))
+										.keys[0];
 
 								return {
-									privateKey: o.keys[0]
-										.toPacketlist()
-										.write(),
-									publicKey: o.keys[0]
-										.toPublic()
-										.toPacketlist()
-										.write()
+									privateKey: await transfer(
+										o.toPacketlist().write()
+									),
+									publicKey: await transfer(
+										o
+											.toPublic()
+											.toPacketlist()
+											.write()
+									)
 								};
 							},
 							signOpen: async (
@@ -316,7 +319,13 @@ export class PGPService extends BaseProvider {
 
 	/** Gets relevant metadata from PGP public key. */
 	public readonly getPublicKeyMetadata = memoize(
-		async (publicKey?: Uint8Array | string) => {
+		async (
+			publicKey?: Uint8Array | string
+		) : Promise<{
+			pgpMetadata: IPGPMetadata;
+			publicKey: string | undefined;
+			publicKeyBytes: Uint8Array | undefined;
+		}> => {
 			let comment: string | undefined;
 			let email: string | undefined;
 			let fingerprint: string | undefined;
@@ -325,6 +334,10 @@ export class PGPService extends BaseProvider {
 			let publicKeyArmor: string | undefined;
 			let publicKeyBytes: Uint8Array | undefined;
 			let userID: string | undefined;
+
+			if (publicKey && publicKey.length < 1) {
+				publicKey = undefined;
+			}
 
 			try {
 				if (publicKey) {
@@ -347,14 +360,16 @@ export class PGPService extends BaseProvider {
 			}
 
 			return {
-				comment,
-				email,
-				fingerprint,
-				keyID,
-				name,
+				pgpMetadata: {
+					comment,
+					email,
+					fingerprint,
+					keyID,
+					name,
+					userID
+				},
 				publicKey: publicKeyArmor,
-				publicKeyBytes,
-				userID
+				publicKeyBytes
 			};
 		}
 	);

@@ -53,7 +53,11 @@ import {
 } from '../proto';
 import {filterUndefined} from '../util/filter';
 import {flattenObservable, toBehaviorSubject} from '../util/flatten-observable';
-import {convertStorageUnitsToBytes, normalizeArray} from '../util/formatting';
+import {
+	convertStorageUnitsToBytes,
+	normalize,
+	normalizeArray
+} from '../util/formatting';
 import {
 	getOrSetDefault,
 	getOrSetDefaultAsync
@@ -69,6 +73,7 @@ import {awaitAsync, resolvable, sleep} from '../util/wait';
 import {AccountSettingsService} from './account-settings.service';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {PGPService} from './crypto/pgp.service';
 import {PotassiumService} from './crypto/potassium.service';
 import {DatabaseService} from './database.service';
 import {DialogService} from './dialog.service';
@@ -310,7 +315,7 @@ export class AccountFilesService extends BaseProvider {
 			blockAnonymous: false,
 			description: 'PGP key',
 			incoming: () => this.incomingFilesFiltered.pgpKeys,
-			isOfType: (file: any) => typeof file.isPGPKey === 'boolean',
+			isOfType: (file: any) => typeof file.pgpMetadata === 'object',
 			list: () => this.filesListFiltered.pgpKeys,
 			mediaType: 'cyph/pgp-key',
 			proto: PGPKey,
@@ -830,6 +835,69 @@ export class AccountFilesService extends BaseProvider {
 		)
 	);
 
+	/** PGP-specific data and functions. */
+	public readonly pgp = (() => {
+		const primaryKeyFingerprint = toBehaviorSubject(
+			this.accountDatabaseService.currentUserFiltered.pipe(
+				switchMap(o => o.user.extra()),
+				switchMap(
+					async o =>
+						(await this.pgpService.getPublicKeyMetadata(
+							o?.pgp?.publicKey
+						))?.pgpMetadata.fingerprint
+				)
+			),
+			undefined
+		);
+
+		const primaryKey = toBehaviorSubject(
+			primaryKeyFingerprint.pipe(
+				switchMap(async fingerprint =>
+					!fingerprint ?
+						undefined :
+						this.downloadPGPKey(fingerprint).result.catch(
+							() => undefined
+						)
+				)
+			),
+			undefined
+		);
+
+		const setPrimaryKeyInternal = async (
+			pgpKey: IPGPKey | string | undefined
+		) => {
+			if (typeof pgpKey === 'string') {
+				pgpKey = await this.downloadPGPKey(pgpKey).result;
+			}
+
+			const publicKey =
+				pgpKey?.publicKey !== undefined ?
+					pgpKey?.publicKey :
+					pgpKey?.keyPair?.publicKey;
+
+			(await this.accountDatabaseService.getCurrentUser()).user.accountUserProfileExtra.updateValue(
+				async o => ({
+					...o,
+					pgp: {
+						...(o.pgp || {}),
+						publicKey
+					}
+				})
+			);
+		};
+
+		const removePrimaryKey = async () => setPrimaryKeyInternal(undefined);
+		const setPrimaryKey = async (pgpKey: IPGPKey | string) =>
+			setPrimaryKeyInternal(pgpKey);
+
+		return {
+			primaryKey,
+			primaryKeyFingerprint,
+			removePrimaryKey,
+			setPrimaryKey
+		};
+	})();
+
 	/** Indicates spinner value. If -1, indefinite. If undefined, hide. */
 	public readonly showSpinner = new BehaviorSubject<number | undefined>(-1);
 
@@ -1317,7 +1385,11 @@ export class AccountFilesService extends BaseProvider {
 		progress: Observable<number>;
 		result: Promise<IPGPKey>;
 	} {
-		return this.downloadItem(id, PGPKey);
+		/* Handle formatted fingerprints that double as file IDs */
+		return this.downloadItem(
+			typeof id === 'string' ? normalize(id) : id,
+			PGPKey
+		);
 	}
 
 	/** Downloads file and returns as data URI. */
@@ -2058,7 +2130,8 @@ export class AccountFilesService extends BaseProvider {
 		metadata?: string,
 		replyTo?: {email?: string; name?: string},
 		wasAnonymousShare: boolean = false,
-		timestamp?: number
+		timestamp?: number,
+		id: string = uuid()
 	) : {
 		progress: Observable<number>;
 		result: Promise<string>;
@@ -2094,7 +2167,6 @@ export class AccountFilesService extends BaseProvider {
 
 		this.showSpinner.next(0);
 
-		const id = uuid();
 		const key = (async () =>
 			this.potassiumService.randomBytes(
 				await this.potassiumService.secretBox.keyBytes
@@ -2377,6 +2449,9 @@ export class AccountFilesService extends BaseProvider {
 
 		/** @ignore */
 		private readonly fileService: FileService,
+
+		/** @ignore */
+		private readonly pgpService: PGPService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService,
