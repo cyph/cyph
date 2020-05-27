@@ -440,47 +440,110 @@ export class AccountFilesService extends BaseProvider {
 	 * @see filesListFiltered
 	 */
 	public readonly filesListFilteredWithData = {
-		appointments: this.getFiles(
+		appointments: this.getFiles<
+			IAppointment,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.appointments,
 			AccountFileRecord.RecordTypes.Appointment,
 			this.config[AccountFileRecord.RecordTypes.Appointment]
 		),
-		ehrApiKeys: this.getFiles(
+		ehrApiKeys: this.getFiles<
+			IEhrApiKey,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.ehrApiKeys,
 			AccountFileRecord.RecordTypes.EhrApiKey,
 			this.config[AccountFileRecord.RecordTypes.EhrApiKey]
 		),
-		files: this.getFiles(
+		files: this.getFiles<
+			Blob,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.files,
 			AccountFileRecord.RecordTypes.File,
 			this.config[AccountFileRecord.RecordTypes.File]
 		),
-		forms: this.getFiles(
+		forms: this.getFiles<
+			IForm,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.forms,
 			AccountFileRecord.RecordTypes.Form,
 			this.config[AccountFileRecord.RecordTypes.Form]
 		),
-		messagingGroups: this.getFiles(
+		messagingGroups: this.getFiles<
+			IAccountMessagingGroup,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.messagingGroups,
 			AccountFileRecord.RecordTypes.MessagingGroup,
 			this.config[AccountFileRecord.RecordTypes.MessagingGroup]
 		),
-		passwords: this.getFiles(
+		passwords: this.getFiles<
+			IPassword,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.passwords,
 			AccountFileRecord.RecordTypes.Password,
 			this.config[AccountFileRecord.RecordTypes.Password]
 		),
-		pgpKeys: this.getFiles(
+		pgpKeys: this.getFiles<
+			IPGPKey,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.pgpKeys,
 			AccountFileRecord.RecordTypes.PGPKey,
 			this.config[AccountFileRecord.RecordTypes.PGPKey]
 		),
-		redoxPatients: this.getFiles(
+		redoxPatients: this.getFiles<
+			IRedoxPatient,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.redoxPatients,
 			AccountFileRecord.RecordTypes.RedoxPatient,
 			this.config[AccountFileRecord.RecordTypes.RedoxPatient]
 		),
-		wallets: this.getFiles(
+		wallets: this.getFiles<
+			IWallet,
+			{
+				data: undefined;
+				owner: string;
+				record: IAccountFileRecord;
+			}
+		>(
 			this.filesListFiltered.wallets,
 			AccountFileRecord.RecordTypes.Wallet,
 			this.config[AccountFileRecord.RecordTypes.Wallet]
