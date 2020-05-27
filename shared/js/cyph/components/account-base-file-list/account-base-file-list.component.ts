@@ -8,6 +8,8 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import memoize from 'lodash-es/memoize';
+import {of} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {
 	AccountFileRecord,
@@ -27,7 +29,8 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {copyToClipboard} from '../../util/clipboard';
-import {readableByteLength} from '../../util/formatting';
+import {toBehaviorSubject} from '../../util/flatten-observable';
+import {normalize, readableByteLength} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
 import {getDateTimeString, watchRelativeDateString} from '../../util/time';
 import {waitForValue} from '../../util/wait';
@@ -50,6 +53,46 @@ export class AccountBaseFileListComponent extends BaseProvider {
 
 	/** @see getDateTimeString */
 	public readonly getDateTimeString = getDateTimeString;
+
+	/** Gets PGP key data, if applicable. */
+	public readonly _getPGPKey = memoize(
+		async ({record}: {record: IAccountFileRecord}) =>
+			record.recordType === AccountFileRecord.RecordTypes.PGPKey ?
+				this.accountFilesService.downloadPGPKey(record).result :
+				undefined
+	);
+
+	/** Gets PGP key data, if applicable. */
+	public readonly getPGPKey = memoize(
+		async ({record}: {record: IAccountFileRecord}) => {
+			if (record.recordType !== AccountFileRecord.RecordTypes.PGPKey) {
+				return;
+			}
+
+			const pgpKey = await this.accountFilesService.downloadPGPKey(record)
+				.result;
+
+			const pgpKeyFingerprint = !!pgpKey.pgpMetadata.fingerprint ?
+				normalize(pgpKey.pgpMetadata.fingerprint) :
+				undefined;
+
+			return {
+				isPrimary: toBehaviorSubject(
+					pgpKeyFingerprint ?
+						this.accountFilesService.pgp.primaryKeyFingerprint.pipe(
+							map(
+								fingerprint =>
+									!!fingerprint &&
+									normalize(fingerprint) === pgpKeyFingerprint
+							)
+						) :
+						of(false),
+					false
+				),
+				key: pgpKey
+			};
+		}
+	);
 
 	/** Gets table columns. */
 	public readonly getTableColumns = memoize(

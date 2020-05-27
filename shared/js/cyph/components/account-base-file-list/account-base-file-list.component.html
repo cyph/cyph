@@ -819,6 +819,30 @@
 	<button
 		mat-icon-button
 		cyphTranslate
+		[matTooltip]="
+			(pgpKey.isPrimary | await) ?
+				stringsService.pgpPrimaryKeyRemove :
+				stringsService.pgpPrimaryKeySet
+		"
+		matTooltipPosition="left"
+		(click)="
+			pgpKey.isPrimary.value ?
+				accountFilesService.pgp.removePrimaryKey(
+					pgpKey.key.pgpMetadata.fingerprint
+				) :
+				accountFilesService.pgp.setPrimaryKey(pgpKey.key);
+			$event.stopPropagation()
+		"
+		*ngIf="getPGPKey(o) | await as pgpKey"
+	>
+		<mat-icon>{{
+			(pgpKey.isPrimary | await) ? 'stars' : 'star_outline'
+		}}</mat-icon>
+	</button>
+
+	<button
+		mat-icon-button
+		cyphTranslate
 		matTooltip="Share"
 		(click)="
 			recordType === recordTypes.EhrApiKey ?
@@ -829,6 +853,7 @@
 		*ngIf="
 			!!currentUser?.agseConfirmed &&
 			!anonymousMessages &&
+			recordType !== recordTypes.PGPKey &&
 			(recordType !== recordTypes.EhrApiKey || o.data?.isMaster) &&
 			!(
 				recordType === recordTypes.Password &&

@@ -837,6 +837,11 @@ export class AccountFilesService extends BaseProvider {
 
 	/** PGP-specific data and functions. */
 	public readonly pgp = (() => {
+		const getPublicKey = (pgpKey?: IPGPKey) =>
+			!this.potassiumService.isEmpty(pgpKey?.publicKey) ?
+				pgpKey?.publicKey :
+				pgpKey?.keyPair?.publicKey;
+
 		const getPrimaryKeyFingerprint = async () =>
 			(await this.pgpService.getPublicKeyMetadata(
 				(await (await this.accountDatabaseService.getCurrentUser()).user.accountUserProfileExtra.getValue())
@@ -876,10 +881,7 @@ export class AccountFilesService extends BaseProvider {
 				pgpKey = await this.downloadPGPKey(pgpKey).result;
 			}
 
-			const publicKey =
-				pgpKey?.publicKey !== undefined ?
-					pgpKey?.publicKey :
-					pgpKey?.keyPair?.publicKey;
+			const publicKey = getPublicKey(pgpKey);
 
 			(await this.accountDatabaseService.getCurrentUser()).user.accountUserProfileExtra.updateValue(
 				async o => ({
@@ -895,9 +897,7 @@ export class AccountFilesService extends BaseProvider {
 		const removePrimaryKey = async (id?: IPGPKey | string) => {
 			if (typeof id === 'object') {
 				id = (await this.pgpService.getPublicKeyMetadata(
-					id?.publicKey !== undefined ?
-						id?.publicKey :
-						id?.keyPair?.publicKey
+					getPublicKey(id)
 				)).pgpMetadata.fingerprint;
 			}
 
