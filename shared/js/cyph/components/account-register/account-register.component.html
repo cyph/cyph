@@ -617,7 +617,7 @@
 													*ngIf="
 														!!pgpData.keybaseUsername ||
 														!!pgpData.pgpMetadata
-															.keyID
+															?.keyID
 													"
 												>
 													<mat-chip-list
@@ -644,7 +644,7 @@
 																*ngIf="
 																	!pgpData
 																		.pgpMetadata
-																		.keyID
+																		?.keyID
 																"
 															>
 																{{
@@ -656,13 +656,14 @@
 																*ngIf="
 																	!!pgpData
 																		.pgpMetadata
-																		.keyID
+																		?.keyID
 																"
 															>
 																{{
 																	pgpData
 																		.pgpMetadata
-																		.keyID
+																		?.keyID ||
+																		''
 																}}
 																<ng-container
 																	*ngIf="
