@@ -837,6 +837,12 @@ export class AccountFilesService extends BaseProvider {
 
 	/** PGP-specific data and functions. */
 	public readonly pgp = (() => {
+		const getPrimaryKeyFingerprint = async () =>
+			(await this.pgpService.getPublicKeyMetadata(
+				(await (await this.accountDatabaseService.getCurrentUser()).user.accountUserProfileExtra.getValue())
+					.pgp?.publicKey
+			)).pgpMetadata.fingerprint;
+
 		const primaryKeyFingerprint = toBehaviorSubject(
 			this.accountDatabaseService.currentUserFiltered.pipe(
 				switchMap(o => o.user.extra()),
@@ -886,11 +892,31 @@ export class AccountFilesService extends BaseProvider {
 			);
 		};
 
-		const removePrimaryKey = async () => setPrimaryKeyInternal(undefined);
+		const removePrimaryKey = async (id?: IPGPKey | string) => {
+			if (typeof id === 'object') {
+				id = (await this.pgpService.getPublicKeyMetadata(
+					id?.publicKey !== undefined ?
+						id?.publicKey :
+						id?.keyPair?.publicKey
+				)).pgpMetadata.fingerprint;
+			}
+
+			if (
+				typeof id === 'string' &&
+				normalize(id) !==
+					normalize((await getPrimaryKeyFingerprint()) || '')
+			) {
+				return;
+			}
+
+			await setPrimaryKeyInternal(undefined);
+		};
+
 		const setPrimaryKey = async (pgpKey: IPGPKey | string) =>
 			setPrimaryKeyInternal(pgpKey);
 
 		return {
+			getPrimaryKeyFingerprint,
 			primaryKey,
 			primaryKeyFingerprint,
 			removePrimaryKey,
@@ -1796,6 +1822,12 @@ export class AccountFilesService extends BaseProvider {
 
 		if (typeof id !== 'string') {
 			id = id.id;
+		}
+
+		if (file.recordType === AccountFileRecord.RecordTypes.PGPKey) {
+			await this.pgp.removePrimaryKey(
+				await this.downloadPGPKey(id).result
+			);
 		}
 
 		if (confirmAndRedirect) {
