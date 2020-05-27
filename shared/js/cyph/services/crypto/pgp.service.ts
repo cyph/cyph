@@ -352,6 +352,15 @@ export class PGPService extends BaseProvider {
 						publicKey
 					);
 
+					/* TODO: Expose and warn about this in the UI instead */
+					if (
+						typeof o.expires === 'number' &&
+						/* eslint-disable-next-line @typescript-eslint/tslint/config */
+						Date.now() > o.expires
+					) {
+						throw new Error('Expired PGP key.');
+					}
+
 					comment = o.comment;
 					email = o.email;
 					expires = o.expires;
