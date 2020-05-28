@@ -2483,12 +2483,54 @@ export class AccountFilesService extends BaseProvider {
 	}
 
 	/** Uploads PGP key. */
-	public async uploadPGPKey (pgpKey: IPGPKey) : Promise<string> {
+	public async uploadPGPKey (
+		pgpKey: IPGPKey,
+		confirmIfReplacing: boolean = true
+	) : Promise<string> {
 		if (!pgpKey.pgpMetadata.fingerprint || !pgpKey.pgpMetadata.keyID) {
 			throw new Error('Invalid PGP key.');
 		}
 
-		return this.upload(
+		const id = normalize(pgpKey.pgpMetadata.fingerprint);
+		const oldPGPKey = await this.downloadPGPKey(id).result.catch(
+			() => undefined
+		);
+		let reSetPrimaryKey = false;
+
+		if (oldPGPKey !== undefined) {
+			const hasPrivateKey = !this.potassiumService.isEmpty(
+				pgpKey.keyPair?.privateKey
+			);
+			const hadPrivateKey = !this.potassiumService.isEmpty(
+				oldPGPKey.keyPair?.privateKey
+			);
+
+			if (
+				hasPrivateKey === hadPrivateKey ||
+				(confirmIfReplacing &&
+					!(await this.dialogService.confirm({
+						content: this.stringsService.setParameters(
+							hadPrivateKey ?
+								this.stringsService
+									.pgpKeyReplacePrivateToPublic :
+								this.stringsService
+									.pgpKeyReplacePublicToPrivate,
+							{
+								fingerprint: pgpKey.pgpMetadata.fingerprint
+							}
+						),
+						title: this.stringsService.pgpKeyReplaceConfirm
+					})))
+			) {
+				return id;
+			}
+
+			reSetPrimaryKey =
+				normalize((await this.pgp.getPrimaryKeyFingerprint()) || '') ===
+				id;
+		}
+
+		await this.upload(
 			pgpKey.pgpMetadata.userID ?
 				`${pgpKey.pgpMetadata.userID} : ${pgpKey.pgpMetadata.keyID}` :
 				pgpKey.pgpMetadata.keyID,
@@ -2498,8 +2540,14 @@ export class AccountFilesService extends BaseProvider {
 			undefined,
 			undefined,
 			undefined,
-			normalize(pgpKey.pgpMetadata.fingerprint)
+			id
 		).result;
+
+		if (reSetPrimaryKey) {
+			await this.pgp.setPrimaryKey(pgpKey);
+		}
+
+		return id;
 	}
 
 	/** Watches appointment. */

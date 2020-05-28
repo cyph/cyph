@@ -1017,6 +1017,15 @@ export class StringsService extends BaseProvider {
 	public readonly pgpEncryptAndSignMessage = `Encrypt & Sign Message`;
 
 	/** @see StringsService */
+	public readonly pgpKeyReplaceConfirm = `Confirm PGP Key Replacement`;
+
+	/** @see StringsService */
+	public readonly pgpKeyReplacePrivateToPublic = `Remove private key from existing key pair \${FINGERPRINT}?`;
+
+	/** @see StringsService */
+	public readonly pgpKeyReplacePublicToPrivate = `Add private key to existing public key \${FINGERPRINT}?`;
+
+	/** @see StringsService */
 	public readonly pgpPrimaryKeyRemove = `Unset Primary Public Key`;
 
 	/** @see StringsService */
