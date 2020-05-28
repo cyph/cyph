@@ -8,7 +8,10 @@
 		<div
 			fxFlex
 			fxFlexFill
-			[class.initiating]="outgoingMessage.spinner | await"
+			[class.initiating]="
+				(outgoingMessage.spinner | await) === true ||
+				(accountFilesService.showSpinner | await) !== undefined
+			"
 		>
 			<mat-card
 				fxFlex
@@ -168,7 +171,7 @@
 
 			<mat-progress-spinner
 				mode="indeterminate"
-				*ngIf="outgoingMessage.spinner | await"
+				*ngIf="outgoingMessage.spinner | await; else defaultFileSpinner"
 			></mat-progress-spinner>
 		</div>
 	</mat-tab>
@@ -177,7 +180,10 @@
 		><div
 			fxFlex
 			fxFlexFill
-			[class.initiating]="incomingMessage.spinner | await"
+			[class.initiating]="
+				(incomingMessage.spinner | await) === true ||
+				(accountFilesService.showSpinner | await) !== undefined
+			"
 		>
 			<mat-card
 				fxFlex
@@ -336,11 +342,31 @@
 
 			<mat-progress-spinner
 				mode="indeterminate"
-				*ngIf="incomingMessage.spinner | await"
+				*ngIf="incomingMessage.spinner | await; else defaultFileSpinner"
 			></mat-progress-spinner>
 		</div>
 	</mat-tab>
 </mat-tab-group>
+
+<ng-template #defaultFileSpinner>
+	<ng-container
+		*ngIf="(accountFilesService.showSpinner | await) !== undefined"
+	>
+		<mat-progress-spinner
+			mode="indeterminate"
+			*ngIf="
+				((accountFilesService.showSpinner | await) || 0) < 1;
+				else determinateFileSpinner
+			"
+		></mat-progress-spinner>
+		<ng-template #determinateFileSpinner>
+			<mat-progress-spinner
+				mode="determinate"
+				[value]="(accountFilesService.showSpinner | await) || 1"
+			></mat-progress-spinner>
+		</ng-template>
+	</ng-container>
+</ng-template>
 
 <smd-fab-speed-dial
 	class="fixed-fab"
