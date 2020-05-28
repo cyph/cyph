@@ -1663,25 +1663,36 @@
 			>
 		</div>
 
-		<div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="32px">
-			<button
-				mat-raised-button
-				cyphTranslate
-				[disabled]="additionalDevices.paperMasterKey | await"
-				matTooltip="Set up a long-term secure passphrase. Most highly recommended option."
-				(click)="paperMasterKeySetup()"
-			>
-				<mat-icon>
-					description
-				</mat-icon>
-				&nbsp;
-				<span cyphTranslate>
-					Paper Master Key
-				</span>
-			</button>
-			<mat-icon *ngIf="additionalDevices.paperMasterKey | await"
-				>check</mat-icon
-			>
+		<div fxLayout="row" style="border-top: 1px solid">
+			<div fxFlex fxLayout="column" fxLayoutAlign="center center">
+				<div fxLayout="row" fxLayoutAlign="center center">
+					<h3>Advanced, but highly recommended:</h3>
+				</div>
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					fxLayoutGap="32px"
+				>
+					<button
+						mat-raised-button
+						cyphTranslate
+						[disabled]="additionalDevices.paperMasterKey | await"
+						matTooltip="Set up a long-term secure passphrase. Most highly recommended option."
+						(click)="paperMasterKeySetup()"
+					>
+						<mat-icon>
+							description
+						</mat-icon>
+						&nbsp;
+						<span cyphTranslate>
+							Paper Master Key
+						</span>
+					</button>
+					<mat-icon *ngIf="additionalDevices.paperMasterKey | await"
+						>check</mat-icon
+					>
+				</div>
+			</div>
 		</div>
 
 		<div></div>
