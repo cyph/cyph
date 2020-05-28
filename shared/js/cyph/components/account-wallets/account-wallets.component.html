@@ -403,18 +403,26 @@
 	>
 		<smd-fab-trigger
 			[spin]="true"
-			(mouseenter)="isSpeedDialOpen.next(true)"
+			(mouseenter)="
+				envService.isMobileOS ? undefined : isSpeedDialOpen.next(true)
+			"
 		>
 			<button
 				mat-fab
 				color="primary"
 				[matTooltip]="stringsService.newWalletGenerate"
 				matTooltipPosition="left"
-				(click)="generate(newWalletOptions.generate)"
+				(click)="
+					isSpeedDialOpen.value ?
+						generate(newWalletOptions.generate) :
+						undefined;
+					isSpeedDialOpen.next(!isSpeedDialOpen.value);
+					$event.stopPropagation()
+				"
 			>
-				<mat-icon *ngIf="(isSpeedDialOpen | await) === false"
-					>add</mat-icon
-				>
+				<mat-icon *ngIf="(isSpeedDialOpen | await) === false">
+					add
+				</mat-icon>
 				<mat-icon
 					svgIcon="key-add-light"
 					*ngIf="isSpeedDialOpen | await"

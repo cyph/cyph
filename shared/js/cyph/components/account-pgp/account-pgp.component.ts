@@ -21,6 +21,7 @@ import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {PGPService} from '../../services/crypto/pgp.service';
 import {DialogService} from '../../services/dialog.service';
+import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {copyToClipboard} from '../../util/clipboard';
@@ -417,6 +418,9 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 
 		/** @see AccountFilesService */
 		public readonly accountFilesService: AccountFilesService,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see PGPService */
 		public readonly pgpService: PGPService,

@@ -303,14 +303,17 @@
 		>
 			<smd-fab-trigger
 				[spin]="true"
-				(mouseenter)="p2pService.ioSwitcher.open()"
+				(mouseenter)="
+					envService.isMobileOS ?
+						undefined :
+						p2pService.ioSwitcher.open()
+				"
 			>
 				<button
 					mat-fab
 					(click)="
-						envService.isMobileOS ?
-							undefined :
-							$event.stopPropagation()
+						isSpeedDialOpen.next(!isSpeedDialOpen.value);
+						$event.stopPropagation()
 					"
 				>
 					<mat-icon>settings</mat-icon>

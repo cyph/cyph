@@ -1,5 +1,5 @@
-<mat-tab-group fxFlex fxFlexFill>
-	<mat-tab cyphTranslate label="Keys" ngClass.lt-md="lt-md">
+<mat-tab-group fxFlex fxFlexFill ngClass.lt-md="lt-md">
+	<mat-tab cyphTranslate label="Keys">
 		<cyph-account-base-file-list [recordType]="recordType">
 		</cyph-account-base-file-list>
 	</mat-tab>
@@ -10,9 +10,19 @@
 			fxFlexFill
 			[class.initiating]="outgoingMessage.spinner | await"
 		>
-			<mat-card fxFlex fxFlexFill fxLayout="column" fxLayoutGap="16px">
+			<mat-card
+				fxFlex
+				fxFlexFill.gt-sm
+				fxLayout="column"
+				fxLayoutGap="16px"
+			>
 				<div fxLayout="row" fxLayoutAlign="center center">
-					<div fxFlex="66" fxLayoutGap="16px">
+					<div
+						fxFlex
+						fxFlex.gt-sm="66"
+						fxLayout.lt-md="column"
+						fxLayoutGap.gt-sm="16px"
+					>
 						<mat-form-field fxFlex>
 							<mat-select
 								cyphTranslate
@@ -88,14 +98,25 @@
 					</div>
 				</div>
 
-				<div fxFlex fxLayout="row" fxLayoutGap="32px">
-					<div fxFlex="50" fxLayout="column">
-						<mat-form-field fxFlex fxFlexFill class="flex-textarea">
+				<div
+					fxFlex
+					fxLayout="row"
+					fxLayout.lt-md="column"
+					fxLayoutGap="32px"
+				>
+					<div fxFlex="50" fxLayout="column" fxLayout.lt-md="row">
+						<mat-form-field
+							fxFlex
+							fxFlexFill.gt-sm
+							ngClass.gt-sm="flex-textarea"
+						>
 							<textarea
-								fxFlex
-								fxFlexFill
 								cyphTranslate
 								matInput
+								[matAutosizeMinRows]="4"
+								[matTextareaAutosize]="
+									envService.isMobile | await
+								"
 								[ngModel]="''"
 								(ngModelChange)="
 									outgoingMessage.plaintext.next($event)
@@ -104,11 +125,24 @@
 							></textarea>
 						</mat-form-field>
 					</div>
-					<div fxFlex="50" fxLayout="column" class="output-section">
-						<mat-form-field fxFlex fxFlexFill class="flex-textarea">
+					<div
+						fxFlex="50"
+						fxLayout="column"
+						fxLayout.lt-md="row"
+						class="output-section"
+					>
+						<mat-form-field
+							fxFlex
+							fxFlexFill.gt-sm
+							ngClass.gt-sm="flex-textarea"
+						>
 							<textarea
 								cyphTranslate
 								matInput
+								[matAutosizeMinRows]="4"
+								[matTextareaAutosize]="
+									envService.isMobile | await
+								"
 								[ngModel]="outgoingMessage.cyphertext | await"
 								placeholder="ASCII Armor Cyphertext"
 								readonly
@@ -116,13 +150,14 @@
 						</mat-form-field>
 						<button
 							mat-icon-button
+							cyphTranslate
 							matTooltip="Copy to Clipboard"
 							(click)="
 								copyToClipboard(
 									outgoingMessage.cyphertext.value || ''
 								)
 							"
-							cyphTranslate
+							*ngIf="!!(outgoingMessage.cyphertext | await)"
 						>
 							<mat-icon>content_copy</mat-icon>
 						</button>
@@ -143,9 +178,19 @@
 			fxFlexFill
 			[class.initiating]="incomingMessage.spinner | await"
 		>
-			<mat-card fxFlex fxFlexFill fxLayout="column" fxLayoutGap="16px">
+			<mat-card
+				fxFlex
+				fxFlexFill.gt-sm
+				fxLayout="column"
+				fxLayoutGap="16px"
+			>
 				<div fxLayout="row" fxLayoutAlign="center center">
-					<div fxFlex="66" fxLayoutGap="16px">
+					<div
+						fxFlex
+						fxFlex.gt-sm="66"
+						fxLayout.lt-md="column"
+						fxLayoutGap.gt-sm="16px"
+					>
 						<mat-form-field fxFlex>
 							<mat-select
 								cyphTranslate
@@ -221,14 +266,25 @@
 					</div>
 				</div>
 
-				<div fxFlex fxLayout="row" fxLayoutGap="32px">
-					<div fxFlex="50" fxLayout="column">
-						<mat-form-field fxFlex fxFlexFill class="flex-textarea">
+				<div
+					fxFlex
+					fxLayout="row"
+					fxLayout.lt-md="column"
+					fxLayoutGap="32px"
+				>
+					<div fxFlex="50" fxLayout="column" fxLayout.lt-md="row">
+						<mat-form-field
+							fxFlex
+							fxFlexFill.gt-sm
+							ngClass.gt-sm="flex-textarea"
+						>
 							<textarea
-								fxFlex
-								fxFlexFill
 								cyphTranslate
 								matInput
+								[matAutosizeMinRows]="4"
+								[matTextareaAutosize]="
+									envService.isMobile | await
+								"
 								[ngModel]="''"
 								(ngModelChange)="
 									incomingMessage.cyphertext.next($event)
@@ -237,11 +293,24 @@
 							></textarea>
 						</mat-form-field>
 					</div>
-					<div fxFlex="50" fxLayout="column" class="output-section">
-						<mat-form-field fxFlex fxFlexFill class="flex-textarea">
+					<div
+						fxFlex="50"
+						fxLayout="column"
+						fxLayout.lt-md="row"
+						class="output-section"
+					>
+						<mat-form-field
+							fxFlex
+							fxFlexFill.gt-sm
+							ngClass.gt-sm="flex-textarea"
+						>
 							<textarea
 								cyphTranslate
 								matInput
+								[matAutosizeMinRows]="4"
+								[matTextareaAutosize]="
+									envService.isMobile | await
+								"
 								[ngModel]="incomingMessage.plaintext | await"
 								placeholder="Opened Message"
 								readonly
@@ -249,13 +318,14 @@
 						</mat-form-field>
 						<button
 							mat-icon-button
+							cyphTranslate
 							matTooltip="Copy to Clipboard"
 							(click)="
 								copyToClipboard(
 									incomingMessage.plaintext.value || ''
 								)
 							"
-							cyphTranslate
+							*ngIf="!!(incomingMessage.plaintext | await)"
 						>
 							<mat-icon>content_copy</mat-icon>
 						</button>
@@ -277,13 +347,24 @@
 	[open]="(isSpeedDialOpen | await) === true"
 	(mouseleave)="isSpeedDialOpen.next(false)"
 >
-	<smd-fab-trigger [spin]="true" (mouseenter)="isSpeedDialOpen.next(true)">
+	<smd-fab-trigger
+		[spin]="true"
+		(mouseenter)="
+			envService.isMobileOS ? undefined : isSpeedDialOpen.next(true)
+		"
+	>
 		<button
 			mat-fab
 			color="primary"
 			[matTooltip]="stringsService.newPGPKeyGenerate"
 			matTooltipPosition="left"
-			(click)="generate(newPGPKeyOptions.generate)"
+			(click)="
+				isSpeedDialOpen.value ?
+					generate(newPGPKeyOptions.generate) :
+					undefined;
+				isSpeedDialOpen.next(!isSpeedDialOpen.value);
+				$event.stopPropagation()
+			"
 		>
 			<mat-icon *ngIf="(isSpeedDialOpen | await) === false">
 				add
