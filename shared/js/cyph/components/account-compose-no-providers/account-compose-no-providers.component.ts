@@ -32,7 +32,6 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 
 	constructor (
 		accountAuthService: AccountAuthService,
-		accountChatService: AccountChatService,
 		accountContactsService: AccountContactsService,
 		accountFilesService: AccountFilesService,
 		configService: ConfigService,
@@ -41,6 +40,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 		sessionService: SessionService,
 		activatedRoute: ActivatedRoute,
 		accountService: AccountService,
+		accountChatService: AccountChatService,
 		accountDatabaseService: AccountDatabaseService,
 		accountSettingsService: AccountSettingsService,
 		envService: EnvService,
@@ -48,7 +48,6 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 	) {
 		super(
 			accountAuthService,
-			accountChatService,
 			accountContactsService,
 			accountFilesService,
 			configService,
@@ -57,6 +56,7 @@ export class AccountComposeNoProvidersComponent extends AccountComposeComponent 
 			sessionService,
 			activatedRoute,
 			accountService,
+			accountChatService,
 			accountDatabaseService,
 			accountSettingsService,
 			envService,
