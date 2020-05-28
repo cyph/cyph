@@ -219,12 +219,17 @@
 							(appointmentFollowUp | await) === true
 						"
 						[disableSend]="
-							((recipients | await)?.size || 0) < 1 &&
-							((((accountService.fromEmail | await) || '')
-								.length < 1 &&
-								((appointmentSMS | await) || '').length < 1) ||
-								((accountService.fromName | await) || '')
-									.length < 1)
+							(((recipients | await)?.size || 0) < 1 &&
+								((((accountService.fromEmail | await) || '')
+									.length < 1 &&
+									((appointmentSMS | await) || '').length <
+										1) ||
+									((accountService.fromName | await) || '')
+										.length < 1)) ||
+							((messageType | await) ===
+								chatMessageValueTypes.CalendarInvite &&
+								!(accountChatService.chatSubject | await)
+									?.currentMessage?.calendarInvite?.startTime)
 						"
 						[forceShow]="true"
 						[messageType]="messageType | await"
