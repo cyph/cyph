@@ -482,9 +482,6 @@ export class AccountComposeComponent extends BaseProvider
 		private readonly accountAuthService: AccountAuthService,
 
 		/** @ignore */
-		private readonly accountChatService: AccountChatService,
-
-		/** @ignore */
 		private readonly accountContactsService: AccountContactsService,
 
 		/** @ignore */
@@ -507,6 +504,9 @@ export class AccountComposeComponent extends BaseProvider
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
+
+		/** @see AccountChatService */
+		public readonly accountChatService: AccountChatService,
 
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
