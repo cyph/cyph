@@ -1386,7 +1386,7 @@ exports.sendAppLink = onCall(async (data, namespace, getUsername) => {
 	}
 
 	await sendSMS(
-		data.toSMS,
+		phoneNumber,
 		`Here's the link you requested to install Cyph! https://www.cyph.com/download-app`
 	);
 });
