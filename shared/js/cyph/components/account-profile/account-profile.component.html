@@ -654,21 +654,23 @@
 										}
 									"
 								></ng-container>
-								<a
-									class="username animated flipInX _2"
-									[href]="
-										envService.cyphMeUrl +
-										(user?.username || '')
-									"
-									target="_self"
-								>
-									<span>@</span
-									><span>{{
-										(user?.realUsername | await) ||
-											user?.username ||
-											''
-									}}</span>
-								</a>
+								<div>
+									<a
+										class="username animated flipInX _2"
+										[href]="
+											envService.cyphMeUrl +
+											(user?.username || '')
+										"
+										target="_self"
+									>
+										<span>@</span
+										><span>{{
+											(user?.realUsername | await) ||
+												user?.username ||
+												''
+										}}</span>
+									</a>
+								</div>
 								<ng-container
 									*ngTemplateOutlet="
 										pgp;
@@ -849,25 +851,27 @@
 									>
 										Doctors
 									</div>
-									<a
-										class="username animated flipInX _2"
-										[href]="
-											envService.cyphMeUrl +
-											(user?.username || '')
-										"
-										target="_self"
-										*ngIf="
-											(user?.userType | await) ===
-											accountUserTypes.Standard
-										"
-									>
-										<span>@</span
-										><span>{{
-											(user?.realUsername | await) ||
-												user?.username ||
-												''
-										}}</span>
-									</a>
+									<div>
+										<a
+											class="username animated flipInX _2"
+											[href]="
+												envService.cyphMeUrl +
+												(user?.username || '')
+											"
+											target="_self"
+											*ngIf="
+												(user?.userType | await) ===
+												accountUserTypes.Standard
+											"
+										>
+											<span>@</span
+											><span>{{
+												(user?.realUsername | await) ||
+													user?.username ||
+													''
+											}}</span>
+										</a>
+									</div>
 									<div
 										class="practice"
 										fxLayout="row"
