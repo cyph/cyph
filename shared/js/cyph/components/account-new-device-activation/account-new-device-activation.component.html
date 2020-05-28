@@ -18,11 +18,13 @@
 			<div fxLayoutAlign="center center">
 				<mat-form-field fxFlex="200px">
 					<input
+						#activationCodeInput
 						matInput
 						cyphTranslate
 						placeholder="Activation Code"
-						(change)="
-							init($event.target.value); $event.target.value = ''
+						[ngModel]="''"
+						(ngModelChange)="
+							init($event); activationCodeInput.value = ''
 						"
 					/>
 				</mat-form-field>
@@ -40,7 +42,7 @@
 >
 	<cyph-link-connection
 		fxFlex
-		[mobileDeviceActivation]="mobileDeviceActivation | await"
+		[mobileDeviceActivation]="(mobileDeviceActivation | await) === true"
 		[newDeviceActivation]="true"
 	></cyph-link-connection>
 

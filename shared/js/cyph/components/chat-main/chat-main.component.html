@@ -312,7 +312,9 @@
 				<button
 					mat-fab
 					(click)="
-						isSpeedDialOpen.next(!isSpeedDialOpen.value);
+						p2pService.ioSwitcher.isOpen.value ?
+							p2pService.ioSwitcher.close() :
+							p2pService.ioSwitcher.open();
 						$event.stopPropagation()
 					"
 				>

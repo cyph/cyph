@@ -377,13 +377,14 @@
 							[style.font-size]="'1rem'"
 						>
 							<input
+								#phoneNumberInput
 								matInput
 								cyphTranslate
 								placeholder="Phone Number"
 								type="tel"
 								(keydown.enter)="
-									sendAppLink($event.target.value);
-									$event.target.value = ''
+									sendAppLink(phoneNumberInput.value);
+									phoneNumberInput.value = ''
 								"
 							/>
 						</mat-form-field>

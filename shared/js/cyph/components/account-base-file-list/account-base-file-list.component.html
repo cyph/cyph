@@ -369,10 +369,10 @@
 					>
 						<span *ngIf="getPGPKey(o) | await as pgpKey">
 							{{
-								!pgpKey?.key.pgpMetadata.expires ?
+								!pgpKey?.key?.pgpMetadata?.expires ?
 									'-' :
 									(geISODateString(
-										pgpKey?.key.pgpMetadata.expires || 0
+										pgpKey?.key?.pgpMetadata?.expires || 0
 									) | await) || ''
 							}}
 						</span>
