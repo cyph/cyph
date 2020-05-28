@@ -1,12 +1,58 @@
-<div fxFlex fxFlexFill fxLayout="column">
+<div
+	fxFlex
+	fxFlexFill
+	fxLayout="column"
+	fxLayoutGap="32px"
+	*ngIf="activateForUsername !== undefined && sessionData === undefined"
+>
 	<cyph-qr-code-scanner
 		fxFlex
 		(scanComplete)="init($event)"
-		*ngIf="activateForUsername !== undefined && sessionData === undefined"
 	></cyph-qr-code-scanner>
+
+	<div *ngIf="!(envService.isMobile | await)">
+		<div fxLayout="column" fxLayoutGap="16px">
+			<div cyphTranslate class="text-center">
+				You can also paste the activation code here:
+			</div>
+			<div fxLayoutAlign="center center">
+				<mat-form-field fxFlex="200px">
+					<input
+						matInput
+						cyphTranslate
+						placeholder="Activation Code"
+						(change)="
+							init($event.target.value); $event.target.value = ''
+						"
+					/>
+				</mat-form-field>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div
+	fxFlex
+	fxFlexFill
+	fxLayout="column"
+	fxLayoutGap="32px"
+	*ngIf="sessionData !== undefined"
+>
 	<cyph-link-connection
 		fxFlex
+		[mobileDeviceActivation]="mobileDeviceActivation | await"
 		[newDeviceActivation]="true"
-		*ngIf="sessionData !== undefined"
 	></cyph-link-connection>
+
+	<div fxLayoutAlign="center center">
+		<mat-slide-toggle
+			cyphTranslate
+			name="mobile"
+			matTooltip="Select this if you're activating a mobile device."
+			[ngModel]="mobileDeviceActivation | await"
+			(ngModelChange)="mobileDeviceActivation.next($event)"
+		>
+			Mobile Device Activation
+		</mat-slide-toggle>
+	</div>
 </div>

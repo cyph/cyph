@@ -8,9 +8,11 @@ import {
 	OnInit,
 	Output
 } from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {burnerChatProviders} from '../../providers/burner-chat';
 import {BasicSessionInitService} from '../../services/basic-session-init.service';
+import {EnvService} from '../../services/env.service';
 import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
@@ -54,6 +56,11 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 	/** Indicates whether or not a mobile device is being activated. */
 	@Input() public mobile: boolean = false;
 
+	/** Indicates whether or not new device activation is for a mobile device. */
+	public readonly mobileDeviceActivation = new BehaviorSubject<boolean>(
+		false
+	);
+
 	/** Data for establishing session and determining whether this is Alice or Bob. */
 	@Input() public sessionData?:
 		| {
@@ -69,6 +76,8 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 	/** Initializes new device activation. */
 	public async init (bobSessionID?: string) : Promise<void> {
+		this.mobileDeviceActivation.next(this.mobile);
+
 		if (typeof bobSessionID === 'string' && this.activateForUsername) {
 			this.sessionData = {
 				aliceMasterKey: undefined,
@@ -153,6 +162,9 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 		/** @see ChangeDetectorRef */
 		public readonly changeDetectorRef: ChangeDetectorRef,
+
+		/** @see EnvService */
+		public readonly envService: EnvService,
 
 		/** @see StringsService */
 		public readonly stringsService: StringsService

@@ -1378,6 +1378,19 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	return inviteCode;
 });
 
+exports.sendAppLink = onCall(async (data, namespace, getUsername) => {
+	const phoneNumber = (data.phoneNumber || '').trim();
+
+	if (typeof phoneNumber !== 'string' || !phoneNumber) {
+		return;
+	}
+
+	await sendSMS(
+		data.toSMS,
+		`Here's the link you requested to install Cyph! https://www.cyph.com/download-app`
+	);
+});
+
 exports.setContact = onCall(async (data, namespace, getUsername) => {
 	const add = data.add === true;
 	const innerCircle = data.innerCircle === true;

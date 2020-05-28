@@ -720,6 +720,9 @@ export class StringsService extends BaseProvider {
 	public readonly newDeviceActivationConfirmation = `New device successfully activated!`;
 
 	/** @see StringsService */
+	public readonly newDeviceActivationCopySuccess = `Device activation code copied.`;
+
+	/** @see StringsService */
 	public readonly newDeviceActivationQR = `Open the ${this.internalProductShort} app and scan this QR code:`;
 
 	/** @see StringsService */
@@ -1191,6 +1194,12 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly send = `Send`;
+
+	/** @see StringsService */
+	public readonly sendAppLinkFailure = `Failed to send download link.`;
+
+	/** @see StringsService */
+	public readonly sendAppLinkSuccess = `Download link sent!`;
 
 	/** @see StringsService */
 	public readonly session = `${this.internalSession}`;

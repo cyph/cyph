@@ -364,6 +364,56 @@
 			<ng-container
 				*ngTemplateOutlet="qrCodeUI; context: {size: 256}"
 			></ng-container>
+
+			<div *ngIf="mobileDeviceActivation | await">
+				<div fxLayout="column" fxLayoutGap="16px">
+					<div cyphTranslate>
+						If you haven't yet installed the app, just enter your
+						number here to receive a link:
+					</div>
+					<div fxLayoutAlign="center center">
+						<mat-form-field
+							fxFlex="200px"
+							[style.font-size]="'1rem'"
+						>
+							<input
+								matInput
+								cyphTranslate
+								placeholder="Phone Number"
+								type="tel"
+								(keydown.enter)="
+									sendAppLink($event.target.value);
+									$event.target.value = ''
+								"
+							/>
+						</mat-form-field>
+					</div>
+				</div>
+			</div>
+
+			<div *ngIf="!(mobileDeviceActivation | await)">
+				<div fxLayout="column" fxLayoutGap="16px">
+					<div cyphTranslate>
+						Alternatively, you may copy the activation code and
+						paste it directly into the app:
+					</div>
+					&ngsp;
+					<div fxLayoutAlign="center center">
+						<button
+							mat-raised-button
+							(click)="
+								copyToClipboard(
+									stringsService.newDeviceActivationCopySuccess
+								)
+							"
+						>
+							<mat-icon>content_copy</mat-icon>
+							&ngsp;
+							<span cyphTranslate>Copy Activation Code</span>
+						</button>
+					</div>
+				</div>
+			</div>
 		</ng-container>
 		<ng-template #newDeviceActivationSpinner>
 			<div fxLayoutAlign="center center">

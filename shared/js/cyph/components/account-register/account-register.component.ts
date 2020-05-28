@@ -407,7 +407,7 @@ export class AccountRegisterComponent extends BaseProvider
 						.pipe(take(1))
 						.toPromise()
 						.then(b => {
-							mobile = o.mobile;
+							mobile = o.mobileDeviceActivation.value;
 							return b;
 						})
 				);

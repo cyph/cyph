@@ -12,6 +12,7 @@ import {filter, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {ChatService} from '../../services/chat.service';
 import {ConfigService} from '../../services/config.service';
+import {DatabaseService} from '../../services/database.service';
 import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {P2PWebRTCService} from '../../services/p2p-webrtc.service';
@@ -74,6 +75,9 @@ export class LinkConnectionComponent extends BaseProvider
 		undefined
 	);
 
+	/** @see AccountNewDeviceActivationComponent.mobileDeviceActivation */
+	@Input() public mobileDeviceActivation: boolean = false;
+
 	/** Special mode for new device activation. */
 	@Input() public newDeviceActivation: boolean = false;
 
@@ -103,11 +107,13 @@ export class LinkConnectionComponent extends BaseProvider
 	}
 
 	/** Copies link to clipboard. */
-	public async copyToClipboard () : Promise<void> {
+	public async copyToClipboard (
+		successToast: string = this.stringsService.linkCopied
+	) : Promise<void> {
 		await lockTryOnce(this.copyLock, async () =>
 			copyToClipboard(
 				this.linkConstant,
-				this.stringsService.linkCopied,
+				successToast,
 				this.stringsService.clipboardCopyFail
 			)
 		);
@@ -252,6 +258,22 @@ export class LinkConnectionComponent extends BaseProvider
 		this.onBlur();
 	}
 
+	/** Sends a link to install Cyph to the specified phone number. */
+	public async sendAppLink (phoneNumber: string) : Promise<void> {
+		if (!phoneNumber) {
+			return;
+		}
+
+		await this.dialogService.toast(
+			await this.databaseService
+				.callFunction('sendAppLink', {phoneNumber})
+				.then(() => this.stringsService.sendAppLinkSuccess)
+				.catch(() => this.stringsService.sendAppLinkFailure),
+			undefined,
+			this.stringsService.ok
+		);
+	}
+
 	constructor (
 		/** @ignore */
 		private readonly domSanitizer: DomSanitizer,
@@ -261,6 +283,9 @@ export class LinkConnectionComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
 		private readonly dialogService: DialogService,
