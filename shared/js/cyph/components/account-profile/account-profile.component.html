@@ -313,7 +313,6 @@
 			<ng-container *ngIf="user?.extra() | await as extra">
 				<div
 					class="pgp"
-					fxLayoutAlign="center"
 					[ngClass]="readViewClasses"
 					*ngIf="
 						(
@@ -323,7 +322,12 @@
 						)?.pgpMetadata?.keyID as keyID
 					"
 				>
-					<button mat-raised-button (click)="viewPGPPublicKey()">
+					<button
+						mat-button
+						[matTooltip]="stringsService.pgpPublicKey"
+						matTooltipPosition="right"
+						(click)="viewPGPPublicKey()"
+					>
 						<mat-icon>
 							vpn_key
 						</mat-icon>

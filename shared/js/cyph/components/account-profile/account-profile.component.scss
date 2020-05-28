@@ -84,12 +84,18 @@ $header-size: 135px;
 		min-height: 50vh !important;
 	}
 
+	.description,
+	.name,
+	.username,
+	.pgp > button {
+		color: white;
+	}
+
 	.name {
 		font-size: 37px;
 		//margin-top: 25px;
 		margin-bottom: 10px;
 		font-weight: 500;
-		color: #fff;
 	}
 
 	mat-form-field.name ::ng-deep {
@@ -134,7 +140,6 @@ $header-size: 135px;
 		text-decoration: none;
 		word-break: break-all;
 		word-wrap: break-word;
-		color: #fff;
 		margin-top: -0.5em;
 		margin-bottom: 0.33em;
 
@@ -146,7 +151,6 @@ $header-size: 135px;
 	.description {
 		font-size: 16px;
 		width: 100%;
-		color: #fff;
 		margin-top: 0.5em;
 	}
 
