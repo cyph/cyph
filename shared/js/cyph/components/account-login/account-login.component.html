@@ -159,15 +159,33 @@
 							</h3>
 						</div>
 
-						<cyph-account-new-device-activation
-							[activateForUsername]="username | await"
-							(altMasterKey)="submit(undefined, $event)"
+						<div
+							class="cyph-inverted-theme"
 							*ngIf="
 								(loggingIn | await) === true &&
 								(pinUnlock | await) === false &&
 								(checking | await) === false
 							"
-						></cyph-account-new-device-activation>
+						>
+							<mat-accordion>
+								<mat-expansion-panel>
+									<mat-expansion-panel-header>
+										<span cyphTranslate
+											>Use Activation Code</span
+										>
+									</mat-expansion-panel-header>
+									<div>
+										<cyph-account-new-device-activation
+											[activateForUsername]="
+												username | await
+											"
+											(altMasterKey)="
+												submit(undefined, $event)
+											"
+										></cyph-account-new-device-activation>
+									</div> </mat-expansion-panel
+							></mat-accordion>
+						</div>
 
 						<ng-container
 							*ngTemplateOutlet="usernameField"
@@ -297,15 +315,33 @@
 							</h3>
 						</div>
 
-						<cyph-account-new-device-activation
-							[activateForUsername]="username | await"
-							(altMasterKey)="submit(undefined, $event)"
+						<div
+							class="cyph-inverted-theme"
 							*ngIf="
 								(loggingIn | await) === true &&
 								(pinUnlock | await) === false &&
 								(checking | await) === false
 							"
-						></cyph-account-new-device-activation>
+						>
+							<mat-accordion>
+								<mat-expansion-panel>
+									<mat-expansion-panel-header>
+										<span cyphTranslate
+											>Use Activation Code</span
+										>
+									</mat-expansion-panel-header>
+									<div>
+										<cyph-account-new-device-activation
+											[activateForUsername]="
+												username | await
+											"
+											(altMasterKey)="
+												submit(undefined, $event)
+											"
+										></cyph-account-new-device-activation>
+									</div> </mat-expansion-panel
+							></mat-accordion>
+						</div>
 
 						<ng-container
 							*ngTemplateOutlet="usernameField"

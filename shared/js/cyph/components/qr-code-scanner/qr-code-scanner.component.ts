@@ -13,6 +13,7 @@ import {VideoComponent} from '../../components/video';
 import {StringsService} from '../../services/strings.service';
 import {QRService} from '../../services/qr.service';
 import {debugLogError} from '../../util/log';
+import {resolvable} from '../../util/wait';
 
 /**
  * Angular component for QR code scanner UI.
@@ -25,6 +26,9 @@ import {debugLogError} from '../../util/log';
 })
 export class QRCodeScannerComponent extends BaseProvider
 	implements OnDestroy, AfterViewInit {
+	/** Activated. */
+	public readonly activated = resolvable(true);
+
 	/** cyph-video element. */
 	@ViewChild(VideoComponent) public cyphVideo?: VideoComponent;
 
@@ -41,6 +45,8 @@ export class QRCodeScannerComponent extends BaseProvider
 
 	/** Camera feed. */
 	public readonly videoStream = (async () => {
+		await this.activated.promise;
+
 		const constraints = {video: {facingMode: 'environment'}};
 
 		try {

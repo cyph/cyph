@@ -46,7 +46,10 @@
 		[newDeviceActivation]="true"
 	></cyph-link-connection>
 
-	<div fxLayoutAlign="center center">
+	<div
+		fxLayoutAlign="center center"
+		*ngIf="activateForUsername === undefined"
+	>
 		<mat-slide-toggle
 			cyphTranslate
 			name="mobile"

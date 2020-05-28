@@ -4,5 +4,25 @@
 	[muted]="true"
 	[playsinline]="true"
 	[src]="videoStream | await"
-	*ngIf="isActive | await"
+	*ngIf="(activated.promise | await) === true && (isActive | await) === true"
 ></cyph-video>
+
+<div
+	fxFlex
+	fxLayout="column"
+	fxLayoutGap="32px"
+	*ngIf="(activated.promise | await) !== true"
+>
+	<div></div>
+	<div fxFlex fxLayout="row" fxLayoutAlign="center center">
+		<button
+			mat-raised-button
+			color="accent"
+			cyphTranslate
+			(click)="activated.resolve()"
+		>
+			Scan QR Code
+		</button>
+	</div>
+	<div></div>
+</div>
