@@ -158,6 +158,10 @@ export class AccountWalletsComponent extends BaseProvider implements OnInit {
 			title
 		});
 
+		if (generateForm === undefined) {
+			return;
+		}
+
 		const name = getFormValue(generateForm, 'string', 1, 0, 0);
 
 		const address =

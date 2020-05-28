@@ -179,6 +179,10 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 			title
 		});
 
+		if (generateForm === undefined) {
+			return;
+		}
+
 		const name =
 			newPGPKeyOptions === NewPGPKeyOptions.generate ?
 				getFormValue(generateForm, 'string', 1, 0, 0) :
