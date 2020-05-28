@@ -354,6 +354,9 @@ export class StringsService extends BaseProvider {
 	public readonly endTime = `End Time`;
 
 	/** @see StringsService */
+	public readonly errorMessage = `Error: \${ERROR}.`;
+
+	/** @see StringsService */
 	public readonly feedback = `Send Feedback`;
 
 	/** @see StringsService */

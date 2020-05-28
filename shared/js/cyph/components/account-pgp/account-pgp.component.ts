@@ -317,6 +317,23 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 					'')
 			);
 		}
+		catch (err) {
+			this.dialogService
+				.toast(
+					this.stringsService.setParameters(
+						this.stringsService.errorMessage,
+						{
+							error: (err.message || err.toString()).replace(
+								/\.$/g,
+								''
+							)
+						}
+					),
+					undefined,
+					this.stringsService.ok
+				)
+				.catch(() => {});
+		}
 		finally {
 			this.incomingMessage.spinner.next(false);
 		}
@@ -365,6 +382,23 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 					) :
 					'')
 			);
+		}
+		catch (err) {
+			this.dialogService
+				.toast(
+					this.stringsService.setParameters(
+						this.stringsService.errorMessage,
+						{
+							error: (err.message || err.toString()).replace(
+								/\.$/g,
+								''
+							)
+						}
+					),
+					undefined,
+					this.stringsService.ok
+				)
+				.catch(() => {});
 		}
 		finally {
 			this.outgoingMessage.spinner.next(false);
