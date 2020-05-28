@@ -1,5 +1,15 @@
 @import '../../../../css/mixins';
 
+/* Temporary workaround pending edit/delete functionality */
+:host ::ng-deep {
+	.e-header-icon-wrapper {
+		> .e-edit,
+		> .e-delete {
+			display: none;
+		}
+	}
+}
+
 :host > div {
 	position: relative;
 	min-height: 100%;
