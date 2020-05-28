@@ -2317,10 +2317,26 @@ export class AccountFilesService extends BaseProvider {
 
 		this.showSpinner.next(0);
 
-		const key = (async () =>
-			this.potassiumService.randomBytes(
-				await this.potassiumService.secretBox.keyBytes
-			))();
+		const fileReferenceData = this.accountDatabaseService
+			.getItem<IAccountFileReference>(
+				`fileReferences/${id}`,
+				AccountFileReference
+			)
+			.then(fileReference => ({fileReference, isNewFileReference: false}))
+			.catch(async () => ({
+				fileReference: {
+					id,
+					key: this.potassiumService.randomBytes(
+						await this.potassiumService.secretBox.keyBytes
+					),
+					metadata,
+					owner: username
+				},
+				isNewFileReference: true
+			}));
+
+		const key = fileReferenceData.then(o => o.fileReference.key);
+
 		const url = `users/${username}/files/${id}`;
 
 		const file =
@@ -2438,14 +2454,20 @@ export class AccountFilesService extends BaseProvider {
 						key
 					);
 
-					await this.accountDatabaseService.setItem<
-						IAccountFileReference
-					>(`fileReferences/${id}`, AccountFileReference, {
-						id,
-						key: await key,
-						metadata,
-						owner: username
-					});
+					const {
+						fileReference,
+						isNewFileReference
+					} = await fileReferenceData;
+
+					if (isNewFileReference) {
+						await this.accountDatabaseService.setItem<
+							IAccountFileReference
+						>(
+							`fileReferences/${id}`,
+							AccountFileReference,
+							fileReference
+						);
+					}
 
 					await Promise.all(
 						shareWithUsers.map(async u => this.shareFile(id, u))
