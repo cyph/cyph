@@ -38,6 +38,7 @@ RUN apt-get -y --allow-downgrades install \
 	lib32ncurses6 \
 	lib32z1 \
 	libbz2-1.0:i386 \
+	libgbm-dev \
 	libgconf-2-4 \
 	libsodium-dev \
 	libstdc++6:i386 \
