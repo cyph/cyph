@@ -15,17 +15,22 @@ export const readableID = (length: number = 20) : string => {
 };
 
 /** Creates a hex string containing 16 random bytes (or optionally 64 + timestamp). */
-export const uuid = (long: boolean = false) : string => {
-	const bytes = !long ?
-		potassiumUtil.randomBytes(16) :
+export const uuid = (
+	long: boolean = false,
+	includeTimestamp: boolean = long
+) : string => {
+	const randomBytes = potassiumUtil.randomBytes(long ? 64 : 16);
+
+	const bytes = !includeTimestamp ?
+		randomBytes :
 		potassiumUtil.concatMemory(
 			true,
 			/* eslint-disable-next-line @typescript-eslint/tslint/config */
 			new Uint32Array([Date.now()]),
-			potassiumUtil.randomBytes(64)
+			randomBytes
 		);
 
 	const hex = potassiumUtil.toHex(bytes);
-	potassiumUtil.clearMemory(bytes);
+	potassiumUtil.clearMemory(randomBytes);
 	return hex;
 };

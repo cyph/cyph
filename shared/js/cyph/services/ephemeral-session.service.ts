@@ -63,7 +63,11 @@ export class EphemeralSessionService extends SessionService {
 	}
 
 	/** @ignore */
-	private setID (id: string, salt?: string) : void {
+	private setID (
+		id: string,
+		salt: string | undefined,
+		headless: boolean
+	) : void {
 		if (
 			/* Too short */
 			id.length < this.configService.secretLength ||
@@ -77,7 +81,12 @@ export class EphemeralSessionService extends SessionService {
 					true
 				)
 		) {
-			id = readableID(this.configService.secretLength);
+			id = headless ?
+				`${readableID(this.configService.cyphIDLength)}${uuid(
+					true,
+					false
+				)}` :
+				readableID(this.configService.secretLength);
 		}
 
 		this.state.cyphID.next(
@@ -85,7 +94,7 @@ export class EphemeralSessionService extends SessionService {
 		);
 
 		this.state.sharedSecret.next(
-			(this.state.sharedSecret.value || id) + (salt || '')
+			(this.state.sharedSecret.value || id) + (salt ? ` ${salt}` : '')
 		);
 	}
 
@@ -206,6 +215,7 @@ export class EphemeralSessionService extends SessionService {
 
 			let id = await this.sessionInitService.id;
 			const salt = await this.sessionInitService.salt;
+			const headless = await this.sessionInitService.headless;
 
 			if (id === '404') {
 				this.state.startingNewCyph.next(true);
@@ -290,7 +300,7 @@ export class EphemeralSessionService extends SessionService {
 			}
 
 			this.state.wasInitiatedByAPI.next(
-				id.length > this.configService.secretLength
+				!headless && id.length > this.configService.secretLength
 			);
 
 			/* true = yes; false = no; undefined = maybe */
@@ -308,7 +318,7 @@ export class EphemeralSessionService extends SessionService {
 				this.state.sharedSecret.next(undefined);
 			}
 			else {
-				this.setID(id, salt);
+				this.setID(id, salt, headless);
 			}
 
 			this.state.ephemeralStateInitialized.next(true);

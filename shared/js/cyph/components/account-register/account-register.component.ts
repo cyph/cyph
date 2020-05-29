@@ -60,7 +60,7 @@ import {resolvable, sleep} from '../../util/wait';
 export class AccountRegisterComponent extends BaseProvider
 	implements OnDestroy, OnInit {
 	/** Alternate master key. */
-	private readonly altMasterKey = xkcdPassphrase.generate(512);
+	private readonly altMasterKey = uuid(true, false);
 
 	/** @ignore */
 	private inviteCodeDebounceLast?: string;
@@ -391,7 +391,7 @@ export class AccountRegisterComponent extends BaseProvider
 		const closeFunction = resolvable<() => void>();
 
 		const sessionData = {
-			aliceMasterKey: await this.altMasterKey,
+			aliceMasterKey: this.altMasterKey,
 			bobSessionID: undefined,
 			username: this.username.value
 		};
@@ -574,7 +574,7 @@ export class AccountRegisterComponent extends BaseProvider
 		}
 
 		const masterKey = !this.additionalDevices.paperMasterKey.value ?
-			await xkcdPassphrase.generate(512) :
+			uuid(true, false) :
 			this.masterKey.value;
 
 		this.checking.next(true);
@@ -605,7 +605,7 @@ export class AccountRegisterComponent extends BaseProvider
 				(await this.accountAuthService.register(
 					this.username.value,
 					masterKey,
-					await this.altMasterKey,
+					this.altMasterKey,
 					{
 						isCustom: !this.useLockScreenPIN.value,
 						value: this.useLockScreenPIN.value ?

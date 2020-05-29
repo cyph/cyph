@@ -149,16 +149,16 @@ export class LinkConnectionComponent extends BaseProvider
 
 		let isWaiting = true;
 
-		const sharedSecret = await this.sessionService.state.sharedSecret
+		const sharedSecret = (await this.sessionService.state.sharedSecret
 			.pipe(
 				filterUndefinedOperator(),
 				filter(s => s.length > 0),
 				take(1)
 			)
-			.toPromise();
+			.toPromise()).split(' ')[0];
 
 		this.linkConstant = this.newDeviceActivation ?
-			sharedSecret.slice(0, this.configService.secretLength) :
+			sharedSecret :
 			this.envService.cyphImUrl +
 			(this.envService.cyphImUrl.indexOf('#') > -1 ? '' : '#') +
 			sharedSecret;
