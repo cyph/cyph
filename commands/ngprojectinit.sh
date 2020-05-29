@@ -55,7 +55,8 @@ node -e "
 			)
 				.map(s => s.trim().replace('\"', ''))
 				.filter(s => s),
-			...glob.sync('node_modules/@angular/*/*/').map(s => s.slice(13, -1))
+			...glob.sync('node_modules/@angular/*/*/').map(s => s.slice(13, -1)),
+			...glob.sync('node_modules/firebase/*/').map(s => s.slice(13, -1))
 		])
 	)
 		.sort()
