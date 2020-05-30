@@ -1026,6 +1026,15 @@ export class StringsService extends BaseProvider {
 	public readonly pgpKeyReplacePublicToPrivate = `Add private key to existing public key \${FINGERPRINT}?`;
 
 	/** @see StringsService */
+	public readonly pgpPassphraseContent = `Please enter the passphrase to decrypt this private key:`;
+
+	/** @see StringsService */
+	public readonly pgpPassphrasePlaceholder = `Passphrase`;
+
+	/** @see StringsService */
+	public readonly pgpPassphraseTitle = `PGP Key Import`;
+
+	/** @see StringsService */
 	public readonly pgpPrimaryKeyRemove = `Unset Primary Public Key`;
 
 	/** @see StringsService */

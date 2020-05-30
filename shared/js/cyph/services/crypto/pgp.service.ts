@@ -6,6 +6,8 @@ import {BaseProvider} from '../../base-provider';
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
 import {IKeyPair, IPGPMetadata} from '../../proto/types';
 import {debugLogError} from '../../util/log';
+import {DialogService} from '../dialog.service';
+import {StringsService} from '../strings.service';
 import {WorkerService} from '../worker.service';
 
 /**
@@ -177,6 +179,7 @@ export class PGPService extends BaseProvider {
 											name?: string;
 									  }
 									| {
+											passphrase?: string;
 											privateKey: Uint8Array | string;
 									  }
 							) => {
@@ -187,6 +190,20 @@ export class PGPService extends BaseProvider {
 									})).key :
 									(await readRawKey(options.privateKey))
 										.keys[0];
+
+								if (
+									'privateKey' in options &&
+									!o.isDecrypted()
+								) {
+									try {
+										await o.decrypt(options.passphrase);
+									}
+									catch {
+										throw new Error(
+											'Failed to decrypt private key.'
+										);
+									}
+								}
 
 								return {
 									privateKey: await transfer(
@@ -650,18 +667,57 @@ export class PGPService extends BaseProvider {
 					name?: string;
 			  }
 			| {
+					passphrase?: string;
 					privateKey: string;
-			  } = {}
+			  } = {},
+		promptForPassphraseIfNeeded: boolean = false
 	) : Promise<IKeyPair> {
-		const kp = await (await this.openpgp()).keyPair(options);
+		const getKeyPair = async () => {
+			const kp = await (await this.openpgp()).keyPair(options);
 
-		return {
-			privateKey: potassiumUtil.fromString(kp.privateKey),
-			publicKey: potassiumUtil.fromString(kp.publicKey)
+			return {
+				privateKey: potassiumUtil.fromString(kp.privateKey),
+				publicKey: potassiumUtil.fromString(kp.publicKey)
+			};
 		};
+
+		if (!promptForPassphraseIfNeeded || !('privateKey' in options)) {
+			return getKeyPair();
+		}
+
+		while (true) {
+			try {
+				return await getKeyPair();
+			}
+			catch (err) {
+				if (
+					!(err instanceof Error) ||
+					err.message !== 'Failed to decrypt private key.'
+				) {
+					throw err;
+				}
+
+				options.passphrase = await this.dialogService.prompt({
+					content: this.stringsService.pgpPassphraseContent,
+					password: true,
+					placeholder: this.stringsService.pgpPassphrasePlaceholder,
+					title: this.stringsService.pgpPassphraseTitle
+				});
+
+				if (options.passphrase === undefined) {
+					throw err;
+				}
+			}
+		}
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService,
+
 		/** @ignore */
 		private readonly workerService: WorkerService
 	) {

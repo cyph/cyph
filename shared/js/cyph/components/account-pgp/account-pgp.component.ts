@@ -229,7 +229,8 @@ export class AccountPGPComponent extends BaseProvider implements OnInit {
 				await this.pgpService.keyPair(
 					privateKey !== undefined ?
 						{privateKey} :
-						{comment, email, name}
+						{comment, email, name},
+					true
 				);
 
 		const {
