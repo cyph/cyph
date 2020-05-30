@@ -365,6 +365,29 @@
 				*ngTemplateOutlet="qrCodeUI; context: {size: 256}"
 			></ng-container>
 
+			<div>
+				<div fxLayout="column" fxLayoutGap="16px">
+					<div cyphTranslate>
+						Alternatively, you may copy the activation code and
+						paste it directly into the app:
+					</div>
+					<div fxLayoutAlign="center center">
+						<button
+							mat-raised-button
+							(click)="
+								copyToClipboard(
+									stringsService.newDeviceActivationCopySuccess
+								)
+							"
+						>
+							<mat-icon>content_copy</mat-icon>
+							&ngsp;
+							<span cyphTranslate>Copy Activation Code</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
 			<div *ngIf="mobileDeviceActivation | await">
 				<div fxLayout="column" fxLayoutGap="16px">
 					<div cyphTranslate>
@@ -392,46 +415,26 @@
 				</div>
 			</div>
 
-			<div>
+			<div *ngIf="!(mobileDeviceActivation | await)">
 				<div fxLayout="column" fxLayoutGap="16px">
-					<div cyphTranslate>
-						Alternatively, you may copy the activation code and
-						paste it directly into the app:
-					</div>
-					<div fxLayoutAlign="center center">
-						<button
-							mat-raised-button
-							(click)="
-								copyToClipboard(
-									stringsService.newDeviceActivationCopySuccess
-								)
-							"
+					<div></div>
+					<div fxLayoutAlign="center center" fxLayoutGap="16px">
+						<a
+							cyphTranslate
+							href="https://www.microsoft.com/en-us/p/cyph/9nz5zdz2p9mv"
 						>
-							<mat-icon>content_copy</mat-icon>
-							&ngsp;
-							<span cyphTranslate>Copy Activation Code</span>
-						</button>
+							Windows app
+						</a>
+						<a
+							cyphTranslate
+							href="https://apps.apple.com/us/app/cyph/id1480070821"
+						>
+							macOS app
+						</a>
+						<a cyphTranslate href="https://snapcraft.io/cyph">
+							Linux app
+						</a>
 					</div>
-					<ng-container *ngIf="!(mobileDeviceActivation | await)">
-						<div></div>
-						<div fxLayoutAlign="center center" fxLayoutGap="16px">
-							<a
-								cyphTranslate
-								href="https://www.microsoft.com/en-us/p/cyph/9nz5zdz2p9mv"
-							>
-								Windows app
-							</a>
-							<a
-								cyphTranslate
-								href="https://apps.apple.com/us/app/cyph/id1480070821"
-							>
-								macOS app
-							</a>
-							<a cyphTranslate href="https://snapcraft.io/cyph">
-								Linux app
-							</a>
-						</div>
-					</ng-container>
 				</div>
 			</div>
 		</ng-container>
