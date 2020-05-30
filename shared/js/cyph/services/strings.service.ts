@@ -648,7 +648,7 @@ export class StringsService extends BaseProvider {
 	public readonly logoutTitle = `Log Out`;
 
 	/** @see StringsService */
-	public readonly masterKey = `Master Key`;
+	public readonly masterKey = `Paper Master Key`;
 
 	/** @see StringsService */
 	public readonly masterKeyInfo = `Master Key is space- and case-sensitive`;
