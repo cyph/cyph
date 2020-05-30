@@ -10,7 +10,7 @@
 		(scanComplete)="init($event)"
 	></cyph-qr-code-scanner>
 
-	<div *ngIf="!(envService.isMobile | await)">
+	<div>
 		<div fxLayout="column" fxLayoutGap="16px">
 			<div cyphTranslate class="text-center">
 				You can also paste the activation code here:
