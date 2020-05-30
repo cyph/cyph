@@ -602,7 +602,7 @@ $default-white: map-get($mat-grey, 100);
 		@include mat-button-theme($cyph-speed-dial-action-theme);
 	}
 
-	.green-button {
+	div.green-button {
 		@include mat-button-theme(
 			cyph-theme(
 				$cyph-white,
@@ -619,7 +619,7 @@ $default-white: map-get($mat-grey, 100);
 		}
 	}
 
-	.red-button {
+	div.red-button {
 		@include mat-button-theme(
 			cyph-theme(
 				$cyph-white,
