@@ -40,6 +40,11 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	/** If true, login via activation code failed. */
 	public readonly activationCodeFailed = new BehaviorSubject<boolean>(false);
 
+	/** Indicates whether activation code UI section is open. */
+	public readonly activationCodeSectionOpen = new BehaviorSubject<boolean>(
+		false
+	);
+
 	/** Indicates whether saved master key is the alternate master key. */
 	public readonly altMasterKey = new BehaviorSubject<boolean>(false);
 

@@ -164,11 +164,19 @@
 							*ngIf="
 								(loggingIn | await) === true &&
 								(pinUnlock | await) === false &&
-								(checking | await) === false
+								(checking | await) === false &&
+								!!(username | await)
 							"
 						>
 							<mat-accordion>
-								<mat-expansion-panel>
+								<mat-expansion-panel
+									(closed)="
+										activationCodeSectionOpen.next(false)
+									"
+									(opened)="
+										activationCodeSectionOpen.next(true)
+									"
+								>
 									<mat-expansion-panel-header>
 										<span cyphTranslate>
 											Use Activation Code
@@ -238,7 +246,10 @@
 								mat-raised-button
 								color="primary"
 								type="submit"
-								*ngIf="loggingIn | await"
+								*ngIf="
+									(activationCodeSectionOpen | await) ===
+										false && (loggingIn | await) === true
+								"
 							>
 								{{ buttonText }}
 							</button>
@@ -341,11 +352,19 @@
 							*ngIf="
 								(loggingIn | await) === true &&
 								(pinUnlock | await) === false &&
-								(checking | await) === false
+								(checking | await) === false &&
+								!!(username | await)
 							"
 						>
 							<mat-accordion>
-								<mat-expansion-panel>
+								<mat-expansion-panel
+									(closed)="
+										activationCodeSectionOpen.next(false)
+									"
+									(opened)="
+										activationCodeSectionOpen.next(true)
+									"
+								>
 									<mat-expansion-panel-header>
 										<span cyphTranslate>
 											Use Activation Code
@@ -413,7 +432,10 @@
 								mat-raised-button
 								color="primary"
 								type="submit"
-								*ngIf="loggingIn | await"
+								*ngIf="
+									(activationCodeSectionOpen | await) ===
+										false && (loggingIn | await) === true
+								"
 							>
 								{{ buttonText }}
 							</button>
@@ -541,7 +563,12 @@
 </ng-template>
 
 <ng-template #login>
-	<div fxLayout="row" fxLayoutAlign="center" class="animated fadeIn">
+	<div
+		fxLayout="row"
+		fxLayoutAlign="center"
+		class="animated fadeIn"
+		*ngIf="(activationCodeSectionOpen | await) === false"
+	>
 		<mat-form-field fxFlex>
 			<input
 				matInput
