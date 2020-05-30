@@ -3,12 +3,9 @@ import {SafeUrl} from '@angular/platform-browser';
 import * as Comlink from 'comlink';
 import {DopeQrOptions, generateQRCode} from 'dope-qr';
 import memoize from 'lodash-es/memoize';
-import {encode} from 'msgpack-lite';
 import {BaseProvider} from '../base-provider';
-import {BinaryProto, DataURIProto} from '../proto';
-import {PotassiumService} from './crypto/potassium.service';
+import {DataURIProto} from '../proto';
 import {FileService} from './file.service';
-import {LocalStorageService} from './local-storage.service';
 import {WorkerService} from './worker.service';
 
 /**
@@ -38,16 +35,7 @@ export class QRService extends BaseProvider {
 	/** Generates a QR code and caches to local storage. */
 	public readonly getQRCode = memoize(
 		async (options: DopeQrOptions) : Promise<SafeUrl> =>
-			DataURIProto.decode(
-				await this.localStorageService.getOrSetDefault(
-					`QRService/${this.potassiumService.toHex(
-						await this.potassiumService.hash.hash(encode(options))
-					)}`,
-					BinaryProto,
-					async () => generateQRCode(options)
-				),
-				'image/png'
-			)
+			DataURIProto.decode(await generateQRCode(options), 'image/png')
 	);
 
 	/** Scans QR code (raw data). */
@@ -110,12 +98,6 @@ export class QRService extends BaseProvider {
 	constructor (
 		/** @ignore */
 		private readonly fileService: FileService,
-
-		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
-
-		/** @ignore */
-		private readonly potassiumService: PotassiumService,
 
 		/** @ignore */
 		private readonly workerService: WorkerService
