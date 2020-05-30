@@ -170,21 +170,42 @@
 							<mat-accordion>
 								<mat-expansion-panel>
 									<mat-expansion-panel-header>
-										<span cyphTranslate
-											>Use Activation Code</span
-										>
+										<span cyphTranslate>
+											Use Activation Code
+										</span>
 									</mat-expansion-panel-header>
 									<div>
 										<cyph-account-new-device-activation
 											[activateForUsername]="
 												username | await
 											"
+											(activationComplete)="
+												!$event ?
+													activationCodeFailed.next(
+														true
+													) :
+													undefined
+											"
 											(altMasterKey)="
 												submit(undefined, $event)
 											"
+											*ngIf="
+												(activationCodeFailed
+													| await) === false
+											"
 										></cyph-account-new-device-activation>
-									</div> </mat-expansion-panel
-							></mat-accordion>
+										<div
+											cyphTranslate
+											*ngIf="
+												(activationCodeFailed
+													| await) === true
+											"
+										>
+											Device activation failed
+										</div>
+									</div>
+								</mat-expansion-panel>
+							</mat-accordion>
 						</div>
 
 						<ng-container
@@ -326,21 +347,42 @@
 							<mat-accordion>
 								<mat-expansion-panel>
 									<mat-expansion-panel-header>
-										<span cyphTranslate
-											>Use Activation Code</span
-										>
+										<span cyphTranslate>
+											Use Activation Code
+										</span>
 									</mat-expansion-panel-header>
 									<div>
 										<cyph-account-new-device-activation
 											[activateForUsername]="
 												username | await
 											"
+											(activationComplete)="
+												!$event ?
+													activationCodeFailed.next(
+														true
+													) :
+													undefined
+											"
 											(altMasterKey)="
 												submit(undefined, $event)
 											"
+											*ngIf="
+												(activationCodeFailed
+													| await) === false
+											"
 										></cyph-account-new-device-activation>
-									</div> </mat-expansion-panel
-							></mat-accordion>
+										<div
+											cyphTranslate
+											*ngIf="
+												(activationCodeFailed
+													| await) === true
+											"
+										>
+											Device activation failed
+										</div>
+									</div>
+								</mat-expansion-panel>
+							</mat-accordion>
 						</div>
 
 						<ng-container

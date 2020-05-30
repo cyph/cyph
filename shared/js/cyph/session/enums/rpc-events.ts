@@ -6,6 +6,10 @@ export class RpcEvents {
 	public readonly accountMasterKey: string = 'accountMasterKey';
 
 	/** @see RpcEvents */
+	public readonly accountMasterKeyConfirmation: string =
+		'accountMasterKeyConfirmation';
+
+	/** @see RpcEvents */
 	public readonly capabilities: string = 'capabilities';
 
 	/** @see RpcEvents */

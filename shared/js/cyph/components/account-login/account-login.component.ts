@@ -37,6 +37,9 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		Uint8Array | undefined
 	>(undefined);
 
+	/** If true, login via activation code failed. */
+	public readonly activationCodeFailed = new BehaviorSubject<boolean>(false);
+
 	/** Indicates whether saved master key is the alternate master key. */
 	public readonly altMasterKey = new BehaviorSubject<boolean>(false);
 

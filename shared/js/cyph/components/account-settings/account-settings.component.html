@@ -269,9 +269,7 @@
 
 				<cyph-account-new-device-activation
 					[sessionData]="newDeviceSessionData"
-					(activationComplete)="
-						$event ? newDeviceActivationComplete() : undefined
-					"
+					(activationComplete)="newDeviceActivationComplete($event)"
 					*ngIf="
 						getNewDeviceSessionData()
 							| await as newDeviceSessionData

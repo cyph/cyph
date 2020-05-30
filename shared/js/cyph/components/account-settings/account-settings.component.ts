@@ -205,11 +205,15 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	}
 
 	/** New device activation completion handler. */
-	public async newDeviceActivationComplete () : Promise<void> {
+	public async newDeviceActivationComplete (
+		success: boolean
+	) : Promise<void> {
 		await this.router.navigate(['settings']);
 
 		await this.dialogService.toast(
-			this.stringsService.newDeviceActivationConfirmation,
+			success ?
+				this.stringsService.newDeviceActivationConfirmation :
+				this.stringsService.newDeviceActivationFailure,
 			undefined,
 			this.stringsService.ok
 		);

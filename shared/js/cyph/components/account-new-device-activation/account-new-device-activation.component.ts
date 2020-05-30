@@ -12,12 +12,15 @@ import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {burnerChatProviders} from '../../providers/burner-chat';
 import {BasicSessionInitService} from '../../services/basic-session-init.service';
+import {ConfigService} from '../../services/config.service';
 import {EnvService} from '../../services/env.service';
 import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
 import {ISessionMessageData, rpcEvents} from '../../session';
 import {normalize} from '../../util/formatting';
+import {readableID} from '../../util/uuid';
+import {resolvable} from '../../util/wait';
 
 /**
  * Angular component for account new device activation UI.
@@ -52,6 +55,14 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 	/** Emits alt master key on succesful activation completion. */
 	@Output() public readonly altMasterKey = new EventEmitter<string>();
+
+	/** Answer to master key confirmation code verification. */
+	public readonly masterKeyConfirmationAnswer = resolvable<boolean>();
+
+	/** Confirmation code to verify before master key is transmitted. */
+	public readonly masterKeyConfirmationCode = new BehaviorSubject<
+		string | undefined
+	>(undefined);
 
 	/** Indicates whether or not a mobile device is being activated. */
 	@Input() public mobile: boolean = false;
@@ -92,6 +103,13 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			return;
 		}
 
+		const masterKeyConfirmationCodePromise = this.sessionData.bobSessionID ?
+			(async () =>
+				((await this.sessionService.one<ISessionMessageData[]>(
+					rpcEvents.accountMasterKeyConfirmation
+				)) || [])[0]?.command?.additionalData)() :
+			undefined;
+
 		const masterKeyPromise = this.sessionData.bobSessionID ?
 			(async () =>
 				((await this.sessionService.one<ISessionMessageData[]>(
@@ -108,6 +126,29 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 		await this.sessionService.connected;
 
 		if (this.sessionData.aliceMasterKey) {
+			const masterKeyConfirmationCode = readableID(
+				this.configService.cyphIDLength
+			);
+
+			await (await this.sessionService.send([
+				rpcEvents.accountMasterKeyConfirmation,
+				{
+					command: {
+						additionalData: masterKeyConfirmationCode,
+						method: ''
+					}
+				}
+			])).confirmPromise;
+
+			this.masterKeyConfirmationCode.next(masterKeyConfirmationCode);
+
+			if (!(await this.masterKeyConfirmationAnswer.promise)) {
+				this.sessionService.close();
+				this.activationComplete.emit(false);
+				this.wasSuccessful = false;
+				return;
+			}
+
 			await (await this.sessionService.send([
 				rpcEvents.accountMasterKey,
 				{
@@ -119,23 +160,29 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			])).confirmPromise;
 
 			this.activationComplete.emit(true);
-
 			this.wasSuccessful = true;
-
 			return;
 		}
 
-		const masterKey = await masterKeyPromise;
+		this.masterKeyConfirmationCode.next(
+			await masterKeyConfirmationCodePromise
+		);
+
+		const masterKey = await Promise.race([
+			masterKeyPromise,
+			this.sessionService.closed.then(() => undefined)
+		]);
 
 		this.sessionService.close();
 
 		if (masterKey === undefined) {
+			this.activationComplete.emit(false);
+			this.wasSuccessful = false;
 			return;
 		}
 
 		this.altMasterKey.emit(masterKey);
 		this.activationComplete.emit(true);
-
 		this.wasSuccessful = true;
 	}
 
@@ -156,6 +203,9 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 	constructor (
 		/** @ignore */
 		private readonly basicSessionInitService: BasicSessionInitService,
+
+		/** @ignore */
+		private readonly configService: ConfigService,
 
 		/** @ignore */
 		private readonly sessionService: SessionService,

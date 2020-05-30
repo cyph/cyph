@@ -723,6 +723,9 @@ export class StringsService extends BaseProvider {
 	public readonly newDeviceActivationCopySuccess = `Device activation code copied.`;
 
 	/** @see StringsService */
+	public readonly newDeviceActivationFailure = `Failed to activate new device.`;
+
+	/** @see StringsService */
 	public readonly newDeviceActivationQR = `Open the ${this.internalProductShort} app and scan this QR code:`;
 
 	/** @see StringsService */

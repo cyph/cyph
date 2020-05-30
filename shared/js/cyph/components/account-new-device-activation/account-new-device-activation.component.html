@@ -40,6 +40,50 @@
 	fxLayoutGap="32px"
 	*ngIf="sessionData !== undefined"
 >
+	<ng-container *ngIf="masterKeyConfirmationCode | await as code">
+		<div *ngIf="activateForUsername === undefined">
+			<div fxLayout="column" fxLayoutAlign="center center">
+				<h2 cyphTranslate>
+					Does the code on the other device match this one?
+				</h2>
+				<h1>{{ code || '' }}</h1>
+				<div
+					fxLayout="row"
+					fxLayoutAlign="center center"
+					fxLayoutGap="32px"
+				>
+					<div class="green-button">
+						<button
+							mat-fab
+							cyphTranslate
+							matTooltip="Yes"
+							(click)="masterKeyConfirmationAnswer.resolve(true)"
+						>
+							<mat-icon>check</mat-icon>
+						</button>
+					</div>
+					<div class="red-button">
+						<button
+							mat-fab
+							cyphTranslate
+							matTooltip="No"
+							(click)="masterKeyConfirmationAnswer.resolve(false)"
+						>
+							<mat-icon>close</mat-icon>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			fxLayoutAlign="center center"
+			*ngIf="activateForUsername !== undefined"
+		>
+			<h1>{{ code || '' }}</h1>
+		</div>
+	</ng-container>
+
 	<cyph-link-connection
 		fxFlex
 		[mobileDeviceActivation]="(mobileDeviceActivation | await) === true"
