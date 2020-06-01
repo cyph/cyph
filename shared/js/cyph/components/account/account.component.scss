@@ -240,21 +240,6 @@ $mobileAppBarHeight: 56px;
 			padding: 0 5px;
 		}
 	}
-
-	.cyph-banner.password {
-		&.high,
-		&.very-high {
-			color: map-get($mat-green, 700) !important;
-		}
-
-		&.medium {
-			color: map-get($mat-amber, 900) !important;
-		}
-
-		&.low {
-			color: map-get($mat-red, 700) !important;
-		}
-	}
 }
 
 :host > :not(.mobile) {

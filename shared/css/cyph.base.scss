@@ -594,6 +594,21 @@ code {
 		@include filter(brightness(1.05));
 	}
 
+	&.password {
+		&.high,
+		&.very-high {
+			color: map-get($mat-green, 700) !important;
+		}
+
+		&.medium {
+			color: map-get($mat-amber, 900) !important;
+		}
+
+		&.low {
+			color: map-get($mat-red, 700) !important;
+		}
+	}
+
 	&:not(.default-align) {
 		text-align: center;
 	}
