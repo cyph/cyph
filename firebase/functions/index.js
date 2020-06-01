@@ -1094,6 +1094,9 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
 			plan
 		}),
+		database
+			.ref(`${namespace}/consumedInviteCodes/${inviteCode}`)
+			.set(username),
 		!braintreeID ?
 			undefined :
 			database

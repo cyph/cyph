@@ -111,6 +111,12 @@
 				}
 			},
 
+			"consumedInviteCodes": {
+				"$code": {
+					".validate": "newData.isString()"
+				}
+			},
+
 			"emails": {
 				"$email": {
 					".read": true,
