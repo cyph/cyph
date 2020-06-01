@@ -614,6 +614,14 @@ code {
 	}
 }
 
+.password-option {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cyph-light-theme .password-option {
+	background-color: rgba(0, 0, 0, 0.03);
+}
+
 @include keyframes(flashIn) {
 	50% {
 		@include filter(
