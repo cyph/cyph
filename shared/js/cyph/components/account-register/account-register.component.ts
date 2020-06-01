@@ -954,6 +954,7 @@ export class AccountRegisterComponent extends BaseProvider
 		this.submissionReadinessErrors = toBehaviorSubject(
 			observableAll([
 				this.additionalDevicesReady,
+				this.checking,
 				this.email,
 				this.inviteCodeWatcher,
 				this.lockScreenPasswordReady,
@@ -970,38 +971,54 @@ export class AccountRegisterComponent extends BaseProvider
 				map(
 					([
 						additionalDevicesReady,
+						checking,
 						email,
 						inviteCode,
 						lockScreenPasswordReady,
 						name,
 						username,
 						xkcd
-					]) => [
-						...(!additionalDevicesReady ?
+					]) =>
+						checking ?
+							[] :
 							[
-								this.stringsService
-									.registerErrorAdditionalDevices
-							] :
-							[]),
-						...(email && !emailRegex.test(email) ?
-							[this.stringsService.registerErrorEmail] :
-							[]),
-						...(!inviteCode.value || inviteCode.errors ?
-							[this.stringsService.registerErrorInviteCode] :
-							[]),
-						...(!lockScreenPasswordReady ?
-							[this.stringsService.registerErrorLockScreen] :
-							[]),
-						...(!name ?
-							[this.stringsService.registerErrorName] :
-							[]),
-						...(!username.value || username.errors ?
-							[this.stringsService.registerErrorUsername] :
-							[]),
-						...(xkcd.length < 1 ?
-							[this.stringsService.registerErrorInitializing] :
-							[])
-					]
+								...(!additionalDevicesReady ?
+									[
+										this.stringsService
+											.registerErrorAdditionalDevices
+									] :
+									[]),
+								...(email && !emailRegex.test(email) ?
+									[this.stringsService.registerErrorEmail] :
+									[]),
+								...(!inviteCode.value || inviteCode.errors ?
+									[
+										this.stringsService
+											.registerErrorInviteCode
+									] :
+									[]),
+								...(!lockScreenPasswordReady ?
+									[
+										this.stringsService
+											.registerErrorLockScreen
+									] :
+									[]),
+								...(!name ?
+									[this.stringsService.registerErrorName] :
+									[]),
+								...(!username.value || username.errors ?
+									[
+										this.stringsService
+											.registerErrorUsername
+									] :
+									[]),
+								...(xkcd.length < 1 ?
+									[
+										this.stringsService
+											.registerErrorInitializing
+									] :
+									[])
+							]
 				)
 			),
 			[this.stringsService.registerErrorInitializing],
