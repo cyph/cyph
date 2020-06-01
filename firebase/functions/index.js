@@ -1032,6 +1032,7 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 		braintreeID,
 		braintreeSubscriptionID,
 		inviterUsername,
+		keybaseUsername,
 		planTrialEnd,
 		reservedUsername
 	} = inviteData;
