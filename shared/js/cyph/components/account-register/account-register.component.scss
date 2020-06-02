@@ -135,7 +135,7 @@ mat-card-content {
 		margin-right: auto;
 	}
 
-	mat-tab-body {
+	mat-tab-body.mat-tab-body-active {
 		&,
 		> div {
 			overflow: visible !important;
