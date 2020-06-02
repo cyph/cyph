@@ -1059,7 +1059,11 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 
 	const initialEmailAddressRef = !email ?
 		undefined :
-		database.ref(`${namespace}/initialEmailAddresses/${email}`);
+		database.ref(
+			`${namespace}/initialEmailAddresses/${Buffer.from(email).toString(
+				'hex'
+			)}`
+		);
 
 	const pendingInviteRef = database.ref(
 		`${namespace}/pendingInvites/${inviteCode}`
