@@ -1057,6 +1057,10 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 		password
 	});
 
+	const initialEmailAddressRef = !email ?
+		undefined :
+		database.ref(`${namespace}/initialEmailAddresses/${email}`);
+
 	const pendingInviteRef = database.ref(
 		`${namespace}/pendingInvites/${inviteCode}`
 	);
@@ -1094,9 +1098,17 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 		setItem(namespace, `users/${username}/plan`, CyphPlan, {
 			plan
 		}),
-		database
-			.ref(`${namespace}/consumedInviteCodes/${inviteCode}`)
-			.set(username),
+		database.ref(`${namespace}/consumedInviteCodes/${inviteCode}`).set({
+			email,
+			username
+		}),
+		!initialEmailAddressRef ||
+		(await initialEmailAddressRef.once('value')).exists() ?
+			undefined :
+			initialEmailAddressRef.set({
+				inviteCode,
+				username
+			}),
 		!braintreeID ?
 			undefined :
 			database

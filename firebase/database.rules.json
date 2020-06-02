@@ -113,7 +113,12 @@
 
 			"consumedInviteCodes": {
 				"$code": {
-					".validate": "newData.isString()"
+					"email": {
+						".validate": "newData.isString()"
+					},
+					"username": {
+						".validate": "newData.isString()"
+					}
 				}
 			},
 
@@ -163,6 +168,17 @@
 					},
 					"timestamp": {
 						".validate": "newData.val() === now"
+					}
+				}
+			},
+
+			"initialEmailAddresses": {
+				"$email": {
+					"inviteCode": {
+						".validate": "newData.isString()"
+					},
+					"username": {
+						".validate": "newData.isString()"
 					}
 				}
 			},
