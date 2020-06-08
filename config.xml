@@ -310,5 +310,5 @@
 
 	<engine name="android" spec="^8.1.0" />
 	<engine name="electron" spec="git+https://github.com/buu700/cordova-electron-tmp" />
-	<engine name="ios" spec="^5.1.0" />
+	<engine name="ios" spec="^6.0.0" />
 </widget>
