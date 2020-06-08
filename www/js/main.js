@@ -22,6 +22,13 @@ try {
 }
 catch (_) {}
 
+try {
+	if (cordova && cordova.plugins && cordova.plugins.iosrtc) {
+		cordova.plugins.iosrtc.registerGlobals();
+	}
+}
+catch (_) {}
+
 var isHiddenService	= false;
 var packageName		= 'cyph.app';
 

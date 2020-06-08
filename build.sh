@@ -146,6 +146,7 @@ if [ "${iOS}" ] ; then
 
 	npm install xcode
 	initPlatform ios
+	chmod +x plugins/cordova-plugin-iosrtc/extra/hooks/iosrtc-swift-support.js
 	pod install --project-directory=platforms/ios
 fi
 

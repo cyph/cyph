@@ -35,6 +35,7 @@
 	<plugin name="cordova-plugin-headercolor" spec="*" />
 	<plugin name="cordova-plugin-ionic-keyboard" spec="*" />
 	<plugin name="cordova-plugin-ionic-webview" spec="*" />
+	<plugin name="cordova-plugin-iosrtc" spec="*" />
 	<plugin name="cordova-plugin-media-capture" spec="*" />
 	<plugin name="cordova-plugin-network-information" spec="*" />
 	<plugin name="cordova-plugin-permission" spec="*" />
@@ -262,6 +263,11 @@
 				<string>applinks:cyph.ws</string>
 			</array>
 		</config-file>
+
+		<hook
+			type="after_platform_add"
+			src="plugins/cordova-plugin-iosrtc/extra/hooks/iosrtc-swift-support.js"
+		/>
 
 		<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
 			<string>For end-to-end encrypted video calling between users</string>
