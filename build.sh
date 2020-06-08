@@ -284,7 +284,7 @@ if [ "${electron}" ] ; then
 fi
 
 if [ "${iOS}" ] ; then
-	# npx cordova build ios --buildFlag='-UseModernBuildSystem=0' --debug --device \
+	# npx cordova build ios --debug --device \
 	# 	--codeSignIdentity='iPhone Developer' \
 	# 	--developmentTeam='SXZZ8WLPV2' \
 	# 	--packageType='development' \
@@ -294,7 +294,7 @@ if [ "${iOS}" ] ; then
 
 	# mv platforms/ios/build/device ios-debug
 
-	npx cordova build ios --buildFlag='-UseModernBuildSystem=0' --release --device \
+	npx cordova build ios --release --device \
 		--codeSignIdentity='iPhone Distribution' \
 		--developmentTeam='SXZZ8WLPV2' \
 		--packageType='app-store' \
