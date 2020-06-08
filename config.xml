@@ -266,6 +266,12 @@
 		<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
 			<string>For end-to-end encrypted video calling between users</string>
 		</edit-config>
+		<edit-config target="NSMicrophoneUsageDescription" file="*-Info.plist" mode="merge">
+			<string>For end-to-end encrypted video calling between users</string>
+		</edit-config>
+		<edit-config target="NSPhotoLibraryUsageDescription" file="*-Info.plist" mode="merge">
+			<string>For end-to-end encrypted photo sharing and storage</string>
+		</edit-config>
 
 		<icon height="57" platform="ios" src="res/icon/ios/icon.png" width="57" />
 		<icon height="114" platform="ios" src="res/icon/ios/icon@2x.png" width="114" />
