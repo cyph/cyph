@@ -71,7 +71,7 @@
 	<preference name="StatusBarStyle" value="lightcontent" />
 
 	<platform name="android">
-		<plugin name="cordova-plugin-inappbrowser" spec="*" />
+		<plugin name="cordova-plugin-browsertab" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
@@ -238,7 +238,7 @@
 	</platform>
 
 	<platform name="ios">
-		<plugin name="cordova-plugin-inappbrowser" spec="*" />
+		<plugin name="cordova-plugin-browsertab" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
