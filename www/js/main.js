@@ -195,7 +195,13 @@ then(function (results) {
 
 /* Successfully execute package */
 then(function (package) {
-	document.head.innerHTML	= package.split('<head>')[1].split('</head>')[0];
+	var headHTML	= package.split('<head>')[1].split('</head>')[0];
+
+	if (device.platform === 'iOS') {
+		headHTML	= headHTML.replace('href="/"', 'href="#"');
+	}
+
+	document.head.innerHTML	= headHTML;
 	document.body.innerHTML	= package.split('<body>')[1].split('</body>')[0];
 
 	webSignSRI(storage.webSignCdnUrl).catch(function (err) {
