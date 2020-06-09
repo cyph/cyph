@@ -88,6 +88,9 @@ const inviteUser = async (
 				planAnnualTelehealth: cyphPlan === CyphPlans.AnnualTelehealth,
 				planFoundersAndFriends:
 					planConfig.planType === CyphPlanTypes.FoundersAndFriends,
+				planFoundersAndFriendsTelehealth:
+					planConfig.planType ===
+					CyphPlanTypes.FoundersAndFriends_Telehealth,
 				planFree: planConfig.planType === CyphPlanTypes.Free,
 				planMonthlyBusiness: cyphPlan === CyphPlans.MonthlyBusiness,
 				planMonthlyTelehealth: cyphPlan === CyphPlans.MonthlyTelehealth,

@@ -69,6 +69,17 @@ Congratulations on securing your Cyph account invite!
 
 ---
 {{/planFoundersAndFriends}}
+{{#planFoundersAndFriendsTelehealth}}
+|||
+| ------------ | :--------------------: |
+| {{^planChange}}Your{{/planChange}}{{#planChange}}New{{/planChange}} Status: | **Founders & Friends (Telehealth)** |
+|              | Platinum               |
+|              | Premium                |
+|              | Supporter              |
+|              | Free                   |
+
+---
+{{/planFoundersAndFriendsTelehealth}}
 {{#planPlatinum}}
 |||
 | ------------ | :--------------------: |

@@ -149,6 +149,11 @@ export const planConfig: Record<
 		...planTypeConfig[CyphPlanTypes.FoundersAndFriends],
 		lifetime: true
 	},
+	[CyphPlans.FoundersAndFriends_Telehealth]: {
+		...planTypeConfig[CyphPlanTypes.FoundersAndFriends],
+		lifetime: true,
+		telehealth: true
+	},
 	[CyphPlans.Free]: {
 		...planTypeConfig[CyphPlanTypes.Free],
 		lifetime: false

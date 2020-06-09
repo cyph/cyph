@@ -175,6 +175,8 @@ const getInviteTemplateData = ({
 		planAnnualTelehealth: plan === CyphPlans.AnnualTelehealth,
 		planFoundersAndFriends:
 			planConfig.planType === CyphPlanTypes.FoundersAndFriends,
+		planFoundersAndFriendsTelehealth:
+			planConfig.planType === CyphPlanTypes.FoundersAndFriends_Telehealth,
 		planFree: planConfig.planType === CyphPlanTypes.Free,
 		planMonthlyBusiness: plan === CyphPlans.MonthlyBusiness,
 		planMonthlyTelehealth: plan === CyphPlans.MonthlyTelehealth,

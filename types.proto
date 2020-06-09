@@ -855,6 +855,7 @@ enum CyphPlans {
 	AnnualSupporter = 10;
 	AnnualTelehealth = 5;
 	FoundersAndFriends = 4;
+	FoundersAndFriends_Telehealth = 13;
 	LifetimePlatinum = 3;
 	MonthlyBusiness = 11;
 	MonthlyPlatinum = 7;

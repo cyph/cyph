@@ -138,6 +138,9 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 					planFoundersAndFriends:
 						planConfig.planType ===
 						CyphPlanTypes.FoundersAndFriends,
+					planFoundersAndFriendsTelehealth:
+						planConfig.planType ===
+						CyphPlanTypes.FoundersAndFriends_Telehealth,
 					planFree: planConfig.planType === CyphPlanTypes.Free,
 					planMonthlyBusiness: cyphPlan === CyphPlans.MonthlyBusiness,
 					planMonthlyTelehealth:

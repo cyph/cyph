@@ -10,5 +10,6 @@ export const titleize = memoize((s: string) =>
 			.replace(/ And /g, ' & ')
 			.replace(/\s+/g, ' ')
 			.trim()
+			.replace(/_ (.*)$/, ' ($1)')
 	)
 );
