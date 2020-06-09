@@ -146,8 +146,8 @@ if [ "${iOS}" ] ; then
 
 	npm install xcode
 	initPlatform ios
+
 	chmod +x plugins/cordova-plugin-iosrtc/extra/hooks/iosrtc-swift-support.js
-	pod install --project-directory=platforms/ios
 
 	# https://github.com/cordova-rtc/cordova-plugin-iosrtc/blob/master/docs/Building.md#apple-store-submission
 	if [ ! "${iOSEmulator}" ] ; then
@@ -159,6 +159,19 @@ if [ "${iOS}" ] ; then
 		npx cordova platform add ios
 		cd -
 	fi
+
+	# https://github.com/phonegap/phonegap-plugin-push/issues/2872#issuecomment-588179073
+	cat >> platforms/ios/Podfile << EndOfMessage
+		post_install do |lib|
+			lib.pods_project.targets.each do |target|
+				target.build_configurations.each do |config|
+					config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+				end
+			end
+		end
+EndOfMessage
+
+	pod install --project-directory=platforms/ios
 fi
 
 
