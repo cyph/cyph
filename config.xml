@@ -247,6 +247,16 @@
 		<allow-intent href="itms-apps:*" />
 
 		<preference name="UseSwiftLanguageVersion" value="5.0" />
+
+		<preference name="allowInlineMediaPlayback" value="true" />
+		<preference name="AllowInlineMediaPlayback" value="true" />
+		<feature name="CDVWKWebViewEngine">
+			<param name="ios-package" value="CDVWKWebViewEngine" />
+		</feature>
+		<preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+		<preference name="DetectMediaTypes" value="true" />
+		<preference name="Orientation" value="all" />
+		<preference name="target-device" value="universal" />
 		<preference name="WKWebViewOnly" value="true" />
 
 		<resource-file src="GoogleService-Info.plist" />
