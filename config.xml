@@ -291,6 +291,8 @@
 		<icon height="144" platform="ios" src="res/icon/ios/icon-72@2x.png" width="144" />
 		<icon height="76" platform="ios" src="res/icon/ios/icon-76.png" width="76" />
 		<icon height="152" platform="ios" src="res/icon/ios/icon-76@2x.png" width="152" />
+		<icon height="83.5" platform="ios" src="res/icon/ios/icon-83.5.png" width="83.5" />
+		<icon height="167" platform="ios" src="res/icon/ios/icon-83.5@2x.png" width="167" />
 		<icon height="29" platform="ios" src="res/icon/ios/icon-small.png" width="29" />
 		<icon height="58" platform="ios" src="res/icon/ios/icon-small@2x.png" width="58" />
 		<icon height="87" platform="ios" src="res/icon/ios/icon-small@3x.png" width="87" />
