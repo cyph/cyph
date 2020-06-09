@@ -247,6 +247,7 @@
 		<allow-intent href="itms-apps:*" />
 
 		<preference name="UseSwiftLanguageVersion" value="5.0" />
+		<preference name="WKWebViewOnly" value="true" />
 
 		<resource-file src="GoogleService-Info.plist" />
 
