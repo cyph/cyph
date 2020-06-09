@@ -150,14 +150,15 @@ if [ "${iOS}" ] ; then
 	pod install --project-directory=platforms/ios
 
 	# https://github.com/cordova-rtc/cordova-plugin-iosrtc/blob/master/docs/Building.md#apple-store-submission
-
-	cd plugins/cordova-plugin-iosrtc/extra
-	node ios_arch.js --extract
-	node ios_arch.js --device
-	node ios_arch.js --clean
-	npx cordova platform remove ios
-	npx cordova platform add ios
-	cd -
+	if [ ! "${iOSEmulator}" ] ; then
+		cd plugins/cordova-plugin-iosrtc/extra
+		node ios_arch.js --extract
+		node ios_arch.js --device
+		node ios_arch.js --clean
+		npx cordova platform remove ios
+		npx cordova platform add ios
+		cd -
+	fi
 fi
 
 
