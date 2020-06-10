@@ -77,7 +77,8 @@ export class SalesService extends BaseProvider {
 		if (
 			!(
 				this.envService.isCordovaDesktopMacOS ||
-				this.envService.isCordovaDesktopWindows
+				this.envService.isCordovaDesktopWindows ||
+				this.envService.isCordovaMobileIOS
 			)
 		) {
 			if (url) {
@@ -152,8 +153,10 @@ export class SalesService extends BaseProvider {
 					!this.envService.isTelehealth &&
 					!this.configService.planConfig[plan].lifetime &&
 					!this.configService.planConfig[plan].telehealth &&
-					/* TODO: Set up In-App Purchase API and re-enable this */
-					!this.envService.isCordovaDesktopMacOS;
+					/* TODO: Set up In-App Purchase APIs and re-enable this */
+					!this.envService.isCordovaDesktopMacOS &&
+					!this.envService.isCordovaDesktopWindows &&
+					!this.envService.isCordovaMobileIOS;
 
 				this.upsellBanner.next(upsellBanner);
 			})
