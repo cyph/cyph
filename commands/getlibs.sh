@@ -310,6 +310,11 @@ do
 	echo "module.exports = ${arr[1]};" >> "${arr[0]}"
 done
 
+sed -i 's/||!e.sender.track/||!e.sender||!e.sender.track/g' simple-peer/simplepeer.min.js
+sed -i \
+	's/&& transceiver.sender.track/&& transceiver.sender && transceiver.sender.track/g' \
+	simple-peer/index.js
+
 rm -rf simplewebrtc/node_modules
 sed -i "s|require('./socketioconnection')|null|g" simplewebrtc/src/simplewebrtc.js
 
