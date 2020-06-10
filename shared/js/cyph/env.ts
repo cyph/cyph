@@ -145,6 +145,12 @@ export class Env extends EnvDeploy {
 	/** Indicates whether this is Cordova on a mobile OS. */
 	public readonly isCordovaMobile: boolean;
 
+	/** Indicates whether this is Cordova on a mobile OS (Android). */
+	public readonly isCordovaMobileAndroid: boolean;
+
+	/** Indicates whether this is Cordova on a mobile OS (iOS). */
+	public readonly isCordovaMobileIOS: boolean;
+
 	/** Indicates whether this is Edge. */
 	public readonly isEdge: boolean;
 
@@ -341,11 +347,15 @@ export class Env extends EnvDeploy {
 			this.isCordovaDesktopLinux = platform === 'linux';
 			this.isCordovaDesktopMacOS = platform === 'darwin';
 			this.isCordovaDesktopWindows = platform === 'win32';
+			this.isCordovaMobileAndroid = false;
+			this.isCordovaMobileIOS = false;
 		}
 		else {
 			this.isCordovaDesktopLinux = false;
 			this.isCordovaDesktopMacOS = false;
 			this.isCordovaDesktopWindows = false;
+			this.isCordovaMobileAndroid = this.isAndroid;
+			this.isCordovaMobileIOS = this.isIOS;
 		}
 
 		const newCyphBaseUrl =

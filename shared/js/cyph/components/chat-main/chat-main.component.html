@@ -160,7 +160,7 @@
 		<cyph-logo alignment="left" homeLink video></cyph-logo>
 		<div
 			class="friend stream"
-			[class.ios-app]="envService.isCordovaMobile && envService.isIOS"
+			[class.ios-app]="envService.isCordovaMobileIOS"
 			[fxHide]="
 				((p2pWebRTCService.incomingVideoStreams | await) || []).length <
 					1 || (p2pWebRTCService.loading | await)
@@ -261,7 +261,7 @@
 		</ng-template>
 		<cyph-video
 			class="me"
-			[class.ios-app]="envService.isCordovaMobile && envService.isIOS"
+			[class.ios-app]="envService.isCordovaMobileIOS"
 			[fxHide]="
 				!(p2pWebRTCService.outgoingStream | await)?.constraints?.video
 			"
