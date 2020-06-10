@@ -1,6 +1,18 @@
+import memoize from 'lodash-es/memoize';
 import {env} from '../env';
 import {MaybePromise} from '../maybe-promise-type';
 import {filterUndefined} from './filter';
+
+const isCordovaBrowserTabAvailable = memoize(
+	async () =>
+		!!(<any> self).cordova?.plugins?.browsertab &&
+		(await new Promise<any>((resolve, reject) => {
+			(<any> self).cordova?.plugins?.browsertab.isAvailable(
+				resolve,
+				reject
+			);
+		}).catch(() => false)) === true
+);
 
 /** Opens the specified URL in a new window. */
 export const openWindow = async (
@@ -31,7 +43,7 @@ export const openWindow = async (
 	}
 
 	try {
-		if ((<any> self).cordova?.plugins?.browsertab) {
+		if (await isCordovaBrowserTabAvailable()) {
 			await new Promise<void>((resolve, reject) => {
 				(<any> self).cordova.plugins.browsertab.openUrl(
 					url,
