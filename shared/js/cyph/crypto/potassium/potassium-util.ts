@@ -172,6 +172,19 @@ export class PotassiumUtil {
 		);
 	}
 
+	/** Normalizes any binary data as standard byte array format (clamped). */
+	public toBytesClamped (
+		a: ArrayBufferView,
+		offset: number = 0,
+		length?: number
+	) : Uint8ClampedArray {
+		return new Uint8ClampedArray(
+			a.buffer,
+			a.byteOffset + offset,
+			length !== undefined ? length : a.byteLength - offset
+		);
+	}
+
 	/** Converts binary data into DataView. */
 	public toDataView (
 		a: ArrayBufferView,

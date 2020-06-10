@@ -205,11 +205,34 @@ export class FileService extends BaseProvider {
 	}
 
 	/** Gets raw image data. */
-	public getImageData (
+	public async getImageData (
 		image: HTMLImageElement | HTMLVideoElement
-	) : ImageData {
+	) : Promise<ImageData> {
 		if (!this.canvas || !this.canvasContext) {
 			throw new Error('No canvas available.');
+		}
+
+		/* https://github.com/cordova-rtc/cordova-plugin-iosrtc/issues/116#issuecomment-532142297 */
+		if (
+			this.envService.isCordovaMobileIOS &&
+			image instanceof HTMLVideoElement &&
+			typeof (<any> image).render?.save === 'function'
+		) {
+			return {
+				data: await new Promise<Uint8ClampedArray>(resolve =>
+					(<any> image).render.save((data: any) =>
+						typeof data === 'string' && data.length > 0 ?
+							resolve(
+								potassiumUtil.toBytesClamped(
+									potassiumUtil.fromBase64(data)
+								)
+							) :
+							resolve(new Uint8ClampedArray(0))
+					)
+				),
+				height: image.videoHeight,
+				width: image.videoWidth
+			};
 		}
 
 		const height =

@@ -66,7 +66,7 @@ export class QRService extends BaseProvider {
 
 		if (image instanceof HTMLImageElement) {
 			return this.scanQRCodeInternal(
-				this.fileService.getImageData(image)
+				await this.fileService.getImageData(image)
 			);
 		}
 
@@ -75,7 +75,7 @@ export class QRService extends BaseProvider {
 		return new Promise<string | undefined>(resolve => {
 			const tryScanQRCode = async () => {
 				const code = await this.scanQRCodeInternal(
-					this.fileService.getImageData(video)
+					await this.fileService.getImageData(video)
 				);
 
 				if (code) {
