@@ -178,12 +178,22 @@
 						position: fixed;
 					}
 				}
+
+				&.ios-app {
+					margin-top: 88px !important;
+					margin-bottom: 88px !important;
+				}
 			}
 
 			.me {
 				position: absolute;
 				bottom: 0;
 				right: 0;
+
+				&.ios-app {
+					height: 88px !important;
+					width: auto !important;
+				}
 			}
 
 			mat-progress-spinner {
