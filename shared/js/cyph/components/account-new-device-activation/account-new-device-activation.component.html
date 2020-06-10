@@ -3,6 +3,7 @@
 	fxFlexFill
 	fxLayout="column"
 	fxLayoutGap="32px"
+	class="bob"
 	*ngIf="activateForUsername !== undefined && sessionData === undefined"
 >
 	<cyph-qr-code-scanner
@@ -38,6 +39,7 @@
 	fxFlexFill
 	fxLayout="column"
 	fxLayoutGap="32px"
+	class="alice"
 	*ngIf="sessionData !== undefined"
 >
 	<ng-container *ngIf="masterKeyConfirmationCode | await as code">

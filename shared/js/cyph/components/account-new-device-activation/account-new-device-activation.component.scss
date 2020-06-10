@@ -1,6 +1,10 @@
 @import '../../../../css/mixins';
 
-:host > div {
+:host > div.alice {
+	min-height: 600px;
+}
+
+:host > div.bob {
 	min-height: 300px;
 }
 
