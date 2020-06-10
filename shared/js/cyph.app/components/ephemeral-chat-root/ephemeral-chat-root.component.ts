@@ -133,9 +133,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 		/* If unsupported, warn and then close window */
 		if (this.sessionInitService.callType && !P2PWebRTCService.isSupported) {
 			await this.dialogService.alert({
-				content: this.envService.isIOS ?
-					this.stringsService.p2pDisabledLocalIOS :
-					this.stringsService.p2pDisabledLocal,
+				content: this.stringsService.p2pDisabledLocal,
 				ok: this.stringsService.ok,
 				title: this.stringsService.p2pTitle
 			});
