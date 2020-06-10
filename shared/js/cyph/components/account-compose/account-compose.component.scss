@@ -3,3 +3,11 @@
 :host > div:not(.mobile) mat-card {
 	margin: 32px 0;
 }
+
+.from-details {
+	min-height: 100px;
+
+	&.column {
+		min-height: 150px;
+	}
+}

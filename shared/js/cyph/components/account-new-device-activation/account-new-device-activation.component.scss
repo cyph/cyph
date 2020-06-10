@@ -1,5 +1,9 @@
 @import '../../../../css/mixins';
 
+:host > div {
+	min-height: 300px;
+}
+
 h1 {
 	font-family: 'Ubuntu Mono';
 	font-size: 3em;
