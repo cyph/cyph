@@ -241,6 +241,7 @@
 		<plugin name="cordova-plugin-browsertab" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
+		<plugin name="cordova-plugin-wkwebview-engine" spec="*" />
 		<plugin name="phonegap-plugin-local-notification" spec="*" />
 
 		<allow-intent href="itms:*" />
@@ -323,5 +324,5 @@
 
 	<engine name="android" spec="^8.1.0" />
 	<engine name="electron" spec="git+https://github.com/buu700/cordova-electron-tmp" />
-	<engine name="ios" spec="^6.0.0" />
+	<engine name="ios" spec="^5.1.0" />
 </widget>
