@@ -236,10 +236,7 @@ export class P2PService extends BaseProvider {
 	/** Creates alert about P2P being unsupported. */
 	public async disabledAlert () : Promise<void> {
 		await this.dialogService.alert({
-			content:
-				this.envService.isCordovaMobile && this.envService.isIOS ?
-					this.stringsService.p2pDisabledLocalIOS :
-					this.stringsService.p2pDisabled,
+			content: this.stringsService.p2pDisabled,
 			title: this.stringsService.p2pTitle
 		});
 	}

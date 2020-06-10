@@ -921,7 +921,7 @@ export class StringsService extends BaseProvider {
 	public readonly p2pDisabledLocal = `Your browser does not support voice or video calling. Try again with the latest Chrome or Firefox.`;
 
 	/** @see StringsService */
-	public readonly p2pDisabledLocalIOS = `Voice/video calling is currently not working in the iOS app. Use https://cyph.app in Safari for now, and try the app again later.`;
+	public readonly p2pDisabledLocalIOS = `Voice/video calling is currently unsupported on iOS.`;
 
 	/** @see StringsService */
 	public readonly p2pDisconnect = `Call has been disconnected.`;

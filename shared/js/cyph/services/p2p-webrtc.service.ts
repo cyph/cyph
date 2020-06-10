@@ -46,9 +46,7 @@ export class P2PWebRTCService extends BaseProvider
 	};
 
 	/** Indicates whether WebRTC is supported in the current environment. */
-	public static readonly isSupported: boolean =
-		_SimplePeer.WEBRTC_SUPPORT &&
-		(env.debug || !(env.isCordovaMobile && env.isIOS));
+	public static readonly isSupported: boolean = _SimplePeer.WEBRTC_SUPPORT;
 
 	/** @ignore */
 	private readonly _HANDLERS = resolvable<IP2PHandlers>();
