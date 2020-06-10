@@ -13,7 +13,7 @@ import {VideoComponent} from '../../components/video';
 import {StringsService} from '../../services/strings.service';
 import {QRService} from '../../services/qr.service';
 import {debugLogError} from '../../util/log';
-import {resolvable} from '../../util/wait';
+import {resolvable, waitForValue} from '../../util/wait';
 
 /**
  * Angular component for QR code scanner UI.
@@ -97,11 +97,9 @@ export class QRCodeScannerComponent extends BaseProvider
 				return;
 			}
 
-			const video = this.cyphVideo?.video?.nativeElement;
-
-			if (video === undefined) {
-				return;
-			}
+			const video = await waitForValue(
+				() => this.cyphVideo?.video?.nativeElement
+			);
 
 			this.scanComplete.emit(await this.qrService.scanQRCode(video));
 		}
