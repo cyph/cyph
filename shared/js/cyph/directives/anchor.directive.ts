@@ -1,7 +1,5 @@
 import {Directive, ElementRef, OnInit, Renderer2} from '@angular/core';
 import {BaseProvider} from '../base-provider';
-import {EnvService} from '../services/env.service';
-import {openWindow} from '../util/window';
 
 /**
  * Adds rel='noopener noreferrer' to all anchor elements.
@@ -13,26 +11,15 @@ import {openWindow} from '../util/window';
 export class AnchorDirective extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		const elem = this.elementRef.nativeElement;
-
-		if (!(elem instanceof HTMLAnchorElement)) {
+		if (!this.elementRef.nativeElement) {
 			return;
 		}
 
-		this.renderer.setAttribute(elem, 'rel', 'noopener noreferrer');
-
-		if (!this.envService.isCordovaMobile) {
-			return;
-		}
-
-		elem.addEventListener('click', e => {
-			if (!elem.href) {
-				return;
-			}
-
-			e.preventDefault();
-			openWindow(elem.href);
-		});
+		this.renderer.setAttribute(
+			this.elementRef.nativeElement,
+			'rel',
+			'noopener noreferrer'
+		);
 	}
 
 	constructor (
@@ -40,10 +27,7 @@ export class AnchorDirective extends BaseProvider implements OnInit {
 		private readonly elementRef: ElementRef,
 
 		/** @ignore */
-		private readonly renderer: Renderer2,
-
-		/** @ignore */
-		private readonly envService: EnvService
+		private readonly renderer: Renderer2
 	) {
 		super();
 	}
