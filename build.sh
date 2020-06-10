@@ -308,15 +308,15 @@ if [ "${electron}" ] ; then
 fi
 
 if [ "${iOS}" ] ; then
-	# npx cordova build ios --debug --device \
-	# 	--codeSignIdentity='iPhone Developer' \
-	# 	--developmentTeam='SXZZ8WLPV2' \
-	# 	--packageType='development' \
-	# 	--provisioningProfile='861ab366-ee4a-4eb5-af69-5694ab52b6e8'
+	npx cordova build ios --debug --device \
+		--codeSignIdentity='iPhone Developer' \
+		--developmentTeam='SXZZ8WLPV2' \
+		--packageType='development' \
+		--provisioningProfile='861ab366-ee4a-4eb5-af69-5694ab52b6e8'
 
-	# if [ ! -f platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
+	if [ ! -f platforms/ios/build/device/Cyph.ipa ] ; then exit 1 ; fi
 
-	# mv platforms/ios/build/device ios-debug
+	mv platforms/ios/build/device ios-debug
 
 	npx cordova build ios --release --device \
 		--codeSignIdentity='iPhone Distribution' \
@@ -329,9 +329,9 @@ if [ "${iOS}" ] ; then
 	mv platforms/ios/build/device ios-release
 
 	mkdir platforms/ios/build/device
-	# mv ios-debug platforms/ios/build/device/debug
+	mv ios-debug platforms/ios/build/device/debug
 	mv ios-release platforms/ios/build/device/release
 
-	# cp platforms/ios/build/device/debug/Cyph.ipa build/cyph.debug.ipa
+	cp platforms/ios/build/device/debug/Cyph.ipa build/cyph.debug.ipa
 	cp platforms/ios/build/device/release/Cyph.ipa build/cyph.ipa
 fi
