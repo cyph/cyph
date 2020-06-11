@@ -17,46 +17,27 @@ export class EnvService extends Env {
 
 	/** Custom build images. */
 	public readonly customBuildImages = {
-		audioImage:
-			this.environment.customBuild &&
-			this.environment.customBuild.audioImage ?
-				deserialize(
-					DataURIProto,
-					this.environment.customBuild.audioImage
-				) :
-				undefined,
-		errorImage:
-			this.environment.customBuild &&
-			this.environment.customBuild.errorImage ?
-				deserialize(
-					DataURIProto,
-					this.environment.customBuild.errorImage
-				) :
-				undefined,
-		favicon:
-			this.environment.customBuild &&
-			this.environment.customBuild.favicon ?
-				deserialize(
-					DataURIProto,
-					this.environment.customBuild.favicon
-				) :
-				undefined,
-		logoHorizontal:
-			this.environment.customBuild &&
-			this.environment.customBuild.logoHorizontal ?
-				deserialize(
-					DataURIProto,
-					this.environment.customBuild.logoHorizontal
-				) :
-				undefined,
-		logoVertical:
-			this.environment.customBuild &&
-			this.environment.customBuild.logoVertical ?
-				deserialize(
-					DataURIProto,
-					this.environment.customBuild.logoVertical
-				) :
-				undefined
+		audioImage: this.environment.customBuild?.audioImage ?
+			deserialize(DataURIProto, this.environment.customBuild.audioImage) :
+			undefined,
+		errorImage: this.environment.customBuild?.errorImage ?
+			deserialize(DataURIProto, this.environment.customBuild.errorImage) :
+			undefined,
+		favicon: this.environment.customBuild?.favicon ?
+			deserialize(DataURIProto, this.environment.customBuild.favicon) :
+			undefined,
+		logoHorizontal: this.environment.customBuild?.logoHorizontal ?
+			deserialize(
+				DataURIProto,
+				this.environment.customBuild.logoHorizontal
+			) :
+			undefined,
+		logoVertical: this.environment.customBuild?.logoVertical ?
+			deserialize(
+				DataURIProto,
+				this.environment.customBuild.logoVertical
+			) :
+			undefined
 	};
 
 	/** @see geolocation */

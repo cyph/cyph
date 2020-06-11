@@ -89,10 +89,8 @@ export abstract class SessionService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly apiFlags = {
-		disableP2P: !!(
-			this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.disableP2P
-		),
+		disableP2P: !!this.envService.environment.customBuild?.config
+			.disableP2P,
 		modestBranding: false
 	};
 

@@ -101,7 +101,7 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 	private clearInput () : void {
 		this.control.setValue('');
 
-		if (this.searchInput && this.searchInput.nativeElement) {
+		if (this.searchInput?.nativeElement) {
 			this.searchInput.nativeElement.value = '';
 		}
 	}

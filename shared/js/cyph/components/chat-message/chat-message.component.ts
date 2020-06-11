@@ -85,13 +85,8 @@ export class ChatMessageComponent extends BaseProvider
 					}
 
 					const rootElement =
-						elem.parentElement &&
-						elem.parentElement.parentElement &&
-						elem.parentElement.parentElement.parentElement &&
-						elem.parentElement.parentElement.parentElement
-							.parentElement &&
-						elem.parentElement.parentElement.parentElement
-							.parentElement.parentElement;
+						elem.parentElement?.parentElement?.parentElement
+							?.parentElement?.parentElement;
 
 					if (!rootElement) {
 						continue;
@@ -299,9 +294,7 @@ export class ChatMessageComponent extends BaseProvider
 		await this.chatService.getMessageValue(this.message);
 
 		this.quill.next(
-			this.message.value &&
-				this.message.value.quill &&
-				this.message.value.quill.length > 0 ?
+			this.message.value?.quill && this.message.value.quill.length > 0 ?
 				msgpack.decode(this.message.value.quill) :
 				undefined
 		);

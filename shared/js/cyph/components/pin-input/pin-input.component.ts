@@ -78,7 +78,7 @@ export class PinInputComponent extends BaseProvider
 					this.onChange(s);
 				}
 
-				if (!(this.pinInput && this.pinInput.nativeElement)) {
+				if (!this.pinInput?.nativeElement) {
 					return;
 				}
 

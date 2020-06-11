@@ -19,18 +19,13 @@ export class AccountAfterRegisterComponent extends BaseProvider
 	implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
-		if (
-			this.accountDatabaseService.currentUser.value &&
-			this.accountDatabaseService.currentUser.value.masterKeyConfirmed
-		) {
+		if (this.accountDatabaseService.currentUser.value?.masterKeyConfirmed) {
 			this.router.navigate(['']);
 			return;
 		}
 
 		this.accountService.setHeader(
-			this.accountDatabaseService.currentUser.value &&
-				this.accountDatabaseService.currentUser.value
-					.masterKeyConfirmed ?
+			this.accountDatabaseService.currentUser.value?.masterKeyConfirmed ?
 				this.stringsService.welcomeToProduct :
 				this.stringsService.welcomeMasterKeySetup
 		);

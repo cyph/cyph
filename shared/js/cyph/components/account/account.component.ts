@@ -120,8 +120,7 @@ export class AccountComponent extends BaseProvider
 				isMobile ||
 				(this.envService.isTelehealth &&
 					[
-						...(this.envService.environment.customBuild &&
-						this.envService.environment.customBuild.config
+						...(this.envService.environment.customBuild?.config
 							.organization ?
 							['doctors'] :
 							[])

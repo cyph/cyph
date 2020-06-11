@@ -677,8 +677,7 @@ export class P2PWebRTCService extends BaseProvider
 				const connected = resolvable();
 
 				const channelParties =
-					sessionService.pairwiseSessionData &&
-					sessionService.pairwiseSessionData.localUsername &&
+					sessionService.pairwiseSessionData?.localUsername &&
 					sessionService.pairwiseSessionData.remoteUsername ?
 						normalizeArray([
 							sessionService.pairwiseSessionData.localUsername,

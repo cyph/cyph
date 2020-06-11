@@ -86,10 +86,7 @@ export class AccountFileSharingComponent extends BaseProvider {
 	/** Usernames to share with. */
 	private get usernames () : string[] {
 		return Array.from(
-			(this.accountContactsSearch &&
-				this.accountContactsSearch.searchBar &&
-				this.accountContactsSearch.searchBar.filter.value) ||
-				[]
+			this.accountContactsSearch?.searchBar?.filter.value || []
 		).map(o => o.username);
 	}
 

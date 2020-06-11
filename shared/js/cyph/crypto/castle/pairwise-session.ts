@@ -363,12 +363,7 @@ export class PairwiseSession implements IPairwiseSession {
 					this.potassium.isEmpty(
 						await this.ratchetState
 							.getValue()
-							.then(
-								o =>
-									o.symmetric &&
-									o.symmetric.current &&
-									o.symmetric.current.incoming
-							)
+							.then(o => o.symmetric.current.incoming)
 					)
 				) {
 					debugLog(() => ({castleHandshake: 'post-bootstrap'}));

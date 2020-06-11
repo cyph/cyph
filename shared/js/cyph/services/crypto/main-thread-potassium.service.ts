@@ -9,10 +9,7 @@ import {EnvService} from '../env.service';
 export class MainThreadPotassiumService extends Potassium {
 	/** @inheritDoc */
 	public async native () : Promise<boolean> {
-		return !!(
-			this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.config.nativeCrypto
-		);
+		return !!this.envService.environment.customBuild?.config.nativeCrypto;
 	}
 
 	constructor (

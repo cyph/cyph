@@ -34,14 +34,12 @@ export class Env extends EnvDeploy {
 			`https://${environment.customBuild.id}/`;
 
 	/** If applicable, default call type. */
-	public readonly callType?: 'audio' | 'video' =
-		environment.customBuild &&
-		environment.customBuild.config.callTypeVideo ?
-			'video' :
-		environment.customBuild &&
-			environment.customBuild.config.callTypeAudio ?
-			'audio' :
-			undefined;
+	public readonly callType?: 'audio' | 'video' = environment.customBuild
+		?.config.callTypeVideo ?
+		'video' :
+	environment.customBuild?.config.callTypeAudio ?
+		'audio' :
+		undefined;
 
 	/** Google Chrome version, if applicable. */
 	public readonly chromeVersion: number = toInt(
@@ -298,10 +296,7 @@ export class Env extends EnvDeploy {
 		!this.isExtension &&
 		!this.isOldFirefox &&
 		!this.isMobileOS &&
-		!(
-			environment.customBuild &&
-			environment.customBuild.config.backgroundColor
-		);
+		!environment.customBuild?.config.backgroundColor;
 
 	/** Base URI for sending an SMS. */
 	public readonly smsUriBase: string = `sms:${this.isIOS ? '&' : '?'}body=`;

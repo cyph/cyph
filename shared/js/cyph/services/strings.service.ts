@@ -12,11 +12,10 @@ import {EnvService} from './env.service';
 @Injectable()
 export class StringsService extends BaseProvider {
 	/** @ignore */
-	private readonly customBuildStrings: Record<string, string> =
-		this.envService.environment.customBuild &&
-		this.envService.environment.customBuild.strings ?
-			this.envService.environment.customBuild.strings :
-			{};
+	private readonly customBuildStrings: Record<string, string> = this
+		.envService.environment.customBuild?.strings ?
+		this.envService.environment.customBuild.strings :
+		{};
 
 	/** @ignore */
 	private readonly internalCompany =

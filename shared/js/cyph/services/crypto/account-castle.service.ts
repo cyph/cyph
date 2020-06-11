@@ -144,9 +144,8 @@ export class AccountCastleService extends CastleService {
 						(await localUser.getSigningKeyPair()) === undefined ||
 							(await remoteUser.getPublicSigningKey()) ===
 								undefined ?
-							this.accountDatabaseService.currentUser.value &&
-								this.accountDatabaseService.currentUser.value
-									.pseudoAccount :
+							this.accountDatabaseService.currentUser.value
+								?.pseudoAccount :
 							undefined
 					);
 

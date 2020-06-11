@@ -488,8 +488,7 @@ export class AccountService extends BaseProvider {
 	/** Current route path. */
 	public get routePath () : string[] {
 		const route =
-			this.activatedRoute.snapshot.firstChild &&
-			this.activatedRoute.snapshot.firstChild.firstChild &&
+			this.activatedRoute.snapshot.firstChild?.firstChild &&
 			this.activatedRoute.snapshot.firstChild.firstChild.url.length > 0 ?
 				this.activatedRoute.snapshot.firstChild.firstChild.url :
 				undefined;

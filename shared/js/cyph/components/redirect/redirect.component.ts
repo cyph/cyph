@@ -18,8 +18,7 @@ export class RedirectComponent extends BaseProvider implements OnInit {
 		await sleep(0);
 
 		this.router.navigate(
-			this.router.routerState.snapshot.root.firstChild &&
-				this.router.routerState.snapshot.root.firstChild.firstChild &&
+			this.router.routerState.snapshot.root.firstChild?.firstChild &&
 				this.router.routerState.snapshot.root.firstChild.firstChild.url
 					.length > 0 ?
 				this.router.routerState.snapshot.root.firstChild.firstChild.url.map(

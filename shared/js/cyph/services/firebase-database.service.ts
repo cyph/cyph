@@ -184,7 +184,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 						(payload: any) => {
 							const notification = !payload ?
 								undefined :
-							payload.notification && payload.notification.title ?
+							payload.notification?.title ?
 								payload.notification :
 								payload.data;
 

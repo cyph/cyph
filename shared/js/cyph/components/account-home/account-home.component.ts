@@ -36,10 +36,7 @@ export class AccountHomeComponent extends BaseProvider
 	public ngAfterViewInit () : void {
 		this.accountService.autoUpdate.next(true);
 
-		if (
-			this.accountDatabaseService.currentUser.value &&
-			this.accountDatabaseService.currentUser.value.pseudoAccount
-		) {
+		if (this.accountDatabaseService.currentUser.value?.pseudoAccount) {
 			this.router.navigate(['messages']);
 			return;
 		}

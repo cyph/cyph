@@ -86,10 +86,7 @@ export class FaviconService extends BaseProvider {
 			return;
 		}
 
-		if (
-			this.envService.environment.customBuild &&
-			this.envService.environment.customBuild.favicon
-		) {
+		if (this.envService.environment.customBuild?.favicon) {
 			return;
 		}
 

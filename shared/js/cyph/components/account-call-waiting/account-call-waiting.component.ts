@@ -115,8 +115,7 @@ export class AccountCallWaitingComponent extends BaseProvider
 			if (
 				!(
 					this.envService.isTelehealth &&
-					(this.appointment &&
-						this.appointment.forms &&
+					(this.appointment?.forms &&
 						this.appointment.forms.length < 1)
 				)
 			) {

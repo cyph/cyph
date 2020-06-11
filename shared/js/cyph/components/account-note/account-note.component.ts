@@ -137,8 +137,7 @@ export class AccountNoteComponent extends BaseProvider
 
 			(async () => {
 				while (
-					this.note.value &&
-					this.note.value.doc &&
+					this.note.value?.doc &&
 					this.noteData.value.id === recordValue.id
 				) {
 					const doc = this.note.value.doc;
@@ -257,7 +256,7 @@ export class AccountNoteComponent extends BaseProvider
 			return;
 		}
 
-		if (this.note.value && this.note.value.doc) {
+		if (this.note.value?.doc) {
 			this.note.value.doc.deltaSendQueue.push(change.delta);
 			this.note.next({...this.note.value});
 		}
@@ -272,7 +271,7 @@ export class AccountNoteComponent extends BaseProvider
 			return;
 		}
 
-		if (this.note.value && this.note.value.doc) {
+		if (this.note.value?.doc) {
 			this.note.value.doc.selectionSendQueue = change.range;
 			this.note.next({...this.note.value});
 		}
@@ -314,23 +313,20 @@ export class AccountNoteComponent extends BaseProvider
 			debugLog(() => ({
 				saveNoteLockClaimed: {
 					noteData,
-					ops: noteData.content && noteData.content.ops
+					ops: noteData.content?.ops
 				}
 			}));
 
 			if (!noteData.content) {
-				noteData.content =
-					this.note.value && this.note.value.content ?
-						await this.note.value.content
-							.pipe(take(1))
-							.toPromise() :
-						<IQuillDelta> (<any> {clientID: '', ops: []});
+				noteData.content = this.note.value?.content ?
+					await this.note.value.content.pipe(take(1)).toPromise() :
+					<IQuillDelta> (<any> {clientID: '', ops: []});
 			}
 
 			debugLog(() => ({
 				saveNoteLockContentSet: {
 					noteData,
-					ops: noteData.content && noteData.content.ops
+					ops: noteData.content?.ops
 				}
 			}));
 
