@@ -6,11 +6,7 @@
 	let getRandomByte: () => number;
 
 	/* Android */
-	if (
-		(<any> self).java !== undefined &&
-		(<any> self).java.security !== undefined &&
-		(<any> self).java.security.SecureRandom !== undefined
-	) {
+	if ((<any> self).java?.security?.SecureRandom !== undefined) {
 		const secureRandom = new java.security.SecureRandom();
 		getRandomByte = () => secureRandom.nextInt(256);
 	}
