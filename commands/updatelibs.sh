@@ -255,6 +255,7 @@ read -r -d '' modules <<- EOM
 	firebase-tools
 	fullcalendar@3.6.1
 	glob
+	gpu.js
 	granim
 	gulp
 	hammerjs
