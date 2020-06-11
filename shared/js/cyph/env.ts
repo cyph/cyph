@@ -262,6 +262,9 @@ export class Env extends EnvDeploy {
 	/** Indicates whether in-app purchases and references to purchases are blocked. */
 	public readonly noInAppPurchasesReferenceAllowed: boolean;
 
+	/** Indicates whether register button should be hidden. */
+	public readonly noInAppRegistrationAllowed: boolean;
+
 	/** Platform name ("android", "electron", "ios", "unknown", "web"). */
 	public readonly platform: string =
 		!this.isCordova && this.isWeb ?
@@ -364,6 +367,7 @@ export class Env extends EnvDeploy {
 		this.noInAppPurchasesAllowed =
 			this.noInAppPurchasesReferenceAllowed ||
 			this.isCordovaDesktopWindows;
+		this.noInAppRegistrationAllowed = this.isCordovaMobileIOS;
 
 		const newCyphBaseUrl =
 			this.newCyphBaseUrl +

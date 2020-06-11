@@ -273,7 +273,10 @@
 										'/:' + ((username | await) || '') :
 										'')
 								"
-								*ngIf="(loggingIn | await) === false"
+								*ngIf="
+									!envService.noInAppRegistrationAllowed &&
+									(loggingIn | await) === false
+								"
 							>
 								Register
 							</a>
@@ -459,7 +462,10 @@
 										'/:' + ((username | await) || '') :
 										'')
 								"
-								*ngIf="(loggingIn | await) === false"
+								*ngIf="
+									!envService.noInAppRegistrationAllowed &&
+									(loggingIn | await) === false
+								"
 							>
 								Register
 							</a>
