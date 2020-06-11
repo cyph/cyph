@@ -21,6 +21,7 @@ import {EnvService} from '../../services/env.service';
 import {HtmlSanitizerService} from '../../services/html-sanitizer.service';
 import {StringsService} from '../../services/strings.service';
 import {sleep} from '../../util/wait';
+import {openWindow} from '../../util/window';
 
 /**
  * Angular component for rendering Markdown.
@@ -116,10 +117,15 @@ export class MarkdownComponent extends BaseProvider
 			return;
 		}
 
+		e.preventDefault();
+
 		const routerLink = e.target.getAttribute('router-link');
 
 		if (routerLink) {
 			this.router.navigate(routerLink.split('/'));
+		}
+		else if (e.target.href) {
+			openWindow(e.target.href);
 		}
 	}
 

@@ -8,7 +8,7 @@ import {openWindow} from '../util/window';
  */
 @Directive({
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	selector: 'a'
+	selector: 'a:not([routerLink])'
 })
 export class AnchorDirective extends BaseProvider implements OnInit {
 	/** @inheritDoc */
