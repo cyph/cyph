@@ -258,6 +258,12 @@ export class Env extends EnvDeploy {
 				environment.customBuild.config.burnerOnly ? '' : '#burner/'
 			}`;
 
+	/** Indicates whether in-app purchases are blocked. */
+	public readonly noInAppPurchasesAllowed: boolean;
+
+	/** Indicates whether in-app purchases and references to purchases are blocked. */
+	public readonly noInAppPurchasesReferenceAllowed: boolean;
+
 	/** Platform name ("android", "electron", "ios", "unknown", "web"). */
 	public readonly platform: string =
 		!this.isCordova && this.isWeb ?
@@ -357,6 +363,12 @@ export class Env extends EnvDeploy {
 			this.isCordovaMobileAndroid = this.isAndroid;
 			this.isCordovaMobileIOS = this.isIOS;
 		}
+
+		this.noInAppPurchasesReferenceAllowed =
+			this.isCordovaDesktopMacOS || this.isCordovaMobileIOS;
+		this.noInAppPurchasesAllowed =
+			this.noInAppPurchasesReferenceAllowed ||
+			this.isCordovaDesktopWindows;
 
 		const newCyphBaseUrl =
 			this.newCyphBaseUrl +

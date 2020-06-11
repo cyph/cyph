@@ -74,13 +74,7 @@ export class SalesService extends BaseProvider {
 		url?: string | MaybePromise<string | undefined>[],
 		sameWindow?: boolean
 	) : Promise<void> {
-		if (
-			!(
-				this.envService.isCordovaDesktopMacOS ||
-				this.envService.isCordovaDesktopWindows ||
-				this.envService.isCordovaMobileIOS
-			)
-		) {
+		if (!this.envService.noInAppPurchasesAllowed) {
 			if (url) {
 				await openWindow(url, sameWindow);
 			}
@@ -153,10 +147,7 @@ export class SalesService extends BaseProvider {
 					!this.envService.isTelehealth &&
 					!this.configService.planConfig[plan].lifetime &&
 					!this.configService.planConfig[plan].telehealth &&
-					/* TODO: Set up In-App Purchase APIs and re-enable this */
-					!this.envService.isCordovaDesktopMacOS &&
-					!this.envService.isCordovaDesktopWindows &&
-					!this.envService.isCordovaMobileIOS;
+					!this.envService.noInAppPurchasesReferenceAllowed;
 
 				this.upsellBanner.next(upsellBanner);
 			})

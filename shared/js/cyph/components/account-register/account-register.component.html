@@ -151,7 +151,7 @@
 					</ng-template>
 				</div>
 				<ng-template #noInviteCodeUpsell>
-					<div>
+					<div *ngIf="!envService.noInAppPurchasesReferenceAllowed">
 						<a
 							cyphTranslate
 							[href]="envService.homeUrl + 'pricing'"
