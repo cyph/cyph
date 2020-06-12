@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {FormControl} from '@angular/forms';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
 import {CheckoutComponent} from '../components/checkout';
@@ -74,7 +75,10 @@ export class SalesService extends BaseProvider {
 		e?: Event,
 		url?: string | MaybePromise<string | undefined>[],
 		sameWindow?: boolean,
-		inAppPurchaseCheckout?: CheckoutComponent
+		inAppPurchaseCheckout?: {
+			checkoutComponent: CheckoutComponent;
+			inviteCode: FormControl;
+		}
 	) : Promise<void> {
 		if (e) {
 			e.preventDefault();
@@ -82,7 +86,16 @@ export class SalesService extends BaseProvider {
 		}
 
 		if (inAppPurchaseCheckout && this.envService.inAppPurchasesSupported) {
-			await inAppPurchaseCheckout.submit();
+			await inAppPurchaseCheckout.checkoutComponent.submit();
+
+			const inviteCode =
+				inAppPurchaseCheckout.checkoutComponent.confirmationMessage
+					.value?.welcomeLetter;
+
+			if (inviteCode) {
+				inAppPurchaseCheckout.inviteCode.setValue(inviteCode);
+			}
+
 			return;
 		}
 

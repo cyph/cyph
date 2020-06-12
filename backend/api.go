@@ -554,6 +554,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			bt.Subscription().Cancel(h.Context, oldBraintreeSubscriptionID)
 		}
 
+		if appStoreReceipt != "" {
+			return inviteCode, http.StatusOK
+		}
+
 		return welcomeLetter, http.StatusOK
 	}
 
