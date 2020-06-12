@@ -89,7 +89,7 @@
 		#inAppPurchaseCheckout
 		[amount]="
 			configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.inAppPurchaseConfig.amount || 0
+				.monthlyPlatinum.inAppPurchaseConfig?.amount || 0
 		"
 		[category]="configService.pricingConfig.categories.accounts.id"
 		[inAppPurchase]="
