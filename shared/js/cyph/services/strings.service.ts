@@ -221,6 +221,21 @@ export class StringsService extends BaseProvider {
 	public readonly checkoutErrorTitle = `Payment Failed`;
 
 	/** @see StringsService */
+	public readonly checkoutInAppPaymentConfirm = `Confirm \$\${AMOUNT} \${PAYMENT}?`;
+
+	/** @see StringsService */
+	public readonly checkoutInAppPaymentTitle = `In-App Purchase`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionAnnual = `annual subscription`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionMonthly = `monthly subscription`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionNone = `payment`;
+
+	/** @see StringsService */
 	public readonly circle = `Circle`;
 
 	/** @see StringsService */

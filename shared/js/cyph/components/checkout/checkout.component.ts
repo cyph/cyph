@@ -22,6 +22,7 @@ import {SubscriptionTypes} from '../../checkout';
 import {AffiliateService} from '../../services/affiliate.service';
 import {AnalyticsService} from '../../services/analytics.service';
 import {ConfigService} from '../../services/config.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -566,6 +567,33 @@ export class CheckoutComponent extends BaseProvider
 
 			const inAppPurchase = this.inAppPurchase;
 
+			if (
+				inAppPurchase &&
+				!(await this.dialogService.confirm({
+					content: this.stringsService.setParameters(
+						this.stringsService.checkoutInAppPaymentConfirm,
+						{
+							amount: this.amount.toString(),
+							payment:
+								this.subscriptionType ===
+								SubscriptionTypes.annual ?
+									this.stringsService
+										.checkoutSubscriptionAnnual :
+								this.subscriptionType ===
+									SubscriptionTypes.monthly ?
+									this.stringsService
+										.checkoutSubscriptionMonthly :
+									this.stringsService.checkoutSubscriptionNone
+						}
+					),
+					title:
+						this.formatItemName(this.itemName) ||
+						this.stringsService.checkoutInAppPaymentTitle
+				}))
+			) {
+				return;
+			}
+
 			const paymentMethod =
 				useBitPay || !!inAppPurchase ?
 					undefined :
@@ -768,6 +796,9 @@ export class CheckoutComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @see AffiliateService */
 		public readonly affiliateService: AffiliateService,
