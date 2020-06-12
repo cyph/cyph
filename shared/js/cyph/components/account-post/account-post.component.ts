@@ -221,9 +221,9 @@ export class AccountPostComponent extends BaseProvider
 		}
 
 		const message = await this.dialogService.prompt({
-			content: 'Repost this post onto your profile?',
-			placeholder: 'Add message (optional)',
-			title: 'Repost'
+			content: this.stringsService.postRepostPrompt,
+			placeholder: this.stringsService.postRepostPlaceholder,
+			title: this.stringsService.postRepostTitle
 		});
 
 		if (message === undefined) {

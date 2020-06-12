@@ -1094,6 +1094,15 @@ export class StringsService extends BaseProvider {
 	public readonly postEditTitle = `Edit Post`;
 
 	/** @see StringsService */
+	public readonly postRepostPlaceholder = `Add message (optional)`;
+
+	/** @see StringsService */
+	public readonly postRepostPrompt = `Repost this post onto your profile?`;
+
+	/** @see StringsService */
+	public readonly postRepostTitle = `Repost`;
+
+	/** @see StringsService */
 	public readonly postShareTitle = `Securely posted on ${this.internalProduct}`;
 
 	/** @see StringsService */
