@@ -58,8 +58,8 @@ export class DOMPurifyHtmlSanitizer {
 			}
 
 			/* Block window.opener in new window */
-			if (node instanceof HTMLAnchorElement) {
-				node.rel = 'noopener noreferrer';
+			if (node.tagName === 'A') {
+				(<HTMLAnchorElement> node).rel = 'noopener noreferrer';
 			}
 
 			return node;
