@@ -82,8 +82,8 @@ import {CyphWebModule} from './cyph-web.module';
 @NgModule({
 	declarations: [
 		AccountAfterRegisterComponent,
-		AccountAppointmentsComponent,
 		AccountAppointmentAgendaComponent,
+		AccountAppointmentsComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
 		AccountChatComponent,
@@ -135,8 +135,8 @@ import {CyphWebModule} from './cyph-web.module';
 	],
 	exports: [
 		AccountAfterRegisterComponent,
-		AccountAppointmentsComponent,
 		AccountAppointmentAgendaComponent,
+		AccountAppointmentsComponent,
 		AccountBaseFileListComponent,
 		AccountCallWaitingComponent,
 		AccountChatComponent,
