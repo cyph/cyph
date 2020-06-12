@@ -66,6 +66,7 @@ while [ ! -f index.html ] ; do
 	done
 
 	sshkill
+	ssh -i ~/.ssh/id_rsa_docker "${sshServer}" sudo chmod -R 777 /var/www/html
 	ssh -i ~/.ssh/id_rsa_docker -f -N -L "${localPort}:${localOrigin}" "${sshServer}" &> /dev/null
 
 	command="$(node -e "(async () => {
@@ -427,3 +428,4 @@ for f in $(grep -rl static_wordpress) ; do
 done
 
 sshkill
+ssh -i ~/.ssh/id_rsa_docker "${sshServer}" sudo chmod -R 777 /var/www/html

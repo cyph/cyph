@@ -26,7 +26,9 @@ sshkill () {
 
 
 sshkill
-ssh -i ~/.ssh/id_rsa_docker "${sshSource}" rm /var/www/html/wp-content/ai1wm-backups/*.wpress
+ssh -i ~/.ssh/id_rsa_docker "${sshSource}" sudo chmod -R 777 /var/www/html
+ssh -i ~/.ssh/id_rsa_docker "${sshTarget}" sudo chmod -R 777 /var/www/html
+ssh -i ~/.ssh/id_rsa_docker "${sshSource}" rm /var/www/html/wp-content/ai1wm-backups/*.wpress &> /dev/null
 ssh -i ~/.ssh/id_rsa_docker -4 -f -N -L "${localPort}:${localOrigin}" "${sshSource}"
 
 commandComment="# wppromote-download $(node -e '
@@ -127,6 +129,8 @@ if (( $? )) ; then
 fi
 
 sshkill
+ssh -i ~/.ssh/id_rsa_docker "${sshSource}" sudo chmod -R 777 /var/www/html
+ssh -i ~/.ssh/id_rsa_docker "${sshTarget}" sudo chmod -R 777 /var/www/html
 
 if [ "${failure}" ] ; then
 	fail
