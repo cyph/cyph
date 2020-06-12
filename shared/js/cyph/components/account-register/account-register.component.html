@@ -87,19 +87,35 @@
 >
 	<cyph-checkout
 		#inAppPurchaseCheckout
-		[amount]="69"
-		[category]="8"
-		[inAppPurchase]="{
-			alias: 'Monthly Platinum',
-			id: 'MonthlyPlatinum',
-			type: 'PAID_SUBSCRIPTION'
-		}"
-		[individualSubscriptions]="true"
-		[item]="4"
-		itemName="Monthly Platinum"
-		[noSpinnerEnd]="false"
-		[perUser]="true"
-		[subscriptionType]="subscriptionTypes.annual"
+		[amount]="
+			configService.pricingConfig.categories.accounts.items
+				.monthlyPlatinum.inAppPurchaseConfig.amount
+		"
+		[category]="configService.pricingConfig.categories.accounts.id"
+		[inAppPurchase]="
+			configService.pricingConfig.categories.accounts.items
+				.monthlyPlatinum.inAppPurchaseConfig
+		"
+		[individualSubscriptions]="
+			configService.pricingConfig.categories.accounts.items
+				.monthlyPlatinum.individualSubscriptions
+		"
+		[item]="
+			configService.pricingConfig.categories.accounts.items
+				.monthlyPlatinum.id
+		"
+		[itemName]="
+			configService.pricingConfig.categories.accounts.items
+				.monthlyPlatinum.name
+		"
+		[perUser]="
+			configService.pricingConfig.categories.accounts.items
+				.monthlyPlatinum.perUser
+		"
+		[subscriptionType]="
+			configService.pricingConfig.categories.accounts.items
+				.monthlyPlatinum.subscriptionType
+		"
 		*ngIf="envService.inAppPurchasesSupported"
 	></cyph-checkout>
 

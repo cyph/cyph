@@ -105,6 +105,12 @@ export class Config {
 						amount?: number;
 						extraUserDiscount?: number;
 						id: number;
+						inAppPurchaseConfig?: {
+							alias: string;
+							amount: number;
+							id: string;
+							type: string;
+						};
 						individualSubscriptions?: boolean;
 						maxUsers?: number;
 						minUsers?: number;
@@ -173,6 +179,12 @@ export class Config {
 					monthlyPlatinum: {
 						amount: 48,
 						id: 4,
+						inAppPurchaseConfig: {
+							alias: 'Monthly Platinum',
+							amount: 69,
+							id: 'MonthlyPlatinum',
+							type: 'PAID_SUBSCRIPTION'
+						},
 						individualSubscriptions: true,
 						name: 'Platinum (Monthly)',
 						perUser: true,
