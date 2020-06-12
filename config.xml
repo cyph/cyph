@@ -239,6 +239,7 @@
 
 	<platform name="ios">
 		<plugin name="cordova-plugin-browsertab" spec="*" />
+		<plugin name="cordova-plugin-purchase" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
 		<plugin name="cordova-plugin-wkwebview-engine" spec="*" />
