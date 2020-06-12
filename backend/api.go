@@ -263,8 +263,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 			subscriptionResults := make(chan SubscriptionResult, subscriptionCount)
 
-			for i := 0; i < int(subscriptionCount); i++ {
-				go func() {
+			/* De-parallelized to work around "Too Many Requests (429)" error */
+			go func() {
+				for i := 0; i < int(subscriptionCount); i++ {
 					subscriptionRequest := &braintree.SubscriptionRequest{
 						Id:                 generateRandomID(),
 						PaymentMethodToken: paymentMethod.GetToken(),
@@ -308,8 +309,8 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 							SuccessStatus: false,
 						}
 					}
-				}()
-			}
+				}
+			}()
 
 			for i := 0; i < int(subscriptionCount); i++ {
 				subscriptionResult := <-subscriptionResults
