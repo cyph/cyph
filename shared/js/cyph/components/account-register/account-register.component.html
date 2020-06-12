@@ -89,7 +89,7 @@
 		#inAppPurchaseCheckout
 		[amount]="
 			configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.inAppPurchaseConfig.amount
+				.monthlyPlatinum.inAppPurchaseConfig.amount || 0
 		"
 		[category]="configService.pricingConfig.categories.accounts.id"
 		[inAppPurchase]="
@@ -97,7 +97,7 @@
 				.monthlyPlatinum.inAppPurchaseConfig
 		"
 		[individualSubscriptions]="
-			configService.pricingConfig.categories.accounts.items
+			!!configService.pricingConfig.categories.accounts.items
 				.monthlyPlatinum.individualSubscriptions
 		"
 		[item]="
@@ -109,7 +109,7 @@
 				.monthlyPlatinum.name
 		"
 		[perUser]="
-			configService.pricingConfig.categories.accounts.items
+			!!configService.pricingConfig.categories.accounts.items
 				.monthlyPlatinum.perUser
 		"
 		[subscriptionType]="
