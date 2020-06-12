@@ -587,7 +587,7 @@ export class CheckoutComponent extends BaseProvider
 						}
 					),
 					title:
-						this.formatItemName(this.itemName) ||
+						this.itemName ||
 						this.stringsService.checkoutInAppPaymentTitle
 				}))
 			) {

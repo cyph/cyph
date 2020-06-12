@@ -76,6 +76,11 @@ export class SalesService extends BaseProvider {
 		sameWindow?: boolean,
 		inAppPurchaseCheckout?: CheckoutComponent
 	) : Promise<void> {
+		if (e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+
 		if (inAppPurchaseCheckout && this.envService.inAppPurchasesSupported) {
 			await inAppPurchaseCheckout.submit();
 			return;
@@ -87,11 +92,6 @@ export class SalesService extends BaseProvider {
 			}
 
 			return;
-		}
-
-		if (e) {
-			e.preventDefault();
-			e.stopPropagation();
 		}
 
 		await this.dialogService.alert({

@@ -368,7 +368,7 @@ export class Env extends EnvDeploy {
 
 		this.inAppPurchasesSupported =
 			this.isCordovaMobileIOS &&
-			typeof (<any> self).store?.register !== 'function';
+			typeof (<any> self).store?.register === 'function';
 
 		this.noInAppPurchasesReferenceAllowed = this.isCordovaDesktopMacOS;
 		this.noInAppPurchasesAllowed =
