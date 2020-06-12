@@ -358,8 +358,9 @@ export class Env extends EnvDeploy {
 			this.isCordovaDesktopLinux = false;
 			this.isCordovaDesktopMacOS = false;
 			this.isCordovaDesktopWindows = false;
-			this.isCordovaMobileAndroid = this.isAndroid;
-			this.isCordovaMobileIOS = this.isIOS;
+			this.isCordovaMobileAndroid =
+				this.isCordovaMobile && this.isAndroid;
+			this.isCordovaMobileIOS = this.isCordovaMobile && this.isIOS;
 		}
 
 		this.noInAppPurchasesReferenceAllowed =
