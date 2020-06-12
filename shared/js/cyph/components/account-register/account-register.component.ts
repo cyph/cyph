@@ -8,7 +8,8 @@ import {
 	Input,
 	OnDestroy,
 	OnInit,
-	Output
+	Output,
+	ViewChild
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -20,6 +21,7 @@ import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
+import {CheckoutComponent} from '../../components/checkout';
 import {emailPattern, emailRegex} from '../../email-pattern';
 import {CyphPlans, IPGPMetadata} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -127,6 +129,10 @@ export class AccountRegisterComponent extends BaseProvider
 
 	/** If true, will hide the top description text of the lock screen password UI. */
 	@Input() public hidePinDescription: boolean = false;
+
+	/** Checkout component instance used for in-app purchases. */
+	@ViewChild(CheckoutComponent)
+	public inAppPurchaseCheckout?: CheckoutComponent;
 
 	/** Invite code. */
 	public readonly inviteCode: FormControl;

@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
+import {CheckoutComponent} from '../components/checkout';
 import {MaybePromise} from '../maybe-promise-type';
 import {BooleanProto} from '../proto';
 import {observableAll} from '../util/observable-all';
@@ -73,7 +74,7 @@ export class SalesService extends BaseProvider {
 		e?: Event,
 		url?: string | MaybePromise<string | undefined>[],
 		sameWindow?: boolean,
-		inAppPurchaseCheckout?: {submit: () => Promise<void>}
+		inAppPurchaseCheckout?: CheckoutComponent
 	) : Promise<void> {
 		if (inAppPurchaseCheckout && this.envService.inAppPurchasesSupported) {
 			await inAppPurchaseCheckout.submit();
