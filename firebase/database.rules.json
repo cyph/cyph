@@ -185,6 +185,9 @@
 
 			"inviteCodes": {
 				"$code": {
+					"appStoreReceipt": {
+						".validate": "newData.isString()"
+					},
 					"braintreeID": {
 						".validate": "newData.isString()"
 					},
@@ -975,6 +978,9 @@
 						".read": false,
 						".write": false,
 
+						"appStoreReceipt": {
+							".validate": "newData.isString()"
+						},
 						"braintreeID": {
 							".validate": "newData.isString()"
 						},

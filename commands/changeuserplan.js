@@ -46,7 +46,11 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 
 	const cyphPlan = CyphPlans[plan];
 
-	const [email, name, oldPlan] = await Promise.all([
+	const [appStoreReceipt, email, name, oldPlan] = await Promise.all([
+		database
+			.ref(`${namespacePath}/users/${username}/internal/appStoreReceipt`)
+			.once('value')
+			.then(o => o.val()),
 		database
 			.ref(`${namespacePath}/users/${username}/internal/email`)
 			.once('value')
@@ -62,6 +66,10 @@ const changeUserPlan = async (projectId, username, plan, namespace) => {
 
 	if (cyphPlan === oldPlan) {
 		throw new Error(`User already has plan "${plan}".`);
+	}
+
+	if (appStoreReceipt) {
+		throw new Error(`Cancelling App Store subscription unsupported.`);
 	}
 
 	const planConfig = config.planConfig[cyphPlan];

@@ -116,6 +116,9 @@ export class Env extends EnvDeploy {
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string = Env.languageInternal.toLowerCase();
 
+	/** Indicates whether platform-native in-app purchases are supported. */
+	public readonly inAppPurchasesSupported: boolean;
+
 	/** Indicates whether this is Android. */
 	public readonly isAndroid: boolean =
 		/android/.test(Env.UA) ||
@@ -363,12 +366,15 @@ export class Env extends EnvDeploy {
 			this.isCordovaMobileIOS = this.isCordovaMobile && this.isIOS;
 		}
 
-		this.noInAppPurchasesReferenceAllowed =
-			this.isCordovaDesktopMacOS || this.isCordovaMobileIOS;
+		this.inAppPurchasesSupported =
+			this.isCordovaMobileIOS &&
+			typeof (<any> self).store?.register !== 'function';
+
+		this.noInAppPurchasesReferenceAllowed = this.isCordovaDesktopMacOS;
 		this.noInAppPurchasesAllowed =
 			this.noInAppPurchasesReferenceAllowed ||
 			this.isCordovaDesktopWindows;
-		this.noInAppRegistrationAllowed = this.isCordovaMobileIOS;
+		this.noInAppRegistrationAllowed = false;
 
 		const newCyphBaseUrl =
 			this.newCyphBaseUrl +

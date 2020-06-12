@@ -10,6 +10,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {CheckoutComponent} from '../components/checkout';
 import {MarkdownComponent} from '../components/markdown';
 import {AnchorDirective} from '../directives/anchor.directive';
 import {AutofocusDirective} from '../directives/autofocus.directive';
@@ -39,6 +40,7 @@ import {StringsService} from '../services/strings.service';
 		EnableLastPassDirective,
 		ArrayPipe,
 		AwaitPipe,
+		CheckoutComponent,
 		FilterPipe,
 		MarkdownComponent,
 		NanoScrollerDirective,
@@ -54,6 +56,7 @@ import {StringsService} from '../services/strings.service';
 		EnableLastPassDirective,
 		ArrayPipe,
 		AwaitPipe,
+		CheckoutComponent,
 		FilterPipe,
 		FlexLayoutModule,
 		FormsModule,

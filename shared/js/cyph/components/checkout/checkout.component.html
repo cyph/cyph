@@ -1,8 +1,8 @@
 <mat-progress-spinner
 	mode="indeterminate"
-	*ngIf="pending | await"
+	*ngIf="!inAppPurchase && pending | await"
 ></mat-progress-spinner>
-<form ngNativeValidate (submit)="submit()">
+<form ngNativeValidate (submit)="submit()" *ngIf="!inAppPurchase">
 	<div
 		fxLayout="column"
 		fxLayoutGap="16px"

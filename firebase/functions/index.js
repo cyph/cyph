@@ -550,6 +550,7 @@ exports.checkInviteCode = onCall(async (data, namespace, getUsername) => {
 
 exports.downgradeAccount = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
+	const removeAppStoreReceiptRef = req.body.removeAppStoreReceiptRef === true;
 	const userToken = validateInput(req.body.userToken);
 
 	const {username} = await tokens.open(
@@ -577,17 +578,20 @@ exports.downgradeAccount = onRequest(true, async (req, res, namespace) => {
 	}
 
 	const internalURL = `${namespace}/users/${username}/internal`;
+	const appStoreReceiptRef = database.ref(`${internalURL}/appStoreReceipt`);
 	const braintreeIDRef = database.ref(`${internalURL}/braintreeID`);
 	const braintreeSubscriptionIDRef = database.ref(
 		`${internalURL}/braintreeSubscriptionID`
 	);
 	const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
 
-	const braintreeSubscriptionID = (await braintreeSubscriptionIDRef.once(
-		'value'
-	)).val();
+	const [appStoreReceipt, braintreeSubscriptionID] = await Promise.all([
+		appStoreReceiptRef.once('value').then(o => o.val() || ''),
+		braintreeSubscriptionIDRef.once('value').then(o => o.val() || '')
+	]);
 
 	await Promise.all([
+		removeAppStoreReceiptRef ? appStoreReceiptRef.remove() : undefined,
 		braintreeIDRef.remove(),
 		braintreeSubscriptionIDRef.remove(),
 		planTrialEndRef.remove(),
@@ -596,11 +600,16 @@ exports.downgradeAccount = onRequest(true, async (req, res, namespace) => {
 		})
 	]);
 
-	return {braintreeSubscriptionID};
+	return {appStoreReceipt, braintreeSubscriptionID};
 });
 
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
+	const appStoreReceipt = validateInput(
+		req.body.appStoreReceipt,
+		undefined,
+		true
+	);
 	const braintreeIDs = validateInput(
 		(req.body.braintreeIDs || '').split('\n'),
 		undefined,
@@ -638,6 +647,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		}
 
 		const internalURL = `${namespace}/users/${username}/internal`;
+		const appStoreReceiptRef = database.ref(
+			`${internalURL}/appStoreReceipt`
+		);
 		const braintreeIDRef = database.ref(`${internalURL}/braintreeID`);
 		const braintreeSubscriptionIDRef = database.ref(
 			`${internalURL}/braintreeSubscriptionID`
@@ -664,6 +676,9 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 
 		await Promise.all([
 			setItem(namespace, `users/${username}/plan`, CyphPlan, {plan}),
+			appStoreReceipt ?
+				appStoreReceiptRef.set(appStoreReceipt) :
+				appStoreReceiptRef.remove(),
 			braintreeID ?
 				braintreeIDRef.set(braintreeID) :
 				braintreeIDRef.remove(),
@@ -745,6 +760,7 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		await preexistingInviteCodeRef.set({
 			inviterUsername: preexistingInviteCodeData.inviterUsername,
 			plan,
+			...(appStoreReceipt ? {appStoreReceipt} : {}),
 			...(braintreeID ? {braintreeID} : {}),
 			...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {})
 		});
@@ -859,16 +875,22 @@ exports.getBraintreeSubscriptionID = onRequest(
 
 		const internalURL = `${namespace}/users/${username}/internal`;
 
+		const appStoreReceiptRef = database.ref(
+			`${internalURL}/appStoreReceipt`
+		);
 		const braintreeSubscriptionIDRef = database.ref(
 			`${internalURL}/braintreeSubscriptionID`
 		);
-		const braintreeSubscriptionID =
-			(await braintreeSubscriptionIDRef.once('value')).val() || '';
+
+		const [appStoreReceipt, braintreeSubscriptionID] = await Promise.all([
+			appStoreReceiptRef.once('value').then(o => o.val() || ''),
+			braintreeSubscriptionIDRef.once('value').then(o => o.val() || '')
+		]);
 
 		const planTrialEndRef = database.ref(`${internalURL}/planTrialEnd`);
 		const planTrialEnd = (await planTrialEndRef.once('value')).val() || 0;
 
-		return {braintreeSubscriptionID, planTrialEnd};
+		return {appStoreReceipt, braintreeSubscriptionID, planTrialEnd};
 	}
 );
 
@@ -1031,6 +1053,7 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 
 	const inviteData = (await inviteDataRef.once('value')).val() || {};
 	const {
+		appStoreReceipt,
 		braintreeID,
 		braintreeSubscriptionID,
 		inviterUsername,
@@ -1115,6 +1138,11 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 				inviteCode,
 				username
 			}),
+		!appStoreReceipt ?
+			undefined :
+			database
+				.ref(`${namespace}/users/${username}/internal/appStoreReceipt`)
+				.set(appStoreReceipt),
 		!braintreeID ?
 			undefined :
 			database

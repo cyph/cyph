@@ -108,6 +108,8 @@ var braintreeMerchantID = os.Getenv("BRAINTREE_MERCHANT_ID")
 var braintreePublicKey = os.Getenv("BRAINTREE_PUBLIC_KEY")
 var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
+var appStoreSecret = os.Getenv("APP_STORE_SECRET")
+
 var everflowID = os.Getenv("EVERFLOW_ID")
 var everflowToken = os.Getenv("EVERFLOW_TOKEN")
 
@@ -326,10 +328,11 @@ func braintreeInit(h HandlerArgs) *braintree.Braintree {
 	return bt
 }
 
-func downgradeAccountHelper(userToken string) (string, error) {
+func downgradeAccountHelper(userToken string, removeAppStoreReceiptRef bool) (string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
-		"namespace": "cyph.ws",
-		"userToken": userToken,
+		"namespace":                "cyph.ws",
+		"removeAppStoreReceiptRef": removeAppStoreReceiptRef,
+		"userToken":                userToken,
 	})
 
 	client := &http.Client{}
@@ -345,18 +348,26 @@ func downgradeAccountHelper(userToken string) (string, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", err
+		return "", "", err
+	}
+
+	appStoreReceipt := ""
+	if data, ok := responseBody["appStoreReceipt"]; ok {
+		switch v := data.(type) {
+		case string:
+			appStoreReceipt = v
+		}
 	}
 
 	braintreeSubscriptionID := ""
@@ -367,11 +378,12 @@ func downgradeAccountHelper(userToken string) (string, error) {
 		}
 	}
 
-	return braintreeSubscriptionID, nil
+	return appStoreReceipt, braintreeSubscriptionID, nil
 }
 
-func generateInvite(email, name, plan string, braintreeIDs, braintreeSubscriptionIDs []string, inviteCode, username string, purchased bool) (string, string, string, error) {
+func generateInvite(email, name, plan, appStoreReceipt string, braintreeIDs, braintreeSubscriptionIDs []string, inviteCode, username string, purchased bool) (string, string, string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
+		"appStoreReceipt":          appStoreReceipt,
 		"braintreeIDs":             strings.Join(braintreeIDs, "\n"),
 		"braintreeSubscriptionIDs": strings.Join(braintreeSubscriptionIDs, "\n"),
 		"email":                    email,
@@ -436,7 +448,7 @@ func generateInvite(email, name, plan string, braintreeIDs, braintreeSubscriptio
 	return inviteCode, oldBraintreeSubscriptionID, welcomeLetter, nil
 }
 
-func getBraintreeSubscriptionID(userToken string) (string, int64, error) {
+func getBraintreeSubscriptionID(userToken string) (string, string, int64, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"namespace": "cyph.ws",
 		"userToken": userToken,
@@ -455,18 +467,26 @@ func getBraintreeSubscriptionID(userToken string) (string, int64, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", 0, err
+		return "", "", 0, err
 	}
 
 	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", 0, err
+		return "", "", 0, err
 	}
 
 	var responseBody map[string]interface{}
 	err = json.Unmarshal(responseBodyBytes, &responseBody)
 	if err != nil {
-		return "", 0, err
+		return "", "", 0, err
+	}
+
+	appStoreReceipt := ""
+	if data, ok := responseBody["appStoreReceipt"]; ok {
+		switch v := data.(type) {
+		case string:
+			appStoreReceipt = v
+		}
 	}
 
 	braintreeSubscriptionID := ""
@@ -485,7 +505,7 @@ func getBraintreeSubscriptionID(userToken string) (string, int64, error) {
 		}
 	}
 
-	return braintreeSubscriptionID, planTrialEnd, nil
+	return appStoreReceipt, braintreeSubscriptionID, planTrialEnd, nil
 }
 
 func getUsername(userToken string) (string, error) {
@@ -548,6 +568,72 @@ func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 	}
 
 	return customer, customerKey, nil
+}
+
+func getAppStoreTransactionData(appStoreReceipt string) (string, error) {
+	body, _ := json.Marshal(map[string]interface{}{
+		"password":     appStoreSecret,
+		"receipt-data": appStoreReceipt,
+	})
+
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		methods.POST,
+		"https://buy.itunes.apple.com/verifyReceipt",
+		bytes.NewBuffer(body),
+	)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+
+	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var responseBody map[string]interface{}
+	err = json.Unmarshal(responseBodyBytes, &responseBody)
+	if err != nil {
+		return "", err
+	}
+
+	status := int64(-1)
+	if data, ok := responseBody["status"]; ok {
+		switch v := data.(type) {
+		case float64:
+			status = int64(v)
+		}
+	}
+
+	if status != 0 {
+		return "", errors.New("Error status: " + string(status))
+	}
+
+	receiptData := map[string]interface{}{}
+	if data, ok := responseBody["receipt"]; ok {
+		switch v := data.(type) {
+		case map[string]interface{}:
+			receiptData = v
+		}
+	}
+
+	appleID := int64(-1)
+	if data, ok := receiptData["app_item_id"]; ok {
+		switch v := data.(type) {
+		case float64:
+			appleID = int64(v)
+		}
+	}
+
+	planID, ok := config.PlanAppleIDs[appleID]
+	if !ok {
+		return "", errors.New("Invalid App Store receipt: " + appStoreReceipt)
+	}
+
+	return planID, nil
 }
 
 func getBitPayInvoice(id string) (map[string]interface{}, error) {

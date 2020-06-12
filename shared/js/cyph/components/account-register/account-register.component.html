@@ -85,6 +85,24 @@
 	[class.show-upsell-banner]="salesService.registerUpsellBanner | await"
 	*ngIf="!confirmMasterKeyOnly && !getMasterKeyOnly && !getPinOnly"
 >
+	<cyph-checkout
+		#inAppPurchaseCheckout
+		[amount]="69"
+		[category]="8"
+		[inAppPurchase]="{
+			alias: 'Monthly Platinum',
+			id: 'MonthlyPlatinum',
+			type: 'PAID_SUBSCRIPTION'
+		}"
+		[individualSubscriptions]="true"
+		[item]="4"
+		itemName="Monthly Platinum"
+		[noSpinnerEnd]="false"
+		[perUser]="true"
+		[subscriptionType]="subscriptionTypes.annual"
+		*ngIf="envService.inAppPurchasesSupported"
+	></cyph-checkout>
+
 	<h3 class="cyph-banner alert">
 		<div fxFlex fxLayout="row">
 			<div fxLayoutAlign="center center" class="visibility-hidden">
@@ -135,7 +153,14 @@
 								'&inviteCode=' +
 								((inviteCodeWatcher | await)?.value || '')
 							"
-							(click)="salesService.openPricing($event)"
+							(click)="
+								salesService.openPricing(
+									$event,
+									undefined,
+									undefined,
+									inAppPurchaseCheckout
+								)
+							"
 							>Upgrade to Platinum now</a
 						>
 						&ngsp;
@@ -155,7 +180,14 @@
 						<a
 							cyphTranslate
 							[href]="envService.homeUrl + 'pricing'"
-							(click)="salesService.openPricing($event)"
+							(click)="
+								salesService.openPricing(
+									$event,
+									undefined,
+									undefined,
+									inAppPurchaseCheckout
+								)
+							"
 							target="_self"
 							>Upgrade to premium</a
 						>
@@ -904,6 +936,8 @@
 												</span>
 												<ng-container
 													*ngIf="
+														!envService.inAppPurchasesSupported &&
+														!envService.noInAppPurchasesReferenceAllowed &&
 														!configService
 															.planConfig[
 															(

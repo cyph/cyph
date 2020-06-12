@@ -72,8 +72,14 @@ export class SalesService extends BaseProvider {
 	public async openPricing (
 		e?: Event,
 		url?: string | MaybePromise<string | undefined>[],
-		sameWindow?: boolean
+		sameWindow?: boolean,
+		inAppPurchaseCheckout?: {submit: () => Promise<void>}
 	) : Promise<void> {
+		if (inAppPurchaseCheckout && this.envService.inAppPurchasesSupported) {
+			await inAppPurchaseCheckout.submit();
+			return;
+		}
+
 		if (!this.envService.noInAppPurchasesAllowed) {
 			if (url) {
 				await openWindow(url, sameWindow);

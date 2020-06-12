@@ -29,16 +29,17 @@ type BurnerChannel struct {
 
 // Customer : Customer with API key
 type Customer struct {
-	APIKey       string
-	BraintreeID  string
-	Company      string
-	Email        string
-	LastSession  int64
-	Name         string
-	Namespace    string
-	SessionCount int64
-	SignupURL    string
-	Timestamp    int64
+	APIKey          string
+	AppStoreReceipt string
+	BraintreeID     string
+	Company         string
+	Email           string
+	LastSession     int64
+	Name            string
+	Namespace       string
+	SessionCount    int64
+	SignupURL       string
+	Timestamp       int64
 }
 
 // CustomerEmail : Mapping of email address to API key
@@ -119,6 +120,7 @@ var config = struct {
 	MaxSignupValueLength       int
 	NewCyphTimeout             int64
 	PartnerConversionURL       string
+	PlanAppleIDs               map[int64]string
 	Plans                      map[string]Plan
 	RootURL                    string
 }{
@@ -223,6 +225,10 @@ var config = struct {
 	600000,
 
 	"https://partner-api.cyph.com",
+
+	map[int64]string{
+		1518159940: "8-4",
+	},
 
 	map[string]Plan{
 		"0-0": Plan{

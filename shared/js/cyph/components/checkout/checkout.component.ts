@@ -121,6 +121,13 @@ export class CheckoutComponent extends BaseProvider
 			undefined
 	);
 
+	/** In-app purchase metadata, if applicable. (iOS-only) */
+	@Input() public inAppPurchase?: {
+		alias: string;
+		id: string;
+		type: string;
+	};
+
 	/** Indicates whether, if per-user, a separate checkout should be performed per user. */
 	@Input() public individualSubscriptions: boolean = false;
 
@@ -245,6 +252,10 @@ export class CheckoutComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
+		if (this.inAppPurchase) {
+			return;
+		}
+
 		if (!this.elementRef.nativeElement || !this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;
@@ -553,22 +564,27 @@ export class CheckoutComponent extends BaseProvider
 			this.errorMessage.next(undefined);
 			this.pending.next(true);
 
-			const paymentMethod = useBitPay ?
-				undefined :
-				await new Promise<any>((resolve, reject) => {
-					this.braintreeInstance.requestPaymentMethod(
-						(err: any, data: any) => {
-							if (data && !err) {
-								resolve(data);
-							}  else {
-								reject(err);
+			const inAppPurchase = this.inAppPurchase;
+
+			const paymentMethod =
+				useBitPay || !!inAppPurchase ?
+					undefined :
+					await new Promise<any>((resolve, reject) => {
+						this.braintreeInstance.requestPaymentMethod(
+							(err: any, data: any) => {
+								if (data && !err) {
+									resolve(data);
+								}  else {
+									reject(err);
+								}
 							}
-						}
-					);
-				}).catch(err => {
-					throw err ||
-						new Error(this.stringsService.checkoutBraintreeError);
-				});
+						);
+					}).catch(err => {
+						throw err ||
+							new Error(
+								this.stringsService.checkoutBraintreeError
+							);
+					});
 
 			const bitPayInvoiceID = !useBitPay ?
 				'' :
@@ -577,6 +593,48 @@ export class CheckoutComponent extends BaseProvider
 			const creditCard = paymentMethod?.type === 'CreditCard';
 
 			const partnerTransactionID = await this.partnerTransactionID;
+
+			const iOSInAppPaymentProduct = !inAppPurchase ?
+				undefined :
+				await (async () => {
+					const store = (<any> self).store;
+
+					if (typeof store?.register !== 'function') {
+						throw new Error('cordova-plugin-purchase not present');
+					}
+
+					store.register({
+						alias: inAppPurchase.alias,
+						id: inAppPurchase.id,
+						type: store[inAppPurchase.type]
+					});
+
+					await new Promise<void>(resolve => {
+						store.ready(resolve);
+					});
+
+					/* https://github.com/j3k0/cordova-plugin-purchase/blob/master/doc/api.md#storeproduct-object */
+					const productPromise = new Promise<{
+						finish: () => void;
+						transaction: {
+							appStoreReceipt: string;
+							id: string;
+							type: string;
+						};
+					}>(resolve => {
+						store.once(inAppPurchase.id).approved(resolve);
+					});
+
+					store.order(inAppPurchase.id);
+
+					const product = await productPromise;
+
+					if (product.transaction.type !== 'ios-appstore') {
+						throw new Error('Unsupported in-app purchase type.');
+					}
+
+					return product;
+				})();
 
 			let welcomeLetter: string | undefined = await request({
 				data: {
@@ -592,7 +650,6 @@ export class CheckoutComponent extends BaseProvider
 									this.users.value - 1 :
 									0)
 					),
-					bitPayInvoiceID,
 					creditCard,
 					deviceData: paymentMethod?.deviceData,
 					nonce: paymentMethod?.nonce,
@@ -605,6 +662,7 @@ export class CheckoutComponent extends BaseProvider
 							1,
 					url: location.toString(),
 					...this.name,
+					...(bitPayInvoiceID ? {bitPayInvoiceID} : {}),
 					...(creditCard ? this.address : {}),
 					...(this.category !== undefined ?
 						{category: this.category} :
@@ -615,6 +673,13 @@ export class CheckoutComponent extends BaseProvider
 					...(this.email !== undefined ? {email: this.email} : {}),
 					...(this.inviteCode !== undefined ?
 						{inviteCode: this.inviteCode} :
+						{}),
+					...(iOSInAppPaymentProduct ?
+						{
+							appStoreReceipt:
+								iOSInAppPaymentProduct.transaction
+									.appStoreReceipt
+						} :
 						{}),
 					...(this.item !== undefined ? {item: this.item} : {}),
 					...(this.namespace !== undefined ?
@@ -642,6 +707,9 @@ export class CheckoutComponent extends BaseProvider
 						checkoutAnalError
 					}));
 				});
+
+			/* eslint-disable-next-line no-unused-expressions */
+			iOSInAppPaymentProduct?.finish();
 
 			const apiKey = welcomeLetter.startsWith('$APIKEY: ') ?
 				welcomeLetter.split('$APIKEY: ')[1] :
