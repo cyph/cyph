@@ -18,7 +18,6 @@ export class AccountUpgradeComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
 		await this.salesService.openPricing(
-			undefined,
 			[
 				this.envService.homeUrl,
 				'pricing?current=',

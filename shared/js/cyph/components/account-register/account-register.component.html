@@ -159,20 +159,16 @@
 					>
 						<a
 							cyphTranslate
-							[href]="
-								envService.homeUrl +
-								'pricing?current=' +
-								cyphPlans[
-									(inviteCodeData | await)?.plan ||
-										cyphPlans.Free
-								] +
-								'&inviteCode=' +
-								((inviteCodeWatcher | await)?.value || '')
-							"
 							(click)="
 								salesService.openPricing(
-									$event,
-									undefined,
+									envService.homeUrl +
+										'pricing?current=' +
+										cyphPlans[
+											inviteCodeData.value?.plan ||
+												cyphPlans.Free
+										] +
+										'&inviteCode=' +
+										(inviteCode.value || ''),
 									undefined,
 									{
 										checkoutComponent: inAppPurchaseCheckout,
@@ -198,11 +194,9 @@
 					<div *ngIf="!envService.noInAppPurchasesReferenceAllowed">
 						<a
 							cyphTranslate
-							[href]="envService.homeUrl + 'pricing'"
 							(click)="
 								salesService.openPricing(
-									$event,
-									undefined,
+									envService.homeUrl + 'pricing',
 									undefined,
 									{
 										checkoutComponent: inAppPurchaseCheckout,
@@ -972,25 +966,19 @@
 												>
 													&nbsp;(<a
 														cyphTranslate
-														[href]="
-															envService.homeUrl +
-															'pricing?current=' +
-															cyphPlans[
-																(
-																	inviteCodeData
-																	| await
-																)?.plan ||
-																	cyphPlans.Free
-															] +
-															'&inviteCode=' +
-															((
-																inviteCodeWatcher
-																| await
-															)?.value || '')
-														"
 														(click)="
 															salesService.openPricing(
-																$event
+																envService.homeUrl +
+																	'pricing?current=' +
+																	cyphPlans[
+																		inviteCodeData
+																			.value
+																			?.plan ||
+																			cyphPlans.Free
+																	] +
+																	'&inviteCode=' +
+																	(inviteCode.value ||
+																		'')
 															)
 														"
 														>change</a

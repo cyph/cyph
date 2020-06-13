@@ -72,7 +72,6 @@ export class SalesService extends BaseProvider {
 
 	/** Opens pricing/upgrade page, with workarounds for platform-specific restrictions. */
 	public async openPricing (
-		e?: Event,
 		url?: string | MaybePromise<string | undefined>[],
 		sameWindow?: boolean,
 		inAppPurchaseCheckout?: {
@@ -80,11 +79,6 @@ export class SalesService extends BaseProvider {
 			inviteCode: FormControl;
 		}
 	) : Promise<void> {
-		if (e) {
-			e.preventDefault();
-			e.stopPropagation();
-		}
-
 		if (
 			inAppPurchaseCheckout?.checkoutComponent &&
 			this.envService.inAppPurchasesSupported

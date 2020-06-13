@@ -317,7 +317,7 @@
 									<a
 										cyphTranslate
 										(click)="
-											salesService.openPricing($event, [
+											salesService.openPricing([
 												envService.homeUrl,
 												'pricing?current=',
 												cyphPlans[
@@ -363,7 +363,7 @@
 						<a
 							cyphTranslate
 							(click)="
-								salesService.openPricing($event, [
+								salesService.openPricing([
 									envService.homeUrl,
 									'checkout/#',
 									configService.planConfig[
