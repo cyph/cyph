@@ -76,7 +76,7 @@ export class SalesService extends BaseProvider {
 		url?: string | MaybePromise<string | undefined>[],
 		sameWindow?: boolean,
 		inAppPurchaseCheckout?: {
-			checkoutComponent: CheckoutComponent;
+			checkoutComponent?: CheckoutComponent;
 			inviteCode: FormControl;
 		}
 	) : Promise<void> {
@@ -85,7 +85,10 @@ export class SalesService extends BaseProvider {
 			e.stopPropagation();
 		}
 
-		if (inAppPurchaseCheckout && this.envService.inAppPurchasesSupported) {
+		if (
+			inAppPurchaseCheckout?.checkoutComponent &&
+			this.envService.inAppPurchasesSupported
+		) {
 			await inAppPurchaseCheckout.checkoutComponent.submit();
 
 			const inviteCode =
