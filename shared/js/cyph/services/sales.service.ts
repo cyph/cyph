@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
-import {InAppPurchaseComponent} from '../components/in-app-purchase';
+import {IInAppPurchaseComponent} from '../checkout/iin-app-purchasecomponent';
 import {MaybePromise} from '../maybe-promise-type';
 import {BooleanProto} from '../proto';
 import {observableAll} from '../util/observable-all';
@@ -73,7 +73,7 @@ export class SalesService extends BaseProvider {
 	public async openPricing (
 		url: string | MaybePromise<string | undefined>[],
 		sameWindow: boolean | undefined,
-		inAppPurchase: InAppPurchaseComponent | undefined
+		inAppPurchase: IInAppPurchaseComponent | undefined
 	) : Promise<void> {
 		if (
 			inAppPurchase?.checkoutComponent &&
