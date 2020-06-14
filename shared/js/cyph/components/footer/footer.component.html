@@ -8,99 +8,123 @@
 	<div fxFlex *ngIf="envService.telehealthTheme | await"></div>
 
 	<ng-container *ngIf="!envService.coBranded && !envService.isTelehealth">
-		<ng-container *ngIf="!envService.isCordova; else cordovaFooter">
-			<div fxFlex="nogrow" fxLayoutAlign="center center">
-				<a [href]="envService.homeUrl"
-					>&copy; {{ stringsService.company }} 2020</a
-				>
-
-				<span *ngIf="!envService.isAccounts" class="pre-spaced">
-					&nbsp;&nbsp;&nbsp;(<a
-						[href]="envService.homeUrl + 'patents'"
-						>{{ stringsService.patents }}</a
-					>)
-				</span>
-			</div>
-
-			<div *ngIf="!envService.isAccounts">&nbsp;&nbsp;</div>
-
-			<div fxFlex="nogrow" fxLayoutAlign="center center">
-				<a [href]="envService.homeUrl + 'contact'" cyphTranslate>
-					Contact
-				</a>
-			</div>
-
-			<div
-				fxFlex="nogrow"
-				fxLayoutAlign="center center"
-				*ngIf="!limited && !envService.isAccounts"
+		<div fxFlex="nogrow" fxLayoutAlign="center center">
+			<a [href]="envService.homeUrl" *ngIf="!envService.isCordova"
+				>&copy; {{ stringsService.company }} 2020</a
 			>
-				<strong>-</strong>
-				&nbsp;
-				<div>
-					<strong
-						*ngIf="
-							(sessionService?.state?.wasInitiatedByAPI
-								| await) === true;
-							else proMessage
-						"
-					>
-						{{ stringsService.footerMessageAPI }}
-					</strong>
-					<ng-template #proMessage>
-						<strong
-							*ngIf="envService.pro | await; else defaultMessage"
-						>
-							{{ stringsService.footerMessagePro }}
-						</strong>
-					</ng-template>
-					<ng-template #defaultMessage>
-						<strong>
-							{{ stringsService.footerMessageDefault }}
-						</strong>
-					</ng-template>
-				</div>
-				&nbsp;
-				<strong>-</strong>
-			</div>
+			<span *ngIf="envService.isCordova">
+				&copy; {{ stringsService.company }} 2020
+			</span>
 
-			<div fxFlex="nogrow" fxLayoutAlign="center center" *ngIf="!limited">
-				<a [href]="envService.homeUrl + 'pricing'" cyphTranslate>
-					Pricing
-				</a>
-			</div>
-
-			<div fxFlex="nogrow" fxLayoutAlign="center center">
-				<a [href]="envService.homeUrl + 'donate'" cyphTranslate>
-					Donate
-				</a>
-			</div>
-
-			<div fxFlex="nogrow" fxLayoutAlign="center center">
-				<a [href]="envService.homeUrl + 'privacy-policy'" cyphTranslate>
-					Privacy Policy
-				</a>
-			</div>
-
-			<div fxFlex="nogrow" fxLayoutAlign="center center">
-				<a
-					[href]="envService.homeUrl + 'terms-of-service'"
-					[style.margin-right]="
-						!limited && !envService.isAccounts ? '20px' : undefined
+			<span *ngIf="!envService.isAccounts" class="pre-spaced">
+				&nbsp;&nbsp;&nbsp;(<a
+					[href]="
+						envService.homeUrl +
+						'patents' +
+						(envService.isCordova ?
+							'?hideHeaderAndFooter=true' :
+							'')
 					"
-					cyphTranslate
+					>{{ stringsService.patents }}</a
+				>)
+			</span>
+		</div>
+
+		<div *ngIf="!envService.isAccounts">&nbsp;&nbsp;</div>
+
+		<div fxFlex="nogrow" fxLayoutAlign="center center">
+			<a
+				[href]="
+					envService.homeUrl +
+					'contact' +
+					(envService.isCordova ? '?hideHeaderAndFooter=true' : '')
+				"
+				cyphTranslate
+			>
+				Contact
+			</a>
+		</div>
+
+		<div
+			fxFlex="nogrow"
+			fxLayoutAlign="center center"
+			*ngIf="!limited && !envService.isAccounts"
+		>
+			<strong>-</strong>
+			&nbsp;
+			<div>
+				<strong
+					*ngIf="
+						(sessionService?.state?.wasInitiatedByAPI | await) ===
+							true;
+						else proMessage
+					"
 				>
-					Terms of Service
-				</a>
+					{{ stringsService.footerMessageAPI }}
+				</strong>
+				<ng-template #proMessage>
+					<strong *ngIf="envService.pro | await; else defaultMessage">
+						{{ stringsService.footerMessagePro }}
+					</strong>
+				</ng-template>
+				<ng-template #defaultMessage>
+					<strong>
+						{{ stringsService.footerMessageDefault }}
+					</strong>
+				</ng-template>
 			</div>
-		</ng-container>
-		<ng-template #cordovaFooter>
-			<div fxFlex="nogrow" fxLayoutAlign="center center">
-				&copy; {{ stringsService.company }} 2020 &nbsp;&nbsp;&nbsp;({{
-					stringsService.patents
-				}})
-			</div>
-		</ng-template>
+			&nbsp;
+			<strong>-</strong>
+		</div>
+
+		<div
+			fxFlex="nogrow"
+			fxLayoutAlign="center center"
+			*ngIf="!limited && !envService.noInAppPurchasesAllowed"
+		>
+			<a [href]="envService.homeUrl + 'pricing'" cyphTranslate>
+				Pricing
+			</a>
+		</div>
+
+		<div
+			fxFlex="nogrow"
+			fxLayoutAlign="center center"
+			*ngIf="!envService.noInAppPurchasesAllowed"
+		>
+			<a [href]="envService.homeUrl + 'donate'" cyphTranslate>
+				Donate
+			</a>
+		</div>
+
+		<div fxFlex="nogrow" fxLayoutAlign="center center">
+			<a
+				[href]="
+					envService.homeUrl +
+					'privacy-policy' +
+					(envService.isCordova ? '?hideHeaderAndFooter=true' : '')
+				"
+				cyphTranslate
+			>
+				Privacy Policy
+			</a>
+		</div>
+
+		<div fxFlex="nogrow" fxLayoutAlign="center center">
+			<a
+				[href]="
+					envService.homeUrl +
+					'terms-of-service' +
+					(envService.isCordova ? '?hideHeaderAndFooter=true' : '')
+				"
+				[style.margin-right]="
+					!limited && !envService.isAccounts ? '20px' : undefined
+				"
+				cyphTranslate
+			>
+				Terms of Service
+			</a>
+		</div>
 	</ng-container>
 
 	<ng-container
