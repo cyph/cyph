@@ -570,7 +570,7 @@ func getCustomer(h HandlerArgs) (*Customer, *datastore.Key, error) {
 	return customer, customerKey, nil
 }
 
-func getAppStoreTransactionData(appStoreReceipt string) (string, error) {
+func getAppStoreTransactionDataInternal(appStoreReceipt string, sandbox bool) (string, error) {
 	body, _ := json.Marshal(map[string]interface{}{
 		"password":     appStoreSecret,
 		"receipt-data": appStoreReceipt,
@@ -578,9 +578,14 @@ func getAppStoreTransactionData(appStoreReceipt string) (string, error) {
 
 	client := &http.Client{}
 
+	url := "https://buy.itunes.apple.com/verifyReceipt"
+	if sandbox {
+		url = "https://sandbox.itunes.apple.com/verifyReceipt"
+	}
+
 	req, _ := http.NewRequest(
 		methods.POST,
-		"https://buy.itunes.apple.com/verifyReceipt",
+		url,
 		bytes.NewBuffer(body),
 	)
 
@@ -606,6 +611,10 @@ func getAppStoreTransactionData(appStoreReceipt string) (string, error) {
 		case float64:
 			status = int64(v)
 		}
+	}
+
+	if status == 21007 {
+		return getAppStoreTransactionDataInternal(appStoreReceipt, true)
 	}
 
 	if status != 0 {
@@ -634,6 +643,10 @@ func getAppStoreTransactionData(appStoreReceipt string) (string, error) {
 	}
 
 	return planID, nil
+}
+
+func getAppStoreTransactionData(appStoreReceipt string) (string, error) {
+	return getAppStoreTransactionDataInternal(appStoreReceipt, false)
 }
 
 func getBitPayInvoice(id string) (map[string]interface{}, error) {
