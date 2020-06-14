@@ -16,6 +16,9 @@
 			"cordova-plugin-browsertab": {
 				"CUSTOM_TAB_COLOR_RGB": "#8b62d9"
 			},
+			"cordova-plugin-contacts": {
+				"CONTACTS_USAGE_DESCRIPTION": "For optional contact list import"
+			},
 			"ionic-plugin-deeplinks": {
 				"URL_SCHEME": "cyph",
 				"DEEPLINK_SCHEME": "https",

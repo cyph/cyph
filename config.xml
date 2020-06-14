@@ -71,6 +71,10 @@
 
 	<platform name="android">
 		<plugin name="cordova-plugin-browsertab" spec="*" />
+		<plugin
+			name="cordova-plugin-contacts"
+			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
+		/>
 		<plugin name="cordova-plugin-ionic-webview" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
@@ -239,6 +243,10 @@
 
 	<platform name="ios">
 		<plugin name="cordova-plugin-browsertab" spec="*" />
+		<plugin
+			name="cordova-plugin-contacts"
+			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
+		/>
 		<plugin name="cordova-plugin-purchase" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
