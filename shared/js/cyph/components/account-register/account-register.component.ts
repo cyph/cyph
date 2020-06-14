@@ -21,7 +21,7 @@ import {usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {AccountNewDeviceActivationComponent} from '../../components/account-new-device-activation';
-import {CheckoutComponent} from '../../components/checkout';
+import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern, emailRegex} from '../../email-pattern';
 import {CyphPlans, IPGPMetadata} from '../../proto';
 import {AccountFilesService} from '../../services/account-files.service';
@@ -130,9 +130,13 @@ export class AccountRegisterComponent extends BaseProvider
 	/** If true, will hide the top description text of the lock screen password UI. */
 	@Input() public hidePinDescription: boolean = false;
 
-	/** Checkout component instance used for in-app purchases. */
-	@ViewChild(CheckoutComponent)
-	public inAppPurchaseCheckout?: CheckoutComponent;
+	/** @see InAppPurchaseComponent */
+	@ViewChild(InAppPurchaseComponent)
+	public inAppPurchase?: InAppPurchaseComponent;
+
+	/** @see InAppPurchaseComponent */
+	@ViewChild(InAppPurchaseComponent)
+	public inAppPurchaseExistingInvite?: InAppPurchaseComponent;
 
 	/** Invite code. */
 	public readonly inviteCode: FormControl;

@@ -19,6 +19,7 @@ import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
+import {MaybePromise} from '../../maybe-promise-type';
 import {AffiliateService} from '../../services/affiliate.service';
 import {AnalyticsService} from '../../services/analytics.service';
 import {ConfigService} from '../../services/config.service';
@@ -132,7 +133,7 @@ export class CheckoutComponent extends BaseProvider
 	@Input() public individualSubscriptions: boolean = false;
 
 	/** Preexisting invite code to apply purchase to, if applicable. */
-	@Input() public inviteCode?: string;
+	@Input() public inviteCode?: MaybePromise<string | undefined>;
 
 	/** Item ID number. */
 	@Input() public item?: number;
@@ -191,7 +192,7 @@ export class CheckoutComponent extends BaseProvider
 	public readonly trackByValue = trackByValue;
 
 	/** Token of preexisting user to apply purchase to, if applicable. */
-	@Input() public userToken?: string;
+	@Input() public userToken?: MaybePromise<string | undefined>;
 
 	/** User count options. */
 	public readonly userOptions = new BehaviorSubject<number[]>([]);
@@ -638,6 +639,11 @@ export class CheckoutComponent extends BaseProvider
 					return product;
 				})();
 
+			const [inviteCode, userToken] = await Promise.all([
+				this.inviteCode,
+				this.userToken
+			]);
+
 			let welcomeLetter: string | undefined = await request({
 				data: {
 					amount: Math.floor(
@@ -673,9 +679,7 @@ export class CheckoutComponent extends BaseProvider
 						{company: this.company} :
 						{}),
 					...(this.email !== undefined ? {email: this.email} : {}),
-					...(this.inviteCode !== undefined ?
-						{inviteCode: this.inviteCode} :
-						{}),
+					...(inviteCode !== undefined ? {inviteCode} : {}),
 					...(iOSInAppPaymentProduct ?
 						{
 							appStoreReceipt:
@@ -688,9 +692,7 @@ export class CheckoutComponent extends BaseProvider
 						{namespace: this.namespace} :
 						{}),
 					...(partnerTransactionID ? {partnerTransactionID} : {}),
-					...(this.userToken !== undefined ?
-						{userToken: this.userToken} :
-						{})
+					...(userToken !== undefined ? {userToken} : {})
 				},
 				method: 'POST',
 				url: this.envService.baseUrl + 'braintree'
@@ -720,7 +722,10 @@ export class CheckoutComponent extends BaseProvider
 			welcomeLetter =
 				typeof apiKey === 'string' ?
 					undefined :
-					welcomeLetter.replace(/^Hello.*?,/, '').trim();
+					(iOSInAppPaymentProduct ?
+						welcomeLetter :
+						welcomeLetter.replace(/^Hello.*?,/, '')
+					).trim();
 
 			if (this.affiliate) {
 				await openWindow(this.affiliateService.checkout.href);

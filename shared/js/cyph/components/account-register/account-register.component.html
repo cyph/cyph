@@ -85,39 +85,15 @@
 	[class.show-upsell-banner]="salesService.registerUpsellBanner | await"
 	*ngIf="!confirmMasterKeyOnly && !getMasterKeyOnly && !getPinOnly"
 >
-	<cyph-checkout
-		#inAppPurchaseCheckout
-		[amount]="
-			configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.inAppPurchaseConfig?.amount || 0
-		"
-		[category]="configService.pricingConfig.categories.accounts.id"
-		[inAppPurchase]="
-			configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.inAppPurchaseConfig
-		"
-		[individualSubscriptions]="
-			!!configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.individualSubscriptions
-		"
-		[item]="
-			configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.id
-		"
-		[itemName]="
-			configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.name
-		"
-		[perUser]="
-			!!configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.perUser
-		"
-		[subscriptionType]="
-			configService.pricingConfig.categories.accounts.items
-				.monthlyPlatinum.subscriptionType
-		"
-		*ngIf="envService.inAppPurchasesSupported"
-	></cyph-checkout>
+	<cyph-in-app-purchase
+		#inAppPurchase
+		[inviteCodeFormControl]="inviteCode"
+	></cyph-in-app-purchase>
+	<cyph-in-app-purchase
+		#inAppPurchaseExistingInvite
+		[inviteCode]="(inviteCodeWatcher | await)?.value || ''"
+		[inviteCodeFormControl]="inviteCode"
+	></cyph-in-app-purchase>
 
 	<h3 class="cyph-banner alert">
 		<div fxFlex fxLayout="row">
@@ -170,10 +146,7 @@
 										'&inviteCode=' +
 										(inviteCode.value || ''),
 									undefined,
-									{
-										checkoutComponent: inAppPurchaseCheckout,
-										inviteCode: inviteCode
-									}
+									inAppPurchase
 								)
 							"
 							>Upgrade to Platinum now</a
@@ -198,10 +171,7 @@
 								salesService.openPricing(
 									envService.homeUrl + 'pricing',
 									undefined,
-									{
-										checkoutComponent: inAppPurchaseCheckout,
-										inviteCode: inviteCode
-									}
+									inAppPurchase
 								)
 							"
 							target="_self"
@@ -952,7 +922,6 @@
 												</span>
 												<ng-container
 													*ngIf="
-														!envService.inAppPurchasesSupported &&
 														!envService.noInAppPurchasesReferenceAllowed &&
 														!configService
 															.planConfig[
@@ -978,7 +947,9 @@
 																	] +
 																	'&inviteCode=' +
 																	(inviteCode.value ||
-																		'')
+																		''),
+																undefined,
+																inAppPurchaseExistingInvite
 															)
 														"
 														>change</a

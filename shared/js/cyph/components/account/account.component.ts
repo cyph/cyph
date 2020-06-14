@@ -2,13 +2,15 @@ import {
 	AfterViewInit,
 	ChangeDetectionStrategy,
 	Component,
-	OnInit
+	OnInit,
+	ViewChild
 } from '@angular/core';
 import {ActivatedRoute, UrlSegment} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {UserPresence} from '../../account';
 import {BaseProvider} from '../../base-provider';
+import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {initGranim} from '../../granim';
 import {CyphPlans} from '../../proto';
 import {AccountDebugService} from '../../services/account-debug.service';
@@ -148,6 +150,10 @@ export class AccountComponent extends BaseProvider
 					))
 		)
 	);
+
+	/** @see InAppPurchaseComponent */
+	@ViewChild(InAppPurchaseComponent)
+	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** Indicates whether menu should be displayed. */
 	public readonly menuVisible: Observable<boolean> = observableAll([

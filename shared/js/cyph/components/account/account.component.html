@@ -242,6 +242,11 @@
 				</ng-container>
 
 				<ng-template #banners>
+					<cyph-in-app-purchase
+						#inAppPurchase
+						[userToken]="true"
+					></cyph-in-app-purchase>
+
 					<h3
 						class="cyph-banner alert"
 						*ngIf="salesService.mobileAppBanner | await"
@@ -317,18 +322,23 @@
 									<a
 										cyphTranslate
 										(click)="
-											salesService.openPricing([
-												envService.homeUrl,
-												'pricing?current=',
-												cyphPlans[
-													accountSettingsService.plan
-														.value || cyphPlans.Free
+											salesService.openPricing(
+												[
+													envService.homeUrl,
+													'pricing?current=',
+													cyphPlans[
+														accountSettingsService
+															.plan.value ||
+															cyphPlans.Free
+													],
+													'&userToken=',
+													accountService.getUserToken(
+														accountService.interstitial
+													)
 												],
-												'&userToken=',
-												accountService.getUserToken(
-													accountService.interstitial
-												)
-											])
+												undefined,
+												inAppPurchase
+											)
 										"
 										>upgrade to premium now</a
 									>!
@@ -363,18 +373,22 @@
 						<a
 							cyphTranslate
 							(click)="
-								salesService.openPricing([
-									envService.homeUrl,
-									'checkout/#',
-									configService.planConfig[
-										accountSettingsService.plan.value ||
-											cyphPlans.Free
-									].checkoutPath || '',
-									'/userToken=',
-									accountService.getUserToken(
-										accountService.interstitial
-									)
-								])
+								salesService.openPricing(
+									[
+										envService.homeUrl,
+										'checkout/#',
+										configService.planConfig[
+											accountSettingsService.plan.value ||
+												cyphPlans.Free
+										].checkoutPath || '',
+										'/userToken=',
+										accountService.getUserToken(
+											accountService.interstitial
+										)
+									],
+									undefined,
+									inAppPurchase
+								)
 							"
 							>Update your payment details</a
 						>

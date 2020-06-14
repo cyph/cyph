@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {FormControl} from '@angular/forms';
 import {BehaviorSubject, ReplaySubject} from 'rxjs';
 import {BaseProvider} from '../base-provider';
-import {CheckoutComponent} from '../components/checkout';
+import {InAppPurchaseComponent} from '../components/in-app-purchase';
 import {MaybePromise} from '../maybe-promise-type';
 import {BooleanProto} from '../proto';
 import {observableAll} from '../util/observable-all';
@@ -72,25 +71,22 @@ export class SalesService extends BaseProvider {
 
 	/** Opens pricing/upgrade page, with workarounds for platform-specific restrictions. */
 	public async openPricing (
-		url?: string | MaybePromise<string | undefined>[],
-		sameWindow?: boolean,
-		inAppPurchaseCheckout?: {
-			checkoutComponent?: CheckoutComponent;
-			inviteCode: FormControl;
-		}
+		url: string | MaybePromise<string | undefined>[],
+		sameWindow: boolean | undefined,
+		inAppPurchase: InAppPurchaseComponent | undefined
 	) : Promise<void> {
 		if (
-			inAppPurchaseCheckout?.checkoutComponent &&
+			inAppPurchase?.checkoutComponent &&
 			this.envService.inAppPurchasesSupported
 		) {
-			await inAppPurchaseCheckout.checkoutComponent.submit();
+			await inAppPurchase.checkoutComponent.submit();
 
 			const inviteCode =
-				inAppPurchaseCheckout.checkoutComponent.confirmationMessage
-					.value?.welcomeLetter;
+				inAppPurchase.checkoutComponent.confirmationMessage.value
+					?.welcomeLetter;
 
-			if (inviteCode) {
-				inAppPurchaseCheckout.inviteCode.setValue(inviteCode);
+			if (inviteCode && inAppPurchase.inviteCodeFormControl) {
+				inAppPurchase.inviteCodeFormControl.setValue(inviteCode);
 			}
 
 			return;
