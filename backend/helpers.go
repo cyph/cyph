@@ -613,7 +613,7 @@ func getAppStoreTransactionDataInternal(appStoreReceipt string, sandbox bool) (s
 		}
 	}
 
-	if status == 21007 {
+	if !sandbox && status == 21007 {
 		return getAppStoreTransactionDataInternal(appStoreReceipt, true)
 	}
 
