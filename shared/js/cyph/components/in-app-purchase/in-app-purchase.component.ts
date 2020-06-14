@@ -34,11 +34,11 @@ export class InAppPurchaseComponent extends BaseProvider {
 	@Input() public inviteCodeFormControl?: FormControl;
 
 	/** @see CheckoutComponent.userToken */
-	@Input() public userToken?: boolean | MaybePromise<string>;
+	@Input() public userToken?: boolean | MaybePromise<string | undefined>;
 
 	constructor (
 		/** @see AccountService */
-		public readonly AccountService: AccountService,
+		public readonly accountService: AccountService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,
