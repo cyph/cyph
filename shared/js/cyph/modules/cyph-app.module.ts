@@ -44,6 +44,7 @@ import {AccountUpgradeComponent} from '../components/account-upgrade';
 import {AccountUserRatingComponent} from '../components/account-user-rating';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {FooterComponent} from '../components/footer';
+import {InAppPurchaseComponent} from '../components/in-app-purchase';
 import {LinkConnectionComponent} from '../components/link-connection';
 import {LinkConnectionEmailComponent} from '../components/link-connection-email';
 import {NotFoundComponent} from '../components/not-found';
@@ -126,6 +127,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountUserRatingComponent,
 		AccountWalletsComponent,
 		FooterComponent,
+		InAppPurchaseComponent,
 		LinkConnectionComponent,
 		LinkConnectionEmailComponent,
 		NotFoundComponent,
@@ -179,6 +181,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountUserRatingComponent,
 		AccountWalletsComponent,
 		FooterComponent,
+		InAppPurchaseComponent,
 		LinkConnectionComponent,
 		LinkConnectionEmailComponent,
 		NotFoundComponent,

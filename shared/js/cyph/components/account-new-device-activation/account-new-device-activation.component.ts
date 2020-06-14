@@ -90,11 +90,14 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 		this.mobileDeviceActivation.next(this.mobile);
 
 		if (typeof bobSessionID === 'string' && this.activateForUsername) {
-			this.sessionData = {
-				aliceMasterKey: undefined,
-				bobSessionID,
-				username: this.activateForUsername
-			};
+			this.sessionData =
+				bobSessionID.length > this.configService.cyphIDLength ?
+					{
+						aliceMasterKey: undefined,
+						bobSessionID,
+						username: this.activateForUsername
+					} :
+					undefined;
 
 			this.changeDetectorRef.detectChanges();
 		}
