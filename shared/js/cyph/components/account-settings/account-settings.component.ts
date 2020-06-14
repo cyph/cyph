@@ -1,10 +1,16 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	OnInit,
+	ViewChild
+} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
+import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern} from '../../email-pattern';
 import {BooleanProto, CyphPlans, StringProto} from '../../proto';
 import {AccountSettingsService} from '../../services/account-settings.service';
@@ -78,6 +84,10 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 				undefined,
 		() => this.user.value?.username
 	);
+
+	/** @see InAppPurchaseComponent */
+	@ViewChild(InAppPurchaseComponent)
+	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** Indicates whether page is loading. */
 	public readonly loading = new BehaviorSubject<boolean>(true);

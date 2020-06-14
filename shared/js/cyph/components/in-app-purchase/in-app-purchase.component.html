@@ -1,1 +1,40 @@
-<div>InAppPurchase</div>
+<cyph-checkout
+	#checkoutComponent
+	[amount]="
+		configService.pricingConfig.categories.accounts.items.monthlyPlatinum
+			.inAppPurchaseConfig?.amount || 0
+	"
+	[category]="configService.pricingConfig.categories.accounts.id"
+	[inAppPurchase]="
+		configService.pricingConfig.categories.accounts.items.monthlyPlatinum
+			.inAppPurchaseConfig
+	"
+	[individualSubscriptions]="
+		!!configService.pricingConfig.categories.accounts.items.monthlyPlatinum
+			.individualSubscriptions
+	"
+	[inviteCode]="inviteCode"
+	[item]="
+		configService.pricingConfig.categories.accounts.items.monthlyPlatinum.id
+	"
+	[itemName]="
+		configService.pricingConfig.categories.accounts.items.monthlyPlatinum
+			.name
+	"
+	[perUser]="
+		!!configService.pricingConfig.categories.accounts.items.monthlyPlatinum
+			.perUser
+	"
+	[subscriptionType]="
+		configService.pricingConfig.categories.accounts.items.monthlyPlatinum
+			.subscriptionType
+	"
+	[userToken]="
+		userToken === true ?
+			accountService.getUserToken(accountService.interstitial) :
+		userToken === false ?
+			undefined :
+			userToken
+	"
+	*ngIf="envService.inAppPurchasesSupported"
+></cyph-checkout>

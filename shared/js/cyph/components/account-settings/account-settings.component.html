@@ -15,6 +15,11 @@
 			(submit)="save()"
 			*ngIf="stateValue === states.default; else newDeviceActivation"
 		>
+			<cyph-in-app-purchase
+				#inAppPurchase
+				[userToken]="true"
+			></cyph-in-app-purchase>
+
 			<mat-form-field
 				*ngIf="
 					(accountDatabaseService.currentUser | await)?.agseConfirmed
@@ -85,16 +90,20 @@
 					&ngsp; (<a
 						cyphTranslate
 						(click)="
-							salesService.openPricing([
-								envService.homeUrl,
-								'pricing?current=',
-								cyphPlans[
-									accountSettingsService.plan.value ||
-										cyphPlans.Free
+							salesService.openPricing(
+								[
+									envService.homeUrl,
+									'pricing?current=',
+									cyphPlans[
+										accountSettingsService.plan.value ||
+											cyphPlans.Free
+									],
+									'&userToken=',
+									accountService.getUserToken(loading)
 								],
-								'&userToken=',
-								accountService.getUserToken(loading)
-							])
+								undefined,
+								inAppPurchase
+							)
 						"
 						>change plan</a
 					><ng-container

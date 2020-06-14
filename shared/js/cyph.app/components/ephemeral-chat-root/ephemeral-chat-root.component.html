@@ -41,7 +41,13 @@
 			<span cyphTranslate>for more details and the solution.</span>
 		</h3>
 
-		<h3 class="cyph-banner alert" *ngIf="salesService.upsellBanner | await">
+		<h3
+			class="cyph-banner alert"
+			*ngIf="
+				!envService.inAppPurchasesSupported &&
+				(salesService.upsellBanner | await)
+			"
+		>
 			<div fxFlex fxLayout="row">
 				<div fxLayoutAlign="center center" class="visibility-hidden">
 					<button
@@ -63,7 +69,9 @@
 							cyphTranslate
 							(click)="
 								salesService.openPricing(
-									envService.homeUrl + 'pricing'
+									envService.homeUrl + 'pricing',
+									undefined,
+									undefined
 								)
 							"
 							>sign up for your account now</a

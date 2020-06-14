@@ -1,6 +1,12 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	Component,
+	ViewChild
+} from '@angular/core';
 import {skip, take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
+import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {CyphPlans} from '../../proto';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
@@ -14,9 +20,19 @@ import {SalesService} from '../../services/sales.service';
 	styleUrls: ['./account-upgrade.component.scss'],
 	templateUrl: './account-upgrade.component.html'
 })
-export class AccountUpgradeComponent extends BaseProvider implements OnInit {
+export class AccountUpgradeComponent extends BaseProvider
+	implements AfterViewInit {
+	/** @see InAppPurchaseComponent */
+	@ViewChild(InAppPurchaseComponent)
+	public inAppPurchase?: InAppPurchaseComponent;
+
+	/** @see CheckoutComponent.userToken */
+	public readonly userToken = this.accountService.getUserToken(
+		this.accountService.interstitial
+	);
+
 	/** @inheritDoc */
-	public async ngOnInit () : Promise<void> {
+	public async ngAfterViewInit () : Promise<void> {
 		await this.salesService.openPricing(
 			[
 				this.envService.homeUrl,
@@ -27,11 +43,10 @@ export class AccountUpgradeComponent extends BaseProvider implements OnInit {
 						.toPromise()
 				],
 				'&userToken=',
-				this.accountService.getUserToken(
-					this.accountService.interstitial
-				)
+				this.userToken
 			],
-			true
+			true,
+			this.inAppPurchase
 		);
 	}
 
