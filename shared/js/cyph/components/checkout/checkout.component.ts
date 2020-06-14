@@ -609,6 +609,8 @@ export class CheckoutComponent extends BaseProvider
 						type: store[inAppPurchase.type]
 					});
 
+					store.refresh();
+
 					await new Promise<void>(resolve => {
 						store.ready(resolve);
 					});
