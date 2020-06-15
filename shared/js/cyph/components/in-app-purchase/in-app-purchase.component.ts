@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {BaseProvider} from '../../base-provider';
+import {IInAppPurchaseComponent} from '../../checkout/iin-app-purchasecomponent';
 import {CheckoutComponent} from '../../components/checkout';
 import {MaybePromise} from '../../maybe-promise-type';
 import {AccountService} from '../../services/account.service';
@@ -22,18 +23,19 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./in-app-purchase.component.scss'],
 	templateUrl: './in-app-purchase.component.html'
 })
-export class InAppPurchaseComponent extends BaseProvider {
-	/** Checkout component instance used for in-app purchases. */
+export class InAppPurchaseComponent extends BaseProvider
+	implements IInAppPurchaseComponent {
+	/** @inheritDoc */
 	@ViewChild(CheckoutComponent)
 	public checkoutComponent?: CheckoutComponent;
 
-	/** @see CheckoutComponent.inviteCode */
+	/** @inheritDoc */
 	@Input() public inviteCode?: MaybePromise<string>;
 
-	/** Form control to set purchased invite code value at, if applicable. */
+	/** @inheritDoc */
 	@Input() public inviteCodeFormControl?: FormControl;
 
-	/** @see CheckoutComponent.userToken */
+	/** @inheritDoc */
 	@Input() public userToken?: boolean | MaybePromise<string | undefined>;
 
 	constructor (
