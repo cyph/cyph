@@ -17,8 +17,11 @@
 				<div class="e-card-header-caption">
 					<div
 						class="e-card-header-title"
-						[routerLink]="(notification.value.type == 2 ?
-							'/messages/user/' : '/profile/') + notification.value.username"
+						[routerLink]="
+							(notification.value.type === 2 ?
+								'/messages/user/' :
+								'/profile/') + notification.value.username
+						"
 						*ngIf="!!notification.value.username"
 					>
 						{{ notification.value.text }}
