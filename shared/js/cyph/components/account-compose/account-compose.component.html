@@ -18,7 +18,8 @@
 				class="close-button"
 				matTooltip="Close"
 				matTooltipPosition="left"
-				[routerLink]="
+				[routerLink]="(messageType | await) ==
+					chatMessageValueTypes.CalendarInvite ? '/schedule' :
 					((searchUsername | await) || '').length > 0 ?
 						'/profile/' + ((searchUsername | await) || '') :
 						'/'
