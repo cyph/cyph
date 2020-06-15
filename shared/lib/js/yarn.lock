@@ -9187,10 +9187,10 @@ domutils@^1.5.1, domutils@^1.7.0:
     dom-serializer "0"
     domelementtype "1"
 
-dope-qr@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/dope-qr/-/dope-qr-1.0.2.tgz#ea58c713edb469fadc2e59e6d47bcc4ed835c1b2"
-  integrity sha512-ffqjB5UL2LOoJwyugSvBFA6YM2MYXd0DZkGYoUXZd3GeTreISwsrLnudVLCZ8Bp0srdsB5CZcLY6798X6WuZ3A==
+dope-qr@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/dope-qr/-/dope-qr-1.1.0.tgz#792344540958362db3d57f6771065577916e8192"
+  integrity sha512-1JPqYfF8w9qWz/7P2MODN4Ic60g23lCwSauRunzQ+MW0LaLZcN9WCAhadaesgKO2VNHEeb6IdFd8/yTvVziRWQ==
 
 dot-prop@^4.1.0:
   version "4.2.0"
