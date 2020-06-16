@@ -889,9 +889,6 @@ export class ChatService extends BaseProvider {
 			return;
 		}
 
-		/* Workaround for Safari bug that breaks initiating a new chat */
-		this.sessionService.send([rpcEvents.ping, {}]);
-
 		if (this.chat.queuedMessage) {
 			this.send(
 				undefined,
