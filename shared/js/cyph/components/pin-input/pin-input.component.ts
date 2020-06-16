@@ -2,8 +2,10 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
+	EventEmitter,
 	Input,
 	OnInit,
+	Output,
 	ViewChild
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
@@ -35,6 +37,9 @@ export class PinInputComponent extends BaseProvider
 
 	/** Indicates whether input should autofocus. */
 	@Input() public autofocus: boolean = false;
+
+	/** Emits when a full PIN is entered. */
+	@Output() public readonly entered = new EventEmitter<void>();
 
 	/** Hide PIN. */
 	@Input() public hide = new BehaviorSubject<boolean>(true);
@@ -76,6 +81,10 @@ export class PinInputComponent extends BaseProvider
 
 				if (this.onChange) {
 					this.onChange(s);
+				}
+
+				if (s.length === 4) {
+					this.entered.emit();
 				}
 
 				if (!this.pinInput?.nativeElement) {

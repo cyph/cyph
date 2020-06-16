@@ -583,6 +583,7 @@
 				name="masterKey"
 				[type]="(hidePassword | await) ? 'password' : 'text'"
 				[placeholder]="stringsService.masterKey"
+				(keydown.enter)="submit(); $event.preventDefault()"
 				required
 			/>
 			<mat-icon
@@ -607,6 +608,7 @@
 				name="pin"
 				[autofocus]="true"
 				[required]="true"
+				(entered)="submit()"
 			></cyph-pin-input>
 		</div>
 	</ng-container>
@@ -617,12 +619,13 @@
 		<mat-form-field fxFlex>
 			<input
 				matInput
+				cyphAutofocus
 				[ngModel]="pin | await"
 				(ngModelChange)="pin.next($event)"
 				name="lockScreenPassword"
 				[type]="(hidePassword | await) ? 'password' : 'text'"
 				[placeholder]="stringsService.unlockPassword | titlecase"
-				cyphAutofocus
+				(keydown.enter)="submit(); $event.preventDefault()"
 				required
 			/>
 			<mat-icon
