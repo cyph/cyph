@@ -11,7 +11,7 @@ import 'firebase/messaging';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/storage';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {filter, skip, take} from 'rxjs/operators';
+import {skip} from 'rxjs/operators';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
@@ -775,10 +775,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 												.TIMESTAMP
 									})
 									.then();
+
+								/*
+								Conflicts with workaround in constructor:
+
 								await mutex
 									.onDisconnect()
 									.remove()
 									.then();
+								*/
+
 								await mutex
 									.set({
 										claimTimestamp:
@@ -791,6 +797,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 										...(reason ? {reason} : {})
 									})
 									.then();
+
 								return getLockTimestamp();
 							}
 							catch (err) {
@@ -854,7 +861,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 							.catch(() => {})
 							.then(surrenderLock);
 
-						/* Kill lock on disconnect */
+						/*
+						Conflicts with workaround in constructor:
+
+						Kill lock on disconnect
 						this.connectionStatus()
 							.pipe(
 								filter(b => !b),
@@ -862,6 +872,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							)
 							.toPromise()
 							.then(surrenderLock);
+						*/
 
 						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						await new Promise<void>(resolve => {
