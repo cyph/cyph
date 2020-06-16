@@ -2,7 +2,6 @@
 
 import {Injectable} from '@angular/core';
 import memoize from 'lodash-es/memoize';
-import * as msgpack from 'msgpack-lite';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {ICurrentUser, publicSigningKeys, SecurityModels} from '../../account';
@@ -20,9 +19,10 @@ import {
 	BinaryProto,
 	IAccountUserPublicKeys,
 	NotificationTypes,
-	StringProto
+	StringProto,
+	TimedArrayProto
 } from '../../proto';
-import {filterUndefined, filterUndefinedOperator} from '../../util/filter';
+import {filterUndefinedOperator} from '../../util/filter';
 import {
 	cacheObservable,
 	flattenObservable,
@@ -69,30 +69,11 @@ export class AccountDatabaseService extends BaseProvider {
 				immutable: boolean
 			) : Promise<ITimedValue<T>[] | undefined> => {
 				try {
-					const arr = msgpack.decode(
-						await this.localStorageService.getItem(
-							`AccountDatabaseService/list${
-								immutable ? '-immutable' : ''
-							}/${await this.normalizeURL(url, true)}`,
-							BinaryProto
-						)
-					);
-					if (!(arr instanceof Array)) {
-						throw new Error();
-					}
-
-					return filterUndefined(
-						await Promise.all(
-							arr.map(async o =>
-								typeof o.timestamp === 'number' &&
-								o.value instanceof Uint8Array ?
-									{
-										timestamp: <number> o.timestamp,
-										value: await deserialize(proto, o.value)
-									} :
-									undefined
-							)
-						)
+					return await this.localStorageService.getItem(
+						`AccountDatabaseService/listCache${
+							immutable ? '-immutable' : ''
+						}/${await this.normalizeURL(url, true)}`,
+						new TimedArrayProto(proto)
 					);
 				}
 				catch {
@@ -106,18 +87,11 @@ export class AccountDatabaseService extends BaseProvider {
 				list: ITimedValue<T>[]
 			) =>
 				this.localStorageService.setItem(
-					`AccountDatabaseService/list${
+					`AccountDatabaseService/listCache${
 						immutable ? '-immutable' : ''
 					}/${await this.normalizeURL(url, true)}`,
-					BinaryProto,
-					msgpack.encode(
-						await Promise.all(
-							list.map(async o => ({
-								timestamp: o.timestamp,
-								value: await serialize(proto, o.value)
-							}))
-						)
-					)
+					new TimedArrayProto(proto),
+					list
 				)
 		}
 	};

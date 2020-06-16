@@ -7,12 +7,14 @@ import {GenericMapProto} from './generic-map-proto';
 import {GenericProto} from './generic-proto';
 
 export * from '../../proto';
+export * from './array-wrapper-proto';
 export * from './binary-proto';
 export * from './blob-proto';
 export * from './channel-incoming-messages-proto';
 export * from './data-uri-proto';
 export * from './maybe-binary-proto';
 export * from './never-proto';
+export * from './timed-array-proto';
 
 /** Boolean array encoder/decoder. */
 export const BooleanArrayProto: IProto<boolean[]> = new GenericArrayProto(
