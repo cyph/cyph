@@ -13,48 +13,29 @@ export const arraySum = (arr: number[]) : number => {
 	return sum;
 };
 
-/** Flattens an array of arrays into one array. */
-export const flattenArray = <T>(
-	arrays: (T | T[])[],
-	omitDuplicates: boolean = false
-) : T[] => {
-	if (!omitDuplicates) {
-		const array = [];
-		for (const arr of arrays) {
-			if (arr instanceof Array) {
-				for (const t of arr) {
-					array.push(t);
+/** Flattens an array of arrays into one array and filters out duplicates. */
+export const flattenAndOmitDuplicates = <T>(arrays: (T | T[])[]) : T[] => {
+	const arr: T[] = [];
+	const seen = new Set<T>();
+
+	for (const value of arrays) {
+		if (value instanceof Array) {
+			for (const t of value) {
+				if (seen.has(t)) {
+					continue;
 				}
-				continue;
+
+				seen.add(t);
+				arr.push(t);
 			}
-			array.push(arr);
 		}
-		return array;
+		else if (!seen.has(value)) {
+			seen.add(value);
+			arr.push(value);
+		}
 	}
 
-	return arrays.reduce<{arr: T[]; seen: Map<T, true>}>(
-		({arr, seen}, b) => {
-			if (b instanceof Array) {
-				arr = arr.concat(
-					b.filter(t => {
-						if (seen.has(t)) {
-							return false;
-						}
-
-						seen.set(t, true);
-						return true;
-					})
-				);
-			}
-			else if (!seen.has(b)) {
-				seen.set(b, true);
-				arr = arr.concat(b);
-			}
-
-			return {arr, seen};
-		},
-		{arr: [], seen: new Map<T, true>()}
-	).arr;
+	return arr;
 };
 
 /** Flattens an array of tuples into one object. */

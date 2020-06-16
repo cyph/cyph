@@ -25,7 +25,6 @@ import {trackBySelf} from '../../track-by/track-by-self';
 import {filterUndefined} from '../../util/filter';
 import {toFloat, toInt} from '../../util/formatting';
 import {getOrSetDefault} from '../../util/get-or-set-default';
-import {flattenArray} from '../../util/reducers';
 import {saveFile} from '../../util/save-file';
 import {parse} from '../../util/serialization';
 import {timestampToDate} from '../../util/time';
@@ -201,15 +200,15 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 					containers :
 					containers.concat(
 						getContainers(
-							flattenArray(
-								containers.map(o =>
+							containers
+								.map(o =>
 									filterUndefined(
 										(o.elements || []).map(
 											elem => elem.elementContainer
 										)
 									)
 								)
-							)
+								.flat()
 						)
 					);
 
@@ -300,8 +299,9 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 						continue;
 					}
 
-					const segments = flattenArray(
-						id.split('.').map(s => {
+					const segments = id
+						.split('.')
+						.map(s => {
 							const arrayIndex = (s.match(/\[\d+\]$/) || [])[0];
 							return !arrayIndex ?
 								s :
@@ -310,7 +310,7 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 									toInt(arrayIndex.slice(1, -1))
 								];
 						})
-					);
+						.flat();
 
 					f(
 						hasOwnID,

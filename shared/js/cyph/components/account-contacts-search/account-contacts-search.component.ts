@@ -22,7 +22,6 @@ import {AccountService} from '../../services/account.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {filterUndefined} from '../../util/filter';
-import {flattenArray} from '../../util/reducers';
 import {SearchBarComponent} from '../search-bar';
 
 /**
@@ -120,16 +119,15 @@ export class AccountContactsSearchComponent extends BaseProvider {
 					const matchingText = (<string[]> [])
 						.concat(extra.address || [])
 						.concat(
-							flattenArray(
-								(<AccountUserProfileExtra.IPosition[]> [])
-									.concat(extra.education || [])
-									.concat(extra.work || [])
-									.map(position =>
-										(<string[]> [])
-											.concat(position.detail || [])
-											.concat(position.locationName || [])
-									)
-							)
+							(<AccountUserProfileExtra.IPosition[]> [])
+								.concat(extra.education || [])
+								.concat(extra.work || [])
+								.map(position =>
+									(<string[]> [])
+										.concat(position.detail || [])
+										.concat(position.locationName || [])
+								)
+								.flat()
 						)
 						.concat(extra.insurance || [])
 						.concat(extra.npis || [])

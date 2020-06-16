@@ -7,7 +7,7 @@ import {ITimedValue} from './itimed-value';
 import {LocalAsyncMap} from './local-async-map';
 import {LockFunction} from './lock-function-type';
 import {MaybePromise} from './maybe-promise-type';
-import {flattenArray} from './util/reducers';
+import {flattenAndOmitDuplicates} from './util/reducers';
 
 /**
  * IAsyncList implementation that wraps a local value.
@@ -63,7 +63,7 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 
 	/** @inheritDoc */
 	public async getFlatValue () : Promise<T extends any[] ? T : T[]> {
-		return <any> flattenArray(this.getValueInternal());
+		return <any> this.getValueInternal().flat();
 	}
 
 	/** @inheritDoc */
@@ -121,7 +121,9 @@ export class LocalAsyncList<T> implements IAsyncList<T> {
 		omitDuplicates?: boolean
 	) : Observable<T extends any[] ? T : T[]> {
 		return this.watch().pipe<any>(
-			map(arr => flattenArray(arr, omitDuplicates))
+			map(arr =>
+				omitDuplicates ? flattenAndOmitDuplicates(arr) : arr.flat()
+			)
 		);
 	}
 

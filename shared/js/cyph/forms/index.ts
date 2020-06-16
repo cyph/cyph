@@ -2,7 +2,6 @@
 
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
-import {flattenArray} from '../util/reducers';
 
 /** Convenience method for extracting a value from an IForm object. */
 export const {getFormValue} = class {
@@ -99,7 +98,7 @@ export const newFormComponent = (
 	id?: string,
 	isColumn?: boolean
 ) : Form.IComponent => ({
-	containers: flattenArray(containers),
+	containers: containers.flat(),
 	id,
 	isColumn
 });

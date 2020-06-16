@@ -36,7 +36,7 @@ import {
 import {lockFunction} from '../../util/lock';
 import {debugLog, debugLogError} from '../../util/log';
 import {observableAll} from '../../util/observable-all';
-import {flattenArray} from '../../util/reducers';
+import {flattenAndOmitDuplicates} from '../../util/reducers';
 import {deserialize, serialize} from '../../util/serialization';
 import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {DatabaseService} from '../database.service';
@@ -546,7 +546,7 @@ export class AccountDatabaseService extends BaseProvider {
 			const asyncList: IAsyncList<T> = {
 				clear: async () => localLock(async () => this.removeItem(url)),
 				getFlatValue: async () =>
-					<any> flattenArray(await asyncList.getValue()),
+					<any> (await asyncList.getValue()).flat(),
 				getTimedValue: async () =>
 					localLock(async () =>
 						this.getListWithTimestamps(
@@ -628,7 +628,11 @@ export class AccountDatabaseService extends BaseProvider {
 					asyncList
 						.watch()
 						.pipe<any>(
-							map(arr => flattenArray(arr, omitDuplicates))
+							map(arr =>
+								omitDuplicates ?
+									flattenAndOmitDuplicates(arr) :
+									arr.flat()
+							)
 						)
 				),
 				watchPushes: memoize(() =>

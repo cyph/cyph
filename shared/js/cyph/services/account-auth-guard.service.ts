@@ -6,7 +6,6 @@ import {
 	Router
 } from '@angular/router';
 import {BaseProvider} from '../base-provider';
-import {flattenArray} from '../util/reducers';
 import {AccountAuthService} from './crypto/account-auth.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
@@ -39,9 +38,7 @@ export class AccountAuthGuardService extends BaseProvider
 		return route.url
 			.map(o => o.path)
 			.concat(
-				flattenArray(
-					route.children.map(child => this.getFullRoutePath(child))
-				)
+				route.children.map(child => this.getFullRoutePath(child)).flat()
 			);
 	}
 

@@ -34,7 +34,6 @@ import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
-import {flattenArray} from '../util/reducers';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
@@ -535,11 +534,10 @@ export abstract class SessionService extends BaseProvider
 			lockClaimed = true;
 
 			await this.cyphertextReceiveHandler(
-				flattenArray(
-					(await this.incomingMessageQueue.getValue()).map(
-						({messages}) => messages || []
-					)
-				).filter(this.correctSubSession),
+				(await this.incomingMessageQueue.getValue())
+					.map(({messages}) => messages || [])
+					.flat()
+					.filter(this.correctSubSession),
 				true
 			);
 
