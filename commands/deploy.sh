@@ -60,6 +60,7 @@ if [ "${1}" == '--prod' ] ; then
 elif [ "${1}" == '--debug-prod' ] ; then
 	test=''
 	debug=true
+	noBeta=true
 	shift
 elif [ "${1}" == '--debug-prod-prod-build' ] ; then
 	test=''
