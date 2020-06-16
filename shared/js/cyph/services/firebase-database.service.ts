@@ -1068,9 +1068,14 @@ export class FirebaseDatabaseService extends DatabaseService {
 			const initialItemRef = listRef.push({
 				timestamp: firebase.database.ServerValue.TIMESTAMP
 			});
+
+			/*
+			Conflicts with workaround in constructor:
+
 			const itemRefOnDisconnect = initialItemRef.onDisconnect();
 
 			itemRefOnDisconnect.remove();
+			*/
 
 			const itemRef = await initialItemRef.then();
 			const key = itemRef.key;
@@ -1109,7 +1114,12 @@ export class FirebaseDatabaseService extends DatabaseService {
 			}
 
 			const result = await this.setItem(`${url}/${key}`, proto, value);
+
+			/*
+			Conflicts with workaround in constructor:
+
 			itemRefOnDisconnect.cancel();
+			*/
 
 			if (o.callback) {
 				await o.callback();
