@@ -11,7 +11,7 @@ import {
 } from '@angular/router';
 import * as Hammer from 'hammerjs';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {filter, map, skip, switchMap, take} from 'rxjs/operators';
+import {filter, map, skip, switchMap} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
@@ -447,6 +447,8 @@ export class AccountService extends BaseProvider {
 			return this.lastUserToken.token;
 		}
 
+		await this.accountDatabaseService.getCurrentUser();
+
 		/* Don't interfere if spinner is already running */
 		if (spinner?.value) {
 			spinner = undefined;
@@ -547,9 +549,7 @@ export class AccountService extends BaseProvider {
 
 	/** Runs on user login. */
 	public async userInit () : Promise<void> {
-		await this.accountDatabaseService.currentUserFiltered
-			.pipe(take(1))
-			.toPromise();
+		await this.accountDatabaseService.getCurrentUser();
 
 		this.subscriptions.push(
 			this.windowWatcherService.visibility
