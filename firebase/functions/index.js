@@ -1310,6 +1310,19 @@ exports.resetCastleSessionID = onCall(async (data, namespace, getUsername) => {
 	);
 });
 
+exports.sendAppLink = onCall(async (data, namespace, getUsername) => {
+	const phoneNumber = (data.phoneNumber || '').trim();
+
+	if (typeof phoneNumber !== 'string' || !phoneNumber) {
+		return;
+	}
+
+	await sendSMS(
+		phoneNumber,
+		`Here's the link you requested to install Cyph! https://www.cyph.com/download-app`
+	);
+});
+
 exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	const {accountsURL} = namespaces[namespace];
 	const email = validateEmail(data.email, true);
@@ -1426,19 +1439,6 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	]);
 
 	return inviteCode;
-});
-
-exports.sendAppLink = onCall(async (data, namespace, getUsername) => {
-	const phoneNumber = (data.phoneNumber || '').trim();
-
-	if (typeof phoneNumber !== 'string' || !phoneNumber) {
-		return;
-	}
-
-	await sendSMS(
-		phoneNumber,
-		`Here's the link you requested to install Cyph! https://www.cyph.com/download-app`
-	);
 });
 
 exports.setContact = onCall(async (data, namespace, getUsername) => {
