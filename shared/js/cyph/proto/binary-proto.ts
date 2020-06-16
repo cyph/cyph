@@ -16,5 +16,7 @@ export class BinaryProto {
 	}
 
 	/** @see IProto.verify */
-	public static verify () : void {}
+	public static verify (_DATA: Uint8Array) : undefined {
+		return;
+	}
 }

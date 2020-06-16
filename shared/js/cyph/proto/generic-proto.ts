@@ -19,7 +19,7 @@ export class GenericProto<T> implements IProto<T> {
 	}
 
 	/** @inheritDoc */
-	public verify (data: T) : any {
+	public async verify (data: T) : Promise<string | undefined> {
 		return this.proto.verify({data});
 	}
 

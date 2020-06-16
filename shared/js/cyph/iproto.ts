@@ -13,5 +13,5 @@ export interface IProto<T> {
 	encode: (data: T) => MaybePromise<Uint8Array | Writer>;
 
 	/** Verify that object can be successfully encoded. */
-	verify: (data: any) => any;
+	verify: (data: any) => MaybePromise<string | undefined>;
 }

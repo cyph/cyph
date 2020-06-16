@@ -20,5 +20,7 @@ export class BlobProto {
 	}
 
 	/** @see IProto.verify */
-	public static verify () : void {}
+	public static verify (_DATA: Blob | ArrayBufferView) : undefined {
+		return;
+	}
 }

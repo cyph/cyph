@@ -16,5 +16,7 @@ export class NeverProto {
 	}
 
 	/** @see IProto.verify */
-	public static verify () : void {}
+	public static verify (_DATA: unknown) : undefined {
+		return;
+	}
 }

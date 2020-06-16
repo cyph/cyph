@@ -61,5 +61,7 @@ export class CastleIncomingMessagesProto {
 	}
 
 	/** @see IProto.verify */
-	public static verify () : void {}
+	public static verify (_DATA: ICastleIncomingMessages) : undefined {
+		return;
+	}
 }
