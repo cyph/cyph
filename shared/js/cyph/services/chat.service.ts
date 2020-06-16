@@ -1864,8 +1864,18 @@ export class ChatService extends BaseProvider {
 
 						this.sessionService.on(rpcEvents.text, f);
 						await Promise.race([
-							this.sessionService.closed,
-							lockData.stillOwner.toPromise()
+							this.sessionService.closed.then(() => {
+								debugLog(
+									() =>
+										'receiveTextLock release: sessionService closed'
+								);
+							}),
+							lockData.stillOwner.toPromise().then(() => {
+								debugLog(
+									() =>
+										'receiveTextLock release: no longer owner'
+								);
+							})
 						]);
 						this.sessionService.off(rpcEvents.text, f);
 					});
