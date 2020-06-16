@@ -21,243 +21,9 @@ import {WorkerService} from '../worker.service';
 @Injectable()
 export class ThreadedPotassiumService extends PotassiumUtil
 	implements IPotassium {
-	/** Proxy for Potassium.Box inside a worker. */
-	private readonly boxThread = memoize(async () => this.getPotassiumThread());
-
-	/** Proxy for Potassium.EphemeralKeyExchange inside a worker. */
-	private readonly ephemeralKeyExchangeThread = memoize(async () =>
-		this.getPotassiumThread()
-	);
-
-	/** Proxy for Potassium.Hash inside a worker. */
-	private readonly hashThread = memoize(async () =>
-		this.getPotassiumThread()
-	);
-
-	/** Proxy for Potassium.OneTimeAuth inside a worker. */
-	private readonly oneTimeAuthThread = memoize(async () =>
-		this.getPotassiumThread()
-	);
-
-	/** Proxy for Potassium.PasswordHash inside a worker. */
-	private readonly passwordHashThread = memoize(async () =>
-		this.getPotassiumThread()
-	);
-
-	/** Proxy for Potassium.SecretBox inside a worker. */
-	private readonly secretBoxThread = memoize(async () =>
-		this.getPotassiumThread()
-	);
-
-	/** Proxy for Potassium.Sign inside a worker. */
-	private readonly signThread = memoize(async () =>
-		this.getPotassiumThread()
-	);
-
-	/** Default Potassium thread to use when it doesn't matter which one we pick. */
-	private readonly staticValues = this.secretBoxThread();
-
-	/** @inheritDoc */
-	public readonly box: IBox = {
-		keyPair: async () => (await this.boxThread()).boxKeyPair(),
-		open: async (cyphertext, keyPair) =>
-			(await this.boxThread()).boxOpen(cyphertext, keyPair),
-		privateKeyBytes: this.staticValues.then(async o =>
-			o.boxPrivateKeyBytes()
-		),
-		publicKeyBytes: this.staticValues.then(async o =>
-			o.boxPublicKeyBytes()
-		),
-		seal: async (plaintext, publicKey) =>
-			(await this.boxThread()).boxSeal(plaintext, publicKey)
-	};
-
-	/** @inheritDoc */
-	public readonly ephemeralKeyExchange: IEphemeralKeyExchange = {
-		aliceKeyPair: async () =>
-			(await this.ephemeralKeyExchangeThread()).ephemeralKeyExchangeAliceKeyPair(),
-		aliceSecret: async (publicKey, privateKey) =>
-			(await this.ephemeralKeyExchangeThread()).ephemeralKeyExchangeAliceSecret(
-				publicKey,
-				privateKey
-			),
-		bobSecret: async alicePublicKey =>
-			(await this.ephemeralKeyExchangeThread()).ephemeralKeyExchangeBobSecret(
-				alicePublicKey
-			),
-		privateKeyBytes: this.staticValues.then(async o =>
-			o.ephemeralKeyExchangePrivateKeyBytes()
-		),
-		publicKeyBytes: this.staticValues.then(async o =>
-			o.ephemeralKeyExchangePublicKeyBytes()
-		),
-		secretBytes: this.staticValues.then(async o =>
-			o.ephemeralKeyExchangeSecretBytes()
-		)
-	};
-
-	/** @inheritDoc */
-	public readonly hash: IHash = {
-		bytes: this.staticValues.then(async o => o.hashBytes()),
-		deriveKey: async (input, outputBytes, clearInput) => {
-			const output = (await this.hashThread()).hashDeriveKey(
-				input,
-				outputBytes
-			);
-
-			if (clearInput && input instanceof Uint8Array) {
-				this.clearMemory(input);
-			}
-
-			return output;
-		},
-		hash: async plaintext => (await this.hashThread()).hashHash(plaintext)
-	};
-
-	/** @inheritDoc */
-	public readonly oneTimeAuth: IOneTimeAuth = {
-		bytes: this.staticValues.then(async o => o.oneTimeAuthBytes()),
-		keyBytes: this.staticValues.then(async o => o.oneTimeAuthKeyBytes()),
-		sign: async (message, key) =>
-			(await this.oneTimeAuthThread()).oneTimeAuthSign(message, key),
-		verify: async (mac, message, key) =>
-			(await this.oneTimeAuthThread()).oneTimeAuthVerify(
-				mac,
-				message,
-				key
-			)
-	};
-
-	/** @inheritDoc */
-	public readonly passwordHash: IPasswordHash = {
-		algorithm: this.staticValues.then(async o => o.passwordHashAlgorithm()),
-		hash: async (
-			plaintext,
-			salt,
-			outputBytes,
-			opsLimit,
-			memLimit,
-			clearInput
-		) => {
-			const output = (await this.passwordHashThread()).passwordHashHash(
-				plaintext,
-				salt,
-				outputBytes,
-				opsLimit,
-				memLimit
-			);
-
-			if (clearInput && plaintext instanceof Uint8Array) {
-				this.clearMemory(plaintext);
-			}
-			if (clearInput && salt instanceof Uint8Array) {
-				this.clearMemory(salt);
-			}
-
-			return output;
-		},
-		memLimitInteractive: this.staticValues.then(async o =>
-			o.passwordHashMemLimitInteractive()
-		),
-		memLimitSensitive: this.staticValues.then(async o =>
-			o.passwordHashMemLimitSensitive()
-		),
-		opsLimitInteractive: this.staticValues.then(async o =>
-			o.passwordHashOpsLimitInteractive()
-		),
-		opsLimitSensitive: this.staticValues.then(async o =>
-			o.passwordHashOpsLimitSensitive()
-		),
-		parseMetadata: async metadata =>
-			(await this.passwordHashThread()).passwordHashParseMetadata(
-				metadata
-			),
-		saltBytes: this.staticValues.then(async o => o.passwordHashSaltBytes())
-	};
-
-	/** @inheritDoc */
-	public readonly secretBox: ISecretBox = {
-		aeadBytes: this.staticValues.then(async o => o.secretBoxAeadBytes()),
-		keyBytes: this.staticValues.then(async o => o.secretBoxKeyBytes()),
-		open: async (cyphertext, key, additionalData) =>
-			this.localStorageService.getOrSetDefault(
-				this.secretBoxCacheKey(cyphertext, additionalData),
-				BinaryProto,
-				async () =>
-					(await this.secretBoxThread()).secretBoxOpen(
-						cyphertext,
-						key,
-						additionalData
-					)
-			),
-		seal: async (plaintext, key, additionalData) => {
-			const cyphertext: Uint8Array = (await this.secretBoxThread()).secretBoxSeal(
-				plaintext,
-				key,
-				additionalData
-			);
-
-			const cacheKey = this.secretBoxCacheKey(cyphertext, additionalData);
-
-			if (cacheKey !== undefined) {
-				this.localStorageService.setItem(
-					cacheKey,
-					BinaryProto,
-					cyphertext
-				);
-			}
-
-			return cyphertext;
-		}
-	};
-
-	/** @inheritDoc */
-	public readonly sign: ISign = {
-		bytes: this.staticValues.then(async o => o.signBytes()),
-		importSuperSphincsPublicKeys: async (rsa, sphincs) =>
-			(await this.signThread()).signImportSuperSphincsPublicKeys(
-				rsa,
-				sphincs
-			),
-		keyPair: async () => (await this.signThread()).signKeyPair(),
-		open: async (signed, publicKey, additionalData, decompress) =>
-			(await this.signThread()).signOpen(
-				signed,
-				publicKey,
-				additionalData,
-				decompress
-			),
-		privateKeyBytes: this.staticValues.then(async o =>
-			o.signPrivateKeyBytes()
-		),
-		publicKeyBytes: this.staticValues.then(async o =>
-			o.signPublicKeyBytes()
-		),
-		sign: async (message, privateKey, additionalData, compress) =>
-			(await this.signThread()).signSign(
-				message,
-				privateKey,
-				additionalData,
-				compress
-			),
-		signDetached: async (message, privateKey, additionalData) =>
-			(await this.signThread()).signSignDetached(
-				message,
-				privateKey,
-				additionalData
-			),
-		verifyDetached: async (signature, message, publicKey, additionalData) =>
-			(await this.signThread()).signVerifyDetached(
-				signature,
-				message,
-				publicKey,
-				additionalData
-			)
-	};
-
 	/** Returns flattened proxy for a Potassium object inside a worker. */
-	private async getPotassiumThread () : Promise<any> {
-		return this.workerService
+	private readonly potassiumInternal = memoize(async (_I: number) =>
+		this.workerService
 			.createThread<any>(
 				/* eslint-disable-next-line prefer-arrow/prefer-arrow-functions */
 				function () : void {
@@ -300,7 +66,218 @@ export class ThreadedPotassiumService extends PotassiumUtil
 					isNative: await this.native()
 				}))()
 			)
-			.then(async thread => thread.api);
+			.then(async thread => thread.api)
+	);
+
+	/** @ignore */
+	private roundRobinIndex: number = 0;
+
+	/** @ignore */
+	private readonly roundRobinMax: number = 4;
+
+	/** Default Potassium thread to use when it doesn't matter which one we pick. */
+	private readonly staticValues = this.potassium();
+
+	/** @inheritDoc */
+	public readonly box: IBox = {
+		keyPair: async () => (await this.potassium()).boxKeyPair(),
+		open: async (cyphertext, keyPair) =>
+			(await this.potassium()).boxOpen(cyphertext, keyPair),
+		privateKeyBytes: this.staticValues.then(async o =>
+			o.boxPrivateKeyBytes()
+		),
+		publicKeyBytes: this.staticValues.then(async o =>
+			o.boxPublicKeyBytes()
+		),
+		seal: async (plaintext, publicKey) =>
+			(await this.potassium()).boxSeal(plaintext, publicKey)
+	};
+
+	/** @inheritDoc */
+	public readonly ephemeralKeyExchange: IEphemeralKeyExchange = {
+		aliceKeyPair: async () =>
+			(await this.potassium()).ephemeralKeyExchangeAliceKeyPair(),
+		aliceSecret: async (publicKey, privateKey) =>
+			(await this.potassium()).ephemeralKeyExchangeAliceSecret(
+				publicKey,
+				privateKey
+			),
+		bobSecret: async alicePublicKey =>
+			(await this.potassium()).ephemeralKeyExchangeBobSecret(
+				alicePublicKey
+			),
+		privateKeyBytes: this.staticValues.then(async o =>
+			o.ephemeralKeyExchangePrivateKeyBytes()
+		),
+		publicKeyBytes: this.staticValues.then(async o =>
+			o.ephemeralKeyExchangePublicKeyBytes()
+		),
+		secretBytes: this.staticValues.then(async o =>
+			o.ephemeralKeyExchangeSecretBytes()
+		)
+	};
+
+	/** @inheritDoc */
+	public readonly hash: IHash = {
+		bytes: this.staticValues.then(async o => o.hashBytes()),
+		deriveKey: async (input, outputBytes, clearInput) => {
+			const output = (await this.potassium()).hashDeriveKey(
+				input,
+				outputBytes
+			);
+
+			if (clearInput && input instanceof Uint8Array) {
+				this.clearMemory(input);
+			}
+
+			return output;
+		},
+		hash: async plaintext => (await this.potassium()).hashHash(plaintext)
+	};
+
+	/** @inheritDoc */
+	public readonly oneTimeAuth: IOneTimeAuth = {
+		bytes: this.staticValues.then(async o => o.oneTimeAuthBytes()),
+		keyBytes: this.staticValues.then(async o => o.oneTimeAuthKeyBytes()),
+		sign: async (message, key) =>
+			(await this.potassium()).oneTimeAuthSign(message, key),
+		verify: async (mac, message, key) =>
+			(await this.potassium()).oneTimeAuthVerify(mac, message, key)
+	};
+
+	/** @inheritDoc */
+	public readonly passwordHash: IPasswordHash = {
+		algorithm: this.staticValues.then(async o => o.passwordHashAlgorithm()),
+		hash: async (
+			plaintext,
+			salt,
+			outputBytes,
+			opsLimit,
+			memLimit,
+			clearInput
+		) => {
+			const output = (await this.potassium()).passwordHashHash(
+				plaintext,
+				salt,
+				outputBytes,
+				opsLimit,
+				memLimit
+			);
+
+			if (clearInput && plaintext instanceof Uint8Array) {
+				this.clearMemory(plaintext);
+			}
+			if (clearInput && salt instanceof Uint8Array) {
+				this.clearMemory(salt);
+			}
+
+			return output;
+		},
+		memLimitInteractive: this.staticValues.then(async o =>
+			o.passwordHashMemLimitInteractive()
+		),
+		memLimitSensitive: this.staticValues.then(async o =>
+			o.passwordHashMemLimitSensitive()
+		),
+		opsLimitInteractive: this.staticValues.then(async o =>
+			o.passwordHashOpsLimitInteractive()
+		),
+		opsLimitSensitive: this.staticValues.then(async o =>
+			o.passwordHashOpsLimitSensitive()
+		),
+		parseMetadata: async metadata =>
+			(await this.potassium()).passwordHashParseMetadata(metadata),
+		saltBytes: this.staticValues.then(async o => o.passwordHashSaltBytes())
+	};
+
+	/** @inheritDoc */
+	public readonly secretBox: ISecretBox = {
+		aeadBytes: this.staticValues.then(async o => o.secretBoxAeadBytes()),
+		keyBytes: this.staticValues.then(async o => o.secretBoxKeyBytes()),
+		open: async (cyphertext, key, additionalData) =>
+			this.localStorageService.getOrSetDefault(
+				this.secretBoxCacheKey(cyphertext, additionalData),
+				BinaryProto,
+				async () =>
+					(await this.potassium()).secretBoxOpen(
+						cyphertext,
+						key,
+						additionalData
+					)
+			),
+		seal: async (plaintext, key, additionalData) => {
+			const cyphertext: Uint8Array = (await this.potassium()).secretBoxSeal(
+				plaintext,
+				key,
+				additionalData
+			);
+
+			const cacheKey = this.secretBoxCacheKey(cyphertext, additionalData);
+
+			if (cacheKey !== undefined) {
+				this.localStorageService.setItem(
+					cacheKey,
+					BinaryProto,
+					cyphertext
+				);
+			}
+
+			return cyphertext;
+		}
+	};
+
+	/** @inheritDoc */
+	public readonly sign: ISign = {
+		bytes: this.staticValues.then(async o => o.signBytes()),
+		importSuperSphincsPublicKeys: async (rsa, sphincs) =>
+			(await this.potassium()).signImportSuperSphincsPublicKeys(
+				rsa,
+				sphincs
+			),
+		keyPair: async () => (await this.potassium()).signKeyPair(),
+		open: async (signed, publicKey, additionalData, decompress) =>
+			(await this.potassium()).signOpen(
+				signed,
+				publicKey,
+				additionalData,
+				decompress
+			),
+		privateKeyBytes: this.staticValues.then(async o =>
+			o.signPrivateKeyBytes()
+		),
+		publicKeyBytes: this.staticValues.then(async o =>
+			o.signPublicKeyBytes()
+		),
+		sign: async (message, privateKey, additionalData, compress) =>
+			(await this.potassium()).signSign(
+				message,
+				privateKey,
+				additionalData,
+				compress
+			),
+		signDetached: async (message, privateKey, additionalData) =>
+			(await this.potassium()).signSignDetached(
+				message,
+				privateKey,
+				additionalData
+			),
+		verifyDetached: async (signature, message, publicKey, additionalData) =>
+			(await this.potassium()).signVerifyDetached(
+				signature,
+				message,
+				publicKey,
+				additionalData
+			)
+	};
+
+	/** Potassium thread pool (round robin load balanced for now). */
+	private async potassium () : Promise<any> {
+		this.roundRobinIndex =
+			this.roundRobinIndex >= this.roundRobinMax ?
+				0 :
+				this.roundRobinIndex + 1;
+
+		return this.potassiumInternal(this.roundRobinIndex);
 	}
 
 	/** Returns cache key for caching SecretBox results. */
