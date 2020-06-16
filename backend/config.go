@@ -101,6 +101,7 @@ var config = struct {
 	BitPayToken                string
 	BurnerChannelExpiration    int64
 	CacheControlHeader         string
+	CloudFunctionRoutes        []string
 	Continents                 map[string]none
 	DefaultContinent           string
 	DefaultContinentCode       string
@@ -177,6 +178,35 @@ var config = struct {
 	172800000,
 
 	"no-cache",
+
+	[]string{
+		"acceptPseudoRelationship",
+		"appointmentInvite",
+		"channelDisconnect",
+		"checkInviteCode",
+		"downgradeAccount",
+		"generateInvite",
+		"getBraintreeSubscriptionID",
+		"getCastleSessionID",
+		"getReactions",
+		"getUserToken",
+		"itemHashChange",
+		"itemRemoved",
+		"openUserToken",
+		"register",
+		"rejectPseudoRelationship",
+		"requestPseudoRelationship",
+		"resetCastleSessionID",
+		"sendAppLink",
+		"sendInvite",
+		"setContact",
+		"userDisconnect",
+		"userEmailSet",
+		"usernameBlacklisted",
+		"userNotify",
+		"userPublicProfileSet",
+		"userRegisterConfirmed",
+	},
 
 	map[string]none{
 		"af": empty,

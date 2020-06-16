@@ -229,6 +229,11 @@ const onCall = f =>
 	functions.https.onRequest((req, res) =>
 		cors(req, res, async () => {
 			try {
+				if (req.get('X-Warmup-Ping')) {
+					res.status(200).send('');
+					return;
+				}
+
 				const idToken = req.get('Authorization');
 				const data = dynamicDeserialize(req.body);
 
