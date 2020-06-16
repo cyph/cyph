@@ -297,9 +297,17 @@ export class AccountDatabaseService extends BaseProvider {
 			return [];
 		}
 
+		const lastValue =
+			(await this.cache.list.getItem(url, proto, immutable)) || [];
+
+		if (keys.length === lastValue.length) {
+			return lastValue;
+		}
+
 		const list = await Promise.all(
 			keys.map(
 				async (k, i) =>
+					lastValue[i] ||
 					(await this.getItemInternal(
 						`${url}/${k}`,
 						proto,
