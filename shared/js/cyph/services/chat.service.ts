@@ -3,9 +3,9 @@
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, concat, interval, Observable, of} from 'rxjs';
+import {BehaviorSubject, interval, Observable} from 'rxjs';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
-import {filter, map, switchMap, take, tap, takeWhile} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
 import {
@@ -29,7 +29,6 @@ import {MaybePromise} from '../maybe-promise-type';
 import {
 	BinaryProto,
 	ChatMessage as ChatMessageProto,
-	StringArrayProto,
 	ChatMessageLiveValueSerialized,
 	ChatMessageValue,
 	ChatPendingMessage,
@@ -49,7 +48,7 @@ import {
 } from '../session';
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
-import {asyncToObservable, toBehaviorSubject} from '../util/flatten-observable';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
@@ -175,34 +174,7 @@ export class ChatService extends BaseProvider {
 	/** List of messages. */
 	public readonly messages = toBehaviorSubject(
 		this.chatSubject.pipe(
-			switchMap(chat =>
-				concat(
-					!chat.pendingMessageRoot ?
-						of<string[]>([]) :
-						asyncToObservable(
-							this.localStorageService
-								.getItem(
-									`${chat.pendingMessageRoot}/messageIDList`,
-									StringArrayProto
-								)
-								.catch(() => [])
-						).pipe(take(1)),
-					chat.messageList.watchFlat(true).pipe(
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						tap(messages => {
-							if (!chat.pendingMessageRoot) {
-								return;
-							}
-
-							this.localStorageService.setItem(
-								`${chat.pendingMessageRoot}/messageIDList`,
-								StringArrayProto,
-								messages
-							);
-						})
-					)
-				)
-			)
+			switchMap(chat => chat.messageList.watchFlat(true))
 		),
 		undefined,
 		this.subscriptions
