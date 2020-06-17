@@ -615,11 +615,7 @@ exports.downgradeAccount = onRequest(true, async (req, res, namespace) => {
 
 exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 	const {accountsURL} = namespaces[namespace];
-	const appStoreReceipt = validateInput(
-		req.body.appStoreReceipt,
-		undefined,
-		true
-	);
+	const appStoreReceipt = req.body.appStoreReceipt;
 	const braintreeIDs = validateInput(
 		(req.body.braintreeIDs || '').split('\n'),
 		undefined,
