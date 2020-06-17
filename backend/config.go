@@ -30,7 +30,7 @@ type BurnerChannel struct {
 // Customer : Customer with API key
 type Customer struct {
 	APIKey          string
-	AppStoreReceipt string
+	AppStoreReceipt string `datastore:",noindex"`
 	BraintreeID     string
 	Company         string
 	Email           string
