@@ -272,6 +272,11 @@ const onRequest = (adminOnly, f) =>
 	functions.https.onRequest((req, res) =>
 		cors(req, res, async () => {
 			try {
+				if (req.get('X-Warmup-Ping')) {
+					res.status(200).send('');
+					return;
+				}
+
 				if (adminOnly && req.get('Authorization') !== cyphAdminKey) {
 					throw new Error('Invalid authorization.');
 				}
