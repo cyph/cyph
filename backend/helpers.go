@@ -639,7 +639,7 @@ func getAppStoreTransactionDataInternal(appStoreReceipt string, sandbox bool) (s
 
 	planID, ok := config.PlanAppleIDs[appleID]
 	if !ok {
-		return "", errors.New("Invalid App Store receipt: " + appStoreReceipt)
+		return "", errors.New("Invalid data from App Store receipt: " + string(responseBodyBytes))
 	}
 
 	return planID, nil
