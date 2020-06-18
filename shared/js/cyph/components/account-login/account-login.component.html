@@ -11,18 +11,30 @@
 	</span>
 </h3>
 
-<div
-	fxFlexFill
-	fxLayoutAlign="center center"
-	class="login-form animated fadeIn"
-	[class.checking]="checking | await"
-	[class.mobile]="envService.isMobile | await"
-	ngClass.gt-xs="gt-xs"
-	*ngIf="(pinUnlock | await) !== undefined"
->
-	<ng-container
-		*ngIf="accountAuthService.pseudoAccountLogin | await; else desktopView"
+<div fxFlexFill fxLayout="column" fxLayoutGap="16px">
+	<div></div>
+	<div></div>
+
+	<div
+		fxFlex
+		fxLayoutAlign="center center"
+		class="login-form animated fadeIn"
+		[class.checking]="checking | await"
+		[class.mobile]="envService.isMobile | await"
+		ngClass.gt-xs="gt-xs"
+		*ngIf="(pinUnlock | await) !== undefined"
 	>
+		<ng-container
+			*ngIf="
+				accountAuthService.pseudoAccountLogin | await;
+				else desktopView
+			"
+		>
+			<ng-container *ngTemplateOutlet="pseudoAccountUI"></ng-container>
+		</ng-container>
+	</div>
+
+	<ng-template #pseudoAccountUI>
 		<mat-card
 			fxFlex
 			fxFlex.sm="95"
@@ -87,7 +99,7 @@
 				></mat-progress-spinner>
 			</ng-container>
 		</mat-card>
-	</ng-container>
+	</ng-template>
 
 	<ng-template #desktopView>
 		<ng-container
@@ -515,6 +527,9 @@
 			mode="indeterminate"
 		></mat-progress-spinner>
 	</ng-template>
+
+	<cyph-footer></cyph-footer>
+	<div></div>
 </div>
 
 <ng-template #usernameField>
