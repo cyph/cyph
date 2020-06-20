@@ -1,11 +1,10 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {IContactListItem, UserLike} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
-import {MaybePromise} from '../maybe-promise-type';
 import {
 	IAccountMessagingGroup,
 	ISessionMessage,
@@ -79,13 +78,11 @@ export class AccountSessionService extends SessionService {
 	public readonly ready = this._READY.promise;
 
 	/** Remote user. */
-	public readonly remoteUser = new BehaviorSubject<
-		MaybePromise<UserLike | undefined>
-	>(undefined);
+	public readonly remoteUser = resolvable<UserLike | undefined>();
 
 	/** @inheritDoc */
 	protected async abortSetup () : Promise<void> {
-		const remoteUser = await this.remoteUser.pipe(take(1)).toPromise();
+		const remoteUser = await this.remoteUser.promise;
 
 		if (remoteUser?.username) {
 			await this.accountContactsService.resetCastleSession(
@@ -228,7 +225,7 @@ export class AccountSessionService extends SessionService {
 			this.accountSessionInitService.ephemeral = true;
 			this.ephemeralSubSession = true;
 
-			this.remoteUser.next({
+			this.remoteUser.resolve({
 				anonymous: true,
 				avatar: undefined,
 				contactID: undefined,
@@ -532,7 +529,7 @@ export class AccountSessionService extends SessionService {
 				(contactState.email && `<${contactState.email}>`) ||
 				this.stringsService.friend;
 
-			this.remoteUser.next({
+			this.remoteUser.resolve({
 				anonymous: false,
 				avatar: undefined,
 				contactID: this.accountContactsService.getContactID(
@@ -578,7 +575,7 @@ export class AccountSessionService extends SessionService {
 			debugLog(() => ({accountSessionInitComplete: {user}}));
 		});
 
-		this.remoteUser.next(userPromise);
+		this.remoteUser.resolve(userPromise);
 		this.resolveReady();
 	}
 

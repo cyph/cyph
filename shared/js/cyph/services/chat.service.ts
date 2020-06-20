@@ -187,14 +187,7 @@ export class ChatService extends BaseProvider {
 	}>();
 
 	/** Remote User object where applicable. */
-	public readonly remoteUser = new BehaviorSubject<
-		MaybePromise<UserLike | undefined>
-	>(undefined);
-
-	/** @see remoteUser */
-	public readonly remoteUserObservable = this.remoteUser.pipe(
-		switchMap(async user => user)
-	);
+	public readonly remoteUser = resolvable<UserLike | undefined>();
 
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers = {
@@ -468,7 +461,7 @@ export class ChatService extends BaseProvider {
 		return {
 			proto: ChatMessageProto,
 			transform: async value => {
-				const remoteUser = await this.remoteUser.value;
+				const remoteUser = await this.remoteUser.promise;
 
 				return {
 					...message,

@@ -32,7 +32,7 @@
 						>
 							<h1
 								*ngIf="
-									(chatService.remoteUserObservable | await)
+									(chatService.remoteUser.promise | await)
 										?.name | await as name
 								"
 							>
@@ -60,7 +60,7 @@
 								[src]="avatar"
 								alt="User Avatar"
 								*ngIf="
-									(chatService.remoteUserObservable | await)
+									(chatService.remoteUser.promise | await)
 										?.avatar | await as avatar
 								"
 							/>
