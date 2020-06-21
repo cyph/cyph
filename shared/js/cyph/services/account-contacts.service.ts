@@ -403,8 +403,7 @@ export class AccountContactsService extends BaseProvider {
 			const getContacts = resolvable<User[]>();
 
 			this.dialogService.baseDialog(
-				await AccountContactsService.accountContactsSearchComponent
-					.promise,
+				await AccountContactsService.accountContactsSearchComponent,
 				o => {
 					o.chipInput = true;
 					o.contactList = undefined;
@@ -421,8 +420,8 @@ export class AccountContactsService extends BaseProvider {
 
 			try {
 				const [contacts, close] = await Promise.all([
-					getContacts.promise,
-					closeFunction.promise
+					getContacts,
+					closeFunction
 				]);
 
 				close();
@@ -516,7 +515,7 @@ export class AccountContactsService extends BaseProvider {
 		const getContacts = resolvable<User[]>();
 
 		this.dialogService.baseDialog(
-			await AccountContactsService.accountContactsSearchComponent.promise,
+			await AccountContactsService.accountContactsSearchComponent,
 			o => {
 				o.chipInput = true;
 				o.getContacts = getContacts;
@@ -530,8 +529,8 @@ export class AccountContactsService extends BaseProvider {
 
 		try {
 			const [contacts, close] = await Promise.all([
-				getContacts.promise,
-				closeFunction.promise
+				getContacts,
+				closeFunction
 			]);
 
 			if (contacts.length < 1) {

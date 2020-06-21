@@ -23,8 +23,8 @@ export class SessionCapabilitiesService extends BaseProvider
 	private readonly localCapabilities: Promise<
 		ISessionCapabilities
 	> = (async () => ({
-		p2p: await this._P2P_SUPPORT.promise,
-		walkieTalkieMode: await this._WALKIE_TALKIE.promise
+		p2p: await this._P2P_SUPPORT,
+		walkieTalkieMode: await this._WALKIE_TALKIE
 	}))();
 
 	/** @ignore */
@@ -45,10 +45,8 @@ export class SessionCapabilitiesService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly capabilities = {
-		p2p: this._CAPABILITIES.promise.then(o => o.p2p),
-		walkieTalkieMode: this._CAPABILITIES.promise.then(
-			o => o.walkieTalkieMode
-		)
+		p2p: this._CAPABILITIES.then(o => o.p2p),
+		walkieTalkieMode: this._CAPABILITIES.then(o => o.walkieTalkieMode)
 	};
 
 	/** @inheritDoc */
@@ -66,7 +64,7 @@ export class SessionCapabilitiesService extends BaseProvider
 	) {
 		super();
 
-		this.sessionService.beginChat.promise.then(async () => {
+		this.sessionService.beginChat.then(async () => {
 			const localCapabilities = await this.localCapabilities;
 
 			this.sessionService.send([

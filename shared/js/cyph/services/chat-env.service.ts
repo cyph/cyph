@@ -83,7 +83,7 @@ export class ChatEnvService extends EnvService {
 	) {
 		super(localStorageService);
 
-		this.sessionInitService.sessionService.promise.then(sessionService => {
+		this.sessionInitService.sessionService.then(sessionService => {
 			this.sessionService = sessionService;
 		});
 	}

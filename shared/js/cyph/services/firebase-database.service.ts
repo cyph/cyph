@@ -566,10 +566,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 			progress.error(err);
 		});
 
-		alreadyCached.promise.catch(() => {});
+		alreadyCached.catch(() => {});
 
 		return {
-			alreadyCached: alreadyCached.promise,
+			alreadyCached: alreadyCached,
 			progress,
 			result
 		};

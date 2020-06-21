@@ -246,8 +246,7 @@ export class EphemeralSessionService extends SessionService {
 						);
 
 						const answered = await this.notificationService.ring(
-							async () =>
-								this.channelConnected.promise.then(() => true),
+							async () => this.channelConnected.then(() => true),
 							true,
 							undefined,
 							this.chatRequestRingTimeout

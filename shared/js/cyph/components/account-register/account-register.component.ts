@@ -434,7 +434,7 @@ export class AccountRegisterComponent extends BaseProvider
 			}
 		);
 
-		const success = await activationComplete.promise;
+		const success = await activationComplete;
 
 		if (success) {
 			const additionalDevices = mobile ?
@@ -444,7 +444,7 @@ export class AccountRegisterComponent extends BaseProvider
 			additionalDevices.next(additionalDevices.value + 1);
 		}
 
-		(await closeFunction.promise)();
+		(await closeFunction)();
 		await closed;
 	}
 
@@ -550,14 +550,14 @@ export class AccountRegisterComponent extends BaseProvider
 			}
 		);
 
-		const masterKey = await submitMasterKey.promise;
+		const masterKey = await submitMasterKey;
 
 		if (masterKey) {
 			this.masterKey.next(masterKey);
 			this.additionalDevices.paperMasterKey.next(true);
 		}
 
-		(await closeFunction.promise)();
+		(await closeFunction)();
 		await closed;
 	}
 

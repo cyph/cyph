@@ -450,8 +450,7 @@ export class AccountComposeComponent extends BaseProvider
 						undefined
 				);
 
-				await this.accountChatService.resolvers.currentMessageSynced
-					.promise;
+				await this.accountChatService.resolvers.currentMessageSynced;
 
 				await this.accountChatService.send(
 					this.messageType.value,

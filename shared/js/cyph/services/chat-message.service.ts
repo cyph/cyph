@@ -148,8 +148,7 @@ const getMetadataInternal = async (
 			let user: UserLike | undefined;
 
 			try {
-				const remoteUser = await accountSessionService?.remoteUser
-					.promise;
+				const remoteUser = await accountSessionService?.remoteUser;
 
 				user =
 					envService.isAccounts && accountUserLookupService ?

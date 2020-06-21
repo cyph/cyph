@@ -27,13 +27,13 @@ export class BasicSessionInitService extends BaseProvider
 	public ephemeral: boolean = true;
 
 	/** @inheritDoc */
-	public readonly headless: Promise<boolean> = this._HEADLESS.promise;
+	public readonly headless: Promise<boolean> = this._HEADLESS;
 
 	/** @inheritDoc */
-	public readonly id: Promise<string> = this._ID.promise;
+	public readonly id: Promise<string> = this._ID;
 
 	/** @inheritDoc */
-	public readonly salt: Promise<string | undefined> = this._SALT.promise;
+	public readonly salt: Promise<string | undefined> = this._SALT;
 
 	/** @inheritDoc */
 	public readonly sessionService: IResolvable<ISessionService> = resolvable();

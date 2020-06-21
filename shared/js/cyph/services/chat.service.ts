@@ -200,14 +200,14 @@ export class ChatService extends BaseProvider {
 
 	/** Resolves when UI is ready to be displayed. */
 	public readonly uiReady: Promise<true> = Promise.all([
-		this.resolvers.chatConnected.promise,
-		this.resolvers.currentMessageSynced.promise,
-		this.resolvers.messageListLoaded.promise,
-		this.sessionService.initialMessagesProcessed.promise,
-		this.sessionService.ready.promise.then(async () =>
+		this.resolvers.chatConnected,
+		this.resolvers.currentMessageSynced,
+		this.resolvers.messageListLoaded,
+		this.sessionService.initialMessagesProcessed,
+		this.sessionService.ready.then(async () =>
 			Promise.all([
 				!this.sessionService.group ?
-					this.channelService?.initialMessagesProcessed.promise :
+					this.channelService?.initialMessagesProcessed :
 					undefined
 			])
 		)
@@ -460,7 +460,7 @@ export class ChatService extends BaseProvider {
 		return {
 			proto: ChatMessageProto,
 			transform: async value => {
-				const remoteUser = await this.remoteUser.promise;
+				const remoteUser = await this.remoteUser;
 
 				return {
 					...message,
@@ -762,7 +762,7 @@ export class ChatService extends BaseProvider {
 							this.sessionInitService.ephemeral &&
 							author === this.sessionService.remoteUsername
 						) {
-							const p2pService = await this.p2pService.promise;
+							const p2pService = await this.p2pService;
 
 							await this.scrollService.trackItem(
 								id,
@@ -1462,27 +1462,27 @@ export class ChatService extends BaseProvider {
 		super();
 
 		if (this.envService.debugLog) {
-			this.resolvers.chatConnected.promise.then(() => {
+			this.resolvers.chatConnected.then(() => {
 				debugLog(() => 'ChatService.resolvers.chatConnected resolved');
 			});
-			this.resolvers.currentMessageSynced.promise.then(() => {
+			this.resolvers.currentMessageSynced.then(() => {
 				debugLog(
 					() => 'ChatService.resolvers.currentMessageSynced resolved'
 				);
 			});
-			this.resolvers.messageListLoaded.promise.then(() => {
+			this.resolvers.messageListLoaded.then(() => {
 				debugLog(
 					() => 'ChatService.resolvers.messageListLoaded resolved'
 				);
 			});
-			this.sessionService.initialMessagesProcessed.promise.then(() => {
+			this.sessionService.initialMessagesProcessed.then(() => {
 				debugLog(
 					() =>
 						'ChatService.sessionService.initialMessagesProcessed resolved'
 				);
 			});
 			(this.channelService && !this.sessionService.group ?
-				this.channelService.initialMessagesProcessed.promise :
+				this.channelService.initialMessagesProcessed :
 				Promise.resolve()
 			).then(() => {
 				debugLog(
@@ -1499,8 +1499,7 @@ export class ChatService extends BaseProvider {
 			this.remoteUser.resolve(undefined);
 		}
 
-		this.sessionService.ready.promise.then(() => {
-			const beginChat = this.sessionService.beginChat.promise;
+		this.sessionService.ready.then(() => {
 			const callType = this.sessionInitService.callType;
 			const pendingMessageRoot = this.chat.pendingMessageRoot;
 
@@ -1635,26 +1634,26 @@ export class ChatService extends BaseProvider {
 						this.fullyLoadedMessages,
 						lastMessageID,
 						resolvable
-					).promise;
+					);
 				}
 				this.resolvers.messageListLoaded.resolve();
 			});
 
-			beginChat.then(() => {
+			this.sessionService.beginChat.then(() => {
 				this.begin();
 			});
 
-			this.sessionService.closed.promise.then(async () => this.close());
+			this.sessionService.closed.then(async () => this.close());
 
 			if (this.sessionInitService.ephemeral) {
-				this.sessionService.channelConnected.promise.then(() => {
+				this.sessionService.channelConnected.then(() => {
 					this.chat.state = States.keyExchange;
 					this.updateChat();
 					this.initProgressStart();
 				});
 			}
 
-			this.sessionService.connected.promise.then(async () => {
+			this.sessionService.connected.then(async () => {
 				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
 					this.walkieTalkieMode.value
 				);
@@ -1706,7 +1705,7 @@ export class ChatService extends BaseProvider {
 				this.p2pWebRTCService.resolveReady();
 
 				if (this.sessionInitService.ephemeral) {
-					await beginChat;
+					await this.sessionService.beginChat;
 				}
 
 				if (!isPassiveAccepted) {
@@ -1717,7 +1716,7 @@ export class ChatService extends BaseProvider {
 				}
 			});
 
-			this.sessionService.connectFailure.promise.then(async () =>
+			this.sessionService.connectFailure.then(async () =>
 				this.abortSetup()
 			);
 
@@ -1811,12 +1810,12 @@ export class ChatService extends BaseProvider {
 								this.fullyLoadedMessages,
 								lastEvent.id,
 								resolvable
-							).promise;
+							);
 						};
 
 						this.sessionService.on(RpcEvents.text, f);
 						await Promise.race([
-							this.sessionService.closed.promise.then(() => {
+							this.sessionService.closed.then(() => {
 								debugLog(
 									() =>
 										'receiveTextLock release: sessionService closed'

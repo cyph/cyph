@@ -326,10 +326,7 @@ export class LocalStorageService extends DataManagerService {
 					};
 				}
 
-				await Promise.race([
-					unlocked.promise,
-					sleep(this.lockConfig.interval)
-				]);
+				await Promise.race([unlocked, sleep(this.lockConfig.interval)]);
 				continue;
 			}
 
@@ -547,7 +544,7 @@ export class LocalStorageService extends DataManagerService {
 
 									unlocked = resolvable();
 
-									await unlocked.promise;
+									await unlocked;
 								}
 							})();
 

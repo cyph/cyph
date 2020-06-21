@@ -5,7 +5,7 @@
 			forceShow ||
 			(chat?.state === states.chat &&
 				(sessionService.state.isAlive | await) &&
-				(chatService.resolvers.currentMessageSynced.promise | await))
+				(chatService.resolvers.currentMessageSynced | await))
 		"
 	>
 		<div

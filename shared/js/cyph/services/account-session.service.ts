@@ -76,7 +76,7 @@ export class AccountSessionService extends SessionService {
 
 	/** @inheritDoc */
 	protected async abortSetup () : Promise<void> {
-		const remoteUser = await this.remoteUser.promise;
+		const remoteUser = await this.remoteUser;
 
 		if (remoteUser?.username) {
 			await this.accountContactsService.resetCastleSession(
@@ -377,9 +377,7 @@ export class AccountSessionService extends SessionService {
 			});
 
 			Promise.all(
-				group.map(
-					async session => session.initialMessagesProcessed.promise
-				)
+				group.map(async session => session.initialMessagesProcessed)
 			).then(() => {
 				this.initialMessagesProcessed.resolve();
 			});

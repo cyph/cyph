@@ -273,7 +273,7 @@ export class PairwiseSession implements IPairwiseSession {
 		await this.outgoingMessageQueue.pushItem(outgoingMessage);
 
 		if (resolver) {
-			await resolver.promise;
+			await resolver;
 		}
 	}
 

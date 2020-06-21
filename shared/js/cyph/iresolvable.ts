@@ -1,7 +1,7 @@
 /**
  * Contains promise and resolve + reject functions.
  */
-export interface IResolvable<T> {
+export interface IResolvable<T> extends Promise<T> {
 	/** @see Promise */
 	promise: Promise<T>;
 

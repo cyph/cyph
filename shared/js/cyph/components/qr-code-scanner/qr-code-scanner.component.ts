@@ -45,7 +45,7 @@ export class QRCodeScannerComponent extends BaseProvider
 
 	/** Camera feed. */
 	public readonly videoStream = (async () => {
-		await this.activated.promise;
+		await this.activated;
 
 		const constraints = {video: {facingMode: 'environment'}};
 

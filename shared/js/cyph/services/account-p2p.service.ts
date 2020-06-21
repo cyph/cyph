@@ -76,7 +76,7 @@ export class AccountP2PService extends P2PService {
 
 	/** @inheritDoc */
 	protected async request (callType: 'audio' | 'video') : Promise<void> {
-		const remoteUser = await this.accountSessionService.remoteUser.promise;
+		const remoteUser = await this.accountSessionService.remoteUser;
 
 		if (remoteUser?.anonymous) {
 			return super.request(callType);
@@ -106,7 +106,7 @@ export class AccountP2PService extends P2PService {
 		callType: 'audio' | 'video',
 		route: string = callType
 	) : Promise<void> {
-		const remoteUser = await this.accountSessionService.remoteUser.promise;
+		const remoteUser = await this.accountSessionService.remoteUser;
 
 		if (remoteUser?.anonymous) {
 			return;
@@ -210,7 +210,7 @@ export class AccountP2PService extends P2PService {
 
 	/** @inheritDoc */
 	public async init (remoteVideos: () => JQuery) : Promise<void> {
-		await this.accountSessionService.ready.promise;
+		await this.accountSessionService.ready;
 
 		await super.init(remoteVideos);
 

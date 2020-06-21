@@ -39,8 +39,8 @@ export class SocialShareService extends BaseProvider {
 			true
 		);
 
-		await socialShareOpened.promise;
-		(await closeFunction.promise)();
+		await socialShareOpened;
+		(await closeFunction)();
 		await closed;
 	}
 

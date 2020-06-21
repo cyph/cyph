@@ -142,7 +142,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			return;
 		}
 
-		this.sessionService.aborted.promise.then(() => {
+		this.sessionService.aborted.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
@@ -151,7 +151,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			this.appService.chatRootState.next(ChatRootStates.chat);
 		});
 
-		this.sessionService.beginChatComplete.promise.then(() => {
+		this.sessionService.beginChatComplete.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
@@ -159,7 +159,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			beforeUnloadMessage = this.stringsService.disconnectWarning;
 		});
 
-		this.sessionService.beginWaiting.promise.then(() => {
+		this.sessionService.beginWaiting.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
@@ -167,7 +167,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			this.appService.chatRootState.next(ChatRootStates.waitingForFriend);
 		});
 
-		this.sessionService.channelConnected.promise.then(() => {
+		this.sessionService.channelConnected.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
@@ -175,7 +175,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			this.appService.chatRootState.next(ChatRootStates.chat);
 		});
 
-		this.sessionService.cyphNotFound.promise.then(() => {
+		this.sessionService.cyphNotFound.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}

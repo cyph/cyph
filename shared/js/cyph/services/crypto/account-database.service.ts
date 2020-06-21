@@ -1443,7 +1443,7 @@ export class AccountDatabaseService extends BaseProvider {
 				await this.seal(url, proto, value, securityModel, customKey)
 			);
 
-			cancel.promise.then(() => {
+			cancel.then(() => {
 				uploadTask.cancel();
 			});
 

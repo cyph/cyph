@@ -90,7 +90,7 @@ export class AccountChatService extends ChatService {
 			return super.getScrollServiceUnreadMessages();
 		}
 
-		const notificationData = await this.notificationData.promise;
+		const notificationData = await this.notificationData;
 
 		const asyncMap = this.accountDatabaseService.getAsyncMap(
 			`unreadMessages/${notificationData.unreadMessagesID}`,
@@ -125,8 +125,8 @@ export class AccountChatService extends ChatService {
 	/** @inheritDoc */
 	public async abortSetup () : Promise<void> {
 		const [groupID, username] = await Promise.all([
-			this.notificationData.promise.then(o => o.groupID),
-			this.remoteUser.promise.then(o =>
+			this.notificationData.then(o => o.groupID),
+			this.remoteUser.then(o =>
 				o && 'username' in o ? o.username : undefined
 			)
 		]);
@@ -161,14 +161,14 @@ export class AccountChatService extends ChatService {
 				keepCurrentMessage,
 				oldLocalStorageKey
 			),
-			this.remoteUser.promise
+			this.remoteUser
 		]);
 
 		if (!id || remoteUser?.anonymous) {
 			return;
 		}
 
-		const notificationData = await this.notificationData.promise;
+		const notificationData = await this.notificationData;
 
 		await this.accountDatabaseService.notify(
 			notificationData.usernames,

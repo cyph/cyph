@@ -125,7 +125,7 @@ export class AccountInviteService extends BaseProvider {
 			return afterClosed;
 		}
 
-		await afterOpened.promise;
+		await afterOpened;
 		await this.deleteInvite(invite);
 		await afterClosed;
 	}

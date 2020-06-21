@@ -315,7 +315,7 @@ export class MaterialDialogService extends BaseProvider
 			matDialogRef.componentInstance.title = o.title;
 
 			return Promise.race([
-				cropResult.promise,
+				cropResult,
 				matDialogRef.afterClosed().toPromise()
 			]);
 		});

@@ -252,7 +252,7 @@ export class AccountComponent extends BaseProvider
 	public readonly userPresence = UserPresence;
 
 	/** Resolves after view init. */
-	public readonly viewInitiated: Promise<void> = this._VIEW_INITIATED.promise;
+	public readonly viewInitiated: Promise<void> = this._VIEW_INITIATED;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {

@@ -223,8 +223,7 @@
 					class="cover-image call"
 					[style.background-image]="
 						urlToSafeStyle(
-							(chatService.remoteUser.promise | await)
-								?.coverImage | await
+							(chatService.remoteUser | await)?.coverImage | await
 						) | await
 					"
 				></div>
@@ -236,8 +235,8 @@
 				>
 					<h2 class="name">
 						{{
-							((chatService.remoteUser.promise | await)?.name
-								| await) || ''
+							((chatService.remoteUser | await)?.name | await) ||
+								''
 						}}
 					</h2>
 					<img
@@ -246,7 +245,7 @@
 						[src]="avatar"
 						alt="User Avatar"
 						*ngIf="
-							(chatService.remoteUser.promise | await)?.avatar
+							(chatService.remoteUser | await)?.avatar
 								| await as avatar
 						"
 					/>

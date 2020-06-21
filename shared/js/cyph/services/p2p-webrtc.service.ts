@@ -85,8 +85,7 @@ export class P2PWebRTCService extends BaseProvider
 	};
 
 	/** @ignore */
-	private readonly remoteVideos: Promise<() => JQuery> = this._REMOTE_VIDEOS
-		.promise;
+	private readonly remoteVideos: Promise<() => JQuery> = this._REMOTE_VIDEOS;
 
 	/** @ignore */
 	private readonly sessionServices: Promise<SessionService[]>;
@@ -98,7 +97,7 @@ export class P2PWebRTCService extends BaseProvider
 	public readonly disconnect: Observable<void> = this.disconnectInternal;
 
 	/** @inheritDoc */
-	public readonly handlers: Promise<IP2PHandlers> = this._HANDLERS.promise;
+	public readonly handlers: Promise<IP2PHandlers> = this._HANDLERS;
 
 	/** @inheritDoc */
 	public readonly incomingStreams = new BehaviorSubject<
@@ -158,7 +157,7 @@ export class P2PWebRTCService extends BaseProvider
 	});
 
 	/** @inheritDoc */
-	public readonly ready: Promise<boolean> = this._READY.promise;
+	public readonly ready: Promise<boolean> = this._READY;
 
 	/** @inheritDoc */
 	public readonly recorder = (() => {
@@ -920,7 +919,7 @@ export class P2PWebRTCService extends BaseProvider
 
 				peerResolvers[0].resolve(getPeer());
 
-				return {connected: connected.promise, peerResolvers};
+				return {connected: connected, peerResolvers};
 			});
 
 			if (this.sessionService.group) {
@@ -1281,7 +1280,7 @@ export class P2PWebRTCService extends BaseProvider
 								typeof message.generation === 'number' ?
 									peerResolvers[message.generation] :
 									undefined;
-							const peer = await peerResolver?.promise;
+							const peer = await peerResolver;
 
 							/* eslint-disable-next-line no-unused-expressions */
 							peer?.signal(message.data);

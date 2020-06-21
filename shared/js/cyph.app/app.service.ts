@@ -34,8 +34,7 @@ export class AppService extends BaseProvider implements CanActivate {
 	private readonly _LOCKED_DOWN_ROUTE = resolvable<string>();
 
 	/** @ignore */
-	private readonly lockedDownRoute: Promise<string> = this._LOCKED_DOWN_ROUTE
-		.promise;
+	private readonly lockedDownRoute: Promise<string> = this._LOCKED_DOWN_ROUTE;
 
 	/** @see ChatRootStates */
 	public readonly chatRootState = new BehaviorSubject<ChatRootStates>(

@@ -41,7 +41,7 @@ export class AccountCastleService extends CastleService {
 	public async init (
 		accountSessionService: AccountSessionService
 	) : Promise<void> {
-		const user = await accountSessionService.remoteUser.promise;
+		const user = await accountSessionService.remoteUser;
 
 		debugLog(() => ({startingAccountCastleSession: {user}}));
 

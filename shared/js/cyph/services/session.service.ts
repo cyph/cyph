@@ -74,7 +74,7 @@ export abstract class SessionService extends BaseProvider
 	protected lastIncomingMessageTimestamp: number = 0;
 
 	/** @ignore */
-	protected readonly opened: Promise<boolean> = this._OPENED.promise;
+	protected readonly opened: Promise<boolean> = this._OPENED;
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string> = new Set<string>();
@@ -207,7 +207,7 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
-		await this.connected.promise;
+		await this.connected;
 
 		await this.castleService.send(
 			await serialize<ISessionMessageList>(SessionMessageList, {
@@ -227,7 +227,7 @@ export abstract class SessionService extends BaseProvider
 		this.channelConnected.resolve();
 		await Promise.all([
 			this.castleService.ready,
-			this.channelService.initialMessagesProcessed.promise
+			this.channelService.initialMessagesProcessed
 		]);
 		this.state.isConnected.next(true);
 		this.connected.resolve();
@@ -405,7 +405,7 @@ export abstract class SessionService extends BaseProvider
 				break;
 
 			case CastleEvents.connect:
-				this.connected.promise.then(async () => {
+				this.connected.then(async () => {
 					this.state.sharedSecret.next(undefined);
 
 					if (await this.sessionInitService.headless) {
@@ -489,7 +489,7 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
-		(await this.p2pWebRTCService.promise).close();
+		(await this.p2pWebRTCService).close();
 
 		this.state.isAlive.next(false);
 		this.closed.resolve();
@@ -586,7 +586,7 @@ export abstract class SessionService extends BaseProvider
 				}
 			);
 
-			await Promise.race([this.closed.promise, o.stillOwner.toPromise()]);
+			await Promise.race([this.closed, o.stillOwner.toPromise()]);
 			sub.unsubscribe();
 		});
 
@@ -672,7 +672,7 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
-		const p2pWebRTCService = await this.p2pWebRTCService.promise;
+		const p2pWebRTCService = await this.p2pWebRTCService;
 
 		/* Workaround for lint false positive bug */
 		/* eslint-disable-next-line prefer-const */
@@ -709,7 +709,7 @@ export abstract class SessionService extends BaseProvider
 
 		localStream = await p2pWebRTCService.initUserMedia(callType);
 
-		closeRequestAlert.promise.then(async f => f()).catch(() => {});
+		closeRequestAlert.then(async f => f()).catch(() => {});
 
 		if (localStream) {
 			this.prepareForCallTypeError.next(undefined);

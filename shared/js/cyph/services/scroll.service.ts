@@ -37,7 +37,7 @@ export class ScrollService extends BaseProvider {
 
 	/** @ignore */
 	private readonly rootElement: Promise<JQuery | undefined> = this
-		._ROOT_ELEMENT.promise;
+		._ROOT_ELEMENT;
 
 	/** @ignore */
 	private readonly scrollDownLock = {};
@@ -84,8 +84,8 @@ export class ScrollService extends BaseProvider {
 	);
 
 	/** Unread item IDs. */
-	public readonly unreadItems: Promise<IAsyncSet<string>> = this._UNREAD_ITEMS
-		.promise;
+	public readonly unreadItems: Promise<IAsyncSet<string>> = this
+		._UNREAD_ITEMS;
 
 	/** Watches unread item count. */
 	public readonly watchUnreadCount = memoize(() =>

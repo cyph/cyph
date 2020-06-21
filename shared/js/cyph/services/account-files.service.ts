@@ -2090,7 +2090,7 @@ export class AccountFilesService extends BaseProvider {
 		const closeFunction = resolvable<() => void>();
 
 		await this.dialogService.baseDialog(
-			await AccountFilesService.accountFileSharingComponent.promise,
+			await AccountFilesService.accountFileSharingComponent,
 			o => {
 				o.closeFunction = closeFunction;
 				o.file = file;

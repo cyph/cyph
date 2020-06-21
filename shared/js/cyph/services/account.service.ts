@@ -224,7 +224,7 @@ export class AccountService extends BaseProvider {
 	public readonly transition: Observable<boolean> = this.transitionInternal;
 
 	/** Resolves after UI is ready. */
-	public readonly uiReady: Promise<void> = this._UI_READY.promise;
+	public readonly uiReady: Promise<void> = this._UI_READY;
 
 	/** Total count of unread messages. */
 	public readonly unreadMessages: Observable<number> = toBehaviorSubject(
@@ -694,7 +694,7 @@ export class AccountService extends BaseProvider {
 								await this.notificationService.ring(
 									async () =>
 										Promise.race([
-											incomingCallAnswer.promise,
+											incomingCallAnswer,
 											this.dialogService.confirm(
 												{
 													bottomSheet: true,
@@ -748,7 +748,7 @@ export class AccountService extends BaseProvider {
 									this.notificationService.ringTimeoutLong
 								);
 
-						(await dialogClose.promise)();
+						(await dialogClose)();
 
 						if (answered) {
 							if (callType === 'chat') {

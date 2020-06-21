@@ -112,7 +112,7 @@ export class AccountFileSharingComponent extends BaseProvider {
 				}
 
 				if (this.closeFunction) {
-					(await this.closeFunction.promise)();
+					(await this.closeFunction)();
 				}
 			})
 		)

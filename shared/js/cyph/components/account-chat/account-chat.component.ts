@@ -490,7 +490,7 @@ export class AccountChatComponent extends BaseProvider
 										.then(async () => {
 											const remoteUser = await this
 												.accountSessionService
-												.remoteUser.promise;
+												.remoteUser;
 
 											if (
 												this.destroyed.value ||
