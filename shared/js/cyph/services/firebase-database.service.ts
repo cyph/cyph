@@ -215,6 +215,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** Max number of bytes to upload to non-blob storage. */
 	private readonly nonBlobStorageLimit = 8192;
 
+	/** Max number of bytes to upload to non-blob storage in pushItem. */
+	private readonly nonBlobStoragePushLimit = 4194304;
+
 	/** @ignore */
 	private readonly observableCaches = {
 		watch: new Map<string, Observable<ITimedValue<any>>>(),
@@ -1059,7 +1062,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 					key: string,
 					previousKey: () => Promise<string | undefined>,
 					o: {callback?: () => MaybePromise<void>}
-			  ) => MaybePromise<T>)
+			  ) => MaybePromise<T>),
+		forcePushWithKeyCallback: boolean = false
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -1138,7 +1142,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 				url,
 				lockFunction
 			)(async () => {
-				if (typeof value === 'function') {
+				if (forcePushWithKeyCallback || typeof value === 'function') {
 					return pushItemWithKeyCallback();
 				}
 
@@ -1420,7 +1424,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 							hash: undefined
 						}))).hash
 				) {
-					if (data.length < this.nonBlobStorageLimit) {
+					if (push || data.length < this.nonBlobStorageLimit) {
+						if (data.length >= this.nonBlobStoragePushLimit) {
+							return this.pushItem(url, proto, value, true);
+						}
+
 						await setDatabaseValue({
 							data: this.potassiumService.toBase64(data)
 						});
