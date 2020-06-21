@@ -1,7 +1,7 @@
 import {ReplaySubject, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {ISessionMessageData} from './session/isession-message-data';
-import {getOrSetDefault} from './util/get-or-set-default';
+import {getOrSetDefault} from '../util/get-or-set-default';
+import {ISessionMessageData} from './isession-message-data';
 
 /**
  * Event manager.

@@ -5,7 +5,6 @@ import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
-import {EventManager} from '../event-manager';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
@@ -23,6 +22,7 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {
 	CastleEvents,
+	EventManager,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
 	ProFeatures,
