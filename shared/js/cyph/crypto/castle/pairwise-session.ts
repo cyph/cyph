@@ -464,8 +464,6 @@ export class PairwiseSession implements IPairwiseSession {
 								}));
 							});
 
-						this.initialMessagesProcessed.resolve();
-
 						if (!o.stillOwner.value) {
 							return;
 						}
@@ -630,10 +628,13 @@ export class PairwiseSession implements IPairwiseSession {
 							}
 						);
 
+						this.initialMessagesProcessed.resolve();
+
 						await Promise.race([
 							this.transport.closed,
 							o.stillOwner.toPromise()
 						]);
+
 						decryptSub.unsubscribe();
 						encryptSub.unsubscribe();
 						ratchetUpdateSub.unsubscribe();
@@ -645,6 +646,8 @@ export class PairwiseSession implements IPairwiseSession {
 						)) {
 							resolver.resolve();
 						}
+
+						this.initialMessagesProcessed.resolve();
 					});
 				}
 			}
