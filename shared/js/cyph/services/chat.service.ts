@@ -1647,7 +1647,7 @@ export class ChatService extends BaseProvider {
 			this.sessionService.closed.promise.then(async () => this.close());
 
 			if (this.sessionInitService.ephemeral) {
-				this.sessionService.connected.promise.then(() => {
+				this.sessionService.channelConnected.promise.then(() => {
 					this.chat.state = States.keyExchange;
 					this.updateChat();
 					this.initProgressStart();

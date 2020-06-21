@@ -41,13 +41,16 @@ export interface ISessionService {
 	/** Resolves when we can begin waiting for Bob. */
 	readonly beginWaiting: IResolvable<void>;
 
+	/** Resolves when this session's channel is connected. */
+	readonly channelConnected: IResolvable<void>;
+
 	/** Target username of outgoing Burner chat request, if applicable. */
 	readonly chatRequestUsername: BehaviorSubject<string | undefined>;
 
 	/** Resolves when this session is closed. */
 	readonly closed: IResolvable<void>;
 
-	/** Resolves when this session's channel is connected. */
+	/** Resolves when this session is connected. */
 	readonly connected: IResolvable<void>;
 
 	/** Resolves when this session's connection fails. */
@@ -64,9 +67,6 @@ export interface ISessionService {
 
 	/** When true, blocks responding to pings. */
 	readonly freezePong: BehaviorSubject<boolean>;
-
-	/** Resolves when this session is fully connected. */
-	readonly fullyConnected: IResolvable<void>;
 
 	/** Messaging group, if applicable. */
 	group?: ISessionService[];

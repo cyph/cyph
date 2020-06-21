@@ -105,6 +105,9 @@ export abstract class SessionService extends BaseProvider
 	public readonly beginWaiting = resolvable();
 
 	/** @inheritDoc */
+	public readonly channelConnected = resolvable();
+
+	/** @inheritDoc */
 	public readonly chatRequestUsername: BehaviorSubject<
 		string | undefined
 	> = new BehaviorSubject<string | undefined>(undefined);
@@ -133,13 +136,10 @@ export abstract class SessionService extends BaseProvider
 	>(false);
 
 	/** @inheritDoc */
-	public readonly fullyConnected = resolvable();
+	public readonly initialMessagesProcessed = resolvable();
 
 	/** @inheritDoc */
 	public group?: SessionService[];
-
-	/** @inheritDoc */
-	public readonly initialMessagesProcessed = resolvable();
 
 	/** @inheritDoc */
 	public readonly localUsername: Observable<string> = new BehaviorSubject<
@@ -222,15 +222,13 @@ export abstract class SessionService extends BaseProvider
 
 	/** @see IChannelHandlers.onConnect */
 	protected async channelOnConnect () : Promise<void> {
-		this.state.isConnected.next(true);
-		this.connected.resolve();
-
+		this.channelConnected.resolve();
 		await Promise.all([
 			this.castleService.ready,
 			this.channelService.initialMessagesProcessed.promise
 		]);
-
-		this.fullyConnected.resolve();
+		this.state.isConnected.next(true);
+		this.connected.resolve();
 	}
 
 	/** @see IChannelHandlers.onMessage */
