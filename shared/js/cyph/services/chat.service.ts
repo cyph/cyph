@@ -1646,14 +1646,6 @@ export class ChatService extends BaseProvider {
 
 			this.sessionService.closed.promise.then(async () => this.close());
 
-			if (this.sessionInitService.ephemeral) {
-				this.sessionService.connected.promise.then(() => {
-					this.chat.state = States.keyExchange;
-					this.updateChat();
-					this.initProgressStart();
-				});
-			}
-
 			this.sessionService.connected.promise.then(async () => {
 				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
 					this.walkieTalkieMode.value
@@ -1669,6 +1661,12 @@ export class ChatService extends BaseProvider {
 						unconfirmedMessages: this.chat.unconfirmedMessages.value
 					}
 				}));
+
+				if (this.sessionInitService.ephemeral) {
+					this.chat.state = States.keyExchange;
+					this.updateChat();
+					this.initProgressStart();
+				}
 
 				if (
 					callType === undefined ||
