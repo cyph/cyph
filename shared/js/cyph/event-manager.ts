@@ -1,6 +1,6 @@
-import {BehaviorSubject} from 'rxjs';
+import {ReplaySubject, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {filterUndefinedOperator} from './util/filter';
+import {ISessionMessageData} from './session/isession-message-data';
 import {getOrSetDefault} from './util/get-or-set-default';
 
 /**
@@ -8,84 +8,75 @@ import {getOrSetDefault} from './util/get-or-set-default';
  */
 export class EventManager {
 	/** @ignore */
-	private readonly eventMappings = new Map<
+	private readonly subjects = new Map<
 		string,
-		BehaviorSubject<Set<(data: any) => void> | undefined>
+		ReplaySubject<ISessionMessageData[]>
 	>();
 
 	/** @ignore */
-	private getEventMapping (
-		event: string
-	) : BehaviorSubject<Set<(data: any) => void> | undefined> {
+	private readonly subscriptions = new Map<
+		string,
+		Map<(data: ISessionMessageData[]) => void, Subscription>
+	>();
+
+	/** @ignore */
+	private getSubject (event: string) : ReplaySubject<ISessionMessageData[]> {
 		return getOrSetDefault(
-			this.eventMappings,
+			this.subjects,
 			event,
-			() =>
-				new BehaviorSubject<Set<(data: any) => void> | undefined>(
-					undefined
-				)
+			() => new ReplaySubject<ISessionMessageData[]>()
+		);
+	}
+
+	/** @ignore */
+	private getSubscriptions (
+		event: string
+	) : Map<(data: ISessionMessageData[]) => void, Subscription> {
+		return getOrSetDefault(
+			this.subscriptions,
+			event,
+			() => new Map<(data: ISessionMessageData[]) => void, Subscription>()
 		);
 	}
 
 	/** Removes handler from event. */
-	public off<T> (event: string, handler?: (data: T) => void) : void {
-		const eventMapping = this.getEventMapping(event);
+	public off (
+		event: string,
+		handler?: (data: ISessionMessageData[]) => void
+	) : void {
+		const subscriptions = this.getSubscriptions(event);
 
-		if (eventMapping.value === undefined) {
-			return;
-		}
-
-		if (handler) {
-			eventMapping.value.delete(handler);
-		}
-
-		if (!handler || eventMapping.value.size < 1) {
-			this.eventMappings.delete(event);
+		for (const f of handler ?
+			[handler] :
+			Array.from(subscriptions.keys())) {
+			/* eslint-disable-next-line no-unused-expressions */
+			subscriptions.get(f)?.unsubscribe();
+			subscriptions.delete(f);
 		}
 	}
 
 	/** Attaches handler to event. */
-	public on<T> (event: string, handler: (data: T) => void) : void {
-		const eventMapping = this.getEventMapping(event);
-
-		if (eventMapping.value) {
-			eventMapping.value.add(handler);
-		}
-		else {
-			eventMapping.next(new Set([handler]));
-		}
+	public on (
+		event: string,
+		handler: (data: ISessionMessageData[]) => void
+	) : void {
+		this.getSubscriptions(event).set(
+			handler,
+			this.getSubject(event).subscribe(handler)
+		);
 	}
 
 	/** Resolves on first occurrence of event. */
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	public async one<T = void> (event: string) : Promise<T> {
-		return new Promise<T>(resolve => {
-			const f = (data: T) => {
-				this.off(event, f);
-				resolve(data);
-			};
-
-			this.on(event, f);
-		});
+	public async one (event: string) : Promise<ISessionMessageData[]> {
+		return this.getSubject(event)
+			.pipe(take(1))
+			.toPromise();
 	}
 
-	/**
-	 * Triggers event.
-	 * If no event handlers are yet set, wait for one.
-	 * Resolve after all handlers have been run, throwing error if any one fails.
-	 */
-	public async trigger<T> (event: string, data?: T) : Promise<void> {
-		const eventMapping = this.getEventMapping(event);
-
-		const handlers =
-			eventMapping.value ||
-			(await eventMapping
-				.pipe(filterUndefinedOperator(), take(1))
-				.toPromise());
-
-		await Promise.all(
-			Array.from(handlers).map(async handler => handler(data))
-		);
+	/** Triggers event. */
+	public trigger (event: string, data: ISessionMessageData[]) : void {
+		this.getSubject(event).next(data);
 	}
 
 	constructor () {}

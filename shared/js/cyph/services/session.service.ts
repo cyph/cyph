@@ -296,15 +296,13 @@ export abstract class SessionService extends BaseProvider
 			})
 		);
 
-		await Promise.all(
-			Array.from(messageGroups.entries()).map(async ([event, data]) => {
-				await this.trigger(event, data);
+		for (const [event, data] of Array.from(messageGroups.entries())) {
+			this.trigger(event, data);
 
-				for (const {id} of data) {
-					this.receivedMessages.add(id);
-				}
-			})
-		);
+			for (const {id} of data) {
+				this.receivedMessages.add(id);
+			}
+		}
 	}
 
 	/** @ignore */
@@ -385,11 +383,8 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** Trigger event. */
-	protected async trigger (
-		event: RpcEvents,
-		data: ISessionMessageData[]
-	) : Promise<void> {
-		await this.eventManager.trigger(event, data);
+	protected trigger (event: RpcEvents, data: ISessionMessageData[]) : void {
+		this.eventManager.trigger(event, data);
 	}
 
 	/** @inheritDoc */
