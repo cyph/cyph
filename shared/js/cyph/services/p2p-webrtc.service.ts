@@ -12,7 +12,7 @@ import {env} from '../env';
 import {IResolvable} from '../iresolvable';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
-import {ISessionMessageData, rpcEvents} from '../session';
+import {RpcEvents} from '../session';
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
@@ -370,7 +370,7 @@ export class P2PWebRTCService extends BaseProvider
 			incomingP2PKill ?
 				Promise.resolve() :
 				this.sessionService
-					.send([rpcEvents.p2pKill, {}])
+					.send([RpcEvents.p2pKill, {}])
 					.then(() => {}),
 			this.recorder.stop()
 		]);
@@ -837,7 +837,7 @@ export class P2PWebRTCService extends BaseProvider
 						debugLog(() => ({webRTC: {outgoingSignal: message}}));
 
 						sessionService.send([
-							rpcEvents.p2p,
+							RpcEvents.p2p,
 							{
 								bytes: msgpack.encode(message)
 							}
@@ -982,7 +982,7 @@ export class P2PWebRTCService extends BaseProvider
 
 		await Promise.all([
 			this.sessionService.send([
-				rpcEvents.p2pRequest,
+				RpcEvents.p2pRequest,
 				{
 					bytes: msgpack.encode(p2pSessionData)
 				}
@@ -1218,86 +1218,75 @@ export class P2PWebRTCService extends BaseProvider
 			);
 
 			if (!this.sessionService.group) {
-				this.sessionService.on(rpcEvents.p2pKill, async () =>
+				this.sessionService.on(RpcEvents.p2pKill, async () =>
 					this.close(true)
 				);
 			}
 
-			this.sessionService.on(
-				rpcEvents.p2pRequest,
-				async (newEvents: ISessionMessageData[]) => {
-					const p2pSessionData =
-						newEvents[0]?.bytes &&
-						msgpack.decode(newEvents[0]?.bytes);
+			this.sessionService.on(RpcEvents.p2pRequest, async newEvents => {
+				const p2pSessionData =
+					newEvents[0]?.bytes && msgpack.decode(newEvents[0]?.bytes);
 
-					if (
-						!(
-							typeof p2pSessionData === 'object' &&
-							p2pSessionData &&
-							(p2pSessionData.callType === 'audio' ||
-								p2pSessionData.callType === 'video') &&
-							typeof p2pSessionData.channelConfigIDs ===
-								'object' &&
-							typeof p2pSessionData.iceServers === 'string' &&
-							typeof p2pSessionData.id === 'string'
-						)
-					) {
-						return;
-					}
-
-					const ok = await (await this.handlers).acceptConfirm(
-						p2pSessionData.callType,
-						500000,
-						this.isAccepted
-					);
-
-					if (!ok) {
-						if (!this.sessionService.group) {
-							await this.sessionService.send([
-								rpcEvents.p2pKill,
-								{}
-							]);
-						}
-
-						return;
-					}
-
-					await this.join(p2pSessionData);
+				if (
+					!(
+						typeof p2pSessionData === 'object' &&
+						p2pSessionData &&
+						(p2pSessionData.callType === 'audio' ||
+							p2pSessionData.callType === 'video') &&
+						typeof p2pSessionData.channelConfigIDs === 'object' &&
+						typeof p2pSessionData.iceServers === 'string' &&
+						typeof p2pSessionData.id === 'string'
+					)
+				) {
+					return;
 				}
-			);
+
+				const ok = await (await this.handlers).acceptConfirm(
+					p2pSessionData.callType,
+					500000,
+					this.isAccepted
+				);
+
+				if (!ok) {
+					if (!this.sessionService.group) {
+						await this.sessionService.send([RpcEvents.p2pKill, {}]);
+					}
+
+					return;
+				}
+
+				await this.join(p2pSessionData);
+			});
 
 			for (let i = 0; i < sessionServices.length; ++i) {
 				const incomingSignalLock = lockFunction();
 
-				sessionServices[i].on(
-					rpcEvents.p2p,
-					async (newEvents: ISessionMessageData[]) =>
-						incomingSignalLock(async () => {
-							const webRTC = await this.getWebRTC();
+				sessionServices[i].on(RpcEvents.p2p, async newEvents =>
+					incomingSignalLock(async () => {
+						const webRTC = await this.getWebRTC();
 
-							for (const o of newEvents) {
-								const message =
-									o?.bytes && msgpack.decode(o.bytes);
-								if (!message) {
-									continue;
-								}
-
-								debugLog(() => ({
-									webRTC: {incomingSignal: message}
-								}));
-
-								const {peerResolvers} = webRTC.peers[i];
-								const peerResolver =
-									peerResolvers &&
-									typeof message.generation === 'number' ?
-										peerResolvers[message.generation] :
-										undefined;
-								const peer = await peerResolver?.promise;
-
-								/* eslint-disable-next-line no-unused-expressions */
-								peer?.signal(message.data);
+						for (const o of newEvents) {
+							const message = o?.bytes && msgpack.decode(o.bytes);
+							if (!message) {
+								continue;
 							}
-						})
+
+							debugLog(() => ({
+								webRTC: {incomingSignal: message}
+							}));
+
+							const {peerResolvers} = webRTC.peers[i];
+							const peerResolver =
+								peerResolvers &&
+								typeof message.generation === 'number' ?
+									peerResolvers[message.generation] :
+									undefined;
+							const peer = await peerResolver?.promise;
+
+							/* eslint-disable-next-line no-unused-expressions */
+							peer?.signal(message.data);
+						}
+					})
 				);
 			}
 		});

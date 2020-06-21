@@ -43,7 +43,7 @@ import {
 import {
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
-	rpcEvents
+	RpcEvents
 } from '../session';
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
@@ -279,7 +279,7 @@ export class ChatService extends BaseProvider {
 								}
 
 								await this.sessionService.send([
-									rpcEvents.confirm,
+									RpcEvents.confirm,
 									{textConfirmation: {id: o.id}}
 								]);
 							});
@@ -509,7 +509,7 @@ export class ChatService extends BaseProvider {
 				string,
 				(timestamp: number) => Promise<ISessionMessageAdditionalData>
 			] => [
-				rpcEvents.text,
+				RpcEvents.text,
 				async timestamp => {
 					const [
 						chatMessage,
@@ -1155,7 +1155,7 @@ export class ChatService extends BaseProvider {
 			this.chat.isMessageChanged = isMessageChanged;
 
 			this.sessionService.send([
-				rpcEvents.typing,
+				RpcEvents.typing,
 				{chatState: {isTyping: this.chat.isMessageChanged}}
 			]);
 		});
@@ -1722,89 +1722,79 @@ export class ChatService extends BaseProvider {
 			);
 
 			if (this.deliveryReceipts) {
-				this.sessionService.on(
-					rpcEvents.confirm,
-					async (newEvents: ISessionMessageData[]) => {
-						for (const o of newEvents) {
-							if (!o.textConfirmation || !o.textConfirmation.id) {
+				this.sessionService.on(RpcEvents.confirm, async newEvents => {
+					for (const o of newEvents) {
+						if (!o.textConfirmation || !o.textConfirmation.id) {
+							continue;
+						}
+
+						const id = o.textConfirmation.id;
+
+						const getNewLastConfirmedMesssage = (
+							messageIDs: string[]
+						) : IChatLastConfirmedMessage | undefined => {
+							for (let i = messageIDs.length - 1; i >= 0; --i) {
+								if (messageIDs[i] === id) {
+									return {id, index: i};
+								}
+							}
+
+							return;
+						};
+
+						let newLastConfirmedMessage = getNewLastConfirmedMesssage(
+							await this.chat.messageList.getFlatValue()
+						);
+
+						if (!newLastConfirmedMessage) {
+							const pendingMessageIDs = (await this.chat.pendingMessages.getFlatValue()).map(
+								m => m.id
+							);
+
+							if (
+								getNewLastConfirmedMesssage(
+									pendingMessageIDs
+								) === undefined
+							) {
 								continue;
 							}
 
-							const id = o.textConfirmation.id;
-
-							const getNewLastConfirmedMesssage = (
-								messageIDs: string[]
-							) : IChatLastConfirmedMessage | undefined => {
-								for (
-									let i = messageIDs.length - 1;
-									i >= 0;
-									--i
-								) {
-									if (messageIDs[i] === id) {
-										return {id, index: i};
-									}
-								}
-
-								return;
-							};
-
-							let newLastConfirmedMessage = getNewLastConfirmedMesssage(
-								await this.chat.messageList.getFlatValue()
-							);
-
-							if (!newLastConfirmedMessage) {
-								const pendingMessageIDs = (await this.chat.pendingMessages.getFlatValue()).map(
-									m => m.id
-								);
-
-								if (
-									getNewLastConfirmedMesssage(
-										pendingMessageIDs
-									) === undefined
-								) {
-									continue;
-								}
-
-								newLastConfirmedMessage = await this.chat.messageList
-									.watchFlat()
-									.pipe(
-										map(getNewLastConfirmedMesssage),
-										filterUndefinedOperator(),
-										take(1)
-									)
-									.toPromise();
-							}
-
-							this.chat.lastConfirmedMessage.updateValue(
-								async lastConfirmedMessage => {
-									if (
-										!newLastConfirmedMessage ||
-										lastConfirmedMessage.id ===
-											newLastConfirmedMessage.id ||
-										lastConfirmedMessage.index >
-											newLastConfirmedMessage.index
-									) {
-										throw newLastConfirmedMessage;
-									}
-
-									return newLastConfirmedMessage;
-								}
-							);
+							newLastConfirmedMessage = await this.chat.messageList
+								.watchFlat()
+								.pipe(
+									map(getNewLastConfirmedMesssage),
+									filterUndefinedOperator(),
+									take(1)
+								)
+								.toPromise();
 						}
+
+						this.chat.lastConfirmedMessage.updateValue(
+							async lastConfirmedMessage => {
+								if (
+									!newLastConfirmedMessage ||
+									lastConfirmedMessage.id ===
+										newLastConfirmedMessage.id ||
+									lastConfirmedMessage.index >
+										newLastConfirmedMessage.index
+								) {
+									throw newLastConfirmedMessage;
+								}
+
+								return newLastConfirmedMessage;
+							}
+						);
 					}
-				);
+				});
 			}
 
-			this.sessionService.on(
-				rpcEvents.typing,
-				(newEvents: ISessionMessageData[]) => {
-					for (const o of newEvents) {
-						if (o.chatState) {
-							this.chat.isFriendTyping.next(o.chatState.isTyping);
-						}
+			this.sessionService.on(RpcEvents.typing, newEvents => {
+				for (const o of newEvents) {
+					if (o.chatState) {
+						this.chat.isFriendTyping.next(o.chatState.isTyping);
 					}
 				}
-			);
+			});
 
 			(async () => {
 				while (this.sessionService.state.isAlive.value) {
@@ -1824,7 +1814,7 @@ export class ChatService extends BaseProvider {
 							).promise;
 						};
 
-						this.sessionService.on(rpcEvents.text, f);
+						this.sessionService.on(RpcEvents.text, f);
 						await Promise.race([
 							this.sessionService.closed.promise.then(() => {
 								debugLog(
@@ -1839,7 +1829,7 @@ export class ChatService extends BaseProvider {
 								);
 							})
 						]);
-						this.sessionService.off(rpcEvents.text, f);
+						this.sessionService.off(RpcEvents.text, f);
 					});
 				}
 			})();

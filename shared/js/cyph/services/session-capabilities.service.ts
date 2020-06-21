@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {ISessionCapabilities} from '../proto/types';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
-import {ISessionMessageData, rpcEvents} from '../session';
+import {RpcEvents} from '../session';
 import {resolvable} from '../util/wait';
 import {SessionService} from './session.service';
 
@@ -30,15 +30,13 @@ export class SessionCapabilitiesService extends BaseProvider
 	/** @ignore */
 	private readonly remoteCapabilities: Promise<
 		ISessionCapabilities
-	> = this.sessionService
-		.one<ISessionMessageData[]>(rpcEvents.capabilities)
-		.then(
-			newEvents =>
-				(newEvents[0] || {capabilities: undefined}).capabilities || {
-					p2p: false,
-					walkieTalkieMode: false
-				}
-		);
+	> = this.sessionService.one(RpcEvents.capabilities).then(
+		newEvents =>
+			(newEvents[0] || {capabilities: undefined}).capabilities || {
+				p2p: false,
+				walkieTalkieMode: false
+			}
+	);
 
 	/** @ignore */
 	private readonly resolveCapabilities: (
@@ -72,7 +70,7 @@ export class SessionCapabilitiesService extends BaseProvider
 			const localCapabilities = await this.localCapabilities;
 
 			this.sessionService.send([
-				rpcEvents.capabilities,
+				RpcEvents.capabilities,
 				{capabilities: localCapabilities}
 			]);
 

@@ -28,10 +28,7 @@ export class EventManager {
 	}
 
 	/** Removes handler from event. */
-	public async off<T> (
-		event: string,
-		handler?: (data: T) => void
-	) : Promise<void> {
+	public off<T> (event: string, handler?: (data: T) => void) : void {
 		const eventMapping = this.getEventMapping(event);
 
 		if (eventMapping.value === undefined) {

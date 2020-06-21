@@ -10,7 +10,8 @@ import {
 	CastleEvents,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
-	ProFeatures
+	ProFeatures,
+	RpcEvents
 } from '../session';
 import {IP2PWebRTCService} from './ip2p-webrtc.service';
 
@@ -148,13 +149,19 @@ export interface ISessionService {
 	) : Promise<T>;
 
 	/** Remove event listener. */
-	off<T> (event: string, handler?: (data: T) => void) : void;
+	off (
+		event: RpcEvents,
+		handler?: (data: ISessionMessageData[]) => void
+	) : void;
 
 	/** Add event listener. */
-	on<T> (event: string, handler: (data: T) => void) : void;
+	on (
+		event: RpcEvents,
+		handler: (data: ISessionMessageData[]) => void
+	) : void;
 
 	/** Returns first occurrence of event. */
-	one<T> (event: string) : Promise<T>;
+	one (event: RpcEvents) : Promise<ISessionMessageData[]>;
 
 	/** If applicable, requests necessary I/O permissions. */
 	prepareForCallType (
@@ -186,9 +193,6 @@ export interface ISessionService {
 
 	/** Creates and returns a new instance. */
 	spawn () : ISessionService;
-
-	/** Trigger event, passing in optional data. */
-	trigger (event: string, data?: any) : Promise<void>;
 
 	/** Resolves when other user is online. */
 	yt () : Promise<void>;

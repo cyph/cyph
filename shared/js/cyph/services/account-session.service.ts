@@ -11,7 +11,7 @@ import {
 	SessionMessageList,
 	StringProto
 } from '../proto';
-import {ISessionMessageData, rpcEvents} from '../session';
+import {ISessionMessageData, RpcEvents} from '../session';
 import {filterUndefined} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -367,7 +367,7 @@ export class AccountSessionService extends SessionService {
 
 			/*
 				Handle events on individual pairwise sessions and perform equivalent behavior.
-				Note: rpcEvents.typing is ignored because it's unsupported in accounts.
+				Note: RpcEvents.typing is ignored because it's unsupported in accounts.
 			*/
 
 			const confirmations = new Map<string, Set<AccountSessionService>>();
@@ -385,45 +385,39 @@ export class AccountSessionService extends SessionService {
 			});
 
 			for (const session of group) {
-				session.on(rpcEvents.text, async newEvents =>
-					this.trigger(rpcEvents.text, newEvents)
+				session.on(RpcEvents.text, async newEvents =>
+					this.trigger(RpcEvents.text, newEvents)
 				);
 
-				session.on(
-					rpcEvents.confirm,
-					async (newEvents: ISessionMessageData[]) =>
-						this.trigger(
-							rpcEvents.confirm,
-							filterUndefined(
-								newEvents.map(o => {
-									if (
-										!o.textConfirmation ||
-										!o.textConfirmation.id
-									) {
-										return;
-									}
-
-									const confirmedSessions = getOrSetDefault(
-										confirmations,
-										o.textConfirmation.id,
-										() => new Set<AccountSessionService>()
-									);
-
-									confirmedSessions.add(session);
-
-									if (
-										confirmedSessions.size === group.length
-									) {
-										confirmations.delete(
-											o.textConfirmation.id
-										);
-										return o;
-									}
-
+				session.on(RpcEvents.confirm, async newEvents =>
+					this.trigger(
+						RpcEvents.confirm,
+						filterUndefined(
+							newEvents.map(o => {
+								if (
+									!o.textConfirmation ||
+									!o.textConfirmation.id
+								) {
 									return;
-								})
-							)
+								}
+
+								const confirmedSessions = getOrSetDefault(
+									confirmations,
+									o.textConfirmation.id,
+									() => new Set<AccountSessionService>()
+								);
+
+								confirmedSessions.add(session);
+
+								if (confirmedSessions.size === group.length) {
+									confirmations.delete(o.textConfirmation.id);
+									return o;
+								}
+
+								return;
+							})
 						)
+					)
 				);
 			}
 
@@ -596,14 +590,14 @@ export class AccountSessionService extends SessionService {
 						continue;
 					}
 
-					this.off(rpcEvents.pong, f);
+					this.off(RpcEvents.pong, f);
 					resolve();
 					return;
 				}
 			};
 
-			this.on(rpcEvents.pong, f);
-			this.send([rpcEvents.ping, {command: {method: id}}]);
+			this.on(RpcEvents.pong, f);
+			this.send([RpcEvents.ping, {command: {method: id}}]);
 		});
 	}
 
@@ -648,7 +642,7 @@ export class AccountSessionService extends SessionService {
 			stringsService
 		);
 
-		this.on(rpcEvents.ping, async (newEvents: ISessionMessageData[]) => {
+		this.on(RpcEvents.ping, async newEvents => {
 			for (const o of newEvents) {
 				if (!o.command || !o.command.method) {
 					continue;
@@ -662,7 +656,7 @@ export class AccountSessionService extends SessionService {
 					.toPromise();
 
 				this.send([
-					rpcEvents.pong,
+					RpcEvents.pong,
 					{command: {method: o.command.method}}
 				]);
 			}

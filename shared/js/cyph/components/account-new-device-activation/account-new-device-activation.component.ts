@@ -17,7 +17,7 @@ import {EnvService} from '../../services/env.service';
 import {SessionInitService} from '../../services/session-init.service';
 import {SessionService} from '../../services/session.service';
 import {StringsService} from '../../services/strings.service';
-import {ISessionMessageData, rpcEvents} from '../../session';
+import {RpcEvents} from '../../session';
 import {normalize} from '../../util/formatting';
 import {readableID} from '../../util/uuid';
 import {resolvable} from '../../util/wait';
@@ -108,16 +108,15 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 		const masterKeyConfirmationCodePromise = this.sessionData.bobSessionID ?
 			(async () =>
-				((await this.sessionService.one<ISessionMessageData[]>(
-					rpcEvents.accountMasterKeyConfirmation
+				((await this.sessionService.one(
+					RpcEvents.accountMasterKeyConfirmation
 				)) || [])[0]?.command?.additionalData)() :
 			undefined;
 
 		const masterKeyPromise = this.sessionData.bobSessionID ?
 			(async () =>
-				((await this.sessionService.one<ISessionMessageData[]>(
-					rpcEvents.accountMasterKey
-				)) || [])[0]?.command?.additionalData)() :
+				((await this.sessionService.one(RpcEvents.accountMasterKey)) ||
+					[])[0]?.command?.additionalData)() :
 			undefined;
 
 		this.basicSessionInitService.setID(
@@ -134,7 +133,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			);
 
 			await (await this.sessionService.send([
-				rpcEvents.accountMasterKeyConfirmation,
+				RpcEvents.accountMasterKeyConfirmation,
 				{
 					command: {
 						additionalData: masterKeyConfirmationCode,
@@ -153,7 +152,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			}
 
 			await (await this.sessionService.send([
-				rpcEvents.accountMasterKey,
+				RpcEvents.accountMasterKey,
 				{
 					command: {
 						additionalData: this.sessionData.aliceMasterKey,

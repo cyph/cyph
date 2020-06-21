@@ -26,7 +26,7 @@ import {
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
 	ProFeatures,
-	rpcEvents
+	RpcEvents
 } from '../session';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {normalize} from '../util/formatting';
@@ -60,7 +60,7 @@ export abstract class SessionService extends BaseProvider
 	private readonly eventManager = new EventManager();
 
 	/** @ignore */
-	private readonly openEvents = new Set<string>();
+	private readonly openEvents = new Set<RpcEvents>();
 
 	/** Indicates whether or not this is an Accounts instance. */
 	protected readonly account: boolean = false;
@@ -255,7 +255,7 @@ export abstract class SessionService extends BaseProvider
 	) : Promise<void> {
 		debugLog(() => ({cyphertextReceiveHandler: {messages}}));
 
-		const messageGroups = new Map<string, ISessionMessageDataInternal[]>();
+		const messageGroups = new Map<RpcEvents, ISessionMessageData[]>();
 
 		const otherSubSessionMessages = messages.filter(
 			message => !this.correctSubSession(message)
@@ -276,17 +276,19 @@ export abstract class SessionService extends BaseProvider
 					return;
 				}
 
-				message.data = await this.processMessageData(
+				const data = await this.processMessageData(
 					message.data,
 					initial
 				);
 
-				if (!(message.event && message.event in rpcEvents)) {
+				message.data = data;
+
+				if (!(message.event && message.event in RpcEvents)) {
 					return;
 				}
 
 				getOrSetDefault(messageGroups, message.event, () => []).push(
-					message.data
+					data
 				);
 			})
 		);
@@ -377,6 +379,14 @@ export abstract class SessionService extends BaseProvider
 		messages: ISessionMessage[]
 	) : Promise<void> {
 		await this.castleSendMessages(messages);
+	}
+
+	/** Trigger event. */
+	protected async trigger (
+		event: RpcEvents,
+		data: ISessionMessageData[]
+	) : Promise<void> {
+		await this.eventManager.trigger(event, data);
 	}
 
 	/** @inheritDoc */
@@ -639,21 +649,27 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public off<T> (event: string, handler?: (data: T) => void) : void {
-		this.eventManager.off<T>(event, handler);
+	public off (
+		event: RpcEvents,
+		handler?: (data: ISessionMessageData[]) => void
+	) : void {
+		this.eventManager.off(event, handler);
 	}
 
 	/** @inheritDoc */
-	public on<T> (event: string, handler: (data: T) => void) : void {
+	public on (
+		event: RpcEvents,
+		handler: (data: ISessionMessageData[]) => void
+	) : void {
 		this.openEvents.add(event);
-		this.eventManager.on<T>(event, handler);
+		this.eventManager.on(event, handler);
 	}
 
 	/** @inheritDoc */
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	public async one<T = void> (event: string) : Promise<T> {
+	public async one (event: RpcEvents) : Promise<ISessionMessageData[]> {
 		this.openEvents.add(event);
-		return this.eventManager.one<T>(event);
+		return this.eventManager.one(event);
 	}
 
 	/** @inheritDoc */
@@ -779,11 +795,6 @@ export abstract class SessionService extends BaseProvider
 		throw new Error(
 			'Must provide an implementation of SessionService.spawn.'
 		);
-	}
-
-	/** @inheritDoc */
-	public async trigger (event: string, data?: any) : Promise<void> {
-		await this.eventManager.trigger(event, data);
 	}
 
 	/** @inheritDoc */
