@@ -36,7 +36,7 @@ import {debugLog, debugLogError} from '../util/log';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {resolvable, sleep} from '../util/wait';
+import {resolvable, resolvedResolvable, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
@@ -164,7 +164,7 @@ export abstract class SessionService extends BaseProvider
 	> = new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
-	public readonly ready = resolvable<void>(undefined, true);
+	public readonly ready = resolvedResolvable();
 
 	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<
@@ -405,7 +405,7 @@ export abstract class SessionService extends BaseProvider
 						return;
 					}
 
-					await this.beginChat.resolve();
+					this.beginChat.resolve();
 				});
 				break;
 
