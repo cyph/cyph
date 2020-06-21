@@ -206,7 +206,7 @@ export class LinkConnectionComponent extends BaseProvider
 			/* TODO: HANDLE NATIVE */
 		}
 
-		this.sessionService.connected.then(() => {
+		this.sessionService.connected.promise.then(() => {
 			isWaiting = false;
 			this.linkConstant = '';
 

@@ -210,7 +210,7 @@ export class AccountP2PService extends P2PService {
 
 	/** @inheritDoc */
 	public async init (remoteVideos: () => JQuery) : Promise<void> {
-		await this.accountSessionService.ready;
+		await this.accountSessionService.ready.promise;
 
 		await super.init(remoteVideos);
 

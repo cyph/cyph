@@ -41,7 +41,6 @@ import {
 	ISessionMessageDataList
 } from '../proto';
 import {
-	events,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
 	rpcEvents
@@ -205,7 +204,7 @@ export class ChatService extends BaseProvider {
 		this.resolvers.currentMessageSynced.promise,
 		this.resolvers.messageListLoaded.promise,
 		this.sessionService.initialMessagesProcessed.promise,
-		this.sessionService.ready.then(async () =>
+		this.sessionService.ready.promise.then(async () =>
 			Promise.all([
 				!this.sessionService.group ?
 					this.channelService?.initialMessagesProcessed.promise :
@@ -620,7 +619,7 @@ export class ChatService extends BaseProvider {
 	public async abortSetup () : Promise<void> {
 		this.chat.state = States.aborted;
 		this.updateChat();
-		this.sessionService.trigger(events.abort);
+		this.sessionService.aborted.resolve();
 		this.sessionService.close();
 		await this.dialogService.dismissToast();
 	}
@@ -880,7 +879,7 @@ export class ChatService extends BaseProvider {
 				return;
 			}
 
-			this.sessionService.trigger(events.beginChatComplete);
+			this.sessionService.beginChatComplete.resolve();
 
 			this.chat.state = States.chat;
 			this.updateChat();
@@ -1496,8 +1495,8 @@ export class ChatService extends BaseProvider {
 			});
 		}
 
-		this.sessionService.ready.then(() => {
-			const beginChat = this.sessionService.one(events.beginChat);
+		this.sessionService.ready.promise.then(() => {
+			const beginChat = this.sessionService.beginChat.promise;
 			const callType = this.sessionInitService.callType;
 			const pendingMessageRoot = this.chat.pendingMessageRoot;
 
@@ -1641,7 +1640,7 @@ export class ChatService extends BaseProvider {
 				this.begin();
 			});
 
-			this.sessionService.closed.then(async () => this.close());
+			this.sessionService.closed.promise.then(async () => this.close());
 
 			this.sessionService.channelConnected.promise.then(async () => {
 				if (!this.sessionInitService.ephemeral) {
@@ -1653,7 +1652,7 @@ export class ChatService extends BaseProvider {
 				this.initProgressStart();
 			});
 
-			this.sessionService.connected.then(async () => {
+			this.sessionService.connected.promise.then(async () => {
 				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
 					this.walkieTalkieMode.value
 				);
@@ -1716,9 +1715,9 @@ export class ChatService extends BaseProvider {
 				}
 			});
 
-			this.sessionService
-				.one(events.connectFailure)
-				.then(async () => this.abortSetup());
+			this.sessionService.connectFailure.promise.then(async () =>
+				this.abortSetup()
+			);
 
 			if (this.deliveryReceipts) {
 				this.sessionService.on(
@@ -1825,7 +1824,7 @@ export class ChatService extends BaseProvider {
 
 						this.sessionService.on(rpcEvents.text, f);
 						await Promise.race([
-							this.sessionService.closed.then(() => {
+							this.sessionService.closed.promise.then(() => {
 								debugLog(
 									() =>
 										'receiveTextLock release: sessionService closed'

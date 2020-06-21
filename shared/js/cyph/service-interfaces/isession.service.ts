@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
@@ -19,6 +19,9 @@ import {IP2PWebRTCService} from './ip2p-webrtc.service';
  * This is the entire non-UI representation of a cyph.
  */
 export interface ISessionService {
+	/** Resolves when service is aborted. */
+	readonly aborted: IResolvable<void>;
+
 	/** API flags passed into this session. */
 	readonly apiFlags: {
 		disableP2P: boolean;
@@ -28,6 +31,15 @@ export interface ISessionService {
 	/** App username. Currently just an empty string. */
 	readonly appUsername: Observable<string>;
 
+	/** Resolves chat init can begin. */
+	readonly beginChat: IResolvable<void>;
+
+	/** Resolves chat init is complete. */
+	readonly beginChatComplete: IResolvable<void>;
+
+	/** Resolves when we can begin waiting for Bob. */
+	readonly beginWaiting: IResolvable<void>;
+
 	/** Resolves when this session's channel is connected. */
 	readonly channelConnected: IResolvable<void>;
 
@@ -35,13 +47,22 @@ export interface ISessionService {
 	readonly chatRequestUsername: BehaviorSubject<string | undefined>;
 
 	/** Resolves when this session is closed. */
-	readonly closed: Promise<void>;
+	readonly closed: IResolvable<void>;
 
 	/** Resolves when this session is connected. */
-	readonly connected: Promise<void>;
+	readonly connected: IResolvable<void>;
+
+	/** Resolves when this session's connection fails. */
+	readonly connectFailure: IResolvable<void>;
 
 	/** Resolves when this session 404s. */
-	readonly cyphNotFound: Promise<void>;
+	readonly cyphNotFound: IResolvable<void>;
+
+	/** Emits cyphertext versions of all messages (if applicable). */
+	readonly cyphertext: Subject<{
+		author: Observable<string>;
+		cyphertext: Uint8Array;
+	}>;
 
 	/** When true, blocks responding to pings. */
 	readonly freezePong: BehaviorSubject<boolean>;
@@ -71,7 +92,7 @@ export interface ISessionService {
 	readonly proFeatures: ProFeatures;
 
 	/** Resolves when service is ready. */
-	readonly ready: Promise<void>;
+	readonly ready: IResolvable<void>;
 
 	/** Remote username (e.g. "friend" or "alice"). */
 	readonly remoteUsername: BehaviorSubject<string>;

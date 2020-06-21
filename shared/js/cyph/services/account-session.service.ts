@@ -11,7 +11,7 @@ import {
 	SessionMessageList,
 	StringProto
 } from '../proto';
-import {events, ISessionMessageData, rpcEvents} from '../session';
+import {ISessionMessageData, rpcEvents} from '../session';
 import {filterUndefined} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -42,16 +42,10 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountSessionService extends SessionService {
 	/** @ignore */
-	private readonly _READY = resolvable();
-
-	/** @ignore */
 	private initiated: boolean = false;
 
 	/** @ignore */
 	private readonly localStorageKey = 'AccountBurnerChannelID';
-
-	/** @ignore */
-	private readonly resolveReady: () => void = this._READY.resolve;
 
 	/** @inheritDoc */
 	protected readonly account: boolean = true;
@@ -75,7 +69,7 @@ export class AccountSessionService extends SessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly ready = this._READY.promise;
+	public readonly ready = resolvable();
 
 	/** Remote user. */
 	public readonly remoteUser = resolvable<UserLike | undefined>();
@@ -262,7 +256,7 @@ export class AccountSessionService extends SessionService {
 					})
 			);
 
-			this.resolveReady();
+			this.ready.resolve();
 			return this.init(channelID);
 		}
 
@@ -390,24 +384,6 @@ export class AccountSessionService extends SessionService {
 				this.initialMessagesProcessed.resolve();
 			});
 
-			for (const {event, all} of [
-				{all: false, event: events.beginChat},
-				{all: false, event: events.closeChat},
-				{all: false, event: events.connect},
-				{all: false, event: events.connectFailure},
-				{all: false, event: events.cyphNotFound}
-			]) {
-				const promises = group.map(async session => session.one(event));
-				const callback = async () => this.trigger(event);
-
-				if (all) {
-					Promise.all(promises).then(callback);
-				}
-				else {
-					Promise.race(promises).then(callback);
-				}
-			}
-
 			for (const session of group) {
 				session.on(rpcEvents.text, async newEvents =>
 					this.trigger(rpcEvents.text, newEvents)
@@ -451,7 +427,7 @@ export class AccountSessionService extends SessionService {
 				);
 			}
 
-			this.resolveReady();
+			this.ready.resolve();
 			return;
 		}
 
@@ -547,7 +523,7 @@ export class AccountSessionService extends SessionService {
 				this.accountService.setHeader({mobile: name});
 			}
 
-			this.resolveReady();
+			this.ready.resolve();
 			return;
 		}
 
@@ -576,7 +552,7 @@ export class AccountSessionService extends SessionService {
 		});
 
 		this.remoteUser.resolve(userPromise);
-		this.resolveReady();
+		this.ready.resolve();
 	}
 
 	/** @inheritDoc */

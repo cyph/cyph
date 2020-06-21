@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {env} from '../env';
 import {NotificationTypes, StringProto} from '../proto';
-import {events, ProFeatures} from '../session';
+import {ProFeatures} from '../session';
 import {random} from '../util/random';
 import {request} from '../util/request';
 import {getTimestamp} from '../util/time';
@@ -120,7 +120,7 @@ export class EphemeralSessionService extends SessionService {
 		super.channelOnOpen(isAlice);
 
 		if (this.state.isAlice.value) {
-			this.trigger(events.beginWaiting);
+			this.beginWaiting.resolve();
 			return;
 		}
 
@@ -219,7 +219,7 @@ export class EphemeralSessionService extends SessionService {
 
 			if (id === '404') {
 				this.state.startingNewCyph.next(true);
-				this.trigger(events.cyphNotFound);
+				this.cyphNotFound.resolve();
 				return;
 			}
 
@@ -246,7 +246,7 @@ export class EphemeralSessionService extends SessionService {
 						);
 
 						const answered = await this.notificationService.ring(
-							async () => this.connected.then(() => true),
+							async () => this.connected.promise.then(() => true),
 							true,
 							undefined,
 							this.chatRequestRingTimeout
@@ -257,7 +257,7 @@ export class EphemeralSessionService extends SessionService {
 						}
 
 						if (burnerRoot === '') {
-							await this.trigger(events.connectFailure);
+							this.connectFailure.resolve();
 							return;
 						}
 
@@ -348,7 +348,7 @@ export class EphemeralSessionService extends SessionService {
 				);
 			}
 			catch {
-				this.trigger(events.cyphNotFound);
+				this.cyphNotFound.resolve();
 			}
 		})();
 	}

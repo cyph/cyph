@@ -2,7 +2,10 @@ import {IResolvable} from '../../iresolvable';
 
 /** Returns a promise and its resolver function. */
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
-export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
+export const resolvable = <T = void>(
+	value?: T,
+	immediatelyResolve: boolean = false
+) : IResolvable<T> => {
 	let resolve: ((t?: T | PromiseLike<T>) => void) | undefined;
 	let reject: ((err?: any) => void) | undefined;
 
@@ -28,6 +31,10 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 			o.value = finalValue;
 		})
 		.catch(() => {});
+
+	if (immediatelyResolve) {
+		o.resolve();
+	}
 
 	return o;
 };

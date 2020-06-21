@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {ISessionCapabilities} from '../proto/types';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
-import {events, ISessionMessageData, rpcEvents} from '../session';
+import {ISessionMessageData, rpcEvents} from '../session';
 import {resolvable} from '../util/wait';
 import {SessionService} from './session.service';
 
@@ -68,7 +68,7 @@ export class SessionCapabilitiesService extends BaseProvider
 	) {
 		super();
 
-		this.sessionService.one(events.beginChat).then(async () => {
+		this.sessionService.beginChat.promise.then(async () => {
 			const localCapabilities = await this.localCapabilities;
 
 			this.sessionService.send([

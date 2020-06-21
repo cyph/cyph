@@ -126,7 +126,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			true
 		);
 
-		await this.sessionService.connected;
+		await this.sessionService.connected.promise;
 
 		if (this.sessionData.aliceMasterKey) {
 			const masterKeyConfirmationCode = readableID(
@@ -173,7 +173,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 		const masterKey = await Promise.race([
 			masterKeyPromise,
-			this.sessionService.closed.then(() => undefined)
+			this.sessionService.closed.promise.then(() => undefined)
 		]);
 
 		this.sessionService.close();

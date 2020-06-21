@@ -12,7 +12,7 @@ import {env} from '../env';
 import {IResolvable} from '../iresolvable';
 import {IP2PHandlers} from '../p2p/ip2p-handlers';
 import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
-import {events, ISessionMessageData, rpcEvents} from '../session';
+import {ISessionMessageData, rpcEvents} from '../session';
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
@@ -1216,10 +1216,6 @@ export class P2PWebRTCService extends BaseProvider
 			sessionCapabilitiesService.resolveP2PSupport(
 				P2PWebRTCService.isSupported
 			);
-
-			this.sessionService.on(events.closeChat, () => {
-				this.close();
-			});
 
 			if (!this.sessionService.group) {
 				this.sessionService.on(rpcEvents.p2pKill, async () =>

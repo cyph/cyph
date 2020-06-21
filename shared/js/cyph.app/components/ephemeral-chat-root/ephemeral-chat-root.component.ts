@@ -22,7 +22,6 @@ import {SplitTestingService} from '../../../cyph/services/split-testing.service'
 import {StringsService} from '../../../cyph/services/strings.service';
 import {UrlSessionInitService} from '../../../cyph/services/url-session-init.service';
 import {WindowWatcherService} from '../../../cyph/services/window-watcher.service';
-import {events} from '../../../cyph/session/enums';
 import {random} from '../../../cyph/util/random';
 import {sleep} from '../../../cyph/util/wait';
 import {AppService} from '../../app.service';
@@ -143,7 +142,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			return;
 		}
 
-		this.sessionService.one(events.abort).then(() => {
+		this.sessionService.aborted.promise.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
@@ -152,7 +151,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			this.appService.chatRootState.next(ChatRootStates.chat);
 		});
 
-		this.sessionService.one(events.beginChatComplete).then(() => {
+		this.sessionService.beginChatComplete.promise.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
@@ -160,7 +159,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			beforeUnloadMessage = this.stringsService.disconnectWarning;
 		});
 
-		this.sessionService.one(events.beginWaiting).then(() => {
+		this.sessionService.beginWaiting.promise.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
@@ -168,7 +167,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			this.appService.chatRootState.next(ChatRootStates.waitingForFriend);
 		});
 
-		this.sessionService.connected.then(() => {
+		this.sessionService.connected.promise.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
@@ -176,7 +175,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			this.appService.chatRootState.next(ChatRootStates.chat);
 		});
 
-		this.sessionService.cyphNotFound.then(() => {
+		this.sessionService.cyphNotFound.promise.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}

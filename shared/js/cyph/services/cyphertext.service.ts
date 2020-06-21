@@ -4,7 +4,6 @@ import {BaseProvider} from '../base-provider';
 import {ChatMessage} from '../chat';
 import {potassiumUtil} from '../crypto/potassium/potassium-util';
 import {LocalAsyncList} from '../local-async-list';
-import {events} from '../session/enums';
 import {getTimestamp} from '../util/time';
 import {AnalyticsService} from './analytics.service';
 import {DialogService} from './dialog.service';
@@ -102,11 +101,10 @@ export class CyphertextService extends BaseProvider {
 			return;
 		}
 
-		this.sessionService.on(
-			events.cyphertext,
-			(o: {author: Observable<string>; cyphertext: Uint8Array}) => {
+		this.subscriptions.push(
+			this.sessionService.cyphertext.subscribe(o => {
 				this.log(o.author, potassiumUtil.toBase64(o.cyphertext));
-			}
+			})
 		);
 	}
 }

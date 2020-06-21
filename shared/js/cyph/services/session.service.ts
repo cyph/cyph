@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
@@ -23,7 +23,6 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {
 	CastleEvents,
-	events,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
 	ProFeatures,
@@ -87,6 +86,9 @@ export abstract class SessionService extends BaseProvider
 	protected readonly resolveOpened: () => void = this._OPENED.resolve;
 
 	/** @inheritDoc */
+	public readonly aborted = resolvable();
+
+	/** @inheritDoc */
 	public readonly apiFlags = {
 		disableP2P: !!this.envService.environment.customBuild?.config
 			.disableP2P,
@@ -97,6 +99,15 @@ export abstract class SessionService extends BaseProvider
 	public readonly appUsername: Observable<string> = of('');
 
 	/** @inheritDoc */
+	public readonly beginChat = resolvable();
+
+	/** @inheritDoc */
+	public readonly beginChatComplete = resolvable();
+
+	/** @inheritDoc */
+	public readonly beginWaiting = resolvable();
+
+	/** @inheritDoc */
 	public readonly channelConnected = resolvable();
 
 	/** @inheritDoc */
@@ -105,13 +116,22 @@ export abstract class SessionService extends BaseProvider
 	> = new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
-	public readonly closed: Promise<void> = this.one(events.closeChat);
+	public readonly closed = resolvable();
 
 	/** @inheritDoc */
-	public readonly connected: Promise<void> = this.one(events.connect);
+	public readonly connected = resolvable();
 
 	/** @inheritDoc */
-	public readonly cyphNotFound: Promise<void> = this.one(events.cyphNotFound);
+	public readonly connectFailure = resolvable();
+
+	/** @inheritDoc */
+	public readonly cyphNotFound = resolvable();
+
+	/** @inheritDoc */
+	public readonly cyphertext = new ReplaySubject<{
+		author: Observable<string>;
+		cyphertext: Uint8Array;
+	}>();
 
 	/** @inheritDoc */
 	public readonly freezePong: BehaviorSubject<boolean> = new BehaviorSubject<
@@ -144,7 +164,7 @@ export abstract class SessionService extends BaseProvider
 	> = new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
-	public readonly ready: Promise<void> = Promise.resolve();
+	public readonly ready = resolvable<void>(undefined, true);
 
 	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<
@@ -179,7 +199,7 @@ export abstract class SessionService extends BaseProvider
 	protected async abortSetup () : Promise<void> {
 		this.state.sharedSecret.next(undefined);
 		this.errorService.log('CYPH AUTHENTICATION FAILURE');
-		await this.trigger(events.connectFailure);
+		this.connectFailure.resolve();
 	}
 
 	/** Sends messages through Castle. */
@@ -208,7 +228,7 @@ export abstract class SessionService extends BaseProvider
 		this.channelConnected.resolve();
 		await this.castleService.initialMessagesProcessed;
 		this.state.isConnected.next(true);
-		await this.trigger(events.connect);
+		this.connected.resolve();
 	}
 
 	/** @see IChannelHandlers.onMessage */
@@ -378,14 +398,14 @@ export abstract class SessionService extends BaseProvider
 				break;
 
 			case CastleEvents.connect:
-				this.connected.then(async () => {
+				this.connected.promise.then(async () => {
 					this.state.sharedSecret.next(undefined);
 
 					if (await this.sessionInitService.headless) {
 						return;
 					}
 
-					await this.trigger(events.beginChat);
+					await this.beginChat.resolve();
 				});
 				break;
 
@@ -462,8 +482,10 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
+		(await this.p2pWebRTCService.promise).close();
+
 		this.state.isAlive.next(false);
-		await this.trigger(events.closeChat);
+		this.closed.resolve();
 
 		for (const event of Array.from(this.openEvents)) {
 			this.off(event);
@@ -561,7 +583,7 @@ export abstract class SessionService extends BaseProvider
 				}
 			);
 
-			await Promise.race([this.closed, o.stillOwner.toPromise()]);
+			await Promise.race([this.closed.promise, o.stillOwner.toPromise()]);
 			sub.unsubscribe();
 		});
 
