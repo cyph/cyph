@@ -14,7 +14,7 @@ import {
 import {lockFunction} from '../../util/lock';
 import {debugLog, debugLogError} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
-import {resolvable, retryUntilSuccessful, sleep} from '../../util/wait';
+import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';
@@ -418,16 +418,17 @@ export class PairwiseSession implements IPairwiseSession {
 
 						Longer-term, perhaps have a signal sent from the client with
 						the lock to this one that initialMessagesProcessed is done.
+
+						let lockClaimed = false;
+						sleep(2500).then(() => {
+							if (!lockClaimed) {
+								this.initialMessagesProcessed.resolve();
+							}
+						});
 					*/
-					let lockClaimed = false;
-					sleep(2500).then(() => {
-						if (!lockClaimed) {
-							this.initialMessagesProcessed.resolve();
-						}
-					});
 
 					return this.lock(async o => {
-						lockClaimed = true;
+						/* lockClaimed = true; */
 
 						debugLog(() => ({castleLockClaimed: o}));
 
