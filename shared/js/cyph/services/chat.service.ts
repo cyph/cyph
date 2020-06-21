@@ -1495,6 +1495,10 @@ export class ChatService extends BaseProvider {
 			});
 		}
 
+		if (this.sessionInitService.ephemeral) {
+			this.remoteUser.resolve(undefined);
+		}
+
 		this.sessionService.ready.promise.then(() => {
 			const beginChat = this.sessionService.beginChat.promise;
 			const callType = this.sessionInitService.callType;
@@ -1642,15 +1646,13 @@ export class ChatService extends BaseProvider {
 
 			this.sessionService.closed.promise.then(async () => this.close());
 
-			this.sessionService.channelConnected.promise.then(async () => {
-				if (!this.sessionInitService.ephemeral) {
-					return;
-				}
-
-				this.chat.state = States.keyExchange;
-				this.updateChat();
-				this.initProgressStart();
-			});
+			if (this.sessionInitService.ephemeral) {
+				this.sessionService.channelConnected.promise.then(() => {
+					this.chat.state = States.keyExchange;
+					this.updateChat();
+					this.initProgressStart();
+				});
+			}
 
 			this.sessionService.connected.promise.then(async () => {
 				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
