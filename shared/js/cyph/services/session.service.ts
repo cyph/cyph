@@ -97,6 +97,9 @@ export abstract class SessionService extends BaseProvider
 	public readonly appUsername: Observable<string> = of('');
 
 	/** @inheritDoc */
+	public readonly channelConnected = resolvable();
+
+	/** @inheritDoc */
 	public readonly chatRequestUsername: BehaviorSubject<
 		string | undefined
 	> = new BehaviorSubject<string | undefined>(undefined);
@@ -202,6 +205,7 @@ export abstract class SessionService extends BaseProvider
 
 	/** @see IChannelHandlers.onConnect */
 	protected async channelOnConnect () : Promise<void> {
+		this.channelConnected.resolve();
 		await this.castleService.initialMessagesProcessed;
 		this.state.isConnected.next(true);
 		await this.trigger(events.connect);

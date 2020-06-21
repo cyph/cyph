@@ -28,6 +28,9 @@ export interface ISessionService {
 	/** App username. Currently just an empty string. */
 	readonly appUsername: Observable<string>;
 
+	/** Resolves when this session's channel is connected. */
+	readonly channelConnected: IResolvable<void>;
+
 	/** Target username of outgoing Burner chat request, if applicable. */
 	readonly chatRequestUsername: BehaviorSubject<string | undefined>;
 

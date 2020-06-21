@@ -1643,6 +1643,16 @@ export class ChatService extends BaseProvider {
 
 			this.sessionService.closed.then(async () => this.close());
 
+			this.sessionService.channelConnected.promise.then(async () => {
+				if (!this.sessionInitService.ephemeral) {
+					return;
+				}
+
+				this.chat.state = States.keyExchange;
+				this.updateChat();
+				this.initProgressStart();
+			});
+
 			this.sessionService.connected.then(async () => {
 				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
 					this.walkieTalkieMode.value
@@ -1660,61 +1670,50 @@ export class ChatService extends BaseProvider {
 				}));
 
 				if (
-					callType !== undefined &&
-					!this.p2pWebRTCService.isActive.value &&
-					!this.account
+					callType === undefined ||
+					this.p2pWebRTCService.isActive.value ||
+					this.account
 				) {
-					(async () => {
-						const [isPassiveAccepted] = await Promise.all([
-							this.p2pWebRTCService.handlers.then(
-								async handlers =>
-									handlers.passiveAcceptConfirm(callType)
-							),
-							this.sessionService.freezePong
-								.pipe(
-									filter(b => !b),
-									take(1)
-								)
-								.toPromise()
-						]);
-
-						if (!this.sessionInitService.ephemeral) {
-							this.initProgressStart(42000);
-						}
-
-						if (isPassiveAccepted) {
-							await this.p2pWebRTCService.accept(callType, true);
-						}
-						else if (this.sessionInitService.ephemeral) {
-							await this.close();
-							return;
-						}
-
-						this.p2pWebRTCService.resolveReady();
-
-						if (this.sessionInitService.ephemeral) {
-							await beginChat;
-						}
-
-						if (!isPassiveAccepted) {
-							await this.p2pWebRTCService.close();
-						}
-						else {
-							await this.p2pWebRTCService.request(callType, true);
-						}
-					})();
-				}
-				else {
 					this.p2pWebRTCService.resolveReady();
-				}
-
-				if (!this.sessionInitService.ephemeral) {
 					return;
 				}
 
-				this.chat.state = States.keyExchange;
-				this.updateChat();
-				this.initProgressStart();
+				const [isPassiveAccepted] = await Promise.all([
+					this.p2pWebRTCService.handlers.then(async handlers =>
+						handlers.passiveAcceptConfirm(callType)
+					),
+					this.sessionService.freezePong
+						.pipe(
+							filter(b => !b),
+							take(1)
+						)
+						.toPromise()
+				]);
+
+				if (!this.sessionInitService.ephemeral) {
+					this.initProgressStart(42000);
+				}
+
+				if (isPassiveAccepted) {
+					await this.p2pWebRTCService.accept(callType, true);
+				}
+				else if (this.sessionInitService.ephemeral) {
+					await this.close();
+					return;
+				}
+
+				this.p2pWebRTCService.resolveReady();
+
+				if (this.sessionInitService.ephemeral) {
+					await beginChat;
+				}
+
+				if (!isPassiveAccepted) {
+					await this.p2pWebRTCService.close();
+				}
+				else {
+					await this.p2pWebRTCService.request(callType, true);
+				}
 			});
 
 			this.sessionService
