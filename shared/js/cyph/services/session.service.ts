@@ -136,10 +136,10 @@ export abstract class SessionService extends BaseProvider
 	>(false);
 
 	/** @inheritDoc */
-	public readonly initialMessagesProcessed = resolvable();
+	public group?: SessionService[];
 
 	/** @inheritDoc */
-	public group?: SessionService[];
+	public readonly initialMessagesProcessed = resolvable();
 
 	/** @inheritDoc */
 	public readonly localUsername: Observable<string> = new BehaviorSubject<
