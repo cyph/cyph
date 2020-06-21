@@ -33,6 +33,7 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 };
 
 /** Returns an already resolved resolvable. */
+/* eslint-disable-next-line @typescript-eslint/tslint/config */
 export const resolvedResolvable = <T = void>(value?: T) : IResolvable<T> => {
 	const o = resolvable<T>(value);
 	o.resolve();
