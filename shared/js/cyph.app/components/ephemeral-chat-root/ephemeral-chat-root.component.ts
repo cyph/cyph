@@ -167,7 +167,7 @@ export class EphemeralChatRootComponent extends BaseProvider
 			this.appService.chatRootState.next(ChatRootStates.waitingForFriend);
 		});
 
-		this.sessionService.connected.promise.then(() => {
+		this.sessionService.channelConnected.promise.then(() => {
 			if (this.destroyed.value) {
 				return;
 			}
