@@ -13,9 +13,9 @@ export class CastleService extends BaseProvider implements ICastle {
 	/** @ignore */
 	protected readonly pairwiseSession = resolvable<IPairwiseSession>();
 
-	/** @see PairwiseSession.initialMessagesProcessed */
-	public readonly initialMessagesProcessed = this.pairwiseSession.promise.then(
-		async o => o.initialMessagesProcessed.promise
+	/** @see PairwiseSession.ready */
+	public readonly ready = this.pairwiseSession.promise.then(
+		async o => o.ready.promise
 	);
 
 	/** Initializes service. */

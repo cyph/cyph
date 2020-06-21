@@ -44,7 +44,7 @@ export class PairwiseSession implements IPairwiseSession {
 	};
 
 	/** @inheritDoc */
-	public readonly initialMessagesProcessed = resolvable();
+	public readonly ready = resolvable();
 
 	/** @ignore */
 	private async abort () : Promise<void> {
@@ -417,12 +417,12 @@ export class PairwiseSession implements IPairwiseSession {
 						resolve this prematurely to dismiss unneeded loading banner.
 
 						Longer-term, perhaps have a signal sent from the client with
-						the lock to this one that initialMessagesProcessed is done.
+						the lock to this one that ready is resolved.
 
 						let lockClaimed = false;
 						sleep(2500).then(() => {
 							if (!lockClaimed) {
-								this.initialMessagesProcessed.resolve();
+								this.ready.resolve();
 							}
 						});
 					*/
@@ -628,7 +628,7 @@ export class PairwiseSession implements IPairwiseSession {
 							}
 						);
 
-						this.initialMessagesProcessed.resolve();
+						this.ready.resolve();
 
 						await Promise.race([
 							this.transport.closed,
@@ -647,7 +647,7 @@ export class PairwiseSession implements IPairwiseSession {
 							resolver.resolve();
 						}
 
-						this.initialMessagesProcessed.resolve();
+						this.ready.resolve();
 					});
 				}
 			}
