@@ -59,9 +59,6 @@ export abstract class SessionService extends BaseProvider
 	/** @ignore */
 	private readonly eventManager = new EventManager();
 
-	/** @ignore */
-	private readonly openEvents = new Set<RpcEvents>();
-
 	/** Indicates whether or not this is an Accounts instance. */
 	protected readonly account: boolean = false;
 
@@ -496,11 +493,7 @@ export abstract class SessionService extends BaseProvider
 
 		this.state.isAlive.next(false);
 		this.closed.resolve();
-
-		for (const event of Array.from(this.openEvents)) {
-			this.off(event);
-		}
-
+		this.eventManager.clear();
 		this.channelService.destroy();
 	}
 
@@ -661,14 +654,12 @@ export abstract class SessionService extends BaseProvider
 		event: RpcEvents,
 		handler: (data: ISessionMessageData[]) => void
 	) : void {
-		this.openEvents.add(event);
 		this.eventManager.on(event, handler);
 	}
 
 	/** @inheritDoc */
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	public async one (event: RpcEvents) : Promise<ISessionMessageData[]> {
-		this.openEvents.add(event);
 		return this.eventManager.one(event);
 	}
 
