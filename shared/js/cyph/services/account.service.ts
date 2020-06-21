@@ -679,12 +679,10 @@ export class AccountService extends BaseProvider {
 						const {name, realUsername} =
 							(await user?.accountUserProfile.getValue()) || {};
 
-						const incomingCallAnswer = getOrSetDefault(
-							this.incomingCallAnswers,
-							k,
-							/* eslint-disable-next-line @typescript-eslint/tslint/config */
-							() => resolvable<boolean>()
-						);
+						const incomingCallAnswer = getOrSetDefault<
+							string,
+							IResolvable<boolean>
+						>(this.incomingCallAnswers, k, resolvable);
 
 						const dialogClose = resolvable<() => void>();
 
@@ -980,21 +978,19 @@ export class AccountService extends BaseProvider {
 			this.accountDatabaseService.pushNotificationsSubscribe(
 				callEvent,
 				async data => {
-					if (
-						typeof data?.additionalData?.callMetadata !== 'string'
-					) {
+					const callMetadata: unknown =
+						data?.additionalData?.callMetadata;
+
+					if (typeof callMetadata !== 'string') {
 						return;
 					}
 
-					this.respondedCallRequests.add(
-						data.additionalData.callMetadata
-					);
+					this.respondedCallRequests.add(callMetadata);
 
-					getOrSetDefault(
+					getOrSetDefault<string, IResolvable<boolean>>(
 						this.incomingCallAnswers,
-						data.additionalData.callMetadata,
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						() => resolvable<boolean>()
+						callMetadata,
+						resolvable
 					).resolve(callAnswer);
 
 					if (!callAnswer) {
@@ -1003,7 +999,7 @@ export class AccountService extends BaseProvider {
 
 					try {
 						const {route} = await this.getIncomingCallRoute(
-							data.additionalData.callMetadata
+							callMetadata
 						);
 
 						await this.router.navigate(route);

@@ -919,7 +919,7 @@ export class P2PWebRTCService extends BaseProvider
 
 				peerResolvers[0].resolve(getPeer());
 
-				return {connected: connected, peerResolvers};
+				return {connected, peerResolvers};
 			});
 
 			if (this.sessionService.group) {

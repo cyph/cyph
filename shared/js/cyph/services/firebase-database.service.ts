@@ -572,7 +572,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 		alreadyCached.catch(() => {});
 
 		return {
-			alreadyCached: alreadyCached,
+			alreadyCached,
 			progress,
 			result
 		};
