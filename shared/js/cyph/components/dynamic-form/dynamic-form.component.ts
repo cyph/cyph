@@ -352,6 +352,8 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		const dataSource = await this.getDataSource();
 
 		if (

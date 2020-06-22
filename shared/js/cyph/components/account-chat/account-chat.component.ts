@@ -154,6 +154,8 @@ export class AccountChatComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 
 		const lock = lockFunction();

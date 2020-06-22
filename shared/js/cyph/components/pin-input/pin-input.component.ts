@@ -75,6 +75,8 @@ export class PinInputComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.subscriptions.push(
 			this.value.subscribe(s => {
 				s = (s || '').trim();

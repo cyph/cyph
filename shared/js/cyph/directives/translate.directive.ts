@@ -65,6 +65,8 @@ export class TranslateDirective extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		if (this.envService.language === this.configService.defaultLanguage) {
 			return;
 		}

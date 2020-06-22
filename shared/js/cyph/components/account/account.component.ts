@@ -261,6 +261,8 @@ export class AccountComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

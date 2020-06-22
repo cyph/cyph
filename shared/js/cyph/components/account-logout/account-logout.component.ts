@@ -19,6 +19,8 @@ import {closeWindow} from '../../util/window';
 export class AccountLogoutComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 
 		const [loggedOut] = await Promise.all([

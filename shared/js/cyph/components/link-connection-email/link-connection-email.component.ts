@@ -80,6 +80,8 @@ export class LinkConnectionEmailComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		this.update();
 
 		try {

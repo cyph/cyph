@@ -199,6 +199,8 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		await this.init();
 	}
 

@@ -472,6 +472,8 @@ export class AccountRegisterComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 
 		if (

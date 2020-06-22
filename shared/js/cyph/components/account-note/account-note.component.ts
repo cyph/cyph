@@ -189,6 +189,8 @@ export class AccountNoteComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 
 		this.setURL(this.router.url);

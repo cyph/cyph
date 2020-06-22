@@ -220,6 +220,8 @@ export class CalendarInviteComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		const now = await getDate();
 
 		this.currentDate.next(now);

@@ -72,6 +72,8 @@ export class AutofocusDirective extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		await this.init();
 	}
 

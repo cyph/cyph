@@ -158,7 +158,13 @@
 					>
 						<div fxLayout="row" fxLayoutAlign="center center">
 							<h3
-								class="cyph-banner warn"
+								class="cyph-banner warn invalid-credentials"
+								[class.master-key]="
+									(pinUnlock | await) === false
+								"
+								[class.pin-unlock]="
+									(pinUnlock | await) === true
+								"
 								[style.visibility]="
 									(error | await) ? 'visible' : 'hidden'
 								"
@@ -199,6 +205,10 @@
 											[activateForUsername]="
 												username | await
 											"
+											[fxShow]="
+												(activationCodeFailed
+													| await) === false
+											"
 											(activationComplete)="
 												!$event ?
 													activationCodeFailed.next(
@@ -209,9 +219,8 @@
 											(altMasterKey)="
 												submit(undefined, $event)
 											"
-											*ngIf="
-												(activationCodeFailed
-													| await) === false
+											(lifecycleOnInit)="
+												activationCodeFailed.next(false)
 											"
 										></cyph-account-new-device-activation>
 										<div
@@ -390,6 +399,10 @@
 											[activateForUsername]="
 												username | await
 											"
+											[fxShow]="
+												(activationCodeFailed
+													| await) === false
+											"
 											(activationComplete)="
 												!$event ?
 													activationCodeFailed.next(
@@ -400,9 +413,8 @@
 											(altMasterKey)="
 												submit(undefined, $event)
 											"
-											*ngIf="
-												(activationCodeFailed
-													| await) === false
+											(lifecycleOnInit)="
+												activationCodeFailed.next(false)
 											"
 										></cyph-account-new-device-activation>
 										<div
@@ -579,7 +591,8 @@
 					(pinUnlock | await) === false
 				"
 				(keydown.enter)="
-					masterKeyInput?.focus(); $event.preventDefault()
+					masterKeyInput?.focus();
+					masterKeyInput && $event.preventDefault()
 				"
 			/>
 		</mat-form-field>

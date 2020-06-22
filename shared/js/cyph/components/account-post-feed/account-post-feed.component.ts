@@ -34,6 +34,8 @@ export class AccountPostFeedComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		this.feed.next(await this.accountPostsService.getFeed());
 	}
 

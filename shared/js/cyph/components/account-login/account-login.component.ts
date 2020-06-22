@@ -144,6 +144,8 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		if (this.accountDatabaseService.currentUser.value?.user) {
 			return this.postLogin();
 		}

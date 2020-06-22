@@ -457,6 +457,8 @@ export class CheckoutComponent extends BaseProvider
 	/** @inheritDoc */
 	/* eslint-disable-next-line complexity */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		/* Workaround for Angular Elements leaving inputs as strings */
 
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */

@@ -13,6 +13,8 @@ import {openWindow} from '../util/window';
 export class AnchorDirective extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		const elem = this.elementRef.nativeElement;
 
 		if (!(elem instanceof HTMLAnchorElement)) {

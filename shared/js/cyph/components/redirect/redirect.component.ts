@@ -15,6 +15,8 @@ import {sleep} from '../../util/wait';
 export class RedirectComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		await sleep(0);
 
 		this.router.navigate(

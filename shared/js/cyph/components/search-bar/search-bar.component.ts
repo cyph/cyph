@@ -154,6 +154,8 @@ export class SearchBarComponent<T extends any> extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.filterChange.emit(this.filter);
 	}
 

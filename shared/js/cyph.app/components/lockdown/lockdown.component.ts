@@ -120,6 +120,8 @@ export class LockdownComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		this.correctPassword = this.envService.environment.customBuild ?
 			this.envService.environment.customBuild.config.password :
 			undefined;

@@ -33,6 +33,8 @@ export class AccountPostPageComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 		this.accountService.resolveUiReady();
 	}

@@ -192,6 +192,8 @@ export class AccountPostComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		await this.updatePost();
 	}
 

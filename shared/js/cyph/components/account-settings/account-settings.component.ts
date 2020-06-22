@@ -231,6 +231,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 
 		const {user} = await this.accountDatabaseService.getCurrentUser();

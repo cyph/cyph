@@ -49,6 +49,8 @@ export class RouterLinkDirective extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.onChanges();
 	}
 

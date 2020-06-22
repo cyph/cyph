@@ -181,6 +181,8 @@ export class AccountComposeComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountChatService.chat.state = States.chat;
 		this.accountChatService.updateChat();
 		this.sessionService.state.isAlive.next(true);

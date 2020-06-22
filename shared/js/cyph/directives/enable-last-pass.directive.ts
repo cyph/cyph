@@ -14,6 +14,8 @@ import {sleep} from '../util/wait';
 export class EnableLastPassDirective extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		if (!this.elementRef.nativeElement) {
 			return;
 		}

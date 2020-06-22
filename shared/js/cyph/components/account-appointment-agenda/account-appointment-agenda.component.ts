@@ -59,6 +59,8 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 	}
 

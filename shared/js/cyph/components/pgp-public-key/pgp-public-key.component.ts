@@ -78,6 +78,8 @@ export class PGPPublicKeyComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		await this.updateData();
 	}
 

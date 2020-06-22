@@ -17,6 +17,8 @@ import {StringsService} from '../../services/strings.service';
 export class ChatCyphertextComponent extends BaseProvider implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

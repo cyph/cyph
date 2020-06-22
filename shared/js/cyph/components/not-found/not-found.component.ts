@@ -31,6 +31,8 @@ export class NotFoundComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		if (
 			!this.envService.isAccounts ||
 			!this.accountService ||

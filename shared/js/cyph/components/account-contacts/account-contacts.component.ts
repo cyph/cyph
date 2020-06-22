@@ -162,6 +162,8 @@ export class AccountContactsComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.initContactListInternal();
 		this.accountService.transitionEnd();
 

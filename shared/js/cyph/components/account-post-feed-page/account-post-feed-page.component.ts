@@ -16,6 +16,8 @@ export class AccountPostFeedPageComponent extends BaseProvider
 	implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 	}
 
