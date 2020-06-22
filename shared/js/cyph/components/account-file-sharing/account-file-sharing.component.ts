@@ -29,7 +29,7 @@ import {AccountContactsSearchComponent} from '../account-contacts-search';
 })
 export class AccountFileSharingComponent extends BaseProvider {
 	/** @see AccountContactsSearchComponent */
-	@ViewChild(AccountContactsSearchComponent)
+	@ViewChild('accountContactsSearch', {read: AccountContactsSearchComponent})
 	public accountContactsSearch?: AccountContactsSearchComponent;
 
 	/** Function to close dialog. */

@@ -26,7 +26,7 @@ import {StringsService} from '../../services/strings.service';
 export class InAppPurchaseComponent extends BaseProvider
 	implements IInAppPurchaseComponent {
 	/** @inheritDoc */
-	@ViewChild(CheckoutComponent)
+	@ViewChild('checkoutComponent', {read: CheckoutComponent})
 	public checkoutComponent?: CheckoutComponent;
 
 	/** @inheritDoc */

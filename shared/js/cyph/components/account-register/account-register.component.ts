@@ -131,11 +131,11 @@ export class AccountRegisterComponent extends BaseProvider
 	@Input() public hidePinDescription: boolean = false;
 
 	/** @see InAppPurchaseComponent */
-	@ViewChild(InAppPurchaseComponent)
+	@ViewChild('inAppPurchase', {read: InAppPurchaseComponent})
 	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** @see InAppPurchaseComponent */
-	@ViewChild(InAppPurchaseComponent)
+	@ViewChild('inAppPurchaseExistingInvite', {read: InAppPurchaseComponent})
 	public inAppPurchaseExistingInvite?: InAppPurchaseComponent;
 
 	/** Invite code. */

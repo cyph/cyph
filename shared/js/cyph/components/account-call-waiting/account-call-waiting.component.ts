@@ -49,7 +49,7 @@ export class AccountCallWaitingComponent extends BaseProvider
 	public readonly callTypes = CallTypes;
 
 	/** Component for composing forms. */
-	@ViewChild(AccountComposeNoProvidersComponent)
+	@ViewChild('formCompose', {read: AccountComposeNoProvidersComponent})
 	public formCompose?: AccountComposeNoProvidersComponent;
 
 	/** Participants by type. */

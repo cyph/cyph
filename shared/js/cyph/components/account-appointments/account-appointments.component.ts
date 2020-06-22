@@ -48,7 +48,7 @@ export class AccountAppointmentsComponent extends BaseProvider
 	public readonly accountUserTypes = AccountUserTypes;
 
 	/** @see CalendarComponent */
-	@ViewChild(CalendarComponent)
+	@ViewChild('calendar', {read: CalendarComponent})
 	public calendar?: CalendarComponent;
 
 	/** Calendar configuration. */

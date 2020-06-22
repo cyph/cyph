@@ -30,7 +30,8 @@ export class QRCodeScannerComponent extends BaseProvider
 	public readonly activated = resolvable(true);
 
 	/** cyph-video element. */
-	@ViewChild(VideoComponent) public cyphVideo?: VideoComponent;
+	@ViewChild('cyphVideo', {read: VideoComponent})
+	public cyphVideo?: VideoComponent;
 
 	/** Indicates whether scanning is in progress. */
 	public readonly isActive = new BehaviorSubject<boolean>(true);

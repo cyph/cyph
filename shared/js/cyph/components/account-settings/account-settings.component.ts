@@ -86,7 +86,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	);
 
 	/** @see InAppPurchaseComponent */
-	@ViewChild(InAppPurchaseComponent)
+	@ViewChild('inAppPurchase', {read: InAppPurchaseComponent})
 	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** Indicates whether page is loading. */

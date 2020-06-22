@@ -152,7 +152,7 @@ export class AccountComponent extends BaseProvider
 	);
 
 	/** @see InAppPurchaseComponent */
-	@ViewChild(InAppPurchaseComponent)
+	@ViewChild('inAppPurchase', {read: InAppPurchaseComponent})
 	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** Indicates whether menu should be displayed. */
