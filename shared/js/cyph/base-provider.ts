@@ -14,9 +14,11 @@ export class BaseProvider implements OnDestroy, OnInit {
 	public readonly destroyed = new BehaviorSubject<boolean>(false);
 
 	/** Lifecycle OnDestroy event. */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	@Output() public readonly lifecycleOnDestroy = new EventEmitter<void>();
 
 	/** Lifecycle OnInit event. */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	@Output() public readonly lifecycleOnInit = new EventEmitter<void>();
 
 	/** Active subscriptions in use by this component. */
@@ -36,6 +38,7 @@ export class BaseProvider implements OnDestroy, OnInit {
 	}
 
 	/** @inheritDoc */
+	/* eslint-disable-next-line @typescript-eslint/tslint/config */
 	public ngOnInit () : void {
 		this.lifecycleOnInit.emit();
 	}
