@@ -564,7 +564,6 @@ export class P2PWebRTCService extends BaseProvider
 	/** @inheritDoc */
 	public async join (p2pSessionData: {
 		callType: 'audio' | 'video';
-		channelConfigIDs: Record<string, Record<string, number>>;
 		iceServers: string;
 		id: string;
 	}) : Promise<void> {
@@ -674,27 +673,6 @@ export class P2PWebRTCService extends BaseProvider
 			}[] = sessionServices.map((sessionService, i) => {
 				const connected = resolvable();
 
-				const channelParties =
-					sessionService.pairwiseSessionData?.localUsername &&
-					sessionService.pairwiseSessionData.remoteUsername ?
-						normalizeArray([
-							sessionService.pairwiseSessionData.localUsername,
-							sessionService.pairwiseSessionData.remoteUsername
-						]) :
-						undefined;
-
-				const channelConfigID =
-					channelParties &&
-					p2pSessionData.channelConfigIDs[channelParties[0]] &&
-					/* eslint-disable-next-line @typescript-eslint/tslint/config */
-					typeof p2pSessionData.channelConfigIDs[channelParties[0]][
-						channelParties[1]
-					] === 'number' ?
-						p2pSessionData.channelConfigIDs[channelParties[0]][
-							channelParties[1]
-						] :
-						0;
-
 				const peerResolvers = [
 					resolvable<SimplePeer.Instance>(),
 					resolvable<SimplePeer.Instance>()
@@ -702,10 +680,6 @@ export class P2PWebRTCService extends BaseProvider
 
 				const getPeer = (generation: number = 0) => {
 					const peer = new SimplePeer({
-						channelConfig: {
-							id: channelConfigID,
-							negotiated: true
-						},
 						channelName: p2pSessionData.id,
 						config: !this.sessionService.apiFlags.disableP2P ?
 							{iceServers} :
@@ -964,17 +938,8 @@ export class P2PWebRTCService extends BaseProvider
 
 		usernames = normalizeArray(usernames);
 
-		const channelConfigIDs = usernames
-			.map((a, i) => usernames.slice(i + 1).map(b => [a, b]))
-			.flat()
-			.reduce<Record<string, Record<string, number>>>(
-				(o, [a, b], i) => ({...o, [a]: {...o[a], [b]: i}}),
-				{}
-			);
-
 		const p2pSessionData = {
 			callType,
-			channelConfigIDs,
 			iceServers,
 			id: uuid()
 		};
@@ -1232,7 +1197,6 @@ export class P2PWebRTCService extends BaseProvider
 						p2pSessionData &&
 						(p2pSessionData.callType === 'audio' ||
 							p2pSessionData.callType === 'video') &&
-						typeof p2pSessionData.channelConfigIDs === 'object' &&
 						typeof p2pSessionData.iceServers === 'string' &&
 						typeof p2pSessionData.id === 'string'
 					)
