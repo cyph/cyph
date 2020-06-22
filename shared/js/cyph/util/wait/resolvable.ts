@@ -21,33 +21,24 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 		throw new Error('Promise constructor did not run.');
 	}
 
-	const o: IResolvable<T> = {
-		[Symbol.toStringTag]: promise[Symbol.toStringTag],
-		catch: async <TResult>(
-			onrejected?:
-				| ((reason: any) => TResult | PromiseLike<TResult>)
-				/* eslint-disable-next-line no-null/no-null */
-				| null
-				| undefined
-		) => promise.catch(onrejected),
-		finally: async (onfinally?: (() => void) | null | undefined) =>
-			promise.finally(onfinally),
-		promise,
-		reject,
-		resolve,
-		then: async <TResult1, TResult2>(
-			onfulfilled?:
-				| ((value: T) => TResult1 | PromiseLike<TResult1>)
-				/* eslint-disable-next-line no-null/no-null */
-				| null
-				| undefined,
-			onrejected?:
-				| ((reason: any) => TResult2 | PromiseLike<TResult2>)
-				/* eslint-disable-next-line no-null/no-null */
-				| null
-				| undefined
-		) => promise.then(onfulfilled, onrejected)
-	};
+	const o: IResolvable<T> = Object.create(promise, {
+		promise: {
+			value: promise,
+			writable: false
+		},
+		reject: {
+			value: reject,
+			writable: false
+		},
+		resolve: {
+			value: resolve,
+			writable: false
+		},
+		value: {
+			value: undefined,
+			writable: true
+		}
+	});
 
 	promise
 		.then(finalValue => {
