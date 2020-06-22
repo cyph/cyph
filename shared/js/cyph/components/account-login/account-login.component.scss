@@ -1,6 +1,10 @@
 @import '../../../../css/mixins';
 @import '../../../../css/theme';
 
+.login-root {
+	overflow: scroll;
+}
+
 form > div:last-child {
 	padding-top: 64px;
 }
