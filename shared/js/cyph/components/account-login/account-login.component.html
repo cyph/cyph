@@ -578,6 +578,9 @@
 					(loggingIn | await) === true &&
 					(pinUnlock | await) === false
 				"
+				(keydown.enter)="
+					masterKeyInput?.focus(); $event.preventDefault()
+				"
 			/>
 		</mat-form-field>
 	</div>
@@ -592,6 +595,7 @@
 	>
 		<mat-form-field fxFlex>
 			<input
+				#masterKeyInput
 				matInput
 				[ngModel]="masterKey | await"
 				(ngModelChange)="masterKey.next($event)"
