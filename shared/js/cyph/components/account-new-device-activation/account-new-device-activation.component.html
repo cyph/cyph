@@ -39,7 +39,8 @@
 	fxFlexFill
 	fxLayout="column"
 	fxLayoutGap="32px"
-	class="alice"
+	[class.alice]="activateForUsername === undefined"
+	[class.bob]="activateForUsername !== undefined"
 	*ngIf="sessionData !== undefined"
 >
 	<ng-container *ngIf="masterKeyConfirmationCode | await as code">
