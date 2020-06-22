@@ -54,9 +54,6 @@ import {StringsService} from './strings.service';
 export abstract class SessionService extends BaseProvider
 	implements ISessionService {
 	/** @ignore */
-	private readonly _OPENED = resolvable(true);
-
-	/** @ignore */
 	private readonly eventManager = new EventManager();
 
 	/** Indicates whether or not this is an Accounts instance. */
@@ -74,13 +71,10 @@ export abstract class SessionService extends BaseProvider
 	protected lastIncomingMessageTimestamp: number = 0;
 
 	/** @ignore */
-	protected readonly opened: Promise<boolean> = this._OPENED;
+	protected readonly opened = resolvable(true);
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string> = new Set<string>();
-
-	/** @ignore */
-	protected readonly resolveOpened: () => void = this._OPENED.resolve;
 
 	/** @inheritDoc */
 	public readonly aborted = resolvable();
@@ -247,7 +241,7 @@ export abstract class SessionService extends BaseProvider
 	/* eslint-disable-next-line @typescript-eslint/require-await */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		this.state.isAlice.next(isAlice);
-		this.resolveOpened();
+		this.opened.resolve();
 	}
 
 	/** @ignore */

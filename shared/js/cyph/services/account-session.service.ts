@@ -372,22 +372,12 @@ export class AccountSessionService extends SessionService {
 
 			const confirmations = new Map<string, Set<AccountSessionService>>();
 
-			Promise.all(group.map(async session => session.opened)).then(() => {
-				this.resolveOpened();
-			});
-
-			Promise.all(
-				group.map(async session => session.initialMessagesProcessed)
-			).then(() => {
-				this.initialMessagesProcessed.resolve();
-			});
-
 			for (const session of group) {
-				session.on(RpcEvents.text, async newEvents =>
-					this.trigger(RpcEvents.text, newEvents)
-				);
+				session.on(RpcEvents.text, newEvents => {
+					this.trigger(RpcEvents.text, newEvents);
+				});
 
-				session.on(RpcEvents.confirm, async newEvents =>
+				session.on(RpcEvents.confirm, newEvents => {
 					this.trigger(
 						RpcEvents.confirm,
 						filterUndefined(
@@ -415,11 +405,54 @@ export class AccountSessionService extends SessionService {
 								return;
 							})
 						)
-					)
-				);
+					);
+				});
 			}
 
-			this.ready.resolve();
+			for (const {all, always, event} of <
+				{
+					all?: boolean;
+					always?: boolean;
+					event:
+						| 'beginChat'
+						| 'closed'
+						| 'connected'
+						| 'channelConnected'
+						| 'connectFailure'
+						| 'cyphNotFound'
+						| 'initialMessagesProcessed'
+						| 'opened'
+						| 'ready';
+				}[]
+			> [
+				{event: 'beginChat'},
+				{all: true, event: 'closed'},
+				{event: 'connected'},
+				{event: 'channelConnected'},
+				{event: 'connectFailure'},
+				{event: 'cyphNotFound'},
+				{all: true, event: 'initialMessagesProcessed'},
+				{all: true, event: 'opened'},
+				{all: true, event: 'ready'}
+			]) {
+				const callback = async () => this[event].resolve();
+
+				if (always) {
+					callback();
+					continue;
+				}
+
+				const promises = group.map(async session => session[event]);
+
+				if (all) {
+					Promise.all(promises).then(callback);
+				}
+				else {
+					Promise.race(promises).then(callback);
+				}
+			}
+
+			this.remoteUser.resolve(undefined);
 			return;
 		}
 
