@@ -2210,6 +2210,10 @@ message Internal {
 		required bool data = 1;
 	}
 
+	message BinaryArray {
+		repeated bytes data = 1;
+	}
+
 	message NumberArray {
 		repeated double data = 1;
 	}

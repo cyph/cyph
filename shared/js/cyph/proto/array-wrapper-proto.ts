@@ -1,4 +1,4 @@
-import {potassiumUtil} from '../crypto/potassium/potassium-util';
+import {Internal} from '../../proto';
 import {IProto} from '../iproto';
 
 /** Wraps a proto class with an array equivalent. */
@@ -11,20 +11,24 @@ export class ArrayWrapperProto<T> implements IProto<T[]> {
 	/** @inheritDoc */
 	public async decode (bytes: Uint8Array) : Promise<T[]> {
 		return Promise.all(
-			potassiumUtil.splitBytes(bytes).map(async b => this.proto.decode(b))
+			Internal.BinaryArray.decode(bytes).data.map(async b =>
+				this.proto.decode(b)
+			)
 		);
 	}
 
 	/** @inheritDoc */
 	public async encode (data: T[]) : Promise<Uint8Array> {
-		return potassiumUtil.joinBytes(
-			...(await Promise.all(
+		const encoded = Internal.BinaryArray.encode({
+			data: await Promise.all(
 				data.map(async t => {
 					const o = await this.proto.encode(t);
 					return o instanceof Uint8Array ? o : o.finish();
 				})
-			))
-		);
+			)
+		});
+
+		return encoded instanceof Uint8Array ? encoded : encoded.finish();
 	}
 
 	/** @inheritDoc */
