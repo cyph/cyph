@@ -471,10 +471,16 @@ export class AccountRegisterComponent extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public ngOnInit () : void {
+	public async ngOnInit () : Promise<void> {
 		super.ngOnInit();
 
 		this.accountService.transitionEnd();
+
+		const pendingInviteCode = this.localStorageService.getString(
+			'pendingInviteCode'
+		);
+		const setPendingInviteCode = async () =>
+			this.inviteCode.setValue(await pendingInviteCode);
 
 		if (
 			this.confirmMasterKeyOnly ||
@@ -519,8 +525,12 @@ export class AccountRegisterComponent extends BaseProvider
 						step <= this.totalSteps + 1
 					) {
 						this.tabIndex.next(step - 1);
+						await setPendingInviteCode();
 						this.accountService.resolveUiReady();
 						return;
+					}
+					else {
+						await setPendingInviteCode();
 					}
 				}
 
@@ -672,6 +682,8 @@ export class AccountRegisterComponent extends BaseProvider
 			this.inviteCode.value,
 			1
 		);
+
+		this.localStorageService.removeItem('pendingInviteCode');
 
 		await this.router.navigate(['welcome']);
 	}
@@ -825,6 +837,15 @@ export class AccountRegisterComponent extends BaseProvider
 							o = {};
 						}
 
+						const isValid = o.isValid === true;
+
+						if (isValid && value) {
+							this.localStorageService.setString(
+								'pendingInviteCode',
+								value
+							);
+						}
+
 						return {
 							email:
 								typeof o.email === 'string' ?
@@ -835,7 +856,7 @@ export class AccountRegisterComponent extends BaseProvider
 								typeof o.inviterUsername === 'string' ?
 									o.inviterUsername :
 									undefined,
-							isValid: o.isValid === true,
+							isValid,
 							keybaseUsername:
 								typeof o.keybaseUsername === 'string' ?
 									o.keybaseUsername :
