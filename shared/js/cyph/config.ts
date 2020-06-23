@@ -219,6 +219,22 @@ export class Config {
 			business: {
 				id: 11,
 				items: {
+					erw8ib3: {
+						amount: 108,
+						id: 8,
+						individualSubscriptions: true,
+						name: 'Business (Annual)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.annual
+					},
+					g7xxm0r: {
+						amount: 12,
+						id: 7,
+						individualSubscriptions: true,
+						name: 'Business (Monthly)',
+						perUser: true,
+						subscriptionType: SubscriptionTypes.monthly
+					},
 					largeAnnual: {
 						amount: 84,
 						id: 6,
