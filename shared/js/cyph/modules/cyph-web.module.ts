@@ -8,7 +8,6 @@ import {MatCardModule} from '@angular/material/card';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatDialogModule} from '@angular/material/dialog';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatIconModule, MatIconRegistry} from '@angular/material/icon';
@@ -63,9 +62,6 @@ import {AngularDraggableModule} from 'angular2-draggable';
 import {TextMaskModule} from 'angular2-text-mask';
 import {FullCalendarModule} from 'ng-fullcalendar';
 import {ImageCropperModule} from 'ngx-image-cropper';
-import {DialogAlertComponent} from '../components/dialog-alert';
-import {DialogConfirmComponent} from '../components/dialog-confirm';
-import {DialogMediaComponent} from '../components/dialog-media';
 import {DynamicFormComponent} from '../components/dynamic-form';
 import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
 import {SocialShareComponent} from '../components/social-share';
@@ -73,9 +69,7 @@ import {VideoComponent} from '../components/video';
 import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {InitDirective} from '../directives/init.directive';
 import {env} from '../env';
-import {DialogService} from '../services/dialog.service';
 import {LocalStorageService} from '../services/local-storage.service';
-import {MaterialDialogService} from '../services/material-dialog.service';
 import {SocialShareService} from '../services/social-share.service';
 import {WebLocalStorageService} from '../services/web-local-storage.service';
 import {CyphSharedModule} from './cyph-shared.module';
@@ -85,9 +79,6 @@ import {CyphSharedModule} from './cyph-shared.module';
  */
 @NgModule({
 	declarations: [
-		DialogAlertComponent,
-		DialogConfirmComponent,
-		DialogMediaComponent,
 		DropZoneDirective,
 		DynamicFormComponent,
 		InitDirective,
@@ -98,9 +89,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 	exports: [
 		AngularDraggableModule,
 		CyphSharedModule,
-		DialogAlertComponent,
-		DialogConfirmComponent,
-		DialogMediaComponent,
 		DropZoneDirective,
 		DynamicFormComponent,
 		EmojiModule,
@@ -114,7 +102,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatCardModule,
 		MatChipsModule,
 		MatDatepickerModule,
-		MatDialogModule,
 		MatExpansionModule,
 		MatGridListModule,
 		MatIconModule,
@@ -157,7 +144,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatCardModule,
 		MatChipsModule,
 		MatDatepickerModule,
-		MatDialogModule,
 		MatExpansionModule,
 		MatGridListModule,
 		MatIconModule,
@@ -186,10 +172,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 	],
 	providers: [
 		SocialShareService,
-		{
-			provide: DialogService,
-			useClass: MaterialDialogService
-		},
 		{
 			provide: LocalStorageService,
 			useClass: WebLocalStorageService

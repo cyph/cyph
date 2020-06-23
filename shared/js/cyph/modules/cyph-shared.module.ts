@@ -5,12 +5,16 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatDialogModule} from '@angular/material/dialog';
 import {MatInputModule} from '@angular/material/input';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatSelectModule} from '@angular/material/select';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CheckoutComponent} from '../components/checkout';
+import {DialogAlertComponent} from '../components/dialog-alert';
+import {DialogConfirmComponent} from '../components/dialog-confirm';
+import {DialogMediaComponent} from '../components/dialog-media';
 import {MarkdownComponent} from '../components/markdown';
 import {AnchorDirective} from '../directives/anchor.directive';
 import {AutofocusDirective} from '../directives/autofocus.directive';
@@ -23,9 +27,11 @@ import {AwaitPipe} from '../pipes/await.pipe';
 import {FilterPipe} from '../pipes/filter.pipe';
 import {AffiliateService} from '../services/affiliate.service';
 import {ConfigService} from '../services/config.service';
+import {DialogService} from '../services/dialog.service';
 import {DOMPurifyHtmlSanitizerService} from '../services/dompurify-html-sanitizer.service';
 import {EnvService} from '../services/env.service';
 import {HtmlSanitizerService} from '../services/html-sanitizer.service';
+import {MaterialDialogService} from '../services/material-dialog.service';
 import {SalesService} from '../services/sales.service';
 import {SplitTestingService} from '../services/split-testing.service';
 import {StringsService} from '../services/strings.service';
@@ -40,6 +46,9 @@ import {StringsService} from '../services/strings.service';
 		AutofocusDirective,
 		AwaitPipe,
 		CheckoutComponent,
+		DialogAlertComponent,
+		DialogConfirmComponent,
+		DialogMediaComponent,
 		EnableLastPassDirective,
 		FilterPipe,
 		MarkdownComponent,
@@ -56,6 +65,9 @@ import {StringsService} from '../services/strings.service';
 		BrowserModule,
 		CheckoutComponent,
 		CommonModule,
+		DialogAlertComponent,
+		DialogConfirmComponent,
+		DialogMediaComponent,
 		EnableLastPassDirective,
 		FilterPipe,
 		FlexLayoutModule,
@@ -64,6 +76,7 @@ import {StringsService} from '../services/strings.service';
 		MarkdownComponent,
 		MatButtonModule,
 		MatCheckboxModule,
+		MatDialogModule,
 		MatInputModule,
 		MatProgressSpinnerModule,
 		MatSelectModule,
@@ -80,6 +93,7 @@ import {StringsService} from '../services/strings.service';
 		HttpClientModule,
 		MatButtonModule,
 		MatCheckboxModule,
+		MatDialogModule,
 		MatInputModule,
 		MatProgressSpinnerModule,
 		MatSelectModule
@@ -91,6 +105,10 @@ import {StringsService} from '../services/strings.service';
 		SalesService,
 		SplitTestingService,
 		StringsService,
+		{
+			provide: DialogService,
+			useClass: MaterialDialogService
+		},
 		{
 			provide: 'EnvService',
 			useExisting: EnvService
