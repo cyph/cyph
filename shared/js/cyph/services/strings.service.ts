@@ -368,7 +368,7 @@ export class StringsService extends BaseProvider {
 	public readonly featureFlagsForms = `Forms`;
 
 	/** @see StringsService */
-	public readonly featureFlagsInbox = `Anononymous Inbox`;
+	public readonly featureFlagsInbox = `Anonymous Inbox`;
 
 	/** @see StringsService */
 	public readonly featureFlagsInvite = `Invite`;
