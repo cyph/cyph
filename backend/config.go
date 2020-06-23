@@ -671,6 +671,32 @@ var config = struct {
 			},
 			SessionCountLimit: -1,
 		},
+		"11-7": Plan{
+			AccountsPlan: "MonthlyBusiness",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"11-8": Plan{
+			AccountsPlan: "AnnualBusiness",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
 	},
 
 	"http://localhost:42000",
