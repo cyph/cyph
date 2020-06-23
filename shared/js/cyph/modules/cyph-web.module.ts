@@ -154,7 +154,6 @@ export class CyphWebModule {
 		sanitizer: DomSanitizer,
 		faIconLibrary: FaIconLibrary,
 		matIconRegistry: MatIconRegistry,
-		dialogService: DialogService,
 		localStorageService: LocalStorageService,
 		router: Router
 	) {
@@ -256,7 +255,6 @@ export class CyphWebModule {
 			return;
 		}
 
-		(<any> self).dialogService = dialogService;
 		(<any> self).localStorageService = localStorageService;
 		(<any> self).router = router;
 	}

@@ -32,6 +32,7 @@ import {EnableLastPassDirective} from '../directives/enable-last-pass.directive'
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {RouterLinkDirective} from '../directives/router-link.directive';
 import {TranslateDirective} from '../directives/translate.directive';
+import {env} from '../env';
 import {ArrayPipe} from '../pipes/array.pipe';
 import {AwaitPipe} from '../pipes/await.pipe';
 import {FilterPipe} from '../pipes/filter.pipe';
@@ -150,5 +151,13 @@ import {StringsService} from '../services/strings.service';
 	]
 })
 export class CyphSharedModule {
-	constructor () {}
+	constructor (dialogService: DialogService) {
+		/* For debugging */
+
+		if (!env.debug) {
+			return;
+		}
+
+		(<any> self).dialogService = dialogService;
+	}
 }
