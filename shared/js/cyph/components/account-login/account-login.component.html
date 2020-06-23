@@ -12,7 +12,10 @@
 </h3>
 
 <div class="login-root" fxFlexFill fxLayout="column" fxLayoutGap="16px">
-	<cyph-footer class="visibility-hidden"></cyph-footer>
+	<cyph-footer
+		class="visibility-hidden"
+		*ngIf="(envService.isMobile | await) === false"
+	></cyph-footer>
 
 	<div
 		fxFlex
