@@ -7,6 +7,7 @@ jobs:
         - beta
     docker:
       - image: cyph/circleci:latest
+    resource_class: large
     working_directory: /cyph
     steps:
       - checkout
