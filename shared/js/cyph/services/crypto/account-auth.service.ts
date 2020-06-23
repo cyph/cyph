@@ -5,6 +5,7 @@ import {BehaviorSubject} from 'rxjs';
 import {xkcdPassphrase} from 'xkcd-passphrase';
 import {BaseProvider} from '../../base-provider';
 import {IProto} from '../../iproto';
+import {IResolvable} from '../../iresolvable';
 import {
 	AccountContactState,
 	AccountLoginData,
@@ -29,16 +30,18 @@ import {debugLog} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
 import {getTimestamp} from '../../util/time';
 import {uuid} from '../../util/uuid';
-import {sleep} from '../../util/wait';
+import {resolvable, sleep} from '../../util/wait';
 import {closeWindow} from '../../util/window';
 import {AccountUserLookupService} from '../account-user-lookup.service';
 import {AnalyticsService} from '../analytics.service';
 import {ConfigService} from '../config.service';
 import {DatabaseService} from '../database.service';
+import {DialogService} from '../dialog.service';
 import {EnvService} from '../env.service';
 import {ErrorService} from '../error.service';
 import {FingerprintService} from '../fingerprint.service';
 import {LocalStorageService} from '../local-storage.service';
+import {StringsService} from '../strings.service';
 import {AccountDatabaseService} from './account-database.service';
 import {PotassiumService} from './potassium.service';
 
@@ -437,6 +440,7 @@ export class AccountAuthService extends BaseProvider {
 			return false;
 		}
 
+		let dismissToast: IResolvable<() => void> | undefined;
 		let errorLogMessage: string | undefined;
 
 		const setErrorMessageLog = (s: string) => {
@@ -484,8 +488,12 @@ export class AccountAuthService extends BaseProvider {
 
 			setErrorMessageLog('getting loginData');
 
+			const loginDataURL = `users/${username}/loginData${
+				altMasterKey ? 'Alt' : ''
+			}`;
+
 			const loginDataPromise = this.getItem(
-				`users/${username}/loginData${altMasterKey ? 'Alt' : ''}`,
+				loginDataURL,
 				AccountLoginData,
 				masterKey,
 				altMasterKey
@@ -497,9 +505,27 @@ export class AccountAuthService extends BaseProvider {
 				.getUserPublicKeys(username)
 				.catch(() => undefined);
 
+			if (!(await this.databaseService.hasItem(loginDataURL))) {
+				dismissToast = resolvable<() => void>();
+
+				this.dialogService
+					.toast(
+						this.stringsService.newDeviceActivationRegisterToast,
+						-1,
+						undefined,
+						dismissToast
+					)
+					.catch(() => {});
+			}
+
 			const loginData = await loginDataPromise;
 
 			setErrorMessageLog('getting user data');
+
+			if (dismissToast) {
+				(await dismissToast)();
+				dismissToast = undefined;
+			}
 
 			const getUserData = async () =>
 				Promise.all([
@@ -729,6 +755,11 @@ export class AccountAuthService extends BaseProvider {
 				true
 			);
 			return false;
+		}
+		finally {
+			if (dismissToast) {
+				(await dismissToast)();
+			}
 		}
 
 		this.analyticsService.sendEvent('login', 'success');
@@ -1175,6 +1206,9 @@ export class AccountAuthService extends BaseProvider {
 		private readonly databaseService: DatabaseService,
 
 		/** @ignore */
+		private readonly dialogService: DialogService,
+
+		/** @ignore */
 		private readonly envService: EnvService,
 
 		/** @ignore */
@@ -1187,7 +1221,10 @@ export class AccountAuthService extends BaseProvider {
 		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
-		private readonly potassiumService: PotassiumService
+		private readonly potassiumService: PotassiumService,
+
+		/** @ignore */
+		private readonly stringsService: StringsService
 	) {
 		super();
 	}

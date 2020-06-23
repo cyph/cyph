@@ -728,6 +728,9 @@ export class StringsService extends BaseProvider {
 	public readonly newDeviceActivationQR = `Open the ${this.internalProductShort} app and scan this QR code:`;
 
 	/** @see StringsService */
+	public readonly newDeviceActivationRegisterToast = `Return to your original device to complete registration.`;
+
+	/** @see StringsService */
 	public readonly newDeviceActivationTitle = `New Device Activation`;
 
 	/** @see StringsService */

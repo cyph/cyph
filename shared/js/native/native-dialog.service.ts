@@ -305,12 +305,22 @@ export class NativeDialogService extends BaseProvider implements DialogService {
 		});
 	}
 
-	/** @inheritDoc */
+	/**
+	 * @inheritDoc
+	 * @param closeFunction Currently unsupported (not implemented exception).
+	 */
 	public async toast (
 		content: string,
 		duration: number = 2500,
-		action?: string
+		action?: string,
+		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
+		if (closeFunction) {
+			throw new Error(
+				'NativeDialogService.toast closeFunction is unsupported.'
+			);
+		}
+
 		if (action !== undefined) {
 			const args = await this.snackbar.action({
 				actionText: action.toUpperCase(),
