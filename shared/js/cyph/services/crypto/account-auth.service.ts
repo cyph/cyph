@@ -463,6 +463,10 @@ export class AccountAuthService extends BaseProvider {
 			}
 
 			if (typeof masterKey === 'string') {
+				setErrorMessageLog('logging out (if applicable)');
+
+				await this.logout().catch(() => {});
+
 				setErrorMessageLog('password-hashing masterKey');
 
 				masterKey = await this.passwordHash(username, masterKey);
