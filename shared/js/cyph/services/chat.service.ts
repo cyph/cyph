@@ -192,7 +192,8 @@ export class ChatService extends BaseProvider {
 	public readonly resolvers = {
 		chatConnected: resolvable(true),
 		currentMessageSynced: resolvable(true),
-		messageListLoaded: resolvable(true)
+		messageListLoaded: resolvable(true),
+		pendingMessagesSynced: resolvable(true)
 	};
 
 	/** Indicates whether an infinite scroll transition is in progress. */
@@ -203,6 +204,7 @@ export class ChatService extends BaseProvider {
 		this.resolvers.chatConnected,
 		this.resolvers.currentMessageSynced,
 		this.resolvers.messageListLoaded,
+		this.resolvers.pendingMessagesSynced,
 		this.sessionService.initialMessagesProcessed,
 		this.sessionService.ready.then(async () =>
 			Promise.all([
@@ -1270,25 +1272,29 @@ export class ChatService extends BaseProvider {
 
 		const localStoragePromise = !this.chat.pendingMessageRoot ?
 			Promise.resolve() :
-			Promise.all([
-				this.localStorageService.setItem(
-					`chatService.getMessageValue/${id}`,
-					ChatMessageValue,
-					value
-				),
-				this.localStorageService
-					.setItem<IChatPendingMessage>(
-						`${this.chat.pendingMessageRoot}/${id}`,
-						ChatPendingMessage,
-						{
-							message: value,
-							messageType,
-							selfDestructChat,
-							selfDestructTimeout
-						}
-					)
-					.then(removeOldStorageItem)
-			]).then(() => {});
+			this.resolvers.pendingMessagesSynced
+				.then(async () =>
+					Promise.all([
+						this.localStorageService.setItem(
+							`chatService.getMessageValue/${id}`,
+							ChatMessageValue,
+							value
+						),
+						this.localStorageService
+							.setItem<IChatPendingMessage>(
+								`${this.chat.pendingMessageRoot}/${id}`,
+								ChatPendingMessage,
+								{
+									message: value,
+									messageType,
+									selfDestructChat,
+									selfDestructTimeout
+								}
+							)
+							.then(removeOldStorageItem)
+					])
+				)
+				.then(() => {});
 
 		const predecessorsPromise = (async () : Promise<
 			IChatMessagePredecessor[] | undefined
@@ -1475,6 +1481,11 @@ export class ChatService extends BaseProvider {
 					() => 'ChatService.resolvers.messageListLoaded resolved'
 				);
 			});
+			this.resolvers.pendingMessagesSynced.then(() => {
+				debugLog(
+					() => 'ChatService.resolvers.pendingMessagesSynced resolved'
+				);
+			});
 			this.sessionService.initialMessagesProcessed.then(() => {
 				debugLog(
 					() =>
@@ -1591,6 +1602,8 @@ export class ChatService extends BaseProvider {
 								true
 							);
 
+							this.resolvers.pendingMessagesSynced.resolve();
+
 							await Promise.all(
 								pendingMessages.map(
 									async ([key, pendingMessage]) =>
@@ -1625,6 +1638,7 @@ export class ChatService extends BaseProvider {
 			}
 			else {
 				this.resolvers.currentMessageSynced.resolve();
+				this.resolvers.pendingMessagesSynced.resolve();
 			}
 
 			this.chat.messageList.getFlatValue().then(async messageIDs => {
