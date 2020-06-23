@@ -22,6 +22,10 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 	}
 
 	const o: IResolvable<T> = Object.create(promise, {
+		complete: {
+			value: false,
+			writable: true
+		},
 		promise: {
 			value: promise,
 			writable: false
@@ -30,9 +34,17 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 			value: reject,
 			writable: false
 		},
+		rejected: {
+			value: false,
+			writable: true
+		},
 		resolve: {
 			value: resolve,
 			writable: false
+		},
+		resolved: {
+			value: false,
+			writable: true
 		},
 		value: {
 			value: undefined,
@@ -42,9 +54,14 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 
 	promise
 		.then(finalValue => {
+			o.complete = true;
+			o.resolved = true;
 			o.value = finalValue;
 		})
-		.catch(() => {});
+		.catch(() => {
+			o.complete = true;
+			o.rejected = true;
+		});
 
 	return o;
 };
