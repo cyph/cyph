@@ -43,6 +43,7 @@ new Array(101)
 */
 
 /** combineLatest wrapper that emits regardless of whether input is empty. */
+/* eslint-disable-next-line @typescript-eslint/unbound-method */
 export const {observableAll} = class {
 	/** @ignore */
 	public static observableAll (

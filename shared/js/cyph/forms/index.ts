@@ -4,6 +4,7 @@ import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
 
 /** Convenience method for extracting a value from an IForm object. */
+/* eslint-disable-next-line @typescript-eslint/unbound-method */
 export const {getFormValue} = class {
 	/** @ignore */
 	public static getFormValue (
