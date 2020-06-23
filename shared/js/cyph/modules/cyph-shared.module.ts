@@ -5,19 +5,29 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatRadioModule} from '@angular/material/radio';
 import {MatSelectModule} from '@angular/material/select';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {TextMaskModule} from 'angular2-text-mask';
+import {ImageCropperModule} from 'ngx-image-cropper';
 import {CheckoutComponent} from '../components/checkout';
 import {DialogAlertComponent} from '../components/dialog-alert';
 import {DialogConfirmComponent} from '../components/dialog-confirm';
 import {DialogMediaComponent} from '../components/dialog-media';
+import {DynamicFormComponent} from '../components/dynamic-form';
 import {MarkdownComponent} from '../components/markdown';
 import {AnchorDirective} from '../directives/anchor.directive';
 import {AutofocusDirective} from '../directives/autofocus.directive';
+import {DropZoneDirective} from '../directives/drop-zone.directive';
 import {EnableLastPassDirective} from '../directives/enable-last-pass.directive';
 import {NanoScrollerDirective} from '../directives/nano-scroller.directive';
 import {RouterLinkDirective} from '../directives/router-link.directive';
@@ -49,6 +59,8 @@ import {StringsService} from '../services/strings.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
+		DropZoneDirective,
+		DynamicFormComponent,
 		EnableLastPassDirective,
 		FilterPipe,
 		MarkdownComponent,
@@ -68,20 +80,30 @@ import {StringsService} from '../services/strings.service';
 		DialogAlertComponent,
 		DialogConfirmComponent,
 		DialogMediaComponent,
+		DropZoneDirective,
+		DynamicFormComponent,
 		EnableLastPassDirective,
 		FilterPipe,
 		FlexLayoutModule,
 		FormsModule,
 		HttpClientModule,
+		ImageCropperModule,
 		MarkdownComponent,
 		MatButtonModule,
 		MatCheckboxModule,
+		MatDatepickerModule,
 		MatDialogModule,
+		MatIconModule,
 		MatInputModule,
+		MatListModule,
 		MatProgressSpinnerModule,
+		MatRadioModule,
 		MatSelectModule,
+		MatSliderModule,
+		MatTooltipModule,
 		NanoScrollerDirective,
 		RouterLinkDirective,
+		TextMaskModule,
 		TranslateDirective
 	],
 	imports: [
@@ -91,12 +113,20 @@ import {StringsService} from '../services/strings.service';
 		FlexLayoutModule,
 		FormsModule,
 		HttpClientModule,
+		ImageCropperModule,
 		MatButtonModule,
 		MatCheckboxModule,
+		MatDatepickerModule,
 		MatDialogModule,
+		MatIconModule,
 		MatInputModule,
+		MatListModule,
 		MatProgressSpinnerModule,
-		MatSelectModule
+		MatRadioModule,
+		MatSelectModule,
+		MatSliderModule,
+		MatTooltipModule,
+		TextMaskModule
 	],
 	providers: [
 		AffiliateService,
