@@ -177,6 +177,9 @@ export class CheckoutComponent extends BaseProvider
 	/** @see reloadWindow */
 	public readonly reloadWindow = reloadWindow;
 
+	/** Spinner to set while performing checkout. */
+	@Input() public spinner?: BehaviorSubject<boolean>;
+
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
 
@@ -565,6 +568,9 @@ export class CheckoutComponent extends BaseProvider
 	/* eslint-disable-next-line complexity */
 	public async submit (useBitPay: boolean = false) : Promise<void> {
 		try {
+			/* eslint-disable-next-line no-unused-expressions */
+			this.spinner?.next(true);
+
 			this.errorMessage.next(undefined);
 			this.pending.next(true);
 
@@ -790,6 +796,10 @@ export class CheckoutComponent extends BaseProvider
 					.trim()
 					.replace(/\.$/, '')}".`
 			);
+		}
+		finally {
+			/* eslint-disable-next-line no-unused-expressions */
+			this.spinner?.next(false);
 		}
 	}
 
