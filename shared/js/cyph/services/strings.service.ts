@@ -224,7 +224,7 @@ export class StringsService extends BaseProvider {
 	public readonly checkoutInAppPaymentConfirm = `The \${ITEM} plan provides access to advanced features not available in the free tier of ${this.internalProductShort}, in addition to skipping the waitlist so you can register immediately. This is a \$\${AMOUNT} \${PAYMENT}. Proceed?`;
 
 	/** @see StringsService */
-	public readonly checkoutInAppPaymentTitle = `In-App Purchase of ${this.internalProductShort} \${ITEM}`;
+	public readonly checkoutInAppPaymentTitle = `${this.internalProductShort} \${ITEM} In-App Purchase`;
 
 	/** @see StringsService */
 	public readonly checkoutInAppPaymentTitleDefaultItemName = `Premium`;
