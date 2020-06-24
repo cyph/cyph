@@ -583,21 +583,38 @@ export class CheckoutComponent extends BaseProvider
 						this.stringsService.checkoutInAppPaymentConfirm,
 						{
 							amount: this.amount.toString(),
+							item:
+								this.itemName ||
+								this.stringsService
+									.checkoutInAppPaymentTitleDefaultItemName,
 							payment:
-								this.subscriptionType ===
-								SubscriptionTypes.annual ?
+								this.subscriptionType === undefined ?
 									this.stringsService
-										.checkoutSubscriptionAnnual :
-								this.subscriptionType ===
-									SubscriptionTypes.monthly ?
-									this.stringsService
-										.checkoutSubscriptionMonthly :
-									this.stringsService.checkoutSubscriptionNone
+										.checkoutSubscriptionNone :
+									this.stringsService.setParameters(
+										this.stringsService
+											.checkoutSubscriptionRecurring,
+										{
+											subscription:
+												this.subscriptionType ===
+												SubscriptionTypes.annual ?
+													this.stringsService
+														.checkoutSubscriptionAnnual :
+													this.stringsService
+														.checkoutSubscriptionMonthly
+										}
+									)
 						}
 					),
-					title:
-						this.itemName ||
-						this.stringsService.checkoutInAppPaymentTitle
+					title: this.stringsService.setParameters(
+						this.stringsService.checkoutInAppPaymentTitle,
+						{
+							item:
+								this.itemName ||
+								this.stringsService
+									.checkoutInAppPaymentTitleDefaultItemName
+						}
+					)
 				}))
 			) {
 				return;

@@ -221,19 +221,25 @@ export class StringsService extends BaseProvider {
 	public readonly checkoutErrorTitle = `Payment Failed`;
 
 	/** @see StringsService */
-	public readonly checkoutInAppPaymentConfirm = `Confirm \$\${AMOUNT} \${PAYMENT}?`;
+	public readonly checkoutInAppPaymentConfirm = `The \${ITEM} plan provides access to advanced features not available in the free tier of ${this.internalProductShort}, in addition to skipping the waitlist so you can register immediately. This is a \$\${AMOUNT} \${PAYMENT}. Proceed?`;
 
 	/** @see StringsService */
-	public readonly checkoutInAppPaymentTitle = `In-App Purchase`;
+	public readonly checkoutInAppPaymentTitle = `In-App Purchase of ${this.internalProductShort} \${ITEM}`;
 
 	/** @see StringsService */
-	public readonly checkoutSubscriptionAnnual = `annual subscription`;
+	public readonly checkoutInAppPaymentTitleDefaultItemName = `Premium`;
 
 	/** @see StringsService */
-	public readonly checkoutSubscriptionMonthly = `monthly subscription`;
+	public readonly checkoutSubscriptionAnnual = `annual`;
 
 	/** @see StringsService */
-	public readonly checkoutSubscriptionNone = `payment`;
+	public readonly checkoutSubscriptionMonthly = `monthly`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionNone = `one-time payment`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionRecurring = `\${SUBSCRIPTION} subscription, which will continue recurring indefinitely until explicitly canceled`;
 
 	/** @see StringsService */
 	public readonly circle = `Circle`;
