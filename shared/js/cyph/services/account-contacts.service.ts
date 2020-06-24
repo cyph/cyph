@@ -586,6 +586,11 @@ export class AccountContactsService extends BaseProvider {
 				AccountContactState.States.Confirmed;
 	}
 
+	/** Indicates whether the user is in the current user's inner Circle. */
+	public async isInnerCircle (username: string) : Promise<boolean> {
+		return this.isContact(username, true, true);
+	}
+
 	/** Removes contact. */
 	public async removeContact (username?: string) : Promise<void> {
 		if (!username) {
@@ -634,6 +639,16 @@ export class AccountContactsService extends BaseProvider {
 			this.contactURL(username),
 			subscriptions
 		);
+	}
+
+	/** Watches whether the user is a in the current user's inner Circle. */
+	public watchIfInnerCircle (
+		username: string,
+		subscriptions?: Subscription[]
+	) : Observable<boolean> {
+		return this.accountDatabaseService
+			.watchExists(this.contactURL(username, true), subscriptions)
+			.pipe(switchMap(async () => this.isInnerCircle(username)));
 	}
 
 	constructor (
