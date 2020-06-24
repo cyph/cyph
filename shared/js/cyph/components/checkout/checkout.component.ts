@@ -568,9 +568,6 @@ export class CheckoutComponent extends BaseProvider
 	/* eslint-disable-next-line complexity */
 	public async submit (useBitPay: boolean = false) : Promise<void> {
 		try {
-			/* eslint-disable-next-line no-unused-expressions */
-			this.spinner?.next(true);
-
 			this.errorMessage.next(undefined);
 			this.pending.next(true);
 
@@ -619,6 +616,9 @@ export class CheckoutComponent extends BaseProvider
 			) {
 				return;
 			}
+
+			/* eslint-disable-next-line no-unused-expressions */
+			this.spinner?.next(true);
 
 			const paymentMethod =
 				useBitPay || !!inAppPurchase ?
