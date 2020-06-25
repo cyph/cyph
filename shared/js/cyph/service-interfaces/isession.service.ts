@@ -21,7 +21,7 @@ import {IP2PWebRTCService} from './ip2p-webrtc.service';
  */
 export interface ISessionService {
 	/** Resolves when service is aborted. */
-	readonly aborted: IResolvable<void>;
+	readonly aborted: IResolvable<true>;
 
 	/** API flags passed into this session. */
 	readonly apiFlags: {
@@ -33,31 +33,31 @@ export interface ISessionService {
 	readonly appUsername: Observable<string>;
 
 	/** Resolves chat init can begin. */
-	readonly beginChat: IResolvable<void>;
+	readonly beginChat: IResolvable<true>;
 
 	/** Resolves chat init is complete. */
-	readonly beginChatComplete: IResolvable<void>;
+	readonly beginChatComplete: IResolvable<true>;
 
 	/** Resolves when we can begin waiting for Bob. */
-	readonly beginWaiting: IResolvable<void>;
+	readonly beginWaiting: IResolvable<true>;
 
 	/** Resolves when this session's channel is connected. */
-	readonly channelConnected: IResolvable<void>;
+	readonly channelConnected: IResolvable<true>;
 
 	/** Target username of outgoing Burner chat request, if applicable. */
 	readonly chatRequestUsername: BehaviorSubject<string | undefined>;
 
 	/** Resolves when this session is closed. */
-	readonly closed: IResolvable<void>;
+	readonly closed: IResolvable<true>;
 
 	/** Resolves when this session is connected. */
-	readonly connected: IResolvable<void>;
+	readonly connected: IResolvable<true>;
 
 	/** Resolves when this session's connection fails. */
-	readonly connectFailure: IResolvable<void>;
+	readonly connectFailure: IResolvable<true>;
 
 	/** Resolves when this session 404s. */
-	readonly cyphNotFound: IResolvable<void>;
+	readonly cyphNotFound: IResolvable<true>;
 
 	/** Emits cyphertext versions of all messages (if applicable). */
 	readonly cyphertext: Subject<{
@@ -72,7 +72,7 @@ export interface ISessionService {
 	group?: ISessionService[];
 
 	/** Resolves when first batch of incoming messages have been processed. */
-	readonly initialMessagesProcessed: IResolvable<void>;
+	readonly initialMessagesProcessed: IResolvable<true>;
 
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
@@ -93,7 +93,7 @@ export interface ISessionService {
 	readonly proFeatures: ProFeatures;
 
 	/** Resolves when service is ready. */
-	readonly ready: IResolvable<void>;
+	readonly ready: IResolvable<true>;
 
 	/** Remote username (e.g. "friend" or "alice"). */
 	readonly remoteUsername: BehaviorSubject<string>;

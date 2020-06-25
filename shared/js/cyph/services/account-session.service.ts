@@ -69,7 +69,7 @@ export class AccountSessionService extends SessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly ready = resolvable();
+	public readonly ready = resolvable<true>(true);
 
 	/** Remote user. */
 	public readonly remoteUser = resolvable<UserLike | undefined>();

@@ -71,13 +71,13 @@ export abstract class SessionService extends BaseProvider
 	protected lastIncomingMessageTimestamp: number = 0;
 
 	/** @ignore */
-	protected readonly opened = resolvable(true);
+	protected readonly opened = resolvable<true>(true);
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string> = new Set<string>();
 
 	/** @inheritDoc */
-	public readonly aborted = resolvable();
+	public readonly aborted = resolvable<true>(true);
 
 	/** @inheritDoc */
 	public readonly apiFlags = {
@@ -90,16 +90,16 @@ export abstract class SessionService extends BaseProvider
 	public readonly appUsername: Observable<string> = of('');
 
 	/** @inheritDoc */
-	public readonly beginChat = resolvable();
+	public readonly beginChat = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly beginChatComplete = resolvable();
+	public readonly beginChatComplete = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly beginWaiting = resolvable();
+	public readonly beginWaiting = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly channelConnected = resolvable();
+	public readonly channelConnected = resolvable<true>(true);
 
 	/** @inheritDoc */
 	public readonly chatRequestUsername: BehaviorSubject<
@@ -107,16 +107,16 @@ export abstract class SessionService extends BaseProvider
 	> = new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
-	public readonly closed = resolvable();
+	public readonly closed = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly connected = resolvable();
+	public readonly connected = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly connectFailure = resolvable();
+	public readonly connectFailure = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly cyphNotFound = resolvable();
+	public readonly cyphNotFound = resolvable<true>(true);
 
 	/** @inheritDoc */
 	public readonly cyphertext = new ReplaySubject<{
@@ -133,7 +133,7 @@ export abstract class SessionService extends BaseProvider
 	public group?: SessionService[];
 
 	/** @inheritDoc */
-	public readonly initialMessagesProcessed = resolvable();
+	public readonly initialMessagesProcessed = resolvable<true>(true);
 
 	/** @inheritDoc */
 	public readonly localUsername: Observable<string> = new BehaviorSubject<
@@ -155,7 +155,7 @@ export abstract class SessionService extends BaseProvider
 	> = new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
-	public readonly ready = resolvedResolvable();
+	public readonly ready = resolvedResolvable<true>(true);
 
 	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<
