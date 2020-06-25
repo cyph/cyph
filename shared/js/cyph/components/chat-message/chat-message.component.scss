@@ -41,6 +41,11 @@
 	white-space: nowrap;
 }
 
+.media-wrapper {
+	display:flex;
+	align-items: center;
+}
+
 .clipboard-copy-menu {
 	margin-top: -4px;
 	width: 24px;

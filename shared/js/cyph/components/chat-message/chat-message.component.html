@@ -347,22 +347,36 @@
 								/>
 							</audio>
 
-							<img
-								class="media-message"
-								[src]="media?.uri || ''"
-								[alt]="value.fileTransfer.name"
-								(click)="
-									!clickable ?
-										undefined :
-										dialogService.media({
-											mediaType:
-												value.fileTransfer.mediaType,
-											src: media?.uri || '',
-											title: value.fileTransfer.name
-										})
-								"
-								*ngIf="fileService.isImage(value.fileTransfer)"
-							/>
+							<div class="media-wrapper" fxLayout="row">
+
+								<img
+									class="media-message"
+									[src]="media?.uri || ''"
+									[alt]="value.fileTransfer.name"
+									(click)="
+										!clickable ?
+											undefined :
+											dialogService.media({
+												mediaType:
+													value.fileTransfer.mediaType,
+												src: media?.uri || '',
+												title: value.fileTransfer.name
+											})
+									"
+									*ngIf="fileService.isImage(value.fileTransfer)"
+								/>
+
+								<button
+									mat-icon-button
+									cyphTranslate
+									class="animated flipInX"
+									matTooltip="Hide Content"
+									(click)="mediaSpoiler.next(true)"
+
+								>
+									<mat-icon>visibility_off</mat-icon>
+								</button>
+							</div>
 
 							<span
 								class="video-message-wrapper"
