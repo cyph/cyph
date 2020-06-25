@@ -16,36 +16,36 @@ cd ~/tmplib/js
 
 read -r -d '' modules <<- EOM
 	@agm/core
-	@angular/animations@next
-	@angular/bazel@next
-	@angular/cdk@next
-	@angular/cdk-experimental@next
-	@angular/cli@next
-	@angular/common@next
-	@angular/compiler@next
-	@angular/compiler-cli@next
-	@angular/core@next
-	@angular/elements@next
+	@angular/animations
+	@angular/bazel
+	@angular/cdk
+	@angular/cdk-experimental
+	@angular/cli
+	@angular/common
+	@angular/compiler
+	@angular/compiler-cli
+	@angular/core
+	@angular/elements
 	@angular/flex-layout
-	@angular/forms@next
-	@angular/material@next
-	@angular/platform-browser@next
-	@angular/platform-browser-dynamic@next
-	@angular/platform-server@next
-	@angular/platform-webworker@next
-	@angular/platform-webworker-dynamic@next
-	@angular/router@next
-	@angular/service-worker@next
-	@angular/tsc-wrapped@next
-	@angular-devkit/architect@next
-	@angular-devkit/architect-cli@next
-	@angular-devkit/build-ng-packagr@next
-	@angular-devkit/core@next
-	@angular-devkit/build-angular@next
-	@angular-devkit/build-optimizer@next
-	@angular-devkit/build-webpack@next
-	@angular-devkit/schematics@next
-	@angular-devkit/schematics-cli@next
+	@angular/forms
+	@angular/material
+	@angular/platform-browser
+	@angular/platform-browser-dynamic
+	@angular/platform-server
+	@angular/platform-webworker
+	@angular/platform-webworker-dynamic
+	@angular/router
+	@angular/service-worker
+	@angular/tsc-wrapped
+	@angular-devkit/architect
+	@angular-devkit/architect-cli
+	@angular-devkit/build-ng-packagr
+	@angular-devkit/core
+	@angular-devkit/build-angular
+	@angular-devkit/build-optimizer
+	@angular-devkit/build-webpack
+	@angular-devkit/schematics
+	@angular-devkit/schematics-cli
 	@asymmetrik/ngx-leaflet
 	@beezleeart/ngx-filemanager
 	@compodoc/compodoc
@@ -84,7 +84,7 @@ read -r -d '' modules <<- EOM
 	@ngrx/router-store
 	@ngrx/store
 	@ngrx/store-devtools
-	@ngtools/webpack@next
+	@ngtools/webpack
 	@ngx-gallery/core
 	@ngx-gallery/gallerize
 	@ngx-gallery/lightbox
