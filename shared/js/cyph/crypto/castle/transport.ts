@@ -19,8 +19,8 @@ export class Transport {
 	}
 
 	/** @see ISessionService.closed */
-	public get closed () : Promise<void> {
-		await this.sessionService.closed;
+	public get closed () : Promise<true> {
+		return this.sessionService.closed;
 	}
 
 	/** Triggers connection event. */
