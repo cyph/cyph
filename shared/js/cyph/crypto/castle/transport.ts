@@ -20,7 +20,7 @@ export class Transport {
 
 	/** @see ISessionService.closed */
 	public get closed () : Promise<void> {
-		return this.sessionService.closed;
+		await this.sessionService.closed;
 	}
 
 	/** Triggers connection event. */
