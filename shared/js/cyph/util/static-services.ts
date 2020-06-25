@@ -14,7 +14,7 @@ const resolvableDialogService = !env.isMainThread ?
 
 /** @ignore */
 export const staticDialogService = resolvableDialogService ?
-	resolvableDialogService.promise :
+	resolvableDialogService :
 	Promise.reject('Dialog service not found.');
 
 /** Resolvable domSanitizer. */
@@ -36,7 +36,7 @@ if (!(env.isMainThread && env.isWeb)) {
 }
 
 /** @see DomSanitizer */
-export const staticDomSanitizer = resolvableDomSanitizer.promise;
+export const staticDomSanitizer = resolvableDomSanitizer;
 
 /** Resolvable fileService. */
 const resolvableFileService = !env.isMainThread ?
@@ -45,7 +45,7 @@ const resolvableFileService = !env.isMainThread ?
 
 /** @ignore */
 export const staticFileService = resolvableFileService ?
-	resolvableFileService.promise :
+	resolvableFileService :
 	Promise.reject('File service not found.');
 
 /** Resolvable httpClient. */
@@ -55,14 +55,14 @@ const resolvableHttpClient = !env.isMainThread ?
 
 /** @see HttpClient */
 export const staticHttpClient = resolvableHttpClient ?
-	resolvableHttpClient.promise :
+	resolvableHttpClient :
 	Promise.reject('HTTP service not found.');
 
 /** Resolvable ngZone. */
 const resolvableNgZone = resolvable<NgZone>();
 
 /** @see NgZone */
-export const staticNgZone = resolvableNgZone.promise;
+export const staticNgZone = resolvableNgZone;
 
 /** Resolvable stringsService. */
 const resolvableStringsService = !env.isMainThread ?
@@ -71,7 +71,7 @@ const resolvableStringsService = !env.isMainThread ?
 
 /** @ignore */
 export const staticStringsService = resolvableStringsService ?
-	resolvableStringsService.promise :
+	resolvableStringsService :
 	Promise.reject('Strings service not found.');
 
 /** Resolves static services. */

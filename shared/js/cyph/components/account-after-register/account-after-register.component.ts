@@ -19,6 +19,8 @@ export class AccountAfterRegisterComponent extends BaseProvider
 	implements OnInit {
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		if (this.accountDatabaseService.currentUser.value?.masterKeyConfirmed) {
 			this.router.navigate(['']);
 			return;

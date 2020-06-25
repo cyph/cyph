@@ -370,10 +370,14 @@ export class Env extends EnvDeploy {
 			this.isCordovaMobileIOS &&
 			typeof (<any> self).store?.register === 'function';
 
-		this.noInAppPurchasesReferenceAllowed = this.isCordovaDesktopMacOS;
+		this.noInAppPurchasesReferenceAllowed =
+			this.isCordovaDesktopMacOS ||
+			(this.isCordovaMobileIOS && !this.inAppPurchasesSupported);
+
 		this.noInAppPurchasesAllowed =
 			this.noInAppPurchasesReferenceAllowed ||
 			this.isCordovaDesktopWindows;
+
 		this.noInAppRegistrationAllowed = false;
 
 		const newCyphBaseUrl =

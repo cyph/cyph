@@ -4,6 +4,7 @@ import {ComponentType} from '@angular/cdk/portal';
 import {ChangeDetectorRef, Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
+import throttle from 'lodash-es/throttle';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {
@@ -70,6 +71,7 @@ export class AccountContactsService extends BaseProvider {
 		}>
 	>();
 
+	/** @ignore */
 	private readonly contactListHelpers = {
 		groupData: memoize(
 			(groupData: {
@@ -108,6 +110,27 @@ export class AccountContactsService extends BaseProvider {
 			})
 		)
 	};
+
+	/** @ignore */
+	private readonly getCastleSessionDataInternal = memoize(
+		(username: string) =>
+			throttle(async () => {
+				username = normalize(username);
+
+				if (!username) {
+					return {
+						castleSessionID: ''
+					};
+				}
+
+				return {
+					castleSessionID: await this.accountDatabaseService.callFunction(
+						'getCastleSessionID',
+						{username}
+					)
+				};
+			}, 600000)
+	);
 
 	/** @see AccountPostsService */
 	public readonly accountPostsService = new BehaviorSubject<
@@ -380,8 +403,7 @@ export class AccountContactsService extends BaseProvider {
 			const getContacts = resolvable<User[]>();
 
 			this.dialogService.baseDialog(
-				await AccountContactsService.accountContactsSearchComponent
-					.promise,
+				await AccountContactsService.accountContactsSearchComponent,
 				o => {
 					o.chipInput = true;
 					o.contactList = undefined;
@@ -398,8 +420,8 @@ export class AccountContactsService extends BaseProvider {
 
 			try {
 				const [contacts, close] = await Promise.all([
-					getContacts.promise,
-					closeFunction.promise
+					getContacts,
+					closeFunction
 				]);
 
 				close();
@@ -493,7 +515,7 @@ export class AccountContactsService extends BaseProvider {
 		const getContacts = resolvable<User[]>();
 
 		this.dialogService.baseDialog(
-			await AccountContactsService.accountContactsSearchComponent.promise,
+			await AccountContactsService.accountContactsSearchComponent,
 			o => {
 				o.chipInput = true;
 				o.getContacts = getContacts;
@@ -507,8 +529,8 @@ export class AccountContactsService extends BaseProvider {
 
 		try {
 			const [contacts, close] = await Promise.all([
-				getContacts.promise,
-				closeFunction.promise
+				getContacts,
+				closeFunction
 			]);
 
 			if (contacts.length < 1) {
@@ -536,20 +558,7 @@ export class AccountContactsService extends BaseProvider {
 	public async getCastleSessionData (
 		username: string
 	) : Promise<{castleSessionID: string}> {
-		username = normalize(username);
-
-		if (!username) {
-			return {
-				castleSessionID: ''
-			};
-		}
-
-		return {
-			castleSessionID: await this.accountDatabaseService.callFunction(
-				'getCastleSessionID',
-				{username}
-			)
-		};
+		return this.getCastleSessionDataInternal(username)();
 	}
 
 	/** Indicates whether the user is already a contact. */
@@ -575,6 +584,11 @@ export class AccountContactsService extends BaseProvider {
 				.then(o => o.state)
 				.catch(() => AccountContactState.States.None)) ===
 				AccountContactState.States.Confirmed;
+	}
+
+	/** Indicates whether the user is in the current user's inner Circle. */
+	public async isInnerCircle (username: string) : Promise<boolean> {
+		return this.isContact(username, true, true);
 	}
 
 	/** Removes contact. */
@@ -625,6 +639,16 @@ export class AccountContactsService extends BaseProvider {
 			this.contactURL(username),
 			subscriptions
 		);
+	}
+
+	/** Watches whether the user is a in the current user's inner Circle. */
+	public watchIfInnerCircle (
+		username: string,
+		subscriptions?: Subscription[]
+	) : Observable<boolean> {
+		return this.accountDatabaseService
+			.watchExists(this.contactURL(username, true), subscriptions)
+			.pipe(switchMap(async () => this.isInnerCircle(username)));
 	}
 
 	constructor (

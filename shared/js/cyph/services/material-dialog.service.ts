@@ -315,7 +315,7 @@ export class MaterialDialogService extends BaseProvider
 			matDialogRef.componentInstance.title = o.title;
 
 			return Promise.race([
-				cropResult.promise,
+				cropResult,
 				matDialogRef.afterClosed().toPromise()
 			]);
 		});
@@ -440,7 +440,8 @@ export class MaterialDialogService extends BaseProvider
 	public async toast (
 		content: string,
 		duration: number = 2500,
-		action?: string
+		action?: string,
+		closeFunction?: IResolvable<() => void>
 	) : Promise<boolean> {
 		return this.toastLock(async () => {
 			const snackbar = this.matSnackbar.open(
@@ -448,6 +449,17 @@ export class MaterialDialogService extends BaseProvider
 				action === undefined ? undefined : action.toUpperCase(),
 				{duration: duration > 0 ? duration : undefined}
 			);
+
+			if (closeFunction) {
+				closeFunction.resolve((closeOK?: boolean) => {
+					if (closeOK) {
+						snackbar.dismissWithAction();
+					}
+					else {
+						snackbar.dismiss();
+					}
+				});
+			}
 
 			const wasManuallyDismissed =
 				(await snackbar

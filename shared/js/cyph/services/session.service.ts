@@ -1,11 +1,10 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of, ReplaySubject} from 'rxjs';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../base-provider';
 import {HandshakeSteps, IHandshakeState} from '../crypto/castle';
-import {EventManager} from '../event-manager';
 import {IAsyncList} from '../iasync-list';
 import {IAsyncValue} from '../iasync-value';
 import {LocalAsyncList} from '../local-async-list';
@@ -23,22 +22,21 @@ import {IP2PWebRTCService} from '../service-interfaces/ip2p-webrtc.service';
 import {ISessionService} from '../service-interfaces/isession.service';
 import {
 	CastleEvents,
-	events,
+	EventManager,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
 	ProFeatures,
-	rpcEvents
+	RpcEvents
 } from '../session';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog, debugLogError} from '../util/log';
-import {flattenArray} from '../util/reducers';
 import {deserialize, serialize} from '../util/serialization';
 import {getTimestamp} from '../util/time';
 import {uuid} from '../util/uuid';
-import {resolvable, sleep} from '../util/wait';
+import {resolvable, resolvedResolvable, sleep} from '../util/wait';
 import {AnalyticsService} from './analytics.service';
 import {ChannelService} from './channel.service';
 import {CastleService} from './crypto/castle.service';
@@ -56,13 +54,7 @@ import {StringsService} from './strings.service';
 export abstract class SessionService extends BaseProvider
 	implements ISessionService {
 	/** @ignore */
-	private readonly _OPENED = resolvable(true);
-
-	/** @ignore */
 	private readonly eventManager = new EventManager();
-
-	/** @ignore */
-	private readonly openEvents = new Set<string>();
 
 	/** Indicates whether or not this is an Accounts instance. */
 	protected readonly account: boolean = false;
@@ -79,13 +71,13 @@ export abstract class SessionService extends BaseProvider
 	protected lastIncomingMessageTimestamp: number = 0;
 
 	/** @ignore */
-	protected readonly opened: Promise<boolean> = this._OPENED.promise;
+	protected readonly opened = resolvable<true>(true);
 
 	/** @ignore */
 	protected readonly receivedMessages: Set<string> = new Set<string>();
 
-	/** @ignore */
-	protected readonly resolveOpened: () => void = this._OPENED.resolve;
+	/** @inheritDoc */
+	public readonly aborted = resolvable<true>(true);
 
 	/** @inheritDoc */
 	public readonly apiFlags = {
@@ -98,18 +90,39 @@ export abstract class SessionService extends BaseProvider
 	public readonly appUsername: Observable<string> = of('');
 
 	/** @inheritDoc */
+	public readonly beginChat = resolvable<true>(true);
+
+	/** @inheritDoc */
+	public readonly beginChatComplete = resolvable<true>(true);
+
+	/** @inheritDoc */
+	public readonly beginWaiting = resolvable<true>(true);
+
+	/** @inheritDoc */
+	public readonly channelConnected = resolvable<true>(true);
+
+	/** @inheritDoc */
 	public readonly chatRequestUsername: BehaviorSubject<
 		string | undefined
 	> = new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
-	public readonly closed: Promise<void> = this.one(events.closeChat);
+	public readonly closed = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly connected: Promise<void> = this.one(events.connect);
+	public readonly connected = resolvable<true>(true);
 
 	/** @inheritDoc */
-	public readonly cyphNotFound: Promise<void> = this.one(events.cyphNotFound);
+	public readonly connectFailure = resolvable<true>(true);
+
+	/** @inheritDoc */
+	public readonly cyphNotFound = resolvable<true>(true);
+
+	/** @inheritDoc */
+	public readonly cyphertext = new ReplaySubject<{
+		author: Observable<string>;
+		cyphertext: Uint8Array;
+	}>();
 
 	/** @inheritDoc */
 	public readonly freezePong: BehaviorSubject<boolean> = new BehaviorSubject<
@@ -117,10 +130,10 @@ export abstract class SessionService extends BaseProvider
 	>(false);
 
 	/** @inheritDoc */
-	public readonly initialMessagesProcessed = resolvable();
+	public group?: SessionService[];
 
 	/** @inheritDoc */
-	public group?: SessionService[];
+	public readonly initialMessagesProcessed = resolvable<true>(true);
 
 	/** @inheritDoc */
 	public readonly localUsername: Observable<string> = new BehaviorSubject<
@@ -142,7 +155,7 @@ export abstract class SessionService extends BaseProvider
 	> = new BehaviorSubject<string | undefined>(undefined);
 
 	/** @inheritDoc */
-	public readonly ready: Promise<void> = Promise.resolve();
+	public readonly ready = resolvedResolvable<true>(true);
 
 	/** @inheritDoc */
 	public readonly remoteUsername: BehaviorSubject<
@@ -177,7 +190,7 @@ export abstract class SessionService extends BaseProvider
 	protected async abortSetup () : Promise<void> {
 		this.state.sharedSecret.next(undefined);
 		this.errorService.log('CYPH AUTHENTICATION FAILURE');
-		await this.trigger(events.connectFailure);
+		this.connectFailure.resolve();
 	}
 
 	/** Sends messages through Castle. */
@@ -187,6 +200,8 @@ export abstract class SessionService extends BaseProvider
 		if (messages.length < 1) {
 			return;
 		}
+
+		await this.connected;
 
 		await this.castleService.send(
 			await serialize<ISessionMessageList>(SessionMessageList, {
@@ -203,9 +218,13 @@ export abstract class SessionService extends BaseProvider
 
 	/** @see IChannelHandlers.onConnect */
 	protected async channelOnConnect () : Promise<void> {
-		await this.castleService.initialMessagesProcessed;
+		this.channelConnected.resolve();
+		await Promise.all([
+			this.castleService.ready,
+			this.channelService.initialMessagesProcessed
+		]);
 		this.state.isConnected.next(true);
-		await this.trigger(events.connect);
+		this.connected.resolve();
 	}
 
 	/** @see IChannelHandlers.onMessage */
@@ -222,7 +241,7 @@ export abstract class SessionService extends BaseProvider
 	/* eslint-disable-next-line @typescript-eslint/require-await */
 	protected async channelOnOpen (isAlice: boolean) : Promise<void> {
 		this.state.isAlice.next(isAlice);
-		this.resolveOpened();
+		this.opened.resolve();
 	}
 
 	/** @ignore */
@@ -232,7 +251,7 @@ export abstract class SessionService extends BaseProvider
 	) : Promise<void> {
 		debugLog(() => ({cyphertextReceiveHandler: {messages}}));
 
-		const messageGroups = new Map<string, ISessionMessageDataInternal[]>();
+		const messageGroups = new Map<RpcEvents, ISessionMessageData[]>();
 
 		const otherSubSessionMessages = messages.filter(
 			message => !this.correctSubSession(message)
@@ -253,30 +272,30 @@ export abstract class SessionService extends BaseProvider
 					return;
 				}
 
-				message.data = await this.processMessageData(
+				const data = await this.processMessageData(
 					message.data,
 					initial
 				);
 
-				if (!(message.event && message.event in rpcEvents)) {
+				message.data = data;
+
+				if (!(message.event && message.event in RpcEvents)) {
 					return;
 				}
 
 				getOrSetDefault(messageGroups, message.event, () => []).push(
-					message.data
+					data
 				);
 			})
 		);
 
-		await Promise.all(
-			Array.from(messageGroups.entries()).map(async ([event, data]) => {
-				await this.trigger(event, data);
+		for (const [event, data] of Array.from(messageGroups.entries())) {
+			this.trigger(event, data);
 
-				for (const {id} of data) {
-					this.receivedMessages.add(id);
-				}
-			})
-		);
+			for (const {id} of data) {
+				this.receivedMessages.add(id);
+			}
+		}
 	}
 
 	/** @ignore */
@@ -356,6 +375,11 @@ export abstract class SessionService extends BaseProvider
 		await this.castleSendMessages(messages);
 	}
 
+	/** Trigger event. */
+	protected trigger (event: RpcEvents, data: ISessionMessageData[]) : void {
+		this.eventManager.trigger(event, data);
+	}
+
 	/** @inheritDoc */
 	public async castleHandler (
 		event: CastleEvents,
@@ -382,7 +406,7 @@ export abstract class SessionService extends BaseProvider
 						return;
 					}
 
-					await this.trigger(events.beginChat);
+					this.beginChat.resolve();
 				});
 				break;
 
@@ -459,13 +483,11 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
+		(await this.p2pWebRTCService).close();
+
 		this.state.isAlive.next(false);
-		await this.trigger(events.closeChat);
-
-		for (const event of Array.from(this.openEvents)) {
-			this.off(event);
-		}
-
+		this.closed.resolve();
+		this.eventManager.clear();
 		this.channelService.destroy();
 	}
 
@@ -535,11 +557,10 @@ export abstract class SessionService extends BaseProvider
 			lockClaimed = true;
 
 			await this.cyphertextReceiveHandler(
-				flattenArray(
-					(await this.incomingMessageQueue.getValue()).map(
-						({messages}) => messages || []
-					)
-				).filter(this.correctSubSession),
+				(await this.incomingMessageQueue.getValue())
+					.map(({messages}) => messages || [])
+					.flat()
+					.filter(this.correctSubSession),
 				true
 			);
 
@@ -615,21 +636,25 @@ export abstract class SessionService extends BaseProvider
 	}
 
 	/** @inheritDoc */
-	public off<T> (event: string, handler?: (data: T) => void) : void {
-		this.eventManager.off<T>(event, handler);
+	public off (
+		event: RpcEvents,
+		handler?: (data: ISessionMessageData[]) => void
+	) : void {
+		this.eventManager.off(event, handler);
 	}
 
 	/** @inheritDoc */
-	public on<T> (event: string, handler: (data: T) => void) : void {
-		this.openEvents.add(event);
-		this.eventManager.on<T>(event, handler);
+	public on (
+		event: RpcEvents,
+		handler: (data: ISessionMessageData[]) => void
+	) : void {
+		this.eventManager.on(event, handler);
 	}
 
 	/** @inheritDoc */
 	/* eslint-disable-next-line @typescript-eslint/tslint/config */
-	public async one<T = void> (event: string) : Promise<T> {
-		this.openEvents.add(event);
-		return this.eventManager.one<T>(event);
+	public async one (event: RpcEvents) : Promise<ISessionMessageData[]> {
+		return this.eventManager.one(event);
 	}
 
 	/** @inheritDoc */
@@ -641,7 +666,7 @@ export abstract class SessionService extends BaseProvider
 			return;
 		}
 
-		const p2pWebRTCService = await this.p2pWebRTCService.promise;
+		const p2pWebRTCService = await this.p2pWebRTCService;
 
 		/* Workaround for lint false positive bug */
 		/* eslint-disable-next-line prefer-const */
@@ -678,7 +703,7 @@ export abstract class SessionService extends BaseProvider
 
 		localStream = await p2pWebRTCService.initUserMedia(callType);
 
-		closeRequestAlert.promise.then(async f => f()).catch(() => {});
+		closeRequestAlert.then(async f => f()).catch(() => {});
 
 		if (localStream) {
 			this.prepareForCallTypeError.next(undefined);
@@ -755,11 +780,6 @@ export abstract class SessionService extends BaseProvider
 		throw new Error(
 			'Must provide an implementation of SessionService.spawn.'
 		);
-	}
-
-	/** @inheritDoc */
-	public async trigger (event: string, data?: any) : Promise<void> {
-		await this.eventManager.trigger(event, data);
 	}
 
 	/** @inheritDoc */

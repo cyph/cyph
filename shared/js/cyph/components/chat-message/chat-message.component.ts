@@ -133,7 +133,7 @@ export class ChatMessageComponent extends BaseProvider
 	);
 
 	/** Clipboard copy menu trigger. */
-	@ViewChild(MatMenuTrigger)
+	@ViewChild('clipboardCopyMenuTrigger', {read: MatMenuTrigger})
 	public clipboardCopyMenuTrigger?: MatMenuTrigger;
 
 	/** Fires after message is fully loaded. */

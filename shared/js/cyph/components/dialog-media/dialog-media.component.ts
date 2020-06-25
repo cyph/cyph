@@ -96,6 +96,8 @@ export class DialogMediaComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		await this.matDialogRef.afterOpened().toPromise();
 
 		if (!(this.elementRef.nativeElement instanceof HTMLElement)) {

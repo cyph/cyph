@@ -2210,6 +2210,10 @@ message Internal {
 		required bool data = 1;
 	}
 
+	message BinaryArray {
+		repeated bytes data = 1;
+	}
+
 	message NumberArray {
 		repeated double data = 1;
 	}
@@ -2228,6 +2232,15 @@ message Internal {
 
 	message StringValue {
 		required string data = 1;
+	}
+
+	message TimedValue {
+		required double timestamp = 1;
+		required bytes value = 2;
+	}
+
+	message TimedValueArray {
+		repeated TimedValue data = 1;
 	}
 
 	message Uint32Array {

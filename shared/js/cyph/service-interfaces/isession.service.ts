@@ -1,4 +1,4 @@
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {IHandshakeState} from '../crypto/castle/ihandshake-state';
 import {IResolvable} from '../iresolvable';
 import {MaybePromise} from '../maybe-promise-type';
@@ -10,7 +10,8 @@ import {
 	CastleEvents,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
-	ProFeatures
+	ProFeatures,
+	RpcEvents
 } from '../session';
 import {IP2PWebRTCService} from './ip2p-webrtc.service';
 
@@ -19,6 +20,9 @@ import {IP2PWebRTCService} from './ip2p-webrtc.service';
  * This is the entire non-UI representation of a cyph.
  */
 export interface ISessionService {
+	/** Resolves when service is aborted. */
+	readonly aborted: IResolvable<true>;
+
 	/** API flags passed into this session. */
 	readonly apiFlags: {
 		disableP2P: boolean;
@@ -28,17 +32,38 @@ export interface ISessionService {
 	/** App username. Currently just an empty string. */
 	readonly appUsername: Observable<string>;
 
+	/** Resolves chat init can begin. */
+	readonly beginChat: IResolvable<true>;
+
+	/** Resolves chat init is complete. */
+	readonly beginChatComplete: IResolvable<true>;
+
+	/** Resolves when we can begin waiting for Bob. */
+	readonly beginWaiting: IResolvable<true>;
+
+	/** Resolves when this session's channel is connected. */
+	readonly channelConnected: IResolvable<true>;
+
 	/** Target username of outgoing Burner chat request, if applicable. */
 	readonly chatRequestUsername: BehaviorSubject<string | undefined>;
 
 	/** Resolves when this session is closed. */
-	readonly closed: Promise<void>;
+	readonly closed: IResolvable<true>;
 
 	/** Resolves when this session is connected. */
-	readonly connected: Promise<void>;
+	readonly connected: IResolvable<true>;
+
+	/** Resolves when this session's connection fails. */
+	readonly connectFailure: IResolvable<true>;
 
 	/** Resolves when this session 404s. */
-	readonly cyphNotFound: Promise<void>;
+	readonly cyphNotFound: IResolvable<true>;
+
+	/** Emits cyphertext versions of all messages (if applicable). */
+	readonly cyphertext: Subject<{
+		author: Observable<string>;
+		cyphertext: Uint8Array;
+	}>;
 
 	/** When true, blocks responding to pings. */
 	readonly freezePong: BehaviorSubject<boolean>;
@@ -47,7 +72,7 @@ export interface ISessionService {
 	group?: ISessionService[];
 
 	/** Resolves when first batch of incoming messages have been processed. */
-	readonly initialMessagesProcessed: IResolvable<void>;
+	readonly initialMessagesProcessed: IResolvable<true>;
 
 	/** Local username (e.g. "me"). */
 	readonly localUsername: Observable<string>;
@@ -68,7 +93,7 @@ export interface ISessionService {
 	readonly proFeatures: ProFeatures;
 
 	/** Resolves when service is ready. */
-	readonly ready: Promise<void>;
+	readonly ready: IResolvable<true>;
 
 	/** Remote username (e.g. "friend" or "alice"). */
 	readonly remoteUsername: BehaviorSubject<string>;
@@ -124,13 +149,19 @@ export interface ISessionService {
 	) : Promise<T>;
 
 	/** Remove event listener. */
-	off<T> (event: string, handler?: (data: T) => void) : void;
+	off (
+		event: RpcEvents,
+		handler?: (data: ISessionMessageData[]) => void
+	) : void;
 
 	/** Add event listener. */
-	on<T> (event: string, handler: (data: T) => void) : void;
+	on (
+		event: RpcEvents,
+		handler: (data: ISessionMessageData[]) => void
+	) : void;
 
 	/** Returns first occurrence of event. */
-	one<T> (event: string) : Promise<T>;
+	one (event: RpcEvents) : Promise<ISessionMessageData[]>;
 
 	/** If applicable, requests necessary I/O permissions. */
 	prepareForCallType (
@@ -162,9 +193,6 @@ export interface ISessionService {
 
 	/** Creates and returns a new instance. */
 	spawn () : ISessionService;
-
-	/** Trigger event, passing in optional data. */
-	trigger (event: string, data?: any) : Promise<void>;
 
 	/** Resolves when other user is online. */
 	yt () : Promise<void>;

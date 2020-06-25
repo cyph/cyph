@@ -37,6 +37,7 @@ func main() {
 	handleFuncs("/signups", false, Handlers{methods.PUT: signUp})
 	handleFuncs("/timestamp", false, Handlers{methods.GET: getTimestampHandler})
 	handleFuncs("/waitlist/invite", true, Handlers{methods.GET: rollOutWaitlistInvites})
+	handleFuncs("/warmupcloudfunctions", true, Handlers{methods.GET: warmUpCloudFunctions})
 	handleFuncs("/whatismyip", false, Handlers{methods.GET: whatismyip})
 
 	handleFunc("/", false, func(h HandlerArgs) (interface{}, int) {
@@ -1271,6 +1272,26 @@ func signUp(h HandlerArgs) (interface{}, int) {
 		"")
 
 	return response, http.StatusOK
+}
+
+func warmUpCloudFunctions(h HandlerArgs) (interface{}, int) {
+	for i := range config.CloudFunctionRoutes {
+		client := &http.Client{}
+
+		cloudFunctionRoute := config.CloudFunctionRoutes[i]
+
+		req, _ := http.NewRequest(
+			methods.POST,
+			"https://us-central1-"+firebaseProject+".cloudfunctions.net/"+cloudFunctionRoute,
+			bytes.NewBuffer([]byte("")),
+		)
+
+		req.Header.Add("X-Warmup-Ping", "true")
+
+		client.Do(req)
+	}
+
+	return "", http.StatusOK
 }
 
 func whatismyip(h HandlerArgs) (interface{}, int) {

@@ -30,7 +30,7 @@ type BurnerChannel struct {
 // Customer : Customer with API key
 type Customer struct {
 	APIKey          string
-	AppStoreReceipt string
+	AppStoreReceipt string `datastore:",noindex"`
 	BraintreeID     string
 	Company         string
 	Email           string
@@ -101,6 +101,7 @@ var config = struct {
 	BitPayToken                string
 	BurnerChannelExpiration    int64
 	CacheControlHeader         string
+	CloudFunctionRoutes        []string
 	Continents                 map[string]none
 	DefaultContinent           string
 	DefaultContinentCode       string
@@ -120,7 +121,7 @@ var config = struct {
 	MaxSignupValueLength       int
 	NewCyphTimeout             int64
 	PartnerConversionURL       string
-	PlanAppleIDs               map[int64]string
+	PlanAppleIDs               map[string]string
 	Plans                      map[string]Plan
 	RootURL                    string
 }{
@@ -178,6 +179,35 @@ var config = struct {
 
 	"no-cache",
 
+	[]string{
+		"acceptPseudoRelationship",
+		"appointmentInvite",
+		"channelDisconnect",
+		"checkInviteCode",
+		"downgradeAccount",
+		"generateInvite",
+		"getBraintreeSubscriptionID",
+		"getCastleSessionID",
+		"getReactions",
+		"getUserToken",
+		"itemHashChange",
+		"itemRemoved",
+		"openUserToken",
+		"register",
+		"rejectPseudoRelationship",
+		"requestPseudoRelationship",
+		"resetCastleSessionID",
+		"sendAppLink",
+		"sendInvite",
+		"setContact",
+		"userDisconnect",
+		"userEmailSet",
+		"usernameBlacklisted",
+		"userNotify",
+		"userPublicProfileSet",
+		"userRegisterConfirmed",
+	},
+
 	map[string]none{
 		"af": empty,
 		/* "an": empty, */
@@ -226,8 +256,8 @@ var config = struct {
 
 	"https://partner-api.cyph.com",
 
-	map[int64]string{
-		1518159940: "8-4",
+	map[string]string{
+		"MonthlyPlatinum": "8-4",
 	},
 
 	map[string]Plan{
@@ -629,6 +659,32 @@ var config = struct {
 			SessionCountLimit: -1,
 		},
 		"11-6": Plan{
+			AccountsPlan: "AnnualBusiness",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"11-7": Plan{
+			AccountsPlan: "MonthlyBusiness",
+			ProFeatures: map[string]bool{
+				"api":            false,
+				"disableP2P":     false,
+				"modestBranding": false,
+				"nativeCrypto":   false,
+				"telehealth":     false,
+				"video":          true,
+				"voice":          true,
+			},
+			SessionCountLimit: -1,
+		},
+		"11-8": Plan{
 			AccountsPlan: "AnnualBusiness",
 			ProFeatures: map[string]bool{
 				"api":            false,

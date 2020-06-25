@@ -23,7 +23,7 @@ import {SalesService} from '../../services/sales.service';
 export class AccountUpgradeComponent extends BaseProvider
 	implements AfterViewInit {
 	/** @see InAppPurchaseComponent */
-	@ViewChild(InAppPurchaseComponent)
+	@ViewChild('inAppPurchase', {read: InAppPurchaseComponent})
 	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** @see CheckoutComponent.userToken */

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {map, switchMap, take} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {IChatData, IChatMessageLiveValue, States} from '../chat';
 import {IAsyncSet} from '../iasync-set';
@@ -68,11 +68,6 @@ export class AccountChatService extends ChatService {
 	public readonly remoteUser = this.accountSessionService.remoteUser;
 
 	/** @inheritDoc */
-	public readonly remoteUserObservable = this.remoteUser.pipe(
-		switchMap(async user => user)
-	);
-
-	/** @inheritDoc */
 	protected async getAuthorID (
 		author: Observable<string>
 	) : Promise<string | undefined> {
@@ -95,7 +90,7 @@ export class AccountChatService extends ChatService {
 			return super.getScrollServiceUnreadMessages();
 		}
 
-		const notificationData = await this.notificationData.promise;
+		const notificationData = await this.notificationData;
 
 		const asyncMap = this.accountDatabaseService.getAsyncMap(
 			`unreadMessages/${notificationData.unreadMessagesID}`,
@@ -130,11 +125,10 @@ export class AccountChatService extends ChatService {
 	/** @inheritDoc */
 	public async abortSetup () : Promise<void> {
 		const [groupID, username] = await Promise.all([
-			this.notificationData.promise.then(o => o.groupID),
-			this.remoteUser
-				.pipe(take(1))
-				.toPromise()
-				.then(o => (o && 'username' in o ? o.username : undefined))
+			this.notificationData.then(o => o.groupID),
+			this.remoteUser.then(o =>
+				o && 'username' in o ? o.username : undefined
+			)
 		]);
 
 		this.sessionService.close();
@@ -167,14 +161,14 @@ export class AccountChatService extends ChatService {
 				keepCurrentMessage,
 				oldLocalStorageKey
 			),
-			this.remoteUser.value
+			this.remoteUser
 		]);
 
 		if (!id || remoteUser?.anonymous) {
 			return;
 		}
 
-		const notificationData = await this.notificationData.promise;
+		const notificationData = await this.notificationData;
 
 		await this.accountDatabaseService.notify(
 			notificationData.usernames,

@@ -83,7 +83,8 @@ cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 			display: block;
 		}
 
-		> * > :not(mat-progress-spinner):not(.global) {
+		> * > :not(mat-progress-spinner):not(.global),
+		+ cyph-footer {
 			opacity: 0.15;
 		}
 	}

@@ -3,9 +3,9 @@
 import {Inject, Injectable, Optional} from '@angular/core';
 import memoize from 'lodash-es/memoize';
 import * as msgpack from 'msgpack-lite';
-import {BehaviorSubject, concat, interval, Observable, of} from 'rxjs';
+import {BehaviorSubject, interval, Observable} from 'rxjs';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
-import {filter, map, switchMap, take, tap, takeWhile} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeWhile} from 'rxjs/operators';
 import {UserLike} from '../account/user-like-type';
 import {BaseProvider} from '../base-provider';
 import {
@@ -29,7 +29,6 @@ import {MaybePromise} from '../maybe-promise-type';
 import {
 	BinaryProto,
 	ChatMessage as ChatMessageProto,
-	StringArrayProto,
 	ChatMessageLiveValueSerialized,
 	ChatMessageValue,
 	ChatPendingMessage,
@@ -42,14 +41,13 @@ import {
 	ISessionMessageDataList
 } from '../proto';
 import {
-	events,
 	ISessionMessageAdditionalData,
 	ISessionMessageData,
-	rpcEvents
+	RpcEvents
 } from '../session';
 import {Timer} from '../timer';
 import {filterUndefined, filterUndefinedOperator} from '../util/filter';
-import {asyncToObservable, toBehaviorSubject} from '../util/flatten-observable';
+import {toBehaviorSubject} from '../util/flatten-observable';
 import {normalize} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
 import {lock, lockFunction} from '../util/lock';
@@ -175,34 +173,7 @@ export class ChatService extends BaseProvider {
 	/** List of messages. */
 	public readonly messages = toBehaviorSubject(
 		this.chatSubject.pipe(
-			switchMap(chat =>
-				concat(
-					!chat.pendingMessageRoot ?
-						of<string[]>([]) :
-						asyncToObservable(
-							this.localStorageService
-								.getItem(
-									`${chat.pendingMessageRoot}/messageIDList`,
-									StringArrayProto
-								)
-								.catch(() => [])
-						).pipe(take(1)),
-					chat.messageList.watchFlat(true).pipe(
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						tap(messages => {
-							if (!chat.pendingMessageRoot) {
-								return;
-							}
-
-							this.localStorageService.setItem(
-								`${chat.pendingMessageRoot}/messageIDList`,
-								StringArrayProto,
-								messages
-							);
-						})
-					)
-				)
-			)
+			switchMap(chat => chat.messageList.watchFlat(true))
 		),
 		undefined,
 		this.subscriptions
@@ -215,20 +186,14 @@ export class ChatService extends BaseProvider {
 	}>();
 
 	/** Remote User object where applicable. */
-	public readonly remoteUser = new BehaviorSubject<
-		MaybePromise<UserLike | undefined>
-	>(undefined);
-
-	/** @see remoteUser */
-	public readonly remoteUserObservable = this.remoteUser.pipe(
-		switchMap(async user => user)
-	);
+	public readonly remoteUser = resolvable<UserLike | undefined>();
 
 	/** Sub-resolvables of uiReady. */
 	public readonly resolvers = {
 		chatConnected: resolvable(true),
 		currentMessageSynced: resolvable(true),
-		messageListLoaded: resolvable(true)
+		messageListLoaded: resolvable(true),
+		pendingMessagesSynced: resolvable(true)
 	};
 
 	/** Indicates whether an infinite scroll transition is in progress. */
@@ -236,14 +201,15 @@ export class ChatService extends BaseProvider {
 
 	/** Resolves when UI is ready to be displayed. */
 	public readonly uiReady: Promise<true> = Promise.all([
-		this.resolvers.chatConnected.promise,
-		this.resolvers.currentMessageSynced.promise,
-		this.resolvers.messageListLoaded.promise,
-		this.sessionService.initialMessagesProcessed.promise,
+		this.resolvers.chatConnected,
+		this.resolvers.currentMessageSynced,
+		this.resolvers.messageListLoaded,
+		this.resolvers.pendingMessagesSynced,
+		this.sessionService.initialMessagesProcessed,
 		this.sessionService.ready.then(async () =>
 			Promise.all([
 				!this.sessionService.group ?
-					this.channelService?.initialMessagesProcessed.promise :
+					this.channelService?.initialMessagesProcessed :
 					undefined
 			])
 		)
@@ -315,7 +281,7 @@ export class ChatService extends BaseProvider {
 								}
 
 								await this.sessionService.send([
-									rpcEvents.confirm,
+									RpcEvents.confirm,
 									{textConfirmation: {id: o.id}}
 								]);
 							});
@@ -496,7 +462,7 @@ export class ChatService extends BaseProvider {
 		return {
 			proto: ChatMessageProto,
 			transform: async value => {
-				const remoteUser = await this.remoteUser.value;
+				const remoteUser = await this.remoteUser;
 
 				return {
 					...message,
@@ -545,7 +511,7 @@ export class ChatService extends BaseProvider {
 				string,
 				(timestamp: number) => Promise<ISessionMessageAdditionalData>
 			] => [
-				rpcEvents.text,
+				RpcEvents.text,
 				async timestamp => {
 					const [
 						chatMessage,
@@ -655,7 +621,7 @@ export class ChatService extends BaseProvider {
 	public async abortSetup () : Promise<void> {
 		this.chat.state = States.aborted;
 		this.updateChat();
-		this.sessionService.trigger(events.abort);
+		this.sessionService.aborted.resolve();
 		this.sessionService.close();
 		await this.dialogService.dismissToast();
 	}
@@ -798,7 +764,7 @@ export class ChatService extends BaseProvider {
 							this.sessionInitService.ephemeral &&
 							author === this.sessionService.remoteUsername
 						) {
-							const p2pService = await this.p2pService.promise;
+							const p2pService = await this.p2pService;
 
 							await this.scrollService.trackItem(
 								id,
@@ -889,9 +855,6 @@ export class ChatService extends BaseProvider {
 			return;
 		}
 
-		/* Workaround for Safari bug that breaks initiating a new chat */
-		this.sessionService.send([rpcEvents.ping, {}]);
-
 		if (this.chat.queuedMessage) {
 			this.send(
 				undefined,
@@ -918,7 +881,7 @@ export class ChatService extends BaseProvider {
 				return;
 			}
 
-			this.sessionService.trigger(events.beginChatComplete);
+			this.sessionService.beginChatComplete.resolve();
 
 			this.chat.state = States.chat;
 			this.updateChat();
@@ -1194,7 +1157,7 @@ export class ChatService extends BaseProvider {
 			this.chat.isMessageChanged = isMessageChanged;
 
 			this.sessionService.send([
-				rpcEvents.typing,
+				RpcEvents.typing,
 				{chatState: {isTyping: this.chat.isMessageChanged}}
 			]);
 		});
@@ -1309,25 +1272,29 @@ export class ChatService extends BaseProvider {
 
 		const localStoragePromise = !this.chat.pendingMessageRoot ?
 			Promise.resolve() :
-			Promise.all([
-				this.localStorageService.setItem(
-					`chatService.getMessageValue/${id}`,
-					ChatMessageValue,
-					value
-				),
-				this.localStorageService
-					.setItem<IChatPendingMessage>(
-						`${this.chat.pendingMessageRoot}/${id}`,
-						ChatPendingMessage,
-						{
-							message: value,
-							messageType,
-							selfDestructChat,
-							selfDestructTimeout
-						}
-					)
-					.then(removeOldStorageItem)
-			]).then(() => {});
+			this.resolvers.pendingMessagesSynced
+				.then(async () =>
+					Promise.all([
+						this.localStorageService.setItem(
+							`chatService.getMessageValue/${id}`,
+							ChatMessageValue,
+							value
+						),
+						this.localStorageService
+							.setItem<IChatPendingMessage>(
+								`${this.chat.pendingMessageRoot}/${id}`,
+								ChatPendingMessage,
+								{
+									message: value,
+									messageType,
+									selfDestructChat,
+									selfDestructTimeout
+								}
+							)
+							.then(removeOldStorageItem)
+					])
+				)
+				.then(() => {});
 
 		const predecessorsPromise = (async () : Promise<
 			IChatMessagePredecessor[] | undefined
@@ -1501,27 +1468,32 @@ export class ChatService extends BaseProvider {
 		super();
 
 		if (this.envService.debugLog) {
-			this.resolvers.chatConnected.promise.then(() => {
+			this.resolvers.chatConnected.then(() => {
 				debugLog(() => 'ChatService.resolvers.chatConnected resolved');
 			});
-			this.resolvers.currentMessageSynced.promise.then(() => {
+			this.resolvers.currentMessageSynced.then(() => {
 				debugLog(
 					() => 'ChatService.resolvers.currentMessageSynced resolved'
 				);
 			});
-			this.resolvers.messageListLoaded.promise.then(() => {
+			this.resolvers.messageListLoaded.then(() => {
 				debugLog(
 					() => 'ChatService.resolvers.messageListLoaded resolved'
 				);
 			});
-			this.sessionService.initialMessagesProcessed.promise.then(() => {
+			this.resolvers.pendingMessagesSynced.then(() => {
+				debugLog(
+					() => 'ChatService.resolvers.pendingMessagesSynced resolved'
+				);
+			});
+			this.sessionService.initialMessagesProcessed.then(() => {
 				debugLog(
 					() =>
 						'ChatService.sessionService.initialMessagesProcessed resolved'
 				);
 			});
 			(this.channelService && !this.sessionService.group ?
-				this.channelService.initialMessagesProcessed.promise :
+				this.channelService.initialMessagesProcessed :
 				Promise.resolve()
 			).then(() => {
 				debugLog(
@@ -1534,8 +1506,11 @@ export class ChatService extends BaseProvider {
 			});
 		}
 
+		if (this.sessionInitService.ephemeral) {
+			this.remoteUser.resolve(undefined);
+		}
+
 		this.sessionService.ready.then(() => {
-			const beginChat = this.sessionService.one(events.beginChat);
 			const callType = this.sessionInitService.callType;
 			const pendingMessageRoot = this.chat.pendingMessageRoot;
 
@@ -1627,6 +1602,8 @@ export class ChatService extends BaseProvider {
 								true
 							);
 
+							this.resolvers.pendingMessagesSynced.resolve();
+
 							await Promise.all(
 								pendingMessages.map(
 									async ([key, pendingMessage]) =>
@@ -1661,6 +1638,7 @@ export class ChatService extends BaseProvider {
 			}
 			else {
 				this.resolvers.currentMessageSynced.resolve();
+				this.resolvers.pendingMessagesSynced.resolve();
 			}
 
 			this.chat.messageList.getFlatValue().then(async messageIDs => {
@@ -1670,16 +1648,24 @@ export class ChatService extends BaseProvider {
 						this.fullyLoadedMessages,
 						lastMessageID,
 						resolvable
-					).promise;
+					);
 				}
 				this.resolvers.messageListLoaded.resolve();
 			});
 
-			beginChat.then(() => {
+			this.sessionService.beginChat.then(() => {
 				this.begin();
 			});
 
 			this.sessionService.closed.then(async () => this.close());
+
+			if (this.sessionInitService.ephemeral) {
+				this.sessionService.channelConnected.then(() => {
+					this.chat.state = States.keyExchange;
+					this.updateChat();
+					this.initProgressStart();
+				});
+			}
 
 			this.sessionService.connected.then(async () => {
 				this.sessionCapabilitiesService.resolveWalkieTalkieMode(
@@ -1698,151 +1684,130 @@ export class ChatService extends BaseProvider {
 				}));
 
 				if (
-					callType !== undefined &&
-					!this.p2pWebRTCService.isActive.value &&
-					!this.account
+					callType === undefined ||
+					this.p2pWebRTCService.isActive.value ||
+					this.account
 				) {
-					(async () => {
-						const [isPassiveAccepted] = await Promise.all([
-							this.p2pWebRTCService.handlers.then(
-								async handlers =>
-									handlers.passiveAcceptConfirm(callType)
-							),
-							this.sessionService.freezePong
-								.pipe(
-									filter(b => !b),
-									take(1)
-								)
-								.toPromise()
-						]);
-
-						if (!this.sessionInitService.ephemeral) {
-							this.initProgressStart(42000);
-						}
-
-						if (isPassiveAccepted) {
-							await this.p2pWebRTCService.accept(callType, true);
-						}
-						else if (this.sessionInitService.ephemeral) {
-							await this.close();
-							return;
-						}
-
-						this.p2pWebRTCService.resolveReady();
-
-						if (this.sessionInitService.ephemeral) {
-							await beginChat;
-						}
-
-						if (!isPassiveAccepted) {
-							await this.p2pWebRTCService.close();
-						}
-						else {
-							await this.p2pWebRTCService.request(callType, true);
-						}
-					})();
-				}
-				else {
 					this.p2pWebRTCService.resolveReady();
-				}
-
-				if (!this.sessionInitService.ephemeral) {
 					return;
 				}
 
-				this.chat.state = States.keyExchange;
-				this.updateChat();
-				this.initProgressStart();
+				const [isPassiveAccepted] = await Promise.all([
+					this.p2pWebRTCService.handlers.then(async handlers =>
+						handlers.passiveAcceptConfirm(callType)
+					),
+					this.sessionService.freezePong
+						.pipe(
+							filter(b => !b),
+							take(1)
+						)
+						.toPromise()
+				]);
+
+				if (!this.sessionInitService.ephemeral) {
+					this.initProgressStart(42000);
+				}
+
+				if (isPassiveAccepted) {
+					await this.p2pWebRTCService.accept(callType, true);
+				}
+				else if (this.sessionInitService.ephemeral) {
+					await this.close();
+					return;
+				}
+
+				this.p2pWebRTCService.resolveReady();
+
+				if (this.sessionInitService.ephemeral) {
+					await this.sessionService.beginChat;
+				}
+
+				if (!isPassiveAccepted) {
+					await this.p2pWebRTCService.close();
+				}
+				else {
+					await this.p2pWebRTCService.request(callType, true);
+				}
 			});
 
-			this.sessionService
-				.one(events.connectFailure)
-				.then(async () => this.abortSetup());
+			this.sessionService.connectFailure.then(async () =>
+				this.abortSetup()
+			);
 
 			if (this.deliveryReceipts) {
-				this.sessionService.on(
-					rpcEvents.confirm,
-					async (newEvents: ISessionMessageData[]) => {
-						for (const o of newEvents) {
-							if (!o.textConfirmation || !o.textConfirmation.id) {
+				this.sessionService.on(RpcEvents.confirm, async newEvents => {
+					for (const o of newEvents) {
+						if (!o.textConfirmation || !o.textConfirmation.id) {
+							continue;
+						}
+
+						const id = o.textConfirmation.id;
+
+						const getNewLastConfirmedMesssage = (
+							messageIDs: string[]
+						) : IChatLastConfirmedMessage | undefined => {
+							for (let i = messageIDs.length - 1; i >= 0; --i) {
+								if (messageIDs[i] === id) {
+									return {id, index: i};
+								}
+							}
+
+							return;
+						};
+
+						let newLastConfirmedMessage = getNewLastConfirmedMesssage(
+							await this.chat.messageList.getFlatValue()
+						);
+
+						if (!newLastConfirmedMessage) {
+							const pendingMessageIDs = (await this.chat.pendingMessages.getFlatValue()).map(
+								m => m.id
+							);
+
+							if (
+								getNewLastConfirmedMesssage(
+									pendingMessageIDs
+								) === undefined
+							) {
 								continue;
 							}
 
-							const id = o.textConfirmation.id;
-
-							const getNewLastConfirmedMesssage = (
-								messageIDs: string[]
-							) : IChatLastConfirmedMessage | undefined => {
-								for (
-									let i = messageIDs.length - 1;
-									i >= 0;
-									--i
-								) {
-									if (messageIDs[i] === id) {
-										return {id, index: i};
-									}
-								}
-
-								return;
-							};
-
-							let newLastConfirmedMessage = getNewLastConfirmedMesssage(
-								await this.chat.messageList.getFlatValue()
-							);
-
-							if (!newLastConfirmedMessage) {
-								const pendingMessageIDs = (await this.chat.pendingMessages.getFlatValue()).map(
-									m => m.id
-								);
-
-								if (
-									getNewLastConfirmedMesssage(
-										pendingMessageIDs
-									) === undefined
-								) {
-									continue;
-								}
-
-								newLastConfirmedMessage = await this.chat.messageList
-									.watchFlat()
-									.pipe(
-										map(getNewLastConfirmedMesssage),
-										filterUndefinedOperator(),
-										take(1)
-									)
-									.toPromise();
-							}
-
-							this.chat.lastConfirmedMessage.updateValue(
-								async lastConfirmedMessage => {
-									if (
-										!newLastConfirmedMessage ||
-										lastConfirmedMessage.id ===
-											newLastConfirmedMessage.id ||
-										lastConfirmedMessage.index >
-											newLastConfirmedMessage.index
-									) {
-										throw newLastConfirmedMessage;
-									}
-
-									return newLastConfirmedMessage;
-								}
-							);
+							newLastConfirmedMessage = await this.chat.messageList
+								.watchFlat()
+								.pipe(
+									map(getNewLastConfirmedMesssage),
+									filterUndefinedOperator(),
+									take(1)
+								)
+								.toPromise();
 						}
+
+						this.chat.lastConfirmedMessage.updateValue(
+							async lastConfirmedMessage => {
+								if (
+									!newLastConfirmedMessage ||
+									lastConfirmedMessage.id ===
+										newLastConfirmedMessage.id ||
+									lastConfirmedMessage.index >
+										newLastConfirmedMessage.index
+								) {
+									throw newLastConfirmedMessage;
+								}
+
+								return newLastConfirmedMessage;
+							}
+						);
 					}
-				);
+				});
 			}
 
-			this.sessionService.on(
-				rpcEvents.typing,
-				(newEvents: ISessionMessageData[]) => {
-					for (const o of newEvents) {
-						if (o.chatState) {
-							this.chat.isFriendTyping.next(o.chatState.isTyping);
-						}
+			this.sessionService.on(RpcEvents.typing, newEvents => {
+				for (const o of newEvents) {
+					if (o.chatState) {
+						this.chat.isFriendTyping.next(o.chatState.isTyping);
 					}
 				}
-			);
+			});
 
 			(async () => {
 				while (this.sessionService.state.isAlive.value) {
@@ -1859,15 +1824,25 @@ export class ChatService extends BaseProvider {
 								this.fullyLoadedMessages,
 								lastEvent.id,
 								resolvable
-							).promise;
+							);
 						};
 
-						this.sessionService.on(rpcEvents.text, f);
+						this.sessionService.on(RpcEvents.text, f);
 						await Promise.race([
-							this.sessionService.closed,
-							lockData.stillOwner.toPromise()
+							this.sessionService.closed.then(() => {
+								debugLog(
+									() =>
+										'receiveTextLock release: sessionService closed'
+								);
+							}),
+							lockData.stillOwner.toPromise().then(() => {
+								debugLog(
+									() =>
+										'receiveTextLock release: no longer owner'
+								);
+							})
 						]);
-						this.sessionService.off(rpcEvents.text, f);
+						this.sessionService.off(RpcEvents.text, f);
 					});
 				}
 			})();

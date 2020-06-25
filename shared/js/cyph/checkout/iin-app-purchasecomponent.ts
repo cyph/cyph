@@ -1,4 +1,5 @@
 import {FormControl} from '@angular/forms';
+import {BehaviorSubject} from 'rxjs';
 import {CheckoutComponent} from '../components/checkout';
 import {MaybePromise} from '../maybe-promise-type';
 
@@ -12,6 +13,9 @@ export interface IInAppPurchaseComponent {
 
 	/** Form control to set purchased invite code value at, if applicable. */
 	inviteCodeFormControl?: FormControl;
+
+	/** @see CheckoutComponent.spinner */
+	spinner?: BehaviorSubject<boolean>;
 
 	/** @see CheckoutComponent.userToken */
 	userToken?: boolean | MaybePromise<string | undefined>;

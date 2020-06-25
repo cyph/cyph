@@ -86,7 +86,7 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 	);
 
 	/** @see InAppPurchaseComponent */
-	@ViewChild(InAppPurchaseComponent)
+	@ViewChild('inAppPurchase', {read: InAppPurchaseComponent})
 	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** Indicates whether page is loading. */
@@ -231,6 +231,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 
 		const {user} = await this.accountDatabaseService.getCurrentUser();

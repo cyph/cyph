@@ -11,18 +11,32 @@
 	</span>
 </h3>
 
-<div
-	fxFlexFill
-	fxLayoutAlign="center center"
-	class="login-form animated fadeIn"
-	[class.checking]="checking | await"
-	[class.mobile]="envService.isMobile | await"
-	ngClass.gt-xs="gt-xs"
-	*ngIf="(pinUnlock | await) !== undefined"
->
-	<ng-container
-		*ngIf="accountAuthService.pseudoAccountLogin | await; else desktopView"
+<div class="login-root" fxFlexFill fxLayout="column" fxLayoutGap="16px">
+	<cyph-footer
+		class="visibility-hidden"
+		*ngIf="(envService.isMobile | await) === false"
+	></cyph-footer>
+
+	<div
+		fxFlex
+		fxLayoutAlign="center center"
+		class="login-form animated fadeIn"
+		[class.checking]="checking | await"
+		[class.mobile]="envService.isMobile | await"
+		ngClass.gt-xs="gt-xs"
+		*ngIf="(pinUnlock | await) !== undefined"
 	>
+		<ng-container
+			*ngIf="
+				accountAuthService.pseudoAccountLogin | await;
+				else desktopView
+			"
+		>
+			<ng-container *ngTemplateOutlet="pseudoAccountUI"></ng-container>
+		</ng-container>
+	</div>
+
+	<ng-template #pseudoAccountUI>
 		<mat-card
 			fxFlex
 			fxFlex.sm="95"
@@ -87,7 +101,7 @@
 				></mat-progress-spinner>
 			</ng-container>
 		</mat-card>
-	</ng-container>
+	</ng-template>
 
 	<ng-template #desktopView>
 		<ng-container
@@ -146,7 +160,13 @@
 					>
 						<div fxLayout="row" fxLayoutAlign="center center">
 							<h3
-								class="cyph-banner warn"
+								class="cyph-banner warn invalid-credentials"
+								[class.master-key]="
+									(pinUnlock | await) === false
+								"
+								[class.pin-unlock]="
+									(pinUnlock | await) === true
+								"
 								[style.visibility]="
 									(error | await) ? 'visible' : 'hidden'
 								"
@@ -187,6 +207,10 @@
 											[activateForUsername]="
 												username | await
 											"
+											[fxShow]="
+												(activationCodeFailed
+													| await) === false
+											"
 											(activationComplete)="
 												!$event ?
 													activationCodeFailed.next(
@@ -197,9 +221,8 @@
 											(altMasterKey)="
 												submit(undefined, $event)
 											"
-											*ngIf="
-												(activationCodeFailed
-													| await) === false
+											(lifecycleOnInit)="
+												activationCodeFailed.next(false)
 											"
 										></cyph-account-new-device-activation>
 										<div
@@ -378,6 +401,10 @@
 											[activateForUsername]="
 												username | await
 											"
+											[fxShow]="
+												(activationCodeFailed
+													| await) === false
+											"
 											(activationComplete)="
 												!$event ?
 													activationCodeFailed.next(
@@ -388,9 +415,8 @@
 											(altMasterKey)="
 												submit(undefined, $event)
 											"
-											*ngIf="
-												(activationCodeFailed
-													| await) === false
+											(lifecycleOnInit)="
+												activationCodeFailed.next(false)
 											"
 										></cyph-account-new-device-activation>
 										<div
@@ -515,6 +541,8 @@
 			mode="indeterminate"
 		></mat-progress-spinner>
 	</ng-template>
+
+	<cyph-footer></cyph-footer>
 </div>
 
 <ng-template #usernameField>
@@ -563,6 +591,10 @@
 					(loggingIn | await) === true &&
 					(pinUnlock | await) === false
 				"
+				(keydown.enter)="
+					masterKeyInput?.focus();
+					masterKeyInput && $event.preventDefault()
+				"
 			/>
 		</mat-form-field>
 	</div>
@@ -577,12 +609,14 @@
 	>
 		<mat-form-field fxFlex>
 			<input
+				#masterKeyInput
 				matInput
 				[ngModel]="masterKey | await"
 				(ngModelChange)="masterKey.next($event)"
 				name="masterKey"
 				[type]="(hidePassword | await) ? 'password' : 'text'"
 				[placeholder]="stringsService.masterKey"
+				(keydown.enter)="submit(); $event.preventDefault()"
 				required
 			/>
 			<mat-icon
@@ -607,6 +641,7 @@
 				name="pin"
 				[autofocus]="true"
 				[required]="true"
+				(entered)="submit()"
 			></cyph-pin-input>
 		</div>
 	</ng-container>
@@ -617,12 +652,13 @@
 		<mat-form-field fxFlex>
 			<input
 				matInput
+				cyphAutofocus
 				[ngModel]="pin | await"
 				(ngModelChange)="pin.next($event)"
 				name="lockScreenPassword"
 				[type]="(hidePassword | await) ? 'password' : 'text'"
 				[placeholder]="stringsService.unlockPassword | titlecase"
-				cyphAutofocus
+				(keydown.enter)="submit(); $event.preventDefault()"
 				required
 			/>
 			<mat-icon

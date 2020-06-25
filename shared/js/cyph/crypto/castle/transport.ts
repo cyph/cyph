@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs';
 import {ISessionService} from '../../service-interfaces/isession.service';
-import {CastleEvents, events} from '../../session/enums';
+import {CastleEvents} from '../../session/enums';
 import {filterUndefined} from '../../util/filter';
 import {debugLog} from '../../util/log';
 import {potassiumUtil} from '../potassium/potassium-util';
@@ -42,7 +42,7 @@ export class Transport {
 			return;
 		}
 
-		this.sessionService.trigger(events.cyphertext, {author, cyphertext});
+		this.sessionService.cyphertext.next({author, cyphertext});
 	}
 
 	/** Send and/or receive incoming and outgoing messages. */

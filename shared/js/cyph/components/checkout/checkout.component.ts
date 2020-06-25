@@ -23,6 +23,7 @@ import {MaybePromise} from '../../maybe-promise-type';
 import {AffiliateService} from '../../services/affiliate.service';
 import {AnalyticsService} from '../../services/analytics.service';
 import {ConfigService} from '../../services/config.service';
+import {DialogService} from '../../services/dialog.service';
 import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
@@ -175,6 +176,9 @@ export class CheckoutComponent extends BaseProvider
 
 	/** @see reloadWindow */
 	public readonly reloadWindow = reloadWindow;
+
+	/** Spinner to set while performing checkout. */
+	@Input() public spinner?: BehaviorSubject<boolean>;
 
 	/** @see SubscriptionTypes */
 	@Input() public subscriptionType?: SubscriptionTypes;
@@ -457,6 +461,8 @@ export class CheckoutComponent extends BaseProvider
 	/** @inheritDoc */
 	/* eslint-disable-next-line complexity */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		/* Workaround for Angular Elements leaving inputs as strings */
 
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
@@ -566,6 +572,53 @@ export class CheckoutComponent extends BaseProvider
 			this.pending.next(true);
 
 			const inAppPurchase = this.inAppPurchase;
+
+			if (
+				inAppPurchase &&
+				!(await this.dialogService.confirm({
+					content: this.stringsService.setParameters(
+						this.stringsService.checkoutInAppPaymentConfirm,
+						{
+							amount: this.amount.toString(),
+							item:
+								this.itemName ||
+								this.stringsService
+									.checkoutInAppPaymentTitleDefaultItemName,
+							payment:
+								this.subscriptionType === undefined ?
+									this.stringsService
+										.checkoutSubscriptionNone :
+									this.stringsService.setParameters(
+										this.stringsService
+											.checkoutSubscriptionRecurring,
+										{
+											subscription:
+												this.subscriptionType ===
+												SubscriptionTypes.annual ?
+													this.stringsService
+														.checkoutSubscriptionAnnual :
+													this.stringsService
+														.checkoutSubscriptionMonthly
+										}
+									)
+						}
+					),
+					title: this.stringsService.setParameters(
+						this.stringsService.checkoutInAppPaymentTitle,
+						{
+							item:
+								this.itemName ||
+								this.stringsService
+									.checkoutInAppPaymentTitleDefaultItemName
+						}
+					)
+				}))
+			) {
+				return;
+			}
+
+			/* eslint-disable-next-line no-unused-expressions */
+			this.spinner?.next(true);
 
 			const paymentMethod =
 				useBitPay || !!inAppPurchase ?
@@ -761,6 +814,10 @@ export class CheckoutComponent extends BaseProvider
 					.replace(/\.$/, '')}".`
 			);
 		}
+		finally {
+			/* eslint-disable-next-line no-unused-expressions */
+			this.spinner?.next(false);
+		}
 	}
 
 	constructor (
@@ -775,6 +832,9 @@ export class CheckoutComponent extends BaseProvider
 
 		/** @ignore */
 		private readonly configService: ConfigService,
+
+		/** @ignore */
+		private readonly dialogService: DialogService,
 
 		/** @see AffiliateService */
 		public readonly affiliateService: AffiliateService,

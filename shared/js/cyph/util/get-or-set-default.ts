@@ -89,7 +89,7 @@ export const getOrSetDefaultAsync = async <K, V>(
 		};
 
 		if (waitUntilAlreadySet) {
-			return setResolver.promise;
+			return setResolver;
 		}
 		if (lock) {
 			await setLock(async () => {
@@ -99,7 +99,7 @@ export const getOrSetDefaultAsync = async <K, V>(
 
 				const v = await Promise.race([
 					Promise.resolve(defaultValue()),
-					setResolver.promise
+					setResolver
 				]);
 
 				if (v !== undefined && !m.has(k)) {

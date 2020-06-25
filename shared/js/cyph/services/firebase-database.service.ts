@@ -11,10 +11,11 @@ import 'firebase/messaging';
 /* eslint-disable-next-line @typescript-eslint/tslint/config */
 import 'firebase/storage';
 import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {filter, skip, take} from 'rxjs/operators';
+import {skip} from 'rxjs/operators';
 import {env} from '../env';
 import {IProto} from '../iproto';
 import {ITimedValue} from '../itimed-value';
+import {LockFunction} from '../lock-function-type';
 import {MaybePromise} from '../maybe-promise-type';
 import {BinaryProto, IDatabaseItem, StringProto} from '../proto';
 import {compareArrays} from '../util/compare';
@@ -214,6 +215,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 	/** Max number of bytes to upload to non-blob storage. */
 	private readonly nonBlobStorageLimit = 8192;
 
+	/** Max number of bytes to upload to non-blob storage in pushItem. */
+	private readonly nonBlobStoragePushLimit = 4194304;
+
 	/** @ignore */
 	private readonly observableCaches = {
 		watch: new Map<string, Observable<ITimedValue<any>>>(),
@@ -235,6 +239,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 			>
 		>()
 	};
+
+	/** @ignore */
+	private readonly pushItemLocks = new Map<string, LockFunction>();
 
 	/** @ignore */
 	private async getDatabaseRef (
@@ -562,10 +569,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 			progress.error(err);
 		});
 
-		alreadyCached.promise.catch(() => {});
+		alreadyCached.catch(() => {});
 
 		return {
-			alreadyCached: alreadyCached.promise,
+			alreadyCached,
 			progress,
 			result
 		};
@@ -775,10 +782,16 @@ export class FirebaseDatabaseService extends DatabaseService {
 												.TIMESTAMP
 									})
 									.then();
+
+								/*
+								Conflicts with workaround in constructor:
+
 								await mutex
 									.onDisconnect()
 									.remove()
 									.then();
+								*/
+
 								await mutex
 									.set({
 										claimTimestamp:
@@ -791,6 +804,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 										...(reason ? {reason} : {})
 									})
 									.then();
+
 								return getLockTimestamp();
 							}
 							catch (err) {
@@ -854,7 +868,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 							.catch(() => {})
 							.then(surrenderLock);
 
-						/* Kill lock on disconnect */
+						/*
+						Conflicts with workaround in constructor:
+
+						Kill lock on disconnect
 						this.connectionStatus()
 							.pipe(
 								filter(b => !b),
@@ -862,6 +879,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 							)
 							.toPromise()
 							.then(surrenderLock);
+						*/
 
 						/* eslint-disable-next-line @typescript-eslint/tslint/config */
 						await new Promise<void>(resolve => {
@@ -1044,22 +1062,28 @@ export class FirebaseDatabaseService extends DatabaseService {
 					key: string,
 					previousKey: () => Promise<string | undefined>,
 					o: {callback?: () => MaybePromise<void>}
-			  ) => MaybePromise<T>)
+			  ) => MaybePromise<T>),
+		forcePushWithKeyCallback: boolean = false
 	) : Promise<{
 		hash: string;
 		url: string;
 	}> {
 		const url = await urlPromise;
 
-		return this.ngZone.runOutsideAngular(async () => {
+		const pushItemWithKeyCallback = async () => {
 			const listRef = await this.getDatabaseRef(url);
 
 			const initialItemRef = listRef.push({
 				timestamp: firebase.database.ServerValue.TIMESTAMP
 			});
+
+			/*
+			Conflicts with workaround in constructor:
+
 			const itemRefOnDisconnect = initialItemRef.onDisconnect();
 
 			itemRefOnDisconnect.remove();
+			*/
 
 			const itemRef = await initialItemRef.then();
 			const key = itemRef.key;
@@ -1098,14 +1122,33 @@ export class FirebaseDatabaseService extends DatabaseService {
 			}
 
 			const result = await this.setItem(`${url}/${key}`, proto, value);
+
+			/*
+			Conflicts with workaround in constructor:
+
 			itemRefOnDisconnect.cancel();
+			*/
 
 			if (o.callback) {
 				await o.callback();
 			}
 
 			return result;
-		});
+		};
+
+		return this.ngZone.runOutsideAngular(async () =>
+			getOrSetDefault(
+				this.pushItemLocks,
+				url,
+				lockFunction
+			)(async () => {
+				if (forcePushWithKeyCallback || typeof value === 'function') {
+					return pushItemWithKeyCallback();
+				}
+
+				return this.setItem<T>(url, proto, value, undefined, true);
+			})
+		);
 	}
 
 	/** @inheritDoc */
@@ -1328,7 +1371,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 		urlPromise: MaybePromise<string>,
 		proto: IProto<T>,
 		value: T,
-		progress?: BehaviorSubject<number>
+		progress?: BehaviorSubject<number>,
+		push: boolean = false
 	) : Promise<{
 		hash: string;
 		url: string;
@@ -1342,26 +1386,52 @@ export class FirebaseDatabaseService extends DatabaseService {
 				}
 
 				const url = await urlPromise;
+				let fullURL = url;
 
 				const data = await serialize(proto, value);
 				const hash = uuid();
 
+				const setDatabaseValue = async (
+					o: Record<string, any> = {}
+				) => {
+					const databaseRef = await this.getDatabaseRef(url);
+
+					const databaseValue = {
+						...o,
+						hash,
+						timestamp: firebase.database.ServerValue.TIMESTAMP
+					};
+
+					if (!push) {
+						return databaseRef.set(databaseValue).then();
+					}
+
+					const key = (await databaseRef.push(databaseValue).then())
+						.key;
+
+					if (!key) {
+						throw new Error(`Failed to push item to ${url}.`);
+					}
+
+					fullURL = `${url}/${key}`;
+				};
+
 				if (
+					push ||
 					/* eslint-disable-next-line @typescript-eslint/tslint/config */
 					hash !==
-					(await this.getMetadata(url).catch(() => ({
-						hash: undefined
-					}))).hash
+						(await this.getMetadata(url).catch(() => ({
+							hash: undefined
+						}))).hash
 				) {
-					if (data.length < this.nonBlobStorageLimit) {
-						await (await this.getDatabaseRef(url))
-							.set({
-								data: this.potassiumService.toBase64(data),
-								hash,
-								timestamp:
-									firebase.database.ServerValue.TIMESTAMP
-							})
-							.then();
+					if (push || data.length < this.nonBlobStorageLimit) {
+						if (data.length >= this.nonBlobStoragePushLimit) {
+							return this.pushItem(url, proto, value, true);
+						}
+
+						await setDatabaseValue({
+							data: this.potassiumService.toBase64(data)
+						});
 					}
 					else {
 						const uploadTask = (await this.getStorageRef(
@@ -1385,17 +1455,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 						}
 
 						await uploadTask.then();
-
-						await (await this.getDatabaseRef(url))
-							.set({
-								hash,
-								timestamp:
-									firebase.database.ServerValue.TIMESTAMP
-							})
-							.then();
+						await setDatabaseValue();
 					}
 
-					this.cache.setItem(url, data, hash);
+					this.cache.setItem(fullURL, data, hash);
 				}
 
 				if (progress) {
@@ -1405,7 +1468,7 @@ export class FirebaseDatabaseService extends DatabaseService {
 					});
 				}
 
-				return {hash, url};
+				return {hash, url: fullURL};
 			})
 		);
 	}

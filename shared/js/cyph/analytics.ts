@@ -119,16 +119,12 @@ export class Analytics {
 		const appVersion = this.env.isWeb ? 'Web' : 'Native';
 
 		this.visitor = (async () => {
-			const visitor = ua(
-				config.analConfig.accountID,
-				await this.uid.promise,
-				{
-					hostname: this.env.baseUrl.split('/')[2],
-					https: this.env.baseUrl.startsWith('https://'),
-					path: '/analytics/collect',
-					strictCidFormat: false
-				}
-			);
+			const visitor = ua(config.analConfig.accountID, await this.uid, {
+				hostname: this.env.baseUrl.split('/')[2],
+				https: this.env.baseUrl.startsWith('https://'),
+				path: '/analytics/collect',
+				strictCidFormat: false
+			});
 
 			visitor.set('aip', '1');
 			visitor.set('an', appName);

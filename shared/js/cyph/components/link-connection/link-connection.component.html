@@ -350,7 +350,6 @@
 <ng-template #newDeviceActivationUI>
 	<div
 		fxFlex
-		fxFlexFill
 		fxLayout="column"
 		fxLayoutAlign="center stretch"
 		fxLayoutGap="32px"
@@ -439,7 +438,7 @@
 			</div>
 		</ng-container>
 		<ng-template #newDeviceActivationSpinner>
-			<div fxLayoutAlign="center center">
+			<div fxFlex fxLayoutAlign="center center">
 				<mat-progress-spinner
 					mode="indeterminate"
 				></mat-progress-spinner>

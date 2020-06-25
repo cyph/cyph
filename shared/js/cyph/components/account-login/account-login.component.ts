@@ -1,4 +1,10 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	OnInit,
+	ViewChild
+} from '@angular/core';
+import {MatInput} from '@angular/material/input';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, Observable} from 'rxjs';
@@ -73,6 +79,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		.hasItem('unconfirmedMasterKey', true)
 		.then(b => !b);
 
+	/** Master key input element. */
+	@ViewChild('masterKeyInput', {read: MatInput})
+	public masterKeyInput?: MatInput;
+
 	/** PIN to be used for login attempt. */
 	public readonly pin = new BehaviorSubject<string>('');
 
@@ -134,6 +144,8 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		if (this.accountDatabaseService.currentUser.value?.user) {
 			return this.postLogin();
 		}

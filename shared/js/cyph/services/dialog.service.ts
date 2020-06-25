@@ -176,7 +176,8 @@ export class DialogService extends BaseProvider {
 	public async toast (
 		_CONTENT: string,
 		_DURATION?: number,
-		_ACTION?: string
+		_ACTION?: string,
+		_CLOSE_FUNCTION?: IResolvable<() => void>
 	) : Promise<boolean> {
 		throw new Error(
 			'Must provide an implementation of DialogService.toast.'

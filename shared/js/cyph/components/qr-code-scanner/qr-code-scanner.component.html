@@ -4,14 +4,14 @@
 	[muted]="true"
 	[playsinline]="true"
 	[src]="videoStream | await"
-	*ngIf="(activated.promise | await) === true && (isActive | await) === true"
+	*ngIf="(activated | await) === true && (isActive | await) === true"
 ></cyph-video>
 
 <div
 	fxFlex
 	fxLayout="column"
 	fxLayoutGap="32px"
-	*ngIf="(activated.promise | await) !== true"
+	*ngIf="(activated | await) !== true"
 >
 	<div></div>
 	<div fxFlex fxLayout="row" fxLayoutAlign="center center">

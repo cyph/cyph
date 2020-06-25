@@ -309,6 +309,8 @@ export class ChatMessageListComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		this.chatService.scrollTransition.next(true);
 
 		const messageListItems = await this.messageListItems

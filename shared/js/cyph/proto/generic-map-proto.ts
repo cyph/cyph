@@ -19,7 +19,9 @@ export class GenericMapProto<T> implements IProto<Record<string, T>> {
 	}
 
 	/** @inheritDoc */
-	public verify (data: Record<string, T>) : any {
+	public async verify (
+		data: Record<string, T>
+	) : Promise<string | undefined> {
 		return this.proto.verify({data});
 	}
 

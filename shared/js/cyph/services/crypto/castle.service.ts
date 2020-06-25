@@ -13,10 +13,8 @@ export class CastleService extends BaseProvider implements ICastle {
 	/** @ignore */
 	protected readonly pairwiseSession = resolvable<IPairwiseSession>();
 
-	/** @see PairwiseSession.initialMessagesProcessed */
-	public readonly initialMessagesProcessed = this.pairwiseSession.promise.then(
-		async o => o.initialMessagesProcessed.promise
-	);
+	/** @see PairwiseSession.ready */
+	public readonly ready = this.pairwiseSession.then(async o => o.ready);
 
 	/** Initializes service. */
 	/* eslint-disable-next-line @typescript-eslint/require-await */
@@ -31,10 +29,7 @@ export class CastleService extends BaseProvider implements ICastle {
 		cyphertext: Uint8Array,
 		initial: boolean
 	) : Promise<void> {
-		return (await this.pairwiseSession.promise).receive(
-			cyphertext,
-			initial
-		);
+		return (await this.pairwiseSession).receive(cyphertext, initial);
 	}
 
 	/** @inheritDoc */
@@ -42,7 +37,7 @@ export class CastleService extends BaseProvider implements ICastle {
 		plaintext: string | ArrayBufferView,
 		timestamp: number
 	) : Promise<void> {
-		return (await this.pairwiseSession.promise).send(plaintext, timestamp);
+		return (await this.pairwiseSession).send(plaintext, timestamp);
 	}
 
 	/** Creates and returns a new instance. */

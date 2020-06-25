@@ -181,6 +181,8 @@ export class AccountComposeComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountChatService.chat.state = States.chat;
 		this.accountChatService.updateChat();
 		this.sessionService.state.isAlive.next(true);
@@ -450,8 +452,7 @@ export class AccountComposeComponent extends BaseProvider
 						undefined
 				);
 
-				await this.accountChatService.resolvers.currentMessageSynced
-					.promise;
+				await this.accountChatService.resolvers.currentMessageSynced;
 
 				await this.accountChatService.send(
 					this.messageType.value,

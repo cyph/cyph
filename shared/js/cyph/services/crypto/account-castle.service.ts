@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {of} from 'rxjs';
-import {switchMap, take} from 'rxjs/operators';
 import {
 	AnonymousRemoteUser,
 	HandshakeSteps,
@@ -19,7 +18,6 @@ import {
 	MaybeBinaryProto,
 	Uint32Proto
 } from '../../proto';
-import {filterUndefinedOperator} from '../../util/filter';
 import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {debugLog} from '../../util/log';
 import {AccountContactsService} from '../account-contacts.service';
@@ -43,17 +41,15 @@ export class AccountCastleService extends CastleService {
 	public async init (
 		accountSessionService: AccountSessionService
 	) : Promise<void> {
-		const transport = new Transport(accountSessionService);
-
-		const user = await accountSessionService.remoteUser
-			.pipe(
-				switchMap(async o => o),
-				filterUndefinedOperator(),
-				take(1)
-			)
-			.toPromise();
+		const user = await accountSessionService.remoteUser;
 
 		debugLog(() => ({startingAccountCastleSession: {user}}));
+
+		if (user === undefined) {
+			return;
+		}
+
+		const transport = new Transport(accountSessionService);
 
 		const localUser = new RegisteredLocalUser(this.accountDatabaseService);
 

@@ -17,7 +17,7 @@ import {DataManagerService} from '../service-interfaces/data-manager.service';
 import {getOrSetDefaultAsync} from '../util/get-or-set-default';
 import {lockFunction} from '../util/lock';
 import {debugLog} from '../util/log';
-import {flattenArray} from '../util/reducers';
+import {flattenAndOmitDuplicates} from '../util/reducers';
 import {getTimestamp} from '../util/time';
 import {PotassiumService} from './crypto/potassium.service';
 import {EnvService} from './env.service';
@@ -283,8 +283,7 @@ export class DatabaseService extends DataManagerService {
 		/* eslint-disable-next-line @typescript-eslint/tslint/config */
 		const asyncList: IAsyncList<T> = {
 			clear: async () => this.removeItem(url),
-			getFlatValue: async () =>
-				<any> flattenArray(await asyncList.getValue()),
+			getFlatValue: async () => <any> (await asyncList.getValue()).flat(),
 			getTimedValue: async () => {
 				throw new Error(
 					'DatabaseService.getAsyncList().getTimedValue() not implemented.'
@@ -310,7 +309,13 @@ export class DatabaseService extends DataManagerService {
 			watchFlat: memoize((omitDuplicates?: boolean) =>
 				asyncList
 					.watch()
-					.pipe<any>(map(arr => flattenArray(arr, omitDuplicates)))
+					.pipe<any>(
+						map(arr =>
+							omitDuplicates ?
+								flattenAndOmitDuplicates(arr) :
+								arr.flat()
+						)
+					)
 			),
 			watchPushes: memoize(() =>
 				this.watchListPushes(

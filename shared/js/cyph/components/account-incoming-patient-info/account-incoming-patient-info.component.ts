@@ -77,6 +77,8 @@ export class AccountIncomingPatientInfoComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 	}
 

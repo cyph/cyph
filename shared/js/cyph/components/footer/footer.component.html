@@ -80,7 +80,11 @@
 		<div
 			fxFlex="nogrow"
 			fxLayoutAlign="center center"
-			*ngIf="!limited && !envService.noInAppPurchasesAllowed"
+			*ngIf="
+				!limited &&
+				!envService.noInAppPurchasesAllowed &&
+				!envService.inAppPurchasesSupported
+			"
 		>
 			<a [href]="envService.homeUrl + 'pricing'" cyphTranslate>
 				Pricing
@@ -90,7 +94,10 @@
 		<div
 			fxFlex="nogrow"
 			fxLayoutAlign="center center"
-			*ngIf="!envService.noInAppPurchasesAllowed"
+			*ngIf="
+				!envService.noInAppPurchasesAllowed &&
+				!envService.inAppPurchasesSupported
+			"
 		>
 			<a [href]="envService.homeUrl + 'donate'" cyphTranslate>
 				Donate

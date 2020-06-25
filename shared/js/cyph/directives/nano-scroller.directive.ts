@@ -15,6 +15,8 @@ export class NanoScrollerDirective extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		const element = this.cyphNanoScrollerNoParent ?
 			this.elementRef.nativeElement :
 			this.renderer.parentNode(this.elementRef.nativeElement);

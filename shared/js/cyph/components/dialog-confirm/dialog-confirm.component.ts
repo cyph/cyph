@@ -42,7 +42,7 @@ export class DialogConfirmComponent extends BaseProvider
 	public content?: string;
 
 	/** @see DynamicFormComponent */
-	@ViewChild(DynamicFormComponent)
+	@ViewChild('dynamicForm', {read: DynamicFormComponent})
 	public dynamicForm?: DynamicFormComponent;
 
 	/** Avatar to put in betwen FAB buttons. */

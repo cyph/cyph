@@ -127,10 +127,10 @@
 					&ngsp;
 					<ng-container
 						*ngIf="
-							!configService.planConfig[
+							configService.planConfig[
 								(inviteCodeData | await)?.plan || cyphPlans.Free
-							].lifetime;
-							else lifetimeBannerMessage
+							].usernameMinLength > 1;
+							else platinumBannerMessage
 						"
 					>
 						<a
@@ -156,9 +156,9 @@
 							and lock in a short username for life!
 						</span>
 					</ng-container>
-					<ng-template #lifetimeBannerMessage>
+					<ng-template #platinumBannerMessage>
 						<span cyphTranslate>
-							Since you have a lifetime plan, you can lock in a
+							Since you have a platinum plan, you can lock in a
 							short username for life!
 						</span>
 					</ng-template>
@@ -1056,6 +1056,8 @@
 						</button>
 					</ng-template>
 				</div>
+				<div></div>
+				<cyph-footer></cyph-footer>
 			</div>
 
 			<div

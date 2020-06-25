@@ -221,6 +221,27 @@ export class StringsService extends BaseProvider {
 	public readonly checkoutErrorTitle = `Payment Failed`;
 
 	/** @see StringsService */
+	public readonly checkoutInAppPaymentConfirm = `The \${ITEM} plan provides access to advanced features not available in the free tier of ${this.internalProductShort}, in addition to skipping the waitlist so you can register immediately. This is a \$\${AMOUNT} \${PAYMENT}. Proceed?`;
+
+	/** @see StringsService */
+	public readonly checkoutInAppPaymentTitle = `${this.internalProductShort} \${ITEM} In-App Purchase`;
+
+	/** @see StringsService */
+	public readonly checkoutInAppPaymentTitleDefaultItemName = `Premium`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionAnnual = `annual`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionMonthly = `monthly`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionNone = `one-time payment`;
+
+	/** @see StringsService */
+	public readonly checkoutSubscriptionRecurring = `\${SUBSCRIPTION} subscription, which will continue recurring indefinitely until explicitly canceled`;
+
+	/** @see StringsService */
 	public readonly circle = `Circle`;
 
 	/** @see StringsService */
@@ -368,7 +389,7 @@ export class StringsService extends BaseProvider {
 	public readonly featureFlagsForms = `Forms`;
 
 	/** @see StringsService */
-	public readonly featureFlagsInbox = `Anononymous Inbox`;
+	public readonly featureFlagsInbox = `Anonymous Inbox`;
 
 	/** @see StringsService */
 	public readonly featureFlagsInvite = `Invite`;
@@ -726,6 +747,9 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly newDeviceActivationQR = `Open the ${this.internalProductShort} app and scan this QR code:`;
+
+	/** @see StringsService */
+	public readonly newDeviceActivationRegisterToast = `Return to your original device to complete registration.`;
 
 	/** @see StringsService */
 	public readonly newDeviceActivationTitle = `New Device Activation`;

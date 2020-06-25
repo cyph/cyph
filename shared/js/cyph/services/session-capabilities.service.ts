@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseProvider} from '../base-provider';
 import {ISessionCapabilities} from '../proto/types';
 import {ISessionCapabilitiesService} from '../service-interfaces/isession-capabilities.service';
-import {events, ISessionMessageData, rpcEvents} from '../session';
+import {RpcEvents} from '../session';
 import {resolvable} from '../util/wait';
 import {SessionService} from './session.service';
 
@@ -23,22 +23,20 @@ export class SessionCapabilitiesService extends BaseProvider
 	private readonly localCapabilities: Promise<
 		ISessionCapabilities
 	> = (async () => ({
-		p2p: await this._P2P_SUPPORT.promise,
-		walkieTalkieMode: await this._WALKIE_TALKIE.promise
+		p2p: await this._P2P_SUPPORT,
+		walkieTalkieMode: await this._WALKIE_TALKIE
 	}))();
 
 	/** @ignore */
 	private readonly remoteCapabilities: Promise<
 		ISessionCapabilities
-	> = this.sessionService
-		.one<ISessionMessageData[]>(rpcEvents.capabilities)
-		.then(
-			newEvents =>
-				(newEvents[0] || {capabilities: undefined}).capabilities || {
-					p2p: false,
-					walkieTalkieMode: false
-				}
-		);
+	> = this.sessionService.one(RpcEvents.capabilities).then(
+		newEvents =>
+			(newEvents[0] || {capabilities: undefined}).capabilities || {
+				p2p: false,
+				walkieTalkieMode: false
+			}
+	);
 
 	/** @ignore */
 	private readonly resolveCapabilities: (
@@ -47,10 +45,8 @@ export class SessionCapabilitiesService extends BaseProvider
 
 	/** @inheritDoc */
 	public readonly capabilities = {
-		p2p: this._CAPABILITIES.promise.then(o => o.p2p),
-		walkieTalkieMode: this._CAPABILITIES.promise.then(
-			o => o.walkieTalkieMode
-		)
+		p2p: this._CAPABILITIES.then(o => o.p2p),
+		walkieTalkieMode: this._CAPABILITIES.then(o => o.walkieTalkieMode)
 	};
 
 	/** @inheritDoc */
@@ -68,11 +64,11 @@ export class SessionCapabilitiesService extends BaseProvider
 	) {
 		super();
 
-		this.sessionService.one(events.beginChat).then(async () => {
+		this.sessionService.beginChat.then(async () => {
 			const localCapabilities = await this.localCapabilities;
 
 			this.sessionService.send([
-				rpcEvents.capabilities,
+				RpcEvents.capabilities,
 				{capabilities: localCapabilities}
 			]);
 

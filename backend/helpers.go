@@ -629,17 +629,31 @@ func getAppStoreTransactionDataInternal(appStoreReceipt string, sandbox bool) (s
 		}
 	}
 
-	appleID := int64(-1)
-	if data, ok := receiptData["app_item_id"]; ok {
+	inAppData := map[string]interface{}{}
+	if data, ok := receiptData["in_app"]; ok {
 		switch v := data.(type) {
-		case float64:
-			appleID = int64(v)
+		case []interface{}:
+			if len(v) > 0 {
+				o := v[len(v)-1]
+				switch value := o.(type) {
+				case map[string]interface{}:
+					inAppData = value
+				}
+			}
 		}
 	}
 
-	planID, ok := config.PlanAppleIDs[appleID]
+	productID := ""
+	if data, ok := inAppData["product_id"]; ok {
+		switch v := data.(type) {
+		case string:
+			productID = v
+		}
+	}
+
+	planID, ok := config.PlanAppleIDs[productID]
 	if !ok {
-		return "", errors.New("Invalid App Store receipt: " + appStoreReceipt)
+		return "", errors.New("Invalid data from App Store receipt: " + string(responseBodyBytes))
 	}
 
 	return planID, nil

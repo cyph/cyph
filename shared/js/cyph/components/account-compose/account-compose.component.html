@@ -109,9 +109,6 @@
 									<mat-form-field fxFlex>
 										<input
 											matInput
-											[matAutocomplete]="
-												fromNameAutocomplete
-											"
 											[ngModel]="
 												accountService.fromName | await
 											"
@@ -139,9 +136,6 @@
 										<input
 											matInput
 											cyphTranslate
-											[matAutocomplete]="
-												fromEmailAutocomplete
-											"
 											[ngModel]="
 												accountService.fromEmail | await
 											"

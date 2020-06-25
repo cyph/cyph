@@ -48,7 +48,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		lock: LockFunction;
 		messagesURL: string;
 		url: string;
-	}> = this._STATE.promise;
+	}> = this._STATE;
 
 	/** @ignore */
 	private readonly userID = resolvable<string>();
@@ -273,7 +273,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			this.databaseService.pushItem<IChannelMessage>(
 				(await this.state).messagesURL,
 				ChannelMessage,
-				{author: await this.userID.promise, cyphertext}
+				{author: await this.userID, cyphertext}
 			)
 		);
 	}

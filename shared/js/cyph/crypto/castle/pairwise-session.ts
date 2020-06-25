@@ -14,7 +14,7 @@ import {
 import {lockFunction} from '../../util/lock';
 import {debugLog, debugLogError} from '../../util/log';
 import {deserialize, serialize} from '../../util/serialization';
-import {resolvable, retryUntilSuccessful, sleep} from '../../util/wait';
+import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {Core} from './core';
 import {HandshakeSteps} from './enums';
@@ -44,7 +44,7 @@ export class PairwiseSession implements IPairwiseSession {
 	};
 
 	/** @inheritDoc */
-	public readonly initialMessagesProcessed = resolvable();
+	public readonly ready = resolvable();
 
 	/** @ignore */
 	private async abort () : Promise<void> {
@@ -273,7 +273,7 @@ export class PairwiseSession implements IPairwiseSession {
 		await this.outgoingMessageQueue.pushItem(outgoingMessage);
 
 		if (resolver) {
-			await resolver.promise;
+			await resolver;
 		}
 	}
 
@@ -417,17 +417,18 @@ export class PairwiseSession implements IPairwiseSession {
 						resolve this prematurely to dismiss unneeded loading banner.
 
 						Longer-term, perhaps have a signal sent from the client with
-						the lock to this one that initialMessagesProcessed is done.
+						the lock to this one that ready is resolved.
+
+						let lockClaimed = false;
+						sleep(2500).then(() => {
+							if (!lockClaimed) {
+								this.ready.resolve();
+							}
+						});
 					*/
-					let lockClaimed = false;
-					sleep(2500).then(() => {
-						if (!lockClaimed) {
-							this.initialMessagesProcessed.resolve();
-						}
-					});
 
 					return this.lock(async o => {
-						lockClaimed = true;
+						/* lockClaimed = true; */
 
 						debugLog(() => ({castleLockClaimed: o}));
 
@@ -462,8 +463,6 @@ export class PairwiseSession implements IPairwiseSession {
 									castleProcessInitialRatchetUpdates: err
 								}));
 							});
-
-						this.initialMessagesProcessed.resolve();
 
 						if (!o.stillOwner.value) {
 							return;
@@ -629,10 +628,13 @@ export class PairwiseSession implements IPairwiseSession {
 							}
 						);
 
+						this.ready.resolve();
+
 						await Promise.race([
 							this.transport.closed,
 							o.stillOwner.toPromise()
 						]);
+
 						decryptSub.unsubscribe();
 						encryptSub.unsubscribe();
 						ratchetUpdateSub.unsubscribe();
@@ -644,6 +646,8 @@ export class PairwiseSession implements IPairwiseSession {
 						)) {
 							resolver.resolve();
 						}
+
+						this.ready.resolve();
 					});
 				}
 			}

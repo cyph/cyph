@@ -65,6 +65,8 @@ export class ContactComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.feedbackForm.next(this.to === 'feedback');
 		this.responseRequired.next(this.to === 'help');
 	}

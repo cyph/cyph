@@ -11,7 +11,7 @@
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
-		"lib": ["dom", "dom.iterable", "es2016", "scripthost"],
+		"lib": ["dom", "dom.iterable", "es2019", "scripthost"],
 		"module": "es2015",
 		"moduleResolution": "node",
 		"newLine": "LF",

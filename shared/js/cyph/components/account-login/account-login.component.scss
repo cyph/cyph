@@ -1,8 +1,16 @@
 @import '../../../../css/mixins';
 @import '../../../../css/theme';
 
+.login-root {
+	overflow: auto;
+}
+
 form > div:last-child {
 	padding-top: 64px;
+}
+
+cyph-footer {
+	margin-bottom: 8px;
 }
 
 cyph-pin-input {
@@ -15,6 +23,10 @@ cyph-pin-input {
 
 .product-description {
 	text-align: center;
+}
+
+.invalid-credentials.master-key {
+	margin-bottom: 32px;
 }
 
 .activation-code {

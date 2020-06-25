@@ -5,6 +5,7 @@ import {
 	ViewChild
 } from '@angular/core';
 import {FormControl} from '@angular/forms';
+import {BehaviorSubject} from 'rxjs';
 import {BaseProvider} from '../../base-provider';
 import {IInAppPurchaseComponent} from '../../checkout/iin-app-purchasecomponent';
 import {CheckoutComponent} from '../../components/checkout';
@@ -26,7 +27,7 @@ import {StringsService} from '../../services/strings.service';
 export class InAppPurchaseComponent extends BaseProvider
 	implements IInAppPurchaseComponent {
 	/** @inheritDoc */
-	@ViewChild(CheckoutComponent)
+	@ViewChild('checkoutComponent', {read: CheckoutComponent})
 	public checkoutComponent?: CheckoutComponent;
 
 	/** @inheritDoc */
@@ -34,6 +35,10 @@ export class InAppPurchaseComponent extends BaseProvider
 
 	/** @inheritDoc */
 	@Input() public inviteCodeFormControl?: FormControl;
+
+	/** @inheritDoc */
+	@Input() public spinner: BehaviorSubject<boolean> | undefined = this
+		.accountService.interstitial;
 
 	/** @inheritDoc */
 	@Input() public userToken?: boolean | MaybePromise<string | undefined>;

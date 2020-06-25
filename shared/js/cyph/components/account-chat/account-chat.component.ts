@@ -154,6 +154,8 @@ export class AccountChatComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.accountService.transitionEnd();
 
 		const lock = lockFunction();
@@ -490,7 +492,7 @@ export class AccountChatComponent extends BaseProvider
 										.then(async () => {
 											const remoteUser = await this
 												.accountSessionService
-												.remoteUser.value;
+												.remoteUser;
 
 											if (
 												this.destroyed.value ||

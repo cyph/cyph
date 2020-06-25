@@ -106,7 +106,8 @@ const getUserMetadata = async (projectId, username, namespace) => {
 		internal,
 		inviteCode,
 		inviterUsername,
-		plan: CyphPlans[plan]
+		plan: CyphPlans[plan],
+		username
 	};
 };
 
@@ -118,7 +119,9 @@ if (require.main === module) {
 
 		console.log(
 			JSON.stringify(
-				await getUserMetadata(projectId, username, namespace)
+				await getUserMetadata(projectId, username, namespace),
+				undefined,
+				'\t'
 			)
 		);
 

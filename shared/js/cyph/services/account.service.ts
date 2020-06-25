@@ -11,7 +11,7 @@ import {
 } from '@angular/router';
 import * as Hammer from 'hammerjs';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {filter, map, skip, switchMap, take} from 'rxjs/operators';
+import {filter, map, skip, switchMap} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
 import {BaseProvider} from '../base-provider';
 import {ContactComponent} from '../components/contact';
@@ -224,7 +224,7 @@ export class AccountService extends BaseProvider {
 	public readonly transition: Observable<boolean> = this.transitionInternal;
 
 	/** Resolves after UI is ready. */
-	public readonly uiReady: Promise<void> = this._UI_READY.promise;
+	public readonly uiReady: Promise<void> = this._UI_READY;
 
 	/** Total count of unread messages. */
 	public readonly unreadMessages: Observable<number> = toBehaviorSubject(
@@ -447,6 +447,8 @@ export class AccountService extends BaseProvider {
 			return this.lastUserToken.token;
 		}
 
+		await this.accountDatabaseService.getCurrentUser();
+
 		/* Don't interfere if spinner is already running */
 		if (spinner?.value) {
 			spinner = undefined;
@@ -547,9 +549,7 @@ export class AccountService extends BaseProvider {
 
 	/** Runs on user login. */
 	public async userInit () : Promise<void> {
-		await this.accountDatabaseService.currentUserFiltered
-			.pipe(take(1))
-			.toPromise();
+		await this.accountDatabaseService.getCurrentUser();
 
 		this.subscriptions.push(
 			this.windowWatcherService.visibility
@@ -679,12 +679,10 @@ export class AccountService extends BaseProvider {
 						const {name, realUsername} =
 							(await user?.accountUserProfile.getValue()) || {};
 
-						const incomingCallAnswer = getOrSetDefault(
-							this.incomingCallAnswers,
-							k,
-							/* eslint-disable-next-line @typescript-eslint/tslint/config */
-							() => resolvable<boolean>()
-						);
+						const incomingCallAnswer = getOrSetDefault<
+							string,
+							IResolvable<boolean>
+						>(this.incomingCallAnswers, k, resolvable);
 
 						const dialogClose = resolvable<() => void>();
 
@@ -694,7 +692,7 @@ export class AccountService extends BaseProvider {
 								await this.notificationService.ring(
 									async () =>
 										Promise.race([
-											incomingCallAnswer.promise,
+											incomingCallAnswer,
 											this.dialogService.confirm(
 												{
 													bottomSheet: true,
@@ -748,7 +746,7 @@ export class AccountService extends BaseProvider {
 									this.notificationService.ringTimeoutLong
 								);
 
-						(await dialogClose.promise)();
+						(await dialogClose)();
 
 						if (answered) {
 							if (callType === 'chat') {
@@ -980,21 +978,19 @@ export class AccountService extends BaseProvider {
 			this.accountDatabaseService.pushNotificationsSubscribe(
 				callEvent,
 				async data => {
-					if (
-						typeof data?.additionalData?.callMetadata !== 'string'
-					) {
+					const callMetadata: unknown =
+						data?.additionalData?.callMetadata;
+
+					if (typeof callMetadata !== 'string') {
 						return;
 					}
 
-					this.respondedCallRequests.add(
-						data.additionalData.callMetadata
-					);
+					this.respondedCallRequests.add(callMetadata);
 
-					getOrSetDefault(
+					getOrSetDefault<string, IResolvable<boolean>>(
 						this.incomingCallAnswers,
-						data.additionalData.callMetadata,
-						/* eslint-disable-next-line @typescript-eslint/tslint/config */
-						() => resolvable<boolean>()
+						callMetadata,
+						resolvable
 					).resolve(callAnswer);
 
 					if (!callAnswer) {
@@ -1003,7 +999,7 @@ export class AccountService extends BaseProvider {
 
 					try {
 						const {route} = await this.getIncomingCallRoute(
-							data.additionalData.callMetadata
+							callMetadata
 						);
 
 						await this.router.navigate(route);

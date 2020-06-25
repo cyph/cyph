@@ -136,6 +136,8 @@ export class MarkdownComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnInit () : void {
+		super.ngOnInit();
+
 		this.onChanges();
 	}
 

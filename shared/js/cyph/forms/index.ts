@@ -2,9 +2,9 @@
 
 import * as msgpack from 'msgpack-lite';
 import {Form, IForm} from '../proto';
-import {flattenArray} from '../util/reducers';
 
 /** Convenience method for extracting a value from an IForm object. */
+/* eslint-disable-next-line @typescript-eslint/unbound-method */
 export const {getFormValue} = class {
 	/** @ignore */
 	public static getFormValue (
@@ -99,7 +99,7 @@ export const newFormComponent = (
 	id?: string,
 	isColumn?: boolean
 ) : Form.IComponent => ({
-	containers: flattenArray(containers),
+	containers: containers.flat(),
 	id,
 	isColumn
 });

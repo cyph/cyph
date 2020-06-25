@@ -84,7 +84,7 @@ export class WorkerService extends BaseProvider {
 			scriptText
 		});
 
-		return output.promise;
+		return output;
 	}
 
 	/** Removes a previously set ServiceWorker function. */

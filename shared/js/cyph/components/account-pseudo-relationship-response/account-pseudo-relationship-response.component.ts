@@ -25,6 +25,8 @@ export class AccountPseudoRelationshipResponseComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		const [accept, id] = await Promise.all([
 			this.activatedRoute.data
 				.pipe(

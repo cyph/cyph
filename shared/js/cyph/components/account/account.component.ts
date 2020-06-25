@@ -152,7 +152,7 @@ export class AccountComponent extends BaseProvider
 	);
 
 	/** @see InAppPurchaseComponent */
-	@ViewChild(InAppPurchaseComponent)
+	@ViewChild('inAppPurchase', {read: InAppPurchaseComponent})
 	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** Indicates whether menu should be displayed. */
@@ -252,7 +252,7 @@ export class AccountComponent extends BaseProvider
 	public readonly userPresence = UserPresence;
 
 	/** Resolves after view init. */
-	public readonly viewInitiated: Promise<void> = this._VIEW_INITIATED.promise;
+	public readonly viewInitiated: Promise<void> = this._VIEW_INITIATED;
 
 	/** @inheritDoc */
 	public ngAfterViewInit () : void {
@@ -261,6 +261,8 @@ export class AccountComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		if (!this.envService.isWeb) {
 			/* TODO: HANDLE NATIVE */
 			return;

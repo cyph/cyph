@@ -1,18 +1,17 @@
 /* eslint-disable max-lines */
 
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
 import {IContactListItem, UserLike} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
-import {MaybePromise} from '../maybe-promise-type';
 import {
 	IAccountMessagingGroup,
 	ISessionMessage,
 	SessionMessageList,
 	StringProto
 } from '../proto';
-import {events, ISessionMessageData, rpcEvents} from '../session';
+import {ISessionMessageData, RpcEvents} from '../session';
 import {filterUndefined} from '../util/filter';
 import {normalizeArray} from '../util/formatting';
 import {getOrSetDefault} from '../util/get-or-set-default';
@@ -43,16 +42,10 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountSessionService extends SessionService {
 	/** @ignore */
-	private readonly _READY = resolvable();
-
-	/** @ignore */
 	private initiated: boolean = false;
 
 	/** @ignore */
 	private readonly localStorageKey = 'AccountBurnerChannelID';
-
-	/** @ignore */
-	private readonly resolveReady: () => void = this._READY.resolve;
 
 	/** @inheritDoc */
 	protected readonly account: boolean = true;
@@ -76,16 +69,14 @@ export class AccountSessionService extends SessionService {
 	};
 
 	/** @inheritDoc */
-	public readonly ready = this._READY.promise;
+	public readonly ready = resolvable<true>(true);
 
 	/** Remote user. */
-	public readonly remoteUser = new BehaviorSubject<
-		MaybePromise<UserLike | undefined>
-	>(undefined);
+	public readonly remoteUser = resolvable<UserLike | undefined>();
 
 	/** @inheritDoc */
 	protected async abortSetup () : Promise<void> {
-		const remoteUser = await this.remoteUser.pipe(take(1)).toPromise();
+		const remoteUser = await this.remoteUser;
 
 		if (remoteUser?.username) {
 			await this.accountContactsService.resetCastleSession(
@@ -228,7 +219,7 @@ export class AccountSessionService extends SessionService {
 			this.accountSessionInitService.ephemeral = true;
 			this.ephemeralSubSession = true;
 
-			this.remoteUser.next({
+			this.remoteUser.resolve({
 				anonymous: true,
 				avatar: undefined,
 				contactID: undefined,
@@ -265,7 +256,7 @@ export class AccountSessionService extends SessionService {
 					})
 			);
 
-			this.resolveReady();
+			this.ready.resolve();
 			return this.init(channelID);
 		}
 
@@ -376,32 +367,82 @@ export class AccountSessionService extends SessionService {
 
 			/*
 				Handle events on individual pairwise sessions and perform equivalent behavior.
-				Note: rpcEvents.typing is ignored because it's unsupported in accounts.
+				Note: RpcEvents.typing is ignored because it's unsupported in accounts.
 			*/
 
 			const confirmations = new Map<string, Set<AccountSessionService>>();
 
-			Promise.all(group.map(async session => session.opened)).then(() => {
-				this.resolveOpened();
-			});
+			for (const session of group) {
+				session.on(RpcEvents.text, newEvents => {
+					this.trigger(RpcEvents.text, newEvents);
+				});
 
-			Promise.all(
-				group.map(
-					async session => session.initialMessagesProcessed.promise
-				)
-			).then(() => {
-				this.initialMessagesProcessed.resolve();
-			});
+				session.on(RpcEvents.confirm, newEvents => {
+					this.trigger(
+						RpcEvents.confirm,
+						filterUndefined(
+							newEvents.map(o => {
+								if (
+									!o.textConfirmation ||
+									!o.textConfirmation.id
+								) {
+									return;
+								}
 
-			for (const {event, all} of [
-				{all: false, event: events.beginChat},
-				{all: false, event: events.closeChat},
-				{all: false, event: events.connect},
-				{all: false, event: events.connectFailure},
-				{all: false, event: events.cyphNotFound}
+								const confirmedSessions = getOrSetDefault(
+									confirmations,
+									o.textConfirmation.id,
+									() => new Set<AccountSessionService>()
+								);
+
+								confirmedSessions.add(session);
+
+								if (confirmedSessions.size === group.length) {
+									confirmations.delete(o.textConfirmation.id);
+									return o;
+								}
+
+								return;
+							})
+						)
+					);
+				});
+			}
+
+			for (const {all, always, event} of <
+				{
+					all?: boolean;
+					always?: boolean;
+					event:
+						| 'beginChat'
+						| 'closed'
+						| 'connected'
+						| 'channelConnected'
+						| 'connectFailure'
+						| 'cyphNotFound'
+						| 'initialMessagesProcessed'
+						| 'opened'
+						| 'ready';
+				}[]
+			> [
+				{event: 'beginChat'},
+				{all: true, event: 'closed'},
+				{event: 'connected'},
+				{event: 'channelConnected'},
+				{event: 'connectFailure'},
+				{event: 'cyphNotFound'},
+				{all: true, event: 'initialMessagesProcessed'},
+				{all: true, event: 'opened'},
+				{all: true, event: 'ready'}
 			]) {
-				const promises = group.map(async session => session.one(event));
-				const callback = async () => this.trigger(event);
+				const callback = async () => this[event].resolve();
+
+				if (always) {
+					callback();
+					continue;
+				}
+
+				const promises = group.map(async session => session[event]);
 
 				if (all) {
 					Promise.all(promises).then(callback);
@@ -411,50 +452,7 @@ export class AccountSessionService extends SessionService {
 				}
 			}
 
-			for (const session of group) {
-				session.on(rpcEvents.text, async newEvents =>
-					this.trigger(rpcEvents.text, newEvents)
-				);
-
-				session.on(
-					rpcEvents.confirm,
-					async (newEvents: ISessionMessageData[]) =>
-						this.trigger(
-							rpcEvents.confirm,
-							filterUndefined(
-								newEvents.map(o => {
-									if (
-										!o.textConfirmation ||
-										!o.textConfirmation.id
-									) {
-										return;
-									}
-
-									const confirmedSessions = getOrSetDefault(
-										confirmations,
-										o.textConfirmation.id,
-										() => new Set<AccountSessionService>()
-									);
-
-									confirmedSessions.add(session);
-
-									if (
-										confirmedSessions.size === group.length
-									) {
-										confirmations.delete(
-											o.textConfirmation.id
-										);
-										return o;
-									}
-
-									return;
-								})
-							)
-						)
-				);
-			}
-
-			this.resolveReady();
+			this.remoteUser.resolve(undefined);
 			return;
 		}
 
@@ -532,7 +530,7 @@ export class AccountSessionService extends SessionService {
 				(contactState.email && `<${contactState.email}>`) ||
 				this.stringsService.friend;
 
-			this.remoteUser.next({
+			this.remoteUser.resolve({
 				anonymous: false,
 				avatar: undefined,
 				contactID: this.accountContactsService.getContactID(
@@ -550,7 +548,7 @@ export class AccountSessionService extends SessionService {
 				this.accountService.setHeader({mobile: name});
 			}
 
-			this.resolveReady();
+			this.ready.resolve();
 			return;
 		}
 
@@ -578,8 +576,8 @@ export class AccountSessionService extends SessionService {
 			debugLog(() => ({accountSessionInitComplete: {user}}));
 		});
 
-		this.remoteUser.next(userPromise);
-		this.resolveReady();
+		this.remoteUser.resolve(userPromise);
+		this.ready.resolve();
 	}
 
 	/** @inheritDoc */
@@ -623,14 +621,14 @@ export class AccountSessionService extends SessionService {
 						continue;
 					}
 
-					this.off(rpcEvents.pong, f);
+					this.off(RpcEvents.pong, f);
 					resolve();
 					return;
 				}
 			};
 
-			this.on(rpcEvents.pong, f);
-			this.send([rpcEvents.ping, {command: {method: id}}]);
+			this.on(RpcEvents.pong, f);
+			this.send([RpcEvents.ping, {command: {method: id}}]);
 		});
 	}
 
@@ -675,7 +673,7 @@ export class AccountSessionService extends SessionService {
 			stringsService
 		);
 
-		this.on(rpcEvents.ping, async (newEvents: ISessionMessageData[]) => {
+		this.on(RpcEvents.ping, async newEvents => {
 			for (const o of newEvents) {
 				if (!o.command || !o.command.method) {
 					continue;
@@ -689,7 +687,7 @@ export class AccountSessionService extends SessionService {
 					.toPromise();
 
 				this.send([
-					rpcEvents.pong,
+					RpcEvents.pong,
 					{command: {method: o.command.method}}
 				]);
 			}

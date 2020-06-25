@@ -35,6 +35,8 @@ export class UploadEhrCredentialsComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		try {
 			this.accountService.resolveUiReady();
 			this.accountService.transitionEnd();

@@ -96,7 +96,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	})();
 
 	/** @inheritDoc */
-	public readonly initialMessagesProcessed = resolvable();
+	public readonly ready = resolvable();
 
 	/** @inheritDoc */
 	public async receive (
@@ -194,7 +194,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		this.key
 			.then(async () => {
 				await this.transport.connect();
-				this.initialMessagesProcessed.resolve();
+				this.ready.resolve();
 			})
 			.catch(async () => this.transport.abort());
 	}
