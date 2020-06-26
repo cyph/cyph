@@ -434,7 +434,7 @@ export class AccountAuthService extends BaseProvider {
 		pin?: string | Uint8Array,
 		altMasterKey: boolean = false
 	) : Promise<boolean> {
-		await this.logout(false);
+		const logoutPromise = this.logout(false, false);
 
 		if (!username || masterKey.length === 0) {
 			return false;
@@ -564,7 +564,8 @@ export class AccountAuthService extends BaseProvider {
 
 						return kp;
 					})(),
-					userPromise
+					userPromise,
+					logoutPromise
 				]);
 
 			/* Test to see if we can fetch user data before initiating fresh log-in */
@@ -765,7 +766,8 @@ export class AccountAuthService extends BaseProvider {
 
 	/** Logs out. */
 	public async logout (
-		clearSavedCredentials: boolean = true
+		clearSavedCredentials: boolean = true,
+		timeouts: boolean = true
 	) : Promise<boolean> {
 		const currentUser = this.accountDatabaseService.currentUser.value;
 
@@ -781,12 +783,15 @@ export class AccountAuthService extends BaseProvider {
 			this.connectTrackerCleanup = undefined;
 		}
 
-		await Promise.race([
-			this.databaseService.unregisterPushNotifications(
+		const unregisterPushNotificationsPromise = this.databaseService
+			.unregisterPushNotifications(
 				`users/${currentUser.user.username}/messagingTokens`
-			),
-			sleep(1000)
-		]).catch(() => {});
+			)
+			.catch(() => {});
+
+		await (timeouts ?
+			Promise.race([unregisterPushNotificationsPromise, sleep(1000)]) :
+			unregisterPushNotificationsPromise);
 
 		this.potassiumService.clearMemory(currentUser.keys.symmetricKey);
 		this.potassiumService.clearMemory(
@@ -803,8 +808,12 @@ export class AccountAuthService extends BaseProvider {
 		);
 
 		if (clearSavedCredentials) {
+			const databaseLogoutPromise = this.databaseService.logout();
+
 			await Promise.all([
-				Promise.race([this.databaseService.logout(), sleep(1000)]),
+				timeouts ?
+					Promise.race([databaseLogoutPromise, sleep(1000)]) :
+					databaseLogoutPromise,
 				this.removeSavedCredentials()
 			]).catch(() => {});
 		}
