@@ -815,12 +815,14 @@ export class CheckoutComponent extends BaseProvider
 			this.spinner?.next(false);
 
 			if (!errorMessage) {
+				/* eslint-disable-next-line no-unsafe-finally */
 				return;
 			}
 
 			this.errorMessage.next(errorMessage);
 
 			if (!this.inAppPurchase) {
+				/* eslint-disable-next-line no-unsafe-finally */
 				return;
 			}
 
