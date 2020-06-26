@@ -451,6 +451,12 @@ export class AccountAuthService extends BaseProvider {
 		try {
 			username = normalize(username);
 
+			const userPromise = this.accountUserLookupService.getUser(username);
+
+			const userPublicKeysPromise = this.accountDatabaseService
+				.getUserPublicKeys(username)
+				.catch(() => undefined);
+
 			if (
 				this.envService.isCordova &&
 				this.configService.betaTestUsers.has(username) &&
@@ -494,12 +500,6 @@ export class AccountAuthService extends BaseProvider {
 				masterKey,
 				altMasterKey
 			);
-
-			const userPromise = this.accountUserLookupService.getUser(username);
-
-			const userPublicKeysPromise = this.accountDatabaseService
-				.getUserPublicKeys(username)
-				.catch(() => undefined);
 
 			if (!(await this.databaseService.hasItem(loginDataURL))) {
 				dismissToast = resolvable<() => void>();
