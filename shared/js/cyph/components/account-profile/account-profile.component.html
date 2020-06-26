@@ -152,8 +152,11 @@
 						</button>
 
 						<ng-container
-							*ngIf="(isInnerCircle | await) ||
-								((accountSettingsService.plan | await) != 0)">
+							*ngIf="
+								(isInnerCircle | await) ||
+								(accountSettingsService.plan | await) !== 0
+							"
+						>
 							<button
 								mat-mini-fab
 								cyphTranslate
@@ -181,7 +184,6 @@
 								<mat-icon>videocam</mat-icon>
 							</button>
 						</ng-container>
-
 					</ng-container>
 				</ng-template>
 

@@ -167,6 +167,12 @@ export class StringsService extends BaseProvider {
 	public readonly businessNameOptional = `Company (optional)`;
 
 	/** @see StringsService */
+	public readonly callStateConnecting = `Now Connecting...`;
+
+	/** @see StringsService */
+	public readonly callStateRinging = `Ringing...`;
+
+	/** @see StringsService */
 	public readonly callType = `Call Type`;
 
 	/** @see StringsService */

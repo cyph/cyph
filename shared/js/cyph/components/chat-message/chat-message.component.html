@@ -348,7 +348,6 @@
 							</audio>
 
 							<div class="media-wrapper" fxLayout="row">
-
 								<img
 									class="media-message"
 									[src]="media?.uri || ''"
@@ -358,12 +357,15 @@
 											undefined :
 											dialogService.media({
 												mediaType:
-													value.fileTransfer.mediaType,
+													value.fileTransfer
+														.mediaType,
 												src: media?.uri || '',
 												title: value.fileTransfer.name
 											})
 									"
-									*ngIf="fileService.isImage(value.fileTransfer)"
+									*ngIf="
+										fileService.isImage(value.fileTransfer)
+									"
 								/>
 
 								<button
@@ -372,7 +374,6 @@
 									class="animated flipInX"
 									matTooltip="Hide Content"
 									(click)="mediaSpoiler.next(true)"
-
 								>
 									<mat-icon>visibility_off</mat-icon>
 								</button>
