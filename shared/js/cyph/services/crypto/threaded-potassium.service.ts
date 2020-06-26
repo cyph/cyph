@@ -10,10 +10,8 @@ import {isNativeCryptoSupported} from '../../crypto/potassium/is-native-crypto-s
 import {ISecretBox} from '../../crypto/potassium/isecret-box';
 import {ISign} from '../../crypto/potassium/isign';
 import {PotassiumUtil} from '../../crypto/potassium/potassium-util';
-import {BinaryProto} from '../../proto';
 import {lockFunction} from '../../util/lock';
 import {EnvService} from '../env.service';
-import {LocalStorageService} from '../local-storage.service';
 import {WorkerService} from '../worker.service';
 
 /**
@@ -206,31 +204,13 @@ export class ThreadedPotassiumService extends PotassiumUtil
 		aeadBytes: this.staticValues.then(async o => o.secretBoxAeadBytes()),
 		keyBytes: this.staticValues.then(async o => o.secretBoxKeyBytes()),
 		open: async (cyphertext, key, additionalData) =>
-			this.localStorageService.getOrSetDefault(
-				this.secretBoxCacheKey(cyphertext, additionalData),
-				BinaryProto,
-				async () =>
-					this.getPotassium(async o =>
-						o.secretBoxOpen(cyphertext, key, additionalData)
-					)
+			this.getPotassium(async o =>
+				o.secretBoxOpen(cyphertext, key, additionalData)
 			),
-		seal: async (plaintext, key, additionalData) => {
-			const cyphertext: Uint8Array = await this.getPotassium(async o =>
+		seal: async (plaintext, key, additionalData) =>
+			this.getPotassium(async o =>
 				o.secretBoxSeal(plaintext, key, additionalData)
-			);
-
-			const cacheKey = this.secretBoxCacheKey(cyphertext, additionalData);
-
-			if (cacheKey !== undefined) {
-				this.localStorageService.setItem(
-					cacheKey,
-					BinaryProto,
-					cyphertext
-				);
-			}
-
-			return cyphertext;
-		}
+			)
 	};
 
 	/** @inheritDoc */
@@ -282,22 +262,6 @@ export class ThreadedPotassiumService extends PotassiumUtil
 		return this.potassiumInternal(this.roundRobinIndex)(f);
 	}
 
-	/** Returns cache key for caching SecretBox results. */
-	private secretBoxCacheKey (
-		cyphertext: Uint8Array,
-		additionalData: string | Uint8Array | undefined
-	) : string | undefined {
-		if (cyphertext.length > 1048576) {
-			return undefined;
-		}
-
-		return `ThreadedPotassiumService.secretBox\n${this.toHex(cyphertext)}${
-			additionalData !== undefined ?
-				`\n${this.toHex(additionalData)}` :
-				''
-		}`;
-	}
-
 	/** @inheritDoc */
 	public async isNativeCryptoSupported () : Promise<boolean> {
 		return isNativeCryptoSupported();
@@ -311,9 +275,6 @@ export class ThreadedPotassiumService extends PotassiumUtil
 	constructor (
 		/** @ignore */
 		private readonly envService: EnvService,
-
-		/** @ignore */
-		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly workerService: WorkerService
