@@ -661,14 +661,6 @@ export class CheckoutComponent extends BaseProvider
 						throw new Error('cordova-plugin-purchase not present');
 					}
 
-					store.register({
-						alias: inAppPurchase.alias,
-						id: inAppPurchase.id,
-						type: store[inAppPurchase.type]
-					});
-
-					store.refresh();
-
 					await new Promise<void>(resolve => {
 						store.ready(resolve);
 					});
