@@ -91,6 +91,7 @@ const args = {
 		process.argv[2] === 'make' ||
 		process.argv.indexOf('--no-auto-make') > -1,
 	noUpdates: process.argv.indexOf('--no-updates') > -1,
+	prod: process.argv.indexOf('--prod') > -1,
 	simple:
 		process.argv.indexOf('--simple') > -1 ||
 		process.argv.indexOf('--simple-custom-build') > -1 ||
@@ -142,7 +143,7 @@ const gitconfigPath = path.join(homeDir, '.gitconfig');
 const gitconfigDockerPath = `${dockerHomeDir}/.gitconfig`;
 const serveReadyPath = path.join(__dirname, 'serve.ready');
 
-const isAgseDeploy =
+const needAGSE =
 	(args.command === 'sign' && process.argv[4] !== '--test') ||
 	(args.command === 'certsign' &&
 		(!process.argv[3] || process.argv[3] === 'cyphme')) ||
@@ -150,6 +151,7 @@ const isAgseDeploy =
 		!args.simple &&
 		(!args.site || args.site === 'cyph.app'));
 
+const isProdAGSEDeploy = needAGSE && args.command === 'deploy' && args.prod;
 const branch = (
 	spawn('git', ['describe', '--tags', '--exact-match']) ||
 	spawn('git', ['branch'])
@@ -374,7 +376,7 @@ const dockerRun = (
 	}
 };
 
-const editImage = (command, condition, useOriginal) =>
+const editImage = (command, condition, dryRunName, useOriginal = false) =>
 	Promise.resolve().then(() => {
 		if (
 			condition &&
@@ -388,6 +390,10 @@ const editImage = (command, condition, useOriginal) =>
 			) !== 'dothemove'
 		) {
 			return false;
+		}
+
+		if (dryRunName) {
+			console.error(`WARNING: Skipping update "${dryRunName}"`);
 		}
 
 		const tmpContainer = containerName('tmp');
@@ -428,7 +434,7 @@ const killContainer = name => {
 
 const killEverything = () => killContainer('cyph');
 
-const pullUpdates = (initialSetup = false) => {
+const pullUpdates = (forceUpdate = false, initialSetup = false) => {
 	if (args.noUpdates) {
 		return Promise.resolve();
 	}
@@ -436,6 +442,7 @@ const pullUpdates = (initialSetup = false) => {
 	return editImage(
 		shellScripts.libUpdate.command,
 		shellScripts.libUpdate.condition,
+		forceUpdate ? undefined : 'getlibs',
 		true
 	)
 		.then(didUpdate =>
@@ -443,7 +450,8 @@ const pullUpdates = (initialSetup = false) => {
 				true :
 				editImage(
 					shellScripts.aptUpdate.command,
-					shellScripts.aptUpdate.condition
+					shellScripts.aptUpdate.condition,
+					forceUpdate ? undefined : 'APT update'
 				)
 		)
 		.then(didUpdate => {
@@ -610,10 +618,10 @@ const updateCircleCI = () => {
 		.then(() => spawnAsync('docker', ['system', 'prune', '-f']));
 };
 
-if (!isCyphInternal && isAgseDeploy) {
+if (!isCyphInternal && needAGSE) {
 	fail('Non-Cyph-employee. AGSE unsupported.');
 }
-if (isWindows && isAgseDeploy) {
+if (isWindows && needAGSE) {
 	fail('AGSE not yet supported on Windows.');
 }
 
@@ -630,7 +638,7 @@ const make = () => {
 				`${image}_original:latest`
 			])
 		)
-		.then(() => pullUpdates(true))
+		.then(() => pullUpdates(true, true))
 		.then(() => editImage(shellScripts.setup))
 		.then(() =>
 			spawnAsync('docker', [
@@ -655,7 +663,7 @@ if (!imageAlreadyBuilt) {
 	}
 }
 
-if (isAgseDeploy) {
+if (needAGSE) {
 	commandAdditionalArgs.push('-p', '31337:31337/udp');
 
 	exitCleanup = () => fs.appendFileSync(agseTempFile, '');
@@ -763,7 +771,11 @@ initPromise.then(() => {
 
 	killContainer(containerName(args.command));
 
-	pullUpdates()
+	pullUpdates(
+		isProdAGSEDeploy ||
+			args.command === 'getlibs' ||
+			args.command === 'updatelibs'
+	)
 		.then(() => {
 			if (args.command === 'getlibs') {
 				return;
