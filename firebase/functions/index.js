@@ -1133,7 +1133,7 @@ exports.register = onCall(async (data, namespace, getUsername, testEnvName) => {
 			plan
 		}),
 		database.ref(`${namespace}/consumedInviteCodes/${inviteCode}`).set({
-			email,
+			...(email ? {email} : {}),
 			username
 		}),
 		!initialEmailAddressRef ||
