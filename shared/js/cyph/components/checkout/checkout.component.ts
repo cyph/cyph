@@ -569,6 +569,8 @@ export class CheckoutComponent extends BaseProvider
 	/** Submits payment. */
 	/* eslint-disable-next-line complexity */
 	public async submit (useBitPay: boolean = false) : Promise<void> {
+		let errorMessage: string | undefined;
+
 		try {
 			this.errorMessage.next(undefined);
 			this.pending.next(true);
@@ -679,11 +681,13 @@ export class CheckoutComponent extends BaseProvider
 							id: string;
 							type: string;
 						};
-					}>(resolve => {
-						store.once(inAppPurchase.id).approved(resolve);
+					}>((resolve, reject) => {
+						store.when(inAppPurchase.id).approved(resolve);
+						store.when(inAppPurchase.id).cancelled(reject);
+						store.when(inAppPurchase.id).error(reject);
 					});
 
-					store.order(inAppPurchase.id);
+					await store.order(inAppPurchase.id);
 
 					const product = await productPromise;
 
@@ -807,18 +811,32 @@ export class CheckoutComponent extends BaseProvider
 				return;
 			}
 
-			this.errorMessage.next(
-				`${this.stringsService.checkoutErrorStart}: "${(
-					err.message || err.toString()
-				)
-					.replace(/\s+/g, ' ')
-					.trim()
-					.replace(/\.$/, '')}".`
-			);
+			errorMessage = `${this.stringsService.checkoutErrorStart}: "${(
+				err.message || err.toString()
+			)
+				.replace(/\s+/g, ' ')
+				.trim()
+				.replace(/\.$/, '')}".`;
 		}
 		finally {
 			/* eslint-disable-next-line no-unused-expressions */
 			this.spinner?.next(false);
+
+			if (!errorMessage) {
+				return;
+			}
+
+			this.errorMessage.next(errorMessage);
+
+			if (!this.inAppPurchase) {
+				return;
+			}
+
+			await this.dialogService.toast(
+				errorMessage,
+				-1,
+				this.stringsService.ok
+			);
 		}
 	}
 
