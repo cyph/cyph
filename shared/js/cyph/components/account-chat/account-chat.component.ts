@@ -44,7 +44,7 @@ import {lockFunction} from '../../util/lock';
 import {debugLogError} from '../../util/log';
 import {observableAll} from '../../util/observable-all';
 import {getDateTimeString, getTimestamp} from '../../util/time';
-import {readableID} from '../../util/uuid';
+import {readableID, uuid} from '../../util/uuid';
 
 /**
  * Angular component for account chat UI.
@@ -438,12 +438,13 @@ export class AccountChatComponent extends BaseProvider
 										callType
 									);
 								}
-								if (callType !== undefined && !sessionSubID) {
-									await this.accountChatService.setUser(chat);
-									return this.accountP2PService.beginCall(
-										callType,
-										path
-									);
+
+								const beginCall =
+									callType !== undefined && !sessionSubID;
+
+								if (callType !== undefined) {
+									sessionSubID = sessionSubID || uuid();
+									ephemeralSubSession = true;
 								}
 
 								this.initiating.next(false);
@@ -457,6 +458,12 @@ export class AccountChatComponent extends BaseProvider
 
 								if (callType === undefined) {
 									return;
+								}
+
+								if (beginCall) {
+									await this.accountP2PService.beginCall(
+										callType
+									);
 								}
 
 								this.accountService.isCallActive.next(true);
