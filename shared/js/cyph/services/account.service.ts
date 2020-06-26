@@ -710,7 +710,8 @@ export class AccountService extends BaseProvider {
 														.answer,
 													okFAB:
 														callType === 'chat' ?
-															'whatshot' :
+															'whatshot' : callType === 'video' ?
+															'videocam' :
 															'phone',
 													timeout:
 														expires -
