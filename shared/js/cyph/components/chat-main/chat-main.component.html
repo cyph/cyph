@@ -250,10 +250,18 @@
 						"
 					/>
 					<h3 class="timer">
-						{{
-							((p2pService.timer | await)?.timestamp | await) ||
-								'00:00'
-						}}
+						<ng-template #timer>
+							{{
+								((p2pService.timer | await)?.timestamp | await)
+							}}
+						</ng-template>
+						<ng-container *ngIf="p2pWebRTCService.loading | await; else timer">
+							{{
+								(sessionService.channelConnected | await) ||
+								(sessionService.state.isAlice | await) === false ?
+								'Now Connecting...' : 'Ringing...'
+							}}
+						</ng-container>
 					</h3>
 				</div>
 			</ng-container>
