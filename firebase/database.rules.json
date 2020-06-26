@@ -8,15 +8,7 @@
 				"$userA": {
 					"$userB": {
 						"id": {
-							"data": {
-								".validate": "newData.isString()"
-							},
-							"hash": {
-								".validate": "newData.isString()"
-							},
-							"timestamp": {
-								".validate": "newData.val() === now"
-							}
+							".validate": "newData.isString()"
 						}
 					}
 				}

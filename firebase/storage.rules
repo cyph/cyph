@@ -1,19 +1,6 @@
 service firebase.storage {
 	match /b/{bucket}/o {
 		match /{namespace} {
-			match /castleSessions/{userA}/{userB} {
-				match /{all=**} {
-					allow read, write: if
-						request.auth != null && (
-							(userA + '@' + DOMAIN) == request.auth.token.email ||
-							(userB + '@' + DOMAIN) == request.auth.token.email
-						)
-					;
-				}
-
-				// match /id/{hash} {}
-			}
-
 			match /certificateHistory/{hash} {
 				allow read, write: if false;
 			}

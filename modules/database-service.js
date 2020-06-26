@@ -9,7 +9,7 @@ const admin = require('firebase-admin');
 const fs = require('fs');
 const lz4 = require('lz4');
 const os = require('os');
-const {BinaryProto} = require('./proto');
+const {BinaryProto, StringProto} = require('./proto');
 
 const {
 	deserialize,
@@ -134,6 +134,36 @@ module.exports = (config, isCloudFunction) => {
 				await databaseService.setItem(namespace, url, proto, value);
 				return value;
 			}
+		},
+		async getOrSetDefaultSimple (namespace, url, defaultValue)  {
+			if (!url) {
+				return defaultValue();
+			}
+
+			const fullURL = processURL(namespace, url);
+
+			let value = (await database.ref(fullURL).once('value')).val();
+
+			if (typeof value === 'string') {
+				return value;
+			}
+
+			if (
+				typeof value === 'object' &&
+				typeof (value || {}).hash === 'string'
+			) {
+				value = await databaseService.getItem(
+					namespace,
+					url,
+					StringProto
+				);
+			}
+			else {
+				value = await defaultValue();
+			}
+
+			await retry(async () => database.ref(fullURL).set(value));
+			return value;
 		},
 		async hasItem (namespace, url)  {
 			try {

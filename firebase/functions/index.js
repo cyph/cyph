@@ -910,10 +910,9 @@ exports.getCastleSessionID = onCall(async (data, namespace, getUsername) => {
 		return '';
 	}
 
-	return databaseService.getOrSetDefault(
+	return databaseService.getOrSetDefaultSimple(
 		namespace,
 		`castleSessions/${userA}/${userB}/id`,
-		StringProto,
 		() => uuid(true)
 	);
 });
@@ -1308,12 +1307,9 @@ exports.resetCastleSessionID = onCall(async (data, namespace, getUsername) => {
 		return;
 	}
 
-	await setItem(
-		namespace,
-		`castleSessions/${userA}/${userB}/id`,
-		StringProto,
-		uuid(true)
-	);
+	await database
+		.ref(`${namespace}/castleSessions/${userA}/${userB}/id`)
+		.set(uuid(true));
 });
 
 exports.sendAppLink = onCall(async (data, namespace, getUsername) => {
