@@ -117,17 +117,20 @@ export class Transport {
 	public async send (...cyphertexts: Uint8Array[]) : Promise<void> {
 		await Promise.all(
 			cyphertexts.map(async cyphertext => {
-				const messageID = potassiumUtil
-					.toDataView(cyphertext)
-					.getUint32(0, true);
-
 				debugLog(() => ({
-					pairwiseSessionOutgoingMessageSend: {cyphertext, messageID}
+					pairwiseSessionOutgoingMessageSend: {
+						cyphertext,
+						messageID: potassiumUtil
+							.toDataView(cyphertext)
+							.getUint32(0, true)
+					}
 				}));
+
 				await this.sessionService.castleHandler(
 					CastleEvents.send,
 					cyphertext
 				);
+
 				this.logCyphertext(
 					this.sessionService.localUsername,
 					cyphertext
