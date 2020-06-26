@@ -247,6 +247,7 @@
 			name="cordova-plugin-contacts"
 			spec="https://github.com/expcapitaldev/cordova-plugin-contacts.git"
 		/>
+		<plugin name="cordova-plugin-network-information" spec="*" />
 		<plugin name="cordova-plugin-purchase" spec="*" />
 		<plugin name="cordova-plugin-secure-storage-echo" spec="*" />
 		<plugin name="cordova-plugin-splashscreen" spec="*" />
