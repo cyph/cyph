@@ -36,7 +36,6 @@ read -r -d '' modules <<- EOM
 	@angular/platform-webworker-dynamic
 	@angular/router
 	@angular/service-worker
-	@angular/tsc-wrapped
 	@angular-devkit/architect
 	@angular-devkit/architect-cli
 	@angular-devkit/build-ng-packagr
