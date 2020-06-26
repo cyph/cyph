@@ -109,6 +109,9 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 	/** Indicates whether the profile editor is in focus. */
 	public readonly isEditorFocused = new BehaviorSubject<boolean>(false);
 
+	/** @see AccountContactsService.watchIfInnerCircle */
+	public readonly isInnerCircle: Observable<boolean>;
+
 	/** Indicates whether profile is ready to save. */
 	public readonly readyToSave: Observable<boolean> = this.draft.pipe(
 		map(
@@ -609,6 +612,21 @@ export class AccountProfileComponent extends BaseProvider implements OnInit {
 				switchMap(username =>
 					username ?
 						this.accountContactsService.watchIfContact(
+							username,
+							this.subscriptions
+						) :
+						of(false)
+				)
+			),
+			false,
+			this.subscriptions
+		);
+
+		this.isInnerCircle = toBehaviorSubject(
+			this.username.pipe(
+				switchMap(username =>
+					username ?
+						this.accountContactsService.watchIfInnerCircle(
 							username,
 							this.subscriptions
 						) :

@@ -150,6 +150,38 @@
 						>
 							<mat-icon>message</mat-icon>
 						</button>
+
+						<ng-container
+							*ngIf="(isInnerCircle | await) ||
+								((accountSettingsService.plan | await) != 0)">
+							<button
+								mat-mini-fab
+								cyphTranslate
+								class="animated flipInX _5"
+								matTooltip="Call User"
+								[routerLink]="
+									'/audio/' +
+									((user?.contactID | await) ||
+										'user/' + (user?.username || ''))
+								"
+							>
+								<mat-icon>phone</mat-icon>
+							</button>
+							<button
+								mat-mini-fab
+								cyphTranslate
+								class="animated flipInX _6"
+								matTooltip="Video Call User"
+								[routerLink]="
+									'/video/' +
+									((user?.contactID | await) ||
+										'user/' + (user?.username || ''))
+								"
+							>
+								<mat-icon>videocam</mat-icon>
+							</button>
+						</ng-container>
+
 					</ng-container>
 				</ng-template>
 
