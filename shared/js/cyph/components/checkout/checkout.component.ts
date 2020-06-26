@@ -55,10 +55,12 @@ const EF: any | undefined =
 export class CheckoutComponent extends BaseProvider
 	implements AfterViewInit, OnChanges, OnInit {
 	/** @ignore */
-	private readonly authorization = request({
-		retries: 5,
-		url: this.envService.baseUrl + 'braintree'
-	});
+	private readonly authorization = memoize(async () =>
+		request({
+			retries: 5,
+			url: this.envService.baseUrl + 'braintree'
+		})
+	);
 
 	/** BitPay invoice ID. */
 	private bitPayInvoiceID?: Promise<string>;
@@ -285,7 +287,7 @@ export class CheckoutComponent extends BaseProvider
 						label: 'Cyph'
 					}
 				},
-				authorization: await this.authorization,
+				authorization: await this.authorization(),
 				dataCollector: {
 					kount: true
 				},
