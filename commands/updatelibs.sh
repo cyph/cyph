@@ -298,7 +298,7 @@ read -r -d '' modules <<- EOM
 	lodash-es
 	long
 	lunr
-	lz4
+	lz4@0.6.3
 	mailchimp-api-v3
 	markdown-escapes
 	markdown-it
