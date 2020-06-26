@@ -112,6 +112,7 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-angular-heatmap
 	@syncfusion/ej2-angular-inplace-editor
 	@syncfusion/ej2-angular-inputs
+	@syncfusion/ej2-angular-kanban
 	@syncfusion/ej2-angular-layouts
 	@syncfusion/ej2-angular-lineargauge
 	@syncfusion/ej2-angular-lists
@@ -121,10 +122,12 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-angular-pdfviewer
 	@syncfusion/ej2-angular-pivotview
 	@syncfusion/ej2-angular-popups
+	@syncfusion/ej2-angular-progressbar
 	@syncfusion/ej2-angular-querybuilder
 	@syncfusion/ej2-angular-richtexteditor
 	@syncfusion/ej2-angular-schedule
 	@syncfusion/ej2-angular-splitbuttons
+	@syncfusion/ej2-angular-spreadsheet
 	@syncfusion/ej2-angular-treegrid
 	@syncfusion/ej2-angular-treemap
 	@syncfusion/ej2-barcode-generator
@@ -148,6 +151,7 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-icons
 	@syncfusion/ej2-inplace-editor
 	@syncfusion/ej2-inputs
+	@syncfusion/ej2-kanban
 	@syncfusion/ej2-layouts
 	@syncfusion/ej2-lineargauge
 	@syncfusion/ej2-lists
@@ -159,10 +163,12 @@ read -r -d '' modules <<- EOM
 	@syncfusion/ej2-pdfviewer
 	@syncfusion/ej2-pivotview
 	@syncfusion/ej2-popups
+	@syncfusion/ej2-progressbar
 	@syncfusion/ej2-querybuilder
 	@syncfusion/ej2-richtexteditor
 	@syncfusion/ej2-schedule
 	@syncfusion/ej2-splitbuttons
+	@syncfusion/ej2-spreadsheet
 	@syncfusion/ej2-svg-base
 	@syncfusion/ej2-treegrid
 	@syncfusion/ej2-treemap
