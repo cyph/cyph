@@ -10,14 +10,7 @@ import {
 	RegisteredRemoteUser,
 	Transport
 } from '../../crypto/castle';
-import {
-	BinaryProto,
-	CastleIncomingMessagesProto,
-	CastleRatchetState,
-	CastleRatchetUpdate,
-	MaybeBinaryProto,
-	Uint32Proto
-} from '../../proto';
+import {MaybeBinaryProto, Uint32Proto} from '../../proto';
 import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {debugLog} from '../../util/log';
 import {AccountContactsService} from '../account-contacts.service';
@@ -95,9 +88,11 @@ export class AccountCastleService extends CastleService {
 		this.pairwiseSession.resolve(
 			await getOrSetDefaultAsync(
 				this.pairwiseSessions,
+				/*
 				accountSessionService.ephemeralSubSession ?
 					undefined :
-					user.username,
+				*/
+				user.username,
 				async () => {
 					debugLog(() => ({
 						startingAccountCastleSessionNow: {
@@ -116,6 +111,10 @@ export class AccountCastleService extends CastleService {
 							of(user.username)
 					);
 
+					/*
+					Not necessary to reset the handshake and use the more complex
+					Castle logic just because the session is ephemeral.
+
 					if (accountSessionService.ephemeralSubSession) {
 						return new PairwiseSession(
 							this.potassiumService,
@@ -125,6 +124,7 @@ export class AccountCastleService extends CastleService {
 							await accountSessionService.handshakeState()
 						);
 					}
+					*/
 
 					const handshakeState = await accountSessionService.handshakeState(
 						this.accountDatabaseService.getAsyncValue<
@@ -150,7 +150,8 @@ export class AccountCastleService extends CastleService {
 						transport,
 						localUser,
 						remoteUser,
-						handshakeState,
+						handshakeState
+						/*
 						this.accountDatabaseService.getAsyncValue(
 							`${sessionURL}/incomingMessages`,
 							CastleIncomingMessagesProto
@@ -178,6 +179,7 @@ export class AccountCastleService extends CastleService {
 							undefined,
 							false
 						)
+						*/
 					);
 				}
 			)

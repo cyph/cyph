@@ -96,6 +96,26 @@ else {
 	});
 }
 
+/* In-app purchase setup */
+
+const store = (<any> self).store;
+
+if (
+	env.inAppPurchasesSupported &&
+	env.isCordovaMobileIOS &&
+	typeof store?.register === 'function'
+) {
+	store.register([
+		{
+			alias: 'Monthly Platinum',
+			id: 'MonthlyPlatinum',
+			type: store.PAID_SUBSCRIPTION
+		}
+	]);
+
+	store.refresh();
+}
+
 /* Polyfill */
 
 /* eslint-disable-next-line @typescript-eslint/unbound-method */

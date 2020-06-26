@@ -476,9 +476,10 @@ export class AccountRegisterComponent extends BaseProvider
 
 		this.accountService.transitionEnd();
 
-		const pendingInviteCode = this.localStorageService.getString(
-			'pendingInviteCode'
-		);
+		const pendingInviteCode = this.localStorageService
+			.getString('pendingInviteCode')
+			.catch(() => '');
+
 		const setPendingInviteCode = async () =>
 			this.inviteCode.setValue(await pendingInviteCode);
 

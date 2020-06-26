@@ -55,10 +55,12 @@ const EF: any | undefined =
 export class CheckoutComponent extends BaseProvider
 	implements AfterViewInit, OnChanges, OnInit {
 	/** @ignore */
-	private readonly authorization = request({
-		retries: 5,
-		url: this.envService.baseUrl + 'braintree'
-	});
+	private readonly authorization = memoize(async () =>
+		request({
+			retries: 5,
+			url: this.envService.baseUrl + 'braintree'
+		})
+	);
 
 	/** BitPay invoice ID. */
 	private bitPayInvoiceID?: Promise<string>;
@@ -285,7 +287,7 @@ export class CheckoutComponent extends BaseProvider
 						label: 'Cyph'
 					}
 				},
-				authorization: await this.authorization,
+				authorization: await this.authorization(),
 				dataCollector: {
 					kount: true
 				},
@@ -567,6 +569,8 @@ export class CheckoutComponent extends BaseProvider
 	/** Submits payment. */
 	/* eslint-disable-next-line complexity */
 	public async submit (useBitPay: boolean = false) : Promise<void> {
+		let errorMessage: string | undefined;
+
 		try {
 			this.errorMessage.next(undefined);
 			this.pending.next(true);
@@ -657,14 +661,6 @@ export class CheckoutComponent extends BaseProvider
 						throw new Error('cordova-plugin-purchase not present');
 					}
 
-					store.register({
-						alias: inAppPurchase.alias,
-						id: inAppPurchase.id,
-						type: store[inAppPurchase.type]
-					});
-
-					store.refresh();
-
 					await new Promise<void>(resolve => {
 						store.ready(resolve);
 					});
@@ -677,11 +673,13 @@ export class CheckoutComponent extends BaseProvider
 							id: string;
 							type: string;
 						};
-					}>(resolve => {
-						store.once(inAppPurchase.id).approved(resolve);
+					}>((resolve, reject) => {
+						store.when(inAppPurchase.id).approved(resolve);
+						store.when(inAppPurchase.id).cancelled(reject);
+						store.when(inAppPurchase.id).error(reject);
 					});
 
-					store.order(inAppPurchase.id);
+					await store.order(inAppPurchase.id);
 
 					const product = await productPromise;
 
@@ -805,18 +803,34 @@ export class CheckoutComponent extends BaseProvider
 				return;
 			}
 
-			this.errorMessage.next(
-				`${this.stringsService.checkoutErrorStart}: "${(
-					err.message || err.toString()
-				)
-					.replace(/\s+/g, ' ')
-					.trim()
-					.replace(/\.$/, '')}".`
-			);
+			errorMessage = `${this.stringsService.checkoutErrorStart}: "${(
+				err.message || err.toString()
+			)
+				.replace(/\s+/g, ' ')
+				.trim()
+				.replace(/\.$/, '')}".`;
 		}
 		finally {
 			/* eslint-disable-next-line no-unused-expressions */
 			this.spinner?.next(false);
+
+			if (!errorMessage) {
+				/* eslint-disable-next-line no-unsafe-finally */
+				return;
+			}
+
+			this.errorMessage.next(errorMessage);
+
+			if (!this.inAppPurchase) {
+				/* eslint-disable-next-line no-unsafe-finally */
+				return;
+			}
+
+			await this.dialogService.toast(
+				errorMessage,
+				-1,
+				this.stringsService.ok
+			);
 		}
 	}
 

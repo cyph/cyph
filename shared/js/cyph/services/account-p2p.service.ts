@@ -6,7 +6,6 @@ import {IContactListItem, User} from '../account';
 import {AccountContactsComponent} from '../components/account-contacts';
 import {BooleanProto, CyphPlans, NotificationTypes} from '../proto';
 import {getTimestamp} from '../util/time';
-import {uuid} from '../util/uuid';
 import {sleep} from '../util/wait';
 import {AccountContactsService} from './account-contacts.service';
 import {AccountSessionService} from './account-session.service';
@@ -102,13 +101,11 @@ export class AccountP2PService extends P2PService {
 	}
 
 	/** Initiates call. */
-	public async beginCall (
-		callType: 'audio' | 'video',
-		route: string = callType
-	) : Promise<void> {
+	public async beginCall (callType: 'audio' | 'video') : Promise<void> {
 		const remoteUser = await this.accountSessionService.remoteUser;
+		const id = this.accountSessionService.sessionSubID;
 
-		if (remoteUser?.anonymous) {
+		if (remoteUser?.anonymous || !id) {
 			return;
 		}
 
@@ -155,6 +152,7 @@ export class AccountP2PService extends P2PService {
 				),
 				title: this.stringsService.p2pTitle
 			});
+			this.router.navigate(['']);
 			return;
 		}
 
@@ -175,37 +173,26 @@ export class AccountP2PService extends P2PService {
 				this.accountService.autoUpdate.next(true);
 			});
 
-		const id = uuid();
+		const timestamp = await getTimestamp();
 
-		await Promise.all([
-			getTimestamp().then(async timestamp =>
-				Promise.all(
-					usernames.map(async username =>
-						this.accountDatabaseService.notify(
-							username,
-							NotificationTypes.Call,
-							{
-								callType,
-								expires:
-									timestamp +
-									(usernames.length > 1 ?
-										this.notificationService
-											.ringTimeoutLong :
-										this.notificationService.ringTimeout),
-								groupID: this.accountSessionService
-									.groupMetadata?.id,
-								id
-							}
-						)
-					)
+		await Promise.all(
+			usernames.map(async username =>
+				this.accountDatabaseService.notify(
+					username,
+					NotificationTypes.Call,
+					{
+						callType,
+						expires:
+							timestamp +
+							(usernames.length > 1 ?
+								this.notificationService.ringTimeoutLong :
+								this.notificationService.ringTimeout),
+						groupID: this.accountSessionService.groupMetadata?.id,
+						id
+					}
 				)
-			),
-			contactID.then(async contactIDString =>
-				this.router.navigate([route, contactIDString, id], {
-					replaceUrl: true
-				})
 			)
-		]);
+		);
 	}
 
 	/** @inheritDoc */
