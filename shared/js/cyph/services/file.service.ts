@@ -218,21 +218,25 @@ export class FileService extends BaseProvider {
 			image instanceof HTMLVideoElement &&
 			typeof (<any> image).render?.save === 'function'
 		) {
-			return {
-				data: await new Promise<Uint8ClampedArray>(resolve =>
-					(<any> image).render.save((data: any) =>
+			const dataURI = await new Promise<string | undefined>(resolve => {
+				(<any> image).render.save((data: any) => {
+					resolve(
 						typeof data === 'string' && data.length > 0 ?
-							resolve(
-								potassiumUtil.toBytesClamped(
-									potassiumUtil.fromBase64(data)
-								)
-							) :
-							resolve(new Uint8ClampedArray(0))
-					)
-				),
-				height: image.videoHeight,
-				width: image.videoWidth
-			};
+							`data:image/jpeg;base64,${data}` :
+							undefined
+					);
+				});
+			});
+
+			if (!dataURI) {
+				return {
+					data: new Uint8ClampedArray(0),
+					height: 0,
+					width: 0
+				};
+			}
+
+			image = await this.toImageElement(dataURI);
 		}
 
 		const height =
