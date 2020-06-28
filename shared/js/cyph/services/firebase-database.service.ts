@@ -2145,24 +2145,27 @@ export class FirebaseDatabaseService extends DatabaseService {
 											keys[i - 1];
 										const itemURL = `${url}/${key}`;
 
-										const {
-											timestamp,
-											value
-										} = await this.downloadItem(
-											itemURL,
-											proto
-										).result;
-
-										this.ngZone.run(() => {
-											observer.next({
-												key,
-												previousKey,
+										try {
+											const {
 												timestamp,
-												url: itemURL,
 												value
+											} = await this.downloadItem(
+												itemURL,
+												proto
+											).result;
+											this.ngZone.run(() => {
+												observer.next({
+													key,
+													previousKey,
+													timestamp,
+													url: itemURL,
+													value
+												});
 											});
-										});
-
+										}
+										catch {
+											continue;
+										}
 										if (noCache) {
 											this.cache.removeItem(itemURL);
 										}
