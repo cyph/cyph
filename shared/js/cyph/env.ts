@@ -118,7 +118,7 @@ export class Env extends EnvDeploy {
 
 	/** Number of available logical CPU cores. */
 	public readonly hardwareConcurrency: number =
-		navigator.hardwareConcurrency || 2;
+		navigatorData.hardwareConcurrency || 2;
 
 	/** Indicates whether platform-native in-app purchases are supported. */
 	public readonly inAppPurchasesSupported: boolean;
