@@ -12,7 +12,7 @@ import {
 } from '../../proto';
 import {DataManagerService} from '../../service-interfaces/data-manager.service';
 import {lockFunction} from '../../util/lock';
-import {resolvable} from '../../util/wait';
+import {resolvable, retryUntilSuccessful} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
 import {HandshakeSteps} from './enums';
 import {ICastleIncomingMessages} from './icastle-incoming-messages';
@@ -33,7 +33,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	private readonly key = this.secretCache.getOrSetDefault(
 		`PairwiseSessionLite-secretCache:${this.secretCacheKey}`,
 		BinaryProto,
-		async () => this.getKey()
+		async () => retryUntilSuccessful(async () => this.getKey())
 	);
 
 	/** @inheritDoc */
@@ -42,6 +42,11 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	/** @ignore */
 	private async getKey () : Promise<Uint8Array> {
 		let secret = await this.handshakeState.initialSecret.getValue();
+		const handshakeStep = await this.handshakeState.currentStep.getValue();
+
+		if (!secret && handshakeStep === HandshakeSteps.Complete) {
+			throw new Error('Failed to get secret from completed handshake.');
+		}
 
 		if (this.handshakeState.isAlice) {
 			if (!secret) {
@@ -52,10 +57,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 				await this.handshakeState.initialSecret.setValue(secret);
 			}
 
-			if (
-				(await this.handshakeState.currentStep.getValue()) ===
-				HandshakeSteps.Start
-			) {
+			if (handshakeStep !== HandshakeSteps.Complete) {
 				const [
 					signingKeyPair,
 					publicEncryptionKey
@@ -74,10 +76,6 @@ export class PairwiseSessionLite implements IPairwiseSession {
 							secret,
 						publicEncryptionKey
 					)
-				);
-
-				await this.handshakeState.currentStep.setValue(
-					HandshakeSteps.Complete
 				);
 			}
 		}
@@ -105,6 +103,12 @@ export class PairwiseSessionLite implements IPairwiseSession {
 				maybeSignedSecret;
 
 			await this.handshakeState.initialSecret.setValue(secret);
+		}
+
+		if (handshakeStep !== HandshakeSteps.Complete) {
+			await this.handshakeState.currentStep.setValue(
+				HandshakeSteps.Complete
+			);
 		}
 
 		return secret;
