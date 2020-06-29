@@ -394,6 +394,7 @@ const editImage = (command, condition, dryRunName, useOriginal = false) =>
 
 		if (dryRunName) {
 			console.error(`WARNING: Skipping update "${dryRunName}"`);
+			return false;
 		}
 
 		const tmpContainer = containerName('tmp');
