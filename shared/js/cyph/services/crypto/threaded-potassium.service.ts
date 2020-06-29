@@ -77,7 +77,8 @@ export class ThreadedPotassiumService extends PotassiumUtil
 	private roundRobinIndex: number = 0;
 
 	/** @ignore */
-	private readonly roundRobinMax: number = 4;
+	private readonly roundRobinMax: number = this.envService
+		.hardwareConcurrency;
 
 	/** Default Potassium thread to use when it doesn't matter which one we pick. */
 	private readonly staticValues = new Promise<any>(resolve => {

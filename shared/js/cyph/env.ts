@@ -116,6 +116,10 @@ export class Env extends EnvDeploy {
 	/** Complete (lowercase) language code, e.g. "en-us". */
 	public readonly fullLanguage: string = Env.languageInternal.toLowerCase();
 
+	/** Number of available logical CPU cores. */
+	public readonly hardwareConcurrency: number =
+		navigator.hardwareConcurrency || 2;
+
 	/** Indicates whether platform-native in-app purchases are supported. */
 	public readonly inAppPurchasesSupported: boolean;
 
