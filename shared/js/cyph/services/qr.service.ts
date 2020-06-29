@@ -83,7 +83,7 @@ export class QRService extends BaseProvider {
 					return;
 				}
 
-				if (video.ended) {
+				if (this.fileService.isVideoEnded(video)) {
 					resolve(undefined);
 					return;
 				}

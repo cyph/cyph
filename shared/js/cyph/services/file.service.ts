@@ -292,6 +292,19 @@ export class FileService extends BaseProvider {
 		return this.getMediaType(file).startsWith('video/');
 	}
 
+	/** Indicates whether video is ended (including handling iOS WebRTC plugin). */
+	public isVideoEnded (video: HTMLVideoElement) : boolean {
+		return (
+			video.ended &&
+			!(
+				this.envService.isCordovaMobileIOS &&
+				video.srcObject &&
+				'active' in video.srcObject &&
+				video.srcObject.active
+			)
+		);
+	}
+
 	/** Converts binary data to base64 data URI. */
 	public toDataURI (data: Uint8Array, mediaType: string) : string {
 		return `data:${mediaType};base64,${potassiumUtil.toBase64(data)}`;
