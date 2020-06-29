@@ -5,7 +5,12 @@ import {IAsyncValue} from '../../iasync-value';
 import {LocalAsyncList} from '../../local-async-list';
 import {LocalAsyncValue} from '../../local-async-value';
 import {LockFunction} from '../../lock-function-type';
-import {ICastleRatchetState, ICastleRatchetUpdate} from '../../proto/types';
+import {
+	BinaryProto,
+	ICastleRatchetState,
+	ICastleRatchetUpdate
+} from '../../proto';
+import {DataManagerService} from '../../service-interfaces/data-manager.service';
 import {lockFunction} from '../../util/lock';
 import {resolvable} from '../../util/wait';
 import {IPotassium} from '../potassium/ipotassium';
@@ -25,7 +30,17 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	private readonly instanceID = this.potassium.randomBytes(16);
 
 	/** @ignore */
-	private readonly key = (async () => {
+	private readonly key = this.secretCache.getOrSetDefault(
+		`PairwiseSessionLite-secretCache:${this.secretCacheKey}`,
+		BinaryProto,
+		async () => this.getKey()
+	);
+
+	/** @inheritDoc */
+	public readonly ready = resolvable();
+
+	/** @ignore */
+	private async getKey () : Promise<Uint8Array> {
 		let secret = await this.handshakeState.initialSecret.getValue();
 
 		if (this.handshakeState.isAlice) {
@@ -93,10 +108,7 @@ export class PairwiseSessionLite implements IPairwiseSession {
 		}
 
 		return secret;
-	})();
-
-	/** @inheritDoc */
-	public readonly ready = resolvable();
+	}
 
 	/** @inheritDoc */
 	public async receive (
@@ -138,6 +150,12 @@ export class PairwiseSessionLite implements IPairwiseSession {
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly secretCacheKey: string,
+
+		/** @ignore */
+		private readonly secretCache: DataManagerService,
+
 		/** @ignore */
 		private readonly potassium: IPotassium,
 

@@ -15,6 +15,7 @@ import {getOrSetDefaultAsync} from '../../util/get-or-set-default';
 import {debugLog} from '../../util/log';
 import {AccountContactsService} from '../account-contacts.service';
 import {AccountSessionService} from '../account-session.service';
+import {LocalStorageService} from '../local-storage.service';
 import {AccountDatabaseService} from './account-database.service';
 import {CastleService} from './castle.service';
 import {PotassiumService} from './potassium.service';
@@ -146,6 +147,8 @@ export class AccountCastleService extends CastleService {
 					);
 
 					return new PairwiseSessionLite(
+						sessionURL,
+						this.localStorageService,
 						this.potassiumService,
 						transport,
 						localUser,
@@ -191,6 +194,7 @@ export class AccountCastleService extends CastleService {
 		return new AccountCastleService(
 			this.accountContactsService,
 			this.accountDatabaseService,
+			this.localStorageService,
 			this.potassiumService
 		);
 	}
@@ -201,6 +205,9 @@ export class AccountCastleService extends CastleService {
 
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly localStorageService: LocalStorageService,
 
 		/** @ignore */
 		private readonly potassiumService: PotassiumService
