@@ -117,8 +117,7 @@ export class Env extends EnvDeploy {
 	public readonly fullLanguage: string = Env.languageInternal.toLowerCase();
 
 	/** Number of available logical CPU cores. */
-	public readonly hardwareConcurrency: number =
-		navigatorData.hardwareConcurrency || 2;
+	public readonly hardwareConcurrency: number;
 
 	/** Indicates whether platform-native in-app purchases are supported. */
 	public readonly inAppPurchasesSupported: boolean;
@@ -348,6 +347,9 @@ export class Env extends EnvDeploy {
 			maxSizeDesktop: filesConfigMaxSizeDesktop,
 			maxSizeMobile: filesConfigMaxSizeMobile
 		};
+
+		this.hardwareConcurrency =
+			navigatorData.hardwareConcurrency || (this.isMobileOS ? 1 : 2);
 
 		this.isCordovaDesktop = this.isCordova && !this.isMobileOS;
 		this.isCordovaMobile = this.isCordova && this.isMobileOS;
