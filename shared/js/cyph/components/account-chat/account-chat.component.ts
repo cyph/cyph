@@ -145,10 +145,7 @@ export class AccountChatComponent extends BaseProvider
 	public async ngOnDestroy () : Promise<void> {
 		super.ngOnDestroy();
 
-		if (this.p2pWebRTCService.isActive.value) {
-			await this.p2pWebRTCService.close();
-		}
-
+		await this.p2pWebRTCService.close();
 		await this.accountSessionService.destroy();
 	}
 
