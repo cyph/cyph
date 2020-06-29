@@ -223,7 +223,7 @@ read -r -d '' modules <<- EOM
 	braintree-web-drop-in
 	cheerio
 	clean-css-cli
-	clipboard-polyfill
+	clipboard-polyfill@^2
 	codelyzer
 	comlink
 	core-js
