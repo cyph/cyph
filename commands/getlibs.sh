@@ -440,7 +440,7 @@ if [ -d ${dir}/cyph.app ] ; then
 	cd ${dir}/cyph.app
 else
 	git clone --depth 1 https://github.com/cyph/cyph.git ~/cyph.tmp
-	cd ~/cyph.tmp
+	cd ~/cyph.tmp/cyph.app
 fi
 
 ../commands/ngprojectinit.sh
