@@ -669,7 +669,6 @@ const make = () => {
 		.then(() => {
 			fs.unlinkSync('Dockerfile.tmp');
 		})
-		.then(() => huskySetup())
 		.then(() => editImage(shellScripts.setup))
 		.then(() =>
 			spawnAsync('docker', [
@@ -684,7 +683,8 @@ const make = () => {
 				'rsync -rL /node_modules /cyph/shared/',
 				'postmake'
 			);
-		});
+		})
+		.then(() => huskySetup());
 };
 
 if (!imageAlreadyBuilt) {
