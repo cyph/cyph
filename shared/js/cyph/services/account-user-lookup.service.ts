@@ -35,19 +35,6 @@ export class AccountUserLookupService extends BaseProvider {
 	/** @ignore */
 	private readonly userCache: Map<string, User> = new Map<string, User>();
 
-	/** @ignore */
-	private async isDeactivated (user: string | User) : Promise<boolean> {
-		const username = normalize(
-			typeof user === 'string' ? user : user.username
-		);
-
-		return (
-			this.accountDatabaseService.currentUser.value?.user.username !==
-				username &&
-			this.accountDatabaseService.hasItem(`users/${username}/deactivated`)
-		);
-	}
-
 	/** Gets count of unread messages from a user. */
 	public readonly getUnreadMessageCount = memoize(username =>
 		this.accountDatabaseService
@@ -79,6 +66,21 @@ export class AccountUserLookupService extends BaseProvider {
 				`${username}\n${reservedUsername}` :
 				username
 	);
+
+	/** @ignore */
+	private async isDeactivated (user: string | User) : Promise<boolean> {
+		const username = normalize(
+			typeof user === 'string' ? user : user.username
+		);
+
+		return (
+			this.accountDatabaseService.currentUser.value?.user.username !==
+				username &&
+			(await this.accountDatabaseService.hasItem(
+				`users/${username}/deactivated`
+			))
+		);
+	}
 
 	/**
 	 * Checks to see if a username is owned by an existing user.
