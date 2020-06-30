@@ -144,14 +144,14 @@ RUN haxelib install hxnodejs
 RUN rm -rf ~/.gnupg
 
 
-#CIRCLECI:RUN sudo apt-get -y --allow-downgrades update
-#CIRCLECI:RUN sudo apt-get -y --allow-downgrades upgrade
-#CIRCLECI:RUN mkdir -p ~/getlibs/commands ~/getlibs/native ~/getlibs/shared/lib/js
-#CIRCLECI:BASE64_FILES
-#CIRCLECI:RUN chmod -R 777 ~/getlibs
-#CIRCLECI:RUN ~/getlibs/commands/updatedockerimage.sh
-#CIRCLECI:RUN ~/getlibs/commands/getlibs.sh
-#CIRCLECI:RUN ~/getlibs/commands/dockerpostmake.sh
+#SETUP:RUN sudo apt-get -y --allow-downgrades update
+#SETUP:RUN sudo apt-get -y --allow-downgrades upgrade
+#SETUP:RUN mkdir -p ~/getlibs/commands ~/getlibs/native ~/getlibs/shared/lib/js
+#SETUP:BASE64_FILES
+#SETUP:RUN chmod -R 777 ~/getlibs
+#SETUP:RUN ~/getlibs/commands/updatedockerimage.sh
+#SETUP:RUN ~/getlibs/commands/getlibs.sh
+#SETUP:RUN ~/getlibs/commands/dockerpostmake.sh
 #CIRCLECI:RUN sudo mkdir /cyph
 #CIRCLECI:RUN sudo chmod 777 /cyph
 

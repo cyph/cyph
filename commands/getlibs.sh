@@ -411,9 +411,14 @@ mv .js.tmp js
 cp js/yarn.lock js/node_modules/
 
 cd
-rm -rf ${dir}/shared/lib ${dir}/shared/node_modules 2> /dev/null
-rsync -rL lib ${dir}/shared/
-mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
+if [ -d ${dir}/cyph.app ] ; then
+	rm -rf ${dir}/shared/lib ${dir}/shared/node_modules 2> /dev/null
+	rsync -rL lib ${dir}/shared/
+	mv ${dir}/shared/lib/js/node_modules ${dir}/shared/
+	sudo mv lib/js/node_modules /
+	sudo chmod -R 777 /node_modules
+	rm -rf lib
+fi
 sudo mv lib/js/node_modules /
 sudo chmod -R 777 /node_modules
 rm -rf lib
@@ -433,8 +438,14 @@ ngcc --properties es2015 browser module main --first-only --create-ivy-entry-poi
 # Quick workaround for incomplete compilation in ngcc command
 if [ -d ${dir}/cyph.app ] ; then
 	cd ${dir}/cyph.app
-	../commands/ngprojectinit.sh
-	../commands/protobuf.sh
-	ng build
-	../commands/ngprojectinit.sh --deinit
+else
+	git clone --depth 1 https://github.com/cyph/cyph.git ~/cyph.tmp
+	cd ~/cyph.tmp
 fi
+
+../commands/ngprojectinit.sh
+../commands/protobuf.sh
+ng build
+../commands/ngprojectinit.sh --deinit
+
+rm -rf ~/cyph.tmp 2> /dev/null

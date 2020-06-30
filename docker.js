@@ -435,6 +435,60 @@ const killContainer = name => {
 
 const killEverything = () => killContainer('cyph');
 
+const huskySetup = () => {
+	backup();
+
+	const huskyRunPath = path.join(
+		__dirname,
+		'shared',
+		'node_modules',
+		'.bin',
+		'husky-run'
+	);
+
+	if (fs.existsSync(huskyRunPath)) {
+		fs.unlinkSync(huskyRunPath);
+	}
+
+	fs.writeFileSync(
+		huskyRunPath,
+		'#!/usr/bin/env node\nrequire("../husky/bin/run")'
+	);
+	fs.chmodSync(
+		huskyRunPath,
+		fs.constants.S_IRUSR |
+			fs.constants.S_IWUSR |
+			fs.constants.S_IXUSR |
+			fs.constants.S_IRGRP |
+			fs.constants.S_IWGRP |
+			fs.constants.S_IXGRP |
+			fs.constants.S_IROTH |
+			fs.constants.S_IWOTH |
+			fs.constants.S_IXOTH
+	);
+
+	return spawnAsync(
+		'node',
+		[
+			path.join(
+				__dirname,
+				'shared',
+				'node_modules',
+				'husky',
+				'lib',
+				'installer',
+				'bin.js'
+			),
+			'install'
+		],
+		undefined,
+		{
+			INIT_CWD: __dirname,
+			npm_config_user_agent: 'npm/6.0.0'
+		}
+	);
+};
+
 const pullUpdates = (forceUpdate = false, initialSetup = false) => {
 	if (args.noUpdates) {
 		return Promise.resolve();
@@ -460,57 +514,7 @@ const pullUpdates = (forceUpdate = false, initialSetup = false) => {
 				return;
 			}
 
-			backup();
-
-			const huskyRunPath = path.join(
-				__dirname,
-				'shared',
-				'node_modules',
-				'.bin',
-				'husky-run'
-			);
-
-			if (fs.existsSync(huskyRunPath)) {
-				fs.unlinkSync(huskyRunPath);
-			}
-
-			fs.writeFileSync(
-				huskyRunPath,
-				'#!/usr/bin/env node\nrequire("../husky/bin/run")'
-			);
-			fs.chmodSync(
-				huskyRunPath,
-				fs.constants.S_IRUSR |
-					fs.constants.S_IWUSR |
-					fs.constants.S_IXUSR |
-					fs.constants.S_IRGRP |
-					fs.constants.S_IWGRP |
-					fs.constants.S_IXGRP |
-					fs.constants.S_IROTH |
-					fs.constants.S_IWOTH |
-					fs.constants.S_IXOTH
-			);
-
-			return spawnAsync(
-				'node',
-				[
-					path.join(
-						__dirname,
-						'shared',
-						'node_modules',
-						'husky',
-						'lib',
-						'installer',
-						'bin.js'
-					),
-					'install'
-				],
-				undefined,
-				{
-					INIT_CWD: __dirname,
-					npm_config_user_agent: 'npm/6.0.0'
-				}
-			);
+			return huskySetup();
 		});
 	/*
 		.then(() => {
@@ -542,6 +546,33 @@ const removeImage = (name, opts) => {
 	}
 };
 
+const dockerBase64Files = s =>
+	s.replace(
+		/BASE64_FILES/,
+		[
+			'commands/dockerpostmake.sh',
+			'commands/getlibs.sh',
+			'commands/libclone.sh',
+			'commands/updatedockerimage.sh',
+			'native/plugins.list',
+			'shared/lib/js/package.json',
+			'shared/lib/js/yarn.lock'
+		]
+			.map(filePath =>
+				fs
+					.readFileSync(filePath)
+					.toString()
+					.match(/(.|\n){1,32768}/g)
+					.map(s => Buffer.from(s).toString('base64'))
+					.map(
+						base64 =>
+							`RUN echo '${base64}' | base64 --decode >> ~/getlibs/${filePath}`
+					)
+					.join('\n')
+			)
+			.join('\n')
+	);
+
 const updateCircleCI = () => {
 	if (args.noUpdates) {
 		return Promise.resolve();
@@ -549,39 +580,17 @@ const updateCircleCI = () => {
 
 	fs.writeFileSync(
 		'Dockerfile.tmp',
-		fs
-			.readFileSync('Dockerfile')
-			.toString()
-			.split('\n')
-			.filter(s => !s.startsWith('VOLUME'))
-			.join('\n')
-			.replace('WORKDIR /cyph/commands', 'WORKDIR /cyph')
-			.replace(/#CIRCLECI:/g, '')
-			.replace(
-				/BASE64_FILES/,
-				[
-					'commands/dockerpostmake.sh',
-					'commands/getlibs.sh',
-					'commands/libclone.sh',
-					'commands/updatedockerimage.sh',
-					'native/plugins.list',
-					'shared/lib/js/package.json',
-					'shared/lib/js/yarn.lock'
-				]
-					.map(filePath =>
-						fs
-							.readFileSync(filePath)
-							.toString()
-							.match(/(.|\n){1,32768}/g)
-							.map(s => Buffer.from(s).toString('base64'))
-							.map(
-								base64 =>
-									`RUN echo '${base64}' | base64 --decode >> ~/getlibs/${filePath}`
-							)
-							.join('\n')
-					)
-					.join('\n')
-			)
+		dockerBase64Files(
+			fs
+				.readFileSync('Dockerfile')
+				.toString()
+				.split('\n')
+				.filter(s => !s.startsWith('VOLUME'))
+				.join('\n')
+				.replace('WORKDIR /cyph/commands', 'WORKDIR /cyph')
+				.replace(/#CIRCLECI:/g, '')
+				.replace(/#SETUP:/g, '')
+		)
 	);
 
 	return spawnAsync('docker', [
@@ -631,7 +640,25 @@ let initPromise = Promise.resolve();
 
 const make = () => {
 	killEverything();
-	initPromise = spawnAsync('docker', ['build', '-t', image, '.'])
+
+	fs.writeFileSync(
+		'Dockerfile.tmp',
+		dockerBase64Files(
+			fs
+				.readFileSync('Dockerfile')
+				.toString()
+				.replace(/#SETUP:/g, '')
+		)
+	);
+
+	initPromise = spawnAsync('docker', [
+		'build',
+		'-t',
+		image,
+		'-f',
+		'Dockerfile.tmp',
+		'.'
+	])
 		.then(() =>
 			spawnAsync('docker', [
 				'tag',
@@ -639,7 +666,10 @@ const make = () => {
 				`${image}_original:latest`
 			])
 		)
-		.then(() => pullUpdates(true, true))
+		.then(() => {
+			fs.unlinkSync('Dockerfile.tmp');
+		})
+		.then(() => huskySetup())
 		.then(() => editImage(shellScripts.setup))
 		.then(() =>
 			spawnAsync('docker', [
@@ -647,7 +677,14 @@ const make = () => {
 				`${image}:latest`,
 				`${image}_original:latest`
 			])
-		);
+		)
+		.then(() => {
+			fs.rmdirSync('shared/node_modules', {recursive: true});
+			return dockerRun(
+				'rsync -rL /node_modules /cyph/shared/',
+				'postmake'
+			);
+		});
 };
 
 if (!imageAlreadyBuilt) {
