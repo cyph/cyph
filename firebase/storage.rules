@@ -286,9 +286,13 @@ service firebase.storage {
 					allow read;
 				}
 
-				// match /profileVisible/{hash} {}
+				match /profileVisible/{hash} {
+					allow read;
+				}
 
-				// match /pseudoAccount/{hash} {}
+				match /pseudoAccount/{hash} {
+					allow read;
+				}
 
 				match /publicEncryptionKey/{hash} {
 					allow read;
