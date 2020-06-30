@@ -73,12 +73,15 @@ export class AccountUserLookupService extends BaseProvider {
 			typeof user === 'string' ? user : user.username
 		);
 
-		return (
-			this.accountDatabaseService.currentUser.value?.user.username !==
-				username &&
-			(await this.accountDatabaseService.hasItem(
-				`users/${username}/deactivated`
-			))
+		if (
+			this.accountDatabaseService.currentUser.value?.user.username ===
+			username
+		) {
+			return false;
+		}
+
+		return this.accountDatabaseService.hasItem(
+			`users/${username}/deactivated`
 		);
 	}
 
