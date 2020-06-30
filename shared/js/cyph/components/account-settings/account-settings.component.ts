@@ -12,7 +12,7 @@ import {SecurityModels, User, usernameMask} from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {emailPattern} from '../../email-pattern';
-import {BooleanProto, CyphPlans, StringProto} from '../../proto';
+import {BinaryProto, BooleanProto, CyphPlans, StringProto} from '../../proto';
 import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {ConfigService} from '../../services/config.service';
@@ -57,6 +57,16 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 		},
 		usernamePattern: ''
 	});
+
+	/** Indicates whether account is deactivated. */
+	public readonly deactivated = toBehaviorSubject(
+		this.accountDatabaseService.watchExists(
+			'deactivated',
+			this.subscriptions
+		),
+		false,
+		this.subscriptions
+	);
 
 	/** Email address. */
 	public readonly email = this.accountDatabaseService.getAsyncValue(
@@ -211,6 +221,48 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 				title: this.stringsService.changePinTitle
 			},
 			async p => this.accountAuthService.changePIN(p)
+		);
+	}
+
+	/** Saves lock screen password update. */
+	public async setAccountDeactivated (deactivated: boolean) : Promise<void> {
+		if (
+			!(await this.dialogService.confirm({
+				content: this.stringsService.setParameters(
+					this.stringsService.deactivateAccountConfirm,
+					{
+						action: deactivated ?
+							this.stringsService.deactivateAccountDeactivate :
+							this.stringsService.deactivateAccountReactivate
+					}
+				),
+				markdown: true,
+				title: deactivated ?
+					this.stringsService.deactivateAccountDeactivateTitle :
+					this.stringsService.deactivateAccountReactivateTitle
+			}))
+		) {
+			return;
+		}
+
+		if (deactivated) {
+			await this.accountDatabaseService.setItem(
+				'deactivated',
+				BinaryProto,
+				new Uint8Array(0),
+				SecurityModels.unprotected
+			);
+		}
+		else {
+			await this.accountDatabaseService.removeItem('deactivated');
+		}
+
+		await this.dialogService.toast(
+			deactivated ?
+				this.stringsService.deactivateAccountDeactivateToast :
+				this.stringsService.deactivateAccountReactivateToast,
+			undefined,
+			this.stringsService.ok
 		);
 	}
 

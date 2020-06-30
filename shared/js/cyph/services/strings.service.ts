@@ -317,6 +317,27 @@ export class StringsService extends BaseProvider {
 	public readonly cypherToast3 = `Thou art amazed.`;
 
 	/** @see StringsService */
+	public readonly deactivateAccountConfirm = `Are you sure that you want to **\${ACTION}** your account?`;
+
+	/** @see StringsService */
+	public readonly deactivateAccountDeactivate = `deactivate`;
+
+	/** @see StringsService */
+	public readonly deactivateAccountDeactivateTitle = `Deactivate Account`;
+
+	/** @see StringsService */
+	public readonly deactivateAccountDeactivateToast = `Account deactivated.`;
+
+	/** @see StringsService */
+	public readonly deactivateAccountReactivate = `reactivate`;
+
+	/** @see StringsService */
+	public readonly deactivateAccountReactivateTitle = `Reactivate Account`;
+
+	/** @see StringsService */
+	public readonly deactivateAccountReactivateToast = `Account reactivated.`;
+
+	/** @see StringsService */
 	public readonly decline = `Decline`;
 
 	/** @see StringsService */

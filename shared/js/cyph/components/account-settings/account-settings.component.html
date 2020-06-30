@@ -245,6 +245,27 @@
 					Save
 				</button>
 			</div>
+
+			<div></div>
+			<hr class="full-width" />
+			<div></div>
+
+			<div fxLayoutAlign="center">
+				<button
+					mat-raised-button
+					color="warn"
+					(click)="setAccountDeactivated(!deactivated.value)"
+				>
+					<mat-icon>person</mat-icon>
+					&nbsp;&nbsp;
+					<span cyphTranslate *ngIf="deactivated | await"
+						>Reactivate Account</span
+					>
+					<span cyphTranslate *ngIf="!(deactivated | await)"
+						>Deactivate Account</span
+					>
+				</button>
+			</div>
 		</form>
 
 		<ng-template #newDeviceActivation>

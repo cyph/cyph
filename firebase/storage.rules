@@ -139,6 +139,10 @@ service firebase.storage {
 					allow read;
 				}
 
+				match /deactivated/{hash} {
+					allow read;
+				}
+
 				match /docs/{all=**} {
 					allow read;
 
