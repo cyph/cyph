@@ -376,6 +376,24 @@ const dockerRun = (
 	}
 };
 
+const dockerCP = (src, dest) => {
+	const container = containerName(crypto.randomBytes(32).toString('hex'));
+
+	dockerRun('sleep Infinity', container, true).catch(() => {});
+
+	const f = () => {
+		if (getContainerPIDs(container).length < 1) {
+			return new Promise(resolve => setTimeout(resolve, 1000)).then(f);
+		}
+
+		spawn('docker', ['cp', '-a', `${container}:${src}`, dest]);
+		killContainer(container);
+		return Promise.resolve();
+	};
+
+	return f();
+};
+
 const editImage = (command, condition, dryRunName, useOriginal = false) =>
 	Promise.resolve().then(() => {
 		if (
@@ -422,12 +440,15 @@ const editImage = (command, condition, dryRunName, useOriginal = false) =>
 			.then(() => true);
 	});
 
-const killContainer = name => {
-	for (const pid of spawn('docker', ['ps', '-a'])
+const getContainerPIDs = name =>
+	spawn('docker', ['ps', '-a'])
 		.split('\n')
 		.slice(1)
 		.filter(s => s.indexOf(name) > -1)
-		.map(s => s.split(/\s+/)[0])) {
+		.map(s => s.split(/\s+/)[0]);
+
+const killContainer = name => {
+	for (const pid of getContainerPIDs(name)) {
 		console.log(spawn('docker', ['kill', '-s', '9', pid]));
 		console.log(spawn('docker', ['rm', '-f', pid]));
 	}
@@ -682,10 +703,7 @@ const make = () => {
 				fs.rmdirSync('shared/node_modules', {recursive: true});
 			}
 
-			return dockerRun(
-				'rsync -rL /node_modules /cyph/shared/',
-				'postmake'
-			);
+			return dockerCP('/node_modules', '/cyph/shared/node_modules');
 		})
 		.then(() => huskySetup());
 };
