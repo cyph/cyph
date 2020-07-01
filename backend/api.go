@@ -187,7 +187,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		return "invalid subscription count", http.StatusTeapot
 	}
 
-	totalAmount := amount * subscriptionCount
+	totalAmount := amount
+	if subscription {
+		totalAmount = amount * subscriptionCount
+	}
 
 	bt := braintreeInit(h)
 
