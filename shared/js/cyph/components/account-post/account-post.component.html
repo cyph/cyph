@@ -151,12 +151,14 @@
 						fxLayout.lt-sm="column"
 						fxLayoutGap="16px"
 					>
-						<div
-							fxFlex.gt-xs="267px"
-							fxLayoutAlign.lt-sm="center center"
-						>
-							<mat-button-toggle-group multiple>
+						<div fxFlex.gt-xs="267px">
+							<mat-button-toggle-group fxFlex multiple>
 								<mat-button-toggle
+									[fxFlex]="
+										(i > 0 && (i + 1) % 4 === 0 ?
+											'1' :
+											'0') + ' 0 25%'
+									"
 									[checked]="reaction.selected"
 									[matTooltip]="
 										reaction.selected ?
@@ -169,6 +171,7 @@
 									"
 									*ngFor="
 										let reaction of reactions | await;
+										let i = index;
 										trackBy: trackByID
 									"
 								>
@@ -182,6 +185,7 @@
 								</mat-button-toggle>
 								<mat-button-toggle
 									cyphTranslate
+									fxLayout="center center"
 									[checked]="
 										(showEmojiPicker | await) && false
 									"

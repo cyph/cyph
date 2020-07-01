@@ -10,15 +10,17 @@ mat-card-content {
 }
 
 mat-button-toggle-group {
-	max-width: 267px;
 	flex-wrap: wrap;
+
+	mat-button-toggle {
+		height: 57px;
+	}
 
 	mat-button-toggle:first-child {
 		border-left: solid 1px rgba(0, 0, 0, 0.12);
 	}
 
 	mat-button-toggle:last-child {
-		max-width: 263px;
 		flex-grow: 1;
 	}
 }
