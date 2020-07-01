@@ -678,7 +678,10 @@ const make = () => {
 			])
 		)
 		.then(() => {
-			fs.rmdirSync('shared/node_modules', {recursive: true});
+			if (fs.existsSync('shared/node_modules')) {
+				fs.rmdirSync('shared/node_modules', {recursive: true});
+			}
+
 			return dockerRun(
 				'rsync -rL /node_modules /cyph/shared/',
 				'postmake'
