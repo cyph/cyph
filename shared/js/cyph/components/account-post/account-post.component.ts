@@ -214,6 +214,7 @@ export class AccountPostComponent extends BaseProvider
 		);
 
 		await this.updatePost();
+		this.showEmojiPicker.next(false);
 	}
 
 	/** Reposts post. */

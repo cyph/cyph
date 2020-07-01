@@ -186,9 +186,7 @@
 								<mat-button-toggle
 									cyphTranslate
 									fxLayout="center center"
-									[checked]="
-										(showEmojiPicker | await) && false
-									"
+									[checked]="showEmojiPicker | await"
 									matTooltip="Add New Reaction"
 									(click)="
 										showEmojiPicker.next(
