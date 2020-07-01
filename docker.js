@@ -379,7 +379,7 @@ const dockerRun = (
 const dockerCP = (src, dest) => {
 	const container = containerName(crypto.randomBytes(32).toString('hex'));
 
-	dockerRun('sleep Infinity', container, true).catch(() => {});
+	dockerRun('sleep Infinity', container).catch(() => {});
 
 	const f = () => {
 		if (getContainerPIDs(container).length < 1) {
