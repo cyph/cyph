@@ -18,6 +18,7 @@ mat-button-toggle-group {
 	}
 
 	mat-button-toggle:last-child {
+		max-width: 263px;
 		flex-grow: 1;
 	}
 }
