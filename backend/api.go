@@ -407,7 +407,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				Amount:             braintree.NewDecimal(amount, 2),
 				BillingAddress:     billingAddress,
 				Customer:           customerRequest,
-				DeviceData:         deviceData,
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})
