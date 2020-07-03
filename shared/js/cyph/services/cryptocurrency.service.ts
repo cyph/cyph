@@ -6,6 +6,7 @@ import {catchError, switchMap} from 'rxjs/operators';
 import {
 	getExchangeRates,
 	minimumTransactionAmount,
+	setBlockchainAPIKey,
 	Transaction,
 	transactionFee,
 	Wallet as SimpleBTCWallet
@@ -22,6 +23,7 @@ import {
 import {asyncToObservable} from '../util/flatten-observable';
 import {saveFile} from '../util/save-file';
 import {AnalyticsService} from './analytics.service';
+import {ConfigService} from './config.service';
 import {LocalStorageService} from './local-storage.service';
 
 /**
@@ -450,8 +452,13 @@ export class CryptocurrencyService extends BaseProvider {
 		private readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
+		private readonly configService: ConfigService,
+
+		/** @ignore */
 		private readonly localStorageService: LocalStorageService
 	) {
 		super();
+
+		setBlockchainAPIKey(this.configService.blockchainAPIKey);
 	}
 }

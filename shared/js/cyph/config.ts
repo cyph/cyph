@@ -45,6 +45,10 @@ export class Config {
 	public readonly bitPayToken: string =
 		'CsLk78BjUj81tBENkNpZxoPFGJWWss5qsga86xDKFWBR';
 
+	/** Blockchain.com API key. */
+	public readonly blockchainAPIKey: string =
+		'327ea4c2-7295-4ac0-a52a-08e39dad8793';
+
 	/** User-facing email addresses to include in places like contact forms. */
 	public readonly contactEmailAddresses: string[] = [
 		'support',
