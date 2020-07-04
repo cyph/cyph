@@ -341,53 +341,21 @@ export class Config {
 			freedomSale: {
 				id: 12,
 				items: {
-					annualPlatinum: {
-						amount: 162,
-						id: 5,
-						individualSubscriptions: true,
-						name: 'Platinum (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
-					annualPremium: {
-						amount: 54,
-						id: 3,
-						individualSubscriptions: true,
-						name: 'Premium (Annual)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
-					},
 					annualSupporter: {
 						amount: 17.76,
-						id: 1,
+						id: 0,
 						individualSubscriptions: true,
 						name: 'Supporter (Annual)',
 						perUser: true,
 						subscriptionType: SubscriptionTypes.annual
 					},
 					monthlyPlatinum: {
-						amount: 24,
-						id: 4,
+						amount: 17.76,
+						id: 1,
 						individualSubscriptions: true,
 						name: 'Platinum (Monthly)',
 						perUser: true,
 						subscriptionType: SubscriptionTypes.monthly
-					},
-					monthlyPremium: {
-						amount: 6,
-						id: 2,
-						individualSubscriptions: true,
-						name: 'Premium (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.monthly
-					},
-					monthlySupporter: {
-						amount: 3,
-						id: 0,
-						individualSubscriptions: true,
-						name: 'Supporter (Monthly)',
-						perUser: true,
-						subscriptionType: SubscriptionTypes.annual
 					}
 				}
 			},
