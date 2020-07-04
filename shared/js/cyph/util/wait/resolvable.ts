@@ -22,9 +22,24 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 	}
 
 	const o: IResolvable<T> = Object.create(promise, {
+		catch: {
+			value: async <TResult>(
+				onrejected?:
+					| ((reason: any) => TResult | PromiseLike<TResult>)
+					/* eslint-disable-next-line no-null/no-null */
+					| null
+					| undefined
+			) => promise.catch(onrejected),
+			writable: false
+		},
 		complete: {
 			value: false,
 			writable: true
+		},
+		finally: {
+			value: async (onfinally?: (() => void) | null | undefined) =>
+				promise.finally(onfinally),
+			writable: false
 		},
 		promise: {
 			value: promise,
@@ -45,6 +60,21 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 		resolved: {
 			value: false,
 			writable: true
+		},
+		then: {
+			value: async <TResult1, TResult2>(
+				onfulfilled?:
+					| ((value: T) => TResult1 | PromiseLike<TResult1>)
+					/* eslint-disable-next-line no-null/no-null */
+					| null
+					| undefined,
+				onrejected?:
+					| ((reason: any) => TResult2 | PromiseLike<TResult2>)
+					/* eslint-disable-next-line no-null/no-null */
+					| null
+					| undefined
+			) => promise.then(onfulfilled, onrejected),
+			writable: false
 		},
 		value: {
 			value: undefined,
