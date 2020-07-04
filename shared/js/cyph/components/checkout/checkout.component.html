@@ -177,7 +177,11 @@
 				<span cyphTranslate>Confirm</span>
 				&ngsp;
 				<span
-					>${{ amount * (perUser ? (users | await) || 1 : 1) }}</span
+					>${{
+						roundToString(
+							amount * (perUser ? (users | await) || 1 : 1)
+						)
+					}}</span
 				>
 				&ngsp;
 				<span>

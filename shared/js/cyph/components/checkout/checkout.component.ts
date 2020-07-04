@@ -28,6 +28,7 @@ import {EnvService} from '../../services/env.service';
 import {StringsService} from '../../services/strings.service';
 import {trackBySelf} from '../../track-by/track-by-self';
 import {trackByValue} from '../../track-by/track-by-value';
+import {roundToString} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
 import {request, requestJSON} from '../../util/request';
 import {uuid} from '../../util/uuid';
@@ -178,6 +179,9 @@ export class CheckoutComponent extends BaseProvider
 
 	/** @see reloadWindow */
 	public readonly reloadWindow = reloadWindow;
+
+	/** @see roundToString */
+	public readonly roundToString = roundToString;
 
 	/** Spinner to set while performing checkout. */
 	@Input() public spinner?: BehaviorSubject<boolean>;

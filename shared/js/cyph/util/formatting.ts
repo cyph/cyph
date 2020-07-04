@@ -98,6 +98,28 @@ export const readableByteLength = (
 			undefined
 	);
 
+/** Rounds number. */
+export const round = (n: number, decimalPlaces: number = 2) => {
+	const factor = Math.pow(10, decimalPlaces);
+	return Math.round(n * factor) / factor;
+};
+
+const roundToStringInternal = memoize((n: number) =>
+	memoize((decimalPlaces: number) =>
+		memoize((stripEmptyDecimal: boolean) => {
+			const s = round(n, decimalPlaces).toFixed(decimalPlaces);
+			return stripEmptyDecimal ? s.replace(/\.0+$/, '') : s;
+		})
+	)
+);
+
+/** Rounds number and converts to String. */
+export const roundToString = (
+	n: number,
+	decimalPlaces: number = 2,
+	stripEmptyDecimal: boolean = true
+) => roundToStringInternal(n)(decimalPlaces)(stripEmptyDecimal);
+
 /** Parses number. */
 export const toFloat = (
 	s: string,
