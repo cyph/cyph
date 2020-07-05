@@ -126,29 +126,61 @@
 						else noInviteCodeUpsell
 					"
 				>
-					<a
-						cyphTranslate
-						(click)="
-							salesService.openPricing(
-								envService.homeUrl +
-									'pricing?current=' +
-									cyphPlans[
-										inviteCodeData.value?.plan ||
-											cyphPlans.Free
-									] +
-									'&noInviteRedirect=true' +
-									'&inviteCode=' +
-									(inviteCode.value || ''),
-								undefined,
-								inAppPurchase
-							)
+					<ng-container
+						*ngIf="
+							envService.inAppPurchasesSupported ||
+								!(pgp | await);
+							else keybaseBannerMessage
 						"
-						>Upgrade to Platinum now</a
 					>
-					&ngsp;
-					<span cyphTranslate>
-						for 1 TB encrypted storage and advanced features!
-					</span>
+						<a
+							cyphTranslate
+							(click)="
+								salesService.openPricing(
+									envService.homeUrl +
+										'pricing?current=' +
+										cyphPlans[
+											inviteCodeData.value?.plan ||
+												cyphPlans.Free
+										] +
+										'&noInviteRedirect=true' +
+										'&inviteCode=' +
+										(inviteCode.value || ''),
+									undefined,
+									inAppPurchase
+								)
+							"
+							>Upgrade to Platinum now</a
+						>
+						&ngsp;
+						<span cyphTranslate>
+							for 1 TB encrypted storage and advanced features!
+						</span>
+					</ng-container>
+					<ng-template #keybaseBannerMessage>
+						<span cyphTranslate>
+							Special offer for Keybase users:
+						</span>
+						&ngsp;
+						<a
+							cyphTranslate
+							(click)="
+								salesService.openPricing(
+									envService.homeUrl +
+										'checkout/#' +
+										'flash-sale/lifetime-platinum' +
+										'/noInviteRedirect=true' +
+										'/inviteCode=' +
+										(inviteCode.value || '')
+								)
+							"
+							>$100 Lifetime Platinum upgrade</a
+						>! &ngsp;
+						<span cyphTranslate>
+							(Usually $48/mo.) Adds 1 TB storage, BTC wallet, and
+							more.
+						</span>
+					</ng-template>
 				</div>
 				<ng-template #noInviteCodeUpsell>
 					<div *ngIf="!envService.noInAppPurchasesReferenceAllowed">
