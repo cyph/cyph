@@ -804,6 +804,15 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 						...(i === 0 && email ? {email} : {}),
 						...(!isNaN(planTrialEnd) ? {planTrialEnd} : {})
 					}),
+					email ?
+						database
+							.ref(
+								`${namespace}/inviteCodeEmailAddresses/${Buffer.from(
+									email
+								).toString('hex')}/${inviteCode}`
+							)
+							.set({inviterUsername: ''}) :
+						undefined,
 					i === 0 &&
 					email &&
 					mailchimp &&
@@ -1398,6 +1407,15 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 	await Promise.all([
 		inviterPlanConfig.initialInvites !== undefined &&
 			inviteCodesRef.child(inviteCode).remove(),
+		email ?
+			database
+				.ref(
+					`${namespace}/inviteCodeEmailAddresses/${Buffer.from(
+						email
+					).toString('hex')}/${inviteCode}`
+				)
+				.set({inviterUsername}) :
+			undefined,
 		email &&
 			sendMailInternal(
 				email,

@@ -17,11 +17,26 @@ const lookUpUser = async (projectId, query, namespace) => {
 
 	const {database} = databaseService(projectId);
 
+	const isEmail = query.indexOf('@') > -1;
+
+	const inviteCodes = isEmail ?
+		(await database
+			.ref(
+				`${namespace.replace(
+					/\./g,
+					'_'
+				)}/inviteCodeEmailAddresses/${Buffer.from(query).toString(
+					'hex'
+				)}`
+			)
+			.once('value')).val() || undefined :
+		undefined;
+
 	const {username} =
 		(await database
 			.ref(
 				`${namespace.replace(/\./g, '_')}/${
-					query.indexOf('@') > -1 ?
+					isEmail ?
 						`initialEmailAddresses/${Buffer.from(query).toString(
 							'hex'
 						)}` :
@@ -30,11 +45,12 @@ const lookUpUser = async (projectId, query, namespace) => {
 			)
 			.once('value')).val() || {};
 
-	if (!username) {
-		throw new Error('User not found.');
-	}
-
-	return getUserMetadata(projectId, username, namespace);
+	return {
+		inviteCodes,
+		userMetadata: username ?
+			await getUserMetadata(projectId, username, namespace) :
+			undefined
+	};
 };
 
 if (require.main === module) {

@@ -175,6 +175,16 @@
 				}
 			},
 
+			"inviteCodeEmailAddresses": {
+				"$email": {
+					"$code": {
+						"inviterUsername": {
+							".validate": "newData.isString()"
+						}
+					}
+				}
+			},
+
 			"inviteCodes": {
 				"$code": {
 					"appStoreReceipt": {

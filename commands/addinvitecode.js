@@ -94,6 +94,15 @@ const addInviteCode = async (
 									} :
 									{})
 							}),
+						email ?
+							database
+								.ref(
+									`${namespacePath}/inviteCodeEmailAddresses/${Buffer.from(
+										email
+									).toString('hex')}/${code}`
+								)
+								.set({inviterUsername}) :
+							undefined,
 						inviterUsername ?
 							setItem(
 								namespace,
