@@ -4,6 +4,7 @@ import {
 	Component,
 	ViewChild
 } from '@angular/core';
+import {Router} from '@angular/router';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
@@ -27,12 +28,12 @@ export class AccountUpgradeComponent extends BaseProvider
 	public inAppPurchase?: InAppPurchaseComponent;
 
 	/** @see CheckoutComponent.userToken */
-	public readonly userToken = this.accountService.getUserToken(
-		this.accountService.interstitial
-	);
+	public readonly userToken = this.accountService.getUserToken();
 
 	/** @inheritDoc */
 	public async ngAfterViewInit () : Promise<void> {
+		this.accountService.interstitial.next(true);
+
 		await this.salesService.openPricing(
 			[
 				this.envService.homeUrl,
@@ -48,9 +49,21 @@ export class AccountUpgradeComponent extends BaseProvider
 			true,
 			this.inAppPurchase
 		);
+
+		/* Handle non-browser case */
+
+		if (!this.envService.isCordova) {
+			return;
+		}
+
+		this.accountService.interstitial.next(false);
+		await this.router.navigate(['']);
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly router: Router,
+
 		/** @ignore */
 		private readonly accountService: AccountService,
 
