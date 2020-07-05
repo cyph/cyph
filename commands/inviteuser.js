@@ -60,7 +60,8 @@ const inviteUser = async (
 					FNAME: firstName,
 					ICODE: inviteCode,
 					LNAME: lastName,
-					PLAN: CyphPlans[cyphPlan]
+					PLAN: CyphPlans[cyphPlan],
+					TRIAL: !!trialMonths
 				}
 			);
 

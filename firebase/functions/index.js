@@ -817,7 +817,8 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 								FNAME: firstName,
 								ICODE: inviteCode,
 								LNAME: lastName,
-								PLAN: CyphPlans[plan]
+								PLAN: CyphPlans[plan],
+								TRIAL: !!planTrialEnd
 							}
 						)
 							.then(async mailingListID =>
@@ -1428,7 +1429,8 @@ exports.sendInvite = onCall(async (data, namespace, getUsername) => {
 					FNAME: firstName,
 					ICODE: inviteCode,
 					LNAME: lastName,
-					PLAN: CyphPlans[plan]
+					PLAN: CyphPlans[plan],
+					TRIAL: !!inviteData.planTrialEnd
 				}
 			)
 				.then(async mailingListID =>
@@ -1554,13 +1556,19 @@ exports.userEmailSet = functions.database
 			`${internalURL}/registrationEmailSent`
 		);
 
-		const [email, plan] = await Promise.all([
+		const [email, plan, planTrialEnd] = await Promise.all([
 			getItem(params.namespace, `users/${username}/email`, StringProto)
 				.then(s => s.trim().toLowerCase())
 				.catch(() => undefined),
 			getItem(params.namespace, `users/${username}/plan`, CyphPlan)
 				.catch(() => undefined)
-				.then(o => (o && o.plan in CyphPlans ? o.plan : CyphPlans.Free))
+				.then(o =>
+					o && o.plan in CyphPlans ? o.plan : CyphPlans.Free
+				),
+			database
+				.ref(`${internalURL}/planTrialEnd`)
+				.once('value')
+				.then(o => o.val())
 		]);
 
 		if (email && emailRegex.test(email)) {
@@ -1587,6 +1595,7 @@ exports.userEmailSet = functions.database
 							FNAME: firstName,
 							LNAME: lastName,
 							PLAN: CyphPlans[plan],
+							TRIAL: !!planTrialEnd,
 							USERNAME: username
 						}
 					);
