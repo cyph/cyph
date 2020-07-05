@@ -133,7 +133,9 @@ export class AccountAppointmentsComponent extends BaseProvider
 						startTime: appointment.calendarInvite.startTime
 					},
 					telehealth: this.configService.planConfig[
-						this.accountSettingsService.plan.value
+						await this.accountSettingsService.plan
+							.pipe(take(1))
+							.toPromise()
 					].telehealth,
 					to: friend || {
 						email: appointment.fromEmail,

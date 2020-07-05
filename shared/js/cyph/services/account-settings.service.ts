@@ -5,8 +5,8 @@ import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IAsyncValue} from '../iasync-value';
 import {IFile} from '../ifile';
-import {BinaryProto, CyphPlans, InvertedBooleanProto} from '../proto';
-import {toBehaviorSubject} from '../util/flatten-observable';
+import {BinaryProto, InvertedBooleanProto} from '../proto';
+import {cacheObservable} from '../util/flatten-observable';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
@@ -43,11 +43,10 @@ export class AccountSettingsService extends BaseProvider {
 	}[];
 
 	/** User's plan / premium status. */
-	public readonly plan = toBehaviorSubject(
+	public readonly plan = cacheObservable(
 		this.accountDatabaseService.currentUserFiltered.pipe(
 			switchMap(o => o.user.plan)
 		),
-		CyphPlans.Free,
 		this.subscriptions
 	);
 

@@ -358,8 +358,9 @@ export class AccountComposeComponent extends BaseProvider
 											undefined,
 										telehealth: this.configService
 											.planConfig[
-											this.accountSettingsService.plan
-												.value
+											await this.accountSettingsService.plan
+												.pipe(take(1))
+												.toPromise()
 										].telehealth,
 										to: {
 											email: this.accountService.fromEmail

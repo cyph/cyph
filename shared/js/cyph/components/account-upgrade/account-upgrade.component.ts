@@ -4,7 +4,7 @@ import {
 	Component,
 	ViewChild
 } from '@angular/core';
-import {skip, take} from 'rxjs/operators';
+import {take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
 import {CyphPlans} from '../../proto';
@@ -39,7 +39,7 @@ export class AccountUpgradeComponent extends BaseProvider
 				'pricing?current=',
 				CyphPlans[
 					await this.accountSettingsService.plan
-						.pipe(skip(1), take(1))
+						.pipe(take(1))
 						.toPromise()
 				],
 				'&userToken=',
