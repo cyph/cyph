@@ -121,10 +121,6 @@
 						else noInviteCodeUpsell
 					"
 				>
-					<span cyphTranslate>
-						NOTE: Usernames cannot be changed post-registration.
-					</span>
-					&ngsp;
 					<ng-container
 						*ngIf="
 							configService.planConfig[
@@ -476,6 +472,14 @@
 															stringsService.registerErrorUsername
 														}}
 													</mat-error>
+													<mat-hint>
+														<span cyphTranslate>
+															NOTE: Usernames are
+															permanent. They
+															cannot be changed
+															post-registration.
+														</span>
+													</mat-hint>
 												</mat-form-field>
 											</div>
 											<div
