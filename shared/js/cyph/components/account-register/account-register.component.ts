@@ -276,20 +276,24 @@ export class AccountRegisterComponent extends BaseProvider
 			const id = uuid();
 			this.usernameDebounceLast = id;
 
-			return (await sleep(500).then(async () =>
-				this.usernameDebounceLast === id && value ?
-					value.length <
-						this.configService.planConfig[
-							this.inviteCodeData.value.plan
-						].usernameMinLength ||
-					(await this.accountUserLookupService.usernameBlacklisted(
-						value,
-						this.inviteCodeData.value.reservedUsername
-					)) ||
-					/* eslint-disable-next-line @typescript-eslint/tslint/config */
-					this.accountUserLookupService.exists(value, false) :
-					true
-			)) ?
+			await sleep(500);
+
+			if (this.usernameDebounceLast !== id || !value) {
+				/* eslint-disable-next-line no-null/no-null */
+				return null;
+			}
+
+			return value &&
+				value.length <
+					this.configService.planConfig[
+						this.inviteCodeData.value.plan
+					].usernameMinLength ?
+				{usernameTooShort: true} :
+			(await this.accountUserLookupService.usernameBlacklisted(
+					value,
+					this.inviteCodeData.value.reservedUsername
+				)) ||
+				(await this.accountUserLookupService.exists(value, false)) ?
 				{usernameTaken: true} :
 				/* eslint-disable-next-line no-null/no-null */
 				null;

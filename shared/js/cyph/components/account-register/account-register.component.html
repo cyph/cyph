@@ -82,7 +82,12 @@
 <div
 	class="login-form"
 	[class.checking]="checking | await"
-	[class.show-upsell-banner]="salesService.registerUpsellBanner | await"
+	[class.show-upsell-banner]="
+		(salesService.registerUpsellBanner | await) &&
+		configService.planConfig[
+			(inviteCodeData | await)?.plan || cyphPlans.Free
+		].usernameMinLength > 1
+	"
 	*ngIf="!confirmMasterKeyOnly && !getMasterKeyOnly && !getPinOnly"
 >
 	<cyph-in-app-purchase
@@ -121,44 +126,29 @@
 						else noInviteCodeUpsell
 					"
 				>
-					<ng-container
-						*ngIf="
-							configService.planConfig[
-								(inviteCodeData | await)?.plan || cyphPlans.Free
-							].usernameMinLength > 1;
-							else platinumBannerMessage
+					<a
+						cyphTranslate
+						(click)="
+							salesService.openPricing(
+								envService.homeUrl +
+									'pricing?current=' +
+									cyphPlans[
+										inviteCodeData.value?.plan ||
+											cyphPlans.Free
+									] +
+									'&noInviteRedirect=true' +
+									'&inviteCode=' +
+									(inviteCode.value || ''),
+								undefined,
+								inAppPurchase
+							)
 						"
+						>Upgrade to Platinum now</a
 					>
-						<a
-							cyphTranslate
-							(click)="
-								salesService.openPricing(
-									envService.homeUrl +
-										'pricing?current=' +
-										cyphPlans[
-											inviteCodeData.value?.plan ||
-												cyphPlans.Free
-										] +
-										'&noInviteRedirect=true' +
-										'&inviteCode=' +
-										(inviteCode.value || ''),
-									undefined,
-									inAppPurchase
-								)
-							"
-							>Upgrade to Platinum now</a
-						>
-						&ngsp;
-						<span cyphTranslate>
-							and lock in a short username for life!
-						</span>
-					</ng-container>
-					<ng-template #platinumBannerMessage>
-						<span cyphTranslate>
-							Since you have a platinum plan, you can lock in a
-							short username for life!
-						</span>
-					</ng-template>
+					&ngsp;
+					<span cyphTranslate>
+						for 1 TB encrypted storage and advanced features!
+					</span>
 				</div>
 				<ng-template #noInviteCodeUpsell>
 					<div *ngIf="!envService.noInAppPurchasesReferenceAllowed">
@@ -471,6 +461,38 @@
 														{{
 															stringsService.registerErrorUsername
 														}}
+													</mat-error>
+													<mat-error
+														*ngIf="
+															(
+																usernameWatcher
+																| await
+															)?.hasError(
+																'usernameTooShort'
+															)
+														"
+													>
+														<span
+															cyphTranslate
+															*ngIf="
+																!envService.isTelehealth
+															"
+														>
+															Must be >4
+															characters. Upgrade
+															to Platinum and lock
+															in a short username
+															for life!
+														</span>
+														<span
+															*ngIf="
+																envService.isTelehealth
+															"
+														>
+															{{
+																stringsService.registerErrorUsername
+															}}
+														</span>
 													</mat-error>
 													<mat-hint>
 														<span cyphTranslate>
