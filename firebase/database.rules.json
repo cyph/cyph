@@ -267,7 +267,7 @@
 			},
 
 			"pendingInvites": {
-				"$inviteCode": {
+				"$code": {
 					".validate": "newData.isString()"
 				}
 			},
