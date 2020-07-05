@@ -384,6 +384,7 @@ export const account: Route = {
 		},
 		{path: 'transition', component: BlankComponent},
 		{path: 'upgrade', component: AccountUpgradeComponent},
+		{path: 'upgrade/:category/:item', component: AccountUpgradeComponent},
 		{
 			path:
 				'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',

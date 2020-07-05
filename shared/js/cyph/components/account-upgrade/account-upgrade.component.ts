@@ -4,7 +4,7 @@ import {
 	Component,
 	ViewChild
 } from '@angular/core';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {take} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {InAppPurchaseComponent} from '../../components/in-app-purchase';
@@ -34,18 +34,35 @@ export class AccountUpgradeComponent extends BaseProvider
 	public async ngAfterViewInit () : Promise<void> {
 		this.accountService.interstitial.next(true);
 
+		const {category, item} = <
+			{
+				category?: string;
+				item?: string;
+			}
+		> await this.activatedRoute.params.pipe(take(1)).toPromise();
+
 		await this.salesService.openPricing(
-			[
-				this.envService.homeUrl,
-				'pricing?current=',
-				CyphPlans[
-					await this.accountSettingsService.plan
-						.pipe(take(1))
-						.toPromise()
+			category && item ?
+				[
+					this.envService.homeUrl,
+					'checkout/#',
+					category,
+					'/',
+					item,
+					'/userToken=',
+					this.userToken
+				] :
+				[
+					this.envService.homeUrl,
+					'pricing?current=',
+					CyphPlans[
+						await this.accountSettingsService.plan
+							.pipe(take(1))
+							.toPromise()
+					],
+					'&userToken=',
+					this.userToken
 				],
-				'&userToken=',
-				this.userToken
-			],
 			true,
 			this.inAppPurchase
 		);
@@ -61,6 +78,9 @@ export class AccountUpgradeComponent extends BaseProvider
 	}
 
 	constructor (
+		/** @ignore */
+		private readonly activatedRoute: ActivatedRoute,
+
 		/** @ignore */
 		private readonly router: Router,
 
