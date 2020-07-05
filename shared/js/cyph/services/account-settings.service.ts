@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, take} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {IAsyncValue} from '../iasync-value';
 import {IFile} from '../ifile';
-import {BinaryProto, InvertedBooleanProto} from '../proto';
+import {CyphPlanConfig} from '../plan-config';
+import {BinaryProto, CyphPlans, InvertedBooleanProto} from '../proto';
 import {cacheObservable} from '../util/flatten-observable';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
@@ -119,6 +120,23 @@ export class AccountSettingsService extends BaseProvider {
 			await this.fileService.getBytes(file, true),
 			SecurityModels.public
 		);
+	}
+
+	/** User's plan / premium status checkout path. */
+	public async getPlanCheckoutPath () : Promise<string> {
+		return (await this.getPlanConfig()).checkoutPath || '';
+	}
+
+	/** User's plan / premium status configuration. */
+	public async getPlanConfig () : Promise<CyphPlanConfig> {
+		return this.configService.planConfig[
+			await this.plan.pipe(take(1)).toPromise()
+		];
+	}
+
+	/** User's plan / premium status (string representation). */
+	public async getPlanString () : Promise<string> {
+		return CyphPlans[await this.plan.pipe(take(1)).toPromise()];
 	}
 
 	/** Sets the currently signed in user's avatar. */

@@ -326,11 +326,7 @@
 												[
 													envService.homeUrl,
 													'pricing?current=',
-													cyphPlans[
-														accountSettingsService
-															.plan.value ||
-															cyphPlans.Free
-													],
+													accountSettingsService.getPlanString(),
 													'&userToken=',
 													accountService.getUserToken(
 														accountService.interstitial
@@ -377,10 +373,7 @@
 									[
 										envService.homeUrl,
 										'checkout/#',
-										configService.planConfig[
-											accountSettingsService.plan.value ||
-												cyphPlans.Free
-										].checkoutPath || '',
+										accountSettingsService.getPlanCheckoutPath(),
 										'/userToken=',
 										accountService.getUserToken(
 											accountService.interstitial

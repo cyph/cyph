@@ -94,10 +94,7 @@
 								[
 									envService.homeUrl,
 									'pricing?current=',
-									cyphPlans[
-										accountSettingsService.plan.value ||
-											cyphPlans.Free
-									],
+									accountSettingsService.getPlanString(),
 									'&userToken=',
 									accountService.getUserToken(loading)
 								],

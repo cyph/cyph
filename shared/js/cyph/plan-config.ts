@@ -112,6 +112,12 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 	}
 };
 
+/** Plan configuration details. */
+export type CyphPlanConfig = IPlanTypeConfig & {
+	checkoutPath?: string;
+	lifetime: boolean;
+};
+
 /** Configuration options for Cyph plans. */
 export const planConfig: Record<
 	CyphPlans,
