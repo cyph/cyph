@@ -1127,6 +1127,16 @@ export class AccountRegisterComponent extends BaseProvider
 		);
 
 		this.subscriptions.push(
+			observableAll([this.currentStep, this.tabIndex]).subscribe(
+				([currentStep, tabIndex]) => {
+					if (tabIndex > currentStep) {
+						this.updateRoute(0, currentStep);
+					}
+				}
+			)
+		);
+
+		this.subscriptions.push(
 			this.windowWatcherService.visibility
 				.pipe(filter(b => b))
 				.subscribe(() => {
