@@ -255,7 +255,7 @@ export class AccountRegisterComponent extends BaseProvider
 	public readonly subscriptionTypes = SubscriptionTypes;
 
 	/** Form tab index. */
-	public readonly tabIndex = new BehaviorSubject<number>(3);
+	public readonly tabIndex = new BehaviorSubject<number>(0);
 
 	/** @see titleize */
 	public readonly titleize = titleize;
@@ -661,6 +661,18 @@ export class AccountRegisterComponent extends BaseProvider
 
 				this.router.navigate(['register', '1']);
 			})
+		);
+
+		await this.accountService.uiReady;
+
+		this.subscriptions.push(
+			observableAll([this.currentStep, this.tabIndex]).subscribe(
+				([currentStep, tabIndex]) => {
+					if (tabIndex > currentStep) {
+						this.updateRoute(0, currentStep);
+					}
+				}
+			)
 		);
 	}
 
@@ -1126,16 +1138,6 @@ export class AccountRegisterComponent extends BaseProvider
 			),
 			0,
 			this.subscriptions
-		);
-
-		this.subscriptions.push(
-			observableAll([this.currentStep, this.tabIndex]).subscribe(
-				([currentStep, tabIndex]) => {
-					if (tabIndex > currentStep) {
-						this.updateRoute(0, currentStep);
-					}
-				}
-			)
 		);
 
 		this.subscriptions.push(
