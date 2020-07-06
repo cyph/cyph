@@ -44,9 +44,9 @@ export class EventManager {
 
 	/** Clears out all subscriptions. */
 	public clear () : void {
-		for (const sub of Array.from(this.subscriptions.values())
-			.map(m => Array.from(m.values()))
-			.flat()) {
+		for (const sub of Array.from(this.subscriptions.values()).flatMap(m =>
+			Array.from(m.values())
+		)) {
 			sub.unsubscribe();
 		}
 

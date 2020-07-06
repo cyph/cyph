@@ -560,8 +560,7 @@ export abstract class SessionService extends BaseProvider
 
 			await this.cyphertextReceiveHandler(
 				(await this.incomingMessageQueue.getValue())
-					.map(({messages}) => messages || [])
-					.flat()
+					.flatMap(({messages}) => messages || [])
 					.filter(this.correctSubSession),
 				true
 			);

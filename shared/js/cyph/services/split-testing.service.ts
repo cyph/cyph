@@ -24,15 +24,13 @@ export class SplitTestingService extends BaseProvider {
 				throw new Error('No values.');
 			}
 
-			(<any[]> values)
-				.map(o =>
-					typeof o === 'object' &&
-					'value' in o &&
-					typeof o.weight === 'number' ?
-						new Array(o.weight).fill(o.value) :
-						[o]
-				)
-				.flat();
+			(<any[]> values).flatMap(o =>
+				typeof o === 'object' &&
+				'value' in o &&
+				typeof o.weight === 'number' ?
+					new Array(o.weight).fill(o.value) :
+					[o]
+			);
 
 			index = Math.floor(values.length * random());
 

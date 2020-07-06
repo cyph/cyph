@@ -200,15 +200,13 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 					containers :
 					containers.concat(
 						getContainers(
-							containers
-								.map(o =>
-									filterUndefined(
-										(o.elements || []).map(
-											elem => elem.elementContainer
-										)
+							containers.flatMap(o =>
+								filterUndefined(
+									(o.elements || []).map(
+										elem => elem.elementContainer
 									)
 								)
-								.flat()
+							)
 						)
 					);
 
@@ -299,18 +297,15 @@ export class DynamicFormComponent extends BaseProvider implements OnInit {
 						continue;
 					}
 
-					const segments = id
-						.split('.')
-						.map(s => {
-							const arrayIndex = (s.match(/\[\d+\]$/) || [])[0];
-							return !arrayIndex ?
-								s :
-								[
-									s.slice(0, 0 - arrayIndex.length),
-									toInt(arrayIndex.slice(1, -1))
-								];
-						})
-						.flat();
+					const segments = id.split('.').flatMap(s => {
+						const arrayIndex = (s.match(/\[\d+\]$/) || [])[0];
+						return !arrayIndex ?
+							s :
+							[
+								s.slice(0, 0 - arrayIndex.length),
+								toInt(arrayIndex.slice(1, -1))
+							];
+					});
 
 					f(
 						hasOwnID,

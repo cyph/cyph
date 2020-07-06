@@ -122,12 +122,11 @@ export class AccountContactsSearchComponent extends BaseProvider {
 							(<AccountUserProfileExtra.IPosition[]> [])
 								.concat(extra.education || [])
 								.concat(extra.work || [])
-								.map(position =>
+								.flatMap(position =>
 									(<string[]> [])
 										.concat(position.detail || [])
 										.concat(position.locationName || [])
 								)
-								.flat()
 						)
 						.concat(extra.insurance || [])
 						.concat(extra.npis || [])
