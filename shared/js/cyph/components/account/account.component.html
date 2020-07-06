@@ -320,7 +320,7 @@
 											(
 												accountDatabaseService.currentUser
 												| await
-											)?.user.extra() | await
+											)?.user?.extra() | await
 										)?.pgp?.keybaseUsername;
 										else keybaseBannerMessage
 									"
@@ -358,15 +358,19 @@
 										<a
 											cyphTranslate
 											(click)="
-												salesService.openPricing([
-													envService.homeUrl,
-													'checkout/#',
-													'flash-sale/lifetime-platinum',
-													'/userToken=',
-													accountService.getUserToken(
-														accountService.interstitial
-													)
-												])
+												salesService.openPricing(
+													[
+														envService.homeUrl,
+														'checkout/#',
+														'flash-sale/lifetime-platinum',
+														'/userToken=',
+														accountService.getUserToken(
+															accountService.interstitial
+														)
+													],
+													undefined,
+													undefined
+												)
 											"
 											>$100 Lifetime Platinum upgrade</a
 										>! &ngsp;
