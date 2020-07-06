@@ -600,9 +600,11 @@ export class AccountRegisterComponent extends BaseProvider
 			}
 
 			const pendingInviteCode = await pendingInviteCodePromise;
+
 			this.inviteCode.setValue(pendingInviteCode);
-			if (!pendingInviteCode) {
-				await this.validateInviteCode(pendingInviteCode);
+
+			if (!pendingInviteCode && !this.inviteCode.value) {
+				await this.validateInviteCode('');
 			}
 		};
 
