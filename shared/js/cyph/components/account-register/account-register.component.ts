@@ -11,7 +11,7 @@ import {
 	Output,
 	ViewChild
 } from '@angular/core';
-import {FormControl, ValidationErrors} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, concat, from, Observable, of} from 'rxjs';
@@ -139,7 +139,7 @@ export class AccountRegisterComponent extends BaseProvider
 	public inAppPurchaseExistingInvite?: InAppPurchaseComponent;
 
 	/** Invite code. */
-	public readonly inviteCode: FormControl;
+	public readonly inviteCode = new FormControl('');
 
 	/** Metadata pulled for current invite code. */
 	public readonly inviteCodeData = new BehaviorSubject<{
@@ -325,6 +325,116 @@ export class AccountRegisterComponent extends BaseProvider
 	public readonly xkcdPassphraseHasBeenViewed = new BehaviorSubject<boolean>(
 		false
 	);
+
+	/** @ignore */
+	private async validateInviteCode (value: string) : Promise<void> {
+		const id = uuid();
+		this.inviteCodeDebounceLast = id;
+
+		this.inviteCodeData.next(
+			await (this.inviteCodeData.value.inviteCode === '' ?
+				Promise.resolve() :
+				sleep(500)
+			).then(async () => {
+				let o =
+					this.inviteCodeDebounceLast === id && value ?
+						await this.databaseService
+							.callFunction('checkInviteCode', {
+								inviteCode: value
+							})
+							.catch(() => undefined) :
+						undefined;
+
+				if (typeof o !== 'object') {
+					o = {};
+				}
+
+				const isValid = o.isValid === true;
+
+				if (isValid && value) {
+					this.localStorageService.setString(
+						'pendingInviteCode',
+						value
+					);
+				}
+
+				return {
+					email: typeof o.email === 'string' ? o.email : undefined,
+					inviteCode: value,
+					inviterUsername:
+						typeof o.inviterUsername === 'string' ?
+							o.inviterUsername :
+							undefined,
+					isValid,
+					keybaseUsername:
+						typeof o.keybaseUsername === 'string' ?
+							o.keybaseUsername :
+							undefined,
+					pgpPublicKey:
+						typeof o.pgpPublicKey === 'string' ?
+							o.pgpPublicKey :
+							undefined,
+					plan: o.plan in CyphPlans ? o.plan : CyphPlans.Free,
+					reservedUsername:
+						typeof o.reservedUsername === 'string' ?
+							o.reservedUsername :
+							undefined,
+					welcomeLetter:
+						typeof o.welcomeLetter === 'string' ?
+							o.welcomeLetter :
+							undefined
+				};
+			})
+		);
+
+		if (this.inviteCodeData.value.email && !this.email.value) {
+			this.email.next(this.inviteCodeData.value.email);
+		}
+
+		if (
+			this.inviteCodeData.value.reservedUsername &&
+			!this.username.value
+		) {
+			this.username.setValue(this.inviteCodeData.value.reservedUsername);
+		}
+		else {
+			/* Trigger validator function */
+			this.username.setValue(this.username.value);
+		}
+
+		if (
+			(this.inviteCodeData.value.keybaseUsername ||
+				this.inviteCodeData.value.pgpPublicKey) &&
+			!this.pgp.value
+		) {
+			this.pgp.next({
+				keybaseUsername: this.inviteCodeData.value.keybaseUsername,
+				...(this.inviteCodeData.value.pgpPublicKey ?
+					await this.pgpService.getPublicKeyMetadata(
+						this.inviteCodeData.value.pgpPublicKey
+					) :
+					{})
+			});
+		}
+
+		this.accountService.resolveUiReady();
+
+		const invalid = !this.inviteCodeData.value.isValid;
+
+		if (invalid) {
+			this.inviteCode.enable();
+		}
+		else {
+			this.inviteCode.disable();
+		}
+
+		this.inviteCode.setErrors(
+			invalid ?
+				{inviteCodeInvalid: true} :
+				/* eslint-disable-next-line no-null/no-null */
+				null
+		);
+	}
 
 	/** Marks master key as confirmed. */
 	public async confirmMasterKey () : Promise<void> {
@@ -815,137 +925,16 @@ export class AccountRegisterComponent extends BaseProvider
 			this.subscriptions
 		);
 
-		/* eslint-disable-next-line no-null/no-null */
-		let inviteCodeResult: {result: ValidationErrors | null} | undefined;
-
-		this.inviteCode = new FormControl('', undefined, [
-			async control => {
-				if (inviteCodeResult) {
-					const {result} = inviteCodeResult;
-					inviteCodeResult = undefined;
-					return result;
-				}
-
-				const value =
-					typeof control.value === 'string' ?
-						control.value :
-						undefined;
-				const id = uuid();
-				this.inviteCodeDebounceLast = id;
-
-				this.inviteCodeData.next(
-					await (this.inviteCodeData.value.inviteCode === '' ?
-						Promise.resolve() :
-						sleep(500)
-					).then(async () => {
-						let o =
-							this.inviteCodeDebounceLast === id && value ?
-								await this.databaseService
-									.callFunction('checkInviteCode', {
-										inviteCode: value
-									})
-									.catch(() => undefined) :
-								undefined;
-
-						if (typeof o !== 'object') {
-							o = {};
-						}
-
-						const isValid = o.isValid === true;
-
-						if (isValid && value) {
-							this.localStorageService.setString(
-								'pendingInviteCode',
-								value
-							);
-						}
-
-						return {
-							email:
-								typeof o.email === 'string' ?
-									o.email :
-									undefined,
-							inviteCode: value,
-							inviterUsername:
-								typeof o.inviterUsername === 'string' ?
-									o.inviterUsername :
-									undefined,
-							isValid,
-							keybaseUsername:
-								typeof o.keybaseUsername === 'string' ?
-									o.keybaseUsername :
-									undefined,
-							pgpPublicKey:
-								typeof o.pgpPublicKey === 'string' ?
-									o.pgpPublicKey :
-									undefined,
-							plan: o.plan in CyphPlans ? o.plan : CyphPlans.Free,
-							reservedUsername:
-								typeof o.reservedUsername === 'string' ?
-									o.reservedUsername :
-									undefined,
-							welcomeLetter:
-								typeof o.welcomeLetter === 'string' ?
-									o.welcomeLetter :
-									undefined
-						};
-					})
-				);
-
-				if (this.inviteCodeData.value.email && !this.email.value) {
-					this.email.next(this.inviteCodeData.value.email);
-				}
-
+		this.subscriptions.push(
+			this.inviteCode.valueChanges.subscribe(value => {
 				if (
-					this.inviteCodeData.value.reservedUsername &&
-					!this.username.value
+					typeof value === 'string' &&
+					value !== this.inviteCodeData.value.inviteCode
 				) {
-					this.username.setValue(
-						this.inviteCodeData.value.reservedUsername
-					);
+					this.validateInviteCode(value);
 				}
-				else {
-					/* Trigger validator function */
-					this.username.setValue(this.username.value);
-				}
-
-				if (
-					(this.inviteCodeData.value.keybaseUsername ||
-						this.inviteCodeData.value.pgpPublicKey) &&
-					!this.pgp.value
-				) {
-					this.pgp.next({
-						keybaseUsername: this.inviteCodeData.value
-							.keybaseUsername,
-						...(this.inviteCodeData.value.pgpPublicKey ?
-							await this.pgpService.getPublicKeyMetadata(
-								this.inviteCodeData.value.pgpPublicKey
-							) :
-							{})
-					});
-				}
-
-				this.accountService.resolveUiReady();
-
-				const invalid = !this.inviteCodeData.value.isValid;
-
-				if (invalid) {
-					control.enable();
-				}
-				else {
-					control.disable();
-				}
-
-				inviteCodeResult = {
-					result: invalid ?
-						{inviteCodeInvalid: true} :
-						/* eslint-disable-next-line no-null/no-null */
-						null
-				};
-
-				return inviteCodeResult.result;
-			}
-		]);
+			})
+		);
 
 		this.inviteCodeWatcher = concat(
 			of(this.inviteCode),
@@ -1142,9 +1131,7 @@ export class AccountRegisterComponent extends BaseProvider
 						return;
 					}
 
-					this.inviteCode.enable();
-					this.inviteCode.setValue('');
-					this.inviteCode.setValue(value);
+					this.validateInviteCode(value);
 				})
 		);
 	}
