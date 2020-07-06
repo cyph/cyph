@@ -35,11 +35,7 @@ export class AccountAuthGuardService extends BaseProvider
 
 	/** @ignore */
 	private getFullRoutePath (route: ActivatedRouteSnapshot) : string[] {
-		return route.url
-			.map(o => o.path)
-			.concat(
-				route.children.map(child => this.getFullRoutePath(child)).flat()
-			);
+		return route.pathFromRoot.flatMap(o => o.url).map(o => o.path);
 	}
 
 	/** @inheritDoc */
