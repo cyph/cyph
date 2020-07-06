@@ -371,7 +371,8 @@
 								<button
 									mat-icon-button
 									cyphTranslate
-									class="animated flipInX"
+									class="hide-content-button"
+									[class.mobile]="mobile"
 									matTooltip="Hide Content"
 									(click)="mediaSpoiler.next(true)"
 								>

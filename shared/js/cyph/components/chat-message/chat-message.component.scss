@@ -46,6 +46,17 @@
 	align-items: center;
 }
 
+.hide-content-button.mobile {
+	position: absolute;
+	bottom: -5px;
+}
+div.author-local .hide-content-button.mobile {
+	left: 0;
+}
+div.author-remote .hide-content-button.mobile {
+	right: 0;
+}
+
 .clipboard-copy-menu {
 	margin-top: -4px;
 	width: 24px;
