@@ -417,8 +417,6 @@ export class AccountRegisterComponent extends BaseProvider
 			});
 		}
 
-		this.accountService.resolveUiReady();
-
 		const invalid = !this.inviteCodeData.value.isValid;
 
 		if (invalid) {
@@ -434,6 +432,8 @@ export class AccountRegisterComponent extends BaseProvider
 				/* eslint-disable-next-line no-null/no-null */
 				null
 		);
+
+		this.accountService.resolveUiReady();
 	}
 
 	/** Marks master key as confirmed. */
@@ -590,12 +590,17 @@ export class AccountRegisterComponent extends BaseProvider
 
 		this.accountService.transitionEnd();
 
-		const pendingInviteCode = this.localStorageService
+		const pendingInviteCodePromise = this.localStorageService
 			.getString('pendingInviteCode')
 			.catch(() => '');
 
-		const setPendingInviteCode = async () =>
-			this.inviteCode.setValue(await pendingInviteCode);
+		const setPendingInviteCode = async () => {
+			const pendingInviteCode = await pendingInviteCodePromise;
+			this.inviteCode.setValue(pendingInviteCode);
+			if (!pendingInviteCode) {
+				await this.validateInviteCode(pendingInviteCode);
+			}
+		};
 
 		if (
 			this.confirmMasterKeyOnly ||
@@ -641,7 +646,6 @@ export class AccountRegisterComponent extends BaseProvider
 					) {
 						this.tabIndex.next(step - 1);
 						await setPendingInviteCode();
-						this.accountService.resolveUiReady();
 						return;
 					}
 					else {
