@@ -595,6 +595,10 @@ export class AccountRegisterComponent extends BaseProvider
 			.catch(() => '');
 
 		const setPendingInviteCode = async () => {
+			if (this.inviteCode.value) {
+				return;
+			}
+
 			const pendingInviteCode = await pendingInviteCodePromise;
 			this.inviteCode.setValue(pendingInviteCode);
 			if (!pendingInviteCode) {
