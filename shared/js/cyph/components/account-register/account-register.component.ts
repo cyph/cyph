@@ -824,7 +824,7 @@ export class AccountRegisterComponent extends BaseProvider
 
 	/** Submits to waitlist. */
 	public async waitlistSignup () : Promise<void> {
-		if (!this.email.value || !this.name.value || !this.username.value) {
+		if (!this.email.value || !this.name.value) {
 			return;
 		}
 
