@@ -11,7 +11,7 @@ import {
 	Output,
 	ViewChild
 } from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {FormControl, ValidationErrors} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import memoize from 'lodash-es/memoize';
 import {BehaviorSubject, concat, from, Observable, of} from 'rxjs';
@@ -815,8 +815,17 @@ export class AccountRegisterComponent extends BaseProvider
 			this.subscriptions
 		);
 
+		/* eslint-disable-next-line no-null/no-null */
+		let inviteCodeResult: {result: ValidationErrors | null} | undefined;
+
 		this.inviteCode = new FormControl('', undefined, [
 			async control => {
+				if (inviteCodeResult) {
+					const {result} = inviteCodeResult;
+					inviteCodeResult = undefined;
+					return result;
+				}
+
 				const value =
 					typeof control.value === 'string' ?
 						control.value :
@@ -918,10 +927,23 @@ export class AccountRegisterComponent extends BaseProvider
 
 				this.accountService.resolveUiReady();
 
-				return !this.inviteCodeData.value.isValid ?
-					{inviteCodeInvalid: true} :
-					/* eslint-disable-next-line no-null/no-null */
-					null;
+				const invalid = !this.inviteCodeData.value.isValid;
+
+				if (invalid) {
+					control.enable();
+				}
+				else {
+					control.disable();
+				}
+
+				inviteCodeResult = {
+					result: invalid ?
+						{inviteCodeInvalid: true} :
+						/* eslint-disable-next-line no-null/no-null */
+						null
+				};
+
+				return inviteCodeResult.result;
 			}
 		]);
 
@@ -1120,6 +1142,7 @@ export class AccountRegisterComponent extends BaseProvider
 						return;
 					}
 
+					this.inviteCode.enable();
 					this.inviteCode.setValue('');
 					this.inviteCode.setValue(value);
 				})

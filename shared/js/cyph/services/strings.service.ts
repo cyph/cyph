@@ -1199,6 +1199,9 @@ export class StringsService extends BaseProvider {
 	public readonly reasonForAppointmentDefault = `Conference`;
 
 	/** @see StringsService */
+	public readonly registerConfirmedInviteCode = `Invite code confirmed`;
+
+	/** @see StringsService */
 	public readonly registerErrorAdditionalDevices = `Additional devices not set up`;
 
 	/** @see StringsService */
