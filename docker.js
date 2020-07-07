@@ -703,7 +703,7 @@ const make = () => {
 				fs.rmdirSync('shared/node_modules', {recursive: true});
 			}
 
-			return dockerCP('/node_modules', '/cyph/shared/node_modules');
+			return dockerCP('/node_modules', 'shared/node_modules');
 		})
 		.then(() => huskySetup());
 };
