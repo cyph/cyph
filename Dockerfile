@@ -88,7 +88,10 @@ RUN echo '\
 		echo -n "/node_modules/.bin"; \
 	)"; \
 \
-	if [ ! -d ~/.gnupg -a -d ~/.gnupg.original ] ; then cp -a ~/.gnupg.original ~/.gnupg ; fi; \
+	if [ -d ~/.gnupg.original ] ; then \
+		rm -rf ~/.gnupg 2> /dev/null; \
+		cp -a ~/.gnupg.original ~/.gnupg; \
+	fi; \
 	export GPG_TTY="$(tty)"; \
 	eval $(gpg-agent --daemon 2> /dev/null) &> /dev/null; \
 \
