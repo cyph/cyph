@@ -6,7 +6,7 @@
 }
 
 form > div:last-child {
-	padding-top: 64px;
+	padding-top: 32px;
 }
 
 cyph-footer {
@@ -21,6 +21,10 @@ cyph-pin-input {
 	text-align: center;
 }
 
+.login-btns {
+	padding-bottom: 72px;
+}
+
 .product-description {
 	text-align: center;
 }
@@ -30,7 +34,7 @@ cyph-pin-input {
 }
 
 .activation-code {
-	margin-bottom: 24px;
+	margin-top: 32px;
 }
 
 .mobile {
@@ -41,6 +45,11 @@ cyph-pin-input {
 		margin-bottom: 20px;
 		max-width: 75%;
 		max-height: 75%;
+	}
+
+	.activation-code {
+		margin-top: 0px;
+		margin-bottom: 32px;
 	}
 
 	form > div:last-child {

@@ -179,66 +179,6 @@
 							</h3>
 						</div>
 
-						<div
-							class="cyph-inverted-theme activation-code"
-							*ngIf="
-								(loggingIn | await) === true &&
-								(pinUnlock | await) === false &&
-								(checking | await) === false &&
-								!!(username | await)
-							"
-						>
-							<mat-accordion>
-								<mat-expansion-panel
-									(closed)="
-										activationCodeSectionOpen.next(false)
-									"
-									(opened)="
-										activationCodeSectionOpen.next(true)
-									"
-								>
-									<mat-expansion-panel-header>
-										<span cyphTranslate>
-											Use Activation Code
-										</span>
-									</mat-expansion-panel-header>
-									<div>
-										<cyph-account-new-device-activation
-											[activateForUsername]="
-												username | await
-											"
-											[fxShow]="
-												(activationCodeFailed
-													| await) === false
-											"
-											(activationComplete)="
-												!$event ?
-													activationCodeFailed.next(
-														true
-													) :
-													undefined
-											"
-											(altMasterKey)="
-												submit(undefined, $event)
-											"
-											(lifecycleOnInit)="
-												activationCodeFailed.next(false)
-											"
-										></cyph-account-new-device-activation>
-										<div
-											cyphTranslate
-											*ngIf="
-												(activationCodeFailed
-													| await) === true
-											"
-										>
-											Device activation failed
-										</div>
-									</div>
-								</mat-expansion-panel>
-							</mat-accordion>
-						</div>
-
 						<ng-container
 							*ngTemplateOutlet="usernameField"
 						></ng-container>
@@ -255,70 +195,115 @@
 
 						<br />
 
-						<div
-							fxLayout="row"
-							fxLayoutAlign="center center"
-							fxLayoutGap="24px"
-							*ngIf="
-								(pinUnlock | await) ?
-									stringsService.unlock :
-									stringsService.logIn as buttonText
-							"
-						>
-							<button
-								mat-raised-button
-								color="primary"
-								type="submit"
+						<ng-container *ngIf="(activationCodeSectionOpen | await ) === false">
+							<div
+								fxLayout="row"
+								fxLayoutAlign="center center"
+								fxLayoutGap="24px"
+								class="login-btns"
 								*ngIf="
-									(activationCodeSectionOpen | await) ===
-										false && (loggingIn | await) === true
+									(pinUnlock | await) ?
+										stringsService.unlock :
+										stringsService.logIn as buttonText
 								"
 							>
-								{{ buttonText }}
-							</button>
+								<button
+									mat-raised-button
+									color="primary"
+									type="submit"
+									*ngIf="
+										(activationCodeSectionOpen | await) ===
+											false && (loggingIn | await) === true
+									"
+								>
+									{{ buttonText }}
+								</button>
 
+								<button
+									mat-raised-button
+									color="primary"
+									routerLink="login"
+									*ngIf="(loggingIn | await) === false"
+								>
+									{{ buttonText }}
+								</button>
+
+								<button
+									cyphTranslate
+									mat-raised-button
+									color="accent"
+									(click)="activationCodeSectionOpen.next(true)"
+								>
+									Use Activation Code
+								</button>
+
+								<a
+									cyphTranslate
+									mat-raised-button
+									color="accent"
+									[routerLink]="
+										'/register' +
+										((username | await) ?
+											'/:' + ((username | await) || '') :
+											'')
+									"
+									*ngIf="
+										!envService.noInAppRegistrationAllowed &&
+										(loggingIn | await) === false
+									"
+								>
+									Register
+								</a>
+							</div>
+						</ng-container>
+
+
+						<div
+							class="activation-code"
+							*ngIf="(activationCodeSectionOpen | await) === true &&
+								(pinUnlock | await) === false &&
+								(checking | await) === false
+							"
+						>
+							<cyph-account-new-device-activation
+								[activateForUsername]="
+									username | await
+								"
+								[fxShow]="
+									(activationCodeFailed
+										| await) === false
+								"
+								(activationComplete)="
+									!$event ?
+										activationCodeFailed.next(
+											true
+										) :
+										undefined
+								"
+								(altMasterKey)="
+									submit(undefined, $event)
+								"
+								(lifecycleOnInit)="
+									activationCodeFailed.next(false)
+								"
+							></cyph-account-new-device-activation>
 							<button
-								mat-raised-button
-								color="primary"
-								routerLink="login"
-								*ngIf="(loggingIn | await) === false"
-							>
-								{{ buttonText }}
-							</button>
-
-							<a
 								cyphTranslate
 								mat-raised-button
 								color="accent"
-								[routerLink]="
-									'/register' +
-									((username | await) ?
-										'/:' + ((username | await) || '') :
-										'')
-								"
+								(click)="activationCodeSectionOpen.next(false)"
+							>
+								Back
+							</button>
+							<div
+								cyphTranslate
 								*ngIf="
-									!envService.noInAppRegistrationAllowed &&
-									(loggingIn | await) === false
+									(activationCodeFailed
+										| await) === true
 								"
 							>
-								Register
-							</a>
-						</div>
-
-						<div
-							fxLayout="row"
-							*ngIf="
-								!envService.isTelehealth &&
-								!envService.isTelehealthFull
-							"
-						>
-							<a mat-button fxFlex routerLink="/burner">
-								<span cyphTranslate>Use</span>
-								&ngsp;
-								<span>{{ stringsService.product }}</span>
-								&ngsp;
-								<span cyphTranslate>without an account</span>
-							</a>
+								Device activation failed
+							</div>
 						</div>
 					</form>
 				</mat-card-content>
@@ -373,65 +358,6 @@
 							</h3>
 						</div>
 
-						<div
-							class="cyph-inverted-theme activation-code"
-							*ngIf="
-								(loggingIn | await) === true &&
-								(pinUnlock | await) === false &&
-								(checking | await) === false &&
-								!!(username | await)
-							"
-						>
-							<mat-accordion>
-								<mat-expansion-panel
-									(closed)="
-										activationCodeSectionOpen.next(false)
-									"
-									(opened)="
-										activationCodeSectionOpen.next(true)
-									"
-								>
-									<mat-expansion-panel-header>
-										<span cyphTranslate>
-											Use Activation Code
-										</span>
-									</mat-expansion-panel-header>
-									<div>
-										<cyph-account-new-device-activation
-											[activateForUsername]="
-												username | await
-											"
-											[fxShow]="
-												(activationCodeFailed
-													| await) === false
-											"
-											(activationComplete)="
-												!$event ?
-													activationCodeFailed.next(
-														true
-													) :
-													undefined
-											"
-											(altMasterKey)="
-												submit(undefined, $event)
-											"
-											(lifecycleOnInit)="
-												activationCodeFailed.next(false)
-											"
-										></cyph-account-new-device-activation>
-										<div
-											cyphTranslate
-											*ngIf="
-												(activationCodeFailed
-													| await) === true
-											"
-										>
-											Device activation failed
-										</div>
-									</div>
-								</mat-expansion-panel>
-							</mat-accordion>
-						</div>
 
 						<ng-container
 							*ngTemplateOutlet="usernameField"
@@ -446,70 +372,133 @@
 								></ng-container>
 							</ng-container>
 						</ng-container>
-
-						<div
-							fxLayout="column"
-							fxLayoutGap="16px"
-							fxLayoutAlign="center center"
-							*ngIf="
-								(pinUnlock | await) ?
-									stringsService.unlock :
-									stringsService.logIn as buttonText
-							"
-						>
-							<button
-								mat-raised-button
-								color="primary"
-								type="submit"
+						<ng-container *ngIf="(activationCodeSectionOpen | await ) === false">
+							<div
+								fxLayout="column"
+								fxLayoutGap="16px"
+								fxLayoutAlign="center center"
 								*ngIf="
-									(activationCodeSectionOpen | await) ===
-										false && (loggingIn | await) === true
+									(pinUnlock | await) ?
+										stringsService.unlock :
+										stringsService.logIn as buttonText
 								"
 							>
-								{{ buttonText }}
-							</button>
+								<button
+									mat-raised-button
+									color="primary"
+									type="submit"
+									*ngIf="
+										(activationCodeSectionOpen | await) ===
+											false && (loggingIn | await) === true
+									"
+								>
+									{{ buttonText }}
+								</button>
 
-							<button
-								mat-raised-button
-								color="primary"
-								routerLink="login"
-								*ngIf="(loggingIn | await) === false"
-							>
-								{{ buttonText }}
-							</button>
+								<button
+									mat-raised-button
+									color="primary"
+									routerLink="login"
+									*ngIf="(loggingIn | await) === false"
+								>
+									{{ buttonText }}
+								</button>
 
-							<a
-								cyphTranslate
-								mat-raised-button
-								color="accent"
-								[routerLink]="
-									'/register' +
-									((username | await) ?
-										'/:' + ((username | await) || '') :
-										'')
-								"
-								*ngIf="
-									!envService.noInAppRegistrationAllowed &&
-									(loggingIn | await) === false
-								"
-							>
-								Register
-							</a>
+								<button
+									cyphTranslate
+									mat-raised-button
+									color="accent"
+									(click)="activationCodeSectionOpen.next(true)"
+								>
+									Use Activation Code
+								</button>
 
-							<a
-								mat-stroked-button
-								routerLink="/burner"
-								*ngIf="(loggingIn | await) === false"
-							>
-								<span cyphTranslate>Use</span>
-								&ngsp;
-								<span>{{ stringsService.product }}</span>
-								&ngsp;
-								<span cyphTranslate>without an account</span>
-							</a>
-						</div>
+								<a
+									cyphTranslate
+									mat-raised-button
+									color="accent"
+									[routerLink]="
+										'/register' +
+										((username | await) ?
+											'/:' + ((username | await) || '') :
+											'')
+									"
+									*ngIf="
+										!envService.noInAppRegistrationAllowed &&
+										(loggingIn | await) === false
+									"
+								>
+									Register
+								</a>
+
+								<a
+									mat-stroked-button
+									routerLink="/burner"
+									*ngIf="(loggingIn | await) === false"
+								>
+									<span cyphTranslate>Use</span>
+									&ngsp;
+									<span>{{ stringsService.product }}</span>
+									&ngsp;
+									<span cyphTranslate>without an account</span>
+								</a>
+							</div>
+						</ng-container>
 					</form>
 				</div>
+
+				<div
+					class="activation-code"
+					*ngIf="
+						(activationCodeSectionOpen | await) === true &&
+						(pinUnlock | await) === false &&
+						(checking | await) === false
+					"
+				>
+							<div>
+								<cyph-account-new-device-activation
+									[activateForUsername]="
+										username | await
+									"
+									[fxShow]="
+										(activationCodeFailed
+											| await) === false
+									"
+									(activationComplete)="
+										!$event ?
+											activationCodeFailed.next(
+												true
+											) :
+											undefined
+									"
+									(altMasterKey)="
+										submit(undefined, $event)
+									"
+									(lifecycleOnInit)="
+										activationCodeFailed.next(false)
+									"
+								></cyph-account-new-device-activation>
+								<div
+									cyphTranslate
+									*ngIf="
+										(activationCodeFailed
+											| await) === true
+									"
+								>
+									Device activation failed
+								</div>
+							</div>
+				</div>
+
+				<button
+					cyphTranslate
+					mat-raised-button
+					color="accent"
+					*ngIf="(activationCodeSectionOpen | await ) === true"
+					(click)="activationCodeSectionOpen.next(false)"
+				>
+					Back
+				</button>
 
 				<em
 					class="logout"
@@ -588,6 +577,7 @@
 				"
 				[disabled]="(pinUnlock | await) === true"
 				[required]="
+					(activationCodeSectionOpen | await ) === true ||
 					(loggingIn | await) === true &&
 					(pinUnlock | await) === false
 				"
