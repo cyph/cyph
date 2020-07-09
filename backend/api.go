@@ -149,7 +149,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		txLog += "\nAPI key: " + apiKey
 	}
 
-	deviceData := sanitize(h.Request.PostFormValue("deviceData"))
+	deviceData := h.Request.PostFormValue("deviceData")
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
 	if appStoreReceipt == "" && bitPayInvoiceID == "" && (deviceData == "" || nonce == "") {
