@@ -1,7 +1,7 @@
 # Sourced by bashrc within Docker
 
 bindmount () {
-	if [ "${CIRCLECI}" ] ; then
+	if [ "${CIRCLECI}" -o ! -d /cyph ] ; then
 		rm -rf "${2}" 2> /dev/null
 		cp -a "${1}" "${2}"
 	else
@@ -75,7 +75,7 @@ unbindmount () {
 }
 
 unbindmountInternal () {
-	if [ ! "${CIRCLECI}" ] ; then
+	if [ ! "${CIRCLECI}" -a -d /cyph ] ; then
 		sudo umount "${1}"
 	fi
 }
@@ -104,9 +104,11 @@ fi
 
 
 # Setup for documentation generation
-cp -f /cyph/LICENSE /cyph/README.md /cyph/cyph.app/
-echo -e '\n---\n' >> /cyph/cyph.app/README.md
-cat /cyph/PATENTS >> /cyph/cyph.app/README.md
+if [ -d /cyph ] ; then
+	cp -f /cyph/LICENSE /cyph/README.md /cyph/cyph.app/
+	echo -e '\n---\n' >> /cyph/cyph.app/README.md
+	cat /cyph/PATENTS >> /cyph/cyph.app/README.md
+fi
 
 
 # Workaround for localhost not working in CircleCI
