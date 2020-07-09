@@ -97,7 +97,11 @@ RUN echo '\
 \
 	eval $(ssh-agent 2> /dev/null) &> /dev/null; \
 \
-	if [ -f /cyph/commands/.bashrc ] ; then source /cyph/commands/.bashrc ; fi \
+	if [ -f /cyph/commands/.bashrc ] ; then \
+		source /cyph/commands/.bashrc; \
+	elif [ -f ~/getlibs/commands/.bashrc ] ; then
+		source ~/getlibs/commands/.bashrc; \
+	fi \
 ' >> /.bashrc
 
 RUN echo 'gibson ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
