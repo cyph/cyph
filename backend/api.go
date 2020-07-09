@@ -149,7 +149,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		txLog += "\nAPI key: " + apiKey
 	}
 
-	deviceData := sanitize(h.Request.PostFormValue("deviceData"))
+	deviceData := h.Request.PostFormValue("deviceData")
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
 	if appStoreReceipt == "" && bitPayInvoiceID == "" && (deviceData == "" || nonce == "") {
@@ -168,7 +168,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	if err != nil {
 		return err.Error(), http.StatusTeapot
 	}
-	if amount < 1 {
+	if amount < 100 {
 		return "invalid amount", http.StatusTeapot
 	}
 
@@ -231,11 +231,16 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 			var paymentMethod braintree.PaymentMethod
 
+			verifyCard := true
+
 			paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
-				BillingAddress:     billingAddress,
-				CardholderName:     name,
-				CustomerId:         braintreeCustomer.Id,
-				DeviceData:         deviceData,
+				BillingAddress: billingAddress,
+				CardholderName: name,
+				CustomerId:     braintreeCustomer.Id,
+				DeviceData:     deviceData,
+				Options: &braintree.PaymentMethodRequestOptions{
+					VerifyCard: &verifyCard,
+				},
 				PaymentMethodNonce: nonce,
 			})
 
@@ -406,10 +411,17 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		if bitPayInvoiceID == "" {
+			braintreeCustomer, err := bt.Customer().Create(h.Context, customerRequest)
+
+			if err != nil {
+				return err.Error(), http.StatusTeapot
+			}
+
 			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
 				Amount:             braintree.NewDecimal(amount, 2),
 				BillingAddress:     billingAddress,
-				Customer:           customerRequest,
+				CustomerID:         braintreeCustomer.Id,
+				DeviceData:         deviceData,
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})
