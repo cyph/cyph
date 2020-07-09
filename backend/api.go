@@ -168,7 +168,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	if err != nil {
 		return err.Error(), http.StatusTeapot
 	}
-	if amount < 1 {
+	if amount < 100 {
 		return "invalid amount", http.StatusTeapot
 	}
 
