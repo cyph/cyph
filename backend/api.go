@@ -231,11 +231,16 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 			var paymentMethod braintree.PaymentMethod
 
+			verifyCard := true
+
 			paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
-				BillingAddress:     billingAddress,
-				CardholderName:     name,
-				CustomerId:         braintreeCustomer.Id,
-				DeviceData:         deviceData,
+				BillingAddress: billingAddress,
+				CardholderName: name,
+				CustomerId:     braintreeCustomer.Id,
+				DeviceData:     deviceData,
+				Options: &braintree.PaymentMethodRequestOptions{
+					VerifyCard: &verifyCard,
+				},
 				PaymentMethodNonce: nonce,
 			})
 
