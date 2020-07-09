@@ -406,10 +406,16 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		if bitPayInvoiceID == "" {
+			braintreeCustomer, err := bt.Customer().Create(h.Context, customerRequest)
+
+			if err != nil {
+				return err.Error(), http.StatusTeapot
+			}
+
 			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
 				Amount:             braintree.NewDecimal(amount, 2),
 				BillingAddress:     billingAddress,
-				Customer:           customerRequest,
+				CustomerID:         braintreeCustomer.Id,
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})
