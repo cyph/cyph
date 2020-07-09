@@ -443,8 +443,8 @@ else
 	cd ~/cyph.tmp/cyph.app
 fi
 
-../commands/ngprojectinit.sh
 ../commands/protobuf.sh
+../commands/ngprojectinit.sh
 ng build
 ../commands/ngprojectinit.sh --deinit
 
