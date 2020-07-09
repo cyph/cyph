@@ -19,6 +19,8 @@ cat > ~/.gnupg/gpg-agent.conf <<- EOM
 EOM
 gpg-connect-agent reloadagent /bye
 
+touch ~/.gnupg/keycache
+
 mkdir ~/tmpgit
 cd ~/tmpgit
 git init
