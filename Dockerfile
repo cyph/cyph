@@ -99,7 +99,7 @@ RUN echo '\
 \
 	if [ -f /cyph/commands/.bashrc ] ; then \
 		source /cyph/commands/.bashrc; \
-	elif [ -f ~/getlibs/commands/.bashrc ] ; then
+	elif [ -f ~/getlibs/commands/.bashrc ] ; then \
 		source ~/getlibs/commands/.bashrc; \
 	fi \
 ' >> /.bashrc
