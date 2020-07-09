@@ -88,7 +88,7 @@ RUN echo '\
 		echo -n "/node_modules/.bin"; \
 	)"; \
 \
-	if [ -d ~/.gnupg.original ] ; then \
+	if [ ! -f ~/.gnupg/keycache -a -d ~/.gnupg.original ] ; then \
 		rm -rf ~/.gnupg 2> /dev/null; \
 		cp -a ~/.gnupg.original ~/.gnupg; \
 	fi; \
