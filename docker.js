@@ -571,6 +571,7 @@ const dockerBase64Files = s =>
 	s.replace(
 		/BASE64_FILES/,
 		[
+			'commands/.bashrc',
 			'commands/dockerpostmake.sh',
 			'commands/getlibs.sh',
 			'commands/libclone.sh',
