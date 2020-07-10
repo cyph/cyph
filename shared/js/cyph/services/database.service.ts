@@ -28,6 +28,14 @@ import {LocalStorageService} from './local-storage.service';
  */
 @Injectable()
 export class DatabaseService extends DataManagerService {
+	/** @ignore */
+	private readonly lockURLInternal = memoize(
+		async (url: string) =>
+			`locks/${this.potassiumService.toHex(
+				await this.potassiumService.hash.hash(url)
+			)}`
+	);
+
 	/** Cache manager. */
 	protected readonly cache = {
 		metadata: {
@@ -198,11 +206,7 @@ export class DatabaseService extends DataManagerService {
 	) : Promise<string> {
 		debugLog(async () => ({lockURL: await urlPromise}));
 
-		return !global ?
-			urlPromise :
-			`locks/${this.potassiumService.toHex(
-				await this.potassiumService.hash.hash(await urlPromise)
-			)}`;
+		return global ? this.lockURLInternal(await urlPromise) : urlPromise;
 	}
 
 	/** Adds namespace to URL. */
