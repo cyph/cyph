@@ -1070,22 +1070,19 @@ export class FirebaseDatabaseService extends DatabaseService {
 	}> {
 		const url = await urlPromise;
 
-		const pushItemWithKeyCallback = async () => {
+		const pushItemWithKeyCallbackInternal = async () => {
 			const listRef = await this.getDatabaseRef(url);
 
-			const initialItemRef = listRef.push({
-				timestamp: firebase.database.ServerValue.TIMESTAMP
-			});
+			const itemRef = listRef.push();
 
 			/*
 			Conflicts with workaround in constructor:
 
-			const itemRefOnDisconnect = initialItemRef.onDisconnect();
+			const itemRefOnDisconnect = itemRef.onDisconnect();
 
 			itemRefOnDisconnect.remove();
 			*/
 
-			const itemRef = await initialItemRef.then();
 			const key = itemRef.key;
 
 			if (!key) {
@@ -1096,17 +1093,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 				retryUntilSuccessful(async () => {
 					const listValueMap: Record<string, any> = (await listRef
 						.orderByKey()
-						.endAt(key)
-						.limitToLast(2)
+						.limitToLast(1)
 						.once('value')).val();
 
-					if (!(key in listValueMap)) {
-						throw new Error(
-							`Key ${key} not found in list at ${url}.`
-						);
-					}
-
-					return Object.keys(listValueMap).find(k => k !== key);
+					return Object.keys(listValueMap)[0];
 				});
 
 			const o: {callback?: () => Promise<void>} = {};
@@ -1135,6 +1125,9 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			return result;
 		};
+
+		const pushItemWithKeyCallback = async () =>
+			this.lock(`pushLocks/${url}`, pushItemWithKeyCallbackInternal);
 
 		return this.ngZone.runOutsideAngular(async () =>
 			getOrSetDefault(
