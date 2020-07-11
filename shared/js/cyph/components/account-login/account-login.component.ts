@@ -238,7 +238,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			isCustom: boolean;
 			value: string;
 		},
-		altMasterKey?: string
+		newDeviceActivationCredentials?: {
+			altMasterKey: string;
+			username: string;
+		}
 	) : Promise<void> {
 		this.checking.next(true);
 		this.error.next(false);
@@ -264,10 +267,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			}
 
 			this.error.next(
-				!(await (typeof altMasterKey === 'string' ?
+				!(await (newDeviceActivationCredentials ?
 					this.accountAuthService.login(
-						this.username.value,
-						altMasterKey,
+						newDeviceActivationCredentials.username,
+						newDeviceActivationCredentials.altMasterKey,
 						undefined,
 						true
 					) :

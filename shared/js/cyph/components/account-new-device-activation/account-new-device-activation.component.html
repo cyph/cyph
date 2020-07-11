@@ -4,7 +4,7 @@
 	fxLayout="column"
 	fxLayoutGap="32px"
 	class="bob"
-	*ngIf="activateForUsername !== undefined && sessionData === undefined"
+	*ngIf="activateThisDevice && sessionData === undefined"
 >
 	<cyph-qr-code-scanner
 		fxFlex
@@ -39,12 +39,12 @@
 	fxFlexFill
 	fxLayout="column"
 	fxLayoutGap="32px"
-	[class.alice]="activateForUsername === undefined"
-	[class.bob]="activateForUsername !== undefined"
+	[class.alice]="!activateThisDevice"
+	[class.bob]="activateThisDevice"
 	*ngIf="sessionData !== undefined"
 >
 	<ng-container *ngIf="masterKeyConfirmationCode | await as code">
-		<div *ngIf="activateForUsername === undefined">
+		<div *ngIf="!activateThisDevice">
 			<div fxLayout="column" fxLayoutAlign="center center">
 				<h2 cyphTranslate>
 					Does the code on the other device match this one?
@@ -79,10 +79,7 @@
 			</div>
 		</div>
 
-		<div
-			fxLayoutAlign="center center"
-			*ngIf="activateForUsername !== undefined"
-		>
+		<div fxLayoutAlign="center center" *ngIf="activateThisDevice">
 			<h1>{{ code || '' }}</h1>
 		</div>
 	</ng-container>
@@ -93,10 +90,7 @@
 		[newDeviceActivation]="true"
 	></cyph-link-connection>
 
-	<div
-		fxLayoutAlign="center center"
-		*ngIf="activateForUsername === undefined"
-	>
+	<div fxLayoutAlign="center center" *ngIf="!activateThisDevice">
 		<mat-slide-toggle
 			cyphTranslate
 			name="mobile"

@@ -520,8 +520,8 @@ export class AccountRegisterComponent extends BaseProvider
 
 		const sessionData = {
 			aliceMasterKey: this.altMasterKey,
-			bobSessionID: undefined,
-			username: this.username.value
+			aliceUsername: this.username.value,
+			bobSessionID: undefined
 		};
 
 		const closed = this.dialogService.baseDialog(

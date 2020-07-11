@@ -273,7 +273,7 @@
 							"
 						>
 							<cyph-account-new-device-activation
-								[activateForUsername]="username | await"
+								[activateThisDevice]="true"
 								[fxShow]="
 									(activationCodeFailed | await) === false
 								"
@@ -462,7 +462,7 @@
 				>
 					<div>
 						<cyph-account-new-device-activation
-							[activateForUsername]="username | await"
+							[activateThisDevice]="true"
 							[fxShow]="(activationCodeFailed | await) === false"
 							(activationComplete)="
 								!$event ?

@@ -45,7 +45,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 	private wasSuccessful: boolean = false;
 
 	/** Username to start activating this device for. */
-	@Input() public activateForUsername?: string;
+	@Input() public activateThisDevice: boolean = false;
 
 	/**
 	 * Emits on activation completion.
@@ -53,8 +53,11 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 	 */
 	@Output() public readonly activationComplete = new EventEmitter<boolean>();
 
-	/** Emits alt master key on succesful activation completion. */
-	@Output() public readonly altMasterKey = new EventEmitter<string>();
+	/** Emits alt master key and username on succesful activation completion. */
+	@Output() public readonly credentials = new EventEmitter<{
+		altMasterKey: string;
+		username: string;
+	}>();
 
 	/** Answer to master key confirmation code verification. */
 	public readonly masterKeyConfirmationAnswer = resolvable<boolean>();
@@ -76,26 +79,26 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 	@Input() public sessionData?:
 		| {
 				aliceMasterKey: string;
+				aliceUsername: string;
 				bobSessionID: undefined;
-				username: string;
 		  }
 		| {
 				aliceMasterKey: undefined;
+				aliceUsername: undefined;
 				bobSessionID: string;
-				username: string;
 		  };
 
 	/** Initializes new device activation. */
 	public async init (bobSessionID?: string) : Promise<void> {
 		this.mobileDeviceActivation.next(this.mobile);
 
-		if (typeof bobSessionID === 'string' && this.activateForUsername) {
+		if (typeof bobSessionID === 'string' && this.activateThisDevice) {
 			this.sessionData =
 				bobSessionID.length > this.configService.cyphIDLength ?
 					{
 						aliceMasterKey: undefined,
-						bobSessionID,
-						username: this.activateForUsername
+						aliceUsername: undefined,
+						bobSessionID
 					} :
 					undefined;
 
@@ -113,21 +116,29 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 				)) || [])[0]?.command?.additionalData)() :
 			undefined;
 
-		const masterKeyPromise = this.sessionData.bobSessionID ?
+		const credentialsPromise = this.sessionData.bobSessionID ?
 			(async () =>
 				((await this.sessionService.one(RpcEvents.accountMasterKey)) ||
-					[])[0]?.command?.additionalData)() :
+					[])[0]?.command)() :
+			undefined;
+
+		const masterKeyPromise = credentialsPromise ?
+			credentialsPromise.then(o => o?.additionalData) :
+			undefined;
+
+		const usernamePromise = credentialsPromise ?
+			credentialsPromise.then(o => o?.method) :
 			undefined;
 
 		this.basicSessionInitService.setID(
 			this.sessionData.bobSessionID ? this.sessionData.bobSessionID : '',
-			normalize(this.sessionData.username),
+			undefined,
 			true
 		);
 
 		await this.sessionService.connected;
 
-		if (this.sessionData.aliceMasterKey) {
+		if (this.sessionData.aliceMasterKey && this.sessionData.aliceUsername) {
 			const masterKeyConfirmationCode = readableID(
 				this.configService.cyphIDLength
 			);
@@ -156,7 +167,7 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 				{
 					command: {
 						additionalData: this.sessionData.aliceMasterKey,
-						method: ''
+						method: this.sessionData.aliceUsername
 					}
 				}
 			])).confirmPromise;
@@ -170,20 +181,23 @@ export class AccountNewDeviceActivationComponent extends BaseProvider
 			await masterKeyConfirmationCodePromise
 		);
 
-		const masterKey = await Promise.race([
-			masterKeyPromise,
-			this.sessionService.closed.then(() => undefined)
+		const [masterKey, username] = await Promise.race([
+			Promise.all([masterKeyPromise, usernamePromise]),
+			this.sessionService.closed.then(() => [])
 		]);
 
 		this.sessionService.close();
 
-		if (masterKey === undefined) {
+		if (masterKey === undefined || username === undefined) {
 			this.activationComplete.emit(false);
 			this.wasSuccessful = false;
 			return;
 		}
 
-		this.altMasterKey.emit(masterKey);
+		this.credentials.emit({
+			altMasterKey: masterKey,
+			username: normalize(username)
+		});
 		this.activationComplete.emit(true);
 		this.wasSuccessful = true;
 	}
