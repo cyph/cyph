@@ -5,11 +5,13 @@ import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
 import {
 	AccountNotification,
+	AccountFileRecord,
 	IAccountNotification,
 	NotificationTypes
 } from '../proto';
 import {toBehaviorSubject} from '../util/flatten-observable';
 import {AccountDatabaseService} from './crypto/account-database.service';
+import {AccountFilesService} from './account-files.service';
 import {StringsService} from './strings.service';
 
 /**
@@ -19,10 +21,28 @@ import {StringsService} from './strings.service';
 export class AccountNotificationsService extends BaseProvider {
 	/** Gets route for notification. */
 	public readonly getRoute = memoize(
-		(notification: {id: string; value: IAccountNotification}) =>
-			(notification.value.type === NotificationTypes.Message ?
-				'/messages/user/' :
-				'/profile/') + notification.value.username,
+		(notification: {id: string; value: IAccountNotification}) => {
+			switch (notification.value.type) {
+				case NotificationTypes.File:
+					if (
+						typeof notification.value.fileType !== 'number' ||
+						!(notification.value.fileType in AccountFileRecord)
+					) {
+						break;
+					}
+
+					return this.accountFilesService.config[
+						notification.value.fileType
+					].route;
+
+				case NotificationTypes.Message:
+					return notification.value.messagesID ?
+						`/messages/${notification.value.messagesID}` :
+						`/messages/users/${notification.value.username}`;
+			}
+
+			return `/profile/${notification.value.username}`;
+		},
 		(notification: {id: string; value: IAccountNotification}) =>
 			notification.id
 	);
@@ -110,6 +130,9 @@ export class AccountNotificationsService extends BaseProvider {
 	constructor (
 		/** @ignore */
 		private readonly accountDatabaseService: AccountDatabaseService,
+
+		/** @ignore */
+		private readonly accountFilesService: AccountFilesService,
 
 		/** @ignore */
 		private readonly stringsService: StringsService

@@ -1673,9 +1673,14 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 
 	const userPath = `${namespace}/users/${notification.target}`;
 
+	const groupID =
+		notification.type === NotificationTypes.Message && metadata.messagesID ?
+			normalize(metadata.groupID) :
+			undefined;
+
 	const unreadMessagesID =
 		notification.type === NotificationTypes.Message ?
-			metadata.groupID || username :
+			groupID || username :
 			'';
 
 	const activeCall =
@@ -1687,7 +1692,7 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 		(typeof metadata.expires === 'number' && metadata.expires > now);
 
 	const callMetadata = activeCall ?
-		`${metadata.callType},${username || ''},${metadata.groupID ||
+		`${metadata.callType},${username || ''},${groupID ||
 			''},${notificationID},${metadata.expires.toString()}` :
 		undefined;
 
@@ -1860,17 +1865,15 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 			} :
 		notification.type === NotificationTypes.Message ?
 			{
-				additionalData: {groupID: metadata.groupID},
+				additionalData: {groupID},
 				subject: `${
 					count > 1 ?
-						`${count} new ${
-							metadata.groupID ? 'group ' : ''
-						}messages` :
-						`New ${metadata.groupID ? 'Group ' : ''}Message`
+						`${count} new ${groupID ? 'group ' : ''}messages` :
+						`New ${groupID ? 'Group ' : ''}Message`
 				} from ${senderUsername}`,
 				tag: unreadMessagesID,
 				text: `${targetName}, ${senderName} has sent you a ${
-					metadata.groupID ? 'group ' : ''
+					groupID ? 'group ' : ''
 				}message.`
 			} :
 		notification.type === NotificationTypes.Yo ?
@@ -1973,6 +1976,7 @@ const userNotify = async (data, namespace, username, serverInitiated) => {
 				eventID: notificationID,
 				fileType: metadata.fileType,
 				isRead: false,
+				messagesID: groupID,
 				text: subject,
 				textDetail: text,
 				timestamp: now,

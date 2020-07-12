@@ -173,6 +173,9 @@ message AccountNotification {
 	/** Indicates whether or not the notification is read. */
 	required bool isRead = 5;
 
+	/** ID of messaging session, if applicable. */
+	string messagesID = 11;
+
 	/** Notification text. */
 	required string text = 6;
 
