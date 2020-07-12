@@ -338,6 +338,12 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			)
 		]).pipe(map(([pinUnlock, loginStep2]) => pinUnlock || loginStep2));
 
+		this.subscriptions.push(
+			this.activatedRoute.url.subscribe(() => {
+				this.error.next(false);
+			})
+		);
+
 		if (
 			(<any> self).androidBackbuttonReady &&
 			this.accountDatabaseService.currentUser.value &&

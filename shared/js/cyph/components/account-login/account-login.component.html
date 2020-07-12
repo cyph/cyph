@@ -186,6 +186,21 @@
 							</h3>
 						</div>
 
+						<button
+							mat-icon-button
+							cyphTranslate
+							class="back"
+							matTooltip="Back"
+							routerLink=".."
+							*ngIf="
+								(activationCodeSectionOpen | await) === true ||
+								((loggingIn | await) === true &&
+									(pinUnlock | await) === false)
+							"
+						>
+							<mat-icon>arrow_back</mat-icon>
+						</button>
+
 						<ng-container
 							*ngIf="
 								(activationCodeSectionOpen | await) === false
@@ -300,16 +315,6 @@
 								(checking | await) === false
 							"
 						>
-							<button
-								mat-icon-button
-								cyphTranslate
-								class="back"
-								matTooltip="Back"
-								routerLink=".."
-							>
-								<mat-icon>arrow_back</mat-icon>
-							</button>
-
 							<cyph-account-new-device-activation
 								[activateThisDevice]="true"
 								[fxShow]="
@@ -365,21 +370,6 @@
 			<div></div>
 
 			<div fxFlex fxLayout="column">
-				<div
-					fxLayoutAlign="start"
-					*ngIf="(activationCodeSectionOpen | await) === true"
-				>
-					<button
-						mat-icon-button
-						cyphTranslate
-						class="back"
-						matTooltip="Back"
-						routerLink=".."
-					>
-						<mat-icon>arrow_back</mat-icon>
-					</button>
-				</div>
-
 				<div fxFlex fxLayoutAlign="center center">
 					<form
 						ngNativeValidate
@@ -407,6 +397,21 @@
 								}}
 							</h3>
 						</div>
+
+						<button
+							mat-icon-button
+							cyphTranslate
+							class="back"
+							matTooltip="Back"
+							routerLink=".."
+							*ngIf="
+								(activationCodeSectionOpen | await) === true ||
+								((loggingIn | await) === true &&
+									(pinUnlock | await) === false)
+							"
+						>
+							<mat-icon>arrow_back</mat-icon>
+						</button>
 
 						<ng-container
 							*ngIf="

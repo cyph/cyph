@@ -31,12 +31,12 @@ cyph-pin-input {
 
 .activation-code {
 	margin-top: 32px;
+}
 
-	> .back {
-		position: absolute;
-		margin-top: -40px;
-		margin-left: -56px;
-	}
+.back {
+	position: absolute;
+	left: 24px;
+	top: 80px;
 }
 
 .mobile {
@@ -52,6 +52,11 @@ cyph-pin-input {
 	.activation-code {
 		margin-top: 0;
 		margin-bottom: 32px;
+	}
+
+	.back {
+		left: 8px;
+		top: 16px;
 	}
 
 	form > div:last-child {
