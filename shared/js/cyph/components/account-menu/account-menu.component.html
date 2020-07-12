@@ -38,46 +38,6 @@
 		></div>
 	</div>
 
-	<!-- TODO: Delete this or move/reuse somewhere else -->
-	<ng-template #appointmentList>
-		<mat-nav-list
-			*ngIf="
-				accountAppointmentsService.appointments.upcoming
-					| await as upcomingAppointments
-			"
-		>
-			<h3 matLine cyphTranslate class="upcoming-appointments">
-				Upcoming Appointments
-			</h3>
-
-			<small>
-				<a
-					[href]="o.appointment.calendarInvite.url || ''"
-					target="_blank"
-					*ngFor="let o of upcomingAppointments"
-				>
-					<div class="appointment-list-item">
-						<strong>{{ o.record.name }}</strong>
-						<br />
-						<small>
-							{{
-								getDateTimeString(
-									o.appointment.calendarInvite.startTime
-								)
-							}}
-							&ngsp; &ndash; &ngsp;
-							{{
-								getDateTimeString(
-									o.appointment.calendarInvite.endTime
-								)
-							}}
-						</small>
-					</div>
-				</a>
-			</small>
-		</mat-nav-list>
-	</ng-template>
-
 	<ng-template #buttons>
 		<mat-nav-list>
 			<ng-container
@@ -315,7 +275,6 @@
 					</h3>
 				</a>
 
-				<!-- TODO: Replace cyph.healthcare with better solution -->
 				<a
 					mat-list-item
 					cyphTranslate

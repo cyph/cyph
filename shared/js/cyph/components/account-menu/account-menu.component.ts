@@ -8,7 +8,6 @@ import {
 } from '../../account';
 import {BaseProvider} from '../../base-provider';
 import {AccountUserTypes, CyphPlans} from '../../proto';
-import {AccountAppointmentsService} from '../../services/account-appointments.service';
 import {AccountContactsService} from '../../services/account-contacts.service';
 import {AccountFilesService} from '../../services/account-files.service';
 import {AccountInviteService} from '../../services/account-invite.service';
@@ -112,9 +111,6 @@ export class AccountMenuComponent extends BaseProvider {
 
 		/** @see AccountService */
 		public readonly accountService: AccountService,
-
-		/** @see AccountAppointmentsService */
-		public readonly accountAppointmentsService: AccountAppointmentsService,
 
 		/** @see AccountAuthService */
 		public readonly accountAuthService: AccountAuthService,
