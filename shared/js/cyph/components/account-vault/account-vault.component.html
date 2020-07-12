@@ -1,1 +1,234 @@
-<div>AccountVault</div>
+<mat-selection-list [multiple]="false">
+	<mat-list-option
+		routerLink="/files"
+		*ngIf="accountSettingsService.featureFlags.files.watch() | await"
+	>
+		<mat-icon
+			mat-list-icon
+			[matBadge]="
+				(
+					(accountFilesService.incomingFilesFiltered.files | await)
+						?.length || 0
+				).toString()
+			"
+			[matBadgeHidden]="
+				!(
+					((accountFilesService.incomingFilesFiltered.files | await)
+						?.length || 0) > 0
+				)
+			"
+			matBadgePosition="above after"
+		>
+			folder
+		</mat-icon>
+		<h3 matLine cyphTranslate>
+			Files
+		</h3>
+	</mat-list-option>
+	<mat-list-option
+		routerLink="/notes"
+		*ngIf="accountSettingsService.featureFlags.notes.watch() | await"
+	>
+		<mat-icon
+			mat-list-icon
+			[matBadge]="
+				(
+					(
+						accountFilesService.incomingFilesFiltered.notes
+						| await
+						| cyphFilter
+							: accountFilesService.filterFunctions
+									.excludeAnonymousMessages
+					)?.length || 0
+				).toString()
+			"
+			[matBadgeHidden]="
+				!(
+					((
+						accountFilesService.incomingFilesFiltered.notes
+						| await
+						| cyphFilter
+							: accountFilesService.filterFunctions
+									.excludeAnonymousMessages
+					)?.length || 0) > 0
+				)
+			"
+			matBadgePosition="above after"
+		>
+			create
+		</mat-icon>
+		<h3 matLine cyphTranslate>
+			Notes
+		</h3>
+	</mat-list-option>
+	<mat-list-option
+		routerLink="/docs"
+		*ngIf="
+			(accountSettingsService.staticFeatureFlags.docs | await) &&
+			(accountSettingsService.featureFlags.docs.watch() | await)
+		"
+	>
+		<mat-icon
+			mat-list-icon
+			[matBadge]="
+				(
+					(accountFilesService.incomingFilesFiltered.docs | await)
+						?.length || 0
+				).toString()
+			"
+			[matBadgeHidden]="
+				!(
+					((accountFilesService.incomingFilesFiltered.docs | await)
+						?.length || 0) > 0
+				)
+			"
+			matBadgePosition="above after"
+		>
+			library_books
+		</mat-icon>
+		<h3 matLine cyphTranslate>
+			Docs (experimental)
+		</h3>
+	</mat-list-option>
+	<mat-list-option
+		routerLink="/forms"
+		*ngIf="
+			(envService.debug || envService.isTelehealthFull) &&
+			(accountSettingsService.featureFlags.forms.watch() | await)
+		"
+	>
+		<mat-icon
+			mat-list-icon
+			[matBadge]="
+				(
+					(accountFilesService.incomingFilesFiltered.forms | await)
+						?.length || 0
+				).toString()
+			"
+			[matBadgeHidden]="
+				!(
+					((accountFilesService.incomingFilesFiltered.forms | await)
+						?.length || 0) > 0
+				)
+			"
+			matBadgePosition="above after"
+			*ngIf="!envService.isTelehealth; else medicalFormsIcon"
+		>
+			content_paste
+		</mat-icon>
+		<ng-template #medicalFormsIcon>
+			<mat-icon
+				mat-list-icon
+				[matBadge]="
+					(
+						(
+							accountFilesService.incomingFilesFiltered.forms
+							| await
+						)?.length || 0
+					).toString()
+				"
+				[matBadgeHidden]="
+					!(
+						((
+							accountFilesService.incomingFilesFiltered.forms
+							| await
+						)?.length || 0) > 0
+					)
+				"
+				matBadgePosition="above after"
+				svgIcon="medical-forms"
+			></mat-icon>
+		</ng-template>
+		<h3 matLine cyphTranslate>
+			Forms
+		</h3>
+	</mat-list-option>
+	<mat-list-option
+		routerLink="/passwords"
+		*ngIf="
+			(accountSettingsService.staticFeatureFlags.passwords | await) &&
+			(accountSettingsService.featureFlags.passwords.watch() | await)
+		"
+	>
+		<mat-icon
+			mat-list-icon
+			[matBadge]="
+				(
+					(
+						accountFilesService.incomingFilesFiltered.passwords
+						| await
+					)?.length || 0
+				).toString()
+			"
+			[matBadgeHidden]="
+				!(
+					((
+						accountFilesService.incomingFilesFiltered.passwords
+						| await
+					)?.length || 0) > 0
+				)
+			"
+			matBadgePosition="above after"
+		>
+			lock
+		</mat-icon>
+		<h3 matLine cyphTranslate>
+			Passwords
+		</h3>
+	</mat-list-option>
+	<mat-list-option
+		routerLink="/pgp"
+		*ngIf="accountSettingsService.featureFlags.pgp.watch() | await"
+	>
+		<mat-icon
+			mat-list-icon
+			[matBadge]="
+				(
+					(accountFilesService.incomingFilesFiltered.pgpKeys | await)
+						?.length || 0
+				).toString()
+			"
+			[matBadgeHidden]="
+				!(
+					((accountFilesService.incomingFilesFiltered.pgpKeys | await)
+						?.length || 0) > 0
+				)
+			"
+			matBadgePosition="above after"
+		>
+			vpn_key
+		</mat-icon>
+		<h3 matLine cyphTranslate>
+			PGP
+		</h3>
+	</mat-list-option>
+	<mat-list-option
+		routerLink="/wallets"
+		*ngIf="
+			(accountSettingsService.staticFeatureFlags.wallets | await) &&
+			(accountSettingsService.featureFlags.wallets.watch() | await)
+		"
+	>
+		<mat-icon
+			mat-list-icon
+			[matBadge]="
+				(
+					(accountFilesService.incomingFilesFiltered.wallets | await)
+						?.length || 0
+				).toString()
+			"
+			[matBadgeHidden]="
+				!(
+					((accountFilesService.incomingFilesFiltered.wallets | await)
+						?.length || 0) > 0
+				)
+			"
+			matBadgePosition="above after"
+		>
+			account_balance_wallet
+		</mat-icon>
+		<h3 matLine cyphTranslate>
+			Wallets (experimental)
+		</h3>
+	</mat-list-option>
+</mat-selection-list>

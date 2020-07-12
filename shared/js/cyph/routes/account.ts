@@ -15,6 +15,7 @@ import {AccountFormsComponent} from '../components/account-forms';
 import {AccountHomeComponent} from '../components/account-home';
 import {AccountIncomingPatientInfoComponent} from '../components/account-incoming-patient-info';
 import {AccountLogoutComponent} from '../components/account-logout';
+import {AccountMessagingComponent} from '../components/account-messaging';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
 import {AccountNotificationsSubscribeComponent} from '../components/account-notifications-subscribe';
@@ -27,6 +28,7 @@ import {AccountPseudoRelationshipResponseComponent} from '../components/account-
 import {AccountRegisterComponent} from '../components/account-register';
 import {AccountSettingsComponent} from '../components/account-settings';
 import {AccountUpgradeComponent} from '../components/account-upgrade';
+import {AccountVaultComponent} from '../components/account-vault';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {BlankComponent} from '../components/blank';
 import {NotFoundComponent} from '../components/not-found';
@@ -262,6 +264,10 @@ export const account: Route = {
 			component: AccountChatComponent
 		},
 		{
+			path: 'messaging',
+			component: AccountMessagingComponent
+		},
+		{
 			path: 'new-patient/:appointmentID',
 			component: AccountComposeComponent,
 			data: {messageType: ChatMessageValue.Types.Form, value: newPatient}
@@ -390,6 +396,7 @@ export const account: Route = {
 				'upload-ehr-credentials/:cyphAdminKey/:redoxApiKey/:redoxSecret/:username',
 			component: UploadEhrCredentialsComponent
 		},
+		{path: 'vault', component: AccountVaultComponent},
 		{path: 'video/user/:username', component: AccountChatComponent},
 		{
 			path: 'video/:contactID',

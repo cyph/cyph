@@ -434,10 +434,13 @@ export class StringsService extends BaseProvider {
 	public readonly featureFlagsPGP = `PGP`;
 
 	/** @see StringsService */
-	public readonly featureFlagsScheduler = `Appointment Scheduler`;
+	public readonly featureFlagsScheduler = `Meetings`;
 
 	/** @see StringsService */
 	public readonly featureFlagsSocial = `Social`;
+
+	/** @see StringsService */
+	public readonly featureFlagsVault = `Vault`;
 
 	/** @see StringsService */
 	public readonly featureFlagsWallets = `Wallets`;
@@ -1232,7 +1235,7 @@ export class StringsService extends BaseProvider {
 	public readonly reject = `reject`;
 
 	/** @see StringsService */
-	public readonly requestAppointment = `Request Appointment`;
+	public readonly requestAppointment = `Schedule Meeting`;
 
 	/** @see StringsService */
 	public readonly requestFollowUpAppointment = `Request Follow-Up Appointment`;

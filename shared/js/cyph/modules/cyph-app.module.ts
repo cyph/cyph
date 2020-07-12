@@ -22,6 +22,7 @@ import {AccountIncomingPatientInfoComponent} from '../components/account-incomin
 import {AccountLoginComponent} from '../components/account-login';
 import {AccountLogoutComponent} from '../components/account-logout';
 import {AccountMenuComponent} from '../components/account-menu';
+import {AccountMessagingComponent} from '../components/account-messaging';
 import {AccountNewDeviceActivationComponent} from '../components/account-new-device-activation';
 import {AccountNoteComponent} from '../components/account-note';
 import {AccountNotesComponent} from '../components/account-notes';
@@ -42,6 +43,7 @@ import {AccountSettingsComponent} from '../components/account-settings';
 import {AccountStorageAnalyticsComponent} from '../components/account-storage-analytics';
 import {AccountUpgradeComponent} from '../components/account-upgrade';
 import {AccountUserRatingComponent} from '../components/account-user-rating';
+import {AccountVaultComponent} from '../components/account-vault';
 import {AccountWalletsComponent} from '../components/account-wallets';
 import {FooterComponent} from '../components/footer';
 import {InAppPurchaseComponent} from '../components/in-app-purchase';
@@ -105,6 +107,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountLoginComponent,
 		AccountLogoutComponent,
 		AccountMenuComponent,
+		AccountMessagingComponent,
 		AccountNewDeviceActivationComponent,
 		AccountNoteComponent,
 		AccountNotesComponent,
@@ -125,6 +128,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountStorageAnalyticsComponent,
 		AccountUpgradeComponent,
 		AccountUserRatingComponent,
+		AccountVaultComponent,
 		AccountWalletsComponent,
 		FooterComponent,
 		InAppPurchaseComponent,
@@ -159,6 +163,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountLoginComponent,
 		AccountLogoutComponent,
 		AccountMenuComponent,
+		AccountMessagingComponent,
 		AccountNewDeviceActivationComponent,
 		AccountNoteComponent,
 		AccountNotesComponent,
@@ -179,6 +184,7 @@ import {CyphWebModule} from './cyph-web.module';
 		AccountStorageAnalyticsComponent,
 		AccountUpgradeComponent,
 		AccountUserRatingComponent,
+		AccountVaultComponent,
 		AccountWalletsComponent,
 		FooterComponent,
 		InAppPurchaseComponent,

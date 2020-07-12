@@ -199,6 +199,7 @@ export class AccountComponent extends BaseProvider
 					'incoming-patient-info',
 					'mail',
 					'messages',
+					'messaging',
 					'new-patient',
 					'notes',
 					'notifications',
@@ -212,6 +213,7 @@ export class AccountComponent extends BaseProvider
 					'settings',
 					'staff',
 					'transition',
+					'vault',
 					'video',
 					'wallets',
 					'welcome'

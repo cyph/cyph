@@ -236,51 +236,9 @@
 				<a
 					mat-list-item
 					cyphTranslate
-					class="contacts"
-					[class.ui-disabled]="
-						!currentUser?.agseConfirmed ||
-						!currentUser?.masterKeyConfirmed
-					"
-					matTooltip="Contacts"
-					[matTooltipDisabled]="menuExpanded | await"
-					matTooltipPosition="right"
-					[routerLink]="
-						(envService.isMobile | await) ? '/contacts' : '/profile'
-					"
-					(click)="click()"
-					*ngIf="
-						accountSettingsService.featureFlags.messaging.watch()
-							| await
-					"
-				>
-					<mat-icon
-						mat-list-icon
-						[matBadge]="
-							(
-								(accountService.unreadMessages | await) || 0
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
-								((accountService.unreadMessages | await) || 0) >
-								0
-							)
-						"
-						matBadgePosition="above after"
-					>
-						message
-					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Contacts
-					</h3>
-				</a>
-
-				<a
-					mat-list-item
-					cyphTranslate
 					class="appointment-scheduler"
 					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
-					matTooltip="Appointment Scheduler"
+					matTooltip="Meetings"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/schedule"
@@ -293,10 +251,67 @@
 					"
 				>
 					<mat-icon mat-list-icon>
-						schedule
+						duo
 					</mat-icon>
 					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Appointment Scheduler
+						Meetings
+					</h3>
+				</a>
+
+				<a
+					mat-list-item
+					cyphTranslate
+					class="messaging"
+					[class.ui-disabled]="
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
+					"
+					matTooltip="Messaging"
+					[matTooltipDisabled]="menuExpanded | await"
+					matTooltipPosition="right"
+					routerLink="/messaging"
+					(click)="click()"
+					*ngIf="
+						accountSettingsService.featureFlags.messaging.watch()
+							| await
+					"
+				>
+					<mat-icon
+						mat-list-icon
+						[matBadge]="
+							(
+								((accountService.unreadMessages | await) || 0) +
+								((
+									accountFilesService.incomingFilesFiltered
+										.notes
+									| await
+									| cyphFilter
+										: accountFilesService.filterFunctions
+												.anonymousMessages
+								)?.length || 0)
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((accountService.unreadMessages | await) || 0) +
+									((
+										accountFilesService
+											.incomingFilesFiltered.notes
+										| await
+										| cyphFilter
+											: accountFilesService
+													.filterFunctions
+													.anonymousMessages
+									)?.length || 0) >
+								0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						message
+					</mat-icon>
+					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
+						Messaging
 					</h3>
 				</a>
 
@@ -308,7 +323,7 @@
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
-					matTooltip="Social Feed"
+					matTooltip="Social"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/feed"
@@ -319,63 +334,10 @@
 					"
 				>
 					<mat-icon mat-list-icon>
-						rss_feed
+						public
 					</mat-icon>
 					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Social Feed
-					</h3>
-				</a>
-
-				<a
-					mat-list-item
-					cyphTranslate
-					class="inbox"
-					[class.ui-disabled]="
-						!currentUser?.agseConfirmed ||
-						!currentUser?.masterKeyConfirmed
-					"
-					matTooltip="Anonymous Inbox"
-					[matTooltipDisabled]="menuExpanded | await"
-					matTooltipPosition="right"
-					routerLink="/inbox"
-					(click)="click()"
-					*ngIf="
-						accountSettingsService.featureFlags.inbox.watch()
-							| await
-					"
-				>
-					<mat-icon
-						mat-list-icon
-						[matBadge]="
-							(
-								(
-									accountFilesService.incomingFilesFiltered
-										.notes
-									| await
-									| cyphFilter
-										: accountFilesService.filterFunctions
-												.anonymousMessages
-								)?.length || 0
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
-								((
-									accountFilesService.incomingFilesFiltered
-										.notes
-									| await
-									| cyphFilter
-										: accountFilesService.filterFunctions
-												.anonymousMessages
-								)?.length || 0) > 0
-							)
-						"
-						matBadgePosition="above after"
-					>
-						email
-					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Anonymous Inbox
+						Social
 					</h3>
 				</a>
 			</ng-container>
@@ -391,15 +353,15 @@
 				<a
 					mat-list-item
 					cyphTranslate
-					class="files"
+					class="vault"
 					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
-					matTooltip="Files"
+					matTooltip="Vault"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
-					routerLink="/files"
+					routerLink="/vault"
 					(click)="click()"
 					*ngIf="
-						accountSettingsService.featureFlags.files.watch()
+						accountSettingsService.featureFlags.vault.watch()
 							| await
 					"
 				>
@@ -407,316 +369,40 @@
 						mat-list-icon
 						[matBadge]="
 							(
-								(
-									accountFilesService.incomingFilesFiltered
-										.files | await
-								)?.length || 0
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
-								((
-									accountFilesService.incomingFilesFiltered
-										.files | await
-								)?.length || 0) > 0
-							)
-						"
-						matBadgePosition="above after"
-					>
-						folder
-					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Files
-					</h3>
-				</a>
-
-				<a
-					mat-list-item
-					cyphTranslate
-					class="notes"
-					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
-					matTooltip="Notes"
-					[matTooltipDisabled]="menuExpanded | await"
-					matTooltipPosition="right"
-					routerLink="/notes"
-					(click)="click()"
-					*ngIf="
-						accountSettingsService.featureFlags.notes.watch()
-							| await
-					"
-				>
-					<mat-icon
-						mat-list-icon
-						[matBadge]="
-							(
-								(
-									accountFilesService.incomingFilesFiltered
-										.notes
-									| await
-									| cyphFilter
-										: accountFilesService.filterFunctions
-												.excludeAnonymousMessages
-								)?.length || 0
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
+								((accountFilesService.incomingFiles | await)
+									?.length || 0) -
 								((
 									accountFilesService.incomingFilesFiltered
 										.notes
 									| await
 									| cyphFilter
 										: accountFilesService.filterFunctions
-												.excludeAnonymousMessages
-								)?.length || 0) > 0
-							)
-						"
-						matBadgePosition="above after"
-					>
-						create
-					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Notes
-					</h3>
-				</a>
-
-				<a
-					mat-list-item
-					cyphTranslate
-					class="docs"
-					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
-					matTooltip="Docs (experimental)"
-					[matTooltipDisabled]="menuExpanded | await"
-					matTooltipPosition="right"
-					routerLink="/docs"
-					(click)="click()"
-					*ngIf="
-						(accountSettingsService.staticFeatureFlags.docs
-							| await) &&
-						(accountSettingsService.featureFlags.docs.watch()
-							| await)
-					"
-				>
-					<mat-icon
-						mat-list-icon
-						[matBadge]="
-							(
-								(
-									accountFilesService.incomingFilesFiltered
-										.docs | await
-								)?.length || 0
+												.anonymousMessages
+								)?.length || 0)
 							).toString()
 						"
 						[matBadgeHidden]="
 							!(
-								((
-									accountFilesService.incomingFilesFiltered
-										.docs | await
-								)?.length || 0) > 0
-							)
-						"
-						matBadgePosition="above after"
-					>
-						library_books
-					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Docs (experimental)
-					</h3>
-				</a>
-
-				<a
-					mat-list-item
-					cyphTranslate
-					class="forms"
-					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
-					matTooltip="Forms"
-					[matTooltipDisabled]="menuExpanded | await"
-					matTooltipPosition="right"
-					routerLink="/forms"
-					(click)="click()"
-					*ngIf="
-						(envService.debug || envService.isTelehealthFull) &&
-						(accountSettingsService.featureFlags.forms.watch()
-							| await)
-					"
-				>
-					<mat-icon
-						mat-list-icon
-						[matBadge]="
-							(
-								(
-									accountFilesService.incomingFilesFiltered
-										.forms | await
-								)?.length || 0
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
-								((
-									accountFilesService.incomingFilesFiltered
-										.forms | await
-								)?.length || 0) > 0
-							)
-						"
-						matBadgePosition="above after"
-						*ngIf="!envService.isTelehealth; else medicalFormsIcon"
-					>
-						content_paste
-					</mat-icon>
-					<ng-template #medicalFormsIcon>
-						<mat-icon
-							mat-list-icon
-							[matBadge]="
-								(
-									(
-										accountFilesService
-											.incomingFilesFiltered.forms | await
-									)?.length || 0
-								).toString()
-							"
-							[matBadgeHidden]="
-								!(
+								((accountFilesService.incomingFiles | await)
+									?.length || 0) -
 									((
 										accountFilesService
-											.incomingFilesFiltered.forms | await
-									)?.length || 0) > 0
-								)
-							"
-							matBadgePosition="above after"
-							svgIcon="medical-forms"
-						></mat-icon>
-					</ng-template>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Forms
-					</h3>
-				</a>
-
-				<a
-					mat-list-item
-					cyphTranslate
-					class="passwords"
-					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
-					matTooltip="Passwords"
-					[matTooltipDisabled]="menuExpanded | await"
-					matTooltipPosition="right"
-					routerLink="/passwords"
-					(click)="click()"
-					*ngIf="
-						(accountSettingsService.staticFeatureFlags.passwords
-							| await) &&
-						(accountSettingsService.featureFlags.passwords.watch()
-							| await)
-					"
-				>
-					<mat-icon
-						mat-list-icon
-						[matBadge]="
-							(
-								(
-									accountFilesService.incomingFilesFiltered
-										.passwords | await
-								)?.length || 0
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
-								((
-									accountFilesService.incomingFilesFiltered
-										.passwords | await
-								)?.length || 0) > 0
+											.incomingFilesFiltered.notes
+										| await
+										| cyphFilter
+											: accountFilesService
+													.filterFunctions
+													.anonymousMessages
+									)?.length || 0) >
+								0
 							)
 						"
 						matBadgePosition="above after"
 					>
-						lock
+						storage
 					</mat-icon>
 					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Passwords
-					</h3>
-				</a>
-
-				<a
-					mat-list-item
-					cyphTranslate
-					class="pgp"
-					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
-					matTooltip="PGP"
-					[matTooltipDisabled]="menuExpanded | await"
-					matTooltipPosition="right"
-					routerLink="/pgp"
-					(click)="click()"
-					*ngIf="
-						accountSettingsService.featureFlags.pgp.watch() | await
-					"
-				>
-					<mat-icon
-						mat-list-icon
-						[matBadge]="
-							(
-								(
-									accountFilesService.incomingFilesFiltered
-										.pgpKeys | await
-								)?.length || 0
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
-								((
-									accountFilesService.incomingFilesFiltered
-										.pgpKeys | await
-								)?.length || 0) > 0
-							)
-						"
-						matBadgePosition="above after"
-					>
-						vpn_key
-					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						PGP
-					</h3>
-				</a>
-
-				<a
-					mat-list-item
-					cyphTranslate
-					class="wallets"
-					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
-					matTooltip="Wallets (experimental)"
-					[matTooltipDisabled]="menuExpanded | await"
-					matTooltipPosition="right"
-					routerLink="/wallets"
-					(click)="click()"
-					*ngIf="
-						(accountSettingsService.staticFeatureFlags.wallets
-							| await) &&
-						(accountSettingsService.featureFlags.wallets.watch()
-							| await)
-					"
-				>
-					<mat-icon
-						mat-list-icon
-						[matBadge]="
-							(
-								(
-									accountFilesService.incomingFilesFiltered
-										.wallets | await
-								)?.length || 0
-							).toString()
-						"
-						[matBadgeHidden]="
-							!(
-								((
-									accountFilesService.incomingFilesFiltered
-										.wallets | await
-								)?.length || 0) > 0
-							)
-						"
-						matBadgePosition="above after"
-					>
-						account_balance_wallet
-					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Wallets (experimental)
+						Vault
 					</h3>
 				</a>
 			</ng-container>

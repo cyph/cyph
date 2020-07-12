@@ -1048,7 +1048,7 @@ export class AccountService extends BaseProvider {
 					'feed': 'Social Feed',
 					'inbox': 'Anonymous Inbox',
 					'pgp': 'PGP',
-					'schedule': 'Appointment Scheduler'
+					'schedule': 'Meetings'
 				};
 
 				/* User headers on desktop are redundant with sidebar */
@@ -1119,6 +1119,7 @@ export class AccountService extends BaseProvider {
 						'forms',
 						'inbox',
 						'incoming-patient-info',
+						'messaging',
 						'notes',
 						'passwords',
 						'patients',
@@ -1126,6 +1127,7 @@ export class AccountService extends BaseProvider {
 						'schedule',
 						'settings',
 						'staff',
+						'vault',
 						'wallets',
 						'welcome'
 					].indexOf(route) < 0 ||

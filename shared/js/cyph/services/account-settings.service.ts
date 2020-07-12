@@ -32,6 +32,7 @@ export class AccountSettingsService extends BaseProvider {
 		pgp: this.getFeatureFlag('pgp'),
 		scheduler: this.getFeatureFlag('scheduler'),
 		social: this.getFeatureFlag('social'),
+		vault: this.getFeatureFlag('vault'),
 		wallets: this.getFeatureFlag('wallets')
 	};
 
@@ -232,6 +233,12 @@ export class AccountSettingsService extends BaseProvider {
 				featureFlag: this.featureFlags.social,
 				id: 'social',
 				label: this.stringsService.featureFlagsSocial,
+				visible: of(true)
+			},
+			{
+				featureFlag: this.featureFlags.vault,
+				id: 'vault',
+				label: this.stringsService.featureFlagsVault,
 				visible: of(true)
 			},
 			{
