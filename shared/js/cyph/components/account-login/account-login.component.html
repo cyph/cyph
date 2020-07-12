@@ -248,7 +248,9 @@
 									routerLink="login"
 									*ngIf="(loggingIn | await) === false"
 								>
-									{{ buttonText }}
+									<mat-icon>login</mat-icon>
+									&nbsp;
+									<span>{{ buttonText }}</span>
 								</button>
 
 								<button
@@ -258,7 +260,11 @@
 									routerLink="activate"
 									*ngIf="(loggingIn | await) === false"
 								>
-									Use Activation Code
+									<mat-icon>center_focus_weak</mat-icon>
+									&nbsp;
+									<span cyphTranslate>
+										Use Activation Code
+									</span>
 								</button>
 
 								<div
@@ -269,12 +275,13 @@
 									"
 								>
 									<a
-										cyphTranslate
 										fxFlex
 										mat-raised-button
 										routerLink="/register"
 									>
-										Register
+										<mat-icon>person_add</mat-icon>
+										&nbsp;
+										<span cyphTranslate>Register</span>
 									</a>
 								</div>
 
@@ -456,17 +463,22 @@
 									routerLink="login"
 									*ngIf="(loggingIn | await) === false"
 								>
-									{{ buttonText }}
+									<mat-icon>login</mat-icon>
+									&nbsp;
+									<span>{{ buttonText }}</span>
 								</button>
 
 								<button
-									cyphTranslate
 									mat-raised-button
 									color="primary"
 									routerLink="activate"
 									*ngIf="(loggingIn | await) === false"
 								>
-									Use Activation Code
+									<mat-icon>center_focus_weak</mat-icon>
+									&nbsp;
+									<span cyphTranslate>
+										Use Activation Code
+									</span>
 								</button>
 
 								<div
@@ -477,12 +489,13 @@
 									"
 								>
 									<a
-										cyphTranslate
 										fxFlex
 										mat-raised-button
 										routerLink="/register"
 									>
-										Register
+										<mat-icon>person_add</mat-icon>
+										&nbsp;
+										<span cyphTranslate>Register</span>
 									</a>
 								</div>
 
