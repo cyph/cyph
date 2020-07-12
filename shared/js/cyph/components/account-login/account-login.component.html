@@ -282,7 +282,7 @@
 										activationCodeFailed.next(true) :
 										undefined
 								"
-								(altMasterKey)="submit(undefined, $event)"
+								(credentials)="submit(undefined, $event)"
 								(lifecycleOnInit)="
 									activationCodeFailed.next(false)
 								"
@@ -469,7 +469,7 @@
 									activationCodeFailed.next(true) :
 									undefined
 							"
-							(altMasterKey)="submit(undefined, $event)"
+							(credentials)="submit(undefined, $event)"
 							(lifecycleOnInit)="activationCodeFailed.next(false)"
 						></cyph-account-new-device-activation>
 						<div

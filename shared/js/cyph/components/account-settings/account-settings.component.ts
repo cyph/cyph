@@ -88,8 +88,8 @@ export class AccountSettingsComponent extends BaseProvider implements OnInit {
 			this.user.value?.username ?
 				{
 					aliceMasterKey: await this.accountAuthService.getAltMasterKey(),
-					bobSessionID: undefined,
-					username: this.user.value.username
+					aliceUsername: this.user.value.username,
+					bobSessionID: undefined
 				} :
 				undefined,
 		() => this.user.value?.username
