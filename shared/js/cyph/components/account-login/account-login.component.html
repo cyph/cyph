@@ -261,7 +261,13 @@
 									Use Activation Code
 								</button>
 
-								<div class="cyph-light-theme">
+								<div
+									class="cyph-light-theme"
+									*ngIf="
+										!envService.noInAppRegistrationAllowed &&
+										(loggingIn | await) === false
+									"
+								>
 									<a
 										cyphTranslate
 										fxFlex
@@ -272,10 +278,6 @@
 												'/:' +
 												((username | await) || '') :
 												'')
-										"
-										*ngIf="
-											!envService.noInAppRegistrationAllowed &&
-											(loggingIn | await) === false
 										"
 									>
 										Register
@@ -473,7 +475,13 @@
 									Use Activation Code
 								</button>
 
-								<div class="cyph-light-theme">
+								<div
+									class="cyph-light-theme"
+									*ngIf="
+										!envService.noInAppRegistrationAllowed &&
+										(loggingIn | await) === false
+									"
+								>
 									<a
 										cyphTranslate
 										fxFlex
@@ -484,10 +492,6 @@
 												'/:' +
 												((username | await) || '') :
 												'')
-										"
-										*ngIf="
-											!envService.noInAppRegistrationAllowed &&
-											(loggingIn | await) === false
 										"
 									>
 										Register
