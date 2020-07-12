@@ -598,7 +598,6 @@
 				[type]="(hidePassword | await) ? 'password' : 'text'"
 				[placeholder]="stringsService.masterKey"
 				(keydown.enter)="submit(); $event.preventDefault()"
-				cyphAutofocus
 				required
 			/>
 			<mat-icon
