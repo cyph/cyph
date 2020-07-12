@@ -47,9 +47,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 	public readonly activationCodeFailed = new BehaviorSubject<boolean>(false);
 
 	/** Indicates whether activation code UI section is open. */
-	public readonly activationCodeSectionOpen = new BehaviorSubject<boolean>(
-		false
-	);
+	public readonly activationCodeSectionOpen: Observable<boolean>;
 
 	/** Indicates whether saved master key is the alternate master key. */
 	public readonly altMasterKey = new BehaviorSubject<boolean>(false);
@@ -328,6 +326,10 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 		public readonly stringsService: StringsService
 	) {
 		super();
+
+		this.activationCodeSectionOpen = this.activatedRoute.url.pipe(
+			map(url => url.length > 0 && url.slice(-1)[0].path === 'activate')
+		);
 
 		this.loggingIn = observableAll([
 			this.pinUnlock,

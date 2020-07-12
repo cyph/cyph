@@ -21,10 +21,6 @@ cyph-pin-input {
 	text-align: center;
 }
 
-.login-btns {
-	padding-bottom: 72px;
-}
-
 .product-description {
 	text-align: center;
 }
@@ -35,6 +31,12 @@ cyph-pin-input {
 
 .activation-code {
 	margin-top: 32px;
+
+	> .back {
+		position: absolute;
+		margin-top: -40px;
+		margin-left: -56px;
+	}
 }
 
 .mobile {
@@ -84,14 +86,5 @@ cyph-pin-input {
 			position: relative;
 			top: 5px;
 		}
-	}
-
-	button,
-	a {
-		&.mat-primary {
-			margin-top: 45px;
-		}
-
-		width: 100%;
 	}
 }

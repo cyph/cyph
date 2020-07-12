@@ -158,7 +158,14 @@
 						fxLayout="column"
 						(submit)="submit()"
 					>
-						<div fxLayout="row" fxLayoutAlign="center center">
+						<div
+							fxLayout="row"
+							fxLayoutAlign="center center"
+							*ngIf="
+								(error | await) === true ||
+								(loggingIn | await) === true
+							"
+						>
 							<h3
 								class="cyph-banner warn invalid-credentials"
 								[class.master-key]="
@@ -180,37 +187,48 @@
 						</div>
 
 						<ng-container
-							*ngTemplateOutlet="usernameField"
-						></ng-container>
-
-						<ng-container *ngIf="loggingIn | await">
-							<ng-container
-								*ngIf="(pinUnlock | await) === true; else login"
-							>
-								<ng-container
-									*ngTemplateOutlet="pinUnlockFields"
-								></ng-container>
-							</ng-container>
-						</ng-container>
-
-						<br />
-
-						<ng-container
 							*ngIf="
 								(activationCodeSectionOpen | await) === false
 							"
 						>
+							<ng-container *ngIf="loggingIn | await">
+								<ng-container
+									*ngTemplateOutlet="usernameField"
+								></ng-container>
+
+								<ng-container
+									*ngIf="
+										(pinUnlock | await) === true;
+										else login
+									"
+								>
+									<ng-container
+										*ngTemplateOutlet="pinUnlockFields"
+									></ng-container>
+								</ng-container>
+							</ng-container>
+
 							<div
-								fxLayout="row"
-								fxLayoutAlign="center center"
+								fxLayout="column"
+								[fxLayoutAlign]="
+									(loggingIn | await) ?
+										'center center' :
+										'stretch'
+								"
 								fxLayoutGap="24px"
-								class="login-btns"
 								*ngIf="
 									(pinUnlock | await) ?
 										stringsService.unlock :
 										stringsService.logIn as buttonText
 								"
 							>
+								<div
+									*ngIf="(loggingIn | await) === false"
+								></div>
+								<div
+									*ngIf="(loggingIn | await) === false"
+								></div>
+
 								<button
 									mat-raised-button
 									color="primary"
@@ -236,31 +254,38 @@
 								<button
 									cyphTranslate
 									mat-raised-button
-									color="accent"
-									(click)="
-										activationCodeSectionOpen.next(true)
-									"
+									color="primary"
+									routerLink="activate"
+									*ngIf="(loggingIn | await) === false"
 								>
 									Use Activation Code
 								</button>
 
-								<a
-									cyphTranslate
-									mat-raised-button
-									color="accent"
-									[routerLink]="
-										'/register' +
-										((username | await) ?
-											'/:' + ((username | await) || '') :
-											'')
-									"
-									*ngIf="
-										!envService.noInAppRegistrationAllowed &&
-										(loggingIn | await) === false
-									"
-								>
-									Register
-								</a>
+								<div class="cyph-light-theme">
+									<a
+										cyphTranslate
+										fxFlex
+										mat-raised-button
+										[routerLink]="
+											'/register' +
+											((username | await) ?
+												'/:' +
+												((username | await) || '') :
+												'')
+										"
+										*ngIf="
+											!envService.noInAppRegistrationAllowed &&
+											(loggingIn | await) === false
+										"
+									>
+										Register
+									</a>
+								</div>
+
+								<div
+									*ngIf="(loggingIn | await) === false"
+								></div>
+								<div></div>
 							</div>
 						</ng-container>
 
@@ -272,6 +297,16 @@
 								(checking | await) === false
 							"
 						>
+							<button
+								mat-icon-button
+								cyphTranslate
+								class="back"
+								matTooltip="Back"
+								routerLink=".."
+							>
+								<mat-icon>arrow_back</mat-icon>
+							</button>
+
 							<cyph-account-new-device-activation
 								[activateThisDevice]="true"
 								[fxShow]="
@@ -287,14 +322,7 @@
 									activationCodeFailed.next(false)
 								"
 							></cyph-account-new-device-activation>
-							<button
-								cyphTranslate
-								mat-raised-button
-								color="accent"
-								(click)="activationCodeSectionOpen.next(false)"
-							>
-								Back
-							</button>
+
 							<div
 								cyphTranslate
 								*ngIf="(activationCodeFailed | await) === true"
@@ -334,6 +362,21 @@
 			<div></div>
 
 			<div fxFlex fxLayout="column">
+				<div
+					fxLayoutAlign="start"
+					*ngIf="(activationCodeSectionOpen | await) === true"
+				>
+					<button
+						mat-icon-button
+						cyphTranslate
+						class="back"
+						matTooltip="Back"
+						routerLink=".."
+					>
+						<mat-icon>arrow_back</mat-icon>
+					</button>
+				</div>
+
 				<div fxFlex fxLayoutAlign="center center">
 					<form
 						ngNativeValidate
@@ -342,7 +385,14 @@
 						fxLayoutAlign="center"
 						(submit)="submit()"
 					>
-						<div fxLayout="row" fxLayoutAlign="center center">
+						<div
+							fxLayout="row"
+							fxLayoutAlign="center center"
+							*ngIf="
+								(error | await) === true ||
+								(loggingIn | await) === true
+							"
+						>
 							<h3
 								class="cyph-banner warn"
 								[fxShow]="error | await"
@@ -356,33 +406,41 @@
 						</div>
 
 						<ng-container
-							*ngTemplateOutlet="usernameField"
-						></ng-container>
-
-						<ng-container *ngIf="loggingIn | await">
-							<ng-container
-								*ngIf="(pinUnlock | await) === true; else login"
-							>
-								<ng-container
-									*ngTemplateOutlet="pinUnlockFields"
-								></ng-container>
-							</ng-container>
-						</ng-container>
-						<ng-container
 							*ngIf="
 								(activationCodeSectionOpen | await) === false
 							"
 						>
+							<ng-container *ngIf="loggingIn | await">
+								<ng-container
+									*ngTemplateOutlet="usernameField"
+								></ng-container>
+
+								<ng-container
+									*ngIf="
+										(pinUnlock | await) === true;
+										else login
+									"
+								>
+									<ng-container
+										*ngTemplateOutlet="pinUnlockFields"
+									></ng-container>
+								</ng-container>
+							</ng-container>
+
 							<div
 								fxLayout="column"
+								fxLayoutAlign="stretch"
 								fxLayoutGap="16px"
-								fxLayoutAlign="center center"
 								*ngIf="
 									(pinUnlock | await) ?
 										stringsService.unlock :
 										stringsService.logIn as buttonText
 								"
 							>
+								<div></div>
+								<div></div>
+								<div></div>
+
 								<button
 									mat-raised-button
 									color="primary"
@@ -408,31 +466,33 @@
 								<button
 									cyphTranslate
 									mat-raised-button
-									color="accent"
-									(click)="
-										activationCodeSectionOpen.next(true)
-									"
+									color="primary"
+									routerLink="activate"
+									*ngIf="(loggingIn | await) === false"
 								>
 									Use Activation Code
 								</button>
 
-								<a
-									cyphTranslate
-									mat-raised-button
-									color="accent"
-									[routerLink]="
-										'/register' +
-										((username | await) ?
-											'/:' + ((username | await) || '') :
-											'')
-									"
-									*ngIf="
-										!envService.noInAppRegistrationAllowed &&
-										(loggingIn | await) === false
-									"
-								>
-									Register
-								</a>
+								<div class="cyph-light-theme">
+									<a
+										cyphTranslate
+										fxFlex
+										mat-raised-button
+										[routerLink]="
+											'/register' +
+											((username | await) ?
+												'/:' +
+												((username | await) || '') :
+												'')
+										"
+										*ngIf="
+											!envService.noInAppRegistrationAllowed &&
+											(loggingIn | await) === false
+										"
+									>
+										Register
+									</a>
+								</div>
 
 								<a
 									mat-stroked-button
@@ -480,16 +540,6 @@
 						</div>
 					</div>
 				</div>
-
-				<button
-					cyphTranslate
-					mat-raised-button
-					color="accent"
-					*ngIf="(activationCodeSectionOpen | await) === true"
-					(click)="activationCodeSectionOpen.next(false)"
-				>
-					Back
-				</button>
 
 				<em
 					class="logout"
