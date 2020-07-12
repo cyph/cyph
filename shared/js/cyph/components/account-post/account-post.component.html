@@ -285,13 +285,23 @@
 												(comment?.author?.username ||
 													'')
 											"
-											>{{
+											><span>{{
 												(comment?.author?.name
 													| await) || ''
 													| slice
 														: 0
 														: accountService.maxNameLength
-											}}</a
+											}}</span
+											>&ngsp;<small>
+												<@{{
+													(comment?.author
+														?.realUsername
+														| await) ||
+														comment?.author
+															?.username ||
+														''
+												}}>
+											</small></a
 										>
 									</h3>
 
