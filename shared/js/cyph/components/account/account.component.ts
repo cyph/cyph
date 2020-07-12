@@ -235,6 +235,7 @@ export class AccountComponent extends BaseProvider
 					'audio',
 					'call',
 					'feed',
+					'inbox',
 					'mail',
 					'messages',
 					'notifications',
