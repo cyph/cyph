@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {BaseProvider} from '../../base-provider';
 import {AccountNotificationsService} from '../../services/account-notifications.service';
 import {StringsService} from '../../services/strings.service';
@@ -17,6 +17,9 @@ import {getDateTimeString, watchRelativeDateTimeString} from '../../util/time';
 export class AccountNotificationCenterComponent extends BaseProvider {
 	/** @see getDateTimeString  */
 	public readonly getDateTimeString = getDateTimeString;
+
+	/** If true, will condense notification UI into a single button. */
+	@Input() public menuButton: boolean = false;
 
 	/** @see trackByID */
 	public readonly trackByID = trackByID;

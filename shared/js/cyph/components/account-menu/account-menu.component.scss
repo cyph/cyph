@@ -11,9 +11,9 @@
 		margin-bottom: -6px;
 
 		cyph-logo {
-			max-width: calc(100% - 40px);
+			max-width: calc(100% - 48px);
 			position: relative;
-			left: 50%;
+			left: calc(50% - 4px);
 
 			@include transform(translateX(-50%));
 		}
@@ -62,13 +62,22 @@ cyph-logo {
 	}
 }
 
+cyph-account-notification-center,
 .context-menu {
 	position: absolute;
 	top: 8px;
-	right: 4px;
 	z-index: 10;
 }
 
+cyph-account-notification-center {
+	right: 4px;
+}
+
+.context-menu {
+	left: 2px;
+}
+
+cyph-account-notification-center ::ng-deep .menu-button,
 .context-menu,
 .avatar-list {
 	&,

@@ -911,6 +911,12 @@ export class StringsService extends BaseProvider {
 	public readonly notFound = `404 page not found`;
 
 	/** @see StringsService */
+	public readonly notificationRead = `Previously Read`;
+
+	/** @see StringsService */
+	public readonly notificationUnread = `Unread`;
+
+	/** @see StringsService */
 	public readonly noTransactions = `No transaction history`;
 
 	/** @see StringsService */

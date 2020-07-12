@@ -1,52 +1,111 @@
-<ng-container
-	*ngFor="
-		let notification of accountNotificationsService.notifications | await;
-		trackBy: trackByID
-	"
->
-	<div
-		class="card-holder"
-		(click)="accountNotificationsService.markAsRead(notification)"
+<ng-container *ngIf="!menuButton; else menuButtonUI">
+	<ng-container
+		*ngFor="
+			let notification of accountNotificationsService.notifications
+				| await;
+			trackBy: trackByID
+		"
 	>
 		<div
-			class="e-card"
-			[class.read]="notification.value.isRead"
-			[matTooltip]="getDateTimeString(notification.value.timestamp)"
+			class="card-holder"
+			(click)="accountNotificationsService.markAsRead(notification)"
 		>
-			<div class="e-card-header">
-				<div class="e-card-header-caption">
-					<div
-						class="e-card-header-title"
-						[routerLink]="
-							(notification.value.type === 2 ?
-								'/messages/user/' :
-								'/profile/') + notification.value.username
-						"
-						*ngIf="!!notification.value.username"
-					>
-						{{ notification.value.text }}
-					</div>
-					<div
-						class="e-card-header-title"
-						*ngIf="!notification.value.username"
-					>
-						{{ notification.value.text }}
-					</div>
+			<div
+				class="e-card"
+				[class.read]="notification.value.isRead"
+				[matTooltip]="getDateTimeString(notification.value.timestamp)"
+			>
+				<div class="e-card-header">
+					<div class="e-card-header-caption">
+						<div
+							class="e-card-header-title"
+							[routerLink]="
+								accountNotificationsService.getRoute(
+									notification
+								)
+							"
+							*ngIf="!!notification.value.username"
+						>
+							{{ notification.value.text }}
+						</div>
+						<div
+							class="e-card-header-title"
+							*ngIf="!notification.value.username"
+						>
+							{{ notification.value.text }}
+						</div>
 
-					<div class="e-card-sub-title">
-						{{
-							watchRelativeDateTimeString(
-								notification.value.timestamp
-							) | await
-						}}
+						<div class="e-card-sub-title">
+							{{
+								watchRelativeDateTimeString(
+									notification.value.timestamp
+								) | await
+							}}
+						</div>
 					</div>
 				</div>
 			</div>
+			<ng-container *ngIf="!notification.value.isRead">
+				<span
+					class="e-badge e-badge-primary e-badge-overlap e-badge-notification"
+				></span>
+			</ng-container>
 		</div>
-		<ng-container *ngIf="!notification.value.isRead">
-			<span
-				class="e-badge e-badge-primary e-badge-overlap e-badge-notification"
-			></span>
-		</ng-container>
-	</div>
+	</ng-container>
 </ng-container>
+
+<ng-template #menuButtonUI>
+	<button
+		mat-icon-button
+		cyphTranslate
+		aria-label="Notifications"
+		class="menu-button"
+		[class.has-badge]="
+			(accountNotificationsService.unreadCount | await) || 0 > 0
+		"
+		[matMenuTriggerFor]="notificationsMenu"
+	>
+		<mat-icon
+			[matBadge]="
+				(
+					(accountNotificationsService.unreadCount | await) || 0
+				).toString()
+			"
+			[matBadgeHidden]="
+				!((accountNotificationsService.unreadCount | await) || 0 > 0)
+			"
+		>
+			notifications
+		</mat-icon>
+	</button>
+</ng-template>
+
+<mat-menu
+	#notificationsMenu="matMenu"
+	(closed)="accountNotificationsService.markAllAsRead()"
+>
+	<button
+		mat-menu-item
+		[attr.aria-label]="
+			notification.value.isRead ?
+				stringsService.notificationRead :
+				stringsService.notificationUnread
+		"
+		[class.font-bold]="!notification.value.isRead"
+		[matTooltip]="
+			((watchRelativeDateTimeString(notification.value.timestamp)
+				| await) || '') +
+			' — ' +
+			notification.value.text
+		"
+		matTooltipPosition="right"
+		[routerLink]="accountNotificationsService.getRoute(notification)"
+		*ngFor="
+			let notification of accountNotificationsService.notifications
+				| await;
+			trackBy: trackByID
+		"
+	>
+		{{ notification.value.text }}
+	</button>
+</mat-menu>

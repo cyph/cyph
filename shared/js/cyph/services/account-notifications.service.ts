@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import memoize from 'lodash-es/memoize';
 import {map} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -16,6 +17,16 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountNotificationsService extends BaseProvider {
+	/** Gets route for notification. */
+	public readonly getRoute = memoize(
+		(notification: {id: string; value: IAccountNotification}) =>
+			(notification.value.type === NotificationTypes.Message ?
+				'/messages/user/' :
+				'/profile/') + notification.value.username,
+		(notification: {id: string; value: IAccountNotification}) =>
+			notification.id
+	);
+
 	/** Notification history. */
 	public readonly notifications = toBehaviorSubject(
 		this.accountDatabaseService
@@ -29,11 +40,19 @@ export class AccountNotificationsService extends BaseProvider {
 			)
 			/* TODO: Better / less arbitrary solution, such as virtual or infinite scrolling */
 			.pipe(
-				map(notifications =>
-					notifications
-						.sort(({id: a}, {id: b}) => (a > b ? -1 : 1))
-						.slice(0, 100)
-				)
+				map(notifications => {
+					notifications = notifications.sort(({id: a}, {id: b}) =>
+						a > b ? -1 : 1
+					);
+
+					return notifications.slice(
+						0,
+						Math.max(
+							notifications.findIndex(o => o.value.isRead),
+							10
+						)
+					);
+				})
 			),
 		[
 			{
@@ -63,6 +82,13 @@ export class AccountNotificationsService extends BaseProvider {
 		),
 		0
 	);
+
+	/** Mark all notifications as read. */
+	public async markAllAsRead () : Promise<void> {
+		await Promise.all(
+			this.notifications.value.map(async o => this.markAsRead(o))
+		);
+	}
 
 	/** Mark a notification as read. */
 	public async markAsRead (notification: {
