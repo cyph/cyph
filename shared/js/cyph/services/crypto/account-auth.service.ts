@@ -163,6 +163,22 @@ export class AccountAuthService extends BaseProvider {
 
 		await Promise.all<unknown>([
 			this.setItem(url, AccountLoginData, newLoginData, symmetricKey),
+			changeDatabasePassword ?
+				(async () =>
+					this.setItem(
+						`users/${currentUser.user.username}/loginDataAlt`,
+						AccountLoginData,
+						newLoginData,
+						await this.passwordHash(
+							currentUser.user.username,
+							await this.getItem(
+								`users/${currentUser.user.username}/altMasterKey`,
+								StringProto,
+								currentUser.loginData.symmetricKey
+							)
+						)
+					))() :
+				undefined,
 			!saveCredentials ?
 				this.removeSavedCredentials() :
 				(async () => {
