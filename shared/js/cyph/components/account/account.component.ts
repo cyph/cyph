@@ -225,12 +225,13 @@ export class AccountComponent extends BaseProvider
 	/** Indicates whether sidebar should be displayed. */
 	public readonly sidebarVisible: Observable<boolean> = observableAll([
 		this.envService.isMobile,
-		this.route
+		this.route,
+		this.routePath
 	]).pipe(
 		map(
-			([isMobile, route]) =>
+			([isMobile, route, routePath]) =>
 				!isMobile &&
-				[
+				([
 					'',
 					'audio',
 					'call',
@@ -240,11 +241,11 @@ export class AccountComponent extends BaseProvider
 					'messages',
 					'notifications',
 					'post',
-					'profile',
 					'transition',
 					'video',
 					'welcome'
-				].indexOf(route) > -1
+				].indexOf(route) > -1 ||
+					(['profile'].indexOf(route) > -1 && routePath.length > 1))
 		)
 	);
 
