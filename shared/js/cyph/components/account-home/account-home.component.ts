@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component} from '@angular/core';
+import {OnInit, ChangeDetectionStrategy, Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -20,8 +20,7 @@ import {StringsService} from '../../services/strings.service';
 	styleUrls: ['./account-home.component.scss'],
 	templateUrl: './account-home.component.html'
 })
-export class AccountHomeComponent extends BaseProvider
-	implements AfterViewInit {
+export class AccountHomeComponent extends BaseProvider implements OnInit {
 	/** Indicates whether speed dial is open. */
 	public readonly isSpeedDialOpen = new BehaviorSubject<boolean>(false);
 
@@ -33,28 +32,23 @@ export class AccountHomeComponent extends BaseProvider
 	);
 
 	/** @inheritDoc */
-	public ngAfterViewInit () : void {
+	public async ngOnInit () : Promise<void> {
 		this.accountService.autoUpdate.next(true);
 
 		if (this.accountDatabaseService.currentUser.value?.pseudoAccount) {
-			this.router.navigate(['messages']);
+			await this.router.navigate(['messages']);
 			return;
 		}
 
 		if (
-			!this.accountDatabaseService.currentUser.value ||
-			!this.accountDatabaseService.currentUser.value.masterKeyConfirmed
+			!this.accountDatabaseService.currentUser.value?.agseConfirmed ||
+			!this.accountDatabaseService.currentUser.value?.masterKeyConfirmed
 		) {
-			this.router.navigate(['welcome']);
+			await this.router.navigate(['welcome']);
 			return;
 		}
 
-		if (this.accountDatabaseService.currentUser.value.agseConfirmed) {
-			this.router.navigate(['profile']);
-			return;
-		}
-
-		this.accountService.transitionEnd();
+		await this.router.navigate(['profile']);
 	}
 
 	constructor (

@@ -21,7 +21,10 @@ export class AccountAfterRegisterComponent extends BaseProvider
 	public ngOnInit () : void {
 		super.ngOnInit();
 
-		if (this.accountDatabaseService.currentUser.value?.masterKeyConfirmed) {
+		if (
+			this.accountDatabaseService.currentUser.value?.agseConfirmed &&
+			this.accountDatabaseService.currentUser.value?.masterKeyConfirmed
+		) {
 			this.router.navigate(['']);
 			return;
 		}

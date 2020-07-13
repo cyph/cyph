@@ -38,21 +38,3 @@
 	<cyph-account-notification-center fxFlex></cyph-account-notification-center>
 </div>
 -->
-
-<div
-	*ngIf="
-		envService.isMobileOS &&
-		!(accountDatabaseService.currentUser | await)?.agseConfirmed
-	"
->
-	<a
-		mat-fab
-		cyphTranslate
-		[class.absolute-fab]="(envService.isMobile | await) === false"
-		[class.fixed-fab]="envService.isMobile | await"
-		matTooltip="New Burner Chat"
-		[href]="envService.cyphImUrl"
-	>
-		<mat-icon>chat</mat-icon>
-	</a>
-</div>
