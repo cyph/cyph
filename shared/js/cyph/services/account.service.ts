@@ -240,7 +240,7 @@ export class AccountService extends BaseProvider {
 
 	/** @see SalesService.upsellBanner */
 	public readonly upsellBanner = observableAll([
-		this.salesService.upsellBanner.pipe(skip(1)),
+		this.salesService.upsellBanner,
 		this.accountDatabaseService.currentUser
 	]).pipe(
 		map(
