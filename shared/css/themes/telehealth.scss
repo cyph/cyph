@@ -93,6 +93,24 @@ body.telehealth {
 		border: 0 !important;
 	}
 
+	cyph-account-menu > .menu.collapsed {
+		cyph-account-notification-center .menu-button mat-icon {
+			color: $cyph-foreground !important;
+		}
+
+		cyph-logo > div {
+			@include filter(
+				brightness(0) saturate(100%) invert(31%) sepia(3%)
+					saturate(3634%) hue-rotate(194deg) brightness(88%)
+					contrast(84%) !important
+			);
+		}
+
+		img.avatar {
+			margin-left: -4px !important;
+		}
+	}
+
 	cyph-chat-message-list > .background-image,
 	.chat-disconnect-message,
 	.abort-screen .image {
