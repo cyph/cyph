@@ -188,6 +188,7 @@ read -r -d '' modules <<- EOM
 	@types/lodash-es
 	@types/long
 	@types/markdown-it
+	@types/materialize-css
 	@types/msgpack-lite
 	@types/node
 	@types/openpgp
@@ -310,6 +311,7 @@ read -r -d '' modules <<- EOM
 	markdown-it-emoji
 	markdown-it-sup
 	mat-video@https://github.com/buu700/mat-video-tmp
+	materialize-css
 	math-expression-evaluator
 	mceliece
 	microlight-string
