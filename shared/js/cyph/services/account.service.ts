@@ -9,7 +9,6 @@ import {
 	Router,
 	UrlSegment
 } from '@angular/router';
-import * as Hammer from 'hammerjs';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {filter, map, skip, switchMap} from 'rxjs/operators';
 import {SecurityModels, User} from '../account';
@@ -847,49 +846,6 @@ export class AccountService extends BaseProvider {
 		if (this.envService.isWeb && !this.envService.isCordova) {
 			self.addEventListener('popstate', () => {
 				this.mobileMenuOpenInternal.next(false);
-			});
-		}
-
-		if (this.envService.isWeb && this.envService.isMobileOS) {
-			new Hammer(document.body).on('panleft', e => {
-				if (
-					Math.abs(e.deltaY) >= 4 ||
-					!this.mobileMenuOpenInternal.value ||
-					this.accountDatabaseService.currentUser.value ===
-						undefined ||
-					this.windowWatcherService.width.value >
-						this.configService.responsiveMaxWidths.sm
-				) {
-					return;
-				}
-
-				this.mobileMenuOpenInternal.next(false);
-
-				if (!this.envService.isCordova) {
-					history.back();
-				}
-			});
-
-			new Hammer(document.body, {
-				recognizers: [
-					[
-						Hammer.Pan,
-						{direction: Hammer.DIRECTION_RIGHT, threshold: 4}
-					]
-				]
-			}).on('pan', e => {
-				if (
-					this.accountDatabaseService.currentUser.value ===
-						undefined ||
-					this.windowWatcherService.width.value >
-						this.configService.responsiveMaxWidths.sm
-				) {
-					return;
-				}
-
-				if (e.center.x < 72 && e.deltaX > 8 && e.deltaY < 4) {
-					this.toggleMobileMenu(true);
-				}
 			});
 		}
 

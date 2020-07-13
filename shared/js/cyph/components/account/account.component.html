@@ -41,177 +41,163 @@
 			<mat-icon>more_vert</mat-icon>
 		</button>
 	</cyph-account-menu>
+	<cyph-sidenav
+		[opened]="accountService.mobileMenuOpen | await"
+		(openChange)="accountService.toggleMobileMenu($event)"
+		*ngIf="envService.isMobile | await"
+	>
+		<cyph-account-menu [sidenav]="true"></cyph-account-menu>
+	</cyph-sidenav>
 
 	<div class="content" fxFlex fxFlexFill fxLayout="column" fxLayout.xs="row">
-		<mat-sidenav-container
-			fxFlexFill
-			(backdropClick)="accountService.toggleMobileMenu(false)"
-		>
-			<mat-sidenav
-				#sidenav
-				ngClass.gt-sm="disabled"
-				position="start"
-				[opened]="accountService.mobileMenuOpen | await"
+		<div fxFlexFill fxLayout="column">
+			<ng-container *ngIf="(envService.isMobile | await) === false">
+				<ng-container *ngTemplateOutlet="banners"></ng-container>
+			</ng-container>
+
+			<div
+				fxLayout="row"
+				class="header slideInDown"
+				[class.animated]="(envService.isMobile | await) === false"
+				[class.fadeOutUp]="accountService.transition | await"
+				fxLayoutAlign="stretch center"
+				fxLayoutGap="8px"
+				*ngIf="
+					(accountService.header | await)?.header !== undefined &&
+					(accountService.isCallActive | await) === false &&
+					!(
+						(envService.isMobile | await) &&
+						(accountService.header | await)?.header?.desktop !==
+							undefined &&
+						(accountService.header | await)?.header?.mobile ===
+							undefined
+					) &&
+					!(
+						(envService.isMobile | await) === false &&
+						(accountService.header | await)?.header?.desktop ===
+							undefined &&
+						(accountService.header | await)?.header?.mobile !==
+							undefined
+					)
+				"
 			>
-				<cyph-account-menu [sidenav]="true"></cyph-account-menu>
-			</mat-sidenav>
+				<div></div>
 
-			<div fxFlexFill fxLayout="column">
-				<ng-container *ngIf="(envService.isMobile | await) === false">
-					<ng-container *ngTemplateOutlet="banners"></ng-container>
-				</ng-container>
-
-				<div
-					fxLayout="row"
-					class="header slideInDown"
-					[class.animated]="(envService.isMobile | await) === false"
-					[class.fadeOutUp]="accountService.transition | await"
-					fxLayoutAlign="stretch center"
-					fxLayoutGap="8px"
+				<button
+					mat-icon-button
+					cyphTranslate
+					class="logo-icon"
+					aria-label="Menu"
+					(click)="accountService.toggleMobileMenu()"
+					fxHide.gt-sm
 					*ngIf="
-						(accountService.header | await)?.header !== undefined &&
-						(accountService.isCallActive | await) === false &&
-						!(
-							(envService.isMobile | await) &&
-							(accountService.header | await)?.header?.desktop !==
-								undefined &&
-							(accountService.header | await)?.header?.mobile ===
-								undefined
-						) &&
-						!(
-							(envService.isMobile | await) === false &&
-							(accountService.header | await)?.header?.desktop ===
-								undefined &&
-							(accountService.header | await)?.header?.mobile !==
-								undefined
-						)
+						(accountDatabaseService.currentUser | await) !==
+							undefined &&
+						(accountDatabaseService.currentUser | await)
+							?.pseudoAccount === false
 					"
 				>
-					<div></div>
+					<mat-icon
+						[matBadge]="
+							(
+								((accountService.unreadMessages | await) || 0) +
+								((accountFilesService.incomingFiles | await)
+									?.length || 0)
+							).toString()
+						"
+						[matBadgeHidden]="
+							!(
+								((accountService.unreadMessages | await) || 0) +
+									((accountFilesService.incomingFiles | await)
+										?.length || 0) >
+								0
+							)
+						"
+						matBadgePosition="above after"
+					>
+						menu
+					</mat-icon>
+				</button>
 
-					<button
-						mat-icon-button
-						cyphTranslate
-						class="logo-icon"
-						aria-label="Menu"
-						(click)="accountService.toggleMobileMenu()"
-						fxHide.gt-sm
+				<div></div>
+				<div></div>
+				<div></div>
+
+				<div class="header-content" fxFlex fxLayout="row">
+					<ng-container
 						*ngIf="
-							(accountDatabaseService.currentUser | await) !==
-								undefined &&
-							(accountDatabaseService.currentUser | await)
-								?.pseudoAccount === false
+							(accountService.header | await)?.header as header;
+							else emptyHeader
 						"
 					>
-						<mat-icon
-							[matBadge]="
-								(
-									((accountService.unreadMessages | await) ||
-										0) +
-									((accountFilesService.incomingFiles | await)
-										?.length || 0)
-								).toString()
+						<a
+							fxFlex
+							class="profile-link"
+							[routerLink]="
+								'/profile/' + (header?.user?.username || '')
 							"
-							[matBadgeHidden]="
-								!(
-									((accountService.unreadMessages | await) ||
-										0) +
-										((
-											accountFilesService.incomingFiles
-											| await
-										)?.length || 0) >
-									0
-								)
-							"
-							matBadgePosition="above after"
+							*ngIf="!!header?.user; else stringHeader"
 						>
-							menu
-						</mat-icon>
-					</button>
-
-					<div></div>
-					<div></div>
-					<div></div>
-
-					<div class="header-content" fxFlex fxLayout="row">
-						<ng-container
-							*ngIf="
-								(accountService.header | await)
-									?.header as header;
-								else emptyHeader
-							"
-						>
-							<a
+							<div
 								fxFlex
-								class="profile-link"
-								[routerLink]="
-									'/profile/' + (header?.user?.username || '')
-								"
-								*ngIf="!!header?.user; else stringHeader"
+								fxLayout="row"
+								fxLayoutAlign="start center"
+								fxLayoutGap="16px"
 							>
-								<div
-									fxFlex
-									fxLayout="row"
-									fxLayoutAlign="start center"
-									fxLayoutGap="16px"
+								<img
+									cyphTranslate
+									class="avatar"
+									[ngClass]="
+										userPresence[
+											(header?.user?.status | await) || 0
+										]
+									"
+									alt="Profile Picture"
+									[src]="(header?.user?.avatar | await) || ''"
+								/>
+
+								<h1
+									*ngIf="
+										header?.user?.name | await as name;
+										else usernameHeader
+									"
 								>
-									<img
-										cyphTranslate
-										class="avatar"
-										[ngClass]="
-											userPresence[
-												(header?.user?.status
-													| await) || 0
-											]
-										"
-										alt="Profile Picture"
-										[src]="
-											(header?.user?.avatar | await) || ''
-										"
-									/>
-
-									<h1
-										*ngIf="
-											header?.user?.name | await as name;
-											else usernameHeader
-										"
-									>
-										{{ name }}
-									</h1>
-
-									<ng-template #usernameHeader>
-										<h1>
-											@{{
-												(header?.user?.realUsername
-													| await) ||
-													header?.user?.username ||
-													''
-											}}
-										</h1>
-									</ng-template>
-								</div>
-							</a>
-
-							<ng-template #stringHeader>
-								<h1 fxFlex>
-									{{
-										((envService.isMobile | await) ?
-											header?.mobile :
-											header?.desktop) || ''
-									}}
+									{{ name }}
 								</h1>
-							</ng-template>
-						</ng-container>
-						<ng-template #emptyHeader>
-							<h1 fxFlex></h1>
+
+								<ng-template #usernameHeader>
+									<h1>
+										@{{
+											(header?.user?.realUsername
+												| await) ||
+												header?.user?.username ||
+												''
+										}}
+									</h1>
+								</ng-template>
+							</div>
+						</a>
+
+						<ng-template #stringHeader>
+							<h1 fxFlex>
+								{{
+									((envService.isMobile | await) ?
+										header?.mobile :
+										header?.desktop) || ''
+								}}
+							</h1>
 						</ng-template>
-					</div>
+					</ng-container>
+					<ng-template #emptyHeader>
+						<h1 fxFlex></h1>
+					</ng-template>
+				</div>
 
-					<div></div>
-					<div></div>
-					<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
 
-					<!--
+				<!--
 					<button
 						mat-icon-button
 						cyphTranslate
@@ -224,109 +210,133 @@
 					</button>
 					-->
 
-					<button
-						mat-icon-button
-						fxHide.gt-sm
-						cyphTranslate
-						aria-label="Context Menu"
-						[matMenuTriggerFor]="contextMenu"
-					>
-						<mat-icon>more_vert</mat-icon>
-					</button>
+				<button
+					mat-icon-button
+					fxHide.gt-sm
+					cyphTranslate
+					aria-label="Context Menu"
+					[matMenuTriggerFor]="contextMenu"
+				>
+					<mat-icon>more_vert</mat-icon>
+				</button>
 
-					<div></div>
-				</div>
+				<div></div>
+			</div>
 
-				<ng-container *ngIf="envService.isMobile | await">
-					<ng-container *ngTemplateOutlet="banners"></ng-container>
-				</ng-container>
+			<ng-container *ngIf="envService.isMobile | await">
+				<ng-container *ngTemplateOutlet="banners"></ng-container>
+			</ng-container>
 
-				<ng-template #banners>
-					<cyph-in-app-purchase
-						#inAppPurchase
-						[userToken]="true"
-					></cyph-in-app-purchase>
+			<ng-template #banners>
+				<cyph-in-app-purchase
+					#inAppPurchase
+					[userToken]="true"
+				></cyph-in-app-purchase>
 
-					<h3
-						class="cyph-banner alert"
-						*ngIf="salesService.mobileAppBanner | await"
-					>
-						<div fxFlex fxLayout="row">
-							<div
-								fxLayoutAlign="center center"
-								class="visibility-hidden"
+				<h3
+					class="cyph-banner alert"
+					*ngIf="salesService.mobileAppBanner | await"
+				>
+					<div fxFlex fxLayout="row">
+						<div
+							fxLayoutAlign="center center"
+							class="visibility-hidden"
+						>
+							<button
+								mat-icon-button
+								cyphTranslate
+								matTooltip="Close"
+								class="close"
 							>
-								<button
-									mat-icon-button
+								<mat-icon>close</mat-icon>
+							</button>
+						</div>
+						<div fxFlex fxLayoutAlign="center center">
+							<div>
+								<span cyphTranslate>
+									For a better experience, we recommend that
+									you
+								</span>
+								&ngsp;
+								<a
 									cyphTranslate
-									matTooltip="Close"
-									class="close"
-								>
-									<mat-icon>close</mat-icon>
-								</button>
-							</div>
-							<div fxFlex fxLayoutAlign="center center">
-								<div>
-									<span cyphTranslate>
-										For a better experience, we recommend
-										that you
-									</span>
-									&ngsp;
-									<a
-										cyphTranslate
-										(click)="salesService.openMobileApp()"
-										>install the mobile app</a
-									>.
-								</div>
-							</div>
-							<div fxLayoutAlign="center center">
-								<button
-									mat-icon-button
-									cyphTranslate
-									matTooltip="Close"
-									class="close"
-									(click)="
-										salesService.dismissMobileAppBanner()
-									"
-								>
-									<mat-icon>close</mat-icon>
-								</button>
+									(click)="salesService.openMobileApp()"
+									>install the mobile app</a
+								>.
 							</div>
 						</div>
-					</h3>
-
-					<h3
-						class="cyph-banner alert"
-						*ngIf="accountService.upsellBanner | await"
-					>
-						<div fxFlex fxLayout="row">
-							<div
-								fxLayoutAlign="center center"
-								class="visibility-hidden"
+						<div fxLayoutAlign="center center">
+							<button
+								mat-icon-button
+								cyphTranslate
+								matTooltip="Close"
+								class="close"
+								(click)="salesService.dismissMobileAppBanner()"
 							>
-								<button
-									mat-icon-button
+								<mat-icon>close</mat-icon>
+							</button>
+						</div>
+					</div>
+				</h3>
+
+				<h3
+					class="cyph-banner alert"
+					*ngIf="accountService.upsellBanner | await"
+				>
+					<div fxFlex fxLayout="row">
+						<div
+							fxLayoutAlign="center center"
+							class="visibility-hidden"
+						>
+							<button
+								mat-icon-button
+								cyphTranslate
+								matTooltip="Close"
+								class="close"
+							>
+								<mat-icon>close</mat-icon>
+							</button>
+						</div>
+						<div fxFlex fxLayoutAlign="center center">
+							<div
+								*ngIf="
+									!(
+										(
+											accountDatabaseService.currentUser
+											| await
+										)?.user?.extra() | await
+									)?.pgp?.keybaseUsername;
+									else keybaseBannerMessage
+								"
+							>
+								<span cyphTranslate>
+									For a ton of extra features,
+								</span>
+								&ngsp;
+								<a
 									cyphTranslate
-									matTooltip="Close"
-									class="close"
-								>
-									<mat-icon>close</mat-icon>
-								</button>
-							</div>
-							<div fxFlex fxLayoutAlign="center center">
-								<div
-									*ngIf="
-										!(
-											(
-												accountDatabaseService.currentUser
-												| await
-											)?.user?.extra() | await
-										)?.pgp?.keybaseUsername;
-										else keybaseBannerMessage
+									(click)="
+										salesService.openPricing(
+											[
+												envService.homeUrl,
+												'pricing?current=',
+												accountSettingsService.getPlanString(),
+												'&userToken=',
+												accountService.getUserToken(
+													accountService.interstitial
+												)
+											],
+											undefined,
+											inAppPurchase
+										)
 									"
-								>
+									>upgrade to premium now</a
+								>!
+							</div>
+							<ng-template #keybaseBannerMessage>
+								<div>
 									<span cyphTranslate>
-										For a ton of extra features,
+										Special offer for Keybase users:
 									</span>
 									&ngsp;
 									<a
@@ -335,141 +345,111 @@
 											salesService.openPricing(
 												[
 													envService.homeUrl,
-													'pricing?current=',
-													accountSettingsService.getPlanString(),
-													'&userToken=',
+													'checkout/#',
+													'flash-sale/lifetime-platinum',
+													'/userToken=',
 													accountService.getUserToken(
 														accountService.interstitial
 													)
 												],
 												undefined,
-												inAppPurchase
+												undefined
 											)
 										"
-										>upgrade to premium now</a
-									>!
+										>$100 Lifetime Platinum upgrade</a
+									>! &ngsp;
+									<span cyphTranslate>
+										(Usually $48/mo.) Adds 1 TB storage, BTC
+										wallet, and more.
+									</span>
 								</div>
-								<ng-template #keybaseBannerMessage>
-									<div>
-										<span cyphTranslate>
-											Special offer for Keybase users:
-										</span>
-										&ngsp;
-										<a
-											cyphTranslate
-											(click)="
-												salesService.openPricing(
-													[
-														envService.homeUrl,
-														'checkout/#',
-														'flash-sale/lifetime-platinum',
-														'/userToken=',
-														accountService.getUserToken(
-															accountService.interstitial
-														)
-													],
-													undefined,
-													undefined
-												)
-											"
-											>$100 Lifetime Platinum upgrade</a
-										>! &ngsp;
-										<span cyphTranslate>
-											(Usually $48/mo.) Adds 1 TB storage,
-											BTC wallet, and more.
-										</span>
-									</div>
-								</ng-template>
-							</div>
-							<div fxLayoutAlign="center center">
-								<button
-									mat-icon-button
-									cyphTranslate
-									matTooltip="Close"
-									class="close"
-									(click)="salesService.dismissUpsellBanner()"
-								>
-									<mat-icon>close</mat-icon>
-								</button>
-							</div>
+							</ng-template>
 						</div>
-					</h3>
+						<div fxLayoutAlign="center center">
+							<button
+								mat-icon-button
+								cyphTranslate
+								matTooltip="Close"
+								class="close"
+								(click)="salesService.dismissUpsellBanner()"
+							>
+								<mat-icon>close</mat-icon>
+							</button>
+						</div>
+					</div>
+				</h3>
 
-					<h3
-						class="cyph-banner alert"
-						*ngIf="
-							(accountService.accountGoodStanding | await) ===
-								false;
-							else unverifiedAccountBanner
-						"
-					>
-						<span cyphTranslate>
-							We were unable to process your payment.
-						</span>
-						&ngsp;
-						<a
-							cyphTranslate
-							(click)="
-								salesService.openPricing(
-									[
-										envService.homeUrl,
-										'checkout/#',
-										accountSettingsService.getPlanCheckoutPath(),
-										'/userToken=',
-										accountService.getUserToken(
-											accountService.interstitial
-										)
-									],
-									undefined,
-									inAppPurchase
-								)
-							"
-							>Update your payment details</a
-						>
-						&ngsp;
-						<span cyphTranslate>
-							or downgrade to a free plan
-						</span>
-						&ngsp;
-						<a
-							cyphTranslate
-							(click)="accountService.downgradeAccount()"
-							>here</a
-						>.
-					</h3>
-				</ng-template>
-
-				<ng-template #unverifiedAccountBanner>
-					<h3
-						class="cyph-banner alert"
-						cyphTranslate
-						*ngIf="
-							(accountDatabaseService.currentUser | await)
-								?.agseConfirmed === false
-						"
-					>
-						Your account is in queue to be verified and will be
-						fully activated soon.
-					</h3>
-				</ng-template>
-
-				<div
-					fxFlex
-					class="content-wrapper animated"
-					[class.fadeOutUp]="accountService.transition | await"
-					[class.full-height]="fullHeight | await"
-					[class.padding]="(fullWidth | await) === false"
-					[class.ui-disabled]="
-						(accountService.accountGoodStanding | await) === false
+				<h3
+					class="cyph-banner alert"
+					*ngIf="
+						(accountService.accountGoodStanding | await) === false;
+						else unverifiedAccountBanner
 					"
-					ngClass.lt-md="small"
-					ngClass.md="medium"
-					ngClass.gt-md="large"
 				>
-					<router-outlet></router-outlet>
-				</div>
+					<span cyphTranslate>
+						We were unable to process your payment.
+					</span>
+					&ngsp;
+					<a
+						cyphTranslate
+						(click)="
+							salesService.openPricing(
+								[
+									envService.homeUrl,
+									'checkout/#',
+									accountSettingsService.getPlanCheckoutPath(),
+									'/userToken=',
+									accountService.getUserToken(
+										accountService.interstitial
+									)
+								],
+								undefined,
+								inAppPurchase
+							)
+						"
+						>Update your payment details</a
+					>
+					&ngsp;
+					<span cyphTranslate>
+						or downgrade to a free plan
+					</span>
+					&ngsp;
+					<a cyphTranslate (click)="accountService.downgradeAccount()"
+						>here</a
+					>.
+				</h3>
+			</ng-template>
+
+			<ng-template #unverifiedAccountBanner>
+				<h3
+					class="cyph-banner alert"
+					cyphTranslate
+					*ngIf="
+						(accountDatabaseService.currentUser | await)
+							?.agseConfirmed === false
+					"
+				>
+					Your account is in queue to be verified and will be fully
+					activated soon.
+				</h3>
+			</ng-template>
+
+			<div
+				fxFlex
+				class="content-wrapper animated"
+				[class.fadeOutUp]="accountService.transition | await"
+				[class.full-height]="fullHeight | await"
+				[class.padding]="(fullWidth | await) === false"
+				[class.ui-disabled]="
+					(accountService.accountGoodStanding | await) === false
+				"
+				ngClass.lt-md="small"
+				ngClass.md="medium"
+				ngClass.gt-md="large"
+			>
+				<router-outlet></router-outlet>
 			</div>
-		</mat-sidenav-container>
+		</div>
 	</div>
 
 	<div

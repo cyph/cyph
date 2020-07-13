@@ -711,11 +711,11 @@ $default-white: map-get($mat-grey, 100);
 	@include mat-expansion-panel-theme($theme);
 	@include mat-option-theme($theme);
 	@include mat-select-theme($theme);
-	@include mat-sidenav-theme($theme);
 	@include mat-tabs-theme($theme);
 
 	.mat-select-content,
-	.mat-select-panel-done-animating {
+	.mat-select-panel-done-animating,
+	.sidenav {
 		background-color: mat-color(map-get($theme, background), card);
 	}
 

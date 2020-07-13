@@ -1,1 +1,7 @@
+@import '~materialize-css';
 @import '../../../../css/mixins';
+
+/* Workaround for edge case Materialize bug */
+.sidenav[style*='translateX(-300px)'] {
+	@include transform(translateX(-105%) !important);
+}

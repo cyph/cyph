@@ -89,3 +89,26 @@ cyph-chat-message-box smd-fab-speed-dial:not(.smd-opened) smd-fab-actions {
 		}
 	}
 }
+
+/* https://github.com/Dogfalo/materialize/blob/v1-dev/sass/components/_sidenav.scss */
+
+.drag-target {
+	height: 100%;
+	width: 10px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 998;
+}
+
+.sidenav-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	opacity: 0;
+	height: 120vh;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 997;
+	display: none;
+}

@@ -55,6 +55,7 @@ import {ScheduleAllModule} from '@syncfusion/ej2-angular-schedule';
 import {SmdFabSpeedDialModule} from 'angular-speed-dial';
 import {AngularDraggableModule} from 'angular2-draggable';
 import {FullCalendarModule} from 'ng-fullcalendar';
+import {SidenavComponent} from '../components/sidenav';
 import {SimpleEmojiPickerComponent} from '../components/simple-emoji-picker';
 import {SocialShareComponent} from '../components/social-share';
 import {VideoComponent} from '../components/video';
@@ -71,6 +72,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 @NgModule({
 	declarations: [
 		InitDirective,
+		SidenavComponent,
 		SimpleEmojiPickerComponent,
 		SocialShareComponent,
 		VideoComponent
@@ -105,6 +107,7 @@ import {CyphSharedModule} from './cyph-shared.module';
 		RouterModule,
 		ScheduleAllModule,
 		ShareButtonsModule,
+		SidenavComponent,
 		SimpleEmojiPickerComponent,
 		SmdFabSpeedDialModule,
 		SocialShareComponent,

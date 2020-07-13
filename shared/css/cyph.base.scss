@@ -73,38 +73,6 @@ body.disable-drop-shadow {
 	white-space: normal !important;
 }
 
-/* Temporary workaround for Angular Material bug */
-mat-sidenav.disabled {
-	@include transform(none !important);
-}
-
-mat-sidenav {
-	min-width: 250px;
-
-	/* Temporary workaround for Angular Material bug */
-	visibility: hidden;
-
-	.mat-button {
-		mat-icon,
-		img {
-			margin-right: 5px;
-		}
-	}
-}
-
-mat-sidenav-container {
-	background-color: transparent !important;
-	color: inherit !important;
-}
-
-.mat-sidenav-content {
-	overflow-x: hidden !important;
-}
-
-.mat-drawer-backdrop {
-	background-color: rgba(33, 33, 33, 0.48) !important;
-}
-
 mat-tab-header {
 	max-width: 100%;
 }
