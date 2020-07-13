@@ -59,7 +59,7 @@ export class AccountCallWaitingComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public async ngOnChanges (changes: SimpleChanges) : Promise<void> {
-		if (!('appointment' in changes)) {
+		if (!changes.appointment) {
 			return;
 		}
 

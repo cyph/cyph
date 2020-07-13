@@ -146,7 +146,7 @@ export class AccountContactsComponent extends BaseProvider
 
 	/** @inheritDoc */
 	public ngOnChanges (changes: SimpleChanges) : void {
-		if (!('contactList' in changes)) {
+		if (!changes.contactList) {
 			return;
 		}
 
