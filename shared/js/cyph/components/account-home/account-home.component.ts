@@ -33,6 +33,8 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 
 	/** @inheritDoc */
 	public async ngOnInit () : Promise<void> {
+		super.ngOnInit();
+
 		this.accountService.autoUpdate.next(true);
 
 		if (this.accountDatabaseService.currentUser.value?.pseudoAccount) {
