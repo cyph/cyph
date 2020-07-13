@@ -42,7 +42,7 @@
 		</button>
 	</cyph-account-menu>
 	<cyph-sidenav
-		[opened]="accountService.mobileMenuOpen | await"
+		[opened]="(accountService.mobileMenuOpen | await) === true"
 		(openChange)="accountService.toggleMobileMenu($event)"
 		*ngIf="envService.isMobile | await"
 	>
