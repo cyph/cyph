@@ -103,40 +103,45 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 
 	/** @ignore */
 	private async postLogin () : Promise<void> {
-		if (this.savedMasterKey.value) {
-			this.potassiumService.clearMemory(this.savedMasterKey.value);
+		try {
+			if (!this.accountDatabaseService.currentUser.value) {
+				return;
+			}
+
+			await this.router.navigate(
+				this.accountDatabaseService.currentUser.value
+					.masterKeyConfirmed ||
+					this.accountDatabaseService.currentUser.value
+						.pseudoAccount ?
+					this.activatedRoute.snapshot.url.length > 0 ?
+						[
+							'',
+							...(this.activatedRoute.snapshot.url.slice(-1)[0]
+								?.path === 'login' ?
+								/* Trim unwanted /login from the end */
+								this.activatedRoute.snapshot.url.slice(0, -1) :
+								this.activatedRoute.snapshot.url
+							).map(o => o.path)
+						] :
+						[''] :
+					['welcome']
+			);
+
+			if (this.envService.isCordova && this.envService.isAndroid) {
+				(<any> self).androidBackbuttonReady = true;
+			}
 		}
+		finally {
+			if (this.savedMasterKey.value) {
+				this.potassiumService.clearMemory(this.savedMasterKey.value);
+			}
 
-		this.masterKey.next('');
-		this.pin.next('');
-		this.pinIsCustom.next(true);
-		this.savedMasterKey.next(undefined);
-		this.savedUsername.next(undefined);
-		this.username.next('');
-
-		if (!this.accountDatabaseService.currentUser.value) {
-			return;
-		}
-
-		await this.router.navigate(
-			this.accountDatabaseService.currentUser.value.masterKeyConfirmed ||
-				this.accountDatabaseService.currentUser.value.pseudoAccount ?
-				this.activatedRoute.snapshot.url.length > 0 ?
-					[
-						'',
-						...(this.activatedRoute.snapshot.url.slice(-1)[0]
-							?.path === 'login' ?
-							/* Trim unwanted /login from the end */
-							this.activatedRoute.snapshot.url.slice(0, -1) :
-							this.activatedRoute.snapshot.url
-						).map(o => o.path)
-					] :
-					[''] :
-				['welcome']
-		);
-
-		if (this.envService.isCordova && this.envService.isAndroid) {
-			(<any> self).androidBackbuttonReady = true;
+			this.masterKey.next('');
+			this.pin.next('');
+			this.pinIsCustom.next(true);
+			this.savedMasterKey.next(undefined);
+			this.savedUsername.next(undefined);
+			this.username.next('');
 		}
 	}
 
@@ -148,8 +153,13 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			return this.postLogin();
 		}
 
-		this.checking.next(true);
 		this.accountService.resolveUiReady();
+
+		if (this.username.value) {
+			return;
+		}
+
+		this.checking.next(true);
 
 		try {
 			const [
@@ -176,6 +186,7 @@ export class AccountLoginComponent extends BaseProvider implements OnInit {
 			this.pinIsCustom.next(pinIsCustom);
 			this.savedMasterKey.next(savedMasterKey);
 			this.savedUsername.next(savedUsername);
+			this.username.next(savedUsername || '');
 
 			if (
 				!(savedMasterKey && savedUsername) ||

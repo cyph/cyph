@@ -616,7 +616,7 @@
 			<input
 				matInput
 				cyphTranslate
-				[ngModel]="savedUsername | await"
+				[ngModel]="username | await"
 				(ngModelChange)="username.next($event)"
 				[textMask]="usernameMask"
 				name="cyphUsername"
