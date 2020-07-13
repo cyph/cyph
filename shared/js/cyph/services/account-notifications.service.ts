@@ -19,6 +19,21 @@ import {StringsService} from './strings.service';
  */
 @Injectable()
 export class AccountNotificationsService extends BaseProvider {
+	/** @ignore */
+	private readonly defaultNotifications = [
+		{
+			id: '',
+			value: {
+				isRead: true,
+				text: this.stringsService.noNotifications,
+				textDetail: '',
+				/* eslint-disable-next-line @typescript-eslint/tslint/config */
+				timestamp: Date.now(),
+				type: NotificationTypes.Yo
+			}
+		}
+	];
+
 	/** Gets route for notification. */
 	public readonly getRoute = memoize(
 		(notification: {id: string; value: IAccountNotification}) => {
@@ -61,6 +76,10 @@ export class AccountNotificationsService extends BaseProvider {
 			/* TODO: Better / less arbitrary solution, such as virtual or infinite scrolling */
 			.pipe(
 				map(notifications => {
+					if (notifications.length < 1) {
+						return this.defaultNotifications;
+					}
+
 					notifications = notifications.sort(({id: a}, {id: b}) =>
 						a > b ? -1 : 1
 					);
@@ -74,19 +93,7 @@ export class AccountNotificationsService extends BaseProvider {
 					);
 				})
 			),
-		[
-			{
-				id: '',
-				value: {
-					isRead: true,
-					text: this.stringsService.noNotifications,
-					textDetail: '',
-					/* eslint-disable-next-line @typescript-eslint/tslint/config */
-					timestamp: Date.now(),
-					type: NotificationTypes.Yo
-				}
-			}
-		]
+		this.defaultNotifications
 	);
 
 	/**
