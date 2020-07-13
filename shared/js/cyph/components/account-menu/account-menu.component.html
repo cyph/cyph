@@ -237,7 +237,10 @@
 					mat-list-item
 					cyphTranslate
 					class="appointment-scheduler"
-					[class.ui-disabled]="!currentUser?.masterKeyConfirmed"
+					[class.ui-disabled]="
+						!currentUser?.agseConfirmed ||
+						!currentUser?.masterKeyConfirmed
+					"
 					matTooltip="Meetings"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
