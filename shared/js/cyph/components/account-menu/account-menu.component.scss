@@ -30,6 +30,13 @@
 		width: 28px;
 		margin-left: -2px;
 	}
+
+	cyph-account-notification-center {
+		@include transform(scale(0.75));
+
+		right: -4px;
+		top: 0px;
+	}
 }
 
 a.emphasis {
