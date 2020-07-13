@@ -19,6 +19,10 @@
 	}
 }
 
-.menu-button.has-badge {
-	margin-right: 4px;
+.menu-button {
+	@include transition(transform 0.5s ease-out);
+
+	&.has-badge {
+		@include transform(translateX(-4px));
+	}
 }
