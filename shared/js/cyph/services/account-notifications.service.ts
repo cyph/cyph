@@ -20,7 +20,10 @@ import {StringsService} from './strings.service';
 @Injectable()
 export class AccountNotificationsService extends BaseProvider {
 	/** @ignore */
-	private readonly defaultNotifications = [
+	private readonly defaultNotifications: {
+		id: string;
+		value: IAccountNotification;
+	}[] = [
 		{
 			id: '',
 			value: {
