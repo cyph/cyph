@@ -12,7 +12,7 @@
 	],
 	"attr-name-ignore-regex": "^(\\*|\\[).*",
 	"attr-name-style": false,
-	"attr-no-dup": true,
+	"attr-no-dup": false,
 	"attr-no-unsafe-char": false,
 	"attr-quote-style": "double",
 	"attr-req-value": false,
