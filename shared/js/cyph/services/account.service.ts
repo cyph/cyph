@@ -1209,6 +1209,8 @@ export class AccountService extends BaseProvider {
 					lastSection = section;
 					this.transitionInternal.next(true);
 				}
+
+				this.toggleMobileMenu(false);
 			})
 		);
 
