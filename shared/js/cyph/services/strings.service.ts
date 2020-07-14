@@ -731,6 +731,12 @@ export class StringsService extends BaseProvider {
 	public readonly meetingHostTelehealth = `Host an Appointment`;
 
 	/** @see StringsService */
+	public readonly meetingHostTitle = `Host Meeting`;
+
+	/** @see StringsService */
+	public readonly meetingHostTitleTelehealth = `Host Appointment`;
+
+	/** @see StringsService */
 	public readonly meetingSchedule = `Schedule a Meeting`;
 
 	/** @see StringsService */

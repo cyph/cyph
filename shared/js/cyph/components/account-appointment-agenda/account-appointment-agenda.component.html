@@ -12,7 +12,7 @@
 		>
 			{{
 				(accountSettingsService.telehealth | await) ?
-					stringsService.meetingScheduleTelehealth :
+					stringsService.meetingScheduleTitleTelehealth :
 					stringsService.meetingSchedule
 			}}
 		</button>
@@ -29,7 +29,7 @@
 		>
 			{{
 				(accountSettingsService.telehealth | await) ?
-					stringsService.meetingHostTelehealth :
+					stringsService.meetingHostTitleTelehealth :
 					stringsService.meetingHost
 			}}
 		</button>
