@@ -1000,12 +1000,11 @@ export class AccountService extends BaseProvider {
 				const route = routePath[0] || '';
 
 				const specialCases: Record<string, string> = {
-					'': this.stringsService.homeHeader,
-					'ehr': 'EHR',
-					'feed': 'Social Feed',
-					'inbox': 'Anonymous Inbox',
-					'pgp': 'PGP',
-					'schedule': telehealth ? 'Appointments' : 'Meetings'
+					ehr: 'EHR',
+					feed: 'Social Feed',
+					inbox: 'Anonymous Inbox',
+					pgp: 'PGP',
+					schedule: telehealth ? 'Appointments' : 'Meetings'
 				};
 
 				/* User headers on desktop are redundant with sidebar */
@@ -1031,6 +1030,8 @@ export class AccountService extends BaseProvider {
 
 				/* No header */
 				if (
+					route.length < 1 ||
+					(route.length === 1 && route[0] === '') ||
 					['register'].indexOf(route) > -1 ||
 					([
 						'account-burner',

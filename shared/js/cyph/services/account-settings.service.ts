@@ -8,6 +8,7 @@ import {IFile} from '../ifile';
 import {CyphPlanConfig} from '../plan-config';
 import {BinaryProto, CyphPlans, InvertedBooleanProto} from '../proto';
 import {cacheObservable} from '../util/flatten-observable';
+import {resolvedResolvable} from '../util/wait';
 import {ConfigService} from './config.service';
 import {AccountDatabaseService} from './crypto/account-database.service';
 import {EnvService} from './env.service';
@@ -43,6 +44,15 @@ export class AccountSettingsService extends BaseProvider {
 		label: string;
 		visible: Observable<boolean>;
 	}[];
+
+	/** Home page for user's plan (only set on initial page load). */
+	public readonly homePage = resolvedResolvable(
+		(async () =>
+			this.configService.planConfig[
+				(await (await this.accountDatabaseService.getCurrentUser()).user.cyphPlan.getValue())
+					.plan
+			].homePage)()
+	);
 
 	/** User's plan / premium status. */
 	public readonly plan = cacheObservable(

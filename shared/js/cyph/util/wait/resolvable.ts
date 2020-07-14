@@ -1,8 +1,11 @@
 import {IResolvable} from '../../iresolvable';
+import {MaybePromise} from '../../maybe-promise-type';
 
 /** Returns a promise and its resolver function. */
 /* eslint-disable-next-line @typescript-eslint/tslint/config, @typescript-eslint/promise-function-async */
-export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
+export const resolvable = <T = void>(
+	value?: MaybePromise<T>
+) : IResolvable<T> => {
 	let resolve: ((t?: T | PromiseLike<T>) => void) | undefined;
 	let reject: ((err?: any) => void) | undefined;
 
@@ -98,7 +101,9 @@ export const resolvable = <T = void>(value?: T) : IResolvable<T> => {
 
 /** Returns an already resolved resolvable. */
 /* eslint-disable-next-line @typescript-eslint/tslint/config, @typescript-eslint/promise-function-async */
-export const resolvedResolvable = <T = void>(value?: T) : IResolvable<T> => {
+export const resolvedResolvable = <T = void>(
+	value?: MaybePromise<T>
+) : IResolvable<T> => {
 	const o = resolvable<T>(value);
 	o.resolve();
 	return o;

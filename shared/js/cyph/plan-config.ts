@@ -6,6 +6,7 @@ interface IPlanTypeConfig {
 	enableScheduler: boolean;
 	enableScreenSharing: boolean;
 	enableWallets: boolean;
+	homePage: string[];
 	initialInvites?: number;
 	innerCircleLimit?: number;
 	planType: CyphPlanTypes;
@@ -23,6 +24,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableScheduler: true,
 		enableScreenSharing: false,
 		enableWallets: false,
+		homePage: ['schedule'],
 		planType: CyphPlanTypes.Business,
 		rank: 2,
 		storageCapGB: 100,
@@ -36,6 +38,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableScheduler: true,
 		enableScreenSharing: false,
 		enableWallets: true,
+		homePage: ['profile'],
 		planType: CyphPlanTypes.FoundersAndFriends,
 		rank: 4,
 		storageCapGB: 1024,
@@ -49,6 +52,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableScheduler: false,
 		enableScreenSharing: false,
 		enableWallets: false,
+		homePage: ['profile'],
 		innerCircleLimit: 5,
 		planType: CyphPlanTypes.Free,
 		rank: 0,
@@ -63,6 +67,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableScheduler: false,
 		enableScreenSharing: false,
 		enableWallets: true,
+		homePage: ['profile'],
 		planType: CyphPlanTypes.Platinum,
 		rank: 3,
 		storageCapGB: 1024,
@@ -76,6 +81,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableScheduler: false,
 		enableScreenSharing: false,
 		enableWallets: false,
+		homePage: ['profile'],
 		planType: CyphPlanTypes.Premium,
 		rank: 2,
 		storageCapGB: 100,
@@ -89,6 +95,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableScheduler: false,
 		enableScreenSharing: false,
 		enableWallets: false,
+		homePage: ['profile'],
 		innerCircleLimit: 15,
 		planType: CyphPlanTypes.Supporter,
 		rank: 1,
@@ -103,6 +110,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		enableScheduler: true,
 		enableScreenSharing: false,
 		enableWallets: false,
+		homePage: ['schedule'],
 		planType: CyphPlanTypes.Telehealth,
 		rank: 2,
 		storageCapGB: 100,
