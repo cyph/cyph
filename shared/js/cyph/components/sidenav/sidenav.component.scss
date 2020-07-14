@@ -5,3 +5,7 @@
 .sidenav[style*='translateX(-300px)'] {
 	@include transform(translateX(-105%) !important);
 }
+
+.sidenav {
+	height: 100%;
+}
