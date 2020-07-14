@@ -13,9 +13,11 @@ import {Internationalization} from '@syncfusion/ej2-base';
 import memoize from 'lodash-es/memoize';
 import {BaseProvider} from '../../base-provider';
 import {AccountAppointmentsService} from '../../services/account-appointments.service';
+import {AccountSettingsService} from '../../services/account-settings.service';
 import {AccountService} from '../../services/account.service';
 import {AccountDatabaseService} from '../../services/crypto/account-database.service';
 import {EnvService} from '../../services/env.service';
+import {StringsService} from '../../services/strings.service';
 import {WindowWatcherService} from '../../services/window-watcher.service';
 import {getDateTimeString} from '../../util/time';
 import {openWindow} from '../../util/window';
@@ -77,8 +79,14 @@ export class AccountAppointmentAgendaComponent extends BaseProvider
 		/** @see AccountDatabaseService */
 		public readonly accountDatabaseService: AccountDatabaseService,
 
+		/** @see AccountSettingsService */
+		public readonly accountSettingsService: AccountSettingsService,
+
 		/** @see EnvService */
 		public readonly envService: EnvService,
+
+		/** @see StringsService */
+		public readonly stringsService: StringsService,
 
 		/** @see WindowWatcherService */
 		public readonly windowWatcherService: WindowWatcherService

@@ -990,11 +990,12 @@ export class AccountService extends BaseProvider {
 
 		this.header = observableAll([
 			this.headerInternal,
+			this.accountSettingsService.telehealth,
 			this.envService.isMobile,
 			this.transitionInternal
 		]).pipe(
 			/* eslint-disable-next-line complexity */
-			map(([{contextMenuActions, header}, isMobile, _]) => {
+			map(([{contextMenuActions, header}, telehealth, isMobile, _]) => {
 				const routePath = this.routePath;
 				const route = routePath[0] || '';
 
@@ -1004,7 +1005,7 @@ export class AccountService extends BaseProvider {
 					'feed': 'Social Feed',
 					'inbox': 'Anonymous Inbox',
 					'pgp': 'PGP',
-					'schedule': 'Meetings'
+					'schedule': telehealth ? 'Appointments' : 'Meetings'
 				};
 
 				/* User headers on desktop are redundant with sidebar */

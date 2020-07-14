@@ -434,7 +434,7 @@ export class StringsService extends BaseProvider {
 	public readonly featureFlagsPGP = `PGP`;
 
 	/** @see StringsService */
-	public readonly featureFlagsScheduler = `Meetings`;
+	public readonly featureFlagsScheduler = `Meetings/Appointments`;
 
 	/** @see StringsService */
 	public readonly featureFlagsSocial = `Social`;
@@ -723,6 +723,30 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly me = `me`;
+
+	/** @see StringsService */
+	public readonly meetingHost = `Host a Meeting`;
+
+	/** @see StringsService */
+	public readonly meetingHostTelehealth = `Host an Appointment`;
+
+	/** @see StringsService */
+	public readonly meetingSchedule = `Schedule a Meeting`;
+
+	/** @see StringsService */
+	public readonly meetingScheduleTelehealth = `Schedule an Appointment`;
+
+	/** @see StringsService */
+	public readonly meetingScheduleTitle = `Schedule Meeting`;
+
+	/** @see StringsService */
+	public readonly meetingScheduleTitleTelehealth = `Schedule Appointment`;
+
+	/** @see StringsService */
+	public readonly meetings = `Meetings`;
+
+	/** @see StringsService */
+	public readonly meetingsTelehealth = `Appointments`;
 
 	/** @see StringsService */
 	public readonly message = `message`;
@@ -1239,9 +1263,6 @@ export class StringsService extends BaseProvider {
 
 	/** @see StringsService */
 	public readonly reject = `reject`;
-
-	/** @see StringsService */
-	public readonly requestAppointment = `Schedule Meeting`;
 
 	/** @see StringsService */
 	public readonly requestFollowUpAppointment = `Request Follow-Up Appointment`;

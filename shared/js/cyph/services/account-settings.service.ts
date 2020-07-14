@@ -97,6 +97,13 @@ export class AccountSettingsService extends BaseProvider {
 				)
 	};
 
+	/** Indicates whether to enable telehealth mode. */
+	public readonly telehealth = this.envService.isTelehealth ?
+		of(true) :
+		this.plan.pipe(
+			map(plan => this.configService.planConfig[plan].telehealth)
+		);
+
 	/** @ignore */
 	private getFeatureFlag (featureFlag: string) : IAsyncValue<boolean> {
 		return this.accountDatabaseService.getAsyncValue(

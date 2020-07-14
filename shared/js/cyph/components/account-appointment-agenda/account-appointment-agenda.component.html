@@ -7,15 +7,17 @@
 	>
 		<button
 			mat-raised-button
-			cyphTranslate
 			color="accent"
 			routerLink="/request-appointment"
 		>
-			Schedule a Meeting
+			{{
+				(accountSettingsService.telehealth | await) ?
+					stringsService.meetingScheduleTelehealth :
+					stringsService.meetingSchedule
+			}}
 		</button>
 		<button
 			mat-raised-button
-			cyphTranslate
 			color="accent"
 			(click)="
 				!accountDatabaseService.currentUser.value?.agseConfirmed ?
@@ -25,7 +27,11 @@
 					openWindow('#account-burner/video')
 			"
 		>
-			Host a Meeting
+			{{
+				(accountSettingsService.telehealth | await) ?
+					stringsService.meetingHostTelehealth :
+					stringsService.meetingHost
+			}}
 		</button>
 	</div>
 	<div fxFlex>

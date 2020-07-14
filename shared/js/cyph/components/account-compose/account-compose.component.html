@@ -40,7 +40,9 @@
 					{{
 						(appointmentFollowUp | await) ?
 							stringsService.requestFollowUpAppointment :
-							stringsService.requestAppointment
+						(accountSettingsService.telehealth | await) ?
+							stringsService.meetingScheduleTitleTelehealth :
+							stringsService.meetingScheduleTitle
 					}}
 				</span>
 				<span

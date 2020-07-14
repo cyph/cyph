@@ -241,7 +241,11 @@
 						!currentUser?.agseConfirmed ||
 						!currentUser?.masterKeyConfirmed
 					"
-					matTooltip="Meetings"
+					[matTooltip]="
+						(accountSettingsService.telehealth | await) ?
+							stringsService.meetingsTelehealth :
+							stringsService.meetings
+					"
 					[matTooltipDisabled]="menuExpanded | await"
 					matTooltipPosition="right"
 					routerLink="/schedule"
@@ -256,8 +260,12 @@
 					<mat-icon mat-list-icon>
 						duo
 					</mat-icon>
-					<h3 matLine cyphTranslate *ngIf="menuExpanded | await">
-						Meetings
+					<h3 matLine *ngIf="menuExpanded | await">
+						{{
+							(accountSettingsService.telehealth | await) ?
+								stringsService.meetingsTelehealth :
+								stringsService.meetings
+						}}
 					</h3>
 				</a>
 
