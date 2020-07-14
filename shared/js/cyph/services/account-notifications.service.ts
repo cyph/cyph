@@ -56,7 +56,7 @@ export class AccountNotificationsService extends BaseProvider {
 				case NotificationTypes.Message:
 					return notification.value.messagesID ?
 						`/messages/${notification.value.messagesID}` :
-						`/messages/users/${notification.value.username}`;
+						`/messages/user/${notification.value.username}`;
 			}
 
 			return `/profile/${notification.value.username}`;
