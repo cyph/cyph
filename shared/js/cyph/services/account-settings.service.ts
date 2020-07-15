@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {concat, Observable, of} from 'rxjs';
 import {map, switchMap, take} from 'rxjs/operators';
 import {SecurityModels} from '../account';
 import {BaseProvider} from '../base-provider';
@@ -110,8 +110,11 @@ export class AccountSettingsService extends BaseProvider {
 	/** Indicates whether to enable telehealth mode. */
 	public readonly telehealth = this.envService.isTelehealth ?
 		of(true) :
-		this.plan.pipe(
-			map(plan => this.configService.planConfig[plan].telehealth)
+		concat(
+			of(false),
+			this.plan.pipe(
+				map(plan => this.configService.planConfig[plan].telehealth)
+			)
 		);
 
 	/** @ignore */
