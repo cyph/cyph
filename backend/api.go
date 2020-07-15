@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -257,7 +256,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			priceDelta := amount - braintreeDecimalToCents(plan.Price)
 
 			if priceDelta < 0 {
-				return errors.New("insufficient payment"), http.StatusTeapot
+				return "insufficient payment", http.StatusTeapot
 			}
 
 			txLog += "\nCustomer ID: " + braintreeCustomer.Id
@@ -403,11 +402,11 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 	} else {
 		if plan, hasPlan := config.Plans[planID]; hasPlan && plan.Price > amount {
-			return errors.New("insufficient payment"), http.StatusTeapot
+			return "insufficient payment", http.StatusTeapot
 		}
 
 		if appStoreReceipt != "" {
-			return errors.New("in-app payments for subscriptions only"), http.StatusTeapot
+			return "in-app payments for subscriptions only", http.StatusTeapot
 		}
 
 		if bitPayInvoiceID == "" {
@@ -734,7 +733,7 @@ func downgradeAccount(h HandlerArgs) (interface{}, int) {
 			return false, http.StatusOK
 		}
 
-		return errors.New("cannot cancel App Store subscription server-side"), http.StatusInternalServerError
+		return "cannot cancel App Store subscription server-side", http.StatusInternalServerError
 	}
 
 	if braintreeSubscriptionID == "" {
