@@ -222,6 +222,12 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	if subscription {
 		if appStoreReceipt == "" {
+			paymentMethodNonce, err := bt.PaymentMethodNonce().Find(h.Context, nonce)
+
+			if err != nil || paymentMethodNonce.ThreeDSecureInfo == nil {
+				return "3DS required", http.StatusTeapot
+			}
+
 			braintreeCustomer, err := bt.Customer().Create(h.Context, customerRequest)
 
 			if err != nil {
@@ -417,10 +423,15 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 
 			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
-				Amount:             braintree.NewDecimal(amount, 2),
-				BillingAddress:     billingAddress,
-				CustomerID:         braintreeCustomer.Id,
-				DeviceData:         deviceData,
+				Amount:         braintree.NewDecimal(amount, 2),
+				BillingAddress: billingAddress,
+				CustomerID:     braintreeCustomer.Id,
+				DeviceData:     deviceData,
+				Options: &braintree.TransactionOptions{
+					ThreeDSecure: &braintree.TransactionOptionsThreeDSecureRequest{
+						Required: true,
+					},
+				},
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})

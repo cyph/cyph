@@ -315,7 +315,8 @@ export class CheckoutComponent extends BaseProvider
 				paypalCredit: {
 					flow: 'vault'
 				},
-				selector: `#${this.containerID}`
+				selector: `#${this.containerID}`,
+				threeDSecure: true
 				/*
 				venmo: {
 					allowNewBrowserTab: false
@@ -633,6 +634,27 @@ export class CheckoutComponent extends BaseProvider
 					undefined :
 					await new Promise<any>((resolve, reject) => {
 						this.braintreeInstance.requestPaymentMethod(
+							{
+								threeDSecure: {
+									...(this.address.streetAddress !==
+									undefined ?
+										{
+											billingAddress: {
+												countryCodeAlpha2: this.address
+													.countryCode,
+												postalCode: this.address
+													.postalCode,
+												streetAddress: this.address
+													.streetAddress
+											}
+										} :
+										{}),
+									...(this.email !== undefined ?
+										{email: this.email} :
+										{}),
+									amount: this.amount.toFixed(2)
+								}
+							},
 							(err: any, data: any) => {
 								if (data && !err) {
 									resolve(data);
