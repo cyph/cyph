@@ -764,11 +764,11 @@ exports.generateInvite = onRequest(true, async (req, res, namespace) => {
 		}
 
 		await preexistingInviteCodeRef.set({
-			inviterUsername: preexistingInviteCodeData.inviterUsername,
-			plan,
-			...(appStoreReceipt ? {appStoreReceipt} : {}),
-			...(braintreeID ? {braintreeID} : {}),
-			...(braintreeSubscriptionID ? {braintreeSubscriptionID} : {})
+			...preexistingInviteCodeData,
+			appStoreReceipt,
+			braintreeID,
+			braintreeSubscriptionID,
+			plan
 		});
 
 		oldBraintreeSubscriptionID =
