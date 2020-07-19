@@ -13,6 +13,7 @@ import {VideoComponent} from '../../components/video';
 import {StringsService} from '../../services/strings.service';
 import {QRService} from '../../services/qr.service';
 import {debugLogError} from '../../util/log';
+import {requestPermissions} from '../../util/permissions';
 import {resolvable, waitForValue} from '../../util/wait';
 
 /**
@@ -46,6 +47,18 @@ export class QRCodeScannerComponent extends BaseProvider
 
 	/** Camera feed. */
 	public readonly videoStream = (async () => {
+		try {
+			if (!(await requestPermissions('CAMERA'))) {
+				throw new Error('Failed to attain camera permission.');
+			}
+		}
+		catch (err) {
+			debugLogError(() => ({
+				qrCodeScanner: {permissionsFailure: err}
+			}));
+			return undefined;
+		}
+
 		await this.activated;
 
 		const constraints = {video: {facingMode: 'environment'}};

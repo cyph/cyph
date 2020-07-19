@@ -495,8 +495,6 @@ if [ ! "${simple}" ] || [ "${simpleProdBuild}" ] ; then
 		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?style-src )/\1https:\/\/cdn.ampproject.org /g' |
 		perl -pe 's/(\/\(\.\*\?\)\/amp\[\/\]\?.*?script-src )/\1https:\/\/cdn.ampproject.org /g' |
 		perl -pe 's/(\/pricing\[\/\]\?.*?script-src )/\1'"'"'unsafe-inline'"'"' /g' |
-		perl -pe 's/(\/checkout\[\/\]\?.*?child-src )(.*?connect-src )(.*?frame-src )(.*?img-src )(.*?script-src )/\1☼\2☼\3☼\4☼\5☼'"'"'unsafe-inline'"'"' /g' |
-		sed "s|☼|${cyphComCheckoutCSPSources}|g" |
 		tr '☁' '\n' |
 		sed "s|Cache-Control: private, max-age=31536000|Cache-Control: public, max-age=31536000|g" \
 	> cyph.com/new.yaml
