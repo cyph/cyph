@@ -31,16 +31,6 @@ cyph-account-contact.active ::ng-deep .contact {
 		padding-top: 0 !important;
 	}
 
-	&.initiating > :first-child:not(mat-progress-spinner) {
-		&,
-		> button.add-contact,
-		> button.add-contact ::ng-deep *,
-		> mat-tab-group,
-		> mat-tab-group ::ng-deep * {
-			pointer-events: unset !important;
-		}
-	}
-
 	cyph-account-contact {
 		margin: 0;
 		margin-bottom: 16px;

@@ -3,10 +3,6 @@
 	fxLayout="row"
 	class="card-list animated slideInDown"
 	[class.mobile]="envService.isMobile | await"
-	[class.initiating]="
-		(showSpinner | await) ||
-		(home && (accountFilesService.uploadSpinner | await) !== undefined)
-	"
 >
 	<div fxFlex fxLayout="column" fxLayoutAlign="start stretch">
 		<ng-container
@@ -75,7 +71,14 @@
 			></cyph-account-contact>
 		</div>
 
-		<div fxFlex>
+		<div
+			fxFlex
+			[class.initiating]="
+				(showSpinner | await) ||
+				(home &&
+					(accountFilesService.uploadSpinner | await) !== undefined)
+			"
+		>
 			<div cyphNanoScroller>
 				<div class="contact-list" fxLayout="column">
 					<cyph-account-contact
@@ -125,6 +128,16 @@
 					</ng-template>
 				</div>
 			</div>
+
+			<mat-progress-spinner
+				mode="indeterminate"
+				*ngIf="
+					(showSpinner | await) ||
+					(home &&
+						(accountFilesService.uploadSpinner | await) !==
+							undefined)
+				"
+			></mat-progress-spinner>
 		</div>
 
 		<br *ngIf="!readOnly" />
@@ -195,14 +208,6 @@
 
 		<br *ngIf="!readOnly" />
 	</div>
-
-	<mat-progress-spinner
-		mode="indeterminate"
-		*ngIf="
-			(showSpinner | await) ||
-			(home && (accountFilesService.uploadSpinner | await) !== undefined)
-		"
-	></mat-progress-spinner>
 </div>
 
 <ng-template #listItem let-item="item">
