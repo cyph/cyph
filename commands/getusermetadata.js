@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const openpgp = require('openpgp');
 const databaseService = require('../modules/database-service');
 const potassium = require('../modules/potassium');
 const {
+	AccountUserProfile,
+	AccountUserProfileExtra,
 	AGSEPKICert,
 	BinaryProto,
 	CyphPlan,
@@ -11,6 +14,9 @@ const {
 	StringProto
 } = require('../modules/proto');
 const {normalize} = require('../modules/util');
+
+openpgp.config.versionstring = 'Cyph';
+openpgp.config.commentstring = 'https://www.cyph.com';
 
 /* TODO: Refactor this */
 const getCertTimestamp = async (username, namespace, getItem) => {
@@ -81,7 +87,9 @@ const getUserMetadata = async (projectId, username, namespace) => {
 		internal,
 		inviteCode,
 		inviterUsername,
-		plan
+		plan,
+		profile,
+		profileExtra
 	] = await Promise.all([
 		getCertTimestamp(username, namespace, getItem).catch(() => 'N/A'),
 		database
@@ -98,7 +106,21 @@ const getUserMetadata = async (projectId, username, namespace) => {
 		).catch(() => ''),
 		getItem(namespace, `users/${username}/plan`, CyphPlan)
 			.then(o => o.plan)
-			.catch(() => CyphPlans.Free)
+			.catch(() => CyphPlans.Free),
+		getItem(
+			namespace,
+			`users/${username}/publicProfile`,
+			AccountUserProfile,
+			true,
+			true
+		).catch(() => ({})),
+		getItem(
+			namespace,
+			`users/${username}/publicProfileExtra`,
+			AccountUserProfileExtra,
+			true,
+			true
+		).catch(() => ({}))
 	]);
 
 	return {
@@ -106,7 +128,19 @@ const getUserMetadata = async (projectId, username, namespace) => {
 		internal,
 		inviteCode,
 		inviterUsername,
+		pgpPublicKey:
+			profileExtra.pgp &&
+			profileExtra.pgp.publicKey &&
+			profileExtra.pgp.publicKey.length > 0 ?
+				(await openpgp.key.read(profileExtra.pgp.publicKey)).keys[0]
+					.toPublic()
+					.armor()
+					.replace(/\r/g, '')
+					.trim() :
+				undefined,
 		plan: CyphPlans[plan],
+		profile,
+		profileExtra,
 		username
 	};
 };
