@@ -211,25 +211,12 @@ body.mobile .card-list {
 .initiating {
 	overflow-y: hidden !important;
 
-	&:not(.contacts){
-		> :first-child:not(mat-progress-spinner) {
-			opacity: 0.5 !important;
+	> :first-child:not(mat-progress-spinner) {
+		opacity: 0.5 !important;
 
-			&,
-			* ::ng-deep:not(cyph-account-contacts-search) {
-				pointer-events: none !important;
-			}
-		}
-	}
-
-	&.contacts {
-		.contact-list {
-			opacity: 0.5 !important;
-
-				&,
-				* {
-					pointer-events: none !important;
-				}
+		&,
+		* {
+			pointer-events: none !important;
 		}
 	}
 
