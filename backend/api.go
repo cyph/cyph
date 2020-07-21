@@ -212,14 +212,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		StreetAddress:     streetAddress,
 	}
 
-	customerRequest := &braintree.CustomerRequest{
-		Company:    company,
-		DeviceData: deviceData,
-		Email:      customerRequestEmail,
-		FirstName:  firstName,
-		LastName:   lastName,
-	}
-
 	var braintreeCustomer *braintree.Customer
 
 	if nonce != "" {
@@ -229,7 +221,13 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			return "3DS required", http.StatusTeapot
 		}
 
-		braintreeCustomer, err = bt.Customer().Create(h.Context, customerRequest)
+		braintreeCustomer, err = bt.Customer().Create(h.Context, &braintree.CustomerRequest{
+			Company:    company,
+			DeviceData: deviceData,
+			Email:      customerRequestEmail,
+			FirstName:  firstName,
+			LastName:   lastName,
+		})
 
 		if err != nil {
 			return err.Error(), http.StatusTeapot
@@ -238,11 +236,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 	if subscription {
 		if appStoreReceipt == "" {
-			var paymentMethod braintree.PaymentMethod
-
 			verifyCard := true
 
-			paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
+			paymentMethod, err := bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
 				BillingAddress: billingAddress,
 				CardholderName: name,
 				CustomerId:     braintreeCustomer.Id,
