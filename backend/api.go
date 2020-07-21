@@ -220,20 +220,24 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		LastName:   lastName,
 	}
 
+	var braintreeCustomer *braintree.Customer
+
+	if nonce != "" {
+		paymentMethodNonce, err := bt.PaymentMethodNonce().Find(h.Context, nonce)
+
+		if err != nil || paymentMethodNonce.ThreeDSecureInfo == nil {
+			return "3DS required", http.StatusTeapot
+		}
+
+		braintreeCustomer, err = bt.Customer().Create(h.Context, customerRequest)
+
+		if err != nil {
+			return err.Error(), http.StatusTeapot
+		}
+	}
+
 	if subscription {
 		if appStoreReceipt == "" {
-			paymentMethodNonce, err := bt.PaymentMethodNonce().Find(h.Context, nonce)
-
-			if err != nil || paymentMethodNonce.ThreeDSecureInfo == nil {
-				return "3DS required", http.StatusTeapot
-			}
-
-			braintreeCustomer, err := bt.Customer().Create(h.Context, customerRequest)
-
-			if err != nil {
-				return err.Error(), http.StatusTeapot
-			}
-
 			var paymentMethod braintree.PaymentMethod
 
 			verifyCard := true
@@ -416,12 +420,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		if bitPayInvoiceID == "" {
-			braintreeCustomer, err := bt.Customer().Create(h.Context, customerRequest)
-
-			if err != nil {
-				return err.Error(), http.StatusTeapot
-			}
-
 			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
 				Amount:         braintree.NewDecimal(amount, 2),
 				BillingAddress: billingAddress,
