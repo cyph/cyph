@@ -220,42 +220,39 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		LastName:   lastName,
 	}
 
-	var braintreeCustomer *braintree.Customer
-	var paymentMethod braintree.PaymentMethod
-
-	if nonce != "" {
-		paymentMethodNonce, err := bt.PaymentMethodNonce().Find(h.Context, nonce)
-
-		if err != nil || paymentMethodNonce.ThreeDSecureInfo == nil {
-			return "3DS required", http.StatusTeapot
-		}
-
-		braintreeCustomer, err = bt.Customer().Create(h.Context, customerRequest)
-
-		if err != nil {
-			return err.Error(), http.StatusTeapot
-		}
-
-		verifyCard := true
-
-		paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
-			BillingAddress: billingAddress,
-			CardholderName: name,
-			CustomerId:     braintreeCustomer.Id,
-			DeviceData:     deviceData,
-			Options: &braintree.PaymentMethodRequestOptions{
-				VerifyCard: &verifyCard,
-			},
-			PaymentMethodNonce: nonce,
-		})
-
-		if err != nil {
-			return err.Error(), http.StatusTeapot
-		}
-	}
-
 	if subscription {
 		if appStoreReceipt == "" {
+			paymentMethodNonce, err := bt.PaymentMethodNonce().Find(h.Context, nonce)
+
+			if err != nil || paymentMethodNonce.ThreeDSecureInfo == nil {
+				return "3DS required", http.StatusTeapot
+			}
+
+			braintreeCustomer, err := bt.Customer().Create(h.Context, customerRequest)
+
+			if err != nil {
+				return err.Error(), http.StatusTeapot
+			}
+
+			var paymentMethod braintree.PaymentMethod
+
+			verifyCard := true
+
+			paymentMethod, err = bt.PaymentMethod().Create(h.Context, &braintree.PaymentMethodRequest{
+				BillingAddress: billingAddress,
+				CardholderName: name,
+				CustomerId:     braintreeCustomer.Id,
+				DeviceData:     deviceData,
+				Options: &braintree.PaymentMethodRequestOptions{
+					VerifyCard: &verifyCard,
+				},
+				PaymentMethodNonce: nonce,
+			})
+
+			if err != nil {
+				return err.Error(), http.StatusTeapot
+			}
+
 			plan, err := bt.Plan().Find(h.Context, planID)
 
 			if err != nil {
@@ -419,9 +416,23 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		if bitPayInvoiceID == "" {
+			braintreeCustomer, err := bt.Customer().Create(h.Context, customerRequest)
+
+			if err != nil {
+				return err.Error(), http.StatusTeapot
+			}
+
 			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
-				Amount:             braintree.NewDecimal(amount, 2),
-				PaymentMethodToken: paymentMethod.GetToken(),
+				Amount:         braintree.NewDecimal(amount, 2),
+				BillingAddress: billingAddress,
+				CustomerID:     braintreeCustomer.Id,
+				DeviceData:     deviceData,
+				Options: &braintree.TransactionOptions{
+					ThreeDSecure: &braintree.TransactionOptionsThreeDSecureRequest{
+						Required: true,
+					},
+				},
+				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})
 
