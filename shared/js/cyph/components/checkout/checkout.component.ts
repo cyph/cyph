@@ -166,6 +166,11 @@ export class CheckoutComponent extends BaseProvider
 	/** If applicable, partner offer ID. */
 	@Input() public offerID?: number;
 
+	/** Amount saved via partner discount, if applicable. */
+	public readonly partnerDiscountString = new BehaviorSubject<
+		string | undefined
+	>(undefined);
+
 	/** Selected payment option. */
 	public readonly paymentOption = new BehaviorSubject<string | undefined>(
 		undefined
@@ -538,6 +543,19 @@ export class CheckoutComponent extends BaseProvider
 				undefined;
 
 		if (affid) {
+			const partnerDiscount =
+				Math.floor(
+					this.amount * this.configService.partnerDiscountRate
+				) / 100;
+
+			this.amount -= partnerDiscount;
+			this.partnerDiscountString.next(
+				this.stringsService.setParameters(
+					this.stringsService.partnerDiscount,
+					{discount: partnerDiscount.toFixed(2)}
+				)
+			);
+
 			this.partnerTransactionID = Promise.resolve<string>(
 				EF.click({
 					/* eslint-disable-next-line @typescript-eslint/naming-convention */
@@ -871,13 +889,13 @@ export class CheckoutComponent extends BaseProvider
 		private readonly analyticsService: AnalyticsService,
 
 		/** @ignore */
-		private readonly configService: ConfigService,
-
-		/** @ignore */
 		private readonly dialogService: DialogService,
 
 		/** @see AffiliateService */
 		public readonly affiliateService: AffiliateService,
+
+		/** @see ConfigService */
+		public readonly configService: ConfigService,
 
 		/** @see EnvService */
 		public readonly envService: EnvService,

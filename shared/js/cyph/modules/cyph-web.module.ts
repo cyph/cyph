@@ -5,7 +5,6 @@ import {MatBadgeModule} from '@angular/material/badge';
 import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatCardModule} from '@angular/material/card';
-import {MatChipsModule} from '@angular/material/chips';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatGridListModule} from '@angular/material/grid-list';
@@ -88,7 +87,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatBottomSheetModule,
 		MatButtonToggleModule,
 		MatCardModule,
-		MatChipsModule,
 		MatExpansionModule,
 		MatGridListModule,
 		MatMenuModule,
@@ -123,7 +121,6 @@ import {CyphSharedModule} from './cyph-shared.module';
 		MatBadgeModule,
 		MatBottomSheetModule,
 		MatCardModule,
-		MatChipsModule,
 		MatExpansionModule,
 		MatGridListModule,
 		MatMenuModule,

@@ -99,6 +99,9 @@ export class Config {
 	/** URL for Cyph Tor site. */
 	public readonly onionRoot: string = 'cyphdbyhiddenbhs.onion';
 
+	/** Discount rate for partner checkouts. */
+	public readonly partnerDiscountRate: number = 20;
+
 	/** Pricing-related config. */
 	public readonly pricingConfig: {
 		categories: {

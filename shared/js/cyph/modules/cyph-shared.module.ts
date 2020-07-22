@@ -5,6 +5,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {FormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatChipsModule} from '@angular/material/chips';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
@@ -92,6 +93,7 @@ import {StringsService} from '../services/strings.service';
 		MarkdownComponent,
 		MatButtonModule,
 		MatCheckboxModule,
+		MatChipsModule,
 		MatDatepickerModule,
 		MatDialogModule,
 		MatIconModule,
@@ -117,6 +119,7 @@ import {StringsService} from '../services/strings.service';
 		ImageCropperModule,
 		MatButtonModule,
 		MatCheckboxModule,
+		MatChipsModule,
 		MatDatepickerModule,
 		MatDialogModule,
 		MatIconModule,

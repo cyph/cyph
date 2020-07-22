@@ -1049,6 +1049,9 @@ export class StringsService extends BaseProvider {
 	public readonly p2pWarningVideoPassive = `Starting video call (P2P).`;
 
 	/** @see StringsService */
+	public readonly partnerDiscount = `$\${DISCOUNT} Discount Applied!`;
+
+	/** @see StringsService */
 	public readonly passwordDefaultURL = `Unspecified`;
 
 	/** @see StringsService */

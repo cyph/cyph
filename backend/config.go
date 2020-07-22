@@ -121,6 +121,7 @@ var config = struct {
 	MaxSignupValueLength       int
 	NewCyphTimeout             int64
 	PartnerConversionURL       string
+	PartnerDiscountRate        int64
 	PlanAppleIDs               map[string]string
 	Plans                      map[string]Plan
 	RootURL                    string
@@ -255,6 +256,8 @@ var config = struct {
 	600000,
 
 	"https://partner-api.cyph.com",
+
+	20,
 
 	map[string]string{
 		"MonthlyPlatinum": "8-4",

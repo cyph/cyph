@@ -259,9 +259,15 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				return err.Error(), http.StatusTeapot
 			}
 
-			priceDelta := amount - braintreeDecimalToCents(plan.Price)
+			price := braintreeDecimalToCents(plan.Price)
+			priceDelta := amount - price
 
-			if priceDelta < 0 {
+			priceDeltaFloor := int64(0)
+			if partnerTransactionID != "" {
+				priceDeltaFloor = price * config.PartnerDiscountRate / 100
+			}
+
+			if priceDelta < priceDeltaFloor {
 				return "insufficient payment", http.StatusTeapot
 			}
 
@@ -290,9 +296,21 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 						subscriptionRequest.AddOns = &braintree.ModificationsRequest{
 							Add: []braintree.AddModificationRequest{
 								braintree.AddModificationRequest{
-									InheritedFromID: "default",
+									InheritedFromID: "addon",
 									ModificationRequest: braintree.ModificationRequest{
 										Amount:       braintree.NewDecimal(priceDelta, 2),
+										NeverExpires: true,
+									},
+								},
+							},
+						}
+					} else if priceDelta < 0 {
+						subscriptionRequest.Discounts = &braintree.ModificationsRequest{
+							Add: []braintree.AddModificationRequest{
+								braintree.AddModificationRequest{
+									InheritedFromID: "discount",
+									ModificationRequest: braintree.ModificationRequest{
+										Amount:       braintree.NewDecimal(priceDelta*-1, 2),
 										NeverExpires: true,
 									},
 								},
