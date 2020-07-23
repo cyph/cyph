@@ -267,7 +267,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 			priceDeltaFloor := int64(0)
 			if partnerTransactionID != "" {
-				priceDeltaFloor = price * config.PartnerDiscountRate / 100
+				priceDeltaFloor = -price * config.PartnerDiscountRate / 100
 			}
 
 			if priceDelta < priceDeltaFloor {
