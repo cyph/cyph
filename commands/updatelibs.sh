@@ -333,6 +333,7 @@ read -r -d '' modules <<- EOM
 	ng2-truncate
 	ngx-bar-rating
 	ngx-build-plus
+	ngx-captcha
 	ngx-contextmenu
 	ngx-image-cropper
 	ngx-progressbar
