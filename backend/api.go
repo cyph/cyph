@@ -217,7 +217,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	if nonce != "" {
 		paymentMethodNonce, err := bt.PaymentMethodNonce().Find(h.Context, nonce)
 
-		if err != nil || paymentMethodNonce.ThreeDSecureInfo == nil {
+		if err != nil {
+			return "Invalid payment nonce", http.StatusTeapot
+		}
+		if paymentMethodNonce.Type == "CreditCard" && paymentMethodNonce.ThreeDSecureInfo == nil {
 			return "3DS required", http.StatusTeapot
 		}
 
