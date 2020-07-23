@@ -148,10 +148,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		txLog += "\nAPI key: " + apiKey
 	}
 
-	deviceData := h.Request.PostFormValue("deviceData")
 	nonce := sanitize(h.Request.PostFormValue("nonce"))
 
-	if appStoreReceipt == "" && bitPayInvoiceID == "" && (deviceData == "" || nonce == "") {
+	if appStoreReceipt == "" && bitPayInvoiceID == "" && nonce == "" {
 		return "invalid payment information", http.StatusBadRequest
 	}
 
@@ -222,11 +221,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 
 		braintreeCustomer, err = bt.Customer().Create(h.Context, &braintree.CustomerRequest{
-			Company:    company,
-			DeviceData: deviceData,
-			Email:      customerRequestEmail,
-			FirstName:  firstName,
-			LastName:   lastName,
+			Company:   company,
+			Email:     customerRequestEmail,
+			FirstName: firstName,
+			LastName:  lastName,
 		})
 
 		if err != nil {
@@ -242,7 +240,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				BillingAddress: billingAddress,
 				CardholderName: name,
 				CustomerId:     braintreeCustomer.Id,
-				DeviceData:     deviceData,
 				Options: &braintree.PaymentMethodRequestOptions{
 					VerifyCard: &verifyCard,
 				},
@@ -438,7 +435,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 				Amount:             braintree.NewDecimal(amount, 2),
 				BillingAddress:     billingAddress,
 				CustomerID:         braintreeCustomer.Id,
-				DeviceData:         deviceData,
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})
