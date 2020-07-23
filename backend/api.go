@@ -220,9 +220,6 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		if err != nil {
 			return "Invalid payment nonce", http.StatusTeapot
 		}
-		if paymentMethodNonce.Type == "CreditCard" && paymentMethodNonce.ThreeDSecureInfo == nil {
-			return "3DS required", http.StatusTeapot
-		}
 
 		braintreeCustomer, err = bt.Customer().Create(h.Context, &braintree.CustomerRequest{
 			Company:    company,
@@ -438,15 +435,10 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 
 		if bitPayInvoiceID == "" {
 			tx, err := bt.Transaction().Create(h.Context, &braintree.TransactionRequest{
-				Amount:         braintree.NewDecimal(amount, 2),
-				BillingAddress: billingAddress,
-				CustomerID:     braintreeCustomer.Id,
-				DeviceData:     deviceData,
-				Options: &braintree.TransactionOptions{
-					ThreeDSecure: &braintree.TransactionOptionsThreeDSecureRequest{
-						Required: true,
-					},
-				},
+				Amount:             braintree.NewDecimal(amount, 2),
+				BillingAddress:     billingAddress,
+				CustomerID:         braintreeCustomer.Id,
+				DeviceData:         deviceData,
 				PaymentMethodNonce: nonce,
 				Type:               "sale",
 			})
