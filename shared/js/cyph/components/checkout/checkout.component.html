@@ -168,6 +168,13 @@
 			{{ affiliateService.checkout.text }}
 		</mat-checkbox>
 
+		<div fxLayoutAlign="center center" *ngIf="recaptchaRequired | await">
+			<ngx-recaptcha2
+				[siteKey]="envService.recaptchaAPIKey"
+				(ngModelChange)="recaptchaResponse.next($event)"
+			></ngx-recaptcha2>
+		</div>
+
 		<div
 			fxLayoutAlign="center center"
 			*ngIf="(partnerDiscountString | await) !== undefined"
@@ -182,7 +189,11 @@
 		<div fxLayoutAlign="center center">
 			<button
 				mat-raised-button
-				[disabled]="(paymentOption | await) === undefined"
+				[disabled]="
+					(paymentOption | await) === undefined ||
+					((recaptchaRequired | await) &&
+						(recaptchaResponse | await) === undefined)
+				"
 				type="submit"
 			>
 				<span cyphTranslate>Confirm</span>

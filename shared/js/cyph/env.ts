@@ -293,6 +293,11 @@ export class Env extends EnvDeploy {
 	/** Complete (original case) language code, e.g. "en-US". */
 	public readonly realLanguage: string = Env.languageInternal;
 
+	/** reCAPTCHA client API key. */
+	public readonly recaptchaAPIKey: string = environment.production ?
+		'6LcxQ7UZAAAAAJEUFPpBY0gbe-ofgublTvPqNH50' :
+		'6LfVSbUZAAAAAJhwvzCEbsYqWNBY5T7yYaOe0IcO';
+
 	/** Indicates whether this is Safari 10.0 or older. */
 	public readonly safariVersion?: number = this.isSafari ?
 		parseFloat((Env.UA.match(/version\/(\d+\.\d+)/) || [])[1] || '0') :

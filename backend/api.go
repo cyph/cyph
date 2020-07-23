@@ -85,6 +85,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 	lastName := sanitize(h.Request.PostFormValue("lastName"))
 	partnerTransactionID := sanitize(h.Request.PostFormValue("partnerTransactionID"))
 	postalCode := sanitize(h.Request.PostFormValue("postalCode"))
+	recaptchaResponse := sanitize(h.Request.PostFormValue("recaptchaResponse"))
 	streetAddress := sanitize(h.Request.PostFormValue("streetAddress"))
 	userToken := sanitize(h.Request.PostFormValue("userToken"))
 	timestamp := getTimestamp()
@@ -219,8 +220,15 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		if err != nil {
 			return "Invalid payment nonce", http.StatusTeapot
 		}
-		if paymentMethodNonce.Type == "CreditCard" && postalCode == "" {
-			return "Postal code required", http.StatusTeapot
+
+		if paymentMethodNonce.Type == "CreditCard" {
+			if postalCode == "" {
+				return "Postal code required", http.StatusTeapot
+			}
+
+			if !verifyRecaptchaResponse(recaptchaResponse) {
+				return "reCAPTCHA verification failed", http.StatusTeapot
+			}
 		}
 
 		braintreeCustomer, err = bt.Customer().Create(h.Context, &braintree.CustomerRequest{

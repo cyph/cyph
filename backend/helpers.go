@@ -110,6 +110,8 @@ var braintreePrivateKey = os.Getenv("BRAINTREE_PRIVATE_KEY")
 
 var appStoreSecret = os.Getenv("APP_STORE_SECRET")
 
+var recaptchaSecret = os.Getenv("RECAPTCHA_SECRET")
+
 var everflowID = os.Getenv("EVERFLOW_ID")
 var everflowToken = os.Getenv("EVERFLOW_TOKEN")
 
@@ -723,6 +725,47 @@ func getTwilioToken(h HandlerArgs) map[string]interface{} {
 	}
 
 	return getTwilioToken(h)
+}
+
+func verifyRecaptchaResponse(recaptchaResponse string) bool {
+	body, _ := json.Marshal(map[string]interface{}{
+		"response": recaptchaResponse,
+		"secret":   recaptchaSecret,
+	})
+
+	client := &http.Client{}
+
+	req, _ := http.NewRequest(
+		methods.POST,
+		"https://www.google.com/recaptcha/api/siteverify",
+		bytes.NewBuffer(body),
+	)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return false
+	}
+
+	responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return false
+	}
+
+	var responseBody map[string]interface{}
+	err = json.Unmarshal(responseBodyBytes, &responseBody)
+	if err != nil {
+		return false
+	}
+
+	success := false
+	if data, ok := responseBody["success"]; ok {
+		switch v := data.(type) {
+		case bool:
+			success = v
+		}
+	}
+
+	return success
 }
 
 func trackEvent(h HandlerArgs, category, action, label string, value int) error {

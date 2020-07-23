@@ -19,6 +19,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TextMaskModule} from 'angular2-text-mask';
+import {NgxCaptchaModule} from 'ngx-captcha';
 import {ImageCropperModule} from 'ngx-image-cropper';
 import {CheckoutComponent} from '../components/checkout';
 import {DialogAlertComponent} from '../components/dialog-alert';
@@ -105,6 +106,7 @@ import {StringsService} from '../services/strings.service';
 		MatSliderModule,
 		MatTooltipModule,
 		NanoScrollerDirective,
+		NgxCaptchaModule,
 		RouterLinkDirective,
 		TextMaskModule,
 		TranslateDirective
@@ -130,6 +132,7 @@ import {StringsService} from '../services/strings.service';
 		MatSelectModule,
 		MatSliderModule,
 		MatTooltipModule,
+		NgxCaptchaModule,
 		TextMaskModule
 	],
 	providers: [

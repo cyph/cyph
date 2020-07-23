@@ -16,7 +16,8 @@ import * as bitPay from 'bitpay.js';
 import * as braintreeDataCollector from 'braintree-web/data-collector';
 import * as braintreeDropIn from 'braintree-web-drop-in';
 import memoize from 'lodash-es/memoize';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {SubscriptionTypes} from '../../checkout';
 import {MaybePromise} from '../../maybe-promise-type';
@@ -181,6 +182,16 @@ export class CheckoutComponent extends BaseProvider
 
 	/** Indicates whether pricing is per-user. */
 	@Input() public perUser: boolean = false;
+
+	/** Indicates whether reCAPTCHA is required. */
+	public readonly recaptchaRequired = !this.envService.isHomeSite ?
+		of(false) :
+		this.paymentOption.pipe(map(paymentOption => paymentOption === 'card'));
+
+	/** reCAPTCHA response. */
+	public readonly recaptchaResponse = new BehaviorSubject<string | undefined>(
+		undefined
+	);
 
 	/** @see reloadWindow */
 	public readonly reloadWindow = reloadWindow;
@@ -767,6 +778,9 @@ export class CheckoutComponent extends BaseProvider
 					...(this.item !== undefined ? {item: this.item} : {}),
 					...(this.namespace !== undefined ?
 						{namespace: this.namespace} :
+						{}),
+					...(this.recaptchaResponse.value !== undefined ?
+						{recaptchaResponse: this.recaptchaResponse.value} :
 						{}),
 					...(partnerTransactionID ? {partnerTransactionID} : {}),
 					...(userToken !== undefined ? {userToken} : {})
