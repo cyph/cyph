@@ -16497,10 +16497,9 @@ ngx-build-plus@^9.0.6:
     webpack-dev-server "^3.1.14"
     webpack-merge "^4.2.1"
 
-ngx-captcha@^8.0.1:
+"ngx-captcha@https://github.com/buu700/ngx-captcha-tmp":
   version "8.0.1"
-  resolved "https://registry.yarnpkg.com/ngx-captcha/-/ngx-captcha-8.0.1.tgz#54118cfccfb9e078b55ea78a44bede9167d43d11"
-  integrity sha512-YPRaHOwegkCU0+F/g9kI/xR6B6IEoqSZVUdgd84xNEEFEhM5PfdWY+xHc0dj75epriGAlquWA+NtpIRynxIFRg==
+  resolved "https://github.com/buu700/ngx-captcha-tmp#de32d93f55023be5cf7e71cb078c678ea8c227da"
 
 ngx-contextmenu@^5.4.0:
   version "5.4.0"
