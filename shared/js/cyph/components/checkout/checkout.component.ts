@@ -297,6 +297,14 @@ export class CheckoutComponent extends BaseProvider
 					}
 				},
 				authorization: await this.authorization(),
+				card: {
+					overrides: {
+						fields: {
+							/* eslint-disable-next-line no-null/no-null */
+							postalCode: null
+						}
+					}
+				},
 				googlePay: {
 					googlePayVersion: 2,
 					merchantId: '09900375611168245515',

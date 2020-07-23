@@ -219,6 +219,9 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		if err != nil {
 			return "Invalid payment nonce", http.StatusTeapot
 		}
+		if paymentMethodNonce.Type == "CreditCard" && postalCode == "" {
+			return "Postal code required", http.StatusTeapot
+		}
 
 		braintreeCustomer, err = bt.Customer().Create(h.Context, &braintree.CustomerRequest{
 			Company:   company,
