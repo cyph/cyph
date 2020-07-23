@@ -28,7 +28,7 @@ handlers:
   static_files: checkout/index.html
   upload: checkout/index.html
   secure: always
-  # default_headers Cache-Control Content-Security-Policy
+  # default_headers Cache-Control
 
 - url: /pricing[/]?
   static_files: pricing/index.html
