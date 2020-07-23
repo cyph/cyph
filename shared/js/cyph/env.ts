@@ -174,7 +174,8 @@ export class Env extends EnvDeploy {
 
 	/** Indicates whether this is the Cyph corporate website (cyph.com). */
 	public readonly isHomeSite: boolean =
-		this.homeUrl.split('/')[2].replace('www.', '') === this.host;
+		this.homeUrl.split('/')[2].replace('www.', '') === this.host ||
+		this.homeUrlLocalAlt.split('/')[2].replace('www.', '') === this.host;
 
 	/** Indicates whether this is iOS. */
 	public readonly isIOS: boolean =

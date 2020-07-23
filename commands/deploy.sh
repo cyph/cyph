@@ -530,6 +530,7 @@ if [ "${test}" ] ; then
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|api.cyph.com|${version}-dot-cyphme.appspot.com|g" %
 	ls */*.yaml shared/js/cyph/env-deploy.ts | xargs -I% sed -i "s|www.cyph.com|${version}-dot-cyph-com-dot-cyphme.appspot.com|g" %
 	sed -i "s|${defaultHost}42000|https://${version}-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}42001|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}43000|https://${version}-dot-cyph-com-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}42002|${appURL}|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|CYPH-AUDIO|https://${version}-dot-cyph-audio-dot-cyphme.appspot.com|g" shared/js/cyph/env-deploy.ts
@@ -581,14 +582,19 @@ else
 	fi
 
 	sed -i "s|${defaultHost}42000|https://api.cyph.com|g" shared/js/cyph/env-deploy.ts
+	sed -i "s|${defaultHost}42001|${homeURL}|g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}43000|${homeURL}|g" shared/js/cyph/env-deploy.ts
 fi
 
 if [ "${simple}" ] ; then
 	sed -i \
+		"s|${defaultHost}42001/root/|https://staging-dot-cyph-com-dot-cyphme.appspot.com/|g" \
+		shared/js/cyph/env-deploy.ts
+	sed -i \
 		"s|${defaultHost}43000/root/|https://staging-dot-cyph-com-dot-cyphme.appspot.com/|g" \
 		shared/js/cyph/env-deploy.ts
 else
+	sed -i "s|${defaultHost}42001/root/||g" shared/js/cyph/env-deploy.ts
 	sed -i "s|${defaultHost}43000/root/||g" shared/js/cyph/env-deploy.ts
 fi
 

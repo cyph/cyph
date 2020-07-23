@@ -46,6 +46,11 @@ export class EnvDeploy {
 		`https://www.${config.onionRoot}/` :
 		`${locationData.protocol}//${locationData.hostname}:43000/`;
 
+	/** Variant of homeUrl for local environments. */
+	public readonly homeUrlLocalAlt: string = this.isOnion ?
+		`https://www.${config.onionRoot}/` :
+		`${locationData.protocol}//${locationData.hostname}:42001/`;
+
 	/** Base URL for a new cyph link ("https://cyph.app/#burner/" or equivalent). */
 	public readonly newCyphBaseUrl: string = `${this.appUrl}#burner/`;
 
