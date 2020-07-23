@@ -271,7 +271,7 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 			}
 
 			if priceDelta < priceDeltaFloor {
-				return "insufficient payment", http.StatusTeapot
+				return "insufficient payment ({\"priceDelta\": " + strconv.FormatInt(priceDelta, 10) + ", \"priceDeltaFloor\": " + strconv.FormatInt(priceDeltaFloor, 10) + "})", http.StatusTeapot
 			}
 
 			txLog += "\nCustomer ID: " + braintreeCustomer.Id
