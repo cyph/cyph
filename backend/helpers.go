@@ -728,20 +728,11 @@ func getTwilioToken(h HandlerArgs) map[string]interface{} {
 }
 
 func verifyRecaptchaResponse(recaptchaResponse string) bool {
-	body, _ := json.Marshal(map[string]interface{}{
-		"response": recaptchaResponse,
-		"secret":   recaptchaSecret,
-	})
-
-	client := &http.Client{}
-
-	req, _ := http.NewRequest(
-		methods.POST,
+	resp, err := http.PostForm(
 		"https://www.google.com/recaptcha/api/siteverify",
-		bytes.NewBuffer(body),
+		url.Values{"response": {recaptchaResponse}, "secret": {recaptchaSecret}},
 	)
 
-	resp, err := client.Do(req)
 	if err != nil {
 		return false
 	}
