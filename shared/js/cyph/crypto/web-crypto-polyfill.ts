@@ -21,6 +21,7 @@ export const webCryptoPolyfill = (seed: Uint8Array) => {
 	crypto = {
 		/* eslint-disable-next-line no-null/no-null */
 		getRandomValues: <T extends ArrayBufferView | null>(
+			/* eslint-disable-next-line no-null/no-null */
 			array?: T | null
 		) : T => {
 			if (!array) {

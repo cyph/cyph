@@ -40,6 +40,7 @@ export const resolvable = <T = void>(
 			writable: true
 		},
 		finally: {
+			/* eslint-disable-next-line no-null/no-null */
 			value: async (onfinally?: (() => void) | null | undefined) =>
 				promise.finally(onfinally),
 			writable: false

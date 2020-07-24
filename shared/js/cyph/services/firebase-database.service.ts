@@ -443,8 +443,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 							'.info/connected'
 						);
 
-						/* eslint-disable-next-line no-null/no-null */
 						const onValue = async (
+							/* eslint-disable-next-line no-null/no-null */
 							snapshot: firebase.database.DataSnapshot | null
 						) => {
 							if (!snapshot) {
@@ -657,8 +657,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			if (waitUntilExists) {
 				val = await new Promise<any>(resolve => {
-					/* eslint-disable-next-line no-null/no-null */
 					const onValue = async (
+						/* eslint-disable-next-line no-null/no-null */
 						snapshot: firebase.database.DataSnapshot | null
 					) => {
 						if (!snapshot?.exists()) {
@@ -1626,8 +1626,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 							let cleanup: () => void;
 							let lastValue: T | undefined;
 
-							/* eslint-disable-next-line no-null/no-null */
 							const onValue = async (
+								/* eslint-disable-next-line no-null/no-null */
 								snapshot: firebase.database.DataSnapshot | null
 							) => {
 								const url = await urlPromise;
@@ -1705,8 +1705,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 						new Observable<boolean>(observer => {
 							let cleanup: () => void;
 
-							/* eslint-disable-next-line no-null/no-null */
 							const onValue = (
+								/* eslint-disable-next-line no-null/no-null */
 								snapshot: firebase.database.DataSnapshot | null
 							) => {
 								this.ngZone.run(() => {
@@ -1765,8 +1765,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 								const initialValues =
 									(await listRef.once('value')).val() || {};
 
-								/* eslint-disable-next-line no-null/no-null */
 								const getValue = async (snapshot: {
+									/* eslint-disable-next-line no-null/no-null */
 									key?: string | null;
 									val: () => any;
 								}) => {
@@ -1844,8 +1844,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 									publishList();
 								};
 
-								/* eslint-disable-next-line no-null/no-null */
 								const onChildChanged = async (
+									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
 								) => {
 									if (
@@ -1858,8 +1858,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 									publishList();
 								};
 
-								/* eslint-disable-next-line no-null/no-null */
 								const onChildRemoved = async (
+									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
 								) => {
 									if (!snapshot || !snapshot.key) {
@@ -1869,8 +1869,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 									publishList();
 								};
 
-								/* eslint-disable-next-line no-null/no-null */
 								const onValue = async (
+									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
 								) => {
 									if (!initiated) {
@@ -1955,9 +1955,10 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 								const listRef = await this.getDatabaseRef(url);
 
-								/* eslint-disable-next-line no-null/no-null */
 								const onChildAdded = async (
+									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null,
+									/* eslint-disable-next-line no-null/no-null */
 									previousKey?: string | null
 								) =>
 									this.ngZone.run(
@@ -2029,8 +2030,8 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 								let keys: string[] | undefined;
 
-								/* eslint-disable-next-line no-null/no-null */
 								const onValue = (
+									/* eslint-disable-next-line no-null/no-null */
 									snapshot: firebase.database.DataSnapshot | null
 								) => {
 									if (!snapshot) {
