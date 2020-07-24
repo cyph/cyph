@@ -171,7 +171,8 @@
 		<div fxLayoutAlign="center center" *ngIf="recaptchaRequired | await">
 			<ngx-recaptcha2
 				[siteKey]="envService.recaptchaAPIKey"
-				(ngModelChange)="recaptchaResponse.next($event)"
+				(reset)="recaptchaResponse.next(undefined)"
+				(success)="recaptchaResponse.next($event)"
 			></ngx-recaptcha2>
 		</div>
 
