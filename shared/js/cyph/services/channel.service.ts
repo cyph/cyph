@@ -34,7 +34,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 	private isClosed: boolean = false;
 
 	/** @ignore */
-	private readonly localLock: LockFunction = lockFunction();
+	private readonly receiveLock = lockFunction();
 
 	/** @ignore */
 	private readonly resolveState: (state: {
@@ -42,6 +42,9 @@ export class ChannelService extends BaseProvider implements IChannelService {
 		messagesURL: string;
 		url: string;
 	}) => void = this._STATE.resolve;
+
+	/** @ignore */
+	private readonly sendLock = lockFunction();
 
 	/** @ignore */
 	private readonly state: Promise<{
@@ -161,53 +164,55 @@ export class ChannelService extends BaseProvider implements IChannelService {
 					true,
 					this.subscriptions
 				)
-				.subscribe(async message => {
-					try {
-						debugLog(() => ({
-							channelMessage: {
-								destroyed: this.destroyed.value,
-								message,
-								userID
-							}
-						}));
+				.subscribe(async message =>
+					this.receiveLock(async () => {
+						try {
+							debugLog(() => ({
+								channelMessage: {
+									destroyed: this.destroyed.value,
+									message,
+									userID
+								}
+							}));
 
-						if (
-							message.value.author === userID ||
-							this.destroyed.value
-						) {
+							if (
+								message.value.author === userID ||
+								this.destroyed.value
+							) {
+								return;
+							}
+
+							await handlers.onMessage(
+								message.value.cyphertext,
+								initialMessageCount > 0
+							);
+						}
+						catch (err) {
+							debugLogError(() => ({
+								channelOnMessageDecryptFailure: err
+							}));
+							return;
+						}
+						finally {
+							if (initialMessageCount > 0) {
+								--initialMessageCount;
+
+								if (initialMessageCount === 0) {
+									this.initialMessagesProcessed.resolve();
+								}
+							}
+						}
+
+						if (this.ephemeral) {
 							return;
 						}
 
-						await handlers.onMessage(
-							message.value.cyphertext,
-							initialMessageCount > 0
-						);
-					}
-					catch (err) {
-						debugLogError(() => ({
-							channelOnMessageDecryptFailure: err
-						}));
-						return;
-					}
-					finally {
-						if (initialMessageCount > 0) {
-							--initialMessageCount;
-
-							if (initialMessageCount === 0) {
-								this.initialMessagesProcessed.resolve();
-							}
-						}
-					}
-
-					if (this.ephemeral) {
-						return;
-					}
-
-					debugLog(() => ({channelMessageDelete: {message}}));
-					await this.databaseService
-						.removeItem(message.url)
-						.catch(() => {});
-				})
+						debugLog(() => ({channelMessageDelete: {message}}));
+						await this.databaseService
+							.removeItem(message.url)
+							.catch(() => {});
+					})
+				)
 		);
 
 		if (
@@ -269,7 +274,7 @@ export class ChannelService extends BaseProvider implements IChannelService {
 
 	/** @inheritDoc */
 	public async send (cyphertext: Uint8Array) : Promise<void> {
-		await this.localLock(async () =>
+		await this.sendLock(async () =>
 			this.databaseService.pushItem<IChannelMessage>(
 				(await this.state).messagesURL,
 				ChannelMessage,
