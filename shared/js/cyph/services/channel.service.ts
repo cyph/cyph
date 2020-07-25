@@ -155,6 +155,8 @@ export class ChannelService extends BaseProvider implements IChannelService {
 			this.initialMessagesProcessed.resolve();
 		}
 
+		const connected = resolvable();
+
 		this.subscriptions.push(
 			this.databaseService
 				.watchListPushes(
@@ -166,6 +168,10 @@ export class ChannelService extends BaseProvider implements IChannelService {
 				)
 				.subscribe(async message =>
 					this.receiveLock(async () => {
+						if (initialMessageCount < 1) {
+							await connected;
+						}
+
 						try {
 							debugLog(() => ({
 								channelMessage: {
@@ -237,26 +243,25 @@ export class ChannelService extends BaseProvider implements IChannelService {
 					this.subscriptions
 				)
 				.subscribe(
-					users => {
+					async users => {
 						if (users.length < 1) {
 							return;
 						}
 						if (!isOpen) {
 							isOpen = true;
-							handlers.onOpen(users[0].value === userID);
+							await handlers.onOpen(users[0].value === userID);
 						}
 						if (users.length < 2) {
 							return;
 						}
-						handlers.onConnect();
+						await handlers.onConnect();
+						connected.resolve();
 					},
-					err => {
-						handlers.onClose();
+					async err => {
+						await handlers.onClose();
 						throw err;
 					},
-					() => {
-						handlers.onClose();
-					}
+					async () => handlers.onClose()
 				)
 		);
 	}
