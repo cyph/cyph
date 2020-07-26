@@ -57,9 +57,7 @@ export class AccountHomeComponent extends BaseProvider implements OnInit {
 			return;
 		}
 
-		this.accountService.interstitial.next(true);
 		await this.router.navigate(await this.accountSettingsService.homePage);
-		this.accountService.interstitial.next(false);
 	}
 
 	constructor (

@@ -232,7 +232,6 @@ export class AccountComponent extends BaseProvider
 			([isMobile, route, routePath]) =>
 				!isMobile &&
 				([
-					'',
 					'audio',
 					'call',
 					'feed',
