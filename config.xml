@@ -332,7 +332,7 @@
 		<splash height="480" platform="ios" src="res/screen/ios/Default~iphone.png" width="320" />
 	</platform>
 
-	<engine name="android" spec="^8.1.0" />
+	<engine name="android" spec="^9" />
 	<engine name="electron" spec="git+https://github.com/buu700/cordova-electron-tmp" />
-	<engine name="ios" spec="^5.1.0" />
+	<engine name="ios" spec="^6" />
 </widget>
