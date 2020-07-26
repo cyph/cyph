@@ -14,6 +14,7 @@ interface IPlanTypeConfig {
 	storageCapGB: number;
 	telehealth: boolean;
 	unlimitedCalling: boolean;
+	upsell: boolean;
 	usernameMinLength: number;
 }
 
@@ -30,6 +31,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		storageCapGB: 100,
 		telehealth: false,
 		unlimitedCalling: true,
+		upsell: false,
 		usernameMinLength: 5
 	},
 	[CyphPlanTypes.FoundersAndFriends]: {
@@ -44,6 +46,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		storageCapGB: 1024,
 		telehealth: false,
 		unlimitedCalling: true,
+		upsell: false,
 		usernameMinLength: 1
 	},
 	[CyphPlanTypes.Free]: {
@@ -59,6 +62,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		storageCapGB: 0.5,
 		telehealth: false,
 		unlimitedCalling: false,
+		upsell: true,
 		usernameMinLength: 5
 	},
 	[CyphPlanTypes.Platinum]: {
@@ -73,6 +77,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		storageCapGB: 1024,
 		telehealth: false,
 		unlimitedCalling: true,
+		upsell: false,
 		usernameMinLength: 1
 	},
 	[CyphPlanTypes.Premium]: {
@@ -87,6 +92,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		storageCapGB: 100,
 		telehealth: false,
 		unlimitedCalling: true,
+		upsell: true,
 		usernameMinLength: 5
 	},
 	[CyphPlanTypes.Supporter]: {
@@ -102,6 +108,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		storageCapGB: 5,
 		telehealth: false,
 		unlimitedCalling: false,
+		upsell: true,
 		usernameMinLength: 5
 	},
 	[CyphPlanTypes.Telehealth]: {
@@ -116,6 +123,7 @@ const planTypeConfig: Record<CyphPlanTypes, IPlanTypeConfig> = {
 		storageCapGB: 100,
 		telehealth: true,
 		unlimitedCalling: true,
+		upsell: false,
 		usernameMinLength: 5
 	}
 };

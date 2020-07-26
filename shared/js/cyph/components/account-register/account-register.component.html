@@ -86,7 +86,7 @@
 		(salesService.registerUpsellBanner | await) &&
 		configService.planConfig[
 			(inviteCodeData | await)?.plan || cyphPlans.Free
-		].usernameMinLength > 1
+		].upsell
 	"
 	*ngIf="!confirmMasterKeyOnly && !getMasterKeyOnly && !getPinOnly"
 >

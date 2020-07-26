@@ -158,8 +158,7 @@ export class SalesService extends BaseProvider {
 				const upsellBanner =
 					!disableUpsellBanner.value &&
 					!this.envService.isTelehealth &&
-					!this.configService.planConfig[plan].lifetime &&
-					!this.configService.planConfig[plan].telehealth &&
+					this.configService.planConfig[plan].upsell &&
 					!this.envService.noInAppPurchasesReferenceAllowed;
 
 				this.upsellBanner.next(upsellBanner);
