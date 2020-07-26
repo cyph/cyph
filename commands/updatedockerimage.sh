@@ -28,6 +28,25 @@ bash -c 'cd ~/emsdk ; git pull'
 emsdk install latest-upstream
 emsdk activate latest-upstream
 
+cd
+rm -rf go-ipfs go-ipfs.tar.gz 2> /dev/null
+wget "$(node -e "(async () => console.log(
+	(await require('node-fetch')(
+		'https://api.github.com/repos/ipfs/go-ipfs/releases/latest'
+	).then(o => o.json())).assets.find(o =>
+		o.browser_download_url.endsWith('_linux-amd64.tar.gz')
+	).browser_download_url
+))()")" -O go-ipfs.tar.gz
+tar xvzf go-ipfs.tar.gz
+cd go-ipfs
+sudo bash install.sh
+cd
+rm -rf go-ipfs go-ipfs.tar.gz
+if [ ! -d ~/.ipfs ] ; then
+	ipfs init
+fi
+
+
 ~/google-cloud-sdk/install.sh \
 	--additional-components app-engine-go cloud-datastore-emulator \
 	--command-completion false \

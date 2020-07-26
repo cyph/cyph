@@ -42,6 +42,39 @@ fail () {
 	exit 1
 }
 
+ipfsAddInternal () {
+	ipfs add -q --chunker=size-2048 "${@}"
+}
+
+ipfsAdd () {
+	if ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; then
+		bash -c 'ipfs daemon &' &> /dev/null
+		sleep 5
+		while ! ipfs swarm peers &> /dev/null ; do sleep 1 ; done
+	fi
+
+	ipfsAddInternal "${1}"
+}
+
+ipfsHash () {
+	ipfsAddInternal -n "${1}"
+}
+
+ipfsVerify () {
+	hash="${1}"
+	shift
+
+	gateway='gateway.ipfs.io'
+	if [ "${1}" ] ; then
+		gateway="${1}"
+		shift
+	fi
+
+	while ! curl "https://${gateway}/ipfs/${hash}" &> /dev/null ; do
+		sleep 60
+	done
+}
+
 log () {
 	echo -e "\n\n\n${*} ($(date))\n"
 }
@@ -86,6 +119,9 @@ export -f checkfailretry
 export -f download
 export -f easyoptions
 export -f fail
+export -f ipfsAdd
+export -f ipfsHash
+export -f ipfsVerify
 export -f log
 export -f ng
 export -f notify
