@@ -31,7 +31,10 @@ export const openWindow = async (
 	}
 
 	try {
-		if ((<any> self).cordova?.plugins?.browsertab) {
+		if (
+			(<any> self).cordova?.plugins?.browsertab &&
+			(url.startsWith('https://') || url.startsWith('http://'))
+		) {
 			await new Promise<void>((resolve, reject) => {
 				(<any> self).cordova.plugins.browsertab.openUrl(
 					url,
