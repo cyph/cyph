@@ -1036,8 +1036,11 @@ message Environment {
 	/** Indicates whether this is prod. */
 	required bool production = 6;
 
+	/** Indicates whether this is an automated test. */
+	bool test = 7;
+
 	/** Indicates whether production AGSE-PKI signing keys should be used. */
-	bool useProdSigningKeys = 7;
+	bool useProdSigningKeys = 8;
 }
 
 /** Represents a transferred file. */

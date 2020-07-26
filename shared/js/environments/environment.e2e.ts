@@ -10,5 +10,6 @@ export const environment: IEnvironment = {
 		project: 'cyph-test-e2e'
 	},
 	local: true,
-	production: false
+	production: false,
+	test: true
 };

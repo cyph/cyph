@@ -64,7 +64,7 @@ for (const k of [
 			appName: '',
 			appVersion: '',
 			cookieEnabled: false,
-			hardwareConcurrency: 0,
+			hardwareConcurrency: 1,
 			language: '',
 			maxTouchPoints: 0,
 			msManipulationViewsEnabled: false,

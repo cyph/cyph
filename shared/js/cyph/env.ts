@@ -230,6 +230,10 @@ export class Env extends EnvDeploy {
 		environment.customBuild !== undefined &&
 		environment.customBuild.config.telehealthFull === true;
 
+	/** Indicates whether this is an automated test. */
+	public readonly isTestRun: boolean =
+		!!(<any> self).isReflectTest || !!environment.test;
+
 	/** Indicates whether this is a WebKit/Blink browser. */
 	public readonly isWebKit: boolean =
 		!(this.isEdge || this.isFirefox) &&
@@ -354,8 +358,15 @@ export class Env extends EnvDeploy {
 			maxSizeMobile: filesConfigMaxSizeMobile
 		};
 
-		this.hardwareConcurrency =
-			navigatorData.hardwareConcurrency || (this.isMobileOS ? 1 : 2);
+		this.hardwareConcurrency = this.isTestRun ?
+			1 :
+			Math.max(
+				Math.floor(
+					(navigatorData.hardwareConcurrency || 2) /
+						(this.isMobileOS ? 2 : 1)
+				),
+				1
+			);
 
 		this.isCordovaDesktop = this.isCordova && !this.isMobileOS;
 		this.isCordovaMobile = this.isCordova && this.isMobileOS;
