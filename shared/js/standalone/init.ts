@@ -56,7 +56,7 @@ if (env.isCordova) {
 			'.overlay.clickable',
 			'.cdk-overlay-pane.mat-tooltip-panel',
 			'.cdk-overlay-backdrop.cdk-overlay-backdrop-showing',
-			'.sidenav-overlay'
+			'.sidenav-overlay[style*="opacity: 1"]'
 		]) {
 			const clickableOverlay = document.querySelector(selector);
 
