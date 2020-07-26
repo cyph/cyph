@@ -4,11 +4,42 @@ const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
 
+const cordovaJSPath = path.join(__dirname, '..', 'www', 'cordova.js');
+
+const defaultCacheValuesPath = path.join(
+	__dirname,
+	'..',
+	'www',
+	'js',
+	'default-cache-values.js'
+);
+
 (async () => {
 	const browser = await puppeteer.launch();
 	const page = await browser.newPage();
 
-	await page.goto('https://cyph.app', {timeout: 0});
+	fs.writeFileSync(
+		cordovaJSPath,
+		`
+			self.history.pushState = undefined;
+			self.cordova = {};
+			self.device = {};
+			document.addEventListener('DOMContentLoaded', () => {
+				setTimeout(() => document.dispatchEvent(new Event('deviceready')), 250);
+				setTimeout(() => document.dispatchEvent(new Event('backbutton')), 500);
+			});
+		`
+	);
+
+	fs.writeFileSync(
+		defaultCacheValuesPath,
+		`var defaultCacheValues = {
+			localforage: {},
+			localStorage: {}
+		};`
+	);
+
+	await page.goto(`file://${__dirname}/../www/index.html`, {timeout: 0});
 
 	await page.waitForSelector('cyph-account-login');
 
@@ -35,16 +66,8 @@ const puppeteer = require('puppeteer');
 		})
 	);
 
-	const f = path.join(
-		__dirname,
-		'..',
-		'www',
-		'js',
-		'default-cache-values.js'
-	);
-
 	fs.writeFileSync(
-		f,
+		defaultCacheValuesPath,
 		format(`var defaultCacheValues = ${cacheValues};`, {
 			arrowParens: 'avoid',
 			bracketSpacing: false,
@@ -64,11 +87,13 @@ const puppeteer = require('puppeteer');
 		}).replace(' =', '\t=')
 	);
 
+	fs.unlinkSync(cordovaJSPath);
+
 	await browser.close();
 
 	childProcess.spawnSync(
 		'git',
-		['commit', '-m', 'updateDefaultCacheValues', f],
+		['commit', '-m', 'updateDefaultCacheValues', defaultCacheValuesPath],
 		{stdio: 'inherit'}
 	);
 
