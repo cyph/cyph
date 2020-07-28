@@ -2,13 +2,16 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	Input,
+	OnChanges,
+	OnInit,
+	SimpleChanges,
 	ViewChild
 } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import memoize from 'lodash-es/memoize';
-import {of} from 'rxjs';
+import {BehaviorSubject, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {BaseProvider} from '../../base-provider';
 import {potassiumUtil} from '../../crypto/potassium/potassium-util';
@@ -34,6 +37,7 @@ import {copyToClipboard} from '../../util/clipboard';
 import {toBehaviorSubject} from '../../util/flatten-observable';
 import {normalize, readableByteLength} from '../../util/formatting';
 import {debugLogError} from '../../util/log';
+import {observableAll} from '../../util/observable-all';
 import {saveFile} from '../../util/save-file';
 import {
 	getDateTimeString,
@@ -51,15 +55,37 @@ import {waitForValue} from '../../util/wait';
 	styleUrls: ['./account-base-file-list.component.scss'],
 	templateUrl: './account-base-file-list.component.html'
 })
-export class AccountBaseFileListComponent extends BaseProvider {
+export class AccountBaseFileListComponent extends BaseProvider
+	implements OnChanges, OnInit {
+	/** @ignore */
+	private readonly filterFunctionSubject = new BehaviorSubject<
+		((o: IAccountFileRecord) => boolean) | undefined
+	>(undefined);
+
 	/** @see AccountNotesComponent.anonymousMessages */
 	@Input() public anonymousMessages: boolean = false;
+
+	/** Current directory. */
+	public readonly currentDirectory = new BehaviorSubject<string>('');
 
 	/** Record filter function. */
 	@Input() public filterFunction?: (o: IAccountFileRecord) => boolean;
 
 	/** @see getDateTimeString */
 	public readonly getDateTimeString = getDateTimeString;
+
+	/** Gets filter function. */
+	public readonly getFilterFunction = memoize((incoming: boolean = false) =>
+		observableAll([this.currentDirectory, this.filterFunctionSubject]).pipe(
+			map(
+				([currentDirectory, filterFunction]) => (
+					o: IAccountFileRecord
+				) =>
+					(filterFunction === undefined || filterFunction(o)) &&
+					(incoming || (o.parentPath || '') === currentDirectory)
+			)
+		)
+	);
 
 	/** @see geISODateString */
 	public readonly geISODateString = geISODateString;
@@ -203,6 +229,26 @@ export class AccountBaseFileListComponent extends BaseProvider {
 		});
 	}
 
+	/** Navigates to specified directory. */
+	public changeDirectory (directory: string) : void {
+		this.currentDirectory.next(
+			this.accountFilesService.directories.transform(
+				this.currentDirectory.value,
+				directory
+			)
+		);
+	}
+
+	/** Creates a directory. */
+	public async createDirectory (directory: string) : Promise<void> {
+		await this.accountFilesService.directories.create(
+			this.accountFilesService.directories.transform(
+				this.currentDirectory.value,
+				directory
+			)
+		);
+	}
+
 	/** Copies a password value to the clipboard. */
 	public async copyPassword (
 		{record}: {record: IAccountFileRecord},
@@ -217,6 +263,22 @@ export class AccountBaseFileListComponent extends BaseProvider {
 		}
 
 		await copyToClipboard(value);
+	}
+
+	/** Deletes a directory. */
+	public async deleteDirectory (directory: string) : Promise<void> {
+		directory = this.accountFilesService.directories.transform(
+			this.currentDirectory.value,
+			directory
+		);
+
+		if (!directory) {
+			return;
+		}
+
+		/* TODO: Add confirmation dialog */
+
+		await this.accountFilesService.directories.delete(directory);
 	}
 
 	/** Edits a password. */
@@ -272,6 +334,18 @@ export class AccountBaseFileListComponent extends BaseProvider {
 				this.stringsService.passwordEditFailed
 			);
 		}
+	}
+
+	/** @inheritDoc */
+	public ngOnChanges (changes: SimpleChanges) : void {
+		if (changes.filterFunction) {
+			this.filterFunctionSubject.next(this.filterFunction);
+		}
+	}
+
+	/** @inheritDoc */
+	public ngOnInit () : void {
+		this.filterFunctionSubject.next(this.filterFunction);
 	}
 
 	/** Removes an EHR API key. */

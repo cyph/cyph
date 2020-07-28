@@ -36,7 +36,7 @@
 			*ngFor="
 				let o of accountFilesService.config[recordType].incoming()
 					| await
-					| cyphFilter: filterFunction;
+					| cyphFilter: (getFilterFunction(true) | await);
 				trackBy: trackBySelf;
 				let i = index
 			"
@@ -160,7 +160,7 @@
 				(
 					accountFilesService.config[recordType].list()
 					| await
-					| cyphFilter: filterFunction
+					| cyphFilter: (getFilterFunction() | await)
 				)?.length < 1
 			"
 		>
@@ -181,7 +181,7 @@
 				(
 					accountFilesService.config[recordType].list()
 					| await
-					| cyphFilter: filterFunction
+					| cyphFilter: (getFilterFunction() | await)
 				)?.length > 0
 			"
 		>
@@ -191,7 +191,7 @@
 					getTableDataSource(
 						(accountFilesService.config[recordType].list()
 							| await
-							| cyphFilter: filterFunction) || []
+							| cyphFilter: (getFilterFunction() | await)) || []
 					)
 				"
 			>
@@ -578,7 +578,7 @@
 				*ngFor="
 					let o of accountFilesService.config[recordType].list()
 						| await
-						| cyphFilter: filterFunction;
+						| cyphFilter: (getFilterFunction() | await);
 					trackBy: trackBySelf;
 					let i = index
 				"

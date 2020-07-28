@@ -23,6 +23,7 @@ import {IQuillDelta} from '../iquill-delta';
 import {IQuillRange} from '../iquill-range';
 import {IResolvable} from '../iresolvable';
 import {
+	AccountFileDirectory,
 	AccountFileRecord,
 	AccountFileReference,
 	AccountFileReferenceContainer,
@@ -33,6 +34,7 @@ import {
 	DataURIProto,
 	EhrApiKey,
 	Form,
+	IAccountFileDirectory,
 	IAccountFileRecord,
 	IAccountFileReference,
 	IAccountFileReferenceContainer,
@@ -98,6 +100,19 @@ export class AccountFilesService extends BaseProvider {
 			file?: AccountFileShare;
 		}>
 	>();
+
+	/** File directories async value. */
+	private readonly directoriesAsyncValue = this.accountDatabaseService.getAsyncValue<
+		IAccountFileDirectory
+	>(
+		'fileDirectories',
+		AccountFileDirectory,
+		undefined,
+		undefined,
+		undefined,
+		undefined,
+		this.subscriptions
+	);
 
 	/** @ignore */
 	private readonly incomingFileCache: Map<
@@ -355,6 +370,101 @@ export class AccountFilesService extends BaseProvider {
 			stringPlural: this.stringsService.translate('wallets'),
 			subroutable: false
 		}
+	};
+
+	/** File directories. */
+	public readonly directories = {
+		create: async (directory: string) => {
+			if (!directory) {
+				return;
+			}
+
+			await this.directoriesAsyncValue.updateValue(async root => {
+				this.getChildDirectory(root, directory.split('/'));
+
+				return root;
+			});
+		},
+		delete: async (directory: string) => {
+			if (!directory) {
+				return;
+			}
+
+			await this.directoriesAsyncValue.updateValue(async root => {
+				const directorySplit = directory.split('/');
+				const pathToDelete = directorySplit.slice(-1)[0];
+
+				const parent = this.getChildDirectory(
+					root,
+					directorySplit.slice(0, -1)
+				);
+
+				if (parent.children) {
+					delete parent.children[pathToDelete];
+				}
+
+				return root;
+			});
+		},
+		transform: (currentDirectory: string, directory: string) => {
+			directory = directory.trim();
+
+			if (!directory || directory === '/') {
+				return '';
+			}
+
+			const directorySplit = directory.split('/');
+
+			if (directory.startsWith('/')) {
+				return directorySplit
+					.slice(1)
+					.filter(
+						(s, i) =>
+							s &&
+							s !== '.' &&
+							s !== '..' &&
+							directorySplit[i + 2] !== '..'
+					)
+					.join('/');
+			}
+
+			return directorySplit
+				.reduce(
+					(arr, path) =>
+						path === '.' ?
+							arr :
+						path === '..' ?
+							arr.slice(0, -1) :
+							arr.concat(path),
+					currentDirectory.split('/')
+				)
+				.join('/');
+		},
+		watch: memoize(
+			(
+				parentDirectory: string = '',
+				includeRelativeParent: boolean = true
+			) => {
+				const parentDirectorySplit = parentDirectory.split('/');
+
+				return this.directoriesAsyncValue
+					.watch()
+					.pipe(
+						map(root =>
+							parentDirectorySplit.length > 0 ?
+								(includeRelativeParent ? ['..'] : []).concat(
+									Object.keys(
+										this.getChildDirectory(
+											root,
+											parentDirectorySplit
+										).children || {}
+									)
+								) :
+								Object.keys(root.children || {})
+						)
+					);
+			}
+		)
 	};
 
 	/** List of file records owned by current user, sorted by timestamp in descending order. */
@@ -1163,6 +1273,22 @@ export class AccountFilesService extends BaseProvider {
 				...('ops' in o ? {ops: o.ops} : {})
 			} :
 			{};
+	}
+
+	/** @ignore */
+	private getChildDirectory (
+		root: IAccountFileDirectory,
+		directorySplit: string[]
+	) : IAccountFileDirectory {
+		return directorySplit.reduce((o, path) => {
+			if (!o.children) {
+				o.children = {};
+			}
+			if (!o.children[path]) {
+				o.children[path] = {children: {}};
+			}
+			return o.children[path];
+		}, root);
 	}
 
 	/** @ignore */
@@ -2281,7 +2407,8 @@ export class AccountFilesService extends BaseProvider {
 		replyTo?: {email?: string; name?: string},
 		wasAnonymousShare: boolean = false,
 		timestamp?: number,
-		id: string = uuid()
+		id: string = uuid(),
+		parentPath?: string
 	) : {
 		progress: Observable<number>;
 		result: Promise<string>;
@@ -2420,7 +2547,7 @@ export class AccountFilesService extends BaseProvider {
 		return {
 			progress,
 			result: result.then(async () => {
-				const accountFileRecord = {
+				const accountFileRecord: IAccountFileRecord = {
 					id,
 					mediaType:
 						fileConfig.mediaType ||
@@ -2428,6 +2555,7 @@ export class AccountFilesService extends BaseProvider {
 						('mediaType' in file ? file.mediaType : undefined) ||
 						'application/octet-stream',
 					name,
+					parentPath,
 					recordType: fileConfig.recordType,
 					replyToEmail: replyTo?.email,
 					replyToName: replyTo?.name,

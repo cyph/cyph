@@ -180,6 +180,8 @@ service firebase.storage {
 				// 	match /wallets/{hash} {}
 				// }
 
+				// match /fileDirectories/{hash} {}
+
 				match /fileRecords/{fileRecord}/{hash} {
 					allow read;
 				}

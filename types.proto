@@ -24,6 +24,12 @@ message AccountContactState {
 	required States state = 1;
 }
 
+/** File directories. */
+message AccountFileDirectory {
+	/** Children of this directory. */
+	map<string, AccountFileDirectory> children = 1;
+}
+
 /** Metadata of one file stored in an account. */
 message AccountFileRecord {
 	/** Possible file record types. */
@@ -49,6 +55,9 @@ message AccountFileRecord {
 
 	/** File name. */
 	required string name = 3;
+
+	/** Path of parent directory. */
+	string parentPath = 10;
 
 	/** Type of file record. */
 	required RecordTypes recordType = 4;
