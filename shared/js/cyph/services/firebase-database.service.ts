@@ -1091,10 +1091,11 @@ export class FirebaseDatabaseService extends DatabaseService {
 
 			const previousKey = async () : Promise<string | undefined> =>
 				retryUntilSuccessful(async () => {
-					const listValueMap: Record<string, any> = (await listRef
-						.orderByKey()
-						.limitToLast(1)
-						.once('value')).val();
+					const listValueMap: Record<string, any> =
+						(await listRef
+							.orderByKey()
+							.limitToLast(1)
+							.once('value')).val() || {};
 
 					return Object.keys(listValueMap)[0];
 				});
