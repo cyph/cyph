@@ -18,6 +18,16 @@
 	}
 }
 
+.table-container {
+	position: relative;
+
+	> .create-directory-button {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+	}
+}
+
 mat-card.incoming {
 	@include transition(500ms);
 

@@ -155,8 +155,34 @@
 		<br />
 
 		<div
+			fxLayout="row"
+			fxLayoutGap="8px"
+			*ngIf="
+				(envService.isMobile | await) || !!(currentDirectory | await)
+			"
+		>
+			<div
+				fxFlex
+				*ngIf="
+					(envService.isMobile | await) ||
+					!!(currentDirectory | await)
+				"
+			>
+				<h3 *ngIf="currentDirectory | await as directory">
+					<code>/{{ directory }}</code>
+				</h3>
+			</div>
+			<div *ngIf="envService.isMobile | await">
+				<ng-container
+					*ngTemplateOutlet="createDirectoryButton"
+				></ng-container>
+			</div>
+		</div>
+
+		<div
 			fxLayoutAlign="center"
 			*ngIf="
+				!(currentDirectory | await) &&
 				(
 					accountFilesService.config[recordType].list()
 					| await
@@ -176,22 +202,31 @@
 		</div>
 
 		<div
+			class="table-container"
 			*ngIf="
 				(envService.isMobile | await) === false &&
-				(
-					accountFilesService.config[recordType].list()
-					| await
-					| cyphFilter: (getFilterFunction() | await)
-				)?.length > 0
+				(!!(currentDirectory | await) ||
+					(
+						accountFilesService.config[recordType].list()
+						| await
+						| cyphFilter: (getFilterFunction() | await)
+					)?.length > 0)
 			"
 		>
 			<mat-table
 				matSort
 				[dataSource]="
 					getTableDataSource(
-						(accountFilesService.config[recordType].list()
-							| await
-							| cyphFilter: (getFilterFunction() | await)) || []
+						getMergedRowData(
+							(accountFilesService.config[recordType].list()
+								| await
+								| cyphFilter: (getFilterFunction() | await)) ||
+								[]
+						)(
+							(accountFilesService.directories.watch(
+								(currentDirectory | await) || ''
+							) | await) || []
+						)
 					)
 				"
 			>
@@ -494,7 +529,17 @@
 						<span cyphTranslate>Size</span>
 					</mat-header-cell>
 					<mat-cell fxFlex="96px" *matCellDef="let o">
-						{{ readableByteLength(o.record.size) }}
+						<div
+							*ngIf="
+								o.record.mediaType !== 'cyph/folder';
+								else noSize
+							"
+						>
+							{{ readableByteLength(o.record.size) }}
+						</div>
+						<ng-template #noSize>
+							<div fxLayoutAlign="center">&mdash;</div>
+						</ng-template>
 					</mat-cell>
 				</ng-container>
 
@@ -512,9 +557,20 @@
 						>
 					</mat-header-cell>
 					<mat-cell fxFlex="128px" *matCellDef="let o">
-						{{
-							watchRelativeDateString(o.record.timestamp) | await
-						}}
+						<div
+							*ngIf="
+								o.record.mediaType !== 'cyph/folder';
+								else noTimestamp
+							"
+						>
+							{{
+								watchRelativeDateString(o.record.timestamp)
+									| await
+							}}
+						</div>
+						<ng-template #noTimestamp>
+							<div fxLayoutAlign="center">&mdash;</div>
+						</ng-template>
 					</mat-cell>
 				</ng-container>
 
@@ -561,6 +617,8 @@
 							row.record.id
 					"
 					(click)="
+						row.record.mediaType === 'cyph/folder' ?
+							changeDirectory(row.record.name) :
 						recordType === recordTypes.File ?
 							accountFilesService.openFile(row.record.id) :
 							undefined
@@ -571,14 +629,24 @@
 				[pageSizeOptions]="[5, 10, 25]"
 				showFirstLastButtons
 			></mat-paginator>
+
+			<ng-container
+				*ngTemplateOutlet="createDirectoryButton"
+			></ng-container>
 		</div>
 
 		<ng-container *ngIf="envService.isMobile | await">
 			<mat-card
 				*ngFor="
-					let o of accountFilesService.config[recordType].list()
-						| await
-						| cyphFilter: (getFilterFunction() | await);
+					let o of getMergedRowData(
+						(accountFilesService.config[recordType].list()
+							| await
+							| cyphFilter: (getFilterFunction() | await)) || []
+					)(
+						(accountFilesService.directories.watch(
+							(currentDirectory | await) || ''
+						) | await) || []
+					);
 					trackBy: trackBySelf;
 					let i = index
 				"
@@ -593,6 +661,8 @@
 						o.record.id
 				"
 				(click)="
+					o.record.mediaType === 'cyph/folder' ?
+						changeDirectory(o.record.name) :
 					recordType === recordTypes.File ?
 						accountFilesService.openFile(o.record.id) :
 						undefined
@@ -620,7 +690,12 @@
 						}}
 					</mat-card-title>
 					<mat-card-subtitle>
-						<ng-container *ngIf="recordType === recordTypes.File">
+						<ng-container
+							*ngIf="
+								o.record.mediaType !== 'cyph/folder' &&
+								recordType === recordTypes.File
+							"
+						>
 							<div>
 								<span cyphTranslate>Type:</span>
 								&ngsp;
@@ -757,7 +832,19 @@
 		matTooltipPosition="above"
 		cyphDropZone
 		cyphTranslate
-		(fileDrop)="accountFilesService.upload($event.name, $event)"
+		(fileDrop)="
+			accountFilesService.upload(
+				$event.name,
+				$event,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				undefined,
+				currentDirectory.value
+			)
+		"
 		*ngIf="
 			((accountFilesService.filesTotalSize | await) || 0) <=
 			((accountFilesService.fileStorageLimit | await) || 0)
@@ -768,7 +855,12 @@
 </ng-template>
 
 <ng-template #actionButtons let-currentUser="currentUser" let-o="o">
-	<ng-container *ngIf="recordType === recordTypes.File">
+	<ng-container
+		*ngIf="
+			o.record.mediaType !== 'cyph/folder' &&
+			recordType === recordTypes.File
+		"
+	>
 		<button
 			mat-icon-button
 			cyphTranslate
@@ -954,6 +1046,7 @@
 			$event.stopPropagation()
 		"
 		*ngIf="
+			o.record.mediaType !== 'cyph/folder' &&
 			!!currentUser?.agseConfirmed &&
 			!anonymousMessages &&
 			recordType !== recordTypes.PGPKey &&
@@ -971,12 +1064,15 @@
 		cyphTranslate
 		matTooltip="Delete"
 		(click)="
+			o.record.mediaType === 'cyph/folder' ?
+				deleteDirectory(o.record.name) :
 			recordType === recordTypes.EhrApiKey ?
 				removeEhrApiKey(o) :
 				accountFilesService.remove(o.record);
 			$event.stopPropagation()
 		"
 		*ngIf="
+			!(o.record.mediaType === 'cyph/folder' && o.record.name === '..') &&
 			(recordType !== recordTypes.EhrApiKey || !o.data?.isMaster) &&
 			!(
 				recordType === recordTypes.Password &&
@@ -985,5 +1081,17 @@
 		"
 	>
 		<mat-icon>delete</mat-icon>
+	</button>
+</ng-template>
+
+<ng-template #createDirectoryButton>
+	<button
+		class="create-directory-button"
+		mat-icon-button
+		cyphTranslate
+		matTooltip="Create New Folder"
+		(click)="createDirectory()"
+	>
+		<mat-icon>create_new_folder</mat-icon>
 	</button>
 </ng-template>

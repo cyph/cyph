@@ -296,6 +296,12 @@ export class StringsService extends BaseProvider {
 	public readonly continuePrompt = `Continue?`;
 
 	/** @see StringsService */
+	public readonly createDirectoryPlaceholder = `Name`;
+
+	/** @see StringsService */
+	public readonly createDirectoryTitle = `Create New Folder`;
+
+	/** @see StringsService */
 	public readonly createGroupTitle = `New Group Chat`;
 
 	/** @see StringsService */

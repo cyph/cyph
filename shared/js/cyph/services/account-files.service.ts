@@ -385,8 +385,17 @@ export class AccountFilesService extends BaseProvider {
 				return root;
 			});
 		},
-		delete: async (directory: string) => {
-			if (!directory) {
+		delete: async (directory: string, confirm: boolean = true) => {
+			if (
+				!directory ||
+				(confirm &&
+					!(await this.dialogService.confirm({
+						content: `${
+							this.stringsService.deleteMessage
+						} ${directory || this.stringsService.untitled}?`,
+						title: this.stringsService.deleteConfirm
+					})))
+			) {
 				return;
 			}
 
@@ -436,7 +445,7 @@ export class AccountFilesService extends BaseProvider {
 						path === '..' ?
 							arr.slice(0, -1) :
 							arr.concat(path),
-					currentDirectory.split('/')
+					currentDirectory ? currentDirectory.split('/') : []
 				)
 				.join('/');
 		},
@@ -445,24 +454,34 @@ export class AccountFilesService extends BaseProvider {
 				parentDirectory: string = '',
 				includeRelativeParent: boolean = true
 			) => {
-				const parentDirectorySplit = parentDirectory.split('/');
+				const parentDirectorySplit = parentDirectory ?
+					parentDirectory.split('/') :
+					[];
 
-				return this.directoriesAsyncValue
-					.watch()
-					.pipe(
-						map(root =>
-							parentDirectorySplit.length > 0 ?
-								(includeRelativeParent ? ['..'] : []).concat(
-									Object.keys(
-										this.getChildDirectory(
-											root,
-											parentDirectorySplit
-										).children || {}
+				return this.directoriesAsyncValue.watch().pipe(
+					map(root =>
+						parentDirectorySplit.length > 0 ?
+							(includeRelativeParent ? ['..'] : []).concat(
+								Array.from(
+									new Set(
+										Object.keys(
+											this.getChildDirectory(
+												root,
+												parentDirectorySplit
+											).children || {}
+										)
 									)
-								) :
-								Object.keys(root.children || {})
-						)
-					);
+								)
+									.filter(s => s)
+									.sort()
+							) :
+							Array.from(
+								new Set(Object.keys(root.children || {}))
+							)
+								.filter(s => s)
+								.sort()
+					)
+				);
 			}
 		)
 	};
@@ -1929,6 +1948,9 @@ export class AccountFilesService extends BaseProvider {
 
 			case 'cyph/ehr-api-key':
 				return 'device_hub';
+
+			case 'cyph/folder':
+				return 'folder';
 
 			case 'cyph/form':
 				return 'web';

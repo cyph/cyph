@@ -1,4 +1,4 @@
-<cyph-account-base-file-list>
+<cyph-account-base-file-list #baseFileList>
 	<ng-container
 		*ngIf="
 			((accountFilesService.filesTotalSize | await) || 0) <=
@@ -14,7 +14,19 @@
 			matTooltipPosition="left"
 			cyphDropZone
 			cyphTranslate
-			(fileDrop)="accountFilesService.upload($event.name, $event)"
+			(fileDrop)="
+				accountFilesService.upload(
+					$event.name,
+					$event,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					undefined,
+					baseFileList.currentDirectory.value
+				)
+			"
 		>
 			<mat-icon>file_upload</mat-icon>
 		</button>

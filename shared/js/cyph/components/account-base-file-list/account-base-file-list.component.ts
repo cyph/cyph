@@ -90,6 +90,34 @@ export class AccountBaseFileListComponent extends BaseProvider
 	/** @see geISODateString */
 	public readonly geISODateString = geISODateString;
 
+	/** Gets row data of files and directories. */
+	public readonly getMergedRowData = memoize(
+		(
+			files: {
+				data: any;
+				owner: string;
+				record: IAccountFileRecord;
+			}[]
+		) =>
+			memoize((directories: string[]) =>
+				directories
+					.map(directory => ({
+						owner:
+							this.accountDatabaseService.currentUser.value?.user
+								.username || '',
+						record: {
+							id: directory,
+							mediaType: 'cyph/folder',
+							name: directory,
+							recordType: AccountFileRecord.RecordTypes.File,
+							size: 0,
+							timestamp: 0
+						}
+					}))
+					.concat(files)
+			)
+	);
+
 	/** Gets PGP key data, if applicable. */
 	public readonly getPGPKey = memoize(
 		async ({record}: {record: IAccountFileRecord}) => {
@@ -175,13 +203,13 @@ export class AccountBaseFileListComponent extends BaseProvider
 	/** Gets table data source. */
 	public readonly getTableDataSource = memoize(
 		(
-			data: {
+			rows: {
 				data: any;
 				owner: string;
 				record: IAccountFileRecord;
 			}[]
 		) => {
-			const dataSource = new MatTableDataSource(data);
+			const dataSource = new MatTableDataSource(rows);
 
 			Promise.all([
 				waitForValue(() => this.paginator),
@@ -240,7 +268,21 @@ export class AccountBaseFileListComponent extends BaseProvider
 	}
 
 	/** Creates a directory. */
-	public async createDirectory (directory: string) : Promise<void> {
+	public async createDirectory (
+		directory: string | undefined = undefined
+	) : Promise<void> {
+		if (directory === undefined) {
+			directory = await this.dialogService.prompt({
+				content: '',
+				placeholder: this.stringsService.createDirectoryPlaceholder,
+				title: this.stringsService.createDirectoryTitle
+			});
+		}
+
+		if (!directory) {
+			return;
+		}
+
 		await this.accountFilesService.directories.create(
 			this.accountFilesService.directories.transform(
 				this.currentDirectory.value,
@@ -275,8 +317,6 @@ export class AccountBaseFileListComponent extends BaseProvider
 		if (!directory) {
 			return;
 		}
-
-		/* TODO: Add confirmation dialog */
 
 		await this.accountFilesService.directories.delete(directory);
 	}
