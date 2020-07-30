@@ -5,7 +5,7 @@
 	.e-header-icon-wrapper {
 		> .e-edit,
 		> .e-delete {
-			display: none;
+			display: none !important;
 		}
 	}
 }

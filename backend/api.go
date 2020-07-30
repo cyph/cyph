@@ -534,7 +534,14 @@ func braintreeCheckout(h HandlerArgs) (interface{}, int) {
 		}
 	}
 
-	subject := "SALE: " + name + " <" + email + ">, $" + strconv.FormatInt(totalAmount/100, 10)
+	subjectExtra := email
+	if appStoreReceipt != "" {
+		subjectExtra = "iOS"
+	} else if bitPayInvoiceID != "" {
+		subjectExtra = "BitPay"
+	}
+
+	subject := "SALE: " + name + " <" + subjectExtra + ">, $" + strconv.FormatInt(totalAmount/100, 10)
 	if !isProd {
 		subject = "[sandbox] " + subject
 	}
