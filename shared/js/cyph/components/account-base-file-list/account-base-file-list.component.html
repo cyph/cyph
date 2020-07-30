@@ -411,7 +411,7 @@
 							{{
 								!pgpKey?.key?.pgpMetadata?.expires ?
 									'-' :
-									(geISODateString(
+									(getISODateString(
 										pgpKey?.key?.pgpMetadata?.expires || 0
 									) | await) || ''
 							}}

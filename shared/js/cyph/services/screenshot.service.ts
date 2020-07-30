@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import html2canvas from 'html2canvas';
 import {BaseProvider} from '../base-provider';
 import {saveFile} from '../util/save-file';
-import {geISODateString, getTimeString} from '../util/time';
+import {getISODateString, getTimeString} from '../util/time';
 import {sleep} from '../util/wait';
 import {FileService} from './file.service';
 
@@ -24,7 +24,7 @@ export class ScreenshotService extends BaseProvider {
 
 		await saveFile(
 			await this.getScreenshot(),
-			`Screenshot ${geISODateString()} at ${getTimeString(
+			`Screenshot ${getISODateString()} at ${getTimeString(
 				undefined,
 				true
 			).replace(/:/g, '.')}.png`,

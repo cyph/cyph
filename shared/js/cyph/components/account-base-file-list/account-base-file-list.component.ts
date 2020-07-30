@@ -41,7 +41,7 @@ import {observableAll} from '../../util/observable-all';
 import {saveFile} from '../../util/save-file';
 import {
 	getDateTimeString,
-	geISODateString,
+	getISODateString,
 	watchRelativeDateString
 } from '../../util/time';
 import {waitForValue} from '../../util/wait';
@@ -87,8 +87,8 @@ export class AccountBaseFileListComponent extends BaseProvider
 		)
 	);
 
-	/** @see geISODateString */
-	public readonly geISODateString = geISODateString;
+	/** @see getISODateString */
+	public readonly getISODateString = getISODateString;
 
 	/** Gets row data of files and directories. */
 	public readonly getMergedRowData = memoize(

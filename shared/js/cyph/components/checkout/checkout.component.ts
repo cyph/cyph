@@ -748,7 +748,6 @@ export class CheckoutComponent extends BaseProvider
 									0)
 					),
 					creditCard,
-					nonce: paymentMethod?.nonce,
 					subscription: this.subscriptionType !== undefined,
 					subscriptionCount:
 						this.subscriptionType === undefined ?
@@ -778,6 +777,9 @@ export class CheckoutComponent extends BaseProvider
 					...(this.item !== undefined ? {item: this.item} : {}),
 					...(this.namespace !== undefined ?
 						{namespace: this.namespace} :
+						{}),
+					...(paymentMethod?.nonce ?
+						{nonce: paymentMethod.nonce} :
 						{}),
 					...(this.recaptchaResponse.value !== undefined ?
 						{recaptchaResponse: this.recaptchaResponse.value} :
