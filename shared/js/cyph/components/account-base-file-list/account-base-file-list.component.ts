@@ -101,7 +101,12 @@ export class AccountBaseFileListComponent extends BaseProvider
 		) =>
 			memoize((directories: string[]) =>
 				directories
-					.map(directory => ({
+					.map<{
+						data: any;
+						owner: string;
+						record: IAccountFileRecord;
+					}>(directory => ({
+						data: undefined,
 						owner:
 							this.accountDatabaseService.currentUser.value?.user
 								.username || '',
