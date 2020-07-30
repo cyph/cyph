@@ -158,7 +158,8 @@
 			fxLayout="row"
 			fxLayoutGap="8px"
 			*ngIf="
-				(envService.isMobile | await) || !!(currentDirectory | await)
+				recordType === recordTypes.File &&
+				((envService.isMobile | await) || !!(currentDirectory | await))
 			"
 		>
 			<div
@@ -182,7 +183,8 @@
 		<div
 			fxLayoutAlign="center"
 			*ngIf="
-				!(currentDirectory | await) &&
+				(recordType !== recordTypes.File ||
+					!(currentDirectory | await)) &&
 				(
 					accountFilesService.config[recordType].list()
 					| await
@@ -205,7 +207,8 @@
 			class="table-container"
 			*ngIf="
 				(envService.isMobile | await) === false &&
-				(!!(currentDirectory | await) ||
+				((recordType === recordTypes.File &&
+					!!(currentDirectory | await)) ||
 					(
 						accountFilesService.config[recordType].list()
 						| await
@@ -223,9 +226,11 @@
 								| cyphFilter: (getFilterFunction() | await)) ||
 								[]
 						)(
-							(accountFilesService.directories.watch(
-								(currentDirectory | await) || ''
-							) | await) || []
+							recordType === recordTypes.File ?
+								(accountFilesService.directories.watch(
+									(currentDirectory | await) || ''
+								) | await) || [] :
+								[]
 						)
 					)
 				"
@@ -643,9 +648,11 @@
 							| await
 							| cyphFilter: (getFilterFunction() | await)) || []
 					)(
-						(accountFilesService.directories.watch(
-							(currentDirectory | await) || ''
-						) | await) || []
+						recordType === recordTypes.File ?
+							(accountFilesService.directories.watch(
+								(currentDirectory | await) || ''
+							) | await) || [] :
+							[]
 					);
 					trackBy: trackBySelf;
 					let i = index
@@ -842,7 +849,9 @@
 				undefined,
 				undefined,
 				undefined,
-				currentDirectory.value
+				recordType === recordTypes.File ?
+					currentDirectory.value :
+					undefined
 			)
 		"
 		*ngIf="
@@ -1091,6 +1100,7 @@
 		cyphTranslate
 		matTooltip="Create New Folder"
 		(click)="createDirectory()"
+		*ngIf="recordType === recordTypes.File"
 	>
 		<mat-icon>create_new_folder</mat-icon>
 	</button>
