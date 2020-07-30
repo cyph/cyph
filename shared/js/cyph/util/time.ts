@@ -300,7 +300,7 @@ export const getDurationString = memoize((time: number) : string => {
 });
 
 /** Returns an ISO 8601 representation of the date (e.g. "2018-01-01"). */
-export const geISODateString = memoize(
+export const getISODateString = memoize(
 	(timestamp?: number) : string =>
 		timestampToDate(timestamp)
 			.toISOString()

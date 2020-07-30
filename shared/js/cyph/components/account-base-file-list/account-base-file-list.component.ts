@@ -37,7 +37,7 @@ import {debugLogError} from '../../util/log';
 import {saveFile} from '../../util/save-file';
 import {
 	getDateTimeString,
-	geISODateString,
+	getISODateString,
 	watchRelativeDateString
 } from '../../util/time';
 import {waitForValue} from '../../util/wait';
@@ -61,8 +61,8 @@ export class AccountBaseFileListComponent extends BaseProvider {
 	/** @see getDateTimeString */
 	public readonly getDateTimeString = getDateTimeString;
 
-	/** @see geISODateString */
-	public readonly geISODateString = geISODateString;
+	/** @see getISODateString */
+	public readonly getISODateString = getISODateString;
 
 	/** Gets PGP key data, if applicable. */
 	public readonly getPGPKey = memoize(
