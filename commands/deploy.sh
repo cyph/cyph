@@ -821,6 +821,7 @@ if [ "${websign}" ] ; then
 
 	if [ -d pkg/cyph.app-subresources ] ; then
 		find pkg/cyph.app-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
+			ipfsAdd % > %.ipfs; \
 			zopfli -i1000 %; \
 			brotli -Zk %; \
 		'
@@ -870,14 +871,23 @@ if [ "${websign}" ] ; then
 
 		cp ${p}/current ${p}/pkg.srihash
 
-		find ${p} -type f -not \( -name '*.srihash' -or -name '*.gz' -or -name '*.br' \) -exec bash -c ' \
-			if [ ! -f {}.gz ] ; then \
+		find ${p} -type f -not \( \
+			-name '*.srihash' \
+			-or -name '*.ipfs' \
+			-or -name '*.gz' \
+			-or -name '*.br' \
+		\) -exec bash -c ' \
+			if [ ! -f {}.ipfs ] ; then \
+				ipfsAdd {} > {}.ipfs; \
 				zopfli -i1000 {}; \
 				brotli -Zk {}; \
 			fi; \
-			chmod 700 {}.gz {}.br; \
-			git add {}.gz {}.br; \
-			git commit -S -m "$(cat {}.srihash 2> /dev/null || date +%s)" {}.gz {}.br > /dev/null 2>&1; \
+			chmod 700 {}.ipfs {}.gz {}.br; \
+			git add {}.ipfs {}.gz {}.br; \
+			git commit -S -m \
+				"$(cat {}.srihash 2> /dev/null || date +%s)" \
+				{}.ipfs {}.gz {}.br \
+			&> /dev/null; \
 		' \;
 
 		if [ "${simple}" ] ; then
@@ -886,6 +896,19 @@ if [ "${websign}" ] ; then
 	done
 
 	git push
+
+	for p in ${packages} ; do
+		if [ "${simple}" ] ; then
+			cd websign/test
+		fi
+
+		ipfsVerifyAll $(find ${p} -type f -name '*.ipfs')
+
+		if [ "${simple}" ] ; then
+			cd ../..
+		fi
+	done
+
 	cd ..
 
 	# Publish internal prod branch to public repo

@@ -1,5 +1,7 @@
 # Sourced by bashrc within Docker
 
+NEWLINE=$'\n'
+
 bindmount () {
 	if [ "${CIRCLECI}" -o ! -d /cyph ] ; then
 		rm -rf "${2}" 2> /dev/null
@@ -56,17 +58,24 @@ ipfsAdd () {
 	ipfsAddInternal "${1}"
 }
 
+ipfsGatewaysCache=""
+
 ipfsGateways () {
-	for gateway in $(
-		curl -sL https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json |
-			grep -oP 'https://[^"]+'
-	) ; do
-		curl -m 5 "$(
-			echo "${gateway}" |
-				sed 's|:hash|QmcBBMQx8truxJZTZayMHS2sCDwzXfaRUCFyjgJKnHNrkx|g'
-		)" &> /dev/null &&
-		echo "${gateway}"
+	while [ ! "${ipfsGatewaysCache}" ] ; do
+		for gateway in $(
+			curl -sL https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json |
+				grep -oP 'https://[^"]+'
+		) ; do
+			if curl -m 5 "$(
+				echo "${gateway}" |
+					sed 's|:hash|QmcBBMQx8truxJZTZayMHS2sCDwzXfaRUCFyjgJKnHNrkx|g'
+			)" &> /dev/null ; then
+				ipfsGatewaysCache="${ipfsGatewaysCache}${gateway}${NEWLINE}"
+			fi
+		done
 	done
+
+	echo -n "${ipfsGatewaysCache}"
 }
 
 ipfsHash () {
@@ -87,6 +96,14 @@ ipfsVerify () {
 
 	while ! curl "${url}" &> /dev/null ; do
 		sleep 60
+	done
+}
+
+ipfsVerifyAll () {
+	for gateway in $(ipfsGateways) ; do
+		for f in "${@}" ; do
+			ipfsVerify "$(cat "${f}")" "${gateway}"
+		done
 	done
 }
 
@@ -138,6 +155,7 @@ export -f ipfsAdd
 export -f ipfsGateways
 export -f ipfsHash
 export -f ipfsVerify
+export -f ipfsVerifyAll
 export -f log
 export -f ng
 export -f notify
