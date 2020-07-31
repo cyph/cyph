@@ -64,12 +64,13 @@ ipfsGateways () {
 	while [ ! "${ipfsGatewaysCache}" ] ; do
 		for gateway in $(
 			curl -sL https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json |
-				grep -oP 'https://[^"]+'
+				grep -oP 'https://[^"]+' |
+			grep -v 'https://:hash'
 		) ; do
-			if curl -m 5 "$(
+			if [ "$(curl -m 5 "$(
 				echo "${gateway}" |
 					sed 's|:hash|QmcBBMQx8truxJZTZayMHS2sCDwzXfaRUCFyjgJKnHNrkx|g'
-			)" &> /dev/null ; then
+			)" 2> /dev/null)" == "balls" ] ; then
 				ipfsGatewaysCache="${ipfsGatewaysCache}${gateway}${NEWLINE}"
 			fi
 		done
