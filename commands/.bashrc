@@ -56,6 +56,19 @@ ipfsAdd () {
 	ipfsAddInternal "${1}"
 }
 
+ipfsGateways () {
+	for gateway in $(
+		curl -sL https://github.com/ipfs/public-gateway-checker/raw/master/gateways.json |
+			grep -oP 'https://[^"]+'
+	) ; do
+		curl -m 5 "$(
+			echo "${gateway}" |
+				sed 's|:hash|QmcBBMQx8truxJZTZayMHS2sCDwzXfaRUCFyjgJKnHNrkx|g'
+		)" &> /dev/null &&
+		echo "${gateway}"
+	done
+}
+
 ipfsHash () {
 	ipfsAddInternal -n "${1}"
 }
@@ -64,13 +77,15 @@ ipfsVerify () {
 	hash="${1}"
 	shift
 
-	gateway='gateway.ipfs.io'
+	gateway='https://gateway.ipfs.io/ipfs/:hash'
 	if [ "${1}" ] ; then
 		gateway="${1}"
 		shift
 	fi
 
-	while ! curl "https://${gateway}/ipfs/${hash}" &> /dev/null ; do
+	url="$(echo "${gateway}" | sed "s|:hash|${hash}|")"
+
+	while ! curl "${url}" &> /dev/null ; do
 		sleep 60
 	done
 }
@@ -120,6 +135,7 @@ export -f download
 export -f easyoptions
 export -f fail
 export -f ipfsAdd
+export -f ipfsGateways
 export -f ipfsHash
 export -f ipfsVerify
 export -f log
