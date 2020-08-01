@@ -45,17 +45,21 @@ fail () {
 }
 
 ipfsAdd () {
-	if ! ps ux | grep 'ipfs daemon' | grep -v grep &> /dev/null ; then
-		bash -c 'ipfs daemon &' &> /dev/null
+	export ipfsAddOutput="$(
+		curl -s https://api.pinata.cloud/pinning/pinFileToIPFS \
+			-H "pinata_api_key: $(head -n1 ~/.cyph/pinata.key)" \
+			-H "pinata_secret_api_key: $(tail -n1 ~/.cyph/pinata.key)" \
+			-F "file=@${PWD}/${1}"
+	)"
+	
+	hash="$(node -e 'console.log(JSON.parse(process.env.ipfsAddOutput).IpfsHash)')"
+
+	if [ "${hash}" ] ; then
+		echo "${hash}"
+	else
 		sleep 5
-		while ! ipfs swarm peers &> /dev/null ; do sleep 1 ; done
+		ipfsAdd "${1}"
 	fi
-
-	ipfsAddInternal "${1}"
-}
-
-ipfsAddInternal () {
-	ipfs add -q --chunker=size-2048 "${@}"
 }
 
 ipfsGatewaysCache=""
@@ -77,10 +81,6 @@ ipfsGateways () {
 	done
 
 	echo -n "${ipfsGatewaysCache}"
-}
-
-ipfsHash () {
-	ipfsAddInternal -n "${1}"
 }
 
 ipfsVerify () {
@@ -153,9 +153,7 @@ export -f download
 export -f easyoptions
 export -f fail
 export -f ipfsAdd
-export -f ipfsAddInternal
 export -f ipfsGateways
-export -f ipfsHash
 export -f ipfsVerify
 export -f ipfsVerifyAll
 export -f log
