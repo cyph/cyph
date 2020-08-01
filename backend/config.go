@@ -2,6 +2,7 @@ package main
 
 import (
 	"regexp"
+	"time"
 )
 
 type none struct{}
@@ -142,7 +143,7 @@ var config = struct {
 	EmailAddress                  string
 	HPKPHeader                    string
 	HSTSHeader                    string
-	IPFSGatewayUptimeCheckTimeout int
+	IPFSGatewayUptimeCheckTimeout time.Duration
 	IPFSGatewayUptimeCheckTTL     int64
 	MaxChannelDescriptorLength    int
 	MaxSignupValueLength          int
