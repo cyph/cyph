@@ -56,8 +56,8 @@ type IPFSGatewayData struct {
 
 // PackageData : Data for an application package
 type PackageData struct {
-	Package     interface{}
-	Timestamp   int64
+	Package   interface{}
+	Timestamp int64
 }
 
 // Plan : Braintree plan

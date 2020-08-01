@@ -51,7 +51,7 @@ ipfsAdd () {
 			-H "pinata_secret_api_key: $(tail -n1 ~/.cyph/pinata.key)" \
 			-F "file=@${PWD}/${1}"
 	)"
-	
+
 	hash="$(node -e 'console.log(JSON.parse(process.env.ipfsAddOutput).IpfsHash)')"
 
 	if [ "${hash}" ] ; then

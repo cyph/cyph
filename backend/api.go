@@ -814,7 +814,7 @@ func getIceServers(h HandlerArgs) (interface{}, int) {
 func getPackage(h HandlerArgs) (interface{}, int) {
 	packageName := h.Request.URL.Path[9:]
 	packageData, ok := packages[packageName]
-	
+
 	if !ok {
 		return "package not found", http.StatusBadRequest
 	}
@@ -822,8 +822,8 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 	_, continentCode, _, _, _, _, _ := geolocate(h)
 
 	return map[string]interface{}{
-		"gateway": getIPFSGateway(continentCode),
-		"package": packageData.Package,
+		"gateway":   getIPFSGateway(continentCode),
+		"package":   packageData.Package,
 		"timestamp": packageData.Timestamp,
 	}, http.StatusOK
 }
@@ -831,7 +831,7 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 func getPackageTimestamp(h HandlerArgs) (interface{}, int) {
 	packageName := h.Request.URL.Path[18:]
 	packageData, ok := packages[packageName]
-	
+
 	if !ok {
 		return "package not found", http.StatusBadRequest
 	}
