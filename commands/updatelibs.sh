@@ -313,6 +313,7 @@ read -r -d '' modules <<- EOM
 	mat-video@https://github.com/buu700/mat-video-tmp
 	materialize-css
 	math-expression-evaluator
+	maxmind
 	mceliece
 	microlight-string
 	mkdirp

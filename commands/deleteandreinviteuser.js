@@ -97,7 +97,9 @@ const deleteAndReinviteUser = async (projectId, username) => {
 		}
 	);
 
-	console.log(`Invited ${email} with invite code ${inviteCode}`);
+	console.log(
+		`Invited ${metadata.internal.email} with invite code ${inviteCode}`
+	);
 };
 
 if (require.main === module) {
