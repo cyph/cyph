@@ -75,8 +75,11 @@ ipfsGateways () {
 }
 
 ipfsVerify () {
-	hash="${1}"
+	f="${1}"
 	shift
+
+	ipfsHash="$(cat "${f}.ipfs")"
+	integrityHash="$(sha "${f}.br")"
 
 	gateway='https://gateway.ipfs.io/ipfs/:hash'
 	if [ "${1}" ] ; then
@@ -84,9 +87,9 @@ ipfsVerify () {
 		shift
 	fi
 
-	url="$(echo "${gateway}" | sed "s|:hash|${hash}|")"
+	url="$(echo "${gateway}" | sed "s|:hash|${ipfsHash}|")"
 
-	while ! curl "${url}" &> /dev/null ; do
+	while [ "$(curl -s "${url}" 2> /dev/null | sha)" != "${integrityHash}" ] ; do
 		sleep 60
 	done
 }
@@ -94,7 +97,7 @@ ipfsVerify () {
 ipfsVerifyAll () {
 	for gateway in $(ipfsGateways) ; do
 		for f in "${@}" ; do
-			ipfsVerify "$(cat "${f}")" "${gateway}"
+			ipfsVerify "${f}" "${gateway}"
 		done
 	done
 }
