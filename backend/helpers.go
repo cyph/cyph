@@ -143,6 +143,10 @@ var ipfsGatewayIndices = map[string]int{
 	"sa": 0,
 }
 
+var ipfsGatewayUptimeCheckTTL = int64(1800)
+
+var ipfsGatewayUptimeChecks = map[string]IPFSGatewayUptimeCheckData{}
+
 var ipfsGateways = func() map[string][]string {
 	gateways := map[string][]string{
 		"af": []string{},
@@ -374,20 +378,68 @@ func getIPString(h HandlerArgs) string {
 	return ip
 }
 
-func getIPFSGateway(continentCode string) string {
+func getIPFSGateway(continentCode string, packageData PackageData) string {
 	gateways := ipfsGateways[continentCode]
-	index := ipfsGatewayIndices[continentCode]
 
-	gateway := gateways[index]
-
-	index++
-	if index >= len(gateways) {
-		index = 0
+	if len(gateways) == 1 {
+		return gateways[0]
 	}
 
-	ipfsGatewayIndices[continentCode] = index
+	index := ipfsGatewayIndices[continentCode]
+	initialIndex := index
 
-	return gateway
+	for ok := true; ok; ok = index == initialIndex {
+		gateway := gateways[index]
+
+		index++
+		if index >= len(gateways) {
+			index = 0
+		}
+
+		ipfsGatewayIndices[continentCode] = index
+
+		if checkIPFSGateway(gateway, packageData) {
+			return gateway
+		}
+	}
+
+	return gateways[initialIndex]
+}
+
+func checkIPFSGateway(gateway string, packageData PackageData) bool {
+	now := time.Now().Unix()
+
+	if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && ipfsGatewayUptimeCheckTTL > (now-uptimeCheck.Timestamp) {
+		return uptimeCheck.Result
+	}
+
+	result := false
+
+	client := &http.Client{}
+
+	req, err := http.NewRequest(
+		methods.GET,
+		strings.Replace(gateway, ":hash", packageData.Uptime.IPFSHash, 1),
+		nil,
+	)
+
+	if err == nil {
+		resp, err := client.Do(req)
+		if err == nil {
+			responseBodyBytes, err := ioutil.ReadAll(resp.Body)
+			if err == nil {
+				response := hex.EncodeToString(responseBodyBytes)
+				result = response == packageData.Uptime.IntegrityHash
+			}
+		}
+	}
+
+	ipfsGatewayUptimeChecks[gateway] = IPFSGatewayUptimeCheckData{
+		Result:    result,
+		Timestamp: now,
+	}
+
+	return result
 }
 
 func braintreeDecimalToCents(d *braintree.Decimal) int64 {

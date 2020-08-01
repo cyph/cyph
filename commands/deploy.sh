@@ -902,7 +902,7 @@ if [ "${websign}" ] ; then
 			cd websign/test
 		fi
 
-		ipfsVerifyAll $(find ${p} -type f -name '*.ipfs')
+		ipfsWarmUpAll $(find ${p} -type f -name '*.ipfs')
 
 		if [ "${simple}" ] ; then
 			cd ../..

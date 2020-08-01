@@ -54,10 +54,23 @@ type IPFSGatewayData struct {
 	URL           string
 }
 
+// IPFSGatewayUptimeCheckData : Data on whether a gateway is working
+type IPFSGatewayUptimeCheckData struct {
+	Result    bool
+	Timestamp int64
+}
+
+// IPFSGatewayUptimeData : Data used to check whether a gateway is working
+type IPFSGatewayUptimeData struct {
+	IntegrityHash string
+	IPFSHash      string
+}
+
 // PackageData : Data for an application package
 type PackageData struct {
 	Package   interface{}
 	Timestamp int64
+	Uptime    IPFSGatewayUptimeData
 }
 
 // Plan : Braintree plan

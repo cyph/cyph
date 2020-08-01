@@ -822,7 +822,7 @@ func getPackage(h HandlerArgs) (interface{}, int) {
 	_, continentCode, _, _, _, _, _ := geolocate(h)
 
 	return map[string]interface{}{
-		"gateway":   getIPFSGateway(continentCode),
+		"gateway":   getIPFSGateway(continentCode, packageData),
 		"package":   packageData.Package,
 		"timestamp": packageData.Timestamp,
 	}, http.StatusOK

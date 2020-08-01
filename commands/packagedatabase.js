@@ -31,10 +31,18 @@ const packageDatabase = () => {
 						options
 					)
 					.stdout.toString()
-			) || 0
+			) || 0,
+			{
+				integrityHash: fs
+					.readFileSync(pkg.slice(0, -6) + 'current.br')
+					.toString('hex'),
+				ipfsHash: fs
+					.readFileSync(pkg.slice(0, -6) + 'current.ipfs')
+					.toString()
+			}
 		])
 		.reduce(
-			(packages, [packageName, root, timestamp]) => ({
+			(packages, [packageName, root, timestamp, uptime]) => ({
 				...packages,
 				[packageName]: {
 					package: {
@@ -55,7 +63,8 @@ const packageDatabase = () => {
 								{}
 							)
 					},
-					timestamp
+					timestamp,
+					uptime
 				}
 			}),
 			{}

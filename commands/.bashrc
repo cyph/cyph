@@ -74,12 +74,9 @@ ipfsGateways () {
 	echo -n "${ipfsGatewaysCache}"
 }
 
-ipfsVerify () {
-	f="${1}"
+ipfsWarmUp () {
+	hash="${1}"
 	shift
-
-	ipfsHash="$(cat "${f}.ipfs")"
-	integrityHash="$(sha "${f}.br")"
 
 	gateway='https://gateway.ipfs.io/ipfs/:hash'
 	if [ "${1}" ] ; then
@@ -87,18 +84,16 @@ ipfsVerify () {
 		shift
 	fi
 
-	url="$(echo "${gateway}" | sed "s|:hash|${ipfsHash}|")"
+	url="$(echo "${gateway}" | sed "s|:hash|${hash}|")"
 
-	while [ "$(curl -s "${url}" 2> /dev/null | sha)" != "${integrityHash}" ] ; do
-		sleep 60
-	done
+	curl "${url}" &> /dev/null
 }
 
-ipfsVerifyAll () {
+ipfsWarmUpAll () {
 	for gateway in $(ipfsGateways) ; do
 		for f in "${@}" ; do
-			ipfsVerify "${f}" "${gateway}"
-		done
+			ipfsWarmUp "$(cat "${f}.ipfs")" "${gateway}"
+		done &
 	done
 }
 
@@ -148,8 +143,8 @@ export -f easyoptions
 export -f fail
 export -f ipfsAdd
 export -f ipfsGateways
-export -f ipfsVerify
-export -f ipfsVerifyAll
+export -f ipfsWarmUp
+export -f ipfsWarmUpAll
 export -f log
 export -f ng
 export -f notify
