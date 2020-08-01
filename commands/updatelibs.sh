@@ -428,6 +428,7 @@ read -r -d '' modules <<- EOM
 	wavesurfer.js
 	web-animations-js
 	web-social-share
+	webix
 	webpack
 	webpack-cli
 	webrtc-adapter
