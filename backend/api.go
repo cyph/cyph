@@ -26,6 +26,8 @@ func main() {
 	handleFuncs("/downgradeaccount/{userToken}", false, Handlers{methods.GET: downgradeAccount})
 	handleFuncs("/geolocation/{language}", false, Handlers{methods.GET: getGeolocation})
 	handleFuncs("/iceservers", false, Handlers{methods.GET: getIceServers})
+	handleFuncs("/package/*", false, Handlers{methods.GET: getPackage})
+	handleFuncs("/packagetimestamp/*", false, Handlers{methods.GET: getPackageTimestamp})
 	handleFuncs("/preauth/{id}", false, Handlers{methods.POST: preAuth})
 	handleFuncs("/pro/unlock", false, Handlers{methods.POST: proUnlock})
 	handleFuncs("/redox/apikey/delete", false, Handlers{methods.POST: redoxDeleteAPIKey})
@@ -807,6 +809,34 @@ func getGeolocation(h HandlerArgs) (interface{}, int) {
 
 func getIceServers(h HandlerArgs) (interface{}, int) {
 	return getTwilioToken(h)["ice_servers"], http.StatusOK
+}
+
+func getPackage(h HandlerArgs) (interface{}, int) {
+	packageName := h.Request.URL.Path[9:]
+	packageData, ok := packages[packageName]
+	
+	if !ok {
+		return "package not found", http.StatusBadRequest
+	}
+
+	_, continentCode, _, _, _, _, _ := geolocate(h)
+
+	return map[string]interface{}{
+		"gateway": getIPFSGateway(continentCode),
+		"package": packageData.Package,
+		"timestamp": packageData.Timestamp,
+	}, http.StatusOK
+}
+
+func getPackageTimestamp(h HandlerArgs) (interface{}, int) {
+	packageName := h.Request.URL.Path[18:]
+	packageData, ok := packages[packageName]
+	
+	if !ok {
+		return "package not found", http.StatusBadRequest
+	}
+
+	return packageData.Timestamp, http.StatusOK
 }
 
 func getTimestampHandler(h HandlerArgs) (interface{}, int) {

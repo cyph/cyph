@@ -133,6 +133,74 @@ var analIDs = func() map[string]string {
 	return o
 }()
 
+var ipfsGatewayIndices = map[string]int{
+	"af": 0,
+	"an": 0,
+	"as": 0,
+	"eu": 0,
+	"na": 0,
+	"oc": 0,
+	"sa": 0,
+}
+
+var ipfsGateways = func() map[string][]string {
+	gateways := map[string][]string{
+		"af": []string{},
+		"an": []string{},
+		"as": []string{},
+		"eu": []string{},
+		"na": []string{},
+		"oc": []string{},
+		"sa": []string{},
+	}
+
+	if appengine.IsDevAppServer() {
+		return gateways
+	}
+
+	b, err := ioutil.ReadFile("ipfs-gateways.txt")
+	if err != nil {
+		panic(err)
+	}
+
+	urls := strings.Split(strings.TrimSpace(string(b)), "\n")
+
+	for i := range urls {
+		urlSplit := strings.Split(urls[i], " ")
+		url := urlSplit[0]
+		continentCode := urlSplit[1]
+
+		gateways[continentCode] = append(gateways[continentCode], url)
+	}
+
+	for k := range gateways {
+		if len(gateways[k]) < 1 {
+			gateways[k] = gateways[config.DefaultContinentCode]
+		}
+	}
+
+	return gateways
+}()
+
+var packages = func() map[string]PackageData {
+	if appengine.IsDevAppServer() {
+		return map[string]PackageData{}
+	}
+
+	b, err := ioutil.ReadFile("packages.json")
+	if err != nil {
+		panic(err)
+	}
+
+	var o map[string]PackageData
+	err = json.Unmarshal(b, &o)
+	if err != nil {
+		panic(err)
+	}
+
+	return o
+}()
+
 func datastoreKey(kind string, name string) *datastore.Key {
 	key := datastore.NameKey(kind, name, nil)
 	key.Namespace = apiNamespace
@@ -301,6 +369,22 @@ func getIPString(h HandlerArgs) string {
 
 	ip, _, _ := net.SplitHostPort(h.Request.RemoteAddr)
 	return ip
+}
+
+func getIPFSGateway(continentCode string) string {
+	gateways := ipfsGateways[continentCode]
+	index := ipfsGatewayIndices[continentCode]
+
+	gateway := gateways[index]
+
+	index++
+	if index >= len(gateways) {
+		index = 0
+	}
+
+	ipfsGatewayIndices[continentCode] = index
+
+	return gateway
 }
 
 func braintreeDecimalToCents(d *braintree.Decimal) int64 {

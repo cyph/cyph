@@ -48,6 +48,12 @@ type CustomerEmail struct {
 	Email  string
 }
 
+// PackageData : Data for an application package
+type PackageData struct {
+	Package     interface{}
+	Timestamp   int64
+}
+
 // Plan : Braintree plan
 type Plan struct {
 	AccountsPlan      string
