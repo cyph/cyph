@@ -821,9 +821,9 @@ if [ "${websign}" ] ; then
 
 	if [ -d pkg/cyph.app-subresources ] ; then
 		find pkg/cyph.app-subresources -type f -not -name '*.srihash' -print0 | xargs -0 -P4 -I% bash -c ' \
-			ipfsAdd % > %.ipfs; \
 			zopfli -i1000 %; \
 			brotli -Zk %; \
+			ipfsAdd %.br > %.ipfs; \
 		'
 
 		cp -a pkg/cyph.app-subresources/* cdn/${package}/
@@ -878,9 +878,9 @@ if [ "${websign}" ] ; then
 			-or -name '*.br' \
 		\) -exec bash -c ' \
 			if [ ! -f {}.ipfs ] ; then \
-				ipfsAdd {} > {}.ipfs; \
 				zopfli -i1000 {}; \
 				brotli -Zk {}; \
+				ipfsAdd {}.br > {}.ipfs; \
 			fi; \
 			chmod 700 {}.ipfs {}.gz {}.br; \
 			git add {}.ipfs {}.gz {}.br; \

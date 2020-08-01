@@ -3,6 +3,27 @@
  * the upcoming Subresource Integrity standard.
  */
 
+/* From PotassiumUtil */
+function fromBlob (blob) {
+	return new Promise(function (resolve, reject) {
+		var reader	= new FileReader();
+		if (reader._realReader) {
+			reader	= reader._realReader;
+		}
+
+		reader.onerror	= reject;
+		reader.onload	= function () {
+			resolve(
+				reader.result instanceof ArrayBuffer ?
+					new Uint8Array(reader.result) :
+					new Uint8Array(0)
+			);
+		};
+
+		reader.readAsArrayBuffer(blob);
+	});
+}
+
 function webSignSRI (packageMetadata) {
 	new MutationObserver(function () {
 		webSignSRI_Process(packageMetadata);
@@ -66,9 +87,13 @@ function webSignSRI_Process (packageMetadata) {
 				return fetchRetry(
 					packageMetadata.gateway.replace(':hash', ipfsHash)
 				).then(function (response) {
-					return response.text();
-				}).then(function (s) {
-					var content	= s.trim();
+					return response.blob();
+				}).then(fromBlob).then(function (bytes) {
+					var content	=
+						superSphincs._sodiumUtil.to_string(
+							BrotliDecode(bytes)
+						).trim()
+					;
 
 					return Promise.all([
 						content,
