@@ -407,6 +407,10 @@ func getIPFSGateway(continentCode string, packageData PackageData) string {
 }
 
 func checkIPFSGateway(gateway string, packageData PackageData) bool {
+	if packageData.Uptime.IPFSHash == "" {
+		return true
+	}
+
 	now := time.Now().Unix()
 
 	if uptimeCheck, ok := ipfsGatewayUptimeChecks[gateway]; ok && ipfsGatewayUptimeCheckTTL > (now-uptimeCheck.Timestamp) {

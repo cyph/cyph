@@ -67,9 +67,9 @@ ipfsAdd () {
 			)\"}" 2> /dev/null
 		)"
 
-		temporalCloudToken="$(node -e 'console.log(
+		temporalCloudToken="$(node -e "console.log(
 			JSON.parse(process.env.temporalCloudAuth || '{}').token || ''
-		)')"
+		)")"
 	fi
 
 	if [ "${hash}" ] ; then
@@ -122,7 +122,7 @@ ipfsWarmUp () {
 ipfsWarmUpAll () {
 	for gateway in $(ipfsGateways) ; do
 		for f in "${@}" ; do
-			ipfsWarmUp "$(cat "${f}.ipfs")" "${gateway}"
+			ipfsWarmUp "$(cat "${f}")" "${gateway}"
 		done &
 	done
 }

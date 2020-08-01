@@ -4,6 +4,7 @@ const childProcess = require('child_process');
 const fs = require('fs');
 const glob = require('glob/sync');
 const os = require('os');
+const path = require('path');
 const {updateRepos} = require('./updaterepos');
 
 const repoPath = `${os.homedir()}/.cyph/repos/cdn`;
@@ -32,14 +33,26 @@ const packageDatabase = () => {
 					)
 					.stdout.toString()
 			) || 0,
-			{
-				integrityHash: fs
-					.readFileSync(pkg.slice(0, -6) + 'current.br')
-					.toString('hex'),
-				ipfsHash: fs
-					.readFileSync(pkg.slice(0, -6) + 'current.ipfs')
-					.toString()
-			}
+			fs.existsSync(
+				path.join(repoPath, pkg.slice(0, -6) + 'current.ipfs')
+			) ?
+				{
+					integrityHash: fs
+						.readFileSync(
+							path.join(repoPath, pkg.slice(0, -6) + 'current.br')
+						)
+						.toString('hex'),
+					ipfsHash: fs
+						.readFileSync(
+							path.join(
+								repoPath,
+								pkg.slice(0, -6) + 'current.ipfs'
+							)
+						)
+						.toString()
+						.trim()
+				} :
+				{}
 		])
 		.reduce(
 			(packages, [packageName, root, timestamp, uptime]) => ({
@@ -50,9 +63,9 @@ const packageDatabase = () => {
 						subresources: glob(`${packageName}/**/*.ipfs`, options)
 							.map(ipfs => [
 								ipfs.slice(packageName.length + 1, -5),
-								childProcess
-									.spawnSync('cat', [ipfs], options)
-									.stdout.toString()
+								fs
+									.readFileSync(path.join(repoPath, ipfs))
+									.toString()
 									.trim()
 							])
 							.reduce(
